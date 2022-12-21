@@ -8,7 +8,9 @@ if Rails.env.development?
     # same name.
     Annotate.set_defaults(
       'active_admin'                => 'false',
-      'additional_file_patterns'    => [],
+      'additional_file_patterns'    => [
+        Rails.root.join("db/seeds/**/%PLURALIZED_MODEL_NAME%.rb")
+      ],
       'routes'                      => 'false',
       'models'                      => 'true',
       'position_in_routes'          => 'before',

@@ -72,6 +72,7 @@ GEM
       activerecord (>= 3.2, < 8.0)
       rake (>= 10.4, < 14.0)
     ast (2.4.2)
+    awesome_print (1.9.2)
     backport (1.2.0)
     benchmark (0.2.1)
     bindex (0.8.1)
@@ -261,6 +262,8 @@ GEM
       rubocop (~> 1.33)
     ruby-progressbar (1.11.0)
     rubyzip (2.3.2)
+    seedbank (0.5.0)
+      rake (>= 10.0)
     selenium-webdriver (4.7.1)
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
@@ -335,6 +338,7 @@ PLATFORMS
 
 DEPENDENCIES
   annotate
+  awesome_print
   bootsnap
   capybara
   cssbundling-rails
@@ -352,6 +356,7 @@ DEPENDENCIES
   rspec
   rspec-rails
   rubocop-govuk
+  seedbank
   selenium-webdriver
   solargraph
   solargraph-rails
