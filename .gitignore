@@ -13,6 +13,8 @@ public/assets
 
 app/assets/builds/*
 !app/assets/builds/.keep
+app/javascript/processed
+!app/javascript/processed/.keep
 
 log/*
 !log/.keep
