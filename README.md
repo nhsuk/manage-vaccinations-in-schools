@@ -1,31 +1,11 @@
-# README
+# Record childrens vaccines -- Prototype
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is a service for recording children vaccinations with the NHS. This version
+is a prototype used for testing service designs and implementation technology.
 
-Things you may want to cover:
+# Development
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-
-## Setup
-
-### Prerequisites
+## Prerequisites
 
 This project depends on:
 
@@ -34,6 +14,22 @@ This project depends on:
   - [NodeJS](https://nodejs.org/)
   - [Yarn](https://yarnpkg.com/)
   - [Postgres](https://www.postgresql.org/)
+
+The instructions below assume you are using `asdf` to manage the necessary
+versions of the above.
+
+## Application architecture
+
+We keep track of architecture decisions in [Architecture Decision Records
+(ADRs)](/adr/).
+
+We use `rladr` to generate the boilerplate for new records:
+
+```bash
+bin/bundle exec rladr new title
+```
+
+## Development toolchain
 
 ### asdf
 
@@ -62,6 +58,16 @@ will use:
 ASDF_POSTGRES_VERSION=13.5 bundle install
 ```
 
+### Library dependencies
+
+#### Bundle
+
+Run `bundle install` to install gem dependencies.
+
+#### Yarn
+
+Run `yarn` to install node dependencies.
+
 ### Linting
 
 To run the linters:
@@ -87,13 +93,47 @@ You'll also need to configure your editor's `solargraph` plugin to
 ```diff
 +  "solargraph.useBundler": true,
 ```
-## How the application works
+### PostgreSQL
 
-We keep track of architecture decisions in [Architecture Decision Records
-(ADRs)](/adr/).
+The script `bin/db` is included to start up PostgreSQL for setups that don't use
+system-started services, such as `asdf` wwhich is our default. Note that this is
+meant to be a handy script to manage PostgreSQL, not run a console like `rails db`
+does.
 
-We use `rladr` to generate the boilerplate for new records:
-
-```bash
-bin/bundle exec rladr new title
 ```
+$ bin/db
+pg_ctl: no server running
+$ bin/db start
+waiting for server to start.... done
+server started
+$ bin/db
+pg_ctl: server is running (PID: 79113)
+/Users/misaka/.asdf/installs/postgres/13.5/bin/postgres
+```
+
+This script attempts to be installation agnostic by relying on `pg_config` to
+determine postgres's installation directory and setting up logging accordingly.
+
+### Database setup
+
+Setup the DB the standard way for a Rails app:
+
+``` bash
+rails db:setup
+rails db:migrate
+```
+
+### Development server
+
+This application comes with a `Procfile.dev` for use with `foreman` in
+development environments. Use the script `bin/dev` to run it:
+
+``` bash
+$ bin/dev
+13:07:31 web.1  | started with pid 73965
+13:07:31 css.1  | started with pid 73966
+13:07:31 js.1   | started with pid 73967
+...
+```
+
+
