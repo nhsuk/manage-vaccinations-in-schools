@@ -1,4 +1,4 @@
-# 2. Application architecture
+# ADR 2: Application Architecture
 
 **Date Created:** 2022-12-22
 
@@ -15,19 +15,19 @@ be used to achieve this.
 ### Option 1: Hybrid server/client side rendering with Service Worker to manage offline functionality
 
 This is a hybrid approach that leverages server-side rendering of the HTML and
-uses JavaScript to perform a certain amount of client-side parameter expansion
-so that cached data can be used while offline. It relies Service Workers to
+uses progressive enhancement
+so that cached data can be used while offline. It relies on Service Workers to
 manage offline functionality with advanced caching, etc. To realise the
-benefits, the choice of server-side framework is relevant, it should be well
+benefits, the choice of server-side framework is relevant — it should be well
 suited to generating the view required by the front-end. For the purpose of this
 analysis we assume Ruby on Rails will be used.
 
 #### Pros:
 
 - Server-side rendering can be simpler to implement with existing libraries and
-  components. NB: there is a conjecture here that the existing [GOVUK components
-  library](https://github.com/DFE-Digital/govuk-components) can be adapted to
-  the NHSUK design system relatively easily.
+  components. NB: there is an assumption here that the existing [GOVUK
+  components library](https://github.com/DFE-Digital/govuk-components) can be
+  adapted to the NHSUK design system relatively easily.
 - Better browser compatibility as the primary browser feature that this approach
   depends on is Service Workers. The one notable browser that does not support
   this is IE11, however as of 15 June 2022 Microsoft has ended support on a
@@ -38,6 +38,9 @@ analysis we assume Ruby on Rails will be used.
 - The use of a well known (by the team) framework that is optimised for
   delivering webapps quickly will accelerate the development of the service
   prototype.
+- Performance (smaller JS bundle, and runs better on clients with slower CPUs)
+- Better accessibility.
+- Progressive enhancement would make this solution work for more users.
 
 #### Cons:
 
@@ -47,7 +50,7 @@ analysis we assume Ruby on Rails will be used.
 - The usability of a service which blends online and offline usability is
   unknown and untested. User research will be needed to understand if users will
   find this a usable solution.
-  
+
 ### Option 2: Full client side rendering with Service Workers to manage offline functionality
 
 A fully browser-based application developed using an existing JS framework may,
@@ -66,14 +69,16 @@ necessary.
 
 #### Cons:
 
-- There is the risk that the [NHSUK
-  Frontend](https://github.com/nhsuk/nhsuk-frontend) will not be usable for
-  client side rendering, or it may be more work than expected to adapt them.
+- There is the risk that the [NHSUK Frontend](https://github.com/nhsuk/nhsuk-frontend)
+  will not be usable for client side rendering, or it may be more work than
+  expected to adapt them.
 - A fully client-side SPA may exclude some users still using legacy browsers,
   more than just relying on the Service Worker feature.
 - The usability of a service which blends online and offline usability is
   unknown and untested. User research will be needed to understand if users will
   find this a usable solution.
+- Managing individual state in multiple single page application clients is a
+  hard distributed systems problem.
 
 ### Option 3: Desktop app using web-based framework, such as Electron, with server side API
 
@@ -84,11 +89,11 @@ API for shared data storage.
 #### Pros:
 
 - This may be more naturally usable for users, but this requires testing.
-- We should be able to make better use of NHSUK Frontend by using npm within
-  the Electron app.
+- We should be able to make better use of NHSUK Frontend by using npm within the
+  Electron app.
 - Having a clearer distinction between client and server via an API may provide
-  a better user experience. (i.e. without relying on advanced caching via
-  Service Workers)
+  a better user experience. (i.e. without relying on advanced caching via Service
+  Workers)
 - Less reliance on the browser should make this approach more accessible on
   legacy systems (e.g. if anyone is stuck using IE11).
 
@@ -96,8 +101,8 @@ API for shared data storage.
 
 - Not all users may be able to install an application, this may be a common
   scenario although we haven't done research to determine this.
-- As a corollary to the above, installing applications may depend on
-  central IT teams which could present additional challenges.
+- As a corollary to the above, installing applications may depend on central IT
+  teams which could present additional challenges.
 - Once installed, keeping the app updated may be a challenge and may require a
   completely different release-cycle approach.
 - There is additional uncertainty to the delivery of such an app as there may be
