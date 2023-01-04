@@ -12,10 +12,10 @@ require 'rails_helper'
 # of tools you can use to make these specs even more expressive, but we're
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
-RSpec.describe "/students", type: :request do
+RSpec.describe "/children", type: :request do
   
   # This should return the minimal set of attributes required to create a valid
-  # Student. As you add validations to Student, be sure to
+  # Child. As you add validations to Child, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
     skip("Add a hash of attributes valid for your model")
@@ -27,59 +27,59 @@ RSpec.describe "/students", type: :request do
 
   describe "GET /index" do
     it "renders a successful response" do
-      Student.create! valid_attributes
-      get students_url
+      Child.create! valid_attributes
+      get children_url
       expect(response).to be_successful
     end
   end
 
   describe "GET /show" do
     it "renders a successful response" do
-      student = Student.create! valid_attributes
-      get student_url(student)
+      child = Child.create! valid_attributes
+      get child_url(child)
       expect(response).to be_successful
     end
   end
 
   describe "GET /new" do
     it "renders a successful response" do
-      get new_student_url
+      get new_child_url
       expect(response).to be_successful
     end
   end
 
   describe "GET /edit" do
     it "renders a successful response" do
-      student = Student.create! valid_attributes
-      get edit_student_url(student)
+      child = Child.create! valid_attributes
+      get edit_child_url(child)
       expect(response).to be_successful
     end
   end
 
   describe "POST /create" do
     context "with valid parameters" do
-      it "creates a new Student" do
+      it "creates a new Child" do
         expect {
-          post students_url, params: { student: valid_attributes }
-        }.to change(Student, :count).by(1)
+          post children_url, params: { child: valid_attributes }
+        }.to change(Child, :count).by(1)
       end
 
-      it "redirects to the created student" do
-        post students_url, params: { student: valid_attributes }
-        expect(response).to redirect_to(student_url(Student.last))
+      it "redirects to the created child" do
+        post children_url, params: { child: valid_attributes }
+        expect(response).to redirect_to(child_url(Child.last))
       end
     end
 
     context "with invalid parameters" do
-      it "does not create a new Student" do
+      it "does not create a new Child" do
         expect {
-          post students_url, params: { student: invalid_attributes }
-        }.to change(Student, :count).by(0)
+          post children_url, params: { child: invalid_attributes }
+        }.to change(Child, :count).by(0)
       end
 
     
       it "renders a response with 422 status (i.e. to display the 'new' template)" do
-        post students_url, params: { student: invalid_attributes }
+        post children_url, params: { child: invalid_attributes }
         expect(response).to have_http_status(:unprocessable_entity)
       end
     
@@ -92,26 +92,26 @@ RSpec.describe "/students", type: :request do
         skip("Add a hash of attributes valid for your model")
       }
 
-      it "updates the requested student" do
-        student = Student.create! valid_attributes
-        patch student_url(student), params: { student: new_attributes }
-        student.reload
+      it "updates the requested child" do
+        child = Child.create! valid_attributes
+        patch child_url(child), params: { child: new_attributes }
+        child.reload
         skip("Add assertions for updated state")
       end
 
-      it "redirects to the student" do
-        student = Student.create! valid_attributes
-        patch student_url(student), params: { student: new_attributes }
-        student.reload
-        expect(response).to redirect_to(student_url(student))
+      it "redirects to the child" do
+        child = Child.create! valid_attributes
+        patch child_url(child), params: { child: new_attributes }
+        child.reload
+        expect(response).to redirect_to(child_url(child))
       end
     end
 
     context "with invalid parameters" do
     
       it "renders a response with 422 status (i.e. to display the 'edit' template)" do
-        student = Student.create! valid_attributes
-        patch student_url(student), params: { student: invalid_attributes }
+        child = Child.create! valid_attributes
+        patch child_url(child), params: { child: invalid_attributes }
         expect(response).to have_http_status(:unprocessable_entity)
       end
     
@@ -119,17 +119,17 @@ RSpec.describe "/students", type: :request do
   end
 
   describe "DELETE /destroy" do
-    it "destroys the requested student" do
-      student = Student.create! valid_attributes
+    it "destroys the requested child" do
+      child = Child.create! valid_attributes
       expect {
-        delete student_url(student)
-      }.to change(Student, :count).by(-1)
+        delete child_url(child)
+      }.to change(Child, :count).by(-1)
     end
 
-    it "redirects to the students list" do
-      student = Student.create! valid_attributes
-      delete student_url(student)
-      expect(response).to redirect_to(students_url)
+    it "redirects to the children list" do
+      child = Child.create! valid_attributes
+      delete child_url(child)
+      expect(response).to redirect_to(children_url)
     end
   end
 end

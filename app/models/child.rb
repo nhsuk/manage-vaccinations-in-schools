@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: students
+# Table name: children
 #
 #  id         :bigint           not null, primary key
 #  dob        :date
@@ -9,5 +9,5 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
-class Student < ApplicationRecord
+class Child < ApplicationRecord
 end
