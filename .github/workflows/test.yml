@@ -1,4 +1,4 @@
-name: Run CI Tests
+name: Test
 
 on:
   push:
@@ -10,8 +10,8 @@ on:
     types: [opened, reopened, synchronize, labeled]
 
 jobs:
-  ci_test:
-    name: CI Tests
+  test:
+    name: Rails
     runs-on: ubuntu-latest
 
     services:
