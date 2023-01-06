@@ -1,0 +1,43 @@
+name: Test
+
+on:
+  push:
+    branches: ["**"]
+
+jobs:
+  test:
+    name: Rails
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13.5
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/record_childrens_vaccinations_test
+      RAILS_ENV: test
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .tool-versions
+          bundler-cache: true
+
+      - name: Setup Database
+        run: bin/rails db:test:prepare
+
+      - name: Precompile assets
+        run: bin/rails assets:precompile
+
+      - name: Run rspec
+        run: bundle exec rspec spec
