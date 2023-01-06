@@ -38,14 +38,6 @@ jobs:
           ruby-version: .tool-versions
           bundler-cache: true
 
-      - name: Install PostgreSQL
-        run: sudo apt-get -yqq install libpq-dev
-
-      - name: Run bundle install
-        run: |
-          gem install bundler
-          bundle install --jobs 4 --retry 3
-
       - name: Setup Database
         run: bin/rails db:create db:schema:load
 
