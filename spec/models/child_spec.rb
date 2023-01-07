@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: students
+# Table name: children
 #
 #  id         :bigint           not null, primary key
 #  dob        :date
@@ -11,6 +11,6 @@
 #
 require 'rails_helper'
 
-RSpec.describe Student, type: :model do
+RSpec.describe Child, type: :model do
   pending "add some examples to (or delete) #{__FILE__}"
 end
