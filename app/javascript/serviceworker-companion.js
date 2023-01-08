@@ -1,7 +1,4 @@
-if (navigator.serviceWorker) {
-  console.log('[Companion]', 'Registering service worker ...');
-  navigator.serviceWorker.register('/serviceworker.js', { scope: './' })
-    .then(function(reg) {
-      console.log('[Companion]', 'Service worker registered!');
-    });
-}
+import {Workbox} from 'workbox-window';
+
+const wb = new Workbox('/serviceworker.js');
+wb.register();
