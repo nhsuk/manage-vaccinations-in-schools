@@ -1,7 +1,7 @@
 var CACHE_VERSION = 'v1';
 var CACHE_NAME = CACHE_VERSION + ':sw-cache-';
 
-function routeRequest(request) {
+export function routeRequest(request) {
   // try to return untouched request from network first
   return fetch(request).then((response) => {
     console.debug('[Serviceworker]', "Fetch received response", response);

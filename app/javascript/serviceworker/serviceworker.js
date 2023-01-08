@@ -1,8 +1,7 @@
 var CACHE_VERSION = 'v1';
 var CACHE_NAME = CACHE_VERSION + ':sw-cache-';
 
-// import routeRequest from 'router.js';
-importScripts('/router.js');
+import { routeRequest } from "./router.js";
 
 function onInstall(event) {
   console.debug('[Serviceworker]', "Installing!", event);
@@ -47,8 +46,8 @@ function onFetch(event) {
   )
 }
 
-
 self.addEventListener('install', onInstall);
 self.addEventListener('activate', onActivate);
 self.addEventListener('fetch', onFetch);
+
 
