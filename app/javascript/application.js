@@ -4,3 +4,4 @@ initAll();
 
 // Generated with serviceworker-rails
 import "./serviceworker-companion";
+import "./controllers"
