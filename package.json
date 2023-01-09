@@ -2,7 +2,7 @@
   "name": "app",
   "private": "true",
   "dependencies": {
-    "esbuild": "^0.16.13",
+    "esbuild": "^0.16.16",
     "govuk-frontend": "4.4.1",
     "sass": "^1.57.1",
     "workbox-build": "^6.5.4"
