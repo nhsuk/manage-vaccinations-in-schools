@@ -3,3 +3,6 @@
 // ./bin/rails generate stimulus controllerName
 
 import { application } from "./application"
+
+import ConnectivityController from "./connectivity_controller"
+application.register("connectivity", ConnectivityController)

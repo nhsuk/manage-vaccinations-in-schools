@@ -37,6 +37,18 @@
       <main class="govuk-main-wrapper" id="main-content" role="main">
         <%= yield %>
       </main>
+
+      <div id="work-offline">
+        <div data-controller="connectivity">
+          <p>
+            Connection status: <span data-connectivity-target="status">Online</span>
+          </p>
+
+          <button data-action="connectivity#toggleConnection">
+            Go Offline
+          </button>
+        </div>
+      </div>
     </div>
 
     <%= govuk_footer %>
