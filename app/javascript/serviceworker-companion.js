@@ -1,4 +1,12 @@
-import {Workbox} from 'workbox-window';
 
-const wb = new Workbox('/serviceworker.js');
-wb.register();
+import { Workbox } from 'workbox-window';
+
+export let wb;
+
+export function initServiceWorker() {
+  if ('serviceWorker' in navigator) {
+    wb = new Workbox('/serviceworker.js');
+
+    wb.register();
+  }
+}
