@@ -42,11 +42,11 @@
         <div data-controller="connectivity">
           <p>
             Connection status: <span data-connectivity-target="status">Online</span>
+            <button data-connectivity-target="button" data-action="connectivity#toggleConnection">
+              Go Offline
+            </button>
           </p>
 
-          <button data-action="connectivity#toggleConnection">
-            Go Offline
-          </button>
         </div>
       </div>
     </div>

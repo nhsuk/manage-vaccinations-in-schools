@@ -4,10 +4,10 @@ import { wb } from "../serviceworker-companion.js";
 
 // Connects to data-controller="offline"
 export default class extends Controller {
-  static targets = [ "status" ]
+  static targets = [ "status", "button" ];
 
-  connect() {
-    console.log("Current status: ", this.status);
+  async connect() {
+    this.connectionStatus = await wb.messageSW({type: 'GET_CONNECTION_STATUS'});
   }
 
   get status() {
@@ -18,8 +18,17 @@ export default class extends Controller {
     this.statusTarget.textContent = text;
   }
 
+  get connectionStatus() {
+    return this.connectionStatusValue;
+  }
+
+  set connectionStatus(st) {
+    this.connectionStatusValue = st;
+    this.status = st ? "Online" : "Offline";
+    this.buttonTarget.textContent = st ? "Go Offline" : "Go Online";
+  }
+
   async toggleConnection() {
-    let offlineStatus = await wb.messageSW({type: 'TOGGLE_CONNECTION'});
-    this.status = offlineStatus ? "Offline" : "Online";
+    this.connectionStatus = await wb.messageSW({type: 'TOGGLE_CONNECTION'});
   }
 }
