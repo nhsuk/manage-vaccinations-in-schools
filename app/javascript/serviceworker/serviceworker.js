@@ -1,14 +1,28 @@
-import {NetworkFirst} from 'workbox-strategies';
-import {registerRoute} from 'workbox-routing';
+import { CacheOnly, NetworkFirst } from 'workbox-strategies';
+import { setDefaultHandler } from 'workbox-routing';
 
 let offlineMode = false;
 
-registerRoute(new RegExp('.*'), new NetworkFirst());
+function setOfflineMode() {
+  setDefaultHandler(new CacheOnly());
+}
+
+function setOnlineMode() {
+  setDefaultHandler(new NetworkFirst());
+}
 
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'TOGGLE_CONNECTION') {
-    console.log("toggling our connection");
+
     offlineMode = !offlineMode;
+    if (offlineMode) {
+      setOfflineMode();
+    } else {
+      setOnlineMode();
+    }
+
     event.ports[0].postMessage(offlineMode)
   }
 });
+
+setOnlineMode();
