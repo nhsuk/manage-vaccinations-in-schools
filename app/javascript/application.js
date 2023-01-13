@@ -1,6 +1,7 @@
 import { initAll } from "govuk-frontend";
+import { initServiceWorker } from "./serviceworker-companion";
+import "./controllers";
+
 
 initAll();
-
-// Generated with serviceworker-rails
-import "./serviceworker-companion";
+initServiceWorker();
