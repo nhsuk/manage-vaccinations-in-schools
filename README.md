@@ -136,4 +136,17 @@ $ bin/dev
 ...
 ```
 
+### Testing
+
+This application comes with Cypress BDD tests. To run the tests use:
+
+``` bash
+yarn cypress run
+```
+
+Or open the Cypress app to interactively run the tests:
+
+``` bash
+yarn cypress open
+```
 
