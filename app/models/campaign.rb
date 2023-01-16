@@ -5,7 +5,6 @@
 #  id            :bigint           not null, primary key
 #  date          :datetime
 #  location_type :text
-#  title         :text
 #  type          :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
