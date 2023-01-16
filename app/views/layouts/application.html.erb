@@ -47,16 +47,18 @@
       <div id="work-offline">
         <div data-controller="connectivity">
           <p>
-            Connection status:
+            <b>Connection status:</b><br />
             <span data-connectivity-target="status" data-testid="online-status">
               Online
             </span>
-            <button data-connectivity-target="button"
-                    data-action="connectivity#toggleConnection"
-                    data-testid="switch-online-offline">
-              Go Offline
-            </button>
           </p>
+
+          <button class="nhsuk-button nhsuk-button--secondary"
+                  data-connectivity-target="button"
+                  data-action="connectivity#toggleConnection"
+                  data-testid="switch-online-offline">
+            Go Offline
+          </button>
 
         </div>
       </div>
