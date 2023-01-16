@@ -1,0 +1,34 @@
+name: Lint
+
+on:
+  push:
+    branches:
+      - "**"
+      - "!main"
+
+jobs:
+  prettier:
+    name: Prettier
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .tool-versions
+          bundler-cache: true
+      - run: yarn install --immutable --immutable-cache --check-cache
+      - run: yarn prettier --check --ignore-unknown '**/*'
+
+  rubocop:
+    name: Rubocop
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .tool-versions
+          bundler-cache: true
+      - run: yarn install --immutable --immutable-cache --check-cache
+      - run: bin/bundle exec rubocop

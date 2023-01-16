@@ -18,7 +18,6 @@ RSpec.describe ChildrenController, type: :routing do
       expect(get: "/children/1/edit").to route_to("children#edit", id: "1")
     end
 
-
     it "routes to #create" do
       expect(post: "/children").to route_to("children#create")
     end

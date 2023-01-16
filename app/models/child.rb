@@ -17,10 +17,10 @@
 #  updated_at     :datetime         not null
 #
 class Child < ApplicationRecord
-  enum :gp, ['Local GP']
-  enum :screening, ['Approved for vaccination']
-  enum :consent, ['Parental consent (digital)']
-  enum :seen, ['Not yet']
+  enum :gp, ["Local GP"]
+  enum :screening, ["Approved for vaccination"]
+  enum :consent, ["Parental consent (digital)"]
+  enum :seen, ["Not yet"]
 
   has_and_belongs_to_many :campaigns
 

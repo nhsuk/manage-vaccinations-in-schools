@@ -1,13 +1,9 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "children/edit", type: :view do
-  let(:child) {
-    Child.create!()
-  }
+  let(:child) { Child.create! }
 
-  before(:each) do
-    assign(:child, child)
-  end
+  before(:each) { assign(:child, child) }
 
   it "renders the edit child form" do
     render

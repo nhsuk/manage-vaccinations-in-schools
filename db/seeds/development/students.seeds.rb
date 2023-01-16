@@ -11,7 +11,7 @@
 #
 #!/usr/bin/env ruby
 
-CHILDREN_DATA = <<EODATA
+CHILDREN_DATA = <<EODATA.freeze
 - id: 1
   name: Isaiah Fay
   dob: 2013-05-10
@@ -20,7 +20,5 @@ EODATA
 
 children_data = YAML.unsafe_load(CHILDREN_DATA)
 Child.transaction do
-  children_data.each do |child_data|
-    Child.find_or_create_by(**child_data)
-  end
+  children_data.each { |child_data| Child.find_or_create_by(**child_data) }
 end

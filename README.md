@@ -9,11 +9,11 @@ is a prototype used for testing service designs and implementation technology.
 
 This project depends on:
 
-  - [Ruby](https://www.ruby-lang.org/)
-  - [Ruby on Rails](https://rubyonrails.org/)
-  - [NodeJS](https://nodejs.org/)
-  - [Yarn](https://yarnpkg.com/)
-  - [Postgres](https://www.postgresql.org/)
+- [Ruby](https://www.ruby-lang.org/)
+- [Ruby on Rails](https://rubyonrails.org/)
+- [NodeJS](https://nodejs.org/)
+- [Yarn](https://yarnpkg.com/)
+- [Postgres](https://www.postgresql.org/)
 
 The instructions below assume you are using `asdf` to manage the necessary
 versions of the above.
@@ -87,6 +87,7 @@ To run the linters:
 ```bash
 bin/lint
 ```
+
 ### Intellisense
 
 [solargraph](https://github.com/castwide/solargraph) is bundled as part of the
@@ -105,6 +106,7 @@ You'll also need to configure your editor's `solargraph` plugin to
 ```diff
 +  "solargraph.useBundler": true,
 ```
+
 ### PostgreSQL
 
 The script `bin/db` is included to start up PostgreSQL for setups that don't use
@@ -130,7 +132,7 @@ determine postgres's installation directory and setting up logging accordingly.
 
 Setup the DB the standard way for a Rails app:
 
-``` bash
+```bash
 rails db:setup
 rails db:migrate
 ```
@@ -140,7 +142,7 @@ rails db:migrate
 This application comes with a `Procfile.dev` for use with `foreman` in
 development environments. Use the script `bin/dev` to run it:
 
-``` bash
+```bash
 $ bin/dev
 13:07:31 web.1  | started with pid 73965
 13:07:31 css.1  | started with pid 73966
@@ -152,12 +154,12 @@ $ bin/dev
 
 This application comes with Cypress BDD tests. To run the tests use:
 
-``` bash
+```bash
 yarn cypress run
 ```
 
 Or open the Cypress app to interactively run the tests:
 
-``` bash
+```bash
 yarn cypress open
 ```
