@@ -5,6 +5,7 @@
     "@hotwired/stimulus": "^3.2.1",
     "esbuild": "^0.16.16",
     "govuk-frontend": "4.4.1",
+    "nhsuk-frontend": "^6.1.2",
     "sass": "^1.57.1",
     "stimulus": "^3.2.1",
     "workbox-build": "^6.5.4"
