@@ -1,5 +1,81 @@
-$govuk-global-styles: true;
-$govuk-new-link-styles: true;
-$govuk-assets-path: "/";
+// $govuk-global-styles: true;
+// $govuk-new-link-styles: true;
+// $govuk-assets-path: "/";
 
+// @import "govuk-frontend/govuk/all";
+
+////////////////////////////////////////////////////////////////
+
+// GOV.UK Frontend options
+$govuk-global-styles: false;
+$govuk-new-link-styles: true;
+$govuk-assets-path: "/govuk/assets/";
+
+@import 'nhsuk-frontend/packages/nhsuk';
+
+// Import GOV.UK Frontend
 @import "govuk-frontend/govuk/all";
+
+// Import GOV.UK Prototype Components
+// @import "govuk-prototype-components/x-govuk/all";
+
+// Add extra styles here, or re-organise the Sass files in whichever way makes most sense to you
+
+.app-offline-indicator {
+  background: $color_nhsuk-pale-yellow;
+  padding: nhsuk-spacing(2) 0;
+}
+
+.app-offline-status {
+  background: $color_nhsuk-pale-yellow;
+  border: 1px solid $nhsuk-border-color;
+  border-bottom: 0;
+  padding: nhsuk-spacing(3) nhsuk-spacing(5);
+}
+
+.app-search {
+  background: $color_nhsuk-grey-5;
+  border: 1px solid $nhsuk-border-color;
+  padding: nhsuk-spacing(3);
+  margin-bottom: nhsuk-spacing(4);
+
+  .nhsuk-form-group {
+    margin-bottom: 0;
+  }
+}
+
+.app-ready-for-offline  {
+  border-top: 2px solid $nhsuk-border-color;
+  padding: nhsuk-spacing(4) 0 nhsuk-spacing(2);
+}
+
+.app-u-inherit {
+  color: inherit !important;
+}
+
+.app-u-frutiger,
+.app-u-frutiger * {
+  font-family: "Frutiger W01", Arial, sans-serif !important
+}
+
+.app-summary-list--no-bottom-border {
+  .govuk-summary-list__row:last-child,
+  .nhsuk-summary-list__row:last-child {
+    border: none;
+
+    .govuk-summary-list__key,
+    .nhsuk-summary-list__key {
+      border-bottom: none;
+    }
+
+    .govuk-summary-list__value,
+    .nhsuk-summary-list__value {
+      border-bottom: none;
+    }
+  }
+}
+
+.app-u-frutiger,
+.app-u-frutiger * {
+  font-family: "Frutiger W01", Arial, sans-serif !important
+}

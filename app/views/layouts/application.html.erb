@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="govuk-template">
+<html lang="en" class="nhsuk-template">
   <head>
     <title><%= [yield(:page_title).presence, t('service.name')].compact.join(' - ') %></title>
 
@@ -20,7 +20,7 @@
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
   </head>
 
-  <body class="govuk-template__body">
+  <body class="nhsuk-template__body app-u-frutiger">
     <script>
       document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
     </script>
@@ -33,8 +33,8 @@
       <%= header.navigation_item(text: "Navigation item 3", href: "#") %>
     <% end %>
 
-    <div class="govuk-width-container">
-      <main class="govuk-main-wrapper" id="main-content" role="main">
+    <div class="nhsuk-width-container">
+      <main class="nhsuk-main-wrapper" id="main-content" role="main">
         <%= yield %>
       </main>
 
