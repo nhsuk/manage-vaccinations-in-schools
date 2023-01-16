@@ -4,3 +4,8 @@ $govuk-assets-path: "/";
 
 @import "govuk-frontend/govuk/all";
 @import "nhsuk-frontend/packages/nhsuk";
+
+.app-u-frutiger,
+.app-u-frutiger * {
+  font-family: "Frutiger W01", Arial, sans-serif !important
+}
