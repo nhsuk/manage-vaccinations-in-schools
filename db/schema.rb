@@ -10,12 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_15_124728) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_16_181339) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "campaigns", force: :cascade do |t|
-    t.text "title"
     t.datetime "date"
     t.text "location_type"
     t.integer "location_id"
