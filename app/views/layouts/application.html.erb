@@ -1,61 +1,75 @@
 <!DOCTYPE html>
-<html lang="en" class="govuk-template">
+<html lang="en" class="nhsuk-template">
   <head>
     <title><%= [yield(:page_title).presence, t('service.name')].compact.join(' - ') %></title>
 
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%= tag :meta, name: 'viewport', content: 'width=device-width, initial-scale=1' %>
-    <%= tag :meta, property: 'og:image', content: asset_path('images/govuk-opengraph-image.png') %>
-    <%= tag :meta, name: 'theme-color', content: '#0b0c0c' %>
-    <%= favicon_link_tag asset_path('images/favicon.ico') %>
-    <%= favicon_link_tag asset_path('images/govuk-mask-icon.svg'), rel: 'mask-icon', type: 'image/svg', color: "#0b0c0c" %>
-    <%= favicon_link_tag asset_path('images/govuk-apple-touch-icon.png'), rel: 'apple-touch-icon', type: 'image/png' %>
-    <%= favicon_link_tag asset_path('images/govuk-apple-touch-icon-152x152.png'), rel: 'apple-touch-icon', type: 'image/png', size: '152x152' %>
-    <%= favicon_link_tag asset_path('images/govuk-apple-touch-icon-167x167.png'), rel: 'apple-touch-icon', type: 'image/png', size: '167x167' %>
-    <%= favicon_link_tag asset_path('images/govuk-apple-touch-icon-180x180.png'), rel: 'apple-touch-icon', type: 'image/png', size: '180x180' %>
+    <link rel="preload" as="font" href="https://assets.nhs.uk/fonts/FrutigerLTW01-55Roman.woff2" type="font/woff2" crossorigin>
+    <link rel="preload" as="font" href="https://assets.nhs.uk/fonts/FrutigerLTW01-65Bold.woff2" type="font/woff2" crossorigin>
+    <link rel="preconnect  dns-prefetch" href="https://www.nhs.uk/">
+    <link rel="preconnect  dns-prefetch" href="https://assets.nhs.uk/" crossorigin>
 
+    <%= tag :meta, name: 'viewport', content: 'width=device-width, initial-scale=1' %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
   </head>
 
-  <body class="govuk-template__body">
+  <body class="nhsuk-template__body">
     <script>
       document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
     </script>
 
-    <%= govuk_skip_link %>
+    <a class="nhsuk-skip-link" href="#maincontent">Skip to main content</a>
 
-    <%= govuk_header(service_name: "GOV.UK Rails Boilerplate") do |header| %>
-      <%= header.navigation_item(text: "Navigation item 1", href: "#", active: true) %>
-      <%= header.navigation_item(text: "Navigation item 2", href: "#") %>
-      <%= header.navigation_item(text: "Navigation item 3", href: "#") %>
-    <% end %>
+    <header class="nhsuk-header" role="banner">
+      <div class="nhsuk-width-container nhsuk-header__container">
+        <div class="nhsuk-header__logo nhsuk-header__logo--only">
+          <a class="nhsuk-header__link nhsuk-header__link--service" href="/" aria-label="NHS homepage">
+            <svg class="nhsuk-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 16" height="40" width="100">
+              <path class="nhsuk-logo__background" fill="#005eb8" d="M0 0h40v16H0z"></path>
+              <path class="nhsuk-logo__text" fill="#fff" d="M3.9 1.5h4.4l2.6 9h.1l1.8-9h3.3l-2.8 13H9l-2.7-9h-.1l-1.8 9H1.1M17.3 1.5h3.6l-1 4.9h4L25 1.5h3.5l-2.7 13h-3.5l1.1-5.6h-4.1l-1.2 5.6h-3.4M37.7 4.4c-.7-.3-1.6-.6-2.9-.6-1.4 0-2.5.2-2.5 1.3 0 1.8 5.1 1.2 5.1 5.1 0 3.6-3.3 4.5-6.4 4.5-1.3 0-2.9-.3-4-.7l.8-2.7c.7.4 2.1.7 3.2.7s2.8-.2 2.8-1.5c0-2.1-5.1-1.3-5.1-5 0-3.4 2.9-4.4 5.8-4.4 1.6 0 3.1.2 4 .6"></path>
+            </svg>
+            <span class="nhsuk-header__service-name">
+              Record children’s vaccinations
+            </span>
+          </a>
+        </div>
+      </div>
+    </header>
 
-    <div class="govuk-width-container">
-      <main class="govuk-main-wrapper" id="main-content" role="main">
+    <div class="nhsuk-width-container">
+      <main class="nhsuk-main-wrapper" id="main-content" role="main">
         <%= yield %>
       </main>
 
       <div id="work-offline">
         <div data-controller="connectivity">
           <p>
-            Connection status:
+            <b>Connection status:</b><br />
             <span data-connectivity-target="status" data-testid="online-status">
               Online
             </span>
-            <button data-connectivity-target="button"
-                    data-action="connectivity#toggleConnection"
-                    data-testid="switch-online-offline">
-              Go Offline
-            </button>
           </p>
+
+          <button class="nhsuk-button nhsuk-button--secondary"
+                  data-connectivity-target="button"
+                  data-action="connectivity#toggleConnection"
+                  data-testid="switch-online-offline">
+            Go Offline
+          </button>
 
         </div>
       </div>
     </div>
 
-    <%= govuk_footer %>
+    <footer role="contentinfo">
+      <div class="nhsuk-footer" id="nhsuk-footer">
+        <div class="nhsuk-width-container">
+          <p class="nhsuk-footer__copyright">&copy; Crown copyright</p>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>
