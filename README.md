@@ -68,6 +68,18 @@ Run `bundle install` to install gem dependencies.
 
 Run `yarn` to install node dependencies.
 
+If you encounter:
+
+```sh
+No yarn executable found for nodejs 18.1.0
+```
+
+You need to reshim nodejs:
+
+```sh
+asdf reshim nodejs
+```
+
 ### Linting
 
 To run the linters:
@@ -149,4 +161,3 @@ Or open the Cypress app to interactively run the tests:
 ``` bash
 yarn cypress open
 ```
-
