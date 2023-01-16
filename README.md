@@ -58,6 +58,18 @@ will use:
 ASDF_POSTGRES_VERSION=13.5 bundle install
 ```
 
+When running `yarn`, if you encounter:
+
+```sh
+No yarn executable found for nodejs 18.1.0
+```
+
+You need to reshim nodejs:
+
+```sh
+asdf reshim nodejs
+```
+
 ### Library dependencies
 
 #### Bundle
@@ -149,4 +161,3 @@ Or open the Cypress app to interactively run the tests:
 ``` bash
 yarn cypress open
 ```
-
