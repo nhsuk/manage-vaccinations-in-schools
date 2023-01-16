@@ -22,6 +22,8 @@ class Child < ApplicationRecord
   enum :consent, ['Parental consent (digital)']
   enum :seen, ['Not yet']
 
+  has_and_belongs_to_many :campaigns
+
   def full_name
     "#{first_name} #{last_name}"
   end
