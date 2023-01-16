@@ -1,4 +1,3 @@
-
 class UpdateChildrenToLatest < ActiveRecord::Migration[7.0]
   def change
     # Do not run this migration on production or on existing data. It is a

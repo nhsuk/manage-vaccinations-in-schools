@@ -1,9 +1,7 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "children/new", type: :view do
-  before(:each) do
-    assign(:child, Child.new)
-  end
+  before(:each) { assign(:child, Child.new) }
 
   it "renders new child form" do
     render

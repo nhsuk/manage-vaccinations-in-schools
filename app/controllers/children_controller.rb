@@ -1,5 +1,5 @@
 class ChildrenController < ApplicationController
-  before_action :set_child, only: %i[ show edit update destroy ]
+  before_action :set_child, only: %i[show edit update destroy]
 
   # GET /children
   def index
@@ -46,13 +46,14 @@ class ChildrenController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_child
-      @child = Child.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def child_params
-      params.fetch(:child, {})
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_child
+    @child = Child.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def child_params
+    params.fetch(:child, {})
+  end
 end

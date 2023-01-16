@@ -1,9 +1,7 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "children/show", type: :view do
-  before(:each) do
-    assign(:child, Child.create!)
-  end
+  before(:each) { assign(:child, Child.create!) }
 
   it "renders attributes in <p>" do
     render

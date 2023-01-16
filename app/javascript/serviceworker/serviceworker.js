@@ -1,5 +1,5 @@
-import { CacheOnly, NetworkFirst } from 'workbox-strategies';
-import { setDefaultHandler } from 'workbox-routing';
+import { CacheOnly, NetworkFirst } from "workbox-strategies";
+import { setDefaultHandler } from "workbox-routing";
 
 let connectionStatus = true;
 
@@ -14,8 +14,11 @@ function setOnlineMode() {
 }
 
 let messageHandlers = {
-  'TOGGLE_CONNECTION': (event) => {
-    console.debug("[Service Worker] TOGGLE_CONNECTION set connection status to:", connectionStatus);
+  TOGGLE_CONNECTION: (event) => {
+    console.debug(
+      "[Service Worker] TOGGLE_CONNECTION set connection status to:",
+      connectionStatus
+    );
     connectionStatus = !connectionStatus;
 
     if (connectionStatus) {
@@ -27,13 +30,16 @@ let messageHandlers = {
     event.ports[0].postMessage(connectionStatus);
   },
 
-  'GET_CONNECTION_STATUS': (event) => {
-    console.debug("[Service Worker] GET_CONNECTION_STATUS Returning status:", connectionStatus);
+  GET_CONNECTION_STATUS: (event) => {
+    console.debug(
+      "[Service Worker] GET_CONNECTION_STATUS Returning status:",
+      connectionStatus
+    );
     event.ports[0].postMessage(connectionStatus);
-  }
-}
+  },
+};
 
-self.addEventListener('message', (event) => {
+self.addEventListener("message", (event) => {
   if (event.data && event.data.type) {
     messageHandlers[event.data.type](event);
   }

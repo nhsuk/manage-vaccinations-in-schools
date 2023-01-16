@@ -20,7 +20,5 @@ EODATA
 
 children_data = YAML.unsafe_load(CHILDREN_DATA)
 Child.transaction do
-  children_data.each do |child_data|
-    Child.find_or_create_by(**child_data)
-  end
+  children_data.each { |child_data| Child.find_or_create_by(**child_data) }
 end

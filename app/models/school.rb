@@ -20,9 +20,9 @@
 #  updated_at    :datetime         not null
 #
 class School < ApplicationRecord
-  self.inheritance_column = '__type'
+  self.inheritance_column = "__type"
 
   has_one :campaign
 
-  enum :phase, ['Primary']
+  enum :phase, ["Primary"]
 end

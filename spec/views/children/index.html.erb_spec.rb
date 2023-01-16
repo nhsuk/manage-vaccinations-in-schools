@@ -1,12 +1,7 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "children/index", type: :view do
-  before(:each) do
-    assign(:children, [
-      Child.create!,
-      Child.create!
-    ])
-  end
+  before(:each) { assign(:children, [Child.create!, Child.create!]) }
 
   it "renders a list of children" do
     render
