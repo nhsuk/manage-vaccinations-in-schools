@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
-  resources :children
+  resources :children, only: %i[show edit delete]
+  resources :campaigns, only: %i[] do
+    resources :children, only: %i[index], as: :record_vaccinations
+  end
   root to: "pages#home"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

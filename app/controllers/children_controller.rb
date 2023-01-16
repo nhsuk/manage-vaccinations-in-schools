@@ -1,9 +1,10 @@
 class ChildrenController < ApplicationController
-  before_action :set_child, only: %i[show edit update destroy]
+  before_action :set_child, only: %i[show]
+  before_action :set_campaign, only: %i[index]
 
   # GET /children
   def index
-    @children = Child.all
+    @children = @campaign.children
   end
 
   # GET /children/1
@@ -50,6 +51,10 @@ class ChildrenController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_child
     @child = Child.find(params[:id])
+  end
+
+  def set_campaign
+    @campaign = Campaign.find(params[:campaign_id])
   end
 
   # Only allow a list of trusted parameters through.
