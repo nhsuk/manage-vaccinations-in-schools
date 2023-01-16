@@ -11,7 +11,7 @@
 #
 #!/usr/bin/env ruby
 
-CHILDREN_DATA = <<EODATA
+CHILDREN_DATA = <<EODATA.freeze
 - id: 1
   name: Isaiah Fay
   dob: 2013-05-10

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "children/new", type: :view do
   before(:each) do
-    assign(:child, Child.new())
+    assign(:child, Child.new)
   end
 
   it "renders new child form" do

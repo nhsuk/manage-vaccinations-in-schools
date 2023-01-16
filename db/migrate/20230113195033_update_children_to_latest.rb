@@ -7,7 +7,7 @@ class UpdateChildrenToLatest < ActiveRecord::Migration[7.0]
 
     remove_column :children, :full_name, :text
 
-    change_table :children do |t|
+    change_table :children, bulk: true do |t|
       t.integer :sex
       t.text :first_name
       t.text :last_name

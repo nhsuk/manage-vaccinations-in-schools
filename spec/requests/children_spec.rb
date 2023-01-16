@@ -17,13 +17,13 @@ RSpec.describe "/children", type: :request do
   # This should return the minimal set of attributes required to create a valid
   # Child. As you add validations to Child, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) {
+  let(:valid_attributes) do
     skip("Add a hash of attributes valid for your model")
-  }
+  end
 
-  let(:invalid_attributes) {
+  let(:invalid_attributes) do
     skip("Add a hash of attributes invalid for your model")
-  }
+  end
 
   describe "GET /index" do
     it "renders a successful response" do
@@ -88,9 +88,9 @@ RSpec.describe "/children", type: :request do
 
   describe "PATCH /update" do
     context "with valid parameters" do
-      let(:new_attributes) {
+      let(:new_attributes) do
         skip("Add a hash of attributes valid for your model")
-      }
+      end
 
       it "updates the requested child" do
         child = Child.create! valid_attributes

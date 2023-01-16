@@ -41,7 +41,7 @@ class ChildrenController < ApplicationController
 
   # DELETE /children/1
   def destroy
-    @child.destroy
+    @child.destroy!
     redirect_to children_url, notice: "Child was successfully destroyed."
   end
 

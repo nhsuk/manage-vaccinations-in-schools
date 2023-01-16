@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe "children/edit", type: :view do
-  let(:child) {
-    Child.create!()
-  }
+  let(:child) do
+    Child.create!
+  end
 
   before(:each) do
     assign(:child, child)

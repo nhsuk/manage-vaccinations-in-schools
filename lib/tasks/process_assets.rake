@@ -14,7 +14,8 @@ class Processor
   end
 end
 
-task :process_assets => :environment do
+desc "Process javascript assets through ERB."
+task process_assets: :environment do
   javascripts_path = Rails.root.join("app/javascript")
   processed_path = javascripts_path.join("processed")
   javascripts_path.glob("*.erb").each do |erb_file|
