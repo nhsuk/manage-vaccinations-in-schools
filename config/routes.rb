@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "/dashboard", to: "dashboard#index"
   resources :children, only: %i[show edit delete]
   resources :campaigns, only: %i[] do
     resources :children, only: %i[index], as: :record_vaccinations

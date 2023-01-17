@@ -1,0 +1,8 @@
+<tr class="govuk-table__row">
+    <td class="govuk-table__cell">
+        <%= campaign.date.strftime("%d %b %Y at %l:%M%P") %>
+    </td>
+    <td class="govuk-table__cell">
+        <%= link_to campaign.location.name, campaign_record_vaccinations_path(campaign) %>
+    </td>
+</tr>

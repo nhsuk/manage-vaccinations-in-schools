@@ -1,0 +1,15 @@
+<h2 class="nhsuk-heading-l"><%= type %> campaign</h2>
+<table class="govuk-table">
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th class="govuk-table__header">Date</th>
+            <th class="govuk-table__header" style="width: 75%">School</th>
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+
+    <% campaigns.each do |campaign| %>
+        <%= render "campaign", campaign: %>
+    <% end %>
+    </tbody>
+</table>
