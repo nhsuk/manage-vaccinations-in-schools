@@ -1,14 +1,10 @@
 Rails.application.routes.draw do
+  root to: redirect("/dashboard")
   get "/dashboard", to: "dashboard#index"
   resources :children, only: %i[show edit delete]
   resources :campaigns, only: %i[] do
     resources :children, only: %i[index], as: :record_vaccinations
   end
-  root to: "pages#home"
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Defines the root path route ("/")
-  # root "articles#index"
 
   scope via: :all do
     get "/404", to: "errors#not_found"
