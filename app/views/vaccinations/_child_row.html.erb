@@ -9,8 +9,14 @@
         <%= child.screening %>
     </td>
     <td class="govuk-table__cell">
-      <strong class="nhsuk-tag nhsuk-tag--grey">
+      <% if child.seen == "Vaccinated" %>
+        <strong class="nhsuk-tag">
           <%= child.seen %>
-      </strong>
+        </strong>
+      <% else %>
+        <strong class="nhsuk-tag nhsuk-tag--grey">
+          <%= child.seen %>
+        </strong>
+      <% end %>
     </td>
 </tr>
