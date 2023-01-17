@@ -40,7 +40,12 @@ class ExampleCampaignData
         seen: patient["seen"]["text"],
         first_name: patient["firstName"],
         last_name: patient["lastName"],
-        dob: patient["dob"]
+        dob: patient["dob"],
+        sex: patient["sex"],
+        consent: patient["consent"],
+        gp: patient["gp"],
+        nhs_number: patient["nhsNumber"],
+        screening: patient["screening"]
       }
     end
   end
