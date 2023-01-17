@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_16_181339) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_17_000745) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -34,7 +34,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_16_181339) do
 
   create_table "children", force: :cascade do |t|
     t.date "dob"
-    t.decimal "nhs_number"
+    t.bigint "nhs_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "sex"

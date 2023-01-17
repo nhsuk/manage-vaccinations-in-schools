@@ -8,7 +8,7 @@
 #  first_name     :text
 #  gp             :integer
 #  last_name      :text
-#  nhs_number     :decimal(, )
+#  nhs_number     :bigint
 #  preferred_name :text
 #  screening      :integer
 #  seen           :integer
