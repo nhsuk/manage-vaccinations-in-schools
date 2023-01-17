@@ -4,6 +4,10 @@ class VaccinationsController < ApplicationController
 
   def index
     @children = @campaign.children
+    respond_to do |format|
+      format.html
+      format.json { render json: @children.index_by(&:id) }
+    end
   end
 
   def show

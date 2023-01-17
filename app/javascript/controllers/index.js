@@ -4,5 +4,11 @@
 
 import { application } from "./application";
 
+import CampaignController from "./campaign_controller";
+application.register("campaign", CampaignController);
+
 import ConnectivityController from "./connectivity_controller";
 application.register("connectivity", ConnectivityController);
+
+import VaccinationController from "./vaccination_controller";
+application.register("vaccination", VaccinationController);
