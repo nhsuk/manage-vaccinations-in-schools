@@ -12,12 +12,42 @@ require "rails_helper"
 # of tools you can use to make these specs even more expressive, but we're
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
-RSpec.describe "/children", type: :request do
-  # This should return the minimal set of attributes required to create a valid
-  # Child. As you add validations to Child, be sure to
-  # adjust the attributes here as well.
-  let(:valid_attributes) do
-    skip("Add a hash of attributes valid for your model")
+RSpec.describe "/campaigns/:campain_id/children", type: :request do
+  let(:school) do
+    School.create!(
+      {
+        urn: "130877",
+        name: "St Andrew's Benn CofE (Voluntary Aided) Primary School",
+        address: "Chester Street",
+        locality: "",
+        town: "Rugby",
+        county: "Warwickshire",
+        postcode: "CV21 3NX",
+        minimum_age: "3",
+        maximum_age: "11",
+        url: "www.standrewsbennprimary.co.uk/",
+        phase: "Primary",
+        type: "Local authority maintained schools",
+        detailed_type: "Voluntary aided school"
+      }
+    )
+  end
+
+  let(:child) do
+    Child.create!(
+      {
+        first_name: "Gianna",
+        last_name: "Becker",
+        dob: "2017-06-27T13:33:41.428Z",
+        nhs_number: "2490559432",
+        gp: "Local GP",
+        screening: "Approved for vaccination"
+      }
+    )
+  end
+
+  let(:campaign) do
+    Campaign.create!({ location: school, type: "HPV", children: [child] })
   end
 
   let(:invalid_attributes) do
@@ -26,103 +56,9 @@ RSpec.describe "/children", type: :request do
 
   describe "GET /index" do
     it "renders a successful response" do
-      Child.create! valid_attributes
-      get children_url
+      # Child.create! valid_attributes
+      get campaign_record_vaccinations_url(campaign.id)
       expect(response).to be_successful
-    end
-  end
-
-  describe "GET /show" do
-    it "renders a successful response" do
-      child = Child.create! valid_attributes
-      get child_url(child)
-      expect(response).to be_successful
-    end
-  end
-
-  describe "GET /new" do
-    it "renders a successful response" do
-      get new_child_url
-      expect(response).to be_successful
-    end
-  end
-
-  describe "GET /edit" do
-    it "renders a successful response" do
-      child = Child.create! valid_attributes
-      get edit_child_url(child)
-      expect(response).to be_successful
-    end
-  end
-
-  describe "POST /create" do
-    context "with valid parameters" do
-      it "creates a new Child" do
-        expect {
-          post children_url, params: { child: valid_attributes }
-        }.to change(Child, :count).by(1)
-      end
-
-      it "redirects to the created child" do
-        post children_url, params: { child: valid_attributes }
-        expect(response).to redirect_to(child_url(Child.last))
-      end
-    end
-
-    context "with invalid parameters" do
-      it "does not create a new Child" do
-        expect {
-          post children_url, params: { child: invalid_attributes }
-        }.to change(Child, :count).by(0)
-      end
-
-      it "renders a response with 422 status (i.e. to display the 'new' template)" do
-        post children_url, params: { child: invalid_attributes }
-        expect(response).to have_http_status(:unprocessable_entity)
-      end
-    end
-  end
-
-  describe "PATCH /update" do
-    context "with valid parameters" do
-      let(:new_attributes) do
-        skip("Add a hash of attributes valid for your model")
-      end
-
-      it "updates the requested child" do
-        child = Child.create! valid_attributes
-        patch child_url(child), params: { child: new_attributes }
-        child.reload
-        skip("Add assertions for updated state")
-      end
-
-      it "redirects to the child" do
-        child = Child.create! valid_attributes
-        patch child_url(child), params: { child: new_attributes }
-        child.reload
-        expect(response).to redirect_to(child_url(child))
-      end
-    end
-
-    context "with invalid parameters" do
-      it "renders a response with 422 status (i.e. to display the 'edit' template)" do
-        child = Child.create! valid_attributes
-        patch child_url(child), params: { child: invalid_attributes }
-        expect(response).to have_http_status(:unprocessable_entity)
-      end
-    end
-  end
-
-  describe "DELETE /destroy" do
-    it "destroys the requested child" do
-      child = Child.create! valid_attributes
-      expect { delete child_url(child) }.to change(Child, :count).by(-1)
-    end
-
-    it "redirects to the children list" do
-      child = Child.create! valid_attributes
-      delete child_url(child)
-      expect(response).to redirect_to(children_url)
     end
   end
 end
