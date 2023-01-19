@@ -137,6 +137,21 @@ rails db:setup
 rails db:migrate
 ```
 
+### Loading example data
+
+You can run a rake task to load data from the example campaign file
+`db/sample_data/example-campaign.json`.`
+
+```bash
+$ rake load_campaign_example
+```
+
+The importer will `find_or_create` the records, using specific attributes to match records:
+
+- **campains** -- a combination of `type`, `location` and `date`
+- **children** -- `nhs_number`
+- **schools** -- `urn`
+
 ### Development server
 
 This application comes with a `Procfile.dev` for use with `foreman` in

@@ -16,6 +16,10 @@
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #
+# Indexes
+#
+#  index_children_on_nhs_number  (nhs_number) UNIQUE
+#
 class Child < ApplicationRecord
   enum :sex, %w[Female Male]
   enum :gp, ["Local GP"]
