@@ -1,8 +1,15 @@
 Rails.application.routes.draw do
   root to: redirect("/dashboard")
   get "/dashboard", to: "dashboard#index"
-  resources :campaigns, only: %i[] do
-    resources :children, only: %i[index], as: :record_vaccinations
+
+  resources :campaigns, only: %i[index] do
+    resources :children,
+              only: %i[index show],
+              as: :vaccinations,
+              controller: :vaccinations do
+      put "record", on: :member
+      get "confirmation", on: :member
+    end
   end
 
   scope via: :all do

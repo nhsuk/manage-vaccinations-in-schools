@@ -1,16 +1,16 @@
 <tr class="govuk-table__row">
     <td class="govuk-table__cell" id="<%= dom_id child %>">
-        <%= child.full_name %>
+        <%= link_to child.full_name, campaign_vaccination_path(@campaign, child) %>
     </td>
     <td class="govuk-table__cell" style="width: 150px">
         <%= child.dob.strftime("%d %b %Y") %>
     </td>
     <td class="govuk-table__cell">
-        Approved
+        <%= child.screening %>
     </td>
     <td class="govuk-table__cell">
-        <strong class="nhsuk-tag nhsuk-tag--grey">
-            Not yet
-        </strong>
+      <strong class="nhsuk-tag nhsuk-tag--grey">
+          <%= child.seen %>
+      </strong>
     </td>
 </tr>
