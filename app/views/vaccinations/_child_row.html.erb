@@ -1,8 +1,9 @@
 <tr class="govuk-table__row"
     data-controller="vaccination"
-    data-vaccination-id-value="<%= child.id %>">
+    data-vaccination-id-value="<%= child.id %>"
+    data-testid="children">
     <td class="govuk-table__cell" id="<%= dom_id child %>">
-        <%= link_to child.full_name, campaign_vaccination_path(@campaign, child) %>
+        <%= link_to child.full_name, campaign_vaccination_path(@campaign, child), "data-testid": "child-link" %>
     </td>
     <td class="govuk-table__cell" style="width: 150px">
         <%= child.dob.strftime("%d %b %Y") %>
@@ -10,6 +11,6 @@
     <td class="govuk-table__cell">
         <%= child.screening %>
     </td>
-    <td class="govuk-table__cell" data-vaccination-target="status">
+    <td class="govuk-table__cell" data-vaccination-target="status" data-testid="child-status">
     </td>
 </tr>
