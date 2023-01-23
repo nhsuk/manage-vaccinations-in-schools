@@ -13,7 +13,7 @@
 class Campaign < ApplicationRecord
   self.inheritance_column = "__type"
 
-  belongs_to :location, class_name: "School"
+  belongs_to :location, class_name: "School", optional: true
   has_and_belongs_to_many :children
 
   enum :type, ["HPV"]

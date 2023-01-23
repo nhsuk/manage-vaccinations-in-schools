@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_16_181339) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_19_215218) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -34,7 +34,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_16_181339) do
 
   create_table "children", force: :cascade do |t|
     t.date "dob"
-    t.decimal "nhs_number"
+    t.bigint "nhs_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "sex"
@@ -45,10 +45,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_16_181339) do
     t.integer "screening"
     t.integer "consent"
     t.integer "seen"
+    t.index ["nhs_number"], name: "index_children_on_nhs_number", unique: true
   end
 
   create_table "schools", force: :cascade do |t|
-    t.decimal "urn"
+    t.integer "urn"
     t.text "name"
     t.text "address"
     t.text "locality"
@@ -63,6 +64,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_16_181339) do
     t.text "detailed_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["urn"], name: "index_schools_on_urn", unique: true
   end
 
 end

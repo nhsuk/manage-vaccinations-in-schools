@@ -15,9 +15,13 @@
 #  town          :text
 #  type          :text
 #  url           :text
-#  urn           :decimal(, )
+#  urn           :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#
+# Indexes
+#
+#  index_schools_on_urn  (urn) UNIQUE
 #
 class School < ApplicationRecord
   self.inheritance_column = "__type"
