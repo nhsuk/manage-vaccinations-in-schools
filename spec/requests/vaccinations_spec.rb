@@ -57,7 +57,7 @@ RSpec.describe "/campaigns/:campain_id/children", type: :request do
   describe "GET /index" do
     it "renders a successful response" do
       # Child.create! valid_attributes
-      get campaign_record_vaccinations_url(campaign.id)
+      get campaign_vaccinations_url(campaign.id)
       expect(response).to be_successful
     end
   end

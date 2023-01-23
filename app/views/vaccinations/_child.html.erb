@@ -1,0 +1,105 @@
+<h2 class="nhsuk-u-heading-s" id="<%= dom_id child %>">
+    <%= child.full_name %>
+</h2>
+<div class="nhsuk-card">
+    <div class="nhsuk-card__content">
+        <h2 class="nhsuk-card__heading nhsuk-heading-m">
+            About them
+        </h2>
+        <p class="nhsuk-card__description">
+        </p>
+        <dl class="nhsuk-summary-list app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0">
+
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Name
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    <%= child.full_name %>
+                </dd>
+
+            </div>
+
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Sex
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    <%= child.sex %>
+                </dd>
+
+            </div>
+
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Date of birth
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    <%= child.dob.strftime("%d %B %Y") %> (aged <%= child.age  %>)
+                </dd>
+
+            </div>
+
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Consent
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    <%= child.consent %>
+                </dd>
+
+            </div>
+
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    GP
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    <%= child.gp %>
+                </dd>
+
+            </div>
+
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    NHS Number
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    <%= child.nhs_number %>
+                </dd>
+
+            </div>
+
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Screening
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    <%= child.screening %>
+                </dd>
+            </div>
+        </dl>
+        <p></p>
+    </div>
+</div>
+
+<div class="nhsuk-card">
+  <div class="nhsuk-card__content">
+    <h2 class="nhsuk-card__heading nhsuk-heading-m">
+        Record vaccination
+    </h2>
+    <%= form_tag  record_campaign_vaccination_path(@campaign, @child), method: :put %>
+        <div class="nhsuk-u-margin-top-6">
+            <%= button_tag "Confirm", class: "nhsuk-button" %>
+        </div>
+    </form>
+
+<!-- <p class="nhsuk-card__description">
+     <a class="nhsuk-button nhsuk-u-margin-bottom-2"
+     href="<%= record_campaign_vaccination_path(@campaign, @child) %>"
+     draggable="false">
+     Record Flu vaccination
+     </a>
+     </p> -->
+  </div>
+</div>
