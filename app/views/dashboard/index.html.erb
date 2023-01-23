@@ -1,0 +1,7 @@
+<p style="color: green"><%= notice %></p>
+
+<h1 class="nhsuk-heading-xl">Your campaigns</h1>
+
+<% @campaigns_by_type.each do |type, campaigns| %>
+    <%= render "campaign_type", type:, campaigns: %>
+<% end %>

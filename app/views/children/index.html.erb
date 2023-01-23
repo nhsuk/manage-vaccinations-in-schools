@@ -1,14 +1,30 @@
 <p style="color: green"><%= notice %></p>
 
-<h1>Children</h1>
+<h1 class="nhsuk-heading-l">Record vaccinations</h1>
 
-<div id="children">
-  <% @children.each do |child| %>
-    <%= render child %>
-    <p>
-      <%= link_to "Show this child", child %>
-    </p>
-  <% end %>
+<div id="children" class="nhsuk-card nhsuk-u-margin-bottom-0">
+  <div class="nhsuk-card__content">
+    <h2 class="nhsuk-card__heading nhsuk-heading-m">Children</h2>
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-three-quarters">
+
+        <table class="nhsuk-table">
+          <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+              <th class="govuk-table__header">Name</th>
+              <th class="govuk-table__header">Date of birth</th>
+              <th class="govuk-table__header">Screening</th>
+              <th class="govuk-table__header">Vaccinated</th>
+            </tr>
+          </thead>
+          <tbody class="govuk-table__body">
+            <% @children.each do |child| %>
+              <%= render "child_row", child: %>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
-
-<%= link_to "New child", new_child_path %>
