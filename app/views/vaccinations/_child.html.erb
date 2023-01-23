@@ -1,7 +1,9 @@
 <h2 class="nhsuk-u-heading-s" id="<%= dom_id child %>">
     <%= child.full_name %>
 </h2>
-<div class="nhsuk-card">
+<div class="nhsuk-card"
+     data-controller="child-vaccination"
+     data-child-vaccination-url-value="<%= campaign_vaccination_path(@campaign, child, format: :json) %>">
     <div class="nhsuk-card__content">
         <h2 class="nhsuk-card__heading nhsuk-heading-m">
             About them
@@ -14,7 +16,7 @@
                 <dt class="nhsuk-summary-list__key">
                     Name
                 </dt>
-                <dd class="nhsuk-summary-list__value">
+                <dd class="nhsuk-summary-list__value" data-child-vaccination-target="fullName">
                     <%= child.full_name %>
                 </dd>
 
@@ -24,7 +26,7 @@
                 <dt class="nhsuk-summary-list__key">
                     Sex
                 </dt>
-                <dd class="nhsuk-summary-list__value">
+                <dd class="nhsuk-summary-list__value" data-child-vaccination-target="sex">
                     <%= child.sex %>
                 </dd>
 
@@ -34,7 +36,7 @@
                 <dt class="nhsuk-summary-list__key">
                     Date of birth
                 </dt>
-                <dd class="nhsuk-summary-list__value">
+                <dd class="nhsuk-summary-list__value" data-child-vaccination-target="dob">
                     <%= child.dob.strftime("%d %B %Y") %> (aged <%= child.age  %>)
                 </dd>
 
@@ -44,7 +46,7 @@
                 <dt class="nhsuk-summary-list__key">
                     Consent
                 </dt>
-                <dd class="nhsuk-summary-list__value">
+                <dd class="nhsuk-summary-list__value" data-child-vaccination-target="consent"
                     <%= child.consent %>
                 </dd>
 
@@ -54,7 +56,7 @@
                 <dt class="nhsuk-summary-list__key">
                     GP
                 </dt>
-                <dd class="nhsuk-summary-list__value">
+                <dd class="nhsuk-summary-list__value" data-child-vaccination-target="gp"
                     <%= child.gp %>
                 </dd>
 
@@ -64,7 +66,7 @@
                 <dt class="nhsuk-summary-list__key">
                     NHS Number
                 </dt>
-                <dd class="nhsuk-summary-list__value">
+                <dd class="nhsuk-summary-list__value" data-child-vaccination-target="nhsNumber"
                     <%= child.nhs_number %>
                 </dd>
 
@@ -74,7 +76,7 @@
                 <dt class="nhsuk-summary-list__key">
                     Screening
                 </dt>
-                <dd class="nhsuk-summary-list__value">
+                <dd class="nhsuk-summary-list__value" data-child-vaccination-target="screening"
                     <%= child.screening %>
                 </dd>
             </div>

@@ -11,6 +11,10 @@ class VaccinationsController < ApplicationController
   end
 
   def show
+    respond_to do |format|
+      format.html
+      format.json { render json: @child }
+    end
   end
 
   def record
