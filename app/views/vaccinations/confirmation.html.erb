@@ -10,7 +10,9 @@
 
         <h2 class="nhsuk-u-heading-m">Continue</h2>
         <p>
-            <%= link_to "Record another vaccination", campaign_vaccinations_path(@campaign) %>
+            <%= link_to("Record another vaccination",
+                        campaign_vaccinations_path(@campaign),
+                        "data-testid": "record-another-vaccination-link") %>
         </p>
     </div>
 </div>

@@ -90,7 +90,7 @@
     </h2>
     <%= form_tag  record_campaign_vaccination_path(@campaign, @child), method: :put %>
         <div class="nhsuk-u-margin-top-6">
-            <%= button_tag "Confirm", class: "nhsuk-button" %>
+            <%= button_tag "Confirm", class: "nhsuk-button", "data-testid": "confirm-button" %>
         </div>
     </form>
 
