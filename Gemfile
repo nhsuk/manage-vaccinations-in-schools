@@ -93,6 +93,7 @@ gem "govuk-components"
 gem "govuk_design_system_formbuilder"
 
 group :test, :development do
+  gem "irbtools"
   gem "rspec"
   gem "rspec-rails"
 end
