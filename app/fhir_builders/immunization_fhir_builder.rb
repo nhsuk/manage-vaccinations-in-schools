@@ -81,12 +81,12 @@ class ImmunizationFHIRBuilder
   end
 
   def dose_quantity
-    {
+    FHIR::Quantity.new(
       value: 0.5,
       unit: "Millilitre",
       system: "http://snomed.info/sct",
       code: "258773002"
-    }
+    )
   end
 
   def reason_code
