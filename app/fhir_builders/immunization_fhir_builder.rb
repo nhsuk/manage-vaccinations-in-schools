@@ -1,16 +1,11 @@
 class ImmunizationFHIRBuilder
-  attr_reader :url, :client, :patient_identifier, :lot_number
+  attr_reader :patient_identifier, :lot_number
 
   def initialize(
     occurrence_date_time:,
-    url: Settings.fhir_server_url,
     patient_identifier: "example",
     lot_number: "808"
   )
-    @url = url
-    @client = FHIR::Client.new(url)
-    FHIR::Model.client = @client
-
     @patient_identifier = patient_identifier
     @lot_number = lot_number
     @occurrence_date_time = occurrence_date_time
