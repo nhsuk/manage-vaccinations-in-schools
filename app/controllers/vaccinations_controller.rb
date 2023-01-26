@@ -19,8 +19,10 @@ class VaccinationsController < ApplicationController
 
   def record
     @child.update!(seen: "Vaccinated")
-    imm = ImmunizationFHIRBuilder.new(patient_identifier: @child.nhs_number)
-    imm.immunization.create # rubocop:disable Rails/SaveBang
+    if Settings.features.fhir_server_integration
+      imm = ImmunizationFHIRBuilder.new(patient_identifier: @child.nhs_number)
+      imm.immunization.create # rubocop:disable Rails/SaveBang
+    end
     redirect_to confirmation_campaign_vaccination_path(@campaign, @child)
   end
 

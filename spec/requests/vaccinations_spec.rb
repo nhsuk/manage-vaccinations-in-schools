@@ -109,5 +109,15 @@ RSpec.describe "/campaigns/:campain_id/children", type: :request do
 
       expect(fhir_server).to have_been_requested
     end
+
+    it "respects the feature flag" do
+      allow(Settings.features).to receive(:fhir_server_integration).and_return(
+        false
+      )
+
+      put record_campaign_vaccination_url(campaign.id, child.id)
+
+      expect(fhir_server).not_to have_been_requested
+    end
   end
 end
