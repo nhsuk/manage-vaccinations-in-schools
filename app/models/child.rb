@@ -46,4 +46,8 @@ class Child < ApplicationRecord
         end
       )
   end
+
+  def as_json(options = {})
+    super.merge("full_name" => full_name, "age" => age)
+  end
 end
