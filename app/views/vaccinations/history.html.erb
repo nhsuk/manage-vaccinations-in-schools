@@ -1,0 +1,53 @@
+<%= link_to "Back", campaign_vaccination_path(@campaign, @child) %>
+
+<h2 class="nhsuk-u-heading-s">
+  Vaccination History
+</h2>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-two-thirds">
+
+    <% @history.each do |vaccination| %>
+<div class="nhsuk-card">
+  <div class="nhsuk-card__content">
+    <h3 class="nhsuk-heading-m">
+        <%= vaccination.occurrenceDateTime %>
+      </h3>
+
+      <dl class="nhsuk-summary-list">
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Vaccination
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            <%= vaccination.extension.first.valueCodeableConcept.coding.first.display %>
+          </dd>
+
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Brand
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            <%= vaccination.vaccineCode.coding.first.display %>
+          </dd>
+
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Batch
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            <%= vaccination.lotNumber %>
+          </dd>
+        </div>
+
+      </dl>
+  </div>
+</div>
+    <% end %>
+  </div>
+</div>

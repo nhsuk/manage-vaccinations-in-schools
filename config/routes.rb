@@ -9,6 +9,7 @@ Rails.application.routes.draw do
               controller: :vaccinations do
       put "record", on: :member
       get "confirmation", on: :member
+      get "history", on: :member
     end
   end
 

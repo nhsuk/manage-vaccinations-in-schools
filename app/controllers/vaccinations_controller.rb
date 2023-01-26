@@ -33,6 +33,15 @@ class VaccinationsController < ApplicationController
   def confirmation
   end
 
+  def history
+    fhir_bundle =
+      FHIR::Immunization.search(
+        patient:
+          "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/#{@child.nhs_number}"
+      )
+    @history = fhir_bundle.entry.map(&:resource)
+  end
+
   private
 
   def set_campaign
