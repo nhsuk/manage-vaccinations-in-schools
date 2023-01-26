@@ -41,14 +41,14 @@ RSpec.describe ImmunizationFHIRBuilder do
             ]
           },
           "patient": {
-            "reference": "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/9000000009",
+            "reference": "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/#{nhs_number}",
             "type": "Patient",
             "identifier": {
               "system": "https://fhir.nhs.uk/Id/nhs-number",
-              "value": "9000000009"
+              "value": "#{nhs_number}"
             }
           },
-          "occurrenceDateTime": "2023-01-25T00:00:00.000+00:00",
+          "occurrenceDateTime": "#{occurrence_date_time.rfc3339}",
           "recorded": "2023-01-25",
           "primarySource": true,
           "lotNumber": "808",
@@ -91,11 +91,29 @@ RSpec.describe ImmunizationFHIRBuilder do
         }
       EOJSON
     let(:app_identity) { "5c1c14a6-37c2-45d3-9e0c-bffea36e13c7" }
+    let(:occurrence_date_time) { Time.zone.now }
+    let(:nhs_number) { "9990000018" }
 
     before { allow(Random).to receive(:uuid).and_return(app_identity) }
 
     it "should match the JSON produced from the POC POC" do
-      imm = described_class.new(patient_identifier: "9000000009")
+      imm =
+        described_class.new(
+          patient_identifier: nhs_number,
+          occurrence_date_time:
+        )
+
+      expect(JSON.parse(imm.immunization.to_json)).to eq(
+        JSON.parse(target_json)
+      )
+    end
+
+    it "allows setting of occurranceDateTime" do
+      imm =
+        described_class.new(
+          patient_identifier: nhs_number,
+          occurrence_date_time:
+        )
 
       expect(JSON.parse(imm.immunization.to_json)).to eq(
         JSON.parse(target_json)

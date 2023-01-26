@@ -2,6 +2,7 @@ class ImmunizationFHIRBuilder
   attr_reader :url, :client, :patient_identifier, :lot_number
 
   def initialize(
+    occurrence_date_time:,
     url: "http://hapi.fhir.org/baseR4",
     patient_identifier: "example",
     lot_number: "808"
@@ -12,6 +13,7 @@ class ImmunizationFHIRBuilder
 
     @patient_identifier = patient_identifier
     @lot_number = lot_number
+    @occurrence_date_time = occurrence_date_time
   end
 
   def ukcore_immunization_meta
@@ -147,7 +149,7 @@ class ImmunizationFHIRBuilder
         imm.primarySource = true
         imm.reasonCode << reason_code
         imm.expirationDate = "2023-01-31"
-        imm.occurrenceDateTime = "2023-01-25T00:00:00.000+00:00"
+        imm.occurrenceDateTime = @occurrence_date_time.rfc3339
         imm.recorded = "2023-01-25"
         imm.status = "completed"
         imm.route = route
