@@ -35,7 +35,7 @@
                     Date of birth
                 </dt>
                 <dd class="nhsuk-summary-list__value" data-child-vaccination-target="dob">
-                    <%= child.dob.strftime("%d %B %Y") %> (aged <%= child.age  %>)
+                    <%= child.dob&.strftime("%d %B %Y") %> (aged <%= child.dob ? child.age : "" %>)
                 </dd>
 
             </div>
@@ -44,7 +44,7 @@
                 <dt class="nhsuk-summary-list__key">
                     Consent
                 </dt>
-                <dd class="nhsuk-summary-list__value" data-child-vaccination-target="consent"
+                <dd class="nhsuk-summary-list__value" data-child-vaccination-target="consent">
                     <%= child.consent %>
                 </dd>
 
@@ -54,7 +54,7 @@
                 <dt class="nhsuk-summary-list__key">
                     GP
                 </dt>
-                <dd class="nhsuk-summary-list__value" data-child-vaccination-target="gp"
+                <dd class="nhsuk-summary-list__value" data-child-vaccination-target="gp">
                     <%= child.gp %>
                 </dd>
 
@@ -64,7 +64,7 @@
                 <dt class="nhsuk-summary-list__key">
                     NHS Number
                 </dt>
-                <dd class="nhsuk-summary-list__value" data-child-vaccination-target="nhsNumber"
+                <dd class="nhsuk-summary-list__value" data-child-vaccination-target="nhsNumber">
                     <%= child.nhs_number %>
                 </dd>
 
@@ -74,7 +74,7 @@
                 <dt class="nhsuk-summary-list__key">
                     Screening
                 </dt>
-                <dd class="nhsuk-summary-list__value" data-child-vaccination-target="screening"
+                <dd class="nhsuk-summary-list__value" data-child-vaccination-target="screening">
                     <%= child.screening %>
                 </dd>
             </div>
@@ -92,18 +92,10 @@
     <h2 class="nhsuk-card__heading nhsuk-heading-m">
         Record vaccination
     </h2>
-    <%= form_tag  record_campaign_vaccination_path(@campaign, @child), method: :put %>
+    <%= form_tag record_campaign_vaccination_path(campaign_id: @campaign.id, id: (@child.id || ":id") ), method: :put %>
         <div class="nhsuk-u-margin-top-6">
             <%= button_tag "Confirm", class: "nhsuk-button", "data-testid": "confirm-button" %>
         </div>
     </form>
-
-<!-- <p class="nhsuk-card__description">
-     <a class="nhsuk-button nhsuk-u-margin-bottom-2"
-     href="<%= record_campaign_vaccination_path(@campaign, @child) %>"
-     draggable="false">
-     Record Flu vaccination
-     </a>
-     </p> -->
   </div>
 </div>
