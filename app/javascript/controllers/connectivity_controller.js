@@ -4,7 +4,7 @@ import { wb } from "../serviceworker-companion.js";
 
 // Connects to data-controller="offline"
 export default class extends Controller {
-  static targets = ["status", "button"];
+  static targets = ["status", "button", "banner"];
 
   async connect() {
     this.connectionStatus = await wb.messageSW({
@@ -26,8 +26,15 @@ export default class extends Controller {
 
   set connectionStatus(st) {
     this.connectionStatusValue = st;
-    this.status = st ? "Online" : "Offline";
-    this.buttonTarget.textContent = st ? "Go Offline" : "Go Online";
+    if (st) {
+      this.status = "Online";
+      this.buttonTarget.textContent = "Go Offline";
+      this.bannerTarget.style.display = "none";
+    } else {
+      this.status = "Offline";
+      this.buttonTarget.textContent = "Go Online";
+      this.bannerTarget.style.display = "inherit";
+    }
   }
 
   async toggleConnection() {

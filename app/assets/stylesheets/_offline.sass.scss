@@ -1,0 +1,23 @@
+.app-offline-indicator {
+  background: $color_app-pale-blue;
+  padding: nhsuk-spacing(3) 0 nhsuk-spacing(3);
+  display: none;
+}
+
+.app-changes-synced-indicator {
+  background: $color_nhsuk-green;
+  color: $color_nhsuk-white;
+  padding: nhsuk-spacing(3) 0 nhsuk-spacing(3);
+}
+
+.app-offline-status {
+  background: $color_nhsuk-pale-yellow;
+  border: 1px solid $nhsuk-border-color;
+  border-bottom: 0;
+  padding: nhsuk-spacing(3) nhsuk-spacing(5);
+}
+
+.app-ready-for-offline {
+  border-top: 2px solid $nhsuk-border-color;
+  padding: nhsuk-spacing(4) 0 nhsuk-spacing(2);
+}
