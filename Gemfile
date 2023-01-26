@@ -54,6 +54,12 @@ gem "awesome_print"
 # Add support to Rails for serviceworker
 gem "serviceworker-rails"
 
+# FHIR
+gem "fhir_client"
+
+# This gem gives us a nice way to manage settings for different envs.
+gem "config"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri mingw x64_mingw]
@@ -84,11 +90,13 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "webdrivers"
+  gem "webmock"
 end
 gem "govuk-components"
 gem "govuk_design_system_formbuilder"
 
 group :test, :development do
+  gem "irbtools"
   gem "rspec"
   gem "rspec-rails"
 end

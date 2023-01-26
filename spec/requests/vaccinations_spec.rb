@@ -61,4 +61,61 @@ RSpec.describe "/campaigns/:campain_id/children", type: :request do
       expect(response).to be_successful
     end
   end
+
+  describe "PUT /record" do
+    it "redirects to confirmation page" do
+      put record_campaign_vaccination_url(campaign.id, child.id)
+      expect(response).to(
+        redirect_to(
+          confirmation_campaign_vaccination_path(campaign.id, child.id)
+        )
+      )
+    end
+
+    let(:last_updated) { Time.zone.now }
+    let(:version_id) { "1" }
+
+    let!(:fhir_server) do
+      stub_request(
+        :post,
+        "https://hapi.fhir.org/baseR4/Immunization"
+      ).to_return(status: 200, body: "", headers: {}) do |request|
+        # A little playing around shows that the response to the POST from the
+        # FHIR server is the created resource with a little additional metadata
+        # added as below.
+        response_hash = JSON.parse(request.body)
+        response_hash["meta"]["lastUpdated"] = last_updated
+        response_hash["meta"]["versionId"] = version_id
+
+        {
+          headers: {
+            "content-type" => "application/fhir+json;charset=utf-8"
+          },
+          body: response_hash.to_json
+        }
+      end
+    end
+
+    it "sends a request to the FHIR server" do
+      put record_campaign_vaccination_url(campaign.id, child.id)
+
+      expect(response).to(
+        redirect_to(
+          confirmation_campaign_vaccination_path(campaign.id, child.id)
+        )
+      )
+
+      expect(fhir_server).to have_been_requested
+    end
+
+    it "respects the feature flag" do
+      allow(Settings.features).to receive(:fhir_server_integration).and_return(
+        false
+      )
+
+      put record_campaign_vaccination_url(campaign.id, child.id)
+
+      expect(fhir_server).not_to have_been_requested
+    end
+  end
 end

@@ -19,6 +19,14 @@ class VaccinationsController < ApplicationController
 
   def record
     @child.update!(seen: "Vaccinated")
+    if Settings.features.fhir_server_integration
+      imm =
+        ImmunizationFHIRBuilder.new(
+          patient_identifier: @child.nhs_number,
+          occurrence_date_time: Time.zone.now
+        )
+      imm.immunization.create # rubocop:disable Rails/SaveBang
+    end
     redirect_to confirmation_campaign_vaccination_path(@campaign, @child)
   end
 
