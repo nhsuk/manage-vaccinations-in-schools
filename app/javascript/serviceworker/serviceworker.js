@@ -1,7 +1,10 @@
 import { CacheOnly, NetworkFirst } from "workbox-strategies";
-import { setDefaultHandler } from "workbox-routing";
+import { setDefaultHandler, registerRoute } from "workbox-routing";
+import { getOrCreateDefaultRouter } from "workbox-routing/utils/getOrCreateDefaultRouter.js";
 
 let connectionStatus = true;
+
+const childrenShowRoute = new RegExp("/campaigns/(\\d+)/children/(\\d+)$");
 
 function setOfflineMode() {
   console.debug("[Service Worker] setting connection to offline");
@@ -45,4 +48,24 @@ self.addEventListener("message", (event) => {
   }
 });
 
+const childrenShowHandlerCb = async ({ url, request, event, params }) => {
+  if (connectionStatus) {
+    event.respondWith(new NetworkFirst().handle({ event, request }));
+  } else {
+    let newRequest = new Request(
+      `/campaigns/${params[0]}/children/show_template`
+    );
+    let handler = new NetworkFirst().handle({
+      event,
+      params,
+      request: newRequest,
+    });
+    console.log(
+      "[Service Worker childrenShowHandlerCb] retrieving child show template"
+    );
+    event.respondWith(handler);
+  }
+};
+
+registerRoute(childrenShowRoute, childrenShowHandlerCb);
 setOnlineMode();
