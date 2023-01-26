@@ -76,12 +76,10 @@ RSpec.describe "/campaigns/:campain_id/children", type: :request do
     let(:version_id) { "1" }
 
     let!(:fhir_server) do
-      stub_request(:post, "http://hapi.fhir.org/baseR4/Immunization").to_return(
-        status: 200,
-        body: "",
-        headers: {
-        }
-      ) do |request|
+      stub_request(
+        :post,
+        "https://hapi.fhir.org/baseR4/Immunization"
+      ).to_return(status: 200, body: "", headers: {}) do |request|
         # A little playing around shows that the response to the POST from the
         # FHIR server is the created resource with a little additional metadata
         # added as below.

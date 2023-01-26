@@ -1,2 +1,4 @@
+fhir_server_url: https://hapi.fhir.org/baseR4
+
 features:
   fhir_server_integration: false

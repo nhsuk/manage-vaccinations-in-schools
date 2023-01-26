@@ -3,7 +3,7 @@ class ImmunizationFHIRBuilder
 
   def initialize(
     occurrence_date_time:,
-    url: "http://hapi.fhir.org/baseR4",
+    url: Settings.fhir_server_url,
     patient_identifier: "example",
     lot_number: "808"
   )
@@ -73,7 +73,7 @@ class ImmunizationFHIRBuilder
           FHIR::CodeableConcept.new(
             coding:
               FHIR::Coding.new(
-                system: "http://snomed.info/sct",
+                system: "https://snomed.info/sct",
                 code: "734152003",
                 display:
                   "Administration of vaccine product containing only Human papillomavirus 6, 11, 16 and 18 antigens"
@@ -86,7 +86,7 @@ class ImmunizationFHIRBuilder
     FHIR::Quantity.new(
       value: 0.5,
       unit: "Millilitre",
-      system: "http://snomed.info/sct",
+      system: "https://snomed.info/sct",
       code: "258773002"
     )
   end
@@ -97,7 +97,7 @@ class ImmunizationFHIRBuilder
         FHIR::Coding.new(
           code: "443684005",
           display: "Disease outbreak",
-          system: "http://snomed.info/sct"
+          system: "https://snomed.info/sct"
         )
     )
   end
@@ -106,7 +106,7 @@ class ImmunizationFHIRBuilder
     FHIR::CodeableConcept.new(
       coding:
         FHIR::Coding.new(
-          system: "http://snomed.info/sct",
+          system: "https://snomed.info/sct",
           code: "78421000",
           display: "Intramuscular route (qualifier value)"
         )
@@ -117,7 +117,7 @@ class ImmunizationFHIRBuilder
     FHIR::CodeableConcept.new(
       coding:
         FHIR::Coding.new(
-          system: "http://snomed.info/sct",
+          system: "https://snomed.info/sct",
           code: "368209003",
           display: "Right upper arm structure (body structure)"
         )
@@ -128,7 +128,7 @@ class ImmunizationFHIRBuilder
     FHIR::CodeableConcept.new(
       coding:
         FHIR::Coding.new(
-          system: "http://snomed.info/sct",
+          system: "https://snomed.info/sct",
           code: "10880211000001104",
           display:
             "Gardasil vaccine suspension for injection 0.5ml pre-filled syringes (Merck Sharp & Dohme (UK) Ltd)"
