@@ -1,9 +1,7 @@
 <h2 class="nhsuk-u-heading-s" id="<%= dom_id child %>">
     <%= child.full_name %>
 </h2>
-<div class="nhsuk-card"
-     data-controller="child-vaccination"
-     data-child-vaccination-url-value="<%= campaign_vaccination_path(@campaign, child, format: :json) %>">
+<div class="nhsuk-card" data-controller="child-vaccination">
     <div class="nhsuk-card__content">
         <h2 class="nhsuk-card__heading nhsuk-heading-m">
             About them

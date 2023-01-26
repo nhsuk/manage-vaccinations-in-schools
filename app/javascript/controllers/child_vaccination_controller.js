@@ -11,12 +11,10 @@ export default class extends Controller {
     "nhsNumber",
     "screening",
   ];
-  static values = {
-    url: String,
-  };
 
   initialize() {
-    this.childVaccination = fetch(this.urlValue).then((response) => {
+    var url = `${window.location.href}.json`;
+    this.childVaccination = fetch(url).then((response) => {
       return response.json();
     });
   }
