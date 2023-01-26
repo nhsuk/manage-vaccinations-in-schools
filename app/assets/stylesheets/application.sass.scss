@@ -1,9 +1,12 @@
 $govuk-global-styles: false;
 $govuk-new-link-styles: true;
 $govuk-assets-path: "/";
+$color_app-pale-blue: #ccdff1;
 
 @import "govuk-frontend/govuk/all";
 @import "nhsuk-frontend/packages/nhsuk";
+
+@import "_offline.sass.scss";
 
 .app-u-frutiger,
 .app-u-frutiger * {
