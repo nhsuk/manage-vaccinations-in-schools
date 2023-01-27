@@ -40,7 +40,11 @@ class VaccinationsController < ApplicationController
           patient:
             "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/#{@child.nhs_number}"
         )
-      @history = fhir_bundle.entry.map(&:resource)
+      @history =
+        fhir_bundle
+          .entry
+          .map(&:resource)
+          .map { |entry| FHIRVaccinationEvent.new(entry) }
     else
       raise "`features.fhir_server_integration` is not enabled in Settings"
     end

@@ -7,10 +7,10 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-two-thirds">
 
-    <% @history.each do |vaccination| %>
+    <% @history.each do |entry| %>
 
     <h3 class="nhsuk-heading-m">
-      <%= Time.parse(vaccination.occurrenceDateTime).to_fs(:long_ordinal_uk) %>
+      <%= entry.occurrence_date_time.to_fs(:long_ordinal_uk) %>
     </h3>
 
 <div class="nhsuk-card">
@@ -23,7 +23,7 @@
             Vaccination
           </dt>
           <dd class="nhsuk-summary-list__value">
-            <%= vaccination.extension.first.valueCodeableConcept.coding.first.display %>
+            <%= entry.vaccination %>
           </dd>
 
         </div>
@@ -33,7 +33,7 @@
             Brand
           </dt>
           <dd class="nhsuk-summary-list__value">
-            <%= vaccination.vaccineCode.coding.first.display %>
+            <%= entry.brand %>
           </dd>
 
         </div>
@@ -43,7 +43,7 @@
             Batch
           </dt>
           <dd class="nhsuk-summary-list__value">
-            <%= vaccination.lotNumber %>
+            <%= entry.batch %>
           </dd>
         </div>
 
