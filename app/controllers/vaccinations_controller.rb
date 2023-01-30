@@ -1,6 +1,6 @@
 class VaccinationsController < ApplicationController
   before_action :set_campaign
-  before_action :set_child
+  before_action :set_child, except: %i[show_template]
 
   def index
     @children = @campaign.children
@@ -48,6 +48,11 @@ class VaccinationsController < ApplicationController
     else
       raise "`features.fhir_server_integration` is not enabled in Settings"
     end
+  end
+
+  def show_template
+    @child = Child.new
+    render "show"
   end
 
   private
