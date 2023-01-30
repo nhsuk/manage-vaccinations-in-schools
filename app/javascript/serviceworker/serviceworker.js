@@ -18,11 +18,15 @@ function setOnlineMode() {
   setDefaultHandler(new NetworkFirst());
 }
 
+function campaignCacheName(id) {
+  return `campaign-offline-cache-${id}`;
+}
+
 let messageHandlers = {
   TOGGLE_CONNECTION: (event) => {
     console.debug(
-      "[Service Worker] TOGGLE_CONNECTION set connection status to:",
-      connectionStatus
+      "[Service Worker TOGGLE_CONNECTION] set connection status to:",
+      !connectionStatus
     );
     connectionStatus = !connectionStatus;
 
@@ -37,16 +41,56 @@ let messageHandlers = {
 
   GET_CONNECTION_STATUS: (event) => {
     console.debug(
-      "[Service Worker] GET_CONNECTION_STATUS Returning status:",
+      "[Service Worker GET_CONNECTION_STATUS] returning status:",
       connectionStatus
     );
     event.ports[0].postMessage(connectionStatus);
+  },
+
+  SAVE_CAMPAIGN_FOR_OFFLINE: (data) => {
+    console.debug(
+      "[Service Worker SAVE_CAMPAIGN_FOR_OFFLINE] saving campaign for offline:",
+      data
+    );
+
+    const campaignID = data.payload["campaignID"];
+    // const cacheName = campaignCacheName(payload["campaignID"]);
+    caches
+      .open(cacheNames.runtime)
+      .then((cache) => {
+        console.debug(
+          "[Service Worker SAVE_CAMPAIGN_FOR_OFFLINE]",
+          "Cacheing campaign pages in cache:",
+          cacheNames.runtime,
+          cache
+        );
+        // Not sure why but cache.addAll isn't working here ...
+        cache.addAll(
+          [
+            `/campaigns/${campaignID}/children`,
+            `/campaigns/${campaignID}/children.json`,
+            `/campaigns/${campaignID}/children/show-template`,
+          ]
+        );
+      })
+      .catch((err) => {
+        console.error(
+          "[Service Worker SAVE_CAMPAIGN_FOR_OFFLINE]",
+          "Could not open cache",
+          cacheNames.runtime,
+          err
+        );
+      });
   },
 };
 
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type) {
-    messageHandlers[event.data.type](event);
+    console.log(
+      "[Service Worker Message Listener] received message event:",
+      event.data
+    );
+    messageHandlers[event.data.type](event.data);
   }
 });
 
@@ -126,8 +170,26 @@ const campaignChildrenVaccinationsHandlerCB = async ({ request, event }) => {
     });
 };
 
-setOnlineMode();
+const defaultHandlerCB = async ({ url, request, event, params }) => {
+  console.log("[Service Worker defaultHandlerCB] request: ", request);
+
+  fetch(request)
+
+  if (connectionStatus) {
+    console.log("[Service Worker defaultHandlerCB] online mode: NetworkFirst");
+    event.respondWith(
+      new NetworkFirst().handle({ url, request, event, params })
+    );
+  } else {
+    console.log("[Service Worker defaultHandlerCB] offline mode: CacheOnly");
+    event.respondWith(new CacheOnly().handle({ url, request, event, params }));
+  }
+};
+
+console.log("[Service Worker] registering routes");
 registerRoute(
   campaignChildrenVaccinationsRoute,
   campaignChildrenVaccinationsHandlerCB
 );
+// setDefaultHandler(defaultHandlerCB);
+setDefaultHandler(new NetworkFirst());
