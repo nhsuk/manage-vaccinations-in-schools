@@ -84,7 +84,9 @@
 </div>
 
 <p>
-    <%= link_to "View vaccination history", history_campaign_vaccination_path %>
+    <%= link_to "View vaccination history",
+                history_campaign_vaccination_path(campaign_id: @campaign.id,
+                                                  id: (@child.id || ":id")) %>
 </p>
 
 <div class="nhsuk-card">

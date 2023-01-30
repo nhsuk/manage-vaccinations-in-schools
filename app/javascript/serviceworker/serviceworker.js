@@ -1,10 +1,12 @@
 import { CacheOnly, NetworkFirst } from "workbox-strategies";
 import { setDefaultHandler, registerRoute } from "workbox-routing";
-import { getOrCreateDefaultRouter } from "workbox-routing/utils/getOrCreateDefaultRouter.js";
+import { cacheNames } from "workbox-core";
 
 let connectionStatus = true;
 
-const childrenShowRoute = new RegExp("/campaigns/(\\d+)/children/(\\d+)$");
+const campaignChildrenVaccinationsRoute = new RegExp(
+  "/campaigns/(\\d+)/children/(\\d+)$"
+);
 
 function setOfflineMode() {
   console.debug("[Service Worker] setting connection to offline");
@@ -48,24 +50,84 @@ self.addEventListener("message", (event) => {
   }
 });
 
-const childrenShowHandlerCb = async ({ url, request, event, params }) => {
-  if (connectionStatus) {
-    event.respondWith(new NetworkFirst().handle({ event, request }));
+function parseCampaignIDFromURL(url) {
+  let match = url.match("/campaigns/(\\d+)/");
+  if (match) {
+    return match[1];
   } else {
-    let newRequest = new Request(
-      `/campaigns/${params[0]}/children/show_template`
-    );
-    let handler = new NetworkFirst().handle({
-      event,
-      params,
-      request: newRequest,
-    });
-    console.log(
-      "[Service Worker childrenShowHandlerCb] retrieving child show template"
-    );
-    event.respondWith(handler);
+    return null;
   }
+}
+
+function campaignShowTemplateURL(campaignID) {
+  return `http://localhost:3000/campaigns/${campaignID}/children/show-template`;
+}
+
+const campaignChildrenVaccinationsHandlerCB = async ({ request, event }) => {
+  console.debug(
+    "[Service Worker campaignChildrenVaccinationsHandlerCB]",
+    "handling request: ",
+    request
+  );
+
+  // fetch request
+  return fetch(event.request)
+    .then((response) => {
+      console.debug(
+        "[Service Worker campaignChildrenVaccinationsHandlerCB]",
+        `fetch ${request.url} received response:`,
+        response
+      );
+
+      caches
+        .open(cacheNames.runtime)
+        .then((cache) => {
+          cache.put(event.request, response.clone());
+        })
+        .catch((err) => {
+          console.error(
+            "[Service Worker campaignChildrenVaccinationsHandlerCB]",
+            `error cacheing ${event.request.url} to ${cacheNames.runtime}:`,
+            err
+          );
+        });
+
+      return response;
+    })
+    .catch((err) => {
+      console.debug(
+        "[Service Worker campaignChildrenVaccinationsHandlerCB]",
+        `fetch ${request.url} did not receive response for request`,
+        err
+      );
+
+      let campaignID = parseCampaignIDFromURL(request.url);
+      console.debug(
+        "[Service Worker campaignChildrenVaccinationsHandlerCB]",
+        `retrieving template ${campaignShowTemplateURL(campaignID)} from cache`
+      );
+
+      return caches
+        .open(cacheNames.runtime)
+        .then((cache) => {
+          let cacheResponse = cache.match(campaignShowTemplateURL(campaignID));
+
+          return cacheResponse;
+        })
+        .catch((err) => {
+          console.error(
+            "[Service Worker campaignChildrenVaccinationsHandlerCB]",
+            `error retrieving ${campaignShowTemplateURL(
+              campaignID
+            )} from cache ${cacheNames.runtime}:`,
+            err
+          );
+        });
+    });
 };
 
-registerRoute(childrenShowRoute, childrenShowHandlerCb);
 setOnlineMode();
+registerRoute(
+  campaignChildrenVaccinationsRoute,
+  campaignChildrenVaccinationsHandlerCB
+);
