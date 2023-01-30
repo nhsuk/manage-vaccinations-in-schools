@@ -1,0 +1,43 @@
+<h1 class="nhsuk-heading-l">
+  <%= @campaign.title %>
+  <span class="nhsuk-caption-l nhsuk-u-margin-top-2"><%= @campaign.date %></span>
+</h1>
+
+<div class="nhsuk-grid-row" data-controller="offline-campaign">
+  <div class="nhsuk-grid-column-two-thirds">
+    <div class="nhsuk-card">
+      <div class="nhsuk-card__content">
+        <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-1">
+          <%= link_to "Record vaccinations", campaign_vaccinations_path(@campaign) %>
+        </h2>
+        <p>Record vaccinations for children.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="nhsuk-grid-column-one-third">
+    <div id="save-offline" data-offline-campaign-target="save-offline">
+      <h2 class="nhsuk-heading-s">Save offline</h2>
+      <p>Record vaccinations while not connected to the internet.</p>
+
+      <form method="post">
+        <button class="nhsuk-button nhsuk-u-margin-bottom-3"
+                type="submit"
+                data-action="offline-campaign#saveOffline:prevent">
+          Save offline
+        </button>
+      </form>
+    </div>
+
+    <div id="available-offline" data-offline-campaign-target="available-offline">
+      <h2 class="nhsuk-heading-s" style="color: #007f3b">
+        <svg class="nhsuk-icon nhsuk-icon__tick" style="vertical-align: bottom" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" aria-hidden="true" width="34" height="34">
+          <path stroke-width="4" stroke-linecap="round" d="M18.4 7.8l-8.5 8.4L5.6 12" stroke="#007f3b"></path>
+        </svg>
+        Available offline
+      </h2>
+      <p>You can record vaccinations while not connected to the internet.</p>
+      <p>Saved offline until 24 Jan 2023.</p>
+    </div>
+  </div>
+</div>
