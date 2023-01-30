@@ -1,5 +1,14 @@
 import { Controller } from "@hotwired/stimulus";
 
+function parseIDsFromURL(url) {
+  var match = url.match("/campaigns/(\\d+)/children/(\\d+)$");
+  if (match) {
+    return { campaignID: match[1], childID: match[2] };
+  } else {
+    return {};
+  }
+}
+
 // Connects to data-controller="child-vaccination"
 export default class extends Controller {
   static targets = [
@@ -12,10 +21,13 @@ export default class extends Controller {
     "screening",
   ];
 
-  initialize() {
-    var url = `${window.location.href}.json`;
+  async initialize() {
+    var { campaignID, childID } = parseIDsFromURL(window.location.href);
+    var url = `/campaigns/${campaignID}/children.json`;
     this.childVaccination = fetch(url).then((response) => {
-      return response.json();
+      return response.json().then((json) => {
+        return json[childID];
+      });
     });
   }
 
