@@ -1,4 +1,4 @@
-import { CacheOnly, NetworkFirst } from "workbox-strategies";
+import { CacheOnly, CacheFirst, NetworkFirst } from "workbox-strategies";
 import { setDefaultHandler, registerRoute } from "workbox-routing";
 import { cacheNames } from "workbox-core";
 
@@ -173,23 +173,49 @@ const campaignChildrenVaccinationsHandlerCB = async ({ request, event }) => {
 const defaultHandlerCB = async ({ url, request, event, params }) => {
   console.log("[Service Worker defaultHandlerCB] request: ", request);
 
-  fetch(request)
+  return fetch(request).then((response) => {
+    console.log("[Service Worker defaultHandlerCB] response: ", response);
+    caches.open(cacheNames.runtime).then((cache) => {
+      cache.put(request, response.clone());
+    });
+    return response;
+  }).catch(async (err) => {
+    console.log("[Service Worker defaultHandlerCB] no response, we're offline:", err);
 
-  if (connectionStatus) {
-    console.log("[Service Worker defaultHandlerCB] online mode: NetworkFirst");
-    event.respondWith(
-      new NetworkFirst().handle({ url, request, event, params })
-    );
-  } else {
-    console.log("[Service Worker defaultHandlerCB] offline mode: CacheOnly");
-    event.respondWith(new CacheOnly().handle({ url, request, event, params }));
-  }
+    var response = await caches.open("workbox-runtime-http://localhost:3000/")
+                               .then((cache) => {
+                                 return cache.match(request.url);
+                               });
+
+    if (response) {
+      console.log("[Service Worker defaultHandlerCB] cached response: ", response);
+    } else {
+      console.log("[Service Worker defaultHandlerCB] no cached response :(");
+    }
+    return response;
+  });
 };
+
+self.addEventListener('install', event => {
+  event.waitUntil(
+    self.caches
+        .open(cacheNames.runtime)
+        .then(
+          cache => cache.addAll(
+            [
+              `/campaigns/1/children`,
+              `/campaigns/1/children.json`,
+              `/campaigns/1/children/show-template`,
+            ]
+          )
+        )
+  );
+});
 
 console.log("[Service Worker] registering routes");
 registerRoute(
   campaignChildrenVaccinationsRoute,
   campaignChildrenVaccinationsHandlerCB
 );
-// setDefaultHandler(defaultHandlerCB);
-setDefaultHandler(new NetworkFirst());
+setDefaultHandler(defaultHandlerCB);
+// setDefaultHandler(new CacheFirst());
