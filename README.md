@@ -58,15 +58,16 @@ will use:
 ASDF_POSTGRES_VERSION=13.5 bundle install
 ```
 
-### Library dependencies
+### Local development
 
-#### Bundle
+To set the project up locally:
 
-Run `bundle install` to install gem dependencies.
+```bash
+bin/setup
+bin/dev
+```
 
 #### Yarn
-
-Run `yarn` to install node dependencies.
 
 If you encounter:
 
@@ -110,7 +111,7 @@ You'll also need to configure your editor's `solargraph` plugin to
 ### PostgreSQL
 
 The script `bin/db` is included to start up PostgreSQL for setups that don't use
-system-started services, such as `asdf` wwhich is our default. Note that this is
+system-started services, such as `asdf` which is our default. Note that this is
 meant to be a handy script to manage PostgreSQL, not run a console like `rails db`
 does.
 
@@ -127,15 +128,6 @@ pg_ctl: server is running (PID: 79113)
 
 This script attempts to be installation agnostic by relying on `pg_config` to
 determine postgres's installation directory and setting up logging accordingly.
-
-### Database setup
-
-Setup the DB the standard way for a Rails app:
-
-```bash
-rails db:setup
-rails db:migrate
-```
 
 ### Loading example data
 
