@@ -120,7 +120,7 @@ const campaignChildrenVaccinationsHandlerCB = async ({ request, event }) => {
       console.debug(
         "[Service Worker campaignChildrenVaccinationsHandlerCB]",
         `fetch ${request.url} received response:`,
-        response
+        response.clone()
       );
 
       caches
@@ -170,19 +170,22 @@ const campaignChildrenVaccinationsHandlerCB = async ({ request, event }) => {
     });
 };
 
+
 const defaultHandlerCB = async ({ url, request, event, params }) => {
   console.log("[Service Worker defaultHandlerCB] request: ", request);
 
   return fetch(request).then((response) => {
-    console.log("[Service Worker defaultHandlerCB] response: ", response);
+    // console.log("[Service Worker defaultHandlerCB] response: ", response.clone());
     caches.open(cacheNames.runtime).then((cache) => {
       cache.put(request, response.clone());
+    }).catch((err) => {
+      console.log("[Service Worker defaultHandlerCB] could not open cache:", err);
     });
-    return response;
+    return response.clone();
   }).catch(async (err) => {
     console.log("[Service Worker defaultHandlerCB] no response, we're offline:", err);
 
-    var response = await caches.open("workbox-runtime-http://localhost:3000/")
+    var response = await caches.open(cacheNames.runtime)
                                .then((cache) => {
                                  return cache.match(request.url);
                                });
@@ -196,21 +199,21 @@ const defaultHandlerCB = async ({ url, request, event, params }) => {
   });
 };
 
-self.addEventListener('install', event => {
-  event.waitUntil(
-    self.caches
-        .open(cacheNames.runtime)
-        .then(
-          cache => cache.addAll(
-            [
-              `/campaigns/1/children`,
-              `/campaigns/1/children.json`,
-              `/campaigns/1/children/show-template`,
-            ]
-          )
-        )
-  );
-});
+// self.addEventListener('install', event => {
+//   event.waitUntil(
+//     self.caches
+//         .open(cacheNames.runtime)
+//         .then(
+//           cache => cache.addAll(
+//             [
+//               `/campaigns/1/children`,
+//               `/campaigns/1/children.json`,
+//               `/campaigns/1/children/show-template`,
+//             ]
+//           )
+//         )
+//   );
+// });
 
 console.log("[Service Worker] registering routes");
 registerRoute(
