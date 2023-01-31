@@ -178,3 +178,7 @@ Or open the Cypress app to interactively run the tests:
 ```bash
 yarn cypress open
 ```
+
+### Licence
+
+[MIT](LICENCE).
