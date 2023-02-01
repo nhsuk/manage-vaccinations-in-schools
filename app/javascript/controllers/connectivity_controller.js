@@ -6,6 +6,7 @@ export default class extends Controller {
   static targets = ["status", "button", "banner"];
 
   async connect() {
+    console.log("[Connectivity Controller] requesting connection status");
     this.connectionStatus = await wb.messageSW({
       type: "GET_CONNECTION_STATUS",
     });
@@ -26,10 +27,16 @@ export default class extends Controller {
   set connectionStatus(st) {
     this.connectionStatusValue = st;
     if (st) {
+      console.log(
+        "[Connectivity Controller] setting connection status to online"
+      );
       this.status = "Online";
       this.buttonTarget.textContent = "Go offline";
       this.bannerTarget.style.display = "none";
     } else {
+      console.log(
+        "[Connectivity Controller] setting connection status to offline"
+      );
       this.status = "Offline";
       this.buttonTarget.textContent = "Go online";
       this.bannerTarget.style.display = "inherit";
@@ -37,6 +44,9 @@ export default class extends Controller {
   }
 
   async toggleConnection() {
+    console.log(
+      "[Connectivity Controller] sending message to toggle connection"
+    );
     this.connectionStatus = await wb.messageSW({ type: "TOGGLE_CONNECTION" });
   }
 }
