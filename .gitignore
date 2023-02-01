@@ -13,8 +13,6 @@ public/assets
 
 app/assets/builds/*
 !app/assets/builds/.keep
-app/javascript/processed
-!app/javascript/processed/.keep
 public/*.js
 public/*.js.map
 
