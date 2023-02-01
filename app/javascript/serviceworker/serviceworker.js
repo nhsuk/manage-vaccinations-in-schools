@@ -18,6 +18,10 @@ function setOnlineMode() {
 
 let messageHandlers = {
   TOGGLE_CONNECTION: (event) => {
+    console.debug(
+      "[Service Worker TOGGLE_CONNECTION] set connection status to:",
+      !connectionStatus
+    );
     connectionStatus = !connectionStatus;
 
     if (connectionStatus) {
@@ -30,6 +34,10 @@ let messageHandlers = {
   },
 
   GET_CONNECTION_STATUS: (event) => {
+    console.debug(
+      "[Service Worker GET_CONNECTION_STATUS] returning status:",
+      connectionStatus
+    );
     event.ports[0].postMessage(connectionStatus);
   },
 
@@ -47,6 +55,10 @@ let messageHandlers = {
 
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type) {
+    console.debug(
+      "[Service Worker Message Listener] received message event:",
+      event.data
+    );
     messageHandlers[event.data.type](event);
   }
 });
