@@ -74,13 +74,9 @@ self.addEventListener("message", (event) => {
   }
 });
 
-function parseCampaignIDFromURL(url) {
-  let match = url.match("/campaigns/(\\d+)/");
-  if (match) {
-    return match[1];
-  } else {
-    return null;
-  }
+function parseCampaignIdFromURL(url) {
+  const [_, campaignId] = url.match("/campaigns/(\\d+)/");
+  return campaignId;
 }
 
 function campaignShowTemplateURL(campaignID) {
@@ -100,12 +96,12 @@ const campaignChildrenVaccinationsHandlerCB = async ({ request, event }) => {
       return response;
     })
     .catch((err) => {
-      let campaignID = parseCampaignIDFromURL(request.url);
+      let campaignId = parseCampaignIdFromURL(request.url);
 
       return caches
         .open(cacheNames.runtime)
         .then((cache) => {
-          let cacheResponse = cache.match(campaignShowTemplateURL(campaignID));
+          let cacheResponse = cache.match(campaignShowTemplateURL(campaignId));
 
           return cacheResponse;
         })
