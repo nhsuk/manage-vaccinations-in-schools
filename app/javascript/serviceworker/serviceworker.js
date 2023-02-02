@@ -84,29 +84,18 @@ function campaignShowTemplateURL(campaignID) {
 }
 
 const campaignChildrenVaccinationsHandlerCB = async ({ request, event }) => {
-  return fetch(event.request)
-    .then((response) => {
-      caches
-        .open(cacheNames.runtime)
-        .then((cache) => {
-          cache.put(event.request, response.clone());
-        })
-        .catch((err) => {});
+  const cache = await caches.open(cacheNames.runtime);
 
-      return response;
-    })
-    .catch((err) => {
-      let campaignId = parseCampaignIdFromURL(request.url);
+  try {
+    const response = await fetch(event.request);
+    cache.put(event.request, response.clone());
 
-      return caches
-        .open(cacheNames.runtime)
-        .then((cache) => {
-          let cacheResponse = cache.match(campaignShowTemplateURL(campaignId));
+    return response;
+  } catch (err) {
+    const campaignId = parseCampaignIdFromURL(request.url);
 
-          return cacheResponse;
-        })
-        .catch((err) => {});
-    });
+    return cache.match(campaignShowTemplateURL(campaignId));
+  }
 };
 
 const defaultHandlerCB = async ({ request }) => {
