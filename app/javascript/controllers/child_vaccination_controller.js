@@ -1,12 +1,10 @@
 import { Controller } from "@hotwired/stimulus";
 
-function parseIDsFromURL(url) {
-  var match = url.match("/campaigns/(\\d+)/children/(\\d+)$");
-  if (match) {
-    return { campaignID: match[1], childID: match[2] };
-  } else {
-    return {};
-  }
+function parseIdsFromURL(url) {
+  const [_, campaignId, childId] = url.match(
+    "/campaigns/(\\d+)/children/(\\d+)$"
+  );
+  return { campaignId, childId };
 }
 
 // Connects to data-controller="child-vaccination"
@@ -21,25 +19,18 @@ export default class extends Controller {
     "screening",
   ];
 
-  async initialize() {
-    var { campaignID, childID } = parseIDsFromURL(window.location.href);
-    var url = `/campaigns/${campaignID}/children.json`;
-    this.childVaccination = fetch(url).then((response) => {
-      return response.json().then((json) => {
-        return json[childID];
-      });
-    });
-  }
+  async connect() {
+    const { campaignId, childId } = parseIdsFromURL(window.location.href);
+    const response = await fetch(`/campaigns/${campaignId}/children.json`);
+    const json = await response.json();
+    const child = json[childId];
 
-  connect() {
-    this.childVaccination.then((data) => {
-      this.fullNameTarget.textContent = data["full_name"];
-      this.sexTarget.textContent = data["sex"];
-      this.dobTarget.textContent = data["dob"];
-      this.consentTarget.textContent = data["consent"];
-      this.gpTarget.textContent = data["gp"];
-      this.nhsNumberTarget.textContent = data["nhs_number"];
-      this.screeningTarget.textContent = data["screening"];
-    });
+    this.fullNameTarget.textContent = child["full_name"];
+    this.sexTarget.textContent = child["sex"];
+    this.dobTarget.textContent = child["dob"];
+    this.consentTarget.textContent = child["consent"];
+    this.gpTarget.textContent = child["gp"];
+    this.nhsNumberTarget.textContent = child["nhs_number"];
+    this.screeningTarget.textContent = child["screening"];
   }
 }
