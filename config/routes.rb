@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   root to: redirect("/dashboard")
   get "/dashboard", to: "dashboard#index"
 
-  resources :campaigns, only: %i[index] do
+  resources :campaigns, only: %i[index show] do
     resources :children,
               only: %i[index show],
               as: :vaccinations,

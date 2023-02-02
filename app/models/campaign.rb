@@ -17,4 +17,8 @@ class Campaign < ApplicationRecord
   has_and_belongs_to_many :children
 
   enum :type, ["HPV"]
+
+  def title
+    "#{type} campaign at #{location.name}"
+  end
 end
