@@ -71,18 +71,74 @@ function campaignShowTemplateURL(campaignID) {
   return `http://localhost:3000/campaigns/${campaignID}/children/show-template`;
 }
 
-const campaignChildrenVaccinationsHandlerCB = async ({ request, event }) => {
-  const cache = await caches.open(cacheNames.runtime);
+function cacheResponse(request, response) {
+  caches.open(cacheNames.runtime).then((cache) => {
+    cache.put(request, response);
+  });
+
+  return response.clone();
+}
+
+function campaignShowTemplate(request) {
+  let campaignID = parseCampaignIdFromURL(request.url);
+  console.debug(
+    "[Service Worker campaignChildrenVaccinationsHandlerCB]",
+    `retrieving template ${campaignShowTemplateURL(campaignID)} from cache`
+  );
+
+  return caches
+    .open(cacheNames.runtime)
+    .then((cache) => {
+      let response = cache.match(campaignShowTemplateURL(campaignID));
+
+      return response;
+    })
+    .catch((err) => {
+      console.error(
+        "[Service Worker campaignChildrenVaccinationsHandlerCB]",
+        `error retrieving ${campaignShowTemplateURL(campaignID)} from cache ${
+          cacheNames.runtime
+        }:`,
+        err
+      );
+    });
+}
+
+async function lookupCachedResponse(request) {
+  var response = await caches.open(cacheNames.runtime).then((cache) => {
+    return cache.match(request.url);
+  });
+
+  if (response) {
+    console.log(
+      "[Service Worker defaultHandlerCB] cached response: ",
+      response
+    );
+  } else {
+    console.log("[Service Worker defaultHandlerCB] no cached response :(");
+  }
+  return response.clone();
+}
+
+const campaignChildrenVaccinationsHandlerCB = async ({ request }) => {
+  console.log("[Service Worker campaignChildrenVaccinationsHandlerCB] request: ", request);
 
   try {
-    const response = await fetch(event.request);
-    cache.put(event.request, response.clone());
+    const response = await fetch(request);
+    console.debug(
+      `[Service Worker cacheResponse] fetch ${request.url} received response:`,
+      response
+    );
 
-    return response;
+    return cacheResponse(request, response);
   } catch (err) {
-    const campaignId = parseCampaignIdFromURL(request.url);
+    console.debug(
+      "[Service Worker campaignChildrenVaccinationsHandlerCB]",
+      `fetch ${request.url} did not receive response for request`,
+      err
+    );
 
-    return cache.match(campaignShowTemplateURL(campaignId));
+    return campaignShowTemplate(request);
   }
 };
 
@@ -91,18 +147,12 @@ const defaultHandlerCB = async ({ request }) => {
 
   return fetch(request)
     .then((response) => {
-      caches
-        .open(cacheNames.runtime)
-        .then((cache) => {
-          cache.put(request, response.clone());
-        })
-        .catch((err) => {
-          console.log(
-            "[Service Worker defaultHandlerCB] could not open cache:",
-            err
-          );
-        });
-      return response.clone();
+      console.log(
+        "[Service Worker defaultHandlerCB] response: ",
+        response.clone()
+      );
+
+      return cacheResponse(request, response);
     })
     .catch(async (err) => {
       console.log(
@@ -110,19 +160,7 @@ const defaultHandlerCB = async ({ request }) => {
         err
       );
 
-      var response = await caches.open(cacheNames.runtime).then((cache) => {
-        return cache.match(request.url);
-      });
-
-      if (response) {
-        console.log(
-          "[Service Worker defaultHandlerCB] cached response: ",
-          response
-        );
-      } else {
-        console.log("[Service Worker defaultHandlerCB] no cached response :(");
-      }
-      return response;
+      return lookupCachedResponse(request);
     });
 };
 
