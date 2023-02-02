@@ -9,21 +9,15 @@ const campaignChildrenVaccinationsRoute = new RegExp(
 );
 
 function setOfflineMode() {
-  console.debug("[Service Worker] setting connection to offline");
   setDefaultHandler(new CacheOnly());
 }
 
 function setOnlineMode() {
-  console.debug("[Service Worker] setting connection to online");
   setDefaultHandler(new NetworkFirst());
 }
 
 let messageHandlers = {
   TOGGLE_CONNECTION: (event) => {
-    console.debug(
-      "[Service Worker] TOGGLE_CONNECTION set connection status to:",
-      connectionStatus
-    );
     connectionStatus = !connectionStatus;
 
     if (connectionStatus) {
@@ -36,10 +30,6 @@ let messageHandlers = {
   },
 
   GET_CONNECTION_STATUS: (event) => {
-    console.debug(
-      "[Service Worker] GET_CONNECTION_STATUS Returning status:",
-      connectionStatus
-    );
     event.ports[0].postMessage(connectionStatus);
   },
 
@@ -98,47 +88,19 @@ function campaignShowTemplateURL(campaignID) {
 }
 
 const campaignChildrenVaccinationsHandlerCB = async ({ request, event }) => {
-  console.debug(
-    "[Service Worker campaignChildrenVaccinationsHandlerCB]",
-    "handling request: ",
-    request
-  );
-
   return fetch(event.request)
     .then((response) => {
-      console.debug(
-        "[Service Worker campaignChildrenVaccinationsHandlerCB]",
-        `fetch ${request.url} received response:`,
-        response
-      );
-
       caches
         .open(cacheNames.runtime)
         .then((cache) => {
           cache.put(event.request, response.clone());
         })
-        .catch((err) => {
-          console.error(
-            "[Service Worker campaignChildrenVaccinationsHandlerCB]",
-            `error cacheing ${event.request.url} to ${cacheNames.runtime}:`,
-            err
-          );
-        });
+        .catch((err) => {});
 
       return response;
     })
     .catch((err) => {
-      console.debug(
-        "[Service Worker campaignChildrenVaccinationsHandlerCB]",
-        `fetch ${request.url} did not receive response for request`,
-        err
-      );
-
       let campaignID = parseCampaignIDFromURL(request.url);
-      console.debug(
-        "[Service Worker campaignChildrenVaccinationsHandlerCB]",
-        `retrieving template ${campaignShowTemplateURL(campaignID)} from cache`
-      );
 
       return caches
         .open(cacheNames.runtime)
@@ -147,15 +109,7 @@ const campaignChildrenVaccinationsHandlerCB = async ({ request, event }) => {
 
           return cacheResponse;
         })
-        .catch((err) => {
-          console.error(
-            "[Service Worker campaignChildrenVaccinationsHandlerCB]",
-            `error retrieving ${campaignShowTemplateURL(
-              campaignID
-            )} from cache ${cacheNames.runtime}:`,
-            err
-          );
-        });
+        .catch((err) => {});
     });
 };
 
