@@ -2,7 +2,7 @@ import { CacheOnly, NetworkFirst } from "workbox-strategies";
 import { setDefaultHandler, registerRoute } from "workbox-routing";
 import { cacheNames } from "workbox-core";
 
-let connectionStatus = true;
+let onlineStatus = true;
 
 const campaignChildrenVaccinationsRoute = new RegExp(
   "/campaigns/(\\d+)/children/(\\d+)$"
@@ -20,25 +20,25 @@ let messageHandlers = {
   TOGGLE_CONNECTION: (event) => {
     console.debug(
       "[Service Worker TOGGLE_CONNECTION] set connection status to:",
-      !connectionStatus
+      !onlineStatus
     );
-    connectionStatus = !connectionStatus;
+    onlineStatus = !onlineStatus;
 
-    if (connectionStatus) {
+    if (onlineStatus) {
       setOnlineMode();
     } else {
       setOfflineMode();
     }
 
-    event.ports[0].postMessage(connectionStatus);
+    event.ports[0].postMessage(onlineStatus);
   },
 
   GET_CONNECTION_STATUS: (event) => {
     console.debug(
       "[Service Worker GET_CONNECTION_STATUS] returning status:",
-      connectionStatus
+      onlineStatus
     );
-    event.ports[0].postMessage(connectionStatus);
+    event.ports[0].postMessage(onlineStatus);
   },
 
   SAVE_CAMPAIGN_FOR_OFFLINE: async ({ data }) => {
