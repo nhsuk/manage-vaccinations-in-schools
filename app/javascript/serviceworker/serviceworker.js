@@ -104,7 +104,6 @@ const campaignChildrenVaccinationsHandlerCB = async ({ request, event }) => {
     request
   );
 
-  // fetch request
   return fetch(event.request)
     .then((response) => {
       console.debug(
@@ -160,8 +159,50 @@ const campaignChildrenVaccinationsHandlerCB = async ({ request, event }) => {
     });
 };
 
+const defaultHandlerCB = async ({ request }) => {
+  console.log("[Service Worker defaultHandlerCB] request: ", request);
+
+  return fetch(request)
+    .then((response) => {
+      caches
+        .open(cacheNames.runtime)
+        .then((cache) => {
+          cache.put(request, response.clone());
+        })
+        .catch((err) => {
+          console.log(
+            "[Service Worker defaultHandlerCB] could not open cache:",
+            err
+          );
+        });
+      return response.clone();
+    })
+    .catch(async (err) => {
+      console.log(
+        "[Service Worker defaultHandlerCB] no response, we're offline:",
+        err
+      );
+
+      var response = await caches.open(cacheNames.runtime).then((cache) => {
+        return cache.match(request.url);
+      });
+
+      if (response) {
+        console.log(
+          "[Service Worker defaultHandlerCB] cached response: ",
+          response
+        );
+      } else {
+        console.log("[Service Worker defaultHandlerCB] no cached response :(");
+      }
+      return response;
+    });
+};
+
+console.log("[Service Worker] registering routes");
 setOnlineMode();
 registerRoute(
   campaignChildrenVaccinationsRoute,
   campaignChildrenVaccinationsHandlerCB
 );
+setDefaultHandler(defaultHandlerCB);
