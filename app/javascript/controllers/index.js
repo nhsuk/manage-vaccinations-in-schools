@@ -13,5 +13,8 @@ application.register("child-vaccination", ChildVaccinationController);
 import ConnectivityController from "./connectivity_controller";
 application.register("connectivity", ConnectivityController);
 
+import OfflineCampaignController from "./offline_campaign_controller";
+application.register("offline-campaign", OfflineCampaignController);
+
 import VaccinationController from "./vaccination_controller";
 application.register("vaccination", VaccinationController);
