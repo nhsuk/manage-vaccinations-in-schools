@@ -1,4 +1,3 @@
-import { CacheOnly, NetworkFirst } from "workbox-strategies";
 import { setDefaultHandler, registerRoute } from "workbox-routing";
 import { cacheNames } from "workbox-core";
 
@@ -9,11 +8,11 @@ const campaignChildrenVaccinationsRoute = new RegExp(
 );
 
 function setOfflineMode() {
-  setDefaultHandler(new CacheOnly());
+  console.debug("[Service Worker] setting connection to offline");
 }
 
 function setOnlineMode() {
-  setDefaultHandler(new NetworkFirst());
+  console.debug("[Service Worker] setting connection to online");
 }
 
 let messageHandlers = {
