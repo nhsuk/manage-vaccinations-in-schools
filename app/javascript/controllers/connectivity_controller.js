@@ -1,5 +1,4 @@
 import { Controller } from "@hotwired/stimulus";
-import { Workbox } from "workbox-window";
 import { wb } from "../serviceworker-companion.js";
 
 // Connects to data-controller="offline"
