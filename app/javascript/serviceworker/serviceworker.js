@@ -15,6 +15,10 @@ function setOnlineMode() {
   console.debug("[Service Worker] setting connection to online");
 }
 
+function checkOnlineStatus() {
+  return onlineStatus;
+}
+
 let messageHandlers = {
   TOGGLE_CONNECTION: (event) => {
     console.debug(
@@ -120,8 +124,13 @@ async function lookupCachedResponse(request) {
   return response.clone();
 }
 
-const campaignChildrenVaccinationsHandlerCB = async ({ request }) => {
-  console.log("[Service Worker campaignChildrenVaccinationsHandlerCB] request: ", request);
+async function campaignChildrenVaccinationsHandlerCB({ request }) {
+  console.debug(
+    "[Service Worker campaignChildrenVaccinationsHandlerCB] request: ",
+    request
+  );
+
+  if (!checkOnlineStatus()) return campaignShowTemplate(request);
 
   try {
     const response = await fetch(request);
@@ -129,7 +138,6 @@ const campaignChildrenVaccinationsHandlerCB = async ({ request }) => {
       `[Service Worker cacheResponse] fetch ${request.url} received response:`,
       response
     );
-
     return cacheResponse(request, response);
   } catch (err) {
     console.debug(
@@ -137,31 +145,34 @@ const campaignChildrenVaccinationsHandlerCB = async ({ request }) => {
       `fetch ${request.url} did not receive response for request`,
       err
     );
-
     return campaignShowTemplate(request);
   }
-};
+}
 
 const defaultHandlerCB = async ({ request }) => {
   console.log("[Service Worker defaultHandlerCB] request: ", request);
 
-  return fetch(request)
-    .then((response) => {
-      console.log(
-        "[Service Worker defaultHandlerCB] response: ",
-        response.clone()
-      );
+  if (checkOnlineStatus()) {
+    return fetch(request)
+      .then((response) => {
+        console.log(
+          "[Service Worker defaultHandlerCB] response: ",
+          response.clone()
+        );
 
-      return cacheResponse(request, response);
-    })
-    .catch(async (err) => {
-      console.log(
-        "[Service Worker defaultHandlerCB] no response, we're offline:",
-        err
-      );
+        return cacheResponse(request, response);
+      })
+      .catch(async (err) => {
+        console.log(
+          "[Service Worker defaultHandlerCB] no response, we're offline:",
+          err
+        );
 
-      return lookupCachedResponse(request);
-    });
+        return lookupCachedResponse(request);
+      });
+  } else {
+    return lookupCachedResponse(request);
+  }
 };
 
 console.log("[Service Worker] registering routes");
