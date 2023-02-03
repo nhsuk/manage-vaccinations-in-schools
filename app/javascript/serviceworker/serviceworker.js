@@ -33,38 +33,15 @@ let messageHandlers = {
     event.ports[0].postMessage(connectionStatus);
   },
 
-  SAVE_CAMPAIGN_FOR_OFFLINE: ({ data }) => {
-    console.debug(
-      "[Service Worker SAVE_CAMPAIGN_FOR_OFFLINE] saving campaign for offline:",
-      data
-    );
+  SAVE_CAMPAIGN_FOR_OFFLINE: async ({ data }) => {
+    const campaignId = data.payload["campaignId"];
 
-    const campaignID = data.payload["campaignID"];
-
-    caches
-      .open(cacheNames.runtime)
-      .then((cache) => {
-        console.debug(
-          "[Service Worker SAVE_CAMPAIGN_FOR_OFFLINE]",
-          "Caching campaign pages in cache:",
-          cacheNames.runtime,
-          cache
-        );
-
-        cache.addAll([
-          `/campaigns/${campaignID}/children`,
-          `/campaigns/${campaignID}/children.json`,
-          `/campaigns/${campaignID}/children/show-template`,
-        ]);
-      })
-      .catch((err) => {
-        console.error(
-          "[Service Worker SAVE_CAMPAIGN_FOR_OFFLINE]",
-          "Could not open cache",
-          cacheNames.runtime,
-          err
-        );
-      });
+    const cache = await caches.open(cacheNames.runtime);
+    await cache.addAll([
+      `/campaigns/${campaignId}/children`,
+      `/campaigns/${campaignId}/children.json`,
+      `/campaigns/${campaignId}/children/show-template`,
+    ]);
   },
 };
 
