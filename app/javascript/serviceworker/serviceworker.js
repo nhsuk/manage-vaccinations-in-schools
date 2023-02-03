@@ -83,54 +83,30 @@ function cacheResponse(request, response) {
   return response.clone();
 }
 
-function campaignShowTemplate(request) {
-  let campaignID = parseCampaignIdFromURL(request.url);
+async function campaignShowTemplate(request) {
+  let campaignId = parseCampaignIdFromURL(request.url);
   console.debug(
-    "[Service Worker campaignChildrenVaccinationsHandlerCB]",
-    `retrieving template ${campaignShowTemplateURL(campaignID)} from cache`
+    "[Service Worker campaignChildrenVaccinationsHandlerCb]",
+    `retrieving template ${campaignShowTemplateURL(campaignId)} from cache`
   );
-
-  return caches
-    .open(cacheNames.runtime)
-    .then((cache) => {
-      let response = cache.match(campaignShowTemplateURL(campaignID));
-
-      return response;
-    })
-    .catch((err) => {
-      console.error(
-        "[Service Worker campaignChildrenVaccinationsHandlerCB]",
-        `error retrieving ${campaignShowTemplateURL(campaignID)} from cache ${
-          cacheNames.runtime
-        }:`,
-        err
-      );
-    });
+  const cache = await caches.open(cacheNames.runtime);
+  return await cache.match(campaignShowTemplateURL(campaignId));
 }
 
 async function lookupCachedResponse(request) {
-  var response = await caches.open(cacheNames.runtime).then((cache) => {
-    return cache.match(request.url);
-  });
+  const cache = await caches.open(cacheNames.runtime);
+  const response = await cache.match(request.url);
 
-  if (response) {
-    console.log(
-      "[Service Worker defaultHandlerCB] cached response: ",
-      response
-    );
-  } else {
-    console.log("[Service Worker defaultHandlerCB] no cached response :(");
-  }
-  return response.clone();
+  return response;
 }
 
-async function campaignChildrenVaccinationsHandlerCB({ request }) {
+async function campaignChildrenVaccinationsHandlerCb({ request }) {
   console.debug(
-    "[Service Worker campaignChildrenVaccinationsHandlerCB] request: ",
+    "[Service Worker campaignChildrenVaccinationsHandlerCb] request: ",
     request
   );
 
-  if (!checkOnlineStatus()) return campaignShowTemplate(request);
+  if (!checkOnlineStatus()) return await campaignShowTemplate(request);
 
   try {
     const response = await fetch(request);
@@ -141,11 +117,11 @@ async function campaignChildrenVaccinationsHandlerCB({ request }) {
     return cacheResponse(request, response);
   } catch (err) {
     console.debug(
-      "[Service Worker campaignChildrenVaccinationsHandlerCB]",
+      "[Service Worker campaignChildrenVaccinationsHandlerCb]",
       `fetch ${request.url} did not receive response for request`,
       err
     );
-    return campaignShowTemplate(request);
+    return await campaignShowTemplate(request);
   }
 }
 
@@ -170,7 +146,7 @@ const defaultHandlerCB = async ({ request }) => {
       err
     );
 
-    return lookupCachedResponse(request);
+    return await lookupCachedResponse(request);
   }
 };
 
@@ -178,6 +154,6 @@ console.log("[Service Worker] registering routes");
 setOnlineMode();
 registerRoute(
   campaignChildrenVaccinationsRoute,
-  campaignChildrenVaccinationsHandlerCB
+  campaignChildrenVaccinationsHandlerCb
 );
 setDefaultHandler(defaultHandlerCB);
