@@ -6,12 +6,9 @@ export default class extends Controller {
   connect() {}
 
   saveOffline() {
-    console.log(
-      "[Offline Campaign Controller saveOffline] saving campaign for offline"
-    );
     wb.messageSW({
       type: "SAVE_CAMPAIGN_FOR_OFFLINE",
-      payload: { campaignID: 1 },
+      payload: { campaignId: 1 },
     });
   }
 }
