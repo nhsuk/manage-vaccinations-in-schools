@@ -67,6 +67,7 @@ end
 
 group :development do
   gem "annotate", require: false
+  gem "dockerfile-rails", ">= 1.0.0"
   gem "prettier_print", require: false
   gem "rladr"
   gem "rubocop-govuk", require: false
