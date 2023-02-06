@@ -26,6 +26,7 @@ tmp/pids/*
 !tmp/pids/
 !tmp/pids/.keep
 
+cypress/screenshots
 cypress/videos
 
 config/settings.local.yml
