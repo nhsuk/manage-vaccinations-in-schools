@@ -2,6 +2,7 @@ describe("Recording child vaccination", () => {
   it("Records a child ", () => {
     cy.visit("/");
     cy.getBySelector("campaigns").first().click();
+    cy.getBySelector("record").first().click();
     cy.getBySelector("children").should("have.length", 100);
 
     // TODO: Need to find a way to setup a test environment before this test
