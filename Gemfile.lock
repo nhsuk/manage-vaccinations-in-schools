@@ -116,6 +116,8 @@ GEM
       paint (>= 0.9, < 3.0)
     deep_merge (1.2.2)
     diff-lcs (1.5.0)
+    dockerfile-rails (1.0.9)
+      rails
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     dry-configurable (1.0.1)
@@ -499,6 +501,7 @@ DEPENDENCIES
   config
   cssbundling-rails
   debug
+  dockerfile-rails (>= 1.0.0)
   fhir_client
   govuk-components
   govuk_design_system_formbuilder
