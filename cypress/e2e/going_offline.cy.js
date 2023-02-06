@@ -6,11 +6,11 @@ describe("Offline functionality", () => {
     cy.getBySelector("online-status").should("contain", "Online");
     cy.getBySelector("offline-indicator").should("not.be.visible");
 
-    cy.getBySelector("switch-online-offline").contains("Go Offline").click();
+    cy.getBySelector("switch-online-offline").contains("Go offline").click();
     cy.getBySelector("online-status").should("contain", "Offline");
     cy.getBySelector("offline-indicator").should("be.visible");
 
-    cy.getBySelector("switch-online-offline").contains("Go Online").click();
+    cy.getBySelector("switch-online-offline").contains("Go online").click();
     cy.getBySelector("online-status").should("contain", "Online");
     cy.getBySelector("offline-indicator").should("not.be.visible");
   });
