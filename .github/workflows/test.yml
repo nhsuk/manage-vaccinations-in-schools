@@ -79,3 +79,11 @@ jobs:
       - uses: cypress-io/github-action@v5.0.8
         with:
           start: sh ./bin/dev
+
+      - name: Upload screenshots and videos to Slack
+        uses: trymbill/cypress-slack-video-upload-action@v1.3.0
+        if: failure()
+        with:
+          token: ${{ secrets.SLACK_TOKEN }}
+          channels: proj_nhs_tech_logs
+          message-text: "Cypress tests failed. Results attached. ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
