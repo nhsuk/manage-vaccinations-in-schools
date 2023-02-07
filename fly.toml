@@ -6,6 +6,7 @@ kill_timeout = 5
 processes = []
 
 [env]
+  RAILS_SERVE_STATIC_FILES = true
 
 [experimental]
   auto_rollback = true
