@@ -3,7 +3,7 @@ class VaccinationsController < ApplicationController
   before_action :set_child, except: %i[show_template]
 
   def index
-    @children = @campaign.children
+    @children = @campaign.children.order(:first_name, :last_name)
     respond_to do |format|
       format.html
       format.json { render json: @children.index_by(&:id) }
