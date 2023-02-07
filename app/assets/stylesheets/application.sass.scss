@@ -3,8 +3,9 @@ $govuk-new-link-styles: true;
 $govuk-assets-path: "/";
 $color_app-pale-blue: #ccdff1;
 
-@import "govuk-frontend/govuk/all";
 @import "nhsuk-frontend/packages/nhsuk";
+$govuk-font-family: $nhsuk-font, $nhsuk-font-fallback;
+@import "govuk-frontend/govuk/all";
 
 @import "_offline.sass.scss";
 
