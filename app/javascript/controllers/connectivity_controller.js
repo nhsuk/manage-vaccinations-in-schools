@@ -7,9 +7,24 @@ export default class extends Controller {
 
   async connect() {
     console.log("[Connectivity Controller] requesting connection status");
-    this.connectionStatus = await wb.messageSW({
-      type: "GET_CONNECTION_STATUS",
-    });
+    try {
+      var timeoutFn = setTimeout(() => {
+        console.log("[Connectivity Controller] SW never came back!!!");
+      }, 10000);
+      this.connectionStatus = await wb.messageSW({
+        type: "GET_CONNECTION_STATUS",
+      });
+      clearTimeout(timeoutFn);
+      console.log(
+        `[Connectivity Controller] got connection status: ${this.connectionStatus}`
+      );
+    } catch (err) {
+      console.error(
+        "[Connectivity Controller] got error sending GET_CONNECTION_STATUS ",
+        "message to service worker:",
+        err
+      );
+    }
   }
 
   get status() {
