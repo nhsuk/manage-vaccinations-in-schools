@@ -1,11 +1,13 @@
+$nhsuk-fonts-path: "/";
+@import "nhsuk-frontend/packages/nhsuk";
+
+$govuk-font-family: $nhsuk-font, $nhsuk-font-fallback;
 $govuk-global-styles: false;
 $govuk-new-link-styles: true;
 $govuk-assets-path: "/";
-$color_app-pale-blue: #ccdff1;
-
-@import "nhsuk-frontend/packages/nhsuk";
-$govuk-font-family: $nhsuk-font, $nhsuk-font-fallback;
 @import "govuk-frontend/govuk/all";
+
+$color_app-pale-blue: #ccdff1;
 
 @import "_offline.sass.scss";
 

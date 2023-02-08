@@ -6,10 +6,8 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <link rel="preload" as="font" href="https://assets.nhs.uk/fonts/FrutigerLTW01-55Roman.woff2" type="font/woff2" crossorigin>
-    <link rel="preload" as="font" href="https://assets.nhs.uk/fonts/FrutigerLTW01-65Bold.woff2" type="font/woff2" crossorigin>
-    <link rel="preconnect  dns-prefetch" href="https://www.nhs.uk/">
-    <link rel="preconnect  dns-prefetch" href="https://assets.nhs.uk/" crossorigin>
+    <%= preload_link_tag asset_path("FrutigerLTW01-55Roman.woff2") %>
+    <%= preload_link_tag asset_path("FrutigerLTW01-65Bold.woff2") %>
 
     <%= tag :meta, name: 'viewport', content: 'width=device-width, initial-scale=1' %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
