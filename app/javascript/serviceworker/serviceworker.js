@@ -126,7 +126,7 @@ async function campaignChildrenVaccinationsHandlerCb({ request }) {
 }
 
 const defaultHandlerCB = async ({ request }) => {
-  console.log("[Service Worker defaultHandlerCB] request: ", request);
+  console.debug("[Service Worker defaultHandlerCB] request:", request);
 
   if (!checkOnlineStatus()) {
     return lookupCachedResponse(request);
@@ -134,14 +134,14 @@ const defaultHandlerCB = async ({ request }) => {
 
   try {
     const response = await fetch(request);
-    console.log(
-      "[Service Worker defaultHandlerCB] response: ",
+    console.debug(
+      "[Service Worker defaultHandlerCB] response:",
       response.clone()
     );
 
     return cacheResponse(request, response);
   } catch (err) {
-    console.log(
+    console.debug(
       "[Service Worker defaultHandlerCB] no response, we're offline:",
       err
     );
@@ -150,7 +150,7 @@ const defaultHandlerCB = async ({ request }) => {
   }
 };
 
-console.log("[Service Worker] registering routes");
+console.debug("[Service Worker] registering routes");
 setOnlineMode();
 registerRoute(
   campaignChildrenVaccinationsRoute,
