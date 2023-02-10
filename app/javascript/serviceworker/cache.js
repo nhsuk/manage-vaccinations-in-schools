@@ -5,6 +5,11 @@ export const addAll = async (requests) => {
   return await cache.addAll(requests);
 };
 
+export const match = async (url) => {
+  const cache = await caches.open(cacheNames.runtime);
+  return await cache.match(url);
+};
+
 export const cacheResponse = (request, response) => {
   caches.open(cacheNames.runtime).then((cache) => {
     cache.put(request, response);
