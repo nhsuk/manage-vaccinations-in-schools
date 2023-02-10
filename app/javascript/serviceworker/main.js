@@ -1,6 +1,6 @@
 import { setDefaultHandler, registerRoute } from "workbox-routing";
 import { checkOnlineStatus, toggleOnlineStatus } from "./online-status";
-import { addAll, put, lookupCachedResponse, match } from "./cache";
+import { addAll, put, match } from "./cache";
 
 const campaignChildrenVaccinationsRoute = new RegExp(
   "/campaigns/(\\d+)/children/(\\d+)$"
@@ -84,7 +84,7 @@ const defaultHandlerCB = async ({ request }) => {
   console.debug("[Service Worker defaultHandlerCB] request:", request);
 
   if (!checkOnlineStatus()) {
-    return lookupCachedResponse(request);
+    return await match(request.url);
   }
 
   try {
@@ -102,7 +102,7 @@ const defaultHandlerCB = async ({ request }) => {
       err
     );
 
-    return await lookupCachedResponse(request);
+    return await match(request.url);
   }
 };
 
