@@ -1,6 +1,6 @@
 import { setDefaultHandler, registerRoute } from "workbox-routing";
 import { checkOnlineStatus, toggleOnlineStatus } from "./online-status";
-import { addAll, cacheResponse, lookupCachedResponse, match } from "./cache";
+import { addAll, put, lookupCachedResponse, match } from "./cache";
 
 const campaignChildrenVaccinationsRoute = new RegExp(
   "/campaigns/(\\d+)/children/(\\d+)$"
@@ -68,7 +68,8 @@ async function campaignChildrenVaccinationsHandlerCb({ request }) {
       `[Service Worker cacheResponse] fetch ${request.url} received response:`,
       response
     );
-    return cacheResponse(request, response);
+    put(request, response.clone());
+    return response;
   } catch (err) {
     console.debug(
       "[Service Worker campaignChildrenVaccinationsHandlerCb]",
@@ -93,7 +94,8 @@ const defaultHandlerCB = async ({ request }) => {
       response.clone()
     );
 
-    return cacheResponse(request, response);
+    put(request, response.clone());
+    return response;
   } catch (err) {
     console.debug(
       "[Service Worker defaultHandlerCB] no response, we're offline:",

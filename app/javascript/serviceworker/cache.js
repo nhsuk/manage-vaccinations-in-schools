@@ -10,12 +10,9 @@ export const match = async (url) => {
   return await cache.match(url);
 };
 
-export const cacheResponse = (request, response) => {
-  caches.open(cacheNames.runtime).then((cache) => {
-    cache.put(request, response);
-  });
-
-  return response.clone();
+export const put = async (request, response) => {
+  const cache = await caches.open(cacheNames.runtime);
+  return await cache.put(request, response);
 };
 
 export const lookupCachedResponse = async (request) => {
