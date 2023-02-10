@@ -1,6 +1,7 @@
 import { setDefaultHandler, registerRoute } from "workbox-routing";
 import { cacheNames } from "workbox-core";
 import { checkOnlineStatus, toggleOnlineStatus } from "./online-status";
+import { cacheResponse, lookupCachedResponse } from "./cache";
 
 const campaignChildrenVaccinationsRoute = new RegExp(
   "/campaigns/(\\d+)/children/(\\d+)$"
@@ -46,14 +47,6 @@ function campaignShowTemplateURL(campaignID) {
   return `http://localhost:3000/campaigns/${campaignID}/children/show-template`;
 }
 
-function cacheResponse(request, response) {
-  caches.open(cacheNames.runtime).then((cache) => {
-    cache.put(request, response);
-  });
-
-  return response.clone();
-}
-
 async function campaignShowTemplate(request) {
   let campaignId = parseCampaignIdFromURL(request.url);
   console.debug(
@@ -62,13 +55,6 @@ async function campaignShowTemplate(request) {
   );
   const cache = await caches.open(cacheNames.runtime);
   return await cache.match(campaignShowTemplateURL(campaignId));
-}
-
-async function lookupCachedResponse(request) {
-  const cache = await caches.open(cacheNames.runtime);
-  const response = await cache.match(request.url);
-
-  return response;
 }
 
 async function campaignChildrenVaccinationsHandlerCb({ request }) {
