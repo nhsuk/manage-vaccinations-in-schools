@@ -1,7 +1,6 @@
 import { setDefaultHandler, registerRoute } from "workbox-routing";
-import { cacheNames } from "workbox-core";
 import { checkOnlineStatus, toggleOnlineStatus } from "./online-status";
-import { addAll, cacheResponse, lookupCachedResponse } from "./cache";
+import { addAll, cacheResponse, lookupCachedResponse, match } from "./cache";
 
 const campaignChildrenVaccinationsRoute = new RegExp(
   "/campaigns/(\\d+)/children/(\\d+)$"
@@ -52,8 +51,7 @@ async function campaignShowTemplate(request) {
     "[Service Worker campaignChildrenVaccinationsHandlerCb]",
     `retrieving template ${campaignShowTemplateURL(campaignId)} from cache`
   );
-  const cache = await caches.open(cacheNames.runtime);
-  return await cache.match(campaignShowTemplateURL(campaignId));
+  return await match(campaignShowTemplateURL(campaignId));
 }
 
 async function campaignChildrenVaccinationsHandlerCb({ request }) {
