@@ -1,40 +1,11 @@
 import { setDefaultHandler, registerRoute } from "workbox-routing";
-import { checkOnlineStatus, toggleOnlineStatus } from "./online-status";
-import { addAll, put, match } from "./cache";
+import { checkOnlineStatus } from "./online-status";
+import { put, match } from "./cache";
+import { handler as messageHandler } from "./messages";
 
 const campaignChildrenVaccinationsRoute = new RegExp(
   "/campaigns/(\\d+)/children/(\\d+)$"
 );
-
-let messageHandlers = {
-  TOGGLE_CONNECTION: (event) => {
-    event.ports[0].postMessage(toggleOnlineStatus());
-  },
-
-  GET_CONNECTION_STATUS: (event) => {
-    event.ports[0].postMessage(checkOnlineStatus());
-  },
-
-  SAVE_CAMPAIGN_FOR_OFFLINE: async ({ data }) => {
-    const campaignId = data.payload["campaignId"];
-
-    addAll([
-      `/campaigns/${campaignId}/children`,
-      `/campaigns/${campaignId}/children.json`,
-      `/campaigns/${campaignId}/children/show-template`,
-    ]);
-  },
-};
-
-self.addEventListener("message", (event) => {
-  if (event.data && event.data.type) {
-    console.debug(
-      "[Service Worker Message Listener] received message event:",
-      event.data
-    );
-    messageHandlers[event.data.type](event);
-  }
-});
 
 function parseCampaignIdFromURL(url) {
   const [_, campaignId] = url.match("/campaigns/(\\d+)/");
@@ -106,6 +77,7 @@ const defaultHandlerCB = async ({ request }) => {
   }
 };
 
+self.addEventListener("message", messageHandler);
 console.debug("[Service Worker] registering routes");
 registerRoute(
   campaignChildrenVaccinationsRoute,
