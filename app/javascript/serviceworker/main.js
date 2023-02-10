@@ -1,47 +1,18 @@
 import { setDefaultHandler, registerRoute } from "workbox-routing";
 import { cacheNames } from "workbox-core";
-
-let onlineStatus = true;
+import { checkOnlineStatus, toggleOnlineStatus } from "./online-status";
 
 const campaignChildrenVaccinationsRoute = new RegExp(
   "/campaigns/(\\d+)/children/(\\d+)$"
 );
 
-function setOfflineMode() {
-  console.debug("[Service Worker] setting connection to offline");
-}
-
-function setOnlineMode() {
-  console.debug("[Service Worker] setting connection to online");
-}
-
-function checkOnlineStatus() {
-  return onlineStatus;
-}
-
 let messageHandlers = {
   TOGGLE_CONNECTION: (event) => {
-    console.debug(
-      "[Service Worker TOGGLE_CONNECTION] set connection status to:",
-      !onlineStatus
-    );
-    onlineStatus = !onlineStatus;
-
-    if (onlineStatus) {
-      setOnlineMode();
-    } else {
-      setOfflineMode();
-    }
-
-    event.ports[0].postMessage(onlineStatus);
+    event.ports[0].postMessage(toggleOnlineStatus());
   },
 
   GET_CONNECTION_STATUS: (event) => {
-    console.debug(
-      "[Service Worker GET_CONNECTION_STATUS] returning status:",
-      onlineStatus
-    );
-    event.ports[0].postMessage(onlineStatus);
+    event.ports[0].postMessage(checkOnlineStatus());
   },
 
   SAVE_CAMPAIGN_FOR_OFFLINE: async ({ data }) => {
@@ -151,7 +122,6 @@ const defaultHandlerCB = async ({ request }) => {
 };
 
 console.debug("[Service Worker] registering routes");
-setOnlineMode();
 registerRoute(
   campaignChildrenVaccinationsRoute,
   campaignChildrenVaccinationsHandlerCb
