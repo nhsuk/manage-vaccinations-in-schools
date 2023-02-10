@@ -1,7 +1,7 @@
 import { setDefaultHandler, registerRoute } from "workbox-routing";
 import { cacheNames } from "workbox-core";
 import { checkOnlineStatus, toggleOnlineStatus } from "./online-status";
-import { cacheResponse, lookupCachedResponse } from "./cache";
+import { addAll, cacheResponse, lookupCachedResponse } from "./cache";
 
 const campaignChildrenVaccinationsRoute = new RegExp(
   "/campaigns/(\\d+)/children/(\\d+)$"
@@ -19,8 +19,7 @@ let messageHandlers = {
   SAVE_CAMPAIGN_FOR_OFFLINE: async ({ data }) => {
     const campaignId = data.payload["campaignId"];
 
-    const cache = await caches.open(cacheNames.runtime);
-    await cache.addAll([
+    addAll([
       `/campaigns/${campaignId}/children`,
       `/campaigns/${campaignId}/children.json`,
       `/campaigns/${campaignId}/children/show-template`,

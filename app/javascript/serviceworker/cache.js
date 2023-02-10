@@ -1,5 +1,10 @@
 import { cacheNames } from "workbox-core";
 
+export const addAll = async (requests) => {
+  const cache = await caches.open(cacheNames.runtime);
+  return await cache.addAll(requests);
+};
+
 export const cacheResponse = (request, response) => {
   caches.open(cacheNames.runtime).then((cache) => {
     cache.put(request, response);
