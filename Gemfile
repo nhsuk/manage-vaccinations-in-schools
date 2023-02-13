@@ -41,6 +41,7 @@ end
 
 group :test do
   gem "capybara"
+  gem "cuprite"
   gem "rspec"
   gem "rspec-rails"
   gem "webmock"
