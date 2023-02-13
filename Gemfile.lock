@@ -159,6 +159,11 @@ GEM
     erubi (1.12.0)
     every_day_irb (2.2.0)
       cd (~> 1.0)
+    factory_bot (6.2.1)
+      activesupport (>= 5.0.0)
+    factory_bot_rails (6.2.0)
+      factory_bot (~> 6.2.0)
+      railties (>= 5.0.0)
     fancy_irb (1.4.3)
       paint (>= 0.9, < 3.0)
       unicode-display_width (>= 1.1)
@@ -502,6 +507,7 @@ DEPENDENCIES
   cuprite
   debug
   dockerfile-rails (>= 1.0.0)
+  factory_bot_rails
   fhir_client
   govuk-components
   govuk_design_system_formbuilder
