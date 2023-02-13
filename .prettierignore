@@ -17,6 +17,7 @@
 .rspec
 .ruby-version
 .tool-versions
+coverage
 Dockerfile
 LICENCE
 Procfile
