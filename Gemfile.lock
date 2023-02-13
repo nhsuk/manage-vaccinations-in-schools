@@ -107,6 +107,9 @@ GEM
     crass (1.0.6)
     cssbundling-rails (1.1.2)
       railties (>= 6.0.0)
+    cuprite (0.14.3)
+      capybara (~> 3.0)
+      ferrum (~> 0.13.0)
     date (3.3.3)
     date_time_precision (0.8.1)
     debug (1.7.1)
@@ -163,6 +166,11 @@ GEM
       faraday-net_http (>= 2.0, < 3.1)
       ruby2_keywords (>= 0.0.4)
     faraday-net_http (3.0.2)
+    ferrum (0.13)
+      addressable (~> 2.5)
+      concurrent-ruby (~> 1.1)
+      webrick (~> 1.7)
+      websocket-driver (>= 0.6, < 0.8)
     ffi (1.15.5)
     fhir_client (5.0.3)
       activesupport (>= 3)
@@ -491,6 +499,7 @@ DEPENDENCIES
   capybara
   config
   cssbundling-rails
+  cuprite
   debug
   dockerfile-rails (>= 1.0.0)
   fhir_client
