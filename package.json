@@ -29,6 +29,7 @@
   },
   "packageManager": "yarn@1.22.19",
   "jest": {
+    "collectCoverage": true,
     "testPathIgnorePatterns": [
       "node_modules/"
     ],
