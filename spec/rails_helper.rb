@@ -8,6 +8,12 @@ if Rails.env.production?
 end
 require "rspec/rails"
 # Add additional requires below this line. Rails is not loaded until this point!
+require "capybara/cuprite"
+
+# Capybara.javascript_driver = :cuprite
+Capybara.register_driver(:cuprite) do |app|
+  Capybara::Cuprite::Driver.new(app, window_size: [1200, 800])
+end
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -62,4 +68,9 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  config.before(:each, type: :system) do
+    WebMock.disable!
+    driven_by(:cuprite)
+  end
 end
