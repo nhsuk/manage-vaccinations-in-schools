@@ -164,6 +164,8 @@ GEM
     factory_bot_rails (6.2.0)
       factory_bot (~> 6.2.0)
       railties (>= 5.0.0)
+    faker (3.1.1)
+      i18n (>= 1.8.11, < 2)
     fancy_irb (1.4.3)
       paint (>= 0.9, < 3.0)
       unicode-display_width (>= 1.1)
@@ -508,6 +510,7 @@ DEPENDENCIES
   debug
   dockerfile-rails (>= 1.0.0)
   factory_bot_rails
+  faker
   fhir_client
   govuk-components
   govuk_design_system_formbuilder
