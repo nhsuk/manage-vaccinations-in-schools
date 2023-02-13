@@ -1,6 +1,8 @@
 import { Controller } from "@hotwired/stimulus";
 import { wb } from "../serviceworker-companion.js";
 
+const getCampaignIdFromURL = (url) => url.match("/campaigns/(\\d+)/")[1];
+
 // Connects to data-controller="offline-campaign"
 export default class extends Controller {
   connect() {}
@@ -8,7 +10,7 @@ export default class extends Controller {
   saveOffline() {
     wb.messageSW({
       type: "SAVE_CAMPAIGN_FOR_OFFLINE",
-      payload: { campaignId: 1 },
+      payload: { campaignId: getCampaignIdFromURL(window.location.href) },
     });
   }
 }
