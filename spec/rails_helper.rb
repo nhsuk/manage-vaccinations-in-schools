@@ -73,4 +73,6 @@ RSpec.configure do |config|
     WebMock.disable!
     driven_by(:cuprite)
   end
+
+  config.include FactoryBot::Syntax::Methods
 end
