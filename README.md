@@ -159,9 +159,23 @@ $ bin/dev
 
 ### Testing
 
-This application comes with Cypress BDD tests. To run the tests use:
+To run the Rails tests:
 
 ```bash
+bin/bundle exec rspec
+```
+
+To run the JS unit tests:
+
+```bash
+yarn test
+```
+
+To run the Cypress end to end tests use:
+
+```bash
+yarn test:e2e
+# or
 yarn cypress run
 ```
 
