@@ -23,10 +23,6 @@ const messageHandlers = {
 
 export const handler = (event) => {
   if (event.data && event.data.type) {
-    console.debug(
-      "[Service Worker Message Listener] received message event:",
-      event.data
-    );
     messageHandlers[event.data.type](event);
   }
 };
