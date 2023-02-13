@@ -86,7 +86,7 @@ jobs:
       - name: Setup data
         run: bundle exec rake load_campaign_example
 
-      - uses: cypress-io/github-action@v5.0.8
+      - uses: cypress-io/github-action@v5.0.9
         with:
           start: sh ./bin/dev
 
