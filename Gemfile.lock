@@ -116,7 +116,7 @@ GEM
       paint (>= 0.9, < 3.0)
     deep_merge (1.2.2)
     diff-lcs (1.5.0)
-    dockerfile-rails (1.0.9)
+    dockerfile-rails (1.0.14)
       rails
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
@@ -254,7 +254,7 @@ GEM
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     looksee (5.0.0)
-    mail (2.8.0.1)
+    mail (2.8.1)
       mini_mime (>= 0.1.1)
       net-imap
       net-pop
@@ -282,9 +282,9 @@ GEM
       net-protocol
     netrc (0.11.0)
     nio4r (2.5.8)
-    nokogiri (1.14.1-arm64-darwin)
+    nokogiri (1.14.2-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.14.1-x86_64-linux)
+    nokogiri (1.14.2-x86_64-linux)
       racc (~> 1.4)
     oauth2 (1.4.11)
       faraday (>= 0.17.3, < 3.0)
@@ -490,7 +490,7 @@ GEM
       nokogiri (~> 1.8)
     yard (0.9.28)
       webrick (~> 1.7.0)
-    zeitwerk (2.6.6)
+    zeitwerk (2.6.7)
 
 PLATFORMS
   arm64-darwin-22
