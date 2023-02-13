@@ -10,6 +10,7 @@ require "rspec/rails"
 # Add additional requires below this line. Rails is not loaded until this point!
 require "capybara/cuprite"
 
+Faker::Config.locale = "en-GB"
 # Capybara.javascript_driver = :cuprite
 Capybara.register_driver(:cuprite) do |app|
   Capybara::Cuprite::Driver.new(app, window_size: [1200, 800])
