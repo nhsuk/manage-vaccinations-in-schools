@@ -1,9 +1,24 @@
-
 # Introduction and Goals
+
+Provide a service to record childrens vaccinations in settings encountered by
+SAIS staff.
 
 ## Requirements Overview
 
+In addition to allowing SAIS staff to record vaccinations efficiently, the
+service is designed to integrate with a central vaccination record, and in
+certain settings provide the service while offline.
+
+This service is part of the alpha phase to explore the user needs of such a
+service; to facilitate this, it is being developed with a priority on speed of
+delivery and flexbility over robustness and longevity, and as such may be
+considered disposable once the desired learnings have been achieved.
+
 ## Quality Goals
+
+As this service is in alpha stages, the current emphasis of this pilot is speed
+of development and flexibility to adapt to the service design as it changes and
+adapts to new research.
 
 ## Stakeholders
 
