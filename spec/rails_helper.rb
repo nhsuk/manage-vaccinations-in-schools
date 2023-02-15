@@ -14,11 +14,15 @@ Faker::Config.locale = "en-GB"
 Capybara.register_driver(:cuprite_custom) do |app|
   Capybara::Cuprite::Driver.new(
     app,
+    headless: false,
     inspector: ENV["INSPECTOR"],
+    js_errors: true,
     window_size: [1200, 800],
   )
 end
 Capybara.javascript_driver = :cuprite_custom
+
+Capybara.configure { |config| config.server_host = "localhost" }
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
