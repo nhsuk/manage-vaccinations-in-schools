@@ -63,13 +63,9 @@ RSpec.describe "/campaigns/:campain_id/children", type: :request do
   end
 
   describe "PUT /record" do
-    it "redirects to confirmation page" do
+    it "redirects to index page" do
       put record_campaign_vaccination_url(campaign.id, child.id)
-      expect(response).to(
-        redirect_to(
-          confirmation_campaign_vaccination_path(campaign.id, child.id)
-        )
-      )
+      expect(response).to(redirect_to(campaign_vaccinations_path(campaign.id)))
     end
 
     let(:last_updated) { Time.zone.now }
@@ -98,13 +94,6 @@ RSpec.describe "/campaigns/:campain_id/children", type: :request do
 
     it "sends a request to the FHIR server" do
       put record_campaign_vaccination_url(campaign.id, child.id)
-
-      expect(response).to(
-        redirect_to(
-          confirmation_campaign_vaccination_path(campaign.id, child.id)
-        )
-      )
-
       expect(fhir_server).to have_been_requested
     end
 
