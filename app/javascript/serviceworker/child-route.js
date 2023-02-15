@@ -9,16 +9,17 @@ const campaignShowTemplateURL = (campaignId) =>
 export const childRoute = new RegExp("/campaigns/(\\d+)/children/(\\d+)$");
 
 export const childRouteHandler = async ({ request }) => {
-  const campaignId = getCampaignIdFromURL(request.url);
-  const campaignUrl = campaignShowTemplateURL(campaignId);
-
-  if (!checkOnlineStatus()) return await match(campaignUrl);
-
   try {
-    const response = await fetch(request);
+    if (!checkOnlineStatus()) throw new NetworkError("Offline");
+
+    var response = await fetch(request);
     put(request, response.clone());
-    return response;
   } catch (err) {
-    return await match(campaignUrl);
+    const campaignId = getCampaignIdFromURL(request.url);
+    const campaignUrl = campaignShowTemplateURL(campaignId);
+
+    var response = await match(campaignUrl);
   }
+
+  return response;
 };
