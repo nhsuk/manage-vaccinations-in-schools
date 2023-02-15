@@ -5,9 +5,26 @@ SAIS staff.
 
 ## Requirements Overview
 
-In addition to allowing SAIS staff to record vaccinations efficiently, the
-service is designed to integrate with a central vaccination record, and in
-certain settings provide the service while offline.
+### Allow SAIS staff to record vaccinations efficiently
+
+The primary requirement is to allow SAIS staff to efficiently record
+vaccinations in their typical work settings. The pilot will use the NHS Design
+System to achieve this.
+
+### Allow SAIS staff to work on campaigns while offline
+
+User research has evidenced that SAIS staff occasionally need to work in
+settings where they do not have access to the Internet. This pilot is designed
+explore how we could achieve this in a way that would meet these needs and
+provide a usable service.
+
+### Integrate with a central vaccination record
+
+The team believes that integrating with a central vaccination record service we
+will be able to fix issues with data quality. This pilot will need to integrate
+with a central vaccionation record to update the vaccination in near-real-time.
+
+### Development speed and design flexibility
 
 This service is part of the alpha phase to explore the user needs of such a
 service; to facilitate this, it is being developed with a priority on speed of
@@ -28,6 +45,14 @@ adapts to new research.
 | _\<Role-2>_ | _\<Contact-2>_ | _\<Expectation-2>_ |
 
 # Architecture Constraints
+
+- Be able to work offline where required. This may clash with aspects of
+  accessibility, but, to take JS as an example, while the offline work
+  fuctionality may not be available if JS isn't supported, the service should
+  continue to be usable without the offline functionality.
+- Patient data must be protected. As this service will, eventually, deal with
+  patient data, even if it is only a small volume as part of the pilot it must
+  be built in a way that protects that data.
 
 # System Scope and Context
 
