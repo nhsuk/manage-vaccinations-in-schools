@@ -25,12 +25,12 @@ export default class extends Controller {
     const json = await response.json();
     const child = json[childId];
 
-    this.fullNameTarget.textContent = child["full_name"];
-    this.sexTarget.textContent = child["sex"];
-    this.dobTarget.textContent = child["dob"];
-    this.consentTarget.textContent = child["consent"];
-    this.gpTarget.textContent = child["gp"];
-    this.nhsNumberTarget.textContent = child["nhs_number"];
-    this.screeningTarget.textContent = child["screening"];
+    // this.fullNameTarget.textContent = child["full_name"];
+    // this.sexTarget.textContent = child["sex"];
+    // this.dobTarget.textContent = child["dob"];
+    // this.consentTarget.textContent = child["consent"];
+    // this.gpTarget.textContent = child["gp"];
+    // this.nhsNumberTarget.textContent = child["nhs_number"];
+    // this.screeningTarget.textContent = child["screening"];
   }
 }
