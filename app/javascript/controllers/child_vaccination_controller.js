@@ -17,6 +17,7 @@ export default class extends Controller {
     "gp",
     "nhsNumber",
     "screening",
+    "form",
   ];
 
   async connect() {
@@ -32,5 +33,6 @@ export default class extends Controller {
     this.gpTarget.textContent = child["gp"];
     this.nhsNumberTarget.textContent = child["nhs_number"];
     this.screeningTarget.textContent = child["screening"];
+    this.formTarget.action = this.formTarget.action.replace(":id", childId);
   }
 }
