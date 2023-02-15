@@ -37,6 +37,7 @@ describe("messageHandler", () => {
         [
           "/campaigns/undefined/children",
           "/campaigns/undefined/children.json",
+          "/campaigns/undefined/children/record-template",
           "/campaigns/undefined/children/show-template",
         ]
       `);

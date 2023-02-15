@@ -16,6 +16,7 @@ const messageHandlers = {
     addAll([
       `/campaigns/${campaignId}/children`,
       `/campaigns/${campaignId}/children.json`,
+      `/campaigns/${campaignId}/children/record-template`,
       `/campaigns/${campaignId}/children/show-template`,
     ]);
   },
