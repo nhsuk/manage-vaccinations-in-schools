@@ -1,4 +1,8 @@
-<p style="color: green"><%= notice %></p>
+<% if flash[:success].present? %>
+  <%= govuk_notification_banner(title_text: "Success", success: true) do |nb| %>
+    <% nb.with_heading(text: flash[:success]) %>
+  <% end %>
+<% end %>
 
 <h1 class="nhsuk-heading-l">Record vaccinations</h1>
 
