@@ -14,7 +14,6 @@ describe("Recording child vaccination", () => {
 
     cy.getBySelector("child-link").first().click();
     cy.getBySelector("confirm-button").click();
-    cy.getBySelector("record-another-vaccination-link").click();
     cy.getBySelector("child-status").first().should("have.text", "Vaccinated");
   });
 });
