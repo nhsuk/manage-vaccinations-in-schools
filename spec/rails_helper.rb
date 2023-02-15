@@ -11,10 +11,15 @@ require "rspec/rails"
 require "capybara/cuprite"
 
 Faker::Config.locale = "en-GB"
-# Capybara.javascript_driver = :cuprite
-Capybara.register_driver(:cuprite) do |app|
-  Capybara::Cuprite::Driver.new(app, window_size: [1200, 800])
+Capybara.register_driver(:cuprite_custom) do |app|
+  Capybara::Cuprite::Driver.new(
+    app,
+    inspector: ENV["DEBUG_TESTS"],
+    js_errors: true,
+    window_size: [1200, 800]
+  )
 end
+Capybara.javascript_driver = :cuprite_custom
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -72,7 +77,7 @@ RSpec.configure do |config|
 
   config.before(:each, type: :system) do
     WebMock.disable!
-    driven_by(:cuprite)
+    driven_by(:cuprite_custom)
   end
 
   config.include FactoryBot::Syntax::Methods
