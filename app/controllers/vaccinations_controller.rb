@@ -1,9 +1,9 @@
 class VaccinationsController < ApplicationController
   before_action :set_campaign
-  before_action :set_child, except: %i[show_template]
+  before_action :set_child, only: %i[show record history]
+  before_action :set_children, only: %i[index record_template]
 
   def index
-    @children = @campaign.children.order(:first_name, :last_name)
     respond_to do |format|
       format.html
       format.json { render json: @children.index_by(&:id) }
@@ -55,6 +55,11 @@ class VaccinationsController < ApplicationController
     render "show"
   end
 
+  def record_template
+    flash[:success] = "Record saved"
+    render :index
+  end
+
   private
 
   def set_campaign
@@ -62,6 +67,10 @@ class VaccinationsController < ApplicationController
   end
 
   def set_child
-    @child = Child.find(params[:id]) if params.key?(:id)
+    @child = Child.find(params[:id])
+  end
+
+  def set_children
+    @children = @campaign.children.order(:first_name, :last_name)
   end
 end

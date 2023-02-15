@@ -11,6 +11,7 @@ Rails.application.routes.draw do
       get "confirmation", on: :member
       get "history", on: :member
       get "show-template", on: :collection
+      get "record-template", on: :collection
     end
   end
 
