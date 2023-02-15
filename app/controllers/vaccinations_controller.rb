@@ -27,7 +27,7 @@ class VaccinationsController < ApplicationController
         )
       imm.immunization.create # rubocop:disable Rails/SaveBang
     end
-    flash[:success] = "Record saved"
+    flash[:success] = { title: "Record saved" }
     redirect_to campaign_vaccinations_path(@campaign)
   end
 
@@ -54,7 +54,10 @@ class VaccinationsController < ApplicationController
   end
 
   def record_template
-    flash[:success] = "Record saved"
+    flash[:success] = {
+      title: "Offline changes saved",
+      body: "You will need to go online to sync your changes."
+    }
     render :index
   end
 
