@@ -3,6 +3,7 @@ import { checkOnlineStatus } from "./online-status";
 import { put, match } from "./cache";
 import { handler as messageHandler } from "./messages";
 import { childRoute, childRouteHandler } from "./child-route";
+import { recordRoute, recordRouteHandler } from "./record-route";
 
 const defaultHandlerCB = async ({ request }) => {
   console.debug("[Service Worker defaultHandlerCB] request:", request);
@@ -33,4 +34,5 @@ const defaultHandlerCB = async ({ request }) => {
 self.addEventListener("message", messageHandler);
 console.debug("[Service Worker] registering routes");
 registerRoute(childRoute, childRouteHandler);
+registerRoute(recordRoute, recordRouteHandler, "POST");
 setDefaultHandler(defaultHandlerCB);
