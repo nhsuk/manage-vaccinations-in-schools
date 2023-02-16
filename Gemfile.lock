@@ -308,6 +308,7 @@ GEM
       multi_xml (~> 0.5)
       rack (>= 1.2, < 4)
     object_shadow (1.1.1)
+    okcomputer (1.18.4)
     os (1.1.4)
     pagy (5.10.1)
       activesupport
@@ -517,6 +518,7 @@ DEPENDENCIES
   irbtools
   jbuilder
   jsbundling-rails
+  okcomputer
   pg (~> 1.1)
   prettier_print
   propshaft
