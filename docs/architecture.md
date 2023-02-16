@@ -5,37 +5,29 @@ SAIS staff.
 
 ## Requirements Overview
 
-### Allow SAIS staff to record vaccinations efficiently
+### Functional Requirements
 
-The primary requirement is to allow SAIS staff to efficiently record
-vaccinations in their typical work settings. The pilot will use the NHS Design
-System to achieve this.
+A certain amount of user research, prototyping and design has already been
+performed for this service. The goal of this system is to provide a
+higher-fidelity prototype to further test out design and to better understand
+user needs.
 
-### Allow SAIS staff to work on campaigns while offline
+- Allow SAIS teams to deliver vaccination campaigns.
+- Allow SAIS teams to record vaccinations administered to children as part of
+  these campaigns.
+- Allow SAIS teams to deliver campaigns in settings where there is no Internet
+  access, i.e. offline working.
 
-User research has evidenced that SAIS staff occasionally need to work in
-settings where they do not have access to the Internet. This pilot is designed
-explore how we could achieve this in a way that would meet these needs and
-provide a usable service.
+### Non-Functional Requirements
 
-### Integrate with a central vaccination record
+This service is in alpha and it's primary purpose is to explore user needs
+through user research. Once the desired learnings have been achieved the system
+will be considered disposable and will be replaced by a production-ready system.
 
-The team believes that integrating with a central vaccination record service we
-will be able to fix issues with data quality. This pilot will need to integrate
-with a central vaccionation record to update the vaccination in near-real-time.
-
-### Development speed and design flexibility
-
-This service is part of the alpha phase to explore the user needs of such a
-service; to facilitate this, it is being developed with a priority on speed of
-delivery and flexbility over robustness and longevity, and as such may be
-considered disposable once the desired learnings have been achieved.
-
-## Quality Goals
-
-As this service is in alpha stages, the current emphasis of this pilot is speed
-of development and flexibility to adapt to the service design as it changes and
-adapts to new research.
+- The system needs to be delivered in a short time frame, and to be flexible
+  enough to adapt to changes as required by service design.
+- The system must be responsive and available, however the number of users will
+  be small so scalibility and hours of operation requirements will be relaxed.
 
 ## Stakeholders
 
@@ -46,13 +38,13 @@ adapts to new research.
 
 # Architecture Constraints
 
-- Be able to work offline where required. This may clash with aspects of
-  accessibility, but, to take JS as an example, while the offline work
-  fuctionality may not be available if JS isn't supported, the service should
-  continue to be usable without the offline functionality.
-- Patient data must be protected. As this service will, eventually, deal with
-  patient data, even if it is only a small volume as part of the pilot it must
-  be built in a way that protects that data.
+- The system must protect patient data and comply with all applicable laws and
+  regulations.
+- The system will need to be compatible with the central vaccination record
+  system.
+- The system must be deployed to a cloud platform, but also be platform agnostic
+  and not constrained to run on any one cloud platform.
+- The system will adhere to the applicable NHS architecture and design principles.
 
 # System Scope and Context
 
