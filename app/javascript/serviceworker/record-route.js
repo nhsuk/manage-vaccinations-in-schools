@@ -1,5 +1,6 @@
 import { isOnline } from "./online-status";
 import { match } from "./cache";
+import { saveRequest } from "./store";
 
 const getCampaignIdFromURL = (url) => url.match("/campaigns/(\\d+)/")[1];
 
@@ -11,6 +12,8 @@ export const recordRoute = new RegExp(
 );
 
 export const recordRouteHandler = async ({ request }) => {
+  const clonedRequest = request.clone();
+
   try {
     if (!isOnline()) throw new NetworkError("Offline");
 
@@ -19,7 +22,7 @@ export const recordRouteHandler = async ({ request }) => {
     const campaignId = getCampaignIdFromURL(request.url);
     const campaignUrl = campaignShowTemplateURL(campaignId);
 
-    // TODO: Cache request for later.
+    saveRequest(clonedRequest);
 
     var response = await match(campaignUrl);
   }

@@ -1,13 +1,17 @@
+require("jest-fetch-mock").enableMocks();
 import { match } from "./cache";
 import { setOfflineMode } from "./online-status";
 import { recordRoute, recordRouteHandler } from "./record-route";
 
 jest.mock("./cache");
+jest.mock("./store");
+
+const url = "/campaigns/1/children/2/record";
+const request = new Request(url);
 
 describe("recordRoute", () => {
   test("matches correctly", () => {
-    expect(recordRoute.exec("/campaigns/1/children/2/record"))
-      .toMatchInlineSnapshot(`
+    expect(recordRoute.exec(url)).toMatchInlineSnapshot(`
       [
         "/campaigns/1/children/2/record",
         "1",
@@ -17,28 +21,24 @@ describe("recordRoute", () => {
   });
 });
 
-const url = "/campaigns/1/children/2/record";
-
 describe("recordRouteHandler", () => {
   test("returns response when fetch works", async () => {
-    global.fetch = jest.fn(() => Promise.resolve("foo"));
+    fetch.mockResolvedValue("foo");
 
-    expect(await recordRouteHandler({ request: { url } })).toBe("foo");
+    expect(await recordRouteHandler({ request })).toBe("foo");
   });
 
   test("saves request for later when fetch fails", async () => {
-    global.fetch = jest.fn(() => {
-      throw new NetworkError("I'm too lazy to connect, yawn");
-    });
+    fetch.mockRejectedValue("I'm too lazy to connect, yawn");
     match.mockResolvedValue("foo");
 
-    expect(await recordRouteHandler({ request: { url } })).toBe("foo");
+    expect(await recordRouteHandler({ request })).toBe("foo");
   });
 
   test("saves request for later when offline", async () => {
     setOfflineMode();
     match.mockResolvedValue("foo");
 
-    expect(await recordRouteHandler({ request: { url } })).toBe("foo");
+    expect(await recordRouteHandler({ request })).toBe("foo");
   });
 });
