@@ -71,6 +71,14 @@ GEM
     annotate (3.2.0)
       activerecord (>= 3.2, < 8.0)
       rake (>= 10.4, < 14.0)
+    asciidoctor (2.0.18)
+    asciidoctor-diagram (2.2.4)
+      asciidoctor (>= 1.5.7, < 3.x)
+      asciidoctor-diagram-ditaamini (~> 1.0)
+      asciidoctor-diagram-plantuml (~> 1.2021)
+      rexml
+    asciidoctor-diagram-ditaamini (1.0.3)
+    asciidoctor-diagram-plantuml (1.2022.14)
     ast (2.4.2)
     awesome_print (1.9.2)
     backport (1.2.0)
@@ -460,6 +468,8 @@ PLATFORMS
 
 DEPENDENCIES
   annotate
+  asciidoctor
+  asciidoctor-diagram
   awesome_print
   bootsnap
   capybara
