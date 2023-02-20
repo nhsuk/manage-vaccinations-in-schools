@@ -1,18 +1,16 @@
-import { test, expect } from '@playwright/test';
+import { test } from "@playwright/test";
 
-test('has title', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+const goOffline = async (page) => {
+  await page.route("**", (route) => route.abort("internetdisconnected"));
+};
 
-  // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Playwright/);
-});
+test("works offline", async ({ page }) => {
+  await page.goto("http://localhost:3000/");
+  await page.getByTestId("campaigns").click();
+  await page.getByRole("button", { name: "Save offline" }).click();
 
-test('get started link', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+  await goOffline(page);
 
-  // Click the get started link.
-  await page.getByRole('link', { name: 'Get started' }).click();
-
-  // Expects the URL to contain intro.
-  await expect(page).toHaveURL(/.*intro/);
+  await page.getByTestId("record").click();
+  await page.getByRole("link", { name: "Aaron Pfeffer" }).click();
 });
