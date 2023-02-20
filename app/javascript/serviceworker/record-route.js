@@ -1,4 +1,4 @@
-import { checkOnlineStatus } from "./online-status";
+import { isOnline } from "./online-status";
 import { match } from "./cache";
 
 const getCampaignIdFromURL = (url) => url.match("/campaigns/(\\d+)/")[1];
@@ -12,7 +12,7 @@ export const recordRoute = new RegExp(
 
 export const recordRouteHandler = async ({ request }) => {
   try {
-    if (!checkOnlineStatus()) throw new NetworkError("Offline");
+    if (!isOnline()) throw new NetworkError("Offline");
 
     var response = await fetch(request, { method: "POST" });
   } catch (err) {

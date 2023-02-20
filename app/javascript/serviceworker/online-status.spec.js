@@ -1,29 +1,29 @@
 import {
-  checkOnlineStatus,
+  isOnline,
   setOfflineMode,
   setOnlineMode,
   toggleOnlineStatus,
 } from "./online-status";
 
-describe("checkOnlineStatus", () => {
+describe("isOnline", () => {
   test("works", () => {
-    expect(checkOnlineStatus()).toBe(true);
+    expect(isOnline()).toBe(true);
   });
 });
 
 describe("toggleOnlineStatus", () => {
   test("works", () => {
     toggleOnlineStatus();
-    expect(checkOnlineStatus()).toBe(false);
+    expect(isOnline()).toBe(false);
     toggleOnlineStatus();
-    expect(checkOnlineStatus()).toBe(true);
+    expect(isOnline()).toBe(true);
   });
 });
 
 describe("setOfflineMode", () => {
   test("works", () => {
     setOfflineMode();
-    expect(checkOnlineStatus()).toBe(false);
+    expect(isOnline()).toBe(false);
   });
 });
 
@@ -31,6 +31,6 @@ describe("setOnlineMode", () => {
   test("works", () => {
     setOfflineMode();
     setOnlineMode();
-    expect(checkOnlineStatus()).toBe(true);
+    expect(isOnline()).toBe(true);
   });
 });

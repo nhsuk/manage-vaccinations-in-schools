@@ -1,4 +1,4 @@
-import { checkOnlineStatus } from "./online-status";
+import { isOnline } from "./online-status";
 import { put, match } from "./cache";
 
 const getCampaignIdFromURL = (url) => url.match("/campaigns/(\\d+)/")[1];
@@ -10,7 +10,7 @@ export const childRoute = new RegExp("/campaigns/(\\d+)/children/(\\d+)$");
 
 export const childRouteHandler = async ({ request }) => {
   try {
-    if (!checkOnlineStatus()) throw new NetworkError("Offline");
+    if (!isOnline()) throw new NetworkError("Offline");
 
     var response = await fetch(request);
     put(request, response.clone());

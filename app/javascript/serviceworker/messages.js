@@ -1,4 +1,4 @@
-import { checkOnlineStatus, toggleOnlineStatus } from "./online-status";
+import { isOnline, toggleOnlineStatus } from "./online-status";
 import { addAll } from "./cache";
 
 const messageHandlers = {
@@ -7,7 +7,7 @@ const messageHandlers = {
   },
 
   GET_CONNECTION_STATUS: (event) => {
-    event.ports[0].postMessage(checkOnlineStatus());
+    event.ports[0].postMessage(isOnline());
   },
 
   SAVE_CAMPAIGN_FOR_OFFLINE: async ({ data }) => {

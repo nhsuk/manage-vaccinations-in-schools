@@ -8,4 +8,4 @@ export const toggleOnlineStatus = () => {
   return online ? setOfflineMode() : setOnlineMode();
 };
 
-export const checkOnlineStatus = () => online;
+export const isOnline = () => online;

@@ -1,5 +1,5 @@
 import { setDefaultHandler, registerRoute } from "workbox-routing";
-import { checkOnlineStatus } from "./online-status";
+import { isOnline } from "./online-status";
 import { put, match } from "./cache";
 import { handler as messageHandler } from "./messages";
 import { childRoute, childRouteHandler } from "./child-route";
@@ -8,7 +8,7 @@ import { recordRoute, recordRouteHandler } from "./record-route";
 const defaultHandlerCB = async ({ request }) => {
   console.debug("[Service Worker defaultHandlerCB] request:", request);
 
-  if (!checkOnlineStatus()) {
+  if (!isOnline()) {
     return await match(request.url);
   }
 

@@ -1,5 +1,5 @@
 import { addAll } from "./cache";
-import { toggleOnlineStatus, checkOnlineStatus } from "./online-status";
+import { toggleOnlineStatus, isOnline } from "./online-status";
 import { handler } from "./messages";
 
 jest.mock("./online-status");
@@ -23,9 +23,9 @@ describe("messageHandler", () => {
 
   describe("GET_CONNECTION_STATUS", () => {
     test("works", () => {
-      checkOnlineStatus.mockReturnValue("online status");
+      isOnline.mockReturnValue("online status");
       handler(event("GET_CONNECTION_STATUS"));
-      expect(checkOnlineStatus).toHaveBeenCalled();
+      expect(isOnline).toHaveBeenCalled();
       expect(postMessage).toHaveBeenCalledWith("online status");
     });
   });
