@@ -50,17 +50,39 @@ will be considered disposable and will be replaced by a production-ready system.
 
 ## Business Context
 
-**\<Diagram or Table>**
+```mermaid
+C4Context
+  title SAIS Record Child Vaccination Alpha
 
-**\<optionally: Explanation of external domain interfaces>**
+  Person(sais, "SAIS Team Member")
+
+  Enterprise_Boundary(nhs, "NHS") {
+    System(serverApp, "Record Child Vaccination", "")
+    SystemDb(vaccineRecord, "Vaccination Record", "FHIR Server")
+  }
+
+  Rel(sais, serverApp, "Uses")
+  Rel(serverApp, vaccineRecord, "View/Update patient vaccionation data")
+```
 
 ## Technical Context
 
-**\<Diagram or Table>**
+```mermaid
+C4Context
+  title SAIS Record Childrens Vaccination Alpha
 
-**\<optionally: Explanation of technical interfaces>**
+  System(browserApp, "Browser App")
 
-**\<Mapping Input/Output to Channels>**
+  Enterprise_Boundary(nhs, "NHS") {
+    SystemDb(postgres, "PostgreSQL")
+    System(serverApp, "Record Child Vaccination", "")
+    SystemDb(vaccineRecord, "Vaccination Record", "FHIR Server")
+  }
+
+  Rel(browserApp, serverApp, "Uses")
+  Rel(serverApp, vaccineRecord, "Updates / Retrieves")
+  Rel(serverApp, postgres, "Caches")
+```
 
 # Solution Strategy
 
