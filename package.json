@@ -18,6 +18,7 @@
     "test": "jest"
   },
   "devDependencies": {
+    "@playwright/test": "^1.30.0",
     "@prettier/plugin-ruby": "^3.2.2",
     "cypress": "^12.5.1",
     "esbuild-jest": "^0.5.0",
