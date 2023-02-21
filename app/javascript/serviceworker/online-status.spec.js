@@ -40,6 +40,12 @@ describe("setOnlineMode", () => {
 describe("refreshOnlineStatus", () => {
   const cb = jest.fn();
 
+  const tick = async () => {
+    jest.advanceTimersToNextTimer(1); // Wait the sleep
+    await Promise.resolve(); // Resolve the fetch
+    await Promise.resolve(); // Resolve the cb
+  };
+
   beforeAll(() => {
     jest.useFakeTimers();
   });
@@ -47,14 +53,17 @@ describe("refreshOnlineStatus", () => {
   test("works", async () => {
     refreshOnlineStatus(cb);
 
-    jest.advanceTimersToNextTimer(2);
-    await Promise.resolve();
+    expect(cb).toHaveBeenCalledTimes(0);
+
+    await tick();
+    expect(cb).toHaveBeenCalledTimes(1);
+
+    await tick();
     expect(cb).toHaveBeenCalledTimes(2);
 
     fetch.mockReject(new Error("Offline"));
 
-    jest.advanceTimersToNextTimer(2);
-    await Promise.resolve();
+    await tick();
     expect(cb).toHaveBeenCalledTimes(2);
   });
 });

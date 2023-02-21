@@ -12,14 +12,18 @@ export const toggleOnlineStatus = () => {
 
 export const isOnline = () => online;
 
-export const refreshOnlineStatus = (cb) => {
-  setInterval(async () => {
-    try {
-      await fetch("/health");
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-      cb();
-    } catch (err) {
-      // Offline, do nothing
-    }
-  }, REFRESH_INTERVAL);
+export const refreshOnlineStatus = async (cb) => {
+  await sleep(REFRESH_INTERVAL);
+
+  try {
+    await fetch("/health");
+
+    await cb();
+  } catch (err) {
+    // Offline, do nothing
+  }
+
+  refreshOnlineStatus(cb);
 };
