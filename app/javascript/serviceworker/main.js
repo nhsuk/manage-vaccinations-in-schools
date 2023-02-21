@@ -32,39 +32,42 @@ const defaultHandlerCB = async ({ request }) => {
   }
 };
 
-refreshOnlineStatus(async () => {
-  const requests = await getAllRequests();
-  requests.forEach(async (request) => {
-    console.debug(
-      "[Service Worker refreshOnlineStatus] sending request:",
-      request
-    );
-    try {
-      const response = await fetch(request.url, {
-        method: "PUT",
-        body: JSON.stringify(request.data),
-        redirect: "manual",
-      });
+const flushRequest = async (request) => {
+  console.debug(
+    "[Service Worker refreshOnlineStatus] sending request:",
+    request
+  );
+  try {
+    const response = await fetch(request.url, {
+      method: "PUT",
+      body: JSON.stringify(request.data),
+      redirect: "manual",
+    });
 
-      // Unfollowed redirects have a status code of 0
-      const requestSuccessful = response.status === 0;
+    // Unfollowed redirects have a status code of 0
+    const requestSuccessful = response.status === 0;
 
-      if (requestSuccessful) {
-        deleteRequest(request.id);
-      } else {
-        console.debug(
-          "[Service Worker refreshOnlineStatus] error sending request:",
-          request,
-          response
-        );
-      }
-    } catch (err) {
+    if (requestSuccessful) {
+      deleteRequest(request.id);
+    } else {
       console.debug(
         "[Service Worker refreshOnlineStatus] error sending request:",
-        err
+        request,
+        response
       );
     }
-  });
+  } catch (err) {
+    console.debug(
+      "[Service Worker refreshOnlineStatus] error sending request:",
+      err
+    );
+  }
+};
+
+refreshOnlineStatus(async () => {
+  const requests = await getAllRequests();
+
+  await Promise.all(requests.map(flushRequest));
 });
 
 self.addEventListener("message", messageHandler);
