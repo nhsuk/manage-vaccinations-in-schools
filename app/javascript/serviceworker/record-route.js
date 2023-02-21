@@ -4,7 +4,7 @@ import { saveRequest } from "./store";
 
 const getCampaignIdFromURL = (url) => url.match("/campaigns/(\\d+)/")[1];
 
-const campaignShowTemplateURL = (campaignId) =>
+const recordTemplateURL = (campaignId) =>
   `http://localhost:3000/campaigns/${campaignId}/children/record-template`;
 
 export const recordRoute = new RegExp(
@@ -20,7 +20,7 @@ export const recordRouteHandler = async ({ request }) => {
     var response = await fetch(request, { method: "POST" });
   } catch (err) {
     const campaignId = getCampaignIdFromURL(request.url);
-    const campaignUrl = campaignShowTemplateURL(campaignId);
+    const campaignUrl = recordTemplateURL(campaignId);
 
     saveRequest(clonedRequest);
 
