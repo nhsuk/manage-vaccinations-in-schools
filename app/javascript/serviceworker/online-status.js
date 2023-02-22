@@ -14,11 +14,25 @@ export const isOnline = () => online;
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+export const fetchWithTimeout = async (resource, options = {}) => {
+  const { timeout = 10000 } = options;
+  delete options.timeout;
+
+  const controller = new AbortController();
+  const abortTimerId = setTimeout(() => controller.abort(), timeout);
+  const response = await fetch(resource, {
+    ...options,
+    signal: controller.signal,
+  });
+  clearTimeout(abortTimerId);
+  return response;
+};
+
 export const refreshOnlineStatus = async (cb) => {
   await sleep(REFRESH_INTERVAL);
 
   try {
-    await fetch("/health");
+    await fetchWithTimeout("/health");
 
     await cb();
   } catch (err) {
