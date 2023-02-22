@@ -5,7 +5,7 @@ import { saveRequest } from "./store";
 const getCampaignIdFromURL = (url) => url.match("/campaigns/(\\d+)/")[1];
 
 const recordTemplateURL = (campaignId) =>
-  `http://localhost:3000/campaigns/${campaignId}/children/record-template`;
+  `/campaigns/${campaignId}/children/record-template`;
 
 export const recordRoute = new RegExp(
   "/campaigns/(\\d+)/children/(\\d+)/record$"
