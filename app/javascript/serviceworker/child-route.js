@@ -4,7 +4,7 @@ import { put, match } from "./cache";
 const getCampaignIdFromURL = (url) => url.match("/campaigns/(\\d+)/")[1];
 
 const campaignShowTemplateURL = (campaignId) =>
-  `http://localhost:3000/campaigns/${campaignId}/children/show-template`;
+  `/campaigns/${campaignId}/children/show-template`;
 
 export const childRoute = new RegExp("/campaigns/(\\d+)/children/(\\d+)$");
 
