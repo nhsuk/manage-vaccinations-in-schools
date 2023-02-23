@@ -24,13 +24,13 @@ gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
 group :development, :test do
   gem "debug", platforms: %i[mri mingw x64_mingw]
   gem "factory_bot_rails"
+  gem "pry-rails"
 end
 
 group :development do
   gem "annotate", require: false
   gem "dockerfile-rails", ">= 1.0.0"
   gem "prettier_print", require: false
-  gem "pry-rails"
   gem "rladr"
   gem "rubocop-govuk", require: false
   gem "solargraph", require: false
