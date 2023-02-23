@@ -30,6 +30,7 @@ group :development do
   gem "annotate", require: false
   gem "dockerfile-rails", ">= 1.0.0"
   gem "prettier_print", require: false
+  gem "pry-rails"
   gem "rladr"
   gem "rubocop-govuk", require: false
   gem "solargraph", require: false
