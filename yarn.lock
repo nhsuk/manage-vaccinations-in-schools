@@ -1484,6 +1484,16 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@playwright/test@^1.31.1":
+  version "1.31.1"
+  resolved "https://registry.yarnpkg.com/@playwright/test/-/test-1.31.1.tgz#39d6873dc46af135f12451d79707db7d1357455d"
+  integrity sha512-IsytVZ+0QLDh1Hj83XatGp/GsI1CDJWbyDaBGbainsh0p2zC7F4toUocqowmjS6sQff2NGT3D9WbDj/3K2CJiA==
+  dependencies:
+    "@types/node" "*"
+    playwright-core "1.31.1"
+  optionalDependencies:
+    fsevents "2.3.2"
+
 "@prettier/plugin-ruby@^3.2.2":
   version "3.2.2"
   resolved "https://registry.npmjs.org/@prettier/plugin-ruby/-/plugin-ruby-3.2.2.tgz"
@@ -3279,7 +3289,7 @@ fs.realpath@^1.0.0:
   resolved "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz"
   integrity sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==
 
-fsevents@^2.1.2, fsevents@^2.3.2, fsevents@~2.3.2:
+fsevents@2.3.2, fsevents@^2.1.2, fsevents@^2.3.2, fsevents@~2.3.2:
   version "2.3.2"
   resolved "https://registry.npmjs.org/fsevents/-/fsevents-2.3.2.tgz"
   integrity sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==
@@ -5166,6 +5176,11 @@ pkg-dir@^4.2.0:
   integrity sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==
   dependencies:
     find-up "^4.0.0"
+
+playwright-core@1.31.1:
+  version "1.31.1"
+  resolved "https://registry.yarnpkg.com/playwright-core/-/playwright-core-1.31.1.tgz#4deeebbb8fb73b512593fe24bea206d8fd85ff7f"
+  integrity sha512-JTyX4kV3/LXsvpHkLzL2I36aCdml4zeE35x+G5aPc4bkLsiRiQshU5lWeVpHFAuC8xAcbI6FDcw/8z3q2xtJSQ==
 
 posix-character-classes@^0.1.0:
   version "0.1.1"
