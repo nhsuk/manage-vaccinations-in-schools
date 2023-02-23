@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@prettier/plugin-ruby": "^3.2.2",
-    "cypress": "^12.5.1",
+    "cypress": "^12.6.0",
     "esbuild-jest": "^0.5.0",
     "eslint": "^8.34.0",
     "eslint-plugin-cypress": "^2.12.1",
