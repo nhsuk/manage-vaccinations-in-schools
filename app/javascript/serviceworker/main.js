@@ -1,35 +1,22 @@
 import { setDefaultHandler, registerRoute } from "workbox-routing";
+import { NetworkFirst, CacheOnly } from "workbox-strategies";
+
 import { isOnline, refreshOnlineStatus } from "./online-status";
-import { put, match } from "./cache";
 import { handler as messageHandler } from "./messages";
 import { childRoute, childRouteHandler } from "./child-route";
 import { recordRoute, recordRouteHandler } from "./record-route";
 import { getAllRequests, deleteRequest } from "./store";
 
-const defaultHandlerCB = async ({ request }) => {
-  console.debug("[Service Worker defaultHandlerCB] request:", request);
+const defaultHandler = async (event) => {
+  // Requests manually added to the cache (such as via .addAll) may have a Vary
+  // header. It will be different for requests cached through navigation versus
+  // ones cached via .add, so we should ignore it when matching. See:
+  // https://github.com/GoogleChrome/workbox/issues/1550#issuecomment-768002808
+  const options = { matchOptions: { ignoreVary: true } };
 
-  if (!isOnline()) {
-    return await match(request.url);
-  }
+  const Strategy = isOnline() ? NetworkFirst : CacheOnly;
 
-  try {
-    const response = await fetch(request);
-    console.debug(
-      "[Service Worker defaultHandlerCB] response:",
-      response.clone()
-    );
-
-    put(request, response.clone());
-    return response;
-  } catch (err) {
-    console.debug(
-      "[Service Worker defaultHandlerCB] no response, we're offline:",
-      err
-    );
-
-    return await match(request.url);
-  }
+  return new Strategy(options).handle(event);
 };
 
 const flushRequest = async (request) => {
@@ -74,4 +61,4 @@ self.addEventListener("message", messageHandler);
 console.debug("[Service Worker] registering routes");
 registerRoute(childRoute, childRouteHandler);
 registerRoute(recordRoute, recordRouteHandler, "POST");
-setDefaultHandler(defaultHandlerCB);
+setDefaultHandler(defaultHandler);
