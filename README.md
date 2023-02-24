@@ -171,18 +171,18 @@ To run the JS unit tests:
 yarn test
 ```
 
-To run the Cypress end to end tests use:
+To run the Playwright end to end tests use:
 
 ```bash
 yarn test:e2e
 # or
-yarn cypress run
+yarn playwright test
 ```
 
-Or open the Cypress app to interactively run the tests:
+To [generate tests interactively by clicking in a live browser](https://playwright.dev/docs/codegen):
 
 ```bash
-yarn cypress open
+yarn playwright codegen http://localhost:4000
 ```
 
 ### Licence
