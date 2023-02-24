@@ -17,6 +17,7 @@ gem "okcomputer"
 gem "pg", "~> 1.1"
 gem "propshaft"
 gem "puma", "~> 6.1"
+gem "silencer", require: false
 gem "stimulus-rails"
 gem "turbo-rails"
 gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]

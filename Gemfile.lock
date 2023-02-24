@@ -386,6 +386,7 @@ GEM
       rubocop-capybara (~> 2.17)
     ruby-progressbar (1.11.0)
     ruby2_keywords (0.0.5)
+    silencer (2.0.0)
     solargraph (0.48.0)
       backport (~> 1.2)
       benchmark
@@ -485,6 +486,7 @@ DEPENDENCIES
   rspec
   rspec-rails
   rubocop-govuk
+  silencer
   solargraph
   solargraph-rails
   stimulus-rails
