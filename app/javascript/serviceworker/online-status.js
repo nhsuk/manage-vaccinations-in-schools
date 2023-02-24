@@ -32,7 +32,7 @@ export const refreshOnlineStatus = async (cb) => {
   await sleep(REFRESH_INTERVAL);
 
   try {
-    await fetchWithTimeout("/health");
+    await fetchWithTimeout("/ping");
 
     await cb();
   } catch (err) {

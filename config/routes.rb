@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   root to: redirect("/dashboard")
   get "/dashboard", to: "dashboard#index"
 
+  get "/ping" => proc { [200, {}, ["PONG"]] }
+
   resources :campaigns, only: %i[index show] do
     resources :children,
               only: %i[index show],
