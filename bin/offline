@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -e
+
+port=4444
+
+if nc -z localhost $port; then
+  echo "Already offline, server running on http://localhost:$port"
+  exit 0
+fi
+
+touch tmp/offline.txt && kill -USR2 $(cat tmp/pids/server.pid)
+
+while ! nc -z localhost $port; do
+  sleep 0.1
+done
+
+echo "Now offline, server running on http://localhost:$port"
