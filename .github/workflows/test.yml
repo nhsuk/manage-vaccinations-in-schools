@@ -97,3 +97,51 @@ jobs:
           token: ${{ secrets.SLACK_TOKEN }}
           channels: proj_nhs_tech_logs
           message-text: "Cypress tests failed. Results attached. ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+  playwright:
+    timeout-minutes: 60
+    name: Playwright
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13.5
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/record_childrens_vaccinations_development
+      RAILS_ENV: development
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .tool-versions
+          bundler-cache: true
+
+      - name: Setup app
+        run: bin/setup
+
+      - name: Setup data
+        run: bundle exec rake load_campaign_example
+
+      - name: Install Playwright Browsers
+        run: yarn playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: yarn playwright test
+
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
