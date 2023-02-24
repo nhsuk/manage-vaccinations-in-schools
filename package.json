@@ -35,7 +35,8 @@
   "jest": {
     "collectCoverage": true,
     "testPathIgnorePatterns": [
-      "node_modules/"
+      "node_modules/",
+      "tests"
     ],
     "transformIgnorePatterns": [],
     "testEnvironment": "jsdom",
