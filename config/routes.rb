@@ -4,6 +4,8 @@ Rails.application.routes.draw do
 
   get "/ping" => proc { [200, {}, ["PONG"]] }
 
+  get "/reset", to: "dev#reset" if Rails.env.development?
+
   resources :campaigns, only: %i[index show] do
     resources :children,
               only: %i[index show],
