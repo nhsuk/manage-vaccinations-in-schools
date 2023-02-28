@@ -175,8 +175,6 @@ To run the Playwright end to end tests use:
 
 ```bash
 yarn test:e2e
-# or
-yarn playwright test
 ```
 
 To [generate tests interactively by clicking in a live browser](https://playwright.dev/docs/codegen):
