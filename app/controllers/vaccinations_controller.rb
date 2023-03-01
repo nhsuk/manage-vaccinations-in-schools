@@ -21,14 +21,8 @@ class VaccinationsController < ApplicationController
 
   def record
     @child.update!(seen: "Vaccinated")
-    if Settings.features.fhir_server_integration
-      imm =
-        ImmunizationFHIRBuilder.new(
-          patient_identifier: @child.nhs_number,
-          occurrence_date_time: Time.zone.now
-        )
-      imm.immunization.create # rubocop:disable Rails/SaveBang
-    end
+    create_immunization
+
     flash[:success] = { title: "Record saved" }
     redirect_to campaign_vaccinations_path(@campaign)
   end
@@ -75,5 +69,16 @@ class VaccinationsController < ApplicationController
 
   def set_children
     @children = @campaign.children.order(:first_name, :last_name)
+  end
+
+  def create_immunization
+    if Settings.features.fhir_server_integration
+      imm =
+        ImmunizationFHIRBuilder.new(
+          patient_identifier: @child.nhs_number,
+          occurrence_date_time: Time.zone.now
+        )
+      imm.immunization.create # rubocop:disable Rails/SaveBang
+    end
   end
 end
