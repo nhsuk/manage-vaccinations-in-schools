@@ -28,13 +28,9 @@ const flushRequest = async (request) => {
     const response = await fetch(request.url, {
       method: "PUT",
       body: JSON.stringify(request.data),
-      redirect: "manual",
     });
 
-    // Unfollowed redirects have a status code of 0
-    const requestSuccessful = response.status === 0;
-
-    if (requestSuccessful) {
+    if (response.status === 200) {
       deleteRequest(request.id);
     } else {
       console.debug(

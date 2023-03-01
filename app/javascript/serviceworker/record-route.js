@@ -22,7 +22,9 @@ export const recordRouteHandler = async ({ request }) => {
     const campaignId = getCampaignIdFromURL(request.url);
     const campaignUrl = recordTemplateURL(campaignId);
 
-    saveRequest(clonedRequest);
+    const url = clonedRequest.url + "-async";
+
+    saveRequest(url, clonedRequest);
 
     var response = await match(campaignUrl);
   }
