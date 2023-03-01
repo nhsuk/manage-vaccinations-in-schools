@@ -12,6 +12,7 @@ Rails.application.routes.draw do
               as: :vaccinations,
               controller: :vaccinations do
       put "record", on: :member
+      put "record-async", on: :member
       get "history", on: :member
       get "show-template", on: :collection
       get "record-template", on: :collection

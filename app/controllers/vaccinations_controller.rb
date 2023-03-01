@@ -1,8 +1,8 @@
 class VaccinationsController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: [:record]
+  skip_before_action :verify_authenticity_token, only: [:record_async]
 
   before_action :set_campaign
-  before_action :set_child, only: %i[show record history]
+  before_action :set_child, only: %i[show record record_async history]
   before_action :set_children, only: %i[index record_template]
 
   def index
@@ -25,6 +25,13 @@ class VaccinationsController < ApplicationController
 
     flash[:success] = { title: "Record saved" }
     redirect_to campaign_vaccinations_path(@campaign)
+  end
+
+  def record_async
+    @child.update!(seen: "Vaccinated")
+    create_immunization
+
+    render json: { success: true }
   end
 
   def history
