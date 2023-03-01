@@ -36,12 +36,12 @@ const openTx = async (mode: "readwrite" | "readonly") => {
   return db.transaction("requests", mode);
 };
 
-export const saveRequest = async (request: Request) => {
+export const saveRequest = async (url: string, request: Request) => {
   const requestData = await request.formData();
   const data = Object.fromEntries(requestData);
 
   const tx = await openTx("readwrite");
-  await tx.store.add({ url: request.url, data });
+  await tx.store.add({ url, data });
   await tx.done;
 };
 

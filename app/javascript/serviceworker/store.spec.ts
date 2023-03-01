@@ -23,7 +23,7 @@ describe("saveRequest and getAllRequests", () => {
 
     request.formData = formDataMock;
 
-    await saveRequest(request);
+    await saveRequest(request.url, request);
 
     const requests = await getAllRequests();
 
@@ -50,7 +50,7 @@ describe("deleteRequest", () => {
 
     request.formData = formDataMock;
 
-    await saveRequest(request);
+    await saveRequest(request.url, request);
 
     await deleteRequest(1);
 
