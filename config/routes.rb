@@ -6,6 +6,8 @@ Rails.application.routes.draw do
 
   get "/reset", to: "dev#reset" if Rails.env.development?
 
+  get "/csrf", to: "csrf#new"
+
   resources :campaigns, only: %i[index show] do
     resources :children,
               only: %i[index show],

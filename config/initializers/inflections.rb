@@ -11,4 +11,7 @@
 # end
 
 # These inflection rules are supported but not enabled by default:
-ActiveSupport::Inflector.inflections(:en) { |inflect| inflect.acronym "FHIR" }
+ActiveSupport::Inflector.inflections(:en) do |inflect|
+  inflect.acronym "FHIR"
+  inflect.acronym "CSRF"
+end
