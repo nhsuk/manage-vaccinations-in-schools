@@ -1,4 +1,4 @@
-# Record childrens vaccines -- Prototype
+# Record children’s vaccinations -- Prototype
 
 This is a service for recording children vaccinations with the NHS. This version
 is a prototype used for testing service designs and implementation technology.
