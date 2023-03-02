@@ -1,6 +1,4 @@
 class VaccinationsController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: [:record]
-
   before_action :set_campaign
   before_action :set_child, only: %i[show record history]
   before_action :set_children, only: %i[index record_template]
