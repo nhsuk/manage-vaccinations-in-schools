@@ -25,10 +25,15 @@ const flushRequest = async (request) => {
     request
   );
   try {
+    const csrf = await fetch("/csrf");
+    const { token } = await csrf.json();
     const response = await fetch(request.url, {
       method: "PUT",
       body: JSON.stringify(request.data),
       redirect: "manual",
+      headers: {
+        "X-CSRF-Token": token,
+      },
     });
 
     // Unfollowed redirects have a status code of 0
