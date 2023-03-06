@@ -3,7 +3,7 @@
   "private": "true",
   "dependencies": {
     "@hotwired/stimulus": "^3.2.1",
-    "esbuild": "^0.17.10",
+    "esbuild": "^0.17.11",
     "govuk-frontend": "4.5.0",
     "idb": "^7.1.1",
     "nhsuk-frontend": "^6.2.0",
