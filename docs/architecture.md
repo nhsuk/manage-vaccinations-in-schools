@@ -54,34 +54,36 @@ will be considered disposable and will be replaced by a production-ready system.
 C4Context
   title SAIS Record Child Vaccination Alpha
 
-  Person(sais, "SAIS Team Member")
+  Person_Ext(sais, "SAIS Team")
 
   Enterprise_Boundary(nhs, "NHS") {
-    System(serverApp, "Record Child Vaccination", "")
+    System(record, "Record Children's Vaccination", "")
     SystemDb(vaccineRecord, "Vaccination Record", "FHIR Server")
   }
 
-  Rel(sais, serverApp, "Uses")
-  Rel(serverApp, vaccineRecord, "View/Update patient vaccionation data")
+  Rel(sais, record, "Records Child Vaccination")
+  Rel(record, vaccineRecord, "Updates Child Vaccination History")
 ```
 
 ## Technical Context
 
 ```mermaid
 C4Context
-  title SAIS Record Childrens Vaccination Alpha
-
-  System(browserApp, "Browser App")
-
+  title Record Childrens Vaccination Technical
+  
+  left to right direction
+  
+  System(browser, "Web Browser")
+  
   Enterprise_Boundary(nhs, "NHS") {
     SystemDb(postgres, "PostgreSQL")
-    System(serverApp, "Record Child Vaccination", "")
+    System(record, "Record Children's Vaccination", "")
     SystemDb(vaccineRecord, "Vaccination Record", "FHIR Server")
   }
-
-  Rel(browserApp, serverApp, "Uses")
-  Rel(serverApp, vaccineRecord, "Updates / Retrieves")
-  Rel(serverApp, postgres, "Caches")
+  
+  Rel(browser, record, "Vaccination Record", "HTTPS")
+  Rel(record, vaccineRecord, "Vaccination Record", "HTTPS")
+  Rel(record, postgres, "Vaccination Record", "Postgres TLS")
 ```
 
 # Solution Strategy
