@@ -1,0 +1,168 @@
+:imagesdir: images
+
+:toc:
+
+= Architecture
+
+:numbered:
+
+== Introduction and Goals
+
+Provide a service to record childrens vaccinations in settings encountered by
+SAIS staff.
+
+=== Requirements Overview
+
+.Functional Requirements
+
+A certain amount of user research, prototyping and design has already been
+performed for this service. The goal of this system is to provide a
+higher-fidelity prototype to further test out design and to better understand
+user needs.
+
+- Allow SAIS teams to deliver vaccination campaigns.
+- Allow SAIS teams to record vaccinations administered to children as part of
+  these campaigns.
+- Allow SAIS teams to deliver campaigns in settings where there is no Internet
+  access, i.e. offline working.
+
+.Non-Functional Requirements
+
+This service is in alpha and it's primary purpose is to explore user needs
+through user research. Once the desired learnings have been achieved the system
+will be considered disposable and will be replaced by a production-ready system.
+
+- The system needs to be delivered in a short time frame, and to be flexible
+  enough to adapt to changes as required by service design.
+- The system must be responsive and available, however the number of users will
+  be small so scalibility and hours of operation requirements will be relaxed.
+
+=== Stakeholders
+
+== Architecture Constraints
+
+- The system must protect patient data and comply with all applicable laws and
+  regulations.
+- The system will need to be compatible with the central vaccination record
+  system.
+- The system must be deployed to a cloud platform, but also be platform agnostic
+  and not constrained to run on any one cloud platform.
+- The system will adhere to the applicable NHS architecture and design principles.
+
+== System Scope and Context
+
+=== Business Context
+
+[plantuml, target="business context"]
+....
+@startuml
+
+!include <C4/C4_Context.puml>
+
+LAYOUT_TOP_DOWN()
+LAYOUT_WITH_LEGEND()
+
+title Record Childrens Vaccination Business Context Overview
+
+Person(sais, "SAIS Team")
+Person_Ext(parents, "Parents")
+
+System(record, "Record Children's Vaccination", "")
+SystemDb(vaccineRecord, "Vaccination Record", "FHIR Server")
+SystemDb(pds, "PDS")
+
+System_Ext(notify, "GOV.UK Notify")
+
+Rel(sais, record, "Manages campaigns")
+Rel(sais, record, "Records Child Vaccination")
+Rel(parents, record, "Consent response")
+Rel(record, vaccineRecord, "Updates Child Vaccination History")
+Rel(record, pds, "Requests Patient Details")t
+Rel(record, notify, "Send consent notifications", "Rest API")
+Rel_U(notify, parents, "Consent notification", "Email")
+
+@enduml
+....
+
+SAIS Team::
+Team responsible for performing vaccinations on school-aged children.
+
+Parents::
+Parents are notified of the planned vaccination campaign and invited to give
+consent for their children to be vaccinated.
+
+Record Children's Vaccination Service::
+The service will be used by the SAIS team to record vaccinations. The
+vaccination will be transferred to the national vaccination record.
+
+Vaccination Record::
+Service which will hold a record of vaccinations for citizens across the NHS.
+This service is currently being designed and it's final form is yet to be
+determined, however any new service created will very likely use a Rest
+FHIR API.
++
+However, it is possible that in the interim this service will be DPS, which is
+built using Data Bricks and which uses file transfers for data input and output,
+so may present additional challenges.
+
+PDS (Personal Demographics Service)::
+Service which will allow us to look up NHS numbers for patients who don't know
+theirs. Crucial for properly identifying patients.
+
+GOV.UK Notify::
+Used to send notifications to parents about vaccination campaigns and consent.
+
+=== Technical Overview
+
+[plantuml, technical-context]
+....
+@startuml
+
+!include <C4/C4_Container.puml>
+
+LAYOUT_TOP_DOWN()
+
+
+title Record Children's Vaccination Business Context Overview
+
+Person(sais, "SAIS Team")
+Person_Ext(parents, "Parents")
+
+System_Boundary(record, "Record Children's Vaccination", "") {
+  Container(webapp, "Web Application", "Ruby on Rails, JavaScript")
+  ContainerDb(db, "Database", "PostgreSQL", $descr="Stores campaign and consent data")
+  Lay_R(webapp, db)
+}
+SystemDb(vaccineRecord, "Vaccination Record", "FHIR Server")
+SystemDb(pds, "PDS", "")
+
+System_Ext(notify, "GOV.UK Notify")
+
+Rel(sais, webapp, "Manages campaigns")
+Rel(sais, webapp, "Records Child Vaccination")
+BiRel(webapp, db, "Campaign data")
+Rel(parents, webapp, "Consent response")
+Rel(webapp, vaccineRecord, "Updates Child Vaccination History")
+Rel(webapp, pds, "Requests Patient Details")t
+Rel(webapp, notify, "Send consent notifications", "Rest API")
+Rel_U(notify, parents, "Consent notification", "Email")
+
+Lay_D(db, pds)
+Lay_D(db, vaccineRecord)
+Lay_D(db, notify)
+
+
+SHOW_FLOATING_LEGEND()
+Lay_Distance(LEGEND(), db, 1)
+
+@enduml
+....
+
+
+== Components
+
+- Authentication
+- Campaign management - creation, update, etc
+- Campaign operations and vaccination recording
+- Offline support - Browser-based component
+- FHIR server synchonisation
