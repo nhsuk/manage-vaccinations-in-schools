@@ -14,7 +14,11 @@ NOTE: This page is structured using asciidoc. GitHub does not automatically
 == Introduction and Goals
 
 Provide a service to record children's vaccinations in schools and during
-catch-up clinics.
+catch-up clinics. This is a single service that provides consent and
+point-of-care services for SAIS teams and parents, and which seamlessly
+integrates with the personal demographics service and the national vaccination
+record.
+
 
 === Requirements Overview
 
@@ -25,24 +29,44 @@ performed for this service. The goal of this system is to provide a
 higher-fidelity prototype to further test out design and to better understand
 user needs.
 
-- Allow SAIS teams to deliver vaccination campaigns.
-- Allow SAIS teams to record vaccinations administered to children as part of
-  these campaigns.
-- Allow SAIS teams to deliver campaigns in settings where there is no Internet
+* Allow SAIS teams to deliver vaccination campaigns.
+** Manage vaccination campaigns including location and cohort information.
+** Send out consent invites and allow parents to give or resufe consent
+** Record vaccinations administered.
+* Allow SAIS teams to deliver campaigns in settings where there is no Internet
   access, i.e. offline working.
 
 .Non-Functional Requirements
 
 This service is in alpha and its primary purpose is to explore user needs
-through user research. Once the desired learnings have been achieved the system
-will be considered disposable and will be replaced by a production-ready system.
+through user research. This will present a user-facing frontend for the SAIS
+team and parents to use, and will connect with PDS and the as-yet-undefined
+National Vaccination Record service. PDS will be used to populate missing
+patient data.
 
-- The system needs to be delivered in a short time frame, and to be flexible
-  enough to adapt to design changes.
-- The system must be responsive and available, however the number of users will
-  be small so scalability and hours of operation requirements will be relaxed.
+* Security
+** Simple authentication and authorisation model
+** Security model appropriate for scale of experiment
+** No integration with NHS CIS 2 or other SSO provider, this isn't required yet
+* Rapid development
+** Cloud-based deployment
+** CI & CD for fast and stable deployment
+** Web application framework that enables accelerated delivery
+* Data persistance
+** Data persisted between sessions and users
+** No long term data storage, i.e. beyond end of experiment
+** Support for offline functionality
+* Integration with NHS services
+** Send events to National Vaccination Record
+** Use People Finder (PDS) to retrieve patient's personal information, for patients whose NHS number isn't known
 
-=== Stakeholders
+We won't need:
+
+* Scalability
+* Authentication that's integrated with wider NHS or other SSO provider
+* Reporting capability
+* Long term maintainability of codebase
+* Long term storage of data
 
 == Architecture Constraints
 
