@@ -13,8 +13,8 @@ NOTE: This page is structured using asciidoc. GitHub does not automatically
 
 == Introduction and Goals
 
-Provide a service to record childrens vaccinations in settings encountered by
-SAIS staff.
+Provide a service to record children's vaccinations in schools and during
+catch-up clinics.
 
 === Requirements Overview
 
@@ -33,14 +33,14 @@ user needs.
 
 .Non-Functional Requirements
 
-This service is in alpha and it's primary purpose is to explore user needs
+This service is in alpha and its primary purpose is to explore user needs
 through user research. Once the desired learnings have been achieved the system
 will be considered disposable and will be replaced by a production-ready system.
 
 - The system needs to be delivered in a short time frame, and to be flexible
-  enough to adapt to changes as required by service design.
+  enough to adapt to design changes.
 - The system must be responsive and available, however the number of users will
-  be small so scalibility and hours of operation requirements will be relaxed.
+  be small so scalability and hours of operation requirements will be relaxed.
 
 === Stakeholders
 
@@ -48,7 +48,7 @@ will be considered disposable and will be replaced by a production-ready system.
 
 - The system must protect patient data and comply with all applicable laws and
   regulations.
-- The system will need to be compatible with the central vaccination record
+- The system will need to be compatible with the national vaccination record
   system.
 - The system must be deployed to a cloud platform, but also be platform agnostic
   and not constrained to run on any one cloud platform.
@@ -67,7 +67,7 @@ will be considered disposable and will be replaced by a production-ready system.
 LAYOUT_TOP_DOWN()
 LAYOUT_WITH_LEGEND()
 
-title Record Childrens Vaccination Business Context Overview
+title Record Children's Vaccination Business Context Overview
 
 Person(sais, "SAIS Team")
 Person_Ext(parents, "Parents")
