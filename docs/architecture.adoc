@@ -75,7 +75,7 @@ We won't need:
 
 === Business Context
 
-image::http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/nhsuk/record-childrens-vaccinations/rename-architecture-doc/docs/business-context.puml[Business context diagram]
+image::http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/nhsuk/record-childrens-vaccinations/rename-architecture-doc/docs/diagrams/business-context.puml[Business context diagram]
 
 SAIS Team::
 Team responsible for performing vaccinations on school-aged children.
@@ -107,7 +107,7 @@ Used to send notifications to parents about vaccination campaigns and consent.
 
 === Technical Overview
 
-image::http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/nhsuk/record-childrens-vaccinations/rename-architecture-doc/docs/technical-overview.puml[Technical overview diagram]
+image::http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/nhsuk/record-childrens-vaccinations/rename-architecture-doc/docs/diagrams/technical-overview.puml[Technical overview diagram]
 
 == Components
 
