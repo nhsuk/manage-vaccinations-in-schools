@@ -1,3 +1,25 @@
+:imagesdir: images
+:source-highlighter: pygments
+
+ifdef::env-github[]
+// If on GitHub, define attributes so we can find our diagram files and render
+// them.
+
+// The branch will be used to find the correct diagrams to render below.
+// When PRing changes to the diagrams you can change this attributes
+// temporarily to the name of the branch you're working on. But don't forget
+// to change it back to main before merging!!
+:github-branch: enable-inline-rendering-for-asciidoc
+
+:github-repo: nhsuk/record-childrens-vaccinations
+
+// URL for PlantUML Proxy. Using an attribute mainly because it's just tidier.
+:plantuml-proxy-url: http://www.plantuml.com/plantuml/proxy?cache=no&src=
+
+// Full path prefix we'll use for diagrams below.
+:diagram-path-url: {plantuml-proxy-url}https://raw.githubusercontent.com/{github-repo}/{github-branch}/docs
+endif::[]
+
 :toc:
 
 = Architecture
@@ -75,7 +97,16 @@ We won't need:
 
 === Business Context
 
-image::http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/nhsuk/record-childrens-vaccinations/rename-architecture-doc/docs/diagrams/business-context.puml[Business context diagram]
+ifdef::env-github[]
+image::{diagram-path-url}/diagrams/business-context.puml[Business context diagram]
+endif::[]
+
+ifndef::env-github[]
+[plantuml]
+----
+include::diagrams/business-context.puml[]
+----
+endif::[]
 
 SAIS Team::
 Team responsible for performing vaccinations on school-aged children.
@@ -107,7 +138,16 @@ Used to send notifications to parents about vaccination campaigns and consent.
 
 === Technical Overview
 
-image::http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/nhsuk/record-childrens-vaccinations/rename-architecture-doc/docs/diagrams/technical-overview.puml[Technical overview diagram]
+ifdef::env-github[]
+image::{diagram-path-url}/diagrams/technical-overview.puml[Technical overview diagram]
+endif::[]
+
+ifndef::env-github[]
+[plantuml]
+----
+include::diagrams/technical-overview.puml[]
+----
+endif::[]
 
 == Components
 
