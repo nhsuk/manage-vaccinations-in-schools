@@ -31,7 +31,7 @@ user needs.
 
 * Allow SAIS teams to deliver vaccination campaigns.
 ** Manage vaccination campaigns including location and cohort information.
-** Send out consent invites and allow parents to give or resufe consent
+** Send out consent invites and allow parents to give or refuse consent
 ** Record vaccinations administered.
 * Allow SAIS teams to deliver campaigns in settings where there is no Internet
   access, i.e. offline working.
