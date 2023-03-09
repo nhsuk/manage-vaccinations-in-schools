@@ -82,36 +82,7 @@ We won't need:
 
 === Business Context
 
-[plantuml, target="business context"]
-....
-@startuml
-
-!include <C4/C4_Context.puml>
-
-LAYOUT_TOP_DOWN()
-LAYOUT_WITH_LEGEND()
-
-title Record Children's Vaccination Business Context Overview
-
-Person(sais, "SAIS Team")
-Person_Ext(parents, "Parents")
-
-System(record, "Record Children's Vaccination", "")
-SystemDb(vaccineRecord, "Vaccination Record", "FHIR Server")
-SystemDb(pds, "PDS")
-
-System_Ext(notify, "GOV.UK Notify")
-
-Rel(sais, record, "Manages campaigns")
-Rel(sais, record, "Records Child Vaccination")
-Rel(parents, record, "Consent response")
-Rel(record, vaccineRecord, "Updates Child Vaccination History")
-Rel(record, pds, "Requests Patient Details")t
-Rel(record, notify, "Send consent notifications", "Rest API")
-Rel_U(notify, parents, "Consent notification", "Email")
-
-@enduml
-....
+image::http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/nhsuk/record-childrens-vaccinations/rename-architecture-doc/docs/business-context.puml[Business context diagram]
 
 SAIS Team::
 Team responsible for performing vaccinations on school-aged children.
@@ -143,50 +114,7 @@ Used to send notifications to parents about vaccination campaigns and consent.
 
 === Technical Overview
 
-[plantuml, technical-context]
-....
-@startuml
-
-!include <C4/C4_Container.puml>
-
-LAYOUT_TOP_DOWN()
-
-
-title Record Children's Vaccination Business Context Overview
-
-Person(sais, "SAIS Team")
-Person_Ext(parents, "Parents")
-
-System_Boundary(record, "Record Children's Vaccination", "") {
-  Container(webapp, "Web Application", "Ruby on Rails, JavaScript")
-  ContainerDb(db, "Database", "PostgreSQL", $descr="Stores campaign and consent data")
-  Lay_R(webapp, db)
-}
-SystemDb(vaccineRecord, "Vaccination Record", "FHIR Server")
-SystemDb(pds, "PDS", "")
-
-System_Ext(notify, "GOV.UK Notify")
-
-Rel(sais, webapp, "Manages campaigns")
-Rel(sais, webapp, "Records Child Vaccination")
-BiRel(webapp, db, "Campaign data")
-Rel(parents, webapp, "Consent response")
-Rel(webapp, vaccineRecord, "Updates Child Vaccination History")
-Rel(webapp, pds, "Requests Patient Details")t
-Rel(webapp, notify, "Send consent notifications", "Rest API")
-Rel_U(notify, parents, "Consent notification", "Email")
-
-Lay_D(db, pds)
-Lay_D(db, vaccineRecord)
-Lay_D(db, notify)
-
-
-SHOW_FLOATING_LEGEND()
-Lay_Distance(LEGEND(), db, 1)
-
-@enduml
-....
-
+image::http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/nhsuk/record-childrens-vaccinations/rename-architecture-doc/docs/technical-overview.puml[Technical overview diagram]
 
 == Components
 

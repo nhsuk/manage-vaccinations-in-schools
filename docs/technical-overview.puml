@@ -1,0 +1,40 @@
+@startuml
+
+!include <C4/C4_Container.puml>
+
+LAYOUT_TOP_DOWN()
+
+
+title Record Children's Vaccination Business Context Overview
+
+Person(sais, "SAIS Team")
+Person_Ext(parents, "Parents")
+
+System_Boundary(record, "Record Children's Vaccination", "") {
+  Container(webapp, "Web Application", "Ruby on Rails, JavaScript")
+  ContainerDb(db, "Database", "PostgreSQL", $descr="Stores campaign and consent data")
+  Lay_R(webapp, db)
+}
+SystemDb(vaccineRecord, "Vaccination Record", "FHIR Server")
+SystemDb(pds, "PDS", "")
+
+System_Ext(notify, "GOV.UK Notify")
+
+Rel(sais, webapp, "Manages campaigns")
+Rel(sais, webapp, "Records Child Vaccination")
+BiRel(webapp, db, "Campaign data")
+Rel(parents, webapp, "Consent response")
+Rel(webapp, vaccineRecord, "Updates Child Vaccination History")
+Rel(webapp, pds, "Requests Patient Details")t
+Rel(webapp, notify, "Send consent notifications", "Rest API")
+Rel_U(notify, parents, "Consent notification", "Email")
+
+Lay_D(db, pds)
+Lay_D(db, vaccineRecord)
+Lay_D(db, notify)
+
+
+SHOW_FLOATING_LEGEND()
+Lay_Distance(LEGEND(), db, 1)
+
+@enduml
