@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "postdeploy": "bundle exec rake db:schema:load load_campaign_example"
+  },
+  "environments": {
+    "review": {
+      "env": {
+        "RCVAPP__SUPPORT_USERNAME": "test",
+        "RCVAPP__SUPPORT_PASSWORD": "test"
+      }
+    }
+  }
+}
