@@ -39,3 +39,4 @@ coverage
 /playwright/.cache/
 
 docs/.asciidoctor
+docs/diagrams/images
