@@ -1,12 +1,23 @@
-NOTE: This page is structured using Asciidoc. GitHub does not automatically
-      render these unfortunately, however you can have in-browser rendering
-      using the
-      https://github.com/asciidoctor/asciidoctor-browser-extension[Asciidoctor
-      browser extension] and by viewing the raw file on GitHub. The extension
-      also supports diagram rendering, which may need enabling in the extension
-      preferences after installation.
-
 :imagesdir: images
+:source-highlighter: pygments
+
+ifdef::env-github[]
+// If on GitHub, define attributes so we can find our diagram files and render
+// them.
+
+// The branch will be used to find the correct diagrams to render below.
+// Change this when working on updates to the diagrams and want the new ones
+// reflected on GitHub, e.g. on a PR.
+:github-branch: add-offline-security-docs
+
+:github-repo: nhsuk/record-childrens-vaccinations
+
+// URL for PlantUML Proxy. Using an attribute mainly because it's just tidier.
+:plantuml-proxy-url: http://www.plantuml.com/plantuml/proxy?cache=no&src=
+
+// Full path prefix we'll use for diagrams below.
+:diagram-path-url: {plantuml-proxy-url}https://raw.githubusercontent.com/{github-repo}/{github-branch}/docs
+endif::[]
 
 # Offline Security
 
@@ -22,69 +33,31 @@ payload.
 
 To illustrate, a normal interaction with valid CSRF looks like this:
 
+ifdef::env-github[]
+image::{diagram-path-url}/diagrams/successful-post-with-csrf.puml[Successful POST with CSRF diagram]
+endif::[]
+
+ifndef::env-github[]
 [plantuml,align="center"]
-....
-@startuml
-title Valid POST with CSRF
-
-autoactivate on
-
-Browser -> record.nhs.uk: GET /patients/1/vaccinations/new
-return 200 OK
-
-note right
-    csrf="Unique CSRF Token"
-end note
-
-Browser -> record.nhs.uk: POST /patients/1/vaccinations
-note right
-    vaccine=mmr
-    vaccination_given=true
-    csrf="Unique CSRF Token"
-end note
-return 200 OK
-
-@enduml
-....
+----
+include::diagrams/successful-post-with-csrf.puml[]
+----
+endif::[]
 
 Then if a malicious site tries to piggy-back on the browser's already-established
 session, they would not have access to the unique CSRF token and would not be
 able to submit a malicious payload:
 
+ifdef::env-github[]
+image::{diagram-path-url}/diagrams/failed-malicious-post-with-csrf.puml[Failed malicious POST with CSRF diagram]
+endif::[]
+
+ifndef::env-github[]
 [plantuml,align="center"]
-....
-@startuml
-
-title Failed malicious POST with CSRF
-
-autoactivate on
-
-== User is still authenticated with record.nhs.uk ==
-
-Browser -> evil.site: GET /
-return 200 OK
-note right
-    // Malicious form that POSTs to record.nhs.uk
-    <form action="https://record.nhs.uk/patients/1/vaccinations" ...>
-      <input type="hidden" name="vaccination" value="mmr" />
-      <input type="hidden" name="vaccination_given" value="false" />
-    ...
-end note
-
-Browser -> record.nhs.uk: POST /patients/1/vaccinations
-note right
-    vaccine=mmr
-    vaccination_given=false
-end note
-Browser <-[#red]-x record.nhs.uk: 422 Unprocessable entity
-deactivate record.nhs.uk
-note right #FCC
-    Missing CSRF token
-end note
-
-@enduml
-....
-
+----
+include::diagrams/failed-malicious-post-with-csrf.puml[]
+----
+endif::[]
 
 ## Offline Mode
 
@@ -93,237 +66,83 @@ generated before going offline, and then submitted once the browser is back
 online. This triggers CSRF protection because the CSRF token is, most likely, no
 longer valid after the browser has been offline for some time:
 
+ifdef::env-github[]
+image::{diagram-path-url}/diagrams/failed-offline-post-with-outdated-csrf.puml[Failed offline POST with outdated CSRF diagram]
+endif::[]
+
+ifndef::env-github[]
 [plantuml,align="center"]
-....
-@startuml
-
-title Failed valid POST with outdated CSRF (Offline mode)
-
-autoactivate on
-
-group Prepare to work offline
-    Browser -> record.nhs.uk: GET /patients/1/vaccinations/new
-    return 200 OK
-    note right
-        // Form including CSRF token
-        csrf_token="CSRF token"
-    end note
-end
-
-== Browser goes offline ==
-
-group Perform offline work
-    Browser --> Browser: Records vaccination
-end
-
-== Browser comes back online ==
-
-group Update patient data
-    Browser -> record.nhs.uk: POST /patients/1/vaccinations/
-    note right
-        vaccination=mmr
-        vaccination_given=false
-        // This token is now old
-        csrf_token="CSRF token"
-    end note
-    Browser <-[#red]-x record.nhs.uk: 422 Unprocessable entity
-    deactivate record.nhs.uk
-    note right #FCC
-        Invalid CSRF token
-    end note
-end
-
-@enduml
-....
-
+----
+include::diagrams/failed-offline-post-with-outdated-csrf.puml[]
+----
+endif::[]
 
 The simplest way to make this work is to remove the need for a CSRF token altogether:
 
+ifdef::env-github[]
+image::{diagram-path-url}/diagrams/successful-offline-post-without-csrf.puml[Successful offline POST without CSRF diagram]
+endif::[]
 
+ifndef::env-github[]
 [plantuml,align="center"]
-....
-@startuml
-
-title Valid POST without CSRF (Offline mode)
-
-autoactivate on
-
-group Prepare to work offline
-    Browser -> record.nhs.uk: GET /patients/1/vaccinations/new
-    return 200 OK
-    note right
-        // HTML form without CSRF token
-    end note
-end
-
-== Browser goes offline ==
-
-group Perform offline work
-    Browser --> Browser: Records vaccination
-end
-
-== Browser comes back online ==
-
-group Update patient data
-    Browser -> record.nhs.uk: POST /patients/1/vaccinations/
-    note right
-        vaccination=mmr
-        vaccination_performed=false
-    end note
-    return 200 OK
-end
-
-@enduml
-....
+----
+include::diagrams/successful-offline-post-without-csrf.puml[]
+----
+endif::[]
 
 But that opens us up to malicious actors:
 
+ifdef::env-github[]
+image::{diagram-path-url}/diagrams/malicious-offline-post-without-csrf.puml[Malicious offline POST without CSRF diagram]
+endif::[]
+
+ifndef::env-github[]
 [plantuml,align="center"]
-....
-@startuml
-
-title Malicious POST without CSRF (Offline mode)
-
-autoactivate on
-
-== User is still authenticated with record.nhs.uk ==
-
-group Malicious update to patient data
-    Browser -> evil.site: GET /
-    return 200 OK
-    note right
-        // Malicious form that POSTs to record.nhs.uk
-        <form action="https://record.nhs.uk/patients/1/vaccinations" ...>
-          <input type="hidden" name="vaccination" value="mmr" />
-          <input type="hidden" name="vaccination_given" value="false" />
-        ...
-    end note
-
-    Browser -> record.nhs.uk: POST /patients/1/vaccinations
-    note right
-        vaccine=mmr
-        vaccination_performed=false
-        // No CSRF token needed
-    end note
-    return 200 OK
-end
-
-@enduml
-....
+----
+include::diagrams/malicious-offline-post-without-csrf.puml[]
+----
+endif::[]
 
 To secure this, we need to re-introduce a way to get a CSRF token through a GET
 request to record.nhs.uk. Doing a GET request from JS on a page from evil.site
 will trigger cross-site scripting protection in modern browsers:
 
+ifdef::env-github[]
+image::{diagram-path-url}/diagrams/successful-offline-post-with-csrf.puml[Successful offline POST with CSRF diagram]
+endif::[]
 
+ifndef::env-github[]
 [plantuml,align="center"]
-....
-@startuml
-title Offline POST with CSRF
-
-autoactivate on
-
-group Prepare to work offline
-    Browser -> record.nhs.uk: GET /patients/1/vaccinations/new
-    return 200 OK
-    note right
-        // HTML form without CSRF token
-    end note
-end
-
-== Browser goes offline ==
-
-group Perform offline work
-    Browser-->Browser: Records vaccination
-end
-
-== Browser comes back online ==
-
-Browser -> record.nhs.uk: GET /csrf
-return 200 OK
-note right: "New CSRF token"
-
-group Update patient data
-    Browser -> record.nhs.uk: POST /patients/1/vaccinations/
-    note right
-        vaccination=mmr
-        vaccination_performed=false
-        csrf="New CSRF token"
-    end note
-    return 200 OK
-end
-@enduml
-....
+----
+include::diagrams/successful-offline-post-with-csrf.puml[]
+----
+endif::[]
 
 And now when the attacker attempts to submit the form they are missing the required CSRF token:
 
+ifdef::env-github[]
+image::{diagram-path-url}/diagrams/failed-malicious-offline-post-without-csrf.puml[Failed malicious offline POST without CSRF diagram]
+endif::[]
+
+ifndef::env-github[]
 [plantuml,align="center"]
-....
-@startuml
-
-title Failed malicious POST without CSRF (Offline mode)
-
-autoactivate on
-
-== User is still authenticated with record.nhs.uk ==
-
-group Malicious update to patient data
-    Browser -> evil.site: GET /
-    return 200 OK
-    note right
-        // Malicious form that POSTs to record.nhs.uk
-        <form action="https://record.nhs.uk/patients/1/vaccinations" ...>
-          <input type="hidden" name="vaccination" value="mmr" />
-          <input type="hidden" name="vaccination_given" value="false" />
-        ...
-    end note
-
-    Browser -> record.nhs.uk: POST /patients/1/vaccinations/
-    note right
-        vaccination=mmr
-        vaccination_performed=false
-    end note
-
-    Browser <-[#red]-x record.nhs.uk: 422 Unprocessable entity
-    deactivate record.nhs.uk
-    note right #FCC
-        Missing CSRF token
-    end note
-end
-
-@enduml
-....
+----
+include::diagrams/failed-malicious-offline-post-without-csrf.puml[]
+----
+endif::[]
 
 The attacker is similarly blocked from retrieving the CSRF token by the
 browser's
 https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy[Same-origin
 policy]:
 
+ifdef::env-github[]
+image::{diagram-path-url}/diagrams/failed-malicious-get-of-csrf.puml[Failed malicious GET of CSRF diagram]
+endif::[]
+
+ifndef::env-github[]
 [plantuml,align="center"]
-....
-@startuml
-
-title Failed Malicious GET of CSRF
-
-autoactivate on
-
-== User is still authenticated with record.nhs.uk ==
-
-group Malicious update to patient data
-    Browser -> evil.site: GET /
-    return 200 OK
-    note right
-        // Malicious script attempts to retrieve a csrf token
-        fetch("https://record.nhs.uk/csrf")
-    end note
-
-    Browser -[#red]>x record.nhs.uk: GET /csrf
-    note right #FCC
-        Cross-Origin Request Blocked by browser
-    end note
-end
-
-@enduml
-....
-
-
+----
+include::diagrams/failed-malicious-get-of-csrf.puml[]
+----
+endif::[]
