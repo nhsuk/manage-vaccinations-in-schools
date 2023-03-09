@@ -1,0 +1,23 @@
+@startuml
+
+title Failed malicious GET of CSRF
+
+autoactivate on
+
+== User is still authenticated with record.nhs.uk ==
+
+group Malicious update to patient data
+    Browser -> evil.site: GET /
+    return 200 OK
+    note right
+        // Malicious script attempts to retrieve a csrf token
+        fetch("https://record.nhs.uk/csrf")
+    end note
+
+    Browser -[#red]>x record.nhs.uk: GET /csrf
+    note right #FCC
+        Cross-Origin Request Blocked by browser
+    end note
+end
+
+@enduml
