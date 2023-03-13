@@ -329,7 +329,7 @@ GEM
       zeitwerk (~> 2.5)
     rainbow (3.1.1)
     rake (13.0.6)
-    rbs (2.8.2)
+    rbs (3.0.4)
     regexp_parser (2.6.2)
     reline (0.3.2)
       io-console (~> 0.5)
@@ -421,7 +421,7 @@ GEM
       haml (>= 5.2, != 6.0.0)
       prettier_print (>= 1.0.0)
       syntax_tree (>= 5.0.1)
-    syntax_tree-rbs (0.5.1)
+    syntax_tree-rbs (1.0.0)
       prettier_print
       rbs
       syntax_tree (>= 2.0.1)
