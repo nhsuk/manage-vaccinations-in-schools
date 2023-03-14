@@ -65,6 +65,32 @@ With this in mind, our options for the prototype are:
 - Support for NHS or GOV.UK Design System unknown.
 - Not commonly used within NHS Digital.
 
+### Addendum 1 - 14-03-2023
+
+There is a [Tech Radar](https://radarpoc.github.io/RadarPOC/) which,
+despite the lack of any obvious branding, maps out the technologies in use at
+the NHS (click on the "APPLICATION RADAR" for "languages and frameworks" and
+other data). A snapshot of how this looks at the time of writing:
+
+![Shapshot of applicaiton tech radar](./snapshot-of-application-tech-radar.jpg)
+
+This confirms that even though Ruby is not a mainstream language, it's on the
+radar as a "proposed" language, suggesting that it is acceptable to use this
+prototyping purposes, if not for fully-fledged services.
+
+Additionally, the published [NHS Software Engineering Quality
+Framework](https://github.com/NHSDigital/software-engineering-quality-framework/blob/main/README.md),
+[NHS Service
+Standard](https://service-manual.nhs.uk/standards-and-technology/service-standard)
+and [NHS Architectural
+Principles](https://digital.nhs.uk/developer/nhs-digital-architecture/principles)
+do not prescribe which technology can be used, but rather what good software
+engineering and architecture looks like.
+
+We believe we can achieve the goals set out by these publications, especially
+seeing as the intention of what's being built is to serve the short-term goals
+of the alpha stage.
+
 ## Decision
 
 Of the options above, the team feels Ruby on Rails is the best placed in terms
