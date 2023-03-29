@@ -1,13 +1,13 @@
 import "fake-indexeddb/auto";
 import FDBFactory from "fake-indexeddb/lib/FDBFactory";
-import { add, getAll, destroy } from "./store";
+import { add, destroy, getByUrl, getAll } from "./store";
 
 beforeEach(() => {
   // Reset database https://github.com/dumbmatter/fakeIndexedDB/issues/40
   indexedDB = new FDBFactory();
 });
 
-describe("saveRequest and getAllRequests", () => {
+describe("add and getAll", () => {
   it("save and get the requests", async () => {
     await add("delayedRequests", "/api", { name: "John" });
 
@@ -27,7 +27,25 @@ describe("saveRequest and getAllRequests", () => {
   });
 });
 
-describe("deleteRequest", () => {
+describe("getByUrl", () => {
+  it("gets a request by url", async () => {
+    await add("delayedRequests", "/api", { name: "John" });
+
+    const request = await getByUrl("delayedRequests", "/api");
+
+    expect(request).toMatchInlineSnapshot(`
+      {
+        "body": {
+          "name": "John",
+        },
+        "id": 1,
+        "url": "/api",
+      }
+    `);
+  });
+});
+
+describe("destroy", () => {
   it("delete a request", async () => {
     await add("delayedRequests", "/api", { name: "John" });
 

@@ -58,6 +58,17 @@ export const destroy = async (storeName: StoreName, id: number) => {
   await tx.done;
 };
 
+export const getByUrl = async (
+  storeName: StoreName,
+  url: string
+): Promise<RequestObject | undefined> => {
+  const tx = await openTx(storeName, "readonly");
+  const request = await tx.store.index("url").get(url);
+  await tx.done;
+
+  return request;
+};
+
 export const getAll = async (
   storeName: StoreName
 ): Promise<RequestObject[]> => {
