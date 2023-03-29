@@ -3,7 +3,7 @@ import { openDB, DBSchema } from "idb";
 interface RequestObject {
   id?: number;
   url: string;
-  data: any;
+  body: any;
 }
 
 interface OfflineDatabase extends DBSchema {
@@ -36,12 +36,9 @@ const openTx = async (mode: "readwrite" | "readonly") => {
   return db.transaction("requests", mode);
 };
 
-export const saveRequest = async (request: Request) => {
-  const requestData = await request.formData();
-  const data = Object.fromEntries(requestData);
-
+export const saveRequest = async (url: string, body: any) => {
   const tx = await openTx("readwrite");
-  await tx.store.add({ url: request.url, data });
+  await tx.store.add({ url, body });
   await tx.done;
 };
 

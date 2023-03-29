@@ -1,13 +1,6 @@
-import "jest-fetch-mock";
 import "fake-indexeddb/auto";
 import FDBFactory from "fake-indexeddb/lib/FDBFactory";
 import { saveRequest, getAllRequests, deleteRequest } from "./store";
-
-const formDataMock = jest.fn(() => {
-  const form = new FormData();
-  form.append("name", "John");
-  return Promise.resolve(form);
-});
 
 beforeEach(() => {
   // Reset database https://github.com/dumbmatter/fakeIndexedDB/issues/40
@@ -16,21 +9,14 @@ beforeEach(() => {
 
 describe("saveRequest and getAllRequests", () => {
   it("save and get the requests", async () => {
-    const request = new Request("/api", {
-      method: "POST",
-      body: JSON.stringify({ name: "John" }),
-    });
-
-    request.formData = formDataMock;
-
-    await saveRequest(request);
+    await saveRequest("/api", { name: "John" });
 
     const requests = await getAllRequests();
 
     expect(requests).toMatchInlineSnapshot(`
       [
         {
-          "data": {
+          "body": {
             "name": "John",
           },
           "id": 1,
@@ -43,14 +29,7 @@ describe("saveRequest and getAllRequests", () => {
 
 describe("deleteRequest", () => {
   it("delete a request", async () => {
-    const request = new Request("/api", {
-      method: "POST",
-      body: JSON.stringify({ name: "John" }),
-    });
-
-    request.formData = formDataMock;
-
-    await saveRequest(request);
+    await saveRequest("/api", { name: "John" });
 
     await deleteRequest(1);
 
