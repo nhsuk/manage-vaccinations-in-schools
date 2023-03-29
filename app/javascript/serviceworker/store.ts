@@ -7,7 +7,7 @@ interface RequestObject {
 }
 
 interface OfflineDatabase extends DBSchema {
-  requests: {
+  delayedRequests: {
     key: number;
     value: RequestObject;
   };
@@ -26,14 +26,14 @@ const DB_VERSION = 1;
 const openTx = async (mode: "readwrite" | "readonly") => {
   const db = await openDB<OfflineDatabase>(DB_NAME, DB_VERSION, {
     upgrade(db: Db) {
-      db.createObjectStore("requests", {
+      db.createObjectStore("delayedRequests", {
         keyPath: "id",
         autoIncrement: true,
       });
     },
   });
 
-  return db.transaction("requests", mode);
+  return db.transaction("delayedRequests", mode);
 };
 
 export const saveRequest = async (url: string, body: any) => {
