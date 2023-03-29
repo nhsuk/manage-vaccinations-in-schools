@@ -8,7 +8,7 @@ jest.mock("./store");
 
 const url = "/campaigns/1/children/2/record";
 const request = new Request(url);
-request.formData = () => Promise.resolve("foo");
+request.formData = () => Promise.resolve([["foo", "bar"]]);
 
 describe("recordRoute", () => {
   test("matches correctly", () => {

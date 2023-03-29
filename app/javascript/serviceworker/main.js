@@ -5,7 +5,7 @@ import { isOnline, refreshOnlineStatus } from "./online-status";
 import { handler as messageHandler } from "./messages";
 import { childRoute, childRouteHandler } from "./child-route";
 import { recordRoute, recordRouteHandler } from "./record-route";
-import { getAllRequests, deleteRequest } from "./store";
+import { getAll, destroy } from "./store";
 
 const setDefaultHandler = () => {
   self.addEventListener("fetch", (event) => {
@@ -25,7 +25,7 @@ const flushRequest = async (request) => {
     const { token } = await csrf.json();
     const response = await fetch(request.url, {
       method: "PUT",
-      body: JSON.stringify(request.data),
+      body: JSON.stringify(request.body),
       redirect: "manual",
       headers: {
         "X-CSRF-Token": token,
@@ -36,7 +36,7 @@ const flushRequest = async (request) => {
     const requestSuccessful = response.status === 0;
 
     if (requestSuccessful) {
-      deleteRequest(request.id);
+      destroy("delayedRequests", request.id);
     } else {
       console.debug(
         "[Service Worker refreshOnlineStatus] error sending request:",
@@ -53,7 +53,7 @@ const flushRequest = async (request) => {
 };
 
 refreshOnlineStatus(async () => {
-  const requests = await getAllRequests();
+  const requests = await getAll("delayedRequests");
 
   await Promise.all(requests.map(flushRequest));
 });
