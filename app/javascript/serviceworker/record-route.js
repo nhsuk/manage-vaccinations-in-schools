@@ -12,6 +12,7 @@ export const recordRoute = new RegExp(
 );
 
 export const recordRouteHandler = async ({ request }) => {
+  const data = await request.formData();
   const clonedRequest = request.clone();
 
   try {
@@ -22,7 +23,7 @@ export const recordRouteHandler = async ({ request }) => {
     const campaignId = getCampaignIdFromURL(request.url);
     const campaignUrl = recordTemplateURL(campaignId);
 
-    saveRequest(clonedRequest);
+    saveRequest(clonedRequest.url, data);
 
     var response = await match(campaignUrl);
   }
