@@ -1,5 +1,7 @@
 import { openDB, DBSchema } from "idb";
 
+type StoreName = "delayedRequests";
+
 interface RequestObject {
   id?: number;
   url: string;
@@ -23,7 +25,7 @@ interface Db {
 const DB_NAME = "offline";
 const DB_VERSION = 1;
 
-const openTx = async (mode: "readwrite" | "readonly") => {
+const openTx = async (storeName: StoreName, mode: "readwrite" | "readonly") => {
   const db = await openDB<OfflineDatabase>(DB_NAME, DB_VERSION, {
     upgrade(db: Db) {
       db.createObjectStore("delayedRequests", {
@@ -33,23 +35,25 @@ const openTx = async (mode: "readwrite" | "readonly") => {
     },
   });
 
-  return db.transaction("delayedRequests", mode);
+  return db.transaction(storeName, mode);
 };
 
-export const saveRequest = async (url: string, body: any) => {
-  const tx = await openTx("readwrite");
+export const add = async (storeName: StoreName, url: string, body: any) => {
+  const tx = await openTx(storeName, "readwrite");
   await tx.store.add({ url, body });
   await tx.done;
 };
 
-export const deleteRequest = async (id: number) => {
-  const tx = await openTx("readwrite");
+export const destroy = async (storeName: StoreName, id: number) => {
+  const tx = await openTx(storeName, "readwrite");
   await tx.store.delete(id);
   await tx.done;
 };
 
-export const getAllRequests = async (): Promise<RequestObject[]> => {
-  const tx = await openTx("readonly");
+export const getAll = async (
+  storeName: StoreName
+): Promise<RequestObject[]> => {
+  const tx = await openTx(storeName, "readonly");
   const requests = await tx.store.getAll();
   await tx.done;
 
