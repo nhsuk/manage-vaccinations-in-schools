@@ -12,26 +12,34 @@ interface OfflineDatabase extends DBSchema {
   delayedRequests: {
     key: number;
     value: RequestObject;
+    indexes: { url: string };
+  };
+  cachedResponses: {
+    key: number;
+    value: RequestObject;
+    indexes: { url: string };
   };
 }
 
-interface Db {
-  createObjectStore: (
-    arg0: string,
-    arg1: { keyPath: string; autoIncrement: boolean }
-  ) => void;
-}
-
 const DB_NAME = "offline";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 const openTx = async (storeName: StoreName, mode: "readwrite" | "readonly") => {
   const db = await openDB<OfflineDatabase>(DB_NAME, DB_VERSION, {
-    upgrade(db: Db) {
-      db.createObjectStore("delayedRequests", {
+    upgrade(db) {
+      const delayedStore = db.createObjectStore("delayedRequests", {
         keyPath: "id",
         autoIncrement: true,
       });
+
+      delayedStore.createIndex("url", "url", { unique: false });
+
+      const cachedStore = db.createObjectStore("cachedResponses", {
+        keyPath: "id",
+        autoIncrement: true,
+      });
+
+      cachedStore.createIndex("url", "url", { unique: true });
     },
   });
 
