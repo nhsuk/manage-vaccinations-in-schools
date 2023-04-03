@@ -16,7 +16,7 @@ gem "jsbundling-rails"
 gem "okcomputer"
 gem "pg", "~> 1.4"
 gem "propshaft"
-gem "puma", "~> 6.1"
+gem "puma", "~> 6.2"
 gem "silencer", require: false
 gem "stimulus-rails"
 gem "turbo-rails"
