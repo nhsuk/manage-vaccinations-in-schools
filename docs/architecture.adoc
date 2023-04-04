@@ -206,13 +206,15 @@ vaccination event data may be kept in this store until the end of the pilot.
 
 == Runtime View
 
-For the most part the Record Children's Vaccinations service is a standard
-server-rendered web application. HTML pages are rendered on the server and
-delivered along with CSS and Javascript to the client. Users login to the service
-using a standard login page, and as is standard with Ruby on Rails apps,
+The Record Children's Vaccinations service is built largely as a standard
+server-rendered web application: HTML pages are rendered on the server and
+delivered along with CSS and Javascript to the client. Users login to the
+service using a standard login page, and as is standard with Ruby on Rails apps,
 resources are exposed with REST-like paths using an MVC approach to separate
-concerns on the server. This app mostly follows common conventions here, with
-the notable exception of offline support.
+concerns on the server.
+
+There is a notable exception made to this pattern, though, to support offline
+working.
 
 === Offline support
 
