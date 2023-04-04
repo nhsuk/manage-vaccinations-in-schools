@@ -1,0 +1,116 @@
+ifdef::env-github[]
+// If on GitHub, define attributes so we can find our diagram files and render
+// them.
+
+// The branch will be used to find the correct diagrams to render below.
+// When PRing changes to the diagrams you can change this attributes
+// temporarily to the name of the branch you're working on. But don't forget
+// to change it back to main before merging!!
+:github-branch: update-architecture-docs
+
+:github-repo: nhsuk/record-childrens-vaccinations
+
+// URL for PlantUML Proxy. Using an attribute mainly because it's just tidier.
+:plantuml-proxy-url: http://www.plantuml.com/plantuml/proxy?cache=no&src=
+
+// Full path prefix we'll use for diagrams below.
+:diagram-path-url: {plantuml-proxy-url}https://raw.githubusercontent.com/{github-repo}/{github-branch}/docs
+endif::[]
+
+:toc:
+
+= Offline support
+
+A key feature required for the Record children's vaccines service is to allow
+clinical users to use parts of the system while not connected to the Internet.
+There are certain clinical settings where Internet access isn't available, for
+example in schools where there may be no mobile signal or wifi that the SAIS
+team can use.
+
+To accomplish this the standard patterns provided by server-rendered apps are
+insufficient. Aggressive cacheing can help accomodate viewing data, but updating
+records requires a more advanced approach.
+
+== Feature overview
+
+The current design of the service expects the SAIS team to save a campaign for
+offline use in advance using a button in the UI. They will then be able to
+retrieve and view saved patient information, including consent status and other
+info (e.g. past vaccination history), before performing the vaccination. When
+the vaccination is performed, the event will be recorded to their local system.
+Once reconnected to the Internet, the records will be uploaded from the local
+system to the service.
+
+== Technical approach
+
+=== Service Worker
+
+The service worker, a feature widely available in modern browsers, is used to
+implement the majority of offline functionality. This service worker sits
+between the website and the server and is responsible for the offline
+functionality. It does this by detecting whether the browser is online or
+offline, and implementing cacheing as appropriate.
+
+ifdef::env-github[]
+image::{diagram-path-url}/diagrams/service-worker.puml[Service worker diagram]
+endif::[]
+
+ifndef::env-github[]
+[plantuml,align="center"]
+----
+include::diagrams/service-worker.puml[]
+----
+endif::[]
+
+It contains the logic for preparing to work offline, caching pages and data, and
+syncing data back to the server once back online.
+
+
+== Security
+
+== Attack scenarios
+
+=== Javascript accessing cached data
+
+* User installs malicious browser extension
+* Javascript injection via unsafe HTTP (non-SSL) connection
+* Resource loaded from CDN is compromised.
+** We don't use CDN resources.
+** We can enable sub-resource integrity.
+
+This doesn't increase our vulnerability because any Javascript running in the
+browser will require that the user visit the service's website in order to be
+able to access the cached data (in IndexedDB). In this situation it doesn't
+matter if the data is cached locally, as the malicious code could simply
+download the data using the user's existing session.
+
+=== Javascript stealing session
+
+- Malicious actor uses Javascript to steal cookie and use it access the service
+  from another browser.
+-- We can use HttpOnly flag on cookies to disallow access to it from Javascript.
+
+Our implementation of cached data in the browser does not increase our
+vulnerability to this attack.
+
+=== Physical access to device
+
+
+
+
+[plantuml]
+----
+@startuml
+
+title Requests when browser is online
+
+participant "Front-End" as frontend
+participant "Service Worker" as sw
+
+frontend -> sw: fetch("/campaigns/1")
+sw -> server: fetch("/campaigns/1")
+server -> sw: HTML / JavaScript
+sw -> frontend: HTML / JavaScript
+
+@enduml
+----
