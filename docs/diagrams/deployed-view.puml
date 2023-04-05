@@ -1,0 +1,35 @@
+@startuml
+
+!include <C4/C4_Deployment.puml>
+
+title "Record Children's Vaccinations Deployed View"
+
+Boundary(heroku, "Heroku Platform", "AWS") {
+    Container_Ext(router, "Heroku Router", "HTTPS, HTTP/2, TLS 1.2")
+
+    Deployment_Node(dyno, "Heroku Dyno") {
+        Container(server, "Server App", "Ruby on Rails")
+    }
+
+    Deployment_Node(herokuPostgres, "Heroku Postgres") {
+        ContainerDb(db, "Database", "PostgreSQL")
+    }
+}
+
+Deployment_Node(comp, "Customer's computer") {
+    Deployment_Node(browser, "Web Browser") {
+        Container(webapp, "Web Application", "HTML and JavaScript")
+        Container(sw, "Service Worker", "JavaScript")
+        ContainerDb(indexedb, "IndexedDB", "IndexedDB")
+    }
+}
+
+Rel(router, server, "Fetch Resources", "HTTP")
+Rel(server, db, "Reads / Writes Resources", "Postgres, TLS")
+Rel_L(sw, router, "Fetch Resources", "HTTPS")
+Rel(webapp, sw, "Fetch Resources")
+Rel(sw, indexedb, "Read/Write Resources")
+
+SHOW_FLOATING_LEGEND()
+
+@enduml

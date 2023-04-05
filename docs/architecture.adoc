@@ -204,6 +204,14 @@ store would be used as temporary storage. However during the alpha phase
 uploading to the national vaccination record may not available, so the
 vaccination event data may be kept in this store until the end of the pilot.
 
+== Runtime View
+
+_To be completed._
+
+== Deployment
+
+include::deployment.adoc[leveloffset=+1,lines=24..-1]
+
 == Components
 
 * Authentication

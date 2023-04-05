@@ -1,0 +1,20 @@
+@startuml
+
+!include <C4/C4_Dynamic.puml>
+
+title "Record Children's Vaccination's Development process overview"
+
+Person(devA, "Alice", "Developer")
+Person(devB, "Bob", "Developer")
+
+System_Ext(heroku, "Heroku")
+System(github, "GitHub")
+
+Rel(devA, github, "Make changes")
+Rel(github, github, "Run tests")
+Rel(github, heroku, "Deploy to testing")
+Rel(devB, github, "Approve changes")
+Rel(github, github, "Merge and re-run tests")
+Rel(github, heroku, "Deploy to staging")
+
+@enduml
