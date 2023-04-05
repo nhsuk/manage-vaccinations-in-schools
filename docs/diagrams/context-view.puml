@@ -1,0 +1,27 @@
+@startuml
+
+!include <C4/C4_Context.puml>
+
+LAYOUT_TOP_DOWN()
+
+title "Record Children's Vaccination's Context Diagram"
+
+Person_Ext(sais, "SAIS Team")
+Person_Ext(parents, "Parents")
+
+System(record, "Record Children's Vaccination", "Ruby on Rails, HTML, Javascript")
+
+SystemDb_Ext(vaccineRecord, "Vaccination Record", "FHIR Server")
+SystemDb_Ext(pds, "PDS", "")
+
+AddRelTag("optional", $textColor="black", $lineColor="black", $lineStyle="dashed")
+
+Rel(sais, record, "Manage campaigns")
+Rel(sais, record, "Record Child Vaccination")
+Rel(parents, record, "Consent response")
+Rel(record, vaccineRecord, "Updates Child Vaccination History", $tags="optional")
+Rel(record, pds, "NHS Number Lookup", $tags="optional")
+
+SHOW_FLOATING_LEGEND()
+
+@enduml
