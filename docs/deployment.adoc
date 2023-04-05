@@ -1,0 +1,116 @@
+ifdef::env-github[]
+// If on GitHub, define attributes so we can find our diagram files and render
+// them.
+
+// The branch will be used to find the correct diagrams to render below.
+// When PRing changes to the diagrams you can change this attributes
+// temporarily to the name of the branch you're working on. But don't forget
+// to change it back to main before merging!!
+:github-branch: main
+
+:github-repo: nhsuk/record-childrens-vaccinations
+
+// URL for PlantUML Proxy. Using an attribute mainly because it's just tidier.
+:plantuml-proxy-url: http://www.plantuml.com/plantuml/proxy?cache=no&src=
+
+// Full path prefix we'll use for diagrams below.
+:diagram-path-url: {plantuml-proxy-url}https://raw.githubusercontent.com/{github-repo}/{github-branch}/docs
+endif::[]
+
+:toc:
+
+= Deployment
+
+NOTE: This service is currently in development and this document describes the
+      non-production environment of this app. It will be updated with details of
+      the production environment when they become available.
+
+
+The service is currently deployed to the Heroku platform (on AWS) within NHSD's
+tenancy. The deployment process relies on Heroku's deployment pipeline
+automation for simplification and standardisation. Client-side components are
+deployed to and run in the browser on the client's computers, including a
+service worker which creates and uses an IndexedDB for storing cached data.
+
+ifdef::env-github[]
+image::{diagram-path-url}/diagrams/deployed-view.puml[Component view diagram]
+endif::[]
+
+ifndef::env-github[]
+[plantuml,align="center"]
+----
+include::diagrams/deployed-view.puml[]
+----
+endif::[]
+
+== Deployment Process
+
+=== Development
+
+Deployment is tightly integrated with the development process. Here is an overview of that process:
+
+ifdef::env-github[]
+image::{diagram-path-url}/diagrams/development-process-overview.puml[Deployment process overview diagram]
+endif::[]
+
+ifndef::env-github[]
+[plantuml, align="center"]
+----
+include::diagrams/development-process-overview.puml[]
+----
+endif::[]
+
+=== Automated testing
+
+* Every change goes through a pull-request process. This consists of:
+** Automated code quality tests
+** Automated code functionality tests
+** Automated security checks to ensure secrets haven't been committed
+** Automated deployment to testing (AKA review) and staging environments to test
+   functionality and deployability.
+* The repo is scanned weekly by GitHub's Dependabot for old libraries; a pull
+  request is created for any updates required, the team is responsible for
+  merging these once ready.
+* Once merged into the main code branch automated tests are run again on the
+  merged code and then deployed to the production environment.
+
+=== Testing deployment
+
+Every pull request gets deployed to a testing environment using Heroku's Review
+apps, where changes are tested before being merged. These deployed environments
+are similar to the production environment, partially replicating their setup,
+helping to ensure the deployability of any changes.
+
+ifdef::env-github[]
+image::{diagram-path-url}/diagrams/testing-deployment-process.puml[Testing deployment process diagram]
+endif::[]
+
+ifndef::env-github[]
+[plantuml,align="center"]
+----
+include::diagrams/testing-deployment-process.puml[]
+----
+endif::[]
+
+=== Staging deployment
+
+Once a change is approved and the PR is merged, it is deployed to a staging
+environment. This environment will be used to test the deployability of the
+changes in a production-like environment.
+
+NOTE: Currently, the "staging" environment is being used to present and test
+      features that will show up in the production version, but without using
+      production data (i.e. real user data). Once a production environment has
+      been setup, a proper staging environment will be setup to replicate the
+      production environment.
+
+ifdef::env-github[]
+image::{diagram-path-url}/diagrams/staging-deployment-process.puml[Staging deployment process diagram]
+endif::[]
+
+ifndef::env-github[]
+[plantuml,align="center"]
+----
+include::diagrams/staging-deployment-process.puml[]
+----
+endif::[]

@@ -1,0 +1,28 @@
+@startuml
+
+!include <C4/C4_Dynamic.puml>
+
+title "Record Children's Vaccinations Staging Deployment Process"
+
+System_Ext(herokuAPI, "Heroku Platform API")
+Boundary(record, "Record Children's Vaccination", "Staging") {
+  Container(serverStaging, "Web Application", "Ruby on Rails")
+  ContainerDb(dbStaging, "Database", "PostgreSQL")
+}
+
+Person(devT, "Developer Ted")
+
+Boundary(github, "GitHub") {
+    Container(repo, "GitHub Code Repository")
+    Container(actions, "GitHub Actions")
+}
+
+Rel(devT, repo, "Merges PR")
+Rel(repo, actions, "Runs tests")
+Rel(repo, herokuAPI, "Runs deploy")
+Rel(herokuAPI, serverStaging, "Deploys app")
+Rel(serverStaging, dbStaging, "Updates schema")
+
+SHOW_FLOATING_LEGEND()
+
+@enduml
