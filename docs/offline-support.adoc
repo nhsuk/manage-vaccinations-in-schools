@@ -63,7 +63,68 @@ include::diagrams/service-worker.puml[]
 endif::[]
 
 It contains the logic for preparing to work offline, caching pages and data, and
-syncing data back to the server once back online.
+syncing data back to the server once back online. The following sequence
+diagrams illustrate the functionality.
+
+.Using the service while online
+Normally when online, requests, while intercepted by the Service worker, do
+straight to the server.
+
+ifdef::env-github[]
+image::{diagram-path-url}/diagrams/working-online-sequence-diagram.puml[Working online sequence diagram]
+endif::[]
+
+ifndef::env-github[]
+[plantuml,align="center"]
+----
+include::diagrams/working-online-sequence-diagram.puml[]
+----
+endif::[]
+
+
+.Saving a campaign for offline
+When the user is ready, they save a campaign to be run while offline:
+
+ifdef::env-github[]
+image::{diagram-path-url}/diagrams/saving-campaign-for-offline-sequence-diagram.puml[Saving campaign for offline sequense diagram]
+endif::[]
+
+ifndef::env-github[]
+[plantuml,align="center"]
+----
+include::diagrams/saving-campaign-for-offline-sequence-diagram.puml[]
+----
+endif::[]
+
+.Recording vaccinations while offline
+When the client goes offline, the Service worker continues to respond to
+front-end requests as if still online, but saves the vaccination record to be
+syncronised later.
+
+ifdef::env-github[]
+image::{diagram-path-url}/diagrams/recording-vaccination-while-offline-sequence-diagram.puml[Working online sequense diagram]
+endif::[]
+
+ifndef::env-github[]
+[plantuml,align="center"]
+----
+include::diagrams/recording-vaccination-while-offline-sequence-diagram.puml[]
+----
+endif::[]
+
+.Record Validation
+****
+There will be a component of record validation performed in the above steps. In
+typical server based apps this happens on the posting of the data; in offline
+mode validation is still done by the server, and has to wait until the client is
+back online and syncs the data. At this point any errors will be presented to
+the user.
+****
+
+IMPORTANT: The design of this service feature is still being designed and tested
+           with users. The exact sequence may change, e.g. the user may need to
+           manually initiate the synchronisation back to the server, etc.
+
 
 
 == Security
@@ -95,22 +156,3 @@ vulnerability to this attack.
 
 === Physical access to device
 
-
-
-
-[plantuml]
-----
-@startuml
-
-title Requests when browser is online
-
-participant "Front-End" as frontend
-participant "Service Worker" as sw
-
-frontend -> sw: fetch("/campaigns/1")
-sw -> server: fetch("/campaigns/1")
-server -> sw: HTML / JavaScript
-sw -> frontend: HTML / JavaScript
-
-@enduml
-----
