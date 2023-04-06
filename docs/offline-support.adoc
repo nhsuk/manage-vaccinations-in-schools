@@ -128,30 +128,91 @@ the user.
 
 == Security
 
-== Attack scenarios
+Ruby on Rails comes with many security features built-in, such as encryption of
+cookie-based session data, protection against CSRF, protection against SQL
+injection, etc. These are documented in the
+link:https://guides.rubyonrails.org/security.html[Securing Rails
+Applications] Rails Guide and aren't covered here.
 
-=== Javascript accessing cached data
+However, by implementing offline working mode we potentially create new
+vulnerabilities. These vulnerabilities, and how we might be able mitigate
+against them, are discussed here.
 
+=== Attack scenarios (Related to offline work)
+
+==== Javascript accessing cached data
+
+.Attack vectors
 * User installs malicious browser extension
 * Javascript injection via unsafe HTTP (non-SSL) connection
 * Resource loaded from CDN is compromised.
 ** We don't use CDN resources.
 ** We can enable sub-resource integrity.
 
-This doesn't increase our vulnerability because any Javascript running in the
-browser will require that the user visit the service's website in order to be
-able to access the cached data (in IndexedDB). In this situation it doesn't
-matter if the data is cached locally, as the malicious code could simply
-download the data using the user's existing session.
+Our offline implementation doesn't increase our vulnerability because any
+Javascript running in the browser will require that the user visit the service's
+website in order to be able to access the cached data (in IndexedDB). In this
+situation it doesn't matter if the data is cached locally, as the malicious code
+could simply download the data using the user's existing session.
 
-=== Javascript stealing session
+==== Javascript stealing session
 
-- Malicious actor uses Javascript to steal cookie and use it access the service
+.Attack vectors
+* Malicious actor uses Javascript to steal cookie and use it access the service
   from another browser.
--- We can use HttpOnly flag on cookies to disallow access to it from Javascript.
+** We can use HttpOnly flag on cookies to disallow access to it from Javascript.
 
 Our implementation of cached data in the browser does not increase our
-vulnerability to this attack.
+vulnerability to this attack. If an attacker steals a session this will give
+them access to the data on the server.
 
-=== Physical access to device
+==== Physical access to device
 
+.Attack vectors
+* Malicious actor gains physical access to the device by a SAIS user, and the
+  built-in OS security is weakened (e.g. automatic login enabled or the disk
+  isn't encrypted).
+
+Because our implementation of offline working stores data in a local database
+that is stored on-disk, if an attacker has physical access to the device they
+will be able to access the data stored there. The database used, IndexedDb, does
+not provide security measures to mitigate this kind of attack.
+
+As this attack requires physical access, we do consider it partially mitigated,
+however there is still residual risk, as described above. We are designing the
+service to mitigate the residual risk by implementing a user-provided password
+which will be used to encrypt the data before writting it to disk. This approach
+involves a non-insignificant burden on the user and the feature is still being
+designed. Once we have this designed we will update this documentation.
+
+Additionally, we will remove the data from the database stored on disk once the
+vaccination data has been sent (via POST) to the server.
+
+==== Remote root access to device
+
+.Attack vectors
+* Malicious actor gains root access to the computer used by the SAIS user,
+  either through phishing or other attacks.
+
+If a malicious actor gains root access to a relevant device, there is already
+the risk that they would be able to access the service website by piggy-backing
+on the SAIS user's session. For example, they may be able to access data on the
+server by hijacking the users session, similar to session stealing above.
+
+Additionally, however, and similar to the physical access attack above, a
+malicious user with remote root access may be able to find and access the data
+that has been stored on disk. We plan to mitigate this the same way as we
+mitigate the physical attack vector above, using encryption and removing the
+data after sending it to the server.
+
+==== CSRF attack
+
+.Attack vectors
+* Malicious actor posts data through the endpoint provided to clients to post
+  their data after offline working.
+
+We protect against this attack by implementing a CSRF token that is used
+specifically by the offline working mechanish. This ensures that any data posted
+to the server after offline working has a valid CSRF token. This attack and our
+approach to protecting against it is detailed in the
+link:offline-csrf-security.adoc[Offline CSRF Security doc].

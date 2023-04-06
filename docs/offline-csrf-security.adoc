@@ -8,7 +8,7 @@ ifdef::env-github[]
 // The branch will be used to find the correct diagrams to render below.
 // Change this when working on updates to the diagrams and want the new ones
 // reflected on GitHub, e.g. on a PR.
-:github-branch: main
+:github-branch: add-offline-docs
 
 :github-repo: nhsuk/record-childrens-vaccinations
 
@@ -19,7 +19,7 @@ ifdef::env-github[]
 :diagram-path-url: {plantuml-proxy-url}https://raw.githubusercontent.com/{github-repo}/{github-branch}/docs
 endif::[]
 
-# Offline Security
+# Offline CSRF Security
 
 ## CSRF Security
 
