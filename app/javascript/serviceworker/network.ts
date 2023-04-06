@@ -1,8 +1,7 @@
 import { match, put } from "./cache";
 
 export const cacheOnly = async (request: Request): Promise<Response> => {
-  const cachedResponse = await match(request, { ignoreVary: true });
-  return cachedResponse;
+  return await match(request, { ignoreVary: true });
 };
 
 export const networkFirst = async (request: Request): Promise<Response> => {
