@@ -43,6 +43,11 @@ system to the service.
 
 == Technical approach
 
+IMPORTANT: The design of this service feature is still being designed and tested
+           with users. The exact approach described here may change, e.g. the
+           user may need to manually initiate the synchronisation back to the
+           server, etc.
+
 === Service Worker
 
 The service worker, a feature widely available in modern browsers, is used to
@@ -120,12 +125,6 @@ mode validation is still done by the server, and has to wait until the client is
 back online and syncs the data. At this point any errors will be presented to
 the user.
 ****
-
-IMPORTANT: The design of this service feature is still being designed and tested
-           with users. The exact sequence may change, e.g. the user may need to
-           manually initiate the synchronisation back to the server, etc.
-
-
 
 == Security
 
