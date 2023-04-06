@@ -8,11 +8,11 @@ export const addAll = async (requests: RequestInfo[]): Promise<void> => {
 };
 
 export const match = async (
-  url: RequestInfo,
+  request: RequestInfo,
   options: CacheQueryOptions = {}
 ): Promise<Response | undefined> => {
   const cache = await caches.open(cacheName);
-  return await cache.match(url, options);
+  return await cache.match(request, options);
 };
 
 export const put = async (
