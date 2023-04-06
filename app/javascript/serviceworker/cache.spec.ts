@@ -1,3 +1,4 @@
+require("jest-fetch-mock").enableMocks();
 import { addAll, match, put } from "./cache";
 
 const addAllMock = jest.fn();
@@ -9,7 +10,7 @@ global.caches = {
     match: matchMock,
     put: putMock,
   })),
-};
+} as any;
 
 describe("addAll", () => {
   test("works", async () => {
@@ -27,7 +28,8 @@ describe("match", () => {
 
 describe("put", () => {
   test("works", async () => {
-    await put("foo", "bar");
-    expect(putMock).toHaveBeenCalledWith("foo", "bar");
+    const response = new Response();
+    await put("foo", response);
+    expect(putMock).toHaveBeenCalledWith("foo", response);
   });
 });
