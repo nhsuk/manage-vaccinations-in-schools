@@ -6,10 +6,11 @@ export const addAll = async (requests: RequestInfo[]): Promise<void> => {
 };
 
 export const match = async (
-  url: RequestInfo
+  url: RequestInfo,
+  options: CacheQueryOptions = {}
 ): Promise<Response | undefined> => {
   const cache = await caches.open(cacheName);
-  return await cache.match(url);
+  return await cache.match(url, options);
 };
 
 export const put = async (
