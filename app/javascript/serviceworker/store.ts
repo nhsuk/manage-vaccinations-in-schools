@@ -1,6 +1,6 @@
 import { openDB, DBSchema } from "idb";
 
-type StoreName = "delayedRequests";
+type StoreName = "cachedResponses" | "delayedRequests";
 
 interface RequestObject {
   id?: number;
