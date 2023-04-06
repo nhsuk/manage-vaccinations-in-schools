@@ -24,11 +24,11 @@ endif::[]
 A key feature required for the Record children's vaccines service is to allow
 clinical users to use parts of the system while not connected to the Internet.
 There are certain clinical settings where Internet access isn't available, for
-example in schools where there may be no mobile signal or wifi that the SAIS
+example in schools where there may be no mobile signal or WiFi that the SAIS
 team can use.
 
 To accomplish this the standard patterns provided by server-rendered apps are
-insufficient. Aggressive cacheing can help accomodate viewing data, but updating
+insufficient. Aggressive caching can help accommodate viewing data, but updating
 records requires a more advanced approach.
 
 == Feature overview
@@ -54,7 +54,7 @@ The service worker, a feature widely available in modern browsers, is used to
 implement the majority of offline functionality. This service worker sits
 between the website and the server and is responsible for the offline
 functionality. It does this by detecting whether the browser is online or
-offline, and implementing cacheing as appropriate.
+offline, and implementing caching as appropriate.
 
 ifdef::env-github[]
 image::{diagram-path-url}/diagrams/service-worker.puml[Service worker diagram]
@@ -72,7 +72,7 @@ syncing data back to the server once back online. The following sequence
 diagrams illustrate the functionality.
 
 .Using the service while online
-Normally when online, requests, while intercepted by the Service worker, do
+Normally when online, requests, while intercepted by the Service worker, go
 straight to the server.
 
 ifdef::env-github[]
@@ -91,7 +91,7 @@ endif::[]
 When the user is ready, they save a campaign to be run while offline:
 
 ifdef::env-github[]
-image::{diagram-path-url}/diagrams/saving-campaign-for-offline-sequence-diagram.puml[Saving campaign for offline sequense diagram]
+image::{diagram-path-url}/diagrams/saving-campaign-for-offline-sequence-diagram.puml[Saving campaign for offline sequence diagram]
 endif::[]
 
 ifndef::env-github[]
@@ -104,10 +104,10 @@ endif::[]
 .Recording vaccinations while offline
 When the client goes offline, the Service worker continues to respond to
 front-end requests as if still online, but saves the vaccination record to be
-syncronised later.
+synchronised later.
 
 ifdef::env-github[]
-image::{diagram-path-url}/diagrams/recording-vaccination-while-offline-sequence-diagram.puml[Working online sequense diagram]
+image::{diagram-path-url}/diagrams/recording-vaccination-while-offline-sequence-diagram.puml[Working online sequence diagram]
 endif::[]
 
 ifndef::env-github[]
@@ -138,29 +138,29 @@ However, by implementing offline working mode we potentially create new
 vulnerabilities. These vulnerabilities, and how we might be able mitigate
 against them, are discussed here.
 
-=== Attack scenarios (Related to offline work)
+=== Attack scenarios
 
-==== Javascript accessing cached data
+==== JavaScript accessing cached data
 
 .Attack vectors
 * User installs malicious browser extension
-* Javascript injection via unsafe HTTP (non-SSL) connection
+* JavaScript injection via unsafe HTTP (non-SSL) connection
 * Resource loaded from CDN is compromised.
 ** We don't use CDN resources.
 ** We can enable sub-resource integrity.
 
 Our offline implementation doesn't increase our vulnerability because any
-Javascript running in the browser will require that the user visit the service's
+JavaScript running in the browser will require that the user visit the service's
 website in order to be able to access the cached data (in IndexedDB). In this
 situation it doesn't matter if the data is cached locally, as the malicious code
 could simply download the data using the user's existing session.
 
-==== Javascript stealing session
+==== JavaScript stealing session
 
 .Attack vectors
-* Malicious actor uses Javascript to steal cookie and use it access the service
+* Malicious actor uses JavaScript to steal cookie and use it access the service
   from another browser.
-** We can use HttpOnly flag on cookies to disallow access to it from Javascript.
+** We can use HttpOnly flag on cookies to disallow access to it from JavaScript.
 
 Our implementation of cached data in the browser does not increase our
 vulnerability to this attack. If an attacker steals a session this will give
@@ -181,7 +181,7 @@ not provide security measures to mitigate this kind of attack.
 As this attack requires physical access, we do consider it partially mitigated,
 however there is still residual risk, as described above. We are designing the
 service to mitigate the residual risk by implementing a user-provided password
-which will be used to encrypt the data before writting it to disk. This approach
+which will be used to encrypt the data before writing it to disk. This approach
 involves a non-insignificant burden on the user and the feature is still being
 designed. Once we have this designed we will update this documentation.
 
@@ -212,7 +212,7 @@ data after sending it to the server.
   their data after offline working.
 
 We protect against this attack by implementing a CSRF token that is used
-specifically by the offline working mechanish. This ensures that any data posted
-to the server after offline working has a valid CSRF token. This attack and our
-approach to protecting against it is detailed in the
+specifically for the offline working mechanism. This ensures that any data
+posted to the server after offline working has a valid CSRF token. This attack
+and our approach to protecting against it is detailed in the
 link:offline-csrf-security.adoc[Offline CSRF Security doc].
