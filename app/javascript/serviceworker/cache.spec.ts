@@ -22,7 +22,7 @@ describe("addAll", () => {
 describe("match", () => {
   test("works", async () => {
     await match("foo");
-    expect(matchMock).toHaveBeenCalledWith("foo");
+    expect(matchMock).toHaveBeenCalledWith("foo", {});
   });
 });
 
