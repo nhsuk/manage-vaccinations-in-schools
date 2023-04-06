@@ -1,24 +1,16 @@
 require("jest-fetch-mock").enableMocks();
 import { cacheOnly, networkFirst } from "./network";
+import { match, put } from "./cache";
 
-const mockCache = {
-  match: jest.fn(() => "test"),
-  put: jest.fn(),
-};
-
-const mockCaches = {
-  open: jest.fn().mockResolvedValue(mockCache),
-};
-
-global.caches = mockCaches as any;
+jest.mock("./cache");
 
 describe("cacheOnly", () => {
   test("returns cached response if available", async () => {
+    (match as jest.Mock).mockReturnValueOnce("test");
     const request = new Request("https://example.com/test");
     const response = await cacheOnly(request);
 
-    expect(mockCaches.open).toHaveBeenCalled();
-    expect(mockCache.match).toHaveBeenCalledWith(request, { ignoreVary: true });
+    expect(match).toHaveBeenCalledWith(request, { ignoreVary: true });
     expect(response).toEqual("test");
   });
 });
@@ -28,20 +20,18 @@ describe("networkFirst", () => {
     const request = new Request("https://example.com/test");
     const response = await networkFirst(request);
 
-    expect(mockCaches.open).toHaveBeenCalled();
-    expect(mockCache.put).toHaveBeenCalled();
+    expect(put).toHaveBeenCalled();
     expect(response).toHaveProperty("status", 200);
   });
 
   test("returns cached response if network request fails", async () => {
-    // @ts-ignore
-    fetch.mockRejectedValueOnce(new Error("test"));
+    (fetch as jest.Mock).mockRejectedValueOnce(new Error("test"));
+    (match as jest.Mock).mockReturnValueOnce("test");
 
     const request = new Request("https://example.com/test");
     const response = await networkFirst(request);
 
-    expect(mockCaches.open).toHaveBeenCalled();
-    expect(mockCache.match).toHaveBeenCalledWith(request, { ignoreVary: true });
+    expect(match).toHaveBeenCalledWith(request, { ignoreVary: true });
     expect(response).toEqual("test");
   });
 });
