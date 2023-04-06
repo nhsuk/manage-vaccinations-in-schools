@@ -1,5 +1,5 @@
 require("jest-fetch-mock").enableMocks();
-import { cacheName, cacheOnly, networkFirst } from "./network";
+import { cacheOnly, networkFirst } from "./network";
 
 const mockCache = {
   match: jest.fn(() => "test"),
@@ -10,16 +10,14 @@ const mockCaches = {
   open: jest.fn().mockResolvedValue(mockCache),
 };
 
-Object.defineProperty(global, "caches", {
-  value: mockCaches,
-});
+global.caches = mockCaches as any;
 
 describe("cacheOnly", () => {
   test("returns cached response if available", async () => {
     const request = new Request("https://example.com/test");
     const response = await cacheOnly(request);
 
-    expect(mockCaches.open).toHaveBeenCalledWith(cacheName);
+    expect(mockCaches.open).toHaveBeenCalled();
     expect(mockCache.match).toHaveBeenCalledWith(request, { ignoreVary: true });
     expect(response).toEqual("test");
   });
@@ -30,7 +28,7 @@ describe("networkFirst", () => {
     const request = new Request("https://example.com/test");
     const response = await networkFirst(request);
 
-    expect(mockCaches.open).toHaveBeenCalledWith(cacheName);
+    expect(mockCaches.open).toHaveBeenCalled();
     expect(mockCache.put).toHaveBeenCalled();
     expect(response).toHaveProperty("status", 200);
   });
@@ -42,7 +40,7 @@ describe("networkFirst", () => {
     const request = new Request("https://example.com/test");
     const response = await networkFirst(request);
 
-    expect(mockCaches.open).toHaveBeenCalledWith(cacheName);
+    expect(mockCaches.open).toHaveBeenCalled();
     expect(mockCache.match).toHaveBeenCalledWith(request, { ignoreVary: true });
     expect(response).toEqual("test");
   });

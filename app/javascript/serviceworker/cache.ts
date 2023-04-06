@@ -1,4 +1,6 @@
-import { cacheName } from "./network";
+const defaultCacheName = "offline-v1";
+
+export const cacheName = defaultCacheName;
 
 export const addAll = async (requests: RequestInfo[]): Promise<void> => {
   const cache = await caches.open(cacheName);
