@@ -1,6 +1,4 @@
-const defaultCacheName = "offline-v1";
-
-export const cacheName = defaultCacheName;
+const cacheName = "offline-v1";
 
 export const addAll = async (requests: RequestInfo[]): Promise<void> => {
   const cache = await caches.open(cacheName);
