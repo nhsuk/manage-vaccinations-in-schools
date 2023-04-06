@@ -48,7 +48,14 @@ const openTx = async (storeName: StoreName, mode: "readwrite" | "readonly") => {
 
 export const add = async (storeName: StoreName, url: string, body: any) => {
   const tx = await openTx(storeName, "readwrite");
-  await tx.store.add({ url, body });
+  const request = await tx.store.index("url").get(url);
+
+  if (storeName === "cachedResponses" && request) {
+    await tx.store.put({ ...request, body });
+  } else {
+    await tx.store.add({ url, body });
+  }
+
   await tx.done;
 };
 
