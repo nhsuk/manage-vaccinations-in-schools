@@ -8,7 +8,7 @@ ifdef::env-github[]
 // The branch will be used to find the correct diagrams to render below.
 // Change this when working on updates to the diagrams and want the new ones
 // reflected on GitHub, e.g. on a PR.
-:github-branch: add-offline-docs
+:github-branch: main
 
 :github-repo: nhsuk/record-childrens-vaccinations
 
