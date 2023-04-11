@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="nhsuk-template">
   <head>
+    <meta charset="utf-8">
     <title><%= [yield(:page_title).presence, t('service.name')].compact.join(' - ') %></title>
 
     <%= csrf_meta_tags %>
