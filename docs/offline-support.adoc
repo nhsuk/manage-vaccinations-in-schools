@@ -53,11 +53,11 @@ IMPORTANT: The design of this service feature is still being designed and tested
 
 === Service Worker
 
-The service worker, a feature widely available in modern browsers, is used to
-implement the majority of offline functionality. This service worker sits
-between the website and the server and is responsible for the offline
-functionality. It does this by detecting whether the browser is online or
-offline, and implementing caching as appropriate.
+The service worker, a feature link:https://caniuse.com/serviceworkers[widely
+available in modern browsers], is used to implement the majority of offline
+functionality. This service worker sits between the website and the server and
+is responsible for the offline functionality. It does this by detecting whether
+the browser is online or offline, and implementing caching as appropriate.
 
 ifdef::env-github[]
 image::{diagram-path-url}/diagrams/service-worker.puml[Service worker diagram]
