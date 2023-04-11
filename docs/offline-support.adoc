@@ -33,13 +33,16 @@ records requires a more advanced approach.
 
 == Feature overview
 
-The current design of the service expects the SAIS team to save a campaign for
-offline use in advance using a button in the UI. They will then be able to
-retrieve and view saved patient information, including consent status and other
-info (e.g. past vaccination history), before performing the vaccination. When
-the vaccination is performed, the event will be recorded to their local system.
-Once reconnected to the Internet, the records will be uploaded from the local
-system to the service.
+The service's current design is for SAIS team members to be able to select
+specific campaigns to be saved (after being encrypted) for offline use. The user
+is then be able to retrieve and view saved patient information, including
+consent status and other info (e.g. past vaccination history), before performing
+the vaccination. When the vaccination is performed, the event will be recorded
+to their local system in an encrypted form. Once reconnected to the Internet,
+the records will be uploaded from the local system to the service.
+
+All data saved locally is encrypted using a user-supplied password, which is
+only ever stored in memory.
 
 == Technical approach
 
