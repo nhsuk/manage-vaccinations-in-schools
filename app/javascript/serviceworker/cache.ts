@@ -1,6 +1,6 @@
 import { add, getByUrl } from "./store";
 
-const url = (request: RequestInfo): string => new Request(request).url;
+const urlOf = (request: RequestInfo): string => new Request(request).url;
 
 export const addAll = async (requests: RequestInfo[]): Promise<void> => {
   const responses = await Promise.all(
@@ -8,14 +8,14 @@ export const addAll = async (requests: RequestInfo[]): Promise<void> => {
   );
 
   await Promise.all(
-    requests.map((request, index) => put(url(request), responses[index]))
+    requests.map((request, index) => put(urlOf(request), responses[index]))
   );
 };
 
 export const match = async (
   request: RequestInfo
 ): Promise<Response | undefined> => {
-  const requestObject = await getByUrl("cachedResponses", url(request));
+  const requestObject = await getByUrl("cachedResponses", urlOf(request));
   return requestObject ? new Response(requestObject.body) : undefined;
 };
 
@@ -24,5 +24,5 @@ export const put = async (
   response: Response
 ): Promise<void> => {
   const body = await response.clone().blob();
-  return await add("cachedResponses", url(request), body);
+  return await add("cachedResponses", urlOf(request), body);
 };
