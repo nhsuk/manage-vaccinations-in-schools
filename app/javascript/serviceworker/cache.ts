@@ -1,28 +1,29 @@
-import { add } from "./store";
+import { add, getByUrl } from "./store";
 
-const cacheName = "offline-v1";
+const url = (request: RequestInfo): string =>
+  typeof request === "string" ? request : request.url;
 
 export const addAll = async (requests: RequestInfo[]): Promise<void> => {
-  const cache = await caches.open(cacheName);
-  return await cache.addAll(requests);
+  const responses = await Promise.all(
+    requests.map((request) => fetch(request))
+  );
+
+  await Promise.all(
+    requests.map((request, index) => put(request, responses[index]))
+  );
 };
 
 export const match = async (
-  request: RequestInfo,
-  options: CacheQueryOptions = {}
+  request: RequestInfo
 ): Promise<Response | undefined> => {
-  const cache = await caches.open(cacheName);
-  return await cache.match(request, options);
+  const requestObject = await getByUrl("cachedResponses", url(request));
+  return requestObject ? new Response(requestObject.body) : undefined;
 };
 
 export const put = async (
   request: RequestInfo,
   response: Response
 ): Promise<void> => {
-  const url = typeof request === "string" ? request : request.url;
   const body = await response.clone().blob();
-  await add("cachedResponses", url, body);
-
-  const cache = await caches.open(cacheName);
-  return await cache.put(request, response);
+  return await add("cachedResponses", url(request), body);
 };
