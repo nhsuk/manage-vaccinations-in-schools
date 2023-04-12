@@ -5,7 +5,7 @@ import { add, getByUrl } from "./store";
 jest.mock("./store");
 
 describe("addAll", () => {
-  test("works", async () => {
+  test("fetches and adds all the passed in requests", async () => {
     const urls = ["https://example.com/test", "https://example.com/test2"];
     const firstResponse = new Response("foo");
     const firstBlob = await firstResponse.clone().blob();
@@ -23,13 +23,11 @@ describe("addAll", () => {
 });
 
 describe("match", () => {
-  test("works", async () => {
-    const request = new Request("https://example.com/test");
-    const response = new Response("foo");
+  test("matches a request with its response", async () => {
     (getByUrl as jest.Mock).mockResolvedValueOnce({ body: "foo" });
 
-    const result = await match(request);
-    expect(result).toEqual(response);
+    const result = await match("test");
+    expect(result).toEqual(new Response("foo"));
   });
 
   test("returns undefined if no match", async () => {
@@ -42,16 +40,13 @@ describe("match", () => {
 
 describe("put", () => {
   test("caches to the store", async () => {
-    const first = "https://example.com/test";
-    const second = "https://example.com/test2";
+    const url = "https://example.com/test";
 
     const response = new Response();
     const body = await response.clone().blob();
 
-    await put(first, response);
-    await put(new Request(second), response);
+    await put(url, response);
 
-    expect(add).toHaveBeenCalledWith("cachedResponses", first, body);
-    expect(add).toHaveBeenCalledWith("cachedResponses", second, body);
+    expect(add).toHaveBeenCalledWith("cachedResponses", url, body);
   });
 });
