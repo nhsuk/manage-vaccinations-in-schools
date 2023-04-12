@@ -1,49 +1,57 @@
 require("jest-fetch-mock").enableMocks();
 import { addAll, match, put } from "./cache";
-import { add } from "./store";
-
-jest.mock("./store");
-
-const addAllMock = jest.fn();
-const matchMock = jest.fn();
-const putMock = jest.fn();
-global.caches = {
-  open: jest.fn(() => ({
-    addAll: addAllMock,
-    match: matchMock,
-    put: putMock,
-  })),
-} as any;
+import { add, getByUrl } from "./store";
 
 jest.mock("./store");
 
 describe("addAll", () => {
   test("works", async () => {
-    await addAll(["foo"]);
-    expect(addAllMock).toHaveBeenCalledWith(["foo"]);
+    const urls = ["https://example.com/test", "https://example.com/test2"];
+    const firstResponse = new Response("foo");
+    const firstBlob = await firstResponse.clone().blob();
+    const secondResponse = new Response("bar");
+    const secondBlob = await secondResponse.clone().blob();
+
+    (fetch as jest.Mock)
+      .mockResolvedValueOnce(firstResponse)
+      .mockResolvedValueOnce(secondResponse);
+    await addAll(urls);
+
+    expect(add).toHaveBeenCalledWith("cachedResponses", urls[0], firstBlob);
+    expect(add).toHaveBeenCalledWith("cachedResponses", urls[1], secondBlob);
   });
 });
 
 describe("match", () => {
   test("works", async () => {
-    await match("foo");
-    expect(matchMock).toHaveBeenCalledWith("foo", {});
+    const request = new Request("https://example.com/test");
+    const response = new Response("foo");
+    (getByUrl as jest.Mock).mockResolvedValueOnce({ body: "foo" });
+
+    const result = await match(request);
+    expect(result).toEqual(response);
+  });
+
+  test("returns undefined if no match", async () => {
+    (getByUrl as jest.Mock).mockResolvedValueOnce(undefined);
+
+    const result = await match("test");
+    expect(result).toBeUndefined();
   });
 });
 
 describe("put", () => {
-  test("caches to the Cache API", async () => {
-    const response = new Response();
-    await put("foo", response);
-    expect(putMock).toHaveBeenCalledWith("foo", response);
-  });
-
   test("caches to the store", async () => {
-    const request = new Request("https://example.com/test");
-    const response = new Response();
-    await put(request, response);
+    const first = "https://example.com/test";
+    const second = "https://example.com/test2";
 
+    const response = new Response();
     const body = await response.clone().blob();
-    expect(add).toHaveBeenCalledWith("cachedResponses", request.url, body);
+
+    await put(first, response);
+    await put(new Request(second), response);
+
+    expect(add).toHaveBeenCalledWith("cachedResponses", first, body);
+    expect(add).toHaveBeenCalledWith("cachedResponses", second, body);
   });
 });
