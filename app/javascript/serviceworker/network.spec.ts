@@ -10,7 +10,7 @@ describe("cacheOnly", () => {
     const request = new Request("https://example.com/test");
     const response = await cacheOnly(request);
 
-    expect(match).toHaveBeenCalledWith(request, { ignoreVary: true });
+    expect(match).toHaveBeenCalledWith(request);
     expect(response).toEqual("test");
   });
 });
@@ -31,7 +31,7 @@ describe("networkFirst", () => {
     const request = new Request("https://example.com/test");
     const response = await networkFirst(request);
 
-    expect(match).toHaveBeenCalledWith(request, { ignoreVary: true });
+    expect(match).toHaveBeenCalledWith(request);
     expect(response).toEqual("test");
   });
 });
