@@ -4,6 +4,7 @@ class VaccinationsController < ApplicationController
   before_action :set_children, only: %i[index record_template]
 
   def index
+    set_disable_cache_headers
     respond_to do |format|
       format.html
       format.json { render json: @children.index_by(&:id) }
@@ -73,5 +74,11 @@ class VaccinationsController < ApplicationController
 
   def set_children
     @children = @campaign.children.order(:first_name, :last_name)
+  end
+
+  def set_disable_cache_headers
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
   end
 end
