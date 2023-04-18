@@ -18,8 +18,9 @@ describe("SimpleCrypto", () => {
   const payload = "Hello, world! 🌎";
   let secret: SimpleCrypto;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     secret = new SimpleCrypto(passphrase, salt);
+    await secret.init();
   });
 
   test("encrypts and decrypts a payload correctly", async () => {
