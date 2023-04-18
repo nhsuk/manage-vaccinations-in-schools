@@ -3,12 +3,14 @@
  *
  * Usage:
  *     const secret = new SimpleCrypto("my-passphrase", "my-salt");
+ *     await secret.init();
  *     const encrypted = await secret.encrypt("hello world");
  *     const decrypted = await secret.decrypt(encrypted);
  */
 export class SimpleCrypto {
   private passphrase: string;
   private salt: string;
+  private key?: CryptoKey;
 
   /**
    * @param passphrase The passphrase to use. This can be provided by the user and should be stored securely.
@@ -23,9 +25,9 @@ export class SimpleCrypto {
   /**
    * Parses the passphrase and salt into a determinstic CryptoKey that can be used for encryption and decryption.
    *
-   * @returns The CryptoKey.
-   */
-  private async getKey(): Promise<CryptoKey> {
+   * @returns A Promise that resolves when the key is ready.
+   * */
+  public async init(): Promise<void> {
     const encoder = new TextEncoder();
 
     // First, import an initial key from the passphrase. On its own, this key
@@ -42,7 +44,7 @@ export class SimpleCrypto {
     // Derive a new key from the initial key. Using salt makes it unique per
     // user, and using lots of iterations makes it computationally expensive to
     // brute force.
-    return crypto.subtle.deriveKey(
+    this.key = await crypto.subtle.deriveKey(
       {
         name: "PBKDF2",
         salt: encoder.encode(this.salt),
@@ -64,7 +66,6 @@ export class SimpleCrypto {
    */
   public async encrypt(plaintext: string): Promise<string> {
     const encoder = new TextEncoder();
-    const key = await this.getKey();
 
     // Each AES-GCM encryption requires a unique initialization vector, or
     // iv. The iv should be 12 bytes long and is safe to store in plaintext
@@ -76,7 +77,7 @@ export class SimpleCrypto {
         name: "AES-GCM",
         iv,
       },
-      key,
+      this.key,
       encoder.encode(plaintext)
     );
 
@@ -98,7 +99,6 @@ export class SimpleCrypto {
    */
   public async decrypt(ciphertextBase64: string): Promise<string> {
     const decoder = new TextDecoder();
-    const key = await this.getKey();
 
     const ciphertextBytes = self
       .atob(ciphertextBase64)
@@ -112,7 +112,7 @@ export class SimpleCrypto {
         name: "AES-GCM",
         iv,
       },
-      key,
+      this.key,
       ciphertext
     );
 
