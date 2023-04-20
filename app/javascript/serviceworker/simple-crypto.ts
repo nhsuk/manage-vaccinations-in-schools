@@ -1,3 +1,23 @@
+const bufferToBase64 = (buffer: ArrayBuffer): string => {
+  let binary = "";
+  const bytes = new Uint8Array(buffer);
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return window.btoa(binary);
+};
+
+const base64ToBuffer = (base64: string): ArrayBuffer => {
+  const binaryString = window.atob(base64);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes.buffer;
+};
+
 /**
  * This is an encryption class that uses the Web Crypto API to encrypt and decrypt a string using a passphrase and a salt.
  *
@@ -83,11 +103,8 @@ export class SimpleCrypto {
 
     // Prepend the iv to the ciphertext, so that it can be retrieved later,
     // then base64-encode the result.
-    return self.btoa(
-      String.fromCharCode.apply(null, [
-        ...new Uint8Array(iv),
-        ...new Uint8Array(ciphertext),
-      ])
+    return bufferToBase64(
+      new Uint8Array([...iv, ...new Uint8Array(ciphertext)])
     );
   }
 
@@ -100,12 +117,9 @@ export class SimpleCrypto {
   public async decrypt(ciphertextBase64: string): Promise<string> {
     const decoder = new TextDecoder();
 
-    const ciphertextBytes = self
-      .atob(ciphertextBase64)
-      .split("")
-      .map((c) => c.charCodeAt(0));
-    const iv = new Uint8Array(ciphertextBytes.slice(0, 12));
-    const ciphertext = new Uint8Array(ciphertextBytes.slice(12));
+    const ciphertextBuffer = base64ToBuffer(ciphertextBase64);
+    const iv = ciphertextBuffer.slice(0, 12);
+    const ciphertext = ciphertextBuffer.slice(12);
 
     const plaintext: Uint8Array = await crypto.subtle.decrypt(
       {
