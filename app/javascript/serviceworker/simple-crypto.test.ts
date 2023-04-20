@@ -30,4 +30,13 @@ describe("SimpleCrypto", () => {
     const decrypted = await secret.decrypt(encrypted);
     expect(decrypted).toEqual(payload);
   });
+
+  test("works with a large payload", async () => {
+    const largePayload = new Array(500000).fill("x").join("");
+    const encrypted = await secret.encrypt(largePayload);
+    expect(encrypted).not.toEqual(largePayload);
+
+    const decrypted = await secret.decrypt(encrypted);
+    expect(decrypted).toEqual(largePayload);
+  });
 });
