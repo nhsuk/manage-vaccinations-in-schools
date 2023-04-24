@@ -14,7 +14,7 @@ gem "govuk_design_system_formbuilder"
 gem "jbuilder"
 gem "jsbundling-rails"
 gem "okcomputer"
-gem "pg", "~> 1.4"
+gem "pg", "~> 1.5"
 gem "propshaft"
 gem "puma", "~> 6.2"
 gem "silencer", require: false
