@@ -1,15 +1,21 @@
-const bufferToBase64 = (buffer: ArrayBuffer): string => {
-  let binary = "";
-  const bytes = new Uint8Array(buffer);
-  const len = bytes.byteLength;
-  for (let i = 0; i < len; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return window.btoa(binary);
+// This converts a buffer to a base64 string using the FileReader API.
+// This appears to be the fastest method.
+// See https://stackoverflow.com/a/9458996/2490003
+const bufferToBase64 = (buffer: ArrayBuffer): Promise<string> => {
+  const blob = new Blob([buffer], { type: "application/octet-binary" });
+  const reader = new FileReader();
+
+  return new Promise((resolve, reject) => {
+    reader.onloadend = () => {
+      resolve((reader.result as string).split(",")[1]);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
 };
 
-const base64ToBuffer = (base64: string): ArrayBuffer => {
-  const binaryString = window.atob(base64);
+const base64ToBuffer = async (base64: string): Promise<ArrayBuffer> => {
+  const binaryString = self.atob(base64);
   const len = binaryString.length;
   const bytes = new Uint8Array(len);
   for (let i = 0; i < len; i++) {
@@ -103,7 +109,7 @@ export class SimpleCrypto {
 
     // Prepend the iv to the ciphertext, so that it can be retrieved later,
     // then base64-encode the result.
-    return bufferToBase64(
+    return await bufferToBase64(
       new Uint8Array([...iv, ...new Uint8Array(ciphertext)])
     );
   }
@@ -117,7 +123,7 @@ export class SimpleCrypto {
   public async decrypt(ciphertextBase64: string): Promise<string> {
     const decoder = new TextDecoder();
 
-    const ciphertextBuffer = base64ToBuffer(ciphertextBase64);
+    const ciphertextBuffer = await base64ToBuffer(ciphertextBase64);
     const iv = ciphertextBuffer.slice(0, 12);
     const ciphertext = ciphertextBuffer.slice(12);
 
