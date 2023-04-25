@@ -6,10 +6,11 @@ export const cacheOnly = async (request: Request): Promise<Response> => {
 
 export const networkFirst = async (request: Request): Promise<Response> => {
   try {
-    const networkResponse = await fetch(request);
-    await put(request, networkResponse.clone());
-    return networkResponse;
+    var networkResponse = await fetch(request);
   } catch (err) {
     return cacheOnly(request);
   }
+
+  await put(request, networkResponse.clone());
+  return networkResponse;
 };
