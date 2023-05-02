@@ -34,6 +34,9 @@ test("Works offline", async ({ page, context }) => {
 
   await page.getByTestId("save-offline").click();
 
+  // Wait for all the requests to finish and be cached
+  await page.waitForTimeout(100);
+
   await goOffline();
 
   await page.getByTestId("record").click();
