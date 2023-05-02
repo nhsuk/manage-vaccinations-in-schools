@@ -32,13 +32,22 @@ describe("messageHandler", () => {
 
   describe("SAVE_CAMPAIGN_FOR_OFFLINE", () => {
     test("works", () => {
-      handler(event("SAVE_CAMPAIGN_FOR_OFFLINE", ["1"]));
+      handler(
+        event("SAVE_CAMPAIGN_FOR_OFFLINE", {
+          campaignId: 1,
+          additionalItems: ["/assets/application.js"],
+        })
+      );
       expect(addAll.mock.calls[0][0]).toMatchInlineSnapshot(`
         [
-          "/campaigns/undefined/children",
-          "/campaigns/undefined/children.json",
-          "/campaigns/undefined/children/record-template",
-          "/campaigns/undefined/children/show-template",
+          "/assets/application.js",
+          "/favicon.ico",
+          "/dashboard",
+          "/campaigns/1",
+          "/campaigns/1/children",
+          "/campaigns/1/children.json",
+          "/campaigns/1/children/record-template",
+          "/campaigns/1/children/show-template",
         ]
       `);
     });
