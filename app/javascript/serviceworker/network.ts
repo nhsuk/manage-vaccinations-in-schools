@@ -1,4 +1,4 @@
-import { match, put } from "./cache";
+import { match } from "./cache";
 
 export const cacheOnly = async (request: Request): Promise<Response> => {
   return await match(request);
@@ -11,6 +11,5 @@ export const networkFirst = async (request: Request): Promise<Response> => {
     return cacheOnly(request);
   }
 
-  await put(request, networkResponse.clone());
   return networkResponse;
 };

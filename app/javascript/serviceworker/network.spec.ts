@@ -1,6 +1,6 @@
 require("jest-fetch-mock").enableMocks();
 import { cacheOnly, networkFirst } from "./network";
-import { match, put } from "./cache";
+import { match } from "./cache";
 
 jest.mock("./cache");
 
@@ -20,7 +20,6 @@ describe("networkFirst", () => {
     const request = new Request("https://example.com/test");
     const response = await networkFirst(request);
 
-    expect(put).toHaveBeenCalled();
     expect(response).toHaveProperty("status", 200);
   });
 
