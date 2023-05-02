@@ -14,6 +14,10 @@ const messageHandlers = {
     const campaignId = data.payload["campaignId"];
 
     addAll([
+      ...data.payload["additionalItems"],
+      `/favicon.ico`,
+      `/dashboard`,
+      `/campaigns/${campaignId}`,
       `/campaigns/${campaignId}/children`,
       `/campaigns/${campaignId}/children.json`,
       `/campaigns/${campaignId}/children/record-template`,
