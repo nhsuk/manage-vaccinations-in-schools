@@ -27,8 +27,10 @@ class VaccinationsController < ApplicationController
         )
       imm.immunization.create # rubocop:disable Rails/SaveBang
     end
-    flash[:success] = { title: "Record saved" }
-    redirect_to campaign_vaccinations_path(@campaign)
+    redirect_to campaign_vaccinations_path(@campaign),
+                flash: {
+                  success: "Record saved"
+                }
   end
 
   def history
