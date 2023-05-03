@@ -1,9 +1,13 @@
 require("jest-fetch-mock").enableMocks();
-import { addAll, match, put } from "./cache";
+import { init as initCache, addAll, match, put } from "./cache";
 import { add, getByUrl } from "./store";
 
 jest.mock("./store");
 jest.mock("./simple-crypto");
+
+beforeEach(async () => {
+  await initCache("test");
+});
 
 describe("addAll", () => {
   test("fetches and adds all the passed in requests", async () => {
