@@ -1,5 +1,5 @@
 import { isOnline, toggleOnlineStatus } from "./online-status";
-import { addAll } from "./cache";
+import { init as initCache, addAll } from "./cache";
 
 const messageHandlers = {
   TOGGLE_CONNECTION: (event) => {
@@ -10,11 +10,14 @@ const messageHandlers = {
     event.ports[0].postMessage(isOnline());
   },
 
-  SAVE_CAMPAIGN_FOR_OFFLINE: async ({ data }) => {
-    const campaignId = data.payload["campaignId"];
+  SAVE_CAMPAIGN_FOR_OFFLINE: async (event) => {
+    const campaignId = event.data.payload["campaignId"];
+    const password = event.data.payload["password"];
 
-    addAll([
-      ...data.payload["additionalItems"],
+    await initCache(password);
+
+    await addAll([
+      ...event.data.payload["additionalItems"],
       `/favicon.ico`,
       `/dashboard`,
       `/campaigns/${campaignId}`,
@@ -23,6 +26,8 @@ const messageHandlers = {
       `/campaigns/${campaignId}/children/record-template`,
       `/campaigns/${campaignId}/children/show-template`,
     ]);
+
+    event.ports[0].postMessage(true);
   },
 };
 
