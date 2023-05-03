@@ -16,5 +16,8 @@ application.register("connectivity", ConnectivityController);
 import OfflineCampaignController from "./offline_campaign_controller";
 application.register("offline-campaign", OfflineCampaignController);
 
+import SetupOfflineController from "./setup_offline_controller";
+application.register("setup-offline", SetupOfflineController);
+
 import VaccinationController from "./vaccination_controller";
 application.register("vaccination", VaccinationController);
