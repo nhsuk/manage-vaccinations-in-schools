@@ -12,5 +12,10 @@
         <%= child.screening %>
     </td>
     <td class="govuk-table__cell" data-vaccination-target="status" data-testid="child-status">
+      <% if child.seen == "Vaccinated" %>
+        <strong class="nhsuk-tag">Vaccinated</strong>
+      <% else %>
+        <strong class="nhsuk-tag nhsuk-tag--grey">Not yet</strong>
+      <% end %>
     </td>
 </tr>
