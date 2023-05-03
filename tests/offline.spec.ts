@@ -33,8 +33,17 @@ test("Works offline", async ({ page, context }) => {
   await expect(page.locator("h1")).toContainText("HPV campaign");
 
   await page.getByTestId("save-offline").click();
+  await expect(page.locator("h1")).toContainText("Create a password");
+
+  await page.getByTestId("password").fill("password1234");
+  await page.getByTestId("password-confirmation").fill("password1234");
+  await page.getByTestId("submit").click();
+  await expect(page.locator("h1")).toContainText("Your campaigns");
 
   await goOffline();
+
+  await page.getByTestId("campaigns").click();
+  await expect(page.locator("h1")).toContainText("HPV campaign");
 
   await page.getByTestId("record").click();
   await expect(page.getByTestId("child-status").nth(0)).toContainText(
