@@ -1,21 +1,24 @@
 import { SimpleCrypto } from "./simple-crypto";
 import { add, getByUrl } from "./store";
 
+let secret: SimpleCrypto;
+
 const encryptBlob = async (blob: Blob): Promise<Blob> => {
-  const secret = new SimpleCrypto("my-passphrase", "my-salt");
-  await secret.init();
   const encrypted = await secret.encrypt(await blob.text());
   return new Blob([encrypted], { type: blob.type });
 };
 
 const decryptBlob = async (blob: Blob): Promise<Blob> => {
-  const secret = new SimpleCrypto("my-passphrase", "my-salt");
-  await secret.init();
   const decrypted = await secret.decrypt(await blob.text());
   return new Blob([decrypted], { type: blob.type });
 };
 
 const urlOf = (request: RequestInfo): string => new Request(request).url;
+
+export const init = async (passphrase: string) => {
+  secret = new SimpleCrypto(passphrase, "my-salt");
+  await secret.init();
+};
 
 export const addAll = async (requests: RequestInfo[]): Promise<void> => {
   const responses = await Promise.all(
