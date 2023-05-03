@@ -1,4 +1,4 @@
-import { addAll } from "./cache";
+import { init as initCache, addAll } from "./cache";
 import { toggleOnlineStatus, isOnline } from "./online-status";
 import { handler } from "./messages";
 
@@ -31,13 +31,19 @@ describe("messageHandler", () => {
   });
 
   describe("SAVE_CAMPAIGN_FOR_OFFLINE", () => {
-    test("works", () => {
+    test("works", async () => {
       handler(
         event("SAVE_CAMPAIGN_FOR_OFFLINE", {
+          password: "test",
           campaignId: 1,
           additionalItems: ["/assets/application.js"],
         })
       );
+
+      await Promise.resolve(); // Wait for initCache to finish
+      await Promise.resolve(); // Wait for addAll to finish
+
+      expect(initCache).toHaveBeenCalledWith("test");
       expect(addAll.mock.calls[0][0]).toMatchInlineSnapshot(`
         [
           "/assets/application.js",
@@ -50,6 +56,7 @@ describe("messageHandler", () => {
           "/campaigns/1/children/show-template",
         ]
       `);
+      expect(postMessage).toHaveBeenCalledWith(true);
     });
   });
 });
