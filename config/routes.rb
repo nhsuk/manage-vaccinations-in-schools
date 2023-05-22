@@ -8,6 +8,9 @@ Rails.application.routes.draw do
 
   get "/csrf", to: "csrf#new"
 
+  get "/setup-offline", to: "offline_passwords#new"
+  post "/setup-offline", to: "offline_passwords#create"
+
   resources :campaigns, only: %i[index show] do
     resources :children,
               only: %i[index show],

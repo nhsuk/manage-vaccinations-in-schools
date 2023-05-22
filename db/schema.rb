@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_19_215218) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_03_080550) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -46,6 +46,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_19_215218) do
     t.integer "consent"
     t.integer "seen"
     t.index ["nhs_number"], name: "index_children_on_nhs_number", unique: true
+  end
+
+  create_table "offline_passwords", force: :cascade do |t|
+    t.string "password", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "schools", force: :cascade do |t|
