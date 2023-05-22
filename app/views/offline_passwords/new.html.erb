@@ -1,0 +1,55 @@
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-two-thirds">
+    <%= form_with(model: @password, url: setup_offline_path,
+                  data: { controller: 'setup-offline',
+                          setup_offline_target: "form" }) do |f| %>
+      <%= f.govuk_error_summary %>
+
+      <h1 class="nhsuk-heading-l">
+        Create a password to protect your offline changes
+      </h1>
+
+      <p>
+        Before you can work offline, you need to create a password. We'll use
+        this to keep your offline changes secure.
+      </p>
+
+      <h2 class="nhsuk-heading-m">Create your password</h2>
+
+      <p>
+        Use a different password to the one you sign in with.
+      </p>
+
+      <p>
+        Keep a safe record of your password. It’s best practice to let your
+        browser save your password.
+      </p>
+
+      <%= f.govuk_password_field :password,
+        label: {
+          text: "Offline password",
+          size: 's'
+        },
+        hint: {
+          text: "Your password must be at least 12 characters long",
+        },
+        width: 20,
+        autocomplete: 'new-password',
+        data: { setup_offline_target: "password",
+                testid: "password" }
+      %>
+
+      <%= f.govuk_password_field :password_confirmation,
+        label: {
+          text: "Confirm offline password",
+          size: 's'
+        },
+        width: 20,
+        autocomplete: 'new-password',
+        data: { testid: "password-confirmation" }
+      %>
+
+      <%= f.govuk_submit "Save password", data: { testid: "submit" } %>
+    <% end %>
+  </div>
+</div>
