@@ -9,10 +9,10 @@ class OfflinePasswordsController < ApplicationController
     if @password.save
       redirect_to root_path,
                   flash: {
-                    success: "Campaign saved, you can now go offline",
+                    success: "Campaign saved, you can now go offline"
                   }
     else
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
 

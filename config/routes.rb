@@ -8,9 +8,6 @@ Rails.application.routes.draw do
 
   get "/csrf", to: "csrf#new"
 
-  get "/setup-offline", to: "offline_passwords#new"
-  post "/setup-offline", to: "offline_passwords#create"
-
   resources :campaigns, only: %i[index show] do
     resources :children,
               only: %i[index show],
@@ -21,6 +18,9 @@ Rails.application.routes.draw do
       get "show-template", on: :collection
       get "record-template", on: :collection
     end
+
+    get "setup-offline", to: "offline_passwords#new", on: :member
+    post "setup-offline", to: "offline_passwords#create", on: :member
   end
 
   scope via: :all do
