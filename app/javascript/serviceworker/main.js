@@ -5,6 +5,10 @@ import { isOnline, refreshOnlineStatus } from "./online-status";
 import { handler as messageHandler } from "./messages";
 import { childRoute, childRouteHandler } from "./child-route";
 import { recordRoute, recordRouteHandler } from "./record-route";
+import {
+  setupOfflineRoute,
+  setupOfflineRouteHandler,
+} from "./setup-offline-route";
 import { getAll, destroy } from "./store";
 
 const setDefaultHandler = () => {
@@ -62,4 +66,5 @@ self.addEventListener("message", messageHandler);
 console.debug("[Service Worker] registering routes");
 registerRoute(childRoute, childRouteHandler);
 registerRoute(recordRoute, recordRouteHandler, "POST");
+registerRoute(setupOfflineRoute, setupOfflineRouteHandler, "POST");
 setDefaultHandler();

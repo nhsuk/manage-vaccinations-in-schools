@@ -1,6 +1,6 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-two-thirds">
-    <%= form_with(model: @password, url: setup_offline_path,
+    <%= form_with(model: @password, url: setup_offline_campaign_path,
                   data: { controller: 'setup-offline',
                           setup_offline_target: "form" }) do |f| %>
       <%= f.govuk_error_summary %>
@@ -24,6 +24,9 @@
         Keep a safe record of your password. It’s best practice to let your
         browser save your password.
       </p>
+
+      <%= f.hidden_field :assets_css, value: asset_path("application.css") %>
+      <%= f.hidden_field :assets_js, value: asset_path("application.js") %>
 
       <%= f.govuk_password_field :password,
         label: {
