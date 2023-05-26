@@ -40,3 +40,5 @@ coverage
 
 docs/.asciidoctor
 docs/diagrams/images
+
+/config/credentials/*.key
