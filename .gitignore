@@ -41,4 +41,8 @@ coverage
 docs/.asciidoctor
 docs/diagrams/images
 
+.terraform
+*.tfstate
+*.tfstate.backup
+
 /config/credentials/*.key
