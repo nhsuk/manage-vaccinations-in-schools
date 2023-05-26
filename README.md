@@ -183,6 +183,17 @@ To [generate tests interactively by clicking in a live browser](https://playwrig
 yarn playwright codegen http://localhost:4000
 ```
 
-### Licence
+## Deploying
+
+This app can be deployed to AWS using Terraform.
+
+```sh
+terraform -chdir=terraform plan
+terraform -chdir=terraform apply
+```
+
+See [docs/terraform.md](docs/terraform.md) for more informations.
+
+## Licence
 
 [MIT](LICENCE).
