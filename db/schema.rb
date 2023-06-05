@@ -10,26 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_03_080550) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_05_104145) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "campaigns", force: :cascade do |t|
-    t.datetime "date"
-    t.text "location_type"
-    t.integer "location_id"
-    t.integer "type"
+    t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "campaigns_children", id: false, force: :cascade do |t|
-    t.bigint "campaign_id", null: false
-    t.bigint "child_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["campaign_id", "child_id"], name: "index_campaigns_children_on_campaign_id_and_child_id"
-    t.index ["child_id", "campaign_id"], name: "index_campaigns_children_on_child_id_and_campaign_id"
   end
 
   create_table "children", force: :cascade do |t|
@@ -48,29 +36,41 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_03_080550) do
     t.index ["nhs_number"], name: "index_children_on_nhs_number", unique: true
   end
 
-  create_table "offline_passwords", force: :cascade do |t|
-    t.string "password", null: false
+  create_table "children_sessions", id: false, force: :cascade do |t|
+    t.bigint "session_id", null: false
+    t.bigint "child_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["child_id", "session_id"], name: "index_children_sessions_on_child_id_and_session_id", unique: true
+    t.index ["session_id", "child_id"], name: "index_children_sessions_on_session_id_and_child_id", unique: true
   end
 
-  create_table "schools", force: :cascade do |t|
-    t.integer "urn"
+  create_table "locations", force: :cascade do |t|
     t.text "name"
     t.text "address"
     t.text "locality"
     t.text "town"
     t.text "county"
     t.text "postcode"
-    t.decimal "minimum_age"
-    t.decimal "maximum_age"
     t.text "url"
-    t.integer "phase"
-    t.text "type"
-    t.text "detailed_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["urn"], name: "index_schools_on_urn", unique: true
+  end
+
+  create_table "offline_passwords", force: :cascade do |t|
+    t.string "password", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "sessions", force: :cascade do |t|
+    t.datetime "date"
+    t.bigint "location_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "name", null: false
+    t.bigint "campaign_id", null: false
+    t.index ["campaign_id"], name: "index_sessions_on_campaign_id"
   end
 
 end
