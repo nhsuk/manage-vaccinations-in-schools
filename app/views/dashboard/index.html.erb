@@ -9,8 +9,7 @@
   <% end %>
 <% end %>
 
-<h1 class="nhsuk-heading-xl">Your campaigns</h1>
-
-<% @campaigns_by_type.each do |type, campaigns| %>
-    <%= render "campaign_type", type:, campaigns: %>
-<% end %>
+<h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-1">
+  <a href="<%= url_for(:sessions) %>">School sessions</a>
+</h2>
+<p>Manage sessions and record vaccinations</p>

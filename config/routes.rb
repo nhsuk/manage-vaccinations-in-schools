@@ -10,7 +10,7 @@ Rails.application.routes.draw do
 
   get "/csrf", to: "csrf#new"
 
-  resources :campaigns, only: %i[index show] do
+  resources :sessions, only: %i[index show] do
     resources :children,
               only: %i[index show],
               as: :vaccinations,
