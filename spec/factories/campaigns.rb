@@ -2,23 +2,17 @@
 #
 # Table name: campaigns
 #
-#  id            :bigint           not null, primary key
-#  date          :datetime
-#  location_type :text
-#  type          :integer
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  location_id   :integer
+#  id         :bigint           not null, primary key
+#  name       :string           not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
 #
 FactoryBot.define do
   factory :campaign do
-    date { Time.zone.today }
-    type { "HPV" }
-    location_type { nil }
-    location { create(:school) }
+    name { "HPV" }
 
     after :create do |campaign|
-      create_list :child, 100, campaigns: [campaign]
+      create :session, campaign:
     end
   end
 end
