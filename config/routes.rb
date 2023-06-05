@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
-  root to: redirect("/dashboard")
+  root to: redirect("/start")
+
+  get "/start", to: "pages#start"
   get "/dashboard", to: "dashboard#index"
 
   get "/ping" => proc { [200, {}, ["PONG"]] }
