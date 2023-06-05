@@ -27,6 +27,11 @@ test.afterEach(async () => {
 
 test("Works offline", async ({ page, context }) => {
   await page.goto("/reset");
+  await expect(page.locator("h1")).toContainText(
+    "Record children’s vaccinations"
+  );
+
+  await page.getByTestId("start").click();
   await expect(page.locator("h1")).toContainText("Your campaigns");
 
   await page.getByTestId("campaigns").click();
