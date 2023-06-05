@@ -27,7 +27,8 @@ class Child < ApplicationRecord
   enum :consent, ["Parental consent (digital)"]
   enum :seen, ["Not yet", "Vaccinated"]
 
-  has_and_belongs_to_many :campaigns
+  has_and_belongs_to_many :sessions
+  belongs_to :location, optional: true
 
   def full_name
     "#{first_name} #{last_name}"
