@@ -1,6 +1,6 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-two-thirds">
-    <%= form_with(model: @password, url: setup_offline_campaign_path,
+    <%= form_with(model: @password, url: setup_offline_session_path,
                   data: { controller: 'setup-offline',
                           setup_offline_target: "form" }) do |f| %>
       <%= f.govuk_error_summary %>
