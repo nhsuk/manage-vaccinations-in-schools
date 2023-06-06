@@ -1,0 +1,28 @@
+<nav class="nhsuk-breadcrumb<%= " #{@classes}" if @classes %>"
+     aria-label="Breadcrumb"
+     <%= @attributes.map { |name, value| "#{name}=\"#{value}\"" }.join(' ') %>>
+  <div class="nhsuk-width-container">
+    <ol class="nhsuk-breadcrumb__list">
+      <% @items.each do |item| %>
+        <% if item[:href] %>
+          <li class="nhsuk-breadcrumb__item">
+            <a class="nhsuk-breadcrumb__link"
+               href="<%= item[:href] %>"
+               <%= item[:attributes]
+                 .map { |name, value| "#{name}=\"#{value}\"" }
+                 .join(' ') if item[:attributes] %>>
+                 <%= item[:text] %>
+            </a>
+          </li>
+        <% end %>
+      <% end %>
+    </ol>
+    <p class="nhsuk-breadcrumb__back">
+      <a class="nhsuk-breadcrumb__backlink"
+         href="<%= @items.last[:href] %>">
+        <span class="nhsuk-u-visually-hidden">Back to &nbsp;</span>
+        <%= @items.last[:text] %>
+      </a>
+    </p>
+  </div>
+</nav>
