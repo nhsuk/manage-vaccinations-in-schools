@@ -1,0 +1,40 @@
+<% if flash[:success].present? %>
+  <%= govuk_notification_banner(title_text: "Success", success: true) do |nb| %>
+    <% if flash[:success].is_a?(Hash) %>
+      <% nb.with_heading(text: flash[:success][:title]) %>
+      <p><%= flash[:success][:body] %></p>
+    <% else %>
+      <% nb.with_heading(text: flash[:success]) %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<h1 class="nhsuk-heading-l">School sessions</h1>
+
+<div id="children" class="nhsuk-card nhsuk-u-margin-bottom-0">
+  <% @sessions_by_type.each do |campaign_type, sessions| %>
+  <div class="nhsuk-card__content">
+    <h2 class="nhsuk-card__heading nhsuk-heading-m"><%= campaign_type %></h2>
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-three-quarters">
+
+        <table class="nhsuk-table">
+          <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+              <th class="govuk-table__header">Date</th>
+              <th class="govuk-table__header">Time</th>
+              <th class="govuk-table__header">School</th>
+            </tr>
+          </thead>
+          <tbody class="govuk-table__body">
+            <% sessions.each do |session| %>
+              <%= render "session_row", session: %>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <% end %>
+</div>
