@@ -1,16 +1,27 @@
+<% content_for :breadcrumbs do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+    { text: 'Home', href: dashboard_path },
+    { text: 'School sessions', href: sessions_path },
+  ]) %>
+<% end %>
+
 <h1 class="nhsuk-heading-l">
-  <%= @campaign.title %>
-  <span class="nhsuk-caption-l nhsuk-u-margin-top-2"><%= @campaign.date %></span>
+  <%= @session.name %>
+  <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
+    <%= @session.date.strftime('%e %B %Y at %l%P') %>
+  </span>
 </h1>
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-two-thirds">
     <div class="nhsuk-card">
       <div class="nhsuk-card__content">
-        <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-1">
-          <%= link_to "Record vaccinations", campaign_vaccinations_path(@campaign), "data-testid": "record" %>
+        <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-3">
+          <%= link_to "Triage", "#" %>
         </h2>
-        <p>Record vaccinations for children.</p>
+        <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-3">
+          <%= link_to "Record vaccinations", "#" %>
+        </h2>
       </div>
     </div>
   </div>
