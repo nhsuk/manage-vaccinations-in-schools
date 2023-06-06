@@ -9,6 +9,12 @@
   <% end %>
 <% end %>
 
+<% content_for :breadcrumbs do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+    { text: 'Home', href: dashboard_path },
+  ]) %>
+<% end %>
+
 <h1 class="nhsuk-heading-l">School sessions</h1>
 
 <div id="children" class="nhsuk-card nhsuk-u-margin-bottom-0">
