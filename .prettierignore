@@ -34,3 +34,7 @@ storage
 tmp
 vendor
 .yarn
+terraform/.terraform
+*.tfstate
+*.tfstate.backup
+scratchpad

@@ -46,3 +46,6 @@ docs/diagrams/images
 *.tfstate.backup
 
 /config/credentials/*.key
+
+# Local scratch workspace
+scratchpad
