@@ -46,6 +46,9 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.1, >= 1.2.0)
+    active_link_to (1.0.5)
+      actionpack
+      addressable
     activejob (7.0.5)
       activesupport (= 7.0.5)
       globalid (>= 0.3.6)
@@ -80,6 +83,20 @@ GEM
     asciidoctor-diagram-ditaamini (1.0.3)
     asciidoctor-diagram-plantuml (1.2023.5)
     ast (2.4.2)
+    avo (2.34.0)
+      actionview (>= 6.0)
+      active_link_to
+      activerecord (>= 6.0)
+      addressable
+      docile
+      dry-initializer
+      httparty
+      inline_svg
+      meta-tags
+      pagy
+      turbo-rails
+      view_component (>= 2.54.0)
+      zeitwerk (>= 2.6.2)
     awesome_print (1.9.2)
     backport (1.2.0)
     bcp47 (0.3.3)
@@ -118,6 +135,7 @@ GEM
       reline (>= 0.3.1)
     deep_merge (1.2.2)
     diff-lcs (1.5.0)
+    docile (1.4.0)
     dockerfile-rails (1.4.1)
       rails
     domain_name (0.5.20190701)
@@ -219,8 +237,14 @@ GEM
     http-accept (1.7.0)
     http-cookie (1.0.5)
       domain_name (~> 0.5)
+    httparty (0.21.0)
+      mini_mime (>= 1.0.0)
+      multi_xml (>= 0.5.2)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
+    inline_svg (1.9.0)
+      activesupport (>= 3.0)
+      nokogiri (>= 1.6)
     io-console (0.6.0)
     irb (1.6.4)
       reline (>= 0.3.0)
@@ -246,6 +270,8 @@ GEM
       net-smtp
     marcel (1.0.2)
     matrix (0.4.2)
+    meta-tags (2.18.0)
+      actionpack (>= 3.2.0, < 7.1)
     method_source (1.0.0)
     mime-types (3.4.1)
       mime-types-data (~> 3.2015)
@@ -470,6 +496,7 @@ DEPENDENCIES
   annotate
   asciidoctor
   asciidoctor-diagram
+  avo
   awesome_print
   bootsnap
   capybara
