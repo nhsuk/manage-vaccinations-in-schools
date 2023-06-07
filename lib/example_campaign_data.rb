@@ -8,7 +8,11 @@ class ExampleCampaignData
   end
 
   def campaign_attributes
-    { date: raw_data["date"], type: raw_data["type"] }
+    { name: raw_data["type"] }
+  end
+
+  def session_attributes
+    { date: raw_data["date"], name: raw_data["title"] }
   end
 
   def campaign_location_name
@@ -19,18 +23,12 @@ class ExampleCampaignData
     school_data = raw_data["school"]
     {
       name: school_data["name"],
-      urn: school_data["urn"],
       address: school_data["address"],
       locality: school_data["locality"],
       town: school_data["town"],
       county: school_data["county"],
       postcode: school_data["postcode"],
-      minimum_age: school_data["minimum_age"],
-      maximum_age: school_data["maximum_age"],
-      url: school_data["url"],
-      phase: school_data["phase"],
-      type: school_data["type"],
-      detailed_type: school_data["detailed_type"]
+      url: school_data["url"]
     }
   end
 
