@@ -21,7 +21,7 @@ FactoryBot.define do
     name { "#{campaign.name} session at #{location.name}" }
 
     after :create do |session|
-      create_list :child, 100, sessions: [session]
+      create_list :patient, 100, sessions: [session]
     end
   end
 end

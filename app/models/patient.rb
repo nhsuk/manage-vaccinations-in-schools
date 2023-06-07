@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: children
+# Table name: patients
 #
 #  id             :bigint           not null, primary key
 #  consent        :integer
@@ -18,9 +18,9 @@
 #
 # Indexes
 #
-#  index_children_on_nhs_number  (nhs_number) UNIQUE
+#  index_patients_on_nhs_number  (nhs_number) UNIQUE
 #
-class Child < ApplicationRecord
+class Patient < ApplicationRecord
   enum :sex, %w[Female Male]
   enum :gp, ["Local GP"]
   enum :screening, ["Approved for vaccination"]

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_05_104145) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_07_150942) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -18,31 +18,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_05_104145) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "children", force: :cascade do |t|
-    t.date "dob"
-    t.bigint "nhs_number"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "sex"
-    t.text "first_name"
-    t.text "last_name"
-    t.text "preferred_name"
-    t.integer "gp"
-    t.integer "screening"
-    t.integer "consent"
-    t.integer "seen"
-    t.index ["nhs_number"], name: "index_children_on_nhs_number", unique: true
-  end
-
-  create_table "children_sessions", id: false, force: :cascade do |t|
-    t.bigint "session_id", null: false
-    t.bigint "child_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["child_id", "session_id"], name: "index_children_sessions_on_child_id_and_session_id", unique: true
-    t.index ["session_id", "child_id"], name: "index_children_sessions_on_session_id_and_child_id", unique: true
   end
 
   create_table "locations", force: :cascade do |t|
@@ -61,6 +36,31 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_05_104145) do
     t.string "password", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "patients", force: :cascade do |t|
+    t.date "dob"
+    t.bigint "nhs_number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "sex"
+    t.text "first_name"
+    t.text "last_name"
+    t.text "preferred_name"
+    t.integer "gp"
+    t.integer "screening"
+    t.integer "consent"
+    t.integer "seen"
+    t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
+  end
+
+  create_table "patients_sessions", id: false, force: :cascade do |t|
+    t.bigint "session_id", null: false
+    t.bigint "patient_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["patient_id", "session_id"], name: "index_patients_sessions_on_patient_id_and_session_id", unique: true
+    t.index ["session_id", "patient_id"], name: "index_patients_sessions_on_session_id_and_patient_id", unique: true
   end
 
   create_table "sessions", force: :cascade do |t|

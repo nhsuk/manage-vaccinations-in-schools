@@ -15,7 +15,7 @@
 #
 class Location < ApplicationRecord
   has_many :sessions
-  has_many :children
+  has_many :patients
 
   validates :name, presence: true
 end
