@@ -1,5 +1,5 @@
 class VaccinationsController < ApplicationController
-  before_action :set_campaign
+  before_action :set_session
   before_action :set_child, only: %i[show record history]
   before_action :set_children, only: %i[index record_template]
 
@@ -27,7 +27,7 @@ class VaccinationsController < ApplicationController
         )
       imm.immunization.create # rubocop:disable Rails/SaveBang
     end
-    redirect_to campaign_vaccinations_path(@campaign),
+    redirect_to session_vaccinations_path(@session),
                 flash: {
                   success: "Record saved"
                 }
@@ -65,8 +65,8 @@ class VaccinationsController < ApplicationController
 
   private
 
-  def set_campaign
-    @campaign = Campaign.find(params[:campaign_id])
+  def set_session
+    @session = Session.find(params[:session_id])
   end
 
   def set_child
@@ -74,6 +74,6 @@ class VaccinationsController < ApplicationController
   end
 
   def set_children
-    @children = @campaign.children.order(:first_name, :last_name)
+    @children = @session.children.order(:first_name, :last_name)
   end
 end

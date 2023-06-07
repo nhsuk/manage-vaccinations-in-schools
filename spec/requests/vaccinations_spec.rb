@@ -14,21 +14,15 @@ require "rails_helper"
 
 RSpec.describe "/campaigns/:campain_id/children", type: :request do
   let(:school) do
-    School.create!(
+    Location.create!(
       {
-        urn: "130877",
         name: "St Andrew's Benn CofE (Voluntary Aided) Primary School",
         address: "Chester Street",
         locality: "",
         town: "Rugby",
         county: "Warwickshire",
         postcode: "CV21 3NX",
-        minimum_age: "3",
-        maximum_age: "11",
-        url: "www.standrewsbennprimary.co.uk/",
-        phase: "Primary",
-        type: "Local authority maintained schools",
-        detailed_type: "Voluntary aided school"
+        url: "www.standrewsbennprimary.co.uk/"
       }
     )
   end
@@ -46,8 +40,10 @@ RSpec.describe "/campaigns/:campain_id/children", type: :request do
     )
   end
 
-  let(:campaign) do
-    Campaign.create!({ location: school, type: "HPV", children: [child] })
+  let(:campaign) { create :campaign }
+
+  let(:session) do
+    create :session, children: [child], location: school, campaign:
   end
 
   let(:invalid_attributes) do
@@ -57,15 +53,15 @@ RSpec.describe "/campaigns/:campain_id/children", type: :request do
   describe "GET /index" do
     it "renders a successful response" do
       # Child.create! valid_attributes
-      get campaign_vaccinations_url(campaign.id)
+      get session_vaccinations_url(session.id)
       expect(response).to be_successful
     end
   end
 
   describe "PUT /record" do
     it "redirects to index page" do
-      put record_campaign_vaccination_url(campaign.id, child.id)
-      expect(response).to(redirect_to(campaign_vaccinations_path(campaign.id)))
+      put record_session_vaccination_url(session.id, child.id)
+      expect(response).to(redirect_to(session_vaccinations_path(session.id)))
     end
 
     let(:last_updated) { Time.zone.now }
@@ -93,7 +89,7 @@ RSpec.describe "/campaigns/:campain_id/children", type: :request do
     end
 
     it "sends a request to the FHIR server" do
-      put record_campaign_vaccination_url(campaign.id, child.id)
+      put record_session_vaccination_url(session.id, child.id)
       expect(fhir_server).to have_been_requested
     end
 
@@ -102,7 +98,7 @@ RSpec.describe "/campaigns/:campain_id/children", type: :request do
         false
       )
 
-      put record_campaign_vaccination_url(campaign.id, child.id)
+      put record_session_vaccination_url(session.id, child.id)
 
       expect(fhir_server).not_to have_been_requested
     end
