@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: children
+# Table name: patients
 #
 #  id             :bigint           not null, primary key
 #  consent        :integer
@@ -18,10 +18,10 @@
 #
 # Indexes
 #
-#  index_children_on_nhs_number  (nhs_number) UNIQUE
+#  index_patients_on_nhs_number  (nhs_number) UNIQUE
 #
 FactoryBot.define do
-  factory :child do
+  factory :patient do
     nhs_number { rand(10**10) }
     sex { %w[Male Female].sample }
     first_name { Faker::Name.first_name }

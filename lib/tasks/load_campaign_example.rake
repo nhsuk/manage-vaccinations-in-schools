@@ -23,7 +23,7 @@ task load_campaign_example: :environment do
 
   example.children_attributes.each do |child_attributes|
     child =
-      session.children.find_or_create_by!(
+      session.patients.find_or_create_by!(
         nhs_number: child_attributes[:nhs_number]
       )
     child.update!(child_attributes)
