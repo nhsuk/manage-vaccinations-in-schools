@@ -3,7 +3,7 @@
     data-vaccination-id-value="<%= child.id %>"
     data-testid="children">
     <td class="govuk-table__cell" id="<%= dom_id child %>">
-        <%= link_to child.full_name, campaign_vaccination_path(@campaign, child), "data-testid": "child-link" %>
+        <%= link_to child.full_name, session_vaccination_path(@session, child), "data-testid": "child-link" %>
     </td>
     <td class="govuk-table__cell" style="width: 150px">
         <%= child.dob.strftime("%d %b %Y") %>

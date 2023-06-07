@@ -87,8 +87,8 @@
 
   <p>
       <%= link_to "View vaccination history",
-                  history_campaign_vaccination_path(campaign_id: @campaign.id,
-                                                    id: (@child.id || ":id")) %>
+                  history_session_vaccination_path(session_id: @session.id,
+                                                   id: (@child.id || ":id")) %>
   </p>
 
   <div class="nhsuk-card">
@@ -96,8 +96,8 @@
       <h2 class="nhsuk-card__heading nhsuk-heading-m">
           Record vaccination
       </h2>
-      <%= form_tag record_campaign_vaccination_path(
-            campaign_id: @campaign.id,
+      <%= form_tag record_session_vaccination_path(
+            session_id: @session.id,
             id: (@child.id || ":id"),
           ),
           method: :put,
