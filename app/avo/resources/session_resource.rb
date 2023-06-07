@@ -1,5 +1,5 @@
 class SessionResource < Avo::BaseResource
-  self.title = :id
+  self.title = :name
   self.includes = []
   # self.search_query = -> do
   #   scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
@@ -8,9 +8,7 @@ class SessionResource < Avo::BaseResource
   field :id, as: :id
   # Fields generated from the model
   field :date, as: :date_time
-  field :location_id, as: :number
-  field :name, as: :textarea
-  field :campaign_id, as: :number
+  field :name, as: :text
   field :campaign, as: :belongs_to
   field :location, as: :belongs_to
   field :children, as: :has_and_belongs_to_many
