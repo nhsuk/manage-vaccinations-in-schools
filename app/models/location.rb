@@ -16,4 +16,6 @@
 class Location < ApplicationRecord
   has_many :sessions
   has_many :children
+
+  validates :name, presence: true
 end

@@ -19,6 +19,9 @@ class Session < ApplicationRecord
   belongs_to :location, optional: true
   has_and_belongs_to_many :children
 
+  validates :name, presence: true
+  validates :date, presence: true
+
   def type
     campaign.name
   end

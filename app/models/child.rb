@@ -27,6 +27,13 @@ class Child < ApplicationRecord
   enum :consent, ["Parental consent (digital)"]
   enum :seen, ["Not yet", "Vaccinated"]
 
+  validates :first_name, presence: true
+  validates :last_name, presence: true
+  validates :dob, presence: true
+  validates :nhs_number, presence: true, uniqueness: true
+  validates :gp, presence: true
+  validates :screening, presence: true
+
   has_and_belongs_to_many :sessions
   belongs_to :location, optional: true
 

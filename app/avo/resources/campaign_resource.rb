@@ -8,7 +8,7 @@ class CampaignResource < Avo::BaseResource
 
   field :id, as: :id
   # Fields generated from the model
-  field :name, as: :text, required: true
+  field :name, as: :text
   field :sessions, as: :has_many
   # add fields here
 end
