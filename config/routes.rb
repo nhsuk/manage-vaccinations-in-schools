@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   resources :sessions, only: %i[index show] do
     resources :patients,
               only: %i[index show],
+              path: "/vaccinations",
               as: :vaccinations,
               controller: :vaccinations do
       put "record", on: :member
