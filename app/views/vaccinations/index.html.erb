@@ -11,9 +11,9 @@
 
 <h1 class="nhsuk-heading-l">Record vaccinations</h1>
 
-<div id="children" class="nhsuk-card nhsuk-u-margin-bottom-0">
+<div id="patients" class="nhsuk-card nhsuk-u-margin-bottom-0">
   <div class="nhsuk-card__content">
-    <h2 class="nhsuk-card__heading nhsuk-heading-m">Children</h2>
+    <h2 class="nhsuk-card__heading nhsuk-heading-m">Patients</h2>
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-three-quarters"
@@ -30,8 +30,8 @@
             </tr>
           </thead>
           <tbody class="govuk-table__body">
-            <% @children.each do |child| %>
-              <%= render "child_row", child: %>
+            <% @patients.each do |patient| %>
+              <%= render "patient_row", patient: %>
             <% end %>
           </tbody>
         </table>

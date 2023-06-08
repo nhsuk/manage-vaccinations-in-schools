@@ -1,28 +1,28 @@
 class VaccinationsController < ApplicationController
   before_action :set_session
-  before_action :set_child, only: %i[show record history]
-  before_action :set_children, only: %i[index record_template]
+  before_action :set_patient, only: %i[show record history]
+  before_action :set_patients, only: %i[index record_template]
 
   def index
     respond_to do |format|
       format.html
-      format.json { render json: @children.index_by(&:id) }
+      format.json { render json: @patients.index_by(&:id) }
     end
   end
 
   def show
     respond_to do |format|
       format.html
-      format.json { render json: @child }
+      format.json { render json: @patient }
     end
   end
 
   def record
-    @child.update!(seen: "Vaccinated")
+    @patient.update!(seen: "Vaccinated")
     if Settings.features.fhir_server_integration
       imm =
         ImmunizationFHIRBuilder.new(
-          patient_identifier: @child.nhs_number,
+          patient_identifier: @patient.nhs_number,
           occurrence_date_time: Time.zone.now
         )
       imm.immunization.create # rubocop:disable Rails/SaveBang
@@ -38,7 +38,7 @@ class VaccinationsController < ApplicationController
       fhir_bundle =
         FHIR::Immunization.search(
           patient:
-            "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/#{@child.nhs_number}"
+            "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/#{@patient.nhs_number}"
         )
       @history =
         fhir_bundle
@@ -51,7 +51,7 @@ class VaccinationsController < ApplicationController
   end
 
   def show_template
-    @child = Child.new
+    @patient = Patient.new
     render "show"
   end
 
@@ -69,11 +69,11 @@ class VaccinationsController < ApplicationController
     @session = Session.find(params[:session_id])
   end
 
-  def set_child
-    @child = Child.find(params[:id])
+  def set_patient
+    @patient = Patient.find(params[:id])
   end
 
-  def set_children
-    @children = @session.children.order(:first_name, :last_name)
+  def set_patients
+    @patients = @session.patients.order(:first_name, :last_name)
   end
 end
