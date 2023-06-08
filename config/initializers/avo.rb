@@ -1,7 +1,7 @@
 # For more information regarding these settings check out our docs https://docs.avohq.io
 Avo.configure do |config|
   ## == Routing ==
-  config.root_path = "/avo"
+  config.root_path = "/model-office-admin"
   # used only when you have custom `map` configuration in your config.ru
   # config.prefix_path = "/internal"
 
@@ -21,9 +21,8 @@ Avo.configure do |config|
   config.current_user_method do
     Struct.new(:id, :name, :email, :avatar_url).new(
       1,
-      "Demo Admin",
-      "admin@example.com",
-      "https://avo.app/images/avo-icon.png"
+      "Model office admin",
+      "admin@example.com"
     )
   end
 
@@ -59,7 +58,7 @@ Avo.configure do |config|
   # config.cache_resource_filters = ->(current_user:, resource:) { current_user.cache_resource_filters?}
 
   ## == Customization ==
-  # config.app_name = 'Avocadelicious'
+  config.app_name = "Model office admin"
   # config.timezone = 'UTC'
   # config.currency = 'USD'
   # config.hide_layout_when_printing = false
@@ -76,17 +75,17 @@ Avo.configure do |config|
   ## == Branding ==
   # config.branding = {
   #   colors: {
-  #     background: "248 246 242",
+  #     :background => "248 246 242",
   #     100 => "#CEE7F8",
   #     400 => "#399EE5",
   #     500 => "#0886DE",
   #     600 => "#066BB2",
   #   },
-  #   chart_colors: ["#0B8AE2", "#34C683", "#2AB1EE", "#34C6A8"],
+  #   chart_colors: %w[#0B8AE2 #34C683 #2AB1EE #34C6A8],
   #   logo: "/avo-assets/logo.png",
   #   logomark: "/avo-assets/logomark.png",
   #   placeholder: "/avo-assets/placeholder.svg",
-  #   favicon: "/avo-assets/favicon.ico"
+  #   favicon: "/avo-assets/favicon.ico",
   # }
 
   ## == Breadcrumbs ==
