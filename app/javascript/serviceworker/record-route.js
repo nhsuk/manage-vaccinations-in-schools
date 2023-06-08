@@ -2,13 +2,13 @@ import { isOnline } from "./online-status";
 import { match } from "./cache";
 import { add } from "./store";
 
-const getCampaignIdFromURL = (url) => url.match("/campaigns/(\\d+)/")[1];
+const getCampaignIdFromURL = (url) => url.match("/sessions/(\\d+)/")[1];
 
 const recordTemplateURL = (campaignId) =>
-  `/campaigns/${campaignId}/children/record-template`;
+  `/sessions/${campaignId}/vaccinations/record-template`;
 
 export const recordRoute = new RegExp(
-  "/campaigns/(\\d+)/children/(\\d+)/record$"
+  "/sessions/(\\d+)/vaccinations/(\\d+)/record$"
 );
 
 export const recordRouteHandler = async ({ request }) => {

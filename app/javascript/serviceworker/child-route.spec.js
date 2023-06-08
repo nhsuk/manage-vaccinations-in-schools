@@ -6,9 +6,10 @@ jest.mock("./cache");
 
 describe("childRoute", () => {
   test("matches correctly", () => {
-    expect(childRoute.exec("/campaigns/1/children/2")).toMatchInlineSnapshot(`
+    expect(childRoute.exec("/sessions/1/vaccinations/2"))
+      .toMatchInlineSnapshot(`
       [
-        "/campaigns/1/children/2",
+        "/sessions/1/vaccinations/2",
         "1",
         "2",
       ]
@@ -16,7 +17,7 @@ describe("childRoute", () => {
   });
 });
 
-const url = "/campaigns/1/children/2";
+const url = "/sessions/1/vaccinations/2";
 
 describe("childRouteHandler", () => {
   test("returns response when fetch works", async () => {

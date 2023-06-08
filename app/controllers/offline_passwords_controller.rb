@@ -7,7 +7,7 @@ class OfflinePasswordsController < ApplicationController
     @password = OfflinePassword.new(password_params)
 
     if @password.save
-      redirect_to dashboard_path,
+      redirect_to sessions_path,
                   flash: {
                     success: "Campaign saved, you can now go offline"
                   }

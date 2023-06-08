@@ -1,12 +1,12 @@
 import { isOnline } from "./online-status";
 import { put, match } from "./cache";
 
-const getCampaignIdFromURL = (url) => url.match("/campaigns/(\\d+)/")[1];
+const getCampaignIdFromURL = (url) => url.match("/sessions/(\\d+)/")[1];
 
 const campaignShowTemplateURL = (campaignId) =>
-  `/campaigns/${campaignId}/children/show-template`;
+  `/sessions/${campaignId}/vaccinations/show-template`;
 
-export const childRoute = new RegExp("/campaigns/(\\d+)/children/(\\d+)$");
+export const childRoute = new RegExp("/sessions/(\\d+)/vaccinations/(\\d+)$");
 
 export const childRouteHandler = async ({ request }) => {
   try {

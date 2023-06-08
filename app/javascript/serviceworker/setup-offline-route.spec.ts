@@ -6,7 +6,7 @@ import {
 
 jest.mock("./cache");
 
-const url = "/campaigns/1/setup-offline";
+const url = "/sessions/1/setup-offline";
 
 afterEach(() => {
   jest.clearAllMocks();
@@ -16,7 +16,7 @@ describe("setupOfflineRoute", () => {
   test("matches correctly", () => {
     expect(setupOfflineRoute.exec(url)).toMatchInlineSnapshot(`
       [
-        "/campaigns/1/setup-offline",
+        "/sessions/1/setup-offline",
         "1",
       ]
     `);
@@ -48,12 +48,13 @@ describe("setupOfflineRouteHandler", () => {
             "/css",
             "/js",
             "/favicon.ico",
+            "/start",
             "/dashboard",
-            "/campaigns/1",
-            "/campaigns/1/children",
-            "/campaigns/1/children.json",
-            "/campaigns/1/children/record-template",
-            "/campaigns/1/children/show-template",
+            "/sessions/1",
+            "/sessions/1/vaccinations",
+            "/sessions/1/vaccinations.json",
+            "/sessions/1/vaccinations/record-template",
+            "/sessions/1/vaccinations/show-template",
           ],
         ],
       ]

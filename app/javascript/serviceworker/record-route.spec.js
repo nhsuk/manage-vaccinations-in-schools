@@ -6,7 +6,7 @@ import { recordRoute, recordRouteHandler } from "./record-route";
 jest.mock("./cache");
 jest.mock("./store");
 
-const url = "/campaigns/1/children/2/record";
+const url = "/sessions/1/vaccinations/2/record";
 const request = new Request(url);
 request.formData = () => Promise.resolve([["foo", "bar"]]);
 
@@ -14,7 +14,7 @@ describe("recordRoute", () => {
   test("matches correctly", () => {
     expect(recordRoute.exec(url)).toMatchInlineSnapshot(`
       [
-        "/campaigns/1/children/2/record",
+        "/sessions/1/vaccinations/2/record",
         "1",
         "2",
       ]

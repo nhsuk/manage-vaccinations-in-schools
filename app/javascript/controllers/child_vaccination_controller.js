@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus";
 
 function parseIdsFromURL(url) {
   const [_, campaignId, childId] = url.match(
-    "/campaigns/(\\d+)/children/(\\d+)$"
+    "/sessions/(\\d+)/vaccinations/(\\d+)$"
   );
   return { campaignId, childId };
 }
@@ -22,7 +22,7 @@ export default class extends Controller {
 
   async connect() {
     const { campaignId, childId } = parseIdsFromURL(window.location.href);
-    const response = await fetch(`/campaigns/${campaignId}/children.json`);
+    const response = await fetch(`/sessions/${campaignId}/vaccinations.json`);
     const json = await response.json();
     const child = json[childId];
 
