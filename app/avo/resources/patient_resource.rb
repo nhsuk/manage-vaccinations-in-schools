@@ -1,4 +1,4 @@
-class ChildResource < Avo::BaseResource
+class PatientResource < Avo::BaseResource
   self.title = :full_name
   self.includes = []
   self.record_selector = false
@@ -13,11 +13,11 @@ class ChildResource < Avo::BaseResource
   field :preferred_name, as: :text
   field :dob, as: :date
   field :nhs_number, as: :number
-  field :sex, as: :select, enum: ::Child.sexes
-  field :gp, as: :select, enum: ::Child.gps
-  field :screening, as: :select, enum: ::Child.screenings
-  field :consent, as: :select, enum: ::Child.consents
-  field :seen, as: :select, enum: ::Child.seens
+  field :sex, as: :select, enum: ::Patient.sexes
+  field :gp, as: :select, enum: ::Patient.gps
+  field :screening, as: :select, enum: ::Patient.screenings
+  field :consent, as: :select, enum: ::Patient.consents
+  field :seen, as: :select, enum: ::Patient.seens
   field :sessions, as: :has_and_belongs_to_many
   field :location, as: :belongs_to
   # add fields here

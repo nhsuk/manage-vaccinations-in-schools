@@ -16,6 +16,6 @@ class LocationResource < Avo::BaseResource
   field :postcode, as: :text
   field :url, as: :text
   field :sessions, as: :has_many
-  field :children, as: :has_many
+  field :patients, as: :has_many
   # add fields here
 end
