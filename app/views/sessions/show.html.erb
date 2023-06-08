@@ -17,7 +17,7 @@
     <div class="nhsuk-card">
       <div class="nhsuk-card__content">
         <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-3">
-          <%= link_to "Triage", "#" %>
+          <%= link_to "Triage", session_triage_index_path(@session) %>
         </h2>
         <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-3">
           <%= link_to "Record vaccinations", session_vaccinations_path(@session) %>
