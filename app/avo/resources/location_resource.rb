@@ -8,7 +8,7 @@ class LocationResource < Avo::BaseResource
 
   field :id, as: :id
   # Fields generated from the model
-  field :name, as: :text, required: true
+  field :name, as: :text
   field :address, as: :text
   field :locality, as: :text
   field :town, as: :text

@@ -8,8 +8,8 @@ class SessionResource < Avo::BaseResource
 
   field :id, as: :id
   # Fields generated from the model
-  field :name, as: :text, required: true
-  field :date, as: :date_time, required: true
+  field :name, as: :text
+  field :date, as: :date_time
   field :campaign, as: :belongs_to
   field :location, as: :belongs_to
   field :children, as: :has_and_belongs_to_many
