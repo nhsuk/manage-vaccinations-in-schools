@@ -73,6 +73,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_09_155513) do
     t.index ["campaign_id"], name: "index_sessions_on_campaign_id"
   end
 
+  create_table "triage", force: :cascade do |t|
+    t.bigint "campaign_id"
+    t.bigint "patient_id"
+    t.integer "status"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["campaign_id"], name: "index_triage_on_campaign_id"
+    t.index ["patient_id"], name: "index_triage_on_patient_id"
+  end
+
   create_table "vaccination_records", force: :cascade do |t|
     t.bigint "patient_session_id", null: false
     t.date "administered_at"
