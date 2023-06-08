@@ -1,15 +1,15 @@
 <tr class="govuk-table__row"
     data-controller="vaccination"
-    data-vaccination-id-value="<%= child.id %>"
+    data-vaccination-id-value="<%= patient.id %>"
     data-testid="children">
-    <td class="govuk-table__cell" id="<%= dom_id child %>">
-        <%= link_to child.full_name, session_vaccination_path(@session, child), "data-testid": "child-link" %>
+    <td class="govuk-table__cell" id="<%= dom_id patient %>">
+        <%= link_to patient.full_name, session_vaccination_path(@session, patient), "data-testid": "child-link" %>
     </td>
     <td class="govuk-table__cell" style="width: 150px">
-        <%= child.dob.strftime("%d %b %Y") %>
+        <%= patient.dob.strftime("%d %b %Y") %>
     </td>
     <td class="govuk-table__cell">
-        <%= child.screening %>
+        <%= patient.screening %>
     </td>
     <td class="govuk-table__cell" data-vaccination-target="status" data-testid="child-status">
     </td>

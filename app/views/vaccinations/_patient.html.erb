@@ -1,5 +1,5 @@
-<h2 class="nhsuk-u-heading-s" id="<%= dom_id child %>">
-    <%= child.full_name %>
+<h2 class="nhsuk-u-heading-s" id="<%= dom_id patient %>">
+    <%= patient.full_name %>
 </h2>
 
 <div data-controller="child-vaccination">
@@ -17,7 +17,7 @@
                       Name
                   </dt>
                   <dd class="nhsuk-summary-list__value" data-child-vaccination-target="fullName" data-testid="full-name">
-                      <%= child.full_name %>
+                      <%= patient.full_name %>
                   </dd>
 
               </div>
@@ -27,7 +27,7 @@
                       Sex
                   </dt>
                   <dd class="nhsuk-summary-list__value" data-child-vaccination-target="sex">
-                      <%= child.sex %>
+                      <%= patient.sex %>
                   </dd>
 
               </div>
@@ -37,7 +37,7 @@
                       Date of birth
                   </dt>
                   <dd class="nhsuk-summary-list__value" data-child-vaccination-target="dob">
-                      <%= child.dob&.strftime("%d %B %Y") %> (aged <%= child.dob ? child.age : "" %>)
+                      <%= patient.dob&.strftime("%d %B %Y") %> (aged <%= patient.dob ? patient.age : "" %>)
                   </dd>
 
               </div>
@@ -47,7 +47,7 @@
                       Consent
                   </dt>
                   <dd class="nhsuk-summary-list__value" data-child-vaccination-target="consent">
-                      <%= child.consent %>
+                      <%= patient.consent %>
                   </dd>
 
               </div>
@@ -57,7 +57,7 @@
                       GP
                   </dt>
                   <dd class="nhsuk-summary-list__value" data-child-vaccination-target="gp">
-                      <%= child.gp %>
+                      <%= patient.gp %>
                   </dd>
 
               </div>
@@ -67,7 +67,7 @@
                       NHS Number
                   </dt>
                   <dd class="nhsuk-summary-list__value" data-child-vaccination-target="nhsNumber">
-                      <%= child.nhs_number %>
+                      <%= patient.nhs_number %>
                   </dd>
 
               </div>
@@ -77,7 +77,7 @@
                       Screening
                   </dt>
                   <dd class="nhsuk-summary-list__value" data-child-vaccination-target="screening">
-                      <%= child.screening %>
+                      <%= patient.screening %>
                   </dd>
               </div>
           </dl>
@@ -88,7 +88,7 @@
   <p>
       <%= link_to "View vaccination history",
                   history_session_vaccination_path(session_id: @session.id,
-                                                   id: (@child.id || ":id")) %>
+                                                   id: (@patient.id || ":id")) %>
   </p>
 
   <div class="nhsuk-card">
@@ -98,7 +98,7 @@
       </h2>
       <%= form_tag record_session_vaccination_path(
             session_id: @session.id,
-            id: (@child.id || ":id"),
+            id: (@patient.id || ":id"),
           ),
           method: :put,
           data: { child_vaccination_target: "form" } %>
