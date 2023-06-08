@@ -1,9 +1,8 @@
 import { init as initCache, addAll } from "./cache";
 
-const getCampaignIdFromURL = (url: string) =>
-  url.match("/campaigns/(\\d+)/")[1];
+const getCampaignIdFromURL = (url: string) => url.match("/sessions/(\\d+)/")[1];
 
-export const setupOfflineRoute = new RegExp("/campaigns/(\\d+)/setup-offline$");
+export const setupOfflineRoute = new RegExp("/sessions/(\\d+)/setup-offline$");
 
 export const setupOfflineRouteHandler = async ({ request }) => {
   const clonedRequest = request.clone();
@@ -23,12 +22,13 @@ export const setupOfflineRouteHandler = async ({ request }) => {
       css,
       js,
       `/favicon.ico`,
+      `/start`,
       `/dashboard`,
-      `/campaigns/${campaignId}`,
-      `/campaigns/${campaignId}/children`,
-      `/campaigns/${campaignId}/children.json`,
-      `/campaigns/${campaignId}/children/record-template`,
-      `/campaigns/${campaignId}/children/show-template`,
+      `/sessions/${campaignId}`,
+      `/sessions/${campaignId}/vaccinations`,
+      `/sessions/${campaignId}/vaccinations.json`,
+      `/sessions/${campaignId}/vaccinations/record-template`,
+      `/sessions/${campaignId}/vaccinations/show-template`,
     ]);
   }
 

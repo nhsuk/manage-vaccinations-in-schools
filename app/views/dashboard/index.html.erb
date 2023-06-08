@@ -10,6 +10,6 @@
 <% end %>
 
 <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-1">
-  <a href="<%= url_for(:sessions) %>">School sessions</a>
+  <%= link_to "School sessions", sessions_path, data: { testid: 'sessions' } %>
 </h2>
 <p>Manage sessions and record vaccinations</p>
