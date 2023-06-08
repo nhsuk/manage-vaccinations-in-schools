@@ -12,6 +12,6 @@ class SessionResource < Avo::BaseResource
   field :date, as: :date_time
   field :campaign, as: :belongs_to
   field :location, as: :belongs_to
-  field :children, as: :has_and_belongs_to_many
+  field :patients, as: :has_and_belongs_to_many
   # add fields here
 end
