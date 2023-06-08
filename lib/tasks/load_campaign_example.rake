@@ -15,7 +15,7 @@ task load_campaign_example: :environment do
   campaign.save!
 
   session =
-    Session.find_or_create_by!(
+    Session.find_or_initialize_by(
       campaign:,
       name: example.session_attributes[:name]
     )
@@ -23,9 +23,8 @@ task load_campaign_example: :environment do
 
   example.children_attributes.each do |child_attributes|
     child =
-      session.patients.find_or_create_by!(
-        nhs_number: child_attributes[:nhs_number]
-      )
+      Patient.find_or_initialize_by(nhs_number: child_attributes[:nhs_number])
     child.update!(child_attributes)
+    session.patients << child
   end
 end
