@@ -32,9 +32,12 @@ test("Works offline", async ({ page, context }) => {
   );
 
   await page.getByTestId("start").click();
-  await expect(page.locator("h1")).toContainText("Your campaigns");
+  await expect(page.locator("h2")).toContainText("School sessions");
 
-  await page.getByTestId("campaigns").click();
+  await page.getByTestId("sessions").click();
+  await expect(page.locator("h2")).toContainText("HPV");
+
+  await page.getByTestId("session-link").click();
   await expect(page.locator("h1")).toContainText("HPV campaign");
 
   await page.getByTestId("save-offline").click();
@@ -43,14 +46,14 @@ test("Works offline", async ({ page, context }) => {
   await page.getByTestId("password").fill("password1234");
   await page.getByTestId("password-confirmation").fill("password1234");
   await page.getByTestId("submit").click();
-  await expect(page.locator("h1")).toContainText("Your campaigns");
+  await expect(page.locator("h2")).toContainText("HPV");
 
   await goOffline();
 
-  await page.getByTestId("campaigns").click();
+  await page.getByTestId("session-link").click();
   await expect(page.locator("h1")).toContainText("HPV campaign");
 
-  await page.getByTestId("record").click();
+  await page.getByRole("link", { name: "Record vaccinations" }).click();
   await expect(page.getByTestId("child-status").nth(0)).toContainText(
     "Not yet"
   );
@@ -63,7 +66,7 @@ test("Works offline", async ({ page, context }) => {
   await goOnline();
   await swWaitForRequest(context, "/ping");
 
-  await page.goto("/campaigns/1/children");
+  await page.goto("/sessions/1/vaccinations");
   await expect(page.getByTestId("child-status").nth(0)).toContainText(
     "Vaccinated"
   );
