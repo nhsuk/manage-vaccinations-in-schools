@@ -16,8 +16,10 @@
 #
 FactoryBot.define do
   factory :session do
+    campaign { create :campaign }
+    location
+
     date { Time.zone.today }
-    location { create(:location) }
     name { "#{campaign.name} session at #{location.name}" }
 
     after :create do |session|
