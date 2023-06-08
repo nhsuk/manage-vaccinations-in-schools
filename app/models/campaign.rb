@@ -9,6 +9,7 @@
 #
 class Campaign < ApplicationRecord
   has_many :sessions, dependent: :destroy
+  has_many :triage, dependent: :destroy
 
   validates :name, presence: true
 end

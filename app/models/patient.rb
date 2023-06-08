@@ -24,6 +24,7 @@ class Patient < ApplicationRecord
   belongs_to :location, optional: true
   has_many :patient_sessions
   has_many :sessions, through: :patient_sessions
+  has_many :triage
 
   validates :first_name, presence: true
   validates :last_name, presence: true
