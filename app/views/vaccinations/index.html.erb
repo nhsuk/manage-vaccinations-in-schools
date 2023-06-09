@@ -9,33 +9,28 @@
   <% end %>
 <% end %>
 
-<h1 class="nhsuk-heading-l">Record vaccinations</h1>
+<% content_for :breadcrumbs do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+    { text: 'Home', href: dashboard_path },
+    { text: 'School sessions', href: sessions_path },
+    { text: @session.name, href: session_path(@session) },
+  ]) %>
+<% end %>
 
-<div id="patients" class="nhsuk-card nhsuk-u-margin-bottom-0">
-  <div class="nhsuk-card__content">
-    <h2 class="nhsuk-card__heading nhsuk-heading-m">Patients</h2>
+<h1>Record vaccinations</h1>
 
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-three-quarters"
-           data-controller="campaign"
-           data-campaign-url-value="<%= session_vaccinations_path(@session, format: :json) %>">
-
-        <table class="nhsuk-table">
-          <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-              <th class="govuk-table__header">Name</th>
-              <th class="govuk-table__header">Date of birth</th>
-              <th class="govuk-table__header">Screening</th>
-              <th class="govuk-table__header">Vaccinated</th>
-            </tr>
-          </thead>
-          <tbody class="govuk-table__body">
-            <% @patients.each do |patient| %>
-              <%= render "patient_row", patient: %>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
+<table class="nhsuk-table">
+  <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+      <th class="govuk-table__header">Name</th>
+      <th class="govuk-table__header">Date of birth</th>
+      <th class="govuk-table__header">Consent</th>
+      <th class="govuk-table__header">Outcome</th>
+    </tr>
+  </thead>
+    <tbody class="govuk-table__body">
+    <% @patients.each do |patient| %>
+      <%= render "patient_row", patient: %>
+    <% end %>
+  </tbody>
+</table>
