@@ -21,11 +21,9 @@
 #  index_patients_on_nhs_number  (nhs_number) UNIQUE
 #
 class Patient < ApplicationRecord
-  enum :sex, %w[Female Male]
-  enum :gp, ["Local GP"]
-  enum :screening, ["Approved for vaccination"]
-  enum :consent, ["Parental consent (digital)"]
-  enum :seen, ["Not yet", "Vaccinated"]
+  belongs_to :location, optional: true
+  has_many :patient_sessions
+  has_many :sessions, through: :patient_sessions
 
   validates :first_name, presence: true
   validates :last_name, presence: true
@@ -34,8 +32,11 @@ class Patient < ApplicationRecord
   validates :gp, presence: true
   validates :screening, presence: true
 
-  has_and_belongs_to_many :sessions
-  belongs_to :location, optional: true
+  enum :sex, %w[Female Male]
+  enum :gp, ["Local GP"]
+  enum :screening, ["Approved for vaccination"]
+  enum :consent, ["Parental consent (digital)"]
+  enum :seen, ["Not yet", "Vaccinated"]
 
   def full_name
     "#{first_name} #{last_name}"
