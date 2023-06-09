@@ -15,32 +15,24 @@
   ]) %>
 <% end %>
 
-<h1 class="nhsuk-heading-l">School sessions</h1>
+<h1>School sessions</h1>
 
-<div id="sessions" class="nhsuk-card nhsuk-u-margin-bottom-0">
-  <% @sessions_by_type.each do |campaign_type, sessions| %>
-  <div class="nhsuk-card__content">
-    <h2 class="nhsuk-card__heading nhsuk-heading-m"><%= campaign_type %></h2>
+<% @sessions_by_type.each do |campaign_type, sessions| %>
+  <h2><%= campaign_type %></h2>
 
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-three-quarters">
-
-        <table class="nhsuk-table">
-          <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-              <th class="govuk-table__header">Date</th>
-              <th class="govuk-table__header">Time</th>
-              <th class="govuk-table__header">School</th>
-            </tr>
-          </thead>
-          <tbody class="govuk-table__body">
-            <% sessions.each do |session| %>
-              <%= render "session_row", session: %>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-  <% end %>
-</div>
+  <table class="govuk-table">
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header">Date</th>
+        <th class="govuk-table__header">Time</th>
+        <th class="govuk-table__header" style="width: 50%">School</th>
+        <th class="govuk-table__header" style="width: 25%"></th>
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+      <% sessions.each do |session| %>
+        <%= render "session_row", session: %>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
