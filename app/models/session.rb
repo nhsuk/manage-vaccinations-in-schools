@@ -17,7 +17,8 @@
 class Session < ApplicationRecord
   belongs_to :campaign
   belongs_to :location, optional: true
-  has_and_belongs_to_many :patients
+  has_many :patient_sessions
+  has_many :patients, through: :patient_sessions
 
   validates :name, presence: true
   validates :date, presence: true

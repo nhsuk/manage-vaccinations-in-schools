@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_07_150942) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_09_153358) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -38,6 +38,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_07_150942) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "patient_sessions", id: false, force: :cascade do |t|
+    t.bigint "session_id", null: false
+    t.bigint "patient_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["patient_id", "session_id"], name: "index_patient_sessions_on_patient_id_and_session_id", unique: true
+    t.index ["session_id", "patient_id"], name: "index_patient_sessions_on_session_id_and_patient_id", unique: true
+  end
+
   create_table "patients", force: :cascade do |t|
     t.date "dob"
     t.bigint "nhs_number"
@@ -52,15 +61,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_07_150942) do
     t.integer "consent"
     t.integer "seen"
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
-  end
-
-  create_table "patients_sessions", id: false, force: :cascade do |t|
-    t.bigint "session_id", null: false
-    t.bigint "patient_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["patient_id", "session_id"], name: "index_patients_sessions_on_patient_id_and_session_id", unique: true
-    t.index ["session_id", "patient_id"], name: "index_patients_sessions_on_session_id_and_patient_id", unique: true
   end
 
   create_table "sessions", force: :cascade do |t|
