@@ -10,9 +10,9 @@ export default class extends Controller {
   connect() {
     window.campaignVaccinations.then((data) => {
       if (data[this.idValue]["seen"] == "Vaccinated") {
-        this.statusTarget.innerHTML = `<strong class="nhsuk-tag">Vaccinated</stong>`;
+        this.statusTarget.innerHTML = `<strong class="nhsuk-tag">Vaccinated</strong>`;
       } else {
-        this.statusTarget.innerHTML = `<strong class="nhsuk-tag nhsuk-tag--grey">Not yet</stong>`;
+        this.statusTarget.innerHTML = `<strong class="nhsuk-tag nhsuk-tag--grey">Not yet</strong>`;
       }
     });
   }
