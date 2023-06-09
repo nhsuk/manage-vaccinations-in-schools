@@ -16,4 +16,5 @@
 class PatientSession < ApplicationRecord
   belongs_to :patient
   belongs_to :session
+  has_many :vaccination_records
 end
