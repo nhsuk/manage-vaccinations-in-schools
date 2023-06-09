@@ -12,7 +12,7 @@ const swWaitForRequest = (context: BrowserContext, url: string) => {
       if (route.request().serviceWorker()) {
         resolve(route.request());
       }
-      return route.fulfill();
+      return route.continue();
     });
   });
 };
@@ -64,7 +64,7 @@ test("Works offline", async ({ page, context }) => {
   await page.getByTestId("confirm-button").click();
 
   await goOnline();
-  await swWaitForRequest(context, "/ping");
+  await swWaitForRequest(context, "/sessions/1/vaccinations/1/record");
 
   await page.goto("/sessions/1/vaccinations");
   await expect(page.getByTestId("child-status").nth(0)).toContainText(
