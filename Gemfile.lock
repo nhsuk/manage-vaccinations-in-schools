@@ -83,7 +83,7 @@ GEM
     asciidoctor-diagram-ditaamini (1.0.3)
     asciidoctor-diagram-plantuml (1.2023.5)
     ast (2.4.2)
-    avo (2.34.0)
+    avo (2.34.5)
       actionview (>= 6.0)
       active_link_to
       activerecord (>= 6.0)
@@ -303,7 +303,7 @@ GEM
       multi_xml (~> 0.5)
       rack (>= 1.2, < 4)
     okcomputer (1.18.4)
-    pagy (6.0.3)
+    pagy (6.0.4)
     parallel (1.22.1)
     parser (3.2.2.0)
       ast (~> 2.4.1)
