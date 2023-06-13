@@ -29,9 +29,8 @@
     </tr>
   </thead>
     <tbody class="govuk-table__body">
-    <% @cohort.each do |member| %>
-      <%= render "patient_row", patient: member.patient,
-                                outcome: member.outcome %>
+    <% @patient_outcomes.each do |patient, outcome| %>
+      <%= render "patient_row", patient:, outcome: %>
     <% end %>
   </tbody>
 </table>
