@@ -1,7 +1,4 @@
-<tr class="govuk-table__row"
-  data-controller="vaccination"
-  data-vaccination-id-value="<%= patient.id %>"
-  data-testid="children">
+<tr class="govuk-table__row">
   <td class="govuk-table__cell" id="<%= dom_id patient %>">
     <%= link_to patient.full_name, session_vaccination_path(@session, patient),
       "data-testid": "child-link" %>
@@ -12,9 +9,7 @@
   <td class="govuk-table__cell">
     <%= patient.consent %>
   </td>
-  <td class="govuk-table__cell" data-vaccination-target="status"
-                                data-testid="child-status">
-
+  <td class="govuk-table__cell" data-testid="child-status">
     <strong class="nhsuk-tag<%=
       patient.seen == "Not yet" ? " nhsuk-tag--grey" : "" %>">
       <%= patient.seen %>
