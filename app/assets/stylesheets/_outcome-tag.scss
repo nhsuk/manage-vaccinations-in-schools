@@ -1,0 +1,24 @@
+.app-outcome-tag {
+  border-width: 0 0 0 3px;
+  font-weight: bold;
+
+  .nhsuk-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .nhsuk-icon__tick {
+    vertical-align: top;
+  }
+
+  .nhsuk-icon__cross {
+    vertical-align: bottom;
+  }
+
+  &.nhsuk-tag--white {
+    background: none;
+    font-weight: normal;
+    border-width: 1px;
+    border-style: dashed;
+  }
+}

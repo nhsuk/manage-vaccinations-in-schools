@@ -10,6 +10,7 @@ $govuk-assets-path: "/";
 $color_app-pale-blue: #ccdff1;
 
 @import "_offline.sass.scss";
+@import "_outcome-tag.scss";
 
 .app-u-frutiger,
 .app-u-frutiger * {
