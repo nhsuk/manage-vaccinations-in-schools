@@ -17,4 +17,12 @@ class PatientSession < ApplicationRecord
   belongs_to :patient
   belongs_to :session
   has_many :vaccination_records
+
+  def outcome
+    # Temporary, while we're not recording separate vaccination records
+    patient.seen == "Vaccinated" ? :vaccinated : :no_outcome
+
+    # TODO: Uncomment this when we're recording separate vaccination records
+    # vaccination_records.last.present? ? :vaccinated : :no_outcome
+  end
 end
