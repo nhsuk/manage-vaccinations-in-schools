@@ -1,17 +1,17 @@
 require "rails_helper"
 
-RSpec.describe AppOutcomeTagComponent, type: :component do
-  let(:outcome) { :no_outcome }
-  let(:component) { render_inline(described_class.new(outcome:)) }
+RSpec.describe AppStatusTagComponent, type: :component do
+  let(:status) { :no_outcome }
+  let(:component) { render_inline(described_class.new(status:)) }
 
-  context "when outcome is :no_outcome" do
+  context "when status is :no_outcome" do
     it "renders no_outcome css class" do
       expect(
-        component.css(".app-outcome-tag.nhsuk-tag.nhsuk-tag--white")
+        component.css(".app-status-tag.nhsuk-tag.nhsuk-tag--white")
       ).to be_present
     end
 
-    it "renders no outcome text" do
+    it "renders no status text" do
       expect(component.text).to include("No outcome yet")
     end
 
@@ -20,12 +20,12 @@ RSpec.describe AppOutcomeTagComponent, type: :component do
     end
   end
 
-  context "when outcome is :vaccinated" do
-    let(:outcome) { :vaccinated }
+  context "when status is :vaccinated" do
+    let(:status) { :vaccinated }
 
     it "renders vaccinated css class" do
       expect(
-        component.css(".app-outcome-tag.nhsuk-tag.nhsuk-tag--green")
+        component.css(".app-status-tag.nhsuk-tag.nhsuk-tag--green")
       ).to be_present
     end
 
@@ -38,12 +38,12 @@ RSpec.describe AppOutcomeTagComponent, type: :component do
     end
   end
 
-  context "when outcome is :no_consent" do
-    let(:outcome) { :no_consent }
+  context "when status is :no_consent" do
+    let(:status) { :no_consent }
 
     it "renders no_consent css class" do
       expect(
-        component.css(".app-outcome-tag.nhsuk-tag.nhsuk-tag--red")
+        component.css(".app-status-tag.nhsuk-tag.nhsuk-tag--red")
       ).to be_present
     end
 
@@ -56,12 +56,12 @@ RSpec.describe AppOutcomeTagComponent, type: :component do
     end
   end
 
-  context "when outcome is :could_not_vaccinate" do
-    let(:outcome) { :could_not_vaccinate }
+  context "when status is :could_not_vaccinate" do
+    let(:status) { :could_not_vaccinate }
 
     it "renders could_not_vaccinate css class" do
       expect(
-        component.css(".app-outcome-tag.nhsuk-tag.nhsuk-tag--orange")
+        component.css(".app-status-tag.nhsuk-tag.nhsuk-tag--orange")
       ).to be_present
     end
 
@@ -74,13 +74,13 @@ RSpec.describe AppOutcomeTagComponent, type: :component do
     end
   end
 
-  context "when outcome is unknown" do
-    let(:outcome) { :unknown }
+  context "when status is unknown" do
+    let(:status) { :unknown }
 
     it "raises an error" do
       expect { component }.to raise_error(
         RuntimeError,
-        "Unknown outcome: unknown"
+        "Unknown status: unknown"
       )
     end
   end
