@@ -34,7 +34,7 @@ class ExampleCampaignData
 
   def children_attributes
     raw_data["patients"].map do |patient|
-      {
+      attributes = {
         seen: patient["seen"]["text"],
         first_name: patient["firstName"],
         last_name: patient["lastName"],
@@ -45,6 +45,15 @@ class ExampleCampaignData
         nhs_number: patient["nhsNumber"],
         screening: patient["screening"]
       }
+
+      if patient["triage"].present?
+        attributes[:triage] = {
+          status: patient["triage"]["status"],
+          notes: patient["triage"]["notes"]
+        }
+      end
+
+      attributes
     end
   end
 end
