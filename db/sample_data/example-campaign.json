@@ -90,6 +90,9 @@
       "seen": {
         "text": "Not yet",
         "classes": "nhsuk-tag--grey"
+      },
+      "triage": {
+        "status": "Ready for session"
       }
     },
     {
@@ -115,6 +118,10 @@
       "seen": {
         "text": "Not yet",
         "classes": "nhsuk-tag--grey"
+      },
+      "triage": {
+        "status": "Ready for session",
+        "notes": "Spoke with parent, it is safe to vaccinate"
       }
     },
     {
@@ -140,6 +147,10 @@
       "seen": {
         "text": "Not yet",
         "classes": "nhsuk-tag--grey"
+      },
+      "triage": {
+        "status": "Do not vaccinate",
+        "notes": "Spoke with parent, child has had the vaccine"
       }
     },
     {
@@ -166,6 +177,9 @@
       "seen": {
         "text": "Not yet",
         "classes": "nhsuk-tag--grey"
+      },
+      "triage": {
+        "status": "Do not vaccinate"
       }
     },
     {
@@ -191,6 +205,9 @@
       "seen": {
         "text": "Not yet",
         "classes": "nhsuk-tag--grey"
+      },
+      "triage": {
+        "status": "Needs follow up"
       }
     },
     {
