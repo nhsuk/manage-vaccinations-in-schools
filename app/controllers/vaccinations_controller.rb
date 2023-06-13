@@ -1,12 +1,12 @@
 class VaccinationsController < ApplicationController
   before_action :set_session
   before_action :set_patient, only: %i[show record history]
-  before_action :set_cohort, only: %i[index record_template]
+  before_action :set_patient_outcomes, only: %i[index record_template]
 
   def index
     respond_to do |format|
       format.html
-      format.json { render json: @cohort.map(&:patient).index_by(&:id) }
+      format.json { render json: @patient_outcomes.map(&:first).index_by(&:id) }
     end
   end
 
@@ -73,11 +73,12 @@ class VaccinationsController < ApplicationController
     @patient = Patient.find(params[:id])
   end
 
-  def set_cohort
-    @cohort =
+  def set_patient_outcomes
+    @patient_outcomes =
       @session
-        .cohort
+        .patient_sessions
         .includes(:patient)
         .order("patients.first_name", "patients.last_name")
+        .map { |ps| [ps.patient, ps.outcome] }
   end
 end
