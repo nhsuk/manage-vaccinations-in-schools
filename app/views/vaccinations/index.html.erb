@@ -30,7 +30,8 @@
   </thead>
     <tbody class="govuk-table__body">
     <% @cohort.each do |member| %>
-      <%= render "patient_row", patient: member.patient %>
+      <%= render "patient_row", patient: member.patient,
+                                outcome: member.outcome %>
     <% end %>
   </tbody>
 </table>

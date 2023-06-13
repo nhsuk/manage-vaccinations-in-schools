@@ -10,9 +10,6 @@
     <%= patient.consent %>
   </td>
   <td class="govuk-table__cell" data-testid="child-status">
-    <strong class="nhsuk-tag<%=
-      patient.seen == "Not yet" ? " nhsuk-tag--grey" : "" %>">
-      <%= patient.seen %>
-    </strong>
+    <%= render(AppOutcomeTagComponent.new(outcome:)) %>
   </td>
 </tr>
