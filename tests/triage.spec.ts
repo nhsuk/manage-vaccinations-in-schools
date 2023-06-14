@@ -14,6 +14,10 @@ test("Performing triage", async ({ page, context }) => {
   ).toContainText("Aaron Pfeffer");
 
   await expect(
+    page.locator("#patients tr:first-child td:nth-child(2)")
+  ).toBeEmpty();
+
+  await expect(
     page.locator("#patients tr:first-child td:nth-child(3)")
   ).toContainText("To do");
 
@@ -25,6 +29,10 @@ test("Performing triage", async ({ page, context }) => {
   await expect(
     page.locator("#patients tr:nth-child(2) td:first-child")
   ).toContainText("Alaia Lakin");
+
+  await expect(
+    page.locator("#patients tr:nth-child(2) td:nth-child(2)")
+  ).toBeEmpty();
 
   await expect(
     page.locator("#patients tr:nth-child(2) td:nth-child(3)")
@@ -40,6 +48,10 @@ test("Performing triage", async ({ page, context }) => {
   ).toContainText("Aliza Kshlerin");
 
   await expect(
+    page.locator("#patients tr:nth-child(3) td:nth-child(2)")
+  ).toContainText("Notes from nurse");
+
+  await expect(
     page.locator("#patients tr:nth-child(3) td:nth-child(3)")
   ).toContainText("Ready for session");
 
@@ -53,10 +65,48 @@ test("Performing triage", async ({ page, context }) => {
   ).toContainText("Amalia Wiza");
 
   await expect(
+    page.locator("#patients tr:nth-child(4) td:nth-child(2)")
+  ).toBeEmpty();
+
+  await expect(
     page.locator("#patients tr:nth-child(4) td:nth-child(3)")
   ).toContainText("Do not vaccinate");
 
   await expect(
     page.locator("#patients tr:nth-child(4) td:nth-child(3) div")
   ).toHaveClass(/nhsuk-tag--red/);
+
+  // Patient 5: Amara Klien
+  await expect(
+    page.locator("#patients tr:nth-child(5) td:first-child")
+  ).toContainText("Amara Klein");
+
+  await expect(
+    page.locator("#patients tr:nth-child(5) td:nth-child(2)")
+  ).toContainText("Notes from nurse");
+
+  await expect(
+    page.locator("#patients tr:nth-child(5) td:nth-child(3)")
+  ).toContainText("Do not vaccinate");
+
+  await expect(
+    page.locator("#patients tr:nth-child(5) td:nth-child(3) div")
+  ).toHaveClass(/nhsuk-tag--red/);
+
+  // Patient 6: Amara Rodriguez
+  await expect(
+    page.locator("#patients tr:nth-child(6) td:first-child")
+  ).toContainText("Amara Rodriguez");
+
+  await expect(
+    page.locator("#patients tr:nth-child(6) td:nth-child(2)")
+  ).toBeEmpty();
+
+  await expect(
+    page.locator("#patients tr:nth-child(6) td:nth-child(3)")
+  ).toContainText("Needs follow up");
+
+  await expect(
+    page.locator("#patients tr:nth-child(6) td:nth-child(3) div")
+  ).toHaveClass(/nhsuk-tag--blue/);
 });
