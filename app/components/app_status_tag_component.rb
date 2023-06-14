@@ -8,16 +8,22 @@ class AppStatusTagComponent < ViewComponent::Base
   def css_classes
     base_classes = "app-status-tag nhsuk-tag"
     status_classes = {
-      no_outcome: " nhsuk-tag--white",
-      vaccinated: " nhsuk-tag--green",
-      no_consent: " nhsuk-tag--red",
-      could_not_vaccinate: " nhsuk-tag--orange"
+      :no_outcome => " nhsuk-tag--white",
+      :vaccinated => " nhsuk-tag--green",
+      :no_consent => " nhsuk-tag--red",
+      :could_not_vaccinate => " nhsuk-tag--orange",
+      "Do not vaccinate" => " nhsuk-tag--red",
+      "Ready for session" => " nhsuk-tag--green",
+      "Needs follow up" => " nhsuk-tag--blue",
+      "To do" => " nhsuk-tag--grey",
+      "No response" => " nhsuk-tag--white"
     }
 
     base_classes +
       (status_classes[@status] || raise("Unknown status: #{@status}"))
   end
 
+  # Convert status symbols to text, if necessary
   def status_text
     status_texts = {
       no_outcome: "No outcome yet",
@@ -26,12 +32,18 @@ class AppStatusTagComponent < ViewComponent::Base
       could_not_vaccinate: "Could not vaccinate"
     }
 
-    status_texts[@status] || raise("Unknown status: #{@status}")
+    status_texts.fetch(@status, @status)
   end
 
   def svg_icon
-    return nil unless @status.in?(%i[vaccinated no_consent could_not_vaccinate])
-
-    @status == :vaccinated ? "tick" : "cross"
+    case @status
+    when :vaccinated
+    when "Ready for session"
+      "tick"
+    when :no_consent
+    when :could_not_vaccinate
+    when "Do not vaccinate"
+      "cross"
+    end
   end
 end

@@ -9,7 +9,7 @@
   <% end %>
 <% end %>
 
-<h1 class="nhsuk-heading-l">Record vaccinations</h1>
+<h1 class="nhsuk-heading-l">Triage</h1>
 
 <div id="patients" class="nhsuk-card nhsuk-u-margin-bottom-0">
   <div class="nhsuk-card__content">
@@ -27,8 +27,8 @@
             </tr>
           </thead>
           <tbody class="govuk-table__body">
-            <% @patients.each do |patient| %>
-              <%= render "patient_row", patient: %>
+            <% @patient_triages.each do |patient, triage| %>
+              <%= render "patient_row", patient:, triage: %>
             <% end %>
           </tbody>
         </table>
