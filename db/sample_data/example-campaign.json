@@ -149,8 +149,7 @@
         "classes": "nhsuk-tag--grey"
       },
       "triage": {
-        "status": "Do not vaccinate",
-        "notes": "Spoke with parent, child has had the vaccine"
+        "status": "Do not vaccinate"
       }
     },
     {
@@ -179,7 +178,8 @@
         "classes": "nhsuk-tag--grey"
       },
       "triage": {
-        "status": "Do not vaccinate"
+        "status": "Do not vaccinate",
+        "notes": "Spoke with parent, child has had the vaccine"
       }
     },
     {
