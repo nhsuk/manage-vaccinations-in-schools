@@ -1,6 +1,6 @@
 <tr class="govuk-table__row">
   <td class="govuk-table__cell">
-    <%= link_to patient.full_name, session_vaccination_path(@session, patient), "data-testid": "child-link" %>
+    <%= link_to patient.full_name, session_triage_path(@session, patient), "data-testid": "child-link" %>
   </td>
   <td class="govuk-table__cell">
     <%= "Notes from nurse" if triage.notes.present? %>

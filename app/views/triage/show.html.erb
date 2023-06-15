@@ -1,0 +1,19 @@
+<% if flash[:success].present? %>
+  <%= govuk_notification_banner(title_text: "Success", success: true) do |nb| %>
+    <% if flash[:success].is_a?(Hash) %>
+      <% nb.with_heading(text: flash[:success][:title]) %>
+      <p><%= flash[:success][:body] %></p>
+    <% else %>
+      <% nb.with_heading(text: flash[:success]) %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% content_for :breadcrumbs do %>
+  <%= render AppBacklinkComponent.new(
+               href: session_triage_index_path(@session),
+               name: "triage page"
+             ) %>
+<% end %>
+
+<%= render "patient_triage", patient: @patient %>

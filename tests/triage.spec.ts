@@ -55,6 +55,14 @@ test("Performing triage", async ({ page }) => {
   await then_i_should_see_patients_with_their_triage_info(page);
 
   await page.getByRole("link", { name: "Aaron Pfeffer" }).click();
+
+  await then_i_should_see_the_triage_page_for_the_patient(
+    page,
+    "Aaron Pfeffer"
+  );
+
+  await page.getByRole("link", { name: "Back to triage" }).click();
+  await expect(page.locator("h1")).toContainText("Triage");
 });
 
 async function then_i_should_see_the_correct_breadcrumbs(page) {
@@ -115,4 +123,9 @@ async function then_i_should_see_patients_with_their_triage_info(page) {
       ).toEqual(0);
     }
   }
+}
+
+async function then_i_should_see_the_triage_page_for_the_patient(page, name) {
+  let patient = patients[name];
+  await expect(page.locator("h1")).toContainText(name);
 }

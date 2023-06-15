@@ -1,5 +1,7 @@
 class TriageController < ApplicationController
-  before_action :set_session, only: [:index]
+  before_action :set_session, only: %i[index show]
+  before_action :set_patient, only: [:show]
+  before_action :set_triage, only: [:show]
 
   def index
     @patient_triages =
@@ -11,9 +13,20 @@ class TriageController < ApplicationController
         end
   end
 
+  def show
+  end
+
   private
 
   def set_session
     @session = Session.find_by(id: params[:session_id])
+  end
+
+  def set_patient
+    @patient = Patient.find_by(id: params[:id])
+  end
+
+  def set_triage
+    @triage = @patient.triage_for_campaign(@session.campaign)
   end
 end
