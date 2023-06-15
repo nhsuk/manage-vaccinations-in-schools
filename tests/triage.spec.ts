@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test("Performing triage", async ({ page, context }) => {
+test("Performing triage", async ({ page }) => {
   await page.goto("/reset");
 
   await page.goto("/sessions/1");
@@ -8,105 +8,100 @@ test("Performing triage", async ({ page, context }) => {
 
   await expect(page.locator("h1")).toContainText("Triage");
 
-  // Patient 1: Aaron Pfeffer
-  await expect(
-    page.locator("#patients tr:first-child td:first-child")
-  ).toContainText("Aaron Pfeffer");
+  const patients = [
+    {
+      row: 1,
+      name: "Aaron Pfeffer",
+      note: "",
+      status: "To do",
+      class: "nhsuk-tag--grey",
+    },
+    {
+      row: 2,
+      name: "Alaia Lakin",
+      note: "",
+      status: "Ready for session",
+      class: "nhsuk-tag--green",
+      icon: "nhsuk-icon__tick",
+    },
+    {
+      row: 3,
+      name: "Aliza Kshlerin",
+      note: "Notes from nurse",
+      status: "Ready for session",
+      class: "nhsuk-tag--green",
+      icon: "nhsuk-icon__tick",
+    },
+    {
+      row: 4,
+      name: "Amalia Wiza",
+      note: "",
+      status: "Do not vaccinate",
+      class: "nhsuk-tag--red",
+      icon: "nhsuk-icon__cross",
+    },
+    {
+      row: 5,
+      name: "Amara Klein",
+      note: "Notes from nurse",
+      status: "Do not vaccinate",
+      class: "nhsuk-tag--red",
+      icon: "nhsuk-icon__cross",
+    },
+    {
+      row: 6,
+      name: "Amara Rodriguez",
+      note: "",
+      status: "Needs follow up",
+      class: "nhsuk-tag--blue",
+    },
+  ];
 
-  await expect(
-    page.locator("#patients tr:first-child td:nth-child(2)")
-  ).toBeEmpty();
+  for (const patient of patients) {
+    await expect(
+      page.locator(`#patients tr:nth-child(${patient.row}) td:first-child`),
+      `Name for patient row: ${patient.row} name: ${patient.name}`
+    ).toContainText(patient.name);
 
-  await expect(
-    page.locator("#patients tr:first-child td:nth-child(3)")
-  ).toContainText("To do");
+    if (patient.note) {
+      await expect(
+        page.locator(`#patients tr:nth-child(${patient.row}) td:nth-child(2)`),
+        `Note for patient row: ${patient.row} name: ${patient.name}`
+      ).toContainText(patient.note);
+    } else {
+      await expect(
+        page.locator(`#patients tr:nth-child(${patient.row}) td:nth-child(2)`),
+        `Empty note patient row: ${patient.row} name: ${patient.name}`
+      ).toBeEmpty();
+    }
+    await expect(
+      page.locator(`#patients tr:nth-child(${patient.row}) td:nth-child(3)`),
+      `Status text for patient row: ${patient.row} name: ${patient.name}`
+    ).toContainText(patient.status);
 
-  await expect(
-    page.locator("#patients tr:first-child td:nth-child(3) div")
-  ).toHaveClass(/nhsuk-tag--grey/);
+    await expect(
+      page.locator(
+        `#patients tr:nth-child(${patient.row}) td:nth-child(3) div`
+      ),
+      `Status colour for patient row: ${patient.row} name: ${patient.name}`
+    ).toHaveClass(new RegExp(patient.class));
 
-  // Patient 2: Alaia Lakin
-  await expect(
-    page.locator("#patients tr:nth-child(2) td:first-child")
-  ).toContainText("Alaia Lakin");
-
-  await expect(
-    page.locator("#patients tr:nth-child(2) td:nth-child(2)")
-  ).toBeEmpty();
-
-  await expect(
-    page.locator("#patients tr:nth-child(2) td:nth-child(3)")
-  ).toContainText("Ready for session");
-
-  await expect(
-    page.locator("#patients tr:nth-child(2) td:nth-child(3) div")
-  ).toHaveClass(/nhsuk-tag--green/);
-
-  // Patient 3: Aliza Kshlerin
-  await expect(
-    page.locator("#patients tr:nth-child(3) td:first-child")
-  ).toContainText("Aliza Kshlerin");
-
-  await expect(
-    page.locator("#patients tr:nth-child(3) td:nth-child(2)")
-  ).toContainText("Notes from nurse");
-
-  await expect(
-    page.locator("#patients tr:nth-child(3) td:nth-child(3)")
-  ).toContainText("Ready for session");
-
-  await expect(
-    page.locator("#patients tr:nth-child(3) td:nth-child(3) div")
-  ).toHaveClass(/nhsuk-tag--green/);
-
-  // Patient 4: Amalia Wiza
-  await expect(
-    page.locator("#patients tr:nth-child(4) td:first-child")
-  ).toContainText("Amalia Wiza");
-
-  await expect(
-    page.locator("#patients tr:nth-child(4) td:nth-child(2)")
-  ).toBeEmpty();
-
-  await expect(
-    page.locator("#patients tr:nth-child(4) td:nth-child(3)")
-  ).toContainText("Do not vaccinate");
-
-  await expect(
-    page.locator("#patients tr:nth-child(4) td:nth-child(3) div")
-  ).toHaveClass(/nhsuk-tag--red/);
-
-  // Patient 5: Amara Klien
-  await expect(
-    page.locator("#patients tr:nth-child(5) td:first-child")
-  ).toContainText("Amara Klein");
-
-  await expect(
-    page.locator("#patients tr:nth-child(5) td:nth-child(2)")
-  ).toContainText("Notes from nurse");
-
-  await expect(
-    page.locator("#patients tr:nth-child(5) td:nth-child(3)")
-  ).toContainText("Do not vaccinate");
-
-  await expect(
-    page.locator("#patients tr:nth-child(5) td:nth-child(3) div")
-  ).toHaveClass(/nhsuk-tag--red/);
-
-  // Patient 6: Amara Rodriguez
-  await expect(
-    page.locator("#patients tr:nth-child(6) td:first-child")
-  ).toContainText("Amara Rodriguez");
-
-  await expect(
-    page.locator("#patients tr:nth-child(6) td:nth-child(2)")
-  ).toBeEmpty();
-
-  await expect(
-    page.locator("#patients tr:nth-child(6) td:nth-child(3)")
-  ).toContainText("Needs follow up");
-
-  await expect(
-    page.locator("#patients tr:nth-child(6) td:nth-child(3) div")
-  ).toHaveClass(/nhsuk-tag--blue/);
+    if (patient.icon) {
+      await expect(
+        page.locator(
+          `#patients tr:nth-child(${patient.row}) td:nth-child(3) div svg`
+        ),
+        `Status icon patient row: ${patient.row} name: ${patient.name}`
+      ).toHaveClass(new RegExp(patient.icon));
+    } else {
+      expect(
+        await page
+          .locator(
+            `#patients tr:nth-child(${patient.row}) td:nth-child(3) div svg`
+          )
+          .count(),
+        `No status icon for patient row: ${patient.row} name: ${patient.name}`
+      ).toEqual(0);
+    }
+  }
 });

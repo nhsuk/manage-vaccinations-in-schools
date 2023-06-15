@@ -37,12 +37,9 @@ class AppStatusTagComponent < ViewComponent::Base
 
   def svg_icon
     case @status
-    when :vaccinated
-    when "Ready for session"
+    when :vaccinated, "Ready for session"
       "tick"
-    when :no_consent
-    when :could_not_vaccinate
-    when "Do not vaccinate"
+    when :no_consent, :could_not_vaccinate, "Do not vaccinate"
       "cross"
     end
   end
