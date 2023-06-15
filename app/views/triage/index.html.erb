@@ -9,30 +9,27 @@
   <% end %>
 <% end %>
 
-<h1 class="nhsuk-heading-l">Triage</h1>
+<% content_for :breadcrumbs do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+    { text: 'Home', href: dashboard_path },
+    { text: 'School sessions', href: sessions_path },
+    { text: @session.name, href: session_path(@session) },
+  ]) %>
+<% end %>
 
-<div id="patients" class="nhsuk-card nhsuk-u-margin-bottom-0">
-  <div class="nhsuk-card__content">
-    <h2 class="nhsuk-card__heading nhsuk-heading-m">Patients</h2>
+<h1>Triage</h1>
 
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-three-quarters">
-
-        <table class="nhsuk-table">
-          <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-              <th class="govuk-table__header">Name</th>
-              <th class="govuk-table__header">Notes</th>
-              <th class="govuk-table__header">Triage status</th>
-            </tr>
-          </thead>
-          <tbody class="govuk-table__body">
-            <% @patient_triages.each do |patient, triage| %>
-              <%= render "patient_row", patient:, triage: %>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
+<table id="patients" class="nhsuk-table">
+  <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+      <th class="govuk-table__header">Name</th>
+      <th class="govuk-table__header">Notes</th>
+      <th class="govuk-table__header">Triage status</th>
+    </tr>
+  </thead>
+  <tbody class="govuk-table__body">
+    <% @patient_triages.each do |patient, triage| %>
+      <%= render "patient_row", patient:, triage: %>
+    <% end %>
+  </tbody>
+</table>
