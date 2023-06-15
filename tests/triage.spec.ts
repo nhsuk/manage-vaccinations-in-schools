@@ -8,6 +8,12 @@ test("Performing triage", async ({ page }) => {
 
   await expect(page.locator("h1")).toContainText("Triage");
 
+  await expect(
+    page.locator(".nhsuk-breadcrumb__item:last-of-type")
+  ).toContainText(
+    "HPV campaign at St Andrew's Benn CofE (Voluntary Aided) Primary School"
+  );
+
   const patients = [
     {
       row: 1,
