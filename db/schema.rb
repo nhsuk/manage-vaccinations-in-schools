@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_09_155513) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_16_103904) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -18,6 +18,35 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_09_155513) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "consent_responses", force: :cascade do |t|
+    t.bigint "patient_id", null: false
+    t.bigint "campaign_id", null: false
+    t.text "childs_name"
+    t.text "childs_common_name"
+    t.date "childs_dob"
+    t.text "address_line_1"
+    t.text "address_line_2"
+    t.text "address_town"
+    t.text "address_postcode"
+    t.text "parent_name"
+    t.integer "parent_relationship"
+    t.text "parent_relationship_other"
+    t.text "parent_email"
+    t.text "parent_phone"
+    t.integer "parent_contact_method"
+    t.text "parent_contact_method_other"
+    t.integer "consent"
+    t.integer "reason_for_refusal"
+    t.text "reason_for_refusal_other"
+    t.integer "gp_response"
+    t.text "gp_name"
+    t.integer "route", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["campaign_id"], name: "index_consent_responses_on_campaign_id"
+    t.index ["patient_id"], name: "index_consent_responses_on_patient_id"
   end
 
   create_table "locations", force: :cascade do |t|
@@ -92,5 +121,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_09_155513) do
     t.index ["patient_session_id"], name: "index_vaccination_records_on_patient_session_id"
   end
 
+  add_foreign_key "consent_responses", "campaigns"
+  add_foreign_key "consent_responses", "patients"
   add_foreign_key "vaccination_records", "patient_sessions"
 end
