@@ -25,6 +25,7 @@ class Patient < ApplicationRecord
   has_many :patient_sessions
   has_many :sessions, through: :patient_sessions
   has_many :triage
+  has_many :consent_responses
 
   validates :first_name, presence: true
   validates :last_name, presence: true

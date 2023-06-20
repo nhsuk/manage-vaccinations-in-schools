@@ -49,7 +49,7 @@ end
 group :test do
   gem "capybara"
   gem "cuprite"
-  gem "faker"
+  gem "faker", github: "misaka/faker", branch: "add_alternative_name"
   gem "rspec"
   gem "webmock"
 end
