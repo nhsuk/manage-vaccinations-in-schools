@@ -24,15 +24,22 @@ task load_campaign_example: :environment do
 
     example.children_attributes.each do |attributes|
       triage_attributes = attributes.delete(:triage)
+      consent_attributes = attributes.delete(:consent)
 
       child = Patient.find_or_initialize_by(nhs_number: attributes[:nhs_number])
       child.update!(attributes)
       session.patients << child
 
-      next if triage_attributes.blank?
-      triage = Triage.new(triage_attributes)
-      triage.campaign = campaign
-      child.triage << triage
+      if triage_attributes.present?
+        triage = Triage.new(triage_attributes)
+        triage.campaign = campaign
+        child.triage << triage
+      end
+
+      next if consent_attributes.blank?
+      consent_response = ConsentResponse.new(consent_attributes)
+      consent_response.campaign = campaign
+      child.consent_responses << consent_response
     end
   end
 end

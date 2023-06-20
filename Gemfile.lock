@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/misaka/faker.git
+  revision: 2c3cbbeedab7de86bbac5a1de9acf0333d268791
+  branch: add_alternative_name
+  specs:
+    faker (3.2.0)
+      i18n (>= 1.8.11, < 2)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -179,8 +187,6 @@ GEM
     factory_bot_rails (6.2.0)
       factory_bot (~> 6.2.0)
       railties (>= 5.0.0)
-    faker (3.2.0)
-      i18n (>= 1.8.11, < 2)
     faraday (2.7.4)
       faraday-net_http (>= 2.0, < 3.1)
       ruby2_keywords (>= 0.0.4)
@@ -506,7 +512,7 @@ DEPENDENCIES
   debug
   dockerfile-rails (>= 1.0.0)
   factory_bot_rails
-  faker
+  faker!
   fhir_client
   govuk-components
   govuk_design_system_formbuilder
