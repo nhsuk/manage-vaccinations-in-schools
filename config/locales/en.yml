@@ -3,6 +3,13 @@ en:
     name: Record children’s vaccinations
     email: my-service@email
   activerecord:
+    attributes:
+      patient_session:
+        outcomes:
+          could_not_vaccinate: Could not vaccinate
+          no_outcome: No outcome yet
+          no_consent: No consent
+          vaccinated: Vaccinated
     errors:
       models:
         offline_password:
