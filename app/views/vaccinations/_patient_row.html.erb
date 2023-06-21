@@ -10,6 +10,8 @@
     <%= patient.consent %>
   </td>
   <td class="govuk-table__cell" data-testid="child-status">
-    <%= render(AppStatusTagComponent.new(status: outcome)) %>
+    <%= render(AppStatusTagComponent.new(status: PatientSession.human_enum_name("outcome", outcome),
+                                         colour: vaccination_status_colour(outcome),
+                                         icon: vaccination_status_icon(outcome))) %>
   </td>
 </tr>
