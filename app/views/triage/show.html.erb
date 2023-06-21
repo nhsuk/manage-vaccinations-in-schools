@@ -9,7 +9,7 @@
   <% end %>
 <% end %>
 
-<% content_for :breadcrumbs do %>
+<% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
                href: session_triage_index_path(@session),
                name: "triage page"
