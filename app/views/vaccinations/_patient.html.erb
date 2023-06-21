@@ -1,110 +1,103 @@
 <h2 class="nhsuk-u-heading-s" id="<%= dom_id patient %>">
-    <%= patient.full_name %>
+  <%= patient.full_name %>
 </h2>
 
 <div data-controller="child-vaccination">
   <div class="nhsuk-card">
-      <div class="nhsuk-card__content">
-          <h2 class="nhsuk-card__heading nhsuk-heading-m">
-              About them
-          </h2>
-          <p class="nhsuk-card__description">
-          </p>
-          <dl class="nhsuk-summary-list app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0">
+    <div class="nhsuk-card__content">
+      <h2 class="nhsuk-card__heading nhsuk-heading-m">
+        About them
+      </h2>
 
-              <div class="nhsuk-summary-list__row">
-                  <dt class="nhsuk-summary-list__key">
-                      Name
-                  </dt>
-                  <dd class="nhsuk-summary-list__value" data-child-vaccination-target="fullName" data-testid="full-name">
-                      <%= patient.full_name %>
-                  </dd>
+      <dl class="nhsuk-summary-list app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0">
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Name
+          </dt>
+          <dd class="nhsuk-summary-list__value" data-child-vaccination-target="fullName" data-testid="full-name">
+            <%= patient.full_name %>
+          </dd>
+        </div>
 
-              </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Sex
+          </dt>
+          <dd class="nhsuk-summary-list__value" data-child-vaccination-target="sex">
+            <%= patient.sex %>
+          </dd>
+        </div>
 
-              <div class="nhsuk-summary-list__row">
-                  <dt class="nhsuk-summary-list__key">
-                      Sex
-                  </dt>
-                  <dd class="nhsuk-summary-list__value" data-child-vaccination-target="sex">
-                      <%= patient.sex %>
-                  </dd>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Date of birth
+          </dt>
+          <dd class="nhsuk-summary-list__value" data-child-vaccination-target="dob">
+            <%= patient.dob&.strftime("%d %B %Y") %> (aged <%= patient.dob ? patient.age : "" %>)
+          </dd>
+        </div>
 
-              </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Consent
+          </dt>
+          <dd class="nhsuk-summary-list__value" data-child-vaccination-target="consent">
+            <%= patient.consent %>
+          </dd>
+        </div>
 
-              <div class="nhsuk-summary-list__row">
-                  <dt class="nhsuk-summary-list__key">
-                      Date of birth
-                  </dt>
-                  <dd class="nhsuk-summary-list__value" data-child-vaccination-target="dob">
-                      <%= patient.dob&.strftime("%d %B %Y") %> (aged <%= patient.dob ? patient.age : "" %>)
-                  </dd>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            GP
+          </dt>
+          <dd class="nhsuk-summary-list__value" data-child-vaccination-target="gp">
+            <%= patient.gp %>
+          </dd>
+        </div>
 
-              </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            NHS Number
+          </dt>
+          <dd class="nhsuk-summary-list__value" data-child-vaccination-target="nhsNumber">
+            <%= patient.nhs_number %>
+          </dd>
+        </div>
 
-              <div class="nhsuk-summary-list__row">
-                  <dt class="nhsuk-summary-list__key">
-                      Consent
-                  </dt>
-                  <dd class="nhsuk-summary-list__value" data-child-vaccination-target="consent">
-                      <%= patient.consent %>
-                  </dd>
-
-              </div>
-
-              <div class="nhsuk-summary-list__row">
-                  <dt class="nhsuk-summary-list__key">
-                      GP
-                  </dt>
-                  <dd class="nhsuk-summary-list__value" data-child-vaccination-target="gp">
-                      <%= patient.gp %>
-                  </dd>
-
-              </div>
-
-              <div class="nhsuk-summary-list__row">
-                  <dt class="nhsuk-summary-list__key">
-                      NHS Number
-                  </dt>
-                  <dd class="nhsuk-summary-list__value" data-child-vaccination-target="nhsNumber">
-                      <%= patient.nhs_number %>
-                  </dd>
-
-              </div>
-
-              <div class="nhsuk-summary-list__row">
-                  <dt class="nhsuk-summary-list__key">
-                      Screening
-                  </dt>
-                  <dd class="nhsuk-summary-list__value" data-child-vaccination-target="screening">
-                      <%= patient.screening %>
-                  </dd>
-              </div>
-          </dl>
-          <p></p>
-      </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Screening
+          </dt>
+          <dd class="nhsuk-summary-list__value" data-child-vaccination-target="screening">
+            <%= patient.screening %>
+          </dd>
+        </div>
+      </dl>
+    </div>
   </div>
 
   <p>
-      <%= link_to "View vaccination history",
-                  history_session_vaccination_path(session_id: @session.id,
-                                                   id: (@patient.id || ":id")) %>
+    <%= link_to "View vaccination history",
+                history_session_vaccination_path(session_id: @session.id,
+                                                 id: (@patient.id || ":id")) %>
   </p>
 
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
       <h2 class="nhsuk-card__heading nhsuk-heading-m">
-          Record vaccination
+        Record vaccination
       </h2>
       <%= form_tag record_session_vaccination_path(
-            session_id: @session.id,
-            id: (@patient.id || ":id"),
-          ),
-          method: :put,
-          data: { child_vaccination_target: "form" } %>
-          <div class="nhsuk-u-margin-top-6">
-              <%= button_tag "Confirm", class: "nhsuk-button", "data-testid": "confirm-button" %>
-          </div>
+                     session_id: @session.id,
+                     id: (@patient.id || ":id"),
+                   ),
+                   method: :put,
+                   data: { child_vaccination_target: "form" } %>
+        <div class="nhsuk-u-margin-top-6">
+          <%= button_tag "Confirm",
+            class: "nhsuk-button",
+            "data-testid": "confirm-button" %>
+        </div>
       </form>
     </div>
   </div>
