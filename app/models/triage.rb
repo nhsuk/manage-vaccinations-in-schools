@@ -20,6 +20,6 @@ class Triage < ApplicationRecord
   belongs_to :patient
 
   enum :status,
-       ["To do", "Ready for session", "Do not vaccinate", "Needs follow up"],
-       default: "To do"
+       %i[to_do ready_for_session do_not_vaccinate needs_follow_up],
+       default: :to_do
 end

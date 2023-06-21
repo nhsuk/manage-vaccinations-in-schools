@@ -92,7 +92,7 @@
         "classes": "nhsuk-tag--grey"
       },
       "triage": {
-        "status": "Ready for session"
+        "status": "ready_for_session"
       }
     },
     {
@@ -120,7 +120,7 @@
         "classes": "nhsuk-tag--grey"
       },
       "triage": {
-        "status": "Ready for session",
+        "status": "ready_for_session",
         "notes": "Spoke with parent, it is safe to vaccinate"
       }
     },
@@ -149,7 +149,7 @@
         "classes": "nhsuk-tag--grey"
       },
       "triage": {
-        "status": "Do not vaccinate"
+        "status": "do_not_vaccinate"
       }
     },
     {
@@ -178,7 +178,7 @@
         "classes": "nhsuk-tag--grey"
       },
       "triage": {
-        "status": "Do not vaccinate",
+        "status": "do_not_vaccinate",
         "notes": "Spoke with parent, child has had the vaccine"
       }
     },
@@ -207,7 +207,7 @@
         "classes": "nhsuk-tag--grey"
       },
       "triage": {
-        "status": "Needs follow up"
+        "status": "needs_follow_up"
       }
     },
     {
