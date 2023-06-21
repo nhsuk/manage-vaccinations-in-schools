@@ -1,7 +1,7 @@
-<div class="<%= css_classes %>" style="width: 100%">
-  <% if svg_icon %>
-    <svg class="nhsuk-icon nhsuk-icon__<%= svg_icon %>" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <% if svg_icon == 'tick' %>
+<div <%= tag.attributes div_attributes %> style="width: 100%">
+  <% if icon %>
+    <svg class="nhsuk-icon nhsuk-icon__<%= icon %>" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <% if icon == 'tick' %>
         <path stroke-width="4" stroke-linecap="round" d="M18.4 7.8l-8.5 8.4L5.6 12" stroke="currentColor">
         </path>
       <% else %>
@@ -13,6 +13,6 @@
     </svg>
   <% end %>
   <span class="nhsuk-u-font-size-16">
-    <%= status_text %>
+    <%= status %>
   </span>
 </div>

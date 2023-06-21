@@ -1,87 +1,35 @@
 require "rails_helper"
 
 RSpec.describe AppStatusTagComponent, type: :component do
-  let(:status) { :no_outcome }
-  let(:component) { render_inline(described_class.new(status:)) }
+  before { render_inline(component) }
 
-  context "when status is :no_outcome" do
-    it "renders no_outcome css class" do
-      expect(
-        component.css(".app-status-tag.nhsuk-tag.nhsuk-tag--white")
-      ).to be_present
-    end
+  subject { page }
 
-    it "renders no status text" do
-      expect(component.text).to include("No outcome yet")
-    end
+  let(:component) { described_class.new(status:, colour:, icon:) }
 
-    it "does not render svg icon" do
-      expect(component.css("svg")).to be_empty
-    end
-  end
+  let(:colour) { :white }
+  let(:status) { :test_status }
+  let(:icon) { nil }
 
-  context "when status is :vaccinated" do
-    let(:status) { :vaccinated }
+  %i[white green red orange blue grey].each do |colour|
+    context "when colour is #{colour}" do
+      let(:colour) { colour }
 
-    it "renders vaccinated css class" do
-      expect(
-        component.css(".app-status-tag.nhsuk-tag.nhsuk-tag--green")
-      ).to be_present
-    end
-
-    it "renders vaccinated text" do
-      expect(component.text).to include("Vaccinated")
-    end
-
-    it "renders tick svg icon" do
-      expect(component.css(".nhsuk-icon__tick")).to be_present
+      it { should have_css(".app-status-tag.nhsuk-tag.nhsuk-tag--#{colour}") }
     end
   end
 
-  context "when status is :no_consent" do
-    let(:status) { :no_consent }
+  %i[tick cross].each do |icon|
+    context "when icon is #{icon}" do
+      let(:icon) { icon }
 
-    it "renders no_consent css class" do
-      expect(
-        component.css(".app-status-tag.nhsuk-tag.nhsuk-tag--red")
-      ).to be_present
-    end
-
-    it "renders no consent text" do
-      expect(component.text).to include("No consent")
-    end
-
-    it "renders cross svg icon" do
-      expect(component.css(".nhsuk-icon__cross")).to be_present
+      it { should have_css(".nhsuk-icon__#{icon}") }
     end
   end
 
-  context "when status is :could_not_vaccinate" do
-    let(:status) { :could_not_vaccinate }
+  context "when icon is nil" do
+    let(:icon) { nil }
 
-    it "renders could_not_vaccinate css class" do
-      expect(
-        component.css(".app-status-tag.nhsuk-tag.nhsuk-tag--orange")
-      ).to be_present
-    end
-
-    it "renders could not vaccinate text" do
-      expect(component.text).to include("Could not vaccinate")
-    end
-
-    it "renders cross svg icon" do
-      expect(component.css(".nhsuk-icon__cross")).to be_present
-    end
-  end
-
-  context "when status is unknown" do
-    let(:status) { :unknown }
-
-    it "raises an error" do
-      expect { component }.to raise_error(
-        RuntimeError,
-        "Unknown status: unknown"
-      )
-    end
+    it { should_not have_css(".nhsuk-icon") }
   end
 end
