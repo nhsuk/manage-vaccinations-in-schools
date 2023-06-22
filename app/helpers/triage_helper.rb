@@ -24,4 +24,15 @@ module TriageHelper
       "tick"
     end
   end
+
+  def parent_relationship(consent_response)
+    if consent_response.parent_relationship == "other"
+      consent_response.parent_relationship_other
+    else
+      ConsentResponse.human_enum_name(
+        "parent_relationship",
+        consent_response.parent_relationship
+      )
+    end
+  end
 end
