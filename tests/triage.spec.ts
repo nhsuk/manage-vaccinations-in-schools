@@ -82,23 +82,11 @@ test("Performing triage", async ({ page }) => {
   await then_i_should_see_the_correct_breadcrumbs(page);
   await then_i_should_see_patients_with_their_triage_info(page);
 
-  await page.getByRole("link", { name: "Aaron Pfeffer" }).click();
-  await then_i_should_see_the_triage_page_for_the_patient(
-    page,
-    "Aaron Pfeffer"
-  );
-  await page.getByRole("link", { name: "Back to triage" }).click();
-
-  await page.getByRole("link", { name: "Annabel Morar" }).click();
-  await then_i_should_see_the_triage_page_for_the_patient(
-    page,
-    "Annabel Morar"
-  );
-  await page.getByRole("link", { name: "Back to triage" }).click();
-
-  await page.getByRole("link", { name: "Amaya Sauer" }).click();
-  await then_i_should_see_the_triage_page_for_the_patient(page, "Amaya Sauer");
-  await page.getByRole("link", { name: "Back to triage" }).click();
+  for (let name in patients) {
+    await page.getByRole("link", { name: name }).click();
+    await then_i_should_see_the_triage_page_for_the_patient(page, name);
+    await page.getByRole("link", { name: "Back to triage" }).click();
+  }
 });
 
 async function then_i_should_see_the_correct_breadcrumbs(page) {
