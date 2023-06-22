@@ -2,7 +2,7 @@
 
 set -e
 
-port=4444
+port=${PORT:-4444}
 
 if nc -z localhost $port; then
   echo "Already offline, server running on http://localhost:$port"
