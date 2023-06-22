@@ -66,6 +66,7 @@ const patients = {
     status: "To do",
     class: "nhsuk-tag--grey",
     consent_response: "Refused by",
+    reason_for_refusal: "Personal choice",
     type_of_consent: "Website",
   },
 };
@@ -174,7 +175,11 @@ async function then_i_should_see_the_triage_page_for_the_patient(page, name) {
     );
   }
 
-  // Reason for refusal
+  if (patient["reason_for_refusal"]) {
+    await expect(page.locator("#consent")).toContainText(
+      "Reason for refusal " + patient["reason_for_refusal"]
+    );
+  }
+
   // Parent relationship if other
-  // Route of consent response
 }

@@ -43,4 +43,18 @@
       <%= ConsentResponse.human_enum_name("route", consent_response.route) %>
     </dd>
   </div>
+
+  <% if consent_response.consent_refused? %>
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Reason for refusal
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        <%= ConsentResponse.human_enum_name(
+              "reason_for_refusal",
+              consent_response.reason_for_refusal
+            ) %>
+      </dd>
+    </div>
+  <% end %>
 </dl>
