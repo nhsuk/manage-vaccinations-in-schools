@@ -7,6 +7,9 @@ const patients = {
     status: "To do",
     class: "nhsuk-tag--grey",
     consent_response: "Given by",
+    parent_name: "Betty Pfeffer",
+    parent_email: "Betty_Pfeffer62@yahoo.com",
+    parent_relationship: "Father",
     type_of_consent: "Paper",
   },
   "Alaia Lakin": {
@@ -16,6 +19,9 @@ const patients = {
     class: "nhsuk-tag--green",
     icon: "nhsuk-icon__tick",
     consent_response: "Given by",
+    parent_name: "Garret Lakin",
+    parent_email: "Garret57@hotmail.com",
+    parent_relationship: "grandmother",
     type_of_consent: "Website",
   },
   "Aliza Kshlerin": {
@@ -25,6 +31,9 @@ const patients = {
     class: "nhsuk-tag--green",
     icon: "nhsuk-icon__tick",
     consent_response: "Given by",
+    parent_name: "Georgianna Kshlerin",
+    parent_email: "Georgianna.Kshlerin0@hotmail.com",
+    parent_relationship: "Mother",
     type_of_consent: "Phone",
   },
   "Amalia Wiza": {
@@ -34,6 +43,9 @@ const patients = {
     class: "nhsuk-tag--red",
     icon: "nhsuk-icon__cross",
     consent_response: "Given by",
+    parent_relationship: "Mother",
+    parent_name: "Jordi Wiza",
+    parent_email: "Jordi.Wiza@yahoo.com",
     type_of_consent: "Website",
   },
   "Amara Klein": {
@@ -43,6 +55,9 @@ const patients = {
     class: "nhsuk-tag--red",
     icon: "nhsuk-icon__cross",
     consent_response: "Given by",
+    parent_relationship: "Mother",
+    parent_name: "Reese Klein",
+    parent_email: "Reese9@gmail.com",
     type_of_consent: "Website",
   },
   "Amara Rodriguez": {
@@ -51,6 +66,9 @@ const patients = {
     status: "Needs follow up",
     class: "nhsuk-tag--blue",
     consent_response: "Given by",
+    parent_relationship: "Father",
+    parent_name: "Lloyd Rodriguez",
+    parent_email: "Lloyd.Rodriguez61@yahoo.com",
     type_of_consent: "Self consent",
   },
   "Amaya Sauer": {
@@ -67,6 +85,9 @@ const patients = {
     class: "nhsuk-tag--grey",
     consent_response: "Refused by",
     reason_for_refusal: "Personal choice",
+    parent_relationship: "Father",
+    parent_name: "Meggie Morar",
+    parent_email: "Meggie19@hotmail.com",
     type_of_consent: "Website",
   },
 };
@@ -153,8 +174,22 @@ async function then_i_should_see_the_triage_page_for_the_patient(page, name) {
   let patient = patients[name];
   await expect(page.locator("h1")).toContainText(name);
 
+  let consentResponse = patient["consent_response"];
+
+  await expect(page.locator("#consent")).toContainText(consentResponse);
+
+  if (consentResponse == "No response given") return;
+
+  let parentRelationship;
+  if (patient["parent_relationship"]) {
+    if (patient["parent_relationship"] == "Other")
+      parentRelationship = patient["parent_relationship_other"];
+    else parentRelationship = patient["parent_relationship"];
+  }
+
+  if (parentRelationship) consentResponse += " " + parentRelationship;
   await expect(page.locator("#consent")).toContainText(
-    patient["consent_response"]
+    parentRelationship + " " + patient["parent_name"]
   );
 
   if (patient["type_of_consent"]) {
@@ -168,6 +203,4 @@ async function then_i_should_see_the_triage_page_for_the_patient(page, name) {
       "Reason for refusal " + patient["reason_for_refusal"]
     );
   }
-
-  // Parent relationship if other
 }
