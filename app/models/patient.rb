@@ -62,6 +62,10 @@ class Patient < ApplicationRecord
     triage.find_or_create_by!(campaign:)
   end
 
+  def consent_response_for_campaign(campaign)
+    consent_responses.find_by(campaign:)
+  end
+
   def as_json(options = {})
     super.merge("full_name" => full_name, "age" => age)
   end

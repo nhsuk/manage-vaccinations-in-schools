@@ -2,6 +2,7 @@ class TriageController < ApplicationController
   before_action :set_session, only: %i[index show]
   before_action :set_patient, only: [:show]
   before_action :set_triage, only: [:show]
+  before_action :set_consent_response, only: [:show]
 
   def index
     @patient_triages =
@@ -28,5 +29,10 @@ class TriageController < ApplicationController
 
   def set_triage
     @triage = @patient.triage_for_campaign(@session.campaign)
+  end
+
+  def set_consent_response
+    @consent_response =
+      @patient.consent_response_for_campaign(@session.campaign)
   end
 end
