@@ -6,6 +6,8 @@ const patients = {
     note: "",
     status: "To do",
     class: "nhsuk-tag--grey",
+    consent_response: "Given by",
+    type_of_consent: "Paper",
   },
   "Alaia Lakin": {
     row: 2,
@@ -13,6 +15,8 @@ const patients = {
     status: "Ready for session",
     class: "nhsuk-tag--green",
     icon: "nhsuk-icon__tick",
+    consent_response: "Given by",
+    type_of_consent: "Website",
   },
   "Aliza Kshlerin": {
     row: 3,
@@ -20,6 +24,8 @@ const patients = {
     status: "Ready for session",
     class: "nhsuk-tag--green",
     icon: "nhsuk-icon__tick",
+    consent_response: "Given by",
+    type_of_consent: "Phone",
   },
   "Amalia Wiza": {
     row: 4,
@@ -27,6 +33,8 @@ const patients = {
     status: "Do not vaccinate",
     class: "nhsuk-tag--red",
     icon: "nhsuk-icon__cross",
+    consent_response: "Given by",
+    type_of_consent: "Website",
   },
   "Amara Klein": {
     row: 5,
@@ -34,12 +42,31 @@ const patients = {
     status: "Do not vaccinate",
     class: "nhsuk-tag--red",
     icon: "nhsuk-icon__cross",
+    consent_response: "Given by",
+    type_of_consent: "Website",
   },
   "Amara Rodriguez": {
     row: 6,
     note: "",
     status: "Needs follow up",
     class: "nhsuk-tag--blue",
+    consent_response: "Given by",
+    type_of_consent: "Self consent",
+  },
+  "Amaya Sauer": {
+    row: 7,
+    note: "",
+    status: "To do",
+    class: "nhsuk-tag--grey",
+    consent_response: "No response given",
+  },
+  "Annabel Morar": {
+    row: 8,
+    note: "",
+    status: "To do",
+    class: "nhsuk-tag--grey",
+    consent_response: "Refused by",
+    type_of_consent: "Website",
   },
 };
 
@@ -55,14 +82,22 @@ test("Performing triage", async ({ page }) => {
   await then_i_should_see_patients_with_their_triage_info(page);
 
   await page.getByRole("link", { name: "Aaron Pfeffer" }).click();
-
   await then_i_should_see_the_triage_page_for_the_patient(
     page,
     "Aaron Pfeffer"
   );
-
   await page.getByRole("link", { name: "Back to triage" }).click();
-  await expect(page.locator("h1")).toContainText("Triage");
+
+  await page.getByRole("link", { name: "Annabel Morar" }).click();
+  await then_i_should_see_the_triage_page_for_the_patient(
+    page,
+    "Annabel Morar"
+  );
+  await page.getByRole("link", { name: "Back to triage" }).click();
+
+  await page.getByRole("link", { name: "Amaya Sauer" }).click();
+  await then_i_should_see_the_triage_page_for_the_patient(page, "Amaya Sauer");
+  await page.getByRole("link", { name: "Back to triage" }).click();
 });
 
 async function then_i_should_see_the_correct_breadcrumbs(page) {
@@ -128,4 +163,18 @@ async function then_i_should_see_patients_with_their_triage_info(page) {
 async function then_i_should_see_the_triage_page_for_the_patient(page, name) {
   let patient = patients[name];
   await expect(page.locator("h1")).toContainText(name);
+
+  await expect(page.locator("#consent")).toContainText(
+    patient["consent_response"]
+  );
+
+  if (patient["type_of_consent"]) {
+    await expect(page.locator("#consent")).toContainText(
+      "Type of consent " + patient["type_of_consent"]
+    );
+  }
+
+  // Reason for refusal
+  // Parent relationship if other
+  // Route of consent response
 }

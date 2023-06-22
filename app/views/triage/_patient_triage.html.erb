@@ -59,5 +59,21 @@
       </div>
     </div>
 
+    <div class="nhsuk-card" id="consent">
+      <div class="nhsuk-card__content">
+        <h2 class="nhsuk-card__heading nhsuk-heading-m">
+          Consent
+        </h2>
+
+        <% if @consent_response.present? %>
+          <%= render "patient_triage_consent_response", consent_response: @consent_response %>
+        <% else %>
+          <p>
+            No response given
+          </p>
+        <% end %>
+      </div>
+    </div>
+
   </div>
 </div>
