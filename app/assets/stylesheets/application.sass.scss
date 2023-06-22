@@ -16,3 +16,15 @@ $color_app-pale-blue: #ccdff1;
 .app-u-frutiger * {
   font-family: "Frutiger W01", Arial, sans-serif !important;
 }
+
+.app-summary-list--no-bottom-border {
+  .govuk-summary-list,
+  .nhsuk-summary-list {
+    &__row:last-child .govuk-summary-list__key,
+    &__row:last-child .nhsuk-summary-list__key,
+    &__row:last-child .govuk-summary-list__value,
+    &__row:last-child .nhsuk-summary-list__value {
+      border-bottom: none;
+    }
+  }
+}
