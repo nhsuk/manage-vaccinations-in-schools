@@ -5,9 +5,9 @@
 <div data-controller="child-vaccination">
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
-      <h2 class="nhsuk-card__heading nhsuk-heading-m">
-        About them
-      </h2>
+      <h1 class="nhsuk-card__heading nhsuk-heading-m">
+        Child details
+      </h1>
 
       <dl class="nhsuk-summary-list app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0">
         <div class="nhsuk-summary-list__row">
@@ -21,28 +21,10 @@
 
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
-            Sex
-          </dt>
-          <dd class="nhsuk-summary-list__value" data-child-vaccination-target="sex">
-            <%= patient.sex %>
-          </dd>
-        </div>
-
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
             Date of birth
           </dt>
           <dd class="nhsuk-summary-list__value" data-child-vaccination-target="dob">
             <%= patient.dob&.strftime("%d %B %Y") %> (aged <%= patient.dob ? patient.age : "" %>)
-          </dd>
-        </div>
-
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Consent
-          </dt>
-          <dd class="nhsuk-summary-list__value" data-child-vaccination-target="consent">
-            <%= patient.consent %>
           </dd>
         </div>
 
@@ -61,15 +43,6 @@
           </dt>
           <dd class="nhsuk-summary-list__value" data-child-vaccination-target="nhsNumber">
             <%= patient.nhs_number %>
-          </dd>
-        </div>
-
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Screening
-          </dt>
-          <dd class="nhsuk-summary-list__value" data-child-vaccination-target="screening">
-            <%= patient.screening %>
           </dd>
         </div>
       </dl>
