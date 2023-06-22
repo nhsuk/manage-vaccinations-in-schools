@@ -16,7 +16,7 @@ module VaccinationsHelper
 
   def vaccination_status_icon(status)
     case status
-    when "no_consent", "couldnt_vaccinate"
+    when "no_consent", "could_not_vaccinate"
       "cross"
     when "vaccinated"
       "tick"
