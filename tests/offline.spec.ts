@@ -46,7 +46,7 @@ test("Works offline", async ({ page, context }) => {
   await page.getByTestId("password").fill("password1234");
   await page.getByTestId("password-confirmation").fill("password1234");
   await page.getByTestId("submit").click();
-  await expect(page.locator("h2")).toContainText("HPV");
+  await expect(page.getByRole("heading", { name: "HPV" })).toContainText("HPV");
 
   await goOffline();
 
