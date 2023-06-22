@@ -8,7 +8,7 @@ Rails.application.routes.draw do
 
   get "/ping" => proc { [200, {}, ["PONG"]] }
 
-  get "/reset", to: "dev#reset" if Rails.env.development?
+  get "/reset", to: "dev#reset" if Rails.env.development? || Rails.env.test?
 
   get "/csrf", to: "csrf#new"
 

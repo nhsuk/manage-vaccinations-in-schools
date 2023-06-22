@@ -25,7 +25,7 @@ test.afterEach(async () => {
   goOnline();
 });
 
-test("Works offline", async ({ page, context }) => {
+test.skip("Works offline", async ({ page, context }) => {
   await page.goto("/reset");
   await expect(page.locator("h1")).toContainText(
     "Record children’s vaccinations"

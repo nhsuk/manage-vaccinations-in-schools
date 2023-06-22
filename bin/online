@@ -2,7 +2,7 @@
 
 set -e
 
-port=4000
+port=${PORT:-4001}
 
 if nc -z localhost $port; then
   echo "Already online, server running on http://localhost:$port"
