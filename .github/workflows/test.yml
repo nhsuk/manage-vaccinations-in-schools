@@ -84,9 +84,6 @@ jobs:
       - name: Setup app
         run: bin/setup
 
-      - name: Setup data
-        run: bundle exec rake load_campaign_example
-
       - name: Install Playwright Browsers
         run: yarn playwright install --with-deps
 
