@@ -32,6 +32,9 @@ jobs:
         with:
           ruby-version: .tool-versions
           bundler-cache: true
+      - uses: actions/setup-node@v3
+        with:
+          cache: "yarn"
 
       - name: Setup database
         run: bin/rails db:test:prepare
@@ -49,7 +52,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      - run: yarn
+        with:
+          cache: "yarn"
+      - run: yarn install --frozen-lockfile
       - run: yarn test
 
   playwright:
@@ -80,6 +85,9 @@ jobs:
         with:
           ruby-version: .tool-versions
           bundler-cache: true
+      - uses: actions/setup-node@v3
+        with:
+          cache: "yarn"
 
       - name: Setup app
         run: bin/setup
