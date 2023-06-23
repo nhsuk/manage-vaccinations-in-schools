@@ -89,8 +89,9 @@ jobs:
         with:
           cache: "yarn"
 
-      - name: Setup app
-        run: bin/setup
+      - run: bundle
+      - run: yarn install --frozen-lockfile
+      - run: bin/rails db:prepare
 
       - name: Get installed Playwright version
         id: playwright-version
@@ -107,6 +108,9 @@ jobs:
       - name: Install Playwright Browsers
         run: yarn playwright install --with-deps
         if: steps.playwright-cache.outputs.cache-hit != 'true'
+
+      - name: Precompile assets
+        run: bin/rails assets:precompile
 
       - name: Run Playwright tests
         run: yarn test:e2e
