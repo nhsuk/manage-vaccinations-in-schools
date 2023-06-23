@@ -6,8 +6,9 @@
     <%= "Notes from nurse" if triage&.notes.present? %>
   </td>
   <td class="govuk-table__cell">
-    <%= render(AppStatusTagComponent.new(status: Triage.human_enum_name(:status, triage.status),
-                                         colour: triage_status_colour(triage.status),
-                                         icon: triage_status_icon(triage.status))) %>
+    <%= triage_status = PatientTriageStatusService.call(consent: consent_response, triage:)
+        render(AppStatusTagComponent.new(status: t(triage_status) { triage_status.to_s.humanize },
+                                         colour: triage_status_colour(triage_status:),
+                                         icon: triage_status_icon(triage_status:))) %>
   </td>
 </tr>
