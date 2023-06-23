@@ -57,7 +57,7 @@ class Patient < ApplicationRecord
   end
 
   def triage_for_campaign(campaign)
-    triage.find_or_create_by!(campaign:)
+    triage.find_by(campaign:)
   end
 
   def consent_response_for_campaign(campaign)

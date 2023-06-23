@@ -3,7 +3,7 @@
     <%= link_to patient.full_name, session_triage_path(@session, patient), "data-testid": "child-link" %>
   </td>
   <td class="govuk-table__cell">
-    <%= "Notes from nurse" if triage.notes.present? %>
+    <%= "Notes from nurse" if triage&.notes.present? %>
   </td>
   <td class="govuk-table__cell">
     <%= render(AppStatusTagComponent.new(status: Triage.human_enum_name(:status, triage.status),
