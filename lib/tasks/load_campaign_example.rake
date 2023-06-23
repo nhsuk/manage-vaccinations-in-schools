@@ -18,7 +18,7 @@ task :load_campaign_example, [:example_file] => :environment do |_task, args|
     session =
       Session.find_or_initialize_by(
         campaign:,
-        name: example.session_attributes[:name],
+        name: example.session_attributes[:name]
       )
     session.update!(example.session_attributes)
 
@@ -26,20 +26,23 @@ task :load_campaign_example, [:example_file] => :environment do |_task, args|
       triage_attributes = attributes.delete(:triage)
       consent_attributes = attributes.delete(:consent)
 
-      child = Patient.find_or_initialize_by(nhs_number: attributes[:nhs_number])
-      child.update!(attributes)
-      session.patients << child
+      patient =
+        Patient.find_or_initialize_by(nhs_number: attributes[:nhs_number])
+      patient.update!(attributes)
+      session.patients << patient unless session.patients.include?(patient)
 
       if triage_attributes.present?
-        triage = Triage.new(triage_attributes)
-        triage.campaign = campaign
-        child.triage << triage
+        triage = Triage.find_or_initialize_by(campaign:, patient:)
+        triage.update!(triage_attributes)
       end
 
       next if consent_attributes.blank?
-      consent_response = ConsentResponse.new(consent_attributes)
-      consent_response.campaign = campaign
-      child.consent_responses << consent_response
+      consent_response =
+        ConsentResponse.find_or_initialize_by(campaign:, patient:)
+      consent_response.update!(consent_attributes)
+      unless patient.consent_responses.include?(consent_response)
+        patient.consent_responses << consent_response
+      end
     end
   end
 end
