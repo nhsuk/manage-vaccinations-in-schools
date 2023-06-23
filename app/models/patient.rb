@@ -31,8 +31,6 @@ class Patient < ApplicationRecord
   validates :last_name, presence: true
   validates :dob, presence: true
   validates :nhs_number, presence: true, uniqueness: true
-  validates :gp, presence: true
-  validates :screening, presence: true
 
   enum :sex, %w[Female Male]
   enum :gp, ["Local GP"]

@@ -35,7 +35,7 @@ class ExampleCampaignData
   def children_attributes
     raw_data["patients"].map do |patient|
       attributes = {
-        seen: patient["seen"]["text"],
+        seen: patient.dig("seen", "text"),
         first_name: patient["firstName"],
         last_name: patient["lastName"],
         dob: patient["dob"],
