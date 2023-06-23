@@ -10,7 +10,11 @@ class TriageController < ApplicationController
         .patients
         .includes(:triage)
         .map do |patient|
-          [patient, patient.triage_for_campaign(@session.campaign)]
+          [
+            patient,
+            patient.triage_for_campaign(@session.campaign),
+            patient.consent_response_for_campaign(@session.campaign)
+          ]
         end
   end
 

@@ -17,7 +17,7 @@ RSpec.describe "/sessions/:session_id/triage", type: :request do
 
     describe "triage status" do
       it "shows child status" do
-        expect(response.body).to include("To do")
+        expect(response.body).to include("No response")
       end
     end
   end

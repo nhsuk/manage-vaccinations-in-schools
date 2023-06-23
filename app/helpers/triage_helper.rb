@@ -1,28 +1,23 @@
 module TriageHelper
-  def triage_status_colour(status)
-    case status
-    when "do_not_vaccinate"
-      :red
-    when "ready_for_session"
-      :green
-    when "needs_follow_up"
-      :blue
-    when "to_do"
-      :grey
-    when "no_response"
-      :white
-    else
-      :white
-    end
+  def triage_status_colour(triage_status:)
+    {
+      refused_consent: :red,
+      do_not_vaccinate: :red,
+      needs_follow_up: :blue,
+      no_response: :white,
+      ready_for_session: :green,
+      to_do: :grey
+    }.with_indifferent_access.fetch(triage_status)
   end
 
-  def triage_status_icon(status)
-    case status
-    when "do_not_vaccinate"
-      "cross"
-    when "ready_for_session"
-      "tick"
-    end
+  def triage_status_icon(triage_status:)
+    {
+      refused_consent: "cross",
+      do_not_vaccinate: "cross",
+      ready_for_session: "tick"
+    }.with_indifferent_access[
+      triage_status
+    ]
   end
 
   def parent_relationship(consent_response)

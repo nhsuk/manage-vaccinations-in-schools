@@ -28,8 +28,8 @@
     </tr>
   </thead>
   <tbody class="govuk-table__body">
-    <% @patient_triages.each do |patient, triage| %>
-      <%= render "patient_row", patient:, triage: %>
+    <% @patient_triages.each do |patient, triage, consent_response| %>
+      <%= render "patient_row", patient:, triage:, consent_response: %>
     <% end %>
   </tbody>
 </table>
