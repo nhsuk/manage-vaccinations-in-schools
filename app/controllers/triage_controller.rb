@@ -1,6 +1,6 @@
 class TriageController < ApplicationController
-  before_action :set_session, only: %i[show create]
-  before_action :set_patient, only: %i[show create]
+  before_action :set_session, only: %i[show create update]
+  before_action :set_patient, only: %i[show create update]
   before_action :set_triage, only: %i[show]
   before_action :set_consent_response, only: %i[show]
 
@@ -25,6 +25,12 @@ class TriageController < ApplicationController
 
   def create
     @triage = Triage.new(campaign: @session.campaign, patient: @patient)
+    @triage.update!(triage_params)
+    redirect_to triage_session_path(@session)
+  end
+
+  def update
+    @triage = @patient.triage_for_campaign(@session.campaign)
     @triage.update!(triage_params)
     redirect_to triage_session_path(@session)
   end
