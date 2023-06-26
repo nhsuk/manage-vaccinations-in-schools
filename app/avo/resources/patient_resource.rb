@@ -14,7 +14,7 @@ class PatientResource < Avo::BaseResource
   field :dob, as: :date
   field :nhs_number, as: :number
   field :sex, as: :select, enum: ::Patient.sexes
-  field :gp, as: :select, enum: ::Patient.gps
+  field :gp, as: :text
   field :screening, as: :select, enum: ::Patient.screenings
   field :consent, as: :select, enum: ::Patient.consents
   field :seen, as: :select, enum: ::Patient.seens

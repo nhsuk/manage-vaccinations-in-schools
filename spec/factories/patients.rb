@@ -6,7 +6,7 @@
 #  consent        :integer
 #  dob            :date
 #  first_name     :text
-#  gp             :integer
+#  gp             :string
 #  last_name      :text
 #  nhs_number     :bigint
 #  preferred_name :text

@@ -6,7 +6,7 @@
 #  consent        :integer
 #  dob            :date
 #  first_name     :text
-#  gp             :integer
+#  gp             :string
 #  last_name      :text
 #  nhs_number     :bigint
 #  preferred_name :text
@@ -33,7 +33,6 @@ class Patient < ApplicationRecord
   validates :nhs_number, presence: true, uniqueness: true
 
   enum :sex, %w[Female Male]
-  enum :gp, ["Local GP"]
   enum :screening, ["Approved for vaccination"]
   enum :consent, ["Parental consent (digital)"]
   enum :seen, ["Not yet", "Vaccinated"]
