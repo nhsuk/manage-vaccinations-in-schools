@@ -98,21 +98,28 @@
 
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
-      <h2 class="nhsuk-card__heading nhsuk-heading-m">
-        Record vaccination
-      </h2>
-      <%= form_tag record_session_vaccination_path(
-                     session_id: @session.id,
-                     id: (@patient.id || ":id"),
-                   ),
-                   method: :put,
-                   data: { child_vaccination_target: "form" } %>
-        <div class="nhsuk-u-margin-top-6">
-          <%= button_tag "Confirm",
-            class: "nhsuk-button",
-            "data-testid": "confirm-button" %>
-        </div>
-      </form>
+      <%= form_with model: [@session, @patient],
+                    url: record_session_vaccination_path(
+                      session_id: @session.id,
+                      id: (@patient.id || ":id"),
+                    ),
+                    method: :put,
+                    data: { child_vaccination_target: "form" } do |f| %>
+        <%= f.govuk_radio_buttons_fieldset(:vaccination,
+          legend: { size: 'm', text: 'Did they get the vaccine?' }) do %>
+          <p>They need their 1st dose.</p>
+
+          <%= f.govuk_radio_button :vaccination, 1,
+            label: { text: 'Yes, they got the HPV vaccine' },
+            link_errors: true %>
+          <%= f.govuk_radio_button :vaccination, 0,
+            label: { text: 'No, they did not get it' } %>
+        <% end %>
+
+        <%= f.submit "Continue",
+          class: "nhsuk-button",
+          "data-testid": "confirm-button" %>
+      <% end %>
     </div>
   </div>
 </div>
