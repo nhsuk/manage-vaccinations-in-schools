@@ -49,11 +49,13 @@
     </div>
   </div>
 
-  <p>
-    <%= link_to "View vaccination history",
-                history_session_vaccination_path(session_id: @session.id,
-                                                 id: (@patient.id || ":id")) %>
-  </p>
+  <% if Settings.features.fhir_server_integration %>
+    <p>
+      <%= link_to "View vaccination history",
+                  history_session_vaccination_path(session_id: @session.id,
+                                                  id: (@patient.id || ":id")) %>
+    </p>
+  <% end %>
 
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
