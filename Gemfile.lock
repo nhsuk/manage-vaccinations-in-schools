@@ -91,7 +91,7 @@ GEM
     asciidoctor-diagram-ditaamini (1.0.3)
     asciidoctor-diagram-plantuml (1.2023.5)
     ast (2.4.2)
-    avo (2.34.6)
+    avo (2.35.0)
       actionview (>= 6.0)
       active_link_to
       activerecord (>= 6.0)
