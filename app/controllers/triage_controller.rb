@@ -9,6 +9,7 @@ class TriageController < ApplicationController
       @session
         .patients
         .includes(:triage)
+        .order("first_name", "last_name")
         .map do |patient|
           [
             patient,
