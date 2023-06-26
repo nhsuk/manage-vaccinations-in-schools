@@ -5,6 +5,7 @@
     </h2>
 
     <%= form_for [session, triage], builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
+      <%= hidden_field(:triage, :patient_id) %>
       <%= f.govuk_text_area :notes, label: { text: 'Triage notes' }, rows: 5 %>
       <%= f.govuk_collection_radio_buttons :status,
                                            triage_form_status_options,

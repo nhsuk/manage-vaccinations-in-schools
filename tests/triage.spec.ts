@@ -102,9 +102,9 @@ test("Performing triage", async ({ page }) => {
   await when_i_go_to_the_triage_page_for_the_first_session();
   await then_i_should_see_the_triage_index_page();
   await then_i_should_see_the_correct_breadcrumbs();
-  await then_i_should_see_patients_with_their_triage_info();
 
   for (let name in patients) {
+    await then_i_should_see_a_triage_row_for_the_patient(name);
     await when_i_click_on_the_patient(name);
     await then_i_should_see_the_triage_page_for_the_patient(name);
     await when_i_go_back_to_the_triage_index_page();
@@ -114,6 +114,13 @@ test("Performing triage", async ({ page }) => {
   await when_i_click_on_the_patient("Aaron Pfeffer");
   await when_i_enter_the_note("Notes from nurse");
   await when_i_click_on_the_option("Ready for session");
+  await when_i_click_on_the_submit_button();
+  await then_i_should_see_a_triage_row_for_the_patient("Aaron Pfeffer", {
+    note: "Notes from nurse",
+    status: "Ready for session",
+    class: "nhsuk-tag--green",
+    icon: "nhsuk-icon__tick",
+  });
 });
 
 async function given_the_app_is_setup() {
@@ -155,53 +162,54 @@ async function then_i_should_see_the_correct_breadcrumbs() {
   );
 }
 
-async function then_i_should_see_patients_with_their_triage_info() {
-  for (let name in patients) {
-    let patient = patients[name];
+async function then_i_should_see_a_triage_row_for_the_patient(
+  name,
+  attributes = {}
+) {
+  let patient = { ...patients[name], ...attributes };
 
+  await expect(
+    p.locator(`#patients tr:nth-child(${patient.row}) td:first-child`),
+    `Name for patient row: ${patient.row} name: ${name}`
+  ).toContainText(name);
+
+  if (patient.note) {
     await expect(
-      p.locator(`#patients tr:nth-child(${patient.row}) td:first-child`),
-      `Name for patient row: ${patient.row} name: ${name}`
-    ).toContainText(name);
-
-    if (patient.note) {
-      await expect(
-        p.locator(`#patients tr:nth-child(${patient.row}) td:nth-child(2)`),
-        `Note for patient row: ${patient.row} name: ${name}`
-      ).toContainText(patient.note);
-    } else {
-      await expect(
-        p.locator(`#patients tr:nth-child(${patient.row}) td:nth-child(2)`),
-        `Empty note patient row: ${patient.row} name: ${name}`
-      ).toBeEmpty();
-    }
+      p.locator(`#patients tr:nth-child(${patient.row}) td:nth-child(2)`),
+      `Note for patient row: ${patient.row} name: ${name}`
+    ).toContainText(patient.note);
+  } else {
     await expect(
-      p.locator(`#patients tr:nth-child(${patient.row}) td:nth-child(3)`),
-      `Status text for patient row: ${patient.row} name: ${name}`
-    ).toContainText(patient.status);
+      p.locator(`#patients tr:nth-child(${patient.row}) td:nth-child(2)`),
+      `Empty note patient row: ${patient.row} name: ${name}`
+    ).toBeEmpty();
+  }
+  await expect(
+    p.locator(`#patients tr:nth-child(${patient.row}) td:nth-child(3)`),
+    `Status text for patient row: ${patient.row} name: ${name}`
+  ).toContainText(patient.status);
 
+  await expect(
+    p.locator(`#patients tr:nth-child(${patient.row}) td:nth-child(3) div`),
+    `Status colour for patient row: ${patient.row} name: ${name}`
+  ).toHaveClass(new RegExp(patient.class));
+
+  if (patient.icon) {
     await expect(
-      p.locator(`#patients tr:nth-child(${patient.row}) td:nth-child(3) div`),
-      `Status colour for patient row: ${patient.row} name: ${name}`
-    ).toHaveClass(new RegExp(patient.class));
-
-    if (patient.icon) {
-      await expect(
-        p.locator(
+      p.locator(
+        `#patients tr:nth-child(${patient.row}) td:nth-child(3) div svg`
+      ),
+      `Status icon patient row: ${patient.row} name: ${name}`
+    ).toHaveClass(new RegExp(patient.icon));
+  } else {
+    expect(
+      await p
+        .locator(
           `#patients tr:nth-child(${patient.row}) td:nth-child(3) div svg`
-        ),
-        `Status icon patient row: ${patient.row} name: ${name}`
-      ).toHaveClass(new RegExp(patient.icon));
-    } else {
-      expect(
-        await p
-          .locator(
-            `#patients tr:nth-child(${patient.row}) td:nth-child(3) div svg`
-          )
-          .count(),
-        `No status icon for patient row: ${patient.row} name: ${name}`
-      ).toEqual(0);
-    }
+        )
+        .count(),
+      `No status icon for patient row: ${patient.row} name: ${name}`
+    ).toEqual(0);
   }
 }
 

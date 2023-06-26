@@ -1,6 +1,6 @@
 class TriageController < ApplicationController
-  before_action :set_session, only: %i[index show]
-  before_action :set_patient, only: [:show]
+  before_action :set_session, only: %i[index show create]
+  before_action :set_patient, only: %i[show create]
   before_action :set_triage, only: [:show]
   before_action :set_consent_response, only: [:show]
 
@@ -22,6 +22,12 @@ class TriageController < ApplicationController
   def show
   end
 
+  def create
+    @triage = Triage.new(campaign: @session.campaign)
+    @triage.update!(triage_params)
+    redirect_to session_triage_index_path(@session)
+  end
+
   private
 
   def set_session
@@ -33,11 +39,17 @@ class TriageController < ApplicationController
   end
 
   def set_triage
-    @triage = @patient.triage_for_campaign(@session.campaign) || Triage.new
+    @triage =
+      @patient.triage_for_campaign(@session.campaign) ||
+        Triage.new(campaign: @session.campaign, patient: @patient)
   end
 
   def set_consent_response
     @consent_response =
       @patient.consent_response_for_campaign(@session.campaign)
+  end
+
+  def triage_params
+    params.require(:triage).permit(:patient_id, :status, :notes)
   end
 end
