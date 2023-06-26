@@ -45,17 +45,22 @@
             <%= patient.nhs_number %>
           </dd>
         </div>
+
+        <% if !Settings.features.fhir_server_integration %>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Vaccination history
+            </dt>
+            <dd class="nhsuk-summary-list__value" data-child-vaccination-target="nhsNumber">
+              <%= link_to "Record available",
+                          history_session_vaccination_path(session_id: @session.id,
+                                                          id: (@patient.id || ":id")) %>
+            </dd>
+          </div>
+        <% end %>
       </dl>
     </div>
   </div>
-
-  <% if Settings.features.fhir_server_integration %>
-    <p>
-      <%= link_to "View vaccination history",
-                  history_session_vaccination_path(session_id: @session.id,
-                                                  id: (@patient.id || ":id")) %>
-    </p>
-  <% end %>
 
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
