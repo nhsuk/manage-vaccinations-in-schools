@@ -5,7 +5,7 @@ RSpec.describe "/sessions/:session_id/triage", type: :request do
   let(:session) { create(:session, patients: [patient]) }
 
   describe "GET /sessions/:session_id/triage" do
-    before { get session_triage_index_url(session) }
+    before { get triage_session_url(session) }
 
     it "renders a successful response" do
       expect(response).to be_successful
@@ -23,7 +23,7 @@ RSpec.describe "/sessions/:session_id/triage", type: :request do
   end
 
   describe "GET /sessions/:session_id/triage/:patient_id" do
-    before { get session_triage_url(session, patient) }
+    before { get session_patient_triage_url(session, patient) }
 
     it "renders a successful response" do
       expect(response).to be_successful
