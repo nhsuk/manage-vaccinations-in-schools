@@ -1,13 +1,13 @@
 module VaccinationsHelper
   def vaccination_status_colour(status)
     case status
-    when "no_outcome"
+    when :no_outcome
       :white
-    when "vaccinated"
+    when :vaccinated
       :green
-    when "no_consent"
+    when :no_consent
       :red
-    when "could_not_vaccinate"
+    when :could_not_vaccinate
       :orange
     else
       :white
@@ -16,9 +16,9 @@ module VaccinationsHelper
 
   def vaccination_status_icon(status)
     case status
-    when "no_consent", "could_not_vaccinate"
+    when :no_consent, :could_not_vaccinate
       "cross"
-    when "vaccinated"
+    when :vaccinated
       "tick"
     end
   end
