@@ -5,9 +5,8 @@ module TriageHelper
       do_not_vaccinate: :red,
       needs_follow_up: :blue,
       no_response: :white,
-      ready_for_session: :green,
-      to_do: :grey
-    }.with_indifferent_access.fetch(triage_status)
+      ready_for_session: :green
+    }.with_indifferent_access.fetch(triage_status, :grey)
   end
 
   def triage_status_icon(triage_status:)
@@ -28,6 +27,12 @@ module TriageHelper
         "parent_relationship",
         consent_response.parent_relationship
       )
+    end
+  end
+
+  def triage_form_status_options
+    Triage.statuses.keys.map do |status|
+      [status, Triage.human_enum_name(:status, status)]
     end
   end
 end
