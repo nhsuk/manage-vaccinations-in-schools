@@ -113,10 +113,21 @@ test("Performing triage", async ({ page }) => {
 
   await when_i_click_on_the_patient("Aaron Pfeffer");
   await when_i_enter_the_note("Notes from nurse");
-  await when_i_click_on_the_option("Ready for session");
+  await when_i_click_on_the_option("Do not vaccinate");
   await when_i_click_on_the_submit_button();
   await then_i_should_see_a_triage_row_for_the_patient("Aaron Pfeffer", {
     note: "Notes from nurse",
+    status: "Do not vaccinate",
+    class: "nhsuk-tag--red",
+    icon: "nhsuk-icon__cross",
+  });
+
+  await when_i_click_on_the_patient("Aaron Pfeffer");
+  await when_i_clear_the_note();
+  await when_i_click_on_the_option("Ready for session");
+  await when_i_click_on_the_submit_button();
+  await then_i_should_see_a_triage_row_for_the_patient("Aaron Pfeffer", {
+    note: null,
     status: "Ready for session",
     class: "nhsuk-tag--green",
     icon: "nhsuk-icon__tick",
@@ -142,6 +153,10 @@ async function when_i_go_back_to_the_triage_index_page() {
 
 async function when_i_enter_the_note(note) {
   await p.getByLabel("Triage notes").type(note);
+}
+
+async function when_i_clear_the_note() {
+  await p.getByLabel("Triage notes").clear();
 }
 
 async function when_i_click_on_the_option(option) {
