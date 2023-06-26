@@ -32,5 +32,7 @@ async function when_i_click_on_the_first_patient() {
 }
 
 async function then_i_should_see_the_vaccinations_page() {
-  await expect(p.locator("h1")).toContainText("Child details");
+  await expect(p.getByRole("heading", { name: "Child details" })).toContainText(
+    "Child details"
+  );
 }
