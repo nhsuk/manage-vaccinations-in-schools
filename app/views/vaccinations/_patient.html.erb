@@ -1,72 +1,15 @@
-<h2 class="nhsuk-u-heading-s" id="<%= dom_id patient %>">
+<h1 class="nhsuk-heading-l" id="<%= dom_id patient %>">
   <%= patient.full_name %>
-</h2>
+</h1>
 
 <div data-controller="child-vaccination">
-  <div class="nhsuk-card">
-    <div class="nhsuk-card__content">
-      <h1 class="nhsuk-card__heading nhsuk-heading-m">
-        Child details
-      </h1>
-
-      <dl class="nhsuk-summary-list app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0">
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Name
-          </dt>
-          <dd class="nhsuk-summary-list__value" data-child-vaccination-target="fullName" data-testid="full-name">
-            <%= patient.full_name %>
-          </dd>
-        </div>
-
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Date of birth
-          </dt>
-          <dd class="nhsuk-summary-list__value" data-child-vaccination-target="dob">
-            <%= patient.dob&.strftime("%d %B %Y") %> (aged <%= patient.dob ? patient.age : "" %>)
-          </dd>
-        </div>
-
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            GP
-          </dt>
-          <dd class="nhsuk-summary-list__value" data-child-vaccination-target="gp">
-            <%= patient.gp %>
-          </dd>
-        </div>
-
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            NHS Number
-          </dt>
-          <dd class="nhsuk-summary-list__value" data-child-vaccination-target="nhsNumber">
-            <%= patient.nhs_number %>
-          </dd>
-        </div>
-
-        <% if !Settings.features.fhir_server_integration %>
-          <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-              Vaccination history
-            </dt>
-            <dd class="nhsuk-summary-list__value" data-child-vaccination-target="nhsNumber">
-              <%= link_to "Record available",
-                          history_session_vaccination_path(session_id: @session.id,
-                                                          id: (@patient.id || ":id")) %>
-            </dd>
-          </div>
-        <% end %>
-      </dl>
-    </div>
-  </div>
+  <%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
 
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
-      <h1 class="nhsuk-card__heading nhsuk-heading-m">
+      <h2 class="nhsuk-card__heading nhsuk-heading-m">
         Medical history
-      </h1>
+      </h2>
 
       <p>No triage needed</p>
 
