@@ -11,7 +11,7 @@
 
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-               href: session_triage_index_path(@session),
+               href: triage_session_path(@session),
                name: "triage page"
              ) %>
 <% end %>

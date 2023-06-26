@@ -13,7 +13,10 @@ Rails.application.routes.draw do
   get "/csrf", to: "csrf#new"
 
   resources :sessions, only: %i[index show] do
-    resources :triage, only: %i[index show create]
+    get "triage", to: "triage#index", on: :member, param: :session_id
+    resources :patients do
+      resource :triage, only: %i[show create update]
+    end
 
     resources :patients,
               only: %i[index show],
