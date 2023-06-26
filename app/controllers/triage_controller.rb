@@ -33,7 +33,7 @@ class TriageController < ApplicationController
   end
 
   def set_triage
-    @triage = @patient.triage_for_campaign(@session.campaign)
+    @triage = @patient.triage_for_campaign(@session.campaign) || Triage.new
   end
 
   def set_consent_response

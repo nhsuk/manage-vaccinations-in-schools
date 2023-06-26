@@ -110,6 +110,10 @@ test("Performing triage", async ({ page }) => {
     await when_i_go_back_to_the_triage_index_page();
     await then_i_should_see_the_triage_index_page();
   }
+
+  await when_i_click_on_the_patient("Aaron Pfeffer");
+  await when_i_enter_the_note("Notes from nurse");
+  await when_i_click_on_the_option("Ready for session");
 });
 
 async function given_the_app_is_setup() {
@@ -127,6 +131,18 @@ async function when_i_click_on_the_patient(name) {
 
 async function when_i_go_back_to_the_triage_index_page() {
   await p.getByRole("link", { name: "Back to triage" }).click();
+}
+
+async function when_i_enter_the_note(note) {
+  await p.getByLabel("Triage notes").type(note);
+}
+
+async function when_i_click_on_the_option(option) {
+  await p.getByRole("radio", { name: option }).click();
+}
+
+async function when_i_click_on_the_submit_button() {
+  await p.getByRole("button", { name: "Save triage" }).click();
 }
 
 async function then_i_should_see_the_triage_index_page() {

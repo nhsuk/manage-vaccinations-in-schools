@@ -1,0 +1,18 @@
+<div class="nhsuk-card">
+  <div class="nhsuk-card__content">
+    <h2 class="nhsuk-card__heading nhsuk-heading-m">
+      Triage
+    </h2>
+
+    <%= form_for [session, triage], builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
+      <%= f.govuk_text_area :notes, label: { text: 'Triage notes' }, rows: 5 %>
+      <%= f.govuk_collection_radio_buttons :status,
+                                           triage_form_status_options,
+                                           :first,
+                                           :second,
+                                           legend: { text: 'Triage status' } %>
+
+      <%= f.submit "Save triage", class: "nhsuk-button" %>
+    <% end %>
+  </div>
+</div>
