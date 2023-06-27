@@ -173,7 +173,7 @@ async function then_i_should_see_the_triage_index_page() {
 
 async function then_i_should_see_the_correct_breadcrumbs() {
   await expect(p.locator(".nhsuk-breadcrumb__item:last-of-type")).toContainText(
-    "HPV campaign at St Andrew's Benn CofE (Voluntary Aided) Primary School"
+    "HPV session at St Andrew's Benn CofE (Voluntary Aided) Primary School"
   );
 }
 
