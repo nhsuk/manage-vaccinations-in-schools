@@ -25,14 +25,20 @@ class TriageController < ApplicationController
 
   def create
     @triage = Triage.new(campaign: @session.campaign, patient: @patient)
-    @triage.update!(triage_params)
-    redirect_to triage_session_path(@session)
+    if @triage.update(triage_params)
+      redirect_to triage_session_path(@session)
+    else
+      render :show, status: :unprocessable_entity
+    end
   end
 
   def update
     @triage = @patient.triage_for_campaign(@session.campaign)
-    @triage.update!(triage_params)
-    redirect_to triage_session_path(@session)
+    if @triage.update(triage_params)
+      redirect_to triage_session_path(@session)
+    else
+      render :show, status: :unprocessable_entity
+    end
   end
 
   private
