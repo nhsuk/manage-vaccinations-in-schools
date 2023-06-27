@@ -9,7 +9,8 @@ if nc -z localhost $port; then
   exit 0
 fi
 
-rm -f tmp/offline.txt && kill -USR2 $(cat tmp/pids/server.pid)
+pidfile=${PIDFILE:-tmp/pids/server.pid}
+rm -f tmp/offline.txt && kill -USR2 $(cat $pidfile)
 
 while ! nc -z localhost $port; do
   sleep 0.1
