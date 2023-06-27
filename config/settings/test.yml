@@ -1,2 +1,2 @@
 features:
-  fhir_server_integration: true
+  fhir_server_integration: false

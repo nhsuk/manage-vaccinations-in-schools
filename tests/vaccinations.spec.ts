@@ -11,6 +11,9 @@ test("Records vaccinations", async ({ page }) => {
 
   await when_i_click_on_the_first_patient();
   await then_i_should_see_the_vaccinations_page();
+
+  await when_i_record_a_vaccination();
+  await then_i_should_see_a_success_message();
 });
 
 async function given_the_app_is_setup() {
@@ -35,4 +38,13 @@ async function then_i_should_see_the_vaccinations_page() {
   await expect(p.getByRole("heading", { name: "Child details" })).toContainText(
     "Child details"
   );
+}
+
+async function when_i_record_a_vaccination() {
+  await p.click("text=Yes, they got the HPV vaccine");
+  await p.click("text=Continue");
+}
+
+async function then_i_should_see_a_success_message() {
+  await expect(p.getByRole("alert").nth(0)).toContainText("Success");
 }
