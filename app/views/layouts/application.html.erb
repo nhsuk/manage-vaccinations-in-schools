@@ -47,11 +47,11 @@
       </div>
     </header>
 
-    <%= yield :before_main %>
-
     <div class="nhsuk-width-container">
+      <%= yield :before_main %>
+
       <main class="nhsuk-main-wrapper" id="main-content" role="main">
-        <%= yield %>
+        <%= content_for?(:content) ? yield(:content) : yield %>
       </main>
 
       <%= render "layouts/toggle_offline" %>

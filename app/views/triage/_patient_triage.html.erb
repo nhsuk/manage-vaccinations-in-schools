@@ -1,28 +1,23 @@
 <h1 class="nhsuk-heading-l" id="<%= dom_id patient %>">
-    <%= patient.full_name %>
+  <%= patient.full_name %>
 </h1>
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-two-thirds">
-    <%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
+<%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
 
-    <div class="nhsuk-card" id="consent">
-      <div class="nhsuk-card__content">
-        <h2 class="nhsuk-card__heading nhsuk-heading-m">
-          Consent
-        </h2>
+<div class="nhsuk-card" id="consent">
+  <div class="nhsuk-card__content">
+    <h2 class="nhsuk-card__heading nhsuk-heading-m">
+      Consent
+    </h2>
 
-        <% if @consent_response.present? %>
-          <%= render "patient_triage_consent_response", consent_response: @consent_response %>
-        <% else %>
-          <p>
-            No response given
-          </p>
-        <% end %>
-      </div>
-    </div>
-
-    <%= render "patient_triage_card", session: @session, patient: @patient, triage: @triage %>
-
+    <% if @consent_response.present? %>
+      <%= render "patient_triage_consent_response", consent_response: @consent_response %>
+    <% else %>
+      <p>
+        No response given
+      </p>
+    <% end %>
   </div>
 </div>
+
+<%= render "patient_triage_card", session: @session, patient: @patient, triage: @triage %>
