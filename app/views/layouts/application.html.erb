@@ -54,8 +54,9 @@
         <%= content_for?(:content) ? yield(:content) : yield %>
       </main>
 
-      <%= render "layouts/toggle_offline" %>
     </div>
+
+    <%= render "layouts/toggle_offline" %>
 
     <footer role="contentinfo">
       <div class="nhsuk-footer" id="nhsuk-footer">
