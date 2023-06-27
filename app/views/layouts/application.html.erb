@@ -47,9 +47,9 @@
       </div>
     </header>
 
-    <div class="nhsuk-width-container">
-      <%= yield :before_main %>
+    <%= yield :before_main %>
 
+    <div class="nhsuk-width-container">
       <main class="nhsuk-main-wrapper" id="main-content" role="main">
         <%= content_for?(:content) ? yield(:content) : yield %>
       </main>
