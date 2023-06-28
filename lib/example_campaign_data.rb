@@ -7,6 +7,10 @@ class ExampleCampaignData
     @raw_data ||= JSON.parse(File.read(@data_file))
   end
 
+  def vaccine_attributes
+    { name: raw_data["type"] }
+  end
+
   def campaign_attributes
     { name: raw_data["type"] }
   end
