@@ -23,8 +23,10 @@ Rails.application.routes.draw do
               path: "/vaccinations",
               as: :vaccinations,
               controller: :vaccinations do
-      put "record", on: :member
       get "history", on: :member
+      get "confirm", on: :member
+      put "record", on: :member
+
       get "show-template", on: :collection
       get "record-template", on: :collection
     end

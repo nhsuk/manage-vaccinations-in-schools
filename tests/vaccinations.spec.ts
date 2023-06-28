@@ -13,6 +13,9 @@ test("Records vaccinations", async ({ page }) => {
   await then_i_should_see_the_vaccinations_page();
 
   await when_i_record_a_vaccination();
+  // await then_i_should_see_the_check_answers_page();
+
+  // await when_i_press_confirm();
   await then_i_should_see_a_success_message();
 });
 
@@ -47,4 +50,12 @@ async function when_i_record_a_vaccination() {
 
 async function then_i_should_see_a_success_message() {
   await expect(p.getByRole("alert").nth(0)).toContainText("Success");
+}
+
+async function then_i_should_see_the_check_answers_page() {
+  await expect(p.getByRole("heading")).toContainText("Check and confirm");
+}
+
+async function when_i_press_confirm() {
+  await p.click("text=Confirm");
 }
