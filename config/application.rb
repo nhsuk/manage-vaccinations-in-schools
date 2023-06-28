@@ -36,5 +36,7 @@ module RecordChildrensVaccinations
     )
 
     config.exceptions_app = routes
+
+    config.time_zone = "London"
   end
 end
