@@ -1,6 +1,6 @@
 class VaccinationsController < ApplicationController
   before_action :set_session
-  before_action :set_patient, only: %i[show record history]
+  before_action :set_patient, only: %i[show confirm record history]
   before_action :set_patient_outcomes, only: %i[index record_template]
 
   def index
@@ -15,6 +15,9 @@ class VaccinationsController < ApplicationController
       format.html
       format.json { render json: @patient }
     end
+  end
+
+  def confirm
   end
 
   def record
