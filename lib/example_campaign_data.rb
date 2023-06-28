@@ -36,6 +36,12 @@ class ExampleCampaignData
     }
   end
 
+  def health_question_attributes
+    return [] if raw_data["healthQuestions"].blank?
+
+    raw_data["healthQuestions"].map { |question| { question: } }
+  end
+
   def children_attributes
     raw_data["patients"].map do |patient|
       attributes = {

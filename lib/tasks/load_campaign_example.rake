@@ -25,6 +25,11 @@ task :load_campaign_example, [:example_file] => :environment do |_task, args|
       )
     session.update!(example.session_attributes)
 
+    vaccine.health_questions =
+      example.health_question_attributes.map do |attributes|
+        HealthQuestion.find_or_initialize_by(attributes.merge(vaccine:))
+      end
+
     example.children_attributes.each do |attributes|
       triage_attributes = attributes.delete(:triage)
       consent_attributes = attributes.delete(:consent)
