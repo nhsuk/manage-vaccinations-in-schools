@@ -13,6 +13,7 @@
 #  consent                     :integer
 #  gp_name                     :text
 #  gp_response                 :integer
+#  health_questions            :jsonb
 #  parent_contact_method       :integer
 #  parent_contact_method_other :text
 #  parent_email                :text
