@@ -19,12 +19,14 @@ $color_app-pale-blue: #ccdff1;
 }
 
 .app-summary-list--no-bottom-border {
-  .govuk-summary-list,
-  .nhsuk-summary-list {
-    &__row:last-child .govuk-summary-list__key,
-    &__row:last-child .nhsuk-summary-list__key,
-    &__row:last-child .govuk-summary-list__value,
-    &__row:last-child .nhsuk-summary-list__value {
+  .govuk-summary-list__row:last-child {
+    border-bottom: none;
+  }
+
+  .nhsuk-summary-list__row:last-child {
+    .nhsuk-summary-list__key,
+    .nhsuk-summary-list__value,
+    .nhsuk-summary-list__action {
       border-bottom: none;
     }
   }
