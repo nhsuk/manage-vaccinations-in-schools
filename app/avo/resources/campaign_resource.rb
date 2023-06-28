@@ -11,4 +11,5 @@ class CampaignResource < Avo::BaseResource
   field :name, as: :text
   field :sessions, as: :has_many
   # add fields here
+  field :vaccine, as: :belongs_to
 end
