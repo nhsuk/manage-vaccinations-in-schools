@@ -40,6 +40,13 @@
     "type": "Local authority maintained schools",
     "detailed_type": "Voluntary aided school"
   },
+  "healthQuestions": [
+    "Does the child have a disease or treatment that severely affects their immune system?",
+    "Is anyone in your household having treatment that severely affects their immune system?",
+    "Has your child been diagnosed with asthma?",
+    "Has your child been admitted to intensive care because of a severe egg allergy?",
+    "Is there anything else we should know?"
+  ],
   "patients": [
     {
       "sex": "Male",

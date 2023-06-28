@@ -13,6 +13,8 @@
 #
 FactoryBot.define do
   factory :vaccine do
+    initialize_with { Vaccine.find_or_initialize_by(name:) }
+
     name { "HPV" }
   end
 end
