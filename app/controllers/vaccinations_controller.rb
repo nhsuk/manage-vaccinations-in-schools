@@ -3,6 +3,8 @@ class VaccinationsController < ApplicationController
   before_action :set_patient, only: %i[show confirm record history]
   before_action :set_patient_outcomes, only: %i[index record_template]
 
+  layout "two_thirds"
+
   def index
     respond_to do |format|
       format.html

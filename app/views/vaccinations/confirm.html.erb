@@ -1,51 +1,47 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-               href: session_vaccinations_path(@session),
-               name: "vaccinations page"
+               href: session_vaccination_path(@session, @patient),
+               name: "vaccination page"
              ) %>
 <% end %>
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-two-thirds">
-    <h1 class="nhsuk-heading-l">Check and confirm</h1>
+<h1 class="nhsuk-heading-l">Check and confirm</h1>
 
-    <div class="nhsuk-card">
-      <div class="nhsuk-card__content">
-        <%= govuk_summary_list(
-          actions: false,
-          classes: 'app-summary-list--no-bottom-border'
-        ) do |summary_list|
-          summary_list.with_row do |row|
-            row.with_key { 'Child' }
-            row.with_value { @patient.full_name }
-          end
+<div class="nhsuk-card">
+  <div class="nhsuk-card__content">
+    <%= govuk_summary_list(
+      actions: false,
+      classes: 'app-summary-list--no-bottom-border'
+    ) do |summary_list|
+      summary_list.with_row do |row|
+        row.with_key { 'Child' }
+        row.with_value { @patient.full_name }
+      end
 
-          summary_list.with_row do |row|
-            row.with_key { 'Vaccine' }
-            row.with_value { 'HPV' }
-          end
+      summary_list.with_row do |row|
+        row.with_key { 'Vaccine' }
+        row.with_value { 'HPV' }
+      end
 
-          summary_list.with_row do |row|
-            row.with_key { 'Dose' }
-            row.with_value { '1 of 2' }
-          end
+      summary_list.with_row do |row|
+        row.with_key { 'Dose' }
+        row.with_value { '1 of 2' }
+      end
 
-          summary_list.with_row do |row|
-            row.with_key { 'Site' }
-            row.with_value { '' }
-          end
+      summary_list.with_row do |row|
+        row.with_key { 'Site' }
+        row.with_value { '' }
+      end
 
-          summary_list.with_row do |row|
-            row.with_key { 'Date' }
-            row.with_value { "Today (#{Time.now.strftime("%d %B %Y")})" }
-          end
+      summary_list.with_row do |row|
+        row.with_key { 'Date' }
+        row.with_value { "Today (#{Time.zone.now.strftime("%d %B %Y")})" }
+      end
 
-          summary_list.with_row do |row|
-            row.with_key { 'Time' }
-            row.with_value { Time.now.strftime("%l:%M%P") }
-          end
-        end %>
-      </div>
-    </div>
+      summary_list.with_row do |row|
+        row.with_key { 'Time' }
+        row.with_value { Time.zone.now.strftime("%l:%M%P") }
+      end
+    end %>
   </div>
 </div>
