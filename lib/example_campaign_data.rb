@@ -99,6 +99,8 @@ class ExampleCampaignData
 
         consent[:route] = consent_example["route"]
 
+        consent[:health_questions] = consent_example["healthQuestionResponses"]
+
         attributes[:consent] = consent
       end
 
