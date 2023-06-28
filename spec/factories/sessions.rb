@@ -16,14 +16,16 @@
 #
 FactoryBot.define do
   factory :session do
+    transient { patients_in_session { 100 } }
+
     campaign { create :campaign }
     location
 
     date { Time.zone.today }
     name { "#{campaign.name} session at #{location.name}" }
 
-    after :create do |session|
-      create_list :patient, 100, sessions: [session]
+    after :create do |session, context|
+      create_list :patient, context.patients_in_session, sessions: [session]
     end
   end
 end

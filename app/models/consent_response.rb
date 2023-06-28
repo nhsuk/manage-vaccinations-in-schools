@@ -57,4 +57,15 @@ class ConsentResponse < ApplicationRecord
        prefix: true
   enum :gp_response, %w[yes no dont_know]
   enum :route, %i[website phone paper in_person self_consent], prefix: "via"
+
+  def triage_needed?
+    consent_given? &&
+      (parent_relationship_other? || health_questions_require_follow_up?)
+  end
+
+  private
+
+  def health_questions_require_follow_up?
+    health_questions&.any? { |question| question["response"].downcase == "yes" }
+  end
 end

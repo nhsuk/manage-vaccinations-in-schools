@@ -76,5 +76,14 @@ FactoryBot.define do
         { question: "Is there anything else we should know?", response: "No" }
       ]
     end
+
+    factory :consent_given do
+      consent { :given }
+    end
+
+    factory :consent_refused do
+      consent { :refused }
+      reason_for_refusal { :personal_choice }
+    end
   end
 end
