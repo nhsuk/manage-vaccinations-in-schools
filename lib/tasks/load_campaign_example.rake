@@ -11,8 +11,11 @@ task :load_campaign_example, [:example_file] => :environment do |_task, args|
     school = Location.find_or_create_by!(name: example.school_attributes[:name])
     school.update!(example.school_attributes)
 
+    vaccine = Vaccine.find_or_create_by! name: example.vaccine_attributes[:name]
+
     campaign =
-      Campaign.find_or_create_by!(name: example.campaign_attributes[:name])
+      Campaign.find_or_initialize_by name: example.campaign_attributes[:name]
+    campaign.vaccine = vaccine
     campaign.save!
 
     session =
