@@ -1,44 +1,40 @@
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    <% if flash[:success].present? %>
-      <%= govuk_notification_banner(title_text: "Success", success: true) do |nb| %>
-        <% if flash[:success].is_a?(Hash) %>
-          <% nb.with_heading(text: flash[:success][:title]) %>
-          <p><%= flash[:success][:body] %></p>
-        <% else %>
-          <% nb.with_heading(text: flash[:success]) %>
-        <% end %>
-      <% end %>
-    <% end %>
-
-    <% content_for :before_main do %>
-      <%= render AppBreadcrumbComponent.new(items: [
-        { text: 'Home', href: dashboard_path },
-        { text: 'School sessions', href: sessions_path },
-        { text: @session.name, href: session_path(@session) },
-      ]) %>
-    <% end %>
-
-    <h1>Record vaccinations</h1>
-
-    <% if @patient_outcomes.any? %>
-      <table class="nhsuk-table">
-        <thead class="govuk-table__head">
-          <tr class="govuk-table__row">
-            <th class="govuk-table__header">Name</th>
-            <th class="govuk-table__header">Date of birth</th>
-            <th class="govuk-table__header">Consent</th>
-            <th class="govuk-table__header">Outcome</th>
-          </tr>
-        </thead>
-        <tbody class="govuk-table__body">
-          <% @patient_outcomes.each do |patient, outcome| %>
-            <%= render "patient_row", patient:, outcome: %>
-          <% end %>
-        </tbody>
-      </table>
+<% if flash[:success].present? %>
+  <%= govuk_notification_banner(title_text: "Success", success: true) do |nb| %>
+    <% if flash[:success].is_a?(Hash) %>
+      <% nb.with_heading(text: flash[:success][:title]) %>
+      <p><%= flash[:success][:body] %></p>
     <% else %>
-      <%= render "layouts/empty_list", message: "We couldn’t find any children in this session." %>
+      <% nb.with_heading(text: flash[:success]) %>
     <% end %>
-  </div>
-</div>
+  <% end %>
+<% end %>
+
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+    { text: 'Home', href: dashboard_path },
+    { text: 'School sessions', href: sessions_path },
+    { text: @session.name, href: session_path(@session) },
+  ]) %>
+<% end %>
+
+<h1>Record vaccinations</h1>
+
+<% if @patient_outcomes.any? %>
+  <table class="nhsuk-table">
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header">Name</th>
+        <th class="govuk-table__header">Date of birth</th>
+        <th class="govuk-table__header">Consent</th>
+        <th class="govuk-table__header">Outcome</th>
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+      <% @patient_outcomes.each do |patient, outcome| %>
+        <%= render "patient_row", patient:, outcome: %>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <%= render "layouts/empty_list", message: "We couldn’t find any children in this session." %>
+<% end %>
