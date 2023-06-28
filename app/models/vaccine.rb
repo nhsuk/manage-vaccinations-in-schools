@@ -13,6 +13,7 @@
 #
 class Vaccine < ApplicationRecord
   has_many :campaigns, dependent: :destroy
+  has_many :health_questions, dependent: :destroy
 
   validates :name, presence: true
 end
