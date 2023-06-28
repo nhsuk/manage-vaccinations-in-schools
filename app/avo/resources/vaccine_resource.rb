@@ -10,4 +10,5 @@ class VaccineResource < Avo::BaseResource
   field :name, as: :text
   # add fields here
   field :campaigns, as: :has_many
+  field :health_questions, as: :has_many
 end
