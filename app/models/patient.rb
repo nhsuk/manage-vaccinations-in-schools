@@ -36,6 +36,8 @@ class Patient < ApplicationRecord
   enum :gp, ["Local GP"]
   enum :screening, ["Approved for vaccination"]
   enum :consent, ["Parental consent (digital)"]
+
+  # TODO: Deprecate. VaccinationRecords supersede .seen
   enum :seen, ["Not yet", "Vaccinated"]
 
   def full_name
