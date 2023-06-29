@@ -3,7 +3,9 @@
 # Table name: vaccination_records
 #
 #  id                 :bigint           not null, primary key
+#  administered       :boolean
 #  administered_at    :date
+#  site               :integer
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #  patient_session_id :bigint           not null
