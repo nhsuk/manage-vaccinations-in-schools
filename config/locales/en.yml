@@ -26,3 +26,9 @@ en:
               too_short: Enter a password that is at least 12 characters long
             password_confirmation:
               confirmation: The password and confirmation do not match
+        vaccination_record:
+          attributes:
+            administered:
+              inclusion: Choose if they got the vaccine
+            site:
+              blank: Choose a site
