@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { example_patient } from "./example_data";
 
 let p = null;
 
@@ -17,6 +18,12 @@ test("Records vaccinations", async ({ page }) => {
 
   await when_i_press_confirm();
   await then_i_should_see_a_success_message();
+
+  await when_i_click_on_the_patient("Aaron Pfeffer");
+  await then_i_should_see_the_medical_history_section();
+
+  await when_i_click_on_show_answers();
+  await then_i_should_see_health_question_responses_if_present("Aaron Pfeffer");
 });
 
 async function given_the_app_is_setup() {
@@ -59,4 +66,37 @@ async function then_i_should_see_the_check_answers_page() {
 
 async function when_i_press_confirm() {
   await p.getByRole("button", { name: "Confirm" }).click();
+}
+
+async function when_i_go_back_to_the_triage_index_page() {
+  await p.getByRole("link", { name: "Back to triage" }).click();
+}
+
+async function when_i_click_on_the_patient(name) {
+  await p.getByRole("link", { name: name }).click();
+}
+
+async function then_i_should_see_the_medical_history_section() {
+  await p.getByRole("heading", { name: "Medical history" });
+}
+
+async function when_i_click_on_show_answers() {
+  await p.getByText("Show answers").click();
+}
+
+async function then_i_should_see_health_question_responses_if_present(name) {
+  let patient = example_patient(name);
+  let consent = patient["consent"];
+
+  if (consent && consent["healthQuestionResponses"]) {
+    for (const example_question of consent["healthQuestionResponses"]) {
+      await expect(
+        p.getByRole("heading", {
+          name: example_question["question"],
+        })
+      ).toContainText(example_question["question"]);
+    }
+  } else {
+    expect(await p.textContent("body")).not.toContain("Health questions");
+  }
 }
