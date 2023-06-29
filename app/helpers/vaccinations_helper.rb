@@ -22,4 +22,10 @@ module VaccinationsHelper
       "tick"
     end
   end
+
+  def vaccination_site_options
+    VaccinationRecord.sites.map do |k, id|
+      OpenStruct.new(id:, name: k.humanize)
+    end
+  end
 end

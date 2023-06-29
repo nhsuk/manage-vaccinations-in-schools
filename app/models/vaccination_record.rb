@@ -30,8 +30,4 @@ class VaccinationRecord < ApplicationRecord
               in: sites.keys
             },
             if: -> { administered }
-
-  def self.site_options
-    sites.map { |k, id| OpenStruct.new(id:, name: k.humanize) }
-  end
 end
