@@ -4,7 +4,7 @@
 #
 #  id                 :bigint           not null, primary key
 #  administered       :boolean
-#  administered_at    :date
+#  recorded_at        :date
 #  site               :integer
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
@@ -21,6 +21,6 @@
 FactoryBot.define do
   factory :vaccination_record do
     patient_session { nil }
-    administered_at { "2023-06-09" }
+    recorded_at { "2023-06-09" }
   end
 end
