@@ -5,44 +5,28 @@
 <div data-controller="child-vaccination">
   <%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
 
-  <div class="nhsuk-card">
-    <div class="nhsuk-card__content">
-      <h2 class="nhsuk-card__heading nhsuk-heading-m">
-        Medical history
-      </h2>
+  <% if @consent_response&.health_questions.present? %>
+    <div class="nhsuk-card" id="consent">
+      <div class="nhsuk-card__content">
+        <h2 class="nhsuk-card__heading nhsuk-heading-m">
+          Medical history
+        </h2>
 
-      <p>No triage needed</p>
+        <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
+          <summary class="nhsuk-details__summary">
+            <span class="nhsuk-details__summary-text">
+              Show answers
+            </span>
+          </summary>
 
-      <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
-        <summary class="nhsuk-details__summary">
-          <span class="nhsuk-details__summary-text">
-            Show answers
-          </span>
-        </summary>
-        <div class="nhsuk-details__text">
-          <h3 class="nhsuk-heading-xs nhsuk-u-margin-bottom-0">
-            Does the child have any severe allergies that have led to an anaphylactic reaction?
-          </h3>
-          <p>No</p>
-
-          <h3 class="nhsuk-heading-xs nhsuk-u-margin-bottom-0">
-            Does the child have any existing medical conditions?
-          </h3>
-          <p>No</p>
-
-          <h3 class="nhsuk-heading-xs nhsuk-u-margin-bottom-0">
-            Does the child take any regular medication?
-          </h3>
-          <p>No</p>
-
-          <h3 class="nhsuk-heading-xs nhsuk-u-margin-bottom-0">
-            Is there anything else we should know?
-          </h3>
-          <p>No</p>
-        </div>
-      </details>
+          <div class="nhsuk-details__text">
+            <%= render AppHealthQuestionsComponent.new(consent_response: @consent_response) %>
+          </div>
+        </details>
+      </div>
     </div>
-  </div>
+  <% end %>
+
 
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">

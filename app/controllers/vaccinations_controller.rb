@@ -3,6 +3,7 @@ class VaccinationsController < ApplicationController
   before_action :set_patient, only: %i[show confirm record history]
   before_action :set_patient_outcomes, only: %i[index record_template]
   before_action :set_vaccination_record, only: %i[show confirm record]
+  before_action :set_consent_response, only: "show"
 
   layout "two_thirds"
 
@@ -104,5 +105,10 @@ class VaccinationsController < ApplicationController
       @patient.vaccination_records_for_session(@session).find_or_initialize_by(
         recorded_at: nil
       )
+  end
+
+  def set_consent_response
+    @consent_response =
+      @patient.consent_response_for_campaign(@session.campaign)
   end
 end
