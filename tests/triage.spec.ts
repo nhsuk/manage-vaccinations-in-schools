@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { example_patient } from "./example_data";
 
 let p = null;
 
@@ -107,6 +108,7 @@ test("Performing triage", async ({ page }) => {
     await then_i_should_see_a_triage_row_for_the_patient(name);
     await when_i_click_on_the_patient(name);
     await then_i_should_see_the_triage_page_for_the_patient(name);
+    await then_i_should_see_health_question_responses_if_present(name);
     await when_i_go_back_to_the_triage_index_page();
     await then_i_should_see_the_triage_index_page();
   }
@@ -260,5 +262,26 @@ async function then_i_should_see_the_triage_page_for_the_patient(name) {
     await expect(p.locator("#consent")).toContainText(
       "Reason for refusal " + patient["reason_for_refusal"]
     );
+  }
+}
+
+async function then_i_should_see_health_question_responses_if_present(name) {
+  let patient = example_patient(name);
+  let consent = patient["consent"];
+
+  if (consent && consent["healthQuestionResponses"]) {
+    await expect(
+      p.getByRole("heading", { name: "Health questions" })
+    ).toBeVisible();
+
+    for (const example_question of consent["healthQuestionResponses"]) {
+      await expect(
+        p.getByRole("heading", {
+          name: example_question["question"],
+        })
+      ).toContainText(example_question["question"]);
+    }
+  } else {
+    expect(await p.textContent("body")).not.toContain("Health questions");
   }
 }
