@@ -1,0 +1,11 @@
+.app-action-tag {
+  // border-width: 0 0 0 3px;
+  font-weight: bold;
+
+  &.nhsuk-tag--white {
+    background: none;
+    font-weight: normal;
+    border-width: 1px;
+    border-style: dashed;
+  }
+}

@@ -10,6 +10,16 @@ en:
           no_outcome: No outcome yet
           no_consent: No consent
           vaccinated: Vaccinated
+        actions_or_outcomes:
+          get_consent: Get consent
+          check_refusal: Check refusal
+          vaccinated: Vaccinated
+          not_vaccinated: Could not vaccinate
+          vaccinate: Vaccinate
+          triage: Triage
+          follow_up: "Triage: follow up"
+          do_not_vaccinate: Do not vaccinate
+          unknown: Unknown
       triage:
         statuses:
           to_do: To do

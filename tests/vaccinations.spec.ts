@@ -8,7 +8,7 @@ test("Records vaccinations", async ({ page }) => {
   await given_the_app_is_setup();
 
   await when_i_go_to_the_vaccinations_page();
-  await then_i_should_see_no_outcome_yet();
+  await then_i_should_see_the_action_to_vaccinate();
 
   await when_i_click_on_the_first_patient();
   await then_i_should_see_the_vaccinations_page();
@@ -18,6 +18,7 @@ test("Records vaccinations", async ({ page }) => {
 
   await when_i_press_confirm();
   await then_i_should_see_a_success_message();
+  await and_i_should_see_the_outcome_as_vaccinated();
 
   await when_i_click_on_the_patient("Aaron Pfeffer");
   await then_i_should_see_the_medical_history_section();
@@ -34,10 +35,8 @@ async function when_i_go_to_the_vaccinations_page() {
   await p.goto("/sessions/1/vaccinations");
 }
 
-async function then_i_should_see_no_outcome_yet() {
-  await expect(p.getByTestId("child-status").nth(0)).toContainText(
-    "No outcome yet"
-  );
+async function then_i_should_see_the_action_to_vaccinate() {
+  await expect(p.getByTestId("child-action").nth(0)).toContainText("Vaccinate");
 }
 
 async function when_i_click_on_the_first_patient() {
@@ -58,6 +57,12 @@ async function when_i_record_a_vaccination() {
 
 async function then_i_should_see_a_success_message() {
   await expect(p.getByRole("alert")).toContainText("Success");
+}
+
+async function and_i_should_see_the_outcome_as_vaccinated() {
+  await expect(p.getByTestId("child-action").nth(0)).toContainText(
+    "Vaccinated"
+  );
 }
 
 async function then_i_should_see_the_check_answers_page() {
