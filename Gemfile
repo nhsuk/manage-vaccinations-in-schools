@@ -36,6 +36,7 @@ group :development do
   gem "asciidoctor-diagram"
   gem "dockerfile-rails", ">= 1.0.0"
   gem "prettier_print", require: false
+  gem "rails-erd"
   gem "rladr"
   gem "rubocop-govuk", require: false
   gem "solargraph", require: false
