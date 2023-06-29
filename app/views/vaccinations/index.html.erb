@@ -19,19 +19,18 @@
 
 <h1>Record vaccinations</h1>
 
-<% if @patient_outcomes.any? %>
+<% if @patient_details.any? %>
   <table class="nhsuk-table">
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">
         <th class="govuk-table__header">Name</th>
         <th class="govuk-table__header">Date of birth</th>
-        <th class="govuk-table__header">Consent</th>
-        <th class="govuk-table__header">Outcome</th>
+        <th class="govuk-table__header" style="width: 200px">Action</th>
       </tr>
     </thead>
     <tbody class="govuk-table__body">
-      <% @patient_outcomes.each do |patient, outcome| %>
-        <%= render "patient_row", patient:, outcome: %>
+      <% @patient_details.each do |patient, action_or_outcome| %>
+        <%= render "patient_row", patient:, action_or_outcome: %>
       <% end %>
     </tbody>
   </table>

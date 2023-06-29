@@ -6,12 +6,8 @@
   <td class="govuk-table__cell" style="width: 150px">
     <%= patient.dob.strftime("%d %b %Y") %>
   </td>
-  <td class="govuk-table__cell">
-    <%= patient.consent %>
-  </td>
-  <td class="govuk-table__cell" data-testid="child-status">
-    <%= render(AppStatusTagComponent.new(status: PatientSession.human_enum_name("outcome", outcome),
-                                         colour: vaccination_status_colour(outcome),
-                                         icon: vaccination_status_icon(outcome))) %>
+  <td class="govuk-table__cell" data-testid="child-action">
+    <% label = PatientSession.human_enum_name("actions_or_outcome", action_or_outcome[:action] || action_or_outcome[:outcome]) %>
+    <%= render(AppActionTagComponent.new(status: label, colour: vaccination_action_colour(action_or_outcome[:action] || action_or_outcome[:outcome]))) %>
   </td>
 </tr>
