@@ -2,6 +2,7 @@ class VaccinationsController < ApplicationController
   before_action :set_session
   before_action :set_patient, only: %i[show confirm record history]
   before_action :set_patient_outcomes, only: %i[index record_template]
+  before_action :set_vaccination_record, only: %i[show confirm record]
 
   layout "two_thirds"
 
@@ -20,10 +21,15 @@ class VaccinationsController < ApplicationController
   end
 
   def confirm
+    if @vaccination_record.update(vaccination_record_params)
+      # Render confirm
+    else
+      render :show
+    end
   end
 
   def record
-    @patient.update!(seen: "Vaccinated")
+    @vaccination_record.update!(administered_at: Time.zone.now)
     if Settings.features.fhir_server_integration
       imm =
         ImmunizationFHIRBuilder.new(
@@ -70,6 +76,12 @@ class VaccinationsController < ApplicationController
 
   private
 
+  def vaccination_record_params
+    p = params.require(:vaccination_record)
+    p[:site] = p[:site].to_i if p[:site].present?
+    p.permit(:administered, :site)
+  end
+
   def set_session
     @session = Session.find(params[:session_id])
   end
@@ -85,5 +97,14 @@ class VaccinationsController < ApplicationController
         .includes(:patient)
         .order("patients.first_name", "patients.last_name")
         .map { |ps| [ps.patient, ps.outcome] }
+  end
+
+  def set_vaccination_record
+    @vaccination_record =
+      @patient
+        .patient_sessions
+        .find_by_session_id(@session.id)
+        .vaccination_records
+        .find_or_initialize_by(administered_at: nil)
   end
 end

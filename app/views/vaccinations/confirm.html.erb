@@ -28,9 +28,16 @@
         row.with_value { '1 of 2' }
       end
 
-      summary_list.with_row do |row|
-        row.with_key { 'Site' }
-        row.with_value { '' }
+      if @vaccination_record.administered?
+        summary_list.with_row do |row|
+          row.with_key { 'Site' }
+          row.with_value { @vaccination_record.site.humanize }
+        end
+      else
+        summary_list.with_row do |row|
+          row.with_key { 'Site' }
+          row.with_value { 'Not administered' }
+        end
       end
 
       summary_list.with_row do |row|
@@ -45,3 +52,26 @@
     end %>
   </div>
 </div>
+
+<%= form_with model: @vaccination_record,
+              url: record_session_vaccination_path(
+                session_id: @session.id,
+                id: @patient.id,
+              ),
+              method: :put do |f| %>
+    <div class="nhsuk-card">
+      <div class="nhsuk-card__content">
+        <%= f.govuk_text_area :notes,
+          label: {
+            text: 'Add notes',
+            size: 'm',
+            class: 'nhsuk-u-margin-bottom-3'
+          },
+          hint: {
+            text: 'For example, if the child had a reaction to the vaccine'
+          },
+          rows: 5 %>
+      </div>
+    </div>
+  <%= f.submit "Confirm", class: "nhsuk-button" %>
+<% end %>

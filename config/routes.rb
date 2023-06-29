@@ -24,7 +24,8 @@ Rails.application.routes.draw do
               as: :vaccinations,
               controller: :vaccinations do
       get "history", on: :member
-      get "confirm", on: :member
+
+      post "confirm", on: :member
       put "record", on: :member
 
       get "show-template", on: :collection
