@@ -10,6 +10,6 @@ class VaccinationRecordResource < Avo::BaseResource
   field :patient_session, as: :belongs_to
   field :administered, as: :boolean
   field :site, as: :select, enum: ::VaccinationRecord.sites
-  field :administered_at, as: :date
+  field :recorded_at, as: :date
   # add fields here
 end

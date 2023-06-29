@@ -29,7 +29,7 @@ class VaccinationsController < ApplicationController
   end
 
   def record
-    @vaccination_record.update!(administered_at: Time.zone.now)
+    @vaccination_record.update!(recorded_at: Time.zone.now)
     if Settings.features.fhir_server_integration
       imm =
         ImmunizationFHIRBuilder.new(
@@ -105,6 +105,6 @@ class VaccinationsController < ApplicationController
         .patient_sessions
         .find_by_session_id(@session.id)
         .vaccination_records
-        .find_or_initialize_by(administered_at: nil)
+        .find_or_initialize_by(recorded_at: nil)
   end
 end
