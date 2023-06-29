@@ -3,7 +3,7 @@ class VaccinationsController < ApplicationController
   before_action :set_patient, only: %i[show confirm record history]
   before_action :set_patient_outcomes, only: %i[index record_template]
   before_action :set_vaccination_record, only: %i[show confirm record]
-  before_action :set_consent_response, only: "show"
+  before_action :set_consent_response, only: :show
 
   layout "two_thirds"
 
