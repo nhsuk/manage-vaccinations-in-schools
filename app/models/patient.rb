@@ -69,4 +69,8 @@ class Patient < ApplicationRecord
   def as_json(options = {})
     super.merge("full_name" => full_name, "age" => age)
   end
+
+  def vaccination_records_for_session(session)
+    patient_sessions.find_by_session_id(session.id).vaccination_records
+  end
 end

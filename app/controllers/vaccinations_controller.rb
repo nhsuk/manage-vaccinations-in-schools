@@ -101,10 +101,8 @@ class VaccinationsController < ApplicationController
 
   def set_vaccination_record
     @vaccination_record =
-      @patient
-        .patient_sessions
-        .find_by_session_id(@session.id)
-        .vaccination_records
-        .find_or_initialize_by(recorded_at: nil)
+      @patient.vaccination_records_for_session(@session).find_or_initialize_by(
+        recorded_at: nil
+      )
   end
 end
