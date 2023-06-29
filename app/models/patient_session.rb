@@ -19,10 +19,10 @@ class PatientSession < ApplicationRecord
   has_many :vaccination_records
 
   def outcome
-    # Temporary, while we're not recording separate vaccination records
-    patient.seen == "Vaccinated" ? :vaccinated : :no_outcome
+    vr = vaccination_records.last
 
-    # TODO: Uncomment this when we're recording separate vaccination records
-    # vaccination_records.last.present? ? :vaccinated : :no_outcome
+    return :no_outcome if vr.nil?
+
+    vr.administered ? :vaccinated : :could_not_vaccinate
   end
 end

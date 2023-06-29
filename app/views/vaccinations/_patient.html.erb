@@ -46,27 +46,38 @@
 
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
-      <%= form_with model: [@session, @patient],
-                    url: record_session_vaccination_path(
+      <%= form_with model: @vaccination_record,
+                    url: confirm_session_vaccination_path(
                       session_id: @session.id,
-                      id: (@patient.id || ":id"),
+                      id: @patient.id,
                     ),
-                    method: :put,
-                    data: { child_vaccination_target: "form" } do |f| %>
-        <%= f.govuk_radio_buttons_fieldset(:vaccination,
+                    method: :post do |f| %>
+        <% content_for(:before_content) { f.govuk_error_summary } %>
+
+        <%= f.govuk_radio_buttons_fieldset(:administered,
           legend: { size: 'm', text: 'Did they get the vaccine?' }) do %>
           <p>They need their 1st dose.</p>
 
-          <%= f.govuk_radio_button :vaccination, 1,
+          <%= f.govuk_radio_button :administered, true,
             label: { text: 'Yes, they got the HPV vaccine' },
-            link_errors: true %>
-          <%= f.govuk_radio_button :vaccination, 0,
+            link_errors: true do %>
+            <%= f.govuk_collection_radio_buttons :site,
+              VaccinationRecord.site_options,
+              :id,
+              :name,
+              :description,
+              inline: true,
+              legend: {
+                size: 'm',
+                text: 'Where did they get it?',
+                hidden: true
+              } %>
+          <% end %>
+          <%= f.govuk_radio_button :administered, false,
             label: { text: 'No, they did not get it' } %>
         <% end %>
 
-        <%= f.submit "Continue",
-          class: "nhsuk-button",
-          "data-testid": "confirm-button" %>
+        <%= f.submit "Continue", class: "nhsuk-button" %>
       <% end %>
     </div>
   </div>

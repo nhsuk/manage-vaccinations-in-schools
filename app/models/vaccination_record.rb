@@ -20,4 +20,18 @@
 #
 class VaccinationRecord < ApplicationRecord
   belongs_to :patient_session
+
+  enum :site, %i[left_arm right_arm other]
+
+  validates :administered, inclusion: [true, false]
+  validates :site,
+            presence: true,
+            inclusion: {
+              in: sites.keys
+            },
+            if: -> { administered }
+
+  def self.site_options
+    sites.map { |k, id| OpenStruct.new(id:, name: k.humanize) }
+  end
 end
