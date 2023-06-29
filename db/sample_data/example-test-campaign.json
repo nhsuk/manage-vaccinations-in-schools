@@ -40,6 +40,13 @@
     "type": "Local authority maintained schools",
     "detailed_type": "Voluntary aided school"
   },
+  "healthQuestions": [
+    "Does the child have a disease or treatment that severely affects their immune system?",
+    "Is anyone in your household having treatment that severely affects their immune system?",
+    "Has your child been diagnosed with asthma?",
+    "Has your child been admitted to intensive care because of a severe egg allergy?",
+    "Is there anything else we should know?"
+  ],
   "patients": [
     {
       "sex": "Male",
@@ -58,7 +65,29 @@
         "parentRelationship": "father",
         "parentEmail": "Betty_Pfeffer62@yahoo.com",
         "gpResponse": "no",
-        "route": "paper"
+        "route": "paper",
+        "healthQuestionResponses": [
+          {
+            "question": "Does the child have a disease or treatment that severely affects their immune system?",
+            "response": "no"
+          },
+          {
+            "question": "Is anyone in your household having treatment that severely affects their immune system?",
+            "response": "no"
+          },
+          {
+            "question": "Has your child been diagnosed with asthma?",
+            "response": "no"
+          },
+          {
+            "question": "Has your child been admitted to intensive care because of a severe egg allergy?",
+            "response": "no"
+          },
+          {
+            "question": "Is there anything else we should know?",
+            "response": "no"
+          }
+        ]
       }
     },
     {
@@ -81,7 +110,29 @@
         "parentRelationshipOther": "grandmother",
         "parentEmail": "Garret57@hotmail.com",
         "gpResponse": "no",
-        "route": "website"
+        "route": "website",
+        "healthQuestionResponses": [
+          {
+            "question": "Does the child have a disease or treatment that severely affects their immune system?",
+            "response": "yes"
+          },
+          {
+            "question": "Is anyone in your household having treatment that severely affects their immune system?",
+            "response": "yes"
+          },
+          {
+            "question": "Has your child been diagnosed with asthma?",
+            "response": "yes"
+          },
+          {
+            "question": "Has your child been admitted to intensive care because of a severe egg allergy?",
+            "response": "yes"
+          },
+          {
+            "question": "Is there anything else we should know?",
+            "response": "deathly afraid of nasal sprays"
+          }
+        ]
       }
     },
     {
