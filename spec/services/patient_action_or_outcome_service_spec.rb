@@ -223,4 +223,45 @@ describe PatientActionOrOutcomeService do
       expect(outcome_or_action).to eq({ outcome: :not_vaccinated })
     end
   end
+
+  describe "when consent given and triage not needed, but triage done anyway and decided not to vaccinate" do
+    it "steps through the right actions and outcomes" do
+      session = create(:session, patients_in_session: 1)
+      patient = session.patients.first
+      triage = nil
+      vaccination_record = nil
+
+      # consent given
+      consent =
+        create(
+          :consent_given,
+          patient:,
+          parent_relationship: :mother,
+          campaign: session.campaign
+        )
+      outcome_or_action =
+        PatientActionOrOutcomeService.call(
+          consent:,
+          triage:,
+          vaccination_record:
+        )
+      expect(outcome_or_action).to eq({ action: :vaccinate })
+
+      # triage decides not to vaccinate
+      triage =
+        create(
+          :triage,
+          patient:,
+          campaign: session.campaign,
+          status: :do_not_vaccinate
+        )
+      outcome_or_action =
+        PatientActionOrOutcomeService.call(
+          consent:,
+          triage:,
+          vaccination_record:
+        )
+      expect(outcome_or_action).to eq({ outcome: :do_not_vaccinate })
+    end
+  end
 end
