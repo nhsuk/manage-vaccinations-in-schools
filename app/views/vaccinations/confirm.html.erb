@@ -28,10 +28,10 @@
         row.with_value { '1 of 2' }
       end
 
-      if @vaccination_record.administered?
+      if @draft_vaccination_record.administered?
         summary_list.with_row do |row|
           row.with_key { 'Site' }
-          row.with_value { @vaccination_record.site.humanize }
+          row.with_value { @draft_vaccination_record.site.humanize }
         end
       else
         summary_list.with_row do |row|
@@ -53,7 +53,7 @@
   </div>
 </div>
 
-<%= form_with model: @vaccination_record,
+<%= form_with model: @draft_vaccination_record,
               url: record_session_vaccination_path(
                 session_id: @session.id,
                 id: @patient.id,
