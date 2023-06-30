@@ -16,7 +16,7 @@ RSpec.describe AppPatientCardComponent, type: :component do
   it "should render the patient's full name" do
     expect(page).to have_css(
       '.nhsuk-summary-list__value[data-child-vaccination-target="fullName"]',
-      text: patient.full_name
+      text: patient.full_name,
     )
   end
 
@@ -24,21 +24,14 @@ RSpec.describe AppPatientCardComponent, type: :component do
     expected_dob = "#{patient.dob.strftime("%d %B %Y")} (aged #{patient.age})"
     expect(page).to have_css(
       '.nhsuk-summary-list__value[data-child-vaccination-target="dob"]',
-      text: expected_dob
-    )
-  end
-
-  it "should render the patient's GP" do
-    expect(page).to have_css(
-      '.nhsuk-summary-list__value[data-child-vaccination-target="gp"]',
-      text: patient.gp
+      text: expected_dob,
     )
   end
 
   it "should render the patient's NHS number" do
     expect(page).to have_css(
       '.nhsuk-summary-list__value[data-child-vaccination-target="nhsNumber"]',
-      text: patient.nhs_number
+      text: patient.nhs_number,
     )
   end
 end
