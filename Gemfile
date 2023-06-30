@@ -9,6 +9,7 @@ gem "awesome_print"
 gem "bootsnap", require: false
 gem "config"
 gem "cssbundling-rails"
+gem "faker", github: "misaka/faker", branch: "add_alternative_name"
 gem "fhir_client"
 gem "govuk-components"
 gem "govuk_design_system_formbuilder"
@@ -50,7 +51,6 @@ end
 group :test do
   gem "capybara"
   gem "cuprite"
-  gem "faker", github: "misaka/faker", branch: "add_alternative_name"
   gem "rspec"
   gem "webmock"
 end
