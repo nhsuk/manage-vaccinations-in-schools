@@ -19,18 +19,18 @@
 
 <h1>Triage</h1>
 
-<% if @patient_triages.any? %>
+<% if @patient_details.any? %>
   <table id="patients" class="nhsuk-table">
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">
         <th class="govuk-table__header">Name</th>
-        <th class="govuk-table__header">Notes</th>
-        <th class="govuk-table__header">Triage status</th>
+        <th class="govuk-table__header">Date of birth</th>
+        <th class="govuk-table__header">Action needed</th>
       </tr>
     </thead>
     <tbody class="govuk-table__body">
-      <% @patient_triages.each do |patient, triage, consent_response| %>
-        <%= render "patient_row", patient:, triage:, consent_response: %>
+      <% @patient_details.each do |patient, action_or_outcome| %>
+        <%= render "patient_row", patient:, action_or_outcome: %>
       <% end %>
     </tbody>
   </table>

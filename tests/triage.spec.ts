@@ -7,8 +7,8 @@ const patients = {
   "Aaron Pfeffer": {
     row: 1,
     note: "",
-    status: "To do",
-    class: "nhsuk-tag--grey",
+    status: "Vaccinate",
+    class: "nhsuk-tag--purple",
     consent_response: "Given by",
     parent_name: "Betty Pfeffer",
     parent_email: "Betty_Pfeffer62@yahoo.com",
@@ -18,9 +18,8 @@ const patients = {
   "Alaia Lakin": {
     row: 2,
     note: "",
-    status: "Ready to vaccinate",
-    class: "nhsuk-tag--green",
-    icon: "nhsuk-icon__tick",
+    status: "Vaccinate",
+    class: "nhsuk-tag--purple",
     consent_response: "Given by",
     parent_name: "Garret Lakin",
     parent_email: "Garret57@hotmail.com",
@@ -30,9 +29,8 @@ const patients = {
   "Aliza Kshlerin": {
     row: 3,
     note: "Notes from nurse",
-    status: "Ready to vaccinate",
-    class: "nhsuk-tag--green",
-    icon: "nhsuk-icon__tick",
+    status: "Vaccinate",
+    class: "nhsuk-tag--purple",
     consent_response: "Given by",
     parent_name: "Georgianna Kshlerin",
     parent_email: "Georgianna.Kshlerin0@hotmail.com",
@@ -44,7 +42,6 @@ const patients = {
     note: "",
     status: "Do not vaccinate",
     class: "nhsuk-tag--red",
-    icon: "nhsuk-icon__cross",
     consent_response: "Given by",
     parent_relationship: "Mother",
     parent_name: "Jordi Wiza",
@@ -56,7 +53,6 @@ const patients = {
     note: "Notes from nurse",
     status: "Do not vaccinate",
     class: "nhsuk-tag--red",
-    icon: "nhsuk-icon__cross",
     consent_response: "Given by",
     parent_relationship: "Mother",
     parent_name: "Reese Klein",
@@ -66,8 +62,8 @@ const patients = {
   "Amara Rodriguez": {
     row: 6,
     note: "",
-    status: "Needs follow up",
-    class: "nhsuk-tag--blue",
+    status: "Triage: follow up",
+    class: "nhsuk-tag--aqua-green",
     consent_response: "Given by",
     parent_relationship: "Father",
     parent_name: "Lloyd Rodriguez",
@@ -77,16 +73,15 @@ const patients = {
   "Amaya Sauer": {
     row: 7,
     note: "",
-    status: "No response",
-    class: "nhsuk-tag--white",
+    status: "Get consent",
+    class: "nhsuk-tag--yellow",
     consent_response: "No response given",
   },
   "Annabel Morar": {
     row: 8,
     note: "",
-    status: "Refused consent",
-    class: "nhsuk-tag--red",
-    icon: "nhsuk-icon__cross",
+    status: "Check refusal",
+    class: "nhsuk-tag--orange",
     consent_response: "Refused by",
     reason_for_refusal: "Personal choice",
     parent_relationship: "Father",
@@ -121,7 +116,6 @@ test("Performing triage", async ({ page }) => {
     note: "Notes from nurse",
     status: "Do not vaccinate",
     class: "nhsuk-tag--red",
-    icon: "nhsuk-icon__cross",
   });
 
   await when_i_click_on_the_patient("Aaron Pfeffer");
@@ -130,9 +124,8 @@ test("Performing triage", async ({ page }) => {
   await when_i_click_on_the_submit_button();
   await then_i_should_see_a_triage_row_for_the_patient("Aaron Pfeffer", {
     note: null,
-    status: "Ready to vaccinate",
-    class: "nhsuk-tag--green",
-    icon: "nhsuk-icon__tick",
+    status: "Vaccinate",
+    class: "nhsuk-tag--purple",
   });
 });
 
@@ -190,17 +183,6 @@ async function then_i_should_see_a_triage_row_for_the_patient(
     `Name for patient row: ${patient.row} name: ${name}`
   ).toContainText(name);
 
-  if (patient.note) {
-    await expect(
-      p.locator(`#patients tr:nth-child(${patient.row}) td:nth-child(2)`),
-      `Note for patient row: ${patient.row} name: ${name}`
-    ).toContainText(patient.note);
-  } else {
-    await expect(
-      p.locator(`#patients tr:nth-child(${patient.row}) td:nth-child(2)`),
-      `Empty note patient row: ${patient.row} name: ${name}`
-    ).toBeEmpty();
-  }
   await expect(
     p.locator(`#patients tr:nth-child(${patient.row}) td:nth-child(3)`),
     `Status text for patient row: ${patient.row} name: ${name}`
@@ -210,24 +192,6 @@ async function then_i_should_see_a_triage_row_for_the_patient(
     p.locator(`#patients tr:nth-child(${patient.row}) td:nth-child(3) div`),
     `Status colour for patient row: ${patient.row} name: ${name}`
   ).toHaveClass(new RegExp(patient.class));
-
-  if (patient.icon) {
-    await expect(
-      p.locator(
-        `#patients tr:nth-child(${patient.row}) td:nth-child(3) div svg`
-      ),
-      `Status icon patient row: ${patient.row} name: ${name}`
-    ).toHaveClass(new RegExp(patient.icon));
-  } else {
-    expect(
-      await p
-        .locator(
-          `#patients tr:nth-child(${patient.row}) td:nth-child(3) div svg`
-        )
-        .count(),
-      `No status icon for patient row: ${patient.row} name: ${name}`
-    ).toEqual(0);
-  }
 }
 
 async function then_i_should_see_the_triage_page_for_the_patient(name) {
