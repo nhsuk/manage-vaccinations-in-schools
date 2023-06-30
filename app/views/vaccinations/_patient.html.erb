@@ -8,7 +8,13 @@
                 explanation: @consent_response.present? ? "Their #{@consent_response.who_responded.downcase} gave consent" : "",
                 colour: "green"
               ) %>
-
+<% elsif @vaccination_record&.administered == false %>
+  <%= render AppBannerComponent.new(
+                title: "Could not vaccinate",
+                # TODO: add reason for refusal once that is collected
+                explanation: @consent_response.present? ? "Their #{@consent_response.who_responded.downcase} gave consent" : "",
+                colour: "orange"
+              ) %>
 <% end %>
 
 <div data-controller="child-vaccination">
