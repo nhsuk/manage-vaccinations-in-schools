@@ -17,12 +17,4 @@ class PatientSession < ApplicationRecord
   belongs_to :patient
   belongs_to :session
   has_many :vaccination_records
-
-  def outcome
-    vr = vaccination_records.last
-
-    return :no_outcome if vr.nil?
-
-    vr.administered ? :vaccinated : :could_not_vaccinate
-  end
 end
