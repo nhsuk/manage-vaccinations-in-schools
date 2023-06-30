@@ -8,7 +8,7 @@ class PatientActionOrOutcomeService
       { outcome: :vaccinated }
     elsif !vaccination_record&.administered.nil?
       { outcome: :not_vaccinated }
-    elsif !consent.triage_needed?
+    elsif !consent.triage_needed? && triage.blank?
       { action: :vaccinate }
     elsif triage.blank?
       { action: :triage }
