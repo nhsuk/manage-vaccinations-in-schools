@@ -23,7 +23,7 @@ const patients = {
     consent_response: "Given by",
     parent_name: "Garret Lakin",
     parent_email: "Garret57@hotmail.com",
-    parent_relationship: "grandmother",
+    parent_relationship: "Grandmother",
     type_of_consent: "Website",
   },
   "Aliza Kshlerin": {

@@ -63,6 +63,14 @@ class ConsentResponse < ApplicationRecord
       (parent_relationship_other? || health_questions_require_follow_up?)
   end
 
+  def who_responded
+    if parent_relationship == "other"
+      parent_relationship_other
+    else
+      self.class.human_enum_name("parent_relationship", parent_relationship)
+    end
+  end
+
   private
 
   def health_questions_require_follow_up?

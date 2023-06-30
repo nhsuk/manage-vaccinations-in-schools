@@ -19,17 +19,6 @@ module TriageHelper
     ]
   end
 
-  def parent_relationship(consent_response)
-    if consent_response.parent_relationship == "other"
-      consent_response.parent_relationship_other
-    else
-      ConsentResponse.human_enum_name(
-        "parent_relationship",
-        consent_response.parent_relationship
-      )
-    end
-  end
-
   def triage_form_status_options
     Triage.statuses.keys.map do |status|
       [status, Triage.human_enum_name(:status, status)]
