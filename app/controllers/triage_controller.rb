@@ -34,7 +34,17 @@ class TriageController < ApplicationController
   def create
     @triage = Triage.new(campaign: @session.campaign, patient: @patient)
     if @triage.update(triage_params)
-      redirect_to triage_session_path(@session)
+      redirect_to triage_session_path(@session),
+                  flash: {
+                    success: {
+                      title: "Record saved for #{@patient.full_name}",
+                      body:
+                        ActionController::Base.helpers.link_to(
+                          "View child record",
+                          session_patient_triage_path(@session, @patient)
+                        )
+                    }
+                  }
     else
       render :show, status: :unprocessable_entity
     end
@@ -43,7 +53,17 @@ class TriageController < ApplicationController
   def update
     @triage = @patient.triage_for_campaign(@session.campaign)
     if @triage.update(triage_params)
-      redirect_to triage_session_path(@session)
+      redirect_to triage_session_path(@session),
+                  flash: {
+                    success: {
+                      title: "Record saved for #{@patient.full_name}",
+                      body:
+                        ActionController::Base.helpers.link_to(
+                          "View child record",
+                          session_patient_triage_path(@session, @patient)
+                        )
+                    }
+                  }
     else
       render :show, status: :unprocessable_entity
     end
