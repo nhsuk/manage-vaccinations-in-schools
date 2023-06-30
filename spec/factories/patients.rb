@@ -6,7 +6,6 @@
 #  consent        :integer
 #  dob            :date
 #  first_name     :text
-#  gp             :integer
 #  last_name      :text
 #  nhs_number     :bigint
 #  preferred_name :text
@@ -26,7 +25,6 @@ FactoryBot.define do
     sex { %w[Male Female].sample }
     first_name { Faker::Name.first_name }
     last_name { Faker::Name.last_name }
-    gp { "Local GP" }
     screening { "Approved for vaccination" }
     consent { "Parental consent (digital)" }
     seen { "Not yet" }

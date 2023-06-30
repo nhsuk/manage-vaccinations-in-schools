@@ -57,7 +57,6 @@
       "age": 4,
       "preferredName": "Aaron Harber",
       "nhsNumber": "8409955246",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -94,7 +93,6 @@
       "dob": "2018-04-15",
       "age": 4,
       "nhsNumber": "7955258493",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -156,7 +154,6 @@
       "dob": "2011-03-27",
       "age": 11,
       "nhsNumber": "5996235637",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -196,7 +193,6 @@
       "dob": "2018-10-10",
       "age": 4,
       "nhsNumber": "5853750198",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -236,7 +232,6 @@
       "age": 4,
       "preferredName": "Amara Rowe",
       "nhsNumber": "7651058702",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -276,7 +271,6 @@
       "dob": "2011-10-02",
       "age": 11,
       "nhsNumber": "6606231345",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -316,7 +310,6 @@
       "dob": "2012-12-02",
       "age": 10,
       "nhsNumber": "5035635371",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -340,7 +333,6 @@
       "dob": "2014-01-08",
       "age": 8,
       "nhsNumber": "2112058154",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -378,7 +370,6 @@
       "dob": "2018-10-15",
       "age": 4,
       "nhsNumber": "8526328217",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -414,7 +405,6 @@
       "dob": "2015-10-03",
       "age": 7,
       "nhsNumber": "4006789524",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -450,7 +440,6 @@
       "dob": "2014-02-11",
       "age": 8,
       "nhsNumber": "3806415399",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -486,7 +475,6 @@
       "dob": "2015-06-11",
       "age": 7,
       "nhsNumber": "9317699886",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -523,7 +511,6 @@
       "dob": "2016-04-10",
       "age": 6,
       "nhsNumber": "0495499247",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -560,7 +547,6 @@
       "dob": "2016-03-10",
       "age": 6,
       "nhsNumber": "2316352390",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -598,7 +584,6 @@
       "age": 11,
       "preferredName": "Barnaby Murazik",
       "nhsNumber": "9911547144",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -635,7 +620,6 @@
       "dob": "2015-03-31",
       "age": 7,
       "nhsNumber": "0042290975",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -659,7 +643,6 @@
       "dob": "2017-04-28",
       "age": 5,
       "nhsNumber": "5371467639",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -697,7 +680,6 @@
       "dob": "2014-11-07",
       "age": 8,
       "nhsNumber": "2390584288",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -734,7 +716,6 @@
       "dob": "2015-06-05",
       "age": 7,
       "nhsNumber": "5811493206",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -758,7 +739,6 @@
       "dob": "2017-02-06",
       "age": 5,
       "nhsNumber": "1772842034",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -782,7 +762,6 @@
       "dob": "2018-04-09",
       "age": 4,
       "nhsNumber": "6226242171",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -820,7 +799,6 @@
       "dob": "2015-03-09",
       "age": 7,
       "nhsNumber": "6576066948",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -858,7 +836,6 @@
       "dob": "2015-10-10",
       "age": 7,
       "nhsNumber": "0717145969",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -895,7 +872,6 @@
       "dob": "2016-06-19",
       "age": 6,
       "nhsNumber": "8877442239",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -931,7 +907,6 @@
       "dob": "2014-04-11",
       "age": 8,
       "nhsNumber": "8487506850",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -968,7 +943,6 @@
       "dob": "2014-08-12",
       "age": 8,
       "nhsNumber": "9343503877",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -1006,7 +980,6 @@
       "dob": "2015-02-02",
       "age": 7,
       "nhsNumber": "8275071876",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -1043,7 +1016,6 @@
       "dob": "2011-10-25",
       "age": 11,
       "nhsNumber": "7844631908",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -1067,7 +1039,6 @@
       "dob": "2016-03-24",
       "age": 6,
       "nhsNumber": "1406826087",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -1105,7 +1076,6 @@
       "dob": "2014-07-24",
       "age": 8,
       "nhsNumber": "4187931733",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -1141,7 +1111,6 @@
       "dob": "2011-11-04",
       "age": 11,
       "nhsNumber": "2804742843",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -1165,7 +1134,6 @@
       "dob": "2013-10-08",
       "age": 9,
       "nhsNumber": "1416226128",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -1201,7 +1169,6 @@
       "dob": "2014-02-07",
       "age": 8,
       "nhsNumber": "8659966789",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -1239,7 +1206,6 @@
       "dob": "2011-08-19",
       "age": 11,
       "nhsNumber": "7336906733",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -1276,7 +1242,6 @@
       "dob": "2015-07-21",
       "age": 7,
       "nhsNumber": "7548348388",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -1300,7 +1265,6 @@
       "dob": "2014-10-20",
       "age": 8,
       "nhsNumber": "3497581015",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -1324,7 +1288,6 @@
       "dob": "2014-08-30",
       "age": 8,
       "nhsNumber": "5900701606",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -1363,7 +1326,6 @@
       "age": 5,
       "preferredName": "Gianna Mayer",
       "nhsNumber": "2490559432",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -1399,7 +1361,6 @@
       "dob": "2018-06-09",
       "age": 4,
       "nhsNumber": "6275223267",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -1436,7 +1397,6 @@
       "dob": "2011-09-09",
       "age": 11,
       "nhsNumber": "9176773497",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -1473,7 +1433,6 @@
       "dob": "2018-05-19",
       "age": 4,
       "nhsNumber": "8793573331",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -1510,7 +1469,6 @@
       "dob": "2015-09-09",
       "age": 7,
       "nhsNumber": "2799448044",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -1547,7 +1505,6 @@
       "dob": "2015-04-18",
       "age": 7,
       "nhsNumber": "5544944806",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -1571,7 +1528,6 @@
       "dob": "2013-03-14",
       "age": 9,
       "nhsNumber": "7104521132",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -1607,7 +1563,6 @@
       "dob": "2018-01-19",
       "age": 4,
       "nhsNumber": "1710868271",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -1644,7 +1599,6 @@
       "dob": "2011-01-20",
       "age": 11,
       "nhsNumber": "2314596698",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -1682,7 +1636,6 @@
       "dob": "2018-10-09",
       "age": 4,
       "nhsNumber": "0791668338",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -1721,7 +1674,6 @@
       "dob": "2018-01-27",
       "age": 4,
       "nhsNumber": "7311912127",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -1758,7 +1710,6 @@
       "dob": "2011-08-26",
       "age": 11,
       "nhsNumber": "7148322456",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -1782,7 +1733,6 @@
       "dob": "2015-06-28",
       "age": 7,
       "nhsNumber": "0110166018",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -1820,7 +1770,6 @@
       "age": 5,
       "preferredName": "Ivy-rose Ankunding",
       "nhsNumber": "8327209921",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -1844,7 +1793,6 @@
       "dob": "2017-03-29",
       "age": 5,
       "nhsNumber": "2943310069",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -1882,7 +1830,6 @@
       "dob": "2016-10-17",
       "age": 6,
       "nhsNumber": "4046596328",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -1920,7 +1867,6 @@
       "dob": "2015-01-25",
       "age": 7,
       "nhsNumber": "4376490794",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -1958,7 +1904,6 @@
       "dob": "2018-03-23",
       "age": 4,
       "nhsNumber": "1052695333",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -1995,7 +1940,6 @@
       "dob": "2011-03-09",
       "age": 11,
       "nhsNumber": "1804044832",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -2033,7 +1977,6 @@
       "dob": "2017-12-16",
       "age": 5,
       "nhsNumber": "0056237775",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -2072,7 +2015,6 @@
       "dob": "2018-02-11",
       "age": 4,
       "nhsNumber": "3669918636",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -2096,7 +2038,6 @@
       "dob": "2018-09-03",
       "age": 4,
       "nhsNumber": "4599009503",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -2134,7 +2075,6 @@
       "dob": "2016-06-13",
       "age": 6,
       "nhsNumber": "8501814162",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -2172,7 +2112,6 @@
       "dob": "2011-01-11",
       "age": 11,
       "nhsNumber": "9801792171",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -2196,7 +2135,6 @@
       "dob": "2018-03-11",
       "age": 4,
       "nhsNumber": "9109282769",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -2220,7 +2158,6 @@
       "dob": "2018-08-26",
       "age": 4,
       "nhsNumber": "5613687532",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -2257,7 +2194,6 @@
       "dob": "2012-10-16",
       "age": 10,
       "nhsNumber": "3735651946",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -2293,7 +2229,6 @@
       "dob": "2018-05-04",
       "age": 4,
       "nhsNumber": "8840082986",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -2317,7 +2252,6 @@
       "dob": "2012-12-06",
       "age": 10,
       "nhsNumber": "2731905666",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -2341,7 +2275,6 @@
       "dob": "2018-05-04",
       "age": 4,
       "nhsNumber": "0827124007",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -2378,7 +2311,6 @@
       "dob": "2014-11-09",
       "age": 8,
       "nhsNumber": "6939903667",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -2415,7 +2347,6 @@
       "dob": "2017-03-09",
       "age": 5,
       "nhsNumber": "8764918437",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -2451,7 +2382,6 @@
       "dob": "2018-05-10",
       "age": 4,
       "nhsNumber": "0263595717",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -2475,7 +2405,6 @@
       "dob": "2013-06-12",
       "age": 9,
       "nhsNumber": "5064664432",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -2513,7 +2442,6 @@
       "age": 7,
       "preferredName": "Mateo Schmeler",
       "nhsNumber": "8085960280",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -2537,7 +2465,6 @@
       "dob": "2011-11-01",
       "age": 11,
       "nhsNumber": "6507285317",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -2561,7 +2488,6 @@
       "dob": "2015-01-04",
       "age": 7,
       "nhsNumber": "1469707173",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -2585,7 +2511,6 @@
       "dob": "2012-07-10",
       "age": 10,
       "nhsNumber": "6388763335",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -2623,7 +2548,6 @@
       "age": 5,
       "preferredName": "Myles Schamberger",
       "nhsNumber": "1050469356",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -2660,7 +2584,6 @@
       "dob": "2013-10-23",
       "age": 9,
       "nhsNumber": "8832683163",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -2698,7 +2621,6 @@
       "dob": "2012-02-11",
       "age": 10,
       "nhsNumber": "7186914010",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -2735,7 +2657,6 @@
       "age": 5,
       "preferredName": "Osian Beatty",
       "nhsNumber": "7302289816",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -2773,7 +2694,6 @@
       "dob": "2011-12-13",
       "age": 11,
       "nhsNumber": "3112415923",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -2811,7 +2731,6 @@
       "dob": "2014-07-25",
       "age": 8,
       "nhsNumber": "8227796294",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -2848,7 +2767,6 @@
       "dob": "2018-07-16",
       "age": 4,
       "nhsNumber": "6621681316",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -2885,7 +2803,6 @@
       "dob": "2017-12-25",
       "age": 5,
       "nhsNumber": "2191497983",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -2921,7 +2838,6 @@
       "dob": "2017-01-17",
       "age": 5,
       "nhsNumber": "2186576681",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -2958,7 +2874,6 @@
       "dob": "2018-05-30",
       "age": 4,
       "nhsNumber": "6845835653",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -2982,7 +2897,6 @@
       "dob": "2012-05-26",
       "age": 10,
       "nhsNumber": "3441281434",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -3020,7 +2934,6 @@
       "dob": "2012-09-18",
       "age": 10,
       "nhsNumber": "5264838890",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -3057,7 +2970,6 @@
       "dob": "2011-03-20",
       "age": 11,
       "nhsNumber": "6458360699",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -3093,7 +3005,6 @@
       "dob": "2018-10-24",
       "age": 4,
       "nhsNumber": "0863005804",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -3129,7 +3040,6 @@
       "dob": "2017-02-17",
       "age": 5,
       "nhsNumber": "9390073397",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -3153,7 +3063,6 @@
       "dob": "2012-02-23",
       "age": 10,
       "nhsNumber": "2846299636",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -3177,7 +3086,6 @@
       "dob": "2011-04-03",
       "age": 11,
       "nhsNumber": "7334840779",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -3201,7 +3109,6 @@
       "dob": "2017-04-18",
       "age": 5,
       "nhsNumber": "4129039542",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Female",
@@ -3238,7 +3145,6 @@
       "dob": "2017-02-05",
       "age": 5,
       "nhsNumber": "0659312218",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -3262,7 +3168,6 @@
       "dob": "2014-02-10",
       "age": 8,
       "nhsNumber": "2780305498",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -3287,7 +3192,6 @@
       "age": 5,
       "preferredName": "Toby Konopelski",
       "nhsNumber": "8453363021",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -3323,7 +3227,6 @@
       "dob": "2015-11-03",
       "age": 7,
       "nhsNumber": "2588091672",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -3360,7 +3263,6 @@
       "dob": "2013-06-11",
       "age": 9,
       "nhsNumber": "0170610812",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -3384,7 +3286,6 @@
       "dob": "2013-05-28",
       "age": 9,
       "nhsNumber": "9838662685",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
@@ -3421,7 +3322,6 @@
       "dob": "2014-08-20",
       "age": 8,
       "nhsNumber": "9646813068",
-      "gp": "Local GP",
       "screening": "Approved for vaccination",
       "parentOrGuardian": {
         "sex": "Male",
