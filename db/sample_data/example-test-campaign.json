@@ -114,23 +114,25 @@
         "healthQuestionResponses": [
           {
             "question": "Does the child have a disease or treatment that severely affects their immune system?",
-            "response": "yes"
+            "response": "yes",
+            "notes": "Has a pretty bad cold"
           },
           {
             "question": "Is anyone in your household having treatment that severely affects their immune system?",
-            "response": "yes"
+            "response": "no"
           },
           {
             "question": "Has your child been diagnosed with asthma?",
-            "response": "yes"
+            "response": "no"
           },
           {
             "question": "Has your child been admitted to intensive care because of a severe egg allergy?",
-            "response": "yes"
+            "response": "no"
           },
           {
             "question": "Is there anything else we should know?",
-            "response": "deathly afraid of nasal sprays"
+            "response": "yes",
+            "notes": "Deathly afraid of nasal sprays"
           }
         ]
       }
