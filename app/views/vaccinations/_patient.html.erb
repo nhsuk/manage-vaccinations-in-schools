@@ -2,6 +2,15 @@
   <%= patient.full_name %>
 </h1>
 
+<% if @vaccination_record&.administered? %>
+  <%= render AppBannerComponent.new(
+                title: "Vaccinated",
+                explanation: @consent_response.present? ? "Their #{@consent_response.parent_relationship} gave consent" : "",
+                colour: "green"
+              ) %>
+
+<% end %>
+
 <div data-controller="child-vaccination">
   <div class="nhsuk-card" id="consent">
     <div class="nhsuk-card__content">
