@@ -18,7 +18,7 @@ const patients = {
   "Alaia Lakin": {
     row: 2,
     note: "",
-    status: "Ready for session",
+    status: "Ready to vaccinate",
     class: "nhsuk-tag--green",
     icon: "nhsuk-icon__tick",
     consent_response: "Given by",
@@ -30,7 +30,7 @@ const patients = {
   "Aliza Kshlerin": {
     row: 3,
     note: "Notes from nurse",
-    status: "Ready for session",
+    status: "Ready to vaccinate",
     class: "nhsuk-tag--green",
     icon: "nhsuk-icon__tick",
     consent_response: "Given by",
@@ -126,11 +126,11 @@ test("Performing triage", async ({ page }) => {
 
   await when_i_click_on_the_patient("Aaron Pfeffer");
   await when_i_clear_the_note();
-  await when_i_click_on_the_option("Ready for session");
+  await when_i_click_on_the_option("Ready to vaccinate");
   await when_i_click_on_the_submit_button();
   await then_i_should_see_a_triage_row_for_the_patient("Aaron Pfeffer", {
     note: null,
-    status: "Ready for session",
+    status: "Ready to vaccinate",
     class: "nhsuk-tag--green",
     icon: "nhsuk-icon__tick",
   });

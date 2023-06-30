@@ -12,7 +12,7 @@ class PatientActionOrOutcomeService
       { action: :vaccinate }
     elsif triage.blank?
       { action: :triage }
-    elsif triage&.ready_for_session?
+    elsif triage&.ready_to_vaccinate?
       { action: :vaccinate }
     elsif triage&.needs_follow_up?
       { action: :follow_up }

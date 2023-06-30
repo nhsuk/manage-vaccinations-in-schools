@@ -108,7 +108,7 @@
         "classes": "nhsuk-tag--grey"
       },
       "triage": {
-        "status": "ready_for_session"
+        "status": "ready_to_vaccinate"
       },
       "consent": {
         "consent": "given",
@@ -169,7 +169,7 @@
         "classes": "nhsuk-tag--grey"
       },
       "triage": {
-        "status": "ready_for_session",
+        "status": "ready_to_vaccinate",
         "notes": "Spoke with parent, it is safe to vaccinate"
       },
       "consent": {
