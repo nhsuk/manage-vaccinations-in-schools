@@ -19,7 +19,7 @@
           Date of birth
         </dt>
         <dd class="nhsuk-summary-list__value" data-child-vaccination-target="dob">
-          <%= @patient.dob&.strftime("%d %B %Y") %> (<%= aged %>)
+          <%= @patient.dob&.to_fs(:nhsuk_date) %> (<%= aged %>)
         </dd>
       </div>
 

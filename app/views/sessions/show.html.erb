@@ -8,7 +8,7 @@
 <h1 class="nhsuk-heading-l">
   <%= @session.name %>
   <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
-    <%= @session.date.strftime('%e %B %Y at %l%P') %>
+    <%= @session.date.to_fs(:long_ordinal_uk) %>
   </span>
 </h1>
 
