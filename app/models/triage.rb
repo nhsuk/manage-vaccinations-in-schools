@@ -19,5 +19,5 @@ class Triage < ApplicationRecord
   belongs_to :campaign
   belongs_to :patient
 
-  enum :status, %i[ready_for_session do_not_vaccinate needs_follow_up]
+  enum :status, %i[ready_to_vaccinate do_not_vaccinate needs_follow_up]
 end

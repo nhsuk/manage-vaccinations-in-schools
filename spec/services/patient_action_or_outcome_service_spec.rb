@@ -119,7 +119,7 @@ describe PatientActionOrOutcomeService do
       expect(outcome_or_action).to eq({ action: :follow_up })
 
       # triage done
-      triage.update!(status: :ready_for_session)
+      triage.update!(status: :ready_to_vaccinate)
       outcome_or_action =
         PatientActionOrOutcomeService.call(
           consent:,

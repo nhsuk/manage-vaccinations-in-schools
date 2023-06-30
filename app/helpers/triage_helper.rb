@@ -5,7 +5,7 @@ module TriageHelper
       do_not_vaccinate: :red,
       needs_follow_up: :blue,
       no_response: :white,
-      ready_for_session: :green
+      ready_to_vaccinate: :green
     }.with_indifferent_access.fetch(triage_status, :grey)
   end
 
@@ -13,7 +13,7 @@ module TriageHelper
     {
       refused_consent: "cross",
       do_not_vaccinate: "cross",
-      ready_for_session: "tick"
+      ready_to_vaccinate: "tick"
     }.with_indifferent_access[
       triage_status
     ]

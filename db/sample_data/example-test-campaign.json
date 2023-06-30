@@ -97,7 +97,7 @@
       "dob": "2018-04-15",
       "nhsNumber": "7955258493",
       "triage": {
-        "status": "ready_for_session"
+        "status": "ready_to_vaccinate"
       },
       "consent": {
         "consent": "given",
@@ -142,7 +142,7 @@
       "dob": "2011-03-27",
       "nhsNumber": "5996235637",
       "triage": {
-        "status": "ready_for_session",
+        "status": "ready_to_vaccinate",
         "notes": "Spoke with parent, it is safe to vaccinate"
       },
       "consent": {

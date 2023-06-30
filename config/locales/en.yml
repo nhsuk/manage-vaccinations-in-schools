@@ -23,7 +23,7 @@ en:
       triage:
         statuses:
           to_do: To do
-          ready_for_session: Ready for session
+          ready_to_vaccinate: Ready to vaccinate
           do_not_vaccinate: Do not vaccinate
           needs_follow_up: Needs follow up
     errors:
