@@ -21,7 +21,7 @@ RSpec.describe AppPatientCardComponent, type: :component do
   end
 
   it "should render the patient's date of birth" do
-    expected_dob = "#{patient.dob.strftime("%d %B %Y")} (aged #{patient.age})"
+    expected_dob = "#{patient.dob.to_fs(:nhsuk_date)} (aged #{patient.age})"
     expect(page).to have_css(
       '.nhsuk-summary-list__value[data-child-vaccination-target="dob"]',
       text: expected_dob

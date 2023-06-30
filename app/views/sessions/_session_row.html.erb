@@ -1,6 +1,6 @@
 <tr class="govuk-table__row">
   <td class="govuk-table__cell">
-    <%= session.date.strftime("%d %b %Y") %>
+    <%= session.date.to_fs(:nhsuk_date_short_month) %>
   </td>
   <td class="govuk-table__cell">
     <%= session.date.strftime("%l%P") %>

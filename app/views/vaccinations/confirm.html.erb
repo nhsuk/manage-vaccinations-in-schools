@@ -42,7 +42,7 @@
 
       summary_list.with_row do |row|
         row.with_key { 'Date' }
-        row.with_value { "Today (#{Time.zone.now.strftime("%d %B %Y")})" }
+        row.with_value { "Today (#{Time.zone.now.to_fs(:nhsuk_date)})" }
       end
 
       summary_list.with_row do |row|
