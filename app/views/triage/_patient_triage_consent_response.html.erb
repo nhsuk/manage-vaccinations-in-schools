@@ -4,7 +4,7 @@
       <%= consent_response.consent_given? ? "Given by" : "Refused by" %>
     </dt>
     <dd class="nhsuk-summary-list__value">
-      <%= parent_relationship(consent_response) %>
+      <%= parent_relationship(consent_response).humanize %>
     </dd>
   </div>
 
