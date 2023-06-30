@@ -5,6 +5,22 @@
 <div data-controller="child-vaccination">
   <%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
 
+  <div class="nhsuk-card" id="consent">
+    <div class="nhsuk-card__content">
+      <h2 class="nhsuk-card__heading nhsuk-heading-m">
+        Consent
+      </h2>
+
+      <% if @consent_response.present? %>
+        <%= render "triage/patient_triage_consent_response", consent_response: @consent_response %>
+      <% else %>
+        <p>
+          No response given
+        </p>
+      <% end %>
+    </div>
+  </div>
+
   <% if @consent_response&.health_questions.present? %>
     <div class="nhsuk-card" id="consent">
       <div class="nhsuk-card__content">
