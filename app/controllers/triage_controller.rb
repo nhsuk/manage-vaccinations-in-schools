@@ -8,17 +8,23 @@ class TriageController < ApplicationController
 
   def index
     @session = Session.find_by(id: params[:id])
-    @patient_triages =
+    @patient_details =
       @session
-        .patients
-        .includes(:triage)
-        .order("first_name", "last_name")
-        .map do |patient|
-          [
-            patient,
-            patient.triage_for_campaign(@session.campaign),
-            patient.consent_response_for_campaign(@session.campaign)
-          ]
+        .patient_sessions
+        .includes(:patient)
+        .order("patients.first_name", "patients.last_name")
+        .map do |ps|
+          consent = ps.patient.consent_response_for_campaign(@session.campaign)
+          triage = ps.patient.triage_for_campaign(@session.campaign)
+          vaccination_record = ps.vaccination_records.last
+
+          action_or_outcome =
+            PatientActionOrOutcomeService.call(
+              consent:,
+              triage:,
+              vaccination_record:
+            )
+          [ps.patient, action_or_outcome]
         end
   end
 

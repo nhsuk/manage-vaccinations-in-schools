@@ -2,13 +2,11 @@
   <td class="govuk-table__cell">
     <%= link_to patient.full_name, session_patient_triage_path(@session, patient), "data-testid": "child-link" %>
   </td>
-  <td class="govuk-table__cell">
-    <%= "Notes from nurse" if triage&.notes.present? %>
+  <td class="govuk-table__cell" style="width: 150px">
+    <%= patient.dob.strftime("%d %b %Y") %>
   </td>
-  <td class="govuk-table__cell">
-    <%= triage_status = PatientTriageStatusService.call(consent: consent_response, triage:)
-        render(AppStatusTagComponent.new(status: t(triage_status) { triage_status.to_s.humanize },
-                                         colour: triage_status_colour(triage_status:),
-                                         icon: triage_status_icon(triage_status:))) %>
+  <td class="govuk-table__cell" data-testid="child-action">
+    <% label = PatientSession.human_enum_name("actions_or_outcome", action_or_outcome[:action] || action_or_outcome[:outcome]) %>
+    <%= render(AppActionTagComponent.new(status: label, colour: vaccination_action_colour(action_or_outcome[:action] || action_or_outcome[:outcome]))) %>
   </td>
 </tr>
