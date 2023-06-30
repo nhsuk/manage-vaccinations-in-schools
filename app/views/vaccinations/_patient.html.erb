@@ -3,8 +3,6 @@
 </h1>
 
 <div data-controller="child-vaccination">
-  <%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
-
   <div class="nhsuk-card" id="consent">
     <div class="nhsuk-card__content">
       <h2 class="nhsuk-card__heading nhsuk-heading-m">
@@ -20,6 +18,8 @@
       <% end %>
     </div>
   </div>
+
+  <%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
 
   <% if @consent_response&.health_questions.present? %>
     <div class="nhsuk-card" id="consent">
