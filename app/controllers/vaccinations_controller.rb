@@ -5,6 +5,7 @@ class VaccinationsController < ApplicationController
   before_action :set_draft_vaccination_record, only: %i[show confirm record]
   before_action :set_vaccination_record, only: %i[show confirm record]
   before_action :set_consent_response, only: :show
+  before_action :set_triage, only: :show
 
   layout "two_thirds"
 
@@ -131,5 +132,11 @@ class VaccinationsController < ApplicationController
   def set_consent_response
     @consent_response =
       @patient.consent_response_for_campaign(@session.campaign)
+  end
+
+  def set_triage
+    @triage =
+      @patient.triage_for_campaign(@session.campaign) ||
+        Triage.new(campaign: @session.campaign, patient: @patient)
   end
 end

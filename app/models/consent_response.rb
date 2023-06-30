@@ -71,8 +71,6 @@ class ConsentResponse < ApplicationRecord
     end
   end
 
-  private
-
   def health_questions_require_follow_up?
     health_questions&.any? { |question| question["response"].downcase == "yes" }
   end

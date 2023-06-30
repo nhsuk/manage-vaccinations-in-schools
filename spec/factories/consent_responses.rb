@@ -85,5 +85,10 @@ FactoryBot.define do
       consent { :refused }
       reason_for_refusal { :personal_choice }
     end
+
+    trait :from_granddad do
+      parent_relationship { "other" }
+      parent_relationship_other { "Granddad" }
+    end
   end
 end
