@@ -5,7 +5,7 @@
 <% if @vaccination_record&.administered? %>
   <%= render AppBannerComponent.new(
                 title: "Vaccinated",
-                explanation: @consent_response.present? ? "Their #{@consent_response.parent_relationship} gave consent" : "",
+                explanation: @consent_response.present? ? "Their #{@consent_response.who_responded.downcase} gave consent" : "",
                 colour: "green"
               ) %>
 

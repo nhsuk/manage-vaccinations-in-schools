@@ -4,13 +4,13 @@
       <%= consent_response.consent_given? ? "Given by" : "Refused by" %>
     </dt>
     <dd class="nhsuk-summary-list__value">
-      <%= parent_relationship(consent_response).humanize %>
+      <%= consent_response.who_responded.capitalize %>
     </dd>
   </div>
 
   <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
-      <%= parent_relationship(consent_response) %>
+      <%= consent_response.who_responded.capitalize %>
     </dt>
     <dd class="nhsuk-summary-list__value">
       <%= consent_response.parent_name %>
