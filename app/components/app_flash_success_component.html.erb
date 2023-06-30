@@ -1,0 +1,8 @@
+<%= govuk_notification_banner(title_text: "Success", success: true) do |nb| %>
+  <% if title.present? %>
+    <% nb.with_heading(text: title) %>
+    <p><%= body.html_safe %></p>
+  <% else %>
+    <% nb.with_heading(text: body) %>
+  <% end %>
+<% end %>
