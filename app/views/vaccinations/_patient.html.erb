@@ -13,6 +13,13 @@
 
 <div data-controller="child-vaccination">
   <% if @consent_response.present? %>
+    <% if @consent_response.consent_refused? %>
+      <%= render AppBannerComponent.new(
+              title: "Their #{@consent_response.who_responded.downcase} has refused to give consent",
+              colour: "orange"
+            ) %>
+    <% end %>
+
     <div class="nhsuk-card" id="consent">
       <div class="nhsuk-card__content">
         <h2 class="nhsuk-card__heading nhsuk-heading-m">
