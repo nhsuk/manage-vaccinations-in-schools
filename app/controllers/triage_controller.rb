@@ -4,7 +4,7 @@ class TriageController < ApplicationController
   before_action :set_triage, only: %i[show]
   before_action :set_consent_response, only: %i[show]
 
-  layout "two_thirds", except: %i[index]
+  layout "two_thirds"
 
   def index
     @session = Session.find_by(id: params[:id])
