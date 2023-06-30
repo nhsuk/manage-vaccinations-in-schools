@@ -43,7 +43,14 @@ class VaccinationsController < ApplicationController
     end
     redirect_to session_vaccinations_path(@session),
                 flash: {
-                  success: "Record saved"
+                  success: {
+                    title: "Record saved for #{@patient.full_name}",
+                    body:
+                      ActionController::Base.helpers.link_to(
+                        "View child record",
+                        session_vaccination_path(@session, @patient)
+                      )
+                  }
                 }
   end
 
