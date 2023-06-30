@@ -2,5 +2,9 @@
   <h3 class="nhsuk-heading-xs nhsuk-u-margin-bottom-0">
     <%= health_question["question"] %>
   </h3>
-  <p><%= health_question["response"].humanize %></p>
+  <% if health_question["response"].downcase == "yes" %>
+    <p><%= health_question["response"].humanize %> &ndash; <%= health_question["notes"] %></p>
+  <% else %>
+    <p><%= health_question["response"].humanize %></p>
+  <% end %>
 <% end %>

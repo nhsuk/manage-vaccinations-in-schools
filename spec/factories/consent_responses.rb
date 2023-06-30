@@ -57,23 +57,23 @@ FactoryBot.define do
         {
           question:
             "Does the child have a disease or treatment that severely affects their immune system?",
-          response: "No"
+          response: "no"
         },
         {
           question:
             "Is anyone in your household having treatment that severely affects their immune system?",
-          response: "No"
+          response: "no"
         },
         {
           question: "Has your child been diagnosed with asthma?",
-          response: "No"
+          response: "no"
         },
         {
           question:
             "Has your child been admitted to intensive care because of a severe egg allergy?",
-          response: "No"
+          response: "no"
         },
-        { question: "Is there anything else we should know?", response: "No" }
+        { question: "Is there anything else we should know?", response: "no" }
       ]
     end
 

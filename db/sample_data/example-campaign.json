@@ -394,7 +394,31 @@
         "parentRelationship": "mother",
         "parentEmail": "Erika54@hotmail.com",
         "gpResponse": "no",
-        "route": "website"
+        "route": "website",
+        "healthQuestionResponses": [
+          {
+            "question": "Does the child have a disease or treatment that severely affects their immune system?",
+            "response": "yes",
+            "notes": "Archie has had a really bad cold for the last 2 weeks"
+          },
+          {
+            "question": "Is anyone in your household having treatment that severely affects their immune system?",
+            "response": "no"
+          },
+          {
+            "question": "Has your child been diagnosed with asthma?",
+            "response": "no"
+          },
+          {
+            "question": "Has your child been admitted to intensive care because of a severe egg allergy?",
+            "response": "no"
+          },
+          {
+            "question": "Is there anything else we should know?",
+            "response": "yes",
+            "notes": "He is also very nervous around needles"
+          }
+        ]
       }
     },
     {

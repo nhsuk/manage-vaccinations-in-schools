@@ -276,10 +276,18 @@ async function then_i_should_see_health_question_responses_if_present(name) {
 
     for (const example_question of consent["healthQuestionResponses"]) {
       await expect(
-        p.getByRole("heading", {
-          name: example_question["question"],
-        })
-      ).toContainText(example_question["question"]);
+        p.locator("h3:text('" + example_question.question + "')")
+      ).toContainText(example_question.question);
+
+      if (example_question["response"].toLowerCase() == "yes") {
+        await expect(
+          p.locator("h3:text('" + example_question.question + "') + p")
+        ).toContainText("Yes – " + example_question.notes);
+      } else {
+        await expect(
+          p.locator("h3:text('" + example_question.question + "') + p")
+        ).toContainText("No");
+      }
     }
   } else {
     expect(await p.textContent("body")).not.toContain("Health questions");
