@@ -61,7 +61,6 @@ def generate_consent_for_example_patient(patient)
           generate_dob(patient),
           generate_address(patient),
           generate_parents(patient),
-          generate_gp(patient),
           generate_route(patient)
 end
 
@@ -159,13 +158,6 @@ def generate_parents(patient)
   parent[:parentEmail] = example_parent["email"]
 
   parent
-end
-
-def generate_gp(_patient)
-  gp = { gpResponse: ConsentResponse.gp_responses.keys.sample }
-  gp[:gpName] = Faker::FunnyName.name if gp[:gpResponse] == "yes"
-
-  gp
 end
 
 def generate_route(_patient)

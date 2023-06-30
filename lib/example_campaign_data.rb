@@ -51,7 +51,6 @@ class ExampleCampaignData
         dob: patient["dob"],
         sex: patient["sex"],
         consent: patient["consent"],
-        gp: patient["gp"],
         nhs_number: patient["nhsNumber"],
         screening: patient["screening"]
       }
