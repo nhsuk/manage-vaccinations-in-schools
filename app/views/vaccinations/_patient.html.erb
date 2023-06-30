@@ -12,21 +12,22 @@
 <% end %>
 
 <div data-controller="child-vaccination">
-  <div class="nhsuk-card" id="consent">
-    <div class="nhsuk-card__content">
-      <h2 class="nhsuk-card__heading nhsuk-heading-m">
-        Consent
-      </h2>
+  <% if @consent_response.present? %>
+    <div class="nhsuk-card" id="consent">
+      <div class="nhsuk-card__content">
+        <h2 class="nhsuk-card__heading nhsuk-heading-m">
+          Consent
+        </h2>
 
-      <% if @consent_response.present? %>
         <%= render "triage/patient_triage_consent_response", consent_response: @consent_response %>
-      <% else %>
-        <p>
-          No response given
-        </p>
-      <% end %>
+      </div>
     </div>
-  </div>
+    <% else %>
+      <%= render AppBannerComponent.new(
+                  title: "No-one responded to our requests for consent",
+                  colour: "yellow"
+                ) %>
+    <% end %>
 
   <%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
 

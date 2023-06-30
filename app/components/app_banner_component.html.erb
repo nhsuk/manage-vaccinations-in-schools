@@ -2,9 +2,11 @@
   <span class="nhsuk-heading-m nhsuk-u-margin-bottom-0">
     <%= title %>
   </span>
-  <p class="nhsuk-u-margin-top-2">
-    <%= explanation %>
-  </p>
+  <% if explanation.present? %>
+    <p class="nhsuk-u-margin-top-2">
+      <%= explanation %>
+    </p>
+  <% end %>
   <!-- <p class="nhsuk-u-margin-bottom-1">
     <a href="#" class="app-u-inherit">Change outcome</a>
   </p> -->
