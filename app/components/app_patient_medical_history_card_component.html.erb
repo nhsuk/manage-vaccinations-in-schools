@@ -1,0 +1,48 @@
+<div class="nhsuk-card">
+  <div class="nhsuk-card__content">
+    <h2 class="nhsuk-card__heading nhsuk-heading-m">
+      Medical history
+    </h2>
+
+    <% if @consent_response.triage_needed? %>
+      <% if triage_present? %>
+        <p>Triage needed</p>
+
+        <ul class="nhsuk-list nhsuk-list--bullet">
+          <% reasons_triage_needed.each do |reason| %>
+            <li><%= reason %></li>
+          <% end %>
+        </ul>
+      <% else %>
+        <% if @triage.notes.present? %>
+          <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Triage notes</h2>
+          <p><%= @triage.notes %></p>
+        <% else %>
+          <p>Triage complete - no notes</p>
+        <% end %>
+      <% end %>
+
+      <% if @consent_response.health_questions.present? %>
+        <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">Medical history answers</h2>
+      <% end %>
+
+    <% else %>
+      <p>No triage needed</p>
+    <% end %>
+
+    <% if @consent_response.health_questions.present? %>
+      <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
+        <summary class="nhsuk-details__summary">
+          <span class="nhsuk-details__summary-text">
+            Show answers
+          </span>
+        </summary>
+
+        <div class="nhsuk-details__text">
+          <%= render AppHealthQuestionsComponent.new(consent_response: @consent_response) %>
+        </div>
+      </details>
+
+    <% end %>
+  </div>
+</div>

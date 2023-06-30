@@ -44,28 +44,13 @@
 
   <%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
 
-  <% if @consent_response&.health_questions.present? %>
-    <div class="nhsuk-card" id="consent">
-      <div class="nhsuk-card__content">
-        <h2 class="nhsuk-card__heading nhsuk-heading-m">
-          Medical history
-        </h2>
-
-        <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
-          <summary class="nhsuk-details__summary">
-            <span class="nhsuk-details__summary-text">
-              Show answers
-            </span>
-          </summary>
-
-          <div class="nhsuk-details__text">
-            <%= render AppHealthQuestionsComponent.new(consent_response: @consent_response) %>
-          </div>
-        </details>
-      </div>
-    </div>
+  <% if @consent_response&.consent_given? %>
+    <%= render AppPatientMedicalHistoryCardComponent.new(
+      patient: @patient,
+      consent_response: @consent_response,
+      triage: @triage
+    ) %>
   <% end %>
-
 
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
