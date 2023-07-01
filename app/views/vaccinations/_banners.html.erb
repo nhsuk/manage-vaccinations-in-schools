@@ -25,3 +25,12 @@
               colour: "yellow"
             ) %>
 <% end %>
+
+<% if @triage&.do_not_vaccinate? %>
+  <%= render AppBannerComponent.new(
+              title: "Do not vaccinate",
+              # TODO replace "The nurse" with the nurse's full name when that information is available
+              explanation: "The nurse has decided that #{@triage.patient.full_name} should not be vaccinated",
+              colour: "red"
+          ) %>
+<% end %>
