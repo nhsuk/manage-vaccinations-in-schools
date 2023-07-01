@@ -2,30 +2,10 @@
   <%= patient.full_name %>
 </h1>
 
-<% if @vaccination_record&.administered? %>
-  <%= render AppBannerComponent.new(
-                title: "Vaccinated",
-                explanation: @consent_response.present? ? "Their #{@consent_response.who_responded.downcase} gave consent" : "",
-                colour: "green"
-              ) %>
-<% elsif @vaccination_record&.administered == false %>
-  <%= render AppBannerComponent.new(
-                title: "Could not vaccinate",
-                # TODO: add reason for refusal once that is collected
-                explanation: @consent_response.present? ? "Their #{@consent_response.who_responded.downcase} gave consent" : "",
-                colour: "orange"
-              ) %>
-<% end %>
+<%= render "banners" %>
 
 <div data-controller="child-vaccination">
   <% if @consent_response.present? %>
-    <% if @consent_response.consent_refused? %>
-      <%= render AppBannerComponent.new(
-              title: "Their #{@consent_response.who_responded.downcase} has refused to give consent",
-              colour: "orange"
-            ) %>
-    <% end %>
-
     <div class="nhsuk-card" id="consent">
       <div class="nhsuk-card__content">
         <h2 class="nhsuk-card__heading nhsuk-heading-m">
@@ -35,12 +15,7 @@
         <%= render "triage/patient_triage_consent_response", consent_response: @consent_response %>
       </div>
     </div>
-    <% else %>
-      <%= render AppBannerComponent.new(
-                  title: "No-one responded to our requests for consent",
-                  colour: "yellow"
-                ) %>
-    <% end %>
+  <% end %>
 
   <%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
 
