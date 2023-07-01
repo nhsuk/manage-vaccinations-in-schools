@@ -1,0 +1,27 @@
+<% if @vaccination_record&.administered? %>
+  <%= render AppBannerComponent.new(
+                title: "Vaccinated",
+                explanation: @consent_response.present? ? "Their #{@consent_response.who_responded.downcase} gave consent" : "",
+                colour: "green"
+              ) %>
+<% elsif @vaccination_record&.administered == false %>
+  <%= render AppBannerComponent.new(
+                title: "Could not vaccinate",
+                # TODO: add reason for refusal once that is collected
+                explanation: @consent_response.present? ? "Their #{@consent_response.who_responded.downcase} gave consent" : "",
+                colour: "orange"
+              ) %>
+<% end %>
+
+<% if @consent_response&.consent_refused? %>
+  <%= render AppBannerComponent.new(
+          title: "Their #{@consent_response.who_responded.downcase} has refused to give consent",
+          colour: "orange"
+        ) %>
+
+<% elsif @consent_response.nil? %>
+  <%= render AppBannerComponent.new(
+              title: "No-one responded to our requests for consent",
+              colour: "yellow"
+            ) %>
+<% end %>
