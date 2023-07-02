@@ -1,0 +1,12 @@
+<% if @consent_response&.triage_needed? %>
+  <%= render AppBannerComponent.new(
+        title: "Triage needed",
+        colour: "blue",
+      ) do %>
+    <ul class="nhsuk-list nhsuk-u-margin-bottom-2">
+      <% @consent_response.reasons_triage_needed.map do |reason| %>
+        <li><%= reason %></li>
+      <% end %>
+    </ul>
+  <% end %>
+<% end %>
