@@ -89,6 +89,20 @@ const patients = {
     parent_email: "Meggie19@hotmail.com",
     type_of_consent: "Website",
   },
+  "Archie Simonis": {
+    row: 9,
+    note: "",
+    status: "Triage",
+    class: "nhsuk-tag--blue",
+    banner_colour_class: "app-consent-banner--blue",
+    banner_title: "Triage needed",
+    banner_content: ["Notes need triage"],
+    consent_response: "Given by",
+    parent_relationship: "Mother",
+    parent_name: "Erika Simonis",
+    parent_email: "Erika54@hotmail.com",
+    type_of_consent: "Website",
+  },
 };
 
 test("Performing triage", async ({ page }) => {
@@ -103,7 +117,10 @@ test("Performing triage", async ({ page }) => {
     await then_i_should_see_a_triage_row_for_the_patient(name);
     await when_i_click_on_the_patient(name);
     await then_i_should_see_the_triage_page_for_the_patient(name);
-    await then_i_should_see_health_question_responses_if_present(name);
+    await and_i_should_see_a_banner_for_the_patient(name);
+    await and_i_should_see_the_consent_section_for_the_patient(name);
+    await and_i_should_see_health_question_responses_if_present(name);
+
     await when_i_go_back_to_the_triage_index_page();
     await then_i_should_see_the_triage_index_page();
   }
@@ -197,7 +214,25 @@ async function then_i_should_see_a_triage_row_for_the_patient(
 async function then_i_should_see_the_triage_page_for_the_patient(name) {
   let patient = patients[name];
   await expect(p.locator("h1")).toContainText(name);
+}
 
+async function and_i_should_see_a_banner_for_the_patient(name) {
+  let patient = patients[name];
+  let title = patient["banner_title"];
+  let colourClass = patient["banner_colour_class"];
+  let content = patient["banner_content"];
+
+  if (title == null && colourClass == null && content == null) return;
+
+  await expect(p.locator("div.app-consent-banner")).toHaveClass(
+    new RegExp(colourClass)
+  );
+  await expect(p.locator(".app-consent-banner > span")).toHaveText(title);
+  for (let text of content) await expect(p.getByText(text)).toBeVisible();
+}
+
+async function and_i_should_see_the_consent_section_for_the_patient(name) {
+  let patient = patients[name];
   let consentResponse = patient["consent_response"];
 
   await expect(p.locator("#consent")).toContainText(consentResponse);
@@ -229,7 +264,7 @@ async function then_i_should_see_the_triage_page_for_the_patient(name) {
   }
 }
 
-async function then_i_should_see_health_question_responses_if_present(name) {
+async function and_i_should_see_health_question_responses_if_present(name) {
   let patient = example_patient(name);
   let consent = patient["consent"];
 
