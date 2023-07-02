@@ -12,13 +12,6 @@ class AppPatientMedicalHistoryCardComponent < ViewComponent::Base
   end
 
   def reasons_triage_needed
-    reasons = []
-    if @consent_response.parent_relationship_other?
-      reasons << "Check parental responsibility"
-    end
-    if @consent_response.health_questions_require_follow_up?
-      reasons << "Notes need triage"
-    end
-    reasons
+    @consent_response&.reasons_triage_needed
   end
 end

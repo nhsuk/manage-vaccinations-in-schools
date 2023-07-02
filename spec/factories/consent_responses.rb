@@ -90,5 +90,36 @@ FactoryBot.define do
       parent_relationship { "other" }
       parent_relationship_other { "Granddad" }
     end
+
+    trait :health_question_notes do
+      health_questions do
+        [
+          {
+            question:
+              "Does the child have a disease or treatment that severely affects their immune system?",
+            response: "no"
+          },
+          {
+            question:
+              "Is anyone in your household having treatment that severely affects their immune system?",
+            response: "no"
+          },
+          {
+            question: "Has your child been diagnosed with asthma?",
+            response: "no"
+          },
+          {
+            question:
+              "Has your child been admitted to intensive care because of a severe egg allergy?",
+            response: "no"
+          },
+          {
+            question: "Is there anything else we should know?",
+            response: "yes",
+            notes: "The child has a severe egg allergy"
+          }
+        ]
+      end
+    end
   end
 end
