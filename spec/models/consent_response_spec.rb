@@ -77,4 +77,35 @@ RSpec.describe ConsentResponse do
       expect(response).to be_triage_needed
     end
   end
+
+  describe "#reasons_triage_needed" do
+    context "parent relationship is other" do
+      it "returns check parental responsibility" do
+        response = build(:consent_given, :from_granddad)
+
+        expect(response.reasons_triage_needed).to eq(
+          ["Check parental responsibility"]
+        )
+      end
+    end
+
+    context "health questions indicate followup needed" do
+      it "returns notes need triage" do
+        response = build(:consent_given, :health_question_notes)
+
+        expect(response.reasons_triage_needed).to eq(["Notes need triage"])
+      end
+    end
+
+    context "parent relationship is other and health questions indicate followup needed" do
+      it "returns both check parental responsibility and notes need triage" do
+        response = build(:consent_given, :health_question_notes, :from_granddad)
+
+        expect(response.reasons_triage_needed).to include("Notes need triage")
+        expect(response.reasons_triage_needed).to include(
+          "Check parental responsibility"
+        )
+      end
+    end
+  end
 end
