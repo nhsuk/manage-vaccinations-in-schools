@@ -4,8 +4,8 @@ class VaccinationsController < ApplicationController
   before_action :set_patient_details, only: %i[index record_template]
   before_action :set_draft_vaccination_record, only: %i[show confirm record]
   before_action :set_vaccination_record, only: %i[show confirm record]
-  before_action :set_consent_response, only: :show
-  before_action :set_triage, only: :show
+  before_action :set_consent_response, only: %i[show confirm]
+  before_action :set_triage, only: %i[show confirm]
 
   layout "two_thirds"
 
