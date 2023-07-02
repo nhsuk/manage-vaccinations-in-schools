@@ -30,4 +30,12 @@ class VaccinationRecord < ApplicationRecord
               in: sites.keys
             },
             if: -> { administered }
+
+  def vaccine_name
+    patient_session.session.campaign.vaccine.name
+  end
+
+  def location_name
+    patient_session.session.location&.name
+  end
 end

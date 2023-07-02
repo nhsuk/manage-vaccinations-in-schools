@@ -29,4 +29,18 @@ module VaccinationsHelper
       OpenStruct.new(id:, name: k.humanize)
     end
   end
+
+  def vaccination_date(datetime)
+    date = datetime.to_date
+
+    current_date = Time.zone.today
+
+    if date == current_date
+      "Today (#{date.to_fs(:nhsuk_date)})"
+    elsif date == current_date - 1
+      "Yesterday (#{date.to_fs(:nhsuk_date)})"
+    else
+      date.to_fs(:nhsuk_date)
+    end
+  end
 end
