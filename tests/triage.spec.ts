@@ -64,6 +64,8 @@ const patients = {
     note: "",
     status: "Triage: follow up",
     class: "nhsuk-tag--aqua-green",
+    banner_colour_class: "app-consent-banner--aqua-green",
+    banner_title: "Triage follow-up needed",
     consent_response: "Given by",
     parent_relationship: "Father",
     parent_name: "Lloyd Rodriguez",
@@ -222,13 +224,16 @@ async function and_i_should_see_a_banner_for_the_patient(name) {
   let colourClass = patient["banner_colour_class"];
   let content = patient["banner_content"];
 
-  if (title == null && colourClass == null && content == null) return;
+  if (colourClass != null)
+    await expect(p.locator("div.app-consent-banner")).toHaveClass(
+      new RegExp(colourClass)
+    );
 
-  await expect(p.locator("div.app-consent-banner")).toHaveClass(
-    new RegExp(colourClass)
-  );
-  await expect(p.locator(".app-consent-banner > span")).toHaveText(title);
-  for (let text of content) await expect(p.getByText(text)).toBeVisible();
+  if (title != null)
+    await expect(p.locator(".app-consent-banner > span")).toHaveText(title);
+
+  if (content != null)
+    for (let text of content) await expect(p.getByText(text)).toBeVisible();
 }
 
 async function and_i_should_see_the_consent_section_for_the_patient(name) {
