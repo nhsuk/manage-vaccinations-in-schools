@@ -22,6 +22,7 @@ test("Records vaccinations", async ({ page }) => {
 
   await when_i_click_on_the_patient("Aaron Pfeffer");
   await then_i_should_see_the_medical_history_section();
+  await then_i_should_see_the_vaccination_details();
 
   await when_i_click_on_show_answers();
   await then_i_should_see_health_question_responses_if_present("Aaron Pfeffer");
@@ -77,7 +78,7 @@ async function when_i_go_back_to_the_triage_index_page() {
   await p.getByRole("link", { name: "Back to triage" }).click();
 }
 
-async function when_i_click_on_the_patient(name) {
+async function when_i_click_on_the_patient(name: string) {
   await p.getByRole("link", { name: name }).click();
 }
 
@@ -89,7 +90,9 @@ async function when_i_click_on_show_answers() {
   await p.getByText("Show answers").click();
 }
 
-async function then_i_should_see_health_question_responses_if_present(name) {
+async function then_i_should_see_health_question_responses_if_present(
+  name: string
+) {
   let patient = example_patient(name);
   let consent = patient["consent"];
 
@@ -104,4 +107,10 @@ async function then_i_should_see_health_question_responses_if_present(name) {
   } else {
     expect(await p.textContent("body")).not.toContain("Health questions");
   }
+}
+
+async function then_i_should_see_the_vaccination_details() {
+  await expect(
+    p.getByRole("heading", { name: "Vaccination details" })
+  ).toBeVisible();
 }
