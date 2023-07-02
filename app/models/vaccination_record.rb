@@ -4,7 +4,7 @@
 #
 #  id                 :bigint           not null, primary key
 #  administered       :boolean
-#  recorded_at        :date
+#  recorded_at        :datetime
 #  site               :integer
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null

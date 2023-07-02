@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_30_110334) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_02_121826) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -125,7 +125,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_30_110334) do
 
   create_table "vaccination_records", force: :cascade do |t|
     t.bigint "patient_session_id", null: false
-    t.date "recorded_at"
+    t.datetime "recorded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "site"
