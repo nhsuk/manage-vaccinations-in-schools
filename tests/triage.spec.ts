@@ -8,7 +8,7 @@ const patients = {
     row: 1,
     note: "",
     status: "Vaccinate",
-    class: "nhsuk-tag--purple",
+    status_colour: "purple",
     consent_response: "Given by",
     parent_name: "Betty Pfeffer",
     parent_email: "Betty_Pfeffer62@yahoo.com",
@@ -19,7 +19,7 @@ const patients = {
     row: 2,
     note: "",
     status: "Vaccinate",
-    class: "nhsuk-tag--purple",
+    status_colour: "purple",
     consent_response: "Given by",
     parent_name: "Garret Lakin",
     parent_email: "Garret57@hotmail.com",
@@ -30,7 +30,7 @@ const patients = {
     row: 3,
     note: "Notes from nurse",
     status: "Vaccinate",
-    class: "nhsuk-tag--purple",
+    status_colour: "purple",
     consent_response: "Given by",
     parent_name: "Georgianna Kshlerin",
     parent_email: "Georgianna.Kshlerin0@hotmail.com",
@@ -41,8 +41,7 @@ const patients = {
     row: 4,
     note: "",
     status: "Do not vaccinate",
-    class: "nhsuk-tag--red",
-    banner_colour_class: "app-consent-banner--red",
+    status_colour: "red",
     banner_title: "Do not vaccinate",
     banner_content: [
       "The nurse has decided that Amalia Wiza should not be vaccinated",
@@ -57,7 +56,7 @@ const patients = {
     row: 5,
     note: "Notes from nurse",
     status: "Do not vaccinate",
-    class: "nhsuk-tag--red",
+    status_colour: "red",
     consent_response: "Given by",
     parent_relationship: "Mother",
     parent_name: "Reese Klein",
@@ -68,8 +67,7 @@ const patients = {
     row: 6,
     note: "",
     status: "Triage: follow up",
-    class: "nhsuk-tag--aqua-green",
-    banner_colour_class: "app-consent-banner--aqua-green",
+    status_colour: "aqua-green",
     banner_title: "Triage follow-up needed",
     consent_response: "Given by",
     parent_relationship: "Father",
@@ -81,8 +79,7 @@ const patients = {
     row: 7,
     note: "",
     status: "Get consent",
-    class: "nhsuk-tag--yellow",
-    banner_colour_class: "app-consent-banner--yellow",
+    status_colour: "yellow",
     banner_title: "No-one responded to our requests for consent",
     consent_response: "No response given",
   },
@@ -90,8 +87,7 @@ const patients = {
     row: 8,
     note: "",
     status: "Check refusal",
-    class: "nhsuk-tag--orange",
-    banner_colour_class: "app-consent-banner--orange",
+    status_colour: "orange",
     banner_title: "Their father has refused to give consent",
     consent_response: "Refused by",
     reason_for_refusal: "Personal choice",
@@ -104,8 +100,7 @@ const patients = {
     row: 9,
     note: "",
     status: "Triage",
-    class: "nhsuk-tag--blue",
-    banner_colour_class: "app-consent-banner--blue",
+    status_colour: "blue",
     banner_title: "Triage needed",
     banner_content: ["Notes need triage"],
     consent_response: "Given by",
@@ -143,7 +138,7 @@ test("Performing triage", async ({ page }) => {
   await then_i_should_see_a_triage_row_for_the_patient("Aaron Pfeffer", {
     note: "Notes from nurse",
     status: "Do not vaccinate",
-    class: "nhsuk-tag--red",
+    status_colour: "red",
   });
 
   await when_i_click_on_the_patient("Aaron Pfeffer");
@@ -153,7 +148,7 @@ test("Performing triage", async ({ page }) => {
   await then_i_should_see_a_triage_row_for_the_patient("Aaron Pfeffer", {
     note: null,
     status: "Vaccinate",
-    class: "nhsuk-tag--purple",
+    status_colour: "purple",
   });
 });
 
@@ -216,10 +211,11 @@ async function then_i_should_see_a_triage_row_for_the_patient(
     `Status text for patient row: ${patient.row} name: ${name}`
   ).toContainText(patient.status);
 
+  let colourClass = "nhsuk-tag--" + patient.status_colour;
   await expect(
     p.locator(`#patients tr:nth-child(${patient.row}) td:nth-child(3) div`),
     `Status colour for patient row: ${patient.row} name: ${name}`
-  ).toHaveClass(new RegExp(patient.class));
+  ).toHaveClass(new RegExp(colourClass));
 }
 
 async function then_i_should_see_the_triage_page_for_the_patient(name) {
@@ -230,16 +226,15 @@ async function then_i_should_see_the_triage_page_for_the_patient(name) {
 async function and_i_should_see_a_banner_for_the_patient(name) {
   let patient = patients[name];
   let title = patient["banner_title"];
-  let colourClass = patient["banner_colour_class"];
+  let colourClass = "app-consent-banner--" + patient["status_colour"];
   let content = patient["banner_content"];
 
-  if (colourClass != null)
-    await expect(p.locator("div.app-consent-banner")).toHaveClass(
-      new RegExp(colourClass)
-    );
+  if (title == null) return;
 
-  if (title != null)
-    await expect(p.locator(".app-consent-banner > span")).toHaveText(title);
+  await expect(p.locator(".app-consent-banner > span")).toHaveText(title);
+  await expect(p.locator("div.app-consent-banner")).toHaveClass(
+    new RegExp(colourClass)
+  );
 
   if (content != null)
     for (let text of content) await expect(p.getByText(text)).toBeVisible();
