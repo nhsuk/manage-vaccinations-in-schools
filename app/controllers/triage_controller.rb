@@ -12,7 +12,7 @@ class TriageController < ApplicationController
     @patient_details =
       @session
         .patient_sessions
-        .includes(:patient)
+        .includes(:vaccination_records, patient: %i[consent_responses triage])
         .order("patients.first_name", "patients.last_name")
         .map do |ps|
           consent = ps.patient.consent_response_for_campaign(@session.campaign)
