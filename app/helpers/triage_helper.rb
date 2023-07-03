@@ -32,7 +32,7 @@ module TriageHelper
   def in_tab_triage_complete?(session, patient, _action, _outcome)
     consent = patient.consent_response_for_campaign(session.campaign)
     triage = patient.triage_for_campaign(session.campaign)
-    consent&.triage_needed? && triage&.ready_to_vaccinate?
+    consent&.triage_needed? && triage&.triage_complete?
   end
 
   def in_tab_get_consent?(_session, _patient, action, _outcome)
