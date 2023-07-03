@@ -57,11 +57,11 @@ class Patient < ApplicationRecord
   end
 
   def triage_for_campaign(campaign)
-    triage.find_by(campaign:)
+    triage.to_a.find { |t| t.campaign_id == campaign.id }
   end
 
   def consent_response_for_campaign(campaign)
-    consent_responses.find_by(campaign:)
+    consent_responses.to_a.find { |t| t.campaign_id == campaign.id }
   end
 
   def as_json(options = {})
