@@ -8,7 +8,7 @@ test("Records vaccinations", async ({ page }) => {
   await given_the_app_is_setup();
 
   await when_i_go_to_the_vaccinations_page();
-  await then_i_should_see_the_action_to_vaccinate();
+  await then_i_should_be_on_the_tab("Action needed");
 
   await when_i_click_on_the_patient("Aaron Pfeffer");
   await then_i_should_see_the_vaccinations_page();
@@ -23,6 +23,9 @@ test("Records vaccinations", async ({ page }) => {
   await when_i_press_confirm();
   await then_i_should_see_a_success_message();
   await and_i_should_see_the_outcome_as_vaccinated();
+
+  await when_i_click_on_the_tab("Vaccinated");
+  await then_i_should_be_on_the_tab("Vaccinated");
 
   await when_i_click_on_the_patient("Aaron Pfeffer");
   await then_i_should_see_the_vaccination_details();
@@ -45,6 +48,17 @@ async function given_the_app_is_setup() {
 
 async function when_i_go_to_the_vaccinations_page() {
   await p.goto("/sessions/1/vaccinations");
+}
+
+async function then_i_should_be_on_the_tab(name: string) {
+  await expect(p.getByRole("tab", { name: name, exact: true })).toHaveAttribute(
+    "aria-selected",
+    "true"
+  );
+}
+
+async function when_i_click_on_the_tab(name: string) {
+  await p.getByRole("tab", { name: name, exact: true }).click();
 }
 
 async function then_i_should_see_the_action_to_vaccinate() {
@@ -72,9 +86,7 @@ async function then_i_should_see_a_success_message() {
 }
 
 async function and_i_should_see_the_outcome_as_vaccinated() {
-  await expect(p.getByTestId("child-action").nth(0)).toContainText(
-    "Vaccinated"
-  );
+  await expect(p.getByTestId("child-action").nth(0)).toContainText("Vaccinate");
 }
 
 async function then_i_should_see_the_check_answers_page() {
