@@ -32,17 +32,41 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
     detailed_type: "Academy sponsor led"
   }
 
-  fake_patient = FactoryBot.build(:patient, :of_hpv_vaccination_age)
-  who_from = %i[from_mum from_dad].sample
-  fake_consent =
-    FactoryBot.build(
-      :consent_response,
-      :given,
-      who_from,
-      :health_question_hpv_no_contraindications,
-      patient: fake_patient,
-      campaign: nil
-    )
+  patients_and_consents = []
+
+  # about 50% yes from parent or guardian, no yes answers or notes, in state ready to vaccinate
+  100.times do
+    patient = FactoryBot.build(:patient, :of_hpv_vaccination_age)
+    who_from = %i[from_mum from_dad].sample
+    consent =
+      FactoryBot.build(
+        :consent_response,
+        :given,
+        who_from,
+        :health_question_hpv_no_contraindications,
+        patient:,
+        campaign: nil
+      )
+    patients_and_consents << [patient, consent]
+  end
+
+  patients_data = patients_and_consents.map do |patient, consent|
+    {
+      firstName: patient.first_name,
+      lastName: patient.last_name,
+      dob: patient.dob.iso8601,
+      nhsNumber: patient.nhs_number,
+      consent: {
+        consent: consent.consent,
+        parentName: consent.parent_name,
+        parentRelationship: consent.parent_relationship,
+        parentEmail: consent.parent_email,
+        parentPhone: consent.parent_phone,
+        healthQuestionResponses: consent.health_questions,
+        route: consent.route
+      }
+    }
+  end
 
   data = {
     id: "5M0",
@@ -52,23 +76,7 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
     type: "HPV",
     vaccines: [hpv_vaccine],
     school: school_details,
-    patients: [
-      {
-        firstName: fake_patient.first_name,
-        lastName: fake_patient.last_name,
-        dob: fake_patient.dob.iso8601,
-        nhsNumber: fake_patient.nhs_number,
-        consent: {
-          consent: fake_consent.consent,
-          parentName: fake_consent.parent_name,
-          parentRelationship: fake_consent.parent_relationship,
-          parentEmail: fake_consent.parent_email,
-          parentPhone: fake_consent.parent_phone,
-          healthQuestionResponses: fake_consent.health_questions,
-          route: fake_consent.route
-        }
-      }
-    ]
+    patients: patients_data,
   }
 
   File.open(target_filename, "w") { |f| f << JSON.pretty_generate(data) }
