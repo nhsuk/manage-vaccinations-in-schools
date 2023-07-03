@@ -4,6 +4,7 @@
 #
 #  id                 :bigint           not null, primary key
 #  administered       :boolean
+#  reason             :integer
 #  recorded_at        :datetime
 #  site               :integer
 #  created_at         :datetime         not null
