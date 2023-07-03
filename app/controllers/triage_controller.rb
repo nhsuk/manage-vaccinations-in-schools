@@ -5,8 +5,6 @@ class TriageController < ApplicationController
   before_action :set_consent_response, only: %i[show]
   before_action :set_vaccination_record, only: %i[show]
 
-  layout "two_thirds"
-
   def index
     @session = Session.find_by(id: params[:id])
     @patient_details =
@@ -25,7 +23,7 @@ class TriageController < ApplicationController
               triage:,
               vaccination_record:
             )
-          [ps.patient, action_or_outcome]
+          [ps.patient, action_or_outcome[:action], action_or_outcome[:outcome]]
         end
   end
 
