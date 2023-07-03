@@ -13,14 +13,14 @@
 <h1>Record vaccinations</h1>
 
 <%=
-govuk_tabs title: "Vax" do |c|
-  c.with_tab(label: "Action needed") do
+govuk_tabs title: "Vax", classes: 'nhsuk-tabs' do |c|
+  c.with_tab(label: "Action needed", classes: 'nhsuk-tabs__panel') do
     render "patients", filter: ->(a, o) { in_tab_action_needed?(a, o) }
   end
-  c.with_tab(label: "Vaccinated") do
+  c.with_tab(label: "Vaccinated", classes: 'nhsuk-tabs__panel') do
     render "patients", filter: ->(a, o) { in_tab_vaccinated?(a, o) }
   end
-  c.with_tab(label: "Not vaccinated") do
+  c.with_tab(label: "Not vaccinated", classes: 'nhsuk-tabs__panel') do
     render "patients", filter: ->(a, o) { in_tab_not_vaccinated?(a, o) }
   end
 end
