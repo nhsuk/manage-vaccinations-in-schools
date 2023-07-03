@@ -41,6 +41,7 @@ module TriageHelper
 
   def in_tab_no_triage_needed?(session, patient, action, outcome)
     !in_tab_triage_complete?(session, patient, action, outcome) &&
-      action.in?(%i[check_refusal vaccinate]) || outcome.in?(%i[vaccinated])
+      action.in?(%i[check_refusal vaccinate]) ||
+      outcome.in?(%i[vaccinated not_vaccinated])
   end
 end
