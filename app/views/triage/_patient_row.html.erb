@@ -2,8 +2,17 @@
   <td class="govuk-table__cell">
     <%= link_to patient.full_name, session_patient_triage_path(@session, patient), "data-testid": "child-link" %>
   </td>
-  <td class="govuk-table__cell" style="width: 150px">
-    <%= patient.dob.to_fs(:nhsuk_date_short_month) %>
+  <td class="govuk-table__cell">
+    <%
+    if %i[triage needs_follow_up].include? action_or_outcome[:action]
+      consent_response = patient.consent_response_for_campaign(@session.campaign)
+      %>
+      <ul class="nhsuk-list nhsuk-u-margin-bottom-2">
+        <% consent_response.reasons_triage_needed.map do |reason| %>
+          <li><%= reason %></li>
+        <% end %>
+      </ul>
+    <% end %>
   </td>
   <td class="govuk-table__cell" data-testid="child-action">
     <% label = PatientSession.human_enum_name("actions_or_outcome", action_or_outcome[:action] || action_or_outcome[:outcome]) %>
