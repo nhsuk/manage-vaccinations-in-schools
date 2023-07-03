@@ -84,6 +84,7 @@ FactoryBot.define do
     factory :consent_refused do
       consent { :refused }
       reason_for_refusal { :personal_choice }
+      health_questions { [] }
     end
 
     trait :from_mum do

@@ -60,9 +60,7 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
     patient = FactoryBot.build(:patient, :of_hpv_vaccination_age)
     consent =
       FactoryBot.build(
-        :consent_response,
-        :refused,
-        :health_question_hpv_no_contraindications,
+        :consent_refused,
         %i[from_mum from_dad].sample,
         reason_for_refusal: %i[personal_choice already_vaccinated].sample,
         patient:,
@@ -74,9 +72,7 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
   patients_data =
     patients_and_consents.map do |patient, consent|
       consent_data =
-        if consent.nil?
-          {}
-        else
+        if consent
           {
             consent: consent.consent,
             parentName: consent.parent_name,
