@@ -155,6 +155,44 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
       patients_consent_triage << [patient, consent, triage]
     end
 
+  # cases that have already been triaged
+  CSV
+    .parse(TO_TRIAGE, headers: true)
+    .each do |row|
+      health_question_responses =
+        row.map do |question, answer|
+          {
+            question:,
+            response: answer.present? ? "Yes" : "No",
+            notes: answer.presence
+          }
+        end
+
+      patient = FactoryBot.build(:patient, :of_hpv_vaccination_age)
+      consent =
+        FactoryBot.build(
+          :consent_response,
+          :given,
+          %i[from_mum from_dad].sample,
+          health_questions: health_question_responses,
+          patient:,
+          campaign: nil
+        )
+      status = %i[ready_to_vaccinate do_not_vaccinate].sample
+      triage = {
+        status:,
+        notes:
+          (
+            if status == :ready_to_vaccinate
+              "Checked with GP, OK to proceed"
+            else
+              "Checked with GP, not OK to proceed"
+            end
+          )
+      }
+      patients_consent_triage << [patient, consent, triage]
+    end
+
   patients_data =
     patients_consent_triage.map do |patient, consent, triage|
       consent_data =
