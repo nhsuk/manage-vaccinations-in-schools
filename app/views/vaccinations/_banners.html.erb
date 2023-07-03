@@ -2,7 +2,7 @@
 triage = @triage&.persisted? ? @triage : nil
 action_or_outcome = PatientActionOrOutcomeService.call(consent: @consent_response,
                                                        triage: triage,
-                                                       vaccination_record: nil)
+                                                       vaccination_record: @vaccination_record)
 action = action_or_outcome[:action]
 outcome = action_or_outcome[:outcome]
 
