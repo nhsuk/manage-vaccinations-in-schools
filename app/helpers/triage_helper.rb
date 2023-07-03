@@ -38,6 +38,6 @@ module TriageHelper
   end
 
   def in_tab_no_triage_needed?(action, outcome)
-    action.in?(%i[vaccinate check_refusal]) || outcome.in?(%i[vaccinated])
+    action.in?(%i[check_refusal]) || outcome.in?(%i[vaccinated])
   end
 end
