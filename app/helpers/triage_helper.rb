@@ -24,4 +24,20 @@ module TriageHelper
       [status, Triage.human_enum_name(:status, status)]
     end
   end
+
+  def in_tab_needs_triage?(action, _outcome)
+    action.in? %i[triage follow_up]
+  end
+
+  def in_tab_triage_complete?(action, _outcome)
+    action.in? %i[vaccinate]
+  end
+
+  def in_tab_get_consent?(action, _outcome)
+    action.in? %i[get_consent]
+  end
+
+  def in_tab_no_triage_needed?(action, outcome)
+    action.in?(%i[vaccinate check_refusal]) || outcome.in?(%i[vaccinated])
+  end
 end
