@@ -1,0 +1,30 @@
+// dot -Tpng docs/states.dot -o states.png
+
+digraph vaccination_process {
+    // Define nodes
+    awaiting_consent [shape=box, label=< <b>awaiting consent</b><br/><sup>awaiting_consent</sup><br/>consent: <i>none</i><br/>triage: <i>none</i><br/>vax record: <i>none</i> >];
+    ready_for_vaccination_no_triage [shape=box, label=< <b>ready for vaccination</b><br/><sup>ready_for_vaccination_no_triage</sup><br/>consent: given<br/>triage: <i>none</i><br/>vax record: <i>none</i> >];
+    ready_for_vaccination_triaged [shape=box, label=< <b>ready for vaccination</b><br/><sup>ready_for_vaccination_triaged</sup><br/>consent: given<br/>triage: ready for session<br/>vax record: <i>none</i> >];
+    do_not_vaccinate_consent_refused [shape=box, label=< <b>do not vaccinate</b><br/><sup>do_not_vaccinate_consent_refused</sup><br/>consent: refused<br/>triage: <i>none</i><br/>vax record: <i>none</i> >];
+    do_not_vaccinate_triaged [shape=box, label=< <b>do not vaccinate</b><br/><sup>do_not_vaccinate_triaged</sup><br/>consent: given<br/>triage: do not vaccinate<br/>vax record: <i>none</i> >];
+    needs_triage [shape=box, label=< <b>needs triage</b><br/><sup>needs_triage</sup><br/>consent: given needs triage<br/>triage: <i>none</i><br/>vax record: <i>none</i> >];
+    needs_follow_up [shape=box, label=< <b>needs triage</b><br/><sup>needs_follow_up</sup><br/>consent: given needs triage<br/>triage: needs follow-up<br/>vax record: <i>none</i> >];
+    vaccinated [shape=box, label=< <b>vaccinated</b><br/><sup>vaccinated</sup> >];
+    not_vaccinated [shape=box, label=< <b>not vaccinated</b><br/><sup>not_vaccinated</sup> >];
+
+    // Define edges
+    awaiting_consent -> ready_for_vaccination_no_triage [label="give consent"];
+    awaiting_consent -> needs_triage [label="give consent needing triage"]
+    awaiting_consent -> do_not_vaccinate_consent_refused [label="refuse consent"];
+
+    ready_for_vaccination_no_triage -> vaccinated [label="administer vaccine"];
+    ready_for_vaccination_no_triage -> not_vaccinated [label="refuse vaccine"];
+
+    needs_triage -> ready_for_vaccination_triaged [label="make ready for session"];
+    needs_triage -> needs_follow_up [label="request follow-up"];
+    needs_triage -> do_not_vaccinate_triaged [label="flag as do not vaccinate"];
+
+    needs_follow_up -> ready_for_vaccination_triaged [label="make ready for session"];
+    needs_follow_up -> needs_follow_up [label="request follow-up"];
+    needs_follow_up -> do_not_vaccinate_triaged [label="flag as do not vaccinate"];
+}
