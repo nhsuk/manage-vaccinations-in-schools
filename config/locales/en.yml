@@ -42,3 +42,5 @@ en:
               inclusion: Choose if they got the vaccine
             site:
               blank: Choose a site
+            reason:
+              inclusion: Choose a reason

@@ -43,4 +43,21 @@ module VaccinationsHelper
       date.to_fs(:nhsuk_date)
     end
   end
+
+  def vaccination_not_given_reason(record)
+    case record.reason
+    when "refused"
+      "#{record.patient_session.patient.full_name} refused it"
+    when "not_well"
+      "#{record.patient_session.patient.full_name} was not well enough"
+    when "contraindications"
+      "#{record.patient_session.patient.full_name} had contraindications"
+    when "already_had"
+      "#{record.patient_session.patient.full_name} has already had the vaccine"
+    when "absent"
+      "#{record.patient_session.patient.full_name} was absent"
+    else
+      "Unknown"
+    end
+  end
 end

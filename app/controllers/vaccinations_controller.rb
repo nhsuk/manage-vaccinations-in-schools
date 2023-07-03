@@ -1,8 +1,9 @@
 class VaccinationsController < ApplicationController
   before_action :set_session
-  before_action :set_patient, only: %i[show confirm record history]
+  before_action :set_patient, only: %i[show confirm reason record history]
   before_action :set_patient_details, only: %i[index record_template]
-  before_action :set_draft_vaccination_record, only: %i[show confirm record]
+  before_action :set_draft_vaccination_record,
+                only: %i[show confirm reason record]
   before_action :set_vaccination_record, only: %i[show confirm record]
   before_action :set_consent_response, only: %i[show confirm]
   before_action :set_triage, only: %i[show confirm]
@@ -23,8 +24,17 @@ class VaccinationsController < ApplicationController
     end
   end
 
+  def reason
+  end
+
   def confirm
     if @draft_vaccination_record.update(vaccination_record_params)
+      not_administered = !@draft_vaccination_record.administered?
+      reason_not_specified = vaccination_record_params[:reason].blank?
+      ask_for_reason = not_administered && reason_not_specified
+      if ask_for_reason
+        redirect_to reason_session_vaccination_path(@session, @patient)
+      end
       # Render confirm
     else
       render :show
@@ -89,7 +99,7 @@ class VaccinationsController < ApplicationController
   def vaccination_record_params
     p = params.require(:vaccination_record)
     p[:site] = p[:site].to_i if p[:site].present?
-    p.permit(:administered, :site)
+    p.permit(:administered, :site, :reason)
   end
 
   def set_session

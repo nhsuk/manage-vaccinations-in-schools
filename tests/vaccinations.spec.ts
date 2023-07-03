@@ -10,8 +10,12 @@ test("Records vaccinations", async ({ page }) => {
   await when_i_go_to_the_vaccinations_page();
   await then_i_should_see_the_action_to_vaccinate();
 
-  await when_i_click_on_the_first_patient();
+  await when_i_click_on_the_patient("Aaron Pfeffer");
   await then_i_should_see_the_vaccinations_page();
+  await then_i_should_see_the_medical_history_section();
+
+  await when_i_click_on_show_answers();
+  await then_i_should_see_health_question_responses_if_present("Aaron Pfeffer");
 
   await when_i_record_a_vaccination();
   await then_i_should_see_the_check_answers_page();
@@ -21,11 +25,18 @@ test("Records vaccinations", async ({ page }) => {
   await and_i_should_see_the_outcome_as_vaccinated();
 
   await when_i_click_on_the_patient("Aaron Pfeffer");
-  await then_i_should_see_the_medical_history_section();
   await then_i_should_see_the_vaccination_details();
 
-  await when_i_click_on_show_answers();
-  await then_i_should_see_health_question_responses_if_present("Aaron Pfeffer");
+  await when_i_click_on_back();
+  await when_i_click_on_the_patient("Aliza Kshlerin");
+  await when_i_record_an_unsuccessful_vaccination();
+  await then_i_should_see_the_reason_page();
+
+  await when_i_choose_a_reason();
+  await then_i_should_see_the_check_answers_page();
+
+  await when_i_press_confirm();
+  await then_i_should_see_a_success_message();
 });
 
 async function given_the_app_is_setup() {
@@ -113,4 +124,24 @@ async function then_i_should_see_the_vaccination_details() {
   await expect(
     p.getByRole("heading", { name: "Vaccination details" })
   ).toBeVisible();
+}
+
+async function when_i_record_an_unsuccessful_vaccination() {
+  await p.click("text=No, they did not get it");
+  await p.click("text=Continue");
+}
+
+async function then_i_should_see_the_reason_page() {
+  await expect(p.locator("legend")).toContainText(
+    "Why was the HPV vaccine not given"
+  );
+}
+
+async function when_i_choose_a_reason() {
+  await p.click("text=They were not well enough");
+  await p.click("text=Continue");
+}
+
+async function when_i_click_on_back() {
+  await p.click("text=Back");
 }
