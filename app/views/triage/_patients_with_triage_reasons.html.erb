@@ -1,7 +1,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <%
-    patient_details = @patient_details.select { |_p, a, o| filter.call(a, o) }
+    patient_details = @patient_details.select { |p, a, o| filter.call(@session, p, a, o) }
     if patient_details.any?
     %>
     <table id="patients" class="nhsuk-table">
