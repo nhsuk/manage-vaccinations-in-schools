@@ -23,6 +23,7 @@ class VaccinationRecord < ApplicationRecord
   belongs_to :patient_session
 
   enum :site, %i[left_arm right_arm other]
+  enum :reason, %i[refused not_well contraindications already_had absent]
 
   validates :administered, inclusion: [true, false]
   validates :site,

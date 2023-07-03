@@ -1,0 +1,29 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+               href: session_vaccination_path(@session, @patient),
+               name: "vaccination page"
+             ) %>
+<% end %>
+
+<%= form_with model: @draft_vaccination_record,
+              url: confirm_session_vaccination_path(
+                session_id: @session.id,
+                id: @patient.id,
+              ),
+              method: :put do |f| %>
+    <%= f.govuk_radio_buttons_fieldset(:reason,
+      legend: { size: 'l', text: 'Why was the HPV vaccine not given?' }) do %>
+
+      <%= f.govuk_radio_button :reason, "refused",
+        label: { text: 'They refused it' } %>
+      <%= f.govuk_radio_button :reason, "not_well",
+        label: { text: 'They were not well enough' } %>
+      <%= f.govuk_radio_button :reason, "contraindications",
+        label: { text: 'They had contraindications' } %>
+      <%= f.govuk_radio_button :reason, "already_had",
+        label: { text: 'They have already had the vaccine' } %>
+      <%= f.govuk_radio_button :reason, "absent",
+        label: { text: 'They were absent' } %>
+    <% end %>
+  <%= f.submit "Continue", class: "nhsuk-button" %>
+<% end %>

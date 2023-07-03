@@ -36,7 +36,9 @@
       else
         summary_list.with_row do |row|
           row.with_key { 'Reason' }
-          row.with_value { 'Not administered' }
+          row.with_value {
+            vaccination_not_given_reason(@draft_vaccination_record)
+          }
         end
       end
 
