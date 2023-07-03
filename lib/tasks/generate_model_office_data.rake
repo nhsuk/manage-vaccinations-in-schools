@@ -33,7 +33,7 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
     detailed_type: "Academy sponsor led"
   }
 
-  patients_and_consents = []
+  patients_consent_triage = []
 
   # about 50% yes from parent or guardian, no yes answers or notes, in state ready to vaccinate
   100.times do
@@ -47,13 +47,13 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
         patient:,
         campaign: nil
       )
-    patients_and_consents << [patient, consent]
+    patients_consent_triage << [patient, consent]
   end
 
   # about 20% no consent response
   40.times do
     patient = FactoryBot.build(:patient, :of_hpv_vaccination_age)
-    patients_and_consents << [patient, nil]
+    patients_consent_triage << [patient, nil]
   end
 
   # about 10% refused
@@ -67,7 +67,7 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
         patient:,
         campaign: nil
       )
-    patients_and_consents << [patient, consent]
+    patients_consent_triage << [patient, consent]
   end
 
   # cases to triage
@@ -113,11 +113,50 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
           patient:,
           campaign: nil
         )
-      patients_and_consents << [patient, consent]
+      patients_consent_triage << [patient, consent]
+    end
+
+  # cases to follow up on
+  TO_FOLLOW_UP = <<~CSV.freeze
+  triage notes,Does the child have any severe allergies that have led to an anaphylactic reaction,Does the child have any existing medical conditions?,Does the child take any regular medication?,Is there anything else we should know?
+  "Spoke to child’s mum. Child completed leukaemia treatment 6 months ago. Need to speak to the consultant who treated her for a view on whether it’s safe to vaccinate. Dr Goehring, King’s College, 0208 734 5432.",,My daughter has just finished treatment for leukaemia. I don’t know if it’s safe for her to have the vaccination.,,
+  Tried to get hold of parent to establish how severe the phobia is. Try again before vaccination session.,,,,My son is needle phobic.
+  Tried to get hold of parent to find out where the pain is. Try again before vaccination session.,,My child has chronic pain due to a previous injury and struggles with discomfort daily,,
+  Tried to get hold of parent to find out what the surgery was for. Try again before vaccination session.,,,,Our child recently had surgery and is still recovering. We want to make sure it’s safe for them to get the vaccine.
+  CSV
+
+  CSV
+    .parse(TO_FOLLOW_UP, headers: true)
+    .each do |row|
+      health_question_responses =
+        row.map do |question, answer|
+          if question == "triage notes"
+            nil
+          else
+            {
+              question:,
+              response: answer.present? ? "Yes" : "No",
+              notes: answer.presence
+            }
+          end
+        end
+
+      patient = FactoryBot.build(:patient, :of_hpv_vaccination_age)
+      consent =
+        FactoryBot.build(
+          :consent_response,
+          :given,
+          %i[from_mum from_dad].sample,
+          health_questions: health_question_responses.compact,
+          patient:,
+          campaign: nil
+        )
+      triage = { notes: row["triage notes"], status: "needs_follow_up" }
+      patients_consent_triage << [patient, consent, triage]
     end
 
   patients_data =
-    patients_and_consents.map do |patient, consent|
+    patients_consent_triage.map do |patient, consent, triage|
       consent_data =
         if consent
           {
@@ -136,7 +175,8 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
         lastName: patient.last_name,
         dob: patient.dob.iso8601,
         nhsNumber: patient.nhs_number,
-        consent: consent_data
+        consent: consent_data,
+        triage:
       }
     end
 
