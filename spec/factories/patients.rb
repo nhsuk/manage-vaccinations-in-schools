@@ -28,6 +28,10 @@ FactoryBot.define do
     screening { "Approved for vaccination" }
     consent { "Parental consent (digital)" }
     seen { "Not yet" }
-    dob { rand(3..9).years.ago }
+    dob { Faker::Date.birthday(min_age: 3, max_age: 9) }
+
+    trait :of_hpv_vaccination_age do
+      dob { Faker::Date.birthday(min_age: 12, max_age: 13) }
+    end
   end
 end
