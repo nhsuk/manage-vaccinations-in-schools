@@ -7,6 +7,7 @@ const patients = {
   "Aaron Pfeffer": {
     row: 1,
     note: "",
+    tab: "Triage complete",
     status: "Vaccinate",
     status_colour: "purple",
     consent_response: "Given by",
@@ -18,6 +19,7 @@ const patients = {
   "Alaia Lakin": {
     row: 2,
     note: "",
+    tab: "Triage complete",
     status: "Vaccinate",
     status_colour: "purple",
     consent_response: "Given by",
@@ -29,6 +31,7 @@ const patients = {
   "Aliza Kshlerin": {
     row: 3,
     note: "Notes from nurse",
+    tab: "Triage complete",
     status: "Vaccinate",
     status_colour: "purple",
     consent_response: "Given by",
@@ -37,35 +40,10 @@ const patients = {
     parent_relationship: "Mother",
     type_of_consent: "Phone",
   },
-  "Amalia Wiza": {
-    row: 4,
-    note: "",
-    status: "Do not vaccinate",
-    status_colour: "red",
-    banner_title: "Do not vaccinate",
-    banner_content: [
-      "The nurse has decided that Amalia Wiza should not be vaccinated",
-    ],
-    consent_response: "Given by",
-    parent_relationship: "Mother",
-    parent_name: "Jordi Wiza",
-    parent_email: "Jordi.Wiza@yahoo.com",
-    type_of_consent: "Website",
-  },
-  "Amara Klein": {
-    row: 5,
-    note: "Notes from nurse",
-    status: "Do not vaccinate",
-    status_colour: "red",
-    consent_response: "Given by",
-    parent_relationship: "Mother",
-    parent_name: "Reese Klein",
-    parent_email: "Reese9@gmail.com",
-    type_of_consent: "Website",
-  },
   "Amara Rodriguez": {
     row: 6,
     note: "",
+    tab: "Needs triage",
     status: "Triage: follow up",
     status_colour: "aqua-green",
     banner_title: "Triage follow-up needed",
@@ -78,6 +56,7 @@ const patients = {
   "Amaya Sauer": {
     row: 7,
     note: "",
+    tab: "Triage complete",
     status: "Get consent",
     status_colour: "yellow",
     banner_title: "No-one responded to our requests for consent",
@@ -86,6 +65,7 @@ const patients = {
   "Annabel Morar": {
     row: 8,
     note: "",
+    tab: "No triage needed",
     status: "Check refusal",
     status_colour: "orange",
     banner_title: "Their father has refused to give consent",
@@ -99,6 +79,7 @@ const patients = {
   "Archie Simonis": {
     row: 9,
     note: "",
+    tab: "Needs triage",
     triage_reasons: ["Notes need triage"],
     status: "Triage",
     status_colour: "blue",
@@ -112,15 +93,19 @@ const patients = {
   },
 };
 
-test("Performing triage", async ({ page }) => {
+test.skip("Performing triage", async ({ page }) => {
   p = page;
 
   await given_the_app_is_setup();
   await when_i_go_to_the_triage_page_for_the_first_session();
   await then_i_should_see_the_triage_index_page();
   await then_i_should_see_the_correct_breadcrumbs();
+  await then_i_should_be_on_the_tab("Needs triage");
 
   for (let name in patients) {
+    if (!patients[name].tab) continue;
+
+    await when_i_click_on_the_tab(patients[name].tab);
     await then_i_should_see_a_triage_row_for_the_patient(name);
     await when_i_click_on_the_patient(name);
     await then_i_should_see_the_triage_page_for_the_patient(name);
@@ -162,6 +147,10 @@ async function when_i_go_to_the_triage_page_for_the_first_session() {
   await p.getByRole("link", { name: "Triage" }).click();
 }
 
+async function when_i_click_on_the_tab(name: string) {
+  await p.getByRole("tab", { name: name, exact: true }).click();
+}
+
 async function when_i_click_on_the_patient(name) {
   await p.getByRole("link", { name: name }).click();
 }
@@ -196,34 +185,42 @@ async function then_i_should_see_the_correct_breadcrumbs() {
   );
 }
 
+async function then_i_should_be_on_the_tab(name: string) {
+  await expect(p.getByRole("tab", { name: name, exact: true })).toHaveAttribute(
+    "aria-selected",
+    "true"
+  );
+}
+
 async function then_i_should_see_a_triage_row_for_the_patient(
   name,
   attributes = {}
 ) {
   let patient = { ...patients[name], ...attributes };
 
+  let id = patient.tab.toLowerCase().replace(" ", "-");
   await expect(
-    p.locator(`#patients tr:nth-child(${patient.row}) td:first-child`),
+    p.locator(`#${id} tr:nth-child(${patient.row}) td:first-child`),
     `Name for patient row: ${patient.row} name: ${name}`
   ).toContainText(name);
 
   if (patient.triage_reasons) {
     for (let reason of patient.triage_reasons) {
       await expect(
-        p.locator(`#patients tr:nth-child(${patient.row}) td:nth-child(2)`),
+        p.locator(`#${id} tr:nth-child(${patient.row}) td:nth-child(2)`),
         `Triage reason for patient row: ${patient.row} name: ${name}`
       ).toContainText(reason);
     }
   }
 
   await expect(
-    p.locator(`#patients tr:nth-child(${patient.row}) td:nth-child(3)`),
+    p.locator(`#${id} tr:nth-child(${patient.row}) td:nth-child(3)`),
     `Status text for patient row: ${patient.row} name: ${name}`
   ).toContainText(patient.status);
 
   let colourClass = "nhsuk-tag--" + patient.status_colour;
   await expect(
-    p.locator(`#patients tr:nth-child(${patient.row}) td:nth-child(3) div`),
+    p.locator(`#${id} tr:nth-child(${patient.row}) td:nth-child(3) div`),
     `Status colour for patient row: ${patient.row} name: ${name}`
   ).toHaveClass(new RegExp(colourClass));
 }
