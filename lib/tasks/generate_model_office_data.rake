@@ -1,5 +1,6 @@
 require "faker"
 
+# rubocop:disable Lint/ConstantDefinitionInBlock
 desc "Generate test scenarios to support the model office"
 task :generate_model_office_data, [] => :environment do |_task, _args|
   Faker::Config.locale = "en-GB"
@@ -69,6 +70,52 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
     patients_and_consents << [patient, consent]
   end
 
+  # cases to triage
+  TO_TRIAGE = <<~CSV.freeze
+  Does the child have any severe allergies that have led to an anaphylactic reaction?,Does the child have any existing medical conditions?,Does the child take any regular medication?,Is there anything else we should know?
+  My child has a severe nut allergy and has had an anaphylactic reaction in the past. This is something that’s extremely important to me and my husband. We make sure to always have an EpiPen on hand.,,,
+  "Yes, my child has a food allergy to dairy products.",,,
+  ,My child was diagnosed with anaemia and has low iron levels.,,
+  ,My child suffers from migraines and has severe headaches on a regular basis.,,
+  ,My child has celiac disease.,,
+  ,Epilepsy,My child takes anti-seizure medication twice a day to manage their epilepsy.,
+  ,My child has type 1 diabetes and requires daily insulin injections.,Insulin,
+  ,My child has asthma,My child takes medication every day to manage their asthma.,
+  ,,My child takes medication to manage their ADHD.,
+  ,,My child uses topical ointments to manage their eczema and prevent skin irritation.,
+  ,,My child takes medication to manage their anxiety and prevent panic attacks.,
+  ,,My child takes medication to manage their depression.,
+  ,,My daughter takes the contraceptive pill to manage her acne.,
+  ,,My daughter has just completed a long-term course of antibiotics for a urine infection.,
+  ,,,My child has a history of fainting after receiving injections.
+  ,,,My child recently had a bad reaction to a different vaccine. I just want to make sure we’re extra cautious with this.
+  CSV
+
+  CSV
+    .parse(TO_TRIAGE, headers: true)
+    .each do |row|
+      health_question_responses =
+        row.map do |question, answer|
+          {
+            question:,
+            response: answer.present? ? "Yes" : "No",
+            notes: answer.presence
+          }
+        end
+
+      patient = FactoryBot.build(:patient, :of_hpv_vaccination_age)
+      consent =
+        FactoryBot.build(
+          :consent_response,
+          :given,
+          %i[from_mum from_dad].sample,
+          health_questions: health_question_responses,
+          patient:,
+          campaign: nil
+        )
+      patients_and_consents << [patient, consent]
+    end
+
   patients_data =
     patients_and_consents.map do |patient, consent|
       consent_data =
@@ -106,3 +153,4 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
 
   File.open(target_filename, "w") { |f| f << JSON.pretty_generate(data) }
 end
+# rubocop:enable Lint/ConstantDefinitionInBlock
