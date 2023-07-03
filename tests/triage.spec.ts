@@ -99,6 +99,7 @@ const patients = {
   "Archie Simonis": {
     row: 9,
     note: "",
+    triage_reasons: ["Notes need triage"],
     status: "Triage",
     status_colour: "blue",
     banner_title: "Triage needed",
@@ -205,6 +206,15 @@ async function then_i_should_see_a_triage_row_for_the_patient(
     p.locator(`#patients tr:nth-child(${patient.row}) td:first-child`),
     `Name for patient row: ${patient.row} name: ${name}`
   ).toContainText(name);
+
+  if (patient.triage_reasons) {
+    for (let reason of patient.triage_reasons) {
+      await expect(
+        p.locator(`#patients tr:nth-child(${patient.row}) td:nth-child(2)`),
+        `Triage reason for patient row: ${patient.row} name: ${name}`
+      ).toContainText(reason);
+    }
+  }
 
   await expect(
     p.locator(`#patients tr:nth-child(${patient.row}) td:nth-child(3)`),
