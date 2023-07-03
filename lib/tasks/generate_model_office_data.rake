@@ -50,23 +50,37 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
     patients_and_consents << [patient, consent]
   end
 
-  patients_data = patients_and_consents.map do |patient, consent|
-    {
-      firstName: patient.first_name,
-      lastName: patient.last_name,
-      dob: patient.dob.iso8601,
-      nhsNumber: patient.nhs_number,
-      consent: {
-        consent: consent.consent,
-        parentName: consent.parent_name,
-        parentRelationship: consent.parent_relationship,
-        parentEmail: consent.parent_email,
-        parentPhone: consent.parent_phone,
-        healthQuestionResponses: consent.health_questions,
-        route: consent.route
-      }
-    }
+  # about 20% no consent response
+  40.times do
+    patient = FactoryBot.build(:patient, :of_hpv_vaccination_age)
+    patients_and_consents << [patient, nil]
   end
+
+  patients_data =
+    patients_and_consents.map do |patient, consent|
+      consent_data =
+        if consent.nil?
+          {}
+        else
+          {
+            consent: consent.consent,
+            parentName: consent.parent_name,
+            parentRelationship: consent.parent_relationship,
+            parentEmail: consent.parent_email,
+            parentPhone: consent.parent_phone,
+            healthQuestionResponses: consent.health_questions,
+            route: consent.route
+          }
+        end
+
+      {
+        firstName: patient.first_name,
+        lastName: patient.last_name,
+        dob: patient.dob.iso8601,
+        nhsNumber: patient.nhs_number,
+        consent: consent_data
+      }
+    end
 
   data = {
     id: "5M0",
@@ -76,7 +90,7 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
     type: "HPV",
     vaccines: [hpv_vaccine],
     school: school_details,
-    patients: patients_data,
+    patients: patients_data
   }
 
   File.open(target_filename, "w") { |f| f << JSON.pretty_generate(data) }
