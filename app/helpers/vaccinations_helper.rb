@@ -60,4 +60,16 @@ module VaccinationsHelper
       "Unknown"
     end
   end
+
+  def in_tab_action_needed?(action, _outcome)
+    action.in? %i[vaccinate get_consent triage follow_up check_refusal]
+  end
+
+  def in_tab_vaccinated?(_action, outcome)
+    outcome.in? %i[vaccinated]
+  end
+
+  def in_tab_not_vaccinated?(_action, outcome)
+    outcome.in? %i[do_not_vaccinate not_vaccinated]
+  end
 end

@@ -127,7 +127,7 @@ class VaccinationsController < ApplicationController
               triage:,
               vaccination_record:
             )
-          [ps.patient, action_or_outcome]
+          [ps.patient, action_or_outcome[:action], action_or_outcome[:outcome]]
         end
   end
 
