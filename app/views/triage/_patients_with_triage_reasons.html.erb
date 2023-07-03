@@ -9,12 +9,12 @@
         <tr class="govuk-table__row">
           <th class="govuk-table__header">Name</th>
           <th class="govuk-table__header">Triage reason</th>
-          <th class="govuk-table__header">Action needed</th>
+          <th class="govuk-table__header">Action</th>
         </tr>
       </thead>
       <tbody class="govuk-table__body">
         <% patient_details.each do |patient, action, outcome| %>
-          <%= render "patient_row", patient:, action:, outcome: %>
+          <%= render "patient_row", middle_column: :triage_reasons, patient:, action:, outcome: %>
         <% end %>
       </tbody>
     </table>

@@ -4,15 +4,22 @@
   </td>
   <td class="govuk-table__cell">
     <%
-    if %i[triage follow_up].include? action
-      consent_response = patient.consent_response_for_campaign(@session.campaign)
-      %>
+    if middle_column == :triage_reasons
+      if %i[triage follow_up].include? action
+        consent_response = patient.consent_response_for_campaign(@session.campaign)
+    %>
       <ul class="nhsuk-list nhsuk-u-margin-bottom-2">
         <% consent_response.reasons_triage_needed.map do |reason| %>
           <li><%= reason %></li>
         <% end %>
       </ul>
+    <%
+    end
+    else
+    %>
+    <%= patient.dob.to_fs(:nhsuk_date_short_month) %>
     <% end %>
+
   </td>
   <td class="govuk-table__cell" data-testid="child-action">
     <% label = PatientSession.human_enum_name("actions_or_outcome", action || outcome) %>
