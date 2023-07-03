@@ -8,7 +8,7 @@ class VaccinationsController < ApplicationController
   before_action :set_consent_response, only: %i[show confirm]
   before_action :set_triage, only: %i[show confirm]
 
-  layout "two_thirds"
+  layout "two_thirds", except: :index
 
   def index
     respond_to do |format|

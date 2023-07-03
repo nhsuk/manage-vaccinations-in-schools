@@ -1,5 +1,30 @@
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
+  <div class="govuk-grid-column-one-quarter">
+    <div class="govuk-form-group">
+      <label class="govuk-label" for="search">
+        By name
+      </label>
+      <input class="govuk-input" id="search-<%= id %>" name="search" type="text" aria-describedby="search-hint">
+    </div>
+    <script>
+      function filterTable() {
+        var inputValue = document.getElementById("search-<%= id %>").value.toLowerCase();
+        var rows = document.getElementById("patients-<%= id %>").querySelectorAll("tbody tr");
+
+        for (var i = 0; i < rows.length; i++) {
+          var nameCell = rows[i].getElementsByTagName("td")[0];
+          var name = nameCell.textContent || nameCell.innerText;
+          if (name.toLowerCase().indexOf(inputValue) > -1) {
+            rows[i].style.display = "";
+          } else {
+            rows[i].style.display = "none";
+          }
+        }
+      }
+      document.getElementById("search-<%= id %>").addEventListener("input", filterTable);
+    </script>
+  </div>
+  <div class="govuk-grid-column-three-quarters" id="patients-<%= id %>">
     <%
     patient_details = @patient_details.select { |_p, a, o| filter.call(a, o) }
     if patient_details.any?
