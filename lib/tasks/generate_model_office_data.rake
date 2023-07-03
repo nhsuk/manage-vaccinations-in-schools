@@ -37,12 +37,11 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
   # about 50% yes from parent or guardian, no yes answers or notes, in state ready to vaccinate
   100.times do
     patient = FactoryBot.build(:patient, :of_hpv_vaccination_age)
-    who_from = %i[from_mum from_dad].sample
     consent =
       FactoryBot.build(
         :consent_response,
         :given,
-        who_from,
+        %i[from_mum from_dad].sample,
         :health_question_hpv_no_contraindications,
         patient:,
         campaign: nil
@@ -54,6 +53,22 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
   40.times do
     patient = FactoryBot.build(:patient, :of_hpv_vaccination_age)
     patients_and_consents << [patient, nil]
+  end
+
+  # about 10% refused
+  20.times do
+    patient = FactoryBot.build(:patient, :of_hpv_vaccination_age)
+    consent =
+      FactoryBot.build(
+        :consent_response,
+        :refused,
+        :health_question_hpv_no_contraindications,
+        %i[from_mum from_dad].sample,
+        reason_for_refusal: %i[personal_choice already_vaccinated].sample,
+        patient:,
+        campaign: nil
+      )
+    patients_and_consents << [patient, consent]
   end
 
   patients_data =
