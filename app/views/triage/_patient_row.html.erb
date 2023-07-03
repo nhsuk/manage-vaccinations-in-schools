@@ -4,7 +4,7 @@
   </td>
   <td class="govuk-table__cell">
     <%
-    if %i[triage needs_follow_up].include? action_or_outcome[:action]
+    if %i[triage follow_up].include? action_or_outcome[:action]
       consent_response = patient.consent_response_for_campaign(@session.campaign)
       %>
       <ul class="nhsuk-list nhsuk-u-margin-bottom-2">
