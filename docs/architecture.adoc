@@ -131,7 +131,7 @@ Parents::
 Parents are notified of the planned vaccination campaign and invited to give
 consent for their children to be vaccinated.
 
-Record Children's Vaccination Service::
+Manage vaccinations for school-aged children Service::
 The service will be used by the SAIS team to record vaccinations.
 
 Vaccination Record::
@@ -206,9 +206,9 @@ vaccination event data may be kept in this store until the end of the pilot.
 
 == Runtime View
 
-The Record Children's Vaccinations service is built largely as a standard
-server-rendered web application: HTML pages are rendered on the server and
-delivered along with CSS and JavaScript to the client. Users login to the
+The Manage vaccinations for school-aged children service is built largely as a
+standard server-rendered web application: HTML pages are rendered on the server
+and delivered along with CSS and JavaScript to the client. Users login to the
 service using a standard login page, and as is standard with Ruby on Rails apps,
 resources are exposed with REST-like paths using an MVC approach to separate
 concerns on the server.

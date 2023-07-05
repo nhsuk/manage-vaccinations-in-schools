@@ -2,7 +2,7 @@
 
 !include <C4/C4_Dynamic.puml>
 
-title "Record Children's Vaccinations Testing Deployment Process"
+title "Manage vaccinations for school-aged children Testing Deployment Process"
 
 System_Ext(herokuAPI, "Heroku Platform API")
 Boundary(record, "Record Children's Vaccination", "Staging") {

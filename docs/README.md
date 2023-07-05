@@ -1,6 +1,6 @@
-# Record Children's Vaccinations Documentation
+# Manage vaccinations for school-aged children Documentation
 
-This directory contains documentation for the Record Children's Vaccinations service.
+This directory contains documentation for the Manage vaccinations for school-aged children service.
 
 - [Architecture](architecture.adoc)
 - [Deployment](deployment.adoc)
