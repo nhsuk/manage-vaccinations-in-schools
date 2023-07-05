@@ -54,8 +54,10 @@ module VaccinationsHelper
       "#{record.patient_session.patient.full_name} had contraindications"
     when "already_had"
       "#{record.patient_session.patient.full_name} has already had the vaccine"
-    when "absent"
-      "#{record.patient_session.patient.full_name} was absent"
+    when "absent_from_school"
+      "#{record.patient_session.patient.full_name} was absent from school"
+    when "absent_from_session"
+      "#{record.patient_session.patient.full_name} was absent from the session"
     else
       "Unknown"
     end
