@@ -1,12 +1,12 @@
 @startuml
 
-title Record Children's Vaccinations Service Worker
+title Manage vaccinations for school-aged children Service Worker
 
 !include <C4/C4_Component.puml>
 
 LAYOUT_TOP_DOWN()
 
-System_Boundary(record, "Record Children's Vaccinations") {
+System_Boundary(record, "Manage vaccinations for school-aged children") {
   Container_Boundary(browser, "Web Browser") {
     Component(frontend, "Front-End", "HTML, Javascript")
     Component(serviceWorker, "Service Worker", "Javascript")
