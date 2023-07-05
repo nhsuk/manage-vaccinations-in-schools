@@ -4,6 +4,20 @@
       Medical history
     </h2>
 
+    <% if @consent_response.health_questions.present? %>
+      <details class="nhsuk-details nhsuk-expander">
+        <summary class="nhsuk-details__summary">
+          <span class="nhsuk-details__summary-text">
+            Show answers
+          </span>
+        </summary>
+
+        <div class="nhsuk-details__text">
+          <%= render AppHealthQuestionsComponent.new(consent_response: @consent_response) %>
+        </div>
+      </details>
+    <% end %>
+
     <% if @consent_response.triage_needed? %>
       <% if triage_present? %>
         <p>Triage needed</p>
@@ -28,21 +42,6 @@
 
     <% else %>
       <p>No triage needed</p>
-    <% end %>
-
-    <% if @consent_response.health_questions.present? %>
-      <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
-        <summary class="nhsuk-details__summary">
-          <span class="nhsuk-details__summary-text">
-            Show answers
-          </span>
-        </summary>
-
-        <div class="nhsuk-details__text">
-          <%= render AppHealthQuestionsComponent.new(consent_response: @consent_response) %>
-        </div>
-      </details>
-
     <% end %>
   </div>
 </div>
