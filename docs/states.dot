@@ -2,29 +2,58 @@
 
 digraph vaccination_process {
     // Define nodes
-    awaiting_consent [shape=box, label=< <b>awaiting consent</b><br/><sup>awaiting_consent</sup><br/>consent: <i>none</i><br/>triage: <i>none</i><br/>vax record: <i>none</i> >];
-    ready_for_vaccination_no_triage [shape=box, label=< <b>ready for vaccination</b><br/><sup>ready_for_vaccination_no_triage</sup><br/>consent: given<br/>triage: <i>none</i><br/>vax record: <i>none</i> >];
-    ready_for_vaccination_triaged [shape=box, label=< <b>ready for vaccination</b><br/><sup>ready_for_vaccination_triaged</sup><br/>consent: given<br/>triage: ready for session<br/>vax record: <i>none</i> >];
-    do_not_vaccinate_consent_refused [shape=box, label=< <b>do not vaccinate</b><br/><sup>do_not_vaccinate_consent_refused</sup><br/>consent: refused<br/>triage: <i>none</i><br/>vax record: <i>none</i> >];
-    do_not_vaccinate_triaged [shape=box, label=< <b>do not vaccinate</b><br/><sup>do_not_vaccinate_triaged</sup><br/>consent: given<br/>triage: do not vaccinate<br/>vax record: <i>none</i> >];
-    needs_triage [shape=box, label=< <b>needs triage</b><br/><sup>needs_triage</sup><br/>consent: given needs triage<br/>triage: <i>none</i><br/>vax record: <i>none</i> >];
-    needs_follow_up [shape=box, label=< <b>needs triage</b><br/><sup>needs_follow_up</sup><br/>consent: given needs triage<br/>triage: needs follow-up<br/>vax record: <i>none</i> >];
-    vaccinated [shape=box, label=< <b>vaccinated</b><br/><sup>vaccinated</sup> >];
-    not_vaccinated [shape=box, label=< <b>not vaccinated</b><br/><sup>not_vaccinated</sup> >];
+    awaiting_consent                 [shape=record,
+                                      label=< {<b>awaiting consent</b><br/><sup>awaiting_consent</sup> | { { consent: <i>none</i> | triage: <i>none</i> | vax record: <i>none</i>} | { action: Get consent | outcome: <i>none</i> } } } >];
+    ready_for_vaccination_no_triage  [shape=record,
+                                      label=< {<b>ready for vaccination</b><br/><sup>ready_for_vaccination_no_triage</sup> | { { consent: given | triage: <i>none</i> | vax record: <i>none</i>} | { action: Vaccinate | outcome: <i>none</i> } } } >];
+    consent_refused                  [shape=record,
+                                      label=< {<b>consent refused</b><br/><sup>consent_refused</sup> | { { consent: refused | triage: <i>none</i> | vax record: <i>none</i>} | { action: Check refusal | outcome: <i>none</i> } } } >];
+    needs_triage                     [shape=record,
+                                      label=< {<b>needs triage</b><br/><sup>needs_triage</sup> | { { consent: given (needs triage) | triage: <i>none</i> | vax record: <i>none</i>} | { action: Triage | outcome: <i>none</i> } } } >];
+    needs_follow_up                  [shape=record,
+                                      label=< {<b>needs triage</b><br/><sup>needs_follow_up</sup> | { { consent: given (needs triage) | triage: needs follow-up | vax record: <i>none</i>} | { action: Triage follow up | outcome: <i>none</i> } } } >];
+    ready_for_vaccination_triaged    [shape=record,
+                                      label=< {<b>ready for vaccination</b><br/><sup>ready_for_vaccination_triaged</sup> | { { consent: <i>any</i> | triage: ready for session | vax record: <i>none</i>} | { action: Vaccinate | outcome: <i>none</i> } } } >];
+    vaccinated                       [shape=record,
+                                      label=< {<b>vaccinated</b><br/><sup>vaccinated</sup> | { { consent: <i>any</i> | triage: <i>any</i> | vax record: administered} | { action: <i>none</i> | outcome: <u><b>Vaccinated</b></u> } } } >];
+    not_vaccinated                   [shape=record,
+                                      label=< {<b>not vaccinated</b><br/><sup>not_vaccinated</sup> | { { consent: <i>any</i> | triage: <i>any</i> | vax record: not administered} | { action: <i>none</i> | outcome: <u><b>Could not vaccinated</b></u> } } } >];
+    do_not_vaccinate                 [shape=record,
+                                      label=< {<b>do not vaccinate</b><br/><sup>permanent_contra_indications</sup> | { { consent: <i>any</i> | triage: do not vaccinate | vax record: <i>none</i>} | { action: <i>none</i> | outcome: <u><b>Do not vaccinate</b></u> } } } >];
+    do_not_vaccinate_this_session    [shape=record,
+                                      label=< {<b>do not vaccinate</b><br/><sup>do_not_vaccinate</sup> | { { consent: <i>any</i> | triage: ready for session \| do not vaccinate | vax record: <i>none</i> \| not administered } | { action: <i>none</i> | outcome: <u><b>Do not vaccinate</b></u> } } } >];
+    do_not_vaccinate_consent_refused [shape=record,
+                                      label=< {<b>do not vaccinate</b><br/><sup>do_not_vaccinate_consent_refused</sup> | { { consent: refused | triage: do not vaccinate | vax record: <i>none</i> } | { action: <i>none</i> | outcome: <u><b>Do not vaccinate</b></u> } } } >];
+                                      // label=< <b>do not vaccinate</b><br/><sup>do_not_vaccinate_consent_refused</sup><br/>consent: refused<br/>triage: do not vaccinate<br/>vax record: <i>none</i> >];
 
     // Define edges
     awaiting_consent -> ready_for_vaccination_no_triage [label="give consent"];
-    awaiting_consent -> needs_triage [label="give consent needing triage"]
-    awaiting_consent -> do_not_vaccinate_consent_refused [label="refuse consent"];
+    awaiting_consent -> needs_triage [label="give consent (needs triage)"]
+    awaiting_consent -> consent_refused [label="refuse consent"];
+
+    consent_refused -> needs_follow_up [label="request follow-up"];
+    consent_refused -> ready_for_vaccination_triaged [label="consent obtained"];
+    consent_refused -> do_not_vaccinate_consent_refused [label="consent refused"];
+    consent_refused -> do_not_vaccinate [label="flag as do\nnot vaccinate"];
+    consent_refused -> do_not_vaccinate_this_session [label="flag as do not\nvaccinate this session"];
 
     ready_for_vaccination_no_triage -> vaccinated [label="administer vaccine"];
     ready_for_vaccination_no_triage -> not_vaccinated [label="refuse vaccine"];
+    ready_for_vaccination_no_triage -> do_not_vaccinate [label="flag as do\nnot vaccinate"];
+    ready_for_vaccination_no_triage -> do_not_vaccinate_this_session [label="flag as do not\nvaccinate this session"];
 
     needs_triage -> ready_for_vaccination_triaged [label="make ready for session"];
     needs_triage -> needs_follow_up [label="request follow-up"];
-    needs_triage -> do_not_vaccinate_triaged [label="flag as do not vaccinate"];
+    needs_triage -> do_not_vaccinate [label="flag as do\nnot vaccinate"];
+    needs_triage -> do_not_vaccinate_this_session [label="flag as do not\nvaccinate this session"];
+
+    ready_for_vaccination_triaged -> vaccinated [label="administer vaccine"];
+    ready_for_vaccination_triaged -> not_vaccinated [label="refuse vaccine"];
+    ready_for_vaccination_triaged -> do_not_vaccinate [label="flag as do\nnot vaccinate"];
+    ready_for_vaccination_triaged -> do_not_vaccinate_this_session [label="flag as do not\nvaccinate this session"];
 
     needs_follow_up -> ready_for_vaccination_triaged [label="make ready for session"];
     needs_follow_up -> needs_follow_up [label="request follow-up"];
-    needs_follow_up -> do_not_vaccinate_triaged [label="flag as do not vaccinate"];
+    needs_follow_up -> do_not_vaccinate [label="flag as do\nnot vaccinate"];
+    needs_follow_up -> do_not_vaccinate_this_session [label="flag as do not\nvaccinate this session"];
 }
