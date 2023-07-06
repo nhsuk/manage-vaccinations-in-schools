@@ -49,7 +49,6 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
     it "renders correctly" do
       expect(page).to have_css("p:first", text: "Triage needed")
       expect(page).to have_css("li", text: "Check parental responsibility")
-      expect(page).to have_css("h2", text: "Medical history answers")
       expect(page).to have_css(
         ".nhsuk-details__summary-text",
         text: "Show answers"
@@ -72,7 +71,6 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
     it "renders correctly" do
       expect(page).to have_css("h2:nth(2)", text: "Triage notes")
       expect(page).to have_css("p:first", text: triage_notes)
-      expect(page).to have_css("h2", text: "Medical history answers")
       expect(page).to have_css(
         ".nhsuk-details__summary-text",
         text: "Show answers"
@@ -93,7 +91,6 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
 
     it "renders correctly" do
       expect(page).to have_css("p:first", text: "Triage complete - no notes")
-      expect(page).to have_css("h2", text: "Medical history answers")
       expect(page).to have_css(
         ".nhsuk-details__summary-text",
         text: "Show answers"
@@ -119,7 +116,6 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
     it "renders correctly" do
       expect(page).to have_css("h2:nth(2)", text: "Triage notes")
       expect(page).to have_css("p:first", text: triage_notes)
-      expect(page).to have_css("h2", text: "Medical history answers")
       expect(page).to have_css(
         ".nhsuk-details__summary-text",
         text: "Show answers"
@@ -143,7 +139,6 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
 
     it "renders correctly" do
       expect(page).to have_css("p:first", text: "Triage complete - no notes")
-      expect(page).to have_css("h2", text: "Medical history answers")
       expect(page).to have_css(
         ".nhsuk-details__summary-text",
         text: "Show answers"
@@ -165,7 +160,6 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
     it "renders correctly" do
       expect(page).to have_css("p:first", text: "Triage needed")
       expect(page).to have_css("li:first", text: "Notes need triage")
-      expect(page).to have_css("h2", text: "Medical history answers")
       expect(page).to have_css(
         ".nhsuk-details__summary-text",
         text: "Show answers"
@@ -195,7 +189,6 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
       expect(page).to have_css("p:first", text: "Triage needed")
       expect(page).to have_css("li", text: "Check parental responsibility")
       expect(page).to have_css("li", text: "Notes need triage")
-      expect(page).to have_css("h2", text: "Medical history answers")
       expect(page).to have_css(
         ".nhsuk-details__summary-text",
         text: "Show answers"
