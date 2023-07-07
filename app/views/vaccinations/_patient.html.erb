@@ -33,63 +33,63 @@
         <h2 class="nhsuk-card__heading nhsuk-heading-m">
           Vaccination details
         </h2>
-        <dl class="govuk-summary-list app-u-frutiger app-summary-list--no-bottom-border  nhsuk-u-margin-bottom-0">
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
+        <dl class="nhsuk-summary-list app-u-frutiger app-summary-list--no-bottom-border  nhsuk-u-margin-bottom-0">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
               Vaccine
             </dt>
-            <dd class="govuk-summary-list__value">
+            <dd class="nhsuk-summary-list__value">
               <%= @vaccination_record.vaccine_name %>
             </dd>
           </div>
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
               Dose
             </dt>
-            <dd class="govuk-summary-list__value">
+            <dd class="nhsuk-summary-list__value">
               1 of 2
             </dd>
           </div>
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
               Vaccine given?
             </dt>
-            <dd class="govuk-summary-list__value">
+            <dd class="nhsuk-summary-list__value">
               <%= @vaccination_record.administered? ? "Yes" : "No" %>
             </dd>
           </div>
           <% if @vaccination_record.site %>
-            <div class="govuk-summary-list__row">
-              <dt class="govuk-summary-list__key">
+            <div class="nhsuk-summary-list__row">
+              <dt class="nhsuk-summary-list__key">
                 Site
               </dt>
-              <dd class="govuk-summary-list__value">
+              <dd class="nhsuk-summary-list__value">
                 <%= @vaccination_record.site.humanize %>
               </dd>
             </div>
           <% end %>
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
               Date
             </dt>
-            <dd class="govuk-summary-list__value">
+            <dd class="nhsuk-summary-list__value">
               <%= vaccination_date(@vaccination_record.recorded_at) %>
             </dd>
           </div>
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
               Time
             </dt>
-            <dd class="govuk-summary-list__value">
+            <dd class="nhsuk-summary-list__value">
               <%= @vaccination_record.recorded_at.strftime("%l:%M%P") %>
             </dd>
           </div>
           <% if @vaccination_record.location_name %>
-            <div class="govuk-summary-list__row">
-              <dt class="govuk-summary-list__key">
+            <div class="nhsuk-summary-list__row">
+              <dt class="nhsuk-summary-list__key">
                 Location
               </dt>
-              <dd class="govuk-summary-list__value">
+              <dd class="nhsuk-summary-list__value">
                 <%= @vaccination_record.location_name %>
               </dd>
             </div>

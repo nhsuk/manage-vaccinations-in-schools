@@ -1,8 +1,8 @@
-<tr class="govuk-table__row">
-  <td class="govuk-table__cell">
+<tr class="nhsuk-table__row">
+  <td class="nhsuk-table__cell">
     <%= link_to patient.full_name, session_patient_triage_path(@session, patient), "data-testid": "child-link" %>
   </td>
-  <td class="govuk-table__cell">
+  <td class="nhsuk-table__cell">
     <%
     if middle_column == :triage_reasons
       if %i[triage follow_up].include? action
@@ -21,7 +21,7 @@
     <% end %>
 
   </td>
-  <td class="govuk-table__cell" data-testid="child-action">
+  <td class="nhsuk-table__cell" data-testid="child-action">
     <% label = PatientSession.human_enum_name("actions_or_outcome", action || outcome) %>
     <%= render(AppActionTagComponent.new(status: label, colour: vaccination_action_colour(action || outcome))) %>
   </td>
