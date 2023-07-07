@@ -3,8 +3,8 @@ GOVUKDesignSystemFormBuilder.configure do |config|
   #
   # https://www.rubydoc.info/gems/govuk_design_system_formbuilder/GOVUKDesignSystemFormBuilder
 
-  # config.brand: 'govuk'
-  #
+  config.brand = "nhsuk"
+
   # config.default_legend_size: 'm'
   # config.default_legend_tag: nil
   # config.default_caption_size: 'm'
