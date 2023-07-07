@@ -1,10 +1,10 @@
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-one-quarter">
-    <div class="govuk-form-group">
-      <label class="govuk-label" for="search">
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-quarter">
+    <div class="nhsuk-form-group">
+      <label class="nhsuk-label" for="search">
         By name
       </label>
-      <input class="govuk-input" id="search-<%= id %>" name="search" type="text" aria-describedby="search-hint">
+      <input class="nhsuk-input" id="search-<%= id %>" name="search" type="text" aria-describedby="search-hint">
     </div>
     <script>
       function filterTable() {
@@ -24,21 +24,21 @@
       document.getElementById("search-<%= id %>").addEventListener("input", filterTable);
     </script>
   </div>
-  <div class="govuk-grid-column-three-quarters" id="patients-<%= id %>">
+  <div class="nhsuk-grid-column-three-quarters" id="patients-<%= id %>">
     <%
     patient_details = @patient_details.select { |_p, a, o| filter.call(a, o) }
     if patient_details.any?
     %>
 
     <table class="nhsuk-table">
-      <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-          <th class="govuk-table__header">Name</th>
-          <th class="govuk-table__header">Date of birth</th>
-          <th class="govuk-table__header" style="width: 200px">Outcome</th>
+      <thead class="nhsuk-table__head">
+        <tr class="nhsuk-table__row">
+          <th class="nhsuk-table__header">Name</th>
+          <th class="nhsuk-table__header">Date of birth</th>
+          <th class="nhsuk-table__header" style="width: 200px">Outcome</th>
         </tr>
       </thead>
-      <tbody class="govuk-table__body">
+      <tbody class="nhsuk-table__body">
         <% patient_details.each do |patient, action, outcome| %>
           <%= render "patient_row", patient:, action:, outcome: %>
         <% end %>

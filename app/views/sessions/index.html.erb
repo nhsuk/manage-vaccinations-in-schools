@@ -13,16 +13,16 @@
 <% @sessions_by_type.each do |campaign_type, sessions| %>
   <h2><%= campaign_type %></h2>
 
-  <table class="govuk-table">
-    <thead class="govuk-table__head">
-      <tr class="govuk-table__row">
-        <th class="govuk-table__header">Date</th>
-        <th class="govuk-table__header">Time</th>
-        <th class="govuk-table__header" style="width: 50%">School</th>
-        <th class="govuk-table__header" style="width: 25%"></th>
+  <table class="nhsuk-table">
+    <thead class="nhsuk-table__head">
+      <tr class="nhsuk-table__row">
+        <th class="nhsuk-table__header">Date</th>
+        <th class="nhsuk-table__header">Time</th>
+        <th class="nhsuk-table__header" style="width: 50%">School</th>
+        <th class="nhsuk-table__header" style="width: 25%"></th>
       </tr>
     </thead>
-    <tbody class="govuk-table__body">
+    <tbody class="nhsuk-table__body">
       <% sessions.each do |session| %>
         <%= render "session_row", session: %>
       <% end %>

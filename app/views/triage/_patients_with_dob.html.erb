@@ -1,18 +1,18 @@
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
     <%
     patient_details = @patient_details.select { |p, a, o| filter.call(@session, p, a, o) }
     if patient_details.any?
     %>
     <table id="patients" class="nhsuk-table">
-      <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-          <th class="govuk-table__header">Name</th>
-          <th class="govuk-table__header">Date of birth</th>
-          <th class="govuk-table__header">Action</th>
+      <thead class="nhsuk-table__head">
+        <tr class="nhsuk-table__row">
+          <th class="nhsuk-table__header">Name</th>
+          <th class="nhsuk-table__header">Date of birth</th>
+          <th class="nhsuk-table__header">Action</th>
         </tr>
       </thead>
-      <tbody class="govuk-table__body">
+      <tbody class="nhsuk-table__body">
         <% patient_details.each do |patient, action, outcome| %>
           <%= render "patient_row", middle_column: :dob, patient:, action:, outcome: %>
         <% end %>
