@@ -33,6 +33,7 @@ group :development, :test do
 end
 
 group :development do
+  gem "aasm-diagram"
   gem "annotate", require: false
   gem "asciidoctor"
   gem "asciidoctor-diagram"
