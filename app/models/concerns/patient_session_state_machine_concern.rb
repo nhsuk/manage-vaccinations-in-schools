@@ -5,45 +5,45 @@ module PatientSessionStateMachineConcern
     include AASM
 
     aasm column: :state do
-      state :awaiting_consent_response, initial: true
-      state :awaiting_triage
+      state :added_to_session, initial: true
+      state :consent_response_received
       state :ready_to_vaccinate
-      state :not_vaccinated
+      state :unable_to_vaccinate
       state :vaccinated
 
       event :received_consent_response do
-        transitions from: :awaiting_consent_response,
-                    to: :awaiting_triage,
+        transitions from: :added_to_session,
+                    to: :consent_response_received,
                     guard: -> {
                       consent_response.consent_given? &&
                         consent_response.triage_needed?
                     }
 
-        transitions from: :awaiting_consent_response,
+        transitions from: :added_to_session,
                     to: :ready_to_vaccinate,
                     guard: -> {
                       consent_response.consent_given? &&
                         !consent_response.triage_needed?
                     }
 
-        transitions from: :awaiting_consent_response,
-                    to: :awaiting_triage,
+        transitions from: :added_to_session,
+                    to: :consent_response_received,
                     guard: -> { consent_response.consent_refused? }
       end
 
       event :triaged do
-        transitions from: :awaiting_triage,
+        transitions from: :consent_response_received,
                     to: :ready_to_vaccinate,
                     guard: -> { triage.ready_to_vaccinate? }
 
-        transitions from: :awaiting_triage,
-                    to: :not_vaccinated,
+        transitions from: :consent_response_received,
+                    to: :unable_to_vaccinate,
                     guard: -> { triage.do_not_vaccinate? }
       end
 
       event :did_not_vaccinate do
         transitions from: :ready_to_vaccinate,
-                    to: :not_vaccinated,
+                    to: :unable_to_vaccinate,
                     guard: -> { vaccination_record.administered == false }
       end
 
