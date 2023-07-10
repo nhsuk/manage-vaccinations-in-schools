@@ -29,4 +29,8 @@ class PatientSession < ApplicationRecord
   def triage
     patient.triage_for_campaign(session.campaign)
   end
+
+  def vaccination_record
+    vaccination_records.last
+  end
 end
