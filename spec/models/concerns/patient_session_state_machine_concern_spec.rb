@@ -40,79 +40,99 @@ RSpec.describe PatientSessionStateMachineConcern do
   context "in added_to_session state" do
     let(:state) { :added_to_session }
 
-    describe "#received_consent_response" do
-      it "transitions to consent_response_received when consent is refused" do
-        allow(consent_response).to receive(:consent_given?).and_return(false)
-        allow(consent_response).to receive(:consent_refused?).and_return(true)
-        allow(consent_response).to receive(:triage_needed?).and_return(false)
-
-        fsm.received_consent_response
-        expect(fsm).to be_consent_response_received
-      end
-
-      it "transitions to ready_to_vaccinate when consent is given and needs no triage" do
+    describe "#process_consent" do
+      it "transitions to consent_given_triage_not_needed when consent is given and needs no triage" do
         allow(consent_response).to receive(:consent_given?).and_return(true)
         allow(consent_response).to receive(:consent_refused?).and_return(false)
         allow(consent_response).to receive(:triage_needed?).and_return(false)
 
-        fsm.received_consent_response
-        expect(fsm).to be_ready_to_vaccinate
+        fsm.process_consent
+        expect(fsm).to be_consent_given_triage_not_needed
       end
 
-      it "transitions to consent_response_received when consent is given and needs triage" do
+      it "transitions to consent_given_triage_needed consent is given and needs triage" do
         allow(consent_response).to receive(:consent_given?).and_return(true)
         allow(consent_response).to receive(:consent_refused?).and_return(false)
         allow(consent_response).to receive(:triage_needed?).and_return(true)
 
-        fsm.received_consent_response
-        expect(fsm).to be_consent_response_received
+        fsm.process_consent
+        expect(fsm).to be_consent_given_triage_needed
+      end
+
+      it "transitions to consent_refused when consent is refused" do
+        allow(consent_response).to receive(:consent_given?).and_return(false)
+        allow(consent_response).to receive(:consent_refused?).and_return(true)
+        allow(consent_response).to receive(:triage_needed?).and_return(false)
+
+        fsm.process_consent
+        expect(fsm).to be_consent_refused
       end
     end
   end
 
-  context "in consent_response_received state" do
-    let(:state) { :consent_response_received }
+  context "in consent_given_triage_not_needed state" do
+    let(:state) { :consent_given_triage_not_needed }
 
-    describe "#triaged" do
-      it "transitions to ready_to_vaccinate when triage is ready to vaccinate" do
-        allow(triage).to receive(:ready_to_vaccinate?).and_return(true)
-        allow(triage).to receive(:do_not_vaccinate?).and_return(false)
-        allow(triage).to receive(:needs_follow_up?).and_return(false)
+    describe "#process_vaccination_result" do
+      it "transitions to vaccinated when vaccination_record is administered" do
+        allow(vaccination_record).to receive(:administered?).and_return(true)
+        allow(vaccination_record).to receive(:administered).and_return(true)
 
-        fsm.triaged
-        expect(fsm).to be_ready_to_vaccinate
+        fsm.process_vaccination_result
+        expect(fsm).to be_vaccinated
       end
 
-      it "transitions to unable_to_vaccinate when triage is do_not_vaccinate" do
-        allow(triage).to receive(:ready_to_vaccinate?).and_return(false)
-        allow(triage).to receive(:do_not_vaccinate?).and_return(true)
-        allow(triage).to receive(:needs_follow_up?).and_return(false)
+      it "transitions to unable_to_vaccinate when vaccination_record is not administered" do
+        allow(vaccination_record).to receive(:administered?).and_return(false)
+        allow(vaccination_record).to receive(:administered).and_return(false)
 
-        fsm.triaged
+        fsm.process_vaccination_result
         expect(fsm).to be_unable_to_vaccinate
       end
     end
   end
 
-  context "in ready_to_vaccinate state" do
-    let(:state) { :ready_to_vaccinate }
+  context "in consent_given_triage_needed state" do
+    let(:state) { :consent_given_triage_needed }
 
-    describe "#vaccine_administered" do
+    describe "#process_triage" do
+      it "transitions to triaged_ready_to_vaccinate when triage is ready to vaccinate" do
+        allow(triage).to receive(:ready_to_vaccinate?).and_return(true)
+        allow(triage).to receive(:do_not_vaccinate?).and_return(false)
+        allow(triage).to receive(:needs_follow_up?).and_return(false)
+
+        fsm.process_triage
+        expect(fsm).to be_triaged_ready_to_vaccinate
+      end
+
+      it "transitions to triaged_do_not_vaccinate when triage is do_not_vaccinate" do
+        allow(triage).to receive(:ready_to_vaccinate?).and_return(false)
+        allow(triage).to receive(:do_not_vaccinate?).and_return(true)
+        allow(triage).to receive(:needs_follow_up?).and_return(false)
+
+        fsm.process_triage
+        expect(fsm).to be_triaged_do_not_vaccinate
+      end
+    end
+  end
+
+  context "in triaged_ready_to_vaccinate state" do
+    let(:state) { :triaged_ready_to_vaccinate }
+
+    describe "#process_vaccination_result" do
       it "transitions to vaccinated when vaccination_record is administered" do
         allow(vaccination_record).to receive(:administered?).and_return(true)
         allow(vaccination_record).to receive(:administered).and_return(true)
 
-        fsm.vaccinate
+        fsm.process_vaccination_result
         expect(fsm).to be_vaccinated
       end
-    end
 
-    describe "#did_not_vaccinate" do
       it "transitions to unable_to_vaccinate when vaccination_record is not administered" do
         allow(vaccination_record).to receive(:administered?).and_return(false)
         allow(vaccination_record).to receive(:administered).and_return(false)
 
-        fsm.did_not_vaccinate
+        fsm.process_vaccination_result
         expect(fsm).to be_unable_to_vaccinate
       end
     end
