@@ -3,6 +3,7 @@
 # Table name: patient_sessions
 #
 #  id         :bigint           not null, primary key
+#  state      :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  patient_id :bigint           not null
