@@ -9,7 +9,7 @@ RSpec.describe AppBacklinkComponent, type: :component do
   let(:href) { "/previous_page" }
   let(:name) { "Previous Page" }
   let(:classes) { "additional-class" }
-  let(:attributes) { { id: "back-link", data: { controller: "back-link" } } }
+  let(:attributes) { { id: "back-link" } }
 
   it { should have_css(".nhsuk-back-link") }
   it { should have_css(".nhsuk-back-link__link") }
