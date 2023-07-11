@@ -4,136 +4,134 @@
 
 <%= render "banners" %>
 
-<div data-controller="child-vaccination">
-  <% if @consent_response.present? %>
-    <div class="nhsuk-card" id="consent">
-      <div class="nhsuk-card__content">
-        <h2 class="nhsuk-card__heading nhsuk-heading-m">
-          Consent
-        </h2>
+<% if @consent_response.present? %>
+  <div class="nhsuk-card" id="consent">
+    <div class="nhsuk-card__content">
+      <h2 class="nhsuk-card__heading nhsuk-heading-m">
+        Consent
+      </h2>
 
-        <%= render "triage/patient_triage_consent_response", consent_response: @consent_response %>
-      </div>
+      <%= render "triage/patient_triage_consent_response", consent_response: @consent_response %>
     </div>
-  <% end %>
+  </div>
+<% end %>
 
-  <%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
+<%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
 
-  <% if @consent_response&.consent_given? %>
-    <%= render AppPatientMedicalHistoryCardComponent.new(
-      patient: @patient,
-      consent_response: @consent_response,
-      triage: @triage
-    ) %>
-  <% end %>
+<% if @consent_response&.consent_given? %>
+  <%= render AppPatientMedicalHistoryCardComponent.new(
+    patient: @patient,
+    consent_response: @consent_response,
+    triage: @triage
+  ) %>
+<% end %>
 
-  <% if @vaccination_record.present? %>
-    <div class="nhsuk-card">
-      <div class="nhsuk-card__content">
-        <h2 class="nhsuk-card__heading nhsuk-heading-m">
-          Vaccination details
-        </h2>
-        <dl class="nhsuk-summary-list app-u-frutiger app-summary-list--no-bottom-border  nhsuk-u-margin-bottom-0">
+<% if @vaccination_record.present? %>
+  <div class="nhsuk-card">
+    <div class="nhsuk-card__content">
+      <h2 class="nhsuk-card__heading nhsuk-heading-m">
+        Vaccination details
+      </h2>
+      <dl class="nhsuk-summary-list app-u-frutiger app-summary-list--no-bottom-border  nhsuk-u-margin-bottom-0">
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Vaccine
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            <%= @vaccination_record.vaccine_name %>
+          </dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Dose
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            1 of 2
+          </dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Vaccine given?
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            <%= @vaccination_record.administered? ? "Yes" : "No" %>
+          </dd>
+        </div>
+        <% if @vaccination_record.site %>
           <div class="nhsuk-summary-list__row">
             <dt class="nhsuk-summary-list__key">
-              Vaccine
+              Site
             </dt>
             <dd class="nhsuk-summary-list__value">
-              <%= @vaccination_record.vaccine_name %>
+              <%= @vaccination_record.site.humanize %>
             </dd>
           </div>
-          <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-              Dose
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-              1 of 2
-            </dd>
-          </div>
-          <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-              Vaccine given?
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-              <%= @vaccination_record.administered? ? "Yes" : "No" %>
-            </dd>
-          </div>
-          <% if @vaccination_record.site %>
-            <div class="nhsuk-summary-list__row">
-              <dt class="nhsuk-summary-list__key">
-                Site
-              </dt>
-              <dd class="nhsuk-summary-list__value">
-                <%= @vaccination_record.site.humanize %>
-              </dd>
-            </div>
-          <% end %>
-          <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-              Date
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-              <%= vaccination_date(@vaccination_record.recorded_at) %>
-            </dd>
-          </div>
-          <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-              Time
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-              <%= @vaccination_record.recorded_at.strftime("%l:%M%P") %>
-            </dd>
-          </div>
-          <% if @vaccination_record.location_name %>
-            <div class="nhsuk-summary-list__row">
-              <dt class="nhsuk-summary-list__key">
-                Location
-              </dt>
-              <dd class="nhsuk-summary-list__value">
-                <%= @vaccination_record.location_name %>
-              </dd>
-            </div>
-          <% end %>
-        </dl>
-      </div>
-    </div>
-  <% else %>
-    <div class="nhsuk-card">
-      <div class="nhsuk-card__content">
-        <%= form_with model: @draft_vaccination_record,
-                      url: confirm_session_vaccination_path(
-                        session_id: @session.id,
-                        id: @patient.id,
-                      ),
-                      method: :post do |f| %>
-          <% content_for(:before_content) { f.govuk_error_summary } %>
-
-          <%= f.govuk_radio_buttons_fieldset(:administered,
-            legend: { size: 'm', text: 'Did they get the vaccine?' }) do %>
-            <p>They need their 1st dose.</p>
-
-            <%= f.govuk_radio_button :administered, true,
-              label: { text: 'Yes, they got the HPV vaccine' },
-              link_errors: true do %>
-              <%= f.govuk_collection_radio_buttons :site,
-                vaccination_site_options,
-                :id,
-                :name,
-                :description,
-                inline: true,
-                legend: {
-                  size: 'm',
-                  text: 'Where did they get it?',
-                  hidden: true
-                } %>
-            <% end %>
-            <%= f.govuk_radio_button :administered, false,
-              label: { text: 'No, they did not get it' } %>
-          <% end %>
-
-          <%= f.submit "Continue", class: "nhsuk-button" %>
         <% end %>
-      </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Date
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            <%= vaccination_date(@vaccination_record.recorded_at) %>
+          </dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Time
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            <%= @vaccination_record.recorded_at.strftime("%l:%M%P") %>
+          </dd>
+        </div>
+        <% if @vaccination_record.location_name %>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Location
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              <%= @vaccination_record.location_name %>
+            </dd>
+          </div>
+        <% end %>
+      </dl>
     </div>
-  <% end %>
-</div>
+  </div>
+<% else %>
+  <div class="nhsuk-card">
+    <div class="nhsuk-card__content">
+      <%= form_with model: @draft_vaccination_record,
+                    url: confirm_session_vaccination_path(
+                      session_id: @session.id,
+                      id: @patient.id,
+                    ),
+                    method: :post do |f| %>
+        <% content_for(:before_content) { f.govuk_error_summary } %>
+
+        <%= f.govuk_radio_buttons_fieldset(:administered,
+          legend: { size: 'm', text: 'Did they get the vaccine?' }) do %>
+          <p>They need their 1st dose.</p>
+
+          <%= f.govuk_radio_button :administered, true,
+            label: { text: 'Yes, they got the HPV vaccine' },
+            link_errors: true do %>
+            <%= f.govuk_collection_radio_buttons :site,
+              vaccination_site_options,
+              :id,
+              :name,
+              :description,
+              inline: true,
+              legend: {
+                size: 'm',
+                text: 'Where did they get it?',
+                hidden: true
+              } %>
+          <% end %>
+          <%= f.govuk_radio_button :administered, false,
+            label: { text: 'No, they did not get it' } %>
+        <% end %>
+
+        <%= f.submit "Continue", class: "nhsuk-button" %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

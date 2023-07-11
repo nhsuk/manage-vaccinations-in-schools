@@ -1,8 +1,6 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-two-thirds">
-    <%= form_with(model: @password, url: setup_offline_session_path,
-                  data: { controller: 'setup-offline',
-                          setup_offline_target: "form" }) do |f| %>
+    <%= form_with(model: @password, url: setup_offline_session_path) do |f| %>
       <%= f.govuk_error_summary %>
 
       <h1 class="nhsuk-heading-l">
@@ -38,8 +36,7 @@
         },
         width: 20,
         autocomplete: 'new-password',
-        data: { setup_offline_target: "password",
-                testid: "password" }
+        data: { testid: "password" }
       %>
 
       <%= f.govuk_password_field :password_confirmation,

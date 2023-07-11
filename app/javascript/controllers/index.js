@@ -3,12 +3,3 @@
 // ./bin/rails generate stimulus controllerName
 
 import { application } from "./application";
-
-import CampaignController from "./campaign_controller";
-application.register("campaign", CampaignController);
-
-import ChildVaccinationController from "./child_vaccination_controller";
-application.register("child-vaccination", ChildVaccinationController);
-
-import ConnectivityController from "./connectivity_controller";
-application.register("connectivity", ConnectivityController);
