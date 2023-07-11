@@ -40,13 +40,13 @@ RSpec.describe PatientSessionStateMachineConcern do
   context "in added_to_session state" do
     let(:state) { :added_to_session }
 
-    describe "#process_consent" do
+    describe "#do_consent" do
       it "transitions to consent_given_triage_not_needed when consent is given and needs no triage" do
         allow(consent_response).to receive(:consent_given?).and_return(true)
         allow(consent_response).to receive(:consent_refused?).and_return(false)
         allow(consent_response).to receive(:triage_needed?).and_return(false)
 
-        fsm.process_consent
+        fsm.do_consent
         expect(fsm).to be_consent_given_triage_not_needed
       end
 
@@ -55,7 +55,7 @@ RSpec.describe PatientSessionStateMachineConcern do
         allow(consent_response).to receive(:consent_refused?).and_return(false)
         allow(consent_response).to receive(:triage_needed?).and_return(true)
 
-        fsm.process_consent
+        fsm.do_consent
         expect(fsm).to be_consent_given_triage_needed
       end
 
@@ -64,7 +64,7 @@ RSpec.describe PatientSessionStateMachineConcern do
         allow(consent_response).to receive(:consent_refused?).and_return(true)
         allow(consent_response).to receive(:triage_needed?).and_return(false)
 
-        fsm.process_consent
+        fsm.do_consent
         expect(fsm).to be_consent_refused
       end
     end
@@ -73,12 +73,12 @@ RSpec.describe PatientSessionStateMachineConcern do
   context "in consent_given_triage_not_needed state" do
     let(:state) { :consent_given_triage_not_needed }
 
-    describe "#process_vaccination_result" do
+    describe "#do_vaccination" do
       it "transitions to vaccinated when vaccination_record is administered" do
         allow(vaccination_record).to receive(:administered?).and_return(true)
         allow(vaccination_record).to receive(:administered).and_return(true)
 
-        fsm.process_vaccination_result
+        fsm.do_vaccination
         expect(fsm).to be_vaccinated
       end
 
@@ -86,7 +86,7 @@ RSpec.describe PatientSessionStateMachineConcern do
         allow(vaccination_record).to receive(:administered?).and_return(false)
         allow(vaccination_record).to receive(:administered).and_return(false)
 
-        fsm.process_vaccination_result
+        fsm.do_vaccination
         expect(fsm).to be_unable_to_vaccinate
       end
     end
@@ -95,13 +95,13 @@ RSpec.describe PatientSessionStateMachineConcern do
   context "in consent_given_triage_needed state" do
     let(:state) { :consent_given_triage_needed }
 
-    describe "#process_triage" do
+    describe "#do_triage" do
       it "transitions to triaged_ready_to_vaccinate when triage is ready to vaccinate" do
         allow(triage).to receive(:ready_to_vaccinate?).and_return(true)
         allow(triage).to receive(:do_not_vaccinate?).and_return(false)
         allow(triage).to receive(:needs_follow_up?).and_return(false)
 
-        fsm.process_triage
+        fsm.do_triage
         expect(fsm).to be_triaged_ready_to_vaccinate
       end
 
@@ -110,7 +110,7 @@ RSpec.describe PatientSessionStateMachineConcern do
         allow(triage).to receive(:do_not_vaccinate?).and_return(true)
         allow(triage).to receive(:needs_follow_up?).and_return(false)
 
-        fsm.process_triage
+        fsm.do_triage
         expect(fsm).to be_triaged_do_not_vaccinate
       end
     end
@@ -119,12 +119,12 @@ RSpec.describe PatientSessionStateMachineConcern do
   context "in triaged_ready_to_vaccinate state" do
     let(:state) { :triaged_ready_to_vaccinate }
 
-    describe "#process_vaccination_result" do
+    describe "#do_vaccination" do
       it "transitions to vaccinated when vaccination_record is administered" do
         allow(vaccination_record).to receive(:administered?).and_return(true)
         allow(vaccination_record).to receive(:administered).and_return(true)
 
-        fsm.process_vaccination_result
+        fsm.do_vaccination
         expect(fsm).to be_vaccinated
       end
 
@@ -132,7 +132,7 @@ RSpec.describe PatientSessionStateMachineConcern do
         allow(vaccination_record).to receive(:administered?).and_return(false)
         allow(vaccination_record).to receive(:administered).and_return(false)
 
-        fsm.process_vaccination_result
+        fsm.do_vaccination
         expect(fsm).to be_unable_to_vaccinate
       end
     end

@@ -14,7 +14,7 @@ module PatientSessionStateMachineConcern
       state :unable_to_vaccinate
       state :vaccinated
 
-      event :process_consent do
+      event :do_consent do
         transitions from: :added_to_session,
                     to: :consent_given_triage_needed,
                     if: %i[consent_given? triage_needed?]
@@ -28,7 +28,7 @@ module PatientSessionStateMachineConcern
                     if: [:consent_refused?]
       end
 
-      event :process_triage do
+      event :do_triage do
         transitions from: :consent_given_triage_needed,
                     to: :triaged_ready_to_vaccinate,
                     if: [:triage_ready_to_vaccinate?]
@@ -38,7 +38,7 @@ module PatientSessionStateMachineConcern
                     if: [:triage_do_not_vaccinate?]
       end
 
-      event :process_vaccination_result do
+      event :do_vaccination do
         transitions from: :consent_given_triage_not_needed,
                     to: :vaccinated,
                     if: [:vaccination_administered?]
