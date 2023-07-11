@@ -8,7 +8,7 @@ const recordTemplateURL = (campaignId) =>
   `/sessions/${campaignId}/vaccinations/record-template`;
 
 export const recordRoute = new RegExp(
-  "/sessions/(\\d+)/vaccinations/(\\d+)/record$"
+  "/sessions/(\\d+)/vaccinations/(\\d+)/record$",
 );
 
 export const recordRouteHandler = async ({ request }) => {

@@ -181,47 +181,47 @@ async function then_i_should_see_the_triage_index_page() {
 
 async function then_i_should_see_the_correct_breadcrumbs() {
   await expect(p.locator(".nhsuk-breadcrumb__item:last-of-type")).toContainText(
-    "HPV session at St Andrew's Benn CofE (Voluntary Aided) Primary School"
+    "HPV session at St Andrew's Benn CofE (Voluntary Aided) Primary School",
   );
 }
 
 async function then_i_should_be_on_the_tab(name: string) {
   await expect(p.getByRole("tab", { name: name, exact: true })).toHaveAttribute(
     "aria-selected",
-    "true"
+    "true",
   );
 }
 
 async function then_i_should_see_a_triage_row_for_the_patient(
   name,
-  attributes = {}
+  attributes = {},
 ) {
   let patient = { ...patients[name], ...attributes };
 
   let id = patient.tab.toLowerCase().replace(" ", "-");
   await expect(
     p.locator(`#${id} tr:nth-child(${patient.row}) td:first-child`),
-    `Name for patient row: ${patient.row} name: ${name}`
+    `Name for patient row: ${patient.row} name: ${name}`,
   ).toContainText(name);
 
   if (patient.triage_reasons) {
     for (let reason of patient.triage_reasons) {
       await expect(
         p.locator(`#${id} tr:nth-child(${patient.row}) td:nth-child(2)`),
-        `Triage reason for patient row: ${patient.row} name: ${name}`
+        `Triage reason for patient row: ${patient.row} name: ${name}`,
       ).toContainText(reason);
     }
   }
 
   await expect(
     p.locator(`#${id} tr:nth-child(${patient.row}) td:nth-child(3)`),
-    `Status text for patient row: ${patient.row} name: ${name}`
+    `Status text for patient row: ${patient.row} name: ${name}`,
   ).toContainText(patient.status);
 
   let colourClass = "nhsuk-tag--" + patient.status_colour;
   await expect(
     p.locator(`#${id} tr:nth-child(${patient.row}) td:nth-child(3) div`),
-    `Status colour for patient row: ${patient.row} name: ${name}`
+    `Status colour for patient row: ${patient.row} name: ${name}`,
   ).toHaveClass(new RegExp(colourClass));
 }
 
@@ -240,7 +240,7 @@ async function and_i_should_see_a_banner_for_the_patient(name) {
 
   await expect(p.locator(".app-consent-banner > span")).toHaveText(title);
   await expect(p.locator("div.app-consent-banner")).toHaveClass(
-    new RegExp(colourClass)
+    new RegExp(colourClass),
   );
 
   if (content != null)
@@ -264,18 +264,18 @@ async function and_i_should_see_the_consent_section_for_the_patient(name) {
 
   if (parentRelationship) consentResponse += " " + parentRelationship;
   await expect(p.locator("#consent")).toContainText(
-    parentRelationship + " " + patient["parent_name"]
+    parentRelationship + " " + patient["parent_name"],
   );
 
   if (patient["type_of_consent"]) {
     await expect(p.locator("#consent")).toContainText(
-      "Type of consent " + patient["type_of_consent"]
+      "Type of consent " + patient["type_of_consent"],
     );
   }
 
   if (patient["reason_for_refusal"]) {
     await expect(p.locator("#consent")).toContainText(
-      "Reason for refusal " + patient["reason_for_refusal"]
+      "Reason for refusal " + patient["reason_for_refusal"],
     );
   }
 }
@@ -286,21 +286,21 @@ async function and_i_should_see_health_question_responses_if_present(name) {
 
   if (consent && consent["healthQuestionResponses"]) {
     await expect(
-      p.getByRole("heading", { name: "Health questions" })
+      p.getByRole("heading", { name: "Health questions" }),
     ).toBeVisible();
 
     for (const example_question of consent["healthQuestionResponses"]) {
       await expect(
-        p.locator("h3:text('" + example_question.question + "')")
+        p.locator("h3:text('" + example_question.question + "')"),
       ).toContainText(example_question.question);
 
       if (example_question["response"].toLowerCase() == "yes") {
         await expect(
-          p.locator("h3:text('" + example_question.question + "') + p")
+          p.locator("h3:text('" + example_question.question + "') + p"),
         ).toContainText("Yes – " + example_question.notes);
       } else {
         await expect(
-          p.locator("h3:text('" + example_question.question + "') + p")
+          p.locator("h3:text('" + example_question.question + "') + p"),
         ).toContainText("No");
       }
     }

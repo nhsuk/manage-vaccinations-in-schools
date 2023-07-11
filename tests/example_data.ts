@@ -5,10 +5,10 @@ import * as path from "path";
 
 const example_campaign_path = path.join(
   __dirname,
-  "../db/sample_data/example-test-campaign.json"
+  "../db/sample_data/example-test-campaign.json",
 );
 const example_campaign = JSON.parse(
-  fs.readFileSync(example_campaign_path, "utf8")
+  fs.readFileSync(example_campaign_path, "utf8"),
 );
 
 export function example_patient(name: string): Record<string, any> | null {
