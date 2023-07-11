@@ -42,7 +42,7 @@ describe("fetchWithTimeout", () => {
   test("works if request is shorter than timeout", async () => {
     fetch.mockResponseOnce(
       () =>
-        new Promise((resolve) => setTimeout(() => resolve({ body: "ok" }), 1))
+        new Promise((resolve) => setTimeout(() => resolve({ body: "ok" }), 1)),
     );
     await expect(fetchWithTimeout("/")).resolves.not.toThrow();
   });
@@ -50,7 +50,7 @@ describe("fetchWithTimeout", () => {
   test("times out if request takes longer than timeout", async () => {
     fetch.mockResponseOnce(
       () =>
-        new Promise((resolve) => setTimeout(() => resolve({ body: "ok" }), 2))
+        new Promise((resolve) => setTimeout(() => resolve({ body: "ok" }), 2)),
     );
     await expect(fetchWithTimeout("/", { timeout: 1 })).rejects.toThrow();
   });

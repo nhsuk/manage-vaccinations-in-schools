@@ -22,16 +22,16 @@ export const init = async (passphrase: string) => {
 
 export const addAll = async (requests: RequestInfo[]): Promise<void> => {
   const responses = await Promise.all(
-    requests.map((request) => fetch(request))
+    requests.map((request) => fetch(request)),
   );
 
   await Promise.all(
-    requests.map((request, index) => put(urlOf(request), responses[index]))
+    requests.map((request, index) => put(urlOf(request), responses[index])),
   );
 };
 
 export const match = async (
-  request: RequestInfo
+  request: RequestInfo,
 ): Promise<Response | undefined> => {
   const requestObject = await getByUrl("cachedResponses", urlOf(request));
   if (!requestObject) return undefined;
@@ -42,7 +42,7 @@ export const match = async (
 
 export const put = async (
   request: RequestInfo,
-  response: Response
+  response: Response,
 ): Promise<void> => {
   const body = await response.clone().blob();
   const encryptedBlob = await encryptBlob(body);

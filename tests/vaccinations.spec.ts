@@ -53,7 +53,7 @@ async function when_i_go_to_the_vaccinations_page() {
 async function then_i_should_be_on_the_tab(name: string) {
   await expect(p.getByRole("tab", { name: name, exact: true })).toHaveAttribute(
     "aria-selected",
-    "true"
+    "true",
   );
 }
 
@@ -71,7 +71,7 @@ async function when_i_click_on_the_first_patient() {
 
 async function then_i_should_see_the_vaccinations_page() {
   await expect(p.getByRole("heading", { name: "Child details" })).toContainText(
-    "Child details"
+    "Child details",
   );
 }
 
@@ -114,7 +114,7 @@ async function when_i_click_on_show_answers() {
 }
 
 async function then_i_should_see_health_question_responses_if_present(
-  name: string
+  name: string,
 ) {
   let patient = example_patient(name);
   let consent = patient["consent"];
@@ -124,7 +124,7 @@ async function then_i_should_see_health_question_responses_if_present(
       await expect(
         p.getByRole("heading", {
           name: example_question["question"],
-        })
+        }),
       ).toContainText(example_question["question"]);
     }
   } else {
@@ -134,7 +134,7 @@ async function then_i_should_see_health_question_responses_if_present(
 
 async function then_i_should_see_the_vaccination_details() {
   await expect(
-    p.getByRole("heading", { name: "Vaccination details" })
+    p.getByRole("heading", { name: "Vaccination details" }),
   ).toBeVisible();
 }
 
@@ -145,7 +145,7 @@ async function when_i_record_an_unsuccessful_vaccination() {
 
 async function then_i_should_see_the_reason_page() {
   await expect(p.locator("legend")).toContainText(
-    "Why was the HPV vaccine not given"
+    "Why was the HPV vaccine not given",
   );
 }
 

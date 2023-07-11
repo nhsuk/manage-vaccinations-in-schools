@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus";
 
 function parseIdsFromURL(url) {
   const [_, campaignId, childId] = url.match(
-    "/sessions/(\\d+)/vaccinations/(\\d+)$"
+    "/sessions/(\\d+)/vaccinations/(\\d+)$",
   );
   return { campaignId, childId };
 }

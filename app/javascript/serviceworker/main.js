@@ -14,7 +14,7 @@ import { getAll, destroy } from "./store";
 const setDefaultHandler = () => {
   self.addEventListener("fetch", (event) => {
     event.respondWith(
-      isOnline ? networkFirst(event.request) : cacheOnly(event.request)
+      isOnline ? networkFirst(event.request) : cacheOnly(event.request),
     );
   });
 };
@@ -22,7 +22,7 @@ const setDefaultHandler = () => {
 const flushRequest = async (request) => {
   console.debug(
     "[Service Worker refreshOnlineStatus] sending request:",
-    request
+    request,
   );
   try {
     const csrf = await fetch("/csrf");
@@ -45,13 +45,13 @@ const flushRequest = async (request) => {
       console.debug(
         "[Service Worker refreshOnlineStatus] error sending request:",
         request,
-        response
+        response,
       );
     }
   } catch (err) {
     console.debug(
       "[Service Worker refreshOnlineStatus] error sending request:",
-      err
+      err,
     );
   }
 };

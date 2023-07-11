@@ -16,13 +16,13 @@ export default class extends Controller {
       });
       clearTimeout(timeoutFn);
       console.log(
-        `[Connectivity Controller] got connection status: ${this.connectionStatus}`
+        `[Connectivity Controller] got connection status: ${this.connectionStatus}`,
       );
     } catch (err) {
       console.error(
         "[Connectivity Controller] got error sending GET_CONNECTION_STATUS ",
         "message to service worker:",
-        err
+        err,
       );
     }
   }
@@ -43,14 +43,14 @@ export default class extends Controller {
     this.connectionStatusValue = st;
     if (st) {
       console.log(
-        "[Connectivity Controller] setting connection status to online"
+        "[Connectivity Controller] setting connection status to online",
       );
       this.status = "Online";
       this.buttonTarget.textContent = "Go offline";
       this.bannerTarget.style.display = "none";
     } else {
       console.log(
-        "[Connectivity Controller] setting connection status to offline"
+        "[Connectivity Controller] setting connection status to offline",
       );
       this.status = "Offline";
       this.buttonTarget.textContent = "Go online";
@@ -60,7 +60,7 @@ export default class extends Controller {
 
   async toggleConnection() {
     console.log(
-      "[Connectivity Controller] sending message to toggle connection"
+      "[Connectivity Controller] sending message to toggle connection",
     );
     this.connectionStatus = await wb.messageSW({ type: "TOGGLE_CONNECTION" });
   }

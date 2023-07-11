@@ -64,7 +64,7 @@ export class SimpleCrypto {
       encoder.encode(this.passphrase),
       { name: "PBKDF2" },
       false,
-      ["deriveBits", "deriveKey"]
+      ["deriveBits", "deriveKey"],
     );
 
     // Derive a new key from the initial key. Using salt makes it unique per
@@ -80,7 +80,7 @@ export class SimpleCrypto {
       initialKey,
       { name: "AES-GCM", length: 256 },
       false,
-      ["encrypt", "decrypt"]
+      ["encrypt", "decrypt"],
     );
   }
 
@@ -104,13 +104,13 @@ export class SimpleCrypto {
         iv,
       },
       this.key,
-      encoder.encode(plaintext)
+      encoder.encode(plaintext),
     );
 
     // Prepend the iv to the ciphertext, so that it can be retrieved later,
     // then base64-encode the result.
     return await bufferToBase64(
-      new Uint8Array([...iv, ...new Uint8Array(ciphertext)])
+      new Uint8Array([...iv, ...new Uint8Array(ciphertext)]),
     );
   }
 
@@ -133,7 +133,7 @@ export class SimpleCrypto {
         iv,
       },
       this.key,
-      ciphertext
+      ciphertext,
     );
 
     return decoder.decode(plaintext);

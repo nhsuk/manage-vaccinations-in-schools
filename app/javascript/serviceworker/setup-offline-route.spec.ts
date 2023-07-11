@@ -33,7 +33,7 @@ describe("setupOfflineRouteHandler", () => {
           ["offline_password[assets_css]", "/css"],
           ["offline_password[assets_js]", "/js"],
           ["offline_password[password]", "password"],
-        ])
+        ]),
       ),
     };
     const response = { type: "opaqueredirect" };

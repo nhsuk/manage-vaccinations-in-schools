@@ -28,7 +28,7 @@ test.afterEach(async () => {
 test.skip("Works offline", async ({ page, context }) => {
   await page.goto("/reset");
   await expect(page.locator("h1")).toContainText(
-    "Manage vaccinations for school-aged children"
+    "Manage vaccinations for school-aged children",
   );
 
   await page.getByTestId("start").click();
@@ -55,7 +55,7 @@ test.skip("Works offline", async ({ page, context }) => {
 
   await page.getByRole("link", { name: "Record vaccinations" }).click();
   await expect(page.getByTestId("child-status").nth(0)).toContainText(
-    "No outcome yet"
+    "No outcome yet",
   );
 
   await page.getByTestId("child-link").nth(0).click();
@@ -68,6 +68,6 @@ test.skip("Works offline", async ({ page, context }) => {
 
   await page.goto("/sessions/1/vaccinations");
   await expect(page.getByTestId("child-status").nth(0)).toContainText(
-    "Vaccinated"
+    "Vaccinated",
   );
 });
