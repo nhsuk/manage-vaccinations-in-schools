@@ -51,6 +51,15 @@ task :load_campaign_example, [:example_file] => :environment do |_task, args|
       unless patient.consent_responses.include?(consent_response)
         patient.consent_responses << consent_response
       end
+
+      transition_states(patient.patient_sessions.first)
     end
   end
+end
+
+def transition_states(patient_session)
+  patient_session.do_consent if patient_session.may_do_consent?
+  patient_session.do_triage if patient_session.may_do_triage?
+  patient_session.do_vaccination if patient_session.may_do_vaccination?
+  patient_session.save!
 end
