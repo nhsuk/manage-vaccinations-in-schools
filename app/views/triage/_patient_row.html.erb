@@ -5,8 +5,7 @@
   <td class="nhsuk-table__cell">
     <%
     if middle_column == :triage_reasons
-      if %i[triage follow_up].include? action
-        consent_response = patient.consent_response_for_campaign(@session.campaign)
+      consent_response = patient.consent_response_for_campaign(@session.campaign)
     %>
       <ul class="nhsuk-list nhsuk-u-margin-bottom-2">
         <% consent_response.reasons_triage_needed.map do |reason| %>
@@ -14,10 +13,9 @@
         <% end %>
       </ul>
     <%
-      end
     else
     %>
-    <%= patient.dob.to_fs(:nhsuk_date_short_month) %>
+      <%= patient.dob.to_fs(:nhsuk_date_short_month) %>
     <% end %>
 
   </td>
