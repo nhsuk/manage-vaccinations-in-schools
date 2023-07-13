@@ -54,7 +54,7 @@ const patients = {
   },
 };
 
-test("Performing triage", async ({ page }) => {
+test("Viewing patients", async ({ page }) => {
   p = page;
 
   await given_the_app_is_setup();
@@ -78,26 +78,48 @@ test("Performing triage", async ({ page }) => {
     await when_i_go_back_to_the_triage_index_page();
     await then_i_should_see_the_triage_index_page();
   }
+});
 
-  // await when_i_click_on_the_patient("Aaron Pfeffer");
-  // await when_i_enter_the_note("Notes from nurse");
-  // await when_i_click_on_the_option("Do not vaccinate");
-  // await when_i_click_on_the_submit_button();
-  // await then_i_should_see_a_triage_row_for_the_patient("Aaron Pfeffer", {
-  //   note: "Notes from nurse",
-  //   status: "Do not vaccinate",
-  //   status_colour: "red",
-  // });
+// Needs state transitions to be added to controller actions
+test("Triage a patient as do not vaccinate", async ({ page }) => {
+  p = page;
 
-  // await when_i_click_on_the_patient("Aaron Pfeffer");
-  // await when_i_clear_the_note();
-  // await when_i_click_on_the_option("Ready to vaccinate");
-  // await when_i_click_on_the_submit_button();
-  // await then_i_should_see_a_triage_row_for_the_patient("Aaron Pfeffer", {
-  //   note: null,
-  //   status: "Vaccinate",
-  //   status_colour: "purple",
-  // });
+  await given_the_app_is_setup();
+
+  await when_i_go_to_the_triage_page_for_the_first_session();
+  await when_i_click_on_the_tab("Needs triage");
+  await when_i_click_on_the_patient("Blaine DuBuque");
+  await when_i_enter_the_note("Notes from nurse");
+  await when_i_click_on_the_option("Do not vaccinate");
+  await when_i_click_on_the_submit_button();
+  await when_i_click_on_the_tab("Triage complete");
+  await then_i_should_see_a_triage_row_for_the_patient("Blaine DuBuque", {
+    note: "Notes need triage",
+    action: "Do not vaccinate",
+    action_colour: "red",
+    tab: "Triage complete",
+  });
+});
+
+// Needs state transitions to be added to controller actions
+test("Triage a patient as ready to vaccinate", async ({ page }) => {
+  p = page;
+
+  await given_the_app_is_setup();
+
+  await when_i_go_to_the_triage_page_for_the_first_session();
+  await when_i_click_on_the_tab("Needs triage");
+  await when_i_click_on_the_patient("Caridad Sipes");
+  await when_i_enter_the_note("Reached mother, should be able to proceed");
+  await when_i_click_on_the_option("Ready to vaccinate");
+  await when_i_click_on_the_submit_button();
+  await when_i_click_on_the_tab("Triage complete");
+  await then_i_should_see_a_triage_row_for_the_patient("Caridad Sipes", {
+    note: "Notes need triage",
+    action: "Vaccinate",
+    action_colour: "purple",
+    tab: "Triage complete",
+  });
 });
 
 async function given_the_app_is_setup() {
@@ -168,10 +190,7 @@ async function then_i_should_see_a_triage_row_for_the_patient(
     }
   }
 
-  await expect(
-    row,
-    `[${name}] Status text should be ${patient.action}`
-  ).toContainText(patient.action);
+  await expect(row, `[${name}] Status text`).toContainText(patient.action);
 
   const colourClass = "nhsuk-tag--" + patient.action_colour;
   await expect(

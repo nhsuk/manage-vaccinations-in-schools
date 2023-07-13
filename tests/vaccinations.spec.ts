@@ -10,28 +10,28 @@ test("Records vaccinations", async ({ page }) => {
   await when_i_go_to_the_vaccinations_page();
   await then_i_should_be_on_the_tab("Action needed");
 
-  await when_i_click_on_the_patient("Aaron Pfeffer");
+  await when_i_click_on_the_patient("Ernie Funk");
   await then_i_should_see_the_vaccinations_page();
   await then_i_should_see_the_medical_history_section();
 
   await when_i_click_on_show_answers();
-  await then_i_should_see_health_question_responses_if_present("Aaron Pfeffer");
+  await then_i_should_see_health_question_responses_if_present("Ernie Funk");
 
   await when_i_record_a_vaccination();
   await then_i_should_see_the_check_answers_page();
 
   await when_i_press_confirm();
   await then_i_should_see_a_success_message();
-  await and_i_should_see_the_outcome_as_vaccinated();
+  await and_i_should_see_the_outcome_as_vaccinated("Ernie Funk");
 
   await when_i_click_on_the_tab("Vaccinated");
   await then_i_should_be_on_the_tab("Vaccinated");
 
-  await when_i_click_on_the_patient("Aaron Pfeffer");
+  await when_i_click_on_the_patient("Ernie Funk");
   await then_i_should_see_the_vaccination_details();
 
   await when_i_click_on_back();
-  await when_i_click_on_the_patient("Aliza Kshlerin");
+  await when_i_click_on_the_patient("Jessika Lindgren");
   await when_i_record_an_unsuccessful_vaccination();
   await then_i_should_see_the_reason_page();
 
@@ -85,8 +85,9 @@ async function then_i_should_see_a_success_message() {
   await expect(p.getByRole("alert")).toContainText("Success");
 }
 
-async function and_i_should_see_the_outcome_as_vaccinated() {
-  await expect(p.getByTestId("child-action").nth(0)).toContainText("Vaccinate");
+async function and_i_should_see_the_outcome_as_vaccinated(name) {
+  const row = p.locator(`tr`, { hasText: name });
+  await expect(row.getByTestId("child-action")).toContainText("Vaccinate");
 }
 
 async function then_i_should_see_the_check_answers_page() {
