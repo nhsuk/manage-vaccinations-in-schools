@@ -27,12 +27,17 @@
     "jest": "^29.6.1",
     "jest-environment-jsdom": "^29.6.1",
     "jest-fetch-mock": "^3.0.3",
+    "mutationobserver-shim": "^0.3.7",
     "prettier": "^3.0.0"
   },
   "packageManager": "yarn@1.22.19",
   "jest": {
     "collectCoverage": true,
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest.setup.js"
+    ],
     "testPathIgnorePatterns": [
+      "app/assets/builds/",
       "node_modules/",
       "tests"
     ],
