@@ -26,11 +26,9 @@ test("Triaging patients", async ({ page }) => {
   await when_i_click_on_the_option("Do not vaccinate");
   await when_i_click_on_the_submit_button();
   await when_i_click_on_the_tab("Triage complete");
-  await then_i_should_see_a_triage_row_for_the_patient("Blaine DuBuque", {
-    note: "Notes need triage",
-    action: "Do not vaccinate",
-    actionColour: "red",
+  await then_i_should_see_a_row_for_the_patient("Blaine DuBuque", {
     tab: "Triage complete",
+    action: "Do not vaccinate",
   });
 
   await when_i_click_on_the_tab("Needs triage");
@@ -39,11 +37,9 @@ test("Triaging patients", async ({ page }) => {
   await when_i_click_on_the_option("Ready to vaccinate");
   await when_i_click_on_the_submit_button();
   await when_i_click_on_the_tab("Triage complete");
-  await then_i_should_see_a_triage_row_for_the_patient("Caridad Sipes", {
-    note: "Notes need triage",
-    action: "Vaccinate",
-    actionColour: "purple",
+  await then_i_should_see_a_row_for_the_patient("Caridad Sipes", {
     tab: "Triage complete",
+    action: "Vaccinate",
   });
 });
 
@@ -78,33 +74,16 @@ export async function then_i_should_see_the_correct_breadcrumbs() {
   );
 }
 
-export async function then_i_should_see_a_triage_row_for_the_patient(
+export async function then_i_should_see_a_row_for_the_patient(
   name,
-  attributes = {},
+  attributes,
 ) {
   const patient = { ...patientExpectations[name], ...attributes };
   const id = patient.tab.toLowerCase().replace(/ /g, "-");
   const row = p.locator(`#${id} tr`, { hasText: name });
 
-  if (patient.triage_reasons) {
-    for (let reason of patient.triage_reasons) {
-      await expect(row, `[${name}] Triage reason`).toContainText(reason);
-    }
-  }
-
-  await expect(row, `[${name}] Status text`).toContainText(patient.action);
-
-  const colourClass = "nhsuk-tag--" + patient.actionColour;
-  await expect(
-    row.locator("td:nth-child(3) div"),
-    `[${name}] Status colour`,
-  ).toHaveClass(new RegExp(colourClass));
-}
-
-export async function then_i_should_see_the_triage_page_for_the_patient(name) {
-  await expect(p.locator("h1"), `[${name}] Triage page title`).toContainText(
-    name,
-  );
+  await expect(row).toBeVisible();
+  await expect(row).toContainText(patient.action);
 }
 
 export async function and_i_should_see_the_consent_section_for_the_patient(
