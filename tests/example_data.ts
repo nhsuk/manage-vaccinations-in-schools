@@ -15,9 +15,9 @@ export const patientExpectations = {
   },
   "Caridad Sipes": {
     tab: "Needs triage",
-    action: "Triage: follow up",
+    action: "Triage started",
     actionColour: "aqua-green",
-    bannerTitle: "Triage follow-up needed",
+    bannerTitle: "Triage started",
     triageReasons: ["Notes need triage"],
   },
   "Jessika Lindgren": {

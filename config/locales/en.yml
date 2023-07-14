@@ -17,7 +17,7 @@ en:
           not_vaccinated: Could not vaccinate
           vaccinate: Vaccinate
           triage: Triage
-          follow_up: "Triage: follow up"
+          follow_up: "Triage started"
           do_not_vaccinate: Do not vaccinate
           unknown: Unknown
       triage:
@@ -25,7 +25,7 @@ en:
           to_do: To do
           ready_to_vaccinate: Ready to vaccinate
           do_not_vaccinate: Do not vaccinate
-          needs_follow_up: Needs follow up
+          needs_follow_up: Keep in triage
     errors:
       models:
         offline_password:
