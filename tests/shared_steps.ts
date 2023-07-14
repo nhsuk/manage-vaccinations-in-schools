@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { patient_expectations, example_patient } from "./example_data";
+import { patientExpectations } from "./example_data";
 
 let p = null;
 
@@ -31,10 +31,10 @@ export async function then_i_should_be_on_the_tab(name: string) {
 }
 
 export async function then_i_should_see_a_banner_for_the_patient(name) {
-  const patient = patient_expectations[name];
-  const title = patient["banner_title"];
-  const colourClass = "app-consent-banner--" + patient["action_colour"];
-  const content = patient["banner_content"];
+  const patient = patientExpectations[name];
+  const title = patient["bannerTitle"];
+  const colourClass = "app-consent-banner--" + patient["actionColour"];
+  const content = patient["bannerContent"];
 
   if (title == null) return;
 

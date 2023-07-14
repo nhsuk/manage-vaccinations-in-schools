@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { patient_expectations, example_patient } from "./example_data";
+import { patientExpectations, examplePatient } from "./example_data";
 import {
   init_page as init_shared_steps_page,
   given_the_app_is_setup,
@@ -24,10 +24,10 @@ test("Viewing patients", async ({ page }) => {
   await then_i_should_see_the_correct_breadcrumbs();
   await then_i_should_be_on_the_tab("Needs triage");
 
-  for (let name in patient_expectations) {
-    if (!patient_expectations[name].tab) continue;
+  for (let name in patientExpectations) {
+    if (!patientExpectations[name].tab) continue;
 
-    await when_i_click_on_the_tab(patient_expectations[name].tab);
+    await when_i_click_on_the_tab(patientExpectations[name].tab);
     await then_i_should_see_a_triage_row_for_the_patient(name);
 
     await when_i_click_on_the_patient(name);
@@ -76,19 +76,19 @@ export async function then_i_should_see_a_triage_row_for_the_patient(
   name,
   attributes = {},
 ) {
-  const patient = { ...patient_expectations[name], ...attributes };
+  const patient = { ...patientExpectations[name], ...attributes };
   const id = patient.tab.toLowerCase().replace(/ /g, "-");
   const row = p.locator(`#${id} tr`, { hasText: name });
 
-  if (patient.triage_reasons) {
-    for (let reason of patient.triage_reasons) {
+  if (patient.triageReasons) {
+    for (let reason of patient.triageReasons) {
       await expect(row, `[${name}] Triage reason`).toContainText(reason);
     }
   }
 
   await expect(row, `[${name}] Status text`).toContainText(patient.action);
 
-  const colourClass = "nhsuk-tag--" + patient.action_colour;
+  const colourClass = "nhsuk-tag--" + patient.actionColour;
   await expect(
     row.locator("td:nth-child(3) div"),
     `[${name}] Status colour`,
@@ -104,7 +104,7 @@ export async function then_i_should_see_the_triage_page_for_the_patient(name) {
 export async function and_i_should_see_the_consent_section_for_the_patient(
   name,
 ) {
-  const consentResponse = example_patient(name).consent;
+  const consentResponse = examplePatient(name).consent;
 
   if (!consentResponse) {
     await expect(
@@ -150,7 +150,7 @@ export async function and_i_should_see_the_consent_section_for_the_patient(
 export async function and_i_should_see_health_question_responses_if_present(
   name,
 ) {
-  let consent = example_patient(name).consent;
+  let consent = examplePatient(name).consent;
 
   if (
     consent &&
