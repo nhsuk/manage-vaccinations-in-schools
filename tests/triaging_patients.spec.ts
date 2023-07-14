@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { patient_expectations, example_patient } from "./example_data";
+import { patientExpectations, examplePatient } from "./example_data";
 import {
   init_page as init_shared_steps_page,
   given_the_app_is_setup,
@@ -29,7 +29,7 @@ test("Triaging patients", async ({ page }) => {
   await then_i_should_see_a_triage_row_for_the_patient("Blaine DuBuque", {
     note: "Notes need triage",
     action: "Do not vaccinate",
-    action_colour: "red",
+    actionColour: "red",
     tab: "Triage complete",
   });
 
@@ -42,7 +42,7 @@ test("Triaging patients", async ({ page }) => {
   await then_i_should_see_a_triage_row_for_the_patient("Caridad Sipes", {
     note: "Notes need triage",
     action: "Vaccinate",
-    action_colour: "purple",
+    actionColour: "purple",
     tab: "Triage complete",
   });
 });
@@ -82,7 +82,7 @@ export async function then_i_should_see_a_triage_row_for_the_patient(
   name,
   attributes = {},
 ) {
-  const patient = { ...patient_expectations[name], ...attributes };
+  const patient = { ...patientExpectations[name], ...attributes };
   const id = patient.tab.toLowerCase().replace(/ /g, "-");
   const row = p.locator(`#${id} tr`, { hasText: name });
 
@@ -94,7 +94,7 @@ export async function then_i_should_see_a_triage_row_for_the_patient(
 
   await expect(row, `[${name}] Status text`).toContainText(patient.action);
 
-  const colourClass = "nhsuk-tag--" + patient.action_colour;
+  const colourClass = "nhsuk-tag--" + patient.actionColour;
   await expect(
     row.locator("td:nth-child(3) div"),
     `[${name}] Status colour`,
@@ -110,7 +110,7 @@ export async function then_i_should_see_the_triage_page_for_the_patient(name) {
 export async function and_i_should_see_the_consent_section_for_the_patient(
   name,
 ) {
-  const consentResponse = example_patient(name).consent;
+  const consentResponse = examplePatient(name).consent;
 
   if (!consentResponse) {
     await expect(
@@ -156,7 +156,7 @@ export async function and_i_should_see_the_consent_section_for_the_patient(
 export async function and_i_should_see_health_question_responses_if_present(
   name,
 ) {
-  let consent = example_patient(name).consent;
+  let consent = examplePatient(name).consent;
 
   if (
     consent &&

@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { example_patient } from "./example_data";
+import { examplePatient } from "./example_data";
 
 let p = null;
 
@@ -117,7 +117,7 @@ async function when_i_click_on_show_answers() {
 async function then_i_should_see_health_question_responses_if_present(
   name: string,
 ) {
-  let patient = example_patient(name);
+  let patient = examplePatient(name);
   let consent = patient["consent"];
 
   if (consent && consent["healthQuestionResponses"]) {
