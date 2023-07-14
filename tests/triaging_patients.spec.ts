@@ -43,41 +43,38 @@ test("Triaging patients", async ({ page }) => {
   });
 });
 
-export async function when_i_go_to_the_triage_page_for_the_first_session() {
+async function when_i_go_to_the_triage_page_for_the_first_session() {
   await p.goto("/sessions/1");
   await p.getByRole("link", { name: "Triage" }).click();
 }
 
-export async function when_i_go_back_to_the_triage_index_page() {
+async function when_i_go_back_to_the_triage_index_page() {
   await p.getByRole("link", { name: "Back to triage" }).click();
 }
 
-export async function when_i_enter_the_note(note) {
+async function when_i_enter_the_note(note) {
   await p.getByLabel("Triage notes").type(note);
 }
 
-export async function when_i_clear_the_note() {
+async function when_i_clear_the_note() {
   await p.getByLabel("Triage notes").clear();
 }
 
-export async function when_i_click_on_the_submit_button() {
+async function when_i_click_on_the_submit_button() {
   await p.getByRole("button", { name: "Save triage" }).click();
 }
 
-export async function then_i_should_see_the_triage_index_page() {
+async function then_i_should_see_the_triage_index_page() {
   await expect(p.locator("h1")).toContainText("Triage");
 }
 
-export async function then_i_should_see_the_correct_breadcrumbs() {
+async function then_i_should_see_the_correct_breadcrumbs() {
   await expect(p.locator(".nhsuk-breadcrumb__item:last-of-type")).toContainText(
     "HPV session at St Andrew's Benn CofE (Voluntary Aided) Primary School",
   );
 }
 
-export async function then_i_should_see_a_row_for_the_patient(
-  name,
-  attributes,
-) {
+async function then_i_should_see_a_row_for_the_patient(name, attributes) {
   const patient = { ...patientExpectations[name], ...attributes };
   const id = patient.tab.toLowerCase().replace(/ /g, "-");
   const row = p.locator(`#${id} tr`, { hasText: name });
@@ -86,9 +83,7 @@ export async function then_i_should_see_a_row_for_the_patient(
   await expect(row).toContainText(patient.action);
 }
 
-export async function and_i_should_see_the_consent_section_for_the_patient(
-  name,
-) {
+async function and_i_should_see_the_consent_section_for_the_patient(name) {
   const consentResponse = examplePatient(name).consent;
 
   if (!consentResponse) {
@@ -132,9 +127,7 @@ export async function and_i_should_see_the_consent_section_for_the_patient(
     );
 }
 
-export async function and_i_should_see_health_question_responses_if_present(
-  name,
-) {
+async function and_i_should_see_health_question_responses_if_present(name) {
   let consent = examplePatient(name).consent;
 
   if (
