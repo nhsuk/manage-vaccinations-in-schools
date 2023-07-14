@@ -18,20 +18,21 @@ test("Triaging patients", async ({ page }) => {
   await init_shared_steps_page(page);
 
   await given_the_app_is_setup();
-
   await when_i_go_to_the_triage_page_for_the_first_session();
+
+  // Triage - start triage but without outcome
   await when_i_click_on_the_tab("Needs triage");
-  await when_i_click_on_the_patient("Blaine DuBuque");
-  await when_i_enter_the_note("Notes from nurse");
-  await when_i_click_on_the_option("Do not vaccinate");
+  await when_i_click_on_the_patient("Caridad Sipes");
+  await when_i_enter_the_note("Unable to reach mother");
+  await when_i_click_on_the_option("Keep in triage");
   await when_i_click_on_the_submit_button();
-  await when_i_click_on_the_tab("Triage complete");
-  await then_i_should_see_a_row_for_the_patient("Blaine DuBuque", {
-    tab: "Triage complete",
-    action: "Do not vaccinate",
+  await when_i_click_on_the_tab("Needs triage");
+  await then_i_should_see_a_row_for_the_patient("Caridad Sipes", {
+    tab: "Needs triage",
+    action: "Triage started",
   });
 
-  await when_i_click_on_the_tab("Needs triage");
+  // Triage - ready to vaccinate
   await when_i_click_on_the_patient("Caridad Sipes");
   await when_i_enter_the_note("Reached mother, should be able to proceed");
   await when_i_click_on_the_option("Ready to vaccinate");
