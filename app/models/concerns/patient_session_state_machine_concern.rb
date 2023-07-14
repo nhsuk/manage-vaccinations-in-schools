@@ -11,6 +11,7 @@ module PatientSessionStateMachineConcern
       state :consent_refused
       state :triaged_ready_to_vaccinate
       state :triaged_do_not_vaccinate
+      state :triaged_kept_in_triage
       state :unable_to_vaccinate
       state :vaccinated
 
@@ -25,35 +26,39 @@ module PatientSessionStateMachineConcern
 
         transitions from: :added_to_session,
                     to: :consent_refused,
-                    if: [:consent_refused?]
+                    if: :consent_refused?
       end
 
       event :do_triage do
-        transitions from: :consent_given_triage_needed,
+        transitions from: %i[consent_given_triage_needed triaged_kept_in_triage],
                     to: :triaged_ready_to_vaccinate,
-                    if: [:triage_ready_to_vaccinate?]
+                    if: :triage_ready_to_vaccinate?
 
-        transitions from: :consent_given_triage_needed,
+        transitions from: %i[consent_given_triage_needed triaged_kept_in_triage],
                     to: :triaged_do_not_vaccinate,
-                    if: [:triage_do_not_vaccinate?]
+                    if: :triage_do_not_vaccinate?
+
+        transitions from: %i[consent_given_triage_needed triaged_kept_in_triage],
+                    to: :triaged_kept_in_triage,
+                    if: :triage_keep_in_triage?
       end
 
       event :do_vaccination do
         transitions from: :consent_given_triage_not_needed,
                     to: :vaccinated,
-                    if: [:vaccination_administered?]
+                    if: :vaccination_administered?
 
         transitions from: :consent_given_triage_not_needed,
                     to: :unable_to_vaccinate,
-                    if: [:vaccination_not_administered?]
+                    if: :vaccination_not_administered?
 
         transitions from: :triaged_ready_to_vaccinate,
                     to: :vaccinated,
-                    if: [:vaccination_administered?]
+                    if: :vaccination_administered?
 
         transitions from: :triaged_ready_to_vaccinate,
                     to: :unable_to_vaccinate,
-                    if: [:vaccination_not_administered?]
+                    if: :vaccination_not_administered?
       end
     end
 
@@ -75,6 +80,10 @@ module PatientSessionStateMachineConcern
 
     def triage_ready_to_vaccinate?
       triage&.ready_to_vaccinate?
+    end
+
+    def triage_keep_in_triage?
+      triage&.needs_follow_up?
     end
 
     def triage_do_not_vaccinate?
