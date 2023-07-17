@@ -1,7 +1,7 @@
 class TriageController < ApplicationController
   before_action :set_session, only: %i[show create update]
   before_action :set_patient, only: %i[show create update]
-  before_action :set_patient_session, only: %i[create update]
+  before_action :set_patient_session, only: %i[create update show]
   before_action :set_triage, only: %i[show]
   before_action :set_consent_response, only: %i[show]
   before_action :set_vaccination_record, only: %i[show]
