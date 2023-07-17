@@ -1,5 +1,5 @@
 module PatientSessionHelper
-  ACTION_COLOURS_AND_TEXT = {
+  STATUS_COLOURS_AND_TEXT = {
     added_to_session: {
       colour: :yellow,
       text: "Get consent",
@@ -38,11 +38,11 @@ module PatientSessionHelper
     },
   }.with_indifferent_access.freeze
 
-  def action_colour_for_state(state)
-    ACTION_COLOURS_AND_TEXT[state][:colour]
+  def status_colour_for_state(state)
+    STATUS_COLOURS_AND_TEXT[state][:colour]
   end
 
-  def action_text_for_state(state)
-    ACTION_COLOURS_AND_TEXT[state][:text]
+  def status_text_for_state(state)
+    STATUS_COLOURS_AND_TEXT[state][:text]
   end
 end
