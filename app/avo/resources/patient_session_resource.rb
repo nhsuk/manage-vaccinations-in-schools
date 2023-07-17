@@ -1,0 +1,17 @@
+class PatientSessionResource < Avo::BaseResource
+  self.title = :id
+  self.includes = []
+  # self.search_query = -> do
+  #   scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+  # end
+
+  field :id, as: :id
+  # Fields generated from the model
+  field :session_id, as: :number
+  field :patient_id, as: :number
+  field :state, as: :text
+  field :patient, as: :belongs_to
+  field :session, as: :belongs_to
+  field :vaccination_records, as: :has_many
+  # add fields here
+end
