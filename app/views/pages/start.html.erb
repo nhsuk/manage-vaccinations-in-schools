@@ -10,8 +10,7 @@
       <li>keep a record of vaccinations given to children</li>
     </ul>
 
-    <%= link_to "Start now", dashboard_path, class: 'nhsuk-button', data: {
-      module: "govuk-button",
+    <%= govuk_button_link_to "Start now", dashboard_path, data: {
       testid: "start",
     } %>
   </div>
