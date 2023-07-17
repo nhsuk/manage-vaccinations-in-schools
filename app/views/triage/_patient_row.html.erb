@@ -19,8 +19,8 @@
   <td class="nhsuk-table__cell" data-testid="child-action">
     <%=
     render(AppActionTagComponent.new(
-      status: action_text_for_state(state),
-      colour: action_colour_for_state(state)
+      status: status_text_for_state(state),
+      colour: status_colour_for_state(state)
     ))
     %>
   </td>
