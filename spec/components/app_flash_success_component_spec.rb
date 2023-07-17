@@ -21,7 +21,7 @@ RSpec.describe AppFlashSuccessComponent, type: :component do
 
       it "renders flash_success with title" do
         expect(page).to have_css(
-          ".govuk-notification-banner__heading",
+          ".nhsuk-notification-banner__heading",
           text: flash_success["title"]
         )
         expect(page).to have_css("p", text: flash_success["body"])
@@ -44,7 +44,7 @@ RSpec.describe AppFlashSuccessComponent, type: :component do
 
       it "renders flash_success without title" do
         expect(page).to have_css(
-          ".govuk-notification-banner__heading",
+          ".nhsuk-notification-banner__heading",
           text: flash_success
         )
       end
