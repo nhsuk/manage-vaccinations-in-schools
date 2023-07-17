@@ -39,20 +39,20 @@ $color_app-pale-blue: #ccdff1;
 
 // Tables in tabs are too narrow, so the hover effect doesn't look good.
 // This makes them full width.
-.govuk-tabs {
+.nhsuk-tabs {
   .nhsuk-table {
-    margin-left: -20px;
-    width: calc(100% + 40px);
+    margin-left: -1 * nhsuk-spacing(4);
+    width: calc(100% + 2 * nhsuk-spacing(4));
 
     tr {
       th:first-child,
       td:first-child {
-        padding-left: 20px;
+        padding-left: nhsuk-spacing(4);
       }
 
       th:last-child,
       td:last-child {
-        padding-right: 20px;
+        padding-right: nhsuk-spacing(4);
       }
     }
   }
