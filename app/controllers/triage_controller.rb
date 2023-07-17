@@ -1,6 +1,7 @@
 class TriageController < ApplicationController
   before_action :set_session, only: %i[show create update]
   before_action :set_patient, only: %i[show create update]
+  before_action :set_patient_session, only: %i[create update]
   before_action :set_triage, only: %i[show]
   before_action :set_consent_response, only: %i[show]
   before_action :set_vaccination_record, only: %i[show]
@@ -9,24 +10,11 @@ class TriageController < ApplicationController
 
   def index
     @session = Session.find_by(id: params[:id])
-    @patient_details =
+    @patient_sessions =
       @session
         .patient_sessions
         .includes(:vaccination_records, patient: %i[consent_responses triage])
         .order("patients.first_name", "patients.last_name")
-        .map do |ps|
-          consent = ps.patient.consent_response_for_campaign(@session.campaign)
-          triage = ps.patient.triage_for_campaign(@session.campaign)
-          vaccination_record = ps.vaccination_records.last
-
-          action_or_outcome =
-            PatientActionOrOutcomeService.call(
-              consent:,
-              triage:,
-              vaccination_record:
-            )
-          [ps.patient, action_or_outcome[:action], action_or_outcome[:outcome]]
-        end
   end
 
   def show

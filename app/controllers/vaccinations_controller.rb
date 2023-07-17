@@ -1,7 +1,7 @@
 class VaccinationsController < ApplicationController
   before_action :set_session
   before_action :set_patient, only: %i[show confirm reason record history]
-  before_action :set_patient_details, only: %i[index record_template]
+  before_action :set_patient_sessions, only: %i[index record_template]
   before_action :set_draft_vaccination_record,
                 only: %i[show confirm reason record]
   before_action :set_vaccination_record, only: %i[show confirm record]
@@ -112,25 +112,12 @@ class VaccinationsController < ApplicationController
     @patient = Patient.find(params[:id])
   end
 
-  def set_patient_details
-    @patient_details =
+  def set_patient_sessions
+    @patient_sessions =
       @session
         .patient_sessions
         .includes(:patient)
         .order("patients.first_name", "patients.last_name")
-        .map do |ps|
-          consent = ps.patient.consent_response_for_campaign(@session.campaign)
-          triage = ps.patient.triage_for_campaign(@session.campaign)
-          vaccination_record = ps.vaccination_records.last
-
-          action_or_outcome =
-            PatientActionOrOutcomeService.call(
-              consent:,
-              triage:,
-              vaccination_record:
-            )
-          [ps.patient, action_or_outcome[:action], action_or_outcome[:outcome]]
-        end
   end
 
   def set_draft_vaccination_record
