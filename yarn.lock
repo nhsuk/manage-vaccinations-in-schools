@@ -2603,10 +2603,10 @@ extglob@^2.0.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
-fake-indexeddb@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/fake-indexeddb/-/fake-indexeddb-4.0.1.tgz#09bb2468e21d0832b2177e894765fb109edac8fb"
-  integrity sha512-hFRyPmvEZILYgdcLBxVdHLik4Tj3gDTu/g7s9ZDOiU3sTNiGx+vEu1ri/AMsFJUZ/1sdRbAVrEcKndh3sViBcA==
+fake-indexeddb@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/fake-indexeddb/-/fake-indexeddb-4.0.2.tgz#e7a884158fa576e00f03e973b9874619947013e4"
+  integrity sha512-SdTwEhnakbgazc7W3WUXOJfGmhH0YfG4d+dRPOFoYDRTL6U5t8tvrmkf2W/C3W1jk2ylV7Wrnj44RASqpX/lEw==
   dependencies:
     realistic-structured-clone "^3.0.0"
 
