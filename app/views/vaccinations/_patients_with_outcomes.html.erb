@@ -26,8 +26,8 @@
   </div>
   <div class="nhsuk-grid-column-three-quarters" id="patients-<%= id %>">
     <%
-    patient_details = @patient_details.select { |_p, a, o| filter.call(a, o) }
-    if patient_details.any?
+    view_patient_sessions = @patient_sessions.select { |ps| ps.state.in? view_states }
+    if view_patient_sessions.any?
     %>
 
     <table class="nhsuk-table">
@@ -39,8 +39,12 @@
         </tr>
       </thead>
       <tbody class="nhsuk-table__body">
-        <% patient_details.each do |patient, action, outcome| %>
-          <%= render "patient_row", patient:, action:, outcome: %>
+        <% view_patient_sessions.each do |patient_session| %>
+          <%= render "patient_row",
+                     patient_session:,
+                     patient: patient_session.patient,
+                     session: patient_session.session,
+                     state: patient_session.state %>
         <% end %>
       </tbody>
     </table>

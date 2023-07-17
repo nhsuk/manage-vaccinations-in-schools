@@ -15,13 +15,17 @@
 <%=
 govuk_tabs title: "Vax", classes: 'nhsuk-tabs' do |c|
   c.with_tab(label: "Action needed", classes: 'nhsuk-tabs__panel') do
-    render "patients_with_actions", id: "action-needed", filter: ->(a, o) { in_tab_action_needed?(a, o) }
-  end
-  c.with_tab(label: "Vaccinated", classes: 'nhsuk-tabs__panel') do
-    render "patients_with_outcomes", id: "vaccinated", filter: ->(a, o) { in_tab_vaccinated?(a, o) }
-  end
-  c.with_tab(label: "Not vaccinated", classes: 'nhsuk-tabs__panel') do
-    render "patients_with_outcomes", id: "not-vaccinated", filter: ->(a, o) { in_tab_not_vaccinated?(a, o) }
-  end
+    render "patients_with_actions",
+           id: "action-needed",
+           view_states: %w[consent_given_triage_needed triaged_kept_in_triage triaged_ready_to_vaccinate triaged_do_not_vaccinate added_to_session consent_refused consent_given_triage_not_needed]
+end
+c.with_tab(label: "Vaccinated", classes: 'nhsuk-tabs__panel') do
+  render "patients_with_outcomes", id: "vaccinated", view_states: %w[vaccinated]
+end
+c.with_tab(label: "Not vaccinated", classes: 'nhsuk-tabs__panel') do
+  render "patients_with_outcomes",
+         id: "not-vaccinated",
+         view_states: %w[triaged_do_not_vaccinate unable_to_vaccinate]
+end
 end
 %>

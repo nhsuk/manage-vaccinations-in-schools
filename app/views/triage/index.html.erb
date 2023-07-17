@@ -15,16 +15,18 @@
 <%=
 govuk_tabs title: "Patient triage", classes: 'nhsuk-tabs' do |c|
   c.with_tab(label: "Needs triage", classes: 'nhsuk-tabs__panel') do
-    render "patients_with_triage_reasons", filter: ->(s, p, a, o) { in_tab_needs_triage?(s, p, a, o) }
+    render "patients_with_triage_reasons", view_states: %w[consent_given_triage_needed triaged_kept_in_triage]
   end
   c.with_tab(label: "Triage complete", classes: 'nhsuk-tabs__panel') do
-    render "patients_with_triage_reasons", filter: ->(s, p, a, o) { in_tab_triage_complete?(s, p, a, o) }
+    render "patients_with_triage_reasons",
+           view_states: %w[triaged_ready_to_vaccinate triaged_do_not_vaccinate]
   end
   c.with_tab(label: "Get consent", classes: 'nhsuk-tabs__panel') do
-    render "patients_with_dob", filter: ->(s, p, a, o) { in_tab_get_consent?(s, p, a, o) }
+    render "patients_with_dob", view_states: %w[added_to_session]
   end
   c.with_tab(label: "No triage needed", classes: 'nhsuk-tabs__panel') do
-    render "patients_with_dob", filter: ->(s, p, a, o) { in_tab_no_triage_needed?(s, p, a, o) }
+    render "patients_with_dob",
+           view_states: %w[consent_refused consent_given_triage_not_needed vaccinated unable_to_vaccinate]
   end
 end
 %>
