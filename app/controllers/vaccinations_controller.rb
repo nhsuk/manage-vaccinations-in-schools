@@ -43,6 +43,8 @@ class VaccinationsController < ApplicationController
 
   def record
     @draft_vaccination_record.update!(recorded_at: Time.zone.now)
+    @patient_session = @patient.patient_sessions.find_by(session: @session)
+    @patient_session.do_vaccination!
     if Settings.features.fhir_server_integration
       imm =
         ImmunizationFHIRBuilder.new(

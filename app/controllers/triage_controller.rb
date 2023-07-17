@@ -35,6 +35,7 @@ class TriageController < ApplicationController
   def create
     @triage = Triage.new(campaign: @session.campaign, patient: @patient)
     if @triage.update(triage_params)
+      @patient_session.do_triage!
       redirect_to triage_session_path(@session),
                   flash: {
                     success: {
@@ -54,6 +55,7 @@ class TriageController < ApplicationController
   def update
     @triage = @patient.triage_for_campaign(@session.campaign)
     if @triage.update(triage_params)
+      @patient_session.do_triage!
       redirect_to triage_session_path(@session),
                   flash: {
                     success: {
@@ -97,6 +99,10 @@ class TriageController < ApplicationController
         .vaccination_records_for_session(@session)
         .where.not(recorded_at: nil)
         .first
+  end
+
+  def set_patient_session
+    @patient_session = @patient.patient_sessions.find_by(session: @session)
   end
 
   def triage_params
