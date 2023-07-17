@@ -34,8 +34,8 @@ application.register(
 import GovukSkipLinkController from "./govuk_skip_link_controller";
 application.register("govuk-skip-link", GovukSkipLinkController);
 
-import GovukTabsController from "./govuk_tabs_controller";
-application.register("govuk-tabs", GovukTabsController);
-
 import NhsukRadiosController from "./nhsuk_radios_controller";
 application.register("nhsuk-radios", NhsukRadiosController);
+
+import NhsukTabsController from "./nhsuk_tabs_controller";
+application.register("nhsuk-tabs", NhsukTabsController);
