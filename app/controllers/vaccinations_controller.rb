@@ -2,6 +2,7 @@ class VaccinationsController < ApplicationController
   before_action :set_session
   before_action :set_patient, only: %i[show confirm reason record history]
   before_action :set_patient_sessions, only: %i[index record_template]
+  before_action :set_patient_session, only: %i[record show]
   before_action :set_draft_vaccination_record,
                 only: %i[show confirm reason record]
   before_action :set_vaccination_record, only: %i[show confirm record]
@@ -43,7 +44,6 @@ class VaccinationsController < ApplicationController
 
   def record
     @draft_vaccination_record.update!(recorded_at: Time.zone.now)
-    @patient_session = @patient.patient_sessions.find_by(session: @session)
     @patient_session.do_vaccination!
     if Settings.features.fhir_server_integration
       imm =
@@ -144,5 +144,9 @@ class VaccinationsController < ApplicationController
     @triage =
       @patient.triage_for_campaign(@session.campaign) ||
         Triage.new(campaign: @session.campaign, patient: @patient)
+  end
+
+  def set_patient_session
+    @patient_session = @patient.patient_sessions.find_by(session: @session)
   end
 end

@@ -1,62 +1,48 @@
 <%
-triage = @triage&.persisted? ? @triage : nil
-action_or_outcome = PatientActionOrOutcomeService.call(consent: @consent_response,
-                                                       triage: triage,
-                                                       vaccination_record: @vaccination_record)
-action = action_or_outcome[:action]
-outcome = action_or_outcome[:outcome]
+state = @patient_session.state
+status = status_text_for_state(state)
 
-if action == :triage %>
-  <%= render AppBannerComponent.new(
-      title: "Triage needed",
-      colour: "blue",
-  ) do %>
-    <ul class="nhsuk-list nhsuk-u-margin-bottom-2">
+if status.in? ["Triage", "Triage started"]
+%>
+<%= render AppBannerComponent.new(
+  title: banner_title_for_state(state, {
+    who_responded: @consent_response&.who_responded&.downcase,
+  }),
+  colour: status_colour_for_state(state),
+) do %>
+  <ul class="nhsuk-list nhsuk-u-margin-bottom-2">
       <% @consent_response.reasons_triage_needed.map do |reason| %>
         <li><%= reason %></li>
       <% end %>
-    </ul>
-  <% end %>
-<% elsif action == :follow_up %>
-  <%= render AppBannerComponent.new(
-      title: "Triage started",
-      colour: "aqua-green",
-  ) do %>
-    <ul class="nhsuk-list nhsuk-u-margin-bottom-2">
-      <% @consent_response.reasons_triage_needed.map do |reason| %>
-        <li><%= reason %></li>
-      <% end %>
-    </ul>
-  <% end %>
-<% elsif outcome == :vaccinated %>
-  <%= render AppBannerComponent.new(
-                title: "Vaccinated",
-                explanation: @consent_response.present? ? "Their #{@consent_response.who_responded.downcase} gave consent" : "",
-                colour: "green"
-              ) %>
-<% elsif outcome == :not_vaccinated %>
-  <%= render AppBannerComponent.new(
-                title: "Could not vaccinate",
-                # TODO: add reason for refusal once that is collected
-                explanation: @consent_response.present? ? "Their #{@consent_response.who_responded.downcase} gave consent" : "",
-                colour: "orange"
-              ) %>
-<% elsif action == :check_refusal %>
-  <%= render AppBannerComponent.new(
-          title: "Their #{@consent_response.who_responded.downcase} has refused to give consent",
-          colour: "orange"
-        ) %>
-
-<% elsif action == :get_consent %>
-  <%= render AppBannerComponent.new(
-              title: "No-one responded to our requests for consent",
-              colour: "yellow"
-            ) %>
-<% elsif outcome == :do_not_vaccinate %>
-  <%= render AppBannerComponent.new(
-              title: "Do not vaccinate",
-              # TODO replace "The nurse" with the nurse's full name when that information is available
-              explanation: "The nurse has decided that #{@triage.patient.full_name} should not be vaccinated",
-              colour: "red"
-          ) %>
+  </ul>
+<% end
+elsif status.in? ["Vaccinated", "Unable to vaccinate"]
+  explanation = if @consent_response.present?
+                  banner_explanation_for_state(state, {
+                    who_responded: @consent_response&.who_responded&.downcase,
+                    full_name: @triage.patient.full_name
+                  })
+                else
+                  ""
+                end
+%>
+<%=
+  render AppBannerComponent.new(
+    title: banner_title_for_state(state, {
+      who_responded: @consent_response&.who_responded&.downcase,
+    }),
+    colour: status_colour_for_state(state),
+    explanation:,
+  ) %>
+<% elsif status != "Vaccinate" %>
+<%= render AppBannerComponent.new(
+  title: banner_title_for_state(state, {
+    who_responded: @consent_response&.who_responded&.downcase,
+  }),
+  colour: status_colour_for_state(state),
+  explanation: banner_explanation_for_state(state, {
+    who_responded: @consent_response&.who_responded&.downcase,
+    full_name: @triage.patient.full_name
+  }),
+) %>
 <% end %>
