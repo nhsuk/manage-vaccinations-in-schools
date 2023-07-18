@@ -14,8 +14,11 @@ Rails.application.routes.draw do
 
   resources :sessions, only: %i[index show] do
     get "triage", to: "triage#index", on: :member, param: :session_id
+
     resources :patients do
       resource :triage, only: %i[show create update]
+
+      get "/consent/confirm", to: "consent_responses#confirm", on: :member
     end
 
     resources :patients,
