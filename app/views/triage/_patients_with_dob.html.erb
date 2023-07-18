@@ -14,12 +14,7 @@
       </thead>
       <tbody class="nhsuk-table__body">
         <% view_patient_sessions.each do |patient_session| %>
-          <%= render "patient_row",
-                     middle_column: :dob,
-                     patient_session:,
-                     patient: patient_session.patient,
-                     session: patient_session.session,
-                     state: patient_session.state %>
+          <%= render "patient_row", middle_column: :dob, patient_session: %>
         <% end %>
       </tbody>
     </table>

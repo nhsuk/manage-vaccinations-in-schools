@@ -1,6 +1,8 @@
 <tr class="nhsuk-table__row">
   <td class="nhsuk-table__cell">
-    <%= link_to patient.full_name, session_patient_triage_path(session, patient), "data-testid": "child-link" %>
+    <%= link_to patient_session.patient.full_name,
+                session_patient_triage_path(patient_session.session, patient_session.patient),
+                "data-testid": "child-link" %>
   </td>
   <td class="nhsuk-table__cell">
     <% if middle_column == :triage_reasons %>
@@ -12,15 +14,15 @@
     <%
     else
     %>
-      <%= patient.dob.to_fs(:nhsuk_date_short_month) %>
+      <%= patient_session.patient.dob.to_fs(:nhsuk_date_short_month) %>
     <% end %>
 
   </td>
   <td class="nhsuk-table__cell" data-testid="child-action">
     <%=
     render(AppActionTagComponent.new(
-      status: status_text_for_state(state),
-      colour: status_colour_for_state(state)
+      status: status_text_for_state(patient_session.state),
+      colour: status_colour_for_state(patient_session.state)
     ))
     %>
   </td>
