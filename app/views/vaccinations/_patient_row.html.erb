@@ -1,13 +1,16 @@
 <tr class="nhsuk-table__row">
-  <td class="nhsuk-table__cell" id="<%= dom_id patient %>">
-    <%= link_to patient.full_name, session_vaccination_path(session, patient),
+  <td class="nhsuk-table__cell" id="<%= dom_id patient_session.patient %>">
+    <%= link_to patient_session.patient.full_name,
+                session_vaccination_path(patient_session.session, patient_session.patient),
       "data-testid": "child-link" %>
   </td>
   <td class="nhsuk-table__cell" style="width: 150px">
-    <%= patient.dob.to_fs(:nhsuk_date_short_month) %>
+    <%= patient_session.patient.dob.to_fs(:nhsuk_date_short_month) %>
   </td>
   <td class="nhsuk-table__cell" data-testid="child-action">
-    <%= render(AppActionTagComponent.new(status: status_text_for_state(state),
-                                         colour: status_colour_for_state(state))) %>
+    <%= render(AppActionTagComponent.new(
+      status: status_text_for_state(patient_session.state),
+      colour: status_colour_for_state(patient_session.state)
+    )) %>
   </td>
 </tr>
