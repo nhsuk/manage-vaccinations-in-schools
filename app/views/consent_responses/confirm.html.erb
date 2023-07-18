@@ -1,0 +1,8 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+               href: session_patient_triage_path(@session, @patient),
+               name: "triage page",
+             ) %>
+<% end %>
+
+<h1 class="nhsuk-heading-l">Check and confirm answers</h1>
