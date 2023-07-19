@@ -47,7 +47,7 @@ task :load_campaign_example, [:example_file] => :environment do |_task, args|
       next if consent_attributes.blank?
       consent_response =
         ConsentResponse.find_or_initialize_by(campaign:, patient:)
-      consent_response.update!(consent_attributes)
+      consent_response.update!(consent_attributes.merge(recorded_at: Time.zone.now))
       unless patient.consent_responses.include?(consent_response)
         patient.consent_responses << consent_response
       end
