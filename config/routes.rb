@@ -13,12 +13,12 @@ Rails.application.routes.draw do
   get "/csrf", to: "csrf#new"
 
   resources :sessions, only: %i[index show] do
-    get "triage", to: "triage#index", on: :member, param: :session_id
+    get "triage", to: "triage#index", on: :member
     get "vaccinations", to: "vaccinations#index", on: :member
 
     resources :patients do
       resource :triage, only: %i[show create update]
-      resources :vaccinations, only: %i[show] do
+      resource :vaccinations, only: %i[show] do
         get "history", on: :member
 
         post "confirm", on: :member
@@ -31,22 +31,6 @@ Rails.application.routes.draw do
       end
 
       get "/consent/confirm", to: "consent_responses#confirm", on: :member
-    end
-
-    resources :patients,
-              only: %i[index show],
-              path: "/vaccinations",
-              as: :vaccinations,
-              controller: :vaccinations do
-      get "history", on: :member
-
-      post "confirm", on: :member
-      get "reason", on: :member
-      put "confirm", on: :member
-      put "record", on: :member
-
-      get "show-template", on: :collection
-      get "record-template", on: :collection
     end
 
     get "setup-offline", to: "offline_passwords#new", on: :member

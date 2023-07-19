@@ -1,5 +1,5 @@
 class TriageController < ApplicationController
-  before_action :set_session, only: %i[show create update]
+  before_action :set_session, only: %i[index show create update]
   before_action :set_patient, only: %i[show create update]
   before_action :set_patient_session, only: %i[create update show]
   before_action :set_triage, only: %i[show]
@@ -9,7 +9,6 @@ class TriageController < ApplicationController
   layout "two_thirds", except: %i[index]
 
   def index
-    @session = Session.find_by(id: params[:id])
     @patient_sessions =
       @session
         .patient_sessions
@@ -63,7 +62,7 @@ class TriageController < ApplicationController
   private
 
   def set_session
-    @session = Session.find_by(id: params[:session_id])
+    @session = Session.find(params.fetch(:session_id) { params.fetch(:id) })
   end
 
   def set_patient

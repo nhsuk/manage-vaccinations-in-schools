@@ -39,8 +39,10 @@
           </dt>
           <dd class="nhsuk-summary-list__value">
             <%= link_to "Record available",
-                        history_session_vaccination_path(session_id: @session.id,
-                                                        id: (@patient.id || ":id")) %>
+                        history_session_patient_vaccinations_path(
+                          session_id: @session.id,
+                          id: (@patient.id || ":id")
+                        ) %>
           </dd>
         </div>
       <% end %>

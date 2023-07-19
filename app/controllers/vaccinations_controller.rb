@@ -34,7 +34,7 @@ class VaccinationsController < ApplicationController
       reason_not_specified = vaccination_record_params[:reason].blank?
       ask_for_reason = not_administered && reason_not_specified
       if ask_for_reason
-        redirect_to reason_session_vaccination_path(@session, @patient)
+        redirect_to reason_session_patient_vaccinations_path(@session, @patient)
       end
       # Render confirm
     else
@@ -53,16 +53,15 @@ class VaccinationsController < ApplicationController
         )
       imm.immunization.create # rubocop:disable Rails/SaveBang
     end
-    redirect_to session_vaccinations_path(@session),
+    redirect_to vaccinations_session_path(@session),
                 flash: {
                   success: {
                     title: "Record saved for #{@patient.full_name}",
-                    body:
-                      ActionController::Base.helpers.link_to(
-                        "View child record",
-                        session_vaccination_path(@session, @patient)
-                      )
-                  }
+                    body: ActionController::Base.helpers.link_to(
+                      "View child record",
+                      session_patient_vaccinations_path(@session, @patient)
+                    ),
+                  },
                 }
   end
 
@@ -105,11 +104,11 @@ class VaccinationsController < ApplicationController
   end
 
   def set_session
-    @session = Session.find(params[:session_id])
+    @session = Session.find(params.fetch(:session_id) { params.fetch(:id) })
   end
 
   def set_patient
-    @patient = Patient.find(params[:id])
+    @patient = Patient.find(params.fetch(:patient_id) { params.fetch(:id) })
   end
 
   def set_patient_sessions
