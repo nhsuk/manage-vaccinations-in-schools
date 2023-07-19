@@ -1,6 +1,6 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-               href: session_vaccination_path(@session, @patient),
+               href: session_patient_vaccinations_path(@session, @patient),
                name: "vaccination page"
              ) %>
 <% end %>
@@ -56,7 +56,7 @@
 </div>
 
 <%= form_with model: @draft_vaccination_record,
-              url: record_session_vaccination_path(
+              url: record_session_patient_vaccinations_path(
                 session_id: @session.id,
                 id: @patient.id,
               ),
