@@ -27,8 +27,8 @@ test("Records consent", async ({ page }) => {
   // await and_i_click_continue();
   await then_i_see_the_check_answers_page();
 
-  // await when_i_click_confirm();
-  // await then_i_see_the_patient_details();
+  await when_i_click_confirm();
+  await then_i_see_the_triage_list();
 });
 
 async function given_the_app_is_setup() {
@@ -63,4 +63,12 @@ async function when_i_click_get_consent() {
 
 async function then_i_see_the_check_answers_page() {
   await expect(p.locator("h1")).toContainText("Check and confirm answers");
+}
+
+async function when_i_click_confirm() {
+  await p.getByRole("button", { name: "Confirm" }).click();
+}
+
+async function then_i_see_the_triage_list() {
+  await expect(p.locator("h1")).toContainText("Triage");
 }
