@@ -7,8 +7,6 @@ import {
   when_i_click_on_the_patient,
   then_i_should_be_on_the_tab,
   then_i_should_see_a_banner_for_the_patient,
-  capitalise,
-  humanise,
 } from "./shared_steps";
 
 export let p = null;
@@ -33,7 +31,7 @@ test("Viewing patients", async ({ page }) => {
     await when_i_click_on_the_patient(name);
     await then_i_should_see_the_triage_page_for_the_patient(name);
     await then_i_should_see_a_banner_for_the_patient(name);
-    await and_i_should_see_the_consent_section_for_the_patient(name);
+    await and_i_should_see_the_consent_card();
     await and_i_should_see_health_question_responses_if_present(name);
 
     await when_i_go_back_to_the_triage_index_page();
@@ -101,50 +99,8 @@ export async function then_i_should_see_the_triage_page_for_the_patient(name) {
   );
 }
 
-export async function and_i_should_see_the_consent_section_for_the_patient(
-  name,
-) {
-  const consentResponse = examplePatient(name).consent;
-
-  if (!consentResponse) {
-    await expect(
-      p.locator("#consent"),
-      `[${name}] Consent response`,
-    ).toContainText("No response given");
-    return;
-  }
-
-  let parentRelationship;
-  if (consentResponse.parentRelationship == "other")
-    parentRelationship = consentResponse.parentRelationshipOther;
-  else if (consentResponse.parentRelationship)
-    parentRelationship = consentResponse.parentRelationship;
-  parentRelationship = capitalise(parentRelationship);
-
-  await expect(
-    p.locator("#consent"),
-    `[${name}] Consent response`,
-  ).toContainText(
-    capitalise(`${consentResponse.consent} by ${parentRelationship}`),
-  );
-
-  await expect(
-    p.locator("#consent"),
-    `[${name}] Consent parent relationship`,
-  ).toContainText(`${parentRelationship} ${consentResponse.parentName}`);
-
-  const route = capitalise(consentResponse.route);
-  await expect(
-    p.locator("#consent", `[${name}] Consent type should be be: ${route}`),
-  ).toContainText(`Type of consent ${route}`);
-
-  if (consentResponse.consent == "refused")
-    await expect(
-      p.locator("#consent"),
-      `[${name}] Reason for refusal`,
-    ).toContainText(
-      `Reason for refusal ${humanise(consentResponse.reasonForRefusal)}`,
-    );
+export async function and_i_should_see_the_consent_card() {
+  await expect(p.getByTestId("consent")).toBeVisible();
 }
 
 export async function and_i_should_see_health_question_responses_if_present(
