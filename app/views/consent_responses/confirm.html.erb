@@ -6,3 +6,50 @@
 <% end %>
 
 <h1 class="nhsuk-heading-l">Check and confirm answers</h1>
+
+<div class="nhsuk-card" data-testid="consent">
+  <div class="nhsuk-card__content">
+    <h2 class="nhsuk-card__heading nhsuk-heading-m">
+      Consent
+    </h2>
+
+    <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
+      summary_list.with_row do |row|
+        row.with_key { "Consent" }
+        row.with_value { @draft_consent_response.consent.humanize }
+      end
+
+      summary_list.with_row do |row|
+        row.with_key { "For" }
+        row.with_value { @patient.full_name }
+      end
+
+      summary_list.with_row do |row|
+        row.with_key { 'By' }
+        row.with_value do %>
+          <%= @draft_consent_response.parent_relationship.humanize %>
+          <div class="nhsuk-u-margin-top-2 nhsuk-u-font-size-16">
+            <%= @draft_consent_response.parent_name %>
+            <% if @draft_consent_response.parent_phone.present? %>
+              <br />
+              Telephone: <%= @draft_consent_response.parent_phone %>
+            <% end %>
+            <% if @draft_consent_response.parent_email.present? %>
+              <br />
+              Email: <%= @draft_consent_response.parent_email %>
+            <% end %>
+          </div>
+        <% end
+      end
+
+      if @draft_consent_response.consent_refused?
+        summary_list.with_row do |row|
+          row.with_key { 'Reason for refusal' }
+          row.with_value { ConsentResponse
+            .human_enum_name("reason_for_refusal",
+                             @draft_consent_response.reason_for_refusal) }
+        end
+      end
+    end %>
+  </div>
+</div>
