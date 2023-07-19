@@ -53,3 +53,17 @@
     end %>
   </div>
 </div>
+
+<div class="nhsuk-card">
+  <div class="nhsuk-card__content">
+    <h2 class="nhsuk-card__heading nhsuk-heading-m">
+      Health questions
+    </h2>
+
+    <%= render AppHealthQuestionsComponent.new(
+      consent_response: @draft_consent_response) %>
+  </div>
+</div>
+
+<%= govuk_button_to "Confirm",
+  consent_record_session_patient_path(@session, @patient), method: :put %>
