@@ -36,5 +36,6 @@ class ConsentResponseResource < Avo::BaseResource
   field :health_questions, as: :text
   field :patient, as: :belongs_to
   field :campaign, as: :belongs_to
+  field :recorded_at, as: :datetime
   # add fields here
 end
