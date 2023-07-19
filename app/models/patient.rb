@@ -61,7 +61,9 @@ class Patient < ApplicationRecord
   end
 
   def consent_response_for_campaign(campaign)
-    consent_responses.to_a.find { |t| t.campaign_id == campaign.id }
+    consent_responses.to_a.find do |t|
+      t.campaign_id == campaign.id && t.recorded_at.present?
+    end
   end
 
   def as_json(options = {})

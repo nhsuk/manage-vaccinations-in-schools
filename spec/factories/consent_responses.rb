@@ -71,6 +71,7 @@ FactoryBot.define do
     address_town { Faker::Address.city }
     address_postcode { Faker::Address.postcode }
     route { "website" }
+    recorded_at { Time.zone.now }
 
     health_questions do
       HEALTH_QUESTIONS
