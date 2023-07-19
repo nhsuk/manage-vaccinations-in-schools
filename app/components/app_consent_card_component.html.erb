@@ -1,0 +1,65 @@
+<div class="nhsuk-card" id="consent">
+  <div class="nhsuk-card__content">
+    <h2 class="nhsuk-card__heading nhsuk-heading-m">
+      Consent
+    </h2>
+
+    <% if @consent_response.present? %>
+      <%= govuk_summary_list do |summary_list|
+        summary_list.with_row do |row|
+          row.with_key { @consent_response.consent_given? ?
+                         "Given by" :
+                         "Refused by" }
+          row.with_value { @consent_response.who_responded.capitalize }
+        end
+
+        summary_list.with_row do |row|
+          row.with_key { @consent_response.who_responded.capitalize }
+          row.with_value do %>
+            <%= @consent_response.parent_name %>
+            <div class="nhsuk-u-margin-top-2 nhsuk-u-font-size-16">
+              <% if @consent_response.parent_phone.present? %>
+                Telephone: <%= @consent_response.parent_phone %>
+                <%= tag.br if @consent_response.parent_email.present? %>
+              <% end %>
+              <% if @consent_response.parent_email.present? %>
+                Email: <%= @consent_response.parent_email %>
+              <% end %>
+            </div>
+          <% end
+        end
+
+        summary_list.with_row do |row|
+          row.with_key { 'Date' }
+          row.with_value { @consent_response.created_at.to_fs(:nhsuk_date) }
+        end
+
+        summary_list.with_row do |row|
+          row.with_key { 'Type of consent' }
+          row.with_value { ConsentResponse
+            .human_enum_name("route",
+                             @consent_response.route) }
+        end
+
+        if @consent_response.consent_refused?
+          summary_list.with_row do |row|
+            row.with_key { 'Reason for refusal' }
+            row.with_value { ConsentResponse
+              .human_enum_name("reason_for_refusal",
+                               @consent_response.reason_for_refusal) }
+          end
+        end
+      end %>
+    <% else %>
+      <p>
+        No response given
+      </p>
+
+      <p>
+        <%= govuk_button_link_to "Get consent",
+          consent_confirm_session_patient_path(@session, id: @patient),
+          class: "nhsuk-u-margin-bottom-2" %>
+      </p>
+    <% end %>
+  </div>
+</div>
