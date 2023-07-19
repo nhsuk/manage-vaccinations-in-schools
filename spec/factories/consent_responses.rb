@@ -23,6 +23,7 @@
 #  parent_relationship_other   :text
 #  reason_for_refusal          :integer
 #  reason_for_refusal_other    :text
+#  recorded_at                 :datetime
 #  route                       :integer          not null
 #  created_at                  :datetime         not null
 #  updated_at                  :datetime         not null
