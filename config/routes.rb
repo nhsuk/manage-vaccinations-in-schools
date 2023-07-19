@@ -30,7 +30,8 @@ Rails.application.routes.draw do
         get "record-template", on: :collection
       end
 
-      get "/consent/confirm", to: "consent_responses#confirm", on: :member
+      post "/consent/confirm", to: "consent_responses#confirm", on: :member
+      put "/consent/record", to: "consent_responses#record", on: :member
     end
 
     get "setup-offline", to: "offline_passwords#new", on: :member
