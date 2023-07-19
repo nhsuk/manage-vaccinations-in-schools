@@ -5,7 +5,7 @@
     </h2>
 
     <% if @consent_response.present? %>
-      <%= govuk_summary_list do |summary_list|
+      <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
         summary_list.with_row do |row|
           row.with_key { @consent_response.consent_given? ?
                          "Given by" :
@@ -20,9 +20,9 @@
             <div class="nhsuk-u-margin-top-2 nhsuk-u-font-size-16">
               <% if @consent_response.parent_phone.present? %>
                 Telephone: <%= @consent_response.parent_phone %>
-                <%= tag.br if @consent_response.parent_email.present? %>
               <% end %>
               <% if @consent_response.parent_email.present? %>
+                <br />
                 Email: <%= @consent_response.parent_email %>
               <% end %>
             </div>
