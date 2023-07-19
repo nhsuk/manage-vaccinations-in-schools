@@ -6,8 +6,8 @@ RSpec.describe AppConsentCardComponent, type: :component do
   subject { page }
 
   let(:component) { described_class.new(consent_response:, patient:, session:) }
-  let(:consent_response) { create(:consent_response) }
-  let(:patient) { create(:patient) }
+  let(:consent_response) { create(:consent_response, campaign: session.campaign, patient:) }
+  let(:patient) { session.patients.first }
   let(:session) { create(:session) }
 
   context "when consent is present" do
@@ -15,18 +15,14 @@ RSpec.describe AppConsentCardComponent, type: :component do
     it { should have_css("dd", text: consent_response.who_responded.capitalize) }
     it { should have_css("dd", text: consent_response.parent_name) }
     it { should have_css("dd", text: consent_response.created_at.to_fs(:nhsuk_date)) }
-    it { should have_css("dd", text: ConsentResponse
-      .human_enum_name("route",
-                       consent_response.route)) }
+    it { should have_css("dd", text: "Website") }
   end
 
   context "when consent is refused" do
-    let(:consent_response) { create(:consent_response, :refused) }
+    let(:consent_response) { create(:consent_refused) }
 
     it { should have_css("dt", text: "Reason for refusal") }
-    it { should have_css("dd", text: ConsentResponse
-      .human_enum_name("reason_for_refusal",
-                       consent_response.reason_for_refusal)) }
+    it { should have_css("dd", text: "Personal choice") }
   end
 
   context "when consent is not present" do
