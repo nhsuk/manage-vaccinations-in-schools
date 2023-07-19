@@ -14,9 +14,21 @@ Rails.application.routes.draw do
 
   resources :sessions, only: %i[index show] do
     get "triage", to: "triage#index", on: :member, param: :session_id
+    get "vaccinations", to: "vaccinations#index", on: :member
 
     resources :patients do
       resource :triage, only: %i[show create update]
+      resources :vaccinations, only: %i[show] do
+        get "history", on: :member
+
+        post "confirm", on: :member
+        get "reason", on: :member
+        put "confirm", on: :member
+        put "record", on: :member
+
+        get "show-template", on: :collection
+        get "record-template", on: :collection
+      end
 
       get "/consent/confirm", to: "consent_responses#confirm", on: :member
     end
