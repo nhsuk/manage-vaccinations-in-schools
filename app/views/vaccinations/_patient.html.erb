@@ -4,17 +4,7 @@
 
 <%= render "banners" %>
 
-<% if @consent_response.present? %>
-  <div class="nhsuk-card" id="consent">
-    <div class="nhsuk-card__content">
-      <h2 class="nhsuk-card__heading nhsuk-heading-m">
-        Consent
-      </h2>
-
-      <%= render "triage/patient_triage_consent_response", consent_response: @consent_response %>
-    </div>
-  </div>
-<% end %>
+<%= render AppConsentCardComponent.new session: @session, patient: @patient, consent_response: @consent_response %>
 
 <%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
 

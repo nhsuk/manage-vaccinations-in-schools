@@ -4,6 +4,10 @@
 
 <%= render "vaccinations/banners" %>
 
+<% if @consent_response.present? %>
+  <%= render AppConsentCardComponent.new session: @session, patient: @patient, consent_response: @consent_response %>
+<% end %>
+
 <%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
 
 <% if @consent_response&.health_questions.present? %>
@@ -20,24 +24,6 @@
   <%= render "patient_triage_card", session: @session, patient: @patient, triage: @triage %>
 <% end %>
 
-<div class="nhsuk-card" id="consent">
-  <div class="nhsuk-card__content">
-    <h2 class="nhsuk-card__heading nhsuk-heading-m">
-      Consent
-    </h2>
-
-    <% if @consent_response.present? %>
-      <%= render "patient_triage_consent_response", consent_response: @consent_response %>
-    <% else %>
-      <p>
-        No response given
-      </p>
-
-      <p>
-      <%= govuk_button_link_to "Get consent",
-        consent_confirm_session_patient_path(id: @session),
-        class: "nhsuk-u-margin-bottom-2" %>
-      </p>
-    <% end %>
-  </div>
-</div>
+<% if @consent_response.nil? %>
+  <%= render AppConsentCardComponent.new session: @session, patient: @patient, consent_response: @consent_response %>
+<% end %>
