@@ -40,22 +40,6 @@
 #  fk_rails_...  (campaign_id => campaigns.id)
 #  fk_rails_...  (patient_id => patients.id)
 #
-HEALTH_QUESTIONS = {
-  flu: [
-    "Does the child have a disease or treatment that severely affects their immune system?",
-    "Is anyone in your household having treatment that severely affects their immune system?",
-    "Has your child been diagnosed with asthma?",
-    "Has your child been admitted to intensive care because of a severe egg allergy?",
-    "Is there anything else we should know?"
-  ],
-  hpv: [
-    "Does the child have any severe allergies that have led to an anaphylactic reaction?",
-    "Does the child have any existing medical conditions?",
-    "Does the child take any regular medication?",
-    "Is there anything else we should know?"
-  ]
-}.freeze
-
 FactoryBot.define do
   factory :consent_response do
     patient { create :patient }
@@ -74,7 +58,7 @@ FactoryBot.define do
     recorded_at { Time.zone.now }
 
     health_questions do
-      HEALTH_QUESTIONS
+      ConsentResponse::HEALTH_QUESTIONS
         .fetch(:flu)
         .map { |question| { question:, response: "no" } }
     end
@@ -114,7 +98,7 @@ FactoryBot.define do
 
     trait :health_question_notes do
       health_questions do
-        HEALTH_QUESTIONS
+        ConsentResponse::HEALTH_QUESTIONS
           .fetch(:flu)
           .map do |question|
             if question == "Is there anything else we should know?"
@@ -132,7 +116,7 @@ FactoryBot.define do
 
     trait :health_question_hpv_no_contraindications do
       health_questions do
-        HEALTH_QUESTIONS
+        ConsentResponse::HEALTH_QUESTIONS
           .fetch(:hpv)
           .map { |question| { question:, response: "no" } }
       end
