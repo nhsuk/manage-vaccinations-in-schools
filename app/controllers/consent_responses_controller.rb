@@ -6,7 +6,7 @@ class ConsentResponsesController < ApplicationController
 
   layout "two_thirds"
 
-  def confirm
+  def create
     @draft_consent_response.update!(
       campaign: @session.campaign,
       parent_name: "Test Parent",
@@ -21,6 +21,11 @@ class ConsentResponsesController < ApplicationController
           { question:, response: "no" }
         end
     )
+
+    redirect_to action: :edit_confirm
+  end
+
+  def edit_confirm
   end
 
   def record
