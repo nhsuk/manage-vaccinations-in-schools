@@ -22,7 +22,14 @@ class ConsentResponsesController < ApplicationController
         end
     )
 
+    redirect_to action: :edit_questions
+  end
+
+  def update
     redirect_to action: :edit_confirm
+  end
+
+  def edit_questions
   end
 
   def edit_confirm

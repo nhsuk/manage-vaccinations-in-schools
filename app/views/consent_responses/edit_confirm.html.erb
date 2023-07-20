@@ -1,7 +1,7 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
                href: session_patient_triage_path(@session, @patient),
-               name: "triage page",
+               name: "health questions page",
              ) %>
 <% end %>
 
@@ -66,4 +66,5 @@
 </div>
 
 <%= govuk_button_to "Confirm",
-  record_session_patient_consent_responses_path(@session, @patient), method: :put %>
+  record_session_patient_consent_responses_path(@session, @patient),
+  method: :put %>
