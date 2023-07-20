@@ -47,11 +47,11 @@ class ConsentResponsesController < ApplicationController
   private
 
   def set_session
-    @session = Session.find(params.fetch(:session_id) { params.fetch(:id) })
+    @session = Session.find(params.fetch(:session_id))
   end
 
   def set_patient
-    @patient = @session.patients.find_by(id: params[:id])
+    @patient = @session.patients.find(params.fetch(:patient_id))
   end
 
   def set_patient_session
