@@ -57,7 +57,7 @@
 
       <p>
         <%= govuk_button_to "Get consent",
-          consent_confirm_session_patient_path(@session, id: @patient),
+          confirm_session_patient_consent_responses_path(@session, @patient),
           class: "nhsuk-u-margin-bottom-2" %>
       </p>
     <% end %>
