@@ -21,10 +21,10 @@ test("Records consent", async ({ page }) => {
   // await then_i_see_do_they_agree_page();
 
   // await when_i_click_yes();
-  // await then_i_see_the_health_questions_page();
+  await then_i_see_the_health_questions_page();
 
-  // await when_i_answer_the_health_questions();
-  // await and_i_click_continue();
+  await when_i_answer_the_health_questions();
+  await and_i_click_continue();
   await then_i_see_the_check_answers_page();
 
   await when_i_click_confirm();
@@ -71,4 +71,16 @@ async function when_i_click_confirm() {
 
 async function then_i_see_the_triage_list() {
   await expect(p.locator("h1")).toContainText("Triage");
+}
+
+async function then_i_see_the_health_questions_page() {
+  await expect(p.locator("h1")).toContainText("Health questions");
+}
+
+async function when_i_answer_the_health_questions() {
+  // TODO
+}
+
+async function and_i_click_continue() {
+  await p.getByRole("button", { name: "Continue" }).click();
 }
