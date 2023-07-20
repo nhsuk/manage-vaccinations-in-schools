@@ -31,7 +31,10 @@ Rails.application.routes.draw do
       end
 
       resource :consent_responses, path: "consent" do
-        post "confirm"
+        # get "edit/who", to: "consent_responses#edit_who"
+        # get "edit/agree", to: "consent_responses#edit_agree"
+        # get "edit/questions", to: "consent_responses#edit_questions"
+        get "edit/confirm", to: "consent_responses#edit_confirm"
         put "record"
       end
     end
