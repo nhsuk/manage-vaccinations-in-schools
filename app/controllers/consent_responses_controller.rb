@@ -15,16 +15,11 @@ class ConsentResponsesController < ApplicationController
       parent_relationship: "mother",
       consent: "given",
       route: "website",
-      health_questions: [
-        {"question"=>"Does the child have any severe allergies that have led to an anaphylactic reaction?",
-         "response"=>"no"},
-        {"question"=>"Does the child have any existing medical conditions?",
-         "response"=>"no"},
-        {"question"=>"Does the child take any regular medication?",
-         "response"=>"no"},
-        {"question"=>"Is there anything else we should know?",
-         "response"=>"no"}
-      ],
+      health_questions: ConsentResponse::HEALTH_QUESTIONS
+        .fetch(:hpv)
+        .map do |question|
+          { question:, response: "no" }
+        end
     )
   end
 
