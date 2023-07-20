@@ -19,5 +19,6 @@ FactoryBot.define do
   factory :triage do
     status { :ready_to_vaccinate }
     notes { nil }
+    patient { create :patient }
   end
 end
