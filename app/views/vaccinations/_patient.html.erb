@@ -2,7 +2,7 @@
   <%= patient.full_name %>
 </h1>
 
-<%= render "banners" %>
+<%= render AppStatusBannerComponent.new(patient_session: @patient_session) %>
 
 <%= render AppConsentCardComponent.new session: @session, patient: @patient, consent_response: @consent_response %>
 
