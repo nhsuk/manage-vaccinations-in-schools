@@ -17,15 +17,17 @@ class ConsentResponsesController < ApplicationController
       route: "website",
       health_questions: ConsentResponse::HEALTH_QUESTIONS
         .fetch(:hpv)
-        .map do |question|
-          { question:, response: "no" }
-        end
+        .map { |question| { question: } }
     )
 
     redirect_to action: :edit_questions
   end
 
   def update
+    @draft_consent_response.health_questions.each_with_index do |hq, index|
+      hq.merge! consent_response_health_questions_params["question_#{index}"]
+    end
+    @draft_consent_response.save!
     redirect_to action: :edit_confirm
   end
 
@@ -69,5 +71,14 @@ class ConsentResponsesController < ApplicationController
     @draft_consent_response = @patient
       .consent_responses
       .find_or_initialize_by(recorded_at: nil)
+  end
+
+  def consent_response_health_questions_params
+    params.require(:consent_response).permit(
+      question_0: [:notes, :response],
+      question_1: [:notes, :response],
+      question_2: [:notes, :response],
+      question_3: [:notes, :response],
+    )
   end
 end
