@@ -1,10 +1,10 @@
 class VaccinationsController < ApplicationController
   before_action :set_session
-  before_action :set_patient, only: %i[show confirm reason record history]
+  before_action :set_patient, only: %i[show confirm edit_reason record history create update]
   before_action :set_patient_sessions, only: %i[index record_template]
   before_action :set_patient_session, only: %i[record show]
   before_action :set_draft_vaccination_record,
-                only: %i[show confirm reason record]
+                only: %i[show confirm edit_reason record create update]
   before_action :set_vaccination_record, only: %i[show confirm record]
   before_action :set_consent_response, only: %i[show confirm]
   before_action :set_triage, only: %i[show confirm]
@@ -25,21 +25,10 @@ class VaccinationsController < ApplicationController
     end
   end
 
-  def reason
+  def edit_reason
   end
 
   def confirm
-    if @draft_vaccination_record.update(vaccination_record_params)
-      not_administered = !@draft_vaccination_record.administered?
-      reason_not_specified = vaccination_record_params[:reason].blank?
-      ask_for_reason = not_administered && reason_not_specified
-      if ask_for_reason
-        redirect_to reason_session_patient_vaccinations_path(@session, @patient)
-      end
-      # Render confirm
-    else
-      render :show
-    end
   end
 
   def record
@@ -93,6 +82,28 @@ class VaccinationsController < ApplicationController
       body: "You will need to go online to sync your changes."
     }
     render :index
+  end
+
+  def create
+    if @draft_vaccination_record.update(vaccination_record_params)
+      if @draft_vaccination_record.administered?
+        redirect_to confirm_session_patient_vaccinations_path(@session, @patient)
+      else
+        redirect_to edit_reason_session_patient_vaccinations_path(@session, @patient)
+      end
+    else
+      render :show
+    end
+  end
+
+  def update
+    if @draft_vaccination_record.update(vaccination_record_params)
+      redirect_to confirm_session_patient_vaccinations_path(@session, @patient)
+    elsif @draft_vaccination_record.not_administered?
+      render :edit_reason
+    else
+      render :show
+    end
   end
 
   private

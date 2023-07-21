@@ -90,7 +90,7 @@
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
       <%= form_with model: @draft_vaccination_record,
-                    url: confirm_session_patient_vaccinations_path(
+                    url: session_patient_vaccinations_path(
                       session_id: @session.id,
                       id: @patient.id,
                     ),

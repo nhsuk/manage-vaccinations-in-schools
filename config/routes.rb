@@ -18,12 +18,11 @@ Rails.application.routes.draw do
 
     resources :patients do
       resource :triage, only: %i[show create update]
-      resource :vaccinations, only: %i[show] do
+      resource :vaccinations, only: %i[create show update] do
         get "history", on: :member
 
-        post "confirm", on: :member
-        get "reason", on: :member
-        put "confirm", on: :member
+        get "edit/reason", action: "edit_reason", on: :member
+        get "confirm", on: :member
         put "record", on: :member
 
         get "show-template", on: :collection
