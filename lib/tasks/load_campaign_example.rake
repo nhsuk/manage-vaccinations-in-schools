@@ -11,20 +11,24 @@ task :load_campaign_example, [:example_file] => :environment do |_task, args|
     school = Location.find_or_create_by!(name: example.school_attributes[:name])
     school.update!(example.school_attributes)
 
-    vaccine = Vaccine.find_or_create_by! name: example.vaccine_attributes[:name]
-
     campaign =
       Campaign.find_or_initialize_by name: example.campaign_attributes[:name]
-    campaign.vaccine = vaccine
     campaign.save!
+
+    example.vaccine_attributes.each do |attributes|
+      batches = attributes.delete(:batches)
+      vaccine = campaign.vaccines.find_or_create_by!(attributes)
+      batches.each { |batch| vaccine.batches.find_or_create_by!(batch) }
+    end
 
     session =
       Session.find_or_initialize_by(
         campaign:,
-        name: example.session_attributes[:name]
+        name: example.session_attributes[:name],
       )
     session.update!(example.session_attributes)
 
+    vaccine = campaign.vaccines.first
     vaccine.health_questions =
       example.health_question_attributes.map do |attributes|
         HealthQuestion.find_or_initialize_by(attributes.merge(vaccine:))
