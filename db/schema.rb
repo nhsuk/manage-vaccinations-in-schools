@@ -10,21 +10,33 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_19_135042) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_21_120653) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "batches", force: :cascade do |t|
+    t.string "name"
+    t.date "expiry"
+    t.bigint "vaccine_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["vaccine_id"], name: "index_batches_on_vaccine_id"
+  end
 
   create_table "campaigns", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "campaigns_vaccines", id: false, force: :cascade do |t|
+    t.bigint "campaign_id", null: false
     t.bigint "vaccine_id", null: false
-    t.index ["vaccine_id"], name: "index_campaigns_on_vaccine_id"
+    t.index ["campaign_id", "vaccine_id"], name: "index_campaigns_vaccines_on_campaign_id_and_vaccine_id"
+    t.index ["vaccine_id", "campaign_id"], name: "index_campaigns_vaccines_on_vaccine_id_and_campaign_id"
   end
 
   create_table "consent_responses", force: :cascade do |t|
-    t.bigint "patient_id", null: false
-    t.bigint "campaign_id", null: false
     t.text "childs_name"
     t.text "childs_common_name"
     t.date "childs_dob"
@@ -49,6 +61,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_19_135042) do
     t.datetime "updated_at", null: false
     t.jsonb "health_questions"
     t.datetime "recorded_at"
+    t.bigint "campaign_id", null: false
+    t.bigint "patient_id", null: false
     t.index ["campaign_id"], name: "index_consent_responses_on_campaign_id"
     t.index ["patient_id"], name: "index_consent_responses_on_patient_id"
   end
@@ -137,15 +151,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_19_135042) do
   end
 
   create_table "vaccines", force: :cascade do |t|
-    t.string "name"
+    t.string "type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_vaccines_on_name", unique: true
+    t.text "brand"
+    t.integer "method"
+    t.index ["type"], name: "index_vaccines_on_type", unique: true
   end
 
-  add_foreign_key "campaigns", "vaccines"
-  add_foreign_key "consent_responses", "campaigns"
-  add_foreign_key "consent_responses", "patients"
+  add_foreign_key "batches", "vaccines"
   add_foreign_key "health_questions", "vaccines"
   add_foreign_key "vaccination_records", "patient_sessions"
 end

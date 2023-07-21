@@ -37,12 +37,12 @@ class VaccinationRecord < ApplicationRecord
   validates :site,
             presence: true,
             inclusion: {
-              in: sites.keys
+              in: sites.keys,
             },
             if: -> { administered }
 
   def vaccine_name
-    patient_session.session.campaign.vaccine.name
+    patient_session.session.campaign.vaccines.first.type
   end
 
   def location_name

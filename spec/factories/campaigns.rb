@@ -6,20 +6,11 @@
 #  name       :string           not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  vaccine_id :bigint           not null
-#
-# Indexes
-#
-#  index_campaigns_on_vaccine_id  (vaccine_id)
-#
-# Foreign Keys
-#
-#  fk_rails_...  (vaccine_id => vaccines.id)
 #
 FactoryBot.define do
   factory :campaign do
     name { "HPV" }
-    vaccine { create :vaccine, name: "HPV" }
+    vaccines { [create(:vaccine, type: "HPV")] }
 
     after :create do |campaign|
       create :session, campaign:
