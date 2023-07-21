@@ -22,6 +22,7 @@ Rails.application.routes.draw do
         get "history", on: :member
 
         get "edit/reason", action: "edit_reason", on: :member
+        get "edit/batch", action: "edit_batch", on: :member
         get "confirm", on: :member
         put "record", on: :member
 

@@ -18,6 +18,9 @@ test("Records vaccinations", async ({ page }) => {
   await then_i_should_see_health_question_responses_if_present("Ernie Funk");
 
   await when_i_record_a_vaccination();
+  await then_i_should_see_the_select_batch_page();
+
+  await when_i_select_a_batch();
   await then_i_should_see_the_check_answers_page();
 
   await when_i_press_confirm();
@@ -78,6 +81,15 @@ async function then_i_should_see_the_vaccinations_page() {
 async function when_i_record_a_vaccination() {
   await p.click("text=Yes, they got the HPV vaccine");
   await p.click("text=Left arm");
+  await p.click("text=Continue");
+}
+
+async function then_i_should_see_the_select_batch_page() {
+  await expect(p.locator("legend")).toContainText("Which batch did you use?");
+}
+
+async function when_i_select_a_batch() {
+  await p.click("text=IE5343");
   await p.click("text=Continue");
 }
 
