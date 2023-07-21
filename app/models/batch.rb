@@ -19,6 +19,7 @@
 #
 class Batch < ApplicationRecord
   belongs_to :vaccine
+  has_many :vaccination_records
 
   validates :name, presence: true
   validates :expiry, presence: true
