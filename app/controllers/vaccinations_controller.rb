@@ -1,10 +1,10 @@
 class VaccinationsController < ApplicationController
   before_action :set_session
-  before_action :set_patient, only: %i[show confirm edit_reason record history create update]
+  before_action :set_patient, except: %i[index record_template]
   before_action :set_patient_sessions, only: %i[index record_template]
   before_action :set_patient_session, only: %i[record show]
   before_action :set_draft_vaccination_record,
-                only: %i[show confirm edit_reason record create update]
+                only: %i[show confirm edit_batch edit_reason record create update]
   before_action :set_vaccination_record, only: %i[show confirm record]
   before_action :set_consent_response, only: %i[show confirm]
   before_action :set_triage, only: %i[show confirm]
@@ -26,6 +26,10 @@ class VaccinationsController < ApplicationController
   end
 
   def edit_reason
+  end
+
+  def edit_batch
+    @batches = @session.campaign.batches
   end
 
   def confirm
@@ -87,7 +91,7 @@ class VaccinationsController < ApplicationController
   def create
     if @draft_vaccination_record.update(vaccination_record_params)
       if @draft_vaccination_record.administered?
-        redirect_to confirm_session_patient_vaccinations_path(@session, @patient)
+        redirect_to edit_batch_session_patient_vaccinations_path(@session, @patient)
       else
         redirect_to edit_reason_session_patient_vaccinations_path(@session, @patient)
       end
@@ -99,10 +103,10 @@ class VaccinationsController < ApplicationController
   def update
     if @draft_vaccination_record.update(vaccination_record_params)
       redirect_to confirm_session_patient_vaccinations_path(@session, @patient)
-    elsif @draft_vaccination_record.not_administered?
-      render :edit_reason
+    elsif @draft_vaccination_record.administered?
+      redirect_to edit_batch_session_patient_vaccinations_path(@session, @patient)
     else
-      render :show
+      redirect_to edit_reason_session_patient_vaccinations_path(@session, @patient)
     end
   end
 
@@ -111,7 +115,7 @@ class VaccinationsController < ApplicationController
   def vaccination_record_params
     p = params.require(:vaccination_record)
     p[:site] = p[:site].to_i if p[:site].present?
-    p.permit(:administered, :site, :reason)
+    p.permit(:administered, :site, :reason, :batch_id)
   end
 
   def set_session

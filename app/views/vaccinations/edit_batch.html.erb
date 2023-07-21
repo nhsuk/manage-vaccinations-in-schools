@@ -1,0 +1,23 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+    href: session_patient_vaccinations_path(@session, @patient),
+    name: "vaccination page"
+  ) %>
+<% end %>
+
+<%= form_with model: @draft_vaccination_record,
+   url: session_patient_vaccinations_path(
+     session_id: @session.id,
+     id: @patient.id,
+   ),
+ method: :put do |f| %>
+  <%= f.govuk_radio_buttons_fieldset(:reason,
+                                     legend: { size: 'l', text: 'Which batch did you use?' }) do %>
+    <% @batches.each do |batch| %>
+      <%= f.govuk_radio_button :batch_id,
+       batch.id,
+       label: { text: "#{batch.name} (expires #{batch.expiry.to_fs(:nhsuk_date)})" } %>
+    <% end %>
+  <% end %>
+  <%= f.submit "Continue", class: "nhsuk-button" %>
+<% end %>
