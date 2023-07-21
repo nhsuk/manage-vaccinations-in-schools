@@ -8,7 +8,14 @@ class ExampleCampaignData
   end
 
   def vaccine_attributes
-    { name: raw_data["type"] }
+    raw_data["vaccines"].map do |vaccine|
+      {
+        type: raw_data["type"],
+        brand: vaccine["brand"],
+        method: vaccine["method"].downcase,
+        batches: vaccine["batches"],
+      }
+    end
   end
 
   def campaign_attributes
@@ -32,7 +39,7 @@ class ExampleCampaignData
       town: school_data["town"],
       county: school_data["county"],
       postcode: school_data["postcode"],
-      url: school_data["url"]
+      url: school_data["url"],
     }
   end
 
@@ -52,13 +59,13 @@ class ExampleCampaignData
         sex: patient["sex"],
         consent: patient["consent"],
         nhs_number: patient["nhsNumber"],
-        screening: patient["screening"]
+        screening: patient["screening"],
       }
 
       if patient["triage"].present?
         attributes[:triage] = {
           status: patient["triage"]["status"],
-          notes: patient["triage"]["notes"]
+          notes: patient["triage"]["notes"],
         }
       end
 
