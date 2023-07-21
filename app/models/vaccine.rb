@@ -3,17 +3,26 @@
 # Table name: vaccines
 #
 #  id         :bigint           not null, primary key
-#  name       :string
+#  brand      :text
+#  method     :integer
+#  type       :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
 # Indexes
 #
-#  index_vaccines_on_name  (name) UNIQUE
+#  index_vaccines_on_type  (type) UNIQUE
 #
 class Vaccine < ApplicationRecord
-  has_many :campaigns, dependent: :destroy
-  has_many :health_questions, dependent: :destroy
+  self.inheritance_column = :_type_disabled
 
-  validates :name, presence: true
+  has_and_belongs_to_many :campaigns
+  has_many :health_questions, dependent: :destroy
+  has_many :batches
+
+  validates :type, presence: true
+  validates :brand, presence: true
+  validates :method, presence: true
+
+  enum :method, %i[injection]
 end
