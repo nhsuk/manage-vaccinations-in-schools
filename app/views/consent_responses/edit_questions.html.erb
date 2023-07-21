@@ -7,6 +7,22 @@
 
 <h1 class="nhsuk-heading-l">Health questions</h1>
 
-<%= govuk_button_to "Continue",
-  session_patient_consent_responses_path(@session, @patient),
-  method: :put %>
+<%= form_for @draft_consent_response,
+  url: session_patient_consent_responses_path(@session, @patient),
+  method: :put do |f| %>
+  <% @draft_consent_response.health_questions.each_with_index do |hq, index| %>
+    <%= f.fields_for "question_#{index}", HealthQuestion.new(hq) do |ff| %>
+      <%= ff.govuk_radio_buttons_fieldset(:question, legend:
+         { size: 's',
+           text: hq["question"] }) do %>
+         <%= ff.govuk_radio_button :response, 'yes', label: { text: 'Yes' },
+           link_errors: true do %>
+          <%= ff.govuk_text_area :notes, label: { text: 'Give details' } %>
+        <% end %>
+        <%= ff.govuk_radio_button :response, 'no', label: { text: 'No' } %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

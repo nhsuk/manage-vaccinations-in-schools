@@ -17,5 +17,6 @@
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 class HealthQuestion < ApplicationRecord
+  attr_accessor :response, :notes
   belongs_to :vaccine
 end
