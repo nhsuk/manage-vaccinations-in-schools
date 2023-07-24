@@ -1,0 +1,28 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+               href: session_patient_triage_path(@session, @patient),
+               name: "triage page",
+             ) %>
+<% end %>
+
+<%= form_for @draft_consent_response,
+  url: session_patient_consent_responses_path(@session, @patient),
+  method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+  <%= f.govuk_radio_buttons_fieldset(:consent,
+    legend: { size: 'l',
+              tag: 'h1',
+              text: 'Do they agree to them having both doses of the
+                     HPV vaccination?' }) do %>
+    <%= f.govuk_radio_button :consent, "given",
+      label: { text: 'Yes, they agree' }, link_errors: true %>
+    <%= f.govuk_radio_button :consent, "refused",
+      label: { text: "No, they do not agree" } %>
+    <%= f.govuk_radio_button :consent, "no_response",
+      label: { text: 'No response' } %>
+  <% end %>
+
+  <div class="nhsuk-u-margin-top-6">
+    <%= f.govuk_submit "Continue" %>
+  </div>
+<% end %>
