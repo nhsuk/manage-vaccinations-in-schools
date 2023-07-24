@@ -223,7 +223,7 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
     id: "5M0",
     title: "HPV campaign at #{school_details[:name]}",
     location: school_details[:name],
-    date: "2023-07-11T12:30",
+    date: "2023-07-28T12:30",
     type: "HPV",
     vaccines: [hpv_vaccine],
     school: school_details,
