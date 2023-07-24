@@ -1,6 +1,10 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: edit_questions_session_patient_consent_responses_path(@session, @patient),
+    href: if @draft_consent_response.consent_given?
+      edit_questions_session_patient_consent_responses_path(@session, @patient)
+    else
+      edit_agree_session_patient_consent_responses_path(@session, @patient)
+    end,
     name: "health questions page",
   ) %>
 <% end %>

@@ -20,6 +20,17 @@ test("Records consent", async ({ page }) => {
   // await and_i_click_continue();
   await then_i_see_do_they_agree_page();
 
+  await when_i_click_no();
+  await and_i_click_continue();
+  await then_i_see_the_reason_for_refusal_page();
+
+  await when_i_select_a_reason();
+  await and_i_click_continue();
+  await then_i_see_the_check_answers_page();
+
+  await when_i_click_back();
+  await then_i_see_do_they_agree_page();
+
   await when_i_click_yes();
   await and_i_click_continue();
   await then_i_see_the_health_questions_page();
@@ -98,4 +109,20 @@ async function then_i_see_do_they_agree_page() {
 
 async function when_i_click_yes() {
   await p.getByRole("radio", { name: "Yes, they agree" }).click();
+}
+
+async function when_i_click_no() {
+  await p.getByRole("radio", { name: "No, they do not agree" }).click();
+}
+
+async function then_i_see_the_reason_for_refusal_page() {
+  await expect(p.locator("h1")).toContainText("Why do they not agree?");
+}
+
+async function when_i_select_a_reason() {
+  await p.getByRole("radio", { name: "Vaccine already received" }).click();
+}
+
+async function when_i_click_back() {
+  await p.getByRole("link", { name: "Back" }).click();
 }
