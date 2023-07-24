@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_21_225536) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_24_141314) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -115,6 +115,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_21_225536) do
     t.integer "screening"
     t.integer "consent"
     t.integer "seen"
+    t.text "parent_name"
+    t.integer "parent_relationship"
+    t.text "parent_relationship_other"
+    t.text "parent_email"
+    t.text "parent_phone"
+    t.text "parent_info_source"
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
   end
 
