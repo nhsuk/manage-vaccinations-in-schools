@@ -20,4 +20,10 @@ class PatientResource < Avo::BaseResource
   field :sessions, as: :has_and_belongs_to_many
   field :location, as: :belongs_to
   # add fields here
+  field :parent_name, as: :text
+  field :parent_relationship, as: :select, enum: ::Patient.parent_relationships
+  field :parent_relationship_other, as: :text
+  field :parent_email, as: :text
+  field :parent_phone, as: :text
+  field :parent_info_source, as: :text
 end
