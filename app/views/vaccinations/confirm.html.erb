@@ -1,6 +1,13 @@
 <% content_for :before_main do %>
+  <%
+  back_url = if @draft_vaccination_record.administered?
+    edit_batch_session_patient_vaccinations_path(@session, @patient)
+  else
+    edit_reason_session_patient_vaccinations_path(@session, @patient)
+  end
+  %>
   <%= render AppBacklinkComponent.new(
-               href: session_patient_vaccinations_path(@session, @patient),
+               href: back_url,
                name: "vaccination page"
              ) %>
 <% end %>
