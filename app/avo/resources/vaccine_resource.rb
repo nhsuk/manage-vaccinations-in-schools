@@ -7,8 +7,11 @@ class VaccineResource < Avo::BaseResource
 
   field :id, as: :id
   # Fields generated from the model
-  field :name, as: :text
+  field :type, as: :text
   # add fields here
-  field :campaigns, as: :has_many
+  field :campaigns, as: :has_and_belongs_to_many
   field :health_questions, as: :has_many
+  field :brand, as: :text
+  field :method, as: :select, enum: Vaccine.methods
+  field :batches, as: :has_many
 end
