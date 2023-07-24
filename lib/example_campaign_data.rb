@@ -60,6 +60,12 @@ class ExampleCampaignData
         consent: patient["consent"],
         nhs_number: patient["nhsNumber"],
         screening: patient["screening"],
+        parent_name: patient["parentName"],
+        parent_relationship: patient["parentRelationship"],
+        parent_relationship_other: patient["parentRelationshipOther"],
+        parent_email: patient["parentEmail"],
+        parent_phone: patient["parentPhone"],
+        parent_info_source: patient["parentInfoSource"],
       }
 
       if patient["triage"].present?
