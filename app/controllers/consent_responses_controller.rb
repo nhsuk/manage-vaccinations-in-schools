@@ -38,8 +38,10 @@ class ConsentResponsesController < ApplicationController
   end
 
   def record
-    @draft_consent_response.update!(recorded_at: Time.zone.now)
-    @patient_session.do_consent!
+    ActiveRecord::Base.transaction do
+      @draft_consent_response.update!(recorded_at: Time.zone.now)
+      @patient_session.do_consent!
+    end
 
     redirect_to triage_session_path(@session),
                 flash: {
