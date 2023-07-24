@@ -37,6 +37,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_24_141314) do
   end
 
   create_table "consent_responses", force: :cascade do |t|
+    t.bigint "patient_id", null: false
+    t.bigint "campaign_id", null: false
     t.text "childs_name"
     t.text "childs_common_name"
     t.date "childs_dob"
@@ -61,8 +63,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_24_141314) do
     t.datetime "updated_at", null: false
     t.jsonb "health_questions"
     t.datetime "recorded_at"
-    t.bigint "campaign_id", null: false
-    t.bigint "patient_id", null: false
     t.index ["campaign_id"], name: "index_consent_responses_on_campaign_id"
     t.index ["patient_id"], name: "index_consent_responses_on_patient_id"
   end
@@ -168,6 +168,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_24_141314) do
   end
 
   add_foreign_key "batches", "vaccines"
+  add_foreign_key "consent_responses", "campaigns"
+  add_foreign_key "consent_responses", "patients"
   add_foreign_key "health_questions", "vaccines"
   add_foreign_key "vaccination_records", "batches"
   add_foreign_key "vaccination_records", "patient_sessions"
