@@ -19,9 +19,6 @@ application.register("govuk-checkboxes", GovukCheckboxesController);
 import GovukDetailsController from "./govuk_details_controller";
 application.register("govuk-details", GovukDetailsController);
 
-import GovukErrorSummaryController from "./govuk_error_summary_controller";
-application.register("govuk-error-summary", GovukErrorSummaryController);
-
 import GovukHeaderController from "./govuk_header_controller";
 application.register("govuk-header", GovukHeaderController);
 
@@ -33,6 +30,9 @@ application.register(
 
 import GovukSkipLinkController from "./govuk_skip_link_controller";
 application.register("govuk-skip-link", GovukSkipLinkController);
+
+import NhsukErrorSummaryController from "./nhsuk_error_summary_controller";
+application.register("nhsuk-error-summary", NhsukErrorSummaryController);
 
 import NhsukRadiosController from "./nhsuk_radios_controller";
 application.register("nhsuk-radios", NhsukRadiosController);
