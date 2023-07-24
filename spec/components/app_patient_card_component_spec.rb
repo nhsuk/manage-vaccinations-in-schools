@@ -53,7 +53,7 @@ RSpec.describe AppPatientCardComponent, type: :component do
     it "should include the information source" do
       expect(page).to have_css(
         '.nhsuk-summary-list__value[data-testid="parent-info"]',
-        text: "(Info from #{patient.parent_info_source})"
+        text: "(Details from #{patient.parent_info_source})"
       )
     end
 
