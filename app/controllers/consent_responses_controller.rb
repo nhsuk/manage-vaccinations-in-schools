@@ -26,11 +26,27 @@ class ConsentResponsesController < ApplicationController
     if consent_response_agree_params.present?
       @draft_consent_response.assign_attributes(consent_response_agree_params)
       if @draft_consent_response.save(context: :edit_consent)
-        redirect_to action: :edit_questions
+        if @draft_consent_response.consent_given?
+          redirect_to action: :edit_questions
+        elsif @draft_consent_response.consent_refused?
+          redirect_to action: :edit_reason
+        else
+          redirect_to action: :edit_confirm
+        end
       else
         render :edit_agree
       end
     end
+
+    if consent_response_reason_params.present?
+      @draft_consent_response.assign_attributes(consent_response_reason_params)
+      if @draft_consent_response.save(context: :edit_reason)
+        redirect_to action: :edit_confirm
+      else
+        render :edit_reason
+      end
+    end
+
 
     if consent_response_health_questions_params.present?
       @draft_consent_response.health_questions.each_with_index do |hq, index|
@@ -45,6 +61,9 @@ class ConsentResponsesController < ApplicationController
   end
 
   def edit_agree
+  end
+
+  def edit_reason
   end
 
   def edit_questions
@@ -96,6 +115,12 @@ class ConsentResponsesController < ApplicationController
   def consent_response_agree_params
     params.fetch(:consent_response, {}).permit(
       :consent,
+    )
+  end
+
+  def consent_response_reason_params
+    params.fetch(:consent_response, {}).permit(
+      :reason_for_refusal,
     )
   end
 
