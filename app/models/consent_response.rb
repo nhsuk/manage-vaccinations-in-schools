@@ -35,6 +35,11 @@
 #  index_consent_responses_on_campaign_id  (campaign_id)
 #  index_consent_responses_on_patient_id   (patient_id)
 #
+# Foreign Keys
+#
+#  fk_rails_...  (campaign_id => campaigns.id)
+#  fk_rails_...  (patient_id => patients.id)
+#
 
 class ConsentResponse < ApplicationRecord
   belongs_to :patient
