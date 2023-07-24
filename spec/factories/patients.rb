@@ -32,6 +32,7 @@ FactoryBot.define do
       # associated with a campaign
       session { create :session }
       campaign { session.campaign }
+      parent_sex { :male }
     end
 
     nhs_number { rand(10 ** 10) }
@@ -43,6 +44,12 @@ FactoryBot.define do
     seen { "Not yet" }
     dob { Faker::Date.birthday(min_age: 3, max_age: 9) }
     patient_sessions { [] }
+    parent_name do
+      parent_sex.to_s == "male" ? Faker::Name.masculine_name : Faker::Name.feminine_name
+    end
+    parent_relationship { parent_sex == "male" ? "father" : "mother" }
+    parent_phone { Faker::PhoneNumber.phone_number }
+    parent_info_source { "School" }
 
     trait :of_hpv_vaccination_age do
       dob { Faker::Date.birthday(min_age: 12, max_age: 13) }
@@ -80,6 +87,15 @@ FactoryBot.define do
       consent_given_triage_needed
 
       triage { [create(:triage, status: :needs_follow_up, campaign: session.campaign)] }
+    end
+
+    trait :no_parent_info do
+      parent_name { nil }
+      parent_relationship { nil }
+      parent_relationship_other { nil }
+      parent_phone { nil }
+      parent_email { nil }
+      parent_info_source { nil }
     end
   end
 end
