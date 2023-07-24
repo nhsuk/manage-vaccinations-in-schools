@@ -59,6 +59,17 @@ class ConsentResponse < ApplicationRecord
   enum :gp_response, %w[yes no dont_know]
   enum :route, %i[website phone paper in_person self_consent], prefix: "via"
 
+  validates :parent_name, presence: true, on: :edit_who
+  validates :parent_phone, presence: true, on: :edit_who
+  validates :parent_relationship,
+    inclusion: { in: parent_relationships.keys },
+    presence: true,
+    on: :edit_who
+  validates :parent_relationship_other,
+    presence: true,
+    if: -> { parent_relationship == "other" },
+    on: :edit_who
+
   validates :consent,
     inclusion: { in: consents.keys },
     presence: true,

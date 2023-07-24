@@ -14,10 +14,10 @@ test("Records consent", async ({ page }) => {
   await then_i_see_the_no_consent_banner();
 
   await when_i_click_get_consent();
-  // await then_i_see_the_consent_form();
+  await then_i_see_the_consent_form();
 
-  // await when_i_enter_the_consent_details();
-  // await and_i_click_continue();
+  await when_i_enter_the_consent_details();
+  await and_i_click_continue();
   await then_i_see_do_they_agree_page();
 
   await when_i_click_no();
@@ -125,4 +125,16 @@ async function when_i_select_a_reason() {
 
 async function when_i_click_back() {
   await p.getByRole("link", { name: "Back" }).click();
+}
+
+async function then_i_see_the_consent_form() {
+  await expect(p.locator("h1")).toContainText(
+    "Who are you trying to get consent from?",
+  );
+}
+
+async function when_i_enter_the_consent_details() {
+  await p.fill('[name="consent_response[parent_name]"]', "Betty Sipes");
+  await p.fill('[name="consent_response[parent_phone]"]', "07700900000");
+  await p.getByRole("radio", { name: "Mum" }).click();
 }
