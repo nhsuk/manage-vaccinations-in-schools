@@ -32,6 +32,31 @@
         </dd>
       </div>
 
+      <% if @patient.parent_name.present? %>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            <%= parent_guardian_or_other %>
+          </dt>
+          <dd class="nhsuk-summary-list__value" data-testid="parent-info">
+            <%= @patient.parent_name %>
+            <div class="nhsuk-u-margin-top-2 nhsuk-u-font-size-16">
+              <% if @patient.parent_phone.present? %>
+                Telephone: <%= @patient.parent_phone %>
+              <% end %>
+              <% if @patient.parent_email.present? %>
+                <br />
+                Email: <%= @patient.parent_email %>
+              <% end %>
+            </div>
+
+            <div class="nhsuk-u-margin-top-2 nhsuk-u-font-size-16">
+              (Info from <%= @patient.parent_info_source %>)
+            </div>
+
+          </dd>
+        </div>
+      <% end %>
+
       <% if Settings.features.fhir_server_integration %>
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
