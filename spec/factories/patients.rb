@@ -2,18 +2,24 @@
 #
 # Table name: patients
 #
-#  id             :bigint           not null, primary key
-#  consent        :integer
-#  dob            :date
-#  first_name     :text
-#  last_name      :text
-#  nhs_number     :bigint
-#  preferred_name :text
-#  screening      :integer
-#  seen           :integer
-#  sex            :integer
-#  created_at     :datetime         not null
-#  updated_at     :datetime         not null
+#  id                        :bigint           not null, primary key
+#  consent                   :integer
+#  dob                       :date
+#  first_name                :text
+#  last_name                 :text
+#  nhs_number                :bigint
+#  parent_email              :text
+#  parent_info_source        :text
+#  parent_name               :text
+#  parent_phone              :text
+#  parent_relationship       :integer
+#  parent_relationship_other :text
+#  preferred_name            :text
+#  screening                 :integer
+#  seen                      :integer
+#  sex                       :integer
+#  created_at                :datetime         not null
+#  updated_at                :datetime         not null
 #
 # Indexes
 #
