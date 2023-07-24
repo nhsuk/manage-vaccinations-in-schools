@@ -46,7 +46,7 @@ class ConsentResponse < ApplicationRecord
   belongs_to :campaign
 
   enum :parent_relationship, %w[mother father guardian other], prefix: true
-  enum :consent, %w[given refused], prefix: true
+  enum :consent, %w[given refused no_response], prefix: true
   enum :reason_for_refusal,
        %w[
          already_vaccinated
@@ -58,6 +58,11 @@ class ConsentResponse < ApplicationRecord
        prefix: true
   enum :gp_response, %w[yes no dont_know]
   enum :route, %i[website phone paper in_person self_consent], prefix: "via"
+
+  validates :consent,
+    inclusion: { in: consents.keys },
+    presence: true,
+    on: :edit_consent
 
   HEALTH_QUESTIONS = {
     flu: [

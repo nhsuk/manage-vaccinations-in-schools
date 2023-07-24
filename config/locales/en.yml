@@ -34,3 +34,7 @@ en:
               blank: Choose a site
             reason:
               inclusion: Choose a reason
+        consent_response:
+          attributes:
+            consent:
+              inclusion: Choose if they consent

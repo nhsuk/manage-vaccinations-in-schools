@@ -13,22 +13,38 @@ class ConsentResponsesController < ApplicationController
       parent_phone: "07412 345678",
       parent_email: "test.parent@example.com",
       parent_relationship: "mother",
-      consent: "given",
       route: "website",
       health_questions: ConsentResponse::HEALTH_QUESTIONS
         .fetch(:hpv)
         .map { |question| { question: } }
     )
 
-    redirect_to action: :edit_questions
+    redirect_to action: :edit_agree
   end
 
   def update
-    @draft_consent_response.health_questions.each_with_index do |hq, index|
-      hq.merge! consent_response_health_questions_params["question_#{index}"]
+    if consent_response_agree_params.present?
+      @draft_consent_response.assign_attributes(consent_response_agree_params)
+      if @draft_consent_response.save(context: :edit_consent)
+        redirect_to action: :edit_questions
+      else
+        render :edit_agree
+      end
     end
-    @draft_consent_response.save!
-    redirect_to action: :edit_confirm
+
+    if consent_response_health_questions_params.present?
+      @draft_consent_response.health_questions.each_with_index do |hq, index|
+        hq.merge! consent_response_health_questions_params["question_#{index}"]
+      end
+
+      # TODO: Handle validation
+      @draft_consent_response.save!
+
+      redirect_to action: :edit_confirm
+    end
+  end
+
+  def edit_agree
   end
 
   def edit_questions
@@ -75,8 +91,14 @@ class ConsentResponsesController < ApplicationController
       .find_or_initialize_by(recorded_at: nil)
   end
 
+  def consent_response_agree_params
+    params.fetch(:consent_response, {}).permit(
+      :consent,
+    )
+  end
+
   def consent_response_health_questions_params
-    params.require(:consent_response).permit(
+    params.fetch(:consent_response, {}).permit(
       question_0: [:notes, :response],
       question_1: [:notes, :response],
       question_2: [:notes, :response],

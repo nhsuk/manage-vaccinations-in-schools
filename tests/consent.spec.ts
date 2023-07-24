@@ -18,9 +18,10 @@ test("Records consent", async ({ page }) => {
 
   // await when_i_enter_the_consent_details();
   // await and_i_click_continue();
-  // await then_i_see_do_they_agree_page();
+  await then_i_see_do_they_agree_page();
 
-  // await when_i_click_yes();
+  await when_i_click_yes();
+  await and_i_click_continue();
   await then_i_see_the_health_questions_page();
 
   await when_i_answer_the_health_questions();
@@ -89,4 +90,12 @@ async function when_i_answer_the_health_questions() {
 
 async function and_i_click_continue() {
   await p.getByRole("button", { name: "Continue" }).click();
+}
+
+async function then_i_see_do_they_agree_page() {
+  await expect(p.locator("h1")).toContainText("Do they agree");
+}
+
+async function when_i_click_yes() {
+  await p.getByRole("radio", { name: "Yes, they agree" }).click();
 }

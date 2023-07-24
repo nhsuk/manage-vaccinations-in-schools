@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-               href: session_patient_triage_path(@session, @patient),
-               name: "triage page",
-             ) %>
+    href: edit_agree_session_patient_consent_responses_path(@session, @patient),
+    name: "consent page",
+  ) %>
 <% end %>
 
 <h1 class="nhsuk-heading-l">Health questions</h1>
