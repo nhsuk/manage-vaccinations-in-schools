@@ -11,4 +11,12 @@ class AppPatientCardComponent < ViewComponent::Base
   def aged
     "aged #{@patient.dob ? @patient.age : ""}"
   end
+
+  def parent_guardian_or_other
+    if @patient.parent_relationship == "other"
+      @patient.parent_relationship_other.humanize
+    else
+      @patient.parent_relationship.humanize
+    end
+  end
 end

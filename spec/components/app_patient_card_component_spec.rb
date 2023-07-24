@@ -34,4 +34,6 @@ RSpec.describe AppPatientCardComponent, type: :component do
       text: patient.nhs_number
     )
   end
+
+  it "should"
 end
