@@ -199,6 +199,7 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
         if consent
           {
             consent: consent.consent,
+            reasonForRefusal: consent.reason_for_refusal,
             parentName: consent.parent_name,
             parentRelationship: consent.parent_relationship,
             parentEmail: consent.parent_email,
