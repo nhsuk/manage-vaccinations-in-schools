@@ -64,6 +64,16 @@ class ConsentResponse < ApplicationRecord
     presence: true,
     on: :edit_consent
 
+  validates :reason_for_refusal,
+    inclusion: { in: reason_for_refusals.keys },
+    presence: true,
+    on: :edit_reason
+
+  validates :reason_for_refusal_other,
+    presence: true,
+    if: -> { reason_for_refusal == "other" },
+    on: :edit_reason
+
   HEALTH_QUESTIONS = {
     flu: [
       "Does the child have a disease or treatment that severely affects their immune system?",
