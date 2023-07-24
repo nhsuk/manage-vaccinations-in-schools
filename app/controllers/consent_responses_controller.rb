@@ -54,9 +54,11 @@ class ConsentResponsesController < ApplicationController
   end
 
   def record
-    ActiveRecord::Base.transaction do
-      @draft_consent_response.update!(recorded_at: Time.zone.now)
-      @patient_session.do_consent!
+    unless @draft_consent_response.consent_no_response?
+      ActiveRecord::Base.transaction do
+        @draft_consent_response.update!(recorded_at: Time.zone.now)
+        @patient_session.do_consent!
+      end
     end
 
     redirect_to triage_session_path(@session),
