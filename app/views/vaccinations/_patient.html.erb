@@ -16,7 +16,7 @@
   ) %>
 <% end %>
 
-<% if @vaccination_record.present? %>
+<% if @vaccination_record&.administered? %>
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
       <h2 class="nhsuk-card__heading nhsuk-heading-m">
@@ -28,7 +28,7 @@
             Vaccine
           </dt>
           <dd class="nhsuk-summary-list__value">
-            <%= @vaccination_record.vaccine_name %>
+            <%= "#{@vaccination_record.vaccine_name} (#{@vaccination_record.vaccine.brand}, #{@vaccination_record.batch.name})" %>
           </dd>
         </div>
         <div class="nhsuk-summary-list__row">
@@ -86,7 +86,7 @@
       </dl>
     </div>
   </div>
-<% else %>
+<% elsif @vaccination_record.nil? %>
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
       <%= form_with model: @draft_vaccination_record,
