@@ -17,20 +17,20 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
   }
 
   school_details = {
-    urn: "139714",
-    name: "The Portsmouth Academy",
-    address: "St Mary's Road",
+    urn: "136295",
+    name: "Holyrood Academy",
+    address: "Zembard Lane",
     locality: "",
     address3: "",
-    town: "Portsmouth",
-    county: "Hampshire",
-    postcode: "PO1 5PF",
+    town: "Chard",
+    county: "Somerset",
+    postcode: "TA20 1JL",
     minimum_age: "11",
-    maximum_age: "16",
-    url: "https://www.theportsmouthacademy.org.uk/",
+    maximum_age: "18",
+    url: "https://holyrood.uat.ac/",
     phase: "Secondary",
-    type: "Academy sponsor led",
-    detailed_type: "Academy sponsor led"
+    type: "Academy converter",
+    detailed_type: "Academy converter"
   }
 
   patients_consent_triage = []
