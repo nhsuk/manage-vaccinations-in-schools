@@ -30,6 +30,18 @@
         row.with_value { 'HPV' }
       end
 
+      if @draft_vaccination_record.administered?
+        summary_list.with_row do |row|
+          row.with_key { 'Brand' }
+          row.with_value { @draft_vaccination_record.vaccine.brand }
+        end
+
+        summary_list.with_row do |row|
+          row.with_key { 'Batch' }
+          row.with_value { @draft_vaccination_record.batch.name }
+        end
+      end
+
       summary_list.with_row do |row|
         row.with_key { 'Dose' }
         row.with_value { '1 of 2' }

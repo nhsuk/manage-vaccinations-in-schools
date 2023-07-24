@@ -25,6 +25,7 @@
 class VaccinationRecord < ApplicationRecord
   belongs_to :patient_session
   belongs_to :batch, optional: true
+  has_one :vaccine, through: :batch
 
   enum :site, %i[left_arm right_arm other]
   enum :reason,
