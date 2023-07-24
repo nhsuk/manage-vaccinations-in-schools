@@ -26,6 +26,10 @@ class ConsentResponsesController < ApplicationController
     if consent_response_agree_params.present?
       @draft_consent_response.assign_attributes(consent_response_agree_params)
       if @draft_consent_response.save(context: :edit_consent)
+        # Reset the reason for refusal so the user has to pick it again.
+        # Otherwise it will be pre-filled with the previous value.
+        @draft_consent_response.update! reason_for_refusal: nil
+
         if @draft_consent_response.consent_given?
           redirect_to action: :edit_questions
         elsif @draft_consent_response.consent_refused?
@@ -121,6 +125,7 @@ class ConsentResponsesController < ApplicationController
   def consent_response_reason_params
     params.fetch(:consent_response, {}).permit(
       :reason_for_refusal,
+      :reason_for_refusal_other,
     )
   end
 

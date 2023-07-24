@@ -38,3 +38,7 @@ en:
           attributes:
             consent:
               inclusion: Choose if they consent
+            reason_for_refusal:
+              inclusion: Choose a reason
+            reason_for_refusal_other:
+              blank: Enter a reason
