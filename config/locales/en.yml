@@ -36,6 +36,14 @@ en:
               inclusion: Choose a reason
         consent_response:
           attributes:
+            parent_name:
+              blank: Enter a name
+            parent_phone:
+              blank: Enter a phone number
+            parent_relationship:
+              blank: Choose a relationship
+            parent_relationship_other:
+              blank: Enter a relationship
             consent:
               inclusion: Choose if they consent
             reason_for_refusal:

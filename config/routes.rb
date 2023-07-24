@@ -31,7 +31,7 @@ Rails.application.routes.draw do
       end
 
       resource :consent_responses, path: "consent" do
-        # get "edit/who", to: "consent_responses#edit_who"
+        get "edit/who", to: "consent_responses#edit_who"
         get "edit/agree", to: "consent_responses#edit_agree"
         get "edit/reason", to: "consent_responses#edit_reason"
         get "edit/questions", to: "consent_responses#edit_questions"

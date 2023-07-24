@@ -9,20 +9,25 @@ class ConsentResponsesController < ApplicationController
   def create
     @draft_consent_response.update!(
       campaign: @session.campaign,
-      parent_name: "Test Parent",
-      parent_phone: "07412 345678",
-      parent_email: "test.parent@example.com",
-      parent_relationship: "mother",
       route: "website",
       health_questions: ConsentResponse::HEALTH_QUESTIONS
         .fetch(:hpv)
         .map { |question| { question: } }
     )
 
-    redirect_to action: :edit_agree
+    redirect_to action: :edit_who
   end
 
   def update
+    if consent_response_who_params.present?
+      @draft_consent_response.assign_attributes(consent_response_who_params)
+      if @draft_consent_response.save(context: :edit_who)
+        redirect_to action: :edit_agree
+      else
+        render :edit_who
+      end
+    end
+
     if consent_response_agree_params.present?
       @draft_consent_response.assign_attributes(consent_response_agree_params)
       if @draft_consent_response.save(context: :edit_consent)
@@ -62,6 +67,9 @@ class ConsentResponsesController < ApplicationController
 
       redirect_to action: :edit_confirm
     end
+  end
+
+  def edit_who
   end
 
   def edit_agree
@@ -114,6 +122,15 @@ class ConsentResponsesController < ApplicationController
     @draft_consent_response = @patient
       .consent_responses
       .find_or_initialize_by(recorded_at: nil)
+  end
+
+  def consent_response_who_params
+    params.fetch(:consent_response, {}).permit(
+      :parent_name,
+      :parent_phone,
+      :parent_relationship,
+      :parent_relationship_other,
+    )
   end
 
   def consent_response_agree_params
