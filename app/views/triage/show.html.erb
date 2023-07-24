@@ -21,7 +21,7 @@
 
 <%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
 
-<% if @consent_response&.health_questions.present? %>
+<% if @consent_response&.consent_given? %>
   <div class="nhsuk-card" id="health-questions">
     <div class="nhsuk-card__content">
       <h2 class="nhsuk-card__heading nhsuk-heading-m">
