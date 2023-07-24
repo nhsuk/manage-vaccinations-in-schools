@@ -54,16 +54,18 @@
   </div>
 </div>
 
-<div class="nhsuk-card">
-  <div class="nhsuk-card__content">
-    <h2 class="nhsuk-card__heading nhsuk-heading-m">
-      Health questions
-    </h2>
+<% if @draft_consent_response.consent_given? %>
+  <div class="nhsuk-card">
+    <div class="nhsuk-card__content">
+      <h2 class="nhsuk-card__heading nhsuk-heading-m">
+        Health questions
+      </h2>
 
-    <%= render AppHealthQuestionsComponent.new(
-      consent_response: @draft_consent_response) %>
+      <%= render AppHealthQuestionsComponent.new(
+        consent_response: @draft_consent_response) %>
+    </div>
   </div>
-</div>
+<% end %>
 
 <%= govuk_button_to "Confirm",
   record_session_patient_consent_responses_path(@session, @patient),
