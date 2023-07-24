@@ -1,7 +1,6 @@
-class CampaignResource < Avo::BaseResource
-  self.title = :name
+class BatchResource < Avo::BaseResource
+  self.title = :id
   self.includes = []
-  self.record_selector = false
   # self.search_query = -> do
   #   scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
   # end
@@ -9,7 +8,9 @@ class CampaignResource < Avo::BaseResource
   field :id, as: :id
   # Fields generated from the model
   field :name, as: :text
-  field :sessions, as: :has_many
+  field :expiry, as: :date
+  field :vaccine_id, as: :number
+  field :vaccine, as: :belongs_to
+  field :vaccination_records, as: :has_many
   # add fields here
-  field :vaccines, as: :has_and_belongs_to_many
 end
