@@ -42,6 +42,15 @@ class ConsentResponsesController < ApplicationController
   end
 
   def update
+    if consent_response_gillick_params.present?
+      @draft_consent_response.assign_attributes(consent_response_gillick_params)
+      if @draft_consent_response.save(context: :edit_gillick)
+        redirect_to action: :edit_consent
+      else
+        render :edit_gillick
+      end
+    end
+
     if consent_response_agree_params.present?
       @draft_consent_response.assign_attributes(consent_response_agree_params)
       if @draft_consent_response.save(context: :edit_consent)
@@ -69,7 +78,6 @@ class ConsentResponsesController < ApplicationController
         render :edit_reason
       end
     end
-
 
     if consent_response_health_questions_params.present?
       @draft_consent_response.health_questions.each_with_index do |hq, index|
@@ -150,6 +158,13 @@ class ConsentResponsesController < ApplicationController
       :parent_phone,
       :parent_relationship,
       :parent_relationship_other,
+    )
+  end
+
+  def consent_response_gillick_params
+    params.fetch(:consent_response, {}).permit(
+      :gillick_competent,
+      :gillick_competence_details,
     )
   end
 

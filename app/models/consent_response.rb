@@ -73,6 +73,14 @@ class ConsentResponse < ApplicationRecord
     if: -> { parent_relationship == "other" },
     on: :edit_who
 
+  validates :gillick_competent,
+    inclusion: { in: ["yes", "no"] },
+    presence: true,
+    on: :edit_gillick
+  validates :gillick_competence_details,
+    presence: true,
+    on: :edit_gillick
+
   validates :consent,
     inclusion: { in: consents.keys },
     presence: true,
@@ -82,7 +90,6 @@ class ConsentResponse < ApplicationRecord
     inclusion: { in: reason_for_refusals.keys },
     presence: true,
     on: :edit_reason
-
   validates :reason_for_refusal_other,
     presence: true,
     if: -> { reason_for_refusal == "other" },
