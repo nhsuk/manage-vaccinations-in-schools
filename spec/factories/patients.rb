@@ -49,7 +49,7 @@ FactoryBot.define do
     end
     parent_relationship { parent_sex == "male" ? "father" : "mother" }
     parent_phone { Faker::PhoneNumber.phone_number }
-    parent_info_source { "School" }
+    parent_info_source { "school" }
 
     trait :of_hpv_vaccination_age do
       dob { Faker::Date.birthday(min_age: 12, max_age: 13) }
