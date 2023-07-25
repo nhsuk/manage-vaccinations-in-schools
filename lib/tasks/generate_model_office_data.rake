@@ -215,6 +215,12 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
         dob: patient.dob.iso8601,
         nhsNumber: patient.nhs_number,
         consent: consent_data,
+        parentEmail: patient.parent_email,
+        parentName: patient.parent_name,
+        parentPhone: patient.parent_phone,
+        parentRelationship: patient.parent_relationship,
+        parentRelationshipOther: patient.parent_relationship_other,
+        parentInfoSource: patient.parent_info_source,
         triage:
       }
     end
