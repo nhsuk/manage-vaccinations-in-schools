@@ -49,6 +49,29 @@ RSpec.describe HumanEnumNameConcern do
 
       it { should eq "Test status" }
     end
+
+    context "when attribute value is blank" do
+      before do
+        I18n.backend.store_translations(
+          :en,
+          activerecord: {
+            attributes: {
+              dummy: {
+                statuses: {
+                  test_status: "Test status"
+                }
+              }
+            }
+          }
+        )
+      end
+
+      let(:enum_value) { nil }
+
+      it { should eq "" }
+    end
+
+
   end
 
   describe "#human_enum_name" do
