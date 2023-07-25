@@ -31,6 +31,7 @@ test("Records gillick consent", async ({ page }) => {
   await when_i_answer_the_health_questions();
   await and_i_click_continue();
   await then_i_see_the_check_answers_page();
+  await and_it_contains_gillick_assessment_details();
 
   await when_i_click_confirm();
   await then_i_see_the_vaccination_show_page();
@@ -121,4 +122,10 @@ async function when_i_click_confirm() {
 
 async function then_i_see_the_vaccination_show_page() {
   await expect(p.locator("h1")).toContainText("Alexandra Sipes");
+}
+
+async function and_it_contains_gillick_assessment_details() {
+  await expect(
+    p.getByRole("heading", { name: "Gillick competence" }),
+  ).toBeVisible();
 }

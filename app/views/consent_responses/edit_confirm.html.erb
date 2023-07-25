@@ -11,6 +11,13 @@
 
 <h1 class="nhsuk-heading-l">Check and confirm answers</h1>
 
+<% if @draft_consent_response.via_self_consent? %>
+  <%= render AppGillickCardComponent.new(
+    session: @session,
+    patient: @patient,
+    consent_response: @draft_consent_response)
+  %>
+<% else %>
 <div class="nhsuk-card" data-testid="consent">
   <div class="nhsuk-card__content">
     <h2 class="nhsuk-card__heading nhsuk-heading-m">
@@ -62,6 +69,7 @@
     end %>
   </div>
 </div>
+<% end %>
 
 <% if @draft_consent_response.consent_given? %>
   <div class="nhsuk-card">
