@@ -69,6 +69,13 @@ FactoryBot.define do
 
     trait :vaccinated do
       state { "vaccinated" }
+      patient { create :patient, :triaged_ready_to_vaccinate, session: }
+
+      after :create do |patient_session|
+        create :vaccination_record,
+               administered: true,
+               patient_session:
+      end
     end
   end
 end
