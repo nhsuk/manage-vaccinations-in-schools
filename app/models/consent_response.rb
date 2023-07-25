@@ -110,7 +110,7 @@ class ConsentResponse < ApplicationRecord
     if parent_relationship == "other"
       parent_relationship_other
     else
-      self.class.human_enum_name("parent_relationship", parent_relationship)
+      human_enum_name(:parent_relationship)
     end
   end
 
