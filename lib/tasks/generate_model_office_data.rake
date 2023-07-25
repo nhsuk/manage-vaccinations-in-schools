@@ -225,6 +225,17 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
       }
     end
 
+  # match mum and dad info for patients with parental consent
+  patients_data.each do |patient|
+    next unless patient[:consent].present? && patient[:consent][:parentRelationship].in?(%w[mother
+father]) && patient[:consent][:parentRelationship] == patient[:parentRelationship]
+
+    patient[:parentName] = patient[:consent][:parentName]
+    patient[:parentRelationship] = patient[:consent][:parentRelationship]
+    patient[:parentEmail] = patient[:consent][:parentEmail]
+    patient[:parentPhone] = patient[:consent][:parentPhone]
+  end
+
   data = {
     id: "5M0",
     title: "HPV campaign at #{school_details[:name]}",
