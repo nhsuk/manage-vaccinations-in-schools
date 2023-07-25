@@ -15,7 +15,7 @@ class ConsentResponsesController < ApplicationController
       @draft_consent_response.assign_attributes(
         consent_response_who_params.merge(
           campaign: @session.campaign,
-          route: "website",
+          route: "phone",
           health_questions: ConsentResponse::HEALTH_QUESTIONS
             .fetch(:hpv)
             .map { |question| { question: } }
