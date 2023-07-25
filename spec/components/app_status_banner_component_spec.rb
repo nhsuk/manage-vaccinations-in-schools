@@ -33,7 +33,7 @@ RSpec.describe AppStatusBannerComponent, type: :component do
     let(:patient_session) { create :patient_session, :consent_refused }
 
     it { should have_css(".app-consent-banner--orange") }
-    it { should have_text("Their mother has refused to give consent.") }
+    it { should have_text("Their mum has refused to give consent.") }
   end
 
   context "state is triaged_do_not_vaccinate" do

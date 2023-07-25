@@ -4,6 +4,14 @@ en:
     email: my-service@email
   activerecord:
     attributes:
+      consent_response:
+        parent_relationships:
+          father: dad
+          mother: mum
+      patient:
+        parent_relationships:
+          father: dad
+          mother: mum
       patient_session:
         outcomes:
           could_not_vaccinate: Could not vaccinate

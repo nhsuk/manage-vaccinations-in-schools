@@ -14,9 +14,9 @@ class AppPatientCardComponent < ViewComponent::Base
 
   def parent_guardian_or_other
     if @patient.parent_relationship == "other"
-      @patient.parent_relationship_other.humanize
+      @patient.human_enum_name(:parent_relationship_other)
     else
-      @patient.parent_relationship.humanize
+      @patient.human_enum_name(:parent_relationship)
     end
   end
 end
