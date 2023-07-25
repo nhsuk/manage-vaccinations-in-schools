@@ -18,7 +18,6 @@ class ConsentResponsesController < ApplicationController
     if consent_response_who_params.present?
       @draft_consent_response.assign_attributes(
         consent_response_who_params.merge(
-          campaign: @session.campaign,
           route: "phone",
           health_questions:
         )
@@ -32,7 +31,6 @@ class ConsentResponsesController < ApplicationController
       # If the params are missing, assume this is the Gillick competence route.
       # This feels like it could be more explicit.
       @draft_consent_response.update!(
-        campaign: @session.campaign,
         route: "self_consent",
         health_questions:
       )
@@ -149,7 +147,7 @@ class ConsentResponsesController < ApplicationController
   def set_draft_consent_response
     @draft_consent_response = @patient
       .consent_responses
-      .find_or_initialize_by(recorded_at: nil)
+      .find_or_initialize_by(recorded_at: nil, campaign: @session.campaign)
   end
 
   def consent_response_who_params
