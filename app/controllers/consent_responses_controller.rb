@@ -118,16 +118,25 @@ class ConsentResponsesController < ApplicationController
       end
     end
 
-    redirect_to triage_session_path(@session),
-                flash: {
-                  success: {
-                    title: "Consent saved for #{@patient.full_name}",
-                    body: ActionController::Base.helpers.link_to(
-                      "View child record",
-                      session_patient_triage_path(@session, @patient)
-                    ),
-                  },
-                }
+    if @draft_consent_response.via_self_consent?
+      redirect_to session_patient_vaccinations_path(@session, @patient),
+                  flash: {
+                    success: {
+                      body: "Gillick assessment saved for #{@patient.full_name}",
+                    },
+                  }
+    else
+      redirect_to triage_session_path(@session),
+                  flash: {
+                    success: {
+                      title: "Consent saved for #{@patient.full_name}",
+                      body: ActionController::Base.helpers.link_to(
+                        "View child record",
+                        session_patient_triage_path(@session, @patient)
+                      ),
+                    },
+                  }
+    end
   end
 
   private
