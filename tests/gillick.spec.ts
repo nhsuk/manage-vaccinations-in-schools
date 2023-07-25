@@ -15,6 +15,9 @@ test("Records gillick consent", async ({ page }) => {
   await when_i_click_yes_gillick();
   await and_i_click_continue();
   await then_i_see_the_assessing_gillick_page();
+
+  await when_i_click_give_your_assessment();
+  await then_i_see_the_gillick_competence_page();
 });
 
 async function given_the_app_is_setup() {
@@ -49,4 +52,12 @@ async function and_i_click_continue() {
 
 async function then_i_see_the_assessing_gillick_page() {
   await expect(p.locator("h1")).toContainText("Gillick competence");
+}
+
+async function when_i_click_give_your_assessment() {
+  await p.click("text=Give your assessment");
+}
+
+async function then_i_see_the_gillick_competence_page() {
+  await expect(p.locator("h1")).toContainText("Are they Gillick competent?");
 }

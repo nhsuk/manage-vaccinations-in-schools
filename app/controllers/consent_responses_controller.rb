@@ -11,14 +11,16 @@ class ConsentResponsesController < ApplicationController
   end
 
   def create
+    health_questions = ConsentResponse::HEALTH_QUESTIONS
+            .fetch(:hpv)
+            .map { |question| { question: } }
+
     if consent_response_who_params.present?
       @draft_consent_response.assign_attributes(
         consent_response_who_params.merge(
           campaign: @session.campaign,
           route: "phone",
-          health_questions: ConsentResponse::HEALTH_QUESTIONS
-            .fetch(:hpv)
-            .map { |question| { question: } }
+          health_questions:
         )
       )
       if @draft_consent_response.save(context: :edit_who)
@@ -26,6 +28,16 @@ class ConsentResponsesController < ApplicationController
       else
         render :edit_who
       end
+    else
+      # If the params are missing, assume this is the Gillick competence route.
+      # This feels like it could be more explicit.
+      @draft_consent_response.update!(
+        campaign: @session.campaign,
+        route: "self_consent",
+        health_questions:
+      )
+
+      redirect_to action: :edit_gillick
     end
   end
 
@@ -75,6 +87,9 @@ class ConsentResponsesController < ApplicationController
   end
 
   def edit_who
+  end
+
+  def edit_gillick
   end
 
   def edit_consent
