@@ -22,7 +22,7 @@ class ConsentResponsesController < ApplicationController
         )
       )
       if @draft_consent_response.save(context: :edit_who)
-        redirect_to action: :edit_agree
+        redirect_to action: :edit_consent
       else
         render :edit_who
       end
@@ -45,7 +45,7 @@ class ConsentResponsesController < ApplicationController
           redirect_to action: :edit_confirm
         end
       else
-        render :edit_agree
+        render :edit_consent
       end
     end
 
@@ -74,7 +74,7 @@ class ConsentResponsesController < ApplicationController
   def edit_who
   end
 
-  def edit_agree
+  def edit_consent
   end
 
   def edit_reason
