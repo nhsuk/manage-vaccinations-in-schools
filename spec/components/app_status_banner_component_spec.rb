@@ -8,6 +8,10 @@ RSpec.describe AppStatusBannerComponent, type: :component do
 
   subject { page }
 
+  before do
+    patient_session.patient.update!(first_name: "Alya", last_name: "Merton")
+  end
+
   context "state is added_to_session" do
     let(:patient_session) { create :patient_session, :added_to_session }
 
@@ -19,7 +23,9 @@ RSpec.describe AppStatusBannerComponent, type: :component do
 
     it { should have_css(".app-consent-banner--purple") }
     it { should have_text("Ready to vaccinate") }
-    # banner_explanation: Jane Doe decided that %{full_name} can be vaccinated.
+    it 'does not provide an explanation as no triage took place' do
+      expect(component.explanation).to eq('Jane Doe decided that Alya Merton can be vaccinated.')
+    end
   end
 
   context "state is consent_given_triage_needed" do
@@ -41,7 +47,9 @@ RSpec.describe AppStatusBannerComponent, type: :component do
 
     it { should have_css(".app-consent-banner--red") }
     it { should have_text("Do not vaccinate") }
-    # banner_explanation: Jane Doe decided that %{full_name} should not be vaccinated.
+    it 'explains who took the decision that the patient should not be vaccinated' do
+      expect(component.explanation).to eq('Jane Doe decided that Alya Merton should not be vaccinated.')
+    end
   end
 
   context "state is triaged_kept_in_triage" do
@@ -56,7 +64,9 @@ RSpec.describe AppStatusBannerComponent, type: :component do
 
     it { should have_css(".app-consent-banner--purple") }
     it { should have_text("Ready to vaccinate") }
-    # banner_explanation: Jane Doe decided that %{full_name} can be vaccinated.
+    it 'explains who took the decision that the patient should be vaccinated' do
+      expect(component.explanation).to eq('Jane Doe decided that Alya Merton can be vaccinated.')
+    end
   end
 
   context "state is unable_to_vaccinate" do
@@ -64,14 +74,9 @@ RSpec.describe AppStatusBannerComponent, type: :component do
 
     it { should have_css(".app-consent-banner--orange") }
     it { should have_text("Could not vaccinate") }
-    # banner_explanation:
-    #   refused: "%{full_name} refused it"
-    #   now_well: "%{full_name} was not well enough"
-    #   contraindications: "%{full_name} had contraindications"
-    #   already_had: "%{full_name} has already had the vaccine"
-    #   absent_from_school: "%{full_name} was absent from school"
-    #   absent_from_session: "%{full_name} was absent from the session"
-    #   gave_consent: "Their %{who_responded} gave consent"
+    it 'explains who took the decision that the patient should be vaccinated' do
+      expect(component.explanation).to include('Alya Merton had contraindications')
+    end
   end
 
   context "state is vaccinated" do
@@ -79,6 +84,9 @@ RSpec.describe AppStatusBannerComponent, type: :component do
 
     it { should have_css(".app-consent-banner--green") }
     it { should have_text("Vaccinated") }
-    # banner_explanation: Their %{who_responded} gave consent
+    it 'explains who gave consent' do
+      who_responded = patient_session.consent_response.who_responded
+      expect(component.explanation).to include("Their #{who_responded} gave consent")
+    end
   end
 end
