@@ -16,7 +16,17 @@
 <%= render AppStatusBannerComponent.new(patient_session: @patient_session) %>
 
 <% if @consent_response.present? %>
-  <%= render AppConsentCardComponent.new session: @session, patient: @patient, consent_response: @consent_response %>
+  <% if @consent_response.via_self_consent? %>
+    <%= render AppGillickCardComponent.new(
+      session: @session,
+      patient: @patient,
+      consent_response: @consent_response) %>
+  <% else %>
+    <%= render AppConsentCardComponent.new(
+      session: @session,
+      patient: @patient,
+      consent_response: @consent_response) %>
+  <% end %>
 <% end %>
 
 <%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
