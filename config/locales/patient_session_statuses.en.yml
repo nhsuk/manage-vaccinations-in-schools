@@ -12,7 +12,6 @@ en:
       colour: purple
       text: Vaccinate
       banner_title: Ready to vaccinate
-      banner_explanation: Jane Doe decided that %{full_name} can be vaccinated.
     consent_refused:
       colour: orange
       text: Check refusal
