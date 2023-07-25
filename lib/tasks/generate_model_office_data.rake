@@ -6,15 +6,15 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
   Faker::Config.locale = "en-GB"
   target_filename = "db/sample_data/model-office.json"
 
-  hpv_vaccine = {
-    brand: "Gardasil 9",
-    method: "Injection",
-    batches: [
-      { name: "IE5343", expiry: "2024-02-01" },
-      { name: "IE6279", expiry: "2024-01-18" },
-      { name: "IE3943", expiry: "2024-01-25" }
-    ]
-  }
+  hpv_vaccine = FactoryBot.create(:vaccine, :hpv)
+  batches = FactoryBot.create_list(:batch, 3, vaccine: hpv_vaccine, days_to_expiry_range: 90..180)
+  vaccines_data = [
+    {
+      brand: hpv_vaccine.brand,
+      method: hpv_vaccine.method,
+      batches: batches.map { |batch| { name: batch.name, expiry: batch.expiry.iso8601 } }
+    }
+  ]
 
   school_details = {
     urn: "136295",
@@ -225,7 +225,7 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
     location: school_details[:name],
     date: "2023-07-28T12:30",
     type: "HPV",
-    vaccines: [hpv_vaccine],
+    vaccines: vaccines_data,
     school: school_details,
     patients: patients_data
   }
