@@ -6,28 +6,30 @@ class ConsentResponsesController < ApplicationController
 
   layout "two_thirds"
 
-  def create
-    @draft_consent_response.update!(
-      campaign: @session.campaign,
-      route: "website",
-      health_questions: ConsentResponse::HEALTH_QUESTIONS
-        .fetch(:hpv)
-        .map { |question| { question: } }
-    )
-
-    redirect_to action: :edit_who
+  def new
+    render :edit_who
   end
 
-  def update
+  def create
     if consent_response_who_params.present?
-      @draft_consent_response.assign_attributes(consent_response_who_params)
+      @draft_consent_response.assign_attributes(
+        consent_response_who_params.merge(
+          campaign: @session.campaign,
+          route: "website",
+          health_questions: ConsentResponse::HEALTH_QUESTIONS
+            .fetch(:hpv)
+            .map { |question| { question: } }
+        )
+      )
       if @draft_consent_response.save(context: :edit_who)
         redirect_to action: :edit_agree
       else
         render :edit_who
       end
     end
+  end
 
+  def update
     if consent_response_agree_params.present?
       @draft_consent_response.assign_attributes(consent_response_agree_params)
       if @draft_consent_response.save(context: :edit_consent)

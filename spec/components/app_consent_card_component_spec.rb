@@ -29,6 +29,6 @@ RSpec.describe AppConsentCardComponent, type: :component do
     let(:consent_response) { nil }
 
     it { should have_css("p", text: "No response given") }
-    it { should have_css("button", text: "Get consent") }
+    it { should have_css("a", text: "Get consent") }
   end
 end
