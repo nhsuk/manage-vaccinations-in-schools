@@ -32,7 +32,8 @@ FactoryBot.define do
       # associated with a campaign
       session { create :session }
       campaign { session.campaign }
-      parent_sex { :male }
+      parent_sex { %w[male female].sample }
+      parent_first_name { parent_sex == "male" ? Faker::Name.masculine_name : Faker::Name.feminine_name }
     end
 
     nhs_number { rand(10 ** 10) }
@@ -44,9 +45,7 @@ FactoryBot.define do
     seen { "Not yet" }
     dob { Faker::Date.birthday(min_age: 3, max_age: 9) }
     patient_sessions { [] }
-    parent_name do
-      parent_sex.to_s == "male" ? Faker::Name.masculine_name : Faker::Name.feminine_name
-    end
+    parent_name { "#{parent_first_name} #{last_name}" }
     parent_relationship { parent_sex == "male" ? "father" : "mother" }
     parent_phone { Faker::PhoneNumber.phone_number }
     parent_info_source { "school" }
