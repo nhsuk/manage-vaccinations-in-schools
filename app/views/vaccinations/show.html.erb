@@ -122,8 +122,7 @@
         <% content_for(:before_content) { f.govuk_error_summary } %>
 
         <%= f.govuk_radio_buttons_fieldset(:administered,
-          legend: { size: 'm', text: 'Did they get the vaccine?' },
-          hint: { text: 'They need their 1st dose.' }) do %>
+          legend: { size: 'm', text: 'Did they get the vaccine?' }) do %>
 
           <%= f.govuk_radio_button :administered, true,
             label: { text: 'Yes, they got the HPV vaccine' },
