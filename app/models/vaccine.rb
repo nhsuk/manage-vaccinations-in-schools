@@ -24,5 +24,5 @@ class Vaccine < ApplicationRecord
   validates :brand, presence: true
   validates :method, presence: true
 
-  enum :method, %i[injection]
+  enum :method, %i[injection nasal]
 end
