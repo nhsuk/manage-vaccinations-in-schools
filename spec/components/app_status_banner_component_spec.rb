@@ -48,7 +48,7 @@ RSpec.describe AppStatusBannerComponent, type: :component do
     it { should have_css(".app-consent-banner--red") }
     it { should have_text("Do not vaccinate") }
     it 'explains who took the decision that the patient should not be vaccinated' do
-      expect(component.explanation).to eq('Jane Doe decided that Alya Merton should not be vaccinated.')
+      expect(component.explanation).to eq('A nurse decided that Alya Merton should not be vaccinated.')
     end
   end
 
@@ -65,7 +65,7 @@ RSpec.describe AppStatusBannerComponent, type: :component do
     it { should have_css(".app-consent-banner--purple") }
     it { should have_text("Ready to vaccinate") }
     it 'explains who took the decision that the patient should be vaccinated' do
-      expect(component.explanation).to eq('Jane Doe decided that Alya Merton can be vaccinated.')
+      expect(component.explanation).to eq('A nurse decided that Alya Merton can be vaccinated.')
     end
   end
 
