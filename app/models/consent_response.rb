@@ -43,6 +43,8 @@
 #
 
 class ConsentResponse < ApplicationRecord
+  attr_accessor :gillick_competent
+
   belongs_to :patient
   belongs_to :campaign
 
