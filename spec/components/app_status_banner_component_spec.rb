@@ -24,7 +24,7 @@ RSpec.describe AppStatusBannerComponent, type: :component do
     it { should have_css(".app-consent-banner--purple") }
     it { should have_text("Ready to vaccinate") }
     it 'does not provide an explanation as no triage took place' do
-      expect(component.explanation).to eq('Jane Doe decided that Alya Merton can be vaccinated.')
+      expect(component.explanation).to be_blank
     end
   end
 
