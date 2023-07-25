@@ -23,6 +23,17 @@ test("Records gillick consent", async ({ page }) => {
   await and_i_give_details();
   await and_i_click_continue();
   await then_i_see_the_do_they_agree_page();
+
+  await when_i_click_yes();
+  await and_i_click_continue();
+  await then_i_see_the_health_questions_page();
+
+  await when_i_answer_the_health_questions();
+  await and_i_click_continue();
+  await then_i_see_the_check_answers_page();
+
+  await when_i_click_confirm();
+  await then_i_see_the_vaccination_show_page();
 });
 
 async function given_the_app_is_setup() {
@@ -80,4 +91,34 @@ async function and_i_give_details() {
 
 async function then_i_see_the_do_they_agree_page() {
   await expect(p.locator("h1")).toContainText("Do they agree");
+}
+
+async function when_i_click_yes() {
+  await p.getByRole("radio", { name: "Yes, they agree" }).click();
+}
+
+async function then_i_see_the_health_questions_page() {
+  await expect(p.locator("h1")).toContainText("Health questions");
+}
+
+async function when_i_answer_the_health_questions() {
+  const radio = (n: number) =>
+    `input[name="consent_response[question_${n}][response]"][value="no"]`;
+
+  await p.click(radio(0));
+  await p.click(radio(1));
+  await p.click(radio(2));
+  await p.click(radio(3));
+}
+
+async function then_i_see_the_check_answers_page() {
+  await expect(p.locator("h1")).toContainText("Check and confirm answers");
+}
+
+async function when_i_click_confirm() {
+  await p.getByRole("button", { name: "Confirm" }).click();
+}
+
+async function then_i_see_the_vaccination_show_page() {
+  await expect(p.locator("h1")).toContainText("Alexandra Sipes");
 }
