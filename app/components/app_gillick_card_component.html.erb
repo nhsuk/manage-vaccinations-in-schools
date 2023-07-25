@@ -1,0 +1,26 @@
+<div class="nhsuk-card">
+  <div class="nhsuk-card__content">
+    <h2 class="nhsuk-card__heading nhsuk-heading-m">
+      Gillick competence
+    </h2>
+
+    <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
+      summary_list.with_row do |row|
+        row.with_key { "Assessment" }
+        row.with_value do %>
+          Assessed by nurse<br /><%= Time.zone.now.to_fs(:nhsuk_date) %>
+        <% end
+      end
+
+      summary_list.with_row do |row|
+        row.with_key { "Gillick competent" }
+        row.with_value { @consent_response.gillick_competent? ? 'Yes' : 'No' }
+      end
+
+      summary_list.with_row do |row|
+        row.with_key { 'Consent' }
+        row.with_value { 'Given by child' }
+      end
+    end %>
+  </div>
+</div>
