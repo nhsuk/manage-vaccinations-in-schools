@@ -111,6 +111,10 @@ class ConsentResponse < ApplicationRecord
     ]
   }.freeze
 
+  def gillick_competent?
+    via_self_consent? && !consent_not_provided?
+  end
+
   def triage_needed?
     consent_given? &&
       (parent_relationship_other? || health_questions_require_follow_up?)
