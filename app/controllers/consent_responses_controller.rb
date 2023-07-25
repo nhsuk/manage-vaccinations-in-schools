@@ -71,6 +71,9 @@ class ConsentResponsesController < ApplicationController
     end
   end
 
+  def assessing_gillick
+  end
+
   def edit_who
   end
 
