@@ -35,7 +35,7 @@
       <% if @patient.parent_name.present? %>
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
-            <%= parent_guardian_or_other %>
+            <%= parent_guardian_or_other.capitalize %>
           </dt>
           <dd class="nhsuk-summary-list__value" data-testid="parent-info">
             <%= @patient.parent_name %>

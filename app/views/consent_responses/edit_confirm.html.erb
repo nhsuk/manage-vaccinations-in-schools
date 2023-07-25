@@ -31,7 +31,9 @@
       summary_list.with_row do |row|
         row.with_key { 'By' }
         row.with_value do %>
-          <%= @draft_consent_response.parent_relationship.humanize %>
+      <%= @draft_consent_response
+        .human_enum_name(:parent_relationship)
+        .capitalize %>
           <div class="nhsuk-u-margin-top-2 nhsuk-u-font-size-16">
             <%= @draft_consent_response.parent_name %>
             <% if @draft_consent_response.parent_phone.present? %>
