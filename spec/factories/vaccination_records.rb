@@ -26,5 +26,6 @@ FactoryBot.define do
   factory :vaccination_record do
     patient_session { nil }
     recorded_at { "2023-06-09" }
+    site { "left_arm" }
   end
 end
