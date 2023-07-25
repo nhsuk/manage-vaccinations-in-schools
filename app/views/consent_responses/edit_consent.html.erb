@@ -1,6 +1,8 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: edit_who_session_patient_consent_responses_path(@session, @patient),
+    href: @draft_consent_response.via_self_consent? ?
+      edit_gillick_session_patient_consent_responses_path(@session, @patient) :
+      edit_who_session_patient_consent_responses_path(@session, @patient),
     name: "triage page",
   ) %>
 <% end %>
