@@ -18,6 +18,11 @@ test("Records gillick consent", async ({ page }) => {
 
   await when_i_click_give_your_assessment();
   await then_i_see_the_gillick_competence_page();
+
+  await when_i_click_yes_they_are_gillick_competent();
+  await and_i_give_details();
+  await and_i_click_continue();
+  await then_i_see_the_do_they_agree_page();
 });
 
 async function given_the_app_is_setup() {
@@ -60,4 +65,19 @@ async function when_i_click_give_your_assessment() {
 
 async function then_i_see_the_gillick_competence_page() {
   await expect(p.locator("h1")).toContainText("Are they Gillick competent?");
+}
+
+async function when_i_click_yes_they_are_gillick_competent() {
+  await p.click("text=Yes, they are Gillick competent");
+}
+
+async function and_i_give_details() {
+  await p.fill(
+    '[name="consent_response[gillick_competence_details]"]',
+    "They were very mature",
+  );
+}
+
+async function then_i_see_the_do_they_agree_page() {
+  await expect(p.locator("h1")).toContainText("Do they agree");
 }
