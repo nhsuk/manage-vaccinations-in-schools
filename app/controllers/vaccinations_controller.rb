@@ -8,6 +8,7 @@ class VaccinationsController < ApplicationController
   before_action :set_vaccination_record, only: %i[show confirm record]
   before_action :set_consent_response, only: %i[show confirm]
   before_action :set_triage, only: %i[show confirm]
+  before_action :set_draft_consent_response, only: %i[show consent]
 
   layout "two_thirds", except: :index
 
@@ -110,12 +111,29 @@ class VaccinationsController < ApplicationController
     end
   end
 
+  def consent
+    case consent_response_params[:route]
+    when "not_provided"
+      # TODO: Implement not provided route. It should create a new
+      # ConsentResponse and progress the state machine to unable_to_vaccinate.
+      head :no_content
+    when "phone"
+      redirect_to new_session_patient_consent_responses_path(@session, @patient)
+    when "self_consent"
+      redirect_to assessing_gillick_session_patient_consent_responses_path(@session, @patient)
+    end
+  end
+
   private
 
   def vaccination_record_params
     p = params.require(:vaccination_record)
     p[:site] = p[:site].to_i if p[:site].present?
     p.permit(:administered, :site, :reason, :batch_id)
+  end
+
+  def consent_response_params
+    params.fetch(:consent_response, {}).permit(:route)
   end
 
   def set_session
@@ -162,5 +180,11 @@ class VaccinationsController < ApplicationController
 
   def set_patient_session
     @patient_session = @patient.patient_sessions.find_by(session: @session)
+  end
+
+  def set_draft_consent_response
+    @draft_consent_response = @patient
+      .consent_responses
+      .find_or_initialize_by(recorded_at: nil)
   end
 end

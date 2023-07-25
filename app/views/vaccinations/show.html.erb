@@ -11,7 +11,9 @@
 
 <%= render AppStatusBannerComponent.new(patient_session: @patient_session) %>
 
-<%= render AppConsentCardComponent.new session: @session, patient: @patient, consent_response: @consent_response %>
+<% if @consent_response.present? %>
+  <%= render AppConsentCardComponent.new session: @session, patient: @patient, consent_response: @consent_response %>
+<% end %>
 
 <%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
 
@@ -23,7 +25,30 @@
   ) %>
 <% end %>
 
-<% if @vaccination_record&.administered? %>
+<% if @consent_response.nil? %>
+  <div class="nhsuk-card">
+    <div class="nhsuk-card__content">
+      <%= form_with model: @draft_consent_response,
+        url: consent_session_patient_vaccinations_path(@session, @patient),
+        method: :post do |f| %>
+        <% content_for(:before_content) { f.govuk_error_summary } %>
+
+        <%= f.govuk_radio_buttons_fieldset(:route,
+          legend: { size: 'm', text: 'Are you attempting to get consent?' }) do %>
+          <%= f.govuk_radio_button :route, "phone",
+            label: { text: 'Yes, I am contacting a parent or guardian' },
+            link_errors: true %>
+          <%= f.govuk_radio_button :route, "self_consent",
+            label: { text: 'Yes, I am assessing Gillick competence' } %>
+          <%= f.govuk_radio_button :route, "not_provided",
+            label: { text: 'No' } %>
+        <% end %>
+
+        <%= f.submit "Continue", class: "nhsuk-button" %>
+      <% end %>
+    </div>
+  </div>
+<% elsif @vaccination_record&.administered? %>
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
       <h2 class="nhsuk-card__heading nhsuk-heading-m">

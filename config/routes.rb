@@ -26,16 +26,22 @@ Rails.application.routes.draw do
         get "confirm", on: :member
         put "record", on: :member
 
+        post "consent", on: :member
+
         get "show-template", on: :collection
         get "record-template", on: :collection
       end
 
       resource :consent_responses, path: "consent" do
+        get "assessing-gillick", to: "consent_responses#assessing_gillick"
+
+        get "edit/gillick", to: "consent_responses#edit_gillick"
         get "edit/who", to: "consent_responses#edit_who"
         get "edit/agree", to: "consent_responses#edit_consent"
         get "edit/reason", to: "consent_responses#edit_reason"
         get "edit/questions", to: "consent_responses#edit_questions"
         get "edit/confirm", to: "consent_responses#edit_confirm"
+
         put "record"
       end
     end

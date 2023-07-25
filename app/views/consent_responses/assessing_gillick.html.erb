@@ -1,0 +1,25 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+    href: session_patient_vaccinations_path(@session, @patient),
+    name: "vaccination page",
+  ) %>
+<% end %>
+
+<h1 class="nhsuk-heading-l">Assessing Gillick competence</h1>
+
+<p>Can the young person tell you:</p>
+
+<ul class="nhsuk-list nhsuk-list--bullet">
+  <li>which vaccination they will have and how many doses they need</li>
+  <li>which disease the vaccination protects against</li>
+  <li>what could happen if they got the disease</li>
+  <li>how the injection will be given</li>
+  <li>which side effects they might experience</li>
+</ul>
+
+<p>Before you make your assessement, you should give the young person a chance to ask questions.</p>
+
+<div class="nhsuk-u-margin-top-6">
+  <%= govuk_button_to "Give your assessment",
+    session_patient_consent_responses_path(@session, @patient) %>
+</div>
