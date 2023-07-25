@@ -20,7 +20,7 @@ en:
       colour: red
       text: Do not vaccinate
       banner_title: Do not vaccinate
-      banner_explanation: Jane Doe decided that %{full_name} should not be vaccinated.
+      banner_explanation: A nurse decided that %{full_name} should not be vaccinated.
     triaged_kept_in_triage:
       colour: aqua-green
       text: Triage started
@@ -29,7 +29,7 @@ en:
       colour: purple
       text: Vaccinate
       banner_title: Ready to vaccinate
-      banner_explanation: Jane Doe decided that %{full_name} can be vaccinated.
+      banner_explanation: A nurse decided that %{full_name} can be vaccinated.
     unable_to_vaccinate:
       colour: orange
       text: Unable to vaccinate
