@@ -18,7 +18,7 @@
       label: { text: 'Yes, they agree' }, link_errors: true %>
     <%= f.govuk_radio_button :consent, "refused",
       label: { text: "No, they do not agree" } %>
-    <%= f.govuk_radio_button :consent, "no_response",
+    <%= f.govuk_radio_button :consent, "not_provided",
       label: { text: 'No response' } %>
   <% end %>
 

@@ -46,7 +46,7 @@ class ConsentResponse < ApplicationRecord
   belongs_to :campaign
 
   enum :parent_relationship, %w[mother father guardian other], prefix: true
-  enum :consent, %w[given refused no_response], prefix: true
+  enum :consent, %w[given refused not_provided], prefix: true
   enum :reason_for_refusal,
        %w[
          already_vaccinated

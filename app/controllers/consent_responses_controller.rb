@@ -87,7 +87,7 @@ class ConsentResponsesController < ApplicationController
   end
 
   def record
-    unless @draft_consent_response.consent_no_response?
+    unless @draft_consent_response.consent_not_provided?
       ActiveRecord::Base.transaction do
         @draft_consent_response.update!(recorded_at: Time.zone.now)
         @patient_session.do_consent!
