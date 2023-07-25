@@ -1,3 +1,7 @@
+<% if flash[:success].present? %>
+  <%= render AppFlashSuccessComponent.new(flash[:success]) %>
+<% end %>
+
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
                href: vaccinations_session_path(@session),
