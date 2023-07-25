@@ -57,7 +57,7 @@
       "parentName": "Carl Sipes",
       "parentRelationship": "father",
       "parentPhone": "07700 923413",
-      "parentInfoSource": "School"
+      "parentInfoSource": "school"
     },
     {
       "firstName": "Blaine",
@@ -68,7 +68,7 @@
       "parentRelationship": "mother",
       "parentEmail": "sarita.hills99@gmail.com",
       "parentPhone": "07451 122330",
-      "parentInfoSource": "School",
+      "parentInfoSource": "school",
       "consent": {
         "consent": "given",
         "parentName": "Sarita Hills",
@@ -110,7 +110,7 @@
       "parentRelationship": "father",
       "parentEmail": "karl.lueilwitz2@gmail.com",
       "parentPhone": "07416 923413",
-      "parentInfoSource": "School",
+      "parentInfoSource": "school",
       "consent": {
         "consent": "given",
         "parentName": "Karl Lueilwitz",
