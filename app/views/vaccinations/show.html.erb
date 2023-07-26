@@ -18,9 +18,8 @@
 <% if @consent_response.present? %>
   <% if @consent_response.via_self_consent? %>
     <%= render AppGillickCardComponent.new(
-      session: @session,
-      patient: @patient,
-      consent_response: @consent_response) %>
+      consent_response: @consent_response,
+      patient_session: @patient_session) %>
   <% else %>
     <%= render AppConsentCardComponent.new(
       session: @session,

@@ -5,17 +5,12 @@ RSpec.describe AppGillickCardComponent, type: :component do
 
   subject { page }
 
-  let(:component) { described_class.new(consent_response:, patient:, session:) }
+  let(:component) { described_class.new(consent_response:, patient_session:) }
   let(:consent_response) do
-    create(:consent_response,
-           campaign: session.campaign,
-           patient:,
-           route: 'self_consent',
-           consent:)
+    create(:consent_response)
   end
-  let(:patient) { session.patients.first }
-  let(:session) { create(:session) }
-  let(:consent) { "given" }
+  let(:patient_session) { create(:patient_session, gillick_competent:) }
+  let(:gillick_competent) { true }
 
   context "when patient is gillick competent" do
     it { should have_css("h2", text: "Gillick competence") }
@@ -23,7 +18,7 @@ RSpec.describe AppGillickCardComponent, type: :component do
   end
 
   context "when patient is not gillick competent" do
-    let(:consent) { "not_provided" }
+    let(:gillick_competent) { false }
 
     it { should have_css("dd", text: "No") }
   end

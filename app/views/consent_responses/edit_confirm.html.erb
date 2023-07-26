@@ -13,10 +13,8 @@
 
 <% if @draft_consent_response.via_self_consent? %>
   <%= render AppGillickCardComponent.new(
-    session: @session,
-    patient: @patient,
-    consent_response: @draft_consent_response)
-  %>
+    consent_response: @draft_consent_response,
+    patient_session: @patient_session) %>
 <% else %>
 <div class="nhsuk-card" data-testid="consent">
   <div class="nhsuk-card__content">
