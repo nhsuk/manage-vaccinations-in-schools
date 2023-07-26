@@ -4,11 +4,13 @@ class VaccinationsController < ApplicationController
   before_action :set_patient_sessions, only: %i[index record_template]
   before_action :set_patient_session, only: %i[record show]
   before_action :set_draft_vaccination_record,
-                only: %i[show confirm edit_batch edit_reason record create update]
+                only: %i[show confirm edit_reason record create update]
+
   before_action :set_vaccination_record, only: %i[show confirm record]
   before_action :set_consent_response, only: %i[show confirm]
   before_action :set_triage, only: %i[show confirm]
   before_action :set_draft_consent_response, only: %i[show consent]
+  before_action :set_todays_batch_id, only: :create
 
   layout "two_thirds", except: :index
 
@@ -27,10 +29,6 @@ class VaccinationsController < ApplicationController
   end
 
   def edit_reason
-  end
-
-  def edit_batch
-    @batches = @session.campaign.batches
   end
 
   def confirm

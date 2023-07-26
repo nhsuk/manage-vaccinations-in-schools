@@ -38,6 +38,8 @@ en:
           attributes:
             administered:
               inclusion: Choose if they got the vaccine
+            batch_id:
+              blank: Choose a batch
             site:
               blank: Choose a site
             reason:
