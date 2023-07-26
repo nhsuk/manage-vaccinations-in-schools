@@ -52,7 +52,7 @@ async function when_i_go_to_the_triage_page() {
 }
 
 async function and_i_click_the_consent_tab() {
-  await p.getByRole("tab", { name: "Get consent", exact: true }).click();
+  await p.getByRole("tab", { name: "Get consent (2)", exact: true }).click();
 }
 
 async function then_i_see_the_patient_that_needs_consent() {
