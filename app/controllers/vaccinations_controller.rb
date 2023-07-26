@@ -15,6 +15,23 @@ class VaccinationsController < ApplicationController
   layout "two_thirds", except: :index
 
   def index
+    tabs_to_states = {
+      action_needed: %w[consent_given_triage_needed triaged_kept_in_triage triaged_ready_to_vaccinate added_to_session
+consent_refused consent_given_triage_not_needed],
+      vaccinated: %w[vaccinated],
+      not_vaccinated: %w[triaged_do_not_vaccinate unable_to_vaccinate unable_to_vaccinate_not_assessed 
+unable_to_vaccinate_not_gillick_competent]
+    }
+
+    @partitioned_patient_sessions = @patient_sessions.group_by do |patient_session|
+      tabs_to_states.find { |_, states| patient_session.state.in? states }&.first
+    end
+
+    # ensure all tabs are present
+    tabs_to_states.each do |tab, _states|
+      @partitioned_patient_sessions[tab] ||= []
+    end
+
     respond_to do |format|
       format.html
       format.json { render json: @patient_outcomes.map(&:first).index_by(&:id) }
