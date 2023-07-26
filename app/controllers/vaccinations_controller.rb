@@ -2,7 +2,7 @@ class VaccinationsController < ApplicationController
   before_action :set_session
   before_action :set_patient, except: %i[index record_template]
   before_action :set_patient_sessions, only: %i[index record_template]
-  before_action :set_patient_session, only: %i[record show]
+  before_action :set_patient_session, only: %i[consent record show]
   before_action :set_draft_vaccination_record,
                 only: %i[show confirm edit_reason record create update]
 
@@ -121,10 +121,18 @@ class VaccinationsController < ApplicationController
 
   def consent
     case consent_response_params[:route]
-    when "not_provided"
-      # TODO: Implement not provided route. It should create a new
-      # ConsentResponse and progress the state machine to unable_to_vaccinate.
-      head :no_content
+    when "not_vaccinating"
+      @patient_session.do_vaccination!
+      redirect_to vaccinations_session_path(@session),
+        flash: {
+          success: {
+            title: "Record saved for #{@patient.full_name}",
+            body: ActionController::Base.helpers.link_to(
+              "View child record",
+              session_patient_vaccinations_path(@session, @patient)
+            ),
+          },
+        }
     when "phone"
       redirect_to new_session_patient_consent_responses_path(@session, @patient)
     when "self_consent"

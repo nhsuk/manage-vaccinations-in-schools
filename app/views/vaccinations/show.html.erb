@@ -38,6 +38,7 @@
   ) %>
 <% end %>
 
+<% if @patient_session.able_to_vaccinate? %>
 <% if @consent_response.nil? %>
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
@@ -53,7 +54,7 @@
             link_errors: true %>
           <%= f.govuk_radio_button :route, "self_consent",
             label: { text: 'Yes, I am assessing Gillick competence' } %>
-          <%= f.govuk_radio_button :route, "not_provided",
+          <%= f.govuk_radio_button :route, "not_vaccinating",
             label: { text: 'No, I am not vaccinating' } %>
         <% end %>
 
@@ -123,8 +124,7 @@
       </dl>
     </div>
   </div>
-<% elsif @vaccination_record.nil? &&
-  !@patient_session.unable_to_vaccinate_not_gillick_competent? %>
+<% elsif @vaccination_record.nil? %>
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
       <%= form_with model: @draft_vaccination_record,
@@ -161,4 +161,5 @@
       <% end %>
     </div>
   </div>
+<% end %>
 <% end %>
