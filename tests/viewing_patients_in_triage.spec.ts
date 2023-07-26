@@ -20,7 +20,7 @@ test("Viewing patients", async ({ page }) => {
   await when_i_go_to_the_triage_page_for_the_first_session();
   await then_i_should_see_the_triage_index_page();
   await then_i_should_see_the_correct_breadcrumbs();
-  await then_i_should_be_on_the_tab("Needs triage");
+  await then_i_should_be_on_the_tab("Needs triage (2)");
 
   for (let name in patientExpectations) {
     if (!patientExpectations[name].tab) continue;
@@ -75,7 +75,7 @@ export async function then_i_should_see_a_triage_row_for_the_patient(
   attributes = {},
 ) {
   const patient = { ...patientExpectations[name], ...attributes };
-  const id = patient.tab.toLowerCase().replace(/ /g, "-");
+  const id = patient.tab.toLowerCase().replace(/ /g, "-").replace(/[()]/g, "");
   const row = p.locator(`#${id} tr`, { hasText: name });
 
   if (patient.triageReasons) {
