@@ -1,25 +1,22 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <%
-    view_patient_sessions = @patient_sessions.select { |ps| ps.state.in? view_states }
-    if view_patient_sessions.any?
-    %>
-    <table id="patients" class="nhsuk-table">
-      <thead class="nhsuk-table__head">
-        <tr class="nhsuk-table__row">
-          <th class="nhsuk-table__header">Name</th>
-          <th class="nhsuk-table__header">Triage reason</th>
-          <th class="nhsuk-table__header">Action</th>
-        </tr>
-      </thead>
-      <tbody class="nhsuk-table__body">
-        <% view_patient_sessions.each do |patient_session| %>
-          <%= render "patient_row", middle_column: :triage_reasons, patient_session: %>
-        <% end %>
-      </tbody>
-    </table>
-<% else %>
-    <%= render "layouts/empty_list", message: "We couldn’t find any children that matched your filters." %>
-<% end %>
+    <% if patient_sessions.any? %>
+      <table id="patients" class="nhsuk-table">
+        <thead class="nhsuk-table__head">
+          <tr class="nhsuk-table__row">
+            <th class="nhsuk-table__header">Name</th>
+            <th class="nhsuk-table__header">Triage reason</th>
+            <th class="nhsuk-table__header">Action</th>
+          </tr>
+        </thead>
+        <tbody class="nhsuk-table__body">
+          <% patient_sessions.each do |patient_session| %>
+            <%= render "patient_row", middle_column: :triage_reasons, patient_session: %>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <%= render "layouts/empty_list", message: "We couldn’t find any children that matched your filters." %>
+    <% end %>
   </div>
 </div>
