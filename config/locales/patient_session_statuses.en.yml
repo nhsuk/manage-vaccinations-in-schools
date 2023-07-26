@@ -15,7 +15,7 @@ en:
     consent_refused:
       colour: orange
       text: Check refusal
-      banner_title: Their %{who_responded} has refused to give consent.
+      banner_title: Their %{who_responded} has refused to give consent
     triaged_do_not_vaccinate:
       colour: red
       text: Do not vaccinate
@@ -35,13 +35,13 @@ en:
       text: Unable to vaccinate
       banner_title: Could not vaccinate
       banner_explanation:
-        refused: "%{full_name} refused it"
-        now_well: "%{full_name} was not well enough"
-        contraindications: "%{full_name} had contraindications"
-        already_had: "%{full_name} has already had the vaccine"
-        absent_from_school: "%{full_name} was absent from school"
-        absent_from_session: "%{full_name} was absent from the session"
-        gave_consent: "Their %{who_responded} gave consent"
+        refused: "%{full_name} refused it."
+        now_well: "%{full_name} was not well enough."
+        contraindications: "%{full_name} had contraindications."
+        already_had: "%{full_name} has already had the vaccine."
+        absent_from_school: "%{full_name} was absent from school."
+        absent_from_session: "%{full_name} was absent from the session."
+        gave_consent: "Their %{who_responded} gave consent."
     unable_to_vaccinate_not_gillick_competent:
       colour: red
       text: Not vaccinated
@@ -51,4 +51,4 @@ en:
       colour: green
       text: Vaccinated
       banner_title: Vaccinated
-      banner_explanation: Their %{who_responded} gave consent
+      banner_explanation: Their %{who_responded} gave consent.
