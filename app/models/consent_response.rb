@@ -43,8 +43,6 @@
 #
 
 class ConsentResponse < ApplicationRecord
-  attr_accessor :gillick_competent
-
   belongs_to :patient
   belongs_to :campaign
 
@@ -72,14 +70,6 @@ class ConsentResponse < ApplicationRecord
     presence: true,
     if: -> { parent_relationship == "other" },
     on: :edit_who
-
-  validates :gillick_competent,
-    inclusion: { in: ["yes", "no"] },
-    presence: true,
-    on: :edit_gillick
-  validates :gillick_competence_details,
-    presence: true,
-    on: :edit_gillick
 
   validates :consent,
     inclusion: { in: consents.keys },
@@ -110,10 +100,6 @@ class ConsentResponse < ApplicationRecord
       "Is there anything else we should know?"
     ]
   }.freeze
-
-  def gillick_competent?
-    via_self_consent? && !consent_not_provided?
-  end
 
   def triage_needed?
     consent_given? &&

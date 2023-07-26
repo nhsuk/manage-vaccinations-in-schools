@@ -40,15 +40,6 @@ class ConsentResponsesController < ApplicationController
   end
 
   def update
-    if consent_response_gillick_params.present?
-      @draft_consent_response.assign_attributes(consent_response_gillick_params)
-      if @draft_consent_response.save(context: :edit_gillick)
-        redirect_to action: :edit_consent
-      else
-        render :edit_gillick
-      end
-    end
-
     if consent_response_agree_params.present?
       @draft_consent_response.assign_attributes(consent_response_agree_params)
       if @draft_consent_response.save(context: :edit_consent)
@@ -86,6 +77,15 @@ class ConsentResponsesController < ApplicationController
       @draft_consent_response.save!
 
       redirect_to action: :edit_confirm
+    end
+  end
+
+  def update_gillick
+    @patient_session.assign_attributes(patient_session_gillick_params)
+    if @patient_session.save(context: :edit_gillick)
+      redirect_to action: :edit_consent
+    else
+      render :edit_gillick
     end
   end
 
@@ -159,19 +159,19 @@ class ConsentResponsesController < ApplicationController
       .find_or_initialize_by(recorded_at: nil, campaign: @session.campaign)
   end
 
+  def patient_session_gillick_params
+    params.fetch(:patient_session, {}).permit(
+      :gillick_competent,
+      :gillick_competence_notes,
+    )
+  end
+
   def consent_response_who_params
     params.fetch(:consent_response, {}).permit(
       :parent_name,
       :parent_phone,
       :parent_relationship,
       :parent_relationship_other,
-    )
-  end
-
-  def consent_response_gillick_params
-    params.fetch(:consent_response, {}).permit(
-      :gillick_competent,
-      :gillick_competence_details,
     )
   end
 

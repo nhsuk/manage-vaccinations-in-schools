@@ -5,21 +5,21 @@
   ) %>
 <% end %>
 
-<%= form_for @draft_consent_response,
-  url: session_patient_consent_responses_path(@session, @patient),
+<%= form_for @patient_session,
+  url: update_gillick_session_patient_consent_responses_path(@session, @patient),
   method: :put do |f| %>
   <%= f.govuk_error_summary %>
   <%= f.govuk_radio_buttons_fieldset(:gillick_competent,
     legend: { size: 'l',
               tag: 'h1',
               text: 'Are they Gillick competent?' }) do %>
-    <%= f.govuk_radio_button :gillick_competent, "yes",
+    <%= f.govuk_radio_button :gillick_competent, true,
       label: { text: 'Yes, they are Gillick competent' }, link_errors: true %>
-    <%= f.govuk_radio_button :gillick_competent, "no",
+    <%= f.govuk_radio_button :gillick_competent, false,
       label: { text: "No" } %>
   <% end %>
 
-  <%= f.govuk_text_area :gillick_competence_details,
+  <%= f.govuk_text_area :gillick_competence_notes,
     label: { text: 'Give details of your assessment' },
     rows: 10 %>
 
