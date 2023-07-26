@@ -14,15 +14,15 @@
 
 <%=
 govuk_tabs title: "Vaccinations", classes: 'nhsuk-tabs' do |c|
-  c.with_tab(label: "Action needed", classes: 'nhsuk-tabs__panel') do
+  c.with_tab(label: "Action needed (#{ @partitioned_patient_sessions[:action_needed].size })", classes: 'nhsuk-tabs__panel') do
     render "patients_with_actions",
            id: "action-needed",
            patient_sessions: @partitioned_patient_sessions[:action_needed]
   end
-  c.with_tab(label: "Vaccinated", classes: 'nhsuk-tabs__panel') do
+  c.with_tab(label: "Vaccinated (#{ @partitioned_patient_sessions[:vaccinated].size })", classes: 'nhsuk-tabs__panel') do
     render "patients_with_outcomes", id: "vaccinated", patient_sessions: @partitioned_patient_sessions[:vaccinated]
   end
-  c.with_tab(label: "Not vaccinated", classes: 'nhsuk-tabs__panel') do
+  c.with_tab(label: "Not vaccinated (#{ @partitioned_patient_sessions[:not_vaccinated].size })", classes: 'nhsuk-tabs__panel') do
     render "patients_with_outcomes",
            id: "not-vaccinated",
            patient_sessions: @partitioned_patient_sessions[:not_vaccinated]

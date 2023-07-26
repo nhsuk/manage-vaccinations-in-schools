@@ -18,7 +18,7 @@ test("Sets default batch for today", async ({ page }) => {
   await when_i_press_confirm();
   await then_i_should_see_a_success_message();
 
-  await when_i_click_on_the_tab("Action needed");
+  await when_i_click_on_the_tab("Action needed (7)");
   await and_i_click_on_the_patient("Man Swaniawski");
   await and_i_record_a_vaccination();
   await then_i_should_see_the_check_answers_page();
