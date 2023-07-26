@@ -123,7 +123,8 @@
       </dl>
     </div>
   </div>
-<% elsif @vaccination_record.nil? %>
+<% elsif @vaccination_record.nil? &&
+  !@patient_session.unable_to_vaccinate_not_gillick_competent? %>
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
       <%= form_with model: @draft_vaccination_record,

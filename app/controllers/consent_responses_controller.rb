@@ -83,7 +83,24 @@ class ConsentResponsesController < ApplicationController
   def update_gillick
     @patient_session.assign_attributes(patient_session_gillick_params)
     if @patient_session.save(context: :edit_gillick)
-      redirect_to action: :edit_consent
+      if @patient_session.gillick_competent?
+        redirect_to action: :edit_consent
+      else
+        ActiveRecord::Base.transaction do
+          @draft_consent_response.update!(
+            recorded_at: Time.zone.now,
+            consent: "not_provided"
+          )
+          @patient_session.do_gillick_assessment!
+        end
+
+        redirect_to session_patient_vaccinations_path(@session, @patient),
+          flash: {
+            success: {
+              body: "Gillick assessment saved for #{@patient.full_name}",
+            },
+          }
+      end
     else
       render :edit_gillick
     end
