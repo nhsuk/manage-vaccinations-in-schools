@@ -16,7 +16,7 @@
 
       summary_list.with_row do |row|
         row.with_key { "Gillick competent" }
-        row.with_value { @consent_response.gillick_competent? ? 'Yes' : 'No' }
+        row.with_value { @patient_session.gillick_competent? ? 'Yes' : 'No' }
       end
 
       summary_list.with_row do |row|
