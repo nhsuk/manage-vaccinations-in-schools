@@ -21,8 +21,8 @@ Rails.application.routes.draw do
       resource :vaccinations, only: %i[create show update] do
         get "history", on: :member
 
+        resource "batch", only: %i[edit update], controller: "vaccinations/batches"
         get "edit/reason", action: "edit_reason", on: :member
-        get "edit/batch", action: "edit_batch", on: :member
         get "confirm", on: :member
         put "record", on: :member
 

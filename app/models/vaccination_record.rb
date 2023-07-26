@@ -39,6 +39,10 @@ class VaccinationRecord < ApplicationRecord
        ]
 
   validates :administered, inclusion: [true, false]
+  validates :batch_id,
+            presence: true,
+            on: :edit_batch,
+            if: -> { administered }
   validates :site,
             presence: true,
             inclusion: {

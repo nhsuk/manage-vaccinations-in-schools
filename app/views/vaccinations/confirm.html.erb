@@ -1,15 +1,15 @@
 <% content_for :before_main do %>
   <%
   back_url = if @draft_vaccination_record.administered?
-    edit_batch_session_patient_vaccinations_path(@session, @patient)
+    edit_session_patient_vaccinations_batch_path(@session, @patient)
   else
     edit_reason_session_patient_vaccinations_path(@session, @patient)
   end
   %>
   <%= render AppBacklinkComponent.new(
-               href: back_url,
-               name: "vaccination page"
-             ) %>
+    href: back_url,
+    name: "vaccination page"
+  ) %>
 <% end %>
 
 <h1 class="nhsuk-heading-l">Check and confirm</h1>
