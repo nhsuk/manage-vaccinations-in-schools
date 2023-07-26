@@ -143,9 +143,8 @@ class VaccinationsController < ApplicationController
   private
 
   def vaccination_record_params
-    p = params.require(:vaccination_record)
-    p[:site] = p[:site].to_i if p[:site].present?
-    p.permit(:administered, :site, :reason, :batch_id)
+    params.require(:vaccination_record)
+      .permit(:administered, :site, :reason, :batch_id)
   end
 
   def vaccination_record_administered_params

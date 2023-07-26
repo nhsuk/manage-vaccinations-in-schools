@@ -1,10 +1,4 @@
 module VaccinationsHelper
-  def vaccination_site_options
-    VaccinationRecord.sites.map do |k, id|
-      OpenStruct.new(id:, name: k.humanize)
-    end
-  end
-
   def vaccination_date(datetime)
     date = datetime.to_date
 
