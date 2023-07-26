@@ -13,5 +13,7 @@ class PatientSessionResource < Avo::BaseResource
   field :patient, as: :belongs_to
   field :session, as: :belongs_to
   field :vaccination_records, as: :has_many
+  field :gillick_competent, as: :boolean
+  field :gillick_competence_notes, as: :textarea
   # add fields here
 end
