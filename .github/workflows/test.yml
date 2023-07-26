@@ -51,8 +51,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: Get Node.js version
+        id: asdf
+        run: echo "::set-output name=VERSION::$(grep nodejs .tool-versions | awk '{print $2}')"
       - uses: actions/setup-node@v3
         with:
+          node-version: ${{ steps.asdf.outputs.VERSION }}
           cache: "yarn"
       - run: yarn install --frozen-lockfile
       - run: yarn test
