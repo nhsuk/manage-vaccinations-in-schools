@@ -9,11 +9,27 @@ class TriageController < ApplicationController
   layout "two_thirds", except: %i[index]
 
   def index
-    @patient_sessions =
+    patient_sessions =
       @session
         .patient_sessions
         .includes(:vaccination_records, patient: %i[consent_responses triage])
         .order("patients.first_name", "patients.last_name")
+
+    tabs_to_states = {
+      needs_triage: %w[consent_given_triage_needed triaged_kept_in_triage],
+      triage_complete: %w[triaged_ready_to_vaccinate triaged_do_not_vaccinate],
+      get_consent: %w[added_to_session],
+      no_triage_needed: %w[consent_refused consent_given_triage_not_needed vaccinated unable_to_vaccinate],
+    }
+
+    @partitioned_patient_sessions = patient_sessions.group_by do |patient_session|
+      tabs_to_states.find { |_, states| patient_session.state.in? states }&.first
+    end
+
+    # ensure all tabs are present
+    tabs_to_states.each do |tab, _states|
+      @partitioned_patient_sessions[tab] ||= []
+    end
   end
 
   def show
