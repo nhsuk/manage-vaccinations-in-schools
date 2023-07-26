@@ -24,5 +24,23 @@
     <% end %>
   <% end %>
 
-  <%= f.govuk_submit "Continue" %>
+  <h2 class="nhsuk-card__heading nhsuk-heading-m nhsuk-u-margin-top-8">
+    Triage
+  </h2>
+
+  <%= f.fields_for @draft_triage do |ff| %>
+
+    <% content_for(:before_content) { ff.govuk_error_summary } %>
+
+    <%= ff.govuk_text_area :notes, label: { text: 'Triage notes' }, rows: 5 %>
+    <%= ff.govuk_collection_radio_buttons :status,
+                                         triage_form_status_options,
+                                         :first,
+                                         :second,
+                                         legend: { text: 'Triage status' } %>
+  <% end %>
+
+  <div class="nhsuk-u-margin-top-6">
+    <%= f.govuk_submit "Continue" %>
+  </div>
 <% end %>

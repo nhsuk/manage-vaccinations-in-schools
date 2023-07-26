@@ -3,6 +3,7 @@ class ConsentResponsesController < ApplicationController
   before_action :set_patient
   before_action :set_patient_session
   before_action :set_draft_consent_response
+  before_action :set_draft_triage, only: %i[edit_questions edit_confirm update]
 
   layout "two_thirds"
 
@@ -76,6 +77,8 @@ class ConsentResponsesController < ApplicationController
       # TODO: Handle validation
       @draft_consent_response.save!
 
+      @draft_triage.update!(consent_response_triage_params[:triage])
+
       redirect_to action: :edit_confirm
     end
   end
@@ -132,6 +135,7 @@ class ConsentResponsesController < ApplicationController
       ActiveRecord::Base.transaction do
         @draft_consent_response.update!(recorded_at: Time.zone.now)
         @patient_session.do_consent!
+        @patient_session.do_triage!
       end
     end
 
@@ -176,6 +180,12 @@ class ConsentResponsesController < ApplicationController
       .find_or_initialize_by(recorded_at: nil, campaign: @session.campaign)
   end
 
+  def set_draft_triage
+    @draft_triage = @patient.triage.find_or_initialize_by(
+      campaign: @session.campaign
+    )
+  end
+
   def patient_session_gillick_params
     params.fetch(:patient_session, {}).permit(
       :gillick_competent,
@@ -211,6 +221,12 @@ class ConsentResponsesController < ApplicationController
       question_1: [:notes, :response],
       question_2: [:notes, :response],
       question_3: [:notes, :response],
+    )
+  end
+
+  def consent_response_triage_params
+    params.fetch(:consent_response, {}).permit(
+      triage: [:notes, :status],
     )
   end
 end

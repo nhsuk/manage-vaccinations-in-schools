@@ -36,6 +36,7 @@ test("Records consent", async ({ page }) => {
   await then_i_see_the_health_questions_page();
 
   await when_i_answer_the_health_questions();
+  await and_i_triage_the_patient();
   await and_i_click_continue();
   await then_i_see_the_check_answers_page();
 
@@ -97,6 +98,11 @@ async function when_i_answer_the_health_questions() {
   await p.click(radio(1));
   await p.click(radio(2));
   await p.click(radio(3));
+}
+
+async function and_i_triage_the_patient() {
+  await p.fill('[name="consent_response[triage][notes]"]', "Some notes");
+  await p.getByRole("radio", { name: "Ready to vaccinate" }).click();
 }
 
 async function and_i_click_continue() {
