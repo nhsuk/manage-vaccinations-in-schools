@@ -15,6 +15,9 @@ RSpec.describe PatientSessionStateMachineConcern do
 
       def vaccination_record
       end
+
+      def gillick_competent?
+      end
     end
   end
 
@@ -66,6 +69,15 @@ RSpec.describe PatientSessionStateMachineConcern do
 
         fsm.do_consent
         expect(fsm).to be_consent_refused
+      end
+    end
+
+    describe "#do_gillick_assessment" do
+      it "transitions to unable_to_vaccinate_not_gillick_competent when patient is not gillick competent" do
+        allow(fsm).to receive(:gillick_competent?).and_return(false)
+
+        fsm.do_gillick_assessment
+        expect(fsm).to be_unable_to_vaccinate_not_gillick_competent
       end
     end
   end
