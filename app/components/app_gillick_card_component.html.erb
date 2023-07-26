@@ -8,7 +8,9 @@
       summary_list.with_row do |row|
         row.with_key { "Assessment" }
         row.with_value do %>
-          Assessed by nurse<br /><%= Time.zone.now.to_fs(:nhsuk_date) %>
+          Assessed by nurse<br />
+          <%= (@consent_response.recorded_at ||
+               @consent_response.created_at).to_fs(:nhsuk_date) %>
         <% end
       end
 
