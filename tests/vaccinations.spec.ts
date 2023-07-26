@@ -64,14 +64,6 @@ async function when_i_click_on_the_tab(name: string) {
   await p.getByRole("tab", { name: name, exact: true }).click();
 }
 
-async function then_i_should_see_the_action_to_vaccinate() {
-  await expect(p.getByTestId("child-action").nth(0)).toContainText("Vaccinate");
-}
-
-async function when_i_click_on_the_first_patient() {
-  await p.getByTestId("child-link").nth(0).click();
-}
-
 async function then_i_should_see_the_vaccinations_page() {
   await expect(p.getByRole("heading", { name: "Child details" })).toContainText(
     "Child details",
@@ -110,14 +102,9 @@ async function when_i_press_confirm() {
   await p.getByRole("button", { name: "Confirm" }).click();
 }
 
-async function when_i_go_back_to_the_triage_index_page() {
-  await p.getByRole("link", { name: "Back to triage" }).click();
-}
-
 async function when_i_click_on_the_patient(name: string) {
   await p.getByRole("link", { name: name }).click();
 }
-
 async function then_i_should_see_the_medical_history_section() {
   await p.getByRole("heading", { name: "Medical history" });
 }
