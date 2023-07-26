@@ -26,7 +26,6 @@ class PatientSession < ApplicationRecord
 
   validates :gillick_competent,
     inclusion: { in: [true, false] },
-    presence: true,
     on: :edit_gillick
   validates :gillick_competence_notes,
     presence: true,

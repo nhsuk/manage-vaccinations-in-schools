@@ -45,7 +45,6 @@ en:
         patient_session:
           attributes:
             gillick_competent:
-              blank: Choose if they are Gillick competent
               inclusion: Choose if they are Gillick competent
             gillick_competence_notes:
               blank: Enter details of your assessment
