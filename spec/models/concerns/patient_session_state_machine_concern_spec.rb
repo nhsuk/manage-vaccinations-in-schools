@@ -80,6 +80,15 @@ RSpec.describe PatientSessionStateMachineConcern do
         expect(fsm).to be_unable_to_vaccinate_not_gillick_competent
       end
     end
+
+    describe "#do_vaccination" do
+      it "transitions to unable_to_vaccinate_not_assessed when consent_response is nil" do
+        allow(fsm).to receive(:consent_response).and_return(nil)
+
+        fsm.do_vaccination
+        expect(fsm).to be_unable_to_vaccinate_not_assessed
+      end
+    end
   end
 
   context "in consent_given_triage_not_needed state" do
