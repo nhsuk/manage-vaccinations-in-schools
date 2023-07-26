@@ -8,6 +8,7 @@ class Vaccinations::BatchesController < ApplicationController
   def update
     @draft_vaccination_record.assign_attributes(vaccination_record_batch_params)
     if @draft_vaccination_record.save(context: :edit_batch)
+      update_default_batch_for_today
       redirect_to confirm_session_patient_vaccinations_path(@session, @patient)
     else
       render action: :edit
@@ -40,6 +41,18 @@ class Vaccinations::BatchesController < ApplicationController
 
   def set_session
     @session = Session.find(params.fetch(:session_id) { params.fetch(:id) })
+  end
+
+  def update_default_batch_for_today
+    if params.dig(:vaccination_record, :todays_batch).present? &&
+       vaccination_record_batch_params[:batch_id].in?(params[:vaccination_record][:todays_batch])
+
+      session[:todays_batch_id] = vaccination_record_batch_params[:batch_id]
+      session[:todays_batch_date] = Time.zone.now.to_date
+    elsif session.key?(:todays_batch_date) != Time.zone.now.to_date.to_s
+      session.delete(:todays_batch_id)
+      session.delete(:todays_batch_date)
+    end
   end
 
   def vaccination_record_batch_params
