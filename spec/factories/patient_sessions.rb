@@ -2,12 +2,14 @@
 #
 # Table name: patient_sessions
 #
-#  id         :bigint           not null, primary key
-#  state      :string
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  patient_id :bigint           not null
-#  session_id :bigint           not null
+#  id                       :bigint           not null, primary key
+#  gillick_competence_notes :text
+#  gillick_competent        :boolean
+#  state                    :string
+#  created_at               :datetime         not null
+#  updated_at               :datetime         not null
+#  patient_id               :bigint           not null
+#  session_id               :bigint           not null
 #
 # Indexes
 #
