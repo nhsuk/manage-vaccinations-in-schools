@@ -14,14 +14,21 @@
         <% end
       end
 
-      summary_list.with_row do |row|
-        row.with_key { "Gillick competent" }
-        row.with_value { @patient_session.gillick_competent? ? 'Yes' : 'No' }
-      end
+      if @patient_session.gillick_competent?
+        summary_list.with_row do |row|
+          row.with_key { "Gillick competent" }
+          row.with_value { 'Yes' }
+        end
 
-      summary_list.with_row do |row|
-        row.with_key { 'Consent' }
-        row.with_value { 'Given by child' }
+        summary_list.with_row do |row|
+          row.with_key { 'Consent' }
+          row.with_value { 'Given by child' }
+        end
+      else
+        summary_list.with_row do |row|
+          row.with_key { "Gillick competent" }
+          row.with_value { 'No' }
+        end
       end
     end %>
   </div>
