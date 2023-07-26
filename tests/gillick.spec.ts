@@ -30,6 +30,7 @@ test("Records gillick consent", async ({ page }) => {
   await then_i_see_the_health_questions_page();
 
   await when_i_answer_the_health_questions();
+  await and_i_triage_the_patient();
   await and_i_click_continue();
   await then_i_see_the_check_answers_page();
   await and_it_contains_gillick_assessment_details();
@@ -153,4 +154,9 @@ async function when_i_click_no_they_are_not_gillick_competent() {
 
 async function then_i_see_the_vaccination_show_page_for_the_second_patient() {
   await expect(p.locator("h1")).toContainText("Mariano Kuhic");
+}
+
+async function and_i_triage_the_patient() {
+  await p.fill('[name="consent_response[triage][notes]"]', "Some notes");
+  await p.getByRole("radio", { name: "Ready to vaccinate" }).click();
 }
