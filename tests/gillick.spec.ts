@@ -6,6 +6,7 @@ test("Records gillick consent", async ({ page }) => {
   p = page;
   await given_the_app_is_setup();
 
+  // Gillick competence passed
   await when_i_go_to_the_vaccinations_page();
   await then_i_see_the_patient_that_needs_consent();
 
@@ -35,6 +36,18 @@ test("Records gillick consent", async ({ page }) => {
 
   await when_i_click_confirm();
   await then_i_see_the_vaccination_show_page();
+
+  // Not Gillick competent
+  await when_i_go_to_the_vaccinations_page();
+  await when_i_click_on_the_second_patient();
+
+  await when_i_click_yes_gillick();
+  await and_i_click_continue();
+  await when_i_click_give_your_assessment();
+  await when_i_click_no_they_are_not_gillick_competent();
+  await and_i_give_details();
+  await and_i_click_continue();
+  await then_i_see_the_vaccination_show_page_for_the_second_patient();
 });
 
 async function given_the_app_is_setup() {
@@ -128,4 +141,16 @@ async function and_it_contains_gillick_assessment_details() {
   await expect(
     p.getByRole("heading", { name: "Gillick competence" }),
   ).toBeVisible();
+}
+
+async function when_i_click_on_the_second_patient() {
+  await p.click("text=Mariano Kuhic");
+}
+
+async function when_i_click_no_they_are_not_gillick_competent() {
+  await p.click("text=No");
+}
+
+async function then_i_see_the_vaccination_show_page_for_the_second_patient() {
+  await expect(p.locator("h1")).toContainText("Mariano Kuhic");
 }
