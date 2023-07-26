@@ -142,10 +142,9 @@
             label: { text: 'Yes, they got the HPV vaccine' },
             link_errors: true do %>
             <%= f.govuk_collection_radio_buttons :site,
-              vaccination_site_options,
-              :id,
-              :name,
-              :description,
+              VaccinationRecord.sites.keys,
+              :to_s,
+              :humanize,
               inline: true,
               legend: {
                 text: 'Where did they get it?',
