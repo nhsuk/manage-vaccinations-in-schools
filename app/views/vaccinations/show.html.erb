@@ -85,13 +85,13 @@
             <%= @vaccination_record.administered? ? "Yes" : "No" %>
           </dd>
         </div>
-        <% if @vaccination_record.site %>
+        <% if @vaccination_record.delivery_site %>
           <div class="nhsuk-summary-list__row">
             <dt class="nhsuk-summary-list__key">
               Site
             </dt>
             <dd class="nhsuk-summary-list__value">
-              <%= @vaccination_record.site.humanize %>
+              <%= @vaccination_record.delivery_site.humanize %>
             </dd>
           </div>
         <% end %>
@@ -141,8 +141,8 @@
           <%= f.govuk_radio_button :administered, true,
             label: { text: 'Yes, they got the HPV vaccine' },
             link_errors: true do %>
-            <%= f.govuk_collection_radio_buttons :site,
-              VaccinationRecord.sites.keys,
+            <%= f.govuk_collection_radio_buttons :delivery_site,
+              VaccinationRecord.delivery_sites.keys,
               :to_s,
               :humanize,
               inline: true,

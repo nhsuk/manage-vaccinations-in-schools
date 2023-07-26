@@ -160,12 +160,12 @@ unable_to_vaccinate_not_gillick_competent]
 
   def vaccination_record_params
     params.fetch(:vaccination_record, {})
-      .permit(:administered, :site, :reason, :batch_id)
+      .permit(:administered, :delivery_site, :reason, :batch_id)
   end
 
   def vaccination_record_administered_params
     params.fetch(:vaccination_record, {})
-      .permit(:administered, :site)
+      .permit(:administered, :delivery_site)
   end
 
   def vaccination_record_reason_params

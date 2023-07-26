@@ -9,7 +9,7 @@ class VaccinationRecordResource < Avo::BaseResource
   # Fields generated from the model
   field :patient_session, as: :belongs_to
   field :administered, as: :boolean
-  field :site, as: :select, enum: ::VaccinationRecord.sites
+  field :delivery_site, as: :select, enum: ::VaccinationRecord.delivery_sites
   field :recorded_at, as: :date
   # add fields here
 end
