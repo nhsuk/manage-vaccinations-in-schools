@@ -8,7 +8,7 @@ test("Records vaccinations", async ({ page }) => {
   await given_the_app_is_setup();
 
   await when_i_go_to_the_vaccinations_page();
-  await then_i_should_be_on_the_tab("Action needed");
+  await then_i_should_be_on_the_tab("Action needed (8)");
 
   await when_i_click_on_the_patient("Ernie Funk");
   await then_i_should_see_the_vaccinations_page();
@@ -27,8 +27,8 @@ test("Records vaccinations", async ({ page }) => {
   await then_i_should_see_a_success_message();
   await and_i_should_see_the_outcome_as_vaccinated("Ernie Funk");
 
-  await when_i_click_on_the_tab("Vaccinated");
-  await then_i_should_be_on_the_tab("Vaccinated");
+  await when_i_click_on_the_tab("Vaccinated (1)");
+  await then_i_should_be_on_the_tab("Vaccinated (1)");
 
   await when_i_click_on_the_patient("Ernie Funk");
   await then_i_should_see_the_vaccination_details();
