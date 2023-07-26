@@ -49,6 +49,12 @@ class VaccinationRecord < ApplicationRecord
               in: sites.keys,
             },
             if: -> { administered }
+  validates :reason,
+            inclusion: {
+              in: reasons.keys,
+            },
+            on: :edit_reason,
+            if: -> { !administered }
 
   def vaccine_name
     patient_session.session.campaign.vaccines.first.type
@@ -56,5 +62,9 @@ class VaccinationRecord < ApplicationRecord
 
   def location_name
     patient_session.session.location&.name
+  end
+
+  def not_administered?
+    !administered?
   end
 end
