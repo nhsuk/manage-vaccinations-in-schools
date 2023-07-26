@@ -13,6 +13,7 @@ module PatientSessionStateMachineConcern
       state :triaged_do_not_vaccinate
       state :triaged_kept_in_triage
       state :unable_to_vaccinate
+      state :unable_to_vaccinate_not_gillick_competent
       state :vaccinated
 
       event :do_consent do
@@ -27,6 +28,12 @@ module PatientSessionStateMachineConcern
         transitions from: :added_to_session,
                     to: :consent_refused,
                     if: :consent_refused?
+      end
+
+      event :do_gillick_assessment do
+        transitions from: :added_to_session,
+                    to: :unable_to_vaccinate_not_gillick_competent,
+                    if: :not_gillick_competent?
       end
 
       event :do_triage do
@@ -96,6 +103,10 @@ module PatientSessionStateMachineConcern
 
     def vaccination_not_administered?
       vaccination_record&.administered == false
+    end
+
+    def not_gillick_competent?
+      !gillick_competent?
     end
   end
 end
