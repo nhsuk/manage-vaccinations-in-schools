@@ -88,9 +88,19 @@ class VaccinationsController < ApplicationController
   end
 
   def create
-    if @draft_vaccination_record.update(vaccination_record_params)
+    @draft_vaccination_record.assign_attributes(vaccination_record_params)
+
+    if @draft_vaccination_record.administered?
+      @draft_vaccination_record.batch_id = @todays_batch_id
+    end
+
+    if @draft_vaccination_record.save
       if @draft_vaccination_record.administered?
-        redirect_to edit_batch_session_patient_vaccinations_path(@session, @patient)
+        if @draft_vaccination_record.batch_id.present?
+          redirect_to confirm_session_patient_vaccinations_path(@session, @patient)
+        else
+          redirect_to edit_session_patient_vaccinations_batch_path(@session, @patient)
+        end
       else
         redirect_to edit_reason_session_patient_vaccinations_path(@session, @patient)
       end
@@ -128,6 +138,16 @@ class VaccinationsController < ApplicationController
     p = params.require(:vaccination_record)
     p[:site] = p[:site].to_i if p[:site].present?
     p.permit(:administered, :site, :reason, :batch_id)
+  end
+
+  def vaccination_record_administered_params
+    params.fetch(:vaccination_record, {})
+      .permit(:administered, :site)
+  end
+
+  def vaccination_record_reason_params
+    params.fetch(:vaccination_record, {})
+      .permit(:reason)
   end
 
   def consent_response_params
@@ -184,5 +204,12 @@ class VaccinationsController < ApplicationController
     @draft_consent_response = @patient
       .consent_responses
       .find_or_initialize_by(recorded_at: nil)
+  end
+
+  def set_todays_batch_id
+    if session.key?(:todays_batch_id) && session.key?(:todays_batch_date) &&
+       session[:todays_batch_date] == Time.zone.now.to_date.to_s
+      @todays_batch_id = session[:todays_batch_id]
+    end
   end
 end
