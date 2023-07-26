@@ -11,7 +11,6 @@
 #  childs_dob                  :date
 #  childs_name                 :text
 #  consent                     :integer
-#  gillick_competence_details  :text
 #  gp_name                     :text
 #  gp_response                 :integer
 #  health_questions            :jsonb
