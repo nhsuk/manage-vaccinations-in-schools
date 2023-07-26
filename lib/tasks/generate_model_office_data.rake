@@ -35,8 +35,8 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
 
   patients_consent_triage = []
 
-  # about 50% yes from parent or guardian, no yes answers or notes, in state ready to vaccinate
-  100.times do
+  # consent given, no contraindications in health questions, ready to vaccinate
+  24.times do
     patient = FactoryBot.build(:patient, :of_hpv_vaccination_age)
     consent =
       FactoryBot.build(
@@ -50,14 +50,14 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
     patients_consent_triage << [patient, consent]
   end
 
-  # about 20% no consent response
-  40.times do
+  # no consent response
+  16.times do
     patient = FactoryBot.build(:patient, :of_hpv_vaccination_age)
     patients_consent_triage << [patient, nil]
   end
 
-  # about 10% refused
-  20.times do
+  # refused
+  15.times do
     patient = FactoryBot.build(:patient, :of_hpv_vaccination_age)
     consent =
       FactoryBot.build(
@@ -74,10 +74,8 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
   TO_TRIAGE = <<~CSV.freeze
   Does the child have any severe allergies that have led to an anaphylactic reaction?,Does the child have any existing medical conditions?,Does the child take any regular medication?,Is there anything else we should know?
   My child has a severe nut allergy and has had an anaphylactic reaction in the past. This is something that’s extremely important to me and my husband. We make sure to always have an EpiPen on hand.,,,
-  "Yes, my child has a food allergy to dairy products.",,,
   ,My child was diagnosed with anaemia and has low iron levels.,,
   ,My child suffers from migraines and has severe headaches on a regular basis.,,
-  ,My child has celiac disease.,,
   ,Epilepsy,My child takes anti-seizure medication twice a day to manage their epilepsy.,
   ,My child has type 1 diabetes and requires daily insulin injections.,Insulin,
   ,My child has asthma,My child takes medication every day to manage their asthma.,
@@ -116,8 +114,8 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
       patients_consent_triage << [patient, consent]
     end
 
-  # cases to follow up on
-  TO_FOLLOW_UP = <<~CSV.freeze
+  # cases where triage has been started
+  TRIAGE_STARTED = <<~CSV.freeze
   triage notes,Does the child have any severe allergies that have led to an anaphylactic reaction,Does the child have any existing medical conditions?,Does the child take any regular medication?,Is there anything else we should know?
   "Spoke to child’s mum. Child completed leukaemia treatment 6 months ago. Need to speak to the consultant who treated her for a view on whether it’s safe to vaccinate. Dr Goehring, King’s College, 0208 734 5432.",,My daughter has just finished treatment for leukaemia. I don’t know if it’s safe for her to have the vaccination.,,
   Tried to get hold of parent to establish how severe the phobia is. Try again before vaccination session.,,,,My son is needle phobic.
@@ -126,7 +124,7 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
   CSV
 
   CSV
-    .parse(TO_FOLLOW_UP, headers: true)
+    .parse(TRIAGE_STARTED, headers: true)
     .each do |row|
       health_question_responses =
         row.map do |question, answer|
