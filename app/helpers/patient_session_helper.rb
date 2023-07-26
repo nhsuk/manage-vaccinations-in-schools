@@ -38,6 +38,16 @@ module PatientSessionHelper
       text: "Unable to vaccinate",
       banner_title: "Could not vaccinate",
     },
+    unable_to_vaccinate_not_assessed: {
+      colour: "red",
+      text: "Not vaccinated",
+      banner_title: "Not vaccinated",
+    },
+    unable_to_vaccinate_not_gillick_competent: {
+      colour: "red",
+      text: "Not vaccinated",
+      banner_title: "Not vaccinated",
+    },
     vaccinated: {
       colour: "green",
       text: "Vaccinated",

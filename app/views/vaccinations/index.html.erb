@@ -25,7 +25,7 @@ govuk_tabs title: "Vaccinations", classes: 'nhsuk-tabs' do |c|
   c.with_tab(label: "Not vaccinated", classes: 'nhsuk-tabs__panel') do
     render "patients_with_outcomes",
            id: "not-vaccinated",
-           view_states: %w[triaged_do_not_vaccinate unable_to_vaccinate]
+           view_states: %w[triaged_do_not_vaccinate unable_to_vaccinate unable_to_vaccinate_not_assessed unable_to_vaccinate_not_gillick_competent]
   end
 end
 %>
