@@ -4,9 +4,9 @@
 #
 #  id                 :bigint           not null, primary key
 #  administered       :boolean
+#  delivery_site      :integer
 #  reason             :integer
 #  recorded_at        :datetime
-#  site               :integer
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #  batch_id           :bigint
@@ -27,7 +27,9 @@ class VaccinationRecord < ApplicationRecord
   belongs_to :batch, optional: true
   has_one :vaccine, through: :batch
 
-  enum :site, %i[left_arm right_arm other]
+  enum :delivery_site, %i[left_arm right_arm other], prefix: true
+  # Sites can be removed after the migration to rename it has been run
+  enum :sites, %i[left_arm right_arm other], prefix: "delivery_site_"
   enum :reason,
        %i[
          refused
@@ -43,7 +45,7 @@ class VaccinationRecord < ApplicationRecord
             presence: true,
             on: :edit_batch,
             if: -> { administered }
-  validates :site,
+  validates :delivery_site,
             presence: true,
             inclusion: {
               in: sites.keys,
