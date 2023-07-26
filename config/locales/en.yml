@@ -42,6 +42,13 @@ en:
               blank: Choose a site
             reason:
               inclusion: Choose a reason
+        patient_session:
+          attributes:
+            gillick_competent:
+              blank: Choose if they are Gillick competent
+              inclusion: Choose if they are Gillick competent
+            gillick_competence_notes:
+              blank: Enter details of your assessment
         consent_response:
           attributes:
             parent_name:
@@ -53,11 +60,6 @@ en:
               inclusion: Choose a relationship
             parent_relationship_other:
               blank: Enter a relationship
-            gillick_competent:
-              blank: Choose if they are Gillick competent
-              inclusion: Choose if they are Gillick competent
-            gillick_competence_details:
-              blank: Enter details of your assessment
             consent:
               inclusion: Choose if they consent
             reason_for_refusal:

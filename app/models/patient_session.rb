@@ -24,6 +24,14 @@ class PatientSession < ApplicationRecord
   belongs_to :session
   has_many :vaccination_records
 
+  validates :gillick_competent,
+    inclusion: { in: [true, false] },
+    presence: true,
+    on: :edit_gillick
+  validates :gillick_competence_notes,
+    presence: true,
+    on: :edit_gillick
+
   def consent_response
     patient.consent_response_for_campaign(session.campaign)
   end

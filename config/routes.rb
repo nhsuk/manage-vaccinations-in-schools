@@ -36,6 +36,8 @@ Rails.application.routes.draw do
         get "assessing-gillick", to: "consent_responses#assessing_gillick"
 
         get "edit/gillick", to: "consent_responses#edit_gillick"
+        put "update/gillick", to: "consent_responses#update_gillick"
+
         get "edit/who", to: "consent_responses#edit_who"
         get "edit/agree", to: "consent_responses#edit_consent"
         get "edit/reason", to: "consent_responses#edit_reason"

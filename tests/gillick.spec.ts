@@ -85,7 +85,7 @@ async function when_i_click_yes_they_are_gillick_competent() {
 
 async function and_i_give_details() {
   await p.fill(
-    '[name="consent_response[gillick_competence_details]"]',
+    '[name="patient_session[gillick_competence_notes]"]',
     "They were very mature",
   );
 }
