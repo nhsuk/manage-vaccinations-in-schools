@@ -15,6 +15,8 @@
 
 <%= render AppStatusBannerComponent.new(patient_session: @patient_session) %>
 
+<%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
+
 <% if @consent_response.present? %>
   <% if @consent_response.via_self_consent? %>
     <%= render AppGillickCardComponent.new(
@@ -27,8 +29,6 @@
       consent_response: @consent_response) %>
   <% end %>
 <% end %>
-
-<%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
 
 <% if @consent_response&.consent_given? %>
   <%= render AppPatientMedicalHistoryCardComponent.new(
