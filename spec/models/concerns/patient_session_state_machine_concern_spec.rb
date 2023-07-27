@@ -254,7 +254,7 @@ RSpec.describe PatientSessionStateMachineConcern do
         :vaccination_record,
         patient_session:,
         administered: true,
-        site: :right_arm,
+        delivery_site: :right_arm,
       )
       patient_session.do_vaccination
       expect(patient_session).to be_vaccinated
@@ -316,7 +316,7 @@ RSpec.describe PatientSessionStateMachineConcern do
         :vaccination_record,
         patient_session:,
         administered: true,
-        site: :left_arm,
+        delivery_site: :left_arm,
       )
       patient_session.do_vaccination
       expect(patient_session).to be_vaccinated
