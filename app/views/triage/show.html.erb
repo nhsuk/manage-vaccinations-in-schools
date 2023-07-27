@@ -15,11 +15,11 @@
 
 <%= render AppStatusBannerComponent.new(patient_session: @patient_session) %>
 
+<%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
+
 <% if @consent_response.present? %>
   <%= render AppConsentCardComponent.new session: @session, patient: @patient, consent_response: @consent_response %>
 <% end %>
-
-<%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
 
 <% if @consent_response&.consent_given? %>
   <div class="nhsuk-card" id="health-questions">
