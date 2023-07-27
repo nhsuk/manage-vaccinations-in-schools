@@ -38,15 +38,30 @@ module PatientSessionStateMachineConcern
       end
 
       event :do_triage do
-        transitions from: %i[consent_given_triage_needed consent_given_triage_not_needed triaged_kept_in_triage],
+        transitions from: %i[
+                      consent_given_triage_needed
+                      consent_given_triage_not_needed
+                      triaged_kept_in_triage
+                      consent_refused
+                    ],
                     to: :triaged_ready_to_vaccinate,
                     if: :triage_ready_to_vaccinate?
 
-        transitions from: %i[consent_given_triage_needed consent_given_triage_not_needed triaged_kept_in_triage],
+        transitions from: %i[
+                      consent_given_triage_needed
+                      consent_given_triage_not_needed
+                      triaged_kept_in_triage
+                      consent_refused
+                    ],
                     to: :triaged_do_not_vaccinate,
                     if: :triage_do_not_vaccinate?
 
-        transitions from: %i[consent_given_triage_needed consent_given_triage_not_needed triaged_kept_in_triage],
+        transitions from: %i[
+                      consent_given_triage_needed
+                      consent_given_triage_not_needed
+                      triaged_kept_in_triage
+                      consent_refused
+                    ],
                     to: :triaged_kept_in_triage,
                     if: :triage_keep_in_triage?
       end
