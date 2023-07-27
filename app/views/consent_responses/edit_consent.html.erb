@@ -14,8 +14,7 @@
   <%= f.govuk_radio_buttons_fieldset(:consent,
     legend: { size: 'l',
               tag: 'h1',
-              text: 'Do they agree to them having both doses of the
-                     HPV vaccination?' }) do %>
+              text: 'Do they agree to them having the HPV vaccination?' }) do %>
     <%= f.govuk_radio_button :consent, "given",
       label: { text: 'Yes, they agree' }, link_errors: true %>
     <%= f.govuk_radio_button :consent, "refused",
