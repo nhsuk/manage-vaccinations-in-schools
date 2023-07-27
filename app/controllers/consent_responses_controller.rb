@@ -138,7 +138,7 @@ class ConsentResponsesController < ApplicationController
       ActiveRecord::Base.transaction do
         @draft_consent_response.update!(recorded_at: Time.zone.now)
         @patient_session.do_consent!
-        @patient_session.do_triage!
+        @patient_session.do_triage! if @patient_session.triage.present?
       end
     end
 
