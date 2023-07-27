@@ -780,7 +780,8 @@
           },
           {
             "question": "Does the child have any existing medical conditions?",
-            "response": "no"
+            "response": "yes",
+            "notes": "Haemophilia."
           },
           {
             "question": "Does the child take any regular medication?",
@@ -788,7 +789,8 @@
           },
           {
             "question": "Is there anything else we should know?",
-            "response": "no"
+            "response": "yes",
+            "notes": "My child has a bleeding disorder. In the past, they've had injections in their thigh to reduce the risk of bleeding."
           }
         ],
         "route": "website"
@@ -1854,18 +1856,18 @@
           },
           {
             "question": "Does the child have any existing medical conditions?",
-            "response": "No",
-            "notes": null
+            "response": "yes",
+            "notes": "Haemophilia."
           },
           {
             "question": "Does the child take any regular medication?",
-            "response": "Yes",
-            "notes": "My child takes medication to manage their ADHD."
+            "response": "No",
+            "notes": null
           },
           {
             "question": "Is there anything else we should know?",
-            "response": "No",
-            "notes": null
+            "response": "yes",
+            "notes": "My child has a bleeding disorder. In the past, they've had injections in their thigh to reduce the risk of bleeding."
           }
         ],
         "route": "website"
