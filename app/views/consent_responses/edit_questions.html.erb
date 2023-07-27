@@ -32,7 +32,8 @@
 
     <% content_for(:before_content) { ff.govuk_error_summary } %>
 
-    <%= ff.govuk_text_area :notes, label: { text: 'Triage notes' }, rows: 5 %>
+    <%= ff.govuk_text_area :notes, label: { text: 'Triage notes (optional)' },
+                                   rows: 5 %>
     <%= ff.govuk_collection_radio_buttons :status,
                                          triage_form_status_options,
                                          :first,
