@@ -24,6 +24,14 @@ en:
           ready_to_vaccinate: Ready to vaccinate
           do_not_vaccinate: Do not vaccinate
           needs_follow_up: Keep in triage
+      vaccination_record:
+        delivery_methods:
+          intranasal: Intramuscular (IM)
+        delivery_sites:
+          left_arm_lower_position: Left arm (lower position)
+          left_arm_upper_position: Left arm (upper position)
+          right_arm_lower_position: Right arm (lower position)
+          right_arm_upper_position: Right arm (upper position)
     errors:
       models:
         offline_password:
@@ -40,6 +48,10 @@ en:
               inclusion: Choose if they got the vaccine
             batch_id:
               blank: Choose a batch
+            delivery_method:
+              blank: Choose a method of delivery
+            delivery_site:
+              blank: Choose a delivery site
             site:
               blank: Choose a site
             reason:
