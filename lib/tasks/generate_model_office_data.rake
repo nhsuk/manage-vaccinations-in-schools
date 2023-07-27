@@ -79,7 +79,7 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
   ,Epilepsy,My child takes anti-seizure medication twice a day to manage their epilepsy.,
   ,My child has type 1 diabetes and requires daily insulin injections.,Insulin,
   ,My child has asthma,My child takes medication every day to manage their asthma.,
-  ,,My child takes medication to manage their ADHD.,
+  ,Haemophilia,,My child has a bleeding disorder. In the past they’ve had injections in their thigh to reduce the risk of bleeding.
   ,,My child uses topical ointments to manage their eczema and prevent skin irritation.,
   ,,My child takes medication to manage their anxiety and prevent panic attacks.,
   ,,My child takes medication to manage their depression.,
