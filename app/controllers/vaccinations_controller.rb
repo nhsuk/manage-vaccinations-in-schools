@@ -105,15 +105,12 @@ unable_to_vaccinate_not_gillick_competent]
   end
 
   def create
-    @draft_vaccination_record.assign_attributes(vaccination_record_params)
+    if @draft_vaccination_record.update(create_params)
 
-    if @draft_vaccination_record.administered?
-      @draft_vaccination_record.batch_id = @todays_batch_id
-    end
-
-    if @draft_vaccination_record.save
       if @draft_vaccination_record.administered?
-        if @draft_vaccination_record.batch_id.present?
+        if @draft_vaccination_record.delivery_site_other
+          redirect_to edit_session_patient_vaccinations_delivery_site_path(@session, @patient)
+        elsif @draft_vaccination_record.batch_id.present?
           redirect_to confirm_session_patient_vaccinations_path(@session, @patient)
         else
           redirect_to edit_session_patient_vaccinations_batch_path(@session, @patient)
@@ -121,6 +118,7 @@ unable_to_vaccinate_not_gillick_competent]
       else
         redirect_to edit_reason_session_patient_vaccinations_path(@session, @patient)
       end
+
     else
       render :show
     end
@@ -160,7 +158,26 @@ unable_to_vaccinate_not_gillick_competent]
 
   def vaccination_record_params
     params.fetch(:vaccination_record, {})
-      .permit(:administered, :delivery_site, :reason, :batch_id)
+      .permit(:administered, :delivery_site, :delivery_method, :reason, :batch_id)
+  end
+
+  def create_params
+    if vaccination_record_params[:administered] == "true"
+      create_params = if delivery_site_param_other?
+                        vaccination_record_params_with_delivery_other
+                      else
+                        vaccination_record_params
+                      end
+      create_params.merge(batch_id: @todays_batch_id)
+    else
+      vaccination_record_params
+    end
+  end
+
+  def vaccination_record_params_with_delivery_other
+    vaccination_record_params
+      .except(:delivery_site, :delivery_method)
+      .merge(delivery_site_other: "true")
   end
 
   def vaccination_record_administered_params
@@ -175,6 +192,10 @@ unable_to_vaccinate_not_gillick_competent]
 
   def consent_response_params
     params.fetch(:consent_response, {}).permit(:route)
+  end
+
+  def delivery_site_param_other?
+    vaccination_record_params[:delivery_site] == "other"
   end
 
   def set_session

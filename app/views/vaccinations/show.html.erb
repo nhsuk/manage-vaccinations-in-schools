@@ -142,7 +142,7 @@
             label: { text: 'Yes, they got the HPV vaccine' },
             link_errors: true do %>
             <%= f.govuk_collection_radio_buttons :delivery_site,
-              VaccinationRecord.delivery_sites.keys,
+              vaccination_initial_delivery_sites,
               :to_s,
               :humanize,
               inline: true,
@@ -155,6 +155,8 @@
           <%= f.govuk_radio_button :administered, false,
             label: { text: 'No, they did not get it' } %>
         <% end %>
+
+        <%= hidden_field_tag "vaccination_record[delivery_method]", "intramuscular" %>
 
         <%= f.submit "Continue", class: "nhsuk-button" %>
       <% end %>

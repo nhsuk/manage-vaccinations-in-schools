@@ -24,13 +24,28 @@
 #  fk_rails_...  (patient_session_id => patient_sessions.id)
 #
 class VaccinationRecord < ApplicationRecord
+  attr_accessor :delivery_site_other
+
   belongs_to :patient_session
   belongs_to :batch, optional: true
   has_one :vaccine, through: :batch
 
-  enum :delivery_site, %i[left_arm right_arm other], prefix: true
   enum :delivery_method,
        %w[intramuscular subcutaneous],
+       prefix: true
+  enum :delivery_site,
+       %w[
+         left_arm
+         right_arm
+         left_arm_upper_position
+         left_arm_lower_position
+         right_arm_upper_position
+         right_arm_lower_position
+         left_thigh
+         right_thigh
+         left_buttock
+         right_buttock
+       ],
        prefix: true
   # Sites can be removed after the migration to rename it has been run
   enum :sites, %i[left_arm right_arm other], prefix: "delivery_site_"
@@ -52,8 +67,28 @@ class VaccinationRecord < ApplicationRecord
   validates :delivery_site,
             presence: true,
             inclusion: {
-              in: sites.keys,
+              in: delivery_sites.keys,
             },
+            if: -> { administered && !delivery_site_other }
+  validates :delivery_method,
+            presence: true,
+            inclusion: {
+              in: delivery_methods.keys,
+            },
+            if: -> { administered && delivery_site.present? }
+  validates :delivery_site,
+            presence: true,
+            inclusion: {
+              in: delivery_sites.keys,
+            },
+            on: :edit_delivery,
+            if: -> { administered }
+  validates :delivery_method,
+            presence: true,
+            inclusion: {
+              in: delivery_methods.keys,
+            },
+            on: :edit_delivery,
             if: -> { administered }
   validates :reason,
             inclusion: {
