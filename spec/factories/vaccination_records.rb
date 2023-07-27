@@ -4,6 +4,7 @@
 #
 #  id                 :bigint           not null, primary key
 #  administered       :boolean
+#  delivery_method    :integer
 #  delivery_site      :integer
 #  reason             :integer
 #  recorded_at        :datetime

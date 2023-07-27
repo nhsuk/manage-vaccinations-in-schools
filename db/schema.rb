@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_26_190539) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_26_190647) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -156,6 +156,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_26_190539) do
     t.boolean "administered"
     t.integer "reason"
     t.bigint "batch_id"
+    t.integer "delivery_method"
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["patient_session_id"], name: "index_vaccination_records_on_patient_session_id"
   end

@@ -4,6 +4,7 @@
 #
 #  id                 :bigint           not null, primary key
 #  administered       :boolean
+#  delivery_method    :integer
 #  delivery_site      :integer
 #  reason             :integer
 #  recorded_at        :datetime
@@ -28,6 +29,9 @@ class VaccinationRecord < ApplicationRecord
   has_one :vaccine, through: :batch
 
   enum :delivery_site, %i[left_arm right_arm other], prefix: true
+  enum :delivery_method,
+       %w[intramuscular subcutaneous],
+       prefix: true
   # Sites can be removed after the migration to rename it has been run
   enum :sites, %i[left_arm right_arm other], prefix: "delivery_site_"
   enum :reason,
