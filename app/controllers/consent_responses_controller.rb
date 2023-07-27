@@ -77,9 +77,12 @@ class ConsentResponsesController < ApplicationController
       # TODO: Handle validation
       @draft_consent_response.save!
 
-      @draft_triage.update!(consent_response_triage_params[:triage])
-
-      redirect_to action: :edit_confirm
+      @draft_triage.assign_attributes consent_response_triage_params[:triage]
+      if @draft_triage.save(context: :edit_questions)
+        redirect_to action: :edit_confirm
+      else
+        render :edit_questions
+      end
     end
   end
 

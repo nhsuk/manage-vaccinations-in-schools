@@ -79,3 +79,10 @@ en:
               inclusion: Choose a reason
             reason_for_refusal_other:
               blank: Enter a reason
+        triage:
+          attributes:
+            status:
+              blank: Choose a status
+              inclusion: Choose a status
+            notes:
+              blank: Enter triage notes
