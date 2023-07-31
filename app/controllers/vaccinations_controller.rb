@@ -2,7 +2,7 @@ class VaccinationsController < ApplicationController
   before_action :set_session
   before_action :set_patient, except: %i[index record_template]
   before_action :set_patient_sessions, only: %i[index record_template]
-  before_action :set_patient_session, only: %i[consent create record show update]
+  before_action :set_patient_session, only: %i[confirm consent create record show update]
   before_action :set_draft_vaccination_record,
                 only: %i[show confirm edit_reason record create update]
 
@@ -235,9 +235,7 @@ unable_to_vaccinate_not_gillick_competent]
   end
 
   def set_triage
-    @triage =
-      @patient.triage_for_campaign(@session.campaign) ||
-        Triage.new(campaign: @session.campaign, patient: @patient)
+    @triage = Triage.find_or_initialize_by(patient_session: @patient_session)
   end
 
   def set_patient_session

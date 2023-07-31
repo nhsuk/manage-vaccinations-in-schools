@@ -36,7 +36,7 @@ class TriageController < ApplicationController
   end
 
   def create
-    @triage = Triage.new(campaign: @session.campaign, patient: @patient)
+    @triage = @patient_session.triage.new
     if @triage.update(triage_params)
       @patient_session.do_triage!
       redirect_to triage_session_path(@session),
@@ -56,7 +56,7 @@ class TriageController < ApplicationController
   end
 
   def update
-    @triage = @patient.triage_for_campaign(@session.campaign)
+    @triage = @patient_session.triage.last
     if @triage.update(triage_params)
       @patient_session.do_triage!
       redirect_to triage_session_path(@session),
@@ -86,9 +86,7 @@ class TriageController < ApplicationController
   end
 
   def set_triage
-    @triage =
-      @patient.triage_for_campaign(@session.campaign) ||
-        Triage.new(campaign: @session.campaign, patient: @patient)
+    @triage = Triage.find_or_initialize_by(patient_session: @patient_session)
   end
 
   def set_consent_response
