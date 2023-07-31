@@ -8,6 +8,8 @@
 #  updated_at :datetime         not null
 #
 class Campaign < ApplicationRecord
+  audited
+
   has_and_belongs_to_many :vaccines
   has_many :batches, through: :vaccines
   has_many :sessions, dependent: :destroy

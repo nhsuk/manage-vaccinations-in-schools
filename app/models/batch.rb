@@ -18,6 +18,8 @@
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 class Batch < ApplicationRecord
+  audited
+
   belongs_to :vaccine
   has_many :vaccination_records
 

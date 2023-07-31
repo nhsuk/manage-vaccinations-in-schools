@@ -42,6 +42,8 @@
 #
 
 class ConsentResponse < ApplicationRecord
+  audited
+
   belongs_to :patient
   belongs_to :campaign
 

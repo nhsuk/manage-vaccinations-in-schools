@@ -14,6 +14,8 @@
 #  updated_at :datetime         not null
 #
 class Location < ApplicationRecord
+  audited
+
   has_many :sessions
   has_many :patients
 

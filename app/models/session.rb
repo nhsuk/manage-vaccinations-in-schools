@@ -15,6 +15,8 @@
 #  index_sessions_on_campaign_id  (campaign_id)
 #
 class Session < ApplicationRecord
+  audited
+
   belongs_to :campaign
   belongs_to :location, optional: true
   has_many :patient_sessions
