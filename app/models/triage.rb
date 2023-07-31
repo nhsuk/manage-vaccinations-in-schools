@@ -18,7 +18,7 @@
 #  fk_rails_...  (patient_session_id => patient_sessions.id)
 #
 class Triage < ApplicationRecord
-  audited
+  audited associated_with: :patient_session
 
   belongs_to :patient_session
   has_one :patient, through: :patient_session
