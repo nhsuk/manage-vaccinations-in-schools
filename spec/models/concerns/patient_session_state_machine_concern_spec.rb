@@ -26,7 +26,7 @@ RSpec.describe PatientSessionStateMachineConcern do
   before do
     fsm.aasm_write_state_without_persistence(state) if state
     allow(fsm).to receive(:consent_response).and_return(consent_response)
-    allow(fsm).to receive(:triage).and_return(triage)
+    allow(fsm).to receive(:triage).and_return([triage])
     allow(fsm).to receive(:vaccination_record).and_return(vaccination_record)
   end
 
@@ -299,8 +299,7 @@ RSpec.describe PatientSessionStateMachineConcern do
       triage =
         create(
           :triage,
-          patient:,
-          campaign: session.campaign,
+          patient_session:,
           status: :needs_follow_up,
         )
       patient_session.do_triage
@@ -342,8 +341,7 @@ RSpec.describe PatientSessionStateMachineConcern do
       # triage decides not to vaccinate
       create(
         :triage,
-        patient:,
-        campaign: session.campaign,
+        patient_session:,
         status: :do_not_vaccinate,
       )
       patient_session.do_triage
@@ -393,8 +391,7 @@ RSpec.describe PatientSessionStateMachineConcern do
       # triage decides not to vaccinate
       create(
         :triage,
-        patient:,
-        campaign: session.campaign,
+        patient_session:,
         status: :do_not_vaccinate,
       )
       patient_session.do_triage

@@ -12,6 +12,7 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
   end
   let(:patient) { FactoryBot.create(:patient) }
   let(:session) { FactoryBot.create(:session) }
+  let(:patient_session) { create(:patient_session, patient:, session:) }
   let(:consent_response) do
     create :consent_response,
            patient:,
@@ -19,7 +20,7 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
            health_questions:
   end
   let(:triage_notes) { nil }
-  let(:triage) { Triage.new(campaign: session.campaign, patient:) }
+  let(:triage) { Triage.new(patient_session:) }
   let(:component) { described_class.new(patient:, consent_response:, triage:) }
 
   it "renders correctly" do
@@ -65,7 +66,7 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
     end
     let(:triage_notes) { "These are triage notes" }
     let(:triage) do
-      create :triage, patient:, campaign: session.campaign, notes: triage_notes
+      create :triage, patient_session:, notes: triage_notes
     end
 
     it "renders correctly" do
@@ -86,7 +87,7 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
              campaign: session.campaign
     end
     let(:triage) do
-      create :triage, patient:, campaign: session.campaign, notes: nil
+      create :triage, patient_session:, notes: nil
     end
 
     it "renders correctly" do
@@ -110,7 +111,7 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
     end
     let(:triage_notes) { "These are triage notes" }
     let(:triage) do
-      create :triage, patient:, campaign: session.campaign, notes: triage_notes
+      create :triage, patient_session:, notes: triage_notes
     end
 
     it "renders correctly" do
@@ -134,7 +135,7 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
       ]
     end
     let(:triage) do
-      create :triage, patient:, campaign: session.campaign, notes: nil
+      create :triage, patient_session:, notes: nil
     end
 
     it "renders correctly" do

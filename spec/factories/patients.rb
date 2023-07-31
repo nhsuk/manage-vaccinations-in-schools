@@ -70,24 +70,6 @@ FactoryBot.define do
       consent_responses { [create(:consent_response, :refused, :from_mum, campaign:)] }
     end
 
-    trait :triaged_ready_to_vaccinate do
-      consent_given_triage_needed
-
-      triage { [create(:triage, campaign:)] }
-    end
-
-    trait :triaged_do_not_vaccinate do
-      consent_given_triage_needed
-
-      triage { [create(:triage, status: :do_not_vaccinate, campaign: session.campaign)] }
-    end
-
-    trait :triaged_kept_in_triage do
-      consent_given_triage_needed
-
-      triage { [create(:triage, status: :needs_follow_up, campaign: session.campaign)] }
-    end
-
     trait :no_parent_info do
       parent_name { nil }
       parent_relationship { nil }
