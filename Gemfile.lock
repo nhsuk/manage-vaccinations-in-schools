@@ -105,6 +105,9 @@ GEM
     asciidoctor-diagram-ditaamini (1.0.3)
     asciidoctor-diagram-plantuml (1.2023.5)
     ast (2.4.2)
+    audited (5.3.3)
+      activerecord (>= 5.0, < 7.1)
+      request_store (~> 1.2)
     avo (2.37.0)
       actionview (>= 6.0)
       active_link_to
@@ -384,6 +387,8 @@ GEM
     regexp_parser (2.8.1)
     reline (0.3.3)
       io-console (~> 0.5)
+    request_store (1.5.1)
+      rack (>= 1.4)
     rest-client (2.1.0)
       http-accept (>= 1.7.0, < 2.0)
       http-cookie (>= 1.0.2, < 2.0)
@@ -529,6 +534,7 @@ DEPENDENCIES
   annotate
   asciidoctor
   asciidoctor-diagram
+  audited
   avo
   awesome_print
   bootsnap
