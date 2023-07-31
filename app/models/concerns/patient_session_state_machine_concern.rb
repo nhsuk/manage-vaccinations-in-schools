@@ -95,15 +95,15 @@ module PatientSessionStateMachineConcern
     end
 
     def triage_ready_to_vaccinate?
-      triage&.ready_to_vaccinate?
+      triage.last&.ready_to_vaccinate?
     end
 
     def triage_keep_in_triage?
-      triage&.needs_follow_up?
+      triage.last&.needs_follow_up?
     end
 
     def triage_do_not_vaccinate?
-      triage&.do_not_vaccinate?
+      triage.last&.do_not_vaccinate?
     end
 
     def vaccination_administered?

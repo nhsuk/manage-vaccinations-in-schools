@@ -41,10 +41,6 @@ class PatientSession < ApplicationRecord
     patient.consent_response_for_campaign(session.campaign)
   end
 
-  def triage
-    patient.triage_for_campaign(session.campaign)
-  end
-
   def vaccination_record
     vaccination_records.last
   end
