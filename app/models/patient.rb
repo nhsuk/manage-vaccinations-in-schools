@@ -31,7 +31,7 @@ class Patient < ApplicationRecord
   belongs_to :location, optional: true
   has_many :patient_sessions
   has_many :sessions, through: :patient_sessions
-  has_many :triage
+  has_many :triage, through: :patient_sessions
   has_many :consent_responses
 
   validates :first_name, presence: true
