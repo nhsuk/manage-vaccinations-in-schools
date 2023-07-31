@@ -184,9 +184,7 @@ class ConsentResponsesController < ApplicationController
   end
 
   def set_draft_triage
-    @draft_triage = @patient.triage.find_or_initialize_by(
-      campaign: @session.campaign
-    )
+    @draft_triage = Triage.find_or_initialize_by(patient_session: @patient_session)
   end
 
   def patient_session_gillick_params

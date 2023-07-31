@@ -65,13 +65,9 @@ class Patient < ApplicationRecord
       )
   end
 
-  def triage_for_campaign(campaign)
-    triage.to_a.find { |t| t.campaign_id == campaign.id }
-  end
-
   def consent_response_for_campaign(campaign)
     consent_responses.to_a.find do |t|
-      t.campaign_id == campaign.id && t.recorded_at.present?
+      t.campaign == campaign && t.recorded_at.present?
     end
   end
 
