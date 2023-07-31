@@ -41,10 +41,10 @@ task :load_campaign_example, [:example_file] => :environment do |_task, args|
       patient =
         Patient.find_or_initialize_by(nhs_number: attributes[:nhs_number])
       patient.update!(attributes)
-      session.patients << patient unless session.patients.include?(patient)
+      patient_session = PatientSession.find_or_create_by!(patient:, session:)
 
       if triage_attributes.present?
-        triage = Triage.find_or_initialize_by(campaign:, patient:)
+        triage = Triage.find_or_initialize_by(patient_session:)
         triage.update!(triage_attributes)
       end
 
