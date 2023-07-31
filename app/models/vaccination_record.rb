@@ -24,7 +24,7 @@
 #  fk_rails_...  (patient_session_id => patient_sessions.id)
 #
 class VaccinationRecord < ApplicationRecord
-  audited
+  audited associated_with: :patient_session
 
   attr_accessor :delivery_site_other
 
