@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_31_094158) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_31_125846) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -159,14 +159,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_31_094158) do
   end
 
   create_table "triage", force: :cascade do |t|
-    t.bigint "campaign_id"
-    t.bigint "patient_id"
     t.integer "status"
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["campaign_id"], name: "index_triage_on_campaign_id"
-    t.index ["patient_id"], name: "index_triage_on_patient_id"
+    t.bigint "patient_session_id"
+    t.index ["patient_session_id"], name: "index_triage_on_patient_session_id"
   end
 
   create_table "vaccination_records", force: :cascade do |t|
@@ -196,6 +194,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_31_094158) do
   add_foreign_key "consent_responses", "campaigns"
   add_foreign_key "consent_responses", "patients"
   add_foreign_key "health_questions", "vaccines"
+  add_foreign_key "triage", "patient_sessions"
   add_foreign_key "vaccination_records", "batches"
   add_foreign_key "vaccination_records", "patient_sessions"
 end

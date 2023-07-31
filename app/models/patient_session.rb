@@ -25,6 +25,9 @@ class PatientSession < ApplicationRecord
 
   belongs_to :patient
   belongs_to :session
+
+  has_one :campaign, through: :session
+  has_many :triage
   has_many :vaccination_records
 
   validates :gillick_competent,
