@@ -16,6 +16,8 @@
 #  index_triage_on_patient_id   (patient_id)
 #
 class Triage < ApplicationRecord
+  audited
+
   belongs_to :campaign
   belongs_to :patient
 

@@ -18,6 +18,8 @@
 #
 
 class PatientSession < ApplicationRecord
+  audited
+
   include PatientSessionStateMachineConcern
 
   belongs_to :patient

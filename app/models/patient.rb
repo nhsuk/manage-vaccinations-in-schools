@@ -26,6 +26,8 @@
 #  index_patients_on_nhs_number  (nhs_number) UNIQUE
 #
 class Patient < ApplicationRecord
+  audited
+
   belongs_to :location, optional: true
   has_many :patient_sessions
   has_many :sessions, through: :patient_sessions

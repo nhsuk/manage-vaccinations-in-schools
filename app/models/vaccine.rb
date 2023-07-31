@@ -16,6 +16,8 @@
 class Vaccine < ApplicationRecord
   self.inheritance_column = :_type_disabled
 
+  audited
+
   has_and_belongs_to_many :campaigns
   has_many :health_questions, dependent: :destroy
   has_many :batches
