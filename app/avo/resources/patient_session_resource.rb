@@ -12,6 +12,7 @@ class PatientSessionResource < Avo::BaseResource
   field :state, as: :text
   field :patient, as: :belongs_to
   field :session, as: :belongs_to
+  field :triage, as: :has_many
   field :vaccination_records, as: :has_many
   field :gillick_competent, as: :boolean
   field :gillick_competence_notes, as: :textarea

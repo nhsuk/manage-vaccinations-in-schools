@@ -7,11 +7,10 @@ class TriageResource < Avo::BaseResource
 
   field :id, as: :id
   # Fields generated from the model
-  field :campaign_id, as: :number
-  field :patient_id, as: :number
+  field :patient_session_id, as: :number
   field :status, as: :select, enum: ::Triage.statuses
   field :notes, as: :textarea
   field :campaign, as: :belongs_to
-  field :patient, as: :belongs_to
+  field :patient_session, as: :belongs_to
   # add fields here
 end
