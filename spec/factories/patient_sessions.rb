@@ -44,22 +44,26 @@ FactoryBot.define do
 
     trait :triaged_ready_to_vaccinate do
       state { "triaged_ready_to_vaccinate" }
-      patient { create :patient, :triaged_ready_to_vaccinate, session: }
+      patient { create :patient, :consent_given_triage_needed, session: }
+      triage { [create(:triage, status: :do_not_vaccinate)] }
     end
 
     trait :triaged_do_not_vaccinate do
       state { "triaged_do_not_vaccinate" }
-      patient { create :patient, :triaged_do_not_vaccinate, session: }
+      patient { create :patient, :consent_given_triage_needed, session: }
+      triage { [create(:triage, status: :do_not_vaccinate)] }
     end
 
     trait :triaged_kept_in_triage do
       state { "triaged_kept_in_triage" }
-      patient { create :patient, :triaged_kept_in_triage, session: }
+      patient { create :patient, :consent_given_triage_needed, session: }
+      triage { [create(:triage, status: :needs_follow_up)] }
     end
 
     trait :unable_to_vaccinate do
       state { "unable_to_vaccinate" }
-      patient { create :patient, :triaged_ready_to_vaccinate, session: }
+      patient { create :patient, :consent_given_triage_needed, session: }
+      triage { [create(:triage, status: :ready_to_vaccinate)] }
 
       after :create do |patient_session|
         create :vaccination_record,
@@ -71,7 +75,8 @@ FactoryBot.define do
 
     trait :vaccinated do
       state { "vaccinated" }
-      patient { create :patient, :triaged_ready_to_vaccinate, session: }
+      patient { create :patient, :consent_given_triage_needed, session: }
+      triage { [create(:triage, status: :ready_to_vaccinate)] }
 
       after :create do |patient_session|
         create :vaccination_record,
