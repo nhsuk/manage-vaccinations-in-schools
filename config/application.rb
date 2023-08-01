@@ -38,5 +38,7 @@ module ManageVaccinations
     config.exceptions_app = routes
 
     config.time_zone = "London"
+
+    config.commit_sha = `git rev-parse --short HEAD`.strip
   end
 end
