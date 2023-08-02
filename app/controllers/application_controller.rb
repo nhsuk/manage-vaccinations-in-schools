@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   before_action :set_disable_cache_headers
 
-  if Rails.env.production?
+  if Rails.env.staging? || Rails.env.production?
     http_basic_authenticate_with name: Settings.support_username,
                                  password: Settings.support_password,
                                  message:
