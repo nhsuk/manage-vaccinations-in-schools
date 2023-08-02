@@ -13,3 +13,10 @@ inherit_mode:
 Style/NumericLiterals:
   Exclude:
     - db/schema.rb
+
+Rails/UnknownEnv:
+  Environments:
+    - development
+    - test
+    - staging
+    - production
