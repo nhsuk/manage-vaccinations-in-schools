@@ -31,11 +31,11 @@ class PatientSession < ApplicationRecord
   has_many :vaccination_records
 
   validates :gillick_competent,
-    inclusion: { in: [true, false] },
-    on: :edit_gillick
-  validates :gillick_competence_notes,
-    presence: true,
-    on: :edit_gillick
+            inclusion: {
+              in: [true, false]
+            },
+            on: :edit_gillick
+  validates :gillick_competence_notes, presence: true, on: :edit_gillick
 
   def consent_response
     patient.consent_response_for_campaign(session.campaign)
@@ -46,8 +46,7 @@ class PatientSession < ApplicationRecord
   end
 
   def able_to_vaccinate?
-    !unable_to_vaccinate? &&
-    !unable_to_vaccinate_not_assessed? &&
-    !unable_to_vaccinate_not_gillick_competent?
+    !unable_to_vaccinate? && !unable_to_vaccinate_not_assessed? &&
+      !unable_to_vaccinate_not_gillick_competent?
   end
 end

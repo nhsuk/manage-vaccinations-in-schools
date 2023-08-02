@@ -6,15 +6,24 @@ RSpec.describe AppConsentCardComponent, type: :component do
   subject { page }
 
   let(:component) { described_class.new(consent_response:, patient:, session:) }
-  let(:consent_response) { create(:consent_response, campaign: session.campaign, patient:) }
+  let(:consent_response) do
+    create(:consent_response, campaign: session.campaign, patient:)
+  end
   let(:patient) { session.patients.first }
   let(:session) { create(:session) }
 
   context "when consent is present" do
     it { should have_css("h2", text: "Consent") }
-    it { should have_css("dd", text: consent_response.who_responded.capitalize) }
+    it do
+      should have_css("dd", text: consent_response.who_responded.capitalize)
+    end
     it { should have_css("dd", text: consent_response.parent_name) }
-    it { should have_css("dd", text: consent_response.created_at.to_fs(:nhsuk_date)) }
+    it do
+      should have_css(
+               "dd",
+               text: consent_response.created_at.to_fs(:nhsuk_date)
+             )
+    end
     it { should have_css("dd", text: "Website") }
   end
 

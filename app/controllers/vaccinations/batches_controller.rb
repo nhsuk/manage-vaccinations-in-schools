@@ -45,8 +45,9 @@ class Vaccinations::BatchesController < ApplicationController
 
   def update_default_batch_for_today
     if params.dig(:vaccination_record, :todays_batch).present? &&
-       vaccination_record_batch_params[:batch_id].in?(params[:vaccination_record][:todays_batch])
-
+         vaccination_record_batch_params[:batch_id].in?(
+           params[:vaccination_record][:todays_batch]
+         )
       session[:todays_batch_id] = vaccination_record_batch_params[:batch_id]
       session[:todays_batch_date] = Time.zone.now.to_date
     elsif session.key?(:todays_batch_date) != Time.zone.now.to_date.to_s

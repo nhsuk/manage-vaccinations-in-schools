@@ -7,12 +7,21 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
   target_filename = "db/sample_data/model-office.json"
 
   hpv_vaccine = FactoryBot.create(:vaccine, :hpv)
-  batches = FactoryBot.create_list(:batch, 3, vaccine: hpv_vaccine, days_to_expiry_range: 90..180)
+  batches =
+    FactoryBot.create_list(
+      :batch,
+      3,
+      vaccine: hpv_vaccine,
+      days_to_expiry_range: 90..180
+    )
   vaccines_data = [
     {
       brand: hpv_vaccine.brand,
       method: hpv_vaccine.method,
-      batches: batches.map { |batch| { name: batch.name, expiry: batch.expiry.iso8601 } }
+      batches:
+        batches.map do |batch|
+          { name: batch.name, expiry: batch.expiry.iso8601 }
+        end
     }
   ]
 
@@ -225,8 +234,12 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
 
   # match mum and dad info for patients with parental consent
   patients_data.each do |patient|
-    next unless patient[:consent].present? && patient[:consent][:parentRelationship].in?(%w[mother
-father]) && patient[:consent][:parentRelationship] == patient[:parentRelationship]
+    unless patient[:consent].present? &&
+             patient[:consent][:parentRelationship].in?(%w[mother father]) &&
+             patient[:consent][:parentRelationship] ==
+               patient[:parentRelationship]
+      next
+    end
 
     patient[:parentName] = patient[:consent][:parentName]
     patient[:parentRelationship] = patient[:consent][:parentRelationship]

@@ -5,7 +5,7 @@ RSpec.describe VaccinationsController, type: :routing do
     it "routes to #index" do
       expect(get: "/sessions/1/vaccinations").to route_to(
         "vaccinations#index",
-        id: "1",
+        id: "1"
       )
     end
   end

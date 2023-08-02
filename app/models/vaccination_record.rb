@@ -32,9 +32,7 @@ class VaccinationRecord < ApplicationRecord
   belongs_to :batch, optional: true
   has_one :vaccine, through: :batch
 
-  enum :delivery_method,
-       %w[intramuscular subcutaneous],
-       prefix: true
+  enum :delivery_method, %w[intramuscular subcutaneous], prefix: true
   enum :delivery_site,
        %w[
          left_arm
@@ -62,39 +60,36 @@ class VaccinationRecord < ApplicationRecord
        ]
 
   validates :administered, inclusion: [true, false]
-  validates :batch_id,
-            presence: true,
-            on: :edit_batch,
-            if: -> { administered }
+  validates :batch_id, presence: true, on: :edit_batch, if: -> { administered }
   validates :delivery_site,
             presence: true,
             inclusion: {
-              in: delivery_sites.keys,
+              in: delivery_sites.keys
             },
             if: -> { administered && !delivery_site_other }
   validates :delivery_method,
             presence: true,
             inclusion: {
-              in: delivery_methods.keys,
+              in: delivery_methods.keys
             },
             if: -> { administered && delivery_site.present? }
   validates :delivery_site,
             presence: true,
             inclusion: {
-              in: delivery_sites.keys,
+              in: delivery_sites.keys
             },
             on: :edit_delivery,
             if: -> { administered }
   validates :delivery_method,
             presence: true,
             inclusion: {
-              in: delivery_methods.keys,
+              in: delivery_methods.keys
             },
             on: :edit_delivery,
             if: -> { administered }
   validates :reason,
             inclusion: {
-              in: reasons.keys,
+              in: reasons.keys
             },
             on: :edit_reason,
             if: -> { !administered }

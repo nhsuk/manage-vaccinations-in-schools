@@ -5,12 +5,20 @@ class Vaccinations::DeliverySiteController < ApplicationController
   before_action :set_draft_vaccination_record, only: %i[edit update]
 
   def update
-    @draft_vaccination_record.assign_attributes(vaccination_record_delivery_params)
+    @draft_vaccination_record.assign_attributes(
+      vaccination_record_delivery_params
+    )
     if @draft_vaccination_record.save(context: :edit_delivery)
       if @draft_vaccination_record.batch_id.present?
-        redirect_to confirm_session_patient_vaccinations_path(@session, @patient)
+        redirect_to confirm_session_patient_vaccinations_path(
+                      @session,
+                      @patient
+                    )
       else
-        redirect_to edit_session_patient_vaccinations_batch_path(@session, @patient)
+        redirect_to edit_session_patient_vaccinations_batch_path(
+                      @session,
+                      @patient
+                    )
       end
     else
       render action: :edit

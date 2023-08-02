@@ -1,18 +1,19 @@
-require 'active_support/parameter_filter'
+require "active_support/parameter_filter"
 
 Sentry.init do |config|
-  config.breadcrumbs_logger = [:active_support_logger, :http_logger]
+  config.breadcrumbs_logger = %i[active_support_logger http_logger]
 
   config.traces_sample_rate = 1.0
 
   rails_filter_parameters =
     Rails.application.config.filter_parameters.map(&:to_s)
 
-  sensitive_env_vars = ENV.select do |key, _v|
-    rails_filter_parameters.any? do |parameter|
-      key.downcase.include?(parameter)
+  sensitive_env_vars =
+    ENV.select do |key, _v|
+      rails_filter_parameters.any? do |parameter|
+        key.downcase.include?(parameter)
+      end
     end
-  end
 
   sensitive_values_pattern = Regexp.union(sensitive_env_vars.values)
 
@@ -24,11 +25,11 @@ Sentry.init do |config|
     end
   end
 
-  combined_filter = ActiveSupport::ParameterFilter.new(
-    Rails.application.config.filter_parameters + [sensitive_value_filter],
-  )
+  combined_filter =
+    ActiveSupport::ParameterFilter.new(
+      Rails.application.config.filter_parameters + [sensitive_value_filter]
+    )
 
-  config.before_send = lambda do |event, _hint|
-    combined_filter.filter(event.to_hash)
-  end
+  config.before_send =
+    lambda { |event, _hint| combined_filter.filter(event.to_hash) }
 end

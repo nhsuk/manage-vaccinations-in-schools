@@ -33,10 +33,16 @@ FactoryBot.define do
       session { create :session }
       campaign { session.campaign }
       parent_sex { %w[male female].sample }
-      parent_first_name { parent_sex == "male" ? Faker::Name.masculine_name : Faker::Name.feminine_name }
+      parent_first_name do
+        if parent_sex == "male"
+          Faker::Name.masculine_name
+        else
+          Faker::Name.feminine_name
+        end
+      end
     end
 
-    nhs_number { rand(10 ** 10) }
+    nhs_number { rand(10**10) }
     sex { %w[Male Female].sample }
     first_name { Faker::Name.first_name }
     last_name { Faker::Name.last_name }
@@ -55,9 +61,7 @@ FactoryBot.define do
     end
 
     trait :consent_given_triage_not_needed do
-      consent_responses do
-        [create(:consent_response, :given, campaign:)]
-      end
+      consent_responses { [create(:consent_response, :given, campaign:)] }
     end
 
     trait :consent_given_triage_needed do
@@ -67,7 +71,9 @@ FactoryBot.define do
     end
 
     trait :consent_refused do
-      consent_responses { [create(:consent_response, :refused, :from_mum, campaign:)] }
+      consent_responses do
+        [create(:consent_response, :refused, :from_mum, campaign:)]
+      end
     end
 
     trait :no_parent_info do
