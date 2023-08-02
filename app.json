@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "postdeploy": "bundle exec rake db:schema:load load_campaign_example"
+    "postdeploy": "bin/rake load_campaign_example"
   },
   "environments": {
     "review": {
