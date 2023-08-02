@@ -64,27 +64,33 @@ class ConsentResponse < ApplicationRecord
   validates :parent_name, presence: true, on: :edit_who
   validates :parent_phone, presence: true, on: :edit_who
   validates :parent_relationship,
-    inclusion: { in: parent_relationships.keys },
-    presence: true,
-    on: :edit_who
+            inclusion: {
+              in: parent_relationships.keys
+            },
+            presence: true,
+            on: :edit_who
   validates :parent_relationship_other,
-    presence: true,
-    if: -> { parent_relationship == "other" },
-    on: :edit_who
+            presence: true,
+            if: -> { parent_relationship == "other" },
+            on: :edit_who
 
   validates :consent,
-    inclusion: { in: consents.keys },
-    presence: true,
-    on: :edit_consent
+            inclusion: {
+              in: consents.keys
+            },
+            presence: true,
+            on: :edit_consent
 
   validates :reason_for_refusal,
-    inclusion: { in: reason_for_refusals.keys },
-    presence: true,
-    on: :edit_reason
+            inclusion: {
+              in: reason_for_refusals.keys
+            },
+            presence: true,
+            on: :edit_reason
   validates :reason_for_refusal_other,
-    presence: true,
-    if: -> { reason_for_refusal == "other" },
-    on: :edit_reason
+            presence: true,
+            if: -> { reason_for_refusal == "other" },
+            on: :edit_reason
 
   HEALTH_QUESTIONS = {
     flu: [

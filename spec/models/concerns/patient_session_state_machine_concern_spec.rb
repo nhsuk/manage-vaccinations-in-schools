@@ -244,7 +244,7 @@ RSpec.describe PatientSessionStateMachineConcern do
         :consent_given,
         patient:,
         parent_relationship: :mother,
-        campaign: session.campaign,
+        campaign: session.campaign
       )
       patient_session.do_consent
       expect(patient_session).to be_consent_given_triage_not_needed
@@ -254,7 +254,7 @@ RSpec.describe PatientSessionStateMachineConcern do
         :vaccination_record,
         patient_session:,
         administered: true,
-        delivery_site: :right_arm,
+        delivery_site: :right_arm
       )
       patient_session.do_vaccination
       expect(patient_session).to be_vaccinated
@@ -272,7 +272,7 @@ RSpec.describe PatientSessionStateMachineConcern do
         :consent_refused,
         patient:,
         parent_relationship: :mother,
-        campaign: session.campaign,
+        campaign: session.campaign
       )
       patient_session.do_consent
       expect(patient_session).to be_consent_refused
@@ -290,18 +290,13 @@ RSpec.describe PatientSessionStateMachineConcern do
         :consent_given,
         patient:,
         parent_relationship: :other,
-        campaign: session.campaign,
+        campaign: session.campaign
       )
       patient_session.do_consent
       expect(patient_session).to be_consent_given_triage_needed
 
       # follow-up needed
-      triage =
-        create(
-          :triage,
-          patient_session:,
-          status: :needs_follow_up,
-        )
+      triage = create(:triage, patient_session:, status: :needs_follow_up)
       patient_session.do_triage
       expect(patient_session).to be_triaged_kept_in_triage
 
@@ -315,7 +310,7 @@ RSpec.describe PatientSessionStateMachineConcern do
         :vaccination_record,
         patient_session:,
         administered: true,
-        delivery_site: :left_arm,
+        delivery_site: :left_arm
       )
       patient_session.do_vaccination
       expect(patient_session).to be_vaccinated
@@ -333,17 +328,13 @@ RSpec.describe PatientSessionStateMachineConcern do
         :consent_given,
         patient:,
         parent_relationship: :other,
-        campaign: session.campaign,
+        campaign: session.campaign
       )
       patient_session.do_consent
       expect(patient_session).to be_consent_given_triage_needed
 
       # triage decides not to vaccinate
-      create(
-        :triage,
-        patient_session:,
-        status: :do_not_vaccinate,
-      )
+      create(:triage, patient_session:, status: :do_not_vaccinate)
       patient_session.do_triage
       expect(patient_session).to be_triaged_do_not_vaccinate
     end
@@ -360,7 +351,7 @@ RSpec.describe PatientSessionStateMachineConcern do
         :consent_given,
         patient:,
         parent_relationship: :mother,
-        campaign: session.campaign,
+        campaign: session.campaign
       )
       patient_session.do_consent
       expect(patient_session).to be_consent_given_triage_not_needed
@@ -383,17 +374,13 @@ RSpec.describe PatientSessionStateMachineConcern do
         :consent_given,
         patient:,
         parent_relationship: :mother,
-        campaign: session.campaign,
+        campaign: session.campaign
       )
       patient_session.do_consent
       expect(patient_session).to be_consent_given_triage_not_needed
 
       # triage decides not to vaccinate
-      create(
-        :triage,
-        patient_session:,
-        status: :do_not_vaccinate,
-      )
+      create(:triage, patient_session:, status: :do_not_vaccinate)
       patient_session.do_triage
       expect(patient_session).to be_triaged_do_not_vaccinate
     end

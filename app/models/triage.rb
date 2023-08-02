@@ -28,9 +28,11 @@ class Triage < ApplicationRecord
   enum :status, %i[ready_to_vaccinate do_not_vaccinate needs_follow_up]
 
   validates :status,
-    presence: true,
-    inclusion: { in: statuses.keys },
-    on: :edit_questions
+            presence: true,
+            inclusion: {
+              in: statuses.keys
+            },
+            on: :edit_questions
 
   def triage_complete?
     ready_to_vaccinate? || do_not_vaccinate?

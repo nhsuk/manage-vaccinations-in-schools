@@ -13,7 +13,7 @@ class ExampleCampaignData
         type: raw_data["type"],
         brand: vaccine["brand"],
         method: vaccine["method"].downcase,
-        batches: vaccine["batches"],
+        batches: vaccine["batches"]
       }
     end
   end
@@ -39,7 +39,7 @@ class ExampleCampaignData
       town: school_data["town"],
       county: school_data["county"],
       postcode: school_data["postcode"],
-      url: school_data["url"],
+      url: school_data["url"]
     }
   end
 
@@ -65,13 +65,13 @@ class ExampleCampaignData
         parent_relationship_other: patient["parentRelationshipOther"],
         parent_email: patient["parentEmail"],
         parent_phone: patient["parentPhone"],
-        parent_info_source: patient["parentInfoSource"],
+        parent_info_source: patient["parentInfoSource"]
       }
 
       if patient["triage"].present?
         attributes[:triage] = {
           status: patient["triage"]["status"],
-          notes: patient["triage"]["notes"],
+          notes: patient["triage"]["notes"]
         }
       end
 

@@ -1,3 +1,1 @@
-Govuk::Components.configure do |conf|
-  conf.brand = "nhsuk"
-end
+Govuk::Components.configure { |conf| conf.brand = "nhsuk" }

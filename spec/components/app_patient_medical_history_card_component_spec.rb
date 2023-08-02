@@ -65,9 +65,7 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
              campaign: session.campaign
     end
     let(:triage_notes) { "These are triage notes" }
-    let(:triage) do
-      create :triage, patient_session:, notes: triage_notes
-    end
+    let(:triage) { create :triage, patient_session:, notes: triage_notes }
 
     it "renders correctly" do
       expect(page).to have_css("h2:nth(2)", text: "Triage notes")
@@ -86,9 +84,7 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
              patient:,
              campaign: session.campaign
     end
-    let(:triage) do
-      create :triage, patient_session:, notes: nil
-    end
+    let(:triage) { create :triage, patient_session:, notes: nil }
 
     it "renders correctly" do
       expect(page).to have_css("p:first", text: "Triage complete - no notes")
@@ -110,9 +106,7 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
       ]
     end
     let(:triage_notes) { "These are triage notes" }
-    let(:triage) do
-      create :triage, patient_session:, notes: triage_notes
-    end
+    let(:triage) { create :triage, patient_session:, notes: triage_notes }
 
     it "renders correctly" do
       expect(page).to have_css("h2:nth(2)", text: "Triage notes")
@@ -134,9 +128,7 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
         }
       ]
     end
-    let(:triage) do
-      create :triage, patient_session:, notes: nil
-    end
+    let(:triage) { create :triage, patient_session:, notes: nil }
 
     it "renders correctly" do
       expect(page).to have_css("p:first", text: "Triage complete - no notes")

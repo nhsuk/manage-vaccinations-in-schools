@@ -1,25 +1,25 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe HumanEnumNameConcern do
   let(:dummy_class) do
-      Class.new do
-        include HumanEnumNameConcern
+    Class.new do
+      include HumanEnumNameConcern
 
-        attr_reader :status
+      attr_reader :status
 
-        def initialize(status:)
-          @status = status
-        end
+      def initialize(status:)
+        @status = status
+      end
 
-        def self.model_name
-          ActiveModel::Name.new(self, nil, "Dummy")
-        end
+      def self.model_name
+        ActiveModel::Name.new(self, nil, "Dummy")
+      end
 
-        def [](attr)
-          send(attr)
-        end
+      def [](attr)
+        send(attr)
       end
     end
+  end
 
   describe ".human_enum_name" do
     subject { dummy_class.human_enum_name(enum_name, enum_value) }
@@ -70,8 +70,6 @@ RSpec.describe HumanEnumNameConcern do
 
       it { should eq "" }
     end
-
-
   end
 
   describe "#human_enum_name" do
@@ -79,12 +77,11 @@ RSpec.describe HumanEnumNameConcern do
       dummy_class.new(status: :test_status).human_enum_name(:status)
     end
 
-   before do
+    before do
       allow(dummy_class).to receive(:human_enum_name).and_return("Test status")
     end
 
     # Cannot instantiate ActiveRecord
-   it { should eq "Test status" }
+    it { should eq "Test status" }
   end
-
 end

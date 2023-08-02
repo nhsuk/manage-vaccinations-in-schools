@@ -38,12 +38,17 @@ module VaccinationsHelper
 
   def vaccination_delivery_methods
     methods = VaccinationRecord.delivery_methods.keys
-    methods.map { |m| [m, VaccinationRecord.human_enum_name("delivery_methods", m)] }
+    methods.map do |m|
+      [m, VaccinationRecord.human_enum_name("delivery_methods", m)]
+    end
   end
 
   def vaccination_delivery_sites
-    sites = VaccinationRecord.delivery_sites.keys - vaccination_initial_delivery_sites
-    sites.map { |s| [s, VaccinationRecord.human_enum_name("delivery_sites", s)] }
+    sites =
+      VaccinationRecord.delivery_sites.keys - vaccination_initial_delivery_sites
+    sites.map do |s|
+      [s, VaccinationRecord.human_enum_name("delivery_sites", s)]
+    end
   end
 
   def in_tab_action_needed?(action, _outcome)

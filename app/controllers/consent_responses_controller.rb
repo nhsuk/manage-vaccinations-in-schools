@@ -12,16 +12,14 @@ class ConsentResponsesController < ApplicationController
   end
 
   def create
-    health_questions = ConsentResponse::HEALTH_QUESTIONS
-            .fetch(:hpv)
-            .map { |question| { question: } }
+    health_questions =
+      ConsentResponse::HEALTH_QUESTIONS
+        .fetch(:hpv)
+        .map { |question| { question: } }
 
     if consent_response_who_params.present?
       @draft_consent_response.assign_attributes(
-        consent_response_who_params.merge(
-          route: "phone",
-          health_questions:
-        )
+        consent_response_who_params.merge(route: "phone", health_questions:)
       )
       if @draft_consent_response.save(context: :edit_who)
         redirect_to action: :edit_consent
@@ -31,10 +29,7 @@ class ConsentResponsesController < ApplicationController
     else
       # If the params are missing, assume this is the Gillick competence route.
       # This feels like it could be more explicit.
-      @draft_consent_response.update!(
-        route: "self_consent",
-        health_questions:
-      )
+      @draft_consent_response.update!(route: "self_consent", health_questions:)
 
       redirect_to action: :edit_gillick
     end
@@ -101,11 +96,12 @@ class ConsentResponsesController < ApplicationController
         end
 
         redirect_to session_patient_vaccinations_path(@session, @patient),
-          flash: {
-            success: {
-              body: "Gillick assessment saved for #{@patient.full_name}",
-            },
-          }
+                    flash: {
+                      success: {
+                        body:
+                          "Gillick assessment saved for #{@patient.full_name}"
+                      }
+                    }
       end
     else
       render :edit_gillick
@@ -146,19 +142,20 @@ class ConsentResponsesController < ApplicationController
       redirect_to session_patient_vaccinations_path(@session, @patient),
                   flash: {
                     success: {
-                      body: "Gillick assessment saved for #{@patient.full_name}",
-                    },
+                      body: "Gillick assessment saved for #{@patient.full_name}"
+                    }
                   }
     else
       redirect_to triage_session_path(@session),
                   flash: {
                     success: {
                       title: "Consent saved for #{@patient.full_name}",
-                      body: ActionController::Base.helpers.link_to(
-                        "View child record",
-                        session_patient_triage_path(@session, @patient)
-                      ),
-                    },
+                      body:
+                        ActionController::Base.helpers.link_to(
+                          "View child record",
+                          session_patient_triage_path(@session, @patient)
+                        )
+                    }
                   }
     end
   end
@@ -178,19 +175,22 @@ class ConsentResponsesController < ApplicationController
   end
 
   def set_draft_consent_response
-    @draft_consent_response = @patient
-      .consent_responses
-      .find_or_initialize_by(recorded_at: nil, campaign: @session.campaign)
+    @draft_consent_response =
+      @patient.consent_responses.find_or_initialize_by(
+        recorded_at: nil,
+        campaign: @session.campaign
+      )
   end
 
   def set_draft_triage
-    @draft_triage = Triage.find_or_initialize_by(patient_session: @patient_session)
+    @draft_triage =
+      Triage.find_or_initialize_by(patient_session: @patient_session)
   end
 
   def patient_session_gillick_params
     params.fetch(:patient_session, {}).permit(
       :gillick_competent,
-      :gillick_competence_notes,
+      :gillick_competence_notes
     )
   end
 
@@ -199,35 +199,31 @@ class ConsentResponsesController < ApplicationController
       :parent_name,
       :parent_phone,
       :parent_relationship,
-      :parent_relationship_other,
+      :parent_relationship_other
     )
   end
 
   def consent_response_agree_params
-    params.fetch(:consent_response, {}).permit(
-      :consent,
-    )
+    params.fetch(:consent_response, {}).permit(:consent)
   end
 
   def consent_response_reason_params
     params.fetch(:consent_response, {}).permit(
       :reason_for_refusal,
-      :reason_for_refusal_other,
+      :reason_for_refusal_other
     )
   end
 
   def consent_response_health_questions_params
     params.fetch(:consent_response, {}).permit(
-      question_0: [:notes, :response],
-      question_1: [:notes, :response],
-      question_2: [:notes, :response],
-      question_3: [:notes, :response],
+      question_0: %i[notes response],
+      question_1: %i[notes response],
+      question_2: %i[notes response],
+      question_3: %i[notes response]
     )
   end
 
   def consent_response_triage_params
-    params.fetch(:consent_response, {}).permit(
-      triage: [:notes, :status],
-    )
+    params.fetch(:consent_response, {}).permit(triage: %i[notes status])
   end
 end

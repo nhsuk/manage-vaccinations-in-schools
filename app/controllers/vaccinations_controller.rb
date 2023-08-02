@@ -2,7 +2,8 @@ class VaccinationsController < ApplicationController
   before_action :set_session
   before_action :set_patient, except: %i[index record_template]
   before_action :set_patient_sessions, only: %i[index record_template]
-  before_action :set_patient_session, only: %i[confirm consent create record show update]
+  before_action :set_patient_session,
+                only: %i[confirm consent create record show update]
   before_action :set_draft_vaccination_record,
                 only: %i[show confirm edit_reason record create update]
 
@@ -16,16 +17,29 @@ class VaccinationsController < ApplicationController
 
   def index
     tabs_to_states = {
-      action_needed: %w[consent_given_triage_needed triaged_kept_in_triage triaged_ready_to_vaccinate added_to_session
-consent_refused consent_given_triage_not_needed],
+      action_needed: %w[
+        consent_given_triage_needed
+        triaged_kept_in_triage
+        triaged_ready_to_vaccinate
+        added_to_session
+        consent_refused
+        consent_given_triage_not_needed
+      ],
       vaccinated: %w[vaccinated],
-      not_vaccinated: %w[triaged_do_not_vaccinate unable_to_vaccinate unable_to_vaccinate_not_assessed 
-unable_to_vaccinate_not_gillick_competent]
+      not_vaccinated: %w[
+        triaged_do_not_vaccinate
+        unable_to_vaccinate
+        unable_to_vaccinate_not_assessed
+        unable_to_vaccinate_not_gillick_competent
+      ]
     }
 
-    @partitioned_patient_sessions = @patient_sessions.group_by do |patient_session|
-      tabs_to_states.find { |_, states| patient_session.state.in? states }&.first
-    end
+    @partitioned_patient_sessions =
+      @patient_sessions.group_by do |patient_session|
+        tabs_to_states
+          .find { |_, states| patient_session.state.in? states }
+          &.first
+      end
 
     # ensure all tabs are present
     tabs_to_states.each do |tab, _states|
@@ -66,11 +80,12 @@ unable_to_vaccinate_not_gillick_competent]
                 flash: {
                   success: {
                     title: "Record saved for #{@patient.full_name}",
-                    body: ActionController::Base.helpers.link_to(
-                      "View child record",
-                      session_patient_vaccinations_path(@session, @patient)
-                    ),
-                  },
+                    body:
+                      ActionController::Base.helpers.link_to(
+                        "View child record",
+                        session_patient_vaccinations_path(@session, @patient)
+                      )
+                  }
                 }
   end
 
@@ -106,19 +121,29 @@ unable_to_vaccinate_not_gillick_competent]
 
   def create
     if @draft_vaccination_record.update(create_params)
-
       if @draft_vaccination_record.administered?
         if @draft_vaccination_record.delivery_site_other
-          redirect_to edit_session_patient_vaccinations_delivery_site_path(@session, @patient)
+          redirect_to edit_session_patient_vaccinations_delivery_site_path(
+                        @session,
+                        @patient
+                      )
         elsif @draft_vaccination_record.batch_id.present?
-          redirect_to confirm_session_patient_vaccinations_path(@session, @patient)
+          redirect_to confirm_session_patient_vaccinations_path(
+                        @session,
+                        @patient
+                      )
         else
-          redirect_to edit_session_patient_vaccinations_batch_path(@session, @patient)
+          redirect_to edit_session_patient_vaccinations_batch_path(
+                        @session,
+                        @patient
+                      )
         end
       else
-        redirect_to edit_reason_session_patient_vaccinations_path(@session, @patient)
+        redirect_to edit_reason_session_patient_vaccinations_path(
+                      @session,
+                      @patient
+                    )
       end
-
     else
       render :show
     end
@@ -138,36 +163,46 @@ unable_to_vaccinate_not_gillick_competent]
     when "not_vaccinating"
       @patient_session.do_vaccination!
       redirect_to vaccinations_session_path(@session),
-        flash: {
-          success: {
-            title: "Record saved for #{@patient.full_name}",
-            body: ActionController::Base.helpers.link_to(
-              "View child record",
-              session_patient_vaccinations_path(@session, @patient)
-            ),
-          },
-        }
+                  flash: {
+                    success: {
+                      title: "Record saved for #{@patient.full_name}",
+                      body:
+                        ActionController::Base.helpers.link_to(
+                          "View child record",
+                          session_patient_vaccinations_path(@session, @patient)
+                        )
+                    }
+                  }
     when "phone"
       redirect_to new_session_patient_consent_responses_path(@session, @patient)
     when "self_consent"
-      redirect_to assessing_gillick_session_patient_consent_responses_path(@session, @patient)
+      redirect_to assessing_gillick_session_patient_consent_responses_path(
+                    @session,
+                    @patient
+                  )
     end
   end
 
   private
 
   def vaccination_record_params
-    params.fetch(:vaccination_record, {})
-      .permit(:administered, :delivery_site, :delivery_method, :reason, :batch_id)
+    params.fetch(:vaccination_record, {}).permit(
+      :administered,
+      :delivery_site,
+      :delivery_method,
+      :reason,
+      :batch_id
+    )
   end
 
   def create_params
     if vaccination_record_params[:administered] == "true"
-      create_params = if delivery_site_param_other?
-                        vaccination_record_params_with_delivery_other
-                      else
-                        vaccination_record_params
-                      end
+      create_params =
+        if delivery_site_param_other?
+          vaccination_record_params_with_delivery_other
+        else
+          vaccination_record_params
+        end
       create_params.merge(batch_id: @todays_batch_id)
     else
       vaccination_record_params
@@ -175,19 +210,17 @@ unable_to_vaccinate_not_gillick_competent]
   end
 
   def vaccination_record_params_with_delivery_other
-    vaccination_record_params
-      .except(:delivery_site, :delivery_method)
-      .merge(delivery_site_other: "true")
+    vaccination_record_params.except(:delivery_site, :delivery_method).merge(
+      delivery_site_other: "true"
+    )
   end
 
   def vaccination_record_administered_params
-    params.fetch(:vaccination_record, {})
-      .permit(:administered, :delivery_site)
+    params.fetch(:vaccination_record, {}).permit(:administered, :delivery_site)
   end
 
   def vaccination_record_reason_params
-    params.fetch(:vaccination_record, {})
-      .permit(:reason)
+    params.fetch(:vaccination_record, {}).permit(:reason)
   end
 
   def consent_response_params
@@ -243,14 +276,13 @@ unable_to_vaccinate_not_gillick_competent]
   end
 
   def set_draft_consent_response
-    @draft_consent_response = @patient
-      .consent_responses
-      .find_or_initialize_by(recorded_at: nil)
+    @draft_consent_response =
+      @patient.consent_responses.find_or_initialize_by(recorded_at: nil)
   end
 
   def set_todays_batch_id
     if session.key?(:todays_batch_id) && session.key?(:todays_batch_date) &&
-       session[:todays_batch_date] == Time.zone.now.to_date.to_s
+         session[:todays_batch_date] == Time.zone.now.to_date.to_s
       @todays_batch_id = session[:todays_batch_id]
     end
   end

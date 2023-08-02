@@ -19,12 +19,20 @@ class TriageController < ApplicationController
       needs_triage: %w[consent_given_triage_needed triaged_kept_in_triage],
       triage_complete: %w[triaged_ready_to_vaccinate triaged_do_not_vaccinate],
       get_consent: %w[added_to_session],
-      no_triage_needed: %w[consent_refused consent_given_triage_not_needed vaccinated unable_to_vaccinate],
+      no_triage_needed: %w[
+        consent_refused
+        consent_given_triage_not_needed
+        vaccinated
+        unable_to_vaccinate
+      ]
     }
 
-    @partitioned_patient_sessions = patient_sessions.group_by do |patient_session|
-      tabs_to_states.find { |_, states| patient_session.state.in? states }&.first
-    end
+    @partitioned_patient_sessions =
+      patient_sessions.group_by do |patient_session|
+        tabs_to_states
+          .find { |_, states| patient_session.state.in? states }
+          &.first
+      end
 
     # ensure all tabs are present
     tabs_to_states.each do |tab, _states|
