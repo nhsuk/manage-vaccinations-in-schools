@@ -3,7 +3,7 @@ class TriageController < ApplicationController
   before_action :set_patient, only: %i[show create update]
   before_action :set_patient_session, only: %i[create update show]
   before_action :set_triage, only: %i[show]
-  before_action :set_consent_response, only: %i[show]
+  before_action :set_consent_response, only: %i[show create update]
   before_action :set_vaccination_record, only: %i[show]
 
   layout "two_thirds", except: %i[index]
@@ -45,7 +45,8 @@ class TriageController < ApplicationController
 
   def create
     @triage = @patient_session.triage.new
-    if @triage.update(triage_params)
+    @triage.assign_attributes triage_params
+    if @triage.save(context: :consent)
       @patient_session.do_triage!
       redirect_to triage_session_path(@session),
                   flash: {
@@ -65,7 +66,8 @@ class TriageController < ApplicationController
 
   def update
     @triage = @patient_session.triage.last
-    if @triage.update(triage_params)
+    @triage.assign_attributes triage_params
+    if @triage.save(context: :consent)
       @patient_session.do_triage!
       redirect_to triage_session_path(@session),
                   flash: {

@@ -32,7 +32,7 @@ class Triage < ApplicationRecord
             inclusion: {
               in: statuses.keys
             },
-            on: :edit_questions
+            on: %i[edit_questions consent]
 
   def triage_complete?
     ready_to_vaccinate? || do_not_vaccinate?
