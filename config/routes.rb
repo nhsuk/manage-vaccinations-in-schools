@@ -19,7 +19,7 @@ Rails.application.routes.draw do
 
     resources :patients do
       resource :triage, only: %i[show create update]
-      resource :vaccinations, only: %i[create show update] do
+      resource :vaccinations, only: %i[new create show update] do
         get "history", on: :member
 
         resource "batch",
