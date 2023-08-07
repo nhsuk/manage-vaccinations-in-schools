@@ -3,9 +3,9 @@ class VaccinationsController < ApplicationController
   before_action :set_patient, except: %i[index record_template]
   before_action :set_patient_sessions, only: %i[index record_template]
   before_action :set_patient_session,
-                only: %i[confirm consent create record show update]
+                only: %i[new confirm consent create record show update]
   before_action :set_draft_vaccination_record,
-                only: %i[show confirm edit_reason record create update]
+                only: %i[new show confirm edit_reason record create update]
 
   before_action :set_vaccination_record, only: %i[show confirm record]
   before_action :set_consent_response, only: %i[create show confirm update]
@@ -50,6 +50,9 @@ class VaccinationsController < ApplicationController
       format.html
       format.json { render json: @patient_outcomes.map(&:first).index_by(&:id) }
     end
+  end
+
+  def new
   end
 
   def show
