@@ -41,6 +41,7 @@ class TriageController < ApplicationController
   end
 
   def show
+    session[:current_flow] = "triage"
   end
 
   def create
