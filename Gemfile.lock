@@ -481,7 +481,7 @@ GEM
     solargraph-rails (1.1.0)
       activesupport
       solargraph
-    stimulus-rails (1.2.1)
+    stimulus-rails (1.2.2)
       railties (>= 6.0.0)
     syntax_tree (6.1.1)
       prettier_print (>= 1.2.0)
