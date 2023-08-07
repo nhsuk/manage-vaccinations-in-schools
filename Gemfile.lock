@@ -8,12 +8,12 @@ GIT
 
 GIT
   remote: https://github.com/x-govuk/govuk-components.git
-  revision: 7118e7b20a2bb64a5b3fae896d819ac9b4fed58a
+  revision: cc04d7643e9d4ff1690ddc86d83a7d298565ae86
   specs:
     govuk-components (4.1.0)
       html-attributes-utils (~> 1.0.0, >= 1.0.0)
       pagy (~> 6.0)
-      view_component (~> 3.3.0)
+      view_component (>= 3.3, < 3.6)
 
 GEM
   remote: https://rubygems.org/
@@ -507,7 +507,7 @@ GEM
       unf_ext
     unf_ext (0.0.8.2)
     unicode-display_width (2.4.2)
-    view_component (3.3.0)
+    view_component (3.5.0)
       activesupport (>= 5.2.0, < 8.0)
       concurrent-ruby (~> 1.0)
       method_source (~> 1.0)
