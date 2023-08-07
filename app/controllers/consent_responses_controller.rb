@@ -138,7 +138,12 @@ class ConsentResponsesController < ApplicationController
       end
     end
 
-    if @draft_consent_response.via_self_consent?
+    current_flow = session.delete(:current_flow)
+
+    if @patient_session.triaged_ready_to_vaccinate? &&
+         current_flow == "vaccination"
+      redirect_to new_session_patient_vaccinations_path(@session, @patient)
+    elsif @draft_consent_response.via_self_consent?
       redirect_to session_patient_vaccinations_path(@session, @patient),
                   flash: {
                     success: {

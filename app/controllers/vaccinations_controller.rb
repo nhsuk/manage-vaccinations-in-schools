@@ -56,6 +56,8 @@ class VaccinationsController < ApplicationController
   end
 
   def show
+    session[:current_flow] = "vaccination"
+
     respond_to do |format|
       format.html
       format.json { render json: @patient }
