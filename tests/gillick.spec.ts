@@ -1,6 +1,6 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, Page } from "@playwright/test";
 
-let p = null;
+let p: Page;
 
 test("Records gillick consent", async ({ page }) => {
   p = page;
@@ -36,7 +36,7 @@ test("Records gillick consent", async ({ page }) => {
   await and_it_contains_gillick_assessment_details();
 
   await when_i_click_confirm();
-  await then_i_see_the_vaccination_show_page();
+  await then_i_see_the_vaccination_new_page();
 
   // Not Gillick competent
   await when_i_go_to_the_vaccinations_page();
@@ -134,10 +134,6 @@ async function when_i_click_confirm() {
   await p.getByRole("button", { name: "Confirm" }).click();
 }
 
-async function then_i_see_the_vaccination_show_page() {
-  await expect(p.locator("h1")).toContainText("Alexandra Sipes");
-}
-
 async function and_it_contains_gillick_assessment_details() {
   await expect(
     p.getByRole("heading", { name: "Gillick competence" }),
@@ -159,4 +155,8 @@ async function then_i_see_the_vaccination_show_page_for_the_second_patient() {
 async function and_i_triage_the_patient() {
   await p.fill('[name="consent_response[triage][notes]"]', "Some notes");
   await p.getByRole("radio", { name: "Ready to vaccinate" }).click();
+}
+
+async function then_i_see_the_vaccination_new_page() {
+  await expect(p.locator("h1")).toContainText("Did they get the vaccine?");
 }
