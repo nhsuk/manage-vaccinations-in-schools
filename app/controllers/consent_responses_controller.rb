@@ -4,6 +4,7 @@ class ConsentResponsesController < ApplicationController
   before_action :set_patient_session
   before_action :set_draft_consent_response
   before_action :set_draft_triage, only: %i[edit_questions edit_confirm update]
+  before_action :keep_consent_return_path, except: %i[record]
 
   layout "two_thirds"
 
@@ -138,10 +139,8 @@ class ConsentResponsesController < ApplicationController
       end
     end
 
-    current_flow = session.delete(:current_flow)
-
     if @patient_session.triaged_ready_to_vaccinate? &&
-         current_flow == "vaccination"
+         flash[:consent_return_path] == "vaccination"
       redirect_to new_session_patient_vaccinations_path(@session, @patient)
     elsif @draft_consent_response.via_self_consent?
       redirect_to session_patient_vaccinations_path(@session, @patient),
@@ -230,5 +229,9 @@ class ConsentResponsesController < ApplicationController
 
   def consent_response_triage_params
     params.fetch(:consent_response, {}).permit(triage: %i[notes status])
+  end
+
+  def keep_consent_return_path
+    flash.keep(:consent_return_path)
   end
 end

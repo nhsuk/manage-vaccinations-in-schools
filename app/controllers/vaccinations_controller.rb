@@ -56,7 +56,7 @@ class VaccinationsController < ApplicationController
   end
 
   def show
-    session[:current_flow] = "vaccination"
+    flash[:consent_return_path] = "vaccination"
 
     respond_to do |format|
       format.html
