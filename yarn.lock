@@ -4888,12 +4888,12 @@ static-extend@^0.1.1:
     define-property "^0.2.5"
     object-copy "^0.1.0"
 
-stimulus@^3.2.1:
-  version "3.2.1"
-  resolved "https://registry.npmjs.org/stimulus/-/stimulus-3.2.1.tgz"
-  integrity sha512-EhpuHnTwtkWrE5m7tQxLBLsi1aE6xJ/9MbB88aKXZSquIC4pCueKJ2AGaF5gq+/BzP7+xvYaVYA0j1dIUuBsgA==
+stimulus@^3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/stimulus/-/stimulus-3.2.2.tgz#a2e955f43e12e2e5784b175d4df5517ef678aa68"
+  integrity sha512-sEGK0ofeMuW+B2oPLTigCqxl47P9vRfZxeqzY5Hk1u0QPWS8DZhW+VOEEyngtzdHM+MutXKGBT8BkUKoA0060Q==
   dependencies:
-    "@hotwired/stimulus" "^3.2.1"
+    "@hotwired/stimulus" "^3.2.2"
     "@hotwired/stimulus-webpack-helpers" "^1.0.0"
 
 string-length@^4.0.1:
