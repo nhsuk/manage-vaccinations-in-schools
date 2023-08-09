@@ -1,6 +1,6 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, Page } from "@playwright/test";
 
-let p = null;
+let p: Page;
 
 test("Full journey - consent obtained before session", async ({ page }) => {
   p = page;
