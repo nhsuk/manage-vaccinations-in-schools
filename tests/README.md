@@ -8,6 +8,6 @@ application should need to be written in a different language/framework.
 
 ### Scenario: No initial consent, consent given before session, vaccination administered
 
-[full_vaccination_journey-consent_obtained_before_session](full_vaccination_journey-consent_obtained_before_session.spec.ts)
+[full_journey](full_journey.spec.ts)
 
-![Flow diagram](images/full_journey-no_consent_response-consent_given-vaccinatation_done.png)
+![Flow diagram](images/full_journey.png)
