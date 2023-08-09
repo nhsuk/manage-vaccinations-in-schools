@@ -2,18 +2,18 @@ import { test, expect, Page } from "@playwright/test";
 
 let p: Page;
 
-test("Records other delivery site", async ({ page }) => {
+test("Vaccination other delivery site", async ({ page }) => {
   p = page;
   await given_the_app_is_setup();
 
   await when_i_go_to_the_vaccinations_page();
-  await and_i_click_on_the_patient("Ernie Funk");
+  await and_i_click_on_a_patient();
   await and_i_record_a_vaccination_with_other_delivery_site();
   await and_i_press_continue();
   await then_i_should_see_the_other_delivery_site_page();
 
-  await when_i_select("Intramuscular");
-  await and_i_select("Right arm (lower position)");
+  await when_i_select_intramuscular();
+  await and_i_select_right_arm_lower_position();
   await and_i_press_continue();
   await then_i_should_see_the_select_batch_page();
 
@@ -34,10 +34,13 @@ async function and_i_record_a_vaccination_with_other_delivery_site() {
   await p.click("text=Other");
 }
 
-async function when_i_select(text) {
-  await p.getByText(text).click();
+async function when_i_select_intramuscular() {
+  await p.getByText("Intramuscular").click();
 }
-const and_i_select = when_i_select;
+
+async function and_i_select_right_arm_lower_position() {
+  await p.getByText("Right arm (lower position)").click();
+}
 
 async function then_i_should_see_the_other_delivery_site_page() {
   await expect(p.getByRole("heading")).toContainText(
@@ -58,12 +61,10 @@ async function then_i_should_see_the_select_batch_page() {
   await expect(p.locator("legend")).toContainText("Which batch did you use?");
 }
 
-async function when_i_press_continue() {
+async function and_i_press_continue() {
   await p.click("text=Continue");
 }
-const and_i_press_continue = when_i_press_continue;
 
-async function when_i_click_on_the_patient(name: string) {
-  await p.getByRole("link", { name: name }).click();
+async function and_i_click_on_a_patient() {
+  await p.getByRole("link", { name: "Ernie Funk" }).click();
 }
-const and_i_click_on_the_patient = when_i_click_on_the_patient;
