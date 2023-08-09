@@ -1,7 +1,7 @@
-import { test, expect } from "@playwright/test";
-import { examplePatient } from "./example_data";
+import { test, expect, Page } from "@playwright/test";
+import { examplePatient } from "./shared/example_data";
 
-let p = null;
+let p: Page;
 
 test("Records vaccinations", async ({ page }) => {
   p = page;

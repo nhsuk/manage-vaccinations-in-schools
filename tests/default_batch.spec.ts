@@ -1,7 +1,6 @@
-import { test, expect } from "@playwright/test";
-import { examplePatient } from "./example_data";
+import { test, expect, Page } from "@playwright/test";
 
-let p = null;
+let p: Page;
 
 test("Sets default batch for today", async ({ page }) => {
   p = page;
