@@ -12,7 +12,7 @@
    ),
  method: :put do |f| %>
   <%= f.govuk_radio_buttons_fieldset(:batch_id,
-                                     legend: { size: 'l', text: 'Which batch did you use?' }) do %>
+    legend: { size: 'l', tag: 'h1', text: 'Which batch did you use?' }) do %>
     <% @batches.each do |batch| %>
       <%= f.govuk_radio_button :batch_id,
        batch.id,
