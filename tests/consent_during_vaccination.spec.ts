@@ -1,4 +1,8 @@
 import { test, expect, Page } from "@playwright/test";
+import {
+  answerHealthQuestions,
+  answerWhoIsGivingConsent,
+} from "./shared/helpers";
 
 let p: Page;
 
@@ -50,22 +54,17 @@ async function then_i_see_the_new_consent_form() {
 
 async function when_i_go_through_the_consent_and_triage_forms() {
   // Who
-  await p.fill('[name="consent_response[parent_name]"]', "Jane Doe");
-  await p.fill('[name="consent_response[parent_phone]"]', "07412345678");
-  await p.click("text=Mum");
+  await answerWhoIsGivingConsent(p);
   await p.click("text=Continue");
 
   // Do they agree
   await p.click("text=Yes, they agree");
   await p.click("text=Continue");
 
-  // Health questions and Triage
-  const radio = (n: number) =>
-    `input[name="consent_response[question_${n}][response]"][value="no"]`;
-  await p.click(radio(0));
-  await p.click(radio(1));
-  await p.click(radio(2));
-  await p.click(radio(3));
+  // Health questions
+  await answerHealthQuestions(p);
+
+  // Triage
   await p.click("text=Ready to vaccinate");
   await p.click("text=Continue");
 

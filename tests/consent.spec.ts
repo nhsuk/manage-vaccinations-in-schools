@@ -1,6 +1,10 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, Page } from "@playwright/test";
+import {
+  answerHealthQuestions,
+  answerWhoIsGivingConsent,
+} from "./shared/helpers";
 
-let p = null;
+let p: Page;
 
 test("Records consent", async ({ page }) => {
   p = page;
@@ -91,13 +95,7 @@ async function then_i_see_the_health_questions_page() {
 }
 
 async function when_i_answer_the_health_questions() {
-  const radio = (n: number) =>
-    `input[name="consent_response[question_${n}][response]"][value="no"]`;
-
-  await p.click(radio(0));
-  await p.click(radio(1));
-  await p.click(radio(2));
-  await p.click(radio(3));
+  await answerHealthQuestions(p);
 }
 
 async function and_i_triage_the_patient() {
@@ -140,7 +138,5 @@ async function then_i_see_the_consent_form() {
 }
 
 async function when_i_enter_the_consent_details() {
-  await p.fill('[name="consent_response[parent_name]"]', "Betty Sipes");
-  await p.fill('[name="consent_response[parent_phone]"]', "07700900000");
-  await p.getByRole("radio", { name: "Mum" }).click();
+  await answerWhoIsGivingConsent(p);
 }
