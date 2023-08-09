@@ -1,65 +1,64 @@
 import { test, expect, Page } from "@playwright/test";
-import { patientExpectations } from "./shared/example_data";
-import {
-  init_page as init_shared_steps_page,
-  given_the_app_is_setup,
-  when_i_click_on_the_tab,
-  when_i_click_on_the_patient,
-  when_i_click_on_the_option,
-} from "./shared/shared_steps";
 
 let p: Page;
 
 // Needs state transitions to be added to controller actions
-test("Triaging patients", async ({ page }) => {
+test("Triage", async ({ page }) => {
   p = page;
-  await init_shared_steps_page(page);
-
   await given_the_app_is_setup();
-  await when_i_go_to_the_triage_page_for_the_first_session();
+  await when_i_go_to_the_triage_page();
 
   // Triage - start triage but without outcome
-  await when_i_click_on_the_tab("Needs triage (2)");
-  await when_i_click_on_the_patient("Caridad Sipes");
-  await when_i_enter_the_note("Unable to reach mother");
-  await when_i_click_on_the_option("Keep in triage");
-  await when_i_click_on_the_submit_button();
-  await when_i_click_on_the_tab("Needs triage (2)");
-  await then_i_should_see_a_row_for_the_patient("Caridad Sipes", {
-    tab: "Needs triage (2)",
-    action: "Triage started",
-  });
+  await when_i_click_on_a_patient();
+  await and_i_enter_a_note_and_save_triage();
+  await then_the_patient_should_still_be_in_triage();
 
   // Triage - ready to vaccinate
-  await when_i_click_on_the_patient("Caridad Sipes");
-  await when_i_enter_the_note("Reached mother, should be able to proceed");
-  await when_i_click_on_the_option("Ready to vaccinate");
-  await when_i_click_on_the_submit_button();
-  await when_i_click_on_the_tab("Triage complete (3)");
-  await then_i_should_see_a_row_for_the_patient("Caridad Sipes", {
-    tab: "Triage complete (3)",
-    action: "Vaccinate",
-  });
+  await when_i_click_on_a_patient();
+  await and_i_enter_a_note_and_select_ready_to_vaccinate();
+  await and_i_click_on_the_ready_to_vaccinate_tab();
+  await then_the_patient_should_be_in_ready_to_vaccinate();
 });
 
-async function when_i_go_to_the_triage_page_for_the_first_session() {
-  await p.goto("/sessions/1");
-  await p.getByRole("link", { name: "Triage" }).click();
+async function given_the_app_is_setup() {
+  await p.goto("/reset");
 }
 
-async function when_i_enter_the_note(note) {
-  await p.getByLabel("Triage notes").type(note);
+async function when_i_go_to_the_triage_page() {
+  await p.goto("/sessions/1/triage");
 }
 
-async function when_i_click_on_the_submit_button() {
+async function when_i_click_on_a_patient() {
+  await p.getByRole("link", { name: "Caridad Sipes" }).click();
+}
+
+async function and_i_enter_a_note_and_save_triage() {
+  await p.getByLabel("Triage notes").type("Unable to reach mother");
   await p.getByRole("button", { name: "Save triage" }).click();
 }
 
-async function then_i_should_see_a_row_for_the_patient(name, attributes) {
-  const patient = { ...patientExpectations[name], ...attributes };
-  const id = patient.tab.toLowerCase().replace(/ /g, "-").replace(/[()]/g, "");
-  const row = p.locator(`#${id} tr`, { hasText: name });
+async function then_the_patient_should_still_be_in_triage() {
+  await expect(
+    p.getByRole("row", {
+      name: "Caridad Sipes Notes need triage Triage started",
+    }),
+  ).toBeVisible();
+}
 
-  await expect(row).toBeVisible();
-  await expect(row).toContainText(patient.action);
+async function and_i_enter_a_note_and_select_ready_to_vaccinate() {
+  await p.getByLabel("Triage notes").type("Reached mother, able to proceed");
+  await p.getByRole("radio", { name: "Ready to vaccinate" }).click();
+  await p.getByRole("button", { name: "Save triage" }).click();
+}
+
+async function and_i_click_on_the_ready_to_vaccinate_tab() {
+  await p.getByRole("tab", { name: "Triage complete (3)" }).click();
+}
+
+async function then_the_patient_should_be_in_ready_to_vaccinate() {
+  await expect(
+    p.getByRole("row", {
+      name: "Caridad Sipes Notes need triage Vaccinate",
+    }),
+  ).toBeVisible();
 }
