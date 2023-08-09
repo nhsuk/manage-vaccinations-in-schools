@@ -56,7 +56,7 @@ export const patientExpectations = {
 
 const exampleCampaignPath = path.join(
   __dirname,
-  "../db/sample_data/example-test-campaign.json",
+  "../../db/sample_data/example-test-campaign.json",
 );
 const exampleCampaign = JSON.parse(
   fs.readFileSync(exampleCampaignPath, "utf8"),

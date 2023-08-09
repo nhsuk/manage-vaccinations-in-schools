@@ -1,7 +1,7 @@
-import { expect } from "@playwright/test";
+import { expect, Page } from "@playwright/test";
 import { patientExpectations } from "./example_data";
 
-let p = null;
+let p: Page;
 
 export async function init_page(page) {
   p = page;

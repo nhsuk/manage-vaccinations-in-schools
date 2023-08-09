@@ -1,5 +1,5 @@
-import { test, expect } from "@playwright/test";
-import { patientExpectations, examplePatient } from "./example_data";
+import { test, expect, Page } from "@playwright/test";
+import { patientExpectations, examplePatient } from "./shared/example_data";
 import {
   init_page as init_shared_steps_page,
   given_the_app_is_setup,
@@ -7,9 +7,9 @@ import {
   when_i_click_on_the_patient,
   then_i_should_be_on_the_tab,
   then_i_should_see_a_banner_for_the_patient,
-} from "./shared_steps";
+} from "./shared/shared_steps";
 
-export let p = null;
+export let p: Page;
 
 test("Viewing patients", async ({ page }) => {
   p = page;

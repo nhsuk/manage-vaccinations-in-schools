@@ -1,14 +1,14 @@
-import { test, expect } from "@playwright/test";
-import { patientExpectations } from "./example_data";
+import { test, expect, Page } from "@playwright/test";
+import { patientExpectations } from "./shared/example_data";
 import {
   init_page as init_shared_steps_page,
   given_the_app_is_setup,
   when_i_click_on_the_tab,
   when_i_click_on_the_patient,
   when_i_click_on_the_option,
-} from "./shared_steps";
+} from "./shared/shared_steps";
 
-let p = null;
+let p: Page;
 
 // Needs state transitions to be added to controller actions
 test("Triaging patients", async ({ page }) => {
