@@ -1,10 +1,8 @@
-import { test, expect, Page } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 
-let p: Page;
+let p = null;
 
-test("Full journey - no consent response - consent given - vaccination done", async ({
-  page,
-}) => {
+test("Full journey - consent obtained before session", async ({ page }) => {
   p = page;
   await given_the_app_is_setup();
 
