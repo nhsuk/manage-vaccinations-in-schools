@@ -24,10 +24,11 @@ async function given_the_app_is_setup() {
   await p.goto("/reset");
 }
 
-async function given_i_am_doing_triage() {}
+async function given_i_am_doing_triage() {
+  await p.goto("/sessions/1/triage");
+}
 
 async function when_i_select_a_child_with_no_consent() {
-  await p.goto("/sessions/1/triage");
   await p.getByRole("tab", { name: "Get consent" }).click();
   await p.getByRole("link", { name: "Alexandra Sipes" }).click();
 }
@@ -76,10 +77,11 @@ async function then_i_see_that_the_child_is_ready_to_vaccinate() {
   await expect(row.getByTestId("child-action")).toContainText("Vaccinate");
 }
 
-async function given_i_am_performing_the_vaccination() {}
+async function given_i_am_performing_the_vaccination() {
+  await p.goto("/sessions/1/vaccinations");
+}
 
 async function when_i_record_the_successful_vaccination() {
-  await p.goto("/sessions/1/vaccinations");
   await p.getByRole("tab", { name: "Action needed" }).click();
   await p.getByRole("link", { name: "Alexandra Sipes" }).click();
 
