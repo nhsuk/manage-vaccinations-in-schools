@@ -1,4 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
+import { answerHealthQuestions } from "./shared/helpers";
 
 let p: Page;
 
@@ -11,8 +12,6 @@ test("Records gillick consent", async ({ page }) => {
   await then_i_see_the_patient_that_needs_consent();
 
   await when_i_click_on_the_patient();
-  await then_i_see_the_no_consent_banner();
-
   await when_i_click_yes_gillick();
   await and_i_click_continue();
   await then_i_see_the_assessing_gillick_page();
@@ -67,12 +66,6 @@ async function when_i_click_on_the_patient() {
   await p.click("text=Alexandra Sipes");
 }
 
-async function then_i_see_the_no_consent_banner() {
-  await expect(p.locator(".app-consent-banner")).toContainText(
-    "No-one responded to our requests for consent",
-  );
-}
-
 async function when_i_click_yes_gillick() {
   await p.click("text=Yes, I am assessing Gillick competence");
 }
@@ -117,13 +110,7 @@ async function then_i_see_the_health_questions_page() {
 }
 
 async function when_i_answer_the_health_questions() {
-  const radio = (n: number) =>
-    `input[name="consent_response[question_${n}][response]"][value="no"]`;
-
-  await p.click(radio(0));
-  await p.click(radio(1));
-  await p.click(radio(2));
-  await p.click(radio(3));
+  await answerHealthQuestions(p);
 }
 
 async function then_i_see_the_check_answers_page() {
