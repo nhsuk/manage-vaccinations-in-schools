@@ -2,7 +2,7 @@ import { test, expect, Page } from "@playwright/test";
 
 let p: Page;
 
-test("Records consent", async ({ page }) => {
+test("Consent", async ({ page }) => {
   p = page;
   await given_the_app_is_setup();
 
