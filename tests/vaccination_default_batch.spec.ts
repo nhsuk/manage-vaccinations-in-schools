@@ -35,7 +35,7 @@ async function when_i_go_to_the_vaccinations_page() {
 }
 
 async function when_i_click_on_the_action_needed_tab() {
-  await p.getByRole("tab", { name: "Action needed (7)", exact: true }).click();
+  await p.getByRole("tab", { name: "Action needed" }).click();
 }
 
 async function and_i_record_a_vaccination() {
