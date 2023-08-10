@@ -52,7 +52,7 @@ async function and_i_enter_a_note_and_select_ready_to_vaccinate() {
 }
 
 async function and_i_click_on_the_ready_to_vaccinate_tab() {
-  await p.getByRole("tab", { name: "Triage complete (3)" }).click();
+  await p.getByRole("tab", { name: "Triage complete" }).click();
 }
 
 async function then_the_patient_should_be_in_ready_to_vaccinate() {

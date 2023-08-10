@@ -109,7 +109,7 @@ async function then_i_should_see_the_vaccination_details() {
 }
 
 async function when_i_click_on_the_vaccinated_tab() {
-  await p.getByRole("tab", { name: "Vaccinated (1)", exact: true }).click();
+  await p.getByRole("tab", { name: /^Vaccinated/ }).click();
 }
 
 async function when_i_record_an_unsuccessful_vaccination() {
