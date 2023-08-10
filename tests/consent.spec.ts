@@ -141,6 +141,6 @@ async function then_i_see_the_consent_form() {
 
 async function when_i_enter_the_consent_details() {
   await p.fill('[name="consent_response[parent_name]"]', "Jane Doe");
-  await p.fill('[name="consent_response[parent_phone]"]', "07412345678");
+  await p.fill('[name="consent_response[parent_phone]"]', "07700900000");
   await p.click("text=Mum");
 }
