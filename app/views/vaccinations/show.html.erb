@@ -85,6 +85,16 @@
             <%= @vaccination_record.administered? ? "Yes" : "No" %>
           </dd>
         </div>
+        <% if @vaccination_record.delivery_method %>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Method
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              <%= @vaccination_record.delivery_method.humanize %>
+            </dd>
+          </div>
+        <% end %>
         <% if @vaccination_record.delivery_site %>
           <div class="nhsuk-summary-list__row">
             <dt class="nhsuk-summary-list__key">
