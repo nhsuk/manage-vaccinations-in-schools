@@ -110,7 +110,13 @@ async function then_i_see_the_health_questions_page() {
 }
 
 async function when_i_answer_the_health_questions() {
-  await answerHealthQuestions(p);
+  const radio = (n: number) =>
+    `input[name="consent_response[question_${n}][response]"][value="no"]`;
+
+  await p.click(radio(0));
+  await p.click(radio(1));
+  await p.click(radio(2));
+  await p.click(radio(3));
 }
 
 async function then_i_see_the_check_answers_page() {
