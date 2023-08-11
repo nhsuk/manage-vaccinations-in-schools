@@ -37,8 +37,8 @@ class ConsentsController < ApplicationController
 
   def update
     if consent_who_params.present?
-      @draft_consent.assign_attributes(consent_agree_params)
-      if @draft_consent.save(context: :edit_consent)
+      @draft_consent.assign_attributes(consent_who_params)
+      if @draft_consent.save(context: :edit_who)
         redirect_to action: :edit_consent
       else
         render :edit_who
