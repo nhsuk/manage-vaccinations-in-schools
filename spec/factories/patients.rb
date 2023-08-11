@@ -65,15 +65,11 @@ FactoryBot.define do
     end
 
     trait :consent_given_triage_needed do
-      consents do
-        [create(:consent, :given, :health_question_notes, campaign:)]
-      end
+      consents { [create(:consent, :given, :health_question_notes, campaign:)] }
     end
 
     trait :consent_refused do
-      consents do
-        [create(:consent, :refused, :from_mum, campaign:)]
-      end
+      consents { [create(:consent, :refused, :from_mum, campaign:)] }
     end
 
     trait :no_parent_info do

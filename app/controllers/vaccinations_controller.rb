@@ -268,8 +268,7 @@ class VaccinationsController < ApplicationController
   end
 
   def set_consent
-    @consent =
-      @patient.consent_for_campaign(@session.campaign)
+    @consent = @patient.consent_for_campaign(@session.campaign)
   end
 
   def set_triage
@@ -281,8 +280,7 @@ class VaccinationsController < ApplicationController
   end
 
   def set_draft_consent
-    @draft_consent =
-      @patient.consents.find_or_initialize_by(recorded_at: nil)
+    @draft_consent = @patient.consents.find_or_initialize_by(recorded_at: nil)
   end
 
   def set_todays_batch_id

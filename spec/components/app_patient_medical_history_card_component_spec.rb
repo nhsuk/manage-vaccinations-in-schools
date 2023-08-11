@@ -14,10 +14,7 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
   let(:session) { FactoryBot.create(:session) }
   let(:patient_session) { create(:patient_session, patient:, session:) }
   let(:consent) do
-    create :consent,
-           patient:,
-           campaign: session.campaign,
-           health_questions:
+    create :consent, patient:, campaign: session.campaign, health_questions:
   end
   let(:triage_notes) { nil }
   let(:triage) { Triage.new(patient_session:) }
@@ -41,10 +38,7 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
 
   context "parent is other and triage is not done" do
     let(:consent) do
-      create :consent,
-             :from_granddad,
-             patient:,
-             campaign: session.campaign
+      create :consent, :from_granddad, patient:, campaign: session.campaign
     end
 
     it "renders correctly" do
@@ -59,10 +53,7 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
 
   context "parent is other and triage is done with notes" do
     let(:consent) do
-      create :consent,
-             :from_granddad,
-             patient:,
-             campaign: session.campaign
+      create :consent, :from_granddad, patient:, campaign: session.campaign
     end
     let(:triage_notes) { "These are triage notes" }
     let(:triage) { create :triage, patient_session:, notes: triage_notes }
@@ -79,10 +70,7 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
 
   context "parent is other and triage is done without notes" do
     let(:consent) do
-      create :consent,
-             :from_granddad,
-             patient:,
-             campaign: session.campaign
+      create :consent, :from_granddad, patient:, campaign: session.campaign
     end
     let(:triage) { create :triage, patient_session:, notes: nil }
 
