@@ -14,9 +14,7 @@ class ConsentsController < ApplicationController
 
   def create
     health_questions =
-      Consent::HEALTH_QUESTIONS
-        .fetch(:hpv)
-        .map { |question| { question: } }
+      Consent::HEALTH_QUESTIONS.fetch(:hpv).map { |question| { question: } }
 
     if consent_who_params.present?
       @draft_consent.assign_attributes(

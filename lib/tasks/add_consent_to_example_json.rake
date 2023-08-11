@@ -28,11 +28,8 @@ task :add_consent_to_example_json, [:name] => :environment do |_task, args|
     example_patient =
       example["patients"].find { |patient| patient["fullName"] == args[:name] }
 
-    consent =
-      generate_consent(example_patient, allow_none: false)
-    consent.update generate_consent_for_example_patient(
-                              example_patient
-                            )
+    consent = generate_consent(example_patient, allow_none: false)
+    consent.update generate_consent_for_example_patient(example_patient)
 
     puts JSON.pretty_generate(consent)
   else
@@ -78,9 +75,7 @@ def generate_consent(_patient, allow_none: true)
     }
 
     if consent[:reasonForRefusal] == "other"
-      consent[
-        :reasonForRefusalOtherReason
-      ] = Faker::Movies::VForVendetta.quote
+      consent[:reasonForRefusalOtherReason] = Faker::Movies::VForVendetta.quote
     end
   else # consent given
     consent = { consent: :given }
@@ -161,8 +156,7 @@ def generate_parents(patient)
 end
 
 def generate_route(_patient)
-  route =
-    Random.rand(0.0..1.0) < 0.5 ? "website" : Consent.routes.keys.sample
+  route = Random.rand(0.0..1.0) < 0.5 ? "website" : Consent.routes.keys.sample
   { route: }
 end
 

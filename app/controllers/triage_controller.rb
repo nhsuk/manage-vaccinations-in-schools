@@ -100,8 +100,7 @@ class TriageController < ApplicationController
   end
 
   def set_consent
-    @consent =
-      @patient.consent_for_campaign(@session.campaign)
+    @consent = @patient.consent_for_campaign(@session.campaign)
   end
 
   def set_vaccination_record

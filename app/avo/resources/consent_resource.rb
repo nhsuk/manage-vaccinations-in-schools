@@ -17,18 +17,14 @@ class ConsentResource < Avo::BaseResource
   field :address_town, as: :textarea
   field :address_postcode, as: :textarea
   field :parent_name, as: :textarea
-  field :parent_relationship,
-        as: :select,
-        enum: ::Consent.parent_relationships
+  field :parent_relationship, as: :select, enum: ::Consent.parent_relationships
   field :parent_relationship_other, as: :textarea
   field :parent_email, as: :textarea
   field :parent_phone, as: :textarea
   field :parent_contact_method, as: :number
   field :parent_contact_method_other, as: :textarea
   field :consent, as: :select, enum: ::Consent.consents
-  field :reason_for_refusal,
-        as: :select,
-        enum: ::Consent.reason_for_refusals
+  field :reason_for_refusal, as: :select, enum: ::Consent.reason_for_refusals
   field :reason_for_refusal_other, as: :textarea
   field :gp_response, as: :select, enum: ::Consent.gp_responses
   field :gp_name, as: :textarea
