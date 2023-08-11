@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_31_125846) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_11_072923) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -58,7 +58,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_31_125846) do
     t.index ["vaccine_id", "campaign_id"], name: "index_campaigns_vaccines_on_vaccine_id_and_campaign_id"
   end
 
-  create_table "consent_responses", force: :cascade do |t|
+  create_table "consents", force: :cascade do |t|
     t.bigint "patient_id", null: false
     t.bigint "campaign_id", null: false
     t.text "childs_name"
@@ -85,8 +85,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_31_125846) do
     t.datetime "updated_at", null: false
     t.jsonb "health_questions"
     t.datetime "recorded_at"
-    t.index ["campaign_id"], name: "index_consent_responses_on_campaign_id"
-    t.index ["patient_id"], name: "index_consent_responses_on_patient_id"
+    t.index ["campaign_id"], name: "index_consents_on_campaign_id"
+    t.index ["patient_id"], name: "index_consents_on_patient_id"
   end
 
   create_table "health_questions", force: :cascade do |t|
@@ -191,8 +191,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_31_125846) do
   end
 
   add_foreign_key "batches", "vaccines"
-  add_foreign_key "consent_responses", "campaigns"
-  add_foreign_key "consent_responses", "patients"
+  add_foreign_key "consents", "campaigns"
+  add_foreign_key "consents", "patients"
   add_foreign_key "health_questions", "vaccines"
   add_foreign_key "triage", "patient_sessions"
   add_foreign_key "vaccination_records", "batches"
