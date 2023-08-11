@@ -39,7 +39,7 @@ Rails.application.routes.draw do
         get "record-template", on: :collection
       end
 
-      resource :consents, path: "consent" do
+      resource :consents, path: ":route/consent" do
         get "assessing-gillick", to: "consents#assessing_gillick"
 
         get "edit/gillick", to: "consents#edit_gillick"
