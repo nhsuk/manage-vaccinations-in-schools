@@ -87,11 +87,11 @@ module PatientSessionStateMachineConcern
     end
 
     def consent_given?
-      consent&.consent_given?
+      consent&.response_given?
     end
 
     def consent_refused?
-      consent&.consent_refused?
+      consent&.response_refused?
     end
 
     def no_consent?

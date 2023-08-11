@@ -70,7 +70,7 @@
       "parentPhone": "07451 122330",
       "parentInfoSource": "school",
       "consent": {
-        "consent": "given",
+        "response": "given",
         "parentName": "Sarita Hills",
         "parentRelationship": "mother",
         "parentEmail": "sarita.hills99@gmail.com",
@@ -112,7 +112,7 @@
       "parentPhone": "07416 923413",
       "parentInfoSource": "school",
       "consent": {
-        "consent": "given",
+        "response": "given",
         "parentName": "Karl Lueilwitz",
         "parentRelationship": "father",
         "parentEmail": "karl.lueilwitz2@gmail.com",
@@ -152,7 +152,7 @@
       "dob": "2010-07-21",
       "nhsNumber": 7786962864,
       "consent": {
-        "consent": "given",
+        "response": "given",
         "parentName": "Jaimie Torphy",
         "parentRelationship": "mother",
         "parentEmail": "jaimie.torphy91@gmail.com",
@@ -185,7 +185,7 @@
       "dob": "2011-01-14",
       "nhsNumber": 8529240690,
       "consent": {
-        "consent": "refused",
+        "response": "refused",
         "parentName": "Marcellus Block",
         "parentRelationship": "father",
         "parentEmail": "marcellus.block26@gmail.com",
@@ -202,7 +202,7 @@
       "dob": "2010-10-19",
       "nhsNumber": 3087350500,
       "consent": {
-        "consent": "given",
+        "response": "given",
         "parentName": "Kelle Sporer",
         "parentRelationship": "mother",
         "parentEmail": "kelle.sporer61@gmail.com",
@@ -242,7 +242,7 @@
       "dob": "2011-05-08",
       "nhsNumber": 685807003,
       "consent": {
-        "consent": "given",
+        "response": "given",
         "parentName": "Luvenia Cummerata",
         "parentRelationship": "mother",
         "parentEmail": "luvenia.cummerata2@gmail.com",
@@ -282,7 +282,7 @@
       "dob": "2011-04-12",
       "nhsNumber": 8296038636,
       "consent": {
-        "consent": "given",
+        "response": "given",
         "parentName": "Dino Kutch",
         "parentRelationship": "father",
         "parentEmail": "dino.kutch41@gmail.com",

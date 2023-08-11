@@ -15,12 +15,12 @@
     legend: { size: 'l',
               tag: 'h1',
               text: 'Do they agree to them having the HPV vaccination?' }) do %>
-    <%= f.govuk_radio_button :consent, "given",
+    <%= f.govuk_radio_button :response, "given",
       label: { text: 'Yes, they agree' }, link_errors: true %>
-    <%= f.govuk_radio_button :consent, "refused",
+    <%= f.govuk_radio_button :response, "refused",
       label: { text: "No, they do not agree" } %>
     <% unless @draft_consent.via_self_consent? %>
-      <%= f.govuk_radio_button :consent, "not_provided",
+      <%= f.govuk_radio_button :response, "not_provided",
         label: { text: 'No response' } %>
     <% end %>
   <% end %>

@@ -23,7 +23,7 @@ class ConsentResource < Avo::BaseResource
   field :parent_phone, as: :textarea
   field :parent_contact_method, as: :number
   field :parent_contact_method_other, as: :textarea
-  field :consent, as: :select, enum: ::Consent.consents
+  field :response, as: :select, enum: ::Consent.responses
   field :reason_for_refusal, as: :select, enum: ::Consent.reason_for_refusals
   field :reason_for_refusal_other, as: :textarea
   field :gp_response, as: :select, enum: ::Consent.gp_responses

@@ -44,7 +44,7 @@ FactoryBot.define do
   factory :consent do
     patient { create :patient }
     campaign { create :campaign }
-    consent { "given" }
+    response { "given" }
     parent_name { Faker::Name.name }
     parent_email { Faker::Internet.email(domain: "gmail.com") }
     parent_phone { Faker::PhoneNumber.cell_phone }
@@ -64,11 +64,11 @@ FactoryBot.define do
     end
 
     factory :consent_given do
-      consent { :given }
+      response { :given }
     end
 
     factory :consent_refused do
-      consent { :refused }
+      response { :refused }
       reason_for_refusal { :personal_choice }
       health_questions { [] }
     end

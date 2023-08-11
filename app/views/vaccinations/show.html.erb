@@ -30,7 +30,7 @@
   <% end %>
 <% end %>
 
-<% if @consent&.consent_given? %>
+<% if @consent&.response_given? %>
   <%= render AppPatientMedicalHistoryCardComponent.new(
     patient: @patient,
     consent: @consent,

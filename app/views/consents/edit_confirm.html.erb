@@ -1,6 +1,6 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: if @draft_consent.consent_given?
+    href: if @draft_consent.response_given?
       edit_questions_session_patient_consents_path(@session, @patient)
     else
       edit_agree_session_patient_consents_path(@session, @patient)
@@ -25,7 +25,7 @@
     <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
       summary_list.with_row do |row|
         row.with_key { "Consent" }
-        row.with_value { @draft_consent.consent.humanize }
+        row.with_value { @draft_consent.response.humanize }
       end
 
       summary_list.with_row do |row|
@@ -53,7 +53,7 @@
         <% end
       end
 
-      if @draft_consent.consent_refused?
+      if @draft_consent.response_refused?
         summary_list.with_row do |row|
           row.with_key { 'Reason for refusal' }
           row.with_value do %>
@@ -69,7 +69,7 @@
 </div>
 <% end %>
 
-<% if @draft_consent.consent_given? %>
+<% if @draft_consent.response_given? %>
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
       <h2 class="nhsuk-card__heading nhsuk-heading-m">
