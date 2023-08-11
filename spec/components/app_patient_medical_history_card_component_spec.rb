@@ -13,15 +13,15 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
   let(:patient) { FactoryBot.create(:patient) }
   let(:session) { FactoryBot.create(:session) }
   let(:patient_session) { create(:patient_session, patient:, session:) }
-  let(:consent_response) do
-    create :consent_response,
+  let(:consent) do
+    create :consent,
            patient:,
            campaign: session.campaign,
            health_questions:
   end
   let(:triage_notes) { nil }
   let(:triage) { Triage.new(patient_session:) }
-  let(:component) { described_class.new(patient:, consent_response:, triage:) }
+  let(:component) { described_class.new(patient:, consent:, triage:) }
 
   it "renders correctly" do
     expect(page).to have_css(".nhsuk-card")
@@ -40,8 +40,8 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
   end
 
   context "parent is other and triage is not done" do
-    let(:consent_response) do
-      create :consent_response,
+    let(:consent) do
+      create :consent,
              :from_granddad,
              patient:,
              campaign: session.campaign
@@ -58,8 +58,8 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
   end
 
   context "parent is other and triage is done with notes" do
-    let(:consent_response) do
-      create :consent_response,
+    let(:consent) do
+      create :consent,
              :from_granddad,
              patient:,
              campaign: session.campaign
@@ -78,8 +78,8 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
   end
 
   context "parent is other and triage is done without notes" do
-    let(:consent_response) do
-      create :consent_response,
+    let(:consent) do
+      create :consent,
              :from_granddad,
              patient:,
              campaign: session.campaign
@@ -170,8 +170,8 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
         }
       ]
     end
-    let(:consent_response) do
-      create :consent_response,
+    let(:consent) do
+      create :consent,
              :from_granddad,
              patient:,
              campaign: session.campaign,

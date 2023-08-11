@@ -8,9 +8,9 @@ class VaccinationsController < ApplicationController
                 only: %i[new show confirm edit_reason record create update]
 
   before_action :set_vaccination_record, only: %i[show confirm record]
-  before_action :set_consent_response, only: %i[create show confirm update]
+  before_action :set_consent, only: %i[create show confirm update]
   before_action :set_triage, only: %i[show confirm]
-  before_action :set_draft_consent_response, only: %i[show consent]
+  before_action :set_draft_consent, only: %i[show consent]
   before_action :set_todays_batch_id, only: :create
 
   layout "two_thirds", except: :index
@@ -164,7 +164,7 @@ class VaccinationsController < ApplicationController
   end
 
   def consent
-    case consent_response_params[:route]
+    case consent_params[:route]
     when "not_vaccinating"
       @patient_session.do_vaccination!
       redirect_to vaccinations_session_path(@session),
@@ -179,9 +179,9 @@ class VaccinationsController < ApplicationController
                     }
                   }
     when "phone"
-      redirect_to new_session_patient_consent_responses_path(@session, @patient)
+      redirect_to new_session_patient_consents_path(@session, @patient)
     when "self_consent"
-      redirect_to assessing_gillick_session_patient_consent_responses_path(
+      redirect_to assessing_gillick_session_patient_consents_path(
                     @session,
                     @patient
                   )
@@ -228,8 +228,8 @@ class VaccinationsController < ApplicationController
     params.fetch(:vaccination_record, {}).permit(:reason)
   end
 
-  def consent_response_params
-    params.fetch(:consent_response, {}).permit(:route)
+  def consent_params
+    params.fetch(:consent, {}).permit(:route)
   end
 
   def delivery_site_param_other?
@@ -267,9 +267,9 @@ class VaccinationsController < ApplicationController
         .first
   end
 
-  def set_consent_response
-    @consent_response =
-      @patient.consent_response_for_campaign(@session.campaign)
+  def set_consent
+    @consent =
+      @patient.consent_for_campaign(@session.campaign)
   end
 
   def set_triage
@@ -280,9 +280,9 @@ class VaccinationsController < ApplicationController
     @patient_session = @patient.patient_sessions.find_by(session: @session)
   end
 
-  def set_draft_consent_response
-    @draft_consent_response =
-      @patient.consent_responses.find_or_initialize_by(recorded_at: nil)
+  def set_draft_consent
+    @draft_consent =
+      @patient.consents.find_or_initialize_by(recorded_at: nil)
   end
 
   def set_todays_batch_id

@@ -14,7 +14,7 @@ class Campaign < ApplicationRecord
   has_many :batches, through: :vaccines
   has_many :sessions, dependent: :destroy
   has_many :triage, dependent: :destroy
-  has_many :consent_responses, dependent: :destroy
+  has_many :consents, dependent: :destroy
 
   validates :name, presence: true
 end

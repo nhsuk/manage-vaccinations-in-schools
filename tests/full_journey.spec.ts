@@ -7,7 +7,7 @@ test("Full journey - consent obtained before session", async ({ page }) => {
   await given_the_app_is_setup();
 
   await given_i_am_doing_triage();
-  await when_i_select_a_child_with_no_consent_response();
+  await when_i_select_a_child_with_no_consent();
   await then_i_see_the_parents_contact_info();
 
   await given_i_call_the_parent_and_receive_consent();
@@ -26,7 +26,7 @@ async function given_the_app_is_setup() {
 
 async function given_i_am_doing_triage() {}
 
-async function when_i_select_a_child_with_no_consent_response() {
+async function when_i_select_a_child_with_no_consent() {
   await p.goto("/sessions/1/triage");
   await p.getByRole("tab", { name: "Get consent" }).click();
   await p.getByRole("link", { name: "Alexandra Sipes" }).click();
@@ -43,8 +43,8 @@ async function given_i_call_the_parent_and_receive_consent() {}
 
 async function when_i_record_the_consent_given() {
   await p.getByRole("button", { name: "Get consent" }).click();
-  await p.fill('[name="consent_response[parent_name]"]', "Carl Sipes");
-  await p.fill('[name="consent_response[parent_phone]"]', "07700900000");
+  await p.fill('[name="consent[parent_name]"]', "Carl Sipes");
+  await p.fill('[name="consent[parent_phone]"]', "07700900000");
   await p.getByRole("radio", { name: "Dad" }).click();
   await p.getByRole("button", { name: "Continue" }).click();
 
@@ -54,13 +54,13 @@ async function when_i_record_the_consent_given() {
 
 async function and_i_record_the_triage_details() {
   const radio = (n: number) =>
-    `input[name="consent_response[question_${n}][response]"][value="no"]`;
+    `input[name="consent[question_${n}][response]"][value="no"]`;
 
   await p.click(radio(0));
   await p.click(radio(1));
   await p.click(radio(2));
   await p.click(radio(3));
-  await p.fill('[name="consent_response[triage][notes]"]', "Some notes");
+  await p.fill('[name="consent[triage][notes]"]', "Some notes");
   await p.getByRole("radio", { name: "Ready to vaccinate" }).click();
   await p.getByRole("button", { name: "Continue" }).click();
 

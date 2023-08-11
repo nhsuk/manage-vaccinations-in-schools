@@ -1,8 +1,8 @@
-class ConsentResponsesController < ApplicationController
+class ConsentsController < ApplicationController
   before_action :set_session
   before_action :set_patient
   before_action :set_patient_session
-  before_action :set_draft_consent_response
+  before_action :set_draft_consent
   before_action :set_draft_triage, only: %i[edit_questions edit_confirm update]
   before_action :keep_consent_return_path, except: %i[record]
 
@@ -14,15 +14,15 @@ class ConsentResponsesController < ApplicationController
 
   def create
     health_questions =
-      ConsentResponse::HEALTH_QUESTIONS
+      Consent::HEALTH_QUESTIONS
         .fetch(:hpv)
         .map { |question| { question: } }
 
-    if consent_response_who_params.present?
-      @draft_consent_response.assign_attributes(
-        consent_response_who_params.merge(route: "phone", health_questions:)
+    if consent_who_params.present?
+      @draft_consent.assign_attributes(
+        consent_who_params.merge(route: "phone", health_questions:)
       )
-      if @draft_consent_response.save(context: :edit_who)
+      if @draft_consent.save(context: :edit_who)
         redirect_to action: :edit_consent
       else
         render :edit_who
@@ -30,23 +30,23 @@ class ConsentResponsesController < ApplicationController
     else
       # If the params are missing, assume this is the Gillick competence route.
       # This feels like it could be more explicit.
-      @draft_consent_response.update!(route: "self_consent", health_questions:)
+      @draft_consent.update!(route: "self_consent", health_questions:)
 
       redirect_to action: :edit_gillick
     end
   end
 
   def update
-    if consent_response_agree_params.present?
-      @draft_consent_response.assign_attributes(consent_response_agree_params)
-      if @draft_consent_response.save(context: :edit_consent)
+    if consent_agree_params.present?
+      @draft_consent.assign_attributes(consent_agree_params)
+      if @draft_consent.save(context: :edit_consent)
         # Reset the reason for refusal so the user has to pick it again.
         # Otherwise it will be pre-filled with the previous value.
-        @draft_consent_response.update! reason_for_refusal: nil
+        @draft_consent.update! reason_for_refusal: nil
 
-        if @draft_consent_response.consent_given?
+        if @draft_consent.consent_given?
           redirect_to action: :edit_questions
-        elsif @draft_consent_response.consent_refused?
+        elsif @draft_consent.consent_refused?
           redirect_to action: :edit_reason
         else
           redirect_to action: :edit_confirm
@@ -56,24 +56,24 @@ class ConsentResponsesController < ApplicationController
       end
     end
 
-    if consent_response_reason_params.present?
-      @draft_consent_response.assign_attributes(consent_response_reason_params)
-      if @draft_consent_response.save(context: :edit_reason)
+    if consent_reason_params.present?
+      @draft_consent.assign_attributes(consent_reason_params)
+      if @draft_consent.save(context: :edit_reason)
         redirect_to action: :edit_confirm
       else
         render :edit_reason
       end
     end
 
-    if consent_response_health_questions_params.present?
-      @draft_consent_response.health_questions.each_with_index do |hq, index|
-        hq.merge! consent_response_health_questions_params["question_#{index}"]
+    if consent_health_questions_params.present?
+      @draft_consent.health_questions.each_with_index do |hq, index|
+        hq.merge! consent_health_questions_params["question_#{index}"]
       end
 
       # TODO: Handle validation
-      @draft_consent_response.save!
+      @draft_consent.save!
 
-      @draft_triage.assign_attributes consent_response_triage_params[:triage]
+      @draft_triage.assign_attributes consent_triage_params[:triage]
       if @draft_triage.save(context: :edit_questions)
         redirect_to action: :edit_confirm
       else
@@ -89,7 +89,7 @@ class ConsentResponsesController < ApplicationController
         redirect_to action: :edit_consent
       else
         ActiveRecord::Base.transaction do
-          @draft_consent_response.update!(
+          @draft_consent.update!(
             recorded_at: Time.zone.now,
             consent: "not_provided"
           )
@@ -131,9 +131,9 @@ class ConsentResponsesController < ApplicationController
   end
 
   def record
-    unless @draft_consent_response.consent_not_provided?
+    unless @draft_consent.consent_not_provided?
       ActiveRecord::Base.transaction do
-        @draft_consent_response.update!(recorded_at: Time.zone.now)
+        @draft_consent.update!(recorded_at: Time.zone.now)
         @patient_session.do_consent!
         @patient_session.do_triage! if @patient_session.triage.present?
       end
@@ -142,7 +142,7 @@ class ConsentResponsesController < ApplicationController
     if @patient_session.triaged_ready_to_vaccinate? &&
          flash[:consent_return_path] == "vaccination"
       redirect_to new_session_patient_vaccinations_path(@session, @patient)
-    elsif @draft_consent_response.via_self_consent?
+    elsif @draft_consent.via_self_consent?
       redirect_to session_patient_vaccinations_path(@session, @patient),
                   flash: {
                     success: {
@@ -178,9 +178,9 @@ class ConsentResponsesController < ApplicationController
     @patient_session = @patient.patient_sessions.find_by(session: @session)
   end
 
-  def set_draft_consent_response
-    @draft_consent_response =
-      @patient.consent_responses.find_or_initialize_by(
+  def set_draft_consent
+    @draft_consent =
+      @patient.consents.find_or_initialize_by(
         recorded_at: nil,
         campaign: @session.campaign
       )
@@ -198,8 +198,8 @@ class ConsentResponsesController < ApplicationController
     )
   end
 
-  def consent_response_who_params
-    params.fetch(:consent_response, {}).permit(
+  def consent_who_params
+    params.fetch(:consent, {}).permit(
       :parent_name,
       :parent_phone,
       :parent_relationship,
@@ -207,19 +207,19 @@ class ConsentResponsesController < ApplicationController
     )
   end
 
-  def consent_response_agree_params
-    params.fetch(:consent_response, {}).permit(:consent)
+  def consent_agree_params
+    params.fetch(:consent, {}).permit(:consent)
   end
 
-  def consent_response_reason_params
-    params.fetch(:consent_response, {}).permit(
+  def consent_reason_params
+    params.fetch(:consent, {}).permit(
       :reason_for_refusal,
       :reason_for_refusal_other
     )
   end
 
-  def consent_response_health_questions_params
-    params.fetch(:consent_response, {}).permit(
+  def consent_health_questions_params
+    params.fetch(:consent, {}).permit(
       question_0: %i[notes response],
       question_1: %i[notes response],
       question_2: %i[notes response],
@@ -227,8 +227,8 @@ class ConsentResponsesController < ApplicationController
     )
   end
 
-  def consent_response_triage_params
-    params.fetch(:consent_response, {}).permit(triage: %i[notes status])
+  def consent_triage_params
+    params.fetch(:consent, {}).permit(triage: %i[notes status])
   end
 
   def keep_consent_return_path

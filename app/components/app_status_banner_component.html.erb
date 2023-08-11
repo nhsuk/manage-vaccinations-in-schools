@@ -1,7 +1,7 @@
 <% if state.in? %[consent_given_triage_needed triaged_kept_in_triage] %>
   <%= render AppBannerComponent.new(title:, colour:) do %>
     <ul class="nhsuk-list nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-0">
-      <% consent_response.reasons_triage_needed.map do |reason| %>
+      <% consent.reasons_triage_needed.map do |reason| %>
         <li><%= reason %></li>
       <% end %>
     </ul>

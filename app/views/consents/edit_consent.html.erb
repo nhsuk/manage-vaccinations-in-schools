@@ -1,14 +1,14 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: @draft_consent_response.via_self_consent? ?
-      edit_gillick_session_patient_consent_responses_path(@session, @patient) :
-      edit_who_session_patient_consent_responses_path(@session, @patient),
+    href: @draft_consent.via_self_consent? ?
+      edit_gillick_session_patient_consents_path(@session, @patient) :
+      edit_who_session_patient_consents_path(@session, @patient),
     name: "triage page",
   ) %>
 <% end %>
 
-<%= form_for @draft_consent_response,
-  url: session_patient_consent_responses_path(@session, @patient),
+<%= form_for @draft_consent,
+  url: session_patient_consents_path(@session, @patient),
   method: :put do |f| %>
   <%= f.govuk_error_summary %>
   <%= f.govuk_radio_buttons_fieldset(:consent,
@@ -19,7 +19,7 @@
       label: { text: 'Yes, they agree' }, link_errors: true %>
     <%= f.govuk_radio_button :consent, "refused",
       label: { text: "No, they do not agree" } %>
-    <% unless @draft_consent_response.via_self_consent? %>
+    <% unless @draft_consent.via_self_consent? %>
       <%= f.govuk_radio_button :consent, "not_provided",
         label: { text: 'No response' } %>
     <% end %>

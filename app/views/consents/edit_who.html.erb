@@ -7,9 +7,9 @@
 
 <h1 class="nhsuk-heading-l">Who are you trying to get consent from?</h1>
 
-<%= form_for @draft_consent_response,
-  url: session_patient_consent_responses_path(@session, @patient),
-  method: @draft_consent_response.persisted? ? :put : :post do |f| %>
+<%= form_for @draft_consent,
+  url: session_patient_consents_path(@session, @patient),
+  method: @draft_consent.persisted? ? :put : :post do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_text_field :parent_name, label: { text: 'Full name' } %>

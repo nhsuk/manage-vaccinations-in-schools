@@ -1,9 +1,9 @@
 class AppConsentCardComponent < ViewComponent::Base
-  def initialize(session:, patient:, consent_response:)
+  def initialize(session:, patient:, consent:)
     super
 
     @session = session
     @patient = patient
-    @consent_response = consent_response
+    @consent = consent
   end
 end

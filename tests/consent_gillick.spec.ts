@@ -111,7 +111,7 @@ async function then_i_see_the_health_questions_page() {
 
 async function when_i_answer_the_health_questions() {
   const radio = (n: number) =>
-    `input[name="consent_response[question_${n}][response]"][value="no"]`;
+    `input[name="consent[question_${n}][response]"][value="no"]`;
 
   await p.click(radio(0));
   await p.click(radio(1));
@@ -146,7 +146,7 @@ async function then_i_see_the_vaccination_show_page_for_the_second_patient() {
 }
 
 async function and_i_triage_the_patient() {
-  await p.fill('[name="consent_response[triage][notes]"]', "Some notes");
+  await p.fill('[name="consent[triage][notes]"]', "Some notes");
   await p.getByRole("radio", { name: "Ready to vaccinate" }).click();
 }
 

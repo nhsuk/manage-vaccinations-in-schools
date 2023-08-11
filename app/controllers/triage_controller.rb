@@ -3,7 +3,7 @@ class TriageController < ApplicationController
   before_action :set_patient, only: %i[show create update]
   before_action :set_patient_session, only: %i[create update show]
   before_action :set_triage, only: %i[show]
-  before_action :set_consent_response, only: %i[show create update]
+  before_action :set_consent, only: %i[show create update]
   before_action :set_vaccination_record, only: %i[show]
 
   layout "two_thirds", except: %i[index]
@@ -12,7 +12,7 @@ class TriageController < ApplicationController
     patient_sessions =
       @session
         .patient_sessions
-        .includes(:vaccination_records, patient: %i[consent_responses triage])
+        .includes(:vaccination_records, patient: %i[consents triage])
         .order("patients.first_name", "patients.last_name")
 
     tabs_to_states = {
@@ -99,9 +99,9 @@ class TriageController < ApplicationController
     @triage = Triage.find_or_initialize_by(patient_session: @patient_session)
   end
 
-  def set_consent_response
-    @consent_response =
-      @patient.consent_response_for_campaign(@session.campaign)
+  def set_consent
+    @consent =
+      @patient.consent_for_campaign(@session.campaign)
   end
 
   def set_vaccination_record

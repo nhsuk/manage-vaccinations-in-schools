@@ -17,32 +17,32 @@
 
 <%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
 
-<% if @consent_response.present? %>
-  <% if @consent_response.via_self_consent? %>
+<% if @consent.present? %>
+  <% if @consent.via_self_consent? %>
     <%= render AppGillickCardComponent.new(
-      consent_response: @consent_response,
+      consent: @consent,
       patient_session: @patient_session) %>
   <% else %>
     <%= render AppConsentCardComponent.new(
       session: @session,
       patient: @patient,
-      consent_response: @consent_response) %>
+      consent: @consent) %>
   <% end %>
 <% end %>
 
-<% if @consent_response&.consent_given? %>
+<% if @consent&.consent_given? %>
   <%= render AppPatientMedicalHistoryCardComponent.new(
     patient: @patient,
-    consent_response: @consent_response,
+    consent: @consent,
     triage: @triage
   ) %>
 <% end %>
 
 <% if @patient_session.able_to_vaccinate? %>
-<% if @consent_response.nil? %>
+<% if @consent.nil? %>
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
-      <%= form_with model: @draft_consent_response,
+      <%= form_with model: @draft_consent,
         url: consent_session_patient_vaccinations_path(@session, @patient),
         method: :post do |f| %>
         <% content_for(:before_content) { f.govuk_error_summary } %>

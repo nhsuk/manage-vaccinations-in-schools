@@ -28,7 +28,7 @@
 FactoryBot.define do
   factory :patient do
     transient do
-      # Used for associations like consent_response and triage that need to be
+      # Used for associations like consent and triage that need to be
       # associated with a campaign
       session { create :session }
       campaign { session.campaign }
@@ -61,18 +61,18 @@ FactoryBot.define do
     end
 
     trait :consent_given_triage_not_needed do
-      consent_responses { [create(:consent_response, :given, campaign:)] }
+      consents { [create(:consent, :given, campaign:)] }
     end
 
     trait :consent_given_triage_needed do
-      consent_responses do
-        [create(:consent_response, :given, :health_question_notes, campaign:)]
+      consents do
+        [create(:consent, :given, :health_question_notes, campaign:)]
       end
     end
 
     trait :consent_refused do
-      consent_responses do
-        [create(:consent_response, :refused, :from_mum, campaign:)]
+      consents do
+        [create(:consent, :refused, :from_mum, campaign:)]
       end
     end
 

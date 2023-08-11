@@ -9,8 +9,8 @@
         row.with_key { "Assessment" }
         row.with_value do %>
           Assessed by nurse<br />
-          <%= (@consent_response.recorded_at ||
-               @consent_response.created_at).to_fs(:nhsuk_date) %>
+          <%= (@consent.recorded_at ||
+               @consent.created_at).to_fs(:nhsuk_date) %>
         <% end
       end
 

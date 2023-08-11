@@ -1,12 +1,12 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: edit_agree_session_patient_consent_responses_path(@session, @patient),
+    href: edit_agree_session_patient_consents_path(@session, @patient),
     name: "consent page",
   ) %>
 <% end %>
 
-<%= form_for @draft_consent_response,
-  url: session_patient_consent_responses_path(@session, @patient),
+<%= form_for @draft_consent,
+  url: session_patient_consents_path(@session, @patient),
   method: :put do |f| %>
   <%= f.govuk_error_summary %>
   <%= f.govuk_radio_buttons_fieldset(:reason_for_refusal,

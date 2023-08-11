@@ -4,7 +4,7 @@
       Medical history
     </h2>
 
-    <% if @consent_response.health_questions.present? %>
+    <% if @consent.health_questions.present? %>
       <details class="nhsuk-details nhsuk-expander">
         <summary class="nhsuk-details__summary">
           <span class="nhsuk-details__summary-text">
@@ -13,12 +13,12 @@
         </summary>
 
         <div class="nhsuk-details__text">
-          <%= render AppHealthQuestionsComponent.new(consent_response: @consent_response) %>
+          <%= render AppHealthQuestionsComponent.new(consent: @consent) %>
         </div>
       </details>
     <% end %>
 
-    <% if @consent_response.triage_needed? %>
+    <% if @consent.triage_needed? %>
       <% if triage_present? %>
         <p>Triage needed</p>
 
