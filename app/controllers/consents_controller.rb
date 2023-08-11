@@ -51,9 +51,9 @@ class ConsentsController < ApplicationController
         # Otherwise it will be pre-filled with the previous value.
         @draft_consent.update! reason_for_refusal: nil
 
-        if @draft_consent.consent_given?
+        if @draft_consent.response_given?
           redirect_to action: :edit_questions
-        elsif @draft_consent.consent_refused?
+        elsif @draft_consent.response_refused?
           redirect_to action: :edit_reason
         else
           redirect_to action: :edit_confirm
@@ -98,7 +98,7 @@ class ConsentsController < ApplicationController
         ActiveRecord::Base.transaction do
           @draft_consent.update!(
             recorded_at: Time.zone.now,
-            consent: "not_provided"
+            response: "not_provided"
           )
           @patient_session.do_gillick_assessment!
         end
@@ -138,7 +138,7 @@ class ConsentsController < ApplicationController
   end
 
   def record
-    unless @draft_consent.consent_not_provided?
+    unless @draft_consent.response_not_provided?
       ActiveRecord::Base.transaction do
         @draft_consent.update!(recorded_at: Time.zone.now)
         @patient_session.do_consent!
@@ -215,7 +215,7 @@ class ConsentsController < ApplicationController
   end
 
   def consent_agree_params
-    params.fetch(:consent, {}).permit(:consent)
+    params.fetch(:consent, {}).permit(:response)
   end
 
   def consent_reason_params

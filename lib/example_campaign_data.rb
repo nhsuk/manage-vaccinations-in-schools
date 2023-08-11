@@ -79,7 +79,7 @@ class ExampleCampaignData
         consent_example = patient["consent"]
         consent = {}
 
-        consent[:consent] = consent_example["consent"]
+        consent[:response] = consent_example["response"]
         consent[:reason_for_refusal] = consent_example["reasonForRefusal"]
         consent[:reason_for_refusal_other] = consent_example[
           "reasonForRefusalOtherReason"

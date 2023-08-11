@@ -45,8 +45,8 @@ RSpec.describe PatientSessionStateMachineConcern do
 
     describe "#do_consent" do
       it "transitions to consent_given_triage_not_needed when consent is given and needs no triage" do
-        allow(consent).to receive(:consent_given?).and_return(true)
-        allow(consent).to receive(:consent_refused?).and_return(false)
+        allow(consent).to receive(:response_given?).and_return(true)
+        allow(consent).to receive(:response_refused?).and_return(false)
         allow(consent).to receive(:triage_needed?).and_return(false)
 
         fsm.do_consent
@@ -54,8 +54,8 @@ RSpec.describe PatientSessionStateMachineConcern do
       end
 
       it "transitions to consent_given_triage_needed consent is given and needs triage" do
-        allow(consent).to receive(:consent_given?).and_return(true)
-        allow(consent).to receive(:consent_refused?).and_return(false)
+        allow(consent).to receive(:response_given?).and_return(true)
+        allow(consent).to receive(:response_refused?).and_return(false)
         allow(consent).to receive(:triage_needed?).and_return(true)
 
         fsm.do_consent
@@ -63,8 +63,8 @@ RSpec.describe PatientSessionStateMachineConcern do
       end
 
       it "transitions to consent_refused when consent is refused" do
-        allow(consent).to receive(:consent_given?).and_return(false)
-        allow(consent).to receive(:consent_refused?).and_return(true)
+        allow(consent).to receive(:response_given?).and_return(false)
+        allow(consent).to receive(:response_refused?).and_return(true)
         allow(consent).to receive(:triage_needed?).and_return(false)
 
         fsm.do_consent

@@ -48,7 +48,7 @@ class Consent < ApplicationRecord
   belongs_to :campaign
 
   enum :parent_relationship, %w[mother father guardian other], prefix: true
-  enum :consent, %w[given refused not_provided], prefix: true
+  enum :response, %w[given refused not_provided], prefix: true
   enum :reason_for_refusal,
        %w[
          already_vaccinated
@@ -74,9 +74,9 @@ class Consent < ApplicationRecord
             if: -> { parent_relationship == "other" },
             on: :edit_who
 
-  validates :consent,
+  validates :response,
             inclusion: {
-              in: consents.keys
+              in: responses.keys
             },
             presence: true,
             on: :edit_consent
@@ -109,7 +109,7 @@ class Consent < ApplicationRecord
   }.freeze
 
   def triage_needed?
-    consent_given? &&
+    response_given? &&
       (parent_relationship_other? || health_questions_require_follow_up?)
   end
 
