@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_11_072923) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_11_114758) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -75,7 +75,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_11_072923) do
     t.text "parent_phone"
     t.integer "parent_contact_method"
     t.text "parent_contact_method_other"
-    t.integer "consent"
+    t.integer "response"
     t.integer "reason_for_refusal"
     t.text "reason_for_refusal_other"
     t.integer "gp_response"

@@ -10,7 +10,6 @@
 #  childs_common_name          :text
 #  childs_dob                  :date
 #  childs_name                 :text
-#  consent                     :integer
 #  gp_name                     :text
 #  gp_response                 :integer
 #  health_questions            :jsonb
@@ -24,6 +23,7 @@
 #  reason_for_refusal          :integer
 #  reason_for_refusal_other    :text
 #  recorded_at                 :datetime
+#  response                    :integer
 #  route                       :integer          not null
 #  created_at                  :datetime         not null
 #  updated_at                  :datetime         not null
