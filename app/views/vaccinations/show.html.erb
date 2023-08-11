@@ -43,7 +43,7 @@
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
       <%= form_with model: @draft_consent,
-        url: consent_session_patient_vaccinations_path(@session, @patient),
+        url: handle_consent_session_patient_vaccinations_path(@session, @patient),
         method: :post do |f| %>
         <% content_for(:before_content) { f.govuk_error_summary } %>
 
