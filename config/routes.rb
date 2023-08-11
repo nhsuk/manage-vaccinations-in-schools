@@ -33,7 +33,7 @@ Rails.application.routes.draw do
         get "confirm", on: :member
         put "record", on: :member
 
-        post "consent", on: :member
+        post "handle-consent", on: :member
 
         get "show-template", on: :collection
         get "record-template", on: :collection

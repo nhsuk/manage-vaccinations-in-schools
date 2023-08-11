@@ -3,7 +3,7 @@ class VaccinationsController < ApplicationController
   before_action :set_patient, except: %i[index record_template]
   before_action :set_patient_sessions, only: %i[index record_template]
   before_action :set_patient_session,
-                only: %i[new confirm consent create record show update]
+                only: %i[new confirm handle_consent create record show update]
   before_action :set_draft_vaccination_record,
                 only: %i[show edit_reason create update]
   before_action :set_draft_vaccination_record!, only: %i[confirm record]
@@ -11,7 +11,7 @@ class VaccinationsController < ApplicationController
   before_action :set_vaccination_record, only: %i[show confirm record]
   before_action :set_consent, only: %i[create show confirm update]
   before_action :set_triage, only: %i[show confirm]
-  before_action :set_draft_consent, only: %i[show consent]
+  before_action :set_draft_consent, only: %i[show]
   before_action :set_todays_batch_id, only: :create
 
   layout "two_thirds", except: :index
@@ -169,7 +169,7 @@ class VaccinationsController < ApplicationController
     end
   end
 
-  def consent
+  def handle_consent
     case consent_params[:route]
     when "not_vaccinating"
       @patient_session.do_vaccination!
