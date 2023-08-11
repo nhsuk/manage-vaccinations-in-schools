@@ -1,16 +1,16 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: edit_agree_session_patient_consent_responses_path(@session, @patient),
+    href: edit_agree_session_patient_consents_path(@session, @patient),
     name: "consent page",
   ) %>
 <% end %>
 
 <h1 class="nhsuk-heading-l">Health questions</h1>
 
-<%= form_for @draft_consent_response,
-  url: session_patient_consent_responses_path(@session, @patient),
+<%= form_for @draft_consent,
+  url: session_patient_consents_path(@session, @patient),
   method: :put do |f| %>
-  <% @draft_consent_response.health_questions.each_with_index do |hq, index| %>
+  <% @draft_consent.health_questions.each_with_index do |hq, index| %>
     <%= f.fields_for "question_#{index}", HealthQuestion.new(hq) do |ff| %>
       <%= ff.govuk_radio_buttons_fieldset(:question, legend:
          { size: 's',

@@ -49,7 +49,7 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
     patient = FactoryBot.build(:patient, :of_hpv_vaccination_age)
     consent =
       FactoryBot.build(
-        :consent_response,
+        :consent,
         :given,
         %i[from_mum from_dad].sample,
         :health_question_hpv_no_contraindications,
@@ -113,7 +113,7 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
       patient = FactoryBot.build(:patient, :of_hpv_vaccination_age)
       consent =
         FactoryBot.build(
-          :consent_response,
+          :consent,
           :given,
           %i[from_mum from_dad].sample,
           health_questions: health_question_responses,
@@ -151,7 +151,7 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
       patient = FactoryBot.build(:patient, :of_hpv_vaccination_age)
       consent =
         FactoryBot.build(
-          :consent_response,
+          :consent,
           :given,
           %i[from_mum from_dad].sample,
           health_questions: health_question_responses.compact,
@@ -178,7 +178,7 @@ task :generate_model_office_data, [] => :environment do |_task, _args|
       patient = FactoryBot.build(:patient, :of_hpv_vaccination_age)
       consent =
         FactoryBot.build(
-          :consent_response,
+          :consent,
           :given,
           %i[from_mum from_dad].sample,
           health_questions: health_question_responses,

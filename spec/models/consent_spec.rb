@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: consent_responses
+# Table name: consents
 #
 #  id                          :bigint           not null, primary key
 #  address_line_1              :text
@@ -32,8 +32,8 @@
 #
 # Indexes
 #
-#  index_consent_responses_on_campaign_id  (campaign_id)
-#  index_consent_responses_on_patient_id   (patient_id)
+#  index_consents_on_campaign_id  (campaign_id)
+#  index_consents_on_patient_id   (patient_id)
 #
 # Foreign Keys
 #
@@ -42,7 +42,7 @@
 #
 require "rails_helper"
 
-RSpec.describe ConsentResponse do
+RSpec.describe Consent do
   describe "when consent given by parent or guardian, all health questions are no" do
     it "does not require triage" do
       response = build(:consent_given, parent_relationship: :mother)

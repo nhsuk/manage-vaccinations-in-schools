@@ -1,11 +1,11 @@
 class AppHealthQuestionsComponent < ViewComponent::Base
-  def initialize(consent_response:)
+  def initialize(consent:)
     super
 
-    @consent_response = consent_response
+    @consent = consent
   end
 
   def health_questions
-    @consent_response&.health_questions
+    @consent&.health_questions
   end
 end

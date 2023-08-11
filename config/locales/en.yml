@@ -4,7 +4,7 @@ en:
     email: my-service@email
   activerecord:
     attributes:
-      consent_response:
+      consent:
         parent_relationships:
           father: dad
           mother: mum
@@ -62,7 +62,7 @@ en:
               inclusion: Choose if they are Gillick competent
             gillick_competence_notes:
               blank: Enter details of your assessment
-        consent_response:
+        consent:
           attributes:
             parent_name:
               blank: Enter a name

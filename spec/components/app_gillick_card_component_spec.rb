@@ -5,8 +5,8 @@ RSpec.describe AppGillickCardComponent, type: :component do
 
   subject { page }
 
-  let(:component) { described_class.new(consent_response:, patient_session:) }
-  let(:consent_response) { create(:consent_response) }
+  let(:component) { described_class.new(consent:, patient_session:) }
+  let(:consent) { create(:consent) }
   let(:patient_session) { create(:patient_session, gillick_competent:) }
   let(:gillick_competent) { true }
 

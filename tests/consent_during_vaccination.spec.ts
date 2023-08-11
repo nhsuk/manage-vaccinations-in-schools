@@ -50,8 +50,8 @@ async function then_i_see_the_new_consent_form() {
 
 async function when_i_go_through_the_consent_and_triage_forms() {
   // Who
-  await p.fill('[name="consent_response[parent_name]"]', "Jane Doe");
-  await p.fill('[name="consent_response[parent_phone]"]', "07700900000");
+  await p.fill('[name="consent[parent_name]"]', "Jane Doe");
+  await p.fill('[name="consent[parent_phone]"]', "07700900000");
   await p.click("text=Mum");
   await p.click("text=Continue");
 
@@ -61,7 +61,7 @@ async function when_i_go_through_the_consent_and_triage_forms() {
 
   // Health questions
   const radio = (n: number) =>
-    `input[name="consent_response[question_${n}][response]"][value="no"]`;
+    `input[name="consent[question_${n}][response]"][value="no"]`;
 
   await p.click(radio(0));
   await p.click(radio(1));

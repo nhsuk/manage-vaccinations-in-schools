@@ -1,4 +1,4 @@
-class ConsentResponseResource < Avo::BaseResource
+class ConsentResource < Avo::BaseResource
   self.title = :id
   self.includes = []
   # self.search_query = -> do
@@ -19,20 +19,20 @@ class ConsentResponseResource < Avo::BaseResource
   field :parent_name, as: :textarea
   field :parent_relationship,
         as: :select,
-        enum: ::ConsentResponse.parent_relationships
+        enum: ::Consent.parent_relationships
   field :parent_relationship_other, as: :textarea
   field :parent_email, as: :textarea
   field :parent_phone, as: :textarea
   field :parent_contact_method, as: :number
   field :parent_contact_method_other, as: :textarea
-  field :consent, as: :select, enum: ::ConsentResponse.consents
+  field :consent, as: :select, enum: ::Consent.consents
   field :reason_for_refusal,
         as: :select,
-        enum: ::ConsentResponse.reason_for_refusals
+        enum: ::Consent.reason_for_refusals
   field :reason_for_refusal_other, as: :textarea
-  field :gp_response, as: :select, enum: ::ConsentResponse.gp_responses
+  field :gp_response, as: :select, enum: ::Consent.gp_responses
   field :gp_name, as: :textarea
-  field :route, as: :select, enum: ::ConsentResponse.routes
+  field :route, as: :select, enum: ::Consent.routes
   field :health_questions, as: :text
   field :patient, as: :belongs_to
   field :campaign, as: :belongs_to

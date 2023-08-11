@@ -28,27 +28,27 @@ task :add_consent_to_example_json, [:name] => :environment do |_task, args|
     example_patient =
       example["patients"].find { |patient| patient["fullName"] == args[:name] }
 
-    consent_response =
-      generate_consent_response(example_patient, allow_none: false)
-    consent_response.update generate_consent_for_example_patient(
+    consent =
+      generate_consent(example_patient, allow_none: false)
+    consent.update generate_consent_for_example_patient(
                               example_patient
                             )
 
-    puts JSON.pretty_generate(consent_response)
+    puts JSON.pretty_generate(consent)
   else
     # Otherwise, generate consent responses for all patients
     example["patients"].each_with_index do |patient, _index|
       # Minor fixup as we go
       patient["dob"] = Date.parse(patient["dob"]).to_s
 
-      consent_response = generate_consent_response(patient)
+      consent = generate_consent(patient)
 
-      if consent_response.nil?
+      if consent.nil?
         patient.delete("consent")
       else
-        consent_response.update generate_consent_for_example_patient(patient)
+        consent.update generate_consent_for_example_patient(patient)
 
-        patient["consent"] = consent_response
+        patient["consent"] = consent
       end
     end
 
@@ -64,29 +64,29 @@ def generate_consent_for_example_patient(patient)
           generate_route(patient)
 end
 
-def generate_consent_response(_patient, allow_none: true)
+def generate_consent(_patient, allow_none: true)
   # Adjust the randomness if don't allow "no consent response" here
   randomness = allow_none ? Random.rand(0.0..1.0) : Random.rand(0.3..1.0)
 
   case randomness
   when 0.0..0.3
-    consent_response = nil
+    consent = nil
   when 0.3..0.5 # consent refused
-    consent_response = {
+    consent = {
       consent: :refused,
-      reasonForRefusal: ConsentResponse.reason_for_refusals.keys.sample
+      reasonForRefusal: Consent.reason_for_refusals.keys.sample
     }
 
-    if consent_response[:reasonForRefusal] == "other"
-      consent_response[
+    if consent[:reasonForRefusal] == "other"
+      consent[
         :reasonForRefusalOtherReason
       ] = Faker::Movies::VForVendetta.quote
     end
   else # consent given
-    consent_response = { consent: :given }
+    consent = { consent: :given }
   end
 
-  consent_response
+  consent
 end
 
 def generate_common_name(patient)
@@ -162,7 +162,7 @@ end
 
 def generate_route(_patient)
   route =
-    Random.rand(0.0..1.0) < 0.5 ? "website" : ConsentResponse.routes.keys.sample
+    Random.rand(0.0..1.0) < 0.5 ? "website" : Consent.routes.keys.sample
   { route: }
 end
 

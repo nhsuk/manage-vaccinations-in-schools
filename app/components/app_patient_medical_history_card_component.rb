@@ -1,9 +1,9 @@
 class AppPatientMedicalHistoryCardComponent < ViewComponent::Base
-  def initialize(patient:, consent_response:, triage:)
+  def initialize(patient:, consent:, triage:)
     super
 
     @patient = patient
-    @consent_response = consent_response
+    @consent = consent
     @triage = triage
   end
 
@@ -12,6 +12,6 @@ class AppPatientMedicalHistoryCardComponent < ViewComponent::Base
   end
 
   def reasons_triage_needed
-    @consent_response&.reasons_triage_needed
+    @consent&.reasons_triage_needed
   end
 end

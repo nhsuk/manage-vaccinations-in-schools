@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: consent_responses
+# Table name: consents
 #
 #  id                          :bigint           not null, primary key
 #  address_line_1              :text
@@ -32,8 +32,8 @@
 #
 # Indexes
 #
-#  index_consent_responses_on_campaign_id  (campaign_id)
-#  index_consent_responses_on_patient_id   (patient_id)
+#  index_consents_on_campaign_id  (campaign_id)
+#  index_consents_on_patient_id   (patient_id)
 #
 # Foreign Keys
 #
@@ -41,7 +41,7 @@
 #  fk_rails_...  (patient_id => patients.id)
 #
 FactoryBot.define do
-  factory :consent_response do
+  factory :consent do
     patient { create :patient }
     campaign { create :campaign }
     consent { "given" }
@@ -58,7 +58,7 @@ FactoryBot.define do
     recorded_at { Time.zone.now }
 
     health_questions do
-      ConsentResponse::HEALTH_QUESTIONS
+      Consent::HEALTH_QUESTIONS
         .fetch(:flu)
         .map { |question| { question:, response: "no" } }
     end
@@ -98,7 +98,7 @@ FactoryBot.define do
 
     trait :health_question_notes do
       health_questions do
-        ConsentResponse::HEALTH_QUESTIONS
+        Consent::HEALTH_QUESTIONS
           .fetch(:flu)
           .map do |question|
             if question == "Is there anything else we should know?"
@@ -116,7 +116,7 @@ FactoryBot.define do
 
     trait :health_question_hpv_no_contraindications do
       health_questions do
-        ConsentResponse::HEALTH_QUESTIONS
+        Consent::HEALTH_QUESTIONS
           .fetch(:hpv)
           .map { |question| { question:, response: "no" } }
       end

@@ -32,7 +32,7 @@ class Patient < ApplicationRecord
   has_many :patient_sessions
   has_many :sessions, through: :patient_sessions
   has_many :triage, through: :patient_sessions
-  has_many :consent_responses
+  has_many :consents
 
   validates :first_name, presence: true
   validates :last_name, presence: true
@@ -65,8 +65,8 @@ class Patient < ApplicationRecord
       )
   end
 
-  def consent_response_for_campaign(campaign)
-    consent_responses.to_a.find do |t|
+  def consent_for_campaign(campaign)
+    consents.to_a.find do |t|
       t.campaign == campaign && t.recorded_at.present?
     end
   end

@@ -38,17 +38,17 @@ Rails.application.routes.draw do
         get "record-template", on: :collection
       end
 
-      resource :consent_responses, path: "consent" do
-        get "assessing-gillick", to: "consent_responses#assessing_gillick"
+      resource :consents, path: "consent" do
+        get "assessing-gillick", to: "consents#assessing_gillick"
 
-        get "edit/gillick", to: "consent_responses#edit_gillick"
-        put "update/gillick", to: "consent_responses#update_gillick"
+        get "edit/gillick", to: "consents#edit_gillick"
+        put "update/gillick", to: "consents#update_gillick"
 
-        get "edit/who", to: "consent_responses#edit_who"
-        get "edit/agree", to: "consent_responses#edit_consent"
-        get "edit/reason", to: "consent_responses#edit_reason"
-        get "edit/questions", to: "consent_responses#edit_questions"
-        get "edit/confirm", to: "consent_responses#edit_confirm"
+        get "edit/who", to: "consents#edit_who"
+        get "edit/agree", to: "consents#edit_consent"
+        get "edit/reason", to: "consents#edit_reason"
+        get "edit/questions", to: "consents#edit_questions"
+        get "edit/confirm", to: "consents#edit_confirm"
 
         put "record"
       end

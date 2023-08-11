@@ -87,23 +87,23 @@ module PatientSessionStateMachineConcern
     end
 
     def consent_given?
-      consent_response&.consent_given?
+      consent&.consent_given?
     end
 
     def consent_refused?
-      consent_response&.consent_refused?
+      consent&.consent_refused?
     end
 
     def no_consent?
-      consent_response.nil?
+      consent.nil?
     end
 
     def triage_needed?
-      consent_response&.triage_needed?
+      consent&.triage_needed?
     end
 
     def triage_not_needed?
-      !consent_response&.triage_needed?
+      !consent&.triage_needed?
     end
 
     def triage_ready_to_vaccinate?

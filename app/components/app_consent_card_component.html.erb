@@ -4,26 +4,26 @@
       Consent
     </h2>
 
-    <% if @consent_response.present? %>
+    <% if @consent.present? %>
       <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
         summary_list.with_row do |row|
-          row.with_key { @consent_response.consent_given? ?
+          row.with_key { @consent.consent_given? ?
                          "Given by" :
                          "Refused by" }
-          row.with_value { @consent_response.who_responded.capitalize }
+          row.with_value { @consent.who_responded.capitalize }
         end
 
         summary_list.with_row do |row|
-          row.with_key { @consent_response.who_responded.capitalize }
+          row.with_key { @consent.who_responded.capitalize }
           row.with_value do %>
-            <%= @consent_response.parent_name %>
+            <%= @consent.parent_name %>
             <div class="nhsuk-u-margin-top-2 nhsuk-u-font-size-16">
-              <% if @consent_response.parent_phone.present? %>
-                Telephone: <%= @consent_response.parent_phone %>
+              <% if @consent.parent_phone.present? %>
+                Telephone: <%= @consent.parent_phone %>
               <% end %>
-              <% if @consent_response.parent_email.present? %>
+              <% if @consent.parent_email.present? %>
                 <br />
-                Email: <%= @consent_response.parent_email %>
+                Email: <%= @consent.parent_email %>
               <% end %>
             </div>
           <% end
@@ -31,18 +31,18 @@
 
         summary_list.with_row do |row|
           row.with_key { 'Date' }
-          row.with_value { @consent_response.created_at.to_fs(:nhsuk_date) }
+          row.with_value { @consent.created_at.to_fs(:nhsuk_date) }
         end
 
         summary_list.with_row do |row|
           row.with_key { 'Type of consent' }
-          row.with_value { @consent_response.human_enum_name(:route) }
+          row.with_value { @consent.human_enum_name(:route) }
         end
 
-        if @consent_response.consent_refused?
+        if @consent.consent_refused?
           summary_list.with_row do |row|
             row.with_key { 'Reason for refusal' }
-            row.with_value { @consent_response.human_enum_name(:reason_for_refusal) }
+            row.with_value { @consent.human_enum_name(:reason_for_refusal) }
           end
         end
       end %>
@@ -53,7 +53,7 @@
 
       <p>
         <%= govuk_button_link_to "Get consent",
-          new_session_patient_consent_responses_path(@session, @patient),
+          new_session_patient_consents_path(@session, @patient),
           class: "nhsuk-u-margin-bottom-2" %>
       </p>
     <% end %>

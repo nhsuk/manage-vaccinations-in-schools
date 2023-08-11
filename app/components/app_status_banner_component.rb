@@ -43,8 +43,8 @@ class AppStatusBannerComponent < ViewComponent::Base
 
   private
 
-  def consent_response
-    @consent_response ||= @patient_session.consent_response
+  def consent
+    @consent ||= @patient_session.consent
   end
 
   def vaccination_record
@@ -52,7 +52,7 @@ class AppStatusBannerComponent < ViewComponent::Base
   end
 
   def who_responded
-    @patient_session.consent_response&.who_responded
+    @patient_session.consent&.who_responded
   end
 
   def full_name

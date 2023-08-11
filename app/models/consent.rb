@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: consent_responses
+# Table name: consents
 #
 #  id                          :bigint           not null, primary key
 #  address_line_1              :text
@@ -32,8 +32,8 @@
 #
 # Indexes
 #
-#  index_consent_responses_on_campaign_id  (campaign_id)
-#  index_consent_responses_on_patient_id   (patient_id)
+#  index_consents_on_campaign_id  (campaign_id)
+#  index_consents_on_patient_id   (patient_id)
 #
 # Foreign Keys
 #
@@ -41,7 +41,7 @@
 #  fk_rails_...  (patient_id => patients.id)
 #
 
-class ConsentResponse < ApplicationRecord
+class Consent < ApplicationRecord
   audited
 
   belongs_to :patient
