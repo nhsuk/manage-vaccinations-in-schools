@@ -74,6 +74,7 @@ async function then_i_see_that_the_child_is_ready_to_vaccinate() {
   );
   await p.getByRole("tab", { name: "Triage complete" }).click();
   const row = p.locator(`tr`, { hasText: "Alexandra Sipes" });
+  await expect(row).toBeVisible();
   await expect(row.getByTestId("child-action")).toContainText("Vaccinate");
 }
 
@@ -101,5 +102,6 @@ async function then_i_see_that_the_child_is_vaccinated() {
   );
   await p.getByRole("tab", { name: /^Vaccinated/ }).click();
   const row = p.locator(`tr`, { hasText: "Alexandra Sipes" });
+  await expect(row).toBeVisible();
   await expect(row.getByTestId("child-action")).toContainText("Vaccinated");
 }
