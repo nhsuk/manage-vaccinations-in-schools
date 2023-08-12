@@ -48,6 +48,12 @@ negative response, followed by a successful attempt to get consent, also during 
 
 ![Flow diagram - consent obtained during vaccination](images/consent_during_vaccination.png)
 
+### Feature: Consent - parental consent refused during vaccination
+
+[Source file - consent_refused_during_vaccination.spec.ts](consent_refused_during_vaccination.spec.ts)
+
+![Flow diagram - consent refused during vaccination](images/consent_refused_during_vaccination.png)
+
 ### Feature: Consent - Gillick competence assessment
 
 [Source file - consent_gillick.spec.ts](consent_gillick.spec.ts)
