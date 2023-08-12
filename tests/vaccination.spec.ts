@@ -90,7 +90,9 @@ async function then_i_should_see_a_success_message() {
 }
 
 async function and_i_should_see_the_outcome_as_vaccinated() {
+  await p.getByRole("tab", { name: /^Vaccinated/ }).click();
   const row = p.locator(`tr`, { hasText: "Ernie Funk" });
+  await expect(row).toBeVisible();
   await expect(row.getByTestId("child-action")).toContainText("Vaccinate");
 }
 
