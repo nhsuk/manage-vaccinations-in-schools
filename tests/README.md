@@ -27,15 +27,6 @@ The diagrams below show what steps and transitions are used for each test.
 Test of the flow when a nurse attempts to get consent during triage, but doesn't
 get a response, followed by a successful attempt to get consent.
 
-### Feature: Consent - parental consent during triage
-
-[Source file - consent.spec.ts](consent.spec.ts)
-
-![Flow diagram - consent during triage](images/consent.png)
-
-Test of the flow when a nurse attempts to get consent during triage, but gets a
-negative response, followed by a successful attempt to get consent, also during triage.
-
 ### Feature: Consent - parental consent refused during triage
 
 [Source file - consent_refused.spec.ts](consent_refused.spec.ts)
