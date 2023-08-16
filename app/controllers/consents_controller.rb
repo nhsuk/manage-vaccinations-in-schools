@@ -2,7 +2,8 @@ class ConsentsController < ApplicationController
   before_action :set_session
   before_action :set_patient
   before_action :set_patient_session
-  before_action :set_draft_consent
+  before_action :set_draft_consent, only: %i[create new]
+  before_action :get_draft_consent, except: %i[assessing_gillick create new]
   before_action :set_draft_triage, only: %i[edit_questions edit_confirm update]
   before_action :keep_consent_return_path, except: %i[record]
 
@@ -191,6 +192,15 @@ class ConsentsController < ApplicationController
         recorded_at: nil,
         campaign: @session.campaign
       )
+  end
+
+  def get_draft_consent
+    @draft_consent =
+      @patient.consents.find_by(recorded_at: nil, campaign: @session.campaign)
+
+    unless @draft_consent
+      render "errors/unprocessable_entity", status: :unprocessable_entity
+    end
   end
 
   def set_draft_triage
