@@ -175,6 +175,39 @@ RSpec.describe PatientSessionStateMachineConcern do
     end
   end
 
+  context "in triaged_do_not_vaccinate state" do
+    let(:state) { :triaged_do_not_vaccinate }
+
+    describe "#do_triage" do
+      it "transitions to triaged_ready_to_vaccinate when triage is ready to vaccinate" do
+        allow(triage).to receive(:ready_to_vaccinate?).and_return(true)
+        allow(triage).to receive(:do_not_vaccinate?).and_return(false)
+        allow(triage).to receive(:needs_follow_up?).and_return(false)
+
+        fsm.do_triage
+        expect(fsm).to be_triaged_ready_to_vaccinate
+      end
+
+      it "transitions to triaged_do_not_vaccinate when triage is do_not_vaccinate" do
+        allow(triage).to receive(:ready_to_vaccinate?).and_return(false)
+        allow(triage).to receive(:do_not_vaccinate?).and_return(true)
+        allow(triage).to receive(:needs_follow_up?).and_return(false)
+
+        fsm.do_triage
+        expect(fsm).to be_triaged_do_not_vaccinate
+      end
+
+      it "transitions to triaged_kept_in_triage when triage is needs_follow_up" do
+        allow(triage).to receive(:ready_to_vaccinate?).and_return(false)
+        allow(triage).to receive(:do_not_vaccinate?).and_return(false)
+        allow(triage).to receive(:needs_follow_up?).and_return(true)
+
+        fsm.do_triage
+        expect(fsm).to be_triaged_kept_in_triage
+      end
+    end
+  end
+
   context "in triaged_kept_in_triage state" do
     let(:state) { :triaged_kept_in_triage }
 
@@ -210,6 +243,35 @@ RSpec.describe PatientSessionStateMachineConcern do
 
   context "in triaged_ready_to_vaccinate state" do
     let(:state) { :triaged_ready_to_vaccinate }
+
+    describe "#do_triage" do
+      it "transitions to triaged_ready_to_vaccinate when triage is ready to vaccinate" do
+        allow(triage).to receive(:ready_to_vaccinate?).and_return(true)
+        allow(triage).to receive(:do_not_vaccinate?).and_return(false)
+        allow(triage).to receive(:needs_follow_up?).and_return(false)
+
+        fsm.do_triage
+        expect(fsm).to be_triaged_ready_to_vaccinate
+      end
+
+      it "transitions to triaged_do_not_vaccinate when triage is do_not_vaccinate" do
+        allow(triage).to receive(:ready_to_vaccinate?).and_return(false)
+        allow(triage).to receive(:do_not_vaccinate?).and_return(true)
+        allow(triage).to receive(:needs_follow_up?).and_return(false)
+
+        fsm.do_triage
+        expect(fsm).to be_triaged_do_not_vaccinate
+      end
+
+      it "transitions to triaged_kept_in_triage when triage is needs_follow_up" do
+        allow(triage).to receive(:ready_to_vaccinate?).and_return(false)
+        allow(triage).to receive(:do_not_vaccinate?).and_return(false)
+        allow(triage).to receive(:needs_follow_up?).and_return(true)
+
+        fsm.do_triage
+        expect(fsm).to be_triaged_kept_in_triage
+      end
+    end
 
     describe "#do_vaccination" do
       it "transitions to vaccinated when vaccination_record is administered" do
@@ -378,6 +440,34 @@ RSpec.describe PatientSessionStateMachineConcern do
       )
       patient_session.do_consent
       expect(patient_session).to be_consent_given_triage_not_needed
+
+      # triage decides not to vaccinate
+      create(:triage, patient_session:, status: :do_not_vaccinate)
+      patient_session.do_triage
+      expect(patient_session).to be_triaged_do_not_vaccinate
+    end
+  end
+
+  describe "changing triage status" do
+    it "steps through the right actions and outcomes" do
+      session = create(:session, patients_in_session: 1)
+      patient = session.patients.first
+      patient_session = patient.patient_sessions.find_by(session:)
+
+      # consent given
+      create(
+        :consent_given,
+        patient:,
+        parent_relationship: :mother,
+        campaign: session.campaign
+      )
+      patient_session.do_consent
+      expect(patient_session).to be_consent_given_triage_not_needed
+
+      # triage decides to vaccinate
+      create(:triage, patient_session:, status: :ready_to_vaccinate)
+      patient_session.do_triage
+      expect(patient_session).to be_triaged_ready_to_vaccinate
 
       # triage decides not to vaccinate
       create(:triage, patient_session:, status: :do_not_vaccinate)

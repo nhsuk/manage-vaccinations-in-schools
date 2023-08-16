@@ -41,7 +41,9 @@ module PatientSessionStateMachineConcern
         transitions from: %i[
                       consent_given_triage_needed
                       consent_given_triage_not_needed
+                      triaged_do_not_vaccinate
                       triaged_kept_in_triage
+                      triaged_ready_to_vaccinate
                     ],
                     to: :triaged_ready_to_vaccinate,
                     if: :triage_ready_to_vaccinate?
@@ -49,7 +51,9 @@ module PatientSessionStateMachineConcern
         transitions from: %i[
                       consent_given_triage_needed
                       consent_given_triage_not_needed
+                      triaged_do_not_vaccinate
                       triaged_kept_in_triage
+                      triaged_ready_to_vaccinate
                     ],
                     to: :triaged_do_not_vaccinate,
                     if: :triage_do_not_vaccinate?
@@ -57,7 +61,9 @@ module PatientSessionStateMachineConcern
         transitions from: %i[
                       consent_given_triage_needed
                       consent_given_triage_not_needed
+                      triaged_do_not_vaccinate
                       triaged_kept_in_triage
+                      triaged_ready_to_vaccinate
                     ],
                     to: :triaged_kept_in_triage,
                     if: :triage_keep_in_triage?
