@@ -198,9 +198,7 @@ class ConsentsController < ApplicationController
     @draft_consent =
       @patient.consents.find_by(recorded_at: nil, campaign: @session.campaign)
 
-    unless @draft_consent
-      render "errors/unprocessable_entity", status: :unprocessable_entity
-    end
+    raise UnprocessableEntity unless @draft_consent
   end
 
   def set_draft_triage
