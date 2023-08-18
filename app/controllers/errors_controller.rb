@@ -2,6 +2,8 @@
 class ErrorsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
+  layout "two_thirds"
+
   def not_found
     render "not_found", status: :not_found
   end

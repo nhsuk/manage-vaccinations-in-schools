@@ -1,19 +1,15 @@
 <%= content_for :page_title, "Page not found" %>
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-two-thirds">
-    <h1 class="nhsuk-heading-l">Page not found</h1>
-    <p class="nhsuk-body">
-      If you entered a web address, check it is correct.
-    </p>
-    <p class="nhsuk-body">
-      If you pasted the web address, check you copied the entire address.
-    </p>
-    <p class="nhsuk-body">
-      If the web address is correct or you selected a link or button and you
-      need to speak to someone about this problem, contact the <%=
-      t('service.name') %> team: <a class="nhsuk-link" href="mailto:<%=
-      t('service.email') %>"><%= t('service.email') %></a>.
-    </p>
-  </div>
-</div>
+<h1 class="nhsuk-heading-l">Page not found</h1>
+<p class="nhsuk-body">
+  If you entered a web address, check it is correct.
+</p>
+<p class="nhsuk-body">
+  If you pasted the web address, check you copied the entire address.
+</p>
+<p class="nhsuk-body">
+  If the web address is correct or you selected a link or button and you
+  need to speak to someone about this problem, contact the <%= t('service.name') %>
+  team: <a class="nhsuk-link" href="mailto:<%= t('service.email') %>">
+  <%= t('service.email') %></a>.
+</p>
