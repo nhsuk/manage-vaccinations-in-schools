@@ -2,6 +2,8 @@ class ConsentsController < ApplicationController
   before_action :set_session
   before_action :set_patient
   before_action :set_patient_session
+  before_action :check_for_existing_gillick_assessment,
+                only: %i[assessing_gillick edit_gillick]
   before_action :set_draft_consent, only: %i[assessing_gillick create new]
   before_action :get_draft_consent, except: %i[assessing_gillick create new]
   before_action :set_draft_triage, only: %i[edit_questions edit_confirm update]
@@ -208,6 +210,10 @@ class ConsentsController < ApplicationController
   def set_draft_triage
     @draft_triage =
       Triage.find_or_initialize_by(patient_session: @patient_session)
+  end
+
+  def check_for_existing_gillick_assessment
+    raise UnprocessableEntity unless @patient_session.gillick_competent.nil?
   end
 
   def patient_session_gillick_params
