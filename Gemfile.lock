@@ -108,7 +108,7 @@ GEM
     audited (5.3.3)
       activerecord (>= 5.0, < 7.1)
       request_store (~> 1.2)
-    avo (2.38.0)
+    avo (2.39.0)
       actionview (>= 6.0)
       active_link_to
       activerecord (>= 6.0)
