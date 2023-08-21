@@ -162,7 +162,7 @@ GEM
     deep_merge (1.2.2)
     diff-lcs (1.5.0)
     docile (1.4.0)
-    dockerfile-rails (1.5.2)
+    dockerfile-rails (1.5.3)
       rails
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
