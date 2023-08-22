@@ -5,10 +5,11 @@ RSpec.describe AppConsentCardComponent, type: :component do
 
   subject { page }
 
-  let(:component) { described_class.new(consent:, patient:, session:) }
+  let(:component) { described_class.new(consent:, patient:, session:, route:) }
   let(:consent) { create(:consent, campaign: session.campaign, patient:) }
   let(:patient) { session.patients.first }
   let(:session) { create(:session) }
+  let(:route) { "triage" }
 
   context "when consent is present" do
     it { should have_css("h2", text: "Consent") }
