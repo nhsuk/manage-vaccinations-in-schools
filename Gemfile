@@ -11,6 +11,7 @@ gem "awesome_print"
 gem "bootsnap", require: false
 gem "config"
 gem "cssbundling-rails"
+gem "devise"
 gem "faker", github: "misaka/faker", branch: "add_alternative_name"
 gem "fhir_client"
 gem "govuk-components", github: "x-govuk/govuk-components"
