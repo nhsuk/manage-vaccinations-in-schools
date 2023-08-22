@@ -62,8 +62,6 @@ class VaccinationsController < ApplicationController
   end
 
   def show
-    flash[:consent_return_path] = "vaccination"
-
     respond_to do |format|
       format.html
       format.json { render json: @patient }

@@ -7,7 +7,6 @@ class ConsentsController < ApplicationController
   before_action :set_draft_consent, only: %i[assessing_gillick create new]
   before_action :get_draft_consent, except: %i[assessing_gillick create new]
   before_action :set_draft_triage, only: %i[edit_questions edit_confirm update]
-  before_action :keep_consent_return_path, except: %i[record]
 
   layout "two_thirds"
 
@@ -150,7 +149,7 @@ class ConsentsController < ApplicationController
     end
 
     if @patient_session.triaged_ready_to_vaccinate? &&
-         flash[:consent_return_path] == "vaccination"
+         params[:route] == "vaccinations"
       redirect_to new_session_patient_vaccinations_path(@session, @patient)
     elsif @draft_consent.via_self_consent?
       redirect_to session_patient_vaccinations_path(@session, @patient),
@@ -254,9 +253,5 @@ class ConsentsController < ApplicationController
 
   def consent_triage_params
     params.fetch(:consent, {}).permit(triage: %i[notes status])
-  end
-
-  def keep_consent_return_path
-    flash.keep(:consent_return_path)
   end
 end
