@@ -18,7 +18,11 @@
 <%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
 
 <% if @consent.present? %>
-  <%= render AppConsentCardComponent.new session: @session, patient: @patient, consent: @consent %>
+  <%= render AppConsentCardComponent.new(
+    session: @session,
+    patient: @patient,
+    consent: @consent,
+    route: 'triage') %>
 <% end %>
 
 <% if @consent&.response_given? %>
@@ -36,5 +40,9 @@
 <% end %>
 
 <% if @consent.nil? %>
-  <%= render AppConsentCardComponent.new session: @session, patient: @patient, consent: @consent %>
+  <%= render AppConsentCardComponent.new(
+    session: @session,
+    patient: @patient,
+    consent: @consent,
+    route: 'triage') %>
 <% end %>

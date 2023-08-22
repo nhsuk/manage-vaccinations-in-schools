@@ -185,11 +185,16 @@ class VaccinationsController < ApplicationController
                     }
                   }
     when "phone"
-      redirect_to new_session_patient_consents_path(@session, @patient)
+      redirect_to new_session_patient_consents_path(
+                    @session,
+                    @patient,
+                    route: "vaccinations"
+                  )
     when "self_consent"
       redirect_to assessing_gillick_session_patient_consents_path(
                     @session,
-                    @patient
+                    @patient,
+                    route: "vaccinations"
                   )
     end
   end
