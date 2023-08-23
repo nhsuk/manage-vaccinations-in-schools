@@ -19,6 +19,7 @@ class Session < ApplicationRecord
 
   belongs_to :campaign
   belongs_to :location, optional: true
+  has_many :consent_forms
   has_many :patient_sessions
   has_many :patients, through: :patient_sessions
 

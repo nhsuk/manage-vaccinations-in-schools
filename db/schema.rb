@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_21_175126) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_23_162539) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -56,6 +56,35 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_21_175126) do
     t.bigint "vaccine_id", null: false
     t.index ["campaign_id", "vaccine_id"], name: "index_campaigns_vaccines_on_campaign_id_and_vaccine_id"
     t.index ["vaccine_id", "campaign_id"], name: "index_campaigns_vaccines_on_vaccine_id_and_campaign_id"
+  end
+
+  create_table "consent_forms", force: :cascade do |t|
+    t.bigint "session_id", null: false
+    t.text "full_name"
+    t.text "common_name"
+    t.date "dob"
+    t.text "address_line_1"
+    t.text "address_line_2"
+    t.text "address_town"
+    t.text "address_postcode"
+    t.text "parent_name"
+    t.integer "parent_relationship"
+    t.text "parent_relationship_other"
+    t.text "parent_email"
+    t.text "parent_phone"
+    t.integer "parent_contact_method"
+    t.text "parent_contact_method_other"
+    t.integer "response"
+    t.integer "reason_for_refusal"
+    t.text "reason_for_refusal_other"
+    t.integer "gp_response"
+    t.text "gp_name"
+    t.integer "route", null: false
+    t.jsonb "health_questions"
+    t.datetime "recorded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["session_id"], name: "index_consent_forms_on_session_id"
   end
 
   create_table "consents", force: :cascade do |t|
@@ -205,6 +234,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_21_175126) do
   end
 
   add_foreign_key "batches", "vaccines"
+  add_foreign_key "consent_forms", "sessions"
   add_foreign_key "consents", "campaigns"
   add_foreign_key "consents", "patients"
   add_foreign_key "health_questions", "vaccines"
