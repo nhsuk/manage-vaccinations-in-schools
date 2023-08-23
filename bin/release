@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+
+if [[ `bin/rails db:version` == "Current version: 0" ]]; then
+  bin/rails db:schema:load
+else
+  bin/rails db:migrate
+fi
