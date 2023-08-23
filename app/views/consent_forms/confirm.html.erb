@@ -1,0 +1,12 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+    href: url_for(action: :start),
+    name: "start page",
+  ) %>
+<% end %>
+
+<h1 class="nhsuk-heading-l">Check and confirm answers</h1>
+
+<%= govuk_button_to "Confirm",
+                    url_for(action: :record),
+                    method: :put %>
