@@ -18,6 +18,12 @@ Rails.application.routes.draw do
     get "triage", to: "triage#index", on: :member
     get "vaccinations", to: "vaccinations#index", on: :member
 
+    resources :consent_forms, only: [:create] do
+      get "start", on: :collection
+      get "confirm"
+      put "record"
+    end
+
     resources :patients do
       resource :triage, only: %i[show create update]
       resource :vaccinations, only: %i[new create show update] do
