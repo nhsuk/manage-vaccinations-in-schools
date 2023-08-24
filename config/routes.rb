@@ -22,6 +22,8 @@ Rails.application.routes.draw do
       get "start", on: :collection
       get "confirm"
       put "record"
+
+      resource "name", only: %i[edit update], controller: "consent_forms/name"
     end
 
     resources :patients do
