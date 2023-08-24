@@ -30,4 +30,8 @@ class ConsentForm < ApplicationRecord
   validates :last_name, presence: true, on: :edit_name
   validates :use_common_name, inclusion: { in: [true, false] }, on: :edit_name
   validates :common_name, presence: true, on: :edit_name, if: :use_common_name?
+
+  def full_name
+    [first_name, last_name].join(" ")
+  end
 end

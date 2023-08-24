@@ -7,6 +7,26 @@
 
 <%= h1 "Check and confirm answers", class: "nhsuk-heading-l" %>
 
-<%= govuk_button_to "Confirm",
-                    url_for(action: :record),
-                    method: :put %>
+<h2 class="nhsuk-heading-m">About your child</h2>
+
+<div class="nhsuk-card">
+    <div class="nhsuk-card__content">
+      <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
+        summary_list.with_row do |row|
+          row.with_key { "Child's name" }
+          row.with_value { @consent_form.full_name }
+          row.with_action(text: "Change", href: edit_session_consent_form_name_path(@session, @consent_form))
+        end
+
+        if @consent_form.use_common_name
+          summary_list.with_row do |row|
+            row.with_key { "Also known as" }
+            row.with_value { @consent_form.common_name }
+            row.with_action(text: "Change", href: edit_session_consent_form_name_path(@session, @consent_form))
+          end
+        end
+      end %>
+    </div>
+</div>
+
+<%= govuk_button_to "Confirm", url_for(action: :record), method: :put %>
