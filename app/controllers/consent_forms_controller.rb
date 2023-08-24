@@ -9,7 +9,7 @@ class ConsentFormsController < ApplicationController
 
   def create
     consent_form = @session.consent_forms.create!
-    redirect_to url_for(action: :confirm, consent_form_id: consent_form)
+    redirect_to edit_session_consent_form_name_path(@session, consent_form)
   end
 
   def record
