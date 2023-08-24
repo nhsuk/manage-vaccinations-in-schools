@@ -10,6 +10,10 @@ test("Parental consent", async ({ page }) => {
   await then_i_see_the_consent_start_page();
 
   await when_i_click_the_start_button();
+  await then_i_see_the_edit_name_page();
+
+  await when_i_enter_the_childs_name();
+  await and_i_click_continue();
   await then_i_see_the_consent_confirm_page();
 
   await when_i_click_the_confirm_button();
@@ -33,6 +37,17 @@ async function when_i_click_the_confirm_button() {
   await p.getByRole("button", { name: "Confirm" }).click();
 }
 
+async function when_i_enter_the_childs_name() {
+  await p.getByLabel("First name").fill("Joe");
+  await p.getByLabel("Last name").fill("Test");
+  await p.getByText("Yes").click();
+  await p.getByLabel("Known as").fill("LittleJoeTests");
+}
+
+async function and_i_click_continue() {
+  await p.getByRole("button", { name: "Continue" }).click();
+}
+
 async function then_i_see_the_consent_start_page() {
   await expect(p.locator("h1")).toContainText(
     "Give or refuse consent for a flu vaccination",
@@ -47,4 +62,8 @@ async function then_i_see_the_start_page() {
   await expect(p.locator("h1")).toContainText(
     "Manage vaccinations for school-aged children",
   );
+}
+
+async function then_i_see_the_edit_name_page() {
+  await expect(p.locator("h1")).toContainText("What is your child’s name?");
 }
