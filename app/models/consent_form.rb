@@ -25,4 +25,9 @@ class ConsentForm < ApplicationRecord
   audited
 
   belongs_to :session
+
+  validates :first_name, presence: true, on: :edit_name
+  validates :last_name, presence: true, on: :edit_name
+  validates :use_common_name, inclusion: { in: [true, false] }, on: :edit_name
+  validates :common_name, presence: true, on: :edit_name, if: :use_common_name?
 end
