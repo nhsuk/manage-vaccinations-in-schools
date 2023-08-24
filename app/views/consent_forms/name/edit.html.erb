@@ -10,6 +10,8 @@
 <p>Give the official name that’s on their passport or birth certificate. If their name has changed, tell us their current name.</p>
 
 <%= form_for @consent_form, url: url_for(action: :update), method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
   <%= f.govuk_text_field :first_name, label: { text: 'First name' } %>
   <%= f.govuk_text_field :last_name, label: { text: 'Last name' } %>
   <%= f.govuk_radio_buttons_fieldset(:use_common_name,
