@@ -5,6 +5,8 @@
   ) %>
 <% end %>
 
+<% content_for :page_title, "Why do they not agree?" %>
+
 <%= form_for @draft_consent,
   url: session_patient_consents_path(@session, @patient),
   method: :put do |f| %>

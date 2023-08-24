@@ -5,6 +5,8 @@
   ) %>
 <% end %>
 
+<% content_for :page_title, "Which batch did you use?" %>
+
 <%= form_with model: @draft_vaccination_record,
    url: session_patient_vaccinations_batch_path(
        session_id: @session.id,

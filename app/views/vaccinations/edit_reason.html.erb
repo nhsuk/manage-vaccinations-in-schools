@@ -5,6 +5,8 @@
              ) %>
 <% end %>
 
+<% content_for :page_title, "Why was the HPV vaccine not given?" %>
+
 <%= form_with model: @draft_vaccination_record,
               url: session_patient_vaccinations_path(
                 session_id: @session.id,
@@ -12,7 +14,8 @@
               ),
               method: :put do |f| %>
     <%= f.govuk_radio_buttons_fieldset(:reason,
-      legend: { size: 'l', text: 'Why was the HPV vaccine not given?' }) do %>
+      legend: { size: 'l', tag: 'h1',
+                text: 'Why was the HPV vaccine not given?' }) do %>
 
       <%= f.govuk_radio_button :reason, "refused",
         label: { text: 'They refused it' } %>
