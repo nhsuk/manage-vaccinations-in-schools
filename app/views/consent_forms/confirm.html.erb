@@ -10,22 +10,28 @@
 <h2 class="nhsuk-heading-m">About your child</h2>
 
 <div class="nhsuk-card">
-    <div class="nhsuk-card__content">
-      <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
-        summary_list.with_row do |row|
-          row.with_key { "Child's name" }
-          row.with_value { @consent_form.full_name }
-          row.with_action(text: "Change", href: edit_session_consent_form_name_path(@session, @consent_form))
-        end
+  <div class="nhsuk-card__content">
+    <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
+      change_name_path = edit_session_consent_form_name_path(
+        @session,
+        @consent_form,
+        return_to: url_for(action: :confirm)
+      )
 
-        if @consent_form.use_common_name
-          summary_list.with_row do |row|
-            row.with_key { "Also known as" }
-            row.with_value { @consent_form.common_name }
-            row.with_action(text: "Change", href: edit_session_consent_form_name_path(@session, @consent_form))
-          end
+      summary_list.with_row do |row|
+        row.with_key { "Child's name" }
+        row.with_value { @consent_form.full_name }
+        row.with_action(text: "Change", href: change_name_path)
+      end
+
+      if @consent_form.use_common_name
+        summary_list.with_row do |row|
+          row.with_key { "Also known as" }
+          row.with_value { @consent_form.common_name }
+          row.with_action(text: "Change", href: change_name_path)
         end
-      end %>
+      end
+    end %>
     </div>
 </div>
 
