@@ -2,11 +2,15 @@
 #
 # Table name: consent_forms
 #
-#  id          :bigint           not null, primary key
-#  recorded_at :datetime
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
-#  session_id  :bigint           not null
+#  id              :bigint           not null, primary key
+#  common_name     :text
+#  first_name      :text
+#  last_name       :text
+#  recorded_at     :datetime
+#  use_common_name :boolean
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  session_id      :bigint           not null
 #
 # Indexes
 #
