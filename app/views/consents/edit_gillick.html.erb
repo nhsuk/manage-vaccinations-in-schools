@@ -5,6 +5,8 @@
   ) %>
 <% end %>
 
+<% content_for :page_title, "Are they Gillick competent?" %>
+
 <%= form_for @patient_session,
   url: update_gillick_session_patient_consents_path(@session, @patient),
   method: :put do |f| %>

@@ -5,7 +5,7 @@
   ) %>
 <% end %>
 
-<h1 class="nhsuk-heading-l">Who are you trying to get consent from?</h1>
+<%= h1 "Who are you trying to get consent from?", class: "nhsuk-heading-l" %>
 
 <%= form_for @draft_consent,
   url: session_patient_consents_path(@session, @patient),

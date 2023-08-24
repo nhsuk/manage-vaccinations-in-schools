@@ -5,12 +5,12 @@
   ]) %>
 <% end %>
 
-<h1 class="nhsuk-heading-l">
+<%= h1 page_title: @session.name, class: "nhsuk-heading-l" do %>
   <%= @session.name %>
   <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
     <%= @session.date.to_fs(:long_ordinal_uk) %>
   </span>
-</h1>
+<% end %>
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-two-thirds">

@@ -3,9 +3,8 @@
     <%= form_with(model: @password, url: setup_offline_session_path) do |f| %>
       <%= f.govuk_error_summary %>
 
-      <h1 class="nhsuk-heading-l">
-        Create a password to protect your offline changes
-      </h1>
+      <%= h1 "Create a password to protect your offline changes",
+        class: "nhsuk-heading-l" %>
 
       <p>
         Before you can work offline, you need to create a password. We'll use

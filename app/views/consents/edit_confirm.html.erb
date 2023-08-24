@@ -9,7 +9,7 @@
   ) %>
 <% end %>
 
-<h1 class="nhsuk-heading-l">Check and confirm answers</h1>
+<%= h1 "Check and confirm answers", class: "nhsuk-heading-l" %>
 
 <% if @draft_consent.via_self_consent? %>
   <%= render AppGillickCardComponent.new(
