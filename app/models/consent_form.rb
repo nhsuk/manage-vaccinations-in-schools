@@ -34,9 +34,9 @@ class ConsentForm < ApplicationRecord
   validates :date_of_birth,
             presence: true,
             comparison: {
-              less_than: Date.today,
-              greater_than_or_equal_to: 20.years.ago.to_date,
-              less_than_or_equal_to: 3.years.ago.to_date,
+              less_than: Time.zone.today,
+              greater_than_or_equal_to: 22.years.ago.to_date,
+              less_than_or_equal_to: 3.years.ago.to_date
             },
             on: :edit_date_of_birth
 

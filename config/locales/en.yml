@@ -82,9 +82,9 @@ en:
           attributes:
             date_of_birth:
               blank: Enter a date
-              greater_than_or_equal_to: Child cannot be over 20 years old
-              less_than: Date is in the future
-              less_than_or_equal_to: Child cannot be under 3 years old
+              greater_than_or_equal_to: The child cannot be older than 22. Enter a date after %{count}.
+              less_than: The date is in the future. Enter a date in the past.
+              less_than_or_equal_to: The child cannot be younger than 3. Enter a date after %{count}.
             common_name:
               blank: Enter a name
             first_name:
