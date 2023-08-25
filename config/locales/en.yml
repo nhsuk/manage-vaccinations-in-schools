@@ -80,14 +80,19 @@ en:
               blank: Enter a reason
         consent_form:
           attributes:
+            date_of_birth:
+              blank: Enter a date
+              greater_than_or_equal_to: Child cannot be over 20 years old
+              less_than: Date is in the future
+              less_than_or_equal_to: Child cannot be under 3 years old
+            common_name:
+              blank: Enter a name
             first_name:
               blank: Enter a first name
             last_name:
               blank: Enter a last name
             use_common_name:
               inclusion: Tell us whether they use a different name
-            common_name:
-              blank: Enter a name
         triage:
           attributes:
             status:

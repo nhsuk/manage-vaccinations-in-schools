@@ -28,7 +28,7 @@ class ConsentForms::DateOfBirthController < ApplicationController
 
   def update_params
     params.fetch(:consent_form, {}).permit(
-      %i[day month year]
+      %i[date_of_birth(3i) date_of_birth(2i) date_of_birth(1i)]
     )
   end
 end

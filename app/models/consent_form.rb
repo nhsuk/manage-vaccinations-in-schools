@@ -31,6 +31,14 @@ class ConsentForm < ApplicationRecord
   validates :last_name, presence: true, on: :edit_name
   validates :use_common_name, inclusion: { in: [true, false] }, on: :edit_name
   validates :common_name, presence: true, on: :edit_name, if: :use_common_name?
+  validates :date_of_birth,
+            presence: true,
+            comparison: {
+              less_than: Date.today,
+              greater_than_or_equal_to: 20.years.ago.to_date,
+              less_than_or_equal_to: 3.years.ago.to_date,
+            },
+            on: :edit_date_of_birth
 
   def full_name
     [first_name, last_name].join(" ")
