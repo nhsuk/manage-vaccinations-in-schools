@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   before_action :set_disable_cache_headers
+  before_action :set_header_path
   before_action :set_service_name
 
   class UnprocessableEntity < StandardError
@@ -19,6 +20,10 @@ class ApplicationController < ActionController::Base
   default_form_builder(GOVUKDesignSystemFormBuilder::FormBuilder)
 
   private
+
+  def set_header_path
+    @header_path = dashboard_path
+  end
 
   def set_service_name
     @service_name = "Manage vaccinations for school-aged children"
