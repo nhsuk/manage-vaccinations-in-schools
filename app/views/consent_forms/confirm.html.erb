@@ -1,6 +1,6 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: url_for(action: :start),
+    href: edit_session_consent_form_date_of_birth_path(@session, @consent_form),
     name: "start page",
   ) %>
 <% end %>
@@ -30,6 +30,18 @@
           row.with_value { @consent_form.common_name }
           row.with_action(text: "Change", href: change_name_path)
         end
+      end
+
+      summary_list.with_row do |row|
+        row.with_key { "Date of birth" }
+        row.with_value { @consent_form.date_of_birth.to_fs(:nhsuk_date) }
+        row.with_action(
+          text: "Change",
+          href: edit_session_consent_form_date_of_birth_path(
+            @session,
+            @consent_form,
+            return_to: url_for(action: :confirm)
+        ))
       end
     end %>
     </div>
