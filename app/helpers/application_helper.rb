@@ -15,7 +15,7 @@ module ApplicationHelper
     end
   end
 
-  def page_title
+  def page_title(service_name)
     title = content_for(:page_title)
 
     if title.blank?
@@ -25,6 +25,6 @@ or set it with content_for(:page_title)."
 
     title = "Error: #{title}" if response.status == 422
 
-    [title, t("service.name")].join(" - ")
+    [title, service_name].join(" - ")
   end
 end

@@ -1,4 +1,4 @@
-class ConsentForms::NameController < ApplicationController
+class ConsentForms::NameController < ConsentForms::BaseController
   before_action :set_session, only: %i[edit update]
   before_action :set_consent_form, only: %i[edit update]
 
