@@ -4,6 +4,7 @@
 #
 #  id              :bigint           not null, primary key
 #  common_name     :text
+#  date_of_birth   :date
 #  first_name      :text
 #  last_name       :text
 #  recorded_at     :datetime
