@@ -14,6 +14,10 @@ test("Parental consent", async ({ page }) => {
 
   await when_i_enter_the_childs_name();
   await and_i_click_continue();
+  await then_i_see_the_date_of_birth_page();
+
+  await when_i_enter_the_childs_date_of_birth();
+  await and_i_click_continue();
   await then_i_see_the_consent_confirm_page();
 
   await when_i_click_the_confirm_button();
@@ -44,6 +48,12 @@ async function when_i_enter_the_childs_name() {
   await p.getByLabel("Known as").fill("LittleJoeTests");
 }
 
+async function when_i_enter_the_childs_date_of_birth() {
+  await p.getByLabel("Day").fill("01");
+  await p.getByLabel("Month").fill("01");
+  await p.getByLabel("Year").fill("2010");
+}
+
 async function and_i_click_continue() {
   await p.getByRole("button", { name: "Continue" }).click();
 }
@@ -66,4 +76,10 @@ async function then_i_see_the_start_page() {
 
 async function then_i_see_the_edit_name_page() {
   await expect(p.locator("h1")).toContainText("What is your child’s name?");
+}
+
+async function then_i_see_the_date_of_birth_page() {
+  await expect(p.locator("h1")).toContainText(
+    "What is your child’s date of birth?",
+  );
 }
