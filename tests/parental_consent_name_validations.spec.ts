@@ -37,7 +37,9 @@ async function then_i_see_the_name_validations_errors() {
   await expect(alert).toBeVisible();
   await expect(alert).toContainText("Enter a first name");
   await expect(alert).toContainText("Enter a last name");
-  await expect(alert).toContainText("Select whether they use a different name");
+  await expect(alert).toContainText(
+    "Tell us whether they use a different name",
+  );
 }
 
 async function then_i_see_the_common_name_validation_errors() {
