@@ -24,6 +24,9 @@ Rails.application.routes.draw do
       put "record"
 
       resource "name", only: %i[edit update], controller: "consent_forms/name"
+      resource "date_of_birth",
+               only: %i[edit update],
+               controller: "consent_forms/date_of_birth"
     end
 
     resources :patients do
