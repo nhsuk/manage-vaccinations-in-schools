@@ -1,7 +1,7 @@
 class ConsentForms::NameController < ConsentForms::BaseController
-  before_action :set_session, only: %i[edit update]
-  before_action :set_consent_form, only: %i[edit update]
-  before_action :set_return_to, only: %i[edit update]
+  before_action :set_session
+  before_action :set_consent_form
+  before_action :set_return_to
 
   layout "two_thirds"
 
