@@ -11,6 +11,7 @@
 
 <%= form_for @consent_form, url: url_for(action: :update), method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
+  <%= hidden_field_tag("return_to", @return_to) if @return_to.present? %>
 
   <%= f.govuk_text_field :first_name, label: { text: 'First name' } %>
   <%= f.govuk_text_field :last_name, label: { text: 'Last name' } %>
