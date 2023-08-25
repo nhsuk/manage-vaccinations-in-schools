@@ -9,16 +9,17 @@
 
 <%= form_for @consent_form, url: url_for(action: :update), method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
+  <%= hidden_field_tag("return_to", @return_to) if @return_to.present? %>
 
-  <%=  f.govuk_date_field :date_of_birth,
-                          date_of_birth: true,
-                          legend: {
-                              tag: "h1",
-                              text: "What is your child’s date of birth?",
-                              size: "l"
-                          },
-                          hint: { text: 'For example, 27 3 2017' },
-                          link_errors: true %>
+  <%= f.govuk_date_field :date_of_birth,
+                         date_of_birth: true,
+                         legend: {
+                             tag: "h1",
+                             text: "What is your child’s date of birth?",
+                             size: "l"
+                         },
+                         hint: { text: 'For example, 27 3 2017' },
+                         link_errors: true %>
 
   <div class="nhsuk-u-margin-top-6">
     <%= f.govuk_submit "Continue" %>
