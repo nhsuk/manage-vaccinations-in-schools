@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   before_action :set_disable_cache_headers
+  before_action :set_service_name
 
   class UnprocessableEntity < StandardError
   end
@@ -18,6 +19,10 @@ class ApplicationController < ActionController::Base
   default_form_builder(GOVUKDesignSystemFormBuilder::FormBuilder)
 
   private
+
+  def set_service_name
+    @service_name = "Manage vaccinations for school-aged children"
+  end
 
   def set_disable_cache_headers
     response.headers["Cache-Control"] = "no-store"

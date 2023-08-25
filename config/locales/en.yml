@@ -1,6 +1,5 @@
 en:
   service:
-    name: Manage vaccinations for school-aged children
     email: my-service@email
   activerecord:
     attributes:

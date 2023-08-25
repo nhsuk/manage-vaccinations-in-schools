@@ -1,4 +1,4 @@
-class ConsentFormsController < ApplicationController
+class ConsentFormsController < ConsentForms::BaseController
   layout "two_thirds"
 
   before_action :set_session
