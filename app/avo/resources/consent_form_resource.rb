@@ -10,4 +10,10 @@ class ConsentFormResource < Avo::BaseResource
   field :session_id, as: :number
   # add fields here
   field :session, as: :belongs_to
+  field :first_name, as: :text
+  field :last_name, as: :text
+  field :use_common_name, as: :boolean
+  field :common_name, as: :text
+  field :date_of_birth, as: :date
+  field :recorded_at, as: :datetime
 end
