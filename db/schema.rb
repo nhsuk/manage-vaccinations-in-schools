@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_24_123840) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_25_085229) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -67,6 +67,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_24_123840) do
     t.text "last_name"
     t.boolean "use_common_name"
     t.text "common_name"
+    t.date "date_of_birth"
     t.index ["session_id"], name: "index_consent_forms_on_session_id"
   end
 
