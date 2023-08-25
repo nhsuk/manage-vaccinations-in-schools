@@ -2,6 +2,8 @@
   <%= render AppFlashSuccessComponent.new(flash[:success]) %>
 <% end %>
 
+<%= h1 "Manage vaccinations for school-aged children" %>
+
 <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-1">
   <%= link_to "School sessions", sessions_path, data: { testid: 'sessions' } %>
 </h2>
