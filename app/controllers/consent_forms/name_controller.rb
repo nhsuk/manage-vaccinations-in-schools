@@ -7,7 +7,10 @@ class ConsentForms::NameController < ConsentForms::BaseController
   def update
     @consent_form.assign_attributes(update_params)
     if @consent_form.save(context: :edit_name)
-      redirect_to session_consent_form_confirm_path(@session)
+      redirect_to edit_session_consent_form_date_of_birth_path(
+                    @session,
+                    @consent_form
+                  )
     else
       render action: :edit
     end
