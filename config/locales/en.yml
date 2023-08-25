@@ -86,7 +86,7 @@ en:
             last_name:
               blank: Enter a last name
             use_common_name:
-              inclusion: Select whether they use a different name
+              inclusion: Tell us whether they use a different name
             common_name:
               blank: Enter a name
         triage:
