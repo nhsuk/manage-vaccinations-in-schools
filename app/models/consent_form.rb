@@ -23,6 +23,8 @@
 #
 
 class ConsentForm < ApplicationRecord
+  attr_accessor :is_this_their_school
+
   audited
 
   belongs_to :session
@@ -39,6 +41,12 @@ class ConsentForm < ApplicationRecord
               less_than_or_equal_to: 3.years.ago.to_date
             },
             on: :edit_date_of_birth
+  validates :is_this_their_school,
+            presence: true,
+            inclusion: {
+              in: %w[yes no]
+            },
+            on: :edit_school
 
   def full_name
     [first_name, last_name].join(" ")

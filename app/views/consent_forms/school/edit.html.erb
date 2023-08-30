@@ -1,0 +1,37 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+    href: params.fetch(:return_to,
+      edit_session_consent_form_date_of_birth_path(@session, @consent_form)),
+    name: "edit date of birth page"
+  ) %>
+<% end %>
+
+<%= h1 "Confirm your child’s school", class: 'nhsuk-heading-l' %>
+
+<%= govuk_inset_text(classes: 'nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-4') do %>
+  <span class="nhsuk-u-visually-hidden">Information:</span>
+  <p>
+    <span class="nhsuk-heading-m nhsuk-u-margin-bottom-0">
+      <%= @session.location.name %>
+    </span>
+    <%= @session.location.postcode %>
+  </p>
+<% end %>
+
+<%= form_for @consent_form, url: url_for(action: :update), method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+  <%= hidden_field_tag("return_to", @return_to) if @return_to.present? %>
+
+  <%= f.govuk_radio_buttons_fieldset(:is_this_their_school,
+    legend: { size: 's', text: 'Is this their school?' }) do %>
+    <%= f.govuk_radio_button :is_this_their_school, "yes",
+      link_errors: true,
+      label: { text: 'Yes, they go to this school' } %>
+    <%= f.govuk_radio_button :is_this_their_school, "no",
+      label: { text: 'No, I need to pick a different school' } %>
+  <% end %>
+
+  <div class="nhsuk-u-margin-top-6">
+    <%= f.govuk_submit "Continue" %>
+  </div>
+<% end %>

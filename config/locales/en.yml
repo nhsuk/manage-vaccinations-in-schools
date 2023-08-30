@@ -93,6 +93,9 @@ en:
               blank: Enter a last name
             use_common_name:
               inclusion: Tell us whether they use a different name
+            is_this_their_school:
+              inclusion: Tell us if this is their school
+              blank: Tell us if this is their school
         triage:
           attributes:
             status:

@@ -18,6 +18,10 @@ test("Parental consent", async ({ page }) => {
 
   await when_i_enter_the_childs_date_of_birth();
   await and_i_click_continue();
+  await then_i_see_the_confirm_your_childs_school_page();
+
+  await when_i_select_yes_this_is_their_school();
+  await and_i_click_continue();
   await then_i_see_the_consent_confirm_page();
 
   await when_i_click_the_confirm_button();
@@ -82,4 +86,12 @@ async function then_i_see_the_date_of_birth_page() {
   await expect(p.locator("h1")).toContainText(
     "What is your child’s date of birth?",
   );
+}
+
+async function then_i_see_the_confirm_your_childs_school_page() {
+  await expect(p.locator("h1")).toContainText("Confirm your child’s school");
+}
+
+async function when_i_select_yes_this_is_their_school() {
+  await p.getByText("Yes, they go to this school").click();
 }
