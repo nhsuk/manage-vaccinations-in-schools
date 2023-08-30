@@ -1,7 +1,7 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: edit_session_consent_form_date_of_birth_path(@session, @consent_form),
-    name: "start page",
+    href: edit_session_consent_form_school_path(@session, @consent_form),
+    name: "edit school page",
   ) %>
 <% end %>
 
@@ -21,14 +21,16 @@
       summary_list.with_row do |row|
         row.with_key { "Child's name" }
         row.with_value { @consent_form.full_name }
-        row.with_action(text: "Change", href: change_name_path)
+        row.with_action(text: "Change", href: change_name_path,
+                        visually_hidden_text: "child's name")
       end
 
       if @consent_form.use_common_name
         summary_list.with_row do |row|
           row.with_key { "Also known as" }
           row.with_value { @consent_form.common_name }
-          row.with_action(text: "Change", href: change_name_path)
+          row.with_action(text: "Change", href: change_name_path,
+                          visually_hidden_text: "common name")
         end
       end
 
@@ -40,8 +42,23 @@
           href: edit_session_consent_form_date_of_birth_path(
             @session,
             @consent_form,
-            return_to: url_for(action: :confirm)
+            return_to: url_for(action: :confirm),
+          visually_hidden_text: "date of birth"
         ))
+      end
+
+      summary_list.with_row do |row|
+        row.with_key { "School" }
+        row.with_value { @consent_form.session.location.name }
+        row.with_action(
+          text: "Change",
+          href: edit_session_consent_form_school_path(
+            @session,
+            @consent_form,
+            return_to: url_for(action: :confirm)
+          ),
+          visually_hidden_text: "school"
+        )
       end
     end %>
     </div>

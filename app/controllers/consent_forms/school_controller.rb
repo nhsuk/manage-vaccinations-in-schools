@@ -1,4 +1,4 @@
-class ConsentForms::DateOfBirthController < ConsentForms::BaseController
+class ConsentForms::SchoolController < ConsentForms::BaseController
   before_action :set_session
   before_action :set_consent_form
   before_action :set_return_to
@@ -7,11 +7,13 @@ class ConsentForms::DateOfBirthController < ConsentForms::BaseController
 
   def update
     @consent_form.assign_attributes(update_params)
-    if @consent_form.save(context: :edit_date_of_birth)
-      if @return_to.present?
+    if @consent_form.valid?(:edit_school)
+      if update_params[:is_this_their_school] == "no"
+        redirect_to url_for(action: :cannot_consent)
+      elsif @return_to.present?
         redirect_to @return_to
       else
-        redirect_to edit_session_consent_form_school_path(@session)
+        redirect_to session_consent_form_confirm_path(@session)
       end
     else
       render action: :edit
@@ -19,6 +21,9 @@ class ConsentForms::DateOfBirthController < ConsentForms::BaseController
   end
 
   def edit
+  end
+
+  def cannot_consent
   end
 
   private
@@ -36,8 +41,6 @@ class ConsentForms::DateOfBirthController < ConsentForms::BaseController
   end
 
   def update_params
-    params.fetch(:consent_form, {}).permit(
-      %i[date_of_birth(3i) date_of_birth(2i) date_of_birth(1i)]
-    )
+    params.fetch(:consent_form, {}).permit(:is_this_their_school)
   end
 end
