@@ -27,6 +27,8 @@ task :load_campaign_example, [:example_file] => :environment do |_task, args|
         name: example.session_attributes[:name]
       )
     session.update!(example.session_attributes)
+    session.location = school if session.location.blank?
+    session.save!
 
     vaccine = campaign.vaccines.first
     vaccine.health_questions =
