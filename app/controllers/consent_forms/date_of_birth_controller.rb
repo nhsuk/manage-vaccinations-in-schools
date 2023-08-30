@@ -1,4 +1,4 @@
-class ConsentForms::DateOfBirthController < ApplicationController
+class ConsentForms::DateOfBirthController < ConsentForms::BaseController
   before_action :set_session
   before_action :set_consent_form
   before_action :set_return_to
