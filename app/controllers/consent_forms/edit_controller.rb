@@ -8,6 +8,7 @@ class ConsentForms::EditController < ConsentForms::BaseController
 
   before_action :set_session
   before_action :set_consent_form
+  before_action :validate_params, only: %i[update]
 
   def show
     render_wizard
@@ -67,5 +68,22 @@ class ConsentForms::EditController < ConsentForms::BaseController
 
   def set_consent_form
     @consent_form = ConsentForm.find(params.fetch(:consent_form_id))
+  end
+
+  def validate_params
+    case current_step
+    when :date_of_birth
+      validator =
+        DateParamsValidator.new(
+          field_name: :date_of_birth,
+          object: @consent_form,
+          params: date_of_birth_params
+        )
+
+      unless validator.date_params_valid?
+        @consent_form.date_of_birth = validator.date_params_as_struct
+        render_wizard nil, status: :unprocessable_entity
+      end
+    end
   end
 end
