@@ -20,6 +20,7 @@ Rails.application.routes.draw do
 
     resources :consent_forms, path: :consents, only: [:create] do
       get "start", on: :collection
+      get "cannot-consent"
       get "confirm"
       put "record"
 
