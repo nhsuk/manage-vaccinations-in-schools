@@ -1,6 +1,6 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: edit_session_consent_form_school_path(@session, @consent_form),
+    href: session_consent_form_edit_path(@session, @consent_form, :school),
     name: "edit school page",
   ) %>
 <% end %>
@@ -12,25 +12,21 @@
 <div class="nhsuk-card">
   <div class="nhsuk-card__content">
     <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
-      change_name_path = edit_session_consent_form_name_path(
-        @session,
-        @consent_form,
-        return_to: url_for(action: :confirm)
-      )
-
       summary_list.with_row do |row|
         row.with_key { "Child's name" }
         row.with_value { @consent_form.full_name }
-        row.with_action(text: "Change", href: change_name_path,
-                        visually_hidden_text: "child's name")
+        row.with_action(text: "Change",
+          href: session_consent_form_edit_path(@session, @consent_form, :name),
+          visually_hidden_text: "child's name")
       end
 
       if @consent_form.use_common_name
         summary_list.with_row do |row|
           row.with_key { "Also known as" }
           row.with_value { @consent_form.common_name }
-          row.with_action(text: "Change", href: change_name_path,
-                          visually_hidden_text: "common name")
+          row.with_action(text: "Change",
+            href: session_consent_form_edit_path(@session, @consent_form, :name),
+            visually_hidden_text: "common name")
         end
       end
 
@@ -39,12 +35,9 @@
         row.with_value { @consent_form.date_of_birth.to_fs(:nhsuk_date) }
         row.with_action(
           text: "Change",
-          href: edit_session_consent_form_date_of_birth_path(
-            @session,
-            @consent_form,
-            return_to: url_for(action: :confirm),
+          href: session_consent_form_edit_path(@session, @consent_form, "date-of-birth"),
           visually_hidden_text: "date of birth"
-        ))
+        )
       end
 
       summary_list.with_row do |row|
@@ -52,16 +45,12 @@
         row.with_value { @consent_form.session.location.name }
         row.with_action(
           text: "Change",
-          href: edit_session_consent_form_school_path(
-            @session,
-            @consent_form,
-            return_to: url_for(action: :confirm)
-          ),
+          href: session_consent_form_edit_path(@session, @consent_form, :school),
           visually_hidden_text: "school"
         )
       end
     end %>
-    </div>
+  </div>
 </div>
 
 <%= govuk_button_to "Confirm", url_for(action: :record), method: :put %>
