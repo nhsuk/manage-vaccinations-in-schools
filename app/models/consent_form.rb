@@ -29,10 +29,11 @@ class ConsentForm < ApplicationRecord
 
   belongs_to :session
 
-  validates :first_name, presence: true, on: :edit_name
-  validates :last_name, presence: true, on: :edit_name
-  validates :use_common_name, inclusion: { in: [true, false] }, on: :edit_name
-  validates :common_name, presence: true, on: :edit_name, if: :use_common_name?
+  validates :first_name, presence: true, on: :name
+  validates :last_name, presence: true, on: :name
+  validates :use_common_name, inclusion: { in: [true, false] }, on: :name
+  validates :common_name, presence: true, on: :name, if: :use_common_name?
+
   validates :date_of_birth,
             presence: true,
             comparison: {
@@ -40,13 +41,14 @@ class ConsentForm < ApplicationRecord
               greater_than_or_equal_to: 22.years.ago.to_date,
               less_than_or_equal_to: 3.years.ago.to_date
             },
-            on: :edit_date_of_birth
+            on: :date_of_birth
+
   validates :is_this_their_school,
             presence: true,
             inclusion: {
               in: %w[yes no]
             },
-            on: :edit_school
+            on: :school
 
   def full_name
     [first_name, last_name].join(" ")
