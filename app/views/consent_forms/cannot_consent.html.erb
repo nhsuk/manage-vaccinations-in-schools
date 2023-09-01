@@ -1,7 +1,6 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: params.fetch(:return_to,
-      edit_session_consent_form_school_path(@session, @consent_form)),
+    href: session_consent_form_edit_path(@session, @consent_form, :school),
     name: "edit school page"
   ) %>
 <% end %>
@@ -16,6 +15,5 @@ parents whose children attend participating schools.</p>
   To give or refuse consent for your child’s vaccination, please use the paper
   form sent by your child’s school. If you have any questions, please contact
   <a class="nhsuk-link" href="mailto:<%= t('service.email') %>">
-    <%= t('service.email') %>
-  </a>.
+    <%= t('service.email') %></a>.
 </p>

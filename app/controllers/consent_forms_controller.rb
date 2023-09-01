@@ -2,22 +2,25 @@ class ConsentFormsController < ConsentForms::BaseController
   layout "two_thirds"
 
   before_action :set_session
-  before_action :set_consent_form, only: %i[confirm record]
+  before_action :set_consent_form, except: %i[start create]
 
-  def confirm
+  def start
   end
 
   def create
     consent_form = @session.consent_forms.create!
-    redirect_to edit_session_consent_form_name_path(@session, consent_form)
+    redirect_to session_consent_form_edit_path(@session, consent_form, :name)
+  end
+
+  def cannot_consent
+  end
+
+  def confirm
   end
 
   def record
     @consent_form.update!(recorded_at: Time.zone.now)
     redirect_to "/"
-  end
-
-  def start
   end
 
   private
