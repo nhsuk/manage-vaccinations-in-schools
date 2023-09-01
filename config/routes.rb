@@ -24,16 +24,7 @@ Rails.application.routes.draw do
       get "confirm"
       put "record"
 
-      resource "name", only: %i[edit update], controller: "consent_forms/name"
-      resource "date_of_birth",
-               only: %i[edit update],
-               path: "date-of-birth",
-               controller: "consent_forms/date_of_birth"
-      resource "school",
-               only: %i[edit update],
-               controller: "consent_forms/school" do
-        get "cannot-consent", on: :collection
-      end
+      resources :edit, only: %i[show update], controller: "consent_forms/edit"
     end
 
     resources :patients do

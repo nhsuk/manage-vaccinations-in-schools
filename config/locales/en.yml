@@ -1,6 +1,10 @@
 en:
   service:
     email: my-service@email
+  wicked:
+    name: "name"
+    date_of_birth: "date-of-birth"
+    school: "school"
   activerecord:
     attributes:
       consent:
