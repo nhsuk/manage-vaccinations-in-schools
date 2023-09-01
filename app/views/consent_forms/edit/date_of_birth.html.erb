@@ -1,0 +1,26 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+      href: previous_wizard_path,
+      name: "previous page"
+  ) %>
+<% end %>
+
+<% content_for(:page_title, "What is your child’s date of birth?") %>
+
+<%= form_for @consent_form, url: wizard_path, method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
+  <%= f.govuk_date_field :date_of_birth,
+                         date_of_birth: true,
+                         legend: {
+                             tag: "h1",
+                             text: "What is your child’s date of birth?",
+                             size: "l"
+                         },
+                         hint: { text: 'For example, 27 3 2017' },
+                         link_errors: true %>
+
+  <div class="nhsuk-u-margin-top-6">
+    <%= f.govuk_submit "Continue" %>
+  </div>
+<% end %>
