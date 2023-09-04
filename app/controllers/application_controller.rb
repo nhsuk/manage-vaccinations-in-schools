@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::Base
+  include Pundit::Authorization
+
   before_action :store_user_location!
   before_action :authenticate_user!
   before_action :set_disable_cache_headers
