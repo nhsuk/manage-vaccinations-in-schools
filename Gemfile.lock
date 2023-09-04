@@ -8,7 +8,7 @@ GIT
 
 GIT
   remote: https://github.com/x-govuk/govuk-components.git
-  revision: cc04d7643e9d4ff1690ddc86d83a7d298565ae86
+  revision: b77b12444a57379aa8157ac5cfbe3a10e942d582
   specs:
     govuk-components (4.1.0)
       html-attributes-utils (~> 1.0.0, >= 1.0.0)
