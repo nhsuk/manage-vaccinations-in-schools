@@ -27,7 +27,7 @@ jobs:
       RAILS_ENV: test
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: .tool-versions
@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Get Node.js version
         id: asdf
         run: echo "::set-output name=VERSION::$(grep nodejs .tool-versions | awk '{print $2}')"
@@ -84,7 +84,7 @@ jobs:
       RAILS_ENV: test
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: .tool-versions
