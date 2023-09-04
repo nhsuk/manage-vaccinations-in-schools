@@ -22,6 +22,7 @@ gem "okcomputer"
 gem "pg", "~> 1.5"
 gem "propshaft"
 gem "puma", "~> 6.3"
+gem "pundit"
 gem "sentry-rails"
 gem "sentry-ruby"
 gem "silencer", require: false
