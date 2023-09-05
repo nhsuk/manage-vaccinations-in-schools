@@ -33,29 +33,31 @@ class ConsentForm < ApplicationRecord
 
   belongs_to :session
 
-  with_options if: -> { required_for_step?(:name) } do
-    validates :first_name, presence: true
-    validates :last_name, presence: true
-    validates :use_common_name, inclusion: { in: [true, false] }
-    validates :common_name, presence: true, if: :use_common_name?
-  end
+  with_options on: :update do
+    with_options if: -> { required_for_step?(:name) } do
+      validates :first_name, presence: true
+      validates :last_name, presence: true
+      validates :use_common_name, inclusion: { in: [true, false] }
+      validates :common_name, presence: true, if: :use_common_name?
+    end
 
-  with_options if: -> { required_for_step?(:date_of_birth) } do
-    validates :date_of_birth,
-              presence: true,
-              comparison: {
-                less_than: Time.zone.today,
-                greater_than_or_equal_to: 22.years.ago.to_date,
-                less_than_or_equal_to: 3.years.ago.to_date
-              }
-  end
+    with_options if: -> { required_for_step?(:date_of_birth) } do
+      validates :date_of_birth,
+                presence: true,
+                comparison: {
+                  less_than: Time.zone.today,
+                  greater_than_or_equal_to: 22.years.ago.to_date,
+                  less_than_or_equal_to: 3.years.ago.to_date
+                }
+    end
 
-  with_options if: -> { required_for_step?(:school, exact: true) } do
-    validates :is_this_their_school,
-              presence: true,
-              inclusion: {
-                in: %w[yes no]
-              }
+    with_options if: -> { required_for_step?(:school, exact: true) } do
+      validates :is_this_their_school,
+                presence: true,
+                inclusion: {
+                  in: %w[yes no]
+                }
+    end
   end
 
   def full_name
