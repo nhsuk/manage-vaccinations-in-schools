@@ -1,6 +1,6 @@
 class ConsentForms::EditController < ConsentForms::BaseController
   include Wicked::Wizard
-  include Wicked::Wizard::Translated # Defined custom URLs, see en.yml wicked
+  include Wicked::Wizard::Translated # For custom URLs, see en.yml wicked
 
   layout "two_thirds"
 
@@ -46,7 +46,16 @@ class ConsentForms::EditController < ConsentForms::BaseController
     permitted_attributes = {
       name: %i[first_name last_name use_common_name common_name],
       date_of_birth: %i[date_of_birth(3i) date_of_birth(2i) date_of_birth(1i)],
-      school: %i[is_this_their_school]
+      school: %i[is_this_their_school],
+      parent: %i[
+        parent_name
+        parent_relationship
+        parent_relationship_other
+        parent_email
+        parent_phone
+        contact_method
+        contact_method_other
+      ]
     }.fetch(current_step)
 
     params

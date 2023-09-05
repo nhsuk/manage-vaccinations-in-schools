@@ -31,7 +31,7 @@
 
 class ConsentForm < ApplicationRecord
   cattr_accessor :form_steps do
-    %i[name date_of_birth school]
+    %i[name date_of_birth school parent]
   end
 
   attr_accessor :form_step, :is_this_their_school
@@ -67,6 +67,18 @@ class ConsentForm < ApplicationRecord
                 inclusion: {
                   in: %w[yes no]
                 }
+    end
+
+    with_options if: -> { required_for_step?(:parent) } do
+      validates :parent_name, presence: true
+      validates :parent_relationship, presence: true
+      validates :parent_relationship_other,
+                presence: true,
+                if: :parent_relationship_other?
+      validates :parent_email, presence: true
+      validates :contact_method_other,
+                presence: true,
+                if: :contact_method_other?
     end
   end
 
