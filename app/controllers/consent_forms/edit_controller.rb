@@ -4,7 +4,7 @@ class ConsentForms::EditController < ConsentForms::BaseController
 
   layout "two_thirds"
 
-  steps :name, :date_of_birth, :school
+  steps(*ConsentForm.form_steps)
 
   before_action :set_session
   before_action :set_consent_form
@@ -15,14 +15,10 @@ class ConsentForms::EditController < ConsentForms::BaseController
   end
 
   def update
-    case current_step
-    when :name
-      @consent_form.assign_attributes(name_params)
-    when :date_of_birth
-      @consent_form.assign_attributes(date_of_birth_params)
-    when :school
-      @consent_form.assign_attributes(school_params)
+    @consent_form.assign_attributes(update_params)
 
+    case current_step
+    when :school
       if @consent_form.is_this_their_school == "no"
         return(
           redirect_to session_consent_form_cannot_consent_path(
@@ -33,7 +29,7 @@ class ConsentForms::EditController < ConsentForms::BaseController
       end
     end
 
-    render_wizard @consent_form, context: current_step
+    render_wizard @consent_form
   end
 
   private
@@ -46,20 +42,17 @@ class ConsentForms::EditController < ConsentForms::BaseController
     session_consent_form_confirm_path(@session, @consent_form)
   end
 
-  def name_params
-    params.fetch(:consent_form, {}).permit(
-      %i[first_name last_name use_common_name common_name]
-    )
-  end
+  def update_params
+    permitted_attributes = {
+      name: %i[first_name last_name use_common_name common_name],
+      date_of_birth: %i[date_of_birth(3i) date_of_birth(2i) date_of_birth(1i)],
+      school: %i[is_this_their_school]
+    }.fetch(current_step)
 
-  def date_of_birth_params
-    params.fetch(:consent_form, {}).permit(
-      %i[date_of_birth(3i) date_of_birth(2i) date_of_birth(1i)]
-    )
-  end
-
-  def school_params
-    params.fetch(:consent_form, {}).permit(%i[is_this_their_school])
+    params
+      .fetch(:consent_form, {})
+      .permit(permitted_attributes)
+      .merge(form_step: current_step)
   end
 
   def set_session
@@ -77,7 +70,7 @@ class ConsentForms::EditController < ConsentForms::BaseController
         DateParamsValidator.new(
           field_name: :date_of_birth,
           object: @consent_form,
-          params: date_of_birth_params
+          params: update_params
         )
 
       unless validator.date_params_valid?
