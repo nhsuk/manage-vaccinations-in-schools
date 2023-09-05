@@ -4,12 +4,31 @@ RSpec.describe ConsentForm, type: :model do
   describe "Validations" do
     let(:form_step) { nil }
     let(:use_common_name) { false }
-    subject { build(:consent_form, form_step:, use_common_name:) }
+    let(:parent_relationship) { nil }
+    let(:contact_method) { nil }
+    subject do
+      build(
+        :consent_form,
+        form_step:,
+        use_common_name:,
+        parent_relationship:,
+        contact_method:
+      )
+    end
 
-    it "validates all fields when no form_step is set" do
+    it "validates all expected fields when no form_step is set" do
       expect(subject).to validate_presence_of(:first_name).on(:update)
       expect(subject).to validate_presence_of(:last_name).on(:update)
+
       expect(subject).to validate_presence_of(:date_of_birth).on(:update)
+
+      expect(subject).not_to validate_presence_of(:is_this_their_school).on(
+        :update
+      )
+
+      expect(subject).to validate_presence_of(:parent_name).on(:update)
+      expect(subject).to validate_presence_of(:parent_relationship).on(:update)
+      expect(subject).to validate_presence_of(:parent_email).on(:update)
     end
 
     context "when form_step is :name" do
@@ -53,6 +72,29 @@ RSpec.describe ConsentForm, type: :model do
         should validate_inclusion_of(:is_this_their_school).in_array(
                  %w[yes no]
                ).on(:update)
+      end
+    end
+
+    context "when form_step is :parent" do
+      let(:form_step) { :parent }
+
+      context "runs validations from previous steps" do
+        it { should validate_presence_of(:first_name).on(:update) }
+        it { should validate_presence_of(:date_of_birth).on(:update) }
+      end
+
+      it { should_not validate_presence_of(:is_this_their_school).on(:update) }
+
+      it { should validate_presence_of(:parent_name).on(:update) }
+      it { should validate_presence_of(:parent_relationship).on(:update) }
+      it { should validate_presence_of(:parent_email).on(:update) }
+
+      context "when parent_relationship is 'other'" do
+        let(:parent_relationship) { "other" }
+
+        it do
+          should validate_presence_of(:parent_relationship_other).on(:update)
+        end
       end
     end
   end

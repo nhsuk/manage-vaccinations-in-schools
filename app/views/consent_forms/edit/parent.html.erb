@@ -1,0 +1,63 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+      href: previous_wizard_path,
+      name: "previous page"
+  ) %>
+<% end %>
+
+<%= h1 "About you", class: "nhsuk-heading-l" %>
+
+<%= form_for @consent_form, url: wizard_path, method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
+  <%= f.govuk_text_field :parent_name, label: { text: 'Your name' } %>
+
+  <%= f.govuk_radio_buttons_fieldset(:parent_relationship,
+    legend: { size: 's',
+              text: 'Your relationship to the child' }) do %>
+    <%= f.govuk_radio_button :parent_relationship, "mother",
+      label: { text: 'Mum' }, link_errors: true %>
+    <%= f.govuk_radio_button :parent_relationship, "father",
+      label: { text: "Dad" } %>
+    <%= f.govuk_radio_button :parent_relationship, "guardian",
+      label: { text: 'Guardian' } %>
+    <%= f.govuk_radio_button :parent_relationship, "other",
+      label: { text: 'Other' } do %>
+      <p>
+        You need parental responsibility to give consent. This means you have
+        legal rights and duties relating to the child.
+      </p>
+
+      <%= f.govuk_text_field :parent_relationship_other,
+        label: { text: 'Relationship to the child' },
+        hint: { text: 'For example, carer' } %>
+    <% end %>
+  <% end %>
+
+  <%= f.govuk_text_field :parent_email, label: { text: 'Email address' } %>
+
+  <%= f.govuk_text_field :parent_phone,
+    label: { text: 'Telephone number (optional)' },
+    hint: { text: 'A nurse might call you about your child’s vaccination' } %>
+
+  <%= govuk_details(
+    summary_text: "I need to tell you more about how to contact me") do %>
+    <%= f.govuk_radio_buttons_fieldset(:contact_method,
+      legend: { size: 's',
+                text: 'Do you need any of the following?' }) do %>
+      <%= f.govuk_radio_button :contact_method, "text",
+        label: { text: 'Text only (no voice calls)' }, link_errors: true %>
+      <%= f.govuk_radio_button :contact_method, "voice",
+        label: { text: "Voice only (no text)" } %>
+      <%= f.govuk_radio_button :contact_method, "other",
+        label: { text: 'Other' } do %>
+        <%= f.govuk_text_area :contact_method_other,
+          label: { text: 'Give details' } %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <div class="nhsuk-u-margin-top-6">
+    <%= f.govuk_submit "Continue" %>
+  </div>
+<% end %>

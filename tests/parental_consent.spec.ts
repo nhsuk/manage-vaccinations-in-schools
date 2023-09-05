@@ -22,6 +22,10 @@ test("Parental consent", async ({ page }) => {
 
   await when_i_select_yes_this_is_their_school();
   await and_i_click_continue();
+  await then_i_see_the_parent_details_page();
+
+  await when_i_enter_the_parent_details();
+  await and_i_click_continue();
   await then_i_see_the_consent_confirm_page();
 
   await when_i_click_the_confirm_button();
@@ -94,4 +98,15 @@ async function then_i_see_the_confirm_your_childs_school_page() {
 
 async function when_i_select_yes_this_is_their_school() {
   await p.getByText("Yes, they go to this school").click();
+}
+
+async function then_i_see_the_parent_details_page() {
+  await expect(p.locator("h1")).toContainText("About you");
+}
+
+async function when_i_enter_the_parent_details() {
+  await p.getByLabel("Your name").fill("Joe Senior");
+  await p.getByRole("radio", { name: "Dad" }).click();
+  await p.getByLabel("Email address").fill("joe.senior@example.com");
+  await p.getByLabel("Telephone number").fill("07123456789");
 }

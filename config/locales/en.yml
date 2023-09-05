@@ -5,6 +5,7 @@ en:
     name: "name"
     date_of_birth: "date-of-birth"
     school: "school"
+    parent: "parent"
   activerecord:
     attributes:
       consent:
@@ -107,6 +108,19 @@ en:
             is_this_their_school:
               inclusion: Tell us if this is their school
               blank: Tell us if this is their school
+            parent_name:
+              blank: Enter your name
+            parent_relationship:
+              blank: Choose your relationship
+              inclusion: Choose a relationship
+            parent_relationship_other:
+              blank: Enter your relationship
+            parent_email:
+              blank: Enter your email address
+            contact_method:
+              inclusion: Choose a contact method
+            contact_method_other:
+              blank: Enter details about how to contact you
         triage:
           attributes:
             status:
