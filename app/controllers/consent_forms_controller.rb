@@ -8,8 +8,7 @@ class ConsentFormsController < ConsentForms::BaseController
   end
 
   def create
-    consent_form = @session.consent_forms.new
-    consent_form.save!(validate: false)
+    consent_form = @session.consent_forms.create!
     redirect_to session_consent_form_edit_path(@session, consent_form, :name)
   end
 
