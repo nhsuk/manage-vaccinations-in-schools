@@ -15,5 +15,14 @@ class ConsentFormResource < Avo::BaseResource
   field :use_common_name, as: :boolean
   field :common_name, as: :text
   field :date_of_birth, as: :date
+  field :parent_name, as: :text
+  field :parent_relationship,
+        as: :select,
+        enum: ::ConsentForm.parent_relationships
+  field :parent_relationship_other, as: :text
+  field :parent_email, as: :text
+  field :parent_phone, as: :text
+  field :contact_method, as: :select, enum: ::ConsentForm.contact_methods
+  field :contact_method_other, as: :text
   field :recorded_at, as: :datetime
 end

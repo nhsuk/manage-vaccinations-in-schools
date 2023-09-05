@@ -15,6 +15,10 @@ en:
         parent_relationships:
           father: dad
           mother: mum
+      consent_form:
+        parent_relationships:
+          father: dad
+          mother: mum
       patient_session:
         outcomes:
           could_not_vaccinate: Could not vaccinate
