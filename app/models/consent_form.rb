@@ -23,34 +23,57 @@
 #
 
 class ConsentForm < ApplicationRecord
-  attr_accessor :is_this_their_school
+  cattr_accessor :form_steps do
+    %i[name date_of_birth school]
+  end
+
+  attr_accessor :form_step, :is_this_their_school
 
   audited
 
   belongs_to :session
 
-  validates :first_name, presence: true, on: :name
-  validates :last_name, presence: true, on: :name
-  validates :use_common_name, inclusion: { in: [true, false] }, on: :name
-  validates :common_name, presence: true, on: :name, if: :use_common_name?
+  with_options if: -> { required_for_step?(:name) } do
+    validates :first_name, presence: true
+    validates :last_name, presence: true
+    validates :use_common_name, inclusion: { in: [true, false] }
+    validates :common_name, presence: true, if: :use_common_name?
+  end
 
-  validates :date_of_birth,
-            presence: true,
-            comparison: {
-              less_than: Time.zone.today,
-              greater_than_or_equal_to: 22.years.ago.to_date,
-              less_than_or_equal_to: 3.years.ago.to_date
-            },
-            on: :date_of_birth
+  with_options if: -> { required_for_step?(:date_of_birth) } do
+    validates :date_of_birth,
+              presence: true,
+              comparison: {
+                less_than: Time.zone.today,
+                greater_than_or_equal_to: 22.years.ago.to_date,
+                less_than_or_equal_to: 3.years.ago.to_date
+              }
+  end
 
-  validates :is_this_their_school,
-            presence: true,
-            inclusion: {
-              in: %w[yes no]
-            },
-            on: :school
+  with_options if: -> { required_for_step?(:school, exact: true) } do
+    validates :is_this_their_school,
+              presence: true,
+              inclusion: {
+                in: %w[yes no]
+              }
+  end
 
   def full_name
     [first_name, last_name].join(" ")
+  end
+
+  private
+
+  def required_for_step?(step, exact: false)
+    # Exact means that the form_step must match the step
+    return false if exact && form_step != step
+
+    # All fields are required if no form_step is set
+    return true if form_step.nil?
+
+    # Otherwise, all fields from previous and current steps are required
+    return true if form_steps.index(step) <= form_steps.index(form_step)
+
+    false
   end
 end
