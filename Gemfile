@@ -59,5 +59,6 @@ group :test do
   gem "capybara"
   gem "cuprite"
   gem "rspec"
+  gem "shoulda-matchers"
   gem "webmock"
 end
