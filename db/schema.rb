@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_05_115257) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_06_123147) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -75,6 +75,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_05_115257) do
     t.string "parent_phone"
     t.integer "contact_method"
     t.text "contact_method_other"
+    t.integer "response"
     t.index ["session_id"], name: "index_consent_forms_on_session_id"
   end
 

@@ -15,6 +15,7 @@
 #  parent_relationship       :integer
 #  parent_relationship_other :string
 #  recorded_at               :datetime
+#  response                  :integer
 #  use_common_name           :boolean
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
@@ -42,6 +43,7 @@ class ConsentForm < ApplicationRecord
 
   enum :parent_relationship, %w[mother father guardian other], prefix: true
   enum :contact_method, %w[text voice other], prefix: true
+  enum :response, %w[given refused not_provided], prefix: true
 
   with_options on: :update do
     with_options if: -> { required_for_step?(:name) } do
