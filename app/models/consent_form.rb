@@ -32,7 +32,7 @@
 
 class ConsentForm < ApplicationRecord
   cattr_accessor :form_steps do
-    %i[name date_of_birth school parent]
+    %i[name date_of_birth school parent consent]
   end
 
   attr_accessor :form_step, :is_this_their_school
@@ -43,7 +43,7 @@ class ConsentForm < ApplicationRecord
 
   enum :parent_relationship, %w[mother father guardian other], prefix: true
   enum :contact_method, %w[text voice other], prefix: true
-  enum :response, %w[given refused not_provided], prefix: true
+  enum :response, %w[given refused not_provided], prefix: "consent"
 
   with_options on: :update do
     with_options if: -> { required_for_step?(:name) } do
@@ -81,6 +81,10 @@ class ConsentForm < ApplicationRecord
       validates :contact_method_other,
                 presence: true,
                 if: :contact_method_other?
+    end
+
+    with_options if: -> { required_for_step?(:consent) } do
+      validates :response, presence: true
     end
   end
 

@@ -1,11 +1,27 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: session_consent_form_edit_path(@session, @consent_form, :parent),
-    name: "edit parent information page",
+    href: session_consent_form_edit_path(@session, @consent_form, :consent),
+    name: "edit consent page",
   ) %>
 <% end %>
 
 <%= h1 "Check and confirm answers", class: "nhsuk-heading-l" %>
+
+<h2 class="nhsuk-heading-m">Consent</h2>
+
+<div class="nhsuk-card">
+  <div class="nhsuk-card__content">
+    <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
+      summary_list.with_row do |row|
+        row.with_key { "Do you agree?" }
+        row.with_value { @consent_form.consent_given? ? "Yes" : "No" }
+        row.with_action(text: "Change",
+          href: session_consent_form_edit_path(@session, @consent_form, :consent),
+          visually_hidden_text: "consent")
+      end
+    end %>
+  </div>
+</div>
 
 <h2 class="nhsuk-heading-m">About your child</h2>
 

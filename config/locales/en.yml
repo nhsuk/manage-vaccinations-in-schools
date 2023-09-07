@@ -6,6 +6,7 @@ en:
     date_of_birth: "date-of-birth"
     school: "school"
     parent: "parent"
+    consent: "consent"
   activerecord:
     attributes:
       consent:
@@ -121,6 +122,8 @@ en:
               inclusion: Choose a contact method
             contact_method_other:
               blank: Enter details about how to contact you
+            response:
+              blank: Choose if you consent
         triage:
           attributes:
             status:

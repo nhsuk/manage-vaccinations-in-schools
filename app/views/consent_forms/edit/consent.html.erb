@@ -1,0 +1,28 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+      href: previous_wizard_path,
+      name: "previous page"
+  ) %>
+<% end %>
+
+<% title = "Do you agree to them having a nasal flu vaccination?" %>
+<% content_for :page_title, title %>
+
+<%= form_for @consent_form, url: wizard_path, method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
+  <%= f.govuk_radio_buttons_fieldset(:response,
+    legend: { size: 'l', text: title, tag: 'h1' },
+    hint: { text: 'The nasal flu spray contains gelatine which comes from pigs.' }
+  ) do %>
+    <%= f.govuk_radio_button :response, "given",
+      label: { text: 'Yes, I agree to them having a nasal vaccine ' },
+      link_errors: true %>
+    <%= f.govuk_radio_button :response, "refused",
+      label: { text: 'No' } %>
+  <% end %>
+
+  <div class="nhsuk-u-margin-top-6">
+    <%= f.govuk_submit "Continue" %>
+  </div>
+<% end %>
