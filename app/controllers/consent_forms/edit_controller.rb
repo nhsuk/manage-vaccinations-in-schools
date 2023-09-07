@@ -4,10 +4,10 @@ class ConsentForms::EditController < ConsentForms::BaseController
 
   layout "two_thirds"
 
-  steps(*ConsentForm.form_steps)
-
   before_action :set_session
   before_action :set_consent_form
+  before_action :set_steps # Uses @consent_form, needs set_consent_form
+  before_action :setup_wizard_translated
   before_action :validate_params, only: %i[update]
 
   def show
@@ -16,6 +16,9 @@ class ConsentForms::EditController < ConsentForms::BaseController
 
   def update
     @consent_form.assign_attributes(update_params)
+
+    set_steps # The form_steps can change after certain attrs change
+    setup_wizard_translated # Next/previous steps can change after steps change
 
     case current_step
     when :school
@@ -71,6 +74,15 @@ class ConsentForms::EditController < ConsentForms::BaseController
 
   def set_consent_form
     @consent_form = ConsentForm.find(params.fetch(:consent_form_id))
+  end
+
+  def set_steps
+    # Translated steps are cached after running setup_wizard_translated.
+    # To allow us to run this method multiple times during a single action
+    # lifecycle, we need to clear the cache.
+    @wizard_translations = nil
+
+    self.steps = @consent_form.form_steps
   end
 
   def validate_params
