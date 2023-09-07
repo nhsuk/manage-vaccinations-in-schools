@@ -60,6 +60,8 @@ RSpec.describe ConsentForm, type: :model do
       expect(subject).to validate_presence_of(:parent_name).on(:update)
       expect(subject).to validate_presence_of(:parent_relationship).on(:update)
       expect(subject).to validate_presence_of(:parent_email).on(:update)
+
+      expect(subject).to validate_presence_of(:response).on(:update)
     end
 
     context "when form_step is :name" do
@@ -127,6 +129,18 @@ RSpec.describe ConsentForm, type: :model do
           should validate_presence_of(:parent_relationship_other).on(:update)
         end
       end
+    end
+
+    context "when form_step is :consent" do
+      let(:form_step) { :consent }
+
+      context "runs validations from previous steps" do
+        it { should validate_presence_of(:first_name).on(:update) }
+        it { should validate_presence_of(:date_of_birth).on(:update) }
+        it { should validate_presence_of(:parent_name).on(:update) }
+      end
+
+      it { should validate_presence_of(:response).on(:update) }
     end
   end
 
