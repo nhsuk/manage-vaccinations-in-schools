@@ -31,10 +31,6 @@
 #
 
 class ConsentForm < ApplicationRecord
-  cattr_accessor :form_steps do
-    %i[name date_of_birth school parent consent]
-  end
-
   attr_accessor :form_step, :is_this_their_school
 
   audited
@@ -90,6 +86,10 @@ class ConsentForm < ApplicationRecord
 
   def full_name
     [first_name, last_name].join(" ")
+  end
+
+  def form_steps
+    %i[name date_of_birth school parent consent]
   end
 
   private
