@@ -7,6 +7,7 @@ en:
     school: "school"
     parent: "parent"
     consent: "consent"
+    reason: "reason"
   activerecord:
     attributes:
       consent:
@@ -124,6 +125,8 @@ en:
               blank: Enter details about how to contact you
             response:
               blank: Choose if you consent
+            reason:
+              blank: Choose a reason
         triage:
           attributes:
             status:

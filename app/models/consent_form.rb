@@ -94,6 +94,10 @@ class ConsentForm < ApplicationRecord
     with_options if: -> { required_for_step?(:consent) } do
       validates :response, presence: true
     end
+
+    with_options if: -> { required_for_step?(:reason) } do
+      validates :reason, presence: true
+    end
   end
 
   def full_name
@@ -101,7 +105,11 @@ class ConsentForm < ApplicationRecord
   end
 
   def form_steps
-    %i[name date_of_birth school parent consent]
+    if consent_refused?
+      %i[name date_of_birth school parent consent reason]
+    else
+      %i[name date_of_birth school parent consent]
+    end
   end
 
   private
@@ -109,6 +117,9 @@ class ConsentForm < ApplicationRecord
   def required_for_step?(step, exact: false)
     # Exact means that the form_step must match the step
     return false if exact && form_step != step
+
+    # Step can't be required if it's not in the current form_steps list
+    return false unless step.in?(form_steps)
 
     # All fields are required if no form_step is set
     return true if form_step.nil?

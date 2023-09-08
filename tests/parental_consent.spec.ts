@@ -33,7 +33,6 @@ test("Parental consent", async ({ page }) => {
   await then_i_see_the_consent_confirm_page();
 
   await when_i_click_the_confirm_button();
-  // Temporary until we have a better "kthxbai" page
   await then_i_see_the_start_page();
 });
 
