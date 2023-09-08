@@ -25,5 +25,7 @@ class ConsentFormResource < Avo::BaseResource
   field :contact_method, as: :select, enum: ::ConsentForm.contact_methods
   field :contact_method_other, as: :text
   field :response, as: :select, enum: ::ConsentForm.responses
+  field :reason, as: :select, enum: ::ConsentForm.reasons
+  field :reason_notes, as: :text
   field :recorded_at, as: :datetime
 end

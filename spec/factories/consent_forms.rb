@@ -14,6 +14,8 @@
 #  parent_phone              :string
 #  parent_relationship       :integer
 #  parent_relationship_other :string
+#  reason                    :integer
+#  reason_notes              :text
 #  recorded_at               :datetime
 #  response                  :integer
 #  use_common_name           :boolean
