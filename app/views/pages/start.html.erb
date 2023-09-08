@@ -1,5 +1,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-two-thirds">
+    <%= render(AppFlashMessageComponent.new(flash: flash)) %>
+
     <%= h1 @service_name %>
 
     <p>Use this service to:</p>

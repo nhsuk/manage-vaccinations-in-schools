@@ -1,0 +1,11 @@
+<%= govuk_notification_banner(
+  classes: classes,
+  html_attributes: { role: role },
+  title_text: title,
+  success: success?,
+) do |notification_banner| %>
+  <% notification_banner.with_heading(text: heading) if heading.present? %>
+  <% if body.present? %>
+    <p class="nhsuk-body"><%= body.html_safe %></p>
+  <% end %>
+<% end %>

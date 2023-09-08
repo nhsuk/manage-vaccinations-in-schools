@@ -1,6 +1,4 @@
-<% if flash[:success].present? %>
-  <%= render AppFlashSuccessComponent.new(flash[:success]) %>
-<% end %>
+<%= render(AppFlashMessageComponent.new(flash: flash)) %>
 
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
