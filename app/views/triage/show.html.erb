@@ -1,13 +1,11 @@
-<% if flash[:success].present? %>
-  <%= render AppFlashSuccessComponent.new(flash[:success]) %>
-<% end %>
-
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
                href: triage_session_path(@session),
                name: "triage page"
              ) %>
 <% end %>
+
+<%= render(AppFlashMessageComponent.new(flash: flash)) %>
 
 <%= h1 @patient.full_name, id: dom_id(@patient), class: "nhsuk-heading-l" %>
 

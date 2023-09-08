@@ -51,7 +51,7 @@ class TriageController < ApplicationController
       redirect_to triage_session_path(@session),
                   flash: {
                     success: {
-                      title: "Record saved for #{@patient.full_name}",
+                      heading: "Record saved for #{@patient.full_name}",
                       body:
                         ActionController::Base.helpers.link_to(
                           "View child record",
@@ -72,7 +72,7 @@ class TriageController < ApplicationController
       redirect_to triage_session_path(@session),
                   flash: {
                     success: {
-                      title: "Record saved for #{@patient.full_name}",
+                      heading: "Record saved for #{@patient.full_name}",
                       body:
                         ActionController::Base.helpers.link_to(
                           "View child record",

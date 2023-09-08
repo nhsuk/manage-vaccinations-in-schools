@@ -155,14 +155,15 @@ class ConsentsController < ApplicationController
       redirect_to session_patient_vaccinations_path(@session, @patient),
                   flash: {
                     success: {
-                      body: "Gillick assessment saved for #{@patient.full_name}"
+                      heading:
+                        "Gillick assessment saved for #{@patient.full_name}"
                     }
                   }
     else
       redirect_to triage_session_path(@session),
                   flash: {
                     success: {
-                      title: "Consent saved for #{@patient.full_name}",
+                      heading: "Consent saved for #{@patient.full_name}",
                       body:
                         ActionController::Base.helpers.link_to(
                           "View child record",

@@ -88,7 +88,7 @@ class VaccinationsController < ApplicationController
     redirect_to vaccinations_session_path(@session),
                 flash: {
                   success: {
-                    title: "Record saved for #{@patient.full_name}",
+                    heading: "Record saved for #{@patient.full_name}",
                     body:
                       ActionController::Base.helpers.link_to(
                         "View child record",
@@ -122,7 +122,7 @@ class VaccinationsController < ApplicationController
 
   def record_template
     flash[:success] = {
-      title: "Offline changes saved",
+      heading: "Offline changes saved",
       body: "You will need to go online to sync your changes."
     }
     render :index
@@ -174,7 +174,7 @@ class VaccinationsController < ApplicationController
       redirect_to vaccinations_session_path(@session),
                   flash: {
                     success: {
-                      title: "Record saved for #{@patient.full_name}",
+                      heading: "Record saved for #{@patient.full_name}",
                       body:
                         ActionController::Base.helpers.link_to(
                           "View child record",

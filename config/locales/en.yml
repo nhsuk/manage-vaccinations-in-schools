@@ -1,4 +1,9 @@
 en:
+  notification_banner:
+    info: Information
+    success: Success
+    warning: Warning
+
   service:
     email: my-service@email
   wicked:
