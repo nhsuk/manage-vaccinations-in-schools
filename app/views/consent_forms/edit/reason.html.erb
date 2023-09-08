@@ -1,0 +1,39 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+      href: previous_wizard_path,
+      name: "previous page"
+  ) %>
+<% end %>
+
+<% title = "Please tell us why you do not agree" %>
+<% content_for :page_title, title %>
+
+<%= form_for @consent_form, url: wizard_path, method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
+  <%= f.govuk_radio_buttons_fieldset(:reason,
+    legend: { size: 'l', text: title, tag: 'h1' }
+  ) do %>
+    <%= f.govuk_radio_button :reason, "contains_gelatine",
+      label: { text: 'Vaccine contains gelatine from pigs' },
+      link_errors: true %>
+    <%= f.govuk_radio_button :reason, "already_received",
+      label: { text: 'Vaccine already received' } %>
+    <%= f.govuk_radio_button :reason, "given_elsewhere",
+      label: { text: 'Vaccine will be given elsewhere' } %>
+    <%= f.govuk_radio_button :reason, "medical_reasons",
+      label: { text: 'Medical reasons' } %>
+    <%= f.govuk_radio_button :reason, "personal_choice",
+      label: { text: 'Personal choice' } %>
+    <%= f.govuk_radio_divider %>
+    <%= f.govuk_radio_button :reason, "other",
+      label: { text: 'Other' } %>
+  <% end %>
+
+  <%= f.govuk_text_area :reason_notes,
+    label: { text: 'Give details (optional)' } %>
+
+  <div class="nhsuk-u-margin-top-6">
+    <%= f.govuk_submit "Continue" %>
+  </div>
+<% end %>
