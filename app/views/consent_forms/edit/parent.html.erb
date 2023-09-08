@@ -41,7 +41,8 @@
     hint: { text: 'A nurse might call you about your child’s vaccination' } %>
 
   <%= govuk_details(
-    summary_text: "I need to tell you more about how to contact me") do %>
+    summary_text: "I need to tell you more about how to contact me",
+    open: @consent_form.contact_method.present?) do %>
     <%= f.govuk_radio_buttons_fieldset(:contact_method,
       legend: { size: 's',
                 text: 'Do you need any of the following?' }) do %>
