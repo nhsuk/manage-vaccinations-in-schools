@@ -34,6 +34,9 @@ application.register("govuk-skip-link", GovukSkipLinkController);
 import NhsukErrorSummaryController from "./nhsuk_error_summary_controller";
 application.register("nhsuk-error-summary", NhsukErrorSummaryController);
 
+import NhsukHeaderController from "./nhsuk_header_controller";
+application.register("nhsuk-header", NhsukHeaderController);
+
 import NhsukRadiosController from "./nhsuk_radios_controller";
 application.register("nhsuk-radios", NhsukRadiosController);
 
