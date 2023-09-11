@@ -8,7 +8,7 @@ GIT
 
 GIT
   remote: https://github.com/x-govuk/govuk-components.git
-  revision: b77b12444a57379aa8157ac5cfbe3a10e942d582
+  revision: d69f0b48ca675e641d67f1a28f6f3ffbbb2b25f7
   specs:
     govuk-components (4.1.0)
       html-attributes-utils (~> 1.0.0, >= 1.0.0)
@@ -305,7 +305,7 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2022.0105)
     mini_mime (1.1.5)
-    minitest (5.19.0)
+    minitest (5.20.0)
     msgpack (1.6.0)
     multi_json (1.15.0)
     multi_xml (0.6.0)
