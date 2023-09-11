@@ -1,9 +1,9 @@
-<%=  h1 "Log in" %>
+<%=  h1 "Sign in" %>
 
 <%= form_for(resource, as: resource_name, url: user_session_path) do |f| %>
   <%= f.govuk_error_summary %>
 
-  <%= f.govuk_email_field :email, autocomplete: "email", label: { text: "Email" } %>
+  <%= f.govuk_email_field :email, autocomplete: "email", label: { text: "Email address" } %>
   <%= f.govuk_password_field :password, autocomplete: "current-password", label: { text: "Password" } %>
 
   <% if devise_mapping.rememberable? %>
@@ -12,7 +12,7 @@
     <% end %>
   <% end %>
 
-  <%= f.govuk_submit %>
+  <%= f.govuk_submit "Sign in" %>
 <% end %>
 
 <%= render "devise/shared/links" %>
