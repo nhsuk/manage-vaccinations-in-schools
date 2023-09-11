@@ -1,11 +1,23 @@
-$nhsuk-fonts-path: "/";
-@import "nhsuk-frontend/packages/nhsuk";
+@use "govuk-frontend/govuk/all" with (
+  $govuk-font-family: (
+    Frutiger W01,
+    Arial,
+    sans-serif,
+  ),
+  $govuk-global-styles: false,
+  $govuk-new-link-styles: true,
+  $govuk-assets-path: "/",
+  $mq-breakpoints: (
+    mobile: 320px,
+    tablet: 641px,
+    desktop: 769px,
+    wide: 1300px,
+  )
+);
 
-$govuk-font-family: $nhsuk-font, $nhsuk-font-fallback;
-$govuk-global-styles: false;
-$govuk-new-link-styles: true;
-$govuk-assets-path: "/";
-@import "govuk-frontend/govuk/all";
+$nhsuk-fonts-path: "/";
+
+@import "nhsuk-frontend/packages/nhsuk";
 
 $color_app-pale-blue: #ccdff1;
 
@@ -80,4 +92,42 @@ $color_app-pale-blue: #ccdff1;
   &__heading {
     @extend .govuk-notification-banner__heading;
   }
+}
+
+.app-header__navigation-text {
+  @include nhsuk-font(16);
+  border-bottom: nhsuk-spacing(1) solid transparent;
+  border-top: nhsuk-spacing(1) solid transparent;
+  color: $color_nhsuk-blue;
+  display: block;
+  padding: 12px nhsuk-spacing(3);
+  text-decoration: none;
+
+  @include mq($from: large-desktop) {
+    color: $color_nhsuk-white;
+    line-height: normal;
+  }
+
+  .nhsuk-icon__chevron-right {
+    fill: $color_nhsuk-grey-3;
+    position: absolute;
+    right: nhsuk-spacing(1);
+    top: 11px;
+  }
+}
+
+.app-header__menu-toggle--no-search {
+  @extend .nhsuk-header__menu-toggle;
+  @include mq($until: desktop) {
+    right: 0px;
+  }
+}
+
+.app-button-link {
+  @extend .nhsuk-header__navigation-link;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
 }

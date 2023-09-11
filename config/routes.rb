@@ -1,7 +1,6 @@
 Rails.application.routes.draw do
   devise_for :users, module: :users
   get "sign-in", to: redirect("/users/sign_in")
-  post "sign_in", to: redirect("/users/sign_out")
 
   root to: redirect("/start")
 
