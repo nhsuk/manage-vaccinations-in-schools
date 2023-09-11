@@ -4,6 +4,7 @@
 #
 #  id                        :bigint           not null, primary key
 #  common_name               :text
+#  contact_injection         :boolean
 #  contact_method            :integer
 #  contact_method_other      :text
 #  date_of_birth             :date
