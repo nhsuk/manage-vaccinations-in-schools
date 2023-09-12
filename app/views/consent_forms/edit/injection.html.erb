@@ -1,0 +1,33 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+      href: previous_wizard_path,
+      name: "previous page"
+  ) %>
+<% end %>
+
+<%= h1 "Your child may be able to have an injection instead",
+  class: 'nhsuk-heading-l' %>
+
+<p>
+  If the nasal spray is not suitable, they may be able to have an injection
+  instead.
+</p>
+
+<%= form_for @consent_form, url: wizard_path, method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
+  <%= f.govuk_radio_buttons_fieldset(:response,
+    legend: { size: 's',
+              text: 'Would you like a nurse to contact you about this option?' }
+  ) do %>
+    <%= f.govuk_radio_button :contact_injection, true,
+      label: { text: 'Yes, I am happy for a nurse to contact me' },
+      link_errors: true %>
+    <%= f.govuk_radio_button :contact_injection, false,
+      label: { text: 'No' } %>
+  <% end %>
+
+  <div class="nhsuk-u-margin-top-6">
+    <%= f.govuk_submit "Continue" %>
+  </div>
+<% end %>
