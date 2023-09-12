@@ -8,6 +8,7 @@ en:
     parent: "parent"
     consent: "consent"
     reason: "reason"
+    injection: "injection"
   activerecord:
     attributes:
       consent:
@@ -127,6 +128,8 @@ en:
               blank: Choose if you consent
             reason:
               blank: Choose a reason
+            contact_injection:
+              blank: Choose if you want to be contacted
         triage:
           attributes:
             status:

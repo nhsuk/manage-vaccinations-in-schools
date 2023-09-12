@@ -99,6 +99,10 @@ class ConsentForm < ApplicationRecord
     with_options if: -> { required_for_step?(:reason) } do
       validates :reason, presence: true
     end
+
+    with_options if: -> { required_for_step?(:injection) } do
+      validates :contact_injection, presence: true
+    end
   end
 
   def full_name
@@ -107,7 +111,7 @@ class ConsentForm < ApplicationRecord
 
   def form_steps
     if consent_refused?
-      %i[name date_of_birth school parent consent reason]
+      %i[name date_of_birth school parent consent reason injection]
     else
       %i[name date_of_birth school parent consent]
     end
