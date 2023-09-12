@@ -114,13 +114,11 @@ class ConsentForm < ApplicationRecord
   end
 
   def form_steps
-    if consent_refused? && eligible_for_injection?
-      %i[name date_of_birth school parent consent reason injection]
-    elsif consent_refused?
-      %i[name date_of_birth school parent consent reason]
-    else
-      %i[name date_of_birth school parent consent]
-    end
+    steps = %i[name date_of_birth school parent]
+    steps += %i[consent]
+    steps += %i[reason] if consent_refused?
+    steps += %i[injection] if consent_refused? && eligible_for_injection?
+    steps
   end
 
   private
