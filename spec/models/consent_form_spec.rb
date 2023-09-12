@@ -40,6 +40,7 @@ RSpec.describe ConsentForm, type: :model do
     let(:parent_relationship) { nil }
     let(:contact_method) { nil }
     let(:response) { nil }
+    let(:reason) { nil }
     subject do
       build(
         :consent_form,
@@ -47,7 +48,8 @@ RSpec.describe ConsentForm, type: :model do
         use_common_name:,
         parent_relationship:,
         contact_method:,
-        response:
+        response:,
+        reason:
       )
     end
 
@@ -162,6 +164,7 @@ RSpec.describe ConsentForm, type: :model do
 
     context "when form_step is :injection" do
       let(:response) { "refused" }
+      let(:reason) { "contains_gelatine" }
       let(:form_step) { :injection }
 
       context "runs validations from previous steps" do
@@ -179,6 +182,28 @@ RSpec.describe ConsentForm, type: :model do
     it "returns the full name as a string" do
       consent_form = build(:consent_form, first_name: "John", last_name: "Doe")
       expect(consent_form.full_name).to eq("John Doe")
+    end
+  end
+
+  describe "#form_steps" do
+    it "does not ask for reason when patient gives consent" do
+      consent_form = build(:consent_form, response: "given")
+      expect(consent_form.form_steps).not_to include(:reason)
+      expect(consent_form.form_steps).not_to include(:injection)
+    end
+
+    it "ask for reason when patient refuses with an ineligible reason" do
+      consent_form =
+        build(:consent_form, response: "refused", reason: "already_received")
+      expect(consent_form.form_steps).to include(:reason)
+      expect(consent_form.form_steps).not_to include(:injection)
+    end
+
+    it "ask for reason when patient refuses with an eligible reason" do
+      consent_form =
+        build(:consent_form, response: "refused", reason: "contains_gelatine")
+      expect(consent_form.form_steps).to include(:reason)
+      expect(consent_form.form_steps).to include(:injection)
     end
   end
 end
