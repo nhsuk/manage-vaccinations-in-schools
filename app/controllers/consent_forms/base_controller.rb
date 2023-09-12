@@ -1,4 +1,6 @@
 class ConsentForms::BaseController < ApplicationController
+  skip_before_action :authenticate_user!
+
   private
 
   def set_header_path

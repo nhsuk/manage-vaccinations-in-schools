@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::Base
+  before_action :store_user_location!
+  before_action :authenticate_user!
   before_action :set_disable_cache_headers
   before_action :set_header_path
   before_action :set_service_name
@@ -37,5 +39,17 @@ class ApplicationController < ActionController::Base
 
   def handle_unprocessable_entity(_exception)
     render "errors/unprocessable_entity", status: :unprocessable_entity
+  end
+
+  def storable_location?
+    request.get? && is_navigational_format? && !devise_controller? &&
+      !request.xhr? && !turbo_frame_request?
+  end
+
+  def store_user_location!
+    return unless user_signed_in?
+    return unless storable_location?
+
+    store_location_for(:user, request.fullpath)
   end
 end
