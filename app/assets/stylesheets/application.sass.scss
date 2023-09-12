@@ -26,11 +26,6 @@ $color_app-pale-blue: #ccdff1;
 @import "_empty-list.scss";
 @import "_offline.sass.scss";
 
-.app-u-frutiger,
-.app-u-frutiger * {
-  font-family: "Frutiger W01", Arial, sans-serif !important;
-}
-
 .app-summary-list--no-bottom-border {
   .govuk-summary-list__row:last-child {
     border-bottom: none;
