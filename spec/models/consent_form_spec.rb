@@ -36,35 +36,36 @@ require "rails_helper"
 
 RSpec.describe ConsentForm, type: :model do
   describe "Validations" do
-    let(:form_step) { nil }
     let(:use_common_name) { false }
     let(:parent_relationship) { nil }
     let(:contact_method) { nil }
+    let(:response) { nil }
     subject do
       build(
         :consent_form,
         form_step:,
         use_common_name:,
         parent_relationship:,
-        contact_method:
+        contact_method:,
+        response:
       )
     end
 
-    it "validates all expected fields when no form_step is set" do
-      expect(subject).to validate_presence_of(:first_name).on(:update)
-      expect(subject).to validate_presence_of(:last_name).on(:update)
+    context "when form_step is nil" do
+      let(:form_step) { nil }
 
-      expect(subject).to validate_presence_of(:date_of_birth).on(:update)
+      it { should validate_presence_of(:first_name).on(:update) }
+      it { should validate_presence_of(:last_name).on(:update) }
 
-      expect(subject).not_to validate_presence_of(:is_this_their_school).on(
-        :update
-      )
+      it { should validate_presence_of(:date_of_birth).on(:update) }
 
-      expect(subject).to validate_presence_of(:parent_name).on(:update)
-      expect(subject).to validate_presence_of(:parent_relationship).on(:update)
-      expect(subject).to validate_presence_of(:parent_email).on(:update)
+      it { should_not validate_presence_of(:is_this_their_school).on(:update) }
 
-      expect(subject).to validate_presence_of(:response).on(:update)
+      it { should validate_presence_of(:parent_name).on(:update) }
+      it { should validate_presence_of(:parent_relationship).on(:update) }
+      it { should validate_presence_of(:parent_email).on(:update) }
+
+      it { should validate_presence_of(:response).on(:update) }
     end
 
     context "when form_step is :name" do
@@ -144,6 +145,19 @@ RSpec.describe ConsentForm, type: :model do
       end
 
       it { should validate_presence_of(:response).on(:update) }
+    end
+
+    context "when form_step is :reason" do
+      let(:response) { "refused" }
+      let(:form_step) { :reason }
+
+      context "runs validations from previous steps" do
+        it { should validate_presence_of(:first_name).on(:update) }
+        it { should validate_presence_of(:date_of_birth).on(:update) }
+        it { should validate_presence_of(:parent_name).on(:update) }
+      end
+
+      it { should validate_presence_of(:reason).on(:update) }
     end
   end
 
