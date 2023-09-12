@@ -109,9 +109,15 @@ class ConsentForm < ApplicationRecord
     [first_name, last_name].join(" ")
   end
 
+  def eligible_for_injection?
+    !refused_because_given_elsewhere? && !refused_because_already_received?
+  end
+
   def form_steps
-    if consent_refused?
+    if consent_refused? && eligible_for_injection?
       %i[name date_of_birth school parent consent reason injection]
+    elsif consent_refused?
+      %i[name date_of_birth school parent consent reason]
     else
       %i[name date_of_birth school parent consent]
     end
