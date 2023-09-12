@@ -56,9 +56,8 @@ class ConsentForms::EditController < ConsentForms::BaseController
         parent_relationship_other
         parent_email
         parent_phone
-        contact_method
-        contact_method_other
       ],
+      contact_method: %i[contact_method contact_method_other],
       consent: %i[response],
       reason: %i[reason reason_notes],
       injection: %i[contact_injection]

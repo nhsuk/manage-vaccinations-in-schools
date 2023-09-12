@@ -26,6 +26,10 @@ test("Parental consent", async ({ page }) => {
 
   await when_i_enter_the_parent_details();
   await and_i_click_continue();
+  await then_i_see_the_phone_contact_page();
+
+  await when_i_enter_the_phone_contact_details();
+  await and_i_click_continue();
   await then_i_see_the_consent_page();
 
   await when_i_fill_in_the_consent_form();
@@ -122,4 +126,12 @@ async function then_i_see_the_consent_page() {
 
 async function when_i_fill_in_the_consent_form() {
   await p.getByText("Yes, I agree to them having a nasal vaccine").click();
+}
+
+async function then_i_see_the_phone_contact_page() {
+  await expect(p.locator("h1")).toContainText("Telephone contact method");
+}
+
+async function when_i_enter_the_phone_contact_details() {
+  await p.getByRole("radio", { name: "I do not have specific needs" }).click();
 }

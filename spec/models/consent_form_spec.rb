@@ -186,6 +186,11 @@ RSpec.describe ConsentForm, type: :model do
   end
 
   describe "#form_steps" do
+    it "asks for contact method if phone is specified" do
+      consent_form = build(:consent_form, parent_phone: "0123456789")
+      expect(consent_form.form_steps).to include(:contact_method)
+    end
+
     it "does not ask for reason when patient gives consent" do
       consent_form = build(:consent_form, response: "given")
       expect(consent_form.form_steps).not_to include(:reason)

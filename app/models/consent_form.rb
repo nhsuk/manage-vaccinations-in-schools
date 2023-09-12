@@ -41,7 +41,7 @@ class ConsentForm < ApplicationRecord
   belongs_to :session
 
   enum :parent_relationship, %w[mother father guardian other], prefix: true
-  enum :contact_method, %w[text voice other], prefix: true
+  enum :contact_method, %w[text voice other any], prefix: true
   enum :response, %w[given refused not_provided], prefix: "consent"
   enum :reason,
        %w[
@@ -87,6 +87,10 @@ class ConsentForm < ApplicationRecord
                 presence: true,
                 if: :parent_relationship_other?
       validates :parent_email, presence: true
+    end
+
+    with_options if: -> { required_for_step?(:contact_method) } do
+      validates :contact_method, presence: true
       validates :contact_method_other,
                 presence: true,
                 if: :contact_method_other?
@@ -109,19 +113,24 @@ class ConsentForm < ApplicationRecord
     [first_name, last_name].join(" ")
   end
 
-  def eligible_for_injection?
-    !refused_because_given_elsewhere? && !refused_because_already_received?
-  end
-
   def form_steps
-    steps = %i[name date_of_birth school parent]
-    steps += %i[consent]
-    steps += %i[reason] if consent_refused?
-    steps += %i[injection] if consent_refused? && eligible_for_injection?
-    steps
+    [
+      :name,
+      :date_of_birth,
+      :school,
+      :parent,
+      (:contact_method if parent_phone.present?),
+      :consent,
+      (:reason if consent_refused?),
+      (:injection if consent_refused? && eligible_for_injection?)
+    ].compact
   end
 
   private
+
+  def eligible_for_injection?
+    !refused_because_given_elsewhere? && !refused_because_already_received?
+  end
 
   def required_for_step?(step, exact: false)
     # Exact means that the form_step must match the step
