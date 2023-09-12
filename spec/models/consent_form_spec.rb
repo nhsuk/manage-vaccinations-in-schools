@@ -159,6 +159,20 @@ RSpec.describe ConsentForm, type: :model do
 
       it { should validate_presence_of(:reason).on(:update) }
     end
+
+    context "when form_step is :injection" do
+      let(:response) { "refused" }
+      let(:form_step) { :injection }
+
+      context "runs validations from previous steps" do
+        it { should validate_presence_of(:first_name).on(:update) }
+        it { should validate_presence_of(:date_of_birth).on(:update) }
+        it { should validate_presence_of(:parent_name).on(:update) }
+        it { should validate_presence_of(:reason).on(:update) }
+      end
+
+      it { should validate_presence_of(:contact_injection).on(:update) }
+    end
   end
 
   describe "#full_name" do
