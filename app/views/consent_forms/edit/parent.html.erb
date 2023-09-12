@@ -40,24 +40,6 @@
     label: { text: 'Telephone number (optional)' },
     hint: { text: 'A nurse might call you about your child’s vaccination' } %>
 
-  <%= govuk_details(
-    summary_text: "I need to tell you more about how to contact me",
-    open: @consent_form.contact_method.present?) do %>
-    <%= f.govuk_radio_buttons_fieldset(:contact_method,
-      legend: { size: 's',
-                text: 'Do you need any of the following?' }) do %>
-      <%= f.govuk_radio_button :contact_method, "text",
-        label: { text: 'Text only (no voice calls)' }, link_errors: true %>
-      <%= f.govuk_radio_button :contact_method, "voice",
-        label: { text: "Voice only (no text)" } %>
-      <%= f.govuk_radio_button :contact_method, "other",
-        label: { text: 'Other' } do %>
-        <%= f.govuk_text_area :contact_method_other,
-          label: { text: 'Give details' } %>
-      <% end %>
-    <% end %>
-  <% end %>
-
   <div class="nhsuk-u-margin-top-6">
     <%= f.govuk_submit "Continue" %>
   </div>

@@ -51,7 +51,6 @@ async function when_i_go_through_the_consent_journey() {
   await p.getByLabel("Your name").fill("Joe Senior");
   await p.getByRole("radio", { name: "Dad" }).click();
   await p.getByLabel("Email address").fill("joe.senior@example.com");
-  await p.getByLabel("Telephone number").fill("07123456789");
   await and_i_click_continue();
 }
 
