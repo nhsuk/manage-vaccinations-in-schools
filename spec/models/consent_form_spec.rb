@@ -203,6 +203,22 @@ RSpec.describe ConsentForm, type: :model do
         it { should validate_presence_of(:gp_name).on(:update) }
       end
     end
+
+    context "when form_step is :address" do
+      let(:response) { "given" }
+      let(:form_step) { :address }
+
+      context "runs validations from previous steps" do
+        it { should validate_presence_of(:first_name).on(:update) }
+        it { should validate_presence_of(:date_of_birth).on(:update) }
+        it { should validate_presence_of(:parent_name).on(:update) }
+        it { should validate_presence_of(:gp_response).on(:update) }
+      end
+
+      it { should validate_presence_of(:address_line_1).on(:update) }
+      it { should validate_presence_of(:address_town).on(:update) }
+      it { should validate_presence_of(:address_postcode).on(:update) }
+    end
   end
 
   describe "#full_name" do
@@ -243,9 +259,10 @@ RSpec.describe ConsentForm, type: :model do
       expect(consent_form.form_steps).not_to include(:gp)
     end
 
-    it "asks for gp details when patient gives consent" do
+    it "asks for gp details, address when patient gives consent" do
       consent_form = build(:consent_form, response: "given")
       expect(consent_form.form_steps).to include(:gp)
+      expect(consent_form.form_steps).to include(:address)
     end
   end
 end

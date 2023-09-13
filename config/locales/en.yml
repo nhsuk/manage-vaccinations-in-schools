@@ -3,7 +3,6 @@ en:
     info: Information
     success: Success
     warning: Warning
-
   service:
     email: my-service@email
   wicked:
@@ -16,6 +15,7 @@ en:
     injection: "injection"
     contact_method: "contact-method"
     gp: "gp"
+    address: "address"
   activerecord:
     attributes:
       consent:
@@ -141,6 +141,12 @@ en:
               blank: Choose if your child is registered with a GP
             gp_name:
               blank: Enter the GP surgery name
+            address_line_1:
+              blank: Enter the first line of your address
+            address_town:
+              blank: Enter the town or city
+            address_postcode:
+              blank: Enter the postcode
         triage:
           attributes:
             status:
