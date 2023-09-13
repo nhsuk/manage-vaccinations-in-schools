@@ -110,6 +110,11 @@ class ConsentForm < ApplicationRecord
     with_options if: -> { required_for_step?(:injection) } do
       validates :contact_injection, presence: true
     end
+
+    with_options if: -> { required_for_step?(:gp) } do
+      validates :gp_response, presence: true
+      validates :gp_name, presence: true, if: :gp_response_yes?
+    end
   end
 
   def full_name
@@ -125,7 +130,8 @@ class ConsentForm < ApplicationRecord
       (:contact_method if parent_phone.present?),
       :consent,
       (:reason if consent_refused?),
-      (:injection if consent_refused? && eligible_for_injection?)
+      (:injection if consent_refused? && eligible_for_injection?),
+      (:gp if consent_given?)
     ].compact
   end
 
