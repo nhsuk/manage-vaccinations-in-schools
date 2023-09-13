@@ -9,6 +9,8 @@
 #  contact_method_other      :text
 #  date_of_birth             :date
 #  first_name                :text
+#  gp_name                   :string
+#  gp_response               :integer
 #  last_name                 :text
 #  parent_email              :string
 #  parent_name               :string

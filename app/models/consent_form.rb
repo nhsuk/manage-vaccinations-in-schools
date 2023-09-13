@@ -9,6 +9,8 @@
 #  contact_method_other      :text
 #  date_of_birth             :date
 #  first_name                :text
+#  gp_name                   :string
+#  gp_response               :integer
 #  last_name                 :text
 #  parent_email              :string
 #  parent_name               :string
@@ -53,6 +55,7 @@ class ConsentForm < ApplicationRecord
          other
        ],
        prefix: "refused_because"
+  enum :gp_response, %w[yes no dont_know], prefix: true
 
   with_options on: :update do
     with_options if: -> { required_for_step?(:name) } do

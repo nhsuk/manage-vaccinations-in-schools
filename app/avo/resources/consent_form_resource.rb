@@ -28,5 +28,7 @@ class ConsentFormResource < Avo::BaseResource
   field :reason, as: :select, enum: ::ConsentForm.reasons
   field :reason_notes, as: :text
   field :contact_injection, as: :boolean
+  field :gp_name, as: :string
+  field :gp_response, as: :select, enum: ::ConsentForm.gp_responses
   field :recorded_at, as: :datetime
 end
