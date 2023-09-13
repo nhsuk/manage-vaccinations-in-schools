@@ -10,7 +10,7 @@ RSpec.describe AppFlashMessageComponent, type: :component do
   context "when no flash message is provided" do
     let(:flash) { {} }
 
-    it { should have_text(nil) }
+    it { should have_text("", exact: true) }
   end
 
   describe "the render? method" do
@@ -32,7 +32,7 @@ RSpec.describe AppFlashMessageComponent, type: :component do
   context "when an unknown flash key is provided" do
     let(:flash) { { unknown: "Message" } }
 
-    it { should have_text(nil) }
+    it { should have_text("", exact: true) }
   end
 
   context "when a simple string is provided" do
