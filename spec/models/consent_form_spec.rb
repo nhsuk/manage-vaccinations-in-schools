@@ -43,6 +43,7 @@ RSpec.describe ConsentForm, type: :model do
     let(:contact_method) { nil }
     let(:response) { nil }
     let(:reason) { nil }
+    let(:gp_response) { nil }
     subject do
       build(
         :consent_form,
@@ -51,7 +52,8 @@ RSpec.describe ConsentForm, type: :model do
         parent_relationship:,
         contact_method:,
         response:,
-        reason:
+        reason:,
+        gp_response:
       )
     end
 
@@ -178,6 +180,25 @@ RSpec.describe ConsentForm, type: :model do
 
       it { should validate_presence_of(:contact_injection).on(:update) }
     end
+
+    context "when form_step is :gp" do
+      let(:response) { "given" }
+      let(:form_step) { :gp }
+
+      context "runs validations from previous steps" do
+        it { should validate_presence_of(:first_name).on(:update) }
+        it { should validate_presence_of(:date_of_birth).on(:update) }
+        it { should validate_presence_of(:parent_name).on(:update) }
+      end
+
+      it { should validate_presence_of(:gp_response).on(:update) }
+
+      context "when gp_response is 'yes'" do
+        let(:gp_response) { "yes" }
+
+        it { should validate_presence_of(:gp_name).on(:update) }
+      end
+    end
   end
 
   describe "#full_name" do
@@ -211,6 +232,16 @@ RSpec.describe ConsentForm, type: :model do
         build(:consent_form, response: "refused", reason: "contains_gelatine")
       expect(consent_form.form_steps).to include(:reason)
       expect(consent_form.form_steps).to include(:injection)
+    end
+
+    it "does not ask for gp details when patient refuses consent" do
+      consent_form = build(:consent_form, response: "refused")
+      expect(consent_form.form_steps).not_to include(:gp)
+    end
+
+    it "asks for gp details when patient gives consent" do
+      consent_form = build(:consent_form, response: "given")
+      expect(consent_form.form_steps).to include(:gp)
     end
   end
 end

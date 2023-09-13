@@ -15,6 +15,7 @@ en:
     reason: "reason"
     injection: "injection"
     contact_method: "contact-method"
+    gp: "gp"
   activerecord:
     attributes:
       consent:
@@ -136,6 +137,10 @@ en:
               blank: Choose a reason
             contact_injection:
               blank: Choose if you want to be contacted
+            gp_response:
+              blank: Choose if your child is registered with a GP
+            gp_name:
+              blank: Enter the GP surgery name
         triage:
           attributes:
             status:
