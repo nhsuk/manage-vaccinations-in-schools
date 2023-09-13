@@ -119,6 +119,12 @@ class ConsentForm < ApplicationRecord
       validates :gp_response, presence: true
       validates :gp_name, presence: true, if: :gp_response_yes?
     end
+
+    with_options if: -> { required_for_step?(:address) } do
+      validates :address_line_1, presence: true
+      validates :address_town, presence: true
+      validates :address_postcode, presence: true
+    end
   end
 
   def full_name
@@ -135,7 +141,8 @@ class ConsentForm < ApplicationRecord
       :consent,
       (:reason if consent_refused?),
       (:injection if consent_refused? && eligible_for_injection?),
-      (:gp if consent_given?)
+      (:gp if consent_given?),
+      (:address if consent_given?)
     ].compact
   end
 
