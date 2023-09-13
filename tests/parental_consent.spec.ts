@@ -115,7 +115,7 @@ async function when_i_enter_the_parent_details() {
   await p.getByLabel("Your name").fill("Joe Senior");
   await p.getByRole("radio", { name: "Dad" }).click();
   await p.getByLabel("Email address").fill("joe.senior@example.com");
-  await p.getByLabel("Telephone number").fill("07123456789");
+  await p.getByLabel("Phone number").fill("07123456789");
 }
 
 async function then_i_see_the_consent_page() {
@@ -129,7 +129,7 @@ async function when_i_fill_in_the_consent_form() {
 }
 
 async function then_i_see_the_phone_contact_page() {
-  await expect(p.locator("h1")).toContainText("Telephone contact method");
+  await expect(p.locator("h1")).toContainText("Phone contact method");
 }
 
 async function when_i_enter_the_phone_contact_details() {
