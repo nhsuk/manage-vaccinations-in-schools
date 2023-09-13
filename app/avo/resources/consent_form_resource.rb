@@ -30,5 +30,9 @@ class ConsentFormResource < Avo::BaseResource
   field :contact_injection, as: :boolean
   field :gp_name, as: :string
   field :gp_response, as: :select, enum: ::ConsentForm.gp_responses
+  field :address_line_1, as: :string
+  field :address_line_2, as: :string
+  field :address_postcode, as: :string
+  field :address_town, as: :string
   field :recorded_at, as: :datetime
 end

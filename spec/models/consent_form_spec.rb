@@ -3,6 +3,10 @@
 # Table name: consent_forms
 #
 #  id                        :bigint           not null, primary key
+#  address_line_1            :string
+#  address_line_2            :string
+#  address_postcode          :string
+#  address_town              :string
 #  common_name               :text
 #  contact_injection         :boolean
 #  contact_method            :integer
