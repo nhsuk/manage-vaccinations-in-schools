@@ -61,7 +61,8 @@ class ConsentForms::EditController < ConsentForms::BaseController
       consent: %i[response],
       reason: %i[reason reason_notes],
       injection: %i[contact_injection],
-      gp: %i[gp_response gp_name]
+      gp: %i[gp_response gp_name],
+      address: %i[address_line_1 address_line_2 address_town address_postcode]
     }.fetch(current_step)
 
     params

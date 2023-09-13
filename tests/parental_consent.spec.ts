@@ -38,6 +38,10 @@ test("Parental consent", async ({ page }) => {
 
   await when_i_fill_in_the_gp_form();
   await and_i_click_continue();
+  await then_i_see_the_address_form();
+
+  await when_i_fill_in_the_address_form();
+  await and_i_click_continue();
   await then_i_see_the_consent_confirm_page();
 
   await when_i_click_the_confirm_button();
@@ -149,4 +153,14 @@ async function then_i_see_the_gp_page() {
 async function when_i_fill_in_the_gp_form() {
   await p.getByLabel("Yes, they are registered with a GP").click();
   await p.getByLabel("Name of GP surgery").fill("Test GP Surgery");
+}
+
+async function then_i_see_the_address_form() {
+  await expect(p.locator("h1")).toContainText("Home address");
+}
+
+async function when_i_fill_in_the_address_form() {
+  await p.getByLabel("Address line 1").fill("1 Test Street");
+  await p.getByLabel("Town or city").fill("Test Town");
+  await p.getByLabel("Postcode").fill("TE1 1ST");
 }

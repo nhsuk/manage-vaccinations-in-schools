@@ -8,4 +8,16 @@ module ConsentFormsHelper
       text
     end
   end
+
+  def format_address(consent_form)
+    safe_join(
+      [
+        consent_form.address_line_1,
+        consent_form.address_line_2,
+        consent_form.address_town,
+        consent_form.address_postcode
+      ].reject(&:blank?),
+      tag.br
+    )
+  end
 end
