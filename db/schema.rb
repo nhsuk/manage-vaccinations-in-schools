@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_11_143431) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_13_110912) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -79,6 +79,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_11_143431) do
     t.integer "reason"
     t.text "reason_notes"
     t.boolean "contact_injection"
+    t.string "gp_name"
+    t.integer "gp_response"
     t.index ["session_id"], name: "index_consent_forms_on_session_id"
   end
 
