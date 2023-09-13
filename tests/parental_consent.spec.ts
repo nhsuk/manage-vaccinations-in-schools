@@ -34,6 +34,10 @@ test("Parental consent", async ({ page }) => {
 
   await when_i_fill_in_the_consent_form();
   await and_i_click_continue();
+  await then_i_see_the_gp_page();
+
+  await when_i_fill_in_the_gp_form();
+  await and_i_click_continue();
   await then_i_see_the_consent_confirm_page();
 
   await when_i_click_the_confirm_button();
@@ -134,4 +138,15 @@ async function then_i_see_the_phone_contact_page() {
 
 async function when_i_enter_the_phone_contact_details() {
   await p.getByRole("radio", { name: "I do not have specific needs" }).click();
+}
+
+async function then_i_see_the_gp_page() {
+  await expect(p.locator("h1")).toContainText(
+    "Is your child registered with a GP?",
+  );
+}
+
+async function when_i_fill_in_the_gp_form() {
+  await p.getByLabel("Yes, they are registered with a GP").click();
+  await p.getByLabel("Name of GP surgery").fill("Test GP Surgery");
 }

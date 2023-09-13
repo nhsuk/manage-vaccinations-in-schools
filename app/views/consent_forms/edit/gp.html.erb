@@ -1,0 +1,32 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+      href: previous_wizard_path,
+      name: "previous page"
+  ) %>
+<% end %>
+
+<% title = "Is your child registered with a GP?" %>
+<% content_for :page_title, title %>
+
+<%= form_for @consent_form, url: wizard_path, method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
+  <%= f.govuk_radio_buttons_fieldset(:gp_response,
+    legend: { size: 'l', text: title, tag: 'h1' }
+  ) do %>
+    <%= f.govuk_radio_button :gp_response, "yes",
+      label: { text: 'Yes, they are registered with a GP' },
+      link_errors: true do %>
+      <%= f.govuk_text_field :gp_name,
+        label: { text: 'Name of GP surgery' } %>
+    <% end %>
+    <%= f.govuk_radio_button :gp_response, "no",
+      label: { text: 'No, they are not registered with a GP' } %>
+    <%= f.govuk_radio_button :gp_response, "dont_know",
+      label: { text: 'I don’t know' } %>
+  <% end %>
+
+  <div class="nhsuk-u-margin-top-6">
+    <%= f.govuk_submit "Continue" %>
+  </div>
+<% end %>
