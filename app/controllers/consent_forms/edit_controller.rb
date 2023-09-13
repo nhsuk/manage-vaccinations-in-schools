@@ -60,7 +60,8 @@ class ConsentForms::EditController < ConsentForms::BaseController
       contact_method: %i[contact_method contact_method_other],
       consent: %i[response],
       reason: %i[reason reason_notes],
-      injection: %i[contact_injection]
+      injection: %i[contact_injection],
+      gp: %i[gp_response gp_name]
     }.fetch(current_step)
 
     params
