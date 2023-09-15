@@ -56,6 +56,8 @@ task :load_campaign_example, [:example_file] => :environment do |_task, args|
       patient.consents << consent unless patient.consents.include?(consent)
 
       transition_states(patient.patient_sessions.first)
+
+      create_user_for_environment(Rails.env)
     end
   end
 end
@@ -65,4 +67,14 @@ def transition_states(patient_session)
   patient_session.do_triage if patient_session.may_do_triage?
   patient_session.do_vaccination if patient_session.may_do_vaccination?
   patient_session.save!
+end
+
+def create_user_for_environment(env)
+  env_name = { "development" => "dev" }.fetch(env, env)
+
+  User.find_or_create_by!(email: "nurse@#{env_name}") do |user|
+    user.full_name = "Nurse Joy"
+    user.password = "nurse@#{env_name}"
+    user.password_confirmation = "nurse@#{env_name}"
+  end
 end
