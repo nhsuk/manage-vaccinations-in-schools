@@ -1,10 +1,12 @@
 import { test, expect, Page } from "@playwright/test";
+import { signInTestUser } from "./shared/sign_in";
 
 let p: Page;
 
 test("Consent - No response", async ({ page }) => {
   p = page;
   await given_the_app_is_setup();
+  await and_i_am_signed_in();
 
   await when_i_select_a_child_with_no_consent_response();
   await and_i_click_get_consent();
@@ -28,6 +30,11 @@ test("Consent - No response", async ({ page }) => {
 
 async function given_the_app_is_setup() {
   await p.goto("/reset");
+}
+
+async function and_i_am_signed_in() {
+  await p.goto("/users/sign_in");
+  await signInTestUser(p);
 }
 
 async function when_i_select_a_child_with_no_consent_response() {
