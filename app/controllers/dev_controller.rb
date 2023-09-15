@@ -1,9 +1,11 @@
 require "rake"
 
-Rails.application.load_tasks
-
 class DevController < ApplicationController
+  skip_before_action :authenticate_user!
+
   def reset
+    Rails.application.load_tasks
+
     ActiveRecord::Base.connection.transaction do
       data_tables =
         ActiveRecord::Base.connection.tables -
