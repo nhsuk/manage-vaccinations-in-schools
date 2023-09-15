@@ -4,6 +4,8 @@ RSpec.describe "/sessions/:session_id/triage", type: :request do
   let(:patient) { create(:patient) }
   let(:session) { create(:session, patients: [patient]) }
 
+  before { sign_in create(:user) }
+
   describe "GET /sessions/:session_id/triage" do
     before { get triage_session_url(session) }
 
