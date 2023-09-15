@@ -208,6 +208,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_13_135836) do
     t.string "last_sign_in_ip"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "full_name"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
