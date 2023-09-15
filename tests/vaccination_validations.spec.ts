@@ -1,10 +1,12 @@
 import { test, expect, Page } from "@playwright/test";
+import { signInTestUser } from "./shared/sign_in";
 
 let p: Page;
 
 test("Vaccination validations", async ({ page }) => {
   p = page;
   await given_the_app_is_setup();
+  await and_i_am_signed_in();
 
   await given_i_am_on_the_vaccination_page_for_a_child();
   await when_i_continue_without_entering_anything();
@@ -25,6 +27,11 @@ test("Vaccination validations", async ({ page }) => {
 
 async function given_the_app_is_setup() {
   await p.goto("/reset");
+}
+
+async function and_i_am_signed_in() {
+  await p.goto("/users/sign_in");
+  await signInTestUser(p);
 }
 
 async function given_i_am_on_the_vaccination_page_for_a_child() {
