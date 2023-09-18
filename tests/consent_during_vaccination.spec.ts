@@ -25,7 +25,6 @@ async function given_the_app_is_setup() {
 }
 
 async function and_i_am_signed_in() {
-  await p.goto("/users/sign_in");
   await signInTestUser(p);
 }
 
