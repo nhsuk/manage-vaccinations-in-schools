@@ -46,7 +46,7 @@ async function and_i_enter_a_note_and_save_triage() {
 async function then_the_patient_should_still_be_in_triage() {
   await expect(
     p.getByRole("row", {
-      name: "Caridad Sipes Notes need triage Triage started",
+      name: "Caridad Sipes Health questions need triage Triage started",
     }),
   ).toBeVisible();
 }
@@ -64,7 +64,7 @@ async function and_i_click_on_the_ready_to_vaccinate_tab() {
 async function then_the_patient_should_be_in_ready_to_vaccinate() {
   await expect(
     p.getByRole("row", {
-      name: "Caridad Sipes Notes need triage Vaccinate",
+      name: "Caridad Sipes Health questions need triage Vaccinate",
     }),
   ).toBeVisible();
 }
