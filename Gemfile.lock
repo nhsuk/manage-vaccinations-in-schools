@@ -8,9 +8,9 @@ GIT
 
 GIT
   remote: https://github.com/x-govuk/govuk-components.git
-  revision: d69f0b48ca675e641d67f1a28f6f3ffbbb2b25f7
+  revision: 66553421558caa1674447a04d6fe4c4d39390626
   specs:
-    govuk-components (4.1.0)
+    govuk-components (4.1.1)
       html-attributes-utils (~> 1.0.0, >= 1.0.0)
       pagy (~> 6.0)
       view_component (>= 3.3, < 3.6)
