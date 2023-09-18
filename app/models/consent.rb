@@ -128,7 +128,9 @@ class Consent < ApplicationRecord
   def reasons_triage_needed
     reasons = []
     reasons << "Check parental responsibility" if parent_relationship_other?
-    reasons << "Notes need triage" if health_questions_require_follow_up?
+    if health_questions_require_follow_up?
+      reasons << "Health questions need triage"
+    end
     reasons
   end
 end

@@ -94,7 +94,9 @@ RSpec.describe Consent do
       it "returns notes need triage" do
         response = build(:consent_given, :health_question_notes)
 
-        expect(response.reasons_triage_needed).to eq(["Notes need triage"])
+        expect(response.reasons_triage_needed).to eq(
+          ["Health questions need triage"]
+        )
       end
     end
 
@@ -102,7 +104,9 @@ RSpec.describe Consent do
       it "returns both check parental responsibility and notes need triage" do
         response = build(:consent_given, :health_question_notes, :from_granddad)
 
-        expect(response.reasons_triage_needed).to include("Notes need triage")
+        expect(response.reasons_triage_needed).to include(
+          "Health questions need triage"
+        )
         expect(response.reasons_triage_needed).to include(
           "Check parental responsibility"
         )
