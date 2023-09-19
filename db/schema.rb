@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_13_135836) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_19_111724) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -49,6 +49,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_13_135836) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "team_id"
   end
 
   create_table "campaigns_vaccines", id: false, force: :cascade do |t|
@@ -188,6 +189,20 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_13_135836) do
     t.index ["campaign_id"], name: "index_sessions_on_campaign_id"
   end
 
+  create_table "teams", force: :cascade do |t|
+    t.text "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_teams_on_name", unique: true
+  end
+
+  create_table "teams_users", id: false, force: :cascade do |t|
+    t.bigint "team_id", null: false
+    t.bigint "user_id", null: false
+    t.index ["team_id", "user_id"], name: "index_teams_users_on_team_id_and_user_id"
+    t.index ["user_id", "team_id"], name: "index_teams_users_on_user_id_and_team_id"
+  end
+
   create_table "triage", force: :cascade do |t|
     t.integer "status"
     t.text "notes"
@@ -236,6 +251,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_13_135836) do
   end
 
   add_foreign_key "batches", "vaccines"
+  add_foreign_key "campaigns", "teams"
   add_foreign_key "consent_forms", "sessions"
   add_foreign_key "consents", "campaigns"
   add_foreign_key "consents", "patients"
