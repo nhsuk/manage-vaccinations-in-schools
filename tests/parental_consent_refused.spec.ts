@@ -59,7 +59,7 @@ async function and_i_click_continue() {
 }
 
 async function then_i_see_the_consent_confirm_page() {
-  await expect(p.locator("h1")).toContainText("Check and confirm answers");
+  await expect(p.locator("h1")).toContainText("Check your answers and confirm");
 }
 
 async function then_i_see_the_consent_page() {
