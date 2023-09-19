@@ -11,25 +11,37 @@ class ConsentForms::EditController < ConsentForms::BaseController
   before_action :validate_params, only: %i[update]
 
   def show
+    if is_health_question_step?
+      @health_answer = current_health_answer
+      return render "health_question"
+    end
+
     render_wizard
   end
 
   def update
-    @consent_form.assign_attributes(update_params)
+    if is_health_question_step?
+      @health_answer = current_health_answer
+      @health_answer.assign_attributes(health_answer_params)
+      unless @health_answer.valid?
+        return render "health_question", status: :unprocessable_entity
+      end
+
+      @consent_form.assign_attributes(form_step: current_step)
+    else
+      @consent_form.assign_attributes(update_params)
+    end
 
     set_steps # The form_steps can change after certain attrs change
     setup_wizard_translated # Next/previous steps can change after steps change
 
-    case current_step
-    when :school
-      if @consent_form.is_this_their_school == "no"
-        return(
-          redirect_to session_consent_form_cannot_consent_path(
-                        @session,
-                        @consent_form
-                      )
-        )
-      end
+    if current_step == :school && @consent_form.is_this_their_school == "no"
+      return(
+        redirect_to session_consent_form_cannot_consent_path(
+                      @session,
+                      @consent_form
+                    )
+      )
     end
 
     render_wizard @consent_form
@@ -71,6 +83,10 @@ class ConsentForms::EditController < ConsentForms::BaseController
       .merge(form_step: current_step)
   end
 
+  def health_answer_params
+    params.fetch(:health_answer, {}).permit(%i[response notes])
+  end
+
   def set_session
     @session = Session.find(params.fetch(:session_id))
   end
@@ -103,5 +119,14 @@ class ConsentForms::EditController < ConsentForms::BaseController
         render_wizard nil, status: :unprocessable_entity
       end
     end
+  end
+
+  def is_health_question_step?
+    step.start_with?("health-")
+  end
+
+  def current_health_answer
+    index = step.split("-").last.to_i - 1
+    @consent_form.health_answers[index]
   end
 end

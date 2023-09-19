@@ -1,0 +1,30 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+      href: previous_wizard_path,
+      name: "previous page"
+  ) %>
+<% end %>
+
+<% title = @health_answer.question %>
+<% content_for :page_title, title %>
+
+<%= form_for @health_answer, url: wizard_path, method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
+  <%= f.govuk_radio_buttons_fieldset(:response,
+    legend: { size: 'l', text: title, tag: 'h1' }
+  ) do %>
+    <%= f.govuk_radio_button :response, "yes",
+      label: { text: 'Yes' },
+      link_errors: true do %>
+      <%= f.govuk_text_area :notes,
+        label: { text: 'Give details' } %>
+    <% end %>
+    <%= f.govuk_radio_button :response, "no",
+      label: { text: 'No' } %>
+  <% end %>
+
+  <div class="nhsuk-u-margin-top-6">
+    <%= f.govuk_submit "Continue" %>
+  </div>
+<% end %>

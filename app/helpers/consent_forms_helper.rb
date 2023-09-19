@@ -20,4 +20,12 @@ module ConsentFormsHelper
       tag.br
     )
   end
+
+  def health_answer_response(health_answer)
+    if health_answer.response == "yes"
+      "Yes – #{health_answer.notes}"
+    else
+      "No"
+    end
+  end
 end

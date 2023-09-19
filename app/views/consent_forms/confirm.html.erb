@@ -154,6 +154,36 @@
             href: session_consent_form_edit_path(@session, @consent_form, "contact-method"),
             visually_hidden_text: "your phone contact method")
         end
+      else
+        summary_list.with_row do |row|
+          row.with_key { "Phone number" }
+          row.with_value { "Not provided" }
+          row.with_action(text: "Change",
+            href: session_consent_form_edit_path(@session, @consent_form, :parent),
+            visually_hidden_text: "your phone")
+        end
+      end
+    end %>
+  </div>
+</div>
+
+<h2 class="nhsuk-heading-m">Health questions</h2>
+
+<div class="nhsuk-card">
+  <div class="nhsuk-card__content">
+    <%= govuk_summary_list classes: 'app-summary-list--full-width' do |summary_list|
+      @consent_form.health_answers.each_with_index do |ha, index|
+        summary_list.with_row do |row|
+          row.with_key { ha.question }
+          row.with_value { health_answer_response(ha) }
+          row.with_action(text: "Change",
+            href: session_consent_form_edit_path(
+              @session,
+              @consent_form,
+              "health-#{index + 1}".to_sym
+            ),
+            visually_hidden_text: "your answer to health question #{index + 1}")
+        end
       end
     end %>
   </div>
