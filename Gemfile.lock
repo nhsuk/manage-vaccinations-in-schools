@@ -6,15 +6,6 @@ GIT
     faker (3.2.0)
       i18n (>= 1.8.11, < 2)
 
-GIT
-  remote: https://github.com/x-govuk/govuk-components.git
-  revision: d69f0b48ca675e641d67f1a28f6f3ffbbb2b25f7
-  specs:
-    govuk-components (4.1.0)
-      html-attributes-utils (~> 1.0.0, >= 1.0.0)
-      pagy (~> 6.0)
-      view_component (>= 3.3, < 3.6)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -108,7 +99,7 @@ GEM
     audited (5.3.3)
       activerecord (>= 5.0, < 7.1)
       request_store (~> 1.2)
-    avo (2.40.0)
+    avo (2.41.0)
       actionview (>= 6.0)
       active_link_to
       activerecord (>= 6.0)
@@ -249,6 +240,10 @@ GEM
       nokogiri (>= 1.11.4)
     globalid (1.2.1)
       activesupport (>= 6.1)
+    govuk-components (4.1.1)
+      html-attributes-utils (~> 1.0.0, >= 1.0.0)
+      pagy (~> 6.0)
+      view_component (>= 3.3, < 3.6)
     govuk_design_system_formbuilder (4.1.1)
       actionview (>= 6.1)
       activemodel (>= 6.1)
@@ -570,7 +565,7 @@ DEPENDENCIES
   factory_bot_rails
   faker!
   fhir_client
-  govuk-components!
+  govuk-components
   govuk_design_system_formbuilder
   jbuilder
   jsbundling-rails
