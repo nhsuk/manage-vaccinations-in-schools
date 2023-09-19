@@ -15,6 +15,7 @@
 #  first_name                :text
 #  gp_name                   :string
 #  gp_response               :integer
+#  health_answers            :jsonb            not null
 #  last_name                 :text
 #  parent_email              :string
 #  parent_name               :string

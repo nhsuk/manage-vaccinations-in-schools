@@ -34,5 +34,6 @@ class ConsentFormResource < Avo::BaseResource
   field :address_line_2, as: :string
   field :address_postcode, as: :string
   field :address_town, as: :string
+  field :health_answers, as: :text
   field :recorded_at, as: :datetime
 end

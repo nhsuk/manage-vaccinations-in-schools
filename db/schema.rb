@@ -86,6 +86,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_19_111724) do
     t.string "address_line_2"
     t.string "address_town"
     t.string "address_postcode"
+    t.jsonb "health_answers", default: [], null: false
     t.index ["session_id"], name: "index_consent_forms_on_session_id"
   end
 
