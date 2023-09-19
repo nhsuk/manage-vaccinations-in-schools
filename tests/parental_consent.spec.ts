@@ -42,6 +42,9 @@ test("Parental consent", async ({ page }) => {
 
   await when_i_fill_in_the_address_form();
   await and_i_click_continue();
+  await then_i_see_the_first_health_question();
+
+  await when_i_submit_all_the_health_questions();
   await then_i_see_the_consent_confirm_page();
 
   await when_i_click_the_confirm_button();
@@ -163,4 +166,17 @@ async function when_i_fill_in_the_address_form() {
   await p.getByLabel("Address line 1").fill("1 Test Street");
   await p.getByLabel("Town or city").fill("Test Town");
   await p.getByLabel("Postcode").fill("TE1 1ST");
+}
+
+async function then_i_see_the_first_health_question() {
+  await expect(p.locator("h1")).toContainText(
+    "Has your child been diagnosed with asthma?",
+  );
+}
+
+async function when_i_submit_all_the_health_questions() {
+  for (let i = 1; i <= 8; i++) {
+    await p.getByRole("radio", { name: "No" }).click();
+    await and_i_click_continue();
+  }
 }
