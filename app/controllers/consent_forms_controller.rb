@@ -8,7 +8,12 @@ class ConsentFormsController < ConsentForms::BaseController
   end
 
   def create
-    consent_form = @session.consent_forms.create!
+    health_answers =
+      ConsentForm::HEALTH_QUESTIONS.map do |question|
+        HealthAnswer.new question:, response: nil, notes: nil
+      end
+    consent_form = @session.consent_forms.create!(health_answers:)
+
     redirect_to session_consent_form_edit_path(@session, consent_form, :name)
   end
 
