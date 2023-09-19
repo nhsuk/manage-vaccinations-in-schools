@@ -5,7 +5,7 @@
   ) %>
 <% end %>
 
-<%= h1 "Check and confirm answers", class: "nhsuk-heading-l" %>
+<%= h1 "Check your answers and confirm", class: "nhsuk-heading-l" %>
 
 <h2 class="nhsuk-heading-m">Consent</h2>
 
@@ -14,7 +14,9 @@
     <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
       summary_list.with_row do |row|
         row.with_key { "Do you agree?" }
-        row.with_value { @consent_form.consent_given? ? "Yes" : "No" }
+        row.with_value { @consent_form.consent_given? ?
+                         "Yes, I agree to them having a nasal vaccine" :
+                         "No" }
         row.with_action(text: "Change",
           href: session_consent_form_edit_path(@session, @consent_form, :consent),
           visually_hidden_text: "consent")
