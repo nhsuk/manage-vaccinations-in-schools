@@ -57,7 +57,8 @@ task :load_campaign_example, [:example_file] => :environment do |_task, args|
 
       transition_states(patient.patient_sessions.first)
 
-      create_user_for_environment(Rails.env)
+      create_user_for_environment(Rails.env, name: "Nurse Joy", username: "nurse")
+      create_user_for_environment(Rails.env, name: "Nurse Jackie", username: "jackie")
     end
   end
 end
@@ -69,12 +70,14 @@ def transition_states(patient_session)
   patient_session.save!
 end
 
-def create_user_for_environment(env)
+def create_user_for_environment(env, name: "Nurse Joy", username: "nurse", password: nil)
   env_name = { "development" => "dev" }.fetch(env, env)
+  email = "#{username}@#{env_name}"
+  password ||= email
 
-  User.find_or_create_by!(email: "nurse@#{env_name}") do |user|
-    user.full_name = "Nurse Joy"
-    user.password = "nurse@#{env_name}"
-    user.password_confirmation = "nurse@#{env_name}"
+  User.find_or_create_by!(email: email) do |user|
+    user.full_name = name
+    user.password = password
+    user.password_confirmation = password
   end
 end
