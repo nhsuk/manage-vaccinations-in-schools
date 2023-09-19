@@ -126,3 +126,16 @@ $color_app-pale-blue: #ccdff1;
   text-align: left;
   cursor: pointer;
 }
+
+.app-summary-list--full-width {
+  .nhsuk-summary-list__row {
+    .nhsuk-summary-list__key,
+    .nhsuk-summary-list__value,
+    .nhsuk-summary-list__actions {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: none;
+    }
+  }
+}
