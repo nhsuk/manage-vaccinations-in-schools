@@ -21,4 +21,6 @@
 #
 class User < ApplicationRecord
   devise :database_authenticatable, :trackable, :timeoutable
+
+  has_and_belongs_to_many :teams
 end
