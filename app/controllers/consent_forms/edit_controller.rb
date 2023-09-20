@@ -4,9 +4,7 @@ class ConsentForms::EditController < ConsentForms::BaseController
 
   layout "two_thirds"
 
-  before_action :set_session
-  before_action :set_consent_form
-  before_action :set_steps # Uses @consent_form, needs set_consent_form
+  before_action :set_steps
   before_action :setup_wizard_translated
   before_action :validate_params, only: %i[update]
 
@@ -85,14 +83,6 @@ class ConsentForms::EditController < ConsentForms::BaseController
 
   def health_answer_params
     params.fetch(:health_answer, {}).permit(%i[response notes])
-  end
-
-  def set_session
-    @session = Session.find(params.fetch(:session_id))
-  end
-
-  def set_consent_form
-    @consent_form = ConsentForm.find(params.fetch(:consent_form_id))
   end
 
   def set_steps
