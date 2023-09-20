@@ -10,6 +10,9 @@ test("Session authorisation", async ({ page }) => {
   await when_i_sign_in_as_a_nurse_from_another_team();
   await and_i_go_to_the_sessions_list();
   await then_i_should_see_no_sessions();
+
+  await when_i_go_to_a_session_belonging_to_another_team();
+  await then_i_should_get_an_error();
 });
 
 async function given_the_app_is_setup() {
@@ -29,4 +32,14 @@ async function then_i_should_see_no_sessions() {
     p.getByRole("heading", { name: "School sessions" }),
   ).toBeVisible();
   await expect(p.locator(".nhsuk-table__row")).not.toBeVisible();
+}
+
+async function when_i_go_to_a_session_belonging_to_another_team() {
+  await p.goto("/sessions/1");
+}
+
+async function then_i_should_get_an_error() {
+  await expect(
+    p.getByRole("heading", { name: "Page not found" }),
+  ).toBeVisible();
 }
