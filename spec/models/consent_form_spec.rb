@@ -183,7 +183,13 @@ RSpec.describe ConsentForm, type: :model do
         it { should validate_presence_of(:reason).on(:update) }
       end
 
-      it { should validate_presence_of(:contact_injection).on(:update) }
+      # This prints a warning because boolean fields always get converted to
+      # false when they are blank. As such we can't check for this validation.
+      # it do
+      #   should validate_inclusion_of(:contact_injection).in_array(
+      #            [true, false]
+      #          ).on(:update)
+      # end
     end
 
     context "when form_step is :gp" do

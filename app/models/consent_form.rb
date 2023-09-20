@@ -126,7 +126,7 @@ class ConsentForm < ApplicationRecord
     end
 
     with_options if: -> { required_for_step?(:injection) } do
-      validates :contact_injection, presence: true
+      validates :contact_injection, inclusion: { in: [true, false] }
     end
 
     with_options if: -> { required_for_step?(:gp) } do

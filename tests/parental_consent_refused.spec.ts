@@ -17,7 +17,7 @@ test("Parental consent - Consent refused", async ({ page }) => {
   await and_i_click_continue();
   await then_i_see_the_injection_page();
 
-  await when_i_choose_to_have_the_injection();
+  await when_i_choose_to_not_have_the_injection();
   await and_i_click_continue();
   await then_i_see_the_consent_confirm_page();
 });
@@ -88,6 +88,6 @@ async function then_i_see_the_injection_page() {
   );
 }
 
-async function when_i_choose_to_have_the_injection() {
-  await p.click("text=Yes, I am happy for a nurse to contact me");
+async function when_i_choose_to_not_have_the_injection() {
+  await p.getByRole("radio", { name: "No" }).click();
 }
