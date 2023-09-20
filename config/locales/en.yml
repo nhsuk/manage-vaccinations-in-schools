@@ -154,7 +154,7 @@ en:
             reason:
               blank: Choose a reason
             contact_injection:
-              blank: Choose if you want to be contacted
+              inclusion: Choose if you want to be contacted
             gp_response:
               blank: Choose if your child is registered with a GP
             gp_name:

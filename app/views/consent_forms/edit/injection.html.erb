@@ -16,7 +16,7 @@
 <%= form_for @consent_form, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <%= f.govuk_radio_buttons_fieldset(:response,
+  <%= f.govuk_radio_buttons_fieldset(:contact_injection,
     legend: { size: 's',
               text: 'Would you like a nurse to contact you about this option?' }
   ) do %>
