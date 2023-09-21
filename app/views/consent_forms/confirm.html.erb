@@ -6,7 +6,7 @@
 <% end %>
 
 <% change_link = Proc.new do |attr|
-  options = {}
+  options = attr.in?(%i[consent reason]) ? {} : { skip_to_confirm: true }
   session_consent_form_edit_path(
     @session,
     @consent_form,
