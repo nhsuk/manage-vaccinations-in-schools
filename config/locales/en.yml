@@ -48,6 +48,13 @@ en:
         parent_relationships:
           father: dad
           mother: mum
+        reasons:
+          contains_gelatine: "Vaccine contains gelatine from pigs"
+          already_received: "Vaccine already received"
+          given_elsewhere: "Vaccine will be given elsewhere"
+          medical_reasons: "Medical reasons"
+          personal_choice: "Personal choice"
+          other: "Other"
       patient_session:
         outcomes:
           could_not_vaccinate: Could not vaccinate
