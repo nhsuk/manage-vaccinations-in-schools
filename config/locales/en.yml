@@ -48,6 +48,11 @@ en:
         parent_relationships:
           father: dad
           mother: mum
+        contact_methods:
+          text: I can only receive text messages
+          voice: I can only receive voice calls
+          other: Other
+          any: I do not have specific needs
         reasons:
           contains_gelatine: "Vaccine contains gelatine from pigs"
           already_received: "Vaccine already received"
