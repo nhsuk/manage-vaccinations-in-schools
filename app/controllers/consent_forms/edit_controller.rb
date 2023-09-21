@@ -42,6 +42,8 @@ class ConsentForms::EditController < ConsentForms::BaseController
       )
     end
 
+    return redirect_to finish_wizard_path if skip_to_confirm?
+
     render_wizard @consent_form
   end
 
@@ -118,5 +120,9 @@ class ConsentForms::EditController < ConsentForms::BaseController
   def current_health_answer
     index = step.split("-").last.to_i - 1
     @consent_form.health_answers[index]
+  end
+
+  def skip_to_confirm?
+    request.referer.include?("skip_to_confirm")
   end
 end
