@@ -8,7 +8,8 @@ task :load_campaign_example, [:example_file] => :environment do |_task, args|
   example = ExampleCampaignData.new(data_file: Rails.root.join(example_file))
 
   ActiveRecord::Base.transaction do
-    team = create_users_and_teams_and_return_primary_team
+    team = create_team(example.team_attributes[:name])
+    create_users(team:, users: example.team_attributes[:users])
 
     school = Location.find_or_create_by!(name: example.school_attributes[:name])
     school.update!(example.school_attributes)
@@ -70,38 +71,26 @@ def transition_states(patient_session)
   patient_session.save!
 end
 
-def create_users_and_teams_and_return_primary_team
-  sais_team_1 = Team.find_or_create_by!(name: "SAIS Team Test 1")
-  sais_team_2 = Team.find_or_create_by!(name: "SAIS Team Test 2")
-
-  create_user_for_environment Rails.env,
-                              name: "Nurse Joy",
-                              username: "nurse",
-                              teams: [sais_team_1]
-  create_user_for_environment Rails.env,
-                              name: "Nurse Jackie",
-                              username: "jackie",
-                              teams: [sais_team_2]
-  sais_team_1
+def create_team(name)
+  Team.find_or_create_by!(name:)
 end
 
-def create_user_for_environment(
-  env,
-  teams:,
-  name: "Nurse Joy",
-  username: "nurse",
-  password: nil
-)
-  env_name = { "development" => "dev" }.fetch(env, env)
-  email = "#{username}@#{env_name}"
-  password ||= email
-
-  user =
-    User.find_or_create_by!(email:) do |new_user|
-      new_user.full_name = name
-      new_user.password = password
-      new_user.password_confirmation = password
+def create_users(team:, users:)
+  users.map do |attributes|
+    email = attributes.fetch(:email) do
+      username = attributes[:username]
+      username ||= attributes[:full_name]&.downcase.gsub(/\s+/, ".")
+      env_name = { "development" => "dev" }.fetch(Rails.env, Rails.env)
+      "#{username}@#{env_name}"
     end
-  user.teams = teams
-  user
+    User
+      .find_or_initialize_by(email:)
+      .tap do |user|
+        user.full_name = attributes[:full_name]
+        user.password = email
+        user.password_confirmation = email
+        user.teams << team unless user.teams.include?(team)
+        user.save!
+      end
+  end
 end

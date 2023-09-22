@@ -119,4 +119,15 @@ class ExampleCampaignData
       attributes
     end
   end
+
+  def team_attributes
+    team_data = raw_data["team"]
+    {
+      name: team_data["name"],
+      users:
+        team_data["users"].map do |user|
+          { full_name: user["full_name"], username: user["username"] }
+        end
+    }
+  end
 end
