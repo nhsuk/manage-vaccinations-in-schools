@@ -4,6 +4,15 @@
   "location": "St Andrew's Benn CofE (Voluntary Aided) Primary School",
   "date": "2023-03-16T12:30",
   "type": "HPV",
+  "team": {
+    "name": "Warwickshire SAIS Team",
+    "users": [
+      {
+        "full_name": "Nurse Joy",
+        "username": "nurse.joy"
+      }
+    ]
+  },
   "vaccines": [
     {
       "brand": "Gardasil 9",
