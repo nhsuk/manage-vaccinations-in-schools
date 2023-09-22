@@ -42,6 +42,11 @@
 #
 FactoryBot.define do
   factory :consent do
+    transient do
+      random { Random.new }
+      health_questions_list { Consent::HEALTH_QUESTIONS.fetch(:flu) }
+    end
+
     patient { create :patient }
     campaign { create :campaign }
     response { "given" }
@@ -50,7 +55,7 @@ FactoryBot.define do
     parent_phone { Faker::PhoneNumber.cell_phone }
     address_line_1 { Faker::Address.street_address }
     address_line_2 do
-      Random.rand(1.0) > 0.8 ? Faker::Address.secondary_address : nil
+      random.rand(1.0) > 0.8 ? Faker::Address.secondary_address : nil
     end
     address_town { Faker::Address.city }
     address_postcode { Faker::Address.postcode }
@@ -58,19 +63,21 @@ FactoryBot.define do
     recorded_at { Time.zone.now }
 
     health_questions do
-      Consent::HEALTH_QUESTIONS
-        .fetch(:flu)
-        .map { |question| { question:, response: "no" } }
+      health_questions_list.map { |question| { question:, response: "no" } }
     end
 
     factory :consent_given do
       response { :given }
     end
 
-    factory :consent_refused do
+    trait :refused do
       response { :refused }
       reason_for_refusal { :personal_choice }
       health_questions { [] }
+    end
+
+    factory :consent_refused do
+      refused
     end
 
     trait :from_mum do
@@ -79,7 +86,7 @@ FactoryBot.define do
         "#{Faker::Name.female_first_name} #{Faker::Name.last_name}"
       end
       parent_email do
-        "#{parent_name.downcase.gsub(" ", ".")}#{rand(100)}@gmail.com"
+        "#{parent_name.downcase.gsub(" ", ".")}#{random.rand(100)}@gmail.com"
       end
     end
 
@@ -87,7 +94,7 @@ FactoryBot.define do
       parent_relationship { "father" }
       parent_name { "#{Faker::Name.male_first_name} #{Faker::Name.last_name}" }
       parent_email do
-        "#{parent_name.downcase.gsub(" ", ".")}#{rand(100)}@gmail.com"
+        "#{parent_name.downcase.gsub(" ", ".")}#{random.rand(100)}@gmail.com"
       end
     end
 
@@ -96,10 +103,21 @@ FactoryBot.define do
       parent_relationship_other { "Granddad" }
     end
 
+    trait :flu do
+      transient do
+        health_questions_list { Consent::HEALTH_QUESTIONS.fetch(:flu) }
+      end
+    end
+
+    trait :hpv do
+      transient do
+        health_questions_list { Consent::HEALTH_QUESTIONS.fetch(:hpv) }
+      end
+    end
+
     trait :health_question_notes do
       health_questions do
-        Consent::HEALTH_QUESTIONS
-          .fetch(:flu)
+        health_questions_list
           .map do |question|
             if question == "Is there anything else we should know?"
               {
@@ -114,10 +132,9 @@ FactoryBot.define do
       end
     end
 
-    trait :health_question_hpv_no_contraindications do
+    trait :no_contraindications do
       health_questions do
-        Consent::HEALTH_QUESTIONS
-          .fetch(:hpv)
+        health_questions_list
           .map { |question| { question:, response: "no" } }
       end
     end

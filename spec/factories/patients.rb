@@ -28,11 +28,13 @@
 FactoryBot.define do
   factory :patient do
     transient do
+      random { Random.new }
+
       # Used for associations like consent and triage that need to be
       # associated with a campaign
       session { create :session }
       campaign { session.campaign }
-      parent_sex { %w[male female].sample }
+      parent_sex { %w[male female].sample(random:) }
       parent_first_name do
         if parent_sex == "male"
           Faker::Name.masculine_name
@@ -42,8 +44,8 @@ FactoryBot.define do
       end
     end
 
-    nhs_number { rand(10**10) }
-    sex { %w[Male Female].sample }
+    nhs_number { Faker::NationalHealthService.british_number.gsub(/\s+/, "") }
+    sex { %w[Male Female].sample(random:) }
     first_name { Faker::Name.first_name }
     last_name { Faker::Name.last_name }
     screening { "Approved for vaccination" }
