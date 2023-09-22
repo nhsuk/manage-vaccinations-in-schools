@@ -6,6 +6,8 @@ class TriageController < ApplicationController
   before_action :set_consent, only: %i[show create update]
   before_action :set_vaccination_record, only: %i[show]
 
+  after_action :verify_policy_scoped, only: %i[index show update]
+
   layout "two_thirds", except: %i[index]
 
   def index
@@ -88,7 +90,10 @@ class TriageController < ApplicationController
   private
 
   def set_session
-    @session = Session.find(params.fetch(:session_id) { params.fetch(:id) })
+    @session =
+      policy_scope(Session).find(
+        params.fetch(:session_id) { params.fetch(:id) }
+      )
   end
 
   def set_patient

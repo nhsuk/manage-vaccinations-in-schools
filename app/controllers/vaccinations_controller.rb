@@ -246,7 +246,10 @@ class VaccinationsController < ApplicationController
   end
 
   def set_session
-    @session = Session.find(params.fetch(:session_id) { params.fetch(:id) })
+    @session =
+      policy_scope(Session).find(
+        params.fetch(:session_id) { params.fetch(:id) }
+      )
   end
 
   def set_patient
