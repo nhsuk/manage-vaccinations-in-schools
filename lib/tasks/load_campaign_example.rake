@@ -2,27 +2,35 @@ require "example_campaign_data"
 
 desc "Load campaign example file into db"
 task :load_campaign_example, [:example_file] => :environment do |_task, args|
+  new_campaign = ENV.fetch("new_campaign", false).in? ["true", "1", "yes"]
+
   example_file =
     args.fetch(:example_file, "db/sample_data/example-campaign.json")
 
   example = ExampleCampaignData.new(data_file: Rails.root.join(example_file))
 
   ActiveRecord::Base.transaction do
-    team = create_team(example.team_attributes[:name])
+    campaign = if new_campaign
+      Campaign.new(example.campaign_attributes)
+    else
+      Campaign.find_or_initialize_by(name: example.campaign_attributes[:name])
+    end
+
+    team = Team.find_or_initialize_by(name: example.team_attributes[:name])
+    team.campaigns << campaign unless campaign.in? team.campaigns
+
     create_users(team:, users: example.team_attributes[:users])
+
+    campaign.save!
 
     school = Location.find_or_create_by!(name: example.school_attributes[:name])
     school.update!(example.school_attributes)
 
-    campaign =
-      Campaign.find_or_initialize_by(name: example.campaign_attributes[:name])
-    campaign.team = team
-    campaign.save!
-
     example.vaccine_attributes.each do |attributes|
       batches = attributes.delete(:batches)
-      vaccine = campaign.vaccines.find_or_create_by!(attributes)
+      vaccine = Vaccine.find_or_create_by!(attributes)
       batches.each { |batch| vaccine.batches.find_or_create_by!(batch) }
+      campaign.vaccines << vaccine unless vaccine.in? campaign.vaccines
     end
 
     session =
@@ -69,10 +77,6 @@ def transition_states(patient_session)
   patient_session.do_triage if patient_session.may_do_triage?
   patient_session.do_vaccination if patient_session.may_do_vaccination?
   patient_session.save!
-end
-
-def create_team(name)
-  Team.find_or_create_by!(name:)
 end
 
 def create_users(team:, users:)
