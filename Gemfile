@@ -61,5 +61,6 @@ group :test do
   gem "cuprite"
   gem "rspec"
   gem "shoulda-matchers"
+  gem "timecop"
   gem "webmock"
 end
