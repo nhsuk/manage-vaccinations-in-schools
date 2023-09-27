@@ -11,11 +11,7 @@ task :generate_example_campaign, [] => :environment do |_task, _args|
   patients = ENV["patients"]&.to_i
   type = ENV.fetch("type", "hpv").to_sym
 
-  generator = ExampleCampaignGenerator.new(
-    seed: seed,
-    type: type,
-    patients: patients,
-  )
+  generator = ExampleCampaignGenerator.new(seed:, type:, patients:)
   data = generator.generate
 
   IO.write(target_filename, JSON.pretty_generate(data))

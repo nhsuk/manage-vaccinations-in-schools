@@ -1,5 +1,5 @@
-require 'rails_helper'
-require 'example_campaign_generator'
+require "rails_helper"
+require "example_campaign_generator"
 
 RSpec.describe ExampleCampaignGenerator do
   let(:expected_json) do

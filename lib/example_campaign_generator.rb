@@ -1,6 +1,5 @@
 require "faker"
 
-# rubocop:disable Lint/ConstantDefinitionInBlock
 class ExampleCampaignGenerator
   attr_reader :random, :type
 
@@ -18,10 +17,13 @@ class ExampleCampaignGenerator
     patients_consent_triage = []
 
     if @patients
-      patients_consent_triage = build_patients_with_no_consent_response(count: @patients)
+      patients_consent_triage =
+        build_patients_with_no_consent_response(count: @patients)
     else
-      patients_consent_triage += build_patients_with_consent_given_and_ready_to_vaccinate
-      patients_consent_triage += build_patients_with_no_consent_response(count: 16)
+      patients_consent_triage +=
+        build_patients_with_consent_given_and_ready_to_vaccinate
+      patients_consent_triage +=
+        build_patients_with_no_consent_response(count: 16)
       patients_consent_triage += build_patients_with_consent_refused
       patients_consent_triage += build_patients_that_still_need_triage
       patients_consent_triage += build_patients_with_triage_started
@@ -64,16 +66,10 @@ class ExampleCampaignGenerator
   end
 
   def team_data
-    @team_data ||=
-      begin
-        team_data = {
-          name: team.name,
-          users: [{
-                    full_name: user.full_name,
-                    email: user.email
-                  }]
-        }
-      end
+    @team_data ||= {
+      name: team.name,
+      users: [{ full_name: user.full_name, email: user.email }]
+    }
   end
 
   def team
@@ -99,15 +95,13 @@ class ExampleCampaignGenerator
         :batch,
         3,
         random:,
-        vaccine: vaccine,
+        vaccine:,
         days_to_expiry_range: 90..180
       )
   end
 
   def batches_data
-    batches.map do |batch|
-      { name: batch.name, expiry: batch.expiry.iso8601 }
-    end
+    batches.map { |batch| { name: batch.name, expiry: batch.expiry.iso8601 } }
   end
 
   def vaccine
@@ -115,14 +109,9 @@ class ExampleCampaignGenerator
   end
 
   def vaccines_data
-    @vaccines_data ||=
-      [
-        {
-          brand: vaccine.brand,
-          method: vaccine.method,
-          batches: batches_data
-        }
-      ]
+    @vaccines_data ||= [
+      { brand: vaccine.brand, method: vaccine.method, batches: batches_data }
+    ]
   end
 
   def build_patient
@@ -139,13 +128,7 @@ class ExampleCampaignGenerator
     carer_options = %i[from_mum from_dad]
     options << carer_options.sample(random:) unless carer_options.in? options
 
-    FactoryBot.build(
-      :consent,
-      *options,
-      random:,
-      campaign: nil,
-      **attrs
-    )
+    FactoryBot.build(:consent, *options, random:, campaign: nil, **attrs)
   end
 
   # consent given, no contraindications in health questions, ready to vaccinate
@@ -169,21 +152,23 @@ class ExampleCampaignGenerator
   def build_patients_with_consent_refused
     15.times.map do
       patient = build_patient
-      consent = build_consent(
-        :refused,
-        reason_for_refusal: %i[personal_choice already_vaccinated].sample(random:),
-        patient:
-      )
+      consent =
+        build_consent(
+          :refused,
+          reason_for_refusal: %i[personal_choice already_vaccinated].sample(
+            random:
+          ),
+          patient:
+        )
       [patient, consent]
     end
   end
-
 
   # cases to triage
   #
   # Each line represents health question responses for a patient that has
   # answered "Yes" to a health question.
-  def health_question_responses_to_triage # rubocop:disable Metrics/LineLength
+  def health_question_responses_to_triage
     @health_question_responses_to_triage ||= CSV.parse(<<~CSV, headers: true)
       Does the child have any severe allergies that have led to an anaphylactic reaction?,Does the child have any existing medical conditions?,Does the child take any regular medication?,Is there anything else we should know?
       My child has a severe nut allergy and has had an anaphylactic reaction in the past. This is something that’s extremely important to me and my husband. We make sure to always have an EpiPen on hand.,,,
@@ -208,22 +193,28 @@ class ExampleCampaignGenerator
     health_question_responses_to_triage.map do |row|
       health_question_responses =
         row.map do |question, answer|
-        {
-          question:,
-          response: answer.present? ? "Yes" : "No",
-          notes: answer.presence
-        }
-      end
+          {
+            question:,
+            response: answer.present? ? "Yes" : "No",
+            notes: answer.presence
+          }
+        end
 
       patient = build_patient
-      consent = build_consent(:given, health_questions: health_question_responses, patient:)
+      consent =
+        build_consent(
+          :given,
+          health_questions: health_question_responses,
+          patient:
+        )
       [patient, consent]
     end
   end
 
   # cases where triage has been started
-  def health_question_responses_triage_started # rubocop:disable Metrics/LineLength
-    @health_question_responses_triage_started ||= CSV.parse(<<~CSV, headers: true)
+  def health_question_responses_triage_started
+    @health_question_responses_triage_started ||=
+      CSV.parse(<<~CSV, headers: true)
       triage notes,Does the child have any severe allergies that have led to an anaphylactic reaction,Does the child have any existing medical conditions?,Does the child take any regular medication?,Is there anything else we should know?
       "Spoke to child’s mum. Child completed leukaemia treatment 6 months ago. Need to speak to the consultant who treated her for a view on whether it’s safe to vaccinate. Dr Goehring, King’s College, 0208 734 5432.",,My daughter has just finished treatment for leukaemia. I don’t know if it’s safe for her to have the vaccination.,,
       Tried to get hold of parent to establish how severe the phobia is. Try again before vaccination session.,,,,My son is needle phobic.
@@ -237,16 +228,16 @@ class ExampleCampaignGenerator
     health_question_responses_triage_started.map do |row|
       health_question_responses =
         row.map do |question, answer|
-        if question == "triage notes"
-          nil
-        else
-          {
-            question:,
-            response: answer.present? ? "Yes" : "No",
-            notes: answer.presence
-          }
+          if question == "triage notes"
+            nil
+          else
+            {
+              question:,
+              response: answer.present? ? "Yes" : "No",
+              notes: answer.presence
+            }
+          end
         end
-      end
 
       patient = build_patient
       consent =
@@ -265,12 +256,12 @@ class ExampleCampaignGenerator
     health_question_responses_to_triage.map do |row|
       health_question_responses =
         row.map do |question, answer|
-        {
-          question:,
-          response: answer.present? ? "Yes" : "No",
-          notes: answer.presence
-        }
-      end
+          {
+            question:,
+            response: answer.present? ? "Yes" : "No",
+            notes: answer.presence
+          }
+        end
 
       patient = build_patient
       consent =
@@ -316,20 +307,18 @@ class ExampleCampaignGenerator
 
   def add_consent_to_patients_data(patients_data)
     patients_data.each do |patient|
-      if patient[:consent]
-        consent = patient[:consent]
-        patient[:consent] =
-          {
-            response: consent.response,
-            reasonForRefusal: consent.reason_for_refusal,
-            parentName: consent.parent_name,
-            parentRelationship: consent.parent_relationship,
-            parentEmail: consent.parent_email,
-            parentPhone: consent.parent_phone,
-            healthQuestionResponses: consent.health_questions,
-            route: consent.route
-          }
-      end
+      next unless patient[:consent]
+      consent = patient[:consent]
+      patient[:consent] = {
+        response: consent.response,
+        reasonForRefusal: consent.reason_for_refusal,
+        parentName: consent.parent_name,
+        parentRelationship: consent.parent_relationship,
+        parentEmail: consent.parent_email,
+        parentPhone: consent.parent_phone,
+        healthQuestionResponses: consent.health_questions,
+        route: consent.route
+      }
     end
   end
 
@@ -337,9 +326,9 @@ class ExampleCampaignGenerator
   def match_mum_and_dad_info_to_consent(patients_data)
     patients_data.each do |patient|
       unless patient[:consent].present? &&
-             patient[:consent][:parentRelationship].in?(%w[mother father]) &&
-             patient[:consent][:parentRelationship] ==
-             patient[:parentRelationship]
+               patient[:consent][:parentRelationship].in?(%w[mother father]) &&
+               patient[:consent][:parentRelationship] ==
+                 patient[:parentRelationship]
         next
       end
 
@@ -350,4 +339,3 @@ class ExampleCampaignGenerator
     end
   end
 end
-# rubocop:enable Lint/ConstantDefinitionInBlock
