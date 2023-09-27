@@ -11,11 +11,14 @@ RSpec.describe ExampleCampaignGenerator do
 
   it "generates the expected campaign json" do
     json = nil
-    # Patient's dob is generated as an age calculated from "now", so we need to
-    # freeze time to get consistent ages calculated.
+    # Patient's dob is generated as an age calculated from when the fixture json
+    # was generated, so we freeze time to the same day it was generated to get
+    # the same random ages.
     #
-    # This time will need to be reset whenever the fixture JSON is regenerated.
-    Timecop.freeze(2023, 9, 26) do
+    # When the fixture json is regenerated, e.g. when the generater is updated,
+    # the time here will need to be changed to match the day when it was
+    # generated.
+    Timecop.freeze(2023, 9, 27) do
       generator = ExampleCampaignGenerator.new(seed: 42, type: :hpv)
       data = generator.generate
       json = JSON.pretty_generate(data)

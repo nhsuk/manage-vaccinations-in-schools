@@ -19,6 +19,7 @@ FactoryBot.define do
     address { Faker::Address.street_address }
     locality { "" }
     town { Faker::Address.city }
+    county { Faker::Address.county }
     postcode { Faker::Address.postcode }
     # minimum_age { 1 }
     # maximum_age { 1 }

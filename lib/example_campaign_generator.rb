@@ -46,25 +46,6 @@ class ExampleCampaignGenerator
     }
   end
 
-  def school_data
-    @school_data ||= {
-      urn: "136295",
-      name: "Holyrood Academy",
-      address: "Zembard Lane",
-      locality: "",
-      address3: "",
-      town: "Chard",
-      county: "Somerset",
-      postcode: "TA20 1JL",
-      minimum_age: "11",
-      maximum_age: "18",
-      url: "https://holyrood.uat.ac/",
-      phase: "Secondary",
-      type: "Academy converter",
-      detailed_type: "Academy converter"
-    }
-  end
-
   def team_data
     @team_data ||= {
       name: team.name,
@@ -337,5 +318,13 @@ class ExampleCampaignGenerator
       patient[:parentEmail] = patient[:consent][:parentEmail]
       patient[:parentPhone] = patient[:consent][:parentPhone]
     end
+  end
+
+  def school_data
+    @school_data ||=
+      JSON
+        .parse(IO.read(Rails.root.join("db/sample_data/schools_sample.json")))
+        .sample(random:)
+        .with_indifferent_access
   end
 end
