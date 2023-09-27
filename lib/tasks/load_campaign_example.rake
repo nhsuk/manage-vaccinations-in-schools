@@ -2,7 +2,7 @@ require "example_campaign_data"
 
 desc "Load campaign example file into db"
 task :load_campaign_example, [:example_file] => :environment do |_task, args|
-  new_campaign = ENV.fetch("new_campaign", false).in? ["true", "1", "yes"]
+  new_campaign = ENV.fetch("new_campaign", false).in? %w[true 1 yes]
 
   example_file =
     args.fetch(:example_file, "db/sample_data/example-campaign.json")
@@ -10,11 +10,12 @@ task :load_campaign_example, [:example_file] => :environment do |_task, args|
   example = ExampleCampaignData.new(data_file: Rails.root.join(example_file))
 
   ActiveRecord::Base.transaction do
-    campaign = if new_campaign
-      Campaign.new(example.campaign_attributes)
-    else
-      Campaign.find_or_initialize_by(name: example.campaign_attributes[:name])
-    end
+    campaign =
+      if new_campaign
+        Campaign.new(example.campaign_attributes)
+      else
+        Campaign.find_or_initialize_by(name: example.campaign_attributes[:name])
+      end
 
     team = Team.find_or_initialize_by(name: example.team_attributes[:name])
     team.campaigns << campaign unless campaign.in? team.campaigns
@@ -81,12 +82,13 @@ end
 
 def create_users(team:, users:)
   users.map do |attributes|
-    email = attributes.fetch(:email) do
-      username = attributes[:username]
-      username ||= attributes[:full_name]&.downcase.gsub(/\s+/, ".")
-      env_name = { "development" => "dev" }.fetch(Rails.env, Rails.env)
-      "#{username}@#{env_name}"
-    end
+    email =
+      attributes.fetch(:email) do
+        username = attributes[:username]
+        username ||= attributes[:full_name]&.downcase&.gsub(/\s+/, ".")
+        env_name = { "development" => "dev" }.fetch(Rails.env, Rails.env)
+        "#{username}@#{env_name}"
+      end
     User
       .find_or_initialize_by(email:)
       .tap do |user|

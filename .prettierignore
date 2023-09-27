@@ -40,7 +40,7 @@ terraform/.terraform
 *.tfstate.backup
 scratchpad
 
-# Unsurprisingly perhaps, Ruby's JSON produces json that isn't pretty-enough for
-# Prettier. This breaks tests that compares prettified json files with json
+# Unsurprisingly perhaps, Ruby's JSON produces json that isn't pretty enough for
+# Prettier. This breaks tests that compare prettified json files with json
 # produced by Ruby's JSON.
 spec/fixtures/*.json
