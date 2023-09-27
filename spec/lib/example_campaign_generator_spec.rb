@@ -2,15 +2,23 @@ require 'rails_helper'
 require 'example_campaign_generator'
 
 RSpec.describe ExampleCampaignGenerator do
-  let(:expected_json) { IO.read(Rails.root.join("spec/fixtures/example-hpv-campaign-42.json")) }
+  let(:expected_json) do
+    # Remove final newline if present to match generated JSON.
+    IO.read(
+      Rails.root.join("spec/fixtures/example-hpv-campaign-42.json")
+    ).rstrip
+  end
 
   it "generates the expected campaign json" do
     json = nil
     # Patient's dob is generated as an age calculated from "now", so we need to
     # freeze time to get consistent ages calculated.
-    Timecop.freeze(2023, 9, 25) do
+    #
+    # This time will need to be reset whenever the fixture JSON is regenerated.
+    Timecop.freeze(2023, 9, 26) do
       generator = ExampleCampaignGenerator.new(seed: 42, type: :hpv)
-      json = JSON.pretty_generate(generator.generate)
+      data = generator.generate
+      json = JSON.pretty_generate(data)
     end
     expect(json).to eq(expected_json)
   end
