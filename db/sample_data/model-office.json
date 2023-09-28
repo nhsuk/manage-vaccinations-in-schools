@@ -4,6 +4,15 @@
   "location": "Holyrood Academy",
   "date": "2023-07-28T12:30",
   "type": "HPV",
+  "team": {
+    "name": "Somerset SAIS Team",
+    "users": [
+      {
+        "full_name": "Nurse Joy",
+        "username": "nurse.joy"
+      }
+    ]
+  },
   "vaccines": [
     {
       "brand": "Gardasil 9",
