@@ -29,6 +29,10 @@ task :generate_example_campaign, [] => :environment do |_task, _args|
   ExampleCampaignGenerator.patient_options.each do |option|
     campaign_options[option] = ENV[option.to_s].to_i if ENV[option.to_s]
   end
+  if campaign_options[:presets].blank? &&
+     (campaign_options.keys & ExampleCampaignGenerator.patient_options).empty?
+    campaign_options[:presets] = :default
+  end
 
   generator = ExampleCampaignGenerator.new(seed:, **campaign_options)
   data = generator.generate
