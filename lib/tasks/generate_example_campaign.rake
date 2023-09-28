@@ -10,7 +10,7 @@ Option (set these as env vars, e.g. seed=42):
   seed: Random seed used to make data reproducible.
   presets: Use preset values for the following options. These can be overridden with patients_* options. Available presets:
     - model_office
-  type: Type of campaign to generate, one of: hpv, flu
+  type: Type of campaign to generate, one of: hpv, flu (default: flu)
 
 Options controlling number of patients to generate:
 #{ExampleCampaignGenerator.patient_options.map { |option| "  #{option}" }.join("\n")}
@@ -24,7 +24,7 @@ task :generate_example_campaign, [:example_file] => :environment do |_task, args
 
   campaign_options = {}
   campaign_options[:type] = ENV
-    .fetch("type") { campaign_options[:type] || :hpv }
+    .fetch("type") { campaign_options[:type] || :flu }
     .to_sym
   campaign_options[:presets] = ENV["presets"] if ENV["presets"]
   ExampleCampaignGenerator.patient_options.each do |option|

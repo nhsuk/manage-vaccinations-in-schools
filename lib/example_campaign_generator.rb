@@ -41,7 +41,7 @@ class ExampleCampaignGenerator
 
   attr_reader :random, :type, :options
 
-  def initialize(seed: nil, type: :hpv, presets: nil, **options)
+  def initialize(seed: nil, type: :flu, presets: nil, **options)
     @random = seed ? Random.new(seed) : Random.new
 
     Faker::Config.locale = "en-GB"
