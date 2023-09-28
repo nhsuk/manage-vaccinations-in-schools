@@ -173,7 +173,7 @@ yarn playwright codegen http://localhost:4000
 ### Loading example data
 
 You can run a rake task to load data from the example campaign file
-`db/sample_data/example-campaign.json`.`
+`db/sample_data/example-campaign.json`.
 
 ```bash
 $ rake load_campaign_example
@@ -191,7 +191,6 @@ The importer will `find_or_create` the records by default, using specific attrib
 - **children** -- `nhs_number`
 - **schools** -- `urn`
 
-
 ### Generating example data
 
 There's also a rake task to generate example campaign data. The `seed` setting
@@ -200,7 +199,7 @@ of campaign can be controlled by the `type` setting. Use `rails -D
 `generate_example_campaign` for more usage information.
 
 ```bash
-# Generate a simple example campaign to stdout 
+# Generate a simple example campaign to stdout
 $ rails generate_example_campaign
 
 # Generate a flu campaign. Default is flu.
@@ -219,7 +218,6 @@ $ rails generate_example_campaign[model-office.json] presets=model_office
 # Generate example campaign data with a specific random seed for repeatability
 $ rails generate_example_campaign seed=42
 ```
-
 
 ## Deploying
 

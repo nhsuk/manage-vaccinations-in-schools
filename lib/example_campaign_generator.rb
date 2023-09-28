@@ -15,7 +15,6 @@ class ExampleCampaignGenerator
         patients_with_consent_given_and_ready_to_vaccinate: 24,
         patients_with_no_consent_response: 16,
         patients_with_consent_refused: 15,
-
         # Default behaviour is to generate patients for all the preset health
         # question responses we have for the following.
         patients_that_still_need_triage:
@@ -191,7 +190,8 @@ class ExampleCampaignGenerator
   # Each line represents health question responses for a patient that has
   # answered "Yes" to a health question.
   def health_question_responses_to_triage
-    @health_question_responses_to_triage ||= CSV.parse(<<~CSV, headers: true).entries
+    @health_question_responses_to_triage ||=
+      CSV.parse(<<~CSV, headers: true).entries
       Does the child have any severe allergies that have led to an anaphylactic reaction?,Does the child have any existing medical conditions?,Does the child take any regular medication?,Is there anything else we should know?
       My child has a severe nut allergy and has had an anaphylactic reaction in the past. This is something that’s extremely important to me and my husband. We make sure to always have an EpiPen on hand.,,,
       ,My child was diagnosed with anaemia and has low iron levels.,,
