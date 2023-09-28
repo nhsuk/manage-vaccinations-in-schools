@@ -19,7 +19,12 @@ RSpec.describe ExampleCampaignGenerator do
     # the time here will need to be changed to match the day when it was
     # generated.
     Timecop.freeze(2023, 9, 27) do
-      generator = ExampleCampaignGenerator.new(seed: 42, type: :hpv)
+      generator =
+        ExampleCampaignGenerator.new(
+          seed: 42,
+          type: :hpv,
+          presets: "model_office"
+        )
       data = generator.generate
       json = JSON.pretty_generate(data)
     end

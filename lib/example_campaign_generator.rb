@@ -1,34 +1,58 @@
 require "faker"
 
 class ExampleCampaignGenerator
-  attr_reader :random, :type
+  def presettings
+    @presettings ||= {
+      model_office: {
+        patients_with_consent_given_and_ready_to_vaccinate: 24,
+        patients_with_no_consent_response: 16,
+        patients_with_consent_refused: 15,
 
-  def initialize(seed: nil, type: :hpv, patients: nil)
+        # Default behaviour is to generate patients for all the preset health
+        # question responses we have for the following.
+        patients_that_still_need_triage:
+          health_question_responses_to_triage.length,
+        patients_that_have_already_been_triaged:
+          health_question_responses_to_triage.length,
+        patients_with_triage_started:
+          health_question_responses_triage_started.length
+      }
+    }.with_indifferent_access.freeze
+  end
+
+  def self.patient_options
+    %i[
+      patients_with_no_consent_response
+      patients_with_consent_given_and_ready_to_vaccinate
+      patients_with_consent_refused
+      patients_that_still_need_triage
+      patients_that_have_already_been_triaged
+      patients_with_triage_started
+    ]
+  end
+
+  attr_reader :random, :type, :options
+
+  def initialize(seed: nil, type: :hpv, presets: nil, **options)
     @random = Random.new(seed)
 
     Faker::Config.locale = "en-GB"
     Faker::Config.random = @random
 
     @type = type
-    @patients = patients
+    @options = options
+    @options = presettings[presets].merge(@options) if presets
   end
 
   def generate
     patients_consent_triage = []
-
-    if @patients
-      patients_consent_triage =
-        build_patients_with_no_consent_response(count: @patients)
-    else
-      patients_consent_triage +=
-        build_patients_with_consent_given_and_ready_to_vaccinate
-      patients_consent_triage +=
-        build_patients_with_no_consent_response(count: 16)
-      patients_consent_triage += build_patients_with_consent_refused
-      patients_consent_triage += build_patients_that_still_need_triage
-      patients_consent_triage += build_patients_with_triage_started
-      patients_consent_triage += build_patients_that_have_already_been_triaged
-    end
+    patients_consent_triage +=
+      build_patients_with_consent_given_and_ready_to_vaccinate
+    patients_consent_triage += build_patients_with_no_consent_response
+    patients_consent_triage += build_patients_with_consent_refused
+    patients_consent_triage += build_patients_that_still_need_triage
+    patients_consent_triage += build_patients_with_triage_started
+    patients_consent_triage += build_patients_that_have_already_been_triaged
 
     patients_data = generate_patients_data(patients_consent_triage)
     patients_data = add_consent_to_patients_data(patients_data)
@@ -82,7 +106,8 @@ class ExampleCampaignGenerator
   end
 
   def batches_data
-    batches.map { |batch| { name: batch.name, expiry: batch.expiry.iso8601 } }
+    @batches_data ||=
+      batches.map { |batch| { name: batch.name, expiry: batch.expiry.iso8601 } }
   end
 
   def vaccine
@@ -114,7 +139,9 @@ class ExampleCampaignGenerator
 
   # consent given, no contraindications in health questions, ready to vaccinate
   def build_patients_with_consent_given_and_ready_to_vaccinate
-    24.times.map do
+    count =
+      options.fetch(:patients_with_consent_given_and_ready_to_vaccinate, 0)
+    count.times.map do
       patient = build_patient
       consent = build_consent(:given, patient:)
       [patient, consent]
@@ -122,7 +149,8 @@ class ExampleCampaignGenerator
   end
 
   # no consent response
-  def build_patients_with_no_consent_response(count:)
+  def build_patients_with_no_consent_response
+    count = options.fetch(:patients_with_no_consent_response, 0)
     count.times.map do
       patient = build_patient
       [patient, nil]
@@ -131,7 +159,8 @@ class ExampleCampaignGenerator
 
   # refused
   def build_patients_with_consent_refused
-    15.times.map do
+    count = options.fetch(:patients_with_consent_refused, 0)
+    count.times.map do
       patient = build_patient
       consent =
         build_consent(
@@ -169,27 +198,31 @@ class ExampleCampaignGenerator
     CSV
   end
 
+  # patients that still need triage
   def build_patients_that_still_need_triage
-    # patients that still need triage
-    health_question_responses_to_triage.map do |row|
-      health_question_responses =
-        row.map do |question, answer|
-          {
-            question:,
-            response: answer.present? ? "Yes" : "No",
-            notes: answer.presence
-          }
-        end
+    count = options.fetch(:patients_that_still_need_triage, 0)
+    health_question_responses_to_triage
+      .cycle
+      .first(count)
+      .map do |row|
+        health_question_responses =
+          row.map do |question, answer|
+            {
+              question:,
+              response: answer.present? ? "Yes" : "No",
+              notes: answer.presence
+            }
+          end
 
-      patient = build_patient
-      consent =
-        build_consent(
-          :given,
-          health_questions: health_question_responses,
-          patient:
-        )
-      [patient, consent]
-    end
+        patient = build_patient
+        consent =
+          build_consent(
+            :given,
+            health_questions: health_question_responses,
+            patient:
+          )
+        [patient, consent]
+      end
   end
 
   # cases where triage has been started
@@ -206,65 +239,73 @@ class ExampleCampaignGenerator
 
   # patients with triage started
   def build_patients_with_triage_started
-    health_question_responses_triage_started.map do |row|
-      health_question_responses =
-        row.map do |question, answer|
-          if question == "triage notes"
-            nil
-          else
+    count = options.fetch(:patients_with_triage_started, 0)
+    health_question_responses_triage_started
+      .cycle
+      .first(count)
+      .map do |row|
+        health_question_responses =
+          row.map do |question, answer|
+            if question == "triage notes"
+              nil
+            else
+              {
+                question:,
+                response: answer.present? ? "Yes" : "No",
+                notes: answer.presence
+              }
+            end
+          end
+
+        patient = build_patient
+        consent =
+          build_consent(
+            :given,
+            patient:,
+            health_questions: health_question_responses.compact
+          )
+        triage = { notes: row["triage notes"], status: "needs_follow_up" }
+        [patient, consent, triage]
+      end
+  end
+
+  # cases that have already been triaged
+  def build_patients_that_have_already_been_triaged
+    count = options.fetch(:patients_that_have_already_been_triaged, 0)
+    health_question_responses_to_triage
+      .cycle
+      .first(count)
+      .map do |row|
+        health_question_responses =
+          row.map do |question, answer|
             {
               question:,
               response: answer.present? ? "Yes" : "No",
               notes: answer.presence
             }
           end
-        end
 
-      patient = build_patient
-      consent =
-        build_consent(
-          :given,
-          patient:,
-          health_questions: health_question_responses.compact
-        )
-      triage = { notes: row["triage notes"], status: "needs_follow_up" }
-      [patient, consent, triage]
-    end
-  end
-
-  # cases that have already been triaged
-  def build_patients_that_have_already_been_triaged
-    health_question_responses_to_triage.map do |row|
-      health_question_responses =
-        row.map do |question, answer|
-          {
-            question:,
-            response: answer.present? ? "Yes" : "No",
-            notes: answer.presence
-          }
-        end
-
-      patient = build_patient
-      consent =
-        build_consent(
-          :given,
-          patient:,
-          health_questions: health_question_responses
-        )
-      status = %i[ready_to_vaccinate do_not_vaccinate].sample(random:)
-      triage = {
-        status:,
-        notes:
-          (
-            if status == :ready_to_vaccinate
-              "Checked with GP, OK to proceed"
-            else
-              "Checked with GP, not OK to proceed"
-            end
+        patient = build_patient
+        consent =
+          build_consent(
+            :given,
+            patient:,
+            health_questions: health_question_responses
           )
-      }
-      [patient, consent, triage]
-    end
+        status = %i[ready_to_vaccinate do_not_vaccinate].sample(random:)
+        triage = {
+          status:,
+          notes:
+            (
+              if status == :ready_to_vaccinate
+                "Checked with GP, OK to proceed"
+              else
+                "Checked with GP, not OK to proceed"
+              end
+            )
+        }
+        [patient, consent, triage]
+      end
   end
 
   def generate_patients_data(patients_consent_triage)
