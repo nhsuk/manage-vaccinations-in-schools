@@ -129,21 +129,6 @@ pg_ctl: server is running (PID: 79113)
 This script attempts to be installation agnostic by relying on `pg_config` to
 determine postgres's installation directory and setting up logging accordingly.
 
-### Loading example data
-
-You can run a rake task to load data from the example campaign file
-`db/sample_data/example-campaign.json`.`
-
-```bash
-$ rake load_campaign_example
-```
-
-The importer will `find_or_create` the records, using specific attributes to match records:
-
-- **campains** -- a combination of `type`, `location` and `date`
-- **children** -- `nhs_number`
-- **schools** -- `urn`
-
 ### Development server
 
 This application comes with a `Procfile.dev` for use with `foreman` in
@@ -182,6 +167,59 @@ To [generate tests interactively by clicking in a live browser](https://playwrig
 ```bash
 yarn playwright codegen http://localhost:4000
 ```
+
+## Example campaigns
+
+### Loading example data
+
+You can run a rake task to load data from the example campaign file
+`db/sample_data/example-campaign.json`.`
+
+```bash
+$ rake load_campaign_example
+
+# Specify a file to load
+$ rake load_campaign_example[db/sample_data/model-office.json]
+
+# Specify that a new campaign should be created instead of using reusing existing
+$ rake load_campaign_example[db/sample_data/model-office.json] new_campaign=1
+```
+
+The importer will `find_or_create` the records by default, using specific attributes to match records:
+
+- **campaigns** -- a combination of `type`, `location` and `date`
+- **children** -- `nhs_number`
+- **schools** -- `urn`
+
+
+### Generating example data
+
+There's also a rake task to generate example campaign data. The `seed` setting
+allows identical campaign data be generated for the purpose of testing. The type
+of campaign can be controlled by the `type` setting. Use `rails -D
+`generate_example_campaign` for more usage information.
+
+```bash
+# Generate a simple example campaign to stdout 
+$ rails generate_example_campaign
+
+# Generate a flu campaign. Default is flu.
+$ rails generate_example_campaign type=hpv
+
+# Get more information about commang usage, including which patient states are
+# available.
+$ rails -D generate_example_campaign
+
+# Generate a specific number of patients in certain states.
+$ rails generate_example_campaign patients_that_still_need_triage=2 patients_with_no_consent=2
+
+# Generate the model office data set and write it to a given file
+$ rails generate_example_campaign[model-office.json] presets=model_office
+
+# Generate example campaign data with a specific random seed for repeatability
+$ rails generate_example_campaign seed=42
+```
+
 
 ## Deploying
 
