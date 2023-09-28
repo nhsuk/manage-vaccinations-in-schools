@@ -15,9 +15,10 @@ Option (set these as env vars, e.g. seed=42):
 Options controlling number of patients to generate:
 #{ExampleCampaignGenerator.patient_options.map { |option| "  #{option}" }.join("\n")}
 DESC
-task :generate_example_campaign, [] => :environment do |_task, _args|
+task :generate_example_campaign, [:example_file] => :environment do |_task, args|
   Faker::Config.locale = "en-GB"
-  target_filename = "/dev/stdout"
+
+  example_file = args.fetch(:example_file, "/dev/stdout")
 
   seed = ENV["seed"]&.to_i
 
@@ -37,5 +38,5 @@ task :generate_example_campaign, [] => :environment do |_task, _args|
   generator = ExampleCampaignGenerator.new(seed:, **campaign_options)
   data = generator.generate
 
-  IO.write(target_filename, JSON.pretty_generate(data))
+  IO.write(example_file, JSON.pretty_generate(data))
 end
