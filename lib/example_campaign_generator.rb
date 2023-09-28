@@ -34,7 +34,7 @@ class ExampleCampaignGenerator
   attr_reader :random, :type, :options
 
   def initialize(seed: nil, type: :hpv, presets: nil, **options)
-    @random = Random.new(seed)
+    @random = seed ? Random.new(seed) : Random.new
 
     Faker::Config.locale = "en-GB"
     Faker::Config.random = @random
@@ -59,6 +59,7 @@ class ExampleCampaignGenerator
     patients_data = match_mum_and_dad_info_to_consent(patients_data)
 
     {
+      id: random.seed.to_s,
       title: "#{type.upcase} campaign at #{school_data[:name]}",
       location: school_data[:name],
       date: "2023-07-28T12:30",
