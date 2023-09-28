@@ -180,7 +180,7 @@ class ExampleCampaignGenerator
   # Each line represents health question responses for a patient that has
   # answered "Yes" to a health question.
   def health_question_responses_to_triage
-    @health_question_responses_to_triage ||= CSV.parse(<<~CSV, headers: true)
+    @health_question_responses_to_triage ||= CSV.parse(<<~CSV, headers: true).entries
       Does the child have any severe allergies that have led to an anaphylactic reaction?,Does the child have any existing medical conditions?,Does the child take any regular medication?,Is there anything else we should know?
       My child has a severe nut allergy and has had an anaphylactic reaction in the past. This is something that’s extremely important to me and my husband. We make sure to always have an EpiPen on hand.,,,
       ,My child was diagnosed with anaemia and has low iron levels.,,
@@ -203,6 +203,7 @@ class ExampleCampaignGenerator
   def build_patients_that_still_need_triage
     count = options.fetch(:patients_that_still_need_triage, 0)
     health_question_responses_to_triage
+      .shuffle(random:)
       .cycle
       .first(count)
       .map do |row|
@@ -229,7 +230,7 @@ class ExampleCampaignGenerator
   # cases where triage has been started
   def health_question_responses_triage_started
     @health_question_responses_triage_started ||=
-      CSV.parse(<<~CSV, headers: true)
+      CSV.parse(<<~CSV, headers: true).entries
       triage notes,Does the child have any severe allergies that have led to an anaphylactic reaction,Does the child have any existing medical conditions?,Does the child take any regular medication?,Is there anything else we should know?
       "Spoke to child’s mum. Child completed leukaemia treatment 6 months ago. Need to speak to the consultant who treated her for a view on whether it’s safe to vaccinate. Dr Goehring, King’s College, 0208 734 5432.",,My daughter has just finished treatment for leukaemia. I don’t know if it’s safe for her to have the vaccination.,,
       Tried to get hold of parent to establish how severe the phobia is. Try again before vaccination session.,,,,My son is needle phobic.
@@ -242,6 +243,7 @@ class ExampleCampaignGenerator
   def build_patients_with_triage_started
     count = options.fetch(:patients_with_triage_started, 0)
     health_question_responses_triage_started
+      .shuffle(random:)
       .cycle
       .first(count)
       .map do |row|
@@ -274,6 +276,7 @@ class ExampleCampaignGenerator
   def build_patients_that_have_already_been_triaged
     count = options.fetch(:patients_that_have_already_been_triaged, 0)
     health_question_responses_to_triage
+      .shuffle(random:)
       .cycle
       .first(count)
       .map do |row|
