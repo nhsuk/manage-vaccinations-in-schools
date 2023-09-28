@@ -3,6 +3,14 @@ require "faker"
 class ExampleCampaignGenerator
   def presettings
     @presettings ||= {
+      default: {
+        patients_with_consent_given_and_ready_to_vaccinate: 2,
+        patients_with_no_consent_response: 2,
+        patients_with_consent_refused: 2,
+        patients_that_still_need_triage: 2,
+        patients_that_have_already_been_triaged: 2,
+        patients_with_triage_started: 2
+      },
       model_office: {
         patients_with_consent_given_and_ready_to_vaccinate: 24,
         patients_with_no_consent_response: 16,
@@ -41,7 +49,10 @@ class ExampleCampaignGenerator
 
     @type = type
     @options = options
-    @options = presettings[presets].merge(@options) if presets
+    if presets
+      raise "Preset #{presets} not found" unless presettings.key?(presets)
+      @options = presettings[presets].merge(@options)
+    end
   end
 
   def generate
