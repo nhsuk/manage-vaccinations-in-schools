@@ -31,6 +31,36 @@ RSpec.describe ExampleCampaignGenerator do
     expect(json).to eq(expected_json)
   end
 
+  describe "setting the campaign type" do
+    it "generates an flu campaign by default" do
+      generator = ExampleCampaignGenerator.new
+      expect(generator.type).to eq(:flu)
+    end
+
+    it "allows overriding of the campaign type" do
+      generator = ExampleCampaignGenerator.new(type: :hpv)
+      expect(generator.type).to eq(:hpv)
+    end
+
+    it "generates an hpv campaign for the model office" do
+      generator = ExampleCampaignGenerator.new(presets: :model_office)
+      expect(generator.type).to eq(:hpv)
+    end
+
+    it "allows overriding of model office campaign type" do
+      generator =
+        ExampleCampaignGenerator.new(presets: :model_office, type: :flu)
+      expect(generator.type).to eq(:flu)
+    end
+
+    it "raises an error when an invalid type is specified" do
+      expect { ExampleCampaignGenerator.new(type: :invalid) }.to raise_error(
+        ArgumentError,
+        /invalid type/i
+      )
+    end
+  end
+
   # The existing model office campaign generator generates the following:
   #
   #   Triage screens:
