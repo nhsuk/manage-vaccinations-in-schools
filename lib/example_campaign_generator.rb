@@ -1,6 +1,21 @@
 require "faker"
 
 class ExampleCampaignGenerator
+  def self.patient_options
+    %i[
+      patients_with_no_consent_response
+      patients_with_consent_given_and_ready_to_vaccinate
+      patients_with_consent_refused
+      patients_that_still_need_triage
+      patients_that_have_already_been_triaged
+      patients_with_triage_started
+    ]
+  end
+
+  def self.default_type
+    :flu
+  end
+
   def presettings
     @presettings ||= {
       default: {
@@ -12,6 +27,7 @@ class ExampleCampaignGenerator
         patients_with_triage_started: 2
       },
       model_office: {
+        type: :hpv,
         patients_with_consent_given_and_ready_to_vaccinate: 24,
         patients_with_no_consent_response: 16,
         patients_with_consent_refused: 15,
@@ -27,30 +43,26 @@ class ExampleCampaignGenerator
     }.with_indifferent_access.freeze
   end
 
-  def self.patient_options
-    %i[
-      patients_with_no_consent_response
-      patients_with_consent_given_and_ready_to_vaccinate
-      patients_with_consent_refused
-      patients_that_still_need_triage
-      patients_that_have_already_been_triaged
-      patients_with_triage_started
-    ]
-  end
-
   attr_reader :random, :type, :options
 
-  def initialize(seed: nil, type: :flu, presets: nil, **options)
+  def initialize(seed: nil, presets: nil, **options)
     @random = seed ? Random.new(seed) : Random.new
 
     Faker::Config.locale = "en-GB"
     Faker::Config.random = @random
 
-    @type = type
     @options = options
+    @type = options.delete(:type)
+    if @type && !@type.in?(%i[hpv flu])
+      raise ArgumentError, "Invalid type #{@type}"
+    end
+
     if presets
       raise "Preset #{presets} not found" unless presettings.key?(presets)
+      @type ||= presettings[presets][:type] || self.class.default_type
       @options = presettings[presets].merge(@options)
+    else
+      @type ||= self.class.default_type
     end
   end
 
