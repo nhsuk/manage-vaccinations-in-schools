@@ -18,7 +18,7 @@ RSpec.describe ExampleCampaignGenerator do
     # When the fixture json is regenerated, e.g. when the generater is updated,
     # the time here will need to be changed to match the day when it was
     # generated.
-    Timecop.freeze(2023, 9, 27) do
+    Timecop.freeze(2023, 9, 29) do
       generator =
         ExampleCampaignGenerator.new(
           seed: 42,
