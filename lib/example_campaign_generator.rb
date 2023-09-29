@@ -379,7 +379,7 @@ class ExampleCampaignGenerator
   def school_data
     @school_data ||=
       JSON
-        .parse(IO.read(Rails.root.join("db/sample_data/schools_sample.json")))
+        .parse(File.read(Rails.root.join("db/sample_data/schools_sample.json")))
         .sample(random:)
         .with_indifferent_access
   end

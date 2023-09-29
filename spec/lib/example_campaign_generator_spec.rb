@@ -4,7 +4,7 @@ require "example_campaign_generator"
 RSpec.describe ExampleCampaignGenerator do
   let(:expected_json) do
     # Remove final newline if present to match generated JSON.
-    IO.read(
+    File.read(
       Rails.root.join("spec/fixtures/example-hpv-campaign-42.json")
     ).rstrip
   end
