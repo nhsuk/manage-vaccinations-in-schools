@@ -89,6 +89,7 @@ class ExampleCampaignGenerator
       team: team_data,
       vaccines: vaccines_data,
       school: school_data,
+      healthQuestions: health_questions_data,
       patients: patients_data
     }
   end
@@ -394,5 +395,23 @@ class ExampleCampaignGenerator
         .parse(File.read(Rails.root.join("db/sample_data/schools_sample.json")))
         .sample(random:)
         .with_indifferent_access
+  end
+
+  def health_questions_data
+    @health_questions_data ||=
+      if @type == :flu
+        [
+          "Has your child been diagnosed with asthma?",
+          "Has your child had a flu vaccination in the last 5 months?",
+          "Does your child have a disease or treatment that severely affects their immune system?",
+          "Is anyone in your household currently having treatment that severely affects their immune system?",
+          "Has your child ever been admitted to intensive care due to an allergic reaction to egg?",
+          "Does your child have any allergies to medication?",
+          "Has your child ever had a reaction to previous vaccinations?",
+          "Does you child take regular aspirin?"
+        ].freeze
+      else
+        [].freeze
+      end
   end
 end
