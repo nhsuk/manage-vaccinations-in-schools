@@ -1,7 +1,7 @@
 export async function signInTestUser(
   page,
-  username = "nurse@test",
-  password = "nurse@test",
+  username = "nurse.joy@test",
+  password = "nurse.joy@test",
 ) {
   await page.goto("/users/sign-in");
   await page.getByLabel("Email address").fill(username);

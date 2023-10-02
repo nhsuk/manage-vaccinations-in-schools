@@ -17,7 +17,7 @@ async function given_the_app_is_setup() {
 }
 
 async function when_i_sign_in_as_a_nurse_from_another_team() {
-  await signInTestUser(p, "jackie@test", "jackie@test");
+  await signInTestUser(p, "nurse.jackie@test", "nurse.jackie@test");
 }
 
 async function and_i_go_to_the_sessions_list() {
