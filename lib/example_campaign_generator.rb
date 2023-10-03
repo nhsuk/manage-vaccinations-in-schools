@@ -31,14 +31,9 @@ class ExampleCampaignGenerator
         patients_with_consent_given_and_ready_to_vaccinate: 24,
         patients_with_no_consent_response: 16,
         patients_with_consent_refused: 15,
-        # Default behaviour is to generate patients for all the preset health
-        # question responses we have for the following.
-        patients_that_still_need_triage:
-          health_question_responses_to_triage.length,
-        patients_that_have_already_been_triaged:
-          health_question_responses_to_triage.length,
-        patients_with_triage_started:
-          health_question_responses_triage_started.length
+        patients_that_still_need_triage: 14,
+        patients_that_have_already_been_triaged: 14,
+        patients_with_triage_started: 4
       }
     }.with_indifferent_access.freeze
   end
@@ -198,12 +193,17 @@ class ExampleCampaignGenerator
     end
   end
 
-  # cases to triage
+  ################################################################
+  # cases that still need triage
   #
-  # Each line represents health question responses for a patient that has
-  # answered "Yes" to a health question.
-  def cases_to_triage_hpv
-    @cases_to_triage_hpv ||=
+  # The patient builders below rely on pre-generated health question responses
+  # and notes for HPV, or randomly generated ones for flu.
+  #
+  # The pre-generated cases come in the form of CSV where each line represents
+  # health question responses for a patient that has answered "Yes" to a health
+  # question.
+  def cases_that_still_need_triage_hpv(count)
+    @cases_that_still_need_triage_hpv ||=
       CSV
         .parse(<<~CSV, headers: true)
         Does the child have any severe allergies that have led to an anaphylactic reaction?,Does the child have any existing medical conditions?,Does the child take any regular medication?,Is there anything else we should know?
@@ -226,61 +226,61 @@ class ExampleCampaignGenerator
         .map do |row|
           {
             health_questions:
-              row.map do |question, answer|
-                { question:, response: answer.present? ? "Yes" : "No", answer: }
+              row.map do |question, notes|
+                { question:, response: notes.present? ? "Yes" : "No", notes: }
               end
           }
         end
+        .shuffle(random:)
+        .cycle
+        .first(count)
   end
 
-  # patients that still need triage
-  def build_patients_that_still_need_triage
-    if type == :flu
-      build_patients_that_still_need_triage_flu
-    else
-      build_patients_that_still_need_triage_hpv
-    end
-  end
-
-  def build_patients_that_still_need_triage_hpv
-    count = options.fetch(:patients_that_still_need_triage, 0)
-    cases_to_triage_hpv
-      .shuffle(random:)
-      .cycle
-      .first(count)
-      .map do |example_case|
-        patient = build_patient
-        consent =
-          build_consent(:given, health_questions: example_case, patient:)
-        [patient, consent]
+  def cases_that_still_need_triage_flu(count)
+    @cases_that_still_need_triage_flu ||=
+      count.times.map do
+        health_questions =
+          health_questions_data.map do |question|
+            { question:, response: "no", notes: nil }
+          end
+        health_questions
+          .sample(random:)
+          .tap do |hq|
+            hq[:response] = "yes"
+            hq[:notes] = "Generic note"
+          end
+        { health_questions: }
       end
   end
 
-  def build_patients_that_still_need_triage_flu
+  def build_patients_that_still_need_triage
     count = options.fetch(:patients_that_still_need_triage, 0)
-    count.times.map do
-      health_question_responses =
-        health_questions_data.map do |question|
-          { question:, response: "no", notes: nil }
-        end
-      health_question_responses
-        .sample(random:)
-        .tap { |response| response[:response] = "yes" }
+    return [] if count.zero?
 
+    cases =
+      case type
+      when :flu
+        cases_that_still_need_triage_flu(count)
+      when :hpv
+        cases_that_still_need_triage_hpv(count)
+      end
+
+    cases.map do |example_case|
       patient = build_patient
       consent =
         build_consent(
           :given,
-          health_questions: health_question_responses,
+          health_questions: example_case[:health_questions],
           patient:
         )
       [patient, consent]
     end
   end
 
+  ################################################################
   # cases where triage has been started
-  def cases_for_triage_started_hpv
-    @cases_for_triage_started_hpv ||=
+  def cases_with_triage_started_hpv(count)
+    @cases_with_triage_started_hpv ||=
       CSV
         .parse(<<~CSV, headers: true)
       triage notes,Does the child have any severe allergies that have led to an anaphylactic reaction,Does the child have any existing medical conditions?,Does the child take any regular medication?,Is there anything else we should know?
@@ -292,63 +292,120 @@ class ExampleCampaignGenerator
         .entries
         .map do |row|
           {
-            triage_notes: row.delete("triage notes"),
+            triage_notes: row.delete("triage notes").second,
             health_questions:
-              row.map do |question, answer|
-                { question:, response: answer.present? ? "Yes" : "No", answer: }
+              row.map do |question, notes|
+                { question:, response: notes.present? ? "Yes" : "No", notes: }
               end
           }
         end
+        .shuffle(random:)
+        .cycle
+        .first(count)
+  end
+
+  def cases_with_triage_started_flu(count)
+    @cases_with_triage_started_flu ||=
+      count.times.map do
+        health_questions =
+          health_questions_data.map do |question|
+            { question:, response: "no", notes: nil }
+          end
+        health_questions
+          .sample(random:)
+          .tap do |hq|
+            hq[:response] = "yes"
+            hq[:notes] = "Generic note"
+          end
+        { triage_notes: "Generic triage notes", health_questions: }
+      end
   end
 
   # patients with triage started
   def build_patients_with_triage_started
     count = options.fetch(:patients_with_triage_started, 0)
-    cases_for_triage_started_hpv
-      .shuffle(random:)
-      .cycle
-      .first(count)
-      .map do |patient_case|
-        patient = build_patient
-        consent =
-          build_consent(
-            :given,
-            patient:,
-            health_questions: patient_case[:health_questions]
-          )
-        triage = {
-          notes: patient_case[:triage_notes],
-          status: "needs_follow_up"
-        }
-        [patient, consent, triage]
+    return [] if count.zero?
+
+    cases =
+      case type
+      when :flu
+        cases_with_triage_started_flu(count)
+      when :hpv
+        cases_with_triage_started_hpv(count)
       end
+
+    cases.map do |patient_case|
+      patient = build_patient
+      consent =
+        build_consent(
+          :given,
+          patient:,
+          health_questions: patient_case[:health_questions]
+        )
+      triage = { notes: patient_case[:triage_notes], status: "needs_follow_up" }
+      [patient, consent, triage]
+    end
   end
 
+  ################################################################
   # cases that have already been triaged
+  def cases_that_have_already_been_triaged_hpv(count)
+    cases_that_still_need_triage_hpv(count).map do |patient_case|
+      patient_case.tap do |c|
+        c[:triage_status] = %i[ready_to_vaccinate do_not_vaccinate].sample(
+          random:
+        )
+        c[:triage_notes] = if c[:triage_status] == :ready_to_vaccinate
+          "Checked with GP, OK to proceed"
+        else
+          "Checked with GP, not OK to proceed"
+        end
+      end
+    end
+  end
+
+  def cases_that_have_already_been_triaged_flu(count)
+    cases_that_still_need_triage_flu(count).map do |patient_case|
+      patient_case.tap do |c|
+        c[:triage_status] = %i[ready_to_vaccinate do_not_vaccinate].sample(
+          random:
+        )
+        c[:triage_notes] = if c[:triage_status] == :ready_to_vaccinate
+          "Checked with GP, OK to proceed"
+        else
+          "Checked with GP, not OK to proceed"
+        end
+      end
+    end
+  end
+
   def build_patients_that_have_already_been_triaged
     count = options.fetch(:patients_that_have_already_been_triaged, 0)
-    cases_to_triage_hpv
-      .shuffle(random:)
-      .cycle
-      .first(count)
-      .map do |response_set|
-        patient = build_patient
-        consent =
-          build_consent(:given, patient:, health_questions: response_set)
-        status = %i[ready_to_vaccinate do_not_vaccinate].sample(random:)
-        triage = {
-          status:,
-          notes:
-            (
-              if status == :ready_to_vaccinate
-                "Checked with GP, OK to proceed"
-              else
-                "Checked with GP, not OK to proceed"
-              end
-            )
-        }
-        [patient, consent, triage]
+    return [] if count.zero?
+
+    cases =
+      case type
+      when :flu
+        cases_that_have_already_been_triaged_flu(count)
+      when :hpv
+        cases_that_have_already_been_triaged_hpv(count)
       end
+
+    cases.map do |patient_case|
+      patient = build_patient
+      consent =
+        build_consent(
+          :given,
+          patient:,
+          health_questions: patient_case[:health_questions]
+        )
+      %i[ready_to_vaccinate do_not_vaccinate].sample(random:)
+      triage = {
+        status: patient_case[:triage_status],
+        notes: patient_case[:triage_notes]
+      }
+      [patient, consent, triage]
+    end
   end
 
   def generate_patients_data(patients_consent_triage)
