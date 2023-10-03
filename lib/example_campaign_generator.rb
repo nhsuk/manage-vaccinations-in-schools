@@ -202,96 +202,124 @@ class ExampleCampaignGenerator
   #
   # Each line represents health question responses for a patient that has
   # answered "Yes" to a health question.
-  def health_question_responses_to_triage
-    @health_question_responses_to_triage ||=
-      CSV.parse(<<~CSV, headers: true).entries
-      Does the child have any severe allergies that have led to an anaphylactic reaction?,Does the child have any existing medical conditions?,Does the child take any regular medication?,Is there anything else we should know?
-      My child has a severe nut allergy and has had an anaphylactic reaction in the past. This is something that’s extremely important to me and my husband. We make sure to always have an EpiPen on hand.,,,
-      ,My child was diagnosed with anaemia and has low iron levels.,,
-      ,My child suffers from migraines and has severe headaches on a regular basis.,,
-      ,Epilepsy,My child takes anti-seizure medication twice a day to manage their epilepsy.,
-      ,My child has type 1 diabetes and requires daily insulin injections.,Insulin,
-      ,My child has asthma,My child takes medication every day to manage their asthma.,
-      ,Haemophilia,,My child has a bleeding disorder. In the past they’ve had injections in their thigh to reduce the risk of bleeding.
-      ,,My child uses topical ointments to manage their eczema and prevent skin irritation.,
-      ,,My child takes medication to manage their anxiety and prevent panic attacks.,
-      ,,My child takes medication to manage their depression.,
-      ,,My daughter takes the contraceptive pill to manage her acne.,
-      ,,My daughter has just completed a long-term course of antibiotics for a urine infection.,
-      ,,,My child has a history of fainting after receiving injections.
-      ,,,My child recently had a bad reaction to a different vaccine. I just want to make sure we’re extra cautious with this.
-    CSV
+  def cases_to_triage_hpv
+    @cases_to_triage_hpv ||=
+      CSV
+        .parse(<<~CSV, headers: true)
+        Does the child have any severe allergies that have led to an anaphylactic reaction?,Does the child have any existing medical conditions?,Does the child take any regular medication?,Is there anything else we should know?
+        My child has a severe nut allergy and has had an anaphylactic reaction in the past. This is something that’s extremely important to me and my husband. We make sure to always have an EpiPen on hand.,,,
+        ,My child was diagnosed with anaemia and has low iron levels.,,
+        ,My child suffers from migraines and has severe headaches on a regular basis.,,
+        ,Epilepsy,My child takes anti-seizure medication twice a day to manage their epilepsy.,
+        ,My child has type 1 diabetes and requires daily insulin injections.,Insulin,
+        ,My child has asthma,My child takes medication every day to manage their asthma.,
+        ,Haemophilia,,My child has a bleeding disorder. In the past they’ve had injections in their thigh to reduce the risk of bleeding.
+        ,,My child uses topical ointments to manage their eczema and prevent skin irritation.,
+        ,,My child takes medication to manage their anxiety and prevent panic attacks.,
+        ,,My child takes medication to manage their depression.,
+        ,,My daughter takes the contraceptive pill to manage her acne.,
+        ,,My daughter has just completed a long-term course of antibiotics for a urine infection.,
+        ,,,My child has a history of fainting after receiving injections.
+        ,,,My child recently had a bad reaction to a different vaccine. I just want to make sure we’re extra cautious with this.
+      CSV
+        .entries
+        .map do |row|
+          {
+            health_questions:
+              row.map do |question, answer|
+                { question:, response: answer.present? ? "Yes" : "No", answer: }
+              end
+          }
+        end
   end
 
   # patients that still need triage
   def build_patients_that_still_need_triage
+    if type == :flu
+      build_patients_that_still_need_triage_flu
+    else
+      build_patients_that_still_need_triage_hpv
+    end
+  end
+
+  def build_patients_that_still_need_triage_hpv
     count = options.fetch(:patients_that_still_need_triage, 0)
-    health_question_responses_to_triage
+    cases_to_triage_hpv
       .shuffle(random:)
       .cycle
       .first(count)
-      .map do |row|
-        health_question_responses =
-          row.map do |question, answer|
-            {
-              question:,
-              response: answer.present? ? "Yes" : "No",
-              notes: answer.presence
-            }
-          end
-
+      .map do |example_case|
         patient = build_patient
         consent =
-          build_consent(
-            :given,
-            health_questions: health_question_responses,
-            patient:
-          )
+          build_consent(:given, health_questions: example_case, patient:)
         [patient, consent]
       end
   end
 
+  def build_patients_that_still_need_triage_flu
+    count = options.fetch(:patients_that_still_need_triage, 0)
+    count.times.map do
+      health_question_responses =
+        health_questions_data.map do |question|
+          { question:, response: "no", notes: nil }
+        end
+      health_question_responses
+        .sample(random:)
+        .tap { |response| response[:response] = "yes" }
+
+      patient = build_patient
+      consent =
+        build_consent(
+          :given,
+          health_questions: health_question_responses,
+          patient:
+        )
+      [patient, consent]
+    end
+  end
+
   # cases where triage has been started
-  def health_question_responses_triage_started
-    @health_question_responses_triage_started ||=
-      CSV.parse(<<~CSV, headers: true).entries
+  def cases_for_triage_started_hpv
+    @cases_for_triage_started_hpv ||=
+      CSV
+        .parse(<<~CSV, headers: true)
       triage notes,Does the child have any severe allergies that have led to an anaphylactic reaction,Does the child have any existing medical conditions?,Does the child take any regular medication?,Is there anything else we should know?
       "Spoke to child’s mum. Child completed leukaemia treatment 6 months ago. Need to speak to the consultant who treated her for a view on whether it’s safe to vaccinate. Dr Goehring, King’s College, 0208 734 5432.",,My daughter has just finished treatment for leukaemia. I don’t know if it’s safe for her to have the vaccination.,,
       Tried to get hold of parent to establish how severe the phobia is. Try again before vaccination session.,,,,My son is needle phobic.
       Tried to get hold of parent to find out where the pain is. Try again before vaccination session.,,My child has chronic pain due to a previous injury and struggles with discomfort daily,,
       Tried to get hold of parent to find out what the surgery was for. Try again before vaccination session.,,,,Our child recently had surgery and is still recovering. We want to make sure it’s safe for them to get the vaccine.
     CSV
+        .entries
+        .map do |row|
+          {
+            triage_notes: row.delete("triage notes"),
+            health_questions:
+              row.map do |question, answer|
+                { question:, response: answer.present? ? "Yes" : "No", answer: }
+              end
+          }
+        end
   end
 
   # patients with triage started
   def build_patients_with_triage_started
     count = options.fetch(:patients_with_triage_started, 0)
-    health_question_responses_triage_started
+    cases_for_triage_started_hpv
       .shuffle(random:)
       .cycle
       .first(count)
-      .map do |row|
-        health_question_responses =
-          row.map do |question, answer|
-            if question == "triage notes"
-              nil
-            else
-              {
-                question:,
-                response: answer.present? ? "Yes" : "No",
-                notes: answer.presence
-              }
-            end
-          end
-
+      .map do |patient_case|
         patient = build_patient
         consent =
           build_consent(
             :given,
             patient:,
-            health_questions: health_question_responses.compact
+            health_questions: patient_case[:health_questions]
           )
-        triage = { notes: row["triage notes"], status: "needs_follow_up" }
+        triage = {
+          notes: patient_case[:triage_notes],
+          status: "needs_follow_up"
+        }
         [patient, consent, triage]
       end
   end
@@ -299,27 +327,14 @@ class ExampleCampaignGenerator
   # cases that have already been triaged
   def build_patients_that_have_already_been_triaged
     count = options.fetch(:patients_that_have_already_been_triaged, 0)
-    health_question_responses_to_triage
+    cases_to_triage_hpv
       .shuffle(random:)
       .cycle
       .first(count)
-      .map do |row|
-        health_question_responses =
-          row.map do |question, answer|
-            {
-              question:,
-              response: answer.present? ? "Yes" : "No",
-              notes: answer.presence
-            }
-          end
-
+      .map do |response_set|
         patient = build_patient
         consent =
-          build_consent(
-            :given,
-            patient:,
-            health_questions: health_question_responses
-          )
+          build_consent(:given, patient:, health_questions: response_set)
         status = %i[ready_to_vaccinate do_not_vaccinate].sample(random:)
         triage = {
           status:,
