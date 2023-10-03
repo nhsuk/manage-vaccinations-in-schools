@@ -90,24 +90,13 @@ $color_app-pale-blue: #ccdff1;
 }
 
 .app-header__navigation-text {
-  @include nhsuk-font(16);
+  color: $color_nhsuk-white;
   border-bottom: nhsuk-spacing(1) solid transparent;
   border-top: nhsuk-spacing(1) solid transparent;
-  color: $color_nhsuk-blue;
-  display: block;
-  padding: 12px nhsuk-spacing(3);
-  text-decoration: none;
+  padding: 16px nhsuk-spacing(3);
 
   @include mq($from: large-desktop) {
-    color: $color_nhsuk-white;
-    line-height: normal;
-  }
-
-  .nhsuk-icon__chevron-right {
-    fill: $color_nhsuk-grey-3;
-    position: absolute;
-    right: nhsuk-spacing(1);
-    top: 11px;
+    @include nhsuk-font(16);
   }
 }
 
@@ -120,8 +109,10 @@ $color_app-pale-blue: #ccdff1;
 
 .app-button-link {
   @extend .nhsuk-header__navigation-link;
-  background: none;
   border: none;
+  border-bottom: nhsuk-spacing(1) solid transparent;
+  border-top: nhsuk-spacing(1) solid transparent;
+  background: none;
   width: 100%;
   text-align: left;
   cursor: pointer;
