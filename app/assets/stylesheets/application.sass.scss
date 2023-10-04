@@ -26,6 +26,10 @@ $color_app-pale-blue: #ccdff1;
 @import "_empty-list.scss";
 @import "_offline.sass.scss";
 
+.app-\!-text-decoration-none {
+  text-decoration: none;
+}
+
 .app-summary-list--no-bottom-border {
   .govuk-summary-list__row:last-child {
     border-bottom: none;
@@ -89,33 +93,42 @@ $color_app-pale-blue: #ccdff1;
   }
 }
 
-.app-header__navigation-text {
-  color: $color_nhsuk-white;
-  border-bottom: nhsuk-spacing(1) solid transparent;
-  border-top: nhsuk-spacing(1) solid transparent;
-  padding: 16px nhsuk-spacing(3);
+.app-header {
+  &__container {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
 
-  @include mq($from: large-desktop) {
+  &__service-name {
+    display: inline-block;
+    line-height: 1.25;
+    padding-left: nhsuk-spacing(2);
+    vertical-align: top;
+
+    @include mq($from: tablet, $until: large-desktop) {
+      max-width: 300px;
+    }
+  }
+
+  &__navigation-list {
+    justify-content: flex-end;
+
+    .button_to,
+    .app-header__button-link {
+      height: 100%;
+    }
+  }
+
+  &__button-link {
+    @extend .nhsuk-header__navigation-link;
     @include nhsuk-font(16);
+    border: none;
+    border-bottom: nhsuk-spacing(1) solid transparent;
+    border-top: nhsuk-spacing(1) solid transparent;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
   }
-}
-
-.app-header__menu-toggle--no-search {
-  @extend .nhsuk-header__menu-toggle;
-  @include mq($until: desktop) {
-    right: 0px;
-  }
-}
-
-.app-button-link {
-  @extend .nhsuk-header__navigation-link;
-  border: none;
-  border-bottom: nhsuk-spacing(1) solid transparent;
-  border-top: nhsuk-spacing(1) solid transparent;
-  background: none;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
 }
 
 .app-summary-list--full-width {
