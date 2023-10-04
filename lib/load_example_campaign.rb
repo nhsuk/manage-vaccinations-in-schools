@@ -18,15 +18,6 @@ module LoadExampleCampaign
       team.campaigns << campaign unless campaign.in? team.campaigns
       create_users(team:, users: example.team_attributes[:users])
 
-      # Added in for testing, this should be replaced by creating another campaign
-      # to load in the test env, since we'll need that for testing other aspects
-      # like authorisation.
-      other_team = Team.find_or_initialize_by(name: "Other SAIS Team")
-      create_users(
-        team: other_team,
-        users: [{ full_name: "Nurse Jackie", username: "nurse.jackie" }]
-      )
-
       campaign.save!
 
       school = create_school(example)

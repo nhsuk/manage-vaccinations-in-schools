@@ -20,7 +20,7 @@ async function given_the_app_is_setup() {
 }
 
 async function when_i_sign_in_as_a_nurse_from_another_team() {
-  await signInTestUser(p, "nurse.jackie@test", "nurse.jackie@test");
+  await signInTestUser(p, "nurse.jackie@sais", "nurse.jackie@sais");
 }
 
 async function and_i_go_to_the_triage_page() {
