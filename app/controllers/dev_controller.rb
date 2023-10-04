@@ -19,6 +19,10 @@ class DevController < ApplicationController
       LoadExampleCampaign.load(
         example_file: "db/sample_data/example-test-campaign.json"
       )
+      LoadExampleCampaign.load(
+        example_file: "db/sample_data/example-flu-campaign.json",
+        new_campaign: true
+      )
     end
 
     redirect_to root_path

@@ -1,0 +1,622 @@
+{
+  "id": "42",
+  "title": "FLU campaign at Oakham School",
+  "location": "Oakham School",
+  "date": "2023-07-28T12:30",
+  "type": "FLU",
+  "team": {
+    "name": "Rutland SAIS team",
+    "users": [
+      {
+        "full_name": "Nurse Jackie",
+        "email": "nurse.jackie@sais"
+      }
+    ]
+  },
+  "vaccines": [
+    {
+      "brand": "Fluenz Tetra",
+      "method": "nasal",
+      "batches": [
+        {
+          "name": "FS7026",
+          "expiry": "2024-03-09"
+        },
+        {
+          "name": "OZ0009",
+          "expiry": "2024-02-25"
+        },
+        {
+          "name": "RM5124",
+          "expiry": "2024-02-02"
+        }
+      ]
+    }
+  ],
+  "school": {
+    "urn": "120322",
+    "name": "Oakham School",
+    "address": "Chapel Close",
+    "locality": "",
+    "address3": "",
+    "town": "Oakham",
+    "county": "Rutland",
+    "postcode": "LE15 6DT",
+    "minimum_age": "9",
+    "maximum_age": "18",
+    "url": "www.oakham.rutland.sch.uk",
+    "phase": "Not applicable",
+    "type": "Independent schools",
+    "detailed_type": "Other independent school"
+  },
+  "healthQuestions": [
+    "Has your child been diagnosed with asthma?",
+    "Has your child had a flu vaccination in the last 5 months?",
+    "Does your child have a disease or treatment that severely affects their immune system?",
+    "Is anyone in your household currently having treatment that severely affects their immune system?",
+    "Has your child ever been admitted to intensive care due to an allergic reaction to egg?",
+    "Does your child have any allergies to medication?",
+    "Has your child ever had a reaction to previous vaccinations?",
+    "Does you child take regular aspirin?"
+  ],
+  "patients": [
+    {
+      "firstName": "Brittany",
+      "lastName": "Klocko",
+      "dob": "2015-08-29",
+      "nhsNumber": 4656828688,
+      "consent": {
+        "response": "given",
+        "reasonForRefusal": null,
+        "parentName": "Zachery Weimann",
+        "parentRelationship": "father",
+        "parentEmail": "zachery.weimann20@gmail.com",
+        "parentPhone": "07168 092638",
+        "healthQuestionResponses": [
+          {
+            "question": "Does the child have a disease or treatment that severely affects their immune system?",
+            "response": "no"
+          },
+          {
+            "question": "Is anyone in your household having treatment that severely affects their immune system?",
+            "response": "no"
+          },
+          {
+            "question": "Has your child been diagnosed with asthma?",
+            "response": "no"
+          },
+          {
+            "question": "Has your child been admitted to intensive care because of a severe egg allergy?",
+            "response": "no"
+          },
+          {
+            "question": "Is there anything else we should know?",
+            "response": "no"
+          }
+        ],
+        "route": "website"
+      },
+      "parentEmail": "zachery.weimann20@gmail.com",
+      "parentName": "Zachery Weimann",
+      "parentPhone": "07168 092638",
+      "parentRelationship": "father",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": null
+    },
+    {
+      "firstName": "Mckinley",
+      "lastName": "Marvin",
+      "dob": "2016-01-01",
+      "nhsNumber": 4526310840,
+      "consent": {
+        "response": "given",
+        "reasonForRefusal": null,
+        "parentName": "Dotty Medhurst",
+        "parentRelationship": "mother",
+        "parentEmail": "dotty.medhurst25@gmail.com",
+        "parentPhone": "07190 868707",
+        "healthQuestionResponses": [
+          {
+            "question": "Does the child have a disease or treatment that severely affects their immune system?",
+            "response": "no"
+          },
+          {
+            "question": "Is anyone in your household having treatment that severely affects their immune system?",
+            "response": "no"
+          },
+          {
+            "question": "Has your child been diagnosed with asthma?",
+            "response": "no"
+          },
+          {
+            "question": "Has your child been admitted to intensive care because of a severe egg allergy?",
+            "response": "no"
+          },
+          {
+            "question": "Is there anything else we should know?",
+            "response": "no"
+          }
+        ],
+        "route": "website"
+      },
+      "parentEmail": "dotty.medhurst25@gmail.com",
+      "parentName": "Dotty Medhurst",
+      "parentPhone": "07190 868707",
+      "parentRelationship": "mother",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": null
+    },
+    {
+      "firstName": "Wonda",
+      "lastName": "Schuster",
+      "dob": "2019-07-26",
+      "nhsNumber": 4007695997,
+      "consent": null,
+      "parentEmail": null,
+      "parentName": "Corey Schuster",
+      "parentPhone": "01462 51984",
+      "parentRelationship": "father",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": null
+    },
+    {
+      "firstName": "Farah",
+      "lastName": "Welch",
+      "dob": "2017-06-01",
+      "nhsNumber": 4817528605,
+      "consent": null,
+      "parentEmail": null,
+      "parentName": "Lauren Welch",
+      "parentPhone": "056 9402 9757",
+      "parentRelationship": "father",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": null
+    },
+    {
+      "firstName": "Evette",
+      "lastName": "Muller",
+      "dob": "2019-03-27",
+      "nhsNumber": 4666534172,
+      "consent": {
+        "response": "refused",
+        "reasonForRefusal": "already_vaccinated",
+        "parentName": "Spencer Hickle",
+        "parentRelationship": "father",
+        "parentEmail": "spencer.hickle89@gmail.com",
+        "parentPhone": "07873 670574",
+        "healthQuestionResponses": [],
+        "route": "website"
+      },
+      "parentEmail": "spencer.hickle89@gmail.com",
+      "parentName": "Spencer Hickle",
+      "parentPhone": "07873 670574",
+      "parentRelationship": "father",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": null
+    },
+    {
+      "firstName": "Bruce",
+      "lastName": "Reynolds",
+      "dob": "2016-06-17",
+      "nhsNumber": 4792147433,
+      "consent": {
+        "response": "refused",
+        "reasonForRefusal": "already_vaccinated",
+        "parentName": "Anibal Funk",
+        "parentRelationship": "father",
+        "parentEmail": "anibal.funk32@gmail.com",
+        "parentPhone": "07517 357328",
+        "healthQuestionResponses": [],
+        "route": "website"
+      },
+      "parentEmail": "anibal.funk32@gmail.com",
+      "parentName": "Anibal Funk",
+      "parentPhone": "07517 357328",
+      "parentRelationship": "father",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": null
+    },
+    {
+      "firstName": "Odelia",
+      "lastName": "Barton",
+      "dob": "2018-02-27",
+      "nhsNumber": 4876927693,
+      "consent": {
+        "response": "given",
+        "reasonForRefusal": null,
+        "parentName": "Audrea Hoppe",
+        "parentRelationship": "mother",
+        "parentEmail": "audrea.hoppe94@gmail.com",
+        "parentPhone": "07413 460218",
+        "healthQuestionResponses": [
+          {
+            "question": "Has your child been diagnosed with asthma?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Has your child had a flu vaccination in the last 5 months?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Does your child have a disease or treatment that severely affects their immune system?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Is anyone in your household currently having treatment that severely affects their immune system?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Has your child ever been admitted to intensive care due to an allergic reaction to egg?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Does your child have any allergies to medication?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Has your child ever had a reaction to previous vaccinations?",
+            "response": "yes",
+            "notes": "Generic note"
+          },
+          {
+            "question": "Does you child take regular aspirin?",
+            "response": "no",
+            "notes": null
+          }
+        ],
+        "route": "website"
+      },
+      "parentEmail": "audrea.hoppe94@gmail.com",
+      "parentName": "Audrea Hoppe",
+      "parentPhone": "07413 460218",
+      "parentRelationship": "mother",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": null
+    },
+    {
+      "firstName": "Rich",
+      "lastName": "Schaden",
+      "dob": "2017-12-12",
+      "nhsNumber": 4362534482,
+      "consent": {
+        "response": "given",
+        "reasonForRefusal": null,
+        "parentName": "Dewitt Homenick",
+        "parentRelationship": "father",
+        "parentEmail": "dewitt.homenick41@gmail.com",
+        "parentPhone": "07864 074463",
+        "healthQuestionResponses": [
+          {
+            "question": "Has your child been diagnosed with asthma?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Has your child had a flu vaccination in the last 5 months?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Does your child have a disease or treatment that severely affects their immune system?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Is anyone in your household currently having treatment that severely affects their immune system?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Has your child ever been admitted to intensive care due to an allergic reaction to egg?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Does your child have any allergies to medication?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Has your child ever had a reaction to previous vaccinations?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Does you child take regular aspirin?",
+            "response": "yes",
+            "notes": "Generic note"
+          }
+        ],
+        "route": "website"
+      },
+      "parentEmail": null,
+      "parentName": "Marvis Schaden",
+      "parentPhone": "0800 628959",
+      "parentRelationship": "mother",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": null
+    },
+    {
+      "firstName": "Sung",
+      "lastName": "Boyle",
+      "dob": "2017-07-07",
+      "nhsNumber": 4336987890,
+      "consent": {
+        "response": "given",
+        "reasonForRefusal": null,
+        "parentName": "Melina Homenick",
+        "parentRelationship": "mother",
+        "parentEmail": "melina.homenick94@gmail.com",
+        "parentPhone": "07339 074376",
+        "healthQuestionResponses": [
+          {
+            "question": "Has your child been diagnosed with asthma?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Has your child had a flu vaccination in the last 5 months?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Does your child have a disease or treatment that severely affects their immune system?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Is anyone in your household currently having treatment that severely affects their immune system?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Has your child ever been admitted to intensive care due to an allergic reaction to egg?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Does your child have any allergies to medication?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Has your child ever had a reaction to previous vaccinations?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Does you child take regular aspirin?",
+            "response": "yes",
+            "notes": "Generic note"
+          }
+        ],
+        "route": "website"
+      },
+      "parentEmail": "melina.homenick94@gmail.com",
+      "parentName": "Melina Homenick",
+      "parentPhone": "07339 074376",
+      "parentRelationship": "mother",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": {
+        "notes": "Generic triage notes",
+        "status": "needs_follow_up"
+      }
+    },
+    {
+      "firstName": "Ted",
+      "lastName": "Swift",
+      "dob": "2016-09-30",
+      "nhsNumber": 4459326590,
+      "consent": {
+        "response": "given",
+        "reasonForRefusal": null,
+        "parentName": "Velva Blanda",
+        "parentRelationship": "mother",
+        "parentEmail": "velva.blanda81@gmail.com",
+        "parentPhone": "07177 640668",
+        "healthQuestionResponses": [
+          {
+            "question": "Has your child been diagnosed with asthma?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Has your child had a flu vaccination in the last 5 months?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Does your child have a disease or treatment that severely affects their immune system?",
+            "response": "yes",
+            "notes": "Generic note"
+          },
+          {
+            "question": "Is anyone in your household currently having treatment that severely affects their immune system?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Has your child ever been admitted to intensive care due to an allergic reaction to egg?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Does your child have any allergies to medication?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Has your child ever had a reaction to previous vaccinations?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Does you child take regular aspirin?",
+            "response": "no",
+            "notes": null
+          }
+        ],
+        "route": "website"
+      },
+      "parentEmail": null,
+      "parentName": "Rudolf Swift",
+      "parentPhone": "0800 494 8720",
+      "parentRelationship": "father",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": {
+        "notes": "Generic triage notes",
+        "status": "needs_follow_up"
+      }
+    },
+    {
+      "firstName": "John",
+      "lastName": "Grady",
+      "dob": "2018-02-22",
+      "nhsNumber": 4359409214,
+      "consent": {
+        "response": "given",
+        "reasonForRefusal": null,
+        "parentName": "Myrtice Miller",
+        "parentRelationship": "mother",
+        "parentEmail": "myrtice.miller65@gmail.com",
+        "parentPhone": "07755 270530",
+        "healthQuestionResponses": [
+          {
+            "question": "Has your child been diagnosed with asthma?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Has your child had a flu vaccination in the last 5 months?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Does your child have a disease or treatment that severely affects their immune system?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Is anyone in your household currently having treatment that severely affects their immune system?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Has your child ever been admitted to intensive care due to an allergic reaction to egg?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Does your child have any allergies to medication?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Has your child ever had a reaction to previous vaccinations?",
+            "response": "yes",
+            "notes": "Generic note"
+          },
+          {
+            "question": "Does you child take regular aspirin?",
+            "response": "no",
+            "notes": null
+          }
+        ],
+        "route": "website"
+      },
+      "parentEmail": null,
+      "parentName": "Cory Grady",
+      "parentPhone": "0928 990 5679",
+      "parentRelationship": "father",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": {
+        "status": "ready_to_vaccinate",
+        "notes": "Checked with GP, OK to proceed"
+      }
+    },
+    {
+      "firstName": "Alysha",
+      "lastName": "Cartwright",
+      "dob": "2016-08-17",
+      "nhsNumber": 4385039321,
+      "consent": {
+        "response": "given",
+        "reasonForRefusal": null,
+        "parentName": "Scott Stark",
+        "parentRelationship": "mother",
+        "parentEmail": "scott.stark46@gmail.com",
+        "parentPhone": "07110 455268",
+        "healthQuestionResponses": [
+          {
+            "question": "Has your child been diagnosed with asthma?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Has your child had a flu vaccination in the last 5 months?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Does your child have a disease or treatment that severely affects their immune system?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Is anyone in your household currently having treatment that severely affects their immune system?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Has your child ever been admitted to intensive care due to an allergic reaction to egg?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Does your child have any allergies to medication?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Has your child ever had a reaction to previous vaccinations?",
+            "response": "no",
+            "notes": null
+          },
+          {
+            "question": "Does you child take regular aspirin?",
+            "response": "yes",
+            "notes": "Generic note"
+          }
+        ],
+        "route": "website"
+      },
+      "parentEmail": "scott.stark46@gmail.com",
+      "parentName": "Scott Stark",
+      "parentPhone": "07110 455268",
+      "parentRelationship": "mother",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": {
+        "status": "do_not_vaccinate",
+        "notes": "Checked with GP, not OK to proceed"
+      }
+    }
+  ]
+}
