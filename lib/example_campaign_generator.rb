@@ -52,9 +52,12 @@ class ExampleCampaignGenerator
       raise ArgumentError, "Invalid type #{@type}"
     end
 
+    @username = options.delete(:username)
+
     if presets
       raise "Preset #{presets} not found" unless presettings.key?(presets)
       @type ||= presettings[presets][:type] || self.class.default_type
+      @username ||= presettings[presets][:username]
       @options = presettings[presets].merge(@options)
     else
       @type ||= self.class.default_type
@@ -103,12 +106,13 @@ class ExampleCampaignGenerator
   def user
     @user ||=
       begin
-        nurse_name = Faker::Name.first_name
+        username = @username || "Nurse #{Faker::Name.first_name}"
+        emailname = username.downcase.gsub(" ", ".").gsub(/[^a-z0-9.]/, "")
         FactoryBot.build(
           :user,
           teams: [team],
-          full_name: "Nurse #{nurse_name}",
-          email: "nurse.#{nurse_name.downcase}@sais"
+          full_name: username,
+          email: "#{emailname}@sais"
         )
       end
   end

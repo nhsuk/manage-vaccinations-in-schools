@@ -11,6 +11,7 @@ Option (set these as env vars, e.g. seed=42):
   presets: Use preset values for the following options. These can be overridden with patients_* options. Available presets:
     - model_office
   type: Type of campaign to generate, one of: hpv, flu (default: ExampleCampaignGenerator.default_type)
+  username: Name of the user to be added to the team. An email address will be generated using this.
 
 Options controlling number of patients to generate:
 #{ExampleCampaignGenerator.patient_options.map { |option| "  #{option}" }.join("\n")}
@@ -34,7 +35,9 @@ task :generate_example_campaign,
     campaign_options[:presets] = :default
   end
 
-  generator = ExampleCampaignGenerator.new(seed:, **campaign_options)
+  username = ENV["username"]
+
+  generator = ExampleCampaignGenerator.new(seed:, username:, **campaign_options)
   data = generator.generate
 
   IO.write(example_file, JSON.pretty_generate(data))
