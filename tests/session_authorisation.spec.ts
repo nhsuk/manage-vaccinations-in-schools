@@ -9,7 +9,7 @@ test("Session authorisation", async ({ page }) => {
   await given_the_app_is_setup();
   await when_i_sign_in_as_a_nurse_from_another_team();
   await and_i_go_to_the_sessions_list();
-  await then_i_should_see_no_sessions();
+  await then_i_should_see_only_my_session();
 
   await when_i_go_to_a_session_belonging_to_another_team();
   await then_i_should_get_an_error();
@@ -20,18 +20,23 @@ async function given_the_app_is_setup() {
 }
 
 async function when_i_sign_in_as_a_nurse_from_another_team() {
-  await signInTestUser(p, "nurse.jackie@test", "nurse.jackie@test");
+  await signInTestUser(p, "nurse.jackie@sais", "nurse.jackie@sais");
 }
 
 async function and_i_go_to_the_sessions_list() {
   await p.goto("/sessions");
 }
 
-async function then_i_should_see_no_sessions() {
+async function then_i_should_see_only_my_session() {
   await expect(
     p.getByRole("heading", { name: "School sessions" }),
   ).toBeVisible();
-  await expect(p.locator(".nhsuk-table__row")).not.toBeVisible();
+  await expect(p.locator(".nhsuk-table__body .nhsuk-table__row")).toHaveCount(
+    1,
+  );
+  await expect(p.locator(".nhsuk-table__body .nhsuk-table__row")).toHaveText(
+    /FLU campaign at Oakham School/,
+  );
 }
 
 async function when_i_go_to_a_session_belonging_to_another_team() {
