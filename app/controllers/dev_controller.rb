@@ -16,10 +16,11 @@ class DevController < ApplicationController
         )
       end
 
-      Rake::Task["load_campaign_example"].execute(
+      LoadExampleCampaign.load(
         example_file: "db/sample_data/example-test-campaign.json"
       )
     end
+
     redirect_to root_path
   end
 end
