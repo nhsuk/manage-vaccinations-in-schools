@@ -12,7 +12,7 @@ task :load_campaign_example,
           ]
 
   example_file =
-    args.fetch(:example_file, "db/sample_data/example-campaign.json")
+    args.fetch(:example_file, "db/sample_data/example-test-campaign.json")
 
   LoadExampleCampaign.load(example_file:, new_campaign:)
 end
