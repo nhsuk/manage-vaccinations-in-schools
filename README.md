@@ -176,13 +176,13 @@ You can run a rake task to load data from the example campaign file
 `db/sample_data/example-campaign.json`.
 
 ```bash
-$ rake load_campaign_example
+$ rails load_campaign_example
 
 # Specify a file to load
-$ rake load_campaign_example[db/sample_data/model-office.json]
+$ rails load_campaign_example[db/sample_data/model-office.json]
 
 # Specify that a new campaign should be created instead of using reusing existing
-$ rake load_campaign_example[db/sample_data/model-office.json] new_campaign=1
+$ rails load_campaign_example[db/sample_data/model-office.json] new_campaign=1
 ```
 
 The importer will `find_or_create` the records by default, using specific attributes to match records:
