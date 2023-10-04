@@ -126,8 +126,8 @@ class ExampleCampaignData
       name: team_data["name"],
       users:
         team_data["users"].map do |user|
-          { full_name: user["full_name"], username: user["username"] }
+          user.slice("full_name", "username", "email")
         end
-    }
+    }.with_indifferent_access
   end
 end
