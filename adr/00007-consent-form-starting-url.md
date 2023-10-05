@@ -70,11 +70,24 @@ required through the consent form journey.
 
 ```
 # :session_id could also be a query param
-GET /session/:session_id/consent/start -> ParentalConsentController#start
+GET /sessions/:session_id/consents/start -> ParentalConsentController#start
+```
 
-# save consent_id in session store
-GET /consent/name -> ParentalConsent::NameController#show
-GET /consent/confirm -> ParentalConsentController#confirm
+Then, to complete the consent journey the `consent_id` could be part of the URL.
+Every step in the journey would be required to authorise that the `consent_id`
+matches what's stored in the sessions store. However this would also better
+accomodate multiple consent forms that parents may need to fill in.
+
+```
+GET /sessions/:session_id/consents/:consent_id/name -> ParentalConsent::NameController#show
+GET /sessions/:session_id/consents/:consent_id/confirm -> ParentalConsentController#confirm
+```
+
+Optionally the `consent_id` could be retrieved from the session store:
+
+```
+GET /sessions/:session_id/consent/name -> ParentalConsent::NameController#show
+GET /sessions/:session_id/consent/confirm -> ParentalConsentController#confirm
 ```
 
 ### Option 4: Vaccine-specific URL
@@ -110,7 +123,9 @@ information may be part of the consent form to confirm attendance information.
 
 We will adopt option 3, using a session specific identifier. In addition, we'll
 store the consent form ID in the user session, so that users can't access other
-consent forms by changing the consent form ID in the URL.
+consent forms by changing the consent form ID in the URL. The consent form ID
+will form part of the URL, however parents won't be able to edit more than one
+consent form at a time until designs for how this would work are done.
 
 ## Consequences
 
