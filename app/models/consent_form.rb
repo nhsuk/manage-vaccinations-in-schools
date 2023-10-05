@@ -64,17 +64,6 @@ class ConsentForm < ApplicationRecord
 
   serialize :health_answers, HealthAnswer::ArraySerializer
 
-  HEALTH_QUESTIONS = [
-    "Has your child been diagnosed with asthma?",
-    "Has your child had a flu vaccination in the last 5 months?",
-    "Does your child have a disease or treatment that severely affects their immune system?",
-    "Is anyone in your household currently having treatment that severely affects their immune system?",
-    "Has your child ever been admitted to intensive care due to an allergic reaction to egg?",
-    "Does your child have any allergies to medication?",
-    "Has your child ever had a reaction to previous vaccinations?",
-    "Does you child take regular aspirin?"
-  ].freeze
-
   with_options on: :update do
     with_options if: -> { required_for_step?(:name) } do
       validates :first_name, presence: true
