@@ -56,7 +56,7 @@ async function given_the_app_is_setup() {
 }
 
 async function when_i_go_to_the_consent_start_page() {
-  await p.goto("/sessions/1/consents/start");
+  await p.goto("/sessions/2/consents/start");
 }
 
 async function when_i_click_the_start_button() {
