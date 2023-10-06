@@ -24,7 +24,14 @@ RSpec.describe ExampleCampaignGenerator do
     # When the fixture json is regenerated, e.g. when the generater is updated,
     # the time here will need to be changed to match the day when it was
     # generated.
-    Timecop.freeze(2023, 10, 3, 12, 0, 0) do
+    #
+    # To regenerate:
+    #     rails generate_example_campaign \
+    #       seed=42 \
+    #       presets=model_office \
+    #       type=hpv \
+    #       username="Nurse Joy" > spec/fixtures/example-hpv-campaign-42.json
+    Timecop.freeze(2023, 10, 6, 12, 0, 0) do
       generator =
         ExampleCampaignGenerator.new(
           seed: 42,
@@ -46,12 +53,20 @@ RSpec.describe ExampleCampaignGenerator do
     # When the fixture json is regenerated, e.g. when the generater is updated,
     # the time here will need to be changed to match the day when it was
     # generated.
-    Timecop.freeze(2023, 10, 3, 12, 0, 0) do
+    #
+    # To regenerate:
+    #     rails generate_example_campaign \
+    #       seed=42 \
+    #       presets=default \
+    #       type=flu \
+    #       username="Nurse Jackie" > db/sample_data/example-flu-campaign.json
+    Timecop.freeze(2023, 10, 6, 12, 0, 0) do
       generator =
         ExampleCampaignGenerator.new(
           seed: 42,
           type: :flu,
-          presets: "model_office"
+          presets: "default",
+          username: "Nurse Jackie"
         )
       data = generator.generate
       json = JSON.pretty_generate(data)
