@@ -244,8 +244,13 @@ class ExampleCampaignGenerator
     @cases_that_still_need_triage_flu ||=
       count.times.map do
         health_questions =
-          health_questions_data.map do |question|
-            { question:, response: "no", notes: nil }
+          health_questions_data.map do |hq|
+            {
+              question: hq[:question],
+              response: "no",
+              notes: nil,
+              hint: hq[:hint]
+            }
           end
         health_questions
           .sample(random:)
@@ -312,8 +317,13 @@ class ExampleCampaignGenerator
     @cases_with_triage_started_flu ||=
       count.times.map do
         health_questions =
-          health_questions_data.map do |question|
-            { question:, response: "no", notes: nil }
+          health_questions_data.map do |hq|
+            {
+              question: hq[:question],
+              response: "no",
+              notes: nil,
+              hint: hq[:hint]
+            }
           end
         health_questions
           .sample(random:)
@@ -477,14 +487,41 @@ class ExampleCampaignGenerator
     @health_questions_data ||=
       if @type == :flu
         [
-          "Has your child been diagnosed with asthma?",
-          "Has your child had a flu vaccination in the last 5 months?",
-          "Does your child have a disease or treatment that severely affects their immune system?",
-          "Is anyone in your household currently having treatment that severely affects their immune system?",
-          "Has your child ever been admitted to intensive care due to an allergic reaction to egg?",
-          "Does your child have any allergies to medication?",
-          "Has your child ever had a reaction to previous vaccinations?",
-          "Does you child take regular aspirin?"
+          { question: "Has your child been diagnosed with asthma?", hint: "" },
+          {
+            question:
+              "Has your child had a flu vaccination in the last 5 months?",
+            hint: ""
+          },
+          {
+            question:
+              "Does your child have a disease or treatment that severely affects their immune system?",
+            hint:
+              "For example, treatment for leukaemia or taking immunosuppressant medication"
+          },
+          {
+            question:
+              "Is anyone in your household currently having treatment that severely affects their immune system?",
+            hint: "For example, they need to be kept in isolation"
+          },
+          {
+            question:
+              "Has your child ever been admitted to intensive care due to an allergic reaction to egg?",
+            hint: ""
+          },
+          {
+            question: "Does your child have any allergies to medication?",
+            hint: ""
+          },
+          {
+            question:
+              "Has your child ever had a reaction to previous vaccinations?",
+            hint: ""
+          },
+          {
+            question: "Does you child take regular aspirin?",
+            hint: "Also known as Salicylate therapy"
+          }
         ].freeze
       else
         [].freeze

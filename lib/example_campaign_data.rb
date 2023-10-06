@@ -46,7 +46,9 @@ class ExampleCampaignData
   def health_question_attributes
     return [] if raw_data["healthQuestions"].blank?
 
-    raw_data["healthQuestions"].map { |question| { question: } }
+    raw_data["healthQuestions"].map do |hq|
+      { question: hq["question"], hint: hq["hint"] }
+    end
   end
 
   def children_attributes
