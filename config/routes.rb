@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   root to: redirect("/start")
 
   mount Avo::Engine, at: Avo.configuration.root_path
+  mount GoodJob::Engine => "/good-job"
 
   get "/start", to: "pages#start"
   get "/dashboard", to: "dashboard#index"
