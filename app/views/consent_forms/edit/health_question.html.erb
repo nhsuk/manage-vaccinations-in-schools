@@ -12,7 +12,8 @@
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_radio_buttons_fieldset(:response,
-    legend: { size: 'l', text: title, tag: 'h1' }
+   legend: { size: 'l', text: title, tag: 'h1' },
+   hint: { text: @health_answer.hint }
   ) do %>
     <%= f.govuk_radio_button :response, "yes",
       label: { text: 'Yes' },
