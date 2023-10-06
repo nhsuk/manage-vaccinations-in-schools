@@ -8,4 +8,6 @@ class HealthQuestionResource < Avo::BaseResource
   field :id, as: :id
   # add fields here
   field :vaccine, as: :belongs_to
+  field :question, as: :string
+  field :hint, as: :string
 end
