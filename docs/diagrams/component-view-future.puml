@@ -1,0 +1,49 @@
+@startuml
+
+!include <C4/C4_Component.puml>
+
+LAYOUT_TOP_DOWN()
+
+title "Manage Vaccinations For School-aged Children Component View"
+
+AddElementTag("outside_context", $bgColor="#CCC", $fontColor="#FFF")
+
+Person_Ext(sais, "SAIS Team", $tags="outside_context")
+Person_Ext(parents, "Parents", $tags="outside_context")
+
+Boundary(aws, "AWS") {
+  System_Boundary(manage, "Manage Vaccinations for School-aged Children", "") {
+    Container_Boundary(browser, "Browser Application", "JavaScript") {
+      Component(pages, "Web Pages", "HTML, CSS")
+      Component(serviceWorker, "Service Worker", "JavaScript")
+      ComponentDb_Ext(cacheStorage, "Browser Cache Storage", "On Disk")
+    }
+    Container_Boundary(server, "Server Application", "Ruby on Rails") {
+      Component(webapp, "Web Application", "Ruby on Rails")
+      ComponentDb(database, "Database", "PostgreSQL")
+    }
+  }
+
+  SystemDb_Ext(vaccineRecord, "Vaccination Record", "FHIR Server")
+  SystemDb_Ext(pds, "PDS", "")
+}
+
+SystemDb_Ext(vaccineRecord, "Vaccination Record", "FHIR Server", $tags="outside_context")
+SystemDb_Ext(pds, "PDS", "", $tags="outside_context")
+
+AddRelTag("optional", $textColor="black", $lineColor="black", $lineStyle="dashed")
+
+Rel(sais, pages, "Manage campaigns")
+Rel(sais, pages, "Record Child Vaccination")
+Rel(parents, pages, "Consent response")
+Rel(pages, serviceWorker, "Request Assets", "internal fetch")
+Rel(serviceWorker, cacheStorage, "Cache Assets")
+Rel(serviceWorker, webapp, "Request pages", "HTTPS")
+Rel(webapp, database, "Read and write data", "Postgres, TLS")
+Rel(webapp, vaccineRecord, "Updates Child Vaccination History", $tags="optional")
+Rel(webapp, pds, "NHS Number Lookup", $tags="optional")
+
+
+SHOW_FLOATING_LEGEND()
+
+@enduml

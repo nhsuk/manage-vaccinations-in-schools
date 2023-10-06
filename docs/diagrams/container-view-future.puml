@@ -1,0 +1,39 @@
+@startuml
+
+!include <C4/C4_Container.puml>
+
+LAYOUT_TOP_DOWN()
+
+title "Manage Vaccinations For School-aged Children Container View"
+
+AddElementTag("outside_context", $bgColor="#CCC", $fontColor="#FFF")
+
+Person_Ext(sais, "SAIS Team", $tags="outside_context")
+Person_Ext(parents, "Parents", $tags="outside_context")
+
+Boundary(aws, "AWS") {
+  System_Boundary(manage, "Manage Vaccinations for School-aged Children Vaccination", "") {
+    Container(browser, "Browser Application", "JavaScript")
+    Container(server, "Server Application", "Ruby on Rails")
+  }
+
+  SystemDb_Ext(vaccineRecord, "Vaccination Record", "FHIR Server")
+  SystemDb_Ext(pds, "PDS", "")
+}
+
+SystemDb_Ext(vaccineRecord, "Vaccination Record", "FHIR Server", $tags="outside_context")
+SystemDb(pds, "PDS", "", $tags="outside_context")
+
+AddRelTag("optional", $textColor="black", $lineColor="black", $lineStyle="dashed")
+
+Rel(server, browser, "Code and assets", "HTTPS")
+Rel(browser, server, "Requests pages", "HTTPS")
+Rel(sais, browser, "Manage campaigns")
+Rel(sais, browser, "Record Child Vaccination")
+Rel(parents, browser, "Consent response")
+Rel(server, vaccineRecord, "Updates Child Vaccination History", $tags="optional")
+Rel(server, pds, "NHS Number Lookup", $tags="optional")
+
+SHOW_FLOATING_LEGEND()
+
+@enduml
