@@ -40,5 +40,7 @@ module ManageVaccinations
     config.time_zone = "London"
 
     config.commit_sha = `git rev-parse --short HEAD`.strip
+
+    config.active_job.queue_adapter = :good_job
   end
 end
