@@ -10,7 +10,10 @@ class ConsentFormsController < ConsentForms::BaseController
   def create
     health_answers =
       @session.campaign.vaccines.first.health_questions.map do |hq|
-        HealthAnswer.new question: hq.question, response: nil, notes: nil
+        HealthAnswer.new question: hq.question,
+                         response: nil,
+                         notes: nil,
+                         hint: hq.hint
       end
     consent_form = @session.consent_forms.create!(health_answers:)
 

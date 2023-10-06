@@ -1,13 +1,13 @@
 class HealthAnswer
   include ActiveModel::Model
 
-  attr_accessor :question, :response, :notes
+  attr_accessor :question, :response, :notes, :hint
 
   validates :response, presence: true, inclusion: { in: %w[yes no] }
   validates :notes, presence: true, if: -> { response == "yes" }
 
   def attributes
-    %i[question response notes].index_with { |attr| send(attr) }
+    %i[question response notes hint].index_with { |attr| send(attr) }
   end
 
   class ArraySerializer
