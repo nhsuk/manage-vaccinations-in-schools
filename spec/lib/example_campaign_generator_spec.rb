@@ -11,7 +11,7 @@ RSpec.describe ExampleCampaignGenerator do
   let(:expected_flu_json) do
     # Remove final newline if present to match generated JSON.
     File.read(
-      Rails.root.join("spec/fixtures/example-flu-campaign-42.json")
+      Rails.root.join("db/sample_data/example-flu-campaign.json")
     ).rstrip
   end
 
