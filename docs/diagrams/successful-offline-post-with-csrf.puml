@@ -4,7 +4,7 @@ title Successful offline POST with CSRF
 autoactivate on
 
 group Prepare to work offline
-    Browser -> record.nhs.uk: GET /patients/1/vaccinations/new
+    Browser -> manage.nhs.uk: GET /patients/1/vaccinations/new
     return 200 OK
     note right
         // HTML form without CSRF token
@@ -19,12 +19,12 @@ end
 
 == Browser comes back online ==
 
-Browser -> record.nhs.uk: GET /csrf
+Browser -> manage.nhs.uk: GET /csrf
 return 200 OK
 note right: "New CSRF token"
 
 group Update patient data
-    Browser -> record.nhs.uk: POST /patients/1/vaccinations/
+    Browser -> manage.nhs.uk: POST /patients/1/vaccinations/
     note right
         vaccination=mmr
         vaccination_performed=false

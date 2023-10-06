@@ -2,7 +2,7 @@
 
 !include <C4/C4_Dynamic.puml>
 
-title "Record Children's Vaccination's Development process overview"
+title "Manage Vaccinations For School-aged Children Development process overview"
 
 Person(devA, "Alice", "Developer")
 Person(devB, "Bob", "Developer")
