@@ -5,7 +5,7 @@
 title "Manage vaccinations for school-aged children Staging Deployment Process"
 
 System_Ext(herokuAPI, "Heroku Platform API")
-Boundary(record, "Record Children's Vaccination", "Staging") {
+Boundary(manage, "Manage Vaccinations for School-aged Children", "Staging") {
   Container(serverStaging, "Web Application", "Ruby on Rails")
   ContainerDb(dbStaging, "Database", "PostgreSQL")
 }

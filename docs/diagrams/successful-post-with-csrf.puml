@@ -4,14 +4,14 @@ title Successful POST with CSRF
 
 autoactivate on
 
-Browser -> record.nhs.uk: GET /patients/1/vaccinations/new
+Browser -> manage.nhs.uk: GET /patients/1/vaccinations/new
 return 200 OK
 
 note right
     csrf="Unique CSRF Token"
 end note
 
-Browser -> record.nhs.uk: POST /patients/1/vaccinations
+Browser -> manage.nhs.uk: POST /patients/1/vaccinations
 note right
     vaccine=mmr
     vaccination_given=true

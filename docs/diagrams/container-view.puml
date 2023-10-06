@@ -4,7 +4,7 @@
 
 LAYOUT_TOP_DOWN()
 
-title "Record Children's Vaccination's Container View"
+title "Manage Vaccinations For School-aged Children Container View"
 
 AddElementTag("outside_context", $bgColor="#CCC", $fontColor="#FFF")
 
@@ -12,8 +12,8 @@ Person_Ext(sais, "SAIS Team", $tags="outside_context")
 Person_Ext(parents, "Parents", $tags="outside_context")
 
 Boundary(aws, "AWS") {
-  System_Boundary(record, "Record Children's Vaccination", "") {
     Container(browser, "Browser Application", "JavaScript")
+  System_Boundary(manage, "Service", "") {
     Container(server, "Server Application", "Ruby on Rails")
   }
 
