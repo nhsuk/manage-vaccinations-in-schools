@@ -28,6 +28,7 @@ Boundary(aws, "AWS") {
   SystemDb_Ext(pds, "PDS", "")
 }
 
+System_Ext(govukNotify, "GOVUK Notify", "Email and SMS Service")
 SystemDb_Ext(vaccineRecord, "Vaccination Record", "FHIR Server", $tags="outside_context")
 SystemDb_Ext(pds, "PDS", "", $tags="outside_context")
 
@@ -40,6 +41,7 @@ Rel(pages, serviceWorker, "Request Assets", "internal fetch")
 Rel(serviceWorker, cacheStorage, "Cache Assets")
 Rel(serviceWorker, webapp, "Request pages", "HTTPS")
 Rel(webapp, database, "Read and write data", "Postgres, TLS")
+Rel(webapp, govukNotify, "Send email and SMS")
 Rel(webapp, vaccineRecord, "Updates Child Vaccination History", $tags="optional")
 Rel(webapp, pds, "NHS Number Lookup", $tags="optional")
 

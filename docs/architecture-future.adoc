@@ -29,15 +29,16 @@ endif::[]
 
 == Introduction and Goals
 
-This is the pilot of a service to record children's vaccinations in schools and
-during catch-up clinics. This service provides consent and point-of-care
-services for SAIS teams and parents, and is designed to integrate with the
-Personal Demographics Service (PDS) and the national vaccination record.
+This is the pilot a service to manage vaccinations for school-aged children in
+schools and during catch-up clinics. This service will provide e-consent,
+campaign management and point-of-care services for SAIS teams and parents. The
+goal is for this service to integrate with the national vaccination record to
+record vaccinations.
 
-This service is in Alpha and this pilot is being used in to explore designs and further
-our understandings of user requirements through user research. Requirements have
-been tailored to focus on user-facing features over non-functional requirements
-which have been, where possible, de-emphasised.
+This service is in Alpha and this pilot is being used in to explore designs and
+further our understandings of user requirements through user research.
+Requirements have been tailored to focus on user-facing features over
+non-functional requirements which have been, where possible, de-emphasised.
 
 === Requirements Overview
 
@@ -53,7 +54,8 @@ which have been, where possible, de-emphasised.
 .Non-Functional Requirements
 
 * Security
-** Simple authentication and authorisation model; the alpha team will issue individual logins, tied to email addresses, to each SAIS user.
+** Simple authentication and authorisation model; the alpha team will issue
+   individual logins, tied to email addresses, to each SAIS user.
 ** Security model appropriate for scale of experiment
 *** Each SAIS team will only be able to view and record vaccinations/patients
     for the school sessions that they manage
@@ -66,7 +68,7 @@ which have been, where possible, de-emphasised.
 ** Web application framework that enables accelerated delivery
 * Data persistence
 ** Data persisted between sessions and users
-** No long term data storage, i.e. beyond end of experiment
+** No long term data storage, i.e. beyond end of testing phase(s)
 ** Support for offline functionality
 * Integration with NHS services (where possible)
 ** Send events to National Vaccination Record
@@ -91,7 +93,7 @@ We won't need:
   and not constrained to run on any one cloud platform.
 * The system must be deployed to NHS approved platforms.
 
-Additionally, there are some integrations which would be required in the
+Additionally, there are some integrations which will be required in the
 production service, but which we consider optional while in Alpha. Where
 possible we will try to integrate with these services, but not treat it as a
 blocker if we cannot:
@@ -177,6 +179,11 @@ ifndef::env-github[]
 include::diagrams/container-view-future.puml[]
 ----
 endif::[]
+
+GOVUK Notify::
+This service used to send consent confirmations and other notifications to
+parents. It is an external service run by Government Digital Service (GDS) and
+in use by other NHS services.
 
 === Level 2: Component View
 

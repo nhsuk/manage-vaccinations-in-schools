@@ -12,27 +12,19 @@ Person_Ext(sais, "SAIS Team", $tags="outside_context")
 Person_Ext(parents, "Parents", $tags="outside_context")
 
 Boundary(aws, "AWS") {
-    Container(browser, "Browser Application", "JavaScript")
   System_Boundary(manage, "Service", "") {
     Container(server, "Server Application", "Ruby on Rails")
   }
-
-  SystemDb_Ext(vaccineRecord, "Vaccination Record", "FHIR Server")
-  SystemDb_Ext(pds, "PDS", "")
 }
 
-SystemDb_Ext(vaccineRecord, "Vaccination Record", "FHIR Server", $tags="outside_context")
-SystemDb(pds, "PDS", "", $tags="outside_context")
+System_Ext(govukNotify, "GOVUK Notify", "Email and SMS Service")
 
 AddRelTag("optional", $textColor="black", $lineColor="black", $lineStyle="dashed")
 
-Rel(server, browser, "Code and assets", "HTTPS")
-Rel(browser, server, "Requests pages", "HTTPS")
-Rel(sais, browser, "Manage campaigns")
-Rel(sais, browser, "Record Child Vaccination")
-Rel(parents, browser, "Consent response")
-Rel(server, vaccineRecord, "Updates Child Vaccination History", $tags="optional")
-Rel(server, pds, "NHS Number Lookup", $tags="optional")
+Rel(sais, server, "Manage campaigns")
+Rel(sais, server, "Record Child Vaccination")
+Rel(parents, server, "Consent response")
+Rel(server, govukNotify, "Send email and SMS")
 
 SHOW_FLOATING_LEGEND()
 

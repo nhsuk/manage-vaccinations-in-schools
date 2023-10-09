@@ -21,6 +21,7 @@ Boundary(aws, "AWS") {
   SystemDb_Ext(pds, "PDS", "")
 }
 
+System_Ext(govukNotify, "GOVUK Notify", "Email and SMS Service")
 SystemDb_Ext(vaccineRecord, "Vaccination Record", "FHIR Server", $tags="outside_context")
 SystemDb(pds, "PDS", "", $tags="outside_context")
 
@@ -31,6 +32,7 @@ Rel(browser, server, "Requests pages", "HTTPS")
 Rel(sais, browser, "Manage campaigns")
 Rel(sais, browser, "Record Child Vaccination")
 Rel(parents, browser, "Consent response")
+Rel(server, govukNotify, "Send email and SMS")
 Rel(server, vaccineRecord, "Updates Child Vaccination History", $tags="optional")
 Rel(server, pds, "NHS Number Lookup", $tags="optional")
 

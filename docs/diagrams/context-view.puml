@@ -11,16 +11,11 @@ Person_Ext(parents, "Parents")
 
 System(manage, "Manage vaccinations for school-aged children", "Ruby on Rails, HTML, Javascript")
 
-SystemDb_Ext(vaccineRecord, "Vaccination Record", "FHIR Server")
-SystemDb_Ext(pds, "PDS", "")
-
 AddRelTag("optional", $textColor="black", $lineColor="black", $lineStyle="dashed")
 
-Rel(sais, record, "Manage campaigns")
-Rel(sais, record, "Record Child Vaccination")
-Rel(parents, record, "Consent response")
-Rel(record, vaccineRecord, "Updates Child Vaccination History", $tags="optional")
-Rel(record, pds, "NHS Number Lookup", $tags="optional")
+Rel(sais, manage, "Manage campaigns")
+Rel(sais, manage, "Record Child Vaccination")
+Rel(parents, manage, "Consent response")
 
 SHOW_FLOATING_LEGEND()
 

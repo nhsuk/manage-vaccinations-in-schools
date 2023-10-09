@@ -29,15 +29,17 @@ endif::[]
 
 == Introduction and Goals
 
-This is the pilot of a service to record children's vaccinations in schools and
-during catch-up clinics. This service provides consent and point-of-care
-services for SAIS teams and parents, and is designed to integrate with the
-Personal Demographics Service (PDS) and the national vaccination record.
+This is the prototype a service to manage vaccinations for school-aged children
+in schools and during catch-up clinics. This service will provide e-consent,
+campaign management and point-of-care services for SAIS teams and parents. The
+goal is for this service to integrate with the national vaccination record to
+record vaccinations. However, integration with the national vaccination record
+will not be part of this phase.
 
-This service is in Alpha and this pilot is being used in to explore designs and further
-our understandings of user requirements through user research. Requirements have
-been tailored to focus on user-facing features over non-functional requirements
-which have been, where possible, de-emphasised.
+This service is in Alpha and this pilot is being used in to explore designs and
+further our understandings of user requirements through user research.
+Requirements have been tailored to focus on user-facing features over
+non-functional requirements which have been, where possible, de-emphasised.
 
 === Requirements Overview
 
@@ -48,12 +50,12 @@ which have been, where possible, de-emphasised.
 ** Create consent invites.
 ** Record vaccinations administered.
 * Allow parents to respond to consent requests.
-* Operate in settings where there is no Internet access, i.e. offline working.
 
 .Non-Functional Requirements
 
 * Security
-** Simple authentication and authorisation model; the alpha team will issue individual logins, tied to email addresses, to each SAIS user.
+** Simple authentication and authorisation model; the alpha team will issue
+   individual logins, tied to email addresses, to each SAIS user.
 ** Security model appropriate for scale of experiment
 *** Each SAIS team will only be able to view and record vaccinations/patients
     for the school sessions that they manage
@@ -66,11 +68,7 @@ which have been, where possible, de-emphasised.
 ** Web application framework that enables accelerated delivery
 * Data persistence
 ** Data persisted between sessions and users
-** No long term data storage, i.e. beyond end of experiment
-** Support for offline functionality
-* Integration with NHS services (where possible)
-** Send events to National Vaccination Record
-** Use Personal Demographic Service (PDS) to perform NHS number lookup
+** No long term data storage, i.e. beyond end of testing phase(s)
 
 We won't need:
 
@@ -78,7 +76,11 @@ We won't need:
 * Authentication that's integrated with wider NHS or other SSO provider
 * Reporting capability
 * Long term maintainability of codebase
+* Offline functionality
 * Long term storage of data
+* Integration with NHS services
+** Send events to National Vaccination Record
+** Use Personal Demographic Service (PDS) to perform NHS number lookup
 
 <<<<
 == Architecture Constraints
@@ -91,10 +93,10 @@ We won't need:
   and not constrained to run on any one cloud platform.
 * The system must be deployed to NHS approved platforms.
 
-Additionally, there are some integrations which would be required in the
-production service, but which we consider optional while in Alpha. Where
-possible we will try to integrate with these services, but not treat it as a
-blocker if we cannot:
+Additionally, there are some integrations which will be required in the
+production service, but which we will be descoped for the current phase. They
+are listed here to help define the wider goal of this service. These services
+are:
 
 * National vaccination record service, to update the vaccination record for
   the patient. We do not yet know what this system looks like so it is unlikely
@@ -134,25 +136,6 @@ consent for their children to be vaccinated.
 Manage vaccinations for school-aged children Service::
 The service will be used by the SAIS team to record vaccinations.
 
-Vaccination Record::
-
-Service which will hold a record of vaccinations for citizens across the NHS.
-This service is currently being designed and it's final form is yet to be
-determined, however any new service created will very likely use a Rest
-FHIR API.
-+
-However, it is possible that in the interim this service will be DPS, which is
-built using Data Bricks and which uses file transfers for data input and output,
-so may present additional challenges.
-+
-This integration may not be available during during this alpha.
-
-PDS (Personal Demographics Service)::
-Service which will allow us to look up NHS numbers for patients who don't know
-theirs. Crucial for properly identifying patients.
-+
-This integration may not be available during during this alpha.
-
 == Solution strategy
 
 Certain solution strategy decisions are recorded as architecture decisions in
@@ -178,6 +161,11 @@ include::diagrams/container-view.puml[]
 ----
 endif::[]
 
+GOVUK Notify::
+This service used to send consent confirmations and other notifications to
+parents. It is an external service run by Government Digital Service (GDS) and
+in use by other NHS services.
+
 === Level 2: Component View
 
 ifdef::env-github[]
@@ -191,11 +179,6 @@ include::diagrams/component-view.puml[]
 ----
 endif::[]
 
-Browser Cache Storage::
-Data necessary for offline functionality is stored in the browser's cache
-storage. This is managed by the service worker, see the offline documentation
-for more information.
-
 Database::
 Relational storage used to store application data including campaign data,
 consent responses and vaccination events. In the case of the vaccination events,
@@ -203,6 +186,13 @@ this data would be uploaded to the national vaccination record and this data
 store would be used as temporary storage. However during the alpha phase
 uploading to the national vaccination record may not available, so the
 vaccination event data may be kept in this store until the end of the pilot.
+
+Sending email and SMS::
+For the current scale of this pilot the sending of emails will be done directly
+from the web servers. It is common for services to use separate workers to
+process API integration with external services to isolate the web application
+from possible network issues, but won't be necessary with the number of users
+using the pilot.
 
 == Runtime View
 
@@ -212,13 +202,6 @@ and delivered along with CSS and JavaScript to the client. Users login to the
 service using a standard login page, and as is standard with Ruby on Rails apps,
 resources are exposed with REST-like paths using an MVC approach to separate
 concerns on the server.
-
-There is a notable exception made to this pattern, though, to support offline
-working.
-
-=== Offline support
-
-include::offline-support.adoc[leveloffset=+2,lines=24..-1]
 
 == Deployment
 
