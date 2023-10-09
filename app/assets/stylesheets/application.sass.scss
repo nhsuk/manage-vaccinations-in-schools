@@ -133,13 +133,26 @@ $color_app-pale-blue: #ccdff1;
 
 .app-summary-list--full-width {
   .nhsuk-summary-list__row {
-    .nhsuk-summary-list__key,
-    .nhsuk-summary-list__value,
-    .nhsuk-summary-list__actions {
-      display: block;
-      width: 100%;
-      text-align: left;
-      border: none;
-    }
+    border-bottom: 1px solid $nhsuk-border-color;
+    display: block;
+    margin-bottom: nhsuk-spacing(3);
+  }
+
+  .nhsuk-summary-list__row:last-of-type {
+    border: none;
+    margin-bottom: 0;
+  }
+
+  .nhsuk-summary-list__key,
+  .nhsuk-summary-list__value,
+  .nhsuk-summary-list__actions {
+    border: none;
+    display: block;
+    text-align: left;
+    width: 100%;
+  }
+
+  .nhsuk-summary-list__key {
+    margin-bottom: 0;
   }
 }
