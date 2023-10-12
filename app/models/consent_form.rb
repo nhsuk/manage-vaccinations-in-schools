@@ -146,15 +146,14 @@ class ConsentForm < ApplicationRecord
       (:injection if consent_refused? && eligible_for_injection?),
       (:gp if consent_given?),
       (:address if consent_given?),
-      (:health_1 if consent_given?),
-      (:health_2 if consent_given?),
-      (:health_3 if consent_given?),
-      (:health_4 if consent_given?),
-      (:health_5 if consent_given?),
-      (:health_6 if consent_given?),
-      (:health_7 if consent_given?),
-      (:health_8 if consent_given?)
+      *form_steps_for_health_questions
     ].compact
+  end
+
+  def form_steps_for_health_questions
+    return [] unless consent_given?
+
+    health_answers.map.with_index { |_args, idx| :"health_#{idx + 1}" }
   end
 
   private
