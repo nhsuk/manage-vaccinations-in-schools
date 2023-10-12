@@ -59,4 +59,15 @@ Rails.application.configure do
 
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
+
+  config.action_mailer.default_url_options = { host: "localhost:4000" }
+  if Settings.govuk_notify&.enabled
+    config.action_mailer.delivery_method = :notify
+    config.action_mailer.notify_settings = {
+      api_key: Settings.govuk_notify.api_key
+    }
+  else
+    config.action_mailer.default_options = { from: "no-reply@nhs.net" }
+    config.action_mailer.delivery_method = :file
+  end
 end
