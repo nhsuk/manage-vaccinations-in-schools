@@ -303,6 +303,13 @@ GEM
       net-imap
       net-pop
       net-smtp
+    mail-notify (1.1.0)
+      actionmailer (>= 5.2.4.6)
+      actionpack (>= 5.2.7.1)
+      actionview (>= 5.2.7.1)
+      activesupport (>= 5.2.4.6)
+      notifications-ruby-client (~> 5.1)
+      rack (>= 2.1.4.1)
     marcel (1.0.2)
     matrix (0.4.2)
     meta-tags (2.18.0)
@@ -331,6 +338,8 @@ GEM
       racc (~> 1.4)
     nokogiri (1.15.4-x86_64-linux)
       racc (~> 1.4)
+    notifications-ruby-client (5.4.0)
+      jwt (>= 1.5, < 3)
     oauth2 (1.4.11)
       faraday (>= 0.17.3, < 3.0)
       jwt (>= 1.0, < 3.0)
@@ -586,6 +595,7 @@ DEPENDENCIES
   govuk_design_system_formbuilder
   jbuilder
   jsbundling-rails
+  mail-notify
   okcomputer
   pg (~> 1.5)
   prettier_print
