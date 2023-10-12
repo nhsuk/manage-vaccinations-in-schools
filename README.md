@@ -230,6 +230,23 @@ terraform -chdir=terraform apply
 
 See [docs/terraform.md](docs/terraform.md) for more informations.
 
+## Notify
+
+When developing locally, emails are sent using the `:file` delivery method, and
+logged to `STDOUT`.
+
+If you want to use Notify, you'll need to set up a test API key, and then set
+up a `config/settings/development.local.yml` file:
+
+```yml
+govuk_notify:
+  enabled: true
+  api_key: YOUR_KEY_HERE
+```
+
+You should set it to `enabled: false` when you're done testing Notify locally,
+because it's easier to work offline without it.
+
 ## Licence
 
 [MIT](LICENCE).
