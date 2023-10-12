@@ -20,7 +20,7 @@
 #  index_users_on_email  (email) UNIQUE
 #
 class User < ApplicationRecord
-  devise :database_authenticatable, :trackable, :timeoutable
+  devise :database_authenticatable, :trackable, :timeoutable, :recoverable
 
   has_and_belongs_to_many :teams
 end
