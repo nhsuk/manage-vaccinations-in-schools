@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_12_101034) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_12_113819) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -204,6 +204,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_12_101034) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "hint"
+    t.jsonb "metadata", default: {}, null: false
     t.index ["vaccine_id"], name: "index_health_questions_on_vaccine_id"
   end
 

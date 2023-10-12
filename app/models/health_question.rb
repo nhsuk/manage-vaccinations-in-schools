@@ -4,6 +4,7 @@
 #
 #  id         :bigint           not null, primary key
 #  hint       :string
+#  metadata   :jsonb            not null
 #  question   :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null

@@ -289,6 +289,10 @@ GEM
     jsbundling-rails (1.2.1)
       railties (>= 6.0.0)
     json (2.6.3)
+    jsonb_accessor (1.3.10)
+      activerecord (>= 5.0)
+      activesupport (>= 5.0)
+      pg (>= 0.18.1)
     jwt (2.6.0)
     kramdown (2.4.0)
       rexml
@@ -595,6 +599,7 @@ DEPENDENCIES
   govuk_design_system_formbuilder
   jbuilder
   jsbundling-rails
+  jsonb_accessor
   mail-notify
   okcomputer
   pg (~> 1.5)
