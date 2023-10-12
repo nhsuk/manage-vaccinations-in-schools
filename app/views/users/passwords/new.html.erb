@@ -1,0 +1,11 @@
+<%= h1 "Reset your password", class: "nhsuk-heading-l" %>
+
+<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= f.govuk_email_field :email, autocomplete: "email", label: { text: "Email address" } %>
+
+  <%= f.govuk_submit "Reset password" %>
+<% end %>
+
+<%= render "devise/shared/links" %>
