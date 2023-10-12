@@ -14,7 +14,7 @@ test("Sign-in", async ({ page }) => {
   await then_i_should_see_the_dashboard();
   await and_i_should_see_a_banner_saying_i_am_signed_in();
 
-  // Sign-out
+  // Sign out
   await when_i_sign_out();
   await then_i_should_see_the_start_page();
   await and_i_should_see_a_banner_saying_i_am_signed_out();
@@ -56,7 +56,7 @@ async function and_i_should_see_a_banner_saying_i_am_signed_in() {
 }
 
 async function when_i_sign_out() {
-  await p.getByRole("button", { name: "Sign-out" }).click();
+  await p.getByRole("button", { name: "Sign out" }).click();
 }
 
 async function then_i_should_see_the_start_page() {
