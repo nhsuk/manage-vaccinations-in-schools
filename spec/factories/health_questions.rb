@@ -18,19 +18,8 @@
 #
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
-class HealthQuestion < ApplicationRecord
-  attr_accessor :response, :notes
-  jsonb_accessor :metadata,
-                 next_question: :string
-
-  belongs_to :vaccine
-
-  def self.first_health_question
-    id_set = ids - all.pluck(Arel.sql("metadata->>'next_question'")).map(&:to_i)
-
-    raise "No first question found" if id_set.empty?
-    raise "More than one first question found" if id_set.length > 1
-
-    find id_set.first
+FactoryBot.define do
+  factory :health_question do
+    vaccine { create :vaccine }
   end
 end
