@@ -24,6 +24,7 @@ class ConsentForms::EditController < ConsentForms::BaseController
       unless @health_answer.valid?
         return render "health_question", status: :unprocessable_entity
       end
+      @consent_form.save!
 
       @consent_form.assign_attributes(form_step: current_step)
     else
