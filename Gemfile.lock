@@ -521,7 +521,7 @@ GEM
     tilt (2.1.0)
     timecop (0.9.8)
     timeout (0.4.0)
-    turbo-rails (1.4.0)
+    turbo-rails (1.5.0)
       actionpack (>= 6.0.0)
       activejob (>= 6.0.0)
       railties (>= 6.0.0)
