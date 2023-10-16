@@ -74,10 +74,15 @@ module LoadExampleCampaign
 
   def self.create_vaccine_health_questions(example, campaign:)
     vaccine = campaign.vaccines.first
-    vaccine.health_questions =
-      example.health_question_attributes.map do |attributes|
-        HealthQuestion.find_or_initialize_by(attributes.merge(vaccine:))
+    last_health_question = nil
+    example.health_question_attributes.map do |attributes|
+      health_question =
+        HealthQuestion.find_or_create_by!(attributes.merge(vaccine:))
+      if last_health_question.present?
+        last_health_question.update!(next_question: health_question.id.to_s)
       end
+      last_health_question = health_question
+    end
   end
 
   def self.create_session(example, campaign:, school:)

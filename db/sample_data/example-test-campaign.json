@@ -50,10 +50,22 @@
     "detailed_type": "Voluntary aided school"
   },
   "healthQuestions": [
-    "Does the child have any severe allergies that have led to an anaphylactic reaction?",
-    "Does the child have any existing medical conditions?",
-    "Does the child take any regular medication?",
-    "Is there anything else we should know?"
+    {
+      "question": "Does the child have any severe allergies that have led to an anaphylactic reaction?",
+      "hint": ""
+    },
+    {
+      "question": "Does the child have any existing medical conditions?",
+      "hint": ""
+    },
+    {
+      "question": "Does the child take any regular medication?",
+      "hint": ""
+    },
+    {
+      "question": "Is there anything else we should know?",
+      "hint": ""
+    }
   ],
   "patients": [
     {
