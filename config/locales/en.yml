@@ -177,6 +177,10 @@ en:
               blank: Enter the town or city
             address_postcode:
               blank: Enter the postcode
+        user:
+          attributes:
+            email:
+              blank: Enter an email address
         triage:
           attributes:
             status:
