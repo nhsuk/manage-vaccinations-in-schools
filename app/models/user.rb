@@ -23,7 +23,11 @@
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
 #
 class User < ApplicationRecord
-  devise :database_authenticatable, :trackable, :timeoutable, :recoverable
+  devise :database_authenticatable,
+         :trackable,
+         :timeoutable,
+         :recoverable,
+         :validatable
 
   has_and_belongs_to_many :teams
 end
