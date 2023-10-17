@@ -27,4 +27,6 @@ class Vaccine < ApplicationRecord
   validates :method, presence: true
 
   enum :method, %i[injection nasal]
+
+  delegate :first_health_question, to: :health_questions
 end

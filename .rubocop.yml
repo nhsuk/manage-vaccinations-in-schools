@@ -10,6 +10,10 @@ inherit_mode:
   merge:
     - Exclude
 
+Lint/UnreachableLoop:
+  Exclude:
+    - spec/lib/health_answers_list_spec.rb
+
 Style/NumericLiterals:
   Exclude:
     - db/schema.rb
