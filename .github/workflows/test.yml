@@ -32,8 +32,12 @@ jobs:
         with:
           ruby-version: .tool-versions
           bundler-cache: true
+      - name: Get Node.js version
+        id: asdf
+        run: echo "::set-output name=VERSION::$(grep nodejs .tool-versions | awk '{print $2}')"
       - uses: actions/setup-node@v3
         with:
+          node-version: ${{ steps.asdf.outputs.VERSION }}
           cache: "yarn"
 
       - name: Setup database
@@ -89,8 +93,12 @@ jobs:
         with:
           ruby-version: .tool-versions
           bundler-cache: true
+      - name: Get Node.js version
+        id: asdf
+        run: echo "::set-output name=VERSION::$(grep nodejs .tool-versions | awk '{print $2}')"
       - uses: actions/setup-node@v3
         with:
+          node-version: ${{ steps.asdf.outputs.VERSION }}
           cache: "yarn"
 
       - run: bundle
