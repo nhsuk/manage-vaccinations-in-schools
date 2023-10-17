@@ -20,8 +20,7 @@
 #
 class HealthQuestion < ApplicationRecord
   attr_accessor :response, :notes
-  jsonb_accessor :metadata,
-                 next_question: :string
+  jsonb_accessor :metadata, next_question: :string
 
   belongs_to :vaccine
 

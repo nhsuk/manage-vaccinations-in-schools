@@ -62,7 +62,7 @@ class ConsentForm < ApplicationRecord
        prefix: "refused_because"
   enum :gp_response, %w[yes no dont_know], prefix: true
 
-  serialize :health_answers, HealthAnswer::ArraySerializer
+  serialize :health_answers, HealthAnswer::ListSerializer
 
   with_options on: :update do
     with_options if: -> { required_for_step?(:name) } do

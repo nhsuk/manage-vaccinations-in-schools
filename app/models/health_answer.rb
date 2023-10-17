@@ -1,19 +1,22 @@
+require "health_answers_list"
+
 class HealthAnswer
   include ActiveModel::Model
 
-  attr_accessor :question, :response, :notes, :hint
+  attr_accessor :id, :question, :response, :notes, :hint, :next_question
 
   validates :response, presence: true, inclusion: { in: %w[yes no] }
   validates :notes, presence: true, if: -> { response == "yes" }
 
   def attributes
-    %i[question response notes hint].index_with { |attr| send(attr) }
+    %i[id question response notes hint next_question].index_with do |attr|
+      send(attr)
+    end
   end
 
-  class ArraySerializer
+  class ListSerializer
     def self.load(arr)
-      return [] if arr.nil?
-      arr.map { |item| HealthAnswer.new(item) }
+      HealthAnswersList.new(arr&.map { |item| HealthAnswer.new(item) })
     end
 
     def self.dump(value)
