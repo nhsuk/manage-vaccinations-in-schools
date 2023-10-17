@@ -79,6 +79,15 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
+  config.action_mailer.default_url_options = {
+    host:
+      if ENV["IS_REVIEW"].present?
+        "#{ENV["HEROKU_APP_NAME"]}.herokuapp.com"
+      else
+        ENV["HEROKU_APP_DEFAULT_DOMAIN_NAME"]
+      end,
+    protocol: "https"
+  }
   config.action_mailer.delivery_method = :notify
   config.action_mailer.notify_settings = {
     api_key: Settings.govuk_notify.api_key
