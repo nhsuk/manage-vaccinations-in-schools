@@ -112,7 +112,7 @@ class ExampleCampaignGenerator
           :user,
           teams: [team],
           full_name: username,
-          email: "#{emailname}@sais"
+          email: "#{emailname}@example.com"
         )
       end
   end
