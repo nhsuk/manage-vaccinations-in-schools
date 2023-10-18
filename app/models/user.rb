@@ -28,6 +28,7 @@ class User < ApplicationRecord
          :timeoutable,
          :recoverable,
          :validatable
+  devise :pwned_password unless Rails.env.test?
 
   has_and_belongs_to_many :teams
 end
