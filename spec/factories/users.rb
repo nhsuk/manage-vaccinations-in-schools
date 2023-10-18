@@ -27,6 +27,6 @@ FactoryBot.define do
     full_name { |n| "Test User #{n}" }
     email { |n| "test-#{n}@localhost" }
     teams { [Team.first || create(:team)] }
-    password { "rosebud" }
+    password { "rosebud1" }
   end
 end
