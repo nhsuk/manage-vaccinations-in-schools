@@ -12,6 +12,7 @@ gem "bootsnap", require: false
 gem "config"
 gem "cssbundling-rails"
 gem "devise"
+gem "devise-pwned_password"
 gem "faker", github: "misaka/faker", branch: "add_alternative_name"
 gem "fhir_client"
 gem "good_job"
