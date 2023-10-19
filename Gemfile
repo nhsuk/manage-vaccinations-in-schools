@@ -33,6 +33,7 @@ gem "silencer", require: false
 gem "stimulus-rails"
 gem "turbo-rails"
 gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
+gem "uk_postcode"
 gem "wicked"
 
 group :development, :test do

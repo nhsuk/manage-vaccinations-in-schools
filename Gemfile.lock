@@ -564,6 +564,7 @@ GEM
       railties (>= 6.0.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
+    uk_postcode (2.1.8)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.8.2)
@@ -652,6 +653,7 @@ DEPENDENCIES
   timecop
   turbo-rails
   tzinfo-data
+  uk_postcode
   web-console
   webmock
   wicked
