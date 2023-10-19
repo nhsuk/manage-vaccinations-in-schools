@@ -47,8 +47,6 @@ class VaccinationRecord < ApplicationRecord
          right_buttock
        ],
        prefix: true
-  # Sites can be removed after the migration to rename it has been run
-  enum :sites, %i[left_arm right_arm other], prefix: "delivery_site_"
   enum :reason,
        %i[
          refused
