@@ -225,6 +225,18 @@ RSpec.describe ConsentForm, type: :model do
       it { should validate_presence_of(:address_line_1).on(:update) }
       it { should validate_presence_of(:address_town).on(:update) }
       it { should validate_presence_of(:address_postcode).on(:update) }
+
+      it "validates the postcode" do
+        consent_form =
+          build(
+            :consent_form,
+            address_postcode: "asdf",
+            form_step: :address,
+            response: "given"
+          )
+        expect(consent_form.valid?(:update)).to be_falsey
+        expect(consent_form.errors[:address_postcode]).to be_present
+      end
     end
   end
 
@@ -270,6 +282,18 @@ RSpec.describe ConsentForm, type: :model do
       consent_form = build(:consent_form, response: "given")
       expect(consent_form.form_steps).to include(:gp)
       expect(consent_form.form_steps).to include(:address)
+    end
+  end
+
+  describe "#address_postcode=" do
+    it "formats the postcode" do
+      consent_form = build(:consent_form, address_postcode: "sw1a1aa")
+      expect(consent_form.address_postcode).to eq("SW1A 1AA")
+    end
+
+    it "converts nil to empty string" do
+      consent_form = build(:consent_form, address_postcode: nil)
+      expect(consent_form.address_postcode).to eq("")
     end
   end
 end
