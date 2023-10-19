@@ -126,8 +126,12 @@ class ConsentForm < ApplicationRecord
     with_options if: -> { required_for_step?(:address) } do
       validates :address_line_1, presence: true
       validates :address_town, presence: true
-      validates :address_postcode, presence: true
+      validates :address_postcode, presence: true, postcode: true
     end
+  end
+
+  def address_postcode=(str)
+    super UKPostcode.parse(str.to_s).to_s
   end
 
   def full_name
