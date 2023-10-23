@@ -97,6 +97,7 @@ class ConsentForm < ApplicationRecord
                 presence: true,
                 if: :parent_relationship_other?
       validates :parent_email, presence: true, email: true
+      validates :parent_phone, phone_number: true, if: :parent_phone?
     end
 
     with_options if: -> { required_for_step?(:contact_method) } do
