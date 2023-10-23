@@ -137,6 +137,9 @@ RSpec.describe ConsentForm, type: :model do
       it { should validate_presence_of(:parent_relationship).on(:update) }
       it { should validate_presence_of(:parent_email).on(:update) }
 
+      it { should_not allow_value("invalid").for(:parent_email).on(:update) }
+      it { should allow_value("foo@foo.com").for(:parent_email).on(:update) }
+
       context "when parent_relationship is 'other'" do
         let(:parent_relationship) { "other" }
 
