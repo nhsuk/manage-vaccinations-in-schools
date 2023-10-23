@@ -63,6 +63,7 @@ class Consent < ApplicationRecord
 
   validates :parent_name, presence: true, on: :edit_who
   validates :parent_phone, presence: true, on: :edit_who
+  validates :parent_phone, phone_number: true, on: :edit_who
   validates :parent_relationship,
             inclusion: {
               in: parent_relationships.keys
