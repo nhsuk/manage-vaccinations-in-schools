@@ -157,6 +157,9 @@ en:
               blank: Enter your relationship
             parent_email:
               blank: Enter your email address
+              invalid: Enter a valid email address, such as j.doe@gmail.com
+            parent_phone:
+              invalid: Enter a valid phone number, like 07632 960 001
             contact_method:
               inclusion: Choose a contact method
             contact_method_other:
