@@ -107,7 +107,7 @@ GEM
     audited (5.4.0)
       activerecord (>= 5.0, < 7.2)
       request_store (~> 1.2)
-    avo (2.41.0)
+    avo (2.42.2)
       actionview (>= 6.0)
       active_link_to
       activerecord (>= 6.0)
@@ -370,7 +370,7 @@ GEM
       rack (>= 1.2, < 4)
     okcomputer (1.18.4)
     orm_adapter (0.5.0)
-    pagy (6.0.4)
+    pagy (6.1.0)
     parallel (1.23.0)
     parser (3.2.2.3)
       ast (~> 2.4.1)
