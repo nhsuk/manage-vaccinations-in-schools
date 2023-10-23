@@ -226,16 +226,8 @@ RSpec.describe ConsentForm, type: :model do
       it { should validate_presence_of(:address_town).on(:update) }
       it { should validate_presence_of(:address_postcode).on(:update) }
 
-      it "validates the postcode" do
-        consent_form =
-          build(
-            :consent_form,
-            address_postcode: "asdf",
-            form_step: :address,
-            response: "given"
-          )
-        expect(consent_form.valid?(:update)).to be_falsey
-        expect(consent_form.errors[:address_postcode]).to be_present
+      it do
+        should_not allow_value("invalid").for(:address_postcode).on(:update)
       end
     end
   end
