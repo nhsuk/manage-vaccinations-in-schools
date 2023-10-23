@@ -35,7 +35,7 @@ jobs:
       - name: Get Node.js version
         id: asdf
         run: echo "::set-output name=VERSION::$(grep nodejs .tool-versions | awk '{print $2}')"
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ steps.asdf.outputs.VERSION }}
           cache: "yarn"
@@ -58,7 +58,7 @@ jobs:
       - name: Get Node.js version
         id: asdf
         run: echo "::set-output name=VERSION::$(grep nodejs .tool-versions | awk '{print $2}')"
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ steps.asdf.outputs.VERSION }}
           cache: "yarn"
@@ -96,7 +96,7 @@ jobs:
       - name: Get Node.js version
         id: asdf
         run: echo "::set-output name=VERSION::$(grep nodejs .tool-versions | awk '{print $2}')"
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ steps.asdf.outputs.VERSION }}
           cache: "yarn"
