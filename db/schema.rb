@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_10_23_145112) do
+ActiveRecord::Schema[7.1].define(version: 2023_10_23_162558) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -206,7 +206,9 @@ ActiveRecord::Schema[7.1].define(version: 2023_10_23_145112) do
     t.string "hint"
     t.jsonb "metadata", default: {}, null: false
     t.bigint "follow_up_question_id"
+    t.bigint "next_question_id"
     t.index ["follow_up_question_id"], name: "index_health_questions_on_follow_up_question_id"
+    t.index ["next_question_id"], name: "index_health_questions_on_next_question_id"
     t.index ["vaccine_id"], name: "index_health_questions_on_vaccine_id"
   end
 
@@ -341,6 +343,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_10_23_145112) do
   add_foreign_key "consents", "campaigns"
   add_foreign_key "consents", "patients"
   add_foreign_key "health_questions", "health_questions", column: "follow_up_question_id"
+  add_foreign_key "health_questions", "health_questions", column: "next_question_id"
   add_foreign_key "health_questions", "vaccines"
   add_foreign_key "triage", "patient_sessions"
   add_foreign_key "vaccination_records", "batches"
