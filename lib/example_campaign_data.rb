@@ -47,7 +47,13 @@ class ExampleCampaignData
     return [] if raw_data["healthQuestions"].blank?
 
     raw_data["healthQuestions"].map do |hq|
-      { question: hq["question"], hint: hq["hint"] }
+      hq.slice(
+        "id",
+        "question",
+        "hint",
+        "next_question",
+        "follow_up_question"
+      ).with_indifferent_access
     end
   end
 

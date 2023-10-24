@@ -487,38 +487,63 @@ class ExampleCampaignGenerator
     @health_questions_data ||=
       if @type == :flu
         [
-          { question: "Has your child been diagnosed with asthma?", hint: "" },
           {
-            question:
-              "Has your child had a flu vaccination in the last 5 months?",
-            hint: ""
+            id: 1,
+            question: "Has your child been diagnosed with asthma?",
+            next_question: 4,
+            follow_up_question: 2
           },
           {
+            id: 2,
+            question: "Have they taken oral steroids in the last 2 weeks?",
+            next_question: 3
+          },
+          {
+            id: 3,
+            question:
+              "Have they been admitted to intensive care for their asthma?",
+            next_question: 4
+          },
+          {
+            id: 4,
+            question:
+              "Has your child had a flu vaccination in the last 5 months?",
+            next_question: 5
+          },
+          {
+            id: 5,
             question:
               "Does your child have a disease or treatment that severely affects their immune system?",
             hint:
-              "For example, treatment for leukaemia or taking immunosuppressant medication"
+              "For example, treatment for leukaemia or taking immunosuppressant medication",
+            next_question: 6
           },
           {
+            id: 6,
             question:
               "Is anyone in your household currently having treatment that severely affects their immune system?",
-            hint: "For example, they need to be kept in isolation"
+            hint: "For example, they need to be kept in isolation",
+            next_question: 7
           },
           {
+            id: 7,
             question:
               "Has your child ever been admitted to intensive care due to an allergic reaction to egg?",
-            hint: ""
+            next_question: 8
           },
           {
+            id: 8,
             question: "Does your child have any allergies to medication?",
-            hint: ""
+            next_question: 9
           },
           {
+            id: 9,
             question:
               "Has your child ever had a reaction to previous vaccinations?",
-            hint: ""
+            next_question: 10
           },
           {
+            id: 10,
             question: "Does you child take regular aspirin?",
             hint: "Also known as Salicylate therapy"
           }

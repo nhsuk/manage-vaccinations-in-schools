@@ -51,20 +51,23 @@
   },
   "healthQuestions": [
     {
+      "id": 1,
       "question": "Does the child have any severe allergies that have led to an anaphylactic reaction?",
-      "hint": ""
+      "next_question": 2
     },
     {
+      "id": 2,
       "question": "Does the child have any existing medical conditions?",
-      "hint": ""
+      "next_question": 3
     },
     {
+      "id": 3,
       "question": "Does the child take any regular medication?",
-      "hint": ""
+      "next_question": 4
     },
     {
-      "question": "Is there anything else we should know?",
-      "hint": ""
+      "id": 4,
+      "question": "Is there anything else we should know?"
     }
   ],
   "patients": [
