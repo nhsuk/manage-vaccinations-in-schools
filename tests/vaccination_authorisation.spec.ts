@@ -44,9 +44,9 @@ async function then_i_should_only_see_my_patients() {
   await expect(p.getByText("Farah Welch")).toBeVisible();
   await expect(p.getByText("John Grady")).toBeVisible();
   await expect(p.getByText("Mckinley Marvin")).toBeVisible();
-  await expect(p.getByText("Odelia Barton")).toBeVisible();
+  await expect(p.getByText("Hyman Jaskolski")).toBeVisible();
   await expect(p.getByText("Rich Schaden")).toBeVisible();
-  await expect(p.getByText("Sung Boyle")).toBeVisible();
+  await expect(p.getByText("Kirstin Labadie")).toBeVisible();
   await expect(p.getByText("Ted Swift")).toBeVisible();
   await expect(p.getByText("Wonda Schuster")).toBeVisible();
 }

@@ -74,14 +74,23 @@ module LoadExampleCampaign
 
   def self.create_vaccine_health_questions(example, campaign:)
     vaccine = campaign.vaccines.first
-    last_health_question = nil
-    example.health_question_attributes.map do |attributes|
-      health_question =
-        HealthQuestion.find_or_create_by!(attributes.merge(vaccine:))
-      if last_health_question.present?
-        last_health_question.update!(next_question: health_question.id.to_s)
-      end
-      last_health_question = health_question
+    hq_id_mappings = {}
+    example.health_question_attributes.each do |attributes|
+      attrs = attributes.slice(:question, :hint).merge(vaccine:)
+      hq = HealthQuestion.find_or_initialize_by(attrs)
+      vaccine.health_questions << hq
+      hq_id_mappings[attributes[:id]] = hq.id
+    end
+
+    set_next_and_follow_up_question_ids(example, hq_id_mappings)
+  end
+
+  def self.set_next_and_follow_up_question_ids(example, hq_id_mappings)
+    example.health_question_attributes.each do |attributes|
+      hq = HealthQuestion.find(hq_id_mappings[attributes[:id]])
+      next_question_id = hq_id_mappings[attributes[:next_question]]
+      follow_up_question_id = hq_id_mappings[attributes[:follow_up_question]]
+      hq.update!(next_question_id:, follow_up_question_id:)
     end
   end
 
