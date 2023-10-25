@@ -41,7 +41,7 @@
 #
 
 class ConsentForm < ApplicationRecord
-  attr_accessor :form_step, :is_this_their_school
+  attr_accessor :form_step, :health_question_number, :is_this_their_school
 
   audited
 
@@ -129,6 +129,10 @@ class ConsentForm < ApplicationRecord
       validates :address_town, presence: true
       validates :address_postcode, presence: true, postcode: true
     end
+
+    with_options if: -> { required_for_step?(:health_question) } do
+      validate :health_answers_valid?
+    end
   end
 
   def address_postcode=(str)
@@ -151,7 +155,7 @@ class ConsentForm < ApplicationRecord
       (:injection if consent_refused? && eligible_for_injection?),
       (:gp if consent_given?),
       (:address if consent_given?),
-      *form_steps_for_health_questions
+      :health_question
     ].compact
   end
 
@@ -181,5 +185,11 @@ class ConsentForm < ApplicationRecord
     return true if form_steps.index(step) <= form_steps.index(form_step)
 
     false
+  end
+
+  def health_answers_valid?
+    unless health_answers[health_question_number].valid?
+      errors.add(:base, "Health answer is invalid")
+    end
   end
 end
