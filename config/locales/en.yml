@@ -177,9 +177,9 @@ en:
             address_line_1:
               blank: Enter the first line of your address
             address_town:
-              blank: Enter the town or city
+              blank: Enter a town or city
             address_postcode:
-              blank: Enter the postcode
+              blank: Enter a postcode
         user:
           attributes:
             email:
