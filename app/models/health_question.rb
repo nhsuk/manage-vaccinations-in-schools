@@ -32,11 +32,28 @@ class HealthQuestion < ApplicationRecord
   belongs_to :follow_up_question, optional: true, class_name: "HealthQuestion"
 
   def self.first_health_question
-    id_set = ids - all.pluck(Arel.sql("metadata->>'next_question'")).map(&:to_i)
+    question_ids, next_question_ids, follow_up_question_ids =
+      pluck(:id, :next_question_id, :follow_up_question_id).transpose
+    id_set = question_ids - next_question_ids - follow_up_question_ids
 
     raise "No first question found" if id_set.empty?
     raise "More than one first question found" if id_set.length > 1
 
     find id_set.first
+  end
+
+  def self.in_order
+    first_health_question.to_set
+  end
+
+  # Turn the health questions into an array.
+  def to_set(set = nil)
+    set ||= Set.new
+    set << self
+
+    follow_up_question.to_set(set) if follow_up_question.present?
+    next_question.to_set(set) if next_question.present?
+
+    set
   end
 end
