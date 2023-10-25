@@ -7,26 +7,24 @@ class ConsentForms::EditController < ConsentForms::BaseController
   before_action :set_steps
   before_action :setup_wizard_translated
   before_action :validate_params, only: %i[update]
+  before_action :set_health_answer, if: -> { is_health_question_step? }
 
   def show
-    if is_health_question_step?
-      @health_answer = current_health_answer
-      return render "health_question"
-    end
-
     render_wizard
   end
 
   def update
     if is_health_question_step?
-      @health_answer = current_health_answer
       @health_answer.assign_attributes(health_answer_params)
-      unless @health_answer.valid?
-        return render "health_question", status: :unprocessable_entity
-      end
-      @consent_form.save!
 
-      @consent_form.assign_attributes(form_step: current_step)
+      @consent_form.assign_attributes(
+        form_step: current_step,
+        health_question_number: @question_number
+      )
+
+      if next_health_question
+        jump_to "health-question", question_number: next_health_question
+      end
     else
       @consent_form.assign_attributes(update_params)
     end
@@ -43,7 +41,7 @@ class ConsentForms::EditController < ConsentForms::BaseController
       )
     end
 
-    return redirect_to finish_wizard_path if skip_to_confirm?
+    jump_to Wicked::FINISH_STEP if skip_to_confirm?
 
     render_wizard @consent_form
   end
@@ -97,6 +95,12 @@ class ConsentForms::EditController < ConsentForms::BaseController
     self.steps = @consent_form.form_steps
   end
 
+  def set_health_answer
+    @question_number = params.fetch(:question_number, "0").to_i
+
+    @health_answer = @consent_form.health_answers[@question_number]
+  end
+
   def validate_params
     case current_step
     when :date_of_birth
@@ -115,7 +119,7 @@ class ConsentForms::EditController < ConsentForms::BaseController
   end
 
   def is_health_question_step?
-    step.start_with?("health-")
+    step == "health-question"
   end
 
   def current_health_answer
@@ -125,5 +129,14 @@ class ConsentForms::EditController < ConsentForms::BaseController
 
   def skip_to_confirm?
     request.referer.include?("skip_to_confirm")
+  end
+
+  def next_health_question
+    @next_health_question ||=
+      if @health_answer.response == "yes"
+        @health_answer.follow_up_question || @health_answer.next_question
+      else
+        @health_answer.next_question
+      end
   end
 end
