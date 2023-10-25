@@ -9,18 +9,20 @@ class ConsentFormsController < ConsentForms::BaseController
 
   def create
     vaccine = @session.campaign.vaccines.first
-    first_health_question = vaccine.first_health_question
-    remaining_health_questions =
-      vaccine.health_questions - [first_health_question]
+    health_questions = vaccine.health_questions.in_order
 
+    hq_id_mappings =
+      Hash[health_questions.map.with_index { |hq, i| [hq.id, i] }]
     health_answers =
-      [first_health_question, *remaining_health_questions].map do |hq|
-        HealthAnswer.new id: hq.id,
+      health_questions.map do |hq|
+        HealthAnswer.new id: hq_id_mappings[hq.id],
                          question: hq.question,
                          response: nil,
                          notes: nil,
                          hint: hq.hint,
-                         next_question: hq.next_question
+                         next_question: hq_id_mappings[hq.next_question_id],
+                         follow_up_question:
+                           hq_id_mappings[hq.follow_up_question_id]
       end
     consent_form = @session.consent_forms.create!(health_answers:)
 
