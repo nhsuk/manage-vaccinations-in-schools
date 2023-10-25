@@ -34,16 +34,16 @@ RSpec.describe HealthQuestion do
     let!(:hq3) { create :health_question, vaccine: }
 
     it "returns the first health question" do
-      hq1.update! next_question: hq2.id
-      hq2.update! next_question: hq3.id
+      hq1.update! next_question: hq2
+      hq2.update! next_question: hq3
 
       expect(vaccine.health_questions.first_health_question).to eq(hq1)
     end
 
     it "raises an error if there is no first question" do
-      hq1.update! next_question: hq2.id
-      hq2.update! next_question: hq3.id
-      hq3.update! next_question: hq1.id
+      hq1.update! next_question: hq2
+      hq2.update! next_question: hq3
+      hq3.update! next_question: hq1
 
       expect { vaccine.health_questions.first_health_question }.to raise_error(
         "No first question found"
@@ -51,7 +51,7 @@ RSpec.describe HealthQuestion do
     end
 
     it "raises an error if there is more than one first question" do
-      hq2.update! next_question: hq3.id
+      hq2.update! next_question: hq3
 
       expect { vaccine.health_questions.first_health_question }.to raise_error(
         "More than one first question found"
@@ -61,8 +61,8 @@ RSpec.describe HealthQuestion do
     it "ignores health questions outside of the scoped collection" do
       create :health_question
 
-      hq1.update! next_question: hq2.id
-      hq2.update! next_question: hq3.id
+      hq1.update! next_question: hq2
+      hq2.update! next_question: hq3
 
       expect(
         vaccine
@@ -70,6 +70,27 @@ RSpec.describe HealthQuestion do
           .where(id: [hq1.id, hq2.id, hq3.id])
           .first_health_question
       ).to eq(hq1)
+    end
+  end
+
+  describe "#to_set" do
+    let(:vaccine) { create :vaccine, type: "tester" }
+    let(:hq1) { create :health_question, vaccine: }
+    let(:hq2) { create :health_question, vaccine: }
+    let(:hq3) { create :health_question, vaccine: }
+
+    it "returns a set ordered by next_question" do
+      hq1.update! next_question: hq2
+      hq2.update! next_question: hq3
+
+      expect(hq1.to_set).to eq(Set[hq1, hq2, hq3])
+    end
+
+    it "orders follow up questions before next questions" do
+      hq1.update! next_question: hq2, follow_up_question: hq3
+      hq3.update! next_question: hq2
+
+      expect(hq1.to_set).to eq(Set[hq1, hq3, hq2])
     end
   end
 end
