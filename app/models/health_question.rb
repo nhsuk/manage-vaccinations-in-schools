@@ -28,6 +28,8 @@ class HealthQuestion < ApplicationRecord
   attr_accessor :response, :notes
 
   belongs_to :vaccine
+  belongs_to :next_question, optional: true, class_name: "HealthQuestion"
+  belongs_to :follow_up_question, optional: true, class_name: "HealthQuestion"
 
   def self.first_health_question
     id_set = ids - all.pluck(Arel.sql("metadata->>'next_question'")).map(&:to_i)
