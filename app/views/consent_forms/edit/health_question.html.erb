@@ -10,6 +10,7 @@
 
 <%= form_for @health_answer, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
+  <%= hidden_field_tag "question_number", @question_number %>
 
   <%= f.govuk_radio_buttons_fieldset(:response,
    legend: { size: 'l', text: title, tag: 'h1' },

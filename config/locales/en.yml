@@ -16,14 +16,7 @@ en:
     contact_method: "contact-method"
     gp: "gp"
     address: "address"
-    health_1: "health-1"
-    health_2: "health-2"
-    health_3: "health-3"
-    health_4: "health-4"
-    health_5: "health-5"
-    health_6: "health-6"
-    health_7: "health-7"
-    health_8: "health-8"
+    health_question: "health-question"
   activemodel:
     errors:
       models:
