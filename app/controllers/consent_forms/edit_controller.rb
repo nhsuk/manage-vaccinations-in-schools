@@ -132,11 +132,6 @@ class ConsentForms::EditController < ConsentForms::BaseController
   end
 
   def next_health_question
-    @next_health_question ||=
-      if @health_answer.response == "yes"
-        @health_answer.follow_up_question || @health_answer.next_question
-      else
-        @health_answer.next_question
-      end
+    @next_health_question ||= @health_answer.next_health_answer_index
   end
 end
