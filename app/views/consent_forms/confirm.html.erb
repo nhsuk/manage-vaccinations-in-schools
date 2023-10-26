@@ -203,13 +203,13 @@ end %>
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
       <%= govuk_summary_list classes: 'app-summary-list--full-width' do |summary_list|
-        @consent_form.health_answers.each_with_index do |ha, index|
+        @consent_form.each_health_answer do |ha|
           summary_list.with_row do |row|
             row.with_key { ha.question }
             row.with_value { health_answer_response(ha) }
             row.with_action(text: "Change",
-              href: change_link[:health_question, question_number: index],
-              visually_hidden_text: "your answer to health question #{index + 1}")
+              href: change_link[:health_question, question_number: ha.id],
+              visually_hidden_text: "your answer to health question #{ha.id + 1}")
           end
         end
       end %>

@@ -165,6 +165,19 @@ class ConsentForm < ApplicationRecord
     health_answers.map.with_index { |_args, idx| :"health_#{idx + 1}" }
   end
 
+  def each_health_answer
+    return if health_answers.empty?
+    return to_enum(:each_health_answer) unless block_given?
+
+    ha = health_answers.first
+    loop do
+      yield ha
+      next_health_answer_index = ha.next_health_answer_index
+      break unless next_health_answer_index
+      ha = health_answers[next_health_answer_index]
+    end
+  end
+
   private
 
   def eligible_for_injection?
@@ -188,8 +201,19 @@ class ConsentForm < ApplicationRecord
   end
 
   def health_answers_valid?
-    unless health_answers[health_question_number].valid?
-      errors.add(:base, "Health answer is invalid")
+    if health_question_number.present?
+      unless health_answers[health_question_number].valid?
+        errors.add(:base, "Health answer(s) invalid")
+        return false
+      end
+    else
+      each_health_answer do |health_answer|
+        unless health_answer.valid?
+          errors.add(:base, "Health answer(s) invalid")
+          return false
+        end
+      end
     end
+    true
   end
 end

@@ -12,7 +12,7 @@ test("Parental consent change answers", async ({ page }) => {
   await when_i_fill_in_the_all_the_consent_questions();
   await then_i_see_the_consent_confirm_page();
 
-  await when_i_click_on_the_change_link_of_the_first_answer();
+  await when_i_click_on_the_change_link_of_the_second_answer();
   await then_i_see_the_health_question();
 
   await when_i_change_my_answer_to_yes();
@@ -86,9 +86,9 @@ async function then_i_see_the_consent_confirm_page() {
   await expect(p.locator("h1")).toContainText("Check your answers and confirm");
 }
 
-async function when_i_click_on_the_change_link_of_the_first_answer() {
+async function when_i_click_on_the_change_link_of_the_second_answer() {
   await p
-    .getByRole("link", { name: "Change your answer to health question 2" })
+    .getByRole("link", { name: "Change your answer to health question 4" })
     .click();
 }
 

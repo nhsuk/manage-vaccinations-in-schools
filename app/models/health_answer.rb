@@ -24,10 +24,18 @@ class HealthAnswer
     ].index_with { |attr| send(attr) }
   end
 
+  def next_health_answer_index
+    if response == "yes"
+      follow_up_question || next_question
+    else
+      next_question
+    end
+  end
+
   class ArraySerializer
     def self.load(arr)
       return [] if arr.nil?
-      arr.map { |item| HealthAnswer.new(item) }
+      arr.map.with_index { |(item), idx| HealthAnswer.new(item.merge(id: idx)) }
     end
 
     def self.dump(value)
