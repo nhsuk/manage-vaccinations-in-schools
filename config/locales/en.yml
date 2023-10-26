@@ -4,7 +4,7 @@ en:
     success: Success
     warning: Warning
   service:
-    email: my-service@email
+    email: england.manage-childrens-vaccinations@nhs.net
   wicked:
     name: "name"
     date_of_birth: "date-of-birth"
