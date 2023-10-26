@@ -5,13 +5,13 @@
   ) %>
 <% end %>
 
-<% change_link = Proc.new do |attr|
+<% change_link = Proc.new do |attr, params = {}|
   options = attr.in?(%i[consent reason]) ? {} : { skip_to_confirm: true }
   session_consent_form_edit_path(
     @session,
     @consent_form,
     attr.to_s.dasherize,
-    options
+    options.merge(params)
   )
 end %>
 
@@ -208,7 +208,7 @@ end %>
             row.with_key { ha.question }
             row.with_value { health_answer_response(ha) }
             row.with_action(text: "Change",
-              href: change_link["health-#{index + 1}"],
+              href: change_link[:health_question, question_number: index],
               visually_hidden_text: "your answer to health question #{index + 1}")
           end
         end
