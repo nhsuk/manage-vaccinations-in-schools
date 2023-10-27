@@ -41,7 +41,5 @@ class ConsentFormsController < ConsentForms::BaseController
     @consent_form.update!(recorded_at: Time.zone.now)
 
     session.delete(:consent_form_id)
-
-    redirect_to "/"
   end
 end
