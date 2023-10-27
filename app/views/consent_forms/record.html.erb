@@ -1,0 +1,6 @@
+<% title = "#{ @consent_form.full_name } will get their nasal flu vaccination at school on #{ @session.date.to_fs(:nhsuk_date) }" %>
+<% content_for :page_title, title %>
+
+<%= govuk_panel(title_text: title, classes: "app-panel nhsuk-u-margin-bottom-6") %>
+
+<p>We’ve sent confirmation to <%= @consent_form.parent_email %></p>
