@@ -21,7 +21,7 @@ test("Parental consent change answers", async ({ page }) => {
   await and_i_see_the_answer_i_changed_is_yes();
 
   await when_i_click_the_confirm_button();
-  await then_i_see_the_start_page();
+  await then_i_see_the_confirmation_page();
 });
 
 async function given_the_app_is_setup() {
@@ -115,8 +115,8 @@ async function when_i_click_the_confirm_button() {
   await p.getByRole("button", { name: "Confirm" }).click();
 }
 
-async function then_i_see_the_start_page() {
+async function then_i_see_the_confirmation_page() {
   await expect(p.locator("h1")).toContainText(
-    "Manage vaccinations for school-aged children",
+    "Joe Test will get their nasal flu vaccination at school",
   );
 }

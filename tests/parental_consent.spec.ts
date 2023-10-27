@@ -48,7 +48,7 @@ test("Parental consent", async ({ page }) => {
   await then_i_see_the_consent_confirm_page();
 
   await when_i_click_the_confirm_button();
-  await then_i_see_the_start_page();
+  await then_i_see_the_confirmation_page();
 });
 
 async function given_the_app_is_setup() {
@@ -94,9 +94,9 @@ async function then_i_see_the_consent_confirm_page() {
   await expect(p.locator("h1")).toContainText("Check your answers and confirm");
 }
 
-async function then_i_see_the_start_page() {
+async function then_i_see_the_confirmation_page() {
   await expect(p.locator("h1")).toContainText(
-    "Manage vaccinations for school-aged children",
+    "Joe Test will get their nasal flu vaccination",
   );
 }
 
