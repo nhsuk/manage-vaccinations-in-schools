@@ -155,7 +155,7 @@ class ConsentForm < ApplicationRecord
       (:injection if consent_refused? && eligible_for_injection?),
       (:gp if consent_given?),
       (:address if consent_given?),
-      :health_question
+      (:health_question if consent_given?)
     ].compact
   end
 
