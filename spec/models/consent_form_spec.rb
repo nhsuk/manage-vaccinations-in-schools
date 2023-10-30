@@ -49,7 +49,8 @@ RSpec.describe ConsentForm, type: :model do
     let(:response) { nil }
     let(:reason) { nil }
     let(:gp_response) { nil }
-    subject do
+    let(:health_answers) { [] }
+    subject(:consent_form) do
       build(
         :consent_form,
         form_step:,
@@ -58,7 +59,8 @@ RSpec.describe ConsentForm, type: :model do
         contact_method:,
         response:,
         reason:,
-        gp_response:
+        gp_response:,
+        health_answers:
       )
     end
 
@@ -235,6 +237,76 @@ RSpec.describe ConsentForm, type: :model do
         should_not allow_value("invalid").for(:address_postcode).on(:update)
       end
     end
+
+    context "when form_step is :health_question" do
+      let(:response) { "given" }
+      let(:gp_response) { "yes" }
+      let(:parent_relationship) { "mother" }
+      let(:contact_method) { "any" }
+      let(:form_step) { :health_question }
+      let(:health_answers) do
+        [
+          HealthAnswer.new(
+            id: 0,
+            question: "Has your child been diagnosed with asthma?",
+            next_question: 2,
+            follow_up_question: 1
+          ),
+          HealthAnswer.new(
+            id: 1,
+            question: "Have they taken oral steroids in the last 2 weeks?",
+            next_question: 2
+          ),
+          HealthAnswer.new(
+            id: 2,
+            question:
+              "Has your child had a flu vaccination in the last 5 months?"
+          )
+        ]
+      end
+
+      describe "validations from previous steps" do
+        it { should validate_presence_of(:first_name).on(:update) }
+        it { should validate_presence_of(:date_of_birth).on(:update) }
+        it { should validate_presence_of(:parent_name).on(:update) }
+        it { should validate_presence_of(:gp_response).on(:update) }
+        it { should validate_presence_of(:address_line_1).on(:update) }
+        it { should validate_presence_of(:address_town).on(:update) }
+        it { should validate_presence_of(:address_postcode).on(:update) }
+      end
+
+      it "is valid if the default health answers have responses" do
+        health_answers[0].response = "no"
+        health_answers[2].response = "no"
+
+        consent_form.save # rubocop:disable Rails/SaveBang
+        expect(consent_form).to be_valid
+      end
+
+      it "is invalid if health answers do not have responses" do
+        consent_form.save # rubocop:disable Rails/SaveBang
+        expect(consent_form).to_not be_valid
+      end
+
+      it "checks follow-up questions if necessary" do
+        health_answers[0].response = "yes"
+        health_answers[0].notes = "for the tests"
+        health_answers[2].response = "no"
+
+        consent_form.save # rubocop:disable Rails/SaveBang
+        expect(consent_form).to_not be_valid
+      end
+
+      context "health_question_number is set" do
+        it "only validates the given health answer" do
+          consent_form.health_question_number = 1
+          consent_form.health_answers[1].response = "no"
+
+          consent_form.save # rubocop:disable Rails/SaveBang
+          expect(consent_form).to be_valid
+        end
+      end
+    end
   end
 
   describe "#full_name" do
@@ -291,6 +363,98 @@ RSpec.describe ConsentForm, type: :model do
     it "converts nil to empty string" do
       consent_form = build(:consent_form, address_postcode: nil)
       expect(consent_form.address_postcode).to eq("")
+    end
+  end
+
+  describe "#each_health_answer" do
+    context "linear health questions without branching" do
+      let(:consent_form) do
+        build(:consent_form, :with_health_answers_no_branching)
+      end
+
+      context "no answers recorded" do
+        it "yields all the health answers in order" do
+          expect { |b| consent_form.each_health_answer(&b) }.to(
+            yield_successive_args(
+              consent_form.health_answers[0],
+              consent_form.health_answers[1],
+              consent_form.health_answers[2]
+            )
+          )
+        end
+      end
+
+      context "no answers requiring follow-up recorded" do
+        it "yields all the health answers in order" do
+          expect { |b| consent_form.each_health_answer(&b) }.to(
+            yield_successive_args(
+              consent_form.health_answers[0],
+              consent_form.health_answers[1],
+              consent_form.health_answers[2]
+            )
+          )
+        end
+      end
+
+      context "answers require follow-up recorded" do
+        it "yields all the health answers in order" do
+          expect { |b| consent_form.each_health_answer(&b) }.to(
+            yield_successive_args(
+              consent_form.health_answers[0],
+              consent_form.health_answers[1],
+              consent_form.health_answers[2]
+            )
+          )
+        end
+      end
+    end
+
+    context "health answers with branching" do
+      let(:consent_form) do
+        build(:consent_form, :with_health_answers_asthma_branching)
+      end
+
+      context "no answers recorded" do
+        it "yields all the health answers in order" do
+          expect { |b| consent_form.each_health_answer(&b) }.to(
+            yield_successive_args(
+              consent_form.health_answers[0],
+              consent_form.health_answers[1],
+              consent_form.health_answers[2]
+            )
+          )
+        end
+      end
+
+      context "no answers requiring follow-up " do
+        it "yields the non follow-up health answers in order" do
+          consent_form.health_answers[0].response = "no"
+          consent_form.health_answers[2].response = "no"
+
+          expect { |b| consent_form.each_health_answer(&b) }.to(
+            yield_successive_args(
+              consent_form.health_answers[0],
+              consent_form.health_answers[2]
+            )
+          )
+        end
+      end
+
+      context "answers require follow-up " do
+        it "yields the normal and follow-up health answer in order" do
+          consent_form.health_answers[0].response = "yse"
+          consent_form.health_answers[1].response = "yes"
+          consent_form.health_answers[2].response = "yes"
+
+          expect { |b| consent_form.each_health_answer(&b) }.to(
+            yield_successive_args(
+              consent_form.health_answers[0],
+              consent_form.health_answers[1],
+              consent_form.health_answers[2]
+            )
+          )
+        end
+      end
     end
   end
 end
