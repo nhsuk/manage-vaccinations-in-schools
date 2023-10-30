@@ -310,7 +310,7 @@ GEM
       activerecord (>= 6.1)
       activesupport (>= 6.1)
       pg (>= 0.18.1)
-    jwt (2.6.0)
+    jwt (2.7.1)
     kramdown (2.4.0)
       rexml
     kramdown-parser-gfm (1.1.0)
@@ -324,7 +324,7 @@ GEM
       net-imap
       net-pop
       net-smtp
-    mail-notify (1.1.0)
+    mail-notify (1.2.0)
       actionmailer (>= 5.2.4.6)
       actionpack (>= 5.2.7.1)
       actionview (>= 5.2.7.1)
@@ -345,7 +345,7 @@ GEM
     multi_json (1.15.0)
     multi_xml (0.6.0)
     mutex_m (0.1.2)
-    net-imap (0.4.2)
+    net-imap (0.4.3)
       date
       net-protocol
     net-pop (0.1.2)
