@@ -468,4 +468,23 @@ RSpec.describe ConsentForm, type: :model do
       end
     end
   end
+
+  describe "#any_health_answers_truthy?" do
+    let(:consent_form) do
+      build(:consent_form, :with_health_answers_no_branching)
+    end
+
+    context "no responses are yes" do
+      it "returns false" do
+        expect(consent_form.any_health_answers_truthy?).to eq(false)
+      end
+    end
+
+    context "some responses are yes" do
+      it "returns true" do
+        consent_form.health_answers[0].response = "yes"
+        expect(consent_form.any_health_answers_truthy?).to eq(true)
+      end
+    end
+  end
 end
