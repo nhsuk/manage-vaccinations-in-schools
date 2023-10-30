@@ -377,7 +377,7 @@ GEM
       racc
     pg (1.5.4)
     prettier_print (1.2.1)
-    propshaft (0.7.0)
+    propshaft (0.8.0)
       actionpack (>= 7.0.0)
       activesupport (>= 7.0.0)
       rack
@@ -440,7 +440,7 @@ GEM
       thor (~> 1.0, >= 1.2.2)
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
-    rake (13.0.6)
+    rake (13.1.0)
     rbs (2.8.4)
     rdoc (6.5.0)
       psych (>= 4.0.0)
