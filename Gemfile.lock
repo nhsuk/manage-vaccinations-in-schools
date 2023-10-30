@@ -107,7 +107,7 @@ GEM
     audited (5.4.0)
       activerecord (>= 5.0, < 7.2)
       request_store (~> 1.2)
-    avo (2.42.2)
+    avo (2.43.0)
       actionview (>= 6.0)
       active_link_to
       activerecord (>= 6.0)
@@ -440,7 +440,7 @@ GEM
       thor (~> 1.0, >= 1.2.2)
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
-    rake (13.0.6)
+    rake (13.1.0)
     rbs (2.8.4)
     rdoc (6.5.0)
       psych (>= 4.0.0)
