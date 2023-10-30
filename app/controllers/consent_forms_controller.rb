@@ -41,5 +41,7 @@ class ConsentFormsController < ConsentForms::BaseController
     @consent_form.update!(recorded_at: Time.zone.now)
 
     session.delete(:consent_form_id)
+
+    ConsentFormMailer.confirmation(@consent_form).deliver_later
   end
 end
