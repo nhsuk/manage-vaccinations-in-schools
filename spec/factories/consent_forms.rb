@@ -41,5 +41,73 @@
 #
 FactoryBot.define do
   factory :consent_form do
+    first_name { Faker::Name.first_name }
+    last_name { Faker::Name.last_name }
+    date_of_birth { Faker::Date.birthday(min_age: 3, max_age: 9) }
+    parent_name { Faker::Name.name }
+    parent_relationship do
+      ConsentForm.parent_relationships.keys.first(2).sample
+    end
+    parent_email { Faker::Internet.email name: parent_name }
+    parent_phone { Faker::PhoneNumber.cell_phone }
+    contact_method { "any" }
+    response { "given" }
+    gp_response { "yes" }
+    gp_name { Faker::Name.name }
+    address_line_1 { Faker::Address.street_address }
+    address_town { Faker::Address.city }
+    address_postcode { Faker::Address.postcode }
+
+    # use_common_name { false }
+
+    session
+    health_answers do
+      [HealthAnswer.new(id: 0, question: "Is there anything we should know?")]
+    end
+
+    trait :with_health_answers_no_branching do
+      health_answers do
+        [
+          HealthAnswer.new(
+            id: 0,
+            question:
+              "Does the child have any severe allergies that have led to an anaphylactic reaction?",
+            next_question: 1
+          ),
+          HealthAnswer.new(
+            id: 1,
+            question: "Does the child have any existing medical conditions?",
+            next_question: 2
+          ),
+          HealthAnswer.new(
+            id: 2,
+            question: "Does the child take any regular medication?"
+          )
+        ]
+      end
+    end
+
+    trait :with_health_answers_asthma_branching do
+      health_answers do
+        [
+          HealthAnswer.new(
+            id: 0,
+            question: "Has your child been diagnosed with asthma?",
+            next_question: 2,
+            follow_up_question: 1
+          ),
+          HealthAnswer.new(
+            id: 1,
+            question: "Have they taken oral steroids in the last 2 weeks?",
+            next_question: 2
+          ),
+          HealthAnswer.new(
+            id: 2,
+            question:
+              "Has your child had a flu vaccination in the last 5 months?"
+          )
+        ]
+      end
+    end
   end
 end

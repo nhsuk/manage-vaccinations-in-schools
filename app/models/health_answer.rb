@@ -25,10 +25,10 @@ class HealthAnswer
   end
 
   def next_health_answer_index
-    if response == "yes"
-      follow_up_question || next_question
-    else
+    if response == "no"
       next_question
+    else
+      follow_up_question || next_question
     end
   end
 
