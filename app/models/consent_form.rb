@@ -169,12 +169,12 @@ class ConsentForm < ApplicationRecord
     return if health_answers.empty?
     return to_enum(:each_health_answer) unless block_given?
 
-    ha = health_answers.first
+    health_answer = health_answers.first
     loop do
-      yield ha
-      next_health_answer_index = ha.next_health_answer_index
+      yield health_answer
+      next_health_answer_index = health_answer.next_health_answer_index
       break unless next_health_answer_index
-      ha = health_answers[next_health_answer_index]
+      health_answer = health_answers[next_health_answer_index]
     end
   end
 
