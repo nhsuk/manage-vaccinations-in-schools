@@ -456,5 +456,16 @@ RSpec.describe ConsentForm, type: :model do
         end
       end
     end
+
+    context "accidental infinite loop" do
+      it "raises an error" do
+        consent_form = build :consent_form
+        consent_form.health_answers[0].next_question = 0
+
+        expect { |_b| consent_form.each_health_answer { nil } }.to(
+          raise_error("Infinite loop detected")
+        )
+      end
+    end
   end
 end

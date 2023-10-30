@@ -170,7 +170,13 @@ class ConsentForm < ApplicationRecord
     return to_enum(:each_health_answer) unless block_given?
 
     health_answer = health_answers.first
+    seen_health_answers = Set.new
     loop do
+      if seen_health_answers.include?(health_answer.object_id)
+        raise "Infinite loop detected"
+      end
+      seen_health_answers << health_answer.object_id
+
       yield health_answer
       next_health_answer_index = health_answer.next_health_answer_index
       break unless next_health_answer_index
