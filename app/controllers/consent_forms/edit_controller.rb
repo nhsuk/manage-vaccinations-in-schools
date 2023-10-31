@@ -21,10 +21,6 @@ class ConsentForms::EditController < ConsentForms::BaseController
         form_step: current_step,
         health_question_number: @question_number
       )
-
-      if next_health_question
-        jump_to "health-question", question_number: next_health_question
-      end
     else
       @consent_form.assign_attributes(update_params)
     end
@@ -41,7 +37,7 @@ class ConsentForms::EditController < ConsentForms::BaseController
       )
     end
 
-    jump_to Wicked::FINISH_STEP if skip_to_confirm?
+    skip_to_confirm_or_next_health_question
 
     render_wizard @consent_form
   end
@@ -133,5 +129,27 @@ class ConsentForms::EditController < ConsentForms::BaseController
 
   def next_health_question
     @next_health_question ||= @health_answer.next_health_answer_index
+  end
+
+  def next_health_answer_missing_response?
+    if next_health_question
+      @consent_form.health_answers[next_health_question].response.blank?
+    else
+      false
+    end
+  end
+
+  def skip_to_confirm_or_next_health_question
+    if skip_to_confirm?
+      if is_health_question_step? && next_health_answer_missing_response?
+        jump_to "health-question",
+                question_number: next_health_question,
+                skip_to_confirm: true
+      else
+        jump_to Wicked::FINISH_STEP
+      end
+    elsif is_health_question_step? && next_health_question
+      jump_to "health-question", question_number: next_health_question
+    end
   end
 end
