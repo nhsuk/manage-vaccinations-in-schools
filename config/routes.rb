@@ -18,7 +18,10 @@ Rails.application.routes.draw do
   get "/ping" => proc { [200, {}, ["PONG"]] }
   get "/sha" => proc { [200, {}, [Rails.application.config.commit_sha]] }
 
-  get "/reset", to: "dev#reset" if Rails.env.development? || Rails.env.test?
+  if Rails.env.development? || Rails.env.test?
+    get "/reset", to: "dev#reset"
+    get "/random_consent_form", to: "dev#random_consent_form"
+  end
 
   get "/csrf", to: "csrf#new"
 
