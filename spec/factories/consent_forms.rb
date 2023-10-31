@@ -43,6 +43,7 @@ FactoryBot.define do
   factory :consent_form do
     first_name { Faker::Name.first_name }
     last_name { Faker::Name.last_name }
+    use_common_name { false }
     date_of_birth { Faker::Date.birthday(min_age: 3, max_age: 9) }
     parent_name { Faker::Name.name }
     parent_relationship do
