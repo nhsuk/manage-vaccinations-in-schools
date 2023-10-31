@@ -39,47 +39,7 @@ async function then_i_see_the_consent_start_page() {
 }
 
 async function when_i_fill_in_the_all_the_consent_questions() {
-  await p.getByRole("button", { name: "Start now" }).click();
-
-  await p.getByLabel("First name").fill("Joe");
-  await p.getByLabel("Last name").fill("Test");
-  await p.getByText("Yes").click();
-  await p.getByLabel("Known as").fill("LittleJoeTests");
-  await p.getByRole("button", { name: "Continue" }).click();
-
-  await p.getByLabel("Day").fill("01");
-  await p.getByLabel("Month").fill("01");
-  await p.getByLabel("Year").fill("2010");
-  await p.getByRole("button", { name: "Continue" }).click();
-
-  await p.getByText("Yes, they go to this school").click();
-  await p.getByRole("button", { name: "Continue" }).click();
-
-  await p.getByLabel("Your name").fill("Joe Senior");
-  await p.getByRole("radio", { name: "Dad" }).click();
-  await p.getByLabel("Email address").fill("joe.senior@example.com");
-  await p.getByLabel("Phone number").fill("07123456789");
-  await p.getByRole("button", { name: "Continue" }).click();
-
-  await p.getByRole("radio", { name: "I do not have specific needs" }).click();
-  await p.getByRole("button", { name: "Continue" }).click();
-
-  await p.getByText("Yes, I agree to them having a nasal vaccine").click();
-  await p.getByRole("button", { name: "Continue" }).click();
-
-  await p.getByLabel("Yes, they are registered with a GP").click();
-  await p.getByLabel("Name of GP surgery").fill("Test GP Surgery");
-  await p.getByRole("button", { name: "Continue" }).click();
-
-  await p.getByLabel("Address line 1").fill("1 Test Street");
-  await p.getByLabel("Town or city").fill("Test Town");
-  await p.getByLabel("Postcode").fill("TE1 1ST");
-  await p.getByRole("button", { name: "Continue" }).click();
-
-  for (let i = 1; i <= 8; i++) {
-    await p.getByRole("radio", { name: "No" }).click();
-    await p.getByRole("button", { name: "Continue" }).click();
-  }
+  await p.goto("/random_consent_form?session_id=2");
 }
 
 async function then_i_see_the_consent_confirm_page() {
