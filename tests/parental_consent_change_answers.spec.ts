@@ -9,6 +9,9 @@ test("Parental consent change answers", async ({ page }) => {
   await when_i_go_to_a_prefilled_consent_form();
   await then_i_see_the_consent_confirm_page();
 
+  await when_i_change_the_patients_name();
+  await then_i_see_the_updated_name();
+
   await when_i_click_on_the_change_link_of_the_first_answer();
   await then_i_see_the_health_question();
 
@@ -36,6 +39,19 @@ async function when_i_go_to_a_prefilled_consent_form() {
 
 async function then_i_see_the_consent_confirm_page() {
   await expect(p.locator("h1")).toContainText("Check your answers and confirm");
+}
+
+async function then_i_see_the_updated_name() {
+  expect(p.getByText("Joe Test")).toBeVisible();
+}
+
+async function when_i_change_the_patients_name() {
+  await p
+    .getByRole("link", { name: "Change child's name", exact: true })
+    .click();
+  await p.getByLabel("First name").fill("Joe");
+  await p.getByLabel("Last name").fill("Test");
+  await p.getByRole("button", { name: "Continue" }).click();
 }
 
 async function when_i_click_on_the_change_link_of_the_first_answer() {
@@ -88,6 +104,6 @@ async function when_i_click_the_confirm_button() {
 
 async function then_i_see_the_confirmation_page() {
   await expect(p.locator("h1")).toContainText(
-    "will get their nasal flu vaccination at school",
+    "Joe Test will get their nasal flu vaccination at school",
   );
 }
