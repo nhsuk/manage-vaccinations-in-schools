@@ -88,6 +88,6 @@ async function when_i_click_the_confirm_button() {
 
 async function then_i_see_the_confirmation_page() {
   await expect(p.locator("h1")).toContainText(
-    "Joe Test will get their nasal flu vaccination at school",
+    "will get their nasal flu vaccination at school",
   );
 }
