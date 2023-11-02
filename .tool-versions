@@ -3,3 +3,4 @@ postgres 13.5
 ruby 3.2.0
 terraform 1.4.5
 yarn 1.22.19
+aws-copilot 1.31.0
