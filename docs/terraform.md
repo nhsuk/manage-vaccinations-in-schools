@@ -1,5 +1,18 @@
 # Deploying with Terraform
 
+## TODO
+
+- Look into setting temporary RAILS_ENV before running assets precompile in
+  Dockerfile
+- Alternatively add a IGNORE_PRODUCTION_CHECKS environment variable check to
+  `check_production.rb` and use it in the Dockerfile
+
+```sh
+aws configure set region eu-west-2
+aws ecr create-repository --repository-name manage-childrens-vaccinations
+yay -S buildx # or macOS equivalent
+```
+
 ## Building a Docker Container
 
 You can build a Docker container the standard way, but you'll need to specify
