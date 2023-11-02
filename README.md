@@ -43,6 +43,7 @@ asdf plugin add nodejs
 asdf plugin add yarn
 asdf plugin add postgres
 asdf plugin add awscli
+asdf plugin add aws-copilot
 
 # To install (or update, following a change to .tool-versions)
 asdf install
