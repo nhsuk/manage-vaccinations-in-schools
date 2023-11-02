@@ -6,16 +6,17 @@ LAYOUT_TOP_DOWN()
 
 title "Manage Vaccinations For School-aged Children Context Diagram"
 
-Person_Ext(sais, "SAIS Team")
+Person(sais, "SAIS Team")
 Person_Ext(parents, "Parents")
 
-System(manage, "Manage vaccinations for school-aged children", "Ruby on Rails, HTML, Javascript")
+System(manage, "Manage vaccinations for school-aged childrens")
 
 AddRelTag("optional", $textColor="black", $lineColor="black", $lineStyle="dashed")
 
 Rel(sais, manage, "Manage campaigns")
 Rel(sais, manage, "Record Child Vaccination")
 Rel(parents, manage, "Consent response")
+Rel(manage, parents, "Send confirmation")
 
 SHOW_FLOATING_LEGEND()
 
