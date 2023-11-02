@@ -1,6 +1,6 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-      href: previous_wizard_path,
+      href: health_question_backlink_path(@consent_form, @health_answer),
       name: "previous page"
   ) %>
 <% end %>
