@@ -8,6 +8,7 @@ class ConsentForms::EditController < ConsentForms::BaseController
   before_action :setup_wizard_translated
   before_action :validate_params, only: %i[update]
   before_action :set_health_answer, if: -> { is_health_question_step? }
+  before_action :set_follow_up_changes_start_page, only: %i[show]
 
   def show
     render_wizard
@@ -124,7 +125,9 @@ class ConsentForms::EditController < ConsentForms::BaseController
   end
 
   def skip_to_confirm?
-    request.referer.include?("skip_to_confirm")
+    request.referer.include?("skip_to_confirm") ||
+      params.key?(:skip_to_confirm) ||
+      session.key?(:follow_up_changes_start_page)
   end
 
   def next_health_question
@@ -142,14 +145,18 @@ class ConsentForms::EditController < ConsentForms::BaseController
   def skip_to_confirm_or_next_health_question
     if skip_to_confirm?
       if is_health_question_step? && next_health_answer_missing_response?
-        jump_to "health-question",
-                question_number: next_health_question,
-                skip_to_confirm: true
+        jump_to "health-question", question_number: next_health_question
       else
         jump_to Wicked::FINISH_STEP
       end
     elsif is_health_question_step? && next_health_question
       jump_to "health-question", question_number: next_health_question
+    end
+  end
+
+  def set_follow_up_changes_start_page
+    if params[:skip_to_confirm] && is_health_question_step?
+      session[:follow_up_changes_start_page] = @question_number
     end
   end
 end
