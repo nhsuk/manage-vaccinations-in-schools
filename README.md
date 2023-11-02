@@ -42,6 +42,7 @@ asdf plugin add ruby
 asdf plugin add nodejs
 asdf plugin add yarn
 asdf plugin add postgres
+asdf plugin add awscli
 
 # To install (or update, following a change to .tool-versions)
 asdf install
