@@ -47,5 +47,7 @@ module ManageVaccinations
     # config.commit_sha = `git rev-parse --short HEAD`.strip
 
     config.active_job.queue_adapter = :good_job
+
+    config.hosts = [/.*/]
   end
 end
