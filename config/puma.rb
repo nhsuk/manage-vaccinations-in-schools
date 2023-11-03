@@ -16,7 +16,7 @@ worker_timeout 3600 if ENV.fetch("RAILS_ENV", "development") == "development"
 if File.exist? "tmp/offline.txt"
   port 4444
 else
-  port ENV.fetch("PORT", 4000)
+  port ENV.fetch("PORT", 3000)
 end
 
 # Specifies the `environment` that Puma will run in.
