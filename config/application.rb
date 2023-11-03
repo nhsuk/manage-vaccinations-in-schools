@@ -28,6 +28,11 @@ module ManageVaccinations
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
+    if ENV["DB_SECRET"].present?
+      db_config = JSON.parse(ENV['DB_SECRET'])
+      ENV['DATABASE_URL'] = "postgres://#{db_config['username']}:#{db_config['password']}@#{db_config['host']}:#{db_config['port']}/#{db_config['dbname']}"
+    end
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
