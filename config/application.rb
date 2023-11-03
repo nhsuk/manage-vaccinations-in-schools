@@ -28,6 +28,20 @@ module ManageVaccinations
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
+    # DB_SECRET is a JSON string containing the database credentials on AWS.
+    # We need to parse it in order to set the DATABASE_URL variable.
+    if ENV["DB_SECRET"].present?
+      db_config = JSON.parse(ENV["DB_SECRET"])
+      username = db_config["username"]
+      password = db_config["password"]
+      host = db_config["host"]
+      port = db_config["port"]
+      dbname = db_config["dbname"]
+      ENV[
+        "DATABASE_URL"
+      ] = "postgres://#{username}:#{password}@#{host}:#{port}/#{dbname}"
+    end
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
