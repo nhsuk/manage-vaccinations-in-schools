@@ -49,3 +49,5 @@ environments:
   staging:
     variables:
       RAILS_ENV: staging
+      RCVAPP__SUPPORT_USERNAME: manage
+      RCVAPP__SUPPORT_PASSWORD: vaccinations
