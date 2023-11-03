@@ -28,6 +28,9 @@ count: 1 # Number of tasks that should be running in your service.
 exec: true # Enable running commands in your container.
 network:
   connect: true # Enable Service Connect for intra-environment traffic between services.
+  vpc:
+    security_groups:
+      - from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-dbSecurityGroup
 
 # storage:
 # readonly_fs: true       # Limit to read-only access to mounted root filesystems.
@@ -40,6 +43,8 @@ network:
 secrets:
   RAILS_MASTER_KEY: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/RAILS_MASTER_KEY
   RCVAPP__GOVUK_NOTIFY__API_KEY: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/RCVAPP__GOVUK_NOTIFY__API_KEY
+  DB_SECRET:
+    from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-dbAuroraSecret
 
 environments:
   staging:
