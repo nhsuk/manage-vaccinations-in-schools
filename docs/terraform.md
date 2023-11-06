@@ -13,6 +13,13 @@ aws ecr create-repository --repository-name manage-childrens-vaccinations
 yay -S buildx # or macOS equivalent
 ```
 
+### Copilot
+
+```sh
+copilot svc deploy --app manage-childrens-vaccinations --env staging --name webapp
+copilot svc logs --since 1h --follow
+```
+
 ## Building a Docker Container
 
 You can build a Docker container the standard way, but you'll need to specify
