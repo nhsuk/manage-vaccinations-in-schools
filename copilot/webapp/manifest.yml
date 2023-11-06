@@ -12,12 +12,13 @@ http:
   # To match all requests you can use the "/" path.
   path: "/"
   # You can specify a custom health check path. The default is "/".
-  # healthcheck: '/'
+  healthcheck: '/ping'
 
 # Configuration for your containers and service.
 image:
   # Docker build arguments. For additional overrides: https://aws.github.io/copilot-cli/docs/manifest/lb-web-service/#image-build
-  build: Dockerfile
+  build:
+    dockerfile: Dockerfile
   # Port exposed through your container to route traffic to it.
   port: 3000
 
