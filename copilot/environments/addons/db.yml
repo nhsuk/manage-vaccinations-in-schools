@@ -22,45 +22,44 @@ Parameters:
     Default: ""
 
 Mappings:
-  dbEnvScalingConfigurationMap: 
+  dbEnvScalingConfigurationMap:
     staging:
       "DBMinCapacity": 0.5 # AllowedValues: from 0.5 through 128
-      "DBMaxCapacity": 8   # AllowedValues: from 0.5 through 128
-    
+      "DBMaxCapacity": 8 # AllowedValues: from 0.5 through 128
+
     All:
       "DBMinCapacity": 0.5 # AllowedValues: from 0.5 through 128
-      "DBMaxCapacity": 8   # AllowedValues: from 0.5 through 128
+      "DBMaxCapacity": 8 # AllowedValues: from 0.5 through 128
 
 Resources:
   dbDBSubnetGroup:
-    Type: 'AWS::RDS::DBSubnetGroup'
+    Type: "AWS::RDS::DBSubnetGroup"
     Properties:
       DBSubnetGroupDescription: Group of private subnets for Aurora Serverless v2 cluster.
-      SubnetIds:
-        !Split [',', !Ref PrivateSubnets]
-  
+      SubnetIds: !Split [",", !Ref PrivateSubnets]
+
   dbWorkloadSecurityGroup:
     Metadata:
-      'aws:copilot:description': 'A security group for one or more workloads to access the Aurora Serverless v2 cluster db'
-    Type: 'AWS::EC2::SecurityGroup'
+      "aws:copilot:description": "A security group for one or more workloads to access the Aurora Serverless v2 cluster db"
+    Type: "AWS::EC2::SecurityGroup"
     Properties:
-      GroupDescription: 'The Security Group to access Aurora Serverless v2 cluster db.'
+      GroupDescription: "The Security Group to access Aurora Serverless v2 cluster db."
       VpcId: !Ref VPCID
       Tags:
         - Key: Name
-          Value: !Sub 'copilot-${App}-${Env}-Aurora'
+          Value: !Sub "copilot-${App}-${Env}-Aurora"
 
   dbDBClusterSecurityGroup:
     Metadata:
-      'aws:copilot:description': 'A security group for your Aurora Serverless v2 cluster db'
+      "aws:copilot:description": "A security group for your Aurora Serverless v2 cluster db"
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: The Security Group for the Aurora Serverless v2 cluster.
       VpcId: !Ref VPCID
       Tags:
         - Key: Name
-          Value: !Sub 'copilot-${App}-${Env}-Aurora'
-  
+          Value: !Sub "copilot-${App}-${Env}-Aurora"
+
   dbDBClusterSecurityGroupIngressFromWorkload:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
@@ -70,10 +69,10 @@ Resources:
       ToPort: 5432
       FromPort: 5432
       SourceSecurityGroupId: !Ref dbWorkloadSecurityGroup
-  
+
   dbAuroraSecret:
     Metadata:
-      'aws:copilot:description': 'A Secrets Manager secret to store your DB credentials'
+      "aws:copilot:description": "A Secrets Manager secret to store your DB credentials"
     Type: AWS::SecretsManager::Secret
     Properties:
       Description: !Sub Aurora main user secret for ${AWS::StackName}
@@ -85,26 +84,40 @@ Resources:
         PasswordLength: 16
   dbDBClusterParameterGroup:
     Metadata:
-      'aws:copilot:description': 'A DB parameter group for engine configuration values'
-    Type: 'AWS::RDS::DBClusterParameterGroup'
+      "aws:copilot:description": "A DB parameter group for engine configuration values"
+    Type: "AWS::RDS::DBClusterParameterGroup"
     Properties:
-      Description: !Ref 'AWS::StackName'
-      Family: 'aurora-postgresql14'
+      Description: !Ref "AWS::StackName"
+      Family: "aurora-postgresql14"
       Parameters:
-        client_encoding: 'UTF8'
-  
+        client_encoding: "UTF8"
+
   dbDBCluster:
     Metadata:
-      'aws:copilot:description': 'The db Aurora Serverless v2 database cluster'
-    Type: 'AWS::RDS::DBCluster'
+      "aws:copilot:description": "The db Aurora Serverless v2 database cluster"
+    Type: "AWS::RDS::DBCluster"
     Properties:
       MasterUsername:
-        !Join [ "",  [ '{{resolve:secretsmanager:', !Ref dbAuroraSecret, ":SecretString:username}}" ]]
+        !Join [
+          "",
+          [
+            "{{resolve:secretsmanager:",
+            !Ref dbAuroraSecret,
+            ":SecretString:username}}",
+          ],
+        ]
       MasterUserPassword:
-        !Join [ "",  [ '{{resolve:secretsmanager:', !Ref dbAuroraSecret, ":SecretString:password}}" ]]
+        !Join [
+          "",
+          [
+            "{{resolve:secretsmanager:",
+            !Ref dbAuroraSecret,
+            ":SecretString:password}}",
+          ],
+        ]
       DatabaseName: !Ref dbDBName
-      Engine: 'aurora-postgresql'
-      EngineVersion: '14.4'
+      Engine: "aurora-postgresql"
+      EngineVersion: "14.4"
       DBClusterParameterGroupName: !Ref dbDBClusterParameterGroup
       DBSubnetGroupName: !Ref dbDBSubnetGroup
       Port: 5432
@@ -112,17 +125,19 @@ Resources:
         - !Ref dbDBClusterSecurityGroup
       ServerlessV2ScalingConfiguration:
         # Replace "All" below with "!Ref Env" to set different autoscaling limits per environment.
-        MinCapacity: !FindInMap [dbEnvScalingConfigurationMap, All, DBMinCapacity]
-        MaxCapacity: !FindInMap [dbEnvScalingConfigurationMap, All, DBMaxCapacity]
-  
+        MinCapacity:
+          !FindInMap [dbEnvScalingConfigurationMap, All, DBMinCapacity]
+        MaxCapacity:
+          !FindInMap [dbEnvScalingConfigurationMap, All, DBMaxCapacity]
+
   dbDBWriterInstance:
     Metadata:
-      'aws:copilot:description': 'The db Aurora Serverless v2 writer instance'
-    Type: 'AWS::RDS::DBInstance'
+      "aws:copilot:description": "The db Aurora Serverless v2 writer instance"
+    Type: "AWS::RDS::DBInstance"
     Properties:
       DBClusterIdentifier: !Ref dbDBCluster
       DBInstanceClass: db.serverless
-      Engine: 'aurora-postgresql'
+      Engine: "aurora-postgresql"
       PromotionTier: 1
       AvailabilityZone: !Select
         - 0
@@ -144,6 +159,6 @@ Outputs:
       Name: !Sub ${App}-${Env}-dbAuroraSecret
   dbSecurityGroup:
     Description: "The security group to attach to the workload."
-    Value: !Ref dbWorkloadSecurityGroup  
+    Value: !Ref dbWorkloadSecurityGroup
     Export:
       Name: !Sub ${App}-${Env}-dbSecurityGroup
