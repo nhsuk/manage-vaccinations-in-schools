@@ -37,3 +37,7 @@
 /public/assets
 
 /copilot
+/docs
+/coverage
+/spec
+/tests
