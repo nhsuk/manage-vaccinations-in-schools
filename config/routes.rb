@@ -16,7 +16,6 @@ Rails.application.routes.draw do
   get "/dashboard", to: "dashboard#index"
 
   get "/ping" => proc { [200, {}, ["PONG"]] }
-  get "/sha" => proc { [200, {}, [Rails.application.config.commit_sha]] }
 
   if Rails.env.development? || Rails.env.test?
     get "/reset", to: "dev#reset"
