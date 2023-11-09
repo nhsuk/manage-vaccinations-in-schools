@@ -15,9 +15,10 @@ RSpec.describe ConsentFormMailer, type: :mailer do
   end
 
   before do
-    allow_any_instance_of(Mail::Notify::Mailer).to receive(
-      :template_mail
-    ).with(notify_template_id, ->(options) { @template_options = options })
+    allow_any_instance_of(Mail::Notify::Mailer).to receive(:template_mail).with(
+      notify_template_id,
+      ->(options) { @template_options = options }
+    )
   end
 
   describe "#confirmation" do
@@ -68,7 +69,6 @@ RSpec.describe ConsentFormMailer, type: :mailer do
 
   describe "#confirmation_needs_triage" do
     let(:notify_template_id) { "604ee667-c996-471e-b986-79ab98d0767c" }
-
 
     it "calls template_mail with correct personalisation" do
       described_class.confirmation_needs_triage(consent_form).deliver_now
