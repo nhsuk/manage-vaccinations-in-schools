@@ -28,4 +28,28 @@ class ConsentFormMailer < ApplicationMailer
       }
     )
   end
+
+  def confirmation_needs_triage(consent_form)
+    if consent_form.common_name.present?
+      short_patient_name = consent_form.common_name
+      full_and_preferred_patient_name =
+        consent_form.full_name + " (known as #{consent_form.common_name})"
+    else
+      short_patient_name = consent_form.first_name
+      full_and_preferred_patient_name = consent_form.full_name
+    end
+
+    template_mail(
+      "604ee667-c996-471e-b986-79ab98d0767c",
+      to: consent_form.parent_email,
+      personalisation: {
+        short_date: consent_form.session.date.strftime("%-d %B"),
+        parent_name: consent_form.parent_name,
+        location_name: consent_form.session.location.name,
+        long_date: consent_form.session.date.strftime("%A %-d %B"),
+        full_and_preferred_patient_name:,
+        short_patient_name:
+      }
+    )
+  end
 end
