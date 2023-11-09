@@ -61,6 +61,23 @@ Assuming you have an environment setup, go ahead and deploy:
 copilot svc deploy --env staging
 ```
 
+## Opening a shell on the remote environment
+
+If you have the service up and running, you can connect to the first running
+container with this command:
+
+```bash
+copilot svc exec --app manage-childrens-vaccinations --env staging --name webapp
+```
+
+## Tailing logs of running service
+
+Use this command to see the most recent logs and to follow any new logs:
+
+```bash
+copilot svc logs --since 1h --follow
+```
+
 ## Setting up a new environment
 
 ```bash
