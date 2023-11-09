@@ -1,3 +1,7 @@
-<%= render "confirmation_agreed" %>
+<% if @consent_form.any_health_answers_truthy? %>
+  <%= render "confirmation_needs_triage" %>
+<% else %>
+  <%= render "confirmation_agreed" %>
+<% end %>
 
 <p>We’ve sent a confirmation to <%= @consent_form.parent_email %>.</p>
