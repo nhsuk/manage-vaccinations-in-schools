@@ -9,8 +9,8 @@ locally:
 $ aws configure sso
 ```
 
-Use the SSO Start URL and SSO Region from the "Command line or programmatic
-access" link in the AWS Account admin.
+Use any session name that makes sense to you, the SSO Start URL and SSO Region
+from the "Command line or programmatic access" link in the AWS Account admin.
 
 Once you're done, your `~/.aws/config` should look something like:
 
@@ -18,11 +18,11 @@ Once you're done, your `~/.aws/config` should look something like:
 [default]
 region = eu-west-2
 [profile Admin-ACCOUNT_ID]
-sso_session = fwk
+sso_session = SESSION_NAME
 sso_account_id = ACCOUNT_ID
 sso_role_name = Admin
 region = eu-west-2
-[sso-session fwk]
+[sso-session SESSION_NAME]
 sso_start_url = https://SUBDOMAIN.awsapps.com/start#
 sso_region = eu-west-2
 sso_registration_scopes = sso:account:access
@@ -34,11 +34,11 @@ You can make the new profile the default by changing the config to:
 [default]
 -region = eu-west-2
 -[profile Admin-ACCOUNT_ID]
-sso_session = fwk
+sso_session = SESSION_NAME
 sso_account_id = ACCOUNT_ID
 sso_role_name = Admin
 region = eu-west-2
-[sso-session fwk]
+[sso-session SESSION_NAME]
 sso_start_url = https://SUBDOMAIN.awsapps.com/start#
 sso_region = eu-west-2
 sso_registration_scopes = sso:account:access
@@ -54,6 +54,8 @@ manage-childrens-vaccinations
 ```
 
 ## Manual deployment
+
+Assuming you have an environment setup, go ahead and deploy:
 
 ```bash
 copilot svc deploy --env staging
