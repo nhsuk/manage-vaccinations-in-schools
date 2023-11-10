@@ -36,14 +36,19 @@ bin/bundle exec rladr new title
 This project uses `asdf`. Use the following to install the required tools:
 
 ```sh
+# Install dependencies
+brew install gcc readline zlib curl ossp-uuid # Mac-specific
+export HOMEBREW_PREFIX=/opt/homebrew          # Mac-specific
+
 # The first time
-brew install asdf # Mac-specific
-asdf plugin add ruby
-asdf plugin add nodejs
-asdf plugin add yarn
-asdf plugin add postgres
-asdf plugin add awscli
+brew install asdf                             # Mac-specific
 asdf plugin add aws-copilot
+asdf plugin add awscli
+asdf plugin add nodejs
+asdf plugin add postgres
+asdf plugin add ruby
+asdf plugin add terraform
+asdf plugin add yarn
 
 # To install (or update, following a change to .tool-versions)
 asdf install
@@ -58,6 +63,16 @@ will use:
 ```sh
 # Temporarily set the version of postgres to use to build the pg gem
 ASDF_POSTGRES_VERSION=13.5 bundle install
+```
+
+After installing Postgres via `asdf`, run the database in the background, and
+connect to it to create a user:
+
+```sh
+$ pg_ctl start
+$ psql -U postgres
+> CREATE USER myuser;
+> ALTER USER myuser WITH SUPERUSER;
 ```
 
 ### Local development
