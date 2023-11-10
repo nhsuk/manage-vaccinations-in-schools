@@ -1,4 +1,4 @@
-<% if @consent_form.any_health_answers_truthy? %>
+<% if @consent_form.needs_triage? %>
   <%= render "confirmation_needs_triage" %>
 <% else %>
   <%= render "confirmation_agreed" %>

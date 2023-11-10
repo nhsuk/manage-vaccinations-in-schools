@@ -208,6 +208,10 @@ class ConsentForm < ApplicationRecord
       end
   end
 
+  def needs_triage?
+    any_health_answers_truthy?
+  end
+
   def any_health_answers_truthy?
     health_answers.to_set.any? do |health_answer|
       health_answer.response == "yes"
