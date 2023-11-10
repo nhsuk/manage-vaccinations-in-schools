@@ -28,7 +28,7 @@ class ConsentFormsController < ConsentForms::BaseController
 
     session.delete(:consent_form_id)
 
-    if @consent_form.any_health_answers_truthy?
+    if @consent_form.needs_triage?
       ConsentFormMailer.confirmation_needs_triage(@consent_form).deliver_later
     else
       ConsentFormMailer.confirmation(@consent_form).deliver_later
