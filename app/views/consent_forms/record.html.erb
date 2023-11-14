@@ -1,4 +1,6 @@
-<% if @consent_form.needs_triage? %>
+<% if @consent_form.contact_injection? %>
+  <%= render "confirmation_injection" %>
+<% elsif @consent_form.needs_triage? %>
   <%= render "confirmation_needs_triage" %>
 <% else %>
   <%= render "confirmation_agreed" %>
