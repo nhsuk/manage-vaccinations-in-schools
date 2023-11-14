@@ -4,6 +4,8 @@ class ConsentFormsController < ConsentForms::BaseController
   skip_before_action :set_consent_form, only: %i[start create]
   skip_before_action :authenticate_consent_form_user!, only: %i[start create]
 
+  before_action :clear_session_edit_variables, only: %i[confirm]
+
   def start
   end
 
@@ -33,5 +35,11 @@ class ConsentFormsController < ConsentForms::BaseController
     else
       ConsentFormMailer.confirmation(@consent_form).deliver_later
     end
+  end
+
+  private
+
+  def clear_session_edit_variables
+    session.delete(:follow_up_changes_start_page)
   end
 end
