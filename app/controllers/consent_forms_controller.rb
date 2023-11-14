@@ -32,6 +32,8 @@ class ConsentFormsController < ConsentForms::BaseController
 
     if @consent_form.contact_injection?
       ConsentFormMailer.confirmation_injection(@consent_form).deliver_later
+    elsif @consent_form.consent_refused?
+      ConsentFormMailer.confirmation_refused(@consent_form).deliver_later
     elsif @consent_form.needs_triage?
       ConsentFormMailer.confirmation_needs_triage(@consent_form).deliver_later
     else
