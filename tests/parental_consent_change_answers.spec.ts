@@ -40,6 +40,18 @@ test("Parental consent change answers", async ({ page }) => {
 
   await when_i_click_the_confirm_button();
   await then_i_see_the_injection_confirmation_page();
+
+  // Consent refused
+  await when_i_go_to_a_prefilled_consent_form();
+  await then_i_see_the_consent_confirm_page();
+
+  await when_i_change_my_consent();
+  await and_say_the_reason_is_that_the_vaccine_contains_gelatine();
+  await and_do_not_agree_to_be_contacted_by_a_nurse();
+  await then_i_see_the_consent_confirm_page();
+
+  await when_i_click_the_confirm_button();
+  await then_i_see_the_refused_confirmation_page();
 });
 
 async function given_the_app_is_setup() {
@@ -146,4 +158,18 @@ async function then_i_see_the_injection_confirmation_page() {
   await expect(
     p.locator("p", { hasText: "having an injection instead" }),
   ).toBeVisible();
+}
+
+async function and_do_not_agree_to_be_contacted_by_a_nurse() {
+  await p.getByRole("radio", { name: "No" }).click();
+  await p.getByRole("button", { name: "Continue" }).click();
+}
+
+async function then_i_see_the_refused_confirmation_page() {
+  await expect(p.locator("h1")).toContainText(
+    "Your child will not get a nasal flu vaccination",
+  );
+  await expect(
+    p.locator("p", { hasText: "having an injection instead" }),
+  ).not.toBeVisible();
 }
