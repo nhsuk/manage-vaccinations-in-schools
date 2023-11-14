@@ -28,6 +28,14 @@ en:
               inclusion: Choose an answer
             notes:
               blank: Enter details
+  consent_form_mailer:
+    reasons_for_refusal:
+      contains_gelatine: "of the gelatine in the nasal spray"
+      already_received: "they have already received the vaccine"
+      given_elsewhere: "they will be given the vaccine elsewhere"
+      medical_reasons: "of medical reasons"
+      personal_choice: "of personal choice"
+      other: "of other reasons"
   activerecord:
     attributes:
       consent:

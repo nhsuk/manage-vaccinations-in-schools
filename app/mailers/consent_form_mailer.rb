@@ -52,4 +52,30 @@ class ConsentFormMailer < ApplicationMailer
       }
     )
   end
+
+  def confirmation_injection(consent_form)
+    full_and_preferred_patient_name =
+      if consent_form.common_name.present?
+        consent_form.full_name + " (known as #{consent_form.common_name})"
+      else
+        consent_form.full_name
+      end
+
+    template_mail(
+      "4d09483a-8181-4acb-8ba3-7abd6c8644cd",
+      to: consent_form.parent_email,
+      personalisation: {
+        short_date: consent_form.session.date.strftime("%-d %B"),
+        parent_name: consent_form.parent_name,
+        location_name: consent_form.session.location.name,
+        long_date: consent_form.session.date.strftime("%A %-d %B"),
+        full_and_preferred_patient_name:,
+        reason_for_refusal: I18n.t(
+          "consent_form_mailer.reasons_for_refusal.#{consent_form.reason.to_s}"
+        ),
+        team_email: I18n.t("service.email"),
+        team_phone: I18n.t("service.temporary_cumbria_phone")
+      }
+    )
+  end
 end
