@@ -1,6 +1,9 @@
 require "rails_helper"
 
 RSpec.describe ConsentFormMailer, type: :mailer do
+  let(:team_email) { "england.manage-childrens-vaccinations@nhs.net" }
+  let(:team_phone) { "01900 705 045" }
+
   def consent_form(overrides = {})
     @consent_form ||=
       build(
@@ -23,8 +26,6 @@ RSpec.describe ConsentFormMailer, type: :mailer do
 
   describe "#confirmation" do
     let(:notify_template_id) { "7cda7ae5-99a2-4c40-9a3e-1863e23f7a73" }
-    let(:team_email) { "england.manage-childrens-vaccinations@nhs.net" }
-    let(:team_phone) { "01900 705 045" }
 
     it "calls template_mail with correct personalisation" do
       described_class.confirmation(consent_form).deliver_now
@@ -81,6 +82,28 @@ RSpec.describe ConsentFormMailer, type: :mailer do
           short_date: consent_form.session.date.strftime("%-d %B"),
           parent_name: "Harry Potter",
           short_patient_name: "Severus"
+        },
+        to: "harry@hogwarts.edu"
+      )
+    end
+  end
+
+  describe "#confirmation_injection" do
+    let(:notify_template_id) { "4d09483a-8181-4acb-8ba3-7abd6c8644cd" }
+
+    it "calls template_mail with correct personalisation" do
+      described_class.confirmation_injection(consent_form(reason: :contains_gelatine)).deliver_now
+
+      expect(@template_options).to include(
+        personalisation: {
+          full_and_preferred_patient_name: "Albus Potter (known as Severus)",
+          location_name: consent_form.session.location.name,
+          long_date: consent_form.session.date.strftime("%A %-d %B"),
+          short_date: consent_form.session.date.strftime("%-d %B"),
+          parent_name: "Harry Potter",
+          reason_for_refusal: "of the gelatine in the nasal spray",
+          team_email:,
+          team_phone:
         },
         to: "harry@hogwarts.edu"
       )
