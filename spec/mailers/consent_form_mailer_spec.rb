@@ -92,7 +92,9 @@ RSpec.describe ConsentFormMailer, type: :mailer do
     let(:notify_template_id) { "4d09483a-8181-4acb-8ba3-7abd6c8644cd" }
 
     it "calls template_mail with correct personalisation" do
-      described_class.confirmation_injection(consent_form(reason: :contains_gelatine)).deliver_now
+      described_class.confirmation_injection(
+        consent_form(reason: :contains_gelatine)
+      ).deliver_now
 
       expect(@template_options).to include(
         personalisation: {
@@ -101,7 +103,27 @@ RSpec.describe ConsentFormMailer, type: :mailer do
           long_date: consent_form.session.date.strftime("%A %-d %B"),
           short_date: consent_form.session.date.strftime("%-d %B"),
           parent_name: "Harry Potter",
-          reason_for_refusal: "of the gelatine in the nasal spray",
+          reason_for_refusal: "of the gelatine in the nasal spray"
+        },
+        to: "harry@hogwarts.edu"
+      )
+    end
+  end
+
+  describe "#confirmation_refused" do
+    let(:notify_template_id) { "5a676dac-3385-49e4-98c2-fc6b45b5a851" }
+
+    it "calls template_mail with correct personalisation" do
+      described_class.confirmation_refused(consent_form).deliver_now
+
+      expect(@template_options).to include(
+        personalisation: {
+          full_and_preferred_patient_name: "Albus Potter (known as Severus)",
+          location_name: consent_form.session.location.name,
+          long_date: consent_form.session.date.strftime("%A %-d %B"),
+          short_date: consent_form.session.date.strftime("%-d %B"),
+          parent_name: "Harry Potter",
+          short_patient_name: "Severus",
           team_email:,
           team_phone:
         },
