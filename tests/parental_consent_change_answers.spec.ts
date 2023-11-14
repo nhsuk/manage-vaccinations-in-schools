@@ -5,6 +5,7 @@ let p: Page;
 test("Parental consent change answers", async ({ page }) => {
   p = page;
 
+  // Health questions contain Yes answers
   await given_the_app_is_setup();
   await when_i_go_to_a_prefilled_consent_form();
   await then_i_see_the_consent_confirm_page();
@@ -27,6 +28,18 @@ test("Parental consent change answers", async ({ page }) => {
 
   await when_i_click_the_confirm_button();
   await then_i_see_the_needs_triage_confirmation_page();
+
+  // Offer an injection instead
+  await when_i_go_to_a_prefilled_consent_form();
+  await then_i_see_the_consent_confirm_page();
+
+  await when_i_change_my_consent();
+  await and_say_the_reason_is_that_the_vaccine_contains_gelatine();
+  await and_agree_to_be_contacted_by_a_nurse();
+  await then_i_see_the_consent_confirm_page();
+
+  await when_i_click_the_confirm_button();
+  await then_i_see_the_injection_confirmation_page();
 });
 
 async function given_the_app_is_setup() {
@@ -106,4 +119,31 @@ async function then_i_see_the_needs_triage_confirmation_page() {
   await expect(p.locator("h1")).toContainText(
     "You’ve given consent for your child to get a flu vaccination",
   );
+}
+
+async function when_i_change_my_consent() {
+  await p.getByRole("link", { name: "Change consent", exact: true }).click();
+  await p.getByRole("radio", { name: "No" }).click();
+  await p.getByRole("button", { name: "Continue" }).click();
+}
+
+async function and_say_the_reason_is_that_the_vaccine_contains_gelatine() {
+  await p
+    .getByRole("radio", { name: "Vaccine contains gelatine from pigs" })
+    .click();
+  await p.getByRole("button", { name: "Continue" }).click();
+}
+
+async function and_agree_to_be_contacted_by_a_nurse() {
+  await p.getByRole("radio", { name: "Yes" }).click();
+  await p.getByRole("button", { name: "Continue" }).click();
+}
+
+async function then_i_see_the_injection_confirmation_page() {
+  await expect(p.locator("h1")).toContainText(
+    "Your child will not get a nasal flu vaccination",
+  );
+  await expect(
+    p.locator("p", { hasText: "having an injection instead" }),
+  ).toBeVisible();
 }
