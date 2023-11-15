@@ -60,7 +60,7 @@ RSpec.describe ExampleCampaignGenerator do
     #       presets=default \
     #       type=flu \
     #       username="Nurse Jackie" > db/sample_data/example-flu-campaign.json
-    Timecop.freeze(2023, 10, 25, 12, 0, 0) do
+    Timecop.freeze(2023, 11, 15, 12, 0, 0) do
       generator =
         ExampleCampaignGenerator.new(
           seed: 42,
