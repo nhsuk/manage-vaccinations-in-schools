@@ -78,12 +78,13 @@ class ExampleCampaignGenerator
     patients_data = add_consent_to_patients_data(patients_data)
     patients_data = match_mum_and_dad_info_to_consent(patients_data)
 
+    vaccine_name = I18n.t("vaccines.#{type}")
     {
       id: random.seed.to_s,
-      title: "#{type.upcase} campaign at #{school_data[:name]}",
+      title: "#{vaccine_name} campaign at #{school_data[:name]}",
       location: school_data[:name],
       date: "2023-07-28T12:30",
-      type: type.upcase,
+      type: vaccine_name,
       team: team_data,
       vaccines: vaccines_data,
       school: school_data,
