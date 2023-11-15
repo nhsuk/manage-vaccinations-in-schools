@@ -105,7 +105,7 @@ GEM
     asciidoctor-diagram-ditaamini (1.0.3)
     asciidoctor-diagram-plantuml (1.2023.10)
     ast (2.4.2)
-    audited (5.4.0)
+    audited (5.4.2)
       activerecord (>= 5.0, < 7.2)
       request_store (~> 1.2)
     avo (2.44.0)
