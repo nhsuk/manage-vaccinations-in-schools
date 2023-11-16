@@ -35,7 +35,7 @@ const and_i_click_the_start_button = when_i_click_the_start_button;
 
 async function then_i_see_the_consent_start_page() {
   await expect(p.locator("h1")).toContainText(
-    "Give or refuse consent for a flu vaccination",
+    "Give or refuse consent for an HPV vaccination",
   );
 }
 

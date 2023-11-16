@@ -27,7 +27,7 @@
 
       summary_list.with_row do |row|
         row.with_key { 'Vaccine' }
-        row.with_value { 'HPV' }
+        row.with_value { @session.type }
       end
 
       if @draft_vaccination_record.administered?
