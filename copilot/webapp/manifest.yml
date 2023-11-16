@@ -48,6 +48,8 @@ secrets:
 
 environments:
   staging:
+    deployments:
+      rolling: recreate
     variables:
       RAILS_ENV: staging
       RCVAPP__SUPPORT_USERNAME: manage
