@@ -26,9 +26,64 @@ en:
       medical_reasons: "of medical reasons"
       personal_choice: "of personal choice"
       other: "of other reasons"
+  consents:
+    edit_consent:
+      title:
+        flu: Do they agree to them having the flu vaccination?
+        hpv: Do they agree to them having the HPV vaccination?
+  vaccinations:
+    form:
+      label:
+        flu: Yes, they got the flu vaccine
+        hpv: Yes, they got the HPV vaccine
+    edit_reason:
+      title:
+        flu: Why was the flu vaccine not given?
+        hpv: Why was the HPV vaccine not given?
+  consent_forms:
+    start:
+      title:
+        flu: Give or refuse consent for a flu vaccination
+        hpv: Give or refuse consent for an HPV vaccination
+      paragraphs:
+        flu:
+          - The vaccination helps to protect children against flu. It also
+            protects others who are vulnerable to flu, such as babies and older
+            people.
+        hpv:
+          - The HPV vaccine helps to prevent HPV related cancers from
+            developing in boys and girls.
+          - The number of doses you need depends on your age and how well your
+            immune system works. Young people usually only need 1 dose.
+    consent:
+      title:
+        flu: Do you agree to them having a nasal flu vaccination?
+        hpv: Do you agree to them having the HPV vaccination?
+      hint:
+        flu: The nasal flu spray contains gelatine which comes from pigs.
+        hpv: ""
+      i_agree:
+        flu: Yes, I agree to them having a nasal vaccine
+        hpv: Yes, I agree
+    confirmation_agreed:
+      title:
+        flu: " %{full_name} will get their nasal flu vaccination at school on %{date}"
+        hpv: " %{full_name} will get their HPV vaccination at school on %{date}"
+    confirmation_needs_triage:
+      title:
+        flu: You’ve given consent for your child to get a flu vaccination
+        hpv: You’ve given consent for your child to get an HPV vaccination
+    confirmation_injection:
+      title:
+        # HPV shouldn't have this state because it's always an injection
+        flu: Your child will not get a nasal flu vaccination at school
+    confirmation_refused:
+      title:
+        flu: Your child will not get a nasal flu vaccination at school
+        hpv: Your child will not get an HPV vaccination at school
   vaccines:
-    hpv: HPV
     flu: Flu
+    hpv: HPV
   activemodel:
     errors:
       models:

@@ -5,7 +5,7 @@
   ) %>
 <% end %>
 
-<% title = "Do you agree to them having a nasal flu vaccination?" %>
+<% title = t("consent_forms.consent.title.#{ @session.type.downcase }") %>
 <% content_for :page_title, title %>
 
 <%= form_for @consent_form, url: wizard_path, method: :put do |f| %>
@@ -13,10 +13,10 @@
 
   <%= f.govuk_radio_buttons_fieldset(:response,
     legend: { size: 'l', text: title, tag: 'h1' },
-    hint: { text: 'The nasal flu spray contains gelatine which comes from pigs.' }
+    hint: { text: t("consent_forms.consent.hint.#{ @session.type.downcase }") }
   ) do %>
     <%= f.govuk_radio_button :response, "given",
-      label: { text: 'Yes, I agree to them having a nasal vaccine ' },
+      label: { text: t("consent_forms.consent.i_agree.#{ @session.type.downcase }") },
       link_errors: true %>
     <%= f.govuk_radio_button :response, "refused",
       label: { text: 'No' } %>

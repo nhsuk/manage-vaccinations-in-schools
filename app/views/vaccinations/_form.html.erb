@@ -11,7 +11,7 @@
       .merge(embedded ? { size: 'm' } : { size: 'l', tag: 'h1' })
   ) do %>
     <%= f.govuk_radio_button :administered, true,
-      label: { text: 'Yes, they got the HPV vaccine' },
+      label: { text: t("vaccinations.form.label.#{ @session.type.downcase }") },
       link_errors: true do %>
       <%= f.govuk_collection_radio_buttons :delivery_site,
         vaccination_initial_delivery_sites,

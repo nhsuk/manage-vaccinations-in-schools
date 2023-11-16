@@ -64,7 +64,7 @@ async function then_i_see_the_consent_confirm_page() {
 
 async function then_i_see_the_consent_page() {
   await expect(p.locator("h1")).toContainText(
-    "Do you agree to them having a nasal flu vaccination?",
+    "Do you agree to them having the HPV vaccination?",
   );
 }
 

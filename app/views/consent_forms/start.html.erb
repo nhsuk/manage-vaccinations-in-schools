@@ -1,8 +1,9 @@
-<%= h1 "Give or refuse consent for a flu vaccination" %>
+<%= h1 t("consent_forms.start.title.#{ @session.type.downcase }") %>
 
-<p class="nhsuk-u-margin-bottom-6">
-  The vaccination helps to protect children against flu. It also protects others
-  who are vulnerable to flu, such as babies and older people.
-</p>
+<% t("consent_forms.start.paragraphs.#{ @session.type.downcase }").each do |paragraph| %>
+  <p class="nhsuk-u-margin-bottom-6">
+    <%= paragraph %>
+  </p>
+<% end %>
 
 <%= govuk_button_to "Start now", url_for(action: :create) %>
