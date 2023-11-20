@@ -10,9 +10,7 @@
                href="<%= item[:href] %>"
                <%= item[:attributes]
                  .map { |name, value| "#{name}=\"#{value}\"" }
-                 .join(' ') if item[:attributes] %>>
-                 <%= item[:text] %>
-            </a>
+                 .join(' ') if item[:attributes] %>><%= item[:text] %></a>
           </li>
         <% end %>
       <% end %>
