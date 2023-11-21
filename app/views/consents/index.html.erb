@@ -7,3 +7,25 @@
 <% end %>
 
 <%= h1 "Check consent responses", class: "govuk-heading-l" %>
+
+<%= govuk_tabs title: "Vaccinations", classes: 'nhsuk-tabs' do |c|
+  c.with_tab(label: "Consent given (#{ @tabs[:consent_given?].size })",
+             classes: 'nhsuk-tabs__panel') do
+    @tabs[:consent_given?].size.to_s
+  end
+
+  c.with_tab(label: "Consent refused (#{ @tabs[:consent_refused?].size })",
+             classes: 'nhsuk-tabs__panel') do
+    @tabs[:consent_refused?].size.to_s
+  end
+
+  c.with_tab(label: "Consent conflicts (#{ @tabs[:consent_conflicts?].size })",
+             classes: 'nhsuk-tabs__panel') do
+    @tabs[:consent_conflicts?].size.to_s
+  end
+
+  c.with_tab(label: "No response (#{ @tabs[:no_consent?].size })",
+             classes: 'nhsuk-tabs__panel') do
+    @tabs[:no_consent?].size.to_s
+  end
+end %>
