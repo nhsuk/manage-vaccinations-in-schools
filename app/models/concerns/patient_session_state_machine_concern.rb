@@ -104,6 +104,12 @@ module PatientSessionStateMachineConcern
       consents.any?(&:response_refused?)
     end
 
+    def consent_conflicts?
+      return false if no_consent?
+
+      consents.any?(&:response_given?) && consents.any?(&:response_refused?)
+    end
+
     def no_consent?
       consents.empty?
     end
