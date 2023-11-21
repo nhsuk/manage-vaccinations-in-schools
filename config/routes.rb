@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   get "/csrf", to: "csrf#new"
 
   resources :sessions, only: %i[index show] do
+    get "consents", to: "consents#index", on: :member
     get "triage", to: "triage#index", on: :member
     get "vaccinations", to: "vaccinations#index", on: :member
 
