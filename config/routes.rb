@@ -38,7 +38,8 @@ Rails.application.routes.draw do
     end
 
     resources :patients do
-      resource :triage, only: %i[show create update]
+      resource :triage, only: %i[create show update]
+
       resource :vaccinations, only: %i[new create show update] do
         get "history", on: :member
 
@@ -58,17 +59,17 @@ Rails.application.routes.draw do
         get "record-template", on: :collection
       end
 
-      resource :consents, path: ":route/consent" do
-        get "assessing-gillick", to: "consents#assessing_gillick"
+      resource :nurse_consents, path: ":route/consent" do
+        get "assessing-gillick", to: "nurse_consents#assessing_gillick"
 
-        get "edit/gillick", to: "consents#edit_gillick"
-        put "update/gillick", to: "consents#update_gillick"
+        get "edit/gillick", to: "nurse_consents#edit_gillick"
+        put "update/gillick", to: "nurse_consents#update_gillick"
 
-        get "edit/who", to: "consents#edit_who"
-        get "edit/agree", to: "consents#edit_consent"
-        get "edit/reason", to: "consents#edit_reason"
-        get "edit/questions", to: "consents#edit_questions"
-        get "edit/confirm", to: "consents#edit_confirm"
+        get "edit/who", to: "nurse_consents#edit_who"
+        get "edit/agree", to: "nurse_consents#edit_consent"
+        get "edit/reason", to: "nurse_consents#edit_reason"
+        get "edit/questions", to: "nurse_consents#edit_questions"
+        get "edit/confirm", to: "nurse_consents#edit_confirm"
 
         put "record"
       end

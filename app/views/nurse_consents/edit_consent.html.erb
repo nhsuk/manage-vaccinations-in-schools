@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
     href: @draft_consent.via_self_consent? ?
-      edit_gillick_session_patient_consents_path(@session, @patient) :
-      edit_who_session_patient_consents_path(@session, @patient),
+      edit_gillick_session_patient_nurse_consents_path(@session, @patient) :
+      edit_who_session_patient_nurse_consents_path(@session, @patient),
     name: "triage page",
   ) %>
 <% end %>
@@ -11,7 +11,7 @@
 <% content_for :page_title, title %>
 
 <%= form_for @draft_consent,
-  url: session_patient_consents_path(@session, @patient),
+  url: session_patient_nurse_consents_path(@session, @patient),
   method: :put do |f| %>
   <%= f.govuk_error_summary %>
   <%= f.govuk_radio_buttons_fieldset(:consent,
