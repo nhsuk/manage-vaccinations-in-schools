@@ -1,6 +1,6 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: edit_agree_session_patient_consents_path(@session, @patient),
+    href: edit_agree_session_patient_nurse_consents_path(@session, @patient),
     name: "consent page",
   ) %>
 <% end %>
@@ -8,7 +8,7 @@
 <%= h1 "Health questions", class: "nhsuk-heading-l" %>
 
 <%= form_for @draft_consent,
-  url: session_patient_consents_path(@session, @patient),
+  url: session_patient_nurse_consents_path(@session, @patient),
   method: :put do |f| %>
   <% @draft_consent.health_questions.each_with_index do |hq, index| %>
     <%= f.fields_for "question_#{index}", HealthQuestion.new(hq) do |ff| %>

@@ -1,9 +1,9 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
     href: if @draft_consent.response_given?
-      edit_questions_session_patient_consents_path(@session, @patient)
+      edit_questions_session_patient_nurse_consents_path(@session, @patient)
     else
-      edit_agree_session_patient_consents_path(@session, @patient)
+      edit_agree_session_patient_nurse_consents_path(@session, @patient)
     end,
     name: "health questions page",
   ) %>
@@ -105,5 +105,5 @@
 <% end %>
 
 <%= govuk_button_to "Confirm",
-  record_session_patient_consents_path(@session, @patient),
+  record_session_patient_nurse_consents_path(@session, @patient),
   method: :put %>

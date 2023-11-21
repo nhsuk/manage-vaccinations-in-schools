@@ -1,6 +1,6 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: edit_agree_session_patient_consents_path(@session, @patient),
+    href: edit_agree_session_patient_nurse_consents_path(@session, @patient),
     name: "consent page",
   ) %>
 <% end %>
@@ -8,7 +8,7 @@
 <% content_for :page_title, "Why do they not agree?" %>
 
 <%= form_for @draft_consent,
-  url: session_patient_consents_path(@session, @patient),
+  url: session_patient_nurse_consents_path(@session, @patient),
   method: :put do |f| %>
   <%= f.govuk_error_summary %>
   <%= f.govuk_radio_buttons_fieldset(:reason_for_refusal,

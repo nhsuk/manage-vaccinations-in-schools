@@ -1,4 +1,4 @@
-class ConsentsController < ApplicationController
+class NurseConsentsController < ApplicationController
   before_action :set_session
   before_action :set_patient
   before_action :set_patient_session
