@@ -37,8 +37,8 @@ class PatientSession < ApplicationRecord
             on: :edit_gillick
   validates :gillick_competence_notes, presence: true, on: :edit_gillick
 
-  def consent
-    patient.consent_for_campaign(session.campaign)
+  def consents
+    patient.consents.where(campaign:).where.not(recorded_at: nil)
   end
 
   def vaccination_record

@@ -7,7 +7,7 @@ RSpec.describe PatientSessionStateMachineConcern do
 
       include PatientSessionStateMachineConcern
 
-      def consent
+      def consents
       end
 
       def triage
@@ -25,12 +25,13 @@ RSpec.describe PatientSessionStateMachineConcern do
 
   before do
     fsm.aasm_write_state_without_persistence(state) if state
-    allow(fsm).to receive(:consent).and_return(consent)
+    allow(fsm).to receive(:consents).and_return(consents)
     allow(fsm).to receive(:triage).and_return([triage])
     allow(fsm).to receive(:vaccination_record).and_return(vaccination_record)
   end
 
   let(:consent) { double("Consent") }
+  let(:consents) { [consent] }
   let(:triage) { double("Triage") }
   let(:vaccination_record) { double("VaccinationRecord") }
 
@@ -83,7 +84,7 @@ RSpec.describe PatientSessionStateMachineConcern do
 
     describe "#do_vaccination" do
       it "transitions to unable_to_vaccinate_not_assessed when consent is nil" do
-        allow(fsm).to receive(:consent).and_return(nil)
+        allow(fsm).to receive(:consents).and_return([])
 
         fsm.do_vaccination
         expect(fsm).to be_unable_to_vaccinate_not_assessed
