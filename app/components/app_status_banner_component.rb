@@ -9,7 +9,7 @@ class AppStatusBannerComponent < ViewComponent::Base
     I18n.t(
       "patient_session_statuses.#{state}.banner_title",
       full_name:,
-      who_responded: who_responded&.downcase
+      who_responded:
     )
   end
 
@@ -23,7 +23,7 @@ class AppStatusBannerComponent < ViewComponent::Base
       gave_consent =
         I18n.t(
           "patient_session_statuses.#{state}.banner_explanation.gave_consent",
-          who_responded: who_responded.downcase
+          who_responded:
         )
 
       "#{reason_for_refusal}\n<br />\n#{gave_consent}".html_safe
@@ -32,7 +32,7 @@ class AppStatusBannerComponent < ViewComponent::Base
         "patient_session_statuses.#{state}.banner_explanation",
         default: "",
         full_name:,
-        who_responded: who_responded&.downcase
+        who_responded:
       )
     end
   end
@@ -44,7 +44,8 @@ class AppStatusBannerComponent < ViewComponent::Base
   private
 
   def consent
-    @consent ||= @patient_session.consent
+    # HACK: Component needs to be updated to work with multiple consents.
+    @consent ||= @patient_session.consents.first
   end
 
   def vaccination_record
@@ -52,7 +53,7 @@ class AppStatusBannerComponent < ViewComponent::Base
   end
 
   def who_responded
-    @patient_session.consent&.who_responded
+    consent&.who_responded&.downcase
   end
 
   def full_name

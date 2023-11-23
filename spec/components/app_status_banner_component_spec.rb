@@ -97,7 +97,8 @@ RSpec.describe AppStatusBannerComponent, type: :component do
     it { should have_css(".app-consent-banner--green") }
     it { should have_text("Vaccinated") }
     it "explains who gave consent" do
-      who_responded = patient_session.consent.who_responded
+      # HACK: Component needs to be updated to work with multiple consents.
+      who_responded = patient_session.consents.first.who_responded
       expect(component.explanation).to include(
         "Their #{who_responded} gave consent"
       )
