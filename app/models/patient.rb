@@ -65,10 +65,6 @@ class Patient < ApplicationRecord
       )
   end
 
-  def consent_for_campaign(campaign)
-    consents.to_a.find { |t| t.campaign == campaign && t.recorded_at.present? }
-  end
-
   def as_json(options = {})
     super.merge("full_name" => full_name, "age" => age)
   end
