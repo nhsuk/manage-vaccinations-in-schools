@@ -285,7 +285,8 @@ class VaccinationsController < ApplicationController
   end
 
   def set_consent
-    @consent = @patient.consent_for_campaign(@session.campaign)
+    # HACK: Vaccinations needs to be updated to work with multiple consents.
+    @consent = @patient_session.consents.first
   end
 
   def set_triage
