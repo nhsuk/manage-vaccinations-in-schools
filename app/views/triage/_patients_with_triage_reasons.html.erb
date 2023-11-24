@@ -16,7 +16,7 @@
         </tbody>
       </table>
     <% else %>
-      <%= render "layouts/empty_list", message: "We couldn’t find any children that matched your filters." %>
+      <%= render AppEmptyListComponent.new(message: "We couldn’t find any children that matched your filters.") %>
     <% end %>
   </div>
 </div>
