@@ -6,7 +6,7 @@ gem "rails", "~> 7.1.2"
 
 gem "aasm"
 gem "audited"
-gem "avo"
+gem "avo", "~> 3.0", ">= 3.0.2"
 gem "awesome_print"
 gem "bootsnap", require: false
 gem "config"
@@ -16,7 +16,7 @@ gem "devise-pwned_password"
 gem "faker", github: "misaka/faker", branch: "add_alternative_name"
 gem "fhir_client"
 gem "good_job"
-gem "govuk-components"
+gem "govuk-components", github: "x-govuk/govuk-components"
 gem "govuk_design_system_formbuilder"
 gem "jbuilder"
 gem "jsbundling-rails"
@@ -34,6 +34,7 @@ gem "stimulus-rails"
 gem "turbo-rails"
 gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
 gem "uk_postcode"
+gem "view_component", "~> 3.7.0"
 gem "wicked"
 
 group :development, :test do
