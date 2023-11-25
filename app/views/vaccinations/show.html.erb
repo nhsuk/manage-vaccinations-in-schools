@@ -5,11 +5,7 @@
              ) %>
 <% end %>
 
-<%= h1 @patient.full_name, id: dom_id(@patient), class: "nhsuk-heading-l" %>
-
-<%= render AppStatusBannerComponent.new(patient_session: @patient_session) %>
-
-<%= render AppPatientCardComponent.new(patient: @patient, session: @session) %>
+<%= render AppPatientPageComponent.new(patient_session: @patient_session) %>
 
 <% if @consent.present? %>
   <% if @consent.via_self_consent? %>
