@@ -2,4 +2,6 @@
 
 <%= render AppStatusBannerComponent.new(patient_session: patient_session) %>
 
-<%= render AppPatientCardComponent.new(patient: patient, session: session) %>
+<%= render AppCardComponent.new(heading: "Child details") do %>
+  <%= render AppPatientDetailsComponent.new(patient:, session:) %>
+<% end %>
