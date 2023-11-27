@@ -5,10 +5,12 @@ class Avo::Resources::Team < Avo::BaseResource
   #   query.ransack(id_eq: params[:q], m: "or").result(distinct: false)
   # end
 
-  field :id, as: :id
-  # Fields generated from the model
-  field :name, as: :text
-  field :campaigns, as: :has_many
-  field :users, as: :has_and_belongs_to_many
-  # add fields here
+  def fields
+    field :id, as: :id
+    # Fields generated from the model
+    field :name, as: :text
+    field :campaigns, as: :has_many
+    field :users, as: :has_and_belongs_to_many
+    # add fields here
+  end
 end
