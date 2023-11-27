@@ -5,15 +5,11 @@
              ) %>
 <% end %>
 
-<%= render AppPatientPageComponent.new(patient_session: @patient_session) %>
-
-<% if @consent.present? %>
-  <%= render AppConsentCardComponent.new(
-    session: @session,
-    patient: @patient,
-    consent: @consent,
-    route: 'triage') %>
-<% end %>
+<%= render AppPatientPageComponent.new(
+      patient_session: @patient_session,
+      consent: @consent,
+      route: "triage",
+    ) %>
 
 <% if @consent&.response_given? %>
   <div class="nhsuk-card" id="health-questions">
