@@ -45,10 +45,13 @@ FactoryBot.define do
     transient do
       random { Random.new }
       health_questions_list { Consent::HEALTH_QUESTIONS.fetch(:flu) }
+      # Allow caller to provide patient_session as a shortcut to prodive
+      # patient and campaign
+      patient_session { nil }
     end
 
-    patient { create :patient }
-    campaign { create :campaign }
+    patient { patient_session&.patient || create(:patient) }
+    campaign { patient_session&.session&.campaign || create(:campaign) }
     response { "given" }
     parent_name { Faker::Name.name }
     parent_email { Faker::Internet.email(domain: "gmail.com") }
