@@ -5,21 +5,12 @@
              ) %>
 <% end %>
 
-<%= render AppPatientPageComponent.new(patient_session: @patient_session) %>
+<%= render AppPatientPageComponent.new(
+      patient_session: @patient_session,
+      consent: @consent,
+      route: "vaccinations",
+    ) %>
 
-<% if @consent.present? %>
-  <% if @consent.via_self_consent? %>
-    <%= render AppGillickCardComponent.new(
-      consent: @consent,
-      patient_session: @patient_session) %>
-  <% else %>
-    <%= render AppConsentCardComponent.new(
-      session: @session,
-      patient: @patient,
-      consent: @consent,
-      route: 'vaccinations') %>
-  <% end %>
-<% end %>
 
 <% if @consent&.response_given? %>
   <%= render AppPatientMedicalHistoryCardComponent.new(
