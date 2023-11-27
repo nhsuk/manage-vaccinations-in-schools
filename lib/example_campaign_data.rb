@@ -65,7 +65,7 @@ class ExampleCampaignData
         last_name: patient["lastName"],
         dob: patient["dob"],
         sex: patient["sex"],
-        consent: patient["consent"],
+        consents: patient["consents"],
         nhs_number: patient["nhsNumber"],
         screening: patient["screening"],
         parent_name: patient["parentName"],
@@ -83,45 +83,50 @@ class ExampleCampaignData
         }
       end
 
-      if patient["consent"].present?
-        consent_example = patient["consent"]
-        consent = {}
+      if patient["consents"].present?
+        patient["consents"].map! do |consent_example|
+          consent = {}
 
-        consent[:response] = consent_example["response"]
-        consent[:reason_for_refusal] = consent_example["reasonForRefusal"]
-        consent[:reason_for_refusal_other] = consent_example[
-          "reasonForRefusalOtherReason"
-        ]
+          consent[:response] = consent_example["response"]
+          consent[:reason_for_refusal] = consent_example["reasonForRefusal"]
+          consent[:reason_for_refusal_other] = consent_example[
+            "reasonForRefusalOtherReason"
+          ]
 
-        consent[:childs_name] = consent_example["childsName"]
-        consent[:childs_dob] = consent_example["childsDob"]
-        consent[:childs_common_name] = consent_example["childsCommonName"]
+          consent[:childs_name] = consent_example["childsName"]
+          consent[:childs_dob] = consent_example["childsDob"]
+          consent[:childs_common_name] = consent_example["childsCommonName"]
 
-        consent[:address_line_1] = consent_example["addressLine1"]
-        consent[:address_line_2] = consent_example["addressLine2"]
-        consent[:address_postcode] = consent_example["addressPostcode"]
-        consent[:address_town] = consent_example["addressTown"]
+          consent[:address_line_1] = consent_example["addressLine1"]
+          consent[:address_line_2] = consent_example["addressLine2"]
+          consent[:address_postcode] = consent_example["addressPostcode"]
+          consent[:address_town] = consent_example["addressTown"]
 
-        consent[:parent_name] = consent_example["parentName"]
-        consent[:parent_relationship] = consent_example["parentRelationship"]
-        consent[:parent_relationship_other] = consent_example[
-          "parentRelationshipOther"
-        ]
-        consent[:parent_email] = consent_example["parentEmail"]
-        consent[:parent_phone] = consent_example["parentPhone"]
-        consent[:parent_contact_method] = consent_example["parentContactMethod"]
-        consent[:parent_contact_method_other] = consent_example[
-          "parentContactMethodOther"
-        ]
+          consent[:parent_name] = consent_example["parentName"]
+          consent[:parent_relationship] = consent_example["parentRelationship"]
+          consent[:parent_relationship_other] = consent_example[
+            "parentRelationshipOther"
+          ]
+          consent[:parent_email] = consent_example["parentEmail"]
+          consent[:parent_phone] = consent_example["parentPhone"]
+          consent[:parent_contact_method] = consent_example[
+            "parentContactMethod"
+          ]
+          consent[:parent_contact_method_other] = consent_example[
+            "parentContactMethodOther"
+          ]
 
-        consent[:gp_response] = consent_example["gpResponse"]
-        consent[:gp_name] = consent_example["gpName"]
+          consent[:gp_response] = consent_example["gpResponse"]
+          consent[:gp_name] = consent_example["gpName"]
 
-        consent[:route] = consent_example["route"]
+          consent[:route] = consent_example["route"]
 
-        consent[:health_questions] = consent_example["healthQuestionResponses"]
+          consent[:health_questions] = consent_example[
+            "healthQuestionResponses"
+          ]
 
-        attributes[:consent] = consent
+          consent
+        end
       end
 
       attributes

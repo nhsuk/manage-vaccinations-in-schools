@@ -75,7 +75,7 @@ class ExampleCampaignGenerator
     patients_consent_triage += build_patients_that_have_already_been_triaged
 
     patients_data = generate_patients_data(patients_consent_triage)
-    patients_data = add_consent_to_patients_data(patients_data)
+    patients_data = add_consents_to_patients_data(patients_data)
     patients_data = match_mum_and_dad_info_to_consent(patients_data)
 
     vaccine_name = I18n.t("vaccines.#{type}")
@@ -167,8 +167,8 @@ class ExampleCampaignGenerator
       options.fetch(:patients_with_consent_given_and_ready_to_vaccinate, 0)
     count.times.map do
       patient = build_patient
-      consent = build_consent(:given, patient:)
-      [patient, consent]
+      consents = [build_consent(:given, patient:)]
+      [patient, consents]
     end
   end
 
@@ -177,7 +177,7 @@ class ExampleCampaignGenerator
     count = options.fetch(:patients_with_no_consent_response, 0)
     count.times.map do
       patient = build_patient
-      [patient, nil]
+      [patient, []]
     end
   end
 
@@ -186,15 +186,22 @@ class ExampleCampaignGenerator
     count = options.fetch(:patients_with_consent_refused, 0)
     count.times.map do
       patient = build_patient
-      consent =
-        build_consent(
-          :refused,
-          reason_for_refusal: %i[personal_choice already_vaccinated].sample(
-            random:
-          ),
-          patient:
-        )
-      [patient, consent]
+      consents =
+        [1, 1, 1, 1, 1, 2, 2, 3].sample(random:)
+          .times
+          .map do
+            build_consent(
+              :refused,
+              reason_for_refusal: %i[
+                already_vaccinated
+                will_be_vaccinated_elsewhere
+                medical
+                personal_choice
+              ].sample(random:),
+              patient:
+            )
+          end
+      [patient, consents]
     end
   end
 
@@ -277,13 +284,14 @@ class ExampleCampaignGenerator
 
     cases.map do |example_case|
       patient = build_patient
-      consent =
+      consents = [
         build_consent(
           :given,
           health_questions: example_case[:health_questions],
           patient:
         )
-      [patient, consent]
+      ]
+      [patient, consents]
     end
   end
 
@@ -351,14 +359,15 @@ class ExampleCampaignGenerator
 
     cases.map do |patient_case|
       patient = build_patient
-      consent =
+      consents = [
         build_consent(
           :given,
           patient:,
           health_questions: patient_case[:health_questions]
         )
+      ]
       triage = { notes: patient_case[:triage_notes], status: "needs_follow_up" }
-      [patient, consent, triage]
+      [patient, consents, triage]
     end
   end
 
@@ -408,29 +417,30 @@ class ExampleCampaignGenerator
 
     cases.map do |patient_case|
       patient = build_patient
-      consent =
+      consents = [
         build_consent(
           :given,
           patient:,
           health_questions: patient_case[:health_questions]
         )
+      ]
       %i[ready_to_vaccinate do_not_vaccinate].sample(random:)
       triage = {
         status: patient_case[:triage_status],
         notes: patient_case[:triage_notes]
       }
-      [patient, consent, triage]
+      [patient, consents, triage]
     end
   end
 
   def generate_patients_data(patients_consent_triage)
-    patients_consent_triage.map do |patient, consent, triage|
+    patients_consent_triage.map do |patient, consents, triage|
       {
         firstName: patient.first_name,
         lastName: patient.last_name,
         dob: patient.dob.iso8601,
         nhsNumber: patient.nhs_number,
-        consent:,
+        consents:,
         parentEmail: patient.parent_email,
         parentName: patient.parent_name,
         parentPhone: patient.parent_phone,
@@ -442,37 +452,39 @@ class ExampleCampaignGenerator
     end
   end
 
-  def add_consent_to_patients_data(patients_data)
+  def add_consents_to_patients_data(patients_data)
     patients_data.each do |patient|
-      next unless patient[:consent]
-      consent = patient[:consent]
-      patient[:consent] = {
-        response: consent.response,
-        reasonForRefusal: consent.reason_for_refusal,
-        parentName: consent.parent_name,
-        parentRelationship: consent.parent_relationship,
-        parentEmail: consent.parent_email,
-        parentPhone: consent.parent_phone,
-        healthQuestionResponses: consent.health_questions,
-        route: consent.route
-      }
+      next unless patient[:consents]
+      consents = patient[:consents]
+      patient[:consents] = consents.map do |consent|
+        {
+          response: consent.response,
+          reasonForRefusal: consent.reason_for_refusal,
+          parentName: consent.parent_name,
+          parentRelationship: consent.parent_relationship,
+          parentEmail: consent.parent_email,
+          parentPhone: consent.parent_phone,
+          healthQuestionResponses: consent.health_questions,
+          route: consent.route
+        }
+      end
     end
   end
 
   # match mum and dad info for patients with parental consent
   def match_mum_and_dad_info_to_consent(patients_data)
     patients_data.each do |patient|
-      unless patient[:consent].present? &&
-               patient[:consent][:parentRelationship].in?(%w[mother father]) &&
-               patient[:consent][:parentRelationship] ==
-                 patient[:parentRelationship]
+      consent = patient[:consents]&.first
+      unless consent.present? &&
+               consent[:parentRelationship].in?(%w[mother father]) &&
+               consent[:parentRelationship] == patient[:parentRelationship]
         next
       end
 
-      patient[:parentName] = patient[:consent][:parentName]
-      patient[:parentRelationship] = patient[:consent][:parentRelationship]
-      patient[:parentEmail] = patient[:consent][:parentEmail]
-      patient[:parentPhone] = patient[:consent][:parentPhone]
+      patient[:parentName] = consent[:parentName]
+      patient[:parentRelationship] = consent[:parentRelationship]
+      patient[:parentEmail] = consent[:parentEmail]
+      patient[:parentPhone] = consent[:parentPhone]
     end
   end
 
