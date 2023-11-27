@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AppPatientCardComponent, type: :component do
+RSpec.describe AppPatientDetailsComponent, type: :component do
   before { render_inline(component) }
 
   subject { page }
@@ -8,10 +8,6 @@ RSpec.describe AppPatientCardComponent, type: :component do
   let(:patient) { FactoryBot.create(:patient) }
   let(:session) { FactoryBot.create(:session) }
   let(:component) { described_class.new(patient:, session:) }
-
-  it { should have_css(".nhsuk-card") }
-  it { should have_css(".nhsuk-card__content") }
-  it { should have_css(".nhsuk-card__heading", text: "Child details") }
 
   it "should render the patient's full name" do
     expect(page).to have_css(

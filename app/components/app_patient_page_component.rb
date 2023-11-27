@@ -12,6 +12,5 @@ class AppPatientPageComponent < ViewComponent::Base
   end
 
   delegate :patient, to: :patient_session
-
   delegate :session, to: :patient_session
 end

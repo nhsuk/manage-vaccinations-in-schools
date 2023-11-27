@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AppPatientCardComponent < ViewComponent::Base
+class AppPatientDetailsComponent < ViewComponent::Base
   def initialize(patient:, session:)
     super
 
