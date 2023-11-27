@@ -107,7 +107,7 @@ module LoadExampleCampaign
   def self.create_children(example, campaign:, session:)
     example.children_attributes.each do |attributes|
       triage_attributes = attributes.delete(:triage)
-      consent_attributes = attributes.delete(:consent)
+      consents_attributes = attributes.delete(:consents)
 
       patient =
         Patient.find_or_initialize_by(nhs_number: attributes[:nhs_number])
@@ -119,10 +119,14 @@ module LoadExampleCampaign
         triage.update!(triage_attributes)
       end
 
-      next if consent_attributes.blank?
-      consent = Consent.find_or_initialize_by(campaign:, patient:)
-      consent.update!(consent_attributes.merge(recorded_at: Time.zone.now))
-      patient.consents << consent unless patient.consents.include?(consent)
+      next if consents_attributes.blank?
+      consents_attributes.each do |consent_attributes|
+        parent_email = consent_attributes[:parent_email]
+        consent =
+          Consent.find_or_initialize_by(campaign:, patient:, parent_email:)
+        consent.update!(consent_attributes.merge(recorded_at: Time.zone.now))
+        patient.consents << consent unless patient.consents.include?(consent)
+      end
 
       transition_states(patient.patient_sessions.first)
     end
