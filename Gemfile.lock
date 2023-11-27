@@ -298,7 +298,7 @@ GEM
       activesupport (>= 3.0)
       nokogiri (>= 1.6)
     io-console (0.6.0)
-    irb (1.9.0)
+    irb (1.9.1)
       rdoc
       reline (>= 0.3.8)
     jaro_winkler (1.5.4)
@@ -521,10 +521,10 @@ GEM
       rexml
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
-    sentry-rails (5.13.0)
+    sentry-rails (5.14.0)
       railties (>= 5.0)
-      sentry-ruby (~> 5.13.0)
-    sentry-ruby (5.13.0)
+      sentry-ruby (~> 5.14.0)
+    sentry-ruby (5.14.0)
       concurrent-ruby (~> 1.0, >= 1.0.2)
     shoulda-matchers (5.3.0)
       activesupport (>= 5.2.0)
