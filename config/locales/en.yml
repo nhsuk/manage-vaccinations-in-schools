@@ -100,6 +100,12 @@ en:
         parent_relationships:
           father: dad
           mother: mum
+        reason_for_refusals:
+          already_vaccinated: "Vaccine already received"
+          will_be_vaccinated_elsewhere: "Vaccine will be given elsewhere"
+          medical: "Medical reasons"
+          personal_choice: "Personal choice"
+          other: "Other"
       patient:
         parent_relationships:
           father: dad

@@ -29,12 +29,7 @@ class AppPatientTableComponent < ViewComponent::Base
   private
 
   def column_name(column)
-    case column
-    when :name
-      "Name"
-    when :dob
-      "Date of birth"
-    end
+    { name: "Name", dob: "Date of birth", reason: "Reason for refusal" }[column]
   end
 
   def column_value(patient_session, column)
@@ -43,6 +38,11 @@ class AppPatientTableComponent < ViewComponent::Base
       patient_session.patient.full_name
     when :dob
       patient_session.patient.dob.to_fs(:nhsuk_date)
+    when :reason
+      patient_session
+        .consents
+        .map { |c| c.human_enum_name(:reason_for_refusal) }
+        .join("<br />")
     end
   end
 end

@@ -8,11 +8,11 @@
 
 <%= h1 "Check consent responses", class: "govuk-heading-l" %>
 
-<% def consent_tab(slot, label, data)
+<% def consent_tab(slot, label, data, columns: %i[name dob])
   slot.with_tab(label: "#{label} (#{data.size})",
                 classes: 'nhsuk-tabs__panel') do
     if data.size > 0
-      render AppPatientTableComponent.new(patient_sessions: data)
+      render AppPatientTableComponent.new(patient_sessions: data, columns:)
     else
       render AppEmptyListComponent.new(
         message: "We couldn’t find any children that matched your filters."
@@ -23,7 +23,8 @@ end %>
 
 <%= govuk_tabs title: "Consents", classes: 'nhsuk-tabs' do |slot|
   consent_tab(slot, "Consent given", @tabs[:consent_given?])
-  consent_tab(slot, "Consent refused", @tabs[:consent_refused?])
+  consent_tab(slot, "Consent refused", @tabs[:consent_refused?],
+              columns: %i[name dob reason])
   consent_tab(slot, "Consent conflicts", @tabs[:consent_conflicts?])
   consent_tab(slot, "No response", @tabs[:no_consent?])
 end %>
