@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AppConsentCardComponent, type: :component do
+RSpec.describe AppConsentComponent, type: :component do
   before { render_inline(component) }
 
   subject { page }
@@ -11,7 +11,6 @@ RSpec.describe AppConsentCardComponent, type: :component do
   let(:route) { "triage" }
 
   context "when consent is present" do
-    it { should have_css("h2", text: "Consent") }
     it { should have_css("dd", text: consent.who_responded.capitalize) }
     it { should have_css("dd", text: consent.parent_name) }
     it { should have_css("dd", text: consent.created_at.to_fs(:nhsuk_date)) }

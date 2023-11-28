@@ -1,4 +1,4 @@
-class AppConsentCardComponent < ViewComponent::Base
+class AppConsentComponent < ViewComponent::Base
   attr_reader :patient_session, :consent
 
   def initialize(patient_session:, consent:, route:)
