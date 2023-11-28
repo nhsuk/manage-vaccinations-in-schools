@@ -5,7 +5,7 @@ RSpec.describe ExampleCampaignGenerator do
   let(:expected_hpv_json) do
     # Remove final newline if present to match generated JSON.
     File.read(
-      Rails.root.join("spec/fixtures/example-hpv-campaign-42.json")
+      Rails.root.join("db/sample_data/example-hpv-campaign.json")
     ).rstrip
   end
   let(:expected_flu_json) do
@@ -28,15 +28,15 @@ RSpec.describe ExampleCampaignGenerator do
     # To regenerate:
     #     rails generate_example_campaign \
     #       seed=42 \
-    #       presets=model_office \
+    #       presets=default \
     #       type=hpv \
-    #       username="Nurse Joy" > spec/fixtures/example-hpv-campaign-42.json
+    #       username="Nurse Joy" > db/sample_data/example-hpv-campaign.json
     Timecop.freeze(2023, 11, 28, 12, 0, 0) do
       generator =
         ExampleCampaignGenerator.new(
           seed: 42,
           type: :hpv,
-          presets: "model_office",
+          presets: "default",
           username: "Nurse Joy"
         )
       data = generator.generate

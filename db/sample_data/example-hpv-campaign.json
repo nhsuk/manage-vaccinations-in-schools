@@ -1,0 +1,539 @@
+{
+  "id": "42",
+  "title": "HPV campaign at St Saviour's Church of England Primary School",
+  "location": "St Saviour's Church of England Primary School",
+  "date": "2023-07-28T12:30",
+  "type": "HPV",
+  "team": {
+    "name": " SAIS team",
+    "users": [
+      {
+        "full_name": "Nurse Joy",
+        "email": "nurse.joy@example.com"
+      }
+    ]
+  },
+  "vaccines": [
+    {
+      "brand": "Gardasil 9",
+      "method": "injection",
+      "batches": [
+        {
+          "name": "ZS7570",
+          "expiry": "2024-03-17"
+        },
+        {
+          "name": "ES4777",
+          "expiry": "2024-04-26"
+        },
+        {
+          "name": "VU6981",
+          "expiry": "2024-02-26"
+        }
+      ]
+    }
+  ],
+  "school": {
+    "urn": "100961",
+    "name": "St Saviour's Church of England Primary School",
+    "address": "Chrisp Street",
+    "locality": "Poplar",
+    "address3": "",
+    "town": "London",
+    "county": "",
+    "postcode": "E14 6BB",
+    "minimum_age": "3",
+    "maximum_age": "11",
+    "url": "www.stsavioursschool.org.uk",
+    "phase": "Primary",
+    "type": "Local authority maintained schools",
+    "detailed_type": "Voluntary aided school"
+  },
+  "healthQuestions": [
+
+  ],
+  "patients": [
+    {
+      "firstName": "Brittany",
+      "lastName": "Klocko",
+      "dob": "2011-10-24",
+      "nhsNumber": 4656828688,
+      "consents": [
+        {
+          "response": "given",
+          "reasonForRefusal": null,
+          "parentName": "Zachery Weimann",
+          "parentRelationship": "father",
+          "parentEmail": "zachery.weimann20@gmail.com",
+          "parentPhone": "07168 092638",
+          "healthQuestionResponses": [
+            {
+              "question": "Does the child have any severe allergies that have led to an anaphylactic reaction?",
+              "response": "no"
+            },
+            {
+              "question": "Does the child have any existing medical conditions?",
+              "response": "no"
+            },
+            {
+              "question": "Does the child take any regular medication?",
+              "response": "no"
+            },
+            {
+              "question": "Is there anything else we should know?",
+              "response": "no"
+            }
+          ],
+          "route": "website"
+        }
+      ],
+      "parentEmail": "zachery.weimann20@gmail.com",
+      "parentName": "Zachery Weimann",
+      "parentPhone": "07168 092638",
+      "parentRelationship": "father",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": null
+    },
+    {
+      "firstName": "Mckinley",
+      "lastName": "Marvin",
+      "dob": "2011-06-30",
+      "nhsNumber": 4526310840,
+      "consents": [
+        {
+          "response": "given",
+          "reasonForRefusal": null,
+          "parentName": "Berry Bogan",
+          "parentRelationship": "mother",
+          "parentEmail": "berry.bogan28@gmail.com",
+          "parentPhone": "07918 687077",
+          "healthQuestionResponses": [
+            {
+              "question": "Does the child have any severe allergies that have led to an anaphylactic reaction?",
+              "response": "no"
+            },
+            {
+              "question": "Does the child have any existing medical conditions?",
+              "response": "no"
+            },
+            {
+              "question": "Does the child take any regular medication?",
+              "response": "no"
+            },
+            {
+              "question": "Is there anything else we should know?",
+              "response": "no"
+            }
+          ],
+          "route": "website"
+        }
+      ],
+      "parentEmail": "berry.bogan28@gmail.com",
+      "parentName": "Berry Bogan",
+      "parentPhone": "07918 687077",
+      "parentRelationship": "mother",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": null
+    },
+    {
+      "firstName": "Wonda",
+      "lastName": "Schuster",
+      "dob": "2011-07-07",
+      "nhsNumber": 4007695997,
+      "consents": [
+
+      ],
+      "parentEmail": null,
+      "parentName": "Corey Schuster",
+      "parentPhone": "01462 51984",
+      "parentRelationship": "father",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": null
+    },
+    {
+      "firstName": "Farah",
+      "lastName": "Welch",
+      "dob": "2011-03-28",
+      "nhsNumber": 4817528605,
+      "consents": [
+
+      ],
+      "parentEmail": null,
+      "parentName": "Evangeline Welch",
+      "parentPhone": "055 6784 0297",
+      "parentRelationship": "mother",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": null
+    },
+    {
+      "firstName": "Franklin",
+      "lastName": "Brekke",
+      "dob": "2011-08-22",
+      "nhsNumber": 4232345116,
+      "consents": [
+        {
+          "response": "refused",
+          "reasonForRefusal": "will_be_vaccinated_elsewhere",
+          "parentName": "Samantha Gleichner",
+          "parentRelationship": "mother",
+          "parentEmail": "samantha.gleichner1@gmail.com",
+          "parentPhone": "07766 367057",
+          "healthQuestionResponses": [
+
+          ],
+          "route": "website"
+        }
+      ],
+      "parentEmail": "samantha.gleichner1@gmail.com",
+      "parentName": "Samantha Gleichner",
+      "parentPhone": "07766 367057",
+      "parentRelationship": "mother",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": null
+    },
+    {
+      "firstName": "Sonja",
+      "lastName": "Williamson",
+      "dob": "2011-01-03",
+      "nhsNumber": 4714506129,
+      "consents": [
+        {
+          "response": "refused",
+          "reasonForRefusal": "already_vaccinated",
+          "parentName": "Joaquin Crona",
+          "parentRelationship": "father",
+          "parentEmail": "joaquin.crona71@gmail.com",
+          "parentPhone": "07567 328281",
+          "healthQuestionResponses": [
+
+          ],
+          "route": "website"
+        },
+        {
+          "response": "refused",
+          "reasonForRefusal": "medical",
+          "parentName": "Antoinette McGlynn",
+          "parentRelationship": "mother",
+          "parentEmail": "antoinette.mcglynn29@gmail.com",
+          "parentPhone": "07114 232004",
+          "healthQuestionResponses": [
+
+          ],
+          "route": "website"
+        },
+        {
+          "response": "refused",
+          "reasonForRefusal": "personal_choice",
+          "parentName": "Maud Becker",
+          "parentRelationship": "mother",
+          "parentEmail": "maud.becker98@gmail.com",
+          "parentPhone": "07397 968330",
+          "healthQuestionResponses": [
+
+          ],
+          "route": "website"
+        }
+      ],
+      "parentEmail": null,
+      "parentName": "Verda Williamson",
+      "parentPhone": "055 9822 2375",
+      "parentRelationship": "mother",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": null
+    },
+    {
+      "firstName": "Alma",
+      "lastName": "Pacocha",
+      "dob": "2011-09-02",
+      "nhsNumber": 4063197085,
+      "consents": [
+        {
+          "response": "given",
+          "reasonForRefusal": null,
+          "parentName": "Napoleon Ledner",
+          "parentRelationship": "father",
+          "parentEmail": "napoleon.ledner66@gmail.com",
+          "parentPhone": "07534 584034",
+          "healthQuestionResponses": [
+            {
+              "question": "Does the child have any severe allergies that have led to an anaphylactic reaction?",
+              "response": "No",
+              "notes": null
+            },
+            {
+              "question": "Does the child have any existing medical conditions?",
+              "response": "No",
+              "notes": null
+            },
+            {
+              "question": "Does the child take any regular medication?",
+              "response": "Yes",
+              "notes": "My daughter has just completed a long-term course of antibiotics for a urine infection."
+            },
+            {
+              "question": "Is there anything else we should know?",
+              "response": "No",
+              "notes": null
+            }
+          ],
+          "route": "website"
+        }
+      ],
+      "parentEmail": "napoleon.ledner66@gmail.com",
+      "parentName": "Napoleon Ledner",
+      "parentPhone": "07534 584034",
+      "parentRelationship": "father",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": null
+    },
+    {
+      "firstName": "Tessie",
+      "lastName": "Borer",
+      "dob": "2011-01-10",
+      "nhsNumber": 4150338892,
+      "consents": [
+        {
+          "response": "given",
+          "reasonForRefusal": null,
+          "parentName": "Michael Dickens",
+          "parentRelationship": "mother",
+          "parentEmail": "michael.dickens7@gmail.com",
+          "parentPhone": "07722 863941",
+          "healthQuestionResponses": [
+            {
+              "question": "Does the child have any severe allergies that have led to an anaphylactic reaction?",
+              "response": "No",
+              "notes": null
+            },
+            {
+              "question": "Does the child have any existing medical conditions?",
+              "response": "No",
+              "notes": null
+            },
+            {
+              "question": "Does the child take any regular medication?",
+              "response": "Yes",
+              "notes": "My daughter takes the contraceptive pill to manage her acne."
+            },
+            {
+              "question": "Is there anything else we should know?",
+              "response": "No",
+              "notes": null
+            }
+          ],
+          "route": "website"
+        }
+      ],
+      "parentEmail": null,
+      "parentName": "Erick Borer",
+      "parentPhone": "016977 2212",
+      "parentRelationship": "father",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": null
+    },
+    {
+      "firstName": "Wilhelmina",
+      "lastName": "MacGyver",
+      "dob": "2011-09-07",
+      "nhsNumber": 4703737736,
+      "consents": [
+        {
+          "response": "given",
+          "reasonForRefusal": null,
+          "parentName": "Warner Haag",
+          "parentRelationship": "father",
+          "parentEmail": "warner.haag56@gmail.com",
+          "parentPhone": "07959 969426",
+          "healthQuestionResponses": [
+            {
+              "question": "Does the child have any severe allergies that have led to an anaphylactic reaction",
+              "response": "No",
+              "notes": null
+            },
+            {
+              "question": "Does the child have any existing medical conditions?",
+              "response": "Yes",
+              "notes": "My child has chronic pain due to a previous injury and struggles with discomfort daily"
+            },
+            {
+              "question": "Does the child take any regular medication?",
+              "response": "No",
+              "notes": null
+            },
+            {
+              "question": "Is there anything else we should know?",
+              "response": "No",
+              "notes": null
+            }
+          ],
+          "route": "website"
+        }
+      ],
+      "parentEmail": null,
+      "parentName": "Maryanne MacGyver",
+      "parentPhone": "0113 944 2834",
+      "parentRelationship": "mother",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": {
+        "notes": "Tried to get hold of parent to find out where the pain is. Try again before vaccination session.",
+        "status": "needs_follow_up"
+      }
+    },
+    {
+      "firstName": "Carson",
+      "lastName": "Gusikowski",
+      "dob": "2011-07-27",
+      "nhsNumber": 4755242630,
+      "consents": [
+        {
+          "response": "given",
+          "reasonForRefusal": null,
+          "parentName": "Porfirio Trantow",
+          "parentRelationship": "father",
+          "parentEmail": "porfirio.trantow5@gmail.com",
+          "parentPhone": "07355 443223",
+          "healthQuestionResponses": [
+            {
+              "question": "Does the child have any severe allergies that have led to an anaphylactic reaction",
+              "response": "No",
+              "notes": null
+            },
+            {
+              "question": "Does the child have any existing medical conditions?",
+              "response": "No",
+              "notes": null
+            },
+            {
+              "question": "Does the child take any regular medication?",
+              "response": "No",
+              "notes": null
+            },
+            {
+              "question": "Is there anything else we should know?",
+              "response": "Yes",
+              "notes": "Our child recently had surgery and is still recovering. We want to make sure it’s safe for them to get the vaccine."
+            }
+          ],
+          "route": "website"
+        }
+      ],
+      "parentEmail": null,
+      "parentName": "So Gusikowski",
+      "parentPhone": "0847 860 2808",
+      "parentRelationship": "mother",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": {
+        "notes": "Tried to get hold of parent to find out what the surgery was for. Try again before vaccination session.",
+        "status": "needs_follow_up"
+      }
+    },
+    {
+      "firstName": "Rene",
+      "lastName": "Shanahan",
+      "dob": "2011-02-17",
+      "nhsNumber": 4900124001,
+      "consents": [
+        {
+          "response": "given",
+          "reasonForRefusal": null,
+          "parentName": "Steven Hagenes",
+          "parentRelationship": "father",
+          "parentEmail": "steven.hagenes95@gmail.com",
+          "parentPhone": "07914 985001",
+          "healthQuestionResponses": [
+            {
+              "question": "Does the child have any severe allergies that have led to an anaphylactic reaction?",
+              "response": "No",
+              "notes": null
+            },
+            {
+              "question": "Does the child have any existing medical conditions?",
+              "response": "No",
+              "notes": null
+            },
+            {
+              "question": "Does the child take any regular medication?",
+              "response": "Yes",
+              "notes": "My daughter has just completed a long-term course of antibiotics for a urine infection."
+            },
+            {
+              "question": "Is there anything else we should know?",
+              "response": "No",
+              "notes": null
+            }
+          ],
+          "route": "website"
+        }
+      ],
+      "parentEmail": "steven.hagenes95@gmail.com",
+      "parentName": "Steven Hagenes",
+      "parentPhone": "07914 985001",
+      "parentRelationship": "father",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": {
+        "status": "do_not_vaccinate",
+        "notes": "Checked with GP, not OK to proceed"
+      }
+    },
+    {
+      "firstName": "Luigi",
+      "lastName": "Ondricka",
+      "dob": "2011-03-19",
+      "nhsNumber": 4166890891,
+      "consents": [
+        {
+          "response": "given",
+          "reasonForRefusal": null,
+          "parentName": "Luis Kris",
+          "parentRelationship": "father",
+          "parentEmail": "luis.kris37@gmail.com",
+          "parentPhone": "07321 213850",
+          "healthQuestionResponses": [
+            {
+              "question": "Does the child have any severe allergies that have led to an anaphylactic reaction?",
+              "response": "No",
+              "notes": null
+            },
+            {
+              "question": "Does the child have any existing medical conditions?",
+              "response": "No",
+              "notes": null
+            },
+            {
+              "question": "Does the child take any regular medication?",
+              "response": "Yes",
+              "notes": "My daughter takes the contraceptive pill to manage her acne."
+            },
+            {
+              "question": "Is there anything else we should know?",
+              "response": "No",
+              "notes": null
+            }
+          ],
+          "route": "website"
+        }
+      ],
+      "parentEmail": "luis.kris37@gmail.com",
+      "parentName": "Luis Kris",
+      "parentPhone": "07321 213850",
+      "parentRelationship": "father",
+      "parentRelationshipOther": null,
+      "parentInfoSource": "school",
+      "triage": {
+        "status": "ready_to_vaccinate",
+        "notes": "Checked with GP, OK to proceed"
+      }
+    }
+  ]
+}
