@@ -41,7 +41,7 @@ async function then_i_see_the_vaccination_page() {
 }
 
 async function when_i_click_yes_i_am_contacting_a_parent() {
-  await p.click("text=Yes, I am contacting a parent or guardian");
+  await p.click("text=Get consent");
 }
 
 async function and_i_click_continue() {

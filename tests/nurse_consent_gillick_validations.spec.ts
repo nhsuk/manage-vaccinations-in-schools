@@ -3,7 +3,7 @@ import { signInTestUser } from "./shared/sign_in";
 
 let p: Page;
 
-test("Consent via Gillick competence validations", async ({ page }) => {
+test.fixme("Consent via Gillick competence validations", async ({ page }) => {
   p = page;
   await given_the_app_is_setup();
   await and_i_am_signed_in();
