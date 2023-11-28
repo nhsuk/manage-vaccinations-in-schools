@@ -6,8 +6,10 @@
   <%= render AppPatientDetailsComponent.new(patient:, session:) %>
 <% end %>
 
-<%= render AppConsentCardComponent.new(
-      patient_session:,
-      consent:,
-      route: @route
-     ) %>
+<%= render AppCardComponent.new(heading: "Consent") do %>
+  <%= render AppConsentComponent.new(
+        patient_session:,
+        consent:,
+        route: @route
+    ) %>
+<% end %>
