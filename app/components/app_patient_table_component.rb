@@ -43,6 +43,7 @@ class AppPatientTableComponent < ViewComponent::Base
         .consents
         .map { |c| c.human_enum_name(:reason_for_refusal) }
         .join("<br />")
+        .html_safe
     end
   end
 end
