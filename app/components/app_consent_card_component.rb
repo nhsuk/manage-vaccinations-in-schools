@@ -15,4 +15,8 @@ class AppConsentCardComponent < ViewComponent::Base
   def display_health_questions?
     @consent&.response_given?
   end
+
+  def display_gillick_consent_button?
+    @consent.nil? && @patient_session.able_to_vaccinate?
+  end
 end

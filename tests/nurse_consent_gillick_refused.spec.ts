@@ -3,7 +3,7 @@ import { signInTestUser } from "./shared/sign_in";
 
 let p: Page;
 
-test.fixme("Records gillick consent refusal", async ({ page }) => {
+test("Records gillick consent refusal", async ({ page }) => {
   p = page;
   await given_the_app_is_setup();
   await and_i_am_signed_in();
@@ -46,10 +46,7 @@ async function then_i_see_the_no_consent_banner() {
 }
 
 async function when_i_select_that_i_am_assessing_gillick_competence() {
-  await p
-    .getByRole("radio", { name: "Yes, I am assessing Gillick competence" })
-    .click();
-  await p.getByRole("button", { name: "Continue" }).click();
+  await p.getByRole("button", { name: "Assess Gillick competence" }).click();
   await p.getByRole("button", { name: "Give your assessment" }).click();
 }
 
