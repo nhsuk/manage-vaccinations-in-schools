@@ -172,3 +172,7 @@ $color_app-pale-blue: #ccdff1;
 .app-panel h1 {
   @include nhsuk-font(32, $weight: bold);
 }
+
+.app-status {
+  font-weight: bold;
+}

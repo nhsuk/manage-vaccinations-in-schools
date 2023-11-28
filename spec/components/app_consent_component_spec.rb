@@ -29,7 +29,7 @@ RSpec.describe AppConsentComponent, type: :component do
   context "when consent is not present" do
     let(:consent) { nil }
 
-    it { should have_css("p", text: "No response given") }
+    it { should have_css("p", text: "No response yet") }
     it { should have_css("a", text: "Get consent") }
   end
 end
