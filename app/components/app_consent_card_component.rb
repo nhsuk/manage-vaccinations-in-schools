@@ -7,4 +7,8 @@ class AppConsentCardComponent < ViewComponent::Base
     @consent = consent
     @route = route
   end
+
+  def display_health_questions?
+    @consent&.response_given?
+  end
 end

@@ -12,14 +12,6 @@
     ) %>
 
 
-<% if @consent&.response_given? %>
-  <%= render AppPatientMedicalHistoryCardComponent.new(
-    patient: @patient,
-    consent: @consent,
-    triage: @triage
-  ) %>
-<% end %>
-
 <% if @patient_session.able_to_vaccinate? %>
 <% if @consent.nil? %>
   <div class="nhsuk-card">

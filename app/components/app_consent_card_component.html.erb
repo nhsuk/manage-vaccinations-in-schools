@@ -46,6 +46,13 @@
           end
         end
       end %>
+
+      <% if display_health_questions? %>
+        <%= render AppDetailsComponent.new(summary: "Responses to health questions") do %>
+          <%= render AppHealthQuestionsComponent.new(consent: @consent) %>
+        <% end %>
+      <% end %>
+
     <% else %>
       <p>
         No response given
