@@ -31,12 +31,13 @@ RSpec.describe ExampleCampaignGenerator do
     #       presets=model_office \
     #       type=hpv \
     #       username="Nurse Joy" > spec/fixtures/example-hpv-campaign-42.json
-    Timecop.freeze(2023, 10, 6, 12, 0, 0) do
+    Timecop.freeze(2023, 11, 28, 12, 0, 0) do
       generator =
         ExampleCampaignGenerator.new(
           seed: 42,
           type: :hpv,
-          presets: "model_office"
+          presets: "model_office",
+          username: "Nurse Joy"
         )
       data = generator.generate
       json = JSON.pretty_generate(data)
@@ -60,7 +61,7 @@ RSpec.describe ExampleCampaignGenerator do
     #       presets=default \
     #       type=flu \
     #       username="Nurse Jackie" > db/sample_data/example-flu-campaign.json
-    Timecop.freeze(2023, 11, 15, 12, 0, 0) do
+    Timecop.freeze(2023, 11, 28, 12, 0, 0) do
       generator =
         ExampleCampaignGenerator.new(
           seed: 42,
