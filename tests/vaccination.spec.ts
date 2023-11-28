@@ -11,9 +11,9 @@ test("Vaccination", async ({ page }) => {
   await when_i_go_to_the_vaccinations_page();
   await when_i_click_on_a_patient();
   await then_i_see_the_vaccination_page();
-  await then_i_see_the_medical_history_section();
+  await then_i_see_the_responses_to_health_questions();
 
-  await when_i_click_on_show_answers();
+  await when_i_click_on_the_responses();
   await then_i_should_see_health_question_responses();
 
   // Successful vaccination
@@ -62,12 +62,14 @@ async function then_i_see_the_vaccination_page() {
   await expect(p.locator("h1")).toContainText("Ernie Funk");
 }
 
-async function then_i_see_the_medical_history_section() {
-  await expect(p.locator("h2", { hasText: "Medical history" })).toBeVisible();
+async function then_i_see_the_responses_to_health_questions() {
+  await expect(p.locator(".nhsuk-card", { hasText: "Consent" })).toHaveText(
+    /Responses to health questions/,
+  );
 }
 
-async function when_i_click_on_show_answers() {
-  await p.getByText("Show answers").click();
+async function when_i_click_on_the_responses() {
+  await p.getByText("Responses to health questions").click();
 }
 
 async function then_i_should_see_health_question_responses() {

@@ -17,6 +17,7 @@ RSpec.describe AppConsentCardComponent, type: :component do
     it { should have_css("dd", text: consent.parent_name) }
     it { should have_css("dd", text: consent.created_at.to_fs(:nhsuk_date)) }
     it { should have_css("dd", text: "Website") }
+    it { should have_css("details", text: "Responses to health questions") }
   end
 
   context "when consent is refused" do
@@ -24,6 +25,7 @@ RSpec.describe AppConsentCardComponent, type: :component do
 
     it { should have_css("dt", text: "Reason for refusal") }
     it { should have_css("dd", text: "Personal choice") }
+    it { should_not have_css("details", text: "Responses to health questions") }
   end
 
   context "when consent is not present" do
