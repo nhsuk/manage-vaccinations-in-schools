@@ -3,7 +3,7 @@ import { signInTestUser } from "./shared/sign_in";
 
 let p: Page;
 
-test("Consent", async ({ page }) => {
+test("Consent refused during vaccination", async ({ page }) => {
   p = page;
   await given_the_app_is_setup();
   await and_i_am_signed_in();
@@ -40,10 +40,7 @@ async function when_i_select_a_child_with_no_consent_response() {
 }
 
 async function when_i_select_that_i_am_getting_consent() {
-  await p
-    .getByRole("radio", { name: "Yes, I am contacting a parent or guardian" })
-    .click();
-  await p.getByRole("button", { name: "Continue" }).click();
+  await p.click("text=Get consent");
 }
 const and_i_select_that_i_am_getting_consent =
   when_i_select_that_i_am_getting_consent;

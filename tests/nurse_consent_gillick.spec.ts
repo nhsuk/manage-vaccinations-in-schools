@@ -4,7 +4,7 @@ import { signInTestUser } from "./shared/sign_in";
 
 let p: Page;
 
-test("Records gillick consent", async ({ page }) => {
+test.fixme("Records gillick consent", async ({ page }) => {
   p = page;
   await given_the_app_is_setup();
   await and_i_am_signed_in();

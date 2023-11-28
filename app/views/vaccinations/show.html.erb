@@ -12,31 +12,8 @@
     ) %>
 
 
-<% if @patient_session.able_to_vaccinate? %>
-<% if @consent.nil? %>
-  <div class="nhsuk-card">
-    <div class="nhsuk-card__content">
-      <%= form_with model: @draft_consent,
-        url: handle_consent_session_patient_vaccinations_path(@session, @patient),
-        method: :post do |f| %>
-        <% content_for(:before_content) { f.govuk_error_summary } %>
-
-        <%= f.govuk_radio_buttons_fieldset(:route,
-          legend: { size: 'm', text: 'Are you attempting to get consent?' }) do %>
-          <%= f.govuk_radio_button :route, "phone",
-            label: { text: 'Yes, I am contacting a parent or guardian' },
-            link_errors: true %>
-          <%= f.govuk_radio_button :route, "self_consent",
-            label: { text: 'Yes, I am assessing Gillick competence' } %>
-          <%= f.govuk_radio_button :route, "not_vaccinating",
-            label: { text: 'No, I am not vaccinating' } %>
-        <% end %>
-
-        <%= f.submit "Continue", class: "nhsuk-button" %>
-      <% end %>
-    </div>
-  </div>
-<% elsif @vaccination_record&.administered? %>
+<% if @consent.present? && @patient_session.able_to_vaccinate? %>
+<% if @vaccination_record&.administered? %>
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
       <h2 class="nhsuk-card__heading nhsuk-heading-m">

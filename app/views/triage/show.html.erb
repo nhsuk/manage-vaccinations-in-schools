@@ -15,10 +15,3 @@
   <%= render "patient_triage_card", session: @session, patient: @patient, triage: @triage %>
 <% end %>
 
-<% if @consent.nil? %>
-  <%= render AppConsentCardComponent.new(
-    session: @session,
-    patient: @patient,
-    consent: @consent,
-    route: 'triage') %>
-<% end %>
