@@ -59,9 +59,23 @@
       </p>
 
       <p>
-        <%= govuk_button_link_to "Get consent",
-          new_session_patient_nurse_consents_path(@session, @patient, @route),
-          class: "nhsuk-u-margin-bottom-2" %>
+        <%= govuk_button_link_to(
+          "Get consent",
+          new_session_patient_nurse_consents_path(session, patient, @route),
+          class: "nhsuk-u-margin-bottom-2"
+        )%>
+
+        <% if display_gillick_consent_button? %>
+          <%= govuk_button_link_to(
+            "Assess Gillick competence",
+            assessing_gillick_session_patient_nurse_consents_path(
+              session,
+              patient,
+              route: @route
+            ),
+            class: "nhsuk-button--secondary nhsuk-u-margin-bottom-2"
+          )%>
+        <% end %>
       </p>
     <% end %>
   </div>

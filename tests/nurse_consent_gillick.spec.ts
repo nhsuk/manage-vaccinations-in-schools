@@ -4,7 +4,7 @@ import { signInTestUser } from "./shared/sign_in";
 
 let p: Page;
 
-test.fixme("Records gillick consent", async ({ page }) => {
+test("Records gillick consent", async ({ page }) => {
   p = page;
   await given_the_app_is_setup();
   await and_i_am_signed_in();
@@ -14,8 +14,7 @@ test.fixme("Records gillick consent", async ({ page }) => {
   await then_i_see_the_patient_that_needs_consent();
 
   await when_i_click_on_the_patient();
-  await when_i_click_yes_gillick();
-  await and_i_click_continue();
+  await when_i_click_assess_gillick_competence();
   await then_i_see_the_assessing_gillick_page();
 
   await when_i_click_give_your_assessment();
@@ -43,8 +42,7 @@ test.fixme("Records gillick consent", async ({ page }) => {
   await when_i_go_to_the_vaccinations_page();
   await when_i_click_on_the_second_patient();
 
-  await when_i_click_yes_gillick();
-  await and_i_click_continue();
+  await when_i_click_assess_gillick_competence();
   await when_i_click_give_your_assessment();
   await when_i_click_no_they_are_not_gillick_competent();
   await and_i_give_details();
@@ -72,8 +70,8 @@ async function when_i_click_on_the_patient() {
   await p.click("text=Alexandra Sipes");
 }
 
-async function when_i_click_yes_gillick() {
-  await p.click("text=Yes, I am assessing Gillick competence");
+async function when_i_click_assess_gillick_competence() {
+  await p.click("text=Assess Gillick competence");
 }
 
 async function and_i_click_continue() {
