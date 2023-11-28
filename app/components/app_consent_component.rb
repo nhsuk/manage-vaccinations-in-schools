@@ -16,6 +16,10 @@ class AppConsentComponent < ViewComponent::Base
     @consent&.response_given?
   end
 
+  def open_health_questions?
+    @patient_session.consent_given_triage_needed?
+  end
+
   def display_gillick_consent_button?
     @consent.nil? && @patient_session.able_to_vaccinate?
   end
