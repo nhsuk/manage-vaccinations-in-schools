@@ -5,10 +5,9 @@ RSpec.describe AppConsentCardComponent, type: :component do
 
   subject { page }
 
-  let(:component) { described_class.new(consent:, patient:, session:, route:) }
-  let(:consent) { create(:consent, campaign: session.campaign, patient:) }
-  let(:patient) { session.patients.first }
-  let(:session) { create(:session) }
+  let(:component) { described_class.new(patient_session:, consent:, route:) }
+  let(:patient_session) { create(:patient_session) }
+  let(:consent) { create(:consent, patient_session:) }
   let(:route) { "triage" }
 
   context "when consent is present" do
