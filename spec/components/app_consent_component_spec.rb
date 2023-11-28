@@ -16,6 +16,16 @@ RSpec.describe AppConsentComponent, type: :component do
     it { should have_css("dd", text: consent.created_at.to_fs(:nhsuk_date)) }
     it { should have_css("dd", text: "Website") }
     it { should have_css("details", text: "Responses to health questions") }
+
+    it "does not open the health questions details" do
+      expect(
+        page.first(
+          "h3",
+          text: consent.health_questions.first["question"],
+          visible: false
+        )
+      ).not_to be_visible
+    end
   end
 
   context "when consent is refused" do
@@ -31,5 +41,17 @@ RSpec.describe AppConsentComponent, type: :component do
 
     it { should have_css("p", text: "No response yet") }
     it { should have_css("a", text: "Get consent") }
+  end
+
+  context "when consent response needs triaging" do
+    let(:patient_session) do
+      create(:patient_session, :consent_given_triage_needed)
+    end
+
+    it "does opens the health questions details" do
+      expect(
+        page.first("h3", text: consent.health_questions.first["question"])
+      ).to be_visible
+    end
   end
 end
