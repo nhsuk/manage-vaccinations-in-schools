@@ -1,6 +1,6 @@
 class AppDetailsComponent < ViewComponent::Base
   erb_template <<-ERB
-    <details class="nhsuk-details nhsuk-expander"<%= open_attr %>>
+    <details class="nhsuk-details<%= expander_class %>"<%= open_attr %>>
       <summary class="nhsuk-details__summary">
         <span class="nhsuk-details__summary-text">
           <%= @summary %>
@@ -13,16 +13,23 @@ class AppDetailsComponent < ViewComponent::Base
     </details>
   ERB
 
-  def initialize(summary:, open: false)
+  def initialize(summary:, open: false, expander: false)
     super
 
     @summary = summary
     @open = open
+    @expander = expander
   end
 
   def open_attr
     return unless @open
 
     " open"
+  end
+
+  def expander_class
+    return unless @expander
+
+    " nhsuk-expander"
   end
 end
