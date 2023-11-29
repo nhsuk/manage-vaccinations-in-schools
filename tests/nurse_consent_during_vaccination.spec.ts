@@ -1,5 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import { signInTestUser } from "./shared/sign_in";
+import { signInTestUser, fixtures } from "./shared";
 
 let p: Page;
 
@@ -33,11 +33,11 @@ async function when_i_go_to_the_vaccinations_page() {
 }
 
 async function when_i_click_on_a_patient_that_needs_consent() {
-  await p.click("text=Alexandra Sipes");
+  await p.getByRole("link", { name: fixtures.patientThatNeedsConsent }).click();
 }
 
 async function then_i_see_the_vaccination_page() {
-  expect(await p.innerText("h1")).toContain("Alexandra Sipes");
+  expect(await p.innerText("h1")).toContain(fixtures.patientThatNeedsConsent);
 }
 
 async function when_i_click_yes_i_am_contacting_a_parent() {
@@ -56,9 +56,9 @@ async function then_i_see_the_new_consent_form() {
 
 async function when_i_go_through_the_consent_and_triage_forms() {
   // Who
-  await p.fill('[name="consent[parent_name]"]', "Jane Doe");
+  await p.fill('[name="consent[parent_name]"]', fixtures.parentName);
   await p.fill('[name="consent[parent_phone]"]', "07700900000");
-  await p.click("text=Mum");
+  await p.getByRole("radio", { name: fixtures.parentRole }).click();
   await p.click("text=Continue");
 
   // Do they agree

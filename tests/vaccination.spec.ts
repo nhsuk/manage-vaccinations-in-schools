@@ -1,5 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import { signInTestUser } from "./shared/sign_in";
+import { signInTestUser, fixtures } from "./shared";
 
 let p: Page;
 
@@ -55,11 +55,15 @@ async function when_i_go_to_the_vaccinations_page() {
 }
 
 async function when_i_click_on_a_patient() {
-  await p.getByRole("link", { name: "Ernie Funk" }).click();
+  await p
+    .getByRole("link", { name: fixtures.patientThatNeedsVaccination })
+    .click();
 }
 
 async function then_i_see_the_vaccination_page() {
-  await expect(p.locator("h1")).toContainText("Ernie Funk");
+  await expect(p.locator("h1")).toContainText(
+    fixtures.patientThatNeedsVaccination,
+  );
 }
 
 async function then_i_see_the_responses_to_health_questions() {
@@ -89,7 +93,7 @@ async function then_i_should_see_the_select_batch_page() {
 }
 
 async function when_i_select_a_batch() {
-  await p.click("text=IE5343");
+  await p.click(`text=${fixtures.vaccineBatch}`);
   await p.click("text=Continue");
 }
 
@@ -99,7 +103,9 @@ async function then_i_should_see_a_success_message() {
 
 async function and_i_should_see_the_outcome_as_vaccinated() {
   await p.getByRole("tab", { name: /^Vaccinated/ }).click();
-  const row = p.locator(`tr`, { hasText: "Ernie Funk" });
+  const row = p.locator(`tr`, {
+    hasText: fixtures.patientThatNeedsVaccination,
+  });
   await expect(row).toBeVisible();
   await expect(row.getByTestId("child-action")).toContainText("Vaccinate");
 }
@@ -134,7 +140,9 @@ async function then_i_should_see_the_reason_page() {
 }
 
 async function when_i_click_on_another_patient() {
-  await p.getByRole("link", { name: "Jessika Lindgren" }).click();
+  await p
+    .getByRole("link", { name: fixtures.secondPatientThatNeedsVaccination })
+    .click();
 }
 
 async function when_i_choose_a_reason() {

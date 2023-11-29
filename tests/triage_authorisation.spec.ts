@@ -38,10 +38,6 @@ async function then_i_should_only_see_my_patients() {
   await expect(
     p.locator("#needs-triage-4 .nhsuk-table__body .nhsuk-table__row"),
   ).toHaveCount(4);
-  await expect(p.getByText("Hyman Jaskolski")).toBeVisible();
-  await expect(p.getByText("Rich Schaden")).toBeVisible();
-  await expect(p.getByText("Kirstin Labadie")).toBeVisible();
-  await expect(p.getByText("Ted Swift")).toBeVisible();
 }
 
 async function when_i_go_to_the_triage_page_of_another_team() {

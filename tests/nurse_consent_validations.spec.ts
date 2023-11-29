@@ -1,5 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import { signInTestUser } from "./shared/sign_in";
+import { signInTestUser, fixtures } from "./shared";
 
 let p: Page;
 
@@ -40,7 +40,7 @@ async function and_i_am_signed_in() {
 async function given_i_am_on_the_who_am_i_contacting_for_consent_page() {
   await p.goto("/sessions/1/triage");
   await p.getByRole("tab", { name: "Get consent" }).click();
-  await p.getByRole("link", { name: "Alexandra Sipes" }).click();
+  await p.getByRole("link", { name: fixtures.patientThatNeedsConsent }).click();
   await p.getByRole("button", { name: "Get consent" }).click();
 }
 
@@ -73,9 +73,9 @@ async function then_i_see_the_other_relationship_validation_errors() {
 }
 
 async function given_i_move_on_to_the_consent_response_page() {
-  await p.fill('[name="consent[parent_name]"]', "Carl Sipes");
+  await p.fill('[name="consent[parent_name]"]', fixtures.parentName);
   await p.fill('[name="consent[parent_phone]"]', "07700900000");
-  await p.getByRole("radio", { name: "Dad" }).click();
+  await p.getByRole("radio", { name: fixtures.parentRole }).click();
   await p.getByRole("button", { name: "Continue" }).click();
 }
 

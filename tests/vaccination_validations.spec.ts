@@ -1,5 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import { signInTestUser } from "./shared/sign_in";
+import { signInTestUser, fixtures } from "./shared";
 
 let p: Page;
 
@@ -36,7 +36,9 @@ async function and_i_am_signed_in() {
 async function given_i_am_on_the_vaccination_page_for_a_child() {
   await p.goto("/sessions/1/vaccinations");
   await p.getByRole("tab", { name: "Action needed" }).click();
-  await p.getByRole("link", { name: "Ernie Funk" }).click();
+  await p
+    .getByRole("link", { name: fixtures.patientThatNeedsVaccination })
+    .click();
 }
 
 async function when_i_continue_without_entering_anything() {

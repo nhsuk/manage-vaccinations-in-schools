@@ -1,5 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import { signInTestUser } from "./shared/sign_in";
+import { signInTestUser, fixtures } from "./shared";
 
 let p: Page;
 
@@ -51,7 +51,7 @@ async function and_i_record_a_vaccination() {
 }
 
 async function and_i_select_a_batch() {
-  await p.click("text=IE5343");
+  await p.click(`text=${fixtures.vaccineBatch}`);
 }
 
 async function and_i_set_the_batch_to_be_the_default_for_today() {
@@ -75,13 +75,17 @@ async function and_i_press_continue() {
 }
 
 async function and_i_click_on_a_patient() {
-  await p.getByRole("link", { name: "Ernie Funk" }).click();
+  await p
+    .getByRole("link", { name: fixtures.patientThatNeedsVaccination })
+    .click();
 }
 
 async function and_i_click_on_another_patient() {
-  await p.getByRole("link", { name: "Man Swaniawski" }).click();
+  await p
+    .getByRole("link", { name: fixtures.secondPatientThatNeedsVaccination })
+    .click();
 }
 
 async function and_the_batch_should_be_displayed() {
-  await expect(p.getByText("IE5343")).toBeVisible();
+  await expect(p.getByText(fixtures.vaccineBatch)).toBeVisible();
 }

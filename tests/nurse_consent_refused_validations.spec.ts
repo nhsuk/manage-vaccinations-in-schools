@@ -1,5 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import { signInTestUser } from "./shared/sign_in";
+import { signInTestUser, fixtures } from "./shared";
 
 let p: Page;
 
@@ -28,7 +28,7 @@ async function and_i_am_signed_in() {
 async function given_i_am_on_the_reasons_for_consent_refusal_page() {
   await p.goto("/sessions/1/triage");
   await p.getByRole("tab", { name: "Get consent" }).click();
-  await p.getByRole("link", { name: "Alexandra Sipes" }).click();
+  await p.getByRole("link", { name: fixtures.patientThatNeedsConsent }).click();
   await p.getByRole("button", { name: "Get consent" }).click();
 
   await p.fill('[name="consent[parent_name]"]', "Carl Sipes");

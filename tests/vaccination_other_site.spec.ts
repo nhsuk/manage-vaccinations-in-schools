@@ -1,5 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import { signInTestUser } from "./shared/sign_in";
+import { signInTestUser, fixtures } from "./shared";
 
 let p: Page;
 
@@ -59,7 +59,7 @@ async function then_i_should_see_the_check_answers_page() {
 }
 
 async function when_i_select_a_batch() {
-  await p.click("text=IE5343");
+  await p.click(`text=${fixtures.vaccineBatch}`);
   await p.click("text=Continue");
 }
 
@@ -72,5 +72,7 @@ async function and_i_press_continue() {
 }
 
 async function and_i_click_on_a_patient() {
-  await p.getByRole("link", { name: "Ernie Funk" }).click();
+  await p
+    .getByRole("link", { name: fixtures.patientThatNeedsVaccination })
+    .click();
 }

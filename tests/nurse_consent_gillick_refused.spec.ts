@@ -1,5 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import { signInTestUser } from "./shared/sign_in";
+import { signInTestUser, fixtures } from "./shared";
 
 let p: Page;
 
@@ -36,7 +36,7 @@ async function given_i_am_performing_vaccinations() {
 }
 
 async function when_i_select_a_child_with_no_consent_response() {
-  await p.getByRole("link", { name: "Alexandra Sipes" }).click();
+  await p.getByRole("link", { name: fixtures.patientThatNeedsConsent }).click();
 }
 
 async function then_i_see_the_no_consent_banner() {
