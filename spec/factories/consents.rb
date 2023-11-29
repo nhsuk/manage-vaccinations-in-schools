@@ -45,7 +45,7 @@ FactoryBot.define do
     transient do
       random { Random.new }
       health_questions_list { Consent::HEALTH_QUESTIONS.fetch(:flu) }
-      # Allow caller to provide patient_session as a shortcut to prodive
+      # Allow caller to provide patient_session as a shortcut to produce
       # patient and campaign
       patient_session { nil }
     end
