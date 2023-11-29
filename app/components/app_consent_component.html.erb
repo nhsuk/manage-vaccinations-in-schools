@@ -1,47 +1,13 @@
 <%= render AppConsentStatusComponent.new(patient_session:) %>
 
-<% if @consent.present? %>
-  <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
-    summary_list.with_row do |row|
-      row.with_key { @consent.response_given? ?
-                     "Given by" :
-                     "Refused by" }
-      row.with_value { @consent.who_responded.capitalize }
-    end
-
-    summary_list.with_row do |row|
-      row.with_key { @consent.who_responded.capitalize }
-      row.with_value do %>
-        <%= @consent.parent_name %>
-        <div class="nhsuk-u-margin-top-2 nhsuk-u-font-size-16">
-          <% if @consent.parent_phone.present? %>
-            Phone: <%= @consent.parent_phone %>
-          <% end %>
-          <% if @consent.parent_email.present? %>
-            <br />
-            Email: <%= @consent.parent_email %>
-          <% end %>
-        </div>
-      <% end
-    end
-
-    summary_list.with_row do |row|
-      row.with_key { 'Date' }
-      row.with_value { @consent.created_at.to_fs(:nhsuk_date) }
-    end
-
-    summary_list.with_row do |row|
-      row.with_key { 'Type of consent' }
-      row.with_value { @consent.human_enum_name(:route) }
-    end
-
-    if @consent.response_refused?
-      summary_list.with_row do |row|
-        row.with_key { 'Reason for refusal' }
-        row.with_value { @consent.human_enum_name(:reason_for_refusal) }
-      end
-    end
-  end %>
+<% if patient_session.consents.present? %>
+  <% patient_session.consents.each do |consent| %>
+    <%= render AppDetailsComponent.new do |details_component|
+      component = AppConsentDetailsComponent.new(consent: consent)
+      details_component.with_summary { component.summary }
+      render component
+    end %>
+  <% end %>
 
   <% if display_health_questions? %>
     <%= render AppDetailsComponent.new(
@@ -52,7 +18,6 @@
       <%= render AppHealthQuestionsComponent.new(consent: @consent) %>
     <% end %>
   <% end %>
-
 <% else %>
   <p class="app-status">
     No response yet
