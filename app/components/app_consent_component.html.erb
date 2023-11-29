@@ -1,3 +1,5 @@
+<%= render AppConsentStatusComponent.new(patient_session:) %>
+
 <% if @consent.present? %>
   <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
     summary_list.with_row do |row|
