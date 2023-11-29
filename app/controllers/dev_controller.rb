@@ -5,8 +5,6 @@ class DevController < ApplicationController
   before_action :ensure_dev_env
 
   def reset
-    Rails.application.load_tasks
-
     ActiveRecord::Base.connection.transaction do
       data_tables =
         ActiveRecord::Base.connection.tables -
