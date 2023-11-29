@@ -5,7 +5,7 @@
   "date": "2023-07-28T12:30",
   "type": "HPV",
   "team": {
-    "name": " SAIS team",
+    "name": "London SAIS team",
     "users": [
       {
         "full_name": "Nurse Joy",
@@ -40,7 +40,7 @@
     "locality": "Poplar",
     "address3": "",
     "town": "London",
-    "county": "",
+    "county": "London",
     "postcode": "E14 6BB",
     "minimum_age": "3",
     "maximum_age": "11",
