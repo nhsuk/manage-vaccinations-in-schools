@@ -10,7 +10,8 @@ RSpec.describe AppConsentComponent, type: :component do
   let(:consent) { create(:consent, patient_session:) }
   let(:route) { "triage" }
 
-  context "when consent is present" do
+  context "when consent is given" do
+    it { should have_css("p.app-status", text: "Consent given") }
     it { should have_css("dd", text: consent.who_responded.capitalize) }
     it { should have_css("dd", text: consent.parent_name) }
     it { should have_css("dd", text: consent.created_at.to_fs(:nhsuk_date)) }
