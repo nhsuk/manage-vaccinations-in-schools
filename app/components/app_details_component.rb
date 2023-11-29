@@ -3,7 +3,7 @@ class AppDetailsComponent < ViewComponent::Base
     <details class="nhsuk-details<%= expander_class %>"<%= open_attr %>>
       <summary class="nhsuk-details__summary">
         <span class="nhsuk-details__summary-text">
-          <%= @summary %>
+          <%= summary %>
         </span>
       </summary>
 
@@ -13,10 +13,12 @@ class AppDetailsComponent < ViewComponent::Base
     </details>
   ERB
 
-  def initialize(summary:, open: false, expander: false)
+  renders_one :summary
+
+  def initialize(summary: nil, open: false, expander: false)
     super
 
-    @summary = summary
+    with_summary { summary } if summary
     @open = open
     @expander = expander
   end
