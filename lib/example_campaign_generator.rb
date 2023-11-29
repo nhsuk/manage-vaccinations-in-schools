@@ -562,7 +562,24 @@ class ExampleCampaignGenerator
           }
         ].freeze
       else
-        [].freeze
+        [
+          {
+            id: 1,
+            question: "Does your child have any severe allergies?",
+            next_question: 2
+          },
+          {
+            id: 2,
+            question:
+              "Does your child have any medical conditions for which they receive treatment?",
+            next_question: 3
+          },
+          {
+            id: 3,
+            question:
+              "Has your child ever had a severe reaction to any medicines, including vaccines?"
+          }
+        ].freeze
       end
   end
 end
