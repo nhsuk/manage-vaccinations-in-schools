@@ -1,5 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import { signInTestUser } from "./shared/sign_in";
+import { signInTestUser, fixtures } from "./shared";
 
 let p: Page;
 
@@ -52,18 +52,19 @@ async function when_i_go_to_the_triage_page() {
 }
 
 async function when_i_click_on_a_patient() {
-  await p.getByRole("link", { name: "Caridad Sipes" }).click();
+  await p.getByRole("link", { name: fixtures.patientThatNeedsTriage }).click();
 }
 
 async function and_i_enter_a_note_and_save_triage() {
   await p.getByLabel("Triage notes").fill("Unable to reach mother");
+  await p.getByRole("radio", { name: "Keep in triage" }).click();
   await p.getByRole("button", { name: "Save triage" }).click();
 }
 
 async function then_the_patient_should_still_be_in_triage() {
   await expect(
     p.getByRole("row", {
-      name: "Caridad Sipes Health questions need triage Triage started",
+      name: `${fixtures.patientThatNeedsTriage} Health questions need triage Triage started`,
     }),
   ).toBeVisible();
 }
@@ -83,7 +84,7 @@ const and_i_click_on_the_triage_complete_tab =
 async function then_the_patient_should_be_in_ready_to_vaccinate() {
   await expect(
     p.getByRole("row", {
-      name: "Caridad Sipes Health questions need triage Vaccinate",
+      name: `${fixtures.patientThatNeedsTriage} Health questions need triage Vaccinate`,
     }),
   ).toBeVisible();
 }
@@ -103,7 +104,9 @@ async function when_i_click_on_the_needs_triage_tab() {
 }
 
 async function when_i_click_on_the_other_patient() {
-  await p.getByRole("link", { name: "Blaine DuBuque" }).click();
+  await p
+    .getByRole("link", { name: fixtures.secondPatientThatNeedsTriage })
+    .click();
 }
 const and_i_click_on_another_patient = when_i_click_on_the_other_patient;
 
@@ -121,12 +124,14 @@ async function then_i_should_be_back_on_the_needs_triage_tab() {
 
 async function and_i_should_not_see_the_other_patient() {
   await expect(
-    p.getByRole("link", { name: "Blaine DuBuque" }),
+    p.getByRole("link", { name: fixtures.secondPatientThatNeedsTriage }),
   ).not.toBeVisible();
 }
 
 async function then_i_should_see_the_other_patient() {
-  await expect(p.getByRole("link", { name: "Blaine DuBuque" })).toBeVisible();
+  await expect(
+    p.getByRole("link", { name: fixtures.secondPatientThatNeedsTriage }),
+  ).toBeVisible();
 }
 
 async function then_i_should_see_their_do_not_vaccinate_status() {

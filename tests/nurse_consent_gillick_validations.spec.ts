@@ -1,5 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import { signInTestUser } from "./shared/sign_in";
+import { signInTestUser, fixtures } from "./shared";
 
 let p: Page;
 
@@ -24,7 +24,7 @@ async function and_i_am_signed_in() {
 async function given_i_am_assessing_a_child_for_gillick_competence() {
   await p.goto("/sessions/1/vaccinations");
   await p.getByRole("tab", { name: "Action needed" }).click();
-  await p.getByRole("link", { name: "Alexandra Sipes" }).click();
+  await p.getByRole("link", { name: fixtures.patientThatNeedsConsent }).click();
 
   await p.getByRole("button", { name: "Assess Gillick competence" }).click();
 

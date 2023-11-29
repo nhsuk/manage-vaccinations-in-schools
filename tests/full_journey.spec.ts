@@ -1,5 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import { signInTestUser } from "./shared/sign_in";
+import { signInTestUser, fixtures } from "./shared";
 
 let p: Page;
 
@@ -36,23 +36,23 @@ async function given_i_am_doing_triage() {
 
 async function when_i_select_a_child_with_no_consent() {
   await p.getByRole("tab", { name: "Get consent" }).click();
-  await p.getByRole("link", { name: "Alexandra Sipes" }).click();
+  await p.getByRole("link", { name: fixtures.patientThatNeedsConsent }).click();
 }
 
 async function then_i_see_the_parents_contact_info() {
   await expect(
-    p.getByRole("heading", { name: "Alexandra Sipes" }),
+    p.getByRole("heading", { name: fixtures.patientThatNeedsConsent }),
   ).toBeVisible();
-  await expect(p.getByText("Carl Sipes")).toBeVisible();
+  await expect(p.getByText(fixtures.parentName)).toBeVisible();
 }
 
 async function given_i_call_the_parent_and_receive_consent() {}
 
 async function when_i_record_the_consent_given() {
   await p.getByRole("button", { name: "Get consent" }).click();
-  await p.fill('[name="consent[parent_name]"]', "Carl Sipes");
+  await p.fill('[name="consent[parent_name]"]', fixtures.parentName);
   await p.fill('[name="consent[parent_phone]"]', "07700900000");
-  await p.getByRole("radio", { name: "Dad" }).click();
+  await p.getByRole("radio", { name: fixtures.parentRole }).click();
   await p.getByRole("button", { name: "Continue" }).click();
 
   await p.getByRole("radio", { name: "Yes, they agree" }).click();
@@ -76,10 +76,10 @@ async function and_i_record_the_triage_details() {
 
 async function then_i_see_that_the_child_is_ready_to_vaccinate() {
   await expect(p.locator(".nhsuk-notification-banner__content")).toContainText(
-    "Consent saved for Alexandra Sipes",
+    `Consent saved for ${fixtures.patientThatNeedsConsent}`,
   );
   await p.getByRole("tab", { name: "Triage complete" }).click();
-  const row = p.locator(`tr`, { hasText: "Alexandra Sipes" });
+  const row = p.locator(`tr`, { hasText: fixtures.patientThatNeedsConsent });
   await expect(row).toBeVisible();
   await expect(row.getByTestId("child-action")).toContainText("Vaccinate");
 }
@@ -90,13 +90,13 @@ async function given_i_am_performing_the_vaccination() {
 
 async function when_i_record_the_successful_vaccination() {
   await p.getByRole("tab", { name: "Action needed" }).click();
-  await p.getByRole("link", { name: "Alexandra Sipes" }).click();
+  await p.getByRole("link", { name: fixtures.patientThatNeedsConsent }).click();
 
   await p.getByRole("radio", { name: "Yes, they got the HPV vaccine" }).click();
   await p.getByRole("radio", { name: "Left arm" }).click();
   await p.getByRole("button", { name: "Continue" }).click();
 
-  await p.getByRole("radio", { name: "IE5343" }).click();
+  await p.getByRole("radio", { name: fixtures.vaccineBatch }).click();
   await p.getByRole("button", { name: "Continue" }).click();
 
   await p.getByRole("button", { name: "Confirm" }).click();
@@ -104,10 +104,10 @@ async function when_i_record_the_successful_vaccination() {
 
 async function then_i_see_that_the_child_is_vaccinated() {
   await expect(p.locator(".nhsuk-notification-banner__content")).toContainText(
-    "Record saved for Alexandra Sipes",
+    `Record saved for ${fixtures.patientThatNeedsConsent}`,
   );
   await p.getByRole("tab", { name: /^Vaccinated/ }).click();
-  const row = p.locator(`tr`, { hasText: "Alexandra Sipes" });
+  const row = p.locator(`tr`, { hasText: fixtures.patientThatNeedsConsent });
   await expect(row).toBeVisible();
   await expect(row.getByTestId("child-action")).toContainText("Vaccinated");
 }

@@ -1,6 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import { answerHealthQuestions } from "./shared/helpers";
-import { signInTestUser } from "./shared/sign_in";
+import { signInTestUser, fixtures } from "./shared";
 
 let p: Page;
 
@@ -63,11 +62,13 @@ async function when_i_go_to_the_vaccinations_page() {
 }
 
 async function then_i_see_the_patient_that_needs_consent() {
-  await expect(p.getByRole("link", { name: "Alexandra Sipes" })).toBeVisible();
+  await expect(
+    p.getByRole("link", { name: fixtures.patientThatNeedsConsent }),
+  ).toBeVisible();
 }
 
 async function when_i_click_on_the_patient() {
-  await p.click("text=Alexandra Sipes");
+  await p.getByRole("link", { name: fixtures.patientThatNeedsConsent }).click();
 }
 
 async function when_i_click_assess_gillick_competence() {
@@ -138,7 +139,9 @@ async function and_it_contains_gillick_assessment_details() {
 }
 
 async function when_i_click_on_the_second_patient() {
-  await p.click("text=Mariano Kuhic");
+  await p
+    .getByRole("link", { name: fixtures.secondPatientThatNeedsConsent })
+    .click();
 }
 
 async function when_i_click_no_they_are_not_gillick_competent() {
@@ -146,7 +149,9 @@ async function when_i_click_no_they_are_not_gillick_competent() {
 }
 
 async function then_i_see_the_vaccination_show_page_for_the_second_patient() {
-  await expect(p.locator("h1")).toContainText("Mariano Kuhic");
+  await expect(p.locator("h1")).toContainText(
+    fixtures.secondPatientThatNeedsConsent,
+  );
 }
 
 async function and_i_triage_the_patient() {

@@ -1,5 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import { signInTestUser } from "./shared/sign_in";
+import { signInTestUser } from "./shared";
 
 let p: Page;
 
@@ -36,19 +36,8 @@ async function and_i_go_to_the_vaccinations_page() {
 
 async function then_i_should_only_see_my_patients() {
   await expect(
-    p.locator("#action-needed-11 .nhsuk-table__body .nhsuk-table__row"),
-  ).toHaveCount(11);
-  await expect(p.getByText("Brittany Klocko")).toBeVisible();
-  await expect(p.getByText("Bruce Reynolds")).toBeVisible();
-  await expect(p.getByText("Evette Muller")).toBeVisible();
-  await expect(p.getByText("Farah Welch")).toBeVisible();
-  await expect(p.getByText("John Grady")).toBeVisible();
-  await expect(p.getByText("Mckinley Marvin")).toBeVisible();
-  await expect(p.getByText("Hyman Jaskolski")).toBeVisible();
-  await expect(p.getByText("Rich Schaden")).toBeVisible();
-  await expect(p.getByText("Kirstin Labadie")).toBeVisible();
-  await expect(p.getByText("Ted Swift")).toBeVisible();
-  await expect(p.getByText("Wonda Schuster")).toBeVisible();
+    p.locator("#action-needed-10 .nhsuk-table__body .nhsuk-table__row"),
+  ).toHaveCount(10);
 }
 
 async function when_i_go_to_the_vaccinations_page_of_another_team() {

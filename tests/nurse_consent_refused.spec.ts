@@ -1,5 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import { signInTestUser } from "./shared/sign_in";
+import { signInTestUser, fixtures } from "./shared";
 
 let p: Page;
 
@@ -34,7 +34,7 @@ async function given_i_am_doing_triage() {
 
 async function when_i_select_a_child_with_no_consent_response() {
   await p.getByRole("tab", { name: "Get consent" }).click();
-  await p.getByRole("link", { name: "Alexandra Sipes" }).click();
+  await p.getByRole("link", { name: fixtures.patientThatNeedsConsent }).click();
 }
 
 async function when_i_click_get_consent() {
@@ -52,9 +52,9 @@ async function given_i_call_the_parent_and_they_refuse_consent() {}
 
 async function when_i_record_the_consent_refused() {
   // Who
-  await p.fill('[name="consent[parent_name]"]', "Jane Doe");
+  await p.fill('[name="consent[parent_name]"]', fixtures.parentName);
   await p.fill('[name="consent[parent_phone]"]', "07700900000");
-  await p.click("text=Mum");
+  await p.getByRole("radio", { name: fixtures.parentRole }).click();
   await p.getByRole("button", { name: "Continue" }).click();
 
   // Do they agree
@@ -73,10 +73,10 @@ async function and_i_record_the_reason_for_refusal() {
 
 async function then_i_see_that_the_child_needs_their_refusal_checked() {
   await expect(p.locator(".nhsuk-notification-banner__content")).toContainText(
-    "Consent saved for Alexandra Sipes",
+    `Consent saved for ${fixtures.patientThatNeedsConsent}`,
   );
   await p.getByRole("tab", { name: "No triage needed" }).click();
-  const row = p.locator(`tr`, { hasText: "Alexandra Sipes" });
+  const row = p.locator(`tr`, { hasText: fixtures.patientThatNeedsConsent });
   await expect(row).toBeVisible();
   await expect(row.getByTestId("child-action")).toContainText("Check refusal");
 }
