@@ -47,6 +47,7 @@
     <%= render AppDetailsComponent.new(
       summary: "Responses to health questions",
       open: open_health_questions?,
+      expander: true
     ) do %>
       <%= render AppHealthQuestionsComponent.new(consent: @consent) %>
     <% end %>
