@@ -1,12 +1,17 @@
 <tr class="nhsuk-table__row">
   <td class="nhsuk-table__cell">
+    <span class="nhsuk-table-responsive__heading">Date</span>
     <%= session.date.to_fs(:nhsuk_date_short_month) %>
   </td>
   <td class="nhsuk-table__cell">
+    <span class="nhsuk-table-responsive__heading">Time</span>
     <%= session.date.strftime("%l%P") %>
   </td>
   <td class="nhsuk-table__cell" id="<%= dom_id session %>">
-    <%= link_to session.name, session_path(session), "data-testid": "session-link" %>
+    <span class="nhsuk-table-responsive__heading">School</span>
+    <p class="nhsuk-u-margin-bottom-0 nhsuk-u-secondary-text-color">
+      <%= link_to session.location.name, session_path(session), "data-testid": "session-link" %><br>
+      <%= session.location.town %>, <%= session.location.postcode %>
+    </p>
   </td>
-  <td class="nhsuk-table__cell"></td>
 </tr>
