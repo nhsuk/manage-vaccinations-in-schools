@@ -29,11 +29,10 @@ endif::[]
 
 == Introduction and Goals
 
-This is the pilot a service to manage vaccinations for school-aged children in
-schools and during catch-up clinics. This service will provide e-consent,
-campaign management and point-of-care services for SAIS teams and parents. The
-goal is for this service to integrate with the national vaccination record to
-record vaccinations.
+This is the pilot a service to manage vaccinations in schools and during 
+catch-up clinics. This service will provide e-consent, campaign management and 
+point-of-care services for SAIS teams and parents. The goal is for this service 
+to integrate with the national vaccination record to record vaccinations.
 
 This service is in Alpha and this pilot is being used in to explore designs and
 further our understandings of user requirements through user research.
@@ -133,7 +132,7 @@ Parents::
 Parents are notified of the planned vaccination campaign and invited to give
 consent for their children to be vaccinated.
 
-Manage vaccinations for school-aged children Service::
+Manage vaccinations in schools service::
 The service will be used by the SAIS team to record vaccinations.
 
 Vaccination Record::
@@ -213,7 +212,7 @@ vaccination event data may be kept in this store until the end of the pilot.
 
 == Runtime View
 
-The Manage vaccinations for school-aged children service is built largely as a
+The Manage vaccinations in schools service is built largely as a
 standard server-rendered web application: HTML pages are rendered on the server
 and delivered along with CSS and JavaScript to the client. Users login to the
 service using a standard login page, and as is standard with Ruby on Rails apps,

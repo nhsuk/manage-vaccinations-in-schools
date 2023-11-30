@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
   end
 
   def set_service_name
-    @service_name = "Manage vaccinations for school-aged children"
+    @service_name = "Manage vaccinations in schools"
   end
 
   def set_disable_cache_headers

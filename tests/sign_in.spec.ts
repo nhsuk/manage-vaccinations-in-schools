@@ -62,7 +62,7 @@ async function when_i_sign_out() {
 async function then_i_should_see_the_start_page() {
   await expect(
     p.getByRole("heading", {
-      name: "Manage vaccinations for school-aged children",
+      name: "Manage vaccinations in schools",
     }),
   ).toBeVisible();
   await expect(p).toHaveURL("/start");

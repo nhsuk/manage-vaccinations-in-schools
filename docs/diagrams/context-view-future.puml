@@ -4,12 +4,12 @@
 
 LAYOUT_TOP_DOWN()
 
-title "Manage Vaccinations For School-aged Children Context Diagram"
+title "Manage vaccinations in schools context diagram"
 
 Person_Ext(sais, "SAIS Team")
 Person_Ext(parents, "Parents")
 
-System(manage, "Manage vaccinations for school-aged children", "Ruby on Rails, HTML, Javascript")
+System(manage, "Manage vaccinations in schools", "Ruby on Rails, HTML, Javascript")
 
 SystemDb_Ext(vaccineRecord, "Vaccination Record", "FHIR Server")
 SystemDb_Ext(pds, "PDS", "")

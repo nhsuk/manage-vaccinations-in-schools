@@ -4,7 +4,7 @@
 
 LAYOUT_TOP_DOWN()
 
-title "Manage Vaccinations For School-aged Children Component View"
+title "Manage vaccinations in schools component view"
 
 AddElementTag("outside_context", $bgColor="#CCC", $fontColor="#FFF")
 
@@ -12,7 +12,7 @@ Person_Ext(sais, "SAIS Team", $tags="outside_context")
 Person_Ext(parents, "Parents", $tags="outside_context")
 
 Boundary(aws, "AWS") {
-  System_Boundary(manage, "Manage vaccinations for school-aged children", "") {
+  System_Boundary(manage, "Manage vaccinations in schools", "") {
     Container_Boundary(server, "Server Application", "Ruby on Rails") {
       Component(webapp, "Web Application", "Ruby on Rails")
       ComponentDb(database, "Database", "PostgreSQL")

@@ -6,7 +6,7 @@
 
 ## Context
 
-The Manage vaccinations for school-aged children service has the rare requirement that it must
+The Manage vaccinations in schools service has the rare requirement that it must
 be usable in situations where no Internet connection is available. This
 requirement for offline work requires an application architecture that is rarely
 used in today's NHSUK and GOVUK services. However, there are approaches that may

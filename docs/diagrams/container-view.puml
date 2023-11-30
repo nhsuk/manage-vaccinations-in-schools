@@ -4,7 +4,7 @@
 
 LAYOUT_TOP_DOWN()
 
-title "Manage Vaccinations For School-aged Children Container View"
+title "Manage vaccinations in schools container view"
 
 AddElementTag("outside_context", $bgColor="#CCC", $fontColor="#FFF")
 
