@@ -1,5 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import { signInTestUser } from "./shared";
+import { signInTestUser, fixtures } from "./shared";
 
 let p: Page;
 
@@ -39,7 +39,7 @@ async function then_i_should_see_only_my_session() {
     1,
   );
   await expect(p.locator(".nhsuk-table__body .nhsuk-table__row")).toHaveText(
-    /Flu campaign at/,
+    fixtures.schoolName,
   );
 }
 
