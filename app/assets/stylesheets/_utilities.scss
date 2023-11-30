@@ -1,3 +1,11 @@
 .app-u-text-decoration-none {
   text-decoration: none;
 }
+
+.app-u-width-one-fifth {
+  width: 100% !important;
+
+  @include mq($from: tablet) {
+    width: 20% !important;
+  }
+}
