@@ -106,6 +106,10 @@ en:
           medical: "Medical reasons"
           personal_choice: "Personal choice"
           other: "Other"
+        responses:
+          given: "consent given"
+          refused: "consent refused"
+          not_provided: "not provided"
       patient:
         parent_relationships:
           father: dad
