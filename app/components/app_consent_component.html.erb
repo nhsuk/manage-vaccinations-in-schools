@@ -1,11 +1,9 @@
 <%= render AppConsentStatusComponent.new(patient_session:) %>
 
 <% if patient_session.consents.present? %>
-  <% patient_session.consents.each do |consent| %>
-    <%= render AppDetailsComponent.new(open: open_consents?) do |details_component| %>
-      <% component = AppConsentDetailsComponent.new(consent: consent) %>
-      <% details_component.with_summary { component.summary } %>
-      <%= render component %>
+  <% consents_grouped_by_parent.each do |summary, consents| %>
+    <%= render AppDetailsComponent.new(summary:, open: open_consents?) do %>
+      <%= render AppConsentDetailsComponent.new(consents:) %>
 
       <% if @consent.response_refused? %>
         <p><%= contact_parent_or_guardian_link %></p>

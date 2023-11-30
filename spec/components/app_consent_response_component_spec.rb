@@ -30,4 +30,19 @@ RSpec.describe AppConsentResponseComponent, type: :component do
 
     it { should have_css("ul li p", text: "Consent given (online)", count: 2) }
   end
+
+  context "with consent refused" do
+    let(:consents) { [create(:consent, :refused)] }
+
+    it { should have_css("p", text: "Consent refused (online)") }
+
+    it "displays the correct date and time" do
+      date = consents.first.created_at.to_fs(:nhsuk_date_short_month)
+      time = consents.first.created_at.strftime("%-l:%M%P")
+
+      should have_css("p", text: "#{date} at #{time}")
+    end
+
+    it { should_not have_css("ul") }
+  end
 end

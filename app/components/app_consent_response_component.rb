@@ -12,7 +12,7 @@ class AppConsentResponseComponent < ViewComponent::Base
         ].join("\n").html_safe
       end
 
-    response_contents.first if response_contents.size == 1
+    return response_contents.first if response_contents.size == 1
 
     tag.ul(class: "nhsuk-list") do
       response_contents.map { |content| tag.li(content) }.join("\n").html_safe
@@ -24,6 +24,8 @@ class AppConsentResponseComponent < ViewComponent::Base
 
     @consents = consents
   end
+
+  private
 
   def date_and_time_p_classes
     %w[
