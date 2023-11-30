@@ -23,4 +23,16 @@ class AppConsentComponent < ViewComponent::Base
   def display_gillick_consent_button?
     @consent.nil? && @patient_session.able_to_vaccinate?
   end
+
+  def open_consents?
+    patient_session.consent_refused?
+  end
+
+  def contact_parent_or_guardian_link
+    link_to(
+      "Contact parent or guardian",
+      new_session_patient_nurse_consents_path(session, patient, @route),
+      class: "nhsuk-u-font-weight-bold"
+    )
+  end
 end

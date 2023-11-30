@@ -2,36 +2,45 @@
 
 <% if patient_session.consents.present? %>
   <% patient_session.consents.each do |consent| %>
-    <%= render AppDetailsComponent.new do |details_component|
-      component = AppConsentDetailsComponent.new(consent: consent)
-      details_component.with_summary { component.summary }
-      render component
-    end %>
+    <%= render AppDetailsComponent.new(open: open_consents?) do |details_component| %>
+      <% component = AppConsentDetailsComponent.new(consent: consent) %>
+      <% details_component.with_summary { component.summary } %>
+      <%= render component %>
+
+      <% if @consent.response_refused? %>
+        <p><%= contact_parent_or_guardian_link %></p>
+      <% end %>
+    <% end %>
   <% end %>
 
-  <% if display_health_questions? %>
-    <%= render AppDetailsComponent.new(
+  <%=
+  if display_health_questions?
+    render AppDetailsComponent.new(
       summary: "Responses to health questions",
       open: open_health_questions?,
       expander: true
-    ) do %>
-      <%= render AppHealthQuestionsComponent.new(consent: @consent) %>
-    <% end %>
-  <% end %>
+    ) do
+      render AppHealthQuestionsComponent.new(consent: @consent)
+    end
+  end
+  %>
 <% else %>
   <p class="app-status">
     No response yet
   </p>
 
   <p>
-    <%= govuk_button_link_to(
+    <%=
+    govuk_button_link_to(
       "Get consent",
       new_session_patient_nurse_consents_path(session, patient, @route),
       class: "nhsuk-u-margin-bottom-2"
-    )%>
+    )
+    %>
 
     <% if display_gillick_consent_button? %>
-      <%= govuk_button_link_to(
+      <%=
+      govuk_button_link_to(
         "Assess Gillick competence",
         assessing_gillick_session_patient_nurse_consents_path(
           session,
@@ -39,7 +48,8 @@
           route: @route
         ),
         class: "nhsuk-button--secondary nhsuk-u-margin-bottom-2"
-      )%>
+      )
+      %>
     <% end %>
   </p>
 <% end %>
