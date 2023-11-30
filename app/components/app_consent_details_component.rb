@@ -5,49 +5,58 @@ class AppConsentDetailsComponent < ViewComponent::Base
     ) do |summary_list|
       summary_list.with_row do |row|
         row.with_key { "Name" }
-        row.with_value { @consent.parent_name }
+        row.with_value { parent_name }
       end
 
       summary_list.with_row do |row|
         row.with_key { "Relationship" }
-        row.with_value { @consent.who_responded.capitalize }
+        row.with_value { who_responded }
       end
 
       summary_list.with_row do |row|
         row.with_key { "Contact" }
-        row.with_value do
-          [@consent.parent_phone, @consent.parent_email].compact
-            .join("<br />")
-            .html_safe
-        end
+        row.with_value { parent_phone_and_email.join("<br />").html_safe }
       end
 
       summary_list.with_row do |row|
         row.with_key { "Response" }
         row.with_value do
-          render AppConsentResponseComponent.new(consents: [@consent])
+          render AppConsentResponseComponent.new(consents: @consents)
         end
       end
 
-      if @consent.response_refused?
+      if refused_consents.any?
         summary_list.with_row do |row|
           row.with_key { "Refusal reason" }
-          row.with_value { @consent.human_enum_name(:reason_for_refusal) }
+          row.with_value do
+            refused_consents.first.human_enum_name(:reason_for_refusal)
+          end
         end
       end
     end
   end
 
-  def initialize(consent:)
+  def initialize(consents:)
     super
 
-    @consent = consent
+    @consents = consents
   end
 
-  def summary
-    response = @consent.human_enum_name(:response).capitalize
-    by_whom = @consent.parent_name
-    relationship = @consent.human_enum_name(:parent_relationship).capitalize
-    "#{response} by #{by_whom} (#{relationship})"
+  private
+
+  def parent_name
+    @consents.first.parent_name
+  end
+
+  def who_responded
+    @consents.first.who_responded.capitalize
+  end
+
+  def parent_phone_and_email
+    [@consents.first.parent_phone, @consents.first.parent_email].compact
+  end
+
+  def refused_consents
+    @refused_consents ||= @consents.find_all(&:response_refused?)
   end
 end
