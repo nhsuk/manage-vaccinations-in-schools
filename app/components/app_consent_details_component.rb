@@ -25,13 +25,7 @@ class AppConsentDetailsComponent < ViewComponent::Base
       summary_list.with_row do |row|
         row.with_key { "Response" }
         row.with_value do
-          tag.p(class: "nhsuk-u-margin-bottom-0") do
-            "#{@consent.human_enum_name(:response).capitalize} (online)"
-          end \
-          + tag.p(class: "nhsuk-u-margin-bottom-2 nhsuk-u-secondary-text-color nhsuk-u-font-size-16 nhsuk-u-margin-bottom-0") do
-            (@consent.created_at.to_fs(:nhsuk_date_short_month) +
-             tag.span(" at #{@consent.created_at.strftime('%-l:%M%P')}", class: "nhsuk-u-margin-left-1")).html_safe
-          end
+          render AppConsentResponseComponent.new(consents: [@consent])
         end
       end
 
