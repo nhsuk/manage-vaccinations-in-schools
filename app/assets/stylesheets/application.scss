@@ -27,10 +27,7 @@ $color_app-pale-blue: #ccdff1;
 @import "_banner.scss";
 @import "_empty-list.scss";
 @import "_offline.scss";
-
-.app-\!-text-decoration-none {
-  text-decoration: none;
-}
+@import "_utilities.scss";
 
 .app-summary-list--no-bottom-border {
   .govuk-summary-list__row:last-child {
