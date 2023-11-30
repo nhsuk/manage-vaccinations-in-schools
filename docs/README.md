@@ -1,6 +1,6 @@
-# Manage vaccinations for school-aged children Documentation
+# Manage vaccinations in schools documentation
 
-This directory contains documentation for the Manage vaccinations for school-aged children service.
+This directory contains documentation for the Manage vaccinations in schools service.
 
 - [Architecture](architecture.adoc)
 - [Deployment](deployment.adoc)

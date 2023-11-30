@@ -2,10 +2,10 @@
 
 !include <C4/C4_Dynamic.puml>
 
-title "Manage vaccinations for school-aged children Testing Deployment Process"
+title "Manage vaccinations in schools testing deployment process"
 
 System_Ext(herokuAPI, "Heroku Platform API")
-Boundary(manage, "Manage Vaccinations for School-aged Children Vaccination", "Staging") {
+Boundary(manage, "Manage vaccinations in schools vaccination", "Staging") {
   Container(serverStaging, "Web Application", "Ruby on Rails")
   ContainerDb(dbStaging, "Database", "PostgreSQL")
 }

@@ -2,7 +2,7 @@
 
 !include <C4/C4_Deployment.puml>
 
-title "Manage vaccinations for school-aged children Deployed View"
+title "Manage vaccinations in schools deployed view"
 
 Boundary(heroku, "Heroku Platform", "AWS") {
     Container_Ext(router, "Heroku Router", "HTTPS, HTTP/2, TLS 1.2")

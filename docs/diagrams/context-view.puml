@@ -4,12 +4,12 @@
 
 LAYOUT_TOP_DOWN()
 
-title "Manage Vaccinations For School-aged Children Context Diagram"
+title "Manage vaccinations in schools context diagram"
 
 Person(sais, "SAIS Team")
 Person_Ext(parents, "Parents")
 
-System(manage, "Manage vaccinations for school-aged childrens")
+System(manage, "Manage vaccinations in schools")
 
 AddRelTag("optional", $textColor="black", $lineColor="black", $lineStyle="dashed")
 
