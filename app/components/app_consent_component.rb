@@ -25,7 +25,13 @@ class AppConsentComponent < ViewComponent::Base
   end
 
   def open_consents?
-    patient_session.consent_refused?
+    !@patient_session.state.to_sym.in? %i[
+                                        triaged_do_not_vaccinate
+                                        unable_to_vaccinate
+                                        unable_to_vaccinate_not_assessed
+                                        unable_to_vaccinate_not_gillick_competent
+                                        vaccinated
+                                      ]
   end
 
   def contact_parent_or_guardian_link

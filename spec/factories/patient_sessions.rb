@@ -23,6 +23,7 @@ FactoryBot.define do
 
     trait :added_to_session do
       state { "added_to_session" }
+      patient { create :patient, consents: [] }
     end
 
     trait :consent_given_triage_not_needed do
@@ -43,7 +44,7 @@ FactoryBot.define do
     trait :triaged_ready_to_vaccinate do
       state { "triaged_ready_to_vaccinate" }
       patient { create :patient, :consent_given_triage_needed, session: }
-      triage { [create(:triage, status: :do_not_vaccinate)] }
+      triage { [create(:triage, status: :ready_to_vaccinate)] }
     end
 
     trait :triaged_do_not_vaccinate do
@@ -56,6 +57,10 @@ FactoryBot.define do
       state { "triaged_kept_in_triage" }
       patient { create :patient, :consent_given_triage_needed, session: }
       triage { [create(:triage, status: :needs_follow_up)] }
+    end
+
+    trait :did_not_need_triage do
+      patient { create :patient, :consent_given_triage_not_needed, session: }
     end
 
     trait :unable_to_vaccinate do

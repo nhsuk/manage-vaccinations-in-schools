@@ -6,7 +6,7 @@ RSpec.describe AppConsentResponseComponent, type: :component do
 
   subject { page }
 
-  before { render_inline(component) { body } }
+  before { render_inline(component) }
 
   context "with a single consent" do
     let(:consents) { [create(:consent, :given)] }
