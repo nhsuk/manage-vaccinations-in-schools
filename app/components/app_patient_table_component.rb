@@ -19,11 +19,12 @@ class AppPatientTableComponent < ViewComponent::Base
     end
   end
 
-  def initialize(patient_sessions:, columns: %i[name dob])
+  def initialize(patient_sessions:, columns: %i[name dob], route: nil)
     super
 
     @patient_sessions = patient_sessions
     @columns = columns
+    @route = route
   end
 
   private
@@ -35,7 +36,7 @@ class AppPatientTableComponent < ViewComponent::Base
   def column_value(patient_session, column)
     case column
     when :name
-      patient_session.patient.full_name
+      patient_link(patient_session)
     when :dob
       patient_session.patient.dob.to_fs(:nhsuk_date)
     when :reason
@@ -44,6 +45,18 @@ class AppPatientTableComponent < ViewComponent::Base
         .map { |c| c.human_enum_name(:reason_for_refusal) }
         .join("<br />")
         .html_safe
+    end
+  end
+
+  def patient_link(patient_session)
+    if @route == :consent
+      govuk_link_to patient_session.patient.full_name,
+                    session_patient_consents_path(
+                      patient_session.session,
+                      patient_session.patient
+                    )
+    else
+      raise ArgumentError, "Unknown route: #{@route}"
     end
   end
 end
