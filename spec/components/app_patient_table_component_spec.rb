@@ -7,8 +7,9 @@ RSpec.describe AppPatientTableComponent, type: :component do
 
   subject { page }
 
+  let(:route) { :consent }
   let(:patient_sessions) { create_list(:patient_session, 2) }
-  let(:component) { described_class.new(patient_sessions:) }
+  let(:component) { described_class.new(patient_sessions:, route:) }
 
   it { should have_css(".nhsuk-table") }
   it { should have_css(".nhsuk-table__head") }
@@ -18,4 +19,11 @@ RSpec.describe AppPatientTableComponent, type: :component do
 
   it { should have_css(".nhsuk-table__body") }
   it { should have_css(".nhsuk-table__body .nhsuk-table__row", count: 2) }
+  it { should have_link(patient_sessions.first.patient.full_name) }
+
+  it "raises an ArgumentError when route is unknown" do
+    expect {
+      render_inline(described_class.new(patient_sessions:, route: :unknown))
+    }.to raise_error(ArgumentError)
+  end
 end
