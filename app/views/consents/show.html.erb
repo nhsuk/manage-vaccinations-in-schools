@@ -1,0 +1,12 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+               href: consents_session_path(@session),
+               name: "consents page"
+             ) %>
+<% end %>
+
+<%= render AppPatientPageComponent.new(
+      patient_session: @patient_session,
+      consent: @consent,
+      route: "triage",
+    ) %>

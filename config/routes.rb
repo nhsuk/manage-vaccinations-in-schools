@@ -39,6 +39,8 @@ Rails.application.routes.draw do
     end
 
     resources :patients do
+      resource :consents, only: %i[show]
+
       resource :triage, only: %i[create show update]
 
       resource :vaccinations, only: %i[new create show update] do

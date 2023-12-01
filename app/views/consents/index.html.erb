@@ -12,7 +12,11 @@
   slot.with_tab(label: "#{label} (#{data.size})",
                 classes: 'nhsuk-tabs__panel') do
     if data.size > 0
-      render AppPatientTableComponent.new(patient_sessions: data, columns:)
+      render AppPatientTableComponent.new(
+        patient_sessions: data,
+        columns:,
+        route: :consent,
+      )
     else
       render AppEmptyListComponent.new(
         message: "We couldn’t find any children that matched your filters."
