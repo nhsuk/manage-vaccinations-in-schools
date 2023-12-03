@@ -79,7 +79,8 @@ class ExampleCampaignData
       if patient["triage"].present?
         attributes[:triage] = {
           status: patient["triage"]["status"],
-          notes: patient["triage"]["notes"]
+          notes: patient["triage"]["notes"],
+          user_email: patient["triage"]["user_email"]
         }
       end
 
