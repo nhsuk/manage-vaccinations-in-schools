@@ -12,5 +12,6 @@ class TriageResource < Avo::BaseResource
   field :notes, as: :textarea
   field :campaign, as: :belongs_to
   field :patient_session, as: :belongs_to
+  field :user, as: :belongs_to
   # add fields here
 end
