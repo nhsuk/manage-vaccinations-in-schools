@@ -4,7 +4,7 @@ class AppConsentResponseComponent < ViewComponent::Base
       @consents.map do |consent|
         [
           tag.p(class: "nhsuk-u-margin-bottom-0") do
-            "#{consent.human_enum_name(:response).capitalize} (online)"
+            "#{response(consent:)} (#{route(consent:)})"
           end,
           tag.p(class: date_and_time_p_classes) do
             date_and_time consent.created_at
@@ -41,5 +41,13 @@ class AppConsentResponseComponent < ViewComponent::Base
     at_time = date.strftime("%-l:%M%P")
 
     %(#{date_text} at <span class="nhsuk-u-margin-left-1">#{at_time}</span>).html_safe
+  end
+
+  def response(consent:)
+    consent.human_enum_name(:response).capitalize
+  end
+
+  def route(consent:)
+    consent.human_enum_name(:route).downcase
   end
 end

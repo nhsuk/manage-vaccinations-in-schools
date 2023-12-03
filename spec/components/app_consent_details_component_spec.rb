@@ -23,22 +23,6 @@ RSpec.describe AppConsentDetailsComponent, type: :component do
     should have_css("div", text: /Response ?Consent refused/)
   end
 
-  context "consent response was given over the phone" do
-    let(:consent) do
-      create(
-        :consent,
-        :refused,
-        :from_dad,
-        parent_name: "Harry",
-        route: "phone"
-      )
-    end
-
-    xit "displays the route" do
-      should have_css("div", text: /Response ?Consent refused \(phone\)/)
-    end
-  end
-
   it "displays the refusal reason" do
     should have_css("div", text: /Refusal reason ?Personal choice/)
   end

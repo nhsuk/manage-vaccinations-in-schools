@@ -110,6 +110,8 @@ en:
           given: "consent given"
           refused: "consent refused"
           not_provided: "not provided"
+        routes:
+          website: online
       patient:
         parent_relationships:
           father: dad
