@@ -23,6 +23,12 @@ RSpec.describe AppConsentResponseComponent, type: :component do
     it { should_not have_css("ul") }
   end
 
+  context "with consent taken over the phone" do
+    let(:consents) { [create(:consent, :given, route: "phone")] }
+
+    it { should have_css("p", text: "Consent given (phone)") }
+  end
+
   context "with multiple consents" do
     let(:consent1) { create(:consent, :given) }
     let(:consent2) { create(:consent, :given) }
