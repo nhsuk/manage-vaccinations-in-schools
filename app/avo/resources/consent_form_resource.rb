@@ -34,6 +34,11 @@ class ConsentFormResource < Avo::BaseResource
   field :address_line_2, as: :string
   field :address_postcode, as: :string
   field :address_town, as: :string
-  field :health_answers, as: :text
-  field :recorded_at, as: :datetime
+  field :health_answers, as: :code, language: "javascript", only_on: :edit
+  field :health_answers, as: :code, language: "javascript" do |record|
+    if record.health_questions.present?
+      JSON.pretty_generate(record.health_questions.as_json)
+    end
+  end
+  field :recorded_at, as: :date_time
 end
