@@ -8,14 +8,17 @@
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #  patient_session_id :bigint
+#  user_id            :bigint
 #
 # Indexes
 #
 #  index_triage_on_patient_session_id  (patient_session_id)
+#  index_triage_on_user_id             (user_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (patient_session_id => patient_sessions.id)
+#  fk_rails_...  (user_id => users.id)
 #
 FactoryBot.define do
   factory :triage do

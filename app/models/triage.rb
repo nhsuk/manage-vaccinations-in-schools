@@ -8,19 +8,23 @@
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #  patient_session_id :bigint
+#  user_id            :bigint
 #
 # Indexes
 #
 #  index_triage_on_patient_session_id  (patient_session_id)
+#  index_triage_on_user_id             (user_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (patient_session_id => patient_sessions.id)
+#  fk_rails_...  (user_id => users.id)
 #
 class Triage < ApplicationRecord
   audited associated_with: :patient_session
 
   belongs_to :patient_session
+  belongs_to :user
   has_one :patient, through: :patient_session
   has_one :session, through: :patient_session
   has_one :campaign, through: :session
