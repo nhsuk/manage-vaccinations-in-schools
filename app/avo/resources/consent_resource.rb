@@ -29,9 +29,14 @@ class ConsentResource < Avo::BaseResource
   field :gp_response, as: :select, enum: ::Consent.gp_responses
   field :gp_name, as: :textarea
   field :route, as: :select, enum: ::Consent.routes
-  field :health_questions, as: :text
+  field :health_questions, as: :code, language: "javascript", only_on: :edit
+  field :health_questions, as: :code, language: "javascript" do |record|
+    if record.health_questions.present?
+      JSON.pretty_generate(record.health_questions.as_json)
+    end
+  end
   field :patient, as: :belongs_to
   field :campaign, as: :belongs_to
-  field :recorded_at, as: :datetime
+  field :recorded_at, as: :date_time
   # add fields here
 end
