@@ -366,7 +366,11 @@ class ExampleCampaignGenerator
           health_questions: patient_case[:health_questions]
         )
       ]
-      triage = { notes: patient_case[:triage_notes], status: "needs_follow_up" }
+      triage = {
+        notes: patient_case[:triage_notes],
+        status: "needs_follow_up",
+        user_email: user.email
+      }
       [patient, consents, triage]
     end
   end
@@ -384,6 +388,7 @@ class ExampleCampaignGenerator
         else
           "Checked with GP, not OK to proceed"
         end
+        c[:user_email] = user.email
       end
     end
   end
@@ -399,6 +404,7 @@ class ExampleCampaignGenerator
         else
           "Checked with GP, not OK to proceed"
         end
+        c[:user_email] = user.email
       end
     end
   end
@@ -427,7 +433,8 @@ class ExampleCampaignGenerator
       %i[ready_to_vaccinate do_not_vaccinate].sample(random:)
       triage = {
         status: patient_case[:triage_status],
-        notes: patient_case[:triage_notes]
+        notes: patient_case[:triage_notes],
+        user_email: user.email
       }
       [patient, consents, triage]
     end

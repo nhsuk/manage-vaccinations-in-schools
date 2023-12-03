@@ -219,7 +219,7 @@ of campaign can be controlled by the `type` setting. Use `rails -D
 # Generate a simple example campaign to stdout
 $ rails generate_example_campaign
 
-# Generate a flu campaign. Default is flu.
+# Generate an hpv campaign. Default is flu.
 $ rails generate_example_campaign type=hpv
 
 # Get more information about commang usage, including which patient states are

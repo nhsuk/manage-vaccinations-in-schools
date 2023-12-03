@@ -15,7 +15,7 @@ export const fixtures = {
   patientThatNeedsVaccination: "Brittany Klocko",
   secondPatientThatNeedsVaccination: "Luigi Ondricka",
 
-  schoolName: /Heath House Hospital School/,
+  schoolName: /Calshot Infant School/,
 
   vaccineBatch: "ZS7570",
 };

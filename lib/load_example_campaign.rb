@@ -115,8 +115,10 @@ module LoadExampleCampaign
       patient_session = PatientSession.find_or_create_by!(patient:, session:)
 
       if triage_attributes.present?
-        triage = Triage.find_or_initialize_by(patient_session:)
-        triage.update!(triage_attributes)
+        patient_session.triage.destroy_all if patient_session.triage.present?
+        user = User.find_by!(email: triage_attributes.delete(:user_email))
+        triage = patient_session.triage.new
+        triage.update!(triage_attributes.merge(user:))
       end
 
       next if consents_attributes.blank?
