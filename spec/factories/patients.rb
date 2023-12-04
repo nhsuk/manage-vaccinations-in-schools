@@ -55,6 +55,9 @@ FactoryBot.define do
     patient_sessions { [] }
     parent_name { "#{parent_first_name} #{last_name}" }
     parent_relationship { parent_sex == "male" ? "father" : "mother" }
+    parent_email do
+      "#{parent_name.downcase.gsub(" ", ".")}#{random.rand(100)}@gmail.com"
+    end
     parent_phone { Faker::PhoneNumber.phone_number }
     parent_info_source { "school" }
 

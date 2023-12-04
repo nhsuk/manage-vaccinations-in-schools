@@ -86,18 +86,50 @@ FactoryBot.define do
     trait :from_mum do
       parent_relationship { "mother" }
       parent_name do
-        "#{Faker::Name.female_first_name} #{Faker::Name.last_name}"
+        if patient.parent_relationship == "mother"
+          patient.parent_name
+        else
+          "#{Faker::Name.female_first_name} #{patient.last_name}"
+        end
       end
       parent_email do
-        "#{parent_name.downcase.gsub(" ", ".")}#{random.rand(100)}@gmail.com"
+        if patient.parent_relationship == "mother"
+          patient.parent_email
+        else
+          "#{parent_name.downcase.gsub(" ", ".")}#{random.rand(100)}@gmail.com"
+        end
+      end
+      parent_phone do
+        if patient.parent_relationship == "mother"
+          patient.parent_phone
+        else
+          Faker::PhoneNumber.cell_phone
+        end
       end
     end
 
     trait :from_dad do
       parent_relationship { "father" }
-      parent_name { "#{Faker::Name.male_first_name} #{Faker::Name.last_name}" }
+      parent_name do
+        if patient.parent_relationship == "father"
+          patient.parent_name
+        else
+          "#{Faker::Name.male_first_name} #{patient.last_name}"
+        end
+      end
       parent_email do
-        "#{parent_name.downcase.gsub(" ", ".")}#{random.rand(100)}@gmail.com"
+        if patient.parent_relationship == "father"
+          patient.parent_email
+        else
+          "#{parent_name.downcase.gsub(" ", ".")}#{random.rand(100)}@gmail.com"
+        end
+      end
+      parent_phone do
+        if patient.parent_relationship == "father"
+          patient.parent_phone
+        else
+          Faker::PhoneNumber.cell_phone
+        end
       end
     end
 
