@@ -3,19 +3,24 @@ export { signInTestUser } from "./sign_in";
 // These fixtures need to be updated whenever the test data is regenerated
 // from the seed data and the data changes in significant ways.
 export const fixtures = {
-  parentName: "Lauren Welch",
+  parentName: "Lauren Pfeffer", // Made up / arbitrary
   parentRole: "Mum",
 
-  patientThatNeedsConsent: "Farah Welch",
-  secondPatientThatNeedsConsent: "Wonda Schuster",
+  // Get from /sessions/1/triage, "Get consent" tab
+  patientThatNeedsConsent: "Davis Pfeffer",
+  secondPatientThatNeedsConsent: "Verlie Gorczany",
 
-  patientThatNeedsTriage: "Alma Pacocha",
-  secondPatientThatNeedsTriage: "Tessie Borer",
+  // Get from /sessions/1/triage, "Needs triage" tab
+  patientThatNeedsTriage: "Brittany Klocko",
+  secondPatientThatNeedsTriage: "Loris Effertz",
 
-  patientThatNeedsVaccination: "Brittany Klocko",
-  secondPatientThatNeedsVaccination: "Luigi Ondricka",
+  // Get from /sessions/1/vaccinations, "Action needed" tab
+  patientThatNeedsVaccination: "Fonda Krajcik",
+  secondPatientThatNeedsVaccination: "Sebastian Farrell",
 
-  schoolName: /Calshot Infant School/,
+  // Get from /sessions, signed in as Nurse Jackie
+  schoolName: /Roman Hill Primary School/,
 
-  vaccineBatch: "ZS7570",
+  // Get from /sessions/1/patients/Y/vaccinations/batch/edit
+  vaccineBatch: "QM4000",
 };
