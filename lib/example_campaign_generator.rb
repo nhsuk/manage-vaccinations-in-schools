@@ -76,7 +76,6 @@ class ExampleCampaignGenerator
 
     patients_data = generate_patients_data(patients_consent_triage)
     patients_data = add_consents_to_patients_data(patients_data)
-    patients_data = match_mum_and_dad_info_to_consent(patients_data)
 
     vaccine_name = I18n.t("vaccines.#{type}")
     {
@@ -154,11 +153,49 @@ class ExampleCampaignGenerator
   end
 
   def build_consent(*options, **attrs)
+    patient = attrs.fetch(:patient)
     options << @type
-    carer_options = %i[from_mum from_dad]
-    options << carer_options.sample(random:) unless carer_options.in? options
+    unless (%i[from_mum from_dad from_granddad] & options).any?
+      options << if patient.parent_relationship == "mother"
+        :from_mum
+      else
+        :from_dad
+      end
+    end
 
     FactoryBot.build(:consent, *options, random:, campaign: nil, **attrs)
+  end
+
+  def build_dual_consents(*options, **attrs)
+    options << @type
+
+    [
+      build_consent(:from_mum, *options, **attrs),
+      build_consent(:from_dad, *options, **attrs)
+    ].shuffle(random:)
+  end
+
+  def build_triple_consents(*options, **attrs)
+    options << @type
+
+    [
+      build_consent(:from_mum, *options, **attrs),
+      build_consent(:from_dad, *options, **attrs),
+      build_consent(:from_granddad, *options, **attrs)
+    ].shuffle(random:)
+  end
+
+  def build_consents(number, *options, **attrs)
+    case number
+    when 1
+      [build_consent(*options, **attrs)]
+    when 2
+      build_dual_consents(*options, **attrs)
+    when 3
+      build_triple_consents(*options, **attrs)
+    else
+      raise ArgumentError, "Invalid number of consents #{number}"
+    end
   end
 
   # consent given, no contraindications in health questions, ready to vaccinate
@@ -167,7 +204,7 @@ class ExampleCampaignGenerator
       options.fetch(:patients_with_consent_given_and_ready_to_vaccinate, 0)
     count.times.map do
       patient = build_patient
-      consents = [build_consent(:given, patient:)]
+      consents = build_consents(random_consents_number, :given, patient:)
       [patient, consents]
     end
   end
@@ -186,21 +223,19 @@ class ExampleCampaignGenerator
     count = options.fetch(:patients_with_consent_refused, 0)
     count.times.map do
       patient = build_patient
+      reason_for_refusal = %i[
+        already_vaccinated
+        will_be_vaccinated_elsewhere
+        medical
+        personal_choice
+      ].sample(random:)
       consents =
-        [1, 1, 1, 1, 1, 2, 2, 3].sample(random:)
-          .times
-          .map do
-            build_consent(
-              :refused,
-              reason_for_refusal: %i[
-                already_vaccinated
-                will_be_vaccinated_elsewhere
-                medical
-                personal_choice
-              ].sample(random:),
-              patient:
-            )
-          end
+        build_consents(
+          random_consents_number,
+          :refused,
+          reason_for_refusal:,
+          patient:
+        )
       [patient, consents]
     end
   end
@@ -284,13 +319,14 @@ class ExampleCampaignGenerator
 
     cases.map do |example_case|
       patient = build_patient
-      consents = [
-        build_consent(
+      consents =
+        build_consents(
+          1,
           :given,
           health_questions: example_case[:health_questions],
           patient:
         )
-      ]
+
       [patient, consents]
     end
   end
@@ -359,13 +395,13 @@ class ExampleCampaignGenerator
 
     cases.map do |patient_case|
       patient = build_patient
-      consents = [
-        build_consent(
+      consents =
+        build_consents(
+          1,
           :given,
           patient:,
           health_questions: patient_case[:health_questions]
         )
-      ]
       triage = {
         notes: patient_case[:triage_notes],
         status: "needs_follow_up",
@@ -423,13 +459,13 @@ class ExampleCampaignGenerator
 
     cases.map do |patient_case|
       patient = build_patient
-      consents = [
-        build_consent(
+      consents =
+        build_consents(
+          1,
           :given,
           patient:,
           health_questions: patient_case[:health_questions]
         )
-      ]
       %i[ready_to_vaccinate do_not_vaccinate].sample(random:)
       triage = {
         status: patient_case[:triage_status],
@@ -469,29 +505,13 @@ class ExampleCampaignGenerator
           reasonForRefusal: consent.reason_for_refusal,
           parentName: consent.parent_name,
           parentRelationship: consent.parent_relationship,
+          parentRelationshipOther: consent.parent_relationship_other,
           parentEmail: consent.parent_email,
           parentPhone: consent.parent_phone,
           healthQuestionResponses: consent.health_questions,
           route: consent.route
         }
       end
-    end
-  end
-
-  # match mum and dad info for patients with parental consent
-  def match_mum_and_dad_info_to_consent(patients_data)
-    patients_data.each do |patient|
-      consent = patient[:consents]&.first
-      unless consent.present? &&
-               consent[:parentRelationship].in?(%w[mother father]) &&
-               consent[:parentRelationship] == patient[:parentRelationship]
-        next
-      end
-
-      patient[:parentName] = consent[:parentName]
-      patient[:parentRelationship] = consent[:parentRelationship]
-      patient[:parentEmail] = consent[:parentEmail]
-      patient[:parentPhone] = consent[:parentPhone]
     end
   end
 
@@ -588,5 +608,9 @@ class ExampleCampaignGenerator
           }
         ].freeze
       end
+  end
+
+  def random_consents_number
+    [1, 1, 1, 1, 1, 2, 2, 3].sample(random:)
   end
 end
