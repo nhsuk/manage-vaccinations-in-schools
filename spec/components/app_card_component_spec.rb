@@ -12,4 +12,10 @@ RSpec.describe AppCardComponent, type: :component do
   it { should have_css(".nhsuk-card") }
   it { should have_css("h2.nhsuk-card__heading", text: "A Heading") }
   it { should have_css(".nhsuk-card__content", text: "A Body") }
+
+  context "no content is provided" do
+    let(:body) { nil }
+
+    it { should_not have_css(".nhsuk-card__content") }
+  end
 end
