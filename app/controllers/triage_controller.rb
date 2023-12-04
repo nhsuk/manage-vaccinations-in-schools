@@ -47,7 +47,7 @@ class TriageController < ApplicationController
 
   def create
     @triage = @patient_session.triage.new
-    @triage.assign_attributes triage_params
+    @triage.assign_attributes triage_params.merge(user: current_user)
     if @triage.save(context: :consent)
       @patient_session.do_triage!
       redirect_to triage_session_path(@session),
