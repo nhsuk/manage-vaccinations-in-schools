@@ -230,7 +230,11 @@ $ rails -D generate_example_campaign
 $ rails generate_example_campaign patients_that_still_need_triage=2 patients_with_no_consent=2
 
 # Generate the model office data set and write it to a given file
-$ rails generate_example_campaign[model-office.json] presets=model_office
+$ rails generate_example_campaign[db/sample_data/model-office.json] \
+  type=hpv \
+  seed=42 \
+  username="Nurse Chapel" \
+  presets=model_office
 
 # Generate example campaign data with a specific random seed for repeatability
 $ rails generate_example_campaign seed=42
