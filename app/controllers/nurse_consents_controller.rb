@@ -82,7 +82,9 @@ class NurseConsentsController < ApplicationController
       # TODO: Handle validation
       @draft_consent.save!
 
-      @draft_triage.assign_attributes consent_triage_params[:triage]
+      @draft_triage.assign_attributes consent_triage_params[:triage].merge(
+                                        user: current_user
+                                      )
       if @draft_triage.save(context: :edit_questions)
         redirect_to action: :edit_confirm
       else
