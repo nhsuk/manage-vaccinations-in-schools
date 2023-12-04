@@ -1,6 +1,6 @@
 class AppPatientTableComponent < ViewComponent::Base
   def call
-    govuk_table do |table|
+    govuk_table(classes: "app-table--patients") do |table|
       table.with_head do |head|
         head.with_row do |row|
           @columns.each { |column| row.with_cell(text: column_name(column)) }
