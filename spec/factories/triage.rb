@@ -25,5 +25,6 @@ FactoryBot.define do
     status { :ready_to_vaccinate }
     notes { nil }
     patient_session { create :patient_session }
+    user { create :user }
   end
 end
