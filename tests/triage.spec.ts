@@ -78,7 +78,7 @@ async function and_i_enter_a_note_and_select_ready_to_vaccinate() {
 }
 
 async function when_i_click_on_the_triage_complete_tab() {
-  await p.getByRole("tab", { name: "Triage complete" }).click();
+  await p.getByRole("tab", { name: "Triage completed" }).click();
 }
 const and_i_click_on_the_triage_complete_tab =
   when_i_click_on_the_triage_complete_tab;

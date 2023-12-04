@@ -24,7 +24,7 @@ test("Consent - No response", async ({ page }) => {
   await when_i_submit_a_consent_with_a_response();
   await then_i_see_the_triage_list();
 
-  await when_i_click_the_triage_complete_tab();
+  await when_i_click_the_triage_completed_tab();
   await then_the_patient_is_triaged();
 });
 
@@ -47,8 +47,8 @@ async function when_i_click_get_consent() {
 }
 const and_i_click_get_consent = when_i_click_get_consent;
 
-async function when_i_click_the_triage_complete_tab() {
-  await p.getByRole("tab", { name: "Triage complete" }).click();
+async function when_i_click_the_triage_completed_tab() {
+  await p.getByRole("tab", { name: "Triage completed" }).click();
 }
 
 async function when_i_submit_a_consent_with_no_response() {
