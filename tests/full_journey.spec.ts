@@ -10,7 +10,7 @@ test("Full journey - consent obtained before session", async ({ page }) => {
 
   await given_i_am_doing_triage();
   await when_i_select_a_child_with_no_consent();
-  await then_i_see_the_parents_contact_info();
+  await then_i_see_there_is_no_response();
 
   await given_i_call_the_parent_and_receive_consent();
   await when_i_record_the_consent_given();
@@ -39,11 +39,12 @@ async function when_i_select_a_child_with_no_consent() {
   await p.getByRole("link", { name: fixtures.patientThatNeedsConsent }).click();
 }
 
-async function then_i_see_the_parents_contact_info() {
+async function then_i_see_there_is_no_response() {
   await expect(
-    p.getByRole("heading", { name: fixtures.patientThatNeedsConsent }),
-  ).toBeVisible();
-  await expect(p.getByText(fixtures.parentName)).toBeVisible();
+    p.locator(".nhsuk-card", {
+      has: p.getByRole("heading", { name: "Consent" }),
+    }),
+  ).toContainText("No response yet");
 }
 
 async function given_i_call_the_parent_and_receive_consent() {}

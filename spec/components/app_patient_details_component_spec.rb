@@ -30,46 +30,4 @@ RSpec.describe AppPatientDetailsComponent, type: :component do
       text: patient.nhs_number
     )
   end
-
-  describe "rendered parent info" do
-    it "should include the parent name" do
-      expect(page).to have_css(
-        '.nhsuk-summary-list__value[data-testid="parent-info"]',
-        text: patient.parent_name
-      )
-    end
-
-    it "should include the parent telephone number" do
-      expect(page).to have_css(
-        '.nhsuk-summary-list__value[data-testid="parent-info"]',
-        text: patient.parent_phone
-      )
-    end
-
-    it "should include the information source" do
-      expect(page).to have_css(
-        '.nhsuk-summary-list__value[data-testid="parent-info"]',
-        text: "(Details from #{patient.parent_info_source})"
-      )
-    end
-
-    context "when the parent relationship is 'other'" do
-      it "should include the parent relationship" do
-        expect(page).to have_css(
-          '.nhsuk-summary-list__value[data-testid="parent-info"]',
-          text: patient.parent_relationship_other
-        )
-      end
-    end
-
-    context "no parent info is provided" do
-      let(:patient) { FactoryBot.create(:patient, :no_parent_info) }
-
-      it "should not render the parent info" do
-        expect(page).not_to have_css(
-          '.nhsuk-summary-list__value[data-testid="parent-info"]'
-        )
-      end
-    end
-  end
 end
