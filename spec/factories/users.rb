@@ -24,9 +24,9 @@
 #
 FactoryBot.define do
   factory :user do
-    full_name { |n| "Test User #{n}" }
-    email { |n| "test-#{n}@localhost" }
-    teams { [Team.first || create(:team)] }
+    sequence(:full_name) { |n| "Test User #{n}" }
+    sequence(:email) { |n| "test-#{n}@localhost" }
+    sequence(:teams) { [Team.first || create(:team)] }
     password { "power overwhelming" }
   end
 end
