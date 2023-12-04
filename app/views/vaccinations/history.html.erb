@@ -1,6 +1,6 @@
 <%= link_to "Back", session_patient_vaccinations_path(@session, @patient) %>
 
-<%= h1 "Vaccination record" %>
+<%= h1 "Vaccination record", class: "govuk-heading-l" %>
 
 <% @history.each do |entry| %>
   <h3 class="nhsuk-heading-m">
