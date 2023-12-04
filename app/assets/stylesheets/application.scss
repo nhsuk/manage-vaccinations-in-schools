@@ -110,17 +110,13 @@ $color_app-pale-blue: #ccdff1;
   }
 
   &__navigation-list {
-    justify-content: flex-end;
-
-    .button_to,
-    .app-header__button-link {
-      height: 100%;
+    .nhsuk-header__navigation-item:first-of-type {
+      margin-right: auto;
     }
   }
 
   &__button-link {
     @extend .nhsuk-header__navigation-link;
-    @include nhsuk-font(16);
     border: none;
     border-bottom: nhsuk-spacing(1) solid transparent;
     border-top: nhsuk-spacing(1) solid transparent;
