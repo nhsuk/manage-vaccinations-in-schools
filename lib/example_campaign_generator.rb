@@ -6,6 +6,7 @@ class ExampleCampaignGenerator
       patients_with_no_consent_response
       patients_with_consent_given_and_ready_to_vaccinate
       patients_with_consent_refused
+      patients_with_conflicting_consent
       patients_that_still_need_triage
       patients_that_have_already_been_triaged
       patients_with_triage_started
@@ -22,6 +23,7 @@ class ExampleCampaignGenerator
         patients_with_consent_given_and_ready_to_vaccinate: 2,
         patients_with_no_consent_response: 2,
         patients_with_consent_refused: 2,
+        patients_with_conflicting_consent: 2,
         patients_that_still_need_triage: 2,
         patients_that_have_already_been_triaged: 2,
         patients_with_triage_started: 2
@@ -31,6 +33,7 @@ class ExampleCampaignGenerator
         patients_with_consent_given_and_ready_to_vaccinate: 24,
         patients_with_no_consent_response: 16,
         patients_with_consent_refused: 15,
+        patients_with_conflicting_consent: 3,
         patients_that_still_need_triage: 14,
         patients_that_have_already_been_triaged: 14,
         patients_with_triage_started: 4
@@ -70,6 +73,7 @@ class ExampleCampaignGenerator
       build_patients_with_consent_given_and_ready_to_vaccinate
     patients_consent_triage += build_patients_with_no_consent_response
     patients_consent_triage += build_patients_with_consent_refused
+    patients_consent_triage += build_patients_with_conflicting_consent
     patients_consent_triage += build_patients_that_still_need_triage
     patients_consent_triage += build_patients_with_triage_started
     patients_consent_triage += build_patients_that_have_already_been_triaged
@@ -200,6 +204,24 @@ class ExampleCampaignGenerator
     end
   end
 
+  def build_conflicting_consents(*options, **attrs)
+    options << @type
+    reason_for_refusal = %i[
+      already_vaccinated
+      will_be_vaccinated_elsewhere
+      medical
+      personal_choice
+    ].sample(random:)
+    giver_options, refuser_options = (options * 2).zip(%i[from_dad from_mum]).shuffle(random:)
+    giver_options << :given
+    refuser_options << :refused
+
+    [
+      build_consent(*giver_options, **attrs),
+      build_consent(*refuser_options, **attrs.merge(reason_for_refusal:))
+    ].shuffle(random:)
+  end
+
   # consent given, no contraindications in health questions, ready to vaccinate
   def build_patients_with_consent_given_and_ready_to_vaccinate
     count =
@@ -236,6 +258,19 @@ class ExampleCampaignGenerator
           random_consents_number,
           :refused,
           reason_for_refusal:,
+          patient:
+        )
+      [patient, consents]
+    end
+  end
+
+  # conflicting consent
+  def build_patients_with_conflicting_consent
+    count = options.fetch(:patients_with_conflicting_consent, 0)
+    count.times.map do
+      patient = build_patient
+      consents =
+        build_conflicting_consents(
           patient:
         )
       [patient, consents]
