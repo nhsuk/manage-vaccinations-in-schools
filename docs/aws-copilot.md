@@ -80,8 +80,25 @@ copilot svc logs --since 1h --follow
 
 ## Setting up a new environment
 
+Before you start, if you want HTTPS, you need to set up certificates in ACM.
+
+The certificate needs to be verified by the DNS team by sending them the
+verification `cname`. On their end, they will verify the ownership, which in
+turn will update the status of the certificate to 'verified' in the ACM List of
+Certificates.
+
+Once the cert is approved, feed the ARN using the CLI:
+
 ```bash
-$ copilot env init
+$ copilot env init --import cert arn:aws.....
+```
+
+This will change the manifest file for the environment:
+
+```
+http:
+  public:
+    certificates: [arn:aws:acm:eu-west-2:393416225559:certificate/05611645-54eb-4bfe-bace-58d64f27c974]
 ```
 
 Give the environment a name and choose the default environment configuration.
@@ -105,6 +122,10 @@ environments:
       RAILS_ENV: staging
       RCVAPP__SUPPORT_USERNAME: manage
       RCVAPP__SUPPORT_PASSWORD: vaccinations
++    http:
++      alias:
++        - "pentest.manage-vaccinations-in-schools.nhs.uk"
++        - "pentest.give-or-refuse-consent-for-vaccinations.nhs.uk"
 +  pentest:
 +    variables:
 +      RAILS_ENV: staging
@@ -124,7 +145,7 @@ Skip the environments you're not setting up keys for by hitting return.
 Finally, deploy the app:
 
 ```bash
-$ copilot svc deploy --env throwaway
+$ copilot svc deploy --env pentest
 ```
 
 When you're done with the environment, you can tear it down with:

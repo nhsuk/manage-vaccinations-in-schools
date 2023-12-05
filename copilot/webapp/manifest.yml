@@ -48,6 +48,10 @@ secrets:
 
 environments:
   staging:
+    http:
+      alias:
+        - "staging.manage-vaccinations-in-schools.nhs.uk"
+        - "staging.give-or-refuse-consent-for-vaccinations.nhs.uk"
     deployments:
       rolling: recreate
     variables:
