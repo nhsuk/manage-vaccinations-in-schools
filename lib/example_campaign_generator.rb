@@ -101,9 +101,8 @@ class ExampleCampaignGenerator
   def team_data
     @team_data ||= {
       name: team.name,
-      users: users.map { |user|
-        { full_name: user.full_name, email: user.email }
-      }
+      users:
+        users.map { |user| { full_name: user.full_name, email: user.email } }
     }
   end
 
@@ -114,14 +113,18 @@ class ExampleCampaignGenerator
   def users
     if @users_json.nil?
       full_name = @username
-      email = "#{full_name.downcase.gsub(" ", ".").gsub(/[^a-z0-9.]/, "")}@example.com"
+      email =
+        "#{full_name.downcase.gsub(" ", ".").gsub(/[^a-z0-9.]/, "")}@example.com"
       @users_json = [{ full_name:, email: }].to_json
     end
 
-    @users ||= JSON.parse(@users_json).map do |user_hash|
-      user_hash.with_indifferent_access => { full_name:, email: }
-      FactoryBot.build(:user, teams: [team], full_name:, email:)
-    end
+    @users ||=
+      JSON
+        .parse(@users_json)
+        .map do |user_hash|
+          user_hash.with_indifferent_access => { full_name:, email: }
+          FactoryBot.build(:user, teams: [team], full_name:, email:)
+        end
   end
 
   def user
@@ -184,13 +187,17 @@ class ExampleCampaignGenerator
   end
 
   def build_dual_consents(*options, **attrs)
-    attrs[:reason_for_refusal] = reason_for_refusal if options.include?(:refused)
+    attrs[:reason_for_refusal] = reason_for_refusal if options.include?(
+      :refused
+    )
 
     mum_attrs = attrs.dup
     dad_attrs = attrs.dup
 
     # Randomise dad's reason in some cases where consent is refused
-    dad_attrs[:reason_for_refusal] = reason_for_refusal if options.include?(:refused) && random.rand(2).zero?
+    dad_attrs[:reason_for_refusal] = reason_for_refusal if options.include?(
+      :refused
+    ) && random.rand(2).zero?
 
     [
       build_consent(:from_mum, *options, **mum_attrs),
@@ -210,10 +217,8 @@ class ExampleCampaignGenerator
   end
 
   def build_conflicting_consents(*options, **attrs)
-    giver_options, refuser_options = [
-      options + [:from_dad],
-      options + [:from_mum]
-    ].shuffle(random:)
+    giver_options, refuser_options =
+      [options + [:from_dad], options + [:from_mum]].shuffle(random:)
     giver_options << :given
     refuser_options << :refused
 
