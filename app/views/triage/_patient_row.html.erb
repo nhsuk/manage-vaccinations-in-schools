@@ -7,10 +7,10 @@
   <td class="nhsuk-table__cell">
     <% if middle_column == :triage_reasons %>
       <ul class="nhsuk-list nhsuk-u-margin-bottom-2">
-        <%# HACK: Triage needs to be updated to work with multiple consents. %>
-        <% patient_session.consents.first
-            .reasons_triage_needed.map do |reason| %>
-          <li><%= reason %></li>
+        <% patient_session.consents.map do |consent| %>
+          <% consent.reasons_triage_needed.map do |reason| %>
+            <li><%= reason %></li>
+          <% end %>
         <% end %>
       </ul>
     <%
