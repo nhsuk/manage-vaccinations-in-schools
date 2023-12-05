@@ -40,7 +40,13 @@ task :generate_example_campaign,
   username = ENV["username"]
   users_json = ENV["users_json"]
 
-  generator = ExampleCampaignGenerator.new(seed:, username:, users_json:, **campaign_options)
+  generator =
+    ExampleCampaignGenerator.new(
+      seed:,
+      username:,
+      users_json:,
+      **campaign_options
+    )
   data = generator.generate
 
   IO.write(example_file, JSON.pretty_generate(data))
