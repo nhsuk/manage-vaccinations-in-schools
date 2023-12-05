@@ -12,10 +12,6 @@ test("Vaccination validations", async ({ page }) => {
   await when_i_continue_without_entering_anything();
   await then_the_vaccination_validation_errors_are_displayed();
 
-  await given_i_select_that_they_got_the_vaccine();
-  await when_i_continue_without_entering_anything();
-  await then_i_see_the_vaccination_site_validation_errors();
-
   await given_i_move_on_to_the_how_the_vaccine_was_given_page();
   await when_i_continue_without_entering_anything();
   await then_i_see_the_how_the_vaccine_was_given_validation_errors();
@@ -51,18 +47,8 @@ async function then_the_vaccination_validation_errors_are_displayed() {
   ).toBeVisible();
 }
 
-async function given_i_select_that_they_got_the_vaccine() {
-  await p.getByRole("radio", { name: "Yes" }).click();
-}
-
-async function then_i_see_the_vaccination_site_validation_errors() {
-  await expect(
-    p.getByRole("alert").getByText("Choose a delivery site"),
-  ).toBeVisible();
-}
-
 async function given_i_move_on_to_the_how_the_vaccine_was_given_page() {
-  await p.getByRole("radio", { name: "Other" }).click();
+  await p.getByRole("radio", { name: "Yes" }).click();
   await p.getByRole("button", { name: "Continue" }).click();
 }
 

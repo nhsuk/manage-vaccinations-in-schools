@@ -16,26 +16,12 @@ form_with(
     <%= f.govuk_radio_buttons_fieldset(:administered, legend: nil) do %>
       <%=
       f.govuk_radio_button(
-        :administered, true,
+        :administered,
+        true,
         label: { text: t("vaccinations.form.label.#{ session.type.downcase }") },
         link_errors: true
-      ) do
+      )
       %>
-        <%=
-        f.govuk_collection_radio_buttons(
-          :delivery_site,
-          vaccination_initial_delivery_sites,
-          :to_s,
-          :humanize,
-          inline: true,
-          legend: {
-            text: 'Where did they get it?',
-            hidden: true
-          },
-          bold_labels: false
-        )
-        %>
-      <% end %>
       <%=
       f.govuk_radio_button(
         :administered,
@@ -44,9 +30,6 @@ form_with(
       )
       %>
     <% end %>
-
-    <%= f.hidden_field :delivery_method, value: :intramuscular %>
-
     <%= f.submit "Continue", class: "nhsuk-button" %>
   </div>
 <% end %>

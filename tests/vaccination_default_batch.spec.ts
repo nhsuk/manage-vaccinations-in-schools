@@ -46,7 +46,9 @@ async function when_i_click_on_the_action_needed_tab() {
 
 async function and_i_record_a_vaccination() {
   await p.click("text=Yes, they got the HPV vaccine");
-  await p.click("text=Left arm");
+  await p.click("text=Continue");
+  await p.click("text=Intramuscular");
+  await p.click("text=Left arm (upper position)");
   await p.click("text=Continue");
 }
 

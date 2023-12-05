@@ -94,7 +94,10 @@ async function when_i_record_the_successful_vaccination() {
   await p.getByRole("link", { name: fixtures.patientThatNeedsConsent }).click();
 
   await p.getByRole("radio", { name: "Yes, they got the HPV vaccine" }).click();
-  await p.getByRole("radio", { name: "Left arm" }).click();
+  await p.getByRole("button", { name: "Continue" }).click();
+
+  await p.getByRole("radio", { name: "Intramuscular" }).click();
+  await p.getByRole("radio", { name: "Left arm (upper position)" }).click();
   await p.getByRole("button", { name: "Continue" }).click();
 
   await p.getByRole("radio", { name: fixtures.vaccineBatch }).click();

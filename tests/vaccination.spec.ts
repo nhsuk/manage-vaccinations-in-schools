@@ -18,6 +18,9 @@ test("Vaccination", async ({ page }) => {
 
   // Successful vaccination
   await when_i_record_a_vaccination();
+  await then_i_should_see_the_page_asking_how_it_was_given();
+
+  await when_i_select_how_and_where_it_was_given();
   await then_i_should_see_the_select_batch_page();
 
   await when_i_select_a_batch();
@@ -84,7 +87,18 @@ async function then_i_should_see_health_question_responses() {
 
 async function when_i_record_a_vaccination() {
   await p.click("text=Yes, they got the HPV vaccine");
-  await p.click("text=Left arm");
+  await p.click("text=Continue");
+}
+
+async function then_i_should_see_the_page_asking_how_it_was_given() {
+  await expect(p.locator("h1")).toContainText(
+    "Tell us how the vaccination was given",
+  );
+}
+
+async function when_i_select_how_and_where_it_was_given() {
+  await p.click("text=Intramuscular");
+  await p.click("text=Left arm (lower position)");
   await p.click("text=Continue");
 }
 

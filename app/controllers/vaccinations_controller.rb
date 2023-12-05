@@ -131,7 +131,8 @@ class VaccinationsController < ApplicationController
   def create
     if @draft_vaccination_record.update(create_params)
       if @draft_vaccination_record.administered?
-        if @draft_vaccination_record.delivery_site_other
+        if @draft_vaccination_record.delivery_site.blank? ||
+             @draft_vaccination_record.delivery_site_other
           redirect_to edit_session_patient_vaccinations_delivery_site_path(
                         @session,
                         @patient

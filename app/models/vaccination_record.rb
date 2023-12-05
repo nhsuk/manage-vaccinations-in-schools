@@ -57,33 +57,35 @@ class VaccinationRecord < ApplicationRecord
          absent_from_session
        ]
 
-  validates :administered, inclusion: [true, false]
+  validates :administered, on: :create, inclusion: [true, false]
   validates :batch_id, presence: true, on: :edit_batch, if: -> { administered }
   validates :delivery_site,
             presence: true,
+            on: :edit_delivery,
             inclusion: {
               in: delivery_sites.keys
             },
             if: -> { administered && !delivery_site_other }
   validates :delivery_method,
             presence: true,
+            on: :edit_delivery,
             inclusion: {
               in: delivery_methods.keys
             },
             if: -> { administered && delivery_site.present? }
   validates :delivery_site,
             presence: true,
+            on: :edit_delivery,
             inclusion: {
               in: delivery_sites.keys
             },
-            on: :edit_delivery,
             if: -> { administered }
   validates :delivery_method,
             presence: true,
+            on: :edit_delivery,
             inclusion: {
               in: delivery_methods.keys
             },
-            on: :edit_delivery,
             if: -> { administered }
   validates :reason,
             inclusion: {
