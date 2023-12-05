@@ -15,3 +15,11 @@
 <%= render AppCardComponent.new(heading: "Triage notes") do %>
   <%= render AppTriageNotesComponent.new(patient_session:) %>
 <% end %>
+
+
+<%=
+render AppVaccinateFormComponent.new(
+    patient_session:,
+    vaccination_record: @vaccination_record,
+)
+%>
