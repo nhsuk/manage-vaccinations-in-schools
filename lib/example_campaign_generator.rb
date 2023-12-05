@@ -434,7 +434,7 @@ class ExampleCampaignGenerator
       patient = build_patient
       consents =
         build_consents(
-          1,
+          [1, 2].sample(random:),
           :given,
           patient:,
           health_questions: patient_case[:health_questions]
