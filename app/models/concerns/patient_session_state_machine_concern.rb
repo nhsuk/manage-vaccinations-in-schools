@@ -101,7 +101,7 @@ module PatientSessionStateMachineConcern
     def consent_refused?
       return false if no_consent?
 
-      consents.any?(&:response_refused?)
+      consents.all?(&:response_refused?)
     end
 
     def consent_conflicts?
