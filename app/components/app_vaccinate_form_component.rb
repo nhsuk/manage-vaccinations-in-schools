@@ -7,6 +7,7 @@ class AppVaccinateFormComponent < ViewComponent::Base
     @vaccination_record = vaccination_record
   end
 
+  # rubocop:disable Naming/MemoizedInstanceVariableName
   def before_render
     @url ||=
       session_patient_vaccinations_path(
@@ -14,6 +15,7 @@ class AppVaccinateFormComponent < ViewComponent::Base
         patient_id: patient.id
       )
   end
+  # rubocop:enable Naming/MemoizedInstanceVariableName
 
   private
 
