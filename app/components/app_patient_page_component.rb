@@ -5,11 +5,12 @@ class AppPatientPageComponent < ViewComponent::Base
 
   attr_reader :patient_session, :consent
 
-  def initialize(patient_session:, consent:, route:)
+  def initialize(patient_session:, consent:, route:, vaccination_record: nil)
     super
 
     @patient_session = patient_session
     @consent = consent
+    @vaccination_record = vaccination_record || VaccinationRecord.new
     @route = route
   end
 
