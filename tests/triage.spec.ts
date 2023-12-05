@@ -66,7 +66,7 @@ async function and_i_enter_a_note_and_save_triage() {
 async function then_the_patient_should_still_be_in_triage() {
   await expect(
     p.getByRole("row", {
-      name: `${fixtures.patientThatNeedsTriage} Health questions need triage Triage started`,
+      name: `${fixtures.patientThatNeedsTriage} Check parental responsibility Triage started`,
     }),
   ).toBeVisible();
 }
@@ -86,7 +86,7 @@ const and_i_click_on_the_triage_complete_tab =
 async function then_the_patient_should_be_in_ready_to_vaccinate() {
   await expect(
     p.getByRole("row", {
-      name: `${fixtures.patientThatNeedsTriage} Health questions need triage Vaccinate`,
+      name: `${fixtures.patientThatNeedsTriage} Check parental responsibility Vaccinate`,
     }),
   ).toBeVisible();
 }
