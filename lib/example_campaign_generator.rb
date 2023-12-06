@@ -183,22 +183,12 @@ class ExampleCampaignGenerator
     ].shuffle(random:)
   end
 
-  def build_triple_consents(*options, **attrs)
-    [
-      build_consent(:from_mum, *options, **attrs),
-      build_consent(:from_dad, *options, **attrs),
-      build_consent(:from_granddad, *options, **attrs)
-    ].shuffle(random:)
-  end
-
   def build_consents(number, *options, **attrs)
     case number
     when 1
       [build_consent(*options, **attrs)]
     when 2
       build_dual_consents(*options, **attrs)
-    when 3
-      build_triple_consents(*options, **attrs)
     else
       raise ArgumentError, "Invalid number of consents #{number}"
     end
@@ -648,6 +638,7 @@ class ExampleCampaignGenerator
   end
 
   def random_consents_number
-    [1, 1, 1, 1, 1, 2, 2, 3].sample(random:)
+    # 70% chance of 1 consent, 30% chance of 2 consents
+    [1, 1, 1, 1, 1, 1, 1, 2, 2, 2].sample(random:)
   end
 end
