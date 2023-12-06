@@ -5,7 +5,7 @@ RSpec.describe AppConsentComponent, type: :component do
 
   subject { page }
 
-  let(:component) { described_class.new(patient_session:, consent:, route:) }
+  let(:component) { described_class.new(patient_session:, route:) }
   let(:rendered_component) { render_inline(component) }
 
   let(:consent) { patient_session.consents.first }

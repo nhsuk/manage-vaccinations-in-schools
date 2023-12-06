@@ -1,11 +1,12 @@
 class AppConsentComponent < ViewComponent::Base
   attr_reader :patient_session, :consent
 
-  def initialize(patient_session:, consent:, route:)
+  def initialize(patient_session:, route:)
     super
 
     @patient_session = patient_session
-    @consent = consent
+    # HACK: This should use multiple consents
+    @consent = patient_session.consents.first
     @route = route
   end
 

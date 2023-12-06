@@ -7,9 +7,7 @@
 <% end %>
 
 <%= render AppCardComponent.new(heading: "Consent") do %>
-  <%= render AppConsentComponent.new(patient_session:,
-                                     consent:,
-                                     route: @route) %>
+  <%= render AppConsentComponent.new(patient_session:, route: @route) %>
 <% end %>
 
 <%= render AppCardComponent.new(heading: "Triage notes") do %>
