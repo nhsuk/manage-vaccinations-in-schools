@@ -154,3 +154,17 @@ When you're done with the environment, you can tear it down with:
 $ copilot svc delete --name pentest
 $ copilot env delete --name pentest
 ```
+
+## Loading example campaigns in a new environment
+
+Demonstration of how to prepare a new environment by loading the example campaigns. `bash` is started simply because the default shell is really barebones.
+
+```
+$ copilot svc exec --app manage-vaccinations-in-schools --env staging --name webapp
+Execute `/bin/sh` in container webapp in task 638cda17ed0b424fb45ccf7e051f1ed1.
+
+Starting session with SessionId: ecs-execute-command-08951764cb092ca09
+# bash
+root@ip-10-0-0-77:/rails# bin/rails load_campaign_example[db/sample_data/example-hpv-campaign.json]
+root@ip-10-0-0-77:/rails# bin/rails load_campaign_example[db/sample_data/example-flu-campaign.json] new_campaign=1
+```
