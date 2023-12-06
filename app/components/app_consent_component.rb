@@ -1,12 +1,10 @@
 class AppConsentComponent < ViewComponent::Base
-  attr_reader :patient_session, :consent
+  attr_reader :patient_session
 
   def initialize(patient_session:, route:)
     super
 
     @patient_session = patient_session
-    # HACK: This should use multiple consents
-    @consent = patient_session.consents.first
     @route = route
   end
 
@@ -14,7 +12,7 @@ class AppConsentComponent < ViewComponent::Base
   delegate :session, to: :patient_session
 
   def display_health_questions?
-    @consent&.response_given?
+    @patient_session.consents.any?(&:response_given?)
   end
 
   def open_health_questions?
@@ -22,7 +20,7 @@ class AppConsentComponent < ViewComponent::Base
   end
 
   def display_gillick_consent_button?
-    @consent.nil? && @patient_session.able_to_vaccinate?
+    @patient_session.consents.empty? && @patient_session.able_to_vaccinate?
   end
 
   def open_consents?

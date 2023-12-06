@@ -3,6 +3,7 @@ class AppPatientMedicalHistoryCardComponent < ViewComponent::Base
     super
 
     @patient = patient
+    # HACK: This needs to work with multiple consents
     @consent = consent
     @triage = triage
   end

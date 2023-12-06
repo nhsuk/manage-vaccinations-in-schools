@@ -5,23 +5,21 @@
     <%= render AppDetailsComponent.new(summary:, open: open_consents?) do %>
       <%= render AppConsentDetailsComponent.new(consents:) %>
 
-      <% if @consent.response_refused? %>
+      <% if consents.any?(&:response_refused?) %>
         <p><%= contact_parent_or_guardian_link %></p>
       <% end %>
     <% end %>
   <% end %>
 
-  <%=
-  if display_health_questions?
+  <%= if display_health_questions?
     render AppDetailsComponent.new(
       summary: "Responses to health questions",
       open: open_health_questions?,
       expander: true
     ) do
-      render AppHealthQuestionsComponent.new(consent: @consent)
+      render AppHealthQuestionsComponent.new(consents: @patient_session.consents)
     end
-  end
-  %>
+  end %>
 <% else %>
   <p class="app-status">
     No response yet

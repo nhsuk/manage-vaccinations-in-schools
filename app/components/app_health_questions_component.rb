@@ -1,8 +1,9 @@
 class AppHealthQuestionsComponent < ViewComponent::Base
-  def initialize(consent:)
+  def initialize(consents:)
     super
 
-    @consent = consent
+    # HACK: This needs to work with multiple consents
+    @consent = consents.first
   end
 
   def health_questions
