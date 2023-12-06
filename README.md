@@ -190,16 +190,14 @@ yarn playwright codegen http://localhost:4000
 ### Loading example data
 
 You can run a rake task to load data from the example campaign file
-`db/sample_data/example-campaign.json`.
+`db/sample_data/example-hpv-campaign.json`. The following commands can be used to prepare a test environment with the example data:
 
 ```bash
+# Load the default example campaign, currently HPV:
 $ rails load_campaign_example
 
-# Specify a file to load
-$ rails load_campaign_example[db/sample_data/model-office.json]
-
-# Specify that a new campaign should be created instead of using reusing existing
-$ rails load_campaign_example[db/sample_data/model-office.json] new_campaign=1
+# Load the Flu campaign as an additional campaign:
+$ rails load_campaign_example[db/sample_data/example-flu-campaign.json] new_campaign=1
 ```
 
 The importer will `find_or_create` the records by default, using specific attributes to match records:
