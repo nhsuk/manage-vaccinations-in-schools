@@ -77,6 +77,15 @@ FactoryBot.define do
       consents { [create(:consent, :refused, :from_mum, campaign:)] }
     end
 
+    trait :consent_conflicting do
+      consents do
+        [
+          create(:consent, :refused, :from_mum, campaign:),
+          create(:consent, :given, :from_dad, campaign:)
+        ]
+      end
+    end
+
     trait :no_parent_info do
       parent_name { nil }
       parent_relationship { nil }
