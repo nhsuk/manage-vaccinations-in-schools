@@ -21,4 +21,10 @@ RSpec.describe AppConsentStatusComponent, type: :component do
 
     it { should have_css("p.app-status", text: "Consent refused") }
   end
+
+  context "when consent conflicts" do
+    let(:patient_session) { create(:patient_session, :consent_conflicting) }
+
+    it { should have_css("p.app-status", text: "Conflicting consent") }
+  end
 end

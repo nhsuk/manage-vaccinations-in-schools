@@ -41,6 +41,11 @@ FactoryBot.define do
       patient { create :patient, :consent_refused, session: }
     end
 
+    trait :consent_conflicting do
+      state { "consent_refused" }
+      patient { create :patient, :consent_conflicting, session: }
+    end
+
     trait :triaged_ready_to_vaccinate do
       state { "triaged_ready_to_vaccinate" }
       patient { create :patient, :consent_given_triage_needed, session: }
