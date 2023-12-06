@@ -32,11 +32,11 @@ RSpec.describe AppHealthQuestionsComponent, type: :component do
 
   let(:patient) { FactoryBot.create(:patient) }
   let(:session) { FactoryBot.create(:session) }
-  let(:consent) do
-    create :consent, patient:, campaign: session.campaign, health_questions:
+  let(:consents) do
+    [create(:consent, patient:, campaign: session.campaign, health_questions:)]
   end
 
-  let(:component) { described_class.new(consent:) }
+  let(:component) { described_class.new(consents:) }
 
   # Copy pasted from the consents factory
   health_questions.each_with_index do |health_question, i|
