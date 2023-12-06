@@ -49,4 +49,8 @@ class PatientSession < ApplicationRecord
     !unable_to_vaccinate? && !unable_to_vaccinate_not_assessed? &&
       !unable_to_vaccinate_not_gillick_competent?
   end
+
+  def ready_to_vaccinate?
+    consent_given_triage_not_needed? || triaged_ready_to_vaccinate?
+  end
 end
