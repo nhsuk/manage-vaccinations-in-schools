@@ -8,10 +8,7 @@ RSpec.describe AppPatientPageComponent, type: :component do
       :session_in_progress
     )
   end
-  let(:consent) { FactoryBot.create(:consent, patient_session:) }
-  let(:component) do
-    described_class.new(patient_session:, consent:, route: "triage")
-  end
+  let(:component) { described_class.new(patient_session:, route: "triage") }
 
   describe "rendering" do
     before { render_inline(component) }
