@@ -38,33 +38,23 @@ module PatientSessionStateMachineConcern
       end
 
       event :do_triage do
-        transitions from: %i[
-                      consent_given_triage_needed
-                      consent_given_triage_not_needed
-                      triaged_do_not_vaccinate
-                      triaged_kept_in_triage
-                      triaged_ready_to_vaccinate
-                    ],
+        valid_states_needing_triage = %i[
+          consent_given_triage_needed
+          consent_given_triage_not_needed
+          triaged_do_not_vaccinate
+          triaged_kept_in_triage
+          triaged_ready_to_vaccinate
+        ]
+
+        transitions from: valid_states_needing_triage,
                     to: :triaged_ready_to_vaccinate,
                     if: :triage_ready_to_vaccinate?
 
-        transitions from: %i[
-                      consent_given_triage_needed
-                      consent_given_triage_not_needed
-                      triaged_do_not_vaccinate
-                      triaged_kept_in_triage
-                      triaged_ready_to_vaccinate
-                    ],
+        transitions from: valid_states_needing_triage,
                     to: :triaged_do_not_vaccinate,
                     if: :triage_do_not_vaccinate?
 
-        transitions from: %i[
-                      consent_given_triage_needed
-                      consent_given_triage_not_needed
-                      triaged_do_not_vaccinate
-                      triaged_kept_in_triage
-                      triaged_ready_to_vaccinate
-                    ],
+        transitions from: valid_states_needing_triage,
                     to: :triaged_kept_in_triage,
                     if: :triage_keep_in_triage?
       end
@@ -74,19 +64,16 @@ module PatientSessionStateMachineConcern
                     to: :unable_to_vaccinate_not_assessed,
                     if: :no_consent?
 
-        transitions from: :consent_given_triage_not_needed,
+        valid_states_for_vaccine_administration = %i[
+          consent_given_triage_not_needed
+          triaged_ready_to_vaccinate
+        ]
+
+        transitions from: valid_states_for_vaccine_administration,
                     to: :vaccinated,
                     if: :vaccination_administered?
 
-        transitions from: :consent_given_triage_not_needed,
-                    to: :unable_to_vaccinate,
-                    if: :vaccination_not_administered?
-
-        transitions from: :triaged_ready_to_vaccinate,
-                    to: :vaccinated,
-                    if: :vaccination_administered?
-
-        transitions from: :triaged_ready_to_vaccinate,
+        transitions from: valid_states_for_vaccine_administration,
                     to: :unable_to_vaccinate,
                     if: :vaccination_not_administered?
       end
