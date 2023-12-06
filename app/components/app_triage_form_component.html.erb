@@ -1,0 +1,35 @@
+<%=
+form_with(
+    model: @triage,
+    url: @url,
+    class: "nhsuk-card",
+    builder: GOVUKDesignSystemFormBuilder::FormBuilder
+) do |f|
+%>
+  <div class="nhsuk-card__content">
+    <h2 class="nhsuk-card__heading nhsuk-heading-m">
+      Triage
+    </h2>
+    <% content_for(:before_content) { f.govuk_error_summary } %>
+
+    <%=
+    f.govuk_text_area(
+        :notes,
+        label: { text: 'Triage notes (optional)' },
+        rows: 5
+    )
+    %>
+
+    <%=
+    f.govuk_collection_radio_buttons(
+        :status,
+        triage_status_options,
+        :first,
+        :second,
+        legend: nil,
+    )
+    %>
+
+    <%= f.submit "Save triage", class: "nhsuk-button" %>
+  </div>
+<% end %>
