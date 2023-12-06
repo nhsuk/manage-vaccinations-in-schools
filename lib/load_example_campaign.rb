@@ -1,8 +1,9 @@
 require "example_campaign_data"
 
 module LoadExampleCampaign
-  def self.load(example_file:, new_campaign: false)
+  def self.load(example_file:, new_campaign: false, in_progress: false)
     example = ExampleCampaignData.new(data_file: Rails.root.join(example_file))
+    example.in_progress! if in_progress
 
     ActiveRecord::Base.transaction do
       campaign =
@@ -27,6 +28,10 @@ module LoadExampleCampaign
       create_vaccine_health_questions(example, campaign:)
       create_children(example, campaign:, session:)
     end
+  end
+
+  def self.make_in_progress!(example)
+    example["date"] = Time.zone.today
   end
 
   def self.transition_states(patient_session)

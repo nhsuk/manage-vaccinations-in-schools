@@ -194,10 +194,10 @@ You can run a rake task to load data from the example campaign file
 
 ```bash
 # Load the default example campaign, currently HPV:
-$ rails load_campaign_example
+$ rails load_campaign_example in_progress=1
 
 # Load the Flu campaign as an additional campaign:
-$ rails load_campaign_example[db/sample_data/example-flu-campaign.json] new_campaign=1
+$ rails load_campaign_example[db/sample_data/example-flu-campaign.json] new_campaign=1 in_progress=1
 ```
 
 The importer will `find_or_create` the records by default, using specific attributes to match records:
