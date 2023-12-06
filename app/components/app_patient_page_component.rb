@@ -5,12 +5,13 @@ class AppPatientPageComponent < ViewComponent::Base
 
   attr_reader :patient_session
 
-  def initialize(patient_session:, route:, vaccination_record: nil)
+  def initialize(patient_session:, route:, triage: nil, vaccination_record: nil)
     super
 
     @patient_session = patient_session
-    @vaccination_record = vaccination_record || VaccinationRecord.new
     @route = route
+    @triage = triage || Triage.new
+    @vaccination_record = vaccination_record || VaccinationRecord.new
   end
 
   delegate :patient, to: :patient_session

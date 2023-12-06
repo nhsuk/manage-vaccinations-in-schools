@@ -9,10 +9,7 @@ class AppTriageFormComponent < ViewComponent::Base
 
   # rubocop:disable Naming/MemoizedInstanceVariableName
   def before_render
-    @url ||=
-      session_patient_triage_path(
-                    session, patient, @triage
-                 )
+    @url ||= session_patient_triage_path(session, patient, @triage)
   end
   # rubocop:enable Naming/MemoizedInstanceVariableName
 

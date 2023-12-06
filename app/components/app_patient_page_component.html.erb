@@ -14,6 +14,12 @@
   <%= render AppTriageNotesComponent.new(patient_session:) %>
 <% end %>
 
+<%=
+render AppTriageFormComponent.new(
+    patient_session:,
+    triage: @triage
+)
+%>
 
 <%=
 render AppVaccinateFormComponent.new(

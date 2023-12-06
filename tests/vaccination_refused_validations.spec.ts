@@ -28,7 +28,7 @@ async function given_i_am_on_the_reason_vaccination_not_given_page_for_a_child()
     .getByRole("link", { name: fixtures.patientThatNeedsVaccination })
     .click();
 
-  await p.getByRole("radio", { name: "No" }).click();
+  await p.getByRole("radio", { name: /^No/ }).click();
   await p.getByRole("button", { name: "Continue" }).click();
 }
 

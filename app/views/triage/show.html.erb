@@ -8,8 +8,5 @@
 <%= render AppPatientPageComponent.new(
       patient_session: @patient_session,
       route: "triage",
+      triage: @triage,
     ) %>
-
-<% if @consent&.response_given? %>
-  <%= render "patient_triage_card", session: @session, patient: @patient, triage: @triage %>
-<% end %>
