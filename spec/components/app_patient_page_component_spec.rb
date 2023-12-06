@@ -1,8 +1,13 @@
 require "rails_helper"
 
 RSpec.describe AppPatientPageComponent, type: :component do
-  let(:triage) { [FactoryBot.create(:triage, notes: "Patient notes")] }
-  let(:patient_session) { FactoryBot.create(:patient_session, triage:) }
+  let(:patient_session) do
+    FactoryBot.create(
+      :patient_session,
+      :triaged_ready_to_vaccinate,
+      :session_in_progress
+    )
+  end
   let(:consent) { FactoryBot.create(:consent, patient_session:) }
   let(:component) do
     described_class.new(patient_session:, consent:, route: "triage")

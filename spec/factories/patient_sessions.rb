@@ -44,7 +44,9 @@ FactoryBot.define do
     trait :triaged_ready_to_vaccinate do
       state { "triaged_ready_to_vaccinate" }
       patient { create :patient, :consent_given_triage_needed, session: }
-      triage { [create(:triage, status: :ready_to_vaccinate)] }
+      triage do
+        [create(:triage, status: :ready_to_vaccinate, notes: "Ok to vaccinate")]
+      end
     end
 
     trait :triaged_do_not_vaccinate do
@@ -84,6 +86,10 @@ FactoryBot.define do
       after :create do |patient_session|
         create :vaccination_record, administered: true, patient_session:
       end
+    end
+
+    trait :session_in_progress do
+      session { create :session, :in_progress }
     end
   end
 end
