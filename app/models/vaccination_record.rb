@@ -43,8 +43,6 @@ class VaccinationRecord < ApplicationRecord
          right_arm_lower_position
          left_thigh
          right_thigh
-         left_buttock
-         right_buttock
        ],
        prefix: true
   enum :reason,
