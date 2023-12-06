@@ -16,11 +16,13 @@ class DevController < ApplicationController
       end
 
       LoadExampleCampaign.load(
-        example_file: "db/sample_data/example-hpv-campaign.json"
+        example_file: "db/sample_data/example-hpv-campaign.json",
+        in_progress: true
       )
       LoadExampleCampaign.load(
         example_file: "db/sample_data/example-flu-campaign.json",
-        new_campaign: true
+        new_campaign: true,
+        in_progress: true
       )
     end
 

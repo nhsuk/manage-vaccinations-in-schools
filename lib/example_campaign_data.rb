@@ -7,6 +7,10 @@ class ExampleCampaignData
     @raw_data ||= JSON.parse(File.read(@data_file))
   end
 
+  def in_progress!
+    raw_data["date"] = Time.zone.today.to_s
+  end
+
   def vaccine_attributes
     raw_data["vaccines"].map do |vaccine|
       {
