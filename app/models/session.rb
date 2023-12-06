@@ -34,4 +34,8 @@ class Session < ApplicationRecord
     Rails.logger.warn "Deprecation warning: Session#title is deprecated. Use Session#name instead."
     name
   end
+
+  def in_progress?
+    date.to_date == Time.zone.today
+  end
 end

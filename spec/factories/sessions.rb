@@ -24,6 +24,18 @@ FactoryBot.define do
     date { Time.zone.today }
     name { "#{campaign.name} session at #{location.name}" }
 
+    trait :in_progress do
+      date { Time.zone.now }
+    end
+
+    trait :in_future do
+      date { Time.zone.now + 1.week }
+    end
+
+    trait :in_past do
+      date { Time.zone.now - 1.week }
+    end
+
     after :create do |session, context|
       create_list :patient, context.patients_in_session, sessions: [session]
     end
