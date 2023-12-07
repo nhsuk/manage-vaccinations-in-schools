@@ -1,0 +1,23 @@
+.nhsuk-notification-banner {
+  @extend .govuk-notification-banner;
+
+  &--success {
+    @extend .govuk-notification-banner--success;
+  }
+
+  &__header {
+    @extend .govuk-notification-banner__header;
+  }
+
+  &__title {
+    @extend .govuk-notification-banner__title;
+  }
+
+  &__content {
+    @extend .govuk-notification-banner__content;
+  }
+
+  &__heading {
+    @extend .govuk-notification-banner__heading;
+  }
+}

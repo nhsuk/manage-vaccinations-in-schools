@@ -27,6 +27,7 @@ $color_app-pale-blue: #ccdff1;
 @import "_action-tag.scss";
 @import "_banner.scss";
 @import "_empty-list.scss";
+@import "_notification-banner.scss";
 @import "_offline.scss";
 @import "_table.scss";
 @import "_summary-list.scss";
@@ -34,30 +35,6 @@ $color_app-pale-blue: #ccdff1;
 
 .nhsuk-visually-hidden {
   @extend .nhsuk-u-visually-hidden;
-}
-
-.nhsuk-notification-banner {
-  @extend .govuk-notification-banner;
-
-  &--success {
-    @extend .govuk-notification-banner--success;
-  }
-
-  &__header {
-    @extend .govuk-notification-banner__header;
-  }
-
-  &__title {
-    @extend .govuk-notification-banner__title;
-  }
-
-  &__content {
-    @extend .govuk-notification-banner__content;
-  }
-
-  &__heading {
-    @extend .govuk-notification-banner__heading;
-  }
 }
 
 .app-header {
