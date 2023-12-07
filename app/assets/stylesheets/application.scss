@@ -27,6 +27,7 @@ $color_app-pale-blue: #ccdff1;
 @import "_action-tag.scss";
 @import "_banner.scss";
 @import "_empty-list.scss";
+@import "_header.scss";
 @import "_notification-banner.scss";
 @import "_offline.scss";
 @import "_table.scss";
@@ -36,40 +37,6 @@ $color_app-pale-blue: #ccdff1;
 
 .nhsuk-visually-hidden {
   @extend .nhsuk-u-visually-hidden;
-}
-
-.app-header {
-  &__container {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  }
-
-  &__service-name {
-    display: inline-block;
-    line-height: 1.25;
-    padding-left: nhsuk-spacing(2);
-    vertical-align: top;
-
-    @include mq($from: tablet, $until: large-desktop) {
-      max-width: 300px;
-    }
-  }
-
-  &__navigation-list {
-    .nhsuk-header__navigation-item:first-of-type {
-      margin-right: auto;
-    }
-  }
-
-  &__button-link {
-    @extend .nhsuk-header__navigation-link;
-    border: none;
-    border-bottom: nhsuk-spacing(1) solid transparent;
-    border-top: nhsuk-spacing(1) solid transparent;
-    background: none;
-    width: 100%;
-    text-align: left;
-    cursor: pointer;
-  }
 }
 
 .nhsuk-panel {
