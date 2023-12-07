@@ -145,5 +145,9 @@ module PatientSessionStateMachineConcern
     def not_gillick_competent?
       !gillick_competent?
     end
+
+    def next_step
+      :triage if consent_given_triage_needed? || triaged_kept_in_triage?
+    end
   end
 end
