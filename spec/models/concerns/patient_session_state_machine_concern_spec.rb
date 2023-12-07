@@ -150,6 +150,12 @@ RSpec.describe PatientSessionStateMachineConcern do
         expect(fsm).to be_unable_to_vaccinate
       end
     end
+
+    describe "#next_step" do
+      subject { fsm.next_step }
+
+      it { should eq(:vaccinate) }
+    end
   end
 
   context "in consent_given_triage_needed state" do
@@ -190,6 +196,12 @@ RSpec.describe PatientSessionStateMachineConcern do
         fsm.do_triage
         expect(fsm).to be_delay_vaccination
       end
+    end
+
+    describe "#next_step" do
+      subject { fsm.next_step }
+
+      it { should eq(:triage) }
     end
   end
 
@@ -273,6 +285,12 @@ RSpec.describe PatientSessionStateMachineConcern do
         expect(fsm).to be_delay_vaccination
       end
     end
+
+    describe "#next_step" do
+      subject { fsm.next_step }
+
+      it { should eq(:triage) }
+    end
   end
 
   context "in triaged_ready_to_vaccinate state" do
@@ -331,6 +349,12 @@ RSpec.describe PatientSessionStateMachineConcern do
         fsm.do_vaccination
         expect(fsm).to be_unable_to_vaccinate
       end
+    end
+
+    describe "#next_step" do
+      subject { fsm.next_step }
+
+      it { should eq(:vaccinate) }
     end
   end
 
