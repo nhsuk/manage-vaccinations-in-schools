@@ -24,16 +24,16 @@ $nhsuk-fonts-path: "/";
 
 $color_app-pale-blue: #ccdff1;
 
-@import "_action-tag.scss";
-@import "_banner.scss";
-@import "_empty-list.scss";
-@import "_header.scss";
-@import "_notification-banner.scss";
-@import "_offline.scss";
-@import "_table.scss";
-@import "_status.scss";
-@import "_summary-list.scss";
-@import "_utilities.scss";
+@import "action-tag";
+@import "banner";
+@import "empty-list";
+@import "header";
+@import "notification-banner";
+@import "offline";
+@import "table";
+@import "status";
+@import "summary-list";
+@import "utilities";
 
 .nhsuk-visually-hidden {
   @extend .nhsuk-u-visually-hidden;
