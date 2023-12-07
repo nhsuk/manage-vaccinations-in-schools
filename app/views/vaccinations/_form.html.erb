@@ -7,6 +7,7 @@
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_radio_buttons_fieldset(:administered,
+    caption: { text: @patient.full_name, size: 'l' },
     legend: { text: 'Did they get the vaccine?' }
       .merge(embedded ? { size: 'm' } : { size: 'l', tag: 'h1' })
   ) do %>

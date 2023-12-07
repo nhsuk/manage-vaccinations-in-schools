@@ -5,7 +5,14 @@
   ) %>
 <% end %>
 
-<%= h1 "Tell us how the vaccination was given", class: "nhsuk-heading-l" %>
+<% page_title = "Tell us how the vaccination was given" %>
+
+<%= h1 page_title:, class: "nhsuk-heading-l" do %>
+  <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
+    <%= @patient.full_name %>
+  </span>
+  <%= page_title %>
+<% end %>
 
 <%= form_with model: @draft_vaccination_record,
    url: session_patient_vaccinations_delivery_site_path(

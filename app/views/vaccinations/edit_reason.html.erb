@@ -15,6 +15,7 @@
               ),
               method: :put do |f| %>
     <%= f.govuk_radio_buttons_fieldset(:reason,
+      caption: { text: @patient.full_name, size: 'l' },
       legend: { size: 'l', tag: 'h1',
                 text: title }) do %>
 
