@@ -15,6 +15,7 @@ module PatientSessionStateMachineConcern
       state :unable_to_vaccinate
       state :unable_to_vaccinate_not_assessed
       state :unable_to_vaccinate_not_gillick_competent
+      state :delay_vaccination
       state :vaccinated
 
       event :do_consent do
@@ -57,6 +58,10 @@ module PatientSessionStateMachineConcern
         transitions from: valid_states_needing_triage,
                     to: :triaged_kept_in_triage,
                     if: :triage_keep_in_triage?
+
+        transitions from: valid_states_needing_triage,
+                    to: :delay_vaccination,
+                    if: :triage_delay_vaccination?
       end
 
       event :do_vaccination do
@@ -76,6 +81,10 @@ module PatientSessionStateMachineConcern
         transitions from: valid_states_for_vaccine_administration,
                     to: :unable_to_vaccinate,
                     if: :vaccination_not_administered?
+
+        transitions from: valid_states_for_vaccine_administration,
+                    to: :delay_vaccination,
+                    if: :vaccination_can_be_delayed?
       end
     end
 
@@ -121,6 +130,10 @@ module PatientSessionStateMachineConcern
       triage.last&.do_not_vaccinate?
     end
 
+    def triage_delay_vaccination?
+      triage.last&.delay_vaccination?
+    end
+
     def vaccination_administered?
       vaccination_record&.administered?
     end
@@ -135,6 +148,11 @@ module PatientSessionStateMachineConcern
 
     def next_step
       :triage if consent_given_triage_needed? || triaged_kept_in_triage?
+    end
+
+    def vaccination_can_be_delayed?
+      vaccination_not_administered? &&
+        (not_well? || contraindication? || absent_from_session?)
     end
   end
 end
