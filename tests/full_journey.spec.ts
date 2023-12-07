@@ -69,7 +69,7 @@ async function and_i_record_the_triage_details() {
   await p.click(radio(2));
   await p.click(radio(3));
   await p.fill('[name="consent[triage][notes]"]', "Some notes");
-  await p.getByRole("radio", { name: "Ready to vaccinate" }).click();
+  await p.getByRole("radio", { name: "Yes, it's safe to vaccinate" }).click();
   await p.getByRole("button", { name: "Continue" }).click();
 
   await p.getByRole("button", { name: "Confirm" }).click();

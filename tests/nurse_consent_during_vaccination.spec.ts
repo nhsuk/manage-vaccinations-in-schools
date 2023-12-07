@@ -75,7 +75,7 @@ async function when_i_go_through_the_consent_and_triage_forms() {
   await p.click(radio(3));
 
   // Triage
-  await p.click("text=Ready to vaccinate");
+  await p.click("text=Yes, it's safe to vaccinate");
   await p.click("text=Continue");
 
   // Check answers
