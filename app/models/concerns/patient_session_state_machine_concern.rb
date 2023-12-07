@@ -146,13 +146,18 @@ module PatientSessionStateMachineConcern
       !gillick_competent?
     end
 
-    def next_step
-      :triage if consent_given_triage_needed? || triaged_kept_in_triage?
-    end
-
     def vaccination_can_be_delayed?
       vaccination_not_administered? &&
         (not_well? || contraindication? || absent_from_session?)
+    end
+
+    def next_step
+      if consent_given_triage_needed? || triaged_kept_in_triage?
+        :triage
+      elsif consent_given_triage_not_needed? || triaged_ready_to_vaccinate? ||
+            delay_vaccination?
+        :vaccinate
+      end
     end
   end
 end

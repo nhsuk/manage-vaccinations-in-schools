@@ -18,7 +18,7 @@ class AppVaccinateFormComponent < ViewComponent::Base
   # rubocop:enable Naming/MemoizedInstanceVariableName
 
   def render?
-    @patient_session.ready_to_vaccinate? && session.in_progress?
+    @patient_session.next_step == :vaccinate && session.in_progress?
   end
 
   private

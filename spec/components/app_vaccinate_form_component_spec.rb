@@ -33,9 +33,7 @@ RSpec.describe AppVaccinateFormComponent, type: :component do
 
     context "patient is not ready for vaccination" do
       before do
-        allow(patient_session).to receive(:ready_to_vaccinate?).and_return(
-          false
-        )
+        allow(patient_session).to receive(:next_step).and_return(:triage)
       end
 
       context "session is in progress" do
@@ -53,7 +51,7 @@ RSpec.describe AppVaccinateFormComponent, type: :component do
 
     context "patient is ready for vaccination" do
       before do
-        allow(patient_session).to receive(:ready_to_vaccinate?).and_return(true)
+        allow(patient_session).to receive(:next_step).and_return(:vaccinate)
       end
 
       context "session is progress" do

@@ -11,8 +11,11 @@ test("Triage - delay vaccination", async ({ page }) => {
 
   await when_i_click_on_a_patient();
   await and_i_enter_a_note_and_delay_vaccination();
+  // Tab not setup yet, we rely on the banner for now.
+  // await then_the_patient_should_on_the_vaccinate_later_tab();
   await when_i_click_to_view_the_child_record();
   await then_they_should_have_the_status_banner_delay_vaccination();
+  await and_i_should_see_the_vaccinate_form();
 });
 
 async function given_the_app_is_setup() {
@@ -44,5 +47,11 @@ async function when_i_click_to_view_the_child_record() {
 async function then_they_should_have_the_status_banner_delay_vaccination() {
   await expect(
     p.locator(".nhsuk-heading-m", { hasText: /Delay vaccination/ }),
+  ).toBeVisible();
+}
+
+async function and_i_should_see_the_vaccinate_form() {
+  await expect(
+    p.locator("h2", { hasText: "Did they get the HPV vaccine?" }),
   ).toBeVisible();
 }
