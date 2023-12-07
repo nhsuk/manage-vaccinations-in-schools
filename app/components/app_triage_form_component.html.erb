@@ -8,7 +8,7 @@ form_with(
 %>
   <div class="nhsuk-card__content">
     <h2 class="nhsuk-card__heading nhsuk-heading-m">
-      Triage
+      Is it safe to vaccinate <%= patient.full_name %>?
     </h2>
     <% content_for(:before_content) { f.govuk_error_summary } %>
 
