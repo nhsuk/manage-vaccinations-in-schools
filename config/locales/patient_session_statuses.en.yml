@@ -1,7 +1,7 @@
 en:
   patient_session_statuses:
     added_to_session:
-      colour: yellow
+      colour: blue
       text: Get consent
       banner_title: No-one responded to our requests for consent
     consent_given_triage_needed:
@@ -22,7 +22,7 @@ en:
       banner_title: Do not vaccinate
       banner_explanation: A nurse decided that %{full_name} should not be vaccinated.
     triaged_kept_in_triage:
-      colour: aqua-green
+      colour: blue
       text: Triage started
       banner_title: Triage started
     triaged_ready_to_vaccinate:

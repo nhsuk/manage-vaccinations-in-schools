@@ -17,12 +17,6 @@
     color: shade($color_nhsuk-green, 40%);
   }
 
-  &--aqua-green {
-    background-color: tint($color_nhsuk-aqua-green, 80%);
-    border: 1px solid shade($color_nhsuk-aqua-green, 50%);
-    color: shade($color_nhsuk-aqua-green, 50%);
-  }
-
   &--purple {
     background-color: tint($color_nhsuk-purple, 80%);
     border: 1px solid shade($color_nhsuk-purple, 30%);

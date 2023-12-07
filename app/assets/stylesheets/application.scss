@@ -24,13 +24,13 @@ $nhsuk-fonts-path: "/";
 
 $color_app-pale-blue: #ccdff1;
 
-@import "action-tag";
 @import "banner";
 @import "empty-list";
 @import "header";
 @import "notification-banner";
 @import "offline";
 @import "table";
+@import "tag";
 @import "status";
 @import "summary-list";
 @import "utilities";

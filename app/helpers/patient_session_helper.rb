@@ -1,7 +1,7 @@
 module PatientSessionHelper
   STATUS_COLOURS_AND_TEXT = {
     added_to_session: {
-      colour: "yellow",
+      colour: "blue",
       text: "Get consent",
       banner_title: "No-one responded to our requests for consent"
     },
@@ -25,7 +25,7 @@ module PatientSessionHelper
       banner_title: "Do not vaccinate"
     },
     triaged_kept_in_triage: {
-      colour: "aqua-green",
+      colour: "blue",
       text: "Triage started",
       banner_title: "Triage started"
     },
@@ -34,7 +34,7 @@ module PatientSessionHelper
       text: "Vaccinate"
     },
     unable_to_vaccinate: {
-      colour: "orange",
+      colour: "red",
       text: "Unable to vaccinate",
       banner_title: "Could not vaccinate"
     },
