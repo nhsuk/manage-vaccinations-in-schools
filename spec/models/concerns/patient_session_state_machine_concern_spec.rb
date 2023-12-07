@@ -100,6 +100,7 @@ RSpec.describe PatientSessionStateMachineConcern do
       allow(triage).to receive(:ready_to_vaccinate?).and_return(false)
       allow(triage).to receive(:do_not_vaccinate?).and_return(false)
       allow(triage).to receive(:needs_follow_up?).and_return(false)
+      allow(triage).to receive(:delay_vaccination?).and_return(false)
     end
 
     describe "#do_triage" do
@@ -122,6 +123,13 @@ RSpec.describe PatientSessionStateMachineConcern do
 
         fsm.do_triage
         expect(fsm).to be_triaged_kept_in_triage
+      end
+
+      it "transitions to delay_vaccination when triage is delay_vaccination" do
+        allow(triage).to receive(:delay_vaccination?).and_return(true)
+
+        fsm.do_triage
+        expect(fsm).to be_delay_vaccination
       end
     end
 
@@ -151,6 +159,7 @@ RSpec.describe PatientSessionStateMachineConcern do
       allow(triage).to receive(:ready_to_vaccinate?).and_return(false)
       allow(triage).to receive(:do_not_vaccinate?).and_return(false)
       allow(triage).to receive(:needs_follow_up?).and_return(false)
+      allow(triage).to receive(:delay_vaccination?).and_return(false)
     end
 
     describe "#do_triage" do
@@ -174,6 +183,13 @@ RSpec.describe PatientSessionStateMachineConcern do
         fsm.do_triage
         expect(fsm).to be_triaged_kept_in_triage
       end
+
+      it "transitions to delay_vaccination when triage is delay_vaccination" do
+        allow(triage).to receive(:delay_vaccination?).and_return(true)
+
+        fsm.do_triage
+        expect(fsm).to be_delay_vaccination
+      end
     end
   end
 
@@ -184,6 +200,7 @@ RSpec.describe PatientSessionStateMachineConcern do
       allow(triage).to receive(:ready_to_vaccinate?).and_return(false)
       allow(triage).to receive(:do_not_vaccinate?).and_return(false)
       allow(triage).to receive(:needs_follow_up?).and_return(false)
+      allow(triage).to receive(:delay_vaccination?).and_return(false)
     end
 
     describe "#do_triage" do
@@ -207,6 +224,13 @@ RSpec.describe PatientSessionStateMachineConcern do
         fsm.do_triage
         expect(fsm).to be_triaged_kept_in_triage
       end
+
+      it "transitions to delay_vaccination when triage is delay_vaccination" do
+        allow(triage).to receive(:delay_vaccination?).and_return(true)
+
+        fsm.do_triage
+        expect(fsm).to be_delay_vaccination
+      end
     end
   end
 
@@ -217,6 +241,7 @@ RSpec.describe PatientSessionStateMachineConcern do
       allow(triage).to receive(:ready_to_vaccinate?).and_return(false)
       allow(triage).to receive(:do_not_vaccinate?).and_return(false)
       allow(triage).to receive(:needs_follow_up?).and_return(false)
+      allow(triage).to receive(:delay_vaccination?).and_return(false)
     end
 
     describe "#do_triage" do
@@ -240,6 +265,13 @@ RSpec.describe PatientSessionStateMachineConcern do
         fsm.do_triage
         expect(fsm).to be_triaged_kept_in_triage
       end
+
+      it "transitions to delay_vaccination when triage is delay_vaccination" do
+        allow(triage).to receive(:delay_vaccination?).and_return(true)
+
+        fsm.do_triage
+        expect(fsm).to be_delay_vaccination
+      end
     end
   end
 
@@ -250,6 +282,7 @@ RSpec.describe PatientSessionStateMachineConcern do
       allow(triage).to receive(:ready_to_vaccinate?).and_return(false)
       allow(triage).to receive(:do_not_vaccinate?).and_return(false)
       allow(triage).to receive(:needs_follow_up?).and_return(false)
+      allow(triage).to receive(:delay_vaccination?).and_return(false)
     end
 
     describe "#do_triage" do
@@ -272,6 +305,13 @@ RSpec.describe PatientSessionStateMachineConcern do
 
         fsm.do_triage
         expect(fsm).to be_triaged_kept_in_triage
+      end
+
+      it "transitions to delay_vaccination when triage is delay_vaccination" do
+        allow(triage).to receive(:delay_vaccination?).and_return(true)
+
+        fsm.do_triage
+        expect(fsm).to be_delay_vaccination
       end
     end
 

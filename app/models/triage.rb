@@ -29,7 +29,8 @@ class Triage < ApplicationRecord
   has_one :session, through: :patient_session
   has_one :campaign, through: :session
 
-  enum :status, %i[ready_to_vaccinate do_not_vaccinate needs_follow_up]
+  enum :status,
+       %i[ready_to_vaccinate do_not_vaccinate needs_follow_up delay_vaccination]
 
   validates :status,
             presence: true,
