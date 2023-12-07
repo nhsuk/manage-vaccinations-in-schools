@@ -12,6 +12,8 @@
   method: :put do |f| %>
   <%= f.govuk_error_summary %>
   <%= f.govuk_radio_buttons_fieldset(:reason_for_refusal,
+    caption: { size: 'l',
+               text: @patient.full_name },
     legend: { size: 'l',
               tag: 'h1',
               text: 'Why do they not agree?' }) do %>

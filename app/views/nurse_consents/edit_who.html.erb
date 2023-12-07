@@ -5,7 +5,14 @@
   ) %>
 <% end %>
 
-<%= h1 "Who are you trying to get consent from?", class: "nhsuk-heading-l" %>
+<% page_title = "Who are you trying to get consent from?" %>
+
+<%= h1 page_title:, class: "nhsuk-heading-l" do %>
+  <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
+    <%= @patient.full_name %>
+  </span>
+  <%= page_title %>
+<% end %>
 
 <%= form_for @draft_consent,
   url: session_patient_nurse_consents_path(@session, @patient),

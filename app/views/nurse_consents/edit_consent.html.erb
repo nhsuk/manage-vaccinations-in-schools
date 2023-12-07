@@ -15,6 +15,8 @@
   method: :put do |f| %>
   <%= f.govuk_error_summary %>
   <%= f.govuk_radio_buttons_fieldset(:consent,
+    caption: { size: 'l',
+               text: @patient.full_name },
     legend: { size: 'l',
               tag: 'h1',
               text: title }) do %>
