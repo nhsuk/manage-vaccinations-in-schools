@@ -28,8 +28,11 @@ class AppTriageFormComponent < ViewComponent::Base
   end
 
   def triage_status_options
-    Triage.statuses.keys.map do |status|
-      [status, Triage.human_enum_name(:status, status)]
-    end
+    %i[
+      ready_to_vaccinate
+      do_not_vaccinate
+      delay_vaccination
+      needs_follow_up
+    ].map { |status| [status, Triage.human_enum_name(:status, status)] }
   end
 end

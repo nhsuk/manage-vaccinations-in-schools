@@ -16,6 +16,10 @@ en:
       colour: orange
       text: Check refusal
       banner_title: Their %{who_responded} has refused to give consent
+    delay_vaccination:
+      colour: red
+      text: Delay vaccination
+      banner_title: Delay vaccination to a later date
     triaged_do_not_vaccinate:
       colour: red
       text: Do not vaccinate
