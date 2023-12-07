@@ -71,7 +71,7 @@ async function then_the_patient_should_still_be_in_triage() {
 
 async function and_i_enter_a_note_and_select_ready_to_vaccinate() {
   await p.getByLabel("Triage notes").fill("Reached mother, able to proceed");
-  await p.getByRole("radio", { name: "Ready to vaccinate" }).click();
+  await p.getByRole("radio", { name: "Yes, it's safe to vaccinate" }).click();
   await p.getByRole("button", { name: "Save triage" }).click();
 }
 
