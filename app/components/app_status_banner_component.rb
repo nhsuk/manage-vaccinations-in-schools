@@ -1,4 +1,11 @@
 class AppStatusBannerComponent < ViewComponent::Base
+  erb_template <<-ERB
+    <%= render AppCardComponent.new(heading: title, feature: true, colour:) do
+      tag.p do
+        explanation
+      end
+    end %>
+  ERB
   def initialize(patient_session:)
     super
 

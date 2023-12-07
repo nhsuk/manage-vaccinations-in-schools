@@ -1,0 +1,26 @@
+.nhsuk-card {
+  &--green {
+    .nhsuk-card__heading--feature {
+      background-color: $color_nhsuk-green;
+    }
+  }
+
+  &--orange {
+    .nhsuk-card__heading--feature {
+      background-color: $color_nhsuk-warm-yellow;
+      color: $nhsuk-focus-text-color;
+    }
+  }
+
+  &--purple {
+    .nhsuk-card__heading--feature {
+      background-color: $color_nhsuk-purple;
+    }
+  }
+
+  &--red {
+    .nhsuk-card__heading--feature {
+      background-color: $color_nhsuk-red;
+    }
+  }
+}

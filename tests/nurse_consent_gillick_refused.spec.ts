@@ -40,7 +40,7 @@ async function when_i_select_a_child_with_no_consent_response() {
 }
 
 async function then_i_see_the_no_consent_banner() {
-  await expect(p.locator(".app-consent-banner")).toContainText(
+  await expect(p.locator(".nhsuk-card--feature")).toContainText(
     "No-one responded to our requests for consent",
   );
 }
