@@ -1,12 +1,15 @@
+<% page_title = "Check consent responses" %>
+
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
     { text: 'Home', href: dashboard_path },
     { text: 'School sessions', href: sessions_path },
     { text: @session.name, href: session_path(@session) },
+    { text: page_title },
   ]) %>
 <% end %>
 
-<%= h1 "Check consent responses", class: "govuk-heading-l" %>
+<%= h1 page_title, page_title:, class: "govuk-heading-l" %>
 
 <% def consent_tab(slot, label, data, columns: %i[name dob])
   slot.with_tab(label: "#{label} (#{data.size})",

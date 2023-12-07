@@ -1,12 +1,15 @@
+<% page_title = @session.name %>
+
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
     { text: 'Home', href: dashboard_path },
     { text: 'School sessions', href: sessions_path },
+    { text: page_title }
   ]) %>
 <% end %>
 
-<%= h1 page_title: @session.name, class: "nhsuk-heading-l" do %>
-  <%= @session.name %>
+<%= h1 page_title:, class: "nhsuk-heading-l" do %>
+  <%= page_title %>
   <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
     <%= @session.date.to_fs(:long_ordinal_uk) %>
   </span>

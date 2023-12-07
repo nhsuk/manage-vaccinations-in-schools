@@ -1,3 +1,5 @@
+<% page_title = "Record vaccinations" %>
+
 <%= render(AppFlashMessageComponent.new(flash: flash)) %>
 
 <% content_for :before_main do %>
@@ -5,10 +7,11 @@
     { text: 'Home', href: dashboard_path },
     { text: 'School sessions', href: sessions_path },
     { text: @session.name, href: session_path(@session) },
+    { text: page_title }
   ]) %>
 <% end %>
 
-<%= h1 "Record vaccinations", class: "govuk-heading-l" %>
+<%= h1 page_title, page_title:, class: "govuk-heading-l" %>
 
 <%=
 govuk_tabs title: "Vaccinations", classes: 'nhsuk-tabs' do |c|
