@@ -30,6 +30,7 @@ $color_app-pale-blue: #ccdff1;
 @import "_notification-banner.scss";
 @import "_offline.scss";
 @import "_table.scss";
+@import "_status.scss";
 @import "_summary-list.scss";
 @import "_utilities.scss";
 
@@ -85,23 +86,4 @@ $color_app-pale-blue: #ccdff1;
 
 .app-panel h1 {
   @include nhsuk-font(32, $weight: bold);
-}
-
-.app-status {
-  align-items: center;
-  display: inline-flex;
-  font-weight: bold;
-  gap: nhsuk-spacing(1);
-
-  .nhsuk-icon {
-    margin-left: nhsuk-spacing(1) * -1;
-  }
-
-  &--green {
-    color: $color_nhsuk-green;
-  }
-
-  &--red {
-    color: $color_nhsuk-red;
-  }
 }
