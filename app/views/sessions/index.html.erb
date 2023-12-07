@@ -1,12 +1,15 @@
+<% page_title = "School sessions" %>
+
 <%= render(AppFlashMessageComponent.new(flash: flash)) %>
 
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
     { text: 'Home', href: dashboard_path },
+    { text: page_title },
   ]) %>
 <% end %>
 
-<%= h1 "School sessions" %>
+<%= h1 page_title, page_title: %>
 
 <% @sessions_by_type.each do |campaign_type, sessions| %>
   <h2><%= campaign_type %></h2>

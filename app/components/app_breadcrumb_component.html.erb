@@ -4,15 +4,17 @@
   <div class="nhsuk-width-container">
     <ol class="nhsuk-breadcrumb__list">
       <% @items.each do |item| %>
-        <% if item[:href] %>
-          <li class="nhsuk-breadcrumb__item">
+        <li class="nhsuk-breadcrumb__item">
+          <% if item[:href] %>
             <a class="nhsuk-breadcrumb__link"
                href="<%= item[:href] %>"
                <%= item[:attributes]
                  .map { |name, value| "#{name}=\"#{value}\"" }
                  .join(' ') if item[:attributes] %>><%= item[:text] %></a>
-          </li>
-        <% end %>
+          <% else %>
+            <%= item[:text] %>
+          <% end %>
+        </li>
       <% end %>
     </ol>
     <p class="nhsuk-breadcrumb__back">
