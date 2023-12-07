@@ -15,7 +15,7 @@ RSpec.describe AppStatusBannerComponent, type: :component do
   context "state is added_to_session" do
     let(:patient_session) { create :patient_session, :added_to_session }
 
-    it { should have_css(".app-consent-banner--yellow") }
+    it { should have_css(".app-consent-banner--blue") }
   end
 
   context "state is consent_given_triage_not_needed" do
@@ -61,7 +61,7 @@ RSpec.describe AppStatusBannerComponent, type: :component do
   context "state is triaged_kept_in_triage" do
     let(:patient_session) { create :patient_session, :triaged_kept_in_triage }
 
-    it { should have_css(".app-consent-banner--aqua-green") }
+    it { should have_css(".app-consent-banner--blue") }
     it { should have_text("Triage started") }
   end
 

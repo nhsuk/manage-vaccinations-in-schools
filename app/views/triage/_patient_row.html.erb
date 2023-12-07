@@ -21,11 +21,10 @@
 
   </td>
   <td class="nhsuk-table__cell" data-testid="child-action">
-    <%=
-    render(AppActionTagComponent.new(
-      status: status_text_for_state(patient_session.state),
+    <%= govuk_tag(
+      classes: "nhsuk-u-font-size-16 nhsuk-u-width-full",
+      text: status_text_for_state(patient_session.state),
       colour: status_colour_for_state(patient_session.state)
-    ))
-    %>
+    ) %>
   </td>
 </tr>
