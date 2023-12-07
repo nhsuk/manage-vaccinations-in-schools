@@ -12,23 +12,19 @@ form_with(
     </h2>
     <% content_for(:before_content) { f.govuk_error_summary } %>
 
-    <%=
-    f.govuk_text_area(
-        :notes,
-        label: { text: 'Triage notes (optional)' },
-        rows: 5
-    )
-    %>
+    <%= f.govuk_collection_radio_buttons(
+      :status,
+      triage_status_options,
+      :first,
+      :second,
+      legend: nil,
+    ) %>
 
-    <%=
-    f.govuk_collection_radio_buttons(
-        :status,
-        triage_status_options,
-        :first,
-        :second,
-        legend: nil,
-    )
-    %>
+    <%= f.govuk_text_area(
+      :notes,
+      label: { text: 'Triage notes (optional)' },
+      rows: 5
+    ) %>
 
     <%= f.submit "Save triage", class: "nhsuk-button" %>
   </div>
