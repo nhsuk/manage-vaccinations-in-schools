@@ -1,0 +1,18 @@
+.app-status {
+  align-items: center;
+  display: inline-flex;
+  font-weight: bold;
+  gap: nhsuk-spacing(1);
+
+  .nhsuk-icon {
+    margin-left: nhsuk-spacing(1) * -1;
+  }
+
+  &--green {
+    color: $color_nhsuk-green;
+  }
+
+  &--red {
+    color: $color_nhsuk-red;
+  }
+}
