@@ -22,8 +22,7 @@ test("Triage", async ({ page }) => {
   await then_the_patient_should_be_in_ready_to_vaccinate();
 
   await when_i_click_on_a_patient();
-  await then_i_should_see_the_triage_details();
-  await and_i_should_see_triage_notes();
+  await then_i_should_see_triage_notes();
 
   // Triage - not ready to vaccinate
   await given_i_click_on_back();
@@ -37,8 +36,7 @@ test("Triage", async ({ page }) => {
   await then_i_should_see_the_other_patient();
 
   await when_i_click_on_the_other_patient();
-  await then_i_should_see_their_do_not_vaccinate_status();
-  await and_i_should_see_the_do_not_vaccinate_triage_notes();
+  await then_i_should_see_the_do_not_vaccinate_triage_notes();
 });
 
 async function given_the_app_is_setup() {
@@ -91,13 +89,7 @@ async function then_the_patient_should_be_in_ready_to_vaccinate() {
   ).toBeVisible();
 }
 
-async function then_i_should_see_the_triage_details() {
-  await expect(
-    p.getByRole("radio", { name: "Ready to vaccinate" }),
-  ).toBeChecked();
-}
-
-async function and_i_should_see_triage_notes() {
+async function then_i_should_see_triage_notes() {
   const today = new Date();
   // Partial test. We're going to avoid wrestling with DateTimeFormat to get
   // this 100% right, it's not useful for this test.
@@ -157,16 +149,7 @@ async function then_i_should_see_the_other_patient() {
   ).toBeVisible();
 }
 
-async function then_i_should_see_their_do_not_vaccinate_status() {
-  await expect(p.getByRole("textbox", { name: "Triage notes" })).toHaveValue(
-    "Father adament he does not want to vaccinate",
-  );
-  await expect(
-    p.getByRole("radio", { name: "Do not vaccinate" }),
-  ).toBeChecked();
-}
-
-async function and_i_should_see_the_do_not_vaccinate_triage_notes() {
+async function then_i_should_see_the_do_not_vaccinate_triage_notes() {
   const today = new Date();
   // Partial test. We're going to avoid wrestling with DateTimeFormat to get
   // this 100% right, it's not useful for this test.

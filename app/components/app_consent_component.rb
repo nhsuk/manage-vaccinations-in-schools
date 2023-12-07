@@ -18,7 +18,7 @@ class AppConsentComponent < ViewComponent::Base
   end
 
   def open_health_questions?
-    @patient_session.consent_given_triage_needed?
+    @patient_session.next_step == :triage
   end
 
   def display_gillick_consent_button?

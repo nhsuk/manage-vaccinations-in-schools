@@ -13,6 +13,10 @@ class AppTriageFormComponent < ViewComponent::Base
   end
   # rubocop:enable Naming/MemoizedInstanceVariableName
 
+  def render?
+    @patient_session.next_step == :triage
+  end
+
   private
 
   def patient
