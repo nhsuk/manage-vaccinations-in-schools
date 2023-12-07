@@ -29,21 +29,8 @@ $color_app-pale-blue: #ccdff1;
 @import "_empty-list.scss";
 @import "_offline.scss";
 @import "_table.scss";
+@import "_summary-list.scss";
 @import "_utilities.scss";
-
-.app-summary-list--no-bottom-border {
-  .govuk-summary-list__row:last-child {
-    border-bottom: none;
-  }
-
-  .nhsuk-summary-list__row:last-child {
-    .nhsuk-summary-list__key,
-    .nhsuk-summary-list__value,
-    .nhsuk-summary-list__actions {
-      border-bottom: none;
-    }
-  }
-}
 
 .nhsuk-visually-hidden {
   @extend .nhsuk-u-visually-hidden;
@@ -104,32 +91,6 @@ $color_app-pale-blue: #ccdff1;
     width: 100%;
     text-align: left;
     cursor: pointer;
-  }
-}
-
-.app-summary-list--full-width {
-  .nhsuk-summary-list__row {
-    border-bottom: 1px solid $nhsuk-border-color;
-    display: block;
-    margin-bottom: nhsuk-spacing(3);
-  }
-
-  .nhsuk-summary-list__row:last-of-type {
-    border: none;
-    margin-bottom: 0;
-  }
-
-  .nhsuk-summary-list__key,
-  .nhsuk-summary-list__value,
-  .nhsuk-summary-list__actions {
-    border: none;
-    display: block;
-    text-align: left;
-    width: 100%;
-  }
-
-  .nhsuk-summary-list__key {
-    margin-bottom: 0;
   }
 }
 
