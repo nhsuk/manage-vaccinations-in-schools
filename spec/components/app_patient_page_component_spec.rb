@@ -19,11 +19,13 @@ RSpec.describe AppPatientPageComponent, type: :component do
     end
     let(:triage) { FactoryBot.create(:triage, patient_session:) }
 
-    it { should have_css(".nhsuk-card", text: "Child details") }
-    it { should have_css(".nhsuk-card", text: "Consent") }
-    it { should have_css(".nhsuk-card", text: "Triage notes") }
-    it { should have_css(".nhsuk-card", text: "Triage") }
-    it do
+    it { should have_css(".nhsuk-card__heading", text: "Child details") }
+    it { should have_css(".nhsuk-card__heading", text: "Consent") }
+    it { should_not have_css(".nhsuk-card__heading", text: "Triage notes") }
+    it "shows the triage form" do
+      should have_css(".nhsuk-card__heading", text: "Is it safe to vaccinate")
+    end
+    it "does not show the vaccination form" do
       should_not have_css(".nhsuk-card", text: "Did they get the HPV vaccine?")
     end
   end
@@ -37,10 +39,20 @@ RSpec.describe AppPatientPageComponent, type: :component do
       )
     end
 
-    it { should have_css(".nhsuk-card", text: "Child details") }
-    it { should have_css(".nhsuk-card", text: "Consent") }
-    it { should have_css(".nhsuk-card", text: "Triage notes") }
-    it { should_not have_css(".nhsuk-card", text: /^Triage$/) }
-    it { should have_css(".nhsuk-card", text: "Did they get the HPV vaccine?") }
+    it { should have_css(".nhsuk-card__heading", text: "Child details") }
+    it { should have_css(".nhsuk-card__heading", text: "Consent") }
+    it { should have_css(".nhsuk-card__heading", text: "Triage notes") }
+    it "does not show the triage form" do
+      should_not have_css(
+                   ".nhsuk-card__heading",
+                   text: "Is it safe to vaccinate"
+                 )
+    end
+    it "shows the vaccination form" do
+      should have_css(
+               ".nhsuk-card__heading",
+               text: "Did they get the HPV vaccine?"
+             )
+    end
   end
 end
