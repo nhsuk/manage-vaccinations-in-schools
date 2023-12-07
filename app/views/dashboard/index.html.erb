@@ -1,6 +1,31 @@
 <%= h1 "#{@service_name} (MAVIS)" %>
 
 <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-1">
-  <%= link_to "School sessions", sessions_path, data: { testid: 'sessions' } %>
+  <%= link_to "School sessions", sessions_path, data: { testid: "sessions" } %>
 </h2>
-<p>Check consent requests, triage health questions and record vaccinations</p>
+<p class="nhsuk-u-margin-bottom-2">Use this area to:</p>
+<ul class="nhsuk-list nhsuk-list--bullet">
+  <li>create new school sessions</li>
+  <li>upload cohort lists</li>
+  <li>send emails to parents</li>
+  <li>check consent requests</li>
+  <li>triage answers to health questions</li>
+  <li>record vaccinations</li>
+</ul>
+
+<h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-1">
+  <%= link_to "Manage vaccines", "#" %>
+</h2>
+<p>Add or remove batches</p>
+
+<hr>
+
+<h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-1">
+  <%= link_to "Manage team", "#" %>
+</h2>
+<p>Add or remove team members and set permissions</p>
+
+<h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-1">
+  <%= link_to "Your account", "#" %>
+</h2>
+<p>Change your email address or password</p>
