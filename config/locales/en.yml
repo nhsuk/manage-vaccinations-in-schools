@@ -143,6 +143,7 @@ en:
           to_do: To do
           ready_to_vaccinate: "Yes, it's safe to vaccinate"
           do_not_vaccinate: "No, do not vaccinate"
+          delay_vaccination: "No, delay vaccination to a later date"
           needs_follow_up: "No, keep in triage"
       vaccination_record:
         delivery_methods:
