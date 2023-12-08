@@ -15,7 +15,7 @@
 
 <%=
 govuk_tabs title: "Patient triage", classes: 'nhsuk-tabs' do |c|
-  c.with_tab(label: "Needs triage (#{ @partitioned_patient_sessions[:needs_triage].size })", classes: 'nhsuk-tabs__panel') do
+  c.with_tab(label: "Triage needed (#{ @partitioned_patient_sessions[:needs_triage].size })", classes: 'nhsuk-tabs__panel') do
     render "patients_with_triage_reasons", patient_sessions: @partitioned_patient_sessions[:needs_triage]
   end
   c.with_tab(label: "Triage completed (#{ @partitioned_patient_sessions[:triage_complete].size })", classes: 'nhsuk-tabs__panel') do

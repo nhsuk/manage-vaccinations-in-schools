@@ -26,10 +26,10 @@ test("Triage", async ({ page }) => {
 
   // Triage - not ready to vaccinate
   await given_i_click_on_back();
-  await when_i_click_on_the_needs_triage_tab();
+  await when_i_click_on_the_triage_needed_tab();
   await and_i_click_on_another_patient();
   await and_i_enter_a_note_and_select_do_not_vaccinate();
-  await then_i_should_be_back_on_the_needs_triage_tab();
+  await then_i_should_be_back_on_the_triage_needed_tab();
   await and_i_should_not_see_the_other_patient();
 
   await when_i_click_on_the_triage_complete_tab();
@@ -124,8 +124,8 @@ async function given_i_click_on_back() {
   await p.click("text=Back");
 }
 
-async function when_i_click_on_the_needs_triage_tab() {
-  await p.getByRole("tab", { name: "Needs triage" }).click();
+async function when_i_click_on_the_triage_needed_tab() {
+  await p.getByRole("tab", { name: /Triage needed/ }).click();
 }
 
 async function when_i_click_on_the_other_patient() {
@@ -143,8 +143,8 @@ async function and_i_enter_a_note_and_select_do_not_vaccinate() {
   await p.getByRole("button", { name: "Save triage" }).click();
 }
 
-async function then_i_should_be_back_on_the_needs_triage_tab() {
-  await expect(p.getByRole("tab", { name: "Needs triage" })).toBeVisible();
+async function then_i_should_be_back_on_the_triage_needed_tab() {
+  await expect(p.getByRole("tab", { name: /Triage needed/ })).toBeVisible();
 }
 
 async function and_i_should_not_see_the_other_patient() {
