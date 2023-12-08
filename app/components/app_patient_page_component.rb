@@ -10,7 +10,7 @@ class AppPatientPageComponent < ViewComponent::Base
 
     @patient_session = patient_session
     @route = route
-    @triage = triage || Triage.new
+    @triage = triage
     @vaccination_record = vaccination_record || VaccinationRecord.new
   end
 

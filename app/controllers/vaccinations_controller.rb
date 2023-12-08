@@ -10,7 +10,7 @@ class VaccinationsController < ApplicationController
 
   before_action :set_vaccination_record, only: %i[show confirm record]
   before_action :set_consent, only: %i[create show confirm update]
-  before_action :set_triage, only: %i[show confirm]
+  before_action :set_triage, only: %i[confirm]
   before_action :set_draft_consent, only: %i[show]
   before_action :set_todays_batch_id, only: :create
 

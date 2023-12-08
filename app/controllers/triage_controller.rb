@@ -2,7 +2,6 @@ class TriageController < ApplicationController
   before_action :set_session, only: %i[index show create update]
   before_action :set_patient, only: %i[show create update]
   before_action :set_patient_session, only: %i[create update show]
-  before_action :set_triage, only: %i[show]
   before_action :set_consent, only: %i[show create update]
   before_action :set_vaccination_record, only: %i[show]
 
@@ -98,10 +97,6 @@ class TriageController < ApplicationController
 
   def set_patient
     @patient = @session.patients.find_by(id: params[:patient_id])
-  end
-
-  def set_triage
-    @triage = Triage.find_or_initialize_by(patient_session: @patient_session)
   end
 
   def set_consent
