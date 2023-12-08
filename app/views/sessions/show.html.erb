@@ -12,7 +12,7 @@
   <%= page_title %>
   <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
     <%= @session.date.to_fs(:long_ordinal_uk) %> ·
-    <%= pluralize(@session.patient_sessions.size, 'child') %> in chort
+    <%= pluralize(@patient_sessions.size, 'child') %> in cohort
   </span>
 <% end %>
 
@@ -25,9 +25,9 @@
             consents_session_path(@session) %>
         </h2>
         <p>
-          <%= pluralize(0, 'child') %> with consent given<br>
-          <%= pluralize(0, 'child') %> with consent refused<br>
-          <%= pluralize(0, 'child') %> without a response
+          <%= pluralize(@counts[:with_consent_given], 'child') %> with consent given<br>
+          <%= pluralize(@counts[:with_consent_refused], 'child') %> with consent refused<br>
+          <%= pluralize(@counts[:without_a_response], 'child') %> without a response
         </p>
 
         <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-1">
@@ -35,7 +35,7 @@
             triage_session_path(@session) %>
         </h2>
         <p>
-          <%= pluralize(0, 'child') %> needing triage
+          <%= pluralize(@counts[:needing_triage], 'child') %> needing triage
         </p>
 
         <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-1">
@@ -43,7 +43,7 @@
             vaccinations_session_path(@session) %>
         </h2>
         <p>
-          <%= pluralize(0, 'child') %> ready to vaccinate
+          <%= pluralize(@counts[:ready_to_vaccinate], 'child') %> ready to vaccinate
         </p>
       </div>
     </div>
