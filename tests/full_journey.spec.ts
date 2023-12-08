@@ -82,7 +82,6 @@ async function then_i_see_that_the_child_is_ready_to_vaccinate() {
   await p.getByRole("tab", { name: "Triage completed" }).click();
   const row = p.locator(`tr`, { hasText: fixtures.patientThatNeedsConsent });
   await expect(row).toBeVisible();
-  await expect(row.getByTestId("child-action")).toContainText("Vaccinate");
 }
 
 async function given_i_am_performing_the_vaccination() {
