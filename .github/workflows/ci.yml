@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  # Permissions to request and use OIDC tokens and access repository contents
+  deploy:
+    permissions:
+      id-token: write
+      contents: read
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::393416225559:role/GitHubActionsRole
+          aws-region: eu-west-2
+
+      - name: Install and Verify AWS Copilot
+        run: |
+          curl -Lo /tmp/copilot https://github.com/aws/copilot-cli/releases/latest/download/copilot-linux
+          chmod +x /tmp/copilot
+          mv /tmp/copilot /usr/local/bin/copilot
+          copilot --version
+
+      - name: Deploy the application using AWS Copilot
+        run: |
+          copilot svc deploy --name webapp --env staging

@@ -168,3 +168,73 @@ Starting session with SessionId: ecs-execute-command-08951764cb092ca09
 root@ip-10-0-0-77:/rails# bin/rails load_campaign_example[db/sample_data/example-hpv-campaign.json]
 root@ip-10-0-0-77:/rails# bin/rails load_campaign_example[db/sample_data/example-flu-campaign.json] new_campaign=1
 ```
+
+# GitHub Actions Custom IAM Role
+
+## Role Details
+
+```
+Role Name: GitHubActionsRole
+Role ARN: arn:aws:iam::393416225559:role/GitHubActionsRole
+```
+
+## Purpose
+
+The primary purpose of this role is to allow GitHub Actions workflows to securely interact with AWS services. This includes deploying applications, managing AWS resources, and executing various AWS operations required by our CI/CD pipeline.
+
+## Permissions
+
+The role includes the following permissions:
+
+- Amazon Elastic Container Service (ECS)
+- Amazon Elastic Container Registry (ECR)
+- Elastic Load Balancing (ELB)
+- Amazon Virtual Private Cloud (VPC)
+- AWS CloudFormation
+- Amazon Simple Storage Service (S3)
+- AWS Secrets Manager or AWS Systems Manager (Parameter Store)
+- Security Token Service (STS)
+
+## Trust Relationship
+
+The role is configured with a trust relationship to allow GitHub Actions to assume this role. The trust policy is as follows:
+
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::393416225559:oidc-provider/token.actions.githubusercontent.com"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringLike": {
+          "token.actions.githubusercontent.com:sub": "repo:nhsuk/manage-childrens-vaccinations:*"
+        }
+      }
+    }
+  ]
+}
+```
+
+## Usage in GitHub Actions
+
+The role is used in GitHub Actions workflows as follows:
+
+Configured in the workflow YAML file using aws-actions/configure-aws-credentials action.
+The role is assumed to provide temporary credentials for the workflow to interact with AWS services.
+
+```
+- name: Configure AWS Credentials
+  uses: aws-actions/configure-aws-credentials@v1
+  with:
+    role-to-assume: arn:aws:iam::393416225559:role/GitHubActionsRole
+    aws-region: eu-west-2
+```
+
+## Security and Best Practices
+
+The role follows the principle of least privilege, granting only the permissions necessary for the tasks performed by GitHub Actions.
+Regular audits and reviews are to be conducted to ensure the role's permissions align with current requirements.
