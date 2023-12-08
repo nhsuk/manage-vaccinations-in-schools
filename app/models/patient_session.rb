@@ -29,6 +29,10 @@ class PatientSession < ApplicationRecord
   has_one :campaign, through: :session
   has_many :triage
   has_many :vaccination_records
+  has_many :consents,
+           ->(patient) { Consent.submitted_for_campaign(patient.campaign) },
+           through: :patient,
+           class_name: "Consent"
 
   validates :gillick_competent,
             inclusion: {
@@ -36,10 +40,6 @@ class PatientSession < ApplicationRecord
             },
             on: :edit_gillick
   validates :gillick_competence_notes, presence: true, on: :edit_gillick
-
-  def consents
-    patient.consents.where(campaign:).where.not(recorded_at: nil)
-  end
 
   def vaccination_record
     vaccination_records.last
