@@ -6,8 +6,8 @@ class SessionsController < ApplicationController
   end
 
   def show
-    @patient_sessions = @session.patient_sessions
-      .includes(:campaign, patient: :consents)
+    @patient_sessions =
+      @session.patient_sessions.strict_loading.includes(:campaign, :consents)
 
     @counts = {
       with_consent_given: 0,
@@ -28,8 +28,7 @@ class SessionsController < ApplicationController
       end
 
       @counts[:ready_to_vaccinate] += 1 if s.triaged_ready_to_vaccinate? ||
-                                            s.added_to_session? ||
-                                            s.consent_given_triage_not_needed?
+        s.added_to_session? || s.consent_given_triage_not_needed?
     end
   end
 
