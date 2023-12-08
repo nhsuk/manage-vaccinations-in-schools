@@ -99,6 +99,16 @@ async function then_i_should_see_triage_notes() {
     year: "numeric",
   });
 
+  // Note 1
+  await expect(
+    p.locator("div.nhsuk-card", {
+      has: p.locator('h2:has-text("Triage notes")'),
+    }),
+  ).toHaveText(
+    new RegExp(`Unable to reach mother\\s*Nurse Joy, ${formattedDate}`),
+  );
+
+  // Note 2
   await expect(
     p.locator("div.nhsuk-card", {
       has: p.locator('h2:has-text("Triage notes")'),
