@@ -8,7 +8,7 @@ test("Full journey - consent obtained before session", async ({ page }) => {
   await given_the_app_is_setup();
   await and_i_am_signed_in();
 
-  await given_i_am_doing_triage();
+  await given_i_am_checking_consent();
   await when_i_select_a_child_with_no_consent();
   await then_i_see_there_is_no_response();
 
@@ -30,12 +30,12 @@ async function and_i_am_signed_in() {
   await signInTestUser(p);
 }
 
-async function given_i_am_doing_triage() {
-  await p.goto("/sessions/1/triage");
+async function given_i_am_checking_consent() {
+  await p.goto("/sessions/1/consents");
 }
 
 async function when_i_select_a_child_with_no_consent() {
-  await p.getByRole("tab", { name: "Get consent" }).click();
+  await p.getByRole("tab", { name: "No response" }).click();
   await p.getByRole("link", { name: fixtures.patientThatNeedsConsent }).click();
 }
 
