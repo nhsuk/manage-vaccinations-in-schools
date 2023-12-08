@@ -3,7 +3,13 @@ class AppTriageFormComponent < ViewComponent::Base
     super
 
     @patient_session = patient_session
-    @triage = triage
+    @triage =
+      triage ||
+        Triage.new.tap do |t|
+          if patient_session.triage.any?
+            t.status = patient_session.triage.order(:created_at).last.status
+          end
+        end
     @url = url
   end
 

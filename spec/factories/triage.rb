@@ -26,5 +26,9 @@ FactoryBot.define do
     notes { nil }
     patient_session { create :patient_session }
     user { create :user }
+
+    trait :kept_in_triage do
+      status { "needs_follow_up" }
+    end
   end
 end
