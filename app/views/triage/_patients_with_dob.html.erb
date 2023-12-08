@@ -6,12 +6,11 @@
           <tr class="nhsuk-table__row">
             <th class="nhsuk-table__header">Name</th>
             <th class="nhsuk-table__header">Date of birth</th>
-            <th class="nhsuk-table__header">Action</th>
           </tr>
         </thead>
         <tbody class="nhsuk-table__body">
           <% patient_sessions.each do |patient_session| %>
-            <%= render "patient_row", middle_column: :dob, patient_session: %>
+            <%= render "patient_row", patient_session: %>
           <% end %>
         </tbody>
       </table>

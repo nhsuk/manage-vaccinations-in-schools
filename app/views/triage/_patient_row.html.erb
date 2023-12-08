@@ -5,26 +5,6 @@
                 "data-testid": "child-link" %>
   </td>
   <td class="nhsuk-table__cell">
-    <% if middle_column == :triage_reasons %>
-      <ul class="nhsuk-list nhsuk-u-margin-bottom-2">
-        <% patient_session.consents.map do |consent| %>
-          <% consent.reasons_triage_needed.map do |reason| %>
-            <li><%= reason %></li>
-          <% end %>
-        <% end %>
-      </ul>
-    <%
-    else
-    %>
-      <%= patient_session.patient.dob.to_fs(:nhsuk_date_short_month) %>
-    <% end %>
-
-  </td>
-  <td class="nhsuk-table__cell" data-testid="child-action">
-    <%= govuk_tag(
-      classes: "nhsuk-u-font-size-16 nhsuk-u-width-full",
-      text: status_text_for_state(patient_session.state),
-      colour: status_colour_for_state(patient_session.state)
-    ) %>
+    <%= patient_session.patient.dob.to_fs(:nhsuk_date_short_month) %>
   </td>
 </tr>

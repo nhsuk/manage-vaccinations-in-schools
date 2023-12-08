@@ -81,5 +81,4 @@ async function then_i_see_that_the_child_needs_their_refusal_checked() {
   await p.getByRole("tab", { name: "No triage needed" }).click();
   const row = p.locator(`tr`, { hasText: fixtures.patientThatNeedsConsent });
   await expect(row).toBeVisible();
-  await expect(row.getByTestId("child-action")).toContainText("Check refusal");
 }

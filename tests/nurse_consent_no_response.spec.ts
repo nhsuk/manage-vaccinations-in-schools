@@ -112,8 +112,6 @@ async function then_the_consent_form_is_prepopulated() {
 
 async function then_the_patient_is_triaged() {
   await expect(
-    p.getByRole("row", {
-      name: `${fixtures.patientThatNeedsConsent} Vaccinate`,
-    }),
+    p.getByRole("row", { name: fixtures.patientThatNeedsConsent }),
   ).toBeVisible();
 }
