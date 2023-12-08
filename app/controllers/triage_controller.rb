@@ -28,7 +28,7 @@ class TriageController < ApplicationController
       ]
     }
 
-    @partitioned_patient_sessions =
+    @tabs =
       patient_sessions.group_by do |patient_session|
         tabs_to_states
           .find { |_, states| patient_session.state.in? states }
@@ -36,9 +36,7 @@ class TriageController < ApplicationController
       end
 
     # ensure all tabs are present
-    tabs_to_states.each do |tab, _states|
-      @partitioned_patient_sessions[tab] ||= []
-    end
+    tabs_to_states.each { |tab, _states| @tabs[tab] ||= [] }
   end
 
   def show
