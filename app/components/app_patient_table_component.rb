@@ -38,7 +38,7 @@ class AppPatientTableComponent < ViewComponent::Base
     when :name
       patient_link(patient_session)
     when :dob
-      patient_session.patient.dob.to_fs(:nhsuk_date)
+      patient_session.patient.dob.to_fs(:nhsuk_date_short_month)
     when :reason
       patient_session
         .consents
@@ -53,6 +53,12 @@ class AppPatientTableComponent < ViewComponent::Base
     if @route == :consent
       govuk_link_to patient_session.patient.full_name,
                     session_patient_consents_path(
+                      patient_session.session,
+                      patient_session.patient
+                    )
+    elsif @route == :triage
+      govuk_link_to patient_session.patient.full_name,
+                    session_patient_triage_path(
                       patient_session.session,
                       patient_session.patient
                     )
