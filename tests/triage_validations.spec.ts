@@ -24,7 +24,7 @@ async function and_i_am_signed_in() {
 
 async function given_i_am_on_the_triage_page_for_a_child() {
   await p.goto("/sessions/1/triage");
-  await p.getByRole("tab", { name: "Needs triage" }).click();
+  await p.getByRole("tab", { name: /Triage needed/ }).click();
   await p.getByRole("link", { name: fixtures.patientThatNeedsTriage }).click();
 }
 

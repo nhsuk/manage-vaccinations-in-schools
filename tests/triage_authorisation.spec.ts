@@ -36,7 +36,7 @@ async function and_i_go_to_the_triage_page() {
 
 async function then_i_should_only_see_my_patients() {
   await expect(
-    p.locator("#needs-triage-4 .nhsuk-table__body .nhsuk-table__row"),
+    p.locator("#triage-needed-4 .nhsuk-table__body .nhsuk-table__row"),
   ).toHaveCount(4);
 }
 
