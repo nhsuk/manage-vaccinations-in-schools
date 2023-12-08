@@ -33,6 +33,5 @@ end %>
 <%= govuk_tabs title: "Consents", classes: 'nhsuk-tabs' do |slot|
   consent_tab(slot, "Triage needed", @tabs[:needs_triage])
   consent_tab(slot, "Triage completed", @tabs[:triage_complete])
-  consent_tab(slot, "Get consent", @tabs[:get_consent])
   consent_tab(slot, "No triage needed", @tabs[:no_triage_needed])
 end %>
