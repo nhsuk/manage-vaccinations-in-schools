@@ -19,7 +19,6 @@ class TriageController < ApplicationController
     tabs_to_states = {
       needs_triage: %w[consent_given_triage_needed triaged_kept_in_triage],
       triage_complete: %w[triaged_ready_to_vaccinate triaged_do_not_vaccinate],
-      get_consent: %w[added_to_session],
       no_triage_needed: %w[
         consent_refused
         consent_given_triage_not_needed
