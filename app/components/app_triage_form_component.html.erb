@@ -1,11 +1,10 @@
-<%=
-form_with(
-    model: @triage,
-    url: @url,
-    class: "nhsuk-card",
-    builder: GOVUKDesignSystemFormBuilder::FormBuilder
-) do |f|
-%>
+<%= form_with(
+  model: @triage,
+  url: @url,
+  class: "nhsuk-card",
+  method: :post,
+  builder: GOVUKDesignSystemFormBuilder::FormBuilder
+) do |f| %>
   <div class="nhsuk-card__content">
     <h2 class="nhsuk-card__heading nhsuk-heading-m">
       Is it safe to vaccinate <%= patient.full_name %>?
