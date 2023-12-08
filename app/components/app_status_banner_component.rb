@@ -39,7 +39,9 @@ class AppStatusBannerComponent < ViewComponent::Base
         "patient_session_statuses.#{state}.banner_explanation",
         default: "",
         full_name:,
-        who_responded:
+        triage_nurse:,
+        who_responded:,
+        who_refused:
       )
     end
   end
@@ -63,8 +65,21 @@ class AppStatusBannerComponent < ViewComponent::Base
     consent&.who_responded&.downcase
   end
 
+  def who_refused
+    @patient_session
+      .consents
+      .response_refused
+      .map(&:who_responded)
+      .last
+      &.capitalize
+  end
+
   def full_name
     @patient_session.patient.full_name
+  end
+
+  def triage_nurse
+    @patient_session.triage.last&.user&.full_name
   end
 
   def state
