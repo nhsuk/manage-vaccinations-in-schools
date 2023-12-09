@@ -44,9 +44,8 @@ class AppConsentComponent < ViewComponent::Base
   def consents_grouped_by_parent
     @consents_grouped_by_parent ||=
       @patient_session.consents.group_by do |consent|
-        relationship = consent.human_enum_name(:parent_relationship).capitalize
         response = consent.human_enum_name(:response).capitalize
-        "#{response} by #{consent.parent_name} (#{relationship})"
+        "#{response} by #{consent.parent_name} (#{consent.who_responded})"
       end
   end
 end
