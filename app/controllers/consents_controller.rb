@@ -3,7 +3,6 @@ class ConsentsController < ApplicationController
   before_action :set_patient_sessions, only: %i[index]
   before_action :set_patient, only: %i[show]
   before_action :set_patient_session, only: %i[show]
-  before_action :set_consent, only: %i[show]
 
   layout "two_thirds", except: :index
 
@@ -36,11 +35,6 @@ class ConsentsController < ApplicationController
 
   def set_patient_session
     @patient_session = @patient.patient_sessions.find_by(session: @session)
-  end
-
-  def set_consent
-    # HACK
-    @consent = @patient_session.consents.first
   end
 
   def set_patient_sessions
