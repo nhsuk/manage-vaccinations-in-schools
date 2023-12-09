@@ -6,6 +6,6 @@
 ) do |notification_banner| %>
   <% notification_banner.with_heading(text: heading) if heading.present? %>
   <% if body.present? %>
-    <p class="nhsuk-body"><%= body.html_safe %></p>
+    <p><%= body.html_safe %></p>
   <% end %>
 <% end %>

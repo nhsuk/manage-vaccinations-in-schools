@@ -60,7 +60,7 @@ RSpec.describe AppFlashMessageComponent, type: :component do
       )
     end
 
-    it { should have_css("p", text: "You win!", class: "nhsuk-body") }
+    it { should have_css("p", text: "You win!") }
   end
 
   context "when a hash is provided" do
