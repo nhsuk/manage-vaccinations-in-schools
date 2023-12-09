@@ -22,10 +22,10 @@ application.register("govuk-details", GovukDetailsController);
 import GovukHeaderController from "./govuk_header_controller";
 application.register("govuk-header", GovukHeaderController);
 
-import GovukNotificationBannerController from "./govuk_notification_banner_controller";
+import NhsukNotificationBannerController from "./nhsuk_notification_banner_controller";
 application.register(
-  "govuk-notification-banner",
-  GovukNotificationBannerController,
+  "nhsuk-notification-banner",
+  NhsukNotificationBannerController,
 );
 
 import GovukSkipLinkController from "./govuk_skip_link_controller";
