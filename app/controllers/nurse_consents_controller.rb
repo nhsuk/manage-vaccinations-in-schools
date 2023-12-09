@@ -166,9 +166,12 @@ class NurseConsentsController < ApplicationController
         case params[:route]
         when "triage"
           triage_session_path(@session)
+        when "vaccinations"
+          vaccinations_session_path(@session)
         else
           consents_session_path(@session)
         end
+
       redirect_to redirect_path,
                   flash: {
                     success: {
