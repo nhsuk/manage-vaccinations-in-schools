@@ -36,6 +36,17 @@ class AppVaccinateFormComponent < ViewComponent::Base
   end
 
   def vaccination_initial_delivery_sites
-    %w[left_arm right_arm other]
+    sites = "activerecord.attributes.vaccination_record.delivery_sites"
+    [
+      OpenStruct.new(
+        value: "left_arm_upper_position",
+        label: t("#{sites}.left_arm_upper_position")
+      ),
+      OpenStruct.new(
+        value: "right_arm_upper_position",
+        label: t("#{sites}.right_arm_upper_position")
+      ),
+      OpenStruct.new(value: "other", label: "Other")
+    ]
   end
 end
