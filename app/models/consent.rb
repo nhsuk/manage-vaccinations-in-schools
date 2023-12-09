@@ -122,7 +122,7 @@ class Consent < ApplicationRecord
       parent_relationship_other
     else
       human_enum_name(:parent_relationship)
-    end
+    end.capitalize
   end
 
   def health_questions_require_follow_up?
