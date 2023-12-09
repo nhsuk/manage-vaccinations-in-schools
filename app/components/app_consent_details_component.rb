@@ -49,7 +49,7 @@ class AppConsentDetailsComponent < ViewComponent::Base
   end
 
   def who_responded
-    @consents.first.who_responded.capitalize
+    @consents.first.who_responded
   end
 
   def parent_phone_and_email
