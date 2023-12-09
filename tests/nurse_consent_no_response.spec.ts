@@ -14,7 +14,7 @@ test("Consent - No response", async ({ page }) => {
 
   // Consent - No response
   await when_i_submit_a_consent_with_no_response();
-  await then_i_see_the_triage_list();
+  await then_i_see_the_consent_responses_page();
 
   await when_i_select_a_child_with_no_consent_response();
   await and_i_click_get_consent();
@@ -22,9 +22,10 @@ test("Consent - No response", async ({ page }) => {
 
   // Consent - With response
   await when_i_submit_a_consent_with_a_response();
-  await then_i_see_the_triage_list();
+  await then_i_see_the_consent_responses_page();
+  await and_i_see_the_consent_has_been_saved();
 
-  await when_i_click_the_triage_completed_tab();
+  await when_i_go_to_the_triage_completed_tab();
   await then_the_patient_is_triaged();
 });
 
@@ -47,10 +48,6 @@ async function when_i_click_get_consent() {
 }
 const and_i_click_get_consent = when_i_click_get_consent;
 
-async function when_i_click_the_triage_completed_tab() {
-  await p.getByRole("tab", { name: "Triage completed" }).click();
-}
-
 async function when_i_submit_a_consent_with_no_response() {
   // Who
   await p.fill('[name="consent[parent_name]"]', fixtures.parentName);
@@ -64,6 +61,16 @@ async function when_i_submit_a_consent_with_no_response() {
 
   // Check answers
   await p.getByRole("button", { name: "Confirm" }).click();
+}
+
+async function then_i_see_the_consent_responses_page() {
+  await expect(p.locator("h1")).toContainText("Check consent responses");
+}
+
+async function and_i_see_the_consent_has_been_saved() {
+  await expect(p.locator(".nhsuk-notification-banner__content")).toContainText(
+    `Consent saved for ${fixtures.patientThatNeedsConsent}`,
+  );
 }
 
 async function when_i_submit_a_consent_with_a_response() {
@@ -90,10 +97,6 @@ async function when_i_submit_a_consent_with_a_response() {
   await p.getByRole("button", { name: "Confirm" }).click();
 }
 
-async function then_i_see_the_triage_list() {
-  await expect(p.locator("h1")).toContainText("Triage");
-}
-
 async function then_the_consent_form_is_empty() {
   await expect(p.locator('[name="consent[parent_name]"]')).toBeEmpty();
   await expect(p.locator('[name="consent[parent_phone]"]')).toBeEmpty();
@@ -108,6 +111,11 @@ async function then_the_consent_form_is_prepopulated() {
     "07700900000",
   );
   await expect(p.locator("text=Mum")).toBeChecked();
+}
+
+async function when_i_go_to_the_triage_completed_tab() {
+  await p.goto("/sessions/1/triage");
+  await p.getByRole("tab", { name: "Triage completed" }).click();
 }
 
 async function then_the_patient_is_triaged() {

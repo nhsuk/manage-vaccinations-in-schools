@@ -3,7 +3,7 @@ import { signInTestUser, fixtures } from "./shared";
 
 let p: Page;
 
-test("Consent", async ({ page }) => {
+test("Consent - refused", async ({ page }) => {
   p = page;
   await given_the_app_is_setup();
   await and_i_am_signed_in();
@@ -17,6 +17,7 @@ test("Consent", async ({ page }) => {
   await when_i_record_the_consent_refused();
   await and_i_record_the_reason_for_refusal();
   // TODO: This is a bug in the app, their status should be do not vaccinate.
+  await then_i_see_the_consent_responses_page();
   await then_i_see_that_the_child_needs_their_refusal_checked();
 });
 
@@ -71,10 +72,15 @@ async function and_i_record_the_reason_for_refusal() {
   await p.getByRole("button", { name: "Confirm" }).click();
 }
 
+async function then_i_see_the_consent_responses_page() {
+  await expect(p.locator("h1")).toContainText("Check consent responses");
+}
+
 async function then_i_see_that_the_child_needs_their_refusal_checked() {
   await expect(p.locator(".nhsuk-notification-banner__content")).toContainText(
     `Consent saved for ${fixtures.patientThatNeedsConsent}`,
   );
+  await p.goto("/sessions/1/triage");
   await p.getByRole("tab", { name: "No triage needed" }).click();
   const row = p.locator(`tr`, { hasText: fixtures.patientThatNeedsConsent });
   await expect(row).toBeVisible();
