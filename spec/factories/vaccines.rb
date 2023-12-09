@@ -15,16 +15,14 @@
 #
 FactoryBot.define do
   factory :vaccine do
+    transient { batch_count { 1 } }
+
     initialize_with { Vaccine.find_or_initialize_by(type:, brand:, method:) }
 
     hpv
 
-    trait :with_batches do
-      transient { batch_count { 3 } }
-
-      after(:create) do |vaccine, evaluator|
-        create_list(:batch, evaluator.batch_count, vaccine:)
-      end
+    after(:create) do |vaccine, evaluator|
+      create_list(:batch, evaluator.batch_count, vaccine:)
     end
 
     trait :flu do
