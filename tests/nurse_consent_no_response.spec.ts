@@ -86,7 +86,6 @@ async function when_i_submit_a_consent_with_a_response() {
   await p.click(radio(0));
   await p.click(radio(1));
   await p.click(radio(2));
-  await p.click(radio(3));
 
   // Triage
   await p.fill('[name="consent[triage][notes]"]', "Some notes");

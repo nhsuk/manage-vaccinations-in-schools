@@ -16,7 +16,9 @@ class NurseConsentsController < ApplicationController
 
   def create
     health_questions =
-      Consent::HEALTH_QUESTIONS.fetch(:hpv).map { |question| { question: } }
+      @session.health_questions.in_order.map do |health_question|
+        { question: health_question.question }
+      end
 
     if consent_who_params.present?
       @draft_consent.assign_attributes(
@@ -259,8 +261,7 @@ class NurseConsentsController < ApplicationController
     params.fetch(:consent, {}).permit(
       question_0: %i[notes response],
       question_1: %i[notes response],
-      question_2: %i[notes response],
-      question_3: %i[notes response]
+      question_2: %i[notes response]
     )
   end
 
