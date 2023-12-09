@@ -96,8 +96,30 @@ RSpec.describe AppStatusBannerComponent, type: :component do
 
   context "state is vaccinated" do
     let(:patient_session) { create :patient_session, :vaccinated }
+    let(:vaccination_record) { patient_session.vaccination_records.first }
+    let(:vaccine) { patient_session.session.campaign.vaccines.first }
+    let(:location) { patient_session.session.location }
+    let(:batch) { vaccine.batches.first }
+    let(:date) { vaccination_record.recorded_at.to_fs(:nhsuk_date) }
+    let(:time) { vaccination_record.recorded_at.to_fs(:time) }
 
     it { should have_css(".nhsuk-card--green") }
-    it { should have_text("Vaccinated") }
+    it { should have_css(".nhsuk-card__heading", text: "Vaccinated") }
+    it { should have_text("VaccineHPV (#{vaccine.brand}, #{batch.name})") }
+    it { should have_text("SiteLeft arm") }
+    it { should have_text("Date#{date}") }
+    it { should have_text("Time#{time}") }
+    it { should have_text("Location#{location.name}") }
+
+    context "recorded_at is today" do
+      let(:patient_session) do
+        create(:patient_session, :vaccinated).tap do |ps|
+          ps.vaccination_records.first.update(recorded_at: Time.zone.now)
+        end
+      end
+      let(:date) { Time.zone.now.to_fs(:nhsuk_date) }
+
+      it { should have_text("DateToday (#{date})") }
+    end
   end
 end

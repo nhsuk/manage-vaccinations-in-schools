@@ -1,9 +1,7 @@
 class AppStatusBannerComponent < ViewComponent::Base
   erb_template <<-ERB
     <%= render AppCardComponent.new(heading: title, feature: true, colour:) do
-      tag.p do
-        explanation
-      end
+      status_contents
     end %>
   ERB
   def initialize(patient_session:)
@@ -84,5 +82,60 @@ class AppStatusBannerComponent < ViewComponent::Base
 
   def state
     @patient_session.state
+  end
+
+  def status_contents
+    if state == "vaccinated"
+      vaccinated_status_contents
+    else
+      tag.p { explanation }
+    end
+  end
+
+  def vaccine_summary
+    type = vaccination_record.vaccine.type
+    brand = vaccination_record.vaccine.brand
+    batch = vaccination_record.batch.name
+    "#{type} (#{brand}, #{batch})"
+  end
+
+  def date_summary
+    date = vaccination_record.recorded_at.to_fs(:nhsuk_date)
+    if vaccination_record.recorded_at.to_date == Time.zone.today
+      "Today (#{date})"
+    else
+      date
+    end
+  end
+
+  def vaccinated_status_contents
+    govuk_summary_list(
+      classes: "app-summary-list--no-bottom-border"
+    ) do |summary_list|
+      summary_list.with_row do |row|
+        row.with_key { "Vaccine" }
+        row.with_value { vaccine_summary }
+      end
+
+      summary_list.with_row do |row|
+        row.with_key { "Site" }
+        row.with_value { vaccination_record.human_enum_name(:delivery_site) }
+      end
+
+      summary_list.with_row do |row|
+        row.with_key { "Date" }
+        row.with_value { date_summary }
+      end
+
+      summary_list.with_row do |row|
+        row.with_key { "Time" }
+        row.with_value { vaccination_record.recorded_at.to_fs(:time) }
+      end
+
+      summary_list.with_row do |row|
+        row.with_key { "Location" }
+        row.with_value { @patient_session.session.location.name }
+      end
+    end
   end
 end

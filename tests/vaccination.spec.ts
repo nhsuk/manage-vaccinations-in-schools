@@ -119,9 +119,7 @@ async function when_i_press_confirm() {
 }
 
 async function then_i_should_see_the_vaccination_details() {
-  await expect(
-    p.getByRole("heading", { name: "Vaccination details" }),
-  ).toBeVisible();
+  await expect(p.getByRole("heading", { name: "Vaccinated" })).toBeVisible();
 }
 
 async function when_i_click_on_the_vaccinated_tab() {
