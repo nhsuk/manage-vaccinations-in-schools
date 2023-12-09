@@ -20,11 +20,19 @@ module PatientSessionStateMachineConcern
       state :vaccinated
 
       event :do_consent do
-        transitions from: :added_to_session,
+        transitions from: %i[
+                      added_to_session
+                      consent_refused
+                      consent_conflicts
+                    ],
                     to: :consent_given_triage_needed,
                     if: %i[consent_given? triage_needed?]
 
-        transitions from: :added_to_session,
+        transitions from: %i[
+                      added_to_session
+                      consent_refused
+                      consent_conflicts
+                    ],
                     to: :consent_given_triage_not_needed,
                     if: %i[consent_given? triage_not_needed?]
 

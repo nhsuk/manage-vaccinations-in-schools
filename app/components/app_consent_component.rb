@@ -39,7 +39,12 @@ class AppConsentComponent < ViewComponent::Base
       consent.parent_relationship.in?(%w[mother father]) ? "parent" : "guardian"
     link_to(
       "Contact #{consent.parent_name} (the #{role} who refused)",
-      new_session_patient_nurse_consents_path(session, patient, @route),
+      edit_session_patient_nurse_consents_path(
+        session,
+        patient,
+        @route,
+        consent_id: consent.id
+      ),
       class: "nhsuk-u-font-weight-bold"
     )
   end

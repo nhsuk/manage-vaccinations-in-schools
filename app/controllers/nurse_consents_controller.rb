@@ -5,7 +5,7 @@ class NurseConsentsController < ApplicationController
   before_action :check_for_existing_gillick_assessment,
                 only: %i[assessing_gillick edit_gillick]
   before_action :set_draft_consent, only: %i[assessing_gillick create new]
-  before_action :get_draft_consent, except: %i[assessing_gillick create new]
+  before_action :get_consent, except: %i[assessing_gillick create new edit]
   before_action :set_draft_triage, only: %i[edit_questions edit_confirm update]
 
   layout "two_thirds"
@@ -65,6 +65,17 @@ class NurseConsentsController < ApplicationController
         @draft_consent.update! reason_for_refusal: nil
 
         if @draft_consent.response_given?
+          # HACK: If we're editing a refused consent, it doesn't have any questions.
+          # So we need to seed them.
+          if @draft_consent.health_questions.empty?
+            health_questions =
+              @session.health_questions.in_order.map do |health_question|
+                { question: health_question.question }
+              end
+
+            @draft_consent.update! health_questions:
+          end
+
           redirect_to action: :edit_questions
         elsif @draft_consent.response_refused?
           redirect_to action: :edit_reason
@@ -134,6 +145,16 @@ class NurseConsentsController < ApplicationController
   def assessing_gillick
   end
 
+  def edit
+    # HACK: We don't support editing a persisted consent, but we need this
+    # behaviour for the model office. We should rewrite this entire controller
+    # to use Wicked, and the routes as well, but until then, this is a stopgap.
+    # It gets cleaned up at the end of the def record method.
+    session[:consent_id] = params[:consent_id]
+
+    redirect_to action: :edit_consent
+  end
+
   def edit_who
   end
 
@@ -195,6 +216,8 @@ class NurseConsentsController < ApplicationController
                     }
                   }
     end
+
+    session.delete(:consent_id)
   end
 
   private
@@ -223,9 +246,13 @@ class NurseConsentsController < ApplicationController
       )
   end
 
-  def get_draft_consent
+  def get_consent
     @draft_consent =
-      @patient.consents.find_by(recorded_at: nil, campaign: @session.campaign)
+      if session[:consent_id].present?
+        @patient.consents.find(session[:consent_id])
+      else
+        @patient.consents.find_by(campaign: @session.campaign)
+      end
 
     raise UnprocessableEntity unless @draft_consent
   end

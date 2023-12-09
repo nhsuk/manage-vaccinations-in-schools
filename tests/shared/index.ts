@@ -10,6 +10,9 @@ export const fixtures = {
   patientThatNeedsConsent: "Jose Pacocha",
   secondPatientThatNeedsConsent: "Silvia Waters",
 
+  // Get from /sessions/1/consents, "Consent conflicts" tab
+  patientWithConflictingConsent: "Corrinne Hahn",
+
   // Get from /sessions/1/triage, "Triage needed" tab
   patientThatNeedsTriage: "Michale Fisher",
   secondPatientThatNeedsTriage: "Shenika Hammes",
