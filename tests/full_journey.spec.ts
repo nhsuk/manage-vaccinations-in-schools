@@ -15,7 +15,7 @@ test("Full journey - consent obtained before session", async ({ page }) => {
   await given_i_call_the_parent_and_receive_consent();
   await when_i_record_the_consent_given();
   await and_i_record_the_triage_details();
-  await then_i_see_that_the_child_is_ready_to_vaccinate();
+  await then_i_see_that_the_child_has_gotten_consent();
 
   await given_i_am_performing_the_vaccination();
   await when_i_record_the_successful_vaccination();
@@ -75,11 +75,10 @@ async function and_i_record_the_triage_details() {
   await p.getByRole("button", { name: "Confirm" }).click();
 }
 
-async function then_i_see_that_the_child_is_ready_to_vaccinate() {
+async function then_i_see_that_the_child_has_gotten_consent() {
   await expect(p.locator(".nhsuk-notification-banner__content")).toContainText(
     `Consent saved for ${fixtures.patientThatNeedsConsent}`,
   );
-  await p.getByRole("tab", { name: "Triage completed" }).click();
   const row = p.locator(`tr`, { hasText: fixtures.patientThatNeedsConsent });
   await expect(row).toBeVisible();
 }
