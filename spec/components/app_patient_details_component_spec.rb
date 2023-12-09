@@ -5,7 +5,7 @@ RSpec.describe AppPatientDetailsComponent, type: :component do
 
   subject { page }
 
-  let(:patient) { FactoryBot.create(:patient) }
+  let(:patient) { FactoryBot.create(:patient, nhs_number: 1_234_567_890) }
   let(:session) { FactoryBot.create(:session) }
   let(:component) { described_class.new(patient:, session:) }
 
@@ -27,7 +27,7 @@ RSpec.describe AppPatientDetailsComponent, type: :component do
   it "should render the patient's NHS number" do
     expect(page).to have_css(
       '.nhsuk-summary-list__value[data-testid="nhs-number"]',
-      text: patient.nhs_number
+      text: "123 456 7890"
     )
   end
 end
