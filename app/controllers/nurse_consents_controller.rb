@@ -162,7 +162,14 @@ class NurseConsentsController < ApplicationController
                     }
                   }
     else
-      redirect_to triage_session_path(@session),
+      redirect_path =
+        case params[:route]
+        when "triage"
+          triage_session_path(@session)
+        else
+          consents_session_path(@session)
+        end
+      redirect_to redirect_path,
                   flash: {
                     success: {
                       heading: "Consent saved for #{@patient.full_name}",
