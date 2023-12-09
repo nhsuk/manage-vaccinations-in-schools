@@ -1,11 +1,17 @@
 class AppHealthQuestionsComponent < ViewComponent::Base
   erb_template <<-ERB
-    <% health_questions.each do |health_question| %>
-      <h3 class="nhsuk-heading-xs nhsuk-u-margin-bottom-0">
-        <%= health_question[:question] %>
-      </h3>
-      <p><%= safe_join(health_question[:answers], tag.br) %></p>
-    <% end %>
+    <dl class="nhsuk-summary-list app-summary-list--full-width">
+      <% health_questions.each do |health_question| %>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            <%= health_question[:question] %>
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            <p><%= safe_join(health_question[:answers], tag.br) %></p>
+          </dd>
+        </div>
+      <% end %>
+    </dl>
   ERB
 
   def initialize(consents:)

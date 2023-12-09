@@ -78,7 +78,7 @@ async function when_i_click_on_the_responses() {
 
 async function then_i_should_see_health_question_responses() {
   await expect(
-    p.locator("h3", { hasText: "Does the child have any severe allergies" }),
+    p.locator("dt", { hasText: "Does the child have any severe allergies" }),
   ).toBeVisible();
 }
 
