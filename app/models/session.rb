@@ -26,6 +26,10 @@ class Session < ApplicationRecord
   validates :name, presence: true
   validates :date, presence: true
 
+  def health_questions
+    campaign.vaccines.first.health_questions
+  end
+
   def type
     campaign.name
   end

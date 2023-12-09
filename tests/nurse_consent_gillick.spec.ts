@@ -121,7 +121,6 @@ async function when_i_answer_the_health_questions() {
   await p.click(radio(0));
   await p.click(radio(1));
   await p.click(radio(2));
-  await p.click(radio(3));
 }
 
 async function then_i_see_the_check_answers_page() {
