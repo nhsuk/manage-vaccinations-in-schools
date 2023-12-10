@@ -96,22 +96,6 @@ class Consent < ApplicationRecord
             if: -> { reason_for_refusal == "other" },
             on: :edit_reason
 
-  HEALTH_QUESTIONS = {
-    flu: [
-      "Does the child have a disease or treatment that severely affects their immune system?",
-      "Is anyone in your household having treatment that severely affects their immune system?",
-      "Has your child been diagnosed with asthma?",
-      "Has your child been admitted to intensive care because of a severe egg allergy?",
-      "Is there anything else we should know?"
-    ],
-    hpv: [
-      "Does the child have any severe allergies that have led to an anaphylactic reaction?",
-      "Does the child have any existing medical conditions?",
-      "Does the child take any regular medication?",
-      "Is there anything else we should know?"
-    ]
-  }.freeze
-
   def triage_needed?
     response_given? &&
       (parent_relationship_other? || health_questions_require_follow_up?)

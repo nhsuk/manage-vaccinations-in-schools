@@ -44,7 +44,7 @@ FactoryBot.define do
   factory :consent do
     transient do
       random { Random.new }
-      health_questions_list { Consent::HEALTH_QUESTIONS.fetch(:flu) }
+      health_questions_list { ["Is there anything else we should know?"] }
       # Allow caller to provide patient_session as a shortcut to produce
       # patient and campaign
       patient_session { nil }
@@ -136,18 +136,6 @@ FactoryBot.define do
     trait :from_granddad do
       parent_relationship { "other" }
       parent_relationship_other { "Granddad" }
-    end
-
-    trait :flu do
-      transient do
-        health_questions_list { Consent::HEALTH_QUESTIONS.fetch(:flu) }
-      end
-    end
-
-    trait :hpv do
-      transient do
-        health_questions_list { Consent::HEALTH_QUESTIONS.fetch(:hpv) }
-      end
     end
 
     trait :health_question_notes do
