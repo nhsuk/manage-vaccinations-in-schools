@@ -12,6 +12,8 @@ Option (set these as env vars, e.g. seed=42):
     - model_office
   type: Type of campaign to generate, one of: hpv, flu (default: ExampleCampaignGenerator.default_type)
   username: Name of the user to be added to the team. An email address will be generated using this.
+  users_json: A JSON string containing an array of users to be added to the team.
+              Example: '[{"full_name": "John Doe", "email": "john.doe@nhs.net"}]'
 
 Options controlling number of patients to generate:
 #{ExampleCampaignGenerator.patient_options.map { |option| "  #{option}" }.join("\n")}
@@ -36,8 +38,9 @@ task :generate_example_campaign,
   end
 
   username = ENV["username"]
+  users_json = ENV["users_json"]
 
-  generator = ExampleCampaignGenerator.new(seed:, username:, **campaign_options)
+  generator = ExampleCampaignGenerator.new(seed:, username:, users_json:, **campaign_options)
   data = generator.generate
 
   IO.write(example_file, JSON.pretty_generate(data))

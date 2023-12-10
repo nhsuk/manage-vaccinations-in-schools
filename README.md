@@ -231,7 +231,7 @@ $ rails generate_example_campaign patients_that_still_need_triage=2 patients_wit
 $ rails generate_example_campaign[db/sample_data/model-office.json] \
   type=hpv \
   seed=42 \
-  username="Nurse Chapel" \
+  users_json='[{ "full_name": "Nurse Chapel", "email": "nurse.chapel@example.com" }]' \
   presets=model_office
 
 # Generate example campaign data with a specific random seed for repeatability

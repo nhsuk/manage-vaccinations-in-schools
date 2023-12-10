@@ -56,11 +56,13 @@ class ExampleCampaignGenerator
     end
 
     @username = options.delete(:username)
+    @users_json = options.delete(:users_json)
 
     if presets
       raise "Preset #{presets} not found" unless presettings.key?(presets)
       @type ||= presettings[presets][:type] || self.class.default_type
       @username ||= presettings[presets][:username]
+      @users_json ||= presettings[presets][:users_json]
       @options = presettings[presets].merge(@options)
     else
       @type ||= self.class.default_type
@@ -99,7 +101,9 @@ class ExampleCampaignGenerator
   def team_data
     @team_data ||= {
       name: team.name,
-      users: [{ full_name: user.full_name, email: user.email }]
+      users: users.map { |user|
+        { full_name: user.full_name, email: user.email }
+      }
     }
   end
 
@@ -107,18 +111,21 @@ class ExampleCampaignGenerator
     @team = FactoryBot.build(:team, name: "#{school_data[:county]} SAIS team")
   end
 
+  def users
+    if @users_json.nil?
+      full_name = @username
+      email = "#{full_name.downcase.gsub(" ", ".").gsub(/[^a-z0-9.]/, "")}@example.com"
+      @users_json = [{ full_name:, email: }].to_json
+    end
+
+    @users ||= JSON.parse(@users_json).map do |user_hash|
+      user_hash.with_indifferent_access => { full_name:, email: }
+      FactoryBot.build(:user, teams: [team], full_name:, email:)
+    end
+  end
+
   def user
-    @user ||=
-      begin
-        username = @username || "Nurse #{Faker::Name.first_name}"
-        emailname = username.downcase.gsub(" ", ".").gsub(/[^a-z0-9.]/, "")
-        FactoryBot.build(
-          :user,
-          teams: [team],
-          full_name: username,
-          email: "#{emailname}@example.com"
-        )
-      end
+    users.first
   end
 
   def batches
