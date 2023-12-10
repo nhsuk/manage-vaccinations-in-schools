@@ -177,9 +177,17 @@ class ExampleCampaignGenerator
   end
 
   def build_dual_consents(*options, **attrs)
+    attrs[:reason_for_refusal] = reason_for_refusal if options.include?(:refused)
+
+    mum_attrs = attrs.dup
+    dad_attrs = attrs.dup
+
+    # Randomise dad's reason in some cases where consent is refused
+    dad_attrs[:reason_for_refusal] = reason_for_refusal if options.include?(:refused) && random.rand(2).zero?
+
     [
-      build_consent(:from_mum, *options, **attrs),
-      build_consent(:from_dad, *options, **attrs)
+      build_consent(:from_mum, *options, **mum_attrs),
+      build_consent(:from_dad, *options, **dad_attrs)
     ].shuffle(random:)
   end
 
@@ -195,14 +203,10 @@ class ExampleCampaignGenerator
   end
 
   def build_conflicting_consents(*options, **attrs)
-    options << @type
-    reason_for_refusal = %i[
-      already_vaccinated
-      will_be_vaccinated_elsewhere
-      medical
-      personal_choice
-    ].sample(random:)
-    giver_options, refuser_options = (options * 2).zip(%i[from_dad from_mum]).shuffle(random:)
+    giver_options, refuser_options = [
+      options + [:from_dad],
+      options + [:from_mum]
+    ].shuffle(random:)
     giver_options << :given
     refuser_options << :refused
 
@@ -237,19 +241,7 @@ class ExampleCampaignGenerator
     count = options.fetch(:patients_with_consent_refused, 0)
     count.times.map do
       patient = build_patient
-      reason_for_refusal = %i[
-        already_vaccinated
-        will_be_vaccinated_elsewhere
-        medical
-        personal_choice
-      ].sample(random:)
-      consents =
-        build_consents(
-          random_consents_number,
-          :refused,
-          reason_for_refusal:,
-          patient:
-        )
+      consents = build_consents(random_consents_number, :refused, patient:)
       [patient, consents]
     end
   end
@@ -259,10 +251,7 @@ class ExampleCampaignGenerator
     count = options.fetch(:patients_with_conflicting_consent, 0)
     count.times.map do
       patient = build_patient
-      consents =
-        build_conflicting_consents(
-          patient:
-        )
+      consents = build_conflicting_consents(patient:)
       [patient, consents]
     end
   end
@@ -640,5 +629,14 @@ class ExampleCampaignGenerator
   def random_consents_number
     # 70% chance of 1 consent, 30% chance of 2 consents
     [1, 1, 1, 1, 1, 1, 1, 2, 2, 2].sample(random:)
+  end
+
+  def reason_for_refusal
+    %i[
+      already_vaccinated
+      will_be_vaccinated_elsewhere
+      medical
+      personal_choice
+    ].sample(random:)
   end
 end
