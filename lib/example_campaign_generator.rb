@@ -154,7 +154,6 @@ class ExampleCampaignGenerator
 
   def build_consent(*options, **attrs)
     patient = attrs.fetch(:patient)
-    options << @type
     unless (%i[from_mum from_dad from_granddad] & options).any?
       options << if patient.parent_relationship == "mother"
         :from_mum
@@ -163,12 +162,17 @@ class ExampleCampaignGenerator
       end
     end
 
-    FactoryBot.build(:consent, *options, random:, campaign: nil, **attrs)
+    FactoryBot.build(
+      :consent,
+      *options,
+      random:,
+      campaign: nil,
+      health_questions_list: health_questions_data.map { |hq| hq[:question] },
+      **attrs
+    )
   end
 
   def build_dual_consents(*options, **attrs)
-    options << @type
-
     [
       build_consent(:from_mum, *options, **attrs),
       build_consent(:from_dad, *options, **attrs)
@@ -176,8 +180,6 @@ class ExampleCampaignGenerator
   end
 
   def build_triple_consents(*options, **attrs)
-    options << @type
-
     [
       build_consent(:from_mum, *options, **attrs),
       build_consent(:from_dad, *options, **attrs),
