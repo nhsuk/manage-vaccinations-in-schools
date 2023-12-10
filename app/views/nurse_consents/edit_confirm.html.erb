@@ -32,7 +32,7 @@
         not_provided: "",
       }[@draft_consent.response.to_sym] %>
       <%= @draft_consent.parent_name.titleize %>
-      (<%= @draft_consent.human_enum_name(:parent_relationship).capitalize %>)
+      (<%= @draft_consent.who_responded %>)
     </h2>
 
     <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
@@ -43,7 +43,7 @@
 
       summary_list.with_row do |row|
         row.with_key { "Relationship" }
-        row.with_value { @draft_consent.human_enum_name(:parent_relationship).capitalize }
+        row.with_value { @draft_consent.who_responded }
       end
 
       summary_list.with_row do |row|
@@ -97,7 +97,7 @@
   </div>
 <% end %>
 
-<% if @draft_triage.status.present? %>
+<% if @draft_consent.response_given? && @draft_triage.status.present? %>
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
       <h2 class="nhsuk-card__heading nhsuk-heading-m">
@@ -106,13 +106,13 @@
 
       <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
         summary_list.with_row do |row|
-          row.with_key { "Triage notes" }
-          row.with_value { @draft_triage.notes.presence || "No notes" }
+          row.with_key { "Status" }
+          row.with_value { @draft_triage.status.humanize }
         end
 
         summary_list.with_row do |row|
-          row.with_key { "Status" }
-          row.with_value { @draft_triage.status.humanize }
+          row.with_key { "Triage notes" }
+          row.with_value { @draft_triage.notes.presence || "No notes" }
         end
       end %>
     </div>
