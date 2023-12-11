@@ -69,7 +69,7 @@ async function then_i_see_the_consent_responses_page() {
 
 async function and_i_see_the_consent_has_been_saved() {
   await expect(p.locator(".nhsuk-notification-banner__content")).toContainText(
-    `Consent saved for ${fixtures.patientThatNeedsConsent}`,
+    `Record saved for ${fixtures.patientThatNeedsConsent}`,
   );
 }
 

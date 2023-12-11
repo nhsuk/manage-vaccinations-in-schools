@@ -76,7 +76,7 @@ async function and_i_record_the_triage_details() {
 
 async function then_i_see_that_the_child_has_gotten_consent() {
   await expect(p.locator(".nhsuk-notification-banner__content")).toContainText(
-    `Consent saved for ${fixtures.patientThatNeedsConsent}`,
+    `Record saved for ${fixtures.patientThatNeedsConsent}`,
   );
   const row = p.locator(`tr`, { hasText: fixtures.patientThatNeedsConsent });
   await expect(row).toBeVisible();

@@ -177,7 +177,7 @@ class NurseConsentsController < ApplicationController
       redirect_to redirect_path,
                   flash: {
                     success: {
-                      heading: "Consent saved for #{@patient.full_name}",
+                      heading: "Record saved for #{@patient.full_name}",
                       body:
                         ActionController::Base.helpers.link_to(
                           "View child record",
