@@ -11,11 +11,19 @@ class AppCardComponent < ViewComponent::Base
     </div>
   ERB
 
-  def initialize(heading:, feature: false, colour: nil)
+  def initialize(
+    heading:,
+    heading_size: "m",
+    feature: false,
+    colour: nil,
+    card_classes: nil
+  )
     super
 
     @heading = heading
+    @heading_size = heading_size
     @feature = feature
+    @card_classes = card_classes
 
     @colour = colour
   end
@@ -30,7 +38,8 @@ class AppCardComponent < ViewComponent::Base
     [
       "nhsuk-card",
       ("nhsuk-card--feature" if @feature),
-      ("app-card--#{@colour}" if @colour.present?)
+      ("app-card--#{@colour}" if @colour.present?),
+      @card_classes
     ].compact.join(" ")
   end
 
@@ -45,7 +54,7 @@ class AppCardComponent < ViewComponent::Base
     [
       "nhsuk-card__heading",
       ("nhsuk-card__heading--feature" if @feature),
-      "nhsuk-heading-m"
+      ("nhsuk-heading-#{@heading_size}" if @heading_size)
     ].compact.join(" ")
   end
 end
