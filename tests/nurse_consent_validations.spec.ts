@@ -10,7 +10,9 @@ test("Consent validations", async ({ page }) => {
 
   // Who are you getting consent from validations
   await given_i_am_on_the_who_am_i_contacting_for_consent_page();
-  await when_i_continue_without_entering_anything();
+  await then_the_page_is_prefilled_with_the_parent_details();
+
+  await when_i_delete_the_prefilled_field_data_and_submit();
   await then_i_see_the_who_i_am_contacting_validation_errors();
 
   await given_i_select_other_relationship();
@@ -44,6 +46,16 @@ async function given_i_am_on_the_who_am_i_contacting_for_consent_page() {
   await p.getByRole("button", { name: "Get consent" }).click();
 }
 
+async function then_the_page_is_prefilled_with_the_parent_details() {
+  await expect(p.getByRole("textbox", { name: "Full name" })).not.toBeEmpty();
+}
+
+async function when_i_delete_the_prefilled_field_data_and_submit() {
+  await p.fill('[name="consent[parent_name]"]', "");
+  await p.fill('[name="consent[parent_phone]"]', "");
+  await p.getByRole("button", { name: "Continue" }).click();
+}
+
 async function when_i_continue_without_entering_anything() {
   await p.getByRole("button", { name: "Continue" }).click();
 }
@@ -59,7 +71,6 @@ async function then_i_see_the_who_i_am_contacting_validation_errors() {
   await expect(alert).toBeVisible();
   await expect(alert).toContainText("Enter a name");
   await expect(alert).toContainText("Enter a phone number");
-  await expect(alert).toContainText("Choose a relationship");
 }
 
 async function given_i_select_other_relationship() {

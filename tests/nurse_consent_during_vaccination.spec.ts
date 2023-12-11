@@ -13,7 +13,6 @@ test("Records consent and then allows vaccination", async ({ page }) => {
   await then_i_see_the_vaccination_page();
 
   await when_i_click_yes_i_am_contacting_a_parent();
-  await and_i_click_continue();
   await then_i_see_the_new_consent_form();
 
   await when_i_go_through_the_consent_and_triage_forms();

@@ -10,7 +10,7 @@ test("Consent - No response", async ({ page }) => {
 
   await when_i_select_a_child_with_no_consent_response();
   await and_i_click_get_consent();
-  await then_the_consent_form_is_empty();
+  await then_the_consent_form_is_prefilled();
 
   // Consent - No response
   await when_i_submit_a_consent_with_no_response();
@@ -96,10 +96,9 @@ async function when_i_submit_a_consent_with_a_response() {
   await p.getByRole("button", { name: "Confirm" }).click();
 }
 
-async function then_the_consent_form_is_empty() {
-  await expect(p.locator('[name="consent[parent_name]"]')).toBeEmpty();
-  await expect(p.locator('[name="consent[parent_phone]"]')).toBeEmpty();
-  await expect(p.locator("text=Mum")).not.toBeChecked();
+async function then_the_consent_form_is_prefilled() {
+  await expect(p.locator('[name="consent[parent_name]"]')).not.toBeEmpty();
+  await expect(p.locator('[name="consent[parent_phone]"]')).not.toBeEmpty();
 }
 
 async function then_the_consent_form_is_prepopulated() {

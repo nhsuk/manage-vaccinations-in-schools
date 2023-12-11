@@ -11,6 +11,15 @@ class NurseConsentsController < ApplicationController
   layout "two_thirds"
 
   def new
+    # Temporary: Prefill the consent details.
+    # This should be replaced with the design that allows users to choose
+    # from available parent details when submiting a new consent.
+    if @patient.consents.submitted_for_campaign(@session.campaign).empty?
+      @draft_consent.parent_name ||= @patient.parent_name
+      @draft_consent.parent_phone ||= @patient.parent_phone
+      @draft_consent.parent_relationship ||= @patient.parent_relationship
+    end
+
     render :edit_who
   end
 
