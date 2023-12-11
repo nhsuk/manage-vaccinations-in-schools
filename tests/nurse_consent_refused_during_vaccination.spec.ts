@@ -78,7 +78,7 @@ async function then_i_see_the_record_vaccinations_page() {
 
 async function and_i_see_that_the_child_needs_their_refusal_checked() {
   await expect(p.locator(".nhsuk-notification-banner__content")).toContainText(
-    `Consent saved for ${fixtures.patientThatNeedsConsent}`,
+    `Record saved for ${fixtures.patientThatNeedsConsent}`,
   );
   const row = p.locator(`tr`, { hasText: fixtures.patientThatNeedsConsent });
   await expect(row).toBeVisible();
