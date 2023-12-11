@@ -31,8 +31,10 @@
         refused: "Refusal confirmed by",
         not_provided: "",
       }[@draft_consent.response.to_sym] %>
-      <%= @draft_consent.parent_name.titleize %>
-      (<%= @draft_consent.who_responded %>)
+      <%= @draft_consent.name.titleize %>
+      <% unless @draft_consent.via_self_consent? %>
+        (<%= @draft_consent.who_responded %>)
+      <% end %>
     </h2>
 
     <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
