@@ -17,7 +17,7 @@ RSpec.describe AppStatusBannerComponent, type: :component do
   context "state is added_to_session" do
     let(:patient_session) { create :patient_session, :added_to_session }
 
-    it { should have_css(".nhsuk-card--blue") }
+    it { should have_css(".app-card--blue") }
   end
 
   context "state is consent_given_triage_not_needed" do
@@ -25,7 +25,7 @@ RSpec.describe AppStatusBannerComponent, type: :component do
       create :patient_session, :consent_given_triage_not_needed
     end
 
-    it { should have_css(".nhsuk-card--purple") }
+    it { should have_css(".app-card--purple") }
     it { should have_css(".nhsuk-card__heading", text: "Consent given") }
     it { should have_text("#{patient_name} is ready to vaccinate") }
   end
@@ -35,7 +35,7 @@ RSpec.describe AppStatusBannerComponent, type: :component do
       create :patient_session, :consent_given_triage_needed
     end
 
-    it { should have_css(".nhsuk-card--blue") }
+    it { should have_css(".app-card--blue") }
     it { should have_css(".nhsuk-card__heading", text: "Needs triage") }
     it { should have_text("Responses to health questions need triage") }
   end
@@ -43,7 +43,7 @@ RSpec.describe AppStatusBannerComponent, type: :component do
   context "state is consent_refused" do
     let(:patient_session) { create :patient_session, :consent_refused }
 
-    it { should have_css(".nhsuk-card--orange") }
+    it { should have_css(".app-card--orange") }
     it { should have_css(".nhsuk-card__heading", text: "Consent refused") }
     it { should have_text("Mum refused to give consent") }
   end
@@ -51,7 +51,7 @@ RSpec.describe AppStatusBannerComponent, type: :component do
   context "state is triaged_kept_in_triage" do
     let(:patient_session) { create :patient_session, :triaged_kept_in_triage }
 
-    it { should have_css(".nhsuk-card--blue") }
+    it { should have_css(".app-card--blue") }
     it { should have_css(".nhsuk-card__heading", text: "Needs triage") }
     it { should have_text("Responses to health questions need triage") }
   end
@@ -61,7 +61,7 @@ RSpec.describe AppStatusBannerComponent, type: :component do
       create :patient_session, :triaged_ready_to_vaccinate
     end
 
-    it { should have_css(".nhsuk-card--purple") }
+    it { should have_css(".app-card--purple") }
     it { should have_css(".nhsuk-card__heading", text: "Safe to vaccinate") }
     it "explains who took the decision that the patient should be vaccinated" do
       expect(component.explanation).to eq(
@@ -73,7 +73,7 @@ RSpec.describe AppStatusBannerComponent, type: :component do
   context "state is unable_to_vaccinate" do
     let(:patient_session) { create :patient_session, :unable_to_vaccinate }
 
-    it { should have_css(".nhsuk-card--red") }
+    it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
     it "explains who took the decision that the patient should be vaccinated" do
       expect(component.explanation).to include(
@@ -91,7 +91,7 @@ RSpec.describe AppStatusBannerComponent, type: :component do
     let(:date) { vaccination_record.recorded_at.to_fs(:nhsuk_date) }
     let(:time) { vaccination_record.recorded_at.to_fs(:time) }
 
-    it { should have_css(".nhsuk-card--green") }
+    it { should have_css(".app-card--green") }
     it { should have_css(".nhsuk-card__heading", text: "Vaccinated") }
     it { should have_text("VaccineHPV (#{vaccine.brand}, #{batch.name})") }
     it { should have_text("SiteLeft arm") }
@@ -120,7 +120,7 @@ RSpec.describe AppStatusBannerComponent, type: :component do
     let(:triage) { patient_session.triage.first }
     let(:date) { triage.created_at.to_fs(:nhsuk_date) }
 
-    it { should have_css(".nhsuk-card--red") }
+    it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
     it { should have_text("ReasonDo not vaccinate in campaign") }
     it { should have_text("DateToday (#{date})") }

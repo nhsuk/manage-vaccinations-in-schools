@@ -30,7 +30,7 @@ class AppCardComponent < ViewComponent::Base
     [
       "nhsuk-card",
       ("nhsuk-card--feature" if @feature),
-      ("nhsuk-card--#{@colour}" if @colour.present?)
+      ("app-card--#{@colour}" if @colour.present?)
     ].compact.join(" ")
   end
 
