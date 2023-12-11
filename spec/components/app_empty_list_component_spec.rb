@@ -5,9 +5,13 @@ RSpec.describe AppEmptyListComponent, type: :component do
 
   subject { page }
 
-  let(:message) { "No items found." }
-  let(:component) { described_class.new(message:) }
+  let(:component) { described_class.new }
 
-  it { should have_css(".app-empty-list", text: "No results") }
-  it { should have_css(".nhsuk-card__content", text: message) }
+  it { should have_css(".app-card--empty-list", text: "No results") }
+  it do
+    should have_css(
+             ".nhsuk-card__content",
+             text: "We couldn’t find any children that matched your filters."
+           )
+  end
 end
