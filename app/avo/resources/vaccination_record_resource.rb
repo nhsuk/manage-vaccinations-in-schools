@@ -14,5 +14,7 @@ class VaccinationRecordResource < Avo::BaseResource
         as: :select,
         enum: ::VaccinationRecord.delivery_methods
   field :recorded_at, as: :date
+  field :user, as: :belongs_to
+  field :notes, as: :text
   # add fields here
 end
