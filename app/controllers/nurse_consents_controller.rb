@@ -174,12 +174,10 @@ class NurseConsentsController < ApplicationController
   end
 
   def record
-    unless @draft_consent.response_not_provided?
-      ActiveRecord::Base.transaction do
-        @draft_consent.update!(recorded_at: Time.zone.now)
-        @patient_session.do_consent!
-        @patient_session.do_triage! if @patient_session.triage.present?
-      end
+    ActiveRecord::Base.transaction do
+      @draft_consent.update!(recorded_at: Time.zone.now)
+      @patient_session.do_consent!
+      @patient_session.do_triage! if @patient_session.triage.present?
     end
 
     if @patient_session.triaged_ready_to_vaccinate? &&

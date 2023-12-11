@@ -17,10 +17,10 @@ test("Consent - No response", async ({ page }) => {
   await then_i_see_the_consent_responses_page();
 
   await when_i_select_a_child_with_no_consent_response();
-  await and_i_click_get_consent();
-  await then_the_consent_form_is_prepopulated();
+  await then_i_see_the_previous_attempt_to_get_consent();
 
   // Consent - With response
+  await when_i_click_get_consent();
   await when_i_submit_a_consent_with_a_response();
   await then_i_see_the_consent_responses_page();
   await and_i_see_the_consent_has_been_saved();
@@ -48,6 +48,10 @@ async function when_i_click_get_consent() {
 }
 const and_i_click_get_consent = when_i_click_get_consent;
 
+async function then_i_see_the_previous_attempt_to_get_consent() {
+  await expect(p.getByText(/Not provided.*phone/)).toBeVisible();
+}
+
 async function when_i_submit_a_consent_with_no_response() {
   // Who
   await p.fill('[name="consent[parent_name]"]', fixtures.parentName);
@@ -74,8 +78,6 @@ async function and_i_see_the_consent_has_been_saved() {
 }
 
 async function when_i_submit_a_consent_with_a_response() {
-  await p.getByRole("button", { name: "Continue" }).click();
-
   // Do they agree
   await p.getByRole("radio", { name: "Yes, they agree" }).click();
   await p.getByRole("button", { name: "Continue" }).click();
@@ -99,16 +101,6 @@ async function when_i_submit_a_consent_with_a_response() {
 async function then_the_consent_form_is_prefilled() {
   await expect(p.locator('[name="consent[parent_name]"]')).not.toBeEmpty();
   await expect(p.locator('[name="consent[parent_phone]"]')).not.toBeEmpty();
-}
-
-async function then_the_consent_form_is_prepopulated() {
-  await expect(p.locator('[name="consent[parent_name]"]')).toHaveValue(
-    fixtures.parentName,
-  );
-  await expect(p.locator('[name="consent[parent_phone]"]')).toHaveValue(
-    "07700900000",
-  );
-  await expect(p.locator("text=Mum")).toBeChecked();
 }
 
 async function when_i_go_to_the_triage_completed_tab() {

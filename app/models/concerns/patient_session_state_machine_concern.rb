@@ -40,6 +40,10 @@ module PatientSessionStateMachineConcern
                     to: :consent_refused,
                     if: :consent_refused?
 
+        transitions from: :added_to_session,
+                    to: :added_to_session,
+                    if: :no_consent?
+
         transitions from: %i[
                       added_to_session
                       consent_given_triage_needed
@@ -124,7 +128,7 @@ module PatientSessionStateMachineConcern
     end
 
     def no_consent?
-      consents.empty?
+      consents.empty? || consents.all?(&:response_not_provided?)
     end
 
     def triage_needed?
