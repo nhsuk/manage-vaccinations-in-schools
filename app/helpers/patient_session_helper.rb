@@ -19,6 +19,10 @@ module PatientSessionHelper
       text: "Check refusal",
       banner_title: "Their %{who_responded} has refused to give consent"
     },
+    consent_conflicts: {
+      colour: "orange",
+      text: "Check conflicting consent"
+    },
     triaged_do_not_vaccinate: {
       colour: "red",
       text: "Do not vaccinate",

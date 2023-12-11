@@ -31,6 +31,7 @@ RSpec.describe PatientSessionStateMachineConcern do
   end
 
   let(:consent) { double("Consent") }
+  let(:other_consent) { double("Consent") }
   let(:consents) { [consent] }
   let(:triage) { double("Triage") }
   let(:vaccination_record) { double("VaccinationRecord") }
@@ -48,11 +49,18 @@ RSpec.describe PatientSessionStateMachineConcern do
       allow(consent).to receive(:response_given?).and_return(false)
       allow(consent).to receive(:response_refused?).and_return(false)
       allow(consent).to receive(:triage_needed?).and_return(false)
+
+      allow(other_consent).to receive(:response_given?).and_return(false)
+      allow(other_consent).to receive(:response_refused?).and_return(false)
+      allow(other_consent).to receive(:triage_needed?).and_return(false)
     end
 
     describe "#do_consent" do
+      let(:consents) { [consent, other_consent] }
+
       it "transitions to consent_given_triage_not_needed when consent is given and needs no triage" do
         allow(consent).to receive(:response_given?).and_return(true)
+        allow(other_consent).to receive(:response_given?).and_return(true)
 
         fsm.do_consent
         expect(fsm).to be_consent_given_triage_not_needed
@@ -61,6 +69,8 @@ RSpec.describe PatientSessionStateMachineConcern do
       it "transitions to consent_given_triage_needed consent is given and needs triage" do
         allow(consent).to receive(:response_given?).and_return(true)
         allow(consent).to receive(:triage_needed?).and_return(true)
+        allow(other_consent).to receive(:response_given?).and_return(true)
+        allow(other_consent).to receive(:response_given?).and_return(true)
 
         fsm.do_consent
         expect(fsm).to be_consent_given_triage_needed
@@ -68,9 +78,18 @@ RSpec.describe PatientSessionStateMachineConcern do
 
       it "transitions to consent_refused when consent is refused" do
         allow(consent).to receive(:response_refused?).and_return(true)
+        allow(other_consent).to receive(:response_refused?).and_return(true)
 
         fsm.do_consent
         expect(fsm).to be_consent_refused
+      end
+
+      it "transitions to consent_conflicts when consent is given and refused" do
+        allow(consent).to receive(:response_given?).and_return(true)
+        allow(other_consent).to receive(:response_refused?).and_return(true)
+
+        fsm.do_consent
+        expect(fsm).to be_consent_conflicts
       end
     end
 

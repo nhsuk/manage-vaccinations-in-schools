@@ -20,6 +20,11 @@ en:
       text: Check refusal
       banner_title: Consent refused
       banner_explanation: "%{who_refused} refused to give consent"
+    consent_conflicts:
+      colour: orange
+      text: Check conflicting consent
+      banner_title: Conflicting consent
+      banner_explanation: "You can only vaccinate if all respondents give consent."
     delay_vaccination:
       colour: red
       text: Delay vaccination
