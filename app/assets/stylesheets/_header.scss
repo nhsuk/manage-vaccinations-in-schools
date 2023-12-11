@@ -4,14 +4,8 @@
   }
 
   &__service-name {
-    display: inline-block;
     line-height: 1.25;
-    padding-left: nhsuk-spacing(2);
-    vertical-align: top;
-
-    @include mq($from: tablet, $until: large-desktop) {
-      max-width: 300px;
-    }
+    max-width: auto;
   }
 
   &__navigation-list {
