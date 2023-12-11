@@ -96,6 +96,10 @@ class Consent < ApplicationRecord
             if: -> { reason_for_refusal == "other" },
             on: :edit_reason
 
+  def name
+    via_self_consent? ? patient.full_name : parent_name
+  end
+
   def triage_needed?
     response_given? &&
       (parent_relationship_other? || health_questions_require_follow_up?)

@@ -5,17 +5,19 @@ class AppConsentDetailsComponent < ViewComponent::Base
     ) do |summary_list|
       summary_list.with_row do |row|
         row.with_key { "Name" }
-        row.with_value { parent_name }
+        row.with_value { name }
       end
 
-      summary_list.with_row do |row|
-        row.with_key { "Relationship" }
-        row.with_value { who_responded }
-      end
+      unless self_consent?
+        summary_list.with_row do |row|
+          row.with_key { "Relationship" }
+          row.with_value { who_responded }
+        end
 
-      summary_list.with_row do |row|
-        row.with_key { "Contact" }
-        row.with_value { parent_phone_and_email.join("<br />").html_safe }
+        summary_list.with_row do |row|
+          row.with_key { "Contact" }
+          row.with_value { parent_phone_and_email.join("<br />").html_safe }
+        end
       end
 
       summary_list.with_row do |row|
@@ -44,8 +46,12 @@ class AppConsentDetailsComponent < ViewComponent::Base
 
   private
 
-  def parent_name
-    @consents.first.parent_name
+  def self_consent?
+    @consents.first.via_self_consent?
+  end
+
+  def name
+    @consents.first.name
   end
 
   def who_responded
