@@ -11,7 +11,7 @@ test("Consent - refused", async ({ page }) => {
   await given_i_am_checking_consent();
   await when_i_select_a_child_with_no_consent_response();
   await and_i_click_get_consent();
-  await then_the_consent_form_is_empty();
+  await then_the_consent_form_is_prefilled();
 
   await given_i_call_the_parent_and_they_refuse_consent();
   await when_i_record_the_consent_refused();
@@ -43,10 +43,9 @@ async function when_i_click_get_consent() {
 }
 const and_i_click_get_consent = when_i_click_get_consent;
 
-async function then_the_consent_form_is_empty() {
-  await expect(p.locator('[name="consent[parent_name]"]')).toBeEmpty();
-  await expect(p.locator('[name="consent[parent_phone]"]')).toBeEmpty();
-  await expect(p.locator("text=Mum")).not.toBeChecked();
+async function then_the_consent_form_is_prefilled() {
+  await expect(p.locator('[name="consent[parent_name]"]')).not.toBeEmpty();
+  await expect(p.locator('[name="consent[parent_phone]"]')).not.toBeEmpty();
 }
 
 async function given_i_call_the_parent_and_they_refuse_consent() {}
