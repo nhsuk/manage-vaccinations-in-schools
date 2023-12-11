@@ -58,7 +58,8 @@ FactoryBot.define do
     parent_email do
       "#{parent_name.downcase.gsub(" ", ".")}#{random.rand(100)}@gmail.com"
     end
-    parent_phone { Faker::PhoneNumber.phone_number }
+    # Replace first two digits with 07 to make it a mobile number
+    parent_phone { Faker::PhoneNumber.phone_number.gsub(/\A\d{2}/, "07") }
     parent_info_source { "school" }
 
     trait :of_hpv_vaccination_age do
