@@ -23,9 +23,7 @@
         route: :triage,
       )
     else
-      render AppEmptyListComponent.new(
-        message: "We couldn’t find any children that matched your filters."
-      )
+      render AppEmptyListComponent.new
     end
   end
 end %>
