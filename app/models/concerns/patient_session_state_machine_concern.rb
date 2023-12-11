@@ -9,6 +9,7 @@ module PatientSessionStateMachineConcern
       state :consent_given_triage_not_needed
       state :consent_given_triage_needed
       state :consent_refused
+      state :consent_conflicts
       state :triaged_ready_to_vaccinate
       state :triaged_do_not_vaccinate
       state :triaged_kept_in_triage
@@ -30,6 +31,14 @@ module PatientSessionStateMachineConcern
         transitions from: :added_to_session,
                     to: :consent_refused,
                     if: :consent_refused?
+
+        transitions from: %i[
+                      added_to_session
+                      consent_given_triage_needed
+                      consent_refused
+                    ],
+                    to: :consent_conflicts,
+                    if: :consent_conflicts?
       end
 
       event :do_gillick_assessment do

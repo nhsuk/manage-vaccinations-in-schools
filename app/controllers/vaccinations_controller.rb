@@ -24,6 +24,7 @@ class VaccinationsController < ApplicationController
         triaged_ready_to_vaccinate
         added_to_session
         consent_refused
+        consent_conflicts
         consent_given_triage_not_needed
       ],
       vaccinated: %w[vaccinated],
