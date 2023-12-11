@@ -153,6 +153,13 @@ en:
           left_arm_upper_position: Left arm (upper position)
           right_arm_lower_position: Right arm (lower position)
           right_arm_upper_position: Right arm (upper position)
+        reasons:
+          refused: "Refused vaccine"
+          not_well: "Unwell"
+          contraindications: "Had contraindications"
+          already_had: "Already had the vaccine"
+          absent_from_school: "Absent from school"
+          absent_from_session: "Absent from session"
     errors:
       models:
         offline_password:
