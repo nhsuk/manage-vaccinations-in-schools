@@ -76,7 +76,13 @@ class VaccinationsController < ApplicationController
   end
 
   def record
-    @draft_vaccination_record.update!(recorded_at: Time.zone.now)
+    unless @draft_vaccination_record.update(
+             confirm_params.merge(recorded_at: Time.zone.now)
+           )
+      render :confirm
+      return
+    end
+
     @patient_session.do_vaccination!
     if Settings.features.fhir_server_integration
       imm =
@@ -307,5 +313,9 @@ class VaccinationsController < ApplicationController
          session[:todays_batch_date] == Time.zone.now.to_date.to_s
       @todays_batch_id = session[:todays_batch_id]
     end
+  end
+
+  def confirm_params
+    params.fetch(:vaccination_record, {}).permit(:notes)
   end
 end
