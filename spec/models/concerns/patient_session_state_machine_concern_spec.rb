@@ -48,10 +48,12 @@ RSpec.describe PatientSessionStateMachineConcern do
     before do
       allow(consent).to receive(:response_given?).and_return(false)
       allow(consent).to receive(:response_refused?).and_return(false)
+      allow(consent).to receive(:response_not_provided?).and_return(false)
       allow(consent).to receive(:triage_needed?).and_return(false)
 
       allow(other_consent).to receive(:response_given?).and_return(false)
       allow(other_consent).to receive(:response_refused?).and_return(false)
+      allow(other_consent).to receive(:response_not_provided?).and_return(false)
       allow(other_consent).to receive(:triage_needed?).and_return(false)
     end
 

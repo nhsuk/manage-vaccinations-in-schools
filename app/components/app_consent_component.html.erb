@@ -1,5 +1,11 @@
 <%= render AppConsentStatusComponent.new(patient_session:) %>
 
+<% if patient_session.no_consent? %>
+  <p class="app-status">
+    No response yet
+  </p>
+<% end %>
+
 <% if patient_session.consents.present? %>
   <% consents_grouped_by_parent.each do |summary, consents| %>
     <%= render AppDetailsComponent.new(summary:, open: open_consents?) do %>
@@ -7,6 +13,17 @@
 
       <% if consents.any?(&:response_refused?) %>
         <p><%= contact_parent_or_guardian_link(consents) %></p>
+      <% elsif consents.any?(&:response_not_provided?) %>
+        <%= govuk_button_link_to(
+          "Get consent",
+          edit_session_patient_nurse_consents_path(
+            session,
+            patient,
+            @route,
+            consent_id: consents.first.id
+          ),
+          class: "nhsuk-button--secondary nhsuk-u-margin-bottom-2"
+        ) %>
       <% end %>
     <% end %>
   <% end %>
@@ -21,10 +38,6 @@
     end
   end %>
 <% else %>
-  <p class="app-status">
-    No response yet
-  </p>
-
   <p>
     <%= govuk_button_link_to(
       "Get consent",
