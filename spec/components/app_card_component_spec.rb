@@ -47,7 +47,7 @@ RSpec.describe AppCardComponent, type: :component do
     describe "card_classes" do
       subject { component.send(:card_classes) }
 
-      it { should include "nhsuk-card--purple" }
+      it { should include "app-card--purple" }
     end
   end
 end
