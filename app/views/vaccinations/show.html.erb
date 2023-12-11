@@ -6,7 +6,8 @@
 <% end %>
 
 <%= render AppPatientPageComponent.new(
-      patient_session: @patient_session,
-      vaccination_record: @draft_vaccination_record,
-      route: "vaccinations",
-    ) %>
+  patient_session: @patient_session,
+  vaccination_record: @draft_vaccination_record,
+  route: "vaccinations",
+  current_user:,
+) %>
