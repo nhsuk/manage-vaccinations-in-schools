@@ -6,6 +6,7 @@
 #  administered       :boolean
 #  delivery_method    :integer
 #  delivery_site      :integer
+#  notes              :text
 #  reason             :integer
 #  recorded_at        :datetime
 #  created_at         :datetime         not null
