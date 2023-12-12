@@ -125,7 +125,7 @@ RSpec.describe AppStatusBannerComponent, type: :component do
     it { should have_text("ReasonDo not vaccinate in campaign") }
     it { should have_text("DateToday (#{date})") }
     it { should have_text("Location#{location.name}") }
-    it { should have_text("VaccinatorYou (#{triage.user.full_name})") }
+    it { should have_text("NurseYou (#{triage.user.full_name})") }
 
     context "recorded_at is not today" do
       let(:date) { Time.zone.now - 2.days }

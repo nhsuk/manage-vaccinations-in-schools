@@ -90,8 +90,11 @@ FactoryBot.define do
       patient { create :patient, :consent_given_triage_needed, session: }
       triage { [create(:triage, status: :ready_to_vaccinate, user:)] }
 
-      after :create do |patient_session|
-        create :vaccination_record, administered: true, patient_session:
+      after :create do |patient_session, context|
+        create :vaccination_record,
+               administered: true,
+               patient_session:,
+               user: context.user
       end
     end
 
