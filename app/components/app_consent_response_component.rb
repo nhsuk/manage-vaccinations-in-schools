@@ -7,7 +7,7 @@ class AppConsentResponseComponent < ViewComponent::Base
             "#{response(consent:)} (#{route(consent:)})"
           end,
           tag.p(class: date_and_time_p_classes) do
-            date_and_time consent.created_at
+            date_and_time consent.recorded_at
           end
         ].join("\n").html_safe
       end
