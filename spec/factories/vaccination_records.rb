@@ -34,5 +34,6 @@ FactoryBot.define do
     delivery_site { "left_arm" }
     delivery_method { "intramuscular" }
     batch { patient_session.session.campaign.vaccines.first.batches.first }
+    user { create :user }
   end
 end
