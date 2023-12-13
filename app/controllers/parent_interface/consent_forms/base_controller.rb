@@ -1,30 +1,32 @@
-class ConsentForms::BaseController < ApplicationController
-  skip_before_action :authenticate_user!
-  before_action :set_session
-  before_action :set_consent_form
-  before_action :authenticate_consent_form_user!
+module ParentInterface
+  class ConsentForms::BaseController < ApplicationController
+    skip_before_action :authenticate_user!
+    before_action :set_session
+    before_action :set_consent_form
+    before_action :authenticate_consent_form_user!
 
-  private
+    private
 
-  def set_session
-    @session = Session.find(params.fetch(:session_id))
-  end
-
-  def set_consent_form
-    @consent_form = ConsentForm.find(params.fetch(:consent_form_id))
-  end
-
-  def authenticate_consent_form_user!
-    unless session[:consent_form_id] == @consent_form.id
-      redirect_to start_session_consent_forms_path(@session)
+    def set_session
+      @session = Session.find(params.fetch(:session_id))
     end
-  end
 
-  def set_header_path
-    @header_path = start_session_consent_forms_path
-  end
+    def set_consent_form
+      @consent_form = ConsentForm.find(params.fetch(:consent_form_id))
+    end
 
-  def set_service_name
-    @service_name = "Give or refuse consent for vaccinations"
+    def authenticate_consent_form_user!
+      unless session[:consent_form_id] == @consent_form.id
+        redirect_to start_session_consent_forms_path(@session)
+      end
+    end
+
+    def set_header_path
+      @header_path = start_session_consent_forms_path
+    end
+
+    def set_service_name
+      @service_name = "Give or refuse consent for vaccinations"
+    end
   end
 end
