@@ -29,7 +29,7 @@ async function given_i_am_on_the_reasons_for_consent_refusal_page() {
   await p.goto("/sessions/1/consents");
   await p.getByRole("tab", { name: "No response" }).click();
   await p.getByRole("link", { name: fixtures.patientThatNeedsConsent }).click();
-  await p.getByRole("button", { name: "Get consent" }).click();
+  await p.getByRole("link", { name: "Get consent" }).click();
 
   await p.fill('[name="consent[parent_name]"]', "Carl Sipes");
   await p.fill('[name="consent[parent_phone]"]', "07700900000");

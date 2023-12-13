@@ -34,7 +34,7 @@ async function given_the_app_is_setup() {
 
 async function when_i_go_to_the_start_page() {
   await p.goto("/");
-  await p.getByRole("button", { name: "Start now" }).click();
+  await p.getByRole("link", { name: "Start now" }).click();
 }
 
 async function then_i_should_see_the_sign_in_page() {

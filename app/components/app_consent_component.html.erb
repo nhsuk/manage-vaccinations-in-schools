@@ -22,7 +22,7 @@
             @route,
             consent_id: consents.first.id
           ),
-          class: "nhsuk-button--secondary nhsuk-u-margin-bottom-2"
+          secondary: true
         ) %>
       <% end %>
     <% end %>
@@ -41,8 +41,7 @@
   <p>
     <%= govuk_button_link_to(
       "Get consent",
-      new_session_patient_nurse_consents_path(session, patient, @route),
-      class: "nhsuk-u-margin-bottom-2"
+      new_session_patient_nurse_consents_path(session, patient, @route)
     ) %>
 
     <% if display_gillick_consent_button? %>
@@ -53,7 +52,7 @@
           patient,
           route: @route
         ),
-        class: "nhsuk-button--secondary nhsuk-u-margin-bottom-2"
+        secondary: true
       ) %>
     <% end %>
   </p>
