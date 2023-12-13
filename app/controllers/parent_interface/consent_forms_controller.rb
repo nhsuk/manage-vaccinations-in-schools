@@ -19,7 +19,11 @@ module ParentInterface
 
       session[:consent_form_id] = consent_form.id
 
-      redirect_to session_consent_form_edit_path(@session, consent_form, :name)
+      redirect_to session_parent_interface_consent_form_edit_path(
+                    @session,
+                    consent_form,
+                    :name
+                  )
     end
 
     def cannot_consent

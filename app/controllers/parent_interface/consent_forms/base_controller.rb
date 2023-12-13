@@ -17,12 +17,12 @@ module ParentInterface
 
     def authenticate_consent_form_user!
       unless session[:consent_form_id] == @consent_form.id
-        redirect_to start_session_consent_forms_path(@session)
+        redirect_to start_session_parent_interface_consent_forms_path(@session)
       end
     end
 
     def set_header_path
-      @header_path = start_session_consent_forms_path
+      @header_path = start_session_parent_interface_consent_forms_path
     end
 
     def set_service_name
