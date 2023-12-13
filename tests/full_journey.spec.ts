@@ -50,7 +50,7 @@ async function then_i_see_there_is_no_response() {
 async function given_i_call_the_parent_and_receive_consent() {}
 
 async function when_i_record_the_consent_given() {
-  await p.getByRole("button", { name: "Get consent" }).click();
+  await p.getByRole("link", { name: "Get consent" }).click();
   await p.fill('[name="consent[parent_name]"]', fixtures.parentName);
   await p.fill('[name="consent[parent_phone]"]', "07700900000");
   await p.getByRole("radio", { name: fixtures.parentRole }).click();

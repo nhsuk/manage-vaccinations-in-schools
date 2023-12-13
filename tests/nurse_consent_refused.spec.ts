@@ -39,7 +39,7 @@ async function when_i_select_a_child_with_no_consent_response() {
 }
 
 async function when_i_click_get_consent() {
-  await p.getByRole("button", { name: "Get consent" }).click();
+  await p.getByRole("link", { name: "Get consent" }).click();
 }
 const and_i_click_get_consent = when_i_click_get_consent;
 
