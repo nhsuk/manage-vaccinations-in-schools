@@ -29,13 +29,15 @@ Rails.application.routes.draw do
     get "triage", to: "triage#index", on: :member
     get "vaccinations", to: "vaccinations#index", on: :member
 
-    resources :consent_forms, path: :consents, only: [:create] do
-      get "start", on: :collection
-      get "cannot-consent"
-      get "confirm"
-      put "record"
+    namespace :parent_interface, path: "/" do
+      resources :consent_forms, path: :consents, only: [:create] do
+        get "start", on: :collection
+        get "cannot-consent"
+        get "confirm"
+        put "record"
 
-      resources :edit, only: %i[show update], controller: "consent_forms/edit"
+        resources :edit, only: %i[show update], controller: "consent_forms/edit"
+      end
     end
 
     resources :patients do
