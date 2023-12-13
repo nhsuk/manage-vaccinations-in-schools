@@ -42,7 +42,10 @@ class DevController < ApplicationController
     end
     @consent_form.save!
     session[:consent_form_id] = @consent_form.id
-    redirect_to session_consent_form_confirm_path(@session, @consent_form)
+    redirect_to session_parent_interface_consent_form_confirm_path(
+                  @session,
+                  @consent_form
+                )
   end
 
   private

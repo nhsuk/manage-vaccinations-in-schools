@@ -51,13 +51,20 @@ module ParentInterface
     end
 
     def finish_wizard_path
-      session_consent_form_confirm_path(@session, @consent_form)
+      session_parent_interface_consent_form_confirm_path(
+        @session,
+        @consent_form
+      )
     end
 
     def update_params
       permitted_attributes = {
         name: %i[first_name last_name use_common_name common_name],
-        date_of_birth: %i[date_of_birth(3i) date_of_birth(2i) date_of_birth(1i)],
+        date_of_birth: %i[
+          date_of_birth(3i)
+          date_of_birth(2i)
+          date_of_birth(1i)
+        ],
         school: %i[is_this_their_school],
         parent: %i[
           parent_name
