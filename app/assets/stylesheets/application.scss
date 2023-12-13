@@ -1,4 +1,4 @@
-@use "govuk-frontend/govuk/all" with (
+@use "govuk-frontend/dist/govuk/all" with (
   $govuk-font-family: (
     Frutiger W01,
     Arial,
@@ -8,7 +8,6 @@
   $govuk-error-colour: #d5281b,
   $govuk-success-colour: #007f3b,
   $govuk-global-styles: false,
-  $govuk-new-link-styles: true,
   $govuk-assets-path: "/",
   $mq-breakpoints: (
     mobile: 320px,

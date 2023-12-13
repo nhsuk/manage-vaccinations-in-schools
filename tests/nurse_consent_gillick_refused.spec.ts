@@ -46,7 +46,7 @@ async function then_i_see_the_no_consent_banner() {
 }
 
 async function when_i_select_that_i_am_assessing_gillick_competence() {
-  await p.getByRole("button", { name: "Assess Gillick competence" }).click();
+  await p.getByRole("link", { name: "Assess Gillick competence" }).click();
   await p.getByRole("button", { name: "Give your assessment" }).click();
 }
 
