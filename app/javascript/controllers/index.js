@@ -16,9 +16,6 @@ application.register("govuk-character-count", GovukCharacterCountController);
 import GovukCheckboxesController from "./govuk_checkboxes_controller";
 application.register("govuk-checkboxes", GovukCheckboxesController);
 
-import GovukDetailsController from "./govuk_details_controller";
-application.register("govuk-details", GovukDetailsController);
-
 import GovukHeaderController from "./govuk_header_controller";
 application.register("govuk-header", GovukHeaderController);
 
