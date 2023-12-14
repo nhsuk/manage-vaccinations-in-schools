@@ -1,5 +1,5 @@
 class SessionsController < ApplicationController
-  before_action :set_session, only: %i[show]
+  before_action :set_session, only: %i[show make_in_progress]
 
   def index
     @sessions_by_type = policy_scope(Session).group_by(&:type)
@@ -30,6 +30,16 @@ class SessionsController < ApplicationController
       @counts[:ready_to_vaccinate] += 1 if s.triaged_ready_to_vaccinate? ||
         s.added_to_session? || s.consent_given_triage_not_needed?
     end
+  end
+
+  def make_in_progress
+    @session.update!(date: Time.zone.today)
+    redirect_to session_path,
+                flash: {
+                  success: {
+                    heading: "Session is now in progress"
+                  }
+                }
   end
 
   private
