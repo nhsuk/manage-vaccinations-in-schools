@@ -258,6 +258,11 @@ GEM
       date_time_precision (>= 0.8)
       mime-types (>= 3.0)
       nokogiri (>= 1.11.4)
+    flipper (1.1.2)
+      concurrent-ruby (< 2)
+    flipper-active_record (1.1.2)
+      activerecord (>= 4.2, < 8)
+      flipper (~> 1.1.2)
     fugit (1.9.0)
       et-orbi (~> 1, >= 1.2.7)
       raabro (~> 1.4)
@@ -631,6 +636,8 @@ DEPENDENCIES
   factory_bot_rails
   faker!
   fhir_client
+  flipper
+  flipper-active_record
   good_job
   govuk-components
   govuk_design_system_formbuilder
