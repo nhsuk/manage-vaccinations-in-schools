@@ -1,3 +1,5 @@
+<%= render(AppFlashMessageComponent.new(flash: flash)) %>
+
 <% page_title = @session.name %>
 
 <% content_for :before_main do %>
@@ -47,6 +49,7 @@
         </p>
       </div>
     </div>
+    <%= govuk_button_to "Make session in-progress", make_in_progress_session_path, method: :put  %>
   </div>
 
   <div class="nhsuk-grid-column-one-third">
