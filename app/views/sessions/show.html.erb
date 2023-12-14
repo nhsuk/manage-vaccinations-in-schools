@@ -49,7 +49,10 @@
         </p>
       </div>
     </div>
-    <%= govuk_button_to "Make session in-progress", make_in_progress_session_path, method: :put  %>
+
+    <% if Flipper.enabled? :make_session_in_progress_button %>
+      <%= govuk_button_to "Make session in-progress", make_in_progress_session_path, method: :put  %>
+    <% end %>
   </div>
 
   <div class="nhsuk-grid-column-one-third">

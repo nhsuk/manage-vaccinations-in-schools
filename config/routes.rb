@@ -29,7 +29,9 @@ Rails.application.routes.draw do
     get "triage", to: "triage#index", on: :member
     get "vaccinations", to: "vaccinations#index", on: :member
 
-    put "make_in_progress", to: "sessions#make_in_progress", on: :member
+    constraints -> { Flipper.enabled?(:make_session_in_progress_button) } do
+      put "make-in-progress", to: "sessions#make_in_progress", on: :member
+    end
 
     namespace :parent_interface, path: "/" do
       resources :consent_forms, path: :consents, only: [:create] do
