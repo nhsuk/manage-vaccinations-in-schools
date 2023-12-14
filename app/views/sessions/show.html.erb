@@ -50,8 +50,22 @@
       </div>
     </div>
 
-    <% if Flipper.enabled? :make_session_in_progress_button %>
-      <%= govuk_button_to "Make session in-progress", make_in_progress_session_path, method: :put  %>
+    <% unless Rails.env.production? %>
+      <%= govuk_details(
+        summary_text: "Dev tools (only available in non-production environments)"
+      ) do %>
+        <% if Flipper.enabled? :make_session_in_progress_button %>
+          <p>
+            Vaccinations can only be recorded if a session is in progress. If you want
+            to test vaccination recording, you can set this session as in progress for today.
+          </p>
+          <%= govuk_button_to(
+            "Set session in progress for today",
+            make_in_progress_session_path,
+            method: :put
+          ) %>
+        <% end %>
+      <% end %>
     <% end %>
   </div>
 
