@@ -9,8 +9,11 @@ Rails.application.routes.draw do
 
   root to: redirect("/start")
 
-  mount Avo::Engine, at: Avo.configuration.root_path
-  mount GoodJob::Engine => "/good-job"
+  constraints -> { !Rails.env.production? } do
+    mount Avo::Engine, at: Avo.configuration.root_path
+    mount GoodJob::Engine => "/good-job"
+    mount Flipper::UI.app => "/flipper"
+  end
 
   get "/start", to: "pages#start"
   get "/dashboard", to: "dashboard#index"
@@ -86,10 +89,6 @@ Rails.application.routes.draw do
 
     get "setup-offline", to: "offline_passwords#new", on: :member
     post "setup-offline", to: "offline_passwords#create", on: :member
-  end
-
-  constraints -> { !Rails.env.production? } do
-    mount Flipper::UI.app => '/flipper'
   end
 
   scope via: :all do
