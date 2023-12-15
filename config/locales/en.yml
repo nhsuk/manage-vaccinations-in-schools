@@ -18,6 +18,7 @@ en:
     gp: "gp"
     address: "address"
     health_question: "health-question"
+    who: "who"
   consent_form_mailer:
     reasons_for_refusal:
       contains_gelatine: "of the gelatine in the nasal spray"

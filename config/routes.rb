@@ -71,19 +71,27 @@ Rails.application.routes.draw do
         get "record-template", on: :collection
       end
 
-      resource :nurse_consents, path: ":route/consent" do
-        get "assessing-gillick", to: "nurse_consents#assessing_gillick"
+      constraints -> { Flipper.enabled?(:new_consents) } do
+        resources :manage_consents,
+                  only: %i[show update],
+                  path: ":route/consents"
+      end
 
-        get "edit/gillick", to: "nurse_consents#edit_gillick"
-        put "update/gillick", to: "nurse_consents#update_gillick"
+      constraints -> { !Flipper.enabled?(:new_consents) } do
+        resource :nurse_consents, path: ":route/consent" do
+          get "assessing-gillick", to: "nurse_consents#assessing_gillick"
 
-        get "edit/who", to: "nurse_consents#edit_who"
-        get "edit/agree", to: "nurse_consents#edit_consent"
-        get "edit/reason", to: "nurse_consents#edit_reason"
-        get "edit/questions", to: "nurse_consents#edit_questions"
-        get "edit/confirm", to: "nurse_consents#edit_confirm"
+          get "edit/gillick", to: "nurse_consents#edit_gillick"
+          put "update/gillick", to: "nurse_consents#update_gillick"
 
-        put "record"
+          get "edit/who", to: "nurse_consents#edit_who"
+          get "edit/agree", to: "nurse_consents#edit_consent"
+          get "edit/reason", to: "nurse_consents#edit_reason"
+          get "edit/questions", to: "nurse_consents#edit_questions"
+          get "edit/confirm", to: "nurse_consents#edit_confirm"
+
+          put "record"
+        end
       end
     end
 
