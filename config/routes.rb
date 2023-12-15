@@ -88,6 +88,10 @@ Rails.application.routes.draw do
     post "setup-offline", to: "offline_passwords#create", on: :member
   end
 
+  constraints -> { !Rails.env.production? } do
+    mount Flipper::UI.app => '/flipper'
+  end
+
   scope via: :all do
     get "/404", to: "errors#not_found"
     get "/422", to: "errors#unprocessable_entity"
