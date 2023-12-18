@@ -41,7 +41,8 @@ class NurseConsentsController < ApplicationController
     else
       # If the params are missing, assume this is the Gillick competence route.
       # This feels like it could be more explicit.
-      @draft_consent.update!(route: "self_consent", health_questions:)
+      @draft_consent.assign_attributes(route: "self_consent", health_questions:)
+      @draft_consent.save!(validate: false)
 
       redirect_to action: :edit_gillick
     end
@@ -62,7 +63,8 @@ class NurseConsentsController < ApplicationController
       if @draft_consent.save(context: :edit_consent)
         # Reset the reason for refusal so the user has to pick it again.
         # Otherwise it will be pre-filled with the previous value.
-        @draft_consent.update! reason_for_refusal: nil
+        @draft_consent.reason_for_refusal = nil
+        @draft_consent.save!(validate: false)
 
         if @draft_consent.response_given?
           # HACK: If we're editing a refused consent, it doesn't have any questions.
@@ -73,7 +75,8 @@ class NurseConsentsController < ApplicationController
                 { question: health_question.question }
               end
 
-            @draft_consent.update! health_questions:
+            @draft_consent.health_questions = health_questions
+            @draft_consent.save!(validate: false)
           end
 
           redirect_to action: :edit_questions
@@ -102,7 +105,7 @@ class NurseConsentsController < ApplicationController
       end
 
       # TODO: Handle validation
-      @draft_consent.save!
+      @draft_consent.save!(validate: false)
 
       @draft_triage.assign_attributes consent_triage_params[:triage].merge(
                                         user: current_user
@@ -122,10 +125,11 @@ class NurseConsentsController < ApplicationController
         redirect_to action: :edit_consent
       else
         ActiveRecord::Base.transaction do
-          @draft_consent.update!(
+          @draft_consent.assign_attributes(
             recorded_at: Time.zone.now,
             response: "not_provided"
           )
+          @draft_consent.save!(validate: false)
           @patient_session.do_gillick_assessment!
         end
 
@@ -175,7 +179,8 @@ class NurseConsentsController < ApplicationController
 
   def record
     ActiveRecord::Base.transaction do
-      @draft_consent.update!(recorded_at: Time.zone.now)
+      @draft_consent.recorded_at = Time.zone.now
+      @draft_consent.save!(validate: false)
       @patient_session.do_consent!
       @patient_session.do_triage! if @patient_session.triage.present?
     end
