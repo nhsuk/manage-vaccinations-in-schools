@@ -124,7 +124,7 @@ class Consent < ApplicationRecord
   end
 
   def form_steps
-    %i[who agree]
+    %i[who agree confirm].compact
   end
 
   def name

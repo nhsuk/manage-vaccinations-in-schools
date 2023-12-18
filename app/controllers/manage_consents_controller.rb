@@ -27,7 +27,21 @@ class ManageConsentsController < ApplicationController
   end
 
   def update
-    @consent.assign_attributes(update_params)
+    if current_step == :confirm
+      # TODO: Handle the final step of the manage consent journey.
+      # Something like:
+      #
+      # ActiveRecord::Base.transaction do
+      #   @draft_consent.recorded_at = Time.zone.now
+      #   @draft_consent.save!(validate: false)
+      #   @patient_session.do_consent!
+      #   @patient_session.do_triage! if @patient_session.triage.present?
+      # end
+      #
+      # Plus a flash and redirect to the right location.
+    else
+      @consent.assign_attributes(update_params)
+    end
 
     render_wizard @consent
   end
