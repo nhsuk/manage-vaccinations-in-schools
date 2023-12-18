@@ -72,9 +72,12 @@ Rails.application.routes.draw do
       end
 
       constraints -> { Flipper.enabled?(:new_consents) } do
+        post ":route/consents",
+             to: "manage_consents#create",
+             as: :manage_consents
         resources :manage_consents,
                   only: %i[show update],
-                  path: ":route/consents"
+                  path: ":route/consents/:consent_id/"
       end
 
       constraints -> { !Flipper.enabled?(:new_consents) } do
