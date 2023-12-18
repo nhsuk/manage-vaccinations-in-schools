@@ -1,0 +1,50 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+    href: previous_wizard_path,
+    name: "health questions page",
+  ) %>
+<% end %>
+
+<% page_title = "Check and confirm answers" %>
+
+<%= h1 page_title:, class: "nhsuk-heading-l" do %>
+  <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
+    <%= @patient.full_name %>
+  </span>
+  <%= page_title %>
+<% end %>
+
+<% if @consent.via_self_consent? %>
+  <%= render AppGillickCardComponent.new(
+    consent: @consent,
+    patient_session: @patient_session) %>
+<% else %>
+  <%= render AppConsentCardComponent.new(
+    consent: @consent,
+    current_user:) %>
+<% end %>
+
+<% if @consent.response_given? %>
+  <%= render AppCardComponent.new(heading: "Health questions") do %>
+    <%= render AppHealthQuestionsComponent.new(
+      consents: [@consent]) %>
+  <% end %>
+<% end %>
+
+<% if @consent.response_given? && @draft_triage.status.present? %>
+  <%= render AppCardComponent.new(heading: "Triage") do %>
+    <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
+      summary_list.with_row do |row|
+        row.with_key { "Status" }
+        row.with_value { @draft_triage.status.humanize }
+      end
+
+      summary_list.with_row do |row|
+        row.with_key { "Triage notes" }
+        row.with_value { @draft_triage.notes.presence || "No notes" }
+      end
+    end %>
+  <% end %>
+<% end %>
+
+<%= govuk_button_to "Confirm", wizard_path, method: :put %>
