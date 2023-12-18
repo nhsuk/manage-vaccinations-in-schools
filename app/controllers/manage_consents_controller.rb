@@ -61,7 +61,8 @@ class ManageConsentsController < ApplicationController
         parent_phone
         parent_relationship
         parent_relationship_other
-      ]
+      ],
+      agree: %i[response]
     }.fetch(current_step)
 
     params
