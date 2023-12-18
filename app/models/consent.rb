@@ -97,6 +97,10 @@ class Consent < ApplicationRecord
               if: -> { reason_for_refusal == "other" }
   end
 
+  def form_steps
+    %i[who]
+  end
+
   def name
     via_self_consent? ? patient.full_name : parent_name
   end
