@@ -67,23 +67,51 @@ FactoryBot.define do
     end
 
     trait :consent_given_triage_not_needed do
-      consents { [create(:consent, :given, campaign:)] }
+      after(:create) do |patient, evaluator|
+        create(:consent, :given, campaign: evaluator.campaign, patient:)
+      end
     end
 
     trait :consent_given_triage_needed do
-      consents { [create(:consent, :given, :health_question_notes, campaign:)] }
+      after(:create) do |patient, evaluator|
+        create(
+          :consent,
+          :given,
+          :health_question_notes,
+          campaign: evaluator.campaign,
+          patient:
+        )
+      end
     end
 
     trait :consent_refused do
-      consents { [create(:consent, :refused, :from_mum, campaign:)] }
+      after(:create) do |patient, evaluator|
+        create(
+          :consent,
+          :refused,
+          :from_mum,
+          campaign: evaluator.campaign,
+          patient:
+        )
+      end
     end
 
     trait :consent_conflicting do
-      consents do
-        [
-          create(:consent, :refused, :from_mum, campaign:),
-          create(:consent, :given, :from_dad, campaign:)
-        ]
+      after(:create) do |patient, evaluator|
+        create(
+          :consent,
+          :refused,
+          :from_mum,
+          campaign: evaluator.campaign,
+          patient:
+        )
+        create(
+          :consent,
+          :given,
+          :from_dad,
+          campaign: evaluator.campaign,
+          patient:
+        )
       end
     end
 
