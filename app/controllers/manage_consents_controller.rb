@@ -27,7 +27,6 @@ class ManageConsentsController < ApplicationController
   end
 
   def set_steps
-    # self.steps = @consent.form_steps
-    self.steps = %i[who]
+    self.steps = @consent.form_steps
   end
 end
