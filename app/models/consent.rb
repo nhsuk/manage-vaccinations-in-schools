@@ -99,6 +99,22 @@ class Consent < ApplicationRecord
               if: -> { reason_for_refusal == "other" }
   end
 
+  with_options on: :update do
+    with_options if: -> { required_for_step?(:who) } do
+      validates :parent_name, presence: true
+      validates :parent_phone, presence: true
+      validates :parent_phone, phone_number: true
+      validates :parent_relationship,
+                inclusion: {
+                  in: Consent.parent_relationships.keys
+                },
+                presence: true
+      validates :parent_relationship_other,
+                presence: true,
+                if: -> { parent_relationship == "other" }
+    end
+  end
+
   def form_steps
     %i[who]
   end

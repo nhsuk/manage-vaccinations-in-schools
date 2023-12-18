@@ -39,12 +39,17 @@
   end %>
 <% else %>
   <p>
-    <%= govuk_button_link_to(
-      "Get consent",
-      Flipper.enabled?(:new_consents) ?
-        session_patient_manage_consent_path(session, patient, @route, :who) :
+    <% if Flipper.enabled?(:new_consents) %>
+      <%= govuk_button_to(
+        "Get consent",
+        session_patient_manage_consents_path(session, patient, @route)
+      ) %>
+    <% else %>
+      <%= govuk_button_link_to(
+        "Get consent",
         new_session_patient_nurse_consents_path(session, patient, @route)
-    ) %>
+      ) %>
+    <% end %>
 
     <% if display_gillick_consent_button? %>
       <%= govuk_button_link_to(
