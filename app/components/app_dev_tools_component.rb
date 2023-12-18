@@ -1,11 +1,15 @@
 class AppDevToolsComponent < ViewComponent::Base
   erb_template <<-ERB
     <% unless Rails.env.production? %>
-      <%= govuk_details(
-        summary_text: "Dev tools (only available in non-production environments)"
-      ) do %>
-        <%= content %>
-      <% end %>
+      <div class="app-dev-tools">
+        <div class="nhsuk-width-container">
+          <h2 class="nhsuk-heading-s">
+            Development tools
+            <span class="nhsuk-caption-m">Only available in non-production environments</span>
+          </h2>
+          <%= content %>
+        </div>
+      </div>
     <% end %>
   ERB
 
