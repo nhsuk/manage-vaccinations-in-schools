@@ -23,67 +23,9 @@
     consent: @draft_consent,
     patient_session: @patient_session) %>
 <% else %>
-<div class="nhsuk-card" data-testid="consent">
-  <div class="nhsuk-card__content">
-    <h2 class="nhsuk-card__heading nhsuk-heading-m">
-      <%= {
-        given: "Consent given by",
-        refused: "Refusal confirmed by",
-        not_provided: "",
-      }[@draft_consent.response.to_sym] %>
-      <%= @draft_consent.name.titleize %>
-      <% unless @draft_consent.via_self_consent? %>
-        (<%= @draft_consent.who_responded %>)
-      <% end %>
-    </h2>
-
-    <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
-      summary_list.with_row do |row|
-        row.with_key { "Name" }
-        row.with_value { @draft_consent.parent_name.titleize }
-      end
-
-      summary_list.with_row do |row|
-        row.with_key { "Relationship" }
-        row.with_value { @draft_consent.who_responded }
-      end
-
-      summary_list.with_row do |row|
-        row.with_key { "Contact" }
-        row.with_value { @draft_consent.parent_phone }
-      end
-
-      summary_list.with_row do |row|
-        row.with_key { "Response" }
-        row.with_value do %>
-          <p class="nhsuk-u-margin-bottom-0">
-            <%= {
-            given: "Consent updated to given (by phone)",
-            refused: "Refusal confirmed (by phone)",
-            not_provided: "No response when contacted",
-            }[@draft_consent.response.to_sym] %>
-          </p>
-          <p class="nhsuk-u-margin-bottom-2 nhsuk-u-secondary-text-color nhsuk-u-font-size-16 nhsuk-u-margin-bottom-0">
-            <%= govuk_link_to current_user.full_name, "mailto:#{current_user.email}" %>,
-            <%= Time.zone.now.to_fs(:app_date_time) %>
-          </p>
-        <% end
-      end
-
-      if @draft_consent.response_refused?
-        summary_list.with_row do |row|
-          row.with_key { "Refusal reason" }
-          row.with_value do %>
-            <%= @draft_consent.human_enum_name(:reason_for_refusal) %>
-            <div class="nhsuk-u-margin-top-2 nhsuk-u-font-size-16">
-              <%= @draft_consent.reason_for_refusal_other %>
-            </div>
-          <% end
-        end
-      end
-    end %>
-  </div>
-</div>
+  <%= render AppConsentCardComponent.new(
+    consent: @draft_consent,
+    current_user:) %>
 <% end %>
 
 <% if @draft_consent.response_given? %>
