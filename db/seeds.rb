@@ -5,3 +5,7 @@
 #
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
+
+FEATURE_FLAGS = %i[make_session_in_progress_button new_consents].freeze
+
+FEATURE_FLAGS.each { |flag| Flipper.add(flag) unless Flipper.exist?(flag) }
