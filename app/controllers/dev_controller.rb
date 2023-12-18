@@ -8,7 +8,13 @@ class DevController < ApplicationController
     ActiveRecord::Base.connection.transaction do
       data_tables =
         ActiveRecord::Base.connection.tables -
-          %w[users schema_migrations ar_internal_metadata]
+          %w[
+            users
+            schema_migrations
+            ar_internal_metadata
+            flipper_features
+            flipper_gates
+          ]
       data_tables.each do |table|
         ActiveRecord::Base.connection.execute(
           "TRUNCATE #{table} RESTART IDENTITY CASCADE"
