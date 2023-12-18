@@ -113,10 +113,18 @@ class Consent < ApplicationRecord
                 presence: true,
                 if: -> { parent_relationship == "other" }
     end
+
+    with_options if: -> { required_for_step?(:agree) } do
+      validates :response,
+                inclusion: {
+                  in: Consent.responses.keys
+                },
+                presence: true
+    end
   end
 
   def form_steps
-    %i[who]
+    %i[who agree]
   end
 
   def name

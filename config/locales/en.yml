@@ -7,6 +7,7 @@ en:
     email: england.manage-childrens-vaccinations@nhs.net
     temporary_cumbria_phone: "01900 705 045"
   wicked:
+    # ConsentForm
     name: "name"
     date_of_birth: "date-of-birth"
     school: "school"
@@ -18,7 +19,10 @@ en:
     gp: "gp"
     address: "address"
     health_question: "health-question"
+
+    # Consent
     who: "who"
+    agree: "agree"
   consent_form_mailer:
     reasons_for_refusal:
       contains_gelatine: "of the gelatine in the nasal spray"
@@ -203,7 +207,7 @@ en:
               inclusion: Choose a relationship
             parent_relationship_other:
               blank: Enter a relationship
-            consent:
+            response:
               inclusion: Choose if they consent
             reason_for_refusal:
               inclusion: Choose a reason
