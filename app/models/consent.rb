@@ -64,37 +64,38 @@ class Consent < ApplicationRecord
   enum :gp_response, %w[yes no dont_know]
   enum :route, %i[website phone paper in_person self_consent], prefix: "via"
 
-  validates :parent_name, presence: true, on: :edit_who
-  validates :parent_phone, presence: true, on: :edit_who
-  validates :parent_phone, phone_number: true, on: :edit_who
-  validates :parent_relationship,
-            inclusion: {
-              in: parent_relationships.keys
-            },
-            presence: true,
-            on: :edit_who
-  validates :parent_relationship_other,
-            presence: true,
-            if: -> { parent_relationship == "other" },
-            on: :edit_who
+  with_options on: :edit_who do
+    validates :parent_name, presence: true
+    validates :parent_phone, presence: true
+    validates :parent_phone, phone_number: true
+    validates :parent_relationship,
+              inclusion: {
+                in: Consent.parent_relationships.keys
+              },
+              presence: true
+    validates :parent_relationship_other,
+              presence: true,
+              if: -> { parent_relationship == "other" }
+  end
 
-  validates :response,
-            inclusion: {
-              in: responses.keys
-            },
-            presence: true,
-            on: :edit_consent
+  with_options on: :edit_consent do
+    validates :response,
+              inclusion: {
+                in: Consent.responses.keys
+              },
+              presence: true
+  end
 
-  validates :reason_for_refusal,
-            inclusion: {
-              in: reason_for_refusals.keys
-            },
-            presence: true,
-            on: :edit_reason
-  validates :reason_for_refusal_other,
-            presence: true,
-            if: -> { reason_for_refusal == "other" },
-            on: :edit_reason
+  with_options on: :edit_reason do
+    validates :reason_for_refusal,
+              inclusion: {
+                in: Consent.reason_for_refusals.keys
+              },
+              presence: true
+    validates :reason_for_refusal_other,
+              presence: true,
+              if: -> { reason_for_refusal == "other" }
+  end
 
   def name
     via_self_consent? ? patient.full_name : parent_name
