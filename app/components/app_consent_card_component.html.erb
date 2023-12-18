@@ -1,0 +1,47 @@
+<%= render AppCardComponent.new(heading:) do %>
+  <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
+    summary_list.with_row do |row|
+      row.with_key { "Name" }
+      row.with_value { @consent.parent_name.titleize }
+    end
+
+    summary_list.with_row do |row|
+      row.with_key { "Relationship" }
+      row.with_value { @consent.who_responded }
+    end
+
+    summary_list.with_row do |row|
+      row.with_key { "Contact" }
+      row.with_value { @consent.parent_phone }
+    end
+
+    summary_list.with_row do |row|
+      row.with_key { "Response" }
+      row.with_value do %>
+        <p class="nhsuk-u-margin-bottom-0">
+          <%= {
+          given: "Consent updated to given (by phone)",
+          refused: "Refusal confirmed (by phone)",
+          not_provided: "No response when contacted",
+          }[@consent.response.to_sym] %>
+        </p>
+        <p class="nhsuk-u-margin-bottom-2 nhsuk-u-secondary-text-color nhsuk-u-font-size-16 nhsuk-u-margin-bottom-0">
+          <%= govuk_link_to @current_user.full_name, "mailto:#{@current_user.email}" %>,
+          <%= Time.zone.now.to_fs(:app_date_time) %>
+        </p>
+      <% end
+    end
+
+    if @consent.response_refused?
+      summary_list.with_row do |row|
+        row.with_key { "Refusal reason" }
+        row.with_value do %>
+          <%= @consent.human_enum_name(:reason_for_refusal) %>
+          <div class="nhsuk-u-margin-top-2 nhsuk-u-font-size-16">
+            <%= @consent.reason_for_refusal_other %>
+          </div>
+        <% end
+      end
+    end
+  end %>
+<% end %>
