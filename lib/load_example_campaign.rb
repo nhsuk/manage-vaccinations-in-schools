@@ -3,7 +3,6 @@ require "example_campaign_data"
 module LoadExampleCampaign
   def self.load(example_file:, new_campaign: false, in_progress: false)
     example = ExampleCampaignData.new(data_file: Rails.root.join(example_file))
-    example.in_progress! if in_progress
 
     ActiveRecord::Base.transaction do
       campaign =
@@ -21,17 +20,27 @@ module LoadExampleCampaign
 
       campaign.save!
 
-      school = create_school(example)
       create_vaccine_and_batches(example, campaign:)
-      session = create_session(example, campaign:, school:)
-
       create_vaccine_health_questions(example, campaign:)
-      create_children(example, campaign:, session:)
+
+      example.sessions.each do |session_attributes|
+        # HACK: Yes, this is a massive hack. If the "in_progress" cli flag is
+        #       set, then we set all the sessions in this campaign to
+        #       in-progress. Soz. At the moment we only use this option when
+        #       loading single sessions (for tests or /reset), so embrace and
+        #       iterate when needed.
+        make_in_progress!(session_attributes:) if in_progress
+
+        school = create_school(school_attributes: session_attributes["school"])
+        session = create_session(session_attributes, campaign:, school:)
+        children_attributes = example.children_attributes(session_attributes:)
+        create_children(children_attributes:, campaign:, session:)
+      end
     end
   end
 
-  def self.make_in_progress!(example)
-    example["date"] = Time.zone.today
+  def self.make_in_progress!(session_attributes:)
+    session_attributes["date"] = Time.zone.today
   end
 
   def self.transition_states(patient_session)
@@ -62,10 +71,10 @@ module LoadExampleCampaign
     end
   end
 
-  def self.create_school(example)
+  def self.create_school(school_attributes:)
     Location
-      .find_or_create_by!(name: example.school_attributes[:name])
-      .tap { |school| school.update!(example.school_attributes) }
+      .find_or_create_by!(name: school_attributes[:name])
+      .tap { |school| school.update!(school_attributes) }
   end
 
   def self.create_vaccine_and_batches(example, campaign:)
@@ -99,18 +108,18 @@ module LoadExampleCampaign
     end
   end
 
-  def self.create_session(example, campaign:, school:)
+  def self.create_session(session_attributes, campaign:, school:)
     Session
-      .find_or_initialize_by(campaign:, name: example.session_attributes[:name])
+      .find_or_initialize_by(campaign:, name: school[:name])
       .tap do |session|
-        session.update!(example.session_attributes)
+        session.update!(session_attributes.slice("date"))
         session.location = school if session.location.blank?
         session.save!
       end
   end
 
-  def self.create_children(example, campaign:, session:)
-    example.children_attributes.each do |attributes|
+  def self.create_children(children_attributes:, campaign:, session:)
+    children_attributes.each do |attributes|
       triage_attributes = attributes.delete(:triage)
       consents_attributes = attributes.delete(:consents)
 

@@ -7,10 +7,6 @@ class ExampleCampaignData
     @raw_data ||= JSON.parse(File.read(@data_file))
   end
 
-  def in_progress!
-    raw_data["date"] = Time.zone.today.to_s
-  end
-
   def vaccine_attributes
     raw_data["vaccines"].map do |vaccine|
       {
@@ -34,8 +30,23 @@ class ExampleCampaignData
     raw_data["location"]
   end
 
-  def school_attributes
-    school_data = raw_data["school"]
+  def sessions
+    if raw_data.key? "sessions"
+      raw_data["sessions"].map do |session_data|
+        session_data.merge("school" => school_attributes(session_data))
+      end
+    else
+      {
+        "date" => raw_data["date"],
+        "location" => raw_data["location"],
+        "school" => school_attributes(raw_data),
+        "patients" => raw_data["patients"]
+      }
+    end
+  end
+
+  def school_attributes(session_data)
+    school_data = session_data["school"]
     {
       name: school_data["name"],
       address: school_data["address"],
@@ -61,8 +72,9 @@ class ExampleCampaignData
     end
   end
 
-  def children_attributes
-    raw_data["patients"].map do |patient|
+  def children_attributes(session_attributes: nil)
+    session_attributes ||= raw_data
+    session_attributes["patients"].map do |patient|
       attributes = {
         seen: patient.dig("seen", "text"),
         first_name: patient["firstName"],
