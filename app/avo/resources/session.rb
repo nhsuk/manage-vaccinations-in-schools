@@ -6,12 +6,14 @@ class Avo::Resources::Session < Avo::BaseResource
   #   query.ransack(id_eq: params[:q], m: "or").result(distinct: false)
   # end
 
-  field :id, as: :id
-  # Fields generated from the model
-  field :name, as: :text
-  field :date, as: :date_time
-  field :campaign, as: :belongs_to
-  field :location, as: :belongs_to
-  field :patients, as: :has_and_belongs_to_many
-  # add fields here
+  def fields
+    field :id, as: :id
+    # Fields generated from the model
+    field :name, as: :text
+    field :date, as: :date_time
+    field :campaign, as: :belongs_to
+    field :location, as: :belongs_to
+    field :patients, as: :has_and_belongs_to_many
+    # add fields here
+  end
 end
