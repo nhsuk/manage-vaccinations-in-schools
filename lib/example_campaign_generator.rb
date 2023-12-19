@@ -70,31 +70,17 @@ class ExampleCampaignGenerator
   end
 
   def generate
-    patients_consent_triage = []
-    patients_consent_triage +=
-      build_patients_with_consent_given_and_ready_to_vaccinate
-    patients_consent_triage += build_patients_with_no_consent_response
-    patients_consent_triage += build_patients_with_consent_refused
-    patients_consent_triage += build_patients_with_conflicting_consent
-    patients_consent_triage += build_patients_that_still_need_triage
-    patients_consent_triage += build_patients_with_triage_started
-    patients_consent_triage += build_patients_that_have_already_been_triaged
-
-    patients_data = generate_patients_data(patients_consent_triage)
-    patients_data = add_consents_to_patients_data(patients_data)
+    sessions_data = [generate_session_data]
 
     vaccine_name = I18n.t("vaccines.#{type}")
     {
       id: random.seed.to_s,
-      title: "#{vaccine_name} campaign at #{school_data[:name]}",
-      location: school_data[:name],
-      date: "2023-07-28T12:30",
+      title: vaccine_name,
       type: vaccine_name,
       team: team_data,
       vaccines: vaccines_data,
-      school: school_data,
       healthQuestions: health_questions_data,
-      patients: patients_data
+      sessions: sessions_data
     }
   end
 
@@ -155,6 +141,37 @@ class ExampleCampaignGenerator
     @vaccines_data ||= [
       { brand: vaccine.brand, method: vaccine.method, batches: batches_data }
     ]
+  end
+
+  def generate_session_data
+    patients_consent_triage = []
+    patients_consent_triage +=
+      build_patients_with_consent_given_and_ready_to_vaccinate
+    patients_consent_triage += build_patients_with_no_consent_response
+    patients_consent_triage += build_patients_with_consent_refused
+    patients_consent_triage += build_patients_with_conflicting_consent
+    patients_consent_triage += build_patients_that_still_need_triage
+    patients_consent_triage += build_patients_with_triage_started
+    patients_consent_triage += build_patients_that_have_already_been_triaged
+
+    patients_data = generate_patients_data(patients_consent_triage)
+    patients_data = add_consents_to_patients_data(patients_data)
+
+    school_data = generate_school_data
+
+    {
+      date: "2023-07-28T12:30",
+      location: school_data[:name],
+      school: school_data,
+      patients: patients_data
+    }
+  end
+
+  def generate_school_data
+    JSON
+      .parse(File.read(Rails.root.join("db/sample_data/schools_sample.json")))
+      .sample(random:)
+      .with_indifferent_access
   end
 
   def build_patient
@@ -541,14 +558,6 @@ class ExampleCampaignGenerator
         }
       end
     end
-  end
-
-  def school_data
-    @school_data ||=
-      JSON
-        .parse(File.read(Rails.root.join("db/sample_data/schools_sample.json")))
-        .sample(random:)
-        .with_indifferent_access
   end
 
   def health_questions_data
