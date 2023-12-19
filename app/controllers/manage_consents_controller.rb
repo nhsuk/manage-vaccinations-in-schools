@@ -43,6 +43,9 @@ class ManageConsentsController < ApplicationController
       @consent.assign_attributes(update_params)
     end
 
+    set_steps # The form_steps can change after certain attrs change
+    setup_wizard_translated # Next/previous steps can change after steps change
+
     render_wizard @consent
   end
 
@@ -86,6 +89,11 @@ class ManageConsentsController < ApplicationController
   end
 
   def set_steps
+    # Translated steps are cached after running setup_wizard_translated.
+    # To allow us to run this method multiple times during a single action
+    # lifecycle, we need to clear the cache.
+    @wizard_translations = nil
+
     self.steps = @consent.form_steps
   end
 end
