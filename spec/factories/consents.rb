@@ -56,7 +56,7 @@ FactoryBot.define do
     parent_name { Faker::Name.name }
     parent_email { Faker::Internet.email(domain: "gmail.com") }
     # Replace first two digits with 07 to make it a mobile number
-    parent_phone { Faker::PhoneNumber.phone_number.gsub(/\A\d{2}/, "07") }
+    parent_phone { Faker::PhoneNumber.cell_phone }
     address_line_1 { Faker::Address.street_address }
     address_line_2 do
       random.rand(1.0) > 0.8 ? Faker::Address.secondary_address : nil
