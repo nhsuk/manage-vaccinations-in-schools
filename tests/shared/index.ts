@@ -6,7 +6,7 @@ export const fixtures = {
   parentName: "Lauren Pacocha", // Made up / arbitrary
   parentRole: "Mum",
 
-  // Get from /sessions/1/consents, "No consent" tab
+  // Get from /sessions/1/consents, "No response" tab
   patientThatNeedsConsent: "Jose Pacocha",
   secondPatientThatNeedsConsent: "Silvia Waters",
 
@@ -22,8 +22,8 @@ export const fixtures = {
   secondPatientThatNeedsVaccination: "Carla Reynolds",
 
   // Get from /sessions/1/patients/Y/vaccinations/batch/edit
-  vaccineBatch: "TK8195",
+  vaccineBatch: "KD5966",
 
   // Get from /sessions, signed in as Nurse Jackie
-  schoolName: /Fosse Way Academy/,
+  schoolName: /Fallibroome High School/,
 };
