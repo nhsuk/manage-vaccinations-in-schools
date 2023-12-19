@@ -6,7 +6,7 @@ require "example_campaign_generator"
 desc <<DESC
 Generates a random example campaign and writes it to stdout.
 
-Option (set these as env vars, e.g. seed=42):
+Options (set these as env vars, e.g. seed=42):
   seed: Random seed used to make data reproducible.
   presets: Use preset values for the following options. These can be overridden with patients_* options. Available presets:
     - model_office
