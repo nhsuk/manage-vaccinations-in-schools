@@ -1,9 +1,9 @@
-class CampaignResource < Avo::BaseResource
+class Avo::Resources::Campaign < Avo::BaseResource
   self.title = :name
   self.includes = []
   self.record_selector = false
   # self.search_query = -> do
-  #   scope.ransack(id_eq: params[:q], m: "or").result(distinct: false)
+  #   query.ransack(id_eq: params[:q], m: "or").result(distinct: false)
   # end
 
   field :id, as: :id
