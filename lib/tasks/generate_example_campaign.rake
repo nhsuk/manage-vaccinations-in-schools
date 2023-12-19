@@ -10,7 +10,8 @@ Option (set these as env vars, e.g. seed=42):
   seed: Random seed used to make data reproducible.
   presets: Use preset values for the following options. These can be overridden with patients_* options. Available presets:
     - model_office
-  type: Type of campaign to generate, one of: hpv, flu (default: ExampleCampaignGenerator.default_type)
+  sessions: Number of sessions to generate (default: 1)
+  type: Type of campaign to generate, one of: hpv, flu (default: #{ExampleCampaignGenerator.default_type})
   username: Name of the user to be added to the team. An email address will be generated using this.
   users_json: A JSON string containing an array of users to be added to the team.
               Example: '[{"full_name": "John Doe", "email": "john.doe@nhs.net"}]'
@@ -39,12 +40,14 @@ task :generate_example_campaign,
 
   username = ENV["username"]
   users_json = ENV["users_json"]
+  sessions = ENV["sessions"]
 
   generator =
     ExampleCampaignGenerator.new(
       seed:,
       username:,
       users_json:,
+      sessions:,
       **campaign_options
     )
   data = generator.generate

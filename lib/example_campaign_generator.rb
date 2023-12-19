@@ -57,12 +57,14 @@ class ExampleCampaignGenerator
 
     @username = options.delete(:username)
     @users_json = options.delete(:users_json)
+    @sessions = options.delete(:sessions)&.to_i
 
     if presets
       raise "Preset #{presets} not found" unless presettings.key?(presets)
       @type ||= presettings[presets][:type] || self.class.default_type
       @username ||= presettings[presets][:username]
       @users_json ||= presettings[presets][:users_json]
+      @sessions ||= presettings[presets].fetch(:sessions, 1).to_i
       @options = presettings[presets].merge(@options)
     else
       @type ||= self.class.default_type
@@ -70,7 +72,7 @@ class ExampleCampaignGenerator
   end
 
   def generate
-    sessions_data = [generate_session_data]
+    sessions_data = @sessions.times.map { generate_session_data }
 
     vaccine_name = I18n.t("vaccines.#{type}")
     {
