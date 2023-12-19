@@ -95,7 +95,8 @@ class ExampleCampaignGenerator
   end
 
   def team
-    @team = FactoryBot.build(:team, name: "#{school_data[:county]} SAIS team")
+    @team ||=
+      FactoryBot.build(:team, name: "SAIS team #{@random.rand(1..1_000_000)}")
   end
 
   def users
