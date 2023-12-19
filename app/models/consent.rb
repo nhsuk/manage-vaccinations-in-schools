@@ -121,10 +121,21 @@ class Consent < ApplicationRecord
                 },
                 presence: true
     end
+
+    with_options if: -> { required_for_step?(:reason) } do
+      validates :reason_for_refusal,
+                inclusion: {
+                  in: Consent.reason_for_refusals.keys
+                },
+                presence: true
+      validates :reason_for_refusal_other,
+                presence: true,
+                if: -> { reason_for_refusal == "other" }
+    end
   end
 
   def form_steps
-    %i[who agree confirm].compact
+    [:who, :agree, (:reason if response_refused?), :confirm].compact
   end
 
   def name
