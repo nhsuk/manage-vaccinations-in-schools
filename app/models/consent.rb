@@ -135,6 +135,10 @@ class Consent < ApplicationRecord
                 presence: true,
                 if: -> { reason_for_refusal == "other" }
     end
+
+    with_options if: -> { required_for_step?(:questions) } do
+      validate :health_answers_valid?
+    end
   end
 
   def form_steps
@@ -178,6 +182,18 @@ class Consent < ApplicationRecord
   end
 
   private
+
+  def health_answers_valid?
+    return if health_answers.map(&:valid?).all?
+
+    health_answers.each_with_index do |health_answer, index|
+      health_answer.errors.messages.each do |field, messages|
+        messages.each do |message|
+          errors.add("question-#{index}-#{field}", message)
+        end
+      end
+    end
+  end
 
   def required_for_step?(step, exact: false)
     # Exact means that the form_step must match the step
