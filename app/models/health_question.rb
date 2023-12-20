@@ -46,6 +46,10 @@ class HealthQuestion < ApplicationRecord
     first_health_question.to_set
   end
 
+  def self.to_health_answers
+    HealthAnswer.from_health_questions(in_order)
+  end
+
   # Turn the health questions into an array.
   def to_set(set = nil)
     set ||= Set.new
