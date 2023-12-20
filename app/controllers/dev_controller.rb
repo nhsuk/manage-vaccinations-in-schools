@@ -41,7 +41,7 @@ class DevController < ApplicationController
     @vaccine = @session.campaign.vaccines.first
     @consent_form =
       FactoryBot.build :consent_form, session_id: @session.id, recorded_at: nil
-    @consent_form.health_questions = @vaccine.health_questions.in_order
+    @consent_form.health_answers = @vaccine.health_questions.to_health_answers
     @consent_form.save!
     @consent_form.each_health_answer do |health_answer|
       health_answer.response = "no"

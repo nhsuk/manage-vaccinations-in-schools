@@ -41,16 +41,11 @@
 #
 
 class ConsentForm < ApplicationRecord
-  attr_accessor :form_step,
-                :health_question_number,
-                :is_this_their_school,
-                :health_questions
+  attr_accessor :form_step, :health_question_number, :is_this_their_school
 
   audited
 
   belongs_to :session
-
-  before_create :initialize_health_answers_from_health_questions
 
   enum :parent_relationship, %w[mother father guardian other], prefix: true
   enum :contact_method, %w[text voice other any], prefix: true
@@ -187,25 +182,6 @@ class ConsentForm < ApplicationRecord
       break unless next_health_answer_index
       health_answer = health_answers[next_health_answer_index]
     end
-  end
-
-  def initialize_health_answers_from_health_questions
-    return if health_questions.blank?
-
-    hq_id_mappings =
-      Hash[health_questions.map.with_index { |hq, i| [hq.id, i] }]
-
-    self.health_answers =
-      health_questions.map do |hq|
-        HealthAnswer.new id: hq_id_mappings[hq.id],
-                         question: hq.question,
-                         response: nil,
-                         notes: nil,
-                         hint: hq.hint,
-                         next_question: hq_id_mappings[hq.next_question_id],
-                         follow_up_question:
-                           hq_id_mappings[hq.follow_up_question_id]
-      end
   end
 
   def needs_triage?
