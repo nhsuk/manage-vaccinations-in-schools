@@ -28,10 +28,15 @@ class NurseConsentsController < ApplicationController
       @session.health_questions.in_order.map do |health_question|
         { question: health_question.question }
       end
+    health_answers = @session.health_questions.to_health_answers
 
     if consent_who_params.present?
       @draft_consent.assign_attributes(
-        consent_who_params.merge(route: "phone", health_questions:)
+        consent_who_params.merge(
+          route: "phone",
+          health_questions:,
+          health_answers:
+        )
       )
       if @draft_consent.save(context: :edit_who)
         redirect_to action: :edit_consent
@@ -41,7 +46,11 @@ class NurseConsentsController < ApplicationController
     else
       # If the params are missing, assume this is the Gillick competence route.
       # This feels like it could be more explicit.
-      @draft_consent.assign_attributes(route: "self_consent", health_questions:)
+      @draft_consent.assign_attributes(
+        route: "self_consent",
+        health_questions:,
+        health_answers:
+      )
       @draft_consent.save!(validate: false)
 
       redirect_to action: :edit_gillick
