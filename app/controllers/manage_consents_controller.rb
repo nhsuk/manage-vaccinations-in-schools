@@ -10,6 +10,7 @@ class ManageConsentsController < ApplicationController
   before_action :set_consent, except: %i[create]
   before_action :set_steps, except: %i[create]
   before_action :setup_wizard_translated, except: %i[create]
+  before_action :set_triage, except: %i[create], if: -> { step == "questions" }
 
   def create
     consent =
@@ -24,9 +25,6 @@ class ManageConsentsController < ApplicationController
   end
 
   def show
-    @patient_session = @patient.patient_sessions.find_by(session: @session)
-    @triage = Triage.find_or_initialize_by(patient_session: @patient_session)
-
     render_wizard
   end
 
@@ -43,6 +41,15 @@ class ManageConsentsController < ApplicationController
       # end
       #
       # Plus a flash and redirect to the right location.
+    elsif current_step == :questions
+      # triage_attrs = update_params.delete(:triage) # TODO: Update @triage
+      questions_attrs = update_params.except(:triage, :form_step).values
+
+      @consent.health_answers.each_with_index do |ha, index|
+        ha.assign_attributes(questions_attrs[index])
+      end
+
+      @consent.assign_attributes(form_step: current_step)
     else
       @consent.assign_attributes(update_params)
     end
@@ -73,6 +80,11 @@ class ManageConsentsController < ApplicationController
 
   def set_consent
     @consent = Consent.find(params[:consent_id])
+  end
+
+  def set_triage
+    patient_session = @patient.patient_sessions.find_by(session: @session)
+    @triage = Triage.find_or_initialize_by(patient_session:)
   end
 
   def update_params
