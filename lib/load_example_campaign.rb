@@ -137,6 +137,11 @@ module LoadExampleCampaign
 
       next if consents_attributes.blank?
       consents_attributes.each do |consent_attributes|
+        # TODO: Temporary while we migrate consents to :health_answers.
+        consent_attributes[
+          :health_answers
+        ] = session.health_questions.to_health_answers
+
         parent_email = consent_attributes[:parent_email]
         consent =
           Consent.find_or_initialize_by(campaign:, patient:, parent_email:)
