@@ -16,13 +16,17 @@ class ManageConsentsController < ApplicationController
       Consent.create!(
         patient: @patient,
         campaign: @session.campaign,
-        route: "phone"
+        route: "phone",
+        health_answers: @session.health_questions.to_health_answers
       )
 
     redirect_to action: :show, id: :who, consent_id: consent.id
   end
 
   def show
+    @patient_session = @patient.patient_sessions.find_by(session: @session)
+    @triage = Triage.find_or_initialize_by(patient_session: @patient_session)
+
     render_wizard
   end
 
@@ -80,13 +84,31 @@ class ManageConsentsController < ApplicationController
         parent_relationship_other
       ],
       agree: %i[response],
-      reason: %i[reason_for_refusal reason_for_refusal_other]
+      reason: %i[reason_for_refusal reason_for_refusal_other],
+      questions: questions_params
     }.fetch(current_step)
 
     params
       .fetch(:consent, {})
       .permit(permitted_attributes)
       .merge(form_step: current_step)
+  end
+
+  # Returns:
+  # {
+  #   question_0: %i[notes response],
+  #   question_1: %i[notes response],
+  #   question_2: %i[notes response],
+  #   ...
+  #   triage: %i[notes status]
+  # }
+  def questions_params
+    n = @consent.health_answers.size
+
+    Array
+      .new(n) { |index| ["question_#{index}", %i[notes response]] }
+      .to_h
+      .merge(triage: %i[notes status])
   end
 
   def set_steps

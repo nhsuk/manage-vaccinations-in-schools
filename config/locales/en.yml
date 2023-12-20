@@ -23,8 +23,9 @@ en:
     # Consent
     who: "who"
     agree: "agree"
-    confirm: "confirm"
+    questions: "questions"
     # reason: "reason" # already defined above
+    confirm: "confirm"
   consent_form_mailer:
     reasons_for_refusal:
       contains_gelatine: "of the gelatine in the nasal spray"

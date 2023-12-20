@@ -138,7 +138,13 @@ class Consent < ApplicationRecord
   end
 
   def form_steps
-    [:who, :agree, (:reason if response_refused?), :confirm].compact
+    [
+      :who,
+      :agree,
+      (:questions if response_given?),
+      (:reason if response_refused?),
+      :confirm
+    ].compact
   end
 
   def name

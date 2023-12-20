@@ -71,6 +71,12 @@ FactoryBot.define do
       health_questions_list.map { |question| { question:, response: "no" } }
     end
 
+    health_answers do
+      health_questions_list.map do |question|
+        HealthAnswer.new({ question:, response: "no" })
+      end
+    end
+
     factory :consent_given do
       response { :given }
     end
