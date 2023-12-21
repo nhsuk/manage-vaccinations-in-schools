@@ -31,17 +31,17 @@
   <% end %>
 <% end %>
 
-<% if @consent.response_given? && @draft_triage.status.present? %>
+<% if @consent.response_given? && @triage.status.present? %>
   <%= render AppCardComponent.new(heading: "Triage") do %>
     <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
       summary_list.with_row do |row|
         row.with_key { "Status" }
-        row.with_value { @draft_triage.status.humanize }
+        row.with_value { @triage.status.humanize }
       end
 
       summary_list.with_row do |row|
         row.with_key { "Triage notes" }
-        row.with_value { @draft_triage.notes.presence || "No notes" }
+        row.with_value { @triage.notes.presence || "No notes" }
       end
     end %>
   <% end %>
