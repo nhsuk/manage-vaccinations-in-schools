@@ -68,6 +68,28 @@ class ManageConsentsController < ApplicationController
     wizard_value(step).to_sym
   end
 
+  def finish_wizard_path
+    redirect_path =
+      case @route
+      when "consents"
+        consents_session_path(@session)
+      when "triage"
+        triage_session_path(@session)
+      else
+        vaccinations_session_path(@session)
+      end
+
+    flash[:success] = {
+      heading: "Record saved for #{@patient.full_name}",
+      body:
+        ActionController::Base.helpers.link_to(
+          "View child record",
+          session_patient_triage_path(@session, @patient)
+        )
+    }
+    redirect_path
+  end
+
   def set_route
     @route = params[:route]
   end
