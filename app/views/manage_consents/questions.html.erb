@@ -37,8 +37,6 @@
   <hr class="nhsuk-section-break nhsuk-section-break--l nhsuk-section-break--visible">
 
   <%= f.fields_for @triage do |ff| %>
-    <% content_for(:before_content) { ff.govuk_error_summary } %>
-
     <%= ff.govuk_collection_radio_buttons :status,
      triage_form_status_options,
      :first,
