@@ -27,7 +27,9 @@
 <% if @consent.response_given? %>
   <%= render AppCardComponent.new(heading: "Health questions") do %>
     <%= render AppHealthQuestionsComponent.new(
-      consents: [@consent]) %>
+      consents: [@consent],
+      use_health_answers: true,
+    ) %>
   <% end %>
 <% end %>
 
