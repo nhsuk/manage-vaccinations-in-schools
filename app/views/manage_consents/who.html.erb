@@ -3,7 +3,11 @@
     href: case @route
       when 'consents'
         session_patient_consents_path(@session, @patient)
-    end,
+      when "triage"
+        session_patient_triage_path(@session)
+      else
+        session_patient_vaccinations_path(@session)
+      end,
     name: "patient page",
   ) %>
 <% end %>
