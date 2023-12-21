@@ -10,7 +10,9 @@ class ManageConsentsController < ApplicationController
   before_action :set_consent, except: %i[create]
   before_action :set_steps, except: %i[create]
   before_action :setup_wizard_translated, except: %i[create]
-  before_action :set_triage, except: %i[create], if: -> { step == "questions" }
+  before_action :set_triage,
+                except: %i[create],
+                if: -> { step.in?(%w[questions confirm]) }
 
   def create
     consent =
