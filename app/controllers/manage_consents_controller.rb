@@ -32,26 +32,22 @@ class ManageConsentsController < ApplicationController
 
   def update
     if current_step == :confirm
-      # TODO: Handle the final step of the manage consent journey.
-      # Something like:
-      #
-      # ActiveRecord::Base.transaction do
-      #   @draft_consent.recorded_at = Time.zone.now
-      #   @draft_consent.save!(validate: false)
-      #   @patient_session.do_consent!
-      #   @patient_session.do_triage! if @patient_session.triage.present?
-      # end
-      #
-      # Plus a flash and redirect to the right location.
+      ActiveRecord::Base.transaction do
+        @consent.recorded_at = Time.zone.now
+        @consent.save!
+        @patient_session.do_consent!
+        @patient_session.do_triage!
+      end
     elsif current_step == :questions
-      # triage_attrs = update_params.delete(:triage) # TODO: Update @triage
       questions_attrs = update_params.except(:triage, :form_step).values
-
       @consent.health_answers.each_with_index do |ha, index|
         ha.assign_attributes(questions_attrs[index])
       end
 
-      @consent.assign_attributes(form_step: current_step)
+      triage_attrs = update_params.delete(:triage).merge(user: current_user)
+      @triage.update! triage_attrs
+
+      @consent.assign_attributes(triage: @triage, form_step: current_step)
     else
       @consent.assign_attributes(update_params)
     end
@@ -107,8 +103,8 @@ class ManageConsentsController < ApplicationController
   end
 
   def set_triage
-    patient_session = @patient.patient_sessions.find_by(session: @session)
-    @triage = Triage.find_or_initialize_by(patient_session:)
+    @patient_session = @patient.patient_sessions.find_by(session: @session)
+    @triage = Triage.find_or_initialize_by(patient_session: @patient_session)
   end
 
   def update_params
