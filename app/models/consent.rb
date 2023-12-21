@@ -45,7 +45,7 @@
 class Consent < ApplicationRecord
   audited
 
-  attr_accessor :form_step
+  attr_accessor :form_step, :triage
 
   belongs_to :patient
   belongs_to :campaign
@@ -139,6 +139,10 @@ class Consent < ApplicationRecord
     with_options if: -> { required_for_step?(:questions) } do
       validate :health_answers_valid?
     end
+
+    with_options if: -> { required_for_step?(:questions, exact: true) } do
+      validate :triage_valid?
+    end
   end
 
   def form_steps
@@ -193,6 +197,12 @@ class Consent < ApplicationRecord
         end
       end
     end
+  end
+
+  def triage_valid?
+    return if triage.valid?(:consent)
+
+    errors.add(:triage_status, triage.errors.messages[:status].first)
   end
 
   def required_for_step?(step, exact: false)
