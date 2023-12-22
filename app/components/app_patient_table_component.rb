@@ -1,4 +1,6 @@
 class AppPatientTableComponent < ViewComponent::Base
+  include ApplicationHelper
+
   def call
     govuk_table(classes: "app-table--patients") do |table|
       table.with_head do |head|

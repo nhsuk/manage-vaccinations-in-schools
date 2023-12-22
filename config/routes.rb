@@ -47,12 +47,19 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :patients do
+    resources :patients, only: [] do
+      get "/:route",
+          action: :show,
+          on: :member,
+          as: "",
+          controller: "patient_sessions",
+          route: /vaccinations/
+
       resource :consents, only: %i[show]
 
       resource :triage, only: %i[create show update]
 
-      resource :vaccinations, only: %i[new create show update] do
+      resource :vaccinations, only: %i[new create update] do
         get "history", on: :member
 
         resource "batch",
