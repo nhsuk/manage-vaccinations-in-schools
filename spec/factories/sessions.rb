@@ -16,7 +16,7 @@
 #
 FactoryBot.define do
   factory :session do
-    transient { patients_in_session { 1 } }
+    transient { patients_in_session { 0 } }
 
     campaign { create :campaign }
     location
