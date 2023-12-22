@@ -13,6 +13,6 @@
 #
 FactoryBot.define do
   factory :team do
-    name { |n| "Team #{n}" }
+    sequence(:name) { |n| "Team #{n}" }
   end
 end
