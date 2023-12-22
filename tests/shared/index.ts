@@ -8,22 +8,23 @@ export const fixtures = {
 
   // Get from /sessions/1/consents, "No response" tab
   patientThatNeedsConsent: "Jose Pacocha",
-  secondPatientThatNeedsConsent: "Silvia Waters",
+  secondPatientThatNeedsConsent: "Sebastian Farrell",
 
   // Get from /sessions/1/consents, "Consent conflicts" tab
-  patientWithConflictingConsent: "Corrinne Hahn",
+  patientWithConflictingConsent: "Gus Langworth",
 
-  // Get from /sessions/1/triage, "Triage needed" tab
-  patientThatNeedsTriage: "Michale Fisher",
-  secondPatientThatNeedsTriage: "Shenika Hammes",
+  // Get from /sessions/1/triage, "Triage needed" tab; check that they don't
+  // have existing triage
+  patientThatNeedsTriage: "Freddie Russel",
+  secondPatientThatNeedsTriage: "Marcelino Wintheiser",
 
   // Get from /sessions/1/vaccinations, "Action needed" tab
   patientThatNeedsVaccination: "Brittany Klocko",
-  secondPatientThatNeedsVaccination: "Carla Reynolds",
+  secondPatientThatNeedsVaccination: "Brenton Kautzer",
 
   // Get from /sessions/1/patients/Y/vaccinations/batch/edit
-  vaccineBatch: "KD5966",
+  vaccineBatch: "CV2898",
 
   // Get from /sessions, signed in as Nurse Jackie
-  schoolName: /Fallibroome High School/,
+  schoolName: /Park Wood Middle School/,
 };
