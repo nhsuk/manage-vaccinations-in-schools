@@ -161,7 +161,7 @@ class VaccinationsController < ApplicationController
                     )
       end
     else
-      render :show
+      render "patient_sessions/show"
     end
   end
 
