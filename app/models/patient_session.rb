@@ -42,7 +42,7 @@ class PatientSession < ApplicationRecord
   validates :gillick_competence_notes, presence: true, on: :edit_gillick
 
   def vaccination_record
-    vaccination_records.last
+    vaccination_records.where.not(recorded_at: nil).last
   end
 
   def able_to_vaccinate?

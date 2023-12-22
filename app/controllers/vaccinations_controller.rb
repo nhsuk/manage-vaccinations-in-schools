@@ -5,7 +5,7 @@ class VaccinationsController < ApplicationController
   before_action :set_patient_session,
                 only: %i[new confirm handle_consent create record show update]
   before_action :set_draft_vaccination_record,
-                only: %i[show edit_reason create update]
+                only: %i[edit_reason create update]
   before_action :set_draft_vaccination_record!, only: %i[confirm record]
 
   before_action :set_vaccination_record, only: %i[show confirm record]
