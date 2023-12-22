@@ -2,6 +2,7 @@ class PatientSessionsController < ApplicationController
   before_action :set_patient_session
   before_action :set_session
   before_action :set_patient
+  before_action :set_draft_vaccination_record
   before_action :set_route
   before_action :set_back_link
 
@@ -22,6 +23,13 @@ class PatientSessionsController < ApplicationController
 
   def set_patient
     @patient = @patient_session.patient
+  end
+
+  def set_draft_vaccination_record
+    @draft_vaccination_record =
+      @patient_session.vaccination_records.find_or_initialize_by(
+        recorded_at: nil
+      )
   end
 
   def set_route
