@@ -15,11 +15,7 @@
 FactoryBot.define do
   factory :campaign do
     name { "HPV" }
-    team { Team.first || create(:team) }
+    team { create(:team) }
     vaccines { [create(:vaccine, type: "HPV")] }
-
-    after :create do |campaign|
-      create :session, campaign:
-    end
   end
 end
