@@ -3,15 +3,13 @@ class VaccinationsController < ApplicationController
   before_action :set_patient, except: %i[index record_template]
   before_action :set_patient_sessions, only: %i[index record_template]
   before_action :set_patient_session,
-                only: %i[new confirm handle_consent create record show update]
+                only: %i[new confirm handle_consent create record update]
   before_action :set_draft_vaccination_record,
                 only: %i[edit_reason create update]
   before_action :set_draft_vaccination_record!, only: %i[confirm record]
 
-  before_action :set_vaccination_record, only: %i[show confirm record]
-  before_action :set_consent, only: %i[create show confirm update]
+  before_action :set_consent, only: %i[create confirm update]
   before_action :set_triage, only: %i[confirm]
-  before_action :set_draft_consent, only: %i[show]
   before_action :set_todays_batch_id, only: :create
 
   layout "two_thirds", except: :index
@@ -60,13 +58,6 @@ class VaccinationsController < ApplicationController
     end
     @draft_vaccination_record =
       @patient.vaccination_records_for_session(@session).new
-  end
-
-  def show
-    respond_to do |format|
-      format.html
-      format.json { render json: @patient }
-    end
   end
 
   def edit_reason
@@ -120,11 +111,6 @@ class VaccinationsController < ApplicationController
     else
       raise "`features.fhir_server_integration` is not enabled in Settings"
     end
-  end
-
-  def show_template
-    @patient = Patient.new
-    render "show"
   end
 
   def record_template
@@ -283,14 +269,6 @@ class VaccinationsController < ApplicationController
     raise UnprocessableEntity unless @draft_vaccination_record.persisted?
   end
 
-  def set_vaccination_record
-    @vaccination_record =
-      @patient
-        .vaccination_records_for_session(@session)
-        .where.not(recorded_at: nil)
-        .first
-  end
-
   def set_consent
     # HACK: Vaccinations needs to be updated to work with multiple consents.
     @consent = @patient_session.consents.first
@@ -302,10 +280,6 @@ class VaccinationsController < ApplicationController
 
   def set_patient_session
     @patient_session = @patient.patient_sessions.find_by(session: @session)
-  end
-
-  def set_draft_consent
-    @draft_consent = @patient.consents.find_or_initialize_by(recorded_at: nil)
   end
 
   def set_todays_batch_id
