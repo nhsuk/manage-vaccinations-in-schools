@@ -1,10 +1,10 @@
 class AppVaccinateFormComponent < ViewComponent::Base
-  def initialize(patient_session:, vaccination_record:, url: nil)
+  def initialize(patient_session:, vaccination_record: nil, url: nil)
     super
 
     @patient_session = patient_session
     @url = url
-    @vaccination_record = vaccination_record
+    @vaccination_record = vaccination_record || VaccinationRecord.new
   end
 
   # rubocop:disable Naming/MemoizedInstanceVariableName
