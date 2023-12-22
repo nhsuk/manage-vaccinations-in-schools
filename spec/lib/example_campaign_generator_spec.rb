@@ -57,14 +57,14 @@ RSpec.describe ExampleCampaignGenerator do
     #
     # To regenerate:
     #     rails generate_example_campaign \
-    #       seed=42 \
+    #       seed=43 \
     #       presets=default \
     #       type=flu \
     #       username="Nurse Jackie" > db/sample_data/example-flu-campaign.json
     Timecop.freeze(2023, 12, 22, 12, 0, 0) do
       generator =
         ExampleCampaignGenerator.new(
-          seed: 42,
+          seed: 43,
           type: :flu,
           presets: "default",
           username: "Nurse Jackie"
