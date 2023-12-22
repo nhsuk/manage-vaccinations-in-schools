@@ -37,6 +37,12 @@ class PatientSessionsController < ApplicationController
   end
 
   def set_back_link
-    @back_link = vaccinations_session_path(@session)
+    @back_link =
+      case @route
+      when "vaccinations"
+        vaccinations_session_path(@session)
+      when "triage"
+        triage_session_path(@session)
+      end
   end
 end

@@ -53,11 +53,11 @@ Rails.application.routes.draw do
           on: :member,
           as: "",
           controller: "patient_sessions",
-          route: /vaccinations/
+          route: /triage|vaccinations/
 
       resource :consents, only: %i[show]
 
-      resource :triage, only: %i[create show update]
+      resource :triage, only: %i[create update]
 
       resource :vaccinations, only: %i[new create update] do
         get "history", on: :member
