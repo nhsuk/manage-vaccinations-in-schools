@@ -1,11 +1,10 @@
 class TriageController < ApplicationController
-  before_action :set_session, only: %i[index show create update]
-  before_action :set_patient, only: %i[show create update]
-  before_action :set_patient_session, only: %i[create update show]
-  before_action :set_consent, only: %i[show create update]
-  before_action :set_vaccination_record, only: %i[show]
+  before_action :set_session, only: %i[index create update]
+  before_action :set_patient, only: %i[create update]
+  before_action :set_patient_session, only: %i[create update]
+  before_action :set_consent, only: %i[create update]
 
-  after_action :verify_policy_scoped, only: %i[index show update]
+  after_action :verify_policy_scoped, only: %i[index update]
 
   layout "two_thirds", except: %i[index]
 
@@ -39,9 +38,6 @@ class TriageController < ApplicationController
     tabs_to_states.each { |tab, _states| @tabs[tab] ||= [] }
   end
 
-  def show
-  end
-
   def create
     @triage = @patient_session.triage.new
     @triage.assign_attributes triage_params.merge(user: current_user)
@@ -59,7 +55,7 @@ class TriageController < ApplicationController
                     }
                   }
     else
-      render :show, status: :unprocessable_entity
+      render "patient_sessions/show", status: :unprocessable_entity
     end
   end
 
@@ -80,7 +76,7 @@ class TriageController < ApplicationController
                     }
                   }
     else
-      render :show, status: :unprocessable_entity
+      render "patient_sessions/show", status: :unprocessable_entity
     end
   end
 
@@ -100,14 +96,6 @@ class TriageController < ApplicationController
   def set_consent
     # HACK: Triage needs to be updated to work with multiple consents.
     @consent = @patient_session.consents.first
-  end
-
-  def set_vaccination_record
-    @vaccination_record =
-      @patient
-        .vaccination_records_for_session(@session)
-        .where.not(recorded_at: nil)
-        .first
   end
 
   def set_patient_session
