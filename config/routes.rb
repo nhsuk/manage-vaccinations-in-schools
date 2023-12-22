@@ -53,9 +53,7 @@ Rails.application.routes.draw do
           on: :member,
           as: "",
           controller: "patient_sessions",
-          route: /triage|vaccinations/
-
-      resource :consents, only: %i[show]
+          route: /consents|triage|vaccinations/
 
       resource :triage, only: %i[create update]
 

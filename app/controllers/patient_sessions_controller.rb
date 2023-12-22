@@ -43,6 +43,8 @@ class PatientSessionsController < ApplicationController
         vaccinations_session_path(@session)
       when "triage"
         triage_session_path(@session)
+      when "consents"
+        consents_session_path(@session)
       end
   end
 end
