@@ -31,9 +31,15 @@ FactoryBot.define do
   factory :vaccination_record do
     patient_session { nil }
     recorded_at { "2023-06-09" }
-    delivery_site { "left_arm" }
+    delivery_site { "left_arm_upper_position" }
     delivery_method { "intramuscular" }
     batch { patient_session.session.campaign.vaccines.first.batches.first }
     user { create :user }
+    administered { true }
+
+    trait :unrecorded do
+      recorded_at { nil }
+      user { nil }
+    end
   end
 end

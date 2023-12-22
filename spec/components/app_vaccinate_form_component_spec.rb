@@ -28,6 +28,18 @@ RSpec.describe AppVaccinateFormComponent, type: :component do
   it { should have_field("Yes, they got the HPV vaccine") }
   it { should have_field("No, they did not get it") }
 
+  context "patient has unrecorded vaccination record" do
+    let(:patient_session) do
+      create :patient_session, :consent_given_triage_not_needed, session:
+    end
+    let(:vaccination_record) do
+      create :vaccination_record, patient_session:, recorded_at: nil
+    end
+
+    it { should have_field("Yes, they got the HPV vaccine", checked: true) }
+    it { should have_field("Left arm", checked: true, exact: false) }
+  end
+
   describe "render?" do
     subject { component.render? }
 
