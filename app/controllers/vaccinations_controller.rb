@@ -42,9 +42,7 @@ class VaccinationsController < ApplicationController
       end
 
     # ensure all tabs are present
-    tabs_to_states.each do |tab, _states|
-      @partitioned_patient_sessions[tab] ||= []
-    end
+    tabs_to_states.each_key { |tab| @partitioned_patient_sessions[tab] ||= [] }
 
     respond_to do |format|
       format.html
