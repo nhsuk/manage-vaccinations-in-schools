@@ -35,7 +35,7 @@ class TriageController < ApplicationController
       end
 
     # ensure all tabs are present
-    tabs_to_states.each { |tab, _states| @tabs[tab] ||= [] }
+    tabs_to_states.each_key { |tab| @tabs[tab] ||= [] }
   end
 
   def create

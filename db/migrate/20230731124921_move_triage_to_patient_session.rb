@@ -1,6 +1,6 @@
 class MoveTriageToPatientSession < ActiveRecord::Migration[7.0]
   def up
-    Triage.all.each do |triage|
+    Triage.all.find_each do |triage|
       ps =
         PatientSession.find_by! patient_id: triage.patient_id,
                                 session_id:
@@ -13,7 +13,7 @@ class MoveTriageToPatientSession < ActiveRecord::Migration[7.0]
   end
 
   def down
-    Triage.all.each do |triage|
+    Triage.all.find_each do |triage|
       triage.patient_id =
         PatientSession.find(triage.patient_session_id).patient_id
       triage.campaign_id =
