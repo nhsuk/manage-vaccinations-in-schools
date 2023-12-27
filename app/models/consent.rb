@@ -147,7 +147,9 @@ class Consent < ApplicationRecord
 
   def form_steps
     [
-      :who,
+      (:assessing_gillick if via_self_consent?),
+      (:gillick if via_self_consent?),
+      (:who if via_phone?),
       :agree,
       (:questions if response_given?),
       (:reason if response_refused?),

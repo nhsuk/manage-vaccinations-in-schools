@@ -113,6 +113,7 @@ class ManageConsentsController < ApplicationController
 
   def update_params
     permitted_attributes = {
+      assessing_gillick: %i[],
       who: %i[
         parent_name
         parent_phone
