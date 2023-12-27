@@ -36,8 +36,16 @@ class ManageConsentsController < ApplicationController
       ActiveRecord::Base.transaction do
         @consent.recorded_at = Time.zone.now
         @consent.save!
-        @patient_session.do_consent!
-        @patient_session.do_triage!
+
+        if @triage.persisted?
+          @patient_session.do_consent!
+          @patient_session.do_triage!
+        else
+          # We need to discard the draft triage record so that the patient
+          # session can be saved.
+          @triage.destroy!
+          @patient_session.do_consent!
+        end
       end
     when :gillick
       @patient_session.update! gillick_params
