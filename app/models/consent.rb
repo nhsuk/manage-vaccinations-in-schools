@@ -45,7 +45,7 @@
 class Consent < ApplicationRecord
   audited
 
-  attr_accessor :form_step, :triage
+  attr_accessor :form_step, :triage, :patient_session
 
   belongs_to :patient
   belongs_to :campaign
@@ -103,6 +103,10 @@ class Consent < ApplicationRecord
   end
 
   with_options on: :update do
+    with_options if: -> { required_for_step?(:gillick, exact: true) } do
+      validate :patient_session_valid?
+    end
+
     with_options if: -> { required_for_step?(:who) } do
       validates :parent_name, presence: true
       validates :parent_phone, presence: true
@@ -199,6 +203,19 @@ class Consent < ApplicationRecord
         end
       end
     end
+  end
+
+  def patient_session_valid?
+    return if patient_session.valid?(:edit_gillick)
+
+    errors.add(
+      :gillick_competent,
+      patient_session.errors.messages[:gillick_competent].first
+    )
+    errors.add(
+      :gillick_competence_notes,
+      patient_session.errors.messages[:gillick_competence_notes].first
+    )
   end
 
   def triage_valid?

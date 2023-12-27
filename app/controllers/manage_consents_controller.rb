@@ -10,6 +10,9 @@ class ManageConsentsController < ApplicationController
   before_action :set_consent, except: %i[create]
   before_action :set_steps, except: %i[create]
   before_action :setup_wizard_translated, except: %i[create]
+  before_action :set_patient_session,
+                except: %i[create],
+                if: -> { step.in?(%w[gillick questions confirm]) }
   before_action :set_triage,
                 except: %i[create],
                 if: -> { step.in?(%w[questions confirm]) }
@@ -28,14 +31,22 @@ class ManageConsentsController < ApplicationController
   end
 
   def update
-    if current_step == :confirm
+    case current_step
+    when :confirm
       ActiveRecord::Base.transaction do
         @consent.recorded_at = Time.zone.now
         @consent.save!
         @patient_session.do_consent!
         @patient_session.do_triage!
       end
-    elsif current_step == :questions
+    when :gillick
+      @patient_session.update! gillick_params
+
+      @consent.assign_attributes(
+        patient_session: @patient_session,
+        form_step: current_step
+      )
+    when :questions
       questions_attrs = update_params.except(:triage, :form_step).values
       @consent.health_answers.each_with_index do |ha, index|
         ha.assign_attributes(questions_attrs[index])
@@ -97,8 +108,11 @@ class ManageConsentsController < ApplicationController
     @consent = Consent.find(params[:consent_id])
   end
 
-  def set_triage
+  def set_patient_session
     @patient_session = @patient.patient_sessions.find_by(session: @session)
+  end
+
+  def set_triage
     @triage = Triage.find_or_initialize_by(patient_session: @patient_session)
   end
 
@@ -114,6 +128,7 @@ class ManageConsentsController < ApplicationController
   def update_params
     permitted_attributes = {
       assessing_gillick: %i[],
+      gillick: %i[],
       who: %i[
         parent_name
         parent_phone
@@ -129,6 +144,13 @@ class ManageConsentsController < ApplicationController
       .fetch(:consent, {})
       .permit(permitted_attributes)
       .merge(form_step: current_step)
+  end
+
+  def gillick_params
+    params.fetch(:patient_session, {}).permit(
+      :gillick_competent,
+      :gillick_competence_notes
+    )
   end
 
   # Returns:
