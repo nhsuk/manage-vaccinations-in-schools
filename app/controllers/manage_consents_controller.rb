@@ -125,12 +125,30 @@ class ManageConsentsController < ApplicationController
   end
 
   def create_params
-    {
+    route = params.permit(:consent)[:consent]
+
+    attrs = {
       patient: @patient,
       campaign: @session.campaign,
-      route: params.permit(:consent)[:consent],
+      route:,
       health_answers: @session.health_questions.to_health_answers
     }
+
+    no_consent =
+      @patient.consents.submitted_for_campaign(@session.campaign).empty?
+
+    # Temporary: Prefill the consent details.
+    # This should be replaced with the design that allows users to choose
+    # from available parent details when submiting a new consent.
+    if route == "phone" && no_consent
+      attrs.merge!(
+        parent_name: @patient.parent_name,
+        parent_phone: @patient.parent_phone,
+        parent_relationship: @patient.parent_relationship
+      )
+    end
+
+    attrs
   end
 
   def update_params
