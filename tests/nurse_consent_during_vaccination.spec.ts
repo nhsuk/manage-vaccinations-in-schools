@@ -16,7 +16,7 @@ test("Records consent and then allows vaccination", async ({ page }) => {
   await then_i_see_the_new_consent_form();
 
   await when_i_go_through_the_consent_and_triage_forms();
-  await then_i_see_the_vaccination_form();
+  await then_i_see_the_vaccinations_page();
 });
 
 async function given_the_app_is_setup() {
@@ -80,6 +80,6 @@ async function when_i_go_through_the_consent_and_triage_forms() {
   await p.getByRole("button", { name: "Confirm" }).click();
 }
 
-async function then_i_see_the_vaccination_form() {
-  expect(await p.innerText("h1")).toContain("Did they get the vaccine?");
+async function then_i_see_the_vaccinations_page() {
+  expect(await p.innerText("h1")).toContain("Record vaccinations");
 }
