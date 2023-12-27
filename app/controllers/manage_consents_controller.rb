@@ -15,15 +15,12 @@ class ManageConsentsController < ApplicationController
                 if: -> { step.in?(%w[questions confirm]) }
 
   def create
-    consent =
-      Consent.create!(
-        patient: @patient,
-        campaign: @session.campaign,
-        route: "phone",
-        health_answers: @session.health_questions.to_health_answers
-      )
+    @consent = Consent.create! create_params
 
-    redirect_to action: :show, id: :who, consent_id: consent.id
+    set_steps # The form_steps can change after certain attrs change
+    setup_wizard_translated # Next/previous steps can change after steps change
+
+    redirect_to action: :show, id: steps.first, consent_id: @consent.id
   end
 
   def show
@@ -103,6 +100,15 @@ class ManageConsentsController < ApplicationController
   def set_triage
     @patient_session = @patient.patient_sessions.find_by(session: @session)
     @triage = Triage.find_or_initialize_by(patient_session: @patient_session)
+  end
+
+  def create_params
+    {
+      patient: @patient,
+      campaign: @session.campaign,
+      route: params.permit(:consent)[:consent],
+      health_answers: @session.health_questions.to_health_answers
+    }
   end
 
   def update_params

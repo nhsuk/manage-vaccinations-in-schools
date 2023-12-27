@@ -40,27 +40,34 @@
 <% else %>
   <p>
     <% if Flipper.enabled?(:new_consents) %>
-      <%= govuk_button_to(
-        "Get consent",
-        session_patient_manage_consents_path(session, patient, @route)
-      ) %>
+      <%= form_for :consent,
+        url: session_patient_manage_consents_path(session, patient, @route),
+        method: :post,
+        builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
+        <%= f.govuk_submit "Get consent", name: "consent", value: "phone" %>
+
+        <% if display_gillick_consent_button? %>
+          <%= f.govuk_submit "Assess Gillick competence", secondary: true,
+            name: "consent", value: "self_consent" %>
+        <% end %>
+      <% end %>
     <% else %>
       <%= govuk_button_link_to(
         "Get consent",
         new_session_patient_nurse_consents_path(session, patient, @route)
       ) %>
-    <% end %>
 
-    <% if display_gillick_consent_button? %>
-      <%= govuk_button_link_to(
-        "Assess Gillick competence",
-        assessing_gillick_session_patient_nurse_consents_path(
-          session,
-          patient,
-          route: @route
-        ),
-        secondary: true
-      ) %>
+      <% if display_gillick_consent_button? %>
+        <%= govuk_button_link_to(
+          "Assess Gillick competence",
+          assessing_gillick_session_patient_nurse_consents_path(
+            session,
+            patient,
+            route: @route
+          ),
+          secondary: true
+        ) %>
+      <% end %>
     <% end %>
   </p>
 <% end %>
