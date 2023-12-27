@@ -68,6 +68,7 @@ group :test do
   gem "capybara"
   gem "cuprite"
   gem "rspec"
+  gem "rspec-html-matchers"
   gem "shoulda-matchers"
   gem "timecop"
   gem "webmock"
