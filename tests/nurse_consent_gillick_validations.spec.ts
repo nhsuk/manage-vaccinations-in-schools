@@ -26,7 +26,7 @@ async function given_i_am_assessing_a_child_for_gillick_competence() {
   await p.getByRole("tab", { name: "Action needed" }).click();
   await p.getByRole("link", { name: fixtures.patientThatNeedsConsent }).click();
 
-  await p.getByRole("link", { name: "Assess Gillick competence" }).click();
+  await p.getByRole("button", { name: "Assess Gillick competence" }).click();
 
   await p.getByRole("button", { name: "Give your assessment" }).click();
 }
