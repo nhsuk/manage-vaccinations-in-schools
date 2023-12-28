@@ -1,5 +1,6 @@
 class SessionsController < ApplicationController
   before_action :set_session, only: %i[show make_in_progress]
+  before_action :set_school, only: %i[show]
 
   def index
     @sessions_by_type = policy_scope(Session).group_by(&:type)
@@ -14,7 +15,8 @@ class SessionsController < ApplicationController
       with_consent_refused: 0,
       without_a_response: 0,
       needing_triage: 0,
-      ready_to_vaccinate: 0
+      ready_to_vaccinate: 0,
+      unmatched_responses: @session.location.consent_forms.unmatched.count
     }
 
     @patient_sessions.each do |s|
@@ -46,5 +48,9 @@ class SessionsController < ApplicationController
 
   def set_session
     @session = policy_scope(Session).find(params[:id])
+  end
+
+  def set_school
+    @school = @session.location
   end
 end

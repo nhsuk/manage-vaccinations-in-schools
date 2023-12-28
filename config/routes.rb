@@ -107,6 +107,8 @@ Rails.application.routes.draw do
     post "setup-offline", to: "offline_passwords#create", on: :member
   end
 
+  resources :schools, only: [:show]
+
   scope via: :all do
     get "/404", to: "errors#not_found"
     get "/422", to: "errors#unprocessable_entity"
