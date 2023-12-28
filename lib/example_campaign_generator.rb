@@ -3,6 +3,7 @@ require "faker"
 class ExampleCampaignGenerator
   def self.patient_options
     %i[
+      consent_forms_that_do_not_match
       patients_with_no_consent_response
       patients_with_consent_given_and_ready_to_vaccinate
       patients_with_consent_refused
@@ -20,6 +21,7 @@ class ExampleCampaignGenerator
   def presettings
     @presettings ||= {
       default: {
+        consent_forms_that_do_not_match: 2,
         patients_with_consent_given_and_ready_to_vaccinate: 2,
         patients_with_no_consent_response: 2,
         patients_with_consent_refused: 2,
@@ -162,11 +164,14 @@ class ExampleCampaignGenerator
 
     school_data = generate_school_data
 
+    consent_forms_data = generate_consent_forms_data(patients_data)
+
     {
       date: "2023-07-28T12:30",
       location: school_data[:name],
       school: school_data,
-      patients: patients_data
+      patients: patients_data,
+      consent_forms: consent_forms_data
     }
   end
 
@@ -662,5 +667,35 @@ class ExampleCampaignGenerator
       medical
       personal_choice
     ].sample(random:)
+  end
+
+  def generate_consent_forms_data(patients_data)
+    consent_forms = []
+    consent_forms +=
+      build_consent_forms_that_do_not_match_patients(patients_data)
+
+    consent_forms.map do |consent_form|
+      consent_form.attributes.tap do |attrs|
+        attrs.compact!
+        attrs["health_answers"]&.map! do |ha_attrs|
+          ha_attrs.attributes.except :id
+        end
+      end
+    end
+  end
+
+  def build_consent_forms_that_do_not_match_patients(patients_data)
+    return [] unless options.key?(:consent_forms_that_do_not_match)
+
+    options[:consent_forms_that_do_not_match].times.map do
+      cf = FactoryBot.build(:consent_form, random:, session: nil)
+      patient_exists =
+        patients_data.any? do |p|
+          p[:firstName] == cf.first_name || p[:lastName] == cf.last_name
+        end
+
+      redo if patient_exists
+      cf
+    end
   end
 end
