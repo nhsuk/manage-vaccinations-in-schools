@@ -81,6 +81,6 @@ async function when_i_record_that_they_dont_agree() {
 
 async function then_i_see_a_banner_showing_the_gillick_assessment_was_saved() {
   await expect(p.locator(".nhsuk-notification-banner__content")).toContainText(
-    "Gillick assessment saved",
+    "Record saved",
   );
 }
