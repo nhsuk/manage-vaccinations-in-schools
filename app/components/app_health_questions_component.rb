@@ -14,11 +14,10 @@ class AppHealthQuestionsComponent < ViewComponent::Base
     </dl>
   ERB
 
-  def initialize(consents:, use_health_answers: false)
+  def initialize(consents:)
     super
 
     @consents = consents
-    @use_health_answers = use_health_answers
   end
 
   def health_questions
@@ -35,22 +34,10 @@ class AppHealthQuestionsComponent < ViewComponent::Base
     # }
     dict =
       @consents.each_with_object({}) do |consent, acc|
-        questions =
-          if @use_health_answers
-            consent.health_answers.map do |health_answer|
-              {
-                "question" => health_answer.question,
-                "response" => health_answer.response,
-                "notes" => health_answer.notes
-              }
-            end
-          else
-            consent.health_questions
-          end
-        questions.each do |health_question|
-          question = health_question["question"]
-          response = health_question["response"]
-          notes = health_question["notes"]
+        consent.health_answers.each do |health_question|
+          question = health_question.question
+          response = health_question.response
+          notes = health_question.notes
 
           formatted_answer = response.humanize
           formatted_answer += " – #{notes}" if notes.present?

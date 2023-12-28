@@ -14,9 +14,13 @@ RSpec.describe AppHealthQuestionsComponent, type: :component do
           :consent,
           :given,
           :from_mum,
-          health_questions: [
-            { question: "First question?", response: "no" },
-            { question: "Second question?", response: "yes", notes: "Notes" }
+          health_answers: [
+            HealthAnswer.new(question: "First question?", response: "no"),
+            HealthAnswer.new(
+              question: "Second question?",
+              response: "yes",
+              notes: "Notes"
+            )
           ]
         )
       ]
@@ -33,18 +37,22 @@ RSpec.describe AppHealthQuestionsComponent, type: :component do
           :consent,
           :given,
           :from_mum,
-          health_questions: [
-            { question: "First question?", response: "no" },
-            { question: "Second question?", response: "no" }
+          health_answers: [
+            HealthAnswer.new(question: "First question?", response: "no"),
+            HealthAnswer.new(question: "Second question?", response: "no")
           ]
         ),
         create(
           :consent,
           :given,
           :from_dad,
-          health_questions: [
-            { question: "First question?", response: "no" },
-            { question: "Second question?", response: "yes", notes: "Notes" }
+          health_answers: [
+            HealthAnswer.new(question: "First question?", response: "no"),
+            HealthAnswer.new(
+              question: "Second question?",
+              response: "yes",
+              notes: "Notes"
+            )
           ]
         )
       ]
@@ -65,9 +73,9 @@ RSpec.describe AppHealthQuestionsComponent, type: :component do
           :consent,
           :given,
           :from_mum,
-          health_questions: [
-            { question: "First question?", response: "no" },
-            { question: "Second question?", response: "no" }
+          health_answers: [
+            HealthAnswer.new(question: "First question?", response: "no"),
+            HealthAnswer.new(question: "Second question?", response: "no")
           ]
         ),
         create(:consent, :refused, :from_dad)
