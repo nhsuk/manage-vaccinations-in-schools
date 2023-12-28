@@ -35,7 +35,7 @@ test("Records gillick consent", async ({ page }) => {
   await and_it_contains_gillick_assessment_details();
 
   await when_i_click_confirm();
-  await then_i_see_the_vaccination_new_page();
+  await then_i_see_the_vaccination_index_page();
 
   // Not Gillick competent
   await when_i_go_to_the_vaccinations_page();
@@ -158,6 +158,6 @@ async function and_i_triage_the_patient() {
   await p.getByRole("radio", { name: "Yes, it's safe to vaccinate" }).click();
 }
 
-async function then_i_see_the_vaccination_new_page() {
-  await expect(p.locator("h1")).toContainText("Did they get the vaccine?");
+async function then_i_see_the_vaccination_index_page() {
+  await expect(p.locator("h1")).toContainText("Record vaccinations");
 }
