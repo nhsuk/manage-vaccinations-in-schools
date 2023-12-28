@@ -39,7 +39,7 @@ async function then_i_should_see_only_my_session() {
     1,
   );
   await expect(p.locator(".nhsuk-table__body .nhsuk-table__row")).toHaveText(
-    fixtures.schoolName,
+    fixtures.secondSchoolName,
   );
 }
 
