@@ -37,14 +37,27 @@ class AppConsentComponent < ViewComponent::Base
     consent = consents.first
     role =
       consent.parent_relationship.in?(%w[mother father]) ? "parent" : "guardian"
+
+    href =
+      if Flipper.enabled?(:new_consents)
+        session_patient_manage_consent_path(
+          session,
+          patient,
+          @route,
+          consent.id,
+          :agree
+        )
+      else
+        edit_session_patient_nurse_consents_path(
+          session,
+          patient,
+          @route,
+          consent_id: consent.id
+        )
+      end
     link_to(
       "Contact #{consent.parent_name} (the #{role} who refused)",
-      edit_session_patient_nurse_consents_path(
-        session,
-        patient,
-        @route,
-        consent_id: consent.id
-      ),
+      href,
       class: "nhsuk-u-font-weight-bold"
     )
   end
