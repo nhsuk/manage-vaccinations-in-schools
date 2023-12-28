@@ -42,5 +42,6 @@ class Avo::Resources::ConsentForm < Avo::BaseResource
       end
     end
     field :recorded_at, as: :date_time
+    field :consent, as: :belongs_to
   end
 end
