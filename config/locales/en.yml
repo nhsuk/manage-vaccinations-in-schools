@@ -142,6 +142,10 @@ en:
           medical_reasons: "Medical reasons"
           personal_choice: "Personal choice"
           other: "Other"
+        responses:
+          given: "Consent given"
+          refused: "Consent refused"
+          not_provided: "Not provided"
       patient_session:
         outcomes:
           could_not_vaccinate: Could not vaccinate
