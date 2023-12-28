@@ -36,8 +36,8 @@ async function and_i_go_to_the_vaccinations_page() {
 
 async function then_i_should_only_see_my_patients() {
   await expect(
-    p.locator("div[id^='action-needed'] .nhsuk-table__body .nhsuk-table__row"),
-  ).toHaveCount(14);
+    p.locator("div#action-needed .nhsuk-table__body .nhsuk-table__row"),
+  ).toHaveCount(16);
 }
 
 async function when_i_go_to_the_vaccinations_page_of_another_team() {

@@ -40,13 +40,13 @@ async function then_i_see_the_consent_start_page() {
 }
 
 async function then_i_see_the_edit_name_page_for_the_first_form() {
-  expect(p.url()).toContain("/1/edit/name");
+  expect(p.url()).toContain("/9/edit/name");
 }
 
 async function then_i_see_the_edit_name_page_for_the_second_form() {
-  expect(p.url()).toContain("/2/edit/name");
+  expect(p.url()).toContain("/10/edit/name");
 }
 
 async function when_i_go_to_the_first_form() {
-  await p.goto("/sessions/1/consents/1/edit/name");
+  await p.goto("/sessions/1/consents/9/edit/name");
 }

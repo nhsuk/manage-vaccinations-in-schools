@@ -23,7 +23,7 @@ export const fixtures = {
   secondPatientThatNeedsVaccination: "Brenton Kautzer",
 
   // Get from /sessions/1/patients/Y/vaccinations/batch/edit
-  vaccineBatch: "CV2898",
+  vaccineBatch: "QS3186",
 
   // Get from /sessions, signed in as Nurse Jackie
   schoolName: /Crompton Primary School/,
