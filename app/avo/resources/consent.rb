@@ -42,5 +42,6 @@ class Avo::Resources::Consent < Avo::BaseResource
     field :campaign, as: :belongs_to
     field :recorded_at, as: :date_time
     # add fields here
+    field :consent_form, as: :has_many
   end
 end
