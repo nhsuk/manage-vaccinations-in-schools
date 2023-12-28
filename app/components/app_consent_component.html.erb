@@ -14,16 +14,30 @@
       <% if consents.any?(&:response_refused?) %>
         <p><%= contact_parent_or_guardian_link(consents) %></p>
       <% elsif consents.any?(&:response_not_provided?) %>
-        <%= govuk_button_link_to(
-          "Get consent",
-          edit_session_patient_nurse_consents_path(
-            session,
-            patient,
-            @route,
-            consent_id: consents.first.id
-          ),
-          secondary: true
-        ) %>
+        <% if Flipper.enabled?(:new_consents) %>
+          <%= govuk_button_link_to(
+            "Get consent",
+            session_patient_manage_consent_path(
+              session,
+              patient,
+              @route,
+              consents.first.id,
+              :agree
+            ),
+            secondary: true
+          ) %>
+        <% else %>
+          <%= govuk_button_link_to(
+            "Get consent",
+            edit_session_patient_nurse_consents_path(
+              session,
+              patient,
+              @route,
+              consent_id: consents.first.id
+            ),
+            secondary: true
+          ) %>
+        <% end %>
       <% end %>
     <% end %>
   <% end %>
