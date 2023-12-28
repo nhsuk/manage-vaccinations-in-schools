@@ -26,10 +26,19 @@
           <%= link_to "Check consent responses",
             consents_session_path(@session) %>
         </h2>
-        <p>
+        <p class="nhsuk-u-margin-bottom-2">
           <%= pluralize(@counts[:with_consent_given], 'child') %> with consent given<br>
           <%= pluralize(@counts[:with_consent_refused], 'child') %> with consent refused<br>
           <%= pluralize(@counts[:without_a_response], 'child') %> without a response
+        </p>
+        <p>
+          <%=
+          responses = pluralize(@counts[:unmatched_responses], 'response')
+          link_to(
+            "#{responses} need matching with a parent record",
+            school_path(@school)
+          )
+          %>
         </p>
 
         <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-1">
