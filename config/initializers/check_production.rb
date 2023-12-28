@@ -1,5 +1,9 @@
 if Rails.env.production? && ENV["SKIP_PRODUCTION_CHECKS"].blank?
-  if credentials.dig(:active_record_encryption, :primary_key).blank?
+  if Rails
+       .application
+       .credentials
+       .dig(:active_record_encryption, :primary_key)
+       .blank?
     raise "Application is running in production mode but Active Record
     Encryption is not set up. Please set up Active Record Encryption. See
     https://edgeguides.rubyonrails.org/active_record_encryption.html"
