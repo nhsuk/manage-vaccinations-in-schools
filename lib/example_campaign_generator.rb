@@ -4,6 +4,7 @@ class ExampleCampaignGenerator
   def self.patient_options
     %i[
       consent_forms_that_do_not_match
+      consent_forms_that_partially_match
       patients_with_no_consent_response
       patients_with_consent_given_and_ready_to_vaccinate
       patients_with_consent_refused
@@ -22,8 +23,9 @@ class ExampleCampaignGenerator
     @presettings ||= {
       default: {
         consent_forms_that_do_not_match: 2,
+        consent_forms_that_partially_match: 2,
         patients_with_consent_given_and_ready_to_vaccinate: 2,
-        patients_with_no_consent_response: 2,
+        patients_with_no_consent_response: 4,
         patients_with_consent_refused: 2,
         patients_with_conflicting_consent: 2,
         patients_that_still_need_triage: 2,
@@ -673,6 +675,8 @@ class ExampleCampaignGenerator
     consent_forms = []
     consent_forms +=
       build_consent_forms_that_do_not_match_patients(patients_data)
+    consent_forms +=
+      build_consent_forms_that_partially_match_patients(patients_data)
 
     consent_forms.map do |consent_form|
       consent_form.attributes.tap do |attrs|
@@ -696,6 +700,24 @@ class ExampleCampaignGenerator
 
       redo if patient_exists
       cf
+    end
+  end
+
+  def build_consent_forms_that_partially_match_patients(patients_data)
+    return [] unless options.key?(:consent_forms_that_partially_match)
+
+    patients_data = patients_data.dup
+    options[:consent_forms_that_partially_match].times.map do
+      patient = patients_data.delete(patients_data.sample(random:))
+      match_patient_on = %i[firstName lastName].sample(random:)
+
+      FactoryBot
+        .build(:consent_form, random:, session: nil)
+        .tap do |cf|
+          cf[match_patient_on.to_s.underscore.to_sym] = patient[
+            match_patient_on
+          ]
+        end
     end
   end
 end
