@@ -139,6 +139,8 @@ class ConsentForm < ApplicationRecord
     end
   end
 
+  scope :unmatched, -> { where(consent_id: nil) }
+
   def address_postcode=(str)
     super UKPostcode.parse(str.to_s).to_s
   end

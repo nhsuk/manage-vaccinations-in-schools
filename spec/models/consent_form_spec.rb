@@ -490,4 +490,15 @@ RSpec.describe ConsentForm, type: :model do
       end
     end
   end
+
+  describe "scope unmatched" do
+    let(:consent) { create(:consent) }
+    let(:unmatched_consent_form) { create(:consent_form, consent: nil) }
+    let(:matched_consent_form) { create(:consent_form, consent:) }
+
+    it "returns unmatched consent forms" do
+      expect(ConsentForm.unmatched).to include unmatched_consent_form
+      expect(ConsentForm.unmatched).not_to include matched_consent_form
+    end
+  end
 end
