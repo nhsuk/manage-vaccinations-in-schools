@@ -20,4 +20,6 @@ class Location < ApplicationRecord
   has_many :patients
 
   validates :name, presence: true
+
+  has_many :consent_forms, through: :sessions
 end
