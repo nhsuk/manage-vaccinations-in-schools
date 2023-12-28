@@ -25,6 +25,9 @@ export const fixtures = {
   // Get from /sessions/1/patients/Y/vaccinations/batch/edit
   vaccineBatch: "QS3186",
 
+  // Get from /sessions, signed in as Nurse Joy
+  schoolName: /Park Wood Middle School/,
+
   // Get from /sessions, signed in as Nurse Jackie
   secondSchoolName: /Crompton Primary School/,
 };
