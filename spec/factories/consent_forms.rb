@@ -41,13 +41,15 @@
 #
 FactoryBot.define do
   factory :consent_form do
+    transient { random { Random.new } }
+
     first_name { Faker::Name.first_name }
     last_name { Faker::Name.last_name }
     use_common_name { false }
     date_of_birth { Faker::Date.birthday(min_age: 3, max_age: 9) }
     parent_name { Faker::Name.name }
     parent_relationship do
-      ConsentForm.parent_relationships.keys.first(2).sample
+      ConsentForm.parent_relationships.keys.first(2).sample(random:)
     end
     parent_email { Faker::Internet.email name: parent_name }
     parent_phone { Faker::PhoneNumber.cell_phone }
