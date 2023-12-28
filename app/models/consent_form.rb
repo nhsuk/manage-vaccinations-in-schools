@@ -49,7 +49,7 @@ class ConsentForm < ApplicationRecord
   audited
 
   belongs_to :session
-  belongs_to :patient
+  belongs_to :patient, optional: true
 
   enum :parent_relationship, %w[mother father guardian other], prefix: true
   enum :contact_method, %w[text voice other any], prefix: true
