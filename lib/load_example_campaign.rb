@@ -35,6 +35,10 @@ module LoadExampleCampaign
         session = create_session(session_attributes, campaign:, school:)
         children_attributes = example.children_attributes(session_attributes:)
         create_children(children_attributes:, campaign:, session:)
+
+        consent_forms =
+          example.consent_form_attributes(session_attributes:) || []
+        create_consent_forms(consent_forms:, session:)
       end
     end
   end
@@ -150,6 +154,18 @@ module LoadExampleCampaign
       end
 
       transition_states(patient.patient_sessions.first)
+    end
+  end
+
+  def self.create_consent_forms(consent_forms:, session:)
+    consent_forms.each do |attributes|
+      health_answers =
+        attributes
+          .delete("health_answers")
+          .map { |answer| HealthAnswer.new(answer) }
+      session.consent_forms << ConsentForm.new(
+        attributes.merge(health_answers:)
+      )
     end
   end
 end

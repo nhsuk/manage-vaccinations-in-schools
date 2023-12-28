@@ -160,4 +160,8 @@ class ExampleCampaignData
         end
     }.with_indifferent_access
   end
+
+  def consent_form_attributes(session_attributes:)
+    session_attributes["consent_forms"]
+  end
 end
