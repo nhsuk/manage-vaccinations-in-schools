@@ -12,7 +12,7 @@
 #  childs_name                 :text
 #  gp_name                     :text
 #  gp_response                 :integer
-#  health_answers              :jsonb            not null
+#  health_answers              :jsonb
 #  health_questions            :jsonb
 #  parent_contact_method       :integer
 #  parent_contact_method_other :text
