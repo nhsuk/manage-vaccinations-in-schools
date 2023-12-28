@@ -47,6 +47,18 @@ secrets:
     from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-dbAuroraSecret
 
 environments:
+  pentest:
+    http:
+      alias:
+        - "pentest.manage-vaccinations-in-schools.nhs.uk"
+        - "pentest.give-or-refuse-consent-for-vaccinations.nhs.uk"
+    deployments:
+      rolling: recreate
+    variables:
+      RAILS_ENV: production
+      RCVAPP__SUPPORT_USERNAME: manage
+      RCVAPP__SUPPORT_PASSWORD: vaccinations
+      SKIP_PRODUCTION_CHECKS: please
   staging:
     http:
       alias:
