@@ -43,10 +43,6 @@ async function when_i_click_yes_i_am_contacting_a_parent() {
   await p.click("text=Get consent");
 }
 
-async function and_i_click_continue() {
-  await p.click("text=Continue");
-}
-
 async function then_i_see_the_new_consent_form() {
   expect(await p.innerText("h1")).toContain(
     "Who are you trying to get consent from?",
