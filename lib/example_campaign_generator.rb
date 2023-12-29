@@ -692,7 +692,14 @@ class ExampleCampaignGenerator
     return [] unless options.key?(:consent_forms_that_do_not_match)
 
     options[:consent_forms_that_do_not_match].times.map do
-      cf = FactoryBot.build(:consent_form, random:, session: nil)
+      cf =
+        FactoryBot.build(
+          :consent_form,
+          random:,
+          session: nil,
+          recorded_at: random.rand(1..(14.days.to_i)).seconds.ago
+        )
+
       patient_exists =
         patients_data.any? do |p|
           p[:firstName] == cf.first_name || p[:lastName] == cf.last_name
@@ -708,16 +715,16 @@ class ExampleCampaignGenerator
 
     patients_data = patients_data.dup
     options[:consent_forms_that_partially_match].times.map do
-      patient = patients_data.delete(patients_data.sample(random:))
       match_patient_on = %i[firstName lastName].sample(random:)
+      patient = patients_data.delete(patients_data.sample(random:))
 
-      FactoryBot
-        .build(:consent_form, random:, session: nil)
-        .tap do |cf|
-          cf[match_patient_on.to_s.underscore.to_sym] = patient[
-            match_patient_on
-          ]
-        end
+      FactoryBot.build(
+        :consent_form,
+        random:,
+        session: nil,
+        recorded_at: random.rand(1..(14.days.to_i)).seconds.ago,
+        match_patient_on.to_s.underscore => patient[match_patient_on]
+      )
     end
   end
 end

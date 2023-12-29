@@ -23,9 +23,16 @@ task :generate_example_campaign,
      [:example_file] => :environment do |_task, args|
   Faker::Config.locale = "en-GB"
 
+  require "timecop"
+
   example_file = args.fetch(:example_file, "/dev/stdout")
 
   seed = ENV["seed"]&.to_i
+  date = Time.zone.today
+  # As we generate data with specific timestamps, we'll freeze time to be midday
+  # today. A bit hacky but it's easier than having to stick the exact date AND
+  # time into the example campaign generation specs.
+  runtime = Time.zone.local(date.year, date.month, date.day, 12, 0, 0)
 
   campaign_options = {}
   campaign_options[:type] = ENV["type"]&.to_sym
@@ -42,15 +49,18 @@ task :generate_example_campaign,
   users_json = ENV["users_json"]
   sessions = ENV["sessions"]
 
-  generator =
-    ExampleCampaignGenerator.new(
-      seed:,
-      username:,
-      users_json:,
-      sessions:,
-      **campaign_options
-    )
-  data = generator.generate
+  data =
+    Timecop.freeze(runtime) do
+      generator =
+        ExampleCampaignGenerator.new(
+          seed:,
+          username:,
+          users_json:,
+          sessions:,
+          **campaign_options
+        )
+      generator.generate
+    end
 
   IO.write(example_file, JSON.pretty_generate(data))
 end
