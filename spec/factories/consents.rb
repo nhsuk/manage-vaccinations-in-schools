@@ -66,10 +66,6 @@ FactoryBot.define do
     route { "website" }
     recorded_at { Time.zone.now }
 
-    health_questions do
-      health_questions_list.map { |question| { question:, response: "no" } }
-    end
-
     health_answers do
       health_questions_list.map do |question|
         HealthAnswer.new({ question:, response: "no" })
@@ -83,7 +79,7 @@ FactoryBot.define do
     trait :refused do
       response { :refused }
       reason_for_refusal { :personal_choice }
-      health_questions { [] }
+      health_answers { [] }
     end
 
     factory :consent_refused do
@@ -146,7 +142,7 @@ FactoryBot.define do
     end
 
     trait :health_question_notes do
-      health_questions do
+      health_answers do
         health_questions_list.map do |question|
           if question == "Is there anything else we should know?"
             {
@@ -162,7 +158,7 @@ FactoryBot.define do
     end
 
     trait :no_contraindications do
-      health_questions do
+      health_answers do
         health_questions_list.map { |question| { question:, response: "no" } }
       end
     end
