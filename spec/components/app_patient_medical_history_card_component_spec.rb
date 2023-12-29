@@ -7,14 +7,19 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
 
   subject { page }
 
-  let(:health_questions) do
-    [{ question: "Is there anything else we should know?", response: "no" }]
+  let(:health_answers) do
+    [
+      HealthAnswer.new(
+        question: "Is there anything else we should know?",
+        response: "no"
+      )
+    ]
   end
   let(:patient) { FactoryBot.create(:patient) }
   let(:session) { FactoryBot.create(:session) }
   let(:patient_session) { create(:patient_session, patient:, session:) }
   let(:consent) do
-    create :consent, patient:, campaign: session.campaign, health_questions:
+    create :consent, patient:, campaign: session.campaign, health_answers:
   end
   let(:triage_notes) { nil }
   let(:triage) { Triage.new(patient_session:) }
@@ -84,13 +89,13 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
   end
 
   context "health question is yes and triage is done with notes" do
-    let(:health_questions) do
+    let(:health_answers) do
       [
-        {
+        HealthAnswer.new(
           question: "Is there anything else we should know?",
           response: "yes",
           notes: "These are notes"
-        }
+        )
       ]
     end
     let(:triage_notes) { "These are triage notes" }
@@ -107,13 +112,13 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
   end
 
   context "health question is yes and triage is done without notes" do
-    let(:health_questions) do
+    let(:health_answers) do
       [
-        {
+        HealthAnswer.new(
           question: "Is there anything else we should know?",
           response: "yes",
           notes: "These are notes"
-        }
+        )
       ]
     end
     let(:triage) { create :triage, patient_session:, notes: nil }
@@ -128,13 +133,13 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
   end
 
   context "health question is yes but triage is not done" do
-    let(:health_questions) do
+    let(:health_answers) do
       [
-        {
+        HealthAnswer.new(
           question: "Is there anything else we should know?",
           response: "yes",
           notes: "These are notes"
-        }
+        )
       ]
     end
 
@@ -149,13 +154,13 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
   end
 
   context "health question is yes and parent is other but triage is not done" do
-    let(:health_questions) do
+    let(:health_answers) do
       [
-        {
+        HealthAnswer.new(
           question: "Is there anything else we should know?",
           response: "yes",
           notes: "These are notes"
-        }
+        )
       ]
     end
     let(:consent) do
@@ -163,7 +168,7 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
              :from_granddad,
              patient:,
              campaign: session.campaign,
-             health_questions:
+             health_answers:
     end
 
     it "renders correctly" do

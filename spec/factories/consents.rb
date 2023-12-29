@@ -145,13 +145,13 @@ FactoryBot.define do
       health_answers do
         health_questions_list.map do |question|
           if question == "Is there anything else we should know?"
-            {
+            HealthAnswer.new(
               question:,
               response: "yes",
               notes: "The child has a severe egg allergy"
-            }
+            )
           else
-            { question:, response: "no" }
+            HealthAnswer.new(question:, response: "no")
           end
         end
       end
@@ -159,7 +159,9 @@ FactoryBot.define do
 
     trait :no_contraindications do
       health_answers do
-        health_questions_list.map { |question| { question:, response: "no" } }
+        health_questions_list.map do
+          HealthAnswer.new(question: _1, response: "no")
+        end
       end
     end
   end

@@ -1,7 +1,7 @@
 class AppHealthQuestionsComponent < ViewComponent::Base
   erb_template <<-ERB
     <dl class="nhsuk-summary-list app-summary-list--full-width">
-      <% health_questions.each do |health_question| %>
+      <% health_answers.each do |health_question| %>
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
             <%= health_question[:question] %>
@@ -20,7 +20,7 @@ class AppHealthQuestionsComponent < ViewComponent::Base
     @consents = consents
   end
 
-  def health_questions
+  def health_answers
     # Generates a hash like:
     # {
     #   "First question?" => {
