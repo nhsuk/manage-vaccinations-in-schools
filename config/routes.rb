@@ -76,31 +76,10 @@ Rails.application.routes.draw do
         get "record-template", on: :collection
       end
 
-      constraints -> { Flipper.enabled?(:new_consents) } do
-        post ":route/consents",
-             to: "manage_consents#create",
-             as: :manage_consents
-        resources :manage_consents,
-                  only: %i[show update],
-                  path: ":route/consents/:consent_id/"
-      end
-
-      constraints -> { !Flipper.enabled?(:new_consents) } do
-        resource :nurse_consents, path: ":route/consent" do
-          get "assessing-gillick", to: "nurse_consents#assessing_gillick"
-
-          get "edit/gillick", to: "nurse_consents#edit_gillick"
-          put "update/gillick", to: "nurse_consents#update_gillick"
-
-          get "edit/who", to: "nurse_consents#edit_who"
-          get "edit/agree", to: "nurse_consents#edit_consent"
-          get "edit/reason", to: "nurse_consents#edit_reason"
-          get "edit/questions", to: "nurse_consents#edit_questions"
-          get "edit/confirm", to: "nurse_consents#edit_confirm"
-
-          put "record"
-        end
-      end
+      post ":route/consents", to: "manage_consents#create", as: :manage_consents
+      resources :manage_consents,
+                only: %i[show update],
+                path: ":route/consents/:consent_id/"
     end
 
     get "setup-offline", to: "offline_passwords#new", on: :member

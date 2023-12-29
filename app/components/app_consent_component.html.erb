@@ -14,30 +14,17 @@
       <% if consents.any?(&:response_refused?) %>
         <p><%= contact_parent_or_guardian_link(consents) %></p>
       <% elsif consents.any?(&:response_not_provided?) %>
-        <% if Flipper.enabled?(:new_consents) %>
-          <%= govuk_button_link_to(
-            "Get consent",
-            session_patient_manage_consent_path(
-              session,
-              patient,
-              @route,
-              consents.first.id,
-              :agree
-            ),
-            secondary: true
-          ) %>
-        <% else %>
-          <%= govuk_button_link_to(
-            "Get consent",
-            edit_session_patient_nurse_consents_path(
-              session,
-              patient,
-              @route,
-              consent_id: consents.first.id
-            ),
-            secondary: true
-          ) %>
-        <% end %>
+        <%= govuk_button_link_to(
+          "Get consent",
+          session_patient_manage_consent_path(
+            session,
+            patient,
+            @route,
+            consents.first.id,
+            :agree
+          ),
+          secondary: true
+        ) %>
       <% end %>
     <% end %>
   <% end %>
@@ -53,34 +40,15 @@
   end %>
 <% else %>
   <p>
-    <% if Flipper.enabled?(:new_consents) %>
-      <%= form_for :consent,
-        url: session_patient_manage_consents_path(session, patient, @route),
-        method: :post,
-        builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
-        <%= f.govuk_submit "Get consent", name: "consent", value: "phone" %>
-
-        <% if display_gillick_consent_button? %>
-          <%= f.govuk_submit "Assess Gillick competence", secondary: true,
-            name: "consent", value: "self_consent" %>
-        <% end %>
-      <% end %>
-    <% else %>
-      <%= govuk_button_link_to(
-        "Get consent",
-        new_session_patient_nurse_consents_path(session, patient, @route)
-      ) %>
+    <%= form_for :consent,
+      url: session_patient_manage_consents_path(session, patient, @route),
+      method: :post,
+      builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
+      <%= f.govuk_submit "Get consent", name: "consent", value: "phone" %>
 
       <% if display_gillick_consent_button? %>
-        <%= govuk_button_link_to(
-          "Assess Gillick competence",
-          assessing_gillick_session_patient_nurse_consents_path(
-            session,
-            patient,
-            route: @route
-          ),
-          secondary: true
-        ) %>
+        <%= f.govuk_submit "Assess Gillick competence", secondary: true,
+          name: "consent", value: "self_consent" %>
       <% end %>
     <% end %>
   </p>

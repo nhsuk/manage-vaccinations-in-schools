@@ -7,6 +7,4 @@ if Rails.env.test?
       Flipper.new(Flipper::Adapters::PStore.new("tmp/flipper.test.pstore"))
     end
   end
-
-  Flipper.enable :new_consents
 end
