@@ -138,9 +138,9 @@ class ExampleCampaignData
 
           consent[:route] = consent_example["route"]
 
-          consent[:health_questions] = consent_example[
+          consent[:health_answers] = consent_example[
             "healthQuestionResponses"
-          ]
+          ].map { HealthAnswer.new(_1) }
 
           consent
         end
