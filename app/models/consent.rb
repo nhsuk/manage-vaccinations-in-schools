@@ -166,7 +166,7 @@ class Consent < ApplicationRecord
 
   def triage_needed?
     response_given? &&
-      (parent_relationship_other? || health_questions_require_follow_up?)
+      (parent_relationship_other? || health_answers_require_follow_up?)
   end
 
   def who_responded
@@ -177,14 +177,14 @@ class Consent < ApplicationRecord
     end.capitalize
   end
 
-  def health_questions_require_follow_up?
-    health_questions&.any? { |question| question["response"].downcase == "yes" }
+  def health_answers_require_follow_up?
+    health_answers&.any? { |question| question.response.downcase == "yes" }
   end
 
   def reasons_triage_needed
     reasons = []
     reasons << "Check parental responsibility" if parent_relationship_other?
-    if health_questions_require_follow_up?
+    if health_answers_require_follow_up?
       reasons << "Health questions need triage"
     end
     reasons

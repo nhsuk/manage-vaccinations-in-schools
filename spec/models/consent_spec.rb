@@ -61,19 +61,15 @@ RSpec.describe Consent do
 
   describe "when consent given by parent or guardian, but some info for health questions" do
     it "does require triage" do
-      health_responses = [
-        {
+      health_answers = [
+        HealthAnswer.new(
           question:
             "Does the child have a disease or treatment that severely affects their immune system?",
           response: "yes"
-        }
+        )
       ]
       response =
-        build(
-          :consent_given,
-          parent_relationship: :mother,
-          health_questions: health_responses
-        )
+        build(:consent_given, parent_relationship: :mother, health_answers:)
 
       expect(response).to be_triage_needed
     end
