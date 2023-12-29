@@ -1,8 +1,12 @@
 if Rails.env.test?
-  require "flipper/adapters/memory"
+  require "flipper/adapters/pstore"
   require "flipper"
 
   Flipper.configure do |config|
-    config.default { Flipper.new(Flipper::Adapters::Memory.new) }
+    config.default do
+      Flipper.new(Flipper::Adapters::PStore.new("tmp/flipper.test.pstore"))
+    end
   end
+
+  Flipper.enable :new_consents
 end
