@@ -115,5 +115,9 @@ FactoryBot.define do
         ]
       end
     end
+
+    trait :recorded do
+      recorded_at { Time.zone.now }
+    end
   end
 end
