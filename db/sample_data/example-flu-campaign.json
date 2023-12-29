@@ -590,62 +590,46 @@
               "healthQuestionResponses": [
                 {
                   "question": "Has your child been diagnosed with asthma?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Have they taken oral steroids in the last 2 weeks?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Have they been admitted to intensive care for their asthma?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Has your child had a flu vaccination in the last 5 months?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Does your child have a disease or treatment that severely affects their immune system?",
                   "response": "no",
-                  "notes": null,
                   "hint": "For example, treatment for leukaemia or taking immunosuppressant medication"
                 },
                 {
                   "question": "Is anyone in your household currently having treatment that severely affects their immune system?",
                   "response": "no",
-                  "notes": null,
                   "hint": "For example, they need to be kept in isolation"
                 },
                 {
                   "question": "Has your child ever been admitted to intensive care due to an allergic reaction to egg?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Does your child have any allergies to medication?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Has your child ever had a reaction to previous vaccinations?",
                   "response": "yes",
-                  "notes": "Generic note",
-                  "hint": null
+                  "notes": "Generic note"
                 },
                 {
                   "question": "Does you child take regular aspirin?",
                   "response": "no",
-                  "notes": null,
                   "hint": "Also known as Salicylate therapy"
                 }
               ],
@@ -677,27 +661,19 @@
               "healthQuestionResponses": [
                 {
                   "question": "Has your child been diagnosed with asthma?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Have they taken oral steroids in the last 2 weeks?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Have they been admitted to intensive care for their asthma?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Has your child had a flu vaccination in the last 5 months?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Does your child have a disease or treatment that severely affects their immune system?",
@@ -708,31 +684,23 @@
                 {
                   "question": "Is anyone in your household currently having treatment that severely affects their immune system?",
                   "response": "no",
-                  "notes": null,
                   "hint": "For example, they need to be kept in isolation"
                 },
                 {
                   "question": "Has your child ever been admitted to intensive care due to an allergic reaction to egg?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Does your child have any allergies to medication?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Has your child ever had a reaction to previous vaccinations?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Does you child take regular aspirin?",
                   "response": "no",
-                  "notes": null,
                   "hint": "Also known as Salicylate therapy"
                 }
               ],
@@ -764,32 +732,23 @@
               "healthQuestionResponses": [
                 {
                   "question": "Has your child been diagnosed with asthma?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Have they taken oral steroids in the last 2 weeks?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Have they been admitted to intensive care for their asthma?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Has your child had a flu vaccination in the last 5 months?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Does your child have a disease or treatment that severely affects their immune system?",
                   "response": "no",
-                  "notes": null,
                   "hint": "For example, treatment for leukaemia or taking immunosuppressant medication"
                 },
                 {
@@ -800,26 +759,19 @@
                 },
                 {
                   "question": "Has your child ever been admitted to intensive care due to an allergic reaction to egg?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Does your child have any allergies to medication?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Has your child ever had a reaction to previous vaccinations?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Does you child take regular aspirin?",
                   "response": "no",
-                  "notes": null,
                   "hint": "Also known as Salicylate therapy"
                 }
               ],
@@ -855,62 +807,46 @@
               "healthQuestionResponses": [
                 {
                   "question": "Has your child been diagnosed with asthma?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Have they taken oral steroids in the last 2 weeks?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Have they been admitted to intensive care for their asthma?",
                   "response": "yes",
-                  "notes": "Generic note",
-                  "hint": null
+                  "notes": "Generic note"
                 },
                 {
                   "question": "Has your child had a flu vaccination in the last 5 months?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Does your child have a disease or treatment that severely affects their immune system?",
                   "response": "no",
-                  "notes": null,
                   "hint": "For example, treatment for leukaemia or taking immunosuppressant medication"
                 },
                 {
                   "question": "Is anyone in your household currently having treatment that severely affects their immune system?",
                   "response": "no",
-                  "notes": null,
                   "hint": "For example, they need to be kept in isolation"
                 },
                 {
                   "question": "Has your child ever been admitted to intensive care due to an allergic reaction to egg?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Does your child have any allergies to medication?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Has your child ever had a reaction to previous vaccinations?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Does you child take regular aspirin?",
                   "response": "no",
-                  "notes": null,
                   "hint": "Also known as Salicylate therapy"
                 }
               ],
@@ -927,62 +863,46 @@
               "healthQuestionResponses": [
                 {
                   "question": "Has your child been diagnosed with asthma?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Have they taken oral steroids in the last 2 weeks?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Have they been admitted to intensive care for their asthma?",
                   "response": "yes",
-                  "notes": "Generic note",
-                  "hint": null
+                  "notes": "Generic note"
                 },
                 {
                   "question": "Has your child had a flu vaccination in the last 5 months?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Does your child have a disease or treatment that severely affects their immune system?",
                   "response": "no",
-                  "notes": null,
                   "hint": "For example, treatment for leukaemia or taking immunosuppressant medication"
                 },
                 {
                   "question": "Is anyone in your household currently having treatment that severely affects their immune system?",
                   "response": "no",
-                  "notes": null,
                   "hint": "For example, they need to be kept in isolation"
                 },
                 {
                   "question": "Has your child ever been admitted to intensive care due to an allergic reaction to egg?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Does your child have any allergies to medication?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Has your child ever had a reaction to previous vaccinations?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Does you child take regular aspirin?",
                   "response": "no",
-                  "notes": null,
                   "hint": "Also known as Salicylate therapy"
                 }
               ],
@@ -1018,62 +938,46 @@
               "healthQuestionResponses": [
                 {
                   "question": "Has your child been diagnosed with asthma?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Have they taken oral steroids in the last 2 weeks?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Have they been admitted to intensive care for their asthma?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Has your child had a flu vaccination in the last 5 months?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Does your child have a disease or treatment that severely affects their immune system?",
                   "response": "no",
-                  "notes": null,
                   "hint": "For example, treatment for leukaemia or taking immunosuppressant medication"
                 },
                 {
                   "question": "Is anyone in your household currently having treatment that severely affects their immune system?",
                   "response": "no",
-                  "notes": null,
                   "hint": "For example, they need to be kept in isolation"
                 },
                 {
                   "question": "Has your child ever been admitted to intensive care due to an allergic reaction to egg?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Does your child have any allergies to medication?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Has your child ever had a reaction to previous vaccinations?",
                   "response": "yes",
-                  "notes": "Generic note",
-                  "hint": null
+                  "notes": "Generic note"
                 },
                 {
                   "question": "Does you child take regular aspirin?",
                   "response": "no",
-                  "notes": null,
                   "hint": "Also known as Salicylate therapy"
                 }
               ],
@@ -1109,27 +1013,19 @@
               "healthQuestionResponses": [
                 {
                   "question": "Has your child been diagnosed with asthma?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Have they taken oral steroids in the last 2 weeks?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Have they been admitted to intensive care for their asthma?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Has your child had a flu vaccination in the last 5 months?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Does your child have a disease or treatment that severely affects their immune system?",
@@ -1140,31 +1036,23 @@
                 {
                   "question": "Is anyone in your household currently having treatment that severely affects their immune system?",
                   "response": "no",
-                  "notes": null,
                   "hint": "For example, they need to be kept in isolation"
                 },
                 {
                   "question": "Has your child ever been admitted to intensive care due to an allergic reaction to egg?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Does your child have any allergies to medication?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Has your child ever had a reaction to previous vaccinations?",
-                  "response": "no",
-                  "notes": null,
-                  "hint": null
+                  "response": "no"
                 },
                 {
                   "question": "Does you child take regular aspirin?",
                   "response": "no",
-                  "notes": null,
                   "hint": "Also known as Salicylate therapy"
                 }
               ],

@@ -85,7 +85,7 @@ class ExampleCampaignGenerator
       type: vaccine_name,
       team: team_data,
       vaccines: vaccines_data,
-      healthQuestions: health_questions_data,
+      healthQuestions: health_answers_data,
       sessions: sessions_data
     }
   end
@@ -208,7 +208,7 @@ class ExampleCampaignGenerator
       *options,
       random:,
       campaign: nil,
-      health_questions_list: health_questions_data.map { |hq| hq[:question] },
+      health_questions_list: health_answers_data.map { |hq| hq[:question] },
       **attrs
     )
   end
@@ -327,9 +327,13 @@ class ExampleCampaignGenerator
         .entries
         .map do |row|
           {
-            health_questions:
+            health_answers:
               row.map do |question, notes|
-                { question:, response: notes.present? ? "Yes" : "No", notes: }
+                HealthAnswer.new(
+                  question:,
+                  response: notes.present? ? "Yes" : "No",
+                  notes:
+                )
               end
           }
         end
@@ -341,22 +345,22 @@ class ExampleCampaignGenerator
   def cases_that_still_need_triage_flu(count)
     @cases_that_still_need_triage_flu ||=
       count.times.map do
-        health_questions =
-          health_questions_data.map do |hq|
-            {
+        health_answers =
+          health_answers_data.map do |hq|
+            HealthAnswer.new(
               question: hq[:question],
               response: "no",
               notes: nil,
               hint: hq[:hint]
-            }
+            )
           end
-        health_questions
+        health_answers
           .sample(random:)
           .tap do |hq|
-            hq[:response] = "yes"
-            hq[:notes] = "Generic note"
+            hq.response = "yes"
+            hq.notes = "Generic note"
           end
-        { health_questions: }
+        { health_answers: }
       end
   end
 
@@ -378,7 +382,7 @@ class ExampleCampaignGenerator
         build_consents(
           1,
           :given,
-          health_questions: example_case[:health_questions],
+          health_answers: example_case[:health_answers],
           patient:
         )
 
@@ -402,9 +406,13 @@ class ExampleCampaignGenerator
         .map do |row|
           {
             triage_notes: row.delete("triage notes").second,
-            health_questions:
+            health_answers:
               row.map do |question, notes|
-                { question:, response: notes.present? ? "Yes" : "No", notes: }
+                HealthAnswer.new(
+                  question:,
+                  response: notes.present? ? "Yes" : "No",
+                  notes:
+                )
               end
           }
         end
@@ -416,22 +424,22 @@ class ExampleCampaignGenerator
   def cases_with_triage_started_flu(count)
     @cases_with_triage_started_flu ||=
       count.times.map do
-        health_questions =
-          health_questions_data.map do |hq|
-            {
+        health_answers =
+          health_answers_data.map do |hq|
+            HealthAnswer.new(
               question: hq[:question],
               response: "no",
               notes: nil,
               hint: hq[:hint]
-            }
+            )
           end
-        health_questions
+        health_answers
           .sample(random:)
           .tap do |hq|
-            hq[:response] = "yes"
-            hq[:notes] = "Generic note"
+            hq.response = "yes"
+            hq.notes = "Generic note"
           end
-        { triage_notes: "Generic triage notes", health_questions: }
+        { triage_notes: "Generic triage notes", health_answers: }
       end
   end
 
@@ -455,7 +463,7 @@ class ExampleCampaignGenerator
           [1, 2].sample(random:),
           :given,
           patient:,
-          health_questions: patient_case[:health_questions]
+          health_answers: patient_case[:health_answers]
         )
       triage = {
         notes: patient_case[:triage_notes],
@@ -519,7 +527,7 @@ class ExampleCampaignGenerator
           1,
           :given,
           patient:,
-          health_questions: patient_case[:health_questions]
+          health_answers: patient_case[:health_answers]
         )
       %i[ready_to_vaccinate do_not_vaccinate].sample(random:)
       triage = {
@@ -563,15 +571,23 @@ class ExampleCampaignGenerator
           parentRelationshipOther: consent.parent_relationship_other,
           parentEmail: consent.parent_email,
           parentPhone: consent.parent_phone,
-          healthQuestionResponses: consent.health_questions,
+          healthQuestionResponses:
+            consent.health_answers.map do |ha|
+              {
+                question: ha.question,
+                response: ha.response,
+                notes: ha.notes,
+                hint: ha.hint
+              }.compact
+            end,
           route: consent.route
         }
       end
     end
   end
 
-  def health_questions_data
-    @health_questions_data ||=
+  def health_answers_data
+    @health_answers_data ||=
       if @type == :flu
         [
           {
