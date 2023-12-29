@@ -32,10 +32,10 @@ class Avo::Resources::Consent < Avo::BaseResource
     field :gp_response, as: :select, enum: ::Consent.gp_responses
     field :gp_name, as: :textarea
     field :route, as: :select, enum: ::Consent.routes
-    field :health_questions, as: :code, language: "javascript", only_on: :edit
-    field :health_questions, as: :code, language: "javascript" do |record|
-      if record.health_questions.present?
-        JSON.pretty_generate(record.health_questions.as_json)
+    field :health_answers, as: :code, language: "javascript", only_on: :edit
+    field :health_answers, as: :code, language: "javascript" do |record|
+      if record.health_answers.present?
+        JSON.pretty_generate(record.health_answers.as_json)
       end
     end
     field :patient, as: :belongs_to
