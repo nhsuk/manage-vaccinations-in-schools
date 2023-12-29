@@ -424,13 +424,11 @@
               "healthQuestionResponses": [
                 {
                   "question": "Does the child have any severe allergies that have led to an anaphylactic reaction?",
-                  "response": "No",
-                  "notes": null
+                  "response": "No"
                 },
                 {
                   "question": "Does the child have any existing medical conditions?",
-                  "response": "No",
-                  "notes": null
+                  "response": "No"
                 },
                 {
                   "question": "Does the child take any regular medication?",
@@ -439,8 +437,7 @@
                 },
                 {
                   "question": "Is there anything else we should know?",
-                  "response": "No",
-                  "notes": null
+                  "response": "No"
                 }
               ],
               "route": "website"
@@ -471,8 +468,7 @@
               "healthQuestionResponses": [
                 {
                   "question": "Does the child have any severe allergies that have led to an anaphylactic reaction?",
-                  "response": "No",
-                  "notes": null
+                  "response": "No"
                 },
                 {
                   "question": "Does the child have any existing medical conditions?",
@@ -481,8 +477,7 @@
                 },
                 {
                   "question": "Does the child take any regular medication?",
-                  "response": "No",
-                  "notes": null
+                  "response": "No"
                 },
                 {
                   "question": "Is there anything else we should know?",
@@ -518,18 +513,15 @@
               "healthQuestionResponses": [
                 {
                   "question": "Does the child have any severe allergies that have led to an anaphylactic reaction",
-                  "response": "No",
-                  "notes": null
+                  "response": "No"
                 },
                 {
                   "question": "Does the child have any existing medical conditions?",
-                  "response": "No",
-                  "notes": null
+                  "response": "No"
                 },
                 {
                   "question": "Does the child take any regular medication?",
-                  "response": "No",
-                  "notes": null
+                  "response": "No"
                 },
                 {
                   "question": "Is there anything else we should know?",
@@ -550,18 +542,15 @@
               "healthQuestionResponses": [
                 {
                   "question": "Does the child have any severe allergies that have led to an anaphylactic reaction",
-                  "response": "No",
-                  "notes": null
+                  "response": "No"
                 },
                 {
                   "question": "Does the child have any existing medical conditions?",
-                  "response": "No",
-                  "notes": null
+                  "response": "No"
                 },
                 {
                   "question": "Does the child take any regular medication?",
-                  "response": "No",
-                  "notes": null
+                  "response": "No"
                 },
                 {
                   "question": "Is there anything else we should know?",
@@ -601,8 +590,7 @@
               "healthQuestionResponses": [
                 {
                   "question": "Does the child have any severe allergies that have led to an anaphylactic reaction",
-                  "response": "No",
-                  "notes": null
+                  "response": "No"
                 },
                 {
                   "question": "Does the child have any existing medical conditions?",
@@ -611,13 +599,11 @@
                 },
                 {
                   "question": "Does the child take any regular medication?",
-                  "response": "No",
-                  "notes": null
+                  "response": "No"
                 },
                 {
                   "question": "Is there anything else we should know?",
-                  "response": "No",
-                  "notes": null
+                  "response": "No"
                 }
               ],
               "route": "website"
@@ -633,8 +619,7 @@
               "healthQuestionResponses": [
                 {
                   "question": "Does the child have any severe allergies that have led to an anaphylactic reaction",
-                  "response": "No",
-                  "notes": null
+                  "response": "No"
                 },
                 {
                   "question": "Does the child have any existing medical conditions?",
@@ -643,13 +628,11 @@
                 },
                 {
                   "question": "Does the child take any regular medication?",
-                  "response": "No",
-                  "notes": null
+                  "response": "No"
                 },
                 {
                   "question": "Is there anything else we should know?",
-                  "response": "No",
-                  "notes": null
+                  "response": "No"
                 }
               ],
               "route": "website"
@@ -684,13 +667,11 @@
               "healthQuestionResponses": [
                 {
                   "question": "Does the child have any severe allergies that have led to an anaphylactic reaction?",
-                  "response": "No",
-                  "notes": null
+                  "response": "No"
                 },
                 {
                   "question": "Does the child have any existing medical conditions?",
-                  "response": "No",
-                  "notes": null
+                  "response": "No"
                 },
                 {
                   "question": "Does the child take any regular medication?",
@@ -699,8 +680,7 @@
                 },
                 {
                   "question": "Is there anything else we should know?",
-                  "response": "No",
-                  "notes": null
+                  "response": "No"
                 }
               ],
               "route": "website"
@@ -735,8 +715,7 @@
               "healthQuestionResponses": [
                 {
                   "question": "Does the child have any severe allergies that have led to an anaphylactic reaction?",
-                  "response": "No",
-                  "notes": null
+                  "response": "No"
                 },
                 {
                   "question": "Does the child have any existing medical conditions?",
@@ -745,8 +724,7 @@
                 },
                 {
                   "question": "Does the child take any regular medication?",
-                  "response": "No",
-                  "notes": null
+                  "response": "No"
                 },
                 {
                   "question": "Is there anything else we should know?",
