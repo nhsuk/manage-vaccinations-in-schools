@@ -2,8 +2,7 @@ class VaccinationsController < ApplicationController
   before_action :set_session
   before_action :set_patient, except: %i[index record_template]
   before_action :set_patient_sessions, only: %i[index record_template]
-  before_action :set_patient_session,
-                only: %i[new confirm handle_consent create record update]
+  before_action :set_patient_session, only: %i[new confirm create record update]
   before_action :set_draft_vaccination_record,
                 only: %i[edit_reason create update]
   before_action :set_draft_vaccination_record!, only: %i[confirm record]
@@ -155,36 +154,6 @@ class VaccinationsController < ApplicationController
       redirect_to confirm_session_patient_vaccinations_path(@session, @patient)
     else
       render :edit_reason
-    end
-  end
-
-  def handle_consent
-    case consent_params[:route]
-    when "not_vaccinating"
-      @patient_session.do_vaccination!
-      redirect_to vaccinations_session_path(@session),
-                  flash: {
-                    success: {
-                      heading: "Record saved for #{@patient.full_name}",
-                      body:
-                        ActionController::Base.helpers.link_to(
-                          "View child record",
-                          session_patient_vaccinations_path(@session, @patient)
-                        )
-                    }
-                  }
-    when "phone"
-      redirect_to new_session_patient_nurse_consents_path(
-                    @session,
-                    @patient,
-                    route: "vaccinations"
-                  )
-    when "self_consent"
-      redirect_to assessing_gillick_session_patient_nurse_consents_path(
-                    @session,
-                    @patient,
-                    route: "vaccinations"
-                  )
     end
   end
 
