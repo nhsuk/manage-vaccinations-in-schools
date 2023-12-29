@@ -33,48 +33,13 @@ class ManageConsentsController < ApplicationController
   def update
     case current_step
     when :confirm
-      ActiveRecord::Base.transaction do
-        @consent.recorded_at = Time.zone.now
-        @consent.save!
-
-        if @triage.persisted?
-          @patient_session.do_consent!
-          @patient_session.do_triage!
-        else
-          # We need to discard the draft triage record so that the patient
-          # session can be saved.
-          @triage.destroy!
-          @patient_session.do_consent!
-        end
-      end
-    when :agree
-      response_was_given = @consent.response_given?
-      @consent.assign_attributes(update_params)
-
-      if !response_was_given && @consent.response_given?
-        @consent.health_answers = @session.health_questions.to_health_answers
-        @consent.reason_for_refusal = nil
-      elsif response_was_given && !@consent.response_given?
-        @consent.health_answers = []
-        @consent.reason_for_refusal = nil
-      end
-    when :gillick
-      @patient_session.update! gillick_params
-
-      @consent.assign_attributes(
-        patient_session: @patient_session,
-        form_step: current_step
-      )
+      handle_confirm
     when :questions
-      questions_attrs = update_params.except(:triage, :form_step).values
-      @consent.health_answers.each_with_index do |ha, index|
-        ha.assign_attributes(questions_attrs[index])
-      end
-
-      triage_attrs = update_params.delete(:triage).merge(user: current_user)
-      @triage.update! triage_attrs
-
-      @consent.assign_attributes(triage: @triage, form_step: current_step)
+      handle_questions
+    when :agree
+      handle_agree
+    when :gillick
+      handle_gillick
     else
       @consent.assign_attributes(update_params)
     end
@@ -109,6 +74,57 @@ class ManageConsentsController < ApplicationController
     else
       vaccinations_session_path(@session)
     end
+  end
+
+  def handle_confirm
+    ActiveRecord::Base.transaction do
+      @consent.recorded_at = Time.zone.now
+      @consent.save!
+
+      if @triage.persisted?
+        @patient_session.do_consent!
+        @patient_session.do_triage!
+      else
+        # We need to discard the draft triage record so that the patient
+        # session can be saved.
+        @triage.destroy!
+        @patient_session.do_consent!
+      end
+    end
+  end
+
+  def handle_questions
+    questions_attrs = update_params.except(:triage, :form_step).values
+    @consent.health_answers.each_with_index do |ha, index|
+      ha.assign_attributes(questions_attrs[index])
+    end
+
+    triage_attrs = update_params.delete(:triage).merge(user: current_user)
+    @triage.update! triage_attrs
+
+    @consent.assign_attributes(triage: @triage, form_step: current_step)
+  end
+
+  def handle_agree
+    response_was_given = @consent.response_given?
+    @consent.assign_attributes(update_params)
+
+    if !response_was_given && @consent.response_given?
+      @consent.health_answers = @session.health_questions.to_health_answers
+      @consent.reason_for_refusal = nil
+    elsif response_was_given && !@consent.response_given?
+      @consent.health_answers = []
+      @consent.reason_for_refusal = nil
+    end
+  end
+
+  def handle_gillick
+    @patient_session.update! gillick_params
+
+    @consent.assign_attributes(
+      patient_session: @patient_session,
+      form_step: current_step
+    )
   end
 
   def set_route
