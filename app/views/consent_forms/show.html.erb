@@ -1,0 +1,8 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+    href: school_path(@school),
+    name: "school page"
+  ) %>
+<% end %>
+
+<%= h1 "Consent response for #{@consent_form.parent_name}", class: "nhsuk-heading-l" %>

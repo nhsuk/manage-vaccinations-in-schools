@@ -87,6 +87,7 @@ Rails.application.routes.draw do
   end
 
   resources :schools, only: [:show]
+  resources :consent_forms, only: [:show]
 
   scope via: :all do
     get "/404", to: "errors#not_found"
