@@ -44,6 +44,9 @@
 #
 
 class ConsentForm < ApplicationRecord
+  scope :unmatched, -> { where(consent_id: nil) }
+  scope :recorded, -> { where.not(recorded_at: nil) }
+
   attr_accessor :form_step, :health_question_number, :is_this_their_school
 
   audited
@@ -138,8 +141,6 @@ class ConsentForm < ApplicationRecord
       validate :health_answers_valid?
     end
   end
-
-  scope :unmatched, -> { where(consent_id: nil) }
 
   def address_postcode=(str)
     super UKPostcode.parse(str.to_s).to_s

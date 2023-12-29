@@ -13,6 +13,6 @@ class SchoolsController < ApplicationController
   end
 
   def set_unmatched_consent_responses
-    @unmatched_consent_responses = @school.consent_forms.unmatched
+    @unmatched_consent_responses = @school.consent_forms.unmatched.recorded
   end
 end

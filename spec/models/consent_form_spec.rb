@@ -501,4 +501,15 @@ RSpec.describe ConsentForm, type: :model do
       expect(ConsentForm.unmatched).not_to include matched_consent_form
     end
   end
+
+  describe "scope recorded" do
+    let(:consent) { create(:consent) }
+    let(:recorded_consent_form) { create(:consent_form, :recorded, consent:) }
+    let(:draft_consent_form) { create(:consent_form, consent:) }
+
+    it "returns unmatched consent forms" do
+      expect(ConsentForm.recorded).to include recorded_consent_form
+      expect(ConsentForm.recorded).not_to include draft_consent_form
+    end
+  end
 end
