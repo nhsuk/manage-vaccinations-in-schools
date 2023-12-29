@@ -47,6 +47,17 @@ class ManageConsentsController < ApplicationController
           @patient_session.do_consent!
         end
       end
+    when :agree
+      response_was_given = @consent.response_given?
+      @consent.assign_attributes(update_params)
+
+      if !response_was_given && @consent.response_given?
+        @consent.health_answers = @session.health_questions.to_health_answers
+        @consent.reason_for_refusal = nil
+      elsif response_was_given && !@consent.response_given?
+        @consent.health_answers = []
+        @consent.reason_for_refusal = nil
+      end
     when :gillick
       @patient_session.update! gillick_params
 
