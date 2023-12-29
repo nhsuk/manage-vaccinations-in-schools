@@ -6,3 +6,11 @@
 <% end %>
 
 <%= h1 "Consent response for #{@consent_form.parent_name}", class: "nhsuk-heading-l" %>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-two-thirds">
+    <%= render AppCardComponent.new(heading: "Child details") do
+      render AppPatientDetailsComponent.new(session: @session, consent_form: @consent_form, school: @school)
+    end %>
+  </div>
+</div>
