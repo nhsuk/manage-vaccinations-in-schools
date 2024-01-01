@@ -162,7 +162,7 @@ GEM
       ferrum (~> 0.14.0)
     date (3.3.4)
     date_time_precision (0.8.1)
-    debug (1.9.0)
+    debug (1.9.1)
       irb (~> 1.10)
       reline (>= 0.3.8)
     deep_merge (1.2.2)
