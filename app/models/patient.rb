@@ -49,7 +49,7 @@ class Patient < ApplicationRecord
 
   encrypts :first_name,
            :last_name,
-           # :nhs_number, # TODO: Migrate this field to type string first
+           :nhs_number,
            :parent_email,
            :parent_info_source,
            :parent_name,
