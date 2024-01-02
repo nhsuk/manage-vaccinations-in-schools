@@ -44,6 +44,8 @@
 #
 
 class ConsentForm < ApplicationRecord
+  include AgeConcern
+
   scope :unmatched, -> { where(consent_id: nil) }
   scope :recorded, -> { where.not(recorded_at: nil) }
 
