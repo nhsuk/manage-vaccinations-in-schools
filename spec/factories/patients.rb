@@ -7,7 +7,7 @@
 #  dob                       :date
 #  first_name                :text
 #  last_name                 :text
-#  nhs_number                :bigint
+#  nhs_number                :string
 #  parent_email              :text
 #  parent_info_source        :text
 #  parent_name               :text
