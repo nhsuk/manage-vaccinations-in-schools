@@ -32,6 +32,8 @@ class Triage < ApplicationRecord
   enum :status,
        %i[ready_to_vaccinate do_not_vaccinate needs_follow_up delay_vaccination]
 
+  encrypts :notes
+
   validates :status,
             presence: true,
             inclusion: {

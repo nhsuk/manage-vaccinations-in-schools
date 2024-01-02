@@ -41,6 +41,8 @@ class PatientSession < ApplicationRecord
             on: :edit_gillick
   validates :gillick_competence_notes, presence: true, on: :edit_gillick
 
+  encrypts :gillick_competence_notes
+
   def vaccination_record
     vaccination_records.where.not(recorded_at: nil).last
   end

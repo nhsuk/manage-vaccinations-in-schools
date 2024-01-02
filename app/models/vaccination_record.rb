@@ -60,6 +60,8 @@ class VaccinationRecord < ApplicationRecord
          absent_from_session
        ]
 
+  encrypts :notes
+
   validates :administered, inclusion: [true, false]
   validates :batch_id, presence: true, on: :edit_batch, if: -> { administered }
   validates :delivery_site,

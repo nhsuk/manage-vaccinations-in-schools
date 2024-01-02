@@ -47,6 +47,16 @@ class Patient < ApplicationRecord
   # TODO: Deprecate. VaccinationRecords supersede .seen
   enum :seen, ["Not yet", "Vaccinated"]
 
+  encrypts :first_name,
+           :last_name,
+           # :nhs_number, # TODO: Migrate this field to type string first
+           :parent_email,
+           :parent_info_source,
+           :parent_name,
+           :parent_phone,
+           :parent_relationship_other,
+           :preferred_name
+
   def full_name
     "#{first_name} #{last_name}"
   end

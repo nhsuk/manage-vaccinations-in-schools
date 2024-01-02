@@ -68,6 +68,22 @@ class Consent < ApplicationRecord
 
   serialize :health_answers, coder: HealthAnswer::ArraySerializer
 
+  encrypts :address_line_1,
+           :address_line_2,
+           :address_town,
+           :address_postcode,
+           :childs_common_name,
+           :childs_name,
+           :gp_name,
+           :health_answers,
+           :parent_contact_method,
+           :parent_contact_method_other,
+           :parent_email,
+           :parent_name,
+           :parent_phone,
+           :parent_relationship_other,
+           :reason_for_refusal_other
+
   with_options on: :edit_who do
     validates :parent_name, presence: true
     validates :parent_phone, presence: true
