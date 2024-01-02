@@ -26,6 +26,9 @@
 #  index_patients_on_nhs_number  (nhs_number) UNIQUE
 #
 class Patient < ApplicationRecord
+  include AgeConcern
+  date_of_birth_field_for_age :dob
+
   audited
 
   belongs_to :location, optional: true
@@ -59,20 +62,6 @@ class Patient < ApplicationRecord
 
   def full_name
     "#{first_name} #{last_name}"
-  end
-
-  # TODO: Needs testing for calculations around leap years, etc.
-  def age
-    now = Time.zone.now.to_date
-    now.year - dob.year -
-      (
-        if now.month > dob.month ||
-             (now.month == dob.month && now.day >= dob.day)
-          0
-        else
-          1
-        end
-      )
   end
 
   def as_json(options = {})
