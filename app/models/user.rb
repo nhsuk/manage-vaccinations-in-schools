@@ -31,4 +31,7 @@ class User < ApplicationRecord
   devise :pwned_password unless Rails.env.test?
 
   has_and_belongs_to_many :teams
+
+  encrypts :email, deterministic: true
+  encrypts :full_name
 end
