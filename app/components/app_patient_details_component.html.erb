@@ -1,43 +1,18 @@
 <dl class="nhsuk-summary-list app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0">
-  <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Name
-    </dt>
-    <dd class="nhsuk-summary-list__value" data-testid="full-name">
-      <%= @patient.full_name %>
-    </dd>
-  </div>
+  <%= govuk_summary_list do |summary_list|
+    summary_list.with_row do |row|
+      row.with_key { "Name" }
+      row.with_value { @patient.full_name }
+    end
 
-  <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Date of birth
-    </dt>
-    <dd class="nhsuk-summary-list__value" data-testid="dob">
-      <%= @patient.dob&.to_fs(:nhsuk_date) %> (<%= aged %>)
-    </dd>
-  </div>
+    summary_list.with_row do |row|
+      row.with_key { "Date of birth" }
+      row.with_value { "#{@patient.dob.to_fs(:nhsuk_date)} #{aged}" }
+    end
 
-  <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      NHS Number
-    </dt>
-    <dd class="nhsuk-summary-list__value" data-testid="nhs-number">
-      <%= nhs_number %>
-    </dd>
-  </div>
-
-  <% if Settings.features.fhir_server_integration %>
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Vaccination history
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        <%= link_to "Record available",
-           history_session_patient_vaccinations_path(
-             session_id: @session.id,
-             id: (@patient.id || ":id")
-           ) %>
-      </dd>
-    </div>
-  <% end %>
+    summary_list.with_row do |row|
+      row.with_key { "NHS Number" }
+      row.with_value { nhs_number }
+    end
+  end %>
 </dl>
