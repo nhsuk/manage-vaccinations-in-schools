@@ -40,6 +40,7 @@ gem "uk_postcode"
 gem "wicked"
 
 group :development, :test do
+  gem "brakeman"
   gem "debug", platforms: %i[mri mingw x64_mingw]
   gem "factory_bot_rails"
   gem "pry-rails"
