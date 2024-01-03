@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 class ErrorsController < ApplicationController
   skip_before_action :verify_authenticity_token
+  skip_before_action :authenticate_user!
 
   layout "two_thirds"
 
