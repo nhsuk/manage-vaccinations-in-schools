@@ -212,7 +212,7 @@ The importer will `find_or_create` the records by default, using specific attrib
 There's also a rake task to generate example campaign data. The `seed` setting
 allows identical campaign data be generated for the purpose of testing. The type
 of campaign can be controlled by the `type` setting. Use `rails -D
-`generate_example_campaign` for more usage information.
+generate_example_campaign` for more usage information.
 
 ```bash
 # Generate a simple example campaign to stdout
@@ -237,6 +237,14 @@ $ rails generate_example_campaign[db/sample_data/model-office.json] \
 
 # Generate example campaign data with a specific random seed for repeatability
 $ rails generate_example_campaign seed=42
+```
+
+### Adding a test user
+
+You can add a new user to an environment using the `add_new_user` rake task:
+
+```
+rails add_new_user['user@example.com','password123','John Doe',1]
 ```
 
 ## Deploying
