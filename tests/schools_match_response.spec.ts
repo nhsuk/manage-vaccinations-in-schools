@@ -12,6 +12,9 @@ test("School - match response", async ({ page }) => {
   await when_i_go_to_the_session_page();
   await and_i_click_on_the_unmatched_responses_link();
   await then_i_am_on_the_unmatched_responses_page();
+
+  await when_i_click_on_an_unmatched_response();
+  await then_i_am_on_the_consent_form_page();
 });
 
 async function given_the_app_is_setup() {
@@ -37,5 +40,19 @@ async function and_i_click_on_the_unmatched_responses_link() {
 async function then_i_am_on_the_unmatched_responses_page() {
   await expect(
     p.getByRole("heading", { name: fixtures.schoolName }),
+  ).toBeVisible();
+}
+
+async function when_i_click_on_an_unmatched_response() {
+  await p
+    .getByRole("link", { name: fixtures.unmatchedConsentFormParentName })
+    .click();
+}
+
+async function then_i_am_on_the_consent_form_page() {
+  await expect(
+    p.getByRole("heading", {
+      name: `Consent response for ${fixtures.unmatchedConsentFormParentName}`,
+    }),
   ).toBeVisible();
 }
