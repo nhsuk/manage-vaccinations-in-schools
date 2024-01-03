@@ -12,5 +12,9 @@
     <%= render AppCardComponent.new(heading: "Child details") do
       render AppPatientDetailsComponent.new(session: @session, consent_form: @consent_form, school: @school)
     end %>
+
+    <%= render AppCardComponent.new(heading: "Consent") do
+      render AppConsentDetailsComponent.new(consents: [@consent_form])
+    end %>
   </div>
 </div>
