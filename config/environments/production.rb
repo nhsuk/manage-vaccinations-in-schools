@@ -49,7 +49,14 @@ Rails.application.configure do
   # config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = false
+  config.force_ssl = true
+
+  # Don't force SSL for healthcheck endpoint.
+  config.ssl_options = {
+    redirect: {
+      exclude: ->(request) { request.path =~ /ping/ }
+    }
+  }
 
   # Log to STDOUT by default
   config.logger =
