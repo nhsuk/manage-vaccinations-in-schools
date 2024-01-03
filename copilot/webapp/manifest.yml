@@ -59,7 +59,6 @@ environments:
       RAILS_ENV: production
       RCVAPP__SUPPORT_USERNAME: manage
       RCVAPP__SUPPORT_PASSWORD: vaccinations
-      SKIP_PRODUCTION_CHECKS: please
   staging:
     http:
       alias:
