@@ -39,7 +39,7 @@
       table.with_body do |body|
         @unmatched_consent_responses.each do |consent_form|
           body.with_row do |row|
-            row.with_cell(text: consent_form.parent_name)
+            row.with_cell(text: govuk_link_to(consent_form.parent_name, consent_form))
             row.with_cell(text: consent_form.full_name)
             row.with_cell(text: consent_form.date_of_birth&.to_fs(:nhsuk_date_short_month))
             row.with_cell(text: consent_form.human_enum_name(:response))
