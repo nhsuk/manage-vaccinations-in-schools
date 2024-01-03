@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe AppConsentResponseComponent, type: :component do
-  let(:consents) { [] }
+  let(:consents) { [consent] }
   let(:component) { described_class.new(consents:) }
 
   subject { page }
@@ -9,24 +9,49 @@ RSpec.describe AppConsentResponseComponent, type: :component do
   before { render_inline(component) }
 
   context "with a single consent" do
-    let(:consents) { [create(:consent, :given)] }
+    let(:consent) { create(:consent, :given) }
+    let(:consents) { [consent] }
 
-    it { should have_css("p", text: "Consent given (online)") }
+    it do
+      should have_text "Consent given (online)\n" \
+                         "#{consent.parent_name}" \
+                         "#{consent.created_at.to_fs(:nhsuk_date)} at " \
+                         "#{consent.created_at.to_fs(:time)}"
+    end
 
-    it "displays the correct date and time" do
-      date = consents.first.created_at.to_fs(:nhsuk_date_short_month)
-      time = consents.first.created_at.strftime("%-l:%M%P")
-
-      should have_css("p", text: "#{date} at #{time}")
+    it do
+      should have_link(
+               consent.parent_name,
+               href: "mailto:#{consent.parent_email}"
+             )
     end
 
     it { should_not have_css("ul") }
   end
 
   context "with consent taken over the phone" do
-    let(:consents) { [create(:consent, :given, route: "phone")] }
+    let(:consent) { create(:consent, :given, route: "phone") }
 
-    it { should have_css("p", text: "Consent given (phone)") }
+    it { should have_text("Consent given (phone)") }
+  end
+
+  context "with consent_form" do
+    let(:consent_form) { create(:consent_form, :recorded) }
+    let(:consents) { [consent_form] }
+
+    it do
+      should have_text "Consent given (online)\n" \
+                         "#{consent_form.parent_name}" \
+                         "#{consent_form.created_at.to_fs(:nhsuk_date)} at " \
+                         "#{consent_form.created_at.to_fs(:time)}"
+    end
+
+    it do
+      should have_link(
+               consent_form.parent_name,
+               href: "mailto:#{consent_form.parent_email}"
+             )
+    end
   end
 
   context "with multiple consents" do
@@ -38,17 +63,8 @@ RSpec.describe AppConsentResponseComponent, type: :component do
   end
 
   context "with consent refused" do
-    let(:consents) { [create(:consent, :refused)] }
+    let(:consent) { create(:consent, :refused) }
 
-    it { should have_css("p", text: "Consent refused (online)") }
-
-    it "displays the correct date and time" do
-      date = consents.first.created_at.to_fs(:nhsuk_date_short_month)
-      time = consents.first.created_at.strftime("%-l:%M%P")
-
-      should have_css("p", text: "#{date} at #{time}")
-    end
-
-    it { should_not have_css("ul") }
+    it { should have_text("Consent refused (online)") }
   end
 end
