@@ -16,8 +16,9 @@ class DevController < ApplicationController
             flipper_gates
           ]
       data_tables.each do |table|
+        safe_table_name = ActiveRecord::Base.connection.quote_table_name(table)
         ActiveRecord::Base.connection.execute(
-          "TRUNCATE #{table} RESTART IDENTITY CASCADE"
+          "TRUNCATE #{safe_table_name} RESTART IDENTITY CASCADE"
         )
       end
 
