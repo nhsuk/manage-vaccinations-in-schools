@@ -32,7 +32,7 @@ module ParentInterface
 
       if current_step == :school && @consent_form.is_this_their_school == "no"
         return(
-          redirect_to session_consent_form_cannot_consent_path(
+          redirect_to session_parent_interface_consent_form_cannot_consent_path(
                         @session,
                         @consent_form
                       )

@@ -20,6 +20,11 @@ test("Parental consent", async ({ page }) => {
   await and_i_click_continue();
   await then_i_see_the_confirm_your_childs_school_page();
 
+  await when_i_select_no_this_is_not_their_school();
+  await and_i_click_continue();
+  await then_i_see_the_cannot_consent_page();
+
+  await when_i_click_back();
   await when_i_select_yes_this_is_their_school();
   await and_i_click_continue();
   await then_i_see_the_parent_details_page();
@@ -53,6 +58,10 @@ test("Parental consent", async ({ page }) => {
 
 async function given_the_app_is_setup() {
   await p.goto("/reset");
+}
+
+async function when_i_click_back() {
+  await p.getByRole("link", { name: "Back" }).click();
 }
 
 async function when_i_go_to_the_consent_start_page() {
@@ -112,6 +121,16 @@ async function then_i_see_the_date_of_birth_page() {
 
 async function then_i_see_the_confirm_your_childs_school_page() {
   await expect(p.locator("h1")).toContainText("Confirm your child’s school");
+}
+
+async function when_i_select_no_this_is_not_their_school() {
+  await p.getByText("No, they go to a different school").click();
+}
+
+async function then_i_see_the_cannot_consent_page() {
+  await expect(p.locator("h1")).toContainText(
+    "You cannot give or refuse consent through this service",
+  );
 }
 
 async function when_i_select_yes_this_is_their_school() {
