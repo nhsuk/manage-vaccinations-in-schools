@@ -3,11 +3,14 @@ class AppConsentResponseComponent < ViewComponent::Base
     response_contents =
       @consents.map do |consent|
         [
-          tag.p(class: "nhsuk-u-margin-bottom-0") do
+          tag.p(class: "nhsuk-body") do
             "#{response(consent:)} (#{route(consent:)})"
           end,
           tag.p(class: date_and_time_p_classes) do
-            date_and_time consent.recorded_at
+            [
+              recorded_by_link(consent:),
+              date_and_time(consent.recorded_at)
+            ].join("<br />").html_safe
           end
         ].join("\n").html_safe
       end
@@ -37,10 +40,7 @@ class AppConsentResponseComponent < ViewComponent::Base
   end
 
   def date_and_time(date)
-    date_text = date.to_fs(:nhsuk_date_short_month)
-    at_time = date.strftime("%-l:%M%P")
-
-    %(#{date_text} at <span class="nhsuk-u-margin-left-1">#{at_time}</span>).html_safe
+    %(#{date.to_fs(:nhsuk_date)} at #{date.to_fs(:time)}).html_safe
   end
 
   def response(consent:)
@@ -48,6 +48,14 @@ class AppConsentResponseComponent < ViewComponent::Base
   end
 
   def route(consent:)
-    consent.human_enum_name(:route).downcase
+    if consent.respond_to?(:route)
+      consent.human_enum_name(:route).downcase
+    else
+      "online"
+    end
+  end
+
+  def recorded_by_link(consent:)
+    link_to(consent.parent_name, "mailto:#{consent.parent_email}")
   end
 end
