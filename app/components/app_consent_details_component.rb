@@ -30,9 +30,7 @@ class AppConsentDetailsComponent < ViewComponent::Base
       if refused_consents.any?
         summary_list.with_row do |row|
           row.with_key { "Refusal reason" }
-          row.with_value do
-            refused_consents.first.human_enum_name(:reason_for_refusal)
-          end
+          row.with_value { reason_for_refusal }
         end
       end
     end
@@ -47,11 +45,19 @@ class AppConsentDetailsComponent < ViewComponent::Base
   private
 
   def self_consent?
-    @consents.first.via_self_consent?
+    if @consents.first.respond_to?(:via_self_consent?)
+      @consents.first.via_self_consent?
+    else
+      false
+    end
   end
 
   def name
-    @consents.first.name
+    if @consents.first.respond_to?(:via_self_consent?)
+      @consents.first.name
+    else
+      @consents.first.parent_name
+    end
   end
 
   def who_responded
@@ -63,6 +69,19 @@ class AppConsentDetailsComponent < ViewComponent::Base
   end
 
   def refused_consents
-    @refused_consents ||= @consents.find_all(&:response_refused?)
+    @refused_consents ||=
+      if @consents.first.respond_to?(:response_refused?)
+        @consents.find_all(&:response_refused?)
+      else
+        @consents.find_all(&:consent_refused?)
+      end
+  end
+
+  def reason_for_refusal
+    if refused_consents.first.respond_to?(:reason)
+      refused_consents.first.human_enum_name(:reason)
+    else
+      refused_consents.first.human_enum_name(:reason_for_refusal)
+    end
   end
 end

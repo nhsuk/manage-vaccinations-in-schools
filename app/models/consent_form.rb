@@ -219,6 +219,14 @@ class ConsentForm < ApplicationRecord
     end
   end
 
+  def who_responded
+    if parent_relationship == "other"
+      parent_relationship_other
+    else
+      human_enum_name(:parent_relationship)
+    end.capitalize
+  end
+
   private
 
   def eligible_for_injection?

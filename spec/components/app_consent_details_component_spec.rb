@@ -26,4 +26,26 @@ RSpec.describe AppConsentDetailsComponent, type: :component do
   it "displays the refusal reason" do
     should have_css("div", text: /Refusal reason ?Personal choice/)
   end
+
+  context "with a consent_form" do
+    let(:consent_form) do
+      create :consent_form, :recorded, parent_relationship: :father
+    end
+    let(:component) { described_class.new(consents: [consent_form]) }
+
+    it { should have_css("div", text: /Name ?#{consent_form.parent_name}/) }
+    it { should have_css("div", text: /Relationship ?Dad/) }
+
+    it "displays the parents phone and email" do
+      should have_css(
+               "div",
+               text:
+                 /Contact ?#{consent_form.parent_phone} ?#{consent_form.parent_email}/
+             )
+    end
+
+    it "displays the response given" do
+      should have_css("div", text: /Response ?Consent given/)
+    end
+  end
 end
