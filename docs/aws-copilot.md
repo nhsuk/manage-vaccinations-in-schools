@@ -1,4 +1,4 @@
-# Provisioning a new environment using AWS Copilot
+# AWS Copilot Ops Manual
 
 ## Configure AWS local credentials
 
@@ -70,7 +70,7 @@ container with this command:
 copilot svc exec --app manage-childrens-vaccinations --env staging --name webapp
 ```
 
-## Tailing logs of running service
+### Tailing logs of running service
 
 Use this command to see the most recent logs and to follow any new logs:
 
@@ -155,7 +155,7 @@ $ copilot svc delete --name pentest
 $ copilot env delete --name pentest
 ```
 
-## Loading example campaigns in a new environment
+### Loading example campaigns in a new environment
 
 Demonstration of how to prepare a new environment by loading the example campaigns. `bash` is started simply because the default shell is really barebones.
 
@@ -169,20 +169,20 @@ root@ip-10-0-0-77:/rails# bin/rails load_campaign_example[db/sample_data/example
 root@ip-10-0-0-77:/rails# bin/rails load_campaign_example[db/sample_data/example-flu-campaign.json] new_campaign=1
 ```
 
-# GitHub Actions Custom IAM Role
+## GitHub Actions Custom IAM Role
 
-## Role Details
+### Role Details
 
 ```
 Role Name: GitHubActionsRole
 Role ARN: arn:aws:iam::393416225559:role/GitHubActionsRole
 ```
 
-## Purpose
+### Purpose
 
 The primary purpose of this role is to allow GitHub Actions workflows to securely interact with AWS services. This includes deploying applications, managing AWS resources, and executing various AWS operations required by our CI/CD pipeline.
 
-## Permissions
+### Permissions
 
 The role includes the following permissions:
 
@@ -195,7 +195,7 @@ The role includes the following permissions:
 - AWS Secrets Manager or AWS Systems Manager (Parameter Store)
 - Security Token Service (STS)
 
-## Trust Relationship
+### Trust Relationship
 
 The role is configured with a trust relationship to allow GitHub Actions to assume this role. The trust policy is as follows:
 
@@ -219,7 +219,7 @@ The role is configured with a trust relationship to allow GitHub Actions to assu
 }
 ```
 
-## Usage in GitHub Actions
+### Usage in GitHub Actions
 
 The role is used in GitHub Actions workflows as follows:
 
@@ -234,7 +234,7 @@ The role is assumed to provide temporary credentials for the workflow to interac
     aws-region: eu-west-2
 ```
 
-## Security and Best Practices
+### Security and Best Practices
 
 The role follows the principle of least privilege, granting only the permissions necessary for the tasks performed by GitHub Actions.
 Regular audits and reviews are to be conducted to ensure the role's permissions align with current requirements.
