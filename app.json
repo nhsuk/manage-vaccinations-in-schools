@@ -5,9 +5,9 @@
   "environments": {
     "review": {
       "env": {
-        "IS_REVIEW": "true",
         "RACK_ENV": "staging",
         "RAILS_ENV": "staging",
+        "RCVAPP__IS_REVIEW": "true",
         "RCVAPP__SUPPORT_USERNAME": "test",
         "RCVAPP__SUPPORT_PASSWORD": "test"
       }
