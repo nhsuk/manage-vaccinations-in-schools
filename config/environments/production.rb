@@ -106,7 +106,7 @@ Rails.application.configure do
 
   config.action_mailer.default_url_options = {
     host:
-      if ENV["IS_REVIEW"].present?
+      if Settings.is_review
         "#{ENV["HEROKU_APP_NAME"]}.herokuapp.com"
       else
         ENV["HEROKU_APP_DEFAULT_DOMAIN_NAME"]
