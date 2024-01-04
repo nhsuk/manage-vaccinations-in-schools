@@ -12,7 +12,7 @@ desc <<-DESC
 DESC
 task :add_new_user,
      %i[email password full_name team_id] => :environment do |_task, args|
-  raise "All arguments are required" if args.values.any?(&:nil?)
+  raise "All arguments are required" if args.to_a.size < 4
 
   user =
     User.create!(
