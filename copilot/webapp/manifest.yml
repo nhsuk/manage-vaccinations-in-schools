@@ -57,6 +57,7 @@ environments:
       rolling: recreate
     variables:
       RAILS_ENV: production
+      RCVAPP__HOST: "pentest.manage-vaccinations-in-schools.nhs.uk"
       RCVAPP__SUPPORT_USERNAME: manage
       RCVAPP__SUPPORT_PASSWORD: vaccinations
   staging:
@@ -68,5 +69,6 @@ environments:
       rolling: recreate
     variables:
       RAILS_ENV: staging
+      RCVAPP__HOST: "staging.manage-vaccinations-in-schools.nhs.uk"
       RCVAPP__SUPPORT_USERNAME: manage
       RCVAPP__SUPPORT_PASSWORD: vaccinations
