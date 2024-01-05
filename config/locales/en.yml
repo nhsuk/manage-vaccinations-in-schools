@@ -234,10 +234,13 @@ en:
               missing_day: Enter a day
             common_name:
               blank: Enter a name
+              too_long: Enter a name that is less than 255 characters long
             first_name:
               blank: Enter a first name
+              too_long: Enter a first name that is less than 255 characters long
             last_name:
               blank: Enter a last name
+              too_long: Enter a last name that is less than 255 characters long
             use_common_name:
               inclusion: Tell us whether they use a different name
             is_this_their_school:
@@ -245,34 +248,46 @@ en:
               blank: Tell us if this is their school
             parent_name:
               blank: Enter your name
+              too_long: Enter a name that is less than 255 characters long
             parent_relationship:
               blank: Choose your relationship
               inclusion: Choose a relationship
             parent_relationship_other:
               blank: Enter your relationship
+              too_long: Enter a relationship that are less than 255 characters long
             parent_email:
               blank: Enter your email address
               invalid: Enter a valid email address, such as j.doe@gmail.com
+              too_long: Enter an email address that is less than 255 characters long
             parent_phone:
               invalid: Enter a valid phone number, like 07632 960 001
+              too_long: Enter a phone number that is less than 255 characters long
             contact_method:
               inclusion: Choose a contact method
             contact_method_other:
               blank: Enter details about how to contact you
+              too_long: Enter details that are less than 255 characters long
             response:
               blank: Choose if you consent
             reason:
               blank: Choose a reason
+            reason_notes:
+              too_long: Enter details for refusal that are less than 1023 characters long
             contact_injection:
               inclusion: Choose if you want to be contacted
             gp_response:
               blank: Choose if your child is registered with a GP
             gp_name:
               blank: Enter the GP surgery name
+              too_long: Enter a GP name that is less than 255 characters long
             address_line_1:
               blank: Enter the first line of your address
+              too_long: Enter a first line of address that is less than 255 characters long
+            address_line_2:
+              too_long: Enter a second line of address that is less than 255 characters long
             address_town:
               blank: Enter a town or city
+              too_long: Enter a town or city that is less than 255 characters long
             address_postcode:
               blank: Enter a postcode
         user:
