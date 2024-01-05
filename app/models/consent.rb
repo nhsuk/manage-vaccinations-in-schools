@@ -254,7 +254,9 @@ class Consent < ApplicationRecord
   def triage_valid?
     return if triage.valid?(:consent)
 
-    errors.add(:triage_status, triage.errors.messages[:status].first)
+    triage.errors.each do |error|
+      errors.add(:"triage_#{error.attribute}", error.message)
+    end
   end
 
   def required_for_step?(step, exact: false)

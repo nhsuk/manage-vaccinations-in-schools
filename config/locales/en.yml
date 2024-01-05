@@ -311,3 +311,4 @@ en:
               inclusion: Choose a status
             notes:
               blank: Enter triage notes
+              too_long: Enter triage notes that are less than 1023 characters long
