@@ -48,6 +48,8 @@ class AppPatientTableComponent < ViewComponent::Base
         .uniq
         .join("<br />")
         .html_safe
+    else
+      raise ArgumentError, "Unknown column: #{column}"
     end
   end
 

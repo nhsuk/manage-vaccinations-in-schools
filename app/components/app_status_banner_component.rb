@@ -112,6 +112,8 @@ class AppStatusBannerComponent < ViewComponent::Base
       :vaccination
     when "triaged_do_not_vaccinate"
       :triage
+    else
+      raise ArgumentError, "Unknown state: #{state}"
     end
   end
 
