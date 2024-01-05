@@ -45,6 +45,8 @@ class PatientSessionsController < ApplicationController
         triage_session_path(@session)
       when "consents"
         consents_session_path(@session)
+      else
+        raise ArgumentError, "Unknown route: #{@route}"
       end
   end
 end

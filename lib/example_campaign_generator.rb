@@ -190,6 +190,8 @@ class ExampleCampaignGenerator
       FactoryBot.build(:patient, :of_hpv_vaccination_age, random:)
     when :flu
       FactoryBot.build(:patient, random:)
+    else
+      raise ArgumentError, "Invalid type #{@type}"
     end
   end
 
@@ -374,6 +376,8 @@ class ExampleCampaignGenerator
         cases_that_still_need_triage_flu(count)
       when :hpv
         cases_that_still_need_triage_hpv(count)
+      else
+        raise ArgumentError, "Invalid type #{type}"
       end
 
     cases.map do |example_case|
@@ -454,6 +458,8 @@ class ExampleCampaignGenerator
         cases_with_triage_started_flu(count)
       when :hpv
         cases_with_triage_started_hpv(count)
+      else
+        raise ArgumentError, "Invalid type #{type}"
       end
 
     cases.map do |patient_case|
@@ -518,6 +524,8 @@ class ExampleCampaignGenerator
         cases_that_have_already_been_triaged_flu(count)
       when :hpv
         cases_that_have_already_been_triaged_hpv(count)
+      else
+        raise ArgumentError, "Invalid type #{type}"
       end
 
     cases.map do |patient_case|
