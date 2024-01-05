@@ -2,7 +2,7 @@
 
 set -e
 
-if [[ "$IS_REVIEW" == "true" && `bin/rails db:version | grep version` == "Current version: 0" ]]; then
+if [[ "$RCVAPP__IS_REVIEW" == "true" && `bin/rails db:version | grep version` == "Current version: 0" ]]; then
   bin/rails db:schema:load
 else
   bin/rails db:migrate
