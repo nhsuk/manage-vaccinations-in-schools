@@ -39,7 +39,7 @@ class ApplicationController < ActionController::Base
     response.headers["Expires"] = "0"
   end
 
-  def handle_unprocessable_entity(_exception)
+  def handle_unprocessable_entity
     render "errors/unprocessable_entity", status: :unprocessable_entity
   end
 
