@@ -208,20 +208,24 @@ en:
           attributes:
             parent_name:
               blank: Enter a name
+              too_long: Enter a name that is less than 255 characters long
             parent_phone:
               blank: Enter a phone number
               invalid: Enter a valid phone number, like 07632 960 001
+              too_long: Enter a phone number that is less than 255 characters long
             parent_relationship:
               blank: Choose a relationship
               inclusion: Choose a relationship
             parent_relationship_other:
               blank: Enter a relationship
+              too_long: Enter a relationship that is less than 255 characters long
             response:
               inclusion: Choose if they consent
             reason_for_refusal:
               inclusion: Choose a reason
             reason_for_refusal_other:
               blank: Enter a reason
+              too_long: Enter a reason that is less than 1023 characters long
         consent_form:
           attributes:
             date_of_birth:
