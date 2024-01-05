@@ -84,6 +84,24 @@ class Consent < ApplicationRecord
            :parent_relationship_other,
            :reason_for_refusal_other
 
+  validates :address_line_1,
+            :address_line_2,
+            :address_postcode,
+            :address_town,
+            :childs_common_name,
+            :childs_name,
+            :gp_name,
+            :parent_contact_method_other,
+            :parent_email,
+            :parent_name,
+            :parent_phone,
+            :parent_relationship_other,
+            length: {
+              maximum: 255
+            }
+
+  validates :reason_for_refusal_other, length: { maximum: 1023 }
+
   with_options on: :edit_who do
     validates :parent_name, presence: true
     validates :parent_phone, presence: true
