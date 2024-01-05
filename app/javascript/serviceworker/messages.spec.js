@@ -1,4 +1,3 @@
-import { init as initCache, addAll } from "./cache";
 import { toggleOnlineStatus, isOnline } from "./online-status";
 import { handler } from "./messages";
 
