@@ -195,6 +195,8 @@ en:
               blank: Choose a method of delivery
             delivery_site:
               blank: Choose a delivery site
+            notes:
+              too_long: Enter notes that are less than 1023 characters long
             site:
               blank: Choose a site
             reason:
