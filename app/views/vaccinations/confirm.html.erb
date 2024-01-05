@@ -96,6 +96,9 @@
       id: @patient.id,
     ),
  method: :put do |f| %>
+
+    <% content_for(:before_content) { f.govuk_error_summary } %>
+
     <div class="nhsuk-card">
       <div class="nhsuk-card__content">
         <%= f.govuk_text_area :notes,

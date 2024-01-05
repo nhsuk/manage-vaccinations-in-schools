@@ -62,6 +62,8 @@ class VaccinationRecord < ApplicationRecord
 
   encrypts :notes
 
+  validates :notes, length: { maximum: 1023 }
+
   validates :administered, inclusion: [true, false]
   validates :batch_id, presence: true, on: :edit_batch, if: -> { administered }
   validates :delivery_site,
