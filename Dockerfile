@@ -31,14 +31,14 @@ ARG YARN_VERSION=1.22.19
 ENV PATH=/usr/local/node/bin:$PATH
 RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
     /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node && \
-    npm install --ignore-scripts -g yarn@$YARN_VERSION && \
+    npm install --ignore-scripts -g yarn@"$YARN_VERSION" && \
     rm -rf /tmp/node-build-master
 
 # Install application gems
 COPY --link Gemfile Gemfile.lock ./
 RUN bundle install && \
     bundle exec bootsnap precompile --gemfile && \
-    rm -rf ~/.bundle/ $BUNDLE_PATH/ruby/*/cache $BUNDLE_PATH/ruby/*/bundler/gems/*/.git
+    rm -rf ~/.bundle/ "$BUNDLE_PATH/ruby/*/cache" "$BUNDLE_PATH/ruby/*/bundler/gems/*/.git"
 
 # Install node modules
 COPY --link .yarnrc package.json yarn.lock ./
