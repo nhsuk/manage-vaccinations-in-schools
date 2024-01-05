@@ -26,9 +26,4 @@ class PhoneNumberValidator < ActiveModel::EachValidator
       return # rubocop:disable Style/RedundantReturn
     end
   end
-
-  private
-
-  def normalise_phone_number(number)
-  end
 end
