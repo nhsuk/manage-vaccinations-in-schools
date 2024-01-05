@@ -9,6 +9,8 @@ class HealthAnswer
                 :next_question,
                 :follow_up_question
 
+  validates :notes, length: { maximum: 1023 }
+
   validates :response, presence: true, inclusion: { in: %w[yes no] }
   validates :notes, presence: true, if: -> { response == "yes" }
 

@@ -104,6 +104,7 @@ en:
               inclusion: Choose an answer
             notes:
               blank: Enter details
+              too_long: Enter details that are less than 1023 characters long
   activerecord:
     attributes:
       consent:
