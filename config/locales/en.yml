@@ -207,6 +207,7 @@ en:
               inclusion: Choose if they are Gillick competent
             gillick_competence_notes:
               blank: Enter details of your assessment
+              too_long: Enter details that are less than 1023 characters long
         consent:
           attributes:
             parent_name:
