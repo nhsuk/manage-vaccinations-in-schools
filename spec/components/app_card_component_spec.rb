@@ -10,7 +10,7 @@ RSpec.describe AppCardComponent, type: :component do
   before { render_inline(component) { body } }
 
   it { should have_css(".nhsuk-card") }
-  it { should have_css("h2.nhsuk-card__heading", text: "A Heading") }
+  it { should have_css("h2.nhsuk-card__heading", text: heading) }
   it { should have_css(".nhsuk-card__content", text: "A Body") }
 
   context "no content is provided" do
@@ -30,7 +30,7 @@ RSpec.describe AppCardComponent, type: :component do
   context "larger heading" do
     let(:component) { described_class.new(heading:, heading_size: "xl") }
 
-    it { should have_css("h2.nhsuk-heading-xl", text: "A Heading") }
+    it { should have_css("h2.nhsuk-heading-xl", text: heading) }
   end
 
   context "feature card" do
