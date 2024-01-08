@@ -79,7 +79,7 @@ class ExampleCampaignData
         seen: patient.dig("seen", "text"),
         first_name: patient["firstName"],
         last_name: patient["lastName"],
-        dob: patient["dob"],
+        date_of_birth: patient["dob"],
         sex: patient["sex"],
         consents: patient["consents"],
         nhs_number: patient["nhsNumber"],
