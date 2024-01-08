@@ -11,8 +11,8 @@ class Avo::Resources::Patient < Avo::BaseResource
     # Fields generated from the model
     field :first_name, as: :text
     field :last_name, as: :text
-    field :preferred_name, as: :text
-    field :dob, as: :date
+    field :common_name, as: :text
+    field :date_of_birth, as: :date
     field :nhs_number, as: :number
     field :sex, as: :select, enum: ::Patient.sexes
     field :screening, as: :select, enum: ::Patient.screenings

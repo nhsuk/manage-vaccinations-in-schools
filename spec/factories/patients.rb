@@ -51,7 +51,7 @@ FactoryBot.define do
     screening { "Approved for vaccination" }
     consent { "Parental consent (digital)" }
     seen { "Not yet" }
-    dob { Faker::Date.birthday(min_age: 3, max_age: 9) }
+    date_of_birth { Faker::Date.birthday(min_age: 3, max_age: 9) }
     patient_sessions { [] }
     parent_name { "#{parent_first_name} #{last_name}" }
     parent_relationship { parent_sex == "male" ? "father" : "mother" }
@@ -63,7 +63,7 @@ FactoryBot.define do
     parent_info_source { "school" }
 
     trait :of_hpv_vaccination_age do
-      dob { Faker::Date.birthday(min_age: 12, max_age: 13) }
+      date_of_birth { Faker::Date.birthday(min_age: 12, max_age: 13) }
     end
 
     trait :consent_given_triage_not_needed do
