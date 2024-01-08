@@ -112,7 +112,7 @@ class ExampleCampaignData
 
           consent[:childs_name] = consent_example["childsName"]
           consent[:childs_dob] = consent_example["childsDob"]
-          consent[:childs_common_name] = consent_example["childsCommonName"]
+          consent[:common_name] = consent_example["childsCommonName"]
 
           consent[:address_line_1] = consent_example["addressLine1"]
           consent[:address_line_2] = consent_example["addressLine2"]
