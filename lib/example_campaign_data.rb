@@ -110,15 +110,6 @@ class ExampleCampaignData
             "reasonForRefusalOtherReason"
           ]
 
-          consent[:childs_name] = consent_example["childsName"]
-          consent[:childs_dob] = consent_example["childsDob"]
-          consent[:common_name] = consent_example["childsCommonName"]
-
-          consent[:address_line_1] = consent_example["addressLine1"]
-          consent[:address_line_2] = consent_example["addressLine2"]
-          consent[:address_postcode] = consent_example["addressPostcode"]
-          consent[:address_town] = consent_example["addressTown"]
-
           consent[:parent_name] = consent_example["parentName"]
           consent[:parent_relationship] = consent_example["parentRelationship"]
           consent[:parent_relationship_other] = consent_example[
@@ -132,9 +123,6 @@ class ExampleCampaignData
           consent[:parent_contact_method_other] = consent_example[
             "parentContactMethodOther"
           ]
-
-          consent[:gp_response] = consent_example["gpResponse"]
-          consent[:gp_name] = consent_example["gpName"]
 
           consent[:route] = consent_example["route"]
 
