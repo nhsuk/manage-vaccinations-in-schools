@@ -15,24 +15,8 @@ class AppPatientDetailsComponent < ViewComponent::Base
 
   private
 
-  def known_as
-    if @object.respond_to? :common_name
-      @object.common_name
-    elsif @object.respond_to? :preferred_name
-      @object.preferred_name
-    end
-  end
-
-  def date_of_birth
-    if @object.respond_to? :dob
-      @object.dob
-    else
-      @object.date_of_birth
-    end
-  end
-
   def aged
-    "aged #{date_of_birth ? @object.age : ""}"
+    "aged #{@object.date_of_birth ? @object.age : ""}"
   end
 
   def parent_guardian_or_other
