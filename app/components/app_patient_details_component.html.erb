@@ -11,9 +11,11 @@
     end
   end
 
-  summary_list.with_row do |row|
-    row.with_key { "Date of birth" }
-    row.with_value { "#{@object.date_of_birth.to_fs(:nhsuk_date)} (#{aged})" }
+  if @object.date_of_birth.present?
+    summary_list.with_row do |row|
+      row.with_key { "Date of birth" }
+      row.with_value { "#{@object.date_of_birth.to_fs(:nhsuk_date)} (#{aged})" }
+    end
   end
 
   if address_present?
