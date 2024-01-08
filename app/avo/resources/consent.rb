@@ -11,7 +11,7 @@ class Avo::Resources::Consent < Avo::BaseResource
     field :patient_id, as: :number
     field :campaign_id, as: :number
     field :childs_name, as: :textarea
-    field :childs_common_name, as: :textarea
+    field :common_name, as: :textarea
     field :childs_dob, as: :date
     field :address_line_1, as: :textarea
     field :address_line_2, as: :textarea
