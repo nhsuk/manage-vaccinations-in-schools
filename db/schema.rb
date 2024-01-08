@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_01_08_112551) do
+ActiveRecord::Schema[7.1].define(version: 2024_01_08_113654) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -97,7 +97,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_08_112551) do
     t.bigint "campaign_id", null: false
     t.text "childs_name"
     t.text "common_name"
-    t.date "childs_dob"
+    t.date "date_of_birth"
     t.text "address_line_1"
     t.text "address_line_2"
     t.text "address_town"
