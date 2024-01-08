@@ -27,7 +27,6 @@
 #
 class Patient < ApplicationRecord
   include AgeConcern
-  date_of_birth_field_for_age :dob
 
   audited
 
@@ -39,7 +38,7 @@ class Patient < ApplicationRecord
 
   validates :first_name, presence: true
   validates :last_name, presence: true
-  validates :dob, presence: true
+  validates :date_of_birth, presence: true
   validates :nhs_number,
             presence: true,
             uniqueness: true,
@@ -63,7 +62,7 @@ class Patient < ApplicationRecord
            :parent_name,
            :parent_phone,
            :parent_relationship_other,
-           :preferred_name
+           :common_name
 
   before_save :remove_spaces_from_nhs_number
 
