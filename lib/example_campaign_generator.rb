@@ -552,7 +552,7 @@ class ExampleCampaignGenerator
       {
         firstName: patient.first_name,
         lastName: patient.last_name,
-        dob: patient.dob.iso8601,
+        dob: patient.date_of_birth.iso8601,
         nhsNumber: patient.nhs_number,
         consents:,
         parentEmail: patient.parent_email,
