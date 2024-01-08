@@ -3,18 +3,18 @@
 # Table name: patients
 #
 #  id                        :bigint           not null, primary key
+#  common_name               :string
 #  consent                   :integer
-#  dob                       :date
-#  first_name                :text
-#  last_name                 :text
+#  date_of_birth             :date
+#  first_name                :string
+#  last_name                 :string
 #  nhs_number                :string
-#  parent_email              :text
+#  parent_email              :string
 #  parent_info_source        :text
-#  parent_name               :text
-#  parent_phone              :text
+#  parent_name               :string
+#  parent_phone              :string
 #  parent_relationship       :integer
-#  parent_relationship_other :text
-#  preferred_name            :text
+#  parent_relationship_other :string
 #  screening                 :integer
 #  seen                      :integer
 #  sex                       :integer
