@@ -7,9 +7,9 @@
 #  address_line_2              :text
 #  address_postcode            :text
 #  address_town                :text
-#  childs_common_name          :text
 #  childs_dob                  :date
 #  childs_name                 :text
+#  common_name                 :text
 #  gp_name                     :text
 #  gp_response                 :integer
 #  health_answers              :jsonb
