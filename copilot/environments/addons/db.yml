@@ -129,6 +129,7 @@ Resources:
           !FindInMap [dbEnvScalingConfigurationMap, All, DBMinCapacity]
         MaxCapacity:
           !FindInMap [dbEnvScalingConfigurationMap, All, DBMaxCapacity]
+      StorageEncrypted: true
 
   dbDBWriterInstance:
     Metadata:
