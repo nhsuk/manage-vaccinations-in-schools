@@ -40,7 +40,12 @@ class Patient < ApplicationRecord
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :dob, presence: true
-  validates :nhs_number, presence: true, uniqueness: true
+  validates :nhs_number,
+            presence: true,
+            uniqueness: true,
+            format: {
+              with: /\A(?:\d\s*){10}\z/
+            }
 
   enum :sex, %w[Female Male]
   enum :screening, ["Approved for vaccination"]
@@ -60,6 +65,8 @@ class Patient < ApplicationRecord
            :parent_relationship_other,
            :preferred_name
 
+  before_save :remove_spaces_from_nhs_number
+
   def full_name
     "#{first_name} #{last_name}"
   end
@@ -70,5 +77,11 @@ class Patient < ApplicationRecord
 
   def vaccination_records_for_session(session)
     patient_sessions.find_by_session_id(session.id).vaccination_records
+  end
+
+  private
+
+  def remove_spaces_from_nhs_number
+    nhs_number&.gsub!(/\s/, "")
   end
 end
