@@ -47,7 +47,6 @@ asdf plugin add awscli
 asdf plugin add nodejs
 asdf plugin add postgres
 asdf plugin add ruby
-asdf plugin add terraform
 asdf plugin add yarn
 
 # To install (or update, following a change to .tool-versions)
@@ -249,14 +248,13 @@ rails add_new_user['user@example.com','password123','John Doe',1]
 
 ## Deploying
 
-This app can be deployed to AWS using Terraform.
+This app can be deployed to AWS using AWS Copilot:
 
 ```sh
-terraform -chdir=terraform plan
-terraform -chdir=terraform apply
+copilot svc deploy
 ```
 
-See [docs/terraform.md](docs/terraform.md) for more informations.
+See [docs/aws-copilot.md](docs/aws-copilot.md) for more information.
 
 ## Notify
 
