@@ -102,10 +102,10 @@ class ConsentForm < ApplicationRecord
             :parent_phone,
             :parent_relationship_other,
             length: {
-              maximum: 255
+              maximum: 300
             }
 
-  validates :reason_notes, length: { maximum: 1023 }
+  validates :reason_notes, length: { maximum: 1000 }
 
   with_options on: :update do
     with_options if: -> { required_for_step?(:name) } do

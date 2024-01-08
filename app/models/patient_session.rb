@@ -43,7 +43,7 @@ class PatientSession < ApplicationRecord
 
   encrypts :gillick_competence_notes
 
-  validates :gillick_competence_notes, length: { maximum: 1023 }
+  validates :gillick_competence_notes, length: { maximum: 1000 }
 
   def vaccination_record
     vaccination_records.where.not(recorded_at: nil).last

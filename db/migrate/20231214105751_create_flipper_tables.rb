@@ -16,7 +16,7 @@ class CreateFlipperTables < ActiveRecord::Migration[7.1]
               %i[feature_key key value],
               unique: true,
               length: {
-                value: 255
+                value: 300
               }
   end
 

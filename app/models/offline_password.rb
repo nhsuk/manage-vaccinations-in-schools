@@ -13,6 +13,6 @@ class OfflinePassword < ApplicationRecord
             confirmation: true,
             length: {
               minimum: 12,
-              maximum: 255
+              maximum: 300
             }
 end

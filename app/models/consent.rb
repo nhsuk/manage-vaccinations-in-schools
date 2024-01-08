@@ -97,10 +97,10 @@ class Consent < ApplicationRecord
             :parent_phone,
             :parent_relationship_other,
             length: {
-              maximum: 255
+              maximum: 300
             }
 
-  validates :reason_for_refusal_other, length: { maximum: 1023 }
+  validates :reason_for_refusal_other, length: { maximum: 1000 }
 
   with_options on: :edit_who do
     validates :parent_name, presence: true
