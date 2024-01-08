@@ -154,6 +154,18 @@ RSpec.describe AppPatientDetailsComponent, type: :component do
       end
     end
 
+    context "when child does not have a date of birth on record" do
+      let(:consent_form) do
+        FactoryBot.create(:consent_form, date_of_birth: nil)
+      end
+
+      it "should not render the child's date of birth" do
+        expect(page).not_to(
+          have_css(".nhsuk-summary-list__row", text: "Date of birth")
+        )
+      end
+    end
+
     context "when child does not have a GP" do
       let(:consent_form) do
         FactoryBot.create(
