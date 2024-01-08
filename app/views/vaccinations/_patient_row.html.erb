@@ -5,7 +5,7 @@
       "data-testid": "child-link" %>
   </td>
   <td class="nhsuk-table__cell" style="width: 150px">
-    <%= patient_session.patient.dob.to_fs(:nhsuk_date_short_month) %>
+    <%= patient_session.patient.date_of_birth.to_fs(:nhsuk_date_short_month) %>
   </td>
   <td class="nhsuk-table__cell" data-testid="child-action">
     <%= govuk_tag(
