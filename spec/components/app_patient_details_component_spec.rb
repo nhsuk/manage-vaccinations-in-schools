@@ -12,7 +12,7 @@ RSpec.describe AppPatientDetailsComponent, type: :component do
       FactoryBot.create(
         :patient,
         nhs_number: 1_234_567_890,
-        preferred_name: "Homer"
+        common_name: "Homer"
       )
     end
     let(:school) { FactoryBot.create(:location) }
@@ -31,7 +31,8 @@ RSpec.describe AppPatientDetailsComponent, type: :component do
     end
 
     it "should render the patient's date of birth" do
-      expected_dob = "#{patient.dob.to_fs(:nhsuk_date)} (aged #{patient.age})"
+      expected_dob =
+        "#{patient.date_of_birth.to_fs(:nhsuk_date)} (aged #{patient.age})"
       expect(page).to(
         have_css(
           ".nhsuk-summary-list__row",
@@ -67,7 +68,7 @@ RSpec.describe AppPatientDetailsComponent, type: :component do
     end
 
     context "without a preferred name" do
-      let(:patient) { FactoryBot.create(:patient, preferred_name: nil) }
+      let(:patient) { FactoryBot.create(:patient, common_name: nil) }
 
       it "should not render known as" do
         expect(page).not_to(
