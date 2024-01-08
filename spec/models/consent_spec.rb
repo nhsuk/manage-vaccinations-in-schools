@@ -3,15 +3,6 @@
 # Table name: consents
 #
 #  id                          :bigint           not null, primary key
-#  address_line_1              :text
-#  address_line_2              :text
-#  address_postcode            :text
-#  address_town                :text
-#  childs_dob                  :date
-#  childs_name                 :text
-#  common_name                 :text
-#  gp_name                     :text
-#  gp_response                 :integer
 #  health_answers              :jsonb
 #  parent_contact_method       :integer
 #  parent_contact_method_other :text
