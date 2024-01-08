@@ -43,7 +43,7 @@ network:
 
 secrets:
   RAILS_MASTER_KEY: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/RAILS_MASTER_KEY
-  RCVAPP__GOVUK_NOTIFY__API_KEY: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/RCVAPP__GOVUK_NOTIFY__API_KEY
+  MAVIS__GOVUK_NOTIFY__API_KEY: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/MAVIS__GOVUK_NOTIFY__API_KEY
   DB_SECRET:
     from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-dbAuroraSecret
   SENTRY_DSN: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/SENTRY_DSN
@@ -58,9 +58,9 @@ environments:
       rolling: recreate
     variables:
       RAILS_ENV: production
-      RCVAPP__HOST: "pentest.manage-vaccinations-in-schools.nhs.uk"
-      RCVAPP__SUPPORT_USERNAME: manage
-      RCVAPP__SUPPORT_PASSWORD: vaccinations
+      MAVIS__HOST: "pentest.manage-vaccinations-in-schools.nhs.uk"
+      MAVIS__SUPPORT_USERNAME: manage
+      MAVIS__SUPPORT_PASSWORD: vaccinations
   staging:
     http:
       alias:
@@ -70,6 +70,6 @@ environments:
       rolling: recreate
     variables:
       RAILS_ENV: staging
-      RCVAPP__HOST: "staging.manage-vaccinations-in-schools.nhs.uk"
-      RCVAPP__SUPPORT_USERNAME: manage
-      RCVAPP__SUPPORT_PASSWORD: vaccinations
+      MAVIS__HOST: "staging.manage-vaccinations-in-schools.nhs.uk"
+      MAVIS__SUPPORT_USERNAME: manage
+      MAVIS__SUPPORT_PASSWORD: vaccinations

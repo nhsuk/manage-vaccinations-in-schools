@@ -120,8 +120,8 @@ environments:
   staging:
     variables:
       RAILS_ENV: staging
-      RCVAPP__SUPPORT_USERNAME: manage
-      RCVAPP__SUPPORT_PASSWORD: vaccinations
+      MAVIS__SUPPORT_USERNAME: manage
+      MAVIS__SUPPORT_PASSWORD: vaccinations
     http:
       alias:
         - "staging.manage-vaccinations-in-schools.nhs.uk"
@@ -129,8 +129,8 @@ environments:
 +  pentest:
 +    variables:
 +      RAILS_ENV: staging
-+      RCVAPP__SUPPORT_USERNAME: manage
-+      RCVAPP__SUPPORT_PASSWORD: vaccinations
++      MAVIS__SUPPORT_USERNAME: manage
++      MAVIS__SUPPORT_PASSWORD: vaccinations
 +    http:
 +      alias:
 +        - "pentest.manage-vaccinations-in-schools.nhs.uk"
