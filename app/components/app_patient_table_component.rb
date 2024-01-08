@@ -40,7 +40,7 @@ class AppPatientTableComponent < ViewComponent::Base
     when :name
       patient_link(patient_session)
     when :dob
-      patient_session.patient.dob.to_fs(:nhsuk_date_short_month)
+      patient_session.patient.date_of_birth.to_fs(:nhsuk_date_short_month)
     when :reason
       patient_session
         .consents
