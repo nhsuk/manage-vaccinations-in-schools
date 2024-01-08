@@ -12,7 +12,7 @@ class Avo::Resources::Consent < Avo::BaseResource
     field :campaign_id, as: :number
     field :childs_name, as: :textarea
     field :common_name, as: :textarea
-    field :childs_dob, as: :date
+    field :date_of_birth, as: :date
     field :address_line_1, as: :textarea
     field :address_line_2, as: :textarea
     field :address_town, as: :textarea
