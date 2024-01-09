@@ -90,7 +90,7 @@ Certificates.
 Once the cert is approved, feed the ARN using the CLI:
 
 ```bash
-$ copilot env init --import cert arn:aws.....
+copilot env init --import cert arn:aws.....
 ```
 
 This will change the manifest file for the environment:
@@ -110,7 +110,7 @@ Deploy the env once, so that it is upgraded, and allows us to provision
 secrets:
 
 ```bash
-$ copilot env deploy --name pentest
+copilot env deploy --name pentest
 ```
 
 Open `copilot/webapp/manifest.yml` and add a new section to the `environments`:
@@ -122,22 +122,26 @@ environments:
       RAILS_ENV: staging
       RCVAPP__SUPPORT_USERNAME: manage
       RCVAPP__SUPPORT_PASSWORD: vaccinations
-+    http:
-+      alias:
-+        - "pentest.manage-vaccinations-in-schools.nhs.uk"
-+        - "pentest.give-or-refuse-consent-for-vaccinations.nhs.uk"
+    http:
+      alias:
+        - "staging.manage-vaccinations-in-schools.nhs.uk"
+        - "staging.give-or-refuse-consent-for-vaccinations.nhs.uk"
 +  pentest:
 +    variables:
 +      RAILS_ENV: staging
 +      RCVAPP__SUPPORT_USERNAME: manage
 +      RCVAPP__SUPPORT_PASSWORD: vaccinations
++    http:
++      alias:
++        - "pentest.manage-vaccinations-in-schools.nhs.uk"
++        - "pentest.give-or-refuse-consent-for-vaccinations.nhs.uk"
 ```
 
 You'll then need to set up the secrets. Check the `secrets` section of the
 `webapp/manifest.yml`. Set up each one with:
 
 ```bash
-$ copilot secret init
+copilot secret init
 ```
 
 Skip the environments you're not setting up keys for by hitting return.
@@ -145,17 +149,17 @@ Skip the environments you're not setting up keys for by hitting return.
 Finally, deploy the app:
 
 ```bash
-$ copilot svc deploy --env pentest
+copilot svc deploy --env pentest
 ```
 
 When you're done with the environment, you can tear it down with:
 
 ```bash
-$ copilot svc delete --name pentest
-$ copilot env delete --name pentest
+copilot svc delete --name pentest
+copilot env delete --name pentest
 ```
 
-## Using the mavistesting.com domain
+### Using the mavistesting.com domain
 
 The staging AWS subscription has ownership of the `mavistesting.com` domain.
 It's purpose is to assist with debugging Copilot environment related issues
@@ -164,58 +168,29 @@ that require re-provisioning of environments from scratch.
 This is only necessary to change things like load balancer settings, SSL
 security policies.
 
-### Setting up a new app
-
-AWS Copilot only allows specifying a domain when the "app" is setup:
-
-```
-copilot app init mavis-testing --domain mavistesting.com
-```
-
-This will update the `copilot/.workspace` file.
-
-If you want to reuse one of the environment manifests, you'll need to comment
-out any manually specified certificates:
-
-```diff
-http:
-  public:
--    certificates:
--      [
--        arn:aws:acm:eu-west-2:393416225559:certificate/4f53eaeb-daa2-4d9e-8fd0-18ddc2b9dc7c,
--        arn:aws:acm:eu-west-2:393416225559:certificate/0cb0afa8-545b-4e10-8a2c-d677846aab14,
--      ]
-+    # certificates:
-+    #   [
-+    #     arn:aws:acm:eu-west-2:393416225559:certificate/4f53eaeb-daa2-4d9e-8fd0-18ddc2b9dc7c,
-+    #     arn:aws:acm:eu-west-2:393416225559:certificate/0cb0afa8-545b-4e10-8a2c-d677846aab14,
-+    #   ]
-    ssl_policy: "ELBSecurityPolicy-TLS13-1-2-2021-06"
-```
-
-And similary, in `copilot/webapp/manifest.yml`, any manually specified domains
-will have to be replaced:
+To deploy to it, create a new environment in the usual way, but remove the ARNs
+from the `manifest.yml` for your new environment. Specify what domains you'd
+like to use in the `webapp/manifest.yml`:
 
 ```diff
   pentest:
     http:
       alias:
--        - "pentest.manage-vaccinations-in-schools.nhs.uk"
--        - "pentest.give-or-refuse-consent-for-vaccinations.nhs.uk"
-+        - "pentest.mavistesting.com"
++        - "test.mavistesting.com"
     deployments:
       rolling: recreate
 ```
 
-From this point you can deploy the env, set up secrets, init the service (it
-will reuse the manifest.yml after specifying the type of service), and deploy
-the service. This is similar to the "Setting up a new environment" section;
-roughly:
+### Cheat sheet
 
 ```bash
-copilot env deploy --name pentest
-copilot svc init --name webapp
-copilot svc deploy
+copilot env init --name test     # Initialise a new environment
+copilot env deploy --name test   # Deploy the new environment
+copilot secret init              # Add a secret to every environment
+copilot svc deploy --env test    # Deploy the web app
+
+copilot svc delete --name test   # Destroy the web app
+copilot env delete --name test   # Destroy the environment
 ```
 
 ### Loading example campaigns in a new environment
