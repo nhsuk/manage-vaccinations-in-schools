@@ -29,10 +29,9 @@ exec: true # Enable running commands in your container.
 network:
   connect: true # Enable Service Connect for intra-environment traffic between services.
   vpc:
-    flow_logs: on
-    deny_default: true
     security_groups:
-      - from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-dbSecurityGroup
+      groups:
+        - from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-dbSecurityGroup
 
 # storage:
 # readonly_fs: true       # Limit to read-only access to mounted root filesystems.
