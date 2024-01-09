@@ -21,6 +21,10 @@ http:
       ]
     ssl_policy: "ELBSecurityPolicy-TLS13-1-2-2021-06"
 
+network:
+  vpc:
+    flow_logs: on
+
 # Configure observability for your environment resources.
 observability:
   container_insights: false
