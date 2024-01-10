@@ -276,3 +276,29 @@ The role is assumed to provide temporary credentials for the workflow to interac
 
 The role follows the principle of least privilege, granting only the permissions necessary for the tasks performed by GitHub Actions.
 Regular audits and reviews are to be conducted to ensure the role's permissions align with current requirements.
+
+## aws-account-setup script notes
+
+### Purpose
+
+This is a shell script designed to automate the setup of IAM Access Analyzers in an AWS account. It checks for the existence of two specific types of analyzers - ACCOUNT and ACCOUNT_UNUSED_ACCESS - and creates them if they do not exist. This script is useful for ensuring compliance with security best practices in AWS environments.
+
+### Functionality
+
+**Analyzer Check**: The script first checks if the specified analyzers (External Access and Unused Access) exist in the AWS account.\
+**Creation**: If either analyzer is not present, the script proceeds to create it.\
+**Error Handling**: Includes basic error handling; exits upon failure to create an analyzer.\
+NOTE: The script executes non-interactively without requiring manual input.
+
+### Requirements
+
+- AWS CLI installed and configured.
+- User must have permissions to manage IAM Access Analyzer.
+
+### Usage
+
+Run the following from the root of the project directory:
+
+```
+bin/aws-account-setup
+```
