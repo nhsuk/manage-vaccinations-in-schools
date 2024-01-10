@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Function to check and create an analyzer
+create_analyzer() {
+    analyzer_name=$1
+    analyzer_type=$2
+    echo "Checking for the existence of the $analyzer_name of type $analyzer_type..."
+
+    if aws accessanalyzer list-analyzers --no-cli-pager --query 'analyzers[?name==`'"$analyzer_name"'` && type==`'"$analyzer_type"'`].name' | grep -q "$analyzer_name"; then
+        echo "$analyzer_name of type $analyzer_type already exists."
+    else
+        echo "Creating $analyzer_name of type $analyzer_type..."
+        if aws accessanalyzer create-analyzer --no-cli-pager --analyzer-name "$analyzer_name" --type "$analyzer_type" --region eu-west-2; then
+            echo "$analyzer_name of type $analyzer_type created successfully."
+        else
+            echo "Failed to create $analyzer_name of type $analyzer_type." >&2
+            exit 1
+        fi
+    fi
+}
+
+# Analyzer names and types based on the convention
+unused_analyzer_name="UnusedAccess-ConsoleAnalyzer-eu-west-2"
+unused_analyzer_type="ACCOUNT_UNUSED_ACCESS"
+external_analyzer_name="ExternalAccess-ConsoleAnalyzer-eu-west-2"
+external_analyzer_type="ACCOUNT"
+
+# Create or verify Unused Access Analyzer
+create_analyzer "$unused_analyzer_name" "$unused_analyzer_type"
+
+# Create or verify External Access Analyzer
+create_analyzer "$external_analyzer_name" "$external_analyzer_type"
+
+echo "Script finish executing."
