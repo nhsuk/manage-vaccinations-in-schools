@@ -86,7 +86,11 @@ Rails.application.routes.draw do
     post "setup-offline", to: "offline_passwords#create", on: :member
   end
 
-  resources :schools, only: [:show]
+  resources :schools, only: [:show] do
+    resources :registrations,
+              only: %i[new create],
+              controller: "pilot/registrations"
+  end
   resources :consent_forms, only: [:show]
 
   scope via: :all do
