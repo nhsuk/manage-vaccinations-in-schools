@@ -1,0 +1,19 @@
+$nhsuk-font: system-ui;
+
+@import "nhsuk-frontend/packages/nhsuk";
+
+// NHS.UK frontend overrides
+body,
+html {
+  background-color: $color_nhsuk-white;
+}
+
+.nhsuk-label--s,
+.nhsuk-fieldset__legend--s {
+  padding-top: nhsuk-spacing(2);
+  margin-bottom: nhsuk-spacing(2);
+}
+
+.nhsuk-width-container {
+  max-width: 720px;
+}
