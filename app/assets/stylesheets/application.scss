@@ -4,6 +4,7 @@
     Arial,
     sans-serif,
   ),
+  $govuk-border-colour: #d8dde0,
   $govuk-brand-colour: #005eb8,
   $govuk-error-colour: #d5281b,
   $govuk-success-colour: #007f3b,
@@ -29,6 +30,7 @@ $color_app-pale-blue: #ccdff1;
 @import "notification-banner";
 @import "offline";
 @import "panel";
+@import "phase-banner";
 @import "table";
 @import "tag";
 @import "status";
