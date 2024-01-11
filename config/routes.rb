@@ -27,6 +27,11 @@ Rails.application.routes.draw do
 
   get "/csrf", to: "csrf#new"
 
+  resource :pilot do
+    get "/", to: "pilot#manage", as: :manage
+    get "/cohort", to: "pilot#cohort", as: :cohort
+  end
+
   resources :sessions, only: %i[index show] do
     get "consents", to: "consents#index", on: :member
     get "triage", to: "triage#index", on: :member
