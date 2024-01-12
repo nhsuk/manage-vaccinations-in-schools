@@ -5,7 +5,7 @@ class RegistrationsController < ApplicationController
   layout "registration"
 
   def new
-    @parent_interest_form = Registration.new
+    @registration_form = Registration.new
   end
 
   private
