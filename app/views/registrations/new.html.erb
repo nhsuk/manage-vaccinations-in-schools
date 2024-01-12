@@ -1,6 +1,6 @@
-<% content_for :page_title, "Register your interest in the NHS school vaccinations pilot - Manage vaccinations in schools - NHS.UK" %>
+<% page_title = "Register your interest in the NHS school vaccinations pilot" %>
 
-<h1 class="nhsuk-heading-xl">
+<%= h1 page_title:, class: "nhsuk-heading-xl" do %>
   <span class="nhsuk-caption-xl"><%= @school.name %></span>
-  Register your interest in the NHS school vaccinations pilot
-</h1>
+  <%= page_title %>
+<% end %>
