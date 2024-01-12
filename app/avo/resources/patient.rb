@@ -29,5 +29,6 @@ class Avo::Resources::Patient < Avo::BaseResource
     field :parent_email, as: :string
     field :parent_phone, as: :string
     field :parent_info_source, as: :text
+    field :location, as: :belongs_to
   end
 end

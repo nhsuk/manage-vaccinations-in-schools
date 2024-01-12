@@ -20,10 +20,16 @@
 #  sex                       :integer
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
+#  location_id               :bigint
 #
 # Indexes
 #
-#  index_patients_on_nhs_number  (nhs_number) UNIQUE
+#  index_patients_on_location_id  (location_id)
+#  index_patients_on_nhs_number   (nhs_number) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (location_id => locations.id)
 #
 class Patient < ApplicationRecord
   include AgeConcern
