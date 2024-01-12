@@ -302,3 +302,91 @@ Run the following from the root of the project directory:
 ```
 bin/aws-account-setup
 ```
+
+## Security Alerts using AWS CloudWatch
+
+This guide details setting up CloudWatch alerts to monitor critical security events in AWS, starting from CloudTrail and SNS setup to creating specific CloudWatch metric filters and alarms.
+
+### Prerequisites
+
+- AWS CloudTrail Configured: Ensure CloudTrail is active for logging AWS account activity.
+- SNS Topic for Notifications: Create an SNS topic for alerts. Ensure relevant stakeholders are subscribed and have confirmed their subscriptions.
+
+### Instructions
+
+**Configure AWS CloudTrail**
+
+Ensure CloudTrail is enabled and properly configured to log events in the AWS account.
+CloudTrail logs should be directed to a specific log group in CloudWatch Logs.
+
+In our specific case, a new Trail was created.
+You need only specify the name, and KMS alias, the rest of the fields are fine to stay as defaults.
+
+**Set Up SNS Topic for Alerts**
+
+In the SNS console, create a new topic for CloudWatch Alerts.
+Invite stakeholders to subscribe (via email, SMS, etc.).
+The invited stakeholders will need to confirm their respective subscriptions in order for SNS to correctly send out notifications.
+
+It is good practice to have separate Topics for differents kinds and types of alerts, so this could be something to improve on in future.
+
+In our specific case, MSCV_CloudWatch_Alarms_Topic was created. You need only specify the name, and type of the topic, the rest are fine to stay as default values.
+
+**Access CloudWatch Console**
+
+1. Open CloudWatch from the management console and navigate to the Logs -> Log Groups section.
+2. Select the log group you want to use. (in our case aws-cloudtrail-logs-393416225559-83ed3a78)
+
+**Create Metric Filters for Key Events**
+
+For each key event (e.g., Unauthorized API Calls, IAM Policy Changes), create a new metric filter
+
+Click "Create metric filter."
+Enter a filter pattern to match the specific event.
+Assign a name (e.g., UnauthorizedAPICallsFilter), a metric namespace (e.g., CloudTrailMetrics), and a metric value (e.g. 1).
+
+**Define Filter Patterns**
+
+Use the below filters as a reference point, but it is worth noting that monitoring is an ever changing practice, so it is very important to regularly review these expressions and adjust depending on monitoring and alerting needs.
+
+```
+- UnauthorizedAPICalls = "{ ($.errorCode = "*UnauthorizedOperation") || ($.errorCode = "AccessDenied\*") }"
+- IAMPolicyChanges = "{($.eventName=DeleteGroupPolicy)||($.eventName=DeleteRolePolicy)||($.eventName=DeleteUserPolicy)||($.eventName=PutGroupPolicy)||($.eventName=PutRolePolicy)||($.eventName=PutUserPolicy)||($.eventName=CreatePolicy)||($.eventName=DeletePolicy)||($.eventName=CreatePolicyVersion)||($.eventName=DeletePolicyVersion)||($.eventName=AttachRolePolicy)||($.eventName=DetachRolePolicy)||($.eventName=AttachUserPolicy)||($.eventName=DetachUserPolicy)||($.eventName=AttachGroupPolicy)||($.eventName=DetachGroupPolicy)}"
+- AWSConfigChange = "{($.eventSource = config.amazonaws.com) && (($.eventName=StopConfigurationRecorder)||($.eventName=DeleteDeliveryChannel)||($.eventName=PutDeliveryChannel)||($.eventName=PutConfigurationRecorder))}"
+- CMKPendingDeletionFilter = "{ $.eventSource = kms* && $.errorMessage = "* is pending deletion."}"
+- CloudTrailChanges = "{ ($.eventName = CreateTrail) || ($.eventName = UpdateTrail) || ($.eventName = DeleteTrail) || ($.eventName = StartLogging) || ($.eventName = StopLogging) }"
+- NACLChangeFilter = "{ ($.eventName = CreateNetworkAcl) || ($.eventName = DeleteNetworkAcl) || ($.eventName = ReplaceNetworkAclAssociation) }"
+- NetworkGatewayChangesFilter = "{ ($.eventName = CreateCustomerGateway) || ($.eventName = DeleteCustomerGateway) || ($.eventName = AttachInternetGateway) || ($.eventName = CreateInternetGateway) || ($.eventName = DeleteInternetGateway) || ($.eventName = DetachInternetGateway) }"
+- RouteTableChangeFilter = "{ ($.eventName = CreateRoute) || ($.eventName = CreateRouteTable) || ($.eventName = ReplaceRoute) || ($.eventName = ReplaceRouteTableAssociation) || ($.eventName = DeleteRoute) || ($.eventName = DeleteRouteTable) }"
+- SecurityGroupChangesFilter = "{ ($.eventName = AuthorizeSecurityGroupIngress) || ($.eventName = AuthorizeSecurityGroupEgress) || ($.eventName = RevokeSecurityGroupIngress) || ($.eventName = RevokeSecurityGroupEgress) || ($.eventName = CreateSecurityGroup) || ($.eventName = DeleteSecurityGroup)}"
+- VPCChangeFilter = "{ ($.eventName = CreateVpc) || ($.eventName = DeleteVpc) || ($.eventName = ModifyVpcAttribute) || ($.eventName = AcceptVpcPeeringConnection) || ($.eventName = CreateVpcPeeringConnection) || ($.eventName = DeleteVpcPeeringConnection) || ($.eventName = RejectVpcPeeringConnection) }"
+```
+
+**Create CloudWatch Alarms**
+
+Then for each one of the filters created, create an alarm by selecting the metric filter and click "Create alarm."
+Define the alarm condition (e.g., metric greater than 0 for 1 consecutive period).
+Set alarm actions to notify via the SNS topic created earlier.
+
+**Test Alarm Configuration**
+
+The most realistic test for any montioring alert is a real life situation that actually triggers the defined expression.
+However, it can also be tested by manually changing the state of the alert. This is not the best way since it can yield false positives, but for the purpose of testing SNS function, it can be useful.
+You can do this using aws-cli:
+
+```
+aws cloudwatch set-alarm-state --alarm-name "UnauthorizedOperationCount" --state-reason "Testing alarm" --state-value ALARM
+```
+
+And then, remember to change the state back (it can also resolve itself automatically upon a re-check):
+
+```
+aws cloudwatch set-alarm-state --alarm-name "UnauthorizedOperationCount" --state-reason "Testing alarm" --state-value OK
+```
+
+### NOTES
+
+The following sites contain some valuable examples that can be used for inspiration whenever ready to take the monitoring journey to the next level:
+
+- https://asecure.cloud/l/cloudwatch/
+- https://www.intelligentdiscovery.io/controls/cloudwatch/
