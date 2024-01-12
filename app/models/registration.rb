@@ -15,8 +15,6 @@
 #
 #  fk_rails_...  (location_id => locations.id)
 #
-module Pilot
-  class Registration < ApplicationRecord
-    belongs_to :location
-  end
+class Registration < ApplicationRecord
+  belongs_to :location
 end
