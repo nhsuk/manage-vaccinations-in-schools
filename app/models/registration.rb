@@ -2,10 +2,15 @@
 #
 # Table name: registrations
 #
-#  id          :bigint           not null, primary key
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
-#  location_id :bigint           not null
+#  id                        :bigint           not null, primary key
+#  parent_email              :string           not null
+#  parent_name               :string           not null
+#  parent_phone              :string
+#  parent_relationship       :integer          not null
+#  parent_relationship_other :string
+#  created_at                :datetime         not null
+#  updated_at                :datetime         not null
+#  location_id               :bigint           not null
 #
 # Indexes
 #
