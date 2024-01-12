@@ -30,6 +30,8 @@ Rails.application.routes.draw do
   resource :pilot do
     get "/", to: "pilot#manage", as: :manage
     get "/cohort", to: "pilot#cohort", as: :cohort
+    post "/cohort", to: "pilot#create"
+    get "/success", to: "pilot#success", as: :success
   end
 
   resources :sessions, only: %i[index show] do
