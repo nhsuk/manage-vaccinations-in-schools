@@ -1,0 +1,12 @@
+.nhsuk-file-upload {
+  @extend .govuk-file-upload;
+
+  &::file-selector-button {
+    @extend .nhsuk-button;
+    @extend .nhsuk-button--secondary;
+
+    color: $color_nhsuk-white;
+    font-weight: bold;
+    margin-bottom: 0;
+  }
+}
