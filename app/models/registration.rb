@@ -22,4 +22,23 @@
 #
 class Registration < ApplicationRecord
   belongs_to :location
+
+  enum :parent_relationship, %w[mother father guardian other], prefix: true
+
+  validates :parent_name, presence: true, length: { maximum: 300 }
+  validates :parent_email, presence: true, email: true, length: { maximum: 300 }
+  validates :parent_phone,
+            presence: true,
+            phone_number: true,
+            length: {
+              maximum: 300
+            },
+            if: :parent_phone?
+  validates :parent_relationship, presence: true
+  validates :parent_relationship_other,
+            presence: true,
+            length: {
+              maximum: 300
+            },
+            if: :parent_relationship_other?
 end

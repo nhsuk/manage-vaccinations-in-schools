@@ -21,6 +21,8 @@
 <%= govuk_section_break visible: true, size: "l" %>
 
 <%= form_for(@registration_form, url: registration_path) do |f| %>
+  <%= f.govuk_error_summary %>
+
   <%= f.govuk_fieldset legend: { text: "About you", size: "l" } do %>
 
     <%= f.govuk_text_field :parent_name, label: { text: "Your name", size: "s" } %>
