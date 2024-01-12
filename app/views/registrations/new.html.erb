@@ -4,3 +4,50 @@
   <span class="nhsuk-caption-xl"><%= @school.name %></span>
   <%= page_title %>
 <% end %>
+
+<p>
+  This pilot is for parents of children who are due to get their HPV
+  vaccination this year.
+</p>
+
+<p>
+  Taking part involves responding to a request for consent through a digital
+  service, and then completing a follow-up survey. It should take 15 to 30
+  minutes of your time.
+</p>
+
+<p>To register your interest, complete the fields below.</p>
+
+<%= govuk_section_break visible: true, size: "l" %>
+
+<%= form_for(@registration_form, url: registration_path) do |f| %>
+  <%= f.govuk_fieldset legend: { text: "About you", size: "l" } do %>
+
+    <%= f.govuk_text_field :parent_name, label: { text: "Your name", size: "s" } %>
+
+    <%= f.govuk_radio_buttons_fieldset(:parent_relationship,
+                                       legend: { size: 's',
+                                         text: 'Your relationship to the child' }) do %>
+      <%= f.govuk_radio_button :parent_relationship, "mother",
+       label: { text: 'Mum' }, link_errors: true %>
+      <%= f.govuk_radio_button :parent_relationship, "father",
+       label: { text: "Dad" } %>
+      <%= f.govuk_radio_button :parent_relationship, "guardian",
+       label: { text: 'Guardian' } %>
+      <%= f.govuk_radio_button :parent_relationship, "other",
+       label: { text: 'Other' } do %>
+        <%= f.govuk_text_field :parent_relationship_other,
+         label: { text: 'Relationship to the child' },
+         hint: { text: 'For example, carer' } %>
+      <% end %>
+    <% end %>
+
+    <%= f.govuk_text_field :parent_email, label: { text: "Email address", size: "s" } %>
+
+    <%= f.govuk_text_field :parent_phone, label: { text: "Phone number (optional)", size: "s" }, class: "nhsuk-input--width-10" %>
+
+    <%= govuk_section_break visible: true, size: "l" %>
+
+    <%= f.govuk_submit "Register your interest", secondary: true %>
+  <% end %>
+<% end %>
