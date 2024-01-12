@@ -278,6 +278,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_12_143006) do
     t.bigint "location_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "parent_name", null: false
+    t.integer "parent_relationship", null: false
+    t.string "parent_relationship_other"
+    t.string "parent_email", null: false
+    t.string "parent_phone"
     t.index ["location_id"], name: "index_registrations_on_location_id"
   end
 
