@@ -25,31 +25,42 @@
 
   <%= f.govuk_fieldset legend: { text: "About you", size: "l" } do %>
 
-    <%= f.govuk_text_field :parent_name, label: { text: "Your name", size: "s" } %>
+    <%= f.govuk_text_field :parent_name,
+                           label: { text: "Your name", size: "s" },
+                           class: "nhsuk-input--width-20" %>
 
-    <%= f.govuk_radio_buttons_fieldset(:parent_relationship,
-                                       legend: { size: 's',
-                                         text: 'Your relationship to the child' }) do %>
+    <%= f.govuk_radio_buttons_fieldset :parent_relationship,
+                                       legend: {
+                                         size: 's',
+                                         text: 'Your relationship to the child'
+                                       } do %>
       <%= f.govuk_radio_button :parent_relationship, "mother",
-       label: { text: 'Mum' }, link_errors: true %>
+                               label: { text: 'Mum' }, link_errors: true %>
       <%= f.govuk_radio_button :parent_relationship, "father",
-       label: { text: "Dad" } %>
+                               label: { text: "Dad" } %>
       <%= f.govuk_radio_button :parent_relationship, "guardian",
-       label: { text: 'Guardian' } %>
+                               label: { text: "Guardian" } %>
       <%= f.govuk_radio_button :parent_relationship, "other",
-       label: { text: 'Other' } do %>
+                               label: { text: "Other" } do %>
         <%= f.govuk_text_field :parent_relationship_other,
-         label: { text: 'Relationship to the child' },
-         hint: { text: 'For example, carer' } %>
+                               label: { text: "Relationship to the child" },
+                               hint: { text: "For example, carer" } %>
       <% end %>
     <% end %>
 
-    <%= f.govuk_text_field :parent_email, label: { text: "Email address", size: "s" } %>
+    <%= f.govuk_text_field :parent_email,
+                           label: { text: "Email address", size: "s" } %>
 
-    <%= f.govuk_text_field :parent_phone, label: { text: "Phone number (optional)", size: "s" }, class: "nhsuk-input--width-10" %>
+    <%= f.govuk_text_field :parent_phone,
+                           label: {
+                             text: "Phone number (optional)",
+                             size: "s"
+                           },
+                           class: "nhsuk-input--width-10" %>
 
-    <%= govuk_section_break visible: true, size: "l" %>
-
-    <%= f.govuk_submit "Register your interest", secondary: true %>
   <% end %>
+
+  <%= govuk_section_break visible: true, size: "l" %>
+
+  <%= f.govuk_submit "Register your interest", secondary: true %>
 <% end %>
