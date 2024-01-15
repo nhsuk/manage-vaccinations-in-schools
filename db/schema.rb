@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_01_15_095616) do
+ActiveRecord::Schema[7.1].define(version: 2024_01_15_095617) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -284,6 +284,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_15_095616) do
     t.string "parent_relationship_other"
     t.string "parent_email"
     t.string "parent_phone"
+    t.string "first_name"
+    t.string "last_name"
+    t.boolean "use_common_name"
+    t.string "common_name"
+    t.date "date_of_birth"
+    t.string "address_line_1"
+    t.string "address_line_2"
+    t.string "address_town"
+    t.string "address_postcode"
+    t.string "nhs_number"
     t.index ["location_id"], name: "index_registrations_on_location_id"
   end
 
