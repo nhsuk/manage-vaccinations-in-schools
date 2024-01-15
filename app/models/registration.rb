@@ -3,10 +3,10 @@
 # Table name: registrations
 #
 #  id                        :bigint           not null, primary key
-#  parent_email              :string           not null
-#  parent_name               :string           not null
+#  parent_email              :string
+#  parent_name               :string
 #  parent_phone              :string
-#  parent_relationship       :integer          not null
+#  parent_relationship       :integer
 #  parent_relationship_other :string
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
