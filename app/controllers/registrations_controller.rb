@@ -30,11 +30,21 @@ class RegistrationsController < ApplicationController
 
   def registration_params
     params.require(:registration).permit(
+      :address_line_1,
+      :address_line_2,
+      :address_postcode,
+      :address_town,
+      :common_name,
+      :date_of_birth,
+      :first_name,
+      :last_name,
+      :nhs_number,
+      :parent_email,
       :parent_name,
+      :parent_phone,
       :parent_relationship,
       :parent_relationship_other,
-      :parent_email,
-      :parent_phone
+      :use_common_name
     )
   end
 end
