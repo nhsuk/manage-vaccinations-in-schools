@@ -35,8 +35,32 @@ class Registration < ApplicationRecord
 
   enum :parent_relationship, %w[mother father guardian other], prefix: true
 
-  validates :parent_name, presence: true, length: { maximum: 300 }
+  validates :address_line_1, presence: true, length: { maximum: 300 }
+  validates :address_town, presence: true, length: { maximum: 300 }
+  validates :address_postcode, presence: true, postcode: true
+  validates :date_of_birth,
+            presence: true,
+            comparison: {
+              less_than: Time.zone.today,
+              greater_than_or_equal_to: 22.years.ago.to_date,
+              less_than_or_equal_to: 3.years.ago.to_date
+            }
+  validates :first_name, presence: true, length: { maximum: 300 }
+  validates :last_name, presence: true, length: { maximum: 300 }
+  validates :common_name,
+            presence: true,
+            length: {
+              maximum: 300
+            },
+            if: :use_common_name?
+  validates :nhs_number,
+            uniqueness: true,
+            format: {
+              with: /\A(?:\d\s*){10}\z/
+            },
+            if: :nhs_number?
   validates :parent_email, presence: true, email: true, length: { maximum: 300 }
+  validates :parent_name, presence: true, length: { maximum: 300 }
   validates :parent_phone,
             presence: true,
             phone_number: true,
@@ -51,4 +75,11 @@ class Registration < ApplicationRecord
               maximum: 300
             },
             if: :parent_relationship_other?
+  validates :use_common_name,
+            inclusion: {
+              in: [true, false]
+            },
+            length: {
+              maximum: 300
+            }
 end
