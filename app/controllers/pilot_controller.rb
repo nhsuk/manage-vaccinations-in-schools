@@ -16,7 +16,7 @@ class PilotController < ApplicationController
 
       redirect_to action: :success
     else
-      render :cohort
+      render :cohort, status: :unprocessable_entity
     end
   end
 
@@ -26,6 +26,6 @@ class PilotController < ApplicationController
   private
 
   def cohort_list_params
-    params.require(:cohort_list).permit(:csv)
+    params.fetch(:cohort_list, {}).permit(:csv)
   end
 end
