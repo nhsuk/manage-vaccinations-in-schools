@@ -4247,10 +4247,10 @@ natural-compare@^1.4.0:
   resolved "https://registry.npmjs.org/natural-compare/-/natural-compare-1.4.0.tgz"
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
 
-nhsuk-frontend@^8.0.2:
-  version "8.0.2"
-  resolved "https://registry.yarnpkg.com/nhsuk-frontend/-/nhsuk-frontend-8.0.2.tgz#0e9f9835b399abb45aa622a0f791b32a502b02e9"
-  integrity sha512-ZRKESqJMyWCyAlFyVPGpiNJMEo+vrq37ELkUqP4nNA7QV/8jB5i/m79ljIIXM6NUgStLSdQ3BHeR5yFEAC1qug==
+nhsuk-frontend@^8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/nhsuk-frontend/-/nhsuk-frontend-8.1.0.tgz#fb48fe7b28fd7353bc4e23c917d7b04ae2172435"
+  integrity sha512-ZscH6FYP2MgtmhAB8zAsaEU9CF0Y2Nur9jfXMDz6iT5pnB8Ws13Evb06f1J4GZOOa2IiUHSe4tpAFJ3K2S5lhQ==
 
 nice-try@^1.0.4:
   version "1.0.5"
