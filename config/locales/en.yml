@@ -105,6 +105,10 @@ en:
             notes:
               blank: Enter details
               too_long: Enter details that are less than 1000 characters long
+        cohort_list:
+          attributes:
+            csv:
+              blank: Choose a file
   activerecord:
     attributes:
       consent:
