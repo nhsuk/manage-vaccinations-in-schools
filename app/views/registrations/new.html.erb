@@ -62,5 +62,61 @@
 
   <%= govuk_section_break visible: true, size: "l" %>
 
+  <%= f.govuk_fieldset legend: { text: "About your child", size: "l" } do %>
+
+    <%= f.govuk_text_field :first_name,
+                           label: { text: "First name", size: "s" },
+                           class: "nhsuk-input--width-20" %>
+
+    <%= f.govuk_text_field :last_name,
+                           label: { text: "Last name", size: "s" },
+                           class: "nhsuk-input--width-20" %>
+
+    <%= f.govuk_radio_buttons_fieldset :use_common_name,
+                                       legend: {
+                                         size: "s",
+                                         text: "Do they use a different name in school?"
+                                       } do %>
+      <%= f.govuk_radio_button :use_common_name,
+                               true,
+                               label: { text: "Yes" },
+                               link_errors: true do %>
+        <%= f.govuk_text_field :common_name, label: { text: "Preferred name" } %>
+      <% end %>
+      <%= f.govuk_radio_button :use_common_name, false, label: { text: 'No' } %>
+    <% end %>
+
+    <%= f.govuk_date_field :date_of_birth,
+                           date_of_birth: true,
+                           legend: { text: "Date of birth", size: "s" },
+                           hint: { text: 'For example, 27 3 2017' },
+                           link_errors: true %>
+
+    <%= f.govuk_fieldset legend: { text: "Address", size: "s" } do %>
+      <p class="nhsuk-hint">
+        If your child lives at more than one address, enter the address registered with the GP.
+      </p>
+
+      <%= f.govuk_text_field :address_line_1,
+                             label: { text: 'Address line 1' } %>
+
+      <%= f.govuk_text_field :address_line_2,
+                             label: { text: 'Address line 2 (optional)' } %>
+
+      <%= f.govuk_text_field :address_town,
+                             label: { text: 'Town or city' } %>
+
+      <%= f.govuk_text_field :address_postcode,
+                             label: { text: 'Postcode' },
+                             class: 'nhsuk-input--width-10' %>
+    <% end %>
+
+    <%= f.govuk_text_field :nhs_number,
+                           label: { text: "NHS number (optional)", size: "s" },
+                           class: "nhsuk-input--width-10" %>
+  <% end %>
+
+  <%= govuk_section_break visible: true, size: "l" %>
+
   <%= f.govuk_submit "Register your interest", secondary: true %>
 <% end %>
