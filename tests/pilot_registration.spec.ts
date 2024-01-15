@@ -3,7 +3,7 @@ import { signInTestUser, fixtures } from "./shared";
 
 let p: Page;
 
-test("School - match response", async ({ page }) => {
+test("Pilot registration", async ({ page }) => {
   p = page;
 
   await given_the_app_is_setup();
@@ -15,6 +15,7 @@ test("School - match response", async ({ page }) => {
   await then_it_shows_me_validation_errors();
 
   await when_i_enter_my_details();
+  await and_i_enter_my_childs_details();
   await and_i_click_submit();
   await then_i_see_the_confirmation_message();
 });
@@ -41,9 +42,20 @@ const and_i_click_submit = when_i_click_submit;
 async function then_it_shows_me_validation_errors() {
   const alert = p.getByRole("alert");
   await expect(alert).toBeVisible();
-  await expect(alert).toContainText("Enter your name");
+  await expect(alert).toContainText(
+    "Enter the first line of the child's address",
+  );
+  await expect(alert).toContainText("Enter the town or city the child is in");
+  await expect(alert).toContainText("Enter the child's postcode");
+  await expect(alert).toContainText("Enter the child's date of birth");
+  await expect(alert).toContainText("Enter the child's first name");
+  await expect(alert).toContainText("Enter the child's last name");
   await expect(alert).toContainText("Enter your email address");
+  await expect(alert).toContainText("Enter your name");
   await expect(alert).toContainText("Choose your relationship");
+  await expect(alert).toContainText(
+    "Tell us whether the child use a different name",
+  );
 }
 
 async function when_i_enter_my_details() {
@@ -51,6 +63,21 @@ async function when_i_enter_my_details() {
   await p.getByLabel("Dad").check();
   await p.getByLabel("Email address").fill("daddy.tests@example.com");
   await p.getByLabel("Phone number").fill("07123456789");
+}
+
+async function and_i_enter_my_childs_details() {
+  await p.getByLabel("First name").fill("Bobby");
+  await p.getByLabel("Last name").fill("Tests");
+  await p.getByLabel("Yes").check();
+  await p.getByLabel("Preferred name").fill("Drop Table");
+  await p.getByLabel("Day").fill("01");
+  await p.getByLabel("Month").fill("01");
+  await p.getByLabel("Year").fill("2020");
+  await p.getByLabel("Address line 1").fill("1 Test Street");
+  await p.getByLabel("Address line 1").fill("2nd Floor");
+  await p.getByLabel("Town or city").fill("Testville");
+  await p.getByLabel("Postcode").fill("TE1 1ST");
+  await p.getByLabel("NHS number").fill("999 888 7777");
 }
 
 async function then_i_see_the_confirmation_message() {
