@@ -3,11 +3,21 @@
 # Table name: registrations
 #
 #  id                        :bigint           not null, primary key
+#  address_line_1            :string
+#  address_line_2            :string
+#  address_postcode          :string
+#  address_town              :string
+#  common_name               :string
+#  date_of_birth             :date
+#  first_name                :string
+#  last_name                 :string
+#  nhs_number                :string
 #  parent_email              :string
 #  parent_name               :string
 #  parent_phone              :string
 #  parent_relationship       :integer
 #  parent_relationship_other :string
+#  use_common_name           :boolean
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  location_id               :bigint           not null
