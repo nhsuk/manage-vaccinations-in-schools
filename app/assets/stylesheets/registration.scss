@@ -17,3 +17,7 @@ html {
 .nhsuk-width-container {
   max-width: 720px;
 }
+
+.nhsuk-visually-hidden {
+  @extend .nhsuk-u-visually-hidden;
+}
