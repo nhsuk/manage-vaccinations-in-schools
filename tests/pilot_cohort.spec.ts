@@ -21,6 +21,9 @@ test("Pilot - manage cohort", async ({ page }) => {
   await when_i_continue_without_uploading_a_file();
   await then_i_should_see_an_error();
 
+  await when_i_upload_a_malformed_csv();
+  await then_i_should_see_an_error();
+
   await when_i_upload_the_cohort_file();
   await then_i_should_see_the_success_page();
 });
@@ -83,4 +86,9 @@ async function then_i_should_see_an_error() {
   await expect(
     p.getByRole("heading", { name: "There is a problem" }),
   ).toBeVisible();
+}
+
+async function when_i_upload_a_malformed_csv() {
+  await p.setInputFiles('input[type="file"]', "tests/fixtures/malformed.csv");
+  await p.getByRole("button", { name: "Upload the cohort list" }).click();
 }
