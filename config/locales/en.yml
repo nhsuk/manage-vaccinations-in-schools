@@ -95,6 +95,21 @@ en:
     flu: Flu
     hpv: HPV
   activemodel:
+    attributes:
+      cohort_list_row:
+        parent_name: "<code>PARENT_NAME</code>"
+        parent_relationship: "<code>PARENT_RELATIONSHIP</code>"
+        parent_email: "<code>PARENT_EMAIL</code>"
+        parent_phone: "<code>PARENT_PHONE</code>"
+        child_first_name: "<code>CHILD_FIRST_NAME</code>"
+        child_last_name: "<code>CHILD_LAST_NAME</code>"
+        child_common_name: "<code>CHILD_COMMON_NAME</code>"
+        child_date_of_birth: "<code>CHILD_DATE_OF_BIRTH</code>"
+        child_address_line_1: "<code>CHILD_ADDRESS_LINE_1</code>"
+        child_address_line_2: "<code>CHILD_ADDRESS_LINE_2</code>"
+        child_address_town: "<code>CHILD_ADDRESS_TOWN</code>"
+        child_address_postcode: "<code>CHILD_ADDRESS_POSTCODE</code>"
+        child_nhs_number: "<code>CHILD_NHS_NUMBER</code>"
     errors:
       models:
         health_answer:
@@ -110,6 +125,35 @@ en:
             csv:
               blank: Choose a file
               invalid: Choose a CSV file in the correct format
+        cohort_list_row:
+          attributes:
+            parent_name:
+              blank: "is required but missing"
+            parent_relationship:
+              blank: "is required but missing"
+            parent_email:
+              blank: "is required but missing"
+              invalid: "‘%{value}’ should be a valid email address, like j.doe@example.com"
+            parent_phone:
+              blank: "is required but missing"
+              invalid: "‘%{value}’ should be a valid phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192"
+            child_first_name:
+              blank: "is required but missing"
+            child_last_name:
+              blank: "is required but missing"
+            child_date_of_birth:
+              blank: "is required but missing"
+              invalid: "‘%{value}’ should be formatted as YYYY-MM-DD"
+            child_address_line_1:
+              blank: "is required but missing"
+            child_address_town:
+              blank: "is required but missing"
+            child_address_postcode:
+              blank: "is required but missing111"
+              invalid_postcode: "‘%{value}’ should be a postcode, like SW1A 1AA"
+            child_nhs_number:
+              blank: "is required but missing"
+              invalid: "‘%{value}’ should be a valid NHS number, like 999 888 7777"
   activerecord:
     attributes:
       consent:
