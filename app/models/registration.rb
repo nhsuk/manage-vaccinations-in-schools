@@ -38,6 +38,19 @@ class Registration < ApplicationRecord
 
   enum :parent_relationship, %w[mother father guardian other], prefix: true
 
+  encrypts :address_line_1,
+           :address_line_2,
+           :address_postcode,
+           :address_town,
+           :common_name,
+           :first_name,
+           :last_name,
+           :nhs_number,
+           :parent_email,
+           :parent_name,
+           :parent_phone,
+           :parent_relationship_other
+
   validates :address_line_1, presence: true, length: { maximum: 300 }
   validates :address_town, presence: true, length: { maximum: 300 }
   validates :address_postcode, presence: true, postcode: true
