@@ -24,6 +24,14 @@ test("Pilot - manage cohort", async ({ page }) => {
   await when_i_upload_a_malformed_csv();
   await then_i_should_see_an_error();
 
+  await when_i_upload_a_cohort_file_with_invalid_headers();
+  await then_i_should_the_errors_page_with_invalid_headers();
+  await and_i_should_be_able_to_go_back_to_the_upload_page();
+
+  await when_i_upload_a_cohort_file_with_invalid_fields();
+  await then_i_should_the_errors_page_with_invalid_fields();
+  await and_i_should_be_able_to_go_to_the_upload_page();
+
   await when_i_upload_the_cohort_file();
   await then_i_should_see_the_success_page();
 });
@@ -67,7 +75,7 @@ async function then_i_should_see_the_upload_cohort_page() {
 async function when_i_upload_the_cohort_file() {
   await p.setInputFiles(
     'input[type="file"]',
-    "tests/fixtures/pilot-cohort.csv",
+    "spec/fixtures/cohort_list/valid_cohort.csv",
   );
   await p.getByRole("button", { name: "Upload the cohort list" }).click();
 }
@@ -89,6 +97,55 @@ async function then_i_should_see_an_error() {
 }
 
 async function when_i_upload_a_malformed_csv() {
-  await p.setInputFiles('input[type="file"]', "tests/fixtures/malformed.csv");
+  await p.setInputFiles(
+    'input[type="file"]',
+    "spec/fixtures/cohort_list/malformed.csv",
+  );
   await p.getByRole("button", { name: "Upload the cohort list" }).click();
+}
+
+async function when_i_upload_a_cohort_file_with_invalid_headers() {
+  await p.setInputFiles(
+    'input[type="file"]',
+    "spec/fixtures/cohort_list/invalid_headers.csv",
+  );
+  await p.getByRole("button", { name: "Upload the cohort list" }).click();
+}
+
+async function then_i_should_the_errors_page_with_invalid_headers() {
+  await expect(
+    p.getByRole("heading", {
+      level: 1,
+      name: "The cohort list could not be added",
+    }),
+  ).toBeVisible();
+  await expect(p.getByRole("heading", { level: 2, name: "CSV" })).toBeVisible();
+}
+
+async function and_i_should_be_able_to_go_back_to_the_upload_page() {
+  await p.getByRole("link", { name: "Back to cohort upload page" }).click();
+}
+
+async function when_i_upload_a_cohort_file_with_invalid_fields() {
+  await p.setInputFiles(
+    'input[type="file"]',
+    "spec/fixtures/cohort_list/invalid_fields.csv",
+  );
+  await p.getByRole("button", { name: "Upload the cohort list" }).click();
+}
+
+async function then_i_should_the_errors_page_with_invalid_fields() {
+  await expect(
+    p.getByRole("heading", {
+      level: 1,
+      name: "The cohort list could not be added",
+    }),
+  ).toBeVisible();
+  await expect(
+    p.getByRole("heading", { level: 2, name: "Row 0" }),
+  ).toBeVisible();
+}
+
+async function and_i_should_be_able_to_go_to_the_upload_page() {
+  await p.getByRole("link", { name: "Upload a new cohort list" }).click();
 }

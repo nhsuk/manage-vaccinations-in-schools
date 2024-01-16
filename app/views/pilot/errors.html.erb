@@ -1,0 +1,38 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+    href: cohort_pilot_path,
+    name: "cohort upload page"
+  ) %>
+<% end %>
+
+<%= h1 "The cohort list could not be added", class: 'nhsuk-heading-l' %>
+
+<p>
+  It wasn’t possible to add a cohort list due to the following errors in the
+  uploaded CSV file:
+</p>
+
+<% @cohort_list.errors.each do |error| %>
+  <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">
+    <% if error.attribute == :csv %>
+      CSV
+    <% else %>
+      <%= error.attribute.to_s.humanize %>
+    <% end %>
+  </h2>
+  <ul class="nhsuk-list nhsuk-list--bullet nhsuk-u-font-size-16">
+    <% if error.type.is_a?(Array) %>
+      <% error.type.each do |type| %>
+        <li><%= type.html_safe %></li>
+      <% end %>
+    <% else %>
+      <li><%= error.type.html_safe %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<hr />
+
+<p>
+  <%= link_to "Upload a new cohort list", cohort_pilot_path %>
+</p>
