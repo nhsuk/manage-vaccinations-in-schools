@@ -16,6 +16,7 @@ test("Pilot registration", async ({ page }) => {
 
   await when_i_enter_my_details();
   await and_i_enter_my_childs_details();
+  await and_i_check_the_conditions_for_taking_part();
   await and_i_click_submit();
   await then_i_see_the_confirmation_message();
 });
@@ -56,6 +57,9 @@ async function then_it_shows_me_validation_errors() {
   await expect(alert).toContainText(
     "Tell us whether the child use a different name",
   );
+  await expect(alert).toContainText(
+    "You must agree to all of the conditions for taking part in the pilot",
+  );
 }
 
 async function when_i_enter_my_details() {
@@ -78,6 +82,12 @@ async function and_i_enter_my_childs_details() {
   await p.getByLabel("Town or city").fill("Testville");
   await p.getByLabel("Postcode").fill("TE1 1ST");
   await p.getByLabel("NHS number").fill("999 888 7777");
+}
+
+async function and_i_check_the_conditions_for_taking_part() {
+  await p.getByLabel("I agree to the terms and conditions").check();
+  await p.getByLabel("I agree to my data").check();
+  await p.getByLabel("I confirm I’ve responded to the school").check();
 }
 
 async function then_i_see_the_confirmation_message() {
