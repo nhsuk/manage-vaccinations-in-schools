@@ -328,6 +328,8 @@ en:
             common_name:
               blank: Enter the child's name
               too_long: Enter a name that is less than 300 characters long
+            conditions_for_taking_part_met:
+              accepted: You must agree to all of the conditions for taking part in the pilot
             date_of_birth:
               blank: Enter the child's date of birth
               greater_than_or_equal_to: The child cannot be older than 22. Enter a date after %{count}.
