@@ -9,3 +9,7 @@
     width: 20% !important;
   }
 }
+
+.nhsuk-visually-hidden {
+  @extend .nhsuk-u-visually-hidden;
+}
