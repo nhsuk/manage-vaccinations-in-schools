@@ -35,7 +35,9 @@ class RegistrationsController < ApplicationController
       :address_postcode,
       :address_town,
       :common_name,
+      :consent_response_confirmed,
       :date_of_birth,
+      :data_processing_agreed,
       :first_name,
       :last_name,
       :nhs_number,
@@ -44,6 +46,7 @@ class RegistrationsController < ApplicationController
       :parent_phone,
       :parent_relationship,
       :parent_relationship_other,
+      :terms_and_conditions_agreed,
       :use_common_name
     )
   end

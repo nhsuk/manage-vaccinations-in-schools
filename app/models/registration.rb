@@ -85,4 +85,10 @@ class Registration < ApplicationRecord
             length: {
               maximum: 300
             }
+  validates :conditions_for_taking_part_met, acceptance: true
+
+  def conditions_for_taking_part_met
+    consent_response_confirmed? && data_processing_agreed? &&
+      terms_and_conditions_agreed?
+  end
 end
