@@ -14,7 +14,11 @@ class PilotController < ApplicationController
     if @cohort_list.valid?
       @cohort_list.generate_cohort!
 
-      redirect_to action: :success
+      if @cohort_list.errors.any?
+        render :errors, status: :unprocessable_entity, layout: "application"
+      else
+        redirect_to action: :success
+      end
     else
       render :cohort, status: :unprocessable_entity
     end
