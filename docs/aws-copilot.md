@@ -390,3 +390,26 @@ The following sites contain some valuable examples that can be used for inspirat
 
 - https://asecure.cloud/l/cloudwatch/
 - https://www.intelligentdiscovery.io/controls/cloudwatch/
+
+## Server Access Logging on S3 Buckets
+
+This is a feature provided by AWS. Server access logging for S3 buckets in AWS provides detailed records for the requests made to a specific bucket. These logs are invaluable for security and audit purposes.
+
+### Enabling Server Access Logging
+
+This can be done through the Management Console as well as the AWS CLI, but for the sake of convenience, we will only cover doing it though former.
+
+Follow the instructions below:
+
+1. Navigate to the AWS Management Console
+2. Navigate to S3
+3. Select the bucket you want to enable logging for.
+4. Click the Properties tab.
+5. Find Server access logging and click Edit.
+6. Configure the destination where the logs will be written - using the same bucket for the server access logs is usually fine, unless the intention is to have many different objects in one bucket, in which case it would be a good idea to have separate buckets for each logical log group. In our case it is something like _s3://stackset-mavis-infrastruc-pipelinebuiltartifactbuc-navrlbfulzw6/server-access-logs/server-access-log_ - where _/server-access-logs/server-access-log_ are the destination folder and the log prefix.
+7. Select the desired Log object key format. ('[DestinationPrefix][YYYY]-[MM]-[DD]-[hh]-[mm]-[ss]-[UniqueString]' should be fine, unless you plan to use these logs for analytics, in which case, choose the second option.)
+8. Click Save Changes.
+
+There is a delay in delivering the logs, so it can potentially take a couple hours before we start seeing some logs.
+
+NOTE: When you enable server access logging, the S3 console automatically updates your bucket policy to include access to the S3 log delivery group.
