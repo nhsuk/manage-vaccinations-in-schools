@@ -19,7 +19,7 @@ class CohortList
     CHILD_NHS_NUMBER
   ].freeze
 
-  attr_accessor :csv, :csv_is_malformed, :data
+  attr_accessor :csv, :csv_is_malformed, :data, :rows
 
   validates :csv, presence: true
   validate :csv_is_valid
@@ -34,7 +34,7 @@ class CohortList
     csv.close if csv.respond_to?(:close)
   end
 
-  def generate_cohort!
+  def parse_rows!
     unless data.headers == EXPECTED_HEADERS
       html_missing_headers =
         (EXPECTED_HEADERS - data.headers).map { "<code>#{_1}</code>" }
@@ -45,12 +45,13 @@ class CohortList
       return
     end
 
-    data.each.with_index do |raw_row, index|
+    self.rows = data.map.with_index do |raw_row, index|
       row_hash = raw_row.to_h.transform_keys { _1.downcase.to_sym }
       row = CohortListRow.new(row_hash)
       unless row.valid?
         errors.add("row_#{index}".to_sym, row.errors.full_messages)
       end
+      row
     end
   end
 
