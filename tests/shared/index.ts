@@ -7,31 +7,31 @@ export const fixtures = {
   parentRole: "Mum",
 
   // Get from /sessions/1/consents, "No response" tab
-  patientThatNeedsConsent: "Jose Pacocha",
-  secondPatientThatNeedsConsent: "Sebastian Farrell",
+  patientThatNeedsConsent: "Clora Mueller",
+  secondPatientThatNeedsConsent: "Nathanial Jones",
 
   // Get from /sessions/1/consents, "Consent conflicts" tab
-  patientWithConflictingConsent: "Gus Langworth",
+  patientWithConflictingConsent: "Alonzo Klocko",
 
   // Get from /sessions/1/triage, "Triage needed" tab; check that they don't
   // have existing triage
-  patientThatNeedsTriage: "Freddie Russel",
-  secondPatientThatNeedsTriage: "Marcelino Wintheiser",
+  patientThatNeedsTriage: "Mickey Schroeder",
+  secondPatientThatNeedsTriage: "Phil Spencer",
 
   // Get from /sessions/1/vaccinations, "Action needed" tab
-  patientThatNeedsVaccination: "Brittany Klocko",
-  secondPatientThatNeedsVaccination: "Brenton Kautzer",
+  patientThatNeedsVaccination: "Michaele Schmitt",
+  secondPatientThatNeedsVaccination: "Brittany Klocko",
 
   // Get from /sessions/1/patients/Y/vaccinations/batch/edit
-  vaccineBatch: "BD4566",
+  vaccineBatch: "VU2074",
 
   // Get from /sessions, signed in as Nurse Joy
-  schoolName: /Park Wood Middle School/,
+  schoolName: /Great Cornard Middle School/,
 
   // Get from /sessions, signed in as Nurse Jackie
-  secondSchoolName: /Crompton Primary School/,
+  secondSchoolName: /Kesteven and Sleaford High School Selective Academy/,
 
   // Any consent response from /schools/1, signed in as Nurse Joy
-  unmatchedConsentFormParentName: "Dorla Dibbert Ret.",
-  unmatchedConsentFormChildName: "Michaele Schmitt",
+  unmatchedConsentFormParentName: "Kacy Mosciski",
+  unmatchedConsentFormChildName: "Werner Boyle",
 };
