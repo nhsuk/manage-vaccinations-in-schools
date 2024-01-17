@@ -33,10 +33,11 @@ RSpec.describe CohortList, type: :model do
     describe "with invalid headers" do
       let(:file) { "invalid_headers.csv" }
 
-      it "populates errors" do
+      it "populates header errors" do
         cohort_list.load_data!
         cohort_list.parse_rows!
 
+        expect(cohort_list).to be_invalid
         expect(cohort_list.errors[:csv]).to include(/missing.*headers/)
       end
     end
@@ -44,11 +45,12 @@ RSpec.describe CohortList, type: :model do
     describe "with invalid fields" do
       let(:file) { "invalid_fields.csv" }
 
-      it "populates errors" do
+      it "populates rows" do
         cohort_list.load_data!
         cohort_list.parse_rows!
 
-        expect(cohort_list.errors[:row_0]).not_to be_empty
+        expect(cohort_list).to be_invalid
+        expect(cohort_list.rows).not_to be_empty
       end
     end
 

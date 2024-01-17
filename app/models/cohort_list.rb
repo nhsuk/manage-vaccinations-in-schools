@@ -19,10 +19,12 @@ class CohortList
     CHILD_NHS_NUMBER
   ].freeze
 
-  attr_accessor :csv, :csv_is_malformed, :data, :rows
+  attr_accessor :csv, :csv_is_malformed, :data, :missing_headers, :rows
 
   validates :csv, presence: true
   validate :csv_is_valid
+  validate :headers_are_valid
+  validate :rows_are_valid
 
   def load_data!
     return if invalid?
@@ -35,29 +37,42 @@ class CohortList
   end
 
   def parse_rows!
-    unless data.headers == EXPECTED_HEADERS
-      html_missing_headers =
-        (EXPECTED_HEADERS - data.headers).map { "<code>#{_1}</code>" }
-      errors.add(
-        :csv,
-        "The file is missing the following headers: #{html_missing_headers.join(", ")}"
-      )
+    if data.headers != EXPECTED_HEADERS
+      self.missing_headers = EXPECTED_HEADERS - data.headers
       return
     end
 
-    self.rows = data.map.with_index do |raw_row, index|
-      row_hash = raw_row.to_h.transform_keys { _1.downcase.to_sym }
-      row = CohortListRow.new(row_hash)
-      unless row.valid?
-        errors.add("row_#{index}".to_sym, row.errors.full_messages)
-      end
-      row
-    end
+    self.rows =
+      data
+        .map { |raw_row| raw_row.to_h.transform_keys { _1.downcase.to_sym } }
+        .map { CohortListRow.new(_1) }
   end
 
   private
 
   def csv_is_valid
-    errors.add(:csv, :invalid) if csv_is_malformed
+    return unless csv_is_malformed
+
+    errors.add(:csv, :invalid)
+  end
+
+  def headers_are_valid
+    return unless missing_headers
+
+    html_missing_headers = missing_headers.map { "<code>#{_1}</code>" }
+    errors.add(
+      :csv,
+      "The file is missing the following headers: #{html_missing_headers.join(", ")}"
+    )
+  end
+
+  def rows_are_valid
+    return unless rows
+
+    rows.each.with_index do |row, index|
+      unless row.valid?
+        errors.add("row_#{index}".to_sym, row.errors.full_messages)
+      end
+    end
   end
 end
