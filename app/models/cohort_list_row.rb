@@ -49,7 +49,60 @@ class CohortListRow
             },
             if: -> { child_nhs_number.present? }
 
+  def to_patient
+    {
+      common_name:,
+      date_of_birth:,
+      first_name:,
+      last_name:,
+      nhs_number:,
+      parent_email:,
+      parent_name:,
+      parent_phone:
+      # child_address_line_1:,
+      # child_address_line_2:,
+      # child_address_town:,
+      # child_address_postcode:,
+    }.merge(parent_relationship_hash)
+  end
+
   private
+
+  def common_name
+    child_common_name
+  end
+
+  def date_of_birth
+    Date.parse(child_date_of_birth)
+  end
+
+  def first_name
+    child_first_name
+  end
+
+  def last_name
+    child_last_name
+  end
+
+  def nhs_number
+    child_nhs_number
+  end
+
+  def parent_relationship_hash
+    case parent_relationship
+    when "Mother"
+      { parent_relationship: "mother" }
+    when "father"
+      { parent_relationship: "father" }
+    when "Guardian"
+      { parent_relationship: "guardian" }
+    else
+      {
+        parent_relationship: "other",
+        parent_relationship_other: parent_relationship
+      }
+    end
+  end
 
   def submitted_at_is_valid
     errors.add(:submitted_at, :invalid) if Time.zone.parse(submitted_at).nil?
