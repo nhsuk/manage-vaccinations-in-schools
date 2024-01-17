@@ -4,6 +4,9 @@ class CohortList
   include ActiveModel::Model
 
   EXPECTED_HEADERS = %w[
+    SUBMITTED_AT
+    SCHOOL_ID
+    SCHOOL_NAME
     PARENT_NAME
     PARENT_RELATIONSHIP
     PARENT_EMAIL
