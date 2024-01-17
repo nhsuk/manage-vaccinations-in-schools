@@ -560,7 +560,6 @@ class ExampleCampaignGenerator
         parentPhone: patient.parent_phone,
         parentRelationship: patient.parent_relationship,
         parentRelationshipOther: patient.parent_relationship_other,
-        parentInfoSource: patient.parent_info_source,
         triage:
       }
     end

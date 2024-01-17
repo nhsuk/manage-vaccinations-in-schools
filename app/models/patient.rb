@@ -4,20 +4,15 @@
 #
 #  id                        :bigint           not null, primary key
 #  common_name               :string
-#  consent                   :integer
 #  date_of_birth             :date
 #  first_name                :string
 #  last_name                 :string
 #  nhs_number                :string
 #  parent_email              :string
-#  parent_info_source        :text
 #  parent_name               :string
 #  parent_phone              :string
 #  parent_relationship       :integer
 #  parent_relationship_other :string
-#  screening                 :integer
-#  seen                      :integer
-#  sex                       :integer
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  location_id               :bigint
@@ -52,19 +47,10 @@ class Patient < ApplicationRecord
               with: /\A(?:\d\s*){10}\z/
             }
 
-  enum :sex, %w[Female Male]
-  enum :screening, ["Approved for vaccination"]
-  enum :consent, ["Parental consent (digital)"]
-  enum :parent_relationship, %w[mother father guardian other], prefix: true
-
-  # TODO: Deprecate. VaccinationRecords supersede .seen
-  enum :seen, ["Not yet", "Vaccinated"]
-
   encrypts :first_name,
            :last_name,
            :nhs_number,
            :parent_email,
-           :parent_info_source,
            :parent_name,
            :parent_phone,
            :parent_relationship_other,

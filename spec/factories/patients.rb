@@ -4,20 +4,15 @@
 #
 #  id                        :bigint           not null, primary key
 #  common_name               :string
-#  consent                   :integer
 #  date_of_birth             :date
 #  first_name                :string
 #  last_name                 :string
 #  nhs_number                :string
 #  parent_email              :string
-#  parent_info_source        :text
 #  parent_name               :string
 #  parent_phone              :string
 #  parent_relationship       :integer
 #  parent_relationship_other :string
-#  screening                 :integer
-#  seen                      :integer
-#  sex                       :integer
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  location_id               :bigint
@@ -51,12 +46,8 @@ FactoryBot.define do
     end
 
     nhs_number { Faker::NationalHealthService.british_number.gsub(/\s+/, "") }
-    sex { %w[Male Female].sample(random:) }
     first_name { Faker::Name.first_name }
     last_name { Faker::Name.last_name }
-    screening { "Approved for vaccination" }
-    consent { "Parental consent (digital)" }
-    seen { "Not yet" }
     date_of_birth { Faker::Date.birthday(min_age: 3, max_age: 9) }
     patient_sessions { [] }
     parent_name { "#{parent_first_name} #{last_name}" }
@@ -66,7 +57,6 @@ FactoryBot.define do
     end
     # Replace first two digits with 07 to make it a mobile number
     parent_phone { Faker::PhoneNumber.cell_phone }
-    parent_info_source { "school" }
 
     trait :of_hpv_vaccination_age do
       date_of_birth { Faker::Date.birthday(min_age: 12, max_age: 13) }
@@ -127,7 +117,6 @@ FactoryBot.define do
       parent_relationship_other { nil }
       parent_phone { nil }
       parent_email { nil }
-      parent_info_source { nil }
     end
   end
 end
