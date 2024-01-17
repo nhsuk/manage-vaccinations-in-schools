@@ -142,7 +142,7 @@ async function then_i_should_the_errors_page_with_invalid_fields() {
     }),
   ).toBeVisible();
   await expect(
-    p.getByRole("heading", { level: 2, name: "Row 0" }),
+    p.getByRole("heading", { level: 2, name: "Row 2", exact: true }),
   ).toBeVisible();
 }
 
