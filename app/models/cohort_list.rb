@@ -19,10 +19,20 @@ class CohortList
     CHILD_NHS_NUMBER
   ].freeze
 
-  attr_accessor :csv, :data
+  attr_accessor :csv, :csv_is_malformed, :data
 
   validates :csv, presence: true
   validate :csv_is_valid
+
+  def load_data!
+    return if invalid?
+
+    self.data ||= CSV.parse(csv.read, headers: true, skip_blanks: true)
+  rescue CSV::MalformedCSVError
+    self.csv_is_malformed = true
+  ensure
+    csv.close if csv.respond_to?(:close)
+  end
 
   def generate_cohort!
     unless data.headers == EXPECTED_HEADERS
@@ -47,10 +57,6 @@ class CohortList
   private
 
   def csv_is_valid
-    return if csv.blank?
-
-    self.data = CSV.parse(csv.read, headers: true, skip_blanks: true)
-  rescue CSV::MalformedCSVError
-    errors.add(:csv, :invalid)
+    errors.add(:csv, :invalid) if csv_is_malformed
   end
 end

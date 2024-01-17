@@ -5,21 +5,27 @@ RSpec.describe CohortList, type: :model do
 
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_list/#{file}") }
 
-  describe "with missing CSV" do
-    let(:csv) { nil }
+  describe "#load_data!" do
+    describe "with missing CSV" do
+      let(:csv) { nil }
 
-    it "is invalid" do
-      expect(cohort_list).to be_invalid
-      expect(cohort_list.errors[:csv]).to include(/Choose/)
+      it "is invalid" do
+        cohort_list.load_data!
+
+        expect(cohort_list).to be_invalid
+        expect(cohort_list.errors[:csv]).to include(/Choose/)
+      end
     end
-  end
 
-  describe "with malformed CSV" do
-    let(:file) { "malformed.csv" }
+    describe "with malformed CSV" do
+      let(:file) { "malformed.csv" }
 
-    it "is invalid" do
-      expect(cohort_list).to be_invalid
-      expect(cohort_list.errors[:csv]).to include(/correct format/)
+      it "is invalid" do
+        cohort_list.load_data!
+
+        expect(cohort_list).to be_invalid
+        expect(cohort_list.errors[:csv]).to include(/correct format/)
+      end
     end
   end
 
@@ -28,7 +34,7 @@ RSpec.describe CohortList, type: :model do
       let(:file) { "invalid_headers.csv" }
 
       it "populates errors" do
-        cohort_list.valid?
+        cohort_list.load_data!
         cohort_list.generate_cohort!
 
         expect(cohort_list.errors[:csv]).to include(/missing.*headers/)
@@ -39,7 +45,7 @@ RSpec.describe CohortList, type: :model do
       let(:file) { "invalid_fields.csv" }
 
       it "populates errors" do
-        cohort_list.valid?
+        cohort_list.load_data!
         cohort_list.generate_cohort!
 
         expect(cohort_list.errors[:row_0]).not_to be_empty
@@ -50,7 +56,7 @@ RSpec.describe CohortList, type: :model do
       let(:file) { "valid_cohort.csv" }
 
       it "is valid" do
-        cohort_list.valid?
+        cohort_list.load_data!
         cohort_list.generate_cohort!
 
         expect(cohort_list).to be_valid
