@@ -13,7 +13,7 @@ class PilotController < ApplicationController
     @cohort_list.load_data!
 
     if @cohort_list.valid?
-      @cohort_list.generate_cohort!
+      @cohort_list.parse_rows!
 
       if @cohort_list.errors.any?
         render :errors, status: :unprocessable_entity, layout: "application"
