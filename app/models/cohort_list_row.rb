@@ -1,7 +1,10 @@
 class CohortListRow
   include ActiveModel::Model
 
-  attr_accessor :parent_name,
+  attr_accessor :submitted_at,
+                :school_id,
+                :school_name,
+                :parent_name,
                 :parent_relationship,
                 :parent_email,
                 :parent_phone,
@@ -15,6 +18,10 @@ class CohortListRow
                 :child_address_postcode,
                 :child_nhs_number
 
+  validates :submitted_at, presence: true
+  validate :submitted_at_is_valid, if: -> { submitted_at.present? }
+  validates :school_id, presence: true
+  validate :school_id_is_valid, if: -> { school_id.present? }
   validates :parent_name, presence: true
   validates :parent_relationship, presence: true
   validates :parent_email, presence: true
@@ -41,4 +48,16 @@ class CohortListRow
               with: /\A\d{10}\z/
             },
             if: -> { child_nhs_number.present? }
+
+  private
+
+  def submitted_at_is_valid
+    errors.add(:submitted_at, :invalid) if Time.zone.parse(submitted_at).nil?
+  end
+
+  def school_id_is_valid
+    Location.find(school_id)
+  rescue ActiveRecord::RecordNotFound
+    errors.add(:school_id, :invalid)
+  end
 end
