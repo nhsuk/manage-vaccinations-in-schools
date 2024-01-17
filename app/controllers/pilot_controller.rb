@@ -23,10 +23,14 @@ class PilotController < ApplicationController
       return
     end
 
+    @cohort_list.generate_patients!
+    session[:last_cohort_upload_count] = @cohort_list.rows.count
+
     redirect_to action: :success
   end
 
   def success
+    @count = session.delete(:last_cohort_upload_count)
   end
 
   private
