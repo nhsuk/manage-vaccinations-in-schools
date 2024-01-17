@@ -16,8 +16,6 @@ invalid,1,Surrey Primary,John Smith,Father,john@example.com,7412345678,Jimmy,Smi
 2024-01-17T14:34:06Z,invalid,Surrey Primary,John Smith,Father,john@example.com,7412345678,Jimmy,Smith,Jim,2010-01-01,10 Downing Street,,London,SW1A 1AA,1234567890
 2024-01-17T14:34:06Z,1,Surrey Primary,John Smith,Father,invalid,7412345678,Jimmy,Smith,Jim,2010-01-01,10 Downing Street,,London,SW1A 1AA,1234567890
 2024-01-17T14:34:06Z,1,Surrey Primary,John Smith,Father,john@example.com,invalid,Jimmy,Smith,Jim,2010-01-01,10 Downing Street,,London,SW1A 1AA,1234567890
-2024-01-17T14:34:06Z,1,Surrey Primary,John Smith,Father,john@example.com,7412345678,invalid,Smith,Jim,2010-01-01,10 Downing Street,,London,SW1A 1AA,1234567890
-2024-01-17T14:34:06Z,1,Surrey Primary,John Smith,Father,john@example.com,7412345678,Jimmy,invalid,Jim,2010-01-01,10 Downing Street,,London,SW1A 1AA,1234567890
 2024-01-17T14:34:06Z,1,Surrey Primary,John Smith,Father,john@example.com,7412345678,Jimmy,Smith,Jim,invalid,10 Downing Street,,London,SW1A 1AA,1234567890
 2024-01-17T14:34:06Z,1,Surrey Primary,John Smith,Father,john@example.com,7412345678,Jimmy,Smith,Jim,2010-01-01,10 Downing Street,,London,invalid,1234567890
 2024-01-17T14:34:06Z,1,Surrey Primary,John Smith,Father,john@example.com,7412345678,Jimmy,Smith,Jim,2010-01-01,10 Downing Street,,London,SW1A 1AA,invalid
