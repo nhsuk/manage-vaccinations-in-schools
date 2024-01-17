@@ -10,6 +10,7 @@ class PilotController < ApplicationController
 
   def create
     @cohort_list = CohortList.new(cohort_list_params)
+    @cohort_list.load_data!
 
     if @cohort_list.valid?
       @cohort_list.generate_cohort!
