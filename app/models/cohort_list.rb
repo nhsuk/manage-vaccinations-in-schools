@@ -51,6 +51,16 @@ class CohortList
         .map { CohortListRow.new(_1) }
   end
 
+  def generate_patients!
+    return if invalid?
+
+    rows.each do |row|
+      location = Location.find(row.school_id)
+      patient = location.patients.new(row.to_patient)
+      patient.save!
+    end
+  end
+
   private
 
   def csv_is_valid

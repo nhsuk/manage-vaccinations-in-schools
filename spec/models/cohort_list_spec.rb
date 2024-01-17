@@ -5,6 +5,8 @@ RSpec.describe CohortList, type: :model do
 
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_list/#{file}") }
 
+  before { create(:location, id: 1) if Location.count.zero? }
+
   describe "#load_data!" do
     describe "with missing CSV" do
       let(:csv) { nil }
@@ -63,6 +65,19 @@ RSpec.describe CohortList, type: :model do
 
         expect(cohort_list).to be_valid
       end
+    end
+  end
+
+  describe "#generate_patients!" do
+    let(:file) { "valid_cohort.csv" }
+
+    it "creates patients" do
+      cohort_list.load_data!
+      cohort_list.parse_rows!
+
+      expect { cohort_list.generate_patients! }.to change { Patient.count }.by(
+        1
+      )
     end
   end
 end
