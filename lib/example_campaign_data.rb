@@ -76,20 +76,16 @@ class ExampleCampaignData
     session_attributes ||= raw_data
     session_attributes["patients"].map do |patient|
       attributes = {
-        seen: patient.dig("seen", "text"),
         first_name: patient["firstName"],
         last_name: patient["lastName"],
         date_of_birth: patient["dob"],
-        sex: patient["sex"],
         consents: patient["consents"],
         nhs_number: patient["nhsNumber"],
-        screening: patient["screening"],
         parent_name: patient["parentName"],
         parent_relationship: patient["parentRelationship"],
         parent_relationship_other: patient["parentRelationshipOther"],
         parent_email: patient["parentEmail"],
-        parent_phone: patient["parentPhone"],
-        parent_info_source: patient["parentInfoSource"]
+        parent_phone: patient["parentPhone"]
       }
 
       if patient["triage"].present?

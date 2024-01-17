@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_01_16_150655) do
+ActiveRecord::Schema[7.1].define(version: 2024_01_17_152336) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -257,19 +257,14 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_16_150655) do
     t.string "nhs_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "sex"
     t.string "first_name"
     t.string "last_name"
     t.string "common_name"
-    t.integer "screening"
-    t.integer "consent"
-    t.integer "seen"
     t.string "parent_name"
     t.integer "parent_relationship"
     t.string "parent_relationship_other"
     t.string "parent_email"
     t.string "parent_phone"
-    t.text "parent_info_source"
     t.bigint "location_id"
     t.index ["location_id"], name: "index_patients_on_location_id"
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
