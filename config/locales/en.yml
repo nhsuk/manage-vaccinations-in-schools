@@ -357,6 +357,8 @@ en:
               too_long: Enter a password that is less than 128 characters long
             password_confirmation:
               confirmation: The password and confirmation do not match
+            unlock_token:
+              invalid: The unlock token is invalid
         registration:
           attributes:
             address_line_1:
