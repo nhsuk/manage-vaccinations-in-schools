@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe ConsentFormMailer, type: :mailer do
-  let(:team_email) { "england.manage-childrens-vaccinations@nhs.net" }
+  let(:team_email) { "england.mavis@nhs.net" }
   let(:team_phone) { "01900 705 045" }
 
   def consent_form(overrides = {})

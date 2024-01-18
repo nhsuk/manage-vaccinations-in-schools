@@ -4,7 +4,8 @@ en:
     success: Success
     warning: Warning
   service:
-    email: england.manage-childrens-vaccinations@nhs.net
+    email: england.mavis@nhs.net
+    nhs_ur_email: anthony.green11@nhs.net
     temporary_cumbria_phone: "01900 705 045"
   wicked:
     # ConsentForm
