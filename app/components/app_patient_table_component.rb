@@ -2,18 +2,27 @@ class AppPatientTableComponent < ViewComponent::Base
   include ApplicationHelper
 
   def call
-    govuk_table(classes: "app-table--patients") do |table|
-      table.with_head do |head|
-        head.with_row do |row|
-          @columns.each { |column| row.with_cell(text: column_name(column)) }
-        end
-      end
-
-      table.with_body do |body|
-        @patient_sessions.each do |patient_session|
-          body.with_row do |row|
+    tag.action_table(sort: "name") do
+      govuk_table(classes: "app-table--patients nhsuk-u-margin-0") do |table|
+        table.with_head do |head|
+          head.with_row do |row|
             @columns.each do |column|
-              row.with_cell(text: column_value(patient_session, column))
+              row.with_cell(
+                text: column_name(column),
+                html_attributes: {
+                  "data-col": column
+                }
+              )
+            end
+          end
+        end
+
+        table.with_body do |body|
+          @patient_sessions.each do |patient_session|
+            body.with_row do |row|
+              @columns.each do |column|
+                row.with_cell(**column_value(patient_session, column))
+              end
             end
           end
         end
@@ -38,16 +47,25 @@ class AppPatientTableComponent < ViewComponent::Base
   def column_value(patient_session, column)
     case column
     when :name
-      patient_link(patient_session)
+      { text: patient_link(patient_session) }
     when :dob
-      patient_session.patient.date_of_birth.to_fs(:nhsuk_date_short_month)
+      {
+        text:
+          patient_session.patient.date_of_birth.to_fs(:nhsuk_date_short_month),
+        html_attributes: {
+          "data-sort": patient_session.patient.date_of_birth
+        }
+      }
     when :reason
-      patient_session
-        .consents
-        .map { |c| c.human_enum_name(:reason_for_refusal) }
-        .uniq
-        .join("<br />")
-        .html_safe
+      {
+        text:
+          patient_session
+            .consents
+            .map { |c| c.human_enum_name(:reason_for_refusal) }
+            .uniq
+            .join("<br />")
+            .html_safe
+      }
     else
       raise ArgumentError, "Unknown column: #{column}"
     end
