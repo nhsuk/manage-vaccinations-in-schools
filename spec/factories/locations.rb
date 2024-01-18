@@ -12,6 +12,11 @@
 #  url        :text
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  team_id    :integer          not null
+#
+# Foreign Keys
+#
+#  fk_rails_...  (team_id => teams.id)
 #
 FactoryBot.define do
   factory :location do
