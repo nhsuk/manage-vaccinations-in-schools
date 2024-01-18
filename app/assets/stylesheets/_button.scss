@@ -1,0 +1,4 @@
+.app-button--small {
+  @include nhsuk-typography-responsive(16);
+  padding: nhsuk-spacing(1) nhsuk-spacing(2);
+}

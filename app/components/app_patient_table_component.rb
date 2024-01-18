@@ -1,41 +1,13 @@
 class AppPatientTableComponent < ViewComponent::Base
   include ApplicationHelper
 
-  def call
-    tag.action_table(sort: "name") do
-      govuk_table(classes: "app-table--patients nhsuk-u-margin-0") do |table|
-        table.with_head do |head|
-          head.with_row do |row|
-            @columns.each do |column|
-              row.with_cell(
-                text: column_name(column),
-                html_attributes: {
-                  "data-col": column
-                }
-              )
-            end
-          end
-        end
-
-        table.with_body do |body|
-          @patient_sessions.each do |patient_session|
-            body.with_row do |row|
-              @columns.each do |column|
-                row.with_cell(**column_value(patient_session, column))
-              end
-            end
-          end
-        end
-      end
-    end
-  end
-
-  def initialize(patient_sessions:, columns: %i[name dob], route: nil)
+  def initialize(patient_sessions:, tab_id:, columns: %i[name dob], route: nil)
     super
 
     @patient_sessions = patient_sessions
     @columns = columns
     @route = route
+    @tab_id = tab_id
   end
 
   private
@@ -53,6 +25,8 @@ class AppPatientTableComponent < ViewComponent::Base
         text:
           patient_session.patient.date_of_birth.to_fs(:nhsuk_date_short_month),
         html_attributes: {
+          "data-filter":
+            patient_session.patient.date_of_birth.strftime("%d/%m/%Y"),
           "data-sort": patient_session.patient.date_of_birth
         }
       }

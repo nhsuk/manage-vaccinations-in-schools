@@ -9,7 +9,9 @@ RSpec.describe AppPatientTableComponent, type: :component do
 
   let(:route) { :consent }
   let(:patient_sessions) { create_list(:patient_session, 2) }
-  let(:component) { described_class.new(patient_sessions:, route:) }
+  let(:component) do
+    described_class.new(patient_sessions:, tab_id: "foo", route:)
+  end
 
   it { should have_css(".nhsuk-table") }
   it { should have_css(".nhsuk-table__head") }

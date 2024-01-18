@@ -4,7 +4,7 @@
                 session_patient_vaccinations_path(patient_session.session, patient_session.patient),
       "data-testid": "child-link" %>
   </td>
-  <td class="nhsuk-table__cell" style="width: 150px" data-sort="<%= patient_session.patient.date_of_birth %>">
+  <td class="nhsuk-table__cell" style="width: 150px" data-filter="<%= patient_session.patient.date_of_birth.strftime("%d/%m/%Y") %>" data-sort="<%= patient_session.patient.date_of_birth %>">
     <%= patient_session.patient.date_of_birth.to_fs(:nhsuk_date_short_month) %>
   </td>
   <td class="nhsuk-table__cell" data-testid="child-action">
