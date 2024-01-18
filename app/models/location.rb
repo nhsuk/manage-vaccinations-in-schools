@@ -23,8 +23,8 @@ class Location < ApplicationRecord
 
   has_many :sessions
   has_many :patients
+  has_many :consent_forms, through: :sessions
+  belongs_to :team
 
   validates :name, presence: true
-
-  has_many :consent_forms, through: :sessions
 end
