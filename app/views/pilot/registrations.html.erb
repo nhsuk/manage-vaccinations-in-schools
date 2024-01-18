@@ -1,0 +1,42 @@
+<% page_title = "Parents interested in the pilot" %>
+
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+    { text: 'Home', href: dashboard_path },
+    { text: 'Manage pilot', href: manage_pilot_path },
+    { text: page_title }
+  ]) %>
+<% end %>
+
+<%= h1 page_title, class: 'nhsuk-heading-l' %>
+
+<% if @registrations.empty? %>
+  <p>No parents have registered their interest in the pilot yet.</p>
+<% end %>
+
+<% @registrations.each do |school, responses| %>
+  <%= render AppCardComponent.new(heading: school) do %>
+    <%= govuk_table do |table|
+      table.with_caption(text: pluralize(responses.count, "response"),
+                         classes: 'nhsuk-u-font-size-19')
+
+      table.with_head do |head|
+        head.with_row do |row|
+          row.with_cell(text: 'Name')
+          row.with_cell(text: 'Email Address')
+          row.with_cell(text: 'Phone number')
+        end
+      end
+
+      table.with_body do |body|
+        responses.each do |response|
+          body.with_row do |row|
+            row.with_cell(text: response.parent_name)
+            row.with_cell(text: response.parent_email)
+            row.with_cell(text: response.parent_phone)
+          end
+        end
+      end
+    end %>
+  <% end %>
+<% end %>

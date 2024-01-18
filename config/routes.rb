@@ -31,6 +31,10 @@ Rails.application.routes.draw do
     get "/", to: "pilot#manage", as: :manage
     get "/manual", to: "pilot#manual", as: :manual
 
+    resources :registrations, only: %i[] do
+      get "/", to: "pilot#registrations", on: :collection
+    end
+
     resource :cohort_list, as: :cohort, only: %i[new create] do
       get "success", on: :collection
     end
