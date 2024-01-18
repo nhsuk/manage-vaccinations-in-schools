@@ -26,21 +26,23 @@
   </div>
   <div class="nhsuk-grid-column-three-quarters" id="patients-<%= id %>">
     <% if patient_sessions.any? %>
-      <table class="nhsuk-table app-table--patients">
-        <caption class="nhsuk-table__caption nhsuk-visually-hidden">Patients</caption>
-        <thead class="nhsuk-table__head">
-          <tr class="nhsuk-table__row">
-            <th class="nhsuk-table__header">Name</th>
-            <th class="nhsuk-table__header">Date of birth</th>
-            <th class="nhsuk-table__header" style="width: 200px">Outcome</th>
-          </tr>
-        </thead>
-        <tbody class="nhsuk-table__body">
-          <% patient_sessions.each do |patient_session| %>
-            <%= render "patient_row", patient_session: %>
-          <% end %>
-        </tbody>
-      </table>
+      <action-table sort="name">
+        <table class="nhsuk-table app-table--patients">
+          <caption class="nhsuk-table__caption nhsuk-visually-hidden">Patients</caption>
+          <thead class="nhsuk-table__head">
+            <tr class="nhsuk-table__row">
+              <th class="nhsuk-table__header" data-col="name">Name</th>
+              <th class="nhsuk-table__header app-u-nowrap" data-col="dob">Date of birth</th>
+              <th class="nhsuk-table__header" data-col="outcome" style="width: 200px">Outcome</th>
+            </tr>
+          </thead>
+          <tbody class="nhsuk-table__body">
+            <% patient_sessions.each do |patient_session| %>
+              <%= render "patient_row", patient_session: %>
+            <% end %>
+          </tbody>
+        </table>
+      </action-table>
     <% else %>
       <%= render AppEmptyListComponent.new %>
     <% end %>
