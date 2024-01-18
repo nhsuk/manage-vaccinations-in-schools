@@ -39,4 +39,9 @@ class User < ApplicationRecord
 
   encrypts :email, deterministic: true
   encrypts :full_name
+
+  def team
+    # TODO: Update the app to properly support multiple teams per user
+    teams.first
+  end
 end
