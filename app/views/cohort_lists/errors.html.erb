@@ -1,6 +1,6 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: cohort_pilot_path,
+    href: new_pilot_cohort_path,
     name: "cohort upload page"
   ) %>
 <% end %>
@@ -34,5 +34,5 @@
 <hr />
 
 <p>
-  <%= link_to "Upload a new cohort list", cohort_pilot_path %>
+  <%= link_to "Upload a new cohort list", new_pilot_cohort_path %>
 </p>
