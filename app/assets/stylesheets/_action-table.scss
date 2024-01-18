@@ -1,3 +1,14 @@
+action-table-filters,
+action-table-no-results {
+  display: none;
+
+  @include mq($from: tablet) {
+    &:defined {
+      display: block;
+    }
+  }
+}
+
 action-table {
   display: block;
 
@@ -35,22 +46,5 @@ action-table {
   & th[aria-sort="descending"] button::after {
     opacity: 1;
     transform: rotate(180deg);
-  }
-
-  .no-results p {
-    text-transform: lowercase;
-
-    &::first-letter {
-      text-transform: uppercase;
-    }
-
-    &:first-of-type {
-      @extend .nhsuk-heading-m;
-    }
-  }
-
-  .no-results button {
-    @include nhsuk-link-style-default;
-    font-weight: normal;
   }
 }

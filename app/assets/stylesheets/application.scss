@@ -25,6 +25,7 @@ $nhsuk-fonts-path: "/";
 $color_app-pale-blue: #ccdff1;
 
 @import "action-table";
+@import "button";
 @import "card";
 @import "dev-tools";
 @import "file-upload";
@@ -39,3 +40,10 @@ $color_app-pale-blue: #ccdff1;
 @import "status";
 @import "summary-list";
 @import "utilities";
+
+// NHS.UK Frontend overrides
+.nhsuk-label--s,
+.nhsuk-fieldset__legend--s {
+  padding-top: nhsuk-spacing(2);
+  margin-bottom: nhsuk-spacing(2);
+}

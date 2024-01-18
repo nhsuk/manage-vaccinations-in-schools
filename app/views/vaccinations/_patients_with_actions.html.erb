@@ -1,50 +1,26 @@
-<div class="nhsuk-grid-row">
+<action-table class="nhsuk-grid-row" sort="name">
   <div class="nhsuk-grid-column-one-quarter">
-    <div class="nhsuk-form-group nhsuk-u-margin-top-3">
-      <label class="nhsuk-label" for="search-<%= id %>">
-        By name
-      </label>
-      <input class="nhsuk-input" id="search-<%= id %>" name="search" type="text" aria-describedby="search-hint">
-    </div>
-    <script>
-      function filterTable() {
-        var inputValue = document.getElementById("search-<%= id %>").value.toLowerCase();
-        var rows = document.getElementById("patients-<%= id %>").querySelectorAll("tbody tr");
-
-        for (var i = 0; i < rows.length; i++) {
-          var nameCell = rows[i].getElementsByTagName("td")[0];
-          var name = nameCell.textContent || nameCell.innerText;
-          if (name.toLowerCase().indexOf(inputValue) > -1) {
-            rows[i].style.display = "";
-          } else {
-            rows[i].style.display = "none";
-          }
-        }
-      }
-      document.getElementById("search-<%= id %>").addEventListener("input", filterTable);
-    </script>
+    <%= render AppPatientTableFilterComponent.new(tab_id: id, filter_actions: true) %>
   </div>
   <div class="nhsuk-grid-column-three-quarters" id="patients-<%= id %>">
     <% if patient_sessions.any? %>
-      <action-table sort="name">
-        <table class="nhsuk-table app-table--patients">
-          <caption class="nhsuk-table__caption nhsuk-visually-hidden">Patients</caption>
-          <thead class="nhsuk-table__head">
-            <tr class="nhsuk-table__row">
-              <th class="nhsuk-table__header" data-col="name">Name</th>
-              <th class="nhsuk-table__header app-u-nowrap" data-col="dob">Date of birth</th>
-              <th class="nhsuk-table__header" data-col="action" style="width: 200px">Action needed</th>
-            </tr>
-          </thead>
-          <tbody class="nhsuk-table__body">
-            <% patient_sessions.each do |patient_session| %>
-              <%= render "patient_row", patient_session: %>
-            <% end %>
-          </tbody>
-        </table>
-      </action-table>
+      <table class="nhsuk-table app-table--patients">
+        <caption class="nhsuk-table__caption nhsuk-visually-hidden">Patients</caption>
+        <thead class="nhsuk-table__head">
+          <tr class="nhsuk-table__row">
+            <th class="nhsuk-table__header" data-col="name">Name</th>
+            <th class="nhsuk-table__header app-u-nowrap" data-col="dob">Date of birth</th>
+            <th class="nhsuk-table__header" data-col="action" style="width: 200px">Action needed</th>
+          </tr>
+        </thead>
+        <tbody class="nhsuk-table__body">
+          <% patient_sessions.each do |patient_session| %>
+            <%= render "patient_row", patient_session: %>
+          <% end %>
+        </tbody>
+      </table>
     <% else %>
       <%= render AppEmptyListComponent.new %>
     <% end %>
   </div>
-</div>
+</action-table>
