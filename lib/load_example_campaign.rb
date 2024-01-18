@@ -31,7 +31,8 @@ module LoadExampleCampaign
         #       iterate when needed.
         make_in_progress!(session_attributes:) if in_progress
 
-        school = create_school(school_attributes: session_attributes["school"])
+        school =
+          create_school(team:, school_attributes: session_attributes["school"])
         session = create_session(session_attributes, campaign:, school:)
         children_attributes = example.children_attributes(session_attributes:)
         create_children(children_attributes:, campaign:, session:)
@@ -75,9 +76,9 @@ module LoadExampleCampaign
     end
   end
 
-  def self.create_school(school_attributes:)
+  def self.create_school(team:, school_attributes:)
     Location
-      .find_or_create_by!(name: school_attributes[:name])
+      .find_or_create_by!(team:, name: school_attributes[:name])
       .tap { |school| school.update!(school_attributes) }
   end
 
