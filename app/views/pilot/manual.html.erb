@@ -1,0 +1,44 @@
+<% page_title = "Create a pilot cohort" %>
+
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+    { text: 'Home', href: dashboard_path },
+    { text: 'Manage pilot', href: manage_pilot_path },
+    { text: page_title }
+  ]) %>
+<% end %>
+
+<%= h1 page_title, class: "nhsuk-heading-xl" %>
+
+<p class="nhsuk-body">Creating the pilot cohort involves five steps:</p>
+<ol class="nhsuk-list nhsuk-list--number"><li><a class="nhsuk-link" href="#1-download-the-list-of-interested-parents-from-mavis">Download the list of parents interested in the pilot</a></li>
+<li><a class="nhsuk-link" href="#2-identify-up-to-110-eligible-children-to-participate">Identify up to 110 children eligible to take part in the pilot</a></li>
+<li><a class="nhsuk-link" href="#3-tell-us-which-parents-are-taking-part-in-the-pilot-and-which-are-not">Tell us which parents are taking part in the pilot and which are not</a></li>
+<li><a class="nhsuk-link" href="#4-create-the-cohort-list-for-those-who-are-taking-part">Create the cohort list for those who are taking part</a></li>
+<li><a class="nhsuk-link" href="#5-upload-the-cohort-list">Upload the cohort list into Mavis</a></li>
+</ol>
+<h2 class="nhsuk-heading-l" id="1-download-the-list-of-interested-parents-from-mavis">1. Download the list of interested parents from Mavis</h2><p class="nhsuk-body">You can see how many people have expressed their interest in joining the pilot from each school in <a class="nhsuk-link" href="/pilot/participants">Parents interested in the pilot</a>.</p>
+<p class="nhsuk-body">When you have more than 110 responses overall, and a suitable number from each school, you can download the data as a CSV to see the full list of interested parents.</p>
+<h2 class="nhsuk-heading-l" id="2-identify-up-to-110-eligible-children-to-participate">2. Identify up to 110 eligible children to participate</h2><p class="nhsuk-body">As we’re not allowed to see children’s personal information, we need you to check the eligibility of those who sign up.</p>
+<p class="nhsuk-body">The CSV will be sorted in order of sign-ups, so the first person to sign up is at the top of the list. We are only authorised to run the pilot with a certain number of children per SAIS team, so we need to identify the first 110 eligible parents who signed up. (You can break this down by school however you need to.)</p>
+<p class="nhsuk-body">Children are eligible for the pilot if:</p>
+<ul class="nhsuk-list nhsuk-list--bullet"><li><p class="nhsuk-body">they are part of the cohort you had planned to vaccinate at the participating school according to your existing process (so children at other schools or in other year groups are not eligible)</p>
+</li>
+<li><p class="nhsuk-body">they have not already had the vaccine</p>
+</li>
+<li><p class="nhsuk-body">their parent/guardian has a completed consent form according to your current process (it does not matter whether the response was to give or refuse consent)</p>
+</li>
+</ul>
+<p class="nhsuk-body">Once you reach the desired number of eligible children for a particular school, go to <a class="nhsuk-link" href="/pilot/participants">Parents interested in the pilot</a> and click on the link labelled ‘Close pilot to new participants at this school’.</p>
+<h2 class="nhsuk-heading-l" id="3-tell-us-which-parents-are-taking-part-in-the-pilot-and-which-are-not">3. Tell us which parents are taking part in the pilot and which are not</h2><p class="nhsuk-body">Once you’ve identified 110 eligible children overall, copy their parents’ names and email addresses (not their children’s details) into a separate file, labelled ‘Participants’.</p>
+<p class="nhsuk-body">Create another file for the names and email addresses of parents who will not be participating, labelled ‘Not participating’.</p>
+<p class="nhsuk-body">Email both files to us, so that we can contact both groups confirming whether or not they can participate in the pilot.</p>
+<p class="nhsuk-body">You should send both files to: <a class="nhsuk-link" href="mailto:england.mavis@nhs.net">england.mavis@nhs.net</a></p>
+<h2 class="nhsuk-heading-l" id="4-create-the-cohort-list-for-those-who-are-taking-part">4. Create the cohort list for those who are taking part</h2><p class="nhsuk-body">Mavis is built to keep track of all the children in the cohort. It links consent responses to the right child, and shows which children don’t have consent responses yet.</p>
+<p class="nhsuk-body">In future, we plan to get cohort data by integrating with other systems you use, but for the pilot, you will need to manually upload the cohort list for the children taking part in the pilot.</p>
+<p class="nhsuk-body">One of our key goals for the pilot is to test whether we can accurately match the consent responses we receive from parents to your existing records. The best way to test this will be if you can upload the child’s details as they are in your existing process, rather than us using the details the parent provided when expressing interest.</p>
+<p class="nhsuk-body">To do this, you need to create a CSV in the template format we have provided (the same as the download from step 1), but updated with the child details you have on record in your patient records system or spreadsheet.</p>
+<p class="nhsuk-body">In practice, this means you need to populate children’s NHS numbers if they’re missing, and if you have a different name, date of birth or address for the child in your existing records, change the CSV so that it matches your records.</p>
+<p class="nhsuk-body">You may find it easier, if it’s possible in your system, to export the children’s records in bulk and then alter the format to match our template. However, please make sure that you use the parent contact details that the parent provided themselves when they expressed interest.</p>
+<h2 class="nhsuk-heading-l" id="5-upload-the-cohort-list">5. Upload the cohort list</h2><p class="nhsuk-body">Once you’ve finalised the participants details, you can upload the cohort list by going to <a class="nhsuk-link" href="/pilot/cohort">Upload the cohort list</a>, then selecting the right file and uploading it.</p>
+<p class="nhsuk-body">Mavis will reject the file if it is not formatted correctly. If you have any issues at this stage, get in touch and we can help. If it’s not urgent, email <a class="nhsuk-link" href="mailto:england.mavis@nhs.net">england.mavis@nhs.net</a>. If it is urgent, call Jake Benilov on 07700 900000.</p>

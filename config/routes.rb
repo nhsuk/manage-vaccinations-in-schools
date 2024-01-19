@@ -29,6 +29,7 @@ Rails.application.routes.draw do
 
   resource :pilot, only: [] do
     get "/", to: "pilot#manage", as: :manage
+    get "/manual", to: "pilot#manual", as: :manual
 
     resource :cohort_list, as: :cohort, only: %i[new create] do
       get "success", on: :collection
