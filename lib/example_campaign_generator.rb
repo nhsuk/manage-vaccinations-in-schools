@@ -3,6 +3,7 @@ require "faker"
 class ExampleCampaignGenerator
   def self.patient_options
     %i[
+      parents_that_have_registered_interest
       consent_forms_that_do_not_match
       consent_forms_that_partially_match
       patients_with_no_consent_response
@@ -22,6 +23,7 @@ class ExampleCampaignGenerator
   def presettings
     @presettings ||= {
       default: {
+        parents_that_have_registered_interest: 5,
         consent_forms_that_do_not_match: 2,
         consent_forms_that_partially_match: 2,
         patients_with_consent_given_and_ready_to_vaccinate: 2,
@@ -86,7 +88,8 @@ class ExampleCampaignGenerator
       team: team_data,
       vaccines: vaccines_data,
       healthQuestions: health_answers_data,
-      sessions: sessions_data
+      sessions: sessions_data,
+      registrations: registrations_data
     }
   end
 
@@ -148,6 +151,33 @@ class ExampleCampaignGenerator
     @vaccines_data ||= [
       { brand: vaccine.brand, method: vaccine.method, batches: batches_data }
     ]
+  end
+
+  def registrations_data
+    @registrations_data ||=
+      options
+        .fetch(:parents_that_have_registered_interest, 0)
+        .times
+        .map { FactoryBot.build(:registration, random:) }
+        .map do |registration|
+          {
+            firstName: registration.first_name,
+            lastName: registration.last_name,
+            dob: registration.date_of_birth.iso8601,
+            nhsNumber: registration.nhs_number,
+            parentEmail: registration.parent_email,
+            parentName: registration.parent_name,
+            parentPhone: registration.parent_phone,
+            parentRelationship: registration.parent_relationship,
+            parentRelationshipOther: registration.parent_relationship_other,
+            addressLine1: registration.address_line_1,
+            addressLine2: registration.address_line_2,
+            addressTown: registration.address_town,
+            addressPostcode: registration.address_postcode,
+            commonName: registration.common_name,
+            useCommonName: registration.use_common_name
+          }
+        end
   end
 
   def generate_session_data

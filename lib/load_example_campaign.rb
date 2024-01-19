@@ -41,6 +41,18 @@ module LoadExampleCampaign
           example.consent_form_attributes(session_attributes:) || []
         create_consent_forms(consent_forms:, session:)
       end
+
+      location = team.locations.first
+      example.registrations.each do |registration_attributes|
+        Registration.create!(
+          registration_attributes.merge(
+            location:,
+            terms_and_conditions_agreed: true,
+            data_processing_agreed: true,
+            consent_response_confirmed: true
+          )
+        )
+      end
     end
   end
 
