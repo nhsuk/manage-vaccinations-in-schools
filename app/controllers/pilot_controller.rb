@@ -3,4 +3,7 @@ class PilotController < ApplicationController
 
   def manage
   end
+
+  def manual
+  end
 end
