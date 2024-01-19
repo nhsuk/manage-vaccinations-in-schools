@@ -3,7 +3,7 @@ import { signInTestUser } from "./shared";
 
 let p: Page;
 
-test("Pilot - manage cohort", async ({ page }) => {
+test("Pilot - upload cohort", async ({ page }) => {
   p = page;
 
   await given_the_app_is_setup();
