@@ -39,7 +39,3 @@ $color_app-pale-blue: #ccdff1;
 @import "status";
 @import "summary-list";
 @import "utilities";
-
-.nhsuk-visually-hidden {
-  @extend .nhsuk-u-visually-hidden;
-}
