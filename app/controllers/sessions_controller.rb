@@ -3,7 +3,7 @@ class SessionsController < ApplicationController
   before_action :set_school, only: %i[show]
 
   def index
-    @sessions_by_type = policy_scope(Session).group_by(&:type)
+    @sessions_by_type = policy_scope(Session).active.group_by(&:type)
   end
 
   def show

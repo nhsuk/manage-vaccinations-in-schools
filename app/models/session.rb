@@ -4,6 +4,7 @@
 #
 #  id          :bigint           not null, primary key
 #  date        :datetime
+#  draft       :boolean          default(FALSE)
 #  name        :text             not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
@@ -25,6 +26,7 @@ class Session < ApplicationRecord
 
   validates :name, presence: true
   validates :date, presence: true
+  scope :active, -> { where(draft: false) }
 
   def health_questions
     campaign.vaccines.first.health_questions

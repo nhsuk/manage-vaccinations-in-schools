@@ -4,6 +4,7 @@
 #
 #  id          :bigint           not null, primary key
 #  date        :datetime
+#  draft       :boolean          default(FALSE)
 #  name        :text             not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
@@ -37,5 +38,15 @@ RSpec.describe Session do
 
       it { should be_falsey }
     end
+  end
+
+  describe ".active scope" do
+    subject { Session.active }
+
+    let!(:active_session) { FactoryBot.create :session }
+    let!(:draft_session) { FactoryBot.create :session, draft: true }
+
+    it { should include active_session }
+    it { should_not include draft_session }
   end
 end
