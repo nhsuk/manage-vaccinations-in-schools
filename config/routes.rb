@@ -40,10 +40,13 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :sessions, only: %i[create index show] do
+  resources :sessions, only: %i[create index show update] do
     get "consents", to: "consents#index", on: :member
     get "triage", to: "triage#index", on: :member
     get "vaccinations", to: "vaccinations#index", on: :member
+
+    resources :edit, only: %i[show update], controller: "sessions/edit"
+    get "confirm", on: :member
 
     constraints -> { Flipper.enabled?(:make_session_in_progress_button) } do
       put "make-in-progress", to: "sessions#make_in_progress", on: :member

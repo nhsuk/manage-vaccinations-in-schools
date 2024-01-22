@@ -29,6 +29,9 @@ en:
     questions: "questions"
     # reason: "reason" # already defined above
     confirm: "confirm"
+
+    # Session
+    type: "type"
   consent_form_mailer:
     reasons_for_refusal:
       contains_gelatine: "of the gelatine in the nasal spray"
