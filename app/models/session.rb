@@ -5,7 +5,6 @@
 #  id          :bigint           not null, primary key
 #  date        :datetime
 #  draft       :boolean          default(FALSE)
-#  name        :text             not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #  campaign_id :bigint           not null
@@ -24,13 +23,14 @@ class Session < ApplicationRecord
   has_many :patient_sessions
   has_many :patients, through: :patient_sessions
 
-  validates :name, presence: true
   validates :date, presence: true
   scope :active, -> { where(draft: false) }
 
   def health_questions
     campaign.vaccines.first.health_questions
   end
+
+  delegate :name, to: :location
 
   def type
     campaign.name

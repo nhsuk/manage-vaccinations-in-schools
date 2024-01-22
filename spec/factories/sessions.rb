@@ -5,7 +5,6 @@
 #  id          :bigint           not null, primary key
 #  date        :datetime
 #  draft       :boolean          default(FALSE)
-#  name        :text             not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #  campaign_id :bigint           not null
@@ -23,7 +22,6 @@ FactoryBot.define do
     location
 
     date { Time.zone.today }
-    name { "#{campaign.name} session at #{location.name}" }
 
     trait :in_progress do
       date { Time.zone.now }
