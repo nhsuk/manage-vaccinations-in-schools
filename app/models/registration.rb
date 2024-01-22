@@ -100,8 +100,18 @@ class Registration < ApplicationRecord
             }
   validates :conditions_for_taking_part_met, acceptance: true
 
+  delegate :name, to: :location, prefix: true
+
   def conditions_for_taking_part_met
     consent_response_confirmed? && data_processing_agreed? &&
       terms_and_conditions_agreed?
+  end
+
+  def formatted_parent_relationship
+    if parent_relationship_other?
+      parent_relationship_other
+    else
+      parent_relationship.capitalize
+    end
   end
 end
