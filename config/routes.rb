@@ -98,8 +98,10 @@ Rails.application.routes.draw do
                 path: ":route/consents/:consent_id/"
     end
 
-    get "setup-offline", to: "offline_passwords#new", on: :member
-    post "setup-offline", to: "offline_passwords#create", on: :member
+    constraints -> { Flipper.enabled? :offline_working } do
+      get "setup-offline", to: "offline_passwords#new", on: :member
+      post "setup-offline", to: "offline_passwords#create", on: :member
+    end
   end
 
   resources :schools, only: [:show]

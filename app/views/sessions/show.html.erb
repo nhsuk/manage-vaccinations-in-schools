@@ -60,18 +60,20 @@
     </div>
   </div>
 
-  <div class="nhsuk-grid-column-one-third">
-    <div id="save-offline">
-      <h2 class="nhsuk-heading-s">Save offline</h2>
-      <p>Record vaccinations while not connected to the internet.</p>
+  <% if Flipper.enabled? :offline_working %>
+    <div class="nhsuk-grid-column-one-third">
+      <div id="save-offline">
+        <h2 class="nhsuk-heading-s">Save offline</h2>
+        <p>Record vaccinations while not connected to the internet.</p>
 
-      <a href="<%= setup_offline_session_path %>"
-         class="nhsuk-button nhsuk-u-margin-bottom-3"
-         data-testid="save-offline">
-         Save offline
-      </a>
+        <a href="<%= setup_offline_session_path %>"
+           class="nhsuk-button nhsuk-u-margin-bottom-3"
+           data-testid="save-offline">
+           Save offline
+        </a>
+      </div>
     </div>
-  </div>
+  <% end %>
 </div>
 
 <% content_for :after_main do %>
