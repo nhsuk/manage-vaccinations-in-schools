@@ -261,7 +261,7 @@ GEM
       date_time_precision (>= 0.8)
       mime-types (>= 3.0)
       nokogiri (>= 1.11.4)
-    flipper (1.2.1)
+    flipper (1.2.2)
       concurrent-ruby (< 2)
     flipper-active_record (1.2.1)
       activerecord (>= 4.2, < 8)
