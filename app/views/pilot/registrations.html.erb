@@ -10,6 +10,9 @@
 
 <%= h1 page_title, class: 'nhsuk-heading-l' %>
 
+<%= govuk_button_link_to "Download data for registered parents (CSV)",
+  download_pilot_registrations_path, download: "registered_parents.csv" %>
+
 <% if @registrations.empty? %>
   <p>No parents have registered their interest in the pilot yet.</p>
 <% end %>

@@ -2,6 +2,7 @@ import { test, expect, Page } from "@playwright/test";
 import { signInTestUser } from "./shared";
 
 let p: Page;
+let download;
 
 test("Pilot - upload cohort", async ({ page }) => {
   p = page;
@@ -17,6 +18,9 @@ test("Pilot - upload cohort", async ({ page }) => {
 
   await when_i_click_the_registrations_link();
   await then_i_should_see_the_registrations_page();
+
+  await when_i_click_the_download_cohort_button();
+  await then_it_should_download_the_cohort_file();
 });
 
 async function given_the_app_is_setup() {
@@ -58,4 +62,19 @@ async function then_i_should_see_the_registrations_page() {
       name: "Parents interested in the pilot",
     }),
   ).toBeVisible();
+}
+
+async function when_i_click_the_download_cohort_button() {
+  [download] = await Promise.all([
+    p.waitForEvent("download"),
+    p
+      .getByRole("link", {
+        name: "Download data for registered parents (CSV)",
+      })
+      .click(),
+  ]);
+}
+
+async function then_it_should_download_the_cohort_file() {
+  expect(download.suggestedFilename()).toBe("registered_parents.csv");
 }
