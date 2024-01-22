@@ -127,7 +127,7 @@ module LoadExampleCampaign
 
   def self.create_session(session_attributes, campaign:, school:)
     Session
-      .find_or_initialize_by(campaign:, name: school[:name])
+      .find_or_initialize_by(campaign:, location: school)
       .tap do |session|
         session.update!(session_attributes.slice("date"))
         session.location = school if session.location.blank?
