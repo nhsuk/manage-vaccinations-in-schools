@@ -3,6 +3,9 @@ en:
     info: Information
     success: Success
     warning: Warning
+  page_titles:
+    privacy_policy: "Your privacy"
+    privacy_policy_summary: "Your privacy"
   service:
     email: england.mavis@nhs.net
     nhs_ur_email: anthony.green11@nhs.net
