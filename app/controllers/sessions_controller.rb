@@ -2,6 +2,18 @@ class SessionsController < ApplicationController
   before_action :set_session, only: %i[show make_in_progress]
   before_action :set_school, only: %i[show]
 
+  def create
+    team = current_user.teams.first
+    campaign = team.campaigns.first
+
+    @session =
+      Session.create! campaign:,
+                      date: Time.zone.today,
+                      location: current_user.teams.first.locations.sample
+
+    redirect_to sessions_path
+  end
+
   def index
     @sessions_by_type = policy_scope(Session).active.group_by(&:type)
   end

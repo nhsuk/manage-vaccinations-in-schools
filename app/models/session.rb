@@ -23,7 +23,6 @@ class Session < ApplicationRecord
   has_many :patient_sessions
   has_many :patients, through: :patient_sessions
 
-  validates :date, presence: true
   scope :active, -> { where(draft: false) }
 
   def health_questions
