@@ -11,7 +11,7 @@
 
 <%= h1 page_title, page_title: %>
 
-<%= govuk_button_link_to("Add a new session", "#") %>
+<%= govuk_button_to("Add a new session", sessions_path) %>
 
 <% @sessions_by_type.each do |campaign_type, sessions| %>
   <h2><%= campaign_type %></h2>
