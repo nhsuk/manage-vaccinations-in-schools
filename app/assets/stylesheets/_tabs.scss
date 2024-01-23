@@ -1,0 +1,5 @@
+.nhsuk-tabs__list-item {
+  @include mq($from: tablet, $until: desktop) {
+    @include nhsuk-font(16);
+  }
+}
