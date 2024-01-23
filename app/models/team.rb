@@ -18,4 +18,9 @@ class Team < ApplicationRecord
 
   validates :name, presence: true
   validates :name, uniqueness: true
+
+  def campaign
+    # TODO: Update the app to properly support multiple campaigns per team
+    campaigns.first
+  end
 end
