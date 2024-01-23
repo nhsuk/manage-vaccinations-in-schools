@@ -50,8 +50,7 @@ Rails.application.routes.draw do
     get "triage", to: "triage#index", on: :member
     get "vaccinations", to: "vaccinations#index", on: :member
 
-    resources :edit, only: %i[show update], controller: "sessions/edit"
-    get "confirm", on: :member
+    resources :edit_sessions, only: %i[show update], path: "edit", as: :edit
 
     constraints -> { Flipper.enabled?(:make_session_in_progress_button) } do
       put "make-in-progress", to: "sessions#make_in_progress", on: :member
