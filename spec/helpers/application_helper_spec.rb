@@ -4,7 +4,9 @@ describe ApplicationHelper do
   describe "#h1" do
     context "when called with only text" do
       it "returns an h1 tag with the text" do
-        expect(helper.h1("Title")).to eq("<h1>Title</h1>")
+        expect(helper.h1("Title")).to eq(
+          '<h1 class="nhsuk-heading-l">Title</h1>'
+        )
       end
 
       it "sets the page title" do
@@ -15,12 +17,22 @@ describe ApplicationHelper do
 
     context "when called with text and page_title option" do
       it "returns an h1 tag with the text" do
-        expect(helper.h1("Title", page_title: "Custom")).to eq("<h1>Title</h1>")
+        expect(helper.h1("Title", page_title: "Custom")).to eq(
+          '<h1 class="nhsuk-heading-l">Title</h1>'
+        )
       end
 
       it "sets the page title from the option" do
         helper.h1("Title", page_title: "Custom")
         expect(helper.content_for(:page_title)).to eq("Custom")
+      end
+    end
+
+    context "when called with size option" do
+      it "returns an h1 tag with the correct heading class" do
+        expect(helper.h1("Title", size: "xl")).to eq(
+          '<h1 class="nhsuk-heading-xl">Title</h1>'
+        )
       end
     end
 
@@ -31,7 +43,7 @@ describe ApplicationHelper do
 
       it "returns an h1 tag with the block content" do
         output = helper.h1(page_title: "Custom Title") { "Block Content" }
-        expect(output).to eq("<h1>Block Content</h1>")
+        expect(output).to eq('<h1 class="nhsuk-heading-l">Block Content</h1>')
       end
 
       it "sets the page title from the title option" do

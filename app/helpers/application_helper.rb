@@ -1,7 +1,11 @@
 module ApplicationHelper
   def h1(text = nil, **options, &block)
-    title_text = options[:page_title] || text
+    title_text = options.fetch(:page_title, text)
+    size = options.fetch(:size, "l")
+
+    options[:class] = "nhsuk-heading-#{size}"
     options.delete(:page_title)
+    options.delete(:size)
 
     content_for(:page_title, title_text) unless content_for?(:page_title)
 

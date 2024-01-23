@@ -5,7 +5,7 @@
   ) %>
 <% end %>
 
-<%= h1 "About you", class: "nhsuk-heading-l" %>
+<%= h1 "About you" %>
 
 <%= form_for @consent_form, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>

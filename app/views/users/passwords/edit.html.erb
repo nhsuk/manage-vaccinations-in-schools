@@ -1,4 +1,4 @@
-<%= h1 "Change your password", class: 'nhsuk-heading-xl' %>
+<%= h1 "Change your password", size: "xl" %>
 
 <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
   <%= f.hidden_field :reset_password_token %>
