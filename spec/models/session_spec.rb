@@ -2,13 +2,16 @@
 #
 # Table name: sessions
 #
-#  id          :bigint           not null, primary key
-#  date        :datetime
-#  draft       :boolean          default(FALSE)
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
-#  campaign_id :bigint           not null
-#  location_id :bigint
+#  id                :bigint           not null, primary key
+#  close_consent_at  :datetime
+#  date              :datetime
+#  draft             :boolean          default(FALSE)
+#  send_consent_at   :datetime
+#  send_reminders_at :datetime
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  campaign_id       :bigint           not null
+#  location_id       :bigint
 #
 # Indexes
 #

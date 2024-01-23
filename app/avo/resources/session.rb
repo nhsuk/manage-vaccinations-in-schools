@@ -15,5 +15,8 @@ class Avo::Resources::Session < Avo::BaseResource
     field :location, as: :belongs_to
     field :patients, as: :has_and_belongs_to_many
     # add fields here
+    field :send_consent_at, as: :date_time
+    field :send_reminders_at, as: :date_time
+    field :close_consent_at, as: :date_time
   end
 end
