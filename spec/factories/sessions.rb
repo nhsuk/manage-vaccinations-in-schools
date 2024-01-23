@@ -2,13 +2,16 @@
 #
 # Table name: sessions
 #
-#  id          :bigint           not null, primary key
-#  date        :datetime
-#  draft       :boolean          default(FALSE)
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
-#  campaign_id :bigint           not null
-#  location_id :bigint
+#  id                :bigint           not null, primary key
+#  close_consent_at  :datetime
+#  date              :datetime
+#  draft             :boolean          default(FALSE)
+#  send_consent_at   :datetime
+#  send_reminders_at :datetime
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  campaign_id       :bigint           not null
+#  location_id       :bigint
 #
 # Indexes
 #
@@ -22,6 +25,9 @@ FactoryBot.define do
     location
 
     date { Time.zone.today }
+    send_consent_at { date - 14.days }
+    send_reminders_at { send_consent_at + 7.days }
+    close_consent_at { date }
 
     trait :in_progress do
       date { Time.zone.now }
