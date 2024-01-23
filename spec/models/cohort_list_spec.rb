@@ -65,6 +65,16 @@ RSpec.describe CohortList, type: :model do
 
         expect(cohort_list).to be_valid
       end
+
+      it "accepts NHS numbers with spaces, removes spaces" do
+        cohort_list.load_data!
+        cohort_list.parse_rows!
+
+        expect(cohort_list).to be_valid
+        expect(cohort_list.rows.second.to_patient[:nhs_number]).to eq(
+          "1234567891"
+        )
+      end
     end
   end
 
@@ -76,7 +86,7 @@ RSpec.describe CohortList, type: :model do
       cohort_list.parse_rows!
 
       expect { cohort_list.generate_patients! }.to change { Patient.count }.by(
-        1
+        2
       )
     end
   end

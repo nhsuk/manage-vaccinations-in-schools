@@ -45,7 +45,7 @@ class CohortListRow
   validates :child_nhs_number, presence: true
   validates :child_nhs_number,
             format: {
-              with: /\A\d{10}\z/
+              with: /\A(?:\d\s*){10}\z/
             },
             if: -> { child_nhs_number.present? }
 
@@ -85,7 +85,7 @@ class CohortListRow
   end
 
   def nhs_number
-    child_nhs_number
+    child_nhs_number&.gsub(/\s/, "")
   end
 
   def parent_relationship_hash
