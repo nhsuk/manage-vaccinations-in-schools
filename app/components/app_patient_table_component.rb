@@ -1,13 +1,20 @@
 class AppPatientTableComponent < ViewComponent::Base
   include ApplicationHelper
 
-  def initialize(patient_sessions:, tab_id:, columns: %i[name dob], route: nil)
+  def initialize(
+    patient_sessions:,
+    tab_id:,
+    caption:,
+    columns: %i[name dob],
+    route: nil
+  )
     super
 
     @patient_sessions = patient_sessions
     @columns = columns
     @route = route
     @tab_id = tab_id
+    @caption = caption
   end
 
   private

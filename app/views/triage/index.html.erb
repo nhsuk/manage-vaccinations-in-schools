@@ -13,7 +13,9 @@
 
 <%= h1 page_title, page_title:, class: "govuk-heading-l" %>
 
-<% def consent_tab(slot, label, data, columns: %i[name dob])
+<% def consent_tab(slot, state, columns: %i[name dob])
+  label = t("states.#{state}.label")
+  data = @tabs[state]
   slot.with_tab(id: label.parameterize,
                 label: "#{label} (#{data.size})",
                 classes: 'nhsuk-tabs__panel') do
@@ -21,6 +23,7 @@
       render AppPatientTableComponent.new(
         patient_sessions: data,
         tab_id: label.parameterize,
+        caption: t("states.#{state}.title"),
         columns:,
         route: :triage,
       )
@@ -31,7 +34,7 @@
 end %>
 
 <%= render AppTabComponent.new title: "Consents", classes: 'nhsuk-tabs' do |slot|
-  consent_tab(slot, "Triage needed", @tabs[:needs_triage])
-  consent_tab(slot, "Triage completed", @tabs[:triage_complete])
-  consent_tab(slot, "No triage needed", @tabs[:no_triage_needed])
+  consent_tab(slot, :needs_triage)
+  consent_tab(slot, :triage_complete)
+  consent_tab(slot, :no_triage_needed)
 end %>
