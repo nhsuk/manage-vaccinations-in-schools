@@ -2,7 +2,7 @@ class SessionsController < ApplicationController
   before_action :set_session, only: %i[show make_in_progress confirm update]
   before_action :set_school, only: %i[show]
 
-  layout "two_thirds", except: :index
+  layout "two_thirds", except: %i[index show]
 
   def create
     campaign = current_user.team.campaigns.first
