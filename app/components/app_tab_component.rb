@@ -61,7 +61,7 @@ class AppTabComponent < GovukComponent::Base
     end
 
     def call
-      content || text || raise(ArgumentError, "no text or content")
+      content || text.html_safe || raise(ArgumentError, "no text or content")
     end
   end
 end
