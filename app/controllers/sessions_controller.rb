@@ -1,5 +1,5 @@
 class SessionsController < ApplicationController
-  before_action :set_session, only: %i[show make_in_progress confirm update]
+  before_action :set_session, only: %i[show make_in_progress]
   before_action :set_school, only: %i[show]
 
   layout "two_thirds", except: %i[index show]
@@ -12,7 +12,7 @@ class SessionsController < ApplicationController
                       date: Time.zone.today,
                       location: current_user.team.locations.first
 
-    redirect_to confirm_session_path(@session)
+    redirect_to session_edit_path(@session, :confirm)
   end
 
   def index
@@ -55,15 +55,6 @@ class SessionsController < ApplicationController
                     heading: "Session is now in progress"
                   }
                 }
-  end
-
-  def confirm
-  end
-
-  def update
-    @session.draft = false
-    @session.save!
-    redirect_to session_path(@session)
   end
 
   private
