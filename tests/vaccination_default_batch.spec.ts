@@ -63,7 +63,9 @@ async function then_i_should_see_a_success_message() {
 }
 
 async function then_i_should_see_the_check_answers_page() {
-  await expect(p.getByRole("heading")).toContainText("Check and confirm");
+  await expect(p.getByRole("heading", { level: 1 })).toContainText(
+    "Check and confirm",
+  );
 }
 
 async function when_i_press_confirm() {
