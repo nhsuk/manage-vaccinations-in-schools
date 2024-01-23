@@ -13,7 +13,9 @@
 
 <%= h1 page_title, page_title:, class: "govuk-heading-l" %>
 
-<% def consent_tab(slot, label, data, columns: %i[name dob])
+<% def consent_tab(slot, state, columns: %i[name dob])
+  label = t("states.#{state}.label")
+  data = @tabs[state]
   slot.with_tab(id: label.parameterize,
                 label: "#{label} (#{data.size})",
                 classes: 'nhsuk-tabs__panel') do
@@ -21,6 +23,7 @@
       render AppPatientTableComponent.new(
         patient_sessions: data,
         tab_id: label.parameterize,
+        caption: t("states.#{state}.title"),
         columns:,
         route: :consent,
       )
@@ -31,9 +34,8 @@
 end %>
 
 <%= render AppTabComponent.new title: "Consents", classes: 'nhsuk-tabs' do |slot|
-  consent_tab(slot, "Consent given", @tabs[:consent_given?])
-  consent_tab(slot, "Consent refused", @tabs[:consent_refused?],
-              columns: %i[name dob reason])
-  consent_tab(slot, "Consent conflicts", @tabs[:consent_conflicts?])
-  consent_tab(slot, "No response", @tabs[:no_consent?])
+  consent_tab(slot, :consent_given?)
+  consent_tab(slot, :consent_refused?, columns: %i[name dob reason])
+  consent_tab(slot, :consent_conflicts?)
+  consent_tab(slot, :no_consent?)
 end %>

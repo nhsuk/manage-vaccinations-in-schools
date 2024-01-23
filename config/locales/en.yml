@@ -6,6 +6,37 @@ en:
   page_titles:
     privacy_policy: "Your privacy"
     privacy_policy_summary: "Your privacy"
+  states:
+    consent_given?:
+      label: Given
+      title: Children with consent given
+    consent_refused?:
+      label: Refused
+      title: Children with consent refused
+    consent_conflicts?:
+      label: Conflicts
+      title: Children with conflicting consent responses
+    no_consent?:
+      label: No response
+      title: Children with no consent response
+    needs_triage:
+      label: Triage needed
+      title: Children needing triage
+    triage_complete:
+      label: Triage completed
+      title: Children with triage completed
+    no_triage_needed:
+      label: No triage needed
+      title: Children with no triage needed
+    action_needed:
+      label: Action needed
+      title: Children with action needed
+    vaccinated:
+      label: Vaccinated
+      title: Vaccinated children
+    not_vaccinated:
+      label: Could not vaccinate
+      title: Children who could not be vaccinated
   service:
     email: england.mavis@nhs.net
     nhs_ur_email: anthony.green11@nhs.net

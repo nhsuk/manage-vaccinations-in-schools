@@ -5,7 +5,7 @@
   <div class="nhsuk-grid-column-three-quarters" id="patients-<%= id %>">
     <% if patient_sessions.any? %>
       <table class="nhsuk-table app-table--patients">
-        <caption class="nhsuk-table__caption nhsuk-visually-hidden">Patients</caption>
+        <caption class="nhsuk-table__caption"><%= t("states.action_needed.title") %></caption>
         <thead class="nhsuk-table__head">
           <tr class="nhsuk-table__row">
             <th class="nhsuk-table__header" data-col="name">Name</th>
