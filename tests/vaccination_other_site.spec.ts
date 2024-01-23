@@ -49,13 +49,15 @@ async function and_i_select_right_arm_lower_position() {
 }
 
 async function then_i_should_see_the_other_delivery_site_page() {
-  await expect(p.getByRole("heading")).toContainText(
+  await expect(p.getByRole("heading", { level: 1 })).toContainText(
     "Tell us how the vaccination was given",
   );
 }
 
 async function then_i_should_see_the_check_answers_page() {
-  await expect(p.getByRole("heading")).toContainText("Check and confirm");
+  await expect(p.getByRole("heading", { level: 1 })).toContainText(
+    "Check and confirm",
+  );
 }
 
 async function when_i_select_a_batch() {
