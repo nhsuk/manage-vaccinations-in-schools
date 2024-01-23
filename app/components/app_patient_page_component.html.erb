@@ -1,4 +1,4 @@
-<%= h1 patient.full_name, id: dom_id(patient), class: "nhsuk-heading-l" %>
+<%= h1 patient.full_name, id: dom_id(patient) %>
 
 <%= render AppStatusBannerComponent.new(patient_session:, current_user:) %>
 

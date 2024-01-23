@@ -1,4 +1,4 @@
-<%= h1 "Resend unlock instructions", class: "nhsuk-heading-xl" %>
+<%= h1 "Resend unlock instructions", size: "xl" %>
 
 <%= form_for(resource, as: resource_name, url: unlock_path(resource_name), html: { method: :post }) do |f| %>
   <%= f.govuk_error_summary %>
