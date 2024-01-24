@@ -92,39 +92,6 @@ class Consent < ApplicationRecord
 
   validates :reason_for_refusal_other, length: { maximum: 1000 }
 
-  with_options on: :edit_who do
-    validates :parent_name, presence: true
-    validates :parent_phone, presence: true
-    validates :parent_phone, phone_number: true
-    validates :parent_relationship,
-              inclusion: {
-                in: Consent.parent_relationships.keys
-              },
-              presence: true
-    validates :parent_relationship_other,
-              presence: true,
-              if: -> { parent_relationship == "other" }
-  end
-
-  with_options on: :edit_consent do
-    validates :response,
-              inclusion: {
-                in: Consent.responses.keys
-              },
-              presence: true
-  end
-
-  with_options on: :edit_reason do
-    validates :reason_for_refusal,
-              inclusion: {
-                in: Consent.reason_for_refusals.keys
-              },
-              presence: true
-    validates :reason_for_refusal_other,
-              presence: true,
-              if: -> { reason_for_refusal == "other" }
-  end
-
   with_options on: :update do
     with_options if: -> { required_for_step?(:gillick, exact: true) } do
       validate :patient_session_valid?
