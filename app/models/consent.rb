@@ -33,9 +33,10 @@
 #
 
 class Consent < ApplicationRecord
+  include WizardFormConcern
   audited
 
-  attr_accessor :form_step, :triage, :patient_session
+  attr_accessor :triage, :patient_session
 
   belongs_to :patient
   belongs_to :campaign
@@ -92,51 +93,49 @@ class Consent < ApplicationRecord
 
   validates :reason_for_refusal_other, length: { maximum: 1000 }
 
-  with_options on: :update do
-    with_options if: -> { required_for_step?(:gillick, exact: true) } do
-      validate :patient_session_valid?
-    end
+  on_wizard_step :gillick, exact: true do
+    validate :patient_session_valid?
+  end
 
-    with_options if: -> { required_for_step?(:who) } do
-      validates :parent_name, presence: true
-      validates :parent_phone, presence: true
-      validates :parent_phone, phone_number: true
-      validates :parent_relationship,
-                inclusion: {
-                  in: Consent.parent_relationships.keys
-                },
-                presence: true
-      validates :parent_relationship_other,
-                presence: true,
-                if: -> { parent_relationship == "other" }
-    end
+  on_wizard_step :who do
+    validates :parent_name, presence: true
+    validates :parent_phone, presence: true
+    validates :parent_phone, phone_number: true
+    validates :parent_relationship,
+              inclusion: {
+                in: Consent.parent_relationships.keys
+              },
+              presence: true
+    validates :parent_relationship_other,
+              presence: true,
+              if: -> { parent_relationship == "other" }
+  end
 
-    with_options if: -> { required_for_step?(:agree) } do
-      validates :response,
-                inclusion: {
-                  in: Consent.responses.keys
-                },
-                presence: true
-    end
+  on_wizard_step :agree do
+    validates :response,
+              inclusion: {
+                in: Consent.responses.keys
+              },
+              presence: true
+  end
 
-    with_options if: -> { required_for_step?(:reason) } do
-      validates :reason_for_refusal,
-                inclusion: {
-                  in: Consent.reason_for_refusals.keys
-                },
-                presence: true
-      validates :reason_for_refusal_other,
-                presence: true,
-                if: -> { reason_for_refusal == "other" }
-    end
+  on_wizard_step :reason do
+    validates :reason_for_refusal,
+              inclusion: {
+                in: Consent.reason_for_refusals.keys
+              },
+              presence: true
+    validates :reason_for_refusal_other,
+              presence: true,
+              if: -> { reason_for_refusal == "other" }
+  end
 
-    with_options if: -> { required_for_step?(:questions) } do
-      validate :health_answers_valid?
-    end
+  on_wizard_step :questions do
+    validate :health_answers_valid?
+  end
 
-    with_options if: -> { required_for_step?(:questions, exact: true) } do
-      validate :triage_valid?
-    end
+  on_wizard_step :questions, exact: true do
+    validate :triage_valid?
   end
 
   def form_steps
@@ -214,21 +213,5 @@ class Consent < ApplicationRecord
     triage.errors.each do |error|
       errors.add(:"triage_#{error.attribute}", error.message)
     end
-  end
-
-  def required_for_step?(step, exact: false)
-    # Exact means that the form_step must match the step
-    return false if exact && form_step != step
-
-    # Step can't be required if it's not in the current form_steps list
-    return false unless step.in?(form_steps)
-
-    # All fields are required if no form_step is set
-    return true if form_step.nil?
-
-    # Otherwise, all fields from previous and current steps are required
-    return true if form_steps.index(step) <= form_steps.index(form_step)
-
-    false
   end
 end
