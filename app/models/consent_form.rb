@@ -44,12 +44,13 @@
 #
 
 class ConsentForm < ApplicationRecord
+  include WizardFormConcern
   include AgeConcern
 
   scope :unmatched, -> { where(consent_id: nil) }
   scope :recorded, -> { where.not(recorded_at: nil) }
 
-  attr_accessor :form_step, :health_question_number, :is_this_their_school
+  attr_accessor :health_question_number, :is_this_their_school
 
   audited
 
@@ -107,75 +108,71 @@ class ConsentForm < ApplicationRecord
 
   validates :reason_notes, length: { maximum: 1000 }
 
-  with_options on: :update do
-    with_options if: -> { required_for_step?(:name) } do
-      validates :first_name, presence: true
-      validates :last_name, presence: true
-      validates :use_common_name, inclusion: { in: [true, false] }
-      validates :common_name, presence: true, if: :use_common_name?
-    end
+  on_wizard_step :name do
+    validates :first_name, presence: true
+    validates :last_name, presence: true
+    validates :use_common_name, inclusion: { in: [true, false] }
+    validates :common_name, presence: true, if: :use_common_name?
+  end
 
-    with_options if: -> { required_for_step?(:date_of_birth) } do
-      validates :date_of_birth,
-                presence: true,
-                comparison: {
-                  less_than: Time.zone.today,
-                  greater_than_or_equal_to: 22.years.ago.to_date,
-                  less_than_or_equal_to: 3.years.ago.to_date
-                }
-    end
+  on_wizard_step :date_of_birth do
+    validates :date_of_birth,
+              presence: true,
+              comparison: {
+                less_than: Time.zone.today,
+                greater_than_or_equal_to: 22.years.ago.to_date,
+                less_than_or_equal_to: 3.years.ago.to_date
+              }
+  end
 
-    with_options if: -> { required_for_step?(:school, exact: true) } do
-      validates :is_this_their_school,
-                presence: true,
-                inclusion: {
-                  in: %w[yes no]
-                }
-    end
+  on_wizard_step :school, exact: true do
+    validates :is_this_their_school,
+              presence: true,
+              inclusion: {
+                in: %w[yes no]
+              }
+  end
 
-    with_options if: -> { required_for_step?(:parent) } do
-      validates :parent_name, presence: true
-      validates :parent_relationship, presence: true
-      validates :parent_relationship_other,
-                presence: true,
-                if: :parent_relationship_other?
-      validates :parent_email, presence: true, email: true
-      validates :parent_phone, phone_number: true, if: :parent_phone?
-    end
+  on_wizard_step :parent do
+    validates :parent_name, presence: true
+    validates :parent_relationship, presence: true
+    validates :parent_relationship_other,
+              presence: true,
+              if: :parent_relationship_other?
+    validates :parent_email, presence: true, email: true
+    validates :parent_phone, phone_number: true, if: :parent_phone?
+  end
 
-    with_options if: -> { required_for_step?(:contact_method) } do
-      validates :contact_method, presence: true
-      validates :contact_method_other,
-                presence: true,
-                if: :contact_method_other?
-    end
+  on_wizard_step :contact_method do
+    validates :contact_method, presence: true
+    validates :contact_method_other, presence: true, if: :contact_method_other?
+  end
 
-    with_options if: -> { required_for_step?(:consent) } do
-      validates :response, presence: true
-    end
+  on_wizard_step :consent do
+    validates :response, presence: true
+  end
 
-    with_options if: -> { required_for_step?(:reason) } do
-      validates :reason, presence: true
-    end
+  on_wizard_step :reason do
+    validates :reason, presence: true
+  end
 
-    with_options if: -> { required_for_step?(:injection) } do
-      validates :contact_injection, inclusion: { in: [true, false] }
-    end
+  on_wizard_step :injection do
+    validates :contact_injection, inclusion: { in: [true, false] }
+  end
 
-    with_options if: -> { required_for_step?(:gp) } do
-      validates :gp_response, presence: true
-      validates :gp_name, presence: true, if: :gp_response_yes?
-    end
+  on_wizard_step :gp do
+    validates :gp_response, presence: true
+    validates :gp_name, presence: true, if: :gp_response_yes?
+  end
 
-    with_options if: -> { required_for_step?(:address) } do
-      validates :address_line_1, presence: true
-      validates :address_town, presence: true
-      validates :address_postcode, presence: true, postcode: true
-    end
+  on_wizard_step :address do
+    validates :address_line_1, presence: true
+    validates :address_town, presence: true
+    validates :address_postcode, presence: true, postcode: true
+  end
 
-    with_options if: -> { required_for_step?(:health_question) } do
-      validate :health_answers_valid?
-    end
+  on_wizard_step :health_question do
+    validate :health_answers_valid?
   end
 
   def address_postcode=(str)
@@ -249,22 +246,6 @@ class ConsentForm < ApplicationRecord
 
   def eligible_for_injection?
     !refused_because_given_elsewhere? && !refused_because_already_received?
-  end
-
-  def required_for_step?(step, exact: false)
-    # Exact means that the form_step must match the step
-    return false if exact && form_step != step
-
-    # Step can't be required if it's not in the current form_steps list
-    return false unless step.in?(form_steps)
-
-    # All fields are required if no form_step is set
-    return true if form_step.nil?
-
-    # Otherwise, all fields from previous and current steps are required
-    return true if form_steps.index(step) <= form_steps.index(form_step)
-
-    false
   end
 
   def health_answers_valid?
