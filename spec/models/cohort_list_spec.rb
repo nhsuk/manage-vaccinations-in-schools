@@ -75,6 +75,26 @@ RSpec.describe CohortList, type: :model do
           "1234567891"
         )
       end
+
+      it "parses dates in the ISO8601 format" do
+        cohort_list.load_data!
+        cohort_list.parse_rows!
+
+        expect(cohort_list).to be_valid
+        expect(cohort_list.rows.first.to_patient[:date_of_birth]).to eq(
+          Date.new(2010, 1, 1)
+        )
+      end
+
+      it "parses dates in the DD/MM/YYYY format" do
+        cohort_list.load_data!
+        cohort_list.parse_rows!
+
+        expect(cohort_list).to be_valid
+        expect(cohort_list.rows.second.to_patient[:date_of_birth]).to eq(
+          Date.new(2010, 1, 2)
+        )
+      end
     end
   end
 

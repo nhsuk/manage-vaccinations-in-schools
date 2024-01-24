@@ -33,7 +33,7 @@ class CohortListRow
   validates :child_date_of_birth, presence: true
   validates :child_date_of_birth,
             format: {
-              with: /\A\d{4}-\d{2}-\d{2}\z/
+              with: /\A(\d{4}-\d{2}-\d{2}|\d{2}\/\d{2}\/\d{4})\z/
             },
             if: -> { child_date_of_birth.present? }
   validates :child_address_line_1, presence: true
