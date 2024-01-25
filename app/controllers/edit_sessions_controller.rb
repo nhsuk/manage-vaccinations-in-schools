@@ -14,6 +14,8 @@ class EditSessionsController < ApplicationController
 
   def update
     case current_step
+    when :timeline
+      @session.assign_attributes update_params
     when :confirm
       @session.draft = false
     end
@@ -33,6 +35,24 @@ class EditSessionsController < ApplicationController
 
   def set_session
     @session = current_user.team.campaign.sessions.find(params[:session_id])
+  end
+
+  def update_params
+    permitted_attributes = {
+      timeline: %i[
+        consent_days_before
+        consent_days_before_custom
+        reminder_days_after
+        reminder_days_after_custom
+        close_consent_on
+        close_consent_at
+      ]
+    }.fetch(current_step)
+
+    params
+      .fetch(:session, {})
+      .permit(permitted_attributes)
+      .merge(form_step: current_step)
   end
 
   def set_steps

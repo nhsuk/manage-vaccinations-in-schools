@@ -1,0 +1,61 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+    href: sessions_path,
+    name: "school sessions",
+  ) %>
+<% end %>
+
+<%= form_for @session, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+  <%= h1 "What’s the timeline for consent requests?" %>
+
+  <%= govuk_inset_text do %>
+    <span class="nhsuk-visually-hidden">Information:</span>
+    Session scheduled for <%= @session.date.to_fs(:app_date_time_long) %>
+  <% end %>
+
+  <%= f.govuk_radio_buttons_fieldset :consent_days_before,
+    legend: { size: 'm', text: 'Consent requests' },
+    hint: { text: 'When should parents get a request for consent?' } do %>
+    <%= f.govuk_radio_button :consent_days_before, :default,
+      label: { text: "#{pluralize(Session::DEFAULT_DAYS_FOR_CONSENT, 'day')} before the session" },
+      link_errors: true %>
+    <%= f.govuk_radio_button :consent_days_before, :custom,
+      label: { text: 'Choose your own schedule' } do %>
+      <%= f.govuk_text_field :consent_days_before_custom,
+        label: { text: 'Days before the session' },
+        width: 2,
+        suffix_text: "days" %>
+    <% end %>
+  <% end %>
+
+  <%= f.govuk_radio_buttons_fieldset :reminder_days_after,
+    legend: { size: 'm', text: 'Reminders' },
+    hint: { text: 'When should parents who haven’t responded get a reminder?' } do %>
+    <%= f.govuk_radio_button :reminder_days_after, :default,
+      label: { text: "#{pluralize(Session::DEFAULT_DAYS_FOR_REMINDER, 'day')} after the first consent request" },
+      link_errors: true %>
+    <%= f.govuk_radio_button :reminder_days_after, :custom,
+      label: { text: 'Choose your own schedule' } do %>
+      <%= f.govuk_text_field :reminder_days_after_custom,
+        label: { text: 'Days after the first consent request' },
+        width: 2,
+        suffix_text: "days" %>
+    <% end %>
+  <% end %>
+
+  <%= f.govuk_radio_buttons_fieldset :close_consent_on,
+    legend: { size: 'm', text: 'Deadline for responses' } do %>
+    <%= f.govuk_radio_button :close_consent_on, :default,
+      label: { text: 'Allow responses until the day of the session' },
+      link_errors: true %>
+    <%= f.govuk_radio_button :close_consent_on, :custom,
+      label: { text: 'Choose your own deadline' } do %>
+      <%= f.govuk_date_field :close_consent_at,
+        legend: { text: 'Deadline for consent responses' },
+        hint: { text: 'For example, 27 3 2023' } %>
+    <% end %>
+  <% end %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

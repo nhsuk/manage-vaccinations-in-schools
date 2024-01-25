@@ -11,6 +11,9 @@ test("Session create", async ({ page }) => {
 
   await when_i_go_to_the_sessions_list();
   await and_i_click_on_the_add_session_button();
+  await then_i_see_the_timeline_page();
+
+  await when_i_choose_my_timeline();
   await then_i_see_the_confirm_details_page();
 
   await when_i_click_on_the_confirm_button();
@@ -48,4 +51,25 @@ async function then_i_see_the_session_details_page() {
   await expect(
     p.getByRole("heading", { name: "Check consent responses" }),
   ).toBeVisible();
+}
+
+async function then_i_see_the_timeline_page() {
+  await expect(
+    p.getByRole("heading", {
+      name: "What’s the timeline for consent requests?",
+    }),
+  ).toBeVisible();
+}
+
+async function when_i_choose_my_timeline() {
+  await p.getByRole("radio", { name: "14 days before the session" }).click();
+  await p
+    .getByRole("radio", { name: "7 days after the first consent request" })
+    .click();
+  await p
+    .getByRole("radio", {
+      name: "Allow responses until the day of the session",
+    })
+    .click();
+  await p.getByRole("button", { name: "Continue" }).click();
 }
