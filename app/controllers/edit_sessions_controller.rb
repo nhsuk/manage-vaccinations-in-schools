@@ -1,11 +1,12 @@
 class EditSessionsController < ApplicationController
   include Wicked::Wizard
+  include Wicked::Wizard::Translated # For custom URLs, see en.yml wicked
 
   layout "two_thirds"
 
   before_action :set_session
-
-  steps :confirm
+  before_action :set_steps
+  before_action :setup_wizard_translated
 
   def show
     render_wizard
@@ -32,5 +33,9 @@ class EditSessionsController < ApplicationController
 
   def set_session
     @session = current_user.team.campaign.sessions.find(params[:session_id])
+  end
+
+  def set_steps
+    self.steps = @session.form_steps
   end
 end
