@@ -19,5 +19,6 @@ class Avo::Resources::Location < Avo::BaseResource
     field :sessions, as: :has_many
     field :patients, as: :has_many
     # add fields here
+    field :registration_open, as: :boolean
   end
 end
