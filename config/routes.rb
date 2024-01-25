@@ -108,10 +108,11 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :schools, only: [:show]  do
+  resources :schools, only: [:show] do
+    get "close_registration", on: :member
+
     resource :registration, only: %i[new create update] do
       get "confirmation", on: :collection
-      get "close"
     end
   end
   resources :consent_forms, only: [:show]

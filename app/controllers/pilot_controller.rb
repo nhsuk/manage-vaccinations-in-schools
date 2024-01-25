@@ -9,9 +9,9 @@ class PilotController < ApplicationController
 
   def registrations
     @registrations =
-      Registration
-        .where(location_id: current_user.team.locations.map(&:id))
-        .group_by { |r| r.location.name }
+      Registration.where(
+        location_id: current_user.team.locations.map(&:id)
+      ).group_by(&:location)
   end
 
   def download
