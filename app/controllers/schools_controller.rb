@@ -1,5 +1,6 @@
 class SchoolsController < ApplicationController
-  before_action :set_school, only: %i[show close_registration]
+  before_action :set_school,
+                only: %i[show close_registration handle_close_registration]
   before_action :set_unmatched_consent_responses, only: [:show]
 
   layout "two_thirds", only: %i[close_registration]
@@ -8,6 +9,15 @@ class SchoolsController < ApplicationController
   end
 
   def close_registration
+  end
+
+  def handle_close_registration
+    if @school.update(registration_open: false)
+      flash[:success] = "Pilot is now closed to new participants"
+      redirect_to pilot_registrations_path
+    else
+      render :close_registration
+    end
   end
 
   private
