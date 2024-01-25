@@ -4,6 +4,7 @@ set -e
 
 if [[ "$MAVIS__IS_REVIEW" == "true" && `bin/rails db:version | grep version` == "Current version: 0" ]]; then
   bin/rails db:schema:load
+  bin/rails db:seed
 else
   bin/rails db:migrate
 fi
