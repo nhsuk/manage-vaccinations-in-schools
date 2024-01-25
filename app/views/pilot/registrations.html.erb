@@ -21,12 +21,14 @@
 
 <% @registrations.each do |school, responses| %>
   <%= render AppCardComponent.new(heading: school.name) do %>
-    <p>
-      <%= govuk_link_to close_registration_school_path(school) do %>
-        Close pilot to new participants at this school
-        <span class="nhsuk-u-visually-hidden">(<%= school.name %>)</span>
-      <% end %>
-    </p>
+    <% if Flipper.enabled?(:registration_open) && school.registration_open %>
+      <p>
+        <%= govuk_link_to close_registration_school_path(school) do %>
+          Close pilot to new participants at this school
+          <span class="nhsuk-u-visually-hidden">(<%= school.name %>)</span>
+        <% end %>
+      </p>
+    <% end %>
 
     <%= govuk_table do |table|
       table.with_caption(text: pluralize(responses.count, "response"),
