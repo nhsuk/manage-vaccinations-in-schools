@@ -466,3 +466,24 @@ en:
             notes:
               blank: Enter triage notes
               too_long: Enter triage notes that are less than 1000 characters long
+        session:
+          attributes:
+            consent_days_before:
+              blank: Choose when to send consent requests
+              inclusion: Choose when to send consent requests
+            consent_days_before_custom:
+              blank: Choose the number of days before the session to send consent requests
+              greater_than_or_equal_to: Choose a number between 10 and 30
+              less_than_or_equal_to: Choose a number between 10 and 30
+            reminder_days_after:
+              blank: Choose when to send reminders
+              inclusion: Choose when to send reminders
+            reminder_days_after_custom:
+              blank: Choose the number of days after the session to send reminders
+              greater_than_or_equal_to: Choose a number between 2 and 7
+              less_than_or_equal_to: Choose a number between 2 and 7
+            close_consent_on:
+              blank: Choose a deadline for responses
+              inclusion: Choose a deadline for responses
+            close_consent_at:
+              blank: Choose a date for the deadline
