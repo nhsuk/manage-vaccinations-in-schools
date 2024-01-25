@@ -1,6 +1,8 @@
 class SchoolsController < ApplicationController
-  before_action :set_school, only: [:show]
+  before_action :set_school, only: %i[show close_registration]
   before_action :set_unmatched_consent_responses, only: [:show]
+
+  layout "two_thirds", only: %i[close_registration]
 
   def show
   end
