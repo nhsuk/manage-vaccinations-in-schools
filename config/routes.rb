@@ -108,14 +108,13 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :schools, only: [:show]
-  resources :consent_forms, only: [:show]
-
-  resource :registration,
-           path: "/schools/:school_id/registration",
-           only: %i[new create update] do
-    get "confirmation", on: :collection
+  resources :schools, only: [:show]  do
+    resource :registration, only: %i[new create update] do
+      get "confirmation", on: :collection
+      get "close"
+    end
   end
+  resources :consent_forms, only: [:show]
 
   scope via: :all do
     get "/404", to: "errors#not_found"

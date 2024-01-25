@@ -18,7 +18,7 @@ class RegistrationsController < ApplicationController
     @registration_form.location = @school
 
     if @registration_form.save
-      redirect_to confirmation_registration_path
+      redirect_to confirmation_school_registration_path
     else
       render :new
     end

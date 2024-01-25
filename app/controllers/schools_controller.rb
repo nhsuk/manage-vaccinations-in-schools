@@ -5,6 +5,9 @@ class SchoolsController < ApplicationController
   def show
   end
 
+  def close_registration
+  end
+
   private
 
   def set_school

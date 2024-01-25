@@ -1,6 +1,6 @@
 <% page_title = "Register your interest in the NHS school vaccinations pilot" %>
 
-<%= form_for(@registration_form, url: registration_path) do |f| %>
+<%= form_for(@registration_form, url: school_registration_path) do |f| %>
   <%= f.govuk_error_summary %>
 
   <%= h1 page_title:, size: "xl" do %>
