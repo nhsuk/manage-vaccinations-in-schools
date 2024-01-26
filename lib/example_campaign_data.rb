@@ -54,7 +54,8 @@ class ExampleCampaignData
       town: school_data["town"],
       county: school_data["county"],
       postcode: school_data["postcode"],
-      url: school_data["url"]
+      url: school_data["url"],
+      registration_open: true
     }
   end
 
