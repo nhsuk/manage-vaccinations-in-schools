@@ -12,7 +12,7 @@ class SessionsController < ApplicationController
                       date: Time.zone.today,
                       location: current_user.team.locations.first
 
-    redirect_to session_edit_path(@session, :timeline)
+    redirect_to session_edit_path(@session, :location)
   end
 
   def index
