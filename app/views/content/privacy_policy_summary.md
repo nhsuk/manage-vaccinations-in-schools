@@ -2,7 +2,7 @@ Your privacy is important to us. This privacy policy covers what personal inform
 
 ## Who we are
 
-The Manage school-aged vaccinations service (Mavis) is run by NHS England for the purpose of managing vaccinations in schools.
+The Manage vaccinations in schools service (Mavis) is run by NHS England for the purpose of managing vaccinations in schools.
 
 ## What personal information we collect
 
