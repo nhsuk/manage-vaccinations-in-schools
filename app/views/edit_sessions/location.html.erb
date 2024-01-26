@@ -1,0 +1,21 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+    href: sessions_path,
+    name: "school sessions",
+  ) %>
+<% end %>
+
+<%= form_for @session, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+  <%= h1 "Which school is it at?" %>
+
+  <%= f.govuk_collection_radio_buttons(
+    :location_id,
+    @locations,
+    :id,
+    :name,
+    legend: nil
+  ) %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

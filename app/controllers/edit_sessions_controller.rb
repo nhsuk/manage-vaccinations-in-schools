@@ -9,15 +9,20 @@ class EditSessionsController < ApplicationController
   before_action :setup_wizard_translated
 
   def show
+    case current_step
+    when :location
+      @locations = current_user.team.locations
+    end
+
     render_wizard
   end
 
   def update
     case current_step
-    when :timeline
-      @session.assign_attributes update_params
     when :confirm
       @session.draft = false
+    else
+      @session.assign_attributes update_params
     end
 
     render_wizard @session
@@ -26,7 +31,7 @@ class EditSessionsController < ApplicationController
   private
 
   def current_step
-    wizard_value(step).to_sym
+    wizard_value(step)&.to_sym
   end
 
   def finish_wizard_path
@@ -46,7 +51,8 @@ class EditSessionsController < ApplicationController
         reminder_days_after_custom
         close_consent_on
         close_consent_at
-      ]
+      ],
+      location: [:location_id]
     }.fetch(current_step)
 
     params
