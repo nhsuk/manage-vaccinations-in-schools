@@ -31,4 +31,17 @@ create_analyzer "$unused_analyzer_name" "$unused_analyzer_type"
 # Create or verify External Access Analyzer
 create_analyzer "$external_analyzer_name" "$external_analyzer_type"
 
+# Find the RDS instances and store them in a varibale to be used later
+db_clusters=$(aws rds describe-db-clusters --output yaml | grep -E 'DBClusterIdentifier\W+' | awk '{print $2}')
+
+# Loop through each instance and enable deletion protection
+for db_cluster in $db_clusters; do
+    echo "Enabling deletion protection for cluster $db_cluster"
+    aws rds modify-db-cluster \
+        --db-cluster-identifier $db_cluster \
+        --deletion-protection \
+        --apply-immediately \
+        --no-cli-pager
+done
+
 echo "Script finish executing."
