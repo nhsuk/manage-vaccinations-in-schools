@@ -6,20 +6,6 @@
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
 
-FEATURE_FLAGS = {
-  make_session_in_progress_button: false,
-  basic_auth: Rails.env.staging? || Rails.env.production?
-}.freeze
+FEATURE_FLAGS = %i[make_session_in_progress_button].freeze
 
-FEATURE_FLAGS.each do |flag, default|
-  next if Flipper.exist?(flag)
-
-  case default
-  when true
-    Flipper.enable flag
-  when false
-    Flipper.disable flag
-  else
-    raise "Invalid default value for #{flag}: #{default.inspect}"
-  end
-end
+FEATURE_FLAGS.each { |flag| Flipper.add(flag) unless Flipper.exist?(flag) }

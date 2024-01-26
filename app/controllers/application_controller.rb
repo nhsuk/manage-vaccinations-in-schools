@@ -15,6 +15,8 @@ class ApplicationController < ActionController::Base
     rescue_from UnprocessableEntity, with: :handle_unprocessable_entity
   end
 
+  FLIPPER_INITIALIZERS[:basic_auth].call unless Flipper.exist? :basic_auth
+
   if Flipper.enabled? :basic_auth
     http_basic_authenticate_with name: Settings.support_username,
                                  password: Settings.support_password,
