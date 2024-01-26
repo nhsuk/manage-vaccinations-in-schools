@@ -18,9 +18,7 @@ class Avo::Resources::Patient < Avo::BaseResource
     field :location, as: :belongs_to
     # add fields here
     field :parent_name, as: :string
-    field :parent_relationship,
-          as: :select,
-          enum: ::Patient.parent_relationships
+    field :parent_relationship
     field :parent_relationship_other, as: :string
     field :parent_email, as: :string
     field :parent_phone, as: :string
