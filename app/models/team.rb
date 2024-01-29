@@ -3,6 +3,7 @@
 # Table name: teams
 #
 #  id         :bigint           not null, primary key
+#  email      :string
 #  name       :text             not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
