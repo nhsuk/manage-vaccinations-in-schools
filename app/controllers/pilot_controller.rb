@@ -8,7 +8,7 @@ class PilotController < ApplicationController
   end
 
   def registrations
-    @schools = current_user.team.locations
+    @schools = current_user.team.locations.includes(:registrations)
   end
 
   def download
