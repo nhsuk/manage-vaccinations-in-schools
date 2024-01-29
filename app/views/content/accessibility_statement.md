@@ -1,0 +1,35 @@
+This accessibility statement applies to the Manage vaccinations in schools service.
+
+We want as many people as possible to be able to use the service. This means you should be able to:
+
+- change colours, contrast levels and fonts using browser functionality
+- zoom in up to 400 per cent without the text spilling off the screen
+- navigate most of the service using just a keyboard
+- navigate most of the service using speech recognition software
+- interact with most of the service using a screen reader (including recent versions of JAWS, NVDA and VoiceOver)
+
+We also try to make our content as simple as possible to understand.
+
+If you have a disability, search AbilityNet for guides on how to make your device easier to use.
+
+## Compliance status
+
+This website is compliant with the Web Content Accessibility Guidelines (WCAG) version 2.2 AA standard.
+
+## Alternative formats
+
+If you need information on this service in a different format, like accessible PDF, large print, easy read, audio recording or Braille, please [contact us](mailto:england.mavis@nhs.net). We'll consider your request and get back to you in 10 working days.
+
+## Reporting accessibility problems with this website
+
+We're always looking to improve the accessibility of this website. If you find any problems, or think we're not meeting accessibility requirements, please [contact us](mailto:england.mavis@nhs.net) to report this. This helps us improve.
+
+## Preparing this accessibility statement
+
+This statement was published in January 2024. We’ll continue to update it with any relevant changes.
+
+This website was tested on 22 January 2024 by an internal team, who evaluated our service against all level A and AA success criteria of WCAG 2.2.
+
+## How to contact us
+
+If you have any questions about accessibility, please email us at <england.mavis@nhs.net>
