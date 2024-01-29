@@ -7,10 +7,7 @@ class SessionsController < ApplicationController
   def create
     campaign = current_user.team.campaigns.first
 
-    @session =
-      Session.create! campaign:,
-                      date: Time.zone.today,
-                      location: current_user.team.locations.first
+    @session = Session.create! campaign:, date: Time.zone.today
 
     redirect_to session_edit_path(@session, :location)
   end
