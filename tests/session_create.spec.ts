@@ -1,5 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import { signInTestUser } from "./shared";
+import { signInTestUser, fixtures } from "./shared";
 
 let p: Page;
 
@@ -11,6 +11,9 @@ test("Session create", async ({ page }) => {
 
   await when_i_go_to_the_sessions_list();
   await and_i_click_on_the_add_session_button();
+  await then_i_see_the_location_page();
+
+  await when_i_choose_my_location();
   await then_i_see_the_timeline_page();
 
   await when_i_choose_my_timeline();
@@ -36,10 +39,27 @@ async function and_i_click_on_the_add_session_button() {
   await p.click("text=Add a new session");
 }
 
+async function then_i_see_the_location_page() {
+  await expect(
+    p.getByRole("heading", {
+      name: "Which school is it at?",
+    }),
+  ).toBeVisible();
+}
+
+async function when_i_choose_my_location() {
+  await p.click("text=" + fixtures.schoolName);
+  await p.getByRole("button", { name: "Continue" }).click();
+}
+
 async function then_i_see_the_confirm_details_page() {
   await expect(
     p.getByRole("heading", { name: "Check and confirm details" }),
   ).toBeVisible();
+
+  await expect(p.locator(".nhsuk-card")).toHaveText(
+    new RegExp("School" + fixtures.schoolName),
+  );
 }
 
 async function when_i_click_on_the_confirm_button() {

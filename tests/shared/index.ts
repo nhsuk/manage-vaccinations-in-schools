@@ -26,7 +26,7 @@ export const fixtures = {
   vaccineBatch: "VU2074",
 
   // Get from /sessions, signed in as Nurse Joy
-  schoolName: /Great Cornard Middle School/,
+  schoolName: "Great Cornard Middle School",
 
   // Get from /sessions, signed in as Nurse Jackie
   secondSchoolName: /Kesteven and Sleaford High School Selective Academy/,
