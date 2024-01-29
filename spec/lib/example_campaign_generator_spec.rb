@@ -31,7 +31,7 @@ RSpec.describe ExampleCampaignGenerator do
     #       presets=default \
     #       type=hpv \
     #       username="Nurse Joy" > db/sample_data/example-hpv-campaign.json
-    Timecop.freeze(2024, 1, 19, 12, 0, 0) do
+    Timecop.freeze(2024, 1, 30, 12, 0, 0) do
       generator =
         ExampleCampaignGenerator.new(
           seed: 42,
@@ -61,7 +61,7 @@ RSpec.describe ExampleCampaignGenerator do
     #       presets=default \
     #       type=flu \
     #       username="Nurse Jackie" > db/sample_data/example-flu-campaign.json
-    Timecop.freeze(2024, 1, 19, 12, 0, 0) do
+    Timecop.freeze(2024, 1, 30, 12, 0, 0) do
       generator =
         ExampleCampaignGenerator.new(
           seed: 43,
