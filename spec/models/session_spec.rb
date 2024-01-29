@@ -20,6 +20,24 @@
 require "rails_helper"
 
 RSpec.describe Session do
+  describe "validations" do
+    subject { FactoryBot.build :session, form_step: }
+
+    context "when form_step is location" do
+      let(:form_step) { :location }
+
+      it { should validate_presence_of(:location_id).on(:update) }
+
+      it "validates location_id is one of the team's locations" do
+        expect(subject).to(
+          validate_inclusion_of(:location_id).in_array(
+            subject.campaign.team.locations.pluck(:id)
+          ).on(:update)
+        )
+      end
+    end
+  end
+
   describe "#in_progress?" do
     subject { session.in_progress? }
 

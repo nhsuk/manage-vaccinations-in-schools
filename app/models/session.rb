@@ -43,6 +43,14 @@ class Session < ApplicationRecord
   after_initialize :set_timeline_attributes
   after_validation :set_timeline_timestamps
 
+  on_wizard_step :location, exact: true do
+    validates :location_id,
+              presence: true,
+              inclusion: {
+                in: ->(object) { object.campaign.team.locations.pluck(:id) }
+              }
+  end
+
   on_wizard_step :timeline, exact: true do
     validates :consent_days_before,
               presence: true,

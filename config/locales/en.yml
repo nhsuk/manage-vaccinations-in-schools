@@ -489,3 +489,6 @@ en:
               inclusion: Choose a deadline for responses
             close_consent_at:
               blank: Choose a date for the deadline
+            location_id:
+              blank: Choose a school
+              inclusion: Choose a school

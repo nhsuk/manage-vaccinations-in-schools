@@ -13,6 +13,9 @@ test("Session create", async ({ page }) => {
   await and_i_click_on_the_add_session_button();
   await then_i_see_the_location_page();
 
+  await when_i_submit_without_choosing_a_location();
+  await then_i_see_the_location_page_with_errors();
+
   await when_i_choose_my_location();
   await then_i_see_the_timeline_page();
 
@@ -45,6 +48,14 @@ async function then_i_see_the_location_page() {
       name: "Which school is it at?",
     }),
   ).toBeVisible();
+}
+
+async function when_i_submit_without_choosing_a_location() {
+  await p.getByRole("button", { name: "Continue" }).click();
+}
+
+async function then_i_see_the_location_page_with_errors() {
+  await expect(p.getByRole("alert")).toContainText("Choose a school");
 }
 
 async function when_i_choose_my_location() {

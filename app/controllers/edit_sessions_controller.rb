@@ -7,13 +7,11 @@ class EditSessionsController < ApplicationController
   before_action :set_session
   before_action :set_steps
   before_action :setup_wizard_translated
+  before_action :set_locations,
+                only: %i[show update],
+                if: -> { current_step == :location }
 
   def show
-    case current_step
-    when :location
-      @locations = current_user.team.locations
-    end
-
     render_wizard
   end
 
@@ -63,5 +61,9 @@ class EditSessionsController < ApplicationController
 
   def set_steps
     self.steps = @session.form_steps
+  end
+
+  def set_locations
+    @locations = policy_scope(Location).order(:name)
   end
 end
