@@ -23,7 +23,7 @@ export const fixtures = {
   secondPatientThatNeedsVaccination: "Brittany Klocko",
 
   // Get from /sessions/1/patients/Y/vaccinations/batch/edit
-  vaccineBatch: "VU2074",
+  vaccineBatch: "YF4263",
 
   // Get from /sessions, signed in as Nurse Joy
   schoolName: "Great Cornard Middle School",

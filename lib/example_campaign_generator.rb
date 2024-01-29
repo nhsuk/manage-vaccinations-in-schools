@@ -96,14 +96,21 @@ class ExampleCampaignGenerator
   def team_data
     @team_data ||= {
       name: team.name,
+      email: team.email,
       users:
         users.map { |user| { full_name: user.full_name, email: user.email } }
     }
   end
 
   def team
+    id = @random.rand(1..1_000_000)
+
     @team ||=
-      FactoryBot.build(:team, name: "SAIS team #{@random.rand(1..1_000_000)}")
+      FactoryBot.build(
+        :team,
+        name: "SAIS team #{id}",
+        email: "sais.#{id}@nhs.uk"
+      )
   end
 
   def users

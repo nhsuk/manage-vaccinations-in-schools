@@ -139,6 +139,7 @@ class ExampleCampaignData
     team_data = raw_data["team"]
     {
       name: team_data["name"],
+      email: team_data["email"],
       users:
         team_data["users"].map do |user|
           user.slice("full_name", "username", "email")
