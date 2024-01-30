@@ -8,6 +8,7 @@ class Avo::Resources::Team < Avo::BaseResource
   def fields
     field :id, as: :id
     # Fields generated from the model
+    field :email, as: :text
     field :name, as: :text
     field :campaigns, as: :has_many
     field :users, as: :has_and_belongs_to_many
