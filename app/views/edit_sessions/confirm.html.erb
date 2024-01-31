@@ -17,6 +17,11 @@
     end
 
     summary_list.with_row do |row|
+      row.with_key { "Vaccine" }
+      row.with_value { @session.campaign.name }
+    end
+
+    summary_list.with_row do |row|
       row.with_key { "Date" }
       row.with_value { @session.date.to_fs(:nhsuk_date_day_of_week) }
     end
@@ -39,8 +44,8 @@
       row.with_key { "Deadline for responses" }
       row.with_value {
         @session.date == @session.close_consent_at ?
-          "Allow responses until the day of the session" :
-          "Allow responses until #{@session.close_consent_at.to_fs(:nhsuk_date)}"
+        "Allow responses until the day of the session" :
+        "Allow responses until #{@session.close_consent_at.to_fs(:nhsuk_date)}"
       }
     end
   end %>
