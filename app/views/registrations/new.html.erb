@@ -64,6 +64,8 @@
 
   <%= f.govuk_fieldset legend: { text: "About your child", size: "l" } do %>
 
+    <p>We need your child’s details to check your eligibility to take part in the pilot.</p>
+
     <%= f.govuk_text_field :first_name,
                            label: { text: "First name", size: "s" },
                            class: "nhsuk-input--width-20" %>
@@ -118,20 +120,8 @@
 
   <%= govuk_section_break visible: true, size: "l" %>
 
-  <h2>Terms and conditions</h2>
-
   <%= govuk_inset_text do %>
     <span class="nhsuk-visually-hidden">Information: </span>
-
-    <p>
-      Taking part in the pilot is voluntary. You can withdraw at any time by
-      emailing <%= govuk_mail_to @school.team.email %>.
-    </p>
-
-    <p>
-      Any findings we make will be anonymised. This means you won’t be
-      personally identified when we share the results of our research.
-    </p>
 
     <h3>What you’ll get for taking part in the pilot</h3>
 
@@ -158,29 +148,37 @@
       obligation to take part.
     </p>
 
-    <h3>What happens to data in our service</h3>
+    <h3>Your personal information </h3>
 
     <p>
-      Your privacy is important to us. We explain how we protect your personal
-      information in our <%= govuk_link_to "privacy policy", :privacy_policy %>.
+      Your contact details will be shared with NHS England so they can contact 
+      you and send you a high street shopping voucher. You can find out more 
+      about how NHS England will protect your personal information in their 
+      <%= govuk_link_to "privacy notice", :privacy_policy %>.
+    </p>
+
+    <h3>If you’re not chosen to take part in the pilot</h3>
+
+    <p>
+      NHS England will delete your contact details within two months of the last pilot vaccination session taking place.
     </p>
   <% end %>
 
   <%= f.govuk_check_boxes_fieldset :conditions_for_taking_part_met,
                                    multiple: false,
-                                   legend: { text: "Conditions for taking part in the pilot" } do %>
+                                   legend: { text: "What you agree to" } do %>
     <%= f.govuk_check_box :terms_and_conditions_agreed,
                           1,
                           0,
                           multiple: false,
-                          label: { text: "I agree to the terms and conditions" },
+                          label: { text: "I agree to take part in the pilot" },
                           link_errors: true %>
     <%= f.govuk_check_box :data_processing_agreed,
                           1,
                           0,
                           multiple: false,
                           label: {
-                            text: "I agree to my data and my child’s data being processed during the pilot"
+                            text: "I agree to share my contact details with NHS England for the purpose of administering payments and electronic communications."
                           },
                           link_errors: true %>
     <%= f.govuk_check_box :consent_response_confirmed,
