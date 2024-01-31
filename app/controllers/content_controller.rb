@@ -9,8 +9,4 @@ class ContentController < ApplicationController
   def privacy_policy
     render_content_page :privacy_policy
   end
-
-  def privacy_policy_summary
-    render_content_page :privacy_policy_summary
-  end
 end
