@@ -335,6 +335,9 @@ In our specific case, MSCV_CloudWatch_Alarms_Topic was created. You need only sp
 **Access CloudWatch Console**
 
 1. Open CloudWatch from the management console and navigate to the Logs -> Log Groups section.
+
+- NOTE: If there aren't any log groups created, refer back to CloudTrail and ensure the trail you have created has got the CloudWatch Logging enabled.
+
 2. Select the log group you want to use. (in our case aws-cloudtrail-logs-393416225559-83ed3a78)
 
 **Create Metric Filters for Key Events**
@@ -350,7 +353,7 @@ Assign a name (e.g., UnauthorizedAPICallsFilter), a metric namespace (e.g., Clou
 Use the below filters as a reference point, but it is worth noting that monitoring is an ever changing practice, so it is very important to regularly review these expressions and adjust depending on monitoring and alerting needs.
 
 ```
-- UnauthorizedAPICalls = "{ ($.errorCode = "*UnauthorizedOperation") || ($.errorCode = "AccessDenied\*") }"
+- UnauthorizedAPICalls = "{ ($.errorCode = "*UnauthorizedOperation" || $.errorCode = "AccessDenied*") && ($.userIdentity.userName != "nhsd_cloudhealth") }"
 - IAMPolicyChanges = "{($.eventName=DeleteGroupPolicy)||($.eventName=DeleteRolePolicy)||($.eventName=DeleteUserPolicy)||($.eventName=PutGroupPolicy)||($.eventName=PutRolePolicy)||($.eventName=PutUserPolicy)||($.eventName=CreatePolicy)||($.eventName=DeletePolicy)||($.eventName=CreatePolicyVersion)||($.eventName=DeletePolicyVersion)||($.eventName=AttachRolePolicy)||($.eventName=DetachRolePolicy)||($.eventName=AttachUserPolicy)||($.eventName=DetachUserPolicy)||($.eventName=AttachGroupPolicy)||($.eventName=DetachGroupPolicy)}"
 - AWSConfigChange = "{($.eventSource = config.amazonaws.com) && (($.eventName=StopConfigurationRecorder)||($.eventName=DeleteDeliveryChannel)||($.eventName=PutDeliveryChannel)||($.eventName=PutConfigurationRecorder))}"
 - CMKPendingDeletionFilter = "{ $.eventSource = kms* && $.errorMessage = "* is pending deletion."}"
