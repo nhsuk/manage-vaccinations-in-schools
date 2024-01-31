@@ -28,7 +28,8 @@ class Session < ApplicationRecord
                 :consent_days_before_custom,
                 :reminder_days_after,
                 :reminder_days_after_custom,
-                :close_consent_on
+                :close_consent_on,
+                :team
 
   belongs_to :campaign, optional: true
   belongs_to :location, optional: true
@@ -37,6 +38,7 @@ class Session < ApplicationRecord
   has_many :patients, through: :patient_sessions
 
   scope :active, -> { where(draft: false) }
+  scope :draft, -> { where(draft: true) }
 
   delegate :name, to: :location
 
@@ -47,7 +49,13 @@ class Session < ApplicationRecord
     validates :location_id,
               presence: true,
               inclusion: {
-                in: ->(object) { object.campaign.team.locations.pluck(:id) }
+                in: ->(object) do
+                  # Location must exist in campaign this session is attached to.
+                  # If there is no campaign yet (during creation), use the
+                  # current user's team instead, which is passed in as
+                  # object.team
+                  (object.campaign&.team || object.team).locations.pluck(:id)
+                end
               }
   end
 
