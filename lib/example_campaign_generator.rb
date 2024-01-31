@@ -97,6 +97,7 @@ class ExampleCampaignGenerator
     @team_data ||= {
       name: team.name,
       email: team.email,
+      privacyPolicyURL: team.privacy_policy_url,
       users:
         users.map { |user| { full_name: user.full_name, email: user.email } }
     }
@@ -109,7 +110,8 @@ class ExampleCampaignGenerator
       FactoryBot.build(
         :team,
         name: "SAIS team #{id}",
-        email: "sais.#{id}@nhs.uk"
+        email: "sais.#{id}@nhs.uk",
+        privacy_policy_url: "https://www.nhs.uk/our-policies/"
       )
   end
 

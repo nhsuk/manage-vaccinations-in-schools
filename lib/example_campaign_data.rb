@@ -140,6 +140,7 @@ class ExampleCampaignData
     {
       name: team_data["name"],
       email: team_data["email"],
+      privacy_policy_url: team_data["privacyPolicyURL"],
       users:
         team_data["users"].map do |user|
           user.slice("full_name", "username", "email")
