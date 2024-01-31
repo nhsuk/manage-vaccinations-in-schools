@@ -17,7 +17,8 @@ module LoadExampleCampaign
       team =
         Team.find_or_initialize_by(
           name: example.team_attributes[:name],
-          email: example.team_attributes[:email]
+          email: example.team_attributes[:email],
+          privacy_policy_url: example.team_attributes[:privacy_policy_url]
         )
       team.campaigns << campaign unless campaign.in? team.campaigns
       create_users(team:, users: example.team_attributes[:users])

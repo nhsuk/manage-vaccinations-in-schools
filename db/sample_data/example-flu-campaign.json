@@ -5,6 +5,7 @@
   "team": {
     "name": "SAIS team 300612",
     "email": "sais.300612@nhs.uk",
+    "privacyPolicyURL": "https://www.nhs.uk/our-policies/",
     "users": [
       {
         "full_name": "Nurse Jackie",
@@ -18,7 +19,7 @@
       "method": "nasal",
       "batches": [
         {
-          "name": "JC5091",
+          "name": "ZC5091",
           "expiry": "2024-05-31"
         },
         {

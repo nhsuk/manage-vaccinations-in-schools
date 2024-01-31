@@ -5,6 +5,7 @@
   "team": {
     "name": "SAIS team 672109",
     "email": "sais.672109@nhs.uk",
+    "privacyPolicyURL": "https://www.nhs.uk/our-policies/",
     "users": [
       {
         "full_name": "Nurse Joy",
