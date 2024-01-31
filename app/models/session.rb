@@ -8,6 +8,7 @@
 #  draft             :boolean          default(FALSE)
 #  send_consent_at   :datetime
 #  send_reminders_at :datetime
+#  time_of_day       :integer
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  campaign_id       :bigint
@@ -36,6 +37,8 @@ class Session < ApplicationRecord
   has_many :consent_forms
   has_many :patient_sessions
   has_many :patients, through: :patient_sessions
+
+  enum :time_of_day, %w[morning afternoon all_day]
 
   scope :active, -> { where(draft: false) }
   scope :draft, -> { where(draft: true) }

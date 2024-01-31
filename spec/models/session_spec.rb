@@ -8,6 +8,7 @@
 #  draft             :boolean          default(FALSE)
 #  send_consent_at   :datetime
 #  send_reminders_at :datetime
+#  time_of_day       :integer
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  campaign_id       :bigint
