@@ -491,3 +491,6 @@ en:
             location_id:
               blank: Choose a school
               inclusion: Choose a school
+            campaign_id:
+              blank: Choose a vaccine
+              inclusion: Choose a vaccine

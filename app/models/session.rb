@@ -59,6 +59,14 @@ class Session < ApplicationRecord
               }
   end
 
+  on_wizard_step :vaccine, exact: true do
+    validates :campaign_id,
+              presence: true,
+              inclusion: {
+                in: ->(object) { object.team.campaigns.pluck :id }
+              }
+  end
+
   on_wizard_step :timeline, exact: true do
     validates :consent_days_before,
               presence: true,

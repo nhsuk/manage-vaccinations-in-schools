@@ -21,10 +21,13 @@ require "rails_helper"
 
 RSpec.describe Session do
   describe "validations" do
-    subject { FactoryBot.build :session, form_step: }
-
     context "when form_step is location" do
       let(:form_step) { :location }
+      let(:location) { create :location }
+      let(:team) { create :team, locations: [location] }
+      let(:campaign) { create :campaign, team: }
+
+      subject { FactoryBot.build :session, form_step:, campaign: }
 
       it { should validate_presence_of(:location_id).on(:update) }
 
@@ -32,6 +35,36 @@ RSpec.describe Session do
         expect(subject).to(
           validate_inclusion_of(:location_id).in_array(
             subject.campaign.team.locations.pluck(:id)
+          ).on(:update)
+        )
+      end
+
+      context "with team attribute and no campaign set" do
+        subject { FactoryBot.build :session, team:, form_step:, campaign: nil }
+
+        it "validates location_id is one of the provided team's locations" do
+          expect(subject).to(
+            validate_inclusion_of(:location_id).in_array(
+              team.locations.pluck(:id)
+            ).on(:update)
+          )
+        end
+      end
+    end
+
+    context "when form_step is vaccine" do
+      let(:form_step) { :vaccine }
+      let(:campaign) { create :campaign }
+      let(:team) { create :team, campaigns: [campaign] }
+
+      subject { FactoryBot.build :session, form_step:, team:, campaign: }
+
+      it { should validate_presence_of(:campaign_id).on(:update) }
+
+      it "validates campaign_id is one of the team's locations" do
+        expect(subject).to(
+          validate_inclusion_of(:campaign_id).in_array(
+            team.campaigns.pluck(:id)
           ).on(:update)
         )
       end
