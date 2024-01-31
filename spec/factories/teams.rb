@@ -2,11 +2,12 @@
 #
 # Table name: teams
 #
-#  id         :bigint           not null, primary key
-#  email      :string
-#  name       :text             not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id                 :bigint           not null, primary key
+#  email              :string
+#  name               :text             not null
+#  privacy_policy_url :string
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
 #
 # Indexes
 #
