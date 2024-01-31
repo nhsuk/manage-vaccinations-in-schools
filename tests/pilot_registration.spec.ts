@@ -96,9 +96,17 @@ async function and_i_enter_my_childs_details() {
 }
 
 async function and_i_check_the_conditions_for_taking_part() {
-  await p.getByLabel("I agree to the terms and conditions").check();
-  await p.getByLabel("I agree to my data").check();
-  await p.getByLabel("I confirm I’ve responded to the school").check();
+  await p.getByLabel("I agree to take part in the pilot").check();
+  await p
+    .getByLabel(
+      "I agree to share my contact details with NHS England for the purpose of administering payments and electronic communications",
+    )
+    .check();
+  await p
+    .getByLabel(
+      "I confirm I’ve responded to the school’s regular request for consent for my child's HPV vaccination",
+    )
+    .check();
 }
 
 async function then_i_see_the_confirmation_message() {
