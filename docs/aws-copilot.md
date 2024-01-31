@@ -335,6 +335,7 @@ In our specific case, MSCV_CloudWatch_Alarms_Topic was created. You need only sp
 **Access CloudWatch Console**
 
 1. Open CloudWatch from the management console and navigate to the Logs -> Log Groups section.
+- NOTE: If there aren't any log groups created, refer back to CloudTrail and ensure the trail you have created has got the CloudWatch Logging enabled.
 2. Select the log group you want to use. (in our case aws-cloudtrail-logs-393416225559-83ed3a78)
 
 **Create Metric Filters for Key Events**
