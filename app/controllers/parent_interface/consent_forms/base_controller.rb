@@ -4,6 +4,7 @@ module ParentInterface
     before_action :set_session
     before_action :set_consent_form
     before_action :authenticate_consent_form_user!
+    before_action :set_privacy_policy_url
 
     private
 
@@ -31,6 +32,10 @@ module ParentInterface
 
     def set_phase_banner_text
       @phase_banner_text = "This is a pilot service."
+    end
+
+    def set_privacy_policy_url
+      @privacy_policy_url = @session.location.team.privacy_policy_url
     end
   end
 end
