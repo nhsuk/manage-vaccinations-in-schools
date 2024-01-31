@@ -64,6 +64,7 @@ en:
     confirm: "confirm"
 
     # Session
+    vaccine: "vaccine"
     location: "location"
     timeline: "timeline"
   consent_form_mailer:
