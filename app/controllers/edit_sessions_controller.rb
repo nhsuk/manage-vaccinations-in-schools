@@ -22,6 +22,9 @@ class EditSessionsController < ApplicationController
     case current_step
     when :confirm
       @session.draft = false
+    when :location, :vaccine
+      @session.team = current_user.team
+      @session.assign_attributes update_params
     else
       @session.assign_attributes update_params
     end
@@ -40,7 +43,15 @@ class EditSessionsController < ApplicationController
   end
 
   def set_session
-    @session = current_user.team.campaign.sessions.find(params[:session_id])
+    policy_scope_class =
+      if params[:id] == "wicked_finish"
+        SessionPolicy::Scope
+      else
+        SessionPolicy::DraftScope
+      end
+
+    @session =
+      policy_scope(Session, policy_scope_class:).find(params[:session_id])
   end
 
   def update_params

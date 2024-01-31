@@ -5,9 +5,7 @@ class SessionsController < ApplicationController
   layout "two_thirds", except: %i[index show]
 
   def create
-    campaign = current_user.team.campaigns.first
-
-    @session = Session.create! campaign:, date: Time.zone.today, draft: true
+    @session = Session.create! date: Time.zone.today, draft: true
 
     redirect_to session_edit_path(@session, :location)
   end
