@@ -10,6 +10,9 @@ class EditSessionsController < ApplicationController
   before_action :set_locations,
                 only: %i[show update],
                 if: -> { current_step == :location }
+  before_action :set_campaigns,
+                only: :show,
+                if: -> { current_step == :vaccine }
 
   def show
     render_wizard
@@ -50,7 +53,8 @@ class EditSessionsController < ApplicationController
         close_consent_on
         close_consent_at
       ],
-      location: [:location_id]
+      location: [:location_id],
+      vaccine: [:campaign_id]
     }.fetch(current_step)
 
     params
@@ -65,5 +69,9 @@ class EditSessionsController < ApplicationController
 
   def set_locations
     @locations = policy_scope(Location).order(:name)
+  end
+
+  def set_campaigns
+    @campaigns = policy_scope(Campaign).order(:created_at)
   end
 end

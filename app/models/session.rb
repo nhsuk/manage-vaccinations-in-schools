@@ -101,7 +101,7 @@ class Session < ApplicationRecord
   end
 
   def form_steps
-    %i[location timeline confirm]
+    %i[location vaccine timeline confirm]
   end
 
   def days_between_consent_and_session
