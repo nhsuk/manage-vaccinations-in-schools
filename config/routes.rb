@@ -21,9 +21,6 @@ Rails.application.routes.draw do
       to: "content#accessibility_statement",
       as: :accessibility_statement
   get "/privacy-policy", to: "content#privacy_policy", as: :privacy_policy
-  get "/privacy-policy-summary",
-      to: "content#privacy_policy_summary",
-      as: :privacy_policy_summary
 
   get "/ping" => proc { [200, {}, ["PONG"]] }
 
