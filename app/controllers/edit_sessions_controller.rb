@@ -11,7 +11,7 @@ class EditSessionsController < ApplicationController
                 only: %i[show update],
                 if: -> { current_step == :location }
   before_action :set_campaigns,
-                only: :show,
+                only: %i[show update],
                 if: -> { current_step == :vaccine }
 
   def show
