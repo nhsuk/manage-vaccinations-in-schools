@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_01_31_142726) do
+ActiveRecord::Schema[7.1].define(version: 2024_01_31_231958) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -307,6 +307,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_31_142726) do
     t.datetime "send_consent_at"
     t.datetime "send_reminders_at"
     t.datetime "close_consent_at"
+    t.integer "time_of_day"
     t.index ["campaign_id"], name: "index_sessions_on_campaign_id"
   end
 
