@@ -1,0 +1,30 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+    href: session_edit_path(id: :vaccine),
+    name: "session vaccine",
+  ) %>
+<% end %>
+
+<%= form_for @session, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+  <%= h1 "When is the session?" %>
+
+  <%= f.govuk_date_field :date,
+                         legend: { text: "Date" },
+                         hint: { text: 'For example, 27 3 2017' },
+                         link_errors: true %>
+
+  <%= f.govuk_collection_radio_buttons(
+    :time_of_day,
+    Session.time_of_days.keys.map do
+      [_1, Session.human_enum_name("time_of_days", _1)]
+    end,
+    :first,
+    :second,
+    legend: {
+      text: "Time",
+    }
+  ) %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

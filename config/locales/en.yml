@@ -66,6 +66,7 @@ en:
     # Session
     vaccine: "vaccine"
     location: "location"
+    when: "when"
     timeline: "timeline"
   consent_form_mailer:
     reasons_for_refusal:
