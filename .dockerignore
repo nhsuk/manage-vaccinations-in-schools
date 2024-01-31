@@ -46,3 +46,6 @@
 /config/settings.local.yml
 /config/settings/*.local.yml
 /config/environments/*.local.yml
+
+# Local scratch workspace
+/scratchpad
