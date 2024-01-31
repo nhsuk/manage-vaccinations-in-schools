@@ -10,7 +10,7 @@
 #  send_reminders_at :datetime
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
-#  campaign_id       :bigint           not null
+#  campaign_id       :bigint
 #  location_id       :bigint
 #
 # Indexes

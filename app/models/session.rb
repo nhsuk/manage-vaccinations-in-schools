@@ -10,7 +10,7 @@
 #  send_reminders_at :datetime
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
-#  campaign_id       :bigint           not null
+#  campaign_id       :bigint
 #  location_id       :bigint
 #
 # Indexes
@@ -30,7 +30,7 @@ class Session < ApplicationRecord
                 :reminder_days_after_custom,
                 :close_consent_on
 
-  belongs_to :campaign
+  belongs_to :campaign, optional: true
   belongs_to :location, optional: true
   has_many :consent_forms
   has_many :patient_sessions

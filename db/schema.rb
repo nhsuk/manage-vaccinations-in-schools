@@ -302,7 +302,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_31_142726) do
     t.bigint "location_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "campaign_id", null: false
+    t.bigint "campaign_id"
     t.boolean "draft", default: false
     t.datetime "send_consent_at"
     t.datetime "send_reminders_at"
