@@ -35,3 +35,11 @@ export const fixtures = {
   unmatchedConsentFormParentName: "Kacy Mosciski",
   unmatchedConsentFormChildName: "Werner Boyle",
 };
+
+export function formatDate(date: Date): string {
+  return date.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}

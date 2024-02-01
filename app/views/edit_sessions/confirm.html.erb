@@ -27,6 +27,11 @@
     end
 
     summary_list.with_row do |row|
+      row.with_key { "Time" }
+      row.with_value { @session.human_enum_name(:time_of_day) }
+    end
+
+    summary_list.with_row do |row|
       row.with_key { "Consent requests" }
       row.with_value {
         "Send #{pluralize(@session.days_between_consent_and_session, "day")} before the session"
