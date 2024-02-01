@@ -3,11 +3,11 @@
 # Table name: sessions
 #
 #  id                :bigint           not null, primary key
-#  close_consent_at  :datetime
-#  date              :datetime
+#  close_consent_at  :date
+#  date              :date
 #  draft             :boolean          default(FALSE)
-#  send_consent_at   :datetime
-#  send_reminders_at :datetime
+#  send_consent_at   :date
+#  send_reminders_at :date
 #  time_of_day       :integer
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
@@ -141,11 +141,11 @@ class Session < ApplicationRecord
   end
 
   def days_between_consent_and_session
-    (date - send_consent_at).to_i / 1.day
+    (date - send_consent_at).to_i
   end
 
   def days_between_consent_and_reminder
-    (send_reminders_at - send_consent_at).to_i / 1.day
+    (send_reminders_at - send_consent_at).to_i
   end
 
   private
