@@ -23,7 +23,7 @@
     <%= f.govuk_radio_button :consent_days_before, :custom,
       label: { text: 'Choose your own schedule' } do %>
       <%= f.govuk_text_field :consent_days_before_custom,
-        label: { text: 'Days before the session' },
+        label: { text: 'Days before the session', size: 's' },
         width: 2,
         suffix_text: "days" %>
     <% end %>
@@ -38,7 +38,7 @@
     <%= f.govuk_radio_button :reminder_days_after, :custom,
       label: { text: 'Choose your own schedule' } do %>
       <%= f.govuk_text_field :reminder_days_after_custom,
-        label: { text: 'Days after the first consent request' },
+        label: { text: 'Days after the first consent request', size: 's' },
         width: 2,
         suffix_text: "days" %>
     <% end %>
@@ -52,7 +52,7 @@
     <%= f.govuk_radio_button :close_consent_on, :custom,
       label: { text: 'Choose your own deadline' } do %>
       <%= f.govuk_date_field :close_consent_at,
-        legend: { text: 'Deadline for consent responses' },
+        legend: { text: 'Deadline for consent responses', size: 's' },
         hint: { text: 'For example, 27 3 2023' } %>
     <% end %>
   <% end %>
