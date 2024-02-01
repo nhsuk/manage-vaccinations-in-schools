@@ -499,6 +499,9 @@ en:
               blank: Enter a date
               greater_than_or_equal_to: Enter a date on or after %{count}
               less_than_or_equal_to: Enter a date on or before %{count}
+              missing_year: Enter a year
+              missing_month: Enter a month
+              missing_day: Enter a day
             time_of_day:
               blank: Select a time of day
               inclusion: Select a time of day
