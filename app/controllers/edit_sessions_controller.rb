@@ -22,6 +22,7 @@ class EditSessionsController < ApplicationController
   def update
     case current_step
     when :confirm
+      copy_entire_cohort_to_session
       @session.draft = false
     when :location, :vaccine
       @session.team = current_user.team
@@ -34,6 +35,15 @@ class EditSessionsController < ApplicationController
   end
 
   private
+
+  def copy_entire_cohort_to_session
+    @session
+      .location
+      .patients
+      .filter { |patient| patient.sessions.active.empty? }
+      .each { |patient| @session.patients << patient }
+    @session.save!
+  end
 
   def current_step
     wizard_value(step)&.to_sym
