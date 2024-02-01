@@ -70,6 +70,23 @@ class Session < ApplicationRecord
               }
   end
 
+  on_wizard_step :when, exact: true do
+    validates :date,
+              presence: true,
+              comparison: {
+                greater_than_or_equal_to:
+                  Date.parse(Settings.pilot.earliest_session_date),
+                less_than_or_equal_to:
+                  Date.parse(Settings.pilot.latest_session_date)
+              }
+
+    validates :time_of_day,
+              presence: true,
+              inclusion: {
+                in: Session.time_of_days.keys
+              }
+  end
+
   on_wizard_step :timeline, exact: true do
     validates :consent_days_before,
               presence: true,

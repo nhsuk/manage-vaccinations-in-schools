@@ -56,6 +56,9 @@ class EditSessionsController < ApplicationController
 
   def update_params
     permitted_attributes = {
+      location: [:location_id],
+      vaccine: [:campaign_id],
+      when: %i[date(3i) date(2i) date(1i) time_of_day],
       timeline: %i[
         consent_days_before
         consent_days_before_custom
@@ -63,9 +66,7 @@ class EditSessionsController < ApplicationController
         reminder_days_after_custom
         close_consent_on
         close_consent_at
-      ],
-      location: [:location_id],
-      vaccine: [:campaign_id]
+      ]
     }.fetch(current_step)
 
     params
