@@ -13,6 +13,7 @@ class EditSessionsController < ApplicationController
   before_action :set_campaigns,
                 only: %i[show update],
                 if: -> { current_step == :vaccine }
+  before_action :validate_params, only: %i[update]
 
   def show
     render_wizard
@@ -85,5 +86,23 @@ class EditSessionsController < ApplicationController
 
   def set_campaigns
     @campaigns = policy_scope(Campaign).order(:created_at)
+  end
+
+  def validate_params
+    case current_step
+    when :when
+      validator =
+        DateParamsValidator.new(
+          field_name: :date,
+          object: @session,
+          params: update_params
+        )
+
+      unless validator.date_params_valid?
+        @session.date = validator.date_params_as_struct
+        @session.time_of_day = update_params[:time_of_day]
+        render_wizard nil, status: :unprocessable_entity
+      end
+    end
   end
 end
