@@ -1,5 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import { signInTestUser, fixtures } from "./shared";
+import { signInTestUser, fixtures, formatDate } from "./shared";
 
 let p: Page;
 
@@ -23,6 +23,12 @@ test("Session create", async ({ page }) => {
   await then_i_see_the_vaccine_page_with_errors();
 
   await when_i_choose_a_vaccine();
+  await then_i_see_the_when_page();
+
+  await when_i_submit_without_choosing_when();
+  await then_i_see_the_when_page_with_errors();
+
+  await when_i_choose_when();
   await then_i_see_the_timeline_page();
 
   await when_i_choose_my_timeline();
@@ -90,6 +96,35 @@ async function when_i_choose_a_vaccine() {
   await p.getByRole("button", { name: "Continue" }).click();
 }
 
+async function then_i_see_the_when_page() {
+  await expect(
+    p.getByRole("heading", {
+      name: "When is the session?",
+    }),
+  ).toBeVisible();
+}
+
+async function when_i_submit_without_choosing_when() {
+  await p.getByRole("button", { name: "Continue" }).click();
+}
+
+async function then_i_see_the_when_page_with_errors() {
+  await expect(p.getByRole("alert")).toContainText("Enter a date");
+  await expect(p.getByRole("alert")).toContainText("Select a time of day");
+}
+
+async function when_i_choose_when() {
+  const date = new Date();
+
+  await p.getByLabel("Day", { exact: true }).fill(date.getDate().toString());
+  await p.getByLabel("Month").fill((date.getMonth() + 1).toString());
+  await p.getByLabel("Year").fill(date.getFullYear().toString());
+
+  await p.getByLabel("Afternoon").click();
+
+  await p.getByRole("button", { name: "Continue" }).click();
+}
+
 async function then_i_see_the_confirm_details_page() {
   await expect(
     p.getByRole("heading", { name: "Check and confirm details" }),
@@ -101,6 +136,18 @@ async function then_i_see_the_confirm_details_page() {
 
   await expect(p.locator(".nhsuk-card")).toHaveText(
     new RegExp("Vaccine" + "HPV"),
+  );
+
+  const today = new Date();
+  const formattedDate = formatDate(today);
+  const dayOfWeek = today.toLocaleDateString("en-GB", { weekday: "long" });
+
+  await expect(p.locator(".nhsuk-card")).toHaveText(
+    new RegExp(`Date${dayOfWeek} ${formattedDate}`),
+  );
+
+  await expect(p.locator(".nhsuk-card")).toHaveText(
+    new RegExp("Time" + "Afternoon"),
   );
 }
 
