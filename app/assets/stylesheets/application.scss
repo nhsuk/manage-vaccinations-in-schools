@@ -44,8 +44,7 @@ $color_app-pale-blue: #ccdff1;
 @import "utilities";
 
 // NHS.UK Frontend overrides
-.nhsuk-label--s,
-.nhsuk-fieldset__legend--s {
-  padding-top: nhsuk-spacing(2);
+.nhsuk-label,
+.nhsuk-fieldset__legend {
   margin-bottom: nhsuk-spacing(2);
 }
