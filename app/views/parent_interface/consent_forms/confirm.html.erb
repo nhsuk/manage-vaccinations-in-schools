@@ -17,204 +17,188 @@ end %>
 
 <%= h1 "Check your answers and confirm" %>
 
-<h2 class="nhsuk-heading-m">Consent</h2>
+<%= render AppCardComponent.new(heading: "Consent") do %>
+  <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
+    summary_list.with_row do |row|
+      row.with_key { "Do you agree?" }
+      row.with_value { @consent_form.consent_given? ?
+                        "Yes, I agree to them having a nasal vaccine" :
+                        "No" }
+      row.with_action(text: "Change",
+        href: change_link[:consent],
+        visually_hidden_text: "consent")
+    end
 
-<div class="nhsuk-card">
-  <div class="nhsuk-card__content">
-    <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
+    if @consent_form.consent_refused?
       summary_list.with_row do |row|
-        row.with_key { "Do you agree?" }
-        row.with_value { @consent_form.consent_given? ?
-                         "Yes, I agree to them having a nasal vaccine" :
-                         "No" }
+        row.with_key { "Reason" }
+        row.with_value { @consent_form.human_enum_name(:reason) }
         row.with_action(text: "Change",
-          href: change_link[:consent],
-          visually_hidden_text: "consent")
+          href: change_link[:reason],
+          visually_hidden_text: "reason for refusal")
       end
 
-      if @consent_form.consent_refused?
-        summary_list.with_row do |row|
-          row.with_key { "Reason" }
-          row.with_value { @consent_form.human_enum_name(:reason) }
-          row.with_action(text: "Change",
-            href: change_link[:reason],
-            visually_hidden_text: "reason for refusal")
-        end
-
-        summary_list.with_row do |row|
-          row.with_key { "Alternative option" }
-          row.with_value { @consent_form.contact_injection? ?
-                           "A nurse can contact me about an injection" :
-                           "No" }
-          row.with_action(text: "Change",
-            href: change_link[:injection],
-            visually_hidden_text: "alternative option")
-        end
-      end
-    end %>
-  </div>
-</div>
-
-<h2 class="nhsuk-heading-m">About your child</h2>
-
-<div class="nhsuk-card">
-  <div class="nhsuk-card__content">
-    <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
       summary_list.with_row do |row|
-        row.with_key { "Child's name" }
-        row.with_value { @consent_form.full_name }
+        row.with_key { "Alternative option" }
+        row.with_value { @consent_form.contact_injection? ?
+                          "A nurse can contact me about an injection" :
+                          "No" }
+        row.with_action(text: "Change",
+          href: change_link[:injection],
+          visually_hidden_text: "alternative option")
+      end
+    end
+  end %>
+<% end %>
+
+<%= render AppCardComponent.new(heading: "About your child") do %>
+  <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
+    summary_list.with_row do |row|
+      row.with_key { "Child's name" }
+      row.with_value { @consent_form.full_name }
+      row.with_action(text: "Change",
+        href: change_link[:name],
+        visually_hidden_text: "child's name")
+    end
+
+    if @consent_form.use_common_name
+      summary_list.with_row do |row|
+        row.with_key { "Also known as" }
+        row.with_value { @consent_form.common_name }
         row.with_action(text: "Change",
           href: change_link[:name],
-          visually_hidden_text: "child's name")
+          visually_hidden_text: "common name")
       end
+    end
 
-      if @consent_form.use_common_name
-        summary_list.with_row do |row|
-          row.with_key { "Also known as" }
-          row.with_value { @consent_form.common_name }
-          row.with_action(text: "Change",
-            href: change_link[:name],
-            visually_hidden_text: "common name")
-        end
-      end
+    summary_list.with_row do |row|
+      row.with_key { "Date of birth" }
+      row.with_value { @consent_form.date_of_birth.to_fs(:nhsuk_date) }
+      row.with_action(
+        text: "Change",
+        href: change_link[:date_of_birth],
+        visually_hidden_text: "date of birth"
+      )
+    end
 
+    if @consent_form.consent_given?
       summary_list.with_row do |row|
-        row.with_key { "Date of birth" }
-        row.with_value { @consent_form.date_of_birth.to_fs(:nhsuk_date) }
+        row.with_key { "Address" }
+        row.with_value { format_address(@consent_form) }
         row.with_action(
           text: "Change",
-          href: change_link[:date_of_birth],
-          visually_hidden_text: "date of birth"
+          href: change_link[:address],
+          visually_hidden_text: "address"
         )
       end
+    end
 
-      if @consent_form.consent_given?
-        summary_list.with_row do |row|
-          row.with_key { "Address" }
-          row.with_value { format_address(@consent_form) }
-          row.with_action(
-            text: "Change",
-            href: change_link[:address],
-            visually_hidden_text: "address"
-          )
-        end
-      end
+    summary_list.with_row do |row|
+      row.with_key { "School" }
+      row.with_value { @consent_form.session.location.name }
+      row.with_action(
+        text: "Change",
+        href: change_link[:school],
+        visually_hidden_text: "school"
+      )
+    end
 
+    if @consent_form.gp_response_yes?
       summary_list.with_row do |row|
-        row.with_key { "School" }
-        row.with_value { @consent_form.session.location.name }
+        row.with_key { "GP Surgery" }
+        row.with_value { @consent_form.gp_name }
         row.with_action(
           text: "Change",
-          href: change_link[:school],
-          visually_hidden_text: "school"
+          href: change_link[:gp],
+          visually_hidden_text: "GP"
         )
       end
+    end
 
-      if @consent_form.gp_response_yes?
-        summary_list.with_row do |row|
-          row.with_key { "GP Surgery" }
-          row.with_value { @consent_form.gp_name }
-          row.with_action(
-            text: "Change",
-            href: change_link[:gp],
-            visually_hidden_text: "GP"
-          )
-        end
-      end
-
-      if @consent_form.gp_response_no? || @consent_form.gp_response_dont_know?
-        summary_list.with_row do |row|
-          row.with_key { "Registered with a GP" }
-          row.with_value { @consent_form.gp_response_no? ? "No" : "I don’t know" }
-          row.with_action(
-            text: "Change",
-            href: change_link[:gp],
-            visually_hidden_text: "GP"
-          )
-        end
-      end
-    end %>
-  </div>
-</div>
-
-<h2 class="nhsuk-heading-m">About you</h2>
-
-<div class="nhsuk-card">
-  <div class="nhsuk-card__content">
-    <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
+    if @consent_form.gp_response_no? || @consent_form.gp_response_dont_know?
       summary_list.with_row do |row|
-        row.with_key { "Your name" }
-        row.with_value { @consent_form.parent_name }
+        row.with_key { "Registered with a GP" }
+        row.with_value { @consent_form.gp_response_no? ? "No" : "I don’t know" }
+        row.with_action(
+          text: "Change",
+          href: change_link[:gp],
+          visually_hidden_text: "GP"
+        )
+      end
+    end
+  end %>
+<% end %>
+
+<%= render AppCardComponent.new(heading: "About you") do %>
+  <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
+    summary_list.with_row do |row|
+      row.with_key { "Your name" }
+      row.with_value { @consent_form.parent_name }
+      row.with_action(text: "Change",
+        href: change_link[:parent],
+        visually_hidden_text: "your name")
+    end
+
+    summary_list.with_row do |row|
+      row.with_key { "Relationship" }
+      row.with_value { @consent_form
+        .human_enum_name(:parent_relationship)
+        .capitalize }
+      row.with_action(text: "Change",
+        href: change_link[:parent],
+        visually_hidden_text: "your relationship")
+    end
+
+    summary_list.with_row do |row|
+      row.with_key { "Email address" }
+      row.with_value { @consent_form.parent_email }
+      row.with_action(text: "Change",
+        href: change_link[:parent],
+        visually_hidden_text: "your email")
+    end
+
+    if @consent_form.parent_phone.present?
+      summary_list.with_row do |row|
+        row.with_key { "Phone number" }
+        row.with_value { @consent_form.parent_phone }
         row.with_action(text: "Change",
           href: change_link[:parent],
-          visually_hidden_text: "your name")
+          visually_hidden_text: "your phone")
       end
 
       summary_list.with_row do |row|
-        row.with_key { "Relationship" }
-        row.with_value { @consent_form
-          .human_enum_name(:parent_relationship)
-          .capitalize }
+        row.with_key { "Phone contact method" }
+        row.with_value { contact_method_for(@consent_form) }
         row.with_action(text: "Change",
-          href: change_link[:parent],
-          visually_hidden_text: "your relationship")
+          href: change_link[:contact_method],
+          visually_hidden_text: "your phone contact method")
       end
-
+    else
       summary_list.with_row do |row|
-        row.with_key { "Email address" }
-        row.with_value { @consent_form.parent_email }
+        row.with_key { "Phone number" }
+        row.with_value { "Not provided" }
         row.with_action(text: "Change",
           href: change_link[:parent],
-          visually_hidden_text: "your email")
+          visually_hidden_text: "your phone")
       end
-
-      if @consent_form.parent_phone.present?
-        summary_list.with_row do |row|
-          row.with_key { "Phone number" }
-          row.with_value { @consent_form.parent_phone }
-          row.with_action(text: "Change",
-            href: change_link[:parent],
-            visually_hidden_text: "your phone")
-        end
-
-        summary_list.with_row do |row|
-          row.with_key { "Phone contact method" }
-          row.with_value { contact_method_for(@consent_form) }
-          row.with_action(text: "Change",
-            href: change_link[:contact_method],
-            visually_hidden_text: "your phone contact method")
-        end
-      else
-        summary_list.with_row do |row|
-          row.with_key { "Phone number" }
-          row.with_value { "Not provided" }
-          row.with_action(text: "Change",
-            href: change_link[:parent],
-            visually_hidden_text: "your phone")
-        end
-      end
-    end %>
-  </div>
-</div>
+    end
+  end %>
+<% end %>
 
 <% if @consent_form.consent_given? %>
-  <h2 class="nhsuk-heading-m">Health questions</h2>
-
-  <div class="nhsuk-card">
-    <div class="nhsuk-card__content">
-      <%= govuk_summary_list classes: 'app-summary-list--full-width' do |summary_list|
-        @consent_form.each_health_answer do |ha|
-          summary_list.with_row do |row|
-            row.with_key { ha.question }
-            row.with_value { health_answer_response(ha) }
-            row.with_action(text: "Change",
-              href: change_link[:health_question, question_number: ha.id],
-              visually_hidden_text: "your answer to health question #{ha.id + 1}")
-          end
+  <%= render AppCardComponent.new(heading: "Health questions") do %>
+    <%= govuk_summary_list classes: 'app-summary-list--full-width' do |summary_list|
+      @consent_form.each_health_answer do |ha|
+        summary_list.with_row do |row|
+          row.with_key { ha.question }
+          row.with_value { health_answer_response(ha) }
+          row.with_action(text: "Change",
+            href: change_link[:health_question, question_number: ha.id],
+            visually_hidden_text: "your answer to health question #{ha.id + 1}")
         end
-      end %>
-    </div>
-  </div>
+      end
+    end %>
+  <% end %>
 <% end %>
 
 <%= govuk_button_to "Confirm", url_for(action: :record), method: :put %>
