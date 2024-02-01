@@ -248,10 +248,16 @@ rails add_new_user['user@example.com','password123','John Doe',1]
 
 ## Deploying
 
-This app can be deployed to AWS using AWS Copilot:
+This app can be deployed to AWS using AWS Copilot. Once authenticated, you can run:
 
 ```sh
-copilot svc deploy
+$ copilot svc deploy
+Found only one service, defaulting to: webapp
+
+  Select an environment  [Use arrows to move, type to filter]
+  > staging
+    test
+
 ```
 
 See [docs/aws-copilot.md](docs/aws-copilot.md) for more information.
