@@ -13,6 +13,9 @@ class EditSessionsController < ApplicationController
   before_action :set_campaigns,
                 only: %i[show update],
                 if: -> { current_step == :vaccine }
+  before_action :set_patients,
+                only: %i[show update],
+                if: -> { current_step == :cohort }
   before_action :validate_params, only: %i[update]
 
   def show
@@ -96,6 +99,28 @@ class EditSessionsController < ApplicationController
 
   def set_campaigns
     @campaigns = policy_scope(Campaign).order(:created_at)
+  end
+
+  def set_patients
+    # Get a list of patients but ensure we don't include patients that are
+    # already in other sessions, if those sessions are active (not draft) and
+    # for the same vaccine/campaign.
+    @patients =
+      @session
+        .location
+        .patients
+        .where(
+          "NOT EXISTS (:sessions)",
+          sessions:
+            Session
+              .select(1)
+              .joins(:patient_sessions)
+              .where(
+                "patient_sessions.patient_id = patients.id AND draft = false AND campaign_id = :campaign_id",
+                campaign_id: @session.campaign_id
+              )
+        )
+        .sort_by(&:last_name)
   end
 
   def validate_params
