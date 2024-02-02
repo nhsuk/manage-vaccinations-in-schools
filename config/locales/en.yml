@@ -526,3 +526,5 @@ en:
             time_of_day:
               blank: Select a time of day
               inclusion: Select a time of day
+            patients:
+              blank: Cannot continue without selecting patients

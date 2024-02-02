@@ -87,6 +87,10 @@ class Session < ApplicationRecord
               }
   end
 
+  on_wizard_step :cohort, exact: true do
+    validates :patients, presence: true
+  end
+
   on_wizard_step :timeline, exact: true do
     validates :consent_days_before,
               presence: true,

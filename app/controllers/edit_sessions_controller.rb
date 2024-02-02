@@ -25,9 +25,12 @@ class EditSessionsController < ApplicationController
   def update
     case current_step
     when :confirm
-      copy_entire_cohort_to_session
       @session.draft = false
     when :location, :vaccine
+      # At this step in the form a location or vaccinee (aka campaign) will not
+      # be set. Validations rely on the team being set here to be able to
+      # validate the user has access to the location or campaign being set
+      # during this step.
       @session.team = current_user.team
       @session.assign_attributes update_params
     else
@@ -38,15 +41,6 @@ class EditSessionsController < ApplicationController
   end
 
   private
-
-  def copy_entire_cohort_to_session
-    @session
-      .location
-      .patients
-      .filter { |patient| patient.sessions.active.empty? }
-      .each { |patient| @session.patients << patient }
-    @session.save!
-  end
 
   def current_step
     wizard_value(step)&.to_sym
@@ -73,6 +67,9 @@ class EditSessionsController < ApplicationController
       location: [:location_id],
       vaccine: [:campaign_id],
       when: %i[date(3i) date(2i) date(1i) time_of_day],
+      cohort: {
+        patient_ids: []
+      },
       timeline: %i[
         consent_days_before
         consent_days_before_custom

@@ -34,11 +34,8 @@
     summary_list.with_row do |row|
       row.with_key { "Cohort" }
       row.with_value do
-        patients_count = @session
-        .location
-        .patients
-        .filter { |patient| patient.sessions.active.empty? }
-        .count
+
+        patients_count = @session.patients.count
         pluralize(patients_count, "children")
       end
     end
