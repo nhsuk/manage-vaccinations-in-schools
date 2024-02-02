@@ -70,6 +70,13 @@ class Patient < ApplicationRecord
     patient_sessions.find_by_session_id(session.id).vaccination_records
   end
 
+  def year_group
+    first_school_year = date_of_birth.year + 5
+    first_school_year += 1 if date_of_birth.month >= 9
+    Time.zone.today.year - first_school_year +
+      (Time.zone.today.month >= 9 ? 1 : 0)
+  end
+
   private
 
   def remove_spaces_from_nhs_number
