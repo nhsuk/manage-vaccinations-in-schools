@@ -1,7 +1,7 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: sessions_path,
-    name: "school sessions",
+    href: previous_wizard_path,
+    name: "#{@previous_step} page of session creation",
   ) %>
 <% end %>
 
