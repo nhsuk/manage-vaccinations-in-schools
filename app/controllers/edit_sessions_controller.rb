@@ -88,6 +88,7 @@ class EditSessionsController < ApplicationController
 
   def set_steps
     self.steps = @session.form_steps
+    @previous_step = previous_step
   end
 
   def set_locations
