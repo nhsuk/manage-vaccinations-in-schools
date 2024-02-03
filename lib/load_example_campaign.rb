@@ -39,8 +39,8 @@ module LoadExampleCampaign
         school =
           create_school(team:, school_attributes: session_attributes["school"])
         session = create_session(session_attributes, campaign:, school:)
-        children_attributes = example.children_attributes(session_attributes:)
-        create_children(children_attributes:, campaign:, session:)
+        patient_attributes = example.children_attributes(session_attributes:)
+        create_children(patient_attributes:, campaign:, session:)
 
         consent_forms =
           example.consent_form_attributes(session_attributes:) || []
@@ -58,6 +58,12 @@ module LoadExampleCampaign
           )
         )
       end
+
+      create_children(
+        patient_attributes: example.patients_with_no_session,
+        campaign: nil,
+        session: nil
+      )
     end
   end
 
@@ -140,14 +146,19 @@ module LoadExampleCampaign
       end
   end
 
-  def self.create_children(children_attributes:, campaign:, session:)
-    children_attributes.each do |attributes|
+  def self.create_children(patient_attributes:, campaign:, session:)
+    patient_attributes.each do |attributes|
       triage_attributes = attributes.delete(:triage)
       consents_attributes = attributes.delete(:consents)
+      location_name = attributes.delete(:location)
 
       patient =
         Patient.find_or_initialize_by(nhs_number: attributes[:nhs_number])
       patient.update!(attributes)
+      patient.location = Location.find_by(name: location_name)
+      patient.save!
+
+      next if session.blank?
       patient_session = PatientSession.find_or_create_by!(patient:, session:)
 
       if triage_attributes.present?

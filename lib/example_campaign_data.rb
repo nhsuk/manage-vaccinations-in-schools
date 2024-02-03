@@ -76,18 +76,7 @@ class ExampleCampaignData
   def children_attributes(session_attributes: nil)
     session_attributes ||= raw_data
     session_attributes["patients"].map do |patient|
-      attributes = {
-        first_name: patient["firstName"],
-        last_name: patient["lastName"],
-        date_of_birth: patient["dob"],
-        consents: patient["consents"],
-        nhs_number: patient["nhsNumber"],
-        parent_name: patient["parentName"],
-        parent_relationship: patient["parentRelationship"],
-        parent_relationship_other: patient["parentRelationshipOther"],
-        parent_email: patient["parentEmail"],
-        parent_phone: patient["parentPhone"]
-      }
+      attributes = patient_attributes(patient:)
 
       if patient["triage"].present?
         attributes[:triage] = {
@@ -129,6 +118,10 @@ class ExampleCampaignData
 
           consent
         end
+      end
+
+      if patient["location"].blank?
+        patient["location"] = session_attributes["location"]
       end
 
       attributes
@@ -176,5 +169,29 @@ class ExampleCampaignData
       registration[:use_common_name] = registration_example["useCommonName"]
       registration
     end
+  end
+
+  def patients_with_no_session
+    return [] if raw_data["patientsWithNoSession"].blank?
+
+    raw_data["patientsWithNoSession"].map do |patient|
+      patient_attributes(patient:)
+    end
+  end
+
+  def patient_attributes(patient:)
+    {
+      first_name: patient["firstName"],
+      last_name: patient["lastName"],
+      date_of_birth: patient["dob"],
+      consents: patient["consents"],
+      nhs_number: patient["nhsNumber"],
+      parent_name: patient["parentName"],
+      parent_relationship: patient["parentRelationship"],
+      parent_relationship_other: patient["parentRelationshipOther"],
+      parent_email: patient["parentEmail"],
+      parent_phone: patient["parentPhone"],
+      location: patient["location"]
+    }
   end
 end
