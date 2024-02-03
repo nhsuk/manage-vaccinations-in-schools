@@ -4,6 +4,7 @@ class ExampleCampaignGenerator
   def self.patient_options
     %i[
       parents_that_have_registered_interest
+      patients_with_no_session
       consent_forms_that_do_not_match
       consent_forms_that_partially_match
       patients_with_no_consent_response
@@ -24,6 +25,7 @@ class ExampleCampaignGenerator
     @presettings ||= {
       default: {
         parents_that_have_registered_interest: 5,
+        patients_with_no_session: 5,
         consent_forms_that_do_not_match: 2,
         consent_forms_that_partially_match: 2,
         patients_with_consent_given_and_ready_to_vaccinate: 2,
@@ -89,7 +91,9 @@ class ExampleCampaignGenerator
       vaccines: vaccines_data,
       healthQuestions: health_answers_data,
       sessions: sessions_data,
-      registrations: registrations_data
+      registrations: registrations_data,
+      patientsWithNoSession:
+        patients_with_no_session_data(sessions_data.first[:location])
     }
   end
 
@@ -190,17 +194,17 @@ class ExampleCampaignGenerator
   end
 
   def generate_session_data
-    patients_consent_triage = []
-    patients_consent_triage +=
+    patients_consents_triage = []
+    patients_consents_triage +=
       build_patients_with_consent_given_and_ready_to_vaccinate
-    patients_consent_triage += build_patients_with_no_consent_response
-    patients_consent_triage += build_patients_with_consent_refused
-    patients_consent_triage += build_patients_with_conflicting_consent
-    patients_consent_triage += build_patients_that_still_need_triage
-    patients_consent_triage += build_patients_with_triage_started
-    patients_consent_triage += build_patients_that_have_already_been_triaged
+    patients_consents_triage += build_patients_with_no_consent_response
+    patients_consents_triage += build_patients_with_consent_refused
+    patients_consents_triage += build_patients_with_conflicting_consent
+    patients_consents_triage += build_patients_that_still_need_triage
+    patients_consents_triage += build_patients_with_triage_started
+    patients_consents_triage += build_patients_that_have_already_been_triaged
 
-    patients_data = generate_patients_data(patients_consent_triage)
+    patients_data = generate_patients_data(patients_consents_triage)
     patients_data = add_consents_to_patients_data(patients_data)
 
     school_data = generate_school_data
@@ -221,6 +225,17 @@ class ExampleCampaignGenerator
       .parse(File.read(Rails.root.join("db/sample_data/schools_sample.json")))
       .sample(random:)
       .with_indifferent_access
+  end
+
+  def patients_with_no_session_data(location)
+    count = options.fetch(:patients_with_no_session, 0)
+    patients_locations =
+      count.times.map do
+        patient = build_patient
+        { patient:, location: }
+      end
+
+    generate_patients_data(patients_locations)
   end
 
   def build_patient
@@ -303,7 +318,7 @@ class ExampleCampaignGenerator
     count.times.map do
       patient = build_patient
       consents = build_consents(random_consents_number, :given, patient:)
-      [patient, consents]
+      { patient:, consents: }
     end
   end
 
@@ -312,7 +327,7 @@ class ExampleCampaignGenerator
     count = options.fetch(:patients_with_no_consent_response, 0)
     count.times.map do
       patient = build_patient
-      [patient, []]
+      { patient: }
     end
   end
 
@@ -322,7 +337,7 @@ class ExampleCampaignGenerator
     count.times.map do
       patient = build_patient
       consents = build_consents(random_consents_number, :refused, patient:)
-      [patient, consents]
+      { patient:, consents: }
     end
   end
 
@@ -332,7 +347,7 @@ class ExampleCampaignGenerator
     count.times.map do
       patient = build_patient
       consents = build_conflicting_consents(patient:)
-      [patient, consents]
+      { patient:, consents: }
     end
   end
 
@@ -429,7 +444,7 @@ class ExampleCampaignGenerator
           patient:
         )
 
-      [patient, consents]
+      { patient:, consents: }
     end
   end
 
@@ -515,7 +530,7 @@ class ExampleCampaignGenerator
         status: "needs_follow_up",
         user_email: user.email
       }
-      [patient, consents, triage]
+      { patient:, consents:, triage: }
     end
   end
 
@@ -582,12 +597,16 @@ class ExampleCampaignGenerator
         notes: patient_case[:triage_notes],
         user_email: user.email
       }
-      [patient, consents, triage]
+      { patient:, consents:, triage: }
     end
   end
 
-  def generate_patients_data(patients_consent_triage)
-    patients_consent_triage.map do |patient, consents, triage|
+  def generate_patients_data(patients_consents_triage)
+    patients_consents_triage.map do |patient_consent_triage|
+      patient = patient_consent_triage[:patient]
+      consents = patient_consent_triage[:consents]
+      triage = patient_consent_triage[:triage]
+      location = patient_consent_triage[:location]
       {
         firstName: patient.first_name,
         lastName: patient.last_name,
@@ -599,7 +618,8 @@ class ExampleCampaignGenerator
         parentPhone: patient.parent_phone,
         parentRelationship: patient.parent_relationship,
         parentRelationshipOther: patient.parent_relationship_other,
-        triage:
+        triage:,
+        location:
       }
     end
   end
