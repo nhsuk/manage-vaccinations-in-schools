@@ -29,6 +29,12 @@ test("Session create", async ({ page }) => {
   await then_i_see_the_when_page_with_errors();
 
   await when_i_choose_when();
+  await then_i_see_the_cohort_page();
+
+  await when_i_uncheck_all_patients_and_submit();
+  await then_i_see_the_cohort_page_with_errors();
+
+  await when_i_submit_with_all_patients_checked();
   await then_i_see_the_timeline_page();
 
   await when_i_choose_my_timeline();
@@ -125,6 +131,35 @@ async function when_i_choose_when() {
   await p.getByRole("button", { name: "Continue" }).click();
 }
 
+async function then_i_see_the_cohort_page() {
+  await expect(
+    p.getByRole("heading", {
+      name: "Select cohort for this session",
+    }),
+  ).toBeVisible();
+}
+
+async function when_i_uncheck_all_patients_and_submit() {
+  // Un-check each checkbox
+  const patientCheckboxes = p.locator("input[type=checkbox]");
+  const count = await patientCheckboxes.count();
+  for (let i = 0; i < count; i++) {
+    await patientCheckboxes.nth(i).uncheck();
+  }
+
+  await p.getByRole("button", { name: "Continue" }).click();
+}
+
+async function then_i_see_the_cohort_page_with_errors() {
+  await expect(p.getByRole("alert")).toContainText(
+    "Cannot continue without selecting patients",
+  );
+}
+
+async function when_i_submit_with_all_patients_checked() {
+  await p.getByRole("button", { name: "Continue" }).click();
+}
+
 async function then_i_see_the_confirm_details_page() {
   await expect(
     p.getByRole("heading", { name: "Check and confirm details" }),
@@ -148,6 +183,14 @@ async function then_i_see_the_confirm_details_page() {
 
   await expect(p.locator(".nhsuk-card")).toHaveText(
     new RegExp("Time" + "Afternoon"),
+  );
+
+  await expect(p.locator(".nhsuk-card")).toHaveText(
+    new RegExp("Time" + "Afternoon"),
+  );
+
+  await expect(p.locator(".nhsuk-card")).toHaveText(
+    new RegExp("Cohort" + "5 children"),
   );
 }
 
