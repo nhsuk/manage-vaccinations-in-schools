@@ -38,7 +38,7 @@ module LoadExampleCampaign
 
         school =
           create_school(team:, school_attributes: session_attributes["school"])
-        session = create_session(session_attributes, campaign:, school:)
+        session = create_session(session_attributes, team:, campaign:, school:)
         patient_attributes = example.children_attributes(session_attributes:)
         create_children(patient_attributes:, campaign:, session:)
 
@@ -136,9 +136,9 @@ module LoadExampleCampaign
     end
   end
 
-  def self.create_session(session_attributes, campaign:, school:)
+  def self.create_session(session_attributes, team:, campaign:, school:)
     Session
-      .find_or_initialize_by(campaign:, location: school)
+      .find_or_initialize_by(team:, campaign:, location: school)
       .tap do |session|
         session.update!(session_attributes.slice("date"))
         session.location = school if session.location.blank?
