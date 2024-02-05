@@ -31,7 +31,6 @@ class EditSessionsController < ApplicationController
       # be set. Validations rely on the team being set here to be able to
       # validate the user has access to the location or campaign being set
       # during this step.
-      @session.team = current_user.team
       @session.assign_attributes update_params
     when :cohort
       @session.assign_attributes(

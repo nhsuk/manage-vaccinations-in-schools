@@ -149,7 +149,14 @@ class Session < ApplicationRecord
   end
 
   def form_steps
-    %i[location vaccine when cohort timeline confirm]
+    [
+      :location,
+      (:vaccine if team.campaigns.count > 1),
+      :when,
+      :cohort,
+      :timeline,
+      :confirm
+    ].compact
   end
 
   def days_between_consent_and_session
