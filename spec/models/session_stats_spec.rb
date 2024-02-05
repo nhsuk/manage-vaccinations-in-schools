@@ -8,11 +8,11 @@ RSpec.describe SessionStats do
       described_class.new(
         patient_sessions: session.patient_sessions,
         location: session.location
-      ).call
+      )
     end
 
     it "returns a hash of session stats" do
-      expect(subject).to eq(
+      expect(subject.to_h).to eq(
         with_consent_given: 0,
         with_consent_refused: 0,
         without_a_response: 0,
@@ -36,7 +36,7 @@ RSpec.describe SessionStats do
       end
 
       it "returns a hash of session stats" do
-        expect(subject).to eq(
+        expect(subject.to_h).to eq(
           with_consent_given: 4,
           with_consent_refused: 1,
           without_a_response: 1,
