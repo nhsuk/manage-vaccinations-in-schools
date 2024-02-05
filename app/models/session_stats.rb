@@ -2,9 +2,21 @@ class SessionStats
   def initialize(patient_sessions:, location:)
     @patient_sessions = patient_sessions
     @location = location
+
+    @stats = calculate_stats
   end
 
-  def call
+  def [](key)
+    @stats[key]
+  end
+
+  def to_h
+    @stats
+  end
+
+  private
+
+  def calculate_stats
     counts = {
       with_consent_given: 0,
       with_consent_refused: 0,

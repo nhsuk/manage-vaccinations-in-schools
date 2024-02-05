@@ -22,7 +22,7 @@ class SessionsController < ApplicationController
       SessionStats.new(
         patient_sessions: @patient_sessions,
         location: @session.location
-      ).call
+      )
   end
 
   def make_in_progress
