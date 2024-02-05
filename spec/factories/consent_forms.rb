@@ -66,7 +66,7 @@ FactoryBot.define do
 
     # use_common_name { false }
 
-    session
+    session { create :session }
     health_answers do
       [HealthAnswer.new(id: 0, question: "Is there anything we should know?")]
     end

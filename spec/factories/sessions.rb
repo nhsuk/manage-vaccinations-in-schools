@@ -28,8 +28,9 @@ FactoryBot.define do
   factory :session do
     transient { patients_in_session { 0 } }
 
-    campaign { create :campaign }
-    location
+    team
+    campaign { create :campaign, team: }
+    location { create :location, team: }
 
     date { Time.zone.today }
     send_consent_at { date - 14.days }
