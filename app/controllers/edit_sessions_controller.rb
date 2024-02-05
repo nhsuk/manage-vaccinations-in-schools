@@ -33,6 +33,11 @@ class EditSessionsController < ApplicationController
       # during this step.
       @session.team = current_user.team
       @session.assign_attributes update_params
+    when :cohort
+      @session.assign_attributes(
+        patient_ids: update_params[:patient_ids] || [],
+        form_step: current_step
+      )
     else
       @session.assign_attributes update_params
     end
