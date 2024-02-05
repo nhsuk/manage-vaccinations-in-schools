@@ -5,7 +5,7 @@
   </td>
   <td class="nhsuk-table__cell">
     <span class="nhsuk-table-responsive__heading">Time</span>
-    <%= session.date.strftime("%l%P") %>
+    <%= session.human_enum_name(:time_of_day) %>
   </td>
   <td class="nhsuk-table__cell" id="<%= dom_id session %>">
     <span class="nhsuk-table-responsive__heading">School</span>
