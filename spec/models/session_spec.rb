@@ -13,10 +13,16 @@
 #  updated_at        :datetime         not null
 #  campaign_id       :bigint
 #  location_id       :bigint
+#  team_id           :bigint
 #
 # Indexes
 #
 #  index_sessions_on_campaign_id  (campaign_id)
+#  index_sessions_on_team_id      (team_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (team_id => teams.id)
 #
 require "rails_helper"
 

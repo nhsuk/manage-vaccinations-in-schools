@@ -13,10 +13,16 @@
 #  updated_at        :datetime         not null
 #  campaign_id       :bigint
 #  location_id       :bigint
+#  team_id           :bigint
 #
 # Indexes
 #
 #  index_sessions_on_campaign_id  (campaign_id)
+#  index_sessions_on_team_id      (team_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (team_id => teams.id)
 #
 class Session < ApplicationRecord
   include WizardFormConcern
@@ -29,9 +35,9 @@ class Session < ApplicationRecord
                 :consent_days_before_custom,
                 :reminder_days_after,
                 :reminder_days_after_custom,
-                :close_consent_on,
-                :team
+                :close_consent_on
 
+  belongs_to :team
   belongs_to :campaign, optional: true
   belongs_to :location, optional: true
   has_many :consent_forms
@@ -47,6 +53,8 @@ class Session < ApplicationRecord
 
   after_initialize :set_timeline_attributes
   after_validation :set_timeline_timestamps
+
+  validates :team_id, presence: true
 
   on_wizard_step :location, exact: true do
     validates :location_id,
