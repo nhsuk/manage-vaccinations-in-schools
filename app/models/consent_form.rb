@@ -140,7 +140,7 @@ class ConsentForm < ApplicationRecord
               presence: true,
               if: :parent_relationship_other?
     validates :parent_email, presence: true, email: true
-    validates :parent_phone, phone_number: true, if: :parent_phone?
+    validates :parent_phone, phone: true, if: :parent_phone?
   end
 
   on_wizard_step :contact_method do

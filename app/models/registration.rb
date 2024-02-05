@@ -79,7 +79,7 @@ class Registration < ApplicationRecord
   validates :parent_name, presence: true, length: { maximum: 300 }
   validates :parent_phone,
             presence: true,
-            phone_number: true,
+            phone: true,
             length: {
               maximum: 300
             },

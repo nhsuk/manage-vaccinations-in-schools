@@ -100,7 +100,7 @@ class Consent < ApplicationRecord
   on_wizard_step :who do
     validates :parent_name, presence: true
     validates :parent_phone, presence: true
-    validates :parent_phone, phone_number: true
+    validates :parent_phone, phone: true
     validates :parent_relationship,
               inclusion: {
                 in: Consent.parent_relationships.keys
