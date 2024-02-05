@@ -11,7 +11,7 @@ class SessionStats
       without_a_response: 0,
       needing_triage: 0,
       ready_to_vaccinate: 0,
-      unmatched_responses: @location.consent_forms.unmatched.count
+      unmatched_responses: @location.consent_forms.unmatched.recorded.count
     }
 
     @patient_sessions.each do |s|
