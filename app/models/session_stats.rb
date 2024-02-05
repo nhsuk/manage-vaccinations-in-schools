@@ -21,11 +21,10 @@ class SessionStats
 
       if s.consent_given_triage_needed? || s.triaged_kept_in_triage?
         counts[:needing_triage] += 1
-        counts[:ready_to_vaccinate] += 1
       end
 
       counts[:ready_to_vaccinate] += 1 if s.triaged_ready_to_vaccinate? ||
-        s.added_to_session? || s.consent_given_triage_not_needed?
+        s.consent_given_triage_not_needed?
     end
 
     counts
