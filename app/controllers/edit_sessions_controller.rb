@@ -62,6 +62,7 @@ class EditSessionsController < ApplicationController
       location: [:location_id],
       when: %i[date(3i) date(2i) date(1i) time_of_day],
       cohort: {
+        all_patients: nil,
         patient_ids: []
       },
       timeline: %i[
