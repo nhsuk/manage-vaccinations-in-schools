@@ -4,6 +4,9 @@
 
 import { application } from "./application";
 
+import CheckAllController from "./check_all_controller";
+application.register("check-all", CheckAllController);
+
 import GovukAccordionController from "./govuk_accordion_controller";
 application.register("govuk-accordion", GovukAccordionController);
 
@@ -19,12 +22,6 @@ application.register("govuk-checkboxes", GovukCheckboxesController);
 import GovukHeaderController from "./govuk_header_controller";
 application.register("govuk-header", GovukHeaderController);
 
-import NhsukNotificationBannerController from "./nhsuk_notification_banner_controller";
-application.register(
-  "nhsuk-notification-banner",
-  NhsukNotificationBannerController,
-);
-
 import GovukSkipLinkController from "./govuk_skip_link_controller";
 application.register("govuk-skip-link", GovukSkipLinkController);
 
@@ -33,6 +30,12 @@ application.register("nhsuk-error-summary", NhsukErrorSummaryController);
 
 import NhsukHeaderController from "./nhsuk_header_controller";
 application.register("nhsuk-header", NhsukHeaderController);
+
+import NhsukNotificationBannerController from "./nhsuk_notification_banner_controller";
+application.register(
+  "nhsuk-notification-banner",
+  NhsukNotificationBannerController,
+);
 
 import NhsukRadiosController from "./nhsuk_radios_controller";
 application.register("nhsuk-radios", NhsukRadiosController);
