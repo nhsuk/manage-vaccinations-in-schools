@@ -527,4 +527,4 @@ en:
               blank: Select a time of day
               inclusion: Select a time of day
             patients:
-              blank: Cannot continue without selecting patients
+              blank: You must choose a cohort to continue
