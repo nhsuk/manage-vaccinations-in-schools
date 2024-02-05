@@ -27,17 +27,22 @@ task :add_new_location,
     raise "Expected 6 arguments got #{args.to_a.size}"
   end
 
-  Location.create!(
-    name:,
-    address:,
-    town:,
-    county:,
-    postcode:,
-    team_id:,
-    registration_open: true
-  )
+  location =
+    Location.create!(
+      name:,
+      address:,
+      town:,
+      county:,
+      postcode:,
+      team_id:,
+      registration_open: true
+    )
 
-  puts "Location #{name} added to team #{Team.find(team_id).name}."
+  puts "Location #{name} (id: #{location.id}) added to team #{Team.find(team_id).name}."
+  puts "New registration url:"
+  base_url =
+    Settings.host ? "https://#{Settings.host}" : "http://localhost:4000"
+  puts base_url + "/schools/#{location.id}/registration/new"
 end
 
 def prompt_user_for(prompt, required: false)
