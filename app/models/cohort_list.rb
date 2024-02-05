@@ -87,7 +87,7 @@ class CohortList
   end
 
   def to_csv
-    CSV.generate(headers: true) do |csv|
+    CSV.generate(headers: true, force_quotes: true) do |csv|
       csv << EXPECTED_HEADERS
 
       data.each { csv << _1 }
