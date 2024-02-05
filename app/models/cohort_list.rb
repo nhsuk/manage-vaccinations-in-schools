@@ -22,24 +22,25 @@ class CohortList
     CHILD_NHS_NUMBER
   ].freeze
 
-  REGISTRATION_ATTRS = %i[
-    created_at
-    location_id
-    location_name
-    parent_name
-    formatted_parent_relationship
-    parent_email
-    parent_phone
-    first_name
-    last_name
-    common_name
-    date_of_birth
-    address_line_1
-    address_line_2
-    address_town
-    address_postcode
-    nhs_number
-  ].freeze
+  REGISTRATION_ATTRS =
+    [
+      :created_at,
+      :location_id,
+      :location_name,
+      :parent_name,
+      :formatted_parent_relationship,
+      :parent_email,
+      %i[parent_phone quoted],
+      :first_name,
+      :last_name,
+      :common_name,
+      :date_of_birth,
+      :address_line_1,
+      :address_line_2,
+      :address_town,
+      :address_postcode,
+      :nhs_number
+    ].map { _1.is_a?(Array) ? _1 : [_1, nil] }.freeze
 
   attr_accessor :csv, :csv_is_malformed, :data, :missing_headers, :rows
 
@@ -67,6 +68,7 @@ class CohortList
     self.rows =
       data
         .map { |raw_row| raw_row.to_h.transform_keys { _1.downcase.to_sym } }
+        .map { |row| row.transform_values { _1&.sub(/^="(.*)"$/, '\1') } }
         .map { CohortListRow.new(_1) }
   end
 
@@ -82,7 +84,16 @@ class CohortList
 
   def self.from_registrations(registrations)
     new.tap do |ch|
-      ch.data = registrations.map { _1.values_at(*REGISTRATION_ATTRS) }
+      ch.data =
+        registrations.map do |registration|
+          REGISTRATION_ATTRS.map do |attr, quote|
+            if quote == :quoted
+              "=\"#{registration.send(attr)}\""
+            else
+              registration.send(attr)
+            end
+          end
+        end
     end
   end
 
