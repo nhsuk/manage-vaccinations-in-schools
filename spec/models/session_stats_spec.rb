@@ -32,6 +32,7 @@ RSpec.describe SessionStats do
         create(:patient_session, :consent_given_triage_not_needed, session:) # ready to vaccinate, consent given
 
         create(:consent_form, :recorded, session:, consent_id: nil) # => unmatched response
+        create(:consent_form, session:, consent_id: nil, recorded_at: nil) # => still draft, should not be counted
       end
 
       it "returns a hash of session stats" do
