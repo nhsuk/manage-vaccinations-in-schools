@@ -22,7 +22,7 @@
   "devDependencies": {
     "@playwright/test": "^1.41.2",
     "@prettier/plugin-ruby": "^4.0.4",
-    "@types/jest": "^29.5.11",
+    "@types/jest": "^29.5.12",
     "concurrently": "^8.2.2",
     "esbuild-jest": "^0.5.0",
     "fake-indexeddb": "^4.0.2",
