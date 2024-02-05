@@ -395,6 +395,7 @@ GEM
       ast (~> 2.4.1)
       racc
     pg (1.5.4)
+    phonelib (0.8.7)
     prettier_print (1.2.1)
     propshaft (0.8.0)
       actionpack (>= 7.0.0)
@@ -672,6 +673,7 @@ DEPENDENCIES
   mail-notify
   okcomputer
   pg (~> 1.5)
+  phonelib
   prettier_print
   propshaft
   pry-rails
