@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   before_action :set_header_path
   before_action :set_service_name
   before_action :set_phase_banner_text
+  before_action :authenticate_basic
 
   class UnprocessableEntity < StandardError
   end
@@ -16,13 +17,6 @@ class ApplicationController < ActionController::Base
   end
 
   FLIPPER_INITIALIZERS[:basic_auth].call unless Flipper.exist? :basic_auth
-
-  if Flipper.enabled? :basic_auth
-    http_basic_authenticate_with name: Settings.support_username,
-                                 password: Settings.support_password,
-                                 message:
-                                   "THIS IS NOT A PRODUCTION NHS.UK SERVICE"
-  end
 
   default_form_builder(GOVUKDesignSystemFormBuilder::FormBuilder)
 
@@ -61,5 +55,21 @@ class ApplicationController < ActionController::Base
     return unless storable_location?
 
     store_location_for(:user, request.fullpath)
+  end
+
+  def authenticate_basic
+    if Flipper.enabled? :basic_auth
+      authenticated =
+        authenticate_with_http_basic do |username, password|
+          username == Settings.support_username &&
+            password == Settings.support_password
+        end
+
+      unless authenticated
+        request_http_basic_authentication "Application", <<~MESSAGE
+        Access is currently restricted to authorised users only.
+      MESSAGE
+      end
+    end
   end
 end
