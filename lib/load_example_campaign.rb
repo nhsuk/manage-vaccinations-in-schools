@@ -141,6 +141,7 @@ module LoadExampleCampaign
       .find_or_initialize_by(campaign:, location: school)
       .tap do |session|
         session.update!(session_attributes.slice("date"))
+        session.update!(time_of_day: 'morning')
         session.location = school if session.location.blank?
         session.save!
       end
