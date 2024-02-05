@@ -134,7 +134,7 @@ async function when_i_choose_when() {
 async function then_i_see_the_cohort_page() {
   await expect(
     p.getByRole("heading", {
-      name: "Select cohort for this session",
+      name: "Choose cohort for this session",
     }),
   ).toBeVisible();
 }
@@ -152,7 +152,7 @@ async function when_i_uncheck_all_patients_and_submit() {
 
 async function then_i_see_the_cohort_page_with_errors() {
   await expect(p.getByRole("alert")).toContainText(
-    "Cannot continue without selecting patients",
+    "You must choose a cohort to continue",
   );
 }
 
