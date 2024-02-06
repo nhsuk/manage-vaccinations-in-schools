@@ -5,6 +5,7 @@
 #  id                 :bigint           not null, primary key
 #  email              :string
 #  name               :text             not null
+#  ods_code           :string
 #  privacy_policy_url :string
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null

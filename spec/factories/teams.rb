@@ -5,6 +5,7 @@
 #  id                 :bigint           not null, primary key
 #  email              :string
 #  name               :text             not null
+#  ods_code           :string
 #  privacy_policy_url :string
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
@@ -16,5 +17,8 @@
 FactoryBot.define do
   factory :team do
     sequence(:name) { |n| "Team #{n}" }
+    sequence(:email) { |n| "team-#{n}@example.com" }
+    ods_code { "U#{rand(10_000..99_999)}" }
+    privacy_policy_url { "https://example.com/privacy" }
   end
 end
