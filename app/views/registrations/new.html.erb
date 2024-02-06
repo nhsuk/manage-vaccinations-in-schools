@@ -8,20 +8,20 @@
     <%= page_title %>
   <% end %>
 
-  <p>
+  <p class="nhsuk-body-m">
     This pilot is for parents of children who are due to get their HPV
     vaccination this year.
   </p>
 
-  <p>
+  <p class="nhsuk-body-m">
     Taking part involves responding to a request for consent through a digital
     service, and then completing a follow-up survey. It should take 15 to 30
     minutes of your time.
   </p>
 
-  <p>To register your interest, complete the fields below.</p>
-
-  <%= govuk_section_break visible: true, size: "l" %>
+  <p class="nhsuk-body-m">
+    To register your interest, complete the fields below.
+  </p>
 
   <%= f.govuk_fieldset legend: { text: "About you", size: "l" } do %>
 
@@ -60,11 +60,12 @@
 
   <% end %>
 
-  <%= govuk_section_break visible: true, size: "l" %>
-
   <%= f.govuk_fieldset legend: { text: "About your child", size: "l" } do %>
 
-    <p>We need your child’s details to check your eligibility to take part in the pilot.</p>
+    <p class="nhsuk-body-m">
+      We need your child’s details to check your eligibility to take part in 
+      the pilot.
+    </p>
 
     <%= f.govuk_text_field :first_name,
                            label: { text: "First name", size: "s" },
@@ -118,31 +119,37 @@
                            class: "nhsuk-input--width-10" %>
   <% end %>
 
-  <%= govuk_section_break visible: true, size: "l" %>
-
   <%= govuk_inset_text do %>
     <span class="nhsuk-visually-hidden">Information: </span>
 
-    <h3>What you’ll get for taking part in the pilot</h3>
+    <h3 class="nhsuk-heading-m">
+      What you’ll get for taking part in the pilot
+    </h3>
 
-    <p>We’ll send you a £20 high street shopping voucher once you’ve:</p>
+    <p class="nhsuk-body-m">
+      We’ll send you a £20 high street shopping voucher once you’ve:
+    </p>
 
-    <ul>
+    <ul class="nhsuk-list nhsuk-list--bullet">
       <li>submitted a response through our digital service</li>
       <li>completed a survey about your experience</li>
     </ul>
 
-    <p>You need to do both these things to qualify for a voucher.</p>
+    <p class="nhsuk-body-m">
+      You need to do both these things to qualify for a voucher.
+    </p>
 
-    <p>
+    <p class="nhsuk-body-m">
       Vouchers are limited to one per household. If you have more than one child
       eligible for the HPV vaccination, you should only submit a consent
       response for one of your children.
     </p>
 
-    <h3>Follow-up research</h3>
+    <h3 class="nhsuk-heading-m">
+      Follow-up research
+    </h3>
 
-    <p>
+    <p class="nhsuk-body-m">
       Once you’ve completed the survey, you might be asked to take part in some
       follow-up research. There are separate incentives for this, and there’s no
       obligation to take part.
@@ -150,16 +157,18 @@
 
     <h3>Your personal information </h3>
 
-    <p>
+    <p class="nhsuk-body-m">
       Your contact details will be shared with NHS England so they can contact 
       you and send you a high street shopping voucher. You can find out more 
       about how NHS England will protect your personal information in their 
       <%= govuk_link_to "privacy notice", :privacy_policy %>.
     </p>
 
-    <h3>If you’re not chosen to take part in the pilot</h3>
+    <h3 class="nhsuk-heading-m">
+      If you’re not chosen to take part in the pilot
+    </h3>
 
-    <p>
+    <p class="nhsuk-body-m">
       NHS England will delete your contact details within two months of the last pilot vaccination session taking place.
     </p>
   <% end %>
@@ -193,8 +202,6 @@
                           },
                           link_errors: true %>
   <% end %>
-
-  <%= govuk_section_break visible: true, size: "l" %>
 
   <%= f.govuk_submit "Register your interest", secondary: true %>
 <% end %>
