@@ -69,7 +69,7 @@ async function when_i_submit_a_consent_with_no_health_concerns() {
   await p.click(radio(0));
   await p.click(radio(1));
   await p.click(radio(2));
-  await p.getByRole("radio", { name: "Yes, it's safe to vaccinate" }).click();
+  await p.getByRole("radio", { name: "Yes, it’s safe to vaccinate" }).click();
   await p.getByRole("button", { name: "Continue" }).click();
 
   // Check answers page

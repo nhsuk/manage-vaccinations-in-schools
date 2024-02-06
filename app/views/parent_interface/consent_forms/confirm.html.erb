@@ -54,11 +54,11 @@ end %>
 <%= render AppCardComponent.new(heading: "About your child") do %>
   <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
     summary_list.with_row do |row|
-      row.with_key { "Child's name" }
+      row.with_key { "Child’s name" }
       row.with_value { @consent_form.full_name }
       row.with_action(text: "Change",
         href: change_link[:name],
-        visually_hidden_text: "child's name")
+        visually_hidden_text: "child’s name")
     end
 
     if @consent_form.use_common_name

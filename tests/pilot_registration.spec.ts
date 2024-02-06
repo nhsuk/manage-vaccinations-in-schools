@@ -55,13 +55,13 @@ async function then_it_shows_me_validation_errors() {
   const alert = p.getByRole("alert");
   await expect(alert).toBeVisible();
   await expect(alert).toContainText(
-    "Enter the first line of the child's address",
+    "Enter the first line of the child’s address",
   );
   await expect(alert).toContainText("Enter the town or city the child is in");
-  await expect(alert).toContainText("Enter the child's postcode");
-  await expect(alert).toContainText("Enter the child's date of birth");
-  await expect(alert).toContainText("Enter the child's first name");
-  await expect(alert).toContainText("Enter the child's last name");
+  await expect(alert).toContainText("Enter the child’s postcode");
+  await expect(alert).toContainText("Enter the child’s date of birth");
+  await expect(alert).toContainText("Enter the child’s first name");
+  await expect(alert).toContainText("Enter the child’s last name");
   await expect(alert).toContainText("Enter your email address");
   await expect(alert).toContainText("Enter your name");
   await expect(alert).toContainText("Choose your relationship");
@@ -104,7 +104,7 @@ async function and_i_check_the_conditions_for_taking_part() {
     .check();
   await p
     .getByLabel(
-      "I confirm I’ve responded to the school’s regular request for consent for my child's HPV vaccination",
+      "I confirm I’ve responded to the school’s regular request for consent for my child’s HPV vaccination",
     )
     .check();
 }

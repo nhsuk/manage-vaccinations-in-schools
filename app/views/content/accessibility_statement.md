@@ -18,11 +18,11 @@ This website is compliant with the Web Content Accessibility Guidelines (WCAG) v
 
 ## Alternative formats
 
-If you need information on this service in a different format, like accessible PDF, large print, easy read, audio recording or Braille, please [contact us](mailto:england.mavis@nhs.net). We'll consider your request and get back to you in 10 working days.
+If you need information on this service in a different format, like accessible PDF, large print, easy read, audio recording or Braille, please [contact us](mailto:england.mavis@nhs.net). We’ll consider your request and get back to you in 10 working days.
 
 ## Reporting accessibility problems with this website
 
-We're always looking to improve the accessibility of this website. If you find any problems, or think we're not meeting accessibility requirements, please [contact us](mailto:england.mavis@nhs.net) to report this. This helps us improve.
+We’re always looking to improve the accessibility of this website. If you find any problems, or think we’re not meeting accessibility requirements, please [contact us](mailto:england.mavis@nhs.net) to report this. This helps us improve.
 
 ## Preparing this accessibility statement
 

@@ -72,7 +72,7 @@ async function then_i_see_the_updated_name() {
 
 async function when_i_change_the_patients_name() {
   await p
-    .getByRole("link", { name: "Change child's name", exact: true })
+    .getByRole("link", { name: "Change child’s name", exact: true })
     .click();
   await p.getByLabel("First name").fill("Joe");
   await p.getByLabel("Last name").fill("Test");

@@ -53,8 +53,8 @@ NHS England is the sole controller for the details of parents who have consented
 
 You can:
 
-- find out what information we hold about you, ask us to correct it if it's wrong, or delete it by emailing <enquiries@nhsdigital.nhs.uk>
-- contact the Information Commissioner's Office, Wycliffe House Water Lane, Wilmslow SK9 5AF if you want to make a complaint about how we’ve managed your data
+- find out what information we hold about you, ask us to correct it if it’s wrong, or delete it by emailing <enquiries@nhsdigital.nhs.uk>
+- contact the Information Commissioner’s Office, Wycliffe House Water Lane, Wilmslow SK9 5AF if you want to make a complaint about how we’ve managed your data
 
 ## Our legal basis for using personal information
 
