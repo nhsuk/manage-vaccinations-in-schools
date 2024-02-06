@@ -155,7 +155,7 @@ async function then_i_see_the_vaccination_show_page_for_the_second_patient() {
 
 async function and_i_triage_the_patient() {
   await p.fill('[name="consent[triage][notes]"]', "Some notes");
-  await p.getByRole("radio", { name: "Yes, it's safe to vaccinate" }).click();
+  await p.getByRole("radio", { name: "Yes, it’s safe to vaccinate" }).click();
 }
 
 async function then_i_see_the_vaccination_index_page() {

@@ -91,7 +91,7 @@ async function when_i_submit_a_consent_with_a_response() {
 
   // Triage
   await p.fill('[name="consent[triage][notes]"]', "Some notes");
-  await p.getByRole("radio", { name: "Yes, it's safe to vaccinate" }).click();
+  await p.getByRole("radio", { name: "Yes, it’s safe to vaccinate" }).click();
   await p.getByRole("button", { name: "Continue" }).click();
 
   // Check answers
