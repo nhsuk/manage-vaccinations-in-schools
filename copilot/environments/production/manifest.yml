@@ -1,0 +1,26 @@
+# The manifest for the "production" environment.
+# Read the full specification for the "Environment" type at:
+#  https://aws.github.io/copilot-cli/docs/manifest/environment/
+
+# Your environment name will be used in naming your resources like VPC, cluster, etc.
+name: production
+type: Environment
+
+# Import your own VPC and subnets or configure how they should be created.
+# network:
+#   vpc:
+#     id:
+
+# Configure the load balancers in your environment, once created.
+http:
+  public:
+    certificates:
+      [
+        arn:aws:acm:eu-west-2:590184012497:certificate/008b9ed6-f2f1-4e01-bb2c-41d6870222ff,
+        arn:aws:acm:eu-west-2:590184012497:certificate/8b5c5653-4ca8-4e16-9543-230715187bc3,
+      ]
+    ssl_policy: "ELBSecurityPolicy-TLS13-1-2-2021-06"
+
+# Configure observability for your environment resources.
+observability:
+  container_insights: false
