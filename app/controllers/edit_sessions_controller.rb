@@ -10,9 +10,6 @@ class EditSessionsController < ApplicationController
   before_action :set_locations,
                 only: %i[show update],
                 if: -> { current_step == :location }
-  before_action :set_campaigns,
-                only: %i[show update],
-                if: -> { current_step == :vaccine }
   before_action :set_patients,
                 only: %i[show update],
                 if: -> { current_step == :cohort }
@@ -26,13 +23,6 @@ class EditSessionsController < ApplicationController
     case current_step
     when :confirm
       @session.draft = false
-    when :location, :vaccine
-      # At this step in the form a location or vaccinee (aka campaign) will not
-      # be set. Validations rely on the team being set here to be able to
-      # validate the user has access to the location or campaign being set
-      # during this step.
-      @session.team = current_user.team
-      @session.assign_attributes update_params
     when :cohort
       @session.assign_attributes(
         patient_ids: update_params[:patient_ids] || [],
@@ -70,7 +60,6 @@ class EditSessionsController < ApplicationController
   def update_params
     permitted_attributes = {
       location: [:location_id],
-      vaccine: [:campaign_id],
       when: %i[date(3i) date(2i) date(1i) time_of_day],
       cohort: {
         patient_ids: []
@@ -98,10 +87,6 @@ class EditSessionsController < ApplicationController
 
   def set_locations
     @locations = policy_scope(Location).order(:name)
-  end
-
-  def set_campaigns
-    @campaigns = policy_scope(Campaign).order(:created_at)
   end
 
   def set_patients

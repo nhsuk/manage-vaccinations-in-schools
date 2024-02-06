@@ -29,9 +29,9 @@ class Session < ApplicationRecord
                 :consent_days_before_custom,
                 :reminder_days_after,
                 :reminder_days_after_custom,
-                :close_consent_on,
-                :team
+                :close_consent_on
 
+  delegate :team, to: :campaign
   belongs_to :campaign, optional: true
   belongs_to :location, optional: true
   has_many :consent_forms
@@ -52,21 +52,7 @@ class Session < ApplicationRecord
     validates :location_id,
               presence: true,
               inclusion: {
-                in: ->(object) do
-                  # Location must exist in campaign this session is attached to.
-                  # If there is no campaign yet (during creation), use the
-                  # current user's team instead, which is passed in as
-                  # object.team
-                  (object.campaign&.team || object.team).locations.pluck(:id)
-                end
-              }
-  end
-
-  on_wizard_step :vaccine, exact: true do
-    validates :campaign_id,
-              presence: true,
-              inclusion: {
-                in: ->(object) { object.team.campaigns.pluck :id }
+                in: ->(object) { object.team.locations.pluck(:id) }
               }
   end
 
@@ -141,7 +127,7 @@ class Session < ApplicationRecord
   end
 
   def form_steps
-    %i[location vaccine when cohort timeline confirm]
+    %i[location when cohort timeline confirm]
   end
 
   def days_between_consent_and_session
