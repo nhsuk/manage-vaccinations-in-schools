@@ -12,6 +12,7 @@
 #  last_sign_in_at        :datetime
 #  last_sign_in_ip        :string
 #  locked_at              :datetime
+#  registration           :string
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
@@ -32,5 +33,6 @@ FactoryBot.define do
     sequence(:email) { |n| "test-#{n}@localhost" }
     sequence(:teams) { [Team.first || create(:team)] }
     password { "power overwhelming" }
+    registration { "SW608658 (HCPC)" }
   end
 end
