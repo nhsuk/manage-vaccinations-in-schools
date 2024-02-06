@@ -7,13 +7,14 @@ desc <<-DESC
     rake add_new_location[name,address,town,county,postcode,team_id]
 DESC
 task :add_new_location,
-     %i[name address town county postcode team_id] =>
+     %i[name address town county urn postcode team_id] =>
        :environment do |_task, args|
   if args.to_a.empty? && $stdin.isatty && $stdout.isatty
     name = prompt_user_for "name", required: true
     address = prompt_user_for "address"
     town = prompt_user_for "town"
     county = prompt_user_for "county"
+    urn = prompt_user_for "urn"
     postcode = prompt_user_for "postcode", required: true
     team_id = prompt_user_for "team_id", required: true
   elsif args.to_a.size == 6
@@ -21,6 +22,7 @@ task :add_new_location,
     address = args[:address]
     town = args[:town]
     county = args[:county]
+    urn = args[:urn]
     postcode = args[:postcode]
     team_id = args[:team_id]
   elsif args.to_a.size != 4
@@ -33,6 +35,7 @@ task :add_new_location,
       address:,
       town:,
       county:,
+      urn:,
       postcode:,
       team_id:,
       registration_open: true
