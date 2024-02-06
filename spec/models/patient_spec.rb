@@ -1,3 +1,31 @@
+# == Schema Information
+#
+# Table name: patients
+#
+#  id                        :bigint           not null, primary key
+#  common_name               :string
+#  date_of_birth             :date
+#  first_name                :string
+#  last_name                 :string
+#  nhs_number                :string
+#  parent_email              :string
+#  parent_name               :string
+#  parent_phone              :string
+#  parent_relationship       :integer
+#  parent_relationship_other :string
+#  created_at                :datetime         not null
+#  updated_at                :datetime         not null
+#  location_id               :bigint
+#
+# Indexes
+#
+#  index_patients_on_location_id  (location_id)
+#  index_patients_on_nhs_number   (nhs_number) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (location_id => locations.id)
+#
 require "rails_helper"
 
 RSpec.describe Patient do
