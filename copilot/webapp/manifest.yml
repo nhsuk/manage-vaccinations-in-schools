@@ -84,3 +84,15 @@ environments:
       MAVIS__HOST: "test.mavis.mavistesting.com"
       MAVIS__SUPPORT_USERNAME: manage
       MAVIS__SUPPORT_PASSWORD: vaccinations
+  production:
+    http:
+      alias:
+        - "www.manage-vaccinations-in-schools.nhs.uk"
+        - "www.give-or-refuse-consent-for-vaccinations.nhs.uk"
+    deployments:
+      # rolling: recreate
+    variables:
+      RAILS_ENV: production
+      MAVIS__HOST: "www.manage-vaccinations-in-schools.nhs.uk"
+      MAVIS__SUPPORT_USERNAME: manage
+      MAVIS__SUPPORT_PASSWORD: vaccinations
