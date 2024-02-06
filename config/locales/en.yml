@@ -64,7 +64,6 @@ en:
     confirm: "confirm"
 
     # Session
-    vaccine: "vaccine"
     location: "location"
     when: "when"
     cohort: "cohort"
@@ -513,9 +512,6 @@ en:
             location_id:
               blank: Choose a school
               inclusion: Choose a school
-            campaign_id:
-              blank: Choose a vaccine
-              inclusion: Choose a vaccine
             date:
               blank: Enter a date
               greater_than_or_equal_to: Enter a date on or after %{count}

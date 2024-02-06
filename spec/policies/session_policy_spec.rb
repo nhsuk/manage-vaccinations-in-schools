@@ -54,7 +54,7 @@ RSpec.describe SessionPolicy do
 
     context "campaign is set but not location" do
       let(:draft_session) do
-        create :session, draft: true, team:, location: nil, campaign:
+        create :session, draft: true, location: nil, campaign:
       end
 
       it { should include draft_session }

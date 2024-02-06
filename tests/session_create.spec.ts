@@ -17,12 +17,6 @@ test("Session create", async ({ page }) => {
   await then_i_see_the_location_page_with_errors();
 
   await when_i_choose_my_location();
-  await then_i_see_the_vaccine_page();
-
-  await when_i_submit_without_choosing_a_vaccine();
-  await then_i_see_the_vaccine_page_with_errors();
-
-  await when_i_choose_a_vaccine();
   await then_i_see_the_when_page();
 
   await when_i_submit_without_choosing_when();
@@ -78,27 +72,6 @@ async function then_i_see_the_location_page_with_errors() {
 
 async function when_i_choose_my_location() {
   await p.click("text=" + fixtures.schoolName);
-  await p.getByRole("button", { name: "Continue" }).click();
-}
-
-async function then_i_see_the_vaccine_page() {
-  await expect(
-    p.getByRole("heading", {
-      name: "Which routine vaccination is being given?",
-    }),
-  ).toBeVisible();
-}
-
-async function when_i_submit_without_choosing_a_vaccine() {
-  await p.getByRole("button", { name: "Continue" }).click();
-}
-
-async function then_i_see_the_vaccine_page_with_errors() {
-  await expect(p.getByRole("alert")).toContainText("Choose a vaccine");
-}
-
-async function when_i_choose_a_vaccine() {
-  await p.click("text=HPV");
   await p.getByRole("button", { name: "Continue" }).click();
 }
 
