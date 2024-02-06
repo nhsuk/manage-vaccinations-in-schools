@@ -14,7 +14,11 @@ class PatientSessionsController < ApplicationController
   private
 
   def set_patient_session
-    @patient_session = policy_scope(PatientSession).find(params.fetch(:id))
+    @patient_session =
+      policy_scope(PatientSession).find_by!(
+        session_id: params.fetch(:session_id),
+        patient_id: params.fetch(:id)
+      )
   end
 
   def set_session
