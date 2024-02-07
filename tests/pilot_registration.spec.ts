@@ -37,7 +37,7 @@ async function and_registration_is_open() {
 }
 
 async function when_i_go_to_the_registration_page_for_a_school() {
-  await p.goto("/schools/1/registration/new");
+  await p.goto("/1/");
 }
 
 async function then_i_see_the_page_with_the_school_name() {

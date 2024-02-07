@@ -11,7 +11,7 @@ test("Pilot registration - close", async ({ page }) => {
   await when_i_visit_the_parents_registration_page();
   await then_i_see_the_registration_form();
 
-  await when_i_to_to_the_who_has_registered();
+  await when_i_go_see_who_has_registered();
   await then_i_see_the_parents_who_have_registered_page();
 
   await when_click_the_link_to_close_registration();
@@ -48,7 +48,7 @@ async function and_registration_is_open() {
 }
 
 async function when_i_visit_the_parents_registration_page() {
-  await p.goto("/schools/1/registration/new");
+  await p.goto("/1/");
 }
 
 async function then_i_see_the_registration_form() {
@@ -59,7 +59,7 @@ async function then_i_see_the_registration_form() {
   ).toBeVisible();
 }
 
-async function when_i_to_to_the_who_has_registered() {
+async function when_i_go_see_who_has_registered() {
   await p.goto("/dashboard");
   await p.click("text=Manage pilot");
   await p.click("text=See who’s interested in the pilot");

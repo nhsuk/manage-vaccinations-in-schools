@@ -1,6 +1,6 @@
 <% page_title = "Register your interest in the NHS school vaccinations pilot" %>
 
-<%= form_for(@registration_form, url: school_registration_path) do |f| %>
+<%= form_for(@registration_form, url: registration_path) do |f| %>
   <%= f.govuk_error_summary %>
 
   <%= h1 page_title:, size: "xl" do %>
@@ -63,7 +63,7 @@
   <%= f.govuk_fieldset legend: { text: "About your child", size: "l" } do %>
 
     <p class="nhsuk-body-m">
-      We need your child’s details to check your eligibility to take part in 
+      We need your child’s details to check your eligibility to take part in
       the pilot.
     </p>
 
@@ -158,9 +158,9 @@
     <h3>Your personal information </h3>
 
     <p class="nhsuk-body-m">
-      Your contact details will be shared with NHS England so they can contact 
-      you and send you a high street shopping voucher. You can find out more 
-      about how NHS England will protect your personal information in their 
+      Your contact details will be shared with NHS England so they can contact
+      you and send you a high street shopping voucher. You can find out more
+      about how NHS England will protect your personal information in their
       <%= govuk_link_to "privacy notice", :privacy_policy %>.
     </p>
 

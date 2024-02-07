@@ -4,6 +4,10 @@ class RegistrationsController < ApplicationController
 
   layout "registration"
 
+  def slug
+    redirect_to action: :new
+  end
+
   def new
     if Flipper.enabled?(:registration_open) && @school.registration_open?
       @registration_form = Registration.new
@@ -18,7 +22,7 @@ class RegistrationsController < ApplicationController
     @registration_form.location = @school
 
     if @registration_form.save
-      redirect_to confirmation_school_registration_path
+      redirect_to confirmation_registration_path
     else
       render :new
     end
