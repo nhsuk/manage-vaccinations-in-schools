@@ -12,6 +12,8 @@ desc <<-DESC
 DESC
 task :add_new_user_securely,
      %i[email full_name team_id registration] => :environment do |_task, args|
+  include TaskHelpers
+
   password = SecureRandom.uuid
 
   if args.to_a.empty? && $stdin.isatty && $stdout.isatty
