@@ -10,6 +10,8 @@ desc <<-DESC
 DESC
 task :add_new_hpv_team,
      %i[email name ods_code privacy_policy_url] => :environment do |_task, args|
+  include TaskHelpers
+
   if args.to_a.empty? && $stdin.isatty && $stdout.isatty
     email = prompt_user_for "Enter team email:", required: true
     name = prompt_user_for "Enter name:", required: true

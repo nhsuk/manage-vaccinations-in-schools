@@ -10,6 +10,8 @@ DESC
 task :add_new_user,
      %i[email password full_name team_id registration] =>
        :environment do |_task, args|
+  include TaskHelpers
+
   if args.to_a.empty? && $stdin.isatty && $stdout.isatty
     email = prompt_user_for "Enter email:", required: true
     password = prompt_user_for "Enter password:", required: true

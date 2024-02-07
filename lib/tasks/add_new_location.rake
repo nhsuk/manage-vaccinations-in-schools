@@ -10,6 +10,8 @@ DESC
 task :add_new_location,
      %i[name address town county urn postcode team_id] =>
        :environment do |_task, args|
+  include TaskHelpers
+
   if args.to_a.empty? && $stdin.isatty && $stdout.isatty
     name = prompt_user_for "Enter name:", required: true
     address = prompt_user_for "Enter address:"
