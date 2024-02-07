@@ -4,3 +4,6 @@ features:
 pilot:
   earliest_session_date: 01-01-2024
   latest_session_date: 01-01-2034
+
+manage_domain: localhost
+consent_domain: localhost

@@ -58,7 +58,8 @@ environments:
       rolling: recreate
     variables:
       RAILS_ENV: production
-      MAVIS__HOST: "pentest.manage-vaccinations-in-schools.nhs.uk"
+      MAVIS__MANAGE_DOMAIN: "pentest.manage-vaccinations-in-schools.nhs.uk"
+      MAVIS__CONSENT_DOMAIN: "pentest.give-or-refuse-consent-for-vaccinations.nhs.uk"
       MAVIS__SUPPORT_USERNAME: manage
       MAVIS__SUPPORT_PASSWORD: vaccinations
   staging:
@@ -70,7 +71,8 @@ environments:
       rolling: recreate
     variables:
       RAILS_ENV: staging
-      MAVIS__HOST: "staging.manage-vaccinations-in-schools.nhs.uk"
+      MAVIS__MANAGE_DOMAIN: "staging.manage-vaccinations-in-schools.nhs.uk"
+      MAVIS__CONSENT_DOMAIN: "staging.give-or-refuse-consent-for-vaccinations.nhs.uk"
       MAVIS__SUPPORT_USERNAME: manage
       MAVIS__SUPPORT_PASSWORD: vaccinations
   test:
@@ -81,7 +83,8 @@ environments:
       rolling: recreate
     variables:
       RAILS_ENV: staging
-      MAVIS__HOST: "test.mavis.mavistesting.com"
+      MAVIS__MANAGE_DOMAIN: "test.mavis.mavistesting.com"
+      MAVIS__CONSENT_DOMAIN: "test.mavis.mavistesting.com"
       MAVIS__SUPPORT_USERNAME: manage
       MAVIS__SUPPORT_PASSWORD: vaccinations
   production:
@@ -93,6 +96,7 @@ environments:
       # rolling: recreate
     variables:
       RAILS_ENV: production
-      MAVIS__HOST: "www.manage-vaccinations-in-schools.nhs.uk"
+      MAVIS__MANAGE_DOMAIN: "www.manage-vaccinations-in-schools.nhs.uk"
+      MAVIS__CONSENT_DOMAIN: "www.give-or-refuse-consent-for-vaccinations.nhs.uk"
       MAVIS__SUPPORT_USERNAME: manage
       MAVIS__SUPPORT_PASSWORD: vaccinations

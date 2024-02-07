@@ -46,7 +46,10 @@ task :add_new_location,
 
   puts "Location #{name} (id: #{location.id}) added to team #{Team.find(team_id).name}."
   puts "New registration url:"
-  base_url =
-    Settings.host ? "https://#{Settings.host}" : "http://localhost:4000"
+  base_url = if Settings.consent_domain
+    "https://#{Settings.consent_domain}"
+  else
+    "http://localhost:4000"
+  end
   puts base_url + "/schools/#{location.id}/registration/new"
 end

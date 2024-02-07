@@ -109,7 +109,7 @@ Rails.application.configure do
       if Settings.is_review
         "#{ENV["HEROKU_APP_NAME"]}.herokuapp.com"
       else
-        Settings.host
+        Settings.manage_domain
       end,
     protocol: "https"
   }
