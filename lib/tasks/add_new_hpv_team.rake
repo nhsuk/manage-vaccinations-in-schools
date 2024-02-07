@@ -1,27 +1,30 @@
+require_relative "../task_helpers"
+
 desc <<-DESC
-  Add a new HPV team
+  Add a new HPV team consisting of a team, campaign, vaccine, and
+  health questions.
 
   Usage:
+    rake add_new_hpv_team # Complete the prompts
     rake add_new_hpv_team[email,name,ods_code,privacy_policy_url]
-  Arguments:
-    email: String, the email of the team.
-    name: String, the name of the team.
-    ods_code: String, the ODS code of the team.
-    privacy_policy_url: String, the URL of the team's privacy policy.
-  Example:
-    rake add_new_hpv_team['team@example.com','Team Name','U12345','https://example.com/privacy']
 DESC
 task :add_new_hpv_team,
      %i[email name ods_code privacy_policy_url] => :environment do |_task, args|
-  raise "All arguments are required" if args.to_a.size < 4
+  if args.to_a.empty? && $stdin.isatty && $stdout.isatty
+    email = prompt_user_for "Enter team email:", required: true
+    name = prompt_user_for "Enter name:", required: true
+    ods_code = prompt_user_for "Enter ODS code:"
+    privacy_policy_url = prompt_user_for "Enter privacy policy URL:"
+  elsif args.to_a.size == 4
+    email = args[:email]
+    name = args[:name]
+    ods_code = args[:ods_code]
+    privacy_policy_url = args[:privacy_policy_url]
+  elsif args.to_a.size != 4
+    raise "Expected 4 arguments got #{args.to_a.size}"
+  end
 
-  team =
-    Team.create!(
-      email: args[:email],
-      name: args[:name],
-      ods_code: args[:ods_code],
-      privacy_policy_url: args[:privacy_policy_url]
-    )
+  team = Team.create!(email:, name:, ods_code:, privacy_policy_url:)
 
   campaign = Campaign.create!(name: "HPV", team:)
   vaccine =
