@@ -7,9 +7,9 @@ name: production
 type: Environment
 
 # Import your own VPC and subnets or configure how they should be created.
-# network:
-#   vpc:
-#     id:
+network:
+  vpc:
+    flow_logs: on
 
 # Configure the load balancers in your environment, once created.
 http:
