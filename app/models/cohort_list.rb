@@ -43,12 +43,13 @@ class CohortList
     nhs_number
   ].freeze
 
-  attr_accessor :csv, :csv_is_malformed, :data, :missing_headers, :rows
+  attr_accessor :csv, :csv_is_malformed, :data, :missing_headers, :rows, :team
 
   validates :csv, presence: true
   validate :csv_is_valid
   validate :headers_are_valid
   validate :rows_are_valid
+  validate :cohort_is_within_team_limit
 
   def load_data!
     return if invalid?
@@ -123,6 +124,14 @@ class CohortList
         # what it would be shown as in Excel. The first row of data is Row 2.
         errors.add("row_#{index + 2}".to_sym, row.errors.full_messages)
       end
+    end
+  end
+
+  def cohort_is_within_team_limit
+    return unless data
+
+    if data.size > team.remaining_cohort_size
+      errors.add(:csv, :too_large, remaining: team.remaining_cohort_size)
     end
   end
 end

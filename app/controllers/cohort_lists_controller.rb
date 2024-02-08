@@ -4,7 +4,7 @@ class CohortListsController < ApplicationController
   before_action :set_team, only: %i[new create]
 
   def new
-    @cohort_list = CohortList.new
+    @cohort_list = CohortList.new(team: @team)
   end
 
   def create
@@ -35,7 +35,7 @@ class CohortListsController < ApplicationController
   private
 
   def cohort_list_params
-    params.fetch(:cohort_list, {}).permit(:csv)
+    params.fetch(:cohort_list, {}).permit(:csv).merge(team: @team)
   end
 
   def set_team

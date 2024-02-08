@@ -30,7 +30,7 @@ class Team < ApplicationRecord
   end
 
   def cohort_size
-    @cohort_size ||= locations.map(&:patients).map(&:size).reduce(&:+)
+    @cohort_size ||= locations.map(&:patients).map(&:size).reduce(&:+) || 0
   end
 
   def remaining_cohort_size

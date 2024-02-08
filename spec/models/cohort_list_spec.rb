@@ -1,17 +1,22 @@
 require "rails_helper"
 
 RSpec.describe CohortList, type: :model do
-  subject(:cohort_list) { described_class.new(csv:) }
+  subject(:cohort_list) { described_class.new(csv:, team:) }
 
+  let(:team) { create(:team) }
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_list/#{file}") }
 
   before do
-    create(:location, id: 1) if Location.count.zero?
+    create(:location, id: 1, team:) if Location.count.zero?
     if Registration.count.zero?
       create(:registration, id: 1, location_id: 1)
       create(:registration, id: 2, location_id: 1)
     end
   end
+
+  # Clear out any patients created by the test suite to prevent
+  # the validations from failing due to duplicate registration IDs
+  before(:each) { Patient.where.not(registration: nil).delete_all }
 
   describe "#load_data!" do
     describe "with missing CSV" do
@@ -33,6 +38,17 @@ RSpec.describe CohortList, type: :model do
 
         expect(cohort_list).to be_invalid
         expect(cohort_list.errors[:csv]).to include(/correct format/)
+      end
+    end
+
+    describe "with too many rows" do
+      let(:file) { "too_many_rows.csv" }
+
+      it "is invalid" do
+        cohort_list.load_data!
+
+        expect(cohort_list).to be_invalid
+        expect(cohort_list.errors[:csv]).to include(/fewer rows/)
       end
     end
   end
