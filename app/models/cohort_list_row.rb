@@ -57,11 +57,11 @@ class CohortListRow
       nhs_number:,
       parent_email:,
       parent_name:,
-      parent_phone:
-      # child_address_line_1:,
-      # child_address_line_2:,
-      # child_address_town:,
-      # child_address_postcode:,
+      parent_phone:,
+      address_line_1:,
+      address_line_2:,
+      address_town:,
+      address_postcode:
     }.merge(parent_relationship_hash)
   end
 
@@ -85,6 +85,22 @@ class CohortListRow
 
   def nhs_number
     child_nhs_number&.gsub(/\s/, "")
+  end
+
+  def address_line_1
+    child_address_line_1
+  end
+
+  def address_line_2
+    child_address_line_2
+  end
+
+  def address_town
+    child_address_town
+  end
+
+  def address_postcode
+    child_address_postcode
   end
 
   def parent_relationship_hash
