@@ -35,6 +35,7 @@
 #
 class Registration < ApplicationRecord
   belongs_to :location
+  has_one :patient
 
   enum :parent_relationship, %w[mother father guardian other], prefix: true
 
