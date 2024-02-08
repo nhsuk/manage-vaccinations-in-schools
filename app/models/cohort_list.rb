@@ -5,6 +5,7 @@ class CohortList
 
   EXPECTED_HEADERS = %w[
     SUBMITTED_AT
+    EOI_ID
     SCHOOL_ID
     SCHOOL_NAME
     PARENT_NAME
@@ -24,6 +25,7 @@ class CohortList
 
   REGISTRATION_ATTRS = %i[
     created_at
+    id
     location_id
     location_name
     parent_name

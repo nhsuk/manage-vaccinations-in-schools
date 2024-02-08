@@ -2,6 +2,7 @@ class CohortListRow
   include ActiveModel::Model
 
   attr_accessor :submitted_at,
+                :eoi_id,
                 :school_id,
                 :school_name,
                 :parent_name,
@@ -50,6 +51,7 @@ class CohortListRow
 
   def to_patient
     {
+      registration_id:,
       common_name:,
       date_of_birth:,
       first_name:,
@@ -101,6 +103,10 @@ class CohortListRow
 
   def address_postcode
     child_address_postcode
+  end
+
+  def registration_id
+    eoi_id
   end
 
   def parent_relationship_hash
