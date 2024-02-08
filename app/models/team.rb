@@ -22,8 +22,18 @@ class Team < ApplicationRecord
   validates :name, presence: true
   validates :name, uniqueness: true
 
+  MAX_COHORT_SIZE = 100
+
   def campaign
     # TODO: Update the app to properly support multiple campaigns per team
     campaigns.first
+  end
+
+  def cohort_size
+    @cohort_size ||= locations.map(&:patients).map(&:size).reduce(&:+)
+  end
+
+  def remaining_cohort_size
+    MAX_COHORT_SIZE - cohort_size
   end
 end
