@@ -5,7 +5,13 @@ RSpec.describe CohortList, type: :model do
 
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_list/#{file}") }
 
-  before { create(:location, id: 1) if Location.count.zero? }
+  before do
+    create(:location, id: 1) if Location.count.zero?
+    if Registration.count.zero?
+      create(:registration, id: 1, location_id: 1)
+      create(:registration, id: 2, location_id: 1)
+    end
+  end
 
   describe "#load_data!" do
     describe "with missing CSV" do
