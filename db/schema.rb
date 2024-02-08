@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_02_08_122856) do
+ActiveRecord::Schema[7.1].define(version: 2024_02_08_124647) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -273,8 +273,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_08_122856) do
     t.string "address_line_2"
     t.string "address_town"
     t.string "address_postcode"
+    t.bigint "registration_id"
     t.index ["location_id"], name: "index_patients_on_location_id"
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
+    t.index ["registration_id"], name: "index_patients_on_registration_id"
   end
 
   create_table "registrations", force: :cascade do |t|
@@ -404,6 +406,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_08_122856) do
   add_foreign_key "health_questions", "vaccines"
   add_foreign_key "locations", "teams"
   add_foreign_key "patients", "locations"
+  add_foreign_key "patients", "registrations"
   add_foreign_key "registrations", "locations"
   add_foreign_key "triage", "patient_sessions"
   add_foreign_key "triage", "users"
