@@ -26,7 +26,6 @@ class CohortListRow
   validates :parent_relationship, presence: true
   validates :parent_email, presence: true
   validates :parent_email, email: true, if: -> { parent_email.present? }
-  validates :parent_phone, presence: true
   validates :parent_phone, phone: true, if: -> { parent_phone.present? }
   validates :child_first_name, presence: true
   validates :child_last_name, presence: true
