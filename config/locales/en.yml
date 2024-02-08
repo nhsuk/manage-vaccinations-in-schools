@@ -169,6 +169,7 @@ en:
             csv:
               blank: Choose a file
               invalid: Choose a CSV file in the correct format
+              too_large: "Choose a CSV with %{remaining} or fewer rows"
         cohort_list_row:
           attributes:
             submitted_at:
