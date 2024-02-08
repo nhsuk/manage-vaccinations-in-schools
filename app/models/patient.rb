@@ -3,6 +3,10 @@
 # Table name: patients
 #
 #  id                        :bigint           not null, primary key
+#  address_line_1            :string
+#  address_line_2            :string
+#  address_postcode          :string
+#  address_town              :string
 #  common_name               :string
 #  date_of_birth             :date
 #  first_name                :string
@@ -54,7 +58,11 @@ class Patient < ApplicationRecord
            :parent_name,
            :parent_phone,
            :parent_relationship_other,
-           :common_name
+           :common_name,
+           :address_line_1,
+           :address_line_2,
+           :address_postcode,
+           :address_town
 
   before_save :remove_spaces_from_nhs_number
 
