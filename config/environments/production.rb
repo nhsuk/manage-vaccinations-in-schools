@@ -104,13 +104,10 @@ Rails.application.configure do
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
+  config.hosts = [config.manage_domain, config.consent_domain]
+
   config.action_mailer.default_url_options = {
-    host:
-      if Settings.is_review
-        "#{ENV["HEROKU_APP_NAME"]}.herokuapp.com"
-      else
-        Settings.manage_domain
-      end,
+    host: config.manage_domain,
     protocol: "https"
   }
   config.action_mailer.delivery_method = :notify

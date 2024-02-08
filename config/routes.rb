@@ -6,7 +6,7 @@ Rails.application.routes.draw do
     get "/500", to: "errors#internal_server_error"
   end
 
-  constraints domain: Settings.manage_domain do
+  constraints domain: Rails.application.config.manage_domain do
     root to: redirect("/start")
 
     devise_for :users,
@@ -129,7 +129,7 @@ Rails.application.routes.draw do
     resources :consent_forms, only: [:show]
   end
 
-  constraints domain: Settings.consent_domain do
+  constraints domain: Rails.application.config.consent_domain do
     resource :registration, path: ":school_id", only: %i[new create] do
       get "/", to: "registrations#new"
       get "confirmation", on: :collection

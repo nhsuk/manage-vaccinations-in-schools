@@ -59,5 +59,13 @@ module ManageVaccinations
     config.time_zone = "London"
 
     config.active_job.queue_adapter = :good_job
+
+    if Settings.is_review
+      config.manage_domain = "#{ENV["HEROKU_APP_NAME"]}.herokuapp.com"
+      config.consent_domain = config.manage_domain
+    else
+      config.manage_domain = Settings.manage_domain
+      config.consent_domain = Settings.consent_domain
+    end
   end
 end
