@@ -9,14 +9,34 @@
   ]) %>
 <% end %>
 
-<%= form_for @cohort_list, url: pilot_cohort_path do |f| %>
-  <%= f.govuk_error_summary %>
+<% if @team.remaining_cohort_size.zero? %>
+  <%= h1 page_title %>
+  <%= govuk_inset_text(classes: "nhsuk-u-margin-top-4") do %>
+    <p>
+      Your current cohort has <%= pluralize(@team.cohort_size, "child") %>.
+      You have reached the maximum number of children for this pilot.
+    </p>
+  <% end %>
+<% else %>
+  <%= form_for @cohort_list, url: pilot_cohort_path do |f| %>
+    <%= f.govuk_error_summary %>
 
-  <%= f.govuk_file_field :csv,
-    label: { text: page_title, tag: 'h1', size: 'l' },
-    hint: { text: 'Make sure the CSV you upload has the same format as your
-                   standard cohort template' }
-  %>
+    <%= f.govuk_file_field :csv,
+      label: { text: page_title, tag: 'h1', size: 'l' },
+      hint: { text: 'Make sure the CSV you upload has the same format as your
+                     standard cohort template' } do %>
+      <%= govuk_inset_text(classes: 'nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-4') do %>
+        <p>
+          <% if @team.cohort_size.zero? %>
+            Your current cohort is empty.
+          <% else %>
+            Your current cohort has <%= pluralize(@team.cohort_size, "child") %>.
+          <% end %>
+          You can upload <%= @team.remaining_cohort_size %> more.
+        </p>
+      <% end %>
+    <% end %>
 
-  <%= f.govuk_submit 'Upload the cohort list' %>
+    <%= f.govuk_submit 'Upload the cohort list' %>
+  <% end %>
 <% end %>

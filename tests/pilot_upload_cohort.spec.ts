@@ -70,6 +70,9 @@ async function then_i_should_see_the_upload_cohort_page() {
   await expect(
     p.getByRole("heading", { name: "Upload the cohort list" }),
   ).toBeVisible();
+  await expect(p.locator(".nhsuk-inset-text")).toContainText(
+    "Your current cohort has 5 children",
+  );
 }
 
 async function when_i_upload_the_cohort_file() {

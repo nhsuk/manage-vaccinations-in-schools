@@ -1,6 +1,8 @@
 class CohortListsController < ApplicationController
   layout "two_thirds"
 
+  before_action :set_team, only: %i[new create]
+
   def new
     @cohort_list = CohortList.new
   end
@@ -34,5 +36,9 @@ class CohortListsController < ApplicationController
 
   def cohort_list_params
     params.fetch(:cohort_list, {}).permit(:csv)
+  end
+
+  def set_team
+    @team = current_user.team
   end
 end
