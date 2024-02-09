@@ -70,7 +70,7 @@ class CohortList
     self.rows =
       data
         .map { |raw_row| raw_row.to_h.transform_keys { _1.downcase.to_sym } }
-        .map { CohortListRow.new(_1) }
+        .map { CohortListRow.new(_1.merge(team:)) }
   end
 
   def generate_patients!
