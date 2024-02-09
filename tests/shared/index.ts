@@ -34,6 +34,19 @@ export const fixtures = {
   // Any consent response from /schools/1, signed in as Nurse Joy
   unmatchedConsentFormParentName: "Kacy Mosciski",
   unmatchedConsentFormChildName: "Werner Boyle",
+
+  // School from /pilot/registrations
+  pilotSchoolName: "Holy Rosary Catholic Primary Academy",
+
+  // Children whose parents have expressed interest in the pilot These should
+  // all exist in the downloaded list of registered parents from
+  // /pilot/registrations or from the "registrations" section of the example
+  // campaign CSV. We only the first 3.
+  registeredChildren: [
+    { firstName: "Ray", lastName: "O'Conner", fullName: "Ray O'Conner" },
+    { firstName: "Antonia", lastName: "Heaney", fullName: "Antonia Heaney" },
+    { firstName: "Huey", lastName: "Mosciski", fullName: "Huey Mosciski" },
+  ],
 };
 
 export function formatDate(date: Date): string {
