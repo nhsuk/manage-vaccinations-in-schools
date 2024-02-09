@@ -3,11 +3,12 @@ require "rails_helper"
 RSpec.describe CohortList, type: :model do
   subject(:cohort_list) { described_class.new(csv:, team:) }
 
-  let(:team) { create(:team) }
+  let(:team) { create(:team, locations: [location]) }
+  # Ensure we have a location with id=1 since our fixture file uses it
+  let!(:location) { Location.find_by(id: 1) || create(:location, id: 1) }
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_list/#{file}") }
 
   before do
-    create(:location, id: 1, team:) if Location.count.zero?
     if Registration.count.zero?
       create(:registration, id: 1, location_id: 1)
       create(:registration, id: 2, location_id: 1)
