@@ -1,13 +1,20 @@
 # AWS Copilot Ops Manual
 
-## Configure AWS local credentials
+This document aims to provide instructions on how to work with aws-copilot, and creating and managing the environments and services to get the MAVIS application up and running.
 
-Install `awscli` and `aws-copilot`. Then configure your AWS CLI credentials
-locally:
+## Prerequisites
 
-```bash
-$ aws configure sso
-```
+Before you start, make sure you have the following ready:
+
+1. Credentials to your AWS account.
+2. Administrative rights on your machine for software installation.
+3. `asdf` installed locally. (refer to notes in root project README)
+4. aws-cli installed locally.
+5. aws-copilot installed locally.
+
+**NOTE**: For steps 3-5, refer to the README in the root directory of this project.
+
+### Configuring AWS CLI
 
 Use any session name that makes sense to you, the SSO Start URL and SSO Region
 from the "Command line or programmatic access" link in the AWS Account admin.
@@ -46,72 +53,60 @@ sso_registration_scopes = sso:account:access
 
 Running `aws sso login` will log you in via your browser.
 
-After this, AWS Copilot commands should run on your new profile:
+**NOTE**: If you have multiple AWS accounts, you can also use temporary credentials and export them. These can be found in the Command line or programmatic access bit under your account.
 
-```bash
-$ copilot app ls
-manage-childrens-vaccinations
-```
+After this, AWS Copilot will have access and visibility of the account and you can start using it.
 
-## Manual deployment
+## AWS Copilot - Starting from scratch
 
-Assuming you have an environment setup, go ahead and deploy:
+If setting it up the first time, or after tearing down the existent stack, follow the instructions below:
 
-```bash
-copilot svc deploy --env staging
-```
+### If you need to tear it down
 
-## Opening a shell on the remote environment
+`copilot app delete`, and follow the instructions
 
-If you have the service up and running, you can connect to the first running
-container with this command:
+### Setting up a new Stack
 
-```bash
-copilot svc exec --app manage-childrens-vaccinations --env staging --name webapp
-```
-
-### Tailing logs of running service
-
-Use this command to see the most recent logs and to follow any new logs:
-
-```bash
-copilot svc logs --since 1h --follow
-```
-
-## Setting up a new environment
-
-Before you start, if you want HTTPS, you need to set up certificates in ACM.
+Before you start, if you want to use HTTPS, you need to set up certificates in ACM.
 
 The certificate needs to be verified by the DNS team by sending them the
 verification `cname`. On their end, they will verify the ownership, which in
 turn will update the status of the certificate to 'verified' in the ACM List of
 Certificates.
 
-Once the cert is approved, feed the ARN using the CLI:
-
-```bash
-copilot env init --import cert arn:aws.....
-```
-
-This will change the manifest file for the environment:
+Once the cert is approved, continue the commands below sequentially.
 
 ```
+$ aws configure sso                                         # do this or export the termporary credentials you got from the console start page.
+$ copilot app init                                          # initialise the app
+$ copilot env init --name env_name                          # initialise the environment
+$ copilot env deploy --name staging                         # deploy the environment
+$ copilot secret init --name secret_name                    # initialise the secret(s)
+$ copilot svc init                                          # initialise the service, and follow the instructions. In our case it is a Load Balanced Web Service option.
+$ copilot svc deploy --name service_name --env env_name     # deploy the service to the target environment.
+```
+
+**NOTES**
+
+You can modify the command in step 3 to import the certs, but ideally you should import the certs using the environment manifest file. Refer to the example below:
+
+```yml
+# example from copilot/environments/staging/manifest.yml
 http:
   public:
-    certificates: [arn:aws:acm:eu-west-2:393416225559:certificate/05611645-54eb-4bfe-bace-58d64f27c974]
+    certificates:
+      [
+        arn:aws:acm:eu-west-2:393416225559:certificate/05611645-54eb-4bfe-bace-58d64f27c974,
+        arn:aws:acm:eu-west-2:393416225559:certificate/4d936f64-9a49-46b3-92db-cd3336aa63f9,
+      ]
 ```
 
-Give the environment a name and choose the default environment configuration.
+However, if need be, you can also import the certificates during the initialisation of the environment like so:
+`$ copilot env init --import-cert-arns arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012 --import-cert-arns arn:aws:acm:us-east-1:123456789012:certificate/87654321-4321-4321-4321-210987654321 --name env_name`
 
-`copilot env ls` should show the new environment when the previous command
-succeeds.
+You can do step 5 as many times as you need to. You can also optionally add the `--overwrite` flag if the secret is already initialised but needs modifying. More on this after these notes.
 
-Deploy the env once, so that it is upgraded, and allows us to provision
-secrets:
-
-```bash
-copilot env deploy --name pentest
-```
+Step 7 will do image building, deploying, and configuring of all that will be needed for the service.
 
 Open `copilot/webapp/manifest.yml` and add a new section to the `environments`:
 
@@ -137,20 +132,32 @@ environments:
 +        - "pentest.give-or-refuse-consent-for-vaccinations.nhs.uk"
 ```
 
-You'll then need to set up the secrets. Check the `secrets` section of the
-`webapp/manifest.yml`. Set up each one with:
+## AWS Copilot - Working with existent stack
+
+Assuming you have an environment setup, go ahead and deploy:
 
 ```bash
-copilot secret init
+copilot svc deploy --env staging
 ```
 
-Skip the environments you're not setting up keys for by hitting return.
+### Opening a shell on the remote environment
 
-Finally, deploy the app:
+If you have the service up and running, you can connect to the first running
+container with this command:
 
 ```bash
-copilot svc deploy --env pentest
+copilot svc exec --app manage-childrens-vaccinations --env staging --name webapp
 ```
+
+### Tailing logs of running service
+
+Use this command to see the most recent logs and to follow any new logs:
+
+```bash
+copilot svc logs --since 1h --follow
+```
+
+### Destroying the environment
 
 When you're done with the environment, you can tear it down with:
 
@@ -288,7 +295,8 @@ This is a shell script designed to automate the setup of IAM Access Analyzers in
 **Analyzer Check**: The script first checks if the specified analyzers (External Access and Unused Access) exist in the AWS account.\
 **Creation**: If either analyzer is not present, the script proceeds to create it.\
 **Error Handling**: Includes basic error handling; exits upon failure to create an analyzer.\
-NOTE: The script executes non-interactively without requiring manual input.
+
+**NOTE**: The script executes non-interactively without requiring manual input.
 
 ### Requirements
 
@@ -314,7 +322,7 @@ This guide details setting up CloudWatch alerts to monitor critical security eve
 
 ### Instructions
 
-**Configure AWS CloudTrail**
+#### Configure AWS CloudTrail
 
 Ensure CloudTrail is enabled and properly configured to log events in the AWS account.
 CloudTrail logs should be directed to a specific log group in CloudWatch Logs.
@@ -322,7 +330,7 @@ CloudTrail logs should be directed to a specific log group in CloudWatch Logs.
 In our specific case, a new Trail was created.
 You need only specify the name, and KMS alias, the rest of the fields are fine to stay as defaults.
 
-**Set Up SNS Topic for Alerts**
+#### Set Up SNS Topic for Alerts
 
 In the SNS console, create a new topic for CloudWatch Alerts.
 Invite stakeholders to subscribe (via email, SMS, etc.).
@@ -332,15 +340,15 @@ It is good practice to have separate Topics for differents kinds and types of al
 
 In our specific case, MSCV_CloudWatch_Alarms_Topic was created. You need only specify the name, and type of the topic, the rest are fine to stay as default values.
 
-**Access CloudWatch Console**
+#### Access CloudWatch Console
 
 1. Open CloudWatch from the management console and navigate to the Logs -> Log Groups section.
 
-- NOTE: If there aren't any log groups created, refer back to CloudTrail and ensure the trail you have created has got the CloudWatch Logging enabled.
+- **NOTE**: If there aren't any log groups created, refer back to CloudTrail and ensure the trail you have created has got the CloudWatch Logging enabled.
 
 2. Select the log group you want to use. (in our case aws-cloudtrail-logs-393416225559-83ed3a78)
 
-**Create Metric Filters for Key Events**
+#### Create Metric Filters for Key Events
 
 For each key event (e.g., Unauthorized API Calls, IAM Policy Changes), create a new metric filter
 
@@ -348,7 +356,7 @@ Click "Create metric filter."
 Enter a filter pattern to match the specific event.
 Assign a name (e.g., UnauthorizedAPICallsFilter), a metric namespace (e.g., CloudTrailMetrics), and a metric value (e.g. 1).
 
-**Define Filter Patterns**
+#### Define Filter Patterns
 
 Use the below filters as a reference point, but it is worth noting that monitoring is an ever changing practice, so it is very important to regularly review these expressions and adjust depending on monitoring and alerting needs.
 
@@ -365,13 +373,13 @@ Use the below filters as a reference point, but it is worth noting that monitori
 - VPCChangeFilter = "{ ($.eventName = CreateVpc) || ($.eventName = DeleteVpc) || ($.eventName = ModifyVpcAttribute) || ($.eventName = AcceptVpcPeeringConnection) || ($.eventName = CreateVpcPeeringConnection) || ($.eventName = DeleteVpcPeeringConnection) || ($.eventName = RejectVpcPeeringConnection) }"
 ```
 
-**Create CloudWatch Alarms**
+#### Create CloudWatch Alarms
 
 Then for each one of the filters created, create an alarm by selecting the metric filter and click "Create alarm."
 Define the alarm condition (e.g., metric greater than 0 for 1 consecutive period).
 Set alarm actions to notify via the SNS topic created earlier.
 
-**Test Alarm Configuration**
+#### Test Alarm Configuration
 
 The most realistic test for any montioring alert is a real life situation that actually triggers the defined expression.
 However, it can also be tested by manually changing the state of the alert. This is not the best way since it can yield false positives, but for the purpose of testing SNS function, it can be useful.
@@ -387,18 +395,11 @@ And then, remember to change the state back (it can also resolve itself automati
 aws cloudwatch set-alarm-state --alarm-name "UnauthorizedOperationCount" --state-reason "Testing alarm" --state-value OK
 ```
 
-### NOTES
-
-The following sites contain some valuable examples that can be used for inspiration whenever ready to take the monitoring journey to the next level:
-
-- https://asecure.cloud/l/cloudwatch/
-- https://www.intelligentdiscovery.io/controls/cloudwatch/
-
-## Server Access Logging on S3 Buckets
+### Server Access Logging on S3 Buckets
 
 This is a feature provided by AWS. Server access logging for S3 buckets in AWS provides detailed records for the requests made to a specific bucket. These logs are invaluable for security and audit purposes.
 
-### Enabling Server Access Logging
+#### Enabling Server Access Logging
 
 This can be done through the Management Console as well as the AWS CLI, but for the sake of convenience, we will only cover doing it though former.
 
@@ -415,4 +416,11 @@ Follow the instructions below:
 
 There is a delay in delivering the logs, so it can potentially take a couple hours before we start seeing some logs.
 
-NOTE: When you enable server access logging, the S3 console automatically updates your bucket policy to include access to the S3 log delivery group.
+**NOTE**: When you enable server access logging, the S3 console automatically updates your bucket policy to include access to the S3 log delivery group.
+
+### NOTES
+
+The following sites contain some valuable examples that can be used for inspiration whenever ready to take the monitoring journey to the next level:
+
+- https://asecure.cloud/l/cloudwatch/
+- https://www.intelligentdiscovery.io/controls/cloudwatch/
