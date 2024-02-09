@@ -84,6 +84,17 @@ environments:
       MAVIS__HOST: "test.mavis.mavistesting.com"
       MAVIS__SUPPORT_USERNAME: manage
       MAVIS__SUPPORT_PASSWORD: vaccinations
+  training:
+    http:
+      alias:
+        - "training.mavistesting.com"
+    deployments:
+      rolling: recreate
+    variables:
+      RAILS_ENV: staging
+      MAVIS__HOST: "training.mavistesting.com"
+      MAVIS__SUPPORT_USERNAME: manage
+      MAVIS__SUPPORT_PASSWORD: vaccinations
   production:
     http:
       alias:
