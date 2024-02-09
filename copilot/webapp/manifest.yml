@@ -49,18 +49,6 @@ secrets:
   SENTRY_DSN: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/SENTRY_DSN
 
 environments:
-  pentest:
-    http:
-      alias:
-        - "pentest.manage-vaccinations-in-schools.nhs.uk"
-        - "pentest.give-or-refuse-consent-for-vaccinations.nhs.uk"
-    deployments:
-      rolling: recreate
-    variables:
-      RAILS_ENV: production
-      MAVIS__HOST: "pentest.manage-vaccinations-in-schools.nhs.uk"
-      MAVIS__SUPPORT_USERNAME: manage
-      MAVIS__SUPPORT_PASSWORD: vaccinations
   staging:
     http:
       alias:
