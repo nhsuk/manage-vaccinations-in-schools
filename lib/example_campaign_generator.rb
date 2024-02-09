@@ -45,6 +45,20 @@ class ExampleCampaignGenerator
         patients_that_still_need_triage: 14,
         patients_that_have_already_been_triaged: 14,
         patients_with_triage_started: 4
+      },
+      empty_pilot: {
+        type: :hpv,
+        sessions: 0,
+        schools_with_no_sessions: 1,
+        parents_that_have_registered_interest: 5,
+        patients_with_no_session: 5,
+        patients_with_consent_given_and_ready_to_vaccinate: 0,
+        patients_with_no_consent_response: 0,
+        patients_with_consent_refused: 0,
+        patients_with_conflicting_consent: 0,
+        patients_that_still_need_triage: 0,
+        patients_that_have_already_been_triaged: 0,
+        patients_with_triage_started: 0
       }
     }.with_indifferent_access.freeze
   end
@@ -70,9 +84,14 @@ class ExampleCampaignGenerator
     if presets
       raise "Preset #{presets} not found" unless presettings.key?(presets)
       @type ||= presettings[presets][:type] || self.class.default_type
+
       @username ||= presettings[presets][:username]
+      raise "Username required" if @username.blank?
+
       @users_json ||= presettings[presets][:users_json]
       @sessions ||= presettings[presets].fetch(:sessions, 1).to_i
+      @schools_with_no_sessions ||=
+        presettings[presets].fetch(:schools_with_no_sessions, 0)
       @options = presettings[presets].merge(@options)
     else
       @type ||= self.class.default_type
@@ -81,7 +100,10 @@ class ExampleCampaignGenerator
 
   def generate
     sessions_data = @sessions.times.map { generate_session_data }
-
+    school_data = @schools_with_no_sessions.times.map { generate_school_data }
+    default_school =
+      sessions_data.dig(0, :location) || school_data.dig(0, :name) ||
+        generate_school_data[:name]
     vaccine_name = I18n.t("vaccines.#{type}")
     {
       id: random.seed.to_s,
@@ -92,8 +114,8 @@ class ExampleCampaignGenerator
       healthQuestions: health_answers_data,
       sessions: sessions_data,
       registrations: registrations_data,
-      patientsWithNoSession:
-        patients_with_no_session_data(sessions_data.first[:location])
+      patientsWithNoSession: patients_with_no_session_data(default_school),
+      schoolsWithNoSession: school_data
     }
   end
 
@@ -217,7 +239,7 @@ class ExampleCampaignGenerator
       school: school_data,
       patients: patients_data,
       consent_forms: consent_forms_data
-    }
+    }.with_indifferent_access
   end
 
   def generate_school_data

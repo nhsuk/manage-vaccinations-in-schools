@@ -47,7 +47,18 @@ module LoadExampleCampaign
         create_consent_forms(consent_forms:, session:)
       end
 
-      location = team.locations.first
+      create_children(
+        patient_attributes: example.patients_with_no_session,
+        campaign: nil,
+        session: nil
+      )
+
+      schools_with_no_session =
+        example.schools_with_no_session.map do |school_attributes|
+          create_school(team:, school_attributes:)
+        end
+
+      location = team.locations.first || schools_with_no_session.first
       example.registrations.each do |registration_attributes|
         Registration.create!(
           registration_attributes.merge(
@@ -58,12 +69,6 @@ module LoadExampleCampaign
           )
         )
       end
-
-      create_children(
-        patient_attributes: example.patients_with_no_session,
-        campaign: nil,
-        session: nil
-      )
     end
   end
 
