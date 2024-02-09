@@ -131,6 +131,7 @@ Resources:
           !FindInMap [dbEnvScalingConfigurationMap, All, DBMaxCapacity]
       StorageEncrypted: true
       DeletionProtection: true # Keep this to protect the cluster from deletion. This also applies to the databases that are a part of this cluster.
+      BackupRetentionPeriod: 7 # Store the snapshots for 7 days.
 
   dbDBWriterInstance:
     Metadata:
