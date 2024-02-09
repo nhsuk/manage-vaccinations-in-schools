@@ -33,20 +33,21 @@ class ExampleCampaignData
   def sessions
     if raw_data.key? "sessions"
       raw_data["sessions"].map do |session_data|
-        session_data.merge("school" => school_attributes(session_data))
+        session_data.merge(
+          "school" => school_attributes(session_data["school"])
+        )
       end
     else
       {
         "date" => raw_data["date"],
         "location" => raw_data["location"],
-        "school" => school_attributes(raw_data),
+        "school" => school_attributes(raw_data["school"]),
         "patients" => raw_data["patients"]
       }
     end
   end
 
-  def school_attributes(session_data)
-    school_data = session_data["school"]
+  def school_attributes(school_data)
     {
       name: school_data["name"],
       address: school_data["address"],
@@ -193,5 +194,11 @@ class ExampleCampaignData
       parent_phone: patient["parentPhone"],
       location: patient["location"]
     }
+  end
+
+  def schools_with_no_session
+    return [] if raw_data["schoolsWithNoSession"].blank?
+
+    raw_data["schoolsWithNoSession"].map { |school| school_attributes(school) }
   end
 end
