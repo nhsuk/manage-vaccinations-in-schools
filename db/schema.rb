@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_02_08_124647) do
+ActiveRecord::Schema[7.1].define(version: 2024_02_12_153242) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -392,7 +392,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_08_124647) do
     t.datetime "updated_at", null: false
     t.text "brand"
     t.integer "method"
-    t.index ["type"], name: "index_vaccines_on_type", unique: true
   end
 
   add_foreign_key "batches", "vaccines"
