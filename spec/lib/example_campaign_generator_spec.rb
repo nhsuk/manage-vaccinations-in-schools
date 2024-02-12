@@ -32,11 +32,7 @@ RSpec.describe ExampleCampaignGenerator do
     # generated.
     #
     # To regenerate:
-    #     rails generate_example_campaign \
-    #       seed=42 \
-    #       presets=default \
-    #       type=hpv \
-    #       username="Nurse Joy" > db/sample_data/example-hpv-campaign.json
+    #     bin/generate_example_campaigns
     Timecop.freeze(2024, 2, 3, 12, 0, 0) do
       generator =
         ExampleCampaignGenerator.new(
@@ -62,11 +58,7 @@ RSpec.describe ExampleCampaignGenerator do
     # generated.
     #
     # To regenerate:
-    #     rails generate_example_campaign \
-    #       seed=43 \
-    #       presets=default \
-    #       type=flu \
-    #       username="Nurse Jackie" > db/sample_data/example-flu-campaign.json
+    #     bin/generate_example_campaigns
     Timecop.freeze(2024, 2, 3, 12, 0, 0) do
       generator =
         ExampleCampaignGenerator.new(
@@ -92,10 +84,7 @@ RSpec.describe ExampleCampaignGenerator do
     # generated.
     #
     # To regenerate:
-    #     rails generate_example_campaign \
-    #       seed=44 \
-    #       presets=empty_pilot \
-    #       username="Nurse Flo" > db/sample_data/example-pilot-campaign.json
+    #     bin/generate_example_campaigns
     Timecop.freeze(2024, 2, 8, 12, 0, 0) do
       generator =
         ExampleCampaignGenerator.new(
