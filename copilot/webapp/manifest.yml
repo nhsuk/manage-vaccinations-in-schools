@@ -54,8 +54,6 @@ environments:
       alias:
         - "staging.manage-vaccinations-in-schools.nhs.uk"
         - "staging.give-or-refuse-consent-for-vaccinations.nhs.uk"
-    deployments:
-      rolling: recreate
     variables:
       RAILS_ENV: staging
       MAVIS__HOST: "staging.manage-vaccinations-in-schools.nhs.uk"
@@ -64,20 +62,18 @@ environments:
   test:
     http:
       alias:
-        - "test.mavis.mavistesting.com"
+        - "test.mavistesting.com"
     deployments:
-      rolling: recreate
+      rolling: recreate # Disables blue-green deployment for speed
     variables:
       RAILS_ENV: staging
-      MAVIS__HOST: "test.mavis.mavistesting.com"
+      MAVIS__HOST: "test.mavistesting.com"
       MAVIS__SUPPORT_USERNAME: manage
       MAVIS__SUPPORT_PASSWORD: vaccinations
   training:
     http:
       alias:
         - "training.mavistesting.com"
-    deployments:
-      rolling: recreate
     variables:
       RAILS_ENV: staging
       MAVIS__HOST: "training.mavistesting.com"
@@ -88,8 +84,6 @@ environments:
       alias:
         - "www.manage-vaccinations-in-schools.nhs.uk"
         - "www.give-or-refuse-consent-for-vaccinations.nhs.uk"
-    deployments:
-      # rolling: recreate
     variables:
       RAILS_ENV: production
       MAVIS__HOST: "www.manage-vaccinations-in-schools.nhs.uk"

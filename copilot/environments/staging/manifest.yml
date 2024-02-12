@@ -6,10 +6,9 @@
 name: staging
 type: Environment
 
-# Import your own VPC and subnets or configure how they should be created.
-# network:
-#   vpc:
-#     id:
+network:
+  vpc:
+    flow_logs: on
 
 # Configure the load balancers in your environment, once created.
 http:
@@ -20,10 +19,6 @@ http:
         arn:aws:acm:eu-west-2:393416225559:certificate/4d936f64-9a49-46b3-92db-cd3336aa63f9,
       ]
     ssl_policy: "ELBSecurityPolicy-TLS13-1-2-2021-06"
-
-network:
-  vpc:
-    flow_logs: on
 
 # Configure observability for your environment resources.
 observability:
