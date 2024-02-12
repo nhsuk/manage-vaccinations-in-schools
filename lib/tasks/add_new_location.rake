@@ -13,7 +13,7 @@ task :add_new_location,
   include TaskHelpers
 
   if args.to_a.empty? && $stdin.isatty && $stdout.isatty
-    name = prompt_user_for "Enter name:", required: true
+    name = prompt_user_for "Enter location name:", required: true
     address = prompt_user_for "Enter address:"
     town = prompt_user_for "Enter town:"
     county = prompt_user_for "Enter county:"
