@@ -17,7 +17,7 @@ task :add_new_user_securely,
   password = SecureRandom.uuid
 
   if args.to_a.empty? && $stdin.isatty && $stdout.isatty
-    email = prompt_user_for "Enter email:", required: true
+    email = prompt_user_for "Enter user email:", required: true
     full_name = prompt_user_for "Enter full name:", required: true
     team_id = prompt_user_for "Enter team ID:", required: true
     registration = prompt_user_for "Enter registration:"
