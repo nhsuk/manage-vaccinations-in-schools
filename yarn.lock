@@ -1062,10 +1062,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@colinaut/action-table@^2.4.4":
-  version "2.4.4"
-  resolved "https://registry.yarnpkg.com/@colinaut/action-table/-/action-table-2.4.4.tgz#55682d21c1b74631e16ca1409eca9d9e0f0d24e3"
-  integrity sha512-ki20f1fo23f8itzRuIPhjds6Lke4WrakAhtdi455L4v+ITT5qP5embmZ28GGQTEEUF3GuaJSu8k2rb4vrQiIlQ==
+"@colinaut/action-table@^2.4.9":
+  version "2.4.9"
+  resolved "https://registry.yarnpkg.com/@colinaut/action-table/-/action-table-2.4.9.tgz#c022608122ee70b93aecf449d0b60dc7f637def6"
+  integrity sha512-YmUNiBsubS2y1lfcffSv9dLPeoJ+dpWPmR2USOr4sR3idZGOU/JGdYnKCn/ZTrMkDVfCUrBKKPFxwiZcXE9eGA==
 
 "@esbuild/aix-ppc64@0.20.0":
   version "0.20.0"
