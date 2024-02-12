@@ -26,33 +26,35 @@ task :add_new_hpv_team,
     raise "Expected 4 arguments got #{args.to_a.size}"
   end
 
-  team = Team.create!(email:, name:, ods_code:, privacy_policy_url:)
+  ActiveRecord::Base.transaction do
+    team = Team.create!(email:, name:, ods_code:, privacy_policy_url:)
 
-  campaign = Campaign.create!(name: "HPV", team:)
-  vaccine =
-    Vaccine.create!(type: "HPV", brand: "Gardasil 9", method: "injection")
+    campaign = Campaign.create!(name: "HPV", team:)
+    vaccine =
+      Vaccine.create!(type: "HPV", brand: "Gardasil 9", method: "injection")
 
-  health_questions = []
-  health_questions << HealthQuestion.create!(
-    question: "Does your child have any severe allergies?",
-    vaccine:
-  )
-  health_questions << HealthQuestion.create!(
-    question:
-      "Does your child have any medical conditions for which they receive treatment?",
-    vaccine:
-  )
-  health_questions << HealthQuestion.create!(
-    question:
-      "Has your child ever had a severe reaction to any medicines, including vaccines?",
-    vaccine:
-  )
-  health_questions[0].update!(next_question_id: health_questions[1].id)
-  health_questions[1].update!(next_question_id: health_questions[2].id)
+    health_questions = []
+    health_questions << HealthQuestion.create!(
+      question: "Does your child have any severe allergies?",
+      vaccine:
+    )
+    health_questions << HealthQuestion.create!(
+      question:
+        "Does your child have any medical conditions for which they receive treatment?",
+      vaccine:
+    )
+    health_questions << HealthQuestion.create!(
+      question:
+        "Has your child ever had a severe reaction to any medicines, including vaccines?",
+      vaccine:
+    )
+    health_questions[0].update!(next_question_id: health_questions[1].id)
+    health_questions[1].update!(next_question_id: health_questions[2].id)
 
-  campaign.vaccines << vaccine
+    campaign.vaccines << vaccine
 
-  puts "Team #{team.name} (ID: #{team.id}) added.
-Campaign #{campaign.name} (ID: #{campaign.id}) added.
-HPV vaccine (ID: #{vaccine.id}) added."
+    puts "Team #{team.name} (ID: #{team.id}) added.
+  Campaign #{campaign.name} (ID: #{campaign.id}) added.
+  HPV vaccine (ID: #{vaccine.id}) added."
+  end
 end
