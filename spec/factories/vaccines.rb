@@ -9,10 +9,6 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
-# Indexes
-#
-#  index_vaccines_on_type  (type) UNIQUE
-#
 FactoryBot.define do
   factory :vaccine do
     transient { batch_count { 1 } }

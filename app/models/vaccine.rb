@@ -9,10 +9,6 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
-# Indexes
-#
-#  index_vaccines_on_type  (type) UNIQUE
-#
 class Vaccine < ApplicationRecord
   self.inheritance_column = :_type_disabled
 
