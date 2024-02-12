@@ -1,0 +1,5 @@
+#!/bin/bash
+
+rails generate_example_campaign[db/sample_data/example-hpv-campaign.json] seed=42 presets=default type=hpv username="Nurse Joy"
+rails generate_example_campaign[db/sample_data/example-flu-campaign.json] seed=43 presets=default type=flu username="Nurse Jackie"
+rails generate_example_campaign[db/sample_data/example-pilot-campaign.json] seed=44 presets=empty_pilot username="Nurse Flo"
