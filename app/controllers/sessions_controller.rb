@@ -1,5 +1,5 @@
 class SessionsController < ApplicationController
-  before_action :set_session, only: %i[show make_in_progress]
+  before_action :set_session, except: %i[index create]
   before_action :set_school, only: %i[show]
 
   layout "two_thirds", except: %i[index show]
@@ -25,6 +25,9 @@ class SessionsController < ApplicationController
         patient_sessions: @patient_sessions,
         location: @session.location
       )
+  end
+
+  def edit
   end
 
   def make_in_progress

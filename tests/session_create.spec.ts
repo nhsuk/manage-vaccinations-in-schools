@@ -36,6 +36,9 @@ test("Session create", async ({ page }) => {
 
   await when_i_click_on_the_confirm_button();
   await then_i_see_the_session_details_page();
+
+  await when_i_click_the_view_session_link();
+  await then_i_see_the_view_session_page();
 });
 
 async function given_the_app_is_setup() {
@@ -197,4 +200,14 @@ async function when_i_choose_my_timeline() {
     })
     .click();
   await p.getByRole("button", { name: "Continue" }).click();
+}
+
+async function when_i_click_the_view_session_link() {
+  await p.getByRole("link", { name: "View session" }).click();
+}
+
+async function then_i_see_the_view_session_page() {
+  await expect(
+    p.getByRole("heading", { name: "Session details" }),
+  ).toBeVisible();
 }

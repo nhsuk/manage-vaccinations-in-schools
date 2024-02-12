@@ -45,7 +45,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :sessions, only: %i[create index show update] do
+  resources :sessions, only: %i[create edit index show update] do
     get "consents", to: "consents#index", on: :member
     get "triage", to: "triage#index", on: :member
     get "vaccinations", to: "vaccinations#index", on: :member
