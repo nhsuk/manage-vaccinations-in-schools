@@ -32,7 +32,7 @@ RSpec.describe ExampleCampaignGenerator do
     # generated.
     #
     # To regenerate:
-    #     bin/generate_example_campaigns
+    #     bin/generate-example-campaigns
     Timecop.freeze(2024, 2, 12, 12, 0, 0) do
       generator =
         ExampleCampaignGenerator.new(
@@ -58,7 +58,7 @@ RSpec.describe ExampleCampaignGenerator do
     # generated.
     #
     # To regenerate:
-    #     bin/generate_example_campaigns
+    #     bin/generate-example-campaigns
     Timecop.freeze(2024, 2, 12, 12, 0, 0) do
       generator =
         ExampleCampaignGenerator.new(
@@ -84,8 +84,8 @@ RSpec.describe ExampleCampaignGenerator do
     # generated.
     #
     # To regenerate:
-    #     bin/generate_example_campaigns
-    Timecop.freeze(2024, 2, 8, 12, 0, 0) do
+    #     bin/generate-example-campaigns
+    Timecop.freeze(2024, 2, 12, 12, 0, 0) do
       generator =
         ExampleCampaignGenerator.new(
           seed: 44,
