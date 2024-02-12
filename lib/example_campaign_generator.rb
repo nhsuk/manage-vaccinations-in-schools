@@ -234,7 +234,10 @@ class ExampleCampaignGenerator
     consent_forms_data = generate_consent_forms_data(patients_data)
 
     {
-      date: "2023-07-28T12:30",
+      date: 28.days.from_now.iso8601,
+      sendConsentAt: 14.days.from_now.iso8601,
+      sendRemindersAt: 21.days.from_now.iso8601,
+      closeConsentAt: 28.days.from_now.iso8601,
       location: school_data[:name],
       school: school_data,
       patients: patients_data,
