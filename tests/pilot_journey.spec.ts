@@ -102,11 +102,7 @@ async function then_i_see_that_i_have_registered() {
 }
 
 async function given_i_am_a_nurse_signed_in() {
-  await signInTestUser(
-    p,
-    "nurse.florence@example.com",
-    "nurse.florence@example.com",
-  );
+  await signInTestUser(p, "nurse.flo@example.com", "nurse.flo@example.com");
 }
 
 async function when_i_close_the_registration_for_the_pilot() {

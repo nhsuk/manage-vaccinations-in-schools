@@ -974,5 +974,8 @@
       "triage": null,
       "location": "Great Cornard Middle School"
     }
+  ],
+  "schoolsWithNoSession": [
+
   ]
 }
