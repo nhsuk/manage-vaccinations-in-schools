@@ -40,6 +40,9 @@ class ExampleCampaignData
     else
       {
         "date" => raw_data["date"],
+        "send_consent_at" => raw_data["sendConsentAt"],
+        "send_reminders_at" => raw_data["sendRemindersAt"],
+        "close_consent_at" => raw_data["closeConsentAt"],
         "location" => raw_data["location"],
         "school" => school_attributes(raw_data["school"]),
         "patients" => raw_data["patients"]

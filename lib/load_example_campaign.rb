@@ -74,6 +74,9 @@ module LoadExampleCampaign
 
   def self.make_in_progress!(session_attributes:)
     session_attributes["date"] = Time.zone.today
+    session_attributes["close_consent_at"] = Time.zone.today
+    session_attributes["send_reminders_at"] = Time.zone.today - 7.days
+    session_attributes["send_consent_at"] = Time.zone.today - 14.days
   end
 
   def self.transition_states(patient_session)
@@ -145,7 +148,14 @@ module LoadExampleCampaign
     Session
       .find_or_initialize_by(campaign:, location: school)
       .tap do |session|
-        session.update!(session_attributes.slice("date"))
+        session.update!(
+          session_attributes.slice(
+            "date",
+            "send_consent_at",
+            "send_reminders_at",
+            "close_consent_at"
+          )
+        )
         session.update!(time_of_day: "morning")
         session.location = school if session.location.blank?
         session.save!
