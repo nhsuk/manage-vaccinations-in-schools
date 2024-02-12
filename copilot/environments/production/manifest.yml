@@ -6,7 +6,6 @@
 name: production
 type: Environment
 
-# Import your own VPC and subnets or configure how they should be created.
 network:
   vpc:
     flow_logs: on
