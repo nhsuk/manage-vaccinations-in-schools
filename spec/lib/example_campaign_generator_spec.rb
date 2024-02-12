@@ -14,6 +14,12 @@ RSpec.describe ExampleCampaignGenerator do
       Rails.root.join("db/sample_data/example-flu-campaign.json")
     ).rstrip
   end
+  let(:expected_pilot_json) do
+    # Remove final newline if present to match generated JSON.
+    File.read(
+      Rails.root.join("db/sample_data/example-pilot-campaign.json")
+    ).rstrip
+  end
 
   it "generates the expected HPV campaign json" do
     json = nil
@@ -75,6 +81,34 @@ RSpec.describe ExampleCampaignGenerator do
     expect(json).to eq(expected_flu_json)
   end
 
+  it "generates the expected empty pilot campaign json" do
+    json = nil
+    # Patient's dob is generated as an age calculated from when the fixture json
+    # was generated, so we freeze time to the same day it was generated to get
+    # the same random ages.
+    #
+    # When the fixture json is regenerated, e.g. when the generater is updated,
+    # the time here will need to be changed to match the day when it was
+    # generated.
+    #
+    # To regenerate:
+    #     rails generate_example_campaign \
+    #       seed=44 \
+    #       presets=empty_pilot \
+    #       username="Nurse Flo" > db/sample_data/example-pilot-campaign.json
+    Timecop.freeze(2024, 2, 8, 12, 0, 0) do
+      generator =
+        ExampleCampaignGenerator.new(
+          seed: 44,
+          presets: "empty_pilot",
+          username: "Nurse Flo"
+        )
+      data = generator.generate
+      json = JSON.pretty_generate(data)
+    end
+    expect(json).to eq(expected_pilot_json)
+  end
+
   describe "setting the campaign type" do
     it "generates an flu campaign by default" do
       generator = ExampleCampaignGenerator.new
@@ -87,13 +121,21 @@ RSpec.describe ExampleCampaignGenerator do
     end
 
     it "generates an hpv campaign for the model office" do
-      generator = ExampleCampaignGenerator.new(presets: :model_office)
+      generator =
+        ExampleCampaignGenerator.new(
+          presets: :model_office,
+          username: "Nurse Test"
+        )
       expect(generator.type).to eq(:hpv)
     end
 
     it "allows overriding of model office campaign type" do
       generator =
-        ExampleCampaignGenerator.new(presets: :model_office, type: :flu)
+        ExampleCampaignGenerator.new(
+          presets: :model_office,
+          type: :flu,
+          username: "Nurse Test"
+        )
       expect(generator.type).to eq(:flu)
     end
 
