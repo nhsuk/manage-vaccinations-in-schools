@@ -66,8 +66,9 @@ class EditSessionsController < ApplicationController
         patient_ids: []
       },
       timeline: %i[
-        consent_days_before
-        consent_days_before_custom
+        send_consent_at(3i)
+        send_consent_at(2i)
+        send_consent_at(1i)
         reminder_days_after
         reminder_days_after_custom
         close_consent_on
@@ -125,6 +126,18 @@ class EditSessionsController < ApplicationController
       unless validator.date_params_valid?
         @session.date = validator.date_params_as_struct
         @session.time_of_day = update_params[:time_of_day]
+        render_wizard nil, status: :unprocessable_entity
+      end
+    when :timeline
+      validator =
+        DateParamsValidator.new(
+          field_name: :send_consent_at,
+          object: @session,
+          params: update_params
+        )
+
+      unless validator.date_params_valid?
+        @session.send_consent_at = validator.date_params_as_struct
         render_wizard nil, status: :unprocessable_entity
       end
     end

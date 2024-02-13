@@ -14,20 +14,9 @@
     Session scheduled for <%= @session.date.to_fs(:nhsuk_date_day_of_week) %> (<%= @session.human_enum_name(:time_of_day) %>)
   <% end %>
 
-  <%= f.govuk_radio_buttons_fieldset :consent_days_before,
+  <%= f.govuk_date_field :send_consent_at,
     legend: { size: 'm', text: 'Consent requests' },
-    hint: { text: 'When should parents get a request for consent?' } do %>
-    <%= f.govuk_radio_button :consent_days_before, :default,
-      label: { text: "#{pluralize(Session::DEFAULT_DAYS_FOR_CONSENT, 'day')} before the session" },
-      link_errors: true %>
-    <%= f.govuk_radio_button :consent_days_before, :custom,
-      label: { text: 'Choose your own schedule' } do %>
-      <%= f.govuk_text_field :consent_days_before_custom,
-        label: { text: 'Days before the session', size: 's' },
-        width: 2,
-        suffix_text: "days" %>
-    <% end %>
-  <% end %>
+    hint: { text: 'When should parents get a request for consent?' } %>
 
   <%= f.govuk_radio_buttons_fieldset :reminder_days_after,
     legend: { size: 'm', text: 'Reminders' },
@@ -36,7 +25,7 @@
       label: { text: "#{pluralize(Session::DEFAULT_DAYS_FOR_REMINDER, 'day')} after the first consent request" },
       link_errors: true %>
     <%= f.govuk_radio_button :reminder_days_after, :custom,
-      label: { text: 'Choose your own schedule' } do %>
+      label: { text: 'Choose your own date' } do %>
       <%= f.govuk_text_field :reminder_days_after_custom,
         label: { text: 'Days after the first consent request', size: 's' },
         width: 2,
