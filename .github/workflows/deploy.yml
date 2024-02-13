@@ -1,4 +1,4 @@
-name: CI
+name: Deploy
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   # Permissions to request and use OIDC tokens and access repository contents
-  deploy:
+  copilot:
     permissions:
       id-token: write
       contents: read
@@ -31,4 +31,4 @@ jobs:
 
       - name: Deploy the application using AWS Copilot
         run: |
-          copilot svc deploy --name webapp --env staging
+          copilot svc deploy --env test
