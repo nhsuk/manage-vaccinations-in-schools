@@ -22,12 +22,9 @@ class Session < ApplicationRecord
   include WizardFormConcern
   audited
 
-  DEFAULT_DAYS_FOR_CONSENT = 14
-  DEFAULT_DAYS_FOR_REMINDER = 7
+  DEFAULT_DAYS_FOR_REMINDER = 2
 
-  attr_accessor :consent_days_before,
-                :consent_days_before_custom,
-                :reminder_days_after,
+  attr_accessor :reminder_days_after,
                 :reminder_days_after_custom,
                 :close_consent_on
 
@@ -78,18 +75,12 @@ class Session < ApplicationRecord
   end
 
   on_wizard_step :timeline, exact: true do
-    validates :consent_days_before,
+    validates :send_consent_at,
               presence: true,
-              inclusion: {
-                in: %w[default custom]
+              comparison: {
+                greater_than_or_equal_to: Time.zone.today,
+                less_than_or_equal_to: ->(object) { object.date }
               }
-    validates :consent_days_before_custom,
-              presence: true,
-              numericality: {
-                greater_than_or_equal_to: 10,
-                less_than_or_equal_to: 30
-              },
-              if: -> { consent_days_before == "custom" }
 
     validates :reminder_days_after,
               presence: true,
@@ -141,15 +132,6 @@ class Session < ApplicationRecord
   private
 
   def set_timeline_attributes
-    unless send_consent_at.nil?
-      if date - DEFAULT_DAYS_FOR_CONSENT.days == send_consent_at
-        self.consent_days_before = "default"
-      else
-        self.consent_days_before = "custom"
-        self.consent_days_before_custom = days_between_consent_and_session
-      end
-    end
-
     unless send_reminders_at.nil?
       if send_consent_at + DEFAULT_DAYS_FOR_REMINDER.days == send_reminders_at
         self.reminder_days_after = "default"
@@ -165,16 +147,8 @@ class Session < ApplicationRecord
   end
 
   def set_timeline_timestamps
-    return if errors.any? || consent_days_before.nil?
+    return if errors.any? || reminder_days_after.nil?
 
-    consent_days_before =
-      (
-        if self.consent_days_before == "default"
-          DEFAULT_DAYS_FOR_CONSENT
-        else
-          consent_days_before_custom.to_i
-        end
-      )
     reminder_days_after =
       (
         if self.reminder_days_after == "default"
@@ -186,7 +160,6 @@ class Session < ApplicationRecord
     close_consent_on =
       self.close_consent_on == "default" ? date : close_consent_at
 
-    self.send_consent_at = date - consent_days_before.days
     self.send_reminders_at = send_consent_at + reminder_days_after.days
     self.close_consent_at = close_consent_on
   end

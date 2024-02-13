@@ -168,9 +168,7 @@ async function when_i_create_a_new_session() {
 
   // Choosing a date 30 days from today
   sessionDate = new Date();
-  formatDate(sessionDate);
   sessionDate.setDate(sessionDate.getDate() + 30);
-  formatDate(sessionDate);
 
   await p
     .getByLabel("Day", { exact: true })
@@ -223,9 +221,21 @@ async function and_select_the_children_for_the_cohort() {
 }
 
 async function and_enter_and_confirm_the_session_details() {
-  await p.getByRole("radio", { name: "14 days before the session" }).click();
+  // Ask for consents 16 days from today, 2 weeks before the session
+  const consentDate = new Date();
+  consentDate.setDate(sessionDate.getDate() + 16);
   await p
-    .getByRole("radio", { name: "7 days after the first consent request" })
+    .getByRole("textbox", { name: "Day" })
+    .fill(consentDate.getDate().toString());
+  await p
+    .getByRole("textbox", { name: "Month" })
+    .fill((consentDate.getMonth() + 1).toString());
+  await p
+    .getByRole("textbox", { name: "Year" })
+    .fill(consentDate.getFullYear().toString());
+
+  await p
+    .getByRole("radio", { name: "2 days after the first consent request" })
     .click();
   await p
     .getByRole("radio", {
