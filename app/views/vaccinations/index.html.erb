@@ -1,7 +1,5 @@
 <% page_title = "Record vaccinations" %>
 
-<%= render(AppFlashMessageComponent.new(flash:)) %>
-
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
     { text: 'Home', href: dashboard_path },
