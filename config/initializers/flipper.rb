@@ -18,5 +18,12 @@ FLIPPER_INITIALIZERS = {
     else
       Flipper.disable(:basic_auth)
     end
+  end,
+  pilot_phase_1: -> do
+    if Rails.env.staging? || Rails.env.production?
+      Flipper.enable(:pilot_phase_1)
+    else
+      Flipper.disable(:pilot_phase_1)
+    end
   end
 }.freeze

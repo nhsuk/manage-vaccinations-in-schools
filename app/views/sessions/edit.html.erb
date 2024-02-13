@@ -5,10 +5,13 @@
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
     { text: 'Home', href: dashboard_path },
-    { text: 'School sessions', href: sessions_path },
+    { text: 'School sessions', href: sessions_path }
+  ] + (Flipper.enabled?(:pilot_phase_1) ? [
+    { text: @session.name, active: true }
+  ] : [
     { text: @session.name, href: session_path(@session) },
     { text: page_title, active: true }
-  ]) %>
+  ])) %>
 <% end %>
 
 <%= h1 page_title %>
