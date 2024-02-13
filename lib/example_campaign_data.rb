@@ -31,22 +31,16 @@ class ExampleCampaignData
   end
 
   def sessions
-    if raw_data.key? "sessions"
-      raw_data["sessions"].map do |session_data|
-        session_data.merge(
-          "school" => school_attributes(session_data["school"])
-        )
-      end
-    else
-      {
-        "date" => raw_data["date"],
-        "send_consent_at" => raw_data["sendConsentAt"],
-        "send_reminders_at" => raw_data["sendRemindersAt"],
-        "close_consent_at" => raw_data["closeConsentAt"],
-        "location" => raw_data["location"],
-        "school" => school_attributes(raw_data["school"]),
-        "patients" => raw_data["patients"]
-      }
+    raw_data["sessions"].map do |session_data|
+      session_data.merge(
+        "school" => school_attributes(session_data["school"])
+      ).transform_keys(
+        {
+          "sendConsentAt" => "send_consent_at",
+          "sendRemindersAt" => "send_reminders_at",
+          "closeConsentAt" => "close_consent_at"
+        }
+      )
     end
   end
 
