@@ -3,6 +3,15 @@ name: Deploy
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Deployment environment"
+        required: true
+        type: choice
+        options:
+          - staging
+          - training
 
 jobs:
   # Permissions to request and use OIDC tokens and access repository contents
@@ -32,4 +41,9 @@ jobs:
 
       - name: Deploy the application using AWS Copilot
         run: |
-          copilot svc deploy --env test
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            ENVIRONMENT=${{ github.event.inputs.environment }}
+          else
+            ENVIRONMENT=test
+          fi
+          copilot svc deploy --env $ENVIRONMENT
