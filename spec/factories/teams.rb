@@ -9,6 +9,7 @@
 #  privacy_policy_url :string
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
+#  reply_to_id        :string
 #
 # Indexes
 #
@@ -20,5 +21,6 @@ FactoryBot.define do
     sequence(:email) { |n| "team-#{n}@example.com" }
     ods_code { "U#{rand(10_000..99_999)}" }
     privacy_policy_url { "https://example.com/privacy" }
+    sequence(:reply_to_id) { |n| "reply-to-id-team-#{n}" }
   end
 end
