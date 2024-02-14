@@ -2,6 +2,8 @@ require "rails_helper"
 require "example_campaign_generator"
 
 RSpec.describe ExampleCampaignGenerator do
+  let(:test_timestamp) { [2024, 02, 12, 12, 0, 0] }
+
   let(:expected_hpv_json) do
     # Remove final newline if present to match generated JSON.
     File.read(
@@ -33,7 +35,7 @@ RSpec.describe ExampleCampaignGenerator do
     #
     # To regenerate:
     #     bin/generate-example-campaigns
-    Timecop.freeze(2024, 2, 12, 12, 0, 0) do
+    Timecop.freeze(*test_timestamp) do
       generator =
         ExampleCampaignGenerator.new(
           seed: 42,
@@ -59,7 +61,7 @@ RSpec.describe ExampleCampaignGenerator do
     #
     # To regenerate:
     #     bin/generate-example-campaigns
-    Timecop.freeze(2024, 2, 12, 12, 0, 0) do
+    Timecop.freeze(*test_timestamp) do
       generator =
         ExampleCampaignGenerator.new(
           seed: 43,
@@ -85,7 +87,7 @@ RSpec.describe ExampleCampaignGenerator do
     #
     # To regenerate:
     #     bin/generate-example-campaigns
-    Timecop.freeze(2024, 2, 12, 12, 0, 0) do
+    Timecop.freeze(*test_timestamp) do
       generator =
         ExampleCampaignGenerator.new(
           seed: 44,
