@@ -279,6 +279,12 @@ govuk_notify:
 You should set it to `enabled: false` when you're done testing Notify locally,
 because it's easier to work offline without it.
 
+### Reply-To
+
+GOVUK Notify can store reply-to email addresses and use them when sending mail.
+Once you've added the reply-to email in GOVUK Notify, get the UUID and add it to
+the team.
+
 ## Licence
 
 [MIT](LICENCE).

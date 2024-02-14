@@ -6,10 +6,11 @@ desc <<-DESC
 
   Usage:
     rake add_new_hpv_team # Complete the prompts
-    rake add_new_hpv_team[email,name,ods_code,privacy_policy_url]
+    rake add_new_hpv_team[email,name,ods_code,privacy_policy_url,reply_to_id]
 DESC
 task :add_new_hpv_team,
-     %i[email name ods_code privacy_policy_url] => :environment do |_task, args|
+     %i[email name ods_code privacy_policy_url reply_to_id] =>
+       :environment do |_task, args|
   include TaskHelpers
 
   if args.to_a.empty? && $stdin.isatty && $stdout.isatty
@@ -17,17 +18,20 @@ task :add_new_hpv_team,
     name = prompt_user_for "Enter name:", required: true
     ods_code = prompt_user_for "Enter ODS code:"
     privacy_policy_url = prompt_user_for "Enter privacy policy URL:"
-  elsif args.to_a.size == 4
+    reply_to_id = prompt_user_for "Reply-to ID (from GOVUK Notify):"
+  elsif args.to_a.size == 5
     email = args[:email]
     name = args[:name]
     ods_code = args[:ods_code]
     privacy_policy_url = args[:privacy_policy_url]
-  elsif args.to_a.size != 4
-    raise "Expected 4 arguments got #{args.to_a.size}"
+    reply_to_id = args[:reply_to_id]
+  elsif args.to_a.size != 5
+    raise "Expected 5 arguments got #{args.to_a.size}"
   end
 
   ActiveRecord::Base.transaction do
-    team = Team.create!(email:, name:, ods_code:, privacy_policy_url:)
+    team =
+      Team.create!(email:, name:, ods_code:, privacy_policy_url:, reply_to_id:)
 
     campaign = Campaign.create!(name: "HPV", team:)
     vaccine =
