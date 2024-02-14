@@ -47,7 +47,7 @@ FactoryBot.define do
     nhs_number { Faker::NationalHealthService.british_number.gsub(/\s+/, "") }
     parent_email { Faker::Internet.email }
     parent_name { Faker::Name.name }
-    parent_phone { Faker::PhoneNumber.cell_phone }
+    parent_phone { "07700 900#{random.rand(0..999).to_s.rjust(3, "0")}" }
     parent_relationship do
       Registration.parent_relationships.keys.sample(random:)
     end

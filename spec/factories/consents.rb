@@ -47,7 +47,7 @@ FactoryBot.define do
     parent_name { Faker::Name.name }
     parent_email { Faker::Internet.email(domain: "gmail.com") }
     # Replace first two digits with 07 to make it a mobile number
-    parent_phone { Faker::PhoneNumber.cell_phone }
+    parent_phone { "07700 900#{random.rand(0..999).to_s.rjust(3, "0")}" }
     address_line_1 { Faker::Address.street_address }
     address_line_2 do
       random.rand(1.0) > 0.8 ? Faker::Address.secondary_address : nil
@@ -97,7 +97,7 @@ FactoryBot.define do
         if patient.parent_relationship == "mother"
           patient.parent_phone
         else
-          Faker::PhoneNumber.cell_phone
+          "07700 900#{random.rand(0..999).to_s.rjust(3, "0")}"
         end
       end
     end
@@ -122,7 +122,7 @@ FactoryBot.define do
         if patient.parent_relationship == "father"
           patient.parent_phone
         else
-          Faker::PhoneNumber.cell_phone
+          "07700 900#{random.rand(0..999).to_s.rjust(3, "0")}"
         end
       end
     end
