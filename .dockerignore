@@ -40,6 +40,7 @@
 /docs
 /coverage
 /spec
+!/spec/factories
 /tests
 /terraform
 
