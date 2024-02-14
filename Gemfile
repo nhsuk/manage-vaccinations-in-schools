@@ -13,6 +13,7 @@ gem "config"
 gem "cssbundling-rails"
 gem "devise"
 gem "devise-pwned_password"
+gem "factory_bot_rails"
 gem "faker", github: "misaka/faker", branch: "add_alternative_name"
 gem "fhir_client"
 gem "flipper"
@@ -44,7 +45,6 @@ gem "wicked"
 group :development, :test do
   gem "brakeman"
   gem "debug", platforms: %i[mri mingw x64_mingw]
-  gem "factory_bot_rails"
   gem "pry-rails"
   gem "rspec-rails"
 end
