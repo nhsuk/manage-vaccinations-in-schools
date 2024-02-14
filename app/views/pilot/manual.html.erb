@@ -10,7 +10,7 @@
 
 <%= h1 page_title, size: "xl" %>
 
-<p class="nhsuk-body">Creating the pilot cohort involves five steps:</p>
+<p class="nhsuk-body">Creating the pilot cohort involves six steps:</p>
 
 <ol class="nhsuk-list nhsuk-list--number">
   <li>
@@ -44,6 +44,12 @@
   <li>
     <a class="nhsuk-link" href="#5-upload-the-cohort-list"
       >Upload the cohort list into Mavis</a
+    >
+  </li>
+
+  <li>
+    <a class="nhsuk-link" href="#6-schedule-the-school-sessions"
+      >Schedule the school sessions</a
     >
   </li>
 </ol>
@@ -189,6 +195,67 @@
 </p>
 <p class="nhsuk-body">
   Mavis will reject the file if it is not formatted correctly. If you have any
-  issues at this stage, get in touch and we can help. If it’s not urgent, email
-  <%= govuk_mail_to t("service.email") %>.
+  issues at this stage, ring <%= Rails.application.credentials.dig(:service, :support_phone_number) %>
+  and we can help. If it’s not urgent, email <%= govuk_mail_to t("service.email") %>.
+</p>
+
+<h2 class="nhsuk-heading-l" id="6-schedule-the-school-sessions">
+  6. Schedule the school sessions
+</h2>
+
+<p class="nhsuk-body">
+  Now the cohort list is uploaded, you can create school vaccination sessions and
+  add the right children to each.
+</p>
+
+<p class="nhsuk-body">
+  To create a session immediately after uploading the cohort list, you can follow
+  the link to Add a new school session from the confirmation page. If you’re
+  starting from the home page, navigate to School sessions and then the green
+  button Add a new session.
+</p>
+
+<p class="nhsuk-body">
+  Add the details of the school session, which means selecting the school and
+  adding the date and time.
+</p>
+
+<p class="nhsuk-body">
+  The next screen asks you to Choose cohort for this session. This list is
+  prepopulated with the cohort you uploaded for the school. You can check
+  that the details match what you entered in the spreadsheet.
+</p>
+
+<p class="nhsuk-body">
+  If the list is not correct, email <%= govuk_mail_to t("service.email") %>
+  and we can help.
+</p>
+
+<p class="nhsuk-body">
+  If this is correct, leave all the children selected and continue.
+</p>
+
+<p class="nhsuk-body">
+  Next, you’ll need to enter dates for sending out consent requests as well
+  as reminders to those who haven’t responded. You’ll also need to set a final
+  deadline for responses. Enter the dates we have agreed in the schedule.
+</p>
+
+<p class="nhsuk-body">
+  Finally, you will need to check your answers and confirm.
+</p>
+
+<p class="nhsuk-body">
+  When you’ve completed the process, you’ll be able to see the dashboard
+  for the school session.
+</p>
+
+<h2 class="nhsuk-heading-l">
+  Get in touch
+</h2>
+
+<p class="nhsuk-body">
+  If it’s not urgent, email <%= govuk_mail_to t("service.email") %>.
+  If it is urgent, ring us on
+  <%= Rails.application.credentials.dig(:service, :support_phone_number) %>.
 </p>
