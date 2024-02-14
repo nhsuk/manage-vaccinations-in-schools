@@ -17,6 +17,8 @@ RSpec.describe ConsentFormMailer, type: :mailer do
       )
   end
 
+  let(:reply_to_id) { consent_form.session.campaign.team.reply_to_id }
+
   before do
     allow_any_instance_of(Mail::Notify::Mailer).to receive(:template_mail).with(
       notify_template_id,
@@ -42,7 +44,8 @@ RSpec.describe ConsentFormMailer, type: :mailer do
           team_email:,
           team_phone:
         },
-        to: "harry@hogwarts.edu"
+        to: "harry@hogwarts.edu",
+        reply_to_id:
       )
     end
 
@@ -83,7 +86,8 @@ RSpec.describe ConsentFormMailer, type: :mailer do
           parent_name: "Harry Potter",
           short_patient_name: "Severus"
         },
-        to: "harry@hogwarts.edu"
+        to: "harry@hogwarts.edu",
+        reply_to_id:
       )
     end
   end
@@ -105,7 +109,8 @@ RSpec.describe ConsentFormMailer, type: :mailer do
           parent_name: "Harry Potter",
           reason_for_refusal: "of the gelatine in the nasal spray"
         },
-        to: "harry@hogwarts.edu"
+        to: "harry@hogwarts.edu",
+        reply_to_id:
       )
     end
   end
@@ -127,7 +132,8 @@ RSpec.describe ConsentFormMailer, type: :mailer do
           team_email:,
           team_phone:
         },
-        to: "harry@hogwarts.edu"
+        to: "harry@hogwarts.edu",
+        reply_to_id:
       )
     end
   end
