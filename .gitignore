@@ -46,6 +46,7 @@ docs/diagrams/images
 *.tfstate.backup
 
 /config/credentials/*.key
+!/config/credentials/development.key
 
 # Local scratch workspace
 scratchpad
