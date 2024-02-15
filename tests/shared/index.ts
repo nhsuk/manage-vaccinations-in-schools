@@ -7,33 +7,33 @@ export const fixtures = {
   parentRole: "Mum",
 
   // Get from /sessions/1/consents, "No response" tab
-  patientThatNeedsConsent: "Clora Mueller",
-  secondPatientThatNeedsConsent: "Nathanial Jones",
+  patientThatNeedsConsent: "Dani Kuhn",
+  secondPatientThatNeedsConsent: "Dolores Koepp",
 
   // Get from /sessions/1/consents, "Consent conflicts" tab
-  patientWithConflictingConsent: "Alonzo Klocko",
+  patientWithConflictingConsent: "Mirtha Ondricka",
 
   // Get from /sessions/1/triage, "Triage needed" tab; check that they don't
   // have existing triage
-  patientThatNeedsTriage: "Mickey Schroeder",
-  secondPatientThatNeedsTriage: "Phil Spencer",
+  patientThatNeedsTriage: "Birgit Schinner",
+  secondPatientThatNeedsTriage: "Christie Reynolds",
 
   // Get from /sessions/1/vaccinations, "Action needed" tab
-  patientThatNeedsVaccination: "Michaele Schmitt",
-  secondPatientThatNeedsVaccination: "Brittany Klocko",
+  patientThatNeedsVaccination: "Bernie Durgan",
+  secondPatientThatNeedsVaccination: "Fonda Krajcik",
 
   // Get from /sessions/1/patients/Y/vaccinations/batch/edit
-  vaccineBatch: "YF4263",
+  vaccineBatch: "BK4612",
 
   // Get from /sessions, signed in as Nurse Joy
-  schoolName: "Great Cornard Middle School",
+  schoolName: "Stanford Primary School",
 
   // Get from /sessions, signed in as Nurse Jackie
-  secondSchoolName: /Kesteven and Sleaford High School Selective Academy/,
+  secondSchoolName: /St Patrick's Catholic Primary School/,
 
   // Any consent response from /schools/1, signed in as Nurse Joy
-  unmatchedConsentFormParentName: "Kacy Mosciski",
-  unmatchedConsentFormChildName: "Werner Boyle",
+  unmatchedConsentFormParentName: "Hugh Ledner",
+  unmatchedConsentFormChildName: "Kassandra O'Hara",
 
   // School from /pilot/registrations
   pilotSchoolName: "Holy Rosary Catholic Primary Academy",
@@ -44,9 +44,20 @@ export const fixtures = {
   // campaign CSV. We only the first 3.
   registeredChildren: [
     { firstName: "Ray", lastName: "O'Conner", fullName: "Ray O'Conner" },
-    { firstName: "Antonia", lastName: "Heaney", fullName: "Antonia Heaney" },
-    { firstName: "Huey", lastName: "Mosciski", fullName: "Huey Mosciski" },
+    {
+      firstName: "Louis",
+      lastName: "Williamson",
+      fullName: "Louis Williamson",
+    },
+    {
+      firstName: "Sylvester",
+      lastName: "Heidenreich",
+      fullName: "Sylvester Heidenreich",
+    },
   ],
+
+  // Number of children who are ready to be vaccinated in the flu session
+  childrenToBeVaccinatedInFluSession: 16,
 };
 
 export function formatDate(date: Date): string {

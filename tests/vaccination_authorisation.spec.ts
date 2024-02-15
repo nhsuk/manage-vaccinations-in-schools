@@ -1,5 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import { signInTestUser } from "./shared";
+import { signInTestUser, fixtures } from "./shared";
 
 let p: Page;
 
@@ -37,7 +37,7 @@ async function and_i_go_to_the_vaccinations_page() {
 async function then_i_should_only_see_my_patients() {
   await expect(
     p.locator("div#action-needed .nhsuk-table__body .nhsuk-table__row"),
-  ).toHaveCount(15);
+  ).toHaveCount(fixtures.childrenToBeVaccinatedInFluSession);
 }
 
 async function when_i_go_to_the_vaccinations_page_of_another_team() {
