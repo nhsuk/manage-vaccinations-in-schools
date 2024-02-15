@@ -107,6 +107,9 @@ async function and_i_check_the_conditions_for_taking_part() {
       "I confirm I’ve responded to the school’s regular request for consent for my child’s HPV vaccination",
     )
     .check();
+  await p
+    .getByLabel("I agree to my child’s vaccination session being observed")
+    .check();
 }
 
 async function then_i_see_the_confirmation_message() {

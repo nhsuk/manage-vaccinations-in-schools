@@ -89,6 +89,9 @@ async function when_i_register_for_the_pilot_as_a_parent() {
       "I confirm I’ve responded to the school’s regular request for consent for my child’s HPV vaccination",
     )
     .check();
+  await p
+    .getByLabel("I agree to my child’s vaccination session being observed")
+    .check();
 
   await p.click("button[type='submit']");
 }
