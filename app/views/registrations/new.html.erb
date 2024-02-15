@@ -63,7 +63,7 @@
   <%= f.govuk_fieldset legend: { text: "About your child", size: "l" } do %>
 
     <p class="nhsuk-body-m">
-      We need your child’s details to check your eligibility to take part in 
+      We need your child’s details to check your eligibility to take part in
       the pilot.
     </p>
 
@@ -158,9 +158,9 @@
     <h3>Your personal information </h3>
 
     <p class="nhsuk-body-m">
-      Your contact details will be shared with NHS England so they can contact 
-      you and send you a high street shopping voucher. You can find out more 
-      about how NHS England will protect your personal information in their 
+      Your contact details will be shared with NHS England so they can contact
+      you and send you a high street shopping voucher. You can find out more
+      about how NHS England will protect your personal information in their
       <%= govuk_link_to "privacy notice", :privacy_policy %>.
     </p>
 
@@ -175,21 +175,20 @@
 
   <%= f.govuk_check_boxes_fieldset :conditions_for_taking_part_met,
                                    multiple: false,
-                                   legend: { text: "What you agree to" } do %>
+                                   legend: { text: "What you agree to" },
+                                   id: 'registration-conditions-for-taking-part-met-field-error' do %>
     <%= f.govuk_check_box :terms_and_conditions_agreed,
                           1,
                           0,
                           multiple: false,
-                          label: { text: "I agree to take part in the pilot" },
-                          link_errors: true %>
+                          label: { text: "I agree to take part in the pilot" } %>
     <%= f.govuk_check_box :data_processing_agreed,
                           1,
                           0,
                           multiple: false,
                           label: {
                             text: "I agree to share my contact details with NHS England for the purpose of administering payments and electronic communications"
-                          },
-                          link_errors: true %>
+                          } %>
     <%= f.govuk_check_box :consent_response_confirmed,
                           1,
                           0,
@@ -199,8 +198,7 @@
                           },
                           hint: {
                             text: "You can only take part in the pilot if you’ve done this"
-                          },
-                          link_errors: true %>
+                          } %>
   <% end %>
 
   <%= f.govuk_submit "Register your interest", secondary: true %>
