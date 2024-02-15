@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Use this to generate example campaigns for testing.
+
 rails generate_example_campaign[db/sample_data/example-hpv-campaign.json] seed=42 presets=default type=hpv username="Nurse Joy"
 rails generate_example_campaign[db/sample_data/example-flu-campaign.json] seed=43 presets=default type=flu username="Nurse Jackie"
 rails generate_example_campaign[db/sample_data/example-pilot-campaign.json] seed=44 presets=empty_pilot username="Nurse Flo"
@@ -7,5 +9,6 @@ rails generate_example_campaign[db/sample_data/example-pilot-campaign.json] seed
 read year month day <<< $(date +"%Y %m %d")
 echo "Set the dates in spec/lib/example_campaign_generator_spec.rb"
 echo ""
-printf "  let(:test_timestamp) { [%d, %d, %d, 12, 0, 0] }" $year $month $day
+printf "  let(:test_timestamp) { [%d, %d, %d, 12, 0, 0] }\n" $year $month $day
 echo ""
+
