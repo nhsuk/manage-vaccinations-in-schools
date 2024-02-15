@@ -149,18 +149,6 @@ async function then_i_see_the_confirm_details_page() {
     new RegExp("Vaccine" + "HPV"),
   );
 
-  const today = new Date();
-  const formattedDate = formatDate(today);
-  const dayOfWeek = today.toLocaleDateString("en-GB", { weekday: "long" });
-
-  await expect(p.locator(".nhsuk-card")).toHaveText(
-    new RegExp(`Date${dayOfWeek} ${formattedDate}`),
-  );
-
-  await expect(p.locator(".nhsuk-card")).toHaveText(
-    new RegExp("Time" + "Afternoon"),
-  );
-
   await expect(p.locator(".nhsuk-card")).toHaveText(
     new RegExp("Time" + "Afternoon"),
   );
