@@ -105,8 +105,14 @@ class Registration < ApplicationRecord
   delegate :name, to: :location, prefix: true
 
   def conditions_for_taking_part_met
-    consent_response_confirmed? && data_processing_agreed? &&
-      terms_and_conditions_agreed? && observed_session_agreed?
+    conditions = [
+      consent_response_confirmed?,
+      data_processing_agreed?,
+      terms_and_conditions_agreed?,
+      (observed_session_agreed? if location.permission_to_observe_required?)
+    ].compact
+
+    conditions.all?
   end
 
   def formatted_parent_relationship

@@ -2,19 +2,20 @@
 #
 # Table name: locations
 #
-#  id                :bigint           not null, primary key
-#  address           :text
-#  county            :text
-#  locality          :text
-#  name              :text
-#  postcode          :text
-#  registration_open :boolean          default(FALSE)
-#  town              :text
-#  url               :text
-#  urn               :string
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
-#  team_id           :integer          not null
+#  id                             :bigint           not null, primary key
+#  address                        :text
+#  county                         :text
+#  locality                       :text
+#  name                           :text
+#  permission_to_observe_required :boolean
+#  postcode                       :text
+#  registration_open              :boolean          default(FALSE)
+#  town                           :text
+#  url                            :text
+#  urn                            :string
+#  created_at                     :datetime         not null
+#  updated_at                     :datetime         not null
+#  team_id                        :integer          not null
 #
 # Foreign Keys
 #
