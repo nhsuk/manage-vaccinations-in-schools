@@ -106,7 +106,7 @@ class Registration < ApplicationRecord
 
   def conditions_for_taking_part_met
     consent_response_confirmed? && data_processing_agreed? &&
-      terms_and_conditions_agreed?
+      terms_and_conditions_agreed? && observed_session_agreed?
   end
 
   def formatted_parent_relationship

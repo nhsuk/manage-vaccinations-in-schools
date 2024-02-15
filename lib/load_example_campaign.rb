@@ -65,7 +65,8 @@ module LoadExampleCampaign
             location:,
             terms_and_conditions_agreed: true,
             data_processing_agreed: true,
-            consent_response_confirmed: true
+            consent_response_confirmed: true,
+            observed_session_agreed: true
           )
         )
       end

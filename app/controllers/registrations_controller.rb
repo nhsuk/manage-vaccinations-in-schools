@@ -46,6 +46,7 @@ class RegistrationsController < ApplicationController
       :first_name,
       :last_name,
       :nhs_number,
+      :observed_session_agreed,
       :parent_email,
       :parent_name,
       :parent_phone,
