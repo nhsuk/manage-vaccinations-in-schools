@@ -110,7 +110,11 @@ module LoadExampleCampaign
 
   def self.create_school(team:, school_attributes:)
     Location
-      .find_or_create_by!(team:, name: school_attributes[:name])
+      .find_or_create_by!(
+        team:,
+        name: school_attributes[:name],
+        permission_to_observe_required: true
+      )
       .tap { |school| school.update!(school_attributes) }
   end
 
