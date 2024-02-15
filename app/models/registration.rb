@@ -14,6 +14,7 @@
 #  first_name                  :string
 #  last_name                   :string
 #  nhs_number                  :string
+#  observed_session_agreed     :boolean
 #  parent_email                :string
 #  parent_name                 :string
 #  parent_phone                :string
