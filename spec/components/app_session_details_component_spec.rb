@@ -27,4 +27,24 @@ RSpec.describe AppSessionDetailsComponent, type: :component do
       should have_content "Allow responses until #{close_consent_at.to_fs(:nhsuk_date_day_of_week)}"
     end
   end
+
+  context "for a session with only 1 patient" do
+    let(:session) do
+      create(:session, date:, close_consent_at:, patients_in_session: 1)
+    end
+
+    it "should pluralize 'child' correctly" do
+      expect(component.cohort).to eq "1 child"
+    end
+  end
+
+  context "for a session with more than 1 patient" do
+    let(:session) do
+      create(:session, date:, close_consent_at:, patients_in_session: 2)
+    end
+
+    it "should pluralize 'child' correctly" do
+      expect(component.cohort).to eq "2 children"
+    end
+  end
 end
