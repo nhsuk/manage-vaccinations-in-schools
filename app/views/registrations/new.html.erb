@@ -200,7 +200,7 @@
                             text: "You can only take part in the pilot if you’ve done this"
                           } %>
     <% if @school.permission_to_observe_required? %>
-      <%= f.govuk_check_box :observed_session_agreed,
+      <%= f.govuk_check_box :user_research_observation_agreed,
                             1,
                             0,
                             multiple: false,

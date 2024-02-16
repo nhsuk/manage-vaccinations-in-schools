@@ -302,7 +302,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_15_161923) do
     t.boolean "terms_and_conditions_agreed"
     t.boolean "data_processing_agreed"
     t.boolean "consent_response_confirmed"
-    t.boolean "observed_session_agreed"
+    t.boolean "user_research_observation_agreed"
     t.index ["location_id"], name: "index_registrations_on_location_id"
   end
 

@@ -1,5 +1,5 @@
 class AddObservedSessionAgreedFieldToRegistration < ActiveRecord::Migration[7.1]
   def change
-    add_column :registrations, :observed_session_agreed, :boolean
+    add_column :registrations, :user_research_observation_agreed, :boolean
   end
 end
