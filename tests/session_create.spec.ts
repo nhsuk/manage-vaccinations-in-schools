@@ -156,6 +156,10 @@ async function then_i_see_the_confirm_details_page() {
   await expect(p.locator(".nhsuk-card")).toHaveText(
     new RegExp("Cohort" + "5 children"),
   );
+
+  await expect(p.locator(".nhsuk-inset-text")).toHaveText(
+    /After clicking confirm/,
+  );
 }
 
 async function when_i_click_on_the_confirm_button() {
