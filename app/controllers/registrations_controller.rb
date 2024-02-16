@@ -46,14 +46,14 @@ class RegistrationsController < ApplicationController
       :first_name,
       :last_name,
       :nhs_number,
-      :observed_session_agreed,
       :parent_email,
       :parent_name,
       :parent_phone,
       :parent_relationship,
       :parent_relationship_other,
       :terms_and_conditions_agreed,
-      :use_common_name
+      :use_common_name,
+      :user_research_observation_agreed
     )
   end
 end
