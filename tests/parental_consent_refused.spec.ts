@@ -15,10 +15,6 @@ test("Parental consent - Consent refused", async ({ page }) => {
 
   await when_i_choose_contains_gelatine_as_the_reason();
   await and_i_click_continue();
-  await then_i_see_the_injection_page();
-
-  await when_i_choose_to_not_have_the_injection();
-  await and_i_click_continue();
   await then_i_see_the_consent_confirm_page();
 });
 
@@ -80,14 +76,4 @@ async function then_i_see_the_reason_page() {
 
 async function when_i_choose_contains_gelatine_as_the_reason() {
   await p.click("text=Vaccine contains gelatine from pigs");
-}
-
-async function then_i_see_the_injection_page() {
-  await expect(p.locator("h1")).toContainText(
-    "Your child may be able to have an injection instead",
-  );
-}
-
-async function when_i_choose_to_not_have_the_injection() {
-  await p.getByRole("radio", { name: "No" }).click();
 }
