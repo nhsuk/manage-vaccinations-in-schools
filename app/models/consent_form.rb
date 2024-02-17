@@ -192,7 +192,7 @@ class ConsentForm < ApplicationRecord
       (:contact_method if parent_phone.present?),
       :consent,
       (:reason if consent_refused?),
-      (:injection if consent_refused? && eligible_for_injection?),
+      (:injection if injection_offered_as_alternative?),
       (:gp if consent_given?),
       (:address if consent_given?),
       (:health_question if consent_given?)
@@ -244,8 +244,22 @@ class ConsentForm < ApplicationRecord
 
   private
 
-  def eligible_for_injection?
-    !refused_because_given_elsewhere? && !refused_because_already_received?
+  def refused_and_not_had_it_already?
+    consent_refused? && !refused_because_given_elsewhere? &&
+      !refused_because_already_received?
+  end
+
+  def injection_offered_as_alternative?
+    refused_and_not_had_it_already? && session.campaign.name == "Flu"
+    # checking for flu here is a simplification
+    # the actual logic is: if the parent has refused a nasal vaccine AND the session is for a nasal vaccine
+    # AND the SAIS team offers an alternative injection vaccine, then show the injection step
+    #
+    # we currently don't track what type of vaccine was refused.
+    # currently HPV is only offered as an injection, so we don't need to check for it
+    #
+    # so a more true-to-life implementation would be:
+    # refused_nasal? && not_had_it_already? && injection_offered_as_alternative?
   end
 
   def health_answers_valid?
