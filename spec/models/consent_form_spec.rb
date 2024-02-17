@@ -53,6 +53,7 @@ RSpec.describe ConsentForm, type: :model do
     let(:reason) { nil }
     let(:gp_response) { nil }
     let(:health_answers) { [] }
+    let(:session) { build(:session) }
     subject(:consent_form) do
       build(
         :consent_form,
@@ -63,7 +64,8 @@ RSpec.describe ConsentForm, type: :model do
         response:,
         reason:,
         gp_response:,
-        health_answers:
+        health_answers:,
+        session:
       )
     end
 
@@ -182,6 +184,9 @@ RSpec.describe ConsentForm, type: :model do
     end
 
     context "when form_step is :injection" do
+      # currently injection alternative only offered during flu campaign
+      let(:session) { build(:session, campaign: build(:campaign, :flu)) }
+
       let(:response) { "refused" }
       let(:reason) { "contains_gelatine" }
       let(:form_step) { :injection }
@@ -325,24 +330,52 @@ RSpec.describe ConsentForm, type: :model do
       expect(consent_form.form_steps).to include(:contact_method)
     end
 
-    it "does not ask for reason when patient gives consent" do
+    it "does not ask for reason for refusal when patient gives consent" do
       consent_form = build(:consent_form, response: "given")
       expect(consent_form.form_steps).not_to include(:reason)
       expect(consent_form.form_steps).not_to include(:injection)
     end
 
-    it "ask for reason when patient refuses with an ineligible reason" do
-      consent_form =
-        build(:consent_form, response: "refused", reason: "already_received")
-      expect(consent_form.form_steps).to include(:reason)
-      expect(consent_form.form_steps).not_to include(:injection)
+    context "for a flu campaign, when patient refuses consent" do
+      let(:session) { build(:session, campaign: build(:campaign, :flu)) }
+
+      it "offers an injection alternative if the child hasn't received vaccine elsewhere" do
+        consent_form =
+          build(
+            :consent_form,
+            response: "refused",
+            reason: "contains_gelatine",
+            session:
+          )
+        expect(consent_form.form_steps).to include(:reason)
+        expect(consent_form.form_steps).to include(:injection)
+      end
+
+      it "doesn't offer an injection alternative if the child has already received vaccine" do
+        consent_form =
+          build(
+            :consent_form,
+            response: "refused",
+            reason: "already_received",
+            session:
+          )
+        expect(consent_form.form_steps).to include(:reason)
+        expect(consent_form.form_steps).not_to include(:injection)
+      end
     end
 
-    it "ask for reason when patient refuses with an eligible reason" do
-      consent_form =
-        build(:consent_form, response: "refused", reason: "contains_gelatine")
-      expect(consent_form.form_steps).to include(:reason)
-      expect(consent_form.form_steps).to include(:injection)
+    context "for an HPV campaign, when patient refuses consent" do
+      it "does not offer an injection alternative" do
+        # this assumes that the HPV campaign does not offer nasal spray vaccines, which is true in 2024
+        consent_form =
+          build(
+            :consent_form,
+            response: "refused",
+            reason: "medical_reasons",
+            session: build(:session, campaign: build(:campaign, :hpv))
+          )
+        expect(consent_form.form_steps).not_to include(:injection)
+      end
     end
 
     it "does not ask for gp details when patient refuses consent" do
