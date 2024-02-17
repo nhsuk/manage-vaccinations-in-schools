@@ -27,6 +27,11 @@ Rails.application.routes.draw do
   if Rails.env.development? || Rails.env.test?
     get "/reset", to: "dev#reset"
     get "/random_consent_form", to: "dev#random_consent_form"
+
+    namespace :testing do
+      get "/campaigns/:id", action: :show_campaign, as: "show_campaign"
+      post "generate-campaign"
+    end
   end
 
   get "/csrf", to: "csrf#new"

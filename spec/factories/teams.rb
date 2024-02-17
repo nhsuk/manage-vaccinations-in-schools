@@ -17,10 +17,15 @@
 #
 FactoryBot.define do
   factory :team do
-    sequence(:name) { |n| "Team #{n}" }
-    sequence(:email) { |n| "team-#{n}@example.com" }
-    ods_code { "U#{rand(10_000..99_999)}" }
+    transient do
+      random { Random.new }
+      identifier { random.rand(1..10_000) }
+    end
+
+    name { "Team #{identifier}" }
+    email { "team-#{identifier}@example.com" }
+    ods_code { "U#{identifier}" }
     privacy_policy_url { "https://example.com/privacy" }
-    sequence(:reply_to_id) { |n| "reply-to-id-team-#{n}" }
+    reply_to_id { "reply-to-id-team-#{identifier}" }
   end
 end
