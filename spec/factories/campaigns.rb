@@ -14,12 +14,19 @@
 #
 FactoryBot.define do
   factory :campaign do
+    team
     hpv
 
     trait :hpv do
       name { "HPV" }
-      team
       vaccines { [create(:vaccine, :gardasil_9)] }
+    end
+
+    trait :flu do
+      name { "Flu" }
+      vaccines do
+        [create(:vaccine, :fluenz_tetra), create(:vaccine, :fluerix_tetra)]
+      end
     end
   end
 end
