@@ -25,4 +25,8 @@ class Vaccine < ApplicationRecord
   enum :method, %i[injection nasal]
 
   delegate :first_health_question, to: :health_questions
+
+  def contains_gelatine?
+    type.downcase == "flu" && nasal?
+  end
 end
