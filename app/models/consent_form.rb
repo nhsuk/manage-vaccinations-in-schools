@@ -242,6 +242,19 @@ class ConsentForm < ApplicationRecord
     end.capitalize
   end
 
+  def gelatine_content_status_in_vaccines
+    # we don't YET track the vaccine type that the user is agreeing to in the consent form,
+    # so we have to check all vaccines
+    # there might not be a true or false answer if there are multiple vaccines in the campaign
+    # (e.g. flu nasal and flu injection)
+    possible_answers = vaccines.map(&:contains_gelatine?)
+    if possible_answers.uniq.length == 1
+      possible_answers.first
+    else
+      :maybe
+    end
+  end
+
   private
 
   def refused_and_not_had_it_already?
@@ -260,6 +273,10 @@ class ConsentForm < ApplicationRecord
     #
     # so a more true-to-life implementation would be:
     # refused_nasal? && not_had_it_already? && injection_offered_as_alternative?
+  end
+
+  def vaccines
+    session.campaign.vaccines
   end
 
   def health_answers_valid?

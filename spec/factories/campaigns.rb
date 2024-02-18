@@ -28,5 +28,10 @@ FactoryBot.define do
         [create(:vaccine, :fluenz_tetra), create(:vaccine, :fluerix_tetra)]
       end
     end
+
+    trait :flu_nasal_only do
+      name { "Flu" }
+      vaccines { [create(:vaccine, :fluenz_tetra)] }
+    end
   end
 end
