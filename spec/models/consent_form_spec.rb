@@ -524,6 +524,35 @@ RSpec.describe ConsentForm, type: :model do
     end
   end
 
+  describe "#gelatine_content_status_in_vaccines" do
+    it "returns :maybe if the flu campaign offers both injection and nasal vaccines" do
+      consent_form =
+        build(
+          :consent_form,
+          session: build(:session, campaign: build(:campaign, :flu))
+        )
+      expect(consent_form.gelatine_content_status_in_vaccines).to eq(:maybe)
+    end
+
+    it "returns false if the flu campaign only offers injection vaccines" do
+      consent_form =
+        build(
+          :consent_form,
+          session: build(:session, campaign: build(:campaign, :flu_nasal_only))
+        )
+      expect(consent_form.gelatine_content_status_in_vaccines).to eq(true)
+    end
+
+    it "returns false for an HPV campaign" do
+      consent_form =
+        build(
+          :consent_form,
+          session: build(:session, campaign: build(:campaign, :hpv))
+        )
+      expect(consent_form.gelatine_content_status_in_vaccines).to eq(false)
+    end
+  end
+
   describe "scope unmatched" do
     let(:consent) { create(:consent) }
     let(:unmatched_consent_form) { create(:consent_form, consent: nil) }
