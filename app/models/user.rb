@@ -41,6 +41,9 @@ class User < ApplicationRecord
   encrypts :email, deterministic: true
   encrypts :full_name
 
+  scope :recently_active,
+        -> { where(last_sign_in_at: 1.week.ago..Time.current) }
+
   def team
     # TODO: Update the app to properly support multiple teams per user
     teams.first
