@@ -62,6 +62,7 @@ environments:
       MAVIS__HOST: "staging.manage-vaccinations-in-schools.nhs.uk"
       MAVIS__SUPPORT_USERNAME: manage
       MAVIS__SUPPORT_PASSWORD: vaccinations
+      WEB_CONCURRENCY: 2
   test:
     http:
       alias:
