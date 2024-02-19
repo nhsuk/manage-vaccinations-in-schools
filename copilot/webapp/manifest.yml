@@ -50,6 +50,9 @@ secrets:
 
 environments:
   staging:
+    cpu: 1024
+    memory: 2048
+    count: 2
     http:
       alias:
         - "staging.manage-vaccinations-in-schools.nhs.uk"
