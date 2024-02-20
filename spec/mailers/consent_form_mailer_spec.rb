@@ -43,7 +43,8 @@ RSpec.describe ConsentFormMailer, type: :mailer do
           short_patient_name_apos: "Severus'",
           team_email:,
           team_phone:,
-          observed_session: false
+          observed_session: false,
+          vaccination: "HPV vaccination"
         },
         to: "harry@hogwarts.edu",
         reply_to_id:
@@ -101,7 +102,8 @@ RSpec.describe ConsentFormMailer, type: :mailer do
           long_date: consent_form.session.date.strftime("%A %-d %B"),
           short_date: consent_form.session.date.strftime("%-d %B"),
           parent_name: "Harry Potter",
-          short_patient_name: "Severus"
+          short_patient_name: "Severus",
+          vaccination: "HPV vaccination"
         },
         to: "harry@hogwarts.edu",
         reply_to_id:
@@ -114,7 +116,10 @@ RSpec.describe ConsentFormMailer, type: :mailer do
 
     it "calls template_mail with correct personalisation" do
       described_class.confirmation_injection(
-        consent_form(reason: :contains_gelatine)
+        consent_form(
+          reason: :contains_gelatine,
+          session: create(:session, campaign: create(:campaign, :flu))
+        )
       ).deliver_now
 
       expect(@template_options).to include(
@@ -124,7 +129,8 @@ RSpec.describe ConsentFormMailer, type: :mailer do
           long_date: consent_form.session.date.strftime("%A %-d %B"),
           short_date: consent_form.session.date.strftime("%-d %B"),
           parent_name: "Harry Potter",
-          reason_for_refusal: "of the gelatine in the nasal spray"
+          reason_for_refusal: "of the gelatine in the nasal spray",
+          vaccination: "Flu vaccination"
         },
         to: "harry@hogwarts.edu",
         reply_to_id:
@@ -147,7 +153,8 @@ RSpec.describe ConsentFormMailer, type: :mailer do
           parent_name: "Harry Potter",
           short_patient_name: "Severus",
           team_email:,
-          team_phone:
+          team_phone:,
+          vaccination: "HPV vaccination"
         },
         to: "harry@hogwarts.edu",
         reply_to_id:

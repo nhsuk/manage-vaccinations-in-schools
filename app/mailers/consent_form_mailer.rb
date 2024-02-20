@@ -1,8 +1,4 @@
 class ConsentFormMailer < ApplicationMailer
-  def reply_to_id(consent_form:)
-    consent_form.session.campaign.team.reply_to_id
-  end
-
   def confirmation(consent_form)
     if consent_form.common_name.present?
       short_patient_name = consent_form.common_name
@@ -32,7 +28,8 @@ class ConsentFormMailer < ApplicationMailer
         short_patient_name_apos:,
         team_email: I18n.t("service.email"),
         team_phone: I18n.t("service.temporary_cumbria_phone"),
-        observed_session:
+        observed_session:,
+        vaccination: vaccination(consent_form)
       }
     )
   end
@@ -57,7 +54,8 @@ class ConsentFormMailer < ApplicationMailer
         location_name: consent_form.session.location.name,
         long_date: consent_form.session.date.strftime("%A %-d %B"),
         full_and_preferred_patient_name:,
-        short_patient_name:
+        short_patient_name:,
+        vaccination: vaccination(consent_form)
       }
     )
   end
@@ -83,7 +81,8 @@ class ConsentFormMailer < ApplicationMailer
         reason_for_refusal:
           I18n.t(
             "consent_form_mailer.reasons_for_refusal.#{consent_form.reason}"
-          )
+          ),
+        vaccination: vaccination(consent_form)
       }
     )
   end
@@ -110,8 +109,19 @@ class ConsentFormMailer < ApplicationMailer
         full_and_preferred_patient_name:,
         short_patient_name:,
         team_email: I18n.t("service.email"),
-        team_phone: I18n.t("service.temporary_cumbria_phone")
+        team_phone: I18n.t("service.temporary_cumbria_phone"),
+        vaccination: vaccination(consent_form)
       }
     )
+  end
+
+  private
+
+  def reply_to_id(consent_form:)
+    consent_form.session.campaign.team.reply_to_id
+  end
+
+  def vaccination(consent_form)
+    "#{consent_form.session.campaign.name} vaccination"
   end
 end
