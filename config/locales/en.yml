@@ -115,6 +115,13 @@ en:
       i_agree:
         flu: Yes, I agree to them having a nasal vaccine
         hpv: Yes, I agree
+    confirm:
+      consent_card_title:
+        flu: Consent for the flu vaccination
+        hpv: Consent for the HPV vaccination
+      i_agree:
+        flu: Yes, I agree to them having a nasal flu vaccination
+        hpv: Yes, I agree
     confirmation_agreed:
       title:
         flu: " %{full_name} will get their nasal flu vaccination at school on %{date}"

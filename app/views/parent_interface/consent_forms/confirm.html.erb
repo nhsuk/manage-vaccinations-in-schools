@@ -17,12 +17,12 @@ end %>
 
 <%= h1 "Check your answers and confirm" %>
 
-<%= render AppCardComponent.new(heading: "Consent") do %>
+<%= render AppCardComponent.new(heading: t("consent_forms.confirm.consent_card_title.#{ @consent_form.session.type.downcase }")) do %>
   <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
     summary_list.with_row do |row|
       row.with_key { "Do you agree?" }
       row.with_value { @consent_form.consent_given? ?
-                        "Yes, I agree" :
+                        t("consent_forms.confirm.i_agree.#{ @consent_form.session.type.downcase }") :
                         "No" }
       row.with_action(text: "Change",
         href: change_link[:consent],
