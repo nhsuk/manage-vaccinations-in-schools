@@ -1,4 +1,6 @@
 class TriageController < ApplicationController
+  include TriageMailerConcern
+
   before_action :set_session, only: %i[index create update]
   before_action :set_patient, only: %i[create update]
   before_action :set_patient_session, only: %i[create update]
@@ -43,6 +45,7 @@ class TriageController < ApplicationController
     @triage.assign_attributes triage_params.merge(user: current_user)
     if @triage.save(context: :consent)
       @patient_session.do_triage!
+      send_triage_mail(@patient_session)
       redirect_to triage_session_path(@session),
                   flash: {
                     success: {
@@ -64,6 +67,7 @@ class TriageController < ApplicationController
     @triage.assign_attributes triage_params
     if @triage.save(context: :consent)
       @patient_session.do_triage!
+      send_triage_mail(@patient_session)
       redirect_to triage_session_path(@session),
                   flash: {
                     success: {
