@@ -15,6 +15,8 @@ class ConsentFormMailer < ApplicationMailer
     apos = "'"
     apos += "s" unless short_patient_name.ends_with?("s")
     short_patient_name_apos = short_patient_name + apos
+    observed_session =
+      consent_form.session.location.permission_to_observe_required?
 
     template_mail(
       "7cda7ae5-99a2-4c40-9a3e-1863e23f7a73",
@@ -29,7 +31,8 @@ class ConsentFormMailer < ApplicationMailer
         short_patient_name:,
         short_patient_name_apos:,
         team_email: I18n.t("service.email"),
-        team_phone: I18n.t("service.temporary_cumbria_phone")
+        team_phone: I18n.t("service.temporary_cumbria_phone"),
+        observed_session:
       }
     )
   end

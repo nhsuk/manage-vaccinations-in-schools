@@ -42,7 +42,8 @@ RSpec.describe ConsentFormMailer, type: :mailer do
           short_patient_name: "Severus",
           short_patient_name_apos: "Severus'",
           team_email:,
-          team_phone:
+          team_phone:,
+          observed_session: false
         },
         to: "harry@hogwarts.edu",
         reply_to_id:
@@ -67,6 +68,22 @@ RSpec.describe ConsentFormMailer, type: :mailer do
       expect(@template_options[:personalisation]).to include(
         short_patient_name: "Harry",
         short_patient_name_apos: "Harry's"
+      )
+    end
+
+    it "calls template_mail correctly when location will be observed" do
+      described_class.confirmation(
+        consent_form(
+          session:
+            create(
+              :session,
+              location: create(:location, permission_to_observe_required: true)
+            )
+        )
+      ).deliver_now
+
+      expect(@template_options[:personalisation]).to include(
+        observed_session: true
       )
     end
   end
