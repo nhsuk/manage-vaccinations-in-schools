@@ -17,7 +17,7 @@ on:
 jobs:
   # Permissions to request and use OIDC tokens and access repository contents
   copilot:
-    name: AWS Copilot
+    name: AWS Copilot deploy to ${{ github.event.inputs.environment }}
     permissions:
       id-token: write
       contents: read
