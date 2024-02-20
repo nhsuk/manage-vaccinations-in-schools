@@ -50,8 +50,6 @@ secrets:
 
 environments:
   staging:
-    cpu: 1024
-    memory: 2048
     count: 2
     http:
       alias:
@@ -62,7 +60,6 @@ environments:
       MAVIS__HOST: "staging.manage-vaccinations-in-schools.nhs.uk"
       MAVIS__SUPPORT_USERNAME: manage
       MAVIS__SUPPORT_PASSWORD: vaccinations
-      WEB_CONCURRENCY: 2
   test:
     http:
       alias:
@@ -84,6 +81,9 @@ environments:
       MAVIS__SUPPORT_USERNAME: manage
       MAVIS__SUPPORT_PASSWORD: vaccinations
   production:
+    cpu: 1024
+    memory: 2048
+    count: 2
     http:
       alias:
         - "www.manage-vaccinations-in-schools.nhs.uk"
@@ -93,3 +93,4 @@ environments:
       MAVIS__HOST: "www.manage-vaccinations-in-schools.nhs.uk"
       MAVIS__SUPPORT_USERNAME: manage
       MAVIS__SUPPORT_PASSWORD: vaccinations
+      WEB_CONCURRENCY: 2
