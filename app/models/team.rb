@@ -21,8 +21,11 @@ class Team < ApplicationRecord
   has_many :locations
   has_and_belongs_to_many :users
 
-  validates :name, presence: true
-  validates :name, uniqueness: true
+  validates :name, presence: true, uniqueness: true
+  validates :email, presence: true, email: true
+  validates :phone, presence: true, phone: true
+
+  encrypts :name, :email, :phone, :privacy_policy_url
 
   MAX_COHORT_SIZE = 100
 
