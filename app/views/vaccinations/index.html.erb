@@ -14,22 +14,40 @@
 <%=
 render AppTabComponent.new(title: "Vaccinations", classes: 'nhsuk-tabs') do |c|
   c.with_tab(id: "action-needed", label: t("states.action_needed.label") + " (#{ @partitioned_patient_sessions[:action_needed].size })", classes: 'nhsuk-tabs__panel') do
-    render "patients_with_actions",
-           id: "action-needed",
-           caption: t("states.action_needed.title"),
-           patient_sessions: @partitioned_patient_sessions[:action_needed]
+    if @partitioned_patient_sessions[:action_needed].any?
+      render "patients_with_actions",
+            id: "action-needed",
+            caption: t("states.action_needed.title"),
+            patient_sessions: @partitioned_patient_sessions[:action_needed]
+    else
+      render AppEmptyListComponent.new(
+        title: t("states.action_needed.title")
+      )
+    end
   end
   c.with_tab(id: "vaccinated", label: t("states.vaccinated.label") + " (#{ @partitioned_patient_sessions[:vaccinated].size })", classes: 'nhsuk-tabs__panel') do
-    render "patients_with_outcomes",
-           id: "vaccinated",
-           caption: t("states.vaccinated.title"),
-           patient_sessions: @partitioned_patient_sessions[:vaccinated]
+    if @partitioned_patient_sessions[:vaccinated].any?
+      render "patients_with_outcomes",
+            id: "vaccinated",
+            caption: t("states.vaccinated.title"),
+            patient_sessions: @partitioned_patient_sessions[:vaccinated]
+    else
+      render AppEmptyListComponent.new(
+        title: t("states.vaccinated.title")
+      )
+    end
   end
   c.with_tab(id: "could-not-vaccinate", label: t("states.not_vaccinated.label") + " (#{ @partitioned_patient_sessions[:not_vaccinated].size })", classes: 'nhsuk-tabs__panel') do
-    render "patients_with_outcomes",
+    if @partitioned_patient_sessions[:not_vaccinated].any?
+      render "patients_with_outcomes",
            id: "could-not-vaccinate",
            caption: t("states.not_vaccinated.title"),
            patient_sessions: @partitioned_patient_sessions[:not_vaccinated]
+    else
+      render AppEmptyListComponent.new(
+        title: t("states.not_vaccinated.title")
+      )
+    end
   end
 end
 %>

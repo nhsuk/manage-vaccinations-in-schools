@@ -40,7 +40,10 @@
         route: :consent,
       )
     else
-      render AppEmptyListComponent.new
+      render AppEmptyListComponent.new(
+        title: t("states.#{state}.title"),
+        text: t("table.no_results")
+      )
     end
   end
 end %>

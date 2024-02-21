@@ -1,6 +1,6 @@
 <action-table-filters>
   <fieldset class="nhsuk-fieldset">
-    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m nhsuk-u-padding-top-0 nhsuk-u-font-size-22">
+    <legend class="nhsuk-fieldset__legend nhsuk-u-font-weight-bold nhsuk-u-padding-top-3">
       Filter results
     </legend>
     <div class="nhsuk-form-group">
@@ -9,7 +9,7 @@
       </label>
       <input class="nhsuk-input" id="filter-<%= @tab_id %>-name" name="name" type="search" autocomplete="off">
     </div>
-    <div class="nhsuk-form-group">
+    <div class="nhsuk-form-group app-visually-hidden-until-desktop">
       <label class="nhsuk-label nhsuk-label--s nhsuk-u-margin-bottom-0" for="filter-<%= @tab_id %>-dob">
         By date of birth
       </label>
@@ -19,7 +19,7 @@
       <input class="nhsuk-input" id="filter-<%= @tab_id %>-dob" name="dob" type="search" aria-describedby="filter-<%= @tab_id %>-dob-hint" autocomplete="off">
     </div>
     <% if @filter_actions %>
-      <div class="nhsuk-form-group">
+      <div class="nhsuk-form-group app-visually-hidden-until-desktop">
         <fieldset class="nhsuk-fieldset">
           <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--s">
             By action needed

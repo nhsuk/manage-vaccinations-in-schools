@@ -1,3 +1,4 @@
-<%= render AppCardComponent.new(heading: "No results", heading_size: "l", card_classes: "app-card--empty-list") do %>
-  <p>We couldn’t find any children that matched your filters.</p>
+<% if @title %>
+  <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-3"><%= @title %></h3>
 <% end %>
+<p class="nhsuk-body"><%= @text %></p>
