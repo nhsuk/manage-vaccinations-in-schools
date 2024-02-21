@@ -29,7 +29,7 @@ end %>
         visually_hidden_text: "consent")
     end
 
-    reason_notes = @consent_form.reason_notes.present? ? "<br>" + @consent_form.reason_notes : ""
+    reason_notes = @consent_form.reason_notes.present? ? "<br>".html_safe + @consent_form.reason_notes : ""
     reason_for_refusal_text = @consent_form.human_enum_name(:reason) + reason_notes
 
     if @consent_form.consent_refused?
