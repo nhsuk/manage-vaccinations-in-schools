@@ -21,6 +21,8 @@ Capybara.register_driver(:cuprite_custom) do |app|
 end
 Capybara.javascript_driver = :cuprite_custom
 
+ActiveJob::Base.queue_adapter = :test
+
 Shoulda::Matchers.configure do |config|
   config.integrate do |with|
     with.test_framework :rspec
