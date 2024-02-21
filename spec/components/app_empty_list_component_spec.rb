@@ -7,14 +7,14 @@ RSpec.describe AppEmptyListComponent, type: :component do
   subject { page }
 
   context "when no title is provided" do
-    let(:title) { {} }
+    let(:component) { described_class.new }
 
     it { should have_css(".nhsuk-body", text: "No results") }
   end
 
   context "when a title is provided" do
-    let(:title) { "No results" }
+    let(:title) { "Some other title" }
 
-    it { should have_css(".nhsuk-heading-s", text: "No results") }
+    it { should have_css(".nhsuk-heading-s", text: "Some other title") }
   end
 end
