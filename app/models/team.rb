@@ -25,8 +25,6 @@ class Team < ApplicationRecord
   validates :email, presence: true, email: true
   validates :phone, presence: true, phone: true
 
-  encrypts :name, :email, :phone, :privacy_policy_url
-
   MAX_COHORT_SIZE = 100
 
   def campaign
