@@ -64,7 +64,7 @@ Rails.application.configure do
 
   config.action_mailer.default_url_options = { host: "localhost:4000" }
   config.action_mailer.default_options = { from: "no-reply@nhs.net" }
-  config.action_mailer.delivery_method = :file
+  config.action_mailer.delivery_method = :test
 
   # Set up Active Record Encryption in test mode
   config.active_record.encryption.primary_key = "test"

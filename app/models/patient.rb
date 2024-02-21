@@ -46,6 +46,8 @@ class Patient < ApplicationRecord
   has_many :triage, through: :patient_sessions
   has_many :consents
 
+  scope :consent_not_sent, -> { where(sent_consent_at: nil) }
+
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :date_of_birth, presence: true
