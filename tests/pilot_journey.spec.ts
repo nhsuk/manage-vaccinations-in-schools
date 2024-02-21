@@ -262,7 +262,7 @@ async function then_i_see_the_session_page() {
   await expect(p.getByText("0 children with consent refused")).toBeVisible();
   await expect(p.getByText("4 children without a response")).toBeVisible();
   await expect(
-    p.getByText("0 responses need matching with a parent record"),
+    p.getByText("0 responses need matching with records in the cohort"),
   ).toBeVisible();
   await expect(p.getByText("0 children needing triage")).toBeVisible();
   await expect(p.getByText("0 children ready to vaccinate")).toBeVisible();

@@ -7,6 +7,14 @@ class ConsentsController < ApplicationController
   def index
     methods = %i[consent_given? consent_refused? consent_conflicts? no_consent?]
 
+    @unmatched_record_counts =
+      SessionStats.new(
+        patient_sessions: @patient_sessions,
+        location: @session.location
+      )[
+        :unmatched_responses
+      ]
+
     @tabs =
       @patient_sessions.group_by do |patient_session|
         methods.find { |m| patient_session.send(m) }
