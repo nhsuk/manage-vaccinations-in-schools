@@ -10,6 +10,14 @@ class ConsentRequestMailer < ApplicationMailer
 
   private
 
+  def host
+    if Rails.env.development? || Rails.env.test?
+      "http://localhost:4000"
+    else
+      "https://#{Settings.give_or_refuse_consent_host}"
+    end
+  end
+
   def opts(session, patient)
     @session = session
     @patient = patient
@@ -22,6 +30,6 @@ class ConsentRequestMailer < ApplicationMailer
   end
 
   def consent_link
-    start_session_parent_interface_consent_forms_url(@session)
+    host + start_session_parent_interface_consent_forms_path(@session)
   end
 end
