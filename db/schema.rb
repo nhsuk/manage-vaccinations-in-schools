@@ -275,6 +275,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_21_130747) do
     t.string "address_town"
     t.string "address_postcode"
     t.bigint "registration_id"
+    t.datetime "sent_consent_at"
     t.index ["location_id"], name: "index_patients_on_location_id"
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
     t.index ["registration_id"], name: "index_patients_on_registration_id"

@@ -17,6 +17,7 @@
 #  parent_phone              :string
 #  parent_relationship       :integer
 #  parent_relationship_other :string
+#  sent_consent_at           :datetime
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  location_id               :bigint
