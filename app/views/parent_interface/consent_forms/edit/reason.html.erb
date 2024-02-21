@@ -5,7 +5,7 @@
   ) %>
 <% end %>
 
-<% title = "Please tell us why you do not agree" %>
+<% title = "Why are you refusing to give consent?" %>
 <% content_for :page_title, title %>
 
 <%= form_for @consent_form, url: wizard_path, method: :put do |f| %>
@@ -31,9 +31,6 @@
     <%= f.govuk_radio_button :reason, "other",
       label: { text: 'Other' } %>
   <% end %>
-
-  <%= f.govuk_text_area :reason_notes,
-    label: { text: 'Give details (optional)' } %>
 
   <div class="nhsuk-u-margin-top-6">
     <%= f.govuk_submit "Continue" %>

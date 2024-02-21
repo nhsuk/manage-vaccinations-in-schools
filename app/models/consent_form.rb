@@ -156,6 +156,10 @@ class ConsentForm < ApplicationRecord
     validates :reason, presence: true
   end
 
+  on_wizard_step :reason_notes do
+    validates :reason_notes, presence: true
+  end
+
   on_wizard_step :injection do
     validates :contact_injection, inclusion: { in: [true, false] }
   end
@@ -192,6 +196,7 @@ class ConsentForm < ApplicationRecord
       (:contact_method if parent_phone.present?),
       :consent,
       (:reason if consent_refused?),
+      (:reason_notes if consent_refused? && reason_notes_must_be_provided?),
       (:injection if injection_offered_as_alternative?),
       (:gp if consent_given?),
       (:address if consent_given?),
@@ -253,6 +258,11 @@ class ConsentForm < ApplicationRecord
     else
       :maybe
     end
+  end
+
+  def reason_notes_must_be_provided?
+    refused_because_other? || refused_because_given_elsewhere? ||
+      refused_because_medical_reasons? || refused_because_already_received?
   end
 
   private

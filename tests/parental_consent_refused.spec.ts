@@ -17,6 +17,8 @@ test("Parental consent for HPV vaccination - Consent refused", async ({
 
   await when_i_choose_medical_reasons_as_the_reason();
   await and_i_click_continue();
+  await and_i_provide_a_reason();
+  await and_i_click_continue();
   await then_i_see_the_consent_confirm_page();
 });
 
@@ -72,10 +74,14 @@ async function when_i_refuse_consent() {
 
 async function then_i_see_the_reason_page() {
   await expect(p.locator("h1")).toContainText(
-    "Please tell us why you do not agree",
+    "Why are you refusing to give consent?",
   );
 }
 
 async function when_i_choose_medical_reasons_as_the_reason() {
   await p.click("text=Medical reasons");
+}
+
+async function and_i_provide_a_reason() {
+  await p.getByLabel("Give details").fill("Previous allergic reaction");
 }

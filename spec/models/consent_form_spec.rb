@@ -183,6 +183,20 @@ RSpec.describe ConsentForm, type: :model do
       it { should validate_presence_of(:reason).on(:update) }
     end
 
+    context "when form_step is :reason_notes" do
+      let(:response) { "refused" }
+      let(:reason) { "medical_reasons" }
+      let(:form_step) { :reason_notes }
+
+      context "runs validations from previous steps" do
+        it { should validate_presence_of(:first_name).on(:update) }
+        it { should validate_presence_of(:date_of_birth).on(:update) }
+        it { should validate_presence_of(:parent_name).on(:update) }
+      end
+
+      it { should validate_presence_of(:reason_notes).on(:update) }
+    end
+
     context "when form_step is :injection" do
       # currently injection alternative only offered during flu campaign
       let(:session) { build(:session, campaign: build(:campaign, :flu)) }
@@ -381,6 +395,25 @@ RSpec.describe ConsentForm, type: :model do
     it "does not ask for gp details when patient refuses consent" do
       consent_form = build(:consent_form, response: "refused")
       expect(consent_form.form_steps).not_to include(:gp)
+    end
+
+    it "asks for details when patient refuses for a few different reasons" do
+      %w[
+        medical_reasons
+        given_elsewhere
+        other
+        already_received
+      ].each do |reason|
+        consent_form = build(:consent_form, response: "refused", reason:)
+        expect(consent_form.form_steps).to include(:reason_notes)
+      end
+    end
+
+    it "skips asking for details when patient refuses due to gelatine content or pesonal reason" do
+      %w[contains_gelatine personal_choice].each do |reason|
+        consent_form = build(:consent_form, response: "refused", reason:)
+        expect(consent_form.form_steps).not_to include(:reason_notes)
+      end
     end
 
     it "asks for gp details, address when patient gives consent" do
