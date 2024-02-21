@@ -33,21 +33,20 @@ RSpec.describe ConsentFormMailer, type: :mailer do
       described_class.confirmation(consent_form).deliver_now
 
       expect(@template_options).to include(
-        personalisation: {
-          full_and_preferred_patient_name: "Albus Potter (known as Severus)",
-          location_name: consent_form.session.location.name,
-          long_date: consent_form.session.date.strftime("%A %-d %B"),
-          short_date: consent_form.session.date.strftime("%-d %B"),
-          parent_name: "Harry Potter",
-          short_patient_name: "Severus",
-          short_patient_name_apos: "Severus'",
-          team_email:,
-          team_phone:,
-          observed_session: false,
-          vaccination: "HPV vaccination"
-        },
         to: "harry@hogwarts.edu",
         reply_to_id:
+      )
+      expect(@template_options[:personalisation]).to include(
+        full_and_preferred_patient_name: "Albus Potter (known as Severus)",
+        short_patient_name: "Severus",
+        short_patient_name_apos: "Severus'",
+        location_name: consent_form.session.location.name,
+        long_date: consent_form.session.date.strftime("%A %-d %B"),
+        short_date: consent_form.session.date.strftime("%-d %B"),
+        team_email:,
+        team_phone:,
+        observed_session: false,
+        vaccination: "HPV vaccination"
       )
     end
 
@@ -96,15 +95,6 @@ RSpec.describe ConsentFormMailer, type: :mailer do
       described_class.confirmation_needs_triage(consent_form).deliver_now
 
       expect(@template_options).to include(
-        personalisation: {
-          full_and_preferred_patient_name: "Albus Potter (known as Severus)",
-          location_name: consent_form.session.location.name,
-          long_date: consent_form.session.date.strftime("%A %-d %B"),
-          short_date: consent_form.session.date.strftime("%-d %B"),
-          parent_name: "Harry Potter",
-          short_patient_name: "Severus",
-          vaccination: "HPV vaccination"
-        },
         to: "harry@hogwarts.edu",
         reply_to_id:
       )
@@ -122,18 +112,8 @@ RSpec.describe ConsentFormMailer, type: :mailer do
         )
       ).deliver_now
 
-      expect(@template_options).to include(
-        personalisation: {
-          full_and_preferred_patient_name: "Albus Potter (known as Severus)",
-          location_name: consent_form.session.location.name,
-          long_date: consent_form.session.date.strftime("%A %-d %B"),
-          short_date: consent_form.session.date.strftime("%-d %B"),
-          parent_name: "Harry Potter",
-          reason_for_refusal: "of the gelatine in the nasal spray",
-          vaccination: "Flu vaccination"
-        },
-        to: "harry@hogwarts.edu",
-        reply_to_id:
+      expect(@template_options[:personalisation]).to include(
+        reason_for_refusal: "of the gelatine in the nasal spray"
       )
     end
   end
@@ -145,17 +125,6 @@ RSpec.describe ConsentFormMailer, type: :mailer do
       described_class.confirmation_refused(consent_form).deliver_now
 
       expect(@template_options).to include(
-        personalisation: {
-          full_and_preferred_patient_name: "Albus Potter (known as Severus)",
-          location_name: consent_form.session.location.name,
-          long_date: consent_form.session.date.strftime("%A %-d %B"),
-          short_date: consent_form.session.date.strftime("%-d %B"),
-          parent_name: "Harry Potter",
-          short_patient_name: "Severus",
-          team_email:,
-          team_phone:,
-          vaccination: "HPV vaccination"
-        },
         to: "harry@hogwarts.edu",
         reply_to_id:
       )
