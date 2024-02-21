@@ -1,0 +1,22 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+      href: backlink_path,
+      name: "previous page"
+  ) %>
+<% end %>
+
+<% title = t("consent_forms.reason_notes.title.#{@consent_form.reason}") %>
+<% content_for :page_title, title %>
+
+<%= h1 title %>
+
+<%= form_for @consent_form, url: wizard_path, method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
+  <%= f.govuk_text_area :reason_notes,
+    label: { text: 'Give details' + (@consent_form.reason_notes_must_be_provided? ? '' : ' (optional)') } %>
+
+  <div class="nhsuk-u-margin-top-6">
+    <%= f.govuk_submit "Continue" %>
+  </div>
+<% end %>
