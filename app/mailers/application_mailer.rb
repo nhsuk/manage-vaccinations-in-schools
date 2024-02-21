@@ -71,11 +71,11 @@ class ApplicationMailer < Mail::Notify::Mailer
   end
 
   def team_email
-    I18n.t("service.email")
+    @session.campaign.team.email
   end
 
   def team_phone
-    I18n.t("service.temporary_cumbria_phone")
+    @session.campaign.team.phone
   end
 
   def vaccination
