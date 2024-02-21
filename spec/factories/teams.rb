@@ -6,6 +6,7 @@
 #  email              :string
 #  name               :text             not null
 #  ods_code           :string
+#  phone              :string
 #  privacy_policy_url :string
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
@@ -24,6 +25,7 @@ FactoryBot.define do
 
     name { "Team #{identifier}" }
     email { "team-#{identifier}@example.com" }
+    phone { "01234 567890" }
     ods_code { "U#{identifier}" }
     privacy_policy_url { "https://example.com/privacy" }
     reply_to_id { "reply-to-id-team-#{identifier}" }
