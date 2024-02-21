@@ -39,7 +39,6 @@ en:
       title: Children who could not be vaccinated
   service:
     email: england.mavis@nhs.net
-    temporary_cumbria_phone: "01900 705 045"
   wicked:
     # ConsentForm
     name: "name"

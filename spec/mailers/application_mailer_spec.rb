@@ -3,7 +3,14 @@ require "rails_helper"
 RSpec.describe ApplicationMailer, type: :mailer do
   subject { described_class.new }
 
-  let(:team) { create(:team, reply_to_id: "notify-reply-to-id") }
+  let(:team) do
+    create(
+      :team,
+      email: "team@email.com",
+      phone: "01234567890",
+      reply_to_id: "notify-reply-to-id"
+    )
+  end
   let(:location) { create(:location, name: "Hogwarts", team:) }
   let(:campaign) { create(:campaign, :hpv, team:) }
   let(:session) do
@@ -35,8 +42,8 @@ RSpec.describe ApplicationMailer, type: :mailer do
             short_date: "1 January",
             short_patient_name: "John",
             short_patient_name_apos: "John's",
-            team_email: "england.mavis@nhs.net",
-            team_phone: "01900 705 045",
+            team_email: "team@email.com",
+            team_phone: "01234567890",
             vaccination: "HPV vaccination"
           }
         }
