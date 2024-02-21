@@ -1,0 +1,33 @@
+#!/bin/bash
+
+if [ -z "$1" ] || [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
+  echo "Usage: bin/deploy <environment>"
+  exit 1
+fi
+
+if [ "$(git branch --show-current)" != "main" ]; then
+  echo "Not on main branch, please 'git checkout main'"
+  exit 1
+fi
+
+if [ -n "$(git status --porcelain)" ]; then
+  echo "Uncommitted changes, please 'git commit' or 'git stash'"
+  exit 1
+fi
+
+if [ -n "$(git log origin/main..HEAD)" ]; then
+  echo "Unpushed changes, please 'git push'"
+  exit 1
+fi
+
+if [ -n "$(git diff --name-only origin/main)" ]; then
+  echo "Unpulled changes, please 'git pull'"
+  exit 1
+fi
+
+if [ -n "$(git fetch --dry-run)" ]; then
+  echo "Unfetched changes, please 'git fetch'"
+  exit 1
+fi
+
+copilot svc deploy --env $1
