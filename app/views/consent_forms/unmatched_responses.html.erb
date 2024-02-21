@@ -1,22 +1,15 @@
 
-<% page_title = @school.name %>
+<% page_title = "Unmatched consent responses" %>
 
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
-    { text: 'Home', href: dashboard_path },
-    { text: 'Manage schools' },
+    { text: "#{@session.campaign.name} session at #{@session.name}", href: session_path(@session) },
+    { text: "Check consent responses", href: consents_session_path(@session) },
     { text: page_title }
   ]) %>
 <% end %>
 
-<%= h1 page_title: do %>
-  <%= page_title %>
-  <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
-    <%= @school.address %>,
-    <%= @school.town %>.
-    <%= @school.postcode %>
-  </span>
-<% end %>
+<%= h1 page_title %>
 
 <%= render AppTabComponent.new(title: "School", classes: "nhsuk-tabs") do |slot|
   unmatched_count = @unmatched_consent_responses.count

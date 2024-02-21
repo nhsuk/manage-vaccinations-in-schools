@@ -46,7 +46,7 @@ async function and_i_click_on_the_unmatched_responses_link() {
 
 async function then_i_am_on_the_unmatched_responses_page() {
   await expect(
-    p.getByRole("heading", { name: fixtures.schoolName }),
+    p.getByRole("heading", { name: "Unmatched consent responses" }),
   ).toBeVisible();
 }
 

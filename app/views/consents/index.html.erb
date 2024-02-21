@@ -17,7 +17,7 @@
       responses = pluralize(@unmatched_record_counts, 'response')
       link_to(
         "#{responses} need matching with records in the cohort",
-        school_path(@session.location)
+        unmatched_responses_session_path(@session)
       )
     %>
   </p>
