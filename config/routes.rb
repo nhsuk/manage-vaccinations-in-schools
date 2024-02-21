@@ -52,6 +52,10 @@ Rails.application.routes.draw do
 
   resources :sessions, only: %i[create edit index show update] do
     get "consents", to: "consents#index", on: :member
+    get "consents/unmatched-responses",
+        to: "consent_forms#unmatched_responses",
+        on: :member,
+        as: :unmatched_responses
     get "triage", to: "triage#index", on: :member
     get "vaccinations", to: "vaccinations#index", on: :member
 
@@ -113,7 +117,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :schools, only: [:show] do
+  resources :schools, only: [] do
     get "close_registration", on: :member
     post "close_registration",
          to: "schools#handle_close_registration",
