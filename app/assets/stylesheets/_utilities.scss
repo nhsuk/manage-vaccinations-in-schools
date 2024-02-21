@@ -15,5 +15,17 @@
 }
 
 .nhsuk-visually-hidden {
-  @extend .nhsuk-u-visually-hidden;
+  @include visually-hidden();
+}
+
+.app-visually-hidden-until-desktop {
+  @include mq($until: desktop) {
+    @include visually-hidden();
+  }
+}
+
+.app-visually-hidden-from-desktop {
+  @include mq($from: tablet) {
+    @include visually-hidden();
+  }
 }

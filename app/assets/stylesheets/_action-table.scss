@@ -1,14 +1,3 @@
-action-table-filters,
-action-table-no-results {
-  display: none;
-
-  @include mq($from: tablet) {
-    &:defined {
-      display: block;
-    }
-  }
-}
-
 action-table {
   display: block;
 
@@ -46,5 +35,11 @@ action-table {
   & th[aria-sort="descending"] button::after {
     opacity: 1;
     transform: rotate(180deg);
+  }
+}
+
+action-table-no-results {
+  .nhsuk-body {
+    padding-top: nhsuk-spacing(2);
   }
 }

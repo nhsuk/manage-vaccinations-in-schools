@@ -10,6 +10,9 @@ en:
     "8": eight
     "9": nine
     "0": zero
+  table:
+    no_results: No results
+    no_filtered_results: We couldn’t find any children that matched your filters.
   notification_banner:
     info: Information
     success: Success
