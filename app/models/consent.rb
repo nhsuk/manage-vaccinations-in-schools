@@ -186,7 +186,7 @@ class Consent < ApplicationRecord
       route: "website",
       health_answers: consent_form.health_answers
     )
-    patient_session.do_consent if patient_session.may_do_consent?
+    patient_session.do_consent! if patient_session.may_do_consent?
   end
 
   private
