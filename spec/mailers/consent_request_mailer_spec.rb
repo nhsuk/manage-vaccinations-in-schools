@@ -11,8 +11,14 @@ RSpec.describe ConsentRequestMailer, type: :mailer do
     describe "personalisation" do
       subject { mail.message.header["personalisation"].unparsed_value }
 
-      it { should include(short_date: session.date.strftime("%-d %B")) }
-      it { should include(long_date: session.date.strftime("%A %-d %B")) }
+      it { should include(session_date: session.date.strftime("%A %-d %B")) }
+      it { should include(session_short_date: session.date.strftime("%-d %B")) }
+      it do
+        should include(
+                 close_consent_date:
+                   session.close_consent_at.strftime("%A %-d %B")
+               )
+      end
       it { should include(location_name: session.location.name) }
       it { should include(team_email: session.team.email) }
       it { should include(team_phone: session.team.phone) }
