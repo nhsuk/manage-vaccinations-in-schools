@@ -23,6 +23,9 @@ class EditSessionsController < ApplicationController
     case current_step
     when :confirm
       @session.draft = false
+      if @session.send_consent_at.today?
+        ConsentRequestsSessionBatchJob.perform_later(@session)
+      end
     when :cohort
       @session.assign_attributes(
         patient_ids: update_params[:patient_ids] || [],
