@@ -7,33 +7,33 @@ export const fixtures = {
   parentRole: "Mum",
 
   // Get from /sessions/1/consents, "No response" tab
-  patientThatNeedsConsent: "Dani Kuhn",
-  secondPatientThatNeedsConsent: "Dolores Koepp",
+  patientThatNeedsConsent: "Ahmad Langworth",
+  secondPatientThatNeedsConsent: "Harold Macejkovic",
 
   // Get from /sessions/1/consents, "Consent conflicts" tab
-  patientWithConflictingConsent: "Mirtha Ondricka",
+  patientWithConflictingConsent: "Betsey Hegmann",
 
   // Get from /sessions/1/triage, "Triage needed" tab; check that they don't
   // have existing triage
-  patientThatNeedsTriage: "Birgit Schinner",
-  secondPatientThatNeedsTriage: "Christie Reynolds",
+  patientThatNeedsTriage: "Farah Welch",
+  secondPatientThatNeedsTriage: "Janeth Larkin",
 
   // Get from /sessions/1/vaccinations, "Action needed" tab
-  patientThatNeedsVaccination: "Bernie Durgan",
-  secondPatientThatNeedsVaccination: "Fonda Krajcik",
+  patientThatNeedsVaccination: "Mina DuBuque",
+  secondPatientThatNeedsVaccination: "Raymundo Towne",
 
   // Get from /sessions/1/patients/Y/vaccinations/batch/edit
-  vaccineBatch: "BK4612",
+  vaccineBatch: "EP2141",
 
   // Get from /sessions, signed in as Nurse Joy
-  schoolName: "Stanford Primary School",
+  schoolName: "Dorothy Barley Junior School and Special Needs Base",
 
   // Get from /sessions, signed in as Nurse Jackie
-  secondSchoolName: /St Patrick's Catholic Primary School/,
+  secondSchoolName: /The Halley Academy/,
 
   // Any consent response from /schools/1, signed in as Nurse Joy
-  unmatchedConsentFormParentName: "Hugh Ledner",
-  unmatchedConsentFormChildName: "Kassandra O'Hara",
+  unmatchedConsentFormParentName: "Royal Cassin",
+  unmatchedConsentFormChildName: "Valrie Murray",
 
   // School from /pilot/registrations
   pilotSchoolName: "Holy Rosary Catholic Primary Academy",
@@ -57,7 +57,7 @@ export const fixtures = {
   ],
 
   // Number of children who are ready to be vaccinated in the flu session
-  childrenToBeVaccinatedInFluSession: 16,
+  childrenToBeVaccinatedInFluSession: 14,
 };
 
 export function formatDate(date: Date): string {
