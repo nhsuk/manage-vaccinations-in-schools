@@ -24,7 +24,7 @@
   }
 }
 
-.app-visually-hidden-from-desktop {
+.app-visually-hidden-from-tablet {
   @include mq($from: tablet) {
     @include visually-hidden();
   }
