@@ -7,7 +7,8 @@ class ConsentFormsController < ApplicationController
   end
 
   def unmatched_responses
-    @unmatched_consent_responses = @session.consent_forms.unmatched.recorded
+    @unmatched_consent_responses =
+      @session.consent_forms.unmatched.recorded.order(:recorded_at)
   end
 
   private
