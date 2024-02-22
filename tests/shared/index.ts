@@ -31,9 +31,10 @@ export const fixtures = {
   // Get from /sessions, signed in as Nurse Jackie
   secondSchoolName: /The Halley Academy/,
 
-  // Any consent response from /schools/1, signed in as Nurse Joy
+  // A 'given' consent response from /schools/1, signed in as Nurse Joy
   unmatchedConsentFormParentName: "Royal Cassin",
   unmatchedConsentFormChildName: "Valrie Murray",
+  cohortRecordChildNameForUnmatchedConsentForm: "Ahmad Langworth",
 
   // School from /pilot/registrations
   pilotSchoolName: "Holy Rosary Catholic Primary Academy",

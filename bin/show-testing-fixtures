@@ -85,6 +85,10 @@ function unmatched_consent_form_child_name {
     jq -r '.sessions[].consent_forms[0] | { first_name, last_name } | "\(.first_name) \(.last_name)"' db/sample_data/example-hpv-campaign.json
 }
 
+function cohort_record_child_name_for_unmatched_consent_form {
+    jq -r '[.sessions[].patients[] | select(.consents == null) | {firstName, lastName}] | sort_by(.firstName) | .[0] | "\(.firstName) \(.lastName)"' db/sample_data/example-hpv-campaign.json
+}
+
 function pilot_school_name {
     jq -r '.schoolsWithNoSession[].name' db/sample_data/example-pilot-campaign.json
 }
@@ -134,9 +138,10 @@ export const fixtures = {
   // Get from /sessions, signed in as Nurse Jackie
   secondSchoolName: /$(second_school_name)/,
 
-  // Any consent response from /schools/1, signed in as Nurse Joy
+  // A 'given' consent response from /schools/1, signed in as Nurse Joy
   unmatchedConsentFormParentName: "$(unmatched_consent_form_parent_name)",
   unmatchedConsentFormChildName: "$(unmatched_consent_form_child_name)",
+  cohortRecordChildNameForUnmatchedConsentForm: "$(cohort_record_child_name_for_unmatched_consent_form)",
 
   // School from /pilot/registrations
   pilotSchoolName: "$(pilot_school_name)",
