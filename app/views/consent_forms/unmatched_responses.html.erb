@@ -11,35 +11,26 @@
 
 <%= h1 page_title %>
 
-<%= render AppTabComponent.new(title: "School", classes: "nhsuk-tabs") do |slot|
-  unmatched_count = @unmatched_consent_responses.count
-
-  slot.with_tab(
-    id: "unmatched-consent-responses",
-    label: "Unmatched consent responses (#{unmatched_count})",
-    classes: "nhsuk-tabs__panel",
-  ) do
-    govuk_table(classes: "app-table--dense") do |table|
-      table.with_head do |head|
-        head.with_row do |row|
-          row.with_cell(text: "Parent or guardian")
-          row.with_cell(text: "Child")
-          row.with_cell(text: "Date of birth")
-          row.with_cell(text: "Response")
-        end
+<%= render AppCardComponent.new(heading: "#{@unmatched_consent_responses.count} unmatched responses", heading_size: "m", card_classes: "app-card--empty-list") do
+  govuk_table(classes: "app-table--dense") do |table|
+    table.with_head do |head|
+      head.with_row do |row|
+        row.with_cell(text: "Responded")
+        row.with_cell(text: "Child")
+        row.with_cell(text: "Parent or guardian")
+        row.with_cell(text: "Action")
       end
+    end
 
-      table.with_body do |body|
-        @unmatched_consent_responses.each do |consent_form|
-          body.with_row do |row|
-            row.with_cell(text: govuk_link_to(consent_form.parent_name, consent_form))
-            row.with_cell(text: consent_form.full_name)
-            row.with_cell(text: consent_form.date_of_birth&.to_fs(:nhsuk_date_short_month))
-            row.with_cell(text: consent_form.human_enum_name(:response))
-          end
+    table.with_body do |body|
+      @unmatched_consent_responses.each do |consent_form|
+        body.with_row do |row|
+          row.with_cell(text: consent_form.recorded_at&.to_fs(:nhsuk_date_short_month))
+          row.with_cell(text: consent_form.full_name)
+          row.with_cell(text: consent_form.parent_name)
+          row.with_cell(text: govuk_link_to('Find match', consent_form))
         end
       end
     end
   end
-end
-%>
+end %>
