@@ -100,4 +100,51 @@ RSpec.describe Consent do
       end
     end
   end
+
+  describe "#from_consent_form" do
+    describe "the created consent object" do
+      let(:session) { create(:session) }
+      let(:consent_form) do
+        create(:consent_form, session:, contact_method: :voice)
+      end
+      let(:patient_session) { create(:patient_session, session:) }
+
+      subject(:consent) do
+        Consent.from_consent_form(consent_form, patient_session)
+      end
+
+      it "copies over attributes from consent_form" do
+        expect(consent.reload).to(
+          have_attributes(
+            campaign: session.campaign,
+            patient: patient_session.patient,
+            consent_form:,
+            parent_contact_method: consent_form.contact_method,
+            parent_contact_method_other: consent_form.contact_method_other,
+            parent_email: consent_form.parent_email,
+            parent_name: consent_form.parent_name,
+            parent_phone: consent_form.parent_phone,
+            parent_relationship: consent_form.parent_relationship,
+            parent_relationship_other: consent_form.parent_relationship_other,
+            reason_for_refusal: consent_form.reason,
+            reason_for_refusal_other: consent_form.reason_notes,
+            response: consent_form.response,
+            route: "website"
+          )
+        )
+      end
+
+      it "copies health answers from consent_form" do
+        expect(consent.reload.health_answers.to_json).to eq(
+          consent_form.health_answers.to_json
+        )
+      end
+
+      it "runs the do_consent state transition" do
+        expect { consent }.to change(patient_session, :state).from(
+          "added_to_session"
+        ).to("consent_given_triage_not_needed")
+      end
+    end
+  end
 end
