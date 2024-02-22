@@ -48,16 +48,16 @@ module LoadExampleCampaign
         create_consent_forms(consent_forms:, session:)
       end
 
+      schools_with_no_session =
+        example.schools_with_no_session.map do |school_attributes|
+          create_school(team:, school_attributes:)
+        end
+
       create_children(
         patient_attributes: example.patients_with_no_session,
         campaign: nil,
         session: nil
       )
-
-      schools_with_no_session =
-        example.schools_with_no_session.map do |school_attributes|
-          create_school(team:, school_attributes:)
-        end
 
       location = team.locations.first || schools_with_no_session.first
       example.registrations.each do |registration_attributes|
@@ -173,11 +173,17 @@ module LoadExampleCampaign
       triage_attributes = attributes.delete(:triage)
       consents_attributes = attributes.delete(:consents)
       location_name = attributes.delete(:location)
+      location =
+        if location_name.blank?
+          session&.location
+        else
+          Location.find_by(name: location_name)
+        end
 
       patient =
         Patient.find_or_initialize_by(nhs_number: attributes[:nhs_number])
       patient.update!(attributes)
-      patient.location = Location.find_by(name: location_name)
+      patient.location = location
       patient.save!
 
       next if session.blank?
