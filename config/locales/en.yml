@@ -82,7 +82,7 @@ en:
   consent_form_mailer:
     reasons_for_refusal:
       contains_gelatine: "of the gelatine in the nasal spray"
-      already_received: "they have already received the vaccine"
+      already_vaccinated: "they have already received the vaccine"
       will_be_vaccinated_elsewhere: "they will be given the vaccine elsewhere"
       medical_reasons: "of medical reasons"
       personal_choice: "of personal choice"
@@ -151,7 +151,7 @@ en:
         hpv: Your child will not get an HPV vaccination at school
     reason_notes:
       title:
-        already_received: Where did your child get their vaccination?
+        already_vaccinated: Where did your child get their vaccination?
         will_be_vaccinated_elsewhere: Where will your child get their vaccination?
         medical_reasons: What medical reasons prevent your child from being vaccinated?
         personal_choice: Tell us why you don’t agree
@@ -288,7 +288,7 @@ en:
           any: I do not have specific needs
         reasons:
           contains_gelatine: "Vaccine contains gelatine from pigs"
-          already_received: "Vaccine already received"
+          already_vaccinated: "Vaccine already received"
           will_be_vaccinated_elsewhere: "Vaccine will be given elsewhere"
           medical_reasons: "Medical reasons"
           personal_choice: "Personal choice"
