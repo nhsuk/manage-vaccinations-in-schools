@@ -3,10 +3,11 @@ class AppPatientTableComponent < ViewComponent::Base
 
   def initialize(
     patient_sessions:,
-    tab_id:,
-    caption:,
+    tab_id: nil,
+    caption: nil,
     columns: %i[name dob],
-    route: nil
+    route: nil,
+    consent_form: nil
   )
     super
 
@@ -15,12 +16,21 @@ class AppPatientTableComponent < ViewComponent::Base
     @route = route
     @tab_id = tab_id
     @caption = caption
+    @consent_form = consent_form
   end
 
   private
 
   def column_name(column)
-    { name: "Name", dob: "Date of birth", reason: "Reason for refusal" }[column]
+    {
+      name: "Name",
+      dob: "Date of birth",
+      reason: "Reason for refusal",
+      postcode: "Postcode",
+      select_for_matching: "Action"
+    }[
+      column
+    ]
   end
 
   def column_value(patient_session, column)
@@ -47,26 +57,45 @@ class AppPatientTableComponent < ViewComponent::Base
             .join("<br />")
             .html_safe
       }
+    when :postcode
+      { text: patient_session.patient.address_postcode }
+    when :select_for_matching
+      { text: matching_link(patient_session) }
     else
       raise ArgumentError, "Unknown column: #{column}"
     end
   end
 
   def patient_link(patient_session)
-    if @route == :consent
+    case @route
+    when :consent
       govuk_link_to patient_session.patient.full_name,
                     session_patient_consents_path(
                       patient_session.session,
                       patient_session.patient
                     )
-    elsif @route == :triage
+    when :triage
       govuk_link_to patient_session.patient.full_name,
                     session_patient_triage_path(
                       patient_session.session,
                       patient_session.patient
                     )
+    when :matching
+      patient_session.patient.full_name
     else
       raise ArgumentError, "Unknown route: #{@route}"
     end
+  end
+
+  def matching_link(patient_session)
+    govuk_button_link_to(
+      "Select",
+      review_match_consent_form_path(
+        @consent_form.id,
+        patient_session_id: patient_session.id
+      ),
+      secondary: true,
+      class: "app-button--small nhsuk-u-margin-bottom-0"
+    )
   end
 end
