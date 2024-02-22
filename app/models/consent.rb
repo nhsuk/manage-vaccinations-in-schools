@@ -52,7 +52,7 @@ class Consent < ApplicationRecord
          contains_gelatine
          already_vaccinated
          will_be_vaccinated_elsewhere
-         medical
+         medical_reasons
          personal_choice
          other
        ],

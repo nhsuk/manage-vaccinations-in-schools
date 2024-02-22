@@ -64,7 +64,7 @@ class ConsentForm < ApplicationRecord
        %w[
          contains_gelatine
          already_received
-         given_elsewhere
+         will_be_vaccinated_elsewhere
          medical_reasons
          personal_choice
          other
@@ -261,14 +261,14 @@ class ConsentForm < ApplicationRecord
   end
 
   def reason_notes_must_be_provided?
-    refused_because_other? || refused_because_given_elsewhere? ||
+    refused_because_other? || refused_because_will_be_vaccinated_elsewhere? ||
       refused_because_medical_reasons? || refused_because_already_received?
   end
 
   private
 
   def refused_and_not_had_it_already?
-    consent_refused? && !refused_because_given_elsewhere? &&
+    consent_refused? && !refused_because_will_be_vaccinated_elsewhere? &&
       !refused_because_already_received?
   end
 
