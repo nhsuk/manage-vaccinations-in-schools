@@ -16,8 +16,7 @@ test("School - match response", async ({ page }) => {
 
   await when_i_click_on_an_unmatched_response();
   await then_i_am_on_the_consent_form_page();
-  await and_i_can_see_the_patient_details();
-  await and_i_can_see_the_consent_details();
+  await and_i_can_see_the_matching_criteria();
 });
 
 async function given_the_app_is_setup() {
@@ -66,29 +65,15 @@ async function when_i_click_on_an_unmatched_response() {
 async function then_i_am_on_the_consent_form_page() {
   await expect(
     p.getByRole("heading", {
-      name: `Consent response for ${fixtures.unmatchedConsentFormParentName}`,
+      name: `Search for a child record`,
     }),
   ).toBeVisible();
 }
 
-async function and_i_can_see_the_patient_details() {
-  const detailsCard = p
-    .locator("div.nhsuk-card")
-    .filter({ has: p.getByRole("heading", { name: "Child details" }) });
-
-  await expect(detailsCard).toBeVisible();
-  await expect(detailsCard).toHaveText(
-    new RegExp("Name" + fixtures.unmatchedConsentFormChildName),
-  );
-}
-
-async function and_i_can_see_the_consent_details() {
-  const consentCard = p
-    .locator("div.nhsuk-card")
-    .filter({ has: p.getByRole("heading", { name: "Consent" }) });
-
-  await expect(consentCard).toBeVisible();
-  await expect(consentCard).toHaveText(
-    new RegExp("Name" + fixtures.unmatchedConsentFormParentName),
+async function and_i_can_see_the_matching_criteria() {
+  const matchingCriteriaTable = await p.locator("details").first();
+  await expect(matchingCriteriaTable).toBeVisible();
+  await expect(matchingCriteriaTable).toHaveText(
+    new RegExp("Dad" + fixtures.unmatchedConsentFormParentName),
   );
 }

@@ -5,16 +5,14 @@
   ) %>
 <% end %>
 
-<%= h1 "Consent response for #{@consent_form.parent_name}" %>
+<% page_title = "Search for a child record" %>
+<%= h1 page_title: do %>
+  <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
+    Consent response from <%= @consent_form.parent_name %>
+  </span>
+  <%= page_title %>
+<% end %>
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-two-thirds">
-    <%= render AppCardComponent.new(heading: "Child details") do
-      render AppPatientDetailsComponent.new(session: @session, consent_form: @consent_form, school: @school)
-    end %>
-
-    <%= render AppCardComponent.new(heading: "Consent") do
-      render AppConsentDetailsComponent.new(consents: [@consent_form])
-    end %>
-  </div>
-</div>
+<%= render AppDetailsComponent.new(summary: "Details given in consent response", open: true, expander: true) do %>
+  <%= render AppMatchingCriteriaComponent.new(consent_form: @consent_form) %>
+<% end %>
