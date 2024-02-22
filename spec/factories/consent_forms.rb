@@ -68,7 +68,13 @@ FactoryBot.define do
 
     session
     health_answers do
-      [HealthAnswer.new(id: 0, question: "Is there anything we should know?")]
+      [
+        HealthAnswer.new(
+          id: 0,
+          question: "Is there anything we should know?",
+          response: "no"
+        )
+      ]
     end
 
     trait :with_health_answers_no_branching do
