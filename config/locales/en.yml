@@ -525,7 +525,7 @@ en:
           attributes:
             send_consent_at:
               blank: Choose a date to send consent requests
-              greater_than_or_equal_to: Enter a date in the future
+              greater_than_or_equal_to: Enter a date that is not in the past
               less_than_or_equal_to: Enter a date before the session
               missing_year: Enter a year
               missing_month: Enter a month
