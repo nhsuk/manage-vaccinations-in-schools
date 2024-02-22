@@ -370,7 +370,7 @@ RSpec.describe ConsentForm, type: :model do
           build(
             :consent_form,
             response: "refused",
-            reason: "already_received",
+            reason: "already_vaccinated",
             session:
           )
         expect(consent_form.form_steps).to include(:reason)
@@ -402,7 +402,7 @@ RSpec.describe ConsentForm, type: :model do
         medical_reasons
         will_be_vaccinated_elsewhere
         other
-        already_received
+        already_vaccinated
       ].each do |reason|
         consent_form = build(:consent_form, response: "refused", reason:)
         expect(consent_form.form_steps).to include(:reason_notes)

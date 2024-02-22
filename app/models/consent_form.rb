@@ -63,7 +63,7 @@ class ConsentForm < ApplicationRecord
   enum :reason,
        %w[
          contains_gelatine
-         already_received
+         already_vaccinated
          will_be_vaccinated_elsewhere
          medical_reasons
          personal_choice
@@ -262,14 +262,14 @@ class ConsentForm < ApplicationRecord
 
   def reason_notes_must_be_provided?
     refused_because_other? || refused_because_will_be_vaccinated_elsewhere? ||
-      refused_because_medical_reasons? || refused_because_already_received?
+      refused_because_medical_reasons? || refused_because_already_vaccinated?
   end
 
   private
 
   def refused_and_not_had_it_already?
     consent_refused? && !refused_because_will_be_vaccinated_elsewhere? &&
-      !refused_because_already_received?
+      !refused_because_already_vaccinated?
   end
 
   def injection_offered_as_alternative?
