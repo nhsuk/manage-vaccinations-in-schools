@@ -59,5 +59,6 @@ module ManageVaccinations
     config.time_zone = "London"
 
     config.active_job.queue_adapter = :good_job
+    config.good_job.execution_mode = :async
   end
 end
