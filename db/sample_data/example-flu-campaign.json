@@ -1064,7 +1064,7 @@
           "health_answers": [
             {
               "question": "Is there anything we should know?",
-              "response": null,
+              "response": "no",
               "notes": null,
               "hint": null,
               "next_question": null,
@@ -1092,7 +1092,7 @@
           "health_answers": [
             {
               "question": "Is there anything we should know?",
-              "response": null,
+              "response": "no",
               "notes": null,
               "hint": null,
               "next_question": null,
@@ -1120,7 +1120,7 @@
           "health_answers": [
             {
               "question": "Is there anything we should know?",
-              "response": null,
+              "response": "no",
               "notes": null,
               "hint": null,
               "next_question": null,
@@ -1148,7 +1148,7 @@
           "health_answers": [
             {
               "question": "Is there anything we should know?",
-              "response": null,
+              "response": "no",
               "notes": null,
               "hint": null,
               "next_question": null,
