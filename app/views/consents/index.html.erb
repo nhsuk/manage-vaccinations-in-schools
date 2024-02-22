@@ -11,16 +11,18 @@
 
 <%= h1 page_title, page_title: %>
 
-<%= govuk_inset_text(classes: "nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-4") do %>
-  <p class="nhsuk-body">
-    <%=
-      responses = pluralize(@unmatched_record_counts, 'response')
-      link_to(
-        "#{responses} need matching with records in the cohort",
-        unmatched_responses_session_path(@session)
-      )
-    %>
-  </p>
+<% if @unmatched_record_counts > 0 %>
+  <%= govuk_inset_text(classes: "nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-4") do %>
+    <p class="nhsuk-body">
+      <%=
+        responses = pluralize(@unmatched_record_counts, 'response')
+        link_to(
+          "#{responses} need matching with records in the cohort",
+          unmatched_responses_session_path(@session)
+        )
+      %>
+    </p>
+  <% end %>
 <% end %>
 
 <% def consent_tab(slot, state, columns: %i[name dob])
