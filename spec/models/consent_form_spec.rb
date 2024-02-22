@@ -400,7 +400,7 @@ RSpec.describe ConsentForm, type: :model do
     it "asks for details when patient refuses for a few different reasons" do
       %w[
         medical_reasons
-        given_elsewhere
+        will_be_vaccinated_elsewhere
         other
         already_received
       ].each do |reason|

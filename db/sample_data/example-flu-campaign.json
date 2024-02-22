@@ -351,7 +351,7 @@
           "consents": [
             {
               "response": "refused",
-              "reasonForRefusal": "medical",
+              "reasonForRefusal": "medical_reasons",
               "parentName": "Lenny Kilback",
               "parentRelationship": "father",
               "parentRelationshipOther": null,

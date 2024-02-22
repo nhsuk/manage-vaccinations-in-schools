@@ -83,7 +83,7 @@ en:
     reasons_for_refusal:
       contains_gelatine: "of the gelatine in the nasal spray"
       already_received: "they have already received the vaccine"
-      given_elsewhere: "they will be given the vaccine elsewhere"
+      will_be_vaccinated_elsewhere: "they will be given the vaccine elsewhere"
       medical_reasons: "of medical reasons"
       personal_choice: "of personal choice"
       other: "of other reasons"
@@ -152,7 +152,7 @@ en:
     reason_notes:
       title:
         already_received: Where did your child get their vaccination?
-        given_elsewhere: Where will your child get their vaccination?
+        will_be_vaccinated_elsewhere: Where will your child get their vaccination?
         medical_reasons: What medical reasons prevent your child from being vaccinated?
         personal_choice: Tell us why you don’t agree
         contains_gelatine: Tell us why you don’t agree
@@ -289,7 +289,7 @@ en:
         reasons:
           contains_gelatine: "Vaccine contains gelatine from pigs"
           already_received: "Vaccine already received"
-          given_elsewhere: "Vaccine will be given elsewhere"
+          will_be_vaccinated_elsewhere: "Vaccine will be given elsewhere"
           medical_reasons: "Medical reasons"
           personal_choice: "Personal choice"
           other: "Other"
