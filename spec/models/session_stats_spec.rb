@@ -5,10 +5,7 @@ RSpec.describe SessionStats do
     let(:session) { create :session }
 
     subject do
-      described_class.new(
-        patient_sessions: session.patient_sessions,
-        location: session.location
-      )
+      described_class.new(patient_sessions: session.patient_sessions, session:)
     end
 
     it "returns a hash of session stats" do

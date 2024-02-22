@@ -1,7 +1,7 @@
 class SessionStats
-  def initialize(patient_sessions:, location:)
+  def initialize(patient_sessions:, session:)
     @patient_sessions = patient_sessions
-    @location = location
+    @session = session
 
     @stats = calculate_stats
   end
@@ -23,7 +23,7 @@ class SessionStats
       without_a_response: 0,
       needing_triage: 0,
       ready_to_vaccinate: 0,
-      unmatched_responses: @location.consent_forms.unmatched.recorded.count
+      unmatched_responses: @session.consent_forms.unmatched.recorded.count
     }
 
     @patient_sessions.each do |s|
