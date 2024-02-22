@@ -48,12 +48,6 @@ FactoryBot.define do
     parent_email { Faker::Internet.email(domain: "gmail.com") }
     # Replace first two digits with 07 to make it a mobile number
     parent_phone { "07700 900#{random.rand(0..999).to_s.rjust(3, "0")}" }
-    address_line_1 { Faker::Address.street_address }
-    address_line_2 do
-      random.rand(1.0) > 0.8 ? Faker::Address.secondary_address : nil
-    end
-    address_town { Faker::Address.city }
-    address_postcode { Faker::Address.postcode }
     route { "website" }
     recorded_at { Time.zone.now }
 
