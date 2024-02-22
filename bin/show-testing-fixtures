@@ -100,7 +100,7 @@ if [ $# -gt 0 ]; then
     exit 0
 fi
 
-echo "Copy the following into tests/shared/intex.ts replacing the fixtures"
+echo "Copy the following into tests/shared/index.ts replacing the fixtures"
 echo "structure there:"
 echo ""
 
