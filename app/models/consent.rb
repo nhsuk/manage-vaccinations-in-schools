@@ -49,6 +49,7 @@ class Consent < ApplicationRecord
   enum :response, %w[given refused not_provided], prefix: true
   enum :reason_for_refusal,
        %w[
+         contains_gelatine
          already_vaccinated
          will_be_vaccinated_elsewhere
          medical
