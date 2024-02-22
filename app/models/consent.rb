@@ -169,25 +169,27 @@ class Consent < ApplicationRecord
   end
 
   def self.from_consent_form(consent_form, patient_session)
-    create!(
-      consent_form:,
-      campaign: consent_form.session.campaign,
-      patient: patient_session.patient,
-      parent_contact_method: consent_form.contact_method,
-      parent_contact_method_other: consent_form.contact_method_other,
-      parent_email: consent_form.parent_email,
-      parent_name: consent_form.parent_name,
-      parent_phone: consent_form.parent_phone,
-      parent_relationship: consent_form.parent_relationship,
-      parent_relationship_other: consent_form.parent_relationship_other,
-      reason_for_refusal: consent_form.reason,
-      reason_for_refusal_other: consent_form.reason_notes,
-      recorded_at: Time.zone.now,
-      response: consent_form.response,
-      route: "website",
-      health_answers: consent_form.health_answers
-    )
+    consent =
+      create!(
+        consent_form:,
+        campaign: consent_form.session.campaign,
+        patient: patient_session.patient,
+        parent_contact_method: consent_form.contact_method,
+        parent_contact_method_other: consent_form.contact_method_other,
+        parent_email: consent_form.parent_email,
+        parent_name: consent_form.parent_name,
+        parent_phone: consent_form.parent_phone,
+        parent_relationship: consent_form.parent_relationship,
+        parent_relationship_other: consent_form.parent_relationship_other,
+        reason_for_refusal: consent_form.reason,
+        reason_for_refusal_other: consent_form.reason_notes,
+        recorded_at: Time.zone.now,
+        response: consent_form.response,
+        route: "website",
+        health_answers: consent_form.health_answers
+      )
     patient_session.do_consent! if patient_session.may_do_consent?
+    consent
   end
 
   private
