@@ -38,6 +38,7 @@ class Consent < ApplicationRecord
 
   attr_accessor :triage, :patient_session
 
+  has_one :consent_form
   belongs_to :patient
   belongs_to :campaign
 
