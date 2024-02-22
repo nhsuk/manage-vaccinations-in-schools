@@ -51,9 +51,16 @@ async function then_i_am_on_the_unmatched_responses_page() {
 }
 
 async function when_i_click_on_an_unmatched_response() {
-  await p
-    .getByRole("link", { name: fixtures.unmatchedConsentFormParentName })
-    .click();
+  const row = await p
+    .locator(
+      `//td[contains(., '${fixtures.unmatchedConsentFormParentName}')]/parent::tr`,
+    )
+    .first();
+  if (row) {
+    await row.getByRole("link", { name: "Find match" }).click();
+  } else {
+    throw new Error("Could not find unmatched consent response");
+  }
 }
 
 async function then_i_am_on_the_consent_form_page() {
