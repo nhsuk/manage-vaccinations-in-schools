@@ -61,15 +61,7 @@ class Consent < ApplicationRecord
 
   serialize :health_answers, coder: HealthAnswer::ArraySerializer
 
-  encrypts :address_line_1,
-           :address_line_2,
-           :address_town,
-           :address_postcode,
-           :common_name,
-           :childs_name,
-           :gp_name,
-           :health_answers,
-           :parent_contact_method,
+  encrypts :health_answers,
            :parent_contact_method_other,
            :parent_email,
            :parent_name,
@@ -77,14 +69,7 @@ class Consent < ApplicationRecord
            :parent_relationship_other,
            :reason_for_refusal_other
 
-  validates :address_line_1,
-            :address_line_2,
-            :address_postcode,
-            :address_town,
-            :common_name,
-            :childs_name,
-            :gp_name,
-            :parent_contact_method_other,
+  validates :parent_contact_method_other,
             :parent_email,
             :parent_name,
             :parent_phone,
