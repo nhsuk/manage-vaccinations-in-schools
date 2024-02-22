@@ -1,30 +1,44 @@
 class ConsentFormsController < ApplicationController
-  before_action :set_consent_form, only: [:show]
-  before_action :set_school, only: [:show]
-  before_action :set_session, only: [:unmatched_responses]
-
-  def show
-  end
-
   def unmatched_responses
-    @unmatched_consent_responses =
-      @session.consent_forms.unmatched.recorded.order(:recorded_at)
-  end
-
-  private
-
-  def set_consent_form
-    @consent_form = ConsentForm.find(params[:id])
-  end
-
-  def set_school
-    @school = @consent_form.session.location
-  end
-
-  def set_session
     @session =
       policy_scope(Session).find(
         params.fetch(:session_id) { params.fetch(:id) }
       )
+    @unmatched_consent_responses =
+      @session.consent_forms.unmatched.recorded.order(:recorded_at)
+  end
+
+  def show
+    @consent_form = policy_scope(ConsentForm).find(params[:id])
+    @patient_sessions =
+      @consent_form
+        .session
+        .patient_sessions
+        .includes(:patient)
+        .order("patients.last_name")
+  end
+
+  def review_match
+    @consent_form = policy_scope(ConsentForm).find(params[:id])
+    @patient_session =
+      policy_scope(PatientSession).find(params[:patient_session_id])
+  end
+
+  def match
+    @consent_form = policy_scope(ConsentForm).find(params[:id])
+    @patient_session =
+      policy_scope(PatientSession).find(params[:patient_session_id])
+
+    Consent.from_consent_form(@consent_form, @patient_session)
+
+    session = @consent_form.session
+    @unmatched_consent_responses =
+      session.consent_forms.unmatched.recorded.order(:recorded_at)
+
+    if @unmatched_consent_responses.any?
+      redirect_to unmatched_responses_session_path(@consent_form.session.id)
+    else
+      redirect_to consents_session_path(session)
+    end
   end
 end
