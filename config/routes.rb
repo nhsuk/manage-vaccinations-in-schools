@@ -127,7 +127,16 @@ Rails.application.routes.draw do
       get "confirmation", on: :collection
     end
   end
-  resources :consent_forms, only: [:show]
+  resources :consent_forms, only: [:show] do
+    get "match/:patient_session_id",
+        on: :member,
+        to: "consent_forms#review_match",
+        as: :review_match
+    post "match/:patient_session_id",
+         on: :member,
+         to: "consent_forms#match",
+         as: :match
+  end
 
   scope via: :all do
     get "/404", to: "errors#not_found"

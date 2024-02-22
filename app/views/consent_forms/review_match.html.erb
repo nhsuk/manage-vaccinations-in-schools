@@ -1,0 +1,19 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+    href: consent_form_path(@consent_form),
+    name: "search for a child record"
+  ) %>
+<% end %>
+
+<% page_title = "Link consent response with child record?" %>
+
+<%= h1 page_title: do %>
+  <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
+    Consent response from <%= @consent_form.parent_name %>
+  </span>
+  <%= page_title %>
+<% end %>
+
+<%= form_tag match_consent_form_path(@consent_form.id, patient_session_id: @patient_session.id) do %>
+  <%= submit_tag "Link response with record", class: "nhsuk-button" %>
+<% end %>
