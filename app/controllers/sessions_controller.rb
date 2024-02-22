@@ -8,6 +8,9 @@ class SessionsController < ApplicationController
     campaign = current_user.team.campaigns.first
 
     @session = Session.create!(draft: true, campaign:)
+    if @session.send_consent_at.today?
+      ConsentRequestsSessionBatchJob.perform_later(session)
+    end
 
     redirect_to session_edit_path(@session, :location)
   end
