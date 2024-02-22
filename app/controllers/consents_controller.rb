@@ -8,10 +8,7 @@ class ConsentsController < ApplicationController
     methods = %i[consent_given? consent_refused? consent_conflicts? no_consent?]
 
     @unmatched_record_counts =
-      SessionStats.new(
-        patient_sessions: @patient_sessions,
-        location: @session.location
-      )[
+      SessionStats.new(patient_sessions: @patient_sessions, session: @session)[
         :unmatched_responses
       ]
 

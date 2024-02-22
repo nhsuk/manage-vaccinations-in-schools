@@ -21,10 +21,7 @@ class SessionsController < ApplicationController
       @session.patient_sessions.strict_loading.includes(:campaign, :consents)
 
     @counts =
-      SessionStats.new(
-        patient_sessions: @patient_sessions,
-        location: @session.location
-      )
+      SessionStats.new(patient_sessions: @patient_sessions, session: @session)
   end
 
   def edit
