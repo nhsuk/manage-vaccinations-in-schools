@@ -430,8 +430,8 @@ en:
             reason:
               blank: Choose a reason
             reason_notes:
-              blank: Enter details for refusal
-              too_long: Enter details for refusal that are less than 1000 characters long
+              blank: Enter details for refusing
+              too_long: Enter details for refusing that are less than 1000 characters long
             contact_injection:
               inclusion: Choose if you want to be contacted
             gp_response:
