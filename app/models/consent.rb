@@ -45,6 +45,7 @@ class Consent < ApplicationRecord
   scope :submitted_for_campaign,
         ->(campaign) { where(campaign:).where.not(recorded_at: nil) }
 
+  enum :parent_contact_method, %w[text voice other any], prefix: true
   enum :parent_relationship, %w[mother father guardian other], prefix: true
   enum :response, %w[given refused not_provided], prefix: true
   enum :reason_for_refusal,
