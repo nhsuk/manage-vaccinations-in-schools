@@ -8,6 +8,13 @@ class ConsentRequestMailer < ApplicationMailer
     )
   end
 
+  def consent_reminder(session, patient)
+    template_mail(
+      "ceefd526-d44c-4561-b0d2-c9ef4ccaba4f",
+      **opts(session, patient)
+    )
+  end
+
   private
 
   def host
@@ -26,7 +33,12 @@ class ConsentRequestMailer < ApplicationMailer
   end
 
   def consent_request_personalisation
-    personalisation.merge consent_link:
+    personalisation.merge(
+      consent_link:,
+      session_date: @session.date.to_fs(:app_date),
+      close_consent_date: @session.close_consent_at.to_fs(:app_date),
+      close_consent_short_date: @session.close_consent_at.to_fs(:app_short_date)
+    )
   end
 
   def consent_link
