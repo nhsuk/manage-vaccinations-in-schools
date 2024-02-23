@@ -31,6 +31,7 @@ async function then_i_see_the_consents_page() {
 }
 
 async function when_i_click_on_a_patient() {
+  await p.getByRole("tab", { name: "Given" }).click();
   await p.getByRole("link", { name: fixtures.patientThatNeedsTriage }).click();
 }
 

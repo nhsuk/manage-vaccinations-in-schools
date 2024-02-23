@@ -49,8 +49,8 @@
 end %>
 
 <%= render AppTabComponent.new title: "Consents", classes: 'nhsuk-tabs' do |slot|
+  consent_tab(slot, :no_consent?)
   consent_tab(slot, :consent_given?)
   consent_tab(slot, :consent_refused?, columns: %i[name dob reason])
   consent_tab(slot, :consent_conflicts?)
-  consent_tab(slot, :no_consent?)
 end %>

@@ -81,6 +81,7 @@ async function then_i_see_the_success_banner() {
 }
 
 async function when_i_select_the_same_patient() {
+  await p.getByRole("tab", { name: "Given" }).click();
   await p
     .getByRole("link", { name: fixtures.patientWithConflictingConsent })
     .click();

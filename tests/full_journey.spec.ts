@@ -78,6 +78,7 @@ async function then_i_see_that_the_child_has_gotten_consent() {
   await expect(p.locator(".nhsuk-notification-banner__content")).toContainText(
     `Record saved for ${fixtures.patientThatNeedsConsent}`,
   );
+  await p.getByRole("tab", { name: "Given" }).click();
   const row = p.locator(`tr`, { hasText: fixtures.patientThatNeedsConsent });
   await expect(row).toBeVisible();
 }
