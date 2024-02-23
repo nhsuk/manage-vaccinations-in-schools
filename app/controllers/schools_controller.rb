@@ -23,7 +23,7 @@ class SchoolsController < ApplicationController
 
   def set_school
     # The only kind of locations we have currently are schools.
-    @school = Location.find(params[:id])
+    @school = policy_scope(Location).find(params[:id])
   end
 
   def set_unmatched_consent_responses

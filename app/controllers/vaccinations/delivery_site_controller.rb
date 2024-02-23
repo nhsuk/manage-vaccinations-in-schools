@@ -44,7 +44,10 @@ class Vaccinations::DeliverySiteController < ApplicationController
   end
 
   def set_patient
-    @patient = Patient.find(params.fetch(:patient_id) { params.fetch(:id) })
+    @patient =
+      policy_scope(Patient).find(
+        params.fetch(:patient_id) { params.fetch(:id) }
+      )
   end
 
   def set_patient_session
@@ -52,7 +55,10 @@ class Vaccinations::DeliverySiteController < ApplicationController
   end
 
   def set_session
-    @session = Session.find(params.fetch(:session_id) { params.fetch(:id) })
+    @session =
+      policy_scope(Session).find(
+        params.fetch(:session_id) { params.fetch(:id) }
+      )
   end
 
   def vaccination_record_delivery_params

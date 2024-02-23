@@ -8,11 +8,11 @@ class PilotController < ApplicationController
   end
 
   def registrations
-    @schools = current_user.team.locations.includes(:registrations)
+    @schools = policy_scope(Location).includes(:registrations)
   end
 
   def download
-    registrations = Registration.where(location: current_user.team.locations)
+    registrations = policy_scope(Registration)
     csv = CohortList.from_registrations(registrations).to_csv
     send_data(csv, filename: "registered_parents.csv")
   end
