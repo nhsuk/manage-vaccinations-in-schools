@@ -20,7 +20,8 @@ class AppConsentComponent < ViewComponent::Base
   end
 
   def display_gillick_consent_button?
-    @patient_session.consents.empty? && @patient_session.able_to_vaccinate?
+    @patient_session.session.in_progress? && @patient_session.consents.empty? &&
+      @patient_session.able_to_vaccinate?
   end
 
   def open_consents?
