@@ -121,6 +121,9 @@ async function and_i_review_the_match() {
   await expect(header).toHaveText(
     new RegExp(fixtures.unmatchedConsentFormParentName),
   );
+  await expect(p.locator("table").first()).toHaveText(
+    new RegExp(fixtures.unmatchedConsentFormChildName),
+  );
 }
 
 async function and_i_link_the_response_with_the_record() {
