@@ -265,6 +265,12 @@ class ConsentForm < ApplicationRecord
       refused_because_medical_reasons? || refused_because_already_vaccinated?
   end
 
+  def address_fields
+    [address_line_1, address_line_2, address_town, address_postcode].reject(
+      &:blank?
+    )
+  end
+
   private
 
   def refused_and_not_had_it_already?
