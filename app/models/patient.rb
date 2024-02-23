@@ -92,6 +92,12 @@ class Patient < ApplicationRecord
       (Time.zone.today.month >= 9 ? 1 : 0)
   end
 
+  def address_fields
+    [address_line_1, address_line_2, address_town, address_postcode].reject(
+      &:blank?
+    )
+  end
+
   private
 
   def remove_spaces_from_nhs_number
