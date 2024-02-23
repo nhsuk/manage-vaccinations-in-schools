@@ -5,6 +5,8 @@ class SessionsController < ApplicationController
   layout "two_thirds", except: %i[index show]
 
   def create
+    skip_policy_scope
+
     campaign = current_user.team.campaigns.first
 
     @session = Session.create!(draft: true, campaign:)

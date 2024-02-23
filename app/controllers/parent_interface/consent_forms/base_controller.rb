@@ -1,6 +1,8 @@
 module ParentInterface
   class ConsentForms::BaseController < ApplicationController
     skip_before_action :authenticate_user!
+    skip_after_action :verify_policy_scoped
+
     before_action :set_session
     before_action :set_consent_form
     before_action :authenticate_consent_form_user!

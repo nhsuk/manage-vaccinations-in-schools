@@ -2,11 +2,12 @@ require "faker"
 
 class TestingController < ApplicationController
   skip_before_action :authenticate_user!
+  skip_before_action :verify_authenticity_token
+  skip_after_action :verify_policy_scoped
+
   before_action :ensure_dev_or_test_env
 
   layout "two_thirds"
-
-  skip_before_action :verify_authenticity_token
 
   def show_campaign
     @campaign = Campaign.find(params[:id])
