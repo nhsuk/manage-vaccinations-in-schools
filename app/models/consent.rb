@@ -168,7 +168,7 @@ class Consent < ApplicationRecord
     reasons
   end
 
-  def self.from_consent_form(consent_form, patient_session)
+  def self.from_consent_form!(consent_form, patient_session)
     consent =
       create!(
         consent_form:,
