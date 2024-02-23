@@ -6,14 +6,26 @@
 <% end %>
 
 <% page_title = "Link consent response with child record?" %>
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-two-thirds">
+    <%= h1 page_title: do %>
+      <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
+        Consent response from <%= @consent_form.parent_name %>
+      </span>
+      <%= page_title %>
+    <% end %>
 
-<%= h1 page_title: do %>
-  <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
-    Consent response from <%= @consent_form.parent_name %>
-  </span>
-  <%= page_title %>
-<% end %>
+    <%= render AppCompareConsentFormAndPatientComponent.new(
+          heading: "Compare details",
+          consent_form: @consent_form,
+          patient: @patient_session.patient) %>
 
-<%= form_tag match_consent_form_path(@consent_form.id, patient_session_id: @patient_session.id) do %>
-  <%= submit_tag "Link response with record", class: "nhsuk-button" %>
-<% end %>
+    <%= render AppCardComponent.new(heading: "Consent response") do
+      render AppConsentDetailsComponent.new(consents: [@consent_form])
+    end %>
+
+    <%= form_tag match_consent_form_path(@consent_form.id, patient_session_id: @patient_session.id) do %>
+      <%= submit_tag "Link response with record", class: "nhsuk-button" %>
+    <% end %>
+  </div>
+</div>
