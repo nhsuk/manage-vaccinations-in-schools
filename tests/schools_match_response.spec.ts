@@ -46,6 +46,7 @@ async function and_i_click_on_the_check_consent_responses_link() {
 }
 
 async function and_a_specific_cohort_record_is_not_present() {
+  await p.getByRole("tab", { name: "Given" }).click();
   await expect(
     p
       .locator(
@@ -127,6 +128,7 @@ async function and_i_link_the_response_with_the_record() {
 }
 
 async function and_the_matched_cohort_appears_in_the_consent_given_list() {
+  await p.getByRole("tab", { name: "Given" }).click();
   await expect(
     p
       .locator(
