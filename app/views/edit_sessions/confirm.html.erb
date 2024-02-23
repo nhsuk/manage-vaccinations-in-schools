@@ -13,8 +13,7 @@
 
 <% if @session.send_consent_at.today? %>
   <%= govuk_inset_text do %>
-    After clicking confirm, consent request emails will be sent today at
-    <%= Time.zone.now.strftime("%H:%M") %>.
+    After clicking confirm, consent request emails will be sent immediately.
   <% end %>
 <% end %>
 
