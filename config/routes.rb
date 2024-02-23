@@ -9,9 +9,9 @@ Rails.application.routes.draw do
 
   root to: redirect("/start")
 
+  mount GoodJob::Engine => "/good-job"
   constraints -> { !Rails.env.production? } do
     mount Avo::Engine, at: Avo.configuration.root_path
-    mount GoodJob::Engine => "/good-job"
     mount Flipper::UI.app => "/flipper"
   end
 
