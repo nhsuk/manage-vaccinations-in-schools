@@ -32,6 +32,13 @@ class ConsentFormsController < ApplicationController
     Consent.from_consent_form!(@consent_form, @patient_session)
 
     session = @consent_form.session
+
+    success_flash_after_patient_update(
+      patient: @patient_session.patient,
+      view_record_link:
+        session_patient_triage_path(session, @patient_session.patient)
+    )
+
     @unmatched_consent_responses =
       session.consent_forms.unmatched.recorded.order(:recorded_at)
 
