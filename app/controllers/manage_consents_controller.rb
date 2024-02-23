@@ -128,7 +128,7 @@ class ManageConsentsController < ApplicationController
   end
 
   def set_session
-    @session = Session.find(params.fetch(:session_id))
+    @session = policy_scope(Session).find(params.fetch(:session_id))
   end
 
   def set_patient
@@ -136,7 +136,7 @@ class ManageConsentsController < ApplicationController
   end
 
   def set_consent
-    @consent = Consent.find(params[:consent_id])
+    @consent = policy_scope(Consent).find(params[:consent_id])
   end
 
   def set_patient_session
