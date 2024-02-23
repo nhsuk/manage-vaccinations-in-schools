@@ -49,3 +49,8 @@ $color_app-pale-blue: #ccdff1;
   font-weight: normal;
   margin-bottom: nhsuk-spacing(2);
 }
+
+// Use NHSUK colour for <mark>
+mark {
+  background-color: $color_nhsuk-pale-yellow;
+}
