@@ -101,7 +101,7 @@ RSpec.describe Consent do
     end
   end
 
-  describe "#from_consent_form" do
+  describe "#from_consent_form!" do
     describe "the created consent object" do
       let(:session) { create(:session) }
       let(:consent_form) do
@@ -110,7 +110,7 @@ RSpec.describe Consent do
       let(:patient_session) { create(:patient_session, session:) }
 
       subject(:consent) do
-        Consent.from_consent_form(consent_form, patient_session)
+        Consent.from_consent_form!(consent_form, patient_session)
       end
 
       it "copies over attributes from consent_form" do

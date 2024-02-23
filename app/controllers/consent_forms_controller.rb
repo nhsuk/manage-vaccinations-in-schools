@@ -29,7 +29,7 @@ class ConsentFormsController < ApplicationController
     @patient_session =
       policy_scope(PatientSession).find(params[:patient_session_id])
 
-    Consent.from_consent_form(@consent_form, @patient_session)
+    Consent.from_consent_form!(@consent_form, @patient_session)
 
     session = @consent_form.session
     @unmatched_consent_responses =
