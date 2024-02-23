@@ -46,17 +46,11 @@ class TriageController < ApplicationController
     if @triage.save(context: :consent)
       @patient_session.do_triage!
       send_triage_mail(@patient_session)
-      redirect_to triage_session_path(@session),
-                  flash: {
-                    success: {
-                      heading: "Record saved for #{@patient.full_name}",
-                      body:
-                        ActionController::Base.helpers.link_to(
-                          "View child record",
-                          session_patient_triage_path(@session, @patient)
-                        )
-                    }
-                  }
+      success_flash_after_patient_update(
+        patient: @patient,
+        view_record_link: session_patient_triage_path(@session, @patient)
+      )
+      redirect_to triage_session_path(@session)
     else
       render "patient_sessions/show", status: :unprocessable_entity
     end
@@ -68,17 +62,11 @@ class TriageController < ApplicationController
     if @triage.save(context: :consent)
       @patient_session.do_triage!
       send_triage_mail(@patient_session)
-      redirect_to triage_session_path(@session),
-                  flash: {
-                    success: {
-                      heading: "Record saved for #{@patient.full_name}",
-                      body:
-                        ActionController::Base.helpers.link_to(
-                          "View child record",
-                          session_patient_triage_path(@session, @patient)
-                        )
-                    }
-                  }
+      success_flash_after_patient_update(
+        patient: @patient,
+        view_record_link: session_patient_triage_path(@session, @patient)
+      )
+      redirect_to triage_session_path(@session)
     else
       render "patient_sessions/show", status: :unprocessable_entity
     end

@@ -57,14 +57,10 @@ class ManageConsentsController < ApplicationController
   end
 
   def finish_wizard_path
-    flash[:success] = {
-      heading: "Record saved for #{@patient.full_name}",
-      body:
-        ActionController::Base.helpers.link_to(
-          "View child record",
-          session_patient_triage_path(@session, @patient)
-        )
-    }
+    success_flash_after_patient_update(
+      patient: @patient,
+      view_record_link: session_patient_triage_path(@session, @patient)
+    )
 
     case @route
     when "consents"

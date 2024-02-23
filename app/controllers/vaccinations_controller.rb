@@ -80,17 +80,12 @@ class VaccinationsController < ApplicationController
         )
       imm.immunization.create # rubocop:disable Rails/SaveBang
     end
-    redirect_to vaccinations_session_path(@session),
-                flash: {
-                  success: {
-                    heading: "Record saved for #{@patient.full_name}",
-                    body:
-                      ActionController::Base.helpers.link_to(
-                        "View child record",
-                        session_patient_vaccinations_path(@session, @patient)
-                      )
-                  }
-                }
+
+    success_flash_after_patient_update(
+      patient: @patient,
+      view_record_link: session_patient_vaccinations_path(@session, @patient)
+    )
+    redirect_to vaccinations_session_path(@session)
   end
 
   def history
