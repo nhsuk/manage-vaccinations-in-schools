@@ -117,4 +117,13 @@ Rails.application.configure do
   config.action_mailer.notify_settings = {
     api_key: Settings.govuk_notify.api_key
   }
+
+  config.good_job.enable_cron = true
+  config.good_job.cron = {
+    consent_request: {
+      cron: "every day at 9am",
+      class: "ConsentRequestsJob",
+      description: "Send consent request emails to parents for each session"
+    }
+  }
 end
