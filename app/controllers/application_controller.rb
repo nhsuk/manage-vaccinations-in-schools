@@ -9,6 +9,9 @@ class ApplicationController < ActionController::Base
   before_action :set_phase_banner_text
   before_action :authenticate_basic
 
+  after_action :verify_policy_scoped,
+               if: -> { Rails.env.development? || Rails.env.test? }
+
   class UnprocessableEntity < StandardError
   end
 

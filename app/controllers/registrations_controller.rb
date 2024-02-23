@@ -1,5 +1,7 @@
 class RegistrationsController < ApplicationController
   skip_before_action :authenticate_user!
+  skip_after_action :verify_policy_scoped, only: %i[new create confirmation]
+
   before_action :set_school
 
   layout "registration"
