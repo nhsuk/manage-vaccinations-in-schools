@@ -129,6 +129,10 @@ class Session < ApplicationRecord
     (send_reminders_at - send_consent_at).to_i
   end
 
+  def unmatched_consent_forms
+    consent_forms.unmatched.recorded.order(:recorded_at)
+  end
+
   private
 
   def set_timeline_attributes
