@@ -11,9 +11,9 @@
     </ol>
     <p class="nhsuk-breadcrumb__back">
       <a class="nhsuk-breadcrumb__backlink"
-         href="<%= @items.last[:href] %>">
+         href="<%= linkable_items.last[:href] %>">
         <span class="nhsuk-u-visually-hidden">Back to &nbsp;</span>
-        <%= @items.last[:text] %>
+        <%= linkable_items.last[:text] %>
       </a>
     </p>
   </div>

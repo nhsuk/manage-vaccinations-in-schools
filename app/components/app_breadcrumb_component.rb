@@ -6,4 +6,8 @@ class AppBreadcrumbComponent < ViewComponent::Base
     @classes = classes
     @attributes = attributes
   end
+
+  def linkable_items
+    @items.select { |item| item[:href] }
+  end
 end

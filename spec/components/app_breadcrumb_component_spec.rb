@@ -20,4 +20,12 @@ RSpec.describe AppBreadcrumbComponent, type: :component do
   it { should have_link("Previous page", href: "/previous-page") }
   it { should have_text("Current page") }
   it { should have_css("nav.additional-class") }
+
+  it "renders a back link on narrow viewports" do
+    expect(page).to have_link(
+      "Previous page",
+      href: "/previous-page",
+      class: "nhsuk-breadcrumb__backlink"
+    )
+  end
 end
