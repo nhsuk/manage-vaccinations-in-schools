@@ -607,4 +607,123 @@ RSpec.describe ConsentForm, type: :model do
       expect(ConsentForm.recorded).not_to include draft_consent_form
     end
   end
+
+  describe "#find_matching_patient" do
+    subject { consent_form.find_matching_patient }
+
+    let(:patients_in_session) { 1 }
+    let!(:patients) do
+      create_list(
+        :patient,
+        patients_in_session,
+        sessions: [session],
+        address_postcode: "SW1A 1AA"
+      )
+    end
+    let!(:session) { create(:session) }
+    let(:consent_form) { build(:consent_form, session:) }
+
+    context "when there are no patients in the session" do
+      let(:patients_in_session) { 0 }
+
+      it { is_expected.to be_nil }
+    end
+
+    context "when there are unmatched patients in the session" do
+      it { is_expected.to be_nil }
+    end
+
+    context "when there is one patient with matching first name and dob" do
+      let(:consent_form) do
+        build(
+          :consent_form,
+          session:,
+          first_name: patients.first.first_name,
+          date_of_birth: patients.first.date_of_birth
+        )
+      end
+
+      it { is_expected.to be_nil }
+    end
+
+    context "when there are multiple patients with matching full_name and dob" do
+      let!(:patients) do
+        create_list(
+          :patient,
+          2,
+          first_name: "John",
+          last_name: "Doe",
+          date_of_birth: 10.years.ago,
+          sessions: [session]
+        )
+      end
+      let(:consent_form) do
+        build(
+          :consent_form,
+          session:,
+          first_name: patients.first.first_name,
+          last_name: patients.first.last_name,
+          date_of_birth: patients.first.date_of_birth
+        )
+      end
+
+      it { is_expected.to be_nil }
+    end
+
+    context "when there is one patient with matching full_name and dob" do
+      let(:consent_form) do
+        build(
+          :consent_form,
+          session:,
+          first_name: patients.first.first_name,
+          last_name: patients.first.last_name,
+          date_of_birth: patients.first.date_of_birth
+        )
+      end
+
+      it { is_expected.to eq patients.first }
+    end
+
+    context "when there is one patient with matching full_name and postcode" do
+      let(:consent_form) do
+        build(
+          :consent_form,
+          session:,
+          first_name: patients.first.first_name,
+          last_name: patients.first.last_name,
+          address_postcode: patients.first.address_postcode
+        )
+      end
+
+      it { is_expected.to eq patients.first }
+    end
+
+    context "when there is one patient with matching f_name, dob, postcode" do
+      let(:consent_form) do
+        build(
+          :consent_form,
+          session:,
+          first_name: patients.first.first_name,
+          date_of_birth: patients.first.date_of_birth,
+          address_postcode: patients.first.address_postcode
+        )
+      end
+
+      it { is_expected.to eq patients.first }
+    end
+
+    context "when there is one patient with matching l_name, dob, postcode" do
+      let(:consent_form) do
+        build(
+          :consent_form,
+          session:,
+          last_name: patients.first.last_name,
+          date_of_birth: patients.first.date_of_birth,
+          address_postcode: patients.first.address_postcode
+        )
+      end
+
+      it { is_expected.to eq patients.first }
+    end
+  end
 end
