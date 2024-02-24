@@ -1,5 +1,5 @@
 name: Deploy
-run-name: Deploy to ${{ inputs.environment }}
+run-name: ${{ github.event_name == 'workflow_dispatch' && format('Deploy to {0}', inputs.environment) || null }}
 
 on:
   push:
