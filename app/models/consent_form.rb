@@ -271,6 +271,20 @@ class ConsentForm < ApplicationRecord
     )
   end
 
+  def find_matching_patient
+    sp = session.patients
+    patients =
+      sp
+        .where(first_name:, last_name:, date_of_birth:)
+        .or(sp.where(first_name:, last_name:, address_postcode:))
+        .or(sp.where(first_name:, date_of_birth:, address_postcode:))
+        .or(sp.where(last_name:, date_of_birth:, address_postcode:))
+
+    return nil if patients.count > 1
+
+    patients.first
+  end
+
   private
 
   def refused_and_not_had_it_already?
