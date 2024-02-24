@@ -47,6 +47,8 @@ secrets:
   DB_SECRET:
     from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-dbAuroraSecret
   SENTRY_DSN: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/SENTRY_DSN
+  MAVIS__SUPPORT_USERNAME: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/MAVIS__SUPPORT_USERNAME
+  MAVIS__SUPPORT_PASSWORD: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/MAVIS__SUPPORT_PASSWORD
 
 environments:
   staging:
@@ -59,8 +61,6 @@ environments:
       RAILS_ENV: staging
       MAVIS__HOST: "staging.manage-vaccinations-in-schools.nhs.uk"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "staging.give-or-refuse-consent-for-vaccinations.nhs.uk"
-      MAVIS__SUPPORT_USERNAME: manage
-      MAVIS__SUPPORT_PASSWORD: vaccinations
   test:
     http:
       alias:
@@ -71,8 +71,6 @@ environments:
       RAILS_ENV: staging
       MAVIS__HOST: "test.mavistesting.com"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "test.mavistesting.com"
-      MAVIS__SUPPORT_USERNAME: manage
-      MAVIS__SUPPORT_PASSWORD: vaccinations
   training:
     http:
       alias:
@@ -81,8 +79,6 @@ environments:
       RAILS_ENV: staging
       MAVIS__HOST: "training.mavistesting.com"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "training.mavistesting.com"
-      MAVIS__SUPPORT_USERNAME: manage
-      MAVIS__SUPPORT_PASSWORD: vaccinations
   production:
     cpu: 1024
     count: 2
@@ -94,6 +90,4 @@ environments:
       RAILS_ENV: production
       MAVIS__HOST: "www.manage-vaccinations-in-schools.nhs.uk"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "www.give-or-refuse-consent-for-vaccinations.nhs.uk"
-      MAVIS__SUPPORT_USERNAME: manage
-      MAVIS__SUPPORT_PASSWORD: vaccinations
       WEB_CONCURRENCY: 2
