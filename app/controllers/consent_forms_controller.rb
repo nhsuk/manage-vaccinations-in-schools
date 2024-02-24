@@ -1,17 +1,13 @@
 class ConsentFormsController < ApplicationController
+  before_action :set_consent_form, except: %i[unmatched_responses]
   skip_after_action :verify_policy_scoped
 
   def unmatched_responses
-    @session =
-      policy_scope(Session).find(
-        params.fetch(:session_id) { params.fetch(:id) }
-      )
-    @unmatched_consent_responses =
-      @session.consent_forms.unmatched.recorded.order(:recorded_at)
+    @session = policy_scope(Session).find(params.fetch(:id))
+    @unmatched_consent_responses = @session.unmatched_consent_forms
   end
 
   def show
-    @consent_form = policy_scope(ConsentForm).find(params[:id])
     @patient_sessions =
       @consent_form
         .session
@@ -21,13 +17,11 @@ class ConsentFormsController < ApplicationController
   end
 
   def review_match
-    @consent_form = policy_scope(ConsentForm).find(params[:id])
     @patient_session =
       policy_scope(PatientSession).find(params[:patient_session_id])
   end
 
   def match
-    @consent_form = policy_scope(ConsentForm).find(params[:id])
     @patient_session =
       policy_scope(PatientSession).find(params[:patient_session_id])
 
@@ -41,13 +35,16 @@ class ConsentFormsController < ApplicationController
         session_patient_triage_path(session, @patient_session.patient)
     )
 
-    @unmatched_consent_responses =
-      session.consent_forms.unmatched.recorded.order(:recorded_at)
-
-    if @unmatched_consent_responses.any?
+    if session.unmatched_consent_forms.any?
       redirect_to unmatched_responses_session_path(@consent_form.session.id)
     else
       redirect_to consents_session_path(session)
     end
+  end
+
+  private
+
+  def set_consent_form
+    @consent_form = policy_scope(ConsentForm).find(params[:id])
   end
 end
