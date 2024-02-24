@@ -3,7 +3,25 @@
 require "rails_helper"
 
 RSpec.feature "Pilot journey", type: :feature do
-  before { visit "/reset" }
+  before do
+    team = create(:team, name: "School Nurses")
+    create(:campaign, :hpv, team:)
+    create(
+      :user,
+      email: "nurse.testy@example.com",
+      password: "nurse.testy@example.com",
+      teams: [team]
+    )
+
+    @school =
+      create(
+        :location,
+        name: "Pilot School",
+        team:,
+        registration_open: true,
+        permission_to_observe_required: true
+      )
+  end
 
   scenario "Complete journey from registration to session creation and consent checks" do
     given_registration_is_open
@@ -44,8 +62,8 @@ RSpec.feature "Pilot journey", type: :feature do
   end
 
   def when_i_register_for_the_pilot_as_a_parent
-    visit "/schools/3/registration/new"
-    expect(page).to have_content(Location.find(3).name)
+    visit "/schools/#{@school.id}/registration/new"
+    expect(page).to have_content("Pilot School")
 
     fill_in "Your name", with: "Big Daddy Tests"
     choose "Dad"
@@ -79,8 +97,8 @@ RSpec.feature "Pilot journey", type: :feature do
 
   def given_i_am_a_nurse_signed_into_the_service
     visit "/dashboard"
-    fill_in "Email address", with: "nurse.flo@example.com"
-    fill_in "Password", with: "nurse.flo@example.com"
+    fill_in "Email address", with: "nurse.testy@example.com"
+    fill_in "Password", with: "nurse.testy@example.com"
     click_button "Sign in"
     expect(page).to have_content("Signed in successfully.")
   end
@@ -109,8 +127,8 @@ RSpec.feature "Pilot journey", type: :feature do
 
   def then_i_see_the_newly_registered_parent_in_the_list_of_parents_who_have_registered
     expect(@registered_parents_csv[-1].to_h).to include(
-      "SCHOOL_ID" => "3",
-      "SCHOOL_NAME" => Location.find(3).name,
+      "SCHOOL_ID" => @school.id.to_s,
+      "SCHOOL_NAME" => "Pilot School",
       "PARENT_NAME" => "Big Daddy Tests",
       "PARENT_RELATIONSHIP" => "Father",
       "PARENT_EMAIL" => "daddy.tests@example.com",
@@ -150,7 +168,7 @@ RSpec.feature "Pilot journey", type: :feature do
     click_on "Add a new session"
 
     expect(page).to have_content("Which school is it at?")
-    choose Location.find(3).name
+    choose "Pilot School"
     click_on "Continue"
 
     expect(page).to have_content("When is the session?")
@@ -192,7 +210,7 @@ RSpec.feature "Pilot journey", type: :feature do
     click_on "Continue"
 
     expect(page).to have_content("Check and confirm details")
-    expect(page).to have_content(Location.find(3).name)
+    expect(page).to have_content("Pilot School")
     expect(page).to have_content("Morning")
     expect(page).to have_content("1 child")
 
@@ -209,7 +227,7 @@ RSpec.feature "Pilot journey", type: :feature do
   end
 
   def then_i_see_the_session_page
-    expect(page).to have_content(Location.find(3).name)
+    expect(page).to have_content("Pilot School")
   end
 
   def when_i_look_at_children_that_need_consent_responses
