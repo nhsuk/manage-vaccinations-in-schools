@@ -28,8 +28,6 @@ RSpec.feature "Parent gives consent", type: :feature do
     and_the_sais_team_has_organised_a_session_at_my_childs_school
     then_they_see_that_no_consent_has_been_given_for_my_child
 
-    perform_enqueued_jobs
-
     when_i_follow_the_link_from_the_email_i_received_to_the_consent_form
     then_i_see_the_consent_form
 
@@ -47,8 +45,6 @@ RSpec.feature "Parent gives consent", type: :feature do
     and_i_submit_the_consent_form
     and_i_get_a_confirmation_email
 
-    perform_enqueued_jobs
-
     when_the_sais_nurse_checks_the_consent_responses
     then_they_see_that_the_child_has_consent
     and_they_do_not_need_triage
@@ -59,8 +55,6 @@ RSpec.feature "Parent gives consent", type: :feature do
     given_the_sais_team_has_my_childs_record_in_their_cohort
     and_the_sais_team_has_organised_a_session_at_my_childs_school
     then_they_see_that_no_consent_has_been_given_for_my_child
-
-    perform_enqueued_jobs
 
     when_i_follow_the_link_from_the_email_i_received_to_the_consent_form
     then_i_see_the_consent_form
@@ -119,12 +113,17 @@ RSpec.feature "Parent gives consent", type: :feature do
   end
 
   def when_i_follow_the_link_from_the_email_i_received_to_the_consent_form
+    perform_enqueued_jobs
     expect(ActionMailer::Base.deliveries.count).to eq(1)
 
     invitation_to_give_consent = ActionMailer::Base.deliveries.last
+    expect(invitation_to_give_consent.to).to eq([@child.parent_email])
+
     # this is awful but I can't figure out how to get the link out of the Notify email
     consent_url =
       invitation_to_give_consent.to_s.match(/consent_link=>"([^"]+)"/)[1]
+    ActionMailer::Base.deliveries.clear
+
     visit URI.parse(consent_url).path
   end
 
@@ -242,7 +241,13 @@ RSpec.feature "Parent gives consent", type: :feature do
   end
 
   def and_i_get_a_confirmation_email
-    # not sure how to do this yet
+    perform_enqueued_jobs
+    expect(ActionMailer::Base.deliveries.count).to eq(1)
+
+    confirmation_email = ActionMailer::Base.deliveries.last
+    expect(confirmation_email.to).to eq(["jane@example.com"])
+
+    ActionMailer::Base.deliveries.clear
   end
 
   def when_the_sais_nurse_checks_the_consent_responses
