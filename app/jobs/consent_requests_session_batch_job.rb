@@ -1,4 +1,4 @@
-# This job is sends consent requests for a session.
+# This job sends consent requests for a session.
 #
 # Each patient that hasn't been sent a consent request yet will be sent one.
 # Typically this should happen on the day that the session has set as the date
