@@ -89,6 +89,7 @@ RSpec.configure do |config|
     driven_by(:cuprite_custom)
   end
 
+  config.include ActiveJob::TestHelper, type: :feature
   config.include FactoryBot::Syntax::Methods
   config.include ViewComponent::TestHelpers, type: :component
 
