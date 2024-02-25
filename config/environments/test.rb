@@ -70,4 +70,7 @@ Rails.application.configure do
   config.active_record.encryption.primary_key = "test"
   config.active_record.encryption.deterministic_key = "test"
   config.active_record.encryption.key_derivation_salt = "test"
+
+  # Set up GoodJob for inline execution in test mode
+  config.good_job.execution_mode = :inline
 end
