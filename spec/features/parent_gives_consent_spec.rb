@@ -106,6 +106,8 @@ RSpec.feature "Parent gives consent", type: :feature do
     and_the_sais_team_has_organised_a_session_at_my_childs_school
     then_they_see_that_no_consent_has_been_given_for_my_child
 
+    perform_enqueued_jobs
+
     when_i_follow_the_link_from_the_email_i_received_to_the_consent_form
     then_i_see_the_consent_form
 
@@ -178,7 +180,13 @@ RSpec.feature "Parent gives consent", type: :feature do
   end
 
   def when_i_follow_the_link_from_the_email_i_received_to_the_consent_form
-    visit "/sessions/#{Session.last.id}/consents/start"
+    expect(ActionMailer::Base.deliveries.count).to eq(1)
+
+    invitation_to_give_consent = ActionMailer::Base.deliveries.last
+    # this is awful but I can't figure out how to get the link out of the Notify email
+    consent_url =
+      invitation_to_give_consent.to_s.match(/consent_link=>"([^"]+)"/)[1]
+    visit URI.parse(consent_url).path
   end
 
   def then_i_see_the_consent_form
