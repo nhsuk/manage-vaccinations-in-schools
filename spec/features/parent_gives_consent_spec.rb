@@ -133,6 +133,23 @@ RSpec.feature "Parent gives consent", type: :feature do
     and_they_are_ready_to_vaccinate
   end
 
+  scenario "Parent's child isn't actually at the school so they can't continue" do
+    given_the_sais_team_has_my_childs_record_in_their_cohort
+    and_the_sais_team_has_organised_a_session_at_my_childs_school
+    then_they_see_that_no_consent_has_been_given_for_my_child
+
+    perform_enqueued_jobs
+
+    when_i_follow_the_link_from_the_email_i_received_to_the_consent_form
+    then_i_see_the_consent_form
+
+    when_i_fill_in_my_childs_name_matching_the_sais_record
+    and_i_fill_in_my_childs_date_of_birth_matching_the_sais_record
+
+    when_i_do_not_confirm_they_attend_the_pilot_school
+    then_i_see_a_page_telling_me_i_cannot_continue
+  end
+
   def given_the_sais_team_has_my_childs_record_in_their_cohort
     @child = create(:patient, location: @school)
   end
@@ -222,6 +239,20 @@ RSpec.feature "Parent gives consent", type: :feature do
 
     choose "Yes, they go to this school"
     click_on "Continue"
+  end
+
+  def when_i_do_not_confirm_they_attend_the_pilot_school
+    expect(page).to have_content("Confirm your child’s school")
+    expect(page).to have_content("Pilot School")
+
+    choose "No, they go to a different school"
+    click_on "Continue"
+  end
+
+  def then_i_see_a_page_telling_me_i_cannot_continue
+    expect(page).to have_content(
+      "You cannot give or refuse consent through this service"
+    )
   end
 
   def and_i_fill_in_details_about_me
