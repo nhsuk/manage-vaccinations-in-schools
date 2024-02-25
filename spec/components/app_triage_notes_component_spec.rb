@@ -21,6 +21,8 @@ RSpec.describe AppTriageNotesComponent, type: :component do
       Timecop.freeze(Time.zone.local(2023, 12, 4, 10, 4))
     end
 
+    after(:context) { Timecop.return }
+
     let(:user) { create(:user, full_name: "Joe Gear") }
     let(:triage) { [create(:triage, notes: "Some notes", user:)] }
 
