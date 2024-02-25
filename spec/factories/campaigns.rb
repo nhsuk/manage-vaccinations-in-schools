@@ -20,6 +20,26 @@ FactoryBot.define do
     trait :hpv do
       name { "HPV" }
       vaccines { [create(:vaccine, :gardasil_9)] }
+
+      after :create do |campaign|
+        vaccine = campaign.vaccines.first
+
+        if vaccine.health_questions.empty?
+          question_texts = [
+            "Does your child have any severe allergies?",
+            "Does your child have any medical conditions for which they receive treatment?",
+            "Has your child ever had a severe reaction to any medicines, including vaccines?"
+          ]
+          questions =
+            question_texts.map do |text|
+              vaccine.health_questions.create!(question: text)
+            end
+
+          questions.each_cons(2) do |first_q, next_q|
+            first_q.update!(next_question: next_q)
+          end
+        end
+      end
     end
 
     trait :flu do
