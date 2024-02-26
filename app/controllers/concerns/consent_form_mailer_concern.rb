@@ -11,5 +11,7 @@ module ConsentFormMailerConcern
     else
       ConsentFormMailer.confirmation(consent_form).deliver_later
     end
+
+    ConsentFormMailer.give_feedback(consent_form).deliver_later(wait: 1.hour)
   end
 end

@@ -23,10 +23,7 @@ RSpec.describe ConsentFormMailer, type: :mailer do
     it "calls template_mail with correct survey_deadline_date" do
       mail =
         described_class.give_feedback(
-          build(
-            :consent_form,
-            recorded_at: Date.new(2021, 1, 1),
-          )
+          build(:consent_form, recorded_at: Date.new(2021, 1, 1))
         )
 
       expect(mail.message.header["personalisation"].unparsed_value).to include(
