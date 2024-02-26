@@ -73,6 +73,34 @@ RSpec.describe HealthQuestion do
     end
   end
 
+  describe ".last_health_question" do
+    let(:vaccine) { create :vaccine, type: "tester" }
+    let!(:hq1) { create :health_question, vaccine: }
+    let!(:hq2) { create :health_question, vaccine: }
+    let!(:hq3) { create :health_question, vaccine: }
+
+    it "returns the last health question" do
+      hq1.update! next_question: hq2
+      hq2.update! next_question: hq3
+
+      expect(vaccine.health_questions.last_health_question).to eq(hq3)
+    end
+
+    it "ignores health questions outside of the scoped collection" do
+      create :health_question
+
+      hq1.update! next_question: hq2
+      hq2.update! next_question: hq3
+
+      expect(
+        vaccine
+          .health_questions
+          .where(id: [hq1.id, hq2.id, hq3.id])
+          .last_health_question
+      ).to eq(hq3)
+    end
+  end
+
   describe "#remaining_questions" do
     let(:vaccine) { create :vaccine, type: "tester" }
     let(:hq1) { create :health_question, vaccine: }
