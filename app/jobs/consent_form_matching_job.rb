@@ -2,6 +2,8 @@ class ConsentFormMatchingJob < ApplicationJob
   queue_as :default
 
   def perform(consent_form_id)
+    return unless Flipper.enabled?(:automatic_matching)
+
     consent_form = ConsentForm.find(consent_form_id)
 
     matching_patient = consent_form.find_matching_patient
