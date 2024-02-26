@@ -62,12 +62,7 @@ class Patient < ApplicationRecord
            :last_name,
            :common_name,
            :address_postcode,
-           deterministic: {
-             fixed: false
-           },
-           previous: {
-             deterministic: false
-           }
+           deterministic: true
 
   encrypts :nhs_number,
            :parent_email,
