@@ -234,9 +234,7 @@ class ConsentForm < ApplicationRecord
   end
 
   def any_health_answers_truthy?
-    health_answers.to_set.any? do |health_answer|
-      health_answer.response == "yes"
-    end
+    health_answers.any? { _1.response == "yes" }
   end
 
   def who_responded
