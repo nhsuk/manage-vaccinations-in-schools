@@ -1,7 +1,10 @@
 require "rails_helper"
 
 RSpec.describe ConsentRequestsJob, type: :job do
-  before { ActiveJob::Base.queue_adapter.enqueued_jobs.clear }
+  before do
+    Flipper.enable(:scheduled_emails)
+    ActiveJob::Base.queue_adapter.enqueued_jobs.clear
+  end
 
   context "with draft and active sessions" do
     it "enqueues ConsentRequestsSessionBatchJob for each active sessions" do

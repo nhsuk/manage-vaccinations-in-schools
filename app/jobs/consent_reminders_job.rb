@@ -5,6 +5,8 @@ class ConsentRemindersJob < ApplicationJob
   queue_as :default
 
   def perform(*_args)
+    return unless Flipper.enabled?(:scheduled_emails)
+
     Session.active.each do |session|
       if session.send_reminders_at&.today?
         ConsentRemindersSessionBatchJob.perform_later(session)
