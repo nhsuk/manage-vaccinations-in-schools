@@ -7,10 +7,15 @@ RSpec.describe ConsentRemindersSessionBatchJob, type: :job do
     patient_with_reminder_sent =
       create(:patient, sent_reminder_at: Time.zone.today)
     patient_not_sent_reminder = create(:patient)
+    patient_with_consent = create(:patient, :consent_given_triage_not_needed)
     session =
       create(
         :session,
-        patients: [patient_with_reminder_sent, patient_not_sent_reminder]
+        patients: [
+          patient_with_reminder_sent,
+          patient_not_sent_reminder,
+          patient_with_consent
+        ]
       )
 
     expect { described_class.perform_now(session) }.to send_email(
