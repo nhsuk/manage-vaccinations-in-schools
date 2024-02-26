@@ -43,21 +43,24 @@ class HealthQuestion < ApplicationRecord
   end
 
   def self.in_order
-    first_health_question.to_set
+    first_health_question.remaining_questions
   end
 
   def self.to_health_answers
     HealthAnswer.from_health_questions(in_order)
   end
 
-  # Turn the health questions into an array.
-  def to_set(set = nil)
-    set ||= Set.new
-    set << self
+  # Turn the health questions into an array ordered by follow_up_questions and
+  # next_questions.
+  def remaining_questions(ary = nil)
+    ary ||= []
+    ary << self
 
-    follow_up_question.to_set(set) if follow_up_question.present?
-    next_question.to_set(set) if next_question.present?
+    follow_up_question.remaining_questions(ary) if follow_up_question.present?
+    if next_question.present? && !next_question.in?(ary)
+      next_question.remaining_questions(ary)
+    end
 
-    set
+    ary
   end
 end

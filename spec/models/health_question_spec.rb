@@ -73,24 +73,24 @@ RSpec.describe HealthQuestion do
     end
   end
 
-  describe "#to_set" do
+  describe "#remaining_questions" do
     let(:vaccine) { create :vaccine, type: "tester" }
     let(:hq1) { create :health_question, vaccine: }
     let(:hq2) { create :health_question, vaccine: }
     let(:hq3) { create :health_question, vaccine: }
 
-    it "returns a set ordered by next_question" do
+    it "returns remaining questions in order" do
       hq1.update! next_question: hq2
       hq2.update! next_question: hq3
 
-      expect(hq1.to_set).to eq(Set[hq1, hq2, hq3])
+      expect(hq1.remaining_questions).to eq([hq1, hq2, hq3])
     end
 
     it "orders follow up questions before next questions" do
       hq1.update! next_question: hq2, follow_up_question: hq3
       hq3.update! next_question: hq2
 
-      expect(hq1.to_set).to eq(Set[hq1, hq3, hq2])
+      expect(hq1.remaining_questions).to eq([hq1, hq3, hq2])
     end
   end
 end
