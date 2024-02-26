@@ -43,7 +43,7 @@ RSpec.feature "Parent gives consent", type: :feature do
 
     then_i_see_a_confirmation_page
     and_i_submit_the_consent_form
-    and_i_get_a_confirmation_email
+    and_i_get_a_confirmation_and_scheduled_survey_email
 
     when_the_sais_nurse_checks_the_consent_responses
     then_they_see_that_the_child_has_consent
@@ -240,14 +240,18 @@ RSpec.feature "Parent gives consent", type: :feature do
     )
   end
 
-  def and_i_get_a_confirmation_email
+  def and_i_get_a_confirmation_and_scheduled_survey_email
+    expect(enqueued_jobs.first["scheduled_at"]).to be_nil
+    expect(
+      Time.zone.parse(enqueued_jobs.second["scheduled_at"]).to_i
+    ).to be_within(1.second).of(1.hour.from_now.to_i)
+
     perform_enqueued_jobs
-    expect(ActionMailer::Base.deliveries.count).to eq(1)
 
-    confirmation_email = ActionMailer::Base.deliveries.last
-    expect(confirmation_email.to).to eq(["jane@example.com"])
-
-    ActionMailer::Base.deliveries.clear
+    expect(ActionMailer::Base.deliveries.count).to eq(2)
+    expect(ActionMailer::Base.deliveries.map(&:to).flatten).to eq(
+      ["jane@example.com"] * 2
+    )
   end
 
   def when_the_sais_nurse_checks_the_consent_responses

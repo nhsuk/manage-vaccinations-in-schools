@@ -30,10 +30,7 @@ class ConsentFormMailer < ApplicationMailer
   end
 
   def consent_form_personalisation
-    personalisation.merge(
-      reason_for_refusal:,
-      survey_deadline_date:
-    )
+    personalisation.merge(reason_for_refusal:, survey_deadline_date:)
   end
 
   def reason_for_refusal
