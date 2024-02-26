@@ -33,6 +33,7 @@ gem "phonelib"
 gem "propshaft"
 gem "puma", "~> 6.4"
 gem "pundit"
+gem "rainbow"
 gem "sentry-rails"
 gem "sentry-ruby"
 gem "silencer", require: false
