@@ -62,7 +62,7 @@ class Patient < ApplicationRecord
            :last_name,
            :common_name,
            :address_postcode,
-           deterministic: true
+           deterministic: Flipper.enabled?(:automatic_matching)
 
   encrypts :nhs_number,
            :parent_email,
