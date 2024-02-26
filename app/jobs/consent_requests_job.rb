@@ -5,6 +5,8 @@ class ConsentRequestsJob < ApplicationJob
   queue_as :default
 
   def perform(*_args)
+    return unless Flipper.enabled?(:scheduled_emails)
+
     Session.active.each do |session|
       if session.send_consent_at&.today?
         ConsentRequestsSessionBatchJob.perform_later(session)
