@@ -12,7 +12,7 @@ class ConsentRemindersSessionBatchJob < ApplicationJob
   queue_as :default
 
   def perform(session)
-    session.patients.reminder_not_sent.each do |patient|
+    session.patients.needing_consent_reminder.each do |patient|
       ConsentRequestMailer.consent_reminder(session, patient).deliver_now
       patient.update!(sent_reminder_at: Time.zone.now)
     end

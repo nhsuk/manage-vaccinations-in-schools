@@ -50,6 +50,10 @@ class Patient < ApplicationRecord
   scope :consent_not_sent, -> { where(sent_consent_at: nil) }
   scope :reminder_not_sent, -> { where(sent_reminder_at: nil) }
 
+  scope :without_consent,
+        -> { includes(:consents).where(consents: { id: nil }) }
+  scope :needing_consent_reminder, -> { without_consent.reminder_not_sent }
+
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :date_of_birth, presence: true
