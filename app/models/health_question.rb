@@ -42,6 +42,12 @@ class HealthQuestion < ApplicationRecord
     find id_set.first
   end
 
+  def self.last_health_question
+    question = first_health_question
+    question = question.next_question until question.next_question.nil?
+    question
+  end
+
   def self.in_order
     first_health_question.remaining_questions
   end
