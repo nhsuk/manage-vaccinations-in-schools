@@ -6,5 +6,5 @@ if [[ "$MAVIS__IS_REVIEW" == "true" && `bin/rails db:version | grep version` == 
   bin/rails db:schema:load
   bin/rails db:seed
 else
-  bin/rails db:migrate
+  bin/rails db:prepare:ignore_concurrent_migration_exceptions
 fi
