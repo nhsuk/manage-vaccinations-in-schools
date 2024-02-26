@@ -44,7 +44,7 @@ task :add_health_questions,
   puts "Enter an empty line to finish."
 
   health_questions = []
-  num = 0
+  num = replace ? 0 : existing_health_questions.count - 1
   loop do
     response =
       Readline.readline Rainbow("health question #{num + 1}: ").green, true
