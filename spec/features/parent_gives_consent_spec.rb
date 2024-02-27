@@ -5,6 +5,7 @@ RSpec.feature "Parent gives consent", type: :feature do
 
   before do
     Flipper.enable(:parent_contact_method)
+    Flipper.enable(:parental_consent_jobs)
     team = create(:team, name: "School Nurses")
     @campaign = create(:campaign, :hpv, team:)
     create(
