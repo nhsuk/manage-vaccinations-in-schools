@@ -22,8 +22,11 @@ FROM base AS build
 
 # Install packages needed to build gems and node modules
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential curl git libpq-dev node-gyp pkg-config python-is-python3 && \
+    apt-get install --no-install-recommends -y build-essential curl git libpq-dev node-gyp pkg-config python-is-python3 supervisor && \
     apt-get clean
+
+# Configure supervisord to run background processes
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Install JavaScript dependencies
 ARG NODE_VERSION=18.1.0
@@ -79,6 +82,6 @@ USER rails:rails
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
-# Start the server by default, this can be overwritten at runtime
+# Start the server and background jobs with supervisord
 EXPOSE 3000
-CMD ["./bin/rails", "server"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
