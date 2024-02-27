@@ -119,9 +119,10 @@ RSpec.feature "Parent gives consent", type: :feature do
     invitation_to_give_consent = ActionMailer::Base.deliveries.last
     expect(invitation_to_give_consent.to).to eq([@child.parent_email])
 
-    # this is awful but I can't figure out how to get the link out of the Notify email
     consent_url =
-      invitation_to_give_consent.to_s.match(/consent_link=>"([^"]+)"/)[1]
+      invitation_to_give_consent.header["personalisation"].unparsed_value[
+        :consent_link
+      ]
     ActionMailer::Base.deliveries.clear
 
     visit URI.parse(consent_url).path
