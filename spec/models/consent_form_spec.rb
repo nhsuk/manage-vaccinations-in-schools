@@ -340,6 +340,7 @@ RSpec.describe ConsentForm, type: :model do
 
   describe "#form_steps" do
     it "asks for contact method if phone is specified" do
+      Flipper.enable(:parent_contact_method)
       consent_form = build(:consent_form, parent_phone: "0123456789")
       expect(consent_form.form_steps).to include(:contact_method)
     end

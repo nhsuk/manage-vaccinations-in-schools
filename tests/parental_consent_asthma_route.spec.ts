@@ -21,6 +21,16 @@ test("Parental consent asthma route", async ({ page }) => {
 
 async function given_the_app_is_setup() {
   await p.goto("/reset");
+
+  // Enable parent contact method feature
+  await p.goto("/flipper/features/parent_contact_method");
+  await expect(
+    p.getByText("Home Features parent_contact_method"),
+  ).toBeVisible();
+  if (await p.getByText("Disabled").isVisible()) {
+    await p.getByRole("button", { name: "Fully Enable" }).click();
+    await expect(p.getByText("Fully enabled")).toBeVisible();
+  }
 }
 
 async function when_i_go_to_the_consent_start_page() {
