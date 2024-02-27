@@ -6,28 +6,11 @@ RSpec.feature "Parent gives consent", type: :feature do
   before do
     Flipper.enable(:parent_contact_method)
     Flipper.enable(:parental_consent_jobs)
-    team =
-      create(
-        :team,
-        :with_one_nurse,
-        nurse_email: "nurse.testy@example.com",
-        nurse_password: "nurse.testy@example.com"
-      )
-    @campaign = create(:campaign, :hpv, team:)
-
-    @school =
-      create(
-        :location,
-        name: "Pilot School",
-        team:,
-        registration_open: true,
-        permission_to_observe_required: true
-      )
   end
 
   scenario "Parent gives consent, their consent form exactly matches the cohort" do
-    given_the_sais_team_has_my_childs_record_in_their_cohort
-    and_the_sais_team_has_organised_a_session_at_my_childs_school
+    given_the_local_sais_team_is_running_an_hpv_vaccination_campaign
+    and_they_arrange_a_session_at_my_childs_school_with_my_child_in_the_cohort
     then_they_see_that_no_consent_has_been_given_for_my_child
 
     when_i_follow_the_link_from_the_email_i_received_to_the_consent_form
@@ -54,8 +37,8 @@ RSpec.feature "Parent gives consent", type: :feature do
   end
 
   scenario "Parent's child isn't actually at the school so they can't continue" do
-    given_the_sais_team_has_my_childs_record_in_their_cohort
-    and_the_sais_team_has_organised_a_session_at_my_childs_school
+    given_the_local_sais_team_is_running_an_hpv_vaccination_campaign
+    and_they_arrange_a_session_at_my_childs_school_with_my_child_in_the_cohort
     then_they_see_that_no_consent_has_been_given_for_my_child
 
     when_i_follow_the_link_from_the_email_i_received_to_the_consent_form
@@ -68,11 +51,28 @@ RSpec.feature "Parent gives consent", type: :feature do
     then_i_see_a_page_telling_me_i_cannot_continue
   end
 
-  def given_the_sais_team_has_my_childs_record_in_their_cohort
-    @child = create(:patient, location: @school)
+  def given_the_local_sais_team_is_running_an_hpv_vaccination_campaign
+    @team =
+      create(
+        :team,
+        :with_one_nurse,
+        nurse_email: "nurse.testy@example.com",
+        nurse_password: "nurse.testy@example.com"
+      )
+    create(:campaign, :hpv, team: @team)
   end
 
-  def and_the_sais_team_has_organised_a_session_at_my_childs_school
+  def and_they_arrange_a_session_at_my_childs_school_with_my_child_in_the_cohort
+    @school =
+      create(
+        :location,
+        name: "Pilot School",
+        team: @team,
+        registration_open: true,
+        permission_to_observe_required: true
+      )
+    @child = create(:patient, location: @school)
+
     sign_in_as_nurse_testy
     start_new_session(
       school_name: @school.name,
