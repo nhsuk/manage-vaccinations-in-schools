@@ -29,5 +29,21 @@ FactoryBot.define do
     ods_code { "U#{identifier}" }
     privacy_policy_url { "https://example.com/privacy" }
     reply_to_id { "reply-to-id-team-#{identifier}" }
+
+    trait :with_one_nurse do
+      transient do
+        nurse_email { nil }
+        nurse_password { nil }
+      end
+
+      after(:create) do |team, evaluator|
+        options = {
+          teams: [team],
+          email: evaluator.nurse_email,
+          password: evaluator.nurse_password
+        }.compact
+        create(:user, **options)
+      end
+    end
   end
 end
