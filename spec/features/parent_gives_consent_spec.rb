@@ -16,19 +16,10 @@ RSpec.feature "Parent gives consent", type: :feature do
     when_i_follow_the_link_from_the_email_i_received_to_the_consent_form
     then_i_see_the_consent_form
 
-    when_i_fill_in_my_childs_name_matching_the_sais_record
-    and_i_fill_in_my_childs_date_of_birth_matching_the_sais_record
-    and_i_confirm_they_attend_the_pilot_school
-    and_i_fill_in_details_about_me
-    and_i_provide_my_phone_contact_preferences
-    and_i_give_consent_to_the_vaccination
-    and_i_provide_my_childs_gp_details
-    and_i_provide_the_home_address
-    and_i_answer_no_to_all_the_medical_questions
-
-    then_i_see_a_confirmation_page
+    when_i_give_consent_for_my_child_to_have_the_vaccination_in_school
+    and_i_do_not_indicate_anything_out_of_the_ordinary_with_my_childs_health
     and_i_submit_the_consent_form
-    and_i_get_a_confirmation_and_scheduled_survey_email
+    then_i_get_a_confirmation_email_and_scheduled_survey_email
 
     when_the_sais_nurse_checks_the_consent_responses
     then_they_see_that_the_child_has_consent
@@ -136,6 +127,22 @@ RSpec.feature "Parent gives consent", type: :feature do
     )
   end
 
+  def when_i_give_consent_for_my_child_to_have_the_vaccination_in_school
+    when_i_fill_in_my_childs_name_matching_the_sais_record
+    and_i_fill_in_my_childs_date_of_birth_matching_the_sais_record
+    and_i_confirm_they_attend_the_pilot_school
+    and_i_fill_in_details_about_me
+    and_i_provide_my_phone_contact_preferences
+    and_i_give_consent_to_the_vaccination
+    and_i_provide_my_childs_gp_details
+    and_i_provide_the_home_address
+  end
+
+  def and_i_do_not_indicate_anything_out_of_the_ordinary_with_my_childs_health
+    and_i_answer_no_to_all_the_medical_questions
+    then_i_check_my_answers
+  end
+
   def when_i_fill_in_my_childs_name_matching_the_sais_record
     click_on "Start now"
 
@@ -230,7 +237,7 @@ RSpec.feature "Parent gives consent", type: :feature do
     end
   end
 
-  def then_i_see_a_confirmation_page
+  def then_i_check_my_answers
     expect(page).to have_content("Check your answers and confirm")
 
     expect(page).to have_content("Child’s name#{@child.full_name}")
@@ -243,7 +250,7 @@ RSpec.feature "Parent gives consent", type: :feature do
     )
   end
 
-  def and_i_get_a_confirmation_and_scheduled_survey_email
+  def then_i_get_a_confirmation_email_and_scheduled_survey_email
     expect(enqueued_jobs.first["scheduled_at"]).to be_nil
     expect(
       Time.zone.parse(enqueued_jobs.second["scheduled_at"]).to_i
