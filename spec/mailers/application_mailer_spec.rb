@@ -7,6 +7,7 @@ RSpec.describe ApplicationMailer, type: :mailer do
     create(
       :team,
       email: "team@email.com",
+      name: "Teamy McTeamface",
       phone: "01234567890",
       reply_to_id: "notify-reply-to-id"
     )
@@ -43,6 +44,7 @@ RSpec.describe ApplicationMailer, type: :mailer do
             short_patient_name: "John",
             short_patient_name_apos: "John's",
             team_email: "team@email.com",
+            team_name: "Teamy McTeamface",
             team_phone: "01234567890",
             vaccination: "HPV vaccination"
           }

@@ -27,6 +27,7 @@ class ApplicationMailer < Mail::Notify::Mailer
       short_patient_name:,
       short_patient_name_apos:,
       team_email:,
+      team_name:,
       team_phone:,
       vaccination:
     }
@@ -72,6 +73,10 @@ class ApplicationMailer < Mail::Notify::Mailer
 
   def team_email
     @session.campaign.team.email
+  end
+
+  def team_name
+    @session.campaign.team.name
   end
 
   def team_phone
