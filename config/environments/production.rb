@@ -119,6 +119,7 @@ Rails.application.configure do
   }
 
   config.good_job.enable_cron = true
+  config.good_job.execution_mode = :external
   config.good_job.cron = {
     consent_request: {
       cron: "every day at 9am",

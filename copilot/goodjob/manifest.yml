@@ -1,0 +1,84 @@
+# The manifest for the "goodjob" service.
+# Read the full specification for the "Backend Service" type at:
+#  https://aws.github.io/copilot-cli/docs/manifest/backend-service/
+
+# Your service name will be used in naming your resources like log groups, ECS services, etc.
+name: goodjob
+type: Backend Service
+
+# Your service is reachable at "http://goodjob.${COPILOT_SERVICE_DISCOVERY_ENDPOINT}:3000" but is not public.
+
+# Configuration for your containers and service.
+image:
+  # Docker build arguments. For additional overrides: https://aws.github.io/copilot-cli/docs/manifest/backend-service/#image-build
+  build: Dockerfile
+  # Port exposed through your container to route traffic to it.
+  port: 4000
+
+command: ["./bin/bundle", "exec", "good_job", "start"]
+cpu: 256 # Number of CPU units for the task.
+memory: 2048 # Amount of memory in MiB used by the task.
+platform: linux/x86_64 # See https://aws.github.io/copilot-cli/docs/manifest/backend-service/#platform
+count: 1 # Number of tasks that should be running in your service.
+exec: true # Enable running commands in your container.
+network:
+  connect: true # Enable Service Connect for intra-environment traffic between services.
+  vpc:
+    security_groups:
+      groups:
+        - from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-dbSecurityGroup
+
+secrets:
+  RAILS_MASTER_KEY: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/RAILS_MASTER_KEY
+  MAVIS__GOVUK_NOTIFY__API_KEY: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/MAVIS__GOVUK_NOTIFY__API_KEY
+  DB_SECRET:
+    from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-dbAuroraSecret
+  SENTRY_DSN: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/SENTRY_DSN
+  MAVIS__SUPPORT_USERNAME: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/MAVIS__SUPPORT_USERNAME
+  MAVIS__SUPPORT_PASSWORD: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/MAVIS__SUPPORT_PASSWORD
+
+# storage:
+# readonly_fs: true       # Limit to read-only access to mounted root filesystems.
+
+# Optional fields for more advanced use-cases.
+#
+#variables:                    # Pass environment variables as key value pairs.
+#  LOG_LEVEL: info
+
+#secrets:                      # Pass secrets from AWS Systems Manager (SSM) Parameter Store.
+#  GITHUB_TOKEN: GITHUB_TOKEN  # The key is the name of the environment variable, the value is the name of the SSM parameter.
+
+# You can override any of the values defined above by environment.
+#environments:
+#  test:
+#    count: 2               # Number of tasks to run for the "test" environment.
+#    deployment:            # The deployment strategy for the "test" environment.
+#       rolling: 'recreate' # Stops existing tasks before new ones are started for faster deployments.
+
+environments:
+  staging:
+    count: 2
+    variables:
+      RAILS_ENV: staging
+      MAVIS__HOST: "staging.manage-vaccinations-in-schools.nhs.uk"
+      MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "staging.give-or-refuse-consent-for-vaccinations.nhs.uk"
+  test:
+    deployments:
+      rolling: recreate # Disables blue-green deployment for speed
+    variables:
+      RAILS_ENV: staging
+      MAVIS__HOST: "test.mavistesting.com"
+      MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "test.mavistesting.com"
+  training:
+    variables:
+      RAILS_ENV: staging
+      MAVIS__HOST: "training.mavistesting.com"
+      MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "training.mavistesting.com"
+  production:
+    cpu: 1024
+    count: 2
+    variables:
+      RAILS_ENV: production
+      MAVIS__HOST: "www.manage-vaccinations-in-schools.nhs.uk"
+      MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "www.give-or-refuse-consent-for-vaccinations.nhs.uk"
+      WEB_CONCURRENCY: 2
