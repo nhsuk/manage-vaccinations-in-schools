@@ -4,14 +4,14 @@ require "rails_helper"
 
 RSpec.feature "Pilot journey", type: :feature do
   before do
-    team = create(:team, name: "School Nurses")
+    team =
+      create(
+        :team,
+        :with_one_nurse,
+        nurse_email: "nurse.testy@example.com",
+        nurse_password: "nurse.testy@example.com"
+      )
     create(:campaign, :hpv, team:)
-    create(
-      :user,
-      email: "nurse.testy@example.com",
-      password: "nurse.testy@example.com",
-      teams: [team]
-    )
 
     @school =
       create(
