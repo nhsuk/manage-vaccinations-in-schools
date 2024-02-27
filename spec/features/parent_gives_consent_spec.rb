@@ -4,6 +4,7 @@ RSpec.feature "Parent gives consent", type: :feature do
   include SessionCreationSteps
 
   before do
+    Flipper.enable(:parent_contact_method)
     team = create(:team, name: "School Nurses")
     @campaign = create(:campaign, :hpv, team:)
     create(
