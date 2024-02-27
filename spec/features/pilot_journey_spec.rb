@@ -3,28 +3,10 @@
 require "rails_helper"
 
 RSpec.feature "Pilot journey", type: :feature do
-  before do
-    team =
-      create(
-        :team,
-        :with_one_nurse,
-        nurse_email: "nurse.testy@example.com",
-        nurse_password: "nurse.testy@example.com"
-      )
-    create(:campaign, :hpv, team:)
-
-    @school =
-      create(
-        :location,
-        name: "Pilot School",
-        team:,
-        registration_open: true,
-        permission_to_observe_required: true
-      )
-  end
-
   scenario "Complete journey from registration to session creation and consent checks" do
-    given_registration_is_open
+    given_the_local_sais_team_is_running_an_hpv_vaccination_campaign
+    and_they_arranged_for_my_childs_school_to_be_in_the_pilot
+    and_registration_is_open
 
     when_i_register_for_the_pilot_as_a_parent
     then_i_see_that_i_have_registered
@@ -52,7 +34,29 @@ RSpec.feature "Pilot journey", type: :feature do
     then_i_see_the_childs_details_including_the_updated_nhs_number
   end
 
-  def given_registration_is_open
+  def given_the_local_sais_team_is_running_an_hpv_vaccination_campaign
+    @team =
+      create(
+        :team,
+        :with_one_nurse,
+        nurse_email: "nurse.testy@example.com",
+        nurse_password: "nurse.testy@example.com"
+      )
+    create(:campaign, :hpv, team: @team)
+  end
+
+  def and_they_arranged_for_my_childs_school_to_be_in_the_pilot
+    @school =
+      create(
+        :location,
+        name: "Pilot School",
+        team: @team,
+        registration_open: true,
+        permission_to_observe_required: true
+      )
+  end
+
+  def and_registration_is_open
     visit "/flipper/features/registration_open"
     expect(page).to have_text("Home Features registration_open")
     if page.has_text?("Disabled")
