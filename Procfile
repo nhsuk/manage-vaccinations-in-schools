@@ -1,1 +1,1 @@
-release: bin/release
+release: bin/heroku-release
