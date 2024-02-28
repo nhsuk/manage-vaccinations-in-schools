@@ -37,11 +37,9 @@ module ParentInterface
 
       session.delete(:consent_form_id)
 
-      if Flipper.enabled?(:parental_consent_jobs)
-        send_record_mail(@consent_form)
+      send_record_mail(@consent_form)
 
-        ConsentFormMatchingJob.perform_later(@consent_form.id)
-      end
+      ConsentFormMatchingJob.perform_later(@consent_form.id)
     end
 
     private

@@ -25,12 +25,5 @@ FLIPPER_INITIALIZERS = {
     else
       Flipper.disable(:pilot_phase_1)
     end
-  end,
-  parental_consent_jobs: -> do
-    if Rails.env.staging? || Rails.env.production?
-      Flipper.disable(:parental_consent_jobs)
-    else
-      Flipper.enable(:parental_consent_jobs)
-    end
   end
 }.freeze
