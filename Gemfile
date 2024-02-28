@@ -6,7 +6,6 @@ gem "rails", "~> 7.1.3"
 
 gem "aasm"
 gem "audited"
-gem "avo"
 gem "awesome_print"
 gem "bootsnap", require: false
 gem "config"
