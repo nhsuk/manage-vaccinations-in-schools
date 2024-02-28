@@ -3,10 +3,7 @@ require "rails_helper"
 RSpec.feature "Parent gives consent", type: :feature do
   include SessionCreationSteps
 
-  before do
-    Flipper.enable(:parent_contact_method)
-    Flipper.enable(:parental_consent_jobs)
-  end
+  before { Flipper.enable(:parent_contact_method) }
 
   scenario "Parent gives consent, their consent form exactly matches the cohort" do
     given_the_local_sais_team_is_running_an_hpv_vaccination_campaign
