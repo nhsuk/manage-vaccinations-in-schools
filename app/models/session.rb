@@ -78,7 +78,7 @@ class Session < ApplicationRecord
     validates :send_consent_at,
               presence: true,
               comparison: {
-                greater_than_or_equal_to: Time.zone.today,
+                greater_than_or_equal_to: -> { Time.zone.today },
                 less_than_or_equal_to: ->(object) { object.date }
               }
 
