@@ -11,8 +11,8 @@
 parents whose children attend participating schools.</p>
 
 <p>
-  To give or refuse consent for your child’s vaccination, please use the paper
-  form sent by your child’s school. If you have any questions, please contact
-  <a class="nhsuk-link" href="mailto:<%= t('service.email') %>">
-    <%= t('service.email') %></a>.
+  If you have any questions, please contact the local health team by calling
+  <%= @session.campaign.team.phone %>, or email
+  <a class="nhsuk-link" href="mailto:<%= @session.campaign.team.email %>">
+    <%= @session.campaign.team.email %></a>.
 </p>

@@ -50,7 +50,9 @@ class ConsentForm < ApplicationRecord
   scope :unmatched, -> { where(consent_id: nil) }
   scope :recorded, -> { where.not(recorded_at: nil) }
 
-  attr_accessor :health_question_number, :is_this_their_school
+  attr_accessor :health_question_number,
+                :is_this_their_school,
+                :parental_responsibility
 
   audited
 
@@ -142,6 +144,14 @@ class ConsentForm < ApplicationRecord
     validates :parent_email, presence: true, email: true
     validates :parent_phone, phone: true, if: :parent_phone?
   end
+
+  validates :parental_responsibility,
+            inclusion: {
+              in: %w[yes]
+            },
+            if: ->(object) do
+              object.parent_relationship_other? && object.form_step == :parent
+            end
 
   on_wizard_step :contact_method, exact: true do
     validates :contact_method, presence: true

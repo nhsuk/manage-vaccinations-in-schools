@@ -416,6 +416,8 @@ en:
             parent_relationship_other:
               blank: Enter your relationship
               too_long: Enter a relationship that are less than 300 characters long
+            parental_responsibility:
+              inclusion: You need parental responsibility to give consent
             parent_email:
               blank: Enter your email address
               invalid: Enter a valid email address, such as j.doe@gmail.com

@@ -32,7 +32,17 @@ module ParentInterface
 
       if current_step == :school && @consent_form.is_this_their_school == "no"
         return(
-          redirect_to session_parent_interface_consent_form_cannot_consent_path(
+          redirect_to session_parent_interface_consent_form_cannot_consent_school_path(
+                        @session,
+                        @consent_form
+                      )
+        )
+      end
+
+      if current_step == :parent &&
+           @consent_form.parental_responsibility == "no"
+        return(
+          redirect_to session_parent_interface_consent_form_cannot_consent_responsibility_path(
                         @session,
                         @consent_form
                       )
@@ -70,6 +80,7 @@ module ParentInterface
           parent_name
           parent_relationship
           parent_relationship_other
+          parental_responsibility
           parent_email
           parent_phone
         ],

@@ -1,0 +1,19 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+    href: session_parent_interface_consent_form_edit_path(@session, @consent_form, :parent),
+    name: "edit your details page"
+  ) %>
+<% end %>
+
+<%= h1 "You cannot give or refuse consent through this service" %>
+
+<p>
+  To give or refuse consent for a child’s vaccination, you need to have parental responsibility.
+</p>
+
+<p>
+  If you have any questions, please contact the local health team by calling
+  <%= @session.campaign.team.phone %>, or email
+  <a class="nhsuk-link" href="mailto:<%= @session.campaign.team.email %>">
+    <%= @session.campaign.team.email %></a>.
+</p>

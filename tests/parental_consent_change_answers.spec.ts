@@ -10,6 +10,18 @@ test("Parental consent change answers", async ({ page }) => {
   await when_i_go_to_a_prefilled_consent_form();
   await then_i_see_the_consent_confirm_page();
 
+  await when_i_change_my_parental_relationship_to_other();
+  await then_i_see_the_parental_responsibility_error();
+
+  await when_i_refuse_parental_responsibility();
+  await then_i_see_the_cannot_consent_responsibility_page();
+
+  await when_i_accept_parental_responsibility();
+  await then_i_see_the_consent_confirm_page();
+
+  await when_i_change_my_parental_relationship_to_dad();
+  await then_i_see_the_consent_confirm_page();
+
   await when_i_change_the_patients_name();
   await then_i_see_the_updated_name();
 
@@ -172,4 +184,52 @@ async function then_i_see_the_refused_confirmation_page() {
   await expect(
     p.locator("p", { hasText: "having an injection instead" }),
   ).not.toBeVisible();
+}
+
+async function when_i_change_my_parental_relationship_to_other() {
+  await p
+    .getByRole("link", { name: "Change your relationship", exact: true })
+    .click();
+  await p.getByRole("radio", { name: "Other" }).click();
+  await p.getByLabel("Relationship to the child").fill("Granddad");
+  await p.getByRole("button", { name: "Continue" }).click();
+}
+
+async function then_i_see_the_parental_responsibility_error() {
+  await expect(p.locator(".nhsuk-error-summary")).toContainText(
+    "You need parental responsibility to give consent",
+  );
+}
+
+async function when_i_accept_parental_responsibility() {
+  await p.getByRole("link", { name: "Back" }).click();
+  await p.getByRole("radio", { name: "Other" }).click();
+  await p.getByLabel("Relationship to the child").fill("Granddad");
+  await p.getByRole("radio", { name: "Yes" }).click();
+  await p.getByRole("button", { name: "Continue" }).click();
+  // BUG: The page should be the consent confirm page, but because we
+  // encountered a validation error, the skip_to_confirm flag gets lost and we
+  // end up on the next page in the wizard.
+  for (let i = 0; i < 12; i++) {
+    await p.getByRole("button", { name: "Continue" }).click();
+  }
+}
+
+async function when_i_change_my_parental_relationship_to_dad() {
+  await p
+    .getByRole("link", { name: "Change your relationship", exact: true })
+    .click();
+  await p.getByRole("radio", { name: "Dad" }).click();
+  await p.getByRole("button", { name: "Continue" }).click();
+}
+
+async function when_i_refuse_parental_responsibility() {
+  await p.getByRole("radio", { name: "No" }).click();
+  await p.getByRole("button", { name: "Continue" }).click();
+}
+
+async function then_i_see_the_cannot_consent_responsibility_page() {
+  await expect(p.locator("h1")).toContainText(
+    "You cannot give or refuse consent",
+  );
 }

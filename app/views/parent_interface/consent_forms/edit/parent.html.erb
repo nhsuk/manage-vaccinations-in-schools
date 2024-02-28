@@ -23,14 +23,22 @@
       label: { text: 'Guardian' } %>
     <%= f.govuk_radio_button :parent_relationship, "other",
       label: { text: 'Other' } do %>
-      <p>
-        You need parental responsibility to give consent. This means you have
-        legal rights and duties relating to the child.
-      </p>
-
       <%= f.govuk_text_field :parent_relationship_other,
-        label: { text: 'Relationship to the child' },
-        hint: { text: 'For example, carer' } %>
+        # The radio button already has a consent-form-parent-relationship-other
+        # id, so we need to use a different one here.
+        label: { text: 'Relationship to the child',
+                 for: "parent-relationship-other" },
+        hint: { text: 'For example, carer' },
+        id: "parent-relationship-other" %>
+      <%= f.govuk_radio_buttons_fieldset(:parental_responsibility,
+        legend: { size: "s",
+                  text: "Do you have parental responsibility?" },
+        hint: { text: "This means you have legal rights and duties relating to the child" }) do %>
+        <%= f.govuk_radio_button :parental_responsibility, "yes",
+          label: { text: "Yes" }, link_errors: true %>
+        <%= f.govuk_radio_button :parental_responsibility, "no",
+          label: { text: "No" } %>
+      <% end %>
     <% end %>
   <% end %>
 
