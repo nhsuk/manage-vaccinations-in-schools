@@ -60,12 +60,7 @@ RSpec.feature "Pilot journey", type: :feature do
   end
 
   def and_registration_is_open
-    visit "/flipper/features/registration_open"
-    expect(page).to have_text("Home Features registration_open")
-    if page.has_text?("Disabled")
-      click_on "Fully Enable"
-      expect(page).to have_text("Fully enabled")
-    end
+    Flipper.enable :registration_open
   end
 
   def when_i_register_for_the_pilot_as_a_parent
