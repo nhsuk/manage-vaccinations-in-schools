@@ -66,7 +66,8 @@ Rails.application.routes.draw do
     namespace :parent_interface, path: "/" do
       resources :consent_forms, path: :consents, only: [:create] do
         get "start", on: :collection
-        get "cannot-consent"
+        get "cannot-consent-school"
+        get "cannot-consent-responsibility"
         get "confirm"
         put "record"
 
