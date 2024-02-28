@@ -72,37 +72,12 @@ class VaccinationsController < ApplicationController
     end
 
     @patient_session.do_vaccination!
-    if Settings.features.fhir_server_integration
-      imm =
-        ImmunizationFHIRBuilder.new(
-          patient_identifier: @patient.nhs_number,
-          occurrence_date_time: Time.zone.now
-        )
-      imm.immunization.create # rubocop:disable Rails/SaveBang
-    end
 
     success_flash_after_patient_update(
       patient: @patient,
       view_record_link: session_patient_vaccinations_path(@session, @patient)
     )
     redirect_to vaccinations_session_path(@session)
-  end
-
-  def history
-    if Settings.features.fhir_server_integration
-      fhir_bundle =
-        FHIR::Immunization.search(
-          patient:
-            "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/#{@patient.nhs_number}"
-        )
-      @history =
-        fhir_bundle
-          .entry
-          .map(&:resource)
-          .map { |entry| FHIRVaccinationEvent.new(entry) }
-    else
-      raise "`features.fhir_server_integration` is not enabled in Settings"
-    end
   end
 
   def record_template
