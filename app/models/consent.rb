@@ -143,8 +143,7 @@ class Consent < ApplicationRecord
   end
 
   def triage_needed?
-    response_given? &&
-      (parent_relationship_other? || health_answers_require_follow_up?)
+    response_given? && health_answers_require_follow_up?
   end
 
   def who_responded
@@ -161,7 +160,6 @@ class Consent < ApplicationRecord
 
   def reasons_triage_needed
     reasons = []
-    reasons << "Check parental responsibility" if parent_relationship_other?
     if health_answers_require_follow_up?
       reasons << "Health questions need triage"
     end

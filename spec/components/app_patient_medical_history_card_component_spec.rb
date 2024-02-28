@@ -41,53 +41,6 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
     end
   end
 
-  context "parent is other and triage is not done" do
-    let(:consent) do
-      create :consent, :from_granddad, patient:, campaign: session.campaign
-    end
-
-    it "renders correctly" do
-      expect(page).to have_css("p:first", text: "Triage needed")
-      expect(page).to have_css("li", text: "Check parental responsibility")
-      expect(page).to have_css(
-        ".nhsuk-details__summary-text",
-        text: "Show answers"
-      )
-    end
-  end
-
-  context "parent is other and triage is done with notes" do
-    let(:consent) do
-      create :consent, :from_granddad, patient:, campaign: session.campaign
-    end
-    let(:triage_notes) { "These are triage notes" }
-    let(:triage) { create :triage, patient_session:, notes: triage_notes }
-
-    it "renders correctly" do
-      expect(page).to have_css("h2:nth(2)", text: "Triage notes")
-      expect(page).to have_css("p:first", text: triage_notes)
-      expect(page).to have_css(
-        ".nhsuk-details__summary-text",
-        text: "Show answers"
-      )
-    end
-  end
-
-  context "parent is other and triage is done without notes" do
-    let(:consent) do
-      create :consent, :from_granddad, patient:, campaign: session.campaign
-    end
-    let(:triage) { create :triage, patient_session:, notes: nil }
-
-    it "renders correctly" do
-      expect(page).to have_css("p:first", text: "Triage complete - no notes")
-      expect(page).to have_css(
-        ".nhsuk-details__summary-text",
-        text: "Show answers"
-      )
-    end
-  end
-
   context "health question is yes and triage is done with notes" do
     let(:health_answers) do
       [
@@ -146,35 +99,6 @@ RSpec.describe AppPatientMedicalHistoryCardComponent, type: :component do
     it "renders correctly" do
       expect(page).to have_css("p:first", text: "Triage needed")
       expect(page).to have_css("li:first", text: "Health questions need triage")
-      expect(page).to have_css(
-        ".nhsuk-details__summary-text",
-        text: "Show answers"
-      )
-    end
-  end
-
-  context "health question is yes and parent is other but triage is not done" do
-    let(:health_answers) do
-      [
-        HealthAnswer.new(
-          question: "Is there anything else we should know?",
-          response: "yes",
-          notes: "These are notes"
-        )
-      ]
-    end
-    let(:consent) do
-      create :consent,
-             :from_granddad,
-             patient:,
-             campaign: session.campaign,
-             health_answers:
-    end
-
-    it "renders correctly" do
-      expect(page).to have_css("p:first", text: "Triage needed")
-      expect(page).to have_css("li", text: "Check parental responsibility")
-      expect(page).to have_css("li", text: "Health questions need triage")
       expect(page).to have_css(
         ".nhsuk-details__summary-text",
         text: "Show answers"
