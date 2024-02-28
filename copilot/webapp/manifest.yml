@@ -61,6 +61,7 @@ environments:
       RAILS_ENV: staging
       MAVIS__HOST: "staging.manage-vaccinations-in-schools.nhs.uk"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "staging.give-or-refuse-consent-for-vaccinations.nhs.uk"
+      WEB_CONCURRENCY: 2
   test:
     http:
       alias:
