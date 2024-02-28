@@ -30,7 +30,6 @@ Rails.application.routes.draw do
     end
 
     mount Flipper::UI.app => "/flipper"
-    mount Avo::Engine, at: Avo.configuration.root_path
   end
 
   get "/csrf", to: "csrf#new"
