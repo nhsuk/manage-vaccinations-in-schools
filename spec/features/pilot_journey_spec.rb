@@ -3,6 +3,9 @@
 require "rails_helper"
 
 RSpec.feature "Pilot journey", type: :feature do
+  before { Timecop.freeze(Time.zone.local(2024, 2, 1)) }
+  after { Timecop.return }
+
   scenario "Complete journey from registration to session creation and consent checks" do
     given_the_local_sais_team_is_running_an_hpv_vaccination_campaign
     and_they_arranged_for_my_childs_school_to_be_in_the_pilot
