@@ -20,7 +20,7 @@ FactoryBot.define do
   factory :team do
     transient do
       random { Random.new }
-      identifier { random.rand(1..10_000) }
+      sequence(:identifier) { _1 }
     end
 
     name { "Team #{identifier}" }
