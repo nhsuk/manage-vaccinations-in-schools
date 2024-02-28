@@ -42,15 +42,7 @@ RSpec.describe Consent do
     end
   end
 
-  describe "when consent given by someone who's not a parent or a guardian" do
-    it "does require triage" do
-      response = build(:consent_given, parent_relationship: :other)
-
-      expect(response).to be_triage_needed
-    end
-  end
-
-  describe "when consent given by parent or guardian, but some info for health questions" do
+  describe "when consent given by parent or guardian, but some info provided in the health questions" do
     it "does require triage" do
       health_answers = [
         HealthAnswer.new(
@@ -64,40 +56,13 @@ RSpec.describe Consent do
 
       expect(response).to be_triage_needed
     end
-  end
 
-  describe "#reasons_triage_needed" do
-    context "parent relationship is other" do
-      it "returns check parental responsibility" do
-        response = build(:consent_given, :from_granddad)
+    it "returns notes need triage" do
+      response = build(:consent_given, :health_question_notes)
 
-        expect(response.reasons_triage_needed).to eq(
-          ["Check parental responsibility"]
-        )
-      end
-    end
-
-    context "health questions indicate followup needed" do
-      it "returns notes need triage" do
-        response = build(:consent_given, :health_question_notes)
-
-        expect(response.reasons_triage_needed).to eq(
-          ["Health questions need triage"]
-        )
-      end
-    end
-
-    context "parent relationship is other and health questions indicate followup needed" do
-      it "returns both check parental responsibility and notes need triage" do
-        response = build(:consent_given, :health_question_notes, :from_granddad)
-
-        expect(response.reasons_triage_needed).to include(
-          "Health questions need triage"
-        )
-        expect(response.reasons_triage_needed).to include(
-          "Check parental responsibility"
-        )
-      end
+      expect(response.reasons_triage_needed).to eq(
+        ["Health questions need triage"]
+      )
     end
   end
 

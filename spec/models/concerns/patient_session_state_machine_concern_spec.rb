@@ -428,7 +428,7 @@ RSpec.describe PatientSessionStateMachineConcern do
     end
   end
 
-  describe "when consent given by other, triage and follow-up needed, the vaccination is administered" do
+  describe "when consent given by other, no triage needed, the vaccination is administered" do
     it "steps through the right actions and outcomes" do
       session = create(:session, patients_in_session: 1)
       patient = session.patients.first
@@ -442,17 +442,7 @@ RSpec.describe PatientSessionStateMachineConcern do
         campaign: session.campaign
       )
       patient_session.do_consent
-      expect(patient_session).to be_consent_given_triage_needed
-
-      # follow-up needed
-      triage = create(:triage, patient_session:, status: :needs_follow_up)
-      patient_session.do_triage
-      expect(patient_session).to be_triaged_kept_in_triage
-
-      # triage done
-      triage.update!(status: :ready_to_vaccinate)
-      patient_session.do_triage
-      expect(patient_session).to be_triaged_ready_to_vaccinate
+      expect(patient_session).to be_consent_given_triage_not_needed
 
       # vaccination administered
       create(
@@ -480,7 +470,7 @@ RSpec.describe PatientSessionStateMachineConcern do
         campaign: session.campaign
       )
       patient_session.do_consent
-      expect(patient_session).to be_consent_given_triage_needed
+      expect(patient_session).to be_consent_given_triage_not_needed
 
       # triage decides not to vaccinate
       create(:triage, patient_session:, status: :do_not_vaccinate)
