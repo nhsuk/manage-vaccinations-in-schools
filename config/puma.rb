@@ -20,11 +20,18 @@ else
 end
 
 # Specifies the `environment` that Puma will run in.
-#
 environment ENV.fetch("RAILS_ENV") { "development" }
 
 # Specifies the `pidfile` that Puma will use.
 pidfile ENV.fetch("PIDFILE") { "tmp/pids/server.pid" }
+
+# Cleanly shut down GoodJob when Puma is shut down.
+# See https://github.com/bensheldon/good_job#execute-jobs-async--in-process
+MAIN_PID = Process.pid
+before_fork { GoodJob.shutdown }
+on_worker_boot { GoodJob.restart }
+on_worker_shutdown { GoodJob.shutdown }
+at_exit { GoodJob.shutdown if Process.pid == MAIN_PID }
 
 # Specifies the number of `workers` to boot in clustered mode.
 # Workers are forked web server processes. If using threads and workers together
