@@ -2,19 +2,25 @@
 #
 # Table name: patient_sessions
 #
-#  id                       :bigint           not null, primary key
-#  gillick_competence_notes :text
-#  gillick_competent        :boolean
-#  state                    :string
-#  created_at               :datetime         not null
-#  updated_at               :datetime         not null
-#  patient_id               :bigint           not null
-#  session_id               :bigint           not null
+#  id                                  :bigint           not null, primary key
+#  gillick_competence_notes            :text
+#  gillick_competent                   :boolean
+#  state                               :string
+#  created_at                          :datetime         not null
+#  updated_at                          :datetime         not null
+#  gillick_competence_assessor_user_id :bigint
+#  patient_id                          :bigint           not null
+#  session_id                          :bigint           not null
 #
 # Indexes
 #
-#  index_patient_sessions_on_patient_id_and_session_id  (patient_id,session_id) UNIQUE
-#  index_patient_sessions_on_session_id_and_patient_id  (session_id,patient_id) UNIQUE
+#  index_patient_sessions_on_gillick_competence_assessor_user_id  (gillick_competence_assessor_user_id)
+#  index_patient_sessions_on_patient_id_and_session_id            (patient_id,session_id) UNIQUE
+#  index_patient_sessions_on_session_id_and_patient_id            (session_id,patient_id) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (gillick_competence_assessor_user_id => users.id)
 #
 
 class PatientSession < ApplicationRecord
@@ -25,6 +31,10 @@ class PatientSession < ApplicationRecord
 
   belongs_to :patient
   belongs_to :session
+  belongs_to :gillick_competence_assessor,
+             class_name: "User",
+             optional: true,
+             foreign_key: :gillick_competence_assessor_user_id
 
   has_one :campaign, through: :session
   has_many :triage
@@ -40,6 +50,7 @@ class PatientSession < ApplicationRecord
             },
             on: :edit_gillick
   validates :gillick_competence_notes, presence: true, on: :edit_gillick
+  validates :gillick_competence_assessor, presence: true, on: :edit_gillick
 
   encrypts :gillick_competence_notes
 

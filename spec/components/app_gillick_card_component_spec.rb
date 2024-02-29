@@ -7,8 +7,18 @@ RSpec.describe AppGillickCardComponent, type: :component do
 
   let(:component) { described_class.new(consent:, patient_session:) }
   let(:consent) { create(:consent) }
-  let(:patient_session) { create(:patient_session, gillick_competent:) }
+  let(:assessing_nurse) { create(:user, full_name: "Nurse Joy") }
+  let(:patient_session) do
+    create(
+      :patient_session,
+      :after_gillick_competence_assessed,
+      gillick_competent:,
+      gillick_competence_assessor: assessing_nurse
+    )
+  end
   let(:gillick_competent) { true }
+
+  it { should have_text("Nurse Joy") }
 
   context "when patient is gillick competent" do
     it { should have_css("h2", text: "Gillick competence") }

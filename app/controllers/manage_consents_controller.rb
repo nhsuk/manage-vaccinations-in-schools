@@ -115,7 +115,10 @@ class ManageConsentsController < ApplicationController
   end
 
   def handle_gillick
-    @patient_session.update! gillick_params
+    @patient_session.update! gillick_params.merge(
+                               gillick_competence_assessor_user_id:
+                                 current_user.id
+                             )
 
     @consent.assign_attributes(
       patient_session: @patient_session,
