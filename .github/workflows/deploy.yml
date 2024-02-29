@@ -12,12 +12,10 @@ on:
         type: choice
         options:
           - test
-          - staging
           - training
 
 jobs:
-  # Permissions to request and use OIDC tokens and access repository contents
-  webapp:
+  copilot:
     name: AWS Copilot deploy to ${{ github.event.inputs.environment }}
     permissions:
       id-token: write
@@ -49,36 +47,3 @@ jobs:
             ENVIRONMENT=test
           fi
           copilot svc deploy --name webapp --env $ENVIRONMENT
-
-  goodjob:
-    name: AWS Copilot deploy to ${{ github.event.inputs.environment }}
-    permissions:
-      id-token: write
-      contents: read
-
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::393416225559:role/GitHubActionsRole
-          aws-region: eu-west-2
-
-      - name: Install and Verify AWS Copilot
-        run: |
-          curl -Lo /tmp/copilot https://github.com/aws/copilot-cli/releases/latest/download/copilot-linux
-          chmod +x /tmp/copilot
-          mv /tmp/copilot /usr/local/bin/copilot
-          copilot --version
-
-      - name: Deploy the application using AWS Copilot
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            ENVIRONMENT=${{ github.event.inputs.environment }}
-          else
-            ENVIRONMENT=test
-          fi
-          copilot svc deploy --name goodjob --env $ENVIRONMENT
