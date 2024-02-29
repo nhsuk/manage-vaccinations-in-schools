@@ -185,7 +185,7 @@ class AppStatusBannerComponent < ViewComponent::Base
       end
 
       summary_list.with_row do |row|
-        row.with_key { "Nurse" }
+        row.with_key { "Vaccinator" }
         row.with_value { nurse_name_summary }
       end
 
@@ -231,7 +231,7 @@ class AppStatusBannerComponent < ViewComponent::Base
       end
 
       summary_list.with_row do |row|
-        row.with_key { "Nurse" }
+        row.with_key { "Vaccinator" }
         row.with_value { nurse_name_summary }
       end
 
