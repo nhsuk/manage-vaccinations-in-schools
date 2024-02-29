@@ -370,6 +370,12 @@ en:
             gillick_competence_notes:
               blank: Enter details of your assessment
               too_long: Enter details that are less than 1000 characters long
+        batch:
+          attributes:
+            name:
+              blank: Enter a batch
+            expiry:
+              blank: Enter an expiry date
         consent:
           attributes:
             parent_name:
