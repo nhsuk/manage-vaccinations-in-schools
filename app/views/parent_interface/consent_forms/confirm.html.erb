@@ -45,7 +45,7 @@ end %>
         summary_list.with_row do |row|
           row.with_key { "Alternative option" }
           row.with_value { @consent_form.contact_injection? ?
-                            "A nurse can contact me about an injection" :
+                            "Someone can contact me about an injection" :
                             "No" }
           row.with_action(text: "Change",
             href: change_link[:injection],
