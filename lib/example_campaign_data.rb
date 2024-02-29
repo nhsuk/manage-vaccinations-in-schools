@@ -90,7 +90,7 @@ class ExampleCampaignData
 
           consent[:response] = consent_example["response"]
           consent[:reason_for_refusal] = consent_example["reasonForRefusal"]
-          consent[:reason_for_refusal_other] = consent_example[
+          consent[:reason_for_refusal_notes] = consent_example[
             "reasonForRefusalOtherReason"
           ]
 

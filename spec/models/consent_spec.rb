@@ -12,7 +12,7 @@
 #  parent_relationship         :integer
 #  parent_relationship_other   :text
 #  reason_for_refusal          :integer
-#  reason_for_refusal_other    :text
+#  reason_for_refusal_notes    :text
 #  recorded_at                 :datetime
 #  response                    :integer
 #  route                       :integer          not null
@@ -92,7 +92,7 @@ RSpec.describe Consent do
             parent_relationship: consent_form.parent_relationship,
             parent_relationship_other: consent_form.parent_relationship_other,
             reason_for_refusal: consent_form.reason,
-            reason_for_refusal_other: consent_form.reason_notes,
+            reason_for_refusal_notes: consent_form.reason_notes,
             response: consent_form.response,
             route: "website"
           )

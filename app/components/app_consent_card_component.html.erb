@@ -37,9 +37,11 @@
         row.with_key { "Refusal reason" }
         row.with_value do %>
           <%= @consent.human_enum_name(:reason_for_refusal) %>
-          <div class="nhsuk-u-margin-top-2 nhsuk-u-font-size-16">
-            <%= @consent.reason_for_refusal_other %>
-          </div>
+          <% if @consent.reason_notes_required? %>
+            <div class="nhsuk-u-margin-top-2 nhsuk-u-font-size-16">
+              <%= @consent.reason_for_refusal_notes %>
+            </div>
+          <% end %>
         <% end
       end
     end
