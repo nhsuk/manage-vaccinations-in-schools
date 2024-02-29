@@ -106,24 +106,8 @@ class AppStatusBannerComponent < ViewComponent::Base
     "#{type} (#{brand}, #{batch})"
   end
 
-  def last_action
-    case state
-    when "vaccinated", "unable_to_vaccinate"
-      :vaccination
-    when "triaged_do_not_vaccinate"
-      :triage
-    else
-      raise ArgumentError, "Unknown state: #{state}"
-    end
-  end
-
   def last_action_time
-    @last_action_time ||=
-      if last_action == :vaccination
-        vaccination_record.recorded_at
-      elsif last_action == :triage
-        triage.created_at
-      end
+    @last_action_time ||= vaccination_record&.recorded_at || triage&.created_at
   end
 
   def date_summary
@@ -135,12 +119,7 @@ class AppStatusBannerComponent < ViewComponent::Base
   end
 
   def nurse
-    @nurse ||=
-      if last_action == :triage
-        triage&.user
-      elsif last_action == :vaccination
-        vaccination_record&.user
-      end
+    @nurse ||= (vaccination_record || triage).user
   end
 
   def nurse_name_summary
@@ -235,11 +214,9 @@ class AppStatusBannerComponent < ViewComponent::Base
         row.with_value { nurse_name_summary }
       end
 
-      if last_action == :vaccination
-        summary_list.with_row do |row|
-          row.with_key { "Notes" }
-          row.with_value { notes }
-        end
+      summary_list.with_row do |row|
+        row.with_key { "Notes" }
+        row.with_value { notes }
       end
     end
   end
