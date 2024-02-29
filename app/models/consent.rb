@@ -12,7 +12,7 @@
 #  parent_relationship         :integer
 #  parent_relationship_other   :text
 #  reason_for_refusal          :integer
-#  reason_for_refusal_other    :text
+#  reason_for_refusal_notes    :text
 #  recorded_at                 :datetime
 #  response                    :integer
 #  route                       :integer          not null
@@ -68,7 +68,7 @@ class Consent < ApplicationRecord
            :parent_name,
            :parent_phone,
            :parent_relationship_other,
-           :reason_for_refusal_other
+           :reason_for_refusal_notes
 
   validates :parent_contact_method_other,
             :parent_email,
@@ -79,7 +79,7 @@ class Consent < ApplicationRecord
               maximum: 300
             }
 
-  validates :reason_for_refusal_other, length: { maximum: 1000 }
+  validates :reason_for_refusal_notes, length: { maximum: 1000 }
 
   on_wizard_step :gillick, exact: true do
     validate :patient_session_valid?
@@ -180,7 +180,7 @@ class Consent < ApplicationRecord
         parent_relationship: consent_form.parent_relationship,
         parent_relationship_other: consent_form.parent_relationship_other,
         reason_for_refusal: consent_form.reason,
-        reason_for_refusal_other: consent_form.reason_notes,
+        reason_for_refusal_notes: consent_form.reason_notes,
         recorded_at: Time.zone.now,
         response: consent_form.response,
         route: "website",

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_02_29_120105) do
+ActiveRecord::Schema[7.1].define(version: 2024_02_29_150456) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -104,7 +104,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_29_120105) do
     t.text "parent_contact_method_other"
     t.integer "response"
     t.integer "reason_for_refusal"
-    t.text "reason_for_refusal_other"
+    t.text "reason_for_refusal_notes"
     t.integer "route", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

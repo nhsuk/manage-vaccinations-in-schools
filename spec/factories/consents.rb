@@ -12,7 +12,7 @@
 #  parent_relationship         :integer
 #  parent_relationship_other   :text
 #  reason_for_refusal          :integer
-#  reason_for_refusal_other    :text
+#  reason_for_refusal_notes    :text
 #  recorded_at                 :datetime
 #  response                    :integer
 #  route                       :integer          not null

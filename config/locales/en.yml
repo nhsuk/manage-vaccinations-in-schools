@@ -380,9 +380,9 @@ en:
               inclusion: Choose if they consent
             reason_for_refusal:
               inclusion: Choose a reason
-            reason_for_refusal_other:
-              blank: Enter a reason
-              too_long: Enter a reason that is less than 1000 characters long
+            reason_for_refusal_notes:
+              blank: Enter details for refusing
+              too_long: Enter details for refusing that are less than 1000 characters long
         consent_form:
           attributes:
             date_of_birth:
