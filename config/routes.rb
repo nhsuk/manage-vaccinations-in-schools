@@ -116,6 +116,10 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :vaccines, only: %i[index] do
+    resources :batches, only: %i[new create]
+  end
+
   resources :schools, only: [] do
     get "close_registration", on: :member
     post "close_registration",

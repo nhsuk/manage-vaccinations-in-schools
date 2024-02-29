@@ -1,0 +1,33 @@
+<% page_title = "Manage vaccines" %>
+
+<%= h1 page_title, page_title:, size: "xl" %>
+
+<% @vaccines.each do |vaccine| %>
+  <%= render AppCardComponent.new(heading: "#{vaccine.brand} (#{vaccine.type})") do %>
+    <p class="govuk-body">
+      <%= link_to "Add batch", new_vaccine_batch_path(vaccine) %>
+    </p>
+
+    <% if vaccine.batches.any? %>
+      <%= govuk_table do |table| %>
+        <%= table.with_head do |head| %>
+          <%= head.with_row do |row| %>
+            <%= row.with_cell(text: "Batch") %>
+            <%= row.with_cell(text: "Entered") %>
+            <%= row.with_cell(text: "Expiry") %>
+          <% end %>
+        <% end %>
+
+        <%= table.with_body do |body| %>
+          <% vaccine.batches.order(:name).each do |batch| %>
+            <%= body.with_row do |row|
+                  row.with_cell(text: batch.name)
+                  row.with_cell(text: batch.created_at.to_fs(:nhsuk_date))
+                  row.with_cell(text: batch.expiry.to_fs(:nhsuk_date))
+                end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

@@ -1,0 +1,26 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+    href: vaccines_path,
+    name: "manage vaccines"
+  ) %>
+<% end %>
+
+<% page_title = "Add batch" %>
+
+<%= h1 page_title: do %>
+  <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
+    <%= @batch.vaccine.brand %>
+  </span>
+  <%= page_title %>
+<% end %>
+
+<%= form_with model: @batch, url: vaccine_batches_path(@vaccine), method: :post do |form| %>
+  <%= form.govuk_error_summary %>
+
+  <%= form.govuk_text_field :name, label: { text: "Batch" }, width: 10 %>
+  <%= form.govuk_date_field :expiry,
+                            legend: { text: "Expiry date" },
+                            hint: { text: 'For example, 27 10 2025' },
+                            link_errors: true %>
+  <%= form.govuk_submit "Add batch" %>
+<% end %>
