@@ -63,8 +63,12 @@ async function when_i_record_the_consent_refused() {
 }
 
 async function and_i_record_the_reason_for_refusal() {
-  // Why do they not agree
-  await p.getByRole("radio", { name: "Personal choice" }).click();
+  // Why are they refusing to give consent
+  await p.getByRole("radio", { name: "Medical reasons" }).click();
+
+  await p.getByRole("button", { name: "Continue" }).click();
+
+  await p.getByLabel("Give details").fill("They have a medical condition");
 
   await p.getByRole("button", { name: "Continue" }).click();
 

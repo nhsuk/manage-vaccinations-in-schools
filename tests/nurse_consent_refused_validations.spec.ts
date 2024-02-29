@@ -14,7 +14,10 @@ test("Consent refused validations", async ({ page }) => {
 
   await given_i_select_other_reason();
   await when_i_continue_without_entering_anything();
-  await then_i_see_the_other_reason_validation_errors();
+  await then_i_see_the_reason_notes_page();
+
+  await when_i_continue_without_entering_anything();
+  await then_i_see_the_reason_notes_validation_errors();
 });
 
 async function given_the_app_is_setup() {
@@ -52,6 +55,14 @@ async function given_i_select_other_reason() {
   await p.getByRole("radio", { name: "Other" }).click();
 }
 
-async function then_i_see_the_other_reason_validation_errors() {
-  await expect(p.getByRole("alert").getByText("Enter a reason")).toBeVisible();
+async function then_i_see_the_reason_notes_page() {
+  await expect(
+    p.getByRole("heading", { name: "Why are they refusing to give consent?" }),
+  ).toBeVisible();
+}
+
+async function then_i_see_the_reason_notes_validation_errors() {
+  await expect(
+    p.getByRole("alert").getByText("Enter details for refusing"),
+  ).toBeVisible();
 }

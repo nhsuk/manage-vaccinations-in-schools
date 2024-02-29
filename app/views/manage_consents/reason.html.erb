@@ -5,7 +5,8 @@
   ) %>
 <% end %>
 
-<% content_for :page_title, "Why do they not agree?" %>
+<% title = "Why are they refusing to give consent?" %>
+<% content_for :page_title, title %>
 
 <%= form_for @consent, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
@@ -14,21 +15,18 @@
                text: @patient.full_name },
     legend: { size: 'l',
               tag: 'h1',
-              text: 'Why do they not agree?' }) do %>
+              text: title }) do %>
     <%= f.govuk_radio_button :reason_for_refusal, "already_vaccinated",
       label: { text: 'Vaccine already received' }, link_errors: true %>
     <%= f.govuk_radio_button :reason_for_refusal, "will_be_vaccinated_elsewhere",
       label: { text: "Vaccine will be given elsewhere" } %>
-    <%= f.govuk_radio_button :reason_for_refusal, "medical",
+    <%= f.govuk_radio_button :reason_for_refusal, "medical_reasons",
       label: { text: 'Medical reasons' } %>
     <%= f.govuk_radio_button :reason_for_refusal, "personal_choice",
       label: { text: 'Personal choice' } %>
     <%= f.govuk_radio_divider %>
     <%= f.govuk_radio_button :reason_for_refusal, "other",
-      label: { text: 'Other' } do %>
-      <%= f.govuk_text_field :reason_for_refusal_other,
-        label: { text: 'Give details' } %>
-    <% end %>
+      label: { text: 'Other' } %>
   <% end %>
 
   <div class="nhsuk-u-margin-top-6">

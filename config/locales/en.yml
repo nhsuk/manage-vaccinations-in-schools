@@ -74,7 +74,8 @@ en:
     who: "who"
     agree: "agree"
     questions: "questions"
-    # reason: "reason" # already defined above
+    # reason: "reason"             # already defined above
+    # reason_notes: "reason-notes" # already defined above
     confirm: "confirm"
 
     # Session
@@ -95,6 +96,14 @@ en:
       title:
         flu: Do they agree to them having the flu vaccination?
         hpv: Do they agree to them having the HPV vaccination?
+    reason_for_refusal_notes:
+      title:
+        already_vaccinated: Where did their child get their vaccination?
+        will_be_vaccinated_elsewhere: Where will their child get their vaccination?
+        medical_reasons: What medical reasons prevent their child from being vaccinated?
+        personal_choice: Why are they refusing to give consent?
+        contains_gelatine: Why are they refusing to give consent?
+        other: Why are they refusing to give consent?
   vaccinations:
     form:
       label:

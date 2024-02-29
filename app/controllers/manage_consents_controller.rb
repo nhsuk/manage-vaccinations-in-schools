@@ -188,7 +188,8 @@ class ManageConsentsController < ApplicationController
         parent_relationship_other
       ],
       agree: %i[response],
-      reason: %i[reason_for_refusal reason_for_refusal_other],
+      reason: %i[reason_for_refusal],
+      reason_notes: %i[reason_for_refusal_notes],
       questions: questions_params
     }.fetch(current_step)
 

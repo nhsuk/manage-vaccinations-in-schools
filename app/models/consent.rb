@@ -113,9 +113,10 @@ class Consent < ApplicationRecord
                 in: Consent.reason_for_refusals.keys
               },
               presence: true
-    validates :reason_for_refusal_other,
-              presence: true,
-              if: -> { reason_for_refusal == "other" }
+  end
+
+  on_wizard_step :reason_notes do
+    validates :reason_for_refusal_notes, presence: true
   end
 
   on_wizard_step :questions do
@@ -134,6 +135,7 @@ class Consent < ApplicationRecord
       :agree,
       (:questions if response_given?),
       (:reason if response_refused?),
+      (:reason_notes if response_refused? && reason_notes_required?),
       :confirm
     ].compact
   end
@@ -188,6 +190,13 @@ class Consent < ApplicationRecord
       )
     patient_session.do_consent! if patient_session.may_do_consent?
     consent
+  end
+
+  def reason_notes_required?
+    reason_for_refusal_contains_gelatine? ||
+      reason_for_refusal_already_vaccinated? ||
+      reason_for_refusal_will_be_vaccinated_elsewhere? ||
+      reason_for_refusal_medical_reasons? || reason_for_refusal_other?
   end
 
   private

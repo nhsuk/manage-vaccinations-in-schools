@@ -64,7 +64,7 @@ async function when_i_record_the_consent_refused() {
 }
 
 async function and_i_record_the_reason_for_refusal() {
-  // Why do they not agree
+  // Why are they refusing to give consent
   await p.getByRole("radio", { name: "Personal choice" }).click();
 
   await p.getByRole("button", { name: "Continue" }).click();
