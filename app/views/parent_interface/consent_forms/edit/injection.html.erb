@@ -17,10 +17,10 @@
 
   <%= f.govuk_radio_buttons_fieldset(:contact_injection,
     legend: { size: 's',
-              text: 'Would you like a nurse to contact you about this option?' }
+              text: 'Would you like someone to contact you about this option?' }
   ) do %>
     <%= f.govuk_radio_button :contact_injection, true,
-      label: { text: 'Yes, I am happy for a nurse to contact me' },
+      label: { text: 'Yes, I am happy for someone to contact me' },
       link_errors: true %>
     <%= f.govuk_radio_button :contact_injection, false,
       label: { text: 'No' } %>
