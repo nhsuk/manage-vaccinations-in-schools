@@ -90,8 +90,7 @@ RSpec.configure do |config|
   end
 
   config.include ActiveJob::TestHelper, type: :feature
+  config.include Devise::Test::IntegrationHelpers, type: :feature
   config.include FactoryBot::Syntax::Methods
   config.include ViewComponent::TestHelpers, type: :component
-
-  config.include Devise::Test::IntegrationHelpers, type: :request
 end
