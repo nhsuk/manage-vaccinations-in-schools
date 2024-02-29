@@ -1,6 +1,6 @@
 <h2 class="nhsuk-heading-s nhsuk-u-margin-0 app-visually-hidden-from-tablet"><%= caption %></h2>
 
-<action-table class="nhsuk-grid-row" sort="name">
+<action-table store="<%= id %>" class="nhsuk-grid-row" sort="name">
   <div class="nhsuk-grid-column-one-quarter">
     <%= render AppPatientTableFilterComponent.new(tab_id: id) %>
   </div>

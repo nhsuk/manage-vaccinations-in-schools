@@ -4,7 +4,7 @@
   </h2>
 <% end %>
 
-<action-table class="nhsuk-grid-row" sort="name">
+<action-table id="<%= @tab_id %>" class="nhsuk-grid-row" sort="name" store>
   <div class="nhsuk-grid-column-one-quarter">
     <%= render AppPatientTableFilterComponent.new(tab_id: @tab_id) %>
   </div>
