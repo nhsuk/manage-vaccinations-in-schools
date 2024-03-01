@@ -117,7 +117,10 @@ Rails.application.routes.draw do
   end
 
   resources :vaccines, only: %i[index] do
-    resources :batches, only: %i[new create]
+    resources :batches, only: %i[new create] do
+      post "make-default", on: :member, as: :make_default
+      post "remove-default", on: :member, as: :remove_default
+    end
   end
 
   resources :schools, only: [] do

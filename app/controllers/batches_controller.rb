@@ -1,4 +1,6 @@
 class BatchesController < ApplicationController
+  include TodaysBatchConcern
+
   layout "two_thirds"
 
   before_action :set_vaccine
@@ -16,6 +18,16 @@ class BatchesController < ApplicationController
     else
       render :new
     end
+  end
+
+  def make_default
+    self.todays_batch_id = params[:id]
+    redirect_to vaccines_path
+  end
+
+  def remove_default
+    unset_todays_batch
+    redirect_to vaccines_path
   end
 
   private
