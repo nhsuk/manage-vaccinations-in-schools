@@ -30,9 +30,10 @@ RSpec.describe AppConsentResponseComponent, type: :component do
   end
 
   context "with consent taken over the phone" do
-    let(:consent) { create(:consent, :given, route: "phone") }
+    let(:consent) { create(:consent, :given_verbally) }
 
     it { should have_text("Consent given (phone)") }
+    it { should have_text("Test User") }
   end
 
   context "with consent_form" do

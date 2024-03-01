@@ -56,6 +56,13 @@ class AppConsentResponseComponent < ViewComponent::Base
   end
 
   def recorded_by_link(consent:)
-    link_to(consent.parent_name, "mailto:#{consent.parent_email}")
+    if consent.respond_to?(:via_phone?) && consent.via_phone?
+      link_to(
+        consent.recorded_by.full_name,
+        "mailto:#{consent.recorded_by.email}"
+      )
+    else
+      link_to(consent.parent_name, "mailto:#{consent.parent_email}")
+    end
   end
 end
