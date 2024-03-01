@@ -208,4 +208,7 @@ end %>
   <% end %>
 <% end %>
 
-<%= govuk_button_to "Confirm", url_for(action: :record), method: :put %>
+<%= govuk_button_to "Confirm",
+                    url_for(action: :record),
+                    method: :put,
+                    prevent_double_click: true %>
