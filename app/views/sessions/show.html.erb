@@ -80,7 +80,8 @@
         "Set session in progress for today",
         make_in_progress_session_path,
         method: :put,
-        secondary: true
+        secondary: true,
+        prevent_double_click: true
       ) %>
     <% end %>
   <% end %>
