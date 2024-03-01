@@ -1,4 +1,6 @@
 class VaccinationsController < ApplicationController
+  include TodaysBatchConcern
+
   before_action :set_session
   before_action :set_patient, except: %i[index record_template]
   before_action :set_patient_sessions, only: %i[index record_template]
@@ -223,10 +225,7 @@ class VaccinationsController < ApplicationController
   end
 
   def set_todays_batch_id
-    if session.key?(:todays_batch_id) && session.key?(:todays_batch_date) &&
-         session[:todays_batch_date] == Time.zone.now.to_date.to_s
-      @todays_batch_id = session[:todays_batch_id]
-    end
+    @todays_batch_id = todays_batch_id
   end
 
   def confirm_params

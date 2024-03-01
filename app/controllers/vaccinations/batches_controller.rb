@@ -1,4 +1,6 @@
 class Vaccinations::BatchesController < ApplicationController
+  include TodaysBatchConcern
+
   before_action :set_session, only: %i[edit update]
   before_action :set_patient, only: %i[edit update]
   before_action :set_patient_session, only: %i[edit update]
@@ -56,11 +58,7 @@ class Vaccinations::BatchesController < ApplicationController
          vaccination_record_batch_params[:batch_id].in?(
            params[:vaccination_record][:todays_batch]
          )
-      session[:todays_batch_id] = vaccination_record_batch_params[:batch_id]
-      session[:todays_batch_date] = Time.zone.now.to_date
-    elsif session.key?(:todays_batch_date) != Time.zone.now.to_date.to_s
-      session.delete(:todays_batch_id)
-      session.delete(:todays_batch_date)
+      self.todays_batch_id = vaccination_record_batch_params[:batch_id]
     end
   end
 
