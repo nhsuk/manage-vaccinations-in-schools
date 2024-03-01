@@ -13,8 +13,6 @@ FactoryBot.define do
   factory :vaccine do
     transient { batch_count { 1 } }
 
-    initialize_with { Vaccine.find_or_initialize_by(type:, brand:, method:) }
-
     hpv
 
     after(:create) do |vaccine, evaluator|
