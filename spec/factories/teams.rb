@@ -45,5 +45,9 @@ FactoryBot.define do
         create(:user, **options)
       end
     end
+
+    trait :with_one_location do
+      after(:create) { |team| create(:location, team:) }
+    end
   end
 end
