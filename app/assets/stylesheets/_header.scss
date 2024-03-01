@@ -8,12 +8,6 @@
     max-width: auto;
   }
 
-  &__navigation-list {
-    .nhsuk-header__navigation-item:first-of-type {
-      margin-right: auto;
-    }
-  }
-
   &__button-link {
     @extend .nhsuk-header__navigation-link;
     border: none;
@@ -24,4 +18,8 @@
     text-align: left;
     cursor: pointer;
   }
+}
+
+.app-header__navigation-item--divider {
+  margin-right: auto;
 }
