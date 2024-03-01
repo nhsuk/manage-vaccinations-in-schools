@@ -50,7 +50,7 @@ RSpec.feature "Manage batches", type: :feature do
   def when_i_manage_vaccines
     sign_in_as_nurse_testy
 
-    click_on "Manage vaccines"
+    click_on "Manage vaccines", match: :first
   end
 
   def sign_in_as_nurse_testy
