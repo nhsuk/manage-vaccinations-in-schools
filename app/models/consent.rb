@@ -20,16 +20,19 @@
 #  updated_at                  :datetime         not null
 #  campaign_id                 :bigint           not null
 #  patient_id                  :bigint           not null
+#  recorded_by_user_id         :bigint
 #
 # Indexes
 #
-#  index_consents_on_campaign_id  (campaign_id)
-#  index_consents_on_patient_id   (patient_id)
+#  index_consents_on_campaign_id          (campaign_id)
+#  index_consents_on_patient_id           (patient_id)
+#  index_consents_on_recorded_by_user_id  (recorded_by_user_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (campaign_id => campaigns.id)
 #  fk_rails_...  (patient_id => patients.id)
+#  fk_rails_...  (recorded_by_user_id => users.id)
 #
 
 class Consent < ApplicationRecord
@@ -41,6 +44,10 @@ class Consent < ApplicationRecord
   has_one :consent_form
   belongs_to :patient
   belongs_to :campaign
+  belongs_to :recorded_by,
+             class_name: "User",
+             optional: true,
+             foreign_key: :recorded_by_user_id
 
   scope :submitted_for_campaign,
         ->(campaign) { where(campaign:).where.not(recorded_at: nil) }
