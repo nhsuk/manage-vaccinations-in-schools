@@ -14,12 +14,14 @@
 #
 FactoryBot.define do
   factory :campaign do
+    transient { batch_count { 1 } }
+
     team
     hpv
 
     trait :hpv do
       name { "HPV" }
-      vaccines { [create(:vaccine, :gardasil_9)] }
+      vaccines { [create(:vaccine, :gardasil_9, batch_count:)] }
 
       after :create do |campaign|
         vaccine = campaign.vaccines.first
@@ -42,16 +44,24 @@ FactoryBot.define do
       end
     end
 
+    trait :hpv_no_batches do
+      transient { batch_count { 0 } }
+      hpv
+    end
+
     trait :flu do
       name { "Flu" }
       vaccines do
-        [create(:vaccine, :fluenz_tetra), create(:vaccine, :fluerix_tetra)]
+        [
+          create(:vaccine, :fluenz_tetra, batch_count:),
+          create(:vaccine, :fluerix_tetra, batch_count:)
+        ]
       end
     end
 
     trait :flu_nasal_only do
       name { "Flu" }
-      vaccines { [create(:vaccine, :fluenz_tetra)] }
+      vaccines { [create(:vaccine, :fluenz_tetra, batch_count:)] }
     end
   end
 end
