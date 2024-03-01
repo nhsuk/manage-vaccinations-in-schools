@@ -10,8 +10,8 @@ application.register("check-all", CheckAllController);
 import GovukAccordionController from "./govuk_accordion_controller";
 application.register("govuk-accordion", GovukAccordionController);
 
-import GovukButtonController from "./govuk_button_controller";
-application.register("govuk-button", GovukButtonController);
+import NhsukButtonController from "./nhsuk_button_controller";
+application.register("nhsuk-button", NhsukButtonController);
 
 import GovukCharacterCountController from "./govuk_character_count_controller";
 application.register("govuk-character-count", GovukCharacterCountController);
