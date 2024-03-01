@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Parent gives consent", type: :feature do
+RSpec.describe "Parent gives consent" do
   include SessionCreationSteps
 
   before { Flipper.enable(:parent_contact_method) }

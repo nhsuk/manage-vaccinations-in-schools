@@ -2,7 +2,7 @@ require "rails_helper"
 
 require "rake"
 
-RSpec.feature "Manage batches", type: :feature do
+RSpec.describe "Manage batches" do
   before do
     Rails.application.load_tasks
     Timecop.freeze(Time.zone.local(2024, 2, 29)) # so we don't worry about expiry dates
