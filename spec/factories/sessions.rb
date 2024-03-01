@@ -43,7 +43,10 @@ FactoryBot.define do
     end
 
     after :create do |session, context|
-      create_list :patient, context.patients_in_session, sessions: [session]
+      create_list :patient,
+                  context.patients_in_session,
+                  sessions: [session],
+                  location: session.location
     end
   end
 end
