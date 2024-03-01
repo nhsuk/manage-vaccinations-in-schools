@@ -1,6 +1,7 @@
 class ManageConsentsController < ApplicationController
   include Wicked::Wizard
   include Wicked::Wizard::Translated # For custom URLs, see en.yml wicked
+  include TriageMailerConcern
 
   layout "two_thirds"
 
@@ -84,6 +85,7 @@ class ManageConsentsController < ApplicationController
       if @triage.persisted?
         @patient_session.do_consent!
         @patient_session.do_triage!
+        send_triage_email(@patient_session)
       else
         # We need to discard the draft triage record so that the patient
         # session can be saved.
