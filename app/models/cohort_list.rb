@@ -62,15 +62,21 @@ class CohortList
   end
 
   def parse_rows!
-    if data.headers != EXPECTED_HEADERS
+    if (EXPECTED_HEADERS - data.headers) != []
       self.missing_headers = EXPECTED_HEADERS - data.headers
       return
     end
 
     self.rows =
-      data
-        .map { |raw_row| raw_row.to_h.transform_keys { _1.downcase.to_sym } }
-        .map { CohortListRow.new(_1.merge(team:)) }
+      data.map do |raw_row|
+        CohortListRow.new(
+          raw_row
+            .to_h
+            .slice(*EXPECTED_HEADERS) # Remove extra columns
+            .transform_keys { _1.downcase.to_sym }
+            .merge(team:)
+        )
+      end
   end
 
   def generate_patients!

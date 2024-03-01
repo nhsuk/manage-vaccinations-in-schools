@@ -79,6 +79,17 @@ RSpec.describe CohortList, type: :model do
       end
     end
 
+    describe "with unrecognised fields" do
+      let(:file) { "valid_cohort_extra_fields.csv" }
+
+      it "populates rows" do
+        cohort_list.load_data!
+        cohort_list.parse_rows!
+
+        expect(cohort_list).to be_valid
+      end
+    end
+
     describe "with valid fields" do
       let(:file) { "valid_cohort.csv" }
 
