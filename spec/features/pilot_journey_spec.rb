@@ -1,8 +1,6 @@
-# a feature spec which logs in a user and then visits /dashboard
-
 require "rails_helper"
 
-RSpec.feature "Pilot journey", type: :feature do
+RSpec.describe "Pilot journey" do
   before { Timecop.freeze(Time.zone.local(2024, 2, 1)) }
   after { Timecop.return }
 
