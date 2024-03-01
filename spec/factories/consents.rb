@@ -64,6 +64,11 @@ FactoryBot.define do
       response { :given }
     end
 
+    trait :given_verbally do
+      route { "phone" }
+      recorded_by { create(:user) }
+    end
+
     trait :refused do
       response { :refused }
       reason_for_refusal { :personal_choice }
