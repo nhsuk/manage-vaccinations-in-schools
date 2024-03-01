@@ -1,13 +1,7 @@
 require "rails_helper"
 
-require "rake"
-
 RSpec.describe "Manage batches" do
-  before do
-    Rails.application.load_tasks
-    Timecop.freeze(Time.zone.local(2024, 2, 29)) # so we don't worry about expiry dates
-  end
-
+  before { Timecop.freeze(Time.zone.local(2024, 2, 29)) }
   after { Timecop.return }
 
   scenario "Add a new batch" do
@@ -21,48 +15,15 @@ RSpec.describe "Manage batches" do
   end
 
   def given_my_team_is_running_an_hpv_vaccination_campaign
-    team = build(:team) # get some fake data
-
-    suppress_output do
-      Rake::Task["add_new_hpv_team"].invoke(
-        team.email,
-        team.name,
-        team.phone,
-        team.ods_code,
-        team.privacy_policy_url,
-        team.reply_to_id
-      )
-    end
-
-    created_team = Team.find_by(email: team.email)
-
-    suppress_output do
-      Rake::Task["add_new_user"].invoke(
-        "nurse.testy@example.com",
-        "nurse.testy@example.com",
-        "Nurse Testy",
-        created_team.id,
-        ""
-      )
-    end
+    @team = create(:team, :with_one_nurse)
+    create(:campaign, :hpv_no_batches, team: @team)
   end
 
   def when_i_manage_vaccines
-    sign_in_as_nurse_testy
-
-    click_on "Manage vaccines", match: :first
-  end
-
-  def sign_in_as_nurse_testy
-    if page.current_url.present? && page.has_content?("Sign out")
-      click_on "Sign out"
-    end
+    sign_in @team.users.first
 
     visit "/dashboard"
-    fill_in "Email address", with: "nurse.testy@example.com"
-    fill_in "Password", with: "nurse.testy@example.com"
-    click_button "Sign in"
-    expect(page).to have_content("Signed in successfully.")
+    click_on "Manage vaccines", match: :first
   end
 
   def then_i_see_an_hpv_vaccine_with_no_batches_set_up
@@ -95,14 +56,5 @@ RSpec.describe "Manage batches" do
         "30 March 2024" # expiry
       ].join("")
     )
-  end
-
-  def suppress_output
-    original_stdout = $stdout
-    $stdout = StringIO.new
-    yield
-    $stdout.string
-  ensure
-    $stdout = original_stdout
   end
 end
