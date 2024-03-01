@@ -9,9 +9,8 @@ RSpec.describe "Manage consent" do
     when_i_record_the_consent_refusal_and_reason
     then_i_see_the_consent_responses_page
 
-    # TODO: This is a bug in the app, their status should be do not vaccinate
     when_i_go_to_the_patient
-    then_i_see_that_the_child_needs_their_refusal_checked
+    then_i_see_that_the_status_is_do_not_vaccinate
   end
 
   def given_i_am_signed_in
@@ -65,7 +64,7 @@ RSpec.describe "Manage consent" do
     click_link "View child record"
   end
 
-  def then_i_see_that_the_child_needs_their_refusal_checked
-    expect(page).to have_content("Consent refused")
+  def then_i_see_that_the_status_is_do_not_vaccinate
+    expect(page).to have_content("Do not vaccinate")
   end
 end

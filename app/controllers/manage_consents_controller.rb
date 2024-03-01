@@ -77,6 +77,10 @@ class ManageConsentsController < ApplicationController
       @consent.recorded_at = Time.zone.now
       @consent.save!
 
+      if @consent.response_refused?
+        @triage.update! status: "do_not_vaccinate", user: current_user
+      end
+
       if @triage.persisted?
         @patient_session.do_consent!
         @patient_session.do_triage!

@@ -63,6 +63,7 @@ module PatientSessionStateMachineConcern
         valid_states_needing_triage = %i[
           consent_given_triage_needed
           consent_given_triage_not_needed
+          consent_refused
           triaged_do_not_vaccinate
           triaged_kept_in_triage
           triaged_ready_to_vaccinate
