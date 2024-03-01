@@ -174,7 +174,8 @@ class ManageConsentsController < ApplicationController
       attrs.merge!(
         parent_name: @patient.parent_name,
         parent_phone: @patient.parent_phone,
-        parent_relationship: @patient.parent_relationship
+        parent_relationship: @patient.parent_relationship,
+        recorded_by: current_user
       )
     end
 
