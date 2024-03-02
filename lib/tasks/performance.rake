@@ -21,7 +21,7 @@ task :performance, [] => :environment do |_task, _args|
     puts ":busts_in_silhouette: Active users: #{users} users signed in in the last week"
     puts ""
 
-    team.campaigns.first.sessions.each do |session|
+    team.campaigns.first.sessions.active.each do |session|
       puts ":school: *#{session.location.name}*"
       puts ""
 
@@ -34,6 +34,7 @@ task :performance, [] => :environment do |_task, _args|
       puts "- :crying_cat_face: #{pluralize(@counts[:without_a_response], "child")} without a response"
       puts "- :shrug: #{pluralize(@counts[:unmatched_responses], "response")} need matching with records in the cohort"
       puts "- :syringe: #{pluralize(@counts[:ready_to_vaccinate], "child")} ready to vaccinate"
+      puts ""
     end
   end
 end
