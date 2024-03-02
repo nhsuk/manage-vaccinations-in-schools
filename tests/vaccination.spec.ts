@@ -13,9 +13,6 @@ test("Vaccination", async ({ page }) => {
   await then_i_see_the_vaccination_page();
   await then_i_see_the_responses_to_health_questions();
 
-  await when_i_click_on_the_responses();
-  await then_i_should_see_health_question_responses();
-
   // Successful vaccination
   await when_i_record_a_vaccination();
   await then_i_should_see_the_select_batch_page();
@@ -70,13 +67,7 @@ async function then_i_see_the_responses_to_health_questions() {
   await expect(
     p.locator(".nhsuk-card", { hasText: "Consent given by" }),
   ).toHaveText(/Responses to health questions/);
-}
 
-async function when_i_click_on_the_responses() {
-  await p.getByText("Responses to health questions").click();
-}
-
-async function then_i_should_see_health_question_responses() {
   await expect(
     p.locator("dt", { hasText: "Does the child have any severe allergies" }),
   ).toBeVisible();

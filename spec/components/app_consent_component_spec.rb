@@ -77,7 +77,7 @@ RSpec.describe AppConsentComponent, type: :component do
     it { should_not have_css("a", text: "Contact #{consent.parent_name}") }
     it { should have_css("details", text: "Responses to health questions") }
 
-    it "does not open the health questions details" do
+    it "does not open the health questions details (as there are no notes in the health questions)" do
       should have_css "details:not([open])",
                       text: "Responses to health questions"
     end
@@ -91,9 +91,8 @@ RSpec.describe AppConsentComponent, type: :component do
     let(:summary) { "Consent given by #{consent.parent_name} (#{relation})" }
     it { should have_css("details[open]", text: summary) }
 
-    it "does not open the health questions details" do
-      should have_css "details:not([open])",
-                      text: "Responses to health questions"
+    it "opens the health questions details (because there are notes in the health questions)" do
+      should have_css "details[open]", text: "Responses to health questions"
     end
   end
 
@@ -103,7 +102,7 @@ RSpec.describe AppConsentComponent, type: :component do
     let(:summary) { "Consent given by #{consent.parent_name} (#{relation})" }
     it { should have_css("details:not([open])", text: summary) }
 
-    it "does not open the health questions details" do
+    it "doesn't open the health questions details (because there are notes in the health questions)" do
       should have_css "details:not([open])",
                       text: "Responses to health questions"
     end
@@ -117,9 +116,8 @@ RSpec.describe AppConsentComponent, type: :component do
     let(:summary) { "Consent given by #{consent.parent_name} (#{relation})" }
     it { should have_css("details:not([open])", text: summary) }
 
-    it "does not open the health questions details" do
-      should have_css "details:not([open])",
-                      text: "Responses to health questions"
+    it "opens the health questions details (because there are notes in the health questions)" do
+      should have_css "details[open]", text: "Responses to health questions"
     end
   end
 end

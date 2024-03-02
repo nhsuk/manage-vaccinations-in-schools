@@ -37,6 +37,8 @@ class VaccinationRecord < ApplicationRecord
   belongs_to :user
   has_one :vaccine, through: :batch
 
+  scope :administered, -> { where(administered: true) }
+
   enum :delivery_method, %w[intramuscular subcutaneous], prefix: true
   enum :delivery_site,
        %w[
