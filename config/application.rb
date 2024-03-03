@@ -65,5 +65,6 @@ module ManageVaccinations
       .root
       .join("spec/components/previews")
       .to_s
+    config.view_component.default_preview_layout = "component_preview"
   end
 end
