@@ -246,6 +246,14 @@ You can add a new user to an environment using the `add_new_user` rake task:
 rails add_new_user['user@example.com','password123','John Doe',1]
 ```
 
+## Previewing view components
+
+[ViewComponent previews](https://viewcomponent.org/guide/previews.html) are enabled in development and test environments. In development, they are here:
+
+    http://localhost:4000/rails/view_components
+
+The previews are defined in `spec/components/previews`.
+
 ## Deploying
 
 This app can be deployed to AWS using AWS Copilot. Once authenticated, you can
