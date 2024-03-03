@@ -727,4 +727,24 @@ RSpec.describe ConsentForm, type: :model do
       it { is_expected.to eq patients.first }
     end
   end
+
+  it "removes the health questions when the parent refuses consent" do
+    consent_form =
+      create(:consent_form, :with_health_answers_no_branching, response: nil)
+
+    consent_form.update!(response: "refused", reason: "personal_choice")
+    consent_form.reload
+
+    expect(consent_form.health_answers).to be_empty
+  end
+
+  it "leaves the health questions when the parent gives consent" do
+    consent_form =
+      create(:consent_form, :with_health_answers_no_branching, response: nil)
+
+    consent_form.update!(response: "given")
+    consent_form.reload
+
+    expect(consent_form.health_answers).not_to be_empty
+  end
 end
