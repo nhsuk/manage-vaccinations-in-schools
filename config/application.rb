@@ -60,5 +60,10 @@ module ManageVaccinations
 
     config.active_job.queue_adapter = :good_job
     config.good_job.execution_mode = :async
+
+    config.view_component.preview_paths << Rails
+      .root
+      .join("spec/components/previews")
+      .to_s
   end
 end
