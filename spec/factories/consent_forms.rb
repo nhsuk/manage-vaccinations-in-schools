@@ -84,16 +84,19 @@ FactoryBot.define do
             id: 0,
             question:
               "Does the child have any severe allergies that have led to an anaphylactic reaction?",
-            next_question: 1
+            next_question: 1,
+            response: "no"
           ),
           HealthAnswer.new(
             id: 1,
             question: "Does the child have any existing medical conditions?",
-            next_question: 2
+            next_question: 2,
+            response: "no"
           ),
           HealthAnswer.new(
             id: 2,
-            question: "Does the child take any regular medication?"
+            question: "Does the child take any regular medication?",
+            response: "no"
           )
         ]
       end
@@ -106,17 +109,21 @@ FactoryBot.define do
             id: 0,
             question: "Has your child been diagnosed with asthma?",
             next_question: 2,
-            follow_up_question: 1
+            follow_up_question: 1,
+            response: "yes",
+            notes: "Notes"
           ),
           HealthAnswer.new(
             id: 1,
             question: "Have they taken oral steroids in the last 2 weeks?",
-            next_question: 2
+            next_question: 2,
+            response: "no"
           ),
           HealthAnswer.new(
             id: 2,
             question:
-              "Has your child had a flu vaccination in the last 5 months?"
+              "Has your child had a flu vaccination in the last 5 months?",
+            response: "no"
           )
         ]
       end
