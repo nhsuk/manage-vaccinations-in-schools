@@ -214,12 +214,6 @@ class ConsentForm < ApplicationRecord
     ].compact
   end
 
-  def form_steps_for_health_questions
-    return [] unless consent_given?
-
-    health_answers.map.with_index { |_args, idx| :"health_#{idx + 1}" }
-  end
-
   def each_health_answer
     return if health_answers.empty?
     return to_enum(:each_health_answer) unless block_given?
