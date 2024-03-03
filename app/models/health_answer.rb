@@ -50,7 +50,7 @@ class HealthAnswer
 
   class ArraySerializer
     def self.load(arr)
-      return [] if arr.nil?
+      return if arr.nil?
       arr.map.with_index { |(item), idx| HealthAnswer.new(item.merge(id: idx)) }
     end
 
