@@ -157,5 +157,9 @@ FactoryBot.define do
         end
       end
     end
+
+    trait :needing_triage do
+      health_question_notes
+    end
   end
 end

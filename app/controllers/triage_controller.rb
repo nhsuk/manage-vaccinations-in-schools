@@ -45,7 +45,7 @@ class TriageController < ApplicationController
     @triage.assign_attributes triage_params.merge(user: current_user)
     if @triage.save(context: :consent)
       @patient_session.do_triage!
-      send_triage_mail(@patient_session)
+      send_triage_mail(@patient_session, @consent)
       success_flash_after_patient_update(
         patient: @patient,
         view_record_link: session_patient_triage_path(@session, @patient)
@@ -61,7 +61,7 @@ class TriageController < ApplicationController
     @triage.assign_attributes triage_params
     if @triage.save(context: :consent)
       @patient_session.do_triage!
-      send_triage_mail(@patient_session)
+      send_triage_mail(@patient_session, @consent)
       success_flash_after_patient_update(
         patient: @patient,
         view_record_link: session_patient_triage_path(@session, @patient)
