@@ -17,8 +17,8 @@ class AppConsentResponseComponent < ViewComponent::Base
 
     return response_contents.first if response_contents.size == 1
 
-    tag.ul(class: "nhsuk-list") do
-      response_contents.map { |content| tag.li(content) }.join("\n").html_safe
+    tag.ul(class: "nhsuk-list nhsuk-list--bullet app-list--events") do
+      safe_join(response_contents.map { |content| tag.li(content) }, "\n")
     end
   end
 
