@@ -32,5 +32,7 @@ FactoryBot.define do
     url { Faker::Internet.url }
     team { Team.first || association(:team) }
     urn { rand(100_000..999_999).to_s }
+    registration_open { true }
+    permission_to_observe_required { true }
   end
 end
