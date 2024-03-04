@@ -1,17 +1,17 @@
 require "rails_helper"
 
-RSpec.describe "Manage consent" do
-  scenario "Parent refuses verbal consent" do
+RSpec.describe "Verbal consent" do
+  scenario "parent gives consent, triage required, ready to vaccinate" do
     given_i_am_signed_in
     when_i_get_verbal_consent_for_a_patient
     then_the_consent_form_is_prefilled
 
-    when_i_record_the_consent_refusal_and_reason
+    when_i_record_that_consent_was_given
     then_i_see_the_consent_responses_page
 
     when_i_go_to_the_patient
-    then_i_see_that_the_status_is_do_not_vaccinate
-    and_an_email_is_sent_to_the_parent_confirming_the_refusal
+    then_i_see_that_the_status_is_safe_to_vaccinate
+    and_the_kept_in_triage_email_is_sent_to_the_parent
   end
 
   def given_i_am_signed_in
@@ -33,23 +33,21 @@ RSpec.describe "Manage consent" do
     expect(page).to have_field("Full name", with: @patient.parent_name)
   end
 
-  def given_i_call_the_parent_and_they_refuse_consent
-  end
-
-  def when_i_record_the_consent_refusal_and_reason
+  def when_i_record_that_consent_was_given
     # Who are you trying to get consent from?
     click_button "Continue"
 
     # Do they agree?
-    choose "No, they do not agree"
+    choose "Yes, they agree"
     click_button "Continue"
 
-    # Reason
-    choose "Medical reasons"
-    click_button "Continue"
-
-    # Reason notes
-    fill_in "Give details", with: "They have a medical condition"
+    # Health questions
+    find_all(".edit_consent .nhsuk-fieldset")[0].choose "No"
+    find_all(".edit_consent .nhsuk-fieldset")[1].choose "Yes"
+    find_all(".edit_consent .nhsuk-fieldset")[1].fill_in "Give details",
+              with: "moar medicines"
+    find_all(".edit_consent .nhsuk-fieldset")[2].choose "No"
+    choose "Yes, it’s safe to vaccinate"
     click_button "Continue"
 
     # Confirm
@@ -65,16 +63,16 @@ RSpec.describe "Manage consent" do
     click_link "View child record"
   end
 
-  def then_i_see_that_the_status_is_do_not_vaccinate
-    expect(page).to have_content("Do not vaccinate")
+  def then_i_see_that_the_status_is_safe_to_vaccinate
+    expect(page).to have_content("Safe to vaccinate")
   end
 
-  def and_an_email_is_sent_to_the_parent_confirming_the_refusal
+  def and_the_kept_in_triage_email_is_sent_to_the_parent
     perform_enqueued_jobs
     email = ActionMailer::Base.deliveries.last
     expect(email.to).to eq [@patient.parent_email]
     expect(
       email[:template_id].value
-    ).to eq "5a676dac-3385-49e4-98c2-fc6b45b5a851"
+    ).to eq "fa3c8dd5-4688-4b93-960a-1d422c4e5597"
   end
 end
