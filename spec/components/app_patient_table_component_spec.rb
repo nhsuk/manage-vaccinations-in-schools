@@ -28,6 +28,22 @@ RSpec.describe AppPatientTableComponent, type: :component do
   it { should have_column("Date of birth") }
   it { should have_css(".nhsuk-table__head .nhsuk-table__row", count: 1) }
 
+  it "includes the patient's full name" do
+    expect(page).to have_text(patient_sessions.first.patient.full_name)
+  end
+
+  describe "when the patient has a common name" do
+    let(:patient_sessions) do
+      create_list(:patient_session, 2).tap do |ps|
+        ps.first.patient.update!(common_name: "Bobby")
+      end
+    end
+
+    it "includes the patient's common name" do
+      expect(page).to have_text("Bobby")
+    end
+  end
+
   it { should have_css(".nhsuk-table__body") }
   it { should have_css(".nhsuk-table__body .nhsuk-table__row", count: 2) }
   it { should have_link(patient_sessions.first.patient.full_name) }
