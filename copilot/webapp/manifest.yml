@@ -61,7 +61,6 @@ environments:
       RAILS_ENV: staging
       MAVIS__HOST: "staging.manage-vaccinations-in-schools.nhs.uk"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "staging.give-or-refuse-consent-for-vaccinations.nhs.uk"
-      WEB_CONCURRENCY: 2
   test:
     count: 2
     http:
@@ -73,7 +72,6 @@ environments:
       RAILS_ENV: staging
       MAVIS__HOST: "test.mavistesting.com"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "test.mavistesting.com"
-      WEB_CONCURRENCY: 2
   training:
     http:
       alias:
@@ -93,4 +91,3 @@ environments:
       RAILS_ENV: production
       MAVIS__HOST: "www.manage-vaccinations-in-schools.nhs.uk"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "www.give-or-refuse-consent-for-vaccinations.nhs.uk"
-      WEB_CONCURRENCY: 2
