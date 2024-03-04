@@ -129,6 +129,11 @@ Rails.application.configure do
       cron: "every day at 9am",
       class: "ConsentRemindersJob",
       description: "Send consent reminder emails to parents for each session"
+    },
+    session_reminder: {
+      cron: "every day at 9am",
+      class: "SessionRemindersJob",
+      description: "Send session reminder emails to parents"
     }
   }
 end
