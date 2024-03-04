@@ -74,7 +74,13 @@ FactoryBot.define do
 
     trait :consent_given_triage_not_needed do
       after(:create) do |patient, evaluator|
-        create(:consent, :given, campaign: evaluator.campaign, patient:)
+        create(
+          :consent,
+          :given,
+          campaign: evaluator.campaign,
+          patient:,
+          parent_relationship: patient.parent_relationship
+        )
       end
     end
 
