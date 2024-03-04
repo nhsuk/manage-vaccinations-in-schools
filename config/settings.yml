@@ -4,3 +4,4 @@ pilot:
   latest_session_date: 30-3-2024
 support_username: manage
 support_password: vaccinations
+web_concurrency: 2
