@@ -35,6 +35,10 @@ RSpec.describe TriageMailerConcern do
             patient_session
           )
         end
+
+        it "doesn't send a feedback email" do
+          expect(ConsentFormMailer).not_to have_received(:give_feedback)
+        end
       end
 
       context "when the parents agree, triage is required but it isn't safe to vaccinate" do
@@ -98,6 +102,14 @@ RSpec.describe TriageMailerConcern do
           expect(TriageMailer).to have_received(:vaccination_will_happen).with(
             patient_session
           )
+        end
+
+        it "sends a feedback email" do
+          expect(ConsentFormMailer).to have_received(:give_feedback).with(
+            consent:,
+            session: patient_session.session
+          )
+          expect(mail).to have_received(:deliver_later).with(wait: 1.hour)
         end
       end
 
