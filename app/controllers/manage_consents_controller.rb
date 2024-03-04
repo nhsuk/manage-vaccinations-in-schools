@@ -85,7 +85,7 @@ class ManageConsentsController < ApplicationController
       if @triage.persisted?
         @patient_session.do_consent!
         @patient_session.do_triage!
-        send_triage_email(@patient_session)
+        send_triage_mail(@patient_session, @consent)
       else
         # We need to discard the draft triage record so that the patient
         # session can be saved.
