@@ -18,9 +18,7 @@ gem "flipper"
 gem "flipper-active_record"
 gem "flipper-ui"
 gem "good_job"
-gem "govuk-components",
-    github: "misaka/govuk-components",
-    branch: "add-data-module-to-buttons"
+gem "govuk-components", github: "x-govuk/govuk-components"
 gem "govuk_design_system_formbuilder"
 gem "govuk_markdown"
 gem "jbuilder"
