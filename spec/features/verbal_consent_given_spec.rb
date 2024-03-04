@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe "Verbal consent" do
+  include EmailExpectations
+
   scenario "Given" do
     given_i_am_signed_in
     when_i_get_verbal_consent_for_a_patient
@@ -67,22 +69,13 @@ RSpec.describe "Verbal consent" do
   end
 
   def and_an_email_is_sent_to_the_parent_confirming_the_vaccination
-    perform_enqueued_jobs
-
-    email = ActionMailer::Base.deliveries.first
-    expect(email.to).to eq [@patient.parent_email]
-    expect(
-      email[:template_id].value
-    ).to eq "7cda7ae5-99a2-4c40-9a3e-1863e23f7a73"
+    expect_email_to @patient.parent_email,
+                    "7cda7ae5-99a2-4c40-9a3e-1863e23f7a73"
   end
 
   def and_an_email_is_sent_to_the_parent_to_give_feedback
-    perform_enqueued_jobs
-
-    email = ActionMailer::Base.deliveries.second
-    expect(email.to).to eq [@patient.parent_email]
-    expect(
-      email[:template_id].value
-    ).to eq "1250c83b-2a5a-4456-8922-657946eba1fd"
+    expect_email_to @patient.parent_email,
+                    "1250c83b-2a5a-4456-8922-657946eba1fd",
+                    :second
   end
 end
