@@ -4,21 +4,19 @@ RSpec.describe "Pilot journey" do
   before { Timecop.freeze(Time.zone.local(2024, 2, 1)) }
   after { Timecop.return }
 
-  scenario "Complete journey" do
-    given_the_local_sais_team_is_running_an_hpv_vaccination_campaign
-    and_they_arranged_for_my_childs_school_to_be_in_the_pilot
-    and_registration_is_open
+  before { Flipper.enable :registration_open }
 
+  scenario "Complete journey" do
+    given_an_hpv_campaign_is_underway
     when_i_register_for_the_pilot_as_a_parent
     then_i_see_that_i_have_registered
 
     given_i_am_a_nurse_signed_into_the_service
-
     when_i_close_the_registration_for_the_pilot
     then_i_see_that_registrations_are_closed
 
     when_i_download_the_list_of_parents_interested_in_the_pilot
-    then_i_see_the_newly_registered_parent_in_the_list_of_parents_who_have_registered
+    then_i_see_the_newly_registered_parent_in_the_csv
 
     when_i_edit_and_upload_the_cohort_list
     then_i_see_that_the_cohort_has_been_uploaded
@@ -35,30 +33,10 @@ RSpec.describe "Pilot journey" do
     then_i_see_the_childs_details_including_the_updated_nhs_number
   end
 
-  def given_the_local_sais_team_is_running_an_hpv_vaccination_campaign
-    @team =
-      create(
-        :team,
-        :with_one_nurse,
-        nurse_email: "nurse.testy@example.com",
-        nurse_password: "nurse.testy@example.com"
-      )
+  def given_an_hpv_campaign_is_underway
+    @team = create(:team, :with_one_nurse)
     create(:campaign, :hpv, team: @team)
-  end
-
-  def and_they_arranged_for_my_childs_school_to_be_in_the_pilot
-    @school =
-      create(
-        :location,
-        name: "Pilot School",
-        team: @team,
-        registration_open: true,
-        permission_to_observe_required: true
-      )
-  end
-
-  def and_registration_is_open
-    Flipper.enable :registration_open
+    @school = create(:location, name: "Pilot School", team: @team)
   end
 
   def when_i_register_for_the_pilot_as_a_parent
@@ -82,25 +60,20 @@ RSpec.describe "Pilot journey" do
     fill_in "Postcode", with: "TE1 1ST"
     fill_in "NHS number", with: "999 888 7777"
     check "I agree to take part in the pilot"
-    check "I agree to share my contact details with NHS England for the purpose " \
-            "of administering payments and electronic communications"
-    check "I confirm I’ve responded to the school’s regular request for consent for my child’s HPV vaccination"
+    check "I agree to share my contact details"
+    check "I confirm I’ve responded to the school"
     check "I agree to my child’s vaccination session being observed"
+
     click_on "Register your interest"
   end
 
   def then_i_see_that_i_have_registered
-    expect(page).to have_content(
-      "Thank you for registering your interest in the NHS school vaccinations pilot"
-    )
+    expect(page).to have_content("Thank you for registering your interest")
   end
 
   def given_i_am_a_nurse_signed_into_the_service
+    sign_in @team.users.first
     visit "/dashboard"
-    fill_in "Email address", with: "nurse.testy@example.com"
-    fill_in "Password", with: "nurse.testy@example.com"
-    click_button "Sign in"
-    expect(page).to have_content("Signed in successfully.")
   end
 
   def when_i_close_the_registration_for_the_pilot
@@ -125,7 +98,7 @@ RSpec.describe "Pilot journey" do
     @registered_parents_csv = CSV.parse(page.body, headers: true)
   end
 
-  def then_i_see_the_newly_registered_parent_in_the_list_of_parents_who_have_registered
+  def then_i_see_the_newly_registered_parent_in_the_csv
     expect(@registered_parents_csv[-1].to_h).to include(
       "SCHOOL_ID" => @school.id.to_s,
       "SCHOOL_NAME" => "Pilot School",
@@ -181,13 +154,7 @@ RSpec.describe "Pilot journey" do
 
   def and_select_the_children_for_the_cohort
     expect(page).to have_content("Choose cohort for this session")
-    all("input[type=checkbox]").each do |checkbox| # uncheck all the children
-      checkbox.set(false)
-    end
-    within page.find("tr", text: "Bobby Tables") do # check bobby tables
-      find("input[type=checkbox]").check
-    end
-
+    check "Bobby Tables"
     click_on "Continue"
   end
 
