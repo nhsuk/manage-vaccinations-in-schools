@@ -1,11 +1,11 @@
 require "rails_helper"
 
-RSpec.describe "Parent gives consent" do
+RSpec.describe "Parental consent" do
   include SessionCreationSteps
 
   before { Flipper.enable(:parent_contact_method) }
 
-  scenario "Parent gives consent, their consent form exactly matches the cohort" do
+  scenario "Consent form exactly matches the cohort" do
     given_the_local_sais_team_is_running_an_hpv_vaccination_campaign
     and_they_arrange_a_session_at_my_childs_school_with_my_child_in_the_cohort
     then_they_see_that_no_consent_has_been_given_for_my_child
@@ -24,7 +24,7 @@ RSpec.describe "Parent gives consent" do
     and_they_are_ready_to_vaccinate
   end
 
-  scenario "Parent's child isn't actually at the school so they can't continue" do
+  scenario "Child isn't at the school" do
     given_the_local_sais_team_is_running_an_hpv_vaccination_campaign
     and_they_arrange_a_session_at_my_childs_school_with_my_child_in_the_cohort
     then_they_see_that_no_consent_has_been_given_for_my_child

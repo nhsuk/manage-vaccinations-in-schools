@@ -1,10 +1,10 @@
 require "rails_helper"
 
-RSpec.describe "Manage batches" do
+RSpec.describe "Batch management" do
   before { Timecop.freeze(Time.zone.local(2024, 2, 29)) }
   after { Timecop.return }
 
-  scenario "Add a new batch" do
+  scenario "Adding a new batch" do
     given_my_team_is_running_an_hpv_vaccination_campaign
     and_there_is_a_vaccination_session_today_at_one_of_my_teams_schools
 
