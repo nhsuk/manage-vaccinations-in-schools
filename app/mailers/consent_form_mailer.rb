@@ -55,7 +55,8 @@ class ConsentFormMailer < ApplicationMailer
   end
 
   def survey_deadline_date
-    return unless @consent_form
-    (@consent_form.recorded_at + 7.days).to_fs(:nhsuk_date)
+    recorded_at = @consent_form&.recorded_at || @consent.recorded_at
+
+    (recorded_at + 7.days).to_fs(:nhsuk_date)
   end
 end
