@@ -20,7 +20,7 @@ RSpec.describe AppConsentDetailsComponent, type: :component do
   end
 
   it "displays the response given" do
-    should have_css("div", text: /Response ?Consent refused/)
+    should have_css("div", text: /Response(.*?)Consent refused/m)
   end
 
   it "displays the refusal reason" do
@@ -45,7 +45,7 @@ RSpec.describe AppConsentDetailsComponent, type: :component do
     end
 
     it "displays the response given" do
-      should have_css("div", text: /Response ?Consent given/)
+      should have_css("div", text: /Response(.*?)Consent given/m)
     end
   end
 end

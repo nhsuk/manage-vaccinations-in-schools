@@ -12,13 +12,13 @@ RSpec.describe AppConsentResponseComponent, type: :component do
     let(:consent) { create(:consent, :given) }
     let(:consents) { [consent] }
 
+    it { should have_text("Consent given (online)") }
+    it { should have_text(consent.parent_name) }
     it do
-      should have_text "Consent given (online)\n" \
-                         "#{consent.parent_name}" \
-                         "#{consent.created_at.to_fs(:nhsuk_date)} at " \
-                         "#{consent.created_at.to_fs(:time)}"
+      should have_text(
+               "#{consent.created_at.to_fs(:nhsuk_date)} at #{consent.created_at.to_fs(:time)}"
+             )
     end
-
     it do
       should have_link(
                consent.parent_name,
@@ -40,11 +40,12 @@ RSpec.describe AppConsentResponseComponent, type: :component do
     let(:consent_form) { create(:consent_form, :recorded) }
     let(:consents) { [consent_form] }
 
+    it { should have_text("Consent given (online)") }
+    it { should have_text(consent_form.parent_name) }
     it do
-      should have_text "Consent given (online)\n" \
-                         "#{consent_form.parent_name}" \
-                         "#{consent_form.created_at.to_fs(:nhsuk_date)} at " \
-                         "#{consent_form.created_at.to_fs(:time)}"
+      should have_text(
+               "#{consent_form.created_at.to_fs(:nhsuk_date)} at #{consent_form.created_at.to_fs(:time)}"
+             )
     end
 
     it do
