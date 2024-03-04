@@ -36,7 +36,7 @@ class AppPatientTableComponent < ViewComponent::Base
   def column_value(patient_session, column)
     case column
     when :name
-      { text: patient_link(patient_session) }
+      { text: name_cell(patient_session) }
     when :dob
       {
         text:
@@ -64,6 +64,21 @@ class AppPatientTableComponent < ViewComponent::Base
     else
       raise ArgumentError, "Unknown column: #{column}"
     end
+  end
+
+  def name_cell(patient_session)
+    safe_join(
+      [
+        patient_link(patient_session),
+        (
+          if patient_session.patient.common_name.present?
+            "<span class=\"nhsuk-u-font-size-16\">Known as: ".html_safe +
+              patient_session.patient.common_name + "</span>".html_safe
+          end
+        )
+      ].compact,
+      tag.br
+    )
   end
 
   def patient_link(patient_session)
