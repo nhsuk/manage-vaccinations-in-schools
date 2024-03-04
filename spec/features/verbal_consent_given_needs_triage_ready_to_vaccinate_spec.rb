@@ -12,6 +12,7 @@ RSpec.describe "Verbal consent" do
     when_i_go_to_the_patient
     then_i_see_that_the_status_is_safe_to_vaccinate
     and_the_kept_in_triage_email_is_sent_to_the_parent
+    and_an_email_is_sent_to_the_parent_to_give_feedback
   end
 
   def given_i_am_signed_in
@@ -69,10 +70,20 @@ RSpec.describe "Verbal consent" do
 
   def and_the_kept_in_triage_email_is_sent_to_the_parent
     perform_enqueued_jobs
-    email = ActionMailer::Base.deliveries.last
+    email = ActionMailer::Base.deliveries.first
     expect(email.to).to eq [@patient.parent_email]
     expect(
       email[:template_id].value
     ).to eq "fa3c8dd5-4688-4b93-960a-1d422c4e5597"
+  end
+
+  def and_an_email_is_sent_to_the_parent_to_give_feedback
+    perform_enqueued_jobs
+
+    email = ActionMailer::Base.deliveries.second
+    expect(email.to).to eq [@patient.parent_email]
+    expect(
+      email[:template_id].value
+    ).to eq "1250c83b-2a5a-4456-8922-657946eba1fd"
   end
 end
