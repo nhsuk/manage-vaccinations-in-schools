@@ -22,10 +22,10 @@ describe ConsentFormMailerConcern do
       subject.send_record_mail(consent_form)
 
       expect(ConsentFormMailer).to have_received(:confirmation_injection).with(
-        consent_form
+        consent_form:
       )
       expect(ConsentFormMailer).to have_received(:give_feedback).with(
-        consent_form
+        consent_form:
       )
       expect(mail).to have_received(:deliver_later).twice
     end
@@ -35,10 +35,10 @@ describe ConsentFormMailerConcern do
       subject.send_record_mail(consent_form)
 
       expect(ConsentFormMailer).to have_received(:confirmation_refused).with(
-        consent_form
+        consent_form:
       )
       expect(ConsentFormMailer).to have_received(:give_feedback).with(
-        consent_form
+        consent_form:
       )
       expect(mail).to have_received(:deliver_later).twice
     end
@@ -49,9 +49,9 @@ describe ConsentFormMailerConcern do
 
       expect(ConsentFormMailer).to have_received(
         :confirmation_needs_triage
-      ).with(consent_form)
+      ).with(consent_form:)
       expect(ConsentFormMailer).to have_received(:give_feedback).with(
-        consent_form
+        consent_form:
       )
       expect(mail).to have_received(:deliver_later).twice
     end
@@ -60,10 +60,10 @@ describe ConsentFormMailerConcern do
       subject.send_record_mail(consent_form)
 
       expect(ConsentFormMailer).to have_received(:confirmation).with(
-        consent_form
+        consent_form:
       )
       expect(ConsentFormMailer).to have_received(:give_feedback).with(
-        consent_form
+        consent_form:
       )
       expect(mail).to have_received(:deliver_later).twice
     end
