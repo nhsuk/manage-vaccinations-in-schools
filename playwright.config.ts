@@ -41,6 +41,11 @@ export default defineConfig({
     trace: "on-first-retry",
 
     video: "retain-on-failure",
+
+    httpCredentials: {
+      username: "manage",
+      password: "vaccinations",
+    },
   },
 
   /* Configure projects for major browsers */

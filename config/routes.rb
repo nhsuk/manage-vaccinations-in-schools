@@ -20,6 +20,21 @@ Rails.application.routes.draw do
 
   get "/ping" => proc { [200, {}, ["PONG"]] }
 
+  flipper_app =
+    Flipper::UI.app do |builder|
+      builder.use Rack::Auth::Basic do |username, password|
+        ActiveSupport::SecurityUtils.secure_compare(
+          Settings.support_username,
+          username
+        ) &&
+          ActiveSupport::SecurityUtils.secure_compare(
+            Settings.support_password,
+            password
+          )
+      end
+    end
+  mount flipper_app, at: "/flipper"
+
   if Rails.env.development? || Rails.env.test?
     get "/reset", to: "dev#reset"
     get "/random_consent_form", to: "dev#random_consent_form"
@@ -28,8 +43,6 @@ Rails.application.routes.draw do
       get "/campaigns/:id", action: :show_campaign, as: "show_campaign"
       post "generate-campaign"
     end
-
-    mount Flipper::UI.app => "/flipper"
   end
 
   get "/csrf", to: "csrf#new"
