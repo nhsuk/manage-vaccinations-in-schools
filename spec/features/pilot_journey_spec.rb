@@ -6,11 +6,14 @@ RSpec.describe "Pilot journey" do
 
   before { Flipper.enable :registration_open }
 
-  scenario "Complete journey" do
+  scenario "Parent registration, cohorting, session creation, verbal consent, \
+vaccination" do
+    # Parent registration
     given_an_hpv_campaign_is_underway
     when_i_register_for_the_pilot_as_a_parent
     then_i_see_that_i_have_registered
 
+    # Cohorting
     given_i_am_a_nurse_signed_into_the_service
     when_i_close_the_registration_for_the_pilot
     then_i_see_that_registrations_are_closed
@@ -21,6 +24,7 @@ RSpec.describe "Pilot journey" do
     when_i_edit_and_upload_the_cohort_list
     then_i_see_that_the_cohort_has_been_uploaded
 
+    # Session creation
     when_i_start_creating_a_new_session_by_choosing_school_and_time
     and_select_the_children_for_the_cohort
     and_enter_timelines_and_confirm_the_session_details
@@ -31,11 +35,20 @@ RSpec.describe "Pilot journey" do
 
     when_i_click_on_the_child_we_registered
     then_i_see_the_childs_details_including_the_updated_nhs_number
+
+    # Verbal consent
+    given_the_day_of_the_session_comes
+    when_i_register_verbal_consent_and_triage
+    then_i_should_see_that_the_patient_is_ready_for_vaccination
+
+    # Vaccination
+    when_i_record_the_successful_vaccination
+    then_i_see_that_the_child_is_vaccinated
   end
 
   def given_an_hpv_campaign_is_underway
     @team = create(:team, :with_one_nurse)
-    create(:campaign, :hpv, team: @team)
+    @campaign = create(:campaign, :hpv, team: @team)
     @school = create(:location, name: "Pilot School", team: @team)
   end
 
@@ -212,5 +225,47 @@ RSpec.describe "Pilot journey" do
 
   def then_i_see_the_childs_details_including_the_updated_nhs_number
     expect(page).to have_content("NHS Number999 888 6666")
+  end
+
+  def given_the_day_of_the_session_comes
+    Timecop.travel(2024, 3, 1)
+    sign_in @team.users.first
+  end
+
+  def when_i_register_verbal_consent_and_triage
+    click_button "Get consent"
+    click_button "Continue"
+
+    choose "Yes, they agree"
+    click_button "Continue"
+
+    find_all(".edit_consent .nhsuk-fieldset")[0].choose "No"
+    find_all(".edit_consent .nhsuk-fieldset")[1].choose "No"
+    find_all(".edit_consent .nhsuk-fieldset")[2].choose "No"
+    choose "Yes, it’s safe to vaccinate"
+    click_button "Continue"
+
+    click_button "Confirm"
+
+    click_link "View child record"
+  end
+
+  def then_i_should_see_that_the_patient_is_ready_for_vaccination
+    expect(page).to have_content "Safe to vaccinate"
+  end
+
+  def when_i_record_the_successful_vaccination
+    choose "Yes, they got the HPV vaccine"
+    choose "Left arm (upper position)"
+    click_button "Continue"
+
+    choose @campaign.vaccines.first.batches.first.name
+    click_button "Continue"
+
+    click_button "Confirm"
+  end
+
+  def then_i_see_that_the_child_is_vaccinated
+    expect(page).to have_content "Vaccinated (1)"
   end
 end
