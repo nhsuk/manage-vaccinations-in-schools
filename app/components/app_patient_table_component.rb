@@ -95,7 +95,7 @@ class AppPatientTableComponent < ViewComponent::Base
         patient_session_id: patient_session.id
       ),
       secondary: true,
-      class: "app-button--small nhsuk-u-margin-bottom-0"
+      class: "app-button--small"
     )
   end
 end
