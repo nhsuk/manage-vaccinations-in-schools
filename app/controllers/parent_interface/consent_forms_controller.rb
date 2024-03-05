@@ -4,10 +4,12 @@ module ParentInterface
 
     layout "two_thirds"
 
-    skip_before_action :set_consent_form, only: %i[start create]
-    skip_before_action :authenticate_consent_form_user!, only: %i[start create]
+    skip_before_action :set_consent_form, only: %i[start create deadline_passed]
+    skip_before_action :authenticate_consent_form_user!,
+                       only: %i[start create deadline_passed]
 
     before_action :clear_session_edit_variables, only: %i[confirm]
+    before_action :check_if_past_deadline, except: %i[deadline_passed]
 
     def start
     end
@@ -32,6 +34,9 @@ module ParentInterface
     def cannot_consent_responsibility
     end
 
+    def deadline_passed
+    end
+
     def confirm
     end
 
@@ -49,6 +54,12 @@ module ParentInterface
 
     def clear_session_edit_variables
       session.delete(:follow_up_changes_start_page)
+    end
+
+    def check_if_past_deadline
+      return if @session.close_consent_at.future?
+
+      redirect_to action: :deadline_passed
     end
   end
 end
