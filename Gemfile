@@ -68,6 +68,7 @@ end
 
 group :test do
   gem "capybara"
+  gem "capybara-screenshot"
   gem "cuprite"
   gem "rspec"
   gem "rspec-html-matchers"
