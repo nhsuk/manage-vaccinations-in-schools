@@ -1,5 +1,6 @@
 class VaccinationsController < ApplicationController
   include TodaysBatchConcern
+  include VaccinationMailerConcern
 
   before_action :set_session
   before_action :set_patient, except: %i[index record_template]
@@ -73,6 +74,7 @@ class VaccinationsController < ApplicationController
       return
     end
 
+    send_vaccination_mail(@draft_vaccination_record)
     @patient_session.do_vaccination!
 
     success_flash_after_patient_update(
