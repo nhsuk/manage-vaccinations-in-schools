@@ -60,6 +60,10 @@ FactoryBot.define do
     last_name { Faker::Name.last_name }
     date_of_birth { Faker::Date.birthday(min_age: 3, max_age: 9) }
     patient_sessions { [] }
+    # TODO: We should be taking the location from the session by default. But
+    #       this seems to break the example campaign generator by creating
+    #       duplicate sessions.
+    # location { session&.location }
     parent_name { "#{parent_first_name} #{last_name}" }
     parent_relationship { parent_sex == "male" ? "father" : "mother" }
     parent_email do
@@ -133,6 +137,20 @@ FactoryBot.define do
       parent_relationship_other { nil }
       parent_phone { nil }
       parent_email { nil }
+    end
+
+    factory :patient_with_consent_given_triage_not_needed do
+      patient_sessions do
+        [
+          build(
+            :patient_session,
+            session:,
+            state: "consent_given_triage_not_needed"
+          )
+        ]
+      end
+
+      consents { [build(:consent, :given, campaign:, parent_relationship:)] }
     end
   end
 end
