@@ -34,7 +34,8 @@ RSpec.describe "Parental consent" do
     @team = create(:team, :with_one_nurse)
     campaign = create(:campaign, :hpv, team: @team)
     location = create(:location, name: "Pilot School", team: @team)
-    @session = create(:session, campaign:, location:, patients_in_session: 1)
+    @session =
+      create(:session, :in_future, campaign:, location:, patients_in_session: 1)
     @child = @session.patients.first
   end
 

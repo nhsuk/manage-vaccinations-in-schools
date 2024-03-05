@@ -81,6 +81,7 @@ Rails.application.routes.draw do
         get "start", on: :collection
         get "cannot-consent-school"
         get "cannot-consent-responsibility"
+        get "deadline-passed", on: :collection
         get "confirm"
         put "record"
 
