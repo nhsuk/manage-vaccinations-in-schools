@@ -92,6 +92,14 @@ en:
         medical_reasons: "of medical reasons"
         personal_choice: "of personal choice"
         other: "of other reasons"
+    vaccination_mailer:
+      reasons_did_not_vaccinate:
+        refused: "they refused when the nurse offered the vaccination"
+        not_well: "the nurse decided %{short_patient_name} was not well"
+        contraindications: "they had contraindications"
+        already_had: "they've already had the vaccine"
+        absent_from_school: "they were off school today"
+        absent_from_session: "they were not in the vaccination session"
   consents:
     edit_consent:
       title:

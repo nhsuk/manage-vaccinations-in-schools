@@ -6,6 +6,13 @@ class VaccinationMailer < ApplicationMailer
     )
   end
 
+  def hpv_vaccination_has_not_taken_place(vaccination_record:)
+    template_mail(
+      EMAIL_TEMPLATES[:confirming_the_hpv_vaccination_didnt_happen],
+      **opts(vaccination_record)
+    )
+  end
+
   private
 
   def consent
@@ -33,6 +40,8 @@ class VaccinationMailer < ApplicationMailer
     personalisation.merge(
       batch_name:,
       day_month_year_of_vaccination:,
+      reason_did_not_vaccinate:,
+      show_additional_instructions:,
       today_or_date_of_vaccination:
     )
   end
@@ -51,5 +60,19 @@ class VaccinationMailer < ApplicationMailer
 
   def day_month_year_of_vaccination
     @vaccination_record.recorded_at.strftime("%d/%m/%Y")
+  end
+
+  def reason_did_not_vaccinate
+    return if @vaccination_record.administered?
+
+    reason = @vaccination_record.reason
+    I18n.t(
+      "mailers.vaccination_mailer.reasons_did_not_vaccinate.#{reason}",
+      short_patient_name:
+    )
+  end
+
+  def show_additional_instructions
+    @vaccination_record.already_had? ? "no" : "yes"
   end
 end

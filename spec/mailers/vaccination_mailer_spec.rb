@@ -75,4 +75,52 @@ RSpec.describe VaccinationMailer do
       end
     end
   end
+
+  describe "hpv_vaccination_has_not_place" do
+    let(:patient) { create(:patient, consents: [create(:consent_given)]) }
+    let(:patient_session) { create(:patient_session, patient:) }
+    let(:vaccination_record) do
+      create :vaccination_record,
+             patient_session:,
+             administered: false,
+             reason: :not_well
+    end
+
+    subject(:mail) do
+      VaccinationMailer.hpv_vaccination_has_not_taken_place(vaccination_record:)
+    end
+
+    it { should have_attributes(to: [patient.consents.last.parent_email]) }
+
+    it "has the correct template" do
+      expect(mail.header[:template_id].value).to eq(
+        EMAIL_TEMPLATES[:confirming_the_hpv_vaccination_didnt_happen]
+      )
+    end
+
+    describe "personalisation" do
+      subject(:personalisation) do
+        mail.message.header["personalisation"].unparsed_value
+      end
+
+      it "sets the personalisation" do
+        expect(personalisation.keys).to include(
+          :full_and_preferred_patient_name,
+          :parent_name,
+          :reason_did_not_vaccinate,
+          :short_patient_name,
+          :show_additional_instructions,
+          :team_email,
+          :team_name,
+          :team_phone
+        )
+      end
+
+      it "sets the correct parent name" do
+        expect(personalisation).to include(
+          parent_name: patient.consents.last.parent_name
+        )
+      end
+    end
+  end
 end
