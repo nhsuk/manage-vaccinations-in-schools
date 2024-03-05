@@ -30,7 +30,10 @@ class AppConsentDetailsComponent < ViewComponent::Base
       if refused_consents.any?
         summary_list.with_row do |row|
           row.with_key { "Refusal reason" }
-          row.with_value { reason_for_refusal }
+          row.with_value do
+            safe_join [reason_for_refusal, reason_for_refusal_notes].compact,
+                      tag.br
+          end
         end
       end
     end
@@ -82,6 +85,14 @@ class AppConsentDetailsComponent < ViewComponent::Base
       refused_consents.first.human_enum_name(:reason)
     else
       refused_consents.first.human_enum_name(:reason_for_refusal)
+    end
+  end
+
+  def reason_for_refusal_notes
+    if refused_consents.first.respond_to?(:reason_notes)
+      refused_consents.first.reason_notes
+    else
+      refused_consents.first.reason_for_refusal_notes
     end
   end
 end

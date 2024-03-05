@@ -23,8 +23,27 @@ RSpec.describe AppConsentDetailsComponent, type: :component do
     should have_css("div", text: /Response(.*?)Consent refused/m)
   end
 
-  it "displays the refusal reason" do
+  it "displays only the refusal reason if there are no notes" do
     should have_css("div", text: /Refusal reason ?Personal choice/)
+  end
+
+  context "with a refusal reason with notes" do
+    let(:consent) do
+      create(
+        :consent,
+        :refused,
+        reason_for_refusal: :already_vaccinated,
+        reason_for_refusal_notes: "Had it at the GP"
+      )
+    end
+
+    it "displays both the refusal reason and notes" do
+      should have_css(
+               "div",
+               text:
+                 /Refusal reason ?Vaccine already received ?Had it at the GP/
+             )
+    end
   end
 
   context "with a consent_form" do
@@ -46,6 +65,34 @@ RSpec.describe AppConsentDetailsComponent, type: :component do
 
     it "displays the response given" do
       should have_css("div", text: /Response(.*?)Consent given/m)
+    end
+
+    context "with a refusal reason wihout notes" do
+      let(:consent_form) do
+        create :consent_form, :recorded, :refused, reason: :personal_choice
+      end
+
+      it "displays only the refusal reason" do
+        should have_css("div", text: /Refusal reason ?Personal choice/)
+      end
+    end
+
+    context "with a refusal reason with notes" do
+      let(:consent_form) do
+        create :consent_form,
+               :recorded,
+               :refused,
+               reason: :already_vaccinated,
+               reason_notes: "Already had the vaccine at the GP"
+      end
+
+      it "displays the refusal reason and notes" do
+        should have_css(
+                 "div",
+                 text:
+                   /Refusal reason ?Vaccine already received ?Already had the vaccine at the GP/
+               )
+      end
     end
   end
 end
