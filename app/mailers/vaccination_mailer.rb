@@ -46,7 +46,7 @@ class VaccinationMailer < ApplicationMailer
   end
 
   def batch_name
-    @vaccination_record.batch.name
+    @vaccination_record.batch&.name
   end
 
   def day_month_year_of_vaccination
