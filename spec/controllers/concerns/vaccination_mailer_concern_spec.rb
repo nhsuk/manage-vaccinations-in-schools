@@ -4,7 +4,10 @@ describe VaccinationMailerConcern do
   let(:sample) { Class.new { include VaccinationMailerConcern }.new }
 
   describe "#send_vaccination_mail" do
-    let(:patient_session) { create(:patient_session) }
+    let(:route) { "website" }
+    let(:consent) { create(:consent, route:) }
+    let(:patient) { create(:patient, consents: [consent]) }
+    let(:patient_session) { create(:patient_session, patient:) }
     let(:vaccination_record) do
       create(:vaccination_record, patient_session:, administered:)
     end
@@ -45,6 +48,17 @@ describe VaccinationMailerConcern do
 
       it "delivers the email immediately" do
         expect(not_administered_mail).to have_received(:deliver_later)
+      end
+    end
+
+    context "when the consent was done through gillick assessment" do
+      let(:route) { "self_consent" }
+      let(:vaccination_record) { create(:vaccination_record, patient_session:) }
+
+      it "does not send an email" do
+        expect(VaccinationMailer).not_to have_received(
+          :hpv_vaccination_has_taken_place
+        )
       end
     end
   end
