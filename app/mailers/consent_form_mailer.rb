@@ -51,7 +51,7 @@ class ConsentFormMailer < ApplicationMailer
 
   def reason_for_refusal
     reason = @consent_form&.reason || @consent&.reason_for_refusal
-    I18n.t("consent_form_mailer.reasons_for_refusal.#{reason}")
+    I18n.t("mailers.consent_form_mailer.reasons_for_refusal.#{reason}")
   end
 
   def survey_deadline_date
