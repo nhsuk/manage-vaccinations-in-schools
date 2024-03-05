@@ -108,6 +108,20 @@ FactoryBot.define do
       end
     end
 
+    trait :consent_refused_with_notes do
+      after(:create) do |patient, evaluator|
+        create(
+          :consent,
+          :refused,
+          :from_mum,
+          campaign: evaluator.campaign,
+          reason_for_refusal: "already_vaccinated",
+          reason_for_refusal_notes: "Already had the vaccine at the GP",
+          patient:
+        )
+      end
+    end
+
     trait :consent_conflicting do
       after(:create) do |patient, evaluator|
         create(

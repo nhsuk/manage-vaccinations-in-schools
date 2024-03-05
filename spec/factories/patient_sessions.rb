@@ -49,6 +49,11 @@ FactoryBot.define do
       patient { create :patient, :consent_refused, session: }
     end
 
+    trait :consent_refused_with_notes do
+      state { "consent_refused" }
+      patient { create :patient, :consent_refused_with_notes, session: }
+    end
+
     trait :consent_conflicting do
       state { "consent_refused" }
       patient { create :patient, :consent_conflicting, session: }

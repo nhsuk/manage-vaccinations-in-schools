@@ -1,9 +1,18 @@
 class AppConsentComponentPreview < ViewComponent::Preview
-  def consent_not_given
+  def consent_refused_without_notes
     setup
 
     patient_session =
       FactoryBot.create(:patient_session, :consent_refused, session:)
+
+    render AppConsentComponent.new(patient_session:, route: "triage")
+  end
+
+  def consent_refused_with_notes
+    setup
+
+    patient_session =
+      FactoryBot.create(:patient_session, :consent_refused_with_notes, session:)
 
     render AppConsentComponent.new(patient_session:, route: "triage")
   end
