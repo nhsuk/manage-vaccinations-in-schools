@@ -83,14 +83,15 @@ en:
     when: "when"
     cohort: "cohort"
     timeline: "timeline"
-  consent_form_mailer:
-    reasons_for_refusal:
-      contains_gelatine: "of the gelatine in the nasal spray"
-      already_vaccinated: "they have already received the vaccine"
-      will_be_vaccinated_elsewhere: "they will be given the vaccine elsewhere"
-      medical_reasons: "of medical reasons"
-      personal_choice: "of personal choice"
-      other: "of other reasons"
+  mailers:
+    consent_form_mailer:
+      reasons_for_refusal:
+        contains_gelatine: "of the gelatine in the nasal spray"
+        already_vaccinated: "they have already received the vaccine"
+        will_be_vaccinated_elsewhere: "they will be given the vaccine elsewhere"
+        medical_reasons: "of medical reasons"
+        personal_choice: "of personal choice"
+        other: "of other reasons"
   consents:
     edit_consent:
       title:
