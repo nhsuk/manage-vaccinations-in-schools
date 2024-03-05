@@ -1,4 +1,5 @@
 require "faker"
+require "csv"
 
 class ExampleCampaignGenerator
   def self.patient_options
