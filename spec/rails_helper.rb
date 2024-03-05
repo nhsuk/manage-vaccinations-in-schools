@@ -9,6 +9,7 @@ end
 require "rspec/rails"
 # Add additional requires below this line. Rails is not loaded until this point!
 require "capybara/cuprite"
+require "capybara-screenshot/rspec"
 
 Faker::Config.locale = "en-GB"
 Capybara.register_driver(:cuprite_custom) do |app|
@@ -20,6 +21,7 @@ Capybara.register_driver(:cuprite_custom) do |app|
   )
 end
 Capybara.javascript_driver = :cuprite_custom
+Capybara.asset_host = "http://localhost:4000"
 
 ActiveJob::Base.queue_adapter = :test
 
