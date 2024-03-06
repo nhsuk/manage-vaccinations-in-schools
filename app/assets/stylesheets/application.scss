@@ -8,6 +8,7 @@ $govuk-global-styles: false;
 $govuk-assets-path: "/";
 
 @import "govuk-frontend/dist/govuk/base";
+@import "govuk-frontend/dist/govuk/components/checkboxes";
 @import "govuk-frontend/dist/govuk/components/file-upload/index";
 @import "govuk-frontend/dist/govuk/components/notification-banner/index";
 @import "govuk-frontend/dist/govuk/components/panel/index";
