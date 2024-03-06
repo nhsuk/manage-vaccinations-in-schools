@@ -14,7 +14,7 @@ RSpec.describe VaccinationMailer do
 
     it "has the correct template" do
       expect(mail.header[:template_id].value).to eq(
-        EMAIL_TEMPLATES[:confirmation_the_hpv_vaccination_has_taken_place]
+        EMAILS[:confirmation_the_hpv_vaccination_has_taken_place]
       )
     end
 
@@ -94,7 +94,7 @@ RSpec.describe VaccinationMailer do
 
     it "has the correct template" do
       expect(mail.header[:template_id].value).to eq(
-        EMAIL_TEMPLATES[:confirming_the_hpv_vaccination_didnt_happen]
+        EMAILS[:confirming_the_hpv_vaccination_didnt_happen]
       )
     end
 

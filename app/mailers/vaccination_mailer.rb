@@ -1,14 +1,14 @@
 class VaccinationMailer < ApplicationMailer
   def hpv_vaccination_has_taken_place(vaccination_record:)
     template_mail(
-      EMAIL_TEMPLATES[:confirmation_the_hpv_vaccination_has_taken_place],
+      EMAILS[:confirmation_the_hpv_vaccination_has_taken_place],
       **opts(vaccination_record)
     )
   end
 
   def hpv_vaccination_has_not_taken_place(vaccination_record:)
     template_mail(
-      EMAIL_TEMPLATES[:confirming_the_hpv_vaccination_didnt_happen],
+      EMAILS[:confirming_the_hpv_vaccination_didnt_happen],
       **opts(vaccination_record)
     )
   end
