@@ -172,7 +172,10 @@ module PatientSessionStateMachineConcern
 
     def vaccination_can_be_delayed?
       vaccination_not_administered? &&
-        (not_well? || contraindication? || absent_from_session?)
+        (
+          not_well? || contraindication? || absent_from_session? ||
+            absent_from_school?
+        )
     end
 
     def next_step
