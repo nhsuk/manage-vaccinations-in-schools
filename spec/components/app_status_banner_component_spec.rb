@@ -63,10 +63,10 @@ RSpec.describe AppStatusBannerComponent, type: :component do
 
     it { should have_css(".app-card--purple") }
     it { should have_css(".nhsuk-card__heading", text: "Safe to vaccinate") }
-    it "explains who took the decision that the patient should be vaccinated" do
-      expect(component.explanation).to eq(
-        "#{triage_nurse_name} decided that #{patient_name} is safe to vaccinate."
-      )
+    it do
+      should have_text(
+               "#{triage_nurse_name} decided that #{patient_name} is safe to vaccinate"
+             )
     end
   end
 
