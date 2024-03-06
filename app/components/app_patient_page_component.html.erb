@@ -1,6 +1,17 @@
 <%= h1 patient.full_name, id: dom_id(patient) %>
 
-<%= render AppStatusBannerComponent.new(patient_session:, current_user:) %>
+<%= if patient_session.state.in? %w[
+                                  vaccinated
+                                  triaged_do_not_vaccinate
+                                  unable_to_vaccinate
+                                ]
+     render AppOutcomeBannerComponent.new(
+              patient_session:,
+              current_user:
+            )
+   else
+     render AppSimpleStatusBannerComponent.new(patient_session:)
+   end %>
 
 <%= render AppCardComponent.new(heading: "Child details") do %>
   <%= render AppPatientDetailsComponent.new(patient:, session:) %>
