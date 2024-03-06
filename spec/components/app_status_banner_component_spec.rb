@@ -75,11 +75,7 @@ RSpec.describe AppStatusBannerComponent, type: :component do
 
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
-    it "explains who took the decision that the patient should be vaccinated" do
-      expect(component.explanation).to include(
-        "Alya Merton had contraindications"
-      )
-    end
+    it { should have_text("Alya Merton had contraindications") }
   end
 
   context "state is vaccinated" do
