@@ -3,14 +3,14 @@ class ConsentRequestMailer < ApplicationMailer
 
   def consent_request(session, patient)
     template_mail(
-      "6aa04f0d-94c2-4a6b-af97-a7369a12f681",
+      EMAILS[:hpv_session_consent_request],
       **opts(session, patient)
     )
   end
 
   def consent_reminder(session, patient)
     template_mail(
-      "ceefd526-d44c-4561-b0d2-c9ef4ccaba4f",
+      EMAILS[:hpv_session_consent_reminder],
       **opts(session, patient)
     )
   end
