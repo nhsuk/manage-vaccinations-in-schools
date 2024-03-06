@@ -124,5 +124,12 @@ FactoryBot.define do
       gillick_competence_notes { "Assessed as gillick competent" }
       gillick_competence_assessor { create :user }
     end
+
+    trait :not_gillick_competent do
+      state { "unable_to_vaccinate_not_gillick_competent" }
+      gillick_competent { false }
+      gillick_competence_notes { "Assessed as not gillick competent" }
+      gillick_competence_assessor { create :user }
+    end
   end
 end
