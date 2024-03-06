@@ -1,7 +1,7 @@
 class SessionMailer < ApplicationMailer
   def session_reminder(session:, patient:)
     template_mail(
-      "79e131b2-7816-46d0-9c74-ae14956dd77d",
+      EMAILS[:hpv_session_session_reminder],
       **opts(session, patient)
     )
   end
