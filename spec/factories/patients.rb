@@ -63,11 +63,11 @@ FactoryBot.define do
     # TODO: We should be taking the location from the session by default. But
     #       this seems to break the example campaign generator by creating
     #       duplicate sessions.
-    # location { session&.location }
+    # location { session&.location }example.com
     parent_name { "#{parent_first_name} #{last_name}" }
     parent_relationship { parent_sex == "male" ? "father" : "mother" }
     parent_email do
-      "#{parent_name.downcase.gsub(" ", ".")}#{random.rand(100)}@gmail.com"
+      "#{parent_name.downcase.gsub(" ", ".")}#{random.rand(100)}@example.com"
     end
     # Replace first two digits with 07 to make it a mobile number
     parent_phone { "07700 900#{random.rand(0..999).to_s.rjust(3, "0")}" }

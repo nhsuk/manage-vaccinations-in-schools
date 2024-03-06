@@ -48,7 +48,7 @@ FactoryBot.define do
     campaign { patient_session&.session&.campaign || create(:campaign) }
     response { "given" }
     parent_name { Faker::Name.name }
-    parent_email { Faker::Internet.email(domain: "gmail.com") }
+    parent_email { Faker::Internet.email(domain: "example.com") }
     # Replace first two digits with 07 to make it a mobile number
     parent_phone { "07700 900#{random.rand(0..999).to_s.rjust(3, "0")}" }
     route { "website" }
@@ -92,7 +92,7 @@ FactoryBot.define do
         if patient.parent_relationship == "mother"
           patient.parent_email
         else
-          "#{parent_name.downcase.gsub(" ", ".")}#{random.rand(100)}@gmail.com"
+          "#{parent_name.downcase.gsub(" ", ".")}#{random.rand(100)}@example.com"
         end
       end
       parent_phone do
@@ -117,7 +117,7 @@ FactoryBot.define do
         if patient.parent_relationship == "father"
           patient.parent_email
         else
-          "#{parent_name.downcase.gsub(" ", ".")}#{random.rand(100)}@gmail.com"
+          "#{parent_name.downcase.gsub(" ", ".")}#{random.rand(100)}@example.com"
         end
       end
       parent_phone do
