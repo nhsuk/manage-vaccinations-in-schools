@@ -55,7 +55,7 @@ FactoryBot.define do
     end
 
     trait :consent_conflicting do
-      state { "consent_refused" }
+      state { "consent_conflicts" }
       patient { create :patient, :consent_conflicting, session: }
     end
 
