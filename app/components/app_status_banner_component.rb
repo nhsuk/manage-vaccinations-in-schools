@@ -176,9 +176,16 @@ class AppStatusBannerComponent < ViewComponent::Base
   end
 
   def reason_do_not_vaccinate_summary
-    I18n.t(
-      "patient_session_statuses.unable_to_vaccinate.banner_explanation.#{state}"
-    )
+    if vaccination_record&.reason.present?
+      I18n.t(
+        "patient_session_statuses.unable_to_vaccinate.banner_explanation.#{vaccination_record.reason}",
+        full_name:
+      )
+    else
+      I18n.t(
+        "patient_session_statuses.unable_to_vaccinate.banner_explanation.#{state}"
+      )
+    end
   end
 
   def time_summary

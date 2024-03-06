@@ -73,7 +73,7 @@ describe "HPV Vaccination" do
 
   def then_i_see_that_the_status_is_could_not_vaccinate
     expect(page).to have_content("Could not vaccinate")
-    expect(page).to have_content("ReasonRefused vaccine")
+    expect(page).to have_content("Reason#{@patient.full_name} refused it")
   end
 
   def and_an_email_is_sent_saying_the_vaccination_didnt_happen
