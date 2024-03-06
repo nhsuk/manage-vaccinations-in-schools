@@ -2,14 +2,15 @@
 <html lang="en" class="nhsuk-template">
   <head>
     <meta charset="utf-8">
+    <%= tag :meta, name: 'viewport', content: 'width=device-width, initial-scale=1' %>
+
     <title><%= page_title(@service_name) %></title>
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
 
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
-    <%= tag :meta, name: 'viewport', content: 'width=device-width, initial-scale=1' %>
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
   </head>
 
   <body class="nhsuk-template__body">
