@@ -79,6 +79,12 @@ FactoryBot.define do
       triage { [create(:triage, status: :needs_follow_up)] }
     end
 
+    trait :delay_vaccination do
+      state { "delay_vaccination" }
+      patient { create :patient, :consent_given_triage_needed, session: }
+      triage { [create(:triage, status: :delay_vaccination)] }
+    end
+
     trait :did_not_need_triage do
       patient { create :patient, :consent_given_triage_not_needed, session: }
     end
