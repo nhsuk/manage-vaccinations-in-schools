@@ -25,14 +25,6 @@ environment ENV.fetch("RAILS_ENV") { "development" }
 # Specifies the `pidfile` that Puma will use.
 pidfile ENV.fetch("PIDFILE") { "tmp/pids/server.pid" }
 
-# Cleanly shut down GoodJob when Puma is shut down.
-# See https://github.com/bensheldon/good_job#execute-jobs-async--in-process
-MAIN_PID = Process.pid
-before_fork { GoodJob.shutdown }
-on_worker_boot { GoodJob.restart }
-on_worker_shutdown { GoodJob.shutdown }
-at_exit { GoodJob.shutdown if Process.pid == MAIN_PID }
-
 # Specifies the number of `workers` to boot in clustered mode.
 # Workers are forked web server processes. If using threads and workers together
 # the concurrency of the application would be max `threads` * `workers`.
@@ -40,11 +32,21 @@ at_exit { GoodJob.shutdown if Process.pid == MAIN_PID }
 # processes).
 workers Settings.web_concurrency
 
-# Use the `preload_app!` method when specifying a `workers` number.
-# This directive tells Puma to first boot the application and load code
-# before forking the application. This takes advantage of Copy On Write
-# process behavior so workers use less memory.
-preload_app!
+if Settings.web_concurrency > 1
+  # Cleanly shut down GoodJob when Puma is shut down.
+  # See https://github.com/bensheldon/good_job#execute-jobs-async--in-process
+  MAIN_PID = Process.pid
+  before_fork { GoodJob.shutdown }
+  on_worker_boot { GoodJob.restart }
+  on_worker_shutdown { GoodJob.shutdown }
+  at_exit { GoodJob.shutdown if Process.pid == MAIN_PID }
+
+  # Use the `preload_app!` method when specifying a `workers` number.
+  # This directive tells Puma to first boot the application and load code
+  # before forking the application. This takes advantage of Copy On Write
+  # process behavior so workers use less memory.
+  preload_app!
+end
 
 # Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart
