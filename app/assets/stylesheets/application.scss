@@ -24,8 +24,6 @@ $mq-breakpoints: (
 
 @import "nhsuk-frontend/packages/nhsuk";
 
-$color_app-pale-blue: #ccdff1;
-
 // Application components
 @import "action-table";
 @import "button";
@@ -36,7 +34,7 @@ $color_app-pale-blue: #ccdff1;
 @import "globals";
 @import "list";
 @import "notification-banner";
-@import "offline";
+// @import "offline";
 @import "panel";
 @import "phase-banner";
 @import "table";
