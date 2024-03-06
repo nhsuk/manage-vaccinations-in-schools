@@ -1,29 +1,32 @@
-@use "govuk-frontend/dist/govuk/all" with (
-  $govuk-font-family: (
-    Frutiger W01,
-    Arial,
-    sans-serif,
-  ),
-  $govuk-border-colour: #d8dde0,
-  $govuk-brand-colour: #005eb8,
-  $govuk-error-colour: #d5281b,
-  $govuk-success-colour: #007f3b,
-  $govuk-global-styles: false,
-  $govuk-assets-path: "/",
-  $mq-breakpoints: (
-    mobile: 320px,
-    tablet: 641px,
-    desktop: 769px,
-    wide: 1300px,
-  )
-);
+// Configure and import GOV.UK Frontend
+$govuk-font-family: "Frutiger W01", Arial, sans-serif;
+$govuk-border-colour: #d8dde0;
+$govuk-brand-colour: #005eb8;
+$govuk-error-colour: #d5281b;
+$govuk-success-colour: #007f3b;
+$govuk-global-styles: false;
+$govuk-assets-path: "/";
 
+@import "govuk-frontend/dist/govuk/base";
+@import "govuk-frontend/dist/govuk/components/file-upload/index";
+@import "govuk-frontend/dist/govuk/components/notification-banner/index";
+@import "govuk-frontend/dist/govuk/components/panel/index";
+@import "govuk-frontend/dist/govuk/components/phase-banner/index";
+
+// Configure and import NHS.UK Frontend
 $nhsuk-fonts-path: "/";
+$mq-breakpoints: (
+  mobile: 320px,
+  tablet: 641px,
+  desktop: 769px,
+  wide: 1300px,
+);
 
 @import "nhsuk-frontend/packages/nhsuk";
 
 $color_app-pale-blue: #ccdff1;
 
+// Application components
 @import "action-table";
 @import "button";
 @import "card";
