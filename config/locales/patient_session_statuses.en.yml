@@ -24,17 +24,17 @@ en:
       colour: orange
       text: Check conflicting consent
       banner_title: Conflicting consent
-      banner_explanation: "You can only vaccinate if all respondents give consent."
+      banner_explanation: "You can only vaccinate if all respondents give consent"
     delay_vaccination:
       colour: red
       text: Delay vaccination
       banner_title: Delay vaccination to a later date
-      banner_explanation: "%{triage_nurse} decided that %{full_name}’s vaccination should be delayed."
+      banner_explanation: "%{triage_nurse} decided that %{full_name}’s vaccination should be delayed"
     triaged_do_not_vaccinate:
       colour: red
       text: Could not vaccinate
       banner_title: Could not vaccinate
-      banner_explanation: "%{triage_nurse} that %{full_name} should not be vaccinated."
+      banner_explanation: "%{triage_nurse} that %{full_name} should not be vaccinated"
     triaged_kept_in_triage:
       colour: blue
       text: Triage started
@@ -44,7 +44,7 @@ en:
       colour: purple
       text: Vaccinate
       banner_title: Safe to vaccinate
-      banner_explanation: "%{triage_nurse} decided that %{full_name} is safe to vaccinate."
+      banner_explanation: "%{triage_nurse} decided that %{full_name} is safe to vaccinate"
     unable_to_vaccinate:
       colour: red
       text: Could not vaccinate
@@ -63,12 +63,12 @@ en:
       colour: red
       text: Not vaccinated
       banner_title: Not vaccinated
-      banner_explanation: No-one responded to our requests for consent.
+      banner_explanation: No-one responded to our requests for consent
     unable_to_vaccinate_not_gillick_competent:
       colour: red
       text: Not vaccinated
       banner_title: Not vaccinated
-      banner_explanation: No-one responded to our requests for consent. When assessed, the child was not Gillick competent.
+      banner_explanation: No-one responded to our requests for consent. When assessed, the child was not Gillick competent
     vaccinated:
       colour: green
       text: Vaccinated
