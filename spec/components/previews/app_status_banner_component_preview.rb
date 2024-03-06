@@ -1,4 +1,11 @@
 class AppStatusBannerComponentPreview < ViewComponent::Preview
+  def no_consent_and_not_gillick_competent
+    patient_session =
+      FactoryBot.create(:patient_session, :not_gillick_competent)
+
+    render AppStatusBannerComponent.new(patient_session:)
+  end
+
   def consent_conflicts
     patient_session = FactoryBot.create(:patient_session, :consent_conflicting)
 
