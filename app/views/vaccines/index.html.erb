@@ -11,7 +11,7 @@
 
 <% @vaccines.each do |vaccine| %>
   <%= render AppCardComponent.new(heading: "#{vaccine.brand} (#{vaccine.type})") do %>
-    <p class="govuk-body">
+    <p>
       <%= link_to "Add batch", new_vaccine_batch_path(vaccine) %>
     </p>
 
