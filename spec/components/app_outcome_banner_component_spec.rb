@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AppStatusBannerComponent, type: :component do
+RSpec.describe AppOutcomeBannerComponent, type: :component do
   let(:user) { create :user }
   let(:patient_session) { create :patient_session, user: }
   let(:component) { described_class.new(patient_session:, current_user: user) }
@@ -12,62 +12,6 @@ RSpec.describe AppStatusBannerComponent, type: :component do
 
   prepend_before do
     patient_session.patient.update!(first_name: "Alya", last_name: "Merton")
-  end
-
-  context "state is added_to_session" do
-    let(:patient_session) { create :patient_session, :added_to_session }
-
-    it { should have_css(".app-card--blue") }
-  end
-
-  context "state is consent_given_triage_not_needed" do
-    let(:patient_session) do
-      create :patient_session, :consent_given_triage_not_needed
-    end
-
-    it { should have_css(".app-card--purple") }
-    it { should have_css(".nhsuk-card__heading", text: "Consent given") }
-    it { should have_text("#{patient_name} is ready to vaccinate") }
-  end
-
-  context "state is consent_given_triage_needed" do
-    let(:patient_session) do
-      create :patient_session, :consent_given_triage_needed
-    end
-
-    it { should have_css(".app-card--blue") }
-    it { should have_css(".nhsuk-card__heading", text: "Needs triage") }
-    it { should have_text("Responses to health questions need triage") }
-  end
-
-  context "state is consent_refused" do
-    let(:patient_session) { create :patient_session, :consent_refused }
-
-    it { should have_css(".app-card--orange") }
-    it { should have_css(".nhsuk-card__heading", text: "Consent refused") }
-    it { should have_text("Mum refused to give consent") }
-  end
-
-  context "state is triaged_kept_in_triage" do
-    let(:patient_session) { create :patient_session, :triaged_kept_in_triage }
-
-    it { should have_css(".app-card--blue") }
-    it { should have_css(".nhsuk-card__heading", text: "Needs triage") }
-    it { should have_text("Responses to health questions need triage") }
-  end
-
-  context "state is triaged_ready_to_vaccinate" do
-    let(:patient_session) do
-      create :patient_session, :triaged_ready_to_vaccinate
-    end
-
-    it { should have_css(".app-card--purple") }
-    it { should have_css(".nhsuk-card__heading", text: "Safe to vaccinate") }
-    it do
-      should have_text(
-               "#{triage_nurse_name} decided that #{patient_name} is safe to vaccinate"
-             )
-    end
   end
 
   context "state is unable_to_vaccinate" do
