@@ -21,27 +21,7 @@ FactoryBot.define do
 
     trait :hpv do
       name { "HPV" }
-      vaccines { [create(:vaccine, :gardasil_9, batch_count:)] }
-
-      after :create do |campaign|
-        vaccine = campaign.vaccines.first
-
-        if vaccine.health_questions.empty?
-          question_texts = [
-            "Does your child have any severe allergies?",
-            "Does your child have any medical conditions for which they receive treatment?",
-            "Has your child ever had a severe reaction to any medicines, including vaccines?"
-          ]
-          questions =
-            question_texts.map do |text|
-              vaccine.health_questions.create!(question: text)
-            end
-
-          questions.each_cons(2) do |first_q, next_q|
-            first_q.update!(next_question: next_q)
-          end
-        end
-      end
+      vaccines { [create(:vaccine, :hpv, batch_count:)] }
     end
 
     trait :hpv_no_batches do
@@ -53,7 +33,7 @@ FactoryBot.define do
       name { "Flu" }
       vaccines do
         [
-          create(:vaccine, :fluenz_tetra, batch_count:),
+          create(:vaccine, :flu, batch_count:),
           create(:vaccine, :fluerix_tetra, batch_count:)
         ]
       end
@@ -61,7 +41,7 @@ FactoryBot.define do
 
     trait :flu_nasal_only do
       name { "Flu" }
-      vaccines { [create(:vaccine, :fluenz_tetra, batch_count:)] }
+      vaccines { [create(:vaccine, :flu, batch_count:)] }
     end
   end
 end

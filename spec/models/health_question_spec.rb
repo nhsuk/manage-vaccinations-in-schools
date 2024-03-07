@@ -27,8 +27,11 @@
 require "rails_helper"
 
 RSpec.describe HealthQuestion do
+  let(:vaccine) do
+    create :vaccine, type: "tester", brand: "Tester", method: "injection"
+  end
+
   describe ".first_health_question" do
-    let(:vaccine) { create :vaccine, type: "tester" }
     let!(:hq1) { create :health_question, vaccine: }
     let!(:hq2) { create :health_question, vaccine: }
     let!(:hq3) { create :health_question, vaccine: }
@@ -74,7 +77,6 @@ RSpec.describe HealthQuestion do
   end
 
   describe ".last_health_question" do
-    let(:vaccine) { create :vaccine, type: "tester" }
     let!(:hq1) { create :health_question, vaccine: }
     let!(:hq2) { create :health_question, vaccine: }
     let!(:hq3) { create :health_question, vaccine: }
@@ -102,7 +104,6 @@ RSpec.describe HealthQuestion do
   end
 
   describe "#remaining_questions" do
-    let(:vaccine) { create :vaccine, type: "tester" }
     let(:hq1) { create :health_question, vaccine: }
     let(:hq2) { create :health_question, vaccine: }
     let(:hq3) { create :health_question, vaccine: }
