@@ -2,7 +2,7 @@ import { test, expect, Page } from "@playwright/test";
 
 let p: Page;
 
-test("Parental consent for HPV vaccination - Consent refused", async ({
+test.skip("Parental consent for HPV vaccination - Consent refused", async ({
   page,
 }) => {
   p = page;

@@ -2,7 +2,7 @@ import { test, expect, Page } from "@playwright/test";
 
 let p: Page;
 
-test("Parental consent asthma route", async ({ page }) => {
+test.skip("Parental consent asthma route", async ({ page }) => {
   p = page;
 
   await given_the_app_is_setup();

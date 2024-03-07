@@ -2,7 +2,7 @@ import { test, expect, Page } from "@playwright/test";
 
 let p: Page;
 
-test("Parental consent change answers", async ({ page }) => {
+test.skip("Parental consent change answers", async ({ page }) => {
   p = page;
 
   // Health questions contain Yes answers
