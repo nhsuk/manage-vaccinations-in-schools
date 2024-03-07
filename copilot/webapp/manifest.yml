@@ -66,9 +66,6 @@ environments:
     http:
       alias:
         - "test.mavistesting.com"
-      healthcheck:
-        interval: "5s"
-        deregistration_delay: "5s"
     deployments:
       rolling: recreate # Disables blue-green deployment for speed
     variables:
@@ -79,9 +76,6 @@ environments:
     http:
       alias:
         - "training.mavistesting.com"
-      healthcheck:
-        interval: "5s"
-        deregistration_delay: "5s"
     variables:
       RAILS_ENV: staging
       MAVIS__HOST: "training.mavistesting.com"
