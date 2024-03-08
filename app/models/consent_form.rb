@@ -60,6 +60,8 @@ class ConsentForm < ApplicationRecord
 
   belongs_to :consent, optional: true
   belongs_to :session
+  has_one :campaign, through: :session
+  has_one :team, through: :campaign
 
   enum :parent_relationship, %w[mother father guardian other], prefix: true
   enum :contact_method, %w[text voice other any], prefix: true
