@@ -36,6 +36,9 @@ class VaccinationRecord < ApplicationRecord
   belongs_to :batch, optional: true
   belongs_to :user
   has_one :vaccine, through: :batch
+  has_one :session, through: :patient_session
+  has_one :campaign, through: :session
+  has_one :team, through: :campaign
 
   scope :administered, -> { where(administered: true) }
 
