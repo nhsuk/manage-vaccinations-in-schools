@@ -20,6 +20,7 @@ RSpec.describe AppOutcomeBannerComponent, type: :component do
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
     it { should have_text("Alya Merton had contraindications") }
+    it { should have_text("Location#{patient_session.session.location.name}") }
   end
 
   context "state is vaccinated" do
@@ -64,7 +65,7 @@ RSpec.describe AppOutcomeBannerComponent, type: :component do
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
     it { should have_text("ReasonDo not vaccinate in campaign") }
     it { should have_text("DateToday (#{date})") }
-    it { should have_text("Location#{location.name}") }
+    it { should_not have_text("Location") }
     it { should have_text("Decided byYou (#{triage.user.full_name})") }
 
     context "recorded_at is not today" do

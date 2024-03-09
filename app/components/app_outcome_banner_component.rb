@@ -17,26 +17,39 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   private
 
   def rows
-    if @patient_session.vaccinated?
-      [
-        ["Vaccine", vaccine_summary],
-        ["Site", vaccination_record.human_enum_name(:delivery_site)],
-        ["Date", date_summary],
-        ["Time", last_action_time.to_fs(:time)],
-        ["Location", @patient_session.session.location.name],
-        ["Vaccinator", clinician_name],
-        ["Notes", notes]
-      ].map { |key, value| { key: { text: key }, value: { text: value } } }
-    else
-      [
-        ["Reason", reason_do_not_vaccinate],
-        ["Date", date_summary],
-        ["Time", last_action_time.to_fs(:time)],
-        ["Location", @patient_session.session.location.name],
-        ["Decided by", clinician_name],
-        ["Notes", notes]
-      ].map { |key, value| { key: { text: key }, value: { text: value } } }
+    data =
+      if @patient_session.vaccinated?
+        [
+          ["Vaccine", vaccine_summary],
+          ["Site", vaccination_record.human_enum_name(:delivery_site)],
+          ["Date", date_summary],
+          ["Time", last_action_time.to_fs(:time)],
+          ["Location", @patient_session.session.location.name],
+          ["Vaccinator", clinician_name],
+          ["Notes", notes]
+        ]
+      else
+        [
+          ["Reason", reason_do_not_vaccinate],
+          ["Date", date_summary],
+          ["Time", last_action_time.to_fs(:time)],
+          (
+            if show_location?
+              ["Location", @patient_session.session.location.name]
+            end
+          ),
+          ["Decided by", clinician_name],
+          ["Notes", notes]
+        ]
+      end
+    data.compact.map do |key, value|
+      { key: { text: key }, value: { text: value } }
     end
+  end
+
+  def show_location?
+    # location only makes sense if an attempt to vaccinate on site was made
+    @patient_session.vaccination_records.any?
   end
 
   def vaccine_summary
