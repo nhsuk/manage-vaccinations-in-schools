@@ -41,5 +41,10 @@ FactoryBot.define do
       recorded_at { nil }
       user { nil }
     end
+
+    trait :unadministered do
+      administered { false }
+      reason { "not_well" }
+    end
   end
 end

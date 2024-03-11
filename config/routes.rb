@@ -148,7 +148,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :reports, only: %i[index]
+  resources :reports, only: %i[index show]
 
   resources :consent_forms, path: "consent-forms", only: [:show] do
     get "match/:patient_session_id",
