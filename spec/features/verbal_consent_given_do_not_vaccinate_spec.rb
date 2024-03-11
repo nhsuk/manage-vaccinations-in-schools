@@ -72,12 +72,12 @@ RSpec.describe "Verbal consent" do
 
   def and_the_will_not_vaccinate_email_is_sent_to_the_parent
     expect_email_to @patient.parent_email,
-                    "d1faf47e-ccc3-4481-975b-1ec34211a21f"
+                    EMAILS[:triage_vaccination_wont_happen]
   end
 
   def and_an_email_is_sent_to_the_parent_to_give_feedback
     expect_email_to @patient.parent_email,
-                    "1250c83b-2a5a-4456-8922-657946eba1fd",
+                    EMAILS[:parental_consent_give_feedback],
                     :second
   end
 end

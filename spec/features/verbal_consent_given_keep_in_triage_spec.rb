@@ -72,12 +72,12 @@ RSpec.describe "Verbal consent" do
 
   def and_the_kept_in_triage_email_is_sent_to_the_parent
     expect_email_to @patient.parent_email,
-                    "604ee667-c996-471e-b986-79ab98d0767c"
+                    EMAILS[:parental_consent_confirmation_needs_triage]
   end
 
   def and_an_email_is_sent_to_the_parent_to_give_feedback
     expect_email_to @patient.parent_email,
-                    "1250c83b-2a5a-4456-8922-657946eba1fd",
+                    EMAILS[:parental_consent_give_feedback],
                     :second
   end
 end

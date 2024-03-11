@@ -74,12 +74,12 @@ RSpec.describe "Verbal consent" do
 
   def and_an_email_is_sent_to_the_parent_confirming_the_refusal
     expect_email_to @patient.parent_email,
-                    "5a676dac-3385-49e4-98c2-fc6b45b5a851"
+                    EMAILS[:parental_consent_confirmation_refused]
   end
 
   def and_an_email_is_sent_to_the_parent_to_give_feedback
     expect_email_to @patient.parent_email,
-                    "1250c83b-2a5a-4456-8922-657946eba1fd",
+                    EMAILS[:parental_consent_give_feedback],
                     :second
   end
 end
