@@ -147,6 +147,9 @@ Rails.application.routes.draw do
       get "confirmation", on: :collection
     end
   end
+
+  resources :reports, only: %i[index]
+
   resources :consent_forms, path: "consent-forms", only: [:show] do
     get "match/:patient_session_id",
         on: :member,
