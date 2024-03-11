@@ -76,6 +76,13 @@ FactoryBot.define do
       date_of_birth { Faker::Date.birthday(min_age: 12, max_age: 13) }
     end
 
+    trait :with_address do
+      address_line_1 { Faker::Address.street_address }
+      address_line_2 { Faker::Address.secondary_address }
+      address_town { Faker::Address.city }
+      address_postcode { Faker::Address.postcode }
+    end
+
     trait :consent_given_triage_not_needed do
       after(:create) do |patient, evaluator|
         create(
