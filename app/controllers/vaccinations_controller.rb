@@ -50,6 +50,8 @@ class VaccinationsController < ApplicationController
       format.html
       format.json { render json: @patient_outcomes.map(&:first).index_by(&:id) }
     end
+
+    session[:current_section] = "vaccinations"
   end
 
   def new
