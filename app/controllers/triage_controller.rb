@@ -38,6 +38,8 @@ class TriageController < ApplicationController
 
     # ensure all tabs are present
     tabs_to_states.each_key { |tab| @tabs[tab] ||= [] }
+
+    session[:current_section] = "triage"
   end
 
   def create
@@ -50,7 +52,7 @@ class TriageController < ApplicationController
         patient: @patient,
         view_record_link: session_patient_triage_path(@session, @patient)
       )
-      redirect_to triage_session_path(@session)
+      redirect_to redirect_path
     else
       render "patient_sessions/show", status: :unprocessable_entity
     end
@@ -66,7 +68,7 @@ class TriageController < ApplicationController
         patient: @patient,
         view_record_link: session_patient_triage_path(@session, @patient)
       )
-      redirect_to triage_session_path(@session)
+      redirect_to redirect_path
     else
       render "patient_sessions/show", status: :unprocessable_entity
     end
@@ -96,5 +98,15 @@ class TriageController < ApplicationController
 
   def triage_params
     params.require(:triage).permit(:status, :notes)
+  end
+
+  def redirect_path
+    if session[:current_section] == "vaccinations"
+      vaccinations_session_path(@session)
+    elsif session[:current_section] == "consents"
+      consents_session_path(@session)
+    else # if current_section is triage or anything else
+      triage_session_path(@session)
+    end
   end
 end
