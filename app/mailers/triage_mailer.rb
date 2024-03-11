@@ -3,7 +3,7 @@ class TriageMailer < ApplicationMailer
     @patient_session = patient_session
 
     template_mail(
-      "fa3c8dd5-4688-4b93-960a-1d422c4e5597",
+      EMAILS[:triage_vaccination_will_happen],
       **opts(patient_session)
     )
   end
@@ -12,7 +12,7 @@ class TriageMailer < ApplicationMailer
     @patient_session = patient_session
 
     template_mail(
-      "d1faf47e-ccc3-4481-975b-1ec34211a21f",
+      EMAILS[:triage_vaccination_wont_happen],
       **opts(patient_session)
     )
   end
