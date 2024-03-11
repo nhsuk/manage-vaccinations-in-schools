@@ -39,11 +39,10 @@ task :performance, [] => :environment do |_task, _args|
 
     users = "#{team.users.recently_active.count}/#{team.users.count}"
     puts ":busts_in_silhouette: Active users: #{users} users signed in in the last week"
-    puts ""
 
     team.campaigns.first.sessions.active.each do |session|
-      puts ":school: *#{session.location.name}*"
       puts ""
+      puts ":school: *#{session.location.name}*"
 
       puts "- #{pluralize(session.location.registrations.count, "parents")} registered interest :pencil:"
 
