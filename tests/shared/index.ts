@@ -56,9 +56,6 @@ export const fixtures = {
       fullName: "Sylvester Heidenreich",
     },
   ],
-
-  // Number of children who are ready to be vaccinated in the flu session
-  childrenToBeVaccinatedInFluSession: 14,
 };
 
 export function formatDate(date: Date): string {
