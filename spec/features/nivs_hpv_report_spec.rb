@@ -19,7 +19,7 @@ RSpec.describe "NIVS HPV report" do
     session = create(:session, campaign:, location: @team.locations.first)
     create_list(
       :patient_with_consent_given_triage_not_needed,
-      4,
+      5,
       :of_hpv_vaccination_age,
       :with_address,
       session:,
@@ -32,7 +32,13 @@ RSpec.describe "NIVS HPV report" do
     create(
       :vaccination_record,
       :unadministered,
-      patient_session: session.patient_sessions.last
+      patient_session: session.patient_sessions[3]
+    )
+    create(
+      :vaccination_record,
+      :unrecorded,
+      patient_session: session.patient_sessions.last,
+      user: @team.users.first
     )
     @patient_sessions = session.patient_sessions
   end
