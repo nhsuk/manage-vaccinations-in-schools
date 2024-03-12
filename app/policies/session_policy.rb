@@ -22,7 +22,6 @@ class SessionPolicy
 
     def resolve
       @scope
-        .draft
         .and(
           Session.where(location: nil).or(
             Session.where(location: @user.team.locations)
@@ -33,6 +32,7 @@ class SessionPolicy
             Session.where(campaign: @user.team.campaigns)
           )
         )
+        .rewhere(draft: true)
     end
   end
 end
