@@ -40,6 +40,8 @@ class Session < ApplicationRecord
   scope :active, -> { where(draft: false) }
   scope :draft, -> { where(draft: true) }
 
+  default_scope { active }
+
   delegate :name, to: :location
 
   after_initialize :set_timeline_attributes
