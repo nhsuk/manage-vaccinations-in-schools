@@ -20,6 +20,10 @@ RSpec.describe "Parental consent" do
     then_i_see_the_confirmation_page
     and_i_receive_an_email_confirming_that_my_child_wont_be_vaccinated
     and_i_receive_an_email_prompting_me_to_give_feedback
+
+    when_the_nurse_checks_the_consent_responses
+    then_they_see_that_the_child_has_consent_refused
+    and_the_action_in_the_vaccination_session_is_to_check_refusal
   end
 
   def given_an_hpv_campaign_is_underway
@@ -121,5 +125,36 @@ RSpec.describe "Parental consent" do
                     EMAILS[:parental_consent_give_feedback],
                     :second
     expect(ActionMailer::Base.deliveries.count).to eq(2)
+  end
+
+  def when_the_nurse_checks_the_consent_responses
+    sign_in @team.users.first
+
+    visit "/dashboard"
+    click_on "School sessions", match: :first
+    click_on "Pilot School"
+    click_on "Check consent responses"
+  end
+
+  def then_they_see_that_the_child_has_consent_refused
+    expect(page).to have_content("Refused (1)")
+    click_on "Refused (1)"
+    within "div#refused" do
+      expect(page).to have_content(@child.full_name)
+    end
+  end
+
+  def and_the_action_in_the_vaccination_session_is_to_check_refusal
+    click_on "School sessions", match: :first
+    click_on "Pilot School"
+    click_on "Record vaccinations"
+
+    expect(page).to have_content("Action needed (1)")
+    click_on "Action needed (1)"
+    within("div#action-needed") do
+      within("tr", text: @child.full_name) do
+        expect(page).to have_content("Check refusal")
+      end
+    end
   end
 end
