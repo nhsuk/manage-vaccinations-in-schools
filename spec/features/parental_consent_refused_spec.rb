@@ -15,6 +15,11 @@ RSpec.describe "Parental consent" do
 
     when_i_refuse_consent
     then_i_can_check_my_answers
+
+    when_i_confirm_my_answers
+    then_i_see_the_confirmation_page
+    and_i_receive_an_email_confirming_that_my_child_wont_be_vaccinated
+    and_i_receive_an_email_prompting_me_to_give_feedback
   end
 
   def given_an_hpv_campaign_is_underway
@@ -89,5 +94,32 @@ RSpec.describe "Parental consent" do
 
   def then_i_can_check_my_answers
     expect(page).to have_content("Check your answers")
+  end
+
+  def when_i_confirm_my_answers
+    click_on "Confirm"
+  end
+
+  def then_i_see_the_confirmation_page
+    expect(page).to have_content(
+      "Your child will not get an HPV vaccination at school"
+    )
+  end
+
+  def and_i_receive_an_email_confirming_that_my_child_wont_be_vaccinated
+    expect(enqueued_jobs.first["scheduled_at"]).to be_nil
+    expect(
+      Time.zone.parse(enqueued_jobs.second["scheduled_at"]).to_i
+    ).to be_within(1.second).of(1.hour.from_now.to_i)
+
+    expect_email_to "jane@example.com",
+                    EMAILS[:parental_consent_confirmation_refused]
+  end
+
+  def and_i_receive_an_email_prompting_me_to_give_feedback
+    expect_email_to "jane@example.com",
+                    EMAILS[:parental_consent_give_feedback],
+                    :second
+    expect(ActionMailer::Base.deliveries.count).to eq(2)
   end
 end
