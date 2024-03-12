@@ -149,9 +149,10 @@ RSpec.describe "Parental consent" do
     click_on "Pilot School"
     click_on "Record vaccinations"
 
-    expect(page).to have_content("Action needed (1)")
-    click_on "Action needed (1)"
-    within("div#action-needed") do
+    expect(page).to have_content("Could not vaccinate (1)")
+    click_on "Could not vaccinate (1)"
+
+    within("div#could-not-vaccinate") do
       within("tr", text: @child.full_name) do
         expect(page).to have_content("Check refusal")
       end
