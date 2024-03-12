@@ -18,6 +18,8 @@ class ConsentsController < ApplicationController
       end
 
     methods.each { |m| @tabs[m] ||= [] }
+
+    session[:current_section] = "consents"
   end
 
   private

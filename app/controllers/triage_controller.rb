@@ -104,7 +104,7 @@ class TriageController < ApplicationController
     if session[:current_section] == "vaccinations"
       vaccinations_session_path(@session)
     elsif session[:current_section] == "consents"
-      consents_session_path(@session)
+      consents_session_path(@session, anchor: "given")
     else # if current_section is triage or anything else
       triage_session_path(@session)
     end
