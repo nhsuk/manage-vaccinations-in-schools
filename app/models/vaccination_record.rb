@@ -42,6 +42,7 @@ class VaccinationRecord < ApplicationRecord
   has_one :team, through: :campaign
 
   scope :administered, -> { where(administered: true) }
+  scope :recorded, -> { where.not(recorded_at: nil) }
 
   enum :delivery_method, %w[intramuscular subcutaneous], prefix: true
   enum :delivery_site,

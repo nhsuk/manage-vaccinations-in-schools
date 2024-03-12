@@ -8,6 +8,7 @@ class ReportsController < ApplicationController
     vaccinations =
       policy_scope(VaccinationRecord)
         .administered
+        .recorded
         .includes(:session, :patient, :campaign, batch: :vaccine)
         .order("vaccination_records.recorded_at")
 
