@@ -93,10 +93,6 @@ function pilot_school_name {
     jq -r '.schoolsWithNoSession[].name' db/sample_data/example-pilot-campaign.json
 }
 
-function children_to_be_vaccinated_in_flu_session {
-    jq '[.sessions[].patients[] | select(.triage | .status == "do_not_vaccinate" | not)] | length' db/sample_data/example-flu-campaign.json
-}
-
 # Do we have any args?
 if [ $# -gt 0 ]; then
     fun=$1
@@ -155,8 +151,5 @@ $(jq -r '[.registrations[] | {firstName, lastName}] | .[0:3][] | "\(.firstName) 
   echo "    { firstName: \"$firstName\", lastName: \"$lastName\", fullName: \"$firstName $lastName\" },"
 done)
   ],
-
-  // Number of children who are ready to be vaccinated in the flu session
-  childrenToBeVaccinatedInFluSession: $(children_to_be_vaccinated_in_flu_session),
 };
 EOF
