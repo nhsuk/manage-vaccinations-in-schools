@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_04_163610) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_12_151437) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -88,6 +88,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_04_163610) do
     t.string "address_postcode"
     t.jsonb "health_answers", default: [], null: false
     t.bigint "consent_id"
+    t.datetime "feedback_request_sent_at"
     t.index ["consent_id"], name: "index_consent_forms_on_consent_id"
     t.index ["session_id"], name: "index_consent_forms_on_session_id"
   end
