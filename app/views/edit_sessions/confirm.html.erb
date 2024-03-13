@@ -13,7 +13,11 @@
 
 <% if @session.send_consent_at.today? %>
   <%= govuk_inset_text do %>
-    After clicking confirm, consent request emails will be sent immediately.
+    <span class="nhsuk-visually-hidden">Information: </span>
+
+    <p>
+      After clicking confirm, consent request emails will be sent immediately.
+    </p>
   <% end %>
 <% end %>
 
