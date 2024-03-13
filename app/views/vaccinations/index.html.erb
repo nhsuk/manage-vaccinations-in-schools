@@ -37,6 +37,18 @@ render AppTabComponent.new(title: "Vaccinations", classes: 'nhsuk-tabs') do |c|
       )
     end
   end
+  c.with_tab(id: "vaccinate-later", label: t("states.vaccinate_later.label") + " (#{ @partitioned_patient_sessions[:vaccinate_later].size })", classes: 'nhsuk-tabs__panel') do
+    if @partitioned_patient_sessions[:vaccinate_later].any?
+      render "patients_with_outcomes",
+           id: "vaccinate-later",
+           caption: t("states.vaccinate_later.title"),
+           patient_sessions: @partitioned_patient_sessions[:vaccinate_later]
+    else
+      render AppEmptyListComponent.new(
+        title: t("states.not_vaccinated.title")
+      )
+    end
+  end
   c.with_tab(id: "could-not-vaccinate", label: t("states.not_vaccinated.label") + " (#{ @partitioned_patient_sessions[:not_vaccinated].size })", classes: 'nhsuk-tabs__panel') do
     if @partitioned_patient_sessions[:not_vaccinated].any?
       render "patients_with_outcomes",

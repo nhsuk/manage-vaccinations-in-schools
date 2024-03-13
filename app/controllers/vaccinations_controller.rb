@@ -28,6 +28,7 @@ class VaccinationsController < ApplicationController
         consent_given_triage_not_needed
       ],
       vaccinated: %w[vaccinated],
+      vaccinate_later: %w[delay_vaccination],
       not_vaccinated: %w[
         triaged_do_not_vaccinate
         unable_to_vaccinate
