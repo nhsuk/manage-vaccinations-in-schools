@@ -154,7 +154,7 @@ RSpec.describe "Parental consent" do
 
     within("div#could-not-vaccinate") do
       within("tr", text: @child.full_name) do
-        expect(page).to have_content("Check refusal")
+        expect(page).to have_content("Consent refused")
       end
     end
   end
