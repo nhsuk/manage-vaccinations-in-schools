@@ -48,6 +48,9 @@ en:
     vaccinated:
       label: Vaccinated
       title: Vaccinated children
+    vaccinate_later:
+      label: Vaccinate later
+      title: Children who will be vaccinated later
     not_vaccinated:
       label: Could not vaccinate
       title: Children who could not be vaccinated
