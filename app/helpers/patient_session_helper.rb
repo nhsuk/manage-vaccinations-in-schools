@@ -23,6 +23,11 @@ module PatientSessionHelper
       colour: "orange",
       text: "Check conflicting consent"
     },
+    delay_vaccination: {
+      colour: "red",
+      text: "Delay vaccination to a later date",
+      banner_title: "Delay vaccination to a later date"
+    },
     triaged_do_not_vaccinate: {
       colour: "red",
       text: "Do not vaccinate",
