@@ -11,7 +11,9 @@
 
 <% if @team.remaining_cohort_size.zero? %>
   <%= h1 page_title %>
-  <%= govuk_inset_text(classes: "nhsuk-u-margin-top-4") do %>
+  <%= govuk_inset_text do %>
+    <span class="nhsuk-visually-hidden">Information: </span>
+
     <p>
       Your current cohort has <%= pluralize(@team.cohort_size, "child") %>.
       You have reached the maximum number of children for this pilot.
@@ -25,7 +27,9 @@
       label: { text: page_title, tag: 'h1', size: 'l' },
       hint: { text: 'Make sure the CSV you upload has the same format as your
                      standard cohort template' } do %>
-      <%= govuk_inset_text(classes: 'nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-4') do %>
+      <%= govuk_inset_text do %>
+        <span class="nhsuk-visually-hidden">Information: </span>
+
         <p>
           <% if @team.cohort_size.zero? %>
             Your current cohort is empty.
