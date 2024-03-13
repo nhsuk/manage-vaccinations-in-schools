@@ -7,8 +7,7 @@
 
 <%= h1 "Confirm your child’s school" %>
 
-<%= govuk_inset_text(classes: 'nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-4') do %>
-  <span class="nhsuk-u-visually-hidden">Information:</span>
+<%= govuk_inset_text do %>
   <p>
     <span class="nhsuk-heading-m nhsuk-u-margin-bottom-0">
       <%= @session.location.name %>

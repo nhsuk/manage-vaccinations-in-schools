@@ -10,8 +10,11 @@
   <%= h1 "What’s the timeline for consent requests?" %>
 
   <%= govuk_inset_text do %>
-    <span class="nhsuk-visually-hidden">Information:</span>
-    Session scheduled for <%= @session.date.to_fs(:nhsuk_date_day_of_week) %> (<%= @session.human_enum_name(:time_of_day) %>)
+    <span class="nhsuk-visually-hidden">Information: </span>
+
+    <p>
+      Session scheduled for <%= @session.date.to_fs(:nhsuk_date_day_of_week) %> (<%= @session.human_enum_name(:time_of_day) %>)
+    </p>
   <% end %>
 
   <%= f.govuk_date_field :send_consent_at,

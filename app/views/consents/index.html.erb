@@ -12,8 +12,10 @@
 <%= h1 page_title, page_title: %>
 
 <% if @unmatched_record_counts > 0 %>
-  <%= govuk_inset_text(classes: "nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-4") do %>
-    <p class="nhsuk-body">
+  <%= govuk_inset_text do %>
+    <span class="nhsuk-visually-hidden">Information: </span>
+
+    <p>
       <%=
         responses = pluralize(@unmatched_record_counts, 'response')
         link_to(
