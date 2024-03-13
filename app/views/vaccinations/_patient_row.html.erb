@@ -14,7 +14,7 @@
   <td class="nhsuk-table__cell" data-testid="child-action">
     <%= govuk_tag(
       classes: "nhsuk-u-font-size-16 nhsuk-u-width-full",
-      text: status_text_for_state(patient_session.state),
+      text: t("patient_session_statuses.#{patient_session.state}.text"),
       colour: t("patient_session_statuses.#{patient_session.state}.colour")
     ) %>
   </td>
