@@ -27,13 +27,6 @@ class ConsentFormMailer < ApplicationMailer
     )
   end
 
-  def give_feedback(consent_form: nil, consent: nil, session: nil)
-    template_mail(
-      EMAILS[:parental_consent_give_feedback],
-      **opts(consent_form:, consent:, session:)
-    )
-  end
-
   private
 
   def opts(consent_form:, consent:, session: nil)
@@ -46,17 +39,11 @@ class ConsentFormMailer < ApplicationMailer
   end
 
   def consent_form_personalisation
-    personalisation.merge(reason_for_refusal:, survey_deadline_date:)
+    personalisation.merge(reason_for_refusal:)
   end
 
   def reason_for_refusal
     reason = @consent_form&.reason || @consent&.reason_for_refusal
     I18n.t("mailers.consent_form_mailer.reasons_for_refusal.#{reason}")
-  end
-
-  def survey_deadline_date
-    recorded_at = @consent_form&.recorded_at || @consent.recorded_at
-
-    (recorded_at + 7.days).to_fs(:nhsuk_date)
   end
 end

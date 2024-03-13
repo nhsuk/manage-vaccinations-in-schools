@@ -11,8 +11,7 @@ describe ConsentFormMailerConcern do
       confirmation: mail,
       confirmation_needs_triage: mail,
       confirmation_injection: mail,
-      confirmation_refused: mail,
-      give_feedback: mail
+      confirmation_refused: mail
     )
   end
 
@@ -24,10 +23,7 @@ describe ConsentFormMailerConcern do
       expect(ConsentFormMailer).to have_received(:confirmation_injection).with(
         consent_form:
       )
-      expect(ConsentFormMailer).to have_received(:give_feedback).with(
-        consent_form:
-      )
-      expect(mail).to have_received(:deliver_later).twice
+      expect(mail).to have_received(:deliver_later).with(no_args).once
     end
 
     it "sends confirmation_refused mail when user refuses consent" do
@@ -37,10 +33,7 @@ describe ConsentFormMailerConcern do
       expect(ConsentFormMailer).to have_received(:confirmation_refused).with(
         consent_form:
       )
-      expect(ConsentFormMailer).to have_received(:give_feedback).with(
-        consent_form:
-      )
-      expect(mail).to have_received(:deliver_later).twice
+      expect(mail).to have_received(:deliver_later).with(no_args).once
     end
 
     it "sends confirmation_needs_triage mail when a health question is yes" do
@@ -50,10 +43,7 @@ describe ConsentFormMailerConcern do
       expect(ConsentFormMailer).to have_received(
         :confirmation_needs_triage
       ).with(consent_form:)
-      expect(ConsentFormMailer).to have_received(:give_feedback).with(
-        consent_form:
-      )
-      expect(mail).to have_received(:deliver_later).twice
+      expect(mail).to have_received(:deliver_later).with(no_args).once
     end
 
     it "sends confirmation mail when user agrees to consent" do
@@ -62,10 +52,7 @@ describe ConsentFormMailerConcern do
       expect(ConsentFormMailer).to have_received(:confirmation).with(
         consent_form:
       )
-      expect(ConsentFormMailer).to have_received(:give_feedback).with(
-        consent_form:
-      )
-      expect(mail).to have_received(:deliver_later).twice
+      expect(mail).to have_received(:deliver_later).with(no_args).once
     end
   end
 end
