@@ -22,7 +22,7 @@ module TriageMailerConcern
     end
 
     if consent.present?
-      ConsentFormMailer.give_feedback(consent:, session:).deliver_later(
+      FeedbackMailer.give_feedback(consent:, session:).deliver_later(
         wait: 1.hour
       )
     end
