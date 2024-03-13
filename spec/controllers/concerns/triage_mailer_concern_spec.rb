@@ -13,9 +13,9 @@ RSpec.describe TriageMailerConcern do
         confirmation: mail,
         confirmation_needs_triage: mail,
         confirmation_injection: mail,
-        confirmation_refused: mail,
-        give_feedback: mail
+        confirmation_refused: mail
       )
+      allow(FeedbackMailer).to receive_messages(give_feedback: mail)
       allow(TriageMailer).to receive_messages(
         vaccination_will_happen: mail,
         vaccination_wont_happen: mail
@@ -37,7 +37,7 @@ RSpec.describe TriageMailerConcern do
         end
 
         it "doesn't send a feedback email" do
-          expect(ConsentFormMailer).not_to have_received(:give_feedback)
+          expect(FeedbackMailer).not_to have_received(:give_feedback)
         end
       end
 
@@ -105,7 +105,7 @@ RSpec.describe TriageMailerConcern do
         end
 
         it "sends a feedback email" do
-          expect(ConsentFormMailer).to have_received(:give_feedback).with(
+          expect(FeedbackMailer).to have_received(:give_feedback).with(
             consent:,
             session: patient_session.session
           )
