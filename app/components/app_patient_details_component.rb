@@ -13,6 +13,68 @@ class AppPatientDetailsComponent < ViewComponent::Base
     @school = school
   end
 
+  def call
+    govuk_summary_list(
+      classes: "app-summary-list--no-bottom-border"
+    ) do |summary_list|
+      summary_list.with_row do |row|
+        row.with_key { "Name" }
+        row.with_value { @object.full_name }
+      end
+
+      if @object.common_name.present?
+        summary_list.with_row do |row|
+          row.with_key { "Known as" }
+          row.with_value { @object.common_name }
+        end
+      end
+
+      if @object.date_of_birth.present?
+        summary_list.with_row do |row|
+          row.with_key { "Date of birth" }
+          row.with_value do
+            "#{@object.date_of_birth.to_fs(:nhsuk_date)} (#{aged})"
+          end
+        end
+      end
+
+      if address_present?
+        summary_list.with_row do |row|
+          row.with_key { "Address" }
+          row.with_value { address_formatted }
+        end
+      end
+
+      if @school.present?
+        summary_list.with_row do |row|
+          row.with_key { "School" }
+          row.with_value { @school.name }
+        end
+      end
+
+      if gp_response_present?
+        if @object.gp_response_yes?
+          summary_list.with_row do |row|
+            row.with_key { "GP" }
+            row.with_value { @object.gp_name }
+          end
+        else
+          summary_list.with_row do |row|
+            row.with_key { "Registered with a GP" }
+            row.with_value { @object.gp_response_no? ? "No" : "I don’t know" }
+          end
+        end
+      end
+
+      if nhs_number.present?
+        summary_list.with_row do |row|
+          row.with_key { "NHS Number" }
+          row.with_value { nhs_number_formatted }
+        end
+      end
+    end
+  end
+
   private
 
   def aged
