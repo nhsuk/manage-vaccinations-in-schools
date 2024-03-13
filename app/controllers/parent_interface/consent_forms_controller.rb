@@ -1,6 +1,7 @@
 module ParentInterface
   class ConsentFormsController < ConsentForms::BaseController
     include ConsentFormMailerConcern
+    include FeedbackMailerConcern
 
     layout "two_thirds"
 
@@ -46,6 +47,7 @@ module ParentInterface
       session.delete(:consent_form_id)
 
       send_record_mail(@consent_form)
+      send_feedback_request_mail(consent_form: @consent_form)
 
       ConsentFormMatchingJob.perform_later(@consent_form.id)
     end
