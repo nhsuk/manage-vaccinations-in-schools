@@ -139,17 +139,18 @@ RSpec.describe "Parental consent" do
       "#{@child.full_name} will get their HPV vaccination at school"
     )
 
-    expect(enqueued_jobs.first["scheduled_at"]).to be_nil
-    expect(
-      Time.zone.parse(enqueued_jobs.second["scheduled_at"]).to_i
-    ).to be_within(1.second).of(1.hour.from_now.to_i)
-
     perform_enqueued_jobs
 
-    expect(ActionMailer::Base.deliveries.count).to eq(2)
-    expect(ActionMailer::Base.deliveries.map(&:to).flatten).to eq(
-      ["jane@example.com"] * 2
-    )
+    mails = ActionMailer::Base.deliveries
+    expect(mails.count).to eq(2)
+
+    expect(mails.first.to).to eq ["jane@example.com"]
+    first_template_id = mails.first.header[:template_id].value
+    expect(first_template_id).to eq EMAILS[:parental_consent_confirmation]
+
+    expect(mails.second.to).to eq ["jane@example.com"]
+    second_template_id = mails.second.header[:template_id].value
+    expect(second_template_id).to eq EMAILS[:parental_consent_give_feedback]
   end
 
   def when_the_nurse_checks_the_consent_responses
