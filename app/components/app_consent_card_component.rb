@@ -11,7 +11,7 @@ class AppConsentCardComponent < ViewComponent::Base
     {
       given: "Consent updated to given (by phone)",
       refused: "Refusal confirmed (by phone)",
-      not_provided: "No response when contacted"
+      not_provided: "No response when contacted (by phone)"
     }[
       @consent.response.to_sym
     ]
