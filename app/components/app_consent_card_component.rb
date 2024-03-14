@@ -27,7 +27,7 @@ class AppConsentCardComponent < ViewComponent::Base
       }[
         @consent.response.to_sym
       ]
-    heading = "#{by} #{@consent.name.titleize}"
+    heading = "#{by} #{@consent.name}"
     heading += " (#{@consent.who_responded})" unless @consent.via_self_consent?
     heading
   end
