@@ -32,7 +32,7 @@ RSpec.describe AppConsentCardComponent, type: :component do
     end
 
     it { should have_css("h2", text: /Granddad/) }
-    it { should have_css("p", text: /No response/) }
+    it { should have_css("p", text: /No response when contacted \(by phone\)/) }
     it { should have_css("p", text: recorded_by.full_name) }
   end
 end
