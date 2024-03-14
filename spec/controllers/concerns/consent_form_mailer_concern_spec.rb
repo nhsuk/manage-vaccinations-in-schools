@@ -11,7 +11,8 @@ describe ConsentFormMailerConcern do
       confirmation: mail,
       confirmation_needs_triage: mail,
       confirmation_injection: mail,
-      confirmation_refused: mail
+      confirmation_refused: mail,
+      give_feedback: mail
     )
   end
 
@@ -53,6 +54,17 @@ describe ConsentFormMailerConcern do
         consent_form:
       )
       expect(mail).to have_received(:deliver_later).with(no_args).once
+    end
+  end
+
+  describe "#send_feedback_request_mail" do
+    it "sends an email" do
+      subject.send_feedback_request_mail(consent_form:)
+
+      expect(ConsentFormMailer).to have_received(:give_feedback).with(
+        consent_form:
+      )
+      expect(mail).to have_received(:deliver_later).with(wait: 1.hour).once
     end
   end
 end
