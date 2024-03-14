@@ -22,7 +22,7 @@ class AppConsentCardComponent < ViewComponent::Base
       {
         given: "Consent given by",
         refused: "Refusal confirmed by",
-        not_provided: ""
+        not_provided: "Contacted"
       }[
         @consent.response.to_sym
       ]
