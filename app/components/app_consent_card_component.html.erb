@@ -19,11 +19,7 @@
       row.with_key { "Response" }
       row.with_value do %>
         <p class="nhsuk-u-margin-bottom-0">
-          <%= {
-          given: "Consent updated to given (by phone)",
-          refused: "Refusal confirmed (by phone)",
-          not_provided: "No response when contacted",
-          }[@consent.response.to_sym] %>
+        <%= response_string %>
         </p>
         <p class="nhsuk-u-margin-bottom-2 nhsuk-u-secondary-text-color nhsuk-u-font-size-16 nhsuk-u-margin-bottom-0">
           <%= govuk_link_to @current_user.full_name, "mailto:#{@current_user.email}" %>,
