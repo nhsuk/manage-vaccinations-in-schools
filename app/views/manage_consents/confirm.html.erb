@@ -19,9 +19,7 @@
     consent: @consent,
     patient_session: @patient_session) %>
 <% else %>
-  <%= render AppConsentCardComponent.new(
-    consent: @consent,
-    current_user:) %>
+  <%= render AppConsentCardComponent.new(consent: @consent) %>
 <% end %>
 
 <% if @consent.response_given? %>
