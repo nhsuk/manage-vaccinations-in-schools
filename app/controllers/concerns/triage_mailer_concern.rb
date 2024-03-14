@@ -20,12 +20,6 @@ module TriageMailerConcern
         ConsentFormMailer.confirmation(consent:, session:).deliver_later
       end
     end
-
-    if consent.present?
-      FeedbackMailer.give_feedback(consent:, session:).deliver_later(
-        wait: 1.hour
-      )
-    end
   end
 
   def send_vaccination_will_happen_email?(patient_session, consent)
