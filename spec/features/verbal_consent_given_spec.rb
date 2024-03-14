@@ -14,7 +14,6 @@ RSpec.describe "Verbal consent" do
     when_i_go_to_the_patient
     then_i_see_that_the_status_is_do_not_vaccinate
     and_an_email_is_sent_to_the_parent_confirming_the_vaccination
-    and_an_email_is_sent_to_the_parent_to_give_feedback
   end
 
   def given_i_am_signed_in
@@ -69,13 +68,10 @@ RSpec.describe "Verbal consent" do
   end
 
   def and_an_email_is_sent_to_the_parent_confirming_the_vaccination
-    expect_email_to @patient.parent_email,
-                    EMAILS[:parental_consent_confirmation]
-  end
+    expect(sent_emails.count).to eq 1
 
-  def and_an_email_is_sent_to_the_parent_to_give_feedback
-    expect_email_to @patient.parent_email,
-                    EMAILS[:parental_consent_give_feedback],
-                    :second
+    expect(sent_emails.last).to be_sent_with_govuk_notify.using_template(
+      EMAILS[:parental_consent_confirmation]
+    ).to(@patient.parent_email)
   end
 end
