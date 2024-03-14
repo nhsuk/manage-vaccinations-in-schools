@@ -22,7 +22,9 @@
         <%= response_string %>
         </p>
         <p class="nhsuk-u-margin-bottom-2 nhsuk-u-secondary-text-color nhsuk-u-font-size-16 nhsuk-u-margin-bottom-0">
-          <%= govuk_link_to @current_user.full_name, "mailto:#{@current_user.email}" %>,
+          <% if @consent.recorded_by.present? %>
+            <%= govuk_link_to @consent.recorded_by.full_name, "mailto:#{@consent.recorded_by.email}" %>,
+          <% end %>
           <%= Time.zone.now.to_fs(:app_date_time) %>
         </p>
       <% end

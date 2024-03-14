@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 class AppConsentCardComponent < ViewComponent::Base
-  def initialize(consent:, current_user:)
+  def initialize(consent:)
     super
 
     @consent = consent
-    @current_user = current_user
   end
 
   def response_string
