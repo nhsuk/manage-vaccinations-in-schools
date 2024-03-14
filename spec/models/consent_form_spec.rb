@@ -12,7 +12,6 @@
 #  contact_method            :integer
 #  contact_method_other      :text
 #  date_of_birth             :date
-#  feedback_request_sent_at  :datetime
 #  first_name                :text
 #  gp_name                   :string
 #  gp_response               :integer
