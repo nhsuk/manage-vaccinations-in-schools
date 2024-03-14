@@ -8,6 +8,16 @@ class AppConsentCardComponent < ViewComponent::Base
     @current_user = current_user
   end
 
+  def response_string
+    {
+      given: "Consent updated to given (by phone)",
+      refused: "Refusal confirmed (by phone)",
+      not_provided: "No response when contacted"
+    }[
+      @consent.response.to_sym
+    ]
+  end
+
   def heading
     by =
       {
