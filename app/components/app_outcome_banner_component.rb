@@ -48,8 +48,8 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def show_location?
-    # location only makes sense if an attempt to vaccinate on site was made
-    @patient_session.vaccination_records.any?
+    # showing the location only makes sense if an attempt to vaccinate on site was made
+    @patient_session.vaccination_records.recorded.any?
   end
 
   def vaccine_summary
