@@ -41,7 +41,12 @@ class AppConsentFormComponent < ViewComponent::Base
       summary_list.with_row do |row|
         row.with_key { "Response" }
         row.with_value do
-          render AppConsentResponseComponent.new(consents: [@consent_form])
+          render AppConsentResponseComponent::AppSingleConsentResponseComponent.new(
+                   response:
+                     @consent_form.human_enum_name(:response).capitalize,
+                   route: "online",
+                   timestamp: @consent_form.recorded_at
+                 )
         end
       end
 

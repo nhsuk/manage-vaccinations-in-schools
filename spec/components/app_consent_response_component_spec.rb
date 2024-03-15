@@ -13,19 +13,8 @@ RSpec.describe AppConsentResponseComponent, type: :component do
     let(:consents) { [consent] }
 
     it { should have_text("Consent given (online)") }
-    it { should have_text(consent.parent_name) }
-    it do
-      should have_text(
-               "#{consent.created_at.to_fs(:nhsuk_date)} at #{consent.created_at.to_fs(:time)}"
-             )
-    end
-    it do
-      should have_link(
-               consent.parent_name,
-               href: "mailto:#{consent.parent_email}"
-             )
-    end
-
+    it { should_not have_text(consent.parent_name) }
+    it { should have_text(consent.recorded_at.to_fs(:app_date_time)) }
     it { should_not have_css("ul") }
 
     context "with consent refused" do
@@ -35,10 +24,13 @@ RSpec.describe AppConsentResponseComponent, type: :component do
     end
 
     context "with consent taken over the phone" do
-      let(:consent) { create(:consent, :given_verbally) }
+      let(:user) do
+        create(:user, full_name: "Test User", email: "test@example.com")
+      end
+      let(:consent) { create(:consent, :given_verbally, recorded_by: user) }
 
       it { should have_text("Consent given (phone)") }
-      it { should have_text("Test User") }
+      it { should have_link("Test User", href: "mailto:test@example.com") }
     end
 
     context "with no response to attempt to get verbal consent" do
@@ -48,24 +40,20 @@ RSpec.describe AppConsentResponseComponent, type: :component do
     end
   end
 
-  context "with consent_form" do
-    let(:consent_form) { create(:consent_form, :recorded) }
-    let(:consents) { [consent_form] }
+  context "calling the single AppSingleConsentResponseComponent" do
+    let(:component) do
+      AppConsentResponseComponent::AppSingleConsentResponseComponent.new(
+        response: "Consent given",
+        route: "online",
+        timestamp: Time.zone.local(2024, 2, 29, 12, 0, 0),
+        recorded_by:
+          create(:user, full_name: "Test User", email: "test@example.com")
+      )
+    end
 
     it { should have_text("Consent given (online)") }
-    it { should have_text(consent_form.parent_name) }
-    it do
-      should have_text(
-               "#{consent_form.created_at.to_fs(:nhsuk_date)} at #{consent_form.created_at.to_fs(:time)}"
-             )
-    end
-
-    it do
-      should have_link(
-               consent_form.parent_name,
-               href: "mailto:#{consent_form.parent_email}"
-             )
-    end
+    it { should have_text("29 Feb 2024 at 12:00pm") }
+    it { should have_link("Test User", href: "mailto:test@example.com") }
   end
 
   context "with multiple consents" do
