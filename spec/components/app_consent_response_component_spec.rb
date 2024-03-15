@@ -27,13 +27,19 @@ RSpec.describe AppConsentResponseComponent, type: :component do
     end
 
     it { should_not have_css("ul") }
-  end
 
-  context "with consent taken over the phone" do
-    let(:consent) { create(:consent, :given_verbally) }
+    context "with consent refused" do
+      let(:consent) { create(:consent, :refused) }
 
-    it { should have_text("Consent given (phone)") }
-    it { should have_text("Test User") }
+      it { should have_text("Consent refused (online)") }
+    end
+
+    context "with consent taken over the phone" do
+      let(:consent) { create(:consent, :given_verbally) }
+
+      it { should have_text("Consent given (phone)") }
+      it { should have_text("Test User") }
+    end
   end
 
   context "with consent_form" do
@@ -62,11 +68,5 @@ RSpec.describe AppConsentResponseComponent, type: :component do
     let(:consents) { [consent1, consent2] }
 
     it { should have_css("ul li p", text: "Consent given (online)", count: 2) }
-  end
-
-  context "with consent refused" do
-    let(:consent) { create(:consent, :refused) }
-
-    it { should have_text("Consent refused (online)") }
   end
 end
