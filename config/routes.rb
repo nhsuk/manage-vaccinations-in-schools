@@ -100,8 +100,6 @@ Rails.application.routes.draw do
       resource :triage, only: %i[create update]
 
       resource :vaccinations, only: %i[new create update] do
-        get "history", on: :member
-
         resource "batch",
                  only: %i[edit update],
                  controller: "vaccinations/batches"
