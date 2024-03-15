@@ -5,18 +5,18 @@ class AppConsentDetailsComponent < ViewComponent::Base
     ) do |summary_list|
       summary_list.with_row do |row|
         row.with_key { "Name" }
-        row.with_value { name }
+        row.with_value { consent.name }
       end
 
-      unless self_consent?
+      unless consent.via_self_consent?
         summary_list.with_row do |row|
           row.with_key { "Relationship" }
-          row.with_value { who_responded }
+          row.with_value { consent.who_responded }
         end
 
         summary_list.with_row do |row|
           row.with_key { "Contact" }
-          row.with_value { parent_phone_and_email.join("<br />").html_safe }
+          row.with_value { contact_details }
         end
       end
 
@@ -27,13 +27,10 @@ class AppConsentDetailsComponent < ViewComponent::Base
         end
       end
 
-      if refused_consents.any?
+      if first_refused_consent.present?
         summary_list.with_row do |row|
           row.with_key { "Refusal reason" }
-          row.with_value do
-            safe_join [reason_for_refusal, reason_for_refusal_notes].compact,
-                      tag.br
-          end
+          row.with_value { refusal_reason }
         end
       end
     end
@@ -41,58 +38,33 @@ class AppConsentDetailsComponent < ViewComponent::Base
 
   def initialize(consents:)
     super
-
     @consents = consents
   end
 
   private
 
-  def self_consent?
-    if @consents.first.respond_to?(:via_self_consent?)
-      @consents.first.via_self_consent?
-    else
-      false
-    end
+  def consent
+    @consents.first
   end
 
-  def name
-    if @consents.first.respond_to?(:via_self_consent?)
-      @consents.first.name
-    else
-      @consents.first.parent_name
-    end
+  def contact_details
+    safe_join(
+      [consent.parent_phone, consent.parent_email].reject(&:blank?),
+      tag.br
+    )
   end
 
-  def who_responded
-    @consents.first.who_responded
+  def refusal_reason
+    safe_join(
+      [
+        first_refused_consent.human_enum_name(:reason_for_refusal),
+        first_refused_consent.reason_for_refusal_notes
+      ].compact,
+      tag.br
+    )
   end
 
-  def parent_phone_and_email
-    [@consents.first.parent_phone, @consents.first.parent_email].compact
-  end
-
-  def refused_consents
-    @refused_consents ||=
-      if @consents.first.respond_to?(:response_refused?)
-        @consents.find_all(&:response_refused?)
-      else
-        @consents.find_all(&:consent_refused?)
-      end
-  end
-
-  def reason_for_refusal
-    if refused_consents.first.respond_to?(:reason)
-      refused_consents.first.human_enum_name(:reason)
-    else
-      refused_consents.first.human_enum_name(:reason_for_refusal)
-    end
-  end
-
-  def reason_for_refusal_notes
-    if refused_consents.first.respond_to?(:reason_notes)
-      refused_consents.first.reason_notes
-    else
-      refused_consents.first.reason_for_refusal_notes
-    end
+  def first_refused_consent
+    @first_refused_consent ||= @consents.find_all(&:response_refused?).first
   end
 end

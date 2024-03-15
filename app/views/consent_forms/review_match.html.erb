@@ -21,7 +21,7 @@
           patient: @patient_session.patient) %>
 
     <%= render AppCardComponent.new(heading: "Consent response") do
-      render AppConsentDetailsComponent.new(consents: [@consent_form])
+      render AppConsentFormComponent.new(consent_form: @consent_form)
     end %>
 
     <%= form_tag match_consent_form_path(@consent_form.id, patient_session_id: @patient_session.id) do %>
