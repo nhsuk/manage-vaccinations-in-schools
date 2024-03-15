@@ -18,7 +18,12 @@ class AppConsentResponseComponent < ViewComponent::Base
     end
 
     def response
-      consent.human_enum_name(:response).capitalize
+      if consent.respond_to?(:response_not_provided?) &&
+           consent.response_not_provided?
+        "No response when contacted"
+      else
+        consent.human_enum_name(:response).capitalize
+      end
     end
 
     def route
