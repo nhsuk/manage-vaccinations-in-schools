@@ -40,6 +40,12 @@ RSpec.describe AppConsentResponseComponent, type: :component do
       it { should have_text("Consent given (phone)") }
       it { should have_text("Test User") }
     end
+
+    context "with no response to attempt to get verbal consent" do
+      let(:consent) { create(:consent, :not_provided) }
+
+      it { should have_text("No response when contacted") }
+    end
   end
 
   context "with consent_form" do

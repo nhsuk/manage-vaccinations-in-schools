@@ -49,7 +49,9 @@ async function when_i_click_get_consent() {
 const and_i_click_get_consent = when_i_click_get_consent;
 
 async function then_i_see_the_previous_attempt_to_get_consent() {
-  await expect(p.getByText(/Not provided.*phone/)).toBeVisible();
+  await expect(
+    p.getByText(/No response when contacted.*\(phone\)/),
+  ).toBeVisible();
 }
 
 async function when_i_submit_a_consent_with_no_response() {
