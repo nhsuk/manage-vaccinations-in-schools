@@ -11,28 +11,38 @@ RSpec.describe AppConsentCardComponent, type: :component do
   let(:recorded_by) { create(:user, full_name: "Nurse Joy") }
 
   context "when consent is given" do
-    let(:consent) { create(:consent, :given, :from_mum, recorded_by:) }
+    let(:consent) do
+      create(:consent, :given, :from_mum, recorded_by:, route: "phone")
+    end
 
     it { should have_css("h2", text: /Consent given by.*Mum/) }
-    it { should have_css("p", text: /Consent updated.*by phone/) }
+    it { should have_css("p", text: /Consent given.*\(phone\)/) }
     it { should have_css("p", text: recorded_by.full_name) }
   end
 
   context "when consent is refused" do
-    let(:consent) { create(:consent, :refused, :from_dad, recorded_by:) }
+    let(:consent) do
+      create(:consent, :refused, :from_dad, recorded_by:, route: "phone")
+    end
 
     it { should have_css("h2", text: /Refusal confirmed by.*Dad/) }
-    it { should have_css("p", text: /Refusal.*by phone/) }
+    it { should have_css("p", text: /Consent refused \(phone\)/) }
     it { should have_css("p", text: recorded_by.full_name) }
   end
 
   context "when consent is not provided" do
     let(:consent) do
-      create(:consent, :not_provided, :from_granddad, recorded_by:)
+      create(
+        :consent,
+        :not_provided,
+        :from_granddad,
+        recorded_by:,
+        route: "phone"
+      )
     end
 
     it { should have_css("h2", text: /Granddad/) }
-    it { should have_css("p", text: /No response when contacted \(by phone\)/) }
+    it { should have_css("p", text: /No response when contacted \(phone\)/) }
     it { should have_css("p", text: recorded_by.full_name) }
   end
 end

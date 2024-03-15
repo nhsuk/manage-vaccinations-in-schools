@@ -16,7 +16,7 @@ class AppConsentResponseComponent < ViewComponent::Base
       super
       @response = response
       @route = route
-      @timestamp = timestamp
+      @timestamp = timestamp || Time.zone.now
       @recorded_by = recorded_by
     end
   end

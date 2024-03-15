@@ -23,14 +23,38 @@ RSpec.describe AppConsentResponseComponent, type: :component do
       it { should have_text("Consent refused (online)") }
     end
 
-    context "with consent taken over the phone" do
+    context "with consent taken over the phone, after the record has been confirmed" do
       let(:user) do
         create(:user, full_name: "Test User", email: "test@example.com")
       end
-      let(:consent) { create(:consent, :given_verbally, recorded_by: user) }
+      let(:consent) do
+        create(
+          :consent,
+          :given_verbally,
+          recorded_at: Time.zone.local(2024, 2, 27, 14, 0, 0),
+          recorded_by: user
+        )
+      end
 
       it { should have_text("Consent given (phone)") }
       it { should have_link("Test User", href: "mailto:test@example.com") }
+      it { should have_text("27 Feb 2024 at 2:00pm") }
+    end
+
+    context "with consent taken over the phone, prior to the record being confirmed" do
+      prepend_before(:context) do
+        Timecop.freeze(Time.zone.local(2024, 2, 29, 12, 0, 0))
+      end
+      after { Timecop.return }
+
+      let(:user) do
+        create(:user, full_name: "Test User", email: "test@example.com")
+      end
+      let(:consent) do
+        create(:consent, :given_verbally, recorded_at: nil, recorded_by: user)
+      end
+
+      it { should have_text("29 Feb 2024 at 12:00pm") }
     end
 
     context "with no response to attempt to get verbal consent" do
