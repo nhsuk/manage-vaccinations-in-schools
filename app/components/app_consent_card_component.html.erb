@@ -17,17 +17,13 @@
 
     summary_list.with_row do |row|
       row.with_key { "Response" }
-      row.with_value do %>
-        <p class="nhsuk-u-margin-bottom-0">
-        <%= response_string %>
-        </p>
-        <p class="nhsuk-u-margin-bottom-2 nhsuk-u-secondary-text-color nhsuk-u-font-size-16 nhsuk-u-margin-bottom-0">
-          <% if @consent.recorded_by.present? %>
-            <%= govuk_link_to @consent.recorded_by.full_name, "mailto:#{@consent.recorded_by.email}" %>,
-          <% end %>
-          <%= Time.zone.now.to_fs(:app_date_time) %>
-        </p>
-      <% end
+      row.with_value do
+        render AppTimestampedEntryComponent.new(
+          text: response_string,
+          timestamp: Time.zone.now,
+          recorded_by: @consent.recorded_by
+        )
+      end
     end
 
     if @consent.response_refused?
