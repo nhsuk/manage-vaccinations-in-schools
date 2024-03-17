@@ -1,0 +1,20 @@
+class AppTimestampedEntryComponent < ViewComponent::Base
+  erb_template <<-ERB
+    <p class="nhsuk-body">
+      <%= @text %>
+    </p>
+    <p class="nhsuk-u-margin-bottom-2 nhsuk-u-secondary-text-color nhsuk-u-font-size-16 nhsuk-u-margin-bottom-0">
+      <% if @recorded_by.present? %>
+        <%= mail_to(@recorded_by.email, @recorded_by.full_name) %>,
+      <% end %>
+      <%= @timestamp.to_fs(:app_date_time) %>
+    </p>
+  ERB
+
+  def initialize(text:, timestamp:, recorded_by: nil)
+    super
+    @text = text
+    @timestamp = timestamp || Time.zone.now
+    @recorded_by = recorded_by
+  end
+end
