@@ -36,7 +36,7 @@ class Vaccinations::DeliverySiteController < ApplicationController
 
   def set_draft_vaccination_record
     @draft_vaccination_record =
-      @patient.vaccination_records_for_session(@session).find_by(
+      @patient.draft_vaccination_records_for_session(@session).find_by(
         recorded_at: nil
       )
 

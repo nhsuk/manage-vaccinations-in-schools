@@ -56,11 +56,11 @@ class VaccinationsController < ApplicationController
   end
 
   def new
-    if @patient.vaccination_records_for_session(@session).any?
+    if @patient.draft_vaccination_records_for_session(@session).any?
       raise UnprocessableEntity
     end
     @draft_vaccination_record =
-      @patient.vaccination_records_for_session(@session).new
+      @patient.draft_vaccination_records_for_session(@session).new
   end
 
   def edit_reason
@@ -206,9 +206,9 @@ class VaccinationsController < ApplicationController
 
   def set_draft_vaccination_record
     @draft_vaccination_record =
-      @patient.vaccination_records_for_session(@session).find_or_initialize_by(
-        recorded_at: nil
-      )
+      @patient.draft_vaccination_records_for_session(
+        @session
+      ).find_or_initialize_by(recorded_at: nil)
   end
 
   def set_draft_vaccination_record!
