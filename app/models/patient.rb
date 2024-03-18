@@ -91,7 +91,7 @@ class Patient < ApplicationRecord
     super.merge("full_name" => full_name, "age" => age)
   end
 
-  def vaccination_records_for_session(session)
+  def draft_vaccination_records_for_session(session)
     patient_sessions
       .find_by_session_id(session.id)
       .vaccination_records
