@@ -196,4 +196,29 @@ RSpec.describe Consent do
       ).to eq("Refusal confirmed by Jane (Mum)")
     end
   end
+
+  describe "#recorded scope" do
+    let(:patient) { create(:patient) }
+
+    it "returns only consents that have been recorded" do
+      consent = create(:consent, patient:, recorded_at: Time.zone.now)
+      create(:consent, patient:, recorded_at: nil)
+
+      expect(patient.consents.recorded).to eq([consent])
+    end
+  end
+
+  describe "#recorded?" do
+    it "returns true if recorded_at is set" do
+      consent = build(:consent, recorded_at: Time.zone.now)
+
+      expect(consent).to be_recorded
+    end
+
+    it "returns false if recorded_at is nil" do
+      consent = build(:consent, recorded_at: nil)
+
+      expect(consent).not_to be_recorded
+    end
+  end
 end
