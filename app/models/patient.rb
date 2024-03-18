@@ -92,7 +92,10 @@ class Patient < ApplicationRecord
   end
 
   def vaccination_records_for_session(session)
-    patient_sessions.find_by_session_id(session.id).vaccination_records
+    patient_sessions
+      .find_by_session_id(session.id)
+      .vaccination_records
+      .rewhere(recorded_at: nil)
   end
 
   def year_group
