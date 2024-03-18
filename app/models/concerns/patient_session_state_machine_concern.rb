@@ -113,27 +113,29 @@ module PatientSessionStateMachineConcern
     def consent_given?
       return false if no_consent?
 
-      consents.all?(&:response_given?)
+      latest_consents.all?(&:response_given?)
     end
 
     def consent_refused?
       return false if no_consent?
 
-      consents.all?(&:response_refused?)
+      latest_consents.all?(&:response_refused?)
     end
 
     def consent_conflicts?
       return false if no_consent?
 
-      consents.any?(&:response_given?) && consents.any?(&:response_refused?)
+      latest_consents.any?(&:response_refused?) &&
+        latest_consents.any?(&:response_given?)
     end
 
     def no_consent?
-      consents.empty? || consents.all?(&:response_not_provided?)
+      consents.recorded.empty? ||
+        consents.recorded.all?(&:response_not_provided?)
     end
 
     def triage_needed?
-      consents.any?(&:triage_needed?)
+      latest_consents.any?(&:triage_needed?)
     end
 
     def triage_not_needed?

@@ -36,4 +36,59 @@ RSpec.describe PatientSession do
       expect(patient_session.vaccination_record).to eq vaccination_record
     end
   end
+
+  describe "#latest_consents" do
+    let(:campaign) { create(:campaign) }
+    let(:patient_session) { create(:patient_session, patient:, campaign:) }
+
+    subject { patient_session.latest_consents }
+
+    context "multiple consent given responses from different parents" do
+      let(:consent_1) { build(:consent, campaign:, response: :given) }
+      let(:consent_2) { build(:consent, campaign:, response: :given) }
+      let(:patient) { create(:patient, consents: [consent_1, consent_2]) }
+
+      it "groups consents by parent name" do
+        is_expected.to eq [consent_1, consent_2]
+      end
+    end
+
+    context "multiple consent responses from same parents" do
+      let(:parent_name) { Faker::Name.name }
+      let(:consent_1) do
+        build :consent, campaign:, parent_name:, response: :refused
+      end
+      let(:consent_2) do
+        build :consent, campaign:, parent_name:, response: :given
+      end
+      let(:patient) { create(:patient, consents: [consent_1, consent_2]) }
+
+      it "returns the latest consent for each parent" do
+        is_expected.to eq [consent_2]
+      end
+    end
+
+    context "multiple consent responses from same parent where one is draft" do
+      let(:parent_name) { Faker::Name.name }
+      let(:consent_1) do
+        build :consent,
+              campaign:,
+              parent_name:,
+              recorded_at: 1.day.ago,
+              response: :refused
+      end
+      let(:consent_2) do
+        build :consent,
+              campaign:,
+              parent_name:,
+              recorded_at: nil,
+              response: :given
+      end
+      let(:patient) { create(:patient, consents: [consent_1, consent_2]) }
+
+      it "does not return a draft consent record" do
+        is_expected.to eq [consent_1]
+      end
+    end
+  end
 end
