@@ -31,7 +31,7 @@ class PatientSessionsController < ApplicationController
 
   def set_draft_vaccination_record
     @draft_vaccination_record =
-      @patient_session.vaccination_records.find_or_initialize_by(
+      @patient.vaccination_records_for_session(@session).find_or_initialize_by(
         recorded_at: nil
       )
   end
