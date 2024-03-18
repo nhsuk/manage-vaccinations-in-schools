@@ -747,4 +747,16 @@ RSpec.describe ConsentForm, type: :model do
 
     expect(consent_form.health_answers).not_to be_empty
   end
+
+  describe "#summary_with_route" do
+    it "summarises the consent form when consent is given" do
+      consent_form = build(:consent_form, response: "given")
+      expect(consent_form.summary_with_route).to eq("Consent given (online)")
+    end
+
+    it "summarises the consent form when consent is refused" do
+      consent_form = build(:consent_form, response: "refused")
+      expect(consent_form.summary_with_route).to eq("Consent refused (online)")
+    end
+  end
 end
