@@ -291,6 +291,10 @@ class ConsentForm < ApplicationRecord
     patients.first
   end
 
+  def summary_with_route
+    "#{human_enum_name(:response).capitalize} (online)"
+  end
+
   private
 
   def refused_and_not_had_it_already?
