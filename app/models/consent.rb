@@ -51,6 +51,7 @@ class Consent < ApplicationRecord
 
   scope :submitted_for_campaign,
         ->(campaign) { where(campaign:).where.not(recorded_at: nil) }
+  scope :recorded, -> { where.not(recorded_at: nil) }
 
   enum :parent_contact_method, %w[text voice other any], prefix: true
   enum :parent_relationship, %w[mother father guardian other], prefix: true
@@ -231,6 +232,10 @@ class Consent < ApplicationRecord
       end
     summary += " (#{who_responded})" unless via_self_consent?
     summary
+  end
+
+  def recorded?
+    recorded_at.present?
   end
 
   private
