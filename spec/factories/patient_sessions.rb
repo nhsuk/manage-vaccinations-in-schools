@@ -24,10 +24,13 @@
 #
 FactoryBot.define do
   factory :patient_session do
-    transient { user { create :user } }
+    transient do
+      campaign { create :campaign }
+      user { create :user }
+    end
 
     patient { create :patient }
-    session { create :session }
+    session { create(:session, campaign:) }
 
     trait :added_to_session do
       state { "added_to_session" }

@@ -64,4 +64,11 @@ class PatientSession < ApplicationRecord
     !unable_to_vaccinate? && !unable_to_vaccinate_not_assessed? &&
       !unable_to_vaccinate_not_gillick_competent?
   end
+
+  def latest_consents
+    consents
+      .recorded
+      .group_by(&:name)
+      .map { |_, consents| consents.max_by(&:recorded_at) }
+  end
 end
