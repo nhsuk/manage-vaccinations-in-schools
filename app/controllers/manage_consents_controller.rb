@@ -51,6 +51,22 @@ class ManageConsentsController < ApplicationController
     render_wizard @consent
   end
 
+  def clone
+    existing_consent = Consent.find(params.delete(:consent_id))
+    @consent =
+      existing_consent.dup.tap do |consent|
+        consent.recorded_at = nil
+        consent.recorded_by = current_user
+      end
+
+    handle_agree
+    set_steps
+    setup_wizard_translated
+
+    @consent.save!
+    redirect_to wizard_path(next_step, consent_id: @consent.id)
+  end
+
   private
 
   def current_step
