@@ -33,4 +33,47 @@ RSpec.describe AppConsentSummaryComponent, type: :component do
   it do
     should have_text("Refusal reasonAlready vaccinatedVaccinated at the GP")
   end
+
+  context "with only mandatory fields" do
+    let(:component) do
+      described_class.new(
+        name: "Jane Smith",
+        response: {
+          text: "Consent given (online)",
+          timestamp: Time.zone.local(2024, 3, 1, 14, 23, 0)
+        }
+      )
+    end
+
+    it { should have_text("Jane Smith") }
+    it { should have_text("Consent given (online)") }
+    it { should have_text("1 Mar 2024 at 2:23pm") }
+    it { should_not have_text("Relationship") }
+    it { should_not have_text("Contact") }
+    it { should_not have_text("Refusal reason") }
+  end
+
+  context "with multiple responses" do
+    let(:component) do
+      described_class.new(
+        name: "Jane Smith",
+        response: [
+          {
+            text: "Consent given (online)",
+            timestamp: Time.zone.local(2024, 3, 1, 14, 23, 0)
+          },
+          {
+            text: "Consent refused (online)",
+            timestamp: Time.zone.local(2024, 3, 2, 14, 24, 0)
+          }
+        ]
+      )
+    end
+
+    it { should have_text("Jane Smith") }
+    it { should have_text("Consent given (online)") }
+    it { should have_text("1 Mar 2024 at 2:23pm") }
+    it { should have_text("Consent refused (online)") }
+    it { should have_text("2 Mar 2024 at 2:24pm") }
+  end
 end
