@@ -1,7 +1,13 @@
 class AppConsentSummaryComponent < ViewComponent::Base
   attr_reader :name, :relationship, :contact, :refusal_reason, :response
 
-  def initialize(name:, relationship:, contact:, refusal_reason:, response: nil)
+  def initialize(
+    name:,
+    response:,
+    relationship: nil,
+    contact: nil,
+    refusal_reason: nil
+  )
     super
     @name = name
     @relationship = relationship
@@ -38,7 +44,7 @@ class AppConsentSummaryComponent < ViewComponent::Base
         row.with_value { response_details }
       end
 
-      if refusal_reason_details.present?
+      if refusal_reason.present?
         summary_list.with_row do |row|
           row.with_key { "Refusal reason" }
           row.with_value { refusal_reason_details }
@@ -54,11 +60,27 @@ class AppConsentSummaryComponent < ViewComponent::Base
   end
 
   def response_details
-    render AppTimestampedEntryComponent.new(
-             text: @response[:text],
-             timestamp: @response[:timestamp],
-             recorded_by: @response[:recorded_by]
-           )
+    if @response.is_a?(Hash)
+      render AppTimestampedEntryComponent.new(
+               text: @response[:text],
+               timestamp: @response[:timestamp],
+               recorded_by: @response[:recorded_by]
+             )
+    elsif @response.is_a?(Array)
+      tag.ul(class: "nhsuk-list nhsuk-list--bullet app-list--events") do
+        safe_join(
+          @response.map do |item|
+            tag.li do
+              render AppTimestampedEntryComponent.new(
+                       text: item[:text],
+                       timestamp: item[:timestamp],
+                       recorded_by: item[:recorded_by]
+                     )
+            end
+          end
+        )
+      end
+    end
   end
 
   def refusal_reason_details

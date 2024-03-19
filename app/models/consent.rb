@@ -206,6 +206,15 @@ class Consent < ApplicationRecord
       reason_for_refusal_medical_reasons? || reason_for_refusal_other?
   end
 
+  def summary_with_route
+    route_string = human_enum_name(:route).downcase.presence
+    if response_not_provided?
+      "No response when contacted (#{route_string})"
+    else
+      "#{human_enum_name(:response).capitalize} (#{route_string})"
+    end
+  end
+
   private
 
   def health_answers_valid?
