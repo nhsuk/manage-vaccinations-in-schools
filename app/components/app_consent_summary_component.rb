@@ -63,7 +63,9 @@ class AppConsentSummaryComponent < ViewComponent::Base
 
   def refusal_reason_details
     safe_join(
-      [refusal_reason[:reason]&.capitalize, refusal_reason[:notes]].reject(&:blank?),
+      [refusal_reason[:reason]&.capitalize, refusal_reason[:notes]].reject(
+        &:blank?
+      ),
       tag.br
     )
   end
