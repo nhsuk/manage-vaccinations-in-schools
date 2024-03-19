@@ -119,7 +119,9 @@ Rails.application.routes.draw do
       post ":route/consents", to: "manage_consents#create", as: :manage_consents
       resources :manage_consents,
                 only: %i[show update],
-                path: ":route/consents/:consent_id/"
+                path: ":route/consents/:consent_id/" do
+        post "clone", on: :member
+      end
     end
 
     constraints -> { Flipper.enabled? :offline_working } do
