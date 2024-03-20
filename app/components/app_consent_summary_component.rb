@@ -44,7 +44,7 @@ class AppConsentSummaryComponent < ViewComponent::Base
         row.with_value { response_details }
       end
 
-      if refusal_reason.present?
+      if show_refusal_row?
         summary_list.with_row do |row|
           row.with_key { "Refusal reason" }
           row.with_value { refusal_reason_details }
@@ -87,6 +87,11 @@ class AppConsentSummaryComponent < ViewComponent::Base
         )
       end
     end
+  end
+
+  def show_refusal_row?
+    refusal_reason.present? &&
+      [refusal_reason[:reason], refusal_reason[:notes]].compact.any?
   end
 
   def refusal_reason_details
