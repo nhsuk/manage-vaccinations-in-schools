@@ -57,4 +57,34 @@ class AppConsentComponent < ViewComponent::Base
     @consents_grouped_by_parent ||=
       @patient_session.consents.group_by(&:summary_with_consenter)
   end
+
+  private
+
+  def render_grouped_consents(consents)
+    first_consent = consents.first
+    first_refused_consent = consents.find_all(&:response_refused?).first
+
+    props = {
+      name: first_consent.name,
+      response:
+        consents.map do |consent|
+          { text: consent.summary_with_route, timestamp: consent.recorded_at }
+        end
+    }
+    unless first_consent.via_self_consent?
+      props[:relationship] = first_consent.who_responded
+      props[:contact] = {
+        phone: first_consent.parent_phone,
+        email: first_consent.parent_email
+      }
+    end
+    if first_refused_consent.present?
+      props[:refusal_reason] = {
+        reason: first_refused_consent.human_enum_name(:reason_for_refusal),
+        notes: first_refused_consent.reason_for_refusal_notes
+      }
+    end
+
+    render AppConsentSummaryComponent.new(**props)
+  end
 end

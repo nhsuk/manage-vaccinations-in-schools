@@ -38,6 +38,23 @@ RSpec.describe AppConsentComponent, type: :component do
 
     let(:summary) { "Consent refused by #{consent.parent_name} (#{relation})" }
     it { should have_css("details[open]", text: summary) }
+    it { should have_css("div", text: /Name ?#{consent.parent_name}/) }
+    it { should have_css("div", text: /Relationship ?#{relation}/) }
+
+    it "displays the parents phone and email" do
+      should have_css(
+               "div",
+               text: /Contact ?#{consent.parent_phone} ?#{consent.parent_email}/
+             )
+    end
+
+    it "displays the response" do
+      should have_css("div", text: /Response(.*?)Consent refused/m)
+    end
+
+    it "displays only the refusal reason if there are no notes" do
+      should have_css("div", text: /Refusal reason ?Personal choice/)
+    end
 
     it do
       should have_css(
