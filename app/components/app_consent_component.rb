@@ -60,9 +60,9 @@ class AppConsentComponent < ViewComponent::Base
 
   private
 
-  def render_grouped_consents(consents)
+  def grouped_consents(consents)
     first_consent = consents.first
-    first_refused_consent = consents.find_all(&:response_refused?).first
+    first_refused_consent = consents.find(&:response_refused?)
 
     props = {
       name: first_consent.name,
@@ -72,12 +72,15 @@ class AppConsentComponent < ViewComponent::Base
         end
     }
     unless first_consent.via_self_consent?
-      props[:relationship] = first_consent.who_responded
-      props[:contact] = {
-        phone: first_consent.parent_phone,
-        email: first_consent.parent_email
-      }
+      props.merge!(
+        relationship: first_consent.who_responded,
+        contact: {
+          phone: first_consent.parent_phone,
+          email: first_consent.parent_email
+        }
+      )
     end
+
     if first_refused_consent.present?
       props[:refusal_reason] = {
         reason: first_refused_consent.human_enum_name(:reason_for_refusal),
@@ -85,6 +88,6 @@ class AppConsentComponent < ViewComponent::Base
       }
     end
 
-    render AppConsentSummaryComponent.new(**props)
+    props
   end
 end
