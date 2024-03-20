@@ -33,7 +33,7 @@
           timestamp: @consent_form.recorded_at
         },
         refusal_reason: {
-          reason: @consent_form.reason,
+          reason: @consent_form.human_enum_name(:reason).presence,
           notes: @consent_form.reason_notes
         }
       )
