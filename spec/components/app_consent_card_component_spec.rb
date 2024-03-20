@@ -16,7 +16,7 @@ RSpec.describe AppConsentCardComponent, type: :component do
     end
 
     it { should have_css("h2", text: /Consent given by.*Mum/) }
-    it { should have_css("p", text: /Consent updated to given \(by phone\)/) }
+    it { should have_css("p", text: /Consent updated to given \(phone\)/) }
     it { should have_css("p", text: recorded_by.full_name) }
   end
 
@@ -26,7 +26,7 @@ RSpec.describe AppConsentCardComponent, type: :component do
     end
 
     it { should have_css("h2", text: /Refusal confirmed by.*Dad/) }
-    it { should have_css("p", text: /Refusal confirmed \(by phone\)/) }
+    it { should have_css("p", text: /Refusal confirmed \(phone\)/) }
     it { should have_css("p", text: recorded_by.full_name) }
   end
 
@@ -42,7 +42,7 @@ RSpec.describe AppConsentCardComponent, type: :component do
     end
 
     it { should have_css("h2", text: /Granddad/) }
-    it { should have_css("p", text: /No response when contacted \(by phone\)/) }
+    it { should have_css("p", text: /No response when contacted \(phone\)/) }
     it { should have_css("p", text: recorded_by.full_name) }
   end
 end
