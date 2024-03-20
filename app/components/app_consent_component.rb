@@ -55,20 +55,6 @@ class AppConsentComponent < ViewComponent::Base
 
   def consents_grouped_by_parent
     @consents_grouped_by_parent ||=
-      @patient_session.consents.group_by { |consent| summary_for(consent) }
-  end
-
-  private
-
-  def summary_for(consent)
-    summary =
-      if consent.respond_to?(:response_not_provided?) &&
-           consent.response_not_provided?
-        "Contacted #{consent.name}"
-      else
-        "#{consent.human_enum_name(:response).capitalize} by #{consent.name}"
-      end
-    summary += " (#{consent.who_responded})" unless consent.via_self_consent?
-    summary
+      @patient_session.consents.group_by(&:summary_with_consenter)
   end
 end
