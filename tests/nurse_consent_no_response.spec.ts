@@ -66,6 +66,9 @@ async function when_i_submit_a_consent_with_no_response() {
   await p.getByRole("button", { name: "Continue" }).click();
 
   // Check answers
+  await expect(p.locator("main")).toContainText(
+    "No response when contacted (phone)",
+  );
   await p.getByRole("button", { name: "Confirm" }).click();
 }
 
@@ -97,6 +100,9 @@ async function when_i_submit_a_consent_with_a_response() {
   await p.getByRole("button", { name: "Continue" }).click();
 
   // Check answers
+  await expect(p.locator("main")).toContainText(
+    "Consent updated to given (phone)",
+  );
   await p.getByRole("button", { name: "Confirm" }).click();
 }
 
