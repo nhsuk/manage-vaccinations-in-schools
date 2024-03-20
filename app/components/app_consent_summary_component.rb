@@ -91,10 +91,18 @@ class AppConsentSummaryComponent < ViewComponent::Base
 
   def refusal_reason_details
     safe_join(
-      [refusal_reason[:reason]&.capitalize, refusal_reason[:notes]].reject(
+      [refusal_reason[:reason]&.capitalize, refusal_reason_notes].reject(
         &:blank?
       ),
-      tag.br
+      "\n"
     )
+  end
+
+  def refusal_reason_notes
+    if refusal_reason[:notes].present?
+      tag.div class: "nhsuk-u-margin-top-2 nhsuk-u-font-size-16" do
+        refusal_reason[:notes]
+      end
+    end
   end
 end
