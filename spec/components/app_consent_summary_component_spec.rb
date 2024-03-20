@@ -31,7 +31,7 @@ RSpec.describe AppConsentSummaryComponent, type: :component do
   it { should have_text("Consent refused (online)") }
   it { should have_text("1 Mar 2024 at 2:23pm") }
   it do
-    should have_text("Refusal reasonAlready vaccinatedVaccinated at the GP")
+    should have_text("Refusal reasonAlready vaccinated\nVaccinated at the GP")
   end
 
   context "with only mandatory fields" do
