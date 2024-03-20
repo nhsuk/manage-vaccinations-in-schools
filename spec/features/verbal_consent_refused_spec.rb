@@ -55,6 +55,8 @@ RSpec.describe "Verbal consent" do
     click_button "Continue"
 
     # Confirm
+    # BUG: shouldn't be 'Refusal confirmed' as they didn't refuse in the first place
+    expect(page).to have_content("Refusal confirmed by #{@patient.parent_name}")
     click_button "Confirm"
   end
 

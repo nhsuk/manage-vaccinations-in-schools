@@ -73,6 +73,10 @@ async function when_i_submit_a_consent_with_no_health_concerns() {
   await p.getByRole("button", { name: "Continue" }).click();
 
   // Check answers page
+  // BUG: this should be 'Consent updated to given (phone)'
+  await expect(p.locator("main")).toContainText(
+    "Consent updated to given (online)",
+  );
   await p.getByRole("button", { name: "Confirm" }).click();
 }
 
