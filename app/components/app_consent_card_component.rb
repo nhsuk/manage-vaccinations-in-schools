@@ -7,20 +7,6 @@ class AppConsentCardComponent < ViewComponent::Base
     @consent = consent
   end
 
-  def heading
-    by =
-      {
-        given: "Consent given by",
-        refused: "Refusal confirmed by",
-        not_provided: "Contacted"
-      }[
-        @consent.response.to_sym
-      ]
-    heading = "#{by} #{@consent.name}"
-    heading += " (#{@consent.who_responded})" unless @consent.via_self_consent?
-    heading
-  end
-
   def call
     # BUG: this code was originally written with the assumption that it is called
     # when the user is contacting a refusing parent (that assumption is baked into the microcopy)
@@ -33,6 +19,7 @@ class AppConsentCardComponent < ViewComponent::Base
     # The code really needs awareness of whether there was a previous consent or not, and
     # if there was one, what the response was. i.e. the previous_response needs to be dynamic.
 
+    heading = @consent.summary_with_consenter(previous_response: "refused")
     render AppCardComponent.new(heading:) do
       render AppConsentSummaryComponent.new(
                name: @consent.parent_name,

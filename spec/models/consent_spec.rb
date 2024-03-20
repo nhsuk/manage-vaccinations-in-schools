@@ -185,5 +185,15 @@ RSpec.describe Consent do
         ).summary_with_consenter
       ).to eq("Contacted John (Dad)")
     end
+
+    it "summarises a confirmed refusal" do
+      expect(
+        build(
+          :consent_refused,
+          :from_mum,
+          parent_name: "Jane"
+        ).summary_with_consenter(previous_response: "refused")
+      ).to eq("Refusal confirmed by Jane (Mum)")
+    end
   end
 end

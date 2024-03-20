@@ -220,10 +220,12 @@ class Consent < ApplicationRecord
     "#{summary} (#{human_enum_name(:route).downcase.presence})"
   end
 
-  def summary_with_consenter
+  def summary_with_consenter(previous_response: nil)
     summary =
       if response_not_provided?
         "Contacted #{name}"
+      elsif previous_response&.to_sym == :refused && response_refused?
+        "Refusal confirmed by #{name}"
       else
         "#{human_enum_name(:response).capitalize} by #{name}"
       end
