@@ -53,6 +53,24 @@ RSpec.describe AppConsentSummaryComponent, type: :component do
     it { should_not have_text("Refusal reason") }
   end
 
+  context "with only refusal reason" do
+    let(:component) do
+      described_class.new(
+        name: "Jane Smith",
+        response: {
+          text: "Consent refused (online)",
+          timestamp: Time.zone.local(2024, 3, 1, 14, 23, 0)
+        },
+        refusal_reason: {
+          reason: "Personal choice"
+        }
+      )
+    end
+
+    it { should have_text("Jane Smith") }
+    it { should have_text("Refusal reasonPersonal choice") }
+  end
+
   context "with multiple responses" do
     let(:component) do
       described_class.new(
@@ -91,6 +109,6 @@ RSpec.describe AppConsentSummaryComponent, type: :component do
     end
 
     it { should have_text("1 Mar 2024 at 2:23pm") }
-    it { should_not have_css('li') }
+    it { should_not have_css("li") }
   end
 end

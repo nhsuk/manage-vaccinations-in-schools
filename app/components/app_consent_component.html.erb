@@ -9,7 +9,7 @@
 <% if patient_session.consents.present? %>
   <% consents_grouped_by_parent.each do |summary, consents| %>
     <%= render AppDetailsComponent.new(summary:, open: open_consents?) do %>
-      <%= render AppConsentDetailsComponent.new(consents:) %>
+      <%= render_grouped_consents(consents) %>
 
       <% if consents.any?(&:response_refused?) %>
         <p><%= contact_parent_or_guardian_link(consents) %></p>
