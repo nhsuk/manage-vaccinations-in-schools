@@ -76,4 +76,21 @@ RSpec.describe AppConsentSummaryComponent, type: :component do
     it { should have_text("Consent refused (online)") }
     it { should have_text("2 Mar 2024 at 2:24pm") }
   end
+
+  context "with response being an array with one element" do
+    let(:component) do
+      described_class.new(
+        name: "Jane Smith",
+        response: [
+          {
+            text: "Consent given (online)",
+            timestamp: Time.zone.local(2024, 3, 1, 14, 23, 0)
+          }
+        ]
+      )
+    end
+
+    it { should have_text("1 Mar 2024 at 2:23pm") }
+    it { should_not have_css('li') }
+  end
 end
