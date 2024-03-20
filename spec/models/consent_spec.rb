@@ -138,6 +138,22 @@ RSpec.describe Consent do
         ).summary_with_route
       ).to eq("No response when contacted (phone)")
     end
+
+    it "summarises a given consent that follows a refusal" do
+      expect(
+        build(:consent_given, route: "phone").summary_with_route(
+          previous_response: "refused"
+        )
+      ).to eq("Consent updated to given (phone)")
+    end
+
+    it "summarises a confirmed refusal" do
+      expect(
+        build(:consent_refused, route: "phone").summary_with_route(
+          previous_response: "refused"
+        )
+      ).to eq("Refusal confirmed (phone)")
+    end
   end
 
   describe "#summary_with_consenter" do
