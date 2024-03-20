@@ -66,6 +66,12 @@ class AppConsentSummaryComponent < ViewComponent::Base
                timestamp: @response[:timestamp],
                recorded_by: @response[:recorded_by]
              )
+    elsif @response.is_a?(Array) && @response.size == 1
+      render AppTimestampedEntryComponent.new(
+               text: @response.first[:text],
+               timestamp: @response.first[:timestamp],
+               recorded_by: @response.first[:recorded_by]
+             )
     elsif @response.is_a?(Array)
       tag.ul(class: "nhsuk-list nhsuk-list--bullet app-list--events") do
         safe_join(
