@@ -197,5 +197,13 @@ FactoryBot.define do
         ]
       end
     end
+
+    factory :patient_with_consent_refused do
+      patient_sessions do
+        [build(:patient_session, session:, state: "consent_refused")]
+      end
+
+      consents { [build(:consent, :refused, campaign:, parent_relationship:)] }
+    end
   end
 end

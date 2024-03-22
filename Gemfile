@@ -68,6 +68,9 @@ end
 
 group :test do
   gem "capybara"
+  gem "capybara_accessible_selectors",
+      git: "https://github.com/citizensadvice/capybara_accessible_selectors",
+      branch: "main"
   gem "capybara-screenshot"
   gem "cuprite"
   gem "rspec"
