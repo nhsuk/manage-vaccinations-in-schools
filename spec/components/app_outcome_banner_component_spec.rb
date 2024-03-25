@@ -19,7 +19,7 @@ RSpec.describe AppOutcomeBannerComponent, type: :component do
 
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
-    it { should have_text("Alya Merton had contraindications") }
+    it { should have_text("Alya Merton has already had the vaccine") }
     it { should have_text("Location#{patient_session.session.location.name}") }
   end
 
