@@ -15,7 +15,7 @@ class TriageController < ApplicationController
       @session
         .patient_sessions
         .strict_loading
-        .includes(:campaign, :patient)
+        .includes(:campaign, :patient, :triage)
         .order("patients.first_name", "patients.last_name")
 
     tabs_to_states = {

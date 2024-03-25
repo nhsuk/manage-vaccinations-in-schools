@@ -20,7 +20,11 @@ class SessionsController < ApplicationController
 
   def show
     @patient_sessions =
-      @session.patient_sessions.strict_loading.includes(:campaign, :consents)
+      @session.patient_sessions.strict_loading.includes(
+        :campaign,
+        :consents,
+        :triage
+      )
 
     @counts =
       SessionStats.new(patient_sessions: @patient_sessions, session: @session)
