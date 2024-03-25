@@ -36,7 +36,7 @@ class ConsentsController < ApplicationController
       @session
         .patient_sessions
         .strict_loading
-        .includes(:campaign, :consents, :patient)
+        .includes(:campaign, :consents, :patient, :triage)
         .sort_by { |ps| ps.patient.full_name }
   end
 end
