@@ -33,37 +33,30 @@ FactoryBot.define do
     session { create(:session, campaign:) }
 
     trait :added_to_session do
-      state { "added_to_session" }
       patient { create :patient, consents: [] }
     end
 
     trait :consent_given_triage_not_needed do
-      state { "consent_given_triage_not_needed" }
       patient { create :patient, :consent_given_triage_not_needed, session: }
     end
 
     trait :consent_given_triage_needed do
-      state { "consent_given_triage_needed" }
       patient { create :patient, :consent_given_triage_needed, session: }
     end
 
     trait :consent_refused do
-      state { "consent_refused" }
       patient { create :patient, :consent_refused, session: }
     end
 
     trait :consent_refused_with_notes do
-      state { "consent_refused" }
       patient { create :patient, :consent_refused_with_notes, session: }
     end
 
     trait :consent_conflicting do
-      state { "consent_conflicts" }
       patient { create :patient, :consent_conflicting, session: }
     end
 
     trait :triaged_ready_to_vaccinate do
-      state { "triaged_ready_to_vaccinate" }
       patient { create :patient, :consent_given_triage_needed, session: }
       triage do
         [create(:triage, status: :ready_to_vaccinate, notes: "Ok to vaccinate")]
@@ -71,19 +64,16 @@ FactoryBot.define do
     end
 
     trait :triaged_do_not_vaccinate do
-      state { "triaged_do_not_vaccinate" }
       patient { create :patient, :consent_given_triage_needed, session: }
       triage { [create(:triage, status: :do_not_vaccinate, user:)] }
     end
 
     trait :triaged_kept_in_triage do
-      state { "triaged_kept_in_triage" }
       patient { create :patient, :consent_given_triage_needed, session: }
       triage { [create(:triage, status: :needs_follow_up)] }
     end
 
     trait :delay_vaccination do
-      state { "delay_vaccination" }
       patient { create :patient, :consent_given_triage_needed, session: }
       triage { [create(:triage, status: :delay_vaccination)] }
     end
@@ -93,7 +83,6 @@ FactoryBot.define do
     end
 
     trait :unable_to_vaccinate do
-      state { "unable_to_vaccinate" }
       patient { create :patient, :consent_given_triage_needed, session: }
       triage { [create(:triage, status: :ready_to_vaccinate, user:)] }
 
@@ -106,7 +95,6 @@ FactoryBot.define do
     end
 
     trait :vaccinated do
-      state { "vaccinated" }
       patient { create :patient, :consent_given_triage_needed, session: }
       triage { [create(:triage, status: :ready_to_vaccinate, user:)] }
 
@@ -129,7 +117,6 @@ FactoryBot.define do
     end
 
     trait :not_gillick_competent do
-      state { "unable_to_vaccinate_not_gillick_competent" }
       gillick_competent { false }
       gillick_competence_notes { "Assessed as not gillick competent" }
       gillick_competence_assessor { create :user }

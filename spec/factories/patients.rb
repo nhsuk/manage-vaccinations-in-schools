@@ -161,29 +161,13 @@ FactoryBot.define do
     end
 
     factory :patient_with_consent_given_triage_not_needed do
-      patient_sessions do
-        [
-          build(
-            :patient_session,
-            session:,
-            state: "consent_given_triage_not_needed"
-          )
-        ]
-      end
+      patient_sessions { [build(:patient_session, session:)] }
 
       consents { [build(:consent, :given, campaign:, parent_relationship:)] }
     end
 
     factory :patient_with_consent_given_triage_needed do
-      patient_sessions do
-        [
-          build(
-            :patient_session,
-            session:,
-            state: "consent_given_triage_needed"
-          )
-        ]
-      end
+      patient_sessions { [build(:patient_session, session:)] }
 
       consents do
         [
