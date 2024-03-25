@@ -305,7 +305,7 @@ GEM
       ast (~> 2.4.1)
       racc
     pg (1.5.6)
-    phonelib (0.8.7)
+    phonelib (0.8.8)
     prettier_print (1.2.1)
     propshaft (0.8.0)
       actionpack (>= 7.0.0)
