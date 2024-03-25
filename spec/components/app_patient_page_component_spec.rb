@@ -2,9 +2,8 @@ require "rails_helper"
 
 RSpec.describe AppPatientPageComponent, type: :component do
   let(:component) do
-    described_class.new(patient_session:, route: "triage", triage:)
+    described_class.new(patient_session:, route: "triage", triage: nil)
   end
-  let(:triage) { nil }
   let!(:rendered) { render_inline(component) }
 
   subject { page }
@@ -17,7 +16,6 @@ RSpec.describe AppPatientPageComponent, type: :component do
         :session_in_progress
       )
     end
-    let(:triage) { FactoryBot.create(:triage, patient_session:) }
 
     it { should have_css(".nhsuk-card__heading", text: "Child details") }
     it { should have_css(".nhsuk-card__heading", text: "Consent") }

@@ -99,7 +99,7 @@ FactoryBot.define do
 
       after :create do |patient_session|
         create :vaccination_record,
-               reason: :contraindications,
+               reason: :already_had,
                administered: false,
                patient_session:
       end
