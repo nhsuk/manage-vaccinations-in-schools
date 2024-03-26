@@ -25,6 +25,18 @@
 require "rails_helper"
 
 RSpec.describe PatientSession do
+  describe "#triage" do
+    it "returns the triage records in ascending order" do
+      later_triage = create(:triage)
+      earlier_triage = create(:triage, updated_at: 1.day.ago)
+
+      patient_sessions =
+        create :patient_session, triage: [earlier_triage, later_triage]
+
+      expect(patient_sessions.triage).to eq [earlier_triage, later_triage]
+    end
+  end
+
   describe "#vaccine_record" do
     it "returns the last non-draft vaccination record" do
       patient_session = create(:patient_session)

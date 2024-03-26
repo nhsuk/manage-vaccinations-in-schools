@@ -37,7 +37,7 @@ class PatientSession < ApplicationRecord
              foreign_key: :gillick_competence_assessor_user_id
 
   has_one :campaign, through: :session
-  has_many :triage
+  has_many :triage, -> { order(:updated_at) }
   has_many :vaccination_records
   has_many :consents,
            ->(patient) { Consent.submitted_for_campaign(patient.campaign) },

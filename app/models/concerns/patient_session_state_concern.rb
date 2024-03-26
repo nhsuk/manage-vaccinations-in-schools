@@ -49,6 +49,7 @@ module PatientSessionStateConcern
     def do_consent
       nil
     end
+
     def do_consent!
       nil
     end
