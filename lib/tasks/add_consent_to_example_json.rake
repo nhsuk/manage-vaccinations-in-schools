@@ -54,7 +54,7 @@ task :add_consent_to_example_json, [:name] => :environment do |_task, args|
 end
 
 def generate_consent_for_example_patient(patient)
-  {}.merge generate_common_name(patient),
+  {}.merge generate_common_name,
           generate_dob(patient),
           generate_address(patient),
           generate_parents(patient),
@@ -84,13 +84,13 @@ def generate_consent(_patient, allow_none: true)
   consent
 end
 
-def generate_common_name(patient)
+def generate_common_name
   response = {}
 
   if Random.rand(0.0..1.0) < 0.5
     common_name =
       begin
-        Faker::Name.alternative_name(patient["firstName"])
+        Faker::Name.name
       rescue StandardError
         nil
       end

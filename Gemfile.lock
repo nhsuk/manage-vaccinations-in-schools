@@ -7,14 +7,6 @@ GIT
       capybara (~> 3.36)
 
 GIT
-  remote: https://github.com/misaka/faker.git
-  revision: 2c3cbbeedab7de86bbac5a1de9acf0333d268791
-  branch: add_alternative_name
-  specs:
-    faker (3.2.0)
-      i18n (>= 1.8.11, < 2)
-
-GIT
   remote: https://github.com/x-govuk/govuk-components.git
   revision: 9485e095f707ffa4e93c46575c9a7df76398246e
   specs:
@@ -190,6 +182,8 @@ GEM
     factory_bot_rails (6.4.3)
       factory_bot (~> 6.4)
       railties (>= 5.0.0)
+    faker (3.2.0)
+      i18n (>= 1.8.11, < 2)
     ferrum (0.14)
       addressable (~> 2.5)
       concurrent-ruby (~> 1.1)
@@ -566,7 +560,7 @@ DEPENDENCIES
   devise-pwned_password
   dockerfile-rails (>= 1.0.0)
   factory_bot_rails
-  faker!
+  faker
   flipper
   flipper-active_record
   flipper-ui
