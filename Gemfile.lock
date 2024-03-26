@@ -16,9 +16,9 @@ GIT
 
 GIT
   remote: https://github.com/x-govuk/govuk-components.git
-  revision: 1309a61067a049afbb1df190723b0507aa3fe662
+  revision: 9485e095f707ffa4e93c46575c9a7df76398246e
   specs:
-    govuk-components (5.2.1)
+    govuk-components (5.2.2)
       html-attributes-utils (~> 1.0.0, >= 1.0.0)
       pagy (>= 6, < 8)
       view_component (>= 3.9, < 3.12)
@@ -299,7 +299,7 @@ GEM
       jwt (>= 1.5, < 3)
     okcomputer (1.18.5)
     orm_adapter (0.5.0)
-    pagy (7.0.10)
+    pagy (7.0.11)
     parallel (1.24.0)
     parser (3.3.0.5)
       ast (~> 2.4.1)
