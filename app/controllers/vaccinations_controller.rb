@@ -200,7 +200,9 @@ class VaccinationsController < ApplicationController
     @patient_sessions =
       @session
         .patient_sessions
-        .includes(:patient)
+        .strict_loading
+        .includes(:campaign, :patient, :triage, :vaccination_records)
+        .preload(:consents)
         .order("patients.first_name", "patients.last_name")
   end
 
