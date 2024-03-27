@@ -37,7 +37,7 @@ class PatientSession < ApplicationRecord
              foreign_key: :gillick_competence_assessor_user_id
 
   has_one :campaign, through: :session
-  has_many :triage, -> { order(:updated_at) }
+  has_many :triage
   has_many :vaccination_records
   has_many :consents,
            ->(patient) { Consent.submitted_for_campaign(patient.campaign) },
@@ -57,7 +57,7 @@ class PatientSession < ApplicationRecord
   validates :gillick_competence_notes, length: { maximum: 1000 }
 
   def vaccination_record
-    vaccination_records.where.not(recorded_at: nil).last
+    vaccination_records.last
   end
 
   def able_to_vaccinate?
@@ -69,5 +69,9 @@ class PatientSession < ApplicationRecord
     consents
       .group_by(&:name)
       .map { |_, consents| consents.max_by(&:recorded_at) }
+  end
+
+  def latest_triage
+    triage.max_by(&:created_at)
   end
 end
