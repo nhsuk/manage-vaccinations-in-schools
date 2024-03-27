@@ -109,9 +109,12 @@ RSpec.describe Consent do
       end
 
       it "runs the do_consent state transition" do
-        expect { consent }.to change(patient_session, :state).from(
-          "added_to_session"
-        ).to("consent_given_triage_not_needed")
+        expect {
+          consent
+          patient_session.reload
+        }.to change(patient_session, :state).from("added_to_session").to(
+          "consent_given_triage_not_needed"
+        )
       end
     end
   end
@@ -197,6 +200,17 @@ RSpec.describe Consent do
     end
   end
 
+  describe "default scope" do
+    let(:patient) { create(:patient) }
+
+    it "uses the recorded scope" do
+      consent = create(:consent, patient:, recorded_at: Time.zone.now)
+      create(:consent, patient:, recorded_at: nil)
+
+      expect(patient.consents).to eq([consent])
+    end
+  end
+
   describe "#recorded scope" do
     let(:patient) { create(:patient) }
 
@@ -204,7 +218,9 @@ RSpec.describe Consent do
       consent = create(:consent, patient:, recorded_at: Time.zone.now)
       create(:consent, patient:, recorded_at: nil)
 
-      expect(patient.consents.recorded).to eq([consent])
+      expect(patient.consents.unscope(where: :recorded).recorded).to eq(
+        [consent]
+      )
     end
   end
 

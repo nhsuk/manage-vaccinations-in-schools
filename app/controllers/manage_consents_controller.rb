@@ -161,7 +161,10 @@ class ManageConsentsController < ApplicationController
   end
 
   def set_consent
-    @consent = policy_scope(Consent).find(params[:consent_id])
+    @consent =
+      policy_scope(Consent).unscope(where: :recorded_at).find(
+        params[:consent_id]
+      )
   end
 
   def set_patient_session

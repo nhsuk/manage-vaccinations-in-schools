@@ -67,7 +67,6 @@ class PatientSession < ApplicationRecord
 
   def latest_consents
     consents
-      .recorded
       .group_by(&:name)
       .map { |_, consents| consents.max_by(&:recorded_at) }
   end
