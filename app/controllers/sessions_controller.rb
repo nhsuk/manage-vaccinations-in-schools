@@ -23,7 +23,8 @@ class SessionsController < ApplicationController
       @session.patient_sessions.strict_loading.includes(
         :campaign,
         :consents,
-        :triage
+        :triage,
+        :vaccination_records
       )
 
     @counts =
