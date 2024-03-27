@@ -113,19 +113,19 @@ module PatientSessionStateConcern
     end
 
     def triage_ready_to_vaccinate?
-      triage.last&.ready_to_vaccinate?
+      latest_triage&.ready_to_vaccinate?
     end
 
     def triage_keep_in_triage?
-      triage.last&.needs_follow_up?
+      latest_triage&.needs_follow_up?
     end
 
     def triage_do_not_vaccinate?
-      triage.last&.do_not_vaccinate?
+      latest_triage&.do_not_vaccinate?
     end
 
     def triage_delay_vaccination?
-      triage.last&.delay_vaccination?
+      latest_triage&.delay_vaccination?
     end
 
     def vaccination_administered?

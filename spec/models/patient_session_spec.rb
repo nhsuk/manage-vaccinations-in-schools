@@ -103,4 +103,17 @@ RSpec.describe PatientSession do
       end
     end
   end
+
+  describe "#latest_triage" do
+    it "returns the latest triage record" do
+      earlier_triage =
+        build :triage, status: :needs_follow_up, created_at: 1.day.ago
+      later_triage = build :triage, status: :ready_to_vaccinate
+
+      patient_session =
+        create :patient_session, triage: [earlier_triage, later_triage]
+
+      expect(patient_session.latest_triage).to eq later_triage
+    end
+  end
 end
