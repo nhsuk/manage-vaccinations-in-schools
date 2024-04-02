@@ -15,9 +15,7 @@ module ParentInterface
     end
 
     def create
-      vaccine = @session.campaign.vaccines.first
-      health_answers = vaccine.health_questions.to_health_answers
-      consent_form = @session.consent_forms.create!(health_answers:)
+      consent_form = @session.consent_forms.create!
 
       session[:consent_form_id] = consent_form.id
 

@@ -43,7 +43,7 @@ RSpec.feature "Parental consent change answers" do
     when_i_go_to_a_prefilled_consent_form
     then_i_see_the_consent_form_confirmation_page
 
-    when_i_change_my_consent
+    when_i_change_my_consent_to_refused
     and_say_the_reason_is_that_the_vaccine_contains_gelatine
     and_agree_to_be_contacted_by_a_nurse
     then_i_see_the_consent_form_confirmation_page
@@ -56,13 +56,19 @@ RSpec.feature "Parental consent change answers" do
     when_i_go_to_a_prefilled_consent_form
     then_i_see_the_consent_form_confirmation_page
 
-    when_i_change_my_consent
+    when_i_change_my_consent_to_refused
     and_say_the_reason_is_that_the_vaccine_contains_gelatine
     and_do_not_agree_to_be_contacted_by_a_nurse
     then_i_see_the_consent_form_confirmation_page
 
-    when_i_click_the_confirm_button
-    then_i_see_the_refused_confirmation_page
+    when_i_change_my_consent_to_accepted
+    then_i_see_the_gp_page
+
+    when_i_input_my_gp_details
+    then_i_see_the_address_page
+
+    when_i_input_my_address
+    then_i_see_the_first_health_question
   end
 
   def given_a_flu_campaign_is_underway
@@ -181,9 +187,15 @@ RSpec.feature "Parental consent change answers" do
     expect(page).to have_content("Yes – Even more follow up details")
   end
 
-  def when_i_change_my_consent
+  def when_i_change_my_consent_to_refused
     click_link "Change consent"
     choose "No"
+    click_button "Continue"
+  end
+
+  def when_i_change_my_consent_to_accepted
+    click_link "Change consent"
+    choose "Yes"
     click_button "Continue"
   end
 
@@ -235,5 +247,30 @@ RSpec.feature "Parental consent change answers" do
     expect(page).to have_content(
       "Someone will be in touch to discuss them having an injection instead."
     )
+  end
+
+  def then_i_see_the_gp_page
+    expect(page).to have_content("Is your child registered with a GP?")
+  end
+
+  def when_i_input_my_gp_details
+    choose "Yes"
+    fill_in "Name of GP surgery", with: "Test GP"
+    click_button "Continue"
+  end
+
+  def then_i_see_the_address_page
+    expect(page).to have_content("Home address")
+  end
+
+  def when_i_input_my_address
+    fill_in "Address line 1", with: "123 Test Street"
+    fill_in "Town or city", with: "Testington"
+    fill_in "Postcode", with: "TE1 1ST"
+    click_button "Continue"
+  end
+
+  def then_i_see_the_first_health_question
+    expect(page).to have_content("Has your child been diagnosed with asthma?")
   end
 end

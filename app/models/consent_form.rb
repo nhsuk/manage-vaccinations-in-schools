@@ -47,6 +47,7 @@ class ConsentForm < ApplicationRecord
   include WizardFormConcern
   include AgeConcern
 
+  before_save :seed_health_questions_if_consent_given
   before_save :remove_health_questions_if_consent_refused
 
   scope :unmatched, -> { where(consent_id: nil) }
@@ -338,6 +339,12 @@ class ConsentForm < ApplicationRecord
 
   def ask_for_contact_method?
     Flipper.enabled?(:parent_contact_method) && parent_phone.present?
+  end
+
+  def seed_health_questions_if_consent_given
+    return unless consent_given? && health_answers.empty?
+    vaccine = campaign.vaccines.first
+    self.health_answers = vaccine.health_questions.to_health_answers
   end
 
   def remove_health_questions_if_consent_refused

@@ -728,6 +728,15 @@ RSpec.describe ConsentForm, type: :model do
     end
   end
 
+  it "seeds the health questions when the parent gives consent" do
+    consent_form = create(:consent_form, response: "refused")
+
+    consent_form.update!(response: "given")
+    consent_form.reload
+
+    expect(consent_form.health_answers).not_to be_empty
+  end
+
   it "removes the health questions when the parent refuses consent" do
     consent_form =
       create(:consent_form, :with_health_answers_no_branching, response: nil)
