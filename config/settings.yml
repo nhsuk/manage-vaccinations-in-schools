@@ -1,7 +1,7 @@
 allow_dev_phone_numbers: false
 pilot:
   earliest_session_date: 1-3-2024
-  latest_session_date: 30-3-2024
+  latest_session_date: 30-4-2024
 support_username: manage
 support_password: vaccinations
 web_concurrency: 2
