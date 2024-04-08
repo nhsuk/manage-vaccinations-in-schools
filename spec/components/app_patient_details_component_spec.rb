@@ -80,7 +80,11 @@ RSpec.describe AppPatientDetailsComponent, type: :component do
 
   context "with a consent_form object" do
     let(:consent_form) do
-      FactoryBot.create(:consent_form, common_name: "Homer")
+      FactoryBot.create(
+        :consent_form,
+        common_name: "Homer",
+        use_common_name: true
+      )
     end
     let(:school) { FactoryBot.create(:location) }
     let(:component) { described_class.new(consent_form:, session:, school:) }

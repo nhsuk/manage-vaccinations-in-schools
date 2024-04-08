@@ -47,6 +47,7 @@ class ConsentForm < ApplicationRecord
   include WizardFormConcern
   include AgeConcern
 
+  before_save :reset_common_name_if_not_used
   before_save :seed_health_questions_if_consent_given
   before_save :remove_health_questions_if_consent_refused
 
@@ -350,5 +351,9 @@ class ConsentForm < ApplicationRecord
   def remove_health_questions_if_consent_refused
     return unless consent_refused? || health_answers.empty?
     self.health_answers = []
+  end
+
+  def reset_common_name_if_not_used
+    self.common_name = nil unless use_common_name?
   end
 end
