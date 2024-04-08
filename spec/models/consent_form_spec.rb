@@ -768,4 +768,12 @@ RSpec.describe ConsentForm, type: :model do
       expect(consent_form.summary_with_route).to eq("Consent refused (online)")
     end
   end
+
+  it "resets the common name when not used" do
+    consent_form =
+      build(:consent_form, common_name: "John", use_common_name: true)
+    consent_form.update!(use_common_name: false)
+
+    expect(consent_form.common_name).to be_nil
+  end
 end
