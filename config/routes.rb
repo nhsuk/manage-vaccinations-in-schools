@@ -62,6 +62,19 @@ Rails.application.routes.draw do
   end
 
   resources :sessions, only: %i[create edit index show update] do
+    namespace :parent_interface, path: "/" do
+      resources :consent_forms, path: :consents, only: [:create] do
+        get "start", on: :collection
+        get "cannot-consent-school"
+        get "cannot-consent-responsibility"
+        get "deadline-passed", on: :collection
+        get "confirm"
+        put "record"
+
+        resources :edit, only: %i[show update], controller: "consent_forms/edit"
+      end
+    end
+
     get "consents", to: "consents#index", on: :member
     get "consents/unmatched-responses",
         to: "consent_forms#unmatched_responses",
@@ -74,19 +87,6 @@ Rails.application.routes.draw do
 
     constraints -> { Flipper.enabled?(:make_session_in_progress_button) } do
       put "make-in-progress", to: "sessions#make_in_progress", on: :member
-    end
-
-    namespace :parent_interface, path: "/" do
-      resources :consent_forms, path: :consents, only: [:create] do
-        get "start", on: :collection
-        get "cannot-consent-school"
-        get "cannot-consent-responsibility"
-        get "deadline-passed", on: :collection
-        get "confirm"
-        put "record"
-
-        resources :edit, only: %i[show update], controller: "consent_forms/edit"
-      end
     end
 
     resources :patients, only: [] do
