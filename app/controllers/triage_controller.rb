@@ -11,7 +11,7 @@ class TriageController < ApplicationController
   layout "two_thirds", except: %i[index]
 
   def index
-    patient_sessions =
+    all_patient_sessions =
       @session
         .patient_sessions
         .strict_loading
@@ -34,16 +34,16 @@ class TriageController < ApplicationController
       ]
     }
 
-    @tabs =
-      patient_sessions.group_by do |patient_session|
+    @current_tab = TAB_PATHS[:triage][params[:tab]]
+    tabs_to_states[@current_tab]
+    tab_patient_sessions =
+      all_patient_sessions.group_by do |patient_session|
         tabs_to_states
           .find { |_, states| patient_session.state.in? states }
           &.first
       end
-
-    # ensure all tabs are present
-    tabs_to_states.each_key { |tab| @tabs[tab] ||= [] }
-
+    @tab_counts = tab_patient_sessions.transform_values(&:count)
+    @patient_sessions = tab_patient_sessions[@current_tab] || []
     session[:current_section] = "triage"
   end
 
