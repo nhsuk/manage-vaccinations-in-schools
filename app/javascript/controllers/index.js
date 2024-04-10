@@ -28,6 +28,9 @@ application.register(
   NhsukNotificationBannerController,
 );
 
+import NhsukPasswordInputController from "./nhsuk_password_input_controller";
+application.register("nhsuk-password-input", NhsukPasswordInputController);
+
 import NhsukRadiosController from "./nhsuk_radios_controller";
 application.register("nhsuk-radios", NhsukRadiosController);
 
