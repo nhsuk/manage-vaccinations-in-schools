@@ -21,10 +21,20 @@ class AppTabComponent < GovukComponent::Base
   class Tab < GovukComponent::Base
     attr_reader :label, :text
 
-    def initialize(label:, text: nil, id: nil, classes: [], html_attributes: {})
+    def initialize(
+      label:,
+      selected: nil,
+      link: nil,
+      text: nil,
+      id: nil,
+      classes: [],
+      html_attributes: {}
+    )
       @label = label
       @text = text
       @id = id || label.parameterize
+      @selected = selected
+      @link = link || id(prefix: "#")
 
       super(classes:, html_attributes:)
     end
@@ -33,21 +43,23 @@ class AppTabComponent < GovukComponent::Base
       [prefix, @id].join
     end
 
-    def hidden_class(tab_index = nil)
-      return [] if tab_index&.zero?
-
-      ["#{brand}-tabs__panel--hidden"]
+    def selected(tab_index = nil)
+      @selected.nil? ? tab_index.zero? : @selected
     end
 
-    def li_classes(tab_index = nil)
+    def hidden_class(tab_index)
+      selected(tab_index) ? [] : ["#{brand}-tabs__panel--hidden"]
+    end
+
+    def li_classes(tab_index)
       class_names(
         "#{brand}-tabs__list-item",
-        "#{brand}-tabs__list-item--selected" => tab_index&.zero?
+        "#{brand}-tabs__list-item--selected" => selected(tab_index)
       ).split
     end
 
     def li_link
-      link_to(label, id(prefix: "#"), class: "#{brand}-tabs__tab")
+      link_to(label, @link, class: "#{brand}-tabs__tab")
     end
 
     def default_attributes
