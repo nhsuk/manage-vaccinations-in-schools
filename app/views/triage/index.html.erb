@@ -11,31 +11,35 @@
 
 <%= h1 page_title, page_title: %>
 
-<% def consent_tab(slot, state, columns: %i[name dob])
+<% def tab_content(slot, state, tab_path, columns: %i[name dob])
   label = t("states.#{state}.label")
-  data = @tabs[state]
-  slot.with_tab(id: label.parameterize,
-                label: "#{label} (#{data.size})",
-                classes: 'nhsuk-tabs__panel') do
-    if data.size > 0
+  selected = state == @current_tab
+  path = triage_tab_session_path(@session, tab: tab_path)
+  count = @tab_counts[state]
+
+  slot.with_tab(
+    id: label.parameterize,
+    link: path,
+    label: "#{label} (#{count})",
+    classes: 'nhsuk-tabs__panel',
+    selected:
+  ) do
+    if selected && @patient_sessions.size > 0
       render AppPatientTableComponent.new(
-        patient_sessions: data,
+        patient_sessions: @patient_sessions,
         tab_id: label.parameterize,
         caption: t("states.#{state}.title"),
         columns:,
         route: :triage,
       )
     else
-      render AppEmptyListComponent.new(
-        title: t("states.#{state}.title"),
-        text: t("table.no_results")
-      )
+      ""
     end
   end
 end %>
 
 <%= render AppTabComponent.new title: "Consents", classes: 'nhsuk-tabs' do |slot|
-  consent_tab(slot, :needs_triage)
-  consent_tab(slot, :triage_complete)
-  consent_tab(slot, :no_triage_needed)
+  tab_content(slot, :needs_triage, :needed)
+  tab_content(slot, :triage_complete, :completed)
+  tab_content(slot, :no_triage_needed, :"not-needed")
 end %>

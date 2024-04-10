@@ -80,7 +80,15 @@ Rails.application.routes.draw do
         to: "consent_forms#unmatched_responses",
         on: :member,
         as: :unmatched_responses
-    get "triage", to: "triage#index", on: :member
+    get "triage",
+        to: redirect("/sessions/%{id}/triage/needed"),
+        as: :triage,
+        on: :member
+    get "triage/:tab",
+        to: "triage#index",
+        on: :member,
+        as: :triage_tab,
+        tab: /#{TAB_PATHS[:triage].keys.join("|")}/
     get "vaccinations", to: "vaccinations#index", on: :member
 
     resources :edit_sessions, only: %i[show update], path: "edit", as: :edit
