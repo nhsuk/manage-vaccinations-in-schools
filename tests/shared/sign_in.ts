@@ -5,6 +5,6 @@ export async function signInTestUser(
 ) {
   await page.goto("/users/sign-in");
   await page.getByLabel("Email address").fill(username);
-  await page.getByLabel("Password").fill(password);
+  await page.getByLabel("Password", { exact: true }).fill(password);
   await page.getByRole("button", { name: "Sign in" }).click();
 }
