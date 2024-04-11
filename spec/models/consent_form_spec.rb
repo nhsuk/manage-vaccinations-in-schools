@@ -769,11 +769,31 @@ RSpec.describe ConsentForm, type: :model do
     end
   end
 
-  it "resets the common name when not used" do
+  it "resets unused fields" do
     consent_form =
       build(:consent_form, common_name: "John", use_common_name: true)
     consent_form.update!(use_common_name: false)
-
     expect(consent_form.common_name).to be_nil
+
+    consent_form =
+      build(
+        :consent_form,
+        response: "refused",
+        reason: "contains_gelatine",
+        reason_notes: "I'm vegan"
+      )
+    consent_form.update!(response: "given")
+    expect(consent_form.reason).to be_nil
+    expect(consent_form.reason_notes).to be_nil
+
+    consent_form =
+      build(:consent_form, contact_method: "other", contact_method_other: "foo")
+    consent_form.update!(parent_phone: nil)
+    expect(consent_form.contact_method).to be_nil
+    expect(consent_form.contact_method_other).to be_nil
+
+    consent_form = build(:consent_form, gp_response: "yes", gp_name: "Dr. Foo")
+    consent_form.update!(gp_response: "no")
+    expect(consent_form.gp_name).to be_nil
   end
 end
