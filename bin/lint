@@ -2,7 +2,7 @@
 
 bin/bundle exec rubocop --autocorrect-all $*
 yarn prettier --write --list-different --ignore-unknown ${*:-'**/*'}
-if [ -z $* ]
+if [ -z "$*" ]
 then
    bin/bundle exec brakeman --quiet --no-summary --no-pager
 fi
