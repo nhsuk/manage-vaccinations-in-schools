@@ -79,5 +79,5 @@ async function when_i_go_to_the_triage_page() {
 }
 
 async function then_i_should_see_the_triage_page() {
-  await expect(p).toHaveURL("/sessions/1/triage");
+  await expect(p).toHaveURL("/sessions/1/triage/needed");
 }
