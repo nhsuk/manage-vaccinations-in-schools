@@ -113,7 +113,7 @@ async function then_the_consent_form_is_prefilled() {
 
 async function when_i_go_to_the_triage_completed_tab() {
   await p.goto("/sessions/1/triage");
-  await p.getByRole("tab", { name: "Triage completed" }).click();
+  await p.getByRole("link", { name: "Triage completed" }).click();
 }
 
 async function then_the_patient_is_triaged() {

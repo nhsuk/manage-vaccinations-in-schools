@@ -8,7 +8,10 @@ RSpec.describe "Triage" do
 
     when_i_click_on_a_patient
     and_i_enter_a_note_and_delay_vaccination
-    then_i_see_the_patient_in_triage_completed
+    then_i_see_an_alert_saying_the_record_was_saved
+
+    when_i_go_to_the_triage_completed_tab
+    then_i_see_the_patient
 
     when_i_access_the_record_vaccinations_area
     then_i_see_the_patient_in_the_vaccinate_later_tab
@@ -53,9 +56,18 @@ RSpec.describe "Triage" do
     click_button "Save triage"
   end
 
-  def then_i_see_the_patient_in_triage_completed
-    expect(page).to have_content("Record saved for #{@patient.full_name}")
+  def then_i_see_an_alert_saying_the_record_was_saved
+    expect(page).to have_alert(
+      "Success",
+      text: "Record saved for #{@patient.full_name}"
+    )
+  end
 
+  def when_i_go_to_the_triage_completed_tab
+    click_link "Triage completed"
+  end
+
+  def then_i_see_the_patient
     within "div#triage-completed" do
       expect(page).to have_content(@patient.full_name)
     end
