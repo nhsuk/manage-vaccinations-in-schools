@@ -14,6 +14,9 @@
   }
 }
 
+// Some govuk-frontend JS components dynamically insert content with the
+// govuk-visually-hidden class. So we need to shim both namespaces.
+.govuk-visually-hidden,
 .nhsuk-visually-hidden {
   @include visually-hidden();
 }

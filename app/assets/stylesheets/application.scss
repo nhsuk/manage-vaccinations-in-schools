@@ -57,9 +57,3 @@ $mq-breakpoints: (
 mark {
   background-color: $color_nhsuk-pale-yellow;
 }
-
-// Some govuk-frontend JS components dynamically insert content with the
-// govuk-visually-hidden class. So we need to shim it.
-.govuk-visually-hidden {
-  @extend .nhsuk-visually-hidden;
-}
