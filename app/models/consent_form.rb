@@ -48,8 +48,6 @@ class ConsentForm < ApplicationRecord
   include AgeConcern
 
   before_save :reset_unused_fields
-  before_save :seed_health_questions_if_consent_given
-  before_save :remove_health_questions_if_consent_refused
 
   scope :unmatched, -> { where(consent_id: nil) }
   scope :recorded, -> { where.not(recorded_at: nil) }
@@ -196,7 +194,7 @@ class ConsentForm < ApplicationRecord
   end
 
   def address_postcode=(str)
-    super UKPostcode.parse(str.to_s).to_s
+    super str.nil? ? nil : UKPostcode.parse(str.to_s).to_s
   end
 
   def full_name
@@ -342,26 +340,41 @@ class ConsentForm < ApplicationRecord
     Flipper.enabled?(:parent_contact_method) && parent_phone.present?
   end
 
-  def seed_health_questions_if_consent_given
-    return unless consent_given? && health_answers.empty?
-    vaccine = campaign.vaccines.first
-    self.health_answers = vaccine.health_questions.to_health_answers
-  end
-
-  def remove_health_questions_if_consent_refused
-    return unless consent_refused? || health_answers.empty?
-    self.health_answers = []
-  end
-
+  # Because there are branching paths in the consent form journey, fields
+  # sometimes get set with values that then have to be deleted if the user
+  # changes their mind and goes down a different path.
   def reset_unused_fields
     self.common_name = nil unless use_common_name?
 
     self.contact_method = nil unless ask_for_contact_method?
     self.contact_method_other = nil unless contact_method_other?
 
-    self.reason = nil unless consent_refused?
-    self.reason_notes = nil unless consent_refused?
+    if consent_refused?
+      self.gp_response = nil
+
+      self.address_line_1 = nil
+      self.address_line_2 = nil
+      self.address_town = nil
+      self.address_postcode = nil
+
+      self.health_answers = []
+    end
+
+    if consent_given?
+      self.contact_injection = nil
+
+      self.reason = nil
+      self.reason_notes = nil
+
+      seed_health_questions
+    end
 
     self.gp_name = nil unless gp_response_yes?
+  end
+
+  def seed_health_questions
+    return unless health_answers.empty?
+    vaccine = campaign.vaccines.first
+    self.health_answers = vaccine.health_questions.to_health_answers
   end
 end
