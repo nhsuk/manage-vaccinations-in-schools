@@ -11,7 +11,13 @@ feature "Verbal consent" do
     and_i_am_logged_in_as_a_nurse
 
     when_the_nurse_checks_the_consent_responses_given
-    and_i_call_the_parent_that_has_refused_consent
+    and_i_contact_the_parent_that_has_refused_consent
+    then_i_see_the_consent_question_page
+
+    when_i_go_back
+    then_i_see_the_patient_page
+
+    when_i_call_the_parent_that_has_refused_consent
     and_consent_is_given_verbally
     then_i_am_returned_to_the_check_consent_responses_page
     and_i_see_the_success_alert
@@ -43,9 +49,11 @@ feature "Verbal consent" do
     click_on @child.full_name
   end
 
-  def and_i_call_the_parent_that_has_refused_consent
+  def when_i_call_the_parent_that_has_refused_consent
     click_on "Contact #{@child.consents.first.parent_name}"
   end
+  alias_method :and_i_contact_the_parent_that_has_refused_consent,
+               :when_i_call_the_parent_that_has_refused_consent
 
   def and_consent_is_given_verbally
     choose "Yes, they agree"
@@ -76,5 +84,17 @@ feature "Verbal consent" do
     within "div#given" do
       expect(page).to have_content(@child.full_name)
     end
+  end
+
+  def then_i_see_the_consent_question_page
+    expect(page).to have_content("Do they agree")
+  end
+
+  def when_i_go_back
+    click_on "Back"
+  end
+
+  def then_i_see_the_patient_page
+    expect(page).to have_content(@child.full_name)
   end
 end
