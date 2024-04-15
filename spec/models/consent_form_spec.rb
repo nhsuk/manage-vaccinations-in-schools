@@ -424,6 +424,18 @@ RSpec.describe ConsentForm, type: :model do
     end
   end
 
+  describe "#parent_email=" do
+    it "strips whitespace and downcases the email" do
+      consent_form = build(:consent_form, parent_email: "  joHn@doe.com ")
+      expect(consent_form.parent_email).to eq("john@doe.com")
+    end
+
+    it "leaves nil as nil" do
+      consent_form = build(:consent_form, parent_email: nil)
+      expect(consent_form.parent_email).to eq(nil)
+    end
+  end
+
   describe "#address_postcode=" do
     it "formats the postcode" do
       consent_form = build(:consent_form, address_postcode: "sw1a1aa")
