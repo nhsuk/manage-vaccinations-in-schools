@@ -193,6 +193,10 @@ class ConsentForm < ApplicationRecord
     validate :health_answers_valid?
   end
 
+  def parent_email=(str)
+    super str.nil? ? nil : str.to_s.downcase.strip
+  end
+
   def address_postcode=(str)
     super str.nil? ? nil : UKPostcode.parse(str.to_s).to_s
   end
