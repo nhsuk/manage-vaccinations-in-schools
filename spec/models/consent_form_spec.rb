@@ -448,6 +448,18 @@ RSpec.describe ConsentForm, type: :model do
     end
   end
 
+  describe "#parent_phone=" do
+    it "strips non-numeric characters" do
+      consent_form = build(:consent_form, parent_phone: "01234 567890")
+      expect(consent_form.parent_phone).to eq("01234567890")
+    end
+
+    it "leaves nil as nil" do
+      consent_form = build(:consent_form, parent_phone: nil)
+      expect(consent_form.parent_phone).to eq(nil)
+    end
+  end
+
   describe "#each_health_answer" do
     context "linear health questions without branching" do
       let(:consent_form) do

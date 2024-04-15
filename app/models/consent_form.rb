@@ -197,6 +197,10 @@ class ConsentForm < ApplicationRecord
     super str.nil? ? nil : str.to_s.downcase.strip
   end
 
+  def parent_phone=(str)
+    super str.nil? ? nil : str.to_s.gsub(/\s/, "")
+  end
+
   def address_postcode=(str)
     super str.nil? ? nil : UKPostcode.parse(str.to_s).to_s
   end
