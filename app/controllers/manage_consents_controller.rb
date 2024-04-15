@@ -17,6 +17,9 @@ class ManageConsentsController < ApplicationController
   before_action :set_triage,
                 except: %i[create],
                 if: -> { step.in?(%w[questions confirm]) }
+  before_action :set_back_link,
+                only: %i[show],
+                if: -> { wizard_value(step).present? }
 
   def create
     @consent = Consent.create! create_params
@@ -69,8 +72,12 @@ class ManageConsentsController < ApplicationController
 
   private
 
+  def set_back_link
+    current_step # Set the current_step for the back link
+  end
+
   def current_step
-    wizard_value(step).to_sym
+    @current_step ||= wizard_value(step).to_sym
   end
 
   def finish_wizard_path
