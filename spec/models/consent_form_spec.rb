@@ -430,9 +430,9 @@ RSpec.describe ConsentForm, type: :model do
       expect(consent_form.address_postcode).to eq("SW1A 1AA")
     end
 
-    it "converts nil to empty string" do
+    it "leaves nil as nil" do
       consent_form = build(:consent_form, address_postcode: nil)
-      expect(consent_form.address_postcode).to eq("")
+      expect(consent_form.address_postcode).to eq(nil)
     end
   end
 
@@ -731,7 +731,14 @@ RSpec.describe ConsentForm, type: :model do
   it "seeds the health questions when the parent gives consent" do
     consent_form = create(:consent_form, response: "refused")
 
-    consent_form.update!(response: "given")
+    consent_form.update!(
+      response: "given",
+      address_line_1: "123 Fake St",
+      address_town: "London",
+      address_postcode: "SW1A 1AA",
+      gp_response: "yes",
+      gp_name: "Dr. Foo"
+    )
     consent_form.reload
 
     expect(consent_form.health_answers).not_to be_empty
@@ -795,5 +802,13 @@ RSpec.describe ConsentForm, type: :model do
     consent_form = build(:consent_form, gp_response: "yes", gp_name: "Dr. Foo")
     consent_form.update!(gp_response: "no")
     expect(consent_form.gp_name).to be_nil
+
+    consent_form = build(:consent_form)
+    consent_form.update!(response: "refused")
+    expect(consent_form.gp_response).to be_nil
+    expect(consent_form.address_line_1).to be_nil
+    expect(consent_form.address_line_2).to be_nil
+    expect(consent_form.address_town).to be_nil
+    expect(consent_form.address_postcode).to be_nil
   end
 end
