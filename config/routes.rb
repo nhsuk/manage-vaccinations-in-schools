@@ -75,13 +75,25 @@ Rails.application.routes.draw do
       end
     end
 
-    get "consents", to: "consents#index", on: :member
+    get "consents",
+        to:
+          redirect(
+            "/sessions/%{id}/consents/#{TAB_PATHS[:consent].keys.first}"
+          ),
+        as: :consents,
+        on: :member
+
     get "consents/unmatched-responses",
         to: "consent_forms#unmatched_responses",
         on: :member,
         as: :unmatched_responses
+    get "consents/:tab",
+        to: "consents#index",
+        on: :member,
+        as: :consents_tab,
+        tab: /#{TAB_PATHS[:consent].keys.join("|")}/
     get "triage",
-        to: redirect("/sessions/%{id}/triage/needed"),
+        to: redirect("/sessions/%{id}/triage/#{TAB_PATHS[:triage].keys.first}"),
         as: :triage,
         on: :member
     get "triage/:tab",

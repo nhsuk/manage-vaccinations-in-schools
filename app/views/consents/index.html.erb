@@ -27,32 +27,36 @@
   <% end %>
 <% end %>
 
-<% def consent_tab(slot, state, columns: %i[name dob])
+<% def tab_content(slot, state, tab_path, columns: %i[name dob])
   label = t("states.#{state}.label")
-  data = @tabs[state]
-  slot.with_tab(id: label.parameterize,
-                label: "#{label} (#{data.size})",
-                classes: 'nhsuk-tabs__panel') do
-    if data.size > 0
+  selected = state == @current_tab
+  path = consents_tab_session_path(@session, tab: tab_path)
+  count = @tab_counts[state]
+
+  slot.with_tab(
+    id: label.parameterize,
+    link: path,
+    label: "#{label} (#{count})",
+    classes: 'nhsuk-tabs__panel',
+    selected:
+  ) do
+    if selected && @patient_sessions.size > 0
       render AppPatientTableComponent.new(
-        patient_sessions: data,
+        patient_sessions: @patient_sessions,
         tab_id: label.parameterize,
         caption: t("states.#{state}.title"),
         columns:,
-        route: :consent,
+        route: :consent
       )
     else
-      render AppEmptyListComponent.new(
-        title: t("states.#{state}.title"),
-        text: t("table.no_results")
-      )
+      ""
     end
   end
 end %>
 
 <%= render AppTabComponent.new title: "Consents", classes: 'nhsuk-tabs' do |slot|
-  consent_tab(slot, :no_consent?)
-  consent_tab(slot, :consent_given?)
-  consent_tab(slot, :consent_refused?, columns: %i[name dob reason])
-  consent_tab(slot, :consent_conflicts?)
+  tab_content(slot, :no_consent, :"no-consent")
+  tab_content(slot, :consent_given, :given)
+  tab_content(slot, :consent_refused, :refused, columns: %i[name dob reason])
+  tab_content(slot, :conflicting_consent, :conflicts)
 end %>

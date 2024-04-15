@@ -21,16 +21,16 @@ en:
     accessibility_statement: "Accessibility statement"
     privacy_policy: "Your privacy"
   states:
-    consent_given?:
+    consent_given:
       label: Given
       title: Children with consent given
-    consent_refused?:
+    consent_refused:
       label: Refused
       title: Children with consent refused
-    consent_conflicts?:
+    conflicting_consent:
       label: Conflicts
       title: Children with conflicting consent responses
-    no_consent?:
+    no_consent:
       label: No response
       title: Children with no consent response
     needs_triage:
