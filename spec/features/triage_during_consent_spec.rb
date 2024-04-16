@@ -36,7 +36,7 @@ RSpec.describe "Triage" do
   end
 
   def when_i_go_to_the_given_tab_of_the_consents_page
-    visit consents_session_path(@session, anchor: "given")
+    visit consents_tab_session_path(@session, tab: "given")
   end
 
   def and_i_go_to_the_patient_that_needs_triage
