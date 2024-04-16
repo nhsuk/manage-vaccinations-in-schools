@@ -78,7 +78,7 @@ Rails.application.routes.draw do
     get "consents",
         to:
           redirect(
-            "/sessions/%{id}/consents/#{TAB_PATHS[:consent].keys.first}"
+            "/sessions/%{id}/consents/#{TAB_PATHS[:consents].keys.first}"
           ),
         as: :consents,
         on: :member
@@ -91,7 +91,7 @@ Rails.application.routes.draw do
         to: "consents#index",
         on: :member,
         as: :consents_tab,
-        tab: /#{TAB_PATHS[:consent].keys.join("|")}/
+        tab: /#{TAB_PATHS[:consents].keys.join("|")}/
     get "triage",
         to: redirect("/sessions/%{id}/triage/#{TAB_PATHS[:triage].keys.first}"),
         as: :triage,
