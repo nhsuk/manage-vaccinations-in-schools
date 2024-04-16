@@ -184,13 +184,14 @@ like to use in the `webapp/manifest.yml`:
 ### Cheat sheet
 
 ```bash
-copilot env init --name test     # Initialise a new environment
-copilot env deploy --name test   # Deploy the new environment
-copilot secret init              # Add a secret to every environment
-copilot svc deploy --env test    # Deploy the web app
+copilot env init --name test                # Initialise a new environment
+copilot env deploy --name test              # Deploy the new environment
+copilot secret init                         # Add a secret to every environment
+copilot svc deploy --env test               # Deploy the web app
 
-copilot svc delete --name test   # Destroy the web app
-copilot env delete --name test   # Destroy the environment
+copilot svc delete --name webapp --env test # Destroy the web app
+copilot env delete --name test              # Destroy the environment disable
+                                            # deletion protection if necessary
 ```
 
 ### Loading example campaigns in a new environment
