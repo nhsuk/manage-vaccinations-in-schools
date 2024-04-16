@@ -21,7 +21,9 @@ feature "Verbal consent" do
     and_consent_is_given_verbally
     then_i_am_returned_to_the_check_consent_responses_page
     and_i_see_the_success_alert
-    and_i_see_them_in_the_consent_given_tab
+
+    when_i_click_on_the_consent_given_tab
+    then_i_see_the_child_has_consent_given
   end
 
   def given_an_hpv_campaign_is_underway
@@ -80,10 +82,12 @@ feature "Verbal consent" do
     )
   end
 
-  def and_i_see_them_in_the_consent_given_tab
-    within "div#given" do
-      expect(page).to have_content(@child.full_name)
-    end
+  def when_i_click_on_the_consent_given_tab
+    click_on "Given"
+  end
+
+  def then_i_see_the_child_has_consent_given
+    expect(page).to have_content(@child.full_name)
   end
 
   def then_i_see_the_consent_question_page

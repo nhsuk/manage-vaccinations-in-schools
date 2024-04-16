@@ -35,7 +35,7 @@ async function given_i_am_checking_consent() {
 }
 
 async function when_i_select_a_child_with_conflicting_consent() {
-  await p.getByRole("tab", { name: "Conflicts" }).click();
+  await p.getByRole("link", { name: "Conflicts" }).click();
   await p
     .getByRole("link", { name: fixtures.patientWithConflictingConsent })
     .click();
@@ -85,7 +85,7 @@ async function then_i_see_the_success_banner() {
 }
 
 async function when_i_select_the_same_patient() {
-  await p.getByRole("tab", { name: "Given" }).click();
+  await p.getByRole("link", { name: "Given" }).click();
   await p
     .getByRole("link", { name: fixtures.patientWithConflictingConsent })
     .click();
