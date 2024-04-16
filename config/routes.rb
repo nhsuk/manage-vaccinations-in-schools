@@ -75,6 +75,10 @@ Rails.application.routes.draw do
       end
     end
 
+    get "consents/unmatched-responses",
+        to: "consent_forms#unmatched_responses",
+        on: :member,
+        as: :unmatched_responses
     get "consents",
         to:
           redirect(
@@ -82,16 +86,12 @@ Rails.application.routes.draw do
           ),
         as: :consents,
         on: :member
-
-    get "consents/unmatched-responses",
-        to: "consent_forms#unmatched_responses",
-        on: :member,
-        as: :unmatched_responses
     get "consents/:tab",
         to: "consents#index",
         on: :member,
         as: :consents_tab,
         tab: /#{TAB_PATHS[:consents].keys.join("|")}/
+
     get "triage",
         to: redirect("/sessions/%{id}/triage/#{TAB_PATHS[:triage].keys.first}"),
         as: :triage,
