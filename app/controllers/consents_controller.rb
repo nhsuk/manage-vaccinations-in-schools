@@ -31,7 +31,7 @@ class ConsentsController < ApplicationController
     tab_patient_sessions =
       group_patient_sessions_by_conditions(all_patient_sessions, tab_conditions)
 
-    @current_tab = TAB_PATHS[:consent][params[:tab]]
+    @current_tab = TAB_PATHS[:consents][params[:tab]]
     @tab_counts = count_patient_sessions(tab_patient_sessions)
     @patient_sessions = tab_patient_sessions[@current_tab] || []
 

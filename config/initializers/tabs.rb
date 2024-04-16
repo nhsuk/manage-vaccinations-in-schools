@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 TAB_PATHS = {
-  consent: {
+  consents: {
     "no-consent" => :no_consent,
     "given" => :consent_given,
     "refused" => :consent_refused,
