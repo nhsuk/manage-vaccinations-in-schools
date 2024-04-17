@@ -1,5 +1,6 @@
 class TriageController < ApplicationController
   include TriageMailerConcern
+  include PatientTabsConcern
 
   before_action :set_session, only: %i[index create update]
   before_action :set_patient, only: %i[create update]
@@ -34,16 +35,13 @@ class TriageController < ApplicationController
       ]
     }
 
-    @current_tab = TAB_PATHS[:triage][params[:tab]]
-    tabs_to_states[@current_tab]
     tab_patient_sessions =
-      all_patient_sessions.group_by do |patient_session|
-        tabs_to_states
-          .find { |_, states| patient_session.state.in? states }
-          &.first
-      end
-    @tab_counts = tab_patient_sessions.transform_values(&:count)
+      group_patient_sessions_by_state(all_patient_sessions, tabs_to_states)
+
+    @current_tab = TAB_PATHS[:triage][params[:tab]]
+    @tab_counts = count_patient_sessions(tab_patient_sessions)
     @patient_sessions = tab_patient_sessions[@current_tab] || []
+
     session[:current_section] = "triage"
   end
 
