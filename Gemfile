@@ -4,7 +4,6 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby "3.3.0"
 gem "rails", "~> 7.1.3"
 
-gem "aasm"
 gem "audited"
 gem "awesome_print"
 gem "bootsnap", require: false
@@ -49,7 +48,6 @@ group :development, :test do
 end
 
 group :development do
-  gem "aasm-diagram"
   gem "annotate", require: false
   gem "asciidoctor"
   gem "asciidoctor-diagram"
