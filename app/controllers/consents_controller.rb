@@ -1,4 +1,6 @@
 class ConsentsController < ApplicationController
+  include PatientTabsConcern
+
   before_action :set_session
 
   layout "two_thirds", except: :index
@@ -26,17 +28,11 @@ class ConsentsController < ApplicationController
         :unmatched_responses
       ]
 
-    @current_tab = TAB_PATHS[:consent][params[:tab]]
-
     tab_patient_sessions =
-      all_patient_sessions.group_by do |patient_session|
-        tab_conditions
-          .find { |_, conditions| conditions.any? { patient_session.send(_1) } }
-          &.first
-      end
-    @tab_counts = tab_patient_sessions.transform_values(&:count)
-    tab_conditions.each_key { |tab| @tab_counts[tab] ||= 0 }
+      group_patient_sessions_by_conditions(all_patient_sessions, tab_conditions)
 
+    @current_tab = TAB_PATHS[:consent][params[:tab]]
+    @tab_counts = count_patient_sessions(tab_patient_sessions)
     @patient_sessions = tab_patient_sessions[@current_tab] || []
 
     session[:current_section] = "consents"
