@@ -1,10 +1,11 @@
 class VaccinationsController < ApplicationController
   include TodaysBatchConcern
   include VaccinationMailerConcern
+  include PatientTabsConcern
 
   before_action :set_session
   before_action :set_patient, except: %i[index record_template]
-  before_action :set_patient_sessions, only: %i[index record_template]
+  before_action :set_patient_sessions, only: %i[record_template]
   before_action :set_patient_session, only: %i[new confirm create record update]
   before_action :set_draft_vaccination_record,
                 only: %i[edit_reason create update]
@@ -17,7 +18,7 @@ class VaccinationsController < ApplicationController
   layout "two_thirds", except: :index
 
   def index
-    tabs_to_states = {
+    tab_states = {
       action_needed: %w[
         consent_given_triage_needed
         triaged_kept_in_triage
@@ -37,15 +38,20 @@ class VaccinationsController < ApplicationController
       ]
     }
 
-    @partitioned_patient_sessions =
-      @patient_sessions.group_by do |patient_session|
-        tabs_to_states
-          .find { |_, states| patient_session.state.in? states }
-          &.first
-      end
+    all_patient_sessions =
+      @session
+        .patient_sessions
+        .strict_loading
+        .includes(:campaign, :patient, :triage, :vaccination_records)
+        .preload(:consents)
+        .order("patients.first_name", "patients.last_name")
 
-    # ensure all tabs are present
-    tabs_to_states.each_key { |tab| @partitioned_patient_sessions[tab] ||= [] }
+    grouped_patient_sessions =
+      group_patient_sessions_by_state(all_patient_sessions, tab_states)
+
+    @current_tab = TAB_PATHS[:vaccinations][params[:tab]]
+    @tab_counts = count_patient_sessions(grouped_patient_sessions)
+    @patient_sessions = grouped_patient_sessions.fetch(@current_tab, [])
 
     respond_to do |format|
       format.html
