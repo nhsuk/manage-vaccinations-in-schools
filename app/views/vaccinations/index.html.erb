@@ -11,55 +11,41 @@
 
 <%= h1 page_title, page_title: %>
 
-<%=
-render AppTabComponent.new(title: "Vaccinations", classes: 'nhsuk-tabs') do |c|
-  c.with_tab(id: "action-needed", label: t("states.action_needed.label") + " (#{ @partitioned_patient_sessions[:action_needed].size })", classes: 'nhsuk-tabs__panel') do
-    if @partitioned_patient_sessions[:action_needed].any?
-      render "patients_with_actions",
- id: "action-needed",
- caption: t("states.action_needed.title"),
- patient_sessions: @partitioned_patient_sessions[:action_needed]
-else
-  render AppEmptyListComponent.new(
-    title: t("states.action_needed.title")
-  )
-end
-end
-c.with_tab(id: "vaccinated", label: t("states.vaccinated.label") + " (#{ @partitioned_patient_sessions[:vaccinated].size })", classes: 'nhsuk-tabs__panel') do
-  if @partitioned_patient_sessions[:vaccinated].any?
-    render "patients_with_outcomes",
- id: "vaccinated",
- caption: t("states.vaccinated.title"),
- patient_sessions: @partitioned_patient_sessions[:vaccinated]
-else
-  render AppEmptyListComponent.new(
-    title: t("states.vaccinated.title")
-  )
-end
-end
-c.with_tab(id: "vaccinate-later", label: t("states.vaccinate_later.label") + " (#{ @partitioned_patient_sessions[:vaccinate_later].size })", classes: 'nhsuk-tabs__panel') do
-  if @partitioned_patient_sessions[:vaccinate_later].any?
-    render "patients_with_outcomes",
- id: "vaccinate-later",
- caption: t("states.vaccinate_later.title"),
- patient_sessions: @partitioned_patient_sessions[:vaccinate_later]
-else
-  render AppEmptyListComponent.new(
-    title: t("states.vaccinate_later.title")
-  )
-end
-end
-c.with_tab(id: "could-not-vaccinate", label: t("states.could_not_vaccinate.label") + " (#{ @partitioned_patient_sessions[:could_not_vaccinate].size })", classes: 'nhsuk-tabs__panel') do
-  if @partitioned_patient_sessions[:could_not_vaccinate].any?
-    render "patients_with_outcomes",
- id: "could-not-vaccinate",
- caption: t("states.could_not_vaccinate.title"),
- patient_sessions: @partitioned_patient_sessions[:could_not_vaccinate]
-else
-  render AppEmptyListComponent.new(
-    title: t("states.could_not_vaccinate.title")
-  )
-end
-end
-end
-%>
+<% def tab_content(slot, state, tab_path, page_type:, columns: %i[name dob])
+  label = t("states.#{state}.label")
+  selected = state == @current_tab
+  path = vaccinations_tab_session_path(@session, tab: tab_path)
+  count = @tab_counts[state]
+
+  slot.with_tab(
+    id: label.parameterize,
+    link: path,
+    label: "#{label} (#{count})",
+    classes: 'nhsuk-tabs__panel',
+    selected:
+  ) do
+    if selected && @patient_sessions.size > 0
+      if page_type == :actions
+        render "patients_with_actions",
+               id: label.parameterize,
+               caption: t("states.#{state}.title"),
+               patient_sessions: @patient_sessions
+     else
+       render "patients_with_outcomes",
+              id: label.parameterize,
+              caption: t("states.#{state}.title"),
+              patient_sessions: @patient_sessions
+     end
+   else
+     ""
+   end
+ end
+end %>
+
+
+<%= render AppTabComponent.new title: "Vaccinations", classes: 'nhsuk-tabs' do |slot|
+  tab_content(slot, :action_needed, :actions, page_type: :actions)
+  tab_content(slot, :vaccinated, :vaccinated, page_type: :outcomes)
+  tab_content(slot, :vaccinate_later, :later, page_type: :outcomes)
+  tab_content(slot, :could_not_vaccinate, :"could-not", page_type: :outcomes)
+end %>

@@ -101,7 +101,19 @@ Rails.application.routes.draw do
         on: :member,
         as: :triage_tab,
         tab: /#{TAB_PATHS[:triage].keys.join("|")}/
-    get "vaccinations", to: "vaccinations#index", on: :member
+
+    get "vaccinations",
+        to:
+          redirect(
+            "/sessions/%{id}/vaccinations/#{TAB_PATHS[:vaccinations].keys.first}"
+          ),
+        as: :vaccinations,
+        on: :member
+    get "vaccinations/:tab",
+        to: "vaccinations#index",
+        on: :member,
+        as: :vaccinations_tab,
+        tab: /#{TAB_PATHS[:vaccinations].keys.join("|")}/
 
     resources :edit_sessions, only: %i[show update], path: "edit", as: :edit
 
