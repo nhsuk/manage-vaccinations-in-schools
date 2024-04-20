@@ -27,7 +27,7 @@ class VaccinationsController < ApplicationController
       ],
       vaccinated: %w[vaccinated],
       vaccinate_later: %w[delay_vaccination],
-      not_vaccinated: %w[
+      could_not_vaccinate: %w[
         consent_refused
         consent_conflicts
         triaged_do_not_vaccinate

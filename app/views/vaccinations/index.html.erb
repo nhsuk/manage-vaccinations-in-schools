@@ -16,50 +16,50 @@ render AppTabComponent.new(title: "Vaccinations", classes: 'nhsuk-tabs') do |c|
   c.with_tab(id: "action-needed", label: t("states.action_needed.label") + " (#{ @partitioned_patient_sessions[:action_needed].size })", classes: 'nhsuk-tabs__panel') do
     if @partitioned_patient_sessions[:action_needed].any?
       render "patients_with_actions",
-            id: "action-needed",
-            caption: t("states.action_needed.title"),
-            patient_sessions: @partitioned_patient_sessions[:action_needed]
-    else
-      render AppEmptyListComponent.new(
-        title: t("states.action_needed.title")
-      )
-    end
-  end
-  c.with_tab(id: "vaccinated", label: t("states.vaccinated.label") + " (#{ @partitioned_patient_sessions[:vaccinated].size })", classes: 'nhsuk-tabs__panel') do
-    if @partitioned_patient_sessions[:vaccinated].any?
-      render "patients_with_outcomes",
-            id: "vaccinated",
-            caption: t("states.vaccinated.title"),
-            patient_sessions: @partitioned_patient_sessions[:vaccinated]
-    else
-      render AppEmptyListComponent.new(
-        title: t("states.vaccinated.title")
-      )
-    end
-  end
-  c.with_tab(id: "vaccinate-later", label: t("states.vaccinate_later.label") + " (#{ @partitioned_patient_sessions[:vaccinate_later].size })", classes: 'nhsuk-tabs__panel') do
-    if @partitioned_patient_sessions[:vaccinate_later].any?
-      render "patients_with_outcomes",
-           id: "vaccinate-later",
-           caption: t("states.vaccinate_later.title"),
-           patient_sessions: @partitioned_patient_sessions[:vaccinate_later]
-    else
-      render AppEmptyListComponent.new(
-        title: t("states.not_vaccinated.title")
-      )
-    end
-  end
-  c.with_tab(id: "could-not-vaccinate", label: t("states.not_vaccinated.label") + " (#{ @partitioned_patient_sessions[:not_vaccinated].size })", classes: 'nhsuk-tabs__panel') do
-    if @partitioned_patient_sessions[:not_vaccinated].any?
-      render "patients_with_outcomes",
-           id: "could-not-vaccinate",
-           caption: t("states.not_vaccinated.title"),
-           patient_sessions: @partitioned_patient_sessions[:not_vaccinated]
-    else
-      render AppEmptyListComponent.new(
-        title: t("states.not_vaccinated.title")
-      )
-    end
-  end
+ id: "action-needed",
+ caption: t("states.action_needed.title"),
+ patient_sessions: @partitioned_patient_sessions[:action_needed]
+else
+  render AppEmptyListComponent.new(
+    title: t("states.action_needed.title")
+  )
+end
+end
+c.with_tab(id: "vaccinated", label: t("states.vaccinated.label") + " (#{ @partitioned_patient_sessions[:vaccinated].size })", classes: 'nhsuk-tabs__panel') do
+  if @partitioned_patient_sessions[:vaccinated].any?
+    render "patients_with_outcomes",
+ id: "vaccinated",
+ caption: t("states.vaccinated.title"),
+ patient_sessions: @partitioned_patient_sessions[:vaccinated]
+else
+  render AppEmptyListComponent.new(
+    title: t("states.vaccinated.title")
+  )
+end
+end
+c.with_tab(id: "vaccinate-later", label: t("states.vaccinate_later.label") + " (#{ @partitioned_patient_sessions[:vaccinate_later].size })", classes: 'nhsuk-tabs__panel') do
+  if @partitioned_patient_sessions[:vaccinate_later].any?
+    render "patients_with_outcomes",
+ id: "vaccinate-later",
+ caption: t("states.vaccinate_later.title"),
+ patient_sessions: @partitioned_patient_sessions[:vaccinate_later]
+else
+  render AppEmptyListComponent.new(
+    title: t("states.vaccinate_later.title")
+  )
+end
+end
+c.with_tab(id: "could-not-vaccinate", label: t("states.could_not_vaccinate.label") + " (#{ @partitioned_patient_sessions[:could_not_vaccinate].size })", classes: 'nhsuk-tabs__panel') do
+  if @partitioned_patient_sessions[:could_not_vaccinate].any?
+    render "patients_with_outcomes",
+ id: "could-not-vaccinate",
+ caption: t("states.could_not_vaccinate.title"),
+ patient_sessions: @partitioned_patient_sessions[:could_not_vaccinate]
+else
+  render AppEmptyListComponent.new(
+    title: t("states.could_not_vaccinate.title")
+  )
+end
+end
 end
 %>
