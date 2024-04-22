@@ -93,7 +93,7 @@ async function then_i_should_see_a_success_message() {
 }
 
 async function and_i_should_see_the_outcome_as_vaccinated() {
-  await p.getByRole("tab", { name: /^Vaccinated/ }).click();
+  await p.getByRole("link", { name: /^Vaccinated/ }).click();
   const row = p.locator(`tr`, {
     hasText: fixtures.patientThatNeedsVaccination,
   });
@@ -116,7 +116,7 @@ async function then_i_should_see_the_vaccination_details() {
 }
 
 async function when_i_click_on_the_vaccinated_tab() {
-  await p.getByRole("tab", { name: /^Vaccinated/ }).click();
+  await p.getByRole("link", { name: /^Vaccinated/ }).click();
 }
 
 async function when_i_record_an_unsuccessful_vaccination() {

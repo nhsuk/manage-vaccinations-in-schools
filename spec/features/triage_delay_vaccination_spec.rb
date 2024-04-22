@@ -13,8 +13,8 @@ RSpec.describe "Triage" do
     when_i_go_to_the_triage_completed_tab
     then_i_see_the_patient
 
-    when_i_access_the_record_vaccinations_area
-    then_i_see_the_patient_in_the_vaccinate_later_tab
+    when_i_access_the_vaccinate_later_page
+    then_i_see_the_patient
 
     when_i_view_the_child_record
     then_they_should_have_the_status_banner_delay_vaccination
@@ -73,15 +73,14 @@ RSpec.describe "Triage" do
     end
   end
 
-  def when_i_access_the_record_vaccinations_area
+  def when_i_access_the_vaccinate_later_page
     click_on @school.name, match: :first
     click_on "Record vaccinations"
+    click_on "Vaccinate later"
   end
 
-  def then_i_see_the_patient_in_the_vaccinate_later_tab
-    within "div#vaccinate-later" do
-      expect(page).to have_content(@patient.full_name)
-    end
+  def then_i_see_the_patient
+    expect(page).to have_content(@patient.full_name)
   end
 
   def when_i_view_the_child_record
