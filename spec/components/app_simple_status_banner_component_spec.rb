@@ -6,6 +6,9 @@ RSpec.describe AppSimpleStatusBannerComponent, type: :component do
   let(:component) { described_class.new(patient_session:) }
   let!(:rendered) { render_inline(component) }
   let(:triage_nurse_name) { patient_session.triage.last.user.full_name }
+  let(:vaccination_nurse_name) do
+    patient_session.vaccination_records.last.user.full_name
+  end
   let(:patient_name) { patient_session.patient.full_name }
 
   subject { page }
@@ -66,6 +69,18 @@ RSpec.describe AppSimpleStatusBannerComponent, type: :component do
     it do
       should have_text(
                "#{triage_nurse_name} decided that #{patient_name} is safe to vaccinate"
+             )
+    end
+  end
+
+  context "state is delay_vaccination" do
+    let(:patient_session) { create :patient_session, :delay_vaccination }
+
+    it { should have_css(".app-card--red") }
+    it { should have_css(".nhsuk-card__heading", text: "Delay vaccination") }
+    it do
+      should have_text(
+               "#{vaccination_nurse_name} decided that #{patient_name}’s vaccination should be delayed"
              )
     end
   end

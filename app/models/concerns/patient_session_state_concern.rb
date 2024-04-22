@@ -145,7 +145,8 @@ module PatientSessionStateConcern
         (
           vaccination_record.not_well? ||
             vaccination_record.contraindications? ||
-            vaccination_record.absent_from_session?
+            vaccination_record.absent_from_session? ||
+            vaccination_record.absent_from_school?
         )
     end
 
