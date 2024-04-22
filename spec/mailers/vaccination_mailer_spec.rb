@@ -94,7 +94,7 @@ RSpec.describe VaccinationMailer do
 
     it "has the correct template" do
       expect(mail.header[:template_id].value).to eq(
-        EMAILS[:confirming_the_hpv_vaccination_didnt_happen]
+        EMAILS[:confirmation_the_hpv_vaccination_didnt_happen]
       )
     end
 

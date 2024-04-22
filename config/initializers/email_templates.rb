@@ -4,7 +4,7 @@ EMAILS = {
   hpv_session_session_reminder: "79e131b2-7816-46d0-9c74-ae14956dd77d",
   confirmation_the_hpv_vaccination_has_taken_place:
     "8a65d7b5-045c-4f26-8f76-6e593c14cb6d",
-  confirming_the_hpv_vaccination_didnt_happen:
+  confirmation_the_hpv_vaccination_didnt_happen:
     "130fe52a-014a-45dd-9f53-8e65c1b8bb79",
   triage_vaccination_will_happen: "fa3c8dd5-4688-4b93-960a-1d422c4e5597",
   triage_vaccination_wont_happen: "d1faf47e-ccc3-4481-975b-1ec34211a21f",
