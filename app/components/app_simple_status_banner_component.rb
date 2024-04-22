@@ -15,6 +15,7 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
           default: "",
           full_name:,
           triage_nurse:,
+          vaccination_nurse:,
           who_responded:,
           who_refused:
         )
@@ -31,6 +32,11 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
 
   def most_recent_triage
     @most_recent_triage ||= @patient_session.triage.order(:created_at).last
+  end
+
+  def most_recent_vaccination
+    @most_recent_vaccination ||=
+      @patient_session.vaccination_records.order(:created_at).last
   end
 
   def who_responded
@@ -52,6 +58,10 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
 
   def triage_nurse
     most_recent_triage&.user&.full_name
+  end
+
+  def vaccination_nurse
+    most_recent_vaccination&.user&.full_name
   end
 
   def state
