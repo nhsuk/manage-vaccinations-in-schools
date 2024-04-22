@@ -54,9 +54,11 @@ describe PatientTabsConcern do
   end
 
   describe "#group_patient_sessions_by_states" do
-    let(:patient_session1) { create(:patient_session) }
-    let(:patient_session2) do
+    let(:patient_session1) do
       create(:patient_session, :consent_given_triage_needed)
+    end
+    let(:patient_session2) do
+      create(:patient_session, :triaged_ready_to_vaccinate)
     end
     let(:patient_session3) do
       create(:patient_session, :consent_given_triage_not_needed)
@@ -67,8 +69,8 @@ describe PatientTabsConcern do
 
     it "groups patient sessions by states" do
       tab_states = {
-        needs_triage: %w[added_to_session],
-        triage_complete: %w[consent_given_triage_needed],
+        needs_triage: %w[consent_given_triage_needed],
+        triage_complete: %w[triaged_ready_to_vaccinate],
         no_triage_needed: %w[consent_given_triage_not_needed]
       }
 
@@ -80,15 +82,33 @@ describe PatientTabsConcern do
           needs_triage: [patient_session1],
           triage_complete: [patient_session2],
           no_triage_needed: [patient_session3]
-        }
+        }.with_indifferent_access
       )
+    end
+
+    context "using the section parameter" do
+      it "groups patient sessions by states" do
+        result =
+          subject.group_patient_sessions_by_state(
+            patient_sessions,
+            section: :triage
+          )
+
+        expect(result).to eq(
+          {
+            needs_triage: [patient_session1],
+            triage_complete: [patient_session2],
+            no_triage_needed: [patient_session3]
+          }.with_indifferent_access
+        )
+      end
     end
 
     context "one of the groups is empty" do
       it "returns an empty array for the empty group" do
         tab_states = {
-          needs_triage: %w[added_to_session],
-          triage_complete: %w[consent_given_triage_needed],
+          needs_triage: %w[consent_given_triage_needed],
+          triage_complete: %w[triaged_ready_to_vaccinate],
           no_triage_needed: %w[consent_given_triage_not_needed]
         }
 
@@ -103,7 +123,7 @@ describe PatientTabsConcern do
             needs_triage: [patient_session1],
             triage_complete: [],
             no_triage_needed: []
-          }
+          }.with_indifferent_access
         )
       end
     end

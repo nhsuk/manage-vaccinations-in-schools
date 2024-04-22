@@ -20,28 +20,11 @@ class TriageController < ApplicationController
         .preload(:consents)
         .order("patients.first_name", "patients.last_name")
 
-    tabs_to_states = {
-      needs_triage: %w[consent_given_triage_needed triaged_kept_in_triage],
-      triage_complete: %w[
-        delay_vaccination
-        triaged_ready_to_vaccinate
-        triaged_do_not_vaccinate
-      ],
-      no_triage_needed: %w[
-        consent_refused
-        consent_given_triage_not_needed
-        vaccinated
-        unable_to_vaccinate
-      ]
-    }
-
-    tab_patient_sessions =
-      group_patient_sessions_by_state(all_patient_sessions, tabs_to_states)
-
     @current_tab = TAB_PATHS[:triage][params[:tab]]
+    tab_patient_sessions =
+      group_patient_sessions_by_state(all_patient_sessions, section: :triage)
     @tab_counts = count_patient_sessions(tab_patient_sessions)
     @patient_sessions = tab_patient_sessions[@current_tab] || []
-
     session[:current_section] = "triage"
   end
 
