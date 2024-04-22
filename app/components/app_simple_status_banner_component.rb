@@ -14,8 +14,7 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
           "patient_session_statuses.#{state}.banner_explanation",
           default: "",
           full_name:,
-          triage_nurse:,
-          vaccination_nurse:,
+          nurse:,
           who_responded:,
           who_refused:
         )
@@ -56,12 +55,13 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
     @patient_session.patient.full_name
   end
 
-  def triage_nurse
-    most_recent_triage&.user&.full_name
-  end
+  def nurse
+    most_recent_event = [
+      most_recent_triage,
+      most_recent_vaccination
+    ].compact.max_by(&:created_at)
 
-  def vaccination_nurse
-    most_recent_vaccination&.user&.full_name
+    most_recent_event&.user&.full_name
   end
 
   def state
