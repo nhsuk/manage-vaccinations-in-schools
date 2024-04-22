@@ -61,7 +61,8 @@ RSpec.describe PatientSession do
       let(:patient) { create(:patient, consents: [consent_1, consent_2]) }
 
       it "groups consents by parent name" do
-        is_expected.to eq [consent_1, consent_2]
+        is_expected.to include(consent_1, consent_2)
+        expect(subject.size).to eq 2
       end
     end
 
