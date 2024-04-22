@@ -4,54 +4,50 @@ describe PatientTabsConcern do
   subject { Class.new { include PatientTabsConcern }.new }
 
   describe "#group_patient_sessions_by_conditions" do
-    let(:patient_session1) { create(:patient_session) }
-    let(:patient_session2) do
+    let(:patient_session1) do
       create(:patient_session, :consent_given_triage_needed)
     end
-    let(:patient_session3) { create(:patient_session, :consent_refused) }
+    let(:patient_session2) { create(:patient_session, :consent_refused) }
+    let(:patient_session3) { create(:patient_session, :consent_conflicting) }
+    let(:patient_session4) { create(:patient_session) }
 
     it "groups patient sessions by conditions" do
-      tab_conditions = {
-        no_consent: %i[no_consent?],
-        consent_given: %i[consent_given?],
-        consent_refused: %i[consent_refused?]
-      }
-
       result =
         subject.group_patient_sessions_by_conditions(
-          [patient_session1, patient_session2, patient_session3],
-          tab_conditions
+          [
+            patient_session1,
+            patient_session2,
+            patient_session3,
+            patient_session4
+          ],
+          section: :consents
         )
 
       expect(result).to eq(
         {
-          no_consent: [patient_session1],
-          consent_given: [patient_session2],
-          consent_refused: [patient_session3]
-        }
+          consent_given: [patient_session1],
+          consent_refused: [patient_session2],
+          conflicting_consent: [patient_session3],
+          no_consent: [patient_session4]
+        }.with_indifferent_access
       )
     end
 
-    context "one of the groups is empty" do
-      it "returns an empty array for the empty group" do
-        tab_conditions = {
-          no_consent: %i[no_consent?],
-          consent_given: %i[consent_given?],
-          consent_refused: %i[consent_refused?]
-        }
-
+    context "some of the groups are empty" do
+      it "returns an empty array for all the empty groups" do
         result =
           subject.group_patient_sessions_by_conditions(
             [patient_session1],
-            tab_conditions
+            section: :consents
           )
 
         expect(result).to eq(
           {
-            no_consent: [patient_session1],
-            consent_given: [],
-            consent_refused: []
-          }
+            consent_given: [patient_session1],
+            consent_refused: [],
+            conflicting_consent: [],
+            no_consent: []
+          }.with_indifferent_access
         )
       end
     end

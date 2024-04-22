@@ -1,7 +1,18 @@
 module PatientTabsConcern
   extend ActiveSupport::Concern
 
-  def group_patient_sessions_by_conditions(all_patient_sessions, tab_conditions)
+  TAB_CONDITIONS = {
+    consents: {
+      consent_given: %i[consent_given?],
+      consent_refused: %i[consent_refused?],
+      conflicting_consent: %i[consent_conflicts?],
+      no_consent: %i[no_consent?]
+    }
+  }.with_indifferent_access.freeze
+
+  def group_patient_sessions_by_conditions(all_patient_sessions, section:)
+    tab_conditions = TAB_CONDITIONS.fetch(section)
+
     all_patient_sessions
       .group_by do |patient_session| # rubocop:disable Style/BlockDelimiters
         tab_conditions
@@ -9,6 +20,7 @@ module PatientTabsConcern
           &.first
       end
       .tap { |groups| tab_conditions.each_key { groups[_1] ||= [] } }
+      .with_indifferent_access
   end
 
   def group_patient_sessions_by_state(all_patient_sessions, tab_states)
