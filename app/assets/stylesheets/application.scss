@@ -25,6 +25,9 @@ $mq-breakpoints: (
 
 @import "nhsuk-frontend/packages/nhsuk";
 
+// App options
+$app-page-width: 1100px;
+
 // Application components
 @import "action-table";
 @import "button";

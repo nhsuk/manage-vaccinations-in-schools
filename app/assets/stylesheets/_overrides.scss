@@ -9,3 +9,18 @@
 mark {
   background-color: $color_nhsuk-pale-yellow;
 }
+
+// `$nhsuk-page-width` isn’t globally editable, so need to apply manually
+.nhsuk-width-container,
+.nhsuk-header__navigation-list,
+.nhsuk-header__container {
+  max-width: $app-page-width;
+
+  @include govuk-media-query($from: desktop) {
+    margin: 0 $nhsuk-gutter;
+  }
+
+  @include mq($and: "(min-width: #{($app-page-width + $nhsuk-gutter * 2)})") {
+    margin: 0 auto;
+  }
+}
