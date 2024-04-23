@@ -54,43 +54,21 @@ describe PatientTabsConcern do
   end
 
   describe "#group_patient_sessions_by_states" do
-    let(:patient_session1) do
-      create(:patient_session, :consent_given_triage_needed)
-    end
-    let(:patient_session2) do
-      create(:patient_session, :triaged_ready_to_vaccinate)
-    end
-    let(:patient_session3) do
-      create(:patient_session, :consent_given_triage_not_needed)
-    end
-    let(:patient_sessions) do
-      [patient_session1, patient_session2, patient_session3]
-    end
+    context "triage section" do
+      let(:patient_session1) do
+        create(:patient_session, :consent_given_triage_needed)
+      end
+      let(:patient_session2) do
+        create(:patient_session, :triaged_ready_to_vaccinate)
+      end
+      let(:patient_session3) do
+        create(:patient_session, :consent_given_triage_not_needed)
+      end
 
-    it "groups patient sessions by states" do
-      tab_states = {
-        needs_triage: %w[consent_given_triage_needed],
-        triage_complete: %w[triaged_ready_to_vaccinate],
-        no_triage_needed: %w[consent_given_triage_not_needed]
-      }
-
-      result =
-        subject.group_patient_sessions_by_state(patient_sessions, tab_states)
-
-      expect(result).to eq(
-        {
-          needs_triage: [patient_session1],
-          triage_complete: [patient_session2],
-          no_triage_needed: [patient_session3]
-        }.with_indifferent_access
-      )
-    end
-
-    context "using the section parameter" do
-      it "groups patient sessions by states" do
+      it "groups patient sessions by triage states" do
         result =
           subject.group_patient_sessions_by_state(
-            patient_sessions,
+            [patient_session1, patient_session2, patient_session3],
             section: :triage
           )
 
@@ -104,25 +82,52 @@ describe PatientTabsConcern do
       end
     end
 
-    context "one of the groups is empty" do
-      it "returns an empty array for the empty group" do
-        tab_states = {
-          needs_triage: %w[consent_given_triage_needed],
-          triage_complete: %w[triaged_ready_to_vaccinate],
-          no_triage_needed: %w[consent_given_triage_not_needed]
-        }
+    context "vaccinations section" do
+      let(:patient_session1) do
+        create(:patient_session, :consent_given_triage_needed)
+      end
+      let(:patient_session2) { create(:patient_session, :vaccinated) }
+      let(:patient_session3) { create(:patient_session, :delay_vaccination) }
+      let(:patient_session4) { create(:patient_session, :consent_refused) }
 
+      it "groups patient sessions by vaccination states" do
         result =
           subject.group_patient_sessions_by_state(
-            [patient_session1],
-            tab_states
+            [
+              patient_session1,
+              patient_session2,
+              patient_session3,
+              patient_session4
+            ],
+            section: :vaccinations
           )
 
         expect(result).to eq(
           {
-            needs_triage: [patient_session1],
+            action_needed: [patient_session1],
+            vaccinated: [patient_session2],
+            vaccinate_later: [patient_session3],
+            could_not_vaccinate: [patient_session4]
+          }.with_indifferent_access
+        )
+      end
+    end
+
+    context "some of the groups are empty" do
+      let(:patient_session) { create(:patient_session, :consent_refused) }
+
+      it "returns an empty array for all the empty groups" do
+        result =
+          subject.group_patient_sessions_by_conditions(
+            [patient_session],
+            section: :triage
+          )
+
+        expect(result).to eq(
+          {
+            needs_triage: [],
             triage_complete: [],
-            no_triage_needed: []
+            no_triage_needed: [patient_session]
           }.with_indifferent_access
         )
       end
