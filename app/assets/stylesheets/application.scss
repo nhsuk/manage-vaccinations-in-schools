@@ -36,6 +36,7 @@ $mq-breakpoints: (
 @import "list";
 @import "notification-banner";
 // @import "offline";
+@import "overrides";
 @import "panel";
 @import "password-input";
 @import "phase-banner";
@@ -45,15 +46,3 @@ $mq-breakpoints: (
 @import "status";
 @import "summary-list";
 @import "utilities";
-
-// NHS.UK Frontend overrides
-.nhsuk-label--s,
-.nhsuk-fieldset__legend--s {
-  font-weight: normal;
-  margin-bottom: nhsuk-spacing(2);
-}
-
-// Use NHSUK colour for <mark>
-mark {
-  background-color: $color_nhsuk-pale-yellow;
-}
