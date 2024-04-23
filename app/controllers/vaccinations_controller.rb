@@ -18,26 +18,6 @@ class VaccinationsController < ApplicationController
   layout "two_thirds", except: :index
 
   def index
-    tab_states = {
-      action_needed: %w[
-        consent_given_triage_needed
-        triaged_kept_in_triage
-        triaged_ready_to_vaccinate
-        added_to_session
-        consent_given_triage_not_needed
-      ],
-      vaccinated: %w[vaccinated],
-      vaccinate_later: %w[delay_vaccination],
-      could_not_vaccinate: %w[
-        consent_refused
-        consent_conflicts
-        triaged_do_not_vaccinate
-        unable_to_vaccinate
-        unable_to_vaccinate_not_assessed
-        unable_to_vaccinate_not_gillick_competent
-      ]
-    }
-
     all_patient_sessions =
       @session
         .patient_sessions
@@ -47,7 +27,10 @@ class VaccinationsController < ApplicationController
         .order("patients.first_name", "patients.last_name")
 
     grouped_patient_sessions =
-      group_patient_sessions_by_state(all_patient_sessions, tab_states)
+      group_patient_sessions_by_state(
+        all_patient_sessions,
+        section: :vaccinations
+      )
 
     @current_tab = TAB_PATHS[:vaccinations][params[:tab]]
     @tab_counts = count_patient_sessions(grouped_patient_sessions)
