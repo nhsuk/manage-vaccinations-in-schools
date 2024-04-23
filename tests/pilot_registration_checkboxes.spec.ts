@@ -58,7 +58,7 @@ async function given_a_location_requiring_permission_to_observe() {
 async function and_registration_is_open() {
   await signInTestUser(p);
   await p.goto("/flipper/features/registration_open");
-  await expect(p.getByText("Home Features registration_open")).toBeVisible();
+  await expect(p.getByText("registration_open")).toBeVisible();
   if (await p.getByText("Disabled").isVisible()) {
     await p.getByRole("button", { name: "Fully Enable" }).click();
     await expect(p.getByText("Fully enabled")).toBeVisible();
