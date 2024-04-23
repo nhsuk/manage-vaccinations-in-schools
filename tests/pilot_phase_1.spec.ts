@@ -23,7 +23,7 @@ async function given_the_app_is_setup() {
 
 async function and_phase_1_is_enabled() {
   await p.goto("/flipper/features/pilot_phase_1");
-  await expect(p.getByText("Home Features pilot_phase_1")).toBeVisible();
+  await expect(p.getByText("pilot_phase_1")).toBeVisible();
 
   if (await p.getByText("Disabled").isVisible()) {
     await p.getByRole("button", { name: "Fully Enable" }).click();
