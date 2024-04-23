@@ -1,0 +1,11 @@
+// NHS.UK Frontend overrides
+.nhsuk-label--s,
+.nhsuk-fieldset__legend--s {
+  font-weight: normal;
+  margin-bottom: nhsuk-spacing(2);
+}
+
+// Use NHSUK colour for <mark>
+mark {
+  background-color: $color_nhsuk-pale-yellow;
+}
