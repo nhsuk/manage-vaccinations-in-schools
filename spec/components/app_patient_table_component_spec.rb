@@ -94,4 +94,25 @@ RSpec.describe AppPatientTableComponent, type: :component do
       it { should_not have_text("By action needed") }
     end
   end
+
+  describe "columns parameter" do
+    context "is not set" do
+      let(:component) { described_class.new(**params.except(:columns)) }
+
+      it { should have_column("Name") }
+      it { should have_column("Date of birth") }
+    end
+
+    context "includes action" do
+      let(:columns) { %i[name dob action] }
+
+      it { should have_column("Action needed") }
+    end
+
+    context "includes outcome" do
+      let(:columns) { %i[name dob outcome] }
+
+      it { should have_column("Outcome") }
+    end
+  end
 end
