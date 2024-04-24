@@ -11,7 +11,7 @@
 
 <%= h1 page_title, page_title: %>
 
-<% def tab_content(slot, state, tab_path, page_type:, columns: %i[name dob])
+<% def tab_content(slot, state, tab_path, columns: %i[name dob])
   label = t("states.#{state}.label")
   selected = state == @current_tab
   path = vaccinations_tab_session_path(@session, tab: tab_path)
@@ -25,27 +25,24 @@
     selected:
   ) do
     if selected && @patient_sessions.size > 0
-      if page_type == :actions
-        render "patients_with_actions",
-               id: label.parameterize,
-               caption: t("states.#{state}.title"),
-               patient_sessions: @patient_sessions
-     else
-       render "patients_with_outcomes",
-              id: label.parameterize,
-              caption: t("states.#{state}.title"),
-              patient_sessions: @patient_sessions
-     end
-   else
-     ""
-   end
- end
+      render AppPatientTableComponent.new(
+        patient_sessions: @patient_sessions,
+        tab_id: label.parameterize,
+        caption: t("states.#{state}.title"),
+        columns:,
+        route: :vaccination,
+        filter_actions: true
+      )
+    else
+      ""
+    end
+  end
 end %>
 
 
 <%= render AppTabComponent.new title: "Vaccinations", classes: 'nhsuk-tabs' do |slot|
-  tab_content(slot, :action_needed, :actions, page_type: :actions)
-  tab_content(slot, :vaccinated, :vaccinated, page_type: :outcomes)
-  tab_content(slot, :vaccinate_later, :later, page_type: :outcomes)
-  tab_content(slot, :could_not_vaccinate, :"could-not", page_type: :outcomes)
+  tab_content(slot, :action_needed, :actions, columns: %i[name dob action])
+  tab_content(slot, :vaccinated, :vaccinated, columns: %i[name dob outcome])
+  tab_content(slot, :vaccinate_later, :later, columns: %i[name dob outcome])
+  tab_content(slot, :could_not_vaccinate, :"could-not", columns: %i[name dob outcome])
 end %>
