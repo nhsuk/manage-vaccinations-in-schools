@@ -75,6 +75,17 @@ RSpec.describe AppPatientTableComponent, type: :component do
     it { should_not have_link(patient_sessions.first.patient.full_name) }
   end
 
+  context "vaccinations route" do
+    let(:route) { :vaccination }
+
+    it do
+      should have_link(
+               patient_sessions.first.patient.full_name,
+               href: %r{/sessions/\d+/patients/\d+/vaccinations}
+             )
+    end
+  end
+
   describe "filter_actions parameter" do
     context "is not set" do
       let(:component) { described_class.new(**params.except(:filter_actions)) }

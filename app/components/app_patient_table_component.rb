@@ -111,6 +111,12 @@ class AppPatientTableComponent < ViewComponent::Base
                       patient_session.session,
                       patient_session.patient
                     )
+    when :vaccination
+      govuk_link_to patient_session.patient.full_name,
+                    session_patient_vaccinations_path(
+                      patient_session.session,
+                      patient_session.patient
+                    )
     when :matching
       patient_session.patient.full_name
     else
