@@ -103,6 +103,22 @@ FactoryBot.define do
       end
     end
 
+    trait :unable_to_vaccinate_not_gillick_competent do
+      gillick_competent { false }
+      gillick_competence_notes { "Assessed as not gillick competent" }
+      gillick_competence_assessor { user }
+
+      patient { create :patient, :consent_given_triage_needed, session: }
+      triage { [create(:triage, status: :ready_to_vaccinate, user:)] }
+
+      after :create do |patient_session|
+        create :vaccination_record,
+               reason: :already_had,
+               administered: false,
+               patient_session:
+      end
+    end
+
     trait :vaccinated do
       patient { create :patient, :consent_given_triage_needed, session: }
       triage { [create(:triage, status: :ready_to_vaccinate, user:)] }
