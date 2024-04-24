@@ -1,13 +1,16 @@
 class AppPatientTableComponent < ViewComponent::Base
   include ApplicationHelper
 
+  attr_reader :filter_actions
+
   def initialize(
     patient_sessions:,
     tab_id: nil,
     caption: nil,
     columns: %i[name dob],
     route: nil,
-    consent_form: nil
+    consent_form: nil,
+    filter_actions: false
   )
     super
 
@@ -17,6 +20,7 @@ class AppPatientTableComponent < ViewComponent::Base
     @tab_id = tab_id
     @caption = caption
     @consent_form = consent_form
+    @filter_actions = filter_actions
   end
 
   private
