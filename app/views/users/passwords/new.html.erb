@@ -1,11 +1,18 @@
-<%= h1 "Reset your password", size: "xl" %>
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+    href: new_user_session_path,
+    name: "sign in",
+  ) %>
+<% end %>
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
+<%= form_for(resource, as: resource_name, url: password_path(resource_name),
+                       html: { method: :post }) do |f| %>
   <%= f.govuk_error_summary %>
 
-  <%= f.govuk_email_field :email, autocomplete: "email", label: { text: "Email address" } %>
+  <%= h1 "Reset your password", size: "xl" %>
+
+  <%= f.govuk_email_field :email, autocomplete: "email",
+                                  label: { text: "Email address" } %>
 
   <%= f.govuk_submit "Reset password" %>
 <% end %>
-
-<%= render "users/shared/links" %>
