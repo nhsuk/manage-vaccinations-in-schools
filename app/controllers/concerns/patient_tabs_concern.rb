@@ -6,8 +6,8 @@ module PatientTabsConcern
       needs_triage: %w[consent_given_triage_needed triaged_kept_in_triage],
       triage_complete: %w[
         delay_vaccination
-        triaged_ready_to_vaccinate
         triaged_do_not_vaccinate
+        triaged_ready_to_vaccinate
       ],
       no_triage_needed: %w[
         consent_refused
