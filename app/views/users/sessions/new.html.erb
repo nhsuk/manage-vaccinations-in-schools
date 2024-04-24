@@ -1,7 +1,7 @@
-<%= h1 "Sign in" %>
-
 <%= form_for(resource, as: resource_name, url: user_session_path) do |f| %>
   <%= f.govuk_error_summary %>
+
+  <%= h1 "Sign in", size: "xl" %>
 
   <%= f.govuk_email_field :email, autocomplete: "email", label: { text: "Email address" } %>
   <%= f.govuk_password_field :password, autocomplete: "current-password", label: { text: "Password" } %>
@@ -12,7 +12,7 @@
     <% end %>
   <% end %>
 
+  <%= render "users/shared/links" %>
+
   <%= f.govuk_submit "Sign in" %>
 <% end %>
-
-<%= render "users/shared/links" %>
