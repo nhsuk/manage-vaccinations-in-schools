@@ -9,14 +9,19 @@ RSpec.describe AppPatientTableComponent, type: :component do
 
   let(:route) { :consent }
   let(:patient_sessions) { create_list(:patient_session, 2) }
-  let(:component) do
-    described_class.new(
+  let(:columns) { %i[name dob] }
+  let(:filter_actions) { false }
+  let(:params) do
+    {
       patient_sessions:,
       tab_id: "foo",
       caption: "Foo",
-      route:
-    )
+      route:,
+      columns:,
+      filter_actions:
+    }
   end
+  let(:component) { described_class.new(**params) }
 
   def have_column(text)
     have_css(".nhsuk-table__head th", text:)
@@ -68,5 +73,25 @@ RSpec.describe AppPatientTableComponent, type: :component do
     it { should have_column("Action") }
     it { should have_column("Postcode") }
     it { should_not have_link(patient_sessions.first.patient.full_name) }
+  end
+
+  describe "filter_actions parameter" do
+    context "is not set" do
+      let(:component) { described_class.new(**params.except(:filter_actions)) }
+
+      it { should_not have_text("By action needed") }
+    end
+
+    context "is enabled" do
+      let(:filter_actions) { true }
+
+      it { should have_text("By action needed") }
+    end
+
+    context "is disabled" do
+      let(:filter_actions) { false }
+
+      it { should_not have_text("By action needed") }
+    end
   end
 end

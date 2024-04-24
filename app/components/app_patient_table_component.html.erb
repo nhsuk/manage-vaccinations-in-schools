@@ -6,7 +6,7 @@
 
 <action-table id="<%= @tab_id %>" class="nhsuk-grid-row" sort="name" store>
   <div class="nhsuk-grid-column-one-quarter">
-    <%= render AppPatientTableFilterComponent.new(tab_id: @tab_id) %>
+    <%= render AppPatientTableFilterComponent.new(tab_id: @tab_id, filter_actions:) %>
   </div>
   <div class="nhsuk-grid-column-three-quarters">
     <%= govuk_table(classes: "app-table--patients") do |table| %>
