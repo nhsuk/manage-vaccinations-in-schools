@@ -56,6 +56,7 @@ module PatientTabsConcern
           &.first
       end
       .tap { |groups| tab_conditions.each_key { groups[_1] ||= [] } }
+      .except(nil)
       .with_indifferent_access
   end
 
@@ -71,6 +72,7 @@ module PatientTabsConcern
         tab_states.find { |_, states| patient_session.state.in? states }&.first
       end
       .tap { |groups| tab_states.each_key { groups[_1] ||= [] } }
+      .except(nil)
       .with_indifferent_access
   end
 
