@@ -98,7 +98,7 @@ async function and_i_should_see_the_outcome_as_vaccinated() {
     hasText: fixtures.patientThatNeedsVaccination,
   });
   await expect(row).toBeVisible();
-  await expect(row.getByTestId("child-action")).toContainText("Vaccinate");
+  await expect(row).toContainText("Vaccinated");
 }
 
 async function then_i_should_see_the_check_answers_page() {
