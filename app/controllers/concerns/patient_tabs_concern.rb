@@ -14,6 +14,7 @@ module PatientTabsConcern
         consent_given_triage_not_needed
         vaccinated
         unable_to_vaccinate
+        unable_to_vaccinate_not_gillick_competent
       ]
     },
     vaccinations: {
