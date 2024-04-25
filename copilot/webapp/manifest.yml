@@ -75,11 +75,12 @@ environments:
   training:
     http:
       alias:
-        - "training.mavistesting.com"
+        - "training.manage-vaccinations-in-schools.nhs.uk"
+        - "training.give-or-refuse-consent-for-vaccinations.nhs.uk"
     variables:
       RAILS_ENV: staging
-      MAVIS__HOST: "training.mavistesting.com"
-      MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "training.mavistesting.com"
+      MAVIS__HOST: "training.manage-vaccinations-in-schools.nhs.uk"
+      MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "training.manage-vaccinations-in-schools.nhs.uk"
   production:
     cpu: 1024
     count: 2

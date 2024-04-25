@@ -90,7 +90,7 @@ Certificates.
 Once the cert is approved, feed the ARN using the CLI:
 
 ```bash
-copilot env init --import cert arn:aws.....
+copilot env init --import-cert-arns arn:aws.....
 ```
 
 This will change the manifest file for the environment:
@@ -161,9 +161,9 @@ copilot env delete --name pentest
 
 ### Using the mavistesting.com domain
 
-The staging AWS subscription has ownership of the `mavistesting.com` domain.
-It's purpose is to assist with debugging Copilot environment related issues
-that require re-provisioning of environments from scratch.
+The test/training AWS subscription has ownership of the `mavistesting.com`
+domain.  It's purpose is to assist with debugging Copilot environment related
+issues that require re-provisioning of environments from scratch.
 
 This is only necessary to change things like load balancer settings, SSL
 security policies.

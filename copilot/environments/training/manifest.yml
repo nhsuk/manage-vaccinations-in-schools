@@ -11,9 +11,14 @@ network:
     flow_logs: on
 
 # Configure the load balancers in your environment, once created.
-# http:
-#   public:
-#   private:
+http:
+  public:
+    certificates:
+      [
+        arn:aws:acm:eu-west-2:393416225559:certificate/6225e0bb-7365-4dce-9cad-4112b1e3fcc0,
+        arn:aws:acm:eu-west-2:393416225559:certificate/0ee8635d-d358-46fc-96d7-0288413dbc0e,
+      ]
+    ssl_policy: "ELBSecurityPolicy-TLS13-1-2-2021-06"
 
 # Configure observability for your environment resources.
 observability:
