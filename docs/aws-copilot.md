@@ -101,6 +101,9 @@ http:
     certificates: [arn:aws:acm:eu-west-2:393416225559:certificate/05611645-54eb-4bfe-bace-58d64f27c974]
 ```
 
+You can also manually edit the environment file and specify the cert, in case
+the `env` has already been `init`.
+
 Give the environment a name and choose the default environment configuration.
 
 `copilot env ls` should show the new environment when the previous command
@@ -162,7 +165,7 @@ copilot env delete --name pentest
 ### Using the mavistesting.com domain
 
 The test/training AWS subscription has ownership of the `mavistesting.com`
-domain.  It's purpose is to assist with debugging Copilot environment related
+domain. It's purpose is to assist with debugging Copilot environment related
 issues that require re-provisioning of environments from scratch.
 
 This is only necessary to change things like load balancer settings, SSL

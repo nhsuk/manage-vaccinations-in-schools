@@ -51,16 +51,6 @@ secrets:
   MAVIS__SUPPORT_PASSWORD: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/MAVIS__SUPPORT_PASSWORD
 
 environments:
-  staging:
-    count: 2
-    http:
-      alias:
-        - "staging.manage-vaccinations-in-schools.nhs.uk"
-        - "staging.give-or-refuse-consent-for-vaccinations.nhs.uk"
-    variables:
-      RAILS_ENV: staging
-      MAVIS__HOST: "staging.manage-vaccinations-in-schools.nhs.uk"
-      MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "staging.give-or-refuse-consent-for-vaccinations.nhs.uk"
   test:
     count: 2
     http:
