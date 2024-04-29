@@ -1,13 +1,6 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: case @route
-      when 'consents'
-        session_patient_consents_path(@session, @patient)
-      when "triage"
-        session_patient_triage_path(@session)
-      else
-        session_patient_vaccinations_path(@session)
-      end,
+    href: session_patient_path(id: @patient.id),
     name: "patient page",
   ) %>
 <% end %>

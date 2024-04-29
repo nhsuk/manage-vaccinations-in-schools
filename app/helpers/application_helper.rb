@@ -29,16 +29,4 @@ or set it with content_for(:page_title)."
 
     [title, service_name].join(" - ")
   end
-
-  def session_patient_consents_path(*args, **kwargs)
-    session_patient_path(*args, **kwargs.merge(route: "consents"))
-  end
-
-  def session_patient_triage_path(*args, **kwargs)
-    session_patient_path(*args, **kwargs.merge(route: "triage"))
-  end
-
-  def session_patient_vaccinations_path(*args, **kwargs)
-    session_patient_path(*args, **kwargs.merge(route: "vaccinations"))
-  end
 end

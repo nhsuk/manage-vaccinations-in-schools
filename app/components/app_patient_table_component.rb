@@ -5,10 +5,11 @@ class AppPatientTableComponent < ViewComponent::Base
 
   def initialize(
     patient_sessions:,
+    section:,
     tab_id: nil,
     caption: nil,
     columns: %i[name dob],
-    route: nil,
+    tab: nil,
     consent_form: nil,
     filter_actions: false
   )
@@ -16,7 +17,8 @@ class AppPatientTableComponent < ViewComponent::Base
 
     @patient_sessions = patient_sessions
     @columns = columns
-    @route = route
+    @section = section
+    @tab = tab
     @tab_id = tab_id
     @caption = caption
     @consent_form = consent_form
@@ -98,29 +100,17 @@ class AppPatientTableComponent < ViewComponent::Base
   end
 
   def patient_link(patient_session)
-    case @route
-    when :consent
-      govuk_link_to patient_session.patient.full_name,
-                    session_patient_consents_path(
-                      patient_session.session,
-                      patient_session.patient
-                    )
-    when :triage
-      govuk_link_to patient_session.patient.full_name,
-                    session_patient_triage_path(
-                      patient_session.session,
-                      patient_session.patient
-                    )
-    when :vaccination
-      govuk_link_to patient_session.patient.full_name,
-                    session_patient_vaccinations_path(
-                      patient_session.session,
-                      patient_session.patient
-                    )
+    case @section
     when :matching
       patient_session.patient.full_name
     else
-      raise ArgumentError, "Unknown route: #{@route}"
+      govuk_link_to patient_session.patient.full_name,
+                    session_patient_path(
+                      patient_session.session,
+                      patient_session.patient,
+                      section: @section,
+                      tab: @tab
+                    )
     end
   end
 

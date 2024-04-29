@@ -1,5 +1,5 @@
 class AppTriageFormComponent < ViewComponent::Base
-  def initialize(patient_session:, triage:, url: nil)
+  def initialize(patient_session:, triage:, section:, tab:)
     super
 
     @patient_session = patient_session
@@ -10,14 +10,19 @@ class AppTriageFormComponent < ViewComponent::Base
             t.status = patient_session.triage.order(:created_at).last.status
           end
         end
-    @url = url
+    @section = section
+    @tab = tab
   end
 
-  # rubocop:disable Naming/MemoizedInstanceVariableName
-  def before_render
-    @url ||= session_patient_triage_path(session, patient, @triage)
+  def url
+    session_patient_triage_path(
+      session,
+      patient,
+      @triage,
+      section: @section,
+      tab: @tab
+    )
   end
-  # rubocop:enable Naming/MemoizedInstanceVariableName
 
   def render?
     @patient_session.next_step == :triage

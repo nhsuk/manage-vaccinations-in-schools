@@ -1,6 +1,6 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: unmatched_responses_session_path(@consent_form.session.id),
+    href: session_consents_unmatched_responses_path(@consent_form.session.id),
     name: "school page"
   ) %>
 <% end %>
@@ -23,7 +23,7 @@
       patient_sessions: @patient_sessions,
       tab_id: "cohort",
       columns: %i[name postcode dob select_for_matching],
-      route: :matching,
+      section: :matching,
       consent_form: @consent_form
     )
   else

@@ -17,11 +17,11 @@
 
     <p>
       <%=
-        responses = pluralize(@unmatched_record_counts, 'response')
-        link_to(
-          "#{responses} need matching with records in the cohort",
-          unmatched_responses_session_path(@session)
-        )
+      responses = pluralize(@unmatched_record_counts, 'response')
+      link_to(
+        "#{responses} need matching with records in the cohort",
+        session_consents_unmatched_responses_path(@session)
+      )
       %>
     </p>
   <% end %>
@@ -30,7 +30,7 @@
 <% def tab_content(slot, state, tab_path, columns: %i[name dob])
   label = t("states.#{state}.label")
   selected = state == @current_tab
-  path = consents_tab_session_path(@session, tab: tab_path)
+  path = session_consents_tab_path(@session, tab: tab_path)
   count = @tab_counts[state]
 
   slot.with_tab(
@@ -46,7 +46,8 @@
         tab_id: label.parameterize,
         caption: t("states.#{state}.title"),
         columns:,
-        route: :consent
+        section: :consents,
+        tab: params[:tab]
       )
     else
       ""

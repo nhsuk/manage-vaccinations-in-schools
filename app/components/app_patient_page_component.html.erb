@@ -18,7 +18,7 @@
 <% end %>
 
 <%= render AppCardComponent.new(heading: "Consent") do %>
-  <%= render AppConsentComponent.new(patient_session:, route: @route) %>
+  <%= render AppConsentComponent.new(patient_session:, section:, tab:) %>
 <% end %>
 
 <%= render AppCardComponent.new(heading: "Triage notes") do %>
@@ -27,8 +27,10 @@
 
 <%=
 render AppTriageFormComponent.new(
-    patient_session:,
-    triage: @triage
+  patient_session:,
+  triage: @triage,
+  section:,
+  tab:
 )
 %>
 
@@ -36,5 +38,7 @@ render AppTriageFormComponent.new(
 render AppVaccinateFormComponent.new(
     patient_session:,
     vaccination_record: @vaccination_record,
+    section: @section,
+    tab: @tab
 )
 %>

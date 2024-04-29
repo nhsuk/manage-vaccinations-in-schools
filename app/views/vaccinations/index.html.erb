@@ -14,7 +14,7 @@
 <% def tab_content(slot, state, tab_path, columns: %i[name dob])
   label = t("states.#{state}.label")
   selected = state == @current_tab
-  path = vaccinations_tab_session_path(@session, tab: tab_path)
+  path = session_vaccinations_tab_path(@session, tab: tab_path)
   count = @tab_counts[state]
 
   slot.with_tab(
@@ -30,7 +30,8 @@
         tab_id: label.parameterize,
         caption: t("states.#{state}.title"),
         columns:,
-        route: :vaccination,
+        section: :vaccinations,
+        tab: params[:tab],
         filter_actions: true
       )
     else

@@ -83,17 +83,10 @@ class ManageConsentsController < ApplicationController
   def finish_wizard_path
     success_flash_after_patient_update(
       patient: @patient,
-      view_record_link: session_patient_triage_path(@session, @patient)
+      view_record_link: session_patient_path(@session, id: @patient.id)
     )
 
-    case @route
-    when "consents"
-      consents_session_path(@session)
-    when "triage"
-      triage_session_path(@session)
-    else
-      vaccinations_session_path(@session)
-    end
+    session_section_path(@session, section: @section)
   end
 
   def handle_confirm
@@ -156,7 +149,7 @@ class ManageConsentsController < ApplicationController
   end
 
   def set_route
-    @route = params[:route]
+    @section = params[:section]
   end
 
   def set_session

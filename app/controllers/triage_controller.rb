@@ -6,6 +6,7 @@ class TriageController < ApplicationController
   before_action :set_patient, only: %i[create update]
   before_action :set_patient_session, only: %i[create update]
   before_action :set_consent, only: %i[create update]
+  before_action :set_section_and_tab, only: %i[create update]
 
   after_action :verify_policy_scoped, only: %i[index update]
 
@@ -36,11 +37,11 @@ class TriageController < ApplicationController
       send_triage_mail(@patient_session, @consent)
       success_flash_after_patient_update(
         patient: @patient,
-        view_record_link: session_patient_triage_path(@session, @patient)
+        view_record_link: session_patient_path(@session, id: @patient.id)
       )
       redirect_to redirect_path
     else
-      render "patient_sessions/show", status: :unprocessable_entity
+      render "patients/show", status: :unprocessable_entity
     end
   end
 
@@ -52,11 +53,11 @@ class TriageController < ApplicationController
       send_triage_mail(@patient_session, @consent)
       success_flash_after_patient_update(
         patient: @patient,
-        view_record_link: session_patient_triage_path(@session, @patient)
+        view_record_link: session_patient_path(@session, id: @patient.id)
       )
       redirect_to redirect_path
     else
-      render "patient_sessions/show", status: :unprocessable_entity
+      render "patients/show", status: :unprocessable_entity
     end
   end
 
@@ -82,17 +83,22 @@ class TriageController < ApplicationController
     @patient_session = @patient.patient_sessions.find_by(session: @session)
   end
 
+  def set_section_and_tab
+    @section = params[:section]
+    @tab = params[:tab]
+  end
+
   def triage_params
     params.require(:triage).permit(:status, :notes)
   end
 
   def redirect_path
     if session[:current_section] == "vaccinations"
-      vaccinations_session_path(@session)
+      session_vaccinations_path(@session)
     elsif session[:current_section] == "consents"
-      consents_session_path(@session, anchor: "given")
+      session_consents_tab_path(@session, tab: params[:tab])
     else # if current_section is triage or anything else
-      triage_session_path(@session)
+      session_triage_path(@session)
     end
   end
 end

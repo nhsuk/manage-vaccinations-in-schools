@@ -14,6 +14,7 @@ class VaccinationsController < ApplicationController
   before_action :set_consent, only: %i[create confirm update]
   before_action :set_triage, only: %i[confirm]
   before_action :set_todays_batch_id, only: :create
+  before_action :set_section_and_tab, only: %i[create update]
 
   layout "two_thirds", except: :index
 
@@ -71,9 +72,9 @@ class VaccinationsController < ApplicationController
 
     success_flash_after_patient_update(
       patient: @patient,
-      view_record_link: session_patient_vaccinations_path(@session, @patient)
+      view_record_link: session_patient_path(@session, id: @patient.id)
     )
-    redirect_to vaccinations_session_path(@session)
+    redirect_to session_vaccinations_path(@session)
   end
 
   def record_template
@@ -90,34 +91,37 @@ class VaccinationsController < ApplicationController
         if @draft_vaccination_record.delivery_site_other
           redirect_to edit_session_patient_vaccinations_delivery_site_path(
                         @session,
-                        @patient
+                        patient_id: @patient.id
                       )
         elsif @draft_vaccination_record.batch_id.present?
           redirect_to confirm_session_patient_vaccinations_path(
                         @session,
-                        @patient
+                        patient_id: @patient.id
                       )
         else
           redirect_to edit_session_patient_vaccinations_batch_path(
                         @session,
-                        @patient
+                        patient_id: @patient.id
                       )
         end
       else
         redirect_to edit_reason_session_patient_vaccinations_path(
                       @session,
-                      @patient
+                      patient_id: @patient.id
                     )
       end
     else
-      render "patient_sessions/show"
+      render "patients/show", status: :unprocessable_entity
     end
   end
 
   def update
     @draft_vaccination_record.assign_attributes(vaccination_record_params)
     if @draft_vaccination_record.save(context: :edit_reason)
-      redirect_to confirm_session_patient_vaccinations_path(@session, @patient)
+      redirect_to confirm_session_patient_vaccinations_path(
+                    session_id: @session.id,
+                    patient_id: @patient.id
+                  )
     else
       render :edit_reason
     end
@@ -222,6 +226,11 @@ class VaccinationsController < ApplicationController
 
   def set_todays_batch_id
     @todays_batch_id = todays_batch_id
+  end
+
+  def set_section_and_tab
+    @section = params[:section]
+    @tab = params[:tab]
   end
 
   def confirm_params
