@@ -10,7 +10,7 @@
     "nhsuk-frontend": "^8.1.1",
     "sass": "^1.75.0",
     "stimulus": "^3.2.2",
-    "workbox-build": "^7.0.0"
+    "workbox-build": "^7.1.0"
   },
   "scripts": {
     "build:css": "sass ./app/assets/stylesheets/application.scss:./app/assets/builds/application.css ./app/assets/stylesheets/registration.scss:./app/assets/builds/registration.css --no-source-map --load-path=node_modules --quiet-deps --style compressed",
