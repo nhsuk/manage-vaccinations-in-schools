@@ -1,21 +1,22 @@
 class AppVaccinateFormComponent < ViewComponent::Base
-  def initialize(patient_session:, vaccination_record: nil, url: nil)
+  def initialize(patient_session:, section:, tab:, vaccination_record: nil)
     super
 
     @patient_session = patient_session
-    @url = url
+    @section = section
+    @tab = tab
     @vaccination_record = vaccination_record || VaccinationRecord.new
   end
 
-  # rubocop:disable Naming/MemoizedInstanceVariableName
-  def before_render
+  def url
     @url ||=
       session_patient_vaccinations_path(
         session_id: session.id,
-        patient_id: patient.id
+        patient_id: patient.id,
+        section: @section,
+        tab: @tab
       )
   end
-  # rubocop:enable Naming/MemoizedInstanceVariableName
 
   def render?
     @patient_session.next_step == :vaccinate && session.in_progress?

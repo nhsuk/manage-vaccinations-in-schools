@@ -1,11 +1,12 @@
 class AppConsentComponent < ViewComponent::Base
   attr_reader :patient_session
 
-  def initialize(patient_session:, route:)
+  def initialize(patient_session:, section:, tab:)
     super
 
     @patient_session = patient_session
-    @route = route
+    @section = section
+    @tab = tab
   end
 
   delegate :patient, to: :patient_session
@@ -43,11 +44,12 @@ class AppConsentComponent < ViewComponent::Base
     link_to(
       "Contact #{consent.parent_name} (the #{role} who refused)",
       session_patient_manage_consent_path(
-        session,
-        patient,
-        @route,
-        consent.id,
-        :agree
+        session_id: session.id,
+        consent_id: consent.id,
+        patient_id: patient.id,
+        section: @section,
+        tab: @tab,
+        id: :agree
       ),
       class: "nhsuk-u-font-weight-bold"
     )

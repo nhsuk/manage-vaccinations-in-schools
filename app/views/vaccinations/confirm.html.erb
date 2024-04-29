@@ -1,9 +1,9 @@
 <% content_for :before_main do %>
   <%
   back_url = if @draft_vaccination_record.administered?
-    edit_session_patient_vaccinations_batch_path(@session, @patient)
+    edit_session_patient_vaccinations_batch_path(@session, patient_id: @patient.id)
   else
-    edit_reason_session_patient_vaccinations_path(@session, @patient)
+    edit_reason_session_patient_vaccinations_path(@session, patient_id: @patient.id)
   end
   %>
   <%= render AppBacklinkComponent.new(
@@ -93,7 +93,7 @@
 <%= form_with model: @draft_vaccination_record,
     url: record_session_patient_vaccinations_path(
       session_id: @session.id,
-      id: @patient.id,
+      patient_id: @patient.id,
     ),
  method: :put do |f| %>
 

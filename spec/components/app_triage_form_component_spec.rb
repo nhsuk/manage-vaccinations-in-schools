@@ -4,8 +4,14 @@ RSpec.describe AppTriageFormComponent, type: :component do
   describe "#initialize" do
     let(:patient_session) { create :patient_session }
     let(:triage) { nil }
-    let(:url) { nil }
-    let(:component) { described_class.new(patient_session:, triage:, url:) }
+    let(:component) do
+      described_class.new(
+        patient_session:,
+        triage:,
+        section: :triage,
+        tab: :needed
+      )
+    end
 
     subject { component }
 

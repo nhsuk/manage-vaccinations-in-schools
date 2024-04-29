@@ -3,11 +3,18 @@
 require "rails_helper"
 
 RSpec.describe AppPatientTableComponent, type: :component do
-  before { render_inline(component) }
+  before do
+    allow(component).to receive(:session_patient_path).and_return(
+      "/session/patient/"
+    )
+
+    render_inline(component)
+  end
 
   subject { page }
 
-  let(:route) { :consent }
+  let(:section) { :consent }
+  let(:tab) { :needed }
   let(:patient_sessions) { create_list(:patient_session, 2) }
   let(:columns) { %i[name dob] }
   let(:filter_actions) { false }
@@ -16,7 +23,8 @@ RSpec.describe AppPatientTableComponent, type: :component do
       patient_sessions:,
       tab_id: "foo",
       caption: "Foo",
-      route:,
+      section:,
+      tab:,
       columns:,
       filter_actions:
     }
@@ -53,18 +61,12 @@ RSpec.describe AppPatientTableComponent, type: :component do
   it { should have_css(".nhsuk-table__body .nhsuk-table__row", count: 2) }
   it { should have_link(patient_sessions.first.patient.full_name) }
 
-  it "raises an ArgumentError when route is unknown" do
-    expect {
-      render_inline(described_class.new(patient_sessions:, route: :unknown))
-    }.to raise_error(ArgumentError)
-  end
-
-  describe "when the route is :matching" do
+  describe "when the section is :matching" do
     let(:component) do
       described_class.new(
         patient_sessions:,
         tab_id: "foo",
-        route: :matching,
+        section: :matching,
         consent_form: create(:consent_form),
         columns: %i[name postcode dob select_for_matching]
       )
@@ -75,13 +77,14 @@ RSpec.describe AppPatientTableComponent, type: :component do
     it { should_not have_link(patient_sessions.first.patient.full_name) }
   end
 
-  context "vaccinations route" do
-    let(:route) { :vaccination }
+  context "vaccinations section" do
+    let(:section) { :vaccination }
+    let(:tab) { :actions }
 
     it do
       should have_link(
                patient_sessions.first.patient.full_name,
-               href: %r{/sessions/\d+/patients/\d+/vaccinations}
+               href: "/session/patient/"
              )
     end
   end

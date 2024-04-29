@@ -11,7 +11,10 @@ class Vaccinations::BatchesController < ApplicationController
     @draft_vaccination_record.assign_attributes(vaccination_record_batch_params)
     if @draft_vaccination_record.save(context: :edit_batch)
       update_default_batch_for_today
-      redirect_to confirm_session_patient_vaccinations_path(@session, @patient)
+      redirect_to confirm_session_patient_vaccinations_path(
+                    @session,
+                    patient_id: @patient.id
+                  )
     else
       render action: :edit
     end

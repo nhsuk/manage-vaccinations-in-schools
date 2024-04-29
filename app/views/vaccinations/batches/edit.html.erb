@@ -1,7 +1,7 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-      href: session_patient_vaccinations_path(@session, @patient),
-      name: "vaccination page"
+    href: session_patient_path(@session.id, id: @patient.id),
+    name: "vaccination page"
   ) %>
 <% end %>
 
@@ -10,7 +10,7 @@
 <%= form_with model: @draft_vaccination_record,
    url: session_patient_vaccinations_batch_path(
        session_id: @session.id,
-       id: @patient.id,
+       patient_id: @patient.id,
    ),
  method: :put do |f| %>
   <%= f.govuk_radio_buttons_fieldset(:batch_id,

@@ -2,7 +2,12 @@ require "rails_helper"
 
 RSpec.describe AppPatientPageComponent, type: :component do
   let(:component) do
-    described_class.new(patient_session:, route: "triage", triage: nil)
+    described_class.new(
+      patient_session:,
+      section: "triage",
+      tab: "needed",
+      triage: nil
+    )
   end
   let!(:rendered) { render_inline(component) }
 

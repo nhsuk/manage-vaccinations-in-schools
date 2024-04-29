@@ -3,7 +3,7 @@ class PatientsController < ApplicationController
   before_action :set_session
   before_action :set_patient
   before_action :set_draft_vaccination_record
-  before_action :set_route
+  before_action :set_section_and_tab
   before_action :set_back_link
 
   layout "two_thirds", except: :index
@@ -39,21 +39,15 @@ class PatientsController < ApplicationController
       ).find_or_initialize_by(recorded_at: nil)
   end
 
-  def set_route
-    @route = params[:section]
+  def set_section_and_tab
+    @section = params[:section]
+    @tab = params[:tab]
   end
 
   def set_back_link
     @back_link =
-      case params[:section]
-      when "vaccinations"
-        vaccinations_tab_session_path(@session, tab: params[:tab])
-      when "triage"
-        triage_session_path(@session, tab: params[:tab])
-      when "consents"
-        session_consents_path(@session, tab: params[:tab])
-      else
-        raise ArgumentError, "Unknown section: #{params[:section]}"
-      end
+      session_section_tab_path @session,
+                               section: params[:section],
+                               tab: params[:tab]
   end
 end

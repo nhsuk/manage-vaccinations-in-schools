@@ -5,11 +5,12 @@ RSpec.describe AppConsentComponent, type: :component do
 
   subject { page }
 
-  let(:component) { described_class.new(patient_session:, route:) }
+  let(:component) do
+    described_class.new(patient_session:, section: "triage", tab: "needed")
+  end
   let(:rendered_component) { render_inline(component) }
 
   let(:consent) { patient_session.consents.first }
-  let(:route) { "triage" }
   let(:relation) { consent.human_enum_name(:parent_relationship).capitalize }
 
   context "consent is not present" do

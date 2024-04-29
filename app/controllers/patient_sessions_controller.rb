@@ -47,11 +47,11 @@ class PatientSessionsController < ApplicationController
     @back_link =
       case @route
       when "vaccinations"
-        vaccinations_session_path(@session)
+        session_vaccinations_path(@session)
       when "triage"
         triage_session_path(@session)
       when "consents"
-        consents_session_path(@session)
+        session_consents_path(@session)
       else
         raise ArgumentError, "Unknown route: #{@route}"
       end

@@ -3,7 +3,7 @@ class ConsentFormsController < ApplicationController
   skip_after_action :verify_policy_scoped
 
   def unmatched_responses
-    @session = policy_scope(Session).find(params.fetch(:id))
+    @session = policy_scope(Session).find(params.fetch(:session_id))
     @unmatched_consent_responses = @session.unmatched_consent_forms
   end
 
@@ -32,13 +32,20 @@ class ConsentFormsController < ApplicationController
     success_flash_after_patient_update(
       patient: @patient_session.patient,
       view_record_link:
-        session_patient_triage_path(session, @patient_session.patient)
+        session_patient_path(
+          session,
+          id: @patient_session.patient.id,
+          section: "triage",
+          tab: "given"
+        )
     )
 
     if session.unmatched_consent_forms.any?
-      redirect_to unmatched_responses_session_path(@consent_form.session.id)
+      redirect_to session_consents_unmatched_responses_path(
+                    @consent_form.session.id
+                  )
     else
-      redirect_to consents_session_path(session)
+      redirect_to session_consents_path(session)
     end
   end
 

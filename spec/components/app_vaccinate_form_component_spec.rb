@@ -8,9 +8,13 @@ RSpec.describe AppVaccinateFormComponent, type: :component do
     create :patient_session, :consent_given_triage_not_needed, session:
   end
   let(:vaccination_record) { VaccinationRecord.new }
-  let(:url) { "/vaccinate" }
   let(:component) do
-    described_class.new(patient_session:, url:, vaccination_record:)
+    described_class.new(
+      patient_session:,
+      vaccination_record:,
+      section: "vaccinate",
+      tab: "needed"
+    )
   end
   let!(:rendered) { render_inline(component) }
 

@@ -26,7 +26,7 @@ RSpec.describe "Verbal consent" do
   end
 
   def when_i_get_verbal_consent_for_a_patient
-    visit consents_session_path(@session)
+    visit session_consents_path(@session)
     click_link @patient.full_name
     click_button "Get consent"
   end
