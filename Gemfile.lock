@@ -235,7 +235,8 @@ GEM
       activerecord (>= 6.1)
       activesupport (>= 6.1)
       pg (>= 0.18.1)
-    jwt (2.7.1)
+    jwt (2.8.1)
+      base64
     kramdown (2.4.0)
       rexml
     kramdown-parser-gfm (1.1.0)
@@ -252,12 +253,12 @@ GEM
       net-imap
       net-pop
       net-smtp
-    mail-notify (1.2.0)
-      actionmailer (>= 5.2.4.6)
-      actionpack (>= 5.2.7.1)
-      actionview (>= 5.2.7.1)
-      activesupport (>= 5.2.4.6)
-      notifications-ruby-client (~> 5.1)
+    mail-notify (2.0.0)
+      actionmailer (>= 5.2.8.1)
+      actionpack (>= 5.2.8.1)
+      actionview (>= 5.2.8.1)
+      activesupport (>= 5.2.8.1)
+      notifications-ruby-client (~> 6.0)
       rack (>= 2.1.4.1)
     marcel (1.0.4)
     matrix (0.4.2)
@@ -280,7 +281,7 @@ GEM
       racc (~> 1.4)
     nokogiri (1.16.4-x86_64-linux)
       racc (~> 1.4)
-    notifications-ruby-client (5.4.0)
+    notifications-ruby-client (6.0.0)
       jwt (>= 1.5, < 3)
     okcomputer (1.18.5)
     orm_adapter (0.5.0)
