@@ -60,8 +60,7 @@ async function then_i_see_the_registration_form() {
 }
 
 async function when_i_to_to_the_who_has_registered() {
-  await p.goto("/dashboard");
-  await p.click("text=Manage pilot");
+  await p.goto("/pilot");
   await p.click("text=See who’s interested in the pilot");
 }
 

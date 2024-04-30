@@ -90,7 +90,7 @@ vaccination" do
   end
 
   def when_i_close_the_registration_for_the_pilot
-    click_on "Manage pilot"
+    visit "/pilot"
     click_on "See who’s interested in the pilot"
     click_on "Close pilot to new participants at this school"
     click_on "Yes, close the pilot to new participants"
@@ -138,8 +138,7 @@ vaccination" do
     csv_file.write(@registered_parents_csv.to_csv)
     csv_file.close
 
-    visit "/dashboard"
-    click_on "Manage pilot"
+    visit "/pilot"
     click_on "Upload the cohort list"
     attach_file "cohort_list[csv]", csv_file.path
     click_on "Upload the cohort list"

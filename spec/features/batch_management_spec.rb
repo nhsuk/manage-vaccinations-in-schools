@@ -42,7 +42,7 @@ RSpec.describe "Batch management" do
     sign_in @team.users.first
 
     visit "/dashboard"
-    click_on "Manage vaccines", match: :first
+    click_on "Vaccines", match: :first
   end
 
   def then_i_see_an_hpv_vaccine_with_no_batches_set_up

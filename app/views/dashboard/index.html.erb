@@ -1,33 +1,20 @@
 <%= h1 "#{@service_name} (Mavis)", size: "xl" %>
 
-<h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-1">
-  <%= link_to "School sessions", sessions_path, data: { testid: "sessions" } %>
-</h2>
-<p class="nhsuk-u-margin-bottom-2">Use this area to:</p>
-<ul class="nhsuk-list nhsuk-list--bullet">
-  <li>create new school sessions</li>
-  <li>upload cohort lists</li>
-  <li>send emails to parents</li>
-  <li>check consent requests</li>
-  <li>triage answers to health questions</li>
-  <li>record vaccinations</li>
+<ul class="nhsuk-grid-row nhsuk-card-group">
+  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(heading: "Campaigns", link_to: sessions_path) do %>
+      Create and manage vaccination campaigns.
+    <% end %>
+  </li>
+
+  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(heading: "Vaccines", link_to: vaccines_path) do %>
+      Add or remove batches.
+    <% end %>
+  </li>
 </ul>
 
 <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-1">
-  <%= link_to "Manage vaccines", vaccines_path %>
+  <%= link_to "Add a new session", sessions_path, class: "nhsuk-link--no-visited-state" %>
 </h2>
-<p class="nhsuk-u-margin-bottom-4">View and add batches</p>
-
-<h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-1">
-  <%= link_to "Reports", reports_path %>
-</h2>
-<p class="nhsuk-u-margin-bottom-2">View campaign performance reports</p>
-
-<hr>
-
-<h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-1">
-  <%= link_to "Manage pilot", manage_pilot_path %>
-</h2>
-<p>
-  Download a list of parents interested in the pilot, and upload a cohort list
-</p>
+<p>Create a new session or clinic for a campaign.</p>

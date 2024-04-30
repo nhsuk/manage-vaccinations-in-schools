@@ -9,10 +9,7 @@ test("Pilot - upload cohort", async ({ page }) => {
   await given_the_app_is_setup();
   await and_i_am_signed_in();
 
-  await when_i_visit_the_dashboard();
-  await then_i_should_see_the_manage_pilot_link();
-
-  await when_i_click_the_manage_pilot_link();
+  await when_i_visit_the_pilot_dashboard();
   await then_i_should_see_the_manage_pilot_page();
 
   await when_i_click_the_upload_cohort_link();
@@ -44,16 +41,8 @@ async function and_i_am_signed_in() {
   await signInTestUser(p);
 }
 
-async function when_i_visit_the_dashboard() {
-  await p.goto("/dashboard");
-}
-
-async function then_i_should_see_the_manage_pilot_link() {
-  await expect(p.getByRole("link", { name: "Manage pilot" })).toBeVisible();
-}
-
-async function when_i_click_the_manage_pilot_link() {
-  await p.getByRole("link", { name: "Manage pilot" }).click();
+async function when_i_visit_the_pilot_dashboard() {
+  await p.goto("/pilot");
 }
 
 async function then_i_should_see_the_manage_pilot_page() {
