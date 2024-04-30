@@ -3,10 +3,18 @@ class AppCardComponent < ViewComponent::Base
     <div class="<%= card_classes %>">
       <div class="<%= content_classes %>">
         <h2 class="<%= heading_classes %>">
-          <%= @heading %>
+          <% if @link_to.present? %>
+            <%= link_to @link_to, class: "nhsuk-card__link" do %>
+              <%= @heading %>
+            <% end %>
+          <% else %>
+            <%= @heading %>
+          <% end %>
         </h2>
 
-        <%= content %>
+        <div class="nhsuk-card__description">
+          <%= content %>
+        </div>
       </div>
     </div>
   ERB
@@ -16,7 +24,8 @@ class AppCardComponent < ViewComponent::Base
     heading_size: "m",
     feature: false,
     colour: nil,
-    card_classes: nil
+    card_classes: nil,
+    link_to: nil
   )
     super
 
@@ -24,6 +33,7 @@ class AppCardComponent < ViewComponent::Base
     @heading_size = heading_size
     @feature = feature
     @card_classes = card_classes
+    @link_to = link_to
 
     @colour = colour
   end
@@ -39,6 +49,7 @@ class AppCardComponent < ViewComponent::Base
       "nhsuk-card",
       ("nhsuk-card--feature" if @feature),
       ("app-card--#{@colour}" if @colour.present?),
+      ("nhsuk-card--clickable" if @link_to.present?),
       @card_classes
     ].compact.join(" ")
   end
