@@ -13,7 +13,7 @@ RSpec.describe VaccinationMailer do
     it { should have_attributes(to: [patient.consents.last.parent_email]) }
 
     it "has the correct template" do
-      expect(mail.header[:template_id].value).to eq(
+      expect(mail).to be_sent_with_govuk_notify.using_template(
         EMAILS[:confirmation_the_hpv_vaccination_has_taken_place]
       )
     end
@@ -93,7 +93,7 @@ RSpec.describe VaccinationMailer do
     it { should have_attributes(to: [patient.consents.last.parent_email]) }
 
     it "has the correct template" do
-      expect(mail.header[:template_id].value).to eq(
+      expect(mail).to be_sent_with_govuk_notify.using_template(
         EMAILS[:confirmation_the_hpv_vaccination_didnt_happen]
       )
     end

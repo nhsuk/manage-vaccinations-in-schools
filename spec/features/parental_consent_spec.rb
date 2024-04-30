@@ -144,13 +144,13 @@ RSpec.describe "Parental consent" do
     mails = ActionMailer::Base.deliveries
     expect(mails.count).to eq(2)
 
-    expect(mails.first.to).to eq ["jane@example.com"]
-    first_template_id = mails.first.header[:template_id].value
-    expect(first_template_id).to eq EMAILS[:parental_consent_confirmation]
+    expect(mails.first).to be_sent_with_govuk_notify.using_template(
+      EMAILS[:parental_consent_confirmation]
+    ).to("jane@example.com")
 
-    expect(mails.second.to).to eq ["jane@example.com"]
-    second_template_id = mails.second.header[:template_id].value
-    expect(second_template_id).to eq EMAILS[:parental_consent_give_feedback]
+    expect(mails.second).to be_sent_with_govuk_notify.using_template(
+      EMAILS[:parental_consent_give_feedback]
+    ).to("jane@example.com")
   end
 
   def when_the_nurse_checks_the_consent_responses
