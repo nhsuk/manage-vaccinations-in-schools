@@ -64,4 +64,18 @@ RSpec.describe AppCardComponent, type: :component do
       it { should include "app-card--purple" }
     end
   end
+
+  context "link_to is specified" do
+    let(:component) do
+      described_class.new(heading:, link_to: "http://example.com")
+    end
+
+    describe "card_classes" do
+      subject { component.send(:card_classes) }
+
+      it { should include "nhsuk-card--clickable" }
+    end
+
+    it { is_expected.to have_link(href: "http://example.com") }
+  end
 end
