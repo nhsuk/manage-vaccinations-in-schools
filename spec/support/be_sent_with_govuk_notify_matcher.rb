@@ -1,11 +1,12 @@
 RSpec::Matchers.matcher :be_sent_with_govuk_notify do
   match do |actual|
-    return false unless actual.is_a? Mail::Notify::Message
+    unless actual.is_a?(Mail::Notify::Message) ||
+             actual.is_a?(ActionMailer::MessageDelivery)
+      return false
+    end
 
     matched = true
-    if @template.present?
-      matched = actual.header[:template_id].value == @template
-    end
+    matched = actual.template_id == @template if @template.present?
 
     matched = actual.to == [@to_email] if @to_email.present?
 
