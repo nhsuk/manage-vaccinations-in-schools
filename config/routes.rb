@@ -75,45 +75,8 @@ Rails.application.routes.draw do
       end
     end
 
-    get "consents/unmatched-responses",
-        to: "consent_forms#unmatched_responses",
-        on: :member,
-        as: :unmatched_responses
-    get "consents",
-        to:
-          redirect(
-            "/sessions/%{id}/consents/#{TAB_PATHS[:consents].keys.first}"
-          ),
-        as: :consents,
-        on: :member
-    get "consents/:tab",
-        to: "consents#index",
-        on: :member,
-        as: :consents_tab,
-        tab: /#{TAB_PATHS[:consents].keys.join("|")}/
-
-    get "triage",
-        to: redirect("/sessions/%{id}/triage/#{TAB_PATHS[:triage].keys.first}"),
-        as: :triage,
-        on: :member
-    get "triage/:tab",
-        to: "triage#index",
-        on: :member,
-        as: :triage_tab,
-        tab: /#{TAB_PATHS[:triage].keys.join("|")}/
-
-    get "vaccinations",
-        to:
-          redirect(
-            "/sessions/%{id}/vaccinations/#{TAB_PATHS[:vaccinations].keys.first}"
-          ),
-        as: :vaccinations,
-        on: :member
-    get "vaccinations/:tab",
-        to: "vaccinations#index",
-        on: :member,
-        as: :vaccinations_tab,
-        tab: /#{TAB_PATHS[:vaccinations].keys.join("|")}/
+    resource "consents", only: [] do
+    end
 
     resources :edit_sessions, only: %i[show update], path: "edit", as: :edit
 
@@ -125,41 +88,110 @@ Rails.application.routes.draw do
       get "/:route",
           action: :show,
           on: :member,
-          as: "",
           controller: "patient_sessions",
           route: /consents|triage|vaccinations/
 
-      resource :triage, only: %i[create update]
-
-      resource :vaccinations, only: %i[new create update] do
-        resource "batch",
-                 only: %i[edit update],
-                 controller: "vaccinations/batches"
-        resource "delivery_site",
-                 only: %i[edit update],
-                 controller: "vaccinations/delivery_site"
-        get "edit/reason", action: "edit_reason", on: :member
-        get "confirm", on: :member
-        put "record", on: :member
-
-        post "handle-consent", on: :member
-
-        get "show-template", on: :collection
-        get "record-template", on: :collection
-      end
-
-      post ":route/consents", to: "manage_consents#create", as: :manage_consents
-      resources :manage_consents,
-                only: %i[show update],
-                path: ":route/consents/:consent_id/" do
-        post "clone", on: :member
-      end
+      # resource :triage, only: %i[create update]
     end
 
     constraints -> { Flipper.enabled? :offline_working } do
       get "setup-offline", to: "offline_passwords#new", on: :member
       post "setup-offline", to: "offline_passwords#create", on: :member
     end
+  end
+
+  scope "/sessions/:session_id/:section", as: "session" do
+    constraints section: "consents" do
+      defaults section: "consents" do
+        get "/",
+            as: "consents",
+            to:
+              redirect(
+                "/sessions/%{session_id}/consents/#{TAB_PATHS[:consents].keys.first}"
+              )
+
+        get "unmatched-responses",
+            to: "consent_forms#unmatched_responses",
+            as: :consents_unmatched_responses
+
+        get ":tab",
+            controller: "consents",
+            action: :index,
+            as: :consents_tab,
+            tab: TAB_PATHS[:consents].keys.join("|")
+      end
+    end
+
+    constraints section: "triage" do
+      defaults section: "triage" do
+        get "/",
+            as: "triage",
+            to:
+              redirect(
+                "/sessions/%{session_id}/triage/#{TAB_PATHS[:triage].keys.first}"
+              )
+
+        get ":tab",
+            controller: "triage",
+            action: :index,
+            as: :triage_tab,
+            tab: TAB_PATHS[:triage].keys.join("|")
+      end
+    end
+
+    constraints section: "vaccinations" do
+      defaults section: "vaccinations" do
+        get "/",
+            as: "vaccinations",
+            to:
+              redirect(
+                "/sessions/%{session_id}/vaccinations/#{TAB_PATHS[:vaccinations].keys.first}"
+              )
+
+        get ":tab",
+            controller: "vaccinations",
+            action: :index,
+            as: :vaccinations_tab,
+            tab: TAB_PATHS[:vaccinations].keys.join("|")
+      end
+    end
+
+    scope ":tab" do
+      resources :patients, only: %i[show] do
+        post "consents", to: "manage_consents#create", as: :manage_consents
+        resources :manage_consents,
+                  only: %i[show update],
+                  path: "consents/:consent_id/" do
+          post "clone", on: :member
+        end
+
+        resource :triage, only: %i[create update]
+
+        resource :vaccinations, only: %i[new create update] do
+          resource "batch",
+                   only: %i[edit update],
+                   controller: "vaccinations/batches"
+          resource "delivery_site",
+                   only: %i[edit update],
+                   controller: "vaccinations/delivery_site"
+          get "edit/reason", action: "edit_reason", on: :member
+          get "confirm", on: :member
+          put "record", on: :member
+
+          post "handle-consent", on: :member
+
+          get "show-template", on: :collection
+          get "record-template", on: :collection
+        end
+      end
+    end
+
+    # These are just used to create helpers with better names that allow passing
+    # in section and/or tab as a parameter. e.g. session_section_path(@session,
+    # section: @section) which looks cleaner than session_triage_path(@session,
+    # section: @section)
+    get "/", to: "errors#not_found", as: "section"
+    get "/:tab", to: "errors#not_found", as: "section_tab"
   end
 
   resources :vaccines, only: %i[index] do
