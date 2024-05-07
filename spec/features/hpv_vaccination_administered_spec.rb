@@ -35,7 +35,7 @@ describe "HPV Vaccination" do
   end
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
-    visit vaccinations_session_path(@session)
+    visit session_vaccinations_path(@session)
     click_link @patient.full_name
   end
 

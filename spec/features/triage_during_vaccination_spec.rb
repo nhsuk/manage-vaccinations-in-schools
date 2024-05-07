@@ -37,7 +37,7 @@ RSpec.describe "Triage" do
   end
 
   def when_i_go_to_the_vaccinations_page
-    visit vaccinations_session_path(@session)
+    visit session_vaccinations_path(@session)
   end
 
   def and_i_go_to_the_patient_that_needs_triage
