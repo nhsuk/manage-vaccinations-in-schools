@@ -15,7 +15,8 @@ class SessionsController < ApplicationController
   end
 
   def index
-    @sessions_by_type = policy_scope(Session).active.group_by(&:type)
+    @sessions_by_type =
+      policy_scope(Session).active.in_progress.group_by(&:type)
   end
 
   def show

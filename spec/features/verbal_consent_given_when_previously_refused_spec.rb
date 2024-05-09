@@ -44,7 +44,8 @@ feature "Verbal consent" do
 
   def when_the_nurse_checks_the_consent_responses_given
     visit "/dashboard"
-    click_on "School sessions", match: :first
+    click_on "Campaigns", match: :first
+    click_on "HPV"
     click_on "Pilot School"
     click_on "Check consent responses"
     click_on "Refused"

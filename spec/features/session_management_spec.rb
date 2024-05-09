@@ -8,6 +8,9 @@ RSpec.describe "Session management" do
 
   scenario "Adding a new session, closing consent" do
     given_my_team_is_running_an_hpv_vaccination_campaign
+    when_i_go_to_todays_sessions_as_a_nurse
+    then_i_see_no_sessions
+
     when_i_add_a_new_session
     then_i_see_the_list_of_schools
 
@@ -27,11 +30,17 @@ RSpec.describe "Session management" do
     then_i_should_see_the_session_details
     and_the_parent_should_receive_a_consent_request
 
+    when_i_go_to_todays_sessions_as_a_nurse
+    then_i_see_no_sessions
+
     when_the_parent_visits_the_consent_form
     then_they_can_give_consent
 
     when_the_deadline_has_passed
     then_they_can_no_longer_give_consent
+
+    when_i_go_to_todays_sessions_as_a_nurse
+    then_i_see_the_new_session
   end
 
   def given_my_team_is_running_an_hpv_vaccination_campaign
@@ -40,13 +49,19 @@ RSpec.describe "Session management" do
     @location = @team.locations.first
     @patient = create(:patient)
     @location.patients << @patient
+  end
 
+  def when_i_go_to_todays_sessions_as_a_nurse
     sign_in @team.users.first
     visit "/dashboard"
+    click_link "Today’s sessions", match: :first
+  end
+
+  def then_i_see_no_sessions
+    expect(page).to have_content("There are no sessions")
   end
 
   def when_i_add_a_new_session
-    click_link "School sessions", match: :first
     click_button "Add a new session"
   end
 
@@ -130,5 +145,9 @@ RSpec.describe "Session management" do
   def then_they_can_no_longer_give_consent
     visit start_session_parent_interface_consent_forms_path(Session.last)
     expect(page).to have_content("The deadline for responding has passed")
+  end
+
+  def then_i_see_the_new_session
+    expect(page).to have_content(@location.name)
   end
 end
