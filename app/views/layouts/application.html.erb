@@ -44,13 +44,13 @@
         <ul class="nhsuk-header__navigation-list app-header__navigation-list">
           <% if current_user.present? %>
             <li class="nhsuk-header__navigation-item">
-              <%= link_to "School sessions", sessions_path, class: "nhsuk-header__navigation-link" %>
+              <%= link_to "Today’s sessions", sessions_path, class: "nhsuk-header__navigation-link" %>
             </li>
             <li class="nhsuk-header__navigation-item">
-              <%= link_to "Vaccines", vaccines_path, class: "nhsuk-header__navigation-link" %>
+              <%= link_to "Campaigns", campaigns_path, class: "nhsuk-header__navigation-link" %>
             </li>
             <li class="nhsuk-header__navigation-item app-header__navigation-item--divider">
-              <%= link_to "Reports", reports_path, class: "nhsuk-header__navigation-link" %>
+              <%= link_to "Vaccines", vaccines_path, class: "nhsuk-header__navigation-link" %>
             </li>
             <li class="nhsuk-header__navigation-item">
               <span class="nhsuk-header__navigation-link app-u-text-decoration-none">
