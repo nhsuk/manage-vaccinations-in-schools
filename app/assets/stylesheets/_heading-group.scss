@@ -1,0 +1,17 @@
+.app-heading-group {
+  @include nhsuk-responsive-margin(7, "bottom");
+  display: flex;
+  flex-direction: column;
+  gap: nhsuk-spacing(4);
+  justify-content: space-between;
+
+  @include mq($from: tablet) {
+    align-items: center;
+    flex-direction: row;
+  }
+
+  > *,
+  button {
+    margin: 0;
+  }
+}
