@@ -30,6 +30,8 @@ FactoryBot.define do
     send_reminders_at { send_consent_at + 7.days }
     close_consent_at { date }
 
+    time_of_day { %w[morning afternoon all_day].sample }
+
     trait :in_progress do
       date { Time.zone.now }
     end
