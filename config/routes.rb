@@ -61,6 +61,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :campaigns, only: %i[index show]
+
   resources :sessions, only: %i[create edit index show update] do
     namespace :parent_interface, path: "/" do
       resources :consent_forms, path: :consents, only: [:create] do
