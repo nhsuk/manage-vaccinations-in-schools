@@ -39,6 +39,9 @@ class Session < ApplicationRecord
 
   scope :active, -> { where(draft: false) }
   scope :draft, -> { where(draft: true) }
+  scope :past, -> { where(date: ..Time.zone.yesterday) }
+  scope :in_progress, -> { where(date: Time.zone.today) }
+  scope :future, -> { where(date: Time.zone.tomorrow..) }
 
   default_scope { active }
 
