@@ -41,7 +41,8 @@ RSpec.describe "Vaccination authorisation" do
 
   def and_i_go_to_the_vaccinations_page
     visit "/dashboard"
-    click_on "School sessions", match: :first
+    click_on "Campaigns", match: :first
+    click_on "HPV"
     click_on "Pilot School"
     click_on "Record vaccinations"
   end

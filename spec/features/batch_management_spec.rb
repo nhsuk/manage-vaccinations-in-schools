@@ -76,7 +76,8 @@ RSpec.describe "Batch management" do
   end
 
   def and_i_start_vaccinating_a_patient
-    click_on "School sessions", match: :first
+    click_on "Campaigns", match: :first
+    click_on @campaign.name
     click_on @team.locations.first.name
     click_on "Record vaccinations"
 

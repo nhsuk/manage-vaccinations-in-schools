@@ -41,7 +41,7 @@ RSpec.describe "Triage" do
 
   def when_i_go_to_the_triage_page
     visit "/dashboard"
-    click_link "School sessions", match: :first
+    click_link "Today’s sessions", match: :first
     click_link @school.name
     click_link "Triage health questions"
   end

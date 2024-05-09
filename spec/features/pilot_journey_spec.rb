@@ -149,7 +149,7 @@ vaccination" do
   end
 
   def when_i_start_creating_a_new_session_by_choosing_school_and_time
-    click_on "School sessions"
+    click_on "Today’s sessions"
     click_on "Add a new session"
 
     expect(page).to have_content("Which school is it at?")

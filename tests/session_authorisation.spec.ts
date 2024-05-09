@@ -33,7 +33,7 @@ async function and_i_go_to_the_sessions_list() {
 
 async function then_i_should_see_only_my_session() {
   await expect(
-    p.getByRole("heading", { name: "School sessions" }),
+    p.getByRole("heading", { name: "Today’s sessions" }),
   ).toBeVisible();
   await expect(p.locator(".nhsuk-table__body .nhsuk-table__row")).toHaveCount(
     1,
