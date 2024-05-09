@@ -1,0 +1,66 @@
+<%= h1 @campaign.name, page_title: "#{@campaign.name} – School sessions",
+  size: "l" %>
+
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+    { text: 'Home', href: dashboard_path },
+    { text: 'Campaigns', href: campaigns_path }
+  ]) %>
+<% end %>
+
+<% [[@in_progress_sessions, "In progress sessions"],
+    [@future_sessions, "Planned sessions"],
+    [@past_sessions, "Past sessions"]]
+    .select { |sessions, _| sessions.any? }.each do |sessions, title| %>
+  <action-table sort="date">
+    <div class="nhsuk-table__panel-with-heading-tab">
+      <h3 class="nhsuk-table__heading-tab"><%= title %></h3>
+      <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
+        <% table.with_head do |head| %>
+          <% head.with_row do |row| %>
+            <% row.with_cell(text: 'Date') %>
+            <% row.with_cell(text: 'Time') %>
+            <% row.with_cell(text: 'Location') %>
+            <% row.with_cell(text: 'Consent period') %>
+            <% row.with_cell(text: 'Cohort') %>
+          <% end %>
+        <% end %>
+
+        <% table.with_body do |body| %>
+          <% sessions.each do |session| %>
+            <% body.with_row do |row| %>
+              <% row.with_cell do %>
+                <span class="nhsuk-table-responsive__heading">Date</span>
+                <%= session.date.to_fs(:nhsuk_date) %>
+              <% end %>
+              <% row.with_cell do %>
+                <span class="nhsuk-table-responsive__heading">Time</span>
+                <%= session.time_of_day.humanize %>
+              <% end %>
+              <% row.with_cell do %>
+                <span class="nhsuk-table-responsive__heading">Location</span>
+                <p class="nhsuk-u-margin-bottom-0 nhsuk-u-secondary-text-color">
+                  <%= link_to session.location.name, session_path(session) %>
+                  <br>
+                  <%= session.location.address %>
+                </p>
+              <% end %>
+              <% row.with_cell do %>
+                <span class="nhsuk-table-responsive__heading">Consent period</span>
+                <% if session.close_consent_at.past? %>
+                  <%= "Closed #{session.close_consent_at.strftime('%-d %b')}" %>
+                <% else %>
+                  <%= "Open until #{session.close_consent_at.strftime('%-d %b')}" %>
+                <% end %>
+              <% end %>
+              <% row.with_cell(numeric: true) do %>
+                <span class="nhsuk-table-responsive__heading">Cohort</span>
+                <%= session.patients.count %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+  </action-table>
+<% end %>
