@@ -44,8 +44,7 @@ RSpec.describe "NIVS HPV report" do
   end
 
   def when_i_go_to_the_reports_page
-    visit "/dashboard"
-    click_on "Reports", match: :first
+    visit "/reports"
 
     expect(page).to have_css("h1", text: "Reports")
   end
