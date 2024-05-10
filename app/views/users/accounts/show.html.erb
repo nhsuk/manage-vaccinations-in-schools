@@ -1,0 +1,14 @@
+<%= h1 "Your account", size: "xl" %>
+
+<%= form_for @user, url: users_account_path(@user), method: :patch do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= f.govuk_text_field :full_name, label: { text: "Full name" } %>
+  <%= f.govuk_text_field :email, label: { text: "Email address" } %>
+  <%= f.govuk_text_field :registration,
+    width: 10,
+    label: { text: "Registration number" },
+    hint: { text: "Also known as a GMC number or nurse’s pin number" } %>
+
+  <%= f.govuk_submit "Save changes" %>
+<% end %>
