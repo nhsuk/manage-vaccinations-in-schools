@@ -10,12 +10,14 @@ RSpec.describe SessionStats do
 
     it "returns a hash of session stats" do
       expect(subject.to_h).to eq(
+        needing_triage: 0,
+        not_ready_to_vaccinate: 0,
+        ready_to_vaccinate: 0,
+        unmatched_responses: 0,
+        with_conflicting_consent: 0,
         with_consent_given: 0,
         with_consent_refused: 0,
-        without_a_response: 0,
-        needing_triage: 0,
-        ready_to_vaccinate: 0,
-        unmatched_responses: 0
+        without_a_response: 0
       )
     end
 
@@ -34,12 +36,14 @@ RSpec.describe SessionStats do
 
       it "returns a hash of session stats" do
         expect(subject.to_h).to eq(
+          needing_triage: 2,
+          not_ready_to_vaccinate: 4,
+          ready_to_vaccinate: 2,
+          unmatched_responses: 1,
+          with_conflicting_consent: 0,
           with_consent_given: 4,
           with_consent_refused: 1,
-          without_a_response: 1,
-          needing_triage: 2,
-          ready_to_vaccinate: 2,
-          unmatched_responses: 1
+          without_a_response: 1
         )
       end
     end
