@@ -485,6 +485,9 @@ en:
           attributes:
             email:
               blank: Enter an email address
+              invalid: Enter a valid email address, such as j.doe@gmail.com
+              too_long: Enter an email address that is less than 255 characters long
+              taken: This email address is already in use
             password:
               blank: Enter a password
               too_short: Enter a password that is at least 10 characters long
@@ -493,6 +496,11 @@ en:
               confirmation: The password and confirmation do not match
             unlock_token:
               invalid: The unlock token is invalid
+            full_name:
+              blank: Enter your full name
+              too_long: Enter a full name that is less than 255 characters long
+            registration:
+              too_long: Enter a registration number that is less than 255 characters long
         registration:
           attributes:
             address_line_1:

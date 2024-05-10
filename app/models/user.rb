@@ -41,6 +41,16 @@ class User < ApplicationRecord
   encrypts :email, deterministic: true
   encrypts :full_name
 
+  validates :full_name, presence: true, length: { maximum: 255 }
+  validates :registration, length: { maximum: 255 }
+  validates :email,
+            presence: true,
+            length: {
+              maximum: 255
+            },
+            uniqueness: true,
+            email: true
+
   scope :recently_active,
         -> { where(last_sign_in_at: 1.week.ago..Time.current) }
 

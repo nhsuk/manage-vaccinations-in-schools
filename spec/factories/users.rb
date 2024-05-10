@@ -30,7 +30,7 @@
 FactoryBot.define do
   factory :user do
     sequence(:full_name) { |n| "Test User #{n}" }
-    sequence(:email) { |n| "test-#{n}@localhost" }
+    sequence(:email) { |n| "test-#{n}@example.com" }
     sequence(:teams) { [Team.first || create(:team)] }
     password { "power overwhelming!" } # avoid a password that was found in a data breach
     registration { "SW608658 (HCPC)" }
