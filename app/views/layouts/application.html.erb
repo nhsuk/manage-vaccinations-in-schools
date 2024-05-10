@@ -53,9 +53,7 @@
               <%= link_to "Vaccines", vaccines_path, class: "nhsuk-header__navigation-link" %>
             </li>
             <li class="nhsuk-header__navigation-item">
-              <span class="nhsuk-header__navigation-link app-u-text-decoration-none">
-                <%= current_user.email %>
-              </span>
+              <%= link_to current_user.email, users_account_path(current_user), class: "nhsuk-header__navigation-link" %>
             </li>
             <li class="nhsuk-header__navigation-item">
               <%= button_to destroy_user_session_path, class: "app-header__button-link", method: :delete do %>

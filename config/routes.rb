@@ -227,6 +227,10 @@ Rails.application.routes.draw do
          as: :match
   end
 
+  namespace :users do
+    resources :accounts, only: %i[show update]
+  end
+
   scope via: :all do
     get "/404", to: "errors#not_found"
     get "/422", to: "errors#unprocessable_entity"
