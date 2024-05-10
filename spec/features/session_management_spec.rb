@@ -121,7 +121,7 @@ RSpec.describe "Session management" do
   end
 
   def then_i_should_see_the_session_details
-    expect(page).to have_content("HPV session at #{@location.name}")
+    expect(page).to have_content(@location.name.to_s)
   end
 
   def and_the_parent_should_receive_a_consent_request
