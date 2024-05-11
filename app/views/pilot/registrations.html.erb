@@ -15,7 +15,7 @@
 
 <% @schools.each do |school| %>
   <%= render AppCardComponent.new(heading: school.name) do %>
-    <% if Flipper.enabled?(:registration_open) && school.registration_open %>
+    <% if school.registration_open %>
       <p>
         <%= govuk_link_to close_registration_school_path(school) do %>
           Close pilot to new participants at this school

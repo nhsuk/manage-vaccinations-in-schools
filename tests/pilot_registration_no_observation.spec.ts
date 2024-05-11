@@ -11,7 +11,6 @@ test("Pilot registration - no observation", async ({ page, request }) => {
   r = request;
 
   await given_a_location_not_requiring_permission_to_observe();
-  await and_registration_is_open();
 
   await when_i_go_to_the_registration_page_for_a_school();
   await then_i_see_the_page_with_the_school_name();
@@ -43,15 +42,6 @@ async function given_a_location_not_requiring_permission_to_observe() {
 
   registrationPage = json.registrationPage;
   locationName = json.locationName;
-}
-
-async function and_registration_is_open() {
-  await p.goto("/flipper/features/registration_open");
-  await expect(p.getByText("registration_open")).toBeVisible();
-  if (await p.getByText("Disabled").isVisible()) {
-    await p.getByRole("button", { name: "Fully Enable" }).click();
-    await expect(p.getByText("Fully enabled")).toBeVisible();
-  }
 }
 
 async function when_i_go_to_the_registration_page_for_a_school() {

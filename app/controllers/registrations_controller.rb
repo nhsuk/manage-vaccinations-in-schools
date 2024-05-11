@@ -7,7 +7,7 @@ class RegistrationsController < ApplicationController
   layout "registration"
 
   def new
-    if Flipper.enabled?(:registration_open) && @school.registration_open?
+    if @school.registration_open?
       @registration_form = Registration.new
       render "new"
     else

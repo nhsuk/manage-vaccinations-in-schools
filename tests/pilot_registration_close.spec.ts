@@ -7,7 +7,7 @@ test("Pilot registration - close", async ({ page }) => {
   p = page;
 
   await given_the_app_is_setup();
-  await and_registration_is_open();
+  await and_i_sign_in();
   await when_i_visit_the_parents_registration_page();
   await then_i_see_the_registration_form();
 
@@ -37,14 +37,8 @@ async function given_the_app_is_setup() {
   await p.goto("/reset");
 }
 
-async function and_registration_is_open() {
+async function and_i_sign_in() {
   await signInTestUser(p);
-  await p.goto("/flipper/features/registration_open");
-  await expect(p.getByText("registration_open")).toBeVisible();
-  if (await p.getByText("Disabled").isVisible()) {
-    await p.getByRole("button", { name: "Fully Enable" }).click();
-    await expect(p.getByText("Fully enabled")).toBeVisible();
-  }
 }
 
 async function when_i_visit_the_parents_registration_page() {

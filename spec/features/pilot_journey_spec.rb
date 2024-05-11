@@ -4,8 +4,6 @@ RSpec.describe "Pilot journey" do
   before { Timecop.freeze(Time.zone.local(2024, 2, 1)) }
   after { Timecop.return }
 
-  before { Flipper.enable :registration_open }
-
   scenario "Parent registration, cohorting, session creation, verbal consent, \
 vaccination" do
     # Parent registration
