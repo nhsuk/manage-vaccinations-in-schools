@@ -7,7 +7,6 @@ test("Pilot registration", async ({ page }) => {
   p = page;
 
   await given_the_app_is_setup();
-  await and_registration_is_open();
 
   await when_i_go_to_the_registration_page_for_a_school();
   await then_i_see_the_page_with_the_school_name();
@@ -24,16 +23,6 @@ test("Pilot registration", async ({ page }) => {
 
 async function given_the_app_is_setup() {
   await p.goto("/reset");
-}
-
-async function and_registration_is_open() {
-  await signInTestUser(p);
-  await p.goto("/flipper/features/registration_open");
-  await expect(p.getByText("registration_open")).toBeVisible();
-  if (await p.getByText("Disabled").isVisible()) {
-    await p.getByRole("button", { name: "Fully Enable" }).click();
-    await expect(p.getByText("Fully enabled")).toBeVisible();
-  }
 }
 
 async function when_i_go_to_the_registration_page_for_a_school() {
