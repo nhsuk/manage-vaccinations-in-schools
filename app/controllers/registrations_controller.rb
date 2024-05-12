@@ -7,12 +7,7 @@ class RegistrationsController < ApplicationController
   layout "registration"
 
   def new
-    if @school.registration_open?
-      @registration_form = Registration.new
-      render "new"
-    else
-      render "closed"
-    end
+    @registration_form = Registration.new
   end
 
   def create

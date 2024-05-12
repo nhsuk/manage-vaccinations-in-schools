@@ -15,15 +15,6 @@
 
 <% @schools.each do |school| %>
   <%= render AppCardComponent.new(heading: school.name) do %>
-    <% if school.registration_open %>
-      <p>
-        <%= govuk_link_to close_registration_school_path(school) do %>
-          Close pilot to new participants at this school
-          <span class="nhsuk-u-visually-hidden">(<%= school.name %>)</span>
-        <% end %>
-      </p>
-    <% end %>
-
     <% if school.registrations.empty? %>
       <p>No parents have registered their interest in the pilot yet.</p>
     <% else %>

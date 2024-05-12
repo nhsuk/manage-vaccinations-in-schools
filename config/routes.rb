@@ -204,11 +204,6 @@ Rails.application.routes.draw do
   end
 
   resources :schools, only: [] do
-    get "close_registration", on: :member
-    post "close_registration",
-         to: "schools#handle_close_registration",
-         on: :member
-
     resource :registration, only: %i[new create update] do
       get "confirmation", on: :collection
     end
