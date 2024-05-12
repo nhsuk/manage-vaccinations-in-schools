@@ -13,9 +13,6 @@ vaccination" do
 
     # Cohorting
     given_i_am_a_nurse_signed_into_the_service
-    when_i_close_the_registration_for_the_pilot
-    then_i_see_that_registrations_are_closed
-
     when_i_download_the_list_of_parents_interested_in_the_pilot
     then_i_see_the_newly_registered_parent_in_the_csv
 
@@ -87,18 +84,9 @@ vaccination" do
     visit "/dashboard"
   end
 
-  def when_i_close_the_registration_for_the_pilot
+  def when_i_download_the_list_of_parents_interested_in_the_pilot
     visit "/pilot"
     click_on "See who’s interested in the pilot"
-    click_on "Close pilot to new participants at this school"
-    click_on "Yes, close the pilot to new participants"
-  end
-
-  def then_i_see_that_registrations_are_closed
-    expect(page).to have_content("Pilot is now closed to new participants")
-  end
-
-  def when_i_download_the_list_of_parents_interested_in_the_pilot
     click_on "Download data for registered parents (CSV)"
 
     expect(page.response_headers["Content-Type"]).to eq("text/csv")
