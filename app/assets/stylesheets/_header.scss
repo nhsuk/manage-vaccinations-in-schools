@@ -1,13 +1,4 @@
 .app-header {
-  &__container {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  }
-
-  &__service-name {
-    line-height: 1.25;
-    max-width: auto;
-  }
-
   &__button-link {
     @extend .nhsuk-header__navigation-link;
     border: none;
