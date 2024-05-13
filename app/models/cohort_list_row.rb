@@ -1,8 +1,7 @@
 class CohortListRow
   include ActiveModel::Model
 
-  attr_accessor :submitted_at,
-                :school_id,
+  attr_accessor :school_id,
                 :school_name,
                 :parent_name,
                 :parent_relationship,
@@ -19,8 +18,6 @@ class CohortListRow
                 :child_nhs_number,
                 :team
 
-  validates :submitted_at, presence: true
-  validate :submitted_at_is_valid, if: -> { submitted_at.present? }
   validates :school_id, presence: true
   validate :school_id_is_valid, if: -> { school_id.present? }
   validates :parent_name, presence: true
@@ -118,10 +115,6 @@ class CohortListRow
         parent_relationship_other: parent_relationship
       }
     end
-  end
-
-  def submitted_at_is_valid
-    errors.add(:submitted_at, :invalid) if Time.zone.parse(submitted_at).nil?
   end
 
   def school_id_is_valid
