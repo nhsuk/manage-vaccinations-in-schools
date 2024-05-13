@@ -2,7 +2,6 @@ class CohortListRow
   include ActiveModel::Model
 
   attr_accessor :submitted_at,
-                :eoi_id,
                 :school_id,
                 :school_name,
                 :parent_name,
@@ -22,7 +21,6 @@ class CohortListRow
 
   validates :submitted_at, presence: true
   validate :submitted_at_is_valid, if: -> { submitted_at.present? }
-  validates :eoi_id, presence: true
   validates :school_id, presence: true
   validate :school_id_is_valid, if: -> { school_id.present? }
   validates :parent_name, presence: true
