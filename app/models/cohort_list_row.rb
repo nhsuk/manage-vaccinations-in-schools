@@ -23,7 +23,6 @@ class CohortListRow
   validates :submitted_at, presence: true
   validate :submitted_at_is_valid, if: -> { submitted_at.present? }
   validates :eoi_id, presence: true
-  validate :eoi_id_is_valid, if: -> { eoi_id.present? }
   validates :school_id, presence: true
   validate :school_id_is_valid, if: -> { school_id.present? }
   validates :parent_name, presence: true
@@ -136,12 +135,5 @@ class CohortListRow
     team.locations.find(school_id)
   rescue ActiveRecord::RecordNotFound
     errors.add(:school_id, :invalid)
-  end
-
-  def eoi_id_is_valid
-    registration = Registration.find(eoi_id)
-    errors.add(:eoi_id, :in_use) if registration.patient.present?
-  rescue ActiveRecord::RecordNotFound
-    errors.add(:eoi_id, :invalid)
   end
 end
