@@ -9,7 +9,6 @@
 #  name                           :text
 #  permission_to_observe_required :boolean
 #  postcode                       :text
-#  registration_open              :boolean          default(FALSE)
 #  town                           :text
 #  url                            :text
 #  urn                            :string
