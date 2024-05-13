@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_12_221431) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_13_063547) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -236,7 +236,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_12_221431) do
     t.datetime "updated_at", null: false
     t.integer "team_id", null: false
     t.string "urn"
-    t.boolean "permission_to_observe_required"
   end
 
   create_table "offline_passwords", force: :cascade do |t|

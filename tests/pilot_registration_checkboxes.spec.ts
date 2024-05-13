@@ -37,11 +37,6 @@ test("Pilot registration - check-boxes", async ({ page, request }) => {
 
 async function given_a_location_requiring_permission_to_observe() {
   let response = await r.post("/testing/generate-campaign", {
-    data: {
-      location: {
-        permission_to_observe_required: true,
-      },
-    },
     timeout: 10000,
     headers: {
       Accept: "application/json",
