@@ -8,17 +8,6 @@ RSpec.describe CohortList, type: :model do
   let!(:location) { Location.find_by(id: 1) || create(:location, id: 1) }
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_list/#{file}") }
 
-  before do
-    if Registration.count.zero?
-      create(:registration, id: 1, location_id: 1)
-      create(:registration, id: 2, location_id: 1)
-    end
-  end
-
-  # Clear out any patients created by the test suite to prevent
-  # the validations from failing due to duplicate registration IDs
-  before(:each) { Patient.where.not(registration: nil).delete_all }
-
   describe "#load_data!" do
     describe "with missing CSV" do
       let(:csv) { nil }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_13_160517) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_13_163410) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -276,13 +276,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_13_160517) do
     t.string "address_line_2"
     t.string "address_town"
     t.string "address_postcode"
-    t.bigint "registration_id"
     t.datetime "sent_consent_at"
     t.datetime "sent_reminder_at"
     t.datetime "session_reminder_sent_at"
     t.index ["location_id"], name: "index_patients_on_location_id"
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
-    t.index ["registration_id"], name: "index_patients_on_registration_id"
   end
 
   create_table "registrations", force: :cascade do |t|
