@@ -44,7 +44,6 @@ Rails.application.routes.draw do
 
   resource :pilot, only: [] do
     get "/", to: "pilot#manage", as: :manage
-    get "/manual", to: "pilot#manual", as: :manual
 
     resources :registrations, only: %i[] do
       get "/", to: "pilot#registrations", on: :collection
