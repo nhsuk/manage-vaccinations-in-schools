@@ -188,7 +188,6 @@ en:
     attributes:
       cohort_list_row:
         submitted_at: "<code>SUBMITTED_AT</code>"
-        eoi_id: "<code>EOI_ID</code>"
         school_id: "<code>SCHOOL_ID</code>"
         school_name: "<code>SCHOOL_NAME</code>"
         parent_name: "<code>PARENT_NAME</code>"
@@ -225,9 +224,6 @@ en:
             submitted_at:
               blank: "is required but missing"
               invalid: "‘%{value}’ should be formatted as YYYY-MM-DDTHH:MM:SSZ"
-            eoi_id:
-              blank: "is required but missing"
-              in_use: "‘%{value}’ has been uploaded before"
             school_id:
               blank: "is required but missing"
               invalid: "‘%{value}’ is not a valid school ID"

@@ -5,7 +5,6 @@ class CohortList
 
   EXPECTED_HEADERS = %w[
     SUBMITTED_AT
-    EOI_ID
     SCHOOL_ID
     SCHOOL_NAME
     PARENT_NAME
