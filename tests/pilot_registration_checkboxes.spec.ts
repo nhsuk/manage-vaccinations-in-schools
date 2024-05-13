@@ -40,7 +40,6 @@ async function given_a_location_requiring_permission_to_observe() {
     data: {
       location: {
         permission_to_observe_required: true,
-        registration_open: true,
       },
     },
     timeout: 10000,

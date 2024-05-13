@@ -49,8 +49,7 @@ class TestingController < ApplicationController
       :postcode,
       :latitude,
       :longitude,
-      :permission_to_observe_required,
-      :registration_open
+      :permission_to_observe_required
     )
   end
 
