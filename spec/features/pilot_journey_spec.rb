@@ -47,7 +47,6 @@ RSpec.describe "Pilot journey" do
 
   def when_i_upload_the_cohort_list_containing_one_child
     cohort_data = {
-      "SUBMITTED_AT" => "2024-02-01",
       "SCHOOL_ID" => @school.id.to_s,
       "SCHOOL_NAME" => "Pilot School",
       "PARENT_NAME" => "Big Daddy Tests",
