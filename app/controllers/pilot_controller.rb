@@ -1,12 +1,9 @@
 class PilotController < ApplicationController
-  skip_after_action :verify_policy_scoped, only: %i[manage manual]
+  skip_after_action :verify_policy_scoped, only: %i[manage]
 
   layout "two_thirds", except: %i[registrations]
 
   def manage
-  end
-
-  def manual
   end
 
   def registrations
