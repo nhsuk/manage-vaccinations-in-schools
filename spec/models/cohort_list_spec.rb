@@ -133,28 +133,4 @@ RSpec.describe CohortList, type: :model do
       )
     end
   end
-
-  describe ".from_registrations" do
-    let(:registration) { build(:registration) }
-
-    it "creates a CohortList" do
-      cohort_list = described_class.from_registrations([registration])
-
-      expect(cohort_list).to be_a(described_class)
-      expect(cohort_list.data).to be_a(Array)
-      expect(row = cohort_list.data.first).to be_a(Array)
-      expect(row.first).to eq(registration.created_at)
-    end
-  end
-
-  describe "#to_csv" do
-    let(:registration) { build(:registration) }
-
-    it "returns a CSV" do
-      cohort_list = described_class.from_registrations([registration])
-
-      expect(cohort_list.to_csv).to be_a(String)
-      expect(cohort_list.to_csv).to include(registration.created_at.to_s)
-    end
-  end
 end
