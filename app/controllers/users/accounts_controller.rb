@@ -11,7 +11,7 @@ module Users
       if @user.update(user_params)
         redirect_to users_account_path(@user),
                     flash: {
-                      success: "Your account has been updated"
+                      success: "Your account details have been updated"
                     }
       else
         render :show, status: :unprocessable_entity

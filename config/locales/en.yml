@@ -500,7 +500,7 @@ en:
               blank: Enter your full name
               too_long: Enter a full name that is less than 255 characters long
             registration:
-              too_long: Enter a registration number that is less than 255 characters long
+              too_long: Enter a registration number with fewer than 255 characters
         registration:
           attributes:
             address_line_1:

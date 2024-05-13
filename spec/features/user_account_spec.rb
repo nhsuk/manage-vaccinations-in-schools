@@ -54,7 +54,7 @@ RSpec.describe "User account", type: :feature do
     )
     expect(page).to have_content("Enter your full name")
     expect(page).to have_content(
-      "Enter a registration number that is less than 255 characters long"
+      "Enter a registration number with fewer than 255 characters"
     )
   end
 end
