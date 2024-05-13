@@ -21,26 +21,6 @@ class CohortList
     CHILD_NHS_NUMBER
   ].freeze
 
-  REGISTRATION_ATTRS = %i[
-    created_at
-    id
-    location_id
-    location_name
-    parent_name
-    formatted_parent_relationship
-    parent_email
-    parent_phone
-    first_name
-    last_name
-    common_name
-    date_of_birth
-    address_line_1
-    address_line_2
-    address_town
-    address_postcode
-    nhs_number
-  ].freeze
-
   attr_accessor :csv, :csv_is_malformed, :data, :missing_headers, :rows, :team
 
   validates :csv, presence: true
@@ -84,20 +64,6 @@ class CohortList
       location = Location.find(row.school_id)
       patient = location.patients.new(row.to_patient)
       patient.save!
-    end
-  end
-
-  def self.from_registrations(registrations)
-    new.tap do |ch|
-      ch.data = registrations.map { _1.values_at(*REGISTRATION_ATTRS) }
-    end
-  end
-
-  def to_csv
-    CSV.generate(headers: true, force_quotes: true) do |csv|
-      csv << EXPECTED_HEADERS
-
-      data.each { csv << _1 }
     end
   end
 
