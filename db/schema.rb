@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_13_163410) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_13_172932) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -283,32 +283,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_13_163410) do
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
   end
 
-  create_table "registrations", force: :cascade do |t|
-    t.bigint "location_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "parent_name"
-    t.integer "parent_relationship"
-    t.string "parent_relationship_other"
-    t.string "parent_email"
-    t.string "parent_phone"
-    t.string "first_name"
-    t.string "last_name"
-    t.boolean "use_common_name"
-    t.string "common_name"
-    t.date "date_of_birth"
-    t.string "address_line_1"
-    t.string "address_line_2"
-    t.string "address_town"
-    t.string "address_postcode"
-    t.string "nhs_number"
-    t.boolean "terms_and_conditions_agreed"
-    t.boolean "data_processing_agreed"
-    t.boolean "consent_response_confirmed"
-    t.boolean "user_research_observation_agreed"
-    t.index ["location_id"], name: "index_registrations_on_location_id"
-  end
-
   create_table "sessions", force: :cascade do |t|
     t.date "date"
     t.bigint "location_id"
@@ -414,7 +388,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_13_163410) do
   add_foreign_key "locations", "teams"
   add_foreign_key "patient_sessions", "users", column: "gillick_competence_assessor_user_id"
   add_foreign_key "patients", "locations"
-  add_foreign_key "registrations", "locations"
   add_foreign_key "triage", "patient_sessions"
   add_foreign_key "triage", "users"
   add_foreign_key "vaccination_records", "batches"
