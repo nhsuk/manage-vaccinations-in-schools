@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_13_063547) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_13_160517) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -416,7 +416,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_13_063547) do
   add_foreign_key "locations", "teams"
   add_foreign_key "patient_sessions", "users", column: "gillick_competence_assessor_user_id"
   add_foreign_key "patients", "locations"
-  add_foreign_key "patients", "registrations"
   add_foreign_key "registrations", "locations"
   add_foreign_key "triage", "patient_sessions"
   add_foreign_key "triage", "users"

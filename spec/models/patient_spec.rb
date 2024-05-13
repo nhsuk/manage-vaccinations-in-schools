@@ -34,7 +34,6 @@
 # Foreign Keys
 #
 #  fk_rails_...  (location_id => locations.id)
-#  fk_rails_...  (registration_id => registrations.id)
 #
 require "rails_helper"
 
