@@ -43,13 +43,12 @@ class TestingController < ApplicationController
   private
 
   def location_params
-    params.require(:location).permit(
+    params.permit(:location).permit(
       :name,
       :address,
       :postcode,
       :latitude,
-      :longitude,
-      :permission_to_observe_required
+      :longitude
     )
   end
 

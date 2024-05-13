@@ -21,7 +21,6 @@ class ApplicationMailer < Mail::Notify::Mailer
       full_and_preferred_patient_name:,
       location_name:,
       long_date:,
-      observed_session:,
       parent_name:,
       short_date:,
       short_patient_name:,
@@ -53,10 +52,6 @@ class ApplicationMailer < Mail::Notify::Mailer
 
   def parent_name
     @patient.parent_name
-  end
-
-  def observed_session
-    @session.location.permission_to_observe_required?
   end
 
   def location_name

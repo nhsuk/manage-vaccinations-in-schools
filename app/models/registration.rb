@@ -109,11 +109,7 @@ class Registration < ApplicationRecord
       consent_response_confirmed?,
       data_processing_agreed?,
       terms_and_conditions_agreed?,
-      (
-        if location.permission_to_observe_required?
-          user_research_observation_agreed?
-        end
-      )
+      user_research_observation_agreed?
     ].compact
 
     conditions.all?

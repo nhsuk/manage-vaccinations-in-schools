@@ -38,7 +38,6 @@ RSpec.describe ApplicationMailer, type: :mailer do
             full_and_preferred_patient_name: "John Doe",
             location_name: "Hogwarts",
             long_date: "Friday 1 January",
-            observed_session: true,
             parent_name: "Parent Doe",
             short_date: "1 January",
             short_patient_name: "John",
