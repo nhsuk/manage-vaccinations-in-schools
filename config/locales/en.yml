@@ -492,58 +492,6 @@ en:
               too_long: Enter a full name that is less than 255 characters long
             registration:
               too_long: Enter a registration number with fewer than 255 characters
-        registration:
-          attributes:
-            address_line_1:
-              blank: Enter the first line of the child’s address
-              too_long: Enter a first line of address that is less than 300 characters long
-            address_line_2:
-              too_long: Enter a second line of address that is less than 300 characters long
-            address_postcode:
-              blank: Enter the child’s postcode
-            address_town:
-              blank: Enter the town or city the child is in
-              too_long: Enter a town or city that is less than 300 characters long
-            common_name:
-              blank: Enter the child’s name
-              too_long: Enter a name that is less than 300 characters long
-            conditions_for_taking_part_met:
-              accepted: You must agree to all of the conditions for taking part in the pilot
-            date_of_birth:
-              blank: Enter the child’s date of birth
-              greater_than_or_equal_to: The child cannot be older than 22. Enter a date after %{count}.
-              less_than: The date is in the future. Enter a date in the past.
-              less_than_or_equal_to: The child cannot be younger than 3. Enter a date after %{count}.
-              missing_year: Enter a year
-              missing_month: Enter a month
-              missing_day: Enter a day
-            first_name:
-              blank: Enter the child’s first name
-              too_long: Enter a first name that is less than 300 characters long
-            last_name:
-              blank: Enter the child’s last name
-              too_long: Enter a last name that is less than 300 characters long
-            nhs_number:
-              blank: Enter the child’s NHS number
-              invalid: Enter a valid NHS number, such as 999 888 7777
-            parent_email:
-              blank: Enter your email address
-              invalid: Enter a valid email address, such as j.doe@gmail.com
-              too_long: Enter an email address that is less than 300 characters long
-            parent_name:
-              blank: Enter your name
-              too_long: Enter a name that is less than 300 characters long
-            parent_phone:
-              invalid: Enter a valid phone number, like 07700 900 000
-              too_long: Enter a phone number that is less than 300 characters long
-            parent_relationship:
-              blank: Choose your relationship
-              inclusion: Choose a relationship
-            parent_relationship_other:
-              blank: Enter your relationship
-              too_long: Enter a relationship that are less than 300 characters long
-            use_common_name:
-              inclusion: Tell us whether the child use a different name
         triage:
           attributes:
             status:

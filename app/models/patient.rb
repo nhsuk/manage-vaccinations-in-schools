@@ -39,7 +39,6 @@ class Patient < ApplicationRecord
   audited
 
   belongs_to :location, optional: true
-  belongs_to :registration, optional: true
   has_many :patient_sessions
   has_many :sessions, through: :patient_sessions
   has_many :triage, through: :patient_sessions

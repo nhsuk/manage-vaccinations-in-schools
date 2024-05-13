@@ -25,7 +25,6 @@ class Location < ApplicationRecord
   has_many :sessions
   has_many :patients
   has_many :consent_forms, through: :sessions
-  has_many :registrations
   belongs_to :team
 
   validates :name, presence: true
