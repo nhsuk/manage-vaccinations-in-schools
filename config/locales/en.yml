@@ -227,7 +227,6 @@ en:
               invalid: "‘%{value}’ should be formatted as YYYY-MM-DDTHH:MM:SSZ"
             eoi_id:
               blank: "is required but missing"
-              invalid: "‘%{value}’ is not a valid expression of interest ID"
               in_use: "‘%{value}’ has been uploaded before"
             school_id:
               blank: "is required but missing"
