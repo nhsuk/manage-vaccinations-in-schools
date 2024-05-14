@@ -29,16 +29,6 @@
       <% end %>
     <% end %>
   <% end %>
-
-  <%= if display_health_questions?
-    render AppDetailsComponent.new(
-      summary: "Responses to health questions",
-      open: open_health_questions?,
-      expander: true
-    ) do
-      render AppHealthQuestionsComponent.new(consents: @patient_session.consents)
-    end
-  end %>
 <% else %>
   <p>
     <%= form_for :consent,

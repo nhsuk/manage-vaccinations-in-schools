@@ -21,6 +21,12 @@
   <%= render AppConsentComponent.new(patient_session:, section:, tab:) %>
 <% end %>
 
+<% if display_health_questions? %>
+  <%= render AppCardComponent.new(heading: "All answers to health questions") do
+    render AppHealthQuestionsComponent.new(consents: @patient_session.consents)
+  end %>
+<% end %>
+
 <%= render AppCardComponent.new(heading: "Triage notes") do %>
   <%= render AppTriageNotesComponent.new(patient_session:) %>
 <% end %>

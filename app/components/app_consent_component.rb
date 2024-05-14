@@ -12,15 +12,6 @@ class AppConsentComponent < ViewComponent::Base
   delegate :patient, to: :patient_session
   delegate :session, to: :patient_session
 
-  def display_health_questions?
-    @patient_session.consents.any?(&:response_given?)
-  end
-
-  def open_health_questions?
-    @patient_session.consents.any?(&:health_answers_require_follow_up?) &&
-      @patient_session.vaccination_records.administered.none?
-  end
-
   def display_gillick_consent_button?
     @patient_session.session.in_progress? && @patient_session.consents.empty? &&
       @patient_session.able_to_vaccinate?
