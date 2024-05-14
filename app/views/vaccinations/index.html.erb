@@ -27,12 +27,10 @@
     if selected && @patient_sessions.size > 0
       render AppPatientTableComponent.new(
         patient_sessions: @patient_sessions,
-        tab_id: label.parameterize,
         caption: t("states.#{state}.title"),
         columns:,
         section: :vaccinations,
         tab: params[:tab],
-        filter_actions: true
       )
     else
       ""

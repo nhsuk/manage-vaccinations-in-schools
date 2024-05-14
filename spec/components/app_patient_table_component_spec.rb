@@ -17,17 +17,8 @@ RSpec.describe AppPatientTableComponent, type: :component do
   let(:tab) { :needed }
   let(:patient_sessions) { create_list(:patient_session, 2) }
   let(:columns) { %i[name dob] }
-  let(:filter_actions) { false }
   let(:params) do
-    {
-      patient_sessions:,
-      tab_id: "foo",
-      caption: "Foo",
-      section:,
-      tab:,
-      columns:,
-      filter_actions:
-    }
+    { patient_sessions:, caption: "Foo", section:, tab:, columns: }
   end
   let(:component) { described_class.new(**params) }
 
@@ -65,7 +56,6 @@ RSpec.describe AppPatientTableComponent, type: :component do
     let(:component) do
       described_class.new(
         patient_sessions:,
-        tab_id: "foo",
         section: :matching,
         consent_form: create(:consent_form),
         columns: %i[name postcode dob select_for_matching]
@@ -86,26 +76,6 @@ RSpec.describe AppPatientTableComponent, type: :component do
                patient_sessions.first.patient.full_name,
                href: "/session/patient/"
              )
-    end
-  end
-
-  describe "filter_actions parameter" do
-    context "is not set" do
-      let(:component) { described_class.new(**params.except(:filter_actions)) }
-
-      it { should_not have_text("By action needed") }
-    end
-
-    context "is enabled" do
-      let(:filter_actions) { true }
-
-      it { should have_text("By action needed") }
-    end
-
-    context "is disabled" do
-      let(:filter_actions) { false }
-
-      it { should_not have_text("By action needed") }
     end
   end
 

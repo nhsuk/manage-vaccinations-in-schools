@@ -138,11 +138,9 @@ RSpec.describe "Parental consent" do
   end
 
   def then_they_see_that_the_child_has_consent_refused
-    expect(page).to have_content("Refused (1)")
-    click_on "Refused (1)"
-    within "div#refused" do
-      expect(page).to have_content(@child.full_name)
-    end
+    expect(page).to have_content("Refused")
+    click_on "Refused"
+    expect(page).to have_content(@child.full_name)
   end
 
   def and_the_action_in_the_vaccination_session_is_to_check_refusal
