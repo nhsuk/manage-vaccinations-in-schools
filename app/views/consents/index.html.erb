@@ -4,60 +4,41 @@
   <%= render AppBreadcrumbComponent.new(items: [
     { text: 'Home', href: dashboard_path },
     { text: 'Today’s sessions', href: sessions_path },
-    { text: "#{@session.campaign.name} session at #{@session.name}", href: session_path(@session) },
-    { text: page_title },
+    { text: "#{@session.campaign.name} session at #{@session.name}", href: session_path(@session) }
   ]) %>
 <% end %>
 
 <%= h1 page_title, page_title: %>
 
 <% if @unmatched_record_counts > 0 %>
-  <%= govuk_inset_text do %>
+  <%= govuk_inset_text html_attributes: { class: "nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-4" } do %>
     <span class="nhsuk-visually-hidden">Information: </span>
 
-    <p>
-      <%=
+    <p><%=
       responses = pluralize(@unmatched_record_counts, 'response')
       link_to(
         "#{responses} need matching with records in the cohort",
         session_consents_unmatched_responses_path(@session)
       )
-      %>
-    </p>
+    %></p>
   <% end %>
 <% end %>
 
-<% def tab_content(slot, state, tab_path, columns: %i[name dob])
-  label = t("states.#{state}.label")
-  selected = state == @current_tab
-  path = session_consents_tab_path(@session, tab: tab_path)
-  count = @tab_counts[state]
-
-  slot.with_tab(
-    id: label.parameterize,
-    link: path,
-    label: "#{label} (#{count})",
-    classes: 'nhsuk-tabs__panel',
-    selected:
-  ) do
-    if selected && @patient_sessions.size > 0
-      render AppPatientTableComponent.new(
-        patient_sessions: @patient_sessions,
-        tab_id: label.parameterize,
-        caption: t("states.#{state}.title"),
-        columns:,
-        section: :consents,
-        tab: params[:tab]
-      )
-    else
-      ""
-    end
+<%= render AppSecondaryNavigationComponent.new do |nav|
+  [[:"no-consent", :no_consent],
+   [:given, :consent_given],
+   [:refused, :consent_refused],
+   [:conflicts, :conflicting_consent]].each do |tab, state|
+    nav.with_item(selected: params[:tab] == tab.to_s,
+      href: session_consents_tab_path(@session, tab: tab)) do %>
+      <%= tab.to_s.humanize.gsub('-', ' ') %>
+      <%= render AppCountComponent.new(count: @tab_counts[state]) %>
+    <% end
   end
 end %>
 
-<%= render AppTabComponent.new title: "Consents", classes: 'nhsuk-tabs' do |slot|
-  tab_content(slot, :no_consent, :"no-consent")
-  tab_content(slot, :consent_given, :given)
-  tab_content(slot, :consent_refused, :refused, columns: %i[name dob reason])
-  tab_content(slot, :conflicting_consent, :conflicts)
-end %>
+<%= render AppPatientTableComponent.new(
+  patient_sessions: @patient_sessions,
+  caption: t("states.#{@current_tab}.title"),
+  columns: %i[name dob], section: :consents, tab: params[:tab]
+) %>

@@ -147,7 +147,7 @@ RSpec.describe "Pilot journey" do
   end
 
   def then_i_see_the_children_from_the_cohort
-    click_link "No response (1)"
+    click_link "No consent"
     expect(page).to have_content("Bobby Tables")
   end
 

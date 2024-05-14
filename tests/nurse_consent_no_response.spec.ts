@@ -39,7 +39,7 @@ async function and_i_am_signed_in() {
 
 async function when_i_select_a_child_with_no_consent_response() {
   await p.goto("/sessions/1/consents");
-  await p.getByRole("tab", { name: "No response" }).click();
+  await p.getByRole("link", { name: "No consent" }).click();
   await p.getByRole("link", { name: fixtures.patientThatNeedsConsent }).click();
 }
 

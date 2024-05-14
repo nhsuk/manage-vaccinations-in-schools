@@ -41,7 +41,7 @@ async function and_i_am_signed_in() {
 
 async function given_i_am_on_the_who_am_i_contacting_for_consent_page() {
   await p.goto("/sessions/1/consents");
-  await p.getByRole("tab", { name: "No response" }).click();
+  await p.getByRole("link", { name: "No consent" }).click();
   await p.getByRole("link", { name: fixtures.patientThatNeedsConsent }).click();
   await p.getByRole("button", { name: "Get consent" }).click();
 }

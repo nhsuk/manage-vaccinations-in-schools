@@ -1,0 +1,27 @@
+.app-patients {
+  @include top-and-bottom;
+
+  background-color: $color_nhsuk-white;
+  display: flex;
+  flex-wrap: wrap;
+
+  & .app-patients__filters {
+    @include nhsuk-responsive-padding(4);
+
+    background-color: $color_nhsuk-grey-4;
+    flex-basis: 15rem;
+    flex-grow: 1;
+  }
+
+  & .app-patients__no-results {
+    @include nhsuk-responsive-margin(4);
+  }
+
+  & .app-patients__table {
+    @include nhsuk-responsive-margin(4);
+
+    flex-basis: 0;
+    flex-grow: 999;
+    min-width: 70%;
+  }
+}

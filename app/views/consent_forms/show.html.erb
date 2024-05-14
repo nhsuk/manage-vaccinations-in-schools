@@ -21,7 +21,6 @@
   if @patient_sessions.count > 0
     render AppPatientTableComponent.new(
       patient_sessions: @patient_sessions,
-      tab_id: "cohort",
       columns: %i[name postcode dob select_for_matching],
       section: :matching,
       consent_form: @consent_form
