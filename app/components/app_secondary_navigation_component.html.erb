@@ -1,0 +1,13 @@
+<nav class="app-secondary-navigation nhsuk-u-margin-bottom-4"
+  aria-label="Secondary menu">
+  <ul class="app-secondary-navigation__list">
+    <% items.each do |item| %>
+      <li class="app-secondary-navigation__list-item
+        <%= 'app-secondary-navigation__list-item--current' if item.selected %>">
+        <%= link_to item.href, class: "app-secondary-navigation__link" do %>
+          <%= item %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</nav>
