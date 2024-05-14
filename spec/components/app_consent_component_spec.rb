@@ -66,7 +66,7 @@ RSpec.describe AppConsentComponent, type: :component do
     it { should_not have_css("details", text: "Responses to health questions") }
   end
 
-  context "consent is given needing triage" do
+  context "consent is given" do
     let(:patient_session) do
       create(:patient_session, :consent_given_triage_needed)
     end
@@ -77,41 +77,6 @@ RSpec.describe AppConsentComponent, type: :component do
     it { should have_css("details[open]", text: summary) }
 
     it { should_not have_css("a", text: "Contact #{consent.parent_name}") }
-    it { should have_css("details", text: "Responses to health questions") }
-
-    it "opens the health questions details" do
-      should have_css("details[open]", text: "Responses to health questions")
-    end
-  end
-
-  context "consent is given not needing triage" do
-    let(:patient_session) do
-      create(:patient_session, :consent_given_triage_not_needed)
-    end
-
-    let(:summary) { "Consent given by #{consent.parent_name} (#{relation})" }
-    it { should have_css("details[open]", text: summary) }
-
-    it { should_not have_css("a", text: "Contact #{consent.parent_name}") }
-    it { should have_css("details", text: "Responses to health questions") }
-
-    it "does not open the health questions details (as there are no notes in the health questions)" do
-      should have_css "details:not([open])",
-                      text: "Responses to health questions"
-    end
-  end
-
-  context "consent given, triaged and ready to be vaccinated" do
-    let(:patient_session) do
-      create(:patient_session, :triaged_ready_to_vaccinate)
-    end
-
-    let(:summary) { "Consent given by #{consent.parent_name} (#{relation})" }
-    it { should have_css("details[open]", text: summary) }
-
-    it "opens the health questions details (because there are notes in the health questions)" do
-      should have_css "details[open]", text: "Responses to health questions"
-    end
   end
 
   context "consent given needing triage and patient has been vaccinated" do
@@ -119,11 +84,6 @@ RSpec.describe AppConsentComponent, type: :component do
 
     let(:summary) { "Consent given by #{consent.parent_name} (#{relation})" }
     it { should have_css("details:not([open])", text: summary) }
-
-    it "doesn't open the health questions details (because there are notes in the health questions)" do
-      should have_css "details:not([open])",
-                      text: "Responses to health questions"
-    end
   end
 
   context "consent given needing triage and patient cannot be vaccinated" do
@@ -133,9 +93,5 @@ RSpec.describe AppConsentComponent, type: :component do
 
     let(:summary) { "Consent given by #{consent.parent_name} (#{relation})" }
     it { should have_css("details:not([open])", text: summary) }
-
-    it "opens the health questions details (because there are notes in the health questions)" do
-      should have_css "details[open]", text: "Responses to health questions"
-    end
   end
 end

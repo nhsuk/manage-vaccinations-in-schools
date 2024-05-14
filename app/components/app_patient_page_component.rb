@@ -25,4 +25,8 @@ class AppPatientPageComponent < ViewComponent::Base
 
   delegate :patient, to: :patient_session
   delegate :session, to: :patient_session
+
+  def display_health_questions?
+    @patient_session.consents.any?(&:response_given?)
+  end
 end
