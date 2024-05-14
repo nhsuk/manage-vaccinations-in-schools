@@ -48,29 +48,15 @@ module LoadExampleCampaign
         create_consent_forms(consent_forms:, session:)
       end
 
-      schools_with_no_session =
-        example.schools_with_no_session.map do |school_attributes|
-          create_school(team:, school_attributes:)
-        end
+      example.schools_with_no_session.map do |school_attributes|
+        create_school(team:, school_attributes:)
+      end
 
       create_children(
         patient_attributes: example.patients_with_no_session,
         campaign: nil,
         session: nil
       )
-
-      location = team.locations.first || schools_with_no_session.first
-      example.registrations.each do |registration_attributes|
-        Registration.create!(
-          registration_attributes.merge(
-            location:,
-            terms_and_conditions_agreed: true,
-            data_processing_agreed: true,
-            consent_response_confirmed: true,
-            user_research_observation_agreed: true
-          )
-        )
-      end
     end
   end
 
@@ -111,11 +97,7 @@ module LoadExampleCampaign
 
   def self.create_school(team:, school_attributes:)
     Location
-      .find_or_create_by!(
-        team:,
-        name: school_attributes[:name],
-        permission_to_observe_required: true
-      )
+      .find_or_create_by!(team:, name: school_attributes[:name])
       .tap { |school| school.update!(school_attributes) }
   end
 

@@ -4,23 +4,23 @@
   "dependencies": {
     "@colinaut/action-table": "^2.4.14",
     "@hotwired/stimulus": "^3.2.2",
-    "esbuild": "^0.20.2",
+    "esbuild": "^0.21.2",
     "govuk-frontend": "^5.3.1",
     "idb": "^8.0.0",
     "nhsuk-frontend": "^8.1.1",
-    "sass": "^1.76.0",
+    "sass": "^1.77.1",
     "stimulus": "^3.2.2",
     "workbox-build": "^7.1.0"
   },
   "scripts": {
-    "build:css": "sass ./app/assets/stylesheets/application.scss:./app/assets/builds/application.css ./app/assets/stylesheets/registration.scss:./app/assets/builds/registration.css --no-source-map --load-path=node_modules --quiet-deps --style compressed",
+    "build:css": "sass ./app/assets/stylesheets/application.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules --quiet-deps --style compressed",
     "build": "esbuild app/javascript/*.[jt]s app/javascript/controllers/*.[jt]s --bundle --sourcemap --outdir=app/assets/builds --public-path=assets --minify",
     "build:serviceworker": "esbuild app/javascript/serviceworker/main.js --bundle --sourcemap --outfile=public/sw.js --minify",
     "test:e2e": "PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1 playwright test",
     "test": "jest"
   },
   "devDependencies": {
-    "@playwright/test": "^1.43.1",
+    "@playwright/test": "^1.44.0",
     "@prettier/plugin-ruby": "^4.0.4",
     "@types/jest": "^29.5.12",
     "concurrently": "^8.2.2",

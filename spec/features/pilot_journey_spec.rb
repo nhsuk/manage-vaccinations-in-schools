@@ -1,27 +1,15 @@
 require "rails_helper"
+require "csv"
 
 RSpec.describe "Pilot journey" do
   before { Timecop.freeze(Time.zone.local(2024, 2, 1)) }
   after { Timecop.return }
 
-  before { Flipper.enable :registration_open }
-
-  scenario "Parent registration, cohorting, session creation, verbal consent, \
-vaccination" do
-    # Parent registration
-    given_an_hpv_campaign_is_underway
-    when_i_register_for_the_pilot_as_a_parent
-    then_i_see_that_i_have_registered
-
+  scenario "Cohorting, session creation, verbal consent, vaccination" do
     # Cohorting
-    given_i_am_a_nurse_signed_into_the_service
-    when_i_close_the_registration_for_the_pilot
-    then_i_see_that_registrations_are_closed
-
-    when_i_download_the_list_of_parents_interested_in_the_pilot
-    then_i_see_the_newly_registered_parent_in_the_csv
-
-    when_i_edit_and_upload_the_cohort_list
+    given_an_hpv_campaign_is_underway
+    and_i_am_a_nurse_signed_into_the_service
+    when_i_upload_the_cohort_list_containing_one_child
     then_i_see_that_the_cohort_has_been_uploaded
 
     # Session creation
@@ -52,67 +40,13 @@ vaccination" do
     @school = create(:location, name: "Pilot School", team: @team)
   end
 
-  def when_i_register_for_the_pilot_as_a_parent
-    visit "/schools/#{@school.id}/registration/new"
-    expect(page).to have_content("Pilot School")
-
-    fill_in "Your name", with: "Big Daddy Tests"
-    choose "Dad"
-    fill_in "Email address", with: "daddy.tests@example.com"
-    fill_in "Phone number", with: "07123456789"
-    fill_in "First name", with: "Bobby"
-    fill_in "Last name", with: "Tables"
-    choose "Yes"
-    fill_in "Preferred name", with: "Drop Table"
-    fill_in "Day", with: "01"
-    fill_in "Month", with: "01"
-    fill_in "Year", with: "2020"
-    fill_in "Address line 1", with: "1 Test Street"
-    fill_in "Address line 2", with: "2nd Floor"
-    fill_in "Town or city", with: "Testville"
-    fill_in "Postcode", with: "TE1 1ST"
-    fill_in "NHS number", with: "999 888 7777"
-    check "I agree to take part in the pilot"
-    check "I agree to share my contact details"
-    check "I confirm I’ve responded to the school"
-    check "I agree to my child’s vaccination session being observed"
-
-    click_on "Register your interest"
-  end
-
-  def then_i_see_that_i_have_registered
-    expect(page).to have_content("Thank you for registering your interest")
-  end
-
-  def given_i_am_a_nurse_signed_into_the_service
+  def and_i_am_a_nurse_signed_into_the_service
     sign_in @team.users.first
     visit "/dashboard"
   end
 
-  def when_i_close_the_registration_for_the_pilot
-    visit "/pilot"
-    click_on "See who’s interested in the pilot"
-    click_on "Close pilot to new participants at this school"
-    click_on "Yes, close the pilot to new participants"
-  end
-
-  def then_i_see_that_registrations_are_closed
-    expect(page).to have_content("Pilot is now closed to new participants")
-  end
-
-  def when_i_download_the_list_of_parents_interested_in_the_pilot
-    click_on "Download data for registered parents (CSV)"
-
-    expect(page.response_headers["Content-Type"]).to eq("text/csv")
-    expect(page.response_headers["Content-Disposition"]).to eq(
-      "attachment; filename=\"registered_parents.csv\"; filename*=UTF-8''registered_parents.csv"
-    )
-
-    @registered_parents_csv = CSV.parse(page.body, headers: true)
-  end
-
-  def then_i_see_the_newly_registered_parent_in_the_csv
-    expect(@registered_parents_csv[-1].to_h).to include(
+  def when_i_upload_the_cohort_list_containing_one_child
+    cohort_data = {
       "SCHOOL_ID" => @school.id.to_s,
       "SCHOOL_NAME" => "Pilot School",
       "PARENT_NAME" => "Big Daddy Tests",
@@ -127,12 +61,11 @@ vaccination" do
       "CHILD_ADDRESS_LINE_2" => "2nd Floor",
       "CHILD_ADDRESS_TOWN" => "Testville",
       "CHILD_ADDRESS_POSTCODE" => "TE1 1ST",
-      "CHILD_NHS_NUMBER" => "999 888 7777"
-    )
-  end
+      "CHILD_NHS_NUMBER" => "999 888 6666"
+    }
 
-  def when_i_edit_and_upload_the_cohort_list
-    @registered_parents_csv[-1]["CHILD_NHS_NUMBER"] = "999 888 6666"
+    @registered_parents_csv =
+      CSV::Table.new([CSV::Row.new(cohort_data.keys, cohort_data.values)])
 
     csv_file = Tempfile.new("cohort_list.csv", Rails.root.join("tmp"))
     csv_file.write(@registered_parents_csv.to_csv)

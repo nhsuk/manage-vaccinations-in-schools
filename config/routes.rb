@@ -38,23 +38,12 @@ Rails.application.routes.draw do
   if Rails.env.development? || Rails.env.test?
     get "/reset", to: "dev#reset"
     get "/random_consent_form", to: "dev#random_consent_form"
-
-    namespace :testing do
-      get "/campaigns/:id", action: :show_campaign, as: "show_campaign"
-      post "generate-campaign"
-    end
   end
 
   get "/csrf", to: "csrf#new"
 
   resource :pilot, only: [] do
     get "/", to: "pilot#manage", as: :manage
-    get "/manual", to: "pilot#manual", as: :manual
-
-    resources :registrations, only: %i[] do
-      get "/", to: "pilot#registrations", on: :collection
-      get "/download", to: "pilot#download", on: :collection
-    end
 
     resource :cohort_list, as: :cohort, only: %i[new create] do
       get "success", on: :collection
@@ -200,17 +189,6 @@ Rails.application.routes.draw do
     resources :batches, only: %i[new create] do
       post "make-default", on: :member, as: :make_default
       post "remove-default", on: :member, as: :remove_default
-    end
-  end
-
-  resources :schools, only: [] do
-    get "close_registration", on: :member
-    post "close_registration",
-         to: "schools#handle_close_registration",
-         on: :member
-
-    resource :registration, only: %i[new create update] do
-      get "confirmation", on: :collection
     end
   end
 

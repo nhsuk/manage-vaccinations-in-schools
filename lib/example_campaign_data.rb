@@ -52,8 +52,7 @@ class ExampleCampaignData
       town: school_data["town"],
       county: school_data["county"],
       postcode: school_data["postcode"],
-      url: school_data["url"],
-      registration_open: true
+      url: school_data["url"]
     }
   end
 
@@ -141,32 +140,6 @@ class ExampleCampaignData
 
   def consent_form_attributes(session_attributes:)
     session_attributes["consent_forms"]
-  end
-
-  def registrations
-    raw_data["registrations"].map do |registration_example|
-      registration = {}
-      registration[:first_name] = registration_example["firstName"]
-      registration[:last_name] = registration_example["lastName"]
-      registration[:date_of_birth] = registration_example["dob"]
-      registration[:nhs_number] = registration_example["nhsNumber"]
-      registration[:parent_email] = registration_example["parentEmail"]
-      registration[:parent_name] = registration_example["parentName"]
-      registration[:parent_phone] = registration_example["parentPhone"]
-      registration[:parent_relationship] = registration_example[
-        "parentRelationship"
-      ]
-      registration[:parent_relationship_other] = registration_example[
-        "parentRelationshipOther"
-      ]
-      registration[:address_line_1] = registration_example["addressLine1"]
-      registration[:address_line_2] = registration_example["addressLine2"]
-      registration[:address_town] = registration_example["addressTown"]
-      registration[:address_postcode] = registration_example["addressPostcode"]
-      registration[:common_name] = registration_example["commonName"]
-      registration[:use_common_name] = registration_example["useCommonName"]
-      registration
-    end
   end
 
   def patients_with_no_session

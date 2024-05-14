@@ -1,9 +1,7 @@
 class CohortListRow
   include ActiveModel::Model
 
-  attr_accessor :submitted_at,
-                :eoi_id,
-                :school_id,
+  attr_accessor :school_id,
                 :school_name,
                 :parent_name,
                 :parent_relationship,
@@ -20,10 +18,6 @@ class CohortListRow
                 :child_nhs_number,
                 :team
 
-  validates :submitted_at, presence: true
-  validate :submitted_at_is_valid, if: -> { submitted_at.present? }
-  validates :eoi_id, presence: true
-  validate :eoi_id_is_valid, if: -> { eoi_id.present? }
   validates :school_id, presence: true
   validate :school_id_is_valid, if: -> { school_id.present? }
   validates :parent_name, presence: true
@@ -54,7 +48,6 @@ class CohortListRow
 
   def to_patient
     {
-      registration_id:,
       common_name:,
       date_of_birth:,
       first_name:,
@@ -108,10 +101,6 @@ class CohortListRow
     child_address_postcode
   end
 
-  def registration_id
-    eoi_id
-  end
-
   def parent_relationship_hash
     case parent_relationship
     when "Mother"
@@ -128,20 +117,9 @@ class CohortListRow
     end
   end
 
-  def submitted_at_is_valid
-    errors.add(:submitted_at, :invalid) if Time.zone.parse(submitted_at).nil?
-  end
-
   def school_id_is_valid
     team.locations.find(school_id)
   rescue ActiveRecord::RecordNotFound
     errors.add(:school_id, :invalid)
-  end
-
-  def eoi_id_is_valid
-    registration = Registration.find(eoi_id)
-    errors.add(:eoi_id, :in_use) if registration.patient.present?
-  rescue ActiveRecord::RecordNotFound
-    errors.add(:eoi_id, :invalid)
   end
 end

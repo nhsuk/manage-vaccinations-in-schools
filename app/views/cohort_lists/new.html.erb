@@ -24,9 +24,7 @@
     <%= f.govuk_error_summary %>
 
     <%= f.govuk_file_field :csv,
-      label: { text: page_title, tag: 'h1', size: 'l' },
-      hint: { text: 'Make sure the CSV you upload has the same format as your
-                     standard cohort template' } do %>
+      label: { text: page_title, tag: 'h1', size: 'l' } do %>
       <%= govuk_inset_text do %>
         <span class="nhsuk-visually-hidden">Information: </span>
 

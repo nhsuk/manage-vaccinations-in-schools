@@ -23,18 +23,15 @@
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  location_id               :bigint
-#  registration_id           :bigint
 #
 # Indexes
 #
-#  index_patients_on_location_id      (location_id)
-#  index_patients_on_nhs_number       (nhs_number) UNIQUE
-#  index_patients_on_registration_id  (registration_id)
+#  index_patients_on_location_id  (location_id)
+#  index_patients_on_nhs_number   (nhs_number) UNIQUE
 #
 # Foreign Keys
 #
 #  fk_rails_...  (location_id => locations.id)
-#  fk_rails_...  (registration_id => registrations.id)
 #
 class Patient < ApplicationRecord
   include AgeConcern
@@ -42,7 +39,6 @@ class Patient < ApplicationRecord
   audited
 
   belongs_to :location, optional: true
-  belongs_to :registration, optional: true
   has_many :patient_sessions
   has_many :sessions, through: :patient_sessions
   has_many :triage, through: :patient_sessions

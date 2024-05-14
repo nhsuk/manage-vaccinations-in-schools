@@ -9,9 +9,6 @@ task :performance, [] => :environment do |_task, _args|
 
   teams = Team.all - Team.where(name: "Team MAVIS")
 
-  eoi_total = Registration.where(location: teams.map(&:locations).flatten).count
-  puts "#{emoji_count(eoi_total)} *Expressions of interest (total)*"
-
   patients_total = Patient.where(location: teams.map(&:locations).flatten).count
   puts "#{patients_total} *Patients in cohort (total)*"
 
@@ -43,8 +40,6 @@ task :performance, [] => :environment do |_task, _args|
     team.campaigns.first.sessions.active.each do |session|
       puts ""
       puts ":school: *#{session.location.name}*"
-
-      puts "- #{pluralize(session.location.registrations.count, "parents")} registered interest :pencil:"
 
       @counts =
         SessionStats.new(patient_sessions: session.patient_sessions, session:)

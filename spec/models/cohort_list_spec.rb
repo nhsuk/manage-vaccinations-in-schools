@@ -8,17 +8,6 @@ RSpec.describe CohortList, type: :model do
   let!(:location) { Location.find_by(id: 1) || create(:location, id: 1) }
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_list/#{file}") }
 
-  before do
-    if Registration.count.zero?
-      create(:registration, id: 1, location_id: 1)
-      create(:registration, id: 2, location_id: 1)
-    end
-  end
-
-  # Clear out any patients created by the test suite to prevent
-  # the validations from failing due to duplicate registration IDs
-  before(:each) { Patient.where.not(registration: nil).delete_all }
-
   describe "#load_data!" do
     describe "with missing CSV" do
       let(:csv) { nil }
@@ -142,30 +131,6 @@ RSpec.describe CohortList, type: :model do
       expect { cohort_list.generate_patients! }.to change { Patient.count }.by(
         2
       )
-    end
-  end
-
-  describe ".from_registrations" do
-    let(:registration) { build(:registration) }
-
-    it "creates a CohortList" do
-      cohort_list = described_class.from_registrations([registration])
-
-      expect(cohort_list).to be_a(described_class)
-      expect(cohort_list.data).to be_a(Array)
-      expect(row = cohort_list.data.first).to be_a(Array)
-      expect(row.first).to eq(registration.created_at)
-    end
-  end
-
-  describe "#to_csv" do
-    let(:registration) { build(:registration) }
-
-    it "returns a CSV" do
-      cohort_list = described_class.from_registrations([registration])
-
-      expect(cohort_list.to_csv).to be_a(String)
-      expect(cohort_list.to_csv).to include(registration.created_at.to_s)
     end
   end
 end
