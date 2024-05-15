@@ -61,8 +61,7 @@ class PatientSession < ApplicationRecord
   end
 
   def able_to_vaccinate?
-    !unable_to_vaccinate? && !unable_to_vaccinate_not_assessed? &&
-      !unable_to_vaccinate_not_gillick_competent?
+    !unable_to_vaccinate? && !unable_to_vaccinate_not_gillick_competent?
   end
 
   def latest_consents

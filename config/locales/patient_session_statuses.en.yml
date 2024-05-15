@@ -58,11 +58,6 @@ en:
         gave_consent: "Their %{who_responded} gave consent"
         triaged_do_not_vaccinate: "Do not vaccinate in campaign"
         unable_to_vaccinate: "Refused vaccine"
-    unable_to_vaccinate_not_assessed:
-      colour: red
-      text: Not vaccinated
-      banner_title: Not vaccinated
-      banner_explanation: No-one responded to our requests for consent
     unable_to_vaccinate_not_gillick_competent:
       colour: red
       text: Not vaccinated

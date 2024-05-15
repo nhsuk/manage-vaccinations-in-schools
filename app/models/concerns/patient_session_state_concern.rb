@@ -40,7 +40,6 @@ module PatientSessionStateConcern
       triaged_do_not_vaccinate
       triaged_kept_in_triage
       unable_to_vaccinate
-      unable_to_vaccinate_not_assessed
       unable_to_vaccinate_not_gillick_competent
       delay_vaccination
       vaccinated

@@ -42,7 +42,6 @@ class SessionStats
       counts[:could_not_vaccinate] += 1 if s.delay_vaccination? ||
         s.consent_refused? || s.consent_conflicts? ||
         s.triaged_do_not_vaccinate? || s.unable_to_vaccinate? ||
-        s.unable_to_vaccinate_not_assessed? ||
         s.unable_to_vaccinate_not_gillick_competent?
     end
 
