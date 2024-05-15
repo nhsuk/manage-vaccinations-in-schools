@@ -20,19 +20,20 @@ en:
   page_titles:
     accessibility_statement: "Accessibility statement"
     privacy_policy: "Your privacy"
-  states:
+  patients_table:
     consent_given:
       label: Given
-      title: Children with consent given
+      caption: "%{children} with consent given"
     consent_refused:
       label: Refused
-      title: Children with consent refused
+      caption: "%{children} with consent refused"
     conflicting_consent:
       label: Conflicts
-      title: Children with conflicting consent responses
+      caption: "%{children} with conflicting consent responses"
     no_consent:
-      label: No response
-      title: Children with no consent response
+      label: No consent
+      caption: "%{children} without a response"
+  states:
     needs_triage:
       label: Triage needed
       title: Children needing triage

@@ -28,7 +28,7 @@ RSpec.describe AppPatientTableComponent, type: :component do
 
   it { should have_css(".nhsuk-table") }
   it { should have_css(".nhsuk-table__head") }
-  it { should have_column("Name") }
+  it { should have_column("Full name") }
   it { should have_column("Date of birth") }
   it { should have_css(".nhsuk-table__head .nhsuk-table__row", count: 1) }
 
@@ -83,7 +83,7 @@ RSpec.describe AppPatientTableComponent, type: :component do
     context "is not set" do
       let(:component) { described_class.new(**params.except(:columns)) }
 
-      it { should have_column("Name") }
+      it { should have_column("Full name") }
       it { should have_column("Date of birth") }
     end
 
