@@ -1,16 +1,16 @@
 require "rails_helper"
 
-RSpec.describe "Vaccination authorisation" do
-  scenario "Unable to access other teams' vaccinations" do
+RSpec.describe "Consent authorisation" do
+  scenario "Unable to access other teams' triage" do
     given_an_hpv_campaign_is_underway_with_two_teams
     when_i_sign_in_as_a_nurse_from_one_team
-    and_i_go_to_the_vaccinations_page
+    and_i_go_to_the_consent_page
     then_i_should_only_see_my_patients
 
-    when_i_go_to_the_vaccinations_page_of_another_team
+    when_i_go_to_the_consent_page_of_another_team
     then_i_should_see_page_not_found
 
-    when_i_go_to_the_vaccination_record_page_belonging_to_another_team
+    when_i_go_to_the_consent_page_of_another_team
     then_i_should_see_page_not_found
   end
 
@@ -39,12 +39,12 @@ RSpec.describe "Vaccination authorisation" do
     sign_in @team.users.first
   end
 
-  def and_i_go_to_the_vaccinations_page
+  def and_i_go_to_the_consent_page
     visit "/dashboard"
     click_on "Campaigns", match: :first
     click_on "HPV"
     click_on "Pilot School"
-    click_on "Record vaccinations"
+    click_on "Check consent responses"
   end
 
   def then_i_should_only_see_my_patients
@@ -52,15 +52,15 @@ RSpec.describe "Vaccination authorisation" do
     expect(page).not_to have_content(@other_child.full_name)
   end
 
-  def when_i_go_to_the_vaccinations_page_of_another_team
-    visit "/sessions/#{@other_session.id}/vaccinations"
+  def when_i_go_to_the_consent_page_of_another_team
+    visit "/sessions/#{@other_session.id}/consent"
   end
 
   def then_i_should_see_page_not_found
     expect(page).to have_content("Page not found")
   end
 
-  def when_i_go_to_the_vaccination_record_page_belonging_to_another_team
-    visit "/sessions/#{@other_session.id}/patients/#{@other_child.id}/vaccinations"
+  def when_i_go_to_the_consent_page_of_another_team
+    visit "/sessions/#{@other_session.id}/consent"
   end
 end
