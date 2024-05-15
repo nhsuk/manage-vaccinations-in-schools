@@ -25,13 +25,10 @@
 <% end %>
 
 <%= render AppSecondaryNavigationComponent.new do |nav|
-  [[:"no-consent", :no_consent],
-   [:given, :consent_given],
-   [:refused, :consent_refused],
-   [:conflicts, :conflicting_consent]].each do |tab, state|
-    nav.with_item(selected: params[:tab] == tab.to_s,
-      href: session_consents_tab_path(@session, tab: tab)) do %>
-      <%= tab.to_s.humanize.gsub('-', ' ') %>
+  TAB_PATHS[:consents].each do |tab, state|
+    nav.with_item(selected: @current_tab == state,
+      href: session_consents_tab_path(@session, tab:)) do %>
+      <%= t("patients_table.#{state}.label") %>
       <%= render AppCountComponent.new(count: @tab_counts[state]) %>
     <% end
   end
@@ -39,6 +36,8 @@ end %>
 
 <%= render AppPatientTableComponent.new(
   patient_sessions: @patient_sessions,
-  caption: t("states.#{@current_tab}.title"),
-  columns: %i[name dob], section: :consents, tab: params[:tab]
+  caption: t("patients_table.#{@current_tab}.caption",
+             children: pluralize_child(@patient_sessions.count)),
+  columns: @current_tab == :consent_refused ? %i[name dob reason] : %i[name dob],
+  section: :consents, tab: params[:tab]
 ) %>

@@ -24,7 +24,7 @@ class AppPatientTableComponent < ViewComponent::Base
   def column_name(column)
     {
       action: "Action needed",
-      name: "Name",
+      name: "Full name",
       dob: "Date of birth",
       reason: "Reason for refusal",
       outcome: "Outcome",
