@@ -13,7 +13,7 @@ RSpec.describe "Verbal consent" do
 
     when_i_go_to_the_patient
     then_i_see_that_the_status_is_safe_to_vaccinate
-    and_an_email_is_sent_to_the_parent_confirming_the_vaccination
+    and_an_email_is_sent_to_the_parent_confirming_their_consent
   end
 
   def given_i_am_signed_in
@@ -67,7 +67,7 @@ RSpec.describe "Verbal consent" do
     expect(page).to have_content("Safe to vaccinate")
   end
 
-  def and_an_email_is_sent_to_the_parent_confirming_the_vaccination
+  def and_an_email_is_sent_to_the_parent_confirming_their_consent
     expect(sent_emails.count).to eq 1
 
     expect(sent_emails.last).to be_sent_with_govuk_notify.using_template(
