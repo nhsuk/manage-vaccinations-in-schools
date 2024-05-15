@@ -12,7 +12,7 @@ RSpec.describe "Verbal consent" do
     then_i_see_the_consent_responses_page
 
     when_i_go_to_the_patient
-    then_i_see_that_the_status_is_do_not_vaccinate
+    then_i_see_that_the_status_is_safe_to_vaccinate
     and_an_email_is_sent_to_the_parent_confirming_the_vaccination
   end
 
@@ -63,7 +63,7 @@ RSpec.describe "Verbal consent" do
     click_link "View child record"
   end
 
-  def then_i_see_that_the_status_is_do_not_vaccinate
+  def then_i_see_that_the_status_is_safe_to_vaccinate
     expect(page).to have_content("Safe to vaccinate")
   end
 
