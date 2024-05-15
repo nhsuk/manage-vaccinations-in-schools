@@ -172,7 +172,7 @@ RSpec.describe "Parental consent" do
   def when_they_check_triage
     click_link "HPV session at Pilot School"
     click_on "Triage health questions"
-    click_on "No triage needed (1)"
+    click_on "No triage needed"
   end
 
   def then_the_patient_should_be_ready_to_vaccinate

@@ -4,42 +4,26 @@
   <%= render AppBreadcrumbComponent.new(items: [
     { text: 'Home', href: dashboard_path },
     { text: 'Today’s sessions', href: sessions_path },
-    { text: "#{@session.campaign.name} session at #{@session.name}", href: session_path(@session) },
-    { text: page_title }
+    { text: "#{@session.campaign.name} session at #{@session.name}", href: session_path(@session) }
   ]) %>
 <% end %>
 
 <%= h1 page_title, page_title: %>
 
-<% def tab_content(slot, state, tab_path, columns: %i[name dob])
-  label = t("states.#{state}.label")
-  selected = state == @current_tab
-  path = session_triage_tab_path(@session, tab: tab_path)
-  count = @tab_counts[state]
-
-  slot.with_tab(
-    id: label.parameterize,
-    link: path,
-    label: "#{label} (#{count})",
-    classes: 'nhsuk-tabs__panel',
-    selected:
-  ) do
-    if selected && @patient_sessions.size > 0
-      render AppPatientTableComponent.new(
-        patient_sessions: @patient_sessions,
-        caption: t("states.#{state}.title"),
-        columns:,
-        section: :triage,
-        tab: params[:tab]
-      )
-    else
-      ""
-    end
+<%= render AppSecondaryNavigationComponent.new do |nav|
+  TAB_PATHS[:triage].each do |tab, state|
+    nav.with_item(selected: @current_tab == state,
+      href: session_triage_tab_path(@session, tab:)) do %>
+      <%= t("patients_table.#{state}.label") %>
+      <%= render AppCountComponent.new(count: @tab_counts[state]) %>
+    <% end
   end
 end %>
 
-<%= render AppTabComponent.new title: "Consents", classes: 'nhsuk-tabs' do |slot|
-  tab_content(slot, :needs_triage, :needed)
-  tab_content(slot, :triage_complete, :completed)
-  tab_content(slot, :no_triage_needed, :"not-needed")
-end %>
+<%= render AppPatientTableComponent.new(
+  patient_sessions: @patient_sessions,
+  caption: t("patients_table.#{@current_tab}.caption",
+             children: pluralize_child(@patient_sessions.count)),
+  columns: %i[name dob],
+  section: :triage, tab: params[:tab]
+) %>
