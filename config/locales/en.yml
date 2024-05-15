@@ -33,16 +33,16 @@ en:
     no_consent:
       label: No consent
       caption: "%{children} without a response"
-  states:
     needs_triage:
       label: Triage needed
-      title: Children needing triage
+      caption: "%{children} needing triage"
     triage_complete:
       label: Triage completed
-      title: Children with triage completed
+      caption: "%{children} with triage completed"
     no_triage_needed:
       label: No triage needed
-      title: Children with no triage needed
+      caption: "%{children} with no triage needed"
+  states:
     action_needed:
       label: Action needed
       title: Children with action needed
