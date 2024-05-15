@@ -21,6 +21,7 @@ en:
     accessibility_statement: "Accessibility statement"
     privacy_policy: "Your privacy"
   patients_table:
+    # Consent
     consent_given:
       label: Given
       caption: "%{children} with consent given"
@@ -33,6 +34,8 @@ en:
     no_consent:
       label: No consent
       caption: "%{children} without a response"
+
+    # Triage
     needs_triage:
       label: Triage needed
       caption: "%{children} needing triage"
@@ -42,19 +45,14 @@ en:
     no_triage_needed:
       label: No triage needed
       caption: "%{children} with no triage needed"
-  states:
-    action_needed:
-      label: Action needed
-      title: Children with action needed
+
+    # Vaccinate
     vaccinated:
       label: Vaccinated
-      title: Vaccinated children
-    vaccinate_later:
-      label: Vaccinate later
-      title: Children who will be vaccinated later
+      caption: "%{children} vaccinated"
     could_not_vaccinate:
       label: Could not vaccinate
-      title: Children who could not be vaccinated
+      caption: "%{children} could not vaccinated"
   service:
     email: england.mavis@nhs.net
   wicked:

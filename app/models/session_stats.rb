@@ -22,8 +22,8 @@ class SessionStats
       with_consent_refused: 0,
       without_a_response: 0,
       needing_triage: 0,
-      ready_to_vaccinate: 0,
-      not_ready_to_vaccinate: 0,
+      vaccinated: 0,
+      could_not_vaccinate: 0,
       with_conflicting_consent: 0,
       unmatched_responses: @session.consent_forms.unmatched.recorded.count
     }
@@ -38,12 +38,13 @@ class SessionStats
         counts[:needing_triage] += 1
       end
 
-      counts[:ready_to_vaccinate] += 1 if s.triaged_ready_to_vaccinate? ||
-        s.consent_given_triage_not_needed?
+      counts[:vaccinated] += 1 if s.vaccinated?
+      counts[:could_not_vaccinate] += 1 if s.delay_vaccination? ||
+        s.consent_refused? || s.consent_conflicts? ||
+        s.triaged_do_not_vaccinate? || s.unable_to_vaccinate? ||
+        s.unable_to_vaccinate_not_assessed? ||
+        s.unable_to_vaccinate_not_gillick_competent?
     end
-
-    counts[:not_ready_to_vaccinate] = @patient_sessions.size -
-      counts[:ready_to_vaccinate]
 
     counts
   end
