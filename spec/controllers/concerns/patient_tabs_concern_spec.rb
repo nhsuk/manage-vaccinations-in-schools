@@ -23,9 +23,6 @@ describe PatientTabsConcern do
     create(:patient_session, :triaged_ready_to_vaccinate)
   end
   let(:unable_to_vaccinate) { create(:patient_session, :unable_to_vaccinate) }
-  let(:unable_to_vaccinate_not_assessed) do
-    create(:patient_session, :unable_to_vaccinate_not_assessed)
-  end
   let(:unable_to_vaccinate_not_gillick_competent) do
     create(:patient_session, :unable_to_vaccinate_not_gillick_competent)
   end
@@ -142,7 +139,6 @@ describe PatientTabsConcern do
               delay_vaccination,
               triaged_do_not_vaccinate,
               unable_to_vaccinate,
-              unable_to_vaccinate_not_assessed,
               unable_to_vaccinate_not_gillick_competent
             ]
           }.with_indifferent_access

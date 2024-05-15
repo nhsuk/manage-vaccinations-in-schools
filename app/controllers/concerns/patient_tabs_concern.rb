@@ -25,7 +25,6 @@ module PatientTabsConcern
         delay_vaccination
         triaged_do_not_vaccinate
         unable_to_vaccinate
-        unable_to_vaccinate_not_assessed
         unable_to_vaccinate_not_gillick_competent
       ]
     }

@@ -30,7 +30,6 @@ class AppConsentComponent < ViewComponent::Base
     !@patient_session.state.to_sym.in? %i[
                                         triaged_do_not_vaccinate
                                         unable_to_vaccinate
-                                        unable_to_vaccinate_not_assessed
                                         unable_to_vaccinate_not_gillick_competent
                                         vaccinated
                                       ]
