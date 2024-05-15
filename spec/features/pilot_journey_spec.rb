@@ -198,6 +198,6 @@ RSpec.describe "Pilot journey" do
   end
 
   def then_i_see_that_the_child_is_vaccinated
-    expect(page).to have_content "Vaccinated (1)"
+    expect(page).to have_content "1 child vaccinated"
   end
 end

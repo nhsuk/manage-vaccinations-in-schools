@@ -23,6 +23,9 @@ describe PatientTabsConcern do
     create(:patient_session, :triaged_ready_to_vaccinate)
   end
   let(:unable_to_vaccinate) { create(:patient_session, :unable_to_vaccinate) }
+  let(:unable_to_vaccinate_not_assessed) do
+    create(:patient_session, :unable_to_vaccinate_not_assessed)
+  end
   let(:unable_to_vaccinate_not_gillick_competent) do
     create(:patient_session, :unable_to_vaccinate_not_gillick_competent)
   end
@@ -132,20 +135,14 @@ describe PatientTabsConcern do
 
         expect(result).to eq(
           {
-            action_needed: [
-              added_to_session,
-              consent_given_triage_not_needed,
-              consent_given_triage_needed,
-              triaged_kept_in_triage,
-              triaged_ready_to_vaccinate
-            ],
             vaccinated: [vaccinated],
-            vaccinate_later: [delay_vaccination],
             could_not_vaccinate: [
               consent_conflicts,
               consent_refused,
+              delay_vaccination,
               triaged_do_not_vaccinate,
               unable_to_vaccinate,
+              unable_to_vaccinate_not_assessed,
               unable_to_vaccinate_not_gillick_competent
             ]
           }.with_indifferent_access

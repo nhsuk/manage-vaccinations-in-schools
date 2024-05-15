@@ -79,11 +79,12 @@ RSpec.describe "Batch management" do
     click_on "Campaigns", match: :first
     click_on @campaign.name
     click_on @team.locations.first.name
-    click_on "Record vaccinations"
+    click_on "Check consent responses"
 
     # patient is in the "get consent state" so need to get to the vaccination state
     record_self_consent
 
+    click_on "Given"
     click_on @patient.full_name
     choose "Yes, they got the HPV vaccine"
     choose "Left arm (upper position)"
@@ -115,7 +116,7 @@ RSpec.describe "Batch management" do
     # confirmation page
     click_on "Confirm"
 
-    expect(page).to have_content("Record vaccinations")
+    expect(page).to have_content("Check consent responses")
   end
 
   def then_i_am_not_asked_to_select_a_batch

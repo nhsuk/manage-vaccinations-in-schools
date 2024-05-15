@@ -68,15 +68,13 @@ RSpec.describe "Triage" do
   end
 
   def then_i_see_the_patient
-    within "div#triage-completed" do
-      expect(page).to have_content(@patient.full_name)
-    end
+    expect(page).to have_content(@patient.full_name)
   end
 
   def when_i_access_the_vaccinate_later_page
     click_on @school.name, match: :first
     click_on "Record vaccinations"
-    click_on "Vaccinate later"
+    click_on "Could not vaccinate"
   end
 
   def then_i_see_the_patient

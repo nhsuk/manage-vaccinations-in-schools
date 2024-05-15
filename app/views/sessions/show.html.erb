@@ -35,8 +35,8 @@
       heading: "Record vaccinations",
       link_to: session_vaccinations_path(@session)
     ) do %>
-      <%= pluralize_child(@counts[:ready_to_vaccinate]) %> ready to vaccinate<br>
-      <%= pluralize_child(@counts[:not_ready_to_vaccinate]) %> not ready to vaccinate
+      <%= pluralize_child(@counts[:vaccinated]) %> vaccinated<br>
+      <%= pluralize_child(@counts[:could_not_vaccinate]) %> could not be vaccinated
     <% end %>
   </li>
   <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">

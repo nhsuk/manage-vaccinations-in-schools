@@ -18,18 +18,11 @@ module PatientTabsConcern
       ]
     },
     vaccinations: {
-      action_needed: %w[
-        consent_given_triage_needed
-        triaged_kept_in_triage
-        triaged_ready_to_vaccinate
-        added_to_session
-        consent_given_triage_not_needed
-      ],
       vaccinated: %w[vaccinated],
-      vaccinate_later: %w[delay_vaccination],
       could_not_vaccinate: %w[
         consent_refused
         consent_conflicts
+        delay_vaccination
         triaged_do_not_vaccinate
         unable_to_vaccinate
         unable_to_vaccinate_not_assessed
