@@ -16,7 +16,7 @@ on:
 
 jobs:
   copilot:
-    name: AWS Copilot deploy to ${{ github.event.inputs.environment }}
+    name: AWS Copilot deploy
     permissions:
       id-token: write
       contents: read
