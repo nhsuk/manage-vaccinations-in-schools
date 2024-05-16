@@ -1,16 +1,19 @@
 require "rails_helper"
 
-RSpec.describe "Consent authorisation" do
-  scenario "Unable to access other teams' triage" do
+RSpec.describe "User authorisation" do
+  scenario "Users are unable to access other teams' pages" do
     given_an_hpv_campaign_is_underway_with_two_teams
     when_i_sign_in_as_a_nurse_from_one_team
     and_i_go_to_the_consent_page
     then_i_should_only_see_my_patients
 
-    when_i_go_to_the_consent_page_of_another_team
+    when_i_go_to_the_session_page_of_another_team
     then_i_should_see_page_not_found
 
     when_i_go_to_the_consent_page_of_another_team
+    then_i_should_see_page_not_found
+
+    when_i_go_to_the_patient_page_of_another_team
     then_i_should_see_page_not_found
   end
 
@@ -60,7 +63,15 @@ RSpec.describe "Consent authorisation" do
     expect(page).to have_content("Page not found")
   end
 
+  def when_i_go_to_the_session_page_of_another_team
+    visit "/sessions/#{@other_session.id}"
+  end
+
   def when_i_go_to_the_consent_page_of_another_team
     visit "/sessions/#{@other_session.id}/consent"
+  end
+
+  def when_i_go_to_the_patient_page_of_another_team
+    visit "/patients/#{@other_session.id}/consent/given/patients/#{@other_child.id}"
   end
 end
