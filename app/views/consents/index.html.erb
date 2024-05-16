@@ -16,8 +16,9 @@
 
     <p><%=
       responses = pluralize(@unmatched_record_counts, 'response')
+      need = @unmatched_record_counts == 1 ? 'needs' : 'need'
       link_to(
-        "#{responses} need matching with records in the cohort",
+        "#{responses} #{need} matching with records in the cohort",
         session_consents_unmatched_responses_path(@session)
       )
     %></p>
