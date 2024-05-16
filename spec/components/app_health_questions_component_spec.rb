@@ -26,8 +26,10 @@ RSpec.describe AppHealthQuestionsComponent, type: :component do
       ]
     end
 
-    it { should have_content(/First question\?\s*No/) }
-    it { should have_content(/Second question\?\s*Yes –\s*Notes/) }
+    it { should have_content(/First question\?\s*Mum responded: No/) }
+    it do
+      should have_content(/Second question\?\s*Mum responded: Yes:\s*Notes/)
+    end
   end
 
   context "with two consents given" do
@@ -61,7 +63,7 @@ RSpec.describe AppHealthQuestionsComponent, type: :component do
     it { should have_content(/First question\?\s*All responded: No/) }
     it do
       should have_content(
-               /Second question\?\s*Mum responded: No\s*Dad responded: Yes –\s*Notes/
+               /Second question\?\s*Mum responded: No\s*Dad responded: Yes:\s*Notes/
              )
     end
   end

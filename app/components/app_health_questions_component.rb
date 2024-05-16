@@ -1,13 +1,20 @@
 class AppHealthQuestionsComponent < ViewComponent::Base
   erb_template <<-ERB
     <dl class="nhsuk-summary-list app-summary-list--full-width">
-      <% health_answers.each do |health_question| %>
+      <% health_answers.each do |question, answers| %>
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
-            <%= health_question[:question] %>
+            <%= question %>
           </dt>
           <dd class="nhsuk-summary-list__value">
-            <p><%= safe_join(health_question[:answers], tag.br) %></p>
+            <% answers.each do |answer| %>
+              <p>
+                <%= answer[:responder] %> responded: <%= answer[:answer].humanize %><% if answer[:notes].present? %>:<% end %>
+              </p>
+              <% if answer[:notes].present? %>
+                <blockquote><%= answer[:notes] %></blockquote>
+              <% end %>
+            <% end %>
           </dd>
         </div>
       <% end %>
@@ -28,22 +35,12 @@ class AppHealthQuestionsComponent < ViewComponent::Base
         consolidated_answers.add_answer(
           responder: consent.who_responded,
           question: health_question.question,
-          answer: health_question.response,
-          notes: health_question.notes
+          answer: health_question.response.humanize.presence,
+          notes: health_question.notes.presence
         )
       end
     end
 
-    consolidated_answers.to_h.map do |question, answers|
-      { question:, answers: answers.map { |answer| answer_string(answer) } }
-    end
-  end
-
-  def answer_string(answer)
-    responder_string =
-      @consents.size > 1 ? "#{answer[:responder]} responded: " : ""
-    notes_string = answer[:notes].present? ? " – #{answer[:notes]}" : ""
-
-    "#{responder_string}#{answer[:answer].humanize}#{notes_string}"
+    consolidated_answers.to_h
   end
 end
