@@ -21,58 +21,29 @@ class AppHealthQuestionsComponent < ViewComponent::Base
   end
 
   def health_answers
-    # Generates a hash like:
-    # {
-    #   "First question?" => {
-    #     "Mum" => "No",
-    #     "Dad" => "No"
-    #   },
-    #   "Second question?" => {
-    #     "Mum" => "No",
-    #     "Dad" =>" Yes – Notes"
-    #   }
-    # }
-    dict =
-      @consents.each_with_object({}) do |consent, acc|
-        consent.health_answers.each do |health_question|
-          question = health_question.question
-          response = health_question.response
-          notes = health_question.notes
+    consolidated_answers = ConsolidatedHealthAnswers.new
 
-          formatted_answer = response.humanize
-          formatted_answer += " – #{notes}" if notes.present?
-
-          acc[question] ||= {}
-          acc[question][consent.who_responded] = formatted_answer
-        end
+    @consents.each do |consent|
+      consent.health_answers.each do |health_question|
+        consolidated_answers.add_answer(
+          responder: consent.who_responded,
+          question: health_question.question,
+          answer: health_question.response,
+          notes: health_question.notes
+        )
       end
-
-    # Generates an array of hashes like:
-    # [
-    #   {
-    #     "question" => "First question?",
-    #     "answer" => ["All responded: No"]
-    #   }
-    #   {
-    #     "question" => "Second question?",
-    #     "answer" => ["Mum responded: No", "Dad responded: Yes – Notes"]}
-    #   }
-    # }
-    dict.map do |question, answers|
-      only_one_consent = @consents.length == 1
-      answers_are_all_identical =
-        @consents.length == answers.length && answers.values.uniq.length == 1
-
-      formatted_answers =
-        if only_one_consent
-          [answers.values.first]
-        elsif answers_are_all_identical
-          ["All responded: #{answers.values.first}"]
-        else
-          answers.map { |who, response| "#{who} responded: #{response}" }
-        end
-
-      { question:, answers: formatted_answers }
     end
+
+    consolidated_answers.to_h.map do |question, answers|
+      { question:, answers: answers.map { |answer| answer_string(answer) } }
+    end
+  end
+
+  def answer_string(answer)
+    responder_string =
+      @consents.size > 1 ? "#{answer[:responder]} responded: " : ""
+    notes_string = answer[:notes].present? ? " – #{answer[:notes]}" : ""
+
+    "#{responder_string}#{answer[:answer].humanize}#{notes_string}"
   end
 end
