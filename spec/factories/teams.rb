@@ -23,8 +23,8 @@ FactoryBot.define do
       sequence(:identifier) { _1 }
     end
 
-    name { "Team #{identifier}" }
-    email { "team-#{identifier}@example.com" }
+    name { "SAIS Team #{identifier}" }
+    email { "sais-team-#{identifier}@example.com" }
     phone { "01234 567890" }
     ods_code { "U#{identifier}" }
     privacy_policy_url { "https://example.com/privacy" }
