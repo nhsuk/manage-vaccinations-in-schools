@@ -1,11 +1,11 @@
 class AppConsentStatusComponent < ViewComponent::Base
   def call
     if @patient_session.consent_given?
-      green_tick "Consent given"
+      blue_tick "Given"
     elsif @patient_session.consent_refused?
-      red_cross "Consent refused"
+      red_cross "Refused"
     elsif @patient_session.consent_conflicts?
-      red_cross "Conflicting consent"
+      red_cross "Conflicts"
     end
   end
 
@@ -17,9 +17,9 @@ class AppConsentStatusComponent < ViewComponent::Base
 
   private
 
-  def green_tick(content)
+  def blue_tick(content)
     template = <<-ERB
-      <p class="app-status app-status--green">
+      <p class="app-status app-status--blue">
         <svg class="nhsuk-icon nhsuk-icon__tick"
              xmlns="http://www.w3.org/2000/svg"
              viewBox="0 0 24 24"

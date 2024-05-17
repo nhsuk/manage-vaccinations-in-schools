@@ -13,18 +13,18 @@ RSpec.describe AppConsentStatusComponent, type: :component do
       create(:patient_session, :consent_given_triage_needed)
     end
 
-    it { should have_css("p.app-status", text: "Consent given") }
+    it { should have_css("p.app-status", text: "Given") }
   end
 
   context "when consent is refused" do
     let(:patient_session) { create(:patient_session, :consent_refused) }
 
-    it { should have_css("p.app-status", text: "Consent refused") }
+    it { should have_css("p.app-status", text: "Refused") }
   end
 
   context "when consent conflicts" do
     let(:patient_session) { create(:patient_session, :consent_conflicting) }
 
-    it { should have_css("p.app-status", text: "Conflicting consent") }
+    it { should have_css("p.app-status", text: "Conflicts") }
   end
 end
