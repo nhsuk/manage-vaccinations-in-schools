@@ -35,7 +35,7 @@ RSpec.describe AppConsentComponent, type: :component do
   context "consent is refused" do
     let(:patient_session) { create(:patient_session, :consent_refused) }
 
-    it { should have_css("p.app-status", text: "Consent refused") }
+    it { should have_css("p.app-status", text: "Refused") }
 
     let(:summary) { "Consent refused by #{consent.parent_name} (#{relation})" }
     it { should have_css("details[open]", text: summary) }
@@ -71,7 +71,7 @@ RSpec.describe AppConsentComponent, type: :component do
       create(:patient_session, :consent_given_triage_needed)
     end
 
-    it { should have_css("p.app-status", text: "Consent given") }
+    it { should have_css("p.app-status", text: "Given") }
 
     let(:summary) { "Consent given by #{consent.parent_name} (#{relation})" }
     it { should have_css("details[open]", text: summary) }
