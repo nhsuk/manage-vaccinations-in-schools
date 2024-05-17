@@ -9,8 +9,8 @@
     text-align: left;
     cursor: pointer;
   }
-}
 
-.app-header__navigation-item--divider {
-  margin-right: auto;
+  &__navigation-item--divider {
+    margin-right: auto;
+  }
 }
