@@ -7,27 +7,46 @@
 <% end %>
 
 <% if patient_session.consents.present? %>
-  <% consents_grouped_by_parent.each do |summary, consents| %>
-    <%= render AppDetailsComponent.new(summary:, open: open_consents?) do %>
-      <%= render AppConsentSummaryComponent.new(**grouped_consents(consents)) %>
-
-      <% if consents.any?(&:response_refused?) %>
-        <p><%= contact_parent_or_guardian_link(consents) %></p>
-      <% elsif consents.any?(&:response_not_provided?) %>
-        <%= govuk_button_link_to(
-          "Get consent",
-          session_patient_manage_consent_path(
-            session,
-            patient,
-            consents.first.id,
-            :agree,
-            section: @section,
-            tab: @tab
-          ),
-          secondary: true
-        ) %>
+  <% consents = patient_session.consents.order(:recorded_at) %>
+  <%= govuk_table do |table| %>
+    <%= table.with_head do |head| %>
+      <%= head.with_row do |row| %>
+        <%= row.with_cell(text: 'Name') %>
+        <%= row.with_cell(text: 'Response date') %>
+        <%= row.with_cell(text: 'Decision') %>
       <% end %>
     <% end %>
+
+    <%= table.with_body do |body| %>
+      <% patient_session.consents.order(recorded_at: :desc).each do |consent| %>
+        <%= body.with_row do |row| %>
+          <%= row.with_cell do %>
+            <%= consent.parent_name %>
+            <br>
+            <span class="nhsuk-u-font-size-16"><%= consent.human_enum_name(:parent_relationship).humanize %></span>
+          <% end %>
+          <%= row.with_cell(text: consent.recorded_at.to_fs(:app_date_time)) %>
+          <%= row.with_cell(text: consent.human_enum_name(:response).humanize) %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <% if consents.any?(&:response_refused?) %>
+    <p><%= contact_parent_or_guardian_link(consents) %></p>
+  <% elsif consents.any?(&:response_not_provided?) %>
+    <%= govuk_button_link_to(
+      "Get consent",
+      session_patient_manage_consent_path(
+        session,
+        patient,
+        consents.first.id,
+        :agree,
+        section: @section,
+        tab: @tab
+      ),
+      secondary: true
+    ) %>
   <% end %>
 <% else %>
   <p>

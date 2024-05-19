@@ -38,23 +38,11 @@ RSpec.describe AppConsentComponent, type: :component do
     it { should have_css("p.app-status", text: "Refused") }
 
     let(:summary) { "Consent refused by #{consent.parent_name} (#{relation})" }
-    it { should have_css("details[open]", text: summary) }
-    it { should have_css("div", text: /Name ?#{consent.parent_name}/) }
-    it { should have_css("div", text: /Relationship ?#{relation}/) }
-
-    it "displays the parents phone and email" do
-      should have_css(
-               "div",
-               text: /Contact ?#{consent.parent_phone} ?#{consent.parent_email}/
-             )
-    end
+    it { should have_css("table tr", text: /#{consent.parent_name}/) }
+    it { should have_css("table tr", text: /#{relation}/) }
 
     it "displays the response" do
-      should have_css("div", text: /Response(.*?)Consent refused/m)
-    end
-
-    it "displays only the refusal reason if there are no notes" do
-      should have_css("div", text: /Refusal reason ?Personal choice/)
+      should have_css("table tr", text: /Consent refused/)
     end
 
     it do
@@ -74,8 +62,6 @@ RSpec.describe AppConsentComponent, type: :component do
     it { should have_css("p.app-status", text: "Given") }
 
     let(:summary) { "Consent given by #{consent.parent_name} (#{relation})" }
-    it { should have_css("details[open]", text: summary) }
-
     it { should_not have_css("a", text: "Contact #{consent.parent_name}") }
   end
 
@@ -83,15 +69,5 @@ RSpec.describe AppConsentComponent, type: :component do
     let(:patient_session) { create(:patient_session, :vaccinated) }
 
     let(:summary) { "Consent given by #{consent.parent_name} (#{relation})" }
-    it { should have_css("details:not([open])", text: summary) }
-  end
-
-  context "consent given needing triage and patient cannot be vaccinated" do
-    let(:patient_session) do
-      create(:patient_session, :triaged_do_not_vaccinate)
-    end
-
-    let(:summary) { "Consent given by #{consent.parent_name} (#{relation})" }
-    it { should have_css("details:not([open])", text: summary) }
   end
 end
