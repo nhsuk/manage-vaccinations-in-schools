@@ -37,6 +37,10 @@ class ConsentsController < ApplicationController
     session[:current_section] = "consents"
   end
 
+  def show
+    @consent = @session.campaign.consents.find(params[:consent_id])
+  end
+
   private
 
   def set_session

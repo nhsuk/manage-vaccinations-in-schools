@@ -149,6 +149,7 @@ Rails.application.routes.draw do
                   only: %i[show update],
                   path: "consents/:consent_id/" do
           post "clone", on: :member
+          get "details", on: :collection, to: "consents#show"
         end
 
         resource :triage, only: %i[create update]

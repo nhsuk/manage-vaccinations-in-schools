@@ -1,5 +1,5 @@
 class AppConsentComponent < ViewComponent::Base
-  attr_reader :patient_session
+  attr_reader :patient_session, :section, :tab
 
   def initialize(patient_session:, section:, tab:)
     super

@@ -21,7 +21,7 @@
       <% patient_session.consents.order(recorded_at: :desc).each do |consent| %>
         <%= body.with_row do |row| %>
           <%= row.with_cell do %>
-            <%= consent.parent_name %>
+            <%= govuk_link_to consent.parent_name, details_session_patient_manage_consents_path(consent, session_id: session.id, patient_id: patient.id, section:, tab:) %>
             <br>
             <span class="nhsuk-u-font-size-16"><%= consent.human_enum_name(:parent_relationship).humanize %></span>
           <% end %>
