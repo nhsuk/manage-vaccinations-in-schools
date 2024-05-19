@@ -85,6 +85,14 @@ class Patient < ApplicationRecord
     "#{first_name} #{last_name}"
   end
 
+  def parent_relationship_label
+    if parent_relationship == "other"
+      parent_relationship_other
+    else
+      human_enum_name(:parent_relationship)
+    end.capitalize
+  end
+
   def as_json(options = {})
     super.merge("full_name" => full_name, "age" => age)
   end

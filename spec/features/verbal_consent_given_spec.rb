@@ -13,6 +13,7 @@ RSpec.describe "Verbal consent" do
 
     when_i_go_to_the_patient
     then_i_see_that_the_status_is_safe_to_vaccinate
+    and_i_can_see_the_consent_response
     and_an_email_is_sent_to_the_parent_confirming_their_consent
   end
 
@@ -65,6 +66,38 @@ RSpec.describe "Verbal consent" do
 
   def then_i_see_that_the_status_is_safe_to_vaccinate
     expect(page).to have_content("Safe to vaccinate")
+  end
+
+  def and_i_can_see_the_consent_response
+    click_link @patient.parent_name
+
+    expect(page).to have_content(
+      "Consent response from #{@patient.parent_name}"
+    )
+    expect(page).to have_content(
+      ["Response date", Time.zone.today.to_fs(:nhsuk_date_short_month)].join
+    )
+    expect(page).to have_content(["Decision", "Consent given"].join)
+    expect(page).to have_content(["Response method", "Phone"].join)
+
+    expect(page).to have_content(["Full name", @patient.full_name].join)
+    expect(page).to have_content(
+      ["Date of birth", @patient.date_of_birth.to_fs(:nhsuk_date)].join
+    )
+    expect(page).to have_content(["School", @patient.location.name].join)
+
+    expect(page).to have_content(["Name", @patient.parent_name].join)
+    expect(page).to have_content(
+      ["Relationship", @patient.parent_relationship_label].join
+    )
+    expect(page).to have_content(["Email address", @patient.parent_email].join)
+    expect(page).to have_content(["Phone number", @patient.parent_phone].join)
+
+    expect(page).to have_content("Answers to health questions")
+    expect(page).to have_content(
+      "#{@patient.parent_relationship_label} responded: No",
+      count: 3
+    )
   end
 
   def and_an_email_is_sent_to_the_parent_confirming_their_consent
