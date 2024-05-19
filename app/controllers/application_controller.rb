@@ -20,7 +20,6 @@ class ApplicationController < ActionController::Base
   end
 
   FLIPPER_INITIALIZERS[:basic_auth].call unless Flipper.exist? :basic_auth
-  FLIPPER_INITIALIZERS[:pilot_phase_1].call unless Flipper.exist? :pilot_phase_1
 
   default_form_builder(GOVUKDesignSystemFormBuilder::FormBuilder)
 

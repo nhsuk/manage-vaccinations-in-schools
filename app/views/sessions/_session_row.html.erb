@@ -17,11 +17,7 @@
           colour: "blue"
         ) %><br>
       <% end %>
-      <% if Flipper.enabled? :pilot_phase_1 %>
-        <%= link_to session.location.name, edit_session_path(session), "data-testid": "session-link" %><br>
-      <% else %>
-        <%= link_to session.location.name, session_path(session), "data-testid": "session-link" %><br>
-      <% end %>
+      <%= link_to session.location.name, edit_session_path(session), "data-testid": "session-link" %><br>
       <%= session.location.town %>, <%= session.location.postcode %>
     </p>
   </td>
