@@ -66,9 +66,6 @@ Rails.application.routes.draw do
       end
     end
 
-    resource "consents", only: [] do
-    end
-
     resources :edit_sessions, only: %i[show update], path: "edit", as: :edit
 
     constraints -> { Flipper.enabled?(:make_session_in_progress_button) } do
@@ -81,8 +78,6 @@ Rails.application.routes.draw do
           on: :member,
           controller: "patient_sessions",
           route: /consents|triage|vaccinations/
-
-      # resource :triage, only: %i[create update]
     end
 
     constraints -> { Flipper.enabled? :offline_working } do
