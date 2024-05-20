@@ -75,7 +75,6 @@ RSpec.describe TriageMailerConcern do
 
       context "when the parents have verbally refused consent" do
         let(:patient_session) { build(:patient_session, :consent_refused) }
-        let(:consent) { build(:consent, :refused, patient_session:) }
 
         it "doesn't send an email" do
           expect(ConsentFormMailer).not_to have_received(:confirmation_refused)
@@ -90,9 +89,7 @@ RSpec.describe TriageMailerConcern do
         let(:patient_session) do
           build(:patient_session, :triaged_ready_to_vaccinate)
         end
-        let(:consent) do
-          build(:consent_given, :needing_triage, patient_session:)
-        end
+        let(:consent) { patient_session.consents.first }
 
         it "sends an email saying triage was needed and vaccination will happen" do
           expect(TriageMailer).to have_received(:vaccination_will_happen).with(
@@ -105,9 +102,7 @@ RSpec.describe TriageMailerConcern do
         let(:patient_session) do
           build(:patient_session, :triaged_do_not_vaccinate)
         end
-        let(:consent) do
-          build(:consent_given, :needing_triage, patient_session:)
-        end
+        let(:consent) { patient_session.consents.first }
 
         it "sends an email saying triage was needed but vaccination won't happen" do
           expect(TriageMailer).to have_received(:vaccination_wont_happen).with(
@@ -120,7 +115,7 @@ RSpec.describe TriageMailerConcern do
         let(:patient_session) do
           build(:patient_session, :consent_given_triage_not_needed)
         end
-        let(:consent) { build(:consent_given, patient_session:) }
+        let(:consent) { patient_session.consents.first }
 
         it "sends an email saying vaccination will happen" do
           expect(ConsentFormMailer).to have_received(:confirmation).with(
@@ -134,9 +129,7 @@ RSpec.describe TriageMailerConcern do
         let(:patient_session) do
           build(:patient_session, :consent_given_triage_needed)
         end
-        let(:consent) do
-          build(:consent_given, :needing_triage, patient_session:)
-        end
+        let(:consent) { patient_session.consents.first }
 
         it "sends an email saying triage is required" do
           expect(ConsentFormMailer).to have_received(
@@ -147,7 +140,7 @@ RSpec.describe TriageMailerConcern do
 
       context "when the parents have verbally refused consent" do
         let(:patient_session) { build(:patient_session, :consent_refused) }
-        let(:consent) { build(:consent, :refused, patient_session:) }
+        let(:consent) { patient_session.consents.first }
 
         it "sends an email confirming they've refused consent" do
           expect(ConsentFormMailer).to have_received(
