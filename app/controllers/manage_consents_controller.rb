@@ -178,12 +178,7 @@ class ManageConsentsController < ApplicationController
   def create_params
     route = params.permit(:consent)[:consent]
 
-    attrs = {
-      patient: @patient,
-      campaign: @session.campaign,
-      route:,
-      health_answers: @session.health_questions.to_health_answers
-    }
+    attrs = { patient: @patient, campaign: @session.campaign, route: }
 
     no_consent =
       @patient.consents.submitted_for_campaign(@session.campaign).empty?

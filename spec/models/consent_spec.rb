@@ -237,4 +237,36 @@ RSpec.describe Consent do
       expect(consent).not_to be_recorded
     end
   end
+
+  it "resets unused fields after a consent refusal" do
+    consent =
+      build(
+        :consent,
+        health_answers: [],
+        response: "refused",
+        reason_for_refusal: "contains_gelatine",
+        reason_for_refusal_notes: "I'm vegan"
+      )
+    expect(consent.health_answers).to be_empty
+
+    consent.update!(response: "given")
+
+    expect(consent.reason_for_refusal).to be_nil
+    expect(consent.reason_for_refusal_notes).to be_nil
+
+    expect(consent.health_answers).not_to be_empty
+    expect(consent.health_answers.count).to eq(
+      consent.campaign.vaccines.first.health_questions.count
+    )
+    expect(consent.health_answers.map(&:response)).to all(be_nil)
+  end
+
+  it "resets unused fields after a consent being given" do
+    consent = build(:consent, :given)
+    expect(consent.health_answers).not_to be_empty
+
+    consent.update!(response: "refused")
+
+    expect(consent.health_answers).to be_empty
+  end
 end

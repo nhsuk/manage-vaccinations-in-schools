@@ -39,6 +39,8 @@ class Consent < ApplicationRecord
   include WizardFormConcern
   audited
 
+  before_save :reset_unused_fields
+
   attr_accessor :triage, :patient_session
 
   has_one :consent_form
@@ -274,5 +276,22 @@ class Consent < ApplicationRecord
     triage.errors.each do |error|
       errors.add(:"triage_#{error.attribute}", error.message)
     end
+  end
+
+  def reset_unused_fields
+    if response_given?
+      self.reason_for_refusal = nil
+      self.reason_for_refusal_notes = nil
+
+      seed_health_questions
+    elsif response_refused?
+      self.health_answers = []
+    end
+  end
+
+  def seed_health_questions
+    return unless health_answers.empty?
+    vaccine = campaign.vaccines.first # assumes all vaccines in the campaign have the same questions
+    self.health_answers = vaccine.health_questions.to_health_answers
   end
 end
