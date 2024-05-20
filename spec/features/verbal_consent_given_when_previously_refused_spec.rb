@@ -23,7 +23,10 @@ feature "Verbal consent" do
     and_i_see_the_success_alert
 
     when_i_click_on_the_consent_given_tab
-    then_i_see_the_child_has_consent_given
+    then_i_see_the_child_is_listed
+
+    when_i_visit_the_patient_page
+    then_i_see_that_consent_is_given
   end
 
   def given_an_hpv_campaign_is_underway
@@ -87,7 +90,7 @@ feature "Verbal consent" do
     click_on "Given"
   end
 
-  def then_i_see_the_child_has_consent_given
+  def then_i_see_the_child_is_listed
     expect(page).to have_content(@child.full_name)
   end
 
@@ -101,5 +104,13 @@ feature "Verbal consent" do
 
   def then_i_see_the_patient_page
     expect(page).to have_content(@child.full_name)
+  end
+
+  def when_i_visit_the_patient_page
+    click_on @child.full_name
+  end
+
+  def then_i_see_that_consent_is_given
+    expect(page).to have_content("Safe to vaccinate")
   end
 end
