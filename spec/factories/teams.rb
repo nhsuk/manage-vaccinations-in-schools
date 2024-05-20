@@ -36,13 +36,16 @@ FactoryBot.define do
         nurse_password { nil }
       end
 
-      after(:create) do |team, evaluator|
-        options = {
-          teams: [team],
-          email: evaluator.nurse_email,
-          password: evaluator.nurse_password
-        }.compact
-        create(:user, **options)
+      users do
+        create_list(
+          :user,
+          1,
+          **{
+            teams: [instance],
+            email: nurse_email,
+            password: nurse_password
+          }.compact
+        )
       end
     end
 

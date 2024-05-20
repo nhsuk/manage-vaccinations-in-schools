@@ -59,15 +59,14 @@ FactoryBot.define do
     trait :triaged_ready_to_vaccinate do
       patient { create :patient, :consent_given_triage_needed, session: }
       triage do
-        [
-          create(
-            :triage,
-            status: :ready_to_vaccinate,
-            notes: "Ok to vaccinate",
-            user:,
-            patient_session: instance
-          )
-        ]
+        create_list(
+          :triage,
+          1,
+          status: :ready_to_vaccinate,
+          notes: "Ok to vaccinate",
+          user:,
+          patient_session: instance
+        )
       end
     end
 
@@ -85,12 +84,14 @@ FactoryBot.define do
       patient { create :patient, :consent_given_triage_needed, session: }
       triage { [create(:triage, status: :delay_vaccination)] }
 
-      after :create do |patient_session|
-        create(
+      vaccination_records do
+        create_list(
           :vaccination_record,
+          1,
           reason: :absent_from_school,
           administered: false,
-          patient_session:
+          user:,
+          patient_session: instance
         )
       end
     end
@@ -102,12 +103,15 @@ FactoryBot.define do
     trait :unable_to_vaccinate do
       patient { create :patient, :consent_given_triage_needed, session: }
       triage { [create(:triage, status: :ready_to_vaccinate, user:)] }
-
-      after :create do |patient_session|
-        create :vaccination_record,
-               reason: :already_had,
-               administered: false,
-               patient_session:
+      vaccination_records do
+        create_list(
+          :vaccination_record,
+          1,
+          reason: :already_had,
+          administered: false,
+          user:,
+          patient_session: instance
+        )
       end
     end
 
@@ -119,23 +123,29 @@ FactoryBot.define do
       patient { create :patient, :consent_given_triage_needed, session: }
       triage { [create(:triage, status: :ready_to_vaccinate, user:)] }
 
-      after :create do |patient_session|
-        create :vaccination_record,
-               reason: :already_had,
-               administered: false,
-               patient_session:
+      vaccination_records do
+        create_list(
+          :vaccination_record,
+          1,
+          reason: :already_had,
+          administered: false,
+          user:,
+          patient_session: instance
+        )
       end
     end
 
     trait :vaccinated do
       patient { create :patient, :consent_given_triage_needed, session: }
       triage { [create(:triage, status: :ready_to_vaccinate, user:)] }
-
-      after :create do |patient_session, context|
-        create :vaccination_record,
-               administered: true,
-               patient_session:,
-               user: context.user
+      vaccination_records do
+        create_list(
+          :vaccination_record,
+          1,
+          administered: true,
+          user:,
+          patient_session: instance
+        )
       end
     end
 
