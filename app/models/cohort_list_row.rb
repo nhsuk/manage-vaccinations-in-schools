@@ -105,7 +105,7 @@ class CohortListRow
     case parent_relationship
     when "Mother"
       { parent_relationship: "mother" }
-    when "father"
+    when "Father"
       { parent_relationship: "father" }
     when "Guardian"
       { parent_relationship: "guardian" }

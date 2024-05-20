@@ -52,6 +52,8 @@ class Patient < ApplicationRecord
   scope :needing_consent_reminder, -> { without_consent.reminder_not_sent }
   scope :not_reminded_about_session, -> { where(session_reminder_sent_at: nil) }
 
+  enum :parent_relationship, %w[mother father guardian other], prefix: true
+
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :date_of_birth, presence: true
