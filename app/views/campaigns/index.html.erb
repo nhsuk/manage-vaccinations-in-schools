@@ -1,32 +1,30 @@
 <%= h1 "Campaigns", size: "xl" %>
 
-<action-table sort="name">
-  <div class="nhsuk-table__panel-with-heading-tab">
-    <h3 class="nhsuk-table__heading-tab">Active campaigns</h3>
-    <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
-      <% table.with_head do |head| %>
-        <% head.with_row do |row| %>
-          <% row.with_cell(text: 'Name') %>
-          <% row.with_cell(text: 'Vaccines') %>
-        <% end %>
+<div class="nhsuk-table__panel-with-heading-tab">
+  <h3 class="nhsuk-table__heading-tab">Active campaigns</h3>
+  <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
+    <% table.with_head do |head| %>
+      <% head.with_row do |row| %>
+        <% row.with_cell(text: 'Name') %>
+        <% row.with_cell(text: 'Vaccines') %>
       <% end %>
+    <% end %>
 
-      <% table.with_body do |body| %>
-        <% @campaigns.each do |campaign| %>
-          <% body.with_row do |row| %>
-            <% row.with_cell do %>
-              <span class="nhsuk-table-responsive__heading">Name</span>
-              <%= link_to campaign.name, campaign_path(campaign) %>
-            <% end %>
-            <% row.with_cell do %>
-              <span class="nhsuk-table-responsive__heading">Vaccines</span>
-              <%= campaign.vaccines
-                .map { |vaccine| vaccine.brand }
-                .join("<br>").html_safe %>
-            <% end %>
+    <% table.with_body do |body| %>
+      <% @campaigns.each do |campaign| %>
+        <% body.with_row do |row| %>
+          <% row.with_cell do %>
+            <span class="nhsuk-table-responsive__heading">Name</span>
+            <%= link_to campaign.name, campaign_path(campaign) %>
+          <% end %>
+          <% row.with_cell do %>
+            <span class="nhsuk-table-responsive__heading">Vaccines</span>
+            <%= campaign.vaccines
+              .map { |vaccine| vaccine.brand }
+              .join("<br>").html_safe %>
           <% end %>
         <% end %>
       <% end %>
     <% end %>
-  </div>
-</action-table>
+  <% end %>
+</div>

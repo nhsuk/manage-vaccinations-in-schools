@@ -1176,11 +1176,6 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@colinaut/action-table@^2.4.14":
-  version "2.4.14"
-  resolved "https://registry.yarnpkg.com/@colinaut/action-table/-/action-table-2.4.14.tgz#aebb89b0627266b923b9783e7829c6d59e079bf2"
-  integrity sha512-7F1j89aSy3j1y5bfcmZOfZDjhHsYL3Z1pjupVMVTMqVBkf/UaxpPRLkmk7DG3EbvfmQqdGjyEntt52+JD8DjEA==
-
 "@esbuild/aix-ppc64@0.21.2":
   version "0.21.2"
   resolved "https://registry.yarnpkg.com/@esbuild/aix-ppc64/-/aix-ppc64-0.21.2.tgz#7ccd2a552dc4eb740f094a46d18a1b1508b8d37c"
