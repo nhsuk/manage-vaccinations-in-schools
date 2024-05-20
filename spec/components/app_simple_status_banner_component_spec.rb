@@ -46,7 +46,7 @@ RSpec.describe AppSimpleStatusBannerComponent, type: :component do
   context "state is consent_refused" do
     let(:patient_session) { create :patient_session, :consent_refused }
 
-    it { should have_css(".app-card--orange") }
+    it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Consent refused") }
     it { should have_text("Mum refused to give consent") }
   end

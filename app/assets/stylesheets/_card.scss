@@ -5,10 +5,9 @@
     }
   }
 
-  &--orange {
+  &--dark-orange {
     .nhsuk-card__heading--feature {
-      background-color: $color_nhsuk-warm-yellow;
-      color: $nhsuk-focus-text-color;
+      background-color: $color_app-dark-orange;
     }
   }
 

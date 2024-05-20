@@ -16,12 +16,12 @@ en:
       banner_title: Consent given
       banner_explanation: "%{full_name} is ready to vaccinate"
     consent_refused:
-      colour: orange
+      colour: red
       text: Consent refused
       banner_title: Consent refused
       banner_explanation: "%{who_refused} refused to give consent"
     consent_conflicts:
-      colour: orange
+      colour: dark-orange
       text: Conflicting consent
       banner_title: Conflicting consent
       banner_explanation: "You can only vaccinate if all respondents give consent"
