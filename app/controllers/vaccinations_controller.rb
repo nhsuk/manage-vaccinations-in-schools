@@ -2,6 +2,7 @@ class VaccinationsController < ApplicationController
   include TodaysBatchConcern
   include VaccinationMailerConcern
   include PatientTabsConcern
+  include PatientSortingConcern
 
   before_action :set_session
   before_action :set_patient, except: %i[index record_template]
@@ -41,6 +42,8 @@ class VaccinationsController < ApplicationController
       format.html
       format.json { render json: @patient_outcomes.map(&:first).index_by(&:id) }
     end
+
+    sort_patients!(@patient_sessions)
 
     session[:current_section] = "vaccinations"
   end

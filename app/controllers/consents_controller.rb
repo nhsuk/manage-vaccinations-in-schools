@@ -1,5 +1,6 @@
 class ConsentsController < ApplicationController
   include PatientTabsConcern
+  include PatientSortingConcern
 
   before_action :set_session
 
@@ -30,6 +31,8 @@ class ConsentsController < ApplicationController
     @current_tab = TAB_PATHS[:consents][params[:tab]]
     @tab_counts = count_patient_sessions(tab_patient_sessions)
     @patient_sessions = tab_patient_sessions[@current_tab] || []
+
+    sort_patients!(@patient_sessions)
 
     session[:current_section] = "consents"
   end

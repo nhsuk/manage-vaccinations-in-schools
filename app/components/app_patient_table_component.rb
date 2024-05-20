@@ -7,7 +7,9 @@ class AppPatientTableComponent < ViewComponent::Base
     caption: nil,
     columns: %i[name dob],
     tab: nil,
-    consent_form: nil
+    consent_form: nil,
+    sort: nil,
+    direction: nil
   )
     super
 
@@ -17,6 +19,8 @@ class AppPatientTableComponent < ViewComponent::Base
     @tab = tab
     @caption = caption
     @consent_form = consent_form
+    @sort = sort
+    @direction = direction
   end
 
   private
@@ -110,5 +114,24 @@ class AppPatientTableComponent < ViewComponent::Base
       secondary: true,
       class: "app-button--small"
     )
+  end
+
+  def header_link(column)
+    case @section
+    when :matching
+      column_name(column)
+    else
+      session_patient_sort_link(column_name(column), column)
+    end
+  end
+
+  def header_attributes(column)
+    sort =
+      if @sort == column.to_s
+        @direction == "asc" ? "ascending" : "descending"
+      else
+        "none"
+      end
+    { html_attributes: { aria: { sort: } } }
   end
 end

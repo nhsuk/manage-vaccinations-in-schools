@@ -7,6 +7,11 @@ RSpec.describe AppPatientTableComponent, type: :component do
     allow(component).to receive(:session_patient_path).and_return(
       "/session/patient/"
     )
+    allow(component).to(
+      receive(:session_patient_sort_link) do |text, sort|
+        "<a href='/session/sort/#{sort}'>#{text}</a>"
+      end
+    )
 
     render_inline(component)
   end
@@ -20,6 +25,7 @@ RSpec.describe AppPatientTableComponent, type: :component do
   let(:params) do
     { patient_sessions:, caption: "Foo", section:, tab:, columns: }
   end
+
   let(:component) { described_class.new(**params) }
 
   def have_column(text)

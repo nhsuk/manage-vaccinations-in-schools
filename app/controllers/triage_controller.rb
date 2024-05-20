@@ -1,6 +1,7 @@
 class TriageController < ApplicationController
   include TriageMailerConcern
   include PatientTabsConcern
+  include PatientSortingConcern
 
   before_action :set_session, only: %i[index create update]
   before_action :set_patient, only: %i[create update]
@@ -26,6 +27,9 @@ class TriageController < ApplicationController
       group_patient_sessions_by_state(all_patient_sessions, section: :triage)
     @tab_counts = count_patient_sessions(tab_patient_sessions)
     @patient_sessions = tab_patient_sessions[@current_tab] || []
+
+    sort_patients!(@patient_sessions)
+
     session[:current_section] = "triage"
   end
 
