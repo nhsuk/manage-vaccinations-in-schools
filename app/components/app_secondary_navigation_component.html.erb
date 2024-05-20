@@ -4,7 +4,9 @@
     <% items.each do |item| %>
       <li class="app-secondary-navigation__list-item
         <%= 'app-secondary-navigation__list-item--current' if item.selected %>">
-        <%= link_to item.href, class: "app-secondary-navigation__link" do %>
+        <%= link_to item.href,
+          class: "app-secondary-navigation__link",
+          data: { turbo_action: 'replace' } do %>
           <%= item %>
         <% end %>
       </li>
