@@ -64,7 +64,8 @@ FactoryBot.define do
             :triage,
             status: :ready_to_vaccinate,
             notes: "Ok to vaccinate",
-            user:
+            user:,
+            patient_session: instance
           )
         ]
       end
