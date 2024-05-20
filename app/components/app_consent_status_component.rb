@@ -1,11 +1,11 @@
 class AppConsentStatusComponent < ViewComponent::Base
   def call
     if @patient_session.consent_given?
-      blue_tick "Given"
+      icon_tick "Given", "blue"
     elsif @patient_session.consent_refused?
-      red_cross "Refused"
+      icon_cross "Refused", "red"
     elsif @patient_session.consent_conflicts?
-      red_cross "Conflicts"
+      icon_cross "Conflicts", "dark-orange"
     end
   end
 
@@ -17,9 +17,9 @@ class AppConsentStatusComponent < ViewComponent::Base
 
   private
 
-  def blue_tick(content)
+  def icon_tick(content, color)
     template = <<-ERB
-      <p class="app-status app-status--blue">
+      <p class="app-status app-status--#{color}">
         <svg class="nhsuk-icon nhsuk-icon__tick"
              xmlns="http://www.w3.org/2000/svg"
              viewBox="0 0 24 24"
@@ -36,9 +36,9 @@ class AppConsentStatusComponent < ViewComponent::Base
     template.html_safe
   end
 
-  def red_cross(content)
+  def icon_cross(content, color)
     template = <<-ERB
-      <p class="app-status app-status--red">
+      <p class="app-status app-status--#{color}">
         <svg class="nhsuk-icon nhsuk-icon__cross"
              xmlns="http://www.w3.org/2000/svg"
              viewBox="0 0 24 24"
@@ -47,7 +47,7 @@ class AppConsentStatusComponent < ViewComponent::Base
                   .4-.5 0-.9 0-1.2-.3l-3.9-4-4 4c-.3.3-.5.3-1
                   .3a1.5 1.5 0 0 1-1-2.4l3.9-4-4-4c-.5-.5-.5-1.4 0-2
                   .6-.7 1.5-.7 2.2 0l3.9 3.9 4-4c.6-.6 1.4-.6 2 0Z"
-              fill="currentColor"></path>
+                fill="currentColor"></path>
         </svg>
         #{content}
       </p>
