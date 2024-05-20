@@ -7,6 +7,8 @@ class DevController < ApplicationController
   before_action :ensure_dev_env
 
   def reset
+    Faker::Config.locale = "en-GB"
+
     ActiveRecord::Base.connection.transaction do
       data_tables =
         ActiveRecord::Base.connection.tables -
@@ -24,20 +26,15 @@ class DevController < ApplicationController
         )
       end
 
-      LoadExampleCampaign.load(
-        example_file: "db/sample_data/example-hpv-campaign.json",
-        in_progress: true
-      )
-      LoadExampleCampaign.load(
-        example_file: "db/sample_data/example-flu-campaign.json",
-        new_campaign: true,
-        in_progress: true
-      )
-      LoadExampleCampaign.load(
-        example_file: "db/sample_data/example-pilot-campaign.json",
-        new_campaign: true,
-        in_progress: true
-      )
+      user =
+        User.find_by(email: "nurse.joy@example.com") ||
+          FactoryBot.create(
+            :user,
+            full_name: "Nurse Joy",
+            email: "nurse.joy@example.com",
+            password: "nurse.joy@example.com"
+          )
+      FactoryBot.create(:example_in_progress_campaign, :hpv, user:)
     end
 
     redirect_to root_path
