@@ -1,4 +1,4 @@
-<action-table class="app-patients" sort="name" store>
+<div class="app-patients">
   <%= govuk_table(classes: "app-patients__table") do |table| %>
     <%= table.with_caption(text: @caption, html_attributes: { class: "nhsuk-u-secondary-text-color nhsuk-u-font-weight-normal nhsuk-u-font-size-19" }) %>
 
@@ -25,9 +25,4 @@
       <% end %>
     <% end %>
   <% end %>
-  <action-table-no-results>
-    <%= render AppEmptyListComponent.new(
-      text: t("table.no_filtered_results")
-    ) %>
-  </action-table-no-results>
-</action-table>
+</div>
