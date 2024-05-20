@@ -25,5 +25,8 @@ end %>
   caption: t("patients_table.#{@current_tab}.caption",
              children: pluralize_child(@patient_sessions.count)),
   columns: %i[name dob],
-  section: :triage, tab: params[:tab]
+  section: :triage,
+  tab: params[:tab],
+  sort: params[:sort],
+  direction: params[:direction]
 ) %>

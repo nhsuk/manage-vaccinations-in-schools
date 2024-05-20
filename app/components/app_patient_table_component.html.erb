@@ -6,10 +6,9 @@
       <% if @patient_sessions.any? %>
         <%= head.with_row do |row| %>
           <%= @columns.each do |column| %>
-            <%= row.with_cell(
-              text: column_name(column),
-              html_attributes: { "data-col": column }
-            ) %>
+            <%= row.with_cell(**header_attributes(column)) do %>
+              <%= header_link(column) %>
+            <% end %>
           <% end %>
         <% end %>
       <% end %>
