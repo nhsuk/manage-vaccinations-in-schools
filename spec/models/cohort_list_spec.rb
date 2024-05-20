@@ -131,6 +131,34 @@ RSpec.describe CohortList, type: :model do
       expect { cohort_list.generate_patients! }.to change { Patient.count }.by(
         2
       )
+
+      expect(Patient.first).to have_attributes(
+        nhs_number: "1234567890",
+        date_of_birth: Date.new(2010, 1, 1),
+        full_name: "Jimmy Smith",
+        location:,
+        parent_name: "John Smith",
+        parent_relationship: "father",
+        parent_phone: "7412345678",
+        parent_email: "john@example.com",
+        address_line_1: "10 Downing Street",
+        address_town: "London",
+        address_postcode: "SW1A 1AA"
+      )
+
+      expect(Patient.second).to have_attributes(
+        nhs_number: "1234567891",
+        date_of_birth: Date.new(2010, 1, 2),
+        full_name: "Mark Doe",
+        location:,
+        parent_name: "Jane Doe",
+        parent_relationship: "mother",
+        parent_phone: "7412345679",
+        parent_email: "jane@example.com",
+        address_line_1: "11 Downing Street",
+        address_town: "London",
+        address_postcode: "SW1A 1AA"
+      )
     end
   end
 end

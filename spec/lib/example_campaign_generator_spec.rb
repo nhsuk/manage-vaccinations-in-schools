@@ -2,7 +2,7 @@ require "rails_helper"
 require "example_campaign_generator"
 
 RSpec.describe ExampleCampaignGenerator do
-  let(:test_timestamp) { [2024, 5, 13, 12, 0, 0] }
+  let(:test_timestamp) { [2024, 5, 20, 12, 0, 0] }
 
   let(:expected_hpv_json) do
     # Remove final newline if present to match generated JSON.
