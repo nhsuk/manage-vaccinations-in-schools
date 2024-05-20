@@ -243,6 +243,14 @@ class Consent < ApplicationRecord
     recorded_at.present?
   end
 
+  def phone_contact_method_description
+    if parent_contact_method_other.present?
+      "Other – #{parent_contact_method_other}"
+    else
+      human_enum_name(:parent_contact_method)
+    end
+  end
+
   private
 
   def health_answers_valid?

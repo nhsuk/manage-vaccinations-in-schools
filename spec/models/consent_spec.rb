@@ -238,6 +238,46 @@ RSpec.describe Consent do
     end
   end
 
+  describe "#phone_contact_method_description" do
+    it "describes the phone contact method when parent/carer can only receive texts" do
+      consent = build(:consent, parent_contact_method: :text)
+
+      expect(consent.phone_contact_method_description).to eq(
+        "Can only receive text messages"
+      )
+    end
+
+    it "describes the phone contact method when parent/carer can only receive calls" do
+      consent = build(:consent, parent_contact_method: :voice)
+
+      expect(consent.phone_contact_method_description).to eq(
+        "Can only receive voice calls"
+      )
+    end
+
+    it "describes the phone contact method when parent/carer has no preference either way" do
+      consent = build(:consent, parent_contact_method: :any)
+
+      expect(consent.phone_contact_method_description).to eq(
+        "No specific needs"
+      )
+    end
+
+    it "describes the phone contact method when parent/carer has other preferences" do
+      consent =
+        build(
+          :consent,
+          parent_contact_method: :other,
+          parent_contact_method_other:
+            "Please call 01234 567890 ext 8910 between 9am and 5pm."
+        )
+
+      expect(consent.phone_contact_method_description).to eq(
+        "Other – Please call 01234 567890 ext 8910 between 9am and 5pm."
+      )
+    end
+  end
+
   it "resets unused fields after a consent refusal" do
     consent =
       build(
