@@ -81,71 +81,65 @@ FactoryBot.define do
     end
 
     trait :consent_given_triage_not_needed do
-      after(:create) do |patient, evaluator|
-        create(
+      consents do
+        create_list(
           :consent,
+          1,
           :given,
-          campaign: evaluator.campaign,
-          patient:,
-          parent_relationship: patient.parent_relationship
+          campaign:,
+          patient: instance,
+          parent_relationship: instance.parent_relationship
         )
       end
     end
 
     trait :consent_given_triage_needed do
-      after(:create) do |patient, evaluator|
-        create(
+      consents do
+        create_list(
           :consent,
+          1,
           :given,
           :health_question_notes,
-          campaign: evaluator.campaign,
-          patient:
+          campaign:,
+          patient: instance
         )
       end
     end
 
     trait :consent_refused do
-      after(:create) do |patient, evaluator|
-        create(
+      consents do
+        create_list(
           :consent,
+          1,
           :refused,
           :from_mum,
-          campaign: evaluator.campaign,
-          patient:
+          campaign:,
+          patient: instance
         )
       end
     end
 
     trait :consent_refused_with_notes do
-      after(:create) do |patient, evaluator|
-        create(
+      consents do
+        create_list(
           :consent,
+          1,
           :refused,
           :from_mum,
-          campaign: evaluator.campaign,
+          campaign:,
           reason_for_refusal: "already_vaccinated",
           reason_for_refusal_notes: "Already had the vaccine at the GP",
-          patient:
+          patient: instance
         )
       end
     end
 
     trait :consent_conflicting do
-      after(:create) do |patient, evaluator|
-        create(
-          :consent,
-          :refused,
-          :from_mum,
-          campaign: evaluator.campaign,
-          patient:
-        )
-        create(
-          :consent,
-          :given,
-          :from_dad,
-          campaign: evaluator.campaign,
-          patient:
-        )
+      consents do
+        [
+          create(:consent, :refused, :from_mum, campaign:, patient: instance),
+          create(:consent, :given, :from_dad, campaign:, patient: instance)
+        ]
       end
     end
 

@@ -44,11 +44,11 @@ FactoryBot.define do
       date { Time.zone.now - 1.week }
     end
 
-    after :create do |session, context|
+    patients do
       create_list :patient,
-                  context.patients_in_session,
-                  sessions: [session],
-                  location: session.location
+                  patients_in_session,
+                  sessions: [instance],
+                  location: instance.location
     end
   end
 end
