@@ -458,6 +458,11 @@ RSpec.describe ConsentForm, type: :model do
       consent_form = build(:consent_form, parent_phone: nil)
       expect(consent_form.parent_phone).to eq(nil)
     end
+
+    it "sets the phone number to nil if it's blank" do
+      consent_form = build(:consent_form, parent_phone: "")
+      expect(consent_form.parent_phone).to eq(nil)
+    end
   end
 
   describe "#each_health_answer" do
