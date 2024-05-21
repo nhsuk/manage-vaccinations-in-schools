@@ -34,7 +34,14 @@ class DevController < ApplicationController
             email: "nurse.joy@example.com",
             password: "nurse.joy@example.com"
           )
-      FactoryBot.create(:example_campaign, :in_progress, :in_past, :hpv, user:)
+      FactoryBot.create(
+        :example_campaign,
+        :in_progress,
+        :in_past,
+        :in_future,
+        :hpv,
+        user:
+      )
     end
 
     redirect_to root_path
