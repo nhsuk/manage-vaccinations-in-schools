@@ -74,4 +74,33 @@ FactoryBot.define do
       end
     end
   end
+
+  trait :in_future do
+    after(:create) do |campaign, context|
+      location = context.location
+
+      create(:session, :in_future, campaign:, location:).tap do |session|
+        patients_without_consent = create_list(:patient_session, 16, session:)
+        unmatched_patients = patients_without_consent.sample(8).map(&:patient)
+        unmatched_patients.each do |patient|
+          create(
+            :consent_form,
+            :recorded,
+            first_name: patient.first_name,
+            last_name: patient.last_name,
+            session:
+          )
+        end
+        create_list(
+          :patient_session,
+          8,
+          :consent_given_triage_not_needed,
+          session:
+        )
+        create_list(:patient_session, 8, :consent_given_triage_needed, session:)
+        create_list(:patient_session, 8, :consent_refused, session:)
+        create_list(:patient_session, 4, :consent_conflicting, session:)
+      end
+    end
+  end
 end
