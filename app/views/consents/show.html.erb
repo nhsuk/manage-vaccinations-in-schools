@@ -59,7 +59,7 @@
     if @consent.consent_form.present?
       summary_list.with_row do |row|
         row.with_key { "GP surgery" }
-        row.with_value { @consent.consent_form.gp_surgery }
+        row.with_value { @consent.consent_form.gp_name }
       end
     end
 

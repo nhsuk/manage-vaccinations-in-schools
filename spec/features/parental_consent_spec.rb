@@ -25,6 +25,7 @@ RSpec.describe "Parental consent" do
 
     when_the_nurse_checks_the_consent_responses
     then_they_see_that_the_child_has_consent
+    and_they_see_the_full_consent_form
 
     when_they_check_triage
     then_the_patient_should_be_ready_to_vaccinate
@@ -167,6 +168,16 @@ RSpec.describe "Parental consent" do
     expect(page).to have_content("Given")
     click_on "Given"
     expect(page).to have_content(@child.full_name)
+  end
+
+  def and_they_see_the_full_consent_form
+    click_on @child.full_name
+    click_on "Jane #{@child.last_name}"
+    expect(page).to have_content(
+      "Consent response from Jane #{@child.last_name}"
+    )
+    click_on "Back to patient page"
+    click_on "Back to consents page"
   end
 
   def when_they_check_triage
