@@ -38,15 +38,7 @@ class AppPatientTableComponent < ViewComponent::Base
   def column_value(patient_session, column)
     case column
     when :action, :outcome
-      {
-        text:
-          govuk_tag(
-            classes: "nhsuk-u-font-size-16 nhsuk-u-width-full",
-            text: t("patient_session_statuses.#{patient_session.state}.text"),
-            colour:
-              t("patient_session_statuses.#{patient_session.state}.colour")
-          )
-      }
+      { text: t("patient_session_statuses.#{patient_session.state}.text") }
     when :name
       { text: name_cell(patient_session) }
     when :dob
