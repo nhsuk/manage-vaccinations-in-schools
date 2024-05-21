@@ -4,7 +4,7 @@
   "dependencies": {
     "@hotwired/stimulus": "^3.2.2",
     "@hotwired/turbo-rails": "^8.0.4",
-    "esbuild": "^0.21.2",
+    "esbuild": "^0.21.3",
     "govuk-frontend": "^5.4.0",
     "idb": "^8.0.0",
     "nhsuk-frontend": "^8.1.1",
