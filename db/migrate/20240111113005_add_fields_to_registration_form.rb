@@ -1,4 +1,5 @@
 class AddFieldsToRegistrationForm < ActiveRecord::Migration[7.1]
+  # rubocop:disable Rails/NotNullColumn
   def change
     change_table :registrations, bulk: true do |t|
       t.string :parent_name, null: false
@@ -8,4 +9,5 @@ class AddFieldsToRegistrationForm < ActiveRecord::Migration[7.1]
       t.string :parent_phone
     end
   end
+  # rubocop:enable Rails/NotNullColumn
 end
