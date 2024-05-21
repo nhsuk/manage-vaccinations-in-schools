@@ -13,8 +13,8 @@ class AppConsentComponent < ViewComponent::Base
   delegate :session, to: :patient_session
 
   def display_gillick_consent_button?
-    @patient_session.session.in_progress? && @patient_session.consents.empty? &&
-      @patient_session.able_to_vaccinate?
+    patient_session.session.in_progress? && patient_session.consents.empty? &&
+      patient_session.able_to_vaccinate?
   end
 
   def contact_parent_or_guardian_link(consents)
@@ -34,5 +34,9 @@ class AppConsentComponent < ViewComponent::Base
       ),
       class: "nhsuk-u-font-weight-bold"
     )
+  end
+
+  def consents
+    patient_session.consents.order(recorded_at: :desc)
   end
 end
