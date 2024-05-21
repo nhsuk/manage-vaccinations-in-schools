@@ -1,12 +1,14 @@
 FactoryBot.define do
-  factory :example_in_progress_campaign, parent: :campaign do
+  factory :example_campaign, parent: :campaign do
     transient do
-      user { raise "create(:user)" }
+      user { create(:user) }
       location { create(:location, team:) }
     end
 
     team { create(:team, users: [user]) }
+  end
 
+  trait :in_progress do
     after(:create) do |campaign, context|
       location = context.location
 
