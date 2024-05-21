@@ -7,7 +7,6 @@
 <% end %>
 
 <% if patient_session.consents.present? %>
-  <% consents = patient_session.consents.order(:recorded_at) %>
   <%= govuk_table do |table| %>
     <%= table.with_head do |head| %>
       <%= head.with_row do |row| %>
@@ -18,7 +17,7 @@
     <% end %>
 
     <%= table.with_body do |body| %>
-      <% patient_session.consents.order(recorded_at: :desc).each do |consent| %>
+      <% consents.each do |consent| %>
         <%= body.with_row do |row| %>
           <%= row.with_cell do %>
             <%= govuk_link_to consent.parent_name, details_session_patient_manage_consents_path(consent, session_id: session.id, patient_id: patient.id, section:, tab:) %>
