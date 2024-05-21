@@ -1,7 +1,7 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
     href: @back_link,
-    name: "vaccinations page"
+    name: "#{@section.pluralize} page"
   ) %>
 <% end %>
 
