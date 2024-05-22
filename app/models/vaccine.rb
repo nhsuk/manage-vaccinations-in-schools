@@ -4,6 +4,7 @@
 #
 #  id         :bigint           not null, primary key
 #  brand      :text
+#  gtin       :text
 #  method     :integer
 #  supplier   :text
 #  type       :string

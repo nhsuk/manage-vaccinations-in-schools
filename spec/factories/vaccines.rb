@@ -4,6 +4,7 @@
 #
 #  id         :bigint           not null, primary key
 #  brand      :text
+#  gtin       :text
 #  method     :integer
 #  supplier   :text
 #  type       :string
@@ -52,6 +53,7 @@ FactoryBot.define do
       type { "flu" }
       brand { "Fluenz Tetra" }
       supplier { "AstraZeneca UK Ltd)" }
+      gtin { "05000456078276" }
       add_attribute(:method) { :nasal }
     end
 
@@ -59,6 +61,7 @@ FactoryBot.define do
       type { "flu" }
       brand { "Fluerix Tetra" }
       supplier { "GlaxoSmithKline UK Ltd" }
+      gtin { "5000123114115" }
       add_attribute(:method) { :injection }
     end
 
@@ -80,6 +83,7 @@ FactoryBot.define do
       type { "HPV" }
       brand { "Gardasil 9" }
       supplier { "Merck Sharp & Dohme (UK) Ltd" }
+      gtin { "00191778001693" }
       add_attribute(:method) { :injection }
     end
   end

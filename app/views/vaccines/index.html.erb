@@ -5,7 +5,8 @@
 <% @vaccines.each do |vaccine| %>
   <%= render AppCardComponent.new(heading: "#{vaccine.brand} (#{vaccine.type})") do %>
     <p class="nhsuk-body-s nhsuk-secondary-text-color">
-      <%= vaccine.supplier %>, GTIN: <span class="app-u-monospace">05000456078276</span>
+      <%= vaccine.supplier %>,
+      GTIN: <span class="app-u-monospace"><%= vaccine.gtin %></span>
     </p>
 
     <p>
