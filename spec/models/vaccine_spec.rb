@@ -22,7 +22,7 @@ RSpec.describe Vaccine do
     end
 
     it "returns false if the vaccine is an injected flu vaccine" do
-      vaccine = FactoryBot.build(:vaccine, :fluerix_tetra)
+      vaccine = FactoryBot.build(:vaccine, :fluarix_tetra)
       expect(vaccine.contains_gelatine?).to be false
     end
 
