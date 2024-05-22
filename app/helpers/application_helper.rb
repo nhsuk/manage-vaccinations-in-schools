@@ -47,6 +47,7 @@ or set it with content_for(:page_title)."
                 )
             ),
             data: {
+              turbo: "true",
               turbo_action: "replace"
             }
   end
