@@ -18,6 +18,7 @@ module PatientTabsConcern
       ]
     },
     vaccinations: {
+      vaccinate: %w[triaged_ready_to_vaccinate consent_given_triage_not_needed],
       vaccinated: %w[vaccinated],
       could_not_vaccinate: %w[
         consent_refused

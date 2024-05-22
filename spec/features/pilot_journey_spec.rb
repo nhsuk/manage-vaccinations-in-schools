@@ -30,7 +30,8 @@ RSpec.describe "Pilot journey" do
     then_i_should_see_that_the_patient_is_ready_for_vaccination
 
     # Vaccination
-    when_i_record_the_successful_vaccination
+    when_i_click_on_the_vaccination_section
+    and_i_record_the_successful_vaccination
     then_i_see_that_the_child_is_vaccinated
   end
 
@@ -186,7 +187,16 @@ RSpec.describe "Pilot journey" do
     expect(page).to have_content "Safe to vaccinate"
   end
 
-  def when_i_record_the_successful_vaccination
+  def when_i_click_on_the_vaccination_section
+    click_link "Back to consents page"
+    click_link "HPV session at Pilot School"
+    click_link "Record vaccinations"
+    click_link "Vaccinate ( 1 )"
+  end
+
+  def and_i_record_the_successful_vaccination
+    click_link "Bobby Tables"
+
     choose "Yes, they got the HPV vaccine"
     choose "Left arm (upper position)"
     click_button "Continue"
@@ -198,6 +208,7 @@ RSpec.describe "Pilot journey" do
   end
 
   def then_i_see_that_the_child_is_vaccinated
+    click_link "Vaccinated ( 1 )"
     expect(page).to have_content "1 child vaccinated"
   end
 end
