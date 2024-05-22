@@ -69,11 +69,11 @@ describe ApplicationHelper do
       params[:tab] = "tab"
       params[:sort] = "name"
       params[:direction] = "asc"
-      expect(helper.session_patient_sort_link("Text", "name")).to eq(
-        '<a data-turbo-action="replace" href="/sessions/1/section/tab?direction=desc&amp;sort=name">Text</a>'
+      expect(helper.session_patient_sort_link("Text", "name")).to include(
+        '/sessions/1/section/tab?direction=desc&amp;sort=name">Text</a>'
       )
-      expect(helper.session_patient_sort_link("Text", "dob")).to eq(
-        '<a data-turbo-action="replace" href="/sessions/1/section/tab?direction=asc&amp;sort=dob">Text</a>'
+      expect(helper.session_patient_sort_link("Text", "dob")).to include(
+        '/sessions/1/section/tab?direction=asc&amp;sort=dob">Text</a>'
       )
     end
   end

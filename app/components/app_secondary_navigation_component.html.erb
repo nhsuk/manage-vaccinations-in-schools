@@ -6,7 +6,7 @@
         <%= 'app-secondary-navigation__list-item--current' if item.selected %>">
         <%= link_to item.href,
           class: "app-secondary-navigation__link",
-          data: { turbo_action: 'replace' } do %>
+          data: { turbo: true, turbo_action: 'replace' } do %>
           <%= item %>
         <% end %>
       </li>
