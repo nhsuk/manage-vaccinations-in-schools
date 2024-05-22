@@ -47,6 +47,9 @@ en:
       caption: "%{children} with no triage needed"
 
     # Vaccinate
+    vaccinate:
+      label: Vaccinate
+      caption: "%{children} to vaccinate"
     vaccinated:
       label: Vaccinated
       caption: "%{children} vaccinated"

@@ -132,6 +132,10 @@ describe PatientTabsConcern do
 
         expect(result).to eq(
           {
+            vaccinate: [
+              consent_given_triage_not_needed,
+              triaged_ready_to_vaccinate
+            ],
             vaccinated: [vaccinated],
             could_not_vaccinate: [
               consent_conflicts,

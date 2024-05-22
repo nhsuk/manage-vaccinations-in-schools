@@ -13,6 +13,7 @@ TAB_PATHS = {
     "not-needed" => :no_triage_needed
   },
   vaccinations: {
+    "vaccinate" => :vaccinate,
     "vaccinated" => :vaccinated,
     "could-not" => :could_not_vaccinate
   }

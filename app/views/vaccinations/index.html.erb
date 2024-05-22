@@ -24,7 +24,7 @@ end %>
   patient_sessions: @patient_sessions,
   caption: t("patients_table.#{@current_tab}.caption",
              children: pluralize_child(@patient_sessions.count)),
-  columns: @current_tab == :action_needed ?
+  columns: @current_tab == :vaccinate ?
     %i[name dob action] :
     %i[name dob outcome],
   section: :vaccinations,
