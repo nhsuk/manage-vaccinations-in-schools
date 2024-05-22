@@ -5,6 +5,7 @@
 #  id         :bigint           not null, primary key
 #  brand      :text
 #  method     :integer
+#  supplier   :text
 #  type       :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
@@ -50,12 +51,14 @@ FactoryBot.define do
     trait :fluenz_tetra do
       type { "flu" }
       brand { "Fluenz Tetra" }
+      supplier { "AstraZeneca UK Ltd)" }
       add_attribute(:method) { :nasal }
     end
 
     trait :fluerix_tetra do
       type { "flu" }
       brand { "Fluerix Tetra" }
+      supplier { "GlaxoSmithKline UK Ltd" }
       add_attribute(:method) { :injection }
     end
 
@@ -76,6 +79,7 @@ FactoryBot.define do
     trait :gardasil_9 do
       type { "HPV" }
       brand { "Gardasil 9" }
+      supplier { "Merck Sharp & Dohme (UK) Ltd" }
       add_attribute(:method) { :injection }
     end
   end

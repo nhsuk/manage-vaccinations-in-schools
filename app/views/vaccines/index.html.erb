@@ -4,6 +4,10 @@
 
 <% @vaccines.each do |vaccine| %>
   <%= render AppCardComponent.new(heading: "#{vaccine.brand} (#{vaccine.type})") do %>
+    <p class="nhsuk-body-s nhsuk-secondary-text-color">
+      <%= vaccine.supplier %>, GTIN: <span class="app-u-monospace">05000456078276</span>
+    </p>
+
     <p>
       <%= link_to "Add batch", new_vaccine_batch_path(vaccine) %>
     </p>

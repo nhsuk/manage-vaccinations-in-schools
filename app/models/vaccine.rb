@@ -5,6 +5,7 @@
 #  id         :bigint           not null, primary key
 #  brand      :text
 #  method     :integer
+#  supplier   :text
 #  type       :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
