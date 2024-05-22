@@ -57,9 +57,9 @@ FactoryBot.define do
       add_attribute(:method) { :nasal }
     end
 
-    trait :fluerix_tetra do
+    trait :fluarix_tetra do
       type { "flu" }
-      brand { "Fluerix Tetra" }
+      brand { "Fluarix Tetra" }
       supplier { "GlaxoSmithKline UK Ltd" }
       gtin { "5000123114115" }
       add_attribute(:method) { :injection }
