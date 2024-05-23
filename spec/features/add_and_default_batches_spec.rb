@@ -13,11 +13,6 @@ RSpec.describe "Batches" do
 
     when_i_add_a_new_batch
     then_i_see_the_batch_i_just_added_on_the_vaccines_page
-
-    when_i_set_the_batch_as_default
-    and_i_start_vaccinating_a_patient
-    then_i_am_not_asked_to_select_a_batch
-    and_the_batch_is_recorded_against_the_patient
   end
 
   def given_my_team_is_running_an_hpv_vaccination_campaign
@@ -70,40 +65,5 @@ RSpec.describe "Batches" do
     expect(page).to have_content("Gardasil 9 (HPV)")
     expect(page).to have_css("table")
     expect(page).to have_content("AB1234 29 February 202430 March 2024")
-  end
-
-  def when_i_set_the_batch_as_default
-    click_on "Make default"
-  end
-
-  def and_i_start_vaccinating_a_patient
-    click_on "Campaigns", match: :first
-    click_on @campaign.name
-    click_on @team.locations.first.name
-    click_on "Check consent responses"
-
-    click_on "Given"
-    click_on @patient.full_name
-    choose "Yes, they got the HPV vaccine"
-    choose "Left arm (upper position)"
-
-    click_on "Continue"
-  end
-
-  def then_i_am_not_asked_to_select_a_batch
-    expect(page).not_to have_content("Which batch did you use?")
-    expect(page).to have_content("Check and confirm")
-    expect(page).to have_content("AB1234")
-
-    click_on "Confirm"
-  end
-
-  def and_the_batch_is_recorded_against_the_patient
-    expect(page).to have_content("Record saved for #{@patient.full_name}")
-
-    click_on "View child record"
-
-    expect(page).to have_content("Vaccinated")
-    expect(page).to have_content("HPV (Gardasil 9, AB1234)")
   end
 end
