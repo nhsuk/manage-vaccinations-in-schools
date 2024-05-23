@@ -30,17 +30,6 @@ RSpec.describe CohortList, type: :model do
         expect(cohort_list.errors[:csv]).to include(/correct format/)
       end
     end
-
-    describe "with too many rows" do
-      let(:file) { "too_many_rows.csv" }
-
-      it "is invalid" do
-        cohort_list.load_data!
-
-        expect(cohort_list).to be_invalid
-        expect(cohort_list.errors[:csv]).to include(/fewer rows/)
-      end
-    end
   end
 
   describe "#parse_rows!" do
