@@ -39,15 +39,6 @@
               <% row.with_cell(text: batch.created_at.to_fs(:nhsuk_date)) %>
               <% row.with_cell(text: batch.expiry.to_fs(:nhsuk_date)) %>
               <% row.with_cell do %>
-                <% if batch.id == @todays_batch_id %>
-                  <%= form_tag remove_default_vaccine_batch_path(batch, vaccine_id: batch.vaccine.id), method: :post do %>
-                    <%= submit_tag "Remove default", class: "nhsuk-button nhsuk-button--secondary app-button--small" %>
-                  <% end %>
-                <% else %>
-                  <%= form_tag make_default_vaccine_batch_path(batch, vaccine_id: batch.vaccine.id), method: :post do %>
-                    <%= submit_tag "Make default", class: "nhsuk-button nhsuk-button--secondary app-button--small" %>
-                  <% end %>
-                <% end %>
               <% end %>
             <% end %>
           <% end %>
