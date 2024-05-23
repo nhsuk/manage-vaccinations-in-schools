@@ -35,6 +35,7 @@
       heading: "Record vaccinations",
       link_to: session_vaccinations_path(@session)
     ) do %>
+      <%= pluralize_child(@counts[:vaccinate]) %> to vaccinate<br>
       <%= pluralize_child(@counts[:vaccinated]) %> vaccinated<br>
       <%= pluralize_child(@counts[:could_not_vaccinate]) %> could not be vaccinated
     <% end %>
