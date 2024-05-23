@@ -6,14 +6,15 @@
 
     <title><%= page_title(@service_name) %></title>
 
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": Rails.env.development? ? "" : "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": Rails.env.development? ? "" : "reload", defer: true %>
 
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= turbo_refreshes_with method: :morph, scroll: :preserve  %>
     <%= yield :head %>
+    <%= hotwire_livereload_tags if Rails.env.development? %>
   </head>
 
   <body class="nhsuk-template__body<%= ' app-signed-in' if current_user.present? %>">
