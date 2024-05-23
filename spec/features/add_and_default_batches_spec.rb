@@ -52,7 +52,7 @@ RSpec.describe "Batches" do
   end
 
   def when_i_add_a_new_batch
-    click_on "Add batch"
+    click_on "Add a batch"
 
     fill_in "Batch", with: "AB1234"
 

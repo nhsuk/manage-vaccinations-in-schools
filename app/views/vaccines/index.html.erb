@@ -10,7 +10,7 @@
     </p>
 
     <p>
-      <%= link_to "Add batch", new_vaccine_batch_path(vaccine) %>
+      <%= link_to "Add a batch", new_vaccine_batch_path(vaccine) %>
     </p>
 
     <% if vaccine.batches.any? %>
@@ -18,9 +18,9 @@
         <%= table.with_head do |head| %>
           <%= head.with_row do |row| %>
             <%= row.with_cell(text: "Batch") %>
-            <%= row.with_cell(text: "Entered") %>
-            <%= row.with_cell(text: "Expiry") %>
-            <%= row.with_cell(text: "Default") %>
+            <%= row.with_cell(text: "Entered date") %>
+            <%= row.with_cell(text: "Expiry date") %>
+            <%= row.with_cell(text: "Actions") %>
           <% end %>
         <% end %>
 
