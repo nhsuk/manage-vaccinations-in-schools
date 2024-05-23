@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Self consent" do
+RSpec.describe "Self-consent" do
   after { Timecop.return }
 
   scenario "No consent from parent, the child is Gillick competent so can self-consent" do
@@ -78,6 +78,9 @@ RSpec.describe "Self consent" do
   end
 
   def then_they_see_that_the_child_has_consent
+    expect(page).to have_content(
+      "#{@child.full_name} Child (Gillick competent)"
+    )
     expect(page).to have_content("Consent given")
   end
 

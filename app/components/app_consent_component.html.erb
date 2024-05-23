@@ -20,9 +20,9 @@
       <% consents.each do |consent| %>
         <%= body.with_row do |row| %>
           <%= row.with_cell do %>
-            <%= govuk_link_to consent.parent_name, details_session_patient_manage_consents_path(consent, session_id: session.id, patient_id: patient.id, section:, tab:) %>
+            <%= govuk_link_to consent.parent_name || consent.patient.full_name, details_session_patient_manage_consents_path(consent, session_id: session.id, patient_id: patient.id, section:, tab:) %>
             <br>
-            <span class="nhsuk-u-font-size-16"><%= consent.human_enum_name(:parent_relationship).humanize %></span>
+            <span class="nhsuk-u-font-size-16"><%= consent.who_responded %></span>
           <% end %>
           <%= row.with_cell(text: consent.recorded_at.to_fs(:app_date_time)) %>
           <%= row.with_cell(text: consent.human_enum_name(:response).humanize) %>
