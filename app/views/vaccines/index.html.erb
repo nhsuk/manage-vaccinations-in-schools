@@ -39,6 +39,7 @@
               <% row.with_cell(text: batch.created_at.to_fs(:nhsuk_date)) %>
               <% row.with_cell(text: batch.expiry.to_fs(:nhsuk_date)) %>
               <% row.with_cell do %>
+                <%= link_to "Change", edit_vaccine_batch_path(vaccine, batch) %>
               <% end %>
             <% end %>
           <% end %>

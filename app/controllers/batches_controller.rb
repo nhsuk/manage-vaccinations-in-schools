@@ -20,6 +20,10 @@ class BatchesController < ApplicationController
     end
   end
 
+  def edit
+    @batch = @vaccine.batches.find(params[:id])
+  end
+
   def make_default
     self.todays_batch_id = params[:id]
     redirect_to vaccines_path
@@ -28,6 +32,17 @@ class BatchesController < ApplicationController
   def remove_default
     unset_todays_batch
     redirect_to vaccines_path
+  end
+
+  def update
+    @batch = @vaccine.batches.find(params[:id])
+
+    if @batch.update(batch_params)
+      flash[:success] = "Batch #{@batch.name} updated"
+      redirect_to vaccines_path
+    else
+      render :edit
+    end
   end
 
   private
