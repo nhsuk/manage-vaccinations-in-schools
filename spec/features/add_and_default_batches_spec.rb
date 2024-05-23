@@ -13,6 +13,9 @@ RSpec.describe "Batches" do
 
     when_i_add_a_new_batch
     then_i_see_the_batch_i_just_added_on_the_vaccines_page
+
+    when_i_edit_the_expiry_date_of_the_batch
+    then_i_see_the_updated_expiry_date_on_the_vaccines_page
   end
 
   def given_my_team_is_running_an_hpv_vaccination_campaign
@@ -65,5 +68,19 @@ RSpec.describe "Batches" do
     expect(page).to have_content("Gardasil 9 (HPV)")
     expect(page).to have_css("table")
     expect(page).to have_content("AB1234 29 February 202430 March 2024")
+  end
+
+  def when_i_edit_the_expiry_date_of_the_batch
+    click_on "Change"
+    fill_in "Day", with: "31"
+    fill_in "Month", with: "3"
+    fill_in "Year", with: "2024"
+    click_on "Save changes"
+  end
+
+  def then_i_see_the_updated_expiry_date_on_the_vaccines_page
+    expect(page).to have_content("Gardasil 9 (HPV)")
+    expect(page).to have_css("table")
+    expect(page).to have_content("AB1234 29 February 202431 March 2024")
   end
 end
