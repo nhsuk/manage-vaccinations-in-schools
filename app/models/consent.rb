@@ -162,11 +162,13 @@ class Consent < ApplicationRecord
   end
 
   def who_responded
-    if parent_relationship == "other"
-      parent_relationship_other
+    if via_self_consent?
+      "Child (Gillick competent)"
+    elsif parent_relationship == "other"
+      parent_relationship_other.capitalize
     else
-      human_enum_name(:parent_relationship)
-    end.capitalize
+      human_enum_name(:parent_relationship).capitalize
+    end
   end
 
   def health_answers_require_follow_up?
