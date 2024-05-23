@@ -1,0 +1,1 @@
+{ "addons": [{ "plan": "heroku-postgresql:mini" }] }
