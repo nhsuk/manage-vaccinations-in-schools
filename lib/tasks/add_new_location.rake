@@ -8,7 +8,7 @@ desc <<-DESC
     rake add_new_location[name,address,town,postcode,county,urn,team_id]
 DESC
 task :add_new_location,
-     %i[name address town county urn postcode team_id] =>
+     %i[name address town county postcode urn team_id] =>
        :environment do |_task, args|
   include TaskHelpers
 
