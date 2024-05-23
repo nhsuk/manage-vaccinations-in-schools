@@ -187,56 +187,7 @@ yarn playwright codegen http://localhost:4000
 
 ## Example campaigns
 
-### Loading example data
-
-You can run a rake task to load data from the example campaign file
-`db/sample_data/example-hpv-campaign.json`. The following commands can be used to prepare a test environment with the example data:
-
-```bash
-# Load the default example campaign, currently HPV:
-$ rails load_campaign_example in_progress=1
-
-# Load the Flu campaign as an additional campaign:
-$ rails load_campaign_example[db/sample_data/example-flu-campaign.json] new_campaign=1 in_progress=1
-```
-
-The importer will `find_or_create` the records by default, using specific attributes to match records:
-
-- **campaigns** -- a combination of `type`, `location` and `date`
-- **children** -- `nhs_number`
-- **schools** -- `urn`
-
-### Generating example data
-
-There's also a rake task to generate example campaign data. The `seed` setting
-allows identical campaign data be generated for the purpose of testing. The type
-of campaign can be controlled by the `type` setting. Use `rails -D
-generate_example_campaign` for more usage information.
-
-```bash
-# Generate a simple example campaign to stdout
-$ rails generate_example_campaign
-
-# Generate an hpv campaign. Default is flu.
-$ rails generate_example_campaign type=hpv
-
-# Get more information about commang usage, including which patient states are
-# available.
-$ rails -D generate_example_campaign
-
-# Generate a specific number of patients in certain states.
-$ rails generate_example_campaign patients_that_still_need_triage=2 patients_with_no_consent=2
-
-# Generate the model office data set and write it to a given file
-$ rails generate_example_campaign[db/sample_data/model-office.json] \
-  type=hpv \
-  seed=42 \
-  users_json='[{ "full_name": "Nurse Chapel", "email": "nurse.chapel@example.com" }]' \
-  presets=model_office
-
-# Generate example campaign data with a specific random seed for repeatability
-$ rails generate_example_campaign seed=42
-```
+You can generate an example campaign with a few sessions in development by visiting `/reset`.
 
 ### Adding a test user
 

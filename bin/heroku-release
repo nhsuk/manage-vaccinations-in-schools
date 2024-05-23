@@ -8,7 +8,6 @@ set -e
 if [[ `bin/rails db:version | grep version` == "Current version: 0" ]]; then
   bin/rails db:schema:load
   bin/rails db:seed
-  bin/rails load_campaign_example
 else
   bin/rails db:prepare:ignore_concurrent_migration_exceptions
 fi
