@@ -33,6 +33,9 @@
 #
 #  fk_rails_...  (location_id => locations.id)
 #
+
+require_relative "../support/faker/national_health_service"
+
 FactoryBot.define do
   factory :patient do
     transient do
@@ -52,7 +55,8 @@ FactoryBot.define do
       end
     end
 
-    nhs_number { Faker::NationalHealthService.british_number.gsub(/\s+/, "") }
+    nhs_number { Faker::NationalHealthService.test_number.gsub(/\s+/, "") }
+
     first_name { Faker::Name.first_name }
     last_name { Faker::Name.last_name }
     date_of_birth { Faker::Date.birthday(min_age: 3, max_age: 9) }
