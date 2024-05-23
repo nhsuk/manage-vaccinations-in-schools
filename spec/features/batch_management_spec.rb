@@ -6,7 +6,7 @@ RSpec.describe "Batch management" do
 
   scenario "Adding a new batch" do
     given_my_team_is_running_an_hpv_vaccination_campaign
-    and_there_is_a_vaccination_session_today_at_one_of_my_teams_schools
+    and_there_is_a_vaccination_session_today_with_one_patient_ready_to_vaccinate
 
     when_i_manage_vaccines
     then_i_see_an_hpv_vaccine_with_no_batches_set_up
@@ -25,17 +25,18 @@ RSpec.describe "Batch management" do
     @campaign = create(:campaign, :hpv_no_batches, team: @team)
   end
 
-  def and_there_is_a_vaccination_session_today_at_one_of_my_teams_schools
+  def and_there_is_a_vaccination_session_today_with_one_patient_ready_to_vaccinate
     session =
       create(
         :session,
         :in_progress,
         campaign: @campaign,
-        location: @team.locations.first,
-        patients_in_session: 1
+        location: @team.locations.first
       )
 
-    @patient = session.patients.first
+    create(:patient_session, :consent_given_triage_not_needed, session:)
+
+    @patient = session.reload.patients.first
   end
 
   def when_i_manage_vaccines
@@ -81,42 +82,12 @@ RSpec.describe "Batch management" do
     click_on @team.locations.first.name
     click_on "Check consent responses"
 
-    # patient is in the "get consent state" so need to get to the vaccination state
-    record_self_consent
-
     click_on "Given"
     click_on @patient.full_name
     choose "Yes, they got the HPV vaccine"
     choose "Left arm (upper position)"
 
     click_on "Continue"
-  end
-
-  def record_self_consent
-    click_on @patient.full_name
-
-    click_on "Assess Gillick competence"
-    click_on "Give your assessment"
-
-    choose "Yes, they are Gillick competent"
-
-    fill_in "Give details of your assessment",
-            with: "They understand the benefits and risks of the vaccine"
-    click_on "Continue"
-
-    # record consent
-    choose "Yes, they agree"
-    click_on "Continue"
-
-    # answer the health questions
-    all("label", text: "No").each(&:click)
-    choose "Yes, it’s safe to vaccinate"
-    click_on "Continue"
-
-    # confirmation page
-    click_on "Confirm"
-
-    expect(page).to have_content("Check consent responses")
   end
 
   def then_i_am_not_asked_to_select_a_batch
