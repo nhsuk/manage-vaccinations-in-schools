@@ -29,7 +29,7 @@ FactoryBot.define do
       user { create :user }
     end
 
-    patient { create :patient }
+    patient { create :patient, session: }
     session { create(:session, campaign:) }
 
     trait :added_to_session do

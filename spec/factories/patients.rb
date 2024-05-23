@@ -57,10 +57,7 @@ FactoryBot.define do
     last_name { Faker::Name.last_name }
     date_of_birth { Faker::Date.birthday(min_age: 3, max_age: 9) }
     patient_sessions { [] }
-    # TODO: We should be taking the location from the session by default. But
-    #       this seems to break the example campaign generator by creating
-    #       duplicate sessions.
-    # location { session&.location }example.com
+    location { session&.location }
     parent_name { "#{parent_first_name} #{last_name}" }
     parent_relationship { parent_sex == "male" ? "father" : "mother" }
     parent_email do
