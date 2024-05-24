@@ -77,4 +77,45 @@ describe PatientSortingConcern do
       end
     end
   end
+
+  describe "#filter_patients!" do
+    context "when filtering by name" do
+      let(:params) { { name: "Alex" } }
+
+      it "filters patient sessions by patient name" do
+        subject.filter_patients!(patient_sessions)
+        expect(patient_sessions.size).to eq(1)
+        expect(patient_sessions.first.patient.first_name).to eq("Alex")
+      end
+    end
+
+    context "when filtering by date of birth" do
+      let(:params) { { dob: "02/01/2010" } }
+
+      it "filters patient sessions by date of birth" do
+        subject.filter_patients!(patient_sessions)
+        expect(patient_sessions.size).to eq(1)
+        expect(patient_sessions.first.patient.first_name).to eq("Blair")
+      end
+    end
+
+    context "when filtering by name and date of birth" do
+      let(:params) { { name: "Alex", dob: "01/01/2010" } }
+
+      it "filters patient sessions by both name and date of birth" do
+        subject.filter_patients!(patient_sessions)
+        expect(patient_sessions.size).to eq(1)
+        expect(patient_sessions.first.patient.first_name).to eq("Alex")
+      end
+    end
+
+    context "when no filter parameters are provided" do
+      let(:params) { {} }
+
+      it "does not filter patient sessions" do
+        subject.filter_patients!(patient_sessions)
+        expect(patient_sessions.size).to eq(3)
+      end
+    end
+  end
 end
