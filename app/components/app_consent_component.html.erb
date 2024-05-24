@@ -54,11 +54,6 @@
       method: :post,
       builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
       <%= f.govuk_submit "Get consent", name: "consent", value: "phone" %>
-
-      <% if display_gillick_consent_button? %>
-        <%= f.govuk_submit "Assess Gillick competence", secondary: true,
-          name: "consent", value: "self_consent" %>
-      <% end %>
     <% end %>
   </p>
 <% end %>

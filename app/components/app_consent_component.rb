@@ -12,11 +12,6 @@ class AppConsentComponent < ViewComponent::Base
   delegate :patient, to: :patient_session
   delegate :session, to: :patient_session
 
-  def display_gillick_consent_button?
-    patient_session.session.in_progress? && patient_session.consents.empty? &&
-      patient_session.able_to_vaccinate?
-  end
-
   def contact_parent_or_guardian_link(consents)
     consent = consents.first
     role =

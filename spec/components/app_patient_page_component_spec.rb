@@ -13,7 +13,7 @@ RSpec.describe AppPatientPageComponent, type: :component do
 
   subject { page }
 
-  context "patient in triage" do
+  context "session in progress, patient in triage" do
     let(:patient_session) do
       FactoryBot.create(
         :patient_session,
@@ -31,9 +31,10 @@ RSpec.describe AppPatientPageComponent, type: :component do
     it "does not show the vaccination form" do
       should_not have_css(".nhsuk-card", text: "Did they get the HPV vaccine?")
     end
+    it { should have_css("button", text: "Assess Gillick competence") }
   end
 
-  context "patient ready to vaccinate" do
+  context "session in progress, patient ready to vaccinate" do
     let(:patient_session) do
       FactoryBot.create(
         :patient_session,
