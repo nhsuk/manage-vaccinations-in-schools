@@ -29,26 +29,4 @@ or set it with content_for(:page_title)."
 
     [title, service_name].join(" - ")
   end
-
-  def session_patient_sort_link(text, sort)
-    link_to text,
-            session_section_tab_path(
-              session_id: params[:session_id],
-              section: params[:section],
-              tab: params[:tab],
-              sort:,
-              direction:
-                (
-                  if params[:sort] == sort.to_s && params[:direction] == "asc"
-                    "desc"
-                  else
-                    "asc"
-                  end
-                )
-            ),
-            data: {
-              turbo: "true",
-              turbo_action: "replace"
-            }
-  end
 end

@@ -7,11 +7,6 @@ RSpec.describe AppPatientTableComponent, type: :component do
     allow(component).to receive(:session_patient_path).and_return(
       "/session/patient/"
     )
-    allow(component).to(
-      receive(:session_patient_sort_link) do |text, sort|
-        "<a href='/session/sort/#{sort}'>#{text}</a>"
-      end
-    )
 
     render_inline(component)
   end
@@ -19,14 +14,14 @@ RSpec.describe AppPatientTableComponent, type: :component do
   subject { page }
 
   let(:section) { :consent }
-  let(:tab) { :needed }
   let(:patient_sessions) { create_list(:patient_session, 2) }
   let(:columns) { %i[name dob] }
-  let(:params) do
-    { patient_sessions:, caption: "Foo", section:, tab:, columns: }
+  let(:params) { { session_id: 1, section:, tab: :needed } }
+  let(:args) do
+    { patient_sessions:, caption: "Foo", section:, columns:, params: }
   end
 
-  let(:component) { described_class.new(**params) }
+  let(:component) { described_class.new(**args) }
 
   def have_column(text)
     have_css(".nhsuk-table__head th", text:)
@@ -87,7 +82,7 @@ RSpec.describe AppPatientTableComponent, type: :component do
 
   describe "columns parameter" do
     context "is not set" do
-      let(:component) { described_class.new(**params.except(:columns)) }
+      let(:component) { described_class.new(**args.except(:columns)) }
 
       it { should have_column("Full name") }
       it { should have_column("Date of birth") }
