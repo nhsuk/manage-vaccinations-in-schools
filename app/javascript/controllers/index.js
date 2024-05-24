@@ -4,6 +4,9 @@
 
 import { application } from "./application";
 
+import AutosubmitController from "./autosubmit_controller";
+application.register("autosubmit", AutosubmitController);
+
 import CheckAllController from "./check_all_controller";
 application.register("check-all", CheckAllController);
 
