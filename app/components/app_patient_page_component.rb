@@ -29,4 +29,12 @@ class AppPatientPageComponent < ViewComponent::Base
   def display_health_questions?
     @patient_session.consents.any?(&:response_given?)
   end
+
+  def gillick_assessment_applicable?
+    patient_session.session.in_progress?
+  end
+
+  def gillick_assessment_recorded?
+    !patient_session.gillick_competent.nil?
+  end
 end

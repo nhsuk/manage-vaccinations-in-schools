@@ -21,7 +21,6 @@ RSpec.describe AppConsentComponent, type: :component do
     it { should_not have_css("details", text: "Responses to health questions") }
     it { should have_css("p", text: "No response yet") }
     it { should have_css("button", text: "Get consent") }
-    it { should have_css("button", text: "Assess Gillick competence") }
   end
 
   context "consent is not present and session is not in progress" do

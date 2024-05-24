@@ -17,6 +17,31 @@
   <%= render AppPatientDetailsComponent.new(patient:, session:) %>
 <% end %>
 
+<% if gillick_assessment_applicable? %>
+  <%= render AppCardComponent.new(heading: "Gillick assessment") do %>
+    <% if gillick_assessment_recorded? %>
+      <%= govuk_summary_list(classes: "app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0") do |summary_list| %>
+        <%= summary_list.with_row do |row| %>
+          <%= row.with_key { "Are they Gillick competent?" } %>
+          <%= row.with_value { patient_session.gillick_competent ? "Yes, they are Gillick competent" : "No" } %>
+        <% end %>
+        <%= summary_list.with_row do |row| %>
+          <%= row.with_key { "Details of your assessment" } %>
+          <%= row.with_value { patient_session.gillick_competence_notes } %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <%= form_for :consent,
+        url: session_patient_manage_consents_path(session, patient_id: patient.id, section: @section, tab: @tab),
+        method: :post,
+        builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
+        <%= f.govuk_submit "Assess Gillick competence", secondary: true,
+          name: "consent", value: "self_consent" %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>
+
 <%= render AppCardComponent.new(heading: "Consent") do %>
   <%= render AppConsentComponent.new(patient_session:, section:, tab:) %>
 <% end %>

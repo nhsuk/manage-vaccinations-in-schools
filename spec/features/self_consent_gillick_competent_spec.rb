@@ -8,11 +8,12 @@ RSpec.describe "Self-consent" do
     and_it_is_the_day_of_a_vaccination_session
     and_there_is_a_child_without_parental_consent
 
-    when_the_nurse_carries_out_a_gillick_competence_assessment_and_records_it
+    when_the_nurse_assesses_the_child_as_gillick_competent
     then_the_child_can_give_their_own_consent_that_the_nurse_records
 
     when_the_nurse_views_the_childs_record
     then_they_see_that_the_child_has_consent
+    and_the_details_of_the_gillick_competence_assessment_are_visible
     and_the_child_should_be_safe_to_vaccinate
   end
 
@@ -43,7 +44,7 @@ RSpec.describe "Self-consent" do
     expect(page).to have_content(@child.full_name)
   end
 
-  def when_the_nurse_carries_out_a_gillick_competence_assessment_and_records_it
+  def when_the_nurse_assesses_the_child_as_gillick_competent
     click_on @child.full_name
 
     click_on "Assess Gillick competence"
@@ -82,6 +83,13 @@ RSpec.describe "Self-consent" do
       "#{@child.full_name} Child (Gillick competent)"
     )
     expect(page).to have_content("Consent given")
+  end
+
+  def and_the_details_of_the_gillick_competence_assessment_are_visible
+    expect(page).to have_content("Yes, they are Gillick competent")
+    expect(page).to have_content(
+      "They understand the benefits and risks of the vaccine"
+    )
   end
 
   def and_the_child_should_be_safe_to_vaccinate
