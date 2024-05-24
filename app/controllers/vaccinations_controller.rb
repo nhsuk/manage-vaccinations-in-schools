@@ -43,7 +43,7 @@ class VaccinationsController < ApplicationController
       format.json { render json: @patient_outcomes.map(&:first).index_by(&:id) }
     end
 
-    sort_patients!(@patient_sessions)
+    sort_and_filter_patients!(@patient_sessions)
 
     session[:current_section] = "vaccinations"
   end

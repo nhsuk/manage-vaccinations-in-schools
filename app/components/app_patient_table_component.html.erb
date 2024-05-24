@@ -1,6 +1,42 @@
 <div class="app-patients">
+  <% if @section != :matching %>
+    <%= form_with url: form_url,
+                  method: :get,
+                  class: "app-patients__filters",
+                  data: { module: "autosubmit",
+                          turbo: "true",
+                          turbo_action: "replace",
+                          turbo_permanent: "" },
+                  builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
+      <%= f.govuk_fieldset legend: { text: "Filter results", size: "s" } do %>
+        <%= f.govuk_text_field :name, label: { text: "By name" },
+                                      value: params[:name],
+                                      autocomplete: "off",
+                                      "data-autosubmit-target": "field",
+                                      "data-action": "autosubmit#submit" %>
+        <%= f.govuk_text_field :dob, label: { text: "By date of birth" },
+                                     hint: { text: "e.g. 2005 or 01/03/2014" },
+                                     value: params[:dob],
+                                     "data-autosubmit-target": "field",
+                                     "data-action": "autosubmit#submit" %>
+        <%= f.hidden_field :sort, value: params[:sort] %>
+        <%= f.hidden_field :direction, value: params[:direction] %>
+        <%= f.govuk_submit "Reset filters", type: "reset",
+                                            secondary: true,
+                                            "data-autosubmit-target": "reset",
+                                            "data-action": "autosubmit#submit",
+                                            class: "nhsuk-u-display-block" %>
+        <%= f.govuk_submit "Filter", "data-autosubmit-target": "filter" %>
+      <% end %>
+    <% end %>
+  <% end %>
+
   <%= govuk_table(classes: "app-patients__table") do |table| %>
-    <%= table.with_caption(text: @caption, html_attributes: { class: "nhsuk-u-secondary-text-color nhsuk-u-font-weight-normal nhsuk-u-font-size-19" }) %>
+    <%= table.with_caption(text: @caption, html_attributes: {
+                             class: %w[nhsuk-u-secondary-text-color
+                                       nhsuk-u-font-weight-normal
+                                       nhsuk-u-font-size-19],
+                           }) %>
 
     <%= table.with_head do |head| %>
       <% if @patient_sessions.any? %>
