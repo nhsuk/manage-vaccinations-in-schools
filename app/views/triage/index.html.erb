@@ -26,7 +26,5 @@ end %>
              children: pluralize_child(@patient_sessions.count)),
   columns: %i[name dob],
   section: :triage,
-  tab: params[:tab],
-  sort: params[:sort],
-  direction: params[:direction]
+  params:
 ) %>

@@ -61,20 +61,4 @@ describe ApplicationHelper do
       end
     end
   end
-
-  context "#session_patient_sort_link" do
-    it "returns a link to the session section tab path with the correct parameters" do
-      params[:session_id] = 1
-      params[:section] = "section"
-      params[:tab] = "tab"
-      params[:sort] = "name"
-      params[:direction] = "asc"
-      expect(helper.session_patient_sort_link("Text", "name")).to include(
-        '/sessions/1/section/tab?direction=desc&amp;sort=name">Text</a>'
-      )
-      expect(helper.session_patient_sort_link("Text", "dob")).to include(
-        '/sessions/1/section/tab?direction=asc&amp;sort=dob">Text</a>'
-      )
-    end
-  end
 end

@@ -41,7 +41,5 @@ end %>
              children: pluralize_child(@patient_sessions.count)),
   columns: @current_tab == :consent_refused ? %i[name dob reason] : %i[name dob],
   section: :consents,
-  tab: params[:tab],
-  sort: params[:sort],
-  direction: params[:direction]
+  params:,
 ) %>

@@ -1,26 +1,22 @@
 class AppPatientTableComponent < ViewComponent::Base
-  include ApplicationHelper
+  attr_reader :params
 
   def initialize(
     patient_sessions:,
     section:,
     caption: nil,
     columns: %i[name dob],
-    tab: nil,
     consent_form: nil,
-    sort: nil,
-    direction: nil
+    params: {}
   )
     super
 
     @patient_sessions = patient_sessions
     @columns = columns
     @section = section
-    @tab = tab
     @caption = caption
     @consent_form = consent_form
-    @sort = sort
-    @direction = direction
+    @params = params
   end
 
   private
@@ -98,8 +94,8 @@ class AppPatientTableComponent < ViewComponent::Base
                     session_patient_path(
                       patient_session.session,
                       patient_session.patient,
-                      section: @section,
-                      tab: @tab
+                      section: params[:section],
+                      tab: params[:tab]
                     )
     end
   end
@@ -121,14 +117,31 @@ class AppPatientTableComponent < ViewComponent::Base
     when :matching
       column_name(column)
     else
-      session_patient_sort_link(column_name(column), column)
+      direction =
+        if params[:sort] == column.to_s && params[:direction] == "asc"
+          "desc"
+        else
+          "asc"
+        end
+      data = { turbo: "true", turbo_action: "replace" }
+      link_to column_name(column),
+              session_section_tab_path(
+                session_id: params[:session_id],
+                section: params[:section],
+                tab: params[:tab],
+                sort: column,
+                direction:,
+                name: params[:name],
+                dob: params[:dob]
+              ),
+              data:
     end
   end
 
   def header_attributes(column)
     sort =
-      if @sort == column.to_s
-        @direction == "asc" ? "ascending" : "descending"
+      if params[:sort] == column.to_s
+        params[:direction] == "asc" ? "ascending" : "descending"
       else
         "none"
       end
