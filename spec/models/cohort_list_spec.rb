@@ -4,8 +4,10 @@ RSpec.describe CohortList, type: :model do
   subject(:cohort_list) { described_class.new(csv:, team:) }
 
   let(:team) { create(:team, locations: [location]) }
-  # Ensure we have a location with id=1 since our fixture file uses it
-  let!(:location) { Location.find_by(id: 1) || create(:location, id: 1) }
+  # Ensure location URN matches the URN in our fixture files
+  let!(:location) do
+    Location.find_by(urn: "123456") || create(:location, urn: "123456")
+  end
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_list/#{file}") }
 
   describe "#load_data!" do

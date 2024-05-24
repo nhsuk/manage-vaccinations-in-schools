@@ -4,7 +4,7 @@ class CohortList
   include ActiveModel::Model
 
   EXPECTED_HEADERS = %w[
-    SCHOOL_ID
+    SCHOOL_URN
     SCHOOL_NAME
     PARENT_NAME
     PARENT_RELATIONSHIP
@@ -60,7 +60,7 @@ class CohortList
     return if invalid?
 
     rows.each do |row|
-      location = Location.find(row.school_id)
+      location = Location.find_by(urn: row.school_urn)
       patient = location.patients.new(row.to_patient)
       patient.save!
     end

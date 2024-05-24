@@ -189,7 +189,7 @@ en:
   activemodel:
     attributes:
       cohort_list_row:
-        school_id: "<code>SCHOOL_ID</code>"
+        school_urn: "<code>SCHOOL_URN</code>"
         school_name: "<code>SCHOOL_NAME</code>"
         parent_name: "<code>PARENT_NAME</code>"
         parent_relationship: "<code>PARENT_RELATIONSHIP</code>"
@@ -222,9 +222,9 @@ en:
               too_large: "Choose a CSV with %{remaining} or fewer rows"
         cohort_list_row:
           attributes:
-            school_id:
+            school_urn:
               blank: "is required but missing"
-              invalid: "‘%{value}’ is not a valid school ID"
+              invalid: "‘%{value}’ is not a known school URN"
             parent_name:
               blank: "is required but missing"
             parent_relationship:

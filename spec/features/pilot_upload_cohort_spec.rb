@@ -29,7 +29,7 @@ RSpec.describe "Pilot - upload cohort" do
 
   def given_the_app_is_setup
     @team = create(:team, :with_one_nurse)
-    create(:location, team: @team, id: 1)
+    create(:location, team: @team, urn: "123456")
     @user = @team.users.first
   end
 
