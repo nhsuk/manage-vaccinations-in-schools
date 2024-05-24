@@ -2,7 +2,10 @@ FactoryBot.define do
   factory :example_campaign, parent: :campaign do
     transient do
       user { create(:user) }
-      location { create(:location, team:) }
+      # this name and URN matches the data in spec/fixtures/cohort_list/valid_cohort.csv
+      location do
+        create(:location, team:, name: "Surrey Primary", urn: "123456")
+      end
     end
 
     team { create(:team, users: [user]) }

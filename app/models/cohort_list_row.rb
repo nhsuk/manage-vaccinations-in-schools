@@ -1,7 +1,7 @@
 class CohortListRow
   include ActiveModel::Model
 
-  attr_accessor :school_id,
+  attr_accessor :school_urn,
                 :school_name,
                 :parent_name,
                 :parent_relationship,
@@ -18,8 +18,8 @@ class CohortListRow
                 :child_nhs_number,
                 :team
 
-  validates :school_id, presence: true
-  validate :school_id_is_valid, if: -> { school_id.present? }
+  validates :school_urn, presence: true
+  validate :school_urn_is_valid, if: -> { school_urn.present? }
   validates :parent_name, presence: true
   validates :parent_relationship, presence: true
   validates :parent_email, presence: true
@@ -117,9 +117,9 @@ class CohortListRow
     end
   end
 
-  def school_id_is_valid
-    team.locations.find(school_id)
+  def school_urn_is_valid
+    team.locations.find_by!(urn: school_urn)
   rescue ActiveRecord::RecordNotFound
-    errors.add(:school_id, :invalid)
+    errors.add(:school_urn, :invalid)
   end
 end
