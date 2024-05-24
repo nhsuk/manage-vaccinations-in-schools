@@ -4,6 +4,7 @@ class BatchesController < ApplicationController
   layout "two_thirds"
 
   before_action :set_vaccine
+  before_action :set_batch, only: %i[edit update]
 
   def new
     @batch = Batch.new(vaccine:)
@@ -12,7 +13,10 @@ class BatchesController < ApplicationController
   def create
     @batch = Batch.new(batch_params.merge(vaccine:))
 
-    if @batch.save
+    if !expiry_validator.date_params_valid?
+      @batch.expiry = expiry_validator.date_params_as_struct
+      render :new, status: :unprocessable_entity
+    elsif @batch.save
       flash[:success] = "Batch #{@batch.name} added"
       redirect_to vaccines_path
     else
@@ -21,7 +25,6 @@ class BatchesController < ApplicationController
   end
 
   def edit
-    @batch = @vaccine.batches.find(params[:id])
   end
 
   def make_default
@@ -35,9 +38,10 @@ class BatchesController < ApplicationController
   end
 
   def update
-    @batch = @vaccine.batches.find(params[:id])
-
-    if @batch.update(batch_params)
+    if !expiry_validator.date_params_valid?
+      @batch.expiry = expiry_validator.date_params_as_struct
+      render :edit, status: :unprocessable_entity
+    elsif @batch.update(batch_params)
       flash[:success] = "Batch #{@batch.name} updated"
       redirect_to vaccines_path
     else
@@ -53,6 +57,10 @@ class BatchesController < ApplicationController
     @vaccine = policy_scope(Vaccine).find(params[:vaccine_id])
   end
 
+  def set_batch
+    @batch = @vaccine.batches.find(params[:id])
+  end
+
   def batch_params
     params.require(:batch).permit(
       :name,
@@ -60,5 +68,14 @@ class BatchesController < ApplicationController
       :"expiry(2i)",
       :"expiry(1i)"
     )
+  end
+
+  def expiry_validator
+    @expiry_validator ||=
+      DateParamsValidator.new(
+        field_name: :expiry,
+        object: @batch,
+        params: batch_params
+      )
   end
 end

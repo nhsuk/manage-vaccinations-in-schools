@@ -386,6 +386,9 @@ en:
               blank: Enter a batch
             expiry:
               blank: Enter an expiry date
+              missing_year: Enter a year
+              missing_month: Enter a month
+              missing_day: Enter a day
         consent:
           attributes:
             parent_name:
