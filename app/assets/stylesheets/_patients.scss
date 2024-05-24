@@ -1,28 +1,34 @@
 .app-patients {
   @include top-and-bottom;
 
+  align-items: start;
   background-color: $color_nhsuk-white;
   display: flex;
   flex-wrap: wrap;
 
-  & .app-patients__filters {
+  & &__filters {
     @include nhsuk-responsive-padding(4);
 
+    align-self: stretch;
     background-color: $color_nhsuk-grey-4;
     flex-basis: 15rem;
     flex-grow: 1;
+
+    @include govuk-media-query($from: desktop) {
+      order: 2;
+    }
   }
 
-  & .app-patients__no-results {
-    @include nhsuk-responsive-margin(4);
-  }
-
-  & .app-patients__table {
+  & &__table {
     @include nhsuk-responsive-margin(4);
 
     flex-basis: 0;
     flex-grow: 999;
     min-width: 70%;
+
+    @include govuk-media-query($from: desktop) {
+      order: 1;
+    }
   }
 
   & th[aria-sort] {

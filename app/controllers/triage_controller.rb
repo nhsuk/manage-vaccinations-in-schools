@@ -28,7 +28,7 @@ class TriageController < ApplicationController
     @tab_counts = count_patient_sessions(tab_patient_sessions)
     @patient_sessions = tab_patient_sessions[@current_tab] || []
 
-    sort_patients!(@patient_sessions)
+    sort_and_filter_patients!(@patient_sessions)
 
     session[:current_section] = "triage"
   end

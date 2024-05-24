@@ -138,6 +138,14 @@ class AppPatientTableComponent < ViewComponent::Base
     end
   end
 
+  def form_url
+    session_section_tab_path(
+      session_id: params[:session_id],
+      section: params[:section],
+      tab: params[:tab]
+    )
+  end
+
   def header_attributes(column)
     sort =
       if params[:sort] == column.to_s
