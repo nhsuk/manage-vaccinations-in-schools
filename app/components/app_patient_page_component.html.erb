@@ -31,13 +31,13 @@
         <% end %>
       <% end %>
     <% else %>
-      <%= form_for :consent,
-        url: session_patient_manage_consents_path(session, patient_id: patient.id, section: @section, tab: @tab),
-        method: :post,
-        builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
-        <%= f.govuk_submit "Assess Gillick competence", secondary: true,
-          name: "consent", value: "self_consent" %>
-      <% end %>
+      <%= govuk_button_to(
+        "Assess Gillick competence",
+        session_patient_manage_consents_path(session, patient_id: patient.id, section: @section, tab: @tab),
+        secondary: true,
+        name: "consent", value: "self_consent",
+        prevent_double_click: true
+      ) %>
     <% end %>
   <% end %>
 <% end %>
