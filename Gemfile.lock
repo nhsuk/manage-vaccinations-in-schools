@@ -88,7 +88,7 @@ GEM
     annotate (3.2.0)
       activerecord (>= 3.2, < 8.0)
       rake (>= 10.4, < 14.0)
-    asciidoctor (2.0.22)
+    asciidoctor (2.0.23)
     asciidoctor-diagram (2.3.0)
       asciidoctor (>= 1.5.7, < 3.x)
       asciidoctor-diagram-ditaamini (~> 1.0)
