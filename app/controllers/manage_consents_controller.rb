@@ -55,7 +55,7 @@ class ManageConsentsController < ApplicationController
   end
 
   def clone
-    existing_consent = Consent.find(params.delete(:consent_id))
+    existing_consent = policy_scope(Consent).find(params.delete(:consent_id))
     @consent =
       existing_consent.dup.tap do |consent|
         consent.recorded_at = nil
