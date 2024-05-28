@@ -32,3 +32,8 @@
     @include visually-hidden();
   }
 }
+
+.app-u-monospace {
+  font-family: ui-monospace, monospace;
+  font-weight: 450;
+}
