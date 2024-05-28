@@ -47,8 +47,7 @@ RSpec.describe "Session management" do
     @team = create(:team, :with_one_nurse, :with_one_location)
     create(:campaign, :hpv, team: @team)
     @location = @team.locations.first
-    @patient = create(:patient)
-    @location.patients << @patient
+    @patient = create(:patient, location: @location, session: nil)
   end
 
   def when_i_go_to_todays_sessions_as_a_nurse
