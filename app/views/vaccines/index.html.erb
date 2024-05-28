@@ -1,6 +1,4 @@
-<% page_title = "Vaccines" %>
-
-<%= h1 page_title, page_title:, size: "xl" %>
+<%= h1 "Vaccines", size: "xl" %>
 
 <% @vaccines.each do |vaccine| %>
   <%= render AppCardComponent.new(heading: "#{vaccine.brand} (#{vaccine.type})") do %>

@@ -1,5 +1,3 @@
-<% page_title = "Edit batch #{@batch.name}" %>
-
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
     href: vaccines_path,
@@ -7,6 +5,7 @@
   ) %>
 <% end %>
 
+<% page_title = "Edit batch #{@batch.name}" %>
 <%= h1 page_title do %>
   <span class="nhsuk-caption-l">
     <%= @vaccine.brand %>
