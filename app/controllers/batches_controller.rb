@@ -16,11 +16,11 @@ class BatchesController < ApplicationController
     if !expiry_validator.date_params_valid?
       @batch.expiry = expiry_validator.date_params_as_struct
       render :new, status: :unprocessable_entity
-    elsif @batch.save
+    elsif !@batch.save
+      render :new, status: :unprocessable_entity
+    else
       flash[:success] = "Batch #{@batch.name} added"
       redirect_to vaccines_path
-    else
-      render :new
     end
   end
 
@@ -41,11 +41,11 @@ class BatchesController < ApplicationController
     if !expiry_validator.date_params_valid?
       @batch.expiry = expiry_validator.date_params_as_struct
       render :edit, status: :unprocessable_entity
-    elsif @batch.update(batch_params)
+    elsif !@batch.update(batch_params)
+      render :edit, status: :unprocessable_entity
+    else
       flash[:success] = "Batch #{@batch.name} updated"
       redirect_to vaccines_path
-    else
-      render :edit
     end
   end
 
