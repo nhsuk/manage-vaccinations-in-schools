@@ -52,7 +52,7 @@ FactoryBot.define do
     trait :fluenz_tetra do
       type { "flu" }
       brand { "Fluenz Tetra" }
-      supplier { "AstraZeneca UK Ltd)" }
+      supplier { "AstraZeneca UK Ltd" }
       gtin { "05000456078276" }
       add_attribute(:method) { :nasal }
     end
