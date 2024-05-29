@@ -1,0 +1,9 @@
+<% content_for :content do %>
+  <div class="nhsuk-u-width-three-quarters">
+    <%= yield :before_content %>
+
+    <%= yield %>
+  </div>
+<% end %>
+
+<%= render template: 'layouts/application' %>

@@ -6,7 +6,7 @@ class PatientsController < ApplicationController
   before_action :set_section_and_tab
   before_action :set_back_link
 
-  layout "two_thirds", except: :index
+  layout "three_quarters", except: :index
 
   def show
   end
