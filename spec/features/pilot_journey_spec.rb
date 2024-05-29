@@ -33,6 +33,13 @@ RSpec.describe "Pilot journey" do
     when_i_click_on_the_vaccination_section
     and_i_record_the_successful_vaccination
     then_i_see_that_the_child_is_vaccinated
+
+    # Activity log
+    when_i_click_on_the_child_we_registered
+    then_i_see_the_activity_log_link
+
+    when_i_go_to_the_activity_log
+    then_i_see_the_populated_activity_log
   end
 
   def given_an_hpv_campaign_is_underway
@@ -210,5 +217,17 @@ RSpec.describe "Pilot journey" do
   def then_i_see_that_the_child_is_vaccinated
     click_link "Vaccinated ( 1 )"
     expect(page).to have_content "1 child vaccinated"
+  end
+
+  def then_i_see_the_activity_log_link
+    expect(page).to have_link "Activity log"
+  end
+
+  def when_i_go_to_the_activity_log
+    click_link "Activity log"
+  end
+
+  def then_i_see_the_populated_activity_log
+    expect(page).to have_content "Consent given by Big Daddy Tests (Dad)"
   end
 end

@@ -6,9 +6,12 @@ class PatientsController < ApplicationController
   before_action :set_section_and_tab
   before_action :set_back_link
 
-  layout "three_quarters", except: :index
+  layout "three_quarters"
 
   def show
+  end
+
+  def log
   end
 
   private
@@ -20,7 +23,7 @@ class PatientsController < ApplicationController
         .preload(:consents)
         .find_by!(
           session_id: params.fetch(:session_id),
-          patient_id: params.fetch(:id)
+          patient_id: params.fetch(:id, params[:patient_id])
         )
   end
 

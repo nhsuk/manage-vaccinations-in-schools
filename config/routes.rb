@@ -144,6 +144,8 @@ Rails.application.routes.draw do
 
     scope ":tab" do
       resources :patients, only: %i[show] do
+        get "log"
+
         post "consents", to: "manage_consents#create", as: :manage_consents
         resources :manage_consents,
                   only: %i[show update],
