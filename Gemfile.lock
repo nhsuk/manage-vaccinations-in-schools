@@ -6,6 +6,15 @@ GIT
     capybara_accessible_selectors (0.11.0)
       capybara (~> 3.36)
 
+GIT
+  remote: https://github.com/tvararu/audited
+  revision: f52ac706d6e5faaeeab772face93a45e52eee6b8
+  branch: encryption
+  specs:
+    audited (5.6.0)
+      activerecord (>= 5.2, < 7.2)
+      activesupport (>= 5.2, < 7.2)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -97,9 +106,6 @@ GEM
     asciidoctor-diagram-ditaamini (1.0.3)
     asciidoctor-diagram-plantuml (1.2024.0)
     ast (2.4.2)
-    audited (5.6.0)
-      activerecord (>= 5.2, < 7.2)
-      activesupport (>= 5.2, < 7.2)
     awesome_print (1.9.2)
     backport (1.2.0)
     base64 (0.2.0)
@@ -549,7 +555,7 @@ DEPENDENCIES
   annotate
   asciidoctor
   asciidoctor-diagram
-  audited
+  audited!
   awesome_print
   bootsnap
   brakeman
