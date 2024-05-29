@@ -5,6 +5,11 @@
       ) %>
 <% end %>
 
+<%= h1 page_title: @patient.full_name do %>
+  <span class="nhsuk-caption-l"><%= @patient.location.name %></span>
+  <%= @patient.full_name %>
+<% end %>
+
 <%= render AppPatientPageComponent.new(
       patient_session: @patient_session,
       vaccination_record: @draft_vaccination_record,
