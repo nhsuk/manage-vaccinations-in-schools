@@ -6,9 +6,9 @@
                                   unable_to_vaccinate
                                 ]
      render AppOutcomeBannerComponent.new(
-              patient_session:,
-              current_user:
-            )
+       patient_session:,
+       current_user:,
+     )
    else
      render AppSimpleStatusBannerComponent.new(patient_session:)
    end %>
@@ -20,10 +20,17 @@
 <% if gillick_assessment_applicable? %>
   <%= render AppCardComponent.new(heading: "Gillick assessment") do %>
     <% if gillick_assessment_recorded? %>
-      <%= govuk_summary_list(classes: "app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0") do |summary_list| %>
+      <%= govuk_summary_list(
+            classes: %w[app-summary-list--no-bottom-border
+                        nhsuk-u-margin-bottom-0],
+          ) do |summary_list| %>
         <%= summary_list.with_row do |row| %>
           <%= row.with_key { "Are they Gillick competent?" } %>
-          <%= row.with_value { patient_session.gillick_competent ? "Yes, they are Gillick competent" : "No" } %>
+          <%= row.with_value {
+                patient_session.gillick_competent ?
+                  "Yes, they are Gillick competent" :
+                  "No"
+              } %>
         <% end %>
         <%= summary_list.with_row do |row| %>
           <%= row.with_key { "Details of your assessment" } %>
@@ -32,12 +39,16 @@
       <% end %>
     <% else %>
       <%= govuk_button_to(
-        "Assess Gillick competence",
-        session_patient_manage_consents_path(session, patient_id: patient.id, section: @section, tab: @tab),
-        secondary: true,
-        name: "consent", value: "self_consent",
-        prevent_double_click: true
-      ) %>
+            "Assess Gillick competence",
+            session_patient_manage_consents_path(
+              session, patient_id: patient.id,
+                       section: @section,
+                       tab: @tab,
+            ),
+            secondary: true,
+            name: "consent", value: "self_consent",
+            prevent_double_click: true,
+          ) %>
     <% end %>
   <% end %>
 <% end %>
@@ -48,28 +59,26 @@
 
 <% if display_health_questions? %>
   <%= render AppCardComponent.new(heading: "All answers to health questions") do
-    render AppHealthQuestionsComponent.new(consents: @patient_session.consents)
-  end %>
+        render AppHealthQuestionsComponent.new(
+          consents: @patient_session.consents,
+        )
+      end %>
 <% end %>
 
 <%= render AppCardComponent.new(heading: "Triage notes") do %>
   <%= render AppTriageNotesComponent.new(patient_session:) %>
 <% end %>
 
-<%=
-render AppTriageFormComponent.new(
-  patient_session:,
-  triage: @triage,
-  section:,
-  tab:
-)
-%>
+<%= render AppTriageFormComponent.new(
+      patient_session:,
+      triage: @triage,
+      section:,
+      tab:,
+    ) %>
 
-<%=
-render AppVaccinateFormComponent.new(
-    patient_session:,
-    vaccination_record: @vaccination_record,
-    section: @section,
-    tab: @tab
-)
-%>
+<%= render AppVaccinateFormComponent.new(
+      patient_session:,
+      vaccination_record: @vaccination_record,
+      section: @section,
+      tab: @tab,
+    ) %>
