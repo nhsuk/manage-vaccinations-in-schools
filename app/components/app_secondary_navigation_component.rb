@@ -8,7 +8,7 @@ class AppSecondaryNavigationComponent < ViewComponent::Base
       content
     end
 
-    def initialize(href:, selected:)
+    def initialize(href:, selected: false)
       super
 
       @href = href

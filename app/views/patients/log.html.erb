@@ -1,0 +1,34 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: @back_link,
+        name: "#{@section.pluralize} page",
+      ) %>
+<% end %>
+
+<%= h1 page_title: @patient.full_name do %>
+  <span class="nhsuk-caption-l"><%= @patient.location.name %></span>
+  <%= @patient.full_name %>
+<% end %>
+
+<%= render AppSecondaryNavigationComponent.new do |nav|
+      nav.with_item(href: session_patient_path(id: @patient.id)) {
+        "Child record"
+      }
+      nav.with_item(href: session_patient_log_path, selected: true) {
+        "Activity log"
+      }
+    end %>
+
+<% @patient.consents.recorded.each do |consent| %>
+  <div class="nhsuk-card">
+    <div class="nhsuk-card__content">
+      <h2 class="nhsuk-card__heading nhsuk-heading-s">
+        Consent <%= consent.response %> by <%= consent.parent_name %>
+        (<%= consent.who_responded %>)
+      </h2>
+      <p class="nhsuk-body-s nhsuk-u-margin-0 nhsuk-u-secondary-text-color">
+        <%= consent.recorded_at.to_fs(:app_date_time) %>
+      </p>
+    </div>
+  </div>
+<% end %>
