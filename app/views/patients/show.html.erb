@@ -1,15 +1,15 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: @back_link,
-    name: "#{@section.pluralize} page"
-  ) %>
+        href: @back_link,
+        name: "#{@section.pluralize} page",
+      ) %>
 <% end %>
 
 <%= render AppPatientPageComponent.new(
-  patient_session: @patient_session,
-  vaccination_record: @draft_vaccination_record,
-  triage: @triage,
-  section: @section,
-  tab: @tab,
-  current_user:,
-) %>
+      patient_session: @patient_session,
+      vaccination_record: @draft_vaccination_record,
+      triage: @triage,
+      section: @section,
+      tab: @tab,
+      current_user:,
+    ) %>
