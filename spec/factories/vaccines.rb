@@ -80,7 +80,7 @@ FactoryBot.define do
     end
 
     trait :gardasil_9 do
-      type { "HPV" }
+      type { "hpv" }
       brand { "Gardasil 9" }
       supplier { "Merck Sharp & Dohme (UK) Ltd" }
       gtin { "00191778001693" }
