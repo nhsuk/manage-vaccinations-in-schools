@@ -1,0 +1,65 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+    href: vaccines_path,
+    name: "vaccines page"
+  ) %>
+<% end %>
+
+<%= h1 "#{@vaccine.brand} (#{@vaccine.type})", size: "l" %>
+
+<%= render AppCardComponent.new(heading: "Vaccine details") do %>
+  <dl class="nhsuk-summary-list">
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        GTIN
+      </dt>
+      <dd class="nhsuk-summary-list__value app-u-monospace">
+        <%= @vaccine.gtin %>
+      </dd>
+    </div>
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Vaccine
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        <%= @vaccine.type %>
+      </dd>
+    </div>
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Brand
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        <%= @vaccine.brand %>
+      </dd>
+    </div>
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Supplier
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        <%= @vaccine.supplier %>
+      </dd>
+    </div>
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Method
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        <%= @vaccine.method %>
+      </dd>
+    </div>
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Health questions
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        <ul class="nhsuk-list nhsuk-list--bullet">
+          <% @vaccine.health_questions.each do |question| %>
+            <li><%= question.question %></li>
+          <% end %>
+        </ul>
+      </dd>
+    </div>
+  </dl>
+<% end %>

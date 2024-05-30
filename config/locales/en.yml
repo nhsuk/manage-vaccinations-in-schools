@@ -347,6 +347,10 @@ en:
           already_had: "Already had the vaccine"
           absent_from_school: "Absent from school"
           absent_from_session: "Absent from session"
+      vaccine:
+        methods:
+          injection: Injection
+          nasal: Nasal spray
     errors:
       models:
         offline_password:
