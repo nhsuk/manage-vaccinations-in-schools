@@ -36,17 +36,15 @@
         <% end %>
       <% end %>
     <% else %>
-      <%= govuk_button_to(
-            "Assess Gillick competence",
-            session_patient_manage_consents_path(
-              session, patient_id: patient.id,
-                       section: @section,
-                       tab: @tab,
-            ),
-            secondary: true,
-            name: "consent", value: "self_consent",
-            prevent_double_click: true,
-          ) %>
+      <p class="nhsuk-body">
+        <%= govuk_link_to("Give your assessment",
+                          new_session_patient_gillick_assessment_path(
+              session_id: session.id,
+              patient_id: patient.id,
+              section: @section,
+              tab: @tab,
+            )) %>
+      </p>
     <% end %>
   <% end %>
 <% end %>

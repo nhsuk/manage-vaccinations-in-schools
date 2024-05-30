@@ -27,6 +27,9 @@
 <p>Before you make your assessment, you should give the young person a chance
 to ask questions.</p>
 
-
-<%= govuk_button_to "Give your assessment", wizard_path, method: :put,
-                                                         class: "nhsuk-u-margin-top-6" %>
+<%= govuk_button_to "Give your assessment", session_patient_gillick_assessment_path(
+      session_id: @session.id,
+      patient_id: @patient.id,
+      section: params[:section],
+      tab: params[:tab],
+    ), class: "nhsuk-u-margin-top-6" %>

@@ -31,7 +31,7 @@ RSpec.describe AppPatientPageComponent, type: :component do
     it "does not show the vaccination form" do
       should_not have_css(".nhsuk-card", text: "Did they get the HPV vaccine?")
     end
-    it { should have_css("button", text: "Assess Gillick competence") }
+    it { should have_css("a", text: "Give your assessment") }
   end
 
   context "session in progress, patient ready to vaccinate" do
