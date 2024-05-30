@@ -12,7 +12,8 @@ class AppActivityLogComponentPreview < ViewComponent::Preview
   def setup
     @campaign = Campaign.first
     @session = @campaign.sessions.first
-    @patient = FactoryBot.create(:patient)
+    @location = @session.location
+    @patient = FactoryBot.create(:patient, location: @location)
 
     @consents = [
       FactoryBot.create(
@@ -36,6 +37,11 @@ class AppActivityLogComponentPreview < ViewComponent::Preview
     ]
 
     @patient_session =
-      FactoryBot.create(:patient_session, patient: @patient, session: @session)
+      FactoryBot.create(
+        :patient_session,
+        patient: @patient,
+        session: @session,
+        created_at: Time.zone.parse("2024-05-29 12:00")
+      )
   end
 end

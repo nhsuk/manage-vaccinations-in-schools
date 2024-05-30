@@ -15,8 +15,9 @@ end
 
 describe AppActivityLogComponent, type: :component do
   let(:campaign) { create(:campaign) }
-  let(:session) { create(:session, campaign:) }
-  let(:patient) { create(:patient) }
+  let(:location) { create(:location, team: campaign.team, name: "Hogwarts") }
+  let(:session) { create(:session, campaign:, location:) }
+  let(:patient) { create(:patient, location:) }
   let!(:consents) do
     [
       create(
@@ -40,7 +41,14 @@ describe AppActivityLogComponent, type: :component do
     ]
   end
 
-  let(:patient_session) { create(:patient_session, patient:, session:) }
+  let(:patient_session) do
+    create(
+      :patient_session,
+      patient:,
+      session:,
+      created_at: Time.zone.parse("2024-05-29 12:00")
+    )
+  end
   let(:component) { described_class.new(patient_session) }
 
   before { render_inline(component) }
@@ -60,4 +68,13 @@ describe AppActivityLogComponent, type: :component do
                    nth: 2,
                    title: "Consent given by Jane Doe (Mum)",
                    date: "30 May 2024 at 12:00pm"
+
+  it "renders heading #2 correctly" do
+    expect(page).to have_css("h2:nth-of-type(2)", text: "29 May 2024")
+  end
+
+  include_examples "card",
+                   nth: 3,
+                   title: "Invited to session at Hogwarts",
+                   date: "29 May 2024 at 12:00pm"
 end
