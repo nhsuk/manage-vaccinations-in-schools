@@ -12,6 +12,7 @@
         </h3>
         <p class="nhsuk-body-s nhsuk-u-margin-0 nhsuk-u-secondary-text-color">
           <%= event[:time].to_fs(:app_date_time) %>
+          <% if event[:by] %> · <%= event[:by] %><% end %>
         </p>
       </div>
     </div>

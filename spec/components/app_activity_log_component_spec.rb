@@ -10,12 +10,20 @@ shared_examples "card" do |params|
       ".nhsuk-card:nth-of-type(#{params[:nth]}) p",
       text: params[:date]
     )
+    if params[:by]
+      expect(page).to have_css(
+        ".nhsuk-card:nth-of-type(#{params[:nth]}) p",
+        text: params[:by]
+      )
+    end
   end
 end
 
 describe AppActivityLogComponent, type: :component do
-  let(:campaign) { create(:campaign) }
-  let(:location) { create(:location, team: campaign.team, name: "Hogwarts") }
+  let(:team) { create(:team) }
+  let(:user) { create(:user, teams: [team], full_name: "Nurse Joy") }
+  let(:campaign) { create(:campaign, team:) }
+  let(:location) { create(:location, team:, name: "Hogwarts") }
   let(:session) { create(:session, campaign:, location:) }
   let(:patient) { create(:patient, location:) }
   let!(:consents) do
@@ -40,6 +48,17 @@ describe AppActivityLogComponent, type: :component do
       )
     ]
   end
+  let!(:triages) do
+    [
+      create(
+        :triage,
+        :kept_in_triage,
+        patient_session:,
+        created_at: Time.zone.parse("2024-05-30 14:00"),
+        user:
+      )
+    ]
+  end
 
   let(:patient_session) do
     create(
@@ -61,11 +80,17 @@ describe AppActivityLogComponent, type: :component do
 
   include_examples "card",
                    nth: 1,
+                   title: "Triage decision: No, keep in triage",
+                   date: "30 May 2024 at 2:00pm",
+                   by: "Nurse Joy"
+
+  include_examples "card",
+                   nth: 2,
                    title: "Consent refused by John Doe (Dad)",
                    date: "30 May 2024 at 1:00pm"
 
   include_examples "card",
-                   nth: 2,
+                   nth: 3,
                    title: "Consent given by Jane Doe (Mum)",
                    date: "30 May 2024 at 12:00pm"
 
@@ -74,7 +99,7 @@ describe AppActivityLogComponent, type: :component do
   end
 
   include_examples "card",
-                   nth: 3,
+                   nth: 4,
                    title: "Invited to session at Hogwarts",
                    date: "29 May 2024 at 12:00pm"
 end
