@@ -51,7 +51,7 @@ RSpec.describe "Patient sorting and filtering" do
     then_i_see_patients_with_names_starting_with_cas_by_name_desc
 
     when_i_reset_filters
-    then_i_see_patients_ordered_by_name_asc
+    then_i_see_patients_ordered_by_name_desc
   end
 
   def given_that_i_am_signed_in
@@ -120,17 +120,17 @@ RSpec.describe "Patient sorting and filtering" do
   end
 
   def then_i_see_patients_with_names_starting_with_cas_by_name_desc
+    expect(page).not_to have_selector("tr:nth-child(3)")
     expect(page).to have_selector("tr:nth-child(1)", text: "Cassidy")
     expect(page).to have_selector("tr:nth-child(2)", text: "Casey")
-    expect(page).not_to have_selector("tr:nth-child(3)")
   end
   alias_method :then_i_see_patients_with_names_starting_with_cas_by_dob_desc,
                :then_i_see_patients_with_names_starting_with_cas_by_name_desc
 
   def then_i_see_patients_with_names_starting_with_cas_by_name_asc
+    expect(page).not_to have_selector("tr:nth-child(3)")
     expect(page).to have_selector("tr:nth-child(1)", text: "Casey")
     expect(page).to have_selector("tr:nth-child(2)", text: "Cassidy")
-    expect(page).not_to have_selector("tr:nth-child(3)")
   end
   alias_method :then_i_see_patients_with_names_starting_with_cas_by_dob_asc,
                :then_i_see_patients_with_names_starting_with_cas_by_name_asc
@@ -144,9 +144,9 @@ RSpec.describe "Patient sorting and filtering" do
   end
 
   def then_i_see_patients_with_dob_01_2002
+    expect(page).not_to have_selector("tr:nth-child(3)")
     expect(page).to have_selector("tr:nth-child(1)", text: "Casey")
     expect(page).to have_selector("tr:nth-child(2)", text: "Cassidy")
-    expect(page).not_to have_selector("tr:nth-child(3)")
   end
 
   def when_i_filter_by_dob_01_01_2002
@@ -154,8 +154,8 @@ RSpec.describe "Patient sorting and filtering" do
   end
 
   def then_i_see_patients_with_dob_01_01_2002
-    expect(page).to have_selector("tr:nth-child(1)", text: "Casey")
     expect(page).not_to have_selector("tr:nth-child(2)")
+    expect(page).to have_selector("tr:nth-child(1)", text: "Casey")
   end
 
   def when_i_reset_filters
