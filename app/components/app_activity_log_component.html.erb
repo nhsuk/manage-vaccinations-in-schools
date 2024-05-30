@@ -1,0 +1,19 @@
+<% events_by_day.each do |day, events| %>
+  <h2 class="nhsuk-heading-xs nhsuk-u-secondary-text-color
+             nhsuk-u-font-weight-normal">
+    <%= day %>
+  </h2>
+
+  <% events.each do |event| %>
+    <div class="nhsuk-card">
+      <div class="nhsuk-card__content">
+        <h3 class="nhsuk-card__heading nhsuk-heading-s">
+          <%= event[:title] %>
+        </h3>
+        <p class="nhsuk-body-s nhsuk-u-margin-0 nhsuk-u-secondary-text-color">
+          <%= event[:time].to_fs(:app_date_time) %>
+        </p>
+      </div>
+    </div>
+  <% end %>
+<% end %>
