@@ -6,21 +6,32 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def events_by_day
-    consent_events.group_by { _1[:time].to_fs(:nhsuk_date) }
+    all_events
+      .sort_by { -_1[:time].to_i }
+      .group_by { _1[:time].to_fs(:nhsuk_date) }
+  end
+
+  def all_events
+    [session_events, consent_events].flatten
   end
 
   def consent_events
-    @patient_session
-      .patient
-      .consents
-      .recorded
-      .order(recorded_at: :desc)
-      .map do |consent|
-        {
-          title:
-            "Consent #{consent.response} by #{consent.parent_name} (#{consent.who_responded})",
-          time: consent.recorded_at
-        }
-      end
+    @patient_session.patient.consents.recorded.map do
+      {
+        title:
+          "Consent #{_1.response} by #{_1.parent_name} (#{_1.who_responded})",
+        time: _1.recorded_at
+      }
+    end
+  end
+
+  def session_events
+    [
+      {
+        title:
+          "Invited to session at #{@patient_session.session.location.name}",
+        time: @patient_session.created_at
+      }
+    ]
   end
 end
