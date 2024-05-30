@@ -12,7 +12,17 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def all_events
-    [session_events, consent_events].flatten
+    [session_events, consent_events, triage_events].flatten
+  end
+
+  def triage_events
+    @patient_session.triage.map do
+      {
+        title: "Triage decision: #{_1.human_enum_name(:status)}",
+        time: _1.created_at,
+        by: _1.user.full_name
+      }
+    end
   end
 
   def consent_events

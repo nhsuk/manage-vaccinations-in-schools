@@ -10,7 +10,9 @@ class AppActivityLogComponentPreview < ViewComponent::Preview
   attr_reader :patient_session, :campaign, :session, :patient, :consents
 
   def setup
-    @campaign = Campaign.first
+    @team = Team.first
+    @campaign = @team.campaigns.first
+    @user = @team.users.first
     @session = @campaign.sessions.first
     @location = @session.location
     @patient = FactoryBot.create(:patient, location: @location)
@@ -43,5 +45,15 @@ class AppActivityLogComponentPreview < ViewComponent::Preview
         session: @session,
         created_at: Time.zone.parse("2024-05-29 12:00")
       )
+
+    @triage = [
+      FactoryBot.create(
+        :triage,
+        :kept_in_triage,
+        patient_session: @patient_session,
+        created_at: Time.zone.parse("2024-05-30 14:00"),
+        user: @user
+      )
+    ]
   end
 end
