@@ -94,10 +94,6 @@ class Consent < ApplicationRecord
 
   validates :reason_for_refusal_notes, length: { maximum: 1000 }
 
-  on_wizard_step :gillick, exact: true do
-    validate :gillick_assessment_valid?
-  end
-
   on_wizard_step :who do
     validates :parent_name, presence: true
     validates :parent_phone, presence: true
@@ -142,8 +138,6 @@ class Consent < ApplicationRecord
 
   def form_steps
     [
-      (:assessing_gillick if via_self_consent?),
-      (:gillick if via_self_consent?),
       (:who if via_phone?),
       :agree,
       (:questions if response_given?),
@@ -265,16 +259,6 @@ class Consent < ApplicationRecord
         end
       end
     end
-  end
-
-  def gillick_assessment_valid?
-    return if gillick_assessment.valid?(:edit_gillick)
-
-    errors.add(
-      :gillick_competent,
-      gillick_assessment.errors.messages[:gillick_competent].first
-    )
-    errors.add(:notes, gillick_assessment.errors.messages[:notes].first)
   end
 
   def triage_valid?

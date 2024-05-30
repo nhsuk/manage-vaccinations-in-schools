@@ -11,11 +11,7 @@ class ManageConsentsController < ApplicationController
   before_action :set_consent, except: %i[create]
   before_action :set_steps, except: %i[create]
   before_action :setup_wizard_translated, except: %i[create]
-  before_action :set_patient_session,
-                except: %i[create],
-                if: -> do
-                  step.in?(%w[assessing-gillick gillick questions confirm])
-                end
+  before_action :set_patient_session
   before_action :set_triage,
                 except: %i[create],
                 if: -> { step.in?(%w[questions confirm]) }
@@ -44,10 +40,6 @@ class ManageConsentsController < ApplicationController
       handle_questions
     when :agree
       handle_agree
-    when :assessing_gillick
-      handle_assessing_gillick
-    when :gillick
-      handle_gillick
     else
       @consent.assign_attributes(update_params)
     end
@@ -95,12 +87,6 @@ class ManageConsentsController < ApplicationController
 
   def handle_confirm
     ActiveRecord::Base.transaction do
-      if @patient_session.draft_gillick_assessment.present?
-        @patient_session.draft_gillick_assessment.update!(
-          recorded_at: Time.zone.now
-        )
-      end
-
       @consent.recorded_at = Time.zone.now
       @consent.save!
 
@@ -146,22 +132,6 @@ class ManageConsentsController < ApplicationController
     end
   end
 
-  def handle_assessing_gillick
-    @patient_session.create_gillick_assessment!(assessor: current_user)
-    @consent.assign_attributes(
-      gillick_assessment: @patient_session.reload.draft_gillick_assessment,
-      form_step: current_step
-    )
-  end
-
-  def handle_gillick
-    @patient_session.draft_gillick_assessment.update!(gillick_params)
-    @consent.assign_attributes(
-      gillick_assessment: @patient_session.reload.draft_gillick_assessment,
-      form_step: current_step
-    )
-  end
-
   def set_route
     @section = params[:section]
   end
@@ -190,7 +160,12 @@ class ManageConsentsController < ApplicationController
   end
 
   def create_params
-    route = params.permit(:consent)[:consent]
+    route =
+      if @patient_session.gillick_competent?
+        :self_consent
+      else
+        params.permit(:consent)[:consent]
+      end
 
     attrs = { patient: @patient, campaign: @session.campaign, route: }
 
@@ -233,10 +208,6 @@ class ManageConsentsController < ApplicationController
       .fetch(:consent, {})
       .permit(permitted_attributes)
       .merge(form_step: current_step)
-  end
-
-  def gillick_params
-    params.fetch(:gillick_assessment, {}).permit(:gillick_competent, :notes)
   end
 
   # Returns:

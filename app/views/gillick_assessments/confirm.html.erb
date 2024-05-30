@@ -1,0 +1,31 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: previous_wizard_path,
+        name: "previous page",
+      ) %>
+<% end %>
+
+<% page_title = "Check and confirm" %>
+
+<%= h1 page_title: do %>
+  <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
+    <%= @patient.full_name %>
+  </span>
+  <%= page_title %>
+<% end %>
+
+<%= render AppCardComponent.new(heading: "Gillick assessment details") do %>
+  <%= govuk_summary_list classes: "app-summary-list--no-bottom-border nhsuk-u-margin-0" do |summary_list|
+        summary_list.with_row do |row|
+          row.with_key { "Are they Gillick competent?" }
+          row.with_value { @assessment.gillick_competent ? "Yes, they are Gillick competent" : "No" }
+        end
+
+        summary_list.with_row do |row|
+          row.with_key { "Details of your assessment" }
+          row.with_value { @assessment.notes }
+        end
+      end %>
+<% end %>
+
+<%= govuk_button_to "Save changes", wizard_path, method: :put, prevent_double_click: true %>

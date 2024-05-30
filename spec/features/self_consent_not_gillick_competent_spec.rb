@@ -10,7 +10,6 @@ RSpec.describe "Not Gillick competent" do
 
     when_the_nurse_assesses_the_child_as_not_being_gillick_competent
     then_the_child_cannot_give_their_own_consent
-    and_the_lack_of_gillick_competence_is_visible_to_the_nurse
   end
 
   def given_an_hpv_campaign_is_underway
@@ -43,23 +42,31 @@ RSpec.describe "Not Gillick competent" do
   def when_the_nurse_assesses_the_child_as_not_being_gillick_competent
     click_on @child.full_name
 
-    click_on "Assess Gillick competence"
-    click_on "Give your assessment"
+    click_link "Give your assessment"
+    click_button "Give your assessment"
 
     choose "No"
 
     fill_in "Give details of your assessment",
             with: "They didn't understand the benefits and risks of the vaccine"
     click_on "Continue"
+
+    expect(page).to have_content("Check and confirm")
+    expect(page).to have_content(["Are they Gillick competent?", "No"].join)
+    expect(page).to have_content(
+      [
+        "Details of your assessment",
+        "They didn't understand the benefits and risks of the vaccine"
+      ].join
+    )
+    click_on "Save changes"
   end
 
   def then_the_child_cannot_give_their_own_consent
-    skip "BUG here: the child shouldn't be able to give their own consent, but can"
-  end
-
-  def and_the_lack_of_gillick_competence_is_visible_to_the_nurse
-    expect(page).to have_content(
-      "No-one responded to our requests for consent. When assessed, the child was not Gillick competent"
+    click_on "Get consent"
+    expect(page).to have_content("Who are you trying to get consent from?")
+    expect(page).not_to have_content(
+      "Do they agree to them having the HPV vaccination?"
     )
   end
 end

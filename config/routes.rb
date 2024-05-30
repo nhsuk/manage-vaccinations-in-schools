@@ -154,6 +154,12 @@ Rails.application.routes.draw do
           get "details", on: :collection, to: "consents#show"
         end
 
+        resource :gillick_assessment, only: %i[new create]
+
+        resource :gillick_assessment,
+                 path: "gillick-assessment/:id",
+                 only: %i[show update]
+
         resource :triage, only: %i[create update]
 
         resource :vaccinations, only: %i[new create update] do
