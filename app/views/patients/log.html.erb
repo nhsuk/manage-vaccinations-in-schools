@@ -19,16 +19,4 @@
       }
     end %>
 
-<% @patient.consents.recorded.each do |consent| %>
-  <div class="nhsuk-card">
-    <div class="nhsuk-card__content">
-      <h2 class="nhsuk-card__heading nhsuk-heading-s">
-        Consent <%= consent.response %> by <%= consent.parent_name %>
-        (<%= consent.who_responded %>)
-      </h2>
-      <p class="nhsuk-body-s nhsuk-u-margin-0 nhsuk-u-secondary-text-color">
-        <%= consent.recorded_at.to_fs(:app_date_time) %>
-      </p>
-    </div>
-  </div>
-<% end %>
+<%= render AppActivityLogComponent.new(@patient_session) %>
