@@ -5,7 +5,7 @@
   ) %>
 <% end %>
 
-<%= h1 "#{@vaccine.brand} (#{@vaccine.type})", size: "l" %>
+<%= h1 vaccine_heading(@vaccine), size: "l" %>
 
 <%= render AppCardComponent.new(heading: "Vaccine details") do %>
   <dl class="nhsuk-summary-list">
@@ -22,7 +22,7 @@
         Vaccine
       </dt>
       <dd class="nhsuk-summary-list__value">
-        <%= @vaccine.type %>
+        <%= t("vaccines.#{@vaccine.type}") %>
       </dd>
     </div>
     <div class="nhsuk-summary-list__row">
@@ -46,7 +46,7 @@
         Method
       </dt>
       <dd class="nhsuk-summary-list__value">
-        <%= @vaccine.method %>
+        <%= @vaccine.human_enum_name(:method).humanize %>
       </dd>
     </div>
     <div class="nhsuk-summary-list__row">
