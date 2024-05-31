@@ -6,7 +6,6 @@ class ApplicationController < ActionController::Base
   before_action :set_disable_cache_headers
   before_action :set_header_path
   before_action :set_service_name
-  before_action :set_phase_banner_text
   before_action :authenticate_basic
 
   after_action :verify_policy_scoped,
@@ -31,11 +30,6 @@ class ApplicationController < ActionController::Base
 
   def set_service_name
     @service_name = "Manage vaccinations in schools"
-  end
-
-  def set_phase_banner_text
-    @phase_banner_text =
-      "This is a pilot service. Do not use it to make clinical decisions."
   end
 
   def set_disable_cache_headers

@@ -29,12 +29,6 @@
 
     <%= render "header" %>
 
-    <%= govuk_phase_banner(
-      classes: ["nhsuk-width-container"],
-      tag: { text: "Pilot" },
-      text: @phase_banner_text
-    ) %>
-
     <%= yield :before_main %>
 
     <div class="nhsuk-width-container">
