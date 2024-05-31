@@ -10,18 +10,15 @@
 
 <%= h1 page_title, page_title: %>
 
-<%= render AppSecondaryNavigationComponent.new do |nav|
-      TAB_PATHS[:vaccinations].each do |tab, state|
-        nav.with_item(selected: @current_tab == state,
-                      href: session_vaccinations_tab_path(@session, tab:)) do
-        end
-      end
-    end %>
+<%= render AppSecondaryNavigationComponent.new do |nav| %>
+  <% TAB_PATHS[:vaccinations].each do |tab, state| %>
+    <% nav.with_item(selected: @current_tab == state,
+                     href: session_vaccinations_tab_path(@session, tab:)) do %>
       <%= t("patients_table.#{state}.label") %>
       <%= render AppCountComponent.new(count: @tab_counts[state]) %>
-    <% end
-         end
-       end %>
+    <% end %>
+  <% end %>
+<% end %>
 
 <%= render AppPatientTableComponent.new(
       patient_sessions: @patient_sessions,
