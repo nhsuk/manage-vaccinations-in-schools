@@ -32,10 +32,6 @@ module ParentInterface
       @service_name = "Give or refuse consent for vaccinations"
     end
 
-    def set_phase_banner_text
-      @phase_banner_text = "This is a pilot service."
-    end
-
     def set_privacy_policy_url
       @privacy_policy_url = @session.location.team.privacy_policy_url
     end

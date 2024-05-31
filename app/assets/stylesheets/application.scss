@@ -12,7 +12,6 @@ $govuk-assets-path: "/";
 @import "govuk-frontend/dist/govuk/components/file-upload/index";
 @import "govuk-frontend/dist/govuk/components/notification-banner/index";
 @import "govuk-frontend/dist/govuk/components/panel/index";
-@import "govuk-frontend/dist/govuk/components/phase-banner/index";
 
 // Configure and import NHS.UK Frontend
 $nhsuk-fonts-path: "/";
@@ -47,7 +46,6 @@ $color_app-dark-orange: darken(
 @import "overrides";
 @import "panel";
 @import "password-input";
-@import "phase-banner";
 @import "patients";
 @import "table";
 @import "tabs";
