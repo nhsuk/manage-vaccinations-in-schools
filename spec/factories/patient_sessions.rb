@@ -152,9 +152,9 @@ FactoryBot.define do
     end
 
     trait :unable_to_vaccinate_not_gillick_competent do
-      gillick_competent { false }
-      gillick_competence_notes { "Assessed as not gillick competent" }
-      gillick_competence_assessor { user }
+      gillick_assessment do
+        create :gillick_assessment, :not_competent, patient_session: instance
+      end
 
       patient { create :patient, :consent_given_triage_needed, session: }
       triage do
@@ -207,16 +207,10 @@ FactoryBot.define do
       session { create :session, :in_progress }
     end
 
-    trait :after_gillick_competence_assessed do
-      gillick_competent { true }
-      gillick_competence_notes { "Assessed as gillick competent" }
-      gillick_competence_assessor { create :user }
-    end
-
     trait :not_gillick_competent do
-      gillick_competent { false }
-      gillick_competence_notes { "Assessed as not gillick competent" }
-      gillick_competence_assessor { create :user }
+      gillick_assessment do
+        create :gillick_assessment, :not_competent, patient_session: instance
+      end
     end
   end
 end

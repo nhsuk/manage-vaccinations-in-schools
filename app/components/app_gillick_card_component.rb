@@ -1,8 +1,7 @@
 class AppGillickCardComponent < ViewComponent::Base
-  def initialize(consent:, patient_session:)
+  def initialize(assessment:)
     super
 
-    @consent = consent
-    @patient_session = patient_session
+    @assessment = assessment
   end
 end
