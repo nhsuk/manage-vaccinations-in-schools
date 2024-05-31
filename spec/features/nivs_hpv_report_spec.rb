@@ -17,14 +17,7 @@ RSpec.describe "NIVS HPV report" do
   def and_vaccinations_have_happened_in_my_teams_hpv_campaign
     campaign = create(:campaign, :hpv, team: @team)
     session = create(:session, campaign:, location: @team.locations.first)
-    create_list(
-      :patient_with_consent_given_triage_not_needed,
-      5,
-      :of_hpv_vaccination_age,
-      :with_address,
-      session:,
-      location: session.location
-    )
+    create_list(:patient_session, 5, :consent_given_triage_not_needed, session:)
     session
       .patient_sessions
       .first(3)

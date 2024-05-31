@@ -25,10 +25,10 @@ RSpec.describe "Triage" do
   def and_a_patient_needing_triage
     @patient =
       create(
-        :patient_with_consent_given_triage_needed,
-        session: @session,
-        location: @session.location
-      )
+        :patient_session,
+        :consent_given_triage_needed,
+        session: @session
+      ).patient
   end
 
   def and_i_am_signed_in

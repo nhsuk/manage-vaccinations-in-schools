@@ -59,7 +59,7 @@ FactoryBot.define do
 
     first_name { Faker::Name.first_name }
     last_name { Faker::Name.last_name }
-    date_of_birth { Faker::Date.birthday(min_age: 3, max_age: 9) }
+    date_of_birth { Faker::Date.birthday(min_age: 12, max_age: 13) }
     patient_sessions { [] }
     location { session&.location }
     parent_name { "#{parent_first_name} #{last_name}" }
@@ -70,27 +70,14 @@ FactoryBot.define do
     # Replace first two digits with 07 to make it a mobile number
     parent_phone { "07700 900#{random.rand(0..999).to_s.rjust(3, "0")}" }
 
-    trait :of_hpv_vaccination_age do
-      date_of_birth { Faker::Date.birthday(min_age: 12, max_age: 13) }
-    end
-
-    trait :with_address do
-      address_line_1 { Faker::Address.street_address }
-      address_line_2 { Faker::Address.secondary_address }
-      address_town { Faker::Address.city }
-      address_postcode { Faker::Address.postcode }
-    end
+    address_line_1 { Faker::Address.street_address }
+    address_line_2 { Faker::Address.secondary_address }
+    address_town { Faker::Address.city }
+    address_postcode { Faker::Address.postcode }
 
     trait :consent_given_triage_not_needed do
       consents do
-        create_list(
-          :consent,
-          1,
-          :given,
-          campaign:,
-          patient: instance,
-          parent_relationship: instance.parent_relationship
-        )
+        create_list(:consent, 1, :given, campaign:, patient: instance)
       end
     end
 
@@ -150,36 +137,6 @@ FactoryBot.define do
       parent_relationship_other { nil }
       parent_phone { nil }
       parent_email { nil }
-    end
-
-    factory :patient_with_consent_given_triage_not_needed do
-      patient_sessions { [build(:patient_session, session:)] }
-
-      consents { [build(:consent, :given, campaign:, parent_relationship:)] }
-    end
-
-    factory :patient_with_consent_given_triage_needed do
-      patient_sessions { [build(:patient_session, session:)] }
-
-      consents do
-        [
-          build(
-            :consent,
-            :given,
-            :needing_triage,
-            campaign:,
-            parent_relationship:
-          )
-        ]
-      end
-    end
-
-    factory :patient_with_consent_refused do
-      patient_sessions do
-        [build(:patient_session, session:, state: "consent_refused")]
-      end
-
-      consents { [build(:consent, :refused, campaign:, parent_relationship:)] }
     end
   end
 end

@@ -28,11 +28,7 @@ RSpec.describe "Triage" do
     session =
       create(:session, campaign:, location: @school, date: Time.zone.today)
     @patient =
-      create(
-        :patient_with_consent_given_triage_needed,
-        session:,
-        location: session.location
-      )
+      create(:patient_session, :consent_given_triage_needed, session:).patient
   end
 
   def and_i_am_signed_in
