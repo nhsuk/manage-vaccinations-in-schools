@@ -456,6 +456,7 @@ GEM
     ruby-graphviz (1.2.5)
       rexml
     ruby-progressbar (1.13.0)
+    rufo (0.18.0)
     sanitize (6.1.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -599,6 +600,7 @@ DEPENDENCIES
   rspec-html-matchers
   rspec-rails
   rubocop-govuk
+  rufo
   sentry-rails
   sentry-ruby
   shoulda-matchers
