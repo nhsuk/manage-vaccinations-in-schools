@@ -1,7 +1,7 @@
 <%= h1 "Vaccines", size: "xl" %>
 
 <% @vaccines.each do |vaccine| %>
-  <%= render AppCardComponent.new(heading: vaccine_heading(vaccine)) do %>
+  <%= render AppCardComponent.new(heading: link_to(vaccine_heading(vaccine), vaccine_path(vaccine))) do %>
     <p class="nhsuk-body-s nhsuk-secondary-text-color">
       <%= vaccine.supplier %>,
       GTIN: <span class="app-u-monospace"><%= vaccine.gtin %></span>
