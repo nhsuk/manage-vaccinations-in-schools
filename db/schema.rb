@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_31_171121) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_31_213930) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -262,10 +262,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_31_171121) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "state"
-    t.boolean "gillick_competent"
-    t.text "gillick_competence_notes"
-    t.bigint "gillick_competence_assessor_user_id"
-    t.index ["gillick_competence_assessor_user_id"], name: "index_patient_sessions_on_gillick_competence_assessor_user_id"
     t.index ["patient_id", "session_id"], name: "index_patient_sessions_on_patient_id_and_session_id", unique: true
     t.index ["session_id", "patient_id"], name: "index_patient_sessions_on_session_id_and_patient_id", unique: true
   end
@@ -402,7 +398,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_31_171121) do
   add_foreign_key "health_questions", "health_questions", column: "next_question_id"
   add_foreign_key "health_questions", "vaccines"
   add_foreign_key "locations", "teams"
-  add_foreign_key "patient_sessions", "users", column: "gillick_competence_assessor_user_id"
   add_foreign_key "patients", "locations"
   add_foreign_key "triage", "patient_sessions"
   add_foreign_key "triage", "users"
