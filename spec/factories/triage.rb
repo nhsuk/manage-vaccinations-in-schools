@@ -27,8 +27,12 @@ FactoryBot.define do
     patient_session { create :patient_session }
     user { create :user }
 
+    trait :vaccinate do
+      status { :ready_to_vaccinate }
+    end
+
     trait :kept_in_triage do
-      status { "needs_follow_up" }
+      status { :needs_follow_up }
     end
   end
 end

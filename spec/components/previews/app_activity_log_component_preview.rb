@@ -53,6 +53,22 @@ class AppActivityLogComponentPreview < ViewComponent::Preview
         patient_session: @patient_session,
         created_at: Time.zone.parse("2024-05-30 14:00"),
         user: @user
+      ),
+      FactoryBot.create(
+        :triage,
+        :vaccinate,
+        patient_session: @patient_session,
+        created_at: Time.zone.parse("2024-05-30 14:30"),
+        user: @user
+      )
+    ]
+
+    @vaccination_records = [
+      FactoryBot.create(
+        :vaccination_record,
+        patient_session: @patient_session,
+        created_at: Time.zone.parse("2024-05-31 12:00"),
+        user: @user
       )
     ]
   end

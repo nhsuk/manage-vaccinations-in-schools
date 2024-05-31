@@ -12,7 +12,17 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def all_events
-    [session_events, consent_events, triage_events].flatten
+    [vaccination_events, triage_events, consent_events, session_events].flatten
+  end
+
+  def vaccination_events
+    @patient_session.vaccination_records.map do
+      {
+        title: "Vaccinated with #{helpers.vaccine_heading(_1.vaccine)}",
+        time: _1.created_at,
+        by: _1.user.full_name
+      }
+    end
   end
 
   def triage_events
