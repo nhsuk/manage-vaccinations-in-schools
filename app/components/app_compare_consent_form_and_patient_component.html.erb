@@ -3,14 +3,14 @@
     <%= table.with_head do |head| %>
       <%= head.with_row do |row| %>
         <%= row.with_cell %>
-        <%= row.with_cell(text: 'Consent response') %>
-        <%= row.with_cell(text: 'Child record') %>
+        <%= row.with_cell(text: "Consent response") %>
+        <%= row.with_cell(text: "Child record") %>
       <% end %>
     <% end %>
 
     <%= table.with_body do |body| %>
       <%= body.with_row do |row| %>
-        <%= row.with_cell(text: 'Child’s name', header: true) %>
+        <%= row.with_cell(text: "Child’s name", header: true) %>
         <%= row.with_cell(text: mark(consent_form.full_name, unless: name_match?)) %>
         <%= row.with_cell(text: patient.full_name) %>
       <% end %>
@@ -18,7 +18,7 @@
 
     <%= table.with_body do |body| %>
       <%= body.with_row do |row| %>
-        <%= row.with_cell(text: 'Date of birth', header: true) %>
+        <%= row.with_cell(text: "Date of birth", header: true) %>
         <%= row.with_cell(text: mark(consent_form.date_of_birth.to_fs(:nhsuk_date), unless: date_of_birth_match?)) %>
         <%= row.with_cell(text: patient.date_of_birth.to_fs(:nhsuk_date)) %>
       <% end %>
@@ -26,7 +26,7 @@
 
     <%= table.with_body do |body| %>
       <%= body.with_row do |row| %>
-        <%= row.with_cell(text: 'Address', header: true) %>
+        <%= row.with_cell(text: "Address", header: true) %>
         <%= row.with_cell(text: mark(safe_join(consent_form.address_fields, tag.br), unless: address_match?)) %>
         <%= row.with_cell(text: safe_join(patient.address_fields, tag.br)) %>
       <% end %>

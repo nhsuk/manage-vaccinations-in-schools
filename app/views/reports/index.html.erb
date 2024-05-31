@@ -4,9 +4,9 @@
 
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
-    { text: 'Home', href: dashboard_path },
-    { text: page_title },
-  ]) %>
+                                          { text: "Home", href: dashboard_path },
+                                          { text: page_title },
+                                        ]) %>
 <% end %>
 
 <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-4">

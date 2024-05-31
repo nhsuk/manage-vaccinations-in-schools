@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-      href: backlink_path,
-      name: "previous page"
-  ) %>
+        href: backlink_path,
+        name: "previous page",
+      ) %>
 <% end %>
 
 <%= h1 "Confirm your child’s school" %>
@@ -20,12 +20,12 @@
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_radio_buttons_fieldset(:is_this_their_school,
-    legend: { size: 's', text: 'Is this their school?' }) do %>
+                                     legend: { size: "s", text: "Is this their school?" }) do %>
     <%= f.govuk_radio_button :is_this_their_school, "yes",
-      link_errors: true,
-      label: { text: 'Yes, they go to this school' } %>
+                             link_errors: true,
+                             label: { text: "Yes, they go to this school" } %>
     <%= f.govuk_radio_button :is_this_their_school, "no",
-      label: { text: 'No, they go to a different school' } %>
+                             label: { text: "No, they go to a different school" } %>
   <% end %>
 
   <div class="nhsuk-u-margin-top-6">

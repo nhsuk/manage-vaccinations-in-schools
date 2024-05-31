@@ -1,25 +1,24 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-      href: backlink_path,
-      name: "previous page"
-  ) %>
+        href: backlink_path,
+        name: "previous page",
+      ) %>
 <% end %>
 
-<% title = t("consent_forms.consent.title.#{ @session.type.downcase }") %>
+<% title = t("consent_forms.consent.title.#{@session.type.downcase}") %>
 <% content_for :page_title, title %>
 
 <%= form_for @consent_form, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_radio_buttons_fieldset(:response,
-    legend: { size: 'l', text: title, tag: 'h1' },
-    hint: { text: t("consent_forms.consent.hint.#{ @session.type.downcase }") }
-  ) do %>
+                                     legend: { size: "l", text: title, tag: "h1" },
+                                     hint: { text: t("consent_forms.consent.hint.#{@session.type.downcase}") }) do %>
     <%= f.govuk_radio_button :response, "given",
-      label: { text: t("consent_forms.consent.i_agree.#{ @session.type.downcase }") },
-      link_errors: true %>
+                             label: { text: t("consent_forms.consent.i_agree.#{@session.type.downcase}") },
+                             link_errors: true %>
     <%= f.govuk_radio_button :response, "refused",
-      label: { text: 'No' } %>
+                             label: { text: "No" } %>
   <% end %>
 
   <div class="nhsuk-u-margin-top-6">

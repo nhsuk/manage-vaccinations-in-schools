@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: vaccines_path,
-    name: "manage vaccines"
-  ) %>
+        href: vaccines_path,
+        name: "manage vaccines",
+      ) %>
 <% end %>
 
 <% page_title = "Edit batch #{@batch.name}" %>
@@ -18,7 +18,7 @@
 
   <%= form.govuk_date_field :expiry,
                             legend: { size: "s", text: "Expiry date" },
-                            hint: { text: 'For example, 27 10 2025' },
+                            hint: { text: "For example, 27 10 2025" },
                             link_errors: true %>
   <%= form.govuk_submit "Save changes" %>
 <% end %>

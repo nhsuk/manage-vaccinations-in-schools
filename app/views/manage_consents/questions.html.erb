@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: back_link_path,
-    name: "consent page",
-  ) %>
+        href: back_link_path,
+        name: "consent page",
+      ) %>
 <% end %>
 
 <% page_title = "Health questions" %>
@@ -20,16 +20,16 @@
   <% @consent.health_answers.each_with_index do |health_answer, index| %>
     <%= f.fields_for "question_#{index}", health_answer do |ff| %>
       <%= ff.govuk_radio_buttons_fieldset(:question,
-        legend: { size: 's', text: health_answer.question },
-        hint: { text: health_answer.hint }) do %>
-        <%= ff.govuk_radio_button :response, 'yes',
-          label: { text: 'Yes' },
-          link_errors: true do %>
+                                          legend: { size: "s", text: health_answer.question },
+                                          hint: { text: health_answer.hint }) do %>
+        <%= ff.govuk_radio_button :response, "yes",
+                                  label: { text: "Yes" },
+                                  link_errors: true do %>
           <%= ff.govuk_text_area :notes,
-            label: { text: 'Give details' } %>
+                                 label: { text: "Give details" } %>
         <% end %>
-        <%= ff.govuk_radio_button :response, 'no',
-          label: { text: 'No' } %>
+        <%= ff.govuk_radio_button :response, "no",
+                                  label: { text: "No" } %>
       <% end %>
     <% end %>
   <% end %>
@@ -38,12 +38,12 @@
 
   <%= f.fields_for @triage do |ff| %>
     <%= ff.govuk_collection_radio_buttons :status,
-     triage_form_status_options,
-     :first,
-     :second,
-     legend: { text: "Is it safe to vaccinate #{@patient.full_name}?" } %>
+                                          triage_form_status_options,
+                                          :first,
+                                          :second,
+                                          legend: { text: "Is it safe to vaccinate #{@patient.full_name}?" } %>
 
-    <%= ff.govuk_text_area :notes, label: { text: 'Triage notes (optional)' },
+    <%= ff.govuk_text_area :notes, label: { text: "Triage notes (optional)" },
                                    rows: 5 %>
   <% end %>
 

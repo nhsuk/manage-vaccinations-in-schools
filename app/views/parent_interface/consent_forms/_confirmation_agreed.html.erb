@@ -1,7 +1,6 @@
-<% title = t("consent_forms.confirmation_agreed.title.#{ @session.type.downcase }",
-  full_name: @consent_form.full_name,
-  date: @session.date.to_fs(:nhsuk_date)
-) %>
+<% title = t("consent_forms.confirmation_agreed.title.#{@session.type.downcase}",
+            full_name: @consent_form.full_name,
+            date: @session.date.to_fs(:nhsuk_date)) %>
 <% content_for :page_title, title %>
 
 <%= govuk_panel(title_text: title, classes: "app-panel nhsuk-u-margin-bottom-6") %>

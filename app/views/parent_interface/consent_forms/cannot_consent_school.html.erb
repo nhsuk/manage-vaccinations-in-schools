@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: session_parent_interface_consent_form_edit_path(@session, @consent_form, :school),
-    name: "edit school page"
-  ) %>
+        href: session_parent_interface_consent_form_edit_path(@session, @consent_form, :school),
+        name: "edit school page",
+      ) %>
 <% end %>
 
 <%= h1 "You cannot give or refuse consent through this service" %>

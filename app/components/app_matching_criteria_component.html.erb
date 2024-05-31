@@ -1,32 +1,32 @@
 <%= govuk_summary_list classes: "app-summary-list--no-bottom-border" do |summary_list|
-  summary_list.with_row do |row|
-    row.with_key { "Child" }
-    row.with_value { child_full_name }
-  end
-
-  if common_name.present?
-    summary_list.with_row do |row|
-      row.with_key { "Known as" }
-      row.with_value { common_name }
-    end
-  end
-
-  summary_list.with_row do |row|
-    row.with_key { parent_guardian_or_other.capitalize }
-    row.with_value { parent_name }
-  end
-
-  if date_of_birth.present?
-    summary_list.with_row do |row|
-      row.with_key { "Date of birth" }
-      row.with_value { "#{date_of_birth.to_fs(:nhsuk_date)} (aged #{age})" }
-    end
-  end
-
-  if address_present?
-    summary_list.with_row do |row|
-      row.with_key { "Address" }
-      row.with_value { address_fields.join(", ") }
-    end
-  end
-end %>
+     summary_list.with_row do |row|
+       row.with_key { "Child" }
+       row.with_value { child_full_name }
+     end
+   
+     if common_name.present?
+       summary_list.with_row do |row|
+         row.with_key { "Known as" }
+         row.with_value { common_name }
+       end
+     end
+   
+     summary_list.with_row do |row|
+       row.with_key { parent_guardian_or_other.capitalize }
+       row.with_value { parent_name }
+     end
+   
+     if date_of_birth.present?
+       summary_list.with_row do |row|
+         row.with_key { "Date of birth" }
+         row.with_value { "#{date_of_birth.to_fs(:nhsuk_date)} (aged #{age})" }
+       end
+     end
+   
+     if address_present?
+       summary_list.with_row do |row|
+         row.with_key { "Address" }
+         row.with_value { address_fields.join(", ") }
+       end
+     end
+   end %>

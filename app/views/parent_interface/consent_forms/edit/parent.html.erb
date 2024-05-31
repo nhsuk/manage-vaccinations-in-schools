@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-      href: backlink_path,
-      name: "previous page"
-  ) %>
+        href: backlink_path,
+        name: "previous page",
+      ) %>
 <% end %>
 
 <%= h1 "About you" %>
@@ -10,43 +10,43 @@
 <%= form_for @consent_form, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <%= f.govuk_text_field :parent_name, label: { text: 'Your name' } %>
+  <%= f.govuk_text_field :parent_name, label: { text: "Your name" } %>
 
   <%= f.govuk_radio_buttons_fieldset(:parent_relationship,
-    legend: { size: 's',
-              text: 'Your relationship to the child' }) do %>
+                                     legend: { size: "s",
+                                               text: "Your relationship to the child" }) do %>
     <%= f.govuk_radio_button :parent_relationship, "mother",
-      label: { text: 'Mum' }, link_errors: true %>
+                             label: { text: "Mum" }, link_errors: true %>
     <%= f.govuk_radio_button :parent_relationship, "father",
-      label: { text: "Dad" } %>
+                             label: { text: "Dad" } %>
     <%= f.govuk_radio_button :parent_relationship, "guardian",
-      label: { text: 'Guardian' } %>
+                             label: { text: "Guardian" } %>
     <%= f.govuk_radio_button :parent_relationship, "other",
-      label: { text: 'Other' } do %>
+                             label: { text: "Other" } do %>
       <%= f.govuk_text_field :parent_relationship_other,
-        # The radio button already has a consent-form-parent-relationship-other
-        # id, so we need to use a different one here.
-        label: { text: 'Relationship to the child',
-                 for: "parent-relationship-other" },
-        hint: { text: 'For example, carer' },
-        id: "parent-relationship-other" %>
+                             # The radio button already has a consent-form-parent-relationship-other
+                             # id, so we need to use a different one here.
+                             label: { text: "Relationship to the child",
+                                      for: "parent-relationship-other" },
+                             hint: { text: "For example, carer" },
+                             id: "parent-relationship-other" %>
       <%= f.govuk_radio_buttons_fieldset(:parental_responsibility,
-        legend: { size: "s",
-                  text: "Do you have parental responsibility?" },
-        hint: { text: "This means you have legal rights and duties relating to the child" }) do %>
+                                         legend: { size: "s",
+                                                   text: "Do you have parental responsibility?" },
+                                         hint: { text: "This means you have legal rights and duties relating to the child" }) do %>
         <%= f.govuk_radio_button :parental_responsibility, "yes",
-          label: { text: "Yes" }, link_errors: true %>
+                                 label: { text: "Yes" }, link_errors: true %>
         <%= f.govuk_radio_button :parental_responsibility, "no",
-          label: { text: "No" } %>
+                                 label: { text: "No" } %>
       <% end %>
     <% end %>
   <% end %>
 
-  <%= f.govuk_text_field :parent_email, label: { text: 'Email address' } %>
+  <%= f.govuk_text_field :parent_email, label: { text: "Email address" } %>
 
   <%= f.govuk_text_field :parent_phone,
-    label: { text: 'Phone number (optional)' },
-    hint: { text: 'Someone might call you about your child’s vaccination' } %>
+                         label: { text: "Phone number (optional)" },
+                         hint: { text: "Someone might call you about your child’s vaccination" } %>
 
   <div class="nhsuk-u-margin-top-6">
     <%= f.govuk_submit "Continue" %>

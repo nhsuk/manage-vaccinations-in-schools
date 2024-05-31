@@ -25,27 +25,25 @@
       <%= f.hidden_field :assets_js, value: asset_path("application.js") %>
 
       <%= f.govuk_password_field :password,
-        label: {
-          text: "Offline password",
-          size: 's'
-        },
-        hint: {
-          text: "Your password must be at least 12 characters long",
-        },
-        width: 20,
-        autocomplete: 'new-password',
-        data: { testid: "password" }
-      %>
+                                 label: {
+                                   text: "Offline password",
+                                   size: "s",
+                                 },
+                                 hint: {
+                                   text: "Your password must be at least 12 characters long",
+                                 },
+                                 width: 20,
+                                 autocomplete: "new-password",
+                                 data: { testid: "password" } %>
 
       <%= f.govuk_password_field :password_confirmation,
-        label: {
-          text: "Confirm offline password",
-          size: 's'
-        },
-        width: 20,
-        autocomplete: 'new-password',
-        data: { testid: "password-confirmation" }
-      %>
+                                 label: {
+                                   text: "Confirm offline password",
+                                   size: "s",
+                                 },
+                                 width: 20,
+                                 autocomplete: "new-password",
+                                 data: { testid: "password-confirmation" } %>
 
       <%= f.govuk_submit "Save password", data: { testid: "submit" } %>
     <% end %>

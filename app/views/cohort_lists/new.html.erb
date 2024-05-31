@@ -3,17 +3,17 @@
 
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
-    { text: 'Home', href: dashboard_path },
-    { text: 'Manage pilot', href: manage_pilot_path },
-    { text: page_title }
-  ]) %>
+                                          { text: "Home", href: dashboard_path },
+                                          { text: "Manage pilot", href: manage_pilot_path },
+                                          { text: page_title },
+                                        ]) %>
 <% end %>
 
 <%= form_for @cohort_list, url: pilot_cohort_path do |f| %>
   <%= f.govuk_error_summary %>
 
   <%= f.govuk_file_field :csv,
-    label: { text: page_title, tag: 'h1', size: 'l' } %>
+                         label: { text: page_title, tag: "h1", size: "l" } %>
 
-  <%= f.govuk_submit 'Upload the cohort list' %>
+  <%= f.govuk_submit "Upload the cohort list" %>
 <% end %>

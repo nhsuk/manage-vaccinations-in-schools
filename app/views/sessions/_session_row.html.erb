@@ -12,10 +12,10 @@
     <p class="nhsuk-u-margin-bottom-0 nhsuk-u-secondary-text-color">
       <% if session.in_progress? %>
         <%= govuk_tag(
-          classes: "nhsuk-u-margin-bottom-2",
-          text: "Session in progress",
-          colour: "blue"
-        ) %><br>
+              classes: "nhsuk-u-margin-bottom-2",
+              text: "Session in progress",
+              colour: "blue",
+            ) %><br>
       <% end %>
       <%= link_to session.location.name, edit_session_path(session), "data-testid": "session-link" %><br>
       <%= session.location.town %>, <%= session.location.postcode %>

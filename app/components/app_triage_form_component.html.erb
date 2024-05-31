@@ -1,10 +1,10 @@
 <%= form_with(
-  model: @triage,
-  url:,
-  class: "nhsuk-card",
-  method: :post,
-  builder: GOVUKDesignSystemFormBuilder::FormBuilder
-) do |f| %>
+     model: @triage,
+     url:,
+     class: "nhsuk-card",
+     method: :post,
+     builder: GOVUKDesignSystemFormBuilder::FormBuilder,
+   ) do |f| %>
   <div class="nhsuk-card__content">
     <h2 class="nhsuk-card__heading nhsuk-heading-m">
       Is it safe to vaccinate <%= patient.full_name %>?
@@ -12,18 +12,18 @@
     <% content_for(:before_content) { f.govuk_error_summary } %>
 
     <%= f.govuk_collection_radio_buttons(
-      :status,
-      triage_status_options,
-      :first,
-      :second,
-      legend: nil,
-    ) %>
+          :status,
+          triage_status_options,
+          :first,
+          :second,
+          legend: nil,
+        ) %>
 
     <%= f.govuk_text_area(
-      :notes,
-      label: { text: 'Triage notes (optional)' },
-      rows: 5
-    ) %>
+          :notes,
+          label: { text: "Triage notes (optional)" },
+          rows: 5,
+        ) %>
 
     <%= f.submit "Save triage", class: "nhsuk-button" %>
   </div>

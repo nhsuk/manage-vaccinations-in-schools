@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-      href: backlink_path,
-      name: "previous page"
-  ) %>
+        href: backlink_path,
+        name: "previous page",
+      ) %>
 <% end %>
 
 <%= h1 "Home address" %>
@@ -11,17 +11,17 @@
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_text_field :address_line_1,
-    label: { text: 'Address line 1' } %>
+                         label: { text: "Address line 1" } %>
 
   <%= f.govuk_text_field :address_line_2,
-    label: { text: 'Address line 2 (optional)' } %>
+                         label: { text: "Address line 2 (optional)" } %>
 
   <%= f.govuk_text_field :address_town,
-    label: { text: 'Town or city' } %>
+                         label: { text: "Town or city" } %>
 
   <%= f.govuk_text_field :address_postcode,
-    label: { text: 'Postcode' },
-    class: 'nhsuk-input--width-10' %>
+                         label: { text: "Postcode" },
+                         class: "nhsuk-input--width-10" %>
 
   <div class="nhsuk-u-margin-top-6">
     <%= f.govuk_submit "Continue" %>

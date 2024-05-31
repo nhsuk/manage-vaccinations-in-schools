@@ -1,11 +1,11 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-               href: session_patient_vaccinations_path(@session, id: @patient.id),
-               name: "vaccination page"
-             ) %>
+        href: session_patient_vaccinations_path(@session, id: @patient.id),
+        name: "vaccination page",
+      ) %>
 <% end %>
 
-<% title = t("vaccinations.edit_reason.title.#{ @session.type.downcase }") %>
+<% title = t("vaccinations.edit_reason.title.#{@session.type.downcase}") %>
 <% content_for :page_title, title %>
 
 <%= form_with model: @draft_vaccination_record,
@@ -17,22 +17,22 @@
     <%= f.govuk_error_summary %>
 
     <%= f.govuk_radio_buttons_fieldset(:reason,
-      caption: { text: @patient.full_name, size: 'l' },
-      legend: { size: 'l', tag: 'h1',
-                text: title }) do %>
+                                       caption: { text: @patient.full_name, size: "l" },
+                                       legend: { size: "l", tag: "h1",
+                                                 text: title }) do %>
 
       <%= f.govuk_radio_button :reason, "refused",
-        label: { text: 'They refused it' } %>
+                               label: { text: "They refused it" } %>
       <%= f.govuk_radio_button :reason, "not_well",
-        label: { text: 'They were not well enough' } %>
+                               label: { text: "They were not well enough" } %>
       <%= f.govuk_radio_button :reason, "contraindications",
-        label: { text: 'They had contraindications' } %>
+                               label: { text: "They had contraindications" } %>
       <%= f.govuk_radio_button :reason, "already_had",
-        label: { text: 'They have already had the vaccine' } %>
+                               label: { text: "They have already had the vaccine" } %>
       <%= f.govuk_radio_button :reason, "absent_from_school",
-        label: { text: 'They were absent from school' } %>
+                               label: { text: "They were absent from school" } %>
       <%= f.govuk_radio_button :reason, "absent_from_session",
-        label: { text: 'They were absent from the session' } %>
+                               label: { text: "They were absent from the session" } %>
     <% end %>
   <%= f.submit "Continue", class: "nhsuk-button" %>
 <% end %>

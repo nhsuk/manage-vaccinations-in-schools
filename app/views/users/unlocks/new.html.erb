@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: new_user_session_path,
-    name: "sign in",
-  ) %>
+        href: new_user_session_path,
+        name: "sign in",
+      ) %>
 <% end %>
 
 <%= form_for(resource, as: resource_name, url: unlock_path(resource_name), html: { method: :post }) do |f| %>

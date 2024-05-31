@@ -1,12 +1,10 @@
-<%=
-form_with(
-    model: @vaccination_record,
-    url:,
-    method: :post,
-    class: "nhsuk-card",
-    builder: GOVUKDesignSystemFormBuilder::FormBuilder
-) do |f|
-%>
+<%= form_with(
+     model: @vaccination_record,
+     url:,
+     method: :post,
+     class: "nhsuk-card",
+     builder: GOVUKDesignSystemFormBuilder::FormBuilder,
+   ) do |f| %>
   <div class="nhsuk-card__content">
     <h2 class="nhsuk-card__heading nhsuk-heading-m">
       Did they get the <%= campaign_name %> vaccine?
@@ -14,32 +12,28 @@ form_with(
     <% content_for(:before_content) { f.govuk_error_summary } %>
 
     <%= f.govuk_radio_buttons_fieldset(:administered, legend: nil) do %>
-      <%=
-      f.govuk_radio_button(
-        :administered, true,
-        label: { text: t("vaccinations.form.label.#{ session.type.downcase }") },
-        link_errors: true
-      ) do
-      %>
+      <%= f.govuk_radio_button(
+            :administered, true,
+            label: { text: t("vaccinations.form.label.#{session.type.downcase}") },
+            link_errors: true,
+          ) do %>
         <%= f.govuk_collection_radio_buttons(
-          :delivery_site,
-          vaccination_initial_delivery_sites,
-          :value,
-          :label,
-          legend: {
-            text: 'Where did they get it?',
-            hidden: true
-          },
-          bold_labels: false
-        ) %>
+              :delivery_site,
+              vaccination_initial_delivery_sites,
+              :value,
+              :label,
+              legend: {
+                text: "Where did they get it?",
+                hidden: true,
+              },
+              bold_labels: false,
+            ) %>
       <% end %>
-      <%=
-      f.govuk_radio_button(
-        :administered,
-        false,
-        label: { text: 'No, they did not get it' }
-      )
-      %>
+      <%= f.govuk_radio_button(
+            :administered,
+            false,
+            label: { text: "No, they did not get it" },
+          ) %>
     <% end %>
 
     <%= f.hidden_field :delivery_method, value: :intramuscular %>

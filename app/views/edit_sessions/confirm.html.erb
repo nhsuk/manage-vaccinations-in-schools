@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: previous_wizard_path,
-    name: "#{@previous_step} page of session creation",
-  ) %>
+        href: previous_wizard_path,
+        name: "#{@previous_step} page of session creation",
+      ) %>
 <% end %>
 
 <% page_title = "Check and confirm details" %>

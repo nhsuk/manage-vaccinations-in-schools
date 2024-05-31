@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: back_link_path,
-    name: "patient page",
-  ) %>
+        href: back_link_path,
+        name: "patient page",
+      ) %>
 <% end %>
 
 <% page_title = "Who are you trying to get consent from?" %>
@@ -17,25 +17,25 @@
 <%= form_for @consent, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <%= f.govuk_text_field :parent_name, label: { text: 'Full name' } %>
+  <%= f.govuk_text_field :parent_name, label: { text: "Full name" } %>
 
-  <%= f.govuk_text_field :parent_phone, label: { text: 'Phone number' } %>
+  <%= f.govuk_text_field :parent_phone, label: { text: "Phone number" } %>
 
   <%= f.govuk_radio_buttons_fieldset(:parent_relationship,
-    legend: { size: 's',
-              text: 'Relationship to the child' }) do %>
+                                     legend: { size: "s",
+                                               text: "Relationship to the child" }) do %>
     <%= f.govuk_radio_button :parent_relationship, "mother",
-      label: { text: 'Mum' }, link_errors: true %>
+                             label: { text: "Mum" }, link_errors: true %>
     <%= f.govuk_radio_button :parent_relationship, "father",
-      label: { text: "Dad" } %>
+                             label: { text: "Dad" } %>
     <%= f.govuk_radio_button :parent_relationship, "guardian",
-      label: { text: 'Guardian' } %>
+                             label: { text: "Guardian" } %>
     <%= f.govuk_radio_button :parent_relationship, "other",
-      label: { text: 'Other' } do %>
+                             label: { text: "Other" } do %>
       <p>They need parental responsibility to give consent.</p>
       <%= f.govuk_text_field :parent_relationship_other,
-        label: { text: 'Relationship to the child' },
-        hint: { text: 'For example, carer' } %>
+                             label: { text: "Relationship to the child" },
+                             hint: { text: "For example, carer" } %>
     <% end %>
   <% end %>
 

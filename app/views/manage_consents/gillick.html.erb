@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: back_link_path,
-    name: "consent page",
-  ) %>
+        href: back_link_path,
+        name: "consent page",
+      ) %>
 <% end %>
 
 <% content_for :page_title, "Are they Gillick competent?" %>
@@ -10,20 +10,20 @@
 <%= form_for @patient_session, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
   <%= f.govuk_radio_buttons_fieldset(:gillick_competent,
-    caption: { size: 'l',
-               text: @patient.full_name },
-    legend: { size: 'l',
-              tag: 'h1',
-              text: 'Are they Gillick competent?' }) do %>
+                                     caption: { size: "l",
+                                                text: @patient.full_name },
+                                     legend: { size: "l",
+                                               tag: "h1",
+                                               text: "Are they Gillick competent?" }) do %>
     <%= f.govuk_radio_button :gillick_competent, true,
-      label: { text: 'Yes, they are Gillick competent' }, link_errors: true %>
+                             label: { text: "Yes, they are Gillick competent" }, link_errors: true %>
     <%= f.govuk_radio_button :gillick_competent, false,
-      label: { text: "No" } %>
+                             label: { text: "No" } %>
   <% end %>
 
   <%= f.govuk_text_area :gillick_competence_notes,
-    label: { text: 'Give details of your assessment' },
-    rows: 10 %>
+                        label: { text: "Give details of your assessment" },
+                        rows: 10 %>
 
   <div class="nhsuk-u-margin-top-6">
     <%= f.govuk_submit "Continue" %>

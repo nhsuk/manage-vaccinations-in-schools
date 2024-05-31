@@ -4,32 +4,32 @@
       Gillick competence
     </h2>
 
-    <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
-      summary_list.with_row do |row|
-        row.with_key { "Assessment" }
-        row.with_value do %>
-          Assessed by <%= @patient_session.gillick_competence_assessor.full_name %><br />
-          <%= (@consent.recorded_at ||
-               @consent.created_at).to_fs(:nhsuk_date) %>
-        <% end
-      end
-
-      if @patient_session.gillick_competent?
-        summary_list.with_row do |row|
-          row.with_key { "Gillick competent" }
-          row.with_value { 'Yes' }
-        end
-
-        summary_list.with_row do |row|
-          row.with_key { 'Consent' }
-          row.with_value { 'Given by child' }
-        end
-      else
-        summary_list.with_row do |row|
-          row.with_key { "Gillick competent" }
-          row.with_value { 'No' }
-        end
-      end
-    end %>
+    <%= govuk_summary_list classes: "app-summary-list--no-bottom-border" do |summary_list|
+          summary_list.with_row do |row|
+            row.with_key { "Assessment" }
+            row.with_value do
+              "Assessed by #{@patient_session.gillick_competence_assessor.full_name}" +
+              tag.br +
+              "#{@consent.recorded_at || @consent.created_at}.to_fs(:nhsuk_date)"
+            end
+          end
+        
+          if @patient_session.gillick_competent?
+            summary_list.with_row do |row|
+              row.with_key { "Gillick competent" }
+              row.with_value { "Yes" }
+            end
+        
+            summary_list.with_row do |row|
+              row.with_key { "Consent" }
+              row.with_value { "Given by child" }
+            end
+          else
+            summary_list.with_row do |row|
+              row.with_key { "Gillick competent" }
+              row.with_value { "No" }
+            end
+          end
+        end %>
   </div>
 </div>

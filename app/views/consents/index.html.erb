@@ -2,10 +2,10 @@
 
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
-    { text: 'Home', href: dashboard_path },
-    { text: 'Today’s sessions', href: sessions_path },
-    { text: "#{@session.campaign.name} session at #{@session.name}", href: session_path(@session) }
-  ]) %>
+                                          { text: "Home", href: dashboard_path },
+                                          { text: "Today’s sessions", href: sessions_path },
+                                          { text: "#{@session.campaign.name} session at #{@session.name}", href: session_path(@session) },
+                                        ]) %>
 <% end %>
 
 <%= h1 page_title, page_title: %>
@@ -14,32 +14,33 @@
   <%= govuk_inset_text html_attributes: { class: "nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-4" } do %>
     <span class="nhsuk-visually-hidden">Information: </span>
 
-    <p><%=
-      responses = pluralize(@unmatched_record_counts, 'response')
-      need = @unmatched_record_counts == 1 ? 'needs' : 'need'
-      link_to(
-        "#{responses} #{need} matching with records in the cohort",
-        session_consents_unmatched_responses_path(@session)
-      )
-    %></p>
+    <p><%= responses = pluralize(@unmatched_record_counts, "response")
+           need = @unmatched_record_counts == 1 ? "needs" : "need"
+           link_to(
+             "#{responses} #{need} matching with records in the cohort",
+             session_consents_unmatched_responses_path(@session)
+           ) %></p>
   <% end %>
 <% end %>
 
 <%= render AppSecondaryNavigationComponent.new do |nav|
-  TAB_PATHS[:consents].each do |tab, state|
-    nav.with_item(selected: @current_tab == state,
-      href: session_consents_tab_path(@session, tab:)) do %>
+      TAB_PATHS[:consents].each do |tab, state|
+        nav.with_item(selected: @current_tab == state,
+                      href: session_consents_tab_path(@session, tab:)) do
+        end
+      end
+    end %>
       <%= t("patients_table.#{state}.label") %>
       <%= render AppCountComponent.new(count: @tab_counts[state]) %>
     <% end
-  end
-end %>
+         end
+       end %>
 
 <%= render AppPatientTableComponent.new(
-  patient_sessions: @patient_sessions,
-  caption: t("patients_table.#{@current_tab}.caption",
-             children: pluralize_child(@patient_sessions.count)),
-  columns: @current_tab == :consent_refused ? %i[name dob reason] : %i[name dob],
-  section: :consents,
-  params:,
-) %>
+      patient_sessions: @patient_sessions,
+      caption: t("patients_table.#{@current_tab}.caption",
+                 children: pluralize_child(@patient_sessions.count)),
+      columns: @current_tab == :consent_refused ? %i[name dob reason] : %i[name dob],
+      section: :consents,
+      params:,
+    ) %>
