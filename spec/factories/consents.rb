@@ -39,20 +39,19 @@ FactoryBot.define do
     transient do
       random { Random.new }
       health_questions_list { ["Is there anything else we should know?"] }
-      # Allow caller to provide patient_session as a shortcut to produce
-      # patient and campaign
-      patient_session { nil }
     end
 
-    patient { patient_session&.patient || create(:patient) }
-    campaign { patient_session&.session&.campaign || create(:campaign) }
+    patient { create(:patient) }
+    campaign { create(:campaign) }
     response { "given" }
-    parent_name { Faker::Name.name }
-    parent_email { Faker::Internet.email(domain: "example.com") }
-    # Replace first two digits with 07 to make it a mobile number
-    parent_phone { "07700 900#{random.rand(0..999).to_s.rjust(3, "0")}" }
     route { "website" }
     recorded_at { Time.zone.now }
+
+    parent_name { patient.parent_name }
+    parent_email { patient.parent_email }
+    parent_phone { patient.parent_phone }
+    parent_relationship { patient.parent_relationship }
+    parent_relationship_other { patient.parent_relationship_other }
 
     health_answers do
       health_questions_list.map do |question|

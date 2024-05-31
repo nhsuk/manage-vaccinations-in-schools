@@ -2,8 +2,10 @@ require "rails_helper"
 
 RSpec.describe TriageMailer, type: :mailer do
   describe "#vaccination_will_happen" do
-    let(:patient_session) { create(:patient_session) }
-    let(:consent) { create(:consent, patient_session:) }
+    let(:patient_session) do
+      create(:patient_session, :consent_given_triage_not_needed)
+    end
+    let(:consent) { patient_session.patient.consents.first }
 
     subject(:mail) { TriageMailer.vaccination_will_happen(patient_session) }
 
@@ -17,8 +19,8 @@ RSpec.describe TriageMailer, type: :mailer do
   end
 
   describe "#vaccination_wont_happen" do
-    let(:patient_session) { create(:patient_session) }
-    let(:consent) { create(:consent, patient_session:) }
+    let(:patient_session) { create(:patient_session, :consent_refused) }
+    let(:consent) { patient_session.patient.consents.first }
 
     subject(:mail) { TriageMailer.vaccination_wont_happen(patient_session) }
 

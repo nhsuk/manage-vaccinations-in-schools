@@ -48,7 +48,7 @@ RSpec.describe AppSimpleStatusBannerComponent, type: :component do
 
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Consent refused") }
-    it { should have_text("Mum refused to give consent") }
+    it { should have_text("refused to give consent") }
   end
 
   context "state is triaged_kept_in_triage" do

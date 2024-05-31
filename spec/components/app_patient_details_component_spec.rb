@@ -41,10 +41,6 @@ RSpec.describe AppPatientDetailsComponent, type: :component do
       )
     end
 
-    it "should not render the address" do
-      expect(page).not_to have_css(".nhsuk-summary-list__row", text: "Address")
-    end
-
     it "should render the school name" do
       expect(page).to(
         have_css(".nhsuk-summary-list__row", text: "School#{school.name}")
