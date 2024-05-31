@@ -6,9 +6,9 @@
   <%= f.govuk_error_summary %>
 
   <%= f.govuk_password_field :password, autocomplete: "new-password",
-    label: { text: "New password" } %>
+                                        label: { text: "New password" } %>
   <%= f.govuk_password_field :password_confirmation, autocomplete: "new-password",
-    label: { text: "Confirm new password" } %>
+                                                     label: { text: "Confirm new password" } %>
 
   <%= f.govuk_submit "Change password" %>
 <% end %>

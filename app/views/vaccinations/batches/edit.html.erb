@@ -1,25 +1,25 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: session_patient_path(@session.id, id: @patient.id),
-    name: "vaccination page"
-  ) %>
+        href: session_patient_path(@session.id, id: @patient.id),
+        name: "vaccination page",
+      ) %>
 <% end %>
 
 <% content_for :page_title, "Which batch did you use?" %>
 
 <%= form_with model: @draft_vaccination_record,
-   url: session_patient_vaccinations_batch_path(
-       session_id: @session.id,
-       patient_id: @patient.id,
-   ),
- method: :put do |f| %>
+              url: session_patient_vaccinations_batch_path(
+                session_id: @session.id,
+                patient_id: @patient.id,
+              ),
+              method: :put do |f| %>
   <%= f.govuk_radio_buttons_fieldset(:batch_id,
-    caption: { text: @patient.full_name, size: 'l' },
-    legend: { size: 'l', tag: 'h1', text: 'Which batch did you use?' }) do %>
+                                     caption: { text: @patient.full_name, size: "l" },
+                                     legend: { size: "l", tag: "h1", text: "Which batch did you use?" }) do %>
     <% @batches.each do |batch| %>
       <%= f.govuk_radio_button :batch_id,
-       batch.id,
-       label: { text: "#{batch.name} (expires #{batch.expiry.to_fs(:nhsuk_date)})" } do %>
+                               batch.id,
+                               label: { text: "#{batch.name} (expires #{batch.expiry.to_fs(:nhsuk_date)})" } do %>
        <%= f.govuk_check_box :todays_batch, batch.id, label: { text: "Default to this batch for today" } %>
       <% end %>
     <% end %>

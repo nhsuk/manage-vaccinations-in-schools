@@ -1,12 +1,16 @@
 <nav class="nhsuk-breadcrumb<%= " #{@classes}" if @classes %>"
      aria-label="Breadcrumb"
-     <%= @attributes.map { |name, value| "#{name}=\"#{value}\"" }.join(' ') %>>
+     <%= @attributes.map { |name, value| "#{name}=\"#{value}\"" }.join(" ") %>>
   <div class="nhsuk-width-container">
     <ol class="nhsuk-breadcrumb__list">
       <% @items.each do |item| %>
-        <li class="nhsuk-breadcrumb__item"><%= item[:href].nil? ? item[:text]
-          : govuk_link_to(item[:text], item[:href], class: "nhsuk-breadcrumb__link", attributes: item[:attributes])
-        %></li>
+        <li class="nhsuk-breadcrumb__item">
+          <%= item[:href].nil? ?
+                item[:text] :
+                govuk_link_to(item[:text], item[:href],
+                              class: "nhsuk-breadcrumb__link",
+                              attributes: item[:attributes]) %>
+        </li>
       <% end %>
     </ol>
     <p class="nhsuk-breadcrumb__back">

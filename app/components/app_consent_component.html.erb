@@ -10,9 +10,9 @@
   <%= govuk_table(classes: "nhsuk-u-margin-bottom-4") do |table| %>
     <%= table.with_head do |head| %>
       <%= head.with_row do |row| %>
-        <%= row.with_cell(text: 'Name') %>
-        <%= row.with_cell(text: 'Response date') %>
-        <%= row.with_cell(text: 'Decision') %>
+        <%= row.with_cell(text: "Name") %>
+        <%= row.with_cell(text: "Response date") %>
+        <%= row.with_cell(text: "Decision") %>
       <% end %>
     <% end %>
 
@@ -35,24 +35,24 @@
     <p><%= contact_parent_or_guardian_link(consents) %></p>
   <% elsif consents.any?(&:response_not_provided?) %>
     <%= govuk_button_link_to(
-      "Get consent",
-      session_patient_manage_consent_path(
-        session,
-        patient,
-        consents.first.id,
-        :agree,
-        section: @section,
-        tab: @tab
-      ),
-      secondary: true
-    ) %>
+          "Get consent",
+          session_patient_manage_consent_path(
+            session,
+            patient,
+            consents.first.id,
+            :agree,
+            section: @section,
+            tab: @tab,
+          ),
+          secondary: true,
+        ) %>
   <% end %>
 <% else %>
   <p>
     <%= form_for :consent,
-      url: session_patient_manage_consents_path(session, patient_id: patient.id, section: @section, tab: @tab),
-      method: :post,
-      builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
+                 url: session_patient_manage_consents_path(session, patient_id: patient.id, section: @section, tab: @tab),
+                 method: :post,
+                 builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
       <%= f.govuk_submit "Get consent", name: "consent", value: "phone" %>
     <% end %>
   </p>

@@ -1,11 +1,11 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: back_link_path,
-    name: "contact details page",
-  ) %>
+        href: back_link_path,
+        name: "contact details page",
+      ) %>
 <% end %>
 
-<% title = t("consents.edit_consent.title.#{ @session.type.downcase }") %>
+<% title = t("consents.edit_consent.title.#{@session.type.downcase}") %>
 <% content_for :page_title, title %>
 
 <%= form_for @consent, url: form_path_for(@consent), method: form_method_for(@consent) do |f| %>
@@ -15,18 +15,18 @@
     <%= hidden_field_tag :step, "agree" %>
   <% end %>
   <%= f.govuk_radio_buttons_fieldset(:response,
-    caption: { size: 'l',
-               text: @patient.full_name },
-    legend: { size: 'l',
-              tag: 'h1',
-              text: title }) do %>
+                                     caption: { size: "l",
+                                                text: @patient.full_name },
+                                     legend: { size: "l",
+                                               tag: "h1",
+                                               text: title }) do %>
     <%= f.govuk_radio_button :response, "given",
-      label: { text: 'Yes, they agree' }, link_errors: true %>
+                             label: { text: "Yes, they agree" }, link_errors: true %>
     <%= f.govuk_radio_button :response, "refused",
-      label: { text: "No, they do not agree" } %>
+                             label: { text: "No, they do not agree" } %>
     <% unless @consent.via_self_consent? %>
       <%= f.govuk_radio_button :response, "not_provided",
-        label: { text: 'No response' } %>
+                               label: { text: "No response" } %>
     <% end %>
   <% end %>
 

@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-      href: backlink_path,
-      name: "previous page"
-  ) %>
+        href: backlink_path,
+        name: "previous page",
+      ) %>
 <% end %>
 
 <%= h1 "Your child may be able to have an injection instead" %>
@@ -16,14 +16,13 @@
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_radio_buttons_fieldset(:contact_injection,
-    legend: { size: 's',
-              text: 'Would you like someone to contact you about this option?' }
-  ) do %>
+                                     legend: { size: "s",
+                                               text: "Would you like someone to contact you about this option?" }) do %>
     <%= f.govuk_radio_button :contact_injection, true,
-      label: { text: 'Yes, I am happy for someone to contact me' },
-      link_errors: true %>
+                             label: { text: "Yes, I am happy for someone to contact me" },
+                             link_errors: true %>
     <%= f.govuk_radio_button :contact_injection, false,
-      label: { text: 'No' } %>
+                             label: { text: "No" } %>
   <% end %>
 
   <div class="nhsuk-u-margin-top-6">

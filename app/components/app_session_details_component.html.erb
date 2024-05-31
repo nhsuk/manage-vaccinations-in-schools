@@ -1,43 +1,43 @@
 <%= render AppCardComponent.new(heading: "Session") do %>
-  <%= govuk_summary_list classes: 'app-summary-list--no-bottom-border' do |summary_list|
-    summary_list.with_row do |row|
-      row.with_key { "School" }
-      row.with_value { school }
-    end
-
-    summary_list.with_row do |row|
-      row.with_key { "Vaccine" }
-      row.with_value { vaccine }
-    end
-
-    summary_list.with_row do |row|
-      row.with_key { "Date" }
-      row.with_value { date }
-    end
-
-    summary_list.with_row do |row|
-      row.with_key { "Time" }
-      row.with_value { time }
-    end
-
-    summary_list.with_row do |row|
-      row.with_key { "Cohort" }
-      row.with_value { cohort }
-    end
-
-    summary_list.with_row do |row|
-      row.with_key { "Consent requests" }
-      row.with_value { consent_requests }
-    end
-
-    summary_list.with_row do |row|
-      row.with_key { "Reminders" }
-      row.with_value { reminders }
-    end
-
-    summary_list.with_row do |row|
-      row.with_key { "Deadline for responses" }
-      row.with_value { deadline_for_responses }
-    end
-  end %>
+  <%= govuk_summary_list classes: "app-summary-list--no-bottom-border" do |summary_list|
+        summary_list.with_row do |row|
+          row.with_key { "School" }
+          row.with_value { school }
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Vaccine" }
+          row.with_value { vaccine }
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Date" }
+          row.with_value { date }
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Time" }
+          row.with_value { time }
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Cohort" }
+          row.with_value { cohort }
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Consent requests" }
+          row.with_value { consent_requests }
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Reminders" }
+          row.with_value { reminders }
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Deadline for responses" }
+          row.with_value { deadline_for_responses }
+        end
+      end %>
 <% end %>

@@ -2,17 +2,17 @@
 
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
-    { text: 'Home', href: dashboard_path },
-    { text: 'Campaigns', href: campaigns_path },
-    { text: @session.campaign.name, href: campaign_path(@session.campaign) }
-  ]) %>
+                                          { text: "Home", href: dashboard_path },
+                                          { text: "Campaigns", href: campaigns_path },
+                                          { text: @session.campaign.name, href: campaign_path(@session.campaign) },
+                                        ]) %>
 <% end %>
 
 <%= h1 page_title: do %>
   <%= page_title %>
   <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
     <%= @session.date.to_fs(:nhsuk_date) %> (<%= @session.human_enum_name(:time_of_day) %>) ·
-    <%= pluralize(@patient_sessions.size, 'child') %> in cohort
+    <%= pluralize(@patient_sessions.size, "child") %> in cohort
   </span>
 <% end %>
 
@@ -24,17 +24,17 @@
 <ul class="nhsuk-grid-row nhsuk-card-group">
   <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
     <%= render AppCardComponent.new(
-      heading: "Register attendance",
-      link_to: "#"
-    ) do %>
+          heading: "Register attendance",
+          link_to: "#",
+        ) do %>
       <%= pluralize_child(@patient_sessions.size) %> still to register
     <% end %>
   </li>
   <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
     <%= render AppCardComponent.new(
-      heading: "Record vaccinations",
-      link_to: session_vaccinations_path(@session)
-    ) do %>
+          heading: "Record vaccinations",
+          link_to: session_vaccinations_path(@session),
+        ) do %>
       <%= pluralize_child(@counts[:vaccinate]) %> to vaccinate<br>
       <%= pluralize_child(@counts[:vaccinated]) %> vaccinated<br>
       <%= pluralize_child(@counts[:could_not_vaccinate]) %> could not be vaccinated
@@ -42,9 +42,9 @@
   </li>
   <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
     <%= render AppCardComponent.new(
-      heading: "Check consent responses",
-      link_to: session_consents_path(@session)
-    ) do %>
+          heading: "Check consent responses",
+          link_to: session_consents_path(@session),
+        ) do %>
       <%= pluralize_child(@counts[:without_a_response]) %> without a response<br>
       <%= pluralize_child(@counts[:with_consent_given]) %> with consent given<br>
       <%= pluralize_child(@counts[:with_consent_refused]) %> with consent refused<br>
@@ -53,9 +53,9 @@
   </li>
   <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
     <%= render AppCardComponent.new(
-      heading: "Triage health questions",
-      link_to: session_triage_path(@session)
-    ) do %>
+          heading: "Triage health questions",
+          link_to: session_triage_path(@session),
+        ) do %>
       <%= pluralize_child(@counts[:needing_triage]) %> needing triage
     <% end %>
   </li>
@@ -68,12 +68,12 @@
         Vaccinations can only be recorded if a session is in progress. If you want to test vaccination recording, you can set this session as in progress for today.
       </p>
       <%= govuk_button_to(
-        "Set session in progress for today",
-        make_in_progress_session_path,
-        method: :put,
-        secondary: true,
-        prevent_double_click: true
-      ) %>
+            "Set session in progress for today",
+            make_in_progress_session_path,
+            method: :put,
+            secondary: true,
+            prevent_double_click: true,
+          ) %>
     <% end %>
   <% end %>
 <% end %>

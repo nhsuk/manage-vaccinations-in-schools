@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-      href: backlink_path,
-      name: "previous page"
-  ) %>
+        href: backlink_path,
+        name: "previous page",
+      ) %>
 <% end %>
 
 <% content_for(:page_title, "What is your child’s date of birth?") %>
@@ -13,11 +13,11 @@
   <%= f.govuk_date_field :date_of_birth,
                          date_of_birth: true,
                          legend: {
-                             tag: "h1",
-                             text: "What is your child’s date of birth?",
-                             size: "l"
+                           tag: "h1",
+                           text: "What is your child’s date of birth?",
+                           size: "l",
                          },
-                         hint: { text: 'For example, 27 3 2017' },
+                         hint: { text: "For example, 27 3 2017" },
                          link_errors: true %>
 
   <div class="nhsuk-u-margin-top-6">

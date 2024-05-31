@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: session_patient_path(id: @patient.id),
-    name: "patient page",
-  ) %>
+        href: session_patient_path(id: @patient.id),
+        name: "patient page",
+      ) %>
 <% end %>
 
 <% page_title = "Assessing Gillick competence" %>
@@ -29,4 +29,4 @@ to ask questions.</p>
 
 
 <%= govuk_button_to "Give your assessment", wizard_path, method: :put,
-  class: "nhsuk-u-margin-top-6" %>
+                                                         class: "nhsuk-u-margin-top-6" %>

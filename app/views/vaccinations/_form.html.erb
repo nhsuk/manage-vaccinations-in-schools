@@ -1,32 +1,31 @@
 <%= form_with model: @draft_vaccination_record,
-              url: session_patient_vaccinations_path(
-                session_id: @session.id,
-                id: @patient.id,
-              ),
-              method: :post do |f| %>
+             url: session_patient_vaccinations_path(
+               session_id: @session.id,
+               id: @patient.id,
+             ),
+             method: :post do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_radio_buttons_fieldset(:administered,
-    caption: { text: @patient.full_name, size: 'l' },
-    legend: { text: 'Did they get the vaccine?' }
-      .merge(embedded ? { size: 'm' } : { size: 'l', tag: 'h1' })
-  ) do %>
+                                     caption: { text: @patient.full_name, size: "l" },
+                                     legend: { text: "Did they get the vaccine?" }
+                                       .merge(embedded ? { size: "m" } : { size: "l", tag: "h1" })) do %>
     <%= f.govuk_radio_button :administered, true,
-      label: { text: t("vaccinations.form.label.#{ @session.type.downcase }") },
-      link_errors: true do %>
+                             label: { text: t("vaccinations.form.label.#{@session.type.downcase}") },
+                             link_errors: true do %>
       <%= f.govuk_collection_radio_buttons :delivery_site,
-        vaccination_initial_delivery_sites,
-        :to_s,
-        :humanize,
-        inline: true,
-        legend: {
-          text: 'Where did they get it?',
-          hidden: true
-        },
-        bold_labels: false %>
+                                           vaccination_initial_delivery_sites,
+                                           :to_s,
+                                           :humanize,
+                                           inline: true,
+                                           legend: {
+                                             text: "Where did they get it?",
+                                             hidden: true,
+                                           },
+                                           bold_labels: false %>
     <% end %>
     <%= f.govuk_radio_button :administered, false,
-      label: { text: 'No, they did not get it' } %>
+                             label: { text: "No, they did not get it" } %>
   <% end %>
 
   <%= f.hidden_field :delivery_method, value: :intramuscular %>

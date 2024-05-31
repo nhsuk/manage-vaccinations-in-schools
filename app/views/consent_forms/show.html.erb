@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: session_consents_unmatched_responses_path(@consent_form.session.id),
-    name: "school page"
-  ) %>
+        href: session_consents_unmatched_responses_path(@consent_form.session.id),
+        name: "school page",
+      ) %>
 <% end %>
 
 <% page_title = "Search for a child record" %>
@@ -18,14 +18,14 @@
 <% end %>
 
 <%= render AppCardComponent.new(heading: "Children in this cohort") do
-  if @patient_sessions.count > 0
-    render AppPatientTableComponent.new(
-      patient_sessions: @patient_sessions,
-      columns: %i[name postcode dob select_for_matching],
-      section: :matching,
-      consent_form: @consent_form
-    )
-  else
-    render AppEmptyListComponent.new
-  end
-end %>
+      if @patient_sessions.count > 0
+        render AppPatientTableComponent.new(
+          patient_sessions: @patient_sessions,
+          columns: %i[name postcode dob select_for_matching],
+          section: :matching,
+          consent_form: @consent_form,
+        )
+      else
+        render AppEmptyListComponent.new
+      end
+    end %>

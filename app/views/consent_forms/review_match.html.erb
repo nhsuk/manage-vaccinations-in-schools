@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: consent_form_path(@consent_form),
-    name: "search for a child record"
-  ) %>
+        href: consent_form_path(@consent_form),
+        name: "search for a child record",
+      ) %>
 <% end %>
 
 <% page_title = "Link consent response with child record?" %>
@@ -18,26 +18,27 @@
     <%= render AppCompareConsentFormAndPatientComponent.new(
           heading: "Compare details",
           consent_form: @consent_form,
-          patient: @patient_session.patient) %>
+          patient: @patient_session.patient,
+        ) %>
 
     <%= render AppCardComponent.new(heading: "Consent response") do
-      render AppConsentSummaryComponent.new(
-        name: @consent_form.parent_name,
-        relationship: @consent_form.who_responded,
-        contact: {
-          phone: @consent_form.parent_phone,
-          email: @consent_form.parent_email
-        },
-        response: {
-          text: @consent_form.summary_with_route,
-          timestamp: @consent_form.recorded_at
-        },
-        refusal_reason: {
-          reason: @consent_form.human_enum_name(:reason).presence,
-          notes: @consent_form.reason_notes
-        }
-      )
-    end %>
+          render AppConsentSummaryComponent.new(
+            name: @consent_form.parent_name,
+            relationship: @consent_form.who_responded,
+            contact: {
+              phone: @consent_form.parent_phone,
+              email: @consent_form.parent_email,
+            },
+            response: {
+              text: @consent_form.summary_with_route,
+              timestamp: @consent_form.recorded_at,
+            },
+            refusal_reason: {
+              reason: @consent_form.human_enum_name(:reason).presence,
+              notes: @consent_form.reason_notes,
+            },
+          )
+        end %>
 
     <%= form_tag match_consent_form_path(@consent_form.id, patient_session_id: @patient_session.id) do %>
       <%= submit_tag "Link response with record", class: "nhsuk-button" %>

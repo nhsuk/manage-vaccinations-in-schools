@@ -1,15 +1,13 @@
 <% content_for :before_main do %>
-  <%
-  back_url = if @draft_vaccination_record.administered?
-    edit_session_patient_vaccinations_batch_path(@session, patient_id: @patient.id)
-  else
-    edit_reason_session_patient_vaccinations_path(@session, patient_id: @patient.id)
-  end
-  %>
+  <% back_url = if @draft_vaccination_record.administered?
+         edit_session_patient_vaccinations_batch_path(@session, patient_id: @patient.id)
+       else
+         edit_reason_session_patient_vaccinations_path(@session, patient_id: @patient.id)
+       end %>
   <%= render AppBacklinkComponent.new(
-    href: back_url,
-    name: "vaccination page"
-  ) %>
+        href: back_url,
+        name: "vaccination page",
+      ) %>
 <% end %>
 
 <% page_title = "Check and confirm" %>
@@ -21,96 +19,96 @@
 <div class="nhsuk-card">
   <div class="nhsuk-card__content">
     <%= govuk_summary_list(
-      actions: false,
-      classes: 'app-summary-list--no-bottom-border'
-    ) do |summary_list|
-      summary_list.with_row do |row|
-        row.with_key { 'Child' }
-        row.with_value { @patient.full_name }
-      end
-
-      if @draft_vaccination_record.administered?
-        summary_list.with_row do |row|
-          row.with_key { 'Vaccine' }
-          row.with_value { @session.type }
-        end
-
-        summary_list.with_row do |row|
-          row.with_key { 'Brand' }
-          row.with_value do
-            vaccine = @draft_vaccination_record.vaccine
-            "#{vaccine.brand} (#{vaccine.method})"
+          actions: false,
+          classes: "app-summary-list--no-bottom-border",
+        ) do |summary_list|
+          summary_list.with_row do |row|
+            row.with_key { "Child" }
+            row.with_value { @patient.full_name }
           end
-        end
-
-        summary_list.with_row do |row|
-          row.with_key { 'Batch' }
-          row.with_value do
-            batch = @draft_vaccination_record.batch
-            "#{batch.name} (expires #{batch.expiry.to_fs(:nhsuk_date)})"
+        
+          if @draft_vaccination_record.administered?
+            summary_list.with_row do |row|
+              row.with_key { "Vaccine" }
+              row.with_value { @session.type }
+            end
+        
+            summary_list.with_row do |row|
+              row.with_key { "Brand" }
+              row.with_value do
+                vaccine = @draft_vaccination_record.vaccine
+                "#{vaccine.brand} (#{vaccine.method})"
+              end
+            end
+        
+            summary_list.with_row do |row|
+              row.with_key { "Batch" }
+              row.with_value do
+                batch = @draft_vaccination_record.batch
+                "#{batch.name} (expires #{batch.expiry.to_fs(:nhsuk_date)})"
+              end
+            end
+        
+            summary_list.with_row do |row|
+              row.with_key { "Site" }
+              row.with_value { @draft_vaccination_record.human_enum_name(:delivery_site) }
+            end
+        
+            summary_list.with_row do |row|
+              row.with_key { "Outcome" }
+              row.with_value { "Vaccinated" }
+            end
+          else
+            summary_list.with_row do |row|
+              row.with_key { "Outcome" }
+              row.with_value { @draft_vaccination_record.human_enum_name(:reason) }
+            end
           end
-        end
-
-        summary_list.with_row do |row|
-          row.with_key { 'Site' }
-          row.with_value { @draft_vaccination_record.human_enum_name(:delivery_site) }
-        end
-
-        summary_list.with_row do |row|
-          row.with_key { 'Outcome' }
-          row.with_value { 'Vaccinated' }
-        end
-      else
-        summary_list.with_row do |row|
-          row.with_key { 'Outcome' }
-          row.with_value { @draft_vaccination_record.human_enum_name(:reason) }
-        end
-      end
-
-      summary_list.with_row do |row|
-        row.with_key { 'Date' }
-        row.with_value { "Today (#{Time.zone.now.to_fs(:nhsuk_date)})" }
-      end
-
-      summary_list.with_row do |row|
-        row.with_key { 'Time' }
-        row.with_value { Time.zone.now.to_fs(:time) }
-      end
-
-      summary_list.with_row do |row|
-        row.with_key { 'Location' }
-        row.with_value { @session.location.name }
-      end
-
-      summary_list.with_row do |row|
-        row.with_key { 'Vaccinator' }
-        row.with_value { "You (#{@draft_vaccination_record.user.full_name})" }
-      end
-    end %>
+        
+          summary_list.with_row do |row|
+            row.with_key { "Date" }
+            row.with_value { "Today (#{Time.zone.now.to_fs(:nhsuk_date)})" }
+          end
+        
+          summary_list.with_row do |row|
+            row.with_key { "Time" }
+            row.with_value { Time.zone.now.to_fs(:time) }
+          end
+        
+          summary_list.with_row do |row|
+            row.with_key { "Location" }
+            row.with_value { @session.location.name }
+          end
+        
+          summary_list.with_row do |row|
+            row.with_key { "Vaccinator" }
+            row.with_value { "You (#{@draft_vaccination_record.user.full_name})" }
+          end
+        end %>
   </div>
 </div>
 
 <%= form_with model: @draft_vaccination_record,
-    url: record_session_patient_vaccinations_path(
-      session_id: @session.id,
-      patient_id: @patient.id,
-    ),
- method: :put do |f| %>
+              url: record_session_patient_vaccinations_path(
+                session_id: @session.id,
+                patient_id: @patient.id,
+              ),
+              method: :put do |f| %>
 
     <% content_for(:before_content) { f.govuk_error_summary } %>
 
     <div class="nhsuk-card">
       <div class="nhsuk-card__content">
         <%= f.govuk_text_area :notes,
-          label: {
-            text: 'Add notes',
-            size: 'm',
-            class: 'nhsuk-u-margin-bottom-3'
-          },
-          hint: {
-            text: 'For example, if the child had a reaction to the vaccine'
-          },
-          rows: 5 %>
+                              label: {
+                                text: "Add notes",
+                                size: "m",
+                                class: "nhsuk-u-margin-bottom-3",
+                              },
+                              hint: {
+                                text: "For example, if the child had a reaction to the vaccine",
+                              },
+                              rows: 5 %>
       </div>
     </div>
   <%= f.submit "Confirm", class: "nhsuk-button" %>

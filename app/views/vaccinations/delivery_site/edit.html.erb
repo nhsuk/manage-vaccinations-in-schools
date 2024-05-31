@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-      href: session_patient_vaccinations_path(@session, @patient),
-      name: "vaccination page"
-  ) %>
+        href: session_patient_vaccinations_path(@session, @patient),
+        name: "vaccination page",
+      ) %>
 <% end %>
 
 <% page_title = "Tell us how the vaccination was given" %>
@@ -15,30 +15,30 @@
 <% end %>
 
 <%= form_with model: @draft_vaccination_record,
-   url: session_patient_vaccinations_delivery_site_path(
-       session_id: @session.id,
-       id: @patient.id,
-   ),
- method: :put do |f| %>
+              url: session_patient_vaccinations_delivery_site_path(
+                session_id: @session.id,
+                id: @patient.id,
+              ),
+              method: :put do |f| %>
   <%= f.govuk_collection_radio_buttons(
-      :delivery_method,
-      vaccination_delivery_methods,
-      :first,
-      :second,
-      legend: {
-          text: 'How was the vaccination given?',
-      },
-      bold_labels: false
-  ) %>
+        :delivery_method,
+        vaccination_delivery_methods,
+        :first,
+        :second,
+        legend: {
+          text: "How was the vaccination given?",
+        },
+        bold_labels: false,
+      ) %>
   <%= f.govuk_collection_radio_buttons(
         :delivery_site,
         vaccination_delivery_sites,
         :first,
         :second,
         legend: {
-            text: 'Site',
+          text: "Site",
         },
-        bold_labels: false
-        ) %>
+        bold_labels: false,
+      ) %>
   <%= f.submit "Continue", class: "nhsuk-button" %>
 <% end %>

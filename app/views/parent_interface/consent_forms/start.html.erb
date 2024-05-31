@@ -1,6 +1,6 @@
-<%= h1 t("consent_forms.start.title.#{ @session.type.downcase }") %>
+<%= h1 t("consent_forms.start.title.#{@session.type.downcase}") %>
 
-<% t("consent_forms.start.paragraphs.#{ @session.type.downcase }").each do |paragraph| %>
+<% t("consent_forms.start.paragraphs.#{@session.type.downcase}").each do |paragraph| %>
   <p class="nhsuk-u-margin-bottom-6">
     <%= paragraph %>
   </p>

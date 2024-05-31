@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-      href: health_question_backlink_path(@consent_form, @health_answer),
-      name: "previous page"
-  ) %>
+        href: health_question_backlink_path(@consent_form, @health_answer),
+        name: "previous page",
+      ) %>
 <% end %>
 
 <% title = @health_answer.question %>
@@ -13,17 +13,16 @@
   <%= hidden_field_tag "question_number", @question_number %>
 
   <%= f.govuk_radio_buttons_fieldset(:response,
-   legend: { size: 'l', text: title, tag: 'h1' },
-   hint: { text: @health_answer.hint }
-  ) do %>
+                                     legend: { size: "l", text: title, tag: "h1" },
+                                     hint: { text: @health_answer.hint }) do %>
     <%= f.govuk_radio_button :response, "yes",
-      label: { text: 'Yes' },
-      link_errors: true do %>
+                             label: { text: "Yes" },
+                             link_errors: true do %>
       <%= f.govuk_text_area :notes,
-        label: { text: 'Give details' } %>
+                            label: { text: "Give details" } %>
     <% end %>
     <%= f.govuk_radio_button :response, "no",
-      label: { text: 'No' } %>
+                             label: { text: "No" } %>
   <% end %>
 
   <div class="nhsuk-u-margin-top-6">

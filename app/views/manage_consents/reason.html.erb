@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: back_link_path,
-    name: "consent page",
-  ) %>
+        href: back_link_path,
+        name: "consent page",
+      ) %>
 <% end %>
 
 <% title = "Why are they refusing to give consent?" %>
@@ -11,22 +11,22 @@
 <%= form_for @consent, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
   <%= f.govuk_radio_buttons_fieldset(:reason_for_refusal,
-    caption: { size: 'l',
-               text: @patient.full_name },
-    legend: { size: 'l',
-              tag: 'h1',
-              text: title }) do %>
+                                     caption: { size: "l",
+                                                text: @patient.full_name },
+                                     legend: { size: "l",
+                                               tag: "h1",
+                                               text: title }) do %>
     <%= f.govuk_radio_button :reason_for_refusal, "already_vaccinated",
-      label: { text: 'Vaccine already received' }, link_errors: true %>
+                             label: { text: "Vaccine already received" }, link_errors: true %>
     <%= f.govuk_radio_button :reason_for_refusal, "will_be_vaccinated_elsewhere",
-      label: { text: "Vaccine will be given elsewhere" } %>
+                             label: { text: "Vaccine will be given elsewhere" } %>
     <%= f.govuk_radio_button :reason_for_refusal, "medical_reasons",
-      label: { text: 'Medical reasons' } %>
+                             label: { text: "Medical reasons" } %>
     <%= f.govuk_radio_button :reason_for_refusal, "personal_choice",
-      label: { text: 'Personal choice' } %>
+                             label: { text: "Personal choice" } %>
     <%= f.govuk_radio_divider %>
     <%= f.govuk_radio_button :reason_for_refusal, "other",
-      label: { text: 'Other' } %>
+                             label: { text: "Other" } %>
   <% end %>
 
   <div class="nhsuk-u-margin-top-6">

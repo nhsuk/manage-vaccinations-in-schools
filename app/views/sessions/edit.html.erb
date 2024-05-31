@@ -2,10 +2,10 @@
 
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
-    { text: 'Home', href: dashboard_path },
-    { text: 'Today’s sessions', href: sessions_path },
-    { text: @session.name, active: true }
-  ]) %>
+                                          { text: "Home", href: dashboard_path },
+                                          { text: "Today’s sessions", href: sessions_path },
+                                          { text: @session.name, active: true },
+                                        ]) %>
 <% end %>
 
 <%= h1 page_title %>

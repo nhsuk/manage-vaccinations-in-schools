@@ -1,8 +1,8 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-    href: sessions_path,
-    name: "school session"
-  ) %>
+        href: sessions_path,
+        name: "school session",
+      ) %>
 <% end %>
 
 <%= form_for @session, url: wizard_path, method: :put do |f| %>
@@ -10,12 +10,12 @@
   <%= h1 "Which school is it at?" %>
 
   <%= f.govuk_collection_radio_buttons(
-    :location_id,
-    @locations,
-    :id,
-    :name,
-    legend: nil
-  ) %>
+        :location_id,
+        @locations,
+        :id,
+        :name,
+        legend: nil,
+      ) %>
 
   <%= f.govuk_submit "Continue" %>
 <% end %>

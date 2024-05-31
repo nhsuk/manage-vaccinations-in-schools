@@ -6,18 +6,18 @@
 
     <%= form_for triage,
                  url: session_patient_triage_path(
-                    session, patient, triage
+                   session, patient, triage
                  ) do |f| %>
 
       <% content_for(:before_content) { f.govuk_error_summary } %>
 
-      <%= f.govuk_text_area :notes, label: { text: 'Triage notes (optional)' },
+      <%= f.govuk_text_area :notes, label: { text: "Triage notes (optional)" },
                                     rows: 5 %>
       <%= f.govuk_collection_radio_buttons :status,
                                            triage_form_status_options,
                                            :first,
                                            :second,
-                                           legend: { text: 'Triage status' } %>
+                                           legend: { text: "Triage status" } %>
 
       <%= f.submit "Save triage", class: "nhsuk-button" %>
     <% end %>
