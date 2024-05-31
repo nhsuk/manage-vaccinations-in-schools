@@ -1,17 +1,13 @@
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-two-thirds">
-    <%= h1 "#{@service_name} (Mavis)", size: "xl" %>
+<%= h1 "#{@service_name} (Mavis)", size: "xl" %>
 
-    <p>Use this service to:</p>
+<p>Use this service to:</p>
 
-    <ul class="nhsuk-list nhsuk-list--bullet">
-      <li>triage consent requests</li>
-      <li>approve children for vaccination</li>
-      <li>keep a record of vaccinations given to children</li>
-    </ul>
+<ul class="nhsuk-list nhsuk-list--bullet">
+  <li>upload cohort lists</li>
+  <li>manage vaccination sessions</li>
+  <li>triage answers to health questions</li>
+  <li>record vaccinations</li>
+  <li>view and download performance reports</li>
+</ul>
 
-    <%= govuk_button_link_to "Start now", dashboard_path, data: {
-      testid: "start",
-    } %>
-  </div>
-</div>
+<%= govuk_button_link_to "Start now", dashboard_path %>
