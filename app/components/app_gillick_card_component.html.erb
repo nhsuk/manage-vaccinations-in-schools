@@ -8,13 +8,14 @@
           summary_list.with_row do |row|
             row.with_key { "Assessment" }
             row.with_value do
-              "Assessed by #{@patient_session.gillick_competence_assessor.full_name}" +
-              tag.br +
-              "#{@consent.recorded_at || @consent.created_at}.to_fs(:nhsuk_date)"
+              safe_join([
+                "Assessed by #{@assessment.assessor.full_name}",
+                (@assessment.recorded_at || @assessment.created_at).to_fs(:nhsuk_date),
+              ], tag.br)
             end
           end
         
-          if @patient_session.gillick_competent?
+          if @assessment.gillick_competent?
             summary_list.with_row do |row|
               row.with_key { "Gillick competent" }
               row.with_value { "Yes" }

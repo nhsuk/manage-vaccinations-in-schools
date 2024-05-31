@@ -24,7 +24,13 @@ class VaccinationsController < ApplicationController
       @session
         .patient_sessions
         .strict_loading
-        .includes(:campaign, :patient, :triage, :vaccination_records)
+        .includes(
+          :campaign,
+          :gillick_assessment,
+          :patient,
+          :triage,
+          :vaccination_records
+        )
         .preload(:consents)
         .order("patients.first_name", "patients.last_name")
 

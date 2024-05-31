@@ -56,6 +56,7 @@ module PatientSessionStateConcern
     def do_triage
       nil
     end
+
     def do_triage!
       nil
     end
@@ -136,7 +137,8 @@ module PatientSessionStateConcern
     end
 
     def not_gillick_competent?
-      gillick_competent == false
+      gillick_assessment.present? &&
+        gillick_assessment.gillick_competent == false
     end
 
     def vaccination_can_be_delayed?

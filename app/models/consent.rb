@@ -41,7 +41,7 @@ class Consent < ApplicationRecord
 
   before_save :reset_unused_fields
 
-  attr_accessor :triage, :patient_session
+  attr_accessor :triage, :gillick_assessment
 
   has_one :consent_form
   belongs_to :patient
@@ -95,7 +95,7 @@ class Consent < ApplicationRecord
   validates :reason_for_refusal_notes, length: { maximum: 1000 }
 
   on_wizard_step :gillick, exact: true do
-    validate :patient_session_valid?
+    validate :gillick_assessment_valid?
   end
 
   on_wizard_step :who do
@@ -267,17 +267,14 @@ class Consent < ApplicationRecord
     end
   end
 
-  def patient_session_valid?
-    return if patient_session.valid?(:edit_gillick)
+  def gillick_assessment_valid?
+    return if gillick_assessment.valid?(:edit_gillick)
 
     errors.add(
       :gillick_competent,
-      patient_session.errors.messages[:gillick_competent].first
+      gillick_assessment.errors.messages[:gillick_competent].first
     )
-    errors.add(
-      :gillick_competence_notes,
-      patient_session.errors.messages[:gillick_competence_notes].first
-    )
+    errors.add(:notes, gillick_assessment.errors.messages[:notes].first)
   end
 
   def triage_valid?

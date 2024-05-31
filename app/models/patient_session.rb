@@ -31,10 +31,10 @@ class PatientSession < ApplicationRecord
 
   belongs_to :patient
   belongs_to :session
-  belongs_to :gillick_competence_assessor,
-             class_name: "User",
-             optional: true,
-             foreign_key: :gillick_competence_assessor_user_id
+  has_one :gillick_assessment
+  has_one :draft_gillick_assessment,
+          -> { draft },
+          class_name: "GillickAssessment"
 
   has_one :campaign, through: :session
   has_many :triage
@@ -43,18 +43,6 @@ class PatientSession < ApplicationRecord
            ->(patient) { Consent.submitted_for_campaign(patient.campaign) },
            through: :patient,
            class_name: "Consent"
-
-  validates :gillick_competent,
-            inclusion: {
-              in: [true, false]
-            },
-            on: :edit_gillick
-  validates :gillick_competence_notes, presence: true, on: :edit_gillick
-  validates :gillick_competence_assessor, presence: true, on: :edit_gillick
-
-  encrypts :gillick_competence_notes
-
-  validates :gillick_competence_notes, length: { maximum: 1000 }
 
   def vaccination_record
     vaccination_records.last

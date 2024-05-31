@@ -16,8 +16,7 @@
 
 <% if @consent.via_self_consent? %>
   <%= render AppGillickCardComponent.new(
-        consent: @consent,
-        patient_session: @patient_session,
+        assessment: @patient_session.draft_gillick_assessment || @patient_session.gillick_assessment,
       ) %>
 <% else %>
   <%= # BUG: this code was originally written with the assumption that it is called

@@ -11,7 +11,14 @@ class ConsentsController < ApplicationController
       @session
         .patient_sessions
         .strict_loading
-        .includes(:campaign, :consents, :patient, :triage, :vaccination_records)
+        .includes(
+          :campaign,
+          :gillick_assessment,
+          :consents,
+          :patient,
+          :triage,
+          :vaccination_records
+        )
         .sort_by { |ps| ps.patient.full_name }
 
     @unmatched_record_counts =

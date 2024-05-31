@@ -21,19 +21,20 @@
 #  fk_rails_...  (assessor_user_id => users.id)
 #  fk_rails_...  (patient_session_id => patient_sessions.id)
 #
-class GillickAssessment < ApplicationRecord
-  audited
+FactoryBot.define do
+  factory :gillick_assessment do
+    assessor { create :user }
+    patient_session { create :patient_session }
+    competent
 
-  belongs_to :patient_session
-  belongs_to :assessor, class_name: "User", foreign_key: :assessor_user_id
+    trait :not_competent do
+      gillick_competent { false }
+      notes { "Assessed as not Gillick competent" }
+    end
 
-  encrypts :notes
-
-  scope :draft, -> { rewhere(recorded_at: nil) }
-  scope :recorded, -> { where.not(recorded_at: nil) }
-  default_scope { recorded }
-
-  def draft?
-    recorded_at.nil?
+    trait :competent do
+      gillick_competent { true }
+      notes { "Assessed as Gillick competent" }
+    end
   end
 end

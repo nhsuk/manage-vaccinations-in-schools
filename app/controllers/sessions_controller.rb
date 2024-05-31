@@ -23,6 +23,7 @@ class SessionsController < ApplicationController
     @patient_sessions =
       @session.patient_sessions.strict_loading.includes(
         :campaign,
+        :gillick_assessment,
         :consents,
         :triage,
         :vaccination_records
