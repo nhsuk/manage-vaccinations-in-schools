@@ -7,8 +7,8 @@ class GillickAssessmentsController < ApplicationController
   before_action :set_session
   before_action :set_patient_session
   before_action :set_assessment, only: %i[show update]
-
-  steps :gillick, :confirm
+  before_action :set_steps
+  before_action :setup_wizard
 
   def new
   end
@@ -26,7 +26,9 @@ class GillickAssessmentsController < ApplicationController
   def update
     case current_step
     when :gillick
-      @assessment.assign_attributes(gillick_params)
+      @assessment.assign_attributes(
+        gillick_params.merge(form_step: current_step)
+      )
     when :confirm
       @assessment.assign_attributes(recorded_at: Time.zone.now)
     end
@@ -48,12 +50,16 @@ class GillickAssessmentsController < ApplicationController
     @patient_session =
       policy_scope(PatientSession).find_by(
         session_id: params[:session_id],
-        patient_id: params[:patient_id],
+        patient_id: params[:patient_id]
       )
   end
 
   def set_assessment
     @assessment = @patient_session.draft_gillick_assessment
+  end
+
+  def set_steps
+    self.steps = GillickAssessment.form_steps
   end
 
   def finish_wizard_path

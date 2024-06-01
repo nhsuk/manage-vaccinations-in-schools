@@ -353,6 +353,13 @@ en:
           nasal: Nasal spray
     errors:
       models:
+        gillick_assessment:
+          attributes:
+            gillick_competent:
+              inclusion: Choose if they are Gillick competent
+            notes:
+              blank: Enter details of your assessment
+              too_long: Enter details that are less than 1000 characters long
         offline_password:
           attributes:
             password:
@@ -377,13 +384,6 @@ en:
               blank: Choose a site
             reason:
               inclusion: Choose a reason
-        patient_session:
-          attributes:
-            gillick_competent:
-              inclusion: Choose if they are Gillick competent
-            gillick_competence_notes:
-              blank: Enter details of your assessment
-              too_long: Enter details that are less than 1000 characters long
         batch:
           attributes:
             name:
