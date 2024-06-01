@@ -50,6 +50,12 @@ RSpec.describe "Self-consent" do
     click_link "Give your assessment"
     click_button "Give your assessment"
 
+    # try submitting without filling in the form
+    click_on "Continue"
+    expect(page).to have_content("There is a problem")
+    expect(page).to have_content("Choose if they are Gillick competent")
+    expect(page).to have_content("Enter details of your assessment")
+
     choose "Yes, they are Gillick competent"
 
     fill_in "Give details of your assessment",

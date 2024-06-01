@@ -22,6 +22,7 @@
 #  fk_rails_...  (patient_session_id => patient_sessions.id)
 #
 class GillickAssessment < ApplicationRecord
+  include WizardFormConcern
   audited
 
   belongs_to :patient_session
@@ -33,7 +34,20 @@ class GillickAssessment < ApplicationRecord
   scope :recorded, -> { where.not(recorded_at: nil) }
   default_scope { recorded }
 
+  on_wizard_step :gillick do
+    validates :gillick_competent, inclusion: { in: [true, false] }
+    validates :notes, length: { maximum: 1000 }, presence: true
+  end
+
   def draft?
     recorded_at.nil?
+  end
+
+  def self.form_steps
+    %i[gillick confirm]
+  end
+
+  def form_steps
+    self.class.form_steps
   end
 end

@@ -1,7 +1,12 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: previous_wizard_path,
-        name: "consent page",
+        href: new_session_patient_gillick_assessment_path(
+          session_id: @session.id,
+          patient_id: @patient.id,
+          section: params[:section],
+          tab: params[:tab],
+        ),
+        name: "Gillick assessment start page",
       ) %>
 <% end %>
 
