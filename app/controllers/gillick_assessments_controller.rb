@@ -25,7 +25,7 @@ class GillickAssessmentsController < ApplicationController
 
   def update
     case current_step
-    when :gillick
+    when :gillick, :notes
       @assessment.assign_attributes(
         gillick_params.merge(form_step: current_step)
       )

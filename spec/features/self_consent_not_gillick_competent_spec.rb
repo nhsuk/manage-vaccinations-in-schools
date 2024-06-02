@@ -46,8 +46,9 @@ RSpec.describe "Not Gillick competent" do
     click_button "Give your assessment"
 
     choose "No"
+    click_on "Continue"
 
-    fill_in "Give details of your assessment",
+    fill_in "Details of your assessment",
             with: "They didn't understand the benefits and risks of the vaccine"
     click_on "Continue"
 

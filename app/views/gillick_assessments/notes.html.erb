@@ -1,0 +1,22 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: previous_wizard_path,
+        name: "previous page",
+      ) %>
+<% end %>
+
+<% content_for :page_title, "Details of your assessment" %>
+
+<%= form_for @assessment, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+  <%= f.govuk_text_area :notes, caption: { size: "l",
+                                           text: @patient.full_name },
+                                label: { size: "l",
+                                         tag: "h1",
+                                         text: content_for(:page_title) },
+                                rows: 10 %>
+
+  <div class="nhsuk-u-margin-top-6">
+    <%= f.govuk_submit "Continue" %>
+  </div>
+<% end %>
