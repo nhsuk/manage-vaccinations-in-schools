@@ -36,6 +36,9 @@ class GillickAssessment < ApplicationRecord
 
   on_wizard_step :gillick do
     validates :gillick_competent, inclusion: { in: [true, false] }
+  end
+
+  on_wizard_step :notes do
     validates :notes, length: { maximum: 1000 }, presence: true
   end
 
@@ -44,7 +47,7 @@ class GillickAssessment < ApplicationRecord
   end
 
   def self.form_steps
-    %i[gillick confirm]
+    %i[gillick notes confirm]
   end
 
   def form_steps

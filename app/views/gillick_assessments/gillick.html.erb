@@ -12,7 +12,7 @@
 
 <% content_for :page_title, "Are they Gillick competent?" %>
 
-<%= form_for @patient_session.draft_gillick_assessment, url: wizard_path, method: :put do |f| %>
+<%= form_for @assessment, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
   <%= f.govuk_radio_buttons_fieldset(:gillick_competent,
                                      caption: { size: "l",
@@ -25,10 +25,6 @@
     <%= f.govuk_radio_button :gillick_competent, false,
                              label: { text: "No" } %>
   <% end %>
-
-  <%= f.govuk_text_area :notes,
-                        label: { text: "Give details of your assessment" },
-                        rows: 10 %>
 
   <div class="nhsuk-u-margin-top-6">
     <%= f.govuk_submit "Continue" %>
