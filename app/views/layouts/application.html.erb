@@ -6,8 +6,8 @@
 
     <title><%= page_title(@service_name) %></title>
 
-    <%= stylesheet_link_tag "application", "data-turbo-track": Rails.env.development? ? "" : "reload" %>
-    <%= javascript_include_tag "application", "data-turbo-track": Rails.env.development? ? "" : "reload", defer: true %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload" %>
 
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
