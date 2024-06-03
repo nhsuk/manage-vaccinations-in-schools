@@ -11,3 +11,4 @@
 </ul>
 
 <%= govuk_button_link_to "Start now", dashboard_path %>
+<%= govuk_button_to "Sign in with CIS2", user_openid_connect_omniauth_authorize_path, data: { turbo: false } %>

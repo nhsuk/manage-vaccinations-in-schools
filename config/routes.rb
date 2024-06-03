@@ -4,7 +4,11 @@ Rails.application.routes.draw do
              path_names: {
                sign_in: "sign-in",
                sign_out: "sign-out"
+             },
+             controllers: {
+               omniauth_callbacks: "users/omniauth_callbacks"
              }
+
   get "sign-in", to: redirect("/users/sign_in")
 
   root to: redirect("/start")
