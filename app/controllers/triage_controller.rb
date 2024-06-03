@@ -41,34 +41,12 @@ class TriageController < ApplicationController
 
   def create
     @triage = @patient_session.triage.new
-    @triage.assign_attributes triage_params.merge(user: current_user)
-    if @triage.save(context: :consent)
-      @patient_session.do_triage!
-      send_triage_mail(@patient_session, @consent)
-      success_flash_after_patient_update(
-        patient: @patient,
-        view_record_link: session_patient_path(@session, id: @patient.id)
-      )
-      redirect_to redirect_path
-    else
-      render "patients/show", status: :unprocessable_entity
-    end
+    process_triage
   end
 
   def update
     @triage = @patient_session.triage.last
-    @triage.assign_attributes triage_params
-    if @triage.save(context: :consent)
-      @patient_session.do_triage!
-      send_triage_mail(@patient_session, @consent)
-      success_flash_after_patient_update(
-        patient: @patient,
-        view_record_link: session_patient_path(@session, id: @patient.id)
-      )
-      redirect_to redirect_path
-    else
-      render "patients/show", status: :unprocessable_entity
-    end
+    process_triage
   end
 
   private
@@ -109,6 +87,21 @@ class TriageController < ApplicationController
       session_consents_tab_path(@session, tab: params[:tab])
     else # if current_section is triage or anything else
       session_triage_path(@session)
+    end
+  end
+
+  def process_triage
+    @triage.assign_attributes triage_params.merge(user: current_user)
+    if @triage.save(context: :consent)
+      @patient_session.do_triage!
+      send_triage_mail(@patient_session, @consent)
+      success_flash_after_patient_update(
+        patient: @patient,
+        view_record_link: session_patient_path(@session, id: @patient.id)
+      )
+      redirect_to redirect_path
+    else
+      render "patients/show", status: :unprocessable_entity
     end
   end
 end
