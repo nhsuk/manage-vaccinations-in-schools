@@ -119,46 +119,6 @@ RSpec.describe Consent do
     end
   end
 
-  describe "#summary_with_route" do
-    it "summarises a given consent record (self-consent)" do
-      expect(
-        build(:consent_given, route: "self_consent").summary_with_route
-      ).to eq("Consent given (self consent)")
-    end
-
-    it "summarises a refused consent record (phone)" do
-      expect(build(:consent_refused, route: "phone").summary_with_route).to eq(
-        "Consent refused (phone)"
-      )
-    end
-
-    it "summarises a record where the parent couldn't be reached" do
-      expect(
-        build(
-          :consent,
-          response: :not_provided,
-          route: "phone"
-        ).summary_with_route
-      ).to eq("No response when contacted (phone)")
-    end
-
-    it "summarises a given consent that follows a refusal" do
-      expect(
-        build(:consent_given, route: "phone").summary_with_route(
-          previous_response: "refused"
-        )
-      ).to eq("Consent updated to given (phone)")
-    end
-
-    it "summarises a confirmed refusal" do
-      expect(
-        build(:consent_refused, route: "phone").summary_with_route(
-          previous_response: "refused"
-        )
-      ).to eq("Refusal confirmed (phone)")
-    end
-  end
-
   describe "#summary_with_consenter" do
     it "summarises a given consent record (self-consent)" do
       consent = build(:consent_given, parent_name: "John", route: :self_consent)

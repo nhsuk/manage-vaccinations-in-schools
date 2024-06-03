@@ -208,20 +208,6 @@ class Consent < ApplicationRecord
       reason_for_refusal_medical_reasons? || reason_for_refusal_other?
   end
 
-  def summary_with_route(previous_response: nil)
-    summary =
-      if response_not_provided?
-        "No response when contacted"
-      elsif previous_response&.to_sym == :refused && response_refused?
-        "Refusal confirmed"
-      elsif previous_response.present? && response_given?
-        "Consent updated to given"
-      else
-        human_enum_name(:response).capitalize
-      end
-    "#{summary} (#{human_enum_name(:route).downcase.presence})"
-  end
-
   def summary_with_consenter(previous_response: nil)
     summary =
       if response_not_provided?
