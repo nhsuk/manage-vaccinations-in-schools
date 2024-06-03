@@ -8,10 +8,15 @@ RSpec.describe "Triage" do
     and_a_patient_needing_triage
     and_i_am_signed_in
 
-    when_i_go_to_the_given_tab_of_the_consents_page
-    and_i_go_to_the_patient_that_needs_triage
-    and_i_record_that_they_are_safe_to_vaccinate
+    when_i_go_to_the_patient_that_needs_triage
+    then_i_see_the_triage_options
+
+    when_i_save_the_triage_without_choosing_an_option
+    then_i_see_a_validation_error
+
+    when_i_record_that_they_are_safe_to_vaccinate
     then_i_see_the_consents_page
+    and_an_email_is_sent_to_the_parent
   end
 
   def given_a_campaign_with_a_running_session
@@ -35,20 +40,34 @@ RSpec.describe "Triage" do
     sign_in @team.users.first
   end
 
-  def when_i_go_to_the_given_tab_of_the_consents_page
+  def when_i_go_to_the_patient_that_needs_triage
     visit session_consents_tab_path(@session, tab: "given")
-  end
-
-  def and_i_go_to_the_patient_that_needs_triage
     click_link @patient.full_name
   end
 
-  def and_i_record_that_they_are_safe_to_vaccinate
+  def when_i_record_that_they_are_safe_to_vaccinate
     choose "Yes, it’s safe to vaccinate"
     click_button "Save triage"
   end
 
   def then_i_see_the_consents_page
     expect(page).to have_content("Check consent responses")
+  end
+
+  def then_i_see_the_triage_options
+    expect(page).to have_selector :heading, "Is it safe to vaccinate"
+  end
+
+  def when_i_save_the_triage_without_choosing_an_option
+    click_button "Save triage"
+  end
+
+  def then_i_see_a_validation_error
+    expect(page).to have_selector :heading, "There is a problem"
+  end
+
+  def and_an_email_is_sent_to_the_parent
+    expect_email_to @patient.consents.first.parent_email,
+                    EMAILS[:triage_vaccination_will_happen]
   end
 end
