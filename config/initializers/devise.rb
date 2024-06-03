@@ -278,9 +278,9 @@ Devise.setup do |config|
                     scope: [:openid],
                     response_type: :code,
                     # uid_field: "preferred_username",
-                    issuer:
-                      "https://am.nhsdev.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/oidc",
+                    issuer: Settings.cis2.issuer,
                     discovery: true,
+                    client_auth_method: :jwks,
                     client_options: {
                       port: 443,
                       scheme: "https",
