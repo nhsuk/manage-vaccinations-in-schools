@@ -19,11 +19,13 @@
         summary_list.with_row do |row|
           row.with_key { "Are they Gillick competent?" }
           row.with_value { @assessment.gillick_competent ? "Yes, they are Gillick competent" : "No" }
+          row.with_action(text: "Change", href: wizard_path(:gillick), visually_hidden_text: "are they Gillick competent?")
         end
-
+      
         summary_list.with_row do |row|
           row.with_key { "Details of your assessment" }
           row.with_value { @assessment.notes }
+          row.with_action(text: "Change", href: wizard_path(:notes), visually_hidden_text: "details of your assessment")
         end
       end %>
 <% end %>
