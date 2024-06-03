@@ -128,6 +128,10 @@ RSpec.describe "Self-consent" do
     expect(page).to have_content(
       "They understand the benefits and risks of the vaccine"
     )
+
+    click_on @child.full_name
+    expect(page).not_to have_content("Parent or guardian")
+    click_on "Back to patient page"
   end
 
   def and_the_child_should_be_safe_to_vaccinate
