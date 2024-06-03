@@ -46,10 +46,20 @@ RSpec.describe "Self-consent" do
 
   def when_the_nurse_assesses_the_child_as_gillick_competent
     click_on @child.full_name
-
     click_link "Give your assessment"
-    click_button "Give your assessment"
 
+    click_through_guidance
+    record_competence
+    record_details_of_assessment
+    check_and_confirm
+  end
+
+  def click_through_guidance
+    expect(page).to have_content("Assessing Gillick competence")
+    click_button "Give your assessment"
+  end
+
+  def record_competence
     # try submitting without filling in the form
     click_on "Continue"
     expect(page).to have_content("There is a problem")
@@ -57,7 +67,9 @@ RSpec.describe "Self-consent" do
 
     choose "Yes, they are Gillick competent"
     click_on "Continue"
+  end
 
+  def record_details_of_assessment
     # try submitting without filling in the form
     click_on "Continue"
     expect(page).to have_content("Enter details of your assessment")
@@ -65,7 +77,9 @@ RSpec.describe "Self-consent" do
     fill_in "Details of your assessment",
             with: "They understand the benefits and risks of the vaccine"
     click_on "Continue"
+  end
 
+  def check_and_confirm
     expect(page).to have_content("Check and confirm")
     expect(page).to have_content(
       ["Are they Gillick competent?", "Yes, they are Gillick competent"].join
