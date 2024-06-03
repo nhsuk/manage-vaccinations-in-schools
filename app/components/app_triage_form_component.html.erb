@@ -7,7 +7,7 @@
    ) do |f| %>
   <div class="nhsuk-card__content">
     <h2 class="nhsuk-card__heading nhsuk-heading-m">
-      Is it safe to vaccinate <%= patient.full_name %>?
+      Is it safe to vaccinate <%= patient.first_name %>?
     </h2>
     <% content_for(:before_content) { f.govuk_error_summary } %>
 
