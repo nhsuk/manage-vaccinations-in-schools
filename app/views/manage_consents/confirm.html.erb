@@ -14,42 +14,107 @@
   <%= page_title %>
 <% end %>
 
-<% if @consent.via_self_consent? %>
-  <%= render AppGillickCardComponent.new(
-        assessment: @patient_session.draft_gillick_assessment || @patient_session.gillick_assessment,
-      ) %>
-<% else %>
-  <%= # BUG: this code was originally written with the assumption that it is called
-      # when the user is contacting a refusing parent (that assumption is baked into the microcopy)
-      # However, this code is also invoked when a user is recording the first verbal consent,
-      # and in that case, it doesn't quite display the right thing:
-      #
-      #   Consent updated to given...
-      #
-      # (it's not actually being updated as there wasn't consent there before)
-      # The code really needs awareness of whether there was a previous consent or not, and
-      # if there was one, what the response was. i.e. the previous_response needs to be dynamic.
-      
-      heading = @consent.summary_with_consenter(previous_response: "refused")
-      render AppCardComponent.new(heading:) do
-        render AppConsentSummaryComponent.new(
-          name: @consent.parent_name,
-          relationship: @consent.who_responded,
-          contact: {
-            phone: @consent.parent_phone,
-            email: @consent.parent_email,
-          },
-          response: {
-            text: @consent.summary_with_route(previous_response: "refused"),
-            timestamp: @consent.recorded_at,
-            recorded_by: @consent.recorded_by,
-          },
-          refusal_reason: {
-            reason: @consent.human_enum_name(:reason_for_refusal).presence,
-            notes: @consent.reason_for_refusal_notes,
-          },
-        )
+<%= render AppCardComponent.new(heading: "Consent") do %>
+  <%= govuk_summary_list(
+        classes: "app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0",
+      ) do |summary_list|
+        summary_list.with_row do |row|
+          row.with_key { "Decision" }
+          row.with_value { @consent.human_enum_name(:response).humanize }
+        end
+
+        summary_list.with_row do |row|
+          row.with_key { "Response method" }
+          row.with_value { @consent.human_enum_name(:route).humanize }
+        end
+
+        if @consent.reason_for_refusal.present?
+          summary_list.with_row do |row|
+            row.with_key { "Reason for refusal" }
+            row.with_value { @consent.human_enum_name(:reason_for_refusal) }
+          end
+        end
+
+        if @consent.reason_for_refusal_notes.present?
+          summary_list.with_row do |row|
+            row.with_key { "Refusal details" }
+            row.with_value { @consent.reason_for_refusal_notes }
+          end
+        end
       end %>
+<% end %>
+
+<%= render AppCardComponent.new(heading: "Child") do %>
+  <%= govuk_summary_list(
+        classes: "app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0",
+      ) do |summary_list|
+        summary_list.with_row do |row|
+          row.with_key { "Full name" }
+          row.with_value { @consent.patient.full_name }
+        end
+
+        summary_list.with_row do |row|
+          row.with_key { "Date of birth" }
+          row.with_value { @consent.patient.date_of_birth.to_fs(:nhsuk_date) }
+        end
+
+        if @consent.consent_form.present?
+          summary_list.with_row do |row|
+            row.with_key { "GP surgery" }
+            row.with_value {
+              if @consent.consent_form.gp_response_yes?
+                @consent.consent_form.gp_name
+              elsif @consent.consent_form.gp_response_no?
+                "Not registered"
+              elsif @consent.consent_form.gp_response_dont_know?
+                "Not known"
+              end
+            }
+          end
+        end
+
+        summary_list.with_row do |row|
+          row.with_key { "School" }
+          row.with_value { @consent.patient.location.name }
+        end
+      end %>
+<% end %>
+
+<% unless @consent.via_self_consent? %>
+  <%= render AppCardComponent.new(heading: "Parent or guardian") do %>
+    <%= govuk_summary_list(
+          classes: "app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0",
+        ) do |summary_list|
+          summary_list.with_row do |row|
+            row.with_key { "Name" }
+            row.with_value { @consent.parent_name }
+          end
+
+          summary_list.with_row do |row|
+            row.with_key { "Relationship" }
+            row.with_value { @consent.who_responded.humanize }
+          end
+
+          if @consent.parent_email.present?
+            summary_list.with_row do |row|
+              row.with_key { "Email address" }
+              row.with_value { @consent.parent_email }
+            end
+          end
+
+          summary_list.with_row do |row|
+            row.with_key { "Phone number" }
+            row.with_value { @consent.parent_phone.presence || "Not provided" }
+          end
+
+          if @consent.parent_contact_method.present?
+            summary_list.with_row do |row|
+              row.with_key { "Phone contact method" }
+              row.with_value { @consent.phone_contact_method_description }
+            end
+          end
+        end %>
+  <% end %>
 <% end %>
 
 <% if @consent.response_given? %>
@@ -60,12 +125,12 @@
 
 <% if @consent.response_given? && @triage.status.present? %>
   <%= render AppCardComponent.new(heading: "Triage") do %>
-    <%= govuk_summary_list classes: "app-summary-list--no-bottom-border" do |summary_list|
+    <%= govuk_summary_list classes: "app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0" do |summary_list|
           summary_list.with_row do |row|
             row.with_key { "Status" }
             row.with_value { @triage.status.humanize }
           end
-        
+
           summary_list.with_row do |row|
             row.with_key { "Triage notes" }
             row.with_value { @triage.notes.presence || "No notes" }
