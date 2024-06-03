@@ -7,10 +7,9 @@
         <li class="nhsuk-breadcrumb__item">
           <%= item[:href].nil? ?
                 item[:text] :
-                govuk_link_to(item[:text], item[:href],
-                              class: "nhsuk-breadcrumb__link",
-                              attributes: item[:attributes]) %>
-        </li>
+                link_to(item[:text], item[:href],
+                        class: "nhsuk-breadcrumb__link",
+                        attributes: item[:attributes]) %></li>
       <% end %>
     </ol>
     <p class="nhsuk-breadcrumb__back">
