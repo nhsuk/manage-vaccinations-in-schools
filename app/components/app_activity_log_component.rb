@@ -50,7 +50,8 @@ class AppActivityLogComponent < ViewComponent::Base
       {
         title:
           "Invited to session at #{@patient_session.session.location.name}",
-        time: @patient_session.created_at
+        time: @patient_session.created_at,
+        by: @patient_session.user.full_name
       }
     ]
   end

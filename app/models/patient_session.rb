@@ -57,4 +57,8 @@ class PatientSession < ApplicationRecord
   def latest_triage
     triage.max_by(&:created_at)
   end
+
+  def user
+    audits.find { _1.action == "create" }.user
+  end
 end
