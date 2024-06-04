@@ -8,6 +8,21 @@
   }
 }
 
+// Show border if row does not contain action cell
+.nhsuk-summary-list__row:not(:has(.nhsuk-summary-list__actions))::after {
+  border-bottom: 1px solid $nhsuk-border-color;
+  content: "";
+  display: table-cell;
+}
+
+// Remove bottom border on last row of last child
+.nhsuk-summary-list:last-child {
+  .nhsuk-summary-list__row:last-of-type > *,
+  .nhsuk-summary-list__row:last-of-type::after {
+    border: none;
+  }
+}
+
 .app-summary-list--full-width {
   .nhsuk-summary-list__row {
     border-bottom: 1px solid $nhsuk-border-color;
