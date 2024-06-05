@@ -34,5 +34,13 @@ FactoryBot.define do
     trait :kept_in_triage do
       status { :needs_follow_up }
     end
+
+    trait :delay_vaccination do
+      status { :delay_vaccination }
+    end
+
+    trait :do_not_vaccinate do
+      status { :do_not_vaccinate }
+    end
   end
 end

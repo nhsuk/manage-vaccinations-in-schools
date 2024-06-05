@@ -56,6 +56,20 @@ class AppActivityLogComponentPreview < ViewComponent::Preview
       ),
       FactoryBot.create(
         :triage,
+        :do_not_vaccinate,
+        patient_session: @patient_session,
+        created_at: Time.zone.parse("2024-05-30 14:10"),
+        user: @user
+      ),
+      FactoryBot.create(
+        :triage,
+        :delay_vaccination,
+        patient_session: @patient_session,
+        created_at: Time.zone.parse("2024-05-30 14:20"),
+        user: @user
+      ),
+      FactoryBot.create(
+        :triage,
         :vaccinate,
         patient_session: @patient_session,
         created_at: Time.zone.parse("2024-05-30 14:30"),
