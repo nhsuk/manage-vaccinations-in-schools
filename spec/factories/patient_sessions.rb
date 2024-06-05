@@ -29,6 +29,7 @@ FactoryBot.define do
 
     patient { create :patient, session: }
     session { create(:session, campaign:) }
+    created_by { user }
 
     trait :added_to_session do
       patient { create :patient, consents: [] }
