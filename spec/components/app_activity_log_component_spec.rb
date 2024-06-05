@@ -114,5 +114,6 @@ describe AppActivityLogComponent, type: :component do
 
   include_examples "card",
                    title: "Invited to session at Hogwarts",
-                   date: "29 May 2024 at 12:00pm"
+                   date: "29 May 2024 at 12:00pm",
+                   by: "Nurse Joy"
 end
