@@ -8,7 +8,7 @@ FactoryBot.define do
       end
     end
 
-    team { create(:team, users: [user]) }
+    team { user.team || create(:team, users: [user]) }
   end
 
   trait :in_progress do
