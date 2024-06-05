@@ -52,6 +52,7 @@ class AppActivityLogComponentPreview < ViewComponent::Preview
         :kept_in_triage,
         patient_session: @patient_session,
         created_at: Time.zone.parse("2024-05-30 14:00"),
+        notes: "Some notes",
         user: @user
       ),
       FactoryBot.create(

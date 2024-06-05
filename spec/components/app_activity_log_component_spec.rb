@@ -4,6 +4,9 @@ shared_examples "card" do |params|
   it "renders card '#{params[:title]}'" do
     expect(page).to have_css(".nhsuk-card h3", text: params[:title])
     expect(page).to have_css(".nhsuk-card p", text: params[:date])
+    if params[:notes]
+      expect(page).to have_css(".nhsuk-card blockquote", text: params[:notes])
+    end
     expect(page).to have_css(".nhsuk-card p", text: params[:by]) if params[:by]
   end
 end
@@ -46,6 +49,7 @@ describe AppActivityLogComponent, type: :component do
         :kept_in_triage,
         patient_session:,
         created_at: Time.zone.parse("2024-05-30 14:00"),
+        notes: "Some notes",
         user:
       ),
       create(
@@ -100,8 +104,9 @@ describe AppActivityLogComponent, type: :component do
                    by: "Nurse Joy"
 
   include_examples "card",
-                   title: "Triaged decision: Needs triage",
+                   title: "Triaged decision: Keep in triage",
                    date: "30 May 2024 at 2:00pm",
+                   notes: "Some notes",
                    by: "Nurse Joy"
 
   include_examples "card",
