@@ -1,13 +1,14 @@
 require "rails_helper"
 
 shared_examples "card" do |params|
-  it "renders card '#{params[:title]}'" do
-    expect(page).to have_css(".nhsuk-card h3", text: params[:title])
-    expect(page).to have_css(".nhsuk-card p", text: params[:date])
-    if params[:notes]
-      expect(page).to have_css(".nhsuk-card blockquote", text: params[:notes])
-    end
-    expect(page).to have_css(".nhsuk-card p", text: params[:by]) if params[:by]
+  title, date, notes, by = params.values_at(:title, :date, :notes, :by)
+  it "renders card '#{title}'" do
+    expect(page).to have_css(".nhsuk-card h3", text: title)
+
+    card = page.find(".nhsuk-card h3", text: title).ancestor(".nhsuk-card")
+    expect(card).to have_css("p", text: date)
+    expect(card).to have_css("blockquote", text: notes) if notes
+    expect(card).to have_css("p", text: by) if by
   end
 end
 
@@ -78,7 +79,8 @@ describe AppActivityLogComponent, type: :component do
       :patient_session,
       patient:,
       session:,
-      created_at: Time.zone.parse("2024-05-29 12:00")
+      created_at: Time.zone.parse("2024-05-29 12:00"),
+      created_by: user
     )
   end
   let(:component) { described_class.new(patient_session) }
@@ -88,9 +90,9 @@ describe AppActivityLogComponent, type: :component do
   subject { page }
 
   it "renders headings in correct order" do
-    expect(page).to have_css("h2:nth-of-type(1)", text: "31 May 2024")
-    expect(page).to have_css("h2:nth-of-type(2)", text: "30 May 2024")
-    expect(page).to have_css("h2:nth-of-type(3)", text: "29 May 2024")
+    should have_css("h2:nth-of-type(1)", text: "31 May 2024")
+    should have_css("h2:nth-of-type(2)", text: "30 May 2024")
+    should have_css("h2:nth-of-type(3)", text: "29 May 2024")
   end
 
   include_examples "card",
