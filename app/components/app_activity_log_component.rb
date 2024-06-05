@@ -27,8 +27,16 @@ class AppActivityLogComponent < ViewComponent::Base
 
   def triage_events
     @patient_session.triage.map do
+      status_messages = {
+        ready_to_vaccinate: "Safe to vaccinate",
+        do_not_vaccinate: "Do not vaccinate in campaign",
+        delay_vaccination: "Delay vaccination to a later date",
+        needs_follow_up: "Needs triage"
+      }.with_indifferent_access
+      decision = status_messages[_1.status]
+
       {
-        title: "Triage decision: #{_1.human_enum_name(:status)}",
+        title: "Triaged decision: #{decision}",
         time: _1.created_at,
         by: _1.user.full_name
       }

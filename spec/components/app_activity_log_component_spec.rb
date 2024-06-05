@@ -95,12 +95,12 @@ describe AppActivityLogComponent, type: :component do
                    by: "Nurse Joy"
 
   include_examples "card",
-                   title: "Triage decision: Yes, it’s safe to vaccinate",
+                   title: "Triaged decision: Safe to vaccinate",
                    date: "30 May 2024 at 2:30pm",
                    by: "Nurse Joy"
 
   include_examples "card",
-                   title: "Triage decision: No, keep in triage",
+                   title: "Triaged decision: Needs triage",
                    date: "30 May 2024 at 2:00pm",
                    by: "Nurse Joy"
 

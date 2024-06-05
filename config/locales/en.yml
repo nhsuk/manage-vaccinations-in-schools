@@ -327,7 +327,6 @@ en:
           vaccinated: Vaccinated
       triage:
         statuses:
-          to_do: To do
           ready_to_vaccinate: "Yes, it’s safe to vaccinate"
           do_not_vaccinate: "No, do not vaccinate"
           delay_vaccination: "No, delay vaccination to a later date"
