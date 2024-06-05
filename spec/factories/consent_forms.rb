@@ -54,7 +54,7 @@ FactoryBot.define do
     parent_relationship do
       ConsentForm.parent_relationships.keys.first(2).sample(random:)
     end
-    parent_email { Faker::Internet.email name: parent_name }
+    parent_email { Faker::Internet.email name: parent_name.gsub(".", "") }
     parent_phone { "07700900#{random.rand(0..999).to_s.rjust(3, "0")}" }
     contact_method { "any" }
     response { "given" }
