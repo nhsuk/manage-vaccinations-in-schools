@@ -20,11 +20,15 @@ user =
       email: "nurse.joy@example.com",
       password: "nurse.joy@example.com"
     )
-FactoryBot.create(
-  :example_campaign,
-  :in_progress,
-  :in_past,
-  :in_future,
-  :hpv,
-  user:
-)
+Audited
+  .audit_class
+  .as_user(user) do
+    FactoryBot.create(
+      :example_campaign,
+      :in_progress,
+      :in_past,
+      :in_future,
+      :hpv,
+      user:
+    )
+  end
