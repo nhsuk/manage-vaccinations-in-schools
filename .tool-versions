@@ -2,5 +2,5 @@ nodejs 18.1.0
 postgres 13.5
 ruby 3.3.0
 yarn 1.22.19
-aws-copilot 1.33.2
+aws-copilot 1.33.4
 awscli 2.13.31
