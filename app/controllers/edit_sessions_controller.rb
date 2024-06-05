@@ -27,10 +27,15 @@ class EditSessionsController < ApplicationController
         ConsentRequestsSessionBatchJob.perform_later(@session)
       end
     when :cohort
-      @session.assign_attributes(
-        patient_ids: update_params[:patient_ids] || [],
-        form_step: current_step
-      )
+      ActiveRecord::Base.transaction do
+        @session.assign_attributes(
+          patient_ids: update_params[:patient_ids] || [],
+          form_step: current_step
+        )
+        @session.patient_sessions.update_all(
+          created_by_user_id: current_user.id
+        )
+      end
     else
       @session.assign_attributes update_params
     end
