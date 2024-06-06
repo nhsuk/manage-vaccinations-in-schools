@@ -12,9 +12,7 @@ class AppCardComponent < ViewComponent::Base
           <% end %>
         </h2>
 
-        <div class="nhsuk-card__description">
-          <%= content %>
-        </div>
+        <%= content %>
       </div>
     </div>
   ERB
@@ -47,6 +45,7 @@ class AppCardComponent < ViewComponent::Base
   def card_classes
     [
       "nhsuk-card",
+      "app-card",
       ("nhsuk-card--feature" if @feature),
       ("app-card--#{@colour}" if @colour.present?),
       ("nhsuk-card--clickable" if @link_to.present?),
@@ -57,6 +56,7 @@ class AppCardComponent < ViewComponent::Base
   def content_classes
     [
       "nhsuk-card__content",
+      "app-card__content",
       ("nhsuk-card__content--feature" if @feature)
     ].compact.join(" ")
   end
