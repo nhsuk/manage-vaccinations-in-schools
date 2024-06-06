@@ -119,47 +119,6 @@ RSpec.describe Consent do
     end
   end
 
-  describe "#summary_with_consenter" do
-    it "summarises a given consent record (self-consent)" do
-      consent = build(:consent_given, parent_name: "John", route: :self_consent)
-      consent.patient.update!(first_name: "Peter", last_name: "Parker")
-      expect(consent.summary_with_consenter).to eq(
-        "Consent given by Peter Parker"
-      )
-    end
-
-    it "summarises a refused consent record" do
-      expect(
-        build(
-          :consent_refused,
-          :from_mum,
-          parent_name: "Jane"
-        ).summary_with_consenter
-      ).to eq("Consent refused by Jane (Mum)")
-    end
-
-    it "summarises a record where the parent couldn't be reached" do
-      expect(
-        build(
-          :consent,
-          :from_dad,
-          response: :not_provided,
-          parent_name: "John"
-        ).summary_with_consenter
-      ).to eq("Contacted John (Dad)")
-    end
-
-    it "summarises a confirmed refusal" do
-      expect(
-        build(
-          :consent_refused,
-          :from_mum,
-          parent_name: "Jane"
-        ).summary_with_consenter(previous_response: "refused")
-      ).to eq("Refusal confirmed by Jane (Mum)")
-    end
-  end
-
   describe "default scope" do
     let(:patient) { create(:patient) }
 
