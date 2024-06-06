@@ -83,7 +83,7 @@ feature "Verbal consent" do
   def and_i_see_the_success_alert
     expect(page).to have_alert(
       "Success",
-      text: "Record saved for #{@child.full_name}"
+      text: "Consent recorded for #{@child.full_name}"
     )
   end
 

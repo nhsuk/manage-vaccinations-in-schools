@@ -29,16 +29,17 @@ class ConsentFormsController < ApplicationController
 
     session = @consent_form.session
 
-    success_flash_after_patient_update(
-      patient: @patient_session.patient,
-      view_record_link:
+    flash[:success] = {
+      heading: "Consent matched for",
+      heading_link_text: @patient_session.patient.full_name,
+      heading_link_href:
         session_patient_path(
           session,
           id: @patient_session.patient.id,
           section: "triage",
           tab: "given"
         )
-    )
+    }
 
     if session.unmatched_consent_forms.any?
       redirect_to session_consents_unmatched_responses_path(

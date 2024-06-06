@@ -58,11 +58,11 @@ RSpec.describe "Verbal consent" do
 
   def then_i_see_the_consent_responses_page
     expect(page).to have_content("Check consent responses")
-    expect(page).to have_content("Record saved for #{@patient.full_name}")
+    expect(page).to have_content("Consent recorded for #{@patient.full_name}")
   end
 
   def when_i_go_to_the_patient
-    click_link "View child record"
+    click_link @patient.full_name
   end
 
   def then_i_see_that_the_status_is_safe_to_vaccinate
