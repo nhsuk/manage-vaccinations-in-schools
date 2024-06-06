@@ -64,4 +64,17 @@ class User < ApplicationRecord
     # TODO: Update the app to properly support multiple teams per user
     teams.first
   end
+
+  def self.find_or_create_user_from_cis2_oidc(userinfo)
+    user =
+      User.find_or_initialize_by(
+        provider: userinfo[:provider],
+        uid: userinfo[:uid]
+      )
+    user.full_name = userinfo[:info][:name]
+    user.email = userinfo[:info][:email]
+    user.password = Devise.friendly_token
+
+    user.tap(&:save!)
+  end
 end

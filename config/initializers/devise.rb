@@ -274,8 +274,14 @@ Devise.setup do |config|
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
   config.omniauth :openid_connect,
                   {
-                    scope: [:openid],
                     name: :cis2,
+                    scope: %i[
+                      openid
+                      profile
+                      email
+                      nationalrbacaccess
+                      professionalmemberships
+                    ],
                     response_type: :code,
                     # uid_field: "preferred_username",
                     issuer: Settings.cis2.issuer,
