@@ -38,7 +38,7 @@ class User < ApplicationRecord
          :recoverable,
          :validatable,
          :omniauthable,
-         omniauth_providers: %i[openid_connect]
+         omniauth_providers: %i[cis2]
 
   devise :pwned_password unless Rails.env.test?
 

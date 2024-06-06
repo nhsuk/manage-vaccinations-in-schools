@@ -274,8 +274,8 @@ Devise.setup do |config|
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
   config.omniauth :openid_connect,
                   {
-                    name: :openid_connect,
                     scope: [:openid],
+                    name: :cis2,
                     response_type: :code,
                     # uid_field: "preferred_username",
                     issuer: Settings.cis2.issuer,
@@ -288,7 +288,7 @@ Devise.setup do |config|
                       identifier: Settings.cis2.client_id,
                       secret: Settings.cis2.secret,
                       redirect_uri:
-                        "http://localhost:4000/users/auth/openid_connect/callback"
+                        "http://localhost:4000/users/auth/cis2/callback"
                     }
                   }
 
