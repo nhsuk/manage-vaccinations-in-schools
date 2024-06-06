@@ -1,19 +1,15 @@
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-two-thirds">
-    <%= govuk_notification_banner(
-          classes: classes,
-          html_attributes: { role: role },
-          title_text: title,
-          success: success?,
-        ) do |notification_banner| %>
-      <% notification_banner.with_heading(
-           text: heading,
-           link_text: heading_link_text,
-           link_href: heading_link_href,
-         ) if heading.present? %>
-      <% if body.present? %>
-        <p><%= body.html_safe %></p>
-      <% end %>
-    <% end %>
-  </div>
-</div>
+<%= govuk_notification_banner(
+     classes: classes,
+     html_attributes: { role: role },
+     title_text: title,
+     success: success?,
+   ) do |notification_banner| %>
+  <% notification_banner.with_heading(
+       text: heading,
+       link_text: heading_link_text,
+       link_href: heading_link_href,
+     ) if heading.present? %>
+  <% if body.present? %>
+    <p><%= body.html_safe %></p>
+  <% end %>
+<% end %>

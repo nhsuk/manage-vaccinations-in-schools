@@ -187,7 +187,7 @@ RSpec.describe "Pilot journey" do
 
     click_button "Confirm"
 
-    click_link "View child record"
+    click_link "Bobby Tables"
   end
 
   def then_i_should_see_that_the_patient_is_ready_for_vaccination

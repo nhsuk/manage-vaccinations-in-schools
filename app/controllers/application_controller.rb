@@ -54,17 +54,6 @@ class ApplicationController < ActionController::Base
     store_location_for(:user, request.fullpath)
   end
 
-  def success_flash_after_patient_update(patient:, view_record_link:)
-    flash[:success] = {
-      heading: "Record saved for #{patient.full_name}",
-      body:
-        ActionController::Base.helpers.link_to(
-          "View child record",
-          view_record_link
-        )
-    }
-  end
-
   def authenticate_basic
     if Flipper.enabled? :basic_auth
       authenticated =

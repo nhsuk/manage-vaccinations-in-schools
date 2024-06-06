@@ -79,10 +79,11 @@ class VaccinationsController < ApplicationController
     send_vaccination_mail(@draft_vaccination_record)
     @patient_session.do_vaccination!
 
-    success_flash_after_patient_update(
-      patient: @patient,
-      view_record_link: session_patient_path(@session, id: @patient.id)
-    )
+    flash[:success] = {
+      heading: "Vaccination recorded for",
+      heading_link_text: @patient.full_name,
+      heading_link_href: session_patient_path(@session, id: @patient.id)
+    }
     redirect_to session_vaccinations_path(@session)
   end
 

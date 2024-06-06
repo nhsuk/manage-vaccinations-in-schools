@@ -77,10 +77,11 @@ class ManageConsentsController < ApplicationController
   end
 
   def finish_wizard_path
-    success_flash_after_patient_update(
-      patient: @patient,
-      view_record_link: session_patient_path(@session, id: @patient.id)
-    )
+    flash[:success] = {
+      heading: "Consent recorded for",
+      heading_link_text: @patient.full_name,
+      heading_link_href: session_patient_path(@session, id: @patient.id)
+    }
 
     session_section_path(@session, section: @section)
   end

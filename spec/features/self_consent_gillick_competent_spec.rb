@@ -113,7 +113,7 @@ RSpec.describe "Self-consent" do
   end
 
   def when_the_nurse_views_the_childs_record
-    click_on "View child record"
+    click_on @child.full_name
   end
 
   def then_they_see_that_the_child_has_consent

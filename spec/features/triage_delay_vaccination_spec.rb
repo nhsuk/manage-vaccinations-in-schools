@@ -55,7 +55,7 @@ RSpec.describe "Triage" do
   def then_i_see_an_alert_saying_the_record_was_saved
     expect(page).to have_alert(
       "Success",
-      text: "Record saved for #{@patient.full_name}"
+      text: "Triage outcome updated for #{@patient.full_name}"
     )
   end
 
