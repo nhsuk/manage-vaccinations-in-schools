@@ -30,13 +30,13 @@
 #  index_users_on_unlock_token          (unlock_token) UNIQUE
 #
 class User < ApplicationRecord
-  devise :omniauthable,
-         :database_authenticatable,
-         # :lockable,
-         # :trackable,
-         # :timeoutable,
-         # :recoverable,
-         # :validatable,
+  devise :database_authenticatable,
+         :lockable,
+         :trackable,
+         :timeoutable,
+         :recoverable,
+         :validatable,
+         :omniauthable,
          omniauth_providers: %i[openid_connect]
 
   devise :pwned_password unless Rails.env.test?
