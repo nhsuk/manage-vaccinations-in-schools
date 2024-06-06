@@ -1,7 +1,7 @@
+<%= h1 "Sign in", size: "xl" %>
+
 <%= form_for(resource, as: resource_name, url: user_session_path) do |f| %>
   <%= f.govuk_error_summary %>
-
-  <%= h1 "Sign in", size: "xl" %>
 
   <%= f.govuk_email_field :email, autocomplete: "email", label: { text: "Email address" } %>
   <%= f.govuk_password_field :password, autocomplete: "current-password", label: { text: "Password" } %>
@@ -16,3 +16,5 @@
 
   <%= f.govuk_submit "Sign in" %>
 <% end %>
+
+<%= govuk_button_to "Sign in with CIS2", user_openid_connect_omniauth_authorize_path, data: { turbo: false } %>
