@@ -34,6 +34,11 @@ class HealthAnswer
     end
   end
 
+  def assign_attributes(attrs)
+    attrs = attrs.except("notes") if attrs["response"] == "no"
+    super(attrs)
+  end
+
   def self.from_health_questions(health_questions)
     hq_id_map = Hash[health_questions.map.with_index { |hq, i| [hq.id, i] }]
 
