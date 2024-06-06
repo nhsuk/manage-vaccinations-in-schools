@@ -102,6 +102,8 @@ RSpec.describe "Self-consent" do
 
     # answer the health questions
     all("label", text: "No").each(&:click)
+    click_on "Continue"
+
     choose "Yes, it’s safe to vaccinate"
     click_on "Continue"
 

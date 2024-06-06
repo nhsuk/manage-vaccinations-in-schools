@@ -132,7 +132,7 @@ class Consent < ApplicationRecord
     validate :health_answers_valid?
   end
 
-  on_wizard_step :questions, exact: true do
+  on_wizard_step :triage, exact: true do
     validate :triage_valid?
   end
 
@@ -141,6 +141,7 @@ class Consent < ApplicationRecord
       (:who if via_phone?),
       :agree,
       (:questions if response_given?),
+      (:triage if response_given?),
       (:reason if response_refused?),
       (:reason_notes if response_refused? && reason_notes_required?),
       :confirm
@@ -166,7 +167,7 @@ class Consent < ApplicationRecord
   end
 
   def health_answers_require_follow_up?
-    health_answers&.any? { |question| question.response.downcase == "yes" }
+    health_answers&.any? { |question| question.response&.downcase == "yes" }
   end
 
   def reasons_triage_needed

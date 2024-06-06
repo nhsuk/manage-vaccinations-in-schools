@@ -34,19 +34,6 @@
     <% end %>
   <% end %>
 
-  <hr class="nhsuk-section-break nhsuk-section-break--l nhsuk-section-break--visible">
-
-  <%= f.fields_for @triage do |ff| %>
-    <%= ff.govuk_collection_radio_buttons :status,
-                                          triage_form_status_options,
-                                          :first,
-                                          :second,
-                                          legend: { text: "Is it safe to vaccinate #{@patient.full_name}?" } %>
-
-    <%= ff.govuk_text_area :notes, label: { text: "Triage notes (optional)" },
-                                   rows: 5 %>
-  <% end %>
-
   <div class="nhsuk-u-margin-top-6">
     <%= f.govuk_submit "Continue" %>
   </div>

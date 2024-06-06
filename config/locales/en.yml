@@ -79,6 +79,7 @@ en:
     who: "who"
     agree: "agree"
     questions: "questions"
+    triage: "triage"
     # reason: "reason"             # already defined above
     # reason_notes: "reason-notes" # already defined above
     confirm: "confirm"
