@@ -49,6 +49,8 @@ RSpec.describe "Verbal consent" do
               with: "moar allergies"
     find_all(".edit_consent .nhsuk-fieldset")[1].choose "No"
     find_all(".edit_consent .nhsuk-fieldset")[2].choose "No"
+    click_button "Continue"
+
     choose "No, keep in triage"
     click_button "Continue"
 

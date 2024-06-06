@@ -14,7 +14,7 @@ class ManageConsentsController < ApplicationController
   before_action :set_patient_session
   before_action :set_triage,
                 except: %i[create],
-                if: -> { step.in?(%w[questions confirm]) }
+                if: -> { step.in?(%w[triage confirm]) }
   before_action :set_back_link,
                 only: %i[show],
                 if: -> { wizard_value(step).present? }
@@ -38,6 +38,8 @@ class ManageConsentsController < ApplicationController
       handle_confirm
     when :questions
       handle_questions
+    when :triage
+      handle_triage
     when :agree
       handle_agree
     else
@@ -108,11 +110,15 @@ class ManageConsentsController < ApplicationController
   end
 
   def handle_questions
-    questions_attrs = update_params.except(:triage, :form_step).values
+    questions_attrs = update_params.except(:form_step).values
     @consent.health_answers.each_with_index do |ha, index|
       ha.assign_attributes(questions_attrs[index])
     end
 
+    @consent.assign_attributes(form_step: current_step)
+  end
+
+  def handle_triage
     triage_attrs = update_params.delete(:triage).merge(user: current_user)
     @triage.update! triage_attrs
 
@@ -201,7 +207,10 @@ class ManageConsentsController < ApplicationController
       agree: %i[response],
       reason: %i[reason_for_refusal],
       reason_notes: %i[reason_for_refusal_notes],
-      questions: questions_params
+      questions: questions_params,
+      triage: {
+        triage: %i[notes status]
+      }
     }.fetch(current_step)
 
     params
@@ -221,10 +230,7 @@ class ManageConsentsController < ApplicationController
   def questions_params
     n = @consent.health_answers.size
 
-    Array
-      .new(n) { |index| ["question_#{index}", %i[notes response]] }
-      .to_h
-      .merge(triage: %i[notes status])
+    Array.new(n) { |index| ["question_#{index}", %i[notes response]] }.to_h
   end
 
   def set_steps

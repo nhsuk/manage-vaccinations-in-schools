@@ -182,6 +182,8 @@ RSpec.describe "Pilot journey" do
     find_all(".edit_consent .nhsuk-fieldset")[0].choose "No"
     find_all(".edit_consent .nhsuk-fieldset")[1].choose "No"
     find_all(".edit_consent .nhsuk-fieldset")[2].choose "No"
+    click_button "Continue"
+
     choose "Yes, it’s safe to vaccinate"
     click_button "Continue"
 

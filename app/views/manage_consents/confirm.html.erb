@@ -132,16 +132,16 @@
           summary_list.with_row do |row|
             row.with_key { "Status" }
             row.with_value { @triage.status.humanize }
-            row.with_action(text: "Change", href: wizard_path(:questions), visually_hidden_text: "triage status")
+            row.with_action(text: "Change", href: wizard_path(:triage), visually_hidden_text: "triage status")
           end
         
           summary_list.with_row do |row|
             row.with_key { "Triage notes" }
             if @triage.notes.present?
               row.with_value { @triage.notes }
-              row.with_action(text: "Change", href: wizard_path(:questions), visually_hidden_text: "triage notes")
+              row.with_action(text: "Change", href: wizard_path(:triage), visually_hidden_text: "triage notes")
             else
-              row.with_value { @triage.notes.presence || govuk_link_to("Enter triage notes", wizard_path(:questions)) }
+              row.with_value { @triage.notes.presence || govuk_link_to("Enter triage notes", wizard_path(:triage)) }
             end
           end
         end %>

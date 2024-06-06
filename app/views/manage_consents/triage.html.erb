@@ -1,0 +1,32 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: back_link_path,
+        name: "consent page",
+      ) %>
+<% end %>
+
+<% page_title = "Is it safe to vaccinate?" %>
+
+<%= h1 page_title: do %>
+  <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
+    <%= @patient.full_name %>
+  </span>
+  <%= page_title %>
+<% end %>
+
+<%= form_for @consent, url: wizard_path do |f| %>
+  <%= f.fields_for @triage do |ff| %>
+    <%= ff.govuk_collection_radio_buttons :status,
+                                          triage_form_status_options,
+                                          :first,
+                                          :second,
+                                          legend: { text: "Outcome" } %>
+
+    <%= ff.govuk_text_area :notes, label: { text: "Triage notes (optional)" },
+                                   rows: 5 %>
+  <% end %>
+
+  <div class="nhsuk-u-margin-top-6">
+    <%= f.govuk_submit "Continue" %>
+  </div>
+<% end %>

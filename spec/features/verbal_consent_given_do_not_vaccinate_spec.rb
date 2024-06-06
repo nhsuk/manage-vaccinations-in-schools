@@ -49,6 +49,8 @@ RSpec.describe "Verbal consent" do
     find_all(".edit_consent .nhsuk-fieldset")[2].choose "Yes"
     find_all(".edit_consent .nhsuk-fieldset")[2].fill_in "Give details",
               with: "moar reactions"
+    click_button "Continue"
+
     choose "No, do not vaccinate"
     click_button "Continue"
 
