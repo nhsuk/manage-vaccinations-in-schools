@@ -208,19 +208,6 @@ class Consent < ApplicationRecord
       reason_for_refusal_medical_reasons? || reason_for_refusal_other?
   end
 
-  def summary_with_consenter(previous_response: nil)
-    summary =
-      if response_not_provided?
-        "Contacted #{name}"
-      elsif previous_response&.to_sym == :refused && response_refused?
-        "Refusal confirmed by #{name}"
-      else
-        "#{human_enum_name(:response).capitalize} by #{name}"
-      end
-    summary += " (#{who_responded})" unless via_self_consent?
-    summary
-  end
-
   def recorded?
     recorded_at.present?
   end
