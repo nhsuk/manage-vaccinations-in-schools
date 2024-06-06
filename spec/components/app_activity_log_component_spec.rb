@@ -69,7 +69,8 @@ describe AppActivityLogComponent, type: :component do
         :vaccination_record,
         patient_session:,
         created_at: Time.zone.parse("2024-05-31 12:00"),
-        user:
+        user:,
+        notes: "Some notes"
       )
     ]
   end
@@ -98,6 +99,7 @@ describe AppActivityLogComponent, type: :component do
   include_examples "card",
                    title: "Vaccinated with Gardasil 9 (HPV)",
                    date: "31 May 2024 at 12:00pm",
+                   notes: "Some notes",
                    by: "Nurse Joy"
 
   include_examples "card",

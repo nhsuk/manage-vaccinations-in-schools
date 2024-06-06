@@ -83,7 +83,8 @@ class AppActivityLogComponentPreview < ViewComponent::Preview
         :vaccination_record,
         patient_session: @patient_session,
         created_at: Time.zone.parse("2024-05-31 12:00"),
-        user: @user
+        user: @user,
+        notes: "Some notes"
       )
     ]
   end
