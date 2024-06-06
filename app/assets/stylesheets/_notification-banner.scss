@@ -20,4 +20,12 @@
   &__heading {
     @extend .govuk-notification-banner__heading;
   }
+
+  &__link {
+    @extend .govuk-notification-banner__link;
+
+    &:visited {
+      @extend .govuk-notification-banner__link, :visited;
+    }
+  }
 }

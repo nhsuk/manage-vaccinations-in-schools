@@ -6,7 +6,11 @@
           title_text: title,
           success: success?,
         ) do |notification_banner| %>
-      <% notification_banner.with_heading(text: heading) if heading.present? %>
+      <% notification_banner.with_heading(
+           text: heading,
+           link_text: heading_link_text,
+           link_href: heading_link_href,
+         ) if heading.present? %>
       <% if body.present? %>
         <p><%= body.html_safe %></p>
       <% end %>
