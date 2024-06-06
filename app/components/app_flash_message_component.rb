@@ -1,5 +1,5 @@
 class AppFlashMessageComponent < ViewComponent::Base
-  attr_reader :body, :heading
+  attr_reader :body, :heading, :heading_link_text, :heading_link_href
 
   def initialize(flash:)
     super
@@ -10,6 +10,8 @@ class AppFlashMessageComponent < ViewComponent::Base
     if flash[@message_key].is_a?(Hash)
       @title = flash[@message_key][:title]
       @heading = flash[@message_key][:heading]
+      @heading_link_text = flash[@message_key][:heading_link_text]
+      @heading_link_href = flash[@message_key][:heading_link_href]
       @body = flash[@message_key][:body].to_s
     elsif flash[@message_key].is_a?(Array)
       @heading = flash[@message_key].first
