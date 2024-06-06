@@ -228,4 +228,23 @@ RSpec.describe Consent do
 
     expect(consent.health_answers).to be_empty
   end
+
+  it "resets health answer notes if a 'yes' changes to a 'no'" do
+    consent = build(:consent, :given, :health_question_notes)
+    expect(consent.health_answers.first.response).to eq("yes")
+    expect(consent.health_answers.first.notes).to be_present
+
+    param =
+      ActionController::Parameters.new(
+        { "notes" => "Some notes", "response" => "no" }
+      )
+    param.permit!
+
+    consent.health_answers.first.assign_attributes(param)
+    consent.save!
+    consent.reload
+
+    expect(consent.health_answers.first.response).to eq("no")
+    expect(consent.health_answers.first.notes).to be_nil
+  end
 end
