@@ -3,13 +3,13 @@ class TriageController < ApplicationController
   include PatientTabsConcern
   include PatientSortingConcern
 
-  before_action :set_session, only: %i[index create update]
-  before_action :set_patient, only: %i[create update]
-  before_action :set_patient_session, only: %i[create update]
-  before_action :set_consent, only: %i[create update]
-  before_action :set_section_and_tab, only: %i[create update]
+  before_action :set_session, only: %i[index create]
+  before_action :set_patient, only: %i[create]
+  before_action :set_patient_session, only: %i[create]
+  before_action :set_consent, only: %i[create]
+  before_action :set_section_and_tab, only: %i[create]
 
-  after_action :verify_policy_scoped, only: %i[index update]
+  after_action :verify_policy_scoped, only: %i[index create]
 
   layout "two_thirds", except: %i[index]
 
@@ -41,11 +41,6 @@ class TriageController < ApplicationController
 
   def create
     @triage = @patient_session.triage.new
-    process_triage
-  end
-
-  def update
-    @triage = @patient_session.triage.last
     process_triage
   end
 
