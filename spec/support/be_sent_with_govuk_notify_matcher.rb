@@ -5,12 +5,10 @@ RSpec::Matchers.matcher :be_sent_with_govuk_notify do
       return false
     end
 
-    matched = true
-    matched = actual.template_id == @template if @template.present?
-
-    matched = actual.to == [@to_email] if @to_email.present?
-
-    matched
+    [
+      @template.nil? || actual.template_id == @template,
+      @to_email.nil? || actual.to == [@to_email]
+    ].all?
   end
 
   chain :using_template do |template|
