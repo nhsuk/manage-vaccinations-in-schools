@@ -5,10 +5,10 @@ RSpec.describe "Verbal consent" do
 
   scenario "Given" do
     given_i_am_signed_in
-    when_i_get_verbal_consent_for_a_patient
+    when_i_get_consent_for_a_patient
     then_the_consent_form_is_prefilled
 
-    when_i_record_that_consent_was_given
+    when_i_record_that_verbal_consent_was_given
     then_i_see_the_consent_responses_page
 
     when_i_go_to_the_patient
@@ -26,7 +26,7 @@ RSpec.describe "Verbal consent" do
     sign_in team.users.first
   end
 
-  def when_i_get_verbal_consent_for_a_patient
+  def when_i_get_consent_for_a_patient
     visit session_consents_path(@session)
     click_link @patient.full_name
     click_button "Get consent"
@@ -36,7 +36,7 @@ RSpec.describe "Verbal consent" do
     expect(page).to have_field("Full name", with: @patient.parent_name)
   end
 
-  def when_i_record_that_consent_was_given
+  def when_i_record_that_verbal_consent_was_given
     # Who are you trying to get consent from?
     click_button "Continue"
 
@@ -54,6 +54,8 @@ RSpec.describe "Verbal consent" do
     click_button "Continue"
 
     # Confirm
+    expect(page).to have_content("Check and confirm answers")
+    expect(page).to have_content(["Response method", "Phone"].join)
     click_button "Confirm"
   end
 
