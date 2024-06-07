@@ -7,14 +7,16 @@
 
 <% page_title = "Is it safe to vaccinate?" %>
 
-<%= h1 page_title: do %>
-  <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
-    <%= @patient.full_name %>
-  </span>
-  <%= page_title %>
-<% end %>
-
 <%= form_for @triage, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= h1 page_title: do %>
+    <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
+      <%= @patient.full_name %>
+    </span>
+    <%= page_title %>
+  <% end %>
+
   <%= f.govuk_collection_radio_buttons :status,
                                        triage_form_status_options,
                                        :first,
