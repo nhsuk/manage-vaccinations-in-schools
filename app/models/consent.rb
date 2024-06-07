@@ -111,11 +111,7 @@ class Consent < ApplicationRecord
   end
 
   on_wizard_step :route do
-    validates :route,
-              inclusion: {
-                in: Consent.routes.keys
-              },
-              presence: true
+    validates :route, inclusion: { in: Consent.routes.keys }, presence: true
   end
 
   on_wizard_step :agree do

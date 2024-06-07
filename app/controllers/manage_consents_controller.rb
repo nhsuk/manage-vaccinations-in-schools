@@ -55,22 +55,6 @@ class ManageConsentsController < ApplicationController
     render_wizard model
   end
 
-  def clone
-    existing_consent = policy_scope(Consent).find(params.delete(:consent_id))
-    @consent =
-      existing_consent.dup.tap do |consent|
-        consent.recorded_at = nil
-        consent.recorded_by = current_user
-      end
-
-    handle_agree
-    set_steps
-    setup_wizard_translated
-
-    @consent.save!
-    redirect_to wizard_path(next_step, consent_id: @consent.id)
-  end
-
   private
 
   def set_back_link
@@ -167,27 +151,25 @@ class ManageConsentsController < ApplicationController
   end
 
   def create_params
-    route = @patient_session.gillick_competent? ? :self_consent : nil
+    attrs = {
+      patient: @patient,
+      campaign: @session.campaign,
+      recorded_by: current_user
+    }
 
-    attrs = { patient: @patient, campaign: @session.campaign, route: }
-
-    no_consent =
-      @patient.consents.submitted_for_campaign(@session.campaign).empty?
-
-    # Temporary: Prefill the consent details.
-    # This should be replaced with the design that allows users to choose
-    # from available parent details when submiting a new consent.
-    if route.nil? && no_consent
-      attrs.merge!(
+    if @patient_session.gillick_competent?
+      attrs.merge(route: :self_consent)
+    else
+      # Temporary: Prefill the consent details.
+      # This should be replaced with the design that allows users to choose
+      # from available parent details when submiting a new consent.
+      attrs.merge(
         parent_name: @patient.parent_name,
         parent_phone: @patient.parent_phone,
         parent_email: @patient.parent_email,
-        parent_relationship: @patient.parent_relationship,
-        recorded_by: current_user
+        parent_relationship: @patient.parent_relationship
       )
     end
-
-    attrs
   end
 
   def triage_params

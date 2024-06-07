@@ -30,30 +30,13 @@
       <% end %>
     <% end %>
   <% end %>
-
-  <% if consents.any?(&:response_refused?) %>
-    <p><%= contact_parent_or_guardian_link(consents) %></p>
-  <% elsif consents.any?(&:response_not_provided?) %>
-    <%= govuk_button_link_to(
-          "Get consent",
-          session_patient_manage_consent_path(
-            session,
-            patient,
-            consents.first.id,
-            :agree,
-            section: @section,
-            tab: @tab,
-          ),
-          secondary: true,
-        ) %>
-  <% end %>
-<% else %>
-  <p>
-    <%= form_for :consent,
-                 url: session_patient_manage_consents_path(session, patient_id: patient.id, section: @section, tab: @tab),
-                 method: :post,
-                 builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
-      <%= f.govuk_submit "Get consent" %>
-    <% end %>
-  </p>
 <% end %>
+
+<p>
+  <%= form_for :consent,
+               url: session_patient_manage_consents_path(session, patient_id: patient.id, section: @section, tab: @tab),
+               method: :post,
+               builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
+    <%= f.govuk_submit "Get consent" %>
+  <% end %>
+</p>
