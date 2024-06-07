@@ -301,8 +301,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_08_165907) do
     t.datetime "sent_consent_at"
     t.datetime "sent_reminder_at"
     t.datetime "session_reminder_sent_at"
+    t.bigint "parent_id"
     t.index ["location_id"], name: "index_patients_on_location_id"
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
+    t.index ["parent_id"], name: "index_patients_on_parent_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -415,6 +417,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_08_165907) do
   add_foreign_key "locations", "teams"
   add_foreign_key "patient_sessions", "users", column: "created_by_user_id"
   add_foreign_key "patients", "locations"
+  add_foreign_key "patients", "parents"
   add_foreign_key "triage", "patient_sessions"
   add_foreign_key "triage", "users"
   add_foreign_key "vaccination_records", "batches"
