@@ -14,17 +14,15 @@
   <%= page_title %>
 <% end %>
 
-<%= form_for @consent, url: wizard_path do |f| %>
-  <%= f.fields_for @triage do |ff| %>
-    <%= ff.govuk_collection_radio_buttons :status,
-                                          triage_form_status_options,
-                                          :first,
-                                          :second,
-                                          legend: { text: "Outcome" } %>
+<%= form_for @triage, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_collection_radio_buttons :status,
+                                       triage_form_status_options,
+                                       :first,
+                                       :second,
+                                       legend: { text: "Outcome" } %>
 
-    <%= ff.govuk_text_area :notes, label: { text: "Triage notes (optional)" },
-                                   rows: 5 %>
-  <% end %>
+  <%= f.govuk_text_area :notes, label: { text: "Triage notes (optional)" },
+                                rows: 5 %>
 
   <div class="nhsuk-u-margin-top-6">
     <%= f.govuk_submit "Continue" %>

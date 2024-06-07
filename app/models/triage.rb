@@ -36,12 +36,7 @@ class Triage < ApplicationRecord
 
   validates :notes, length: { maximum: 1000 }
 
-  validates :status,
-            presence: true,
-            inclusion: {
-              in: statuses.keys
-            },
-            on: %i[edit_questions consent]
+  validates :status, presence: true, inclusion: { in: statuses.keys }
 
   def triage_complete?
     ready_to_vaccinate? || do_not_vaccinate?
