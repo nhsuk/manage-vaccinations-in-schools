@@ -8,10 +8,6 @@ Rails.application.routes.draw do
              controllers: {
                omniauth_callbacks: "users/omniauth_callbacks"
              }
-  get(
-    "/users/auth/openid_connect/callback",
-    to: redirect { |p, r| "/users/auth/cis2/callback?#{r.paramsp.to_query}" }
-  )
   get "sign-in", to: redirect("/users/sign_in")
 
   root to: redirect("/start")
