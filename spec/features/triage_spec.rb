@@ -3,11 +3,8 @@ require "rails_helper"
 RSpec.describe "Triage" do
   include EmailExpectations
 
-  scenario "during consent" do
+  scenario "nurse can triage a patient" do
     given_a_campaign_with_a_running_session
-    and_a_patient_needing_triage
-    and_i_am_signed_in
-
     when_i_go_to_the_patient_that_needs_triage
     then_i_see_the_triage_options
 
@@ -15,7 +12,7 @@ RSpec.describe "Triage" do
     then_i_see_a_validation_error
 
     when_i_record_that_they_are_safe_to_vaccinate
-    then_i_see_the_consents_page
+    then_i_see_the_triage_page
     and_an_email_is_sent_to_the_parent
   end
 
@@ -25,9 +22,6 @@ RSpec.describe "Triage" do
     @batch = @campaign.batches.first
     @session =
       create(:session, campaign: @campaign, location: @team.locations.first)
-  end
-
-  def and_a_patient_needing_triage
     @patient =
       create(
         :patient_session,
@@ -36,12 +30,9 @@ RSpec.describe "Triage" do
       ).patient
   end
 
-  def and_i_am_signed_in
-    sign_in @team.users.first
-  end
-
   def when_i_go_to_the_patient_that_needs_triage
-    visit session_consents_tab_path(@session, tab: "given")
+    sign_in @team.users.first
+    visit session_triage_tab_path(@session, tab: "needed")
     click_link @patient.full_name
   end
 
@@ -50,8 +41,8 @@ RSpec.describe "Triage" do
     click_button "Save triage"
   end
 
-  def then_i_see_the_consents_page
-    expect(page).to have_content("Check consent responses")
+  def then_i_see_the_triage_page
+    expect(page).to have_selector :heading, "Triage"
   end
 
   def then_i_see_the_triage_options
