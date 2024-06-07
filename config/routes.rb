@@ -150,7 +150,6 @@ Rails.application.routes.draw do
         resources :manage_consents,
                   only: %i[show update],
                   path: "consents/:consent_id/" do
-          post "clone", on: :member
           get "details", on: :collection, to: "consents#show"
         end
 

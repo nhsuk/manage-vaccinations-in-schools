@@ -44,12 +44,6 @@ RSpec.describe AppConsentComponent, type: :component do
       should have_css("table tr", text: /Consent refused/)
     end
 
-    it do
-      should have_css(
-               "a",
-               text: "Contact #{consent.parent_name} (the parent who refused)"
-             )
-    end
     it { should_not have_css("details", text: "Responses to health questions") }
   end
 

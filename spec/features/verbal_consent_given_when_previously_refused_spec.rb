@@ -10,14 +10,8 @@ feature "Verbal consent" do
     and_a_parent_has_refused_consent_for_their_child
     and_i_am_logged_in_as_a_nurse
 
-    when_the_nurse_checks_the_consent_responses_given
-    and_i_contact_the_parent_that_has_refused_consent
-    then_i_see_the_consent_question_page
-
-    when_i_go_back
-    then_i_see_the_patient_page
-
-    when_i_call_the_parent_that_has_refused_consent
+    when_i_check_the_consent_responses_given_for_that_child
+    and_i_call_the_parent_that_has_refused_consent
     and_consent_is_given_verbally
     then_i_am_returned_to_the_check_consent_responses_page
     and_i_see_the_success_alert
@@ -34,7 +28,7 @@ feature "Verbal consent" do
     campaign = create(:campaign, :hpv, team: @team)
     location = create(:location, name: "Pilot School", team: @team)
     @session =
-      create(:session, :in_future, campaign:, location:, patients_in_session: 1)
+      create(:session, :in_future, campaign:, location:, patients_in_session: 0)
   end
 
   def and_a_parent_has_refused_consent_for_their_child
@@ -46,7 +40,7 @@ feature "Verbal consent" do
     sign_in @team.users.first
   end
 
-  def when_the_nurse_checks_the_consent_responses_given
+  def when_i_check_the_consent_responses_given_for_that_child
     visit "/dashboard"
     click_on "Campaigns", match: :first
     click_on "HPV"
@@ -56,13 +50,32 @@ feature "Verbal consent" do
     click_on @child.full_name
   end
 
-  def when_i_call_the_parent_that_has_refused_consent
-    click_on "Contact #{@child.consents.first.parent_name}"
+  def and_i_call_the_parent_that_has_refused_consent
+    click_on "Get consent"
+
+    expect(page).to have_field("Full name", with: @child.parent_name)
+
+    # contacting the same parent who refused
+    fill_in "Phone number",
+            with: @session.patient_sessions.first.consents.first.parent_phone
+    fill_in "Full name",
+            with: @session.patient_sessions.first.consents.first.parent_name
+    # relationship to the child
+    choose @session
+             .patient_sessions
+             .first
+             .consents
+             .first
+             .human_enum_name(:parent_relationship)
+             .capitalize
+
+    click_button "Continue"
   end
-  alias_method :and_i_contact_the_parent_that_has_refused_consent,
-               :when_i_call_the_parent_that_has_refused_consent
 
   def and_consent_is_given_verbally
+    choose "By phone"
+    click_button "Continue"
+
     choose "Yes, they agree"
     click_button "Continue"
 
@@ -94,18 +107,6 @@ feature "Verbal consent" do
   end
 
   def then_i_see_the_child_is_listed
-    expect(page).to have_content(@child.full_name)
-  end
-
-  def then_i_see_the_consent_question_page
-    expect(page).to have_content("Do they agree")
-  end
-
-  def when_i_go_back
-    click_on "Back"
-  end
-
-  def then_i_see_the_patient_page
     expect(page).to have_content(@child.full_name)
   end
 
