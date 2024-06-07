@@ -94,6 +94,8 @@ class Consent < ApplicationRecord
 
   validates :reason_for_refusal_notes, length: { maximum: 1000 }
 
+  validates :route, presence: true, if: -> { recorded_at.present? }
+
   on_wizard_step :who do
     validates :parent_name, presence: true
     validates :parent_phone, presence: true
