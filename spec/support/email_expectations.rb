@@ -6,11 +6,8 @@ module EmailExpectations
   end
 
   def sent_emails
-    @sent_emails ||=
-      begin
-        perform_enqueued_jobs
+    perform_enqueued_jobs
 
-        ActionMailer::Base.deliveries
-      end
+    ActionMailer::Base.deliveries
   end
 end
