@@ -15,7 +15,7 @@
 #  reason_for_refusal_notes    :text
 #  recorded_at                 :datetime
 #  response                    :integer
-#  route                       :integer          not null
+#  route                       :integer
 #  created_at                  :datetime         not null
 #  updated_at                  :datetime         not null
 #  campaign_id                 :bigint           not null
