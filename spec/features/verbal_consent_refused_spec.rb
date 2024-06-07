@@ -108,10 +108,7 @@ RSpec.describe "Verbal consent" do
   end
 
   def and_an_email_is_sent_to_the_parent_confirming_the_refusal
-    expect(sent_emails.count).to eq 1
-
-    expect(sent_emails.last).to be_sent_with_govuk_notify.using_template(
-      EMAILS[:triage_vaccination_wont_happen]
-    ).to(@patient.parent.email)
+    expect_email_to @patient.parent.email,
+                    EMAILS[:parental_consent_confirmation_refused]
   end
 end
