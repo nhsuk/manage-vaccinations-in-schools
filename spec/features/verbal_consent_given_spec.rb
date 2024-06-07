@@ -40,6 +40,10 @@ RSpec.describe "Verbal consent" do
     # Who are you trying to get consent from?
     click_button "Continue"
 
+    # How was the response given?
+    choose "By phone"
+    click_button "Continue"
+
     # Do they agree?
     choose "Yes, they agree"
     click_button "Continue"
@@ -55,7 +59,7 @@ RSpec.describe "Verbal consent" do
 
     # Confirm
     expect(page).to have_content("Check and confirm answers")
-    expect(page).to have_content(["Response method", "Phone"].join)
+    expect(page).to have_content(["Response method", "By phone"].join)
     click_button "Confirm"
   end
 
@@ -82,7 +86,7 @@ RSpec.describe "Verbal consent" do
       ["Response date", Time.zone.today.to_fs(:nhsuk_date_short_month)].join
     )
     expect(page).to have_content(["Decision", "Consent given"].join)
-    expect(page).to have_content(["Response method", "Phone"].join)
+    expect(page).to have_content(["Response method", "By phone"].join)
 
     expect(page).to have_content(["Full name", @patient.full_name].join)
     expect(page).to have_content(

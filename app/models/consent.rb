@@ -138,7 +138,8 @@ class Consent < ApplicationRecord
 
   def form_steps
     [
-      (:who if via_phone?),
+      (:who unless via_self_consent?),
+      (:route unless via_self_consent?),
       :agree,
       (:questions if response_given?),
       (:triage if response_given?),

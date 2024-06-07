@@ -43,6 +43,10 @@ RSpec.describe "Verbal consent" do
     # Who are you trying to get consent from?
     click_button "Continue"
 
+    # How was the response given?
+    choose "By phone"
+    click_button "Continue"
+
     # Do they agree?
     choose "No, they do not agree"
     click_button "Continue"
@@ -81,7 +85,7 @@ RSpec.describe "Verbal consent" do
       ["Response date", Time.zone.today.to_fs(:nhsuk_date_short_month)].join
     )
     expect(page).to have_content(["Decision", "Consent refused"].join)
-    expect(page).to have_content(["Response method", "Phone"].join)
+    expect(page).to have_content(["Response method", "By phone"].join)
     expect(page).to have_content(["Reason for refusal", "Medical reasons"].join)
     expect(page).to have_content(
       ["Refusal details", "They have a medical condition"].join

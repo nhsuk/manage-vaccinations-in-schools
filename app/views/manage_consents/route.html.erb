@@ -1,0 +1,25 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: back_link_path,
+        name: "consent page",
+      ) %>
+<% end %>
+
+<% title = "How was the response given?" %>
+<% content_for :page_title, title %>
+
+<%= form_for @consent, url: wizard_path do |f| %>
+  <%= f.govuk_collection_radio_buttons :route,
+                                       Consent.routes.except("self_consent").keys,
+                                       ->(option) { option },
+                                       ->(option) { Consent.human_enum_name(:route, option) },
+                                       caption: { size: "l",
+                                                  text: @patient.full_name },
+                                       legend: { size: "l",
+                                                 tag: "h1",
+                                                 text: title } %>
+
+  <div class="nhsuk-u-margin-top-6">
+    <%= f.govuk_submit "Continue" %>
+  </div>
+<% end %>

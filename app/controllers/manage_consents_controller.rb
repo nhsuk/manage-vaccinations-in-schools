@@ -167,12 +167,7 @@ class ManageConsentsController < ApplicationController
   end
 
   def create_params
-    route =
-      if @patient_session.gillick_competent?
-        :self_consent
-      else
-        params.permit(:consent)[:consent]
-      end
+    route = @patient_session.gillick_competent? ? :self_consent : nil
 
     attrs = { patient: @patient, campaign: @session.campaign, route: }
 
@@ -182,7 +177,7 @@ class ManageConsentsController < ApplicationController
     # Temporary: Prefill the consent details.
     # This should be replaced with the design that allows users to choose
     # from available parent details when submiting a new consent.
-    if route == "phone" && no_consent
+    if route.nil? && no_consent
       attrs.merge!(
         parent_name: @patient.parent_name,
         parent_phone: @patient.parent_phone,
@@ -207,6 +202,7 @@ class ManageConsentsController < ApplicationController
         parent_relationship
         parent_relationship_other
       ],
+      route: %i[route],
       agree: %i[response],
       reason: %i[reason_for_refusal],
       reason_notes: %i[reason_for_refusal_notes],
