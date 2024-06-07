@@ -53,7 +53,7 @@
                  url: session_patient_manage_consents_path(session, patient_id: patient.id, section: @section, tab: @tab),
                  method: :post,
                  builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
-      <%= f.govuk_submit "Get consent", name: "consent", value: "phone" %>
+      <%= f.govuk_submit "Get consent" %>
     <% end %>
   </p>
 <% end %>

@@ -176,6 +176,9 @@ RSpec.describe "Pilot journey" do
     click_button "Get consent"
     click_button "Continue"
 
+    choose "By phone"
+    click_button "Continue"
+
     choose "Yes, they agree"
     click_button "Continue"
 

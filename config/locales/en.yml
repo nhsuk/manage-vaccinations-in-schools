@@ -75,6 +75,7 @@ en:
 
     # Consent
     who: "who"
+    route: "route"
     agree: "agree"
     questions: "questions"
     triage: "triage"
@@ -273,7 +274,10 @@ en:
           refused: "consent refused"
           not_provided: "not provided"
         routes:
-          website: online
+          website: Online
+          paper: Paper
+          phone: By phone
+          in_person: In person
       patient:
         parent_relationships:
           father: dad

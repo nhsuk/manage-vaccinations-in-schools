@@ -39,6 +39,10 @@ RSpec.describe "Verbal consent" do
     # Who are you trying to get consent from?
     click_button "Continue"
 
+    # How was the response given?
+    choose "By phone"
+    click_button "Continue"
+
     # Do they agree?
     choose "Yes, they agree"
     click_button "Continue"
