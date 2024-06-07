@@ -6,7 +6,6 @@ class TriageController < ApplicationController
   before_action :set_session, only: %i[index create]
   before_action :set_patient, only: %i[create]
   before_action :set_patient_session, only: %i[create]
-  before_action :set_consent, only: %i[create]
   before_action :set_section_and_tab, only: %i[create]
 
   after_action :verify_policy_scoped, only: %i[index create]
@@ -57,11 +56,6 @@ class TriageController < ApplicationController
     @patient = @session.patients.find_by(id: params[:patient_id])
   end
 
-  def set_consent
-    # HACK: Triage needs to be updated to work with multiple consents.
-    @consent = @patient_session.consents.first
-  end
-
   def set_patient_session
     @patient_session = @patient.patient_sessions.find_by(session: @session)
   end
@@ -89,7 +83,7 @@ class TriageController < ApplicationController
     @triage.assign_attributes triage_params.merge(user: current_user)
     if @triage.save(context: :consent)
       @patient_session.do_triage!
-      send_triage_mail(@patient_session, @consent)
+      @patient.consents.each { send_triage_mail(@patient_session, _1) }
       flash[:success] = {
         heading: "Triage outcome updated for",
         heading_link_text: @patient.full_name,
