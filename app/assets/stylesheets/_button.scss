@@ -6,7 +6,7 @@ $button-shadow-size: 4px;
 
 .app-button--small {
   @include nhsuk-typography-responsive(16);
-  padding: nhsuk-spacing(1) nhsuk-spacing(2);
+  padding: 6px nhsuk-spacing(3);
 }
 
 .app-button--warning {
