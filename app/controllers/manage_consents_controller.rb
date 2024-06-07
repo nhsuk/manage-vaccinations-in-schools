@@ -33,12 +33,15 @@ class ManageConsentsController < ApplicationController
   end
 
   def update
+    model = @consent
+
     case current_step
     when :confirm
       handle_confirm
     when :questions
       handle_questions
     when :triage
+      model = @triage
       handle_triage
     when :agree
       handle_agree
@@ -49,7 +52,7 @@ class ManageConsentsController < ApplicationController
     set_steps # The form_steps can change after certain attrs change
     setup_wizard_translated # Next/previous steps can change after steps change
 
-    render_wizard @consent
+    render_wizard model
   end
 
   def clone
@@ -120,10 +123,7 @@ class ManageConsentsController < ApplicationController
   end
 
   def handle_triage
-    triage_attrs = update_params.delete(:triage).merge(user: current_user)
-    @triage.update! triage_attrs
-
-    @consent.assign_attributes(triage: @triage, form_step: current_step)
+    @triage.assign_attributes triage_params.merge(user: current_user)
   end
 
   def handle_agree
@@ -195,6 +195,10 @@ class ManageConsentsController < ApplicationController
     attrs
   end
 
+  def triage_params
+    params.fetch(:triage, {}).permit(:status, :notes)
+  end
+
   def update_params
     permitted_attributes = {
       who: %i[
@@ -206,10 +210,7 @@ class ManageConsentsController < ApplicationController
       agree: %i[response],
       reason: %i[reason_for_refusal],
       reason_notes: %i[reason_for_refusal_notes],
-      questions: questions_params,
-      triage: {
-        triage: %i[notes status]
-      }
+      questions: questions_params
     }.fetch(current_step)
 
     params
@@ -224,7 +225,6 @@ class ManageConsentsController < ApplicationController
   #   question_1: %i[notes response],
   #   question_2: %i[notes response],
   #   ...
-  #   triage: %i[notes status]
   # }
   def questions_params
     n = @consent.health_answers.size
