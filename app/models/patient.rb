@@ -23,15 +23,18 @@
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  location_id               :bigint
+#  parent_id                 :bigint
 #
 # Indexes
 #
 #  index_patients_on_location_id  (location_id)
 #  index_patients_on_nhs_number   (nhs_number) UNIQUE
+#  index_patients_on_parent_id    (parent_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (location_id => locations.id)
+#  fk_rails_...  (parent_id => parents.id)
 #
 class Patient < ApplicationRecord
   include AgeConcern
