@@ -15,7 +15,10 @@
                                       "data-action": "autosubmit#submit",
                                       "data-turbo-permanent": "true" %>
         <%= f.govuk_text_field :dob, label: { text: "By date of birth" },
-                                     hint: { text: "e.g. 2005 or 01/03/2014" },
+                                     hint: {
+                                       text: "e.g. 2005 or 01/03/2014",
+                                       class: "nhsuk-u-font-size-16",
+                                     },
                                      value: params[:dob],
                                      "data-autosubmit-target": "field",
                                      "data-action": "autosubmit#submit",
@@ -27,7 +30,8 @@
                                             "data-autosubmit-target": "reset",
                                             "data-action": "autosubmit#submit",
                                             "data-turbo-permanent": "true",
-                                            class: "nhsuk-u-display-block" %>
+                                            class: %w[nhsuk-u-display-block
+                                                      app-button--small] %>
         <%= f.govuk_submit "Filter", "data-autosubmit-target": "filter",
                                      "data-turbo-permanent": "true" %>
       <% end %>
