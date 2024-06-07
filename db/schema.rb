@@ -256,6 +256,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_08_165907) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "parents", force: :cascade do |t|
+    t.string "name"
+    t.string "email"
+    t.string "phone"
+    t.integer "relationship"
+    t.string "relationship_other"
+    t.integer "contact_method"
+    t.text "contact_method_other"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "patient_sessions", force: :cascade do |t|
     t.bigint "session_id", null: false
     t.bigint "patient_id", null: false
