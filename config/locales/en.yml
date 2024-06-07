@@ -417,6 +417,8 @@ en:
             reason_for_refusal_notes:
               blank: Enter details for refusing
               too_long: Enter details for refusing that are less than 1000 characters long
+            route:
+              inclusion: Choose how the response was given
         consent_form:
           attributes:
             date_of_birth:

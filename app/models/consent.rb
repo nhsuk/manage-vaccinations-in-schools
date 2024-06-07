@@ -108,6 +108,14 @@ class Consent < ApplicationRecord
               if: -> { parent_relationship == "other" }
   end
 
+  on_wizard_step :route do
+    validates :route,
+              inclusion: {
+                in: Consent.routes.keys
+              },
+              presence: true
+  end
+
   on_wizard_step :agree do
     validates :response,
               inclusion: {
