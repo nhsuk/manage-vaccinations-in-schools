@@ -41,7 +41,7 @@ class Consent < ApplicationRecord
 
   before_save :reset_unused_fields
 
-  attr_accessor :triage, :gillick_assessment
+  attr_accessor :triage
 
   has_one :consent_form
   belongs_to :patient

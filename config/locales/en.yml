@@ -74,8 +74,6 @@ en:
     health_question: "health-question"
 
     # Consent
-    assessing_gillick: "assessing-gillick"
-    gillick: "gillick"
     who: "who"
     agree: "agree"
     questions: "questions"
