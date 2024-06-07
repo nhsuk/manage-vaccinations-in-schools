@@ -72,7 +72,7 @@ describe "HPV Vaccination" do
   end
 
   def then_i_see_that_the_status_is_delayed
-    expect(page).to have_content("Delay vaccination to a later date")
+    expect(page).to have_content("Could not vaccinate")
     expect(page).to have_content("#{@team.users.first.full_name} decided that")
   end
 

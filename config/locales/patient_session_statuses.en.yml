@@ -28,7 +28,7 @@ en:
     delay_vaccination:
       colour: red
       text: Delay vaccination to a later date
-      banner_title: Delay vaccination to a later date
+      banner_title: Could not vaccinate
       banner_explanation: "%{nurse} decided that %{full_name}’s vaccination should be delayed"
     triaged_do_not_vaccinate:
       colour: red
