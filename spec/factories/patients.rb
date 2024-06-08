@@ -42,20 +42,10 @@ require_relative "../support/faker/national_health_service"
 FactoryBot.define do
   factory :patient do
     transient do
-      random { Random.new }
-
       # Used for associations like consent and triage that need to be
       # associated with a campaign
       session { create :session }
       campaign { session.campaign }
-      parent_sex { %w[male female].sample(random:) }
-      parent_first_name do
-        if parent_sex == "male"
-          Faker::Name.masculine_name
-        else
-          Faker::Name.feminine_name
-        end
-      end
     end
 
     nhs_number { Faker::NationalHealthService.test_number.gsub(/\s+/, "") }
@@ -65,13 +55,7 @@ FactoryBot.define do
     date_of_birth { Faker::Date.birthday(min_age: 12, max_age: 13) }
     patient_sessions { [] }
     location { session&.location }
-    parent_name { "#{parent_first_name} #{last_name}" }
-    parent_relationship { parent_sex == "male" ? "father" : "mother" }
-    parent_email do
-      "#{parent_name.downcase.gsub(" ", ".")}#{random.rand(100)}@example.com"
-    end
-    # Replace first two digits with 07 to make it a mobile number
-    parent_phone { "07700 900#{random.rand(0..999).to_s.rjust(3, "0")}" }
+    parent { create(:parent, patient: instance, last_name:) }
 
     address_line_1 { Faker::Address.street_address }
     address_line_2 { Faker::Address.secondary_address }
@@ -135,11 +119,7 @@ FactoryBot.define do
     end
 
     trait :no_parent_info do
-      parent_name { nil }
-      parent_relationship { nil }
-      parent_relationship_other { nil }
-      parent_phone { nil }
-      parent_email { nil }
+      parent { nil }
     end
   end
 end

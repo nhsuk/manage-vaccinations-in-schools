@@ -128,13 +128,16 @@ RSpec.describe CohortList, type: :model do
         date_of_birth: Date.new(2010, 1, 1),
         full_name: "Jimmy Smith",
         location:,
-        parent_name: "John Smith",
-        parent_relationship: "father",
-        parent_phone: "07412345678",
-        parent_email: "john@example.com",
         address_line_1: "10 Downing Street",
         address_town: "London",
         address_postcode: "SW1A 1AA"
+      )
+
+      expect(Patient.first.parent).to have_attributes(
+        name: "John Smith",
+        relationship: "father",
+        phone: "07412345678",
+        email: "john@example.com"
       )
 
       expect(Patient.second).to have_attributes(
@@ -142,13 +145,16 @@ RSpec.describe CohortList, type: :model do
         date_of_birth: Date.new(2010, 1, 2),
         full_name: "Mark Doe",
         location:,
-        parent_name: "Jane Doe",
-        parent_relationship: "mother",
-        parent_phone: "07412345679",
-        parent_email: "jane@example.com",
         address_line_1: "11 Downing Street",
         address_town: "London",
         address_postcode: "SW1A 1AA"
+      )
+
+      expect(Patient.second.parent).to have_attributes(
+        name: "Jane Doe",
+        relationship: "mother",
+        phone: "07412345679",
+        email: "jane@example.com"
       )
     end
   end

@@ -42,6 +42,7 @@ class Patient < ApplicationRecord
   audited
 
   belongs_to :location, optional: true
+  belongs_to :parent
   has_many :patient_sessions
   has_many :sessions, through: :patient_sessions
   has_many :triage, through: :patient_sessions
@@ -54,8 +55,6 @@ class Patient < ApplicationRecord
         -> { includes(:consents).where(consents: { id: nil }) }
   scope :needing_consent_reminder, -> { without_consent.reminder_not_sent }
   scope :not_reminded_about_session, -> { where(session_reminder_sent_at: nil) }
-
-  enum :parent_relationship, %w[mother father guardian other], prefix: true
 
   validates :first_name, presence: true
   validates :last_name, presence: true

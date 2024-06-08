@@ -61,7 +61,10 @@ class CohortList
 
     rows.each do |row|
       location = Location.find_by(urn: row.school_urn)
-      patient = location.patients.new(row.to_patient)
+      patient =
+        location.patients.new(
+          row.to_patient.merge(parent: Parent.new(row.to_parent))
+        )
       patient.save!
     end
   end

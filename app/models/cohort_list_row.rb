@@ -53,14 +53,17 @@ class CohortListRow
       first_name:,
       last_name:,
       nhs_number:,
-      parent_email:,
-      parent_name:,
-      parent_phone:,
       address_line_1:,
       address_line_2:,
       address_town:,
       address_postcode:
-    }.merge(parent_relationship_hash)
+    }
+  end
+
+  def to_parent
+    { email: parent_email, name: parent_name, phone: parent_phone }.merge(
+      parent_relationship_hash
+    )
   end
 
   private
@@ -104,16 +107,13 @@ class CohortListRow
   def parent_relationship_hash
     case parent_relationship
     when "Mother"
-      { parent_relationship: "mother" }
+      { relationship: "mother" }
     when "Father"
-      { parent_relationship: "father" }
+      { relationship: "father" }
     when "Guardian"
-      { parent_relationship: "guardian" }
+      { relationship: "guardian" }
     else
-      {
-        parent_relationship: "other",
-        parent_relationship_other: parent_relationship
-      }
+      { relationship: "other", relationship_other: parent_relationship }
     end
   end
 
