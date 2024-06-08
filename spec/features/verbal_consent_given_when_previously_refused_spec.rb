@@ -53,7 +53,7 @@ feature "Verbal consent" do
   def and_i_call_the_parent_that_has_refused_consent
     click_on "Get consent"
 
-    expect(page).to have_field("Full name", with: @child.parent_name)
+    expect(page).to have_field("Full name", with: @child.parent.name)
 
     # contacting the same parent who refused
     fill_in "Phone number",

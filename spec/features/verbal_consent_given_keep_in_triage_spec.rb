@@ -32,7 +32,7 @@ RSpec.describe "Verbal consent" do
   end
 
   def then_the_consent_form_is_prefilled
-    expect(page).to have_field("Full name", with: @patient.parent_name)
+    expect(page).to have_field("Full name", with: @patient.parent.name)
   end
 
   def when_i_record_that_consent_was_given
@@ -80,6 +80,6 @@ RSpec.describe "Verbal consent" do
 
     expect(sent_emails.last).to be_sent_with_govuk_notify.using_template(
       EMAILS[:parental_consent_confirmation_needs_triage]
-    ).to(@patient.parent_email)
+    ).to(@patient.parent.email)
   end
 end

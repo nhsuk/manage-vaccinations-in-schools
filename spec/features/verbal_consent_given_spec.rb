@@ -33,7 +33,7 @@ RSpec.describe "Verbal consent" do
   end
 
   def then_the_consent_form_is_prefilled
-    expect(page).to have_field("Full name", with: @patient.parent_name)
+    expect(page).to have_field("Full name", with: @patient.parent.name)
   end
 
   def when_i_record_that_verbal_consent_was_given
@@ -77,10 +77,10 @@ RSpec.describe "Verbal consent" do
   end
 
   def and_i_can_see_the_consent_response
-    click_link @patient.parent_name
+    click_link @patient.parent.name
 
     expect(page).to have_content(
-      "Consent response from #{@patient.parent_name}"
+      "Consent response from #{@patient.parent.name}"
     )
     expect(page).to have_content(
       ["Response date", Time.zone.today.to_fs(:nhsuk_date_short_month)].join
@@ -94,16 +94,16 @@ RSpec.describe "Verbal consent" do
     )
     expect(page).to have_content(["School", @patient.location.name].join)
 
-    expect(page).to have_content(["Name", @patient.parent_name].join)
+    expect(page).to have_content(["Name", @patient.parent.name].join)
     expect(page).to have_content(
-      ["Relationship", @patient.parent_relationship_label].join
+      ["Relationship", @patient.parent.relationship_label].join
     )
-    expect(page).to have_content(["Email address", @patient.parent_email].join)
-    expect(page).to have_content(["Phone number", @patient.parent_phone].join)
+    expect(page).to have_content(["Email address", @patient.parent.email].join)
+    expect(page).to have_content(["Phone number", @patient.parent.phone].join)
 
     expect(page).to have_content("Answers to health questions")
     expect(page).to have_content(
-      "#{@patient.parent_relationship_label} responded: No",
+      "#{@patient.parent.relationship_label} responded: No",
       count: 3
     )
   end
@@ -113,6 +113,6 @@ RSpec.describe "Verbal consent" do
 
     expect(sent_emails.last).to be_sent_with_govuk_notify.using_template(
       EMAILS[:parental_consent_confirmation]
-    ).to(@patient.parent_email)
+    ).to(@patient.parent.email)
   end
 end

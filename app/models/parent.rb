@@ -17,4 +17,12 @@ class Parent < ApplicationRecord
   has_one :patient
 
   enum :relationship, %w[mother father guardian other], prefix: true
+
+  def relationship_label
+    if relationship == "other"
+      relationship_other
+    else
+      human_enum_name(:relationship)
+    end.capitalize
+  end
 end

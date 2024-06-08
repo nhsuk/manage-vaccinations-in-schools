@@ -82,14 +82,6 @@ class Patient < ApplicationRecord
     "#{first_name} #{last_name}"
   end
 
-  def parent_relationship_label
-    if parent_relationship == "other"
-      parent_relationship_other
-    else
-      human_enum_name(:parent_relationship)
-    end.capitalize
-  end
-
   def as_json(options = {})
     super.merge("full_name" => full_name, "age" => age)
   end
@@ -112,26 +104,6 @@ class Patient < ApplicationRecord
     [address_line_1, address_line_2, address_town, address_postcode].reject(
       &:blank?
     )
-  end
-
-  def parent_name
-    parent&.name
-  end
-
-  def parent_phone
-    parent&.phone
-  end
-
-  def parent_email
-    parent&.email
-  end
-
-  def parent_relationship
-    parent&.relationship
-  end
-
-  def parent_relationship_other
-    parent&.relationship_other
   end
 
   private
