@@ -47,11 +47,11 @@ FactoryBot.define do
     route { "website" }
     recorded_at { Time.zone.now }
 
-    parent_name { patient.parent_name }
-    parent_email { patient.parent_email }
-    parent_phone { patient.parent_phone }
-    parent_relationship { patient.parent_relationship }
-    parent_relationship_other { patient.parent_relationship_other }
+    parent_name { patient.parent.name }
+    parent_email { patient.parent.email }
+    parent_phone { patient.parent.phone }
+    parent_relationship { patient.parent.relationship }
+    parent_relationship_other { patient.parent.relationship_other }
 
     health_answers do
       health_questions_list.map do |question|
@@ -81,22 +81,22 @@ FactoryBot.define do
     trait :from_mum do
       parent_relationship { "mother" }
       parent_name do
-        if patient.parent_relationship == "mother"
-          patient.parent_name
+        if patient.parent.relationship == "mother"
+          patient.parent.name
         else
           "#{Faker::Name.female_first_name} #{patient.last_name}"
         end
       end
       parent_email do
-        if patient.parent_relationship == "mother"
-          patient.parent_email
+        if patient.parent.relationship == "mother"
+          patient.parent.email
         else
           "#{parent_name.downcase.gsub(" ", ".")}#{random.rand(100)}@example.com"
         end
       end
       parent_phone do
-        if patient.parent_relationship == "mother"
-          patient.parent_phone
+        if patient.parent.relationship == "mother"
+          patient.parent.phone
         else
           "07700 900#{random.rand(0..999).to_s.rjust(3, "0")}"
         end
@@ -106,22 +106,22 @@ FactoryBot.define do
     trait :from_dad do
       parent_relationship { "father" }
       parent_name do
-        if patient.parent_relationship == "father"
-          patient.parent_name
+        if patient.parent.relationship == "father"
+          patient.parent.name
         else
           "#{Faker::Name.male_first_name} #{patient.last_name}"
         end
       end
       parent_email do
-        if patient.parent_relationship == "father"
-          patient.parent_email
+        if patient.parent.relationship == "father"
+          patient.parent.email
         else
           "#{parent_name.downcase.gsub(" ", ".")}#{random.rand(100)}@example.com"
         end
       end
       parent_phone do
-        if patient.parent_relationship == "father"
-          patient.parent_phone
+        if patient.parent.relationship == "father"
+          patient.parent.phone
         else
           "07700 900#{random.rand(0..999).to_s.rjust(3, "0")}"
         end

@@ -278,10 +278,11 @@ en:
           paper: Paper
           phone: By phone
           in_person: In person
-      patient:
-        parent_relationships:
+      parent:
+        relationships:
           father: dad
           mother: mum
+      patient:
         year_group:
           -4: Reception -4
           -3: Reception -3

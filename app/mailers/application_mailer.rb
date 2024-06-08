@@ -9,7 +9,13 @@ class ApplicationMailer < Mail::Notify::Mailer
   end
 
   def to
-    @patient.parent_email
+    if @patient.is_a?(Patient)
+      @patient.parent.email
+    elsif @patient.is_a?(ConsentForm)
+      @patient.parent_email
+    else
+      raise ArgumentError, "Unknown patient type"
+    end
   end
 
   def reply_to_id
@@ -51,7 +57,13 @@ class ApplicationMailer < Mail::Notify::Mailer
   end
 
   def parent_name
-    @patient.parent_name
+    if @patient.is_a?(Patient)
+      @patient.parent.name
+    elsif @patient.is_a?(ConsentForm)
+      @patient.parent_name
+    else
+      raise ArgumentError, "Unknown patient type"
+    end
   end
 
   def location_name

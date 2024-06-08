@@ -124,7 +124,7 @@ RSpec.describe "Session management" do
   end
 
   def and_the_parent_should_receive_a_consent_request
-    expect_email_to(@patient.parent_email, EMAILS[:hpv_session_consent_request])
+    expect_email_to(@patient.parent.email, EMAILS[:hpv_session_consent_request])
   end
 
   def when_the_parent_visits_the_consent_form

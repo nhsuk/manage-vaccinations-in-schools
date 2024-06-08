@@ -164,10 +164,10 @@ class ManageConsentsController < ApplicationController
       # This should be replaced with the design that allows users to choose
       # from available parent details when submiting a new consent.
       attrs.merge(
-        parent_name: @patient.parent_name,
-        parent_phone: @patient.parent_phone,
-        parent_email: @patient.parent_email,
-        parent_relationship: @patient.parent_relationship
+        parent_name: @patient.parent.name,
+        parent_phone: @patient.parent.phone,
+        parent_email: @patient.parent.email,
+        parent_relationship: @patient.parent.relationship
       )
     end
   end
