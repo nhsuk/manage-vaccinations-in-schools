@@ -2,28 +2,23 @@
 #
 # Table name: patients
 #
-#  id                        :bigint           not null, primary key
-#  address_line_1            :string
-#  address_line_2            :string
-#  address_postcode          :string
-#  address_town              :string
-#  common_name               :string
-#  date_of_birth             :date
-#  first_name                :string
-#  last_name                 :string
-#  nhs_number                :string
-#  parent_email              :string
-#  parent_name               :string
-#  parent_phone              :string
-#  parent_relationship       :integer
-#  parent_relationship_other :string
-#  sent_consent_at           :datetime
-#  sent_reminder_at          :datetime
-#  session_reminder_sent_at  :datetime
-#  created_at                :datetime         not null
-#  updated_at                :datetime         not null
-#  location_id               :bigint
-#  parent_id                 :bigint
+#  id                       :bigint           not null, primary key
+#  address_line_1           :string
+#  address_line_2           :string
+#  address_postcode         :string
+#  address_town             :string
+#  common_name              :string
+#  date_of_birth            :date
+#  first_name               :string
+#  last_name                :string
+#  nhs_number               :string
+#  sent_consent_at          :datetime
+#  sent_reminder_at         :datetime
+#  session_reminder_sent_at :datetime
+#  created_at               :datetime         not null
+#  updated_at               :datetime         not null
+#  location_id              :bigint
+#  parent_id                :bigint
 #
 # Indexes
 #
@@ -117,6 +112,26 @@ class Patient < ApplicationRecord
     [address_line_1, address_line_2, address_town, address_postcode].reject(
       &:blank?
     )
+  end
+
+  def parent_name
+    parent&.name
+  end
+
+  def parent_phone
+    parent&.phone
+  end
+
+  def parent_email
+    parent&.email
+  end
+
+  def parent_relationship
+    parent&.relationship
+  end
+
+  def parent_relationship_other
+    parent&.relationship_other
   end
 
   private
