@@ -17,14 +17,9 @@ RSpec.describe ApplicationMailer, type: :mailer do
   let(:session) do
     create(:session, campaign:, location:, date: Date.new(2100, 1, 1))
   end
+  let(:parent) { create(:parent, name: "Parent Doe", email: "foo@bar.com") }
   let(:patient) do
-    create(
-      :patient,
-      first_name: "John",
-      last_name: "Doe",
-      parent_email: "foo@bar.com",
-      parent_name: "Parent Doe"
-    )
+    create(:patient, first_name: "John", last_name: "Doe", parent:)
   end
   let(:patient_session) { create(:patient_session, patient:, session:) }
 
