@@ -4,6 +4,7 @@
 #
 #  id         :bigint           not null, primary key
 #  brand      :text
+#  dose       :decimal(, )
 #  gtin       :text
 #  method     :integer
 #  supplier   :text
