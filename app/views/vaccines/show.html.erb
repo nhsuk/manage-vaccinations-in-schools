@@ -51,6 +51,14 @@
     </div>
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">
+        Dose
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        <%= @vaccine.human_enum_name(:dose) %> ml
+      </dd>
+    </div>
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
         Health questions
       </dt>
       <dd class="nhsuk-summary-list__value">
