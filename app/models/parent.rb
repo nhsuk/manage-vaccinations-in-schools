@@ -18,6 +18,8 @@ class Parent < ApplicationRecord
 
   enum :relationship, %w[mother father guardian other], prefix: true
 
+  encrypts :email, :name, :phone, :relationship_other
+
   def relationship_label
     if relationship == "other"
       relationship_other
