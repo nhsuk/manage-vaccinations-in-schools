@@ -4,6 +4,7 @@
 #
 #  id         :bigint           not null, primary key
 #  brand      :text
+#  dose       :decimal(, )
 #  gtin       :text
 #  method     :integer
 #  supplier   :text
@@ -55,6 +56,7 @@ FactoryBot.define do
       supplier { "AstraZeneca UK Ltd" }
       gtin { "05000456078276" }
       add_attribute(:method) { :nasal }
+      dose { 0.2 }
     end
 
     trait :fluarix_tetra do
@@ -63,6 +65,7 @@ FactoryBot.define do
       supplier { "GlaxoSmithKline UK Ltd" }
       gtin { "5000123114115" }
       add_attribute(:method) { :injection }
+      dose { 0.5 }
     end
 
     trait :hpv do
@@ -85,6 +88,7 @@ FactoryBot.define do
       supplier { "Merck Sharp & Dohme (UK) Ltd" }
       gtin { "00191778001693" }
       add_attribute(:method) { :injection }
+      dose { 0.5 }
     end
   end
 end
