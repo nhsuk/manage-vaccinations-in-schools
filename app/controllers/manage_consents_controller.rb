@@ -163,11 +163,19 @@ class ManageConsentsController < ApplicationController
       # Temporary: Prefill the consent details.
       # This should be replaced with the design that allows users to choose
       # from available parent details when submiting a new consent.
+      parent =
+        Parent.new(
+          @patient.parent.attributes.slice(
+            *%w[name email phone relationship relationship_other]
+          )
+        )
+
       attrs.merge(
         parent_name: @patient.parent.name,
         parent_phone: @patient.parent.phone,
         parent_email: @patient.parent.email,
-        parent_relationship: @patient.parent.relationship
+        parent_relationship: @patient.parent.relationship,
+        parent:
       )
     end
   end
