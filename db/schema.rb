@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_08_165907) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_09_103407) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -111,7 +111,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_08_165907) do
     t.datetime "recorded_at"
     t.jsonb "health_answers", default: []
     t.bigint "recorded_by_user_id"
+    t.bigint "parent_id"
     t.index ["campaign_id"], name: "index_consents_on_campaign_id"
+    t.index ["parent_id"], name: "index_consents_on_parent_id"
     t.index ["patient_id"], name: "index_consents_on_patient_id"
     t.index ["recorded_by_user_id"], name: "index_consents_on_recorded_by_user_id"
   end
@@ -402,6 +404,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_08_165907) do
   add_foreign_key "consent_forms", "consents"
   add_foreign_key "consent_forms", "sessions"
   add_foreign_key "consents", "campaigns"
+  add_foreign_key "consents", "parents"
   add_foreign_key "consents", "patients"
   add_foreign_key "consents", "users", column: "recorded_by_user_id"
   add_foreign_key "gillick_assessments", "patient_sessions"
