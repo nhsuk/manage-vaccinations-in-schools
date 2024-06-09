@@ -50,7 +50,7 @@ FactoryBot.define do
     date_of_birth { Faker::Date.birthday(min_age: 12, max_age: 13) }
     patient_sessions { [] }
     location { session&.location }
-    parent { create(:parent, patient: instance, last_name:) }
+    parent { create(:parent, last_name:) }
 
     address_line_1 { Faker::Address.street_address }
     address_line_2 { Faker::Address.secondary_address }
@@ -111,10 +111,6 @@ FactoryBot.define do
           create(:consent, :given, :from_dad, campaign:, patient: instance)
         ]
       end
-    end
-
-    trait :no_parent_info do
-      parent { nil }
     end
   end
 end
