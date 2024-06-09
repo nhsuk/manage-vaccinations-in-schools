@@ -50,6 +50,8 @@ FactoryBot.define do
     route { "website" }
     recorded_at { Time.zone.now }
 
+    parent { patient.parent }
+
     parent_name { patient.parent.name }
     parent_email { patient.parent.email }
     parent_phone { patient.parent.phone }

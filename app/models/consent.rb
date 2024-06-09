@@ -100,6 +100,8 @@ class Consent < ApplicationRecord
 
   validates :route, presence: true, if: -> { recorded_at.present? }
 
+  validates :parent, presence: true, unless: -> { via_self_consent? }
+
   on_wizard_step :who do
     validates :parent_name, presence: true
     validates :parent_phone, presence: true
@@ -190,6 +192,16 @@ class Consent < ApplicationRecord
   end
 
   def self.from_consent_form!(consent_form, patient_session)
+    parent =
+      Parent.create!(
+        name: consent_form.parent_name,
+        email: consent_form.parent_email,
+        phone: consent_form.parent_phone,
+        relationship: consent_form.parent_relationship,
+        relationship_other: consent_form.parent_relationship_other,
+        contact_method: consent_form.contact_method,
+        contact_method_other: consent_form.contact_method_other
+      )
     consent =
       create!(
         consent_form:,
@@ -202,6 +214,7 @@ class Consent < ApplicationRecord
         parent_phone: consent_form.parent_phone,
         parent_relationship: consent_form.parent_relationship,
         parent_relationship_other: consent_form.parent_relationship_other,
+        parent:,
         reason_for_refusal: consent_form.reason,
         reason_for_refusal_notes: consent_form.reason_notes,
         recorded_at: Time.zone.now,
