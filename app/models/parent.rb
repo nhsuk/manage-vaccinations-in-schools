@@ -14,6 +14,8 @@
 #  updated_at           :datetime         not null
 #
 class Parent < ApplicationRecord
+  audited
+
   has_one :patient
 
   enum :relationship, %w[mother father guardian other], prefix: true
