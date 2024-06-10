@@ -1,16 +1,16 @@
 <%= form_with(
      model: @triage,
      url:,
-     class: "nhsuk-card",
      method: :post,
      builder: GOVUKDesignSystemFormBuilder::FormBuilder,
    ) do |f| %>
-  <div class="nhsuk-card__content">
-    <h2 class="nhsuk-card__heading nhsuk-heading-m">
-      Is it safe to vaccinate <%= patient.first_name %>?
-    </h2>
-    <% content_for(:before_content) { f.govuk_error_summary } %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
 
+  <%= f.govuk_fieldset legend: {
+                         text: "Is it safe to vaccinate \
+                                     #{@patient_session.patient.first_name}?",
+                         tag: :h2,
+                       } do %>
     <%= f.govuk_collection_radio_buttons(
           :status,
           triage_status_options,
@@ -26,5 +26,5 @@
         ) %>
 
     <%= f.submit "Save triage", class: "nhsuk-button" %>
-  </div>
+  <% end %>
 <% end %>
