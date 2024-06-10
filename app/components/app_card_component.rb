@@ -2,15 +2,17 @@ class AppCardComponent < ViewComponent::Base
   erb_template <<-ERB
     <div class="<%= card_classes %>">
       <div class="<%= content_classes %>">
-        <h2 class="<%= heading_classes %>">
-          <% if @link_to.present? %>
-            <%= link_to @link_to, class: "nhsuk-card__link" do %>
+        <% if @heading.present? %>
+          <h2 class="<%= heading_classes %>">
+            <% if @link_to.present? %>
+              <%= link_to @link_to, class: "nhsuk-card__link" do %>
+                <%= @heading %>
+              <% end %>
+            <% else %>
               <%= @heading %>
             <% end %>
-          <% else %>
-            <%= @heading %>
-          <% end %>
-        </h2>
+          </h2>
+        <% end %>
 
         <%= content %>
       </div>
@@ -18,7 +20,7 @@ class AppCardComponent < ViewComponent::Base
   ERB
 
   def initialize(
-    heading:,
+    heading: nil,
     heading_size: "m",
     feature: false,
     colour: nil,
