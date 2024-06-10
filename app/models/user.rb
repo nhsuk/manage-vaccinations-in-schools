@@ -73,7 +73,7 @@ class User < ApplicationRecord
       )
     user.full_name = userinfo[:info][:name]
     user.email = userinfo[:info][:email]
-    user.password = Devise.friendly_token
+    user.password = Devise.friendly_token if user.new_record?
 
     user.tap(&:save!)
   end
