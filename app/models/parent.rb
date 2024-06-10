@@ -22,6 +22,27 @@ class Parent < ApplicationRecord
 
   encrypts :email, :name, :phone, :relationship_other
 
+  validates :name, presence: true
+  validates :phone, presence: true, phone: true
+  validates :email, email: true
+  validates :relationship,
+            inclusion: {
+              in: Parent.relationships.keys
+            },
+            presence: true
+  validates :relationship_other,
+            presence: true,
+            if: -> { relationship == "other" }
+
+  validates :contact_method_other,
+            :email,
+            :name,
+            :phone,
+            :relationship_other,
+            length: {
+              maximum: 300
+            }
+
   def relationship_label
     if relationship == "other"
       relationship_other
