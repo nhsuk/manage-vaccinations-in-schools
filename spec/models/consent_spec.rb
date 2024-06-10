@@ -42,7 +42,7 @@ require "rails_helper"
 RSpec.describe Consent do
   describe "when consent given by parent or guardian, all health questions are no" do
     it "does not require triage" do
-      response = build(:consent_given, parent_relationship: :mother)
+      response = build(:consent_given)
 
       expect(response).not_to be_triage_needed
     end
@@ -57,8 +57,7 @@ RSpec.describe Consent do
           response: "yes"
         )
       ]
-      response =
-        build(:consent_given, parent_relationship: :mother, health_answers:)
+      response = build(:consent_given, health_answers:)
 
       expect(response).to be_triage_needed
     end
@@ -90,18 +89,21 @@ RSpec.describe Consent do
             campaign: session.campaign,
             patient: patient_session.patient,
             consent_form:,
-            parent_contact_method: consent_form.contact_method,
-            parent_contact_method_other: consent_form.contact_method_other,
-            parent_email: consent_form.parent_email,
-            parent_name: consent_form.parent_name,
-            parent_phone: consent_form.parent_phone,
-            parent_relationship: consent_form.parent_relationship,
-            parent_relationship_other: consent_form.parent_relationship_other,
             reason_for_refusal: consent_form.reason,
             reason_for_refusal_notes: consent_form.reason_notes,
             response: consent_form.response,
             route: "website"
           )
+        )
+
+        expect(consent.parent).to have_attributes(
+          name: consent_form.parent_name,
+          email: consent_form.parent_email,
+          phone: consent_form.parent_phone,
+          relationship: consent_form.parent_relationship,
+          relationship_other: consent_form.parent_relationship_other,
+          contact_method: consent_form.contact_method,
+          contact_method_other: consent_form.contact_method_other
         )
       end
 
@@ -157,46 +159,6 @@ RSpec.describe Consent do
       consent = build(:consent, recorded_at: nil)
 
       expect(consent).not_to be_recorded
-    end
-  end
-
-  describe "#phone_contact_method_description" do
-    it "describes the phone contact method when parent/carer can only receive texts" do
-      consent = build(:consent, parent_contact_method: :text)
-
-      expect(consent.phone_contact_method_description).to eq(
-        "Can only receive text messages"
-      )
-    end
-
-    it "describes the phone contact method when parent/carer can only receive calls" do
-      consent = build(:consent, parent_contact_method: :voice)
-
-      expect(consent.phone_contact_method_description).to eq(
-        "Can only receive voice calls"
-      )
-    end
-
-    it "describes the phone contact method when parent/carer has no preference either way" do
-      consent = build(:consent, parent_contact_method: :any)
-
-      expect(consent.phone_contact_method_description).to eq(
-        "No specific needs"
-      )
-    end
-
-    it "describes the phone contact method when parent/carer has other preferences" do
-      consent =
-        build(
-          :consent,
-          parent_contact_method: :other,
-          parent_contact_method_other:
-            "Please call 01234 567890 ext 8910 between 9am and 5pm."
-        )
-
-      expect(consent.phone_contact_method_description).to eq(
-        "Other – Please call 01234 567890 ext 8910 between 9am and 5pm."
-      )
     end
   end
 

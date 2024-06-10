@@ -10,7 +10,7 @@ RSpec.describe VaccinationMailer do
       VaccinationMailer.hpv_vaccination_has_taken_place(vaccination_record:)
     end
 
-    it { should have_attributes(to: [patient.consents.last.parent_email]) }
+    it { should have_attributes(to: [patient.consents.last.parent.email]) }
 
     it "has the correct template" do
       expect(mail).to be_sent_with_govuk_notify.using_template(
@@ -39,7 +39,7 @@ RSpec.describe VaccinationMailer do
 
       it "sets the correct parent name" do
         expect(personalisation).to include(
-          parent_name: patient.consents.last.parent_name
+          parent_name: patient.consents.last.parent.name
         )
       end
 
@@ -90,7 +90,7 @@ RSpec.describe VaccinationMailer do
       VaccinationMailer.hpv_vaccination_has_not_taken_place(vaccination_record:)
     end
 
-    it { should have_attributes(to: [patient.consents.last.parent_email]) }
+    it { should have_attributes(to: [patient.consents.last.parent.email]) }
 
     it "has the correct template" do
       expect(mail).to be_sent_with_govuk_notify.using_template(
@@ -118,7 +118,7 @@ RSpec.describe VaccinationMailer do
 
       it "sets the correct parent name" do
         expect(personalisation).to include(
-          parent_name: patient.consents.last.parent_name
+          parent_name: patient.consents.last.parent.name
         )
       end
     end

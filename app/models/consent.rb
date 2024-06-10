@@ -62,8 +62,6 @@ class Consent < ApplicationRecord
   scope :recorded, -> { where.not(recorded_at: nil) }
   scope :draft, -> { rewhere(recorded_at: nil) }
 
-  enum :parent_contact_method, %w[text voice other any], prefix: true
-  enum :parent_relationship, %w[mother father guardian other], prefix: true
   enum :response, %w[given refused not_provided], prefix: true
   enum :reason_for_refusal,
        %w[
@@ -79,22 +77,7 @@ class Consent < ApplicationRecord
 
   serialize :health_answers, coder: HealthAnswer::ArraySerializer
 
-  encrypts :health_answers,
-           :parent_contact_method_other,
-           :parent_email,
-           :parent_name,
-           :parent_phone,
-           :parent_relationship_other,
-           :reason_for_refusal_notes
-
-  validates :parent_contact_method_other,
-            :parent_email,
-            :parent_name,
-            :parent_phone,
-            :parent_relationship_other,
-            length: {
-              maximum: 300
-            }
+  encrypts :health_answers, :reason_for_refusal_notes
 
   validates :reason_for_refusal_notes, length: { maximum: 1000 }
 
@@ -148,7 +131,7 @@ class Consent < ApplicationRecord
   end
 
   def name
-    via_self_consent? ? patient.full_name : parent_name
+    via_self_consent? ? patient.full_name : parent.name
   end
 
   def triage_needed?
@@ -156,13 +139,7 @@ class Consent < ApplicationRecord
   end
 
   def who_responded
-    if via_self_consent?
-      "Child (Gillick competent)"
-    elsif parent_relationship == "other"
-      parent_relationship_other.capitalize
-    else
-      human_enum_name(:parent_relationship).capitalize
-    end
+    via_self_consent? ? "Child (Gillick competent)" : parent.relationship_label
   end
 
   def health_answers_require_follow_up?
@@ -193,13 +170,6 @@ class Consent < ApplicationRecord
         consent_form:,
         campaign: consent_form.session.campaign,
         patient: patient_session.patient,
-        parent_contact_method: consent_form.contact_method,
-        parent_contact_method_other: consent_form.contact_method_other,
-        parent_email: consent_form.parent_email,
-        parent_name: consent_form.parent_name,
-        parent_phone: consent_form.parent_phone,
-        parent_relationship: consent_form.parent_relationship,
-        parent_relationship_other: consent_form.parent_relationship_other,
         parent:,
         reason_for_refusal: consent_form.reason,
         reason_for_refusal_notes: consent_form.reason_notes,
@@ -221,14 +191,6 @@ class Consent < ApplicationRecord
 
   def recorded?
     recorded_at.present?
-  end
-
-  def phone_contact_method_description
-    if parent_contact_method_other.present?
-      "Other – #{parent_contact_method_other}"
-    else
-      human_enum_name(:parent_contact_method)
-    end
   end
 
   private

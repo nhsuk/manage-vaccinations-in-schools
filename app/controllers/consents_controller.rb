@@ -14,7 +14,7 @@ class ConsentsController < ApplicationController
         .includes(
           :campaign,
           :gillick_assessment,
-          :consents,
+          { consents: :parent },
           :patient,
           :triage,
           :vaccination_records

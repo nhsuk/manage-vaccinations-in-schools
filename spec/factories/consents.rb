@@ -52,12 +52,6 @@ FactoryBot.define do
 
     parent { patient.parent }
 
-    parent_name { patient.parent.name }
-    parent_email { patient.parent.email }
-    parent_phone { patient.parent.phone }
-    parent_relationship { patient.parent.relationship }
-    parent_relationship_other { patient.parent.relationship_other }
-
     health_answers do
       health_questions_list.map do |question|
         HealthAnswer.new({ question:, response: "no" })
@@ -84,58 +78,35 @@ FactoryBot.define do
     end
 
     trait :from_mum do
-      parent_relationship { "mother" }
-      parent_name do
-        if patient.parent.relationship == "mother"
-          patient.parent.name
+      parent do
+        if patient.parent.relationship_mother?
+          create(
+            :parent,
+            :mum,
+            last_name: patient.last_name,
+            phone: patient.parent.phone,
+            email: patient.parent.email
+          )
         else
-          "#{Faker::Name.female_first_name} #{patient.last_name}"
-        end
-      end
-      parent_email do
-        if patient.parent.relationship == "mother"
-          patient.parent.email
-        else
-          "#{parent_name.downcase.gsub(" ", ".")}#{random.rand(100)}@example.com"
-        end
-      end
-      parent_phone do
-        if patient.parent.relationship == "mother"
-          patient.parent.phone
-        else
-          "07700 900#{random.rand(0..999).to_s.rjust(3, "0")}"
+          create(:parent, :mum, last_name: patient.last_name)
         end
       end
     end
 
     trait :from_dad do
-      parent_relationship { "father" }
-      parent_name do
-        if patient.parent.relationship == "father"
-          patient.parent.name
+      parent do
+        if patient.parent.relationship_father?
+          create(
+            :parent,
+            :dad,
+            last_name: patient.last_name,
+            phone: patient.parent.phone,
+            email: patient.parent.email
+          )
         else
-          "#{Faker::Name.male_first_name} #{patient.last_name}"
+          create(:parent, :dad, last_name: patient.last_name)
         end
       end
-      parent_email do
-        if patient.parent.relationship == "father"
-          patient.parent.email
-        else
-          "#{parent_name.downcase.gsub(" ", ".")}#{random.rand(100)}@example.com"
-        end
-      end
-      parent_phone do
-        if patient.parent.relationship == "father"
-          patient.parent.phone
-        else
-          "07700 900#{random.rand(0..999).to_s.rjust(3, "0")}"
-        end
-      end
-    end
-
-    trait :from_granddad do
-      parent_relationship { "other" }
-      parent_relationship_other { "Granddad" }
     end
 
     trait :health_question_notes do
@@ -164,6 +135,17 @@ FactoryBot.define do
 
     trait :needing_triage do
       health_question_notes
+    end
+
+    trait :from_granddad do
+      parent do
+        create(
+          :parent,
+          relationship: :other,
+          relationship_other: "Granddad",
+          last_name: patient.last_name
+        )
+      end
     end
   end
 end

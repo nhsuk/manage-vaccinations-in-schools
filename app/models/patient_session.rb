@@ -42,7 +42,9 @@ class PatientSession < ApplicationRecord
   has_many :triage
   has_many :vaccination_records
   has_many :consents,
-           ->(patient) { Consent.submitted_for_campaign(patient.campaign) },
+           ->(patient) do
+             Consent.submitted_for_campaign(patient.campaign).includes(:parent)
+           end,
            through: :patient,
            class_name: "Consent"
 

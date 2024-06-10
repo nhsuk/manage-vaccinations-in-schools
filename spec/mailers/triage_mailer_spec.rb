@@ -9,12 +9,12 @@ RSpec.describe TriageMailer, type: :mailer do
 
     subject(:mail) { TriageMailer.vaccination_will_happen(patient_session) }
 
-    it { should have_attributes(to: [consent.parent_email]) }
+    it { should have_attributes(to: [consent.parent.email]) }
 
     describe "personalisation" do
       subject { mail.message.header["personalisation"].unparsed_value }
 
-      it { should include(parent_name: consent.parent_name) }
+      it { should include(parent_name: consent.parent.name) }
     end
   end
 
@@ -24,12 +24,12 @@ RSpec.describe TriageMailer, type: :mailer do
 
     subject(:mail) { TriageMailer.vaccination_wont_happen(patient_session) }
 
-    it { should have_attributes(to: [consent.parent_email]) }
+    it { should have_attributes(to: [consent.parent.email]) }
 
     describe "personalisation" do
       subject { mail.message.header["personalisation"].unparsed_value }
 
-      it { should include(parent_name: consent.parent_name) }
+      it { should include(parent_name: consent.parent.name) }
     end
   end
 end

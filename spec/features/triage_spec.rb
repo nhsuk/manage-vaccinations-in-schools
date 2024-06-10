@@ -97,27 +97,27 @@ RSpec.describe "Triage" do
   end
 
   def and_needs_triage_emails_are_sent_to_both_parents
-    expect_email_to @patient.consents.first.parent_email,
+    expect_email_to @patient.consents.first.parent.email,
                     EMAILS[:parental_consent_confirmation_needs_triage]
-    expect_email_to @patient.consents.second.parent_email,
+    expect_email_to @patient.consents.second.parent.email,
                     EMAILS[:parental_consent_confirmation_needs_triage],
                     :second
     ActionMailer::Base.deliveries.clear
   end
 
   def and_vaccination_wont_happen_emails_are_sent_to_both_parents
-    expect_email_to @patient.consents.first.parent_email,
+    expect_email_to @patient.consents.first.parent.email,
                     EMAILS[:triage_vaccination_wont_happen]
-    expect_email_to @patient.consents.second.parent_email,
+    expect_email_to @patient.consents.second.parent.email,
                     EMAILS[:triage_vaccination_wont_happen],
                     :second
     ActionMailer::Base.deliveries.clear
   end
 
   def and_vaccination_will_happen_emails_are_sent_to_both_parents
-    expect_email_to @patient.consents.first.parent_email,
+    expect_email_to @patient.consents.first.parent.email,
                     EMAILS[:triage_vaccination_will_happen]
-    expect_email_to @patient.consents.second.parent_email,
+    expect_email_to @patient.consents.second.parent.email,
                     EMAILS[:triage_vaccination_will_happen],
                     :second
     ActionMailer::Base.deliveries.clear
