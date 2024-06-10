@@ -159,7 +159,7 @@ Rails.application.routes.draw do
                  path: "gillick-assessment/:id",
                  only: %i[show update]
 
-        resource :triage, only: %i[create]
+        resource :triage, only: %i[new create]
 
         resource :vaccinations, only: %i[new create update] do
           resource "batch",

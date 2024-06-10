@@ -13,7 +13,19 @@ RSpec.describe "Triage" do
 
     when_i_record_that_they_need_triage
     then_i_see_the_triage_page
-    and_emails_are_sent_to_both_parents
+    and_needs_triage_emails_are_sent_to_both_parents
+
+    when_i_go_to_the_patient
+    and_i_delay_the_vaccination
+    then_i_see_the_triage_page
+    and_vaccination_wont_happen_emails_are_sent_to_both_parents
+
+    when_i_go_to_the_patient
+    then_i_see_the_update_triage_link
+
+    when_i_record_that_they_are_safe_to_vaccinate
+    then_i_see_the_triage_page
+    and_vaccination_will_happen_emails_are_sent_to_both_parents
   end
 
   def given_a_campaign_with_a_running_session
@@ -44,13 +56,23 @@ RSpec.describe "Triage" do
     click_link @patient.full_name
   end
 
+  def when_i_go_to_the_patient
+    click_link @patient.full_name, match: :first
+  end
+
   def when_i_record_that_they_need_triage
     choose "No, keep in triage"
     click_button "Save triage"
   end
 
   def when_i_record_that_they_are_safe_to_vaccinate
+    click_link "Update triage"
     choose "Yes, it’s safe to vaccinate"
+    click_button "Save triage"
+  end
+
+  def and_i_delay_the_vaccination
+    choose "No, delay vaccination to a later date"
     click_button "Save triage"
   end
 
@@ -70,11 +92,34 @@ RSpec.describe "Triage" do
     expect(page).to have_selector :heading, "There is a problem"
   end
 
-  def and_emails_are_sent_to_both_parents
+  def then_i_see_the_update_triage_link
+    expect(page).to have_link "Update triage"
+  end
+
+  def and_needs_triage_emails_are_sent_to_both_parents
     expect_email_to @patient.consents.first.parent_email,
                     EMAILS[:parental_consent_confirmation_needs_triage]
     expect_email_to @patient.consents.second.parent_email,
                     EMAILS[:parental_consent_confirmation_needs_triage],
                     :second
+    ActionMailer::Base.deliveries.clear
+  end
+
+  def and_vaccination_wont_happen_emails_are_sent_to_both_parents
+    expect_email_to @patient.consents.first.parent_email,
+                    EMAILS[:triage_vaccination_wont_happen]
+    expect_email_to @patient.consents.second.parent_email,
+                    EMAILS[:triage_vaccination_wont_happen],
+                    :second
+    ActionMailer::Base.deliveries.clear
+  end
+
+  def and_vaccination_will_happen_emails_are_sent_to_both_parents
+    expect_email_to @patient.consents.first.parent_email,
+                    EMAILS[:triage_vaccination_will_happen]
+    expect_email_to @patient.consents.second.parent_email,
+                    EMAILS[:triage_vaccination_will_happen],
+                    :second
+    ActionMailer::Base.deliveries.clear
   end
 end

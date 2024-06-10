@@ -1,6 +1,12 @@
 require "rails_helper"
 
 RSpec.describe AppPatientPageComponent, type: :component do
+  before do
+    allow_any_instance_of(AppSimpleStatusBannerComponent).to receive(
+      :new_session_patient_triage_path
+    ).and_return("/session/patient/triage/new")
+  end
+
   let(:component) do
     described_class.new(
       patient_session:,
@@ -26,7 +32,7 @@ RSpec.describe AppPatientPageComponent, type: :component do
     it { should have_css(".nhsuk-card__heading", text: "Consent") }
     it { should_not have_css(".nhsuk-card__heading", text: "Triage notes") }
     it "shows the triage form" do
-      should have_css(".nhsuk-card__heading", text: "Is it safe to vaccinate")
+      should have_selector(:heading, text: "Is it safe to vaccinate")
     end
     it "does not show the vaccination form" do
       should_not have_css(".nhsuk-card", text: "Did they get the HPV vaccine?")

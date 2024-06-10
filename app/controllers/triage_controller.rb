@@ -3,12 +3,12 @@ class TriageController < ApplicationController
   include PatientTabsConcern
   include PatientSortingConcern
 
-  before_action :set_session, only: %i[index create]
-  before_action :set_patient, only: %i[create]
-  before_action :set_patient_session, only: %i[create]
-  before_action :set_section_and_tab, only: %i[create]
+  before_action :set_session, only: %i[index create new]
+  before_action :set_patient, only: %i[create new]
+  before_action :set_patient_session, only: %i[create new]
+  before_action :set_section_and_tab, only: %i[create new]
 
-  after_action :verify_policy_scoped, only: %i[index create]
+  after_action :verify_policy_scoped, only: %i[index create new]
 
   layout "two_thirds", except: %i[index]
 
@@ -36,6 +36,10 @@ class TriageController < ApplicationController
     sort_and_filter_patients!(@patient_sessions)
 
     session[:current_section] = "triage"
+  end
+
+  def new
+    @triage = @patient_session.triage.new
   end
 
   def create

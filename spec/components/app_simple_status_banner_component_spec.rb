@@ -1,6 +1,11 @@
 require "rails_helper"
 
 RSpec.describe AppSimpleStatusBannerComponent, type: :component do
+  before do
+    allow(component).to receive(:new_session_patient_triage_path).and_return(
+      "/session/patient/triage/new"
+    )
+  end
   let(:user) { create :user }
   let(:patient_session) { create :patient_session, user: }
   let(:component) { described_class.new(patient_session:) }
