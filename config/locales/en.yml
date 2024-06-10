@@ -491,6 +491,21 @@ en:
               too_long: Enter a town or city that is less than 300 characters long
             address_postcode:
               blank: Enter a postcode
+        parent:
+          attributes:
+            name:
+              blank: Enter a name
+              too_long: Enter a name that is less than 300 characters long
+            phone:
+              blank: Enter a phone number
+              invalid: Enter a valid phone number, like 07700 900 000
+              too_long: Enter a phone number that is less than 300 characters long
+            relationship:
+              blank: Choose a relationship
+              inclusion: Choose a relationship
+            relationship_other:
+              blank: Enter a relationship
+              too_long: Enter a relationship that is less than 300 characters long
         user:
           attributes:
             email:
