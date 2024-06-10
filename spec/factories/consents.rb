@@ -2,26 +2,19 @@
 #
 # Table name: consents
 #
-#  id                          :bigint           not null, primary key
-#  health_answers              :jsonb
-#  parent_contact_method       :integer
-#  parent_contact_method_other :text
-#  parent_email                :text
-#  parent_name                 :text
-#  parent_phone                :text
-#  parent_relationship         :integer
-#  parent_relationship_other   :text
-#  reason_for_refusal          :integer
-#  reason_for_refusal_notes    :text
-#  recorded_at                 :datetime
-#  response                    :integer
-#  route                       :integer
-#  created_at                  :datetime         not null
-#  updated_at                  :datetime         not null
-#  campaign_id                 :bigint           not null
-#  parent_id                   :bigint
-#  patient_id                  :bigint           not null
-#  recorded_by_user_id         :bigint
+#  id                       :bigint           not null, primary key
+#  health_answers           :jsonb
+#  reason_for_refusal       :integer
+#  reason_for_refusal_notes :text
+#  recorded_at              :datetime
+#  response                 :integer
+#  route                    :integer
+#  created_at               :datetime         not null
+#  updated_at               :datetime         not null
+#  campaign_id              :bigint           not null
+#  parent_id                :bigint
+#  patient_id               :bigint           not null
+#  recorded_by_user_id      :bigint
 #
 # Indexes
 #

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_09_103407) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_10_082802) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -95,13 +95,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_09_103407) do
   create_table "consents", force: :cascade do |t|
     t.bigint "patient_id", null: false
     t.bigint "campaign_id", null: false
-    t.text "parent_name"
-    t.integer "parent_relationship"
-    t.text "parent_relationship_other"
-    t.text "parent_email"
-    t.text "parent_phone"
-    t.integer "parent_contact_method"
-    t.text "parent_contact_method_other"
     t.integer "response"
     t.integer "reason_for_refusal"
     t.text "reason_for_refusal_notes"
