@@ -38,6 +38,13 @@ class AppSimpleStatusBannerComponentPreview < ViewComponent::Preview
     render AppSimpleStatusBannerComponent.new(patient_session:)
   end
 
+  def triaged_do_not_vaccinate
+    patient_session =
+      FactoryBot.create(:patient_session, :triaged_do_not_vaccinate)
+
+    render AppSimpleStatusBannerComponent.new(patient_session:)
+  end
+
   def triaged_ready_to_vaccinate
     patient_session =
       FactoryBot.create(:patient_session, :triaged_ready_to_vaccinate)
