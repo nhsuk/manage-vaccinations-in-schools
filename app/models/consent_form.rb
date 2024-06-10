@@ -30,16 +30,19 @@
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  consent_id                :bigint
+#  parent_id                 :bigint
 #  session_id                :bigint           not null
 #
 # Indexes
 #
 #  index_consent_forms_on_consent_id  (consent_id)
+#  index_consent_forms_on_parent_id   (parent_id)
 #  index_consent_forms_on_session_id  (session_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (consent_id => consents.id)
+#  fk_rails_...  (parent_id => parents.id)
 #  fk_rails_...  (session_id => sessions.id)
 #
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_10_082802) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_10_182655) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -88,7 +88,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_10_082802) do
     t.string "address_postcode"
     t.jsonb "health_answers", default: [], null: false
     t.bigint "consent_id"
+    t.bigint "parent_id"
     t.index ["consent_id"], name: "index_consent_forms_on_consent_id"
+    t.index ["parent_id"], name: "index_consent_forms_on_parent_id"
     t.index ["session_id"], name: "index_consent_forms_on_session_id"
   end
 
@@ -395,6 +397,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_10_082802) do
   add_foreign_key "batches", "vaccines"
   add_foreign_key "campaigns", "teams"
   add_foreign_key "consent_forms", "consents"
+  add_foreign_key "consent_forms", "parents"
   add_foreign_key "consent_forms", "sessions"
   add_foreign_key "consents", "campaigns"
   add_foreign_key "consents", "parents"
