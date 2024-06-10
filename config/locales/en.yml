@@ -255,9 +255,6 @@ en:
   activerecord:
     attributes:
       consent:
-        parent_relationships:
-          father: dad
-          mother: mum
         reason_for_refusals:
           already_vaccinated: "Vaccine already received"
           will_be_vaccinated_elsewhere: "Vaccine will be given elsewhere"
@@ -398,19 +395,6 @@ en:
               missing_day: Enter a day
         consent:
           attributes:
-            parent_name:
-              blank: Enter a name
-              too_long: Enter a name that is less than 300 characters long
-            parent_phone:
-              blank: Enter a phone number
-              invalid: Enter a valid phone number, like 07700 900 000
-              too_long: Enter a phone number that is less than 300 characters long
-            parent_relationship:
-              blank: Choose a relationship
-              inclusion: Choose a relationship
-            parent_relationship_other:
-              blank: Enter a relationship
-              too_long: Enter a relationship that is less than 300 characters long
             response:
               inclusion: Choose if they consent
             reason_for_refusal:
