@@ -65,13 +65,9 @@ RSpec.describe PatientSession do
     end
 
     context "multiple consent responses from same parents" do
-      let(:parent_name) { Faker::Name.name }
-      let(:consent_1) do
-        build :consent, campaign:, parent_name:, response: :refused
-      end
-      let(:consent_2) do
-        build :consent, campaign:, parent_name:, response: :given
-      end
+      let(:parent) { create(:parent) }
+      let(:consent_1) { build :consent, campaign:, parent:, response: :refused }
+      let(:consent_2) { build :consent, campaign:, parent:, response: :given }
       let(:patient) { create(:patient, consents: [consent_1, consent_2]) }
 
       it "returns the latest consent for each parent" do
@@ -80,20 +76,16 @@ RSpec.describe PatientSession do
     end
 
     context "multiple consent responses from same parent where one is draft" do
-      let(:parent_name) { Faker::Name.name }
+      let(:parent) { create(:parent) }
       let(:consent_1) do
         build :consent,
               campaign:,
-              parent_name:,
+              parent:,
               recorded_at: 1.day.ago,
               response: :refused
       end
       let(:consent_2) do
-        build :consent,
-              campaign:,
-              parent_name:,
-              recorded_at: nil,
-              response: :given
+        build :consent, campaign:, parent:, recorded_at: nil, response: :given
       end
       let(:patient) { create(:patient, consents: [consent_1, consent_2]) }
 

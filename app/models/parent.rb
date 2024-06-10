@@ -18,13 +18,14 @@ class Parent < ApplicationRecord
 
   has_one :patient
 
+  enum :contact_method, %w[text voice other any], prefix: true
   enum :relationship, %w[mother father guardian other], prefix: true
 
   encrypts :email, :name, :phone, :relationship_other
 
   validates :name, presence: true
   validates :phone, presence: true, phone: true
-  validates :email, email: true
+  validates :email, email: true, if: -> { email.present? }
   validates :relationship,
             inclusion: {
               in: Parent.relationships.keys
@@ -49,5 +50,13 @@ class Parent < ApplicationRecord
     else
       human_enum_name(:relationship)
     end.capitalize
+  end
+
+  def phone_contact_method_description
+    if contact_method_other.present?
+      "Other – #{contact_method_other}"
+    else
+      human_enum_name(:contact_method)
+    end
   end
 end

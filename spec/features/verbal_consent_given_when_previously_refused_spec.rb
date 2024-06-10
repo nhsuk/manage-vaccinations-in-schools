@@ -57,16 +57,17 @@ feature "Verbal consent" do
 
     # contacting the same parent who refused
     fill_in "Phone number",
-            with: @session.patient_sessions.first.consents.first.parent_phone
+            with: @session.patient_sessions.first.consents.first.parent.phone
     fill_in "Full name",
-            with: @session.patient_sessions.first.consents.first.parent_name
+            with: @session.patient_sessions.first.consents.first.parent.name
     # relationship to the child
     choose @session
              .patient_sessions
              .first
              .consents
              .first
-             .human_enum_name(:parent_relationship)
+             .parent
+             .relationship_label
              .capitalize
 
     click_button "Continue"

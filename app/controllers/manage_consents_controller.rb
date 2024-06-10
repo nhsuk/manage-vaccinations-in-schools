@@ -110,16 +110,6 @@ class ManageConsentsController < ApplicationController
   end
 
   def handle_who
-    # temporary, to keep the parent details in sync with the consent
-    @consent.assign_attributes(
-      parent_name: parent_params[:name],
-      parent_phone: parent_params[:phone],
-      parent_relationship: parent_params[:relationship],
-      parent_relationship_other: parent_params[:relationship_other],
-      form_step: current_step
-    )
-    @consent.save!
-
     @consent.parent.assign_attributes parent_params
   end
 
@@ -187,13 +177,7 @@ class ManageConsentsController < ApplicationController
           )
         )
 
-      attrs.merge(
-        parent_name: @patient.parent.name,
-        parent_phone: @patient.parent.phone,
-        parent_email: @patient.parent.email,
-        parent_relationship: @patient.parent.relationship,
-        parent:
-      )
+      attrs.merge(parent:)
     end
   end
 

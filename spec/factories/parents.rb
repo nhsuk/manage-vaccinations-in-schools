@@ -32,7 +32,16 @@ FactoryBot.define do
     name { "#{first_name} #{last_name}" }
     relationship { sex == "male" ? "father" : "mother" }
     email { "#{name.downcase.gsub(" ", ".")}#{random.rand(100)}@example.com" }
-    # Replace first two digits with 07 to make it a mobile number
     phone { "07700 900#{random.rand(0..999).to_s.rjust(3, "0")}" }
+
+    trait :mum do
+      transient { sex { "female" } }
+      relationship { "mother" }
+    end
+
+    trait :dad do
+      transient { sex { "male" } }
+      relationship { "father" }
+    end
   end
 end

@@ -20,11 +20,11 @@ class VaccinationMailer < ApplicationMailer
   end
 
   def to
-    consent.parent_email
+    consent.parent.email
   end
 
   def parent_name
-    consent.parent_name
+    consent.parent.name
   end
 
   def opts(vaccination_record)

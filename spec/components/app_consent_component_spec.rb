@@ -11,7 +11,7 @@ RSpec.describe AppConsentComponent, type: :component do
   let(:rendered_component) { render_inline(component) }
 
   let(:consent) { patient_session.consents.first }
-  let(:relation) { consent.human_enum_name(:parent_relationship).capitalize }
+  let(:relation) { consent.parent.relationship_label.capitalize }
 
   context "consent is not present" do
     let(:patient_session) { create(:patient_session) }
@@ -36,8 +36,8 @@ RSpec.describe AppConsentComponent, type: :component do
 
     it { should have_css("p.app-status", text: "Refused") }
 
-    let(:summary) { "Consent refused by #{consent.parent_name} (#{relation})" }
-    it { should have_css("table tr", text: /#{consent.parent_name}/) }
+    let(:summary) { "Consent refused by #{consent.parent.name} (#{relation})" }
+    it { should have_css("table tr", text: /#{consent.parent.name}/) }
     it { should have_css("table tr", text: /#{relation}/) }
 
     it "displays the response" do
@@ -54,13 +54,13 @@ RSpec.describe AppConsentComponent, type: :component do
 
     it { should have_css("p.app-status", text: "Given") }
 
-    let(:summary) { "Consent given by #{consent.parent_name} (#{relation})" }
-    it { should_not have_css("a", text: "Contact #{consent.parent_name}") }
+    let(:summary) { "Consent given by #{consent.parent.name} (#{relation})" }
+    it { should_not have_css("a", text: "Contact #{consent.parent.name}") }
   end
 
   context "consent given needing triage and patient has been vaccinated" do
     let(:patient_session) { create(:patient_session, :vaccinated) }
 
-    let(:summary) { "Consent given by #{consent.parent_name} (#{relation})" }
+    let(:summary) { "Consent given by #{consent.parent.name} (#{relation})" }
   end
 end

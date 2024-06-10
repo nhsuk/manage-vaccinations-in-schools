@@ -255,11 +255,6 @@ en:
   activerecord:
     attributes:
       consent:
-        parent_contact_methods:
-          text: Can only receive text messages
-          voice: Can only receive voice calls
-          any: No specific needs
-          other: Other
         parent_relationships:
           father: dad
           mother: mum
@@ -279,6 +274,11 @@ en:
           phone: By phone
           in_person: In person
       parent:
+        contact_methods:
+          text: Can only receive text messages
+          voice: Can only receive voice calls
+          any: No specific needs
+          other: Other
         relationships:
           father: dad
           mother: mum
