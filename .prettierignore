@@ -39,9 +39,3 @@ terraform/.terraform
 *.tfstate
 *.tfstate.backup
 scratchpad
-
-# Unsurprisingly perhaps, Ruby's JSON produces json that isn't pretty enough for
-# Prettier. This breaks tests that compare prettified json files with json
-# produced by Ruby's JSON.
-db/sample_data/*.json
-spec/fixtures/*.json
