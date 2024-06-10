@@ -7,27 +7,7 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
     @patient_session = patient_session
   end
 
-  def call
-    render AppCardComponent.new(heading:, feature: true, colour:) do
-      tag.p do
-        I18n.t(
-          "patient_session_statuses.#{state}.banner_explanation",
-          default: "",
-          full_name:,
-          nurse:,
-          who_responded:,
-          who_refused:
-        )
-      end
-    end
-  end
-
   private
-
-  def consent
-    # HACK: Component needs to be updated to work with multiple consents.
-    @consent ||= @patient_session.consents.first
-  end
 
   def most_recent_triage
     @most_recent_triage ||= @patient_session.triage.order(:created_at).last
@@ -36,10 +16,6 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
   def most_recent_vaccination
     @most_recent_vaccination ||=
       @patient_session.vaccination_records.order(:created_at).last
-  end
-
-  def who_responded
-    consent&.who_responded&.downcase
   end
 
   def who_refused

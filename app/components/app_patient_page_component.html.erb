@@ -1,6 +1,5 @@
 <%= if patient_session.state.in? %w[
                                   vaccinated
-                                  triaged_do_not_vaccinate
                                   unable_to_vaccinate
                                 ]
      render AppOutcomeBannerComponent.new(

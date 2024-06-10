@@ -1,0 +1,14 @@
+<%= render AppCardComponent.new(heading:, feature: true, colour:) do %>
+  <p><%= I18n.t("patient_session_statuses.#{state}.banner_explanation",
+                default: "", full_name:, nurse:, who_refused:) %></p>
+  <% if state.in? %w[delay_vaccination
+                     triaged_ready_to_vaccinate
+                     triaged_do_not_vaccinate] %>
+    <p>
+      <%= link_to "Update triage outcome", new_session_patient_triage_path(
+            session_id: @patient_session.session.id,
+            patient_id: @patient_session.patient.id,
+          ) %>
+    </p>
+  <% end %>
+<% end %>
