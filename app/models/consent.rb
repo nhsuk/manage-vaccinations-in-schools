@@ -102,20 +102,6 @@ class Consent < ApplicationRecord
 
   validates :parent, presence: true, unless: -> { via_self_consent? }
 
-  on_wizard_step :who do
-    validates :parent_name, presence: true
-    validates :parent_phone, presence: true
-    validates :parent_phone, phone: true
-    validates :parent_relationship,
-              inclusion: {
-                in: Consent.parent_relationships.keys
-              },
-              presence: true
-    validates :parent_relationship_other,
-              presence: true,
-              if: -> { parent_relationship == "other" }
-  end
-
   on_wizard_step :route do
     validates :route, inclusion: { in: Consent.routes.keys }, presence: true
   end

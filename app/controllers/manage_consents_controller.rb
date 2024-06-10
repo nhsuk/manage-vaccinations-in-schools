@@ -38,6 +38,9 @@ class ManageConsentsController < ApplicationController
     case current_step
     when :confirm
       handle_confirm
+    when :who
+      model = @consent.parent
+      handle_who
     when :questions
       handle_questions
     when :triage
@@ -104,6 +107,20 @@ class ManageConsentsController < ApplicationController
     end
 
     @consent.assign_attributes(form_step: current_step)
+  end
+
+  def handle_who
+    # temporary, to keep the parent details in sync with the consent
+    @consent.assign_attributes(
+      parent_name: parent_params[:name],
+      parent_phone: parent_params[:phone],
+      parent_relationship: parent_params[:relationship],
+      parent_relationship_other: parent_params[:relationship_other],
+      form_step: current_step
+    )
+    @consent.save!
+
+    @consent.parent.assign_attributes parent_params
   end
 
   def handle_triage
@@ -186,12 +203,6 @@ class ManageConsentsController < ApplicationController
 
   def update_params
     permitted_attributes = {
-      who: %i[
-        parent_name
-        parent_phone
-        parent_relationship
-        parent_relationship_other
-      ],
       route: %i[route],
       agree: %i[response],
       reason: %i[reason_for_refusal],
@@ -203,6 +214,15 @@ class ManageConsentsController < ApplicationController
       .fetch(:consent, {})
       .permit(permitted_attributes)
       .merge(form_step: current_step)
+  end
+
+  def parent_params
+    params.fetch(:parent, {}).permit(
+      :name,
+      :phone,
+      :relationship,
+      :relationship_other
+    )
   end
 
   # Returns:
