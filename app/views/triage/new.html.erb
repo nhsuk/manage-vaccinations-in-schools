@@ -1,0 +1,18 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: session_patient_path(id: @patient.id),
+        name: "patient page",
+      ) %>
+<% end %>
+
+<%= h1 page_title: "Update triage outcome" do %>
+  <span class="nhsuk-caption-l"><%= @patient.full_name %></span>
+  Update triage outcome
+<% end %>
+
+<%= render AppTriageFormComponent.new(
+      patient_session: @patient_session,
+      triage: @triage,
+      section: @section,
+      tab: @tab,
+    ) %>

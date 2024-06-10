@@ -75,7 +75,7 @@ RSpec.describe "Verbal consent" do
   end
 
   def then_i_see_that_the_status_is_do_not_vaccinate
-    expect(page).to have_content("Do not vaccinate")
+    expect(page).to have_content("Could not vaccinate")
   end
 
   def and_i_can_see_the_consent_response
