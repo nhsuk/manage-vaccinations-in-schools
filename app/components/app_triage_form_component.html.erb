@@ -7,8 +7,7 @@
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_fieldset legend: {
-                         text: "Is it safe to vaccinate \
-                                     #{@patient_session.patient.first_name}?",
+                         text: "Is it safe to vaccinate #{@patient_session.patient.first_name}?",
                          tag: :h2,
                        } do %>
     <%= f.govuk_collection_radio_buttons(
