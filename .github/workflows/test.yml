@@ -31,13 +31,10 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - name: Get Node.js version
-        id: asdf
-        run: echo "::set-output name=VERSION::$(grep nodejs .tool-versions | awk '{print $2}')"
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ steps.asdf.outputs.VERSION }}
-          cache: "yarn"
+          node-version-file: .tool-versions
+          cache: yarn
 
       - name: Setup database
         run: bin/rails db:test:prepare
@@ -54,12 +51,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Get Node.js version
-        id: asdf
-        run: echo "::set-output name=VERSION::$(grep nodejs .tool-versions | awk '{print $2}')"
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ steps.asdf.outputs.VERSION }}
-          cache: "yarn"
+          node-version-file: .tool-versions
+          cache: yarn
       - run: yarn install --frozen-lockfile
       - run: yarn test
