@@ -148,31 +148,33 @@ class Consent < ApplicationRecord
   end
 
   def self.from_consent_form!(consent_form, patient_session)
-    parent =
-      Parent.create!(
-        name: consent_form.parent_name,
-        email: consent_form.parent_email,
-        phone: consent_form.parent_phone,
-        relationship: consent_form.parent_relationship,
-        relationship_other: consent_form.parent_relationship_other,
-        contact_method: consent_form.contact_method,
-        contact_method_other: consent_form.contact_method_other
-      )
-    consent =
-      create!(
-        consent_form:,
-        campaign: consent_form.session.campaign,
-        patient: patient_session.patient,
-        parent:,
-        reason_for_refusal: consent_form.reason,
-        reason_for_refusal_notes: consent_form.reason_notes,
-        recorded_at: Time.zone.now,
-        response: consent_form.response,
-        route: "website",
-        health_answers: consent_form.health_answers
-      )
-    patient_session.do_consent! if patient_session.may_do_consent?
-    consent
+    ActiveRecord::Base.transaction do
+      parent =
+        Parent.create!(
+          name: consent_form.parent_name,
+          email: consent_form.parent_email,
+          phone: consent_form.parent_phone,
+          relationship: consent_form.parent_relationship,
+          relationship_other: consent_form.parent_relationship_other,
+          contact_method: consent_form.contact_method,
+          contact_method_other: consent_form.contact_method_other
+        )
+      consent =
+        create!(
+          consent_form:,
+          campaign: consent_form.session.campaign,
+          patient: patient_session.patient,
+          parent:,
+          reason_for_refusal: consent_form.reason,
+          reason_for_refusal_notes: consent_form.reason_notes,
+          recorded_at: Time.zone.now,
+          response: consent_form.response,
+          route: "website",
+          health_answers: consent_form.health_answers
+        )
+      patient_session.do_consent! if patient_session.may_do_consent?
+      consent
+    end
   end
 
   def reason_notes_required?
