@@ -33,6 +33,18 @@ jobs:
       - run: yarn install --immutable --immutable-cache --check-cache
       - run: bin/bundle exec rubocop
 
+  rufo:
+    name: Rufo
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .tool-versions
+          bundler-cache: true
+      - run: bin/bundle exec rufo --check app
+
   brakeman:
     name: Brakeman
     runs-on: ubuntu-latest
