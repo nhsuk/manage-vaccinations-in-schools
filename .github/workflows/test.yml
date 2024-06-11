@@ -31,10 +31,6 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: .tool-versions
-          cache: yarn
 
       - name: Setup database
         run: bin/rails db:test:prepare
