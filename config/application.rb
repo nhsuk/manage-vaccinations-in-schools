@@ -20,6 +20,11 @@ Bundler.require(*Rails.groups)
 
 module ManageVaccinations
   class Application < Rails::Application
+    # Added by `rails g phlex:install`
+    config.autoload_paths << "#{root}/app/views"
+    config.autoload_paths << "#{root}/app/views/layouts"
+    config.autoload_paths << "#{root}/app/views/components"
+
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.1
 
