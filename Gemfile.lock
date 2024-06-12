@@ -305,6 +305,10 @@ GEM
       ast (~> 2.4.1)
       racc
     pg (1.5.6)
+    phlex (1.10.3)
+    phlex-rails (1.2.1)
+      phlex (~> 1.10.0)
+      railties (>= 6.1, < 8)
     phonelib (0.8.9)
     prettier_print (1.2.1)
     propshaft (0.9.0)
@@ -586,6 +590,7 @@ DEPENDENCIES
   mail-notify
   okcomputer
   pg (~> 1.5)
+  phlex-rails
   phonelib
   prettier_print
   propshaft
