@@ -36,6 +36,16 @@
       <%= f.govuk_text_field :relationship_other,
                              label: { text: "Relationship to the child" },
                              hint: { text: "For example, carer" } %>
+      <%= f.govuk_radio_buttons_fieldset(:parental_responsibility,
+                                         legend: { size: "s",
+                                                   text: "Do they have parental responsibility?" },
+                                         hint: { text: "This means they have legal rights and duties relating to the child" }) do %>
+        <%= f.govuk_radio_button :parental_responsibility, "yes",
+                                 label: { text: "Yes" }, link_errors: true %>
+        <%= f.govuk_radio_button :parental_responsibility, "no",
+                                 label: { text: "No" } %>
+      <% end %>
+
     <% end %>
   <% end %>
 

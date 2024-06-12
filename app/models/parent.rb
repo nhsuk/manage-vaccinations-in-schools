@@ -18,6 +18,8 @@ class Parent < ApplicationRecord
 
   has_one :patient
 
+  attr_accessor :parental_responsibility
+
   enum :contact_method, %w[text voice other any], prefix: true
   enum :relationship, %w[mother father guardian other], prefix: true
 
@@ -31,10 +33,12 @@ class Parent < ApplicationRecord
               in: Parent.relationships.keys
             },
             presence: true
-  validates :relationship_other,
-            presence: true,
-            if: -> { relationship == "other" }
-
+  validates :relationship_other, presence: true, if: -> { relationship_other? }
+  validates :parental_responsibility,
+            inclusion: {
+              in: %w[yes]
+            },
+            if: -> { relationship_other? }
   validates :contact_method_other,
             :email,
             :name,
