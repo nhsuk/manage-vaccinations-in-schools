@@ -22,7 +22,7 @@ class Team < ApplicationRecord
   has_and_belongs_to_many :users
 
   validates :name, presence: true, uniqueness: true
-  validates :email, presence: true, email: true
+  validates :email, presence: true, notify_safe_email: true
   validates :phone, presence: true, phone: true
 
   def campaign

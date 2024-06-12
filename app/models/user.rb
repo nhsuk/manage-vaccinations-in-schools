@@ -55,7 +55,7 @@ class User < ApplicationRecord
               maximum: 255
             },
             uniqueness: true,
-            email: true
+            notify_safe_email: true
 
   scope :recently_active,
         -> { where(last_sign_in_at: 1.week.ago..Time.current) }

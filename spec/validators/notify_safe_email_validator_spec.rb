@@ -1,12 +1,12 @@
 require "rails_helper"
 
-RSpec.describe EmailValidator do
+RSpec.describe NotifySafeEmailValidator do
   subject(:model) do
     cls =
       Class.new do
         include ActiveModel::Validations
         attr_accessor :email
-        validates :email, email: true
+        validates :email, notify_safe_email: true
       end
     cls.new
   end
