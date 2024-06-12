@@ -19,14 +19,6 @@ RSpec.describe AppCardComponent, type: :component do
     it { should_not have_css(".nhsuk-card__content") }
   end
 
-  context "classes on container" do
-    let(:component) do
-      described_class.new(heading:, card_classes: "app-card--empty")
-    end
-
-    it { should have_css(".nhsuk-card.app-card--empty") }
-  end
-
   context "larger heading" do
     let(:component) { described_class.new(heading:, heading_size: "xl") }
 
