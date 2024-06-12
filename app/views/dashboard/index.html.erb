@@ -2,30 +2,35 @@
 
 <ul class="nhsuk-grid-row nhsuk-card-group">
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(heading: "Today’s sessions", link_to: sessions_path) do %>
+    <%= render AppCardComponent.new(heading: "Today’s sessions",
+                                    link_to: sessions_path) do %>
       View all sessions taking place today.
     <% end %>
   </li>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(heading: "Campaigns", link_to: campaigns_path) do %>
+    <%= render AppCardComponent.new(heading: "Campaigns",
+                                    link_to: campaigns_path) do %>
       Create and manage vaccination campaigns.
     <% end %>
   </li>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(heading: "Vaccines", link_to: vaccines_path) do %>
+    <%= render AppCardComponent.new(heading: "Vaccines",
+                                    link_to: vaccines_path) do %>
       Add or remove batches.
     <% end %>
   </li>
 </ul>
 
 <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-1">
-  <%= link_to "Add a new session", sessions_path, class: "nhsuk-link--no-visited-state" %>
+  <%= link_to "Add a new session", sessions_path,
+              class: "nhsuk-link--no-visited-state" %>
 </h2>
 <p>Create a new session or clinic for a campaign.</p>
 
 <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-1">
-  <%= link_to "Your account", users_account_path(current_user), class: "nhsuk-link--no-visited-state" %>
+  <%= link_to "Your account", users_account_path(current_user),
+              class: "nhsuk-link--no-visited-state" %>
 </h2>
 <p>Change your email address, name, or registration number.</p>
