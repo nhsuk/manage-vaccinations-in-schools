@@ -24,7 +24,6 @@ class AppCardComponent < ViewComponent::Base
     heading_size: "m",
     feature: false,
     colour: nil,
-    card_classes: nil,
     link_to: nil
   )
     super
@@ -32,9 +31,7 @@ class AppCardComponent < ViewComponent::Base
     @heading = heading
     @heading_size = heading_size
     @feature = feature
-    @card_classes = card_classes
     @link_to = link_to
-
     @colour = colour
   end
 
@@ -50,8 +47,7 @@ class AppCardComponent < ViewComponent::Base
       "app-card",
       ("nhsuk-card--feature" if @feature),
       ("app-card--#{@colour}" if @colour.present?),
-      ("nhsuk-card--clickable" if @link_to.present?),
-      @card_classes
+      ("nhsuk-card--clickable" if @link_to.present?)
     ].compact.join(" ")
   end
 
