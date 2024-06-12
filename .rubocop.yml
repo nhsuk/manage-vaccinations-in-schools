@@ -24,3 +24,7 @@ Rails/UnknownEnv:
     - test
     - staging
     - production
+
+Rails/Output:
+  Exclude:
+    - app/views/components/**
