@@ -17,4 +17,6 @@
   <%= f.govuk_submit "Sign in" %>
 <% end %>
 
-<%= govuk_button_to "Sign in with CIS2", user_cis2_omniauth_authorize_path, data: { turbo: false } %>
+<% if Settings.cis2.present? %>
+  <%= govuk_button_to "Sign in with CIS2", user_cis2_omniauth_authorize_path, data: { turbo: false } %>
+<% end %>

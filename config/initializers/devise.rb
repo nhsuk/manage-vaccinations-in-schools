@@ -272,31 +272,33 @@ Devise.setup do |config|
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
-  config.omniauth :openid_connect,
-                  {
-                    name: :cis2,
-                    scope: %i[
-                      openid
-                      profile
-                      email
-                      nationalrbacaccess
-                      professionalmemberships
-                    ],
-                    response_type: :code,
-                    # uid_field: "preferred_username",
-                    issuer: Settings.cis2.issuer,
-                    discovery: true,
-                    client_auth_method: :jwks,
-                    client_options: {
-                      port: 443,
-                      scheme: "https",
-                      host: "am.nhsdev.auth-ptl.cis2.spineservices.nhs.uk",
-                      identifier: Settings.cis2.client_id,
-                      secret: Settings.cis2.secret,
-                      redirect_uri:
-                        "http://localhost:4000/users/auth/cis2/callback"
+  if Settings.cis2.present?
+    config.omniauth :openid_connect,
+                    {
+                      name: :cis2,
+                      scope: %i[
+                        openid
+                        profile
+                        email
+                        nationalrbacaccess
+                        professionalmemberships
+                      ],
+                      response_type: :code,
+                      # uid_field: "preferred_username",
+                      issuer: Settings.cis2.issuer,
+                      discovery: true,
+                      client_auth_method: :jwks,
+                      client_options: {
+                        port: 443,
+                        scheme: "https",
+                        host: "am.nhsdev.auth-ptl.cis2.spineservices.nhs.uk",
+                        identifier: Settings.cis2.client_id,
+                        secret: Settings.cis2.secret,
+                        redirect_uri:
+                          "http://localhost:4000/users/auth/cis2/callback"
+                      }
                     }
-                  }
+  end
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
