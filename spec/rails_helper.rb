@@ -17,7 +17,8 @@ Capybara.register_driver(:cuprite_custom) do |app|
     app,
     inspector: ENV["DEBUG_TESTS"],
     js_errors: true,
-    window_size: [1200, 800]
+    window_size: [1200, 800],
+    process_timeout: 30
   )
 end
 Capybara.javascript_driver = :cuprite_custom
