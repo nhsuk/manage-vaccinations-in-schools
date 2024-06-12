@@ -205,7 +205,8 @@ class ManageConsentsController < ApplicationController
       :name,
       :phone,
       :relationship,
-      :relationship_other
+      :relationship_other,
+      :parental_responsibility
     )
   end
 

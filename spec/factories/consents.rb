@@ -136,6 +136,7 @@ FactoryBot.define do
           :parent,
           relationship: :other,
           relationship_other: "Granddad",
+          parental_responsibility: "yes",
           last_name: patient.last_name
         )
       end

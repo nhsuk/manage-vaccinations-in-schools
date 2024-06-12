@@ -490,6 +490,8 @@ en:
             relationship_other:
               blank: Enter a relationship
               too_long: Enter a relationship that is less than 300 characters long
+            parental_responsibility:
+              inclusion: Choose whether there is parental responsibility
         user:
           attributes:
             email:
