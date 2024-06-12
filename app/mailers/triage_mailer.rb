@@ -1,6 +1,7 @@
 class TriageMailer < ApplicationMailer
-  def vaccination_will_happen(patient_session)
+  def vaccination_will_happen(patient_session, consent)
     @patient_session = patient_session
+    @consent = consent
 
     template_mail(
       EMAILS[:triage_vaccination_will_happen],
@@ -8,8 +9,9 @@ class TriageMailer < ApplicationMailer
     )
   end
 
-  def vaccination_wont_happen(patient_session)
+  def vaccination_wont_happen(patient_session, consent)
     @patient_session = patient_session
+    @consent = consent
 
     template_mail(
       EMAILS[:triage_vaccination_wont_happen],
@@ -19,15 +21,11 @@ class TriageMailer < ApplicationMailer
 
   private
 
-  def consent
-    @patient_session.consents.order(:created_at).last
-  end
-
   def to
-    consent.parent.email
+    @consent.parent.email
   end
 
   def parent_name
-    consent.parent.name
+    @consent.parent.name
   end
 end

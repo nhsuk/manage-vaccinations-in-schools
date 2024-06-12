@@ -45,6 +45,10 @@ class ConsentFormMailer < ApplicationMailer
     { to:, reply_to_id:, personalisation: consent_form_personalisation }
   end
 
+  def to
+    @consent_form&.parent_email || @consent.parent.email
+  end
+
   def consent_form_personalisation
     personalisation.merge(reason_for_refusal:, survey_deadline_date:)
   end
