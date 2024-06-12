@@ -7,7 +7,9 @@ RSpec.describe TriageMailer, type: :mailer do
     end
     let(:consent) { patient_session.patient.consents.first }
 
-    subject(:mail) { TriageMailer.vaccination_will_happen(patient_session) }
+    subject(:mail) do
+      TriageMailer.vaccination_will_happen(patient_session, consent)
+    end
 
     it { should have_attributes(to: [consent.parent.email]) }
 
@@ -22,7 +24,9 @@ RSpec.describe TriageMailer, type: :mailer do
     let(:patient_session) { create(:patient_session, :consent_refused) }
     let(:consent) { patient_session.patient.consents.first }
 
-    subject(:mail) { TriageMailer.vaccination_wont_happen(patient_session) }
+    subject(:mail) do
+      TriageMailer.vaccination_wont_happen(patient_session, consent)
+    end
 
     it { should have_attributes(to: [consent.parent.email]) }
 
