@@ -2,23 +2,23 @@
 
 <ul class="nhsuk-grid-row nhsuk-card-group">
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(heading: "Today’s sessions",
-                                    link_to: sessions_path) do %>
-      View all sessions taking place today.
+    <%= render Card.new(link_to: sessions_path) do |card| %>
+      <%= card.title { "Today’s sessions" } %>
+      <%= card.description { "View all sessions taking place today." } %>
     <% end %>
   </li>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(heading: "Campaigns",
-                                    link_to: campaigns_path) do %>
-      Create and manage vaccination campaigns.
+    <%= render Card.new(link_to: campaigns_path) do |card| %>
+      <%= card.title { "Campaigns" } %>
+      <%= card.description { "Create and manage vaccination campaigns." } %>
     <% end %>
   </li>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(heading: "Vaccines",
-                                    link_to: vaccines_path) do %>
-      Add or remove batches.
+    <%= render Card.new(link_to: vaccines_path) do |card| %>
+      <%= card.title { "Vaccines" } %>
+      <%= card.description { "Add or remove batches." } %>
     <% end %>
   </li>
 </ul>

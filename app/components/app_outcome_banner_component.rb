@@ -8,12 +8,6 @@ class AppOutcomeBannerComponent < ViewComponent::Base
     @current_user = current_user
   end
 
-  def call
-    render AppCardComponent.new(heading:, feature: true, colour:) do
-      govuk_summary_list(classes: "app-summary-list--no-bottom-border", rows:)
-    end
-  end
-
   private
 
   def rows

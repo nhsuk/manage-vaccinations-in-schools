@@ -14,7 +14,8 @@
   <%= page_title %>
 <% end %>
 
-<%= render AppCardComponent.new(heading: "Consent") do %>
+<%= render Card.new do |card| %>
+  <%= card.title { "Consent" } %>
   <%= govuk_summary_list(
         classes: "app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0",
       ) do |summary_list|
@@ -48,7 +49,8 @@
       end %>
 <% end %>
 
-<%= render AppCardComponent.new(heading: "Child") do %>
+<%= render Card.new do |card| %>
+  <%= card.title { "Child" } %>
   <%= govuk_summary_list(
         classes: "app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0",
       ) do |summary_list|
@@ -85,7 +87,8 @@
 <% end %>
 
 <% if @consent.parent.present? %>
-  <%= render AppCardComponent.new(heading: "Parent or guardian") do %>
+  <%= render Card.new do |card| %>
+    <%= card.title { "Parent or guardian" } %>
     <%= govuk_summary_list(
           classes: "app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0",
         ) do |summary_list|
@@ -122,13 +125,15 @@
 <% end %>
 
 <% if @consent.response_given? %>
-  <%= render AppCardComponent.new(heading: "Health questions") do %>
+  <%= render Card.new do |card| %>
+    <%= card.title { "Health questions" } %>
     <%= render AppHealthQuestionsComponent.new(consents: [@consent]) %>
   <% end %>
 <% end %>
 
 <% if @consent.response_given? && @triage.status.present? %>
-  <%= render AppCardComponent.new(heading: "Triage") do %>
+  <%= render Card.new do |card| %>
+    <%= card.title { "Triage" } %>
     <%= govuk_summary_list classes: "app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0" do |summary_list|
           summary_list.with_row do |row|
             row.with_key { "Status" }

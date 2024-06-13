@@ -23,40 +23,40 @@
 
 <ul class="nhsuk-grid-row nhsuk-card-group">
   <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
-    <%= render AppCardComponent.new(
-          heading: "Register attendance",
-          link_to: "#",
-        ) do %>
-      <%= pluralize_child(@patient_sessions.size) %> still to register
+    <%= render Card.new(link_to: "#") do |card| %>
+      <%= card.title { "Register attendance" } %>
+      <%= card.description do %>
+        <%= pluralize_child(@patient_sessions.size) %> still to register
+      <% end %>
     <% end %>
   </li>
   <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
-    <%= render AppCardComponent.new(
-          heading: "Record vaccinations",
-          link_to: session_vaccinations_path(@session),
-        ) do %>
-      <%= pluralize_child(@counts[:vaccinate]) %> to vaccinate<br>
-      <%= pluralize_child(@counts[:vaccinated]) %> vaccinated<br>
-      <%= pluralize_child(@counts[:could_not_vaccinate]) %> could not be vaccinated
+    <%= render Card.new(link_to: session_vaccinations_path(@session)) do |card| %>
+      <%= card.title { "Record vaccinations" } %>
+      <%= card.description do %>
+        <%= pluralize_child(@counts[:vaccinate]) %> to vaccinate<br>
+        <%= pluralize_child(@counts[:vaccinated]) %> vaccinated<br>
+        <%= pluralize_child(@counts[:could_not_vaccinate]) %> could not be vaccinated
+      <% end %>
     <% end %>
   </li>
   <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
-    <%= render AppCardComponent.new(
-          heading: "Check consent responses",
-          link_to: session_consents_path(@session),
-        ) do %>
-      <%= pluralize_child(@counts[:without_a_response]) %> without a response<br>
-      <%= pluralize_child(@counts[:with_consent_given]) %> with consent given<br>
-      <%= pluralize_child(@counts[:with_consent_refused]) %> with consent refused<br>
-      <%= pluralize_child(@counts[:with_conflicting_consent]) %> with conflicting consent
+    <%= render Card.new(link_to: session_consents_path(@session)) do |card| %>
+      <%= card.title { "Check consent responses" } %>
+      <%= card.description do %>
+        <%= pluralize_child(@counts[:without_a_response]) %> without a response<br>
+        <%= pluralize_child(@counts[:with_consent_given]) %> with consent given<br>
+        <%= pluralize_child(@counts[:with_consent_refused]) %> with consent refused<br>
+        <%= pluralize_child(@counts[:with_conflicting_consent]) %> with conflicting consent
+      <% end %>
     <% end %>
   </li>
   <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
-    <%= render AppCardComponent.new(
-          heading: "Triage health questions",
-          link_to: session_triage_path(@session),
-        ) do %>
-      <%= pluralize_child(@counts[:needing_triage]) %> needing triage
+    <%= render Card.new(link_to: session_triage_path(@session)) do |card| %>
+      <%= card.title { "Triage health questions" } %>
+      <%= card.description do %>
+        <%= pluralize_child(@counts[:needing_triage]) %> needing triage
+      <% end %>
     <% end %>
   </li>
 </ul>

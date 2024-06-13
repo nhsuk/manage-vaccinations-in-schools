@@ -1,4 +1,5 @@
-<%= render AppCardComponent.new(heading:, feature: true, colour:) do %>
+<%= render Card.new(colour:) do |card| %>
+  <%= card.title { heading } %>
   <p><%= I18n.t("patient_session_statuses.#{state}.banner_explanation",
                 default: "", full_name:, nurse:, who_refused:) %></p>
   <% if state.in? %w[delay_vaccination

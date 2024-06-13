@@ -17,7 +17,8 @@
 
 <%= h1 "Check your answers and confirm" %>
 
-<%= render AppCardComponent.new(heading: t("consent_forms.confirm.consent_card_title.#{@consent_form.session.type.downcase}")) do %>
+<%= render Card.new do |card| %>
+  <%= card.title { t("consent_forms.confirm.consent_card_title.#{@consent_form.session.type.downcase}") } %>
   <%= govuk_summary_list classes: "app-summary-list--no-bottom-border" do |summary_list|
         summary_list.with_row do |row|
           row.with_key { "Do you agree?" }
@@ -60,7 +61,8 @@
       end %>
 <% end %>
 
-<%= render AppCardComponent.new(heading: "About your child") do %>
+<%= render Card.new do |card| %>
+  <%= card.title { "About your child" } %>
   <%= govuk_summary_list classes: "app-summary-list--no-bottom-border" do |summary_list|
         summary_list.with_row do |row|
           row.with_key { "Child’s name" }
@@ -138,7 +140,8 @@
       end %>
 <% end %>
 
-<%= render AppCardComponent.new(heading: "About you") do %>
+<%= render Card.new do |card| %>
+  <%= card.title { "About you" } %>
   <%= govuk_summary_list classes: "app-summary-list--no-bottom-border" do |summary_list|
         summary_list.with_row do |row|
           row.with_key { "Your name" }
@@ -199,7 +202,8 @@
 <% end %>
 
 <% if @consent_form.consent_given? %>
-  <%= render AppCardComponent.new(heading: "Health questions") do %>
+  <%= render Card.new do |card| %>
+    <%= card.title { "Health questions" } %>
     <%= govuk_summary_list classes: "app-summary-list--full-width" do |summary_list|
           @consent_form.each_health_answer do |ha|
             summary_list.with_row do |row|

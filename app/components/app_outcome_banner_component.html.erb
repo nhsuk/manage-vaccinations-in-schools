@@ -1,0 +1,4 @@
+<%= render Card.new(colour:) do |card| %>
+  <%= card.title { heading } %>
+  <%= govuk_summary_list(classes: "app-summary-list--no-bottom-border", rows:) %>
+<% end %>

@@ -7,7 +7,8 @@
 
 <%= h1 vaccine_heading(@vaccine), size: "l" %>
 
-<%= render AppCardComponent.new(heading: "Vaccine details") do %>
+<%= render Card.new do |card| %>
+  <%= card.title { "Vaccine details" } %>
   <dl class="nhsuk-summary-list">
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">

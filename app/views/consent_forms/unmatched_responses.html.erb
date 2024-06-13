@@ -11,8 +11,9 @@
 
 <%= h1 page_title %>
 
-<%= render AppCardComponent.new(heading: "#{@unmatched_consent_responses.count} unmatched responses", heading_size: "m") do
-      govuk_table(classes: "app-table--dense  nhsuk-u-margin-0") do |table|
+<%= render Card.new do |card| %>
+  <%= card.title { "#{@unmatched_consent_responses.count} unmatched responses" } %>
+  <%= govuk_table(classes: "app-table--dense  nhsuk-u-margin-0") do |table|
         table.with_head do |head|
           head.with_row do |row|
             row.with_cell(text: "Responded", html_attributes: { "data-col": "date" })
@@ -21,7 +22,7 @@
             row.with_cell(text: "Action", html_attributes: { "no-sort": true })
           end
         end
-    
+      
         table.with_body do |body|
           @unmatched_consent_responses.each do |consent_form|
             body.with_row do |row|
@@ -32,5 +33,5 @@
             end
           end
         end
-      end
-    end %>
+      end %>
+<% end %>

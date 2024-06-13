@@ -17,8 +17,9 @@
   <%= render AppMatchingCriteriaComponent.new(consent_form: @consent_form) %>
 <% end %>
 
-<%= render AppCardComponent.new(heading: "Children in this cohort") do
-      if @patient_sessions.count > 0
+<%= render Card.new do |card| %>
+  <%= card.title { "Children in this cohort" } %>
+  <%= if @patient_sessions.count > 0
         render AppPatientTableComponent.new(
           patient_sessions: @patient_sessions,
           columns: %i[name postcode dob select_for_matching],
@@ -27,5 +28,5 @@
         )
       else
         render AppEmptyListComponent.new
-      end
-    end %>
+      end %>
+<% end %>
