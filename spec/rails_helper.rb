@@ -10,6 +10,8 @@ require "rspec/rails"
 # Add additional requires below this line. Rails is not loaded until this point!
 require "capybara/cuprite"
 require "capybara-screenshot/rspec"
+require "phlex/testing/capybara"
+require "phlex/testing/rails/view_helper"
 
 Faker::Config.locale = "en-GB"
 Capybara.register_driver(:cuprite_custom) do |app|
@@ -97,4 +99,6 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include ViewComponent::TestHelpers, type: :component
   config.include Capybara::RSpecMatchers, type: :component
+  config.include Phlex::Testing::Capybara::ViewHelper, type: :phlex_component
+  config.include Phlex::Testing::Rails::ViewHelper, type: :phlex_component
 end

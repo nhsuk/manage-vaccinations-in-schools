@@ -309,6 +309,9 @@ GEM
     phlex-rails (1.2.1)
       phlex (~> 1.10.0)
       railties (>= 6.1, < 8)
+    phlex-testing-capybara (0.1.0)
+      capybara (~> 3.38)
+      phlex (>= 0.5)
     phonelib (0.8.9)
     prettier_print (1.2.1)
     propshaft (0.9.0)
@@ -591,6 +594,7 @@ DEPENDENCIES
   okcomputer
   pg (~> 1.5)
   phlex-rails
+  phlex-testing-capybara
   phonelib
   prettier_print
   propshaft
