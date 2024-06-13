@@ -43,5 +43,9 @@ FactoryBot.define do
       transient { sex { "male" } }
       relationship { "father" }
     end
+
+    trait :randomly_mum_or_dad do
+      send %i[mum dad].sample
+    end
   end
 end
