@@ -26,7 +26,7 @@ class Parent < ApplicationRecord
   encrypts :email, :name, :phone, :relationship_other
 
   validates :name, presence: true
-  validates :phone, presence: true, phone: true
+  validates :phone, phone: true, if: -> { phone.present? }
   validates :email, email: true, if: -> { email.present? }
   validates :relationship,
             inclusion: {
