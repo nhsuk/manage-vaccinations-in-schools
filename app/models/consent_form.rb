@@ -63,6 +63,7 @@ class ConsentForm < ApplicationRecord
 
   belongs_to :consent, optional: true
   belongs_to :session
+  belongs_to :parent, optional: true
   has_one :campaign, through: :session
   has_one :team, through: :campaign
 
