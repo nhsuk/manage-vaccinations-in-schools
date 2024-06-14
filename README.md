@@ -233,6 +233,32 @@ govuk_notify:
 You should set it to `enabled: false` when you're done testing Notify locally,
 because it's easier to work offline without it.
 
+## Care Identity Service (CIS2)
+
+This service uses [NHS's CIS2 Care Identity Authentication
+service](https://digital.nhs.uk/developer/api-catalogue/nhs-cis2-care-identity-authentication)
+to perform OIDC authentication for users.
+
+You can retrieve the issuer URL from the appropriate endpoint listed on [CIS2 Guidance Discovery
+page](https://digital.nhs.uk/services/care-identity-service/applications-and-services/cis2-authentication/guidance-for-developers/detailed-guidance/discovery):
+
+```sh
+$ curl -s https://am.nhsdev.auth-ptl.cis2.spineservices.nhs.uk/openam/oauth2/realms/root/realms/oidc/.well-known/openid-configuration | jq ".issuer"
+"https://am.nhsdev.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/oidc"
+```
+
+New client ids and secrets can be obtained from the NHS CIS2 Authentication team
+(<nhscareidentityauthentication@nhs.net>).
+
+Put the `issuer`, `client_id` and `secret` into the Settings for your env:
+
+```yml
+cis2:
+  issuer: "https://am.nhsdev.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/oidc"
+  client_id: CLIENT_ID
+  secret: SECRET
+```
+
 ### Reply-To
 
 GOVUK Notify can store reply-to email addresses and use them when sending mail.
