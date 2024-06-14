@@ -8,6 +8,7 @@ module ParentInterface
     before_action :set_steps
     before_action :setup_wizard_translated
     before_action :validate_params, only: %i[update]
+    before_action :set_parent
     before_action :set_health_answer, if: -> { is_health_question_step? }
     before_action :set_follow_up_changes_start_page, only: %i[show]
 
@@ -16,6 +17,7 @@ module ParentInterface
     end
 
     def update
+      model = @consent_form
       if is_health_question_step?
         @health_answer.assign_attributes(health_answer_params)
 
@@ -23,6 +25,22 @@ module ParentInterface
           form_step: current_step,
           health_question_number: @question_number
         )
+      elsif current_step == :parent
+        model = @consent_form.parent
+        model.assign_attributes(parent_params)
+
+        if @consent_form.parent.parental_responsibility == "no"
+          return(
+            redirect_to session_parent_interface_consent_form_cannot_consent_responsibility_path(
+                          @session,
+                          @consent_form
+                        )
+          )
+        end
+
+        if model.valid?
+          @consent_form.update!(form_step: current_step, parent: model)
+        end
       else
         @consent_form.assign_attributes(update_params)
       end
@@ -39,30 +57,9 @@ module ParentInterface
         )
       end
 
-      if current_step == :parent
-        if @consent_form.parental_responsibility == "no"
-          return(
-            redirect_to session_parent_interface_consent_form_cannot_consent_responsibility_path(
-                          @session,
-                          @consent_form
-                        )
-          )
-        end
-
-        # rename keys, taking parent_ out of the key
-        parent_params =
-          update_params
-            .except(:form_step)
-            .transform_keys { |key| key.to_s.gsub("parent_", "") }
-        (@consent_form.parent || @consent_form.build_parent).assign_attributes(
-          parent_params
-        )
-        @consent_form.parent.save! if @consent_form.valid?
-      end
-
       skip_to_confirm_or_next_health_question
 
-      render_wizard @consent_form
+      render_wizard model
     end
 
     private
@@ -87,14 +84,6 @@ module ParentInterface
           date_of_birth(1i)
         ],
         school: %i[is_this_their_school],
-        parent: %i[
-          parent_name
-          parent_relationship
-          parent_relationship_other
-          parental_responsibility
-          parent_email
-          parent_phone
-        ],
         contact_method: %i[contact_method contact_method_other],
         consent: %i[response],
         reason: %i[reason],
@@ -108,6 +97,19 @@ module ParentInterface
         .fetch(:consent_form, {})
         .permit(permitted_attributes)
         .merge(form_step: current_step)
+    end
+
+    def parent_params
+      params.fetch(:parent, {}).permit(
+        %i[
+          name
+          email
+          phone
+          relationship
+          relationship_other
+          parental_responsibility
+        ]
+      )
     end
 
     def health_answer_params
@@ -127,6 +129,10 @@ module ParentInterface
       @question_number = params.fetch(:question_number, "0").to_i
 
       @health_answer = @consent_form.health_answers[@question_number]
+    end
+
+    def set_parent
+      @consent_form.build_parent if @consent_form.parent.blank?
     end
 
     def validate_params

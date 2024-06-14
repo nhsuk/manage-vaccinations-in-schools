@@ -143,24 +143,6 @@ class ConsentForm < ApplicationRecord
               }
   end
 
-  on_wizard_step :parent do
-    validates :parent_name, presence: true
-    validates :parent_relationship, presence: true
-    validates :parent_relationship_other,
-              presence: true,
-              if: :parent_relationship_other?
-    validates :parent_email, presence: true, email: true
-    validates :parent_phone, phone: true, if: :parent_phone?
-  end
-
-  validates :parental_responsibility,
-            inclusion: {
-              in: %w[yes]
-            },
-            if: ->(object) do
-              object.parent_relationship_other? && object.form_step == :parent
-            end
-
   on_wizard_step :contact_method, exact: true do
     validates :contact_method, presence: true
     validates :contact_method_other, presence: true, if: :contact_method_other?
@@ -195,14 +177,6 @@ class ConsentForm < ApplicationRecord
 
   on_wizard_step :health_question do
     validate :health_answers_valid?
-  end
-
-  def parent_email=(str)
-    super str.nil? ? nil : str.to_s.downcase.strip
-  end
-
-  def parent_phone=(str)
-    super str.blank? ? nil : str.to_s.gsub(/\s/, "")
   end
 
   def address_postcode=(str)
@@ -349,7 +323,7 @@ class ConsentForm < ApplicationRecord
   end
 
   def ask_for_contact_method?
-    Flipper.enabled?(:parent_contact_method) && parent_phone.present?
+    Flipper.enabled?(:parent_contact_method) && parent&.phone.present?
   end
 
   # Because there are branching paths in the consent form journey, fields

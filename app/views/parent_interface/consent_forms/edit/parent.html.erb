@@ -7,23 +7,23 @@
 
 <%= h1 "About you" %>
 
-<%= form_for @consent_form, url: wizard_path, method: :put do |f| %>
+<%= form_for @consent_form.parent, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <%= f.govuk_text_field :parent_name, label: { text: "Your name" } %>
+  <%= f.govuk_text_field :name, label: { text: "Your name" } %>
 
-  <%= f.govuk_radio_buttons_fieldset(:parent_relationship,
+  <%= f.govuk_radio_buttons_fieldset(:relationship,
                                      legend: { size: "s",
                                                text: "Your relationship to the child" }) do %>
-    <%= f.govuk_radio_button :parent_relationship, "mother",
+    <%= f.govuk_radio_button :relationship, "mother",
                              label: { text: "Mum" }, link_errors: true %>
-    <%= f.govuk_radio_button :parent_relationship, "father",
+    <%= f.govuk_radio_button :relationship, "father",
                              label: { text: "Dad" } %>
-    <%= f.govuk_radio_button :parent_relationship, "guardian",
+    <%= f.govuk_radio_button :relationship, "guardian",
                              label: { text: "Guardian" } %>
-    <%= f.govuk_radio_button :parent_relationship, "other",
+    <%= f.govuk_radio_button :relationship, "other",
                              label: { text: "Other" } do %>
-      <%= f.govuk_text_field :parent_relationship_other,
+      <%= f.govuk_text_field :relationship_other,
                              # The radio button already has a consent-form-parent-relationship-other
                              # id, so we need to use a different one here.
                              label: { text: "Relationship to the child",
@@ -42,9 +42,9 @@
     <% end %>
   <% end %>
 
-  <%= f.govuk_text_field :parent_email, label: { text: "Email address" } %>
+  <%= f.govuk_text_field :email, label: { text: "Email address" } %>
 
-  <%= f.govuk_text_field :parent_phone,
+  <%= f.govuk_text_field :phone,
                          label: { text: "Phone number (optional)" },
                          hint: { text: "Someone might call you about your child’s vaccination" } %>
 

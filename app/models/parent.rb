@@ -34,11 +34,7 @@ class Parent < ApplicationRecord
             },
             presence: true
   validates :relationship_other, presence: true, if: -> { relationship_other? }
-  validates :parental_responsibility,
-            inclusion: {
-              in: %w[yes]
-            },
-            if: -> { relationship_other? }
+  validate :has_parental_responsibility, if: -> { relationship_other? }
   validates :contact_method_other,
             :email,
             :name,
@@ -70,5 +66,18 @@ class Parent < ApplicationRecord
 
   def email=(str)
     super str.nil? ? nil : str.to_s.downcase.strip
+  end
+
+  def has_parental_responsibility
+    return if parental_responsibility == "yes"
+    if parental_responsibility == "no" && validation_context != :manage_consent
+      return
+    end
+
+    if validation_context == :manage_consent
+      errors.add(:parental_responsibility, :inclusion)
+    else
+      errors.add(:parental_responsibility, :inclusion_on_consent_form)
+    end
   end
 end
