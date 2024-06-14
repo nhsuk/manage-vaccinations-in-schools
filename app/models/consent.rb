@@ -149,16 +149,8 @@ class Consent < ApplicationRecord
 
   def self.from_consent_form!(consent_form, patient_session)
     ActiveRecord::Base.transaction do
-      parent =
-        Parent.create!(
-          name: consent_form.parent_name,
-          email: consent_form.parent_email,
-          phone: consent_form.parent_phone,
-          relationship: consent_form.parent_relationship,
-          relationship_other: consent_form.parent_relationship_other,
-          contact_method: consent_form.contact_method,
-          contact_method_other: consent_form.contact_method_other
-        )
+      parent = consent_form.parent.dup
+
       consent =
         create!(
           consent_form:,

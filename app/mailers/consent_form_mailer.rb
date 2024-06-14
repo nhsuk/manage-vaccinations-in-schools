@@ -46,7 +46,7 @@ class ConsentFormMailer < ApplicationMailer
   end
 
   def to
-    @consent_form&.parent_email || @consent.parent.email
+    @consent_form&.parent&.email || @consent.parent.email
   end
 
   def consent_form_personalisation
