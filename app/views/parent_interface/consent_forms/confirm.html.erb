@@ -142,7 +142,7 @@
   <%= govuk_summary_list classes: "app-summary-list--no-bottom-border" do |summary_list|
         summary_list.with_row do |row|
           row.with_key { "Your name" }
-          row.with_value { @consent_form.parent_name }
+          row.with_value { @consent_form.parent.name }
           row.with_action(text: "Change",
                           href: change_link[:parent],
                           visually_hidden_text: "your name")
@@ -150,11 +150,7 @@
       
         summary_list.with_row do |row|
           row.with_key { "Relationship" }
-          row.with_value {
-            @consent_form
-              .human_enum_name(:parent_relationship)
-              .capitalize
-          }
+          row.with_value { @consent_form.parent.relationship_label.capitalize }
           row.with_action(text: "Change",
                           href: change_link[:parent],
                           visually_hidden_text: "your relationship")
@@ -162,16 +158,16 @@
       
         summary_list.with_row do |row|
           row.with_key { "Email address" }
-          row.with_value { @consent_form.parent_email }
+          row.with_value { @consent_form.parent.email }
           row.with_action(text: "Change",
                           href: change_link[:parent],
                           visually_hidden_text: "your email")
         end
       
-        if @consent_form.parent_phone.present?
+        if @consent_form.parent.phone.present?
           summary_list.with_row do |row|
             row.with_key { "Phone number" }
-            row.with_value { @consent_form.parent_phone }
+            row.with_value { @consent_form.parent.phone }
             row.with_action(text: "Change",
                             href: change_link[:parent],
                             visually_hidden_text: "your phone")

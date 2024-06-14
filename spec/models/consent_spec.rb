@@ -90,13 +90,11 @@ RSpec.describe Consent do
         )
 
         expect(consent.parent).to have_attributes(
-          name: consent_form.parent_name,
-          email: consent_form.parent_email,
-          phone: consent_form.parent_phone,
-          relationship: consent_form.parent_relationship,
-          relationship_other: consent_form.parent_relationship_other,
-          contact_method: consent_form.contact_method,
-          contact_method_other: consent_form.contact_method_other
+          consent_form.parent.attributes.except(
+            "id",
+            "created_at",
+            "updated_at"
+          )
         )
       end
 
