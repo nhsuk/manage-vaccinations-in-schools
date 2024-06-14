@@ -1,2 +1,6 @@
 allow_dev_phone_numbers: true
 web_concurrency: 0
+
+# NHS Care Identity Service OIDC integration configuration, used by Omniauth via Devise.
+cis2:
+  issuer: "https://am.nhsdev.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/oidc"

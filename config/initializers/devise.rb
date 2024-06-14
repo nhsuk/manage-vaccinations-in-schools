@@ -273,6 +273,19 @@ Devise.setup do |config|
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
   if Settings.cis2.present?
+    redirect_uri =
+      begin
+        host =
+          if Rails.env.development?
+            "http://localhost:4000"
+          elsif Settings.is_review
+            "https://#{ENV["HEROKU_APP_NAME"]}.herokuapp.com"
+          else
+            "https://#{Settings.host}"
+          end
+        "#{host}/users/auth/cis2/callback"
+      end
+
     config.omniauth :openid_connect,
                     {
                       name: :cis2,
@@ -291,11 +304,10 @@ Devise.setup do |config|
                       client_options: {
                         port: 443,
                         scheme: "https",
-                        host: "am.nhsdev.auth-ptl.cis2.spineservices.nhs.uk",
+                        host: Settings.cis2.host,
                         identifier: Settings.cis2.client_id,
                         secret: Settings.cis2.secret,
                         redirect_uri:
-                          "http://localhost:4000/users/auth/cis2/callback"
                       }
                     }
   end
