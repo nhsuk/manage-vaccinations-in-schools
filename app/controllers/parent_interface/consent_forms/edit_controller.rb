@@ -39,14 +39,25 @@ module ParentInterface
         )
       end
 
-      if current_step == :parent &&
-           @consent_form.parental_responsibility == "no"
-        return(
-          redirect_to session_parent_interface_consent_form_cannot_consent_responsibility_path(
-                        @session,
-                        @consent_form
-                      )
+      if current_step == :parent
+        if @consent_form.parental_responsibility == "no"
+          return(
+            redirect_to session_parent_interface_consent_form_cannot_consent_responsibility_path(
+                          @session,
+                          @consent_form
+                        )
+          )
+        end
+
+        # rename keys, taking parent_ out of the key
+        parent_params =
+          update_params
+            .except(:form_step)
+            .transform_keys { |key| key.to_s.gsub("parent_", "") }
+        (@consent_form.parent || @consent_form.build_parent).assign_attributes(
+          parent_params
         )
+        @consent_form.parent.save! if @consent_form.valid?
       end
 
       skip_to_confirm_or_next_health_question
