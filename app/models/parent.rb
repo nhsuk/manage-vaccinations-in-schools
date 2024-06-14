@@ -67,4 +67,8 @@ class Parent < ApplicationRecord
   def phone=(str)
     super str.blank? ? nil : str.to_s.gsub(/\s/, "")
   end
+
+  def email=(str)
+    super str.nil? ? nil : str.to_s.downcase.strip
+  end
 end

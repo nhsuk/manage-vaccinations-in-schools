@@ -70,4 +70,16 @@ RSpec.describe Parent do
       expect(subject.phone).to eq(nil)
     end
   end
+
+  describe "#email=" do
+    it "strips whitespace and downcases the email" do
+      subject = build(:parent, email: "  joHn@doe.com ")
+      expect(subject.email).to eq("john@doe.com")
+    end
+
+    it "leaves nil as nil" do
+      subject = build(:parent, email: nil)
+      expect(subject.email).to eq(nil)
+    end
+  end
 end
