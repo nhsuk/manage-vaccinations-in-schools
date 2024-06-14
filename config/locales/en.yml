@@ -492,6 +492,7 @@ en:
               too_long: Enter a relationship that is less than 300 characters long
             parental_responsibility:
               inclusion: Choose whether there is parental responsibility
+              inclusion_on_consent_form: You need parental responsibility to give consent
         user:
           attributes:
             email:

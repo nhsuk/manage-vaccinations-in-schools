@@ -50,7 +50,6 @@ require "rails_helper"
 RSpec.describe ConsentForm, type: :model do
   describe "Validations" do
     let(:use_common_name) { false }
-    let(:parent_relationship) { nil }
     let(:contact_method) { nil }
     let(:response) { nil }
     let(:reason) { nil }
@@ -62,7 +61,6 @@ RSpec.describe ConsentForm, type: :model do
         :consent_form,
         form_step:,
         use_common_name:,
-        parent_relationship:,
         contact_method:,
         response:,
         reason:,
@@ -77,15 +75,8 @@ RSpec.describe ConsentForm, type: :model do
 
       it { should validate_presence_of(:first_name).on(:update) }
       it { should validate_presence_of(:last_name).on(:update) }
-
       it { should validate_presence_of(:date_of_birth).on(:update) }
-
       it { should_not validate_presence_of(:is_this_their_school).on(:update) }
-
-      it { should validate_presence_of(:parent_name).on(:update) }
-      it { should validate_presence_of(:parent_relationship).on(:update) }
-      it { should validate_presence_of(:parent_email).on(:update) }
-
       it { should validate_presence_of(:response).on(:update) }
     end
 
@@ -142,23 +133,6 @@ RSpec.describe ConsentForm, type: :model do
       end
 
       it { should_not validate_presence_of(:is_this_their_school).on(:update) }
-
-      it { should validate_presence_of(:parent_name).on(:update) }
-      it { should validate_presence_of(:parent_relationship).on(:update) }
-      it { should validate_presence_of(:parent_email).on(:update) }
-
-      it { should_not allow_value("invalid").for(:parent_email).on(:update) }
-      it { should allow_value("foo@foo.com").for(:parent_email).on(:update) }
-
-      it { should_not allow_value("invalid").for(:parent_phone).on(:update) }
-
-      context "when parent_relationship is 'other'" do
-        let(:parent_relationship) { "other" }
-
-        it do
-          should validate_presence_of(:parent_relationship_other).on(:update)
-        end
-      end
     end
 
     context "when form_step is :consent" do
@@ -167,7 +141,6 @@ RSpec.describe ConsentForm, type: :model do
       context "runs validations from previous steps" do
         it { should validate_presence_of(:first_name).on(:update) }
         it { should validate_presence_of(:date_of_birth).on(:update) }
-        it { should validate_presence_of(:parent_name).on(:update) }
       end
 
       it { should validate_presence_of(:response).on(:update) }
@@ -180,7 +153,6 @@ RSpec.describe ConsentForm, type: :model do
       context "runs validations from previous steps" do
         it { should validate_presence_of(:first_name).on(:update) }
         it { should validate_presence_of(:date_of_birth).on(:update) }
-        it { should validate_presence_of(:parent_name).on(:update) }
       end
 
       it { should validate_presence_of(:reason).on(:update) }
@@ -194,7 +166,6 @@ RSpec.describe ConsentForm, type: :model do
       context "runs validations from previous steps" do
         it { should validate_presence_of(:first_name).on(:update) }
         it { should validate_presence_of(:date_of_birth).on(:update) }
-        it { should validate_presence_of(:parent_name).on(:update) }
       end
 
       it { should validate_presence_of(:reason_notes).on(:update) }
@@ -211,7 +182,6 @@ RSpec.describe ConsentForm, type: :model do
       context "runs validations from previous steps" do
         it { should validate_presence_of(:first_name).on(:update) }
         it { should validate_presence_of(:date_of_birth).on(:update) }
-        it { should validate_presence_of(:parent_name).on(:update) }
         it { should validate_presence_of(:reason).on(:update) }
       end
 
@@ -231,7 +201,6 @@ RSpec.describe ConsentForm, type: :model do
       context "runs validations from previous steps" do
         it { should validate_presence_of(:first_name).on(:update) }
         it { should validate_presence_of(:date_of_birth).on(:update) }
-        it { should validate_presence_of(:parent_name).on(:update) }
       end
 
       it { should validate_presence_of(:gp_response).on(:update) }
@@ -250,7 +219,6 @@ RSpec.describe ConsentForm, type: :model do
       context "runs validations from previous steps" do
         it { should validate_presence_of(:first_name).on(:update) }
         it { should validate_presence_of(:date_of_birth).on(:update) }
-        it { should validate_presence_of(:parent_name).on(:update) }
         it { should validate_presence_of(:gp_response).on(:update) }
       end
 
@@ -266,7 +234,6 @@ RSpec.describe ConsentForm, type: :model do
     context "when form_step is :health_question" do
       let(:response) { "given" }
       let(:gp_response) { "yes" }
-      let(:parent_relationship) { "mother" }
       let(:contact_method) { "any" }
       let(:form_step) { :health_question }
       let(:health_answers) do
@@ -293,7 +260,6 @@ RSpec.describe ConsentForm, type: :model do
       describe "validations from previous steps" do
         it { should validate_presence_of(:first_name).on(:update) }
         it { should validate_presence_of(:date_of_birth).on(:update) }
-        it { should validate_presence_of(:parent_name).on(:update) }
         it { should validate_presence_of(:gp_response).on(:update) }
         it { should validate_presence_of(:address_line_1).on(:update) }
         it { should validate_presence_of(:address_town).on(:update) }
@@ -344,7 +310,8 @@ RSpec.describe ConsentForm, type: :model do
   describe "#form_steps" do
     it "asks for contact method if phone is specified" do
       Flipper.enable(:parent_contact_method)
-      consent_form = build(:consent_form, parent_phone: "0123456789")
+      consent_form =
+        build(:consent_form, parent: build(:parent, phone: "0123456789"))
       expect(consent_form.form_steps).to include(:contact_method)
     end
 
@@ -427,18 +394,6 @@ RSpec.describe ConsentForm, type: :model do
     end
   end
 
-  describe "#parent_email=" do
-    it "strips whitespace and downcases the email" do
-      consent_form = build(:consent_form, parent_email: "  joHn@doe.com ")
-      expect(consent_form.parent_email).to eq("john@doe.com")
-    end
-
-    it "leaves nil as nil" do
-      consent_form = build(:consent_form, parent_email: nil)
-      expect(consent_form.parent_email).to eq(nil)
-    end
-  end
-
   describe "#address_postcode=" do
     it "formats the postcode" do
       consent_form = build(:consent_form, address_postcode: "sw1a1aa")
@@ -448,23 +403,6 @@ RSpec.describe ConsentForm, type: :model do
     it "leaves nil as nil" do
       consent_form = build(:consent_form, address_postcode: nil)
       expect(consent_form.address_postcode).to eq(nil)
-    end
-  end
-
-  describe "#parent_phone=" do
-    it "strips non-numeric characters" do
-      consent_form = build(:consent_form, parent_phone: "01234 567890")
-      expect(consent_form.parent_phone).to eq("01234567890")
-    end
-
-    it "leaves nil as nil" do
-      consent_form = build(:consent_form, parent_phone: nil)
-      expect(consent_form.parent_phone).to eq(nil)
-    end
-
-    it "sets the phone number to nil if it's blank" do
-      consent_form = build(:consent_form, parent_phone: "")
-      expect(consent_form.parent_phone).to eq(nil)
     end
   end
 
