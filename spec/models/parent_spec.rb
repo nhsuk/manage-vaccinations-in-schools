@@ -53,4 +53,21 @@ RSpec.describe Parent do
       )
     end
   end
+
+  describe "#phone=" do
+    it "strips non-numeric characters" do
+      subject = build(:parent, phone: "01234 567890")
+      expect(subject.phone).to eq("01234567890")
+    end
+
+    it "leaves nil as nil" do
+      subject = build(:parent, phone: nil)
+      expect(subject.phone).to eq(nil)
+    end
+
+    it "sets the phone number to nil if it's blank" do
+      subject = build(:parent, phone: " ")
+      expect(subject.phone).to eq(nil)
+    end
+  end
 end

@@ -63,4 +63,8 @@ class Parent < ApplicationRecord
       human_enum_name(:contact_method)
     end
   end
+
+  def phone=(str)
+    super str.blank? ? nil : str.to_s.gsub(/\s/, "")
+  end
 end
