@@ -16,6 +16,8 @@
 class Parent < ApplicationRecord
   audited
 
+  before_save :reset_unused_fields
+
   has_one :patient
 
   attr_accessor :parental_responsibility
@@ -79,5 +81,16 @@ class Parent < ApplicationRecord
     else
       errors.add(:parental_responsibility, :inclusion_on_consent_form)
     end
+  end
+
+  private
+
+  def reset_unused_fields
+    if phone.blank?
+      self.contact_method = nil
+      self.contact_method_other = nil
+    end
+
+    self.relationship_other = nil if relationship != "other"
   end
 end
