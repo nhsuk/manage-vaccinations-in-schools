@@ -82,4 +82,26 @@ RSpec.describe Parent do
       expect(subject.email).to eq(nil)
     end
   end
+
+  describe "#reset_unused_fields" do
+    it "resets contact method fields when phone number is removed" do
+      subject =
+        build(:parent, contact_method: :other, contact_method_other: "foo")
+      subject.update!(phone: nil)
+      expect(subject.contact_method).to be_nil
+      expect(subject.contact_method_other).to be_nil
+    end
+
+    it "resets relationship_other if relationship is updated" do
+      subject =
+        build(
+          :parent,
+          relationship: "other",
+          relationship_other: "granddad",
+          parental_responsibility: "yes"
+        )
+      subject.update!(relationship: "mother")
+      expect(subject.relationship_other).to be_nil
+    end
+  end
 end
