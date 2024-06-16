@@ -67,8 +67,6 @@ class ConsentForm < ApplicationRecord
   has_one :campaign, through: :session
   has_one :team, through: :campaign
 
-  enum :parent_relationship, %w[mother father guardian other], prefix: true
-  enum :contact_method, %w[text voice other any], prefix: true
   enum :response, %w[given refused not_provided], prefix: "consent"
   enum :reason,
        %w[
@@ -227,11 +225,7 @@ class ConsentForm < ApplicationRecord
   end
 
   def who_responded
-    if parent_relationship == "other"
-      parent_relationship_other
-    else
-      human_enum_name(:parent_relationship)
-    end.capitalize
+    parent&.relationship_label
   end
 
   def gelatine_content_status_in_vaccines
@@ -326,9 +320,6 @@ class ConsentForm < ApplicationRecord
   # changes their mind and goes down a different path.
   def reset_unused_fields
     self.common_name = nil unless use_common_name?
-
-    self.contact_method = nil unless ask_for_contact_method?
-    self.contact_method_other = nil unless contact_method_other?
 
     if consent_refused?
       self.gp_response = nil

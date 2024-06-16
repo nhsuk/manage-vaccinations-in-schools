@@ -53,14 +53,7 @@ FactoryBot.define do
     last_name { Faker::Name.last_name }
     use_common_name { false }
     date_of_birth { Faker::Date.birthday(min_age: 3, max_age: 9) }
-    parent_name { Faker::Name.name }
-    parent_relationship do
-      ConsentForm.parent_relationships.keys.first(2).sample(random:)
-    end
-    parent_email { Faker::Internet.email name: parent_name.gsub(".", "") }
-    parent_phone { "07700900#{random.rand(0..999).to_s.rjust(3, "0")}" }
     parent { create(:parent, :randomly_mum_or_dad) }
-    contact_method { "any" }
     response { "given" }
     gp_response { "yes" }
     gp_name { Faker::Name.name }
