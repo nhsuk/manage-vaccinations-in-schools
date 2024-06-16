@@ -25,10 +25,6 @@ class AppMatchingCriteriaComponent < ViewComponent::Base
   end
 
   def parent_guardian_or_other
-    if @consent_form.parent_relationship == "other"
-      @consent_form.human_enum_name(:parent_relationship_other)
-    else
-      @consent_form.human_enum_name(:parent_relationship)
-    end
+    @consent_form.parent.relationship_label
   end
 end

@@ -50,7 +50,6 @@ require "rails_helper"
 RSpec.describe ConsentForm, type: :model do
   describe "Validations" do
     let(:use_common_name) { false }
-    let(:contact_method) { nil }
     let(:response) { nil }
     let(:reason) { nil }
     let(:gp_response) { nil }
@@ -61,7 +60,6 @@ RSpec.describe ConsentForm, type: :model do
         :consent_form,
         form_step:,
         use_common_name:,
-        contact_method:,
         response:,
         reason:,
         gp_response:,
@@ -234,7 +232,6 @@ RSpec.describe ConsentForm, type: :model do
     context "when form_step is :health_question" do
       let(:response) { "given" }
       let(:gp_response) { "yes" }
-      let(:contact_method) { "any" }
       let(:form_step) { :health_question }
       let(:health_answers) do
         [
@@ -308,13 +305,6 @@ RSpec.describe ConsentForm, type: :model do
   end
 
   describe "#form_steps" do
-    it "asks for contact method if phone is specified" do
-      Flipper.enable(:parent_contact_method)
-      consent_form =
-        build(:consent_form, parent: build(:parent, phone: "0123456789"))
-      expect(consent_form.form_steps).to include(:contact_method)
-    end
-
     it "does not ask for reason for refusal when patient gives consent" do
       consent_form = build(:consent_form, response: "given")
       expect(consent_form.form_steps).not_to include(:reason)
@@ -762,12 +752,6 @@ RSpec.describe ConsentForm, type: :model do
     consent_form.update!(response: "given")
     expect(consent_form.reason).to be_nil
     expect(consent_form.reason_notes).to be_nil
-
-    consent_form =
-      build(:consent_form, contact_method: "other", contact_method_other: "foo")
-    consent_form.update!(parent_phone: nil)
-    expect(consent_form.contact_method).to be_nil
-    expect(consent_form.contact_method_other).to be_nil
 
     consent_form = build(:consent_form, gp_response: "yes", gp_name: "Dr. Foo")
     consent_form.update!(gp_response: "no")

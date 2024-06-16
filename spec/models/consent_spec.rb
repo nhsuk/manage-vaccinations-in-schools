@@ -67,9 +67,7 @@ RSpec.describe Consent do
   describe "#from_consent_form!" do
     describe "the created consent object" do
       let(:session) { create(:session) }
-      let(:consent_form) do
-        create(:consent_form, session:, contact_method: :voice)
-      end
+      let(:consent_form) { create(:consent_form, session:) }
       let(:patient_session) { create(:patient_session, session:) }
 
       subject(:consent) do

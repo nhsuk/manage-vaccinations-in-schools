@@ -82,11 +82,7 @@ class AppPatientDetailsComponent < ViewComponent::Base
   end
 
   def parent_guardian_or_other
-    if @object.parent_relationship == "other"
-      @object.human_enum_name(:parent_relationship_other)
-    else
-      @object.human_enum_name(:parent_relationship)
-    end
+    @object&.parent&.relationship_label
   end
 
   def address_present?
