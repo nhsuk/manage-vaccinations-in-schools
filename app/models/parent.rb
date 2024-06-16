@@ -45,6 +45,7 @@ class Parent < ApplicationRecord
             length: {
               maximum: 300
             }
+  validates :contact_method_other, presence: true, if: :contact_method_other?
 
   def relationship_label
     if relationship == "other"

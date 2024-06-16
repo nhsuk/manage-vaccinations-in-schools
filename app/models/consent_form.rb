@@ -143,11 +143,6 @@ class ConsentForm < ApplicationRecord
               }
   end
 
-  on_wizard_step :contact_method, exact: true do
-    validates :contact_method, presence: true
-    validates :contact_method_other, presence: true, if: :contact_method_other?
-  end
-
   on_wizard_step :consent do
     validates :response, presence: true
   end
