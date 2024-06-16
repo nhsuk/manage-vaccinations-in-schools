@@ -446,11 +446,6 @@ en:
             parent_phone:
               invalid: Enter a valid phone number, like 07700 900 000
               too_long: Enter a phone number that is less than 300 characters long
-            contact_method:
-              inclusion: Choose a contact method
-            contact_method_other:
-              blank: Enter details about how to contact you
-              too_long: Enter details that are less than 300 characters long
             response:
               blank: Choose if you consent
             reason:
@@ -477,6 +472,11 @@ en:
               blank: Enter a postcode
         parent:
           attributes:
+            contact_method:
+              inclusion: Choose a contact method
+            contact_method_other:
+              blank: Enter details about how to contact you
+              too_long: Enter details that are less than 300 characters long
             name:
               blank: Enter a name
               too_long: Enter a name that is less than 300 characters long

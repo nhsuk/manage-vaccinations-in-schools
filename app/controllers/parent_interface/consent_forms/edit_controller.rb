@@ -25,7 +25,7 @@ module ParentInterface
           form_step: current_step,
           health_question_number: @question_number
         )
-      elsif current_step == :parent
+      elsif current_step.in?(%i[parent contact_method])
         model = @consent_form.parent
         model.assign_attributes(parent_params)
 
@@ -107,6 +107,8 @@ module ParentInterface
           phone
           relationship
           relationship_other
+          contact_method
+          contact_method_other
           parental_responsibility
         ]
       )
