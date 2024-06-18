@@ -98,13 +98,15 @@ GEM
       activerecord (>= 3.2, < 8.0)
       rake (>= 10.4, < 14.0)
     asciidoctor (2.0.23)
-    asciidoctor-diagram (2.3.0)
+    asciidoctor-diagram (2.3.1)
       asciidoctor (>= 1.5.7, < 3.x)
       asciidoctor-diagram-ditaamini (~> 1.0)
       asciidoctor-diagram-plantuml (~> 1.2021)
       rexml
+    asciidoctor-diagram-batik (1.17)
     asciidoctor-diagram-ditaamini (1.0.3)
-    asciidoctor-diagram-plantuml (1.2024.0)
+    asciidoctor-diagram-plantuml (1.2024.5)
+      asciidoctor-diagram-batik (~> 1.17)
     ast (2.4.2)
     awesome_print (1.9.2)
     backport (1.2.0)
@@ -389,7 +391,7 @@ GEM
       railties (>= 5.2)
     reverse_markdown (2.1.1)
       nokogiri
-    rexml (3.2.9)
+    rexml (3.3.0)
       strscan
     rladr (1.2.0)
     rspec (3.13.0)
