@@ -14,7 +14,8 @@
   <%= page_title %>
 <% end %>
 
-<%= render AppCardComponent.new(heading: "Gillick assessment details") do %>
+<%= render AppCardComponent.new do |c| %>
+  <% c.with_heading { "Gillick assessment details" } %>
   <%= govuk_summary_list classes: "app-summary-list--no-bottom-border nhsuk-u-margin-0" do |summary_list|
         summary_list.with_row do |row|
           row.with_key { "Are they Gillick competent?" }

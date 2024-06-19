@@ -1,4 +1,5 @@
-<%= render AppCardComponent.new(heading:) do %>
+<%= render AppCardComponent.new do |c| %>
+  <% c.with_heading { heading } %>
   <%= govuk_table do |table| %>
     <%= table.with_head do |head| %>
       <%= head.with_row do |row| %>

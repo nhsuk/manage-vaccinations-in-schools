@@ -1,4 +1,5 @@
-<%= render AppCardComponent.new(heading: "Session") do %>
+<%= render AppCardComponent.new do |c| %>
+  <% c.with_heading { "Session" } %>
   <%= govuk_summary_list classes: "app-summary-list--no-bottom-border" do |summary_list|
         summary_list.with_row do |row|
           row.with_key { "School" }

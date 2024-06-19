@@ -10,12 +10,14 @@
      render AppSimpleStatusBannerComponent.new(patient_session:)
    end %>
 
-<%= render AppCardComponent.new(heading: "Child details") do %>
+<%= render AppCardComponent.new do |c| %>
+  <% c.with_heading { "Child details" } %>
   <%= render AppPatientDetailsComponent.new(patient:, session:) %>
 <% end %>
 
 <% if gillick_assessment_applicable? %>
-  <%= render AppCardComponent.new(heading: "Gillick assessment") do %>
+  <%= render AppCardComponent.new do |c| %>
+    <% c.with_heading { "Gillick assessment" } %>
     <% if gillick_assessment_recorded? %>
       <%= govuk_summary_list(
             classes: %w[app-summary-list--no-bottom-border
@@ -48,20 +50,25 @@
   <% end %>
 <% end %>
 
-<%= render AppCardComponent.new(heading: "Consent") do %>
+<%= render AppCardComponent.new do |c| %>
+  <% c.with_heading { "Consent" } %>
   <%= render AppConsentComponent.new(patient_session:, section:, tab:) %>
 <% end %>
 
 <% if display_health_questions? %>
-  <%= render AppCardComponent.new(heading: "All answers to health questions") do
-        render AppHealthQuestionsComponent.new(
+  <%= render AppCardComponent.new do |c| %>
+    <% c.with_heading { "All answers to health questions" } %>
+    <%= render AppHealthQuestionsComponent.new(
           consents: @patient_session.consents,
-        )
-      end %>
+        ) %>
+  <% end %>
 <% end %>
 
-<%= render AppCardComponent.new(heading: "Triage notes") do %>
-  <%= render AppTriageNotesComponent.new(patient_session:) %>
+<% if @patient_session.triage.any? %>
+  <%= render AppCardComponent.new do |c| %>
+    <% c.with_heading { "Triage notes" } %>
+    <%= render AppTriageNotesComponent.new(patient_session:) %>
+  <% end %>
 <% end %>
 
 <% if @patient_session.next_step == :triage %>

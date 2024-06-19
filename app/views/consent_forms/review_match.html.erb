@@ -21,7 +21,8 @@
           patient: @patient_session.patient,
         ) %>
 
-    <%= render AppCardComponent.new(heading: "Consent response") do
+    <%= render AppCardComponent.new do |c|
+          c.with_heading { "Consent response" }
           render AppConsentSummaryComponent.new(
             name: @consent_form.parent_name,
             relationship: @consent_form.who_responded,
