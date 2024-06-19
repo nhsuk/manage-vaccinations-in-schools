@@ -19,12 +19,6 @@ RSpec.describe AppCardComponent, type: :component do
     it { should_not have_css(".nhsuk-card__content") }
   end
 
-  context "larger heading" do
-    let(:component) { described_class.new(heading:, heading_size: "xl") }
-
-    it { should have_css("h2.nhsuk-heading-xl", text: heading) }
-  end
-
   context "feature card" do
     let(:component) { described_class.new(heading:, feature: true) }
 
