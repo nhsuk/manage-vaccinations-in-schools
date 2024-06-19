@@ -2,16 +2,20 @@ class AppCardComponent < ViewComponent::Base
   erb_template <<-ERB
     <div class="<%= card_classes %>">
       <div class="<%= content_classes %>">
-        <% if @heading.present? %>
+        <% if heading.present? %>
           <h2 class="<%= heading_classes %>">
             <% if @link_to.present? %>
               <%= link_to @link_to, class: "nhsuk-card__link" do %>
-                <%= @heading %>
+                <%= heading %>
               <% end %>
             <% else %>
-              <%= @heading %>
+              <%= heading %>
             <% end %>
           </h2>
+        <% end %>
+
+        <% if description.present? %>
+          <p class="nhsuk-card__description"><%= description %></p>
         <% end %>
 
         <%= content %>
@@ -19,17 +23,14 @@ class AppCardComponent < ViewComponent::Base
     </div>
   ERB
 
-  def initialize(heading: nil, feature: false, colour: nil, link_to: nil)
+  renders_one :heading
+  renders_one :description
+
+  def initialize(colour: nil, link_to: nil)
     super
 
-    @heading = heading
-    @feature = feature
     @link_to = link_to
     @colour = colour
-  end
-
-  def render?
-    content.present?
   end
 
   private
@@ -38,7 +39,7 @@ class AppCardComponent < ViewComponent::Base
     [
       "nhsuk-card",
       "app-card",
-      ("nhsuk-card--feature" if @feature),
+      ("nhsuk-card--feature" if @colour.present?),
       ("app-card--#{@colour}" if @colour.present?),
       ("nhsuk-card--clickable" if @link_to.present?)
     ].compact.join(" ")
@@ -48,7 +49,7 @@ class AppCardComponent < ViewComponent::Base
     [
       "nhsuk-card__content",
       "app-card__content",
-      ("nhsuk-card__content--feature" if @feature)
+      ("nhsuk-card__content--feature" if @colour.present?)
     ].compact.join(" ")
   end
 
@@ -56,7 +57,7 @@ class AppCardComponent < ViewComponent::Base
     [
       "nhsuk-card__heading",
       "nhsuk-heading-m",
-      ("nhsuk-card__heading--feature" if @feature)
+      ("nhsuk-card__heading--feature" if @colour.present?)
     ].compact.join(" ")
   end
 end
