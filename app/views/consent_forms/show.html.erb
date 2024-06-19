@@ -17,7 +17,8 @@
   <%= render AppMatchingCriteriaComponent.new(consent_form: @consent_form) %>
 <% end %>
 
-<%= render AppCardComponent.new(heading: "Children in this cohort") do
+<%= render AppCardComponent.new do |c|
+      c.with_heading { "Children in this cohort" }
       if @patient_sessions.count > 0
         render AppPatientTableComponent.new(
           patient_sessions: @patient_sessions,

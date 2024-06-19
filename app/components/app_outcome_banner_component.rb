@@ -9,7 +9,8 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def call
-    render AppCardComponent.new(heading:, feature: true, colour:) do
+    render AppCardComponent.new(colour:) do |c|
+      c.with_heading { heading }
       govuk_summary_list(classes: "app-summary-list--no-bottom-border", rows:)
     end
   end
