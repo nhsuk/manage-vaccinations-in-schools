@@ -1,67 +1,37 @@
 require "rails_helper"
 
 RSpec.describe AppCardComponent, type: :component do
-  let(:heading) { "A Heading" }
-  let(:body) { "A Body" }
-  let(:component) { described_class.new(heading:) }
-
   subject { page }
 
-  before { render_inline(component) { body } }
+  context "with a title" do
+    before { render_inline(described_class.new) { _1.with_heading { "Test" } } }
 
-  it { should have_css(".nhsuk-card") }
-  it { should have_css("h2.nhsuk-card__heading", text: heading) }
-  it { should have_css(".nhsuk-card__content", text: "A Body") }
-
-  context "no content is provided" do
-    let(:body) { nil }
-
-    it { should_not have_css(".nhsuk-card__content") }
+    it { should have_css("h2.nhsuk-heading-m", text: "Test") }
   end
 
-  context "feature card" do
-    let(:component) { described_class.new(heading:, feature: true) }
-
-    describe "card_classes" do
-      subject { component.send(:card_classes) }
-
-      it { should include "nhsuk-card--feature" }
+  context "with a description" do
+    before do
+      render_inline(described_class.new) { _1.with_description { "Test" } }
     end
 
-    describe "content_classes" do
-      subject { component.send(:content_classes) }
-
-      it { should include "nhsuk-card__content--feature" }
-    end
-
-    describe "heading_classes" do
-      subject { component.send(:heading_classes) }
-
-      it { should include "nhsuk-card__heading--feature" }
-    end
+    it { should have_css("p.nhsuk-card__description", text: "Test") }
   end
 
-  context "coloured card" do
-    let(:component) { described_class.new(heading:, colour: "purple") }
-
-    describe "card_classes" do
-      subject { component.send(:card_classes) }
-
-      it { should include "app-card--purple" }
+  context "with a link" do
+    before do
+      render_inline(described_class.new(link_to: "foo")) do
+        _1.with_heading { "Test" }
+      end
     end
+
+    it { should have_css(".nhsuk-card--clickable") }
+    it { should have_link(href: "foo") }
   end
 
-  context "link_to is specified" do
-    let(:component) do
-      described_class.new(heading:, link_to: "http://example.com")
-    end
+  context "with a colour" do
+    before { render_inline(described_class.new(colour: "red")) }
 
-    describe "card_classes" do
-      subject { component.send(:card_classes) }
-
-      it { should include "nhsuk-card--clickable" }
-    end
-
-    it { is_expected.to have_link(href: "http://example.com") }
+    it { should have_css(".nhsuk-card--feature") }
+    it { should have_css(".app-card--red") }
   end
 end
