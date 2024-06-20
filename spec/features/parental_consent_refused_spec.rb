@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Parental consent" do
+describe "Parental consent" do
   include EmailExpectations
 
   before { Flipper.enable(:parent_contact_method) }

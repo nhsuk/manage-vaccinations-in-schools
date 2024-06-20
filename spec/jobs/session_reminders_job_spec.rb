@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe SessionRemindersJob do
+describe SessionRemindersJob do
   before do
     Flipper.enable(:scheduled_emails)
     ActiveJob::Base.queue_adapter.enqueued_jobs.clear

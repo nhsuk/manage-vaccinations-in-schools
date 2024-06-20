@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe SessionRemindersBatchJob, type: :job do
+describe SessionRemindersBatchJob, type: :job do
   before { ActionMailer::Base.deliveries.clear }
 
   it "sends emails to all patients' parents" do

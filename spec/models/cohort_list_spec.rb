@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe CohortList, type: :model do
+describe CohortList, type: :model do
   subject(:cohort_list) { described_class.new(csv:, team:) }
 
   let(:team) { create(:team, locations: [location]) }

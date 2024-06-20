@@ -22,7 +22,7 @@
 #
 require "rails_helper"
 
-RSpec.describe PatientSession do
+describe PatientSession do
   describe "#triage" do
     it "returns the triage records in ascending order" do
       later_triage = create(:triage)

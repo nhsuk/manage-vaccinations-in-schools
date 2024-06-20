@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Batches" do
+describe "Batches" do
   before { Timecop.freeze(Time.zone.local(2024, 2, 29)) }
   after { Timecop.return }
 

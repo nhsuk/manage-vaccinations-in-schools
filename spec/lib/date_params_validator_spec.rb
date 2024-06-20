@@ -1,7 +1,7 @@
 require "rails_helper"
 require "date"
 
-RSpec.describe DateParamsValidator do
+describe DateParamsValidator do
   let(:dummy_class) do
     Class.new do
       attr_accessor :errors

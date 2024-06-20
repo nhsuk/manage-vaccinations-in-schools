@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AppCardComponent, type: :component do
+describe AppCardComponent, type: :component do
   subject { page }
 
   context "with a title" do

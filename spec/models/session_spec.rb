@@ -20,7 +20,7 @@
 #
 require "rails_helper"
 
-RSpec.describe Session do
+describe Session do
   describe "validations" do
     context "when form_step is location" do
       let(:form_step) { :location }

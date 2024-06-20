@@ -15,7 +15,7 @@
 
 require "rails_helper"
 
-RSpec.describe Vaccine do
+describe Vaccine do
   describe "#contains_gelatine?" do
     it "returns true if the vaccine is a nasal flu vaccine" do
       vaccine = FactoryBot.build(:vaccine, :fluenz_tetra)

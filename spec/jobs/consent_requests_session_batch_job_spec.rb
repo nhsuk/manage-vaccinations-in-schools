@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe ConsentRequestsSessionBatchJob, type: :job do
+describe ConsentRequestsSessionBatchJob, type: :job do
   before { ActionMailer::Base.deliveries.clear }
 
   it "only sends emails to patients parents to whom they have not been sent yet" do

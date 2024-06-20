@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe SessionMailer, type: :mailer do
+describe SessionMailer, type: :mailer do
   describe "#session_reminder" do
     let(:patient) { create(:patient, common_name: "Joey") }
     let(:session) { create(:session, patients: [patient]) }

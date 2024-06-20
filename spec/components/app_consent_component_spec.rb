@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AppConsentComponent, type: :component do
+describe AppConsentComponent, type: :component do
   before { rendered_component }
 
   subject { page }

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AppBacklinkComponent, type: :component do
+describe AppBacklinkComponent, type: :component do
   before { render_inline(component) }
 
   subject { page }

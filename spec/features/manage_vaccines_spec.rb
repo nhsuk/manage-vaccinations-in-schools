@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Manage vaccines" do
+describe "Manage vaccines" do
   scenario "Viewing a vaccine" do
     given_my_team_is_running_an_hpv_vaccination_campaign
 

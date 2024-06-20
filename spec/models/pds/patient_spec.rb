@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe PDS::Patient do
+describe PDS::Patient do
   describe ".find" do
     let(:json_response) do
       File.read("spec/support/pds-get-patient-response.json")

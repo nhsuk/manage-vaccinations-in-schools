@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Verbal consent" do
+describe "Verbal consent" do
   include EmailExpectations
 
   scenario "Refused" do

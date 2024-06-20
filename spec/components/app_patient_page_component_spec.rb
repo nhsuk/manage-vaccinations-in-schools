@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AppPatientPageComponent, type: :component do
+describe AppPatientPageComponent, type: :component do
   before do
     allow_any_instance_of(AppSimpleStatusBannerComponent).to receive(
       :new_session_patient_triage_path

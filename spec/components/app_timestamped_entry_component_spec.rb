@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AppTimestampedEntryComponent, type: :component do
+describe AppTimestampedEntryComponent, type: :component do
   subject { page }
 
   before { render_inline(component) }

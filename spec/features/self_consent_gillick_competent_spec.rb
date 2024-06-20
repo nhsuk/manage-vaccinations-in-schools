@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Self-consent" do
+describe "Self-consent" do
   after { Timecop.return }
 
   scenario "No consent from parent, the child is Gillick competent so can self-consent" do

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "NIVS HPV report" do
+describe "NIVS HPV report" do
   scenario "User downloads the NIVS HPV report" do
     given_i_am_signed_in
     and_vaccinations_have_happened_in_my_teams_hpv_campaign

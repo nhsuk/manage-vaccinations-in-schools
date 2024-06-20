@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Parental consent" do
+describe "Parental consent" do
   scenario "Flu campaign" do
     given_a_flu_campaign_is_underway
     when_i_go_to_the_consent_form

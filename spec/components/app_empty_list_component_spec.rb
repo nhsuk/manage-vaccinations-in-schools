@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AppEmptyListComponent, type: :component do
+describe AppEmptyListComponent, type: :component do
   let(:component) { described_class.new(title:) }
   before { render_inline(component) }
 

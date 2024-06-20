@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe ConsentFormMailer, type: :mailer do
+describe ConsentFormMailer, type: :mailer do
   describe "#confirmation_injection" do
     it "calls template_mail with correct reason_for_refusal" do
       mail =

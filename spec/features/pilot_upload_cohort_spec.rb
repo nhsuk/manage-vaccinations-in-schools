@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Pilot - upload cohort" do
+describe "Pilot - upload cohort" do
   scenario "User uploads a cohort list" do
     given_the_app_is_setup
     when_i_visit_the_pilot_dashboard

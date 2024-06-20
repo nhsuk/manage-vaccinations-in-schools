@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe NotifySafeEmailValidator do
+describe NotifySafeEmailValidator do
   subject(:model) do
     cls =
       Class.new do

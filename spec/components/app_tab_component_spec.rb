@@ -2,7 +2,7 @@ require "rails_helper"
 require "govuk_helper"
 # Dir[File.join('./spec', 'components', 'shared', '*.rb')].sort.each { |file| require file }
 
-RSpec.describe(AppTabComponent, type: :component) do
+describe(AppTabComponent, type: :component) do
   let(:title) { "My favourite tabs" }
   let(:label) { "A tab" }
   let(:component_css_class) { "nhsuk-tabs" }

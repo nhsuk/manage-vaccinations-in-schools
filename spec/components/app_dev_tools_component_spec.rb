@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AppDevToolsComponent, type: :component do
+describe AppDevToolsComponent, type: :component do
   let(:consent) { create(:consent, :refused, :from_dad, parent_name: "Harry") }
   let(:consents) { [consent] }
   let(:component) { described_class.new }

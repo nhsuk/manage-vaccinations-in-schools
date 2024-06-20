@@ -16,7 +16,7 @@
 #
 require "rails_helper"
 
-RSpec.describe Parent do
+describe Parent do
   describe "#phone_contact_method_description" do
     it "describes the phone contact method when parent/carer can only receive texts" do
       parent = build(:parent, contact_method: :text)

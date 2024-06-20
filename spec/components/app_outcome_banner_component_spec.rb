@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AppOutcomeBannerComponent, type: :component do
+describe AppOutcomeBannerComponent, type: :component do
   let(:user) { create :user }
   let(:patient_session) { create :patient_session, user: }
   let(:component) { described_class.new(patient_session:, current_user: user) }

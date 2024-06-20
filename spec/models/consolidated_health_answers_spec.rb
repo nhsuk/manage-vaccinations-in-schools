@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe ConsolidatedHealthAnswers do
+describe ConsolidatedHealthAnswers do
   it "returns a questionnaire from one responder in the order it was given, including notes" do
     subject.add_answer(
       responder: "Mum",

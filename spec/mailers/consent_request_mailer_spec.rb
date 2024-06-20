@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe ConsentRequestMailer, type: :mailer do
+describe ConsentRequestMailer, type: :mailer do
   describe "#consent_request" do
     let(:patient) { create(:patient) }
     let(:session) { create(:session, patients: [patient]) }

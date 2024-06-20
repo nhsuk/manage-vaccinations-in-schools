@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe ConsentRemindersJob, type: :job do
+describe ConsentRemindersJob, type: :job do
   before do
     Flipper.enable(:scheduled_emails)
     ActiveJob::Base.queue_adapter.enqueued_jobs.clear

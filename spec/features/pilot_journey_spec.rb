@@ -1,7 +1,7 @@
 require "rails_helper"
 require "csv"
 
-RSpec.describe "Pilot journey" do
+describe "Pilot journey" do
   before { Timecop.freeze(Time.zone.local(2024, 2, 1)) }
   after { Timecop.return }
 
