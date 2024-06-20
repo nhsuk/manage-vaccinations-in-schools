@@ -32,7 +32,7 @@
 #
 require "rails_helper"
 
-RSpec.describe Consent do
+describe Consent do
   describe "when consent given by parent or guardian, all health questions are no" do
     it "does not require triage" do
       response = build(:consent_given)

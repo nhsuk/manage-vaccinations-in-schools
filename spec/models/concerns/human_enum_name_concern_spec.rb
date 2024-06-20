@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe HumanEnumNameConcern do
+describe HumanEnumNameConcern do
   let(:dummy_class) do
     Class.new do
       include HumanEnumNameConcern

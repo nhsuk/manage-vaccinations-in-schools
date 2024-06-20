@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AppTriageNotesComponent, type: :component do
+describe AppTriageNotesComponent, type: :component do
   before { render_component }
 
   subject { page }

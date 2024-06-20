@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AppDetailsComponent, type: :component do
+describe AppDetailsComponent, type: :component do
   let(:summary) { "A summary" }
   let(:content) { "A content" }
   let(:component) { described_class.new(summary:) }

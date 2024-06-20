@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe CohortListRow, type: :model do
+describe CohortListRow, type: :model do
   describe "school_urn validations" do
     let(:user) { create(:user, team:) }
     let(:location) { create(:location) }

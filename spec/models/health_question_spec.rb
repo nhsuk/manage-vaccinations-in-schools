@@ -26,7 +26,7 @@
 #
 require "rails_helper"
 
-RSpec.describe HealthQuestion do
+describe HealthQuestion do
   let(:vaccine) do
     create :vaccine, type: "tester", brand: "Tester", method: "injection"
   end

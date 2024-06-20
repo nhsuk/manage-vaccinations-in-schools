@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Triage" do
+describe "Triage" do
   scenario "delay vaccination" do
     given_a_campaign_with_a_running_session
     and_i_am_signed_in

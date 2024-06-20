@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Patient sorting and filtering" do
+describe "Patient sorting and filtering" do
   scenario "Users can sort and filter patients" do
     given_that_i_am_signed_in
     when_i_visit_the_consents_page

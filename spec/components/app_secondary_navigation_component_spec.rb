@@ -1,7 +1,7 @@
 require "rails_helper"
 require "govuk_helper"
 
-RSpec.describe AppSecondaryNavigationComponent, type: :component do
+describe AppSecondaryNavigationComponent, type: :component do
   before { render_inline(component) }
 
   subject { rendered_content }

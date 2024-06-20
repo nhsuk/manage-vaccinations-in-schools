@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe VaccinationMailer do
+describe VaccinationMailer do
   describe "hpv_vaccination_has_taken_place" do
     let(:patient) { create(:patient, consents: [create(:consent_given)]) }
     let(:patient_session) { create(:patient_session, patient:) }

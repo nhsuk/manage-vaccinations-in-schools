@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AppTriageFormComponent, type: :component do
+describe AppTriageFormComponent, type: :component do
   describe "#initialize" do
     let(:patient_session) { create :patient_session }
     let(:triage) { nil }

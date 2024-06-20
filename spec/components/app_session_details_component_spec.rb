@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe AppSessionDetailsComponent, type: :component do
+describe AppSessionDetailsComponent, type: :component do
   before { render_inline(component) }
 
   subject { page }

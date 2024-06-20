@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe NivsReportRow do
+describe NivsReportRow do
   describe "#to_a" do
     let(:patient_session) { create(:patient_session, :vaccinated) }
     let(:vaccination) { patient_session.vaccination_records.first }

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe SessionPolicy do
+describe SessionPolicy do
   describe "Scope#resolve" do
     let(:team1) { create :team }
     let(:team2) { create :team }

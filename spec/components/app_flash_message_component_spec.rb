@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe AppFlashMessageComponent, type: :component do
+describe AppFlashMessageComponent, type: :component do
   let(:component) { described_class.new(flash:) }
   let!(:rendered) { render_inline(component) }
   subject { page }

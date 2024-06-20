@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Not Gillick competent" do
+describe "Not Gillick competent" do
   after { Timecop.return }
 
   scenario "No consent from parent, the child is not Gillick competent" do

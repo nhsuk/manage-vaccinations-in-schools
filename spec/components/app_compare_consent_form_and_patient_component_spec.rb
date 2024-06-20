@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AppCompareConsentFormAndPatientComponent, type: :component do
+describe AppCompareConsentFormAndPatientComponent, type: :component do
   let(:consent_form) do
     create(
       :consent_form,

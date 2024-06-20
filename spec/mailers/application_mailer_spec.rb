@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe ApplicationMailer, type: :mailer do
+describe ApplicationMailer, type: :mailer do
   subject { described_class.new }
 
   let(:team) do

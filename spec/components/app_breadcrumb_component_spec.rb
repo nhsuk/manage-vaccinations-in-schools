@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AppBreadcrumbComponent, type: :component do
+describe AppBreadcrumbComponent, type: :component do
   before { render_inline(component) }
 
   subject { page }

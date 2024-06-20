@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe ConsentFormsHelper, type: :helper do
+describe ConsentFormsHelper, type: :helper do
   include ActionView::Helpers
 
   before do

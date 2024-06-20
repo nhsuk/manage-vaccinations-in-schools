@@ -33,7 +33,7 @@
 #
 require "rails_helper"
 
-RSpec.describe Patient do
+describe Patient do
   describe "#year_group" do
     before { Timecop.freeze(date) }
     after { Timecop.return }

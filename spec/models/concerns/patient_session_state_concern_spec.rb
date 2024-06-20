@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe PatientSessionStateConcern do
+describe PatientSessionStateConcern do
   let(:fake_state_machine_class) do
     Class.new do
       attr_accessor :state

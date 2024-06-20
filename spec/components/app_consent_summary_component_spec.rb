@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AppConsentSummaryComponent, type: :component do
+describe AppConsentSummaryComponent, type: :component do
   let(:component) do
     described_class.new(
       name: "Jane Smith",

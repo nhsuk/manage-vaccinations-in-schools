@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "User account" do
+describe "User account" do
   scenario "Users can edit their account details" do
     given_that_i_am_signed_in
     when_i_visit_my_account_page

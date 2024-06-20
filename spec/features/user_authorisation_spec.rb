@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "User authorisation" do
+describe "User authorisation" do
   scenario "Users are unable to access other teams' pages" do
     given_an_hpv_campaign_is_underway_with_two_teams
     when_i_sign_in_as_a_nurse_from_one_team

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe SessionStats do
+describe SessionStats do
   describe "#call" do
     let(:session) { create :session }
 

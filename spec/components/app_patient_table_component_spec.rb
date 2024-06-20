@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe AppPatientTableComponent, type: :component do
+describe AppPatientTableComponent, type: :component do
   before do
     allow(component).to receive(:session_patient_path).and_return(
       "/session/patient/"

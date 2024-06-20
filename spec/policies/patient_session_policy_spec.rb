@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe PatientSessionPolicy do
+describe PatientSessionPolicy do
   let(:patient_session1) { create :patient_session }
   let(:patient_session2) { create :patient_session }
   let(:team) { patient_session1.session.campaign.team }

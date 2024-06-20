@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AppVaccinateFormComponent, type: :component do
+describe AppVaccinateFormComponent, type: :component do
   let(:heading) { "A Heading" }
   let(:body) { "A Body" }
   let(:session) { create :session, :in_progress }

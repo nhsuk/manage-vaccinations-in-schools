@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AgeConcern do
+describe AgeConcern do
   let(:dummy_class) do
     Class.new do
       include AgeConcern

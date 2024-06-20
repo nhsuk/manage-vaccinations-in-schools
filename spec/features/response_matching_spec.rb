@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Response matching" do
+describe "Response matching" do
   scenario "Users can match responses to patient records" do
     given_the_app_is_setup
     when_i_go_to_the_campaigns_page

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "User authentication" do
+describe "User authentication" do
   scenario "Users log in, log out, and their redirect page is remembered" do
     given_that_i_have_an_account
     when_i_go_to_the_dashboard

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe TriageMailerConcern do
+describe TriageMailerConcern do
   let(:sample_class) { Class.new { include TriageMailerConcern }.new }
 
   describe "#send_triage_mail" do

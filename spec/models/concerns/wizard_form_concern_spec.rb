@@ -5,7 +5,7 @@ class Dummy
   include WizardFormConcern
 end
 
-RSpec.describe WizardFormConcern do
+describe WizardFormConcern do
   describe ".form_step" do
     subject { Dummy.new.form_step }
 

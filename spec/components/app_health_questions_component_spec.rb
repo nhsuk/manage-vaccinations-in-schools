@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AppHealthQuestionsComponent, type: :component do
+describe AppHealthQuestionsComponent, type: :component do
   before { render_inline(component) }
 
   subject { page }

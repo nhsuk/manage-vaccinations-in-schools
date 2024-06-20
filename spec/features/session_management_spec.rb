@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Session management" do
+describe "Session management" do
   include EmailExpectations
 
   before { Timecop.freeze(Time.zone.local(2024, 2, 29)) }

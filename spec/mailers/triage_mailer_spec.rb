@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe TriageMailer, type: :mailer do
+describe TriageMailer, type: :mailer do
   describe "#vaccination_will_happen" do
     let(:patient_session) do
       create(:patient_session, :consent_given_triage_not_needed)

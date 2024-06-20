@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Triage" do
+describe "Triage" do
   include EmailExpectations
 
   scenario "nurse can triage a patient" do
