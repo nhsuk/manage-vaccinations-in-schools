@@ -4,7 +4,7 @@ RSpec.describe "Batches" do
   before { Timecop.freeze(Time.zone.local(2024, 2, 29)) }
   after { Timecop.return }
 
-  scenario "Adding a new batch and defaulting to it" do
+  scenario "Adding and editing batches" do
     given_my_team_is_running_an_hpv_vaccination_campaign
     and_there_is_a_vaccination_session_today_with_one_patient_ready_to_vaccinate
 
