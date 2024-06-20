@@ -13,7 +13,7 @@ class VaccinationsController < ApplicationController
 
   before_action :set_consent, only: %i[create confirm update]
   before_action :set_triage, only: %i[confirm]
-  before_action :set_todays_batch_id, only: :create
+  before_action :set_todays_batch, only: %i[index create]
   before_action :set_section_and_tab, only: %i[create update]
 
   layout "two_thirds", except: :index
@@ -148,7 +148,7 @@ class VaccinationsController < ApplicationController
         else
           vaccination_record_params
         end
-      create_params.merge(batch_id: @todays_batch_id)
+      create_params.merge(batch_id: @todays_batch&.id)
     else
       vaccination_record_params
     end
@@ -215,8 +215,8 @@ class VaccinationsController < ApplicationController
     @patient_session = @patient.patient_sessions.find_by(session: @session)
   end
 
-  def set_todays_batch_id
-    @todays_batch_id = todays_batch_id
+  def set_todays_batch
+    @todays_batch = policy_scope(Batch).find_by(id: todays_batch_id)
   end
 
   def set_section_and_tab

@@ -1,14 +1,26 @@
-<% page_title = "Record vaccinations" %>
-
 <% content_for :before_main do %>
-  <%= render AppBreadcrumbComponent.new(items: [
-                                          { text: "Home", href: dashboard_path },
-                                          { text: "Today’s sessions", href: sessions_path },
-                                          { text: "#{@session.campaign.name} session at #{@session.name}", href: session_path(@session) },
-                                        ]) %>
+  <%= render AppBreadcrumbComponent.new(
+        items: [
+          { text: "Home", href: dashboard_path },
+          { text: "Today’s sessions", href: sessions_path },
+          { text: "#{@session.campaign.name} session at #{@session.name}",
+            href: session_path(@session) },
+        ],
+      ) %>
 <% end %>
 
-<%= h1 page_title, page_title: %>
+<%= h1 "Record vaccinations" %>
+
+<% if @todays_batch.present? %>
+  <%= govuk_inset_text html_attributes: { class: "nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-4" } do %>
+    <span class="nhsuk-visually-hidden">Information: </span>
+
+    <p>
+      You are currently using <%= @todays_batch.vaccine.brand %> batch
+      <span class="app-u-monospace"><%= @todays_batch.name %></span>.
+    </p>
+  <% end %>
+<% end %>
 
 <%= render AppSecondaryNavigationComponent.new do |nav| %>
   <% TAB_PATHS[:vaccinations].each do |tab, state| %>
