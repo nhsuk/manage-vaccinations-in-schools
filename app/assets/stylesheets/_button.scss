@@ -3,6 +3,10 @@ $app-warning-button-hover-color: shade($app-warning-button-color, 20%);
 $app-warning-button-active-color: shade($app-warning-button-color, 50%);
 $app-warning-button-shadow-color: shade($app-warning-button-color, 50%);
 $button-shadow-size: 4px;
+$app-cis2-button-color: $color_nhsuk-blue;
+$app-cis2-button-hover-color: mix($app-cis2-button-color, #003087, 50%);
+$app-cis2-button-active-color: #003087;
+$app-cis2-button-shadow-color: #003087;
 
 .app-button--small {
   @include nhsuk-typography-responsive(16);
@@ -39,5 +43,37 @@ $button-shadow-size: 4px;
 .nhsuk-button {
   .nhsuk-table & {
     margin-bottom: 0;
+  }
+}
+
+.app-button--cis2 {
+  align-items: center;
+  background-color: $app-cis2-button-color;
+  box-shadow: 0 $button-shadow-size 0 $app-cis2-button-shadow-color;
+  display: inline-flex;
+  gap: nhsuk-spacing(3);
+
+  & span::before {
+    @include mq($from: desktop) {
+      content: "Log in with my ";
+    }
+  }
+
+  &:hover {
+    background-color: $app-cis2-button-hover-color;
+  }
+
+  &:focus {
+    background: $nhsuk-focus-color;
+    box-shadow: 0 $button-shadow-size 0 $nhsuk-focus-text-color;
+    color: $nhsuk-focus-text-color;
+    outline: $nhsuk-focus-width solid transparent;
+  }
+
+  &:active {
+    background: $app-cis2-button-active-color;
+    box-shadow: none;
+    color: $nhsuk-button-text-color;
+    top: $button-shadow-size;
   }
 }
