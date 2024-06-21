@@ -5,7 +5,7 @@ class VaccinationsController < ApplicationController
   include PatientSortingConcern
 
   before_action :set_session
-  before_action :set_patient, except: %i[index]
+  before_action :set_patient, except: %i[index batch update_batch]
   before_action :set_patient_session, only: %i[new confirm create record update]
   before_action :set_draft_vaccination_record,
                 only: %i[edit_reason create update]
@@ -13,7 +13,8 @@ class VaccinationsController < ApplicationController
 
   before_action :set_consent, only: %i[create confirm update]
   before_action :set_triage, only: %i[confirm]
-  before_action :set_todays_batch, only: %i[index create]
+  before_action :set_todays_batch, only: %i[index batch create]
+  before_action :set_batches, only: %i[batch update_batch]
   before_action :set_section_and_tab, only: %i[create update]
 
   layout "two_thirds", except: :index
@@ -128,6 +129,25 @@ class VaccinationsController < ApplicationController
     end
   end
 
+  def batch
+  end
+
+  def update_batch
+    @todays_batch =
+      policy_scope(Batch).find_by(params.fetch(:batch).permit(:id))
+
+    if @todays_batch
+      self.todays_batch_id = @todays_batch.id
+
+      flash[:success] = { heading: "Default batch updated for this session" }
+      redirect_to session_vaccinations_path(@session)
+    else
+      @todays_batch = Batch.new
+      @todays_batch.errors.add(:id, "Select a default batch for this session")
+      render :batch, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def vaccination_record_params
@@ -217,6 +237,10 @@ class VaccinationsController < ApplicationController
 
   def set_todays_batch
     @todays_batch = policy_scope(Batch).find_by(id: todays_batch_id)
+  end
+
+  def set_batches
+    @batches = @session.campaign.batches
   end
 
   def set_section_and_tab
