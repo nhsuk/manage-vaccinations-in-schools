@@ -4,13 +4,20 @@ describe "HPV Vaccination" do
   scenario "Default batch" do
     given_i_am_signed_in
     when_i_vaccinate_a_patient
-    then_i_see_the_default_batch_banner
+    then_i_see_the_default_batch_banner_with_batch_1
+
+    when_i_click_the_change_batch_link
+    then_i_see_the_change_batch_page
+
+    when_i_choose_the_second_batch
+    then_i_see_the_default_batch_banner_with_batch_2
   end
 
   def given_i_am_signed_in
     campaign = create(:example_campaign, :in_progress)
     team = campaign.team
     @batch = campaign.batches.first
+    @batch2 = campaign.batches.second
     @session = campaign.sessions.first
     @patient =
       @session
@@ -30,13 +37,32 @@ describe "HPV Vaccination" do
     click_button "Continue"
 
     choose @batch.name
-    check "Default to this batch for today"
+    check "Default to this batch for this session", match: :first
     click_button "Continue"
 
     click_button "Confirm"
   end
 
-  def then_i_see_the_default_batch_banner
-    expect(page).to have_content("You are currently using")
+  def then_i_see_the_default_batch_banner_with_batch_1
+    expect(page).to have_content(/You are currently using.*#{@batch.name}/)
+  end
+
+  def then_i_see_the_default_batch_banner_with_batch_2
+    expect(page).to have_content(/You are currently using.*#{@batch2.name}/)
+  end
+
+  def when_i_click_the_change_batch_link
+    click_link "Change the default batch"
+  end
+
+  def then_i_see_the_change_batch_page
+    expect(page).to have_content("Select a default batch for this session")
+    expect(page).to have_selector(:label, @batch.name)
+    expect(page).to have_selector(:label, @batch2.name)
+  end
+
+  def when_i_choose_the_second_batch
+    choose @batch2.name
+    click_button "Continue"
   end
 end

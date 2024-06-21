@@ -1,0 +1,32 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: session_vaccinations_path(@session.id),
+        name: "vaccinations page",
+      ) %>
+<% end %>
+
+<% page_title = "Select a default batch for this session" %>
+<% content_for :page_title, page_title %>
+
+<%= form_with model: @todays_batch, url: session_batch_path(@session) do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= f.govuk_radio_buttons_fieldset(
+        :batch_id,
+        caption: { text: @session.location.name, size: "l" },
+        legend: { size: "l", tag: "h1", text: page_title },
+      ) do %>
+    <% @batches.each_with_index do |batch, index| %>
+      <%= f.govuk_radio_button(
+            :id,
+            batch.id,
+            label: {
+              text: "#{batch.name} (expires #{batch.expiry.to_fs(:nhsuk_date)})",
+            },
+            link_errors: index == 0,
+          ) %>
+    <% end %>
+  <% end %>
+
+  <%= f.submit "Continue", class: "nhsuk-button" %>
+<% end %>
