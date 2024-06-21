@@ -5,8 +5,7 @@ class VaccinationsController < ApplicationController
   include PatientSortingConcern
 
   before_action :set_session
-  before_action :set_patient, except: %i[index record_template]
-  before_action :set_patient_sessions, only: %i[record_template]
+  before_action :set_patient, except: %i[index]
   before_action :set_patient_session, only: %i[new confirm create record update]
   before_action :set_draft_vaccination_record,
                 only: %i[edit_reason create update]
@@ -85,14 +84,6 @@ class VaccinationsController < ApplicationController
       heading_link_href: session_patient_path(@session, id: @patient.id)
     }
     redirect_to session_vaccinations_path(@session)
-  end
-
-  def record_template
-    flash[:success] = {
-      heading: "Offline changes saved",
-      body: "You will need to go online to sync your changes."
-    }
-    render :index
   end
 
   def create
@@ -197,16 +188,6 @@ class VaccinationsController < ApplicationController
       policy_scope(Patient).find(
         params.fetch(:patient_id) { params.fetch(:id) }
       )
-  end
-
-  def set_patient_sessions
-    @patient_sessions =
-      @session
-        .patient_sessions
-        .strict_loading
-        .includes(:campaign, :patient, :triage, :vaccination_records)
-        .preload(:consents)
-        .order("patients.first_name", "patients.last_name")
   end
 
   def set_draft_vaccination_record
