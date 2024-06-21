@@ -32,11 +32,6 @@ class BatchesController < ApplicationController
     redirect_to vaccines_path
   end
 
-  def remove_default
-    unset_todays_batch
-    redirect_to vaccines_path
-  end
-
   def update
     if !expiry_validator.date_params_valid?
       @batch.expiry = expiry_validator.date_params_as_struct
