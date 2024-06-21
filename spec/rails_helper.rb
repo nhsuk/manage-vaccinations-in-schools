@@ -92,6 +92,8 @@ RSpec.configure do |config|
     driven_by(:cuprite_custom)
   end
 
+  config.after(:each, type: :system) { WebMock.enable! }
+
   config.include ActiveJob::TestHelper, type: :feature
   config.include Devise::Test::IntegrationHelpers, type: :feature
   config.include Devise::Test::IntegrationHelpers, type: :system
