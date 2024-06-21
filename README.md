@@ -259,6 +259,8 @@ cis2:
   secret: SECRET
 ```
 
+The `cis2` feature flag also needs to be enabled in Flipper for CIS2 logins to work.
+
 ### Reply-To
 
 GOVUK Notify can store reply-to email addresses and use them when sending mail.
