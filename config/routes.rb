@@ -55,7 +55,7 @@ Rails.application.routes.draw do
 
   resources :campaigns, only: %i[index show]
 
-  resources :sessions, only: %i[create edit index show update] do
+  resources :sessions, only: %i[create edit index show] do
     namespace :parent_interface, path: "/" do
       resources :consent_forms, path: :consents, only: [:create] do
         get "start", on: :collection
@@ -73,14 +73,6 @@ Rails.application.routes.draw do
 
     constraints -> { Flipper.enabled?(:make_session_in_progress_button) } do
       put "make-in-progress", to: "sessions#make_in_progress", on: :member
-    end
-
-    resources :patients, only: [] do
-      get "/:route",
-          action: :show,
-          on: :member,
-          controller: "patient_sessions",
-          route: /consents|triage|vaccinations/
     end
 
     constraints -> { Flipper.enabled? :offline_working } do
@@ -174,11 +166,6 @@ Rails.application.routes.draw do
           get "edit/reason", action: "edit_reason", on: :member
           get "confirm", on: :member
           put "record", on: :member
-
-          post "handle-consent", on: :member
-
-          get "show-template", on: :collection
-          get "record-template", on: :collection
         end
       end
     end
