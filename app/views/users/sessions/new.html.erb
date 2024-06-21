@@ -16,7 +16,3 @@
 
   <%= f.govuk_submit "Log in" %>
 <% end %>
-
-<% if Settings.cis2.present? %>
-  <%= govuk_button_to "Log in with CIS2", user_cis2_omniauth_authorize_path, data: { turbo: false } %>
-<% end %>
