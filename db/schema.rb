@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_16_121453) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_22_061956) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -256,6 +256,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_16_121453) do
     t.text "contact_method_other"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "recorded_at"
   end
 
   create_table "patient_sessions", force: :cascade do |t|
