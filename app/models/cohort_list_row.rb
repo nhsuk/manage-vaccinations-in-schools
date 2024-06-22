@@ -63,9 +63,12 @@ class CohortListRow
   end
 
   def to_parent
-    { email: parent_email, name: parent_name, phone: parent_phone }.merge(
-      parent_relationship_hash
-    )
+    {
+      email: parent_email,
+      name: parent_name,
+      phone: parent_phone,
+      recorded_at: Time.zone.now
+    }.merge(parent_relationship_hash)
   end
 
   private

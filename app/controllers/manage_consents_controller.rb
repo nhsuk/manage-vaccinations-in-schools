@@ -97,6 +97,11 @@ class ManageConsentsController < ApplicationController
         @triage.destroy!
         @patient_session.do_consent!
       end
+
+      if @consent.parent.present?
+        @consent.parent.recorded_at = Time.zone.now
+        @consent.parent.save!
+      end
     end
   end
 

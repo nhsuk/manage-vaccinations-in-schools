@@ -34,6 +34,7 @@ FactoryBot.define do
     relationship { sex == "male" ? "father" : "mother" }
     email { "#{name.downcase.gsub(" ", ".")}#{random.rand(100)}@example.com" }
     phone { "07700 900#{random.rand(0..999).to_s.rjust(3, "0")}" }
+    recorded_at { Time.zone.now }
 
     trait :mum do
       transient { sex { "female" } }
