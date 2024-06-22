@@ -39,7 +39,10 @@ module ParentInterface
     end
 
     def record
-      @consent_form.update!(recorded_at: Time.zone.now)
+      ActiveRecord::Base.transaction do
+        @consent_form.update!(recorded_at: Time.zone.now)
+        @consent_form.parent.update!(recorded_at: Time.zone.now)
+      end
 
       session.delete(:consent_form_id)
 

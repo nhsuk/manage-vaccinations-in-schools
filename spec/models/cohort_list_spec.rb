@@ -139,6 +139,7 @@ RSpec.describe CohortList, type: :model do
         phone: "07412345678",
         email: "john@example.com"
       )
+      expect(Patient.first.parent.recorded_at).to be_present
 
       expect(Patient.second).to have_attributes(
         nhs_number: "1234567891",
@@ -149,6 +150,7 @@ RSpec.describe CohortList, type: :model do
         address_town: "London",
         address_postcode: "SW1A 1AA"
       )
+      expect(Patient.second.parent.recorded_at).to be_present
 
       expect(Patient.second.parent).to have_attributes(
         name: "Jane Doe",
