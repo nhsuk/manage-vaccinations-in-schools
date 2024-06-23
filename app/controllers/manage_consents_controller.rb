@@ -39,7 +39,7 @@ class ManageConsentsController < ApplicationController
     when :confirm
       handle_confirm
     when :who
-      model = @consent.parent
+      model = @consent.draft_parent
       handle_who
     when :questions
       handle_questions
@@ -80,9 +80,6 @@ class ManageConsentsController < ApplicationController
 
   def handle_confirm
     ActiveRecord::Base.transaction do
-      @consent.recorded_at = Time.zone.now
-      @consent.save!
-
       if @consent.response_refused?
         @triage.update! status: "do_not_vaccinate", user: current_user
       end
@@ -98,10 +95,13 @@ class ManageConsentsController < ApplicationController
         @patient_session.do_consent!
       end
 
-      if @consent.parent.present?
-        @consent.parent.recorded_at = Time.zone.now
-        @consent.parent.save!
+      if @consent.draft_parent.present?
+        @consent.draft_parent.recorded_at = Time.zone.now
+        @consent.draft_parent.save!
       end
+
+      @consent.recorded_at = Time.zone.now
+      @consent.save!
     end
   end
 
@@ -115,7 +115,7 @@ class ManageConsentsController < ApplicationController
   end
 
   def handle_who
-    @consent.parent.assign_attributes parent_params
+    @consent.draft_parent.assign_attributes parent_params
   end
 
   def handle_triage
@@ -175,14 +175,14 @@ class ManageConsentsController < ApplicationController
       # Temporary: Prefill the consent details.
       # This should be replaced with the design that allows users to choose
       # from available parent details when submiting a new consent.
-      parent =
+      draft_parent =
         Parent.new(
           @patient.parent.attributes.slice(
             *%w[name email phone relationship relationship_other]
           )
         )
 
-      attrs.merge(parent:)
+      attrs.merge(draft_parent:)
     end
   end
 

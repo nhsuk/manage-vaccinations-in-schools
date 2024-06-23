@@ -14,7 +14,7 @@
   <%= page_title %>
 <% end %>
 
-<%= form_for @consent.parent, url: wizard_path, method: :put do |f| %>
+<%= form_for @consent.draft_parent, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_text_field :name, label: { text: "Full name" } %>
