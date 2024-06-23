@@ -1,10 +1,14 @@
 class AppMatchingCriteriaComponent < ViewComponent::Base
-  delegate :common_name, :date_of_birth, :age, :parent_name, to: :@consent_form
+  delegate :common_name, :date_of_birth, :age, to: :@consent_form
 
   def initialize(consent_form:)
     super
 
     @consent_form = consent_form
+  end
+
+  def parent_name
+    @consent_form.parent.name
   end
 
   def child_full_name

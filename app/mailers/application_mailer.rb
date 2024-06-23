@@ -51,13 +51,7 @@ class ApplicationMailer < Mail::Notify::Mailer
   end
 
   def parent_name
-    if @patient.is_a?(Patient)
-      @patient.parent.name
-    elsif @patient.is_a?(ConsentForm)
-      @patient.parent_name
-    else
-      raise ArgumentError, "Unknown patient type"
-    end
+    @patient.parent.name
   end
 
   def location_name
