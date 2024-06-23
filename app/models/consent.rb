@@ -41,6 +41,11 @@ class Consent < ApplicationRecord
 
   has_one :consent_form
   belongs_to :parent, optional: true
+  belongs_to :draft_parent,
+             -> { draft },
+             class_name: "Parent",
+             optional: true,
+             foreign_key: :parent_id
   belongs_to :patient
   belongs_to :campaign
   belongs_to :recorded_by,
@@ -76,7 +81,12 @@ class Consent < ApplicationRecord
 
   validates :route, presence: true, if: -> { recorded_at.present? }
 
-  validates :parent, presence: true, unless: -> { via_self_consent? }
+  validates :draft_parent,
+            presence: true,
+            if: -> { recorded_at.nil? && !via_self_consent? }
+  validates :parent,
+            presence: true,
+            if: -> { recorded_at.present? && !via_self_consent? }
 
   on_wizard_step :route do
     validates :route, inclusion: { in: Consent.routes.keys }, presence: true
@@ -132,7 +142,11 @@ class Consent < ApplicationRecord
   end
 
   def who_responded
-    via_self_consent? ? "Child (Gillick competent)" : parent.relationship_label
+    if via_self_consent?
+      "Child (Gillick competent)"
+    else
+      (draft_parent || parent).relationship_label
+    end
   end
 
   def health_answers_require_follow_up?
