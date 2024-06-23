@@ -26,10 +26,10 @@ module ParentInterface
           health_question_number: @question_number
         )
       elsif current_step.in?(%i[parent contact_method])
-        model = @consent_form.parent
+        model = @consent_form.draft_parent
         model.assign_attributes(parent_params)
 
-        if @consent_form.parent.parental_responsibility == "no"
+        if @consent_form.draft_parent.parental_responsibility == "no"
           return(
             redirect_to session_parent_interface_consent_form_cannot_consent_responsibility_path(
                           @session,
@@ -39,7 +39,7 @@ module ParentInterface
         end
 
         if model.valid?
-          @consent_form.update!(form_step: current_step, parent: model)
+          @consent_form.update!(form_step: current_step, draft_parent: model)
         end
       else
         @consent_form.assign_attributes(update_params)
@@ -134,7 +134,7 @@ module ParentInterface
     end
 
     def set_parent
-      @consent_form.build_parent if @consent_form.parent.blank?
+      @consent_form.build_draft_parent if @consent_form.draft_parent.blank?
     end
 
     def validate_params

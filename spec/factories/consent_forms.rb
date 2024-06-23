@@ -122,5 +122,11 @@ FactoryBot.define do
     trait :recorded do
       recorded_at { Time.zone.now }
     end
+
+    trait :draft do
+      recorded_at { nil }
+      parent { nil }
+      draft_parent { create(:parent, :randomly_mum_or_dad, recorded_at: nil) }
+    end
   end
 end

@@ -85,7 +85,7 @@ RSpec.describe PatientSession do
               response: :refused
       end
       let(:consent_2) do
-        build :consent, campaign:, parent:, recorded_at: nil, response: :given
+        build :consent, :draft, campaign:, parent:, response: :given
       end
       let(:patient) { create(:patient, consents: [consent_1, consent_2]) }
 

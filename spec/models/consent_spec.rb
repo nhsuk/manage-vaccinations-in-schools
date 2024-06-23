@@ -118,7 +118,7 @@ RSpec.describe Consent do
 
     it "uses the recorded scope" do
       consent = create(:consent, patient:, recorded_at: Time.zone.now)
-      create(:consent, patient:, recorded_at: nil)
+      create(:consent, :draft, patient:)
 
       expect(patient.consents).to eq([consent])
     end
@@ -129,7 +129,7 @@ RSpec.describe Consent do
 
     it "returns only consents that have been recorded" do
       consent = create(:consent, patient:, recorded_at: Time.zone.now)
-      create(:consent, patient:, recorded_at: nil)
+      create(:consent, :draft, patient:)
 
       expect(patient.consents.unscope(where: :recorded).recorded).to eq(
         [consent]

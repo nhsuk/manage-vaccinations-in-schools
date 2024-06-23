@@ -141,5 +141,10 @@ FactoryBot.define do
         )
       end
     end
+
+    trait :draft do
+      recorded_at { nil }
+      draft_parent { patient.parent.tap { _1.update!(recorded_at: nil) } }
+    end
   end
 end

@@ -57,6 +57,11 @@ class ConsentForm < ApplicationRecord
   belongs_to :consent, optional: true
   belongs_to :session
   belongs_to :parent, optional: true
+  belongs_to :draft_parent,
+             -> { draft },
+             class_name: "Parent",
+             optional: true,
+             foreign_key: :parent_id
   has_one :campaign, through: :session
   has_one :team, through: :campaign
 
@@ -295,7 +300,7 @@ class ConsentForm < ApplicationRecord
   end
 
   def ask_for_contact_method?
-    Flipper.enabled?(:parent_contact_method) && parent&.phone.present?
+    Flipper.enabled?(:parent_contact_method) && draft_parent&.phone.present?
   end
 
   # Because there are branching paths in the consent form journey, fields
