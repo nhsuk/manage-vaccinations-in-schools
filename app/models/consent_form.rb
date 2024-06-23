@@ -80,29 +80,19 @@ class ConsentForm < ApplicationRecord
            :address_postcode,
            :address_town,
            :common_name,
-           :contact_method_other,
            :first_name,
            :gp_name,
            :health_answers,
            :last_name,
-           :parent_email,
-           :parent_name,
-           :parent_phone,
-           :parent_relationship_other,
            :reason_notes
 
   validates :address_line_1,
             :address_line_2,
             :address_town,
             :common_name,
-            :contact_method_other,
             :first_name,
             :gp_name,
             :last_name,
-            :parent_email,
-            :parent_name,
-            :parent_phone,
-            :parent_relationship_other,
             length: {
               maximum: 300
             }
