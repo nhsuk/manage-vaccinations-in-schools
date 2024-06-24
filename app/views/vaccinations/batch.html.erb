@@ -16,15 +16,12 @@
         caption: { text: @session.location.name, size: "l" },
         legend: { size: "l", tag: "h1", text: page_title },
       ) do %>
-    <% @batches.each_with_index do |batch, index| %>
-      <%= f.govuk_radio_button(
-            :id,
-            batch.id,
-            label: {
-              text: "#{batch.name} (expires #{batch.expiry.to_fs(:nhsuk_date)})",
-            },
-            link_errors: index == 0,
-          ) %>
+    <% @batches.each_with_index do |batch, idx| %>
+      <% label = proc do %>
+        <span class="app-u-monospace"><%= batch.name %></span>
+        (expires <%= batch.expiry.to_fs(:nhsuk_date) %>)
+      <% end %>
+      <%= f.govuk_radio_button(:id, batch.id, label:, link_errors: idx.zero?) %>
     <% end %>
   <% end %>
 
