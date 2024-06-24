@@ -242,7 +242,7 @@ class VaccinationsController < ApplicationController
   end
 
   def set_batches
-    @batches = @session.campaign.batches
+    @batches = @session.campaign.batches.order(expiry: :asc, name: :asc)
   end
 
   def set_section_and_tab
