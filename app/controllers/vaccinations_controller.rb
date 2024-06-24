@@ -139,7 +139,9 @@ class VaccinationsController < ApplicationController
     if @todays_batch
       self.todays_batch_id = @todays_batch.id
 
-      flash[:success] = { heading: "Default batch updated for this session" }
+      flash[:success] = {
+        heading: "The default batch for this session has been updated"
+      }
       redirect_to session_vaccinations_path(@session)
     else
       @todays_batch = Batch.new
