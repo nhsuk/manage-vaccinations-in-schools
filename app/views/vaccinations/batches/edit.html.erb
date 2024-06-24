@@ -17,10 +17,16 @@
                                      caption: { text: @patient.full_name, size: "l" },
                                      legend: { size: "l", tag: "h1", text: "Which batch did you use?" }) do %>
     <% @batches.each do |batch| %>
-      <%= f.govuk_radio_button :batch_id,
-                               batch.id,
-                               label: { text: "#{batch.name} (expires #{batch.expiry.to_fs(:nhsuk_date)})" } do %>
-       <%= f.govuk_check_box :todays_batch, batch.id, label: { text: "Default to this batch for this session" } %>
+      <% label = proc do %>
+        <span class="app-u-monospace"><%= batch.name %></span>
+        (expires <%= batch.expiry.to_fs(:nhsuk_date) %>)
+      <% end %>
+      <%= f.govuk_radio_button(:batch_id, batch.id, label:) do %>
+        <%= f.govuk_check_box(
+              :todays_batch,
+              batch.id,
+              label: { text: "Default to this batch for this session" },
+            ) %>
       <% end %>
     <% end %>
   <% end %>
