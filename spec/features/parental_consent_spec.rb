@@ -173,9 +173,22 @@ describe "Parental consent" do
   def and_they_see_the_full_consent_form
     click_on @child.full_name
     click_on "Jane #{@child.last_name}"
+
     expect(page).to have_content(
       "Consent response from Jane #{@child.last_name}"
     )
+    expect(page).to have_content(["GP surgery", "GP Surgery"].join)
+    expect(page).to have_content(
+      [
+        "Home address",
+        "1 Test Street",
+        "2nd Floor",
+        "Testville",
+        "TE1 1ST"
+      ].join
+    )
+    expect(page).to have_content(["School", "Pilot School"].join)
+
     click_on "Back to patient page"
     click_on "Back to consents page"
   end
