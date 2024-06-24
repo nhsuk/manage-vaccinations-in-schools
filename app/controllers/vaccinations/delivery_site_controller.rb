@@ -31,7 +31,7 @@ class Vaccinations::DeliverySiteController < ApplicationController
   private
 
   def set_batches
-    @batches = @session.campaign.batches
+    @batches = @session.campaign.batches.order(expiry: :asc, name: :asc)
   end
 
   def set_draft_vaccination_record
