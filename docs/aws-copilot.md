@@ -77,6 +77,9 @@ copilot svc logs --since 1h --follow
 copilot env init --name test                # Initialise a new environment
 copilot env deploy --name test              # Deploy the new environment
 copilot secret init                         # Add a secret to every environment
+
+copilot svc init --name webapp --env test   # Only needed if service doesn't
+                                            # exist in subscription
 copilot svc deploy --env test               # Deploy the web app
 
 copilot svc delete --name webapp --env test # Destroy the web app
@@ -161,6 +164,7 @@ Skip the environments you're not setting up keys for by hitting return.
 Finally, deploy the app:
 
 ```bash
+copilot svc init # Only necessary if service doesn't exist in subscription
 copilot svc deploy --env pentest
 ```
 
