@@ -1,18 +1,14 @@
 # AWS Copilot Ops Manual
 
-## Configure AWS local credentials
+## Configure AWS credentials
 
-Install `awscli` and `aws-copilot`. Then configure your AWS CLI credentials
-locally:
+To set up `awscli` for the first time:
 
 ```bash
-$ aws configure sso
+aws configure sso
 ```
 
-Use any session name that makes sense to you, the SSO Start URL and SSO Region
-from the "Command line or programmatic access" link in the AWS Account admin.
-
-Once you're done, your `~/.aws/config` should look something like:
+Your `~/.aws/config` should look something like:
 
 ```bash
 [default]
@@ -46,39 +42,49 @@ sso_registration_scopes = sso:account:access
 
 Running `aws sso login` will log you in via your browser.
 
-After this, AWS Copilot commands should run on your new profile:
+After this, AWS Copilot commands should run on your default profile:
 
 ```bash
 $ copilot app ls
-manage-childrens-vaccinations
+mavis
 ```
 
-## Manual deployment
+## Ops cheat sheet
 
-Assuming you have an environment setup, go ahead and deploy:
+### Manual deployment
 
 ```bash
-copilot svc deploy --env staging
+copilot svc deploy --env test
 ```
 
-## Opening a shell on the remote environment
-
-If you have the service up and running, you can connect to the first running
-container with this command:
+### Shelling in
 
 ```bash
-copilot svc exec --app manage-childrens-vaccinations --env staging --name webapp
+copilot svc exec --env test
 ```
 
-### Tailing logs of running service
-
-Use this command to see the most recent logs and to follow any new logs:
+### Tailing logs
 
 ```bash
 copilot svc logs --since 1h --follow
 ```
 
 ## Setting up a new environment
+
+### Quick start
+
+```bash
+copilot env init --name test                # Initialise a new environment
+copilot env deploy --name test              # Deploy the new environment
+copilot secret init                         # Add a secret to every environment
+copilot svc deploy --env test               # Deploy the web app
+
+copilot svc delete --name webapp --env test # Destroy the web app
+copilot env delete --name test              # Destroy the environment disable
+                                            # deletion protection if necessary
+```
+
+### Full guide
 
 Before you start, if you want HTTPS, you need to set up certificates in ACM.
 
@@ -106,10 +112,13 @@ the `env` has already been `init`.
 
 Give the environment a name and choose the default environment configuration.
 
-`copilot env ls` should show the new environment when the previous command
-succeeds.
+To check that the environment was provisioned successfully:
 
-Deploy the env once, so that it is upgraded, and allows us to provision
+```bash
+copilot env ls
+```
+
+Deploy the environment once, so that it is upgraded, and allows us to provision
 secrets:
 
 ```bash
@@ -168,7 +177,7 @@ The test/training AWS subscription has ownership of the `mavistesting.com`
 domain. It's purpose is to assist with debugging Copilot environment related
 issues that require re-provisioning of environments from scratch.
 
-This is only necessary to change things like load balancer settings, SSL
+This is only necessary to change things like load balancer settings or SSL
 security policies.
 
 To deploy to it, create a new environment in the usual way, but remove the ARNs
@@ -184,20 +193,9 @@ like to use in the `webapp/manifest.yml`:
       rolling: recreate
 ```
 
-### Cheat sheet
-
-```bash
-copilot env init --name test                # Initialise a new environment
-copilot env deploy --name test              # Deploy the new environment
-copilot secret init                         # Add a secret to every environment
-copilot svc deploy --env test               # Deploy the web app
-
-copilot svc delete --name webapp --env test # Destroy the web app
-copilot env delete --name test              # Destroy the environment disable
-                                            # deletion protection if necessary
-```
-
 ## GitHub Actions Custom IAM Role
+
+There is a predefined IAM role to facilitate continuous deployment.
 
 ### Role Details
 
@@ -206,13 +204,7 @@ Role Name: GitHubActionsRole
 Role ARN: arn:aws:iam::393416225559:role/GitHubActionsRole
 ```
 
-### Purpose
-
-The primary purpose of this role is to allow GitHub Actions workflows to securely interact with AWS services. This includes deploying applications, managing AWS resources, and executing various AWS operations required by our CI/CD pipeline.
-
 ### Permissions
-
-The role includes the following permissions:
 
 - Amazon Elastic Container Service (ECS)
 - Amazon Elastic Container Registry (ECR)
@@ -223,9 +215,7 @@ The role includes the following permissions:
 - AWS Secrets Manager or AWS Systems Manager (Parameter Store)
 - Security Token Service (STS)
 
-### Trust Relationship
-
-The role is configured with a trust relationship to allow GitHub Actions to assume this role. The trust policy is as follows:
+### AWS trust policy
 
 ```
 {
@@ -239,7 +229,7 @@ The role is configured with a trust relationship to allow GitHub Actions to assu
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
         "StringLike": {
-          "token.actions.githubusercontent.com:sub": "repo:nhsuk/manage-childrens-vaccinations:*"
+          "token.actions.githubusercontent.com:sub": "repo:nhsuk/manage-vaccinations-in-schools:*"
         }
       }
     }
@@ -249,11 +239,6 @@ The role is configured with a trust relationship to allow GitHub Actions to assu
 
 ### Usage in GitHub Actions
 
-The role is used in GitHub Actions workflows as follows:
-
-Configured in the workflow YAML file using aws-actions/configure-aws-credentials action.
-The role is assumed to provide temporary credentials for the workflow to interact with AWS services.
-
 ```
 - name: Configure AWS Credentials
   uses: aws-actions/configure-aws-credentials@v1
@@ -262,32 +247,18 @@ The role is assumed to provide temporary credentials for the workflow to interac
     aws-region: eu-west-2
 ```
 
-### Security and Best Practices
-
-The role follows the principle of least privilege, granting only the permissions necessary for the tasks performed by GitHub Actions.
-Regular audits and reviews are to be conducted to ensure the role's permissions align with current requirements.
-
-## aws-account-setup script notes
+## `bin/aws-account-setup` script
 
 ### Purpose
 
-This is a shell script designed to automate the setup of IAM Access Analyzers in an AWS account. It checks for the existence of two specific types of analyzers - ACCOUNT and ACCOUNT_UNUSED_ACCESS - and creates them if they do not exist. This script is useful for ensuring compliance with security best practices in AWS environments.
+This is a shell script designed to automate the setup of IAM Access Analyzers in
+an AWS account.
 
-### Functionality
-
-**Analyzer Check**: The script first checks if the specified analyzers (External Access and Unused Access) exist in the AWS account.\
-**Creation**: If either analyzer is not present, the script proceeds to create it.\
-**Error Handling**: Includes basic error handling; exits upon failure to create an analyzer.\
-NOTE: The script executes non-interactively without requiring manual input.
-
-### Requirements
-
-- AWS CLI installed and configured.
-- User must have permissions to manage IAM Access Analyzer.
+It checks for the existence of two specific types of analyzers - ACCOUNT and
+ACCOUNT_UNUSED_ACCESS - and creates them if they do not exist. This script is
+useful for ensuring compliance with security best practices in AWS environments.
 
 ### Usage
-
-Run the following from the root of the project directory:
 
 ```
 bin/aws-account-setup
@@ -304,7 +275,7 @@ This guide details setting up CloudWatch alerts to monitor critical security eve
 
 ### Instructions
 
-**Configure AWS CloudTrail**
+#### Configure AWS CloudTrail
 
 Ensure CloudTrail is enabled and properly configured to log events in the AWS account.
 CloudTrail logs should be directed to a specific log group in CloudWatch Logs.
@@ -312,7 +283,7 @@ CloudTrail logs should be directed to a specific log group in CloudWatch Logs.
 In our specific case, a new Trail was created.
 You need only specify the name, and KMS alias, the rest of the fields are fine to stay as defaults.
 
-**Set Up SNS Topic for Alerts**
+#### Set Up SNS Topic for Alerts
 
 In the SNS console, create a new topic for CloudWatch Alerts.
 Invite stakeholders to subscribe (via email, SMS, etc.).
@@ -322,7 +293,7 @@ It is good practice to have separate Topics for differents kinds and types of al
 
 In our specific case, MSCV_CloudWatch_Alarms_Topic was created. You need only specify the name, and type of the topic, the rest are fine to stay as default values.
 
-**Access CloudWatch Console**
+#### Access CloudWatch Console
 
 1. Open CloudWatch from the management console and navigate to the Logs -> Log Groups section.
 
@@ -330,7 +301,7 @@ In our specific case, MSCV_CloudWatch_Alarms_Topic was created. You need only sp
 
 2. Select the log group you want to use. (in our case aws-cloudtrail-logs-393416225559-83ed3a78)
 
-**Create Metric Filters for Key Events**
+#### Create Metric Filters for Key Events
 
 For each key event (e.g., Unauthorized API Calls, IAM Policy Changes), create a new metric filter
 
@@ -338,7 +309,7 @@ Click "Create metric filter."
 Enter a filter pattern to match the specific event.
 Assign a name (e.g., UnauthorizedAPICallsFilter), a metric namespace (e.g., CloudTrailMetrics), and a metric value (e.g. 1).
 
-**Define Filter Patterns**
+#### Define Filter Patterns
 
 Use the below filters as a reference point, but it is worth noting that monitoring is an ever changing practice, so it is very important to regularly review these expressions and adjust depending on monitoring and alerting needs.
 
@@ -355,16 +326,18 @@ Use the below filters as a reference point, but it is worth noting that monitori
 - VPCChangeFilter = "{ ($.eventName = CreateVpc) || ($.eventName = DeleteVpc) || ($.eventName = ModifyVpcAttribute) || ($.eventName = AcceptVpcPeeringConnection) || ($.eventName = CreateVpcPeeringConnection) || ($.eventName = DeleteVpcPeeringConnection) || ($.eventName = RejectVpcPeeringConnection) }"
 ```
 
-**Create CloudWatch Alarms**
+#### Create CloudWatch Alarms
 
 Then for each one of the filters created, create an alarm by selecting the metric filter and click "Create alarm."
 Define the alarm condition (e.g., metric greater than 0 for 1 consecutive period).
 Set alarm actions to notify via the SNS topic created earlier.
 
-**Test Alarm Configuration**
+#### Test Alarm Configuration
 
 The most realistic test for any montioring alert is a real life situation that actually triggers the defined expression.
+
 However, it can also be tested by manually changing the state of the alert. This is not the best way since it can yield false positives, but for the purpose of testing SNS function, it can be useful.
+
 You can do this using aws-cli:
 
 ```
@@ -377,16 +350,9 @@ And then, remember to change the state back (it can also resolve itself automati
 aws cloudwatch set-alarm-state --alarm-name "UnauthorizedOperationCount" --state-reason "Testing alarm" --state-value OK
 ```
 
-### NOTES
-
-The following sites contain some valuable examples that can be used for inspiration whenever ready to take the monitoring journey to the next level:
-
-- https://asecure.cloud/l/cloudwatch/
-- https://www.intelligentdiscovery.io/controls/cloudwatch/
-
 ## Server Access Logging on S3 Buckets
 
-This is a feature provided by AWS. Server access logging for S3 buckets in AWS provides detailed records for the requests made to a specific bucket. These logs are invaluable for security and audit purposes.
+This is a feature provided by AWS. Server access logging for S3 buckets in AWS provides detailed records for the requests made to a specific bucket.
 
 ### Enabling Server Access Logging
 
@@ -403,6 +369,8 @@ Follow the instructions below:
 7. Select the desired Log object key format. ('[DestinationPrefix][YYYY]-[MM]-[DD]-[hh]-[mm]-[ss]-[UniqueString]' should be fine, unless you plan to use these logs for analytics, in which case, choose the second option.)
 8. Click Save Changes.
 
-There is a delay in delivering the logs, so it can potentially take a couple hours before we start seeing some logs.
+There is a delay in delivering the logs, so it can potentially take a couple
+hours before we start seeing some logs.
 
-NOTE: When you enable server access logging, the S3 console automatically updates your bucket policy to include access to the S3 log delivery group.
+NOTE: When you enable server access logging, the S3 console automatically
+updates your bucket policy to include access to the S3 log delivery group.
