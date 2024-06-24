@@ -15,8 +15,7 @@ http:
   public:
     certificates:
       [
-        arn:aws:acm:eu-west-2:590184012497:certificate/008b9ed6-f2f1-4e01-bb2c-41d6870222ff,
-        arn:aws:acm:eu-west-2:590184012497:certificate/8b5c5653-4ca8-4e16-9543-230715187bc3,
+        arn:aws:acm:eu-west-2:590184012497:certificate/bdc33817-4533-45ed-970b-b354640676e5,
       ]
     ssl_policy: "ELBSecurityPolicy-TLS13-1-2-2021-06"
 
