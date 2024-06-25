@@ -4,27 +4,35 @@
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
     <%= render AppCardComponent.new(link_to: sessions_path) do |c| %>
       <% c.with_heading { t("sessions.index.title") } %>
-      <% c.with_description do %>
-        View all sessions taking place today.
-      <% end %>
+      <p class="nhsuk-body">Use this area to:</p>
+      <ul class="nhsuk-list nhsuk-list--bullet">
+        <li>register attendance</li>
+        <li>record vaccinations</li>
+        <li>review session outcomes</li>
+      </ul>
     <% end %>
   </li>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
     <%= render AppCardComponent.new(link_to: campaigns_path) do |c| %>
       <% c.with_heading { t("campaigns.index.title") } %>
-      <% c.with_description do %>
-        Create and manage vaccination campaigns.
-      <% end %>
+      <p class="nhsuk-body">Use this area to:</p>
+      <ul class="nhsuk-list nhsuk-list--bullet">
+        <li>create new programmes</li>
+        <li>review consent responses</li>
+        <li>triage health records</li>
+      </ul>
     <% end %>
   </li>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
     <%= render AppCardComponent.new(link_to: vaccines_path) do |c| %>
       <% c.with_heading { t("vaccines.index.title") } %>
-      <% c.with_description do %>
-        Add or remove batches.
-      <% end %>
+      <p class="nhsuk-body">Use this area to:</p>
+      <ul class="nhsuk-list nhsuk-list--bullet">
+        <li>add new vaccine batches</li>
+        <li>edit details for existing batches</li>
+      </ul>
     <% end %>
   </li>
 </ul>
