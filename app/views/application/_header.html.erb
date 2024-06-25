@@ -19,13 +19,13 @@
     <ul class="nhsuk-header__navigation-list">
       <% if current_user.present? %>
         <li class="nhsuk-header__navigation-item">
-          <%= link_to "Today’s sessions", sessions_path, class: "nhsuk-header__navigation-link" %>
+          <%= link_to t("sessions.index.title"), sessions_path, class: "nhsuk-header__navigation-link" %>
         </li>
         <li class="nhsuk-header__navigation-item">
-          <%= link_to "Campaigns", campaigns_path, class: "nhsuk-header__navigation-link" %>
+          <%= link_to t("campaigns.index.title"), campaigns_path, class: "nhsuk-header__navigation-link" %>
         </li>
         <li class="nhsuk-header__navigation-item app-header__navigation-item--divider">
-          <%= link_to "Vaccines", vaccines_path, class: "nhsuk-header__navigation-link" %>
+          <%= link_to t("vaccines.index.title"), vaccines_path, class: "nhsuk-header__navigation-link" %>
         </li>
         <li class="nhsuk-header__navigation-item">
           <%= link_to current_user.email, users_account_path(current_user), class: "nhsuk-header__navigation-link" %>

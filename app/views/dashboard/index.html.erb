@@ -3,7 +3,7 @@
 <ul class="nhsuk-grid-row nhsuk-card-group">
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
     <%= render AppCardComponent.new(link_to: sessions_path) do |c| %>
-      <% c.with_heading { "Today’s sessions" } %>
+      <% c.with_heading { t("sessions.index.title") } %>
       <% c.with_description do %>
         View all sessions taking place today.
       <% end %>
@@ -12,7 +12,7 @@
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
     <%= render AppCardComponent.new(link_to: campaigns_path) do |c| %>
-      <% c.with_heading { "Campaigns" } %>
+      <% c.with_heading { t("campaigns.index.title") } %>
       <% c.with_description do %>
         Create and manage vaccination campaigns.
       <% end %>
@@ -21,7 +21,7 @@
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
     <%= render AppCardComponent.new(link_to: vaccines_path) do |c| %>
-      <% c.with_heading { "Vaccines" } %>
+      <% c.with_heading { t("vaccines.index.title") } %>
       <% c.with_description do %>
         Add or remove batches.
       <% end %>

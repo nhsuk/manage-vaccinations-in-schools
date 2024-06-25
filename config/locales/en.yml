@@ -1,4 +1,7 @@
 en:
+  campaigns:
+    index:
+      title: Campaigns
   number:
     "1": one
     "2": two
@@ -10,6 +13,9 @@ en:
     "8": eight
     "9": nine
     "0": zero
+  sessions:
+    index:
+      title: Today’s sessions
   table:
     no_results: No results
     no_filtered_results: We couldn’t find any children that matched your filters.
@@ -184,6 +190,8 @@ en:
         contains_gelatine: Tell us why you don’t agree
         other: Tell us why you don’t agree
   vaccines:
+    index:
+      title: Vaccines
     flu: Flu
     hpv: HPV
   activemodel:
