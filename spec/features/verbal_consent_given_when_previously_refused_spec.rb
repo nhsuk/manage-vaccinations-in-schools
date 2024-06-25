@@ -42,7 +42,7 @@ feature "Verbal consent" do
 
   def when_i_check_the_consent_responses_given_for_that_child
     visit "/dashboard"
-    click_on "Campaigns", match: :first
+    click_on "Vaccination programmes", match: :first
     click_on "HPV"
     click_on "Pilot School"
     click_on "Check consent responses"

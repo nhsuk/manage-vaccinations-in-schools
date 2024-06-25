@@ -131,7 +131,7 @@ describe "Parental consent" do
     sign_in @team.users.first
 
     visit "/dashboard"
-    click_on "Campaigns", match: :first
+    click_on "Vaccination programmes", match: :first
     click_on "HPV"
     click_on "Pilot School"
     click_on "Check consent responses"
@@ -144,7 +144,7 @@ describe "Parental consent" do
   end
 
   def and_the_action_in_the_vaccination_session_is_to_check_refusal
-    click_on "Campaigns", match: :first
+    click_on "Vaccination programmes", match: :first
     click_on "HPV"
     click_on "Pilot School"
     click_on "Record vaccinations"

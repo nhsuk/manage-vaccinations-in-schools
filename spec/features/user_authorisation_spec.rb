@@ -44,7 +44,7 @@ describe "User authorisation" do
 
   def and_i_go_to_the_consent_page
     visit "/dashboard"
-    click_on "Campaigns", match: :first
+    click_on "Vaccination programmes", match: :first
     click_on "HPV"
     click_on "Pilot School"
     click_on "Check consent responses"

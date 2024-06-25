@@ -30,7 +30,7 @@ describe "Not Gillick competent" do
 
     visit "/dashboard"
 
-    click_on "Campaigns", match: :first
+    click_on "Vaccination programmes", match: :first
     click_on "HPV"
     click_on "Pilot School"
     click_on "Check consent responses"

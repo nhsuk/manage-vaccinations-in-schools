@@ -44,7 +44,7 @@ describe "Parental consent" do
     sign_in @team.users.first
     visit "/dashboard"
 
-    click_on "Campaigns", match: :first
+    click_on "Vaccination programmes", match: :first
     click_on "HPV"
     click_on "Pilot School"
     click_on "Check consent responses"
@@ -158,7 +158,7 @@ describe "Parental consent" do
   def when_the_nurse_checks_the_consent_responses
     sign_in @team.users.first
     visit "/dashboard"
-    click_on "Campaigns", match: :first
+    click_on "Vaccination programmes", match: :first
     click_on "HPV"
     click_on "Pilot School"
     click_on "Check consent responses"
