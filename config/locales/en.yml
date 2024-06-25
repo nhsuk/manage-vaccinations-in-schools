@@ -1,345 +1,154 @@
 en:
-  campaigns:
-    index:
-      title: Vaccination programmes
-  number:
-    "1": one
-    "2": two
-    "3": three
-    "4": four
-    "5": five
-    "6": six
-    "7": seven
-    "8": eight
-    "9": nine
-    "0": zero
-  sessions:
-    index:
-      title: Today’s sessions
-  table:
-    no_results: No results
-    no_filtered_results: We couldn’t find any children that matched your filters.
-  notification_banner:
-    info: Information
-    success: Success
-    warning: Warning
-  page_titles:
-    accessibility_statement: "Accessibility statement"
-    privacy_policy: "Your privacy"
-  patients_table:
-    # Consent
-    consent_given:
-      label: Given
-      caption: "%{children} with consent given"
-    consent_refused:
-      label: Refused
-      caption: "%{children} with consent refused"
-    conflicting_consent:
-      label: Conflicts
-      caption: "%{children} with conflicting consent responses"
-    no_consent:
-      label: No consent
-      caption: "%{children} without a response"
-
-    # Triage
-    needs_triage:
-      label: Triage needed
-      caption: "%{children} needing triage"
-    triage_complete:
-      label: Triage completed
-      caption: "%{children} with triage completed"
-    no_triage_needed:
-      label: No triage needed
-      caption: "%{children} with no triage needed"
-
-    # Vaccinate
-    vaccinate:
-      label: Vaccinate
-      caption: "%{children} to vaccinate"
-    vaccinated:
-      label: Vaccinated
-      caption: "%{children} vaccinated"
-    could_not_vaccinate:
-      label: Could not vaccinate
-      caption: "%{children} could not vaccinated"
-  service:
-    email: england.mavis@nhs.net
-  wicked:
-    # ConsentForm
-    name: "name"
-    date_of_birth: "date-of-birth"
-    school: "school"
-    parent: "parent"
-    consent: "consent"
-    reason: "reason"
-    reason_notes: "reason-notes"
-    injection: "injection"
-    contact_method: "contact-method"
-    gp: "gp"
-    address: "address"
-    health_question: "health-question"
-
-    # Consent
-    who: "who"
-    route: "route"
-    agree: "agree"
-    questions: "questions"
-    triage: "triage"
-    # reason: "reason"             # already defined above
-    # reason_notes: "reason-notes" # already defined above
-    confirm: "confirm"
-
-    # Session
-    location: "location"
-    when: "when"
-    cohort: "cohort"
-    timeline: "timeline"
-  mailers:
-    consent_form_mailer:
-      reasons_for_refusal:
-        contains_gelatine: "of the gelatine in the nasal spray"
-        already_vaccinated: "they have already received the vaccine"
-        will_be_vaccinated_elsewhere: "they will be given the vaccine elsewhere"
-        medical_reasons: "of medical reasons"
-        personal_choice: "of personal choice"
-        other: "of other reasons"
-    vaccination_mailer:
-      reasons_did_not_vaccinate:
-        refused: "they refused when the nurse offered the vaccination"
-        not_well: "the nurse decided %{short_patient_name} was not well"
-        contraindications: "they had contraindications"
-        already_had: "they've already had the vaccine"
-        absent_from_school: "they were off school"
-        absent_from_session: "they were not in the vaccination session"
-  consents:
-    edit_consent:
-      title:
-        flu: Do they agree to them having the flu vaccination?
-        hpv: Do they agree to them having the HPV vaccination?
-    reason_for_refusal_notes:
-      title:
-        already_vaccinated: Where did their child get their vaccination?
-        will_be_vaccinated_elsewhere: Where will their child get their vaccination?
-        medical_reasons: What medical reasons prevent their child from being vaccinated?
-        personal_choice: Why are they refusing to give consent?
-        contains_gelatine: Why are they refusing to give consent?
-        other: Why are they refusing to give consent?
-  vaccinations:
-    form:
-      label:
-        flu: Yes, they got the flu vaccine
-        hpv: Yes, they got the HPV vaccine
-    edit_reason:
-      title:
-        flu: Why was the flu vaccine not given?
-        hpv: Why was the HPV vaccine not given?
-  consent_forms:
-    start:
-      title:
-        flu: Give or refuse consent for a flu vaccination
-        hpv: Give or refuse consent for an HPV vaccination
-      paragraphs:
-        flu:
-          - The vaccination helps to protect children against flu. It also
-            protects others who are vulnerable to flu, such as babies and older
-            people.
-        hpv:
-          - The HPV vaccine helps to prevent HPV related cancers from
-            developing in boys and girls.
-          - The number of doses you need depends on your age and how well your
-            immune system works. Young people usually only need 1 dose.
-    consent:
-      title:
-        flu: Do you agree to them having a nasal flu vaccination?
-        hpv: Do you agree to them having the HPV vaccination?
-      hint:
-        flu: The nasal flu spray contains gelatine which comes from pigs.
-        hpv: ""
-      i_agree:
-        flu: Yes, I agree to them having a nasal vaccine
-        hpv: Yes, I agree
-    confirm:
-      consent_card_title:
-        flu: Consent for the flu vaccination
-        hpv: Consent for the HPV vaccination
-      i_agree:
-        flu: Yes, I agree to them having a nasal flu vaccination
-        hpv: Yes, I agree
-    confirmation_agreed:
-      title:
-        flu: " %{full_name} will get their nasal flu vaccination at school on %{date}"
-        hpv: " %{full_name} will get their HPV vaccination at school on %{date}"
-    confirmation_needs_triage:
-      title:
-        flu: You’ve given consent for your child to get a flu vaccination
-        hpv: You’ve given consent for your child to get an HPV vaccination
-    confirmation_injection:
-      title:
-        # HPV shouldn't have this state because it's always an injection
-        flu: Your child will not get a nasal flu vaccination at school
-    confirmation_refused:
-      title:
-        flu: Your child will not get a nasal flu vaccination at school
-        hpv: Your child will not get an HPV vaccination at school
-    reason_notes:
-      title:
-        already_vaccinated: Where did your child get their vaccination?
-        will_be_vaccinated_elsewhere: Where will your child get their vaccination?
-        medical_reasons: What medical reasons prevent your child from being vaccinated?
-        personal_choice: Tell us why you don’t agree
-        contains_gelatine: Tell us why you don’t agree
-        other: Tell us why you don’t agree
-  vaccines:
-    index:
-      title: Vaccines
-    flu: Flu
-    hpv: HPV
   activemodel:
     attributes:
       cohort_list_row:
-        school_urn: "<code>SCHOOL_URN</code>"
-        school_name: "<code>SCHOOL_NAME</code>"
-        parent_name: "<code>PARENT_NAME</code>"
-        parent_relationship: "<code>PARENT_RELATIONSHIP</code>"
-        parent_email: "<code>PARENT_EMAIL</code>"
-        parent_phone: "<code>PARENT_PHONE</code>"
-        child_first_name: "<code>CHILD_FIRST_NAME</code>"
-        child_last_name: "<code>CHILD_LAST_NAME</code>"
-        child_common_name: "<code>CHILD_COMMON_NAME</code>"
-        child_date_of_birth: "<code>CHILD_DATE_OF_BIRTH</code>"
-        child_address_line_1: "<code>CHILD_ADDRESS_LINE_1</code>"
-        child_address_line_2: "<code>CHILD_ADDRESS_LINE_2</code>"
-        child_address_town: "<code>CHILD_ADDRESS_TOWN</code>"
-        child_address_postcode: "<code>CHILD_ADDRESS_POSTCODE</code>"
-        child_nhs_number: "<code>CHILD_NHS_NUMBER</code>"
+        child_address_line_1: <code>CHILD_ADDRESS_LINE_1</code>
+        child_address_line_2: <code>CHILD_ADDRESS_LINE_2</code>
+        child_address_postcode: <code>CHILD_ADDRESS_POSTCODE</code>
+        child_address_town: <code>CHILD_ADDRESS_TOWN</code>
+        child_common_name: <code>CHILD_COMMON_NAME</code>
+        child_date_of_birth: <code>CHILD_DATE_OF_BIRTH</code>
+        child_first_name: <code>CHILD_FIRST_NAME</code>
+        child_last_name: <code>CHILD_LAST_NAME</code>
+        child_nhs_number: <code>CHILD_NHS_NUMBER</code>
+        parent_email: <code>PARENT_EMAIL</code>
+        parent_name: <code>PARENT_NAME</code>
+        parent_phone: <code>PARENT_PHONE</code>
+        parent_relationship: <code>PARENT_RELATIONSHIP</code>
+        school_name: <code>SCHOOL_NAME</code>
+        school_urn: <code>SCHOOL_URN</code>
     errors:
       models:
-        health_answer:
-          attributes:
-            response:
-              blank: Choose an answer
-              inclusion: Choose an answer
-            notes:
-              blank: Enter details
-              too_long: Enter details that are less than 1000 characters long
         cohort_list:
           attributes:
             csv:
               blank: Choose a file
               invalid: Choose a CSV file in the correct format
-              too_large: "Choose a CSV with %{remaining} or fewer rows"
+              too_large: Choose a CSV with %{remaining} or fewer rows
         cohort_list_row:
           attributes:
-            school_urn:
-              blank: "is required but missing"
-              invalid: "‘%{value}’ is not a known school URN"
-            parent_name:
-              blank: "is required but missing"
-            parent_relationship:
-              blank: "is required but missing"
-            parent_email:
-              blank: "is required but missing"
-              invalid: "‘%{value}’ should be a valid email address, like j.doe@example.com"
-            parent_phone:
-              blank: "is required but missing"
-              invalid: "‘%{value}’ should be a valid phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192"
-            child_first_name:
-              blank: "is required but missing"
-            child_last_name:
-              blank: "is required but missing"
-            child_date_of_birth:
-              blank: "is required but missing"
-              invalid: "‘%{value}’ should be formatted as YYYY-MM-DD"
             child_address_line_1:
-              blank: "is required but missing"
-            child_address_town:
-              blank: "is required but missing"
+              blank: is required but missing
             child_address_postcode:
-              blank: "is required but missing111"
-              invalid_postcode: "‘%{value}’ should be a postcode, like SW1A 1AA"
+              blank: is required but missing111
+              invalid_postcode: ‘%{value}’ should be a postcode, like SW1A 1AA
+            child_address_town:
+              blank: is required but missing
+            child_date_of_birth:
+              blank: is required but missing
+              invalid: ‘%{value}’ should be formatted as YYYY-MM-DD
+            child_first_name:
+              blank: is required but missing
+            child_last_name:
+              blank: is required but missing
             child_nhs_number:
-              blank: "is required but missing"
-              invalid: "‘%{value}’ should be a valid NHS number, like 999 888 7777"
+              blank: is required but missing
+              invalid: ‘%{value}’ should be a valid NHS number, like 999 888 7777
+            parent_email:
+              blank: is required but missing
+              invalid: >-
+                ‘%{value}’ should be a valid email address, like
+                j.doe@example.com
+            parent_name:
+              blank: is required but missing
+            parent_phone:
+              blank: is required but missing
+              invalid: >-
+                ‘%{value}’ should be a valid phone number, like 01632 960 001,
+                07700 900 982 or +44 808 157 0192
+            parent_relationship:
+              blank: is required but missing
+            school_urn:
+              blank: is required but missing
+              invalid: ‘%{value}’ is not a known school URN
+        health_answer:
+          attributes:
+            notes:
+              blank: Enter details
+              too_long: Enter details that are less than 1000 characters long
+            response:
+              blank: Choose an answer
+              inclusion: Choose an answer
   activerecord:
     attributes:
       consent:
         reason_for_refusals:
-          already_vaccinated: "Vaccine already received"
-          will_be_vaccinated_elsewhere: "Vaccine will be given elsewhere"
-          medical: "Medical reasons"
-          personal_choice: "Personal choice"
-          other: "Other"
+          already_vaccinated: Vaccine already received
+          medical: Medical reasons
+          other: Other
+          personal_choice: Personal choice
+          will_be_vaccinated_elsewhere: Vaccine will be given elsewhere
         responses:
-          given: "consent given"
-          refused: "consent refused"
-          not_provided: "not provided"
+          given: consent given
+          not_provided: not provided
+          refused: consent refused
         routes:
-          website: Online
+          in_person: In person
           paper: Paper
           phone: By phone
-          in_person: In person
+          website: Online
+      consent_form:
+        contact_methods:
+          any: I do not have specific needs
+          other: Other
+          text: I can only receive text messages
+          voice: I can only receive voice calls
+        parent_relationships:
+          father: dad
+          mother: mum
+        reasons:
+          already_vaccinated: Vaccine already received
+          contains_gelatine: Vaccine contains gelatine from pigs
+          medical_reasons: Medical reasons
+          other: Other
+          personal_choice: Personal choice
+          will_be_vaccinated_elsewhere: Vaccine will be given elsewhere
+        responses:
+          given: Consent given
+          not_provided: Not provided
+          refused: Consent refused
       parent:
         contact_methods:
-          text: Can only receive text messages
-          voice: Can only receive voice calls
           any: No specific needs
           other: Other
+          text: Can only receive text messages
+          voice: Can only receive voice calls
         relationships:
           father: dad
           mother: mum
       patient:
         year_group:
-          -4: Reception -4
-          -3: Reception -3
-          -2: Reception -2
-          -1: Reception -1
-          0: Reception
-          1: Year 1
-          2: Year 2
-          3: Year 3
-          4: Year 4
-          5: Year 5
-          6: Year 6
-          7: Year 7
-          8: Year 8
-          9: Year 9
-          10: Year 10
-          11: Year 11
-          12: Year 12
-          13: Year 13
-          14: Year 14
-      consent_form:
-        parent_relationships:
-          father: dad
-          mother: mum
-        contact_methods:
-          text: I can only receive text messages
-          voice: I can only receive voice calls
-          other: Other
-          any: I do not have specific needs
-        reasons:
-          contains_gelatine: "Vaccine contains gelatine from pigs"
-          already_vaccinated: "Vaccine already received"
-          will_be_vaccinated_elsewhere: "Vaccine will be given elsewhere"
-          medical_reasons: "Medical reasons"
-          personal_choice: "Personal choice"
-          other: "Other"
-        responses:
-          given: "Consent given"
-          refused: "Consent refused"
-          not_provided: "Not provided"
+          "-1": Reception -1
+          "-2": Reception -2
+          "-3": Reception -3
+          "-4": Reception -4
+          "0": Reception
+          "1": Year 1
+          "10": Year 10
+          "11": Year 11
+          "12": Year 12
+          "13": Year 13
+          "14": Year 14
+          "2": Year 2
+          "3": Year 3
+          "4": Year 4
+          "5": Year 5
+          "6": Year 6
+          "7": Year 7
+          "8": Year 8
+          "9": Year 9
       patient_session:
         outcomes:
           could_not_vaccinate: Could not vaccinate
-          no_outcome: No outcome yet
           no_consent: No consent
+          no_outcome: No outcome yet
           vaccinated: Vaccinated
       triage:
         statuses:
-          ready_to_vaccinate: "Yes, it’s safe to vaccinate"
-          do_not_vaccinate: "No, do not vaccinate"
-          delay_vaccination: "No, delay vaccination to a later date"
-          needs_follow_up: "No, keep in triage"
+          delay_vaccination: No, delay vaccination to a later date
+          do_not_vaccinate: No, do not vaccinate
+          needs_follow_up: No, keep in triage
+          ready_to_vaccinate: Yes, it’s safe to vaccinate
       vaccination_record:
         delivery_methods:
           intranasal: Intramuscular (IM)
@@ -349,18 +158,112 @@ en:
           right_arm_lower_position: Right arm (lower position)
           right_arm_upper_position: Right arm (upper position)
         reasons:
-          refused: "Refused vaccine"
-          not_well: "Unwell"
-          contraindications: "Had contraindications"
-          already_had: "Already had the vaccine"
-          absent_from_school: "Absent from school"
-          absent_from_session: "Absent from session"
+          absent_from_school: Absent from school
+          absent_from_session: Absent from session
+          already_had: Already had the vaccine
+          contraindications: Had contraindications
+          not_well: Unwell
+          refused: Refused vaccine
       vaccine:
         methods:
           injection: Injection
           nasal: Nasal spray
     errors:
       models:
+        batch:
+          attributes:
+            expiry:
+              blank: Enter an expiry date
+              missing_day: Enter a day
+              missing_month: Enter a month
+              missing_year: Enter a year
+            name:
+              blank: Enter a batch
+        consent:
+          attributes:
+            reason_for_refusal:
+              inclusion: Choose a reason
+            reason_for_refusal_notes:
+              blank: Enter details for refusing
+              too_long: >-
+                Enter details for refusing that are less than 1000 characters
+                long
+            response:
+              inclusion: Choose if they consent
+            route:
+              inclusion: Choose how the response was given
+        consent_form:
+          attributes:
+            address_line_1:
+              blank: Enter the first line of your address
+              too_long: >-
+                Enter a first line of address that is less than 300 characters
+                long
+            address_line_2:
+              too_long: >-
+                Enter a second line of address that is less than 300 characters
+                long
+            address_postcode:
+              blank: Enter a postcode
+            address_town:
+              blank: Enter a town or city
+              too_long: Enter a town or city that is less than 300 characters long
+            common_name:
+              blank: Enter a name
+              too_long: Enter a name that is less than 300 characters long
+            contact_injection:
+              inclusion: Choose if you want to be contacted
+            date_of_birth:
+              blank: Enter their date of birth
+              greater_than_or_equal_to: The child cannot be older than 22. Enter a date after %{count}.
+              less_than: The date is in the future. Enter a date in the past.
+              less_than_or_equal_to: The child cannot be younger than 3. Enter a date after %{count}.
+              missing_day: Enter a day
+              missing_month: Enter a month
+              missing_year: Enter a year
+            first_name:
+              blank: Enter a first name
+              too_long: Enter a first name that is less than 300 characters long
+            gp_name:
+              blank: Enter the GP surgery name
+              too_long: Enter a GP name that is less than 300 characters long
+            gp_response:
+              blank: Choose if your child is registered with a GP
+            is_this_their_school:
+              blank: Tell us if this is their school
+              inclusion: Tell us if this is their school
+            last_name:
+              blank: Enter a last name
+              too_long: Enter a last name that is less than 300 characters long
+            parent_email:
+              blank: Enter your email address
+              invalid: Enter a valid email address, such as j.doe@gmail.com
+              too_long: Enter an email address that is less than 300 characters long
+            parent_name:
+              blank: Enter your name
+              too_long: Enter a name that is less than 300 characters long
+            parent_phone:
+              invalid: Enter a valid phone number, like 07700 900 000
+              too_long: Enter a phone number that is less than 300 characters long
+            parent_relationship:
+              blank: Choose your relationship
+              inclusion: Choose a relationship
+            parent_relationship_other:
+              blank: Enter your relationship
+              too_long: Enter a relationship that are less than 300 characters long
+            parental_responsibility:
+              inclusion: You need parental responsibility to give consent
+            reason:
+              blank: Choose a reason
+            reason_notes:
+              blank: Enter details for refusing
+              too_long: >-
+                Enter details for refusing that are less than 1000 characters
+                long
+            response:
+              blank: Choose if you consent
+            use_common_name:
+              inclusion: Tell us whether they use a different name
         gillick_assessment:
           attributes:
             gillick_competent:
@@ -376,6 +279,91 @@ en:
               too_short: Enter a password that is at least 12 characters long
             password_confirmation:
               confirmation: The password and confirmation do not match
+        parent:
+          attributes:
+            contact_method:
+              inclusion: Choose a contact method
+            contact_method_other:
+              blank: Enter details about how to contact you
+              too_long: Enter details that are less than 300 characters long
+            name:
+              blank: Enter a name
+              too_long: Enter a name that is less than 300 characters long
+            parental_responsibility:
+              inclusion: Choose whether there is parental responsibility
+              inclusion_on_consent_form: You need parental responsibility to give consent
+            phone:
+              blank: Enter a phone number
+              invalid: Enter a valid phone number, like 07700 900 000
+              too_long: Enter a phone number that is less than 300 characters long
+            relationship:
+              blank: Choose a relationship
+              inclusion: Choose a relationship
+            relationship_other:
+              blank: Enter a relationship
+              too_long: Enter a relationship that is less than 300 characters long
+        session:
+          attributes:
+            close_consent_at:
+              blank: Choose a date for the deadline
+            close_consent_on:
+              blank: Choose a deadline for responses
+              inclusion: Choose a deadline for responses
+            date:
+              blank: Enter a date
+              missing_day: Enter a day
+              missing_month: Enter a month
+              missing_year: Enter a year
+            location_id:
+              blank: Choose a school
+              inclusion: Choose a school
+            patients:
+              blank: You must choose a cohort to continue
+            reminder_days_after:
+              blank: Choose when to send reminders
+              inclusion: Choose when to send reminders
+            reminder_days_after_custom:
+              blank: Choose the number of days after the session to send reminders
+              greater_than_or_equal_to: Choose a number between 2 and 7
+              less_than_or_equal_to: Choose a number between 2 and 7
+            send_consent_at:
+              blank: Choose a date to send consent requests
+              greater_than_or_equal_to: Enter a date that is not in the past
+              less_than_or_equal_to: Enter a date before the session
+              missing_day: Enter a day
+              missing_month: Enter a month
+              missing_year: Enter a year
+            time_of_day:
+              blank: Select a time of day
+              inclusion: Select a time of day
+        triage:
+          attributes:
+            notes:
+              blank: Enter triage notes
+              too_long: Enter triage notes that are less than 1000 characters long
+            status:
+              blank: Choose a status
+              inclusion: Choose a status
+        user:
+          attributes:
+            email:
+              blank: Enter an email address
+              invalid: Enter a valid email address, such as j.doe@gmail.com
+              taken: This email address is already in use
+              too_long: Enter an email address that is less than 255 characters long
+            full_name:
+              blank: Enter your full name
+              too_long: Enter a full name that is less than 255 characters long
+            password:
+              blank: Enter a password
+              too_long: Enter a password that is less than 128 characters long
+              too_short: Enter a password that is at least 10 characters long
+            password_confirmation:
+              confirmation: The password and confirmation do not match
+            registration:
+              too_long: Enter a registration number with fewer than 255 characters
+            unlock_token:
+              invalid: The unlock token is invalid
         vaccination_record:
           attributes:
             administered:
@@ -388,178 +376,192 @@ en:
               blank: Choose a delivery site
             notes:
               too_long: Enter notes that are less than 1000 characters long
+            reason:
+              inclusion: Choose a reason
             site:
               blank: Choose a site
-            reason:
-              inclusion: Choose a reason
-        batch:
-          attributes:
-            name:
-              blank: Enter a batch
-            expiry:
-              blank: Enter an expiry date
-              missing_year: Enter a year
-              missing_month: Enter a month
-              missing_day: Enter a day
-        consent:
-          attributes:
-            response:
-              inclusion: Choose if they consent
-            reason_for_refusal:
-              inclusion: Choose a reason
-            reason_for_refusal_notes:
-              blank: Enter details for refusing
-              too_long: Enter details for refusing that are less than 1000 characters long
-            route:
-              inclusion: Choose how the response was given
-        consent_form:
-          attributes:
-            date_of_birth:
-              blank: Enter their date of birth
-              greater_than_or_equal_to: The child cannot be older than 22. Enter a date after %{count}.
-              less_than: The date is in the future. Enter a date in the past.
-              less_than_or_equal_to: The child cannot be younger than 3. Enter a date after %{count}.
-              missing_year: Enter a year
-              missing_month: Enter a month
-              missing_day: Enter a day
-            common_name:
-              blank: Enter a name
-              too_long: Enter a name that is less than 300 characters long
-            first_name:
-              blank: Enter a first name
-              too_long: Enter a first name that is less than 300 characters long
-            last_name:
-              blank: Enter a last name
-              too_long: Enter a last name that is less than 300 characters long
-            use_common_name:
-              inclusion: Tell us whether they use a different name
-            is_this_their_school:
-              inclusion: Tell us if this is their school
-              blank: Tell us if this is their school
-            parent_name:
-              blank: Enter your name
-              too_long: Enter a name that is less than 300 characters long
-            parent_relationship:
-              blank: Choose your relationship
-              inclusion: Choose a relationship
-            parent_relationship_other:
-              blank: Enter your relationship
-              too_long: Enter a relationship that are less than 300 characters long
-            parental_responsibility:
-              inclusion: You need parental responsibility to give consent
-            parent_email:
-              blank: Enter your email address
-              invalid: Enter a valid email address, such as j.doe@gmail.com
-              too_long: Enter an email address that is less than 300 characters long
-            parent_phone:
-              invalid: Enter a valid phone number, like 07700 900 000
-              too_long: Enter a phone number that is less than 300 characters long
-            response:
-              blank: Choose if you consent
-            reason:
-              blank: Choose a reason
-            reason_notes:
-              blank: Enter details for refusing
-              too_long: Enter details for refusing that are less than 1000 characters long
-            contact_injection:
-              inclusion: Choose if you want to be contacted
-            gp_response:
-              blank: Choose if your child is registered with a GP
-            gp_name:
-              blank: Enter the GP surgery name
-              too_long: Enter a GP name that is less than 300 characters long
-            address_line_1:
-              blank: Enter the first line of your address
-              too_long: Enter a first line of address that is less than 300 characters long
-            address_line_2:
-              too_long: Enter a second line of address that is less than 300 characters long
-            address_town:
-              blank: Enter a town or city
-              too_long: Enter a town or city that is less than 300 characters long
-            address_postcode:
-              blank: Enter a postcode
-        parent:
-          attributes:
-            contact_method:
-              inclusion: Choose a contact method
-            contact_method_other:
-              blank: Enter details about how to contact you
-              too_long: Enter details that are less than 300 characters long
-            name:
-              blank: Enter a name
-              too_long: Enter a name that is less than 300 characters long
-            phone:
-              blank: Enter a phone number
-              invalid: Enter a valid phone number, like 07700 900 000
-              too_long: Enter a phone number that is less than 300 characters long
-            relationship:
-              blank: Choose a relationship
-              inclusion: Choose a relationship
-            relationship_other:
-              blank: Enter a relationship
-              too_long: Enter a relationship that is less than 300 characters long
-            parental_responsibility:
-              inclusion: Choose whether there is parental responsibility
-              inclusion_on_consent_form: You need parental responsibility to give consent
-        user:
-          attributes:
-            email:
-              blank: Enter an email address
-              invalid: Enter a valid email address, such as j.doe@gmail.com
-              too_long: Enter an email address that is less than 255 characters long
-              taken: This email address is already in use
-            password:
-              blank: Enter a password
-              too_short: Enter a password that is at least 10 characters long
-              too_long: Enter a password that is less than 128 characters long
-            password_confirmation:
-              confirmation: The password and confirmation do not match
-            unlock_token:
-              invalid: The unlock token is invalid
-            full_name:
-              blank: Enter your full name
-              too_long: Enter a full name that is less than 255 characters long
-            registration:
-              too_long: Enter a registration number with fewer than 255 characters
-        triage:
-          attributes:
-            status:
-              blank: Choose a status
-              inclusion: Choose a status
-            notes:
-              blank: Enter triage notes
-              too_long: Enter triage notes that are less than 1000 characters long
-        session:
-          attributes:
-            send_consent_at:
-              blank: Choose a date to send consent requests
-              greater_than_or_equal_to: Enter a date that is not in the past
-              less_than_or_equal_to: Enter a date before the session
-              missing_year: Enter a year
-              missing_month: Enter a month
-              missing_day: Enter a day
-            reminder_days_after:
-              blank: Choose when to send reminders
-              inclusion: Choose when to send reminders
-            reminder_days_after_custom:
-              blank: Choose the number of days after the session to send reminders
-              greater_than_or_equal_to: Choose a number between 2 and 7
-              less_than_or_equal_to: Choose a number between 2 and 7
-            close_consent_on:
-              blank: Choose a deadline for responses
-              inclusion: Choose a deadline for responses
-            close_consent_at:
-              blank: Choose a date for the deadline
-            location_id:
-              blank: Choose a school
-              inclusion: Choose a school
-            date:
-              blank: Enter a date
-              missing_year: Enter a year
-              missing_month: Enter a month
-              missing_day: Enter a day
-            time_of_day:
-              blank: Select a time of day
-              inclusion: Select a time of day
-            patients:
-              blank: You must choose a cohort to continue
+  campaigns:
+    index:
+      title: Vaccination programmes
+  consent_forms:
+    confirm:
+      consent_card_title:
+        flu: Consent for the flu vaccination
+        hpv: Consent for the HPV vaccination
+      i_agree:
+        flu: Yes, I agree to them having a nasal flu vaccination
+        hpv: Yes, I agree
+    confirmation_agreed:
+      title:
+        flu: " %{full_name} will get their nasal flu vaccination at school on %{date}"
+        hpv: " %{full_name} will get their HPV vaccination at school on %{date}"
+    confirmation_injection:
+      title:
+        flu: Your child will not get a nasal flu vaccination at school
+    confirmation_needs_triage:
+      title:
+        flu: You’ve given consent for your child to get a flu vaccination
+        hpv: You’ve given consent for your child to get an HPV vaccination
+    confirmation_refused:
+      title:
+        flu: Your child will not get a nasal flu vaccination at school
+        hpv: Your child will not get an HPV vaccination at school
+    consent:
+      hint:
+        flu: The nasal flu spray contains gelatine which comes from pigs.
+        hpv: ""
+      i_agree:
+        flu: Yes, I agree to them having a nasal vaccine
+        hpv: Yes, I agree
+      title:
+        flu: Do you agree to them having a nasal flu vaccination?
+        hpv: Do you agree to them having the HPV vaccination?
+    reason_notes:
+      title:
+        already_vaccinated: Where did your child get their vaccination?
+        contains_gelatine: Tell us why you don’t agree
+        medical_reasons: What medical reasons prevent your child from being vaccinated?
+        other: Tell us why you don’t agree
+        personal_choice: Tell us why you don’t agree
+        will_be_vaccinated_elsewhere: Where will your child get their vaccination?
+    start:
+      paragraphs:
+        flu:
+          - >-
+            The vaccination helps to protect children against flu. It also
+            protects others who are vulnerable to flu, such as babies and older
+            people.
+        hpv:
+          - >-
+            The HPV vaccine helps to prevent HPV related cancers from developing
+            in boys and girls.
+          - >-
+            The number of doses you need depends on your age and how well your
+            immune system works. Young people usually only need 1 dose.
+      title:
+        flu: Give or refuse consent for a flu vaccination
+        hpv: Give or refuse consent for an HPV vaccination
+  consents:
+    edit_consent:
+      title:
+        flu: Do they agree to them having the flu vaccination?
+        hpv: Do they agree to them having the HPV vaccination?
+    reason_for_refusal_notes:
+      title:
+        already_vaccinated: Where did their child get their vaccination?
+        contains_gelatine: Why are they refusing to give consent?
+        medical_reasons: What medical reasons prevent their child from being vaccinated?
+        other: Why are they refusing to give consent?
+        personal_choice: Why are they refusing to give consent?
+        will_be_vaccinated_elsewhere: Where will their child get their vaccination?
+  mailers:
+    consent_form_mailer:
+      reasons_for_refusal:
+        already_vaccinated: they have already received the vaccine
+        contains_gelatine: of the gelatine in the nasal spray
+        medical_reasons: of medical reasons
+        other: of other reasons
+        personal_choice: of personal choice
+        will_be_vaccinated_elsewhere: they will be given the vaccine elsewhere
+    vaccination_mailer:
+      reasons_did_not_vaccinate:
+        absent_from_school: they were off school
+        absent_from_session: they were not in the vaccination session
+        already_had: they've already had the vaccine
+        contraindications: they had contraindications
+        not_well: the nurse decided %{short_patient_name} was not well
+        refused: they refused when the nurse offered the vaccination
+  notification_banner:
+    info: Information
+    success: Success
+    warning: Warning
+  number:
+    "0": zero
+    "1": one
+    "2": two
+    "3": three
+    "4": four
+    "5": five
+    "6": six
+    "7": seven
+    "8": eight
+    "9": nine
+  page_titles:
+    accessibility_statement: Accessibility statement
+    privacy_policy: Your privacy
+  patients_table:
+    conflicting_consent:
+      caption: "%{children} with conflicting consent responses"
+      label: Conflicts
+    consent_given:
+      caption: "%{children} with consent given"
+      label: Given
+    consent_refused:
+      caption: "%{children} with consent refused"
+      label: Refused
+    could_not_vaccinate:
+      caption: "%{children} could not vaccinated"
+      label: Could not vaccinate
+    needs_triage:
+      caption: "%{children} needing triage"
+      label: Triage needed
+    no_consent:
+      caption: "%{children} without a response"
+      label: No consent
+    no_triage_needed:
+      caption: "%{children} with no triage needed"
+      label: No triage needed
+    triage_complete:
+      caption: "%{children} with triage completed"
+      label: Triage completed
+    vaccinate:
+      caption: "%{children} to vaccinate"
+      label: Vaccinate
+    vaccinated:
+      caption: "%{children} vaccinated"
+      label: Vaccinated
+  service:
+    email: england.mavis@nhs.net
+  sessions:
+    index:
+      title: Today’s sessions
+  table:
+    no_filtered_results: We couldn’t find any children that matched your filters.
+    no_results: No results
+  vaccinations:
+    edit_reason:
+      title:
+        flu: Why was the flu vaccine not given?
+        hpv: Why was the HPV vaccine not given?
+    form:
+      label:
+        flu: Yes, they got the flu vaccine
+        hpv: Yes, they got the HPV vaccine
+  vaccines:
+    flu: Flu
+    hpv: HPV
+    index:
+      title: Vaccines
+  wicked:
+    address: address
+    agree: agree
+    cohort: cohort
+    confirm: confirm
+    consent: consent
+    contact_method: contact-method
+    date_of_birth: date-of-birth
+    gp: gp
+    health_question: health-question
+    injection: injection
+    location: location
+    name: name
+    parent: parent
+    questions: questions
+    reason: reason
+    reason_notes: reason-notes
+    route: route
+    school: school
+    timeline: timeline
+    triage: triage
+    when: when
+    who: who
