@@ -26,6 +26,17 @@ class ApplicationController < ActionController::Base
 
   private
 
+  def authenticate_user!
+    unless user_signed_in? ||
+             request.path.in?(
+               [new_user_session_path, destroy_user_session_path]
+             )
+      store_location_for(:user, request.fullpath) if request.path != start_path
+      flash[:info] = "You must be logged in to access this page."
+      redirect_to start_path
+    end
+  end
+
   def set_header_path
     @header_path = dashboard_path
   end
@@ -70,5 +81,9 @@ class ApplicationController < ActionController::Base
       MESSAGE
       end
     end
+  end
+
+  def after_sign_in_path_for(scope)
+    stored_location_for(scope) || dashboard_path
   end
 end

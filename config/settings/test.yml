@@ -1,1 +1,3 @@
 allow_dev_phone_numbers: true
+cis2:
+  issuer: "http://localhost:4000/not/used"
