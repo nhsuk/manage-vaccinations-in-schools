@@ -2,7 +2,7 @@
   <%= render AppBreadcrumbComponent.new(
         items: [
           { text: "Home", href: dashboard_path },
-          { text: "Today’s sessions", href: sessions_path },
+          { text: t("sessions.index.title"), href: sessions_path },
           { text: "#{@session.campaign.name} session at #{@session.name}",
             href: session_path(@session) },
         ],
