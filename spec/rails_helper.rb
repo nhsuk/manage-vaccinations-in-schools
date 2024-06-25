@@ -28,6 +28,8 @@ Capybara.asset_host = "http://localhost:4000"
 
 ActiveJob::Base.queue_adapter = :test
 
+OmniAuth.config.test_mode = true
+
 Shoulda::Matchers.configure do |config|
   config.integrate do |with|
     with.test_framework :rspec
