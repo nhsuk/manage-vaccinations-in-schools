@@ -3,15 +3,7 @@ require "rails_helper"
 describe AppTriageFormComponent, type: :component do
   describe "#initialize" do
     let(:patient_session) { create :patient_session }
-    let(:triage) { nil }
-    let(:component) do
-      described_class.new(
-        patient_session:,
-        triage:,
-        section: :triage,
-        tab: :needed
-      )
-    end
+    let(:component) { described_class.new(patient_session:, url: "#") }
 
     before { render_inline(component) }
 
@@ -33,7 +25,7 @@ describe AppTriageFormComponent, type: :component do
         let(:old_triage) { create :triage, :kept_in_triage }
         let(:patient_session) { create :patient_session, triage: [old_triage] }
 
-        it { should_not eq triage }
+        it { should_not eq nil }
         it { should be_needs_follow_up } # AKA kept_in_triage
       end
     end
@@ -41,13 +33,7 @@ describe AppTriageFormComponent, type: :component do
     describe "with a bold legend" do
       context "when true" do
         let(:component) do
-          described_class.new(
-            patient_session:,
-            triage:,
-            section: :triage,
-            tab: :needed,
-            bold_legend: true
-          )
+          described_class.new(patient_session:, url: "#", bold_legend: true)
         end
 
         it { should have_css("h2") }

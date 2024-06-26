@@ -12,7 +12,12 @@
 
 <%= render AppTriageFormComponent.new(
       patient_session: @patient_session,
+      url: session_patient_triage_path(
+        @session,
+        @patient,
+        @triage,
+        section: @section,
+        tab: @tab,
+      ),
       triage: @triage,
-      section: @section,
-      tab: @tab,
     ) %>

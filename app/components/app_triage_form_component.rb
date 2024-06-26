@@ -1,5 +1,5 @@
 class AppTriageFormComponent < ViewComponent::Base
-  def initialize(patient_session:, triage:, section:, tab:, bold_legend: false)
+  def initialize(patient_session:, url:, triage: nil, bold_legend: false)
     super
 
     @patient_session = patient_session
@@ -10,30 +10,11 @@ class AppTriageFormComponent < ViewComponent::Base
             t.status = patient_session.triage.order(:created_at).last.status
           end
         end
-    @section = section
-    @tab = tab
+    @url = url
     @bold_legend = bold_legend
   end
 
   private
-
-  def url
-    session_patient_triage_path(
-      session,
-      patient,
-      @triage,
-      section: @section,
-      tab: @tab
-    )
-  end
-
-  def patient
-    @patient_session.patient
-  end
-
-  def session
-    @patient_session.session
-  end
 
   def fieldset_options
     {
