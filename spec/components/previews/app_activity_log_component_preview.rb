@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppActivityLogComponentPreview < ViewComponent::Preview
   def default
     setup

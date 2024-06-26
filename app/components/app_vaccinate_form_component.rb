@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppVaccinateFormComponent < ViewComponent::Base
   def initialize(patient_session:, section:, tab:, vaccination_record: nil)
     super

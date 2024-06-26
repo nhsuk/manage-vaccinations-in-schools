@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PDS::Patient
   include ActiveModel::Model
 

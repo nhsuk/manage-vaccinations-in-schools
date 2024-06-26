@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppDevToolsComponent < ViewComponent::Base
   erb_template <<-ERB
     <% unless Rails.env.production? %>

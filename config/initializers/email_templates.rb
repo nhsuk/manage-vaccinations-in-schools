@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 EMAILS = {
   hpv_session_consent_reminder: "ceefd526-d44c-4561-b0d2-c9ef4ccaba4f",
   hpv_session_consent_request: "6aa04f0d-94c2-4a6b-af97-a7369a12f681",

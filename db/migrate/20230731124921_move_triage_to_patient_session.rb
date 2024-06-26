@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MoveTriageToPatientSession < ActiveRecord::Migration[7.0]
   def up
     Triage.all.find_each do |triage|

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppCountComponent < ViewComponent::Base
   erb_template <<-ERB
     <span class="app-count">

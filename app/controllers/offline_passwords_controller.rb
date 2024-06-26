@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class OfflinePasswordsController < ApplicationController
   def new
     @password = OfflinePassword.new

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PostcodeValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
     ukpc = UKPostcode.parse(value.to_s)

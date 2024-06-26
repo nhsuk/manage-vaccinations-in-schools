@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SessionPolicy
   class Scope
     def initialize(user, scope)

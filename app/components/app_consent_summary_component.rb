@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppConsentSummaryComponent < ViewComponent::Base
   attr_reader :name, :relationship, :contact, :refusal_reason, :response
 

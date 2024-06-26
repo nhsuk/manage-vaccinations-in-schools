@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :db do
   namespace :prepare do
     desc "Run db:prepare but ignore ActiveRecord::ConcurrentMigrationError errors"

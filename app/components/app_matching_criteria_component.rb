@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppMatchingCriteriaComponent < ViewComponent::Base
   delegate :common_name, :date_of_birth, :age, to: :@consent_form
 

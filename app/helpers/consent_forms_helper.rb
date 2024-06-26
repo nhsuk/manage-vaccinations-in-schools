@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ConsentFormsHelper
   def format_address(consent_form)
     safe_join(

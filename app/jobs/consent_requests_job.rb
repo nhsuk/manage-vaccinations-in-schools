@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This job triggers a job to send a batch of consent requests for each sessions
 # that needs them sent today.
 

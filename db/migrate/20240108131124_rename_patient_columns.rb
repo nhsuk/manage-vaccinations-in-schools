@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RenamePatientColumns < ActiveRecord::Migration[7.1]
   def up
     change_table :patients, bulk: true do |t|

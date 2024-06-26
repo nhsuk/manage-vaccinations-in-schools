@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddVaccineIdToCampaign < ActiveRecord::Migration[7.0]
   def up
     add_reference :campaigns, :vaccine, foreign_key: true

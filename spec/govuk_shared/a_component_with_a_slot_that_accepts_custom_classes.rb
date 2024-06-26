@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 shared_examples "a component with a slot that accepts custom classes" do
   let(:custom_class) { "purple-stripes" }
 

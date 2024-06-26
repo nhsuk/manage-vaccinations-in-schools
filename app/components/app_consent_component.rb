@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppConsentComponent < ViewComponent::Base
   attr_reader :patient_session, :section, :tab
 

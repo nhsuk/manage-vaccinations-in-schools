@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ConsentFormMailer < ApplicationMailer
   def confirmation(consent_form: nil, consent: nil, session: nil)
     template_mail(

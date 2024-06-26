@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RemoveParentFieldsFromConsent < ActiveRecord::Migration[7.1]
   def change
     change_table :consents, bulk: true do |t|

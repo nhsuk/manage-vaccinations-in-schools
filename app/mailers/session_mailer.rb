@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SessionMailer < ApplicationMailer
   def session_reminder(session:, patient:)
     template_mail(

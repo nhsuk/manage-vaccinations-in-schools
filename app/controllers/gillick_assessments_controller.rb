@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class GillickAssessmentsController < ApplicationController
   include Wicked::Wizard
 

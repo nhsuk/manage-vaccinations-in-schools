@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ConsentFormMatchingJob < ApplicationJob
   queue_as :default
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :serviceworker do
   desc "Precompile serviceworker JS"
   # Copy how the assets:precompile task depends on yarn being installed.

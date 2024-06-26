@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddParentInfoToPatient < ActiveRecord::Migration[7.0]
   def change
     change_table :patients, bulk: true do |t|

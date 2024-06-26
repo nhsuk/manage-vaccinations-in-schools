@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TriageController < ApplicationController
   include TriageMailerConcern
   include PatientTabsConcern

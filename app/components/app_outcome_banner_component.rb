@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppOutcomeBannerComponent < ViewComponent::Base
   delegate :vaccination_record, :state, to: :@patient_session
 

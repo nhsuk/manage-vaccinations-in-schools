@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppFlashMessageComponentPreview < ViewComponent::Preview
   def success
     render AppFlashMessageComponent.new(

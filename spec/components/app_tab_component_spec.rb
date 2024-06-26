@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 require "govuk_helper"
 # Dir[File.join('./spec', 'components', 'shared', '*.rb')].sort.each { |file| require file }

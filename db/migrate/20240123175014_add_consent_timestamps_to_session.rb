@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddConsentTimestampsToSession < ActiveRecord::Migration[7.1]
   def change
     change_table :sessions, bulk: true do |t|

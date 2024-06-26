@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppCompareConsentFormAndPatientComponent < ViewComponent::Base
   attr_reader :heading, :consent_form, :patient
 

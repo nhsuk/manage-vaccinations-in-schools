@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppTriageNotesComponent < ViewComponent::Base
   def call
     if triage_entries.size == 1

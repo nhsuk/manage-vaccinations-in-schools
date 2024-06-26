@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "view_component/test_helpers"
 
 # require File.expand_path("dummy/config/environment", __dir__)

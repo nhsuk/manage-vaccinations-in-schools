@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ChangeSchoolsUrnToBigintAndIndexed < ActiveRecord::Migration[7.0]
   def up
     change_column :schools, :urn, :integer

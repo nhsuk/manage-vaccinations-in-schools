@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 Date::DATE_FORMATS[:nhsuk_date] = "%-d %B %Y" # 5 January 2023
 Date::DATE_FORMATS[:nhsuk_date_day_of_week] = "%A, %-d %B %Y" # Wednesday, 5 January 2023
 Date::DATE_FORMATS[:nhsuk_date_short_month] = "%-d %b %Y" # 5 Jan 2023

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppPatientTableComponentPreview < ViewComponent::Preview
   def check_consent
     patient_sessions =

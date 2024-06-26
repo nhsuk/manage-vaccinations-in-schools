@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppCardComponent < ViewComponent::Base
   erb_template <<-ERB
     <div class="<%= card_classes %>">

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AllowNullParentRegistrationFields < ActiveRecord::Migration[7.1]
   def up
     change_table :registrations, bulk: true do |t|

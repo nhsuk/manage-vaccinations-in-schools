@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PopulateCreatedByOnPatientSession < ActiveRecord::Migration[7.1]
   def up
     PatientSession.find_each do |ps|

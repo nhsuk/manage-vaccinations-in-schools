@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # See https://github.com/collectiveidea/audited/pull/694
 Audited.filter_encrypted_attributes = false
 

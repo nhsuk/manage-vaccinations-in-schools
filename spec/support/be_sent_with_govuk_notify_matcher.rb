@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec::Matchers.matcher :be_sent_with_govuk_notify do
   match do |actual|
     unless actual.is_a?(Mail::Notify::Message) ||

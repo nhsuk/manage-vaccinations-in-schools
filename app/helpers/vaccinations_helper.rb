@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module VaccinationsHelper
   def vaccination_date(datetime)
     date = datetime.to_date
