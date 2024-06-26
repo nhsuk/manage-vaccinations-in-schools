@@ -4,6 +4,8 @@ class ContentController < ApplicationController
   skip_before_action :authenticate_user!
   skip_after_action :verify_policy_scoped
 
+  layout "two_thirds"
+
   def accessibility_statement
     render_content_page :accessibility_statement
   end
