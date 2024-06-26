@@ -1,5 +1,5 @@
 class AppTriageFormComponent < ViewComponent::Base
-  def initialize(patient_session:, triage:, section:, tab:)
+  def initialize(patient_session:, triage:, section:, tab:, bold_legend: false)
     super
 
     @patient_session = patient_session
@@ -12,7 +12,10 @@ class AppTriageFormComponent < ViewComponent::Base
         end
     @section = section
     @tab = tab
+    @bold_legend = bold_legend
   end
+
+  private
 
   def url
     session_patient_triage_path(
@@ -24,8 +27,6 @@ class AppTriageFormComponent < ViewComponent::Base
     )
   end
 
-  private
-
   def patient
     @patient_session.patient
   end
@@ -34,12 +35,19 @@ class AppTriageFormComponent < ViewComponent::Base
     @patient_session.session
   end
 
-  def triage_status_options
-    %i[
-      ready_to_vaccinate
-      do_not_vaccinate
-      delay_vaccination
-      needs_follow_up
-    ].map { |status| [status, Triage.human_enum_name(:status, status)] }
+  def fieldset_options
+    {
+      legend: {
+        text: "Is it safe to vaccinate #{@patient_session.patient.first_name}?"
+      }.merge(
+        (
+          if @bold_legend
+            { tag: :h2 }
+          else
+            { size: "s", class: "app-fieldset__legend--reset" }
+          end
+        )
+      )
+    }
   end
 end

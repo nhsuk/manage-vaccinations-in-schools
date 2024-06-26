@@ -13,9 +13,12 @@ describe AppTriageFormComponent, type: :component do
       )
     end
 
-    subject { component }
+    before { render_inline(component) }
 
-    it { should be_a described_class }
+    subject { page }
+
+    it { should have_text("Is it safe to vaccinate") }
+    it { should have_css(".app-fieldset__legend--reset") }
 
     describe "triage instance variable" do
       subject { component.instance_variable_get(:@triage) }
@@ -32,6 +35,23 @@ describe AppTriageFormComponent, type: :component do
 
         it { should_not eq triage }
         it { should be_needs_follow_up } # AKA kept_in_triage
+      end
+    end
+
+    describe "with a bold legend" do
+      context "when true" do
+        let(:component) do
+          described_class.new(
+            patient_session:,
+            triage:,
+            section: :triage,
+            tab: :needed,
+            bold_legend: true
+          )
+        end
+
+        it { should have_css("h2") }
+        it { should_not have_css(".app-fieldset__legend--reset") }
       end
     end
   end

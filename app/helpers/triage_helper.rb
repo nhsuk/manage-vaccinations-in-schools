@@ -19,12 +19,6 @@ module TriageHelper
     ]
   end
 
-  def triage_form_status_options
-    Triage.statuses.keys.map do |status|
-      [status, Triage.human_enum_name(:status, status)]
-    end
-  end
-
   def in_tab_needs_triage?(patient_session)
     patient_session.state.in? %w[consent_given_triage_needed]
   end

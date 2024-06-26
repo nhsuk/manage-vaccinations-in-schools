@@ -19,3 +19,11 @@ mark {
     }
   }
 }
+
+// govuk_design_system_formbuilder's fieldset legend always adds a sizing class
+// which bolds the font and overrides the margin. Rather than monkey patch that
+// component to not add the sizing class, we can override the two rules in CSS.
+.app-fieldset__legend--reset {
+  font-weight: normal;
+  margin-bottom: nhsuk-spacing(2);
+}

@@ -17,11 +17,28 @@
     <%= page_title %>
   <% end %>
 
-  <%= f.govuk_collection_radio_buttons :status,
-                                       triage_form_status_options,
-                                       :first,
-                                       :second,
-                                       legend: { text: "Outcome" } %>
+  <%= f.govuk_radio_buttons_fieldset(
+        :status, legend: { size: "m", text: "Outcome" },
+      ) do %>
+    <%= f.govuk_radio_button(
+          :status, :ready_to_vaccinate,
+          label: { text: Triage.human_enum_name(:status, :ready_to_vaccinate) },
+          link_errors: true,
+        ) %>
+    <%= f.govuk_radio_divider %>
+    <%= f.govuk_radio_button(
+          :status, :do_not_vaccinate,
+          label: { text: Triage.human_enum_name(:status, :do_not_vaccinate) },
+        ) %>
+    <%= f.govuk_radio_button(
+          :status, :delay_vaccination,
+          label: { text: Triage.human_enum_name(:status, :delay_vaccination) },
+        ) %>
+    <%= f.govuk_radio_button(
+          :status, :needs_follow_up,
+          label: { text: Triage.human_enum_name(:status, :needs_follow_up) },
+        ) %>
+  <% end %>
 
   <%= f.govuk_text_area :notes, label: { text: "Triage notes (optional)" },
                                 rows: 5 %>
