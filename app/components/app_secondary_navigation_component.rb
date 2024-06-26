@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppSecondaryNavigationComponent < ViewComponent::Base
   renders_many :items, "Item"
 

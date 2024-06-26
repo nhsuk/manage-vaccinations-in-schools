@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This job sends consent requests for a session.
 #
 # Each patient that hasn't been sent a consent request yet will be sent one.

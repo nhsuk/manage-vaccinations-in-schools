@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RefactorCampaignsAndSessions < ActiveRecord::Migration[7.0]
   def up
     rename_table :schools, :locations

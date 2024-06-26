@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppHealthQuestionsComponentPreview < ViewComponent::Preview
   def single_consent_triage_not_needed
     setup

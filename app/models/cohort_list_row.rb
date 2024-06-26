@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CohortListRow
   include ActiveModel::Model
 

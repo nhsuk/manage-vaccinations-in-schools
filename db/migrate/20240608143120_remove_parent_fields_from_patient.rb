@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RemoveParentFieldsFromPatient < ActiveRecord::Migration[7.1]
   def change
     change_table :patients, bulk: true do |t|

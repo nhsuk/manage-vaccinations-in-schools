@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppTimestampedEntryComponent < ViewComponent::Base
   erb_template <<-ERB
     <p class="nhsuk-body">

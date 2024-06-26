@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class NivsReportRow
   SITE_MAPPING = {
     "left_arm_upper_position" => "Left Upper Arm",

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RenameAdministeredAtToRecordedAtInVaccinationRecord < ActiveRecord::Migration[
   7.0
 ]

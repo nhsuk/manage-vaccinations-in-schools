@@ -10,9 +10,16 @@ inherit_mode:
   merge:
     - Exclude
 
+Layout/EmptyLineAfterMagicComment:
+  Enabled: true
+
 Lint/UnreachableLoop:
   Exclude:
     - spec/lib/health_answers_list_spec.rb
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+  EnforcedStyle: always_true
 
 Style/NumericLiterals:
   Exclude:

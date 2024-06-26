@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppHealthQuestionsComponent < ViewComponent::Base
   erb_template <<-ERB
     <dl class="nhsuk-summary-list app-summary-list--full-width nhsuk-u-margin-bottom-0">

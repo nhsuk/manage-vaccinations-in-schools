@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppOutcomeBannerComponentPreview < ViewComponent::Preview
   def triaged_do_not_vaccinate
     patient_session =

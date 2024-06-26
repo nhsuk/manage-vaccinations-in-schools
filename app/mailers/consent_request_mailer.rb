@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ConsentRequestMailer < ApplicationMailer
   include Rails.application.routes.url_helpers
 

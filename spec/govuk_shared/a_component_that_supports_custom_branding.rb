@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 shared_examples "a component that supports custom branding" do
   let(:default_brand) { "govuk" }
   let(:custom_brand) { "globex-corp" }

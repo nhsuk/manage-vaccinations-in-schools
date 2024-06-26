@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ParentInterface
   class ConsentForms::BaseController < ApplicationController
     skip_before_action :authenticate_user!

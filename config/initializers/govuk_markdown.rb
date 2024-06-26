@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MarkdownTemplate
   def self.call(template, source)
     erb_handler = ActionView::Template.registered_template_handler(:erb)

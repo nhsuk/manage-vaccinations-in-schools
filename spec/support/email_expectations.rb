@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module EmailExpectations
   def expect_email_to(to, template, nth = :first)
     email = sent_emails.send(nth)

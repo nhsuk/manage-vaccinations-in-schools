@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Vaccinations::DeliverySiteController < ApplicationController
   before_action :set_session, only: %i[edit update]
   before_action :set_patient, only: %i[edit update]

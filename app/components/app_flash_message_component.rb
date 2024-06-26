@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppFlashMessageComponent < ViewComponent::Base
   attr_reader :body, :heading, :heading_link_text, :heading_link_href
 

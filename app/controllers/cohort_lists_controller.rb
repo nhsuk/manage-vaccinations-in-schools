@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CohortListsController < ApplicationController
   layout "two_thirds"
 

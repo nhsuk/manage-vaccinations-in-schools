@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ApplicationHelper
   def h1(text = nil, size: "l", **options, &block)
     title_text = options.delete(:page_title) { text }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 desc <<-DESC
   Send consent reminders for a session to all patient's parents who've not returned consent yet
 DESC

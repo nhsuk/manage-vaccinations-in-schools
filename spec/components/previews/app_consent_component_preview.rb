@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppConsentComponentPreview < ViewComponent::Preview
   def consent_refused_without_notes
     setup

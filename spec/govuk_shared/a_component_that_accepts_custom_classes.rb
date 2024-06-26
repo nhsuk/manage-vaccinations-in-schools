@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 shared_examples "a component that accepts custom classes" do
   context "when classes are supplied" do
     before do

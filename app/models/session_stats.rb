@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SessionStats
   def initialize(patient_sessions:, session:)
     @patient_sessions = patient_sessions

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PatientSessionPolicy
   class Scope
     def initialize(user, scope)

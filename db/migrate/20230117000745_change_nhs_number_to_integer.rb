@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ChangeNhsNumberToInteger < ActiveRecord::Migration[7.0]
   def up
     change_column :children, :nhs_number, :bigint

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TriageMailer < ApplicationMailer
   def vaccination_will_happen(patient_session, consent)
     @patient_session = patient_session

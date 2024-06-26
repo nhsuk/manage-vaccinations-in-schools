@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class VaccinationMailer < ApplicationMailer
   def hpv_vaccination_has_taken_place(vaccination_record:)
     template_mail(

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SessionsController < ApplicationController
   before_action :set_session, except: %i[index create]
   before_action :set_school, only: %i[show]

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppSimpleStatusBannerComponentPreview < ViewComponent::Preview
   def waiting_for_consent
     patient_session = FactoryBot.create(:patient_session, :added_to_session)

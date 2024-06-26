@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateCampaignVaccinesJoinTable < ActiveRecord::Migration[7.0]
   def up
     create_join_table :campaigns, :vaccines do |t|

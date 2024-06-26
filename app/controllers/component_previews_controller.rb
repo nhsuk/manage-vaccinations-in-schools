@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ComponentPreviewsController < ApplicationController
   include ViewComponent::PreviewActions
   skip_before_action :authenticate_user!

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 if Rails.env.test?
   require "flipper/adapters/pstore"
   require "flipper"

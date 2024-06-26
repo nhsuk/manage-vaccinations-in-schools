@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module TriageHelper
   def triage_status_colour(triage_status:)
     {

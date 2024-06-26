@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppConsentStatusComponent < ViewComponent::Base
   def call
     if @patient_session.consent_given?

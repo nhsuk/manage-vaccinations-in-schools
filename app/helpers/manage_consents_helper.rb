@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ManageConsentsHelper
   def form_path_for(consent)
     consent.recorded? ? clone_session_patient_manage_consent_path : wizard_path

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 desc "Get performance stats"
 task :performance, [] => :environment do |_task, _args|
   include ActionView::Helpers::TextHelper

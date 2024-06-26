@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DateParamsValidator
   attr_reader :field_name, :object, :params
 

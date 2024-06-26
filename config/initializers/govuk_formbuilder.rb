@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 GOVUKDesignSystemFormBuilder.configure do |config|
   # for more info see:
   #

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppDetailsComponent < ViewComponent::Base
   erb_template <<-ERB
     <details class="nhsuk-details<%= expander_class %>"<%= open_attr %>>

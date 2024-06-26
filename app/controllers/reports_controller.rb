@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ReportsController < ApplicationController
   skip_after_action :verify_policy_scoped, only: %i[index]
 

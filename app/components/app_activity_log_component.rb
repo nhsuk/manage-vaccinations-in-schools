@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppActivityLogComponent < ViewComponent::Base
   def initialize(patient_session)
     super

@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class NotifySafeEmailValidator < ActiveModel::EachValidator
-  VALID_LOCAL_CHARS = 'a-zA-Z0-9.!#$%&\'*+/=?^_`{|}~-'.freeze
+  VALID_LOCAL_CHARS = 'a-zA-Z0-9.!#$%&\'*+/=?^_`{|}~-'
   EMAIL_REGEX_PATTERN = /^[#{VALID_LOCAL_CHARS}]+@([^.@][^@\s]+)$/
   HOSTNAME_PART = /^(xn|[a-z0-9]+)(-?-[a-z0-9]+)*$/i
   TLD_PART = /^([a-z]{2,63}|xn--([a-z0-9]+-)*[a-z0-9]+)$/i

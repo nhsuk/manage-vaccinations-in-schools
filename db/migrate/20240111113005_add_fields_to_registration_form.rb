@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddFieldsToRegistrationForm < ActiveRecord::Migration[7.1]
   # rubocop:disable Rails/NotNullColumn
   def change

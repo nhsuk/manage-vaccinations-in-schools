@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ParentInterface
   class ConsentFormsController < ConsentForms::BaseController
     include ConsentFormMailerConcern

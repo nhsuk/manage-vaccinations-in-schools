@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ConsentsController < ApplicationController
   include PatientTabsConcern
   include PatientSortingConcern

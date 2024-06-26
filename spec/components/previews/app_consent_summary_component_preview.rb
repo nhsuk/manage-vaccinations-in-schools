@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppConsentSummaryComponentPreview < ViewComponent::Preview
   def self_consent
     render AppConsentSummaryComponent.new(

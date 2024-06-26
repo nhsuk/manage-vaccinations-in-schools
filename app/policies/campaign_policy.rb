@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CampaignPolicy
   class Scope
     def initialize(user, scope)
