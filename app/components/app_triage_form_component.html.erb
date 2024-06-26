@@ -1,7 +1,7 @@
 <%= form_with(
      model: @triage,
      url: @url,
-     method: :post,
+     method: @method,
      builder: GOVUKDesignSystemFormBuilder::FormBuilder,
    ) do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
@@ -33,5 +33,5 @@
         rows: 5,
       ) %>
 
-  <%= f.submit "Save triage", class: "nhsuk-button" %>
+  <%= f.govuk_submit @method == :put ? "Continue" : "Save triage" %>
 <% end %>

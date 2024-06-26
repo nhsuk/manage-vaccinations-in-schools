@@ -31,14 +31,28 @@ describe AppTriageFormComponent, type: :component do
     end
 
     describe "with a bold legend" do
-      context "when true" do
-        let(:component) do
-          described_class.new(patient_session:, url: "#", bold_legend: true)
-        end
-
-        it { should have_css("h2") }
-        it { should_not have_css(".app-fieldset__legend--reset") }
+      let(:component) do
+        described_class.new(patient_session:, url: "#", legend: :bold)
       end
+
+      it { should have_css("h2") }
+      it { should_not have_css(".app-fieldset__legend--reset") }
+    end
+
+    describe "with a hidden legend" do
+      let(:component) do
+        described_class.new(patient_session:, url: "#", legend: :hidden)
+      end
+
+      it { should have_css("legend.nhsuk-visually-hidden") }
+    end
+
+    describe "with the put method" do
+      let(:component) do
+        described_class.new(patient_session:, url: "#", method: :put)
+      end
+
+      it { should have_text("Continue") }
     end
   end
 end
