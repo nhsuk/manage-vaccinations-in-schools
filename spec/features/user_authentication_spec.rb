@@ -29,13 +29,13 @@ describe "User authentication" do
   end
 
   def then_i_see_the_sign_in_form
-    expect(page).to have_content "Sign in"
+    expect(page).to have_content "Log in"
   end
 
   def when_i_sign_in
     fill_in "Email address", with: @user.email
     fill_in "Password", with: "rosebud123"
-    click_button "Sign in"
+    click_button "Log in"
   end
 
   def then_i_see_the_dashboard
@@ -44,7 +44,7 @@ describe "User authentication" do
   end
 
   def when_i_sign_out
-    click_button "Sign out"
+    click_button "Log out"
   end
 
   def then_i_see_the_start_page

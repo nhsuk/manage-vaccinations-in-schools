@@ -1,4 +1,4 @@
-<%= h1 "Sign in", size: "xl" %>
+<%= h1 "Log in", size: "xl" %>
 
 <%= form_for(resource, as: resource_name, url: user_session_path) do |f| %>
   <%= f.govuk_error_summary %>
@@ -14,9 +14,9 @@
 
   <%= render "users/shared/links" %>
 
-  <%= f.govuk_submit "Sign in" %>
+  <%= f.govuk_submit "Log in" %>
 <% end %>
 
 <% if Settings.cis2.present? %>
-  <%= govuk_button_to "Sign in with CIS2", user_cis2_omniauth_authorize_path, data: { turbo: false } %>
+  <%= govuk_button_to "Log in with CIS2", user_cis2_omniauth_authorize_path, data: { turbo: false } %>
 <% end %>
