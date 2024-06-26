@@ -31,9 +31,7 @@
           <%= link_to current_user.email, users_account_path(current_user), class: "nhsuk-header__navigation-link" %>
         </li>
         <li class="nhsuk-header__navigation-item">
-          <%= button_to destroy_user_session_path, class: "app-header__button-link", method: :delete do %>
-            Sign out
-          <% end %>
+          <%= button_to "Log out", destroy_user_session_path, class: "app-header__button-link", method: :delete %>
         </li>
       <% end %>
       <li class="nhsuk-mobile-menu-container">
