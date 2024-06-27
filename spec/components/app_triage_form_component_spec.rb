@@ -24,11 +24,11 @@ describe AppTriageFormComponent, type: :component do
       end
 
       context "patient_session has existing triage" do
-        let(:old_triage) { create :triage, :kept_in_triage }
+        let(:old_triage) { create :triage, :needs_follow_up }
         let(:patient_session) { create :patient_session, triage: [old_triage] }
 
         it { should_not eq nil }
-        it { should be_needs_follow_up } # AKA kept_in_triage
+        it { should be_needs_follow_up }
       end
     end
 
