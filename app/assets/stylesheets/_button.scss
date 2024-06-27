@@ -53,9 +53,9 @@ $app-cis2-button-shadow-color: #003087;
   display: inline-flex;
   gap: nhsuk-spacing(3);
 
-  & span::before {
-    @include mq($from: desktop) {
-      content: "Log in with my ";
+  & span {
+    @include mq($until: desktop) {
+      @include visually-hidden();
     }
   }
 
