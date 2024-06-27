@@ -9,21 +9,21 @@
   <%= f.govuk_radio_buttons_fieldset(:status, **fieldset_options) do %>
     <%= f.govuk_radio_button(
           :status, :ready_to_vaccinate,
-          label: { text: Triage.human_enum_name(:status, :ready_to_vaccinate) },
+          label: { text: "Yes, it’s safe to vaccinate" },
           link_errors: true,
         ) %>
     <%= f.govuk_radio_divider %>
     <%= f.govuk_radio_button(
           :status, :do_not_vaccinate,
-          label: { text: Triage.human_enum_name(:status, :do_not_vaccinate) },
+          label: { text: "No, do not vaccinate" },
         ) %>
     <%= f.govuk_radio_button(
           :status, :delay_vaccination,
-          label: { text: Triage.human_enum_name(:status, :delay_vaccination) },
+          label: { text: "No, delay vaccination to a later date" },
         ) %>
     <%= f.govuk_radio_button(
           :status, :needs_follow_up,
-          label: { text: Triage.human_enum_name(:status, :needs_follow_up) },
+          label: { text: "No, keep in triage" },
         ) %>
   <% end %>
 

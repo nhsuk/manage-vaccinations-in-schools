@@ -145,10 +145,10 @@ en:
           vaccinated: Vaccinated
       triage:
         statuses:
-          delay_vaccination: No, delay vaccination to a later date
-          do_not_vaccinate: No, do not vaccinate
-          needs_follow_up: No, keep in triage
-          ready_to_vaccinate: Yes, it’s safe to vaccinate
+          delay_vaccination: Delay vaccination to a later date
+          do_not_vaccinate: Do not vaccinate in campaign
+          needs_follow_up: Keep in triage
+          ready_to_vaccinate: Safe to vaccinate
       vaccination_record:
         delivery_methods:
           intranasal: Intramuscular (IM)
