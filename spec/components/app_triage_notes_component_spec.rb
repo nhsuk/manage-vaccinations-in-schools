@@ -24,12 +24,15 @@ describe AppTriageNotesComponent, type: :component do
     end
 
     let(:user) { create(:user, full_name: "Joe Gear") }
-    let(:triage) { [create(:triage, notes: "Some notes", user:)] }
+    let(:triage) do
+      [create(:triage, :ready_to_vaccinate, notes: "Some notes", user:)]
+    end
 
     it "renders" do
       expect(component.render?).to be true
     end
 
+    it { should have_css("h3", text: "Triaged decision: Safe to vaccinate") }
     it { should have_css("p", text: patient_session.triage.first.notes) }
     it { should have_css("p", text: "Joe Gear, 4 December 2023 at 10:04am") }
   end
