@@ -110,7 +110,7 @@ RSpec.describe "User authentication with CIS2" do
   end
 
   def then_i_should_see_the_cis2_login_button
-    expect(page).to have_button "Care Identity"
+    expect(page).to have_button "Log in with my Care Identity"
   end
 
   def when_i_click_the_cis2_login_button
