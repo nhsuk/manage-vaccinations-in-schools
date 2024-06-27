@@ -5,8 +5,7 @@
                   class: "app-patients__filters",
                   data: { module: "autosubmit",
                           turbo: "true",
-                          turbo_action: "replace" },
-                  builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
+                          turbo_action: "replace" } do |f| %>
       <%= f.govuk_fieldset legend: { text: "Filter results", size: "s" } do %>
         <%= f.govuk_text_field :name, label: { text: "By name" },
                                       value: params[:name],
