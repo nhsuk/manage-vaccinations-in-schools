@@ -10,6 +10,10 @@ inherit_mode:
   merge:
     - Exclude
 
+AllCops:
+  Exclude:
+    - scratchpad/*
+
 Layout/EmptyLineAfterMagicComment:
   Enabled: true
 
