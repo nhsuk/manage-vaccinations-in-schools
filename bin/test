@@ -1,0 +1,7 @@
+#!/bin/sh
+
+set -eu
+
+bin/bundle exec rspec
+yarn test
+yarn test:e2e

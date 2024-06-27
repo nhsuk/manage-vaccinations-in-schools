@@ -161,6 +161,12 @@ $ bin/dev
 
 ### Testing
 
+To run all the test:
+
+```bash
+bin/test
+```
+
 To run the Rails tests:
 
 ```bash
