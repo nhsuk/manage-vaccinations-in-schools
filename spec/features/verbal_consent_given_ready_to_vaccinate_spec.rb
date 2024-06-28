@@ -78,7 +78,7 @@ describe "Verbal consent" do
   end
 
   def and_the_kept_in_triage_email_is_sent_to_the_parent
-    expect(sent_emails)
+    expect(sent_emails).not_to be_empty
 
     expect(sent_emails.last).to be_sent_with_govuk_notify.using_template(
       EMAILS[:triage_vaccination_will_happen]
