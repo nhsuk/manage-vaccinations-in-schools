@@ -54,7 +54,7 @@ describe "User authentication" do
   end
 
   def then_i_see_the_dashboard
-    expect(current_path).to eq dashboard_path
+    expect(page).to have_current_path dashboard_path, ignore_query: true
   end
 
   def when_i_sign_out
@@ -80,7 +80,7 @@ describe "User authentication" do
   end
 
   def then_i_see_the_sessions_page
-    expect(current_path).to eq sessions_path
+    expect(page).to have_current_path sessions_path, ignore_query: true
     expect(page).to have_content "Today’s sessions"
   end
 end
