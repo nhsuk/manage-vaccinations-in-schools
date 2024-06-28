@@ -14,7 +14,7 @@ describe AppTriageNotesComponent, type: :component do
 
   context "triage notes are not present" do
     it "does not render" do
-      expect(component.render?).to be_falsey
+      expect(component).not_to be_render
     end
   end
 
@@ -43,7 +43,7 @@ describe AppTriageNotesComponent, type: :component do
     let(:triage) { create_list(:triage, 2) }
 
     it "renders" do
-      expect(component.render?).to be_truthy
+      expect(component).to be_render
     end
 
     it { should have_css("hr") }
