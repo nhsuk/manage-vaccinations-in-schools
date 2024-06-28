@@ -25,6 +25,9 @@ Rails/UnknownEnv:
     - staging
     - test
 
+RSpec/ContextWording:
+  Enabled: false
+
 RSpec/ImplicitExpect:
   EnforcedStyle: should
 
