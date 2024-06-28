@@ -31,7 +31,7 @@ module PatientSortingConcern
 
     if params[:dob].present?
       patient_sessions.select! do
-        _1.patient.date_of_birth.strftime("%d/%m/%Y").include?(params[:dob])
+        _1.patient.date_of_birth.to_fs(:uk_short).include?(params[:dob])
       end
     end
   end

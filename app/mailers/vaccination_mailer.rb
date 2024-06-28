@@ -61,7 +61,7 @@ class VaccinationMailer < ApplicationMailer
   end
 
   def day_month_year_of_vaccination
-    @vaccination_record.recorded_at.strftime("%d/%m/%Y")
+    @vaccination_record.recorded_at.to_date.to_fs(:uk_short)
   end
 
   def reason_did_not_vaccinate

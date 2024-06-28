@@ -47,8 +47,7 @@ class AppPatientTableComponent < ViewComponent::Base
       {
         text: patient_session.patient.date_of_birth.to_fs(:nhsuk_date),
         html_attributes: {
-          "data-filter":
-            patient_session.patient.date_of_birth.strftime("%d/%m/%Y"),
+          "data-filter": patient_session.patient.date_of_birth.to_fs(:uk_short),
           "data-sort": patient_session.patient.date_of_birth
         }
       }
