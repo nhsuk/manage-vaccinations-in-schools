@@ -582,11 +582,11 @@ describe ConsentForm, type: :model do
     context "when there are no patients in the session" do
       let(:patients_in_session) { 0 }
 
-      it { is_expected.to be_nil }
+      it { should be_nil }
     end
 
     context "when there are unmatched patients in the session" do
-      it { is_expected.to be_nil }
+      it { should be_nil }
     end
 
     context "when there is one patient with matching first name and dob" do
@@ -599,7 +599,7 @@ describe ConsentForm, type: :model do
         )
       end
 
-      it { is_expected.to be_nil }
+      it { should be_nil }
     end
 
     context "when there are multiple patients with matching full_name and dob" do
@@ -623,7 +623,7 @@ describe ConsentForm, type: :model do
         )
       end
 
-      it { is_expected.to be_nil }
+      it { should be_nil }
     end
 
     context "when there is one patient with matching full_name and dob" do
@@ -637,7 +637,7 @@ describe ConsentForm, type: :model do
         )
       end
 
-      it { is_expected.to eq patients.first }
+      it { should eq patients.first }
     end
 
     context "when there is one patient with matching full_name and postcode" do
@@ -651,7 +651,7 @@ describe ConsentForm, type: :model do
         )
       end
 
-      it { is_expected.to eq patients.first }
+      it { should eq patients.first }
     end
 
     context "when there is one patient with matching f_name, dob, postcode" do
@@ -665,7 +665,7 @@ describe ConsentForm, type: :model do
         )
       end
 
-      it { is_expected.to eq patients.first }
+      it { should eq patients.first }
     end
 
     context "when there is one patient with matching l_name, dob, postcode" do
@@ -679,7 +679,7 @@ describe ConsentForm, type: :model do
         )
       end
 
-      it { is_expected.to eq patients.first }
+      it { should eq patients.first }
     end
   end
 

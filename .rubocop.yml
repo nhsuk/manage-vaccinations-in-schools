@@ -25,6 +25,9 @@ Rails/UnknownEnv:
     - staging
     - test
 
+RSpec/ImplicitExpect:
+  EnforcedStyle: should
+
 Style/FrozenStringLiteralComment:
   Enabled: true
   EnforcedStyle: always_true
