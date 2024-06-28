@@ -111,6 +111,7 @@ describe ConsentForm, type: :model do
       end
 
       it { should validate_presence_of(:is_this_their_school).on(:update) }
+
       it do
         expect(subject).to validate_inclusion_of(
           :is_this_their_school

@@ -73,11 +73,13 @@ describe AppSimpleStatusBannerComponent, type: :component do
 
     it { should have_css(".app-card--purple") }
     it { should have_css(".nhsuk-card__heading", text: "Safe to vaccinate") }
+
     it do
       expect(subject).to have_text(
         "#{triage_nurse_name} decided that #{patient_name} is safe to vaccinate"
       )
     end
+
     it { should have_link("Update triage") }
   end
 
@@ -86,11 +88,13 @@ describe AppSimpleStatusBannerComponent, type: :component do
 
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
+
     it do
       expect(subject).to have_text(
         "#{triage_nurse_name} decided that #{patient_name} should not be vaccinated"
       )
     end
+
     it { should have_link("Update triage") }
   end
 
@@ -99,11 +103,13 @@ describe AppSimpleStatusBannerComponent, type: :component do
 
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
+
     it do
       expect(subject).to have_text(
         "#{vaccination_nurse_name} decided that #{patient_name}’s vaccination should be delayed"
       )
     end
+
     it { should have_link("Update triage") }
   end
 end

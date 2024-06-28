@@ -33,18 +33,21 @@ describe AppPatientPageComponent, type: :component do
     it { should have_css(".nhsuk-card__heading", text: "Child details") }
     it { should have_css(".nhsuk-card__heading", text: "Consent") }
     it { should_not have_css(".nhsuk-card__heading", text: "Triage notes") }
+
     it "shows the triage form" do
       expect(subject).to have_selector(
         :heading,
         text: "Is it safe to vaccinate"
       )
     end
+
     it "does not show the vaccination form" do
       expect(subject).not_to have_css(
         ".nhsuk-card",
         text: "Did they get the HPV vaccine?"
       )
     end
+
     it { should have_css("a", text: "Give your assessment") }
   end
 
@@ -60,12 +63,14 @@ describe AppPatientPageComponent, type: :component do
     it { should have_css(".nhsuk-card__heading", text: "Child details") }
     it { should have_css(".nhsuk-card__heading", text: "Consent") }
     it { should have_css(".nhsuk-card__heading", text: "Triage notes") }
+
     it "does not show the triage form" do
       expect(subject).not_to have_css(
         ".nhsuk-card__heading",
         text: "Is it safe to vaccinate"
       )
     end
+
     it "shows the vaccination form" do
       expect(subject).to have_css(
         ".nhsuk-card__heading",
