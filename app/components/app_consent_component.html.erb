@@ -24,7 +24,7 @@
             <br>
             <span class="nhsuk-u-font-size-16"><%= consent.who_responded %></span>
           <% end %>
-          <%= row.with_cell(text: consent.recorded_at.to_fs(:app_date_time)) %>
+          <%= row.with_cell(text: consent.recorded_at.to_fs(:nhsuk_date_time)) %>
           <%= row.with_cell(text: consent.human_enum_name(:response).humanize) %>
         <% end %>
       <% end %>
