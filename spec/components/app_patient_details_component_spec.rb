@@ -34,7 +34,7 @@ describe AppPatientDetailsComponent, type: :component do
 
     it "should render the patient's date of birth" do
       expected_dob =
-        "#{patient.date_of_birth.to_fs(:nhsuk_date)} (aged #{patient.age})"
+        "#{patient.date_of_birth.to_fs(:long)} (aged #{patient.age})"
       expect(page).to(
         have_css(
           ".nhsuk-summary-list__row",
@@ -104,7 +104,7 @@ describe AppPatientDetailsComponent, type: :component do
     end
 
     it "should render the child's date of birth" do
-      formatted_date = consent_form.date_of_birth.to_fs(:nhsuk_date)
+      formatted_date = consent_form.date_of_birth.to_fs(:long)
       expected_dob = "#{formatted_date} (aged #{consent_form.age})"
       expect(page).to(
         have_css(

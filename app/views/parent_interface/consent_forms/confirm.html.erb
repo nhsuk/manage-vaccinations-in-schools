@@ -84,7 +84,7 @@
       
         summary_list.with_row do |row|
           row.with_key { "Date of birth" }
-          row.with_value { @consent_form.date_of_birth.to_fs(:nhsuk_date) }
+          row.with_value { @consent_form.date_of_birth.to_fs(:long) }
           row.with_action(
             text: "Change",
             href: change_link[:date_of_birth],

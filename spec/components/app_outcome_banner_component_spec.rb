@@ -31,7 +31,7 @@ describe AppOutcomeBannerComponent, type: :component do
     let(:vaccine) { patient_session.session.campaign.vaccines.first }
     let(:location) { patient_session.session.location }
     let(:batch) { vaccine.batches.first }
-    let(:date) { vaccination_record.recorded_at.to_fs(:nhsuk_date) }
+    let(:date) { vaccination_record.recorded_at.to_date.to_fs(:long) }
     let(:time) { vaccination_record.recorded_at.to_fs(:time) }
 
     it { should have_css(".app-card--green") }
@@ -48,7 +48,7 @@ describe AppOutcomeBannerComponent, type: :component do
           ps.vaccination_records.first.update(recorded_at: Time.zone.now)
         end
       end
-      let(:date) { Time.zone.now.to_fs(:nhsuk_date) }
+      let(:date) { Time.zone.today.to_fs(:long) }
 
       it { should have_text("DateToday (#{date})") }
     end
@@ -61,7 +61,7 @@ describe AppOutcomeBannerComponent, type: :component do
     let(:vaccination_record) { patient_session.vaccination_records.first }
     let(:location) { patient_session.session.location }
     let(:triage) { patient_session.triage.first }
-    let(:date) { triage.created_at.to_fs(:nhsuk_date) }
+    let(:date) { triage.created_at.to_date.to_fs(:long) }
 
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
@@ -78,7 +78,7 @@ describe AppOutcomeBannerComponent, type: :component do
         end
       end
 
-      it { should have_text("Date#{date.to_fs(:nhsuk_date)}") }
+      it { should have_text("Date#{date.to_date.to_fs(:long)}") }
     end
   end
 end

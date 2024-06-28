@@ -41,7 +41,7 @@ class AppTriageNotesComponent < ViewComponent::Base
   end
 
   def author_info(triage:)
-    date_text = triage.created_at.to_fs(:nhsuk_date_time)
+    date_text = triage.created_at.to_fs(:long)
     "#{triage.user.full_name}, #{date_text}"
   end
 end
