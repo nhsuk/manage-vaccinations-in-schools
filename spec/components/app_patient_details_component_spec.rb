@@ -20,19 +20,19 @@ describe AppPatientDetailsComponent, type: :component do
     let(:school) { FactoryBot.create(:location) }
     let(:component) { described_class.new(patient:, session:, school:) }
 
-    it "should render the patient's full name" do
+    it "renders the patient's full name" do
       expect(page).to(
         have_css(".nhsuk-summary-list__row", text: "Name#{patient.full_name}")
       )
     end
 
-    it "should render the patient's preferred name" do
+    it "renders the patient's preferred name" do
       expect(page).to(
         have_css(".nhsuk-summary-list__row", text: "Known asHomer")
       )
     end
 
-    it "should render the patient's date of birth" do
+    it "renders the patient's date of birth" do
       expected_dob =
         "#{patient.date_of_birth.to_fs(:long)} (aged #{patient.age})"
       expect(page).to(
@@ -43,23 +43,23 @@ describe AppPatientDetailsComponent, type: :component do
       )
     end
 
-    it "should render the school name" do
+    it "renders the school name" do
       expect(page).to(
         have_css(".nhsuk-summary-list__row", text: "School#{school.name}")
       )
     end
 
-    it "should not render a GP name" do
+    it "does not render a GP name" do
       expect(page).not_to have_css(".nhsuk-summary-list__row", text: /^GP/)
     end
 
-    it "should not render a GP response" do
+    it "does not render a GP response" do
       expect(page).not_to(
         have_css(".nhsuk-summary-list__row", text: "Registered with a GP")
       )
     end
 
-    it "should render the patient's NHS number" do
+    it "renders the patient's NHS number" do
       expect(page).to(
         have_css(".nhsuk-summary-list__row", text: "NHS Number123 456 7890")
       )
@@ -68,7 +68,7 @@ describe AppPatientDetailsComponent, type: :component do
     context "without a preferred name" do
       let(:patient) { FactoryBot.create(:patient, common_name: nil) }
 
-      it "should not render known as" do
+      it "does not render known as" do
         expect(page).not_to(
           have_css(".nhsuk-summary-list__row", text: "Known as")
         )
@@ -87,7 +87,7 @@ describe AppPatientDetailsComponent, type: :component do
     let(:school) { FactoryBot.create(:location) }
     let(:component) { described_class.new(consent_form:, session:, school:) }
 
-    it "should render the child's full name" do
+    it "renders the child's full name" do
       expect(page).to(
         have_css(
           ".nhsuk-summary-list__row",
@@ -96,14 +96,14 @@ describe AppPatientDetailsComponent, type: :component do
       )
     end
 
-    it "should render the child's common name" do
+    it "renders the child's common name" do
       expect(page).to have_css(
         ".nhsuk-summary-list__row",
         text: "Known asHomer"
       )
     end
 
-    it "should render the child's date of birth" do
+    it "renders the child's date of birth" do
       formatted_date = consent_form.date_of_birth.to_fs(:long)
       expected_dob = "#{formatted_date} (aged #{consent_form.age})"
       expect(page).to(
@@ -114,7 +114,7 @@ describe AppPatientDetailsComponent, type: :component do
       )
     end
 
-    it "should render the child's address" do
+    it "renders the child's address" do
       expect(page).to(
         have_css(
           ".nhsuk-summary-list__row",
@@ -128,19 +128,19 @@ describe AppPatientDetailsComponent, type: :component do
       )
     end
 
-    it "should render the school name" do
+    it "renders the school name" do
       expect(page).to(
         have_css(".nhsuk-summary-list__row", text: "School#{school.name}")
       )
     end
 
-    it "should render the GP name" do
+    it "renders the GP name" do
       expect(page).to(
         have_css(".nhsuk-summary-list__row", text: "GP#{consent_form.gp_name}")
       )
     end
 
-    it "should not render an NHS number" do
+    it "does not render an NHS number" do
       expect(page).not_to(
         have_css(".nhsuk-summary-list__row", text: "NHS Number")
       )
@@ -149,7 +149,7 @@ describe AppPatientDetailsComponent, type: :component do
     context "without a common name" do
       let(:consent_form) { FactoryBot.create(:consent_form, common_name: nil) }
 
-      it "should not render known as" do
+      it "does not render known as" do
         expect(page).not_to(
           have_css(".nhsuk-summary-list__row", text: "Known as")
         )
@@ -161,7 +161,7 @@ describe AppPatientDetailsComponent, type: :component do
         FactoryBot.create(:consent_form, date_of_birth: nil)
       end
 
-      it "should not render the child's date of birth" do
+      it "does not render the child's date of birth" do
         expect(page).not_to(
           have_css(".nhsuk-summary-list__row", text: "Date of birth")
         )
@@ -178,11 +178,11 @@ describe AppPatientDetailsComponent, type: :component do
         )
       end
 
-      it "should not render a GP name" do
+      it "does not render a GP name" do
         expect(page).not_to(have_css(".nhsuk-summary-list__row", text: /^GP/))
       end
 
-      it "should render GP response" do
+      it "renders GP response" do
         expect(page).to(
           have_css(".nhsuk-summary-list__row", text: "Registered with a GPNo")
         )
@@ -199,11 +199,11 @@ describe AppPatientDetailsComponent, type: :component do
         )
       end
 
-      it "should not render a GP name" do
+      it "does not render a GP name" do
         expect(page).not_to(have_css(".nhsuk-summary-list__row", text: /^GP/))
       end
 
-      it "should render GP response" do
+      it "renders GP response" do
         expect(page).to(
           have_css(
             ".nhsuk-summary-list__row",
