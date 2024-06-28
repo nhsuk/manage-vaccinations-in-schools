@@ -6,6 +6,7 @@ describe AppEmptyListComponent, type: :component do
   subject { page }
 
   let(:component) { described_class.new(title:) }
+
   before { render_inline(component) }
 
   context "when no title is provided" do
