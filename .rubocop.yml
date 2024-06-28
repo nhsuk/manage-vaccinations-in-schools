@@ -17,21 +17,13 @@ AllCops:
 Layout/EmptyLineAfterMagicComment:
   Enabled: true
 
-Lint/UnreachableLoop:
-  Exclude:
-    - spec/lib/health_answers_list_spec.rb
+Rails/UnknownEnv:
+  Environments:
+    - development
+    - production
+    - staging
+    - test
 
 Style/FrozenStringLiteralComment:
   Enabled: true
   EnforcedStyle: always_true
-
-Style/NumericLiterals:
-  Exclude:
-    - db/schema.rb
-
-Rails/UnknownEnv:
-  Environments:
-    - development
-    - test
-    - staging
-    - production
