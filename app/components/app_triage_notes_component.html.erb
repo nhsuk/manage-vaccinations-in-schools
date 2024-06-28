@@ -1,4 +1,4 @@
-<% entries.map do |triage| %>
+<% entries.each_with_index do |triage, index| %>
   <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">
     Triaged decision: <%= triage.human_enum_name(:status) %>
   </h3>
@@ -12,4 +12,8 @@
     &middot;
     <%= triage.user.full_name %>
   </p>
+
+  <% if index < entries.size - 1 %>
+    <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--m">
+  <% end %>
 <% end %>
