@@ -26,13 +26,13 @@ class NivsReportRow
       patient.nhs_number,
       patient.first_name,
       patient.last_name,
-      patient.date_of_birth.to_fs(:YYYYMMDD),
+      patient.date_of_birth.to_fs(:number),
       "Not Known", # gender code not available
       patient.address_postcode,
-      vaccination.recorded_at.to_date.to_fs(:YYYYMMDD),
+      vaccination.recorded_at.to_date.to_fs(:number),
       batch.vaccine.brand,
       batch.name,
-      batch.expiry.to_fs(:YYYYMMDD),
+      batch.expiry.to_fs(:number),
       delivery_site,
       "1", # dose sequence hard-coded to 1 for HPV
       "MAVIS-#{patient.id}",
