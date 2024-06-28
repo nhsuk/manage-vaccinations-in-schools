@@ -3,7 +3,7 @@
 require "rails_helper"
 
 describe AppVaccinateFormComponent, type: :component do
-  subject { page }
+  subject(:rendered) { render_inline(component) }
 
   let(:heading) { "A Heading" }
   let(:body) { "A Body" }
@@ -20,7 +20,6 @@ describe AppVaccinateFormComponent, type: :component do
       tab: "needed"
     )
   end
-  let!(:rendered) { render_inline(component) }
 
   it { should have_css(".nhsuk-card") }
 

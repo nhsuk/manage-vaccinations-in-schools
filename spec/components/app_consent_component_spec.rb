@@ -3,14 +3,11 @@
 require "rails_helper"
 
 describe AppConsentComponent, type: :component do
-  subject { page }
-
-  before { rendered_component }
+  subject(:rendered) { render_inline(component) }
 
   let(:component) do
     described_class.new(patient_session:, section: "triage", tab: "needed")
   end
-  let(:rendered_component) { render_inline(component) }
 
   let(:consent) { patient_session.consents.first }
   let(:relation) { consent.parent.relationship_label.capitalize }
