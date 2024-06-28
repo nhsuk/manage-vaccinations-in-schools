@@ -9,7 +9,7 @@ class AppTimestampedEntryComponent < ViewComponent::Base
       <% if @recorded_by.present? %>
         <%= mail_to(@recorded_by.email, @recorded_by.full_name) %>,
       <% end %>
-      <%= @timestamp.to_fs(:app_date_time) %>
+      <%= @timestamp.to_fs(:nhsuk_date_time) %>
     </p>
   ERB
 

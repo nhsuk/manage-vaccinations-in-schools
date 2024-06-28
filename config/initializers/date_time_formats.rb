@@ -9,4 +9,6 @@ Time::DATE_FORMATS[:nhsuk_date] = "%-d %B %Y" # 5 January 2023
 Time::DATE_FORMATS[:nhsuk_date_day_of_week] = "%A, %-d %B %Y" # Wednesday, 5 January 2023
 
 Time::DATE_FORMATS[:time] = "%-l:%M%P" # 3:45pm
-Time::DATE_FORMATS[:app_date_time] = "%-d %B %Y at %-l:%M%P" # 5 January 2023 at 3:45pm
+Time::DATE_FORMATS[
+  :nhsuk_date_time
+] = "#{Time::DATE_FORMATS[:nhsuk_date]} at #{Time::DATE_FORMATS[:time]}"

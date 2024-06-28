@@ -84,7 +84,7 @@ describe "Verbal consent" do
     click_link @patient.parent.name
 
     expect(page).to have_content(
-      ["Response date", Time.zone.now.to_fs(:app_date_time)].join
+      ["Response date", Time.zone.now.to_fs(:nhsuk_date_time)].join
     )
     expect(page).to have_content(["Decision", "Consent refused"].join)
     expect(page).to have_content(["Response method", "By phone"].join)
