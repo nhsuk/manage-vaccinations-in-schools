@@ -31,7 +31,7 @@ describe AppConsentSummaryComponent, type: :component do
   it { should have_text("07987654321") }
   it { should have_text("jane@example.com") }
   it { should have_text("Consent refused (online)") }
-  it { should have_text("1 Mar 2024 at 2:23pm") }
+  it { should have_text("1 March 2024 at 2:23pm") }
   it do
     should have_text("Refusal reasonAlready vaccinated\nVaccinated at the GP")
   end
@@ -49,7 +49,7 @@ describe AppConsentSummaryComponent, type: :component do
 
     it { should have_text("Jane Smith") }
     it { should have_text("Consent given (online)") }
-    it { should have_text("1 Mar 2024 at 2:23pm") }
+    it { should have_text("1 March 2024 at 2:23pm") }
     it { should_not have_text("Relationship") }
     it { should_not have_text("Contact") }
     it { should_not have_text("Refusal reason") }
@@ -92,9 +92,9 @@ describe AppConsentSummaryComponent, type: :component do
 
     it { should have_text("Jane Smith") }
     it { should have_text("Consent given (online)") }
-    it { should have_text("1 Mar 2024 at 2:23pm") }
+    it { should have_text("1 March 2024 at 2:23pm") }
     it { should have_text("Consent refused (online)") }
-    it { should have_text("2 Mar 2024 at 2:24pm") }
+    it { should have_text("2 March 2024 at 2:24pm") }
   end
 
   context "with response being an array with one element" do
@@ -110,7 +110,7 @@ describe AppConsentSummaryComponent, type: :component do
       )
     end
 
-    it { should have_text("1 Mar 2024 at 2:23pm") }
+    it { should have_text("1 March 2024 at 2:23pm") }
     it { should_not have_css("li") }
   end
 end

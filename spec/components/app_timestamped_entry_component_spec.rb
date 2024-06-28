@@ -19,7 +19,7 @@ describe AppTimestampedEntryComponent, type: :component do
     let(:consents) { [consent] }
 
     it { should have_text("Summary of a thing") }
-    it { should have_text("17 Feb 2024 at 12:23pm") }
+    it { should have_text("17 February 2024 at 12:23pm") }
   end
 
   context "with a user who recorded the entry" do
