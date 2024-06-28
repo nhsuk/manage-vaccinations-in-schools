@@ -3,7 +3,7 @@
 require "rails_helper"
 
 describe AppPatientPageComponent, type: :component do
-  subject { page }
+  subject(:rendered) { render_inline(component) }
 
   before do
     allow_any_instance_of(AppSimpleStatusBannerComponent).to receive(
@@ -19,7 +19,6 @@ describe AppPatientPageComponent, type: :component do
       triage: nil
     )
   end
-  let!(:rendered) { render_inline(component) }
 
   context "session in progress, patient in triage" do
     let(:patient_session) do

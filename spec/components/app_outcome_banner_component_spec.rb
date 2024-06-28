@@ -3,12 +3,11 @@
 require "rails_helper"
 
 describe AppOutcomeBannerComponent, type: :component do
-  subject { page }
+  subject(:rendered) { render_inline(component) }
 
   let(:user) { create :user }
   let(:patient_session) { create :patient_session, user: }
   let(:component) { described_class.new(patient_session:, current_user: user) }
-  let!(:rendered) { render_inline(component) }
   let(:triage_nurse_name) { patient_session.triage.last.user.full_name }
   let(:patient_name) { patient_session.patient.full_name }
 
@@ -22,7 +21,12 @@ describe AppOutcomeBannerComponent, type: :component do
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
     it { should have_text("Alya Merton has already had the vaccine") }
-    it { should have_text("Location#{patient_session.session.location.name}") }
+
+    it do
+      expect(subject).to have_text(
+        "Location\n#{patient_session.session.location.name}"
+      )
+    end
   end
 
   context "state is vaccinated" do
@@ -36,11 +40,11 @@ describe AppOutcomeBannerComponent, type: :component do
 
     it { should have_css(".app-card--green") }
     it { should have_css(".nhsuk-card__heading", text: "Vaccinated") }
-    it { should have_text("VaccineHPV (#{vaccine.brand}, #{batch.name})") }
-    it { should have_text("SiteLeft arm") }
-    it { should have_text("Date#{date}") }
-    it { should have_text("Time#{time}") }
-    it { should have_text("Location#{location.name}") }
+    it { should have_text("Vaccine\nHPV (#{vaccine.brand}, #{batch.name})") }
+    it { should have_text("Site\nLeft arm") }
+    it { should have_text("Date\n#{date}") }
+    it { should have_text("Time\n#{time}") }
+    it { should have_text("Location\n#{location.name}") }
 
     context "recorded_at is today" do
       let(:patient_session) do
@@ -50,7 +54,7 @@ describe AppOutcomeBannerComponent, type: :component do
       end
       let(:date) { Time.zone.today.to_fs(:long) }
 
-      it { should have_text("DateToday (#{date})") }
+      it { should have_text("Date\nToday (#{date})") }
     end
   end
 
@@ -65,10 +69,10 @@ describe AppOutcomeBannerComponent, type: :component do
 
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
-    it { should have_text("ReasonDo not vaccinate in campaign") }
-    it { should have_text("DateToday (#{date})") }
+    it { should have_text("Reason\nDo not vaccinate in campaign") }
+    it { should have_text("Date\nToday (#{date})") }
     it { should_not have_text("Location") }
-    it { should have_text("Decided byYou (#{triage.user.full_name})") }
+    it { should have_text("Decided by\nYou (#{triage.user.full_name})") }
 
     context "recorded_at is not today" do
       let(:date) { Time.zone.now - 2.days }
@@ -78,7 +82,7 @@ describe AppOutcomeBannerComponent, type: :component do
         end
       end
 
-      it { should have_text("Date#{date.to_date.to_fs(:long)}") }
+      it { should have_text("Date\n#{date.to_date.to_fs(:long)}") }
     end
   end
 end

@@ -5,9 +5,9 @@ require "rails_helper"
 shared_examples "card" do |params|
   title, date, notes, by = params.values_at(:title, :date, :notes, :by)
   it "renders card '#{title}'" do
-    expect(page).to have_css(".nhsuk-card h3", text: title)
+    expect(subject).to have_css(".nhsuk-card h3", text: title)
 
-    card = page.find(".nhsuk-card h3", text: title).ancestor(".nhsuk-card")
+    card = subject.find(".nhsuk-card h3", text: title).ancestor(".nhsuk-card")
     expect(card).to have_css("p", text: date)
     expect(card).to have_css("blockquote", text: notes) if notes
     expect(card).to have_css("p", text: by) if by
@@ -18,67 +18,6 @@ describe AppActivityLogComponent, type: :component do
   subject { page }
 
   let(:team) { create(:team) }
-  let(:user) { create(:user, teams: [team], full_name: "Nurse Joy") }
-  let(:campaign) { create(:campaign, team:) }
-  let(:location) { create(:location, team:, name: "Hogwarts") }
-  let(:session) { create(:session, campaign:, location:) }
-  let(:patient) { create(:patient, location:) }
-
-  let!(:consents) do
-    [
-      create(
-        :consent,
-        :given,
-        :from_mum,
-        campaign:,
-        patient:,
-        parent: create(:parent, :mum, name: "Jane Doe"),
-        recorded_at: Time.zone.parse("2024-05-30 12:00")
-      ),
-      create(
-        :consent,
-        :refused,
-        :from_dad,
-        campaign:,
-        patient:,
-        parent: create(:parent, :dad, name: "John Doe"),
-        recorded_at: Time.zone.parse("2024-05-30 13:00")
-      )
-    ]
-  end
-
-  let!(:triages) do
-    [
-      create(
-        :triage,
-        :needs_follow_up,
-        patient_session:,
-        created_at: Time.zone.parse("2024-05-30 14:00"),
-        notes: "Some notes",
-        user:
-      ),
-      create(
-        :triage,
-        :ready_to_vaccinate,
-        patient_session:,
-        created_at: Time.zone.parse("2024-05-30 14:30"),
-        user:
-      )
-    ]
-  end
-
-  let!(:vaccination_records) do
-    [
-      create(
-        :vaccination_record,
-        patient_session:,
-        created_at: Time.zone.parse("2024-05-31 12:00"),
-        user:,
-        notes: "Some notes"
-      )
-    ]
-  end
-
   let(:patient_session) do
     create(
       :patient_session,
@@ -89,8 +28,57 @@ describe AppActivityLogComponent, type: :component do
     )
   end
   let(:component) { described_class.new(patient_session) }
+  let(:user) { create(:user, teams: [team], full_name: "Nurse Joy") }
+  let(:campaign) { create(:campaign, team:) }
+  let(:location) { create(:location, team:, name: "Hogwarts") }
+  let(:session) { create(:session, campaign:, location:) }
+  let(:patient) { create(:patient, location:) }
 
-  before { render_inline(component) }
+  before do
+    create(
+      :consent,
+      :given,
+      :from_mum,
+      campaign:,
+      patient:,
+      parent: create(:parent, :mum, name: "Jane Doe"),
+      recorded_at: Time.zone.parse("2024-05-30 12:00")
+    )
+    create(
+      :consent,
+      :refused,
+      :from_dad,
+      campaign:,
+      patient:,
+      parent: create(:parent, :dad, name: "John Doe"),
+      recorded_at: Time.zone.parse("2024-05-30 13:00")
+    )
+
+    create(
+      :triage,
+      :needs_follow_up,
+      patient_session:,
+      created_at: Time.zone.parse("2024-05-30 14:00"),
+      notes: "Some notes",
+      user:
+    )
+    create(
+      :triage,
+      :ready_to_vaccinate,
+      patient_session:,
+      created_at: Time.zone.parse("2024-05-30 14:30"),
+      user:
+    )
+
+    create(
+      :vaccination_record,
+      patient_session:,
+      created_at: Time.zone.parse("2024-05-31 12:00"),
+      user:,
+      notes: "Some notes"
+    )
+    render_inline(component)
+  end
 
   it "renders headings in correct order" do
     expect(subject).to have_css("h2:nth-of-type(1)", text: "31 May 2024")
