@@ -36,21 +36,16 @@ describe AppTriageNotesComponent, type: :component do
     it { should have_css("p", text: patient_session.triage.first.notes) }
     it { should have_css("p", text: "4 December 2023 at 10:04am") }
     it { should have_css("p", text: "Joe Gear") }
+    it { should_not have_css("hr") }
   end
 
   context "multiple triage notes are present" do
-    let(:triage) do
-      [
-        create(:triage, notes: "Some notes"),
-        create(:triage, notes: "More notes")
-      ]
-    end
+    let(:triage) { create_list(:triage, 2) }
 
     it "renders" do
       expect(component.render?).to be_truthy
     end
 
-    it { should have_css("p", text: "Some notes") }
-    it { should have_css("p", text: "More notes") }
+    it { should have_css("hr") }
   end
 end
