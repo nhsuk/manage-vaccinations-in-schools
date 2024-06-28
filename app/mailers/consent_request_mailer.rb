@@ -37,10 +37,10 @@ class ConsentRequestMailer < ApplicationMailer
   def consent_request_personalisation
     personalisation.merge(
       consent_link:,
-      session_date: @session.date.to_fs(:sunday_1_may),
-      session_short_date: @session.date.to_fs(:"1_may"),
-      close_consent_date: @session.close_consent_at.to_fs(:sunday_1_may),
-      close_consent_short_date: @session.close_consent_at.to_fs(:"1_may")
+      session_date: @session.date.to_fs(:short_day_of_week),
+      session_short_date: @session.date.to_fs(:short),
+      close_consent_date: @session.close_consent_at.to_fs(:short_day_of_week),
+      close_consent_short_date: @session.close_consent_at.to_fs(:short)
     )
   end
 
