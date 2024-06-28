@@ -47,9 +47,9 @@
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Consent period</span>
               <% if session.close_consent_at.past? %>
-                <%= "Closed #{session.close_consent_at.strftime("%-d %b")}" %>
+                <%= "Closed #{session.close_consent_at.to_fs(:short)}" %>
               <% else %>
-                <%= "Open until #{session.close_consent_at.strftime("%-d %b")}" %>
+                <%= "Open until #{session.close_consent_at.to_fs(:short)}" %>
               <% end %>
             <% end %>
             <% row.with_cell(numeric: true) do %>

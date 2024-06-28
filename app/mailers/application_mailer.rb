@@ -61,11 +61,11 @@ class ApplicationMailer < Mail::Notify::Mailer
   end
 
   def short_date
-    @session.date.strftime("%-d %B")
+    @session.date.to_fs(:short)
   end
 
   def long_date
-    @session.date.strftime("%A %-d %B")
+    @session.date.to_fs(:short_day_of_week)
   end
 
   def team_email
