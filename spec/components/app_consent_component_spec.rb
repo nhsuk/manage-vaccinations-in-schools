@@ -61,10 +61,4 @@ describe AppConsentComponent, type: :component do
 
     it { should_not have_css("a", text: "Contact #{consent.parent.name}") }
   end
-
-  context "consent given needing triage and patient has been vaccinated" do
-    let(:patient_session) { create(:patient_session, :vaccinated) }
-
-    let(:summary) { "Consent given by #{consent.parent.name} (#{relation})" }
-  end
 end
