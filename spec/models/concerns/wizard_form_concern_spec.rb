@@ -11,7 +11,7 @@ describe WizardFormConcern do
   describe ".form_step" do
     subject { Dummy.new.form_step }
 
-    it { is_expected.to be_nil }
+    it { should be_nil }
   end
 
   describe "on_wizard_step" do
@@ -39,7 +39,7 @@ describe WizardFormConcern do
 
     subject { Dummy.new }
 
-    it { is_expected.to be_valid }
+    it { should be_valid }
 
     context "when no step is set" do
       before { subject.valid?(:update) }
