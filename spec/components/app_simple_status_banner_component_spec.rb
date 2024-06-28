@@ -10,6 +10,7 @@ describe AppSimpleStatusBannerComponent, type: :component do
       "/session/patient/triage/new"
     )
   end
+
   let(:user) { create :user }
   let(:patient_session) { create :patient_session, user: }
   let(:component) { described_class.new(patient_session:) }
