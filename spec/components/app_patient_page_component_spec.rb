@@ -6,9 +6,11 @@ describe AppPatientPageComponent, type: :component do
   subject(:rendered) { render_inline(component) }
 
   before do
+    # rubocop:disable RSpec/AnyInstance
     allow_any_instance_of(AppSimpleStatusBannerComponent).to receive(
       :new_session_patient_triage_path
     ).and_return("/session/patient/triage/new")
+    # rubocop:enable RSpec/AnyInstance
   end
 
   let(:component) do
