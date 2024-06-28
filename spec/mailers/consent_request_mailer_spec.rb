@@ -5,6 +5,7 @@ require "rails_helper"
 describe ConsentRequestMailer, type: :mailer do
   describe "#consent_request" do
     subject(:mail) { ConsentRequestMailer.consent_request(session, patient) }
+
     let(:patient) { create(:patient) }
     let(:session) { create(:session, patients: [patient]) }
 
@@ -36,6 +37,7 @@ describe ConsentRequestMailer, type: :mailer do
 
   describe "#consent_reminder" do
     subject(:mail) { ConsentRequestMailer.consent_reminder(session, patient) }
+
     let(:patient) { create(:patient) }
     let(:session) { create(:session, patients: [patient]) }
 

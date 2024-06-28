@@ -4,6 +4,7 @@ require "rails_helper"
 
 describe AppConsentComponent, type: :component do
   subject { page }
+
   before { rendered_component }
 
   let(:component) do

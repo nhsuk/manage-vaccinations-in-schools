@@ -56,6 +56,7 @@ describe ConsentForm, type: :model do
         session:
       )
     end
+
     let(:use_common_name) { false }
     let(:response) { nil }
     let(:reason) { nil }

@@ -5,6 +5,7 @@ require "rails_helper"
 describe AppTriageFormComponent, type: :component do
   describe "#initialize" do
     subject { page }
+
     let(:patient_session) { create :patient_session }
     let(:component) { described_class.new(patient_session:, url: "#") }
 

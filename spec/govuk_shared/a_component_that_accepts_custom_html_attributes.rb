@@ -2,6 +2,7 @@
 
 shared_examples "a component that accepts custom HTML attributes" do
   subject! { render_inline(described_class.send(:new, **updated_kwargs)) }
+
   let(:custom_attributes) { { lang: "en-GB", style: "background-color: blue" } }
   let(:updated_kwargs) do
     kwargs.deep_merge(

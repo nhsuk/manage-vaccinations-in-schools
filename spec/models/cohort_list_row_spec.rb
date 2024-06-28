@@ -5,6 +5,7 @@ require "rails_helper"
 describe CohortListRow, type: :model do
   describe "school_urn validations" do
     subject(:cohort_list_row) { described_class.new(team:) }
+
     let(:user) { create(:user, team:) }
     let(:location) { create(:location) }
     let(:location2) { create(:location) }

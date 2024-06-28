@@ -5,6 +5,7 @@ require "rails_helper"
 describe SessionPolicy do
   describe "Scope#resolve" do
     subject { SessionPolicy::Scope.new(user, Session).resolve }
+
     let(:team1) { create :team }
     let(:team2) { create :team }
     let(:user) { create :user, teams: [team1] }
@@ -19,6 +20,7 @@ describe SessionPolicy do
 
   describe "DraftScope#resolve" do
     subject { SessionPolicy::DraftScope.new(user, Session).resolve }
+
     let(:team) { create :team }
     let(:user) { create :user, teams: [team] }
     let(:location) { create :location, team: }

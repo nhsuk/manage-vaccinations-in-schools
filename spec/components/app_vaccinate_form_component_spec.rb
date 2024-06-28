@@ -4,6 +4,7 @@ require "rails_helper"
 
 describe AppVaccinateFormComponent, type: :component do
   subject { page }
+
   let(:heading) { "A Heading" }
   let(:body) { "A Body" }
   let(:session) { create :session, :in_progress }

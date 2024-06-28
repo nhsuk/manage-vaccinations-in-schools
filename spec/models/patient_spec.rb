@@ -38,6 +38,7 @@ require "rails_helper"
 describe Patient do
   describe "#year_group" do
     subject { patient.year_group }
+
     before { Timecop.freeze(date) }
     after { Timecop.return }
 

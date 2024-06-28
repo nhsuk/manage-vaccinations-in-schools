@@ -4,6 +4,7 @@ require "rails_helper"
 
 describe AppOutcomeBannerComponent, type: :component do
   subject { page }
+
   let(:user) { create :user }
   let(:patient_session) { create :patient_session, user: }
   let(:component) { described_class.new(patient_session:, current_user: user) }

@@ -10,6 +10,7 @@ shared_examples "a component with a slot that accepts custom html attributes" do
       ) { content.call }
     end
   end
+
   let(:custom_attributes) do
     { lang: "en-GB", style: "background-color: blue;" }
   end

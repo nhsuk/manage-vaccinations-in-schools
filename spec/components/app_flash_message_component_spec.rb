@@ -4,6 +4,7 @@ require "rails_helper"
 
 describe AppFlashMessageComponent, type: :component do
   subject { page }
+
   let(:component) { described_class.new(flash:) }
   let!(:rendered) { render_inline(component) }
 

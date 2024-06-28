@@ -8,6 +8,7 @@ shared_examples "a component with a slot that accepts custom classes" do
       end
     end
   end
+
   let(:custom_class) { "purple-stripes" }
 
   specify "the rendered slot should have the custom class" do

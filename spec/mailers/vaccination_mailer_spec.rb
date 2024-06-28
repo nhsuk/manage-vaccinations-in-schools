@@ -7,6 +7,7 @@ describe VaccinationMailer do
     subject(:mail) do
       VaccinationMailer.hpv_vaccination_has_taken_place(vaccination_record:)
     end
+
     let(:patient) { create(:patient, consents: [create(:consent_given)]) }
     let(:patient_session) { create(:patient_session, patient:) }
     let(:vaccination_record) { create(:vaccination_record, patient_session:) }
@@ -59,6 +60,7 @@ describe VaccinationMailer do
 
       describe "today_or_date_of_vaccination field" do
         subject { personalisation[:today_or_date_of_vaccination] }
+
         let(:vaccination_record) do
           create(:vaccination_record, patient_session:, recorded_at:)
         end
@@ -80,6 +82,7 @@ describe VaccinationMailer do
     subject(:mail) do
       VaccinationMailer.hpv_vaccination_has_not_taken_place(vaccination_record:)
     end
+
     let(:patient) { create(:patient, consents: [create(:consent_given)]) }
     let(:patient_session) { create(:patient_session, patient:) }
     let(:vaccination_record) do

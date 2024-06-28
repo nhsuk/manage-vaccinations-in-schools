@@ -4,6 +4,7 @@ require "rails_helper"
 
 describe AppDevToolsComponent, type: :component do
   subject { page }
+
   let(:consent) { create(:consent, :refused, :from_dad, parent_name: "Harry") }
   let(:consents) { [consent] }
   let(:component) { described_class.new }

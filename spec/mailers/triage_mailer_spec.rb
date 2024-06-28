@@ -7,6 +7,7 @@ describe TriageMailer, type: :mailer do
     subject(:mail) do
       TriageMailer.vaccination_will_happen(patient_session, consent)
     end
+
     let(:patient_session) do
       create(:patient_session, :consent_given_triage_not_needed)
     end
@@ -25,6 +26,7 @@ describe TriageMailer, type: :mailer do
     subject(:mail) do
       TriageMailer.vaccination_wont_happen(patient_session, consent)
     end
+
     let(:patient_session) { create(:patient_session, :consent_refused) }
     let(:consent) { patient_session.patient.consents.first }
 
