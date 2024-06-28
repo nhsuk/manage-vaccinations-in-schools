@@ -32,6 +32,7 @@ describe AppConsentSummaryComponent, type: :component do
   it { should have_text("jane@example.com") }
   it { should have_text("Consent refused (online)") }
   it { should have_text("1 March 2024 at 2:23pm") }
+
   it do
     expect(subject).to have_text(
       "Refusal reasonAlready vaccinated\nVaccinated at the GP"

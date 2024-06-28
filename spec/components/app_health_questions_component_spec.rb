@@ -29,6 +29,7 @@ describe AppHealthQuestionsComponent, type: :component do
     end
 
     it { should have_content(/First question\?\s*Mum responded: No/) }
+
     it do
       expect(subject).to have_content(
         /Second question\?\s*Mum responded: Yes:\s*Notes/
@@ -65,6 +66,7 @@ describe AppHealthQuestionsComponent, type: :component do
     end
 
     it { should have_content(/First question\?\s*All responded: No/) }
+
     it do
       expect(subject).to have_content(
         /Second question\?\s*Mum responded: No\s*Dad responded: Yes:\s*Notes/

@@ -18,6 +18,7 @@ describe AppSecondaryNavigationComponent, type: :component do
   end
 
   it { should have_tag("nav", with: { class: "app-secondary-navigation" }) }
+
   it do
     expect(subject).to have_tag(
       "ul",
@@ -26,6 +27,7 @@ describe AppSecondaryNavigationComponent, type: :component do
       }
     )
   end
+
   it do
     expect(subject).to have_tag(
       "li",
@@ -34,6 +36,7 @@ describe AppSecondaryNavigationComponent, type: :component do
       }
     )
   end
+
   it do
     expect(subject).to have_tag(
       "li",
@@ -42,5 +45,6 @@ describe AppSecondaryNavigationComponent, type: :component do
       }
     )
   end
+
   it { should have_link("Example 1", href: "https://example.com") }
 end
