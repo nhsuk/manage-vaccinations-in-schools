@@ -36,9 +36,8 @@ describe AppConsentComponent, type: :component do
   context "consent is refused" do
     let(:patient_session) { create(:patient_session, :consent_refused) }
 
-    it { should have_css("p.app-status", text: "Refused") }
-
     let(:summary) { "Consent refused by #{consent.parent.name} (#{relation})" }
+    it { should have_css("p.app-status", text: "Refused") }
 
     it { should have_css("table tr", text: /#{consent.parent.name}/) }
     it { should have_css("table tr", text: /#{relation}/) }
@@ -55,9 +54,8 @@ describe AppConsentComponent, type: :component do
       create(:patient_session, :consent_given_triage_needed)
     end
 
-    it { should have_css("p.app-status", text: "Given") }
-
     let(:summary) { "Consent given by #{consent.parent.name} (#{relation})" }
+    it { should have_css("p.app-status", text: "Given") }
 
     it { should_not have_css("a", text: "Contact #{consent.parent.name}") }
   end
