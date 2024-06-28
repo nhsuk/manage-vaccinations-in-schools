@@ -40,9 +40,9 @@ class ManageConsentsController < ApplicationController
     case current_step
     when :confirm
       handle_confirm
-    when :who
+    when :parent_details
       model = @consent.draft_parent
-      handle_who
+      handle_parent_details
     when :questions
       handle_questions
     when :triage
@@ -116,7 +116,7 @@ class ManageConsentsController < ApplicationController
     @consent.assign_attributes(form_step: current_step)
   end
 
-  def handle_who
+  def handle_parent_details
     @consent.draft_parent.assign_attributes parent_params
   end
 
