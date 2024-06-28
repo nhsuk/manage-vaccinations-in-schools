@@ -121,9 +121,7 @@ describe CohortList, type: :model do
       cohort_list.load_data!
       cohort_list.parse_rows!
 
-      expect { cohort_list.generate_patients! }.to change { Patient.count }.by(
-        2
-      )
+      expect { cohort_list.generate_patients! }.to change(Patient, :count).by(2)
 
       expect(Patient.first).to have_attributes(
         nhs_number: "1234567890",
