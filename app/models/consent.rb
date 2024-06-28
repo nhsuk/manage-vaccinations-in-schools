@@ -124,7 +124,7 @@ class Consent < ApplicationRecord
 
   def form_steps
     [
-      (:who unless via_self_consent?),
+      (:parent_details unless via_self_consent?),
       (:route unless via_self_consent?),
       :agree,
       (:questions if response_given?),

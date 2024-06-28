@@ -557,6 +557,7 @@ en:
     location: location
     name: name
     parent: parent
+    parent_details: parent-details
     questions: questions
     reason: reason
     reason_notes: reason-notes
@@ -565,4 +566,3 @@ en:
     timeline: timeline
     triage: triage
     when: when
-    who: who
