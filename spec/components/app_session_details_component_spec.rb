@@ -24,7 +24,9 @@ describe AppSessionDetailsComponent, type: :component do
     let(:close_consent_at) { date - 1.day }
 
     it do
-      should have_content "Allow responses until #{close_consent_at.to_fs(:long_day_of_week)}"
+      expect(
+        subject
+      ).to have_content "Allow responses until #{close_consent_at.to_fs(:long_day_of_week)}"
     end
   end
 

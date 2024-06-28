@@ -61,7 +61,7 @@ describe PatientSession do
       let(:patient) { create(:patient, consents: [consent_1, consent_2]) }
 
       it "groups consents by parent name" do
-        should contain_exactly(consent_1, consent_2)
+        expect(subject).to contain_exactly(consent_1, consent_2)
       end
     end
 
@@ -72,7 +72,7 @@ describe PatientSession do
       let(:patient) { create(:patient, consents: [consent_1, consent_2]) }
 
       it "returns the latest consent for each parent" do
-        should eq [consent_2]
+        expect(subject).to eq [consent_2]
       end
     end
 
@@ -91,7 +91,7 @@ describe PatientSession do
       let(:patient) { create(:patient, consents: [consent_1, consent_2]) }
 
       it "does not return a draft consent record" do
-        should eq [consent_1]
+        expect(subject).to eq [consent_1]
       end
     end
   end

@@ -19,27 +19,28 @@ describe AppSecondaryNavigationComponent, type: :component do
 
   it { should have_tag("nav", with: { class: "app-secondary-navigation" }) }
   it do
-    should have_tag("ul", with: { class: "app-secondary-navigation__list" })
+    expect(subject).to have_tag(
+      "ul",
+      with: {
+        class: "app-secondary-navigation__list"
+      }
+    )
   end
   it do
-    should have_tag(
-             "li",
-             with: {
-               class: "app-secondary-navigation__list-item"
-             }
-           )
+    expect(subject).to have_tag(
+      "li",
+      with: {
+        class: "app-secondary-navigation__list-item"
+      }
+    )
   end
   it do
-    should have_tag(
-             "li",
-             with: {
-               class: "app-secondary-navigation__list-item--current"
-             }
-           )
+    expect(subject).to have_tag(
+      "li",
+      with: {
+        class: "app-secondary-navigation__list-item--current"
+      }
+    )
   end
-  it do
-    should have_tag("a", with: { href: "https://example.com" }) do
-      with_text("Example 1")
-    end
-  end
+  it { should have_link("Example 1", href: "https://example.com") }
 end

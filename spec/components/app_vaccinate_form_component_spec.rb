@@ -25,10 +25,10 @@ describe AppVaccinateFormComponent, type: :component do
   it { should have_css(".nhsuk-card") }
 
   it "has the correct heading" do
-    should have_css(
-             "h2.nhsuk-card__heading",
-             text: "Did they get the HPV vaccine?"
-           )
+    expect(subject).to have_css(
+      "h2.nhsuk-card__heading",
+      text: "Did they get the HPV vaccine?"
+    )
   end
 
   it { should have_field("Yes, they got the HPV vaccine") }

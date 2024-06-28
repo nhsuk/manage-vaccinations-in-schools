@@ -73,10 +73,10 @@ describe AppPatientTableComponent, type: :component do
     let(:tab) { :actions }
 
     it do
-      should have_link(
-               patient_sessions.first.patient.full_name,
-               href: "/session/patient/"
-             )
+      expect(subject).to have_link(
+        patient_sessions.first.patient.full_name,
+        href: "/session/patient/"
+      )
     end
   end
 

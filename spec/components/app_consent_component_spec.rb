@@ -43,7 +43,7 @@ describe AppConsentComponent, type: :component do
     it { should have_css("table tr", text: /#{relation}/) }
 
     it "displays the response" do
-      should have_css("table tr", text: /Consent refused/)
+      expect(subject).to have_css("table tr", text: /Consent refused/)
     end
 
     it { should_not have_css("details", text: "Responses to health questions") }

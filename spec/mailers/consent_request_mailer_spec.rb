@@ -17,20 +17,19 @@ describe ConsentRequestMailer, type: :mailer do
       it { should include(session_date: session.date.strftime("%A %-d %B")) }
       it { should include(session_short_date: session.date.strftime("%-d %B")) }
       it do
-        should include(
-                 close_consent_date:
-                   session.close_consent_at.strftime("%A %-d %B")
-               )
+        expect(subject).to include(
+          close_consent_date: session.close_consent_at.strftime("%A %-d %B")
+        )
       end
       it { should include(location_name: session.location.name) }
       it { should include(team_email: session.team.email) }
       it { should include(team_phone: session.team.phone) }
 
       it "uses the consent url for the session" do
-        should include(
-                 consent_link:
-                   start_session_parent_interface_consent_forms_url(session)
-               )
+        expect(subject).to include(
+          consent_link:
+            start_session_parent_interface_consent_forms_url(session)
+        )
       end
     end
   end
@@ -48,26 +47,24 @@ describe ConsentRequestMailer, type: :mailer do
 
       it { should include(session_date: session.date.strftime("%A %-d %B")) }
       it do
-        should include(
-                 close_consent_date:
-                   session.close_consent_at.strftime("%A %-d %B")
-               )
+        expect(subject).to include(
+          close_consent_date: session.close_consent_at.strftime("%A %-d %B")
+        )
       end
       it do
-        should include(
-                 close_consent_short_date:
-                   session.close_consent_at.strftime("%-d %B")
-               )
+        expect(subject).to include(
+          close_consent_short_date: session.close_consent_at.strftime("%-d %B")
+        )
       end
       it { should include(location_name: session.location.name) }
       it { should include(team_email: session.team.email) }
       it { should include(team_phone: session.team.phone) }
 
       it "uses the consent url for the session" do
-        should include(
-                 consent_link:
-                   start_session_parent_interface_consent_forms_url(session)
-               )
+        expect(subject).to include(
+          consent_link:
+            start_session_parent_interface_consent_forms_url(session)
+        )
       end
     end
   end

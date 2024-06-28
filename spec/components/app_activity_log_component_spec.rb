@@ -93,9 +93,9 @@ describe AppActivityLogComponent, type: :component do
   before { render_inline(component) }
 
   it "renders headings in correct order" do
-    should have_css("h2:nth-of-type(1)", text: "31 May 2024")
-    should have_css("h2:nth-of-type(2)", text: "30 May 2024")
-    should have_css("h2:nth-of-type(3)", text: "29 May 2024")
+    expect(subject).to have_css("h2:nth-of-type(1)", text: "31 May 2024")
+    expect(subject).to have_css("h2:nth-of-type(2)", text: "30 May 2024")
+    expect(subject).to have_css("h2:nth-of-type(3)", text: "29 May 2024")
   end
 
   include_examples "card",
