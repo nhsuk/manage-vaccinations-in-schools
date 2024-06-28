@@ -72,7 +72,7 @@ describe VaccinationMailer do
 
         context "when the vaccination was recorded 2 days ago" do
           let(:recorded_at) { Date.new(2023, 3, 1) }
-          it { should eq("1 Mar 2023") }
+          it { should eq("1 March 2023") }
         end
       end
     end

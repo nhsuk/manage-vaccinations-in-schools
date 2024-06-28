@@ -52,7 +52,7 @@ class VaccinationMailer < ApplicationMailer
     if @vaccination_record.recorded_at.today?
       "today"
     else
-      @vaccination_record.recorded_at.to_fs(:nhsuk_date_short_month)
+      @vaccination_record.recorded_at.to_fs(:nhsuk_date)
     end
   end
 
