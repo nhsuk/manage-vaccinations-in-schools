@@ -69,7 +69,7 @@ describe Consent do
   describe "#from_consent_form!" do
     describe "the created consent object" do
       subject(:consent) do
-        Consent.from_consent_form!(consent_form, patient_session)
+        described_class.from_consent_form!(consent_form, patient_session)
       end
 
       let(:session) { create(:session) }

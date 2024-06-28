@@ -8,7 +8,7 @@ describe NivsReportRow do
 
     let(:patient_session) { create(:patient_session, :vaccinated) }
     let(:vaccination) { patient_session.vaccination_records.first }
-    let(:nivs_report_row) { NivsReportRow.new(vaccination) }
+    let(:nivs_report_row) { described_class.new(vaccination) }
 
     it "includes information about the team who administered the vaccinatino" do
       vaccination.campaign.team.update!(ods_code: "X26")

@@ -42,7 +42,7 @@ describe Patient do
     before { Timecop.freeze(date) }
     after { Timecop.return }
 
-    let(:patient) { Patient.new(date_of_birth: dob) }
+    let(:patient) { described_class.new(date_of_birth: dob) }
 
     context "child born BEFORE 1 Sep 2016, date is BEFORE 1 Sep 2024" do
       let(:dob) { Date.new(2016, 8, 31) }

@@ -549,8 +549,8 @@ describe ConsentForm, type: :model do
     let(:matched_consent_form) { create(:consent_form, consent:) }
 
     it "returns unmatched consent forms" do
-      expect(ConsentForm.unmatched).to include unmatched_consent_form
-      expect(ConsentForm.unmatched).not_to include matched_consent_form
+      expect(described_class.unmatched).to include unmatched_consent_form
+      expect(described_class.unmatched).not_to include matched_consent_form
     end
   end
 
@@ -560,8 +560,8 @@ describe ConsentForm, type: :model do
     let(:draft_consent_form) { create(:consent_form, consent:) }
 
     it "returns unmatched consent forms" do
-      expect(ConsentForm.recorded).to include recorded_consent_form
-      expect(ConsentForm.recorded).not_to include draft_consent_form
+      expect(described_class.recorded).to include recorded_consent_form
+      expect(described_class.recorded).not_to include draft_consent_form
     end
   end
 

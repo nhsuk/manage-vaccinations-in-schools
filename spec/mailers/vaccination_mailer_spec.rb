@@ -5,7 +5,7 @@ require "rails_helper"
 describe VaccinationMailer do
   describe "hpv_vaccination_has_taken_place" do
     subject(:mail) do
-      VaccinationMailer.hpv_vaccination_has_taken_place(vaccination_record:)
+      described_class.hpv_vaccination_has_taken_place(vaccination_record:)
     end
 
     let(:patient) { create(:patient, consents: [create(:consent_given)]) }
@@ -80,7 +80,7 @@ describe VaccinationMailer do
 
   describe "hpv_vaccination_has_not_place" do
     subject(:mail) do
-      VaccinationMailer.hpv_vaccination_has_not_taken_place(vaccination_record:)
+      described_class.hpv_vaccination_has_not_taken_place(vaccination_record:)
     end
 
     let(:patient) { create(:patient, consents: [create(:consent_given)]) }

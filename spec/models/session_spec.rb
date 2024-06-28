@@ -67,7 +67,7 @@ describe Session do
   end
 
   describe ".active scope" do
-    subject { Session.active }
+    subject { described_class.active }
 
     let!(:active_session) { FactoryBot.create :session }
     let!(:draft_session) { FactoryBot.create :session, draft: true }

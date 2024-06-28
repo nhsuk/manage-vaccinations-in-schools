@@ -6,7 +6,7 @@ require "govuk_helper"
 
 describe(AppTabComponent, type: :component) do
   subject! do
-    render_inline(AppTabComponent.new(**kwargs)) do |component|
+    render_inline(described_class.new(**kwargs)) do |component|
       tabs.each { |label, content| component.with_tab(label:) { content } }
     end
   end
@@ -144,7 +144,7 @@ describe(AppTabComponent, type: :component) do
 
   context "when text is passed to a tab instead of a block" do
     subject! do
-      render_inline(AppTabComponent.new(**kwargs)) do |component|
+      render_inline(described_class.new(**kwargs)) do |component|
         tabs.each { |label, content| component.with_tab(label:, text: content) }
       end
     end

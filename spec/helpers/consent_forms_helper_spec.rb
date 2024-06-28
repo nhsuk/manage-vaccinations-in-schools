@@ -8,7 +8,7 @@ describe ConsentFormsHelper, type: :helper do
   before do
     # For some reason the helper doesn't include this in the test environment.
     # There may be some other way to achieve this, but this works for now.
-    ConsentFormsHelper.include Wicked::Controller::Concerns::Path
+    described_class.include Wicked::Controller::Concerns::Path
   end
 
   describe "#health_question_backlink_path" do
