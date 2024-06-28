@@ -32,9 +32,7 @@ class AppPatientDetailsComponent < ViewComponent::Base
       if @object.date_of_birth.present?
         summary_list.with_row do |row|
           row.with_key { "Date of birth" }
-          row.with_value do
-            "#{@object.date_of_birth.to_fs(:nhsuk_date)} (#{aged})"
-          end
+          row.with_value { "#{@object.date_of_birth.to_fs(:long)} (#{aged})" }
         end
       end
 

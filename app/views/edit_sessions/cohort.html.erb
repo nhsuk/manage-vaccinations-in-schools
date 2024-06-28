@@ -46,7 +46,7 @@
                 end
               end
               row.with_cell(text: patient.full_name)
-              row.with_cell(text: patient.date_of_birth.to_fs(:nhsuk_date))
+              row.with_cell(text: patient.date_of_birth.to_fs(:long))
               row.with_cell(
                 text: t("activerecord.attributes.patient.year_group.#{patient.year_group}"),
               )

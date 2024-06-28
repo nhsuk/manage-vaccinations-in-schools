@@ -19,7 +19,7 @@
     <% @batches.each do |batch| %>
       <% label = proc do %>
         <span class="app-u-monospace"><%= batch.name %></span>
-        (expires <%= batch.expiry.to_fs(:nhsuk_date) %>)
+        (expires <%= batch.expiry.to_fs(:long) %>)
       <% end %>
       <%= f.govuk_radio_button(:batch_id, batch.id, label:) do %>
         <%= f.govuk_check_box(

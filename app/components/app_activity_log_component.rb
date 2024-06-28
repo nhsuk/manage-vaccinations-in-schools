@@ -8,9 +8,7 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def events_by_day
-    all_events
-      .sort_by { -_1[:time].to_i }
-      .group_by { _1[:time].to_fs(:nhsuk_date) }
+    all_events.sort_by { -_1[:time].to_i }.group_by { _1[:time].to_date }
   end
 
   def all_events

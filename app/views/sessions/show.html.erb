@@ -11,7 +11,7 @@
 <%= h1 page_title: do %>
   <%= page_title %>
   <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
-    <%= @session.date.to_fs(:nhsuk_date) %> (<%= @session.human_enum_name(:time_of_day) %>) ·
+    <%= @session.date.to_fs(:long) %> (<%= @session.human_enum_name(:time_of_day) %>) ·
     <%= pluralize(@patient_sessions.size, "child") %> in cohort
   </span>
 <% end %>

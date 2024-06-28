@@ -45,7 +45,7 @@ class AppPatientTableComponent < ViewComponent::Base
       { text: name_cell(patient_session) }
     when :dob
       {
-        text: patient_session.patient.date_of_birth.to_fs(:nhsuk_date),
+        text: patient_session.patient.date_of_birth.to_fs(:long),
         html_attributes: {
           "data-filter": patient_session.patient.date_of_birth.to_fs(:uk_short),
           "data-sort": patient_session.patient.date_of_birth

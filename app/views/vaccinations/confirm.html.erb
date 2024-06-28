@@ -45,7 +45,7 @@
               row.with_key { "Batch" }
               row.with_value do
                 batch = @draft_vaccination_record.batch
-                "#{batch.name} (expires #{batch.expiry.to_fs(:nhsuk_date)})"
+                "#{batch.name} (expires #{batch.expiry.to_fs(:long)})"
               end
             end
         
@@ -67,7 +67,7 @@
         
           summary_list.with_row do |row|
             row.with_key { "Date" }
-            row.with_value { "Today (#{Time.zone.now.to_fs(:nhsuk_date)})" }
+            row.with_value { "Today (#{Time.zone.today.to_fs(:long)})" }
           end
         
           summary_list.with_row do |row|

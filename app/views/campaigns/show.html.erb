@@ -30,7 +30,7 @@
           <% body.with_row do |row| %>
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Date</span>
-              <%= session.date.to_fs(:nhsuk_date) %>
+              <%= session.date.to_fs(:long) %>
             <% end %>
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Time</span>

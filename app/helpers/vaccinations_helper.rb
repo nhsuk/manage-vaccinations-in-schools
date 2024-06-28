@@ -7,11 +7,11 @@ module VaccinationsHelper
     current_date = Time.zone.today
 
     if date == current_date
-      "Today (#{date.to_fs(:nhsuk_date)})"
+      "Today (#{date.to_fs(:long)})"
     elsif date == current_date - 1
-      "Yesterday (#{date.to_fs(:nhsuk_date)})"
+      "Yesterday (#{date.to_fs(:long)})"
     else
-      date.to_fs(:nhsuk_date)
+      date.to_fs(:long)
     end
   end
 

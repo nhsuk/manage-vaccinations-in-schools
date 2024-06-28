@@ -89,10 +89,12 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def date_summary
-    if last_action_time.to_date == Time.zone.today
-      "Today (#{last_action_time.to_fs(:nhsuk_date)})"
+    date = last_action_time.to_date
+
+    if date == Time.zone.today
+      "Today (#{date.to_fs(:long)})"
     else
-      last_action_time.to_fs(:nhsuk_date)
+      date.to_fs(:long)
     end
   end
 
