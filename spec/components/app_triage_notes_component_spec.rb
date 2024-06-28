@@ -19,7 +19,7 @@ describe AppTriageNotesComponent, type: :component do
   end
 
   context "a single triage note is present" do
-    around(:all) do |example|
+    around(:each) do |example|
       Timecop.freeze(Time.zone.local(2023, 12, 4, 10, 4)) { example.run }
     end
 
