@@ -68,13 +68,12 @@ describe Consent do
 
   describe "#from_consent_form!" do
     describe "the created consent object" do
-      let(:session) { create(:session) }
-      let(:consent_form) { create(:consent_form, session:) }
-      let(:patient_session) { create(:patient_session, session:) }
-
       subject(:consent) do
         Consent.from_consent_form!(consent_form, patient_session)
       end
+      let(:session) { create(:session) }
+      let(:consent_form) { create(:consent_form, session:) }
+      let(:patient_session) { create(:patient_session, session:) }
 
       it "copies over attributes from consent_form" do
         expect(consent.reload).to(

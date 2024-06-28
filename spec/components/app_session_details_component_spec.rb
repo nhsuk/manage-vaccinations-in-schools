@@ -3,9 +3,8 @@
 require "rails_helper"
 
 describe AppSessionDetailsComponent, type: :component do
-  before { render_inline(component) }
-
   subject { page }
+  before { render_inline(component) }
 
   let(:component) { described_class.new(session:) }
   let(:date) { Time.zone.today }

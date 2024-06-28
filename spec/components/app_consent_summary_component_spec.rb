@@ -3,6 +3,7 @@
 require "rails_helper"
 
 describe AppConsentSummaryComponent, type: :component do
+  subject { page }
   let(:component) do
     described_class.new(
       name: "Jane Smith",
@@ -21,8 +22,6 @@ describe AppConsentSummaryComponent, type: :component do
       }
     )
   end
-
-  subject { page }
 
   before { render_inline(component) }
 

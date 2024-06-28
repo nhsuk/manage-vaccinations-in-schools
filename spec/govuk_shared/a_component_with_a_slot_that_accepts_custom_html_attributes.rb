@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 shared_examples "a component with a slot that accepts custom html attributes" do
-  let(:custom_attributes) do
-    { lang: "en-GB", style: "background-color: blue;" }
-  end
-
   subject! do
     render_inline(described_class.send(:new, **kwargs)) do |component|
       component.send(
@@ -13,6 +9,9 @@ shared_examples "a component with a slot that accepts custom html attributes" do
         **slot_kwargs
       ) { content.call }
     end
+  end
+  let(:custom_attributes) do
+    { lang: "en-GB", style: "background-color: blue;" }
   end
 
   specify "the rendered slot should have the HTML attributes" do

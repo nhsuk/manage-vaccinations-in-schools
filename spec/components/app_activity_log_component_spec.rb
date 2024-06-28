@@ -15,6 +15,7 @@ shared_examples "card" do |params|
 end
 
 describe AppActivityLogComponent, type: :component do
+  subject { page }
   let(:team) { create(:team) }
   let(:user) { create(:user, teams: [team], full_name: "Nurse Joy") }
   let(:campaign) { create(:campaign, team:) }
@@ -89,8 +90,6 @@ describe AppActivityLogComponent, type: :component do
   let(:component) { described_class.new(patient_session) }
 
   before { render_inline(component) }
-
-  subject { page }
 
   it "renders headings in correct order" do
     should have_css("h2:nth-of-type(1)", text: "31 May 2024")

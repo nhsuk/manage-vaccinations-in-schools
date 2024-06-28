@@ -4,13 +4,12 @@ require "rails_helper"
 
 describe VaccinationMailer do
   describe "hpv_vaccination_has_taken_place" do
-    let(:patient) { create(:patient, consents: [create(:consent_given)]) }
-    let(:patient_session) { create(:patient_session, patient:) }
-    let(:vaccination_record) { create(:vaccination_record, patient_session:) }
-
     subject(:mail) do
       VaccinationMailer.hpv_vaccination_has_taken_place(vaccination_record:)
     end
+    let(:patient) { create(:patient, consents: [create(:consent_given)]) }
+    let(:patient_session) { create(:patient_session, patient:) }
+    let(:vaccination_record) { create(:vaccination_record, patient_session:) }
 
     it { should have_attributes(to: [patient.consents.last.parent.email]) }
 
@@ -59,11 +58,10 @@ describe VaccinationMailer do
       end
 
       describe "today_or_date_of_vaccination field" do
+        subject { personalisation[:today_or_date_of_vaccination] }
         let(:vaccination_record) do
           create(:vaccination_record, patient_session:, recorded_at:)
         end
-
-        subject { personalisation[:today_or_date_of_vaccination] }
 
         context "when the vaccination was recorded today" do
           let(:recorded_at) { Time.zone.today }
@@ -79,6 +77,9 @@ describe VaccinationMailer do
   end
 
   describe "hpv_vaccination_has_not_place" do
+    subject(:mail) do
+      VaccinationMailer.hpv_vaccination_has_not_taken_place(vaccination_record:)
+    end
     let(:patient) { create(:patient, consents: [create(:consent_given)]) }
     let(:patient_session) { create(:patient_session, patient:) }
     let(:vaccination_record) do
@@ -86,10 +87,6 @@ describe VaccinationMailer do
              patient_session:,
              administered: false,
              reason: :not_well
-    end
-
-    subject(:mail) do
-      VaccinationMailer.hpv_vaccination_has_not_taken_place(vaccination_record:)
     end
 
     it { should have_attributes(to: [patient.consents.last.parent.email]) }

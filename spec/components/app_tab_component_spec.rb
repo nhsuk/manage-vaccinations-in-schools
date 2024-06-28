@@ -5,6 +5,11 @@ require "govuk_helper"
 # Dir[File.join('./spec', 'components', 'shared', '*.rb')].sort.each { |file| require file }
 
 describe(AppTabComponent, type: :component) do
+  subject! do
+    render_inline(AppTabComponent.new(**kwargs)) do |component|
+      tabs.each { |label, content| component.with_tab(label:) { content } }
+    end
+  end
   let(:title) { "My favourite tabs" }
   let(:label) { "A tab" }
   let(:component_css_class) { "nhsuk-tabs" }
@@ -18,12 +23,6 @@ describe(AppTabComponent, type: :component) do
   end
 
   let(:kwargs) { { title: } }
-
-  subject! do
-    render_inline(AppTabComponent.new(**kwargs)) do |component|
-      tabs.each { |label, content| component.with_tab(label:) { content } }
-    end
-  end
 
   let(:html) { Nokogiri.parse(rendered_content) }
 
@@ -177,8 +176,6 @@ describe(AppTabComponent, type: :component) do
     it_behaves_like "a component with a slot that accepts custom html attributes"
 
     context "when id is supplied" do
-      let(:id) { "some-id" }
-
       subject! do
         render_inline(described_class.send(:new, **kwargs)) do |component|
           component.send("with_#{slot}", label: "id testination", id:) do
@@ -186,6 +183,7 @@ describe(AppTabComponent, type: :component) do
           end
         end
       end
+      let(:id) { "some-id" }
 
       specify "the id is present in the rendered output" do
         expect(rendered_content).to have_tag("div", with: { id: "some-id" })

@@ -3,14 +3,13 @@
 require "rails_helper"
 
 describe AppOutcomeBannerComponent, type: :component do
+  subject { page }
   let(:user) { create :user }
   let(:patient_session) { create :patient_session, user: }
   let(:component) { described_class.new(patient_session:, current_user: user) }
   let!(:rendered) { render_inline(component) }
   let(:triage_nurse_name) { patient_session.triage.last.user.full_name }
   let(:patient_name) { patient_session.patient.full_name }
-
-  subject { page }
 
   prepend_before do
     patient_session.patient.update!(first_name: "Alya", last_name: "Merton")

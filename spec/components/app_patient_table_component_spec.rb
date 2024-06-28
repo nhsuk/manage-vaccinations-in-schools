@@ -3,6 +3,7 @@
 require "rails_helper"
 
 describe AppPatientTableComponent, type: :component do
+  subject { page }
   before do
     allow(component).to receive(:session_patient_path).and_return(
       "/session/patient/"
@@ -10,8 +11,6 @@ describe AppPatientTableComponent, type: :component do
 
     render_inline(component)
   end
-
-  subject { page }
 
   let(:section) { :consent }
   let(:patient_sessions) { create_list(:patient_session, 2) }

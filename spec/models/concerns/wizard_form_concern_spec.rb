@@ -15,6 +15,7 @@ describe WizardFormConcern do
   end
 
   describe "on_wizard_step" do
+    subject { Dummy.new }
     before do
       Dummy.class_eval do
         attr_accessor :foo, :bar, :qux
@@ -36,8 +37,6 @@ describe WizardFormConcern do
         end
       end
     end
-
-    subject { Dummy.new }
 
     it { should be_valid }
 

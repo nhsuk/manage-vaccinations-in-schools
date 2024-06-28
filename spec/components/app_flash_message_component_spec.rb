@@ -3,9 +3,9 @@
 require "rails_helper"
 
 describe AppFlashMessageComponent, type: :component do
+  subject { page }
   let(:component) { described_class.new(flash:) }
   let!(:rendered) { render_inline(component) }
-  subject { page }
 
   context "when no flash message is provided" do
     let(:flash) { {} }

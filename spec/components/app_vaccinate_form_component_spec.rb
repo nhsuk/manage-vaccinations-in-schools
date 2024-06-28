@@ -3,6 +3,7 @@
 require "rails_helper"
 
 describe AppVaccinateFormComponent, type: :component do
+  subject { page }
   let(:heading) { "A Heading" }
   let(:body) { "A Body" }
   let(:session) { create :session, :in_progress }
@@ -19,8 +20,6 @@ describe AppVaccinateFormComponent, type: :component do
     )
   end
   let!(:rendered) { render_inline(component) }
-
-  subject { page }
 
   it { should have_css(".nhsuk-card") }
 

@@ -3,10 +3,9 @@
 require "rails_helper"
 
 describe AppEmptyListComponent, type: :component do
+  subject { page }
   let(:component) { described_class.new(title:) }
   before { render_inline(component) }
-
-  subject { page }
 
   context "when no title is provided" do
     let(:component) { described_class.new }

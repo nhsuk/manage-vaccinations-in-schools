@@ -3,9 +3,8 @@
 require "rails_helper"
 
 describe AppConsentStatusComponent, type: :component do
-  before { render_inline(component) }
-
   subject { page }
+  before { render_inline(component) }
 
   let(:component) { described_class.new(patient_session:) }
   let(:patient_session) { create(:patient_session) }

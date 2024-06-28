@@ -4,11 +4,10 @@ require "rails_helper"
 
 describe SessionStats do
   describe "#call" do
-    let(:session) { create :session }
-
     subject do
       described_class.new(patient_sessions: session.patient_sessions, session:)
     end
+    let(:session) { create :session }
 
     it "returns a hash of session stats" do
       expect(subject.to_h).to eq(
