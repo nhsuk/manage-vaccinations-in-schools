@@ -5,7 +5,7 @@ require "rails_helper"
 describe TriageMailer, type: :mailer do
   describe "#vaccination_will_happen" do
     subject(:mail) do
-      TriageMailer.vaccination_will_happen(patient_session, consent)
+      described_class.vaccination_will_happen(patient_session, consent)
     end
 
     let(:patient_session) do
@@ -24,7 +24,7 @@ describe TriageMailer, type: :mailer do
 
   describe "#vaccination_wont_happen" do
     subject(:mail) do
-      TriageMailer.vaccination_wont_happen(patient_session, consent)
+      described_class.vaccination_wont_happen(patient_session, consent)
     end
 
     let(:patient_session) { create(:patient_session, :consent_refused) }
