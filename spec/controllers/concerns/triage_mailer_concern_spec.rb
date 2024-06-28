@@ -57,18 +57,6 @@ describe TriageMailerConcern do
         build(:patient_session, :consent_given_triage_not_needed)
       end
 
-      it "doesn't send an email" do
-        expect(ConsentFormMailer).not_to have_received(:confirmation).with(
-          consent
-        )
-      end
-    end
-
-    context "when the parents agree and triage is not required" do
-      let(:patient_session) do
-        build(:patient_session, :consent_given_triage_not_needed)
-      end
-
       it "sends an email saying vaccination will happen" do
         expect(ConsentFormMailer).to have_received(:confirmation).with(
           consent:,
