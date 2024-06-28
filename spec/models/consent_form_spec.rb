@@ -415,6 +415,9 @@ describe ConsentForm, type: :model do
 
       context "no answers requiring follow-up recorded" do
         it "yields all the health answers in order" do
+          consent_form.health_answers[0].response = "no"
+          consent_form.health_answers[2].response = "no"
+
           expect { |b| consent_form.each_health_answer(&b) }.to(
             yield_successive_args(
               consent_form.health_answers[0],
@@ -427,6 +430,10 @@ describe ConsentForm, type: :model do
 
       context "answers require follow-up recorded" do
         it "yields all the health answers in order" do
+          consent_form.health_answers[0].response = "yes"
+          consent_form.health_answers[1].response = "yes"
+          consent_form.health_answers[2].response = "yes"
+
           expect { |b| consent_form.each_health_answer(&b) }.to(
             yield_successive_args(
               consent_form.health_answers[0],
@@ -471,7 +478,7 @@ describe ConsentForm, type: :model do
 
       context "answers require follow-up " do
         it "yields the normal and follow-up health answer in order" do
-          consent_form.health_answers[0].response = "yse"
+          consent_form.health_answers[0].response = "yes"
           consent_form.health_answers[1].response = "yes"
           consent_form.health_answers[2].response = "yes"
 

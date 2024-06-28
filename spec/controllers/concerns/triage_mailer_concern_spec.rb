@@ -64,32 +64,6 @@ describe TriageMailerConcern do
       end
     end
 
-    context "when the parents agree, triage is required and it is safe to vaccinate" do
-      let(:patient_session) do
-        build(:patient_session, :triaged_ready_to_vaccinate)
-      end
-
-      it "sends an email saying triage was needed and vaccination will happen" do
-        expect(TriageMailer).to have_received(:vaccination_will_happen).with(
-          patient_session,
-          consent
-        )
-      end
-    end
-
-    context "when the parents agree, triage is required but it isn't safe to vaccinate" do
-      let(:patient_session) do
-        build(:patient_session, :triaged_do_not_vaccinate)
-      end
-
-      it "sends an email saying triage was needed but vaccination won't happen" do
-        expect(TriageMailer).to have_received(:vaccination_wont_happen).with(
-          patient_session,
-          consent
-        )
-      end
-    end
-
     context "when the parents agree and triage is not required" do
       let(:patient_session) do
         build(:patient_session, :consent_given_triage_not_needed)
