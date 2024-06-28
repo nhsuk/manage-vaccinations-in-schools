@@ -16,6 +16,7 @@ end
 
 describe AppActivityLogComponent, type: :component do
   subject { page }
+
   let(:team) { create(:team) }
   let(:user) { create(:user, teams: [team], full_name: "Nurse Joy") }
   let(:campaign) { create(:campaign, team:) }

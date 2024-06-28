@@ -4,6 +4,7 @@ require "rails_helper"
 
 describe AppTriageNotesComponent, type: :component do
   subject { page }
+
   before { render_component }
 
   let(:component) { described_class.new(patient_session:) }

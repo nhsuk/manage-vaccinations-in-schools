@@ -4,6 +4,7 @@ require "rails_helper"
 
 describe AppBacklinkComponent, type: :component do
   subject { page }
+
   before { render_inline(component) }
 
   let(:component) { described_class.new(href:, name:, classes:, attributes:) }

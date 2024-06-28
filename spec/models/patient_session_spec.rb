@@ -51,6 +51,7 @@ describe PatientSession do
 
   describe "#latest_consents" do
     subject { patient_session.latest_consents }
+
     let(:campaign) { create(:campaign) }
     let(:patient_session) { create(:patient_session, patient:, campaign:) }
 

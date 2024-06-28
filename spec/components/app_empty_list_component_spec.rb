@@ -4,6 +4,7 @@ require "rails_helper"
 
 describe AppEmptyListComponent, type: :component do
   subject { page }
+
   let(:component) { described_class.new(title:) }
   before { render_inline(component) }
 

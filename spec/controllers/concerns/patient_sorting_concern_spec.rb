@@ -4,6 +4,7 @@ require "rails_helper"
 
 describe PatientSortingConcern do
   subject { klass.new(params) }
+
   let(:klass) do
     Class.new do
       include PatientSortingConcern

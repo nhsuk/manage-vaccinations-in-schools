@@ -5,6 +5,7 @@ require "govuk_helper"
 
 describe AppSecondaryNavigationComponent, type: :component do
   subject { rendered_content }
+
   before { render_inline(component) }
 
   let(:component) do

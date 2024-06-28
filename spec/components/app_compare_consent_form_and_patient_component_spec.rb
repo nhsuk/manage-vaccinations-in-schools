@@ -4,6 +4,7 @@ require "rails_helper"
 
 describe AppCompareConsentFormAndPatientComponent, type: :component do
   subject { page }
+
   let(:consent_form) do
     create(
       :consent_form,

@@ -4,6 +4,7 @@ require "rails_helper"
 
 describe AppPatientTableComponent, type: :component do
   subject { page }
+
   before do
     allow(component).to receive(:session_patient_path).and_return(
       "/session/patient/"

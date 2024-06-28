@@ -10,6 +10,7 @@ describe(AppTabComponent, type: :component) do
       tabs.each { |label, content| component.with_tab(label:) { content } }
     end
   end
+
   let(:title) { "My favourite tabs" }
   let(:label) { "A tab" }
   let(:component_css_class) { "nhsuk-tabs" }
@@ -183,6 +184,7 @@ describe(AppTabComponent, type: :component) do
           end
         end
       end
+
       let(:id) { "some-id" }
 
       specify "the id is present in the rendered output" do

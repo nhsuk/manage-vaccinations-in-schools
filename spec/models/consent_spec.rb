@@ -71,6 +71,7 @@ describe Consent do
       subject(:consent) do
         Consent.from_consent_form!(consent_form, patient_session)
       end
+
       let(:session) { create(:session) }
       let(:consent_form) { create(:consent_form, session:) }
       let(:patient_session) { create(:patient_session, session:) }

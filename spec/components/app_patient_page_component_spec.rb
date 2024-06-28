@@ -4,6 +4,7 @@ require "rails_helper"
 
 describe AppPatientPageComponent, type: :component do
   subject { page }
+
   before do
     allow_any_instance_of(AppSimpleStatusBannerComponent).to receive(
       :new_session_patient_triage_path

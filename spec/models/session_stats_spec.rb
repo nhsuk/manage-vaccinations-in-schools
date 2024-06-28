@@ -7,6 +7,7 @@ describe SessionStats do
     subject do
       described_class.new(patient_sessions: session.patient_sessions, session:)
     end
+
     let(:session) { create :session }
 
     it "returns a hash of session stats" do
