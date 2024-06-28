@@ -15,14 +15,22 @@ describe AppDetailsComponent, type: :component do
   it { should have_css(".nhsuk-details__summary", text: summary) }
 
   it "defaults to being closed" do
-    should have_css(".nhsuk-details__text", text: content, visible: false)
+    expect(subject).to have_css(
+      ".nhsuk-details__text",
+      text: content,
+      visible: false
+    )
   end
 
   context "open flag is true" do
     let(:component) { described_class.new(summary:, open: true) }
 
     it "displays the content section" do
-      should have_css(".nhsuk-details__text", text: content, visible: true)
+      expect(subject).to have_css(
+        ".nhsuk-details__text",
+        text: content,
+        visible: true
+      )
     end
   end
 end

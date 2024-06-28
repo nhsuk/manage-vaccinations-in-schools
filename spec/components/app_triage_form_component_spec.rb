@@ -19,7 +19,7 @@ describe AppTriageFormComponent, type: :component do
 
       context "patient_session has no existing triage" do
         it "creates a new Triage object" do
-          should be_a Triage
+          expect(subject).to be_a Triage
         end
       end
 

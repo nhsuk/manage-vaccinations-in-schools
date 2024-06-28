@@ -112,9 +112,9 @@ describe ConsentForm, type: :model do
 
       it { should validate_presence_of(:is_this_their_school).on(:update) }
       it do
-        should validate_inclusion_of(:is_this_their_school).in_array(
-                 %w[yes no]
-               ).on(:update)
+        expect(subject).to validate_inclusion_of(
+          :is_this_their_school
+        ).in_array(%w[yes no]).on(:update)
       end
     end
 
@@ -221,7 +221,9 @@ describe ConsentForm, type: :model do
       it { should validate_presence_of(:address_postcode).on(:update) }
 
       it do
-        should_not allow_value("invalid").for(:address_postcode).on(:update)
+        expect(subject).not_to allow_value("invalid").for(:address_postcode).on(
+          :update
+        )
       end
     end
 
