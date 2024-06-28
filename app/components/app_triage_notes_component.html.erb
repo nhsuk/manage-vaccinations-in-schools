@@ -1,0 +1,6 @@
+<% entries.map do |triage| %>
+  <p class="nhsuk-u-margin-bottom-1"><%= triage.notes %></p>
+  <p class="nhsuk-u-secondary-text-color nhsuk-u-font-size-16">
+    <%= triage.user.full_name %>, <%= triage.created_at.to_fs(:long) %>
+  </p>
+<% end %>

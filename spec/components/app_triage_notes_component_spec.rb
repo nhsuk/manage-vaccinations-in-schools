@@ -19,22 +19,19 @@ describe AppTriageNotesComponent, type: :component do
   end
 
   context "a single triage note is present" do
-    prepend_before(:context) do
-      Timecop.freeze(Time.zone.local(2023, 12, 4, 10, 4))
+    around(:all) do |example|
+      Timecop.freeze(Time.zone.local(2023, 12, 4, 10, 4)) { example.run }
     end
-
-    after(:context) { Timecop.return }
 
     let(:user) { create(:user, full_name: "Joe Gear") }
     let(:triage) { [create(:triage, notes: "Some notes", user:)] }
 
     it "renders" do
-      expect(component.render?).to be_truthy
+      expect(component.render?).to be true
     end
 
     it { should have_css("p", text: patient_session.triage.first.notes) }
-    it { should have_css("p", text: "Joe Gear, 4 December 2023 at 10:04") }
-    it { should_not have_css("ul") }
+    it { should have_css("p", text: "Joe Gear, 4 December 2023 at 10:04am") }
   end
 
   context "multiple triage notes are present" do
@@ -49,7 +46,7 @@ describe AppTriageNotesComponent, type: :component do
       expect(component.render?).to be_truthy
     end
 
-    it { should have_css("ul p", text: "Some notes") }
-    it { should have_css("ul p", text: "More notes") }
+    it { should have_css("p", text: "Some notes") }
+    it { should have_css("p", text: "More notes") }
   end
 end
