@@ -85,7 +85,7 @@ describe "Verbal consent" do
       "Consent response from #{@patient.parent.name}"
     )
     expect(page).to have_content(
-      ["Response date", Time.zone.today.to_fs(:nhsuk_date_short_month)].join
+      ["Response date", Time.zone.now.to_fs(:app_date_time)].join
     )
     expect(page).to have_content(["Decision", "Consent given"].join)
     expect(page).to have_content(["Response method", "By phone"].join)
