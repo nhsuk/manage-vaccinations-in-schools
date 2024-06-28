@@ -20,7 +20,6 @@ describe DateParamsValidator do
     dummy_class.new.tap { |obj| obj.errors = ActiveModel::Errors.new(obj) }
   end
   let(:field_name) { "date_of_birth" }
-  let(:params) { {} }
   let(:validator) do
     described_class.new(field_name:, object: dummy_object, params:)
   end
