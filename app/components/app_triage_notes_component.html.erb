@@ -8,6 +8,8 @@
   <% end %>
 
   <p class="nhsuk-u-secondary-text-color nhsuk-u-font-size-16">
-    <%= triage.user.full_name %>, <%= triage.created_at.to_fs(:long) %>
+    <%= triage.created_at.to_fs(:long) %>
+    &middot;
+    <%= triage.user.full_name %>
   </p>
 <% end %>
