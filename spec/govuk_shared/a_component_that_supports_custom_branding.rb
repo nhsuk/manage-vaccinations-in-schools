@@ -4,12 +4,10 @@ shared_examples "a component that supports custom branding" do
   let(:default_brand) { "govuk" }
   let(:custom_brand) { "globex-corp" }
 
-  before do
-    @original_brand = Govuk::Components.config.brand
-    Govuk::Components.configure { |conf| conf.brand = custom_brand }
-  end
+  let!(:original_brand) { Govuk::Components.config.brand }
 
-  after { Govuk::Components.configure { |conf| conf.brand = @original_brand } }
+  before { Govuk::Components.configure { |conf| conf.brand = custom_brand } }
+  after { Govuk::Components.configure { |conf| conf.brand = original_brand } }
 
   specify "should contain the custom branding" do
     render_inline(described_class.new(**kwargs))
