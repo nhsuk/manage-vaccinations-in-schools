@@ -12,6 +12,11 @@ FEATURE_FLAGS = %i[make_session_in_progress_button].freeze
 
 FEATURE_FLAGS.each { |flag| Flipper.add(flag) unless Flipper.exist?(flag) }
 
+if Settings.disallow_database_seeding
+  Rails.logger.info "Database seeding is disabled"
+  exit
+end
+
 Faker::Config.locale = "en-GB"
 
 user =
