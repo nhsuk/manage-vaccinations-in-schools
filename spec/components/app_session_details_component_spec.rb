@@ -35,7 +35,7 @@ describe AppSessionDetailsComponent, type: :component do
       create(:session, date:, close_consent_at:, patients_in_session: 1)
     end
 
-    it "should pluralize 'child' correctly" do
+    it "pluralizes 'child' correctly" do
       expect(component.cohort).to eq "1 child"
     end
   end
@@ -45,7 +45,7 @@ describe AppSessionDetailsComponent, type: :component do
       create(:session, date:, close_consent_at:, patients_in_session: 2)
     end
 
-    it "should pluralize 'child' correctly" do
+    it "pluralizes 'child' correctly" do
       expect(component.cohort).to eq "2 children"
     end
   end
