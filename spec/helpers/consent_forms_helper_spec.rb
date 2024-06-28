@@ -16,10 +16,10 @@ describe ConsentFormsHelper, type: :helper do
       create(:consent_form, :with_health_answers_asthma_branching)
     end
     let(:health_answer) { consent_form.health_answers.first }
-    let(:final_wizard_path) { double("final_wizard_path") }
-    let(:previous_wizard_path) { double("previous_wizard_path") }
+    let(:final_wizard_path) { "final_wizard_path" }
+    let(:previous_wizard_path) { "previous_wizard_path" }
     let(:previous_health_question_wizard_path) do
-      double("previous_health_question_wizard_path")
+      "previous_health_question_wizard_path"
     end
 
     before do
@@ -86,8 +86,8 @@ describe ConsentFormsHelper, type: :helper do
       create(:consent_form, :with_health_answers_asthma_branching)
     end
     let(:health_answer) { consent_form.health_answers.first }
-    let(:final_wizard_path) { double("final_wizard_path") }
-    let(:previous_wizard_path) { double("previous_wizard_path") }
+    let(:final_wizard_path) { "final_wizard_path" }
+    let(:previous_wizard_path) { "previous_wizard_path" }
 
     before do
       allow(helper).to receive(:wizard_path).with(
