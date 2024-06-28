@@ -97,6 +97,8 @@ en:
               missing_month: Enter a month
               missing_year: Enter a year
               invalid: Enter a valid date and time
+            session_id:
+              patient_not_attending: "%{patient_full_name} is not registered as attending for %{display_date}'s session at %{location_name}."
         health_answer:
           attributes:
             notes:

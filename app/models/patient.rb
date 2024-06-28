@@ -418,6 +418,22 @@ class Patient < ApplicationRecord
     !deceased? && !restricted? && !invalidated?
   end
 
+  def attending?(session:)
+    patient_sessions
+      .includes(:registration_status)
+      .find_by(session:)
+      &.registration_status
+      &.attending?
+  end
+
+  def completed?(session:)
+    patient_sessions
+      .includes(:registration_status)
+      .find_by(session:)
+      &.registration_status
+      &.completed?
+  end
+
   def update_from_pds!(pds_patient)
     if nhs_number.nil? || nhs_number != pds_patient.nhs_number
       raise NHSNumberMismatch

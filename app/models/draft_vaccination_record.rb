@@ -100,6 +100,7 @@ class DraftVaccinationRecord
   on_wizard_step :confirm, exact: true do
     validates :outcome, presence: true
     validates :notes, length: { maximum: 1000 }
+    validate :patient_attended_session
   end
 
   with_options on: :update,
@@ -365,6 +366,24 @@ class DraftVaccinationRecord
 
     unless VaccinationRecord.delivery_sites.keys.include?(delivery_site)
       errors.add(:delivery_site, :inclusion)
+    end
+  end
+
+  def patient_attended_session
+    if session&.requires_registration? &&
+         !PatientSession::RegistrationStatus
+           .for_patient_session(patient, session)
+           .allows_recording_vaccinations
+           .exists?
+      date = performed_at.to_date
+      errors.add(
+        :session_id,
+        :patient_not_attending,
+        patient_full_name: patient.full_name,
+        display_date:
+          date.today? ? "Today (#{date.to_fs(:long)})" : date.to_fs(:long),
+        location_name:
+      )
     end
   end
 end
