@@ -16,7 +16,7 @@ describe PatientSessionStateConcern do
   describe "#state" do
     subject { fsm.state }
 
-    RSpec.shared_examples "it supports the state" do |state:, conditions:|
+    shared_examples "it supports the state" do |state:, conditions:|
       conditions_list = conditions.to_sentence
 
       conditions_hash =
@@ -40,7 +40,9 @@ describe PatientSessionStateConcern do
       }.merge(conditions_hash)
 
       context "with conditions #{conditions_list}" do
+        # rubocop:disable RSpec/SubjectStub
         before { allow(fsm).to receive_messages(**messages) }
+        # rubocop:enable RSpec/SubjectStub
 
         it { should eq state.to_s }
       end
