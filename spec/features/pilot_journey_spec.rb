@@ -137,13 +137,13 @@ describe "Pilot journey" do
     expect(page).to have_content("1 child")
 
     expect(page).to have_content(
-      "Consent requestsSend on Tuesday, 27 February 2024"
+      "Consent requestsSend on Tuesday 27 February 2024"
     )
-    expect(page).to have_content("RemindersSend on Thursday, 29 February 2024")
+    expect(page).to have_content("RemindersSend on Thursday 29 February 2024")
     expect(page).to have_content(
       "Deadline for responsesAllow responses until the day of the session"
     )
-    expect(page).to have_content("DateFriday, 1 March 2024")
+    expect(page).to have_content("DateFriday 1 March 2024")
 
     click_on "Confirm"
   end
