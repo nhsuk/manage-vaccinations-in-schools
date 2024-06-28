@@ -3,6 +3,7 @@
 require "rails_helper"
 
 describe AppCompareConsentFormAndPatientComponent, type: :component do
+  subject { page }
   let(:consent_form) do
     create(
       :consent_form,
@@ -17,7 +18,6 @@ describe AppCompareConsentFormAndPatientComponent, type: :component do
   end
   let(:patient) { create(:patient) }
   let(:component) { described_class.new(heading: "", consent_form:, patient:) }
-  subject { page }
 
   before { render_inline(component) }
 

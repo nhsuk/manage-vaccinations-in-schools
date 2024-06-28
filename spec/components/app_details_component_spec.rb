@@ -3,11 +3,10 @@
 require "rails_helper"
 
 describe AppDetailsComponent, type: :component do
+  subject { page }
   let(:summary) { "A summary" }
   let(:content) { "A content" }
   let(:component) { described_class.new(summary:) }
-
-  subject { page }
 
   before { render_inline(component) { content } }
 

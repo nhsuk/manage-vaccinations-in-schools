@@ -4,14 +4,13 @@ require "rails_helper"
 
 describe TriageMailer, type: :mailer do
   describe "#vaccination_will_happen" do
+    subject(:mail) do
+      TriageMailer.vaccination_will_happen(patient_session, consent)
+    end
     let(:patient_session) do
       create(:patient_session, :consent_given_triage_not_needed)
     end
     let(:consent) { patient_session.patient.consents.first }
-
-    subject(:mail) do
-      TriageMailer.vaccination_will_happen(patient_session, consent)
-    end
 
     it { should have_attributes(to: [consent.parent.email]) }
 
@@ -23,12 +22,11 @@ describe TriageMailer, type: :mailer do
   end
 
   describe "#vaccination_wont_happen" do
-    let(:patient_session) { create(:patient_session, :consent_refused) }
-    let(:consent) { patient_session.patient.consents.first }
-
     subject(:mail) do
       TriageMailer.vaccination_wont_happen(patient_session, consent)
     end
+    let(:patient_session) { create(:patient_session, :consent_refused) }
+    let(:consent) { patient_session.patient.consents.first }
 
     it { should have_attributes(to: [consent.parent.email]) }
 

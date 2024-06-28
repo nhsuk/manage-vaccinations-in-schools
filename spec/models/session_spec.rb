@@ -25,12 +25,11 @@ require "rails_helper"
 describe Session do
   describe "validations" do
     context "when form_step is location" do
+      subject { FactoryBot.build :session, form_step:, campaign: }
       let(:form_step) { :location }
       let(:location) { create :location }
       let(:team) { create :team, locations: [location] }
       let(:campaign) { create :campaign, team: }
-
-      subject { FactoryBot.build :session, form_step:, campaign: }
 
       it { should validate_presence_of(:location_id).on(:update) }
 

@@ -3,6 +3,7 @@
 require "rails_helper"
 
 describe PatientSortingConcern do
+  subject { klass.new(params) }
   let(:klass) do
     Class.new do
       include PatientSortingConcern
@@ -13,8 +14,6 @@ describe PatientSortingConcern do
       end
     end
   end
-
-  subject { klass.new(params) }
 
   let(:alex) do
     create(:patient, first_name: "Alex", date_of_birth: "2010-01-01")

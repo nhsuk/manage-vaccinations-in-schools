@@ -3,9 +3,8 @@
 require "rails_helper"
 
 describe AppConsentComponent, type: :component do
-  before { rendered_component }
-
   subject { page }
+  before { rendered_component }
 
   let(:component) do
     described_class.new(patient_session:, section: "triage", tab: "needed")

@@ -3,9 +3,8 @@
 require "rails_helper"
 
 describe AppPatientDetailsComponent, type: :component do
-  before { render_inline(component) }
-
   subject { page }
+  before { render_inline(component) }
 
   let(:session) { FactoryBot.create(:session) }
 

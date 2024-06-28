@@ -4,9 +4,8 @@ require "rails_helper"
 require "govuk_helper"
 
 describe AppSecondaryNavigationComponent, type: :component do
-  before { render_inline(component) }
-
   subject { rendered_content }
+  before { render_inline(component) }
 
   let(:component) do
     described_class.new.tap do |nav|

@@ -4,6 +4,7 @@ require "rails_helper"
 
 describe SessionPolicy do
   describe "Scope#resolve" do
+    subject { SessionPolicy::Scope.new(user, Session).resolve }
     let(:team1) { create :team }
     let(:team2) { create :team }
     let(:user) { create :user, teams: [team1] }
@@ -12,21 +13,18 @@ describe SessionPolicy do
     let(:session1) { create :session, campaign: campaign1 }
     let(:session2) { create :session, campaign: campaign2 }
 
-    subject { SessionPolicy::Scope.new(user, Session).resolve }
-
     it { should include session1 }
     it { should_not include session2 }
   end
 
   describe "DraftScope#resolve" do
+    subject { SessionPolicy::DraftScope.new(user, Session).resolve }
     let(:team) { create :team }
     let(:user) { create :user, teams: [team] }
     let(:location) { create :location, team: }
     let(:campaign) { create :campaign, team: }
     let(:draft_session) { create :session, draft: true, location:, campaign: }
     let(:session) { create :session, location:, campaign: }
-
-    subject { SessionPolicy::DraftScope.new(user, Session).resolve }
 
     it { should include draft_session }
     it { should_not include session }

@@ -50,10 +50,9 @@ describe PatientSession do
   end
 
   describe "#latest_consents" do
+    subject { patient_session.latest_consents }
     let(:campaign) { create(:campaign) }
     let(:patient_session) { create(:patient_session, patient:, campaign:) }
-
-    subject { patient_session.latest_consents }
 
     context "multiple consent given responses from different parents" do
       let(:consent_1) { build(:consent, campaign:, response: :given) }

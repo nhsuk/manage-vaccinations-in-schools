@@ -3,9 +3,8 @@
 require "rails_helper"
 
 describe AppTriageNotesComponent, type: :component do
-  before { render_component }
-
   subject { page }
+  before { render_component }
 
   let(:component) { described_class.new(patient_session:) }
   let(:render_component) { render_inline(component) }

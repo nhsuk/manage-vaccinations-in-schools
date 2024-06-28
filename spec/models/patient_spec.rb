@@ -37,12 +37,11 @@ require "rails_helper"
 
 describe Patient do
   describe "#year_group" do
+    subject { patient.year_group }
     before { Timecop.freeze(date) }
     after { Timecop.return }
 
     let(:patient) { Patient.new(date_of_birth: dob) }
-
-    subject { patient.year_group }
 
     context "child born BEFORE 1 Sep 2016, date is BEFORE 1 Sep 2024" do
       let(:dob) { Date.new(2016, 8, 31) }

@@ -3,6 +3,7 @@
 require "rails_helper"
 
 describe AppSimpleStatusBannerComponent, type: :component do
+  subject { page }
   before do
     allow(component).to receive(:new_session_patient_triage_path).and_return(
       "/session/patient/triage/new"
@@ -17,8 +18,6 @@ describe AppSimpleStatusBannerComponent, type: :component do
     patient_session.vaccination_records.last.user.full_name
   end
   let(:patient_name) { patient_session.patient.full_name }
-
-  subject { page }
 
   prepend_before do
     patient_session.patient.update!(first_name: "Alya", last_name: "Merton")

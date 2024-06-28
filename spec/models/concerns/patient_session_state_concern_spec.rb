@@ -3,6 +3,7 @@
 require "rails_helper"
 
 describe PatientSessionStateConcern do
+  subject(:fsm) { fake_state_machine_class.new }
   let(:fake_state_machine_class) do
     Class.new do
       attr_accessor :state
@@ -10,8 +11,6 @@ describe PatientSessionStateConcern do
       include PatientSessionStateConcern
     end
   end
-
-  subject(:fsm) { fake_state_machine_class.new }
 
   describe "#state" do
     subject { fsm.state }

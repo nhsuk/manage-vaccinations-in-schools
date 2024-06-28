@@ -44,12 +44,6 @@ require "rails_helper"
 
 describe ConsentForm, type: :model do
   describe "Validations" do
-    let(:use_common_name) { false }
-    let(:response) { nil }
-    let(:reason) { nil }
-    let(:gp_response) { nil }
-    let(:health_answers) { [] }
-    let(:session) { build(:session) }
     subject(:consent_form) do
       build(
         :consent_form,
@@ -62,6 +56,12 @@ describe ConsentForm, type: :model do
         session:
       )
     end
+    let(:use_common_name) { false }
+    let(:response) { nil }
+    let(:reason) { nil }
+    let(:gp_response) { nil }
+    let(:health_answers) { [] }
+    let(:session) { build(:session) }
 
     context "when form_step is nil" do
       let(:form_step) { nil }
