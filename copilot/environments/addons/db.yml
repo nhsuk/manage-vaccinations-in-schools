@@ -9,7 +9,7 @@ Parameters:
   dbDBName:
     Type: String
     Description: The name of the initial database to be created in the Aurora Serverless v2 cluster.
-    Default: manage_vaccinations_staging
+    Default: manage_vaccinations
     # Cannot have special characters
     # Naming constraints: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Limits.html#RDS_Limits.Constraints
   VPCID:
