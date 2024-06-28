@@ -72,6 +72,16 @@ class DraftVaccinationRecordsController < ApplicationController
         render_wizard nil, status: :unprocessable_entity
       end
     end
+
+    if current_step == :confirm
+      patient = Patient.find(@draft_vaccination_record.patient_id)
+      session_id = @draft_vaccination_record.session_id
+      unless patient.is_attending?(session_id:)
+        @draft_vaccination_record.errors.add(:session_id,
+                                             :child_not_attending, name: patient.full_name)
+        render_wizard nil, status: :unprocessable_entity
+      end
+    end
   end
 
   def handle_date_and_time

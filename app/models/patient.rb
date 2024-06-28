@@ -309,6 +309,10 @@ class Patient < ApplicationRecord
     !deceased? && !restricted? && !invalidated?
   end
 
+  def is_attending?(session_id:)
+    session_attendance_ids.include? session_id
+  end
+
   def update_from_pds!(pds_patient)
     if nhs_number.nil? || nhs_number != pds_patient.nhs_number
       raise NHSNumberMismatch

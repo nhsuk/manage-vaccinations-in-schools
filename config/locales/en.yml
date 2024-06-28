@@ -85,6 +85,8 @@ en:
               missing_year: Enter a year
               invalid: Enter a valid date and time
               less_than_or_equal_to: Enter a time in the past
+            session_id:
+              child_not_attending: "%{name} is not registered as attending for this session. If you are certain you have the right child, please go back to the registration tab and mark them as attending and then redo the vaccination registration."
         health_answer:
           attributes:
             notes:
