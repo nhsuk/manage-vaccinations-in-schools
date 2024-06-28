@@ -1,13 +1,3 @@
 #!/bin/bash
 
-set -e
-
-# This file is only used by Heroku.
-
-# If the database is empty, we're on a fresh review app, so init the db.
-if [[ `bin/rails db:version | grep version` == "Current version: 0" ]]; then
-  bin/rails db:schema:load
-  bin/rails db:seed
-else
-  bin/rails db:prepare:ignore_concurrent_migration_exceptions
-fi
+bin/rails db:prepare:ignore_concurrent_migration_exceptions
