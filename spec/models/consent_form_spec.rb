@@ -271,7 +271,7 @@ describe ConsentForm, type: :model do
 
       it "is invalid if health answers do not have responses" do
         consent_form.save # rubocop:disable Rails/SaveBang
-        expect(consent_form).to_not be_valid
+        expect(consent_form).not_to be_valid
       end
 
       it "checks follow-up questions if necessary" do
@@ -280,7 +280,7 @@ describe ConsentForm, type: :model do
         health_answers[2].response = "no"
 
         consent_form.save # rubocop:disable Rails/SaveBang
-        expect(consent_form).to_not be_valid
+        expect(consent_form).not_to be_valid
       end
 
       context "health_question_number is set" do
