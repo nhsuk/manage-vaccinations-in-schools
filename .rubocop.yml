@@ -28,6 +28,9 @@ Rails/UnknownEnv:
 RSpec/ContextWording:
   Enabled: false
 
+RSpec/NamedSubject:
+  Enabled: false
+
 RSpec/ImplicitExpect:
   EnforcedStyle: should
 
