@@ -6,7 +6,7 @@ task :performance, [] => :environment do |_task, _args|
 
   puts "Copy and paste the following into Slack:"
   puts ""
-  puts ":chart_with_upwards_trend: *PILOT PERFORMANCE* _#{Time.zone.now.to_fs(:nhsuk_date_day_of_week)}_"
+  puts ":chart_with_upwards_trend: *PILOT PERFORMANCE* _#{Time.zone.today.to_fs(:long_day_of_week)}_"
   puts ""
 
   teams = Team.all - Team.where(name: "Team MAVIS")
