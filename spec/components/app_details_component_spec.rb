@@ -18,7 +18,7 @@ describe AppDetailsComponent, type: :component do
     expect(subject).to have_css(
       ".nhsuk-details__text",
       text: content,
-      visible: false
+      visible: :hidden
     )
   end
 
@@ -29,7 +29,7 @@ describe AppDetailsComponent, type: :component do
       expect(subject).to have_css(
         ".nhsuk-details__text",
         text: content,
-        visible: true
+        visible: :visible
       )
     end
   end
