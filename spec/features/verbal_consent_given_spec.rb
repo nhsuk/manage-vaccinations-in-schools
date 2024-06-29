@@ -12,11 +12,11 @@ describe "Verbal consent" do
 
     when_i_record_that_verbal_consent_was_given
     then_i_see_the_consent_responses_page
+    and_an_email_is_sent_to_the_parent_confirming_their_consent
 
     when_i_go_to_the_patient
     then_i_see_that_the_status_is_safe_to_vaccinate
     and_i_can_see_the_consent_response
-    and_an_email_is_sent_to_the_parent_confirming_their_consent
   end
 
   def given_i_am_signed_in
