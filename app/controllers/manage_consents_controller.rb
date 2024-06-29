@@ -210,6 +210,7 @@ class ManageConsentsController < ApplicationController
   def parent_params
     params.fetch(:parent, {}).permit(
       :name,
+      :email,
       :phone,
       :relationship,
       :relationship_other,
