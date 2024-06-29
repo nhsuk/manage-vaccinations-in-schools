@@ -5,24 +5,15 @@ require "rails_helper"
 feature "Verbal consent" do
   include EmailExpectations
 
-  before { Flipper.enable(:parent_contact_method) }
-
   scenario "Given when previously refused" do
     given_an_hpv_campaign_is_underway
     and_a_parent_has_refused_consent_for_their_child
     and_i_am_logged_in_as_a_nurse
 
-    when_i_check_the_consent_responses_given_for_that_child
-    and_i_call_the_parent_that_has_refused_consent
-    and_consent_is_given_verbally
-    then_i_am_returned_to_the_check_consent_responses_page
-    and_i_see_the_success_alert
+    when_i_record_the_consent_given_for_that_child_from_the_same_parent
 
-    when_i_click_on_the_consent_given_tab
-    then_i_see_the_child_is_listed
-
-    when_i_visit_the_patient_page
-    then_i_see_that_consent_is_given
+    then_an_email_is_sent_to_the_parent_confirming_their_consent
+    and_the_child_is_shown_as_having_consent_given
   end
 
   def given_an_hpv_campaign_is_underway
@@ -42,7 +33,9 @@ feature "Verbal consent" do
     sign_in @team.users.first
   end
 
-  def when_i_check_the_consent_responses_given_for_that_child
+  def when_i_record_the_consent_given_for_that_child_from_the_same_parent
+    refusing_parent = @session.patient_sessions.first.consents.first.parent
+
     visit "/dashboard"
     click_on "Vaccination programmes", match: :first
     click_on "HPV"
@@ -50,32 +43,17 @@ feature "Verbal consent" do
     click_on "Check consent responses"
     click_on "Refused"
     click_on @child.full_name
-  end
-
-  def and_i_call_the_parent_that_has_refused_consent
     click_on "Get consent"
-
     expect(page).to have_field("Full name", with: @child.parent.name)
 
     # contacting the same parent who refused
-    fill_in "Phone number",
-            with: @session.patient_sessions.first.consents.first.parent.phone
-    fill_in "Full name",
-            with: @session.patient_sessions.first.consents.first.parent.name
+    fill_in "Phone number", with: refusing_parent.phone
+    fill_in "Full name", with: refusing_parent.name
     # relationship to the child
-    choose @session
-             .patient_sessions
-             .first
-             .consents
-             .first
-             .parent
-             .relationship_label
-             .capitalize
+    choose refusing_parent.relationship_label
 
     click_button "Continue"
-  end
 
-  def and_consent_is_given_verbally
     choose "By phone"
     click_button "Continue"
 
@@ -92,32 +70,27 @@ feature "Verbal consent" do
     click_button "Continue"
 
     click_button "Confirm"
-  end
 
-  def then_i_am_returned_to_the_check_consent_responses_page
     expect(page).to have_content("Check consent responses")
-  end
-
-  def and_i_see_the_success_alert
     expect(page).to have_alert(
       "Success",
       text: "Consent recorded for #{@child.full_name}"
     )
   end
 
-  def when_i_click_on_the_consent_given_tab
+  def then_an_email_is_sent_to_the_parent_confirming_their_consent
+    expect(sent_emails.count).to eq 1
+
+    expect(sent_emails.last).to be_sent_with_govuk_notify.using_template(
+      EMAILS[:parental_consent_confirmation]
+    ).to(@child.parent.email)
+  end
+
+  def and_the_child_is_shown_as_having_consent_given
     click_on "Given"
-  end
-
-  def then_i_see_the_child_is_listed
     expect(page).to have_content(@child.full_name)
-  end
 
-  def when_i_visit_the_patient_page
     click_on @child.full_name
-  end
-
-  def then_i_see_that_consent_is_given
     expect(page).to have_content("Safe to vaccinate")
   end
 end
