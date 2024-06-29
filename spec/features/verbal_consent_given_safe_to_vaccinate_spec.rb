@@ -5,16 +5,13 @@ require "rails_helper"
 describe "Verbal consent" do
   include EmailExpectations
 
-  scenario "Given, ready to vaccinate" do
+  scenario "Given, with health notes but safe to vaccinate" do
     given_i_am_signed_in
-    when_i_get_verbal_consent_for_a_patient
 
-    when_i_record_that_consent_was_given
-    then_i_see_the_consent_responses_page
-    and_the_kept_in_triage_email_is_sent_to_the_parent
+    when_i_record_that_consent_was_given_with_some_health_notes_that_dont_contraindicate
 
-    when_i_go_to_the_patient
-    then_i_see_that_the_status_is_safe_to_vaccinate
+    then_an_email_is_sent_to_the_parent_that_vaccination_will_happen
+    and_the_patients_status_is_safe_to_vaccinate
   end
 
   def given_i_am_signed_in
@@ -26,13 +23,11 @@ describe "Verbal consent" do
     sign_in team.users.first
   end
 
-  def when_i_get_verbal_consent_for_a_patient
+  def when_i_record_that_consent_was_given_with_some_health_notes_that_dont_contraindicate
     visit session_consents_path(@session)
     click_link @patient.full_name
     click_button "Get consent"
-  end
 
-  def when_i_record_that_consent_was_given
     # Who are you trying to get consent from?
     click_button "Continue"
 
@@ -57,22 +52,17 @@ describe "Verbal consent" do
 
     # Confirm
     click_button "Confirm"
-  end
 
-  def then_i_see_the_consent_responses_page
     expect(page).to have_content("Check consent responses")
     expect(page).to have_content("Consent recorded for #{@patient.full_name}")
   end
 
-  def when_i_go_to_the_patient
+  def and_the_patients_status_is_safe_to_vaccinate
     click_link @patient.full_name
-  end
-
-  def then_i_see_that_the_status_is_safe_to_vaccinate
     expect(page).to have_content("Safe to vaccinate")
   end
 
-  def and_the_kept_in_triage_email_is_sent_to_the_parent
+  def then_an_email_is_sent_to_the_parent_that_vaccination_will_happen
     expect(sent_emails).not_to be_empty
 
     expect(sent_emails.last).to be_sent_with_govuk_notify.using_template(
