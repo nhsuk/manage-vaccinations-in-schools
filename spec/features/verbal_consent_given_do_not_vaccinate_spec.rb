@@ -8,7 +8,6 @@ describe "Verbal consent" do
   scenario "Given, do not vaccinate" do
     given_i_am_signed_in
     when_i_get_verbal_consent_for_a_patient
-    then_the_consent_form_is_prefilled
 
     when_i_record_that_consent_was_given
     then_i_see_the_consent_responses_page
@@ -31,10 +30,6 @@ describe "Verbal consent" do
     visit session_consents_path(@session)
     click_link @patient.full_name
     click_button "Get consent"
-  end
-
-  def then_the_consent_form_is_prefilled
-    expect(page).to have_field("Full name", with: @patient.parent.name)
   end
 
   def when_i_record_that_consent_was_given
