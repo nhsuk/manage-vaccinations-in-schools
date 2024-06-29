@@ -7,15 +7,12 @@ describe "Verbal consent" do
 
   scenario "Refused" do
     given_i_am_signed_in
-    when_i_get_verbal_consent_for_a_patient
 
     when_i_record_the_consent_refusal_and_reason
-    then_i_see_the_consent_responses_page
-    and_an_email_is_sent_to_the_parent_confirming_the_refusal
 
-    when_i_go_to_the_patient
-    then_i_see_that_the_status_is_do_not_vaccinate
-    and_i_can_see_the_consent_response
+    then_an_email_is_sent_to_the_parent_confirming_the_refusal
+    and_the_patients_status_is_do_not_vaccinate
+    and_i_can_see_the_consent_response_details
   end
 
   def given_i_am_signed_in
@@ -27,13 +24,11 @@ describe "Verbal consent" do
     sign_in team.users.first
   end
 
-  def when_i_get_verbal_consent_for_a_patient
+  def when_i_record_the_consent_refusal_and_reason
     visit session_consents_path(@session)
     click_link @patient.full_name
     click_button "Get consent"
-  end
 
-  def when_i_record_the_consent_refusal_and_reason
     # Who are you trying to get consent from?
     click_button "Continue"
 
@@ -57,22 +52,17 @@ describe "Verbal consent" do
     expect(page).to have_content(["Decision", "Consent refused"].join)
     expect(page).to have_content(["Name", @patient.parent.name].join)
     click_button "Confirm"
-  end
 
-  def then_i_see_the_consent_responses_page
     expect(page).to have_content("Check consent responses")
     expect(page).to have_content("Consent recorded for #{@patient.full_name}")
   end
 
-  def when_i_go_to_the_patient
+  def and_the_patients_status_is_do_not_vaccinate
     click_link @patient.full_name
-  end
-
-  def then_i_see_that_the_status_is_do_not_vaccinate
     expect(page).to have_content("Could not vaccinate")
   end
 
-  def and_i_can_see_the_consent_response
+  def and_i_can_see_the_consent_response_details
     click_link @patient.parent.name
 
     expect(page).to have_content(
@@ -101,7 +91,7 @@ describe "Verbal consent" do
     expect(page).not_to have_content("Answers to health questions")
   end
 
-  def and_an_email_is_sent_to_the_parent_confirming_the_refusal
+  def then_an_email_is_sent_to_the_parent_confirming_the_refusal
     expect_email_to @patient.parent.email,
                     EMAILS[:parental_consent_confirmation_refused]
   end
