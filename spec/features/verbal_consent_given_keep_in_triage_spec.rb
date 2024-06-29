@@ -7,14 +7,11 @@ describe "Verbal consent" do
 
   scenario "Given, keep in triage" do
     given_i_am_signed_in
-    when_i_get_verbal_consent_for_a_patient
 
-    when_i_record_that_consent_was_given
-    then_i_see_the_consent_responses_page
-    and_the_kept_in_triage_email_is_sent_to_the_parent
+    when_i_record_that_consent_was_given_but_keep_in_triage
 
-    when_i_go_to_the_patient
-    then_i_see_that_the_status_is_needs_triage
+    then_an_email_is_sent_to_the_parent_about_triage
+    and_the_patient_status_is_needing_triage
   end
 
   def given_i_am_signed_in
@@ -26,13 +23,11 @@ describe "Verbal consent" do
     sign_in team.users.first
   end
 
-  def when_i_get_verbal_consent_for_a_patient
+  def when_i_record_that_consent_was_given_but_keep_in_triage
     visit session_consents_path(@session)
     click_link @patient.full_name
     click_button "Get consent"
-  end
 
-  def when_i_record_that_consent_was_given
     # Who are you trying to get consent from?
     click_button "Continue"
 
@@ -57,22 +52,17 @@ describe "Verbal consent" do
 
     # Confirm
     click_button "Confirm"
-  end
 
-  def then_i_see_the_consent_responses_page
     expect(page).to have_content("Check consent responses")
     expect(page).to have_content("Consent recorded for #{@patient.full_name}")
   end
 
-  def when_i_go_to_the_patient
+  def and_the_patient_status_is_needing_triage
     click_link @patient.full_name
-  end
-
-  def then_i_see_that_the_status_is_needs_triage
     expect(page).to have_content("Needs triage")
   end
 
-  def and_the_kept_in_triage_email_is_sent_to_the_parent
+  def then_an_email_is_sent_to_the_parent_about_triage
     expect(sent_emails.count).to eq 1
 
     expect(sent_emails.last).to be_sent_with_govuk_notify.using_template(
