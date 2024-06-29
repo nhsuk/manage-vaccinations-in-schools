@@ -7,16 +7,14 @@ describe "Verbal consent" do
 
   scenario "Given" do
     given_i_am_signed_in
-    when_i_get_consent_for_a_patient
-    then_the_consent_form_is_prefilled
+    when_i_start_recording_consent_for_a_patient
+    then_the_parent_details_are_prefilled
 
     when_i_record_that_verbal_consent_was_given
-    then_i_see_the_consent_responses_page
-    and_an_email_is_sent_to_the_parent_confirming_their_consent
 
-    when_i_go_to_the_patient
-    then_i_see_that_the_status_is_safe_to_vaccinate
-    and_i_can_see_the_consent_response
+    then_an_email_is_sent_to_the_parent_confirming_their_consent
+    and_the_patients_status_is_safe_to_vaccinate
+    and_i_can_see_the_consent_response_details
   end
 
   def given_i_am_signed_in
@@ -28,13 +26,13 @@ describe "Verbal consent" do
     sign_in team.users.first
   end
 
-  def when_i_get_consent_for_a_patient
+  def when_i_start_recording_consent_for_a_patient
     visit session_consents_path(@session)
     click_link @patient.full_name
     click_button "Get consent"
   end
 
-  def then_the_consent_form_is_prefilled
+  def then_the_parent_details_are_prefilled
     expect(page).to have_field("Full name", with: @patient.parent.name)
   end
 
@@ -63,22 +61,18 @@ describe "Verbal consent" do
     expect(page).to have_content("Check and confirm answers")
     expect(page).to have_content(["Response method", "By phone"].join)
     click_button "Confirm"
-  end
 
-  def then_i_see_the_consent_responses_page
+    # Back on the consent responses page
     expect(page).to have_content("Check consent responses")
     expect(page).to have_content("Consent recorded for #{@patient.full_name}")
   end
 
-  def when_i_go_to_the_patient
+  def and_the_patients_status_is_safe_to_vaccinate
     click_link @patient.full_name
-  end
-
-  def then_i_see_that_the_status_is_safe_to_vaccinate
     expect(page).to have_content("Safe to vaccinate")
   end
 
-  def and_i_can_see_the_consent_response
+  def and_i_can_see_the_consent_response_details
     click_link @patient.parent.name
 
     expect(page).to have_content(
@@ -110,7 +104,7 @@ describe "Verbal consent" do
     )
   end
 
-  def and_an_email_is_sent_to_the_parent_confirming_their_consent
+  def then_an_email_is_sent_to_the_parent_confirming_their_consent
     expect(sent_emails.count).to eq 1
 
     expect(sent_emails.last).to be_sent_with_govuk_notify.using_template(
