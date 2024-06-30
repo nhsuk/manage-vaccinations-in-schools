@@ -38,6 +38,7 @@ describe "Verbal consent" do
 
   def when_i_record_that_verbal_consent_was_given
     # Who are you trying to get consent from?
+    # Here we are effectively picking the parent that is already on the system, in the cohort
     click_button "Continue"
 
     # How was the response given?
