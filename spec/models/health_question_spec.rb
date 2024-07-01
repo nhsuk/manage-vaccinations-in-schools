@@ -32,23 +32,20 @@ describe HealthQuestion do
   let(:vaccine) do
     create :vaccine, type: "tester", brand: "Tester", method: "injection"
   end
+  let!(:hqs) { create_list :health_question, 3, vaccine: }
 
   describe ".first_health_question" do
-    let!(:hq1) { create :health_question, vaccine: }
-    let!(:hq2) { create :health_question, vaccine: }
-    let!(:hq3) { create :health_question, vaccine: }
-
     it "returns the first health question" do
-      hq1.update! next_question: hq2
-      hq2.update! next_question: hq3
+      hqs.first.update! next_question: hqs.second
+      hqs.second.update! next_question: hqs.third
 
-      expect(vaccine.health_questions.first_health_question).to eq(hq1)
+      expect(vaccine.health_questions.first_health_question).to eq(hqs.first)
     end
 
     it "raises an error if there is no first question" do
-      hq1.update! next_question: hq2
-      hq2.update! next_question: hq3
-      hq3.update! next_question: hq1
+      hqs.first.update! next_question: hqs.second
+      hqs.second.update! next_question: hqs.third
+      hqs.third.update! next_question: hqs.first
 
       expect { vaccine.health_questions.first_health_question }.to raise_error(
         "No first question found"
@@ -56,7 +53,7 @@ describe HealthQuestion do
     end
 
     it "raises an error if there is more than one first question" do
-      hq2.update! next_question: hq3
+      hqs.second.update! next_question: hqs.third
 
       expect { vaccine.health_questions.first_health_question }.to raise_error(
         "More than one first question found"
@@ -66,62 +63,52 @@ describe HealthQuestion do
     it "ignores health questions outside of the scoped collection" do
       create :health_question
 
-      hq1.update! next_question: hq2
-      hq2.update! next_question: hq3
+      hqs.first.update! next_question: hqs.second
+      hqs.second.update! next_question: hqs.third
 
       expect(
-        vaccine
-          .health_questions
-          .where(id: [hq1.id, hq2.id, hq3.id])
-          .first_health_question
-      ).to eq(hq1)
+        vaccine.health_questions.where(id: hqs.map(&:id)).first_health_question
+      ).to eq(hqs.first)
     end
   end
 
   describe ".last_health_question" do
-    let!(:hq1) { create :health_question, vaccine: }
-    let!(:hq2) { create :health_question, vaccine: }
-    let!(:hq3) { create :health_question, vaccine: }
-
     it "returns the last health question" do
-      hq1.update! next_question: hq2
-      hq2.update! next_question: hq3
+      hqs.first.update! next_question: hqs.second
+      hqs.second.update! next_question: hqs.third
 
-      expect(vaccine.health_questions.last_health_question).to eq(hq3)
+      expect(vaccine.health_questions.last_health_question).to eq(hqs.third)
     end
 
     it "ignores health questions outside of the scoped collection" do
       create :health_question
 
-      hq1.update! next_question: hq2
-      hq2.update! next_question: hq3
+      hqs.first.update! next_question: hqs.second
+      hqs.second.update! next_question: hqs.third
 
       expect(
-        vaccine
-          .health_questions
-          .where(id: [hq1.id, hq2.id, hq3.id])
-          .last_health_question
-      ).to eq(hq3)
+        vaccine.health_questions.where(id: hqs.map(&:id)).last_health_question
+      ).to eq(hqs.third)
     end
   end
 
   describe "#remaining_questions" do
-    let(:hq1) { create :health_question, vaccine: }
-    let(:hq2) { create :health_question, vaccine: }
-    let(:hq3) { create :health_question, vaccine: }
-
     it "returns remaining questions in order" do
-      hq1.update! next_question: hq2
-      hq2.update! next_question: hq3
+      hqs.first.update! next_question: hqs.second
+      hqs.second.update! next_question: hqs.third
 
-      expect(hq1.remaining_questions).to eq([hq1, hq2, hq3])
+      expect(hqs.first.remaining_questions).to eq(
+        [hqs.first, hqs.second, hqs.third]
+      )
     end
 
     it "orders follow up questions before next questions" do
-      hq1.update! next_question: hq2, follow_up_question: hq3
-      hq3.update! next_question: hq2
+      hqs.first.update! next_question: hqs.second, follow_up_question: hqs.third
+      hqs.third.update! next_question: hqs.second
 
-      expect(hq1.remaining_questions).to eq([hq1, hq3, hq2])
+      expect(hqs.first.remaining_questions).to eq(
+        [hqs.first, hqs.third, hqs.second]
+      )
     end
   end
 end

@@ -11,8 +11,12 @@ describe SessionPolicy do
     let(:user) { create :user, teams: [users_team] }
     let(:users_teams_campaign) { create :campaign, team: users_team }
     let(:another_teams_campaign) { create :campaign, team: another_team }
-    let(:users_teams_session) { create :session, campaign: users_teams_campaign }
-    let(:another_teams_session) { create :session, campaign: another_teams_campaign }
+    let(:users_teams_session) do
+      create :session, campaign: users_teams_campaign
+    end
+    let(:another_teams_session) do
+      create :session, campaign: another_teams_campaign
+    end
 
     it { should include users_teams_session }
     it { should_not include another_teams_session }
