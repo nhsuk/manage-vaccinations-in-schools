@@ -93,9 +93,6 @@ en:
           other: Other
           text: I can only receive text messages
           voice: I can only receive voice calls
-        parent_relationships:
-          father: dad
-          mother: mum
         reasons:
           already_vaccinated: Vaccine already received
           contains_gelatine: Vaccine contains gelatine from pigs
