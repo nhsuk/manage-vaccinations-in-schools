@@ -56,42 +56,52 @@ describe PatientSession do
     let(:patient_session) { create(:patient_session, patient:, campaign:) }
 
     context "multiple consent given responses from different parents" do
-      let(:consent_1) { build(:consent, campaign:, response: :given) }
-      let(:consent_2) { build(:consent, campaign:, response: :given) }
-      let(:patient) { create(:patient, consents: [consent_1, consent_2]) }
+      let(:consents) { build_list(:consent, 2, campaign:, response: :given) }
+      let(:patient) { create(:patient, consents:) }
 
       it "groups consents by parent name" do
-        expect(subject).to contain_exactly(consent_1, consent_2)
+        expect(subject).to contain_exactly(consents.first, consents.second)
       end
     end
 
     context "multiple consent responses from same parents" do
       let(:parent) { create(:parent) }
-      let(:consent_1) { build :consent, campaign:, parent:, response: :refused }
-      let(:consent_2) { build :consent, campaign:, parent:, response: :given }
-      let(:patient) { create(:patient, consents: [consent_1, consent_2]) }
+      let(:refused_consent) do
+        build :consent, campaign:, parent:, response: :refused
+      end
+      let(:given_consent) do
+        build :consent, campaign:, parent:, response: :given
+      end
+      let(:patient) do
+        create(:patient, consents: [refused_consent, given_consent])
+      end
 
       it "returns the latest consent for each parent" do
-        expect(subject).to eq [consent_2]
+        expect(subject).to eq [given_consent]
       end
     end
 
     context "multiple consent responses from same parent where one is draft" do
       let(:parent) { create(:parent) }
-      let(:consent_1) do
+      let(:refused_recorded_consent) do
         build :consent,
               campaign:,
               parent:,
               recorded_at: 1.day.ago,
               response: :refused
       end
-      let(:consent_2) do
+      let(:given_draft_consent) do
         build :consent, :draft, campaign:, parent:, response: :given
       end
-      let(:patient) { create(:patient, consents: [consent_1, consent_2]) }
+      let(:patient) do
+        create(
+          :patient,
+          consents: [refused_recorded_consent, given_draft_consent]
+        )
+      end
 
       it "does not return a draft consent record" do
-        expect(subject).to eq [consent_1]
+        expect(subject).to eq [refused_recorded_consent]
       end
     end
   end

@@ -174,15 +174,14 @@ describe PatientTabsConcern do
   end
 
   describe "#count_patient_sessions" do
-    let(:patient_session1) { create(:patient_session) }
-    let(:patient_session2) { create(:patient_session) }
-    let(:patient_session3) { create(:patient_session, :consent_refused) }
+    let(:no_consent_patient_sessions) { create_list(:patient_session, 2) }
+    let(:refuser_patient_session) { create(:patient_session, :consent_refused) }
 
     it "counts patient session groups" do
       patient_sessions = {
-        no_consent: [patient_session1, patient_session2],
+        no_consent: no_consent_patient_sessions,
         consent_given: [],
-        consent_refused: [patient_session3]
+        consent_refused: [refuser_patient_session]
       }
 
       result = subject.count_patient_sessions(patient_sessions)
