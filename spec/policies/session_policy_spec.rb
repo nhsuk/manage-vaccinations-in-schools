@@ -6,16 +6,16 @@ describe SessionPolicy do
   describe "Scope#resolve" do
     subject { SessionPolicy::Scope.new(user, Session).resolve }
 
-    let(:team1) { create :team }
-    let(:team2) { create :team }
-    let(:user) { create :user, teams: [team1] }
-    let(:campaign1) { create :campaign, team: team1 }
-    let(:campaign2) { create :campaign, team: team2 }
-    let(:session1) { create :session, campaign: campaign1 }
-    let(:session2) { create :session, campaign: campaign2 }
+    let(:users_team) { create :team }
+    let(:another_team) { create :team }
+    let(:user) { create :user, teams: [users_team] }
+    let(:users_teams_campaign) { create :campaign, team: users_team }
+    let(:another_teams_campaign) { create :campaign, team: another_team }
+    let(:users_teams_session) { create :session, campaign: users_teams_campaign }
+    let(:another_teams_session) { create :session, campaign: another_teams_campaign }
 
-    it { should include session1 }
-    it { should_not include session2 }
+    it { should include users_teams_session }
+    it { should_not include another_teams_session }
   end
 
   describe "DraftScope#resolve" do
