@@ -286,6 +286,10 @@ en:
             contact_method_other:
               blank: Enter details about how to contact you
               too_long: Enter details that are less than 300 characters long
+            email:
+              blank: Enter an email address
+              invalid: Enter a valid email address, such as j.doe@gmail.com
+              too_long: Enter a email address that is less than 300 characters long
             name:
               blank: Enter a name
               too_long: Enter a name that is less than 300 characters long
