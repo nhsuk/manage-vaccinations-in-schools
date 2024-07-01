@@ -65,12 +65,12 @@ describe Parent do
 
     it "leaves nil as nil" do
       subject = build(:parent, phone: nil)
-      expect(subject.phone).to eq(nil)
+      expect(subject.phone).to be_nil
     end
 
     it "sets the phone number to nil if it's blank" do
       subject = build(:parent, phone: " ")
-      expect(subject.phone).to eq(nil)
+      expect(subject.phone).to be_nil
     end
   end
 
@@ -82,7 +82,7 @@ describe Parent do
 
     it "leaves nil as nil" do
       subject = build(:parent, email: nil)
-      expect(subject.email).to eq(nil)
+      expect(subject.email).to be_nil
     end
   end
 

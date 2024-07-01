@@ -391,7 +391,7 @@ describe ConsentForm, type: :model do
 
     it "leaves nil as nil" do
       consent_form = build(:consent_form, address_postcode: nil)
-      expect(consent_form.address_postcode).to eq(nil)
+      expect(consent_form.address_postcode).to be_nil
     end
   end
 
@@ -462,7 +462,7 @@ describe ConsentForm, type: :model do
         end
       end
 
-      context "no answers requiring follow-up " do
+      context "no answers requiring follow-up" do
         it "yields the non follow-up health answers in order" do
           consent_form.health_answers[0].response = "no"
           consent_form.health_answers[2].response = "no"
@@ -476,7 +476,7 @@ describe ConsentForm, type: :model do
         end
       end
 
-      context "answers require follow-up " do
+      context "answers require follow-up" do
         it "yields the normal and follow-up health answer in order" do
           consent_form.health_answers[0].response = "yes"
           consent_form.health_answers[1].response = "yes"
@@ -512,14 +512,14 @@ describe ConsentForm, type: :model do
 
     context "no responses are yes" do
       it "returns false" do
-        expect(consent_form.any_health_answers_truthy?).to eq(false)
+        expect(consent_form.any_health_answers_truthy?).to be(false)
       end
     end
 
     context "some responses are yes" do
       it "returns true" do
         consent_form.health_answers[0].response = "yes"
-        expect(consent_form.any_health_answers_truthy?).to eq(true)
+        expect(consent_form.any_health_answers_truthy?).to be(true)
       end
     end
   end
@@ -540,7 +540,7 @@ describe ConsentForm, type: :model do
           :consent_form,
           session: build(:session, campaign: build(:campaign, :flu_nasal_only))
         )
-      expect(consent_form.gelatine_content_status_in_vaccines).to eq(true)
+      expect(consent_form.gelatine_content_status_in_vaccines).to be(true)
     end
 
     it "returns false for an HPV campaign" do
@@ -549,7 +549,7 @@ describe ConsentForm, type: :model do
           :consent_form,
           session: build(:session, campaign: build(:campaign, :hpv))
         )
-      expect(consent_form.gelatine_content_status_in_vaccines).to eq(false)
+      expect(consent_form.gelatine_content_status_in_vaccines).to be(false)
     end
   end
 

@@ -27,7 +27,7 @@ describe AppTriageFormComponent, type: :component do
         let(:old_triage) { create :triage, :needs_follow_up }
         let(:patient_session) { create :patient_session, triage: [old_triage] }
 
-        it { should_not eq nil }
+        it { should_not be_nil }
         it { should be_needs_follow_up }
       end
     end
