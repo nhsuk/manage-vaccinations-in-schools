@@ -38,7 +38,7 @@
     <% end %>
   <% end %>
 
-  <%= govuk_table(classes: "app-patients__table") do |table| %>
+  <%= govuk_table(classes: "app-patients__table nhsuk-table-responsive") do |table| %>
     <%= table.with_caption(text: @caption, html_attributes: {
                              class: %w[nhsuk-u-secondary-text-color
                                        nhsuk-u-font-weight-normal
@@ -61,7 +61,12 @@
       <%= @patient_sessions.each do |patient_session| %>
         <%= body.with_row do |row| %>
           <%= @columns.each do |column| %>
-            <%= row.with_cell(**column_value(patient_session, column)) %>
+            <%= row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">
+                <%= column_name(column) %>
+              </span>
+              <%= column_value(patient_session, column) %>
+            <% end %>
           <% end %>
         <% end %>
       <% end %>
