@@ -40,31 +40,22 @@ class AppPatientTableComponent < ViewComponent::Base
   def column_value(patient_session, column)
     case column
     when :action, :outcome
-      { text: t("patient_session_statuses.#{patient_session.state}.text") }
+      t("patient_session_statuses.#{patient_session.state}.text")
     when :name
-      { text: name_cell(patient_session) }
+      name_cell(patient_session)
     when :dob
-      {
-        text: patient_session.patient.date_of_birth.to_fs(:long),
-        html_attributes: {
-          "data-filter": patient_session.patient.date_of_birth.to_fs(:uk_short),
-          "data-sort": patient_session.patient.date_of_birth
-        }
-      }
+      patient_session.patient.date_of_birth.to_fs(:long)
     when :reason
-      {
-        text:
-          patient_session
-            .consents
-            .map { |c| c.human_enum_name(:reason_for_refusal) }
-            .uniq
-            .join("<br />")
-            .html_safe
-      }
+      patient_session
+        .consents
+        .map { |c| c.human_enum_name(:reason_for_refusal) }
+        .uniq
+        .join("<br />")
+        .html_safe
     when :postcode
-      { text: patient_session.patient.address_postcode }
+      patient_session.patient.address_postcode
     when :select_for_matching
-      { text: matching_link(patient_session) }
+      matching_link(patient_session)
     else
       raise ArgumentError, "Unknown column: #{column}"
     end
