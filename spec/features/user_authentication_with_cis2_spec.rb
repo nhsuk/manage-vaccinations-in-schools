@@ -59,11 +59,16 @@ RSpec.describe "User authentication with CIS2" do
           ],
           "given_name" => "Nurse",
           "family_name" => "Flo",
+          "nhsid_user_orgs" => [
+            { "org_name" => "LONDON HEALTH TRUST", "org_code" => "AB12" },
+            { "org_name" => "LONDON CITY HEALTH ORG", "org_code" => "CD34" }
+          ],
           "uid" => "555057896106",
           "email" => "nurse.flo@example.nhs.uk",
           "sub" => "123456789012",
           "subname" => "123456789012",
-          "iss" => "http://localhost:4000/not/used"
+          "iss" => "http://localhost:4000/not/used",
+          "selected_roleid" => "5678567856785678"
         }
       }
     }
