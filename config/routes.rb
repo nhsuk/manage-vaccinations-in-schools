@@ -1,6 +1,16 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  # Redirect www subdomain to root in production envs
+  unless Rails.env.development? || Rails.env.test?
+    match "(*any)",
+          to: redirect(subdomain: ""),
+          via: :all,
+          constraints: {
+            subdomain: "www"
+          }
+  end
+
   devise_for :users,
              module: :users,
              path_names: {
