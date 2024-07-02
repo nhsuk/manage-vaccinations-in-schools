@@ -35,9 +35,9 @@ describe AppSimpleStatusBannerComponent, type: :component do
       create :patient_session, :consent_given_triage_not_needed
     end
 
-    it { should have_css(".app-card--purple") }
-    it { should have_css(".nhsuk-card__heading", text: "Consent given") }
-    it { should have_text("#{patient_name} is ready to vaccinate") }
+    it { should have_css(".app-card--aqua-green") }
+    it { should have_css(".nhsuk-card__heading", text: "Safe to vaccinate") }
+    it { should have_text("#{patient_name} is safe to vaccinate") }
   end
 
   context "state is consent_given_triage_needed" do

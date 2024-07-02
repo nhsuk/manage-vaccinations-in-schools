@@ -1,4 +1,10 @@
 .app-card {
+  &--aqua-green {
+    .nhsuk-card__heading--feature {
+      background-color: $color_nhsuk-aqua-green;
+    }
+  }
+
   &--green {
     .nhsuk-card__heading--feature {
       background-color: $color_nhsuk-green;
