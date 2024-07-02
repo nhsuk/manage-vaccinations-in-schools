@@ -293,7 +293,9 @@ Devise.setup do |config|
                         openid
                         profile
                         email
+                        selectedrole
                         nationalrbacaccess
+                        associatedorgs
                         professionalmemberships
                       ],
                       response_type: :code,
