@@ -13,6 +13,9 @@ class ManageConsentsController < ApplicationController
   before_action :set_consent, except: %i[create]
   before_action :set_steps, except: %i[create]
   before_action :setup_wizard_translated, except: %i[create]
+  before_action :set_draft_parent,
+                except: %i[create],
+                if: -> { step == "parent-details" }
   before_action :set_patient_session
   before_action :set_triage,
                 except: %i[create],
@@ -43,6 +46,17 @@ class ManageConsentsController < ApplicationController
     when :parent_details
       model = @consent.draft_parent
       handle_parent_details
+
+      # @consent.draft_parent might not be persisted at this point,
+      # so we need to save using
+      if model.valid?
+        ActiveRecord::Base.transaction do
+          model.save!
+
+          @consent.assign_attributes(form_step: current_step)
+          @consent.save! # in case the @consent.draft_parent was nil previously
+        end
+      end
     when :questions
       handle_questions
     when :triage
@@ -149,6 +163,20 @@ class ManageConsentsController < ApplicationController
     @patient = @session.patients.find(params.fetch(:patient_id))
   end
 
+  def set_draft_parent
+    if @consent.draft_parent.nil?
+      # Temporary: Prefill the consent details.
+      # This should be replaced with the design that allows users to choose
+      # from available parent details when submiting a new consent.
+      @consent.draft_parent =
+        Parent.new(
+          @patient.parent.attributes.slice(
+            *%w[name email phone relationship relationship_other]
+          )
+        )
+    end
+  end
+
   def set_consent
     @consent =
       policy_scope(Consent).unscope(where: :recorded_at).find(
@@ -165,26 +193,12 @@ class ManageConsentsController < ApplicationController
   end
 
   def create_params
-    attrs = {
+    {
       patient: @patient,
       campaign: @session.campaign,
       recorded_by: current_user
-    }
-
-    if @patient_session.gillick_competent?
-      attrs.merge(route: :self_consent)
-    else
-      # Temporary: Prefill the consent details.
-      # This should be replaced with the design that allows users to choose
-      # from available parent details when submiting a new consent.
-      draft_parent =
-        Parent.new(
-          @patient.parent.attributes.slice(
-            *%w[name email phone relationship relationship_other]
-          )
-        )
-
-      attrs.merge(draft_parent:)
+    }.tap do |attrs|
+      attrs[:route] = :self_consent if @patient_session.gillick_competent?
     end
   end
 

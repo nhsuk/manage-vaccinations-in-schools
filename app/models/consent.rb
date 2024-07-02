@@ -83,15 +83,16 @@ class Consent < ApplicationRecord
 
   validates :route, presence: true, if: -> { recorded_at.present? }
 
-  validates :draft_parent,
-            presence: true,
-            if: -> { recorded_at.nil? && !via_self_consent? }
   validates :parent,
             presence: true,
             if: -> { recorded_at.present? && !via_self_consent? }
 
   on_wizard_step :route do
     validates :route, inclusion: { in: Consent.routes.keys }, presence: true
+  end
+
+  on_wizard_step :parent_details do
+    validate :draft_parent_present_unless_self_consent
   end
 
   on_wizard_step :agree do
@@ -197,6 +198,12 @@ class Consent < ApplicationRecord
   end
 
   private
+
+  def draft_parent_present_unless_self_consent
+    if recorded_at.nil? && !via_self_consent? && draft_parent.nil?
+      errors.add(:draft_parent, :blank)
+    end
+  end
 
   def health_answers_valid?
     return if health_answers.map(&:valid?).all?
