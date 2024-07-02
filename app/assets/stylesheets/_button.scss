@@ -10,7 +10,7 @@ $app-cis2-button-shadow-color: #003087;
 
 .app-button--small {
   @include nhsuk-typography-responsive(16);
-  padding: 6px nhsuk-spacing(3);
+  padding: nhsuk-spacing(1) 12px;
 }
 
 .app-button--warning {
