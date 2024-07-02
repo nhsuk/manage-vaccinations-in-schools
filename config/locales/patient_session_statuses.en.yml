@@ -4,47 +4,47 @@ en:
       colour: blue
       text: Get consent
       banner_title: No response
-      banner_explanation: No-one responded to our requests for consent
+      banner_explanation: No-one responded to our requests for consent.
     consent_given_triage_needed:
       colour: blue
       text: Triage
       banner_title: Needs triage
-      banner_explanation: Responses to health questions need triage
+      banner_explanation: Responses to health questions need triage.
     consent_given_triage_not_needed:
-      colour: purple
+      colour: aqua-green
       text: Vaccinate
-      banner_title: Consent given
-      banner_explanation: "%{full_name} is ready to vaccinate"
+      banner_title: Safe to vaccinate
+      banner_explanation: "%{full_name} is safe to vaccinate."
     consent_refused:
       colour: red
       text: Consent refused
       banner_title: Consent refused
-      banner_explanation: "%{who_refused} refused to give consent"
+      banner_explanation: "%{who_refused} refused to give consent."
     consent_conflicts:
       colour: dark-orange
       text: Conflicting consent
       banner_title: Conflicting consent
-      banner_explanation: "You can only vaccinate if all respondents give consent"
+      banner_explanation: You can only vaccinate if all respondents give consent.
     delay_vaccination:
       colour: red
       text: Delay vaccination to a later date
       banner_title: Could not vaccinate
-      banner_explanation: "%{nurse} decided that %{full_name}’s vaccination should be delayed"
+      banner_explanation: "%{nurse} decided that %{full_name}’s vaccination should be delayed."
     triaged_do_not_vaccinate:
       colour: red
       text: Do not vaccinate
       banner_title: Could not vaccinate
-      banner_explanation: "%{nurse} decided that %{full_name} should not be vaccinated"
+      banner_explanation: "%{nurse} decided that %{full_name} should not be vaccinated."
     triaged_kept_in_triage:
       colour: blue
       text: Triage started
       banner_title: Needs triage
-      banner_explanation: Responses to health questions need triage
+      banner_explanation: Responses to health questions need triage.
     triaged_ready_to_vaccinate:
       colour: purple
       text: Vaccinate
       banner_title: Safe to vaccinate
-      banner_explanation: "%{nurse} decided that %{full_name} is safe to vaccinate"
+      banner_explanation: "%{nurse} decided that %{full_name} is safe to vaccinate."
     unable_to_vaccinate:
       colour: red
       text: Could not vaccinate
@@ -63,7 +63,7 @@ en:
       colour: red
       text: Not vaccinated
       banner_title: Not vaccinated
-      banner_explanation: No-one responded to our requests for consent. When assessed, the child was not Gillick competent
+      banner_explanation: No-one responded to our requests for consent. When assessed, the child was not Gillick competent.
     vaccinated:
       colour: green
       text: Vaccinated
