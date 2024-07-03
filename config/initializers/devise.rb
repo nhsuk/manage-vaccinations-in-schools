@@ -286,32 +286,44 @@ Devise.setup do |config|
         "#{host}/users/auth/cis2/callback"
       end
 
-    config.omniauth :openid_connect,
-                    {
-                      name: :cis2,
-                      scope: %i[
-                        openid
-                        profile
-                        email
-                        selectedrole
-                        nationalrbacaccess
-                        associatedorgs
-                        professionalmemberships
-                      ],
-                      response_type: :code,
-                      # uid_field: "preferred_username",
-                      issuer: Settings.cis2.issuer,
-                      discovery: true,
-                      client_auth_method: :jwks,
-                      client_options: {
-                        port: 443,
-                        scheme: "https",
-                        host: Settings.cis2.host,
-                        identifier: Settings.cis2.client_id,
-                        secret: Settings.cis2.secret,
-                        redirect_uri:
-                      }
-                    }
+    setup =
+      lambda do |env|
+        if env.dig("rack.request.form_hash", "change_role")
+          env["omniauth.strategy"].options["scope"] << :changedrole
+          env["omniauth.strategy"].options["prompt"] = :login
+        else
+          env["omniauth.strategy"].options["scope"] << :selectedrole
+        end
+      end
+
+    config.omniauth(
+      :openid_connect,
+      {
+        setup:,
+        name: :cis2,
+        scope: %i[
+          openid
+          profile
+          email
+          nationalrbacaccess
+          associatedorgs
+          professionalmemberships
+        ],
+        response_type: :code,
+        # uid_field: "preferred_username",
+        issuer: Settings.cis2.issuer,
+        discovery: true,
+        client_auth_method: :jwks,
+        client_options: {
+          port: 443,
+          scheme: "https",
+          host: Settings.cis2.host,
+          identifier: Settings.cis2.client_id,
+          secret: Settings.cis2.secret,
+          redirect_uri:
+        }
+      }
+    )
   end
 
   # ==> Warden configuration
