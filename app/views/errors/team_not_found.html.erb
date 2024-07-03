@@ -1,0 +1,11 @@
+<%=  h1 "Your organisation is not using this service yet" %>
+
+<p class="nhsuk-body">
+  The following organisation is not currently set up to use Mavis:
+</p>
+
+<%= govuk_inset_text do %>
+  <%= @org_name %><br />
+  (<%= @org_code %>)
+<% end %>
+

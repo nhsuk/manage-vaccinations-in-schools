@@ -22,4 +22,14 @@ class ErrorsController < ApplicationController
   def internal_server_error
     render "internal_server_error", status: :internal_server_error
   end
+
+  def team_not_found
+    @org_name = flash[:org_name]
+    @org_code = flash[:org_code]
+    if @org_name.present? && @org_code.present?
+      render status: :not_found
+    else
+      redirect_to root_path
+    end
+  end
 end

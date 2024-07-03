@@ -3,6 +3,8 @@
 require "rails_helper"
 
 RSpec.describe "User authentication with CIS2" do
+  let(:test_team_ods_code) { "AB12" }
+
   def cis2_auth_mock
     {
       "provider" => :cis2,
@@ -29,7 +31,7 @@ RSpec.describe "User authentication with CIS2" do
             {
               "person_orgid" => "1111222233334444",
               "person_roleid" => "5555666677778888",
-              "org_code" => "AB12",
+              "org_code" => test_team_ods_code,
               "role_name" =>
                 "\"Admin and Clerical\":\"Admin and Clerical\":\"Privacy Officer\"",
               "role_code" => "S8002:G8003:R0001",
@@ -60,15 +62,18 @@ RSpec.describe "User authentication with CIS2" do
           "given_name" => "Nurse",
           "family_name" => "Flo",
           "nhsid_user_orgs" => [
-            { "org_name" => "LONDON HEALTH TRUST", "org_code" => "AB12" },
-            { "org_name" => "LONDON CITY HEALTH ORG", "org_code" => "CD34" }
+            {
+              "org_name" => "LAVENDER TOWN HEALTH",
+              "org_code" => test_team_ods_code
+            },
+            { "org_name" => "KANTO HEALTH ORG", "org_code" => "CD34" }
           ],
           "uid" => "555057896106",
           "email" => "nurse.flo@example.nhs.uk",
           "sub" => "123456789012",
           "subname" => "123456789012",
           "iss" => "http://localhost:4000/not/used",
-          "selected_roleid" => "5678567856785678"
+          "selected_roleid" => "5555666677778888"
         }
       }
     }
@@ -78,6 +83,7 @@ RSpec.describe "User authentication with CIS2" do
     setup_cis2_auth_mock
 
     given_the_cis2_feature_flag_is_enabled
+    and_the_test_team_is_setup_in_mavis
     when_i_go_to_the_start_page
     then_i_should_see_the_cis2_login_button
 
@@ -94,6 +100,7 @@ RSpec.describe "User authentication with CIS2" do
     setup_cis2_auth_mock
 
     given_the_cis2_feature_flag_is_enabled
+    and_the_test_team_is_setup_in_mavis
     when_i_go_to_the_sessions_page
     then_i_am_on_the_start_page
 
@@ -102,12 +109,27 @@ RSpec.describe "User authentication with CIS2" do
     and_i_am_logged_in
   end
 
+  scenario "team is not setup" do
+    setup_cis2_auth_mock
+
+    given_the_cis2_feature_flag_is_enabled
+    when_i_go_to_the_sessions_page
+    then_i_am_on_the_start_page
+
+    when_i_click_the_cis2_login_button
+    then_i_see_the_team_not_found_error
+  end
+
   def setup_cis2_auth_mock
     OmniAuth.config.add_mock(:cis2, cis2_auth_mock)
   end
 
   def given_the_cis2_feature_flag_is_enabled
     Flipper.enable(:cis2)
+  end
+
+  def and_the_test_team_is_setup_in_mavis
+    @team = create :team, ods_code: test_team_ods_code
   end
 
   def when_i_go_to_the_start_page
@@ -150,5 +172,11 @@ RSpec.describe "User authentication with CIS2" do
 
   def then_i_see_the_sessions_page
     expect(page).to have_current_path sessions_path
+  end
+
+  def then_i_see_the_team_not_found_error
+    expect(
+      page
+    ).to have_heading "Your organisation is not using this service yet"
   end
 end

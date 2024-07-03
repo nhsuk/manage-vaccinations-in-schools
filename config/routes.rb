@@ -227,5 +227,7 @@ Rails.application.routes.draw do
     get "/422", to: "errors#unprocessable_entity"
     get "/429", to: "errors#too_many_requests"
     get "/500", to: "errors#internal_server_error"
+
+    get "/team-not-found", to: "errors#team_not_found"
   end
 end
