@@ -47,8 +47,6 @@ class ManageConsentsController < ApplicationController
       model = @consent.draft_parent
       handle_parent_details
 
-      # @consent.draft_parent might not be persisted at this point,
-      # so we need to save using
       if model.valid?
         ActiveRecord::Base.transaction do
           model.save!
