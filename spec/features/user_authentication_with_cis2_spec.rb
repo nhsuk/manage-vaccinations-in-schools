@@ -109,7 +109,7 @@ RSpec.describe "User authentication with CIS2" do
     and_i_am_logged_in
   end
 
-  scenario "team is not setup" do
+  scenario "user has wrong team selected" do
     setup_cis2_auth_mock
 
     given_the_cis2_feature_flag_is_enabled
@@ -118,6 +118,10 @@ RSpec.describe "User authentication with CIS2" do
 
     when_i_click_the_cis2_login_button
     then_i_see_the_team_not_found_error
+
+    given_my_team_is_setup_in_mavis
+    when_i_click_the_change_role_button
+    then_i_see_the_sessions_page
   end
 
   def setup_cis2_auth_mock
@@ -131,6 +135,8 @@ RSpec.describe "User authentication with CIS2" do
   def and_the_test_team_is_setup_in_mavis
     @team = create :team, ods_code: test_team_ods_code
   end
+  alias_method :given_my_team_is_setup_in_mavis,
+               :and_the_test_team_is_setup_in_mavis
 
   def when_i_go_to_the_start_page
     visit "/start"
@@ -172,6 +178,16 @@ RSpec.describe "User authentication with CIS2" do
 
   def then_i_see_the_sessions_page
     expect(page).to have_current_path sessions_path
+  end
+
+  def then_i_see_the_team_not_found_error
+    expect(
+      page
+    ).to have_heading "Your organisation is not using this service yet"
+  end
+
+  def when_i_click_the_change_role_button
+    click_button "Change role"
   end
 
   def then_i_see_the_team_not_found_error
