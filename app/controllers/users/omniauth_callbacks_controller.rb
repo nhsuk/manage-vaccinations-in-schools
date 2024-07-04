@@ -22,6 +22,8 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
       flash[:org_name] = @selected_org["org_name"]
       flash[:org_code] = @selected_org["org_code"]
+      flash[:has_other_roles] = raw_info["nhsid_nrbac_roles"].length > 1
+
       redirect_to team_not_found_path
       false
     else
