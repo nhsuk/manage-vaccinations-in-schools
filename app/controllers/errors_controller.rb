@@ -4,6 +4,7 @@ class ErrorsController < ApplicationController
   skip_before_action :verify_authenticity_token
   skip_before_action :authenticate_user!
   skip_after_action :verify_policy_scoped
+  skip_before_action :store_user_location!, only: :team_not_found
 
   layout "two_thirds"
 
