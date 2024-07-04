@@ -1,14 +1,14 @@
 <%=  h1 "Your organisation is not using this service yet" %>
 
-<p class="nhsuk-body">
+<p>
   The following organisation is not currently set up to use Mavis:
 </p>
 
 <%= govuk_inset_text do %>
-  <%= @org_name %><br />
-  (<%= @org_code %>)
+  <%= @cis2_info[:org_name] %><br />
+  (<%= @cis2_info[:org_code] %>)
 <% end %>
 
-<% if @has_other_roles %>
+<% if @cis2_info[:has_other_roles] %>
   <%= govuk_button_to "Change role", user_cis2_omniauth_authorize_path, params: { change_role: true } %>
 <% end %>

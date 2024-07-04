@@ -25,11 +25,8 @@ class ErrorsController < ApplicationController
   end
 
   def team_not_found
-    @org_name = flash[:org_name]
-    @org_code = flash[:org_code]
-    @has_other_roles = flash[:has_other_roles]
-
-    if @org_name.present? && @org_code.present?
+    if flash.key? :cis2_info
+      @cis2_info = flash[:cis2_info].with_indifferent_access
       render status: :not_found
     else
       redirect_to root_path
