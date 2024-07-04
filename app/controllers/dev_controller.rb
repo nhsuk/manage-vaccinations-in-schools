@@ -46,6 +46,9 @@ class DevController < ApplicationController
             user:
           )
         end
+
+      Team.find_by(ods_code: "Y51") ||
+        FactoryBot.create(:team, name: "NMEPFIT SAIS Team", ods_code: "Y51")
     end
 
     redirect_to root_path
