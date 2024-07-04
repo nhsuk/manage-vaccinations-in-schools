@@ -5,30 +5,42 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   skip_after_action :verify_policy_scoped
 
   def cis2
-    user_info = request.env["omniauth.auth"]
-    raw_info = user_info["extra"]["raw_info"]
-    selected_role = raw_info["selected_roleid"]
-    nrbac_role =
-      raw_info["nhsid_nrbac_roles"].find do
-        _1["person_roleid"] == selected_role
-      end
-
-    team = Team.find_by(ods_code: nrbac_role["org_code"])
+    team = Team.find_by(ods_code: selected_cis2_nrbac_role["org_code"])
     if team.nil?
-      @selected_org =
-        raw_info["nhsid_user_orgs"].find do
-          _1["org_code"] == nrbac_role["org_code"]
-        end
-
-      flash[:org_name] = @selected_org["org_name"]
-      flash[:org_code] = @selected_org["org_code"]
-      flash[:has_other_roles] = raw_info["nhsid_nrbac_roles"].length > 1
+      flash[:cis2_info] = {
+        org_name: selected_cis2_org["org_name"],
+        org_code: selected_cis2_org["org_code"],
+        has_other_roles: raw_cis2_info["nhsid_nrbac_roles"].length > 1
+      }
 
       redirect_to team_not_found_path
-      false
     else
-      @user = User.find_or_create_user_from_cis2_oidc(user_info)
-      sign_in_and_redirect @user, event: :authentication # this will throw if @user is not activated
+      @user = User.find_or_create_user_from_cis2_oidc(user_cis2_info)
+      sign_in_and_redirect @user, event: :authentication
     end
+  end
+
+  private
+
+  def user_cis2_info
+    request.env["omniauth.auth"]
+  end
+
+  def raw_cis2_info
+    user_cis2_info["extra"]["raw_info"]
+  end
+
+  def selected_cis2_nrbac_role
+    @selected_cis2_nrbac_role ||=
+      raw_cis2_info["nhsid_nrbac_roles"].find do
+        _1["person_roleid"] == raw_cis2_info["selected_roleid"]
+      end
+  end
+
+  def selected_cis2_org
+    @selected_cis2_org ||=
+      raw_cis2_info["nhsid_user_orgs"].find do
+        _1["org_code"] == selected_cis2_nrbac_role["org_code"]
+      end
   end
 end
