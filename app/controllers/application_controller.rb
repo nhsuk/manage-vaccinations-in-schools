@@ -2,6 +2,7 @@
 
 class ApplicationController < ActionController::Base
   include Pundit::Authorization
+  include AuthenticationConcern
 
   before_action :store_user_location!
   before_action :authenticate_user!
@@ -26,20 +27,6 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def authenticate_user!
-    if !user_signed_in?
-      store_location_for(:user, request.fullpath) if request.path != start_path
-      flash[:info] = "You must be logged in to access this page."
-      redirect_to start_path
-    elsif !selected_team_exists?
-      redirect_to users_team_not_found_path
-    end
-  end
-
-  def selected_team_exists?
-    Team.exists?(ods_code: session["cis2_info"]["selected_org"]["code"])
-  end
-
   def set_header_path
     @header_path = dashboard_path
   end
@@ -56,37 +43,5 @@ class ApplicationController < ActionController::Base
 
   def handle_unprocessable_entity
     render "errors/unprocessable_entity", status: :unprocessable_entity
-  end
-
-  def storable_location?
-    request.get? && is_navigational_format? && !devise_controller? &&
-      !request.xhr? && !turbo_frame_request?
-  end
-
-  def store_user_location!
-    return unless user_signed_in?
-    return unless storable_location?
-
-    store_location_for(:user, request.fullpath)
-  end
-
-  def authenticate_basic
-    if Flipper.enabled? :basic_auth
-      authenticated =
-        authenticate_with_http_basic do |username, password|
-          username == Settings.support_username &&
-            password == Settings.support_password
-        end
-
-      unless authenticated
-        request_http_basic_authentication "Application", <<~MESSAGE
-        Access is currently restricted to authorised users only.
-      MESSAGE
-      end
-    end
-  end
-
-  def after_sign_in_path_for(scope)
-    stored_location_for(scope) || dashboard_path
   end
 end
