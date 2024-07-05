@@ -25,8 +25,8 @@ module Users
     end
 
     def team_not_found
-      if flash.key? :cis2_info
-        @cis2_info = flash[:cis2_info].with_indifferent_access
+      if session.key? :cis2_info
+        @cis2_info = session[:cis2_info].with_indifferent_access
         render status: :not_found
       else
         redirect_to root_path

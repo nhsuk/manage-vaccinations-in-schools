@@ -27,14 +27,17 @@ class ApplicationController < ActionController::Base
   private
 
   def authenticate_user!
-    unless user_signed_in? ||
-             request.path.in?(
-               [new_user_session_path, destroy_user_session_path]
-             )
+    if !user_signed_in?
       store_location_for(:user, request.fullpath) if request.path != start_path
       flash[:info] = "You must be logged in to access this page."
       redirect_to start_path
+    elsif !selected_team_exists?
+      redirect_to users_team_not_found_path
     end
+  end
+
+  def selected_team_exists?
+    Team.exists?(ods_code: session["cis2_info"]["selected_org"]["code"])
   end
 
   def set_header_path

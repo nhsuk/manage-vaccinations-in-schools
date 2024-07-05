@@ -5,14 +5,14 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   skip_after_action :verify_policy_scoped
 
   def cis2
-    team = Team.find_by(ods_code: selected_cis2_nrbac_role["org_code"])
-    if team.nil?
-      flash[:cis2_info] = {
-        org_name: selected_cis2_org["org_name"],
-        org_code: selected_cis2_org["org_code"],
-        has_other_roles: raw_cis2_info["nhsid_nrbac_roles"].length > 1
-      }
-
+    session["cis2_info"] = {
+      "selected_org" => {
+        "name" => selected_cis2_org["org_name"],
+        "code" => selected_cis2_org["org_code"]
+      },
+      "has_other_roles" => raw_cis2_info["nhsid_nrbac_roles"].length > 1
+    }
+    if !Team.exists?(ods_code: selected_cis2_nrbac_role["org_code"])
       redirect_to users_team_not_found_path
     else
       @user = User.find_or_create_user_from_cis2_oidc(user_cis2_info)
