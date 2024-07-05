@@ -5,8 +5,8 @@
 </p>
 
 <%= govuk_inset_text do %>
-  <%= @cis2_info[:org_name] %><br />
-  (<%= @cis2_info[:org_code] %>)
+  <%= @cis2_info[:selected_org][:name] %><br />
+  (<%= @cis2_info[:selected_org][:code] %>)
 <% end %>
 
 <% if @cis2_info[:has_other_roles] %>
