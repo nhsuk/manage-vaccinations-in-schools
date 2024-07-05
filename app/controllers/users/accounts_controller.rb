@@ -2,7 +2,11 @@
 
 module Users
   class AccountsController < ApplicationController
-    before_action :set_user
+    before_action :set_user, only: %i[show update]
+
+    skip_before_action :store_user_location!, only: :team_not_found
+    skip_before_action :authenticate_user!, only: :team_not_found
+    skip_after_action :verify_policy_scoped, only: :team_not_found
 
     layout "two_thirds"
 
@@ -17,6 +21,15 @@ module Users
                     }
       else
         render :show, status: :unprocessable_entity
+      end
+    end
+
+    def team_not_found
+      if flash.key? :cis2_info
+        @cis2_info = flash[:cis2_info].with_indifferent_access
+        render status: :not_found
+      else
+        redirect_to root_path
       end
     end
 
