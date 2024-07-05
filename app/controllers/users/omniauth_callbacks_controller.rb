@@ -13,7 +13,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
         has_other_roles: raw_cis2_info["nhsid_nrbac_roles"].length > 1
       }
 
-      redirect_to team_not_found_path
+      redirect_to users_team_not_found_path
     else
       @user = User.find_or_create_user_from_cis2_oidc(user_cis2_info)
       sign_in_and_redirect @user, event: :authentication
