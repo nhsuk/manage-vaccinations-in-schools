@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
+  include AuthenticationConcern
+
   skip_before_action :authenticate_user!
   skip_after_action :verify_policy_scoped
 
@@ -12,7 +14,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       },
       "has_other_roles" => raw_cis2_info["nhsid_nrbac_roles"].length > 1
     }
-    if !Team.exists?(ods_code: selected_cis2_nrbac_role["org_code"])
+    if !selected_cis2_org_is_registered?
       redirect_to users_team_not_found_path
     else
       @user = User.find_or_create_user_from_cis2_oidc(user_cis2_info)

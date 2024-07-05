@@ -18,6 +18,10 @@ AllCops:
 Layout/EmptyLineAfterMagicComment:
   Enabled: true
 
+Rails/LexicallyScopedActionFilter:
+  Exclude:
+    - app/controllers/users/sessions_controller.rb
+
 Rails/UnknownEnv:
   Environments:
     - development
