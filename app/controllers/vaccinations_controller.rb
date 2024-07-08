@@ -8,7 +8,8 @@ class VaccinationsController < ApplicationController
 
   before_action :set_session
   before_action :set_patient, except: %i[index batch update_batch]
-  before_action :set_patient_session, only: %i[confirm create record update]
+  before_action :set_patient_session,
+                only: %i[confirm edit_reason create record update]
   before_action :set_draft_vaccination_record,
                 only: %i[edit_reason create update]
   before_action :set_draft_vaccination_record!, only: %i[confirm record]
@@ -206,10 +207,7 @@ class VaccinationsController < ApplicationController
   end
 
   def set_draft_vaccination_record
-    @draft_vaccination_record =
-      @patient.draft_vaccination_records_for_session(
-        @session
-      ).find_or_initialize_by(recorded_at: nil)
+    @draft_vaccination_record = @patient_session.draft_vaccination_record
   end
 
   def set_draft_vaccination_record!

@@ -16,7 +16,7 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def vaccination_events
-    @patient_session.vaccination_records.map do
+    @patient_session.vaccination_records.recorded.map do
       {
         title: "Vaccinated with #{helpers.vaccine_heading(_1.vaccine)}",
         time: _1.created_at,

@@ -45,6 +45,7 @@ class VaccinationRecord < ApplicationRecord
 
   scope :administered, -> { where(administered: true) }
   scope :recorded, -> { where.not(recorded_at: nil) }
+  scope :draft, -> { rewhere(recorded_at: nil) }
 
   default_scope { recorded }
 
