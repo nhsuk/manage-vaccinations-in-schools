@@ -37,11 +37,7 @@ class Vaccinations::DeliverySiteController < ApplicationController
   end
 
   def set_draft_vaccination_record
-    @draft_vaccination_record =
-      @patient.draft_vaccination_records_for_session(@session).find_by(
-        recorded_at: nil
-      )
-
+    @draft_vaccination_record = @patient_session.draft_vaccination_record
     raise UnprocessableEntity unless @draft_vaccination_record
   end
 

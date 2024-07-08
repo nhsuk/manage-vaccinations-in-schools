@@ -81,13 +81,6 @@ class Patient < ApplicationRecord
     super.merge("full_name" => full_name, "age" => age)
   end
 
-  def draft_vaccination_records_for_session(session)
-    patient_sessions
-      .find_by_session_id(session.id)
-      .vaccination_records
-      .rewhere(recorded_at: nil)
-  end
-
   def year_group
     first_school_year = date_of_birth.year + 5
     first_school_year += 1 if date_of_birth.month >= 9

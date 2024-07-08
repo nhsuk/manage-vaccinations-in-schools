@@ -51,7 +51,12 @@ class PatientSession < ApplicationRecord
            class_name: "Consent"
 
   def vaccination_record
-    vaccination_records.last
+    # HACK: in future, it will be possible to have multiple vaccination records for a patient session
+    vaccination_records.recorded.last
+  end
+
+  def draft_vaccination_record
+    vaccination_records.draft.find_or_initialize_by(recorded_at: nil)
   end
 
   def gillick_competent?
