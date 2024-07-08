@@ -8,7 +8,7 @@ class VaccinationsController < ApplicationController
 
   before_action :set_session
   before_action :set_patient, except: %i[index batch update_batch]
-  before_action :set_patient_session, only: %i[new confirm create record update]
+  before_action :set_patient_session, only: %i[confirm create record update]
   before_action :set_draft_vaccination_record,
                 only: %i[edit_reason create update]
   before_action :set_draft_vaccination_record!, only: %i[confirm record]
@@ -53,14 +53,6 @@ class VaccinationsController < ApplicationController
     sort_and_filter_patients!(@patient_sessions)
 
     session[:current_section] = "vaccinations"
-  end
-
-  def new
-    if @patient.draft_vaccination_records_for_session(@session).any?
-      raise UnprocessableEntity
-    end
-    @draft_vaccination_record =
-      @patient.draft_vaccination_records_for_session(@session).new
   end
 
   def edit_reason
