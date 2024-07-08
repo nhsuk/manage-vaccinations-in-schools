@@ -16,6 +16,7 @@ describe AppPatientPageComponent, type: :component do
   let(:component) do
     described_class.new(
       patient_session:,
+      vaccination_record: VaccinationRecord.new,
       section: "triage",
       tab: "needed",
       triage: nil

@@ -7,7 +7,7 @@ class AppVaccinateFormComponent < ViewComponent::Base
     @patient_session = patient_session
     @section = section
     @tab = tab
-    @vaccination_record = vaccination_record || VaccinationRecord.new
+    @vaccination_record = vaccination_record
   end
 
   def url
