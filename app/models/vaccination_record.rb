@@ -48,7 +48,9 @@ class VaccinationRecord < ApplicationRecord
 
   default_scope { recorded }
 
-  enum :delivery_method, %w[intramuscular subcutaneous], prefix: true
+  enum :delivery_method,
+       %w[intramuscular subcutaneous nasal_spray],
+       prefix: true
   enum :delivery_site,
        %w[
          left_arm
@@ -59,6 +61,9 @@ class VaccinationRecord < ApplicationRecord
          right_arm_lower_position
          left_thigh
          right_thigh
+         left_buttock
+         right_buttock
+         nose
        ],
        prefix: true
   enum :reason,
@@ -109,6 +114,14 @@ class VaccinationRecord < ApplicationRecord
             },
             on: :edit_reason,
             if: -> { !administered }
+
+  def self.available_delivery_sites
+    delivery_sites.keys - %w[left_buttock right_buttock nose]
+  end
+
+  def self.available_delivery_methods
+    delivery_methods.keys - %w[nasal_spray]
+  end
 
   def vaccine_name
     patient_session.session.campaign.vaccines.first.type
