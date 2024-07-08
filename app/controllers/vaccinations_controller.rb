@@ -13,7 +13,6 @@ class VaccinationsController < ApplicationController
                 only: %i[edit_reason create update]
   before_action :set_draft_vaccination_record!, only: %i[confirm record]
 
-  before_action :set_consent, only: %i[create confirm update]
   before_action :set_triage, only: %i[confirm]
   before_action :set_todays_batch, only: %i[index batch create]
   before_action :set_batches, only: %i[batch update_batch]
@@ -224,11 +223,6 @@ class VaccinationsController < ApplicationController
   def set_draft_vaccination_record!
     set_draft_vaccination_record
     raise UnprocessableEntity unless @draft_vaccination_record.persisted?
-  end
-
-  def set_consent
-    # HACK: Vaccinations needs to be updated to work with multiple consents.
-    @consent = @patient_session.consents.first
   end
 
   def set_triage
