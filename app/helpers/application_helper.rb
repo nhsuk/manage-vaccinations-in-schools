@@ -28,6 +28,6 @@ or set it with content_for(:page_title)."
 
     title = "Error: #{title}" if response.status == 422
 
-    [title, service_name].join(" - ")
+    [title, service_name].join(" – ")
   end
 end
