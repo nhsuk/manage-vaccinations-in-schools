@@ -8,6 +8,18 @@
                                         ]) %>
 <% end %>
 
+<%= render AppSecondaryNavigationComponent.new do |nav|
+      nav.with_item(
+        text: "School sessions",
+        href: campaign_path(@campaign),
+        selected: true,
+      )
+      nav.with_item(
+        text: "Reports",
+        href: campaign_reports_path(@campaign),
+      )
+    end %>
+
 <% [[@in_progress_sessions, "In progress sessions"],
     [@future_sessions, "Planned sessions"],
     [@past_sessions, "Past sessions"]]

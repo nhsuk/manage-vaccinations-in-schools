@@ -1,20 +1,30 @@
 # frozen_string_literal: true
 
 class ReportsController < ApplicationController
-  skip_after_action :verify_policy_scoped, only: %i[index]
+  before_action :set_campaign
 
   def index
   end
 
-  def show
+  def download
     vaccinations =
       policy_scope(VaccinationRecord)
         .administered
         .recorded
+        .where(campaign: @campaign)
         .includes(:session, :patient, :campaign, batch: :vaccine)
         .order("vaccination_records.recorded_at")
 
     csv = NivsReport.new(vaccinations).to_csv
-    send_data(csv, filename: "NIVS-HPV-report-MAVIS.csv")
+    filename =
+      "NIVS-#{@campaign.name.parameterize(preserve_case: true)}-report-MAVIS.csv"
+
+    send_data(csv, filename:)
+  end
+
+  private
+
+  def set_campaign
+    @campaign = policy_scope(Campaign).find(params[:campaign_id])
   end
 end
