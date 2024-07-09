@@ -268,6 +268,10 @@ en:
             notes:
               blank: Enter details of your assessment
               too_long: Enter details that are less than 1000 characters long
+        immunisation_import:
+          attributes:
+            csv:
+              blank: Choose a file
         offline_password:
           attributes:
             password:

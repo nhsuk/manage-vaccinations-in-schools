@@ -12,6 +12,11 @@ describe "Immunisation imports" do
 
     when_i_click_on_the_upload_link
     then_i_should_see_the_upload_page
+
+    when_i_continue_without_uploading_a_file
+    then_i_should_see_an_error
+
+    when_i_upload_a_nivs_file
   end
 
   def given_i_am_signed_in
@@ -42,5 +47,21 @@ describe "Immunisation imports" do
 
   def then_i_should_see_the_upload_page
     expect(page).to have_content("Upload vaccination events")
+  end
+
+  def when_i_continue_without_uploading_a_file
+    click_on "Upload vaccination events"
+  end
+
+  def then_i_should_see_an_error
+    expect(page).to have_content("There is a problem")
+  end
+
+  def when_i_upload_a_nivs_file
+    attach_file(
+      "immunisation_import[csv]",
+      "spec/fixtures/immunisation_import/nivs.csv"
+    )
+    click_on "Upload vaccination events"
   end
 end
