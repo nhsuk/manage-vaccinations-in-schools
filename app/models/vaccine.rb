@@ -34,4 +34,13 @@ class Vaccine < ApplicationRecord
   def contains_gelatine?
     type.downcase == "flu" && nasal?
   end
+
+  def common_delivery_sites
+    if type.downcase == "hpv"
+      %w[left_arm_upper_position right_arm_upper_position]
+    else
+      raise NotImplementedError,
+            "Common delivery sites not implemented for #{type} vaccines."
+    end
+  end
 end

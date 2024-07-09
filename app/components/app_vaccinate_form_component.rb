@@ -38,18 +38,22 @@ class AppVaccinateFormComponent < ViewComponent::Base
     @patient_session.campaign.name
   end
 
-  def vaccination_initial_delivery_sites
-    sites = "activerecord.attributes.vaccination_record.delivery_sites"
-    [
-      OpenStruct.new(
-        value: "left_arm_upper_position",
-        label: t("#{sites}.left_arm_upper_position")
-      ),
-      OpenStruct.new(
-        value: "right_arm_upper_position",
-        label: t("#{sites}.right_arm_upper_position")
-      ),
-      OpenStruct.new(value: "other", label: "Other")
-    ]
+  def vaccine
+    @vaccination_record.vaccine
+  end
+
+  def vaccination_common_delivery_sites
+    site_options =
+      vaccine.common_delivery_sites.map do |site|
+        OpenStruct.new(
+          value: site,
+          label:
+            t(
+              "activerecord.attributes.vaccination_record.delivery_sites.#{site}"
+            )
+        )
+      end
+
+    site_options + [OpenStruct.new(value: "other", label: "Other")]
   end
 end
