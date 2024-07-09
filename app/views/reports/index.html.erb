@@ -1,16 +1,22 @@
-<% page_title = "Reports" %>
-
-<%= h1 page_title, size: "xl" %>
+<%= h1 @campaign.name, page_title: "#{@campaign.name} – Reports" %>
 
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
                                           { text: "Home", href: dashboard_path },
-                                          { text: page_title },
+                                          { text: t("campaigns.index.title"), href: campaigns_path },
                                         ]) %>
 <% end %>
 
-<h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-4">
-  NIVS download
-</h2>
+<%= render AppSecondaryNavigationComponent.new do |nav|
+      nav.with_item(
+        text: "School sessions",
+        href: campaign_path(@campaign),
+      )
+      nav.with_item(
+        text: "Reports",
+        href: campaign_reports_path(@campaign),
+        selected: true,
+      )
+    end %>
 
-<%= govuk_link_to "Download data (CSV)", report_path(id: "hpv"), class: "nhsuk-u-margin-bottom-2 nhsuk-button" %>
+<%= govuk_link_to "Download NIVS data (CSV)", download_campaign_reports_path(@campaign), class: "nhsuk-button" %>

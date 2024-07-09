@@ -39,13 +39,15 @@ describe "NIVS HPV report" do
   end
 
   def when_i_go_to_the_reports_page
-    visit "/reports"
+    visit "/dashboard"
 
-    expect(page).to have_css("h1", text: "Reports")
+    click_on "Vaccination programmes", match: :first
+    click_on "HPV"
+    click_on "Reports"
   end
 
   def and_i_download_the_nivs_hpv_report
-    click_on "Download data (CSV)"
+    click_on "Download NIVS data (CSV)"
   end
 
   def then_i_should_see_all_the_administered_vaccinations_from_my_teams_hpv_campaign

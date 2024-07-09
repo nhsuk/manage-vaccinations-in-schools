@@ -63,7 +63,11 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :campaigns, only: %i[index show]
+  resources :campaigns, only: %i[index show] do
+    resources :reports, only: %i[index] do
+      get "download", on: :collection
+    end
+  end
 
   resources :sessions, only: %i[create edit index show] do
     namespace :parent_interface, path: "/" do
@@ -196,8 +200,6 @@ Rails.application.routes.draw do
       post "make-default", on: :member, as: :make_default
     end
   end
-
-  resources :reports, only: %i[index show]
 
   resources :consent_forms, path: "consent-forms", only: [:show] do
     get "match/:patient_session_id",
