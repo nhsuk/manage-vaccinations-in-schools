@@ -9,6 +9,9 @@ describe "Immunisation imports" do
 
     when_i_go_to_the_reports_page
     then_i_should_see_the_upload_link
+
+    when_i_click_on_the_upload_link
+    then_i_should_see_the_upload_page
   end
 
   def given_i_am_signed_in
@@ -31,5 +34,13 @@ describe "Immunisation imports" do
 
   def then_i_should_see_the_upload_link
     expect(page).to have_link("Upload vaccination events (CSV)")
+  end
+
+  def when_i_click_on_the_upload_link
+    click_on "Upload vaccination events (CSV)"
+  end
+
+  def then_i_should_see_the_upload_page
+    expect(page).to have_content("Upload vaccination events")
   end
 end
