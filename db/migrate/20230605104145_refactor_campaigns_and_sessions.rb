@@ -47,13 +47,13 @@ class RefactorCampaignsAndSessions < ActiveRecord::Migration[7.0]
       SET name = (SELECT name FROM campaigns WHERE id = sessions.campaign_id) || ' session at ' || (SELECT name FROM locations WHERE id = sessions.location_id)
     SQL
 
-    change_table :sessions do |t|
+    change_table :sessions, bulk: true do |t|
       t.remove :type
       t.change_null :campaign_id, false
       t.change_null :name, false
     end
 
-    change_table :campaigns_children do |t|
+    change_table :campaigns_children, bulk: true do |t|
       t.remove_index %w[child_id campaign_id]
       t.remove_index %w[campaign_id child_id]
       t.rename :campaign_id, :session_id
