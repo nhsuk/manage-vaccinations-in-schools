@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class CreateGoodJobProcessLockIds < ActiveRecord::Migration[7.1]
+  # rubocop:disable Rails/BulkChangeTable
   def change
     reversible do |dir|
       dir.up do
@@ -15,4 +16,5 @@ class CreateGoodJobProcessLockIds < ActiveRecord::Migration[7.1]
     add_column :good_job_executions, :process_id, :uuid
     add_column :good_job_processes, :lock_type, :integer, limit: 2
   end
+  # rubocop:enable Rails/BulkChangeTable
 end
