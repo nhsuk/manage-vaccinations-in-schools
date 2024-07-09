@@ -11,11 +11,16 @@ class ImmunisationImportsController < ApplicationController
     @immunisation_import = ImmunisationImport.new(immunisation_import_params)
 
     if @immunisation_import.save
-      flash[:success] = "Immunisation imported."
-      redirect_to campaign_reports_path(@campaign)
+      redirect_to success_campaign_immunisation_import_path(
+                    @campaign,
+                    @immunisation_import
+                  )
     else
       render :new, status: :unprocessable_entity
     end
+  end
+
+  def success
   end
 
   private
