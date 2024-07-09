@@ -39,7 +39,17 @@ describe "HPV Vaccination" do
     click_button "Continue"
 
     choose @batch.name
-    check "Default to this batch for this session", match: :first
+
+    # Find the selected radio button element
+    selected_radio_button = find(:radio_button, @batch.name, checked: true)
+
+    # Find the "Default to this batch for this session" checkbox immediately below and check it
+    checkbox_below =
+      selected_radio_button.find(
+        :xpath,
+        'following::input[@type="checkbox"][1]'
+      )
+    checkbox_below.check
     click_button "Continue"
 
     click_button "Confirm"
