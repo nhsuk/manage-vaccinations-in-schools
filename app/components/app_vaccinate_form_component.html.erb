@@ -14,7 +14,7 @@
     <%= f.govuk_radio_buttons_fieldset(:administered, legend: nil) do %>
       <%= f.govuk_radio_button(
             :administered, true,
-            label: { text: t("vaccinations.form.label.#{session.type.downcase}") },
+            label: { text: t("vaccinations.form.label.#{@vaccination_record.vaccine.type.downcase}") },
             link_errors: true,
           ) do %>
         <%= f.govuk_collection_radio_buttons(

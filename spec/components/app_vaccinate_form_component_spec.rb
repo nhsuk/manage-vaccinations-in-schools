@@ -8,10 +8,11 @@ describe AppVaccinateFormComponent, type: :component do
   let(:heading) { "A Heading" }
   let(:body) { "A Body" }
   let(:session) { create :session, :in_progress }
+  let(:vaccine) { create :vaccine, :hpv }
   let(:patient_session) do
     create :patient_session, :consent_given_triage_not_needed, session:
   end
-  let(:vaccination_record) { VaccinationRecord.new }
+  let(:vaccination_record) { VaccinationRecord.new(vaccine:) }
   let(:component) do
     described_class.new(
       patient_session:,
