@@ -66,7 +66,9 @@ Rails.application.routes.draw do
   resources :campaigns, only: %i[index show] do
     resources :immunisation_imports,
               path: "/immunisation-imports",
-              only: %i[new create]
+              only: %i[new create] do
+      get "success", on: :member
+    end
 
     resources :reports, only: %i[index] do
       get "download", on: :collection

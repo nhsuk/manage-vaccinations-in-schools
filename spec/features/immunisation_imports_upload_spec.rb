@@ -17,6 +17,7 @@ describe "Immunisation imports" do
     then_i_should_see_an_error
 
     when_i_upload_a_nivs_file
+    then_i_should_see_the_success_page
   end
 
   def given_i_am_signed_in
@@ -63,5 +64,9 @@ describe "Immunisation imports" do
       "spec/fixtures/immunisation_import/nivs.csv"
     )
     click_on "Upload vaccination events"
+  end
+
+  def then_i_should_see_the_success_page
+    expect(page).to have_content("Vaccination events uploaded")
   end
 end
