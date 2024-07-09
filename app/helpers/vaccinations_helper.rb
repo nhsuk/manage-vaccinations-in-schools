@@ -15,10 +15,6 @@ module VaccinationsHelper
     end
   end
 
-  def vaccination_initial_delivery_sites
-    %w[left_arm right_arm other]
-  end
-
   def vaccination_delivery_methods
     methods = VaccinationRecord.available_delivery_methods
     methods.map do |m|
