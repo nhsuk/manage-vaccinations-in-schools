@@ -72,21 +72,13 @@ describe AppCompareConsentFormAndPatientComponent, type: :component do
     end
 
     it "displays the key consent form details with the unmatched details highlighted" do
+      expect(page).to have_text(["Child’s name", "John Doe", "Jane Doe"].join)
       expect(page).to have_text(
-        ["Child’s name", "Inconsistent: ", "John Doe", "Jane Doe"].join
-      )
-      expect(page).to have_text(
-        [
-          "Date of birth",
-          "Inconsistent: ",
-          "1 January 2000",
-          "2 January 2000"
-        ].join
+        ["Date of birth", "1 January 2000", "2 January 2000"].join
       )
       expect(page).to have_text(
         [
           "Address",
-          "Inconsistent: ",
           "1 Main Street",
           "Area",
           "Some Town",

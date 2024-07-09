@@ -1,8 +1,3 @@
-// Use NHSUK colour for <mark>
-mark {
-  background-color: $color_nhsuk-pale-yellow;
-}
-
 // `$nhsuk-page-width` isn’t globally editable, so need to apply manually
 .app-signed-in {
   .nhsuk-width-container,

@@ -25,8 +25,7 @@ class AppCompareConsentFormAndPatientComponent < ViewComponent::Base
 
   def mark(text, opts)
     if !opts[:unless] && !opts[:if]
-      tag.span(class: "nhsuk-u-visually-hidden") { "Inconsistent: " } +
-        tag.mark(text)
+      tag.mark(text, class: "app-highlight")
     else
       text
     end

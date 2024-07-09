@@ -1,0 +1,25 @@
+.app-highlight {
+  background-color: mix(white, $color_nhsuk-warm-yellow, 80%);
+  border-bottom: 3px solid $color_nhsuk-warm-yellow;
+
+  // Ensure highlight is announced by screen readers
+  // @link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/mark#accessibility
+  &::before,
+  &::after {
+    clip-path: inset(100%);
+    clip: rect(1px, 1px, 1px, 1px);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+
+  &::before {
+    content: " [highlight start] ";
+  }
+
+  &::after {
+    content: " [highlight end] ";
+  }
+}
