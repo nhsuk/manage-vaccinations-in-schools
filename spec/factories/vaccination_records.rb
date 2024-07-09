@@ -38,7 +38,8 @@ FactoryBot.define do
     recorded_at { "2023-06-09" }
     delivery_site { "left_arm_upper_position" }
     delivery_method { "intramuscular" }
-    batch { patient_session.session.campaign.vaccines.first.batches.first }
+    vaccine { patient_session.session.campaign.vaccines.first }
+    batch { vaccine.batches.first }
     user { create :user }
     administered { true }
 
