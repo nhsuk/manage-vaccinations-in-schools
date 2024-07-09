@@ -43,4 +43,27 @@ class Vaccine < ApplicationRecord
             "Common delivery sites not implemented for #{type} vaccines."
     end
   end
+
+  def available_delivery_sites
+    if injection?
+      VaccinationRecord.delivery_sites.keys -
+        %w[left_buttock right_buttock nose]
+    elsif nasal?
+      %w[nose]
+    else
+      raise NotImplementedError,
+            "Available delivery sites not implemented for #{method} vaccine."
+    end
+  end
+
+  def available_delivery_methods
+    if type.downcase == "hpv"
+      %w[intramuscular subcutaneous]
+    elsif type.downcase == "flu"
+      %w[nasal_spray]
+    else
+      raise NotImplementedError,
+            "Available delivery methods not implemented for #{type} vaccines."
+    end
+  end
 end

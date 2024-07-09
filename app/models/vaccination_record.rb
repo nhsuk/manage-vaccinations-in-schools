@@ -128,14 +128,6 @@ class VaccinationRecord < ApplicationRecord
             on: :edit_reason,
             if: -> { !administered }
 
-  def self.available_delivery_sites
-    delivery_sites.keys - %w[left_buttock right_buttock nose]
-  end
-
-  def self.available_delivery_methods
-    delivery_methods.keys - %w[nasal_spray]
-  end
-
   def location_name
     patient_session.session.location&.name
   end

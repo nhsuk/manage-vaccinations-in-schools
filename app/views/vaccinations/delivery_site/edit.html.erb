@@ -22,7 +22,7 @@
               method: :put do |f| %>
   <%= f.govuk_collection_radio_buttons(
         :delivery_method,
-        vaccination_delivery_methods,
+        vaccination_delivery_methods_for(@draft_vaccination_record.vaccine),
         :first,
         :second,
         legend: {
@@ -32,7 +32,7 @@
       ) %>
   <%= f.govuk_collection_radio_buttons(
         :delivery_site,
-        vaccination_delivery_sites,
+        vaccination_delivery_sites_for(@draft_vaccination_record.vaccine),
         :first,
         :second,
         legend: {
