@@ -1,4 +1,6 @@
-<%= h1 "Upload vaccination events", page_title: "#{@campaign.name} – Upload vaccination events" %>
+<% page_title = "Upload vaccination events" %>
+
+<%= content_for :page_title, "#{@campaign.name} – Upload vaccination events" %>
 
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
@@ -6,4 +8,12 @@
                                           { text: t("campaigns.index.title"), href: campaigns_path },
                                           { text: @campaign.name, href: campaign_reports_path(@campaign) },
                                         ]) %>
+<% end %>
+
+<%= form_with model: @immunisation_import, url: campaign_immunisation_imports_path do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= f.govuk_file_field :csv, label: { text: page_title, tag: "h1", size: "l" } %>
+
+  <%= f.govuk_submit "Upload vaccination events" %>
 <% end %>
