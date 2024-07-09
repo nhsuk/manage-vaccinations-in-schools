@@ -6,7 +6,9 @@ class CreateGoodJobExecutionErrorBacktrace < ActiveRecord::Migration[7.1]
       dir.up do
         # Ensure this incremental update migration is idempotent
         # with monolithic install migration.
-        return if connection.column_exists?(:good_job_executions, :error_backtrace)
+        if connection.column_exists?(:good_job_executions, :error_backtrace)
+          return
+        end
       end
     end
 
