@@ -11,9 +11,11 @@ describe AppSecondaryNavigationComponent, type: :component do
   let(:component) do
     described_class.new.tap do |nav|
       nav.with_item(selected: true, href: "https://example.com") { "Example 1" }
-      nav.with_item(selected: false, href: "https://example.com") do
-        "Example 2"
-      end
+      nav.with_item(
+        selected: false,
+        text: "Example 2",
+        href: "https://example.com"
+      )
     end
   end
 
@@ -47,4 +49,6 @@ describe AppSecondaryNavigationComponent, type: :component do
   end
 
   it { should have_link("Example 1", href: "https://example.com") }
+
+  it { should have_link("Example 2", href: "https://example.com") }
 end

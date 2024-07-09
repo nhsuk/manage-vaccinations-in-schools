@@ -7,13 +7,14 @@ class AppSecondaryNavigationComponent < ViewComponent::Base
     attr_reader :href, :selected
 
     def call
-      content
+      content || @text || raise(ArgumentError, "no text or content")
     end
 
-    def initialize(href:, selected: false)
+    def initialize(href:, text: nil, selected: false)
       super
 
       @href = href
+      @text = html_escape(text)
       @selected = selected
     end
   end
