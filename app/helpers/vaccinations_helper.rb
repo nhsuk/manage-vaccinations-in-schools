@@ -15,18 +15,14 @@ module VaccinationsHelper
     end
   end
 
-  def vaccination_delivery_methods
-    methods = VaccinationRecord.available_delivery_methods
-    methods.map do |m|
+  def vaccination_delivery_methods_for(vaccine)
+    vaccine.available_delivery_methods.map do |m|
       [m, VaccinationRecord.human_enum_name("delivery_methods", m)]
     end
   end
 
-  def vaccination_delivery_sites
-    sites =
-      VaccinationRecord.available_delivery_sites -
-        vaccination_initial_delivery_sites
-    sites.map do |s|
+  def vaccination_delivery_sites_for(vaccine)
+    vaccine.available_delivery_sites.map do |s|
       [s, VaccinationRecord.human_enum_name("delivery_sites", s)]
     end
   end
