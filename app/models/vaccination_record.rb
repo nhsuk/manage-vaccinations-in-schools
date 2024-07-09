@@ -128,11 +128,25 @@ class VaccinationRecord < ApplicationRecord
             on: :edit_reason,
             if: -> { !administered }
 
+  validate :batch_vaccine_matches_vaccine, if: -> { recorded? && administered }
+
   def location_name
     patient_session.session.location&.name
   end
 
   def not_administered?
     !administered?
+  end
+
+  def recorded?
+    recorded_at.present?
+  end
+
+  private
+
+  def batch_vaccine_matches_vaccine
+    return if batch&.vaccine_id == vaccine_id
+
+    errors.add(:batch_id, :incorrect_vaccine, vaccine_brand: vaccine&.brand)
   end
 end
