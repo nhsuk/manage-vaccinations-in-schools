@@ -123,10 +123,6 @@ class VaccinationRecord < ApplicationRecord
     delivery_methods.keys - %w[nasal_spray]
   end
 
-  def vaccine_name
-    patient_session.session.campaign.vaccines.first.type
-  end
-
   def location_name
     patient_session.session.location&.name
   end
