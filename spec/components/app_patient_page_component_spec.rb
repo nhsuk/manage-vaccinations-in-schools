@@ -13,10 +13,12 @@ describe AppPatientPageComponent, type: :component do
     # rubocop:enable RSpec/AnyInstance
   end
 
+  let(:vaccine) { create :vaccine, :hpv }
+
   let(:component) do
     described_class.new(
       patient_session:,
-      vaccination_record: VaccinationRecord.new,
+      vaccination_record: VaccinationRecord.new(vaccine:),
       section: "triage",
       tab: "needed",
       triage: nil
