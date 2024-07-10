@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
 # frozen_string_literal: true
 
 CIS2_AUTH_INFO = {
@@ -27,9 +26,8 @@ CIS2_AUTH_INFO = {
           "person_orgid" => "1111222233334444",
           "person_roleid" => "5555666677778888",
           "org_code" => "AB12",
-          "role_name" =>
-            "\"Admin and Clerical\":\"Admin and Clerical\":\"Privacy Officer\"",
-          "role_code" => "S8002:G8003:R0001",
+          "role_name" => '"Clinical":"Clinical Provision":"Nurse Access Role"',
+          "role_code" => "S8000:G8000:R8001",
           "activities" => [
             "Receive Self Claimed LR Alerts",
             "Receive Legal Override and Emergency View Alerts",
@@ -41,8 +39,7 @@ CIS2_AUTH_INFO = {
           "person_orgid" => "1234123412341234",
           "person_roleid" => "5678567856785678",
           "org_code" => "CD34",
-          "role_name" =>
-            "\"Clinical\":\"Clinical Provision\":\"Nurse Access Role\"",
+          "role_name" => '"Clinical":"Clinical Provision":"Nurse Access Role"',
           "role_code" => "S8000:G8000:R8001",
           "activities" => [
             "Personal Medication Administration",

@@ -49,16 +49,10 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       end
   end
 
-  def selected_cis2_role_codes
-    selected_cis2_nrbac_role["role_code"].split(":")
-  end
-
-  def selected_cis2_role_names
-    selected_cis2_nrbac_role["role_name"].split(":")
-  end
-
   def selected_cis2_roles
-    @selected_cis2_roles ||=
-      Hash[selected_cis2_role_codes.zip(selected_cis2_role_names)]
+    @selected_cis2_roles ||= {
+      selected_cis2_nrbac_role["role_code"] =>
+        selected_cis2_nrbac_role["role_name"]
+    }
   end
 end
