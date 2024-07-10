@@ -21,22 +21,42 @@ require "csv"
 #  fk_rails_...  (user_id => users.id)
 #
 class ImmunisationImport < ApplicationRecord
+  attr_accessor :csv_is_malformed, :data
+
   belongs_to :user
 
   validates :csv, presence: true
+  validate :csv_is_valid
 
   def csv=(value)
     super(value.respond_to?(:read) ? value.read : value)
   end
 
+  def load_data!
+    return if invalid?
+
+    self.data ||= CSV.parse(csv, headers: true, skip_blanks: true)
+  rescue CSV::MalformedCSVError
+    self.csv_is_malformed = true
+  ensure
+    csv.close if csv.respond_to?(:close)
+  end
+
   def process!(patient_session:)
-    data = CSV.parse(csv, headers: true, skip_blanks: true)
     data.each do |row|
       record = Row.new(row).to_vaccination_record
       record.user = user
       record.patient_session = patient_session
       record.save!
     end
+  end
+
+  private
+
+  def csv_is_valid
+    return unless csv_is_malformed
+
+    errors.add(:csv, :invalid)
   end
 
   class Row
