@@ -4,9 +4,12 @@ module Users
   class AccountsController < ApplicationController
     before_action :set_user, only: %i[show update]
 
-    skip_before_action :store_user_location!, only: :team_not_found
-    skip_before_action :authenticate_user!, only: :team_not_found
-    skip_after_action :verify_policy_scoped, only: :team_not_found
+    skip_before_action :store_user_location!,
+                       only: %i[team_not_found role_not_found]
+    skip_before_action :authenticate_user!,
+                       only: %i[team_not_found role_not_found]
+    skip_after_action :verify_policy_scoped,
+                      only: %i[team_not_found role_not_found]
 
     layout "two_thirds"
 
@@ -25,6 +28,15 @@ module Users
     end
 
     def team_not_found
+      if session.key? :cis2_info
+        @cis2_info = session[:cis2_info].with_indifferent_access
+        render status: :not_found
+      else
+        redirect_to root_path
+      end
+    end
+
+    def role_not_found
       if session.key? :cis2_info
         @cis2_info = session[:cis2_info].with_indifferent_access
         render status: :not_found
