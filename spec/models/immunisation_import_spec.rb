@@ -31,12 +31,12 @@ describe ImmunisationImport do
   it { should validate_presence_of(:csv) }
 
   describe "#load_data!" do
+    before { subject.load_data! }
+
     describe "with malformed CSV" do
       let(:file) { "malformed.csv" }
 
       it "is invalid" do
-        subject.load_data!
-
         expect(subject).to be_invalid
         expect(subject.errors[:csv]).to include(/correct format/)
       end
@@ -46,8 +46,6 @@ describe ImmunisationImport do
       let(:file) { "empty.csv" }
 
       it "is invalid" do
-        subject.load_data!
-
         expect(subject).to be_invalid
         expect(subject.errors[:csv]).to include(/one record/)
       end
@@ -57,8 +55,6 @@ describe ImmunisationImport do
       let(:file) { "missing_headers.csv" }
 
       it "is invalid" do
-        subject.load_data!
-
         expect(subject).to be_invalid
         expect(subject.errors[:csv]).to include(/missing/)
       end
@@ -67,8 +63,6 @@ describe ImmunisationImport do
 
   describe "#process!" do
     it "creates vaccination records" do
-      subject.load_data!
-
       # TEMPORARY: Pass in a dummy patient session. We will iterate this out.
       expect { subject.process!(patient_session:) }.to change(
         VaccinationRecord,
