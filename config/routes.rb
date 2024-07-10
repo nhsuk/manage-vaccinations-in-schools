@@ -222,6 +222,7 @@ Rails.application.routes.draw do
     resources :accounts, only: %i[show update]
 
     get "team-not-found", controller: :accounts
+    get "role-not-found", controller: :accounts
   end
 
   scope via: :all do

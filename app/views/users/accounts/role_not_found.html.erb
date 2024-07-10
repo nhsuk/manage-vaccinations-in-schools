@@ -1,0 +1,20 @@
+<%= h1 "You do not have permission to use this service" %>
+
+<% if @cis2_info[:has_other_roles] %>
+  <%= govuk_button_to "Change role", user_cis2_omniauth_authorize_path, params: { change_role: true } %>
+<% end %>
+
+<h2 class="nhsuk-heading-m">Contact your registration authority</h2>
+
+<p>
+  If you think you should have permission to use this service, contact your
+  registration authority, Acme Community Hospital NHS Foundation Trust (ACM).
+  Ask for one of the following roles to be added to your Care Identity:
+</p>
+
+<%= govuk_list([
+      "Nurse Access Role (R8001)",
+      "Medical Secretary Access Role (R8006)",
+      "Admin/Clinical Support Access Role (R8008)",
+      "Receptionist Access Role (R8009)",
+    ], type: "bullet") %>
