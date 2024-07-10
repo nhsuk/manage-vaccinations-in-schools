@@ -47,6 +47,9 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def process!(patient_session:)
+    load_data! if data.nil?
+    return if invalid?
+
     data.each do |row|
       record = Row.new(row).to_vaccination_record
       record.user = user
