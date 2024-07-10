@@ -13,8 +13,12 @@ module AuthenticationConcern
         end
         flash[:info] = "You must be logged in to access this page."
         redirect_to start_path
-      elsif cis2_session? && !selected_cis2_org_is_registered?
-        redirect_to users_team_not_found_path
+      elsif cis2_session?
+        if !selected_cis2_org_is_registered?
+          redirect_to users_team_not_found_path
+        elsif !selected_cis2_role_is_valid?
+          redirect_to users_role_not_found_path
+        end
       end
     end
 
@@ -24,6 +28,16 @@ module AuthenticationConcern
 
     def selected_cis2_org_is_registered?
       Team.exists?(ods_code: session["cis2_info"]["selected_org"]["code"])
+    end
+
+    def valid_cis2_roles
+      ["R8001"]
+    end
+
+    def selected_cis2_role_is_valid?
+      session["cis2_info"]["selected_roles"].keys.any? do
+        valid_cis2_roles.include? _1
+      end
     end
 
     def storable_location?
