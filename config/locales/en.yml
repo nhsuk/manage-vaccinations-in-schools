@@ -272,6 +272,7 @@ en:
           attributes:
             csv:
               blank: Choose a file
+              empty: Choose a CSV file with at least one record
               invalid: Choose a CSV file in the correct format
         offline_password:
           attributes:

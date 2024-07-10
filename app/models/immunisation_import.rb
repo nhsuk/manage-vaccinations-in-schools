@@ -27,6 +27,7 @@ class ImmunisationImport < ApplicationRecord
 
   validates :csv, presence: true
   validate :csv_is_valid
+  validate :csv_has_records
 
   def csv=(value)
     super(value.respond_to?(:read) ? value.read : value)
@@ -57,6 +58,12 @@ class ImmunisationImport < ApplicationRecord
     return unless csv_is_malformed
 
     errors.add(:csv, :invalid)
+  end
+
+  def csv_has_records
+    return unless data
+
+    errors.add(:csv, :empty) if data.empty?
   end
 
   class Row

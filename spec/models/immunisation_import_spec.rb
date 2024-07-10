@@ -41,6 +41,17 @@ describe ImmunisationImport do
         expect(subject.errors[:csv]).to include(/correct format/)
       end
     end
+
+    describe "with empty CSV" do
+      let(:file) { "empty.csv" }
+
+      it "is invalid" do
+        subject.load_data!
+
+        expect(subject).to be_invalid
+        expect(subject.errors[:csv]).to include(/one record/)
+      end
+    end
   end
 
   describe "#process!" do
