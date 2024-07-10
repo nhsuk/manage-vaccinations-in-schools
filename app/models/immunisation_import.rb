@@ -25,9 +25,12 @@ class ImmunisationImport < ApplicationRecord
 
   belongs_to :user
 
+  EXPECTED_HEADERS = %w[DATE_OF_VACCINATION].freeze
+
   validates :csv, presence: true
   validate :csv_is_valid
   validate :csv_has_records
+  validate :headers_are_valid
 
   def csv=(value)
     super(value.respond_to?(:read) ? value.read : value)
@@ -64,6 +67,13 @@ class ImmunisationImport < ApplicationRecord
     return unless data
 
     errors.add(:csv, :empty) if data.empty?
+  end
+
+  def headers_are_valid
+    return unless data
+
+    missing_headers = EXPECTED_HEADERS - data.headers
+    errors.add(:csv, :missing_headers, missing_headers:) if missing_headers.any?
   end
 
   class Row
