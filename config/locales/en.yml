@@ -274,6 +274,7 @@ en:
               blank: Choose a file
               empty: Choose a CSV file with at least one record
               invalid: Choose a CSV file in the correct format
+              missing_headers: "The file is missing the following headers: %{missing_headers}"
         offline_password:
           attributes:
             password:

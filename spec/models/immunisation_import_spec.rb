@@ -52,6 +52,17 @@ describe ImmunisationImport do
         expect(subject.errors[:csv]).to include(/one record/)
       end
     end
+
+    describe "with missing headers" do
+      let(:file) { "missing_headers.csv" }
+
+      it "is invalid" do
+        subject.load_data!
+
+        expect(subject).to be_invalid
+        expect(subject.errors[:csv]).to include(/missing/)
+      end
+    end
   end
 
   describe "#process!" do
