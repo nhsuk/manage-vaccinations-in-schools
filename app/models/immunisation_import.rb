@@ -86,37 +86,47 @@ class ImmunisationImport < ApplicationRecord
 
     def to_vaccination_record
       VaccinationRecord.new(
-        administered: administered?,
+        administered:,
         delivery_site:,
         delivery_method:,
-        recorded_at: Time.zone.now
+        recorded_at:
       )
     end
 
+    DELIVERY_SITES = {
+      "left thigh" => :left_thigh,
+      "right thigh" => :right_thigh,
+      "left upper arm" => :left_arm_upper_position,
+      "right upper arm" => :right_arm_upper_position,
+      "left buttock" => :left_buttock,
+      "right buttock" => :right_buttock,
+      "nasal" => :nose
+    }.freeze
+
     def delivery_site
-      {
-        "left thigh" => :left_thigh,
-        "right thigh" => :right_thigh,
-        "left upper arm" => :left_arm_upper_position,
-        "right upper arm" => :right_arm_upper_position,
-        "left buttock" => :left_buttock,
-        "right buttock" => :right_buttock,
-        "nasal" => :nose
-      }[
-        @row["ANATOMICAL_SITE"]&.downcase
-      ]
+      DELIVERY_SITES[@row["ANATOMICAL_SITE"]&.downcase]
     end
 
     def delivery_method
-      if @row["ANATOMICAL_SITE"]&.downcase == "nasal"
+      if delivery_site == :nose
         :nasal_spray
       else
         :intramuscular
       end
     end
 
-    def administered?
-      @row["VACCINATED"].downcase == "yes"
+    def administered
+      vaccinated = @row["VACCINATED"]&.downcase
+
+      if vaccinated == "yes"
+        true
+      elsif vaccinated == "no"
+        false
+      end
+    end
+
+    def recorded_at
+      Time.zone.now
     end
   end
 end
