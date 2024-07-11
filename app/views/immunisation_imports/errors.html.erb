@@ -1,0 +1,41 @@
+<% title = "The vaccination events could not be added" %>
+
+<% content_for :page_title, "#{@campaign.name} – #{title}" %>
+
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: "Home", href: dashboard_path },
+                                          { text: t("campaigns.index.title"), href: campaigns_path },
+                                          { text: @campaign.name, href: campaign_reports_path(@campaign) },
+                                        ]) %>
+<% end %>
+
+<%= h1 title %>
+
+<p>
+  It wasn’t possible to add the vaccination events due to the following errors in the uploaded CSV file:
+</p>
+
+<% @immunisation_import.errors.each do |error| %>
+  <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">
+    <% if error.attribute == :csv %>
+      CSV
+    <% else %>
+      <%= error.attribute.to_s.humanize %>
+    <% end %>
+  </h2>
+
+  <ul class="nhsuk-list nhsuk-list--bullet nhsuk-u-font-size-16">
+    <% if error.type.is_a?(Array) %>
+      <% error.type.each do |type| %>
+        <li><%= sanitize type %></li>
+      <% end %>
+    <% else %>
+      <li><%= sanitize error.type %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<p>
+  <%= govuk_link_to "Upload new vaccination events (CSV)", new_campaign_immunisation_import_path, class: "nhsuk-button" %>
+</p>
