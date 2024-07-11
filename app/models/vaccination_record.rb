@@ -41,6 +41,7 @@ class VaccinationRecord < ApplicationRecord
   attr_accessor :delivery_site_other
 
   belongs_to :patient_session
+  belongs_to :imported_from, class_name: "ImmunisationImport", optional: true
   belongs_to :batch, optional: true
   belongs_to :user
   belongs_to :vaccine, optional: true

@@ -24,6 +24,9 @@ class ImmunisationImport < ApplicationRecord
   attr_accessor :csv_is_malformed, :data, :rows
 
   belongs_to :user
+  has_many :vaccination_records,
+           dependent: :restrict_with_exception,
+           foreign_key: :imported_from_id
 
   EXPECTED_HEADERS = %w[DATE_OF_VACCINATION].freeze
 
@@ -62,6 +65,7 @@ class ImmunisationImport < ApplicationRecord
       .map(&:to_vaccination_record)
       .each do |record|
         record.user = user
+        record.imported_from = self
         record.patient_session = patient_session
         record.save!
       end

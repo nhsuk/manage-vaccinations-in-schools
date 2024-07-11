@@ -26,7 +26,6 @@ describe ImmunisationImport do
   let(:file) { "nivs.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/immunisation_import/#{file}") }
   let(:user) { create(:user) }
-  let(:patient_session) { create(:patient_session, user:) }
 
   it { should validate_presence_of(:csv) }
 
@@ -82,10 +81,12 @@ describe ImmunisationImport do
   describe "#process!" do
     it "creates vaccination records" do
       # TEMPORARY: Pass in a dummy patient session. We will iterate this out.
+      patient_session = create(:patient_session, user:)
       expect { immunisation_import.process!(patient_session:) }.to change(
         VaccinationRecord,
         :count
       ).by(11)
+      expect(immunisation_import.vaccination_records.count).to eq(11)
     end
   end
 end
