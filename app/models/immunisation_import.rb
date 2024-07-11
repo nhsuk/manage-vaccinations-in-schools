@@ -21,7 +21,7 @@ require "csv"
 #  fk_rails_...  (user_id => users.id)
 #
 class ImmunisationImport < ApplicationRecord
-  attr_accessor :csv_is_malformed, :data
+  attr_accessor :csv_is_malformed, :data, :rows
 
   belongs_to :user
 
@@ -46,16 +46,24 @@ class ImmunisationImport < ApplicationRecord
     csv.close if csv.respond_to?(:close)
   end
 
-  def process!(patient_session:)
+  def parse_rows!
     load_data! if data.nil?
     return if invalid?
 
-    data.each do |row|
-      record = Row.new(row).to_vaccination_record
-      record.user = user
-      record.patient_session = patient_session
-      record.save!
-    end
+    self.rows = data.map { |raw_row| Row.new(raw_row) }
+  end
+
+  def process!(patient_session:)
+    parse_rows! if rows.nil?
+    return if invalid?
+
+    rows
+      .map(&:to_vaccination_record)
+      .each do |record|
+        record.user = user
+        record.patient_session = patient_session
+        record.save!
+      end
   end
 
   private

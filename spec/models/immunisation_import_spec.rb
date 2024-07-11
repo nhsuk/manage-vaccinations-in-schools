@@ -21,7 +21,7 @@
 require "rails_helper"
 
 describe ImmunisationImport do
-  subject { described_class.create!(csv:, user:) }
+  subject(:immunisation_import) { described_class.create!(csv:, user:) }
 
   let(:file) { "nivs.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/immunisation_import/#{file}") }
@@ -31,14 +31,14 @@ describe ImmunisationImport do
   it { should validate_presence_of(:csv) }
 
   describe "#load_data!" do
-    before { subject.load_data! }
+    before { immunisation_import.load_data! }
 
     describe "with malformed CSV" do
       let(:file) { "malformed.csv" }
 
       it "is invalid" do
-        expect(subject).to be_invalid
-        expect(subject.errors[:csv]).to include(/correct format/)
+        expect(immunisation_import).to be_invalid
+        expect(immunisation_import.errors[:csv]).to include(/correct format/)
       end
     end
 
@@ -46,8 +46,8 @@ describe ImmunisationImport do
       let(:file) { "empty.csv" }
 
       it "is invalid" do
-        expect(subject).to be_invalid
-        expect(subject.errors[:csv]).to include(/one record/)
+        expect(immunisation_import).to be_invalid
+        expect(immunisation_import.errors[:csv]).to include(/one record/)
       end
     end
 
@@ -55,16 +55,25 @@ describe ImmunisationImport do
       let(:file) { "missing_headers.csv" }
 
       it "is invalid" do
-        expect(subject).to be_invalid
-        expect(subject.errors[:csv]).to include(/missing/)
+        expect(immunisation_import).to be_invalid
+        expect(immunisation_import.errors[:csv]).to include(/missing/)
       end
+    end
+  end
+
+  describe "#parse_rows!" do
+    before { immunisation_import.parse_rows! }
+
+    it "populates the rows" do
+      expect(immunisation_import).to be_valid
+      expect(immunisation_import.rows).not_to be_empty
     end
   end
 
   describe "#process!" do
     it "creates vaccination records" do
       # TEMPORARY: Pass in a dummy patient session. We will iterate this out.
-      expect { subject.process!(patient_session:) }.to change(
+      expect { immunisation_import.process!(patient_session:) }.to change(
         VaccinationRecord,
         :count
       ).by(11)
