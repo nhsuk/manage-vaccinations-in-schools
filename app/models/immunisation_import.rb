@@ -28,7 +28,14 @@ class ImmunisationImport < ApplicationRecord
            dependent: :restrict_with_exception,
            foreign_key: :imported_from_id
 
-  EXPECTED_HEADERS = %w[DATE_OF_VACCINATION ORGANISATION_CODE].freeze
+  EXPECTED_HEADERS = %w[
+    ANATOMICAL_SITE
+    DATE_OF_VACCINATION
+    ORGANISATION_CODE
+    SCHOOL_NAME
+    SCHOOL_URN
+    VACCINATED
+  ].freeze
 
   validates :csv, presence: true
   validate :csv_is_valid
