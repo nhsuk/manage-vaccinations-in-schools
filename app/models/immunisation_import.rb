@@ -66,6 +66,68 @@ class ImmunisationImport < ApplicationRecord
       end
   end
 
+  class Row
+    include ActiveModel::Model
+
+    validates :administered, inclusion: [true, false]
+    validates :delivery_site, presence: true, if: :administered
+    validates :delivery_method, presence: true, if: :administered
+    validates :recorded_at, presence: true
+
+    def initialize(row)
+      @row = row
+    end
+
+    def to_vaccination_record
+      return unless valid?
+
+      VaccinationRecord.new(
+        administered:,
+        delivery_site:,
+        delivery_method:,
+        recorded_at:
+      )
+    end
+
+    def administered
+      vaccinated = @row["VACCINATED"]&.downcase
+
+      if vaccinated == "yes"
+        true
+      elsif vaccinated == "no"
+        false
+      end
+    end
+
+    DELIVERY_SITES = {
+      "left thigh" => :left_thigh,
+      "right thigh" => :right_thigh,
+      "left upper arm" => :left_arm_upper_position,
+      "right upper arm" => :right_arm_upper_position,
+      "left buttock" => :left_buttock,
+      "right buttock" => :right_buttock,
+      "nasal" => :nose
+    }.freeze
+
+    def delivery_site
+      DELIVERY_SITES[@row["ANATOMICAL_SITE"]&.downcase]
+    end
+
+    def delivery_method
+      return unless delivery_site
+
+      if delivery_site == :nose
+        :nasal_spray
+      else
+        :intramuscular
+      end
+    end
+
+    def recorded_at
+      Time.zone.now
+    end
+  end
+
   private
 
   def csv_is_valid
@@ -85,56 +147,5 @@ class ImmunisationImport < ApplicationRecord
 
     missing_headers = EXPECTED_HEADERS - data.headers
     errors.add(:csv, :missing_headers, missing_headers:) if missing_headers.any?
-  end
-
-  class Row
-    def initialize(row)
-      @row = row
-    end
-
-    def to_vaccination_record
-      VaccinationRecord.new(
-        administered:,
-        delivery_site:,
-        delivery_method:,
-        recorded_at:
-      )
-    end
-
-    DELIVERY_SITES = {
-      "left thigh" => :left_thigh,
-      "right thigh" => :right_thigh,
-      "left upper arm" => :left_arm_upper_position,
-      "right upper arm" => :right_arm_upper_position,
-      "left buttock" => :left_buttock,
-      "right buttock" => :right_buttock,
-      "nasal" => :nose
-    }.freeze
-
-    def delivery_site
-      DELIVERY_SITES[@row["ANATOMICAL_SITE"]&.downcase]
-    end
-
-    def delivery_method
-      if delivery_site == :nose
-        :nasal_spray
-      else
-        :intramuscular
-      end
-    end
-
-    def administered
-      vaccinated = @row["VACCINATED"]&.downcase
-
-      if vaccinated == "yes"
-        true
-      elsif vaccinated == "no"
-        false
-      end
-    end
-
-    def recorded_at
-      Time.zone.now
-    end
   end
 end
