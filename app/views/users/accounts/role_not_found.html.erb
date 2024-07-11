@@ -8,7 +8,15 @@
 
 <p>
   If you think you should have permission to use this service, contact your
-  registration authority, Acme Community Hospital NHS Foundation Trust (ACM).
+  registration authority:
+</p>
+
+<%= govuk_inset_text do %>
+  <%= @cis2_info[:selected_org][:name] %><br />
+  (<%= @cis2_info[:selected_org][:code] %>)
+<% end %>
+
+<p>
   Ask for one of the following roles to be added to your Care Identity:
 </p>
 
