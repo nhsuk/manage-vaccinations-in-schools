@@ -69,6 +69,14 @@ en:
             response:
               blank: Choose an answer
               inclusion: Choose an answer
+        immunisation_import/row:
+          attributes:
+            administered:
+              inclusion: is required but missing
+            delivery_method:
+              blank: is required but missing
+            delivery_site:
+              blank: is required but missing
   activerecord:
     attributes:
       consent:
