@@ -31,6 +31,7 @@ class ImmunisationImport < ApplicationRecord
   validate :csv_is_valid
   validate :csv_has_records
   validate :headers_are_valid
+  validate :rows_are_valid
 
   def csv=(value)
     super(value.respond_to?(:read) ? value.read : value)
@@ -147,5 +148,17 @@ class ImmunisationImport < ApplicationRecord
 
     missing_headers = EXPECTED_HEADERS - data.headers
     errors.add(:csv, :missing_headers, missing_headers:) if missing_headers.any?
+  end
+
+  def rows_are_valid
+    return unless rows
+
+    rows.each.with_index do |row, index|
+      unless row.valid?
+        # Row 0 is the header row, but humans would call it Row 1. That's also
+        # what it would be shown as in Excel. The first row of data is Row 2.
+        errors.add("row_#{index + 2}".to_sym, row.errors.full_messages)
+      end
+    end
   end
 end

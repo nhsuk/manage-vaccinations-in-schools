@@ -68,6 +68,15 @@ describe ImmunisationImport do
       expect(immunisation_import).to be_valid
       expect(immunisation_import.rows).not_to be_empty
     end
+
+    describe "with invalid rows" do
+      let(:file) { "invalid_rows.csv" }
+
+      it "is invalid" do
+        expect(immunisation_import).to be_invalid
+        expect(immunisation_import.errors).to include(:row_2)
+      end
+    end
   end
 
   describe "#process!" do
