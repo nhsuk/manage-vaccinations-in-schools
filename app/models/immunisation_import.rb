@@ -68,14 +68,23 @@ class ImmunisationImport < ApplicationRecord
     parse_rows! if rows.nil?
     return if invalid?
 
-    rows
-      .map(&:to_vaccination_record)
-      .each do |record|
-        record.user = user
-        record.imported_from = self
-        record.patient_session = patient_session
-        record.save!
-      end
+    ActiveRecord::Base.transaction do
+      rows
+        .map(&:to_location)
+        .uniq(&:urn)
+        .reject(&:invalid?)
+        .map(&:attributes)
+        .tap { Location.create! _1 }
+
+      rows
+        .map(&:to_vaccination_record)
+        .each do |record|
+          record.user = user
+          record.imported_from = self
+          record.patient_session = patient_session
+          record.save!
+        end
+    end
   end
 
   class Row
@@ -97,6 +106,15 @@ class ImmunisationImport < ApplicationRecord
     def initialize(data:, team:)
       @data = data
       @team = team
+    end
+
+    def to_location
+      return unless valid?
+
+      Location.new(
+        name: @data["SCHOOL_NAME"].strip,
+        urn: @data["SCHOOL_URN"].strip
+      )
     end
 
     def to_vaccination_record
