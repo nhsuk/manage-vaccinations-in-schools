@@ -6,7 +6,7 @@ require "fixtures/cis2_auth_info"
 describe "User CIS2 authentication" do
   let(:test_team_ods_code) { "AB12" }
 
-  let(:cis2_auth_info) { CIS2_AUTH_INFO }
+  let(:cis2_auth_info) { CIS2_AUTH_INFO.deep_dup }
 
   scenario "user has wrong role selected" do
     given_the_cis2_feature_flag_is_enabled

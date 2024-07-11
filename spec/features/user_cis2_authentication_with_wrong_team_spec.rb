@@ -7,7 +7,7 @@ describe "User CIS2 authentication" do
   let(:test_team_ods_code) { "AB12" }
 
   let(:cis2_auth_mock) do
-    CIS2_AUTH_INFO.tap do |info|
+    CIS2_AUTH_INFO.deep_dup.tap do |info|
       info["extra"]["raw_info"]["nhsid_nrbac_roles"][0][
         "org_code"
       ] = test_team_ods_code
