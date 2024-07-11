@@ -84,10 +84,9 @@ describe ImmunisationImport do
       # TEMPORARY: Pass in a dummy patient session. We will iterate this out.
       patient_session = create(:patient_session, user:)
       expect { immunisation_import.process!(patient_session:) }.to change(
-        VaccinationRecord,
+        immunisation_import.vaccination_records,
         :count
       ).by(11)
-      expect(immunisation_import.vaccination_records.count).to eq(11)
     end
   end
 end
