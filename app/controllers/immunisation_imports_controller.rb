@@ -10,14 +10,26 @@ class ImmunisationImportsController < ApplicationController
   def create
     @immunisation_import = ImmunisationImport.new(immunisation_import_params)
 
-    if @immunisation_import.save
-      redirect_to success_campaign_immunisation_import_path(
-                    @campaign,
-                    @immunisation_import
-                  )
-    else
+    @immunisation_import.load_data!
+    if @immunisation_import.invalid?
       render :new, status: :unprocessable_entity
+      return
     end
+
+    @immunisation_import.parse_rows!
+    if @immunisation_import.invalid?
+      render :errors, status: :unprocessable_entity
+      return
+    end
+
+    # TODO: @immunisation_import.process!
+
+    @immunisation_import.save!
+
+    redirect_to success_campaign_immunisation_import_path(
+                  @campaign,
+                  @immunisation_import
+                )
   end
 
   def success

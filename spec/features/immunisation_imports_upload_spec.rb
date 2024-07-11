@@ -16,7 +16,11 @@ describe "Immunisation imports" do
     when_i_continue_without_uploading_a_file
     then_i_should_see_an_error
 
-    when_i_upload_a_nivs_file
+    when_i_upload_an_invalid_file
+    then_i_should_see_the_errors_page
+    and_i_go_back_to_the_upload_page
+
+    when_i_upload_a_valid_file
     then_i_should_see_the_success_page
   end
 
@@ -58,7 +62,24 @@ describe "Immunisation imports" do
     expect(page).to have_content("There is a problem")
   end
 
-  def when_i_upload_a_nivs_file
+  def when_i_upload_an_invalid_file
+    attach_file(
+      "immunisation_import[csv]",
+      "spec/fixtures/immunisation_import/invalid_rows.csv"
+    )
+    click_on "Upload vaccination events"
+  end
+
+  def then_i_should_see_the_errors_page
+    expect(page).to have_content("The vaccination events could not be added")
+    expect(page).to have_content("Row 2")
+  end
+
+  def and_i_go_back_to_the_upload_page
+    click_on "Upload new vaccination events (CSV)"
+  end
+
+  def when_i_upload_a_valid_file
     attach_file(
       "immunisation_import[csv]",
       "spec/fixtures/immunisation_import/nivs.csv"
