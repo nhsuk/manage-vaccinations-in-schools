@@ -15,11 +15,6 @@
 #  urn        :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  team_id    :integer          not null
-#
-# Foreign Keys
-#
-#  fk_rails_...  (team_id => teams.id)
 #
 FactoryBot.define do
   factory :location do
@@ -30,7 +25,6 @@ FactoryBot.define do
     county { Faker::Address.county }
     postcode { Faker::Address.postcode }
     url { Faker::Internet.url }
-    team { Team.first || association(:team) }
     urn { rand(100_000..999_999).to_s }
   end
 end
