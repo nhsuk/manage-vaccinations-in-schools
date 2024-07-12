@@ -14,6 +14,9 @@ describe ImmunisationImport::Row, type: :model do
         expect(immunisation_import_row.errors[:administered]).to include(
           "is required but missing"
         )
+        expect(immunisation_import_row.errors[:organisation_code]).to include(
+          "is required but missing"
+        )
       end
     end
 
@@ -28,11 +31,31 @@ describe ImmunisationImport::Row, type: :model do
         expect(immunisation_import_row.errors[:delivery_method]).to include(
           "is required but missing"
         )
+        expect(immunisation_import_row.errors[:organisation_code]).to include(
+          "is required but missing"
+        )
+      end
+    end
+
+    context "with an invalid organisation code" do
+      let(:row) { { "ORGANISATION_CODE" => "this is too long" } }
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:organisation_code]).to include(
+          "is too long (maximum is 5 characters)"
+        )
       end
     end
 
     context "with valid fields" do
-      let(:row) { { "VACCINATED" => "Yes", "ANATOMICAL_SITE" => "nasal" } }
+      let(:row) do
+        {
+          "ORGANISATION_CODE" => "abc",
+          "VACCINATED" => "Yes",
+          "ANATOMICAL_SITE" => "nasal"
+        }
+      end
 
       it { should be_valid }
     end
@@ -149,6 +172,22 @@ describe ImmunisationImport::Row, type: :model do
       let(:row) { { "ANATOMICAL_SITE" => "other" } }
 
       it { should be_nil }
+    end
+  end
+
+  describe "#organisation_code" do
+    subject(:organisation_code) { immunisation_import_row.organisation_code }
+
+    context "without a value" do
+      let(:row) { {} }
+
+      it { should be_nil }
+    end
+
+    context "with a value" do
+      let(:row) { { "ORGANISATION_CODE" => "abc" } }
+
+      it { should eq("abc") }
     end
   end
 

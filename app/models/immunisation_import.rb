@@ -28,7 +28,7 @@ class ImmunisationImport < ApplicationRecord
            dependent: :restrict_with_exception,
            foreign_key: :imported_from_id
 
-  EXPECTED_HEADERS = %w[DATE_OF_VACCINATION].freeze
+  EXPECTED_HEADERS = %w[DATE_OF_VACCINATION ORGANISATION_CODE].freeze
 
   validates :csv, presence: true
   validate :csv_is_valid
@@ -75,8 +75,9 @@ class ImmunisationImport < ApplicationRecord
     include ActiveModel::Model
 
     validates :administered, inclusion: [true, false]
-    validates :delivery_site, presence: true, if: :administered
     validates :delivery_method, presence: true, if: :administered
+    validates :delivery_site, presence: true, if: :administered
+    validates :organisation_code, presence: true, length: { maximum: 5 }
     validates :recorded_at, presence: true
 
     def initialize(row)
@@ -126,6 +127,10 @@ class ImmunisationImport < ApplicationRecord
       else
         :intramuscular
       end
+    end
+
+    def organisation_code
+      @row["ORGANISATION_CODE"]
     end
 
     def recorded_at
