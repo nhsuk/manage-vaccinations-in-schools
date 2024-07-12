@@ -77,6 +77,8 @@ en:
               blank: is required but missing
             delivery_site:
               blank: is required but missing
+            organisation_code:
+              blank: is required but missing
   activerecord:
     attributes:
       consent:
