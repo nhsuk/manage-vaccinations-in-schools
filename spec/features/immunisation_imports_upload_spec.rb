@@ -25,7 +25,7 @@ describe "Immunisation imports" do
   end
 
   def given_i_am_signed_in
-    @team = create(:team, :with_one_nurse, :with_one_location)
+    @team = create(:team, :with_one_nurse, :with_one_location, ods_code: "R1L")
     sign_in @team.users.first
   end
 

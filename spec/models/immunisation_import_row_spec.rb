@@ -5,7 +5,7 @@ require "rails_helper"
 describe ImmunisationImport::Row, type: :model do
   subject(:immunisation_import_row) { described_class.new(data:, team:) }
 
-  let(:team) { create(:team) }
+  let(:team) { create(:team, ods_code: "abc") }
 
   describe "validations" do
     context "with an empty row" do
@@ -46,6 +46,9 @@ describe ImmunisationImport::Row, type: :model do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:organisation_code]).to include(
           "is too long (maximum is 5 characters)"
+        )
+        expect(immunisation_import_row.errors[:organisation_code]).to include(
+          "must be equal to abc"
         )
       end
     end
