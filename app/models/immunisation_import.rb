@@ -54,7 +54,7 @@ class ImmunisationImport < ApplicationRecord
     load_data! if data.nil?
     return if invalid?
 
-    self.rows = data.map { |raw_row| Row.new(raw_row) }
+    self.rows = data.map { |row_data| Row.new(data: row_data, team: user.team) }
   end
 
   def process!(patient_session:)
@@ -80,8 +80,9 @@ class ImmunisationImport < ApplicationRecord
     validates :organisation_code, presence: true, length: { maximum: 5 }
     validates :recorded_at, presence: true
 
-    def initialize(row)
-      @row = row
+    def initialize(data:, team:)
+      @data = data
+      @team = team
     end
 
     def to_vaccination_record
@@ -96,7 +97,7 @@ class ImmunisationImport < ApplicationRecord
     end
 
     def administered
-      vaccinated = @row["VACCINATED"]&.downcase
+      vaccinated = @data["VACCINATED"]&.downcase
 
       if vaccinated == "yes"
         true
@@ -116,7 +117,7 @@ class ImmunisationImport < ApplicationRecord
     }.freeze
 
     def delivery_site
-      DELIVERY_SITES[@row["ANATOMICAL_SITE"]&.downcase]
+      DELIVERY_SITES[@data["ANATOMICAL_SITE"]&.downcase]
     end
 
     def delivery_method
@@ -130,7 +131,7 @@ class ImmunisationImport < ApplicationRecord
     end
 
     def organisation_code
-      @row["ORGANISATION_CODE"]
+      @data["ORGANISATION_CODE"]
     end
 
     def recorded_at
