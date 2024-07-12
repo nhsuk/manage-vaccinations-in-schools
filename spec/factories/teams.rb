@@ -7,7 +7,7 @@
 #  id                 :bigint           not null, primary key
 #  email              :string
 #  name               :text             not null
-#  ods_code           :string
+#  ods_code           :string           not null
 #  phone              :string
 #  privacy_policy_url :string
 #  created_at         :datetime         not null
@@ -16,7 +16,8 @@
 #
 # Indexes
 #
-#  index_teams_on_name  (name) UNIQUE
+#  index_teams_on_name      (name) UNIQUE
+#  index_teams_on_ods_code  (ods_code) UNIQUE
 #
 FactoryBot.define do
   factory :team do
