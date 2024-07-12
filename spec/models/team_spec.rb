@@ -19,18 +19,19 @@
 #  index_teams_on_name      (name) UNIQUE
 #  index_teams_on_ods_code  (ods_code) UNIQUE
 #
-class Team < ApplicationRecord
-  has_many :campaigns
-  has_many :locations
-  has_and_belongs_to_many :users
 
-  validates :email, presence: true, notify_safe_email: true
-  validates :name, presence: true, uniqueness: true
-  validates :ods_code, presence: true, uniqueness: true
-  validates :phone, presence: true, phone: true
+require "rails_helper"
 
-  def campaign
-    # TODO: Update the app to properly support multiple campaigns per team
-    campaigns.first
+describe Team, type: :model do
+  subject(:team) { build(:team) }
+
+  describe "validations" do
+    it { should validate_presence_of(:email) }
+    it { should validate_presence_of(:name) }
+    it { should validate_presence_of(:ods_code) }
+    it { should validate_presence_of(:phone) }
+
+    it { should validate_uniqueness_of(:name) }
+    it { should validate_uniqueness_of(:ods_code) }
   end
 end

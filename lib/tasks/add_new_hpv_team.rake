@@ -19,7 +19,7 @@ task :add_new_hpv_team,
     email = prompt_user_for "Enter team email:", required: true
     name = prompt_user_for "Enter team name:", required: true
     phone = prompt_user_for "Enter team phone:", required: true
-    ods_code = prompt_user_for "Enter ODS code:"
+    ods_code = prompt_user_for "Enter ODS code:", required: true
     privacy_policy_url = prompt_user_for "Enter privacy policy URL:"
     reply_to_id = prompt_user_for "Reply-to ID (from GOVUK Notify):"
   elsif args.to_a.size == 6

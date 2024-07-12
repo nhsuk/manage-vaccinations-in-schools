@@ -370,6 +370,8 @@ en:
             full_name:
               blank: Enter your full name
               too_long: Enter a full name that is less than 255 characters long
+            ods_code:
+              blank: Enter an ODS code
             password:
               blank: Enter a password
               too_long: Enter a password that is less than 128 characters long
