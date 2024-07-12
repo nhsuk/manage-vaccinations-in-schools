@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_11_110842) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_12_102406) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -331,10 +331,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_11_110842) do
     t.datetime "updated_at", null: false
     t.string "email"
     t.string "privacy_policy_url"
-    t.string "ods_code"
+    t.string "ods_code", null: false
     t.string "reply_to_id"
     t.string "phone"
     t.index ["name"], name: "index_teams_on_name", unique: true
+    t.index ["ods_code"], name: "index_teams_on_ods_code", unique: true
   end
 
   create_table "teams_users", id: false, force: :cascade do |t|
