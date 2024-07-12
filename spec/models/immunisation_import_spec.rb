@@ -25,7 +25,8 @@ describe ImmunisationImport do
 
   let(:file) { "nivs.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/immunisation_import/#{file}") }
-  let(:user) { create(:user) }
+  let(:team) { create(:team, ods_code: "R1L") }
+  let(:user) { create(:user, teams: [team]) }
 
   it { should validate_presence_of(:csv) }
 

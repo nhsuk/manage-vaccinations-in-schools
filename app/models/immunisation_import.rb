@@ -77,7 +77,14 @@ class ImmunisationImport < ApplicationRecord
     validates :administered, inclusion: [true, false]
     validates :delivery_method, presence: true, if: :administered
     validates :delivery_site, presence: true, if: :administered
-    validates :organisation_code, presence: true, length: { maximum: 5 }
+    validates :organisation_code,
+              presence: true,
+              length: {
+                maximum: 5
+              },
+              comparison: {
+                equal_to: :valid_ods_code
+              }
     validates :recorded_at, presence: true
 
     def initialize(data:, team:)
@@ -136,6 +143,12 @@ class ImmunisationImport < ApplicationRecord
 
     def recorded_at
       Time.zone.now
+    end
+
+    private
+
+    def valid_ods_code
+      @team.ods_code
     end
   end
 
