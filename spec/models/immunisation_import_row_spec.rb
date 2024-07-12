@@ -3,11 +3,13 @@
 require "rails_helper"
 
 describe ImmunisationImport::Row, type: :model do
-  subject(:immunisation_import_row) { described_class.new(row) }
+  subject(:immunisation_import_row) { described_class.new(data:, team:) }
+
+  let(:team) { create(:team) }
 
   describe "validations" do
     context "with an empty row" do
-      let(:row) { {} }
+      let(:data) { {} }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -21,7 +23,7 @@ describe ImmunisationImport::Row, type: :model do
     end
 
     context "when missing fields" do
-      let(:row) { { "VACCINATED" => "Yes" } }
+      let(:data) { { "VACCINATED" => "Yes" } }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -38,7 +40,7 @@ describe ImmunisationImport::Row, type: :model do
     end
 
     context "with an invalid organisation code" do
-      let(:row) { { "ORGANISATION_CODE" => "this is too long" } }
+      let(:data) { { "ORGANISATION_CODE" => "this is too long" } }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -49,7 +51,7 @@ describe ImmunisationImport::Row, type: :model do
     end
 
     context "with valid fields" do
-      let(:row) do
+      let(:data) do
         {
           "ORGANISATION_CODE" => "abc",
           "VACCINATED" => "Yes",
@@ -65,25 +67,25 @@ describe ImmunisationImport::Row, type: :model do
     subject(:administered) { immunisation_import_row.administered }
 
     context "without a vaccinated field" do
-      let(:row) { {} }
+      let(:data) { {} }
 
       it { should be_nil }
     end
 
     context "with positive vaccinated field" do
-      let(:row) { { "VACCINATED" => "Yes" } }
+      let(:data) { { "VACCINATED" => "Yes" } }
 
       it { should be(true) }
     end
 
     context "with negative vaccinated field" do
-      let(:row) { { "VACCINATED" => "No" } }
+      let(:data) { { "VACCINATED" => "No" } }
 
       it { should be(false) }
     end
 
     context "with an unknown vaccinated field" do
-      let(:row) { { "VACCINATED" => "Other" } }
+      let(:data) { { "VACCINATED" => "Other" } }
 
       it { should be_nil }
     end
@@ -93,25 +95,25 @@ describe ImmunisationImport::Row, type: :model do
     subject(:delivery_method) { immunisation_import_row.delivery_method }
 
     context "without an anatomical site" do
-      let(:row) { {} }
+      let(:data) { {} }
 
       it { should be_nil }
     end
 
     context "with a nasal anatomical site" do
-      let(:row) { { "ANATOMICAL_SITE" => "nasal" } }
+      let(:data) { { "ANATOMICAL_SITE" => "nasal" } }
 
       it { should eq(:nasal_spray) }
     end
 
     context "with a non-nasal anatomical site" do
-      let(:row) { { "ANATOMICAL_SITE" => "left thigh" } }
+      let(:data) { { "ANATOMICAL_SITE" => "left thigh" } }
 
       it { should eq(:intramuscular) }
     end
 
     context "with an unknown anatomical site" do
-      let(:row) { { "ANATOMICAL_SITE" => "other" } }
+      let(:data) { { "ANATOMICAL_SITE" => "other" } }
 
       it { should be_nil }
     end
@@ -121,55 +123,55 @@ describe ImmunisationImport::Row, type: :model do
     subject(:delivery_site) { immunisation_import_row.delivery_site }
 
     context "without an anatomical site" do
-      let(:row) { {} }
+      let(:data) { {} }
 
       it { should be_nil }
     end
 
     context "with a left thigh anatomical site" do
-      let(:row) { { "ANATOMICAL_SITE" => "left thigh" } }
+      let(:data) { { "ANATOMICAL_SITE" => "left thigh" } }
 
       it { should eq(:left_thigh) }
     end
 
     context "with a right thigh anatomical site" do
-      let(:row) { { "ANATOMICAL_SITE" => "right thigh" } }
+      let(:data) { { "ANATOMICAL_SITE" => "right thigh" } }
 
       it { should eq(:right_thigh) }
     end
 
     context "with a left upper arm anatomical site" do
-      let(:row) { { "ANATOMICAL_SITE" => "left upper arm" } }
+      let(:data) { { "ANATOMICAL_SITE" => "left upper arm" } }
 
       it { should eq(:left_arm_upper_position) }
     end
 
     context "with a right upper arm anatomical site" do
-      let(:row) { { "ANATOMICAL_SITE" => "right upper arm" } }
+      let(:data) { { "ANATOMICAL_SITE" => "right upper arm" } }
 
       it { should eq(:right_arm_upper_position) }
     end
 
     context "with a left buttock anatomical site" do
-      let(:row) { { "ANATOMICAL_SITE" => "left buttock" } }
+      let(:data) { { "ANATOMICAL_SITE" => "left buttock" } }
 
       it { should eq(:left_buttock) }
     end
 
     context "with a right buttock anatomical site" do
-      let(:row) { { "ANATOMICAL_SITE" => "right buttock" } }
+      let(:data) { { "ANATOMICAL_SITE" => "right buttock" } }
 
       it { should eq(:right_buttock) }
     end
 
     context "with a nasal anatomical site" do
-      let(:row) { { "ANATOMICAL_SITE" => "nasal" } }
+      let(:data) { { "ANATOMICAL_SITE" => "nasal" } }
 
       it { should eq(:nose) }
     end
 
     context "with an unknown anatomical site" do
-      let(:row) { { "ANATOMICAL_SITE" => "other" } }
+      let(:data) { { "ANATOMICAL_SITE" => "other" } }
 
       it { should be_nil }
     end
@@ -179,20 +181,20 @@ describe ImmunisationImport::Row, type: :model do
     subject(:organisation_code) { immunisation_import_row.organisation_code }
 
     context "without a value" do
-      let(:row) { {} }
+      let(:data) { {} }
 
       it { should be_nil }
     end
 
     context "with a value" do
-      let(:row) { { "ORGANISATION_CODE" => "abc" } }
+      let(:data) { { "ORGANISATION_CODE" => "abc" } }
 
       it { should eq("abc") }
     end
   end
 
   describe "#recorded_at" do
-    let(:row) { {} }
+    let(:data) { {} }
 
     it { should_not be_nil }
   end
