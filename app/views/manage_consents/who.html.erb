@@ -1,0 +1,26 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: back_link_path,
+        name: "patient page",
+      ) %>
+<% end %>
+
+<% page_title = "Who are you trying to get consent from?" %>
+
+<%= h1 page_title: do %>
+  <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
+    <%= @patient.full_name %>
+  </span>
+  <%= page_title %>
+<% end %>
+
+<%= form_for @consent, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_radio_buttons_fieldset(:new_or_existing_parent, legend: nil) do %>
+    <%= f.govuk_radio_button :new_or_existing_parent, "new",
+                             label: { text: "Add a new parental contact" }, link_errors: true %>
+  <% end %>
+
+  <div class="nhsuk-u-margin-top-6">
+    <%= f.govuk_submit "Continue" %>
+  </div>
+<% end %>

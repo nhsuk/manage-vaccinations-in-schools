@@ -44,9 +44,14 @@ feature "Verbal consent" do
     click_on "Refused"
     click_on @child.full_name
     click_on "Get consent"
-    expect(page).to have_field("Full name", with: @child.parent.name)
 
     # contacting the same parent who refused
+    # TODO: update this when it's possible to pick an existing parental contact
+    choose "Add a new parental contact"
+    click_button "Continue"
+
+    # Details for parent or guardian
+    expect(page).to have_field("Full name", with: @child.parent.name)
     fill_in "Phone number", with: refusing_parent.phone
     fill_in "Full name", with: refusing_parent.name
     # relationship to the child

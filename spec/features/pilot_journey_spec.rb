@@ -176,6 +176,12 @@ describe "Pilot journey" do
 
   def when_i_register_verbal_consent_and_triage
     click_button "Get consent"
+
+    # TODO: update this when it's possible to pick an existing parental contact
+    choose "Add a new parental contact"
+    click_button "Continue"
+
+    # Details for parent or guardian: leave prepopulated details
     click_button "Continue"
 
     choose "By phone"

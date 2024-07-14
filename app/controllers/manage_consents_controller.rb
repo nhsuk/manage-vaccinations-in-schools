@@ -210,7 +210,8 @@ class ManageConsentsController < ApplicationController
       agree: %i[response],
       reason: %i[reason_for_refusal],
       reason_notes: %i[reason_for_refusal_notes],
-      questions: questions_params
+      questions: questions_params,
+      who: %i[new_or_existing_parent]
     }.fetch(current_step)
 
     params
