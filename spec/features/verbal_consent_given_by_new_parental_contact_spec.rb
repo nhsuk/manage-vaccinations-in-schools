@@ -30,6 +30,10 @@ describe "Verbal consent" do
     click_button "Get consent"
 
     # Who are you trying to get consent from?
+    choose "Add a new parental contact"
+    click_button "Continue"
+
+    # Details for parent or guardian
     fill_in "Full name", with: "Jane Smith"
     choose "Mum"
     fill_in "Email address", with: "jsmith@example.com"

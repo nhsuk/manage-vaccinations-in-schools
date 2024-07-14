@@ -30,6 +30,9 @@ describe "Verbal consent" do
     visit session_consents_path(@session)
     click_link @patient.full_name
     click_button "Get consent"
+
+    choose "Add a new parental contact"
+    click_button "Continue"
   end
 
   def then_the_parent_details_are_prefilled
