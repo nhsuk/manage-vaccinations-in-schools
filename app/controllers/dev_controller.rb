@@ -2,54 +2,16 @@
 
 class DevController < ApplicationController
   skip_before_action :authenticate_user!
+  skip_before_action :store_user_location!
   skip_after_action :verify_policy_scoped
 
   before_action :ensure_dev_env
 
   def reset
-    Faker::Config.locale = "en-GB"
-
-    ActiveRecord::Base.connection.transaction do
-      data_tables =
-        ActiveRecord::Base.connection.tables -
-          %w[
-            users
-            schema_migrations
-            ar_internal_metadata
-            flipper_features
-            flipper_gates
-          ]
-      data_tables.each do |table|
-        safe_table_name = ActiveRecord::Base.connection.quote_table_name(table)
-        ActiveRecord::Base.connection.execute(
-          "TRUNCATE #{safe_table_name} RESTART IDENTITY CASCADE"
-        )
-      end
-
-      user =
-        User.find_by(email: "nurse.joy@example.com") ||
-          FactoryBot.create(
-            :user,
-            full_name: "Nurse Joy",
-            email: "nurse.joy@example.com",
-            password: "nurse.joy@example.com"
-          )
-      Audited
-        .audit_class
-        .as_user(user) do
-          FactoryBot.create(
-            :example_campaign,
-            :in_progress,
-            :in_past,
-            :in_future,
-            :hpv,
-            user:
-          )
-        end
-
-      Team.find_by(ods_code: "Y51") ||
-        FactoryBot.create(:team, name: "NMEPFIT SAIS Team", ods_code: "Y51")
-    end
+    session.delete :user_return_to
+    Rake::Task.clear
+    Rails.application.load_tasks
+    Rake::Task["db:seed:replant"].invoke
 
     redirect_to root_path
   end
