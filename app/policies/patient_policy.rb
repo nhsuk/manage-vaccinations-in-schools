@@ -8,7 +8,7 @@ class PatientPolicy
     end
 
     def resolve
-      @scope.joins(:location).where(location: { team_id: @user.teams.ids })
+      @scope.joins(:location)
     end
   end
 end

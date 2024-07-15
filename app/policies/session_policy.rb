@@ -23,18 +23,11 @@ class SessionPolicy
     end
 
     def resolve
-      @scope
-        .and(
-          Session.where(location: nil).or(
-            Session.where(location: @user.team.locations)
-          )
+      @scope.and(
+        Session.where(campaign: nil).or(
+          Session.where(campaign: @user.team.campaigns)
         )
-        .and(
-          Session.where(campaign: nil).or(
-            Session.where(campaign: @user.team.campaigns)
-          )
-        )
-        .rewhere(draft: true)
+      ).rewhere(draft: true)
     end
   end
 end
