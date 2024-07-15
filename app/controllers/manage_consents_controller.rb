@@ -13,9 +13,9 @@ class ManageConsentsController < ApplicationController
   before_action :set_consent, except: %i[create]
   before_action :set_steps, except: %i[create]
   before_action :setup_wizard_translated, except: %i[create]
-  before_action :set_draft_parent,
+  before_action :set_parent,
                 except: %i[create],
-                if: -> { step == "parent-details" }
+                if: -> { step.in?(%w[parent-details confirm]) }
   before_action :set_patient_session
   before_action :set_triage,
                 except: %i[create],
@@ -44,7 +44,7 @@ class ManageConsentsController < ApplicationController
     when :confirm
       handle_confirm
     when :parent_details
-      model = @consent.draft_parent
+      model = @parent
       handle_parent_details
 
       if model.valid?
@@ -129,7 +129,8 @@ class ManageConsentsController < ApplicationController
   end
 
   def handle_parent_details
-    @consent.draft_parent.assign_attributes parent_params
+    @parent.assign_attributes parent_params
+    @consent.draft_parent = @parent
   end
 
   def handle_triage
@@ -161,18 +162,17 @@ class ManageConsentsController < ApplicationController
     @patient = @session.patients.find(params.fetch(:patient_id))
   end
 
-  def set_draft_parent
-    if @consent.draft_parent.nil?
-      # Temporary: Prefill the consent details.
-      # This should be replaced with the design that allows users to choose
-      # from available parent details when submiting a new consent.
-      @consent.draft_parent =
+  def set_parent
+    @parent =
+      @consent.draft_parent ||
+        # Temporary: Prefill the consent details.
+        # This should be replaced with the design that allows users to choose
+        # from available parent details when submiting a new consent.
         Parent.new(
           @patient.parent.attributes.slice(
             *%w[name email phone relationship relationship_other]
           )
         )
-    end
   end
 
   def set_consent
