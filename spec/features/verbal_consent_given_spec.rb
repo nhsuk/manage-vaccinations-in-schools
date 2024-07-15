@@ -7,8 +7,6 @@ describe "Verbal consent" do
 
   scenario "Given" do
     given_i_am_signed_in
-    when_i_start_recording_consent_for_a_patient
-    then_the_parent_details_are_prefilled
 
     when_i_record_that_verbal_consent_was_given
 
@@ -26,22 +24,20 @@ describe "Verbal consent" do
     sign_in team.users.first
   end
 
-  def when_i_start_recording_consent_for_a_patient
+  def when_i_record_that_verbal_consent_was_given
     visit session_consents_path(@session)
     click_link @patient.full_name
     click_button "Get consent"
 
-    choose "Add a new parental contact"
-    click_button "Continue"
-  end
-
-  def then_the_parent_details_are_prefilled
-    expect(page).to have_field("Full name", with: @patient.parent.name)
-  end
-
-  def when_i_record_that_verbal_consent_was_given
     # Who are you trying to get consent from?
-    # Here we are effectively picking the parent that is already on the system, in the cohort
+    choose "#{@patient.parent.name} (#{@patient.parent.relationship_label})"
+    click_button "Continue"
+
+    # Details for parent or guardian
+    expect(page).to have_content(
+      "Details for #{@patient.parent.name} (#{@patient.parent.relationship_label})"
+    )
+    # don't change any details
     click_button "Continue"
 
     # How was the response given?

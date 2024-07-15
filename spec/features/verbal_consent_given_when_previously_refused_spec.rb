@@ -34,7 +34,7 @@ feature "Verbal consent" do
   end
 
   def when_i_record_the_consent_given_for_that_child_from_the_same_parent
-    refusing_parent = @session.patient_sessions.first.consents.first.parent
+    @refusing_parent = @session.patient_sessions.first.consents.first.parent
 
     visit "/dashboard"
     click_on "Vaccination programmes", match: :first
@@ -46,16 +46,16 @@ feature "Verbal consent" do
     click_on "Get consent"
 
     # contacting the same parent who refused
-    # TODO: update this when it's possible to pick an existing parental contact
+    # TODO: update this when it's possible to pick an existing parental contact from a consent form
     choose "Add a new parental contact"
     click_button "Continue"
 
     # Details for parent or guardian
-    expect(page).to have_field("Full name", with: @child.parent.name)
-    fill_in "Phone number", with: refusing_parent.phone
-    fill_in "Full name", with: refusing_parent.name
+    fill_in "Phone number", with: @refusing_parent.phone
+    fill_in "Email address", with: @refusing_parent.email
+    fill_in "Full name", with: @refusing_parent.name
     # relationship to the child
-    choose refusing_parent.relationship_label
+    choose @refusing_parent.relationship_label
 
     click_button "Continue"
 
@@ -88,7 +88,7 @@ feature "Verbal consent" do
 
     expect(sent_emails.last).to be_sent_with_govuk_notify.using_template(
       EMAILS[:parental_consent_confirmation]
-    ).to(@child.parent.email)
+    ).to(@refusing_parent.email)
   end
 
   def and_the_child_is_shown_as_having_consent_given

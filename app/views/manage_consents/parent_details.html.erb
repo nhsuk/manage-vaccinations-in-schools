@@ -5,7 +5,11 @@
       ) %>
 <% end %>
 
-<% page_title = "Details for parent or guardian" %>
+<% page_title = if @parent.recorded?
+       "Details for #{@parent.name} (#{@parent.relationship_label})"
+     else
+       page_title = "Details for parent or guardian"
+     end %>
 
 <%= h1 page_title: do %>
   <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
@@ -17,33 +21,35 @@
 <%= form_for @parent, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <%= f.govuk_text_field :name, label: { text: "Full name" } %>
+  <% unless @parent.recorded? %>
+    <%= f.govuk_text_field :name, label: { text: "Full name" } %>
 
-  <%= f.govuk_radio_buttons_fieldset(:relationship,
-                                     legend: { size: "s",
-                                               text: "Relationship to the child" }) do %>
-    <%= f.govuk_radio_button :relationship, "mother",
-                             label: { text: "Mum" }, link_errors: true %>
-    <%= f.govuk_radio_button :relationship, "father",
-                             label: { text: "Dad" } %>
-    <%= f.govuk_radio_button :relationship, "guardian",
-                             label: { text: "Guardian" } %>
-    <%= f.govuk_radio_button :relationship, "other",
-                             label: { text: "Other" } do %>
-      <p>They need parental responsibility to give consent.</p>
-      <%= f.govuk_text_field :relationship_other,
-                             label: { text: "Relationship to the child" },
-                             hint: { text: "For example, carer" } %>
-      <%= f.govuk_radio_buttons_fieldset(:parental_responsibility,
-                                         legend: { size: "s",
-                                                   text: "Do they have parental responsibility?" },
-                                         hint: { text: "This means they have legal rights and duties relating to the child" }) do %>
-        <%= f.govuk_radio_button :parental_responsibility, "yes",
-                                 label: { text: "Yes" }, link_errors: true %>
-        <%= f.govuk_radio_button :parental_responsibility, "no",
-                                 label: { text: "No" } %>
+    <%= f.govuk_radio_buttons_fieldset(:relationship,
+                                       legend: { size: "s",
+                                                 text: "Relationship to the child" }) do %>
+      <%= f.govuk_radio_button :relationship, "mother",
+                               label: { text: "Mum" }, link_errors: true %>
+      <%= f.govuk_radio_button :relationship, "father",
+                               label: { text: "Dad" } %>
+      <%= f.govuk_radio_button :relationship, "guardian",
+                               label: { text: "Guardian" } %>
+      <%= f.govuk_radio_button :relationship, "other",
+                               label: { text: "Other" } do %>
+        <p>They need parental responsibility to give consent.</p>
+        <%= f.govuk_text_field :relationship_other,
+                               label: { text: "Relationship to the child" },
+                               hint: { text: "For example, carer" } %>
+        <%= f.govuk_radio_buttons_fieldset(:parental_responsibility,
+                                           legend: { size: "s",
+                                                     text: "Do they have parental responsibility?" },
+                                           hint: { text: "This means they have legal rights and duties relating to the child" }) do %>
+          <%= f.govuk_radio_button :parental_responsibility, "yes",
+                                   label: { text: "Yes" }, link_errors: true %>
+          <%= f.govuk_radio_button :parental_responsibility, "no",
+                                   label: { text: "No" } %>
+        <% end %>
+
       <% end %>
-
     <% end %>
   <% end %>
 
