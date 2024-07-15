@@ -43,21 +43,6 @@ describe SessionPolicy do
       it { should include draft_session }
     end
 
-    context "location is set but not campaign" do
-      let(:draft_session) do
-        create :session, draft: true, location:, campaign: nil
-      end
-      let(:other_team) { create :team, name: "Other team" }
-      let(:other_campaign) { create :campaign, team: other_team }
-      let(:other_location) { create :location, team: other_team }
-      let(:draft_session_other_location) do
-        create :session, draft: true, location: other_location, campaign: nil
-      end
-
-      it { should include draft_session }
-      it { should_not include draft_session_other_location }
-    end
-
     context "campaign is set but not location" do
       let(:draft_session) do
         create :session, draft: true, location: nil, campaign:

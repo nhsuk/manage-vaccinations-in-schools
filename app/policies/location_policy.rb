@@ -8,7 +8,7 @@ class LocationPolicy
     end
 
     def resolve
-      @scope.where(team: @user.team)
+      @scope
     end
   end
 end
