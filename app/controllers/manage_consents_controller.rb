@@ -41,6 +41,8 @@ class ManageConsentsController < ApplicationController
     model = @consent
 
     case current_step
+    when :who
+      handle_who
     when :confirm
       handle_confirm
     when :parent_details
@@ -117,6 +119,7 @@ class ManageConsentsController < ApplicationController
       @consent.recorded_at = Time.zone.now
       @consent.save!
     end
+    session.delete(:manage_consents_new_or_existing_parent_id)
   end
 
   def handle_questions
@@ -126,6 +129,13 @@ class ManageConsentsController < ApplicationController
     end
 
     @consent.assign_attributes(form_step: current_step)
+  end
+
+  def handle_who
+    session[:manage_consents_new_or_existing_parent_id] = update_params[
+      :new_or_existing_parent
+    ]
+    @consent.assign_attributes(update_params)
   end
 
   def handle_parent_details
@@ -163,16 +173,13 @@ class ManageConsentsController < ApplicationController
   end
 
   def set_parent
+    new_or_existing_parent = session[:manage_consents_new_or_existing_parent_id]
     @parent =
-      @consent.draft_parent ||
-        # Temporary: Prefill the consent details.
-        # This should be replaced with the design that allows users to choose
-        # from available parent details when submiting a new consent.
-        Parent.new(
-          @patient.parent.attributes.slice(
-            *%w[name email phone relationship relationship_other]
-          )
-        )
+      if new_or_existing_parent == "new" || new_or_existing_parent.nil?
+        @consent.draft_parent || Parent.new
+      else
+        @consent.parent
+      end
   end
 
   def set_consent

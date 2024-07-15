@@ -39,6 +39,7 @@ class Consent < ApplicationRecord
 
   before_save :reset_unused_fields
 
+  attr_reader :new_or_existing_parent
   attr_accessor :triage
 
   has_one :consent_form
@@ -92,7 +93,7 @@ class Consent < ApplicationRecord
   end
 
   on_wizard_step :parent_details do
-    validate :draft_parent_present_unless_self_consent
+    validate :parent_present_unless_self_consent
   end
 
   on_wizard_step :agree do
@@ -198,10 +199,19 @@ class Consent < ApplicationRecord
     recorded_at.present?
   end
 
+  def new_or_existing_parent=(value)
+    @new_or_existing_parent = value
+
+    if value != "new" && (patient.parent.id.to_s == value)
+      self.parent = patient.parent
+    end
+  end
+
   private
 
-  def draft_parent_present_unless_self_consent
-    if recorded_at.nil? && !via_self_consent? && draft_parent.nil?
+  def parent_present_unless_self_consent
+    if recorded_at.nil? && !via_self_consent? && draft_parent.nil? &&
+         parent.nil?
       errors.add(:draft_parent, :blank)
     end
   end

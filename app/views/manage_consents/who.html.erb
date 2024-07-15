@@ -16,6 +16,9 @@
 
 <%= form_for @consent, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_radio_buttons_fieldset(:new_or_existing_parent, legend: nil) do %>
+    <%= f.govuk_radio_button :new_or_existing_parent, @patient.parent.id,
+                             label: { text: "#{@patient.parent.name} (#{@patient.parent.relationship_label})" }, link_errors: true %>
+    <%= f.govuk_radio_divider %>
     <%= f.govuk_radio_button :new_or_existing_parent, "new",
                              label: { text: "Add a new parental contact" }, link_errors: true %>
   <% end %>

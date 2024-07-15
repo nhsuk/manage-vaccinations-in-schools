@@ -91,6 +91,10 @@ class Parent < ApplicationRecord
     end
   end
 
+  def recorded?
+    recorded_at.present?
+  end
+
   private
 
   def reset_unused_fields
