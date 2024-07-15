@@ -16,7 +16,7 @@ describe "Manage vaccines" do
   end
 
   def given_my_team_is_running_an_hpv_vaccination_campaign
-    @team = create(:team, :with_one_nurse, :with_one_location)
+    @team = create(:team, :with_one_nurse)
     @campaign = create(:campaign, :hpv_no_batches, team: @team)
     @vaccine = @campaign.vaccines.first
   end

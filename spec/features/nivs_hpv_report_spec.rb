@@ -12,13 +12,14 @@ describe "NIVS HPV report" do
   end
 
   def given_i_am_signed_in
-    @team = create(:team, :with_one_nurse, :with_one_location)
+    @team = create(:team, :with_one_nurse)
     sign_in @team.users.first
   end
 
   def and_vaccinations_have_happened_in_my_teams_hpv_campaign
     campaign = create(:campaign, :hpv, team: @team)
-    session = create(:session, campaign:, location: @team.locations.first)
+    location = create(:location)
+    session = create(:session, campaign:, location:)
     create_list(:patient_session, 5, :consent_given_triage_not_needed, session:)
     session
       .patient_sessions

@@ -31,11 +31,11 @@ describe "Triage" do
   end
 
   def given_a_campaign_with_a_running_session
-    @team = create(:team, :with_one_nurse, :with_one_location)
+    @team = create(:team, :with_one_nurse)
     @campaign = create(:campaign, :hpv, team: @team)
     @batch = @campaign.batches.first
-    @session =
-      create(:session, campaign: @campaign, location: @team.locations.first)
+    location = create(:location)
+    @session = create(:session, campaign: @campaign, location:)
     @patient =
       create(
         :patient_session,

@@ -25,13 +25,14 @@ describe "Immunisation imports" do
   end
 
   def given_i_am_signed_in
-    @team = create(:team, :with_one_nurse, :with_one_location, ods_code: "R1L")
+    @team = create(:team, :with_one_nurse, ods_code: "R1L")
     sign_in @team.users.first
   end
 
   def and_an_hpv_campaign_is_underway
     campaign = create(:campaign, :hpv, team: @team)
-    @session = create(:session, campaign:, location: @team.locations.first)
+    location = create(:location)
+    @session = create(:session, campaign:, location:)
   end
 
   def when_i_go_to_the_reports_page
