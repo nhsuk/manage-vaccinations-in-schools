@@ -24,9 +24,9 @@ describe "Triage" do
   end
 
   def given_a_campaign_with_a_running_session
-    @team = create(:team, :with_one_nurse, :with_one_location)
+    @team = create(:team, :with_one_nurse)
     campaign = create(:campaign, :hpv, team: @team)
-    @school = @team.locations.first
+    @school = create(:location)
     session =
       create(:session, campaign:, location: @school, date: Time.zone.today)
     @patient =

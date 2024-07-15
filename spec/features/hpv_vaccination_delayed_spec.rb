@@ -21,10 +21,11 @@ describe "HPV Vaccination" do
   end
 
   def given_i_am_signed_in
-    @team = create(:team, :with_one_nurse, :with_one_location)
+    @team = create(:team, :with_one_nurse)
+    location = create(:location)
     campaign = create(:campaign, :hpv, team: @team)
     @batch = campaign.batches.first
-    @session = create(:session, campaign:, location: @team.locations.first)
+    @session = create(:session, campaign:, location:)
     @patient =
       create(
         :patient_session,
