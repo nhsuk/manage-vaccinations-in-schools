@@ -17,8 +17,7 @@ class CohortListRow
                 :child_address_line_2,
                 :child_address_town,
                 :child_address_postcode,
-                :child_nhs_number,
-                :team
+                :child_nhs_number
 
   validates :school_urn, presence: true
   validate :school_urn_is_valid, if: -> { school_urn.present? }
@@ -125,7 +124,7 @@ class CohortListRow
   end
 
   def school_urn_is_valid
-    team.locations.find_by!(urn: school_urn)
+    Location.find_by!(urn: school_urn)
   rescue ActiveRecord::RecordNotFound
     errors.add(:school_urn, :invalid)
   end

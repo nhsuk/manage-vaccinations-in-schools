@@ -53,7 +53,6 @@ class CohortList
             .to_h
             .slice(*EXPECTED_HEADERS) # Remove extra columns
             .transform_keys { _1.downcase.to_sym }
-            .merge(team:)
         )
       end
   end

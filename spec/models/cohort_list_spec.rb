@@ -5,7 +5,7 @@ require "rails_helper"
 describe CohortList, type: :model do
   subject(:cohort_list) { described_class.new(csv:, team:) }
 
-  let(:team) { create(:team, locations: [location]) }
+  let(:team) { create(:team) }
   # Ensure location URN matches the URN in our fixture files
   let!(:location) do
     Location.find_by(urn: "123456") || create(:location, urn: "123456")
