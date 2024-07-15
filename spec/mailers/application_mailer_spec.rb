@@ -14,7 +14,7 @@ describe ApplicationMailer, type: :mailer do
       reply_to_id: "notify-reply-to-id"
     )
   end
-  let(:location) { create(:location, name: "Hogwarts", team:) }
+  let(:location) { create(:location, name: "Hogwarts") }
   let(:campaign) { create(:campaign, :hpv, team:) }
   let(:session) do
     create(:session, campaign:, location:, date: Date.new(2100, 1, 1))

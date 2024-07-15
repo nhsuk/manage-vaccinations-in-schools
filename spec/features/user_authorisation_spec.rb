@@ -24,8 +24,8 @@ describe "User authorisation" do
     @other_team = create(:team, :with_one_nurse)
     campaign = create(:campaign, :hpv, team: @team)
     other_campaign = create(:campaign, :hpv, team: @other_team)
-    location = create(:location, name: "Pilot School", team: @team)
-    other_location = create(:location, name: "Other School", team: @other_team)
+    location = create(:location, name: "Pilot School")
+    other_location = create(:location, name: "Other School")
     @session =
       create(:session, :in_future, campaign:, location:, patients_in_session: 1)
     @other_session =

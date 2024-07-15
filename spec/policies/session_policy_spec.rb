@@ -27,7 +27,7 @@ describe SessionPolicy do
 
     let(:team) { create :team }
     let(:user) { create :user, teams: [team] }
-    let(:location) { create :location, team: }
+    let(:location) { create :location }
     let(:campaign) { create :campaign, team: }
     let(:draft_session) { create :session, draft: true, location:, campaign: }
     let(:session) { create :session, location:, campaign: }
