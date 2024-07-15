@@ -28,8 +28,7 @@ describe Session do
       subject { FactoryBot.build :session, form_step:, campaign: }
 
       let(:form_step) { :location }
-      let(:location) { create :location }
-      let(:team) { create :team, locations: [location] }
+      let(:team) { create :team }
       let(:campaign) { create :campaign, team: }
 
       it { should validate_presence_of(:location_id).on(:update) }

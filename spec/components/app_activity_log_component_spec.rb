@@ -30,7 +30,7 @@ describe AppActivityLogComponent, type: :component do
   let(:component) { described_class.new(patient_session) }
   let(:user) { create(:user, teams: [team], full_name: "Nurse Joy") }
   let(:campaign) { create(:campaign, team:) }
-  let(:location) { create(:location, team:, name: "Hogwarts") }
+  let(:location) { create(:location, name: "Hogwarts") }
   let(:session) { create(:session, campaign:, location:) }
   let(:patient) { create(:patient, location:) }
 
