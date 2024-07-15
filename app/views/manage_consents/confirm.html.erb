@@ -86,7 +86,7 @@
       end %>
 <% end %>
 
-<% if @consent.draft_parent.present? %>
+<% if @parent.present? %>
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "Parent or guardian" } %>
     <%= govuk_summary_list(
@@ -94,30 +94,30 @@
         ) do |summary_list|
           summary_list.with_row do |row|
             row.with_key { "Name" }
-            row.with_value { @consent.draft_parent.name }
+            row.with_value { @parent.name }
           end
         
           summary_list.with_row do |row|
             row.with_key { "Relationship" }
-            row.with_value { @consent.draft_parent.relationship_label.humanize }
+            row.with_value { @parent.relationship_label.humanize }
           end
         
-          if @consent.draft_parent.email.present?
+          if @parent.email.present?
             summary_list.with_row do |row|
               row.with_key { "Email address" }
-              row.with_value { @consent.draft_parent.email }
+              row.with_value { @parent.email }
             end
           end
         
           summary_list.with_row do |row|
             row.with_key { "Phone number" }
-            row.with_value { @consent.draft_parent.phone.presence || "Not provided" }
+            row.with_value { @parent.phone.presence || "Not provided" }
           end
         
-          if @consent.draft_parent.contact_method.present?
+          if @parent.contact_method.present?
             summary_list.with_row do |row|
               row.with_key { "Phone contact method" }
-              row.with_value { @consent.draft_parent.phone_contact_method_description }
+              row.with_value { @parent.phone_contact_method_description }
             end
           end
         end %>
