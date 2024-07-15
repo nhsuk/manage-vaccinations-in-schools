@@ -33,14 +33,6 @@ describe Session do
       let(:campaign) { create :campaign, team: }
 
       it { should validate_presence_of(:location_id).on(:update) }
-
-      it "validates location_id is one of the team's locations" do
-        expect(subject).to(
-          validate_inclusion_of(:location_id).in_array(
-            subject.campaign.team.locations.pluck(:id)
-          ).on(:update)
-        )
-      end
     end
   end
 
