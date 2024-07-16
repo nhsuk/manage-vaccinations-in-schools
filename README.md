@@ -69,9 +69,7 @@ connect to it to create a user:
 
 ```sh
 $ pg_ctl start
-$ psql -U postgres
-> CREATE USER myuser;
-> ALTER USER myuser WITH SUPERUSER;
+$ psql -U postgres -c "CREATE USER $(whoami); ALTER USER $(whoami) WITH SUPERUSER;"
 ```
 
 ### Local development
