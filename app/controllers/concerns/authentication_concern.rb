@@ -35,9 +35,7 @@ module AuthenticationConcern
     end
 
     def selected_cis2_role_is_valid?
-      session["cis2_info"]["selected_roles"].keys.any? do
-        valid_cis2_roles.include? _1
-      end
+      session["cis2_info"]["selected_role"]["code"].in? valid_cis2_roles
     end
 
     def storable_location?

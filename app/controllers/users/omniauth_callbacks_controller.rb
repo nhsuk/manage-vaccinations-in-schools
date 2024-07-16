@@ -7,14 +7,8 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   skip_after_action :verify_policy_scoped
 
   def cis2
-    session["cis2_info"] = {
-      "selected_org" => {
-        "name" => selected_cis2_org["org_name"],
-        "code" => selected_cis2_org["org_code"]
-      },
-      "selected_roles" => selected_cis2_roles,
-      "has_other_roles" => raw_cis2_info["nhsid_nrbac_roles"].length > 1
-    }
+    set_cis2_session_info
+
     if !selected_cis2_org_is_registered?
       redirect_to users_team_not_found_path
     elsif !selected_cis2_role_is_valid?
@@ -49,10 +43,17 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       end
   end
 
-  def selected_cis2_roles
-    @selected_cis2_roles ||= {
-      selected_cis2_nrbac_role["role_code"] =>
-        selected_cis2_nrbac_role["role_name"]
+  def set_cis2_session_info
+    session["cis2_info"] = {
+      "selected_org" => {
+        "name" => selected_cis2_org["org_name"],
+        "code" => selected_cis2_org["org_code"]
+      },
+      "selected_role" => {
+        "name" => selected_cis2_nrbac_role["role_name"],
+        "code" => selected_cis2_nrbac_role["role_code"]
+      },
+      "has_other_roles" => raw_cis2_info["nhsid_nrbac_roles"].length > 1
     }
   end
 end
