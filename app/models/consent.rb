@@ -92,6 +92,10 @@ class Consent < ApplicationRecord
     validates :route, inclusion: { in: Consent.routes.keys }, presence: true
   end
 
+  on_wizard_step :who, exact: true do
+    validates :new_or_existing_parent, presence: true
+  end
+
   on_wizard_step :parent_details do
     validate :parent_present_unless_self_consent
   end

@@ -175,9 +175,9 @@ class ManageConsentsController < ApplicationController
   def set_parent
     new_or_existing_parent = session[:manage_consents_new_or_existing_parent_id]
     @parent =
-      if new_or_existing_parent == "new" || new_or_existing_parent.nil?
+      if new_or_existing_parent == "new"
         @consent.draft_parent || Parent.new
-      else
+      elsif new_or_existing_parent.present?
         @consent.parent
       end
   end
