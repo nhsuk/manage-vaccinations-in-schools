@@ -16,6 +16,10 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
+# Indexes
+#
+#  index_locations_on_urn  (urn) UNIQUE
+#
 FactoryBot.define do
   factory :location do
     name { Faker::Educator.primary_school }
