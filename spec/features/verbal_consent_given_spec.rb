@@ -30,6 +30,11 @@ describe "Verbal consent" do
     click_button "Get consent"
 
     # Who are you trying to get consent from?
+    click_button "Continue"
+    expect(page).to have_content(
+      "Choose who you are trying to get consent from"
+    )
+
     choose "#{@patient.parent.name} (#{@patient.parent.relationship_label})"
     click_button "Continue"
 

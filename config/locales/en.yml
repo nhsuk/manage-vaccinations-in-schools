@@ -188,6 +188,8 @@ en:
               blank: Enter a batch
         consent:
           attributes:
+            new_or_existing_parent:
+              blank: Choose who you are trying to get consent from
             reason_for_refusal:
               inclusion: Choose a reason
             reason_for_refusal_notes:
