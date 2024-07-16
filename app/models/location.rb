@@ -16,6 +16,10 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
+# Indexes
+#
+#  index_locations_on_urn  (urn) UNIQUE
+#
 class Location < ApplicationRecord
   audited
 
@@ -24,4 +28,5 @@ class Location < ApplicationRecord
   has_many :consent_forms, through: :sessions
 
   validates :name, presence: true
+  validates :urn, presence: true, uniqueness: true
 end
