@@ -86,7 +86,7 @@ describe ImmunisationImport do
       expect { immunisation_import.process!(patient_session:) }.to change(
         immunisation_import.vaccination_records,
         :count
-      ).by(11).and change(Location, :count).by(4)
+      ).by(11).and change(immunisation_import.locations, :count).by(4)
     end
   end
 end
