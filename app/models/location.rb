@@ -32,6 +32,7 @@ class Location < ApplicationRecord
   has_many :sessions
   has_many :patients
   has_many :consent_forms, through: :sessions
+  belongs_to :imported_from, class_name: "ImmunisationImport", optional: true
 
   validates :name, presence: true
   validates :urn, presence: true, uniqueness: true

@@ -27,6 +27,9 @@ class ImmunisationImport < ApplicationRecord
   has_many :vaccination_records,
            dependent: :restrict_with_exception,
            foreign_key: :imported_from_id
+  has_many :locations,
+           dependent: :restrict_with_exception,
+           foreign_key: :imported_from_id
 
   EXPECTED_HEADERS = %w[
     ANATOMICAL_SITE
@@ -73,8 +76,10 @@ class ImmunisationImport < ApplicationRecord
         .map(&:to_location)
         .uniq(&:urn)
         .reject(&:invalid?)
-        .map(&:attributes)
-        .tap { Location.create! _1 }
+        .each do |location|
+          location.imported_from = self
+          location.save!
+        end
 
       rows
         .map(&:to_vaccination_record)
