@@ -187,6 +187,8 @@ class ManageConsentsController < ApplicationController
       policy_scope(Consent).unscope(where: :recorded_at).find(
         params[:consent_id]
       )
+    @consent.new_or_existing_parent =
+      session[:manage_consents_new_or_existing_parent_id]
   end
 
   def set_patient_session
