@@ -19,17 +19,20 @@
 #  session_reminder_sent_at :datetime
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
+#  imported_from_id         :bigint
 #  location_id              :bigint
 #  parent_id                :bigint
 #
 # Indexes
 #
-#  index_patients_on_location_id  (location_id)
-#  index_patients_on_nhs_number   (nhs_number) UNIQUE
-#  index_patients_on_parent_id    (parent_id)
+#  index_patients_on_imported_from_id  (imported_from_id)
+#  index_patients_on_location_id       (location_id)
+#  index_patients_on_nhs_number        (nhs_number) UNIQUE
+#  index_patients_on_parent_id         (parent_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (imported_from_id => immunisation_imports.id)
 #  fk_rails_...  (location_id => locations.id)
 #  fk_rails_...  (parent_id => parents.id)
 #
@@ -40,6 +43,7 @@ class Patient < ApplicationRecord
 
   belongs_to :location, optional: true
   belongs_to :parent, optional: true
+  belongs_to :imported_from, class_name: "ImmunisationImport", optional: true
   has_many :patient_sessions
   has_many :sessions, through: :patient_sessions
   has_many :triage, through: :patient_sessions
