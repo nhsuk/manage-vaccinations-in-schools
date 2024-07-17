@@ -110,8 +110,13 @@ class ImmunisationImport < ApplicationRecord
                 equal_to: :valid_ods_code
               }
     validates :recorded_at, presence: true
+
     validates :school_name, presence: true
     validates :school_urn, presence: true
+
+    validates :patient_first_name, presence: true
+    validates :patient_last_name, presence: true
+    validates :patient_nhs_number, presence: true
 
     def initialize(data:, team:)
       @data = data
@@ -175,6 +180,22 @@ class ImmunisationImport < ApplicationRecord
 
     def recorded_at
       Time.zone.now
+    end
+
+    def patient_first_name
+      @data["PERSON_FORENAME"]
+    end
+
+    def patient_last_name
+      @data["PERSON_SURNAME"]
+    end
+
+    def patient_date_of_birth
+      @data["PERSON_DOB"]
+    end
+
+    def patient_nhs_number
+      @data["NHS_NUMBER"]
     end
 
     def school_name
