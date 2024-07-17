@@ -3,8 +3,11 @@
 require "rails_helper"
 
 describe ImmunisationImport::Row, type: :model do
-  subject(:immunisation_import_row) { described_class.new(data:, team:) }
+  subject(:immunisation_import_row) do
+    described_class.new(data:, campaign:, team:)
+  end
 
+  let(:campaign) { create(:campaign) }
   let(:team) { create(:team, ods_code: "abc") }
 
   describe "validations" do
@@ -64,7 +67,8 @@ describe ImmunisationImport::Row, type: :model do
           "PERSON_FORENAME" => "Harry",
           "PERSON_SURNAME" => "Potter",
           "PERSON_DOB" => "20120101",
-          "NHS_NUMBER" => "1234567890"
+          "NHS_NUMBER" => "1234567890",
+          "DATE_OF_VACCINATION" => "20240101"
         }
       end
 

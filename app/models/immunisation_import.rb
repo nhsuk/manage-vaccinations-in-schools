@@ -69,7 +69,10 @@ class ImmunisationImport < ApplicationRecord
     load_data! if data.nil?
     return if invalid?
 
-    self.rows = data.map { |row_data| Row.new(data: row_data, team: user.team) }
+    self.rows =
+      data.map do |row_data|
+        Row.new(data: row_data, campaign:, team: user.team)
+      end
   end
 
   def process!(patient_session:)
@@ -93,6 +96,16 @@ class ImmunisationImport < ApplicationRecord
         .each do |patient|
           patient.imported_from = self
           patient.save!
+        end
+
+      rows
+        .map(&:to_session)
+        .uniq { [_1.date, _1.location_id] }
+        .reject(&:persisted?)
+        .reject(&:invalid?)
+        .each do |session|
+          session.imported_from = self
+          session.save!
         end
 
       rows
@@ -134,8 +147,11 @@ class ImmunisationImport < ApplicationRecord
                 with: /\A\d{8}\z/
               }
 
-    def initialize(data:, team:)
+    validates :session_date, presence: true, format: { with: /\A\d{8}\z/ }
+
+    def initialize(data:, campaign:, team:)
       @data = data
+      @campaign = campaign
       @team = team
     end
 
@@ -143,6 +159,15 @@ class ImmunisationImport < ApplicationRecord
       return unless valid?
 
       Location.new(name: school_name, urn: school_urn)
+    end
+
+    def to_session
+      return unless valid?
+
+      @campaign.sessions.find_or_initialize_by(
+        date: session_date,
+        location: Location.find_by(urn: school_urn)
+      )
     end
 
     def to_patient
@@ -232,6 +257,10 @@ class ImmunisationImport < ApplicationRecord
 
     def school_urn
       @data["SCHOOL_URN"]&.strip
+    end
+
+    def session_date
+      @data["DATE_OF_VACCINATION"]&.strip
     end
 
     private
