@@ -60,7 +60,10 @@ describe ImmunisationImport::Row, type: :model do
           "VACCINATED" => "Yes",
           "ANATOMICAL_SITE" => "nasal",
           "SCHOOL_NAME" => "Hogwarts",
-          "SCHOOL_URN" => "123456"
+          "SCHOOL_URN" => "123456",
+          "PERSON_FORENAME" => "Harry",
+          "PERSON_SURNAME" => "Potter",
+          "NHS_NUMBER" => "1234567890"
         }
       end
 
