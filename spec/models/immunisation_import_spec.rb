@@ -92,6 +92,7 @@ describe ImmunisationImport, type: :model do
         .to change(immunisation_import.vaccination_records, :count).by(11)
         .and change(immunisation_import.locations, :count).by(4)
         .and change(immunisation_import.patients, :count).by(11)
+        .and change(immunisation_import.sessions, :count).by(4)
 
       # Second import should duplicate the vaccination records but nothing else.
 
@@ -100,6 +101,7 @@ describe ImmunisationImport, type: :model do
         .to change(immunisation_import.vaccination_records, :count).by(11)
         .and not_change(immunisation_import.locations, :count)
         .and not_change(immunisation_import.patients, :count)
+        .and not_change(immunisation_import.sessions, :count)
     end
   end
 end
