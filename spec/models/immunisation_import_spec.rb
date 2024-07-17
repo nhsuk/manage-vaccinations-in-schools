@@ -80,13 +80,15 @@ describe ImmunisationImport do
   end
 
   describe "#process!" do
-    it "creates locations and vaccination records" do
+    it "creates locations, patients, and vaccination records" do
       # TEMPORARY: Pass in a dummy patient session. We will iterate this out.
       patient_session = create(:patient_session, user:)
-      expect { immunisation_import.process!(patient_session:) }.to change(
-        immunisation_import.vaccination_records,
-        :count
-      ).by(11).and change(immunisation_import.locations, :count).by(4)
+
+      # stree-ignore
+      expect { immunisation_import.process!(patient_session:) }
+        .to change(immunisation_import.vaccination_records, :count).by(11)
+        .and change(immunisation_import.locations, :count).by(4)
+        .and change(immunisation_import.patients, :count).by(11)
     end
   end
 end
