@@ -110,6 +110,8 @@ class ImmunisationImport < ApplicationRecord
                 equal_to: :valid_ods_code
               }
     validates :recorded_at, presence: true
+    validates :school_name, presence: true
+    validates :school_urn, presence: true
 
     def initialize(data:, team:)
       @data = data
@@ -119,10 +121,7 @@ class ImmunisationImport < ApplicationRecord
     def to_location
       return unless valid?
 
-      Location.new(
-        name: @data["SCHOOL_NAME"].strip,
-        urn: @data["SCHOOL_URN"].strip
-      )
+      Location.new(name: school_name, urn: school_urn)
     end
 
     def to_vaccination_record
@@ -176,6 +175,14 @@ class ImmunisationImport < ApplicationRecord
 
     def recorded_at
       Time.zone.now
+    end
+
+    def school_name
+      @data["SCHOOL_NAME"]&.strip
+    end
+
+    def school_urn
+      @data["SCHOOL_URN"]&.strip
     end
 
     private
