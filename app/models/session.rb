@@ -14,11 +14,17 @@
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  campaign_id       :bigint
+#  imported_from_id  :bigint
 #  location_id       :bigint
 #
 # Indexes
 #
-#  index_sessions_on_campaign_id  (campaign_id)
+#  index_sessions_on_campaign_id       (campaign_id)
+#  index_sessions_on_imported_from_id  (imported_from_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (imported_from_id => immunisation_imports.id)
 #
 class Session < ApplicationRecord
   include WizardFormConcern
@@ -33,6 +39,7 @@ class Session < ApplicationRecord
   delegate :team, to: :campaign
   belongs_to :campaign, optional: true
   belongs_to :location, optional: true
+  belongs_to :imported_from, class_name: "ImmunisationImport", optional: true
   has_many :consent_forms
   has_many :patient_sessions
   has_many :patients, through: :patient_sessions

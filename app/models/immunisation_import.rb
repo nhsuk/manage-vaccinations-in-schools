@@ -28,15 +28,13 @@ class ImmunisationImport < ApplicationRecord
 
   belongs_to :user
   belongs_to :campaign
-  has_many :vaccination_records,
-           dependent: :restrict_with_exception,
-           foreign_key: :imported_from_id
-  has_many :locations,
-           dependent: :restrict_with_exception,
-           foreign_key: :imported_from_id
-  has_many :patients,
-           dependent: :restrict_with_exception,
-           foreign_key: :imported_from_id
+  with_options dependent: :restrict_with_exception,
+               foreign_key: :imported_from_id do
+    has_many :vaccination_records
+    has_many :locations
+    has_many :sessions
+    has_many :patients
+  end
 
   EXPECTED_HEADERS = %w[
     ANATOMICAL_SITE

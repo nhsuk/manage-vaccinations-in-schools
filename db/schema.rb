@@ -328,7 +328,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_18_102202) do
     t.date "send_reminders_at"
     t.date "close_consent_at"
     t.integer "time_of_day"
+    t.bigint "imported_from_id"
     t.index ["campaign_id"], name: "index_sessions_on_campaign_id"
+    t.index ["imported_from_id"], name: "index_sessions_on_imported_from_id"
   end
 
   create_table "teams", force: :cascade do |t|
@@ -441,6 +443,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_18_102202) do
   add_foreign_key "patients", "immunisation_imports", column: "imported_from_id"
   add_foreign_key "patients", "locations"
   add_foreign_key "patients", "parents"
+  add_foreign_key "sessions", "immunisation_imports", column: "imported_from_id"
   add_foreign_key "triage", "patient_sessions"
   add_foreign_key "triage", "users"
   add_foreign_key "vaccination_records", "batches"
