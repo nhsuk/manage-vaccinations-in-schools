@@ -85,6 +85,14 @@ class ImmunisationImport < ApplicationRecord
         end
 
       rows
+        .map(&:to_patient)
+        .uniq(&:nhs_number)
+        .each do |patient|
+          patient.imported_from = self
+          patient.save!
+        end
+
+      rows
         .map(&:to_vaccination_record)
         .each do |record|
           record.user = user
@@ -127,6 +135,18 @@ class ImmunisationImport < ApplicationRecord
       return unless valid?
 
       Location.new(name: school_name, urn: school_urn)
+    end
+
+    def to_patient
+      return unless valid?
+
+      Patient.new(
+        first_name: patient_first_name,
+        last_name: patient_last_name,
+        date_of_birth: patient_date_of_birth,
+        nhs_number: patient_nhs_number,
+        location: Location.find_by(urn: school_urn)
+      )
     end
 
     def to_vaccination_record
