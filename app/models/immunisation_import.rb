@@ -30,6 +30,9 @@ class ImmunisationImport < ApplicationRecord
   has_many :locations,
            dependent: :restrict_with_exception,
            foreign_key: :imported_from_id
+  has_many :patients,
+           dependent: :restrict_with_exception,
+           foreign_key: :imported_from_id
 
   EXPECTED_HEADERS = %w[
     ANATOMICAL_SITE

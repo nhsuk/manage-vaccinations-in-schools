@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_16_134016) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_17_101136) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -308,6 +308,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_16_134016) do
     t.datetime "sent_reminder_at"
     t.datetime "session_reminder_sent_at"
     t.bigint "parent_id"
+    t.bigint "imported_from_id"
+    t.index ["imported_from_id"], name: "index_patients_on_imported_from_id"
     t.index ["location_id"], name: "index_patients_on_location_id"
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
     t.index ["parent_id"], name: "index_patients_on_parent_id"
@@ -433,6 +435,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_16_134016) do
   add_foreign_key "immunisation_imports", "users"
   add_foreign_key "locations", "immunisation_imports", column: "imported_from_id"
   add_foreign_key "patient_sessions", "users", column: "created_by_user_id"
+  add_foreign_key "patients", "immunisation_imports", column: "imported_from_id"
   add_foreign_key "patients", "locations"
   add_foreign_key "patients", "parents"
   add_foreign_key "triage", "patient_sessions"
