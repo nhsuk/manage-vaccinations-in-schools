@@ -58,7 +58,9 @@ describe ImmunisationImport::Row, type: :model do
         {
           "ORGANISATION_CODE" => "abc",
           "VACCINATED" => "Yes",
-          "ANATOMICAL_SITE" => "nasal"
+          "ANATOMICAL_SITE" => "nasal",
+          "SCHOOL_NAME" => "Hogwarts",
+          "SCHOOL_URN" => "123456"
         }
       end
 
