@@ -27,6 +27,7 @@ class ImmunisationImport < ApplicationRecord
   attr_accessor :csv_is_malformed, :data, :rows
 
   belongs_to :user
+  belongs_to :campaign
   has_many :vaccination_records,
            dependent: :restrict_with_exception,
            foreign_key: :imported_from_id

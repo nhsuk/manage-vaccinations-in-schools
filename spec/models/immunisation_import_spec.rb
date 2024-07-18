@@ -23,8 +23,8 @@
 #
 require "rails_helper"
 
-describe ImmunisationImport do
-  subject(:immunisation_import) { described_class.create!(csv:, user:) }
+describe ImmunisationImport, type: :model do
+  subject(:immunisation_import) { create(:immunisation_import, csv:, user:) }
 
   let(:file) { "nivs.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/immunisation_import/#{file}") }

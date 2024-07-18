@@ -23,4 +23,5 @@ class Campaign < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_many :triage, dependent: :destroy
   has_many :consents, dependent: :destroy
+  has_many :immunisation_imports, dependent: :destroy
 end
