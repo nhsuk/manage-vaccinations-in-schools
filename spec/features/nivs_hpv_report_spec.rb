@@ -44,7 +44,7 @@ describe "NIVS HPV report" do
 
     click_on "Vaccination programmes", match: :first
     click_on "HPV"
-    click_on "Reports"
+    click_on "Uploaded reports"
   end
 
   def and_i_download_the_nivs_hpv_report
