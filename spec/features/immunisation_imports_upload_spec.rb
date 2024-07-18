@@ -74,12 +74,12 @@ describe "Immunisation imports" do
   end
 
   def then_i_should_see_the_errors_page
-    expect(page).to have_content("The vaccination events could not be added")
+    expect(page).to have_content("The vaccinations could not be added")
     expect(page).to have_content("Row 2")
   end
 
   def and_i_go_back_to_the_upload_page
-    click_on "Upload a new vaccination report"
+    click_on "Back"
   end
 
   def when_i_upload_a_valid_file

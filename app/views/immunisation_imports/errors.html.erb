@@ -1,13 +1,16 @@
-<% title = "The vaccination events could not be added" %>
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: new_campaign_immunisation_import_path(@campaign),
+        name: @campaign.name,
+      ) %>
+<% end %>
 
-<% content_for :page_title, "#{@campaign.name} – #{title}" %>
+<% title = "The vaccinations could not be added" %>
 
-<%= render "breadcrumbs" %>
-
-<%= h1 title %>
+<%= h1 title, page_title: "#{@campaign.name} – #{title}" %>
 
 <p>
-  It wasn’t possible to add the vaccination events due to the following errors in the uploaded CSV file:
+  It wasn’t possible to add the vaccinations due to the following errors in the uploaded CSV file:
 </p>
 
 <% @immunisation_import.errors.each do |error| %>
@@ -29,7 +32,3 @@
     <% end %>
   </ul>
 <% end %>
-
-<p>
-  <%= govuk_link_to "Upload a new vaccination report", new_campaign_immunisation_import_path, class: "nhsuk-button" %>
-</p>
