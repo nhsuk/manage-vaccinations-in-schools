@@ -63,6 +63,7 @@ describe ImmunisationImport::Row, type: :model do
           "SCHOOL_URN" => "123456",
           "PERSON_FORENAME" => "Harry",
           "PERSON_SURNAME" => "Potter",
+          "PERSON_DOB" => "20120101",
           "NHS_NUMBER" => "1234567890"
         }
       end

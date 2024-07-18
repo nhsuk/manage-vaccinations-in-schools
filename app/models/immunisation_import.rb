@@ -126,6 +126,11 @@ class ImmunisationImport < ApplicationRecord
     validates :patient_first_name, presence: true
     validates :patient_last_name, presence: true
     validates :patient_nhs_number, presence: true
+    validates :patient_date_of_birth,
+              presence: true,
+              format: {
+                with: /\A\d{8}\z/
+              }
 
     def initialize(data:, team:)
       @data = data
@@ -195,28 +200,28 @@ class ImmunisationImport < ApplicationRecord
       end
     end
 
-    def organisation_code
-      @data["ORGANISATION_CODE"]
-    end
-
     def recorded_at
       Time.zone.now
     end
 
+    def organisation_code
+      @data["ORGANISATION_CODE"]&.strip
+    end
+
     def patient_first_name
-      @data["PERSON_FORENAME"]
+      @data["PERSON_FORENAME"]&.strip
     end
 
     def patient_last_name
-      @data["PERSON_SURNAME"]
+      @data["PERSON_SURNAME"]&.strip
     end
 
     def patient_date_of_birth
-      @data["PERSON_DOB"]
+      @data["PERSON_DOB"]&.strip
     end
 
     def patient_nhs_number
-      @data["NHS_NUMBER"]
+      @data["NHS_NUMBER"]&.gsub(/\s/, "")
     end
 
     def school_name
