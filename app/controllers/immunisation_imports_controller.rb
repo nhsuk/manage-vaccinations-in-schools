@@ -45,6 +45,6 @@ class ImmunisationImportsController < ApplicationController
     params
       .fetch(:immunisation_import, {})
       .permit(:csv)
-      .merge(user: current_user)
+      .merge(user: current_user, campaign: @campaign)
   end
 end
