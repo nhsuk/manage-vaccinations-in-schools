@@ -1,4 +1,4 @@
-<%= h1 @campaign.name, page_title: "#{@campaign.name} – Reports" %>
+<%= h1 @campaign.name, page_title: "#{@campaign.name} – Uploaded reports" %>
 
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
@@ -14,7 +14,7 @@
       )
       nav.with_item(
         text: "Reports",
-        href: campaign_reports_path(@campaign),
+        href: campaign_immunisation_imports_path(@campaign),
         selected: true,
       )
     end %>
