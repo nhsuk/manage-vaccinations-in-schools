@@ -22,6 +22,9 @@ describe "Immunisation imports" do
 
     when_i_upload_a_valid_file
     then_i_should_see_the_success_page
+
+    when_i_click_on_the_back_link
+    then_i_should_see_the_upload
   end
 
   def given_i_am_signed_in
@@ -90,5 +93,14 @@ describe "Immunisation imports" do
 
   def then_i_should_see_the_success_page
     expect(page).to have_content("Vaccination events uploaded")
+  end
+
+  def when_i_click_on_the_back_link
+    click_on "HPV"
+  end
+
+  def then_i_should_see_the_upload
+    expect(page).to have_content("Uploaded by Test User")
+    expect(page).to have_content("Records 0")
   end
 end
