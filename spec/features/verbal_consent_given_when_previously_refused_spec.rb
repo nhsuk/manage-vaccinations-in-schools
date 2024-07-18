@@ -39,6 +39,7 @@ feature "Verbal consent" do
     visit "/dashboard"
     click_on "Vaccination programmes", match: :first
     click_on "HPV"
+    click_on "School sessions"
     click_on "Pilot School"
     click_on "Check consent responses"
     click_on "Refused"

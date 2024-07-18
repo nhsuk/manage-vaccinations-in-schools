@@ -48,6 +48,7 @@ describe "User authorisation" do
     visit "/dashboard"
     click_on "Vaccination programmes", match: :first
     click_on "HPV"
+    click_on "School sessions"
     click_on "Pilot School"
     click_on "Check consent responses"
   end
