@@ -1,13 +1,19 @@
-<% title = "Upload vaccination events" %>
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: campaign_immunisation_imports_path(@campaign),
+        name: @campaign.name,
+      ) %>
+<% end %>
 
-<% content_for :page_title, "#{@campaign.name} – #{title}" %>
+<% title = "Upload a report on #{@campaign.name} vaccinations" %>
+<% hint = "This will go to NHS England. Make sure the CSV you upload has the same format as your usual reporting template." %>
 
-<%= render "breadcrumbs" %>
+<% content_for :page_title, title %>
 
 <%= form_with model: @immunisation_import, url: campaign_immunisation_imports_path do |f| %>
   <%= f.govuk_error_summary %>
 
-  <%= f.govuk_file_field :csv, label: { text: title, tag: "h1", size: "l" } %>
+  <%= f.govuk_file_field :csv, label: { text: title, tag: "h1", size: "l" }, hint: { text: hint } %>
 
-  <%= f.govuk_submit "Upload vaccination events" %>
+  <%= f.govuk_submit %>
 <% end %>
