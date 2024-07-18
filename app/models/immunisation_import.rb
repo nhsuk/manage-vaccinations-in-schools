@@ -82,6 +82,7 @@ class ImmunisationImport < ApplicationRecord
     ActiveRecord::Base.transaction do
       rows
         .map(&:to_location)
+        .reject(&:persisted?)
         .uniq(&:urn)
         .reject(&:invalid?)
         .each do |location|
@@ -91,6 +92,7 @@ class ImmunisationImport < ApplicationRecord
 
       rows
         .map(&:to_patient)
+        .reject(&:persisted?)
         .uniq(&:nhs_number)
         .reject(&:invalid?)
         .each do |patient|
@@ -100,8 +102,8 @@ class ImmunisationImport < ApplicationRecord
 
       rows
         .map(&:to_session)
-        .uniq { [_1.date, _1.location_id] }
         .reject(&:persisted?)
+        .uniq { [_1.date, _1.location_id] }
         .reject(&:invalid?)
         .each do |session|
           session.imported_from = self
@@ -158,7 +160,9 @@ class ImmunisationImport < ApplicationRecord
     def to_location
       return unless valid?
 
-      Location.new(name: school_name, urn: school_urn)
+      location = Location.find_or_initialize_by(urn: school_urn)
+      location.name ||= school_name
+      location
     end
 
     def to_session
@@ -173,13 +177,12 @@ class ImmunisationImport < ApplicationRecord
     def to_patient
       return unless valid?
 
-      Patient.new(
-        first_name: patient_first_name,
-        last_name: patient_last_name,
-        date_of_birth: patient_date_of_birth,
-        nhs_number: patient_nhs_number,
-        location: Location.find_by(urn: school_urn)
-      )
+      patient = Patient.find_or_initialize_by(nhs_number: patient_nhs_number)
+      patient.first_name ||= patient_first_name
+      patient.last_name ||= patient_last_name
+      patient.date_of_birth ||= patient_date_of_birth
+      patient.location ||= to_location
+      patient
     end
 
     def to_vaccination_record
