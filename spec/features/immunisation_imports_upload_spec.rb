@@ -40,7 +40,7 @@ describe "Immunisation imports" do
 
     click_on "Vaccination programmes", match: :first
     click_on "HPV"
-    click_on "Reports"
+    click_on "Uploaded reports"
   end
 
   def then_i_should_see_the_upload_link
