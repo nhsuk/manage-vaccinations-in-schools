@@ -111,6 +111,6 @@ class AppPatientDetailsComponent < ViewComponent::Base
   end
 
   def nhs_number_formatted
-    nhs_number.to_s.gsub(/(\d{3})(\d{3})(\d{4})/, "\\1 \\2 \\3")
+    helpers.format_nhs_number(nhs_number)
   end
 end
