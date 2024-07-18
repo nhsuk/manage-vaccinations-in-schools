@@ -93,6 +93,8 @@ describe "Immunisation imports" do
 
   def then_i_should_see_the_success_page
     expect(page).to have_content("Vaccination events uploaded")
+
+    # TODO: Check the vaccination reports are shown once we process the CSV files.
   end
 
   def when_i_click_on_the_back_link
