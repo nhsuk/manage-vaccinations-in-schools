@@ -48,6 +48,7 @@ class VaccinationRecord < ApplicationRecord
   has_one :session, through: :patient_session
   has_one :patient, through: :patient_session
   has_one :campaign, through: :session
+  has_one :location, through: :session
   has_one :team, through: :campaign
 
   scope :administered, -> { where(administered: true) }
