@@ -156,6 +156,21 @@ $ bin/dev
 ...
 ```
 
+#### Debugging with `binding.pry`
+
+TTY echo can get mangled when using `binding.pry` in `bin/dev`. To work around
+this, you can run `rails s` directly if you're not working with any JS or CSS
+assets.
+
+Alternatively, you can install `tmux` and
+[`overmind`](https://github.com/DarthSim/overmind#connecting-to-a-process) which
+is compatible with our `Procfile.dev`:
+
+```bash
+$ overmind start -f Procfile.dev
+$ overmind connect web
+```
+
 ### Testing
 
 To run the Rails tests:
