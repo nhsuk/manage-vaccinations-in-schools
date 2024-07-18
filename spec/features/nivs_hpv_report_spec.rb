@@ -6,7 +6,7 @@ describe "NIVS HPV report" do
   scenario "User downloads the NIVS HPV report" do
     given_i_am_signed_in
     and_vaccinations_have_happened_in_my_teams_hpv_campaign
-    when_i_go_to_the_reports_page
+    when_i_go_to_the_campaign_overview_page
     and_i_download_the_nivs_hpv_report
     then_i_should_see_all_the_administered_vaccinations_from_my_teams_hpv_campaign
   end
@@ -39,16 +39,15 @@ describe "NIVS HPV report" do
     @patient_sessions = session.patient_sessions
   end
 
-  def when_i_go_to_the_reports_page
+  def when_i_go_to_the_campaign_overview_page
     visit "/dashboard"
 
     click_on "Vaccination programmes", match: :first
     click_on "HPV"
-    click_on "Uploaded reports"
   end
 
   def and_i_download_the_nivs_hpv_report
-    click_on "Download NIVS data (CSV)"
+    click_on "Download immunisation report (CSV)"
   end
 
   def then_i_should_see_all_the_administered_vaccinations_from_my_teams_hpv_campaign

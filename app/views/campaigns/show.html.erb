@@ -23,3 +23,5 @@
         href: campaign_immunisation_imports_path(@campaign),
       )
     end %>
+
+<%= govuk_link_to "Download immunisation report (CSV)", download_campaign_reports_path(@campaign), class: "nhsuk-button" %>
