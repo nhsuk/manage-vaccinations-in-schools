@@ -6,6 +6,7 @@ class ImmunisationImportsController < ApplicationController
   layout "two_thirds", only: :new
 
   def index
+    @immunisation_imports = @campaign.immunisation_imports.order(:created_at)
   end
 
   def new
@@ -43,7 +44,10 @@ class ImmunisationImportsController < ApplicationController
   private
 
   def set_campaign
-    @campaign = policy_scope(Campaign).find(params[:campaign_id])
+    @campaign =
+      policy_scope(Campaign).includes(:immunisation_imports).find(
+        params[:campaign_id]
+      )
   end
 
   def immunisation_import_params
