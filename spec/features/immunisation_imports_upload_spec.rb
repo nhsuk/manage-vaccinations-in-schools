@@ -44,11 +44,11 @@ describe "Immunisation imports" do
   end
 
   def then_i_should_see_the_upload_link
-    expect(page).to have_link("Upload vaccination events (CSV)")
+    expect(page).to have_link("Upload a new vaccination report")
   end
 
   def when_i_click_on_the_upload_link
-    click_on "Upload vaccination events (CSV)"
+    click_on "Upload a new vaccination report"
   end
 
   def then_i_should_see_the_upload_page
@@ -77,7 +77,7 @@ describe "Immunisation imports" do
   end
 
   def and_i_go_back_to_the_upload_page
-    click_on "Upload new vaccination events (CSV)"
+    click_on "Upload a new vaccination report"
   end
 
   def when_i_upload_a_valid_file
