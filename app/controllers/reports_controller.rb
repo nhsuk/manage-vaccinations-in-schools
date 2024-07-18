@@ -3,9 +3,6 @@
 class ReportsController < ApplicationController
   before_action :set_campaign
 
-  def index
-  end
-
   def download
     vaccinations =
       policy_scope(VaccinationRecord)

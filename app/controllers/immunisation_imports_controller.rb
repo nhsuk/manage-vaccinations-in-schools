@@ -3,6 +3,9 @@
 class ImmunisationImportsController < ApplicationController
   before_action :set_campaign
 
+  def index
+  end
+
   def new
     @immunisation_import = ImmunisationImport.new
   end
