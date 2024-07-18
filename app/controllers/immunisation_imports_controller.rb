@@ -38,6 +38,13 @@ class ImmunisationImportsController < ApplicationController
                 )
   end
 
+  def show
+    @immunisation_import = @campaign.immunisation_imports.find(params[:id])
+
+    @vaccination_records =
+      @immunisation_import.vaccination_records.includes(:location, :patient)
+  end
+
   def success
   end
 
