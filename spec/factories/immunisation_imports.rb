@@ -23,6 +23,8 @@
 #
 FactoryBot.define do
   factory :immunisation_import do
+    association :campaign
+
     csv { "my,csv\n" }
   end
 end
