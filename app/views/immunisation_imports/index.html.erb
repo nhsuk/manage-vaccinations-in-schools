@@ -9,8 +9,12 @@
 
 <%= render AppSecondaryNavigationComponent.new do |nav|
       nav.with_item(
-        text: "School sessions",
+        text: "Overview",
         href: campaign_path(@campaign),
+      )
+      nav.with_item(
+        text: "School sessions",
+        href: sessions_campaign_path(@campaign),
       )
       nav.with_item(
         text: "Reports",
