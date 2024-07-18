@@ -145,15 +145,14 @@ determine postgres's installation directory and setting up logging accordingly.
 
 ### Development server
 
-This application comes with a `concurrently` script for development
-environments. Use script `bin/dev` to run it:
+This application comes with a `Procfile.dev` for use with `foreman` in
+development environments. Use the script `bin/dev` to run it:
 
 ```bash
 $ bin/dev
-[web] rails server
-[css] yarn build:css --watch
-[js] yarn build --watch
-[sw] yarn build:serviceworker --watch
+13:07:31 web.1  | started with pid 73965
+13:07:31 css.1  | started with pid 73966
+13:07:31 js.1   | started with pid 73967
 ...
 ```
 

@@ -1,11 +1,8 @@
 #!/usr/bin/env sh
 
-yarn concurrently \
-  --kill-others \
-  --handle-input \
-  --names "web,css,js,sw" \
-  --prefix-colors "red.bold,blue.bold,yellow.bold,yellow.bold" \
-  "rails s" \
-  "yarn build:css --watch" \
-  "yarn build --watch" \
-  "yarn build:serviceworker --watch"
+if ! gem list foreman -i --silent; then
+  echo "Installing foreman..."
+  gem install foreman
+fi
+
+exec foreman start -f Procfile.dev "$@"
