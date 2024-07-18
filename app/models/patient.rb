@@ -67,9 +67,10 @@ class Patient < ApplicationRecord
            :last_name,
            :common_name,
            :address_postcode,
+           :nhs_number,
            deterministic: true
 
-  encrypts :nhs_number, :address_line_1, :address_line_2, :address_town
+  encrypts :address_line_1, :address_line_2, :address_town
 
   before_save :remove_spaces_from_nhs_number
 
