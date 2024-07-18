@@ -75,7 +75,7 @@ class ImmunisationImport < ApplicationRecord
       end
   end
 
-  def process!(patient_session:)
+  def process!
     parse_rows! if rows.nil?
     return if invalid?
 
@@ -111,11 +111,14 @@ class ImmunisationImport < ApplicationRecord
         end
 
       rows
-        .map(&:to_vaccination_record)
-        .each do |record|
+        .map { [_1.to_patient_session, _1.to_vaccination_record] }
+        .each do |patient_session, record|
+          patient_session.created_by = user
+          patient_session.save!
+
           record.user = user
-          record.imported_from = self
           record.patient_session = patient_session
+          record.imported_from = self
           record.save!
         end
     end
@@ -183,6 +186,15 @@ class ImmunisationImport < ApplicationRecord
       patient.date_of_birth ||= patient_date_of_birth
       patient.location ||= to_location
       patient
+    end
+
+    def to_patient_session
+      return unless valid?
+
+      PatientSession.find_or_initialize_by(
+        patient: to_patient,
+        session: to_session
+      )
     end
 
     def to_vaccination_record

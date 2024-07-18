@@ -84,24 +84,23 @@ describe ImmunisationImport, type: :model do
 
   describe "#process!" do
     it "creates locations, patients, and vaccination records" do
-      # TEMPORARY: Pass in a dummy patient session. We will iterate this out.
-      patient_session = create(:patient_session, user:)
-
       # stree-ignore
-      expect { immunisation_import.process!(patient_session:) }
+      expect { immunisation_import.process! }
         .to change(immunisation_import.vaccination_records, :count).by(11)
         .and change(immunisation_import.locations, :count).by(4)
         .and change(immunisation_import.patients, :count).by(11)
         .and change(immunisation_import.sessions, :count).by(4)
+        .and change(PatientSession, :count).by(11)
 
       # Second import should duplicate the vaccination records but nothing else.
 
       # stree-ignore
-      expect { immunisation_import.process!(patient_session:) }
+      expect { immunisation_import.process! }
         .to change(immunisation_import.vaccination_records, :count).by(11)
         .and not_change(immunisation_import.locations, :count)
         .and not_change(immunisation_import.patients, :count)
         .and not_change(immunisation_import.sessions, :count)
+        .and not_change(PatientSession, :count)
     end
   end
 end
