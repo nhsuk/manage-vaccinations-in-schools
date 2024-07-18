@@ -3,6 +3,8 @@
 class ImmunisationImportsController < ApplicationController
   before_action :set_campaign
 
+  layout "two_thirds", only: :new
+
   def index
   end
 

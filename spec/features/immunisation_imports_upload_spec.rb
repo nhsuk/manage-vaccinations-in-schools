@@ -52,11 +52,11 @@ describe "Immunisation imports" do
   end
 
   def then_i_should_see_the_upload_page
-    expect(page).to have_content("Upload vaccination events")
+    expect(page).to have_content("Upload a report on HPV vaccinations")
   end
 
   def when_i_continue_without_uploading_a_file
-    click_on "Upload vaccination events"
+    click_on "Continue"
   end
 
   def then_i_should_see_an_error
@@ -68,7 +68,7 @@ describe "Immunisation imports" do
       "immunisation_import[csv]",
       "spec/fixtures/immunisation_import/invalid_rows.csv"
     )
-    click_on "Upload vaccination events"
+    click_on "Continue"
   end
 
   def then_i_should_see_the_errors_page
@@ -85,7 +85,7 @@ describe "Immunisation imports" do
       "immunisation_import[csv]",
       "spec/fixtures/immunisation_import/nivs.csv"
     )
-    click_on "Upload vaccination events"
+    click_on "Continue"
   end
 
   def then_i_should_see_the_success_page
