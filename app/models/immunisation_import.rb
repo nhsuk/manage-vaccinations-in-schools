@@ -87,6 +87,7 @@ class ImmunisationImport < ApplicationRecord
       rows
         .map(&:to_patient)
         .uniq(&:nhs_number)
+        .reject(&:invalid?)
         .each do |patient|
           patient.imported_from = self
           patient.save!
