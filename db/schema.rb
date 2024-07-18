@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_17_101136) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_18_102202) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -241,6 +241,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_17_101136) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "campaign_id", null: false
+    t.index ["campaign_id"], name: "index_immunisation_imports_on_campaign_id"
     t.index ["user_id"], name: "index_immunisation_imports_on_user_id"
   end
 
@@ -432,6 +434,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_17_101136) do
   add_foreign_key "health_questions", "health_questions", column: "follow_up_question_id"
   add_foreign_key "health_questions", "health_questions", column: "next_question_id"
   add_foreign_key "health_questions", "vaccines"
+  add_foreign_key "immunisation_imports", "campaigns"
   add_foreign_key "immunisation_imports", "users"
   add_foreign_key "locations", "immunisation_imports", column: "imported_from_id"
   add_foreign_key "patient_sessions", "users", column: "created_by_user_id"
