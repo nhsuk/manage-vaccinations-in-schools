@@ -21,10 +21,9 @@ describe "Immunisation imports" do
     and_i_go_back_to_the_upload_page
 
     when_i_upload_a_valid_file
-    then_i_should_see_the_success_page
-
-    when_i_click_on_the_back_link
-    then_i_should_see_the_upload
+    then_i_should_see_the_success_banner
+    and_i_should_see_the_upload
+    and_i_should_see_the_vaccination_records
   end
 
   def given_i_am_signed_in
@@ -91,18 +90,17 @@ describe "Immunisation imports" do
     click_on "Continue"
   end
 
-  def then_i_should_see_the_success_page
-    expect(page).to have_content("Vaccination events uploaded")
-
-    # TODO: Check the vaccination reports are shown once we process the CSV files.
+  def then_i_should_see_the_success_banner
+    expect(page).to have_content("0 vaccinations uploaded")
   end
 
-  def when_i_click_on_the_back_link
-    click_on "HPV"
+  def and_i_should_see_the_upload
+    expect(page).to have_content("Uploaded on")
+    expect(page).to have_content("Uploaded byTest User")
+    expect(page).to have_content("CampaignHPV")
   end
 
-  def then_i_should_see_the_upload
-    expect(page).to have_content("Uploaded by Test User")
-    expect(page).to have_content("Records 0")
+  def and_i_should_see_the_vaccination_records
+    # TODO: Check the vaccination reports are shown once we process the CSV files
   end
 end

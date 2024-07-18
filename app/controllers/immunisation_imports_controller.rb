@@ -32,7 +32,11 @@ class ImmunisationImportsController < ApplicationController
 
     @immunisation_import.save!
 
-    redirect_to success_campaign_immunisation_import_path(
+    flash[
+      :success
+    ] = "#{@immunisation_import.vaccination_records.count} vaccinations uploaded"
+
+    redirect_to campaign_immunisation_import_path(
                   @campaign,
                   @immunisation_import
                 )
