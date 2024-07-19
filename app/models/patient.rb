@@ -12,6 +12,7 @@
 #  common_name              :string
 #  date_of_birth            :date
 #  first_name               :string
+#  gender_code              :integer          default(0), not null
 #  last_name                :string
 #  nhs_number               :string
 #  sent_consent_at          :datetime
@@ -48,6 +49,9 @@ class Patient < ApplicationRecord
   has_many :sessions, through: :patient_sessions
   has_many :triage, through: :patient_sessions
   has_many :consents
+
+  # https://www.datadictionary.nhs.uk/attributes/person_gender_code.html
+  enum :gender_code, { not_known: 0, male: 1, female: 2, not_specified: 9 }
 
   scope :consent_not_sent, -> { where(sent_consent_at: nil) }
   scope :reminder_not_sent, -> { where(sent_reminder_at: nil) }

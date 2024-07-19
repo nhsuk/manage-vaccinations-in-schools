@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_18_102202) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_19_140632) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -311,6 +311,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_18_102202) do
     t.datetime "session_reminder_sent_at"
     t.bigint "parent_id"
     t.bigint "imported_from_id"
+    t.integer "gender_code", default: 0, null: false
     t.index ["imported_from_id"], name: "index_patients_on_imported_from_id"
     t.index ["location_id"], name: "index_patients_on_location_id"
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
