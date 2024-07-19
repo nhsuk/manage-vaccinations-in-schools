@@ -151,6 +151,11 @@ class ImmunisationImport < ApplicationRecord
               format: {
                 with: /\A\d{8}\z/
               }
+    validates :patient_gender_code,
+              presence: true,
+              inclusion: {
+                in: Patient.gender_codes.values
+              }
     validates :patient_postcode, presence: true, postcode: true
 
     validates :session_date, presence: true, format: { with: /\A\d{8}\z/ }
@@ -186,6 +191,7 @@ class ImmunisationImport < ApplicationRecord
       patient.last_name ||= patient_last_name
       patient.date_of_birth ||= patient_date_of_birth
       patient.address_postcode ||= patient_postcode
+      patient.gender_code ||= patient_gender_code
       patient.location ||= to_location
       patient
     end
@@ -262,6 +268,17 @@ class ImmunisationImport < ApplicationRecord
 
     def patient_date_of_birth
       @data["PERSON_DOB"]&.strip
+    end
+
+    PATIENT_GENDER_CODES = {
+      "not known" => 0,
+      "male" => 1,
+      "female" => 2,
+      "not specified" => 9
+    }.freeze
+
+    def patient_gender_code
+      PATIENT_GENDER_CODES[@data["PERSON_GENDER_CODE"]&.strip&.downcase]
     end
 
     def patient_postcode
