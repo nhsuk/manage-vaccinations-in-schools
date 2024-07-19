@@ -39,6 +39,9 @@ describe ImmunisationImport::Row, type: :model do
         expect(immunisation_import_row.errors[:organisation_code]).to include(
           "is required but missing"
         )
+        expect(immunisation_import_row.errors[:patient_postcode]).to include(
+          "is required but missing"
+        )
       end
     end
 
@@ -56,6 +59,17 @@ describe ImmunisationImport::Row, type: :model do
       end
     end
 
+    context "with an invalid postcode" do
+      let(:data) { { "PERSON_POSTCODE" => "ABC DEF" } }
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:patient_postcode]).to include(
+          /Enter a valid postcode/
+        )
+      end
+    end
+
     context "with valid fields" do
       let(:data) do
         {
@@ -67,6 +81,7 @@ describe ImmunisationImport::Row, type: :model do
           "PERSON_FORENAME" => "Harry",
           "PERSON_SURNAME" => "Potter",
           "PERSON_DOB" => "20120101",
+          "PERSON_POSTCODE" => "SW1A 1AA",
           "NHS_NUMBER" => "1234567890",
           "DATE_OF_VACCINATION" => "20240101"
         }
@@ -203,6 +218,34 @@ describe ImmunisationImport::Row, type: :model do
       let(:data) { { "ORGANISATION_CODE" => "abc" } }
 
       it { should eq("abc") }
+    end
+  end
+
+  describe "#patient_postcode" do
+    subject(:patient_postcode) { immunisation_import_row.patient_postcode }
+
+    context "without a value" do
+      let(:data) { {} }
+
+      it { should be_nil }
+    end
+
+    context "with an invalid postcode" do
+      let(:data) { { "PERSON_POSTCODE" => "abc" } }
+
+      it { should eq("abc") }
+    end
+
+    context "with a valid postcode" do
+      let(:data) { { "PERSON_POSTCODE" => "SW1 1AA" } }
+
+      it { should eq("SW1 1AA") }
+    end
+
+    context "with a valid unformatted postcode" do
+      let(:data) { { "PERSON_POSTCODE" => "sw11aa" } }
+
+      it { should eq("SW1 1AA") }
     end
   end
 
