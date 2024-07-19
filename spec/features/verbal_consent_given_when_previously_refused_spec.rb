@@ -47,17 +47,12 @@ feature "Verbal consent" do
     click_on "Get consent"
 
     # contacting the same parent who refused
-    # TODO: update this when it's possible to pick an existing parental contact from a consent form
-    choose "Add a new parental contact"
+    choose @refusing_parent.name
     click_button "Continue"
 
     # Details for parent or guardian
     fill_in "Phone number", with: @refusing_parent.phone
     fill_in "Email address", with: @refusing_parent.email
-    fill_in "Full name", with: @refusing_parent.name
-    # relationship to the child
-    choose @refusing_parent.relationship_label
-
     click_button "Continue"
 
     choose "By phone"

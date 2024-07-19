@@ -13,13 +13,13 @@ class ManageConsentsController < ApplicationController
   before_action :set_consent, except: %i[create]
   before_action :set_steps, except: %i[create]
   before_action :setup_wizard_translated, except: %i[create]
-  before_action :set_parent_options,
-                only: %i[show update],
-                if: -> { step == "who" }
   before_action :set_parent,
                 except: %i[create],
                 if: -> { step.in?(%w[parent-details confirm]) }
   before_action :set_patient_session
+  before_action :set_parent_options,
+                only: %i[show update],
+                if: -> { step == "who" }
   before_action :set_triage,
                 except: %i[create],
                 if: -> { step.in?(%w[triage confirm]) }
@@ -176,7 +176,11 @@ class ManageConsentsController < ApplicationController
   end
 
   def set_parent_options
-    @parent_options = [@patient.parent]
+    @parent_options =
+      (
+        [@patient.parent] +
+          @patient_session.consents.includes(:parent).map(&:parent)
+      ).compact.uniq.sort_by(&:name)
   end
 
   def set_parent
