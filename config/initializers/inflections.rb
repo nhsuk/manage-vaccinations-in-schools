@@ -17,5 +17,6 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "CSRF"
   inflect.acronym "FHIR"
   inflect.acronym "PDS"
+  inflect.acronym "DPS"
   inflect.uncountable "triage"
 end
