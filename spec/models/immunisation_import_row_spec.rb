@@ -39,6 +39,9 @@ describe ImmunisationImport::Row, type: :model do
         expect(immunisation_import_row.errors[:organisation_code]).to include(
           "is required but missing"
         )
+        expect(immunisation_import_row.errors[:patient_gender_code]).to include(
+          "is required but missing"
+        )
         expect(immunisation_import_row.errors[:patient_postcode]).to include(
           "is required but missing"
         )
@@ -70,6 +73,17 @@ describe ImmunisationImport::Row, type: :model do
       end
     end
 
+    context "with an invalid gender code" do
+      let(:data) { { "PERSON_GENDER_CODE" => "10" } }
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:patient_postcode]).to include(
+          /Enter a valid postcode/
+        )
+      end
+    end
+
     context "with valid fields" do
       let(:data) do
         {
@@ -82,6 +96,7 @@ describe ImmunisationImport::Row, type: :model do
           "PERSON_SURNAME" => "Potter",
           "PERSON_DOB" => "20120101",
           "PERSON_POSTCODE" => "SW1A 1AA",
+          "PERSON_GENDER_CODE" => "Male",
           "NHS_NUMBER" => "1234567890",
           "DATE_OF_VACCINATION" => "20240101"
         }
@@ -218,6 +233,48 @@ describe ImmunisationImport::Row, type: :model do
       let(:data) { { "ORGANISATION_CODE" => "abc" } }
 
       it { should eq("abc") }
+    end
+  end
+
+  describe "#patient_gender_code" do
+    subject(:patient_gender_code) do
+      immunisation_import_row.patient_gender_code
+    end
+
+    context "without a value" do
+      let(:data) { {} }
+
+      it { should be_nil }
+    end
+
+    context "with an unknown value" do
+      let(:data) { { "PERSON_GENDER_CODE" => "unknown" } }
+
+      it { should be_nil }
+    end
+
+    context "with a 'not known' value" do
+      let(:data) { { "PERSON_GENDER_CODE" => "Not Known" } }
+
+      it { should eq(0) }
+    end
+
+    context "with a 'male' value" do
+      let(:data) { { "PERSON_GENDER_CODE" => "Male" } }
+
+      it { should eq(1) }
+    end
+
+    context "with a 'female' value" do
+      let(:data) { { "PERSON_GENDER_CODE" => "Female" } }
+
+      it { should eq(2) }
+    end
+
+    context "with a 'not specified' value" do
+      let(:data) { { "PERSON_GENDER_CODE" => "Not Specified" } }
+
+      it { should eq(9) }
     end
   end
 
