@@ -84,6 +84,22 @@ describe ImmunisationImport::Row, type: :model do
       end
     end
 
+    context "with an invalid session date" do
+      let(:data) { { "DATE_OF_VACCINATION" => "21000101" } }
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+      end
+    end
+
+    context "with an invalid patient date of birth" do
+      let(:data) { { "PERSON_DOB" => "21000101" } }
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+      end
+    end
+
     context "with valid fields" do
       let(:data) do
         {
