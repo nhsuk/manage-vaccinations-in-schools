@@ -18,10 +18,12 @@
   <%= f.govuk_error_summary %>
 
   <%= f.govuk_radio_buttons_fieldset(:new_or_existing_parent, legend: nil) do %>
-    <%= f.govuk_radio_button :new_or_existing_parent, @patient.parent.id,
-                             label: { text: "#{@patient.parent.name} (#{@patient.parent.relationship_label})" },
-                             hint: { text: @patient.parent.phone },
-                             link_errors: true %>
+    <% @parent_options.each.with_index do |parent, i| %>
+      <%= f.govuk_radio_button :new_or_existing_parent, parent.id,
+                               label: { text: "#{parent.name} (#{parent.relationship_label})" },
+                               hint: { text: parent.phone },
+                               link_errors: i == 0 %>
+    <% end %>
     <%= f.govuk_radio_divider %>
     <%= f.govuk_radio_button :new_or_existing_parent, "new",
                              label: { text: "Add a new parental contact" } %>

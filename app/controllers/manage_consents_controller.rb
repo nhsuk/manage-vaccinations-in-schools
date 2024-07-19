@@ -13,6 +13,9 @@ class ManageConsentsController < ApplicationController
   before_action :set_consent, except: %i[create]
   before_action :set_steps, except: %i[create]
   before_action :setup_wizard_translated, except: %i[create]
+  before_action :set_parent_options,
+                only: %i[show update],
+                if: -> { step == "who" }
   before_action :set_parent,
                 except: %i[create],
                 if: -> { step.in?(%w[parent-details confirm]) }
@@ -170,6 +173,10 @@ class ManageConsentsController < ApplicationController
 
   def set_patient
     @patient = @session.patients.find(params.fetch(:patient_id))
+  end
+
+  def set_parent_options
+    @parent_options = [@patient.parent]
   end
 
   def set_parent
