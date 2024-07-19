@@ -19,6 +19,23 @@ class ReportsController < ApplicationController
     send_data(csv, filename:)
   end
 
+  def dps_export
+    vaccinations =
+      policy_scope(VaccinationRecord)
+        .administered
+        .recorded
+        .where(campaign: @campaign)
+        .includes(:session, :patient, :campaign, batch: :vaccine)
+        .order("vaccination_records.recorded_at")
+
+    csv = DPSExport.new(vaccinations).to_csv
+    date = Time.zone.today.strftime("%Y-%m-%d")
+    filename =
+      "DPS-export-#{@campaign.name.parameterize(preserve_case: true)}-#{date}.csv"
+
+    send_data(csv, filename:)
+  end
+
   private
 
   def set_campaign

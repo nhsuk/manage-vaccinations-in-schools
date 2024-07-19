@@ -72,6 +72,7 @@ Rails.application.routes.draw do
 
     resources :reports, only: [] do
       get "download", on: :collection
+      post "dps-export", on: :collection
     end
   end
 
