@@ -75,13 +75,7 @@ FactoryBot.define do
     trait :from_mum do
       parent do
         if patient.parent.relationship_mother?
-          create(
-            :parent,
-            :mum,
-            last_name: patient.last_name,
-            phone: patient.parent.phone,
-            email: patient.parent.email
-          )
+          patient.parent
         else
           create(:parent, :mum, last_name: patient.last_name)
         end
@@ -91,13 +85,7 @@ FactoryBot.define do
     trait :from_dad do
       parent do
         if patient.parent.relationship_father?
-          create(
-            :parent,
-            :dad,
-            last_name: patient.last_name,
-            phone: patient.parent.phone,
-            email: patient.parent.email
-          )
+          patient.parent
         else
           create(:parent, :dad, last_name: patient.last_name)
         end
