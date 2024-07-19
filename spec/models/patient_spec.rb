@@ -12,6 +12,7 @@
 #  common_name              :string
 #  date_of_birth            :date
 #  first_name               :string
+#  gender_code              :integer          default(0), not null
 #  last_name                :string
 #  nhs_number               :string
 #  sent_consent_at          :datetime
