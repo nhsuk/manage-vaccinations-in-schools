@@ -205,10 +205,9 @@ class Consent < ApplicationRecord
 
   def new_or_existing_parent=(value)
     @new_or_existing_parent = value
-
-    if value != "new" && (patient.parent.id.to_s == value)
-      self.parent = patient.parent
-    end
+    self.parent_id = value if value.to_i.in?(
+      patient.consents.pluck(:parent_id) + [patient.parent.id]
+    )
   end
 
   private
