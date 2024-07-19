@@ -105,7 +105,7 @@ describe "Immunisation imports" do
       "Full nameNHS numberDate of birthPostcodeVaccinated date"
     )
     expect(page).to have_content(
-      "Full name Chyna Pickle NHS number 742 018 0008 Date of birth 12 September 2012"
+      "Full name Chyna Pickle NHS number 742 018 0008 Date of birth 12 September 2012 Postcode LE3 2DA"
     )
   end
 end
