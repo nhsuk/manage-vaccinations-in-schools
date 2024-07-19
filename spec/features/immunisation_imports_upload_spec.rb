@@ -91,7 +91,7 @@ describe "Immunisation imports" do
   end
 
   def then_i_should_see_the_success_banner
-    expect(page).to have_content("0 vaccinations uploaded")
+    expect(page).to have_content("11 vaccinations uploaded")
   end
 
   def and_i_should_see_the_upload
@@ -101,6 +101,11 @@ describe "Immunisation imports" do
   end
 
   def and_i_should_see_the_vaccination_records
-    # TODO: Check the vaccination reports are shown once we process the CSV files
+    expect(page).to have_content(
+      "Full nameNHS numberDate of birthPostcodeVaccinated date"
+    )
+    expect(page).to have_content(
+      "Full name Chyna Pickle NHS number 742 018 0008 Date of birth 12 September 2012"
+    )
   end
 end

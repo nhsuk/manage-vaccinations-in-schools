@@ -28,9 +28,8 @@ class ImmunisationImportsController < ApplicationController
       return
     end
 
-    # TODO: @immunisation_import.process!
-
     @immunisation_import.save!
+    @immunisation_import.process!
 
     flash[
       :success
