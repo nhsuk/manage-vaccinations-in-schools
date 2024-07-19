@@ -151,6 +151,7 @@ class ImmunisationImport < ApplicationRecord
               format: {
                 with: /\A\d{8}\z/
               }
+    validates :patient_postcode, presence: true, postcode: true
 
     validates :session_date, presence: true, format: { with: /\A\d{8}\z/ }
 
@@ -184,6 +185,7 @@ class ImmunisationImport < ApplicationRecord
       patient.first_name ||= patient_first_name
       patient.last_name ||= patient_last_name
       patient.date_of_birth ||= patient_date_of_birth
+      patient.address_postcode ||= patient_postcode
       patient.location ||= to_location
       patient
     end
@@ -260,6 +262,12 @@ class ImmunisationImport < ApplicationRecord
 
     def patient_date_of_birth
       @data["PERSON_DOB"]&.strip
+    end
+
+    def patient_postcode
+      if (postcode = @data["PERSON_POSTCODE"]).present?
+        UKPostcode.parse(postcode).to_s
+      end
     end
 
     def patient_nhs_number
