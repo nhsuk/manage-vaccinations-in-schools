@@ -150,6 +150,9 @@ class ImmunisationImport < ApplicationRecord
               presence: true,
               format: {
                 with: /\A\d{8}\z/
+              },
+              comparison: {
+                less_than_or_equal_to: -> { Date.current.strftime("%Y%m%d") }
               }
     validates :patient_gender_code,
               presence: true,
@@ -158,7 +161,14 @@ class ImmunisationImport < ApplicationRecord
               }
     validates :patient_postcode, presence: true, postcode: true
 
-    validates :session_date, presence: true, format: { with: /\A\d{8}\z/ }
+    validates :session_date,
+              presence: true,
+              format: {
+                with: /\A\d{8}\z/
+              },
+              comparison: {
+                less_than_or_equal_to: -> { Date.current.strftime("%Y%m%d") }
+              }
 
     def initialize(data:, campaign:, team:)
       @data = data
