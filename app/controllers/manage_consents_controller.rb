@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class ManageConsentsController < ApplicationController
-  include Wicked::Wizard
   include Wicked::Wizard::Translated # For custom URLs, see en.yml wicked
   include TriageMailerConcern
 
