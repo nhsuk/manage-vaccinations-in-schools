@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class EditSessionsController < ApplicationController
-  include Wicked::Wizard
   include Wicked::Wizard::Translated # For custom URLs, see en.yml wicked
 
   layout "two_thirds"
