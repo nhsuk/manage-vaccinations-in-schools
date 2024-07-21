@@ -36,6 +36,8 @@
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 class VaccinationRecord < ApplicationRecord
+  include WizardFormConcern
+
   audited associated_with: :patient_session
 
   attr_accessor :delivery_site_other
@@ -145,6 +147,10 @@ class VaccinationRecord < ApplicationRecord
 
   def recorded?
     recorded_at.present?
+  end
+
+  def form_steps
+    %w[confirm]
   end
 
   private
