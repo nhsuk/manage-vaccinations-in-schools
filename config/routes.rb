@@ -180,9 +180,6 @@ Rails.application.routes.draw do
         resource :triage, only: %i[new create]
 
         resource :vaccinations, only: %i[create] do
-          resource "batch",
-                   only: %i[edit update],
-                   controller: "vaccinations/batches"
           resource "delivery_site",
                    only: %i[edit update],
                    controller: "vaccinations/delivery_site"

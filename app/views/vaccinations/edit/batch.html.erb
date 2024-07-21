@@ -1,18 +1,15 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: session_patient_path(@session.id, id: @patient.id),
+        href: previous_wizard_path,
         name: "vaccination page",
       ) %>
 <% end %>
 
 <% content_for :page_title, "Which batch did you use?" %>
 
-<%= form_with model: @draft_vaccination_record,
-              url: session_patient_vaccinations_batch_path(
-                session_id: @session.id,
-                patient_id: @patient.id,
-              ),
-              method: :put do |f| %>
+<%= form_for @draft_vaccination_record,
+             url: wizard_path,
+             method: :put do |f| %>
   <%= f.govuk_radio_buttons_fieldset(:batch_id,
                                      caption: { text: @patient.full_name, size: "l" },
                                      legend: { size: "l", tag: "h1", text: "Which batch did you use?" }) do %>

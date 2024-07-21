@@ -40,7 +40,7 @@ class VaccinationRecord < ApplicationRecord
 
   audited associated_with: :patient_session
 
-  attr_accessor :delivery_site_other
+  attr_accessor :delivery_site_other, :todays_batch
 
   belongs_to :patient_session
   belongs_to :imported_from, class_name: "ImmunisationImport", optional: true
@@ -101,7 +101,6 @@ class VaccinationRecord < ApplicationRecord
   validates :notes, length: { maximum: 1000 }
 
   validates :administered, inclusion: [true, false]
-  validates :batch_id, presence: true, on: :edit_batch, if: -> { administered }
   validates :delivery_site,
             presence: true,
             inclusion: {
@@ -129,6 +128,8 @@ class VaccinationRecord < ApplicationRecord
             on: :edit_delivery,
             if: -> { administered }
 
+  validate :batch_vaccine_matches_vaccine, if: -> { recorded? && administered }
+
   on_wizard_step :reason do
     validates :reason,
               inclusion: {
@@ -137,7 +138,9 @@ class VaccinationRecord < ApplicationRecord
               if: -> { not_administered? }
   end
 
-  validate :batch_vaccine_matches_vaccine, if: -> { recorded? && administered }
+  on_wizard_step :batch do
+    validates :batch_id, presence: true, if: -> { administered }
+  end
 
   def location_name
     patient_session.session.location&.name
@@ -152,7 +155,11 @@ class VaccinationRecord < ApplicationRecord
   end
 
   def form_steps
-    [(:reason if not_administered?), :confirm].compact
+    [
+      (:batch if administered? && batch_id.nil?),
+      (:reason if not_administered?),
+      :confirm
+    ].compact
   end
 
   private

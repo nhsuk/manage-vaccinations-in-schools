@@ -572,6 +572,7 @@ en:
   wicked:
     address: address
     agree: agree
+    batch: batch
     cohort: cohort
     confirm: confirm
     consent: consent
