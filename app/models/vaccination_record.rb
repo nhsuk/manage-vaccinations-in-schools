@@ -128,12 +128,14 @@ class VaccinationRecord < ApplicationRecord
             },
             on: :edit_delivery,
             if: -> { administered }
-  validates :reason,
-            inclusion: {
-              in: reasons.keys
-            },
-            on: :edit_reason,
-            if: -> { !administered }
+
+  on_wizard_step :reason do
+    validates :reason,
+              inclusion: {
+                in: VaccinationRecord.reasons.keys
+              },
+              if: -> { not_administered? }
+  end
 
   validate :batch_vaccine_matches_vaccine, if: -> { recorded? && administered }
 
@@ -150,7 +152,7 @@ class VaccinationRecord < ApplicationRecord
   end
 
   def form_steps
-    %w[confirm]
+    [(:reason if not_administered?), :confirm].compact
   end
 
   private

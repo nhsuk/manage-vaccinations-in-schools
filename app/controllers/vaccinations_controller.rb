@@ -8,13 +8,12 @@ class VaccinationsController < ApplicationController
 
   before_action :set_session
   before_action :set_patient, except: %i[index batch update_batch]
-  before_action :set_patient_session, only: %i[edit_reason create update]
-  before_action :set_draft_vaccination_record,
-                only: %i[edit_reason create update]
+  before_action :set_patient_session, only: %i[create]
+  before_action :set_draft_vaccination_record, only: %i[create]
 
   before_action :set_todays_batch, only: %i[index batch create]
   before_action :set_batches, only: %i[batch update_batch]
-  before_action :set_section_and_tab, only: %i[create update]
+  before_action :set_section_and_tab, only: %i[create]
 
   layout "two_thirds", except: :index
 
@@ -53,9 +52,6 @@ class VaccinationsController < ApplicationController
     session[:current_section] = "vaccinations"
   end
 
-  def edit_reason
-  end
-
   def create
     if @draft_vaccination_record.update create_params.merge(user: current_user)
       if @draft_vaccination_record.administered?
@@ -77,26 +73,14 @@ class VaccinationsController < ApplicationController
                       )
         end
       else
-        redirect_to edit_reason_session_patient_vaccinations_path(
+        redirect_to session_patient_vaccinations_edit_path(
                       @session,
-                      patient_id: @patient.id
+                      patient_id: @patient.id,
+                      id: @draft_vaccination_record.form_steps.first
                     )
       end
     else
       render "patients/show", status: :unprocessable_entity
-    end
-  end
-
-  def update
-    @draft_vaccination_record.assign_attributes(vaccination_record_params)
-    if @draft_vaccination_record.save(context: :edit_reason)
-      redirect_to session_patient_vaccinations_edit_path(
-                    @session,
-                    patient_id: @patient.id,
-                    id: @draft_vaccination_record.form_steps.first
-                  )
-    else
-      render :edit_reason
     end
   end
 
@@ -155,10 +139,6 @@ class VaccinationsController < ApplicationController
 
   def vaccination_record_administered_params
     params.fetch(:vaccination_record, {}).permit(:administered, :delivery_site)
-  end
-
-  def vaccination_record_reason_params
-    params.fetch(:vaccination_record, {}).permit(:reason)
   end
 
   def consent_params

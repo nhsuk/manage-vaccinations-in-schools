@@ -556,7 +556,7 @@ en:
     no_filtered_results: We couldn’t find any children that matched your filters.
     no_results: No results
   vaccinations:
-    edit_reason:
+    reason:
       title:
         flu: Why was the flu vaccine not given?
         hpv: Why was the HPV vaccine not given?

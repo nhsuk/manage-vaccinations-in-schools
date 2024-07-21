@@ -1,19 +1,16 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: session_patient_vaccinations_path(@session, id: @patient.id),
+        href: previous_wizard_path,
         name: "vaccination page",
       ) %>
 <% end %>
 
-<% title = t("vaccinations.edit_reason.title.#{@session.type.downcase}") %>
+<% title = t("vaccinations.reason.title.#{@session.type.downcase}") %>
 <% content_for :page_title, title %>
 
-<%= form_with model: @draft_vaccination_record,
-              url: session_patient_vaccinations_path(
-                session_id: @session.id,
-                patient_id: @patient.id,
-              ),
-              method: :put do |f| %>
+<%= form_for @draft_vaccination_record,
+             url: wizard_path,
+             method: :put do |f| %>
     <%= f.govuk_error_summary %>
 
     <%= f.govuk_radio_buttons_fieldset(:reason,
