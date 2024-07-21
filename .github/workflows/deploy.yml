@@ -21,6 +21,10 @@ jobs:
       id-token: write
       contents: read
 
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
