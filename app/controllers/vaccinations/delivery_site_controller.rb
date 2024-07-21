@@ -12,9 +12,10 @@ class Vaccinations::DeliverySiteController < ApplicationController
     )
     if @draft_vaccination_record.save(context: :edit_delivery)
       if @draft_vaccination_record.batch_id.present?
-        redirect_to confirm_session_patient_vaccinations_path(
+        redirect_to session_patient_vaccinations_edit_path(
                       @session,
-                      @patient
+                      patient_id: @patient.id,
+                      id: @draft_vaccination_record.form_steps.first
                     )
       else
         redirect_to edit_session_patient_vaccinations_batch_path(

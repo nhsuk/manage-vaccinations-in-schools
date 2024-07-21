@@ -1,20 +1,12 @@
 <% content_for :before_main do %>
-  <% back_url = if @draft_vaccination_record.administered?
-         edit_session_patient_vaccinations_batch_path(@session, patient_id: @patient.id)
-       else
-         edit_reason_session_patient_vaccinations_path(@session, patient_id: @patient.id)
-       end %>
+
   <%= render AppBacklinkComponent.new(
-        href: back_url,
+        href: previous_wizard_path,
         name: "vaccination page",
       ) %>
 <% end %>
 
-<% page_title = "Check and confirm" %>
-
-<%= h1 page_title: do %>
-  <%= page_title %>
-<% end %>
+<%= h1 "Check and confirm" %>
 
 <div class="nhsuk-card">
   <div class="nhsuk-card__content">
@@ -88,12 +80,9 @@
   </div>
 </div>
 
-<%= form_with model: @draft_vaccination_record,
-              url: record_session_patient_vaccinations_path(
-                session_id: @session.id,
-                patient_id: @patient.id,
-              ),
-              method: :put do |f| %>
+<%= form_for @draft_vaccination_record,
+             url: wizard_path,
+             method: :put do |f| %>
 
     <% content_for(:before_content) { f.govuk_error_summary } %>
 

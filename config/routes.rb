@@ -187,8 +187,11 @@ Rails.application.routes.draw do
                    only: %i[edit update],
                    controller: "vaccinations/delivery_site"
           get "edit/reason", action: "edit_reason", on: :member
-          get "confirm", on: :member
-          put "record", on: :member
+
+          resource "edit",
+                   only: %i[show update],
+                   controller: "vaccinations/edit",
+                   path: "edit/:id"
         end
       end
     end

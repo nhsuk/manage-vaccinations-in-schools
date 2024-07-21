@@ -8,13 +8,10 @@ class VaccinationsController < ApplicationController
 
   before_action :set_session
   before_action :set_patient, except: %i[index batch update_batch]
-  before_action :set_patient_session,
-                only: %i[confirm edit_reason create record update]
+  before_action :set_patient_session, only: %i[edit_reason create update]
   before_action :set_draft_vaccination_record,
                 only: %i[edit_reason create update]
-  before_action :set_draft_vaccination_record!, only: %i[confirm record]
 
-  before_action :set_triage, only: %i[confirm]
   before_action :set_todays_batch, only: %i[index batch create]
   before_action :set_batches, only: %i[batch update_batch]
   before_action :set_section_and_tab, only: %i[create update]
@@ -59,28 +56,6 @@ class VaccinationsController < ApplicationController
   def edit_reason
   end
 
-  def confirm
-  end
-
-  def record
-    unless @draft_vaccination_record.update(
-             confirm_params.merge(recorded_at: Time.zone.now)
-           )
-      render :confirm
-      return
-    end
-
-    send_vaccination_mail(@draft_vaccination_record)
-    @patient_session.do_vaccination!
-
-    flash[:success] = {
-      heading: "Vaccination recorded for",
-      heading_link_text: @patient.full_name,
-      heading_link_href: session_patient_path(@session, id: @patient.id)
-    }
-    redirect_to session_vaccinations_path(@session)
-  end
-
   def create
     if @draft_vaccination_record.update create_params.merge(user: current_user)
       if @draft_vaccination_record.administered?
@@ -90,9 +65,10 @@ class VaccinationsController < ApplicationController
                         patient_id: @patient.id
                       )
         elsif @draft_vaccination_record.batch_id.present?
-          redirect_to confirm_session_patient_vaccinations_path(
+          redirect_to session_patient_vaccinations_edit_path(
                         @session,
-                        patient_id: @patient.id
+                        patient_id: @patient.id,
+                        id: @draft_vaccination_record.form_steps.first
                       )
         else
           redirect_to edit_session_patient_vaccinations_batch_path(
@@ -114,9 +90,10 @@ class VaccinationsController < ApplicationController
   def update
     @draft_vaccination_record.assign_attributes(vaccination_record_params)
     if @draft_vaccination_record.save(context: :edit_reason)
-      redirect_to confirm_session_patient_vaccinations_path(
-                    session_id: @session.id,
-                    patient_id: @patient.id
+      redirect_to session_patient_vaccinations_edit_path(
+                    @session,
+                    patient_id: @patient.id,
+                    id: @draft_vaccination_record.form_steps.first
                   )
     else
       render :edit_reason
@@ -210,15 +187,6 @@ class VaccinationsController < ApplicationController
     @draft_vaccination_record = @patient_session.draft_vaccination_record
   end
 
-  def set_draft_vaccination_record!
-    set_draft_vaccination_record
-    raise UnprocessableEntity unless @draft_vaccination_record.persisted?
-  end
-
-  def set_triage
-    @triage = Triage.find_or_initialize_by(patient_session: @patient_session)
-  end
-
   def set_patient_session
     @patient_session = @patient.patient_sessions.find_by(session: @session)
   end
@@ -234,9 +202,5 @@ class VaccinationsController < ApplicationController
   def set_section_and_tab
     @section = params[:section]
     @tab = params[:tab]
-  end
-
-  def confirm_params
-    params.fetch(:vaccination_record, {}).permit(:notes)
   end
 end
