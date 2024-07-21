@@ -18,7 +18,11 @@ class Vaccinations::EditController < ApplicationController
   end
 
   def update
-    handle_confirm
+    if current_step == :confirm
+      handle_confirm
+    else
+      @draft_vaccination_record.assign_attributes(update_params)
+    end
 
     render_wizard @draft_vaccination_record
   end
@@ -46,7 +50,9 @@ class Vaccinations::EditController < ApplicationController
   end
 
   def update_params
-    permitted_attributes = { confirm: %i[notes] }.fetch(current_step)
+    permitted_attributes = { confirm: %i[notes], reason: %i[reason] }.fetch(
+      current_step
+    )
 
     params
       .fetch(:vaccination_record, {})
