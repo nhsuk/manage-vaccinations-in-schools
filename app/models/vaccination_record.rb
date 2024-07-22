@@ -130,10 +130,7 @@ class VaccinationRecord < ApplicationRecord
   end
 
   on_wizard_step :reason, exact: true do
-    validates :reason,
-              inclusion: {
-                in: VaccinationRecord.reasons.keys
-              }
+    validates :reason, inclusion: { in: VaccinationRecord.reasons.keys }
   end
 
   on_wizard_step :batch, exact: true do
@@ -154,8 +151,8 @@ class VaccinationRecord < ApplicationRecord
 
   def form_steps
     [
-      ("delivery-site" if administered? && delivery_site.nil?),
-      (:batch if administered? && batch_id.nil?),
+      ("delivery-site" if administered? && delivery_site_other),
+      (:batch if administered? && todays_batch.nil?),
       (:reason if not_administered?),
       :confirm
     ].compact

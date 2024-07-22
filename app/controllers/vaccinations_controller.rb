@@ -54,6 +54,10 @@ class VaccinationsController < ApplicationController
 
   def create
     if @draft_vaccination_record.update create_params.merge(user: current_user)
+      session[:delivery_site_other] = "true" if delivery_site_param_other?
+      @draft_vaccination_record.todays_batch =
+        todays_batch_id if todays_batch_id.present?
+
       redirect_to session_patient_vaccinations_edit_path(
                     @session,
                     patient_id: @patient.id,

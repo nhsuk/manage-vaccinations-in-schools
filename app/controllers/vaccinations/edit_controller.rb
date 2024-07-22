@@ -43,6 +43,8 @@ class Vaccinations::EditController < ApplicationController
       send_vaccination_mail(@draft_vaccination_record)
       @patient_session.do_vaccination!
 
+      session.delete(:delivery_site_other)
+
       heading =
         if @draft_vaccination_record.administered?
           t("vaccinations.flash.given")
@@ -87,6 +89,13 @@ class Vaccinations::EditController < ApplicationController
 
   def set_draft_vaccination_record
     @draft_vaccination_record = @patient_session.draft_vaccination_record
+    if (session[:delivery_site_other] = "true")
+      @draft_vaccination_record.delivery_site_other = true
+    end
+    if todays_batch_id.present?
+      @draft_vaccination_record.todays_batch =
+        policy_scope(Batch).find(todays_batch_id)
+    end
   end
 
   def set_batches
