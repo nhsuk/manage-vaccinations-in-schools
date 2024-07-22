@@ -116,30 +116,27 @@ class VaccinationRecord < ApplicationRecord
 
   validate :batch_vaccine_matches_vaccine, if: -> { recorded? && administered }
 
-  on_wizard_step :"delivery-site" do
+  on_wizard_step :"delivery-site", exact: true do
     validates :delivery_site,
               presence: true,
               inclusion: {
                 in: VaccinationRecord.delivery_sites.keys
-              },
-              if: -> { administered }
+              }
     validates :delivery_method,
               presence: true,
               inclusion: {
                 in: VaccinationRecord.delivery_methods.keys
-              },
-              if: -> { administered }
+              }
   end
 
-  on_wizard_step :reason do
+  on_wizard_step :reason, exact: true do
     validates :reason,
               inclusion: {
                 in: VaccinationRecord.reasons.keys
-              },
-              if: -> { not_administered? }
+              }
   end
 
-  on_wizard_step :batch do
+  on_wizard_step :batch, exact: true do
     validates :batch_id, presence: true
   end
 
