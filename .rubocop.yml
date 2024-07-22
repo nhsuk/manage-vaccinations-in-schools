@@ -18,6 +18,10 @@ AllCops:
 Layout/EmptyLineAfterMagicComment:
   Enabled: true
 
+Lint/PercentStringArray:
+  Exclude:
+    - spec/models/dps_export_spec.rb
+
 Rails/LexicallyScopedActionFilter:
   Exclude:
     - app/controllers/users/sessions_controller.rb

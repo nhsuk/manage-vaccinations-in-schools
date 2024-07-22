@@ -15,7 +15,17 @@ describe DPSExport do
     describe "header" do
       subject(:header) { csv.split("\n").first }
 
-      it { should include '"DATE_AND_TIME"' }
+      it "has all the fields in the correct order" do
+        expect(csv.split("\n").first.split(",")).to eq %w[
+             "NHS_NUMBER"
+             "PERSON_FORENAME"
+             "PERSON_SURNAME"
+             "PERSON_DOB"
+             "PERSON_GENDER_CODE"
+             "PERSON_POSTCODE"
+             "DATE_AND_TIME"
+           ]
+      end
     end
   end
 
