@@ -10,6 +10,8 @@
 <%= form_for @draft_vaccination_record,
              url: wizard_path,
              method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
   <%= f.govuk_radio_buttons_fieldset(:batch_id,
                                      caption: { text: @patient.full_name, size: "l" },
                                      legend: { size: "l", tag: "h1", text: "Which batch did you use?" }) do %>
