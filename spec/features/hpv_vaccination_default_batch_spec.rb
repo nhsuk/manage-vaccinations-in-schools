@@ -13,6 +13,10 @@ describe "HPV Vaccination" do
 
     when_i_choose_the_second_batch
     then_i_see_the_default_batch_banner_with_batch_2
+
+    when_i_vaccinate_a_second_patient
+    then_i_see_the_default_batch_on_the_confirmation_page
+    and_i_see_the_default_batch_on_the_patient_page
   end
 
   def given_i_am_signed_in
@@ -21,11 +25,12 @@ describe "HPV Vaccination" do
     @batch = campaign.batches.first
     @batch2 = campaign.batches.second
     @session = campaign.sessions.first
-    @patient =
+    @patient, @patient2 =
       @session
         .patient_sessions
-        .find { _1.state == "consent_given_triage_not_needed" }
-        .patient
+        .select { _1.state == "consent_given_triage_not_needed" }
+        .slice(0, 2)
+        .map(&:patient)
 
     sign_in team.users.first
   end
@@ -55,6 +60,15 @@ describe "HPV Vaccination" do
     click_button "Confirm"
   end
 
+  def when_i_vaccinate_a_second_patient
+    visit session_vaccinations_path(@session)
+    click_link @patient2.full_name
+
+    choose "Yes, they got the HPV vaccine"
+    choose "Left arm"
+    click_button "Continue"
+  end
+
   def then_i_see_the_default_batch_banner_with_batch_1
     expect(page).to have_content(/You are currently using.*#{@batch.name}/)
   end
@@ -76,5 +90,19 @@ describe "HPV Vaccination" do
   def when_i_choose_the_second_batch
     choose @batch2.name
     click_button "Continue"
+  end
+
+  def then_i_see_the_default_batch_on_the_confirmation_page
+    expect(page).to have_content("Check and confirm")
+    expect(page).to have_content(@batch2.name)
+
+    click_button "Confirm"
+  end
+
+  def and_i_see_the_default_batch_on_the_patient_page
+    click_link @patient2.full_name
+
+    expect(page).to have_content("Vaccinated")
+    expect(page).to have_content(@batch2.name)
   end
 end
