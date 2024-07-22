@@ -25,14 +25,15 @@ class ReportsController < ApplicationController
         .administered
         .recorded
         .where(campaign: @campaign)
+        .where(exported_to_dps_at: nil)
         .includes(:session, :patient, :campaign, batch: :vaccine)
         .order("vaccination_records.recorded_at")
 
-    csv = DPSExport.new(vaccinations).to_csv
     date = Time.zone.today.strftime("%Y-%m-%d")
     filename =
       "DPS-export-#{@campaign.name.parameterize(preserve_case: true)}-#{date}.csv"
 
+    csv = DPSExport.new(vaccinations).export_csv
     send_data(csv, filename:)
   end
 
