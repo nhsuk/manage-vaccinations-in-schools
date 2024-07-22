@@ -564,6 +564,9 @@ en:
       label:
         flu: Yes, they got the flu vaccine
         hpv: Yes, they got the HPV vaccine
+    flash:
+      given: Vaccination recorded for
+      not_given: Record updated for
   vaccines:
     flu: Flu
     hpv: HPV

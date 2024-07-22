@@ -42,16 +42,23 @@ class Vaccinations::EditController < ApplicationController
     if @draft_vaccination_record.save
       send_vaccination_mail(@draft_vaccination_record)
       @patient_session.do_vaccination!
+
+      heading =
+        if @draft_vaccination_record.administered?
+          t("vaccinations.flash.given")
+        else
+          t("vaccinations.flash.not_given")
+        end
+
+      flash[:success] = {
+        heading:,
+        heading_link_text: @patient.full_name,
+        heading_link_href: session_patient_path(@session, id: @patient.id)
+      }
     end
   end
 
   def finish_wizard_path
-    # TODO: is this the correct thing to be showing if the vaccination is not administered?
-    flash[:success] = {
-      heading: "Vaccination recorded for",
-      heading_link_text: @patient.full_name,
-      heading_link_href: session_patient_path(@session, id: @patient.id)
-    }
     session_vaccinations_path(@session)
   end
 
