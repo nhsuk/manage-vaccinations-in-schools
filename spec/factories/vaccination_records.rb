@@ -38,7 +38,9 @@
 #
 FactoryBot.define do
   factory :vaccination_record do
-    patient_session { create :patient_session }
+    transient { campaign { create :campaign } }
+
+    patient_session { create :patient_session, campaign: }
     recorded_at { "2023-06-09" }
     delivery_site { "left_arm_upper_position" }
     delivery_method { "intramuscular" }
