@@ -1,6 +1,6 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: session_patient_vaccinations_path(@session, @patient),
+        href: vaccinations_back_link_path,
         name: "vaccination page",
       ) %>
 <% end %>

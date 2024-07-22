@@ -38,4 +38,14 @@ module VaccinationsHelper
   def in_tab_not_vaccinated?(_action, outcome)
     outcome.in? %i[do_not_vaccinate not_vaccinated]
   end
+
+  # rubocop:disable Rails/HelperInstanceVariable
+  def vaccinations_back_link_path
+    if current_step?(@draft_vaccination_record.form_steps.first.to_s)
+      session_patient_path(@session, id: @patient.id)
+    else
+      previous_wizard_path
+    end
+  end
+  # rubocop:enable Rails/HelperInstanceVariable
 end
