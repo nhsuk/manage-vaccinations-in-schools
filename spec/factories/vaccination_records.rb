@@ -8,6 +8,7 @@
 #  administered       :boolean
 #  delivery_method    :integer
 #  delivery_site      :integer
+#  exported_to_dps_at :datetime
 #  notes              :text
 #  reason             :integer
 #  recorded_at        :datetime
