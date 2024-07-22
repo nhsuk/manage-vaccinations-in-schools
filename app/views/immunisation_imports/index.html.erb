@@ -25,8 +25,6 @@
 
 <%= govuk_link_to "Upload a new vaccination report", new_campaign_immunisation_import_path, class: "nhsuk-button nhsuk-u-margin-0" %>
 
-<%= govuk_button_to "Download DPS export", dps_export_campaign_reports_path(@campaign) %>
-
 <div class="nhsuk-table__panel-with-heading-tab">
   <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
     <% table.with_head do |head| %>
@@ -57,3 +55,9 @@
     <% end %>
   <% end %>
 </div>
+
+<% content_for :after_main do %>
+  <%= render(AppDevToolsComponent.new) do %>
+    <%= govuk_button_to "Download DPS export", dps_export_campaign_reports_path(@campaign) %>
+  <% end %>
+<% end %>
