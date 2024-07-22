@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_19_140632) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_22_102108) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -405,6 +405,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_19_140632) do
     t.text "notes"
     t.bigint "vaccine_id"
     t.bigint "imported_from_id"
+    t.datetime "exported_to_dps_at"
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["imported_from_id"], name: "index_vaccination_records_on_imported_from_id"
     t.index ["patient_session_id"], name: "index_vaccination_records_on_patient_session_id"
