@@ -14,12 +14,11 @@
   <%= page_title %>
 <% end %>
 
-<%= form_with model: @draft_vaccination_record,
-              url: session_patient_vaccinations_delivery_site_path(
-                session_id: @session.id,
-                id: @patient.id,
-              ),
-              method: :put do |f| %>
+<%= form_for @draft_vaccination_record,
+             url: wizard_path,
+             method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
   <%= f.govuk_collection_radio_buttons(
         :delivery_method,
         vaccination_delivery_methods_for(@draft_vaccination_record.vaccine),

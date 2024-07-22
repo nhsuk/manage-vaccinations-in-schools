@@ -113,22 +113,23 @@ class VaccinationRecord < ApplicationRecord
               in: delivery_methods.keys
             },
             if: -> { administered && delivery_site.present? }
-  validates :delivery_site,
-            presence: true,
-            inclusion: {
-              in: delivery_sites.keys
-            },
-            on: :edit_delivery,
-            if: -> { administered }
-  validates :delivery_method,
-            presence: true,
-            inclusion: {
-              in: delivery_methods.keys
-            },
-            on: :edit_delivery,
-            if: -> { administered }
 
   validate :batch_vaccine_matches_vaccine, if: -> { recorded? && administered }
+
+  on_wizard_step :"delivery-site" do
+    validates :delivery_site,
+              presence: true,
+              inclusion: {
+                in: VaccinationRecord.delivery_sites.keys
+              },
+              if: -> { administered }
+    validates :delivery_method,
+              presence: true,
+              inclusion: {
+                in: VaccinationRecord.delivery_methods.keys
+              },
+              if: -> { administered }
+  end
 
   on_wizard_step :reason do
     validates :reason,
@@ -139,7 +140,7 @@ class VaccinationRecord < ApplicationRecord
   end
 
   on_wizard_step :batch do
-    validates :batch_id, presence: true, if: -> { administered }
+    validates :batch_id, presence: true
   end
 
   def location_name
@@ -156,6 +157,7 @@ class VaccinationRecord < ApplicationRecord
 
   def form_steps
     [
+      ("delivery-site" if administered? && delivery_site.nil?),
       (:batch if administered? && batch_id.nil?),
       (:reason if not_administered?),
       :confirm

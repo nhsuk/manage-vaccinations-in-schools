@@ -54,19 +54,11 @@ class VaccinationsController < ApplicationController
 
   def create
     if @draft_vaccination_record.update create_params.merge(user: current_user)
-      if @draft_vaccination_record.administered? &&
-           @draft_vaccination_record.delivery_site_other
-        redirect_to edit_session_patient_vaccinations_delivery_site_path(
-                      @session,
-                      patient_id: @patient.id
-                    )
-      else
-        redirect_to session_patient_vaccinations_edit_path(
-                      @session,
-                      patient_id: @patient.id,
-                      id: @draft_vaccination_record.form_steps.first
-                    )
-      end
+      redirect_to session_patient_vaccinations_edit_path(
+                    @session,
+                    patient_id: @patient.id,
+                    id: @draft_vaccination_record.form_steps.first
+                  )
     else
       render "patients/show", status: :unprocessable_entity
     end
