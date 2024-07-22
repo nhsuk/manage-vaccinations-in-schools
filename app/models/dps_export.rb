@@ -12,4 +12,10 @@ class DPSExport
       @vaccinations.each { csv << DPSExportRow.new(_1).to_a }
     end
   end
+
+  def export_csv
+    csv = to_csv
+    @vaccinations.update_all(exported_to_dps_at: Time.zone.now)
+    csv
+  end
 end
