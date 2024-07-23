@@ -606,6 +606,7 @@ describe ConsentForm, type: :model do
           :consent_form,
           session:,
           first_name: patients.first.first_name,
+          last_name: ("a".."z").to_a.sample(8).join, # Make sure last_name doesn't match
           date_of_birth: patients.first.date_of_birth
         )
       end
