@@ -5,8 +5,8 @@
 # Table name: batches
 #
 #  id         :bigint           not null, primary key
-#  expiry     :date
-#  name       :string
+#  expiry     :date             not null
+#  name       :string           not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  vaccine_id :bigint           not null
