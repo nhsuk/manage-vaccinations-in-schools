@@ -9,6 +9,8 @@ class DPSExportRow
     person_gender_code
     person_postcode
     date_and_time
+    site_of_vaccination_code
+    site_of_vaccination_term
   ].freeze
 
   attr_reader :vaccination
@@ -49,5 +51,17 @@ class DPSExportRow
 
   def date_and_time
     vaccination.recorded_at
+  end
+
+  def site_of_vaccination_code
+    VaccinationRecord::DELIVERY_SITE_SNOMED_CODES_AND_TERMS[
+      vaccination.delivery_site
+    ].first
+  end
+
+  def site_of_vaccination_term
+    VaccinationRecord::DELIVERY_SITE_SNOMED_CODES_AND_TERMS[
+      vaccination.delivery_site
+    ].last
   end
 end
