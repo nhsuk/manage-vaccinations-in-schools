@@ -76,6 +76,9 @@ Rails.application.configure do
   # Raise error when a before_action's only/except options reference missing actions
   config.action_controller.raise_on_missing_callback_actions = true
 
+  # Use Turbo Streams for hotwire livereload, improving local DX
+  config.hotwire_livereload.reload_method = :turbo_stream
+
   config.action_mailer.default_url_options = { host: "localhost:4000" }
   if Settings.govuk_notify&.enabled
     config.action_mailer.delivery_method = :notify
