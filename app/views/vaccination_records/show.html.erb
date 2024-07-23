@@ -1,0 +1,11 @@
+<%= h1 @patient.full_name %>
+
+<%= render AppCardComponent.new do |c| %>
+  <% c.with_heading { "Child record" } %>
+  <%= render AppPatientDetailsComponent.new(patient: @patient, session: @session, school: @school) %>
+<% end %>
+
+<%= render AppCardComponent.new do |c| %>
+  <% c.with_heading { "Vaccination record" } %>
+  <%= render AppVaccinationRecordDetailsComponent.new(@vaccination_record) %>
+<% end %>

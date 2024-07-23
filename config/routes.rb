@@ -198,6 +198,8 @@ Rails.application.routes.draw do
     get "/:tab", to: "errors#not_found", as: "section_tab"
   end
 
+  resources :vaccination_records, path: "vaccination-records", only: :show
+
   resources :vaccines, only: %i[index show] do
     resources :batches, only: %i[create edit new update] do
       post "make-default", on: :member, as: :make_default
