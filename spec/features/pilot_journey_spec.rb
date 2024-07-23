@@ -166,7 +166,7 @@ describe "Pilot journey" do
   end
 
   def then_i_see_the_childs_details_including_the_updated_nhs_number
-    expect(page).to have_content("NHS Number999 888 6666")
+    expect(page).to have_content("NHS number999 888 6666")
   end
 
   def given_the_day_of_the_session_comes

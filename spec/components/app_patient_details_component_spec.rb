@@ -60,8 +60,12 @@ describe AppPatientDetailsComponent, type: :component do
     end
 
     it "renders the patient's NHS number" do
+      expect(page).to(have_css(".nhsuk-summary-list__key", text: "NHS number"))
       expect(page).to(
-        have_css(".nhsuk-summary-list__row", text: "NHS Number123 456 7890")
+        have_css(
+          ".nhsuk-summary-list__row .app-u-monospace",
+          text: "123 456 7890"
+        )
       )
     end
 
@@ -142,7 +146,7 @@ describe AppPatientDetailsComponent, type: :component do
 
     it "does not render an NHS number" do
       expect(page).not_to(
-        have_css(".nhsuk-summary-list__row", text: "NHS Number")
+        have_css(".nhsuk-summary-list__row", text: "NHS number")
       )
     end
 

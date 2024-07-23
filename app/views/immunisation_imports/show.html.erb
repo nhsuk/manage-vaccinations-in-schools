@@ -48,7 +48,7 @@
           <% end %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">NHS number</span>
-            <%= format_nhs_number(vaccination_record.patient.nhs_number) %>
+            <span class="app-u-monospace"><%= format_nhs_number(vaccination_record.patient.nhs_number) %></span>
           <% end %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Date of birth</span>

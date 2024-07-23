@@ -66,8 +66,8 @@ class AppPatientDetailsComponent < ViewComponent::Base
 
       if nhs_number.present?
         summary_list.with_row do |row|
-          row.with_key { "NHS Number" }
-          row.with_value { nhs_number_formatted }
+          row.with_key { "NHS number" }
+          row.with_value(classes: ["app-u-monospace"]) { nhs_number_formatted }
         end
       end
     end
