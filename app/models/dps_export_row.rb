@@ -10,6 +10,8 @@ class DPSExportRow
     person_postcode
     date_and_time
     recorded_date
+    site_code
+    site_code_type_uri
     site_of_vaccination_code
     site_of_vaccination_term
   ].freeze
@@ -56,6 +58,14 @@ class DPSExportRow
 
   def recorded_date
     vaccination.created_at.strftime("%Y%m%d")
+  end
+
+  def site_code
+    vaccination.campaign.team.ods_code
+  end
+
+  def site_code_type_uri
+    "https://fhir.nhs.uk/Id/ods-organization-code"
   end
 
   def site_of_vaccination_code
