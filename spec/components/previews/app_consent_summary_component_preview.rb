@@ -59,7 +59,7 @@ class AppConsentSummaryComponentPreview < ViewComponent::Preview
                  text: "Consent given (phone)",
                  timestamp: Time.zone.local(2024, 3, 5, 12, 48, 0),
                  recorded_by:
-                   FactoryBot.build(
+                   build(
                      :user,
                      full_name: "Nurse Joy",
                      email: "nurse.joy@example.com"

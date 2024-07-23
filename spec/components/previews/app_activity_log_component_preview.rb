@@ -17,10 +17,10 @@ class AppActivityLogComponentPreview < ViewComponent::Preview
     @user = @team.users.first
     @session = @campaign.sessions.first
     @location = @session.location
-    @patient = FactoryBot.create(:patient, location: @location)
+    @patient = create(:patient, location: @location)
 
     @consents = [
-      FactoryBot.create(
+      create(
         :consent,
         :given,
         :from_mum,
@@ -29,7 +29,7 @@ class AppActivityLogComponentPreview < ViewComponent::Preview
         parent: create(:parent, :mum, name: "Jane Doe"),
         recorded_at: Time.zone.parse("2024-05-30 12:00")
       ),
-      FactoryBot.create(
+      create(
         :consent,
         :refused,
         :from_dad,
@@ -41,7 +41,7 @@ class AppActivityLogComponentPreview < ViewComponent::Preview
     ]
 
     @patient_session =
-      FactoryBot.create(
+      create(
         :patient_session,
         patient: @patient,
         session: @session,
@@ -49,7 +49,7 @@ class AppActivityLogComponentPreview < ViewComponent::Preview
       )
 
     @triage = [
-      FactoryBot.create(
+      create(
         :triage,
         :kept_in_triage,
         patient_session: @patient_session,
@@ -57,21 +57,21 @@ class AppActivityLogComponentPreview < ViewComponent::Preview
         notes: "Some notes",
         user: @user
       ),
-      FactoryBot.create(
+      create(
         :triage,
         :do_not_vaccinate,
         patient_session: @patient_session,
         created_at: Time.zone.parse("2024-05-30 14:10"),
         user: @user
       ),
-      FactoryBot.create(
+      create(
         :triage,
         :delay_vaccination,
         patient_session: @patient_session,
         created_at: Time.zone.parse("2024-05-30 14:20"),
         user: @user
       ),
-      FactoryBot.create(
+      create(
         :triage,
         :vaccinate,
         patient_session: @patient_session,
@@ -81,7 +81,7 @@ class AppActivityLogComponentPreview < ViewComponent::Preview
     ]
 
     @vaccination_records = [
-      FactoryBot.create(
+      create(
         :vaccination_record,
         patient_session: @patient_session,
         created_at: Time.zone.parse("2024-05-31 12:00"),

@@ -5,11 +5,7 @@ class AppHealthQuestionsComponentPreview < ViewComponent::Preview
     setup
 
     patient_session =
-      FactoryBot.create(
-        :patient_session,
-        :consent_given_triage_not_needed,
-        session:
-      )
+      create(:patient_session, :consent_given_triage_not_needed, session:)
 
     render AppHealthQuestionsComponent.new(consents: patient_session.consents)
   end
@@ -18,11 +14,7 @@ class AppHealthQuestionsComponentPreview < ViewComponent::Preview
     setup
 
     patient_session =
-      FactoryBot.create(
-        :patient_session,
-        :consent_given_triage_needed,
-        session:
-      )
+      create(:patient_session, :consent_given_triage_needed, session:)
 
     render AppHealthQuestionsComponent.new(consents: patient_session.consents)
   end
@@ -31,12 +23,8 @@ class AppHealthQuestionsComponentPreview < ViewComponent::Preview
     setup
 
     patient_session =
-      FactoryBot.create(
-        :patient_session,
-        :consent_given_triage_not_needed,
-        session:
-      )
-    FactoryBot.create(
+      create(:patient_session, :consent_given_triage_not_needed, session:)
+    create(
       :consent,
       :given,
       :no_contraindications,
@@ -51,15 +39,11 @@ class AppHealthQuestionsComponentPreview < ViewComponent::Preview
     setup
 
     patient_session =
-      FactoryBot.create(
-        :patient_session,
-        :consent_given_triage_needed,
-        session:
-      )
+      create(:patient_session, :consent_given_triage_needed, session:)
     patient_session.consents.first.update!(parent_relationship: :mother)
 
     dad_consent =
-      FactoryBot.create(
+      create(
         :consent,
         :given,
         :health_question_notes,
@@ -81,12 +65,7 @@ class AppHealthQuestionsComponentPreview < ViewComponent::Preview
   attr_reader :campaign, :session
 
   def setup
-    @campaign =
-      FactoryBot.create(
-        :campaign,
-        :hpv,
-        team: Team.first || FactoryBot.create(:team)
-      )
-    @session = FactoryBot.create(:session, patients_in_session: 0, campaign:)
+    @campaign = create(:campaign, :hpv, team: Team.first || create(:team))
+    @session = create(:session, patients_in_session: 0, campaign:)
   end
 end
