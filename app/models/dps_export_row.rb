@@ -9,6 +9,7 @@ class DPSExportRow
     person_gender_code
     person_postcode
     date_and_time
+    recorded_date
     site_of_vaccination_code
     site_of_vaccination_term
   ].freeze
@@ -51,6 +52,10 @@ class DPSExportRow
 
   def date_and_time
     vaccination.recorded_at.strftime("%Y%m%dT%H%M%S00")
+  end
+
+  def recorded_date
+    vaccination.created_at.strftime("%Y%m%d")
   end
 
   def site_of_vaccination_code

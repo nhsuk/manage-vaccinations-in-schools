@@ -47,12 +47,16 @@ describe DPSExportRow do
          )
     end
 
+    it "has recorded_date" do
+      expect(array[7]).to eq vaccination_record.created_at.strftime("%Y%m%d")
+    end
+
     it "has site_of_vaccination_code" do
-      expect(array[7]).to eq "368208006"
+      expect(array[8]).to eq "368208006"
     end
 
     it "has site_of_vaccination_term" do
-      expect(array[8]).to eq "Structure of left upper arm (body structure)"
+      expect(array[9]).to eq "Structure of left upper arm (body structure)"
     end
   end
 end
