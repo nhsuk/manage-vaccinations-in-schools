@@ -26,7 +26,9 @@ describe DPSExportRow do
     end
 
     it "has person_dob" do
-      expect(array[3]).to eq vaccination_record.patient.date_of_birth
+      expect(array[3]).to eq vaccination_record.patient.date_of_birth.strftime(
+           "%Y%m%d"
+         )
     end
 
     it "has person_gender_code" do
@@ -40,7 +42,9 @@ describe DPSExportRow do
     end
 
     it "has date_and_time" do
-      expect(array[6]).to eq vaccination_record.recorded_at
+      expect(array[6]).to eq vaccination_record.recorded_at.strftime(
+           "%Y%m%dT%H%M%S00"
+         )
     end
 
     it "has site_of_vaccination_code" do

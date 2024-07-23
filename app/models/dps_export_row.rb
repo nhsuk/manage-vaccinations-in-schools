@@ -38,7 +38,7 @@ class DPSExportRow
   end
 
   def person_dob
-    vaccination.patient.date_of_birth
+    vaccination.patient.date_of_birth.strftime("%Y%m%d")
   end
 
   def person_gender_code
@@ -50,7 +50,7 @@ class DPSExportRow
   end
 
   def date_and_time
-    vaccination.recorded_at
+    vaccination.recorded_at.strftime("%Y%m%dT%H%M%S00")
   end
 
   def site_of_vaccination_code
