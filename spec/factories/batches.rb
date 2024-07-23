@@ -22,15 +22,10 @@
 
 FactoryBot.define do
   factory :batch do
-    transient do
-      random { Random.new }
-      prefix { ("A".."Z").to_a.sample(2, random:).join }
-      days_to_expiry_range { 10..50 }
-      days_to_expiry { random.rand(days_to_expiry_range) }
-    end
+    transient { prefix { Faker::Alphanumeric.alpha(number: 2).upcase } }
 
-    name { "#{prefix}#{sprintf("%04d", random.rand(10_000))}" }
-    expiry { Time.zone.today + days_to_expiry }
-    vaccine { create(:vaccine) }
+    name { "#{prefix}#{Faker::Number.number(digits: 4)}" }
+    expiry { Faker::Time.forward(days: 50) }
+    vaccine
   end
 end
