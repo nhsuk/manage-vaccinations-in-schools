@@ -56,12 +56,20 @@ describe DPSExportRow do
       expect(array[7]).to eq "20240612"
     end
 
+    it "has site_code" do
+      expect(array[8]).to eq vaccination_record.campaign.team.ods_code
+    end
+
+    it "has site_code_type_uri" do
+      expect(array[9]).to eq "https://fhir.nhs.uk/Id/ods-organization-code"
+    end
+
     it "has site_of_vaccination_code" do
-      expect(array[8]).to eq "368208006"
+      expect(array[10]).to eq "368208006"
     end
 
     it "has site_of_vaccination_term" do
-      expect(array[9]).to eq "Structure of left upper arm (body structure)"
+      expect(array[11]).to eq "Structure of left upper arm (body structure)"
     end
   end
 end
