@@ -76,7 +76,7 @@ describe "User CIS2 authentication" do
   end
 
   def and_i_am_logged_in
-    expect(page).to have_link "nurse.test@example.nhs.uk"
+    expect(page).to have_content "Nurse Test"
     expect(page).to have_button "Log out"
   end
 
@@ -89,7 +89,7 @@ describe "User CIS2 authentication" do
   end
 
   def and_i_am_logged_out
-    expect(page).not_to have_link "nurse.test@example.nhs.uk"
+    expect(page).not_to have_content "Nurse Test"
     expect(page).not_to have_button "Log out"
   end
 
