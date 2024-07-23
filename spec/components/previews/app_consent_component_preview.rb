@@ -4,8 +4,7 @@ class AppConsentComponentPreview < ViewComponent::Preview
   def consent_refused_without_notes
     setup
 
-    patient_session =
-      FactoryBot.create(:patient_session, :consent_refused, session:)
+    patient_session = create(:patient_session, :consent_refused, session:)
 
     render AppConsentComponent.new(patient_session:, route: "triage")
   end
@@ -14,7 +13,7 @@ class AppConsentComponentPreview < ViewComponent::Preview
     setup
 
     patient_session =
-      FactoryBot.create(:patient_session, :consent_refused_with_notes, session:)
+      create(:patient_session, :consent_refused_with_notes, session:)
 
     render AppConsentComponent.new(patient_session:, route: "triage")
   end
@@ -23,20 +22,15 @@ class AppConsentComponentPreview < ViewComponent::Preview
     setup
 
     patient_session =
-      FactoryBot.create(
-        :patient_session,
-        :consent_given_triage_not_needed,
-        session:
-      )
+      create(:patient_session, :consent_given_triage_not_needed, session:)
     render AppConsentComponent.new(patient_session:, route: "triage")
   end
 
   def two_refusals_from_the_same_parent
     setup
 
-    patient_session =
-      FactoryBot.create(:patient_session, :consent_refused, session:)
-    FactoryBot.create(
+    patient_session = create(:patient_session, :consent_refused, session:)
+    create(
       :consent,
       :refused,
       patient_session:,
@@ -51,12 +45,8 @@ class AppConsentComponentPreview < ViewComponent::Preview
     setup
 
     patient_session =
-      FactoryBot.create(
-        :patient_session,
-        :consent_given_triage_not_needed,
-        session:
-      )
-    FactoryBot.create(:consent, :refused, :from_mum, patient_session:)
+      create(:patient_session, :consent_given_triage_not_needed, session:)
+    create(:consent, :refused, :from_mum, patient_session:)
 
     render AppConsentComponent.new(patient_session:, route: "triage")
   end
@@ -66,12 +56,7 @@ class AppConsentComponentPreview < ViewComponent::Preview
   attr_reader :campaign, :session
 
   def setup
-    @campaign =
-      FactoryBot.create(
-        :campaign,
-        :hpv,
-        team: Team.first || FactoryBot.create(:team)
-      )
-    @session = FactoryBot.create(:session, patients_in_session: 0, campaign:)
+    @campaign = create(:campaign, :hpv, team: Team.first || create(:team))
+    @session = create(:session, patients_in_session: 0, campaign:)
   end
 end

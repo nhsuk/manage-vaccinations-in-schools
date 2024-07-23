@@ -21,7 +21,7 @@ class DevController < ApplicationController
     @session = Session.find(params.fetch(:session_id))
     @vaccine = @session.campaign.vaccines.first
     @consent_form =
-      FactoryBot.build :consent_form, :draft, session_id: @session.id
+      FactoryBot.build(:consent_form, :draft, session_id: @session.id)
     @consent_form.health_answers = @vaccine.health_questions.to_health_answers
     @consent_form.save!
     @consent_form.each_health_answer do |health_answer|

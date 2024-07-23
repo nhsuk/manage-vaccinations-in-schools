@@ -31,11 +31,11 @@ require "rails_helper"
 describe Session do
   describe "validations" do
     context "when form_step is location" do
-      subject { FactoryBot.build :session, form_step:, campaign: }
+      subject { build(:session, form_step:, campaign:) }
 
       let(:form_step) { :location }
-      let(:team) { create :team }
-      let(:campaign) { create :campaign, team: }
+      let(:team) { create(:team) }
+      let(:campaign) { create(:campaign, team:) }
 
       it { should validate_presence_of(:location_id).on(:update) }
     end
@@ -45,19 +45,19 @@ describe Session do
     subject { session.in_progress? }
 
     context "when the session is scheduled for today" do
-      let(:session) { FactoryBot.create :session, :in_progress }
+      let(:session) { create(:session, :in_progress) }
 
       it { should be_truthy }
     end
 
     context "when the session is scheduled in the past" do
-      let(:session) { FactoryBot.create :session, :in_past }
+      let(:session) { create(:session, :in_past) }
 
       it { should be_falsey }
     end
 
     context "when the session is scheduled in the future" do
-      let(:session) { FactoryBot.create :session, :in_future }
+      let(:session) { create(:session, :in_future) }
 
       it { should be_falsey }
     end
@@ -66,8 +66,8 @@ describe Session do
   describe ".active scope" do
     subject { described_class.active }
 
-    let!(:active_session) { FactoryBot.create :session }
-    let!(:draft_session) { FactoryBot.create :session, draft: true }
+    let!(:active_session) { create(:session) }
+    let!(:draft_session) { create(:session, draft: true) }
 
     it { should include active_session }
     it { should_not include draft_session }

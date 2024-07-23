@@ -27,7 +27,7 @@ describe AppPatientPageComponent, type: :component do
 
   context "session in progress, patient in triage" do
     let(:patient_session) do
-      FactoryBot.create(
+      create(
         :patient_session,
         :consent_given_triage_needed,
         :session_in_progress
@@ -57,7 +57,7 @@ describe AppPatientPageComponent, type: :component do
 
   context "session in progress, patient ready to vaccinate" do
     let(:patient_session) do
-      FactoryBot.create(
+      create(
         :patient_session,
         :triaged_ready_to_vaccinate,
         :session_in_progress

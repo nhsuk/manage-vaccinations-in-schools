@@ -7,17 +7,13 @@ describe AppPatientDetailsComponent, type: :component do
 
   before { render_inline(component) }
 
-  let(:session) { FactoryBot.create(:session) }
+  let(:session) { create(:session) }
 
   context "with a patient object" do
     let(:patient) do
-      FactoryBot.create(
-        :patient,
-        nhs_number: 1_234_567_890,
-        common_name: "Homer"
-      )
+      create(:patient, nhs_number: 1_234_567_890, common_name: "Homer")
     end
-    let(:school) { FactoryBot.create(:location) }
+    let(:school) { create(:location) }
     let(:component) { described_class.new(patient:, session:, school:) }
 
     it "renders the patient's full name" do
@@ -70,7 +66,7 @@ describe AppPatientDetailsComponent, type: :component do
     end
 
     context "without a preferred name" do
-      let(:patient) { FactoryBot.create(:patient, common_name: nil) }
+      let(:patient) { create(:patient, common_name: nil) }
 
       it "does not render known as" do
         expect(page).not_to(
@@ -82,13 +78,9 @@ describe AppPatientDetailsComponent, type: :component do
 
   context "with a consent_form object" do
     let(:consent_form) do
-      FactoryBot.create(
-        :consent_form,
-        common_name: "Homer",
-        use_common_name: true
-      )
+      create(:consent_form, common_name: "Homer", use_common_name: true)
     end
-    let(:school) { FactoryBot.create(:location) }
+    let(:school) { create(:location) }
     let(:component) { described_class.new(consent_form:, session:, school:) }
 
     it "renders the child's full name" do
@@ -151,7 +143,7 @@ describe AppPatientDetailsComponent, type: :component do
     end
 
     context "without a common name" do
-      let(:consent_form) { FactoryBot.create(:consent_form, common_name: nil) }
+      let(:consent_form) { create(:consent_form, common_name: nil) }
 
       it "does not render known as" do
         expect(page).not_to(
@@ -161,9 +153,7 @@ describe AppPatientDetailsComponent, type: :component do
     end
 
     context "when child does not have a date of birth on record" do
-      let(:consent_form) do
-        FactoryBot.create(:consent_form, date_of_birth: nil)
-      end
+      let(:consent_form) { create(:consent_form, date_of_birth: nil) }
 
       it "does not render the child's date of birth" do
         expect(page).not_to(
@@ -174,7 +164,7 @@ describe AppPatientDetailsComponent, type: :component do
 
     context "when child does not have a GP" do
       let(:consent_form) do
-        FactoryBot.create(
+        create(
           :consent_form,
           common_name: "Homer",
           gp_name: nil,
@@ -195,7 +185,7 @@ describe AppPatientDetailsComponent, type: :component do
 
     context "when it's unknown whether the child has a GP" do
       let(:consent_form) do
-        FactoryBot.create(
+        create(
           :consent_form,
           common_name: "Homer",
           gp_name: nil,
