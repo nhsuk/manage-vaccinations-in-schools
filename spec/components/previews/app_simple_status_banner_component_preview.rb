@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class AppSimpleStatusBannerComponentPreview < ViewComponent::Preview
+  include FactoryBot::Syntax::Methods
+
   def waiting_for_consent
     patient_session = create(:patient_session, :added_to_session)
 

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class AppConsentComponentPreview < ViewComponent::Preview
+  include FactoryBot::Syntax::Methods
+
   def consent_refused_without_notes
     setup
 

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class AppHealthQuestionsComponentPreview < ViewComponent::Preview
+  include FactoryBot::Syntax::Methods
+
   def single_consent_triage_not_needed
     setup
 
