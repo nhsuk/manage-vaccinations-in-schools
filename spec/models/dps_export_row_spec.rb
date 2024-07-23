@@ -6,8 +6,17 @@ require "csv"
 describe DPSExportRow do
   subject(:row) { described_class.new(vaccination_record) }
 
+  let(:patient) { create :patient, date_of_birth: "2012-12-29" }
   let(:vaccination_record) do
-    create(:vaccination_record, delivery_site: :left_arm_upper_position)
+    create(
+      :vaccination_record,
+      delivery_site: :left_arm_upper_position,
+      recorded_at: Time.zone.local(2024, 7, 23, 19, 31, 47),
+      created_at: Time.zone.local(2024, 6, 12, 11, 28, 31),
+      patient_attributes: {
+        date_of_birth: "2012-12-29"
+      }
+    )
   end
 
   describe "to_a" do
@@ -26,9 +35,7 @@ describe DPSExportRow do
     end
 
     it "has person_dob" do
-      expect(array[3]).to eq vaccination_record.patient.date_of_birth.strftime(
-           "%Y%m%d"
-         )
+      expect(array[3]).to eq "20121229"
     end
 
     it "has person_gender_code" do
@@ -42,13 +49,11 @@ describe DPSExportRow do
     end
 
     it "has date_and_time" do
-      expect(array[6]).to eq vaccination_record.recorded_at.strftime(
-           "%Y%m%dT%H%M%S00"
-         )
+      expect(array[6]).to eq "20240723T19314700"
     end
 
     it "has recorded_date" do
-      expect(array[7]).to eq vaccination_record.created_at.strftime("%Y%m%d")
+      expect(array[7]).to eq "20240612"
     end
 
     it "has site_of_vaccination_code" do

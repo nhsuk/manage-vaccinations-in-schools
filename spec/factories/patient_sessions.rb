@@ -27,9 +27,10 @@ FactoryBot.define do
     transient do
       campaign { create :campaign }
       user { create :user }
+      patient_attributes { {} }
     end
 
-    patient { create :patient, session: }
+    patient { create :patient, session:, **patient_attributes }
     session { create(:session, campaign:) }
     created_by { user }
 
