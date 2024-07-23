@@ -24,6 +24,9 @@ describe "Immunisation imports" do
     then_i_should_see_the_success_banner
     and_i_should_see_the_upload
     and_i_should_see_the_vaccination_records
+
+    when_i_click_on_a_vaccination_record
+    then_i_should_see_the_vaccination_record
   end
 
   def given_i_am_signed_in
@@ -108,5 +111,17 @@ describe "Immunisation imports" do
       "Full name Chyna Pickle NHS number 742 018 0008 Date of birth 12 September 2012 " \
         "Postcode LE3 2DA Vaccinated date 14 May 2024"
     )
+  end
+
+  def when_i_click_on_a_vaccination_record
+    click_on "Chyna Pickle"
+  end
+
+  def then_i_should_see_the_vaccination_record
+    expect(page).to have_content("Chyna Pickle")
+    expect(page).to have_content("Child record")
+    expect(page).to have_content("NameChyna Pickle")
+    expect(page).to have_content("Vaccination record")
+    expect(page).to have_content("OutcomeVaccinated")
   end
 end
