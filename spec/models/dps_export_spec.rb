@@ -24,6 +24,8 @@ describe DPSExport do
              "PERSON_GENDER_CODE"
              "PERSON_POSTCODE"
              "DATE_AND_TIME"
+             "SITE_OF_VACCINATION_CODE"
+             "SITE_OF_VACCINATION_TERM"
            ]
       end
     end

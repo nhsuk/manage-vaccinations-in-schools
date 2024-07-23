@@ -6,7 +6,9 @@ require "csv"
 describe DPSExportRow do
   subject(:row) { described_class.new(vaccination_record) }
 
-  let(:vaccination_record) { create(:vaccination_record) }
+  let(:vaccination_record) do
+    create(:vaccination_record, delivery_site: :left_arm_upper_position)
+  end
 
   describe "to_a" do
     subject(:array) { row.to_a }
@@ -39,6 +41,14 @@ describe DPSExportRow do
 
     it "has date_and_time" do
       expect(array[6]).to eq vaccination_record.recorded_at
+    end
+
+    it "has site_of_vaccination_code" do
+      expect(array[7]).to eq "368208006"
+    end
+
+    it "has site_of_vaccination_term" do
+      expect(array[8]).to eq "Structure of left upper arm (body structure)"
     end
   end
 end
