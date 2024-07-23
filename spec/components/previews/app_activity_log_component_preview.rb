@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class AppActivityLogComponentPreview < ViewComponent::Preview
+  include FactoryBot::Syntax::Methods
+
   def default
     setup
 

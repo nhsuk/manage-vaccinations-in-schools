@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class AppPatientTableComponentPreview < ViewComponent::Preview
+  include FactoryBot::Syntax::Methods
+
   def check_consent
     patient_sessions =
       create_list(:patient_session, 2, :triaged_ready_to_vaccinate)

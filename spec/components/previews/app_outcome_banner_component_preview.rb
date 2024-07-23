@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class AppOutcomeBannerComponentPreview < ViewComponent::Preview
+  include FactoryBot::Syntax::Methods
+
   def triaged_do_not_vaccinate
     patient_session = create(:patient_session, :triaged_do_not_vaccinate)
 
