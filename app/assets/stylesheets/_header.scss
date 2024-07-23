@@ -1,16 +1,92 @@
-.app-header {
-  &__button-link {
-    @extend .nhsuk-header__navigation-link;
-    border: none;
-    border-bottom: nhsuk-spacing(1) solid transparent;
-    border-top: nhsuk-spacing(1) solid transparent;
-    background: none;
-    width: 100%;
-    text-align: left;
-    cursor: pointer;
+.app-header__content {
+  display: flex;
+  flex-flow: column wrap;
+  gap: nhsuk-spacing(2);
+
+  @include mq($until: tablet) {
+    margin-top: nhsuk-spacing(3);
+  }
+}
+
+.app-header__account {
+  border-radius: $nhsuk-border-radius;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  overflow: hidden;
+}
+
+.app-header__account-item {
+  align-items: start;
+  background-color: shade($nhsuk-link-color, 20%);
+  color: $color_nhsuk-white;
+  display: inline-flex;
+  flex-grow: 1;
+  gap: nhsuk-spacing(2);
+  padding: nhsuk-spacing(2) nhsuk-spacing(3);
+
+  &:first-child {
+    flex-grow: 999;
+  }
+}
+
+.app-header__account-icon {
+  flex-shrink: 0;
+  position: relative;
+  top: 1px;
+}
+
+.app-header__account-link {
+  color: $color_nhsuk-white;
+  display: block;
+  margin: #{nhsuk-spacing(2) * -1} #{nhsuk-spacing(3) * -1};
+  padding: nhsuk-spacing(2) nhsuk-spacing(3);
+
+  &:visited {
+    color: $color_nhsuk-white;
   }
 
-  &__navigation-item--divider {
-    margin-right: auto;
+  &:active,
+  &:focus {
+    background-color: $nhsuk-focus-color;
+    border-bottom: $nhsuk-focus-width solid $nhsuk-focus-text-color;
+    color: $color_nhsuk-black;
+    padding-bottom: nhsuk-spacing(1);
+  }
+
+  &:hover:not(:active):not(:focus) {
+    color: $color_nhsuk-white;
+  }
+}
+
+.app-header__account-button {
+  @extend .app-header__account-link;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: inherit;
+  line-height: nhsuk-spacing(4);
+  outline: none;
+  text-decoration: underline;
+
+  &:hover,
+  &:focus,
+  &:active {
+    text-decoration: none;
+  }
+}
+
+.app-header {
+  .nhsuk-header__search-form {
+    margin-top: 0;
+  }
+
+  .nhsuk-header__navigation-link[aria-current]:not(:focus):not(:active) {
+    text-decoration: none;
+    border-bottom: nhsuk-spacing(1) solid $nhsuk-border-color;
+
+    .nhsuk-header__drop-down & {
+      border-bottom-color: transparent;
+    }
   }
 }

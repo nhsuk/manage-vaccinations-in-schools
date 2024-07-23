@@ -1,4 +1,4 @@
-<header class="nhsuk-header" role="banner" data-module="nhsuk-header">
+<header class="nhsuk-header app-header" role="banner" data-module="nhsuk-header">
   <div class="nhsuk-header__container">
     <div class="nhsuk-header__logo">
       <a class="nhsuk-header__link nhsuk-header__link--service"
@@ -13,10 +13,26 @@
         </span>
       </a>
     </div>
+    <% if current_user.present? %>
+      <div class="nhsuk-header__content app-header__content">
+        <div class="app-header__account">
+          <span class="app-header__account-item">
+            <svg class="app-header__account-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <path fill="currentColor" d="M8 0c4.4 0 8 3.6 8 8s-3.6 8-8 8-8-3.6-8-8 3.6-8 8-8Zm0 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1Zm-1.5 9h3a2.5 2.5 0 0 1 2.5 2.5V14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1.5A2.5 2.5 0 0 1 6.5 10ZM8 9C6.368 9 5 7.684 5 6s1.316-3 3-3c1.632 0 3 1.316 3 3S9.632 9 8 9"></path>
+            </svg>
+            <%= current_user.full_name %>
+          </span>
+          <span class="app-header__account-item">
+            <%= button_to "Log out", destroy_user_session_path,
+                          class: "app-header__account-button", method: :delete %>
+          </span>
+        </div>
+      </div>
+    <% end %>
   </div>
 
   <nav class="nhsuk-navigation" role="navigation" aria-label="Primary navigation">
-    <ul class="nhsuk-header__navigation-list">
+    <ul class="nhsuk-header__navigation-list nhsuk-header__navigation-list--left-aligned">
       <% if current_user.present? %>
         <li class="nhsuk-header__navigation-item">
           <%= link_to t("sessions.index.title"), sessions_path, class: "nhsuk-header__navigation-link" %>
@@ -26,12 +42,6 @@
         </li>
         <li class="nhsuk-header__navigation-item app-header__navigation-item--divider">
           <%= link_to t("vaccines.index.title"), vaccines_path, class: "nhsuk-header__navigation-link" %>
-        </li>
-        <li class="nhsuk-header__navigation-item">
-          <%= link_to current_user.email, users_account_path(current_user), class: "nhsuk-header__navigation-link" %>
-        </li>
-        <li class="nhsuk-header__navigation-item">
-          <%= button_to "Log out", destroy_user_session_path, class: "app-header__button-link", method: :delete %>
         </li>
       <% end %>
       <li class="nhsuk-mobile-menu-container">
