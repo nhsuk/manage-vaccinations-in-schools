@@ -13,6 +13,7 @@ describe DPSExportRow do
       delivery_site: :left_arm_upper_position,
       recorded_at: Time.zone.local(2024, 7, 23, 19, 31, 47),
       created_at: Time.zone.local(2024, 6, 12, 11, 28, 31),
+      user: create(:user, full_name: "Jane Doe"),
       patient_attributes: {
         date_of_birth: "2012-12-29"
       }
@@ -58,6 +59,14 @@ describe DPSExportRow do
 
     it "has site_code_type_uri" do
       expect(array[8]).to eq "https://fhir.nhs.uk/Id/ods-organization-code"
+    end
+
+    it "has performing_professional_forename" do
+      expect(array[12]).to eq "Jane"
+    end
+
+    it "has performing_professional_surname" do
+      expect(array[13]).to eq "Doe"
     end
 
     it "has recorded_date" do

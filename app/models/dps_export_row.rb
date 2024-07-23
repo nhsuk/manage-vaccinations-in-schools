@@ -96,9 +96,11 @@ class DPSExportRow
   end
 
   def performing_professional_forename
+    vaccination&.user&.full_name&.split(" ", 2)&.first
   end
 
   def performing_professional_surname
+    vaccination&.user&.full_name&.split(" ", 2)&.last
   end
 
   def recorded_date
