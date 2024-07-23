@@ -9,11 +9,33 @@ class DPSExportRow
     person_gender_code
     person_postcode
     date_and_time
-    recorded_date
     site_code
     site_code_type_uri
+    unique_id
+    unique_id_uri
+    action_flag
+    performing_professional_forename
+    performing_professional_surname
+    recorded_date
+    primary_source
+    vaccination_procedure_code
+    vaccination_procedure_term
+    dose_sequence
+    vaccine_product_code
+    vaccine_product_term
+    vaccine_manufacturer
+    batch_number
+    expiry_date
     site_of_vaccination_code
     site_of_vaccination_term
+    route_of_vaccination_code
+    route_of_vaccination_term
+    dose_amount
+    dose_unit_code
+    dose_unit_term
+    indication_code
+    location_code
+    location_code_type_uri
   ].freeze
 
   attr_reader :vaccination
@@ -56,16 +78,82 @@ class DPSExportRow
     vaccination.recorded_at.strftime("%Y%m%dT%H%M%S00")
   end
 
-  def recorded_date
-    vaccination.created_at.strftime("%Y%m%d")
-  end
-
   def site_code
     vaccination.campaign.team.ods_code
   end
 
   def site_code_type_uri
     "https://fhir.nhs.uk/Id/ods-organization-code"
+  end
+
+  def unique_id
+  end
+
+  def unique_id_uri
+  end
+
+  def action_flag
+  end
+
+  def performing_professional_forename
+  end
+
+  def performing_professional_surname
+  end
+
+  def recorded_date
+    vaccination.created_at.strftime("%Y%m%d")
+  end
+
+  def primary_source
+  end
+
+  def vaccination_procedure_code
+  end
+
+  def vaccination_procedure_term
+  end
+
+  def dose_sequence
+  end
+
+  def vaccine_product_code
+  end
+
+  def vaccine_product_term
+  end
+
+  def vaccine_manufacturer
+  end
+
+  def batch_number
+  end
+
+  def expiry_date
+  end
+
+  def route_of_vaccination_code
+  end
+
+  def route_of_vaccination_term
+  end
+
+  def dose_amount
+  end
+
+  def dose_unit_code
+  end
+
+  def dose_unit_term
+  end
+
+  def indication_code
+  end
+
+  def location_code
+  end
+
+  def location_code_type_uri
   end
 
   def site_of_vaccination_code
