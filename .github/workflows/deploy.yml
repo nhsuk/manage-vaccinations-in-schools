@@ -22,7 +22,7 @@ jobs:
       contents: read
 
     concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
+      group: ${{ github.ref }}-${{ github.event.inputs.environment }}
       cancel-in-progress: true
 
     runs-on: ubuntu-latest
