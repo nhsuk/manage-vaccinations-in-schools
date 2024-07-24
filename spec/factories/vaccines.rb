@@ -58,6 +58,7 @@ FactoryBot.define do
       brand { "Fluenz Tetra" }
       supplier { "AstraZeneca UK Ltd" }
       gtin { "05000456078276" }
+      snomed_product_code { "27114211000001105" }
       add_attribute(:method) { :nasal }
       dose { 0.2 }
     end
@@ -67,6 +68,7 @@ FactoryBot.define do
       brand { "Quadrivalent Influenza vaccine - QIVe" }
       supplier { "Sanofi" }
       gtin { "3664798046564" }
+      snomed_product_code { "34680411000001107" }
       add_attribute(:method) { :injection }
       dose { 0.5 }
     end
@@ -90,6 +92,7 @@ FactoryBot.define do
       brand { "Gardasil 9" }
       supplier { "Merck Sharp & Dohme (UK) Ltd" }
       gtin { "00191778001693" }
+      snomed_product_code { "33493111000001108" }
       add_attribute(:method) { :injection }
       dose { 0.5 }
     end
