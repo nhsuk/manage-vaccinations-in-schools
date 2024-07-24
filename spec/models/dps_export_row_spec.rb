@@ -14,6 +14,7 @@ describe DPSExportRow do
       vaccine:,
       batch: create(:batch, vaccine:, name: "AB1234", expiry: "2025-07-01"),
       delivery_site: :left_arm_upper_position,
+      delivery_method: :intramuscular,
       recorded_at: Time.zone.local(2024, 7, 23, 19, 31, 47),
       created_at: Time.zone.local(2024, 6, 12, 11, 28, 31),
       user: create(:user, full_name: "Jane Doe"),
@@ -98,6 +99,40 @@ describe DPSExportRow do
 
     it "has site_of_vaccination_term" do
       expect(array[25]).to eq "Structure of left upper arm (body structure)"
+    end
+
+    context "when the vaccine is a nasal spray" do
+      let(:vaccine) { create :vaccine, :fluenz_tetra }
+
+      let(:vaccination_record) do
+        create(
+          :vaccination_record,
+          vaccine:,
+          batch: create(:batch, vaccine:),
+          delivery_site: :nose,
+          delivery_method: :nasal_spray
+        )
+      end
+
+      it "has route_of_vaccination_code" do
+        expect(array[26]).to eq "46713006"
+      end
+
+      it "has route_of_vaccination_term" do
+        expect(array[27]).to eq "Nasal route (qualifier value)"
+      end
+    end
+
+    context "when the vaccine is an intramuscular injection" do
+      let(:vaccine) { create :vaccine, :fluarix_tetra }
+
+      it "has route_of_vaccination_code" do
+        expect(array[26]).to eq "78421000"
+      end
+
+      it "has route_of_vaccination_term" do
+        expect(array[27]).to eq "Intramuscular route (qualifier value)"
+      end
     end
 
     it "has dose_amount" do

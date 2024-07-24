@@ -139,9 +139,15 @@ class DPSExportRow
   end
 
   def route_of_vaccination_code
+    VaccinationRecord::DELIVERY_METHOD_SNOMED_CODES_AND_TERMS[
+      vaccination.delivery_method
+    ].first
   end
 
   def route_of_vaccination_term
+    VaccinationRecord::DELIVERY_METHOD_SNOMED_CODES_AND_TERMS[
+      vaccination.delivery_method
+    ].last
   end
 
   def dose_amount
