@@ -85,6 +85,16 @@ describe DPSExportRow do
       expect(array[15]).to eq "FALSE"
     end
 
+    it "has vaccination_procedure_code" do
+      expect(array[16]).to eq "761841000"
+    end
+
+    it "has vaccination_procedure_term" do
+      expect(
+        array[17]
+      ).to eq "Administration of vaccine product containing only Human papillomavirus antigen (procedure)"
+    end
+
     it "has vaccine_product_code" do
       expect(array[19]).to eq "33493111000001108"
     end
