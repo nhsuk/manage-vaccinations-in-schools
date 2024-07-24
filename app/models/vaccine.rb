@@ -10,6 +10,7 @@
 #  gtin                :text
 #  method              :integer
 #  snomed_product_code :string
+#  snomed_product_term :string
 #  supplier            :text
 #  type                :string
 #  created_at          :datetime         not null
