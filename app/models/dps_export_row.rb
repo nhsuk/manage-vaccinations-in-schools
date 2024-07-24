@@ -130,6 +130,7 @@ class DPSExportRow
   end
 
   def vaccine_manufacturer
+    vaccination.vaccine.supplier
   end
 
   def batch_number

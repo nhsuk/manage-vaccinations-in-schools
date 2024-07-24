@@ -96,6 +96,10 @@ describe DPSExportRow do
            " (Merck Sharp & Dohme (UK) Ltd) (product)"
     end
 
+    it "has vaccine_manufacturer" do
+      expect(array[21]).to eq "Merck Sharp & Dohme (UK) Ltd"
+    end
+
     it "has batch_number" do
       expect(array[22]).to eq "AB1234"
     end
