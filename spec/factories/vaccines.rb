@@ -60,6 +60,9 @@ FactoryBot.define do
       supplier { "AstraZeneca UK Ltd" }
       gtin { "05000456078276" }
       snomed_product_code { "27114211000001105" }
+      snomed_product_term do
+        "Fluenz Tetra vaccine nasal suspension 0.2ml unit dose (AstraZeneca UK Ltd) (product)"
+      end
       add_attribute(:method) { :nasal }
       dose { 0.2 }
     end
@@ -70,6 +73,10 @@ FactoryBot.define do
       supplier { "Sanofi" }
       gtin { "3664798046564" }
       snomed_product_code { "34680411000001107" }
+      snomed_product_term do
+        "Quadrivalent influenza vaccine (split virion, inactivated) suspension" \
+          " for injection 0.5ml pre-filled syringes (Sanofi) (product)"
+      end
       add_attribute(:method) { :injection }
       dose { 0.5 }
     end
@@ -94,6 +101,9 @@ FactoryBot.define do
       supplier { "Merck Sharp & Dohme (UK) Ltd" }
       gtin { "00191778001693" }
       snomed_product_code { "33493111000001108" }
+      snomed_product_term do
+        "Gardasil 9 vaccine suspension for injection 0.5ml pre-filled syringes (Merck Sharp & Dohme (UK) Ltd) (product)"
+      end
       add_attribute(:method) { :injection }
       dose { 0.5 }
     end
