@@ -85,6 +85,10 @@ describe DPSExportRow do
       expect(array[15]).to eq "FALSE"
     end
 
+    it "has vaccine_product_code" do
+      expect(array[19]).to eq "33493111000001108"
+    end
+
     it "has batch_number" do
       expect(array[22]).to eq "AB1234"
     end

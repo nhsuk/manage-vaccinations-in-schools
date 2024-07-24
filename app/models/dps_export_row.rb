@@ -122,6 +122,7 @@ class DPSExportRow
   end
 
   def vaccine_product_code
+    vaccination.vaccine.snomed_product_code
   end
 
   def vaccine_product_term
