@@ -157,6 +157,7 @@ class DPSExportRow
   end
 
   def indication_code
+    # is not required if PRIMARY_SOURCE is FALSE
   end
 
   def location_code
