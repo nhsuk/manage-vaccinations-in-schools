@@ -36,7 +36,7 @@ FactoryBot.define do
       vaccines do
         [
           create(:vaccine, :flu, batch_count:),
-          create(:vaccine, :fluarix_tetra, batch_count:)
+          create(:vaccine, :quadrivalent_influenza, batch_count:)
         ]
       end
     end
