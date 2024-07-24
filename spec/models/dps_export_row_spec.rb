@@ -80,5 +80,13 @@ describe DPSExportRow do
     it "has site_of_vaccination_term" do
       expect(array[25]).to eq "Structure of left upper arm (body structure)"
     end
+
+    it "has dose_unit_code" do
+      expect(array[29]).to eq "258773002"
+    end
+
+    it "has dose_unit_term" do
+      expect(array[30]).to eq "Milliliter (qualifier value)"
+    end
   end
 end

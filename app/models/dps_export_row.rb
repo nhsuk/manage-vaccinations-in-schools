@@ -144,9 +144,11 @@ class DPSExportRow
   end
 
   def dose_unit_code
+    "258773002" # the SCTID for Milliliter (qualifier value)
   end
 
   def dose_unit_term
+    "Milliliter (qualifier value)"
   end
 
   def indication_code
