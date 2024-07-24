@@ -26,7 +26,7 @@ describe Vaccine do
     end
 
     it "returns false if the vaccine is an injected flu vaccine" do
-      vaccine = build(:vaccine, :fluarix_tetra)
+      vaccine = build(:vaccine, :quadrivalent_influenza)
       expect(vaccine.contains_gelatine?).to be false
     end
 

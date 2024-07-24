@@ -62,11 +62,11 @@ FactoryBot.define do
       dose { 0.2 }
     end
 
-    trait :fluarix_tetra do
+    trait :quadrivalent_influenza do
       type { "flu" }
-      brand { "Fluarix Tetra" }
-      supplier { "GlaxoSmithKline UK Ltd" }
-      gtin { "5000123114115" }
+      brand { "Quadrivalent Influenza vaccine - QIVe" }
+      supplier { "Sanofi" }
+      gtin { "3664798046564" }
       add_attribute(:method) { :injection }
       dose { 0.5 }
     end

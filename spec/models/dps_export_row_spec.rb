@@ -124,7 +124,7 @@ describe DPSExportRow do
     end
 
     context "when the vaccine is an intramuscular injection" do
-      let(:vaccine) { create :vaccine, :fluarix_tetra }
+      let(:vaccine) { create :vaccine, :quadrivalent_influenza }
 
       it "has route_of_vaccination_code" do
         expect(array[26]).to eq "78421000"
