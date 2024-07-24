@@ -59,6 +59,12 @@ class VaccinationRecord < ApplicationRecord
     nose: ["279549004", "Nasal cavity structure (body structure)"]
   }.with_indifferent_access
 
+  DELIVERY_METHOD_SNOMED_CODES_AND_TERMS = {
+    intramuscular: ["78421000", "Intramuscular route (qualifier value)"],
+    subcutaneous: ["34206005", "Subcutaneous route (qualifier value)"],
+    nasal_spray: ["46713006", "Nasal route (qualifier value)"]
+  }.with_indifferent_access
+
   belongs_to :patient_session
   belongs_to :imported_from, class_name: "ImmunisationImport", optional: true
   belongs_to :batch, optional: true
