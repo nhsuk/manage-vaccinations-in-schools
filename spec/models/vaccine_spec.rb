@@ -4,15 +4,16 @@
 #
 # Table name: vaccines
 #
-#  id         :bigint           not null, primary key
-#  brand      :text
-#  dose       :decimal(, )
-#  gtin       :text
-#  method     :integer
-#  supplier   :text
-#  type       :string
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id                  :bigint           not null, primary key
+#  brand               :text
+#  dose                :decimal(, )
+#  gtin                :text
+#  method              :integer
+#  snomed_product_code :string
+#  supplier            :text
+#  type                :string
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
 #
 
 require "rails_helper"
