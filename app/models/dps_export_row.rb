@@ -1,41 +1,41 @@
 # frozen_string_literal: true
 
 class DPSExportRow
-  FIELDS = %i[
-    nhs_number
-    person_forename
-    person_surname
-    person_dob
-    person_gender_code
-    person_postcode
-    date_and_time
-    site_code
-    site_code_type_uri
-    unique_id
-    unique_id_uri
-    action_flag
-    performing_professional_forename
-    performing_professional_surname
-    recorded_date
-    primary_source
-    vaccination_procedure_code
-    vaccination_procedure_term
-    dose_sequence
-    vaccine_product_code
-    vaccine_product_term
-    vaccine_manufacturer
-    batch_number
-    expiry_date
-    site_of_vaccination_code
-    site_of_vaccination_term
-    route_of_vaccination_code
-    route_of_vaccination_term
-    dose_amount
-    dose_unit_code
-    dose_unit_term
-    indication_code
-    location_code
-    location_code_type_uri
+  FIELDS = [
+    "nhs_number", #                       0
+    "person_forename", #                  1
+    "person_surname", #                   2
+    "person_dob", #                       3
+    "person_gender_code", #               4
+    "person_postcode", #                  5
+    "date_and_time", #                    6
+    "site_code", #                        7
+    "site_code_type_uri", #               8
+    "unique_id", #                        9
+    "unique_id_uri", #                    10
+    "action_flag", #                      11
+    "performing_professional_forename", # 12
+    "performing_professional_surname", #  13
+    "recorded_date", #                    14
+    "primary_source", #                   15
+    "vaccination_procedure_code", #       16
+    "vaccination_procedure_term", #       17
+    "dose_sequence", #                    18
+    "vaccine_product_code", #             19
+    "vaccine_product_term", #             20
+    "vaccine_manufacturer", #             21
+    "batch_number", #                     22
+    "expiry_date", #                      23
+    "site_of_vaccination_code", #         24
+    "site_of_vaccination_term", #         25
+    "route_of_vaccination_code", #        26
+    "route_of_vaccination_term", #        27
+    "dose_amount", #                      28
+    "dose_unit_code", #                   29
+    "dose_unit_term", #                   30
+    "indication_code", #                  31
+    "location_code", #                    32
+    "location_code_type_uri" #            33
   ].freeze
 
   attr_reader :vaccination
@@ -93,6 +93,7 @@ class DPSExportRow
   end
 
   def action_flag
+    "new"
   end
 
   def performing_professional_forename
@@ -108,6 +109,7 @@ class DPSExportRow
   end
 
   def primary_source
+    "FALSE"
   end
 
   def vaccination_procedure_code
