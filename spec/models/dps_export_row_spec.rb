@@ -10,6 +10,7 @@ describe DPSExportRow do
   let(:vaccination_record) do
     create(
       :vaccination_record,
+      vaccine: create(:vaccine, :gardasil_9, dose: 0.5),
       delivery_site: :left_arm_upper_position,
       recorded_at: Time.zone.local(2024, 7, 23, 19, 31, 47),
       created_at: Time.zone.local(2024, 6, 12, 11, 28, 31),
@@ -79,6 +80,10 @@ describe DPSExportRow do
 
     it "has site_of_vaccination_term" do
       expect(array[25]).to eq "Structure of left upper arm (body structure)"
+    end
+
+    it "has dose_amount" do
+      expect(array[28]).to eq 0.5
     end
 
     it "has dose_unit_code" do
