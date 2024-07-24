@@ -63,7 +63,7 @@ class DPSExportRow
   end
 
   def person_dob
-    vaccination.patient.date_of_birth.strftime("%Y%m%d")
+    vaccination.patient.date_of_birth.to_fs(:dps)
   end
 
   def person_gender_code
@@ -104,7 +104,7 @@ class DPSExportRow
   end
 
   def recorded_date
-    vaccination.created_at.strftime("%Y%m%d")
+    vaccination.created_at.to_date.to_fs(:dps)
   end
 
   def primary_source
@@ -133,7 +133,7 @@ class DPSExportRow
   end
 
   def expiry_date
-    vaccination.batch.expiry.strftime("%Y%m%d")
+    vaccination.batch.expiry.to_fs(:dps)
   end
 
   def route_of_vaccination_code

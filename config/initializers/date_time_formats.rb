@@ -13,6 +13,7 @@ Date::DATE_FORMATS[:long] = "%-d %B %Y" # 5 January 2023
 Date::DATE_FORMATS[:long_day_of_week] = "%A %-d %B %Y" # Wednesday 5 January 2023
 
 Date::DATE_FORMATS[:uk_short] = "%d/%m/%Y" # 01/01/2020
+Date::DATE_FORMATS[:dps] = "%Y%m%d" # 20230105
 
 # Time - https://service-manual.nhs.uk/content/numbers-measurements-dates-time#time
 
