@@ -68,4 +68,19 @@ class Vaccine < ApplicationRecord
             "Available delivery methods not implemented for #{type} vaccines."
     end
   end
+
+  def snomed_procedure_code_and_term
+    case type.downcase
+    when "hpv"
+      [
+        "761841000",
+        "Administration of vaccine product containing only Human papillomavirus antigen (procedure)"
+      ]
+    when "flu"
+      ["822931000000100", "Seasonal influenza vaccination (procedure)"]
+    else
+      raise NotImplementedError,
+            "SNOMED procedure code and term not implemented for #{type} vaccines."
+    end
+  end
 end
