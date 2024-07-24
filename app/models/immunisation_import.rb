@@ -112,6 +112,7 @@ class ImmunisationImport < ApplicationRecord
 
       rows
         .map { [_1.to_patient_session, _1.to_vaccination_record] }
+        .reject { |_, record| record.persisted? }
         .each do |patient_session, record|
           patient_session.created_by ||= user
           patient_session.save! if patient_session.changed?
@@ -218,12 +219,14 @@ class ImmunisationImport < ApplicationRecord
     def to_vaccination_record
       return unless valid?
 
-      VaccinationRecord.new(
-        administered:,
-        delivery_site:,
-        delivery_method:,
-        recorded_at:
-      )
+      record =
+        VaccinationRecord.find_or_initialize_by(
+          administered:,
+          delivery_site:,
+          delivery_method:
+        )
+      record.recorded_at = recorded_at
+      record
     end
 
     def administered

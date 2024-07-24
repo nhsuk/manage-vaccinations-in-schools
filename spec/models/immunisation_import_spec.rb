@@ -92,11 +92,12 @@ describe ImmunisationImport, type: :model do
         .and change(immunisation_import.sessions, :count).by(4)
         .and change(PatientSession, :count).by(11)
 
-      # Second import should duplicate the vaccination records but nothing else.
+      # Second import should not duplicate the vaccination records if they're
+      # identical.
 
       # stree-ignore
       expect { immunisation_import.process! }
-        .to change(immunisation_import.vaccination_records, :count).by(11)
+        .to not_change(immunisation_import.vaccination_records, :count)
         .and not_change(immunisation_import.locations, :count)
         .and not_change(immunisation_import.patients, :count)
         .and not_change(immunisation_import.sessions, :count)
