@@ -126,6 +126,7 @@ class DPSExportRow
   end
 
   def vaccine_product_term
+    vaccination.vaccine.snomed_product_term
   end
 
   def vaccine_manufacturer

@@ -89,6 +89,13 @@ describe DPSExportRow do
       expect(array[19]).to eq "33493111000001108"
     end
 
+    it "has vaccine_product_term" do
+      expect(
+        array[20]
+      ).to eq "Gardasil 9 vaccine suspension for injection 0.5ml pre-filled syringes" \
+           " (Merck Sharp & Dohme (UK) Ltd) (product)"
+    end
+
     it "has batch_number" do
       expect(array[22]).to eq "AB1234"
     end
