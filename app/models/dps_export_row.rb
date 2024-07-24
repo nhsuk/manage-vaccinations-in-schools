@@ -129,9 +129,11 @@ class DPSExportRow
   end
 
   def batch_number
+    vaccination.batch.name
   end
 
   def expiry_date
+    vaccination.batch.expiry.strftime("%Y%m%d")
   end
 
   def route_of_vaccination_code
