@@ -111,5 +111,9 @@ describe DPSExportRow do
     it "has dose_unit_term" do
       expect(array[30]).to eq "Milliliter (qualifier value)"
     end
+
+    it "has indication_code" do
+      expect(array[31]).to be_nil
+    end
   end
 end
