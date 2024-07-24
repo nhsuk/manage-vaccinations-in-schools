@@ -64,6 +64,10 @@ describe DPSExportRow do
       expect(array[8]).to eq "https://fhir.nhs.uk/Id/ods-organization-code"
     end
 
+    it "has action_flag" do
+      expect(array[11]).to eq "new"
+    end
+
     it "has performing_professional_forename" do
       expect(array[12]).to eq "Jane"
     end
@@ -74,6 +78,10 @@ describe DPSExportRow do
 
     it "has recorded_date" do
       expect(array[14]).to eq "20240612"
+    end
+
+    it "has primary_source" do
+      expect(array[15]).to eq "FALSE"
     end
 
     it "has batch_number" do
