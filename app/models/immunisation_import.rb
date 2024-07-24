@@ -113,8 +113,8 @@ class ImmunisationImport < ApplicationRecord
       rows
         .map { [_1.to_patient_session, _1.to_vaccination_record] }
         .each do |patient_session, record|
-          patient_session.created_by = user
-          patient_session.save!
+          patient_session.created_by ||= user
+          patient_session.save! if patient_session.changed?
 
           record.user = user
           record.patient_session = patient_session
