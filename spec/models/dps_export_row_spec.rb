@@ -6,13 +6,16 @@ require "csv"
 describe DPSExportRow do
   subject(:row) { described_class.new(vaccination_record) }
 
-  let(:vaccine) { create :vaccine, :gardasil_9, dose: 0.5 }
-  let(:patient) { create :patient, date_of_birth: "2012-12-29" }
+  let(:team) { create(:team) }
+  let(:campaign) { create(:campaign, team:) }
+  let(:vaccine) { create(:vaccine, :gardasil_9, dose: 0.5) }
+  let(:location) { create(:location) }
   let(:vaccination_record) do
     create(
       :vaccination_record,
       vaccine:,
       batch: create(:batch, vaccine:, name: "AB1234", expiry: "2025-07-01"),
+      campaign:,
       delivery_site: :left_arm_upper_position,
       delivery_method: :intramuscular,
       recorded_at: Time.zone.local(2024, 7, 23, 19, 31, 47),
@@ -20,6 +23,9 @@ describe DPSExportRow do
       user: create(:user, full_name: "Jane Doe"),
       patient_attributes: {
         date_of_birth: "2012-12-29"
+      },
+      session_attributes: {
+        location:
       }
     )
   end
@@ -174,6 +180,25 @@ describe DPSExportRow do
 
     it "has indication_code" do
       expect(array[31]).to be_nil
+    end
+
+    describe "location_code" do
+      subject(:location_code) { array[32] }
+
+      it { should_not be_nil }
+
+      context "when the session has a location" do
+        let(:location) { create(:location, urn: "12345") }
+
+        it { should eq("12345") }
+      end
+
+      context "when the session doesn't have a location" do
+        let(:location) { nil }
+        let(:team) { create(:team, ods_code: "ABC") }
+
+        it { should eq("ABC") }
+      end
     end
   end
 end
