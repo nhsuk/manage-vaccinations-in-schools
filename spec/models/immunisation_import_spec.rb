@@ -26,7 +26,7 @@ require "rails_helper"
 describe ImmunisationImport, type: :model do
   subject(:immunisation_import) { create(:immunisation_import, csv:, user:) }
 
-  let(:file) { "nivs.csv" }
+  let(:file) { "valid_flu.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/immunisation_import/#{file}") }
   let(:team) { create(:team, ods_code: "R1L") }
   let(:user) { create(:user, teams: [team]) }

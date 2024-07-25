@@ -88,7 +88,7 @@ describe "Immunisation imports" do
   def when_i_upload_a_valid_file
     attach_file(
       "immunisation_import[csv]",
-      "spec/fixtures/immunisation_import/nivs.csv"
+      "spec/fixtures/immunisation_import/valid_flu.csv"
     )
     click_on "Continue"
   end
