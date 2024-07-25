@@ -10,10 +10,4 @@ RSpec.describe VaccinesHelper, type: :helper do
 
     it { should eq("Fluenz Tetra (Flu)") }
   end
-
-  describe "#vaccine_dose" do
-    subject(:vaccine_dose) { helper.vaccine_dose(vaccine) }
-
-    it { should eq("0.2 ml") }
-  end
 end
