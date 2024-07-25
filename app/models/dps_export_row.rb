@@ -38,10 +38,8 @@ class DPSExportRow
     "location_code_type_uri" #            33
   ].freeze
 
-  attr_reader :vaccination
-
-  def initialize(vaccination)
-    @vaccination = vaccination
+  def initialize(vaccination_record)
+    @vaccination_record = vaccination_record
   end
 
   def to_a
@@ -50,36 +48,46 @@ class DPSExportRow
 
   private
 
+  attr_reader :vaccination_record
+
+  delegate :batch,
+           :campaign,
+           :delivery_site,
+           :patient,
+           :user,
+           :vaccine,
+           to: :vaccination_record
+
   def nhs_number
-    vaccination.patient.nhs_number
+    patient.nhs_number
   end
 
   def person_forename
-    vaccination.patient.first_name
+    patient.first_name
   end
 
   def person_surname
-    vaccination.patient.last_name
+    patient.last_name
   end
 
   def person_dob
-    vaccination.patient.date_of_birth.to_fs(:dps)
+    patient.date_of_birth.to_fs(:dps)
   end
 
   def person_gender_code
-    vaccination.patient.gender_code_before_type_cast
+    patient.gender_code_before_type_cast
   end
 
   def person_postcode
-    vaccination.patient.address_postcode
+    patient.address_postcode
   end
 
   def date_and_time
-    vaccination.recorded_at.strftime("%Y%m%dT%H%M%S00")
+    vaccination_record.recorded_at.strftime("%Y%m%dT%H%M%S00")
   end
 
   def site_code
-    vaccination.campaign.team.ods_code
+    campaign.team.ods_code
   end
 
   def site_code_type_uri
@@ -97,15 +105,15 @@ class DPSExportRow
   end
 
   def performing_professional_forename
-    vaccination&.user&.full_name&.split(" ", 2)&.first
+    user&.full_name&.split(" ", 2)&.first
   end
 
   def performing_professional_surname
-    vaccination&.user&.full_name&.split(" ", 2)&.last
+    user&.full_name&.split(" ", 2)&.last
   end
 
   def recorded_date
-    vaccination.created_at.to_date.to_fs(:dps)
+    vaccination_record.created_at.to_date.to_fs(:dps)
   end
 
   def primary_source
@@ -113,50 +121,50 @@ class DPSExportRow
   end
 
   def vaccination_procedure_code
-    vaccination.vaccine.snomed_procedure_code_and_term.first
+    vaccine.snomed_procedure_code_and_term.first
   end
 
   def vaccination_procedure_term
-    vaccination.vaccine.snomed_procedure_code_and_term.last
+    vaccine.snomed_procedure_code_and_term.last
   end
 
   def dose_sequence
   end
 
   def vaccine_product_code
-    vaccination.vaccine.snomed_product_code
+    vaccine.snomed_product_code
   end
 
   def vaccine_product_term
-    vaccination.vaccine.snomed_product_term
+    vaccine.snomed_product_term
   end
 
   def vaccine_manufacturer
-    vaccination.vaccine.supplier
+    vaccine.supplier
   end
 
   def batch_number
-    vaccination.batch.name
+    batch.name
   end
 
   def expiry_date
-    vaccination.batch.expiry.to_fs(:dps)
+    vaccination_record.batch.expiry.to_fs(:dps)
   end
 
   def route_of_vaccination_code
     VaccinationRecord::DELIVERY_METHOD_SNOMED_CODES_AND_TERMS[
-      vaccination.delivery_method
+      vaccination_record.delivery_method
     ].first
   end
 
   def route_of_vaccination_term
     VaccinationRecord::DELIVERY_METHOD_SNOMED_CODES_AND_TERMS[
-      vaccination.delivery_method
+      vaccination_record.delivery_method
     ].last
   end
 
   def dose_amount
-    vaccination.dose
+    vaccination_record.dose
   end
 
   def dose_unit_code
@@ -179,13 +187,13 @@ class DPSExportRow
 
   def site_of_vaccination_code
     VaccinationRecord::DELIVERY_SITE_SNOMED_CODES_AND_TERMS[
-      vaccination.delivery_site
+      vaccination_record.delivery_site
     ].first
   end
 
   def site_of_vaccination_term
     VaccinationRecord::DELIVERY_SITE_SNOMED_CODES_AND_TERMS[
-      vaccination.delivery_site
+      vaccination_record.delivery_site
     ].last
   end
 end
