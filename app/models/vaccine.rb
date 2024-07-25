@@ -77,7 +77,7 @@ class Vaccine < ApplicationRecord
         "Administration of vaccine product containing only Human papillomavirus antigen (procedure)"
       ]
     when "flu"
-      ["822931000000100", "Seasonal influenza vaccination (procedure)"]
+      ["822851000000102", "Seasonal influenza vaccination (procedure)"]
     else
       raise NotImplementedError,
             "SNOMED procedure code and term not implemented for #{type} vaccines."
