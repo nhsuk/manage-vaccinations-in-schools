@@ -92,13 +92,16 @@ class VaccinationsController < ApplicationController
   private
 
   def vaccination_record_params
-    params.fetch(:vaccination_record, {}).permit(
-      :administered,
-      :delivery_site,
-      :delivery_method,
-      :reason,
-      :batch_id
-    )
+    params
+      .fetch(:vaccination_record, {})
+      .permit(
+        :administered,
+        :delivery_site,
+        :delivery_method,
+        :reason,
+        :batch_id
+      )
+      .merge(dose_sequence: 1)
   end
 
   def create_params

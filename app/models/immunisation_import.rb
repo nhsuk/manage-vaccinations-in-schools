@@ -226,6 +226,8 @@ class ImmunisationImport < ApplicationRecord
           delivery_method:
         )
       record.recorded_at = recorded_at
+      # TODO: get value from CSV file
+      record.dose_sequence = 1
       record
     end
 
