@@ -53,6 +53,7 @@ class DPSExportRow
   delegate :batch,
            :campaign,
            :delivery_site,
+           :location,
            :patient,
            :user,
            :vaccine,
@@ -180,6 +181,7 @@ class DPSExportRow
   end
 
   def location_code
+    location&.urn.presence || campaign.team.ods_code
   end
 
   def location_code_type_uri
