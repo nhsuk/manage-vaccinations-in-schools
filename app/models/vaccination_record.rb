@@ -8,6 +8,7 @@
 #  administered       :boolean
 #  delivery_method    :integer
 #  delivery_site      :integer
+#  dose_sequence      :integer          not null
 #  exported_to_dps_at :datetime
 #  notes              :text
 #  reason             :integer
@@ -136,6 +137,12 @@ class VaccinationRecord < ApplicationRecord
               in: delivery_methods.keys
             },
             if: -> { administered && delivery_site.present? }
+  validates :dose_sequence,
+            presence: true,
+            comparison: {
+              greater_than_or_equal_to: 1,
+              less_than_or_equal_to: :maximum_dose_sequence
+            }
 
   validate :batch_vaccine_matches_vaccine, if: -> { recorded? && administered }
 
@@ -188,6 +195,10 @@ class VaccinationRecord < ApplicationRecord
   end
 
   private
+
+  def maximum_dose_sequence
+    vaccine&.maximum_dose_sequence || 1
+  end
 
   def batch_vaccine_matches_vaccine
     return if batch&.vaccine_id == vaccine_id
