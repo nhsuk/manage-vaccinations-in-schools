@@ -50,6 +50,17 @@ class ImmunisationImport < ApplicationRecord
     SCHOOL_URN
     VACCINATED
   ].freeze
+  # Fields still to add (remove as we go):
+  #
+  # VACCINE_GIVEN
+  # BATCH_NUMBER
+  # BATCH_EXPIRY_DATE
+  # PERFORMING_PROFESSIONAL_FORENAME
+  # PERFORMING_PROFESSIONAL_SURNAME
+  # REASON_NOT_VACCINATED
+  # CONSENT_TYPE
+  # LOCAL_PATIENT_ID
+  # LOCAL_PATIENT_ID_URI
 
   validates :csv, presence: true
   validate :csv_is_valid
