@@ -41,10 +41,14 @@ FactoryBot.define do
     transient do
       campaign { create :campaign }
       patient_attributes { {} }
+      session_attributes { {} }
     end
 
     patient_session do
-      association :patient_session, campaign:, patient_attributes:
+      association :patient_session,
+                  campaign:,
+                  patient_attributes:,
+                  session_attributes:
     end
     recorded_at { "2023-06-09" }
     delivery_site { "left_arm_upper_position" }

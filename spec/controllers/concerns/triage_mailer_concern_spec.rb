@@ -28,7 +28,7 @@ describe TriageMailerConcern do
 
     context "when the parents agree, triage is required and it is safe to vaccinate" do
       let(:patient_session) do
-        build(:patient_session, :triaged_ready_to_vaccinate)
+        create(:patient_session, :triaged_ready_to_vaccinate)
       end
 
       it "sends an email saying triage was needed and vaccination will happen" do
@@ -41,7 +41,7 @@ describe TriageMailerConcern do
 
     context "when the parents agree, triage is required but it isn't safe to vaccinate" do
       let(:patient_session) do
-        build(:patient_session, :triaged_do_not_vaccinate)
+        create(:patient_session, :triaged_do_not_vaccinate)
       end
 
       it "sends an email saying triage was needed but vaccination won't happen" do
@@ -54,7 +54,7 @@ describe TriageMailerConcern do
 
     context "when the parents agree and triage is not required" do
       let(:patient_session) do
-        build(:patient_session, :consent_given_triage_not_needed)
+        create(:patient_session, :consent_given_triage_not_needed)
       end
 
       it "sends an email saying vaccination will happen" do
@@ -67,7 +67,7 @@ describe TriageMailerConcern do
 
     context "when the parents agree, triage is required and a decision hasn't been made" do
       let(:patient_session) do
-        build(:patient_session, :consent_given_triage_needed)
+        create(:patient_session, :consent_given_triage_needed)
       end
 
       it "sends an email saying triage is required" do
@@ -78,7 +78,7 @@ describe TriageMailerConcern do
     end
 
     context "when the parents have verbally refused consent" do
-      let(:patient_session) { build(:patient_session, :consent_refused) }
+      let(:patient_session) { create(:patient_session, :consent_refused) }
 
       it "sends an email confirming they've refused consent" do
         expect(ConsentFormMailer).to have_received(:confirmation_refused).with(
