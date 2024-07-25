@@ -67,7 +67,7 @@ Rails.application.routes.draw do
     get "sessions", on: :member
 
     resources :immunisation_imports,
-              path: "/immunisation-imports",
+              path: "immunisation-imports",
               only: %i[index new create show]
 
     resources :reports, only: [] do
@@ -75,6 +75,8 @@ Rails.application.routes.draw do
       post "dps-export", on: :collection
       post "dps-export-reset", on: :collection
     end
+
+    resources :vaccination_records, path: "vaccination-records", only: :show
   end
 
   resources :sessions, only: %i[create edit index show] do
@@ -197,8 +199,6 @@ Rails.application.routes.draw do
     get "/", to: "errors#not_found", as: "section"
     get "/:tab", to: "errors#not_found", as: "section_tab"
   end
-
-  resources :vaccination_records, path: "vaccination-records", only: :show
 
   resources :vaccines, only: %i[index show] do
     resources :batches, only: %i[create edit new update] do
