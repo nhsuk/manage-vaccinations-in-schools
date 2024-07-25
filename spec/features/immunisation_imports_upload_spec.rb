@@ -122,6 +122,7 @@ describe "Immunisation imports" do
 
   def when_i_click_on_vaccination_records
     click_on "HPV"
+    click_on "Vaccination records"
   end
 
   def then_i_should_see_the_vaccination_record
