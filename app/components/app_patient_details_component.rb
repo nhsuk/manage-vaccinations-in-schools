@@ -67,7 +67,7 @@ class AppPatientDetailsComponent < ViewComponent::Base
       if nhs_number.present?
         summary_list.with_row do |row|
           row.with_key { "NHS number" }
-          row.with_value(classes: ["app-u-monospace"]) { nhs_number_formatted }
+          row.with_value { helpers.format_nhs_number(nhs_number) }
         end
       end
     end
@@ -107,10 +107,6 @@ class AppPatientDetailsComponent < ViewComponent::Base
   end
 
   def nhs_number
-    @object.nhs_number if @object.respond_to? :nhs_number
-  end
-
-  def nhs_number_formatted
-    helpers.format_nhs_number(nhs_number)
+    @object.try(:nhs_number)
   end
 end
