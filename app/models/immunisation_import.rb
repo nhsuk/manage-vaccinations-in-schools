@@ -46,6 +46,7 @@ class ImmunisationImport < ApplicationRecord
     PERSON_GENDER_CODE
     PERSON_POSTCODE
     PERSON_SURNAME
+    REASON_NOT_VACCINATED
     SCHOOL_NAME
     SCHOOL_URN
     VACCINATED
@@ -57,7 +58,6 @@ class ImmunisationImport < ApplicationRecord
   # BATCH_EXPIRY_DATE
   # PERFORMING_PROFESSIONAL_FORENAME
   # PERFORMING_PROFESSIONAL_SURNAME
-  # REASON_NOT_VACCINATED
   # CONSENT_TYPE
   # LOCAL_PATIENT_ID
   # LOCAL_PATIENT_ID_URI
@@ -187,6 +187,12 @@ class ImmunisationImport < ApplicationRecord
               comparison: {
                 less_than_or_equal_to: -> { Date.current.strftime("%Y%m%d") }
               }
+    validates :reason,
+              presence: true,
+              inclusion: {
+                in: VaccinationRecord.reasons.keys.map(&:to_sym)
+              },
+              unless: :administered
 
     def initialize(data:, campaign:, team:)
       @data = data
@@ -240,7 +246,8 @@ class ImmunisationImport < ApplicationRecord
         VaccinationRecord.find_or_initialize_by(
           administered:,
           delivery_site:,
-          delivery_method:
+          delivery_method:,
+          reason:
         )
       record.recorded_at = recorded_at
       record
@@ -254,6 +261,16 @@ class ImmunisationImport < ApplicationRecord
       elsif vaccinated == "no"
         false
       end
+    end
+
+    def reason
+      {
+        "Did Not Attend" => :absent_from_session,
+        "Vaccination Contraindicated" => :contraindications,
+        "Unwell" => :not_well
+      }[
+        @data["REASON_NOT_VACCINATED"]&.strip
+      ]
     end
 
     DELIVERY_SITES = {
