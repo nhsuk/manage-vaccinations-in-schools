@@ -6,6 +6,7 @@ FactoryBot.define do
       user { create(:user) }
       # this name and URN matches the data in spec/fixtures/cohort_list/valid_cohort.csv
       location { create(:location, name: "Surrey Primary", urn: "123456") }
+      batch_count { 4 }
     end
 
     team { user.team || create(:team, users: [user]) }

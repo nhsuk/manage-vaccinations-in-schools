@@ -16,7 +16,7 @@
 #
 FactoryBot.define do
   factory :campaign do
-    transient { batch_count { 10 } }
+    transient { batch_count { 1 } }
 
     team
     hpv
