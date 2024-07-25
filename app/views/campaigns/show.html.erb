@@ -27,4 +27,4 @@
       )
     end %>
 
-<%= govuk_link_to "Download vaccination report (CSV)", download_campaign_reports_path(@campaign), class: "nhsuk-button" %>
+<%= govuk_link_to "Download vaccination report (CSV)", campaign_vaccination_records_path(@campaign, format: "csv"), class: "nhsuk-button" %>

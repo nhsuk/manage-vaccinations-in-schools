@@ -45,6 +45,7 @@ RSpec/ImplicitExpect:
 RSpec/SpecFilePathFormat:
   Exclude:
     - spec/models/immunisation_import_row_spec.rb
+    - spec/models/nivs_report_row_spec.rb
 
 RSpec/VerifiedDoubles:
   Exclude:
