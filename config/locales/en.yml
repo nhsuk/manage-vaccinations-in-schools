@@ -481,6 +481,9 @@ en:
         other: Why are they refusing to give consent?
         personal_choice: Why are they refusing to give consent?
         will_be_vaccinated_elsewhere: Where will their child get their vaccination?
+  immunisation_imports:
+    index:
+      title: Uploads
   mailers:
     consent_form_mailer:
       reasons_for_refusal:
@@ -555,6 +558,9 @@ en:
   table:
     no_filtered_results: We couldn’t find any children that matched your filters.
     no_results: No results
+  vaccination_records:
+    index:
+      title: Vaccination records
   vaccinations:
     reason:
       title:

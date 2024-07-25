@@ -1,11 +1,11 @@
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
-                                          { text: "Home", href: dashboard_path },
                                           { text: t("campaigns.index.title"), href: campaigns_path },
+                                          { text: @campaign.name, href: campaign_path(@campaign) },
                                         ]) %>
 <% end %>
 
-<%= h1 @campaign.name, page_title: "#{@campaign.name} – Vaccination records" %>
+<%= h1 @campaign.name, page_title: "#{@campaign.name} – #{t("vaccination_records.index.title")}" %>
 
 <%= render AppSecondaryNavigationComponent.new do |nav|
       nav.with_item(
@@ -17,12 +17,12 @@
         href: sessions_campaign_path(@campaign),
       )
       nav.with_item(
-        text: "Vaccination records",
+        text: t("vaccination_records.index.title"),
         href: campaign_vaccination_records_path(@campaign),
         selected: true,
       )
       nav.with_item(
-        text: "Uploads",
+        text: t("immunisation_imports.index.title"),
         href: campaign_immunisation_imports_path(@campaign),
       )
     end %>
