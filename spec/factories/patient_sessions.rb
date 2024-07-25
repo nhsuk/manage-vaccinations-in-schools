@@ -28,10 +28,11 @@ FactoryBot.define do
       campaign { create :campaign }
       user { create :user }
       patient_attributes { {} }
+      session_attributes { {} }
     end
 
-    patient { create :patient, session:, **patient_attributes }
-    session { create(:session, campaign:) }
+    session { association :session, campaign:, **session_attributes }
+    patient { association :patient, session:, **patient_attributes }
     created_by { user }
 
     trait :added_to_session do
