@@ -1,0 +1,43 @@
+<div class="nhsuk-table__panel-with-heading-tab">
+  <h3 class="nhsuk-table__heading-tab">Vaccination records</h3>
+  <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
+    <% table.with_caption(text: "#{vaccination_records.count} vaccination records") %>
+
+    <% table.with_head do |head| %>
+      <% head.with_row do |row| %>
+        <% row.with_cell(text: "Full name") %>
+        <% row.with_cell(text: "NHS number") %>
+        <% row.with_cell(text: "Date of birth") %>
+        <% row.with_cell(text: "Postcode") %>
+        <% row.with_cell(text: "Vaccinated date") %>
+      <% end %>
+    <% end %>
+
+    <% table.with_body do |body| %>
+      <% vaccination_records.each do |vaccination_record| %>
+        <% body.with_row do |row| %>
+          <% row.with_cell do %>
+            <span class="nhsuk-table-responsive__heading">Full name</span>
+            <%= govuk_link_to vaccination_record.patient.full_name, campaign_vaccination_record_path(vaccination_record.campaign, vaccination_record) %>
+          <% end %>
+          <% row.with_cell do %>
+            <span class="nhsuk-table-responsive__heading">NHS number</span>
+            <span class="app-u-monospace"><%= helpers.format_nhs_number(vaccination_record.patient.nhs_number) %></span>
+          <% end %>
+          <% row.with_cell do %>
+            <span class="nhsuk-table-responsive__heading">Date of birth</span>
+            <%= vaccination_record.patient.date_of_birth.to_fs(:long) %>
+          <% end %>
+          <% row.with_cell do %>
+            <span class="nhsuk-table-responsive__heading">Postcode</span>
+            <%= vaccination_record.patient.address_postcode %>
+          <% end %>
+          <% row.with_cell do %>
+            <span class="nhsuk-table-responsive__heading">Vaccinated date</span>
+            <%= vaccination_record.session.date.to_fs(:long) %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
