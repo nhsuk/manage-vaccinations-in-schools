@@ -200,5 +200,23 @@ describe DPSExportRow do
         it { should eq("ABC") }
       end
     end
+
+    describe "location_code_type_uri" do
+      subject(:location_code_type_uri) { array[33] }
+
+      it { should_not be_nil }
+
+      context "when the session has a location" do
+        let(:location) { create(:location) }
+
+        it { should eq("https://fhir.hl7.org.uk/Id/urn-school-number") }
+      end
+
+      context "when the session doesn't have a location" do
+        let(:location) { nil }
+
+        it { should eq("https://fhir.nhs.uk/Id/ods-organization-code") }
+      end
+    end
   end
 end
