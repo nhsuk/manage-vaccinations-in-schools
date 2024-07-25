@@ -181,11 +181,11 @@ class DPSExportRow
   end
 
   def location_code
-    location&.urn.presence || campaign.team.ods_code
+    location.present? ? location.urn : campaign.team.ods_code
   end
 
   def location_code_type_uri
-    if location&.urn.present?
+    if location.present?
       "https://fhir.hl7.org.uk/Id/urn-school-number"
     else
       "https://fhir.nhs.uk/Id/ods-organization-code"
