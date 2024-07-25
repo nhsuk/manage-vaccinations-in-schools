@@ -22,7 +22,7 @@
           <% end %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">NHS number</span>
-            <span class="app-u-monospace"><%= helpers.format_nhs_number(vaccination_record.patient.nhs_number) %></span>
+            <%= helpers.format_nhs_number(vaccination_record.patient.nhs_number) %>
           <% end %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Date of birth</span>
