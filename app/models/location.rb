@@ -12,7 +12,7 @@
 #  postcode         :text
 #  town             :text
 #  url              :text
-#  urn              :string
+#  urn              :string           not null
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #  imported_from_id :bigint
