@@ -46,6 +46,17 @@ class Vaccine < ApplicationRecord
     end
   end
 
+  def maximum_dose_sequence
+    if type.downcase == "flu"
+      1
+    elsif type.downcase == "hpv"
+      3
+    else
+      raise NotImplementedError,
+            "Maximum dose sequence not implemented for #{type} vaccines."
+    end
+  end
+
   def available_delivery_sites
     if injection?
       VaccinationRecord.delivery_sites.keys -

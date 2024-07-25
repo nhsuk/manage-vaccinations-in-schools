@@ -19,7 +19,7 @@
 
 require "rails_helper"
 
-describe Vaccine do
+describe Vaccine, type: :model do
   describe "#contains_gelatine?" do
     it "returns true if the vaccine is a nasal flu vaccine" do
       vaccine = build(:vaccine, :fluenz_tetra)
@@ -34,6 +34,22 @@ describe Vaccine do
     it "returns false if the vaccine is not a flu vaccine" do
       vaccine = build(:vaccine, :gardasil_9)
       expect(vaccine.contains_gelatine?).to be false
+    end
+  end
+
+  describe "#maximum_dose_sequence" do
+    subject(:maximum_dose_sequence) { vaccine.maximum_dose_sequence }
+
+    context "with a Flu vaccine" do
+      let(:vaccine) { build(:vaccine, :flu) }
+
+      it { should eq(1) }
+    end
+
+    context "with an HPV vaccine" do
+      let(:vaccine) { build(:vaccine, :hpv) }
+
+      it { should eq(3) }
     end
   end
 end
