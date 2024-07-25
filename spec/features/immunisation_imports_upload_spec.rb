@@ -45,15 +45,15 @@ describe "Immunisation imports" do
 
     click_on "Vaccination programmes", match: :first
     click_on "HPV"
-    click_on "Uploaded reports"
+    click_on "Uploads"
   end
 
   def then_i_should_see_the_upload_link
-    expect(page).to have_link("Upload a new vaccination report")
+    expect(page).to have_link("Upload new vaccination records")
   end
 
   def when_i_click_on_the_upload_link
-    click_on "Upload a new vaccination report"
+    click_on "Upload new vaccination records"
   end
 
   def then_i_should_see_the_upload_page
