@@ -44,7 +44,7 @@
         <% body.with_row do |row| %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Full name</span>
-            <%= govuk_link_to vaccination_record.patient.full_name, vaccination_record_path(vaccination_record) %>
+            <%= govuk_link_to vaccination_record.patient.full_name, campaign_vaccination_record_path(@campaign, vaccination_record) %>
           <% end %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">NHS number</span>
