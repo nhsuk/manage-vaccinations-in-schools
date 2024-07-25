@@ -47,7 +47,7 @@ describe "NIVS HPV report" do
   end
 
   def and_i_download_the_nivs_hpv_report
-    click_on "Download immunisation report (CSV)"
+    click_on "Download vaccination report (CSV)"
   end
 
   def then_i_should_see_all_the_administered_vaccinations_from_my_teams_hpv_campaign
