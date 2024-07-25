@@ -2,7 +2,7 @@
   <%= render AppBreadcrumbComponent.new(items: [
                                           { text: "Home", href: dashboard_path },
                                           { text: t("campaigns.index.title"), href: campaigns_path },
-                                          { text: @campaign.name, href: campaign_path(@campaign) },
+                                          { text: @campaign.name, href: campaign_vaccination_records_path(@campaign) },
                                         ]) %>
 <% end %>
 

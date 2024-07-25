@@ -3,7 +3,7 @@
 require "rails_helper"
 
 describe "Immunisation imports" do
-  scenario "User uploads a file" do
+  scenario "User uploads a file and views vaccination records" do
     given_i_am_signed_in
     and_an_hpv_campaign_is_underway
 
@@ -27,6 +27,9 @@ describe "Immunisation imports" do
 
     when_i_click_on_a_vaccination_record
     then_i_should_see_the_vaccination_record
+
+    when_i_click_on_vaccination_records
+    and_i_should_see_the_vaccination_records
   end
 
   def given_i_am_signed_in
@@ -115,6 +118,10 @@ describe "Immunisation imports" do
 
   def when_i_click_on_a_vaccination_record
     click_on "Chyna Pickle"
+  end
+
+  def when_i_click_on_vaccination_records
+    click_on "HPV"
   end
 
   def then_i_should_see_the_vaccination_record

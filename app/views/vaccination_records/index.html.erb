@@ -1,6 +1,3 @@
-<%= h1 @campaign.name, page_title: "#{@campaign.name} – Overview",
-                      size: "l" %>
-
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
                                           { text: "Home", href: dashboard_path },
@@ -8,11 +5,12 @@
                                         ]) %>
 <% end %>
 
+<%= h1 @campaign.name, page_title: "#{@campaign.name} – Vaccination records" %>
+
 <%= render AppSecondaryNavigationComponent.new do |nav|
       nav.with_item(
         text: "Overview",
         href: campaign_path(@campaign),
-        selected: true,
       )
       nav.with_item(
         text: "School sessions",
@@ -21,6 +19,7 @@
       nav.with_item(
         text: "Vaccination records",
         href: campaign_vaccination_records_path(@campaign),
+        selected: true,
       )
       nav.with_item(
         text: "Uploads",
@@ -28,4 +27,4 @@
       )
     end %>
 
-<%= govuk_link_to "Download vaccination report (CSV)", download_campaign_reports_path(@campaign), class: "nhsuk-button" %>
+<%= render AppVaccinationRecordTableComponent.new(@vaccination_records) %>

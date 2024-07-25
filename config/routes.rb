@@ -76,7 +76,9 @@ Rails.application.routes.draw do
       post "dps-export-reset", on: :collection
     end
 
-    resources :vaccination_records, path: "vaccination-records", only: :show
+    resources :vaccination_records,
+              path: "vaccination-records",
+              only: %i[index show]
   end
 
   resources :sessions, only: %i[create edit index show] do
