@@ -8,6 +8,7 @@
 #  administered       :boolean
 #  delivery_method    :integer
 #  delivery_site      :integer
+#  dose_sequence      :integer          not null
 #  exported_to_dps_at :datetime
 #  notes              :text
 #  reason             :integer
@@ -57,6 +58,7 @@ FactoryBot.define do
     batch { vaccine.batches.first }
     user { create :user }
     administered { true }
+    dose_sequence { 1 }
 
     trait :unrecorded do
       recorded_at { nil }
