@@ -150,6 +150,32 @@ describe ImmunisationImport::Row, type: :model do
     end
   end
 
+  describe "#reason" do
+    subject(:reason) { immunisation_import_row.reason }
+
+    context "without a reason" do
+      let(:data) { { "VACCINATED" => "No" } }
+
+      it { expect(immunisation_import_row).to be_invalid }
+    end
+
+    context "without an unknown reason" do
+      let(:data) do
+        { "VACCINATED" => "No", "REASON_NOT_VACCINATED" => "Unknown" }
+      end
+
+      it { expect(immunisation_import_row).to be_invalid }
+    end
+
+    context "with a reason" do
+      let(:data) do
+        { "VACCINATED" => "No", "REASON_NOT_VACCINATED" => "Did Not Attend" }
+      end
+
+      it { should eq(:absent_from_session) }
+    end
+  end
+
   describe "#delivery_method" do
     subject(:delivery_method) { immunisation_import_row.delivery_method }
 
