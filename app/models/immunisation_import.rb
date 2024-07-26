@@ -45,10 +45,8 @@ class ImmunisationImport < ApplicationRecord
     PERSON_FORENAME
     PERSON_POSTCODE
     PERSON_SURNAME
-    REASON_NOT_VACCINATED
     SCHOOL_NAME
     SCHOOL_URN
-    VACCINATED
   ].freeze
   # Fields still to add (remove as we go):
   #
@@ -261,6 +259,8 @@ class ImmunisationImport < ApplicationRecord
         true
       elsif vaccinated == "no"
         false
+      elsif @data["VACCINE_GIVEN"].present?
+        true
       end
     end
 
