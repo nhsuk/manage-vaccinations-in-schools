@@ -13,20 +13,21 @@ describe DPSExportRow do
   let(:vaccination_record) do
     create(
       :vaccination_record,
-      vaccine:,
       batch: create(:batch, vaccine:, name: "AB1234", expiry: "2025-07-01"),
       campaign:,
-      delivery_site: :left_arm_upper_position,
-      delivery_method: :intramuscular,
-      recorded_at: Time.zone.local(2024, 7, 23, 19, 31, 47),
       created_at: Time.zone.local(2024, 6, 12, 11, 28, 31),
-      user: create(:user, full_name: "Jane Doe"),
+      delivery_method: :intramuscular,
+      delivery_site: :left_arm_upper_position,
+      dose_sequence: 1,
       patient_attributes: {
         date_of_birth: "2012-12-29"
       },
+      recorded_at: Time.zone.local(2024, 7, 23, 19, 31, 47),
       session_attributes: {
         location:
-      }
+      },
+      user: create(:user, full_name: "Jane Doe"),
+      vaccine:
     )
   end
 
@@ -99,6 +100,12 @@ describe DPSExportRow do
       expect(
         array[17]
       ).to eq "Administration of vaccine product containing only Human papillomavirus antigen (procedure)"
+    end
+
+    describe "dose_sequence" do
+      subject(:dose_sequence) { array[18] }
+
+      it { should eq("1") }
     end
 
     it "has vaccine_product_code" do

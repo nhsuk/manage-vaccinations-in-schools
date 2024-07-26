@@ -131,6 +131,7 @@ class DPSExportRow
   end
 
   def dose_sequence
+    vaccination_record.dose_sequence.to_s
   end
 
   def vaccine_product_code
