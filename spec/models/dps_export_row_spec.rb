@@ -88,7 +88,7 @@ describe DPSExportRow do
     end
 
     it "has primary_source" do
-      expect(array[15]).to eq "FALSE"
+      expect(array[15]).to eq "TRUE"
     end
 
     it "has vaccination_procedure_code" do
