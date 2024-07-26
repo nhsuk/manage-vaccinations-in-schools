@@ -36,7 +36,7 @@ describe ImmunisationImport, type: :model do
   describe "#load_data!" do
     before { immunisation_import.load_data! }
 
-    describe "with malformed CSV" do
+    context "with malformed CSV" do
       let(:file) { "malformed.csv" }
 
       it "is invalid" do
@@ -45,7 +45,7 @@ describe ImmunisationImport, type: :model do
       end
     end
 
-    describe "with empty CSV" do
+    context "with empty CSV" do
       let(:file) { "empty.csv" }
 
       it "is invalid" do
@@ -54,7 +54,7 @@ describe ImmunisationImport, type: :model do
       end
     end
 
-    describe "with missing headers" do
+    context "with missing headers" do
       let(:file) { "missing_headers.csv" }
 
       it "is invalid" do
@@ -67,12 +67,25 @@ describe ImmunisationImport, type: :model do
   describe "#parse_rows!" do
     before { immunisation_import.parse_rows! }
 
-    it "populates the rows" do
-      expect(immunisation_import).to be_valid
-      expect(immunisation_import.rows).not_to be_empty
+    context "with valid Flu rows" do
+      let(:file) { "valid_flu.csv" }
+
+      it "populates the rows" do
+        expect(immunisation_import).to be_valid
+        expect(immunisation_import.rows).not_to be_empty
+      end
     end
 
-    describe "with invalid rows" do
+    context "with valid HPV rows" do
+      let(:file) { "valid_hpv.csv" }
+
+      it "populates the rows" do
+        expect(immunisation_import).to be_valid
+        expect(immunisation_import.rows).not_to be_empty
+      end
+    end
+
+    context "with invalid rows" do
       let(:file) { "invalid_rows.csv" }
 
       it "is invalid" do
@@ -83,25 +96,56 @@ describe ImmunisationImport, type: :model do
   end
 
   describe "#process!" do
-    it "creates locations, patients, and vaccination records" do
-      # stree-ignore
-      expect { immunisation_import.process! }
-        .to change(immunisation_import.vaccination_records, :count).by(11)
-        .and change(immunisation_import.locations, :count).by(4)
-        .and change(immunisation_import.patients, :count).by(11)
-        .and change(immunisation_import.sessions, :count).by(4)
-        .and change(PatientSession, :count).by(11)
+    subject(:process!) { immunisation_import.process! }
 
-      # Second import should not duplicate the vaccination records if they're
-      # identical.
+    context "with valid Flu rows" do
+      let(:file) { "valid_flu.csv" }
 
-      # stree-ignore
-      expect { immunisation_import.process! }
-        .to not_change(immunisation_import.vaccination_records, :count)
-        .and not_change(immunisation_import.locations, :count)
-        .and not_change(immunisation_import.patients, :count)
-        .and not_change(immunisation_import.sessions, :count)
-        .and not_change(PatientSession, :count)
+      it "creates locations, patients, and vaccination records" do
+        # stree-ignore
+        expect { process! }
+          .to change(immunisation_import.vaccination_records, :count).by(11)
+          .and change(immunisation_import.locations, :count).by(4)
+          .and change(immunisation_import.patients, :count).by(11)
+          .and change(immunisation_import.sessions, :count).by(4)
+          .and change(PatientSession, :count).by(11)
+
+        # Second import should not duplicate the vaccination records if they're
+        # identical.
+
+        # stree-ignore
+        expect { immunisation_import.process! }
+          .to not_change(immunisation_import.vaccination_records, :count)
+          .and not_change(immunisation_import.locations, :count)
+          .and not_change(immunisation_import.patients, :count)
+          .and not_change(immunisation_import.sessions, :count)
+          .and not_change(PatientSession, :count)
+      end
+    end
+
+    context "with valid HPV rows" do
+      let(:file) { "valid_hpv.csv" }
+
+      it "creates locations, patients, and vaccination records" do
+        # stree-ignore
+        expect { process! }
+          .to change(immunisation_import.vaccination_records, :count).by(7)
+          .and change(immunisation_import.locations, :count).by(1)
+          .and change(immunisation_import.patients, :count).by(7)
+          .and change(immunisation_import.sessions, :count).by(1)
+          .and change(PatientSession, :count).by(7)
+
+        # Second import should not duplicate the vaccination records if they're
+        # identical.
+
+        # stree-ignore
+        expect { immunisation_import.process! }
+          .to not_change(immunisation_import.vaccination_records, :count)
+          .and not_change(immunisation_import.locations, :count)
+          .and not_change(immunisation_import.patients, :count)
+          .and not_change(immunisation_import.sessions, :count)
+          .and not_change(PatientSession, :count)
+      end
     end
   end
 end
