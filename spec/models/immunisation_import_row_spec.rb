@@ -148,6 +148,12 @@ describe ImmunisationImport::Row, type: :model do
 
       it { should be_nil }
     end
+
+    context "with a vaccine given field" do
+      let(:data) { { "VACCINE_GIVEN" => "Vaccine" } }
+
+      it { should be(true) }
+    end
   end
 
   describe "#reason" do
