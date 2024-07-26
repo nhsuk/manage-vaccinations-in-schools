@@ -289,35 +289,40 @@ describe ImmunisationImport::Row, type: :model do
       it { should be_nil }
     end
 
-    context "with an unknown value" do
-      let(:data) { { "PERSON_GENDER_CODE" => "unknown" } }
+    shared_examples "with a value" do |key|
+      context "with an unknown value" do
+        let(:data) { { key => "unknown" } }
 
-      it { should be_nil }
+        it { should be_nil }
+      end
+
+      context "with a 'not known' value" do
+        let(:data) { { key => "Not Known" } }
+
+        it { should eq(0) }
+      end
+
+      context "with a 'male' value" do
+        let(:data) { { key => "Male" } }
+
+        it { should eq(1) }
+      end
+
+      context "with a 'female' value" do
+        let(:data) { { key => "Female" } }
+
+        it { should eq(2) }
+      end
+
+      context "with a 'not specified' value" do
+        let(:data) { { key => "Not Specified" } }
+
+        it { should eq(9) }
+      end
     end
 
-    context "with a 'not known' value" do
-      let(:data) { { "PERSON_GENDER_CODE" => "Not Known" } }
-
-      it { should eq(0) }
-    end
-
-    context "with a 'male' value" do
-      let(:data) { { "PERSON_GENDER_CODE" => "Male" } }
-
-      it { should eq(1) }
-    end
-
-    context "with a 'female' value" do
-      let(:data) { { "PERSON_GENDER_CODE" => "Female" } }
-
-      it { should eq(2) }
-    end
-
-    context "with a 'not specified' value" do
-      let(:data) { { "PERSON_GENDER_CODE" => "Not Specified" } }
-
-      it { should eq(9) }
-    end
+    include_examples "with a value", "PERSON_GENDER_CODE"
+    include_examples "with a value", "PERSON_GENDER"
   end
 
   describe "#patient_postcode" do
