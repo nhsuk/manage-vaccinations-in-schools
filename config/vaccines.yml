@@ -1,0 +1,157 @@
+27114211000001105:
+  name: Fluenz Tetra - LAIV
+  programme_type: Flu
+  methods:
+    - nasal
+  brand: AstraZeneca
+  dose: 0.2
+  product_code: 27114211000001105
+  product_term: Fluenz Tetra vaccine nasal suspension 0.2ml unit dose
+    (AstraZeneca UK Ltd) (product)
+  procedure_code: 822851000000102
+  procedure_term: Seasonal influenza vaccination (procedure)
+
+12238911000001100:
+  name: Cervarix
+  programme_type: HPV
+  methods:
+    - intramuscular
+    - subcutaneous
+  brand: GlaxoSmithKline
+  dose: 0.5
+  product_code: 12238911000001100
+  product_term: Cervarix vaccine suspension for injection 0.5ml pre-filled
+    syringes (GlaxoSmithKline) (product)
+  procedure_code: 761841000
+  procedure_term: Administration of vaccine product containing only Human
+    papillomavirus antigen (procedure)
+
+33493111000001108:
+  name: Gardasil 9
+  programme_type: HPV
+  methods:
+    - intramuscular
+    - subcutaneous
+  brand: Merck Sharp & Dohme
+  dose: 0.5
+  product_code: 33493111000001108
+  product_term: Gardasil 9 vaccine suspension for injection 0.5ml pre-filled
+    syringes (Merck Sharp & Dohme (UK) Ltd) (product)
+  procedure_code: 761841000
+  procedure_term: Administration of vaccine product containing only Human
+    papillomavirus antigen (procedure)
+
+10880211000001104:
+  name: Gardasil
+  programme_type: HPV
+  methods:
+    - intramuscular
+    - subcutaneous
+  brand: Merck Sharp & Dohme
+  dose: 0.5
+  product_code: 10880211000001104
+  product_term: Gardasil vaccine suspension for injection 0.5ml pre-filled
+    syringes (Merck Sharp & Dohme (UK) Ltd) (product)
+  procedure_code: 761841000
+  procedure_term: Administration of vaccine product containing only Human
+    papillomavirus antigen (procedure)
+
+35727111000001109:
+  name: Quadrivalent Influvac sub-unit Tetra - QIVe
+  programme_type: Flu
+  methods:
+    - intramuscular
+    - subcutaneous
+  brand: Mylan
+  dose: 0.5
+  product_code: 35727111000001109
+  product_term: Influvac sub-unit Tetra vaccine suspension for injection 0.5ml
+    pre-filled syringes (Viatris UK Healthcare Ltd) (product)
+  procedure_code: 822851000000102
+  procedure_term: Seasonal influenza vaccination (procedure)
+
+39566211000001103:
+  name: Supemtek - QIVr
+  programme_type: Flu
+  methods:
+    - intramuscular
+    - subcutaneous
+  brand: Sanofi
+  dose: 0.5
+  product_code: 39566211000001103
+  product_term: Supemtek Quadrivalent vaccine (recombinant) solution for
+    injection 0.5ml pre-filled syringes (Sanofi) (product)
+  procedure_code: 822851000000102
+  procedure_term: Seasonal influenza vaccination (procedure)
+
+34680411000001107:
+  name: Quadrivalent Influenza vaccine - QIVe
+  programme_type: Flu
+  methods:
+    - intramuscular
+    - subcutaneous
+  brand: Sanofi
+  dose: 0.5
+  product_code: 34680411000001107
+  product_term: Quadrivalent influenza vaccine (split virion, inactivated)
+    suspension for injection 0.5ml pre-filled syringes (Sanofi) (product)
+  procedure_code: 822851000000102
+  procedure_term: Seasonal influenza vaccination (procedure)
+
+38973211000001108:
+  name: Fluad Tetra - aQIV
+  programme_type: Flu
+  methods:
+    - intramuscular
+    - subcutaneous
+  brand: Seqirus
+  dose: 0.5
+  product_code: 38973211000001108
+  product_term: Fluad Tetra vaccine suspension for injection 0.5ml pre-filled
+    syringes (Seqirus UK Ltd) (product)
+  procedure_code: 822851000000102
+  procedure_term: Seasonal influenza vaccination (procedure)
+
+36509011000001106:
+  name: Flucelvax Tetra - QIVc
+  programme_type: Flu
+  methods:
+    - intramuscular
+    - subcutaneous
+  brand: Seqirus
+  dose: 0.5
+  product_code: 36509011000001106
+  product_term: Flucelvax Tetra vaccine suspension for injection 0.5ml
+    pre-filled syringes (Seqirus UK Ltd) (product)
+  procedure_code: 822851000000102
+  procedure_term: Seasonal influenza vaccination (procedure)
+
+40085011000001101:
+  name: Cell-based Quadrivalent - QIVc
+  programme_type: Flu
+  methods:
+    - intramuscular
+    - subcutaneous
+  brand: Seqirus
+  dose: 0.5
+  product_code: 40085011000001101
+  product_term: Cell-based quadrivalent influenza vaccine (surface antigen,
+    inactivated) suspension for injection 0.5ml pre-filled syringes (Seqirus UK
+    Ltd) (product)
+  procedure_code: 822851000000102
+  procedure_term: Seasonal influenza vaccination (procedure)
+
+40085311000001103:
+  name: Adjuvanted Quadrivalent - aQIV
+  programme_type: Flu
+  methods:
+    - intramuscular
+    - subcutaneous
+  brand: Seqirus
+  dose: 0.5
+  product_code: 40085311000001103
+  product_term: Adjuvanted quadrivalent influenza vaccine (surface antigen,
+    inactivated) suspension for injection 0.5ml pre-filled syringes (Seqirus UK
+    Ltd) (product)
+  procedure_code: 822851000000102
+  procedure_term: Seasonal influenza vaccination (procedure)
