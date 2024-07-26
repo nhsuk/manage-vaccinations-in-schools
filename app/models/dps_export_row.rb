@@ -117,8 +117,9 @@ class DPSExportRow
     vaccination_record.created_at.to_date.to_fs(:dps)
   end
 
+  # needs to equal 'true' as the record is coming from the organisation that is administering the vaccine
   def primary_source
-    "FALSE"
+    "TRUE"
   end
 
   def vaccination_procedure_code
@@ -177,7 +178,7 @@ class DPSExportRow
   end
 
   def indication_code
-    # is not required if PRIMARY_SOURCE is FALSE
+    # is not required
   end
 
   def location_code
