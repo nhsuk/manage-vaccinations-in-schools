@@ -36,14 +36,13 @@ class ImmunisationImport < ApplicationRecord
     has_many :patients
   end
 
-  EXPECTED_HEADERS = %w[
+  REQUIRED_HEADERS = %w[
     ANATOMICAL_SITE
     DATE_OF_VACCINATION
     NHS_NUMBER
     ORGANISATION_CODE
     PERSON_DOB
     PERSON_FORENAME
-    PERSON_GENDER_CODE
     PERSON_POSTCODE
     PERSON_SURNAME
     REASON_NOT_VACCINATED
@@ -327,7 +326,8 @@ class ImmunisationImport < ApplicationRecord
     }.freeze
 
     def patient_gender_code
-      PATIENT_GENDER_CODES[@data["PERSON_GENDER_CODE"]&.strip&.downcase]
+      gender_code = @data["PERSON_GENDER_CODE"] || @data["PERSON_GENDER"]
+      PATIENT_GENDER_CODES[gender_code&.strip&.downcase]
     end
 
     def patient_postcode
@@ -376,7 +376,7 @@ class ImmunisationImport < ApplicationRecord
   def headers_are_valid
     return unless data
 
-    missing_headers = EXPECTED_HEADERS - data.headers
+    missing_headers = REQUIRED_HEADERS - data.headers
     errors.add(:csv, :missing_headers, missing_headers:) if missing_headers.any?
   end
 
