@@ -283,6 +283,30 @@ describe ImmunisationImport::Row, type: :model do
     end
   end
 
+  describe "#patient_date_of_birth" do
+    subject(:patient_date_of_birth) do
+      immunisation_import_row.patient_date_of_birth
+    end
+
+    context "without a value" do
+      let(:data) { {} }
+
+      it { should be_nil }
+    end
+
+    context "with a value" do
+      let(:data) { { "PERSON_DOB" => "abc" } }
+
+      it { should be_nil }
+    end
+
+    context "with a valid value" do
+      let(:data) { { "PERSON_DOB" => "19900101" } }
+
+      it { should eq(Date.new(1990, 1, 1)) }
+    end
+  end
+
   describe "#patient_gender_code" do
     subject(:patient_gender_code) do
       immunisation_import_row.patient_gender_code
