@@ -6,6 +6,12 @@ class ImmunisationImportRow
   validates :administered, inclusion: [true, false]
   validates :delivery_method, presence: true, if: :administered
   validates :delivery_site, presence: true, if: :administered
+  validates :dose_sequence,
+            presence: true,
+            comparison: {
+              greater_than_or_equal_to: 1,
+              less_than_or_equal_to: :maximum_dose_sequence
+            }
   validates :organisation_code,
             presence: true,
             length: {
@@ -59,11 +65,9 @@ class ImmunisationImportRow
   def to_vaccination_record
     return unless valid?
 
-    # TODO: get dose sequence value from CSV
     # TODO: determine correct vaccine batch
 
     VaccinationRecord.create_with(
-      dose_sequence: 1,
       imported_from: @imported_from,
       recorded_at:,
       user: @user
@@ -71,9 +75,11 @@ class ImmunisationImportRow
       administered:,
       delivery_method:,
       delivery_site:,
+      dose_sequence:,
       patient_session:,
       reason:,
-      batch: @campaign.vaccines.first.batches.first
+      batch: vaccine.batches.first,
+      vaccine:
     )
   end
 
@@ -137,6 +143,18 @@ class ImmunisationImportRow
       :nasal_spray
     else
       :intramuscular
+    end
+  end
+
+  def dose_sequence
+    if vaccine.maximum_dose_sequence == 1 && !@data.key?("DOSE_SEQUENCE")
+      return 1
+    end
+
+    begin
+      Integer(@data["DOSE_SEQUENCE"])
+    rescue ArgumentError, TypeError
+      nil
     end
   end
 
@@ -226,8 +244,16 @@ class ImmunisationImportRow
       )
   end
 
+  def vaccine
+    @vaccine ||= @campaign.vaccines.first
+  end
+
   def valid_ods_code
     @user.team.ods_code
+  end
+
+  def maximum_dose_sequence
+    vaccine.maximum_dose_sequence
   end
 
   def find_existing_patients
