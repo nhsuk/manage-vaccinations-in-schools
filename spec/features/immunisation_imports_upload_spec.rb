@@ -91,13 +91,13 @@ describe "Immunisation imports" do
   def when_i_upload_a_valid_file
     attach_file(
       "immunisation_import[csv]",
-      "spec/fixtures/immunisation_import/valid_flu.csv"
+      "spec/fixtures/immunisation_import/valid_hpv.csv"
     )
     click_on "Continue"
   end
 
   def then_i_should_see_the_success_banner
-    expect(page).to have_content("11 vaccinations uploaded")
+    expect(page).to have_content("7 vaccinations uploaded")
   end
 
   def and_i_should_see_the_upload

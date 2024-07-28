@@ -134,7 +134,20 @@ describe ImmunisationImportRow, type: :model do
       end
     end
 
-    context "with valid fields" do
+    context "with an invalid dose sequence" do
+      let(:data) { { "DOSE_SEQUENCE" => "4" } }
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:dose_sequence]).to include(
+          /must be less than/
+        )
+      end
+    end
+
+    context "with valid fields for Flu" do
+      let(:campaign) { create(:campaign, :flu) }
+
       let(:data) do
         {
           "ORGANISATION_CODE" => "abc",
@@ -177,7 +190,8 @@ describe ImmunisationImportRow, type: :model do
         "PERSON_POSTCODE" => address_postcode,
         "PERSON_GENDER_CODE" => "Male",
         "NHS_NUMBER" => nhs_number,
-        "DATE_OF_VACCINATION" => "20240101"
+        "DATE_OF_VACCINATION" => "20240101",
+        "DOSE_SEQUENCE" => "1"
       }
     end
 
@@ -385,6 +399,28 @@ describe ImmunisationImportRow, type: :model do
       let(:data) { { "ANATOMICAL_SITE" => "other" } }
 
       it { should be_nil }
+    end
+  end
+
+  describe "#dose_sequence" do
+    subject(:dose_sequence) { immunisation_import_row.dose_sequence }
+
+    context "without a value" do
+      let(:data) { {} }
+
+      it { should be_nil }
+    end
+
+    context "with an invalid value" do
+      let(:data) { { "DOSE_SEQUENCE" => "abc" } }
+
+      it { should be_nil }
+    end
+
+    context "with a valid value" do
+      let(:data) { { "DOSE_SEQUENCE" => "1" } }
+
+      it { should eq(1) }
     end
   end
 
