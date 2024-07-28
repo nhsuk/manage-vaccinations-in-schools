@@ -634,6 +634,7 @@ DEPENDENCIES
   dockerfile-rails (>= 1.0.0)
   factory_bot_rails
   faker
+  faraday
   flipper
   flipper-active_record
   flipper-ui
