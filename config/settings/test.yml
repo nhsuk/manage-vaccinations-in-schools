@@ -1,3 +1,10 @@
 allow_dev_phone_numbers: true
 cis2:
   issuer: "http://localhost:4000/not/used"
+
+mesh:
+  base_url: https://localhost:8700
+  mailbox: X26ABC1
+  password: password
+  dps_mailbox: X26ABC3
+  shared_key: TestKey
