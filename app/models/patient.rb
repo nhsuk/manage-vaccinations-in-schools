@@ -65,11 +65,11 @@ class Patient < ApplicationRecord
   validates :last_name, presence: true
   validates :date_of_birth, presence: true
   validates :nhs_number,
-            presence: true,
             uniqueness: true,
             format: {
               with: /\A(?:\d\s*){10}\z/
-            }
+            },
+            allow_nil: true
 
   encrypts :first_name,
            :last_name,

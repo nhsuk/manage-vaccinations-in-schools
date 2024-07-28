@@ -155,7 +155,6 @@ class ImmunisationImport < ApplicationRecord
 
     validates :patient_first_name, presence: true
     validates :patient_last_name, presence: true
-    validates :patient_nhs_number, presence: true
     validates :patient_date_of_birth,
               presence: true,
               format: {
@@ -332,7 +331,7 @@ class ImmunisationImport < ApplicationRecord
     end
 
     def patient_nhs_number
-      @data["NHS_NUMBER"]&.gsub(/\s/, "")
+      @data["NHS_NUMBER"]&.gsub(/\s/, "")&.presence
     end
 
     def school_name
