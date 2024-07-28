@@ -157,11 +157,8 @@ class ImmunisationImport < ApplicationRecord
     validates :patient_last_name, presence: true
     validates :patient_date_of_birth,
               presence: true,
-              format: {
-                with: /\A\d{8}\z/
-              },
               comparison: {
-                less_than_or_equal_to: -> { Date.current.strftime("%Y%m%d") }
+                less_than_or_equal_to: -> { Date.current }
               }
     validates :patient_gender_code,
               presence: true,
@@ -309,7 +306,9 @@ class ImmunisationImport < ApplicationRecord
     end
 
     def patient_date_of_birth
-      @data["PERSON_DOB"]&.strip
+      Date.strptime(@data["PERSON_DOB"]&.strip, "%Y%m%d")
+    rescue ArgumentError, TypeError
+      nil
     end
 
     PATIENT_GENDER_CODES = {
