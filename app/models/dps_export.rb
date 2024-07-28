@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "csv"
+
 class DPSExport
   def initialize(vaccinations)
     @vaccinations = vaccinations
