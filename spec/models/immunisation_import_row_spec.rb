@@ -113,7 +113,6 @@ describe ImmunisationImport::Row, type: :model do
           "PERSON_DOB" => "20120101",
           "PERSON_POSTCODE" => "SW1A 1AA",
           "PERSON_GENDER_CODE" => "Male",
-          "NHS_NUMBER" => "1234567890",
           "DATE_OF_VACCINATION" => "20240101"
         }
       end
