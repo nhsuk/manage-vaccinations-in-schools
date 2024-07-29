@@ -100,6 +100,33 @@ describe ImmunisationImport::Row, type: :model do
       end
     end
 
+    context "with more than two matching patients" do
+      let(:data) do
+        {
+          "PERSON_FORENAME" => "John",
+          "PERSON_SURNAME" => "Smith",
+          "PERSON_DOB" => "19900101"
+        }
+      end
+
+      before do
+        create_list(
+          :patient,
+          2,
+          first_name: "John",
+          last_name: "Smith",
+          date_of_birth: Date.new(1990, 1, 1)
+        )
+      end
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:patient_first_name]).to include(
+          /two or more possible patients match/
+        )
+      end
+    end
+
     context "with valid fields" do
       let(:data) do
         {
@@ -118,6 +145,94 @@ describe ImmunisationImport::Row, type: :model do
       end
 
       it { should be_valid }
+    end
+  end
+
+  describe "#to_patient" do
+    subject(:to_patient) { immunisation_import_row.to_patient }
+
+    let(:nhs_number) { "1234567890" }
+    let(:first_name) { "Harry" }
+    let(:last_name) { "Potter" }
+    let(:date_of_birth) { "20120101" }
+    let(:address_postcode) { "SW1A 1AA" }
+
+    let(:valid_data) do
+      {
+        "ORGANISATION_CODE" => "abc",
+        "VACCINATED" => "Yes",
+        "ANATOMICAL_SITE" => "nasal",
+        "SCHOOL_NAME" => "Hogwarts",
+        "SCHOOL_URN" => "123456",
+        "PERSON_FORENAME" => first_name,
+        "PERSON_SURNAME" => last_name,
+        "PERSON_DOB" => date_of_birth,
+        "PERSON_POSTCODE" => address_postcode,
+        "PERSON_GENDER_CODE" => "Male",
+        "NHS_NUMBER" => nhs_number,
+        "DATE_OF_VACCINATION" => "20240101"
+      }
+    end
+
+    context "without patient data" do
+      let(:data) { {} }
+
+      it { should be_nil }
+    end
+
+    context "with new patient data" do
+      let(:data) { valid_data }
+
+      it { should_not be_nil }
+      it { should_not be_persisted }
+    end
+
+    context "with an existing patient matching NHS number" do
+      let(:data) { valid_data }
+
+      let(:patient) { create(:patient, nhs_number:) }
+
+      it { should eq(patient) }
+    end
+
+    context "with an existing patient matching first name, last name and date of birth" do
+      let(:data) { valid_data }
+
+      let(:patient) do
+        create(:patient, first_name:, last_name:, date_of_birth:)
+      end
+
+      it { should eq(patient) }
+    end
+
+    context "with an existing patient matching first name, last name and postcode" do
+      let(:data) { valid_data }
+
+      let(:patient) do
+        create(:patient, first_name:, last_name:, address_postcode:)
+      end
+
+      it { should eq(patient) }
+    end
+
+    context "with an existing patient matching first name, date of birth and postcode" do
+      let(:data) { valid_data }
+
+      let(:patient) do
+        create(:patient, first_name:, date_of_birth:, address_postcode:)
+      end
+
+      it { should eq(patient) }
+    end
+
+    context "with an existing patient matching last name, date of birth and postcode" do
+      let(:data) { valid_data }
+
+      let(:patient) do
+        create(:patient, last_name:, date_of_birth:, address_postcode:)
+      end
+
+      it { should eq(patient) }
     end
   end
 

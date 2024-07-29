@@ -79,6 +79,8 @@ en:
               blank: is required but missing
             organisation_code:
               blank: is required but missing
+            patient_first_name:
+              multiple_duplicate_match: two or more possible patients match
             patient_gender_code:
               blank: is required but missing
             patient_postcode:
