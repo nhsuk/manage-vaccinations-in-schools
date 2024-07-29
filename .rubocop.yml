@@ -42,10 +42,6 @@ RSpec/NamedSubject:
 RSpec/ImplicitExpect:
   EnforcedStyle: should
 
-RSpec/SpecFilePathFormat:
-  Exclude:
-    - spec/models/immunisation_import_row_spec.rb
-
 RSpec/VerifiedDoubles:
   Exclude:
     - spec/controllers/concerns/consent_form_mailer_concern_spec.rb

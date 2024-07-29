@@ -69,7 +69,7 @@ en:
             response:
               blank: Choose an answer
               inclusion: Choose an answer
-        immunisation_import/row:
+        immunisation_import_row:
           attributes:
             administered:
               inclusion: is required but missing
