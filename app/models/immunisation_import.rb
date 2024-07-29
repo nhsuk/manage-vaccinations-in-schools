@@ -166,6 +166,7 @@ class ImmunisationImport < ApplicationRecord
                 in: Patient.gender_codes.values
               }
     validates :patient_postcode, presence: true, postcode: true
+    validate :zero_or_one_existing_patient
 
     validates :session_date,
               presence: true,
@@ -208,14 +209,15 @@ class ImmunisationImport < ApplicationRecord
     def to_patient
       return unless valid?
 
-      patient = Patient.find_or_initialize_by(nhs_number: patient_nhs_number)
-      patient.first_name ||= patient_first_name
-      patient.last_name ||= patient_last_name
-      patient.date_of_birth ||= patient_date_of_birth
-      patient.address_postcode ||= patient_postcode
-      patient.gender_code ||= patient_gender_code
-      patient.location ||= to_location
-      patient
+      (find_existing_patients.first || Patient.new).tap do |patient|
+        patient.address_postcode ||= patient_postcode
+        patient.date_of_birth ||= patient_date_of_birth
+        patient.first_name ||= patient_first_name
+        patient.gender_code ||= patient_gender_code
+        patient.last_name ||= patient_last_name
+        patient.location ||= to_location
+        patient.nhs_number ||= patient_nhs_number
+      end
     end
 
     def to_patient_session
@@ -349,6 +351,36 @@ class ImmunisationImport < ApplicationRecord
 
     def valid_ods_code
       @team.ods_code
+    end
+
+    def find_existing_patients
+      @find_existing_patients ||=
+        begin
+          if patient_nhs_number.present? &&
+               (
+                 patient = Patient.find_by(nhs_number: patient_nhs_number)
+               ).present?
+            return [patient]
+          end
+
+          first_name = patient_first_name
+          last_name = patient_last_name
+          date_of_birth = patient_date_of_birth
+          address_postcode = patient_postcode
+
+          Patient
+            .where(first_name:, last_name:, date_of_birth:)
+            .or(Patient.where(first_name:, last_name:, address_postcode:))
+            .or(Patient.where(first_name:, date_of_birth:, address_postcode:))
+            .or(Patient.where(last_name:, date_of_birth:, address_postcode:))
+            .to_a
+        end
+    end
+
+    def zero_or_one_existing_patient
+      if find_existing_patients.count >= 2
+        errors.add(:patient_first_name, :multiple_duplicate_match)
+      end
     end
   end
 

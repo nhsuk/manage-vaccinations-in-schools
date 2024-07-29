@@ -147,5 +147,29 @@ describe ImmunisationImport, type: :model do
           .and not_change(PatientSession, :count)
       end
     end
+
+    context "with an existing patient matching the name" do
+      let(:file) { "valid_flu.csv" }
+
+      let!(:patient) do
+        create(
+          :patient,
+          first_name: "Chyna",
+          last_name: "Pickle",
+          date_of_birth: Date.new(2012, 9, 12),
+          nhs_number: nil
+        )
+      end
+
+      it "doesn't create an additional patient" do
+        expect { process! }.to change(immunisation_import.patients, :count).by(
+          10
+        )
+      end
+
+      it "doesn't update the NHS number on the existing patient" do
+        expect { process! }.not_to change(patient, :nhs_number).from(nil)
+      end
+    end
   end
 end
