@@ -96,9 +96,11 @@ class DPSExportRow
   end
 
   def unique_id
+    vaccination_record.uuid.to_s
   end
 
   def unique_id_uri
+    "https://manage-vaccinations-in-schools.nhs.uk/vaccination-records"
   end
 
   def action_flag
