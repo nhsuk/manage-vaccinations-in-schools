@@ -24,6 +24,7 @@
 FactoryBot.define do
   factory :immunisation_import do
     association :campaign
+    association :user
 
     csv { "my,csv\n" }
   end

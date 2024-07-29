@@ -80,7 +80,7 @@ class ImmunisationImport < ApplicationRecord
 
     self.rows =
       data.map do |row_data|
-        Row.new(data: row_data, campaign:, team: user.team)
+        Row.new(data: row_data, campaign:, user:, imported_from: self)
       end
   end
 
@@ -88,50 +88,7 @@ class ImmunisationImport < ApplicationRecord
     parse_rows! if rows.nil?
     return if invalid?
 
-    ActiveRecord::Base.transaction do
-      rows
-        .map(&:to_location)
-        .reject(&:persisted?)
-        .uniq(&:urn)
-        .reject(&:invalid?)
-        .each do |location|
-          location.imported_from = self
-          location.save!
-        end
-
-      rows
-        .map(&:to_patient)
-        .reject(&:persisted?)
-        .uniq(&:nhs_number)
-        .reject(&:invalid?)
-        .each do |patient|
-          patient.imported_from = self
-          patient.save!
-        end
-
-      rows
-        .map(&:to_session)
-        .reject(&:persisted?)
-        .uniq { [_1.date, _1.location_id] }
-        .reject(&:invalid?)
-        .each do |session|
-          session.imported_from = self
-          session.save!
-        end
-
-      rows
-        .map { [_1.to_patient_session, _1.to_vaccination_record] }
-        .reject { |_, record| record.persisted? }
-        .each do |patient_session, record|
-          patient_session.created_by ||= user
-          patient_session.save! if patient_session.changed?
-
-          record.user = user
-          record.patient_session = patient_session
-          record.imported_from = self
-          record.save!
-        end
-    end
+    ActiveRecord::Base.transaction { rows.map(&:to_vaccination_record) }
   end
 
   class Row
@@ -183,47 +140,50 @@ class ImmunisationImport < ApplicationRecord
               },
               unless: :administered
 
-    def initialize(data:, campaign:, team:)
+    def initialize(data:, campaign:, user:, imported_from:)
       @data = data
       @campaign = campaign
-      @team = team
+      @user = user
+      @imported_from = imported_from
     end
 
     def to_location
       return unless valid?
 
-      location = Location.find_or_initialize_by(urn: school_urn)
-      location.name ||= school_name
-      location
-    end
-
-    def to_session
-      return unless valid?
-
-      @campaign.sessions.find_or_initialize_by(
-        date: session_date,
-        location: Location.find_by(urn: school_urn)
-      )
+      @to_location ||=
+        Location.create_with(
+          name: school_name,
+          imported_from:
+        ).find_or_create_by!(urn: school_urn)
     end
 
     def to_patient
       return unless valid?
 
-      (find_existing_patients.first || Patient.new).tap do |patient|
-        patient.address_postcode ||= patient_postcode
-        patient.date_of_birth ||= patient_date_of_birth
-        patient.first_name ||= patient_first_name
-        patient.gender_code ||= patient_gender_code
-        patient.last_name ||= patient_last_name
-        patient.location ||= to_location
-        patient.nhs_number ||= patient_nhs_number
-      end
+      @to_patient ||=
+        find_existing_patients.first ||
+          Patient.create!(
+            address_postcode: patient_postcode,
+            date_of_birth: patient_date_of_birth,
+            first_name: patient_first_name,
+            gender_code: patient_gender_code,
+            imported_from:,
+            last_name: patient_last_name,
+            location: to_location,
+            nhs_number: patient_nhs_number
+          )
+    end
+
+    def to_session
+      @to_session ||=
+        @campaign
+          .sessions
+          .create_with(imported_from:)
+          .find_or_create_by!(date: session_date, location: to_location)
     end
 
     def to_patient_session
-      return unless valid?
-
-      PatientSession.find_or_initialize_by(
+      PatientSession.create_with(created_by: @user).find_or_create_by!(
         patient: to_patient,
         session: to_session
       )
@@ -232,17 +192,22 @@ class ImmunisationImport < ApplicationRecord
     def to_vaccination_record
       return unless valid?
 
-      record =
-        VaccinationRecord.find_or_initialize_by(
-          administered:,
-          delivery_site:,
-          delivery_method:,
-          reason:
-        )
-      record.recorded_at = recorded_at
-      # TODO: get value from CSV file
-      record.dose_sequence = 1
-      record
+      # TODO: get dose sequence value from CSV
+      # TODO: determine correct vaccine batch
+
+      VaccinationRecord.create_with(
+        dose_sequence: 1,
+        imported_from: @imported_from,
+        recorded_at:,
+        user: @user
+      ).find_or_create_by!(
+        administered:,
+        delivery_method:,
+        delivery_site:,
+        patient_session: to_patient_session,
+        reason:,
+        batch: @campaign.vaccines.first.batches.first
+      )
     end
 
     def administered
@@ -349,8 +314,10 @@ class ImmunisationImport < ApplicationRecord
 
     private
 
+    attr_reader :imported_from
+
     def valid_ods_code
-      @team.ods_code
+      @user.team.ods_code
     end
 
     def find_existing_patients
