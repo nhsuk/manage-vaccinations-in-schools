@@ -155,8 +155,8 @@ describe ImmunisationImportRow, type: :model do
     end
   end
 
-  describe "#to_patient" do
-    subject(:to_patient) { immunisation_import_row.to_patient }
+  describe "#patient" do
+    subject(:patient) { immunisation_import_row.patient }
 
     let(:nhs_number) { "1234567890" }
     let(:first_name) { "Harry" }
