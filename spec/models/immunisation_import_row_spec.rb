@@ -4,11 +4,18 @@ require "rails_helper"
 
 describe ImmunisationImport::Row, type: :model do
   subject(:immunisation_import_row) do
-    described_class.new(data:, campaign:, team:)
+    described_class.new(
+      data:,
+      campaign:,
+      user:,
+      imported_from: immunisation_import
+    )
   end
 
   let(:campaign) { create(:campaign) }
   let(:team) { create(:team, ods_code: "abc") }
+  let(:user) { create(:user, teams: [team]) }
+  let(:immunisation_import) { create(:immunisation_import, campaign:, user:) }
 
   describe "validations" do
     context "with an empty row" do
@@ -184,7 +191,6 @@ describe ImmunisationImport::Row, type: :model do
       let(:data) { valid_data }
 
       it { should_not be_nil }
-      it { should_not be_persisted }
     end
 
     context "with an existing patient matching NHS number" do
