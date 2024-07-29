@@ -27,6 +27,7 @@ describe DPSExportRow do
         location:
       },
       user: create(:user, full_name: "Jane Doe"),
+      uuid: "ea4860a5-6d97-4f31-b640-f5c50f43bfd2",
       vaccine:
     )
   end
@@ -70,6 +71,20 @@ describe DPSExportRow do
 
     it "has site_code_type_uri" do
       expect(array[8]).to eq "https://fhir.nhs.uk/Id/ods-organization-code"
+    end
+
+    describe "unique_id" do
+      subject(:unique_id) { array[9] }
+
+      it { should eq("ea4860a5-6d97-4f31-b640-f5c50f43bfd2") }
+    end
+
+    describe "unique_id_uri" do
+      it "is expected to be valid" do
+        expect(array[10]).to eq(
+          "https://manage-vaccinations-in-schools.nhs.uk/vaccination-records"
+        )
+      end
     end
 
     it "has action_flag" do
