@@ -56,48 +56,6 @@ class ImmunisationImportRow
     @imported_from = imported_from
   end
 
-  def to_location
-    return unless valid?
-
-    @to_location ||=
-      Location.create_with(
-        name: school_name,
-        imported_from:
-      ).find_or_create_by!(urn: school_urn)
-  end
-
-  def to_patient
-    return unless valid?
-
-    @to_patient ||=
-      find_existing_patients.first ||
-        Patient.create!(
-          address_postcode: patient_postcode,
-          date_of_birth: patient_date_of_birth,
-          first_name: patient_first_name,
-          gender_code: patient_gender_code,
-          imported_from:,
-          last_name: patient_last_name,
-          location: to_location,
-          nhs_number: patient_nhs_number
-        )
-  end
-
-  def to_session
-    @to_session ||=
-      @campaign
-        .sessions
-        .create_with(imported_from:)
-        .find_or_create_by!(date: session_date, location: to_location)
-  end
-
-  def to_patient_session
-    PatientSession.create_with(created_by: @user).find_or_create_by!(
-      patient: to_patient,
-      session: to_session
-    )
-  end
-
   def to_vaccination_record
     return unless valid?
 
@@ -113,10 +71,27 @@ class ImmunisationImportRow
       administered:,
       delivery_method:,
       delivery_site:,
-      patient_session: to_patient_session,
+      patient_session:,
       reason:,
       batch: @campaign.vaccines.first.batches.first
     )
+  end
+
+  def patient
+    return unless valid?
+
+    @patient ||=
+      find_existing_patients.first ||
+        Patient.create!(
+          address_postcode: patient_postcode,
+          date_of_birth: patient_date_of_birth,
+          first_name: patient_first_name,
+          gender_code: patient_gender_code,
+          imported_from:,
+          last_name: patient_last_name,
+          location:,
+          nhs_number: patient_nhs_number
+        )
   end
 
   def administered
@@ -224,6 +199,32 @@ class ImmunisationImportRow
   private
 
   attr_reader :imported_from
+
+  def location
+    return unless valid?
+
+    @location ||=
+      Location.create_with(
+        name: school_name,
+        imported_from:
+      ).find_or_create_by!(urn: school_urn)
+  end
+
+  def session
+    @session ||=
+      @campaign
+        .sessions
+        .create_with(imported_from:)
+        .find_or_create_by!(date: session_date, location:)
+  end
+
+  def patient_session
+    @patient_session ||=
+      PatientSession.create_with(created_by: @user).find_or_create_by!(
+        patient:,
+        session:
+      )
+  end
 
   def valid_ods_code
     @user.team.ods_code
