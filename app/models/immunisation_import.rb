@@ -26,6 +26,8 @@ require "csv"
 class ImmunisationImport < ApplicationRecord
   attr_accessor :csv_is_malformed, :data, :rows
 
+  encrypts :csv
+
   belongs_to :user
   belongs_to :campaign
   with_options dependent: :restrict_with_exception,
