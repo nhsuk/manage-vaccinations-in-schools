@@ -7,32 +7,10 @@
   flex-wrap: wrap;
   gap: nhsuk-spacing(3) nhsuk-spacing(4);
 
-  .nhsuk-link {
-    @include nhsuk-font($size: 19, $line-height: 19px);
-    display: inline-block;
-    margin-bottom: nhsuk-spacing(2);
-    margin-top: nhsuk-spacing(2);
-    max-width: 100%;
-    text-align: center;
-  }
-
-  .nhsuk-button {
-    margin-bottom: 0;
-    width: 100%;
-  }
-
   @include mq($from: tablet) {
     align-items: baseline;
     flex-direction: row;
     flex-wrap: wrap;
-
-    .nhsuk-button {
-      width: auto;
-    }
-
-    .nhsuk-link {
-      text-align: left;
-    }
   }
 
   &--table {
@@ -53,5 +31,27 @@
     @include mq($from: desktop) {
       flex-wrap: nowrap;
     }
+  }
+}
+
+.app-button-group .nhsuk-link {
+  @include nhsuk-font($size: 19, $line-height: 19px);
+  display: inline-block;
+  margin-bottom: nhsuk-spacing(2);
+  margin-top: nhsuk-spacing(2);
+  max-width: 100%;
+  text-align: center;
+
+  @include mq($from: tablet) {
+    text-align: left;
+  }
+}
+
+.app-button-group .nhsuk-button {
+  margin-bottom: 0;
+  width: 100%;
+
+  @include mq($from: tablet) {
+    width: auto;
   }
 }
