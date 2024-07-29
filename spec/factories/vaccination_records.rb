@@ -13,6 +13,7 @@
 #  notes              :text
 #  reason             :integer
 #  recorded_at        :datetime
+#  uuid               :uuid             not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #  batch_id           :bigint
@@ -59,6 +60,7 @@ FactoryBot.define do
     user { create :user }
     administered { true }
     dose_sequence { 1 }
+    uuid { SecureRandom.uuid }
 
     trait :unrecorded do
       recorded_at { nil }

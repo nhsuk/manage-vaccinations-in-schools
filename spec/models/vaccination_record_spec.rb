@@ -13,6 +13,7 @@
 #  notes              :text
 #  reason             :integer
 #  recorded_at        :datetime
+#  uuid               :uuid             not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #  batch_id           :bigint
