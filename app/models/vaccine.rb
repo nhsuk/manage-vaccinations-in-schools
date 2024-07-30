@@ -16,6 +16,13 @@
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #
+# Indexes
+#
+#  index_vaccines_on_gtin                 (gtin) UNIQUE
+#  index_vaccines_on_snomed_product_code  (snomed_product_code) UNIQUE
+#  index_vaccines_on_snomed_product_term  (snomed_product_term) UNIQUE
+#  index_vaccines_on_supplier_and_brand   (supplier,brand) UNIQUE
+#
 class Vaccine < ApplicationRecord
   self.inheritance_column = :_type_disabled
 
@@ -25,11 +32,12 @@ class Vaccine < ApplicationRecord
   has_many :health_questions, dependent: :destroy
   has_many :batches
 
-  validates :brand, presence: true
+  validates :brand, presence: true, uniqueness: { scope: :supplier }
   validates :dose, presence: true
+  validates :gtin, uniqueness: true, allow_nil: true
   validates :method, presence: true
-  validates :snomed_product_code, presence: true
-  validates :snomed_product_term, presence: true
+  validates :snomed_product_code, presence: true, uniqueness: true
+  validates :snomed_product_term, presence: true, uniqueness: true
   validates :supplier, presence: true
   validates :type, presence: true
 
