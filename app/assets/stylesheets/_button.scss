@@ -1,43 +1,12 @@
-$app-warning-button-color: $color_nhsuk-red;
-$app-warning-button-hover-color: shade($app-warning-button-color, 20%);
-$app-warning-button-active-color: shade($app-warning-button-color, 50%);
-$app-warning-button-shadow-color: shade($app-warning-button-color, 50%);
-$button-shadow-size: 4px;
 $app-cis2-button-color: $color_nhsuk-blue;
 $app-cis2-button-hover-color: mix($app-cis2-button-color, #003087, 50%);
 $app-cis2-button-active-color: #003087;
 $app-cis2-button-shadow-color: #003087;
+$button-shadow-size: 4px;
 
 .app-button--small {
   @include nhsuk-typography-responsive(16);
   padding: nhsuk-spacing(1) 12px;
-}
-
-.app-button--warning {
-  background-color: $app-warning-button-color;
-  box-shadow: 0 $button-shadow-size 0 $app-warning-button-shadow-color;
-
-  &:hover {
-    background-color: darken($app-warning-button-color, 10%);
-  }
-
-  &:focus {
-    background: $nhsuk-focus-color;
-    box-shadow: 0 $button-shadow-size 0 $nhsuk-focus-text-color;
-    color: $nhsuk-focus-text-color;
-    outline: $nhsuk-focus-width solid transparent;
-  }
-
-  &:active {
-    background: $app-warning-button-active-color;
-    box-shadow: none;
-    color: $nhsuk-button-text-color;
-    top: $button-shadow-size;
-  }
-
-  &.nhsuk-button--disabled {
-    background-color: $app-warning-button-color;
-  }
 }
 
 .nhsuk-button {
