@@ -73,6 +73,10 @@ en:
           attributes:
             administered:
               inclusion: is required but missing
+            batch_expiry_date:
+              blank: is required but missing
+            batch_number:
+              blank: is required but missing
             delivery_method:
               blank: is required but missing
             delivery_site:
