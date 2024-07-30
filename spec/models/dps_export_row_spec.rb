@@ -141,7 +141,7 @@ describe DPSExportRow do
     end
 
     it "has vaccine_manufacturer" do
-      expect(array[21]).to eq "Merck Sharp & Dohme (UK) Ltd"
+      expect(array[21]).to eq "Merck Sharp & Dohme"
     end
 
     it "has batch_number" do

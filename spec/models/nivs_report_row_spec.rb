@@ -49,7 +49,7 @@ describe NivsReportRow do
 
       expect(subject[9..17]).to eq [
            "20200101",
-           "Gardasil 9",
+           "Cervarix",
            "AB1234",
            "20210101",
            "Left Upper Arm",

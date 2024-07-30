@@ -47,7 +47,7 @@ describe "Batches" do
   end
 
   def when_i_add_a_new_batch
-    click_on "Add a batch"
+    click_on "Add a batch", match: :first
 
     fill_in "Batch", with: "AB1234"
 

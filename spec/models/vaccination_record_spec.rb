@@ -44,7 +44,7 @@ describe VaccinationRecord do
   it "validates that the vaccine and the batch vaccines match" do
     patient_session = create(:patient_session)
     vaccine = patient_session.campaign.vaccines.first
-    different_vaccine = create(:vaccine, :flu)
+    different_vaccine = create(:vaccine)
     batch = create(:batch, vaccine: different_vaccine)
 
     subject =
