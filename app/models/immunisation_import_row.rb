@@ -13,7 +13,8 @@ class ImmunisationImportRow
             comparison: {
               greater_than_or_equal_to: 1,
               less_than_or_equal_to: :maximum_dose_sequence
-            }
+            },
+            if: -> { administered && vaccine.present? }
   validates :organisation_code,
             presence: true,
             length: {
@@ -23,6 +24,12 @@ class ImmunisationImportRow
               equal_to: :valid_ods_code
             }
   validates :recorded_at, presence: true
+  validates :vaccine_given,
+            presence: true,
+            inclusion: {
+              in: :valid_given_vaccines
+            },
+            if: :administered
 
   validates :school_name, presence: true
   validates :school_urn, presence: true
@@ -152,6 +159,8 @@ class ImmunisationImportRow
   end
 
   def dose_sequence
+    return 1 unless administered
+
     if vaccine.maximum_dose_sequence == 1 && !@data.key?("DOSE_SEQUENCE")
       return 1
     end
@@ -169,6 +178,10 @@ class ImmunisationImportRow
 
   def organisation_code
     @data["ORGANISATION_CODE"]&.strip
+  end
+
+  def vaccine_given
+    @data["VACCINE_GIVEN"]&.strip
   end
 
   def patient_first_name
@@ -252,8 +265,9 @@ class ImmunisationImportRow
   end
 
   def vaccine
-    # TODO: determine correct vaccine
-    @vaccine ||= @campaign.vaccines.first
+    return unless administered
+
+    @vaccine ||= @campaign.vaccines.find_by(nivs_name: vaccine_given)
   end
 
   def batch
@@ -269,6 +283,10 @@ class ImmunisationImportRow
 
   def valid_ods_code
     @user.team.ods_code
+  end
+
+  def valid_given_vaccines
+    @campaign.vaccines.pluck(:nivs_name)
   end
 
   def maximum_dose_sequence

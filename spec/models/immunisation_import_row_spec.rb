@@ -12,7 +12,7 @@ describe ImmunisationImportRow, type: :model do
     )
   end
 
-  let(:campaign) { create(:campaign) }
+  let(:campaign) { create(:campaign, :flu) }
   let(:team) { create(:team, ods_code: "abc") }
   let(:user) { create(:user, teams: [team]) }
   let(:immunisation_import) { create(:immunisation_import, campaign:, user:) }
@@ -141,7 +141,9 @@ describe ImmunisationImportRow, type: :model do
     end
 
     context "with an invalid dose sequence" do
-      let(:data) { { "DOSE_SEQUENCE" => "4" } }
+      let(:campaign) { create(:campaign, :hpv) }
+
+      let(:data) { { "VACCINE_GIVEN" => "Gardasil", "DOSE_SEQUENCE" => "4" } }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -168,7 +170,8 @@ describe ImmunisationImportRow, type: :model do
           "PERSON_DOB" => "20120101",
           "PERSON_POSTCODE" => "SW1A 1AA",
           "PERSON_GENDER_CODE" => "Male",
-          "DATE_OF_VACCINATION" => "20240101"
+          "DATE_OF_VACCINATION" => "20240101",
+          "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV"
         }
       end
 
@@ -201,7 +204,7 @@ describe ImmunisationImportRow, type: :model do
         "PERSON_GENDER_CODE" => "Male",
         "NHS_NUMBER" => nhs_number,
         "DATE_OF_VACCINATION" => "20240101",
-        "DOSE_SEQUENCE" => "1"
+        "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV"
       }
     end
 
@@ -453,20 +456,22 @@ describe ImmunisationImportRow, type: :model do
   describe "#dose_sequence" do
     subject(:dose_sequence) { immunisation_import_row.dose_sequence }
 
+    let(:campaign) { create(:campaign, :hpv) }
+
     context "without a value" do
-      let(:data) { {} }
+      let(:data) { { "VACCINE_GIVEN" => "Gardasil" } }
 
       it { should be_nil }
     end
 
     context "with an invalid value" do
-      let(:data) { { "DOSE_SEQUENCE" => "abc" } }
+      let(:data) { { "VACCINE_GIVEN" => "Gardasil", "DOSE_SEQUENCE" => "abc" } }
 
       it { should be_nil }
     end
 
     context "with a valid value" do
-      let(:data) { { "DOSE_SEQUENCE" => "1" } }
+      let(:data) { { "VACCINE_GIVEN" => "Gardasil", "DOSE_SEQUENCE" => "1" } }
 
       it { should eq(1) }
     end

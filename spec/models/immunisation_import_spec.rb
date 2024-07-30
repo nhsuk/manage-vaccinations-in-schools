@@ -28,7 +28,7 @@ describe ImmunisationImport, type: :model do
     create(:immunisation_import, campaign:, csv:, user:)
   end
 
-  let(:campaign) { create(:campaign) }
+  let(:campaign) { create(:campaign, :flu) }
   let(:file) { "valid_flu.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/immunisation_import/#{file}") }
   let(:team) { create(:team, ods_code: "R1L") }
@@ -115,7 +115,7 @@ describe ImmunisationImport, type: :model do
           .and change(immunisation_import.patients, :count).by(11)
           .and change(immunisation_import.sessions, :count).by(4)
           .and change(PatientSession, :count).by(11)
-          .and change(Batch, :count).by(2)
+          .and change(Batch, :count).by(4)
 
         # Second import should not duplicate the vaccination records if they're
         # identical.
@@ -143,7 +143,7 @@ describe ImmunisationImport, type: :model do
           .and change(immunisation_import.patients, :count).by(7)
           .and change(immunisation_import.sessions, :count).by(1)
           .and change(PatientSession, :count).by(7)
-          .and change(Batch, :count).by(2)
+          .and change(Batch, :count).by(5)
 
         # Second import should not duplicate the vaccination records if they're
         # identical.
