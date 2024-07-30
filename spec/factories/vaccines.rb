@@ -8,26 +8,26 @@
 #  brand               :text             not null
 #  dose                :decimal(, )      not null
 #  gtin                :text
+#  manufacturer        :text             not null
 #  method              :integer          not null
 #  snomed_product_code :string           not null
 #  snomed_product_term :string           not null
-#  supplier            :text             not null
 #  type                :string           not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #
 # Indexes
 #
-#  index_vaccines_on_gtin                 (gtin) UNIQUE
-#  index_vaccines_on_snomed_product_code  (snomed_product_code) UNIQUE
-#  index_vaccines_on_snomed_product_term  (snomed_product_term) UNIQUE
-#  index_vaccines_on_supplier_and_brand   (supplier,brand) UNIQUE
+#  index_vaccines_on_gtin                    (gtin) UNIQUE
+#  index_vaccines_on_manufacturer_and_brand  (manufacturer,brand) UNIQUE
+#  index_vaccines_on_snomed_product_code     (snomed_product_code) UNIQUE
+#  index_vaccines_on_snomed_product_term     (snomed_product_term) UNIQUE
 #
 FactoryBot.define do
   factory :vaccine do
     transient { batch_count { 1 } }
 
-    supplier { Faker::Company.name }
+    manufacturer { Faker::Company.name }
     dose { Faker::Number.decimal(l_digits: 0) }
     snomed_product_code { Faker::Number.decimal_part(digits: 17) }
     snomed_product_term { Faker::Lorem.sentence }
@@ -69,7 +69,7 @@ FactoryBot.define do
     trait :fluenz_tetra do
       type { "flu" }
       brand { "Fluenz Tetra" }
-      supplier { "AstraZeneca UK Ltd" }
+      manufacturer { "AstraZeneca UK Ltd" }
       gtin { "05000456078276" }
       snomed_product_code { "27114211000001105" }
       snomed_product_term do
@@ -82,7 +82,7 @@ FactoryBot.define do
     trait :quadrivalent_influenza do
       type { "flu" }
       brand { "Quadrivalent Influenza vaccine - QIVe" }
-      supplier { "Sanofi" }
+      manufacturer { "Sanofi" }
       gtin { "3664798046564" }
       snomed_product_code { "34680411000001107" }
       snomed_product_term do
@@ -110,7 +110,7 @@ FactoryBot.define do
     trait :gardasil_9 do
       type { "hpv" }
       brand { "Gardasil 9" }
-      supplier { "Merck Sharp & Dohme (UK) Ltd" }
+      manufacturer { "Merck Sharp & Dohme (UK) Ltd" }
       gtin { "00191778001693" }
       snomed_product_code { "33493111000001108" }
       snomed_product_term do
