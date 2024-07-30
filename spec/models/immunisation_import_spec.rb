@@ -115,6 +115,7 @@ describe ImmunisationImport, type: :model do
           .and change(immunisation_import.patients, :count).by(11)
           .and change(immunisation_import.sessions, :count).by(4)
           .and change(PatientSession, :count).by(11)
+          .and change(Batch, :count).by(2)
 
         # Second import should not duplicate the vaccination records if they're
         # identical.
@@ -126,6 +127,7 @@ describe ImmunisationImport, type: :model do
           .and not_change(immunisation_import.patients, :count)
           .and not_change(immunisation_import.sessions, :count)
           .and not_change(PatientSession, :count)
+          .and not_change(Batch, :count)
       end
     end
 
@@ -141,6 +143,7 @@ describe ImmunisationImport, type: :model do
           .and change(immunisation_import.patients, :count).by(7)
           .and change(immunisation_import.sessions, :count).by(1)
           .and change(PatientSession, :count).by(7)
+          .and change(Batch, :count).by(2)
 
         # Second import should not duplicate the vaccination records if they're
         # identical.
@@ -152,6 +155,7 @@ describe ImmunisationImport, type: :model do
           .and not_change(immunisation_import.patients, :count)
           .and not_change(immunisation_import.sessions, :count)
           .and not_change(PatientSession, :count)
+          .and not_change(Batch, :count)
       end
     end
 
