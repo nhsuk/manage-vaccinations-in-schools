@@ -10,6 +10,7 @@
 #  gtin                :text
 #  manufacturer        :text             not null
 #  method              :integer          not null
+#  nivs_name           :text             not null
 #  snomed_product_code :string           not null
 #  snomed_product_term :string           not null
 #  type                :string           not null
@@ -20,6 +21,7 @@
 #
 #  index_vaccines_on_gtin                    (gtin) UNIQUE
 #  index_vaccines_on_manufacturer_and_brand  (manufacturer,brand) UNIQUE
+#  index_vaccines_on_nivs_name               (nivs_name) UNIQUE
 #  index_vaccines_on_snomed_product_code     (snomed_product_code) UNIQUE
 #  index_vaccines_on_snomed_product_term     (snomed_product_term) UNIQUE
 #
