@@ -37,6 +37,12 @@ describe ImmunisationImportRow, type: :model do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:batch_expiry_date]).to include(
+          "is required but missing"
+        )
+        expect(immunisation_import_row.errors[:batch_number]).to include(
+          "is required but missing"
+        )
         expect(immunisation_import_row.errors[:delivery_site]).to include(
           "is required but missing"
         )
@@ -152,6 +158,8 @@ describe ImmunisationImportRow, type: :model do
         {
           "ORGANISATION_CODE" => "abc",
           "VACCINATED" => "Yes",
+          "BATCH_EXPIRY_DATE" => "20210101",
+          "BATCH_NUMBER" => "123",
           "ANATOMICAL_SITE" => "nasal",
           "SCHOOL_NAME" => "Hogwarts",
           "SCHOOL_URN" => "123456",
@@ -182,6 +190,8 @@ describe ImmunisationImportRow, type: :model do
         "ORGANISATION_CODE" => "abc",
         "VACCINATED" => "Yes",
         "ANATOMICAL_SITE" => "nasal",
+        "BATCH_EXPIRY_DATE" => "20210101",
+        "BATCH_NUMBER" => "123",
         "SCHOOL_NAME" => "Hogwarts",
         "SCHOOL_URN" => "123456",
         "PERSON_FORENAME" => first_name,
@@ -287,6 +297,44 @@ describe ImmunisationImportRow, type: :model do
       let(:data) { { "VACCINE_GIVEN" => "Vaccine" } }
 
       it { should be(true) }
+    end
+  end
+
+  describe "#batch_expiry_date" do
+    subject(:batch_expiry_date) { immunisation_import_row.batch_expiry_date }
+
+    context "without a value" do
+      let(:data) { {} }
+
+      it { should be_nil }
+    end
+
+    context "with an invalid value" do
+      let(:data) { { "BATCH_EXPIRY_DATE" => "abc" } }
+
+      it { should be_nil }
+    end
+
+    context "with a valid value" do
+      let(:data) { { "BATCH_EXPIRY_DATE" => "20100101" } }
+
+      it { should eq(Date.new(2010, 1, 1)) }
+    end
+  end
+
+  describe "#batch_number" do
+    subject(:batch_number) { immunisation_import_row.batch_number }
+
+    context "without a value" do
+      let(:data) { {} }
+
+      it { should be_nil }
+    end
+
+    context "with a value" do
+      let(:data) { { "BATCH_NUMBER" => "abc" } }
+
+      it { should eq("abc") }
     end
   end
 

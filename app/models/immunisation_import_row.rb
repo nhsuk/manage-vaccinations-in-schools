@@ -4,6 +4,8 @@ class ImmunisationImportRow
   include ActiveModel::Model
 
   validates :administered, inclusion: [true, false]
+  validates :batch_expiry_date, presence: true, if: :administered
+  validates :batch_number, presence: true, if: :administered
   validates :delivery_method, presence: true, if: :administered
   validates :delivery_site, presence: true, if: :administered
   validates :dose_sequence,
@@ -42,11 +44,8 @@ class ImmunisationImportRow
 
   validates :session_date,
             presence: true,
-            format: {
-              with: /\A\d{8}\z/
-            },
             comparison: {
-              less_than_or_equal_to: -> { Date.current.strftime("%Y%m%d") }
+              less_than_or_equal_to: -> { Date.current }
             }
   validates :reason,
             presence: true,
@@ -112,6 +111,14 @@ class ImmunisationImportRow
     end
   end
 
+  def batch_expiry_date
+    parse_date("BATCH_EXPIRY_DATE")
+  end
+
+  def batch_number
+    @data["BATCH_NUMBER"]&.strip
+  end
+
   def reason
     {
       "Did Not Attend" => :absent_from_session,
@@ -175,9 +182,7 @@ class ImmunisationImportRow
   end
 
   def patient_date_of_birth
-    Date.strptime(@data["PERSON_DOB"]&.strip, "%Y%m%d")
-  rescue ArgumentError, TypeError
-    nil
+    parse_date("PERSON_DOB")
   end
 
   PATIENT_GENDER_CODES = {
@@ -211,7 +216,7 @@ class ImmunisationImportRow
   end
 
   def session_date
-    @data["DATE_OF_VACCINATION"]&.strip
+    parse_date("DATE_OF_VACCINATION")
   end
 
   private
@@ -254,6 +259,12 @@ class ImmunisationImportRow
 
   def maximum_dose_sequence
     vaccine.maximum_dose_sequence
+  end
+
+  def parse_date(key)
+    Date.strptime(@data[key]&.strip, "%Y%m%d")
+  rescue ArgumentError, TypeError
+    nil
   end
 
   def find_existing_patients
