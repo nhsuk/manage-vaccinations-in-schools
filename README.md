@@ -295,17 +295,17 @@ configured to communicate with MESH at https://localhost:8700/.
 There are rake tasks that can be used to run the DPS export, and manage MESH mailboxes:
 
 ```shell
-rails dps_mesh_export                       # Export DPS data via MESH
-rails mesh:ack_message[message]             # Acknowledge message MESH, removing it from inbox
+rails mesh:dps_export                       # Export DPS data via MESH
 rails mesh:check_inbox                      # Check MESH inbox, listing any messages
 rails mesh:get_message[message]             # Get message from MESH
+rails mesh:ack_message[message]             # Acknowledge message MESH, removing it from inbox
 ```
 
 Example of using this in local dev:
 
 ```shell
 # Send export to DPS via MESH
-$ rails dps_mesh_export
+$ rails mesh:dps_export
 
 # Check the DPS mailbox by overriding our MESH mailbox id
 $ MAVIS__MESH__MAILBOX="X26ABC3" rails mesh:check_inbox
