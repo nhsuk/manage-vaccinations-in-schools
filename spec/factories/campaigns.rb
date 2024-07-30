@@ -25,7 +25,7 @@ FactoryBot.define do
       name { "HPV" }
       vaccines do
         [
-          create(:vaccine, :cervaris, batch_count:),
+          create(:vaccine, :cervarix, batch_count:),
           create(:vaccine, :gardasil, batch_count:),
           create(:vaccine, :gardasil_9, batch_count:)
         ]
@@ -41,9 +41,14 @@ FactoryBot.define do
       name { "Flu" }
       vaccines do
         [
+          create(:vaccine, :adjuvanted_quadrivalent, batch_count:),
+          create(:vaccine, :cell_quadrivalent, batch_count:),
+          create(:vaccine, :fluad_tetra, batch_count:),
           create(:vaccine, :flucelvax_tetra, batch_count:),
           create(:vaccine, :fluenz_tetra, batch_count:),
-          create(:vaccine, :quadrivalent_influenza, batch_count:)
+          create(:vaccine, :quadrivalent_influenza, batch_count:),
+          create(:vaccine, :quadrivalent_influvac_tetra, batch_count:),
+          create(:vaccine, :supemtek, batch_count:)
         ]
       end
     end
