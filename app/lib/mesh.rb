@@ -3,27 +3,29 @@
 module MESH
   SCHEMA = "NHSMESH"
 
-  def self.send_file(to:, data:)
+  def self.connection
     authorisation = generate_authorisation
+    Faraday.new(
+      "#{base_url}/messageexchange/#{mailbox}/",
+      ssl: {
+        verify: !Rails.env.development?
+      },
+      headers: {
+        "Accept" => "application/vnd.mesh.v2+json",
+        "Authorization" => "#{SCHEMA} #{authorisation}"
+      }
+    )
+  end
 
+  def self.send_file(to:, data:)
     headers = {
-      "Accept" => "application/vnd.mesh.v2+json",
-      "Authorization" => "#{SCHEMA} #{authorisation}",
       "Content-Type" => "text/csv",
       "Content-Encoding" => "gzip",
       "mex-to" => to,
       "mex-workflowid" => "dps export"
     }
 
-    conn =
-      Faraday.new("#{base_url}/messageexchange/#{mailbox}/outbox") do |faraday|
-        faraday.ssl[:verify] = false if Rails.env.development?
-      end
-
-    conn.post do |req|
-      req.body = Zlib.gzip(data)
-      req.headers = headers
-    end
+    connection.post("outbox", Zlib.gzip(data), headers)
   end
 
   def self.generate_authorisation
