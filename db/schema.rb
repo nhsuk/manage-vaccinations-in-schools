@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_29_111404) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_30_102733) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -416,16 +416,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_29_111404) do
   end
 
   create_table "vaccines", force: :cascade do |t|
-    t.string "type"
+    t.string "type", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "brand"
-    t.integer "method"
-    t.text "supplier"
+    t.text "brand", null: false
+    t.integer "method", null: false
+    t.text "supplier", null: false
     t.text "gtin"
-    t.decimal "dose"
-    t.string "snomed_product_code"
-    t.string "snomed_product_term"
+    t.decimal "dose", null: false
+    t.string "snomed_product_code", null: false
+    t.string "snomed_product_term", null: false
   end
 
   add_foreign_key "batches", "vaccines"
