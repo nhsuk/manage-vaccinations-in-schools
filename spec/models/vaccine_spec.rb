@@ -16,6 +16,13 @@
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #
+# Indexes
+#
+#  index_vaccines_on_gtin                 (gtin) UNIQUE
+#  index_vaccines_on_snomed_product_code  (snomed_product_code) UNIQUE
+#  index_vaccines_on_snomed_product_term  (snomed_product_term) UNIQUE
+#  index_vaccines_on_supplier_and_brand   (supplier,brand) UNIQUE
+#
 
 require "rails_helper"
 
