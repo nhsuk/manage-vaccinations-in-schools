@@ -5,20 +5,25 @@
 # Table name: vaccines
 #
 #  id                  :bigint           not null, primary key
-#  brand               :text
-#  dose                :decimal(, )
+#  brand               :text             not null
+#  dose                :decimal(, )      not null
 #  gtin                :text
-#  method              :integer
-#  snomed_product_code :string
-#  snomed_product_term :string
-#  supplier            :text
-#  type                :string
+#  method              :integer          not null
+#  snomed_product_code :string           not null
+#  snomed_product_term :string           not null
+#  supplier            :text             not null
+#  type                :string           not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #
 FactoryBot.define do
   factory :vaccine do
     transient { batch_count { 1 } }
+
+    supplier { Faker::Company.name }
+    dose { Faker::Number.decimal(l_digits: 0) }
+    snomed_product_code { Faker::Number.decimal_part(digits: 17) }
+    snomed_product_term { Faker::Lorem.sentence }
 
     after(:create) do |vaccine, evaluator|
       create_list(:batch, evaluator.batch_count, vaccine:)
