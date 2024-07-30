@@ -23,10 +23,6 @@ describe MESH do
     end
 
     it "sets the required headers" do
-      allow(described_class).to receive(:generate_authorisation).and_return(
-        "AUTHORIZATIONSTRING"
-      )
-
       described_class.send_file(to: "TESTBOX", data: "some,csv")
 
       expect(
@@ -35,14 +31,12 @@ describe MESH do
           "https://localhost:8700/messageexchange/X26ABC1/outbox"
         ).with(
           headers: {
-            "Accept" => "application/vnd.mesh.v2+json",
             "Accept-Encoding" => "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
-            "Authorization" => "NHSMESH AUTHORIZATIONSTRING",
             "Content-Type" => "text/csv",
             "Content-Encoding" => "gzip",
             "Mex-To" => "TESTBOX",
             "Mex-Workflowid" => "dps export",
-            "User-Agent" => "Ruby"
+            "User-Agent" => "Faraday v2.10.0"
           }
         )
       ).to have_been_made
@@ -65,6 +59,46 @@ describe MESH do
              6e27345bec8d29ea1a3c9d87870b0b5bc98ee510921616506bca1bbea7c66fd6
            ].join(":")
       end
+    end
+  end
+
+  describe "#connection" do
+    it "disables ssl in development" do
+      allow(Rails).to receive(:env).and_return(
+        instance_double(ActiveSupport::EnvironmentInquirer, development?: true)
+      )
+
+      expect(described_class.connection.ssl).to have_attributes(verify: false)
+    end
+
+    it "enables ssl in production" do
+      allow(Rails).to receive(:env).and_return(
+        instance_double(ActiveSupport::EnvironmentInquirer, development?: false)
+      )
+
+      expect(described_class.connection.ssl).to have_attributes(verify: true)
+    end
+
+    it "sets the url" do
+      expect(
+        described_class.connection.url_prefix.to_s
+      ).to eq "https://localhost:8700/messageexchange/X26ABC1/"
+    end
+
+    it "sets the authorisation header" do
+      allow(described_class).to receive(:generate_authorisation).and_return(
+        "AUTHORIZATIONSTRING"
+      )
+
+      expect(
+        described_class.connection.headers["Authorization"]
+      ).to eq "NHSMESH AUTHORIZATIONSTRING"
+    end
+
+    it "sets the accept header" do
+      expect(
+        described_class.connection.headers["Accept"]
+      ).to eq "application/vnd.mesh.v2+json"
     end
   end
 end
