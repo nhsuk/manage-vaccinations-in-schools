@@ -84,15 +84,6 @@ class VaccinationRecord < ApplicationRecord
 
   default_scope { recorded }
 
-  # HACK: this code will need to be revisited in future as it only really works for HPV, where we only have one vaccine
-  # It is likely to fail for the Doubles programme as that has 2 vaccines
-  # It is also likely to fail for the flu programme for the SAIS teams that offer both nasal and injectable vaccines
-  after_initialize do
-    if patient_session.present?
-      self.vaccine_id ||= patient_session.session.campaign.vaccines.first&.id
-    end
-  end
-
   enum :delivery_method,
        %w[intramuscular subcutaneous nasal_spray],
        prefix: true
