@@ -14,14 +14,14 @@ const bufferToBase64 = (buffer: ArrayBuffer): Promise<string> => {
   });
 };
 
-const base64ToBuffer = async (base64: string): Promise<ArrayBuffer> => {
+const base64ToBuffer = (base64: string): Uint8Array => {
   const binaryString = self.atob(base64);
   const len = binaryString.length;
   const bytes = new Uint8Array(len);
   for (let i = 0; i < len; i++) {
     bytes[i] = binaryString.charCodeAt(i);
   }
-  return bytes.buffer;
+  return bytes;
 };
 
 /**
@@ -123,7 +123,7 @@ export class SimpleCrypto {
   public async decrypt(ciphertextBase64: string): Promise<string> {
     const decoder = new TextDecoder();
 
-    const ciphertextBuffer = await base64ToBuffer(ciphertextBase64);
+    const ciphertextBuffer = base64ToBuffer(ciphertextBase64);
     const iv = ciphertextBuffer.slice(0, 12);
     const ciphertext = ciphertextBuffer.slice(12);
 
