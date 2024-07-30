@@ -4,7 +4,7 @@
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { link_to(vaccine_heading(vaccine), vaccine_path(vaccine)) } %>
     <p class="nhsuk-body-s nhsuk-secondary-text-color">
-      <%= vaccine.supplier %>,
+      <%= vaccine.manufacturer %>,
       GTIN: <span class="app-u-monospace"><%= vaccine.gtin %></span>
     </p>
 
