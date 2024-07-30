@@ -64,8 +64,6 @@ class ImmunisationImportRow
   def to_vaccination_record
     return unless valid?
 
-    # TODO: determine correct vaccine batch
-
     VaccinationRecord.create_with(
       imported_from: @imported_from,
       recorded_at:,
@@ -77,7 +75,7 @@ class ImmunisationImportRow
       dose_sequence:,
       patient_session:,
       reason:,
-      batch: vaccine.batches.first,
+      batch:,
       vaccine:
     )
   end
@@ -234,6 +232,8 @@ class ImmunisationImportRow
   end
 
   def session
+    return unless valid?
+
     @session ||=
       @campaign
         .sessions
@@ -242,6 +242,8 @@ class ImmunisationImportRow
   end
 
   def patient_session
+    return unless valid?
+
     @patient_session ||=
       PatientSession.create_with(created_by: @user).find_or_create_by!(
         patient:,
@@ -250,7 +252,19 @@ class ImmunisationImportRow
   end
 
   def vaccine
+    # TODO: determine correct vaccine
     @vaccine ||= @campaign.vaccines.first
+  end
+
+  def batch
+    return unless valid? && administered
+
+    @batch ||=
+      Batch.find_or_create_by!(
+        vaccine:,
+        expiry: batch_expiry_date,
+        name: batch_number
+      )
   end
 
   def valid_ods_code
