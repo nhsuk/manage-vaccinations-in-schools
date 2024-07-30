@@ -3,18 +3,19 @@
 require "rails_helper"
 
 describe AppPatientTableComponent, type: :component do
-  subject { page }
+  subject(:rendered) { render_inline(component) }
 
   before do
     allow(component).to receive(:session_patient_path).and_return(
       "/session/patient/"
     )
-
-    render_inline(component)
   end
 
   let(:section) { :consent }
-  let(:patient_sessions) { create_list(:patient_session, 2) }
+  let(:campaign) { create(:campaign) }
+  let(:patient_sessions) do
+    create_list(:patient_session, 2, session_attributes: { campaign: })
+  end
   let(:columns) { %i[name dob] }
   let(:params) { { session_id: 1, section:, tab: :needed } }
   let(:args) do
@@ -34,18 +35,25 @@ describe AppPatientTableComponent, type: :component do
   it { should have_css(".nhsuk-table__head .nhsuk-table__row", count: 1) }
 
   it "includes the patient's full name" do
-    expect(page).to have_text(patient_sessions.first.patient.full_name)
+    expect(rendered).to have_text(patient_sessions.first.patient.full_name)
   end
 
   describe "when the patient has a common name" do
     let(:patient_sessions) do
-      create_list(:patient_session, 2).tap do |ps|
-        ps.first.patient.update!(common_name: "Bobby")
-      end
+      create_list(
+        :patient_session,
+        2,
+        session_attributes: {
+          campaign:
+        },
+        patient_attributes: {
+          common_name: "Bobby"
+        }
+      )
     end
 
     it "includes the patient's common name" do
-      expect(page).to have_text("Bobby")
+      expect(rendered).to have_text("Bobby")
     end
   end
 
@@ -58,7 +66,8 @@ describe AppPatientTableComponent, type: :component do
       described_class.new(
         patient_sessions:,
         section: :matching,
-        consent_form: create(:consent_form),
+        consent_form:
+          create(:consent_form, session: patient_sessions.first.session),
         columns: %i[name postcode dob select_for_matching]
       )
     end

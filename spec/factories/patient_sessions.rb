@@ -25,13 +25,12 @@
 FactoryBot.define do
   factory :patient_session do
     transient do
-      campaign { create :campaign }
-      user { create :user }
+      user { association :user }
       patient_attributes { {} }
       session_attributes { {} }
     end
 
-    session { association :session, campaign:, **session_attributes }
+    session { association :session, **session_attributes }
     patient { association :patient, session:, **patient_attributes }
     created_by { user }
 
@@ -207,7 +206,7 @@ FactoryBot.define do
     end
 
     trait :session_in_progress do
-      session { create :session, :in_progress }
+      session { association :session, :in_progress, **session_attributes }
     end
 
     trait :not_gillick_competent do

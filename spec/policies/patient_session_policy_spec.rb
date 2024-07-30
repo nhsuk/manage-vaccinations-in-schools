@@ -4,7 +4,10 @@ require "rails_helper"
 
 describe PatientSessionPolicy do
   let(:patient_session) { create :patient_session }
-  let(:another_teams_patient_session) { create :patient_session }
+  let(:another_teams_patient_session) do
+    create :patient_session,
+           session: create(:session, campaign: create(:campaign, :flu))
+  end
   let(:team) { patient_session.session.campaign.team }
   let(:user) { create :user, teams: [team] }
 

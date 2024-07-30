@@ -117,10 +117,12 @@ describe Consent do
 
   describe "default scope" do
     let(:patient) { create(:patient) }
+    let(:campaign) { create(:campaign) }
 
     it "uses the recorded scope" do
-      consent = create(:consent, patient:, recorded_at: Time.zone.now)
-      create(:consent, :draft, patient:)
+      consent =
+        create(:consent, patient:, recorded_at: Time.zone.now, campaign:)
+      create(:consent, :draft, patient:, campaign:)
 
       expect(patient.consents).to eq([consent])
     end
@@ -128,10 +130,12 @@ describe Consent do
 
   describe "#recorded scope" do
     let(:patient) { create(:patient) }
+    let(:campaign) { create(:campaign) }
 
     it "returns only consents that have been recorded" do
-      consent = create(:consent, patient:, recorded_at: Time.zone.now)
-      create(:consent, :draft, patient:)
+      consent =
+        create(:consent, patient:, recorded_at: Time.zone.now, campaign:)
+      create(:consent, :draft, patient:, campaign:)
 
       expect(patient.consents.unscope(where: :recorded).recorded).to eq(
         [consent]

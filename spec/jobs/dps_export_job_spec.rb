@@ -5,9 +5,16 @@ require "rails_helper"
 describe DPSExportJob, type: :job do
   before { allow(MESH).to receive(:send_file) }
 
+  let(:patient_session) { create(:patient_session) }
+
   it "generates an export with vaccination records that haven't been exported yet" do
-    create :vaccination_record, exported_to_dps_at: 2.hours.ago
-    vaccination2 = create :vaccination_record, exported_to_dps_at: nil
+    create(
+      :vaccination_record,
+      exported_to_dps_at: 2.hours.ago,
+      patient_session:
+    )
+    vaccination2 =
+      create(:vaccination_record, exported_to_dps_at: nil, patient_session:)
 
     allow(DPSExport).to receive(:new).and_return(
       instance_double(DPSExport, export_csv: "csv")

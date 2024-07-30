@@ -7,25 +7,31 @@ describe DPSExportRow do
   subject(:row) { described_class.new(vaccination_record) }
 
   let(:team) { create(:team) }
-  let(:campaign) { create(:campaign, team:) }
   let(:vaccine) { create(:vaccine, :gardasil_9, dose: 0.5) }
+  let(:campaign) { create(:campaign, team:, vaccines: [vaccine]) }
   let(:location) { create(:location) }
+  let(:patient_session) do
+    create(
+      :patient_session,
+      patient_attributes: {
+        date_of_birth: "2012-12-29"
+      },
+      session_attributes: {
+        campaign:,
+        location:
+      }
+    )
+  end
   let(:vaccination_record) do
     create(
       :vaccination_record,
       batch: create(:batch, vaccine:, name: "AB1234", expiry: "2025-07-01"),
-      campaign:,
       created_at: Time.zone.local(2024, 6, 12, 11, 28, 31),
       delivery_method: :intramuscular,
       delivery_site: :left_arm_upper_position,
       dose_sequence: 1,
-      patient_attributes: {
-        date_of_birth: "2012-12-29"
-      },
+      patient_session:,
       recorded_at: Time.zone.local(2024, 7, 23, 19, 31, 47),
-      session_attributes: {
-        location:
-      },
       user: create(:user, full_name: "Jane Doe"),
       uuid: "ea4860a5-6d97-4f31-b640-f5c50f43bfd2",
       vaccine:

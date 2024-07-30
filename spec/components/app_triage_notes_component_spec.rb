@@ -3,14 +3,10 @@
 require "rails_helper"
 
 describe AppTriageNotesComponent, type: :component do
-  subject { page }
-
-  before { render_component }
+  subject(:rendered) { render_inline(component) }
 
   let(:component) { described_class.new(patient_session:) }
-  let(:render_component) { render_inline(component) }
-  let(:patient_session) { create(:patient_session, triage:) }
-  let(:triage) { [] }
+  let(:patient_session) { create(:patient_session) }
 
   context "triage notes are not present" do
     it "does not render" do
@@ -24,8 +20,15 @@ describe AppTriageNotesComponent, type: :component do
     end
 
     let(:user) { create(:user, full_name: "Joe Gear") }
-    let(:triage) do
-      [create(:triage, :ready_to_vaccinate, notes: "Some notes", user:)]
+
+    before do
+      create(
+        :triage,
+        :ready_to_vaccinate,
+        notes: "Some notes",
+        user:,
+        patient_session:
+      )
     end
 
     it "renders" do
@@ -40,7 +43,7 @@ describe AppTriageNotesComponent, type: :component do
   end
 
   context "multiple triage notes are present" do
-    let(:triage) { create_list(:triage, 2) }
+    before { create_list(:triage, 2, patient_session:) }
 
     it "renders" do
       expect(component).to be_render

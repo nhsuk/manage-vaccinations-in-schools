@@ -5,30 +5,44 @@ require "rails_helper"
 describe PatientTabsConcern do
   subject { Class.new { include PatientTabsConcern }.new }
 
-  let(:added_to_session) { create(:patient_session, :added_to_session) }
-  let(:consent_conflicts) { create(:patient_session, :consent_conflicting) }
+  let(:session) { create(:session) }
+
+  let(:added_to_session) do
+    create(:patient_session, :added_to_session, session:)
+  end
+  let(:consent_conflicts) do
+    create(:patient_session, :consent_conflicting, session:)
+  end
   let(:consent_given_triage_not_needed) do
-    create(:patient_session, :consent_given_triage_not_needed)
+    create(:patient_session, :consent_given_triage_not_needed, session:)
   end
   let(:consent_given_triage_needed) do
-    create(:patient_session, :consent_given_triage_needed)
+    create(:patient_session, :consent_given_triage_needed, session:)
   end
-  let(:consent_refused) { create(:patient_session, :consent_refused) }
-  let(:delay_vaccination) { create(:patient_session, :delay_vaccination) }
+  let(:consent_refused) { create(:patient_session, :consent_refused, session:) }
+  let(:delay_vaccination) do
+    create(:patient_session, :delay_vaccination, session:)
+  end
   let(:triaged_do_not_vaccinate) do
-    create(:patient_session, :triaged_do_not_vaccinate)
+    create(:patient_session, :triaged_do_not_vaccinate, session:)
   end
   let(:triaged_kept_in_triage) do
-    create(:patient_session, :triaged_kept_in_triage)
+    create(:patient_session, :triaged_kept_in_triage, session:)
   end
   let(:triaged_ready_to_vaccinate) do
-    create(:patient_session, :triaged_ready_to_vaccinate)
+    create(:patient_session, :triaged_ready_to_vaccinate, session:)
   end
-  let(:unable_to_vaccinate) { create(:patient_session, :unable_to_vaccinate) }
+  let(:unable_to_vaccinate) do
+    create(:patient_session, :unable_to_vaccinate, session:)
+  end
   let(:unable_to_vaccinate_not_gillick_competent) do
-    create(:patient_session, :unable_to_vaccinate_not_gillick_competent)
+    create(
+      :patient_session,
+      :unable_to_vaccinate_not_gillick_competent,
+      session:
+    )
   end
-  let(:vaccinated) { create(:patient_session, :vaccinated) }
+  let(:vaccinated) { create(:patient_session, :vaccinated, session:) }
 
   let(:patient_sessions) do
     [
@@ -174,8 +188,13 @@ describe PatientTabsConcern do
   end
 
   describe "#count_patient_sessions" do
-    let(:no_consent_patient_sessions) { create_list(:patient_session, 2) }
-    let(:refuser_patient_session) { create(:patient_session, :consent_refused) }
+    let(:session) { create(:session) }
+    let(:no_consent_patient_sessions) do
+      create_list(:patient_session, 2, session:)
+    end
+    let(:refuser_patient_session) do
+      create(:patient_session, :consent_refused, session:)
+    end
 
     it "counts patient session groups" do
       patient_sessions = {

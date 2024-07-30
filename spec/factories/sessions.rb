@@ -30,7 +30,7 @@ FactoryBot.define do
   factory :session do
     transient { patients_in_session { 0 } }
 
-    campaign { create :campaign }
+    campaign { association :campaign }
     location
 
     date { Time.zone.today }

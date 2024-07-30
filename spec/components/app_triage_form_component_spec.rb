@@ -3,58 +3,53 @@
 require "rails_helper"
 
 describe AppTriageFormComponent, type: :component do
-  describe "#initialize" do
-    subject { page }
+  subject(:rendered) { render_inline(component) }
 
-    let(:patient_session) { create :patient_session }
-    let(:component) { described_class.new(patient_session:, url: "#") }
+  let(:patient_session) { create(:patient_session) }
+  let(:component) { described_class.new(patient_session:, url: "#") }
 
-    before { render_inline(component) }
+  it { should have_text("Is it safe to vaccinate") }
+  it { should have_css(".app-fieldset__legend--reset") }
 
-    it { should have_text("Is it safe to vaccinate") }
-    it { should have_css(".app-fieldset__legend--reset") }
+  describe "triage instance variable" do
+    subject { component.instance_variable_get(:@triage) }
 
-    describe "triage instance variable" do
-      subject { component.instance_variable_get(:@triage) }
-
-      context "patient_session has no existing triage" do
-        it "creates a new Triage object" do
-          expect(subject).to be_a Triage
-        end
-      end
-
-      context "patient_session has existing triage" do
-        let(:old_triage) { create :triage, :needs_follow_up }
-        let(:patient_session) { create :patient_session, triage: [old_triage] }
-
-        it { should_not be_nil }
-        it { should be_needs_follow_up }
+    context "patient_session has no existing triage" do
+      it "creates a new Triage object" do
+        expect(subject).to be_a Triage
       end
     end
 
-    describe "with a bold legend" do
-      let(:component) do
-        described_class.new(patient_session:, url: "#", legend: :bold)
-      end
+    context "patient_session has existing triage" do
+      before { create(:triage, :needs_follow_up, patient_session:) }
 
-      it { should have_css("h2") }
-      it { should_not have_css(".app-fieldset__legend--reset") }
+      it { should_not be_nil }
+      it { should be_needs_follow_up }
+    end
+  end
+
+  describe "with a bold legend" do
+    let(:component) do
+      described_class.new(patient_session:, url: "#", legend: :bold)
     end
 
-    describe "with a hidden legend" do
-      let(:component) do
-        described_class.new(patient_session:, url: "#", legend: :hidden)
-      end
+    it { should have_css("h2") }
+    it { should_not have_css(".app-fieldset__legend--reset") }
+  end
 
-      it { should have_css("legend.nhsuk-visually-hidden") }
+  describe "with a hidden legend" do
+    let(:component) do
+      described_class.new(patient_session:, url: "#", legend: :hidden)
     end
 
-    describe "with the put method" do
-      let(:component) do
-        described_class.new(patient_session:, url: "#", method: :put)
-      end
+    it { should have_css("legend.nhsuk-visually-hidden") }
+  end
 
-      it { should have_text("Continue") }
+  describe "with the put method" do
+    let(:component) do
+      described_class.new(patient_session:, url: "#", method: :put)
     end
+
+    it { should have_text("Continue") }
   end
 end

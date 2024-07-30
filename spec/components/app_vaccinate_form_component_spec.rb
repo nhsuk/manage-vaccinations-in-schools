@@ -7,8 +7,9 @@ describe AppVaccinateFormComponent, type: :component do
 
   let(:heading) { "A Heading" }
   let(:body) { "A Body" }
-  let(:session) { create :session, :in_progress }
-  let(:vaccine) { create :vaccine, :hpv }
+  let(:campaign) { create(:campaign, :hpv) }
+  let(:session) { create(:session, :in_progress, campaign:) }
+  let(:vaccine) { campaign.vaccines.first }
   let(:patient_session) do
     create :patient_session, :consent_given_triage_not_needed, session:
   end
@@ -55,13 +56,13 @@ describe AppVaccinateFormComponent, type: :component do
       end
 
       context "session is in progress" do
-        let(:session) { create :session, :in_progress }
+        let(:session) { create(:session, :in_progress, campaign:) }
 
         it { should be_falsey }
       end
 
       context "session is in the future" do
-        let(:session) { create :session, :in_future }
+        let(:session) { create(:session, :in_future, campaign:) }
 
         it { should be_falsey }
       end
@@ -73,13 +74,13 @@ describe AppVaccinateFormComponent, type: :component do
       end
 
       context "session is progress" do
-        let(:session) { create :session, :in_progress }
+        let(:session) { create(:session, :in_progress, campaign:) }
 
         it { should be_truthy }
       end
 
       context "session is in the future" do
-        let(:session) { create :session, :in_future }
+        let(:session) { create(:session, :in_future, campaign:) }
 
         it { should be_falsey }
       end

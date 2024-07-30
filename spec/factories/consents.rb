@@ -39,8 +39,8 @@ FactoryBot.define do
       health_questions_list { ["Is there anything else we should know?"] }
     end
 
-    patient { create(:patient) }
-    campaign { create(:campaign) }
+    patient
+    campaign
     response { "given" }
     route { "website" }
     recorded_at { Time.zone.now }
