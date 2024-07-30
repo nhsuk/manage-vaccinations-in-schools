@@ -86,7 +86,7 @@ bin/dev
 If you encounter:
 
 ```sh
-No yarn executable found for nodejs 18.1.0
+No yarn executable found for nodejs 22.5.1
 ```
 
 You need to reshim nodejs:

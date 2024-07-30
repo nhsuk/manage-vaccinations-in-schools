@@ -26,7 +26,7 @@ RUN apt-get update -qq && \
     apt-get clean
 
 # Install JavaScript dependencies
-ARG NODE_VERSION=18.1.0
+ARG NODE_VERSION=22.5.1
 ARG YARN_VERSION=1.22.19
 ENV PATH=/usr/local/node/bin:$PATH
 RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
