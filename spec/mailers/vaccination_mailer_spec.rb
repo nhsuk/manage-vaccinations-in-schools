@@ -3,13 +3,18 @@
 require "rails_helper"
 
 describe VaccinationMailer do
+  let(:campaign) { create(:campaign) }
+  let(:session) { create(:session, campaign:) }
+
   describe "hpv_vaccination_has_taken_place" do
     subject(:mail) do
       described_class.hpv_vaccination_has_taken_place(vaccination_record:)
     end
 
-    let(:patient) { create(:patient, consents: [create(:consent_given)]) }
-    let(:patient_session) { create(:patient_session, patient:) }
+    let(:patient) do
+      create(:patient, consents: [build(:consent_given, campaign:)])
+    end
+    let(:patient_session) { create(:patient_session, patient:, session:) }
     let(:vaccination_record) { create(:vaccination_record, patient_session:) }
 
     it { should have_attributes(to: [patient.consents.last.parent.email]) }
@@ -85,8 +90,10 @@ describe VaccinationMailer do
       described_class.hpv_vaccination_has_not_taken_place(vaccination_record:)
     end
 
-    let(:patient) { create(:patient, consents: [create(:consent_given)]) }
-    let(:patient_session) { create(:patient_session, patient:) }
+    let(:patient) do
+      create(:patient, consents: [build(:consent_given, campaign:)])
+    end
+    let(:patient_session) { create(:patient_session, session:, patient:) }
     let(:vaccination_record) do
       create :vaccination_record,
              patient_session:,

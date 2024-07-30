@@ -43,7 +43,7 @@ require "rails_helper"
 describe VaccinationRecord do
   it "validates that the vaccine and the batch vaccines match" do
     patient_session = create(:patient_session)
-    vaccine = create(:vaccine, :hpv)
+    vaccine = patient_session.campaign.vaccines.first
     different_vaccine = create(:vaccine, :flu)
     batch = create(:batch, vaccine: different_vaccine)
 

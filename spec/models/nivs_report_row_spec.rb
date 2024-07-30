@@ -45,7 +45,6 @@ describe NivsReportRow do
         recorded_at: Time.zone.local(2020, 1, 1, 12, 0, 0),
         delivery_site: "left_arm_upper_position"
       )
-      vaccination.batch.update!(vaccine: create(:vaccine, :hpv))
       vaccination.batch.update!(name: "AB1234", expiry: Date.new(2021, 1, 1))
 
       expect(subject[9..17]).to eq [

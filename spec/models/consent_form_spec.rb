@@ -358,20 +358,26 @@ describe ConsentForm, type: :model do
     end
 
     it "asks for details when patient refuses for a few different reasons" do
+      session = create(:session)
+
       %w[
         medical_reasons
         will_be_vaccinated_elsewhere
         other
         already_vaccinated
       ].each do |reason|
-        consent_form = build(:consent_form, response: "refused", reason:)
+        consent_form =
+          build(:consent_form, response: "refused", reason:, session:)
         expect(consent_form.form_steps).to include(:reason_notes)
       end
     end
 
     it "skips asking for details when patient refuses due to gelatine content or pesonal reason" do
+      session = create(:session)
+
       %w[contains_gelatine personal_choice].each do |reason|
-        consent_form = build(:consent_form, response: "refused", reason:)
+        consent_form =
+          build(:consent_form, response: "refused", reason:, session:)
         expect(consent_form.form_steps).not_to include(:reason_notes)
       end
     end
@@ -554,9 +560,12 @@ describe ConsentForm, type: :model do
   end
 
   describe "scope unmatched" do
-    let(:consent) { create(:consent) }
-    let(:unmatched_consent_form) { create(:consent_form, consent: nil) }
-    let(:matched_consent_form) { create(:consent_form, consent:) }
+    let(:session) { create(:session) }
+    let(:consent) { create(:consent, campaign: session.campaign) }
+    let(:unmatched_consent_form) do
+      create(:consent_form, consent: nil, session:)
+    end
+    let(:matched_consent_form) { create(:consent_form, consent:, session:) }
 
     it "returns unmatched consent forms" do
       expect(described_class.unmatched).to include unmatched_consent_form
@@ -565,9 +574,12 @@ describe ConsentForm, type: :model do
   end
 
   describe "scope recorded" do
-    let(:consent) { create(:consent) }
-    let(:recorded_consent_form) { create(:consent_form, :recorded, consent:) }
-    let(:draft_consent_form) { create(:consent_form, consent:) }
+    let(:session) { create(:session) }
+    let(:consent) { create(:consent, campaign: session.campaign) }
+    let(:recorded_consent_form) do
+      create(:consent_form, :recorded, consent:, session:)
+    end
+    let(:draft_consent_form) { create(:consent_form, consent:, session:) }
 
     it "returns unmatched consent forms" do
       expect(described_class.recorded).to include recorded_consent_form
@@ -744,8 +756,10 @@ describe ConsentForm, type: :model do
   end
 
   it "resets unused fields" do
+    session = create(:session)
+
     consent_form =
-      build(:consent_form, common_name: "John", use_common_name: true)
+      build(:consent_form, common_name: "John", use_common_name: true, session:)
     consent_form.update!(use_common_name: false)
     expect(consent_form.common_name).to be_nil
 
@@ -754,17 +768,19 @@ describe ConsentForm, type: :model do
         :consent_form,
         response: "refused",
         reason: "contains_gelatine",
-        reason_notes: "I'm vegan"
+        reason_notes: "I'm vegan",
+        session:
       )
     consent_form.update!(response: "given")
     expect(consent_form.reason).to be_nil
     expect(consent_form.reason_notes).to be_nil
 
-    consent_form = build(:consent_form, gp_response: "yes", gp_name: "Dr. Foo")
+    consent_form =
+      build(:consent_form, gp_response: "yes", gp_name: "Dr. Foo", session:)
     consent_form.update!(gp_response: "no")
     expect(consent_form.gp_name).to be_nil
 
-    consent_form = build(:consent_form)
+    consent_form = build(:consent_form, session:)
     consent_form.update!(response: "refused")
     expect(consent_form.gp_response).to be_nil
     expect(consent_form.address_line_1).to be_nil

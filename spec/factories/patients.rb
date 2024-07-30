@@ -45,8 +45,8 @@ FactoryBot.define do
     transient do
       # Used for associations like consent and triage that need to be
       # associated with a campaign
-      session { create :session }
-      campaign { session.campaign }
+      session { nil }
+      campaign { session&.campaign }
     end
 
     nhs_number { Faker::NationalHealthService.test_number.gsub(/\s+/, "") }

@@ -38,12 +38,14 @@ describe AppHealthQuestionsComponent, type: :component do
   end
 
   context "with two consents given" do
+    let(:campaign) { create(:campaign) }
     let(:consents) do
       [
         create(
           :consent,
           :given,
           :from_mum,
+          campaign:,
           health_answers: [
             HealthAnswer.new(question: "First question?", response: "no"),
             HealthAnswer.new(question: "Second question?", response: "no")
@@ -53,6 +55,7 @@ describe AppHealthQuestionsComponent, type: :component do
           :consent,
           :given,
           :from_dad,
+          campaign:,
           health_answers: [
             HealthAnswer.new(question: "First question?", response: "no"),
             HealthAnswer.new(
@@ -75,18 +78,20 @@ describe AppHealthQuestionsComponent, type: :component do
   end
 
   context "with two consents, one refused" do
+    let(:campaign) { create(:campaign) }
     let(:consents) do
       [
         create(
           :consent,
           :given,
           :from_mum,
+          campaign:,
           health_answers: [
             HealthAnswer.new(question: "First question?", response: "no"),
             HealthAnswer.new(question: "Second question?", response: "no")
           ]
         ),
-        create(:consent, :refused, :from_dad)
+        create(:consent, :refused, :from_dad, campaign:)
       ]
     end
 

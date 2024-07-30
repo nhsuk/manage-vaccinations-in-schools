@@ -66,8 +66,9 @@ describe Session do
   describe ".active scope" do
     subject { described_class.active }
 
-    let!(:active_session) { create(:session) }
-    let!(:draft_session) { create(:session, draft: true) }
+    let(:campaign) { create(:campaign) }
+    let!(:active_session) { create(:session, campaign:) }
+    let!(:draft_session) { create(:session, campaign:, draft: true) }
 
     it { should include active_session }
     it { should_not include draft_session }

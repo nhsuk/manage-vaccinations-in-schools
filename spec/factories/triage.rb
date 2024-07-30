@@ -26,8 +26,8 @@ FactoryBot.define do
   factory :triage do
     status { :ready_to_vaccinate }
     notes { nil }
-    patient_session { create :patient_session }
-    user { create :user }
+    patient_session { association :patient_session }
+    user { association :user }
 
     traits_for_enum :status
   end

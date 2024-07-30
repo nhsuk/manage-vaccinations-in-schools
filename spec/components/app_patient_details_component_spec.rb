@@ -78,7 +78,12 @@ describe AppPatientDetailsComponent, type: :component do
 
   context "with a consent_form object" do
     let(:consent_form) do
-      create(:consent_form, common_name: "Homer", use_common_name: true)
+      create(
+        :consent_form,
+        common_name: "Homer",
+        use_common_name: true,
+        session:
+      )
     end
     let(:school) { create(:location) }
     let(:component) { described_class.new(consent_form:, session:, school:) }
@@ -143,7 +148,7 @@ describe AppPatientDetailsComponent, type: :component do
     end
 
     context "without a common name" do
-      let(:consent_form) { create(:consent_form, common_name: nil) }
+      let(:consent_form) { create(:consent_form, common_name: nil, session:) }
 
       it "does not render known as" do
         expect(page).not_to(
@@ -153,7 +158,7 @@ describe AppPatientDetailsComponent, type: :component do
     end
 
     context "when child does not have a date of birth on record" do
-      let(:consent_form) { create(:consent_form, date_of_birth: nil) }
+      let(:consent_form) { create(:consent_form, date_of_birth: nil, session:) }
 
       it "does not render the child's date of birth" do
         expect(page).not_to(
@@ -168,7 +173,8 @@ describe AppPatientDetailsComponent, type: :component do
           :consent_form,
           common_name: "Homer",
           gp_name: nil,
-          gp_response: "no"
+          gp_response: "no",
+          session:
         )
       end
 
@@ -189,7 +195,8 @@ describe AppPatientDetailsComponent, type: :component do
           :consent_form,
           common_name: "Homer",
           gp_name: nil,
-          gp_response: "dont_know"
+          gp_response: "dont_know",
+          session:
         )
       end
 

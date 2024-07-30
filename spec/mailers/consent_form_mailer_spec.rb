@@ -37,8 +37,13 @@ describe ConsentFormMailer, type: :mailer do
 
     context "with a consent record" do
       it "calls template_mail with correct survey_deadline_date" do
-        session = build :session
-        consent = build(:consent, recorded_at: Date.new(2021, 1, 1))
+        session = build(:session)
+        consent =
+          build(
+            :consent,
+            recorded_at: Date.new(2021, 1, 1),
+            campaign: session.campaign
+          )
         mail = described_class.give_feedback(consent:, session:)
 
         expect(

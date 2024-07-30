@@ -5,7 +5,11 @@ require "csv"
 
 describe DPSExport do
   let(:vaccination_records) do
-    create_list(:vaccination_record, 3, campaign: create(:campaign))
+    create_list(
+      :vaccination_record,
+      3,
+      patient_session: create(:patient_session)
+    )
     VaccinationRecord.all
   end
 

@@ -7,6 +7,7 @@ describe AppVaccinationRecordTableComponent, type: :component do
 
   let(:component) { described_class.new(vaccination_records) }
 
+  let(:campaign) { create(:campaign) }
   let(:vaccination_records) do
     [
       create(
@@ -19,10 +20,11 @@ describe AppVaccinationRecordTableComponent, type: :component do
           address_postcode: "SW1A 2AA"
         },
         session_attributes: {
-          date: Date.new(2020, 1, 1)
+          date: Date.new(2020, 1, 1),
+          campaign:
         }
       )
-    ] + create_list(:vaccination_record, 9)
+    ] + create_list(:vaccination_record, 9, session_attributes: { campaign: })
   end
 
   it "renders a heading tab" do

@@ -27,13 +27,11 @@ require "rails_helper"
 describe PatientSession do
   describe "#triage" do
     it "returns the triage records in ascending order" do
-      later_triage = create(:triage)
-      earlier_triage = create(:triage, updated_at: 1.day.ago)
+      patient_session = create(:patient_session)
+      later_triage = create(:triage, patient_session:)
+      earlier_triage = create(:triage, patient_session:, updated_at: 1.day.ago)
 
-      patient_sessions =
-        create :patient_session, triage: [earlier_triage, later_triage]
-
-      expect(patient_sessions.triage).to eq [earlier_triage, later_triage]
+      expect(patient_session.triage).to eq [earlier_triage, later_triage]
     end
   end
 
@@ -53,7 +51,9 @@ describe PatientSession do
     subject { patient_session.latest_consents }
 
     let(:campaign) { create(:campaign) }
-    let(:patient_session) { create(:patient_session, patient:, campaign:) }
+    let(:patient_session) do
+      create(:patient_session, patient:, session_attributes: { campaign: })
+    end
 
     context "multiple consent given responses from different parents" do
       let(:consents) { build_list(:consent, 2, campaign:, response: :given) }
@@ -108,12 +108,15 @@ describe PatientSession do
 
   describe "#latest_triage" do
     it "returns the latest triage record" do
-      earlier_triage =
-        build :triage, status: :needs_follow_up, created_at: 1.day.ago
-      later_triage = build :triage, status: :ready_to_vaccinate
-
-      patient_session =
-        create :patient_session, triage: [earlier_triage, later_triage]
+      patient_session = create(:patient_session)
+      create(
+        :triage,
+        status: :needs_follow_up,
+        created_at: 1.day.ago,
+        patient_session:
+      )
+      later_triage =
+        create(:triage, status: :ready_to_vaccinate, patient_session:)
 
       expect(patient_session.latest_triage).to eq later_triage
     end

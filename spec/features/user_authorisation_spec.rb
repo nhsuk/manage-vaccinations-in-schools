@@ -22,8 +22,10 @@ describe "User authorisation" do
   def given_an_hpv_campaign_is_underway_with_two_teams
     @team = create(:team, :with_one_nurse)
     @other_team = create(:team, :with_one_nurse)
-    campaign = create(:campaign, :hpv, team: @team)
-    other_campaign = create(:campaign, :hpv, team: @other_team)
+    vaccine = create(:vaccine, :hpv)
+    campaign = create(:campaign, :hpv, team: @team, vaccines: [vaccine])
+    other_campaign =
+      create(:campaign, :hpv, team: @other_team, vaccines: [vaccine])
     location = create(:location, name: "Pilot School")
     other_location = create(:location, name: "Other School")
     @session =
