@@ -9,10 +9,10 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
 
   let(:administered) { true }
   let(:location) { create(:location, name: "Hogwarts") }
-  let(:campaign) { create(:campaign, :hpv) }
+  let(:campaign) { create(:campaign, vaccines: [vaccine].compact) }
   let(:session) { create(:session, campaign:, location:) }
   let(:patient_session) { create(:patient_session, session:) }
-  let(:vaccine) { campaign.vaccines.first }
+  let(:vaccine) { create(:vaccine, :gardasil_9) }
   let(:batch) do
     create(:batch, name: "ABC", expiry: Date.new(2020, 1, 1), vaccine:)
   end

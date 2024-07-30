@@ -29,18 +29,23 @@ FactoryBot.define do
   factory :vaccine do
     transient { batch_count { 1 } }
 
+    type { %w[flu hpv].sample }
+    brand { Faker::Commerce.product_name }
     manufacturer { Faker::Company.name }
-    nivs_name { Faker::Commerce.product_name }
+    nivs_name { brand }
     dose { Faker::Number.decimal(l_digits: 0) }
     snomed_product_code { Faker::Number.decimal_part(digits: 17) }
     snomed_product_term { Faker::Lorem.sentence }
+    add_attribute(:method) { %i[nasal injection].sample }
+
+    traits_for_enum :method
 
     after(:create) do |vaccine, evaluator|
       create_list(:batch, evaluator.batch_count, vaccine:)
     end
 
     trait :flu do
-      fluenz_tetra
+      type { "flu" }
 
       after(:create) do |vaccine|
         asthma = create(:health_question, :asthma, vaccine:)
@@ -69,37 +74,50 @@ FactoryBot.define do
       end
     end
 
+    trait :flucelvax_tetra do
+      flu
+      injection
+      brand { "Flucelvax Tetra - QIVc" }
+      manufacturer { "Seqirus" }
+      nivs_name { "Seqirus Flucelvax Tetra QIVC" }
+      snomed_product_code { "36509011000001106" }
+      snomed_product_term do
+        "Flucelvax Tetra vaccine suspension for injection 0.5ml" \
+          " pre-filled syringes (Seqirus UK Ltd) (product)"
+      end
+      dose { 0.5 }
+    end
+
     trait :fluenz_tetra do
+      flu
+      nasal
       type { "flu" }
-      brand { "Fluenz Tetra" }
-      manufacturer { "AstraZeneca UK Ltd" }
+      brand { "Fluenz Tetra - LAIV" }
+      manufacturer { "AstraZeneca" }
       nivs_name { "AstraZeneca Fluenz Tetra LAIV" }
-      gtin { "05000456078276" }
       snomed_product_code { "27114211000001105" }
       snomed_product_term do
         "Fluenz Tetra vaccine nasal suspension 0.2ml unit dose (AstraZeneca UK Ltd) (product)"
       end
-      add_attribute(:method) { :nasal }
       dose { 0.2 }
     end
 
     trait :quadrivalent_influenza do
-      type { "flu" }
+      flu
+      injection
       brand { "Quadrivalent Influenza vaccine - QIVe" }
       manufacturer { "Sanofi" }
       nivs_name { "Sanofi Pasteur QIVe" }
-      gtin { "3664798046564" }
       snomed_product_code { "34680411000001107" }
       snomed_product_term do
         "Quadrivalent influenza vaccine (split virion, inactivated) suspension" \
           " for injection 0.5ml pre-filled syringes (Sanofi) (product)"
       end
-      add_attribute(:method) { :injection }
       dose { 0.5 }
     end
 
     trait :hpv do
-      gardasil_9
+      type { "hpv" }
 
       after(:create) do |vaccine|
         severe_allergies = create(:health_question, :severe_allergies, vaccine:)
@@ -112,17 +130,42 @@ FactoryBot.define do
       end
     end
 
+    trait :cervaris do
+      hpv
+      injection
+      brand { "Cervarix" }
+      manufacturer { "GlaxoSmithKline" }
+      nivs_name { "Cervarix" }
+      snomed_product_code { "12238911000001100" }
+      snomed_product_term do
+        "Cervarix vaccine suspension for injection 0.5ml pre-filled syringes (GlaxoSmithKline) (product)"
+      end
+      dose { 0.5 }
+    end
+
+    trait :gardasil do
+      hpv
+      injection
+      brand { "Gardasil" }
+      manufacturer { "Merck Sharp & Dohme" }
+      nivs_name { "Gardasil" }
+      snomed_product_code { "10880211000001104" }
+      snomed_product_term do
+        "Gardasil vaccine suspension for injection 0.5ml pre-filled syringes (Merck Sharp & Dohme (UK) Ltd) (product)"
+      end
+      dose { 0.5 }
+    end
+
     trait :gardasil_9 do
-      type { "hpv" }
+      hpv
+      injection
       brand { "Gardasil 9" }
-      manufacturer { "Merck Sharp & Dohme (UK) Ltd" }
+      manufacturer { "Merck Sharp & Dohme" }
       nivs_name { "Gardasil9" }
-      gtin { "00191778001693" }
       snomed_product_code { "33493111000001108" }
       snomed_product_term do
         "Gardasil 9 vaccine suspension for injection 0.5ml pre-filled syringes (Merck Sharp & Dohme (UK) Ltd) (product)"
       end
-      add_attribute(:method) { :injection }
       dose { 0.5 }
     end
   end

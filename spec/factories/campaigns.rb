@@ -23,7 +23,13 @@ FactoryBot.define do
 
     trait :hpv do
       name { "HPV" }
-      vaccines { [create(:vaccine, :hpv, batch_count:)] }
+      vaccines do
+        [
+          create(:vaccine, :cervaris, batch_count:),
+          create(:vaccine, :gardasil, batch_count:),
+          create(:vaccine, :gardasil_9, batch_count:)
+        ]
+      end
     end
 
     trait :hpv_no_batches do
@@ -35,7 +41,8 @@ FactoryBot.define do
       name { "Flu" }
       vaccines do
         [
-          create(:vaccine, :flu, batch_count:),
+          create(:vaccine, :flucelvax_tetra, batch_count:),
+          create(:vaccine, :fluenz_tetra, batch_count:),
           create(:vaccine, :quadrivalent_influenza, batch_count:)
         ]
       end
@@ -43,7 +50,7 @@ FactoryBot.define do
 
     trait :flu_nasal_only do
       name { "Flu" }
-      vaccines { [create(:vaccine, :flu, batch_count:)] }
+      vaccines { [create(:vaccine, :fluenz_tetra, batch_count:)] }
     end
   end
 end
