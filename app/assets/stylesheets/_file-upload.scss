@@ -1,12 +1,17 @@
 .nhsuk-file-upload {
-  @extend .govuk-file-upload;
+  @include nhsuk-font(19, $line-height: 60px);
 
   &::file-selector-button {
     @extend .nhsuk-button;
     @extend .nhsuk-button--secondary;
 
     color: $color_nhsuk-white;
-    font-weight: bold;
+    font-family: inherit;
     margin-bottom: 0;
+  }
+
+  // Button receives focus
+  &:focus {
+    outline: 0;
   }
 }
