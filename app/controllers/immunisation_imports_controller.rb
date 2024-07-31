@@ -52,9 +52,6 @@ class ImmunisationImportsController < ApplicationController
       )
   end
 
-  def success
-  end
-
   private
 
   def set_campaign
