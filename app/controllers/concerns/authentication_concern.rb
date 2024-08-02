@@ -11,8 +11,11 @@ module AuthenticationConcern
         if request.path != start_path
           store_location_for(:user, request.fullpath)
         end
-        flash[:info] = "You must be logged in to access this page."
-        redirect_to start_path
+
+        unless request.path == new_user_session_path
+          flash[:info] = "You must be logged in to access this page."
+          redirect_to start_path
+        end
       elsif cis2_session?
         if !selected_cis2_org_is_registered?
           redirect_to users_team_not_found_path
