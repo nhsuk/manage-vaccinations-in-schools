@@ -251,7 +251,11 @@ class ImmunisationImportRow
       @campaign
         .sessions
         .create_with(imported_from:)
-        .find_or_create_by!(date: session_date, location:)
+        .find_or_create_by!(
+          date: session_date,
+          location:,
+          time_of_day: :all_day
+        )
   end
 
   def patient_session

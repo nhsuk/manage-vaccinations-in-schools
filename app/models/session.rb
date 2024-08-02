@@ -59,6 +59,13 @@ class Session < ApplicationRecord
   after_initialize :set_timeline_attributes
   after_validation :set_timeline_timestamps
 
+  validates :time_of_day,
+            presence: true,
+            inclusion: {
+              in: time_of_days.keys
+            },
+            unless: -> { draft? }
+
   on_wizard_step :location, exact: true do
     validates :location_id, presence: true
   end
