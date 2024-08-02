@@ -157,6 +157,16 @@ describe ImmunisationImport, type: :model do
           .and not_change(PatientSession, :count)
           .and not_change(Batch, :count)
       end
+
+      it "creates a new session for each date" do
+        process!
+
+        expect(immunisation_import.sessions.count).to eq(1)
+
+        session = immunisation_import.sessions.first
+        expect(session.date).to eq(Date.new(2024, 5, 14))
+        expect(session.time_of_day).to eq("all_day")
+      end
     end
 
     context "with an existing patient matching the name" do
