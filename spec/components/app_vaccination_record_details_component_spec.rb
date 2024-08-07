@@ -81,14 +81,21 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
     end
   end
 
-  describe "dose row" do
-    it { should have_css(".nhsuk-summary-list__row", text: "Dose\n0.5 ml") }
+  describe "dose volume row" do
+    it do
+      should have_css(".nhsuk-summary-list__row", text: "Dose volume\n0.5 ml")
+    end
 
     context "without a vaccine" do
       let(:vaccine) { nil }
       let(:batch) { nil }
 
-      it { should_not have_css(".nhsuk-summary-list__row", text: "Dose") }
+      it do
+        expect(subject).not_to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Dose volume"
+        )
+      end
     end
   end
 
