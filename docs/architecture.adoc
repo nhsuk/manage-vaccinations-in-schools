@@ -24,6 +24,7 @@ endif::[]
 
 = Architecture
 
+// Display toc of headings up to level 2
 :sectnums:
 :sectnumlevels: 2
 
@@ -43,44 +44,51 @@ non-functional requirements which have been, where possible, de-emphasised.
 
 === Requirements Overview
 
-.Functional Requirements
+==== Functional Requirements
 
-* Allow SAIS teams to deliver vaccination campaigns.
-** Manage vaccination campaigns including location and cohort information.
-** Create consent invites.
-** Record vaccinations administered.
-* Allow parents to respond to consent requests.
+.Vaccination campaign management
+* Create and manage vaccination campaigns
+* Create and manage vaccines and batches
+* Create and manage sessions
+* Manage session cohorts
 
-.Non-Functional Requirements
+.Running sessions in schools
+* Create requests to go to parents to give or refuse consent for their children
+  to be vaccinated
+* View and manage consent responses for each child
+* Triage consent responses to ensure children are safe to vaccinate
+* Record Gillick competence and consent responses from children
+* Record vaccination outcomes for children during session
 
-* Security
-** Simple authentication and authorisation model; the alpha team will issue
-   individual logins, tied to email addresses, to each SAIS user.
-** Security model appropriate for scale of experiment
-*** Each SAIS team will only be able to view and record vaccinations/patients
-    for the school sessions that they manage
-*** The service will be available on the public internet with no IP address
-    range restrictions
-** No integration with NHS CIS 2 or other SSO provider, this isn't required yet
-* Rapid development
-** Cloud-based deployment
-** CI & CD for fast and stable deployment
-** Web application framework that enables accelerated delivery
-* Data persistence
-** Data persisted between sessions and users
-** No long term data storage, i.e. beyond end of testing phase(s)
+.Giving or receiving consent
+* Parents can respond to requests to give or receive consent
+* Child data is confirmed with a lookup to PDS
 
-We won't need:
+.Reporting vaccinations to NHSE
+* Report the recorded vaccinations upstream to NHSE (DPS)
+* Child information is validated with PDS
+* Users are authenticated using CIS2
+* Access to system functions are defined using national role-based access
+  control (RBAC)
 
-* Scalability
-* Authentication that's integrated with wider NHS or other SSO provider
-* Reporting capability
-* Long term maintainability of codebase
-* Offline functionality
-* Long term storage of data
-* Integration with NHS services
-** Send events to National Vaccination Record
-** Use Personal Demographic Service (PDS) to perform NHS number lookup
+.Upload vaccination events to NHSE
+* Users can upload vaccination records exported from their own systems
+
+.User authentication
+* Users are authenticated with the NHS Care Identity Service (CIS2)
+* Users are part of a SAIS team and have restricted access to only those
+  campaign and session data owned by their team
+* User SAIS team information is retrieved from NHS CIS2
+* Access to functionality will be tied to user's roles as defined in the
+    national RBAC, fox example only nurses are authorised to record a
+    vaccination
+* No authentication is required for parents to give or refuse consent
+
+==== Non-Functional Requirements
+
+* All user authentication will be done using NHS CIS2
+* The service will be available on the public internet with no IP address
+  range restrictions
 
 <<<<
 == Architecture Constraints
@@ -92,25 +100,8 @@ We won't need:
 * The system must be deployed to a cloud platform, but also be platform agnostic
   and not constrained to run on any one cloud platform.
 * The system must be deployed to NHS approved platforms.
-
-Additionally, there are some integrations which will be required in the
-production service, but which we will be descoped for the current phase. They
-are listed here to help define the wider goal of this service. These services
-are:
-
-* National vaccination record service, to update the vaccination record for
-  the patient. We do not yet know what this system looks like so it is unlikely
-  we'll be able to integrate with it properly. However we anticipate that
-  whatever this system is, it will have a FHIR API which we can use to update
-  the vaccination record. As this is a convenient technical abstraction point
-  for whatever the future system is, we will demonstrate that we can update a
-  FHIR API when an vaccination is administered as a proof of concept in this
-  Alpha.
-* The Personal Demographic Service (PDS) will be used to look up patient's NHS
-  numbers using their name and date of birth. Because we are using real patient
-  data from a non-live service, there may be serious hurdles to integrating with
-  PDS, and we may need to drop this requirements or opt for a mock server if we
-  think that will be beneficial.
+* Integration with NHS DPS is via MESH using background batched jobs.
+* Integration with NHS PDS is via FHIR API using background jobs.
 
 <<<<
 == System Scope and Context
@@ -133,8 +124,12 @@ Parents::
 Parents are notified of the planned vaccination campaign and invited to give
 consent for their children to be vaccinated.
 
-Manage vaccinations in schools Service::
-The service will be used by the SAIS team to record vaccinations.
+NHS Personal demographic service (PDS)::
+Used to lookup NHS numbers and confirm information entered / uploaded.
+
+NHS Data Processing Service (DPS)::
+Upstream recipient of vaccination records.
+
 
 == Solution strategy
 
