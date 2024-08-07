@@ -14,6 +14,6 @@
 <% end %>
 
 <%= render AppCardComponent.new do |c| %>
-  <% c.with_heading { "Vaccination record" } %>
+  <% c.with_heading { "Vaccination details" } %>
   <%= render AppVaccinationRecordDetailsComponent.new(@vaccination_record) %>
 <% end %>
