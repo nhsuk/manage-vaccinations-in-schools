@@ -26,19 +26,25 @@
           row.with_value { cohort }
         end
       
-        summary_list.with_row do |row|
-          row.with_key { "Consent requests" }
-          row.with_value { consent_requests }
+        if consent_requests.present?
+          summary_list.with_row do |row|
+            row.with_key { "Consent requests" }
+            row.with_value { consent_requests }
+          end
         end
       
-        summary_list.with_row do |row|
-          row.with_key { "Reminders" }
-          row.with_value { reminders }
+        if reminders.present?
+          summary_list.with_row do |row|
+            row.with_key { "Reminders" }
+            row.with_value { reminders }
+          end
         end
       
-        summary_list.with_row do |row|
-          row.with_key { "Deadline for responses" }
-          row.with_value { deadline_for_responses }
+        if deadline_for_responses.present?
+          summary_list.with_row do |row|
+            row.with_key { "Deadline for responses" }
+            row.with_value { deadline_for_responses }
+          end
         end
       end %>
 <% end %>
