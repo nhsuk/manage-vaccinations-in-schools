@@ -4,14 +4,14 @@
 
 title "Manage vaccinations in schools deployed view"
 
-Boundary(heroku, "Heroku Platform", "AWS") {
-    Container_Ext(router, "Heroku Router", "HTTPS, HTTP/2, TLS 1.2")
+Boundary(aws, "AWS", "AWS") {
+    Container_Ext(lb, "EC2 Load Balancers", "HTTPS, HTTP/2, TLS 1.2")
 
-    Deployment_Node(dyno, "Heroku Dyno") {
+    Deployment_Node(dyno, "ECS Fargate") {
         Container(server, "Server App", "Ruby on Rails")
     }
 
-    Deployment_Node(herokuPostgres, "Heroku Postgres") {
+    Deployment_Node(herokuPostgres, "RDS Aurora") {
         ContainerDb(db, "Database", "PostgreSQL")
     }
 }
@@ -19,16 +19,12 @@ Boundary(heroku, "Heroku Platform", "AWS") {
 Deployment_Node(comp, "Customer's computer") {
     Deployment_Node(browser, "Web Browser") {
         Container(webapp, "Web Application", "HTML and JavaScript")
-        Container(sw, "Service Worker", "JavaScript")
-        ContainerDb(indexedb, "IndexedDB", "IndexedDB")
     }
 }
 
-Rel(router, server, "Fetch Resources", "HTTP")
+Rel(lb, server, "Fetch Resources", "HTTP")
 Rel(server, db, "Reads / Writes Resources", "Postgres, TLS")
-Rel_L(sw, router, "Fetch Resources", "HTTPS")
-Rel(webapp, sw, "Fetch Resources")
-Rel(sw, indexedb, "Read/Write Resources")
+Rel_L(webapp, lb, "Fetch Resources", "HTTPS")
 
 SHOW_FLOATING_LEGEND()
 

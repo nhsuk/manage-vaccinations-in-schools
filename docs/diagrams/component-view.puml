@@ -11,24 +11,39 @@ AddElementTag("outside_context", $bgColor="#CCC", $fontColor="#FFF")
 Person_Ext(sais, "SAIS Team", $tags="outside_context")
 Person_Ext(parents, "Parents", $tags="outside_context")
 
-Boundary(aws, "AWS") {
-  System_Boundary(manage, "Manage vaccinations in schools", "") {
-    Container_Boundary(server, "Server Application", "Ruby on Rails") {
-      Component(webapp, "Web Application", "Ruby on Rails")
-      ComponentDb(database, "Database", "PostgreSQL")
+System_Ext(poc, "Point of care systems")
+
+Enterprise_Boundary(nhs, "NHS England Digital") {
+  System_Boundary(mavis, "Mavis", "") {
+    Container_Boundary(mavis_app, "Mavis Deployed App", "Ruby on Rails") {
+      Component(webapp, "Web Application")
+      Component(bgjobs, "Background Jobs")
     }
+    ContainerDb(database, "Database", "PostgreSQL")
   }
+
+  System_Ext(cis, "NHS CIS2")
+  System_Ext(pds, "NHS PDS")
+  System_Ext(dps, "NHS DPS")
 }
-System_Ext(govukNotify, "GOVUK Notify", "Email and SMS Service")
+System_Ext(notify, "GOV.UK Notify", "Email and SMS Service")
 
 
 AddRelTag("optional", $textColor="black", $lineColor="black", $lineStyle="dashed")
 
-Rel(sais, webapp, "Manage campaigns")
-Rel(sais, webapp, "Record Child Vaccination")
-Rel(parents, webapp, "Consent response")
+Rel(sais, cis, "Authenticates")
+Rel(webapp, cis, "Gets user info", "OIDC")
+Rel(sais, webapp, "Uses system", "HTML, JS")
+Rel(sais, poc, "Gets vaccination records from")
+Rel(sais, webapp, "Uploads vaccination records", "CSV")
+Rel(parents, webapp, "Responds to consent requests", "HTML, JS")
 Rel(webapp, database, "Read and write data", "Postgres, TLS")
-Rel(webapp, govukNotify, "Send email and SMS")
+Rel(webapp, bgjobs, "Queues jobs")
+Rel(bgjobs, database, "Read and write data", "Postgres, TLS")
+Rel(bgjobs, notify, "Send notifications to user", "REST API")
+Rel(notify, parents, "Sends notifications to", "Email, SMS")
+Rel(bgjobs, pds, "Gets NHS numbers from", "FHIR REST API")
+Rel(bgjobs, dps, "Sends vaccination records to", "MESH")
 
 
 SHOW_FLOATING_LEGEND()
