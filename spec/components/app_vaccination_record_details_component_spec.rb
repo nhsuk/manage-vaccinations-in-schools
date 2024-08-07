@@ -83,7 +83,10 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
 
   describe "dose volume row" do
     it do
-      should have_css(".nhsuk-summary-list__row", text: "Dose volume\n0.5 ml")
+      expect(subject).to have_css(
+        ".nhsuk-summary-list__row",
+        text: "Dose volume\n0.5 ml"
+      )
     end
 
     context "without a vaccine" do
@@ -94,6 +97,32 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
         expect(subject).not_to have_css(
           ".nhsuk-summary-list__row",
           text: "Dose volume"
+        )
+      end
+    end
+  end
+
+  describe "dose number row" do
+    context "for HPV vaccine" do
+      let(:vaccine) { create(:vaccine, :hpv) }
+
+      before { vaccination_record.dose_sequence = 2 }
+
+      it do
+        expect(subject).to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Dose number\nSecond"
+        )
+      end
+    end
+
+    context "for a seasonal vaccine (e.g. flu)" do
+      let(:vaccine) { create(:vaccine, :flu) }
+
+      it do
+        expect(subject).not_to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Dose number"
         )
       end
     end

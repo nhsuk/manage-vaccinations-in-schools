@@ -71,6 +71,17 @@ class Vaccine < ApplicationRecord
     end
   end
 
+  def seasonal?
+    if type.downcase == "flu"
+      true
+    elsif type.downcase == "hpv"
+      false
+    else
+      raise NotImplementedError,
+            "Seasonal not implemented for #{type} vaccines."
+    end
+  end
+
   def available_delivery_sites
     if injection?
       VaccinationRecord.delivery_sites.keys -

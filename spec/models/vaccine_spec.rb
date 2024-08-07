@@ -61,4 +61,21 @@ describe Vaccine, type: :model do
       it { should eq(3) }
     end
   end
+
+  describe "#seasonal?" do
+    it "returns true if the vaccine is a flu vaccine" do
+      vaccine = build(:vaccine, :flu)
+      expect(vaccine.seasonal?).to be true
+    end
+
+    it "returns false for HPV" do
+      vaccine = build(:vaccine, :gardasil_9)
+      expect(vaccine.seasonal?).to be false
+    end
+
+    it "raises an error for an unknown vaccine type" do
+      vaccine = build(:vaccine, type: "unknown")
+      expect { vaccine.seasonal? }.to raise_error(NotImplementedError)
+    end
+  end
 end

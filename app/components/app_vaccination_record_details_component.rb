@@ -9,6 +9,28 @@ class AppVaccinationRecordDetailsComponent < ViewComponent::Base
     @batch = vaccination_record.batch
   end
 
+  def dose_number
+    return nil if @vaccine.nil? || @vaccine.seasonal?
+
+    numbers_to_words = {
+      1 => "First",
+      2 => "Second",
+      3 => "Third",
+      4 => "Fourth",
+      5 => "Fifth",
+      6 => "Sixth",
+      7 => "Seventh",
+      8 => "Eighth",
+      9 => "Ninth"
+    }.freeze
+
+    if @vaccination_record.dose_sequence <= 9
+      numbers_to_words[@vaccination_record.dose_sequence]
+    else
+      @vaccination_record.dose_sequence
+    end
+  end
+
   def call
     govuk_summary_list(
       classes: "app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0"
@@ -47,6 +69,13 @@ class AppVaccinationRecordDetailsComponent < ViewComponent::Base
         summary_list.with_row do |row|
           row.with_key { "Dose volume" }
           row.with_value { "#{@vaccination_record.dose} ml" }
+        end
+      end
+
+      if dose_number.present?
+        summary_list.with_row do |row|
+          row.with_key { "Dose number" }
+          row.with_value { dose_number }
         end
       end
 
