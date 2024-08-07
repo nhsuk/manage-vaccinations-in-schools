@@ -36,7 +36,7 @@ describe MESH do
             "Content-Encoding" => "gzip",
             "Mex-To" => "TESTBOX",
             "Mex-Workflowid" => "dps export",
-            "User-Agent" => "Faraday v2.10.0"
+            "User-Agent" => /Faraday v.+/
           }
         )
       ).to have_been_made
