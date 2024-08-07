@@ -27,7 +27,7 @@ class AppVaccinationRecordDetailsComponent < ViewComponent::Base
     if @vaccination_record.dose_sequence <= 9
       numbers_to_words[@vaccination_record.dose_sequence]
     else
-      @vaccination_record.dose_sequence
+      @vaccination_record.dose_sequence.ordinalize
     end
   end
 
