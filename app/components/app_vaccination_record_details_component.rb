@@ -45,7 +45,7 @@ class AppVaccinationRecordDetailsComponent < ViewComponent::Base
 
       if @vaccine.present?
         summary_list.with_row do |row|
-          row.with_key { "Dose" }
+          row.with_key { "Dose volume" }
           row.with_value { "#{@vaccination_record.dose} ml" }
         end
       end
