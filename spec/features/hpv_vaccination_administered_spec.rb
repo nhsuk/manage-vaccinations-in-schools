@@ -58,6 +58,7 @@ describe "HPV Vaccination" do
     expect(page).to have_content("Check and confirm")
     expect(page).to have_content("Child#{@patient.full_name}")
     expect(page).to have_content("Batch#{@batch.name}")
+    expect(page).to have_content("MethodIntramuscular")
     expect(page).to have_content("SiteLeft arm")
     expect(page).to have_content("OutcomeVaccinated")
   end

@@ -42,6 +42,11 @@
             end
         
             summary_list.with_row do |row|
+              row.with_key { "Method" }
+              row.with_value { @draft_vaccination_record.human_enum_name(:delivery_method) }
+            end
+        
+            summary_list.with_row do |row|
               row.with_key { "Site" }
               row.with_value { @draft_vaccination_record.human_enum_name(:delivery_site) }
             end
