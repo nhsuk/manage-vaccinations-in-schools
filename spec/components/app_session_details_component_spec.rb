@@ -49,4 +49,28 @@ describe AppSessionDetailsComponent, type: :component do
       expect(component.cohort).to eq "2 children"
     end
   end
+
+  context "for a session with the minimum amount of information" do
+    let(:session) do
+      Session.new(
+        draft: false,
+        location: create(:location),
+        campaign: create(:campaign, :hpv),
+        date:,
+        time_of_day: "all_day"
+      )
+    end
+
+    it "does not render the consent requests" do
+      expect(component.consent_requests).to be_nil
+    end
+
+    it "does not render the reminders" do
+      expect(component.reminders).to be_nil
+    end
+
+    it "does not render the deadline for responses" do
+      expect(component.deadline_for_responses).to be_nil
+    end
+  end
 end

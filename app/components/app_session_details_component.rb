@@ -29,14 +29,20 @@ class AppSessionDetailsComponent < ViewComponent::Base
   end
 
   def consent_requests
-    "Send on #{@session.send_consent_at.to_fs(:long_day_of_week)}"
+    if @session.send_consent_at.present?
+      "Send on #{@session.send_consent_at.to_fs(:long_day_of_week)}"
+    end
   end
 
   def reminders
-    "Send on #{@session.send_reminders_at.to_fs(:long_day_of_week)}"
+    if @session.send_reminders_at.present?
+      "Send on #{@session.send_reminders_at.to_fs(:long_day_of_week)}"
+    end
   end
 
   def deadline_for_responses
+    return nil if @session.close_consent_at.blank?
+
     if @session.date == @session.close_consent_at
       "Allow responses until the day of the session"
     else
