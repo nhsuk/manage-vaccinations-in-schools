@@ -108,11 +108,11 @@ class DPSExportRow
   end
 
   def performing_professional_forename
-    user&.full_name&.split(" ", 2)&.first
+    # is not required
   end
 
   def performing_professional_surname
-    user&.full_name&.split(" ", 2)&.last
+    # is not required
   end
 
   def recorded_date
