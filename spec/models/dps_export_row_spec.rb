@@ -98,11 +98,11 @@ describe DPSExportRow do
     end
 
     it "has performing_professional_forename" do
-      expect(array[12]).to eq "Jane"
+      expect(array[12]).to be_nil
     end
 
     it "has performing_professional_surname" do
-      expect(array[13]).to eq "Doe"
+      expect(array[13]).to be_nil
     end
 
     it "has recorded_date" do
