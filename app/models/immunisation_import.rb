@@ -52,8 +52,6 @@ class ImmunisationImport < ApplicationRecord
     BATCH_NUMBER
     BATCH_EXPIRY_DATE
     ANATOMICAL_SITE
-    LOCAL_PATIENT_ID
-    LOCAL_PATIENT_ID_URI
   ].freeze
 
   validates :csv, presence: true
