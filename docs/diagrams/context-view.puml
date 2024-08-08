@@ -6,8 +6,6 @@ LAYOUT_TOP_DOWN()
 
 title "Manage vaccinations in schools context diagram"
 
-Person_Ext(parents, "Parents")
-
 System_Ext(poc, "Point of care systems")
 Person(sais, "SAIS Team")
 
@@ -17,7 +15,6 @@ Enterprise_Boundary(nhs, "NHS England Digital") {
   System_Ext(cis, "NHS CIS2")
   System_Ext(pds, "NHS PDS")
   System_Ext(dps, "NHS DPS")
-  System_Ext(notify, "GOV.UK Notify")
 }
 
 AddRelTag("optional", $textColor="black", $lineColor="black", $lineStyle="dashed")
@@ -25,9 +22,6 @@ AddRelTag("optional", $textColor="black", $lineColor="black", $lineStyle="dashed
 Rel(sais, cis, "Authenticates")
 Rel(sais, mavis, "Uses system")
 Rel(sais, poc, "Gets vaccination records from")
-Rel(mavis, notify, "Send notifications to user")
-Rel(notify, parents, "Send notifications to")
-Rel(parents, mavis, "Responds to consent requests")
 Rel(mavis, pds, "Gets NHS numbers from")
 Rel(mavis, dps, "Sends vaccination records to")
 

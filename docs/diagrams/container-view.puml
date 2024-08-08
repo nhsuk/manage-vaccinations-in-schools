@@ -9,7 +9,6 @@ title "Manage vaccinations in schools container view"
 AddElementTag("outside_context", $bgColor="#CCC", $fontColor="#FFF")
 
 Person_Ext(sais, "SAIS Team", $tags="outside_context")
-Person_Ext(parents, "Parents", $tags="outside_context")
 
 System_Ext(poc, "Point of care systems")
 
@@ -24,8 +23,6 @@ Enterprise_Boundary(nhs, "NHS England Digital") {
   System_Ext(dps, "NHS DPS")
 }
 
-System_Ext(notify, "GOV.UK Notify")
-
 AddRelTag("optional", $textColor="black", $lineColor="black", $lineStyle="dashed")
 
 Rel(sais, cis, "Authenticates")
@@ -33,9 +30,6 @@ Rel(mavis, cis, "Gets user info", "OIDC API")
 Rel(sais, mavis, "Uses system", "HTML, JS")
 Rel(sais, poc, "Gets vaccination records from")
 Rel(sais, mavis, "Uploads vaccination records", "CSV")
-Rel(parents, mavis, "Responds to consent requests", "HTML, JS")
-Rel(mavis, notify, "Send notifications to user", "REST API")
-Rel(notify, parents, "Sends notifications to", "Email, SMS")
 Rel(mavis, pds, "Gets NHS numbers from", "FHIR REST API")
 Rel(mavis, dps, "Sends vaccination records to", "MESH")
 Rel(mavis, mavis_db, "Reads from and writes to", "Postgres, TLS")
