@@ -71,7 +71,6 @@ Rails.application.routes.draw do
               only: %i[index new create show]
 
     resources :reports, only: [] do
-      get "download", on: :collection
       post "dps-export", on: :collection
       constraints -> { Flipper.enabled?(:dev_tools) } do
         post "dps-export-reset", on: :collection

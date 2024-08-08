@@ -3,14 +3,6 @@
 class ReportsController < ApplicationController
   before_action :set_campaign
 
-  def download
-    csv = NivsReport.new(vaccination_records).to_csv
-    filename =
-      "NIVS-#{@campaign.name.parameterize(preserve_case: true)}-report-MAVIS.csv"
-
-    send_data(csv, filename:)
-  end
-
   def dps_export
     date = Time.zone.today.strftime("%Y-%m-%d")
     filename =
