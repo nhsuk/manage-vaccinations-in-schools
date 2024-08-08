@@ -36,3 +36,5 @@ Team.find_by(ods_code: "Y51") ||
   FactoryBot.create(:team, name: "NMEPFIT SAIS Team", ods_code: "Y51")
 
 Rake::Task["vaccines:seed"].execute
+
+Rake::Task["schools:import"].execute
