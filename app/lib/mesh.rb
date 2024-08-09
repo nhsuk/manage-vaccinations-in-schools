@@ -8,7 +8,14 @@ module MESH
     Faraday.new(
       "#{base_url}/messageexchange/#{mailbox}/",
       ssl: {
-        verify: !Rails.env.development?
+        verify: true,
+        client_cert: OpenSSL::X509::Certificate.new(Settings.mesh.certificate),
+        client_key:
+          OpenSSL::PKey::RSA.new(
+            Settings.mesh.private_key,
+            Settings.mesh.private_key_passphrase
+          ),
+        ca_file: Rails.root.join("config", "mesh_ca_bundle.pem").to_s
       },
       headers: {
         "Accept" => "application/vnd.mesh.v2+json",
