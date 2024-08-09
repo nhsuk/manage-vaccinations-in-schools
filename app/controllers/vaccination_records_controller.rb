@@ -20,11 +20,16 @@ class VaccinationRecordsController < ApplicationController
 
   def vaccination_records
     @vaccination_records ||=
-      policy_scope(VaccinationRecord).includes(
-        :vaccine,
-        :batch,
-        patient: :location,
-        session: :location
-      ).where(campaign:)
+      policy_scope(VaccinationRecord)
+        .includes(
+          :vaccine,
+          :batch,
+          :campaign,
+          :user,
+          patient: :location,
+          session: :location
+        )
+        .where(campaign:)
+        .strict_loading
   end
 end
