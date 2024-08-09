@@ -73,7 +73,9 @@ Rails.application.routes.draw do
     resources :reports, only: [] do
       get "download", on: :collection
       post "dps-export", on: :collection
-      post "dps-export-reset", on: :collection
+      constraints -> { Flipper.enabled?(:dev_tools) } do
+        post "dps-export-reset", on: :collection
+      end
     end
 
     resources :vaccination_records,
@@ -97,7 +99,7 @@ Rails.application.routes.draw do
 
     resources :edit_sessions, only: %i[show update], path: "edit", as: :edit
 
-    constraints -> { Flipper.enabled?(:make_session_in_progress_button) } do
+    constraints -> { Flipper.enabled?(:dev_tools) } do
       put "make-in-progress", to: "sessions#make_in_progress", on: :member
     end
 
