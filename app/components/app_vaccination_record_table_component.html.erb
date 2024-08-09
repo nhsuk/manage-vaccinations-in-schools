@@ -21,11 +21,9 @@
             <%= govuk_link_to vaccination_record.patient.full_name, campaign_vaccination_record_path(vaccination_record.campaign, vaccination_record) %>
           <% end %>
 
-          <% if (nhs_number = vaccination_record.patient.nhs_number).present? %>
-            <% row.with_cell do %>
-              <span class="nhsuk-table-responsive__heading">NHS number</span>
-              <%= helpers.format_nhs_number(nhs_number) %>
-            <% end %>
+          <% row.with_cell do %>
+            <span class="nhsuk-table-responsive__heading">NHS number</span>
+            <%= helpers.format_nhs_number(vaccination_record.patient.nhs_number) %>
           <% end %>
 
           <% row.with_cell do %>
