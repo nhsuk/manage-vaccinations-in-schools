@@ -63,11 +63,9 @@
 </div>
 
 <% content_for :after_main do %>
-  <% if Flipper.enabled? :dev_tools %>
-    <%= render(AppDevToolsComponent.new) do %>
-      <%= govuk_button_to "Download DPS export", dps_export_campaign_reports_path(@campaign) %>
+  <%= render(AppDevToolsComponent.new) do %>
+    <%= govuk_button_to "Download DPS export", dps_export_campaign_reports_path(@campaign) %>
 
-      <%= govuk_button_to "Reset vaccination records for DPS export", dps_export_reset_campaign_reports_path(@campaign) %>
-    <% end %>
+    <%= govuk_button_to "Reset vaccination records for DPS export", dps_export_reset_campaign_reports_path(@campaign) %>
   <% end %>
 <% end %>

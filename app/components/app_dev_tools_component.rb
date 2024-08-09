@@ -16,6 +16,6 @@ class AppDevToolsComponent < ViewComponent::Base
   ERB
 
   def render?
-    !Rails.env.production?
+    !Rails.env.production? && Flipper.enabled?(:dev_tools)
   end
 end
