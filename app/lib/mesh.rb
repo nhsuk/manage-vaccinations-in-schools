@@ -10,7 +10,11 @@ module MESH
       ssl: ssl_options,
       headers: {
         "Accept" => "application/vnd.mesh.v2+json",
-        "Authorization" => "#{SCHEMA} #{authorisation}"
+        "Authorization" => "#{SCHEMA} #{authorisation}",
+        "mex-clientversion" => "Mavis 1.0.0",
+        "mex-osarchitecture" => Etc.uname[:machine],
+        "mex-osname" => Etc.uname[:sysname],
+        "mex-osversion" => Etc.uname[:release]
       }
     )
   end
@@ -28,6 +32,10 @@ module MESH
         ),
       ca_file: Rails.root.join("config/mesh_ca_bundle.pem").to_s
     }
+  end
+
+  def self.validate_mailbox
+    connection.get ""
   end
 
   def self.send_file(to:, data:)

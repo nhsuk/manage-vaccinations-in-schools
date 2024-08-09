@@ -8,6 +8,19 @@ describe MESH do
       :post,
       "https://localhost:8700/messageexchange/X26ABC1/outbox"
     ).to_return(status: 200, body: "", headers: {})
+
+    stub_request(
+      :get,
+      "https://localhost:8700/messageexchange/X26ABC1"
+    ).to_return(status: 200, body: "", headers: {})
+
+    allow(Etc).to receive(:uname).and_return(
+      {
+        sysname: "mex-osname test",
+        release: "mex-osversion test",
+        machine: "mex-osarchitecture test"
+      }
+    )
   end
 
   describe "#send_file" do
@@ -36,7 +49,30 @@ describe MESH do
             "Content-Encoding" => "gzip",
             "Mex-To" => "TESTBOX",
             "Mex-Workflowid" => "dps export",
-            "User-Agent" => /Faraday v.+/
+            "User-Agent" => /Faraday v.+/,
+            "Mex-Clientversion" => "Mavis 1.0.0",
+            "Mex-Osarchitecture" => "mex-osarchitecture test",
+            "Mex-Osname" => "mex-osname test",
+            "Mex-Osversion" => "mex-osversion test"
+          }
+        )
+      ).to have_been_made
+    end
+  end
+
+  describe "#validate_mailbox" do
+    it "makes a request to the correct endpoint" do
+      described_class.validate_mailbox
+
+      expect(
+        a_request(:get, "https://localhost:8700/messageexchange/X26ABC1").with(
+          headers: {
+            "Accept-Encoding" => "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
+            "User-Agent" => /Faraday v.+/,
+            "Mex-Clientversion" => "Mavis 1.0.0",
+            "Mex-Osarchitecture" => "mex-osarchitecture test",
+            "Mex-Osname" => "mex-osname test",
+            "Mex-Osversion" => "mex-osversion test"
           }
         )
       ).to have_been_made
