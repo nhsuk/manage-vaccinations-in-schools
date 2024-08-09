@@ -62,7 +62,7 @@
 </ul>
 
 <% content_for :after_main do %>
-  <% if Flipper.enabled? :make_session_in_progress_button %>
+  <% if Flipper.enabled? :dev_tools %>
     <%= render(AppDevToolsComponent.new) do %>
       <p class="nhsuk-u-reading-width">
         Vaccinations can only be recorded if a session is in progress. If you want to test vaccination recording, you can set this session as in progress for today.
