@@ -62,18 +62,16 @@
 </ul>
 
 <% content_for :after_main do %>
-  <% if Flipper.enabled? :dev_tools %>
-    <%= render(AppDevToolsComponent.new) do %>
-      <p class="nhsuk-u-reading-width">
-        Vaccinations can only be recorded if a session is in progress. If you want to test vaccination recording, you can set this session as in progress for today.
-      </p>
-      <%= govuk_button_to(
-            "Set session in progress for today",
-            make_in_progress_session_path,
-            method: :put,
-            secondary: true,
-            prevent_double_click: true,
-          ) %>
-    <% end %>
+  <%= render(AppDevToolsComponent.new) do %>
+    <p class="nhsuk-u-reading-width">
+      Vaccinations can only be recorded if a session is in progress. If you want to test vaccination recording, you can set this session as in progress for today.
+    </p>
+    <%= govuk_button_to(
+          "Set session in progress for today",
+          make_in_progress_session_path,
+          method: :put,
+          secondary: true,
+          prevent_double_click: true,
+        ) %>
   <% end %>
 <% end %>
