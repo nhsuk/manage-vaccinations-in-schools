@@ -141,9 +141,9 @@ describe AppPatientDetailsComponent, type: :component do
       )
     end
 
-    it "does not render an NHS number" do
-      expect(page).not_to(
-        have_css(".nhsuk-summary-list__row", text: "NHS number")
+    it "renders 'Not provided' for the NHS number" do
+      expect(page).to(
+        have_css(".nhsuk-summary-list__row", text: "NHS numberNot provided")
       )
     end
 

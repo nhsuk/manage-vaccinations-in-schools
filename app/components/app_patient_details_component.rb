@@ -64,11 +64,9 @@ class AppPatientDetailsComponent < ViewComponent::Base
         end
       end
 
-      if nhs_number.present?
-        summary_list.with_row do |row|
-          row.with_key { "NHS number" }
-          row.with_value { helpers.format_nhs_number(nhs_number) }
-        end
+      summary_list.with_row do |row|
+        row.with_key { "NHS number" }
+        row.with_value { helpers.format_nhs_number(nhs_number) }
       end
     end
   end
