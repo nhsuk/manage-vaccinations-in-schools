@@ -110,11 +110,11 @@ describe ImmunisationImport, type: :model do
       it "creates locations, patients, and vaccination records" do
         # stree-ignore
         expect { process! }
-          .to change(immunisation_import.vaccination_records, :count).by(11)
-          .and change(immunisation_import.locations, :count).by(4)
-          .and change(immunisation_import.patients, :count).by(11)
-          .and change(immunisation_import.sessions, :count).by(4)
-          .and change(PatientSession, :count).by(11)
+          .to change(immunisation_import.vaccination_records, :count).by(9)
+          .and change(immunisation_import.locations, :count).by(3)
+          .and change(immunisation_import.patients, :count).by(9)
+          .and change(immunisation_import.sessions, :count).by(3)
+          .and change(PatientSession, :count).by(9)
           .and change(Batch, :count).by(4)
 
         # Second import should not duplicate the vaccination records if they're
@@ -185,7 +185,7 @@ describe ImmunisationImport, type: :model do
 
       it "doesn't create an additional patient" do
         expect { process! }.to change(immunisation_import.patients, :count).by(
-          10
+          8
         )
       end
 

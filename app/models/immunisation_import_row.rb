@@ -69,7 +69,8 @@ class ImmunisationImportRow
   end
 
   def to_vaccination_record
-    return unless valid?
+    # we don't need to collect 'not vaccinated' outcomes from SAIS teams to send to DPS
+    return unless valid? && administered
 
     VaccinationRecord.create_with(
       imported_from: @imported_from,
