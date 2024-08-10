@@ -6,22 +6,28 @@ module MESH
   def self.connection
     authorisation = generate_authorisation
     Faraday.new(
-      "#{base_url}/messageexchange/#{mailbox}/",
-      ssl: {
-        verify: true,
-        client_cert: OpenSSL::X509::Certificate.new(Settings.mesh.certificate),
-        client_key:
-          OpenSSL::PKey::RSA.new(
-            Settings.mesh.private_key,
-            Settings.mesh.private_key_passphrase
-          ),
-        ca_file: Rails.root.join("config", "mesh_ca_bundle.pem").to_s
-      },
+      "#{base_url}/messageexchange/#{mailbox}",
+      ssl: ssl_options,
       headers: {
         "Accept" => "application/vnd.mesh.v2+json",
         "Authorization" => "#{SCHEMA} #{authorisation}"
       }
     )
+  end
+
+  def self.ssl_options
+    return { verify: false } if Settings.mesh.disable_ssl_verification?
+
+    {
+      verify: true,
+      client_cert: OpenSSL::X509::Certificate.new(Settings.mesh.certificate),
+      client_key:
+        OpenSSL::PKey::RSA.new(
+          Settings.mesh.private_key,
+          Settings.mesh.private_key_passphrase
+        ),
+      ca_file: Rails.root.join("config/mesh_ca_bundle.pem").to_s
+    }
   end
 
   def self.send_file(to:, data:)

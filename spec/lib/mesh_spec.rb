@@ -63,26 +63,15 @@ describe MESH do
   end
 
   describe "#connection" do
-    it "disables ssl in development" do
-      allow(Rails).to receive(:env).and_return(
-        instance_double(ActiveSupport::EnvironmentInquirer, development?: true)
-      )
-
-      expect(described_class.connection.ssl).to have_attributes(verify: false)
-    end
-
-    it "enables ssl in production" do
-      allow(Rails).to receive(:env).and_return(
-        instance_double(ActiveSupport::EnvironmentInquirer, development?: false)
-      )
-
+    it "uses ssl_options" do
+      allow(described_class).to receive(:ssl_options).and_return(verify: true)
       expect(described_class.connection.ssl).to have_attributes(verify: true)
     end
 
     it "sets the url" do
       expect(
         described_class.connection.url_prefix.to_s
-      ).to eq "https://localhost:8700/messageexchange/X26ABC1/"
+      ).to eq "https://localhost:8700/messageexchange/X26ABC1"
     end
 
     it "sets the authorisation header" do
@@ -99,6 +88,41 @@ describe MESH do
       expect(
         described_class.connection.headers["Accept"]
       ).to eq "application/vnd.mesh.v2+json"
+    end
+  end
+
+  describe "#ssl_options" do
+    it "loads ssl settings when not configured to disabled verification" do
+      allow(OpenSSL::X509::Certificate).to receive(:new).and_return(
+        "CERTIFICATE"
+      )
+      allow(OpenSSL::PKey::RSA).to receive(:new).and_return("PRIVATEKEY")
+      # rubocop:disable RSpec/VerifiedDoubles
+      allow(Settings).to receive(:mesh).and_return(
+        double(
+          disable_ssl_verification?: nil,
+          certificate: "CERTIFICATE64",
+          private_key: "PRIVATEKEY64",
+          private_key_passphrase: "PASSPHRASE"
+        )
+      )
+      # rubocop:enable RSpec/VerifiedDoubles
+
+      expect(described_class.ssl_options).to include(
+        verify: true,
+        client_cert: "CERTIFICATE",
+        client_key: "PRIVATEKEY"
+      )
+    end
+
+    it "disables ssl in dev mode" do
+      # rubocop:disable RSpec/VerifiedDoubles
+      allow(Settings).to receive(:mesh).and_return(
+        double(disable_ssl_verification?: true)
+      )
+      # rubocop:enable RSpec/VerifiedDoubles
+
+      expect(described_class.ssl_options).to include(verify: false)
     end
   end
 end
