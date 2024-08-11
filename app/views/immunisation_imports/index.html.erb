@@ -65,7 +65,6 @@
 <% content_for :after_main do %>
   <%= render(AppDevToolsComponent.new) do %>
     <%= govuk_button_to "Download DPS export", dps_export_campaign_vaccination_records_path(@campaign) %>
-
-    <%= govuk_button_to "Reset vaccination records for DPS export", dps_export_reset_campaign_reports_path(@campaign) %>
+    <%= govuk_button_to "Reset vaccination records for DPS export", dps_export_reset_campaign_vaccination_records_path(@campaign) %>
   <% end %>
 <% end %>
