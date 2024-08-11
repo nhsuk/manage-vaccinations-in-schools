@@ -70,16 +70,13 @@ Rails.application.routes.draw do
               path: "immunisation-imports",
               only: %i[index new create show]
 
-    resources :reports, only: [] do
-      constraints -> { Flipper.enabled?(:dev_tools) } do
-        post "dps-export-reset", on: :collection
-      end
-    end
-
     resources :vaccination_records,
               path: "vaccination-records",
               only: %i[index show] do
       post "dps-export", on: :collection
+      constraints -> { Flipper.enabled?(:dev_tools) } do
+        post "dps-export-reset", on: :collection
+      end
     end
   end
 

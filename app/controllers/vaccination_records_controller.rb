@@ -20,6 +20,18 @@ class VaccinationRecordsController < ApplicationController
     send_data(csv, filename:)
   end
 
+  def dps_export_reset
+    exported_administered_vaccination_records.update_all(
+      exported_to_dps_at: nil
+    )
+
+    flash[:success] = {
+      heading: "Vaccination records have been reset for the DPS export"
+    }
+
+    redirect_to campaign_immunisation_imports_path(campaign)
+  end
+
   private
 
   def campaign
@@ -52,5 +64,10 @@ class VaccinationRecordsController < ApplicationController
   def unexported_administered_vaccination_records
     @unexported_administered_vaccination_records ||=
       administered_vaccination_records.where(exported_to_dps_at: nil)
+  end
+
+  def exported_administered_vaccination_records
+    @exported_administered_vaccination_records ||=
+      administered_vaccination_records.where.not(exported_to_dps_at: nil)
   end
 end
