@@ -62,7 +62,7 @@ supemtek:
   type: flu
   method: injection
   manufacturer: Sanofi
-  nivs_name: Sanofi Pasteur  Supemtek QIVr
+  nivs_name: Sanofi Pasteur Supemtek QIVr
   dose: 0.5
   snomed_product_code: 39566211000001103
   snomed_product_term: Supemtek Quadrivalent vaccine (recombinant) solution for
