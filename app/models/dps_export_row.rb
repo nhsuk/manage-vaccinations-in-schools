@@ -51,10 +51,10 @@ class DPSExportRow
   attr_reader :vaccination_record
 
   delegate :batch,
-           :campaign,
            :delivery_site,
            :location,
            :patient,
+           :team,
            :user,
            :vaccine,
            to: :vaccination_record
@@ -88,7 +88,7 @@ class DPSExportRow
   end
 
   def site_code
-    campaign.team.ods_code
+    team.ods_code
   end
 
   def site_code_type_uri
@@ -185,7 +185,7 @@ class DPSExportRow
   end
 
   def location_code
-    location.present? ? location.urn : campaign.team.ods_code
+    location.present? ? location.urn : team.ods_code
   end
 
   def location_code_type_uri
