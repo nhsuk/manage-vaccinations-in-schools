@@ -16,7 +16,7 @@ module MESH
   end
 
   def self.ssl_options
-    return { verify: false } if Settings.mesh.disable_ssl_verification?
+    return { verify: false } if Settings.mesh.disable_ssl_verification
 
     {
       verify: true,

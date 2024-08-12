@@ -100,7 +100,7 @@ describe MESH do
       # rubocop:disable RSpec/VerifiedDoubles
       allow(Settings).to receive(:mesh).and_return(
         double(
-          disable_ssl_verification?: nil,
+          disable_ssl_verification: nil,
           certificate: "CERTIFICATE64",
           private_key: "PRIVATEKEY64",
           private_key_passphrase: "PASSPHRASE"
@@ -118,7 +118,7 @@ describe MESH do
     it "disables ssl in dev mode" do
       # rubocop:disable RSpec/VerifiedDoubles
       allow(Settings).to receive(:mesh).and_return(
-        double(disable_ssl_verification?: true)
+        double(disable_ssl_verification: true)
       )
       # rubocop:enable RSpec/VerifiedDoubles
 
