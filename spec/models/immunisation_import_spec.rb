@@ -110,11 +110,11 @@ describe ImmunisationImport, type: :model do
       it "creates locations, patients, and vaccination records" do
         # stree-ignore
         expect { process! }
-          .to change(immunisation_import.vaccination_records, :count).by(11)
-          .and change(immunisation_import.locations, :count).by(4)
-          .and change(immunisation_import.patients, :count).by(11)
-          .and change(immunisation_import.sessions, :count).by(4)
-          .and change(PatientSession, :count).by(11)
+          .to change(immunisation_import.vaccination_records, :count).by(7)
+          .and change(immunisation_import.locations, :count).by(1)
+          .and change(immunisation_import.patients, :count).by(7)
+          .and change(immunisation_import.sessions, :count).by(1)
+          .and change(PatientSession, :count).by(7)
           .and change(Batch, :count).by(4)
 
         # Second import should not duplicate the vaccination records if they're
@@ -128,6 +128,10 @@ describe ImmunisationImport, type: :model do
           .and not_change(immunisation_import.sessions, :count)
           .and not_change(PatientSession, :count)
           .and not_change(Batch, :count)
+      end
+
+      it "returns statistics on the import" do
+        expect(process!).to eq({ count: 7, ignored_count: 4 })
       end
     end
 
@@ -158,6 +162,10 @@ describe ImmunisationImport, type: :model do
           .and not_change(Batch, :count)
       end
 
+      it "returns statistics on the import" do
+        expect(process!).to eq({ count: 7, ignored_count: 0 })
+      end
+
       it "creates a new session for each date" do
         process!
 
@@ -185,7 +193,7 @@ describe ImmunisationImport, type: :model do
 
       it "doesn't create an additional patient" do
         expect { process! }.to change(immunisation_import.patients, :count).by(
-          10
+          6
         )
       end
 

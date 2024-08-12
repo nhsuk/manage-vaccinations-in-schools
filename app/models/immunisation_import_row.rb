@@ -71,6 +71,8 @@ class ImmunisationImportRow
   def to_vaccination_record
     return unless valid?
 
+    return unless administered
+
     VaccinationRecord.create_with(
       imported_from: @imported_from,
       recorded_at:,

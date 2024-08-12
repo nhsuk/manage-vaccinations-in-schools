@@ -93,7 +93,13 @@ class ImmunisationImport < ApplicationRecord
     parse_rows! if rows.nil?
     return if invalid?
 
-    ActiveRecord::Base.transaction { rows.map(&:to_vaccination_record) }
+    vaccination_records =
+      ActiveRecord::Base.transaction { rows.map(&:to_vaccination_record) }
+
+    {
+      count: vaccination_records.compact.count,
+      ignored_count: vaccination_records.count(&:nil?)
+    }
   end
 
   private

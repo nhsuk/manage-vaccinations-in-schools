@@ -29,11 +29,14 @@ class ImmunisationImportsController < ApplicationController
     end
 
     @immunisation_import.save!
-    @immunisation_import.process!
 
-    flash[
-      :success
-    ] = "#{@immunisation_import.vaccination_records.count} vaccinations uploaded"
+    result = @immunisation_import.process!
+
+    flash[:success] = "#{result[:count]} vaccinations uploaded"
+
+    if (ignored_count = result[:ignored_count]) > 1
+      flash[:info] = "#{ignored_count} un-administered vaccinations ignored"
+    end
 
     redirect_to campaign_immunisation_import_path(
                   @campaign,
