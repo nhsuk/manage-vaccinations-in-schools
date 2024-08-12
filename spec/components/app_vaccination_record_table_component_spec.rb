@@ -59,7 +59,10 @@ describe AppVaccinationRecordTableComponent, type: :component do
     )
     expect(rendered).to have_css(".nhsuk-table__cell", text: "John Smith")
     expect(rendered).to have_link("John Smith")
-    expect(rendered).to have_css(".nhsuk-table__cell", text: "999 999 9999")
+    expect(rendered).to have_css(
+      ".nhsuk-table__cell",
+      text: "999\u00A0\u200D999\u00A0\u200D9999"
+    )
     expect(rendered).to have_css(".nhsuk-table__cell", text: "SW1A 2AA")
     expect(rendered).to have_css(".nhsuk-table__cell", text: "28 May 2000")
     expect(rendered).to have_css(".nhsuk-table__cell", text: "1 January 2020")

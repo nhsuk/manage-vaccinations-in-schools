@@ -60,7 +60,7 @@ describe AppPatientDetailsComponent, type: :component do
       expect(page).to(
         have_css(
           ".nhsuk-summary-list__row .app-u-monospace",
-          text: "123 456 7890"
+          text: "123\u00A0\u200D456\u00A0\u200D7890"
         )
       )
     end

@@ -10,7 +10,12 @@ RSpec.describe PatientsHelper, type: :helper do
       let(:nhs_number) { "0123456789" }
 
       it { should be_html_safe }
-      it { should eq("<span class=\"app-u-monospace\">012 345 6789</span>") }
+
+      it do
+        expect(subject).to eq(
+          "<span class=\"app-u-monospace\">012&nbsp;&zwj;345&nbsp;&zwj;6789</span>"
+        )
+      end
     end
 
     context "when the NHS number is not present" do
