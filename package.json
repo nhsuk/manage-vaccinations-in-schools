@@ -5,7 +5,7 @@
     "@hotwired/stimulus": "^3.2.2",
     "@hotwired/turbo-rails": "^8.0.5",
     "esbuild": "^0.23.0",
-    "govuk-frontend": "^5.4.1",
+    "govuk-frontend": "^5.5.0",
     "idb": "^8.0.0",
     "nhsuk-frontend": "^8.3.0",
     "sass": "^1.77.8",
