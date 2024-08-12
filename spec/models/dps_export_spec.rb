@@ -3,24 +3,33 @@
 require "rails_helper"
 require "csv"
 
-describe DPSExport do
-  let(:vaccination_records) do
-    create_list(
-      :vaccination_record,
-      3,
-      patient_session: create(:patient_session)
-    )
-    VaccinationRecord.all
+describe DPSExport, type: :model do
+  subject(:dps_export) { described_class.new(campaign:) }
+
+  let(:campaign) { patient_session.campaign }
+  let(:patient_session) { create(:patient_session) }
+
+  let!(:unexported_vaccination_records) do
+    create_list(:vaccination_record, 2, patient_session:)
   end
 
-  describe "#to_csv" do
-    subject(:csv) { described_class.new(vaccination_records).to_csv }
+  before do
+    create_list(
+      :vaccination_record,
+      1,
+      patient_session:,
+      exported_to_dps_at: Time.zone.now
+    )
+  end
+
+  describe "#csv" do
+    subject(:csv) { dps_export.csv }
 
     describe "header" do
       subject(:header) { csv.split("\n").first }
 
       it "has all the fields in the correct order" do
-        expect(csv.split("\n").first.split(",")).to eq %w[
+        expect(header.split(",")).to eq %w[
              "NHS_NUMBER"
              "PERSON_FORENAME"
              "PERSON_SURNAME"
@@ -58,19 +67,31 @@ describe DPSExport do
            ]
       end
     end
+
+    describe "body" do
+      subject(:rows) { csv.split("\n").drop(1) }
+
+      it "ignores already exported records" do
+        expect(rows.count).to eq(2)
+      end
+    end
   end
 
-  describe "#export_csv" do
-    subject(:export) { described_class.new(vaccination_records).export_csv }
+  describe "#export!" do
+    subject(:export!) { dps_export.export! }
 
     it "returns the CSV export" do
-      expect(export).to eq described_class.new(vaccination_records).to_csv
+      expect(export!).to eq(dps_export.csv)
     end
 
     it "updates the exported_to_dps_at timestamp" do
       Timecop.freeze do
-        expect { export }.to change {
-          vaccination_records.first.reload.exported_to_dps_at&.change(nsec: 0)
+        expect { export! }.to change {
+          unexported_vaccination_records
+            .first
+            .reload
+            .exported_to_dps_at
+            &.change(nsec: 0)
         }.from(nil).to(Time.zone.now.change(nsec: 0))
       end
     end

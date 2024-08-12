@@ -12,18 +12,12 @@ class VaccinationRecordsController < ApplicationController
     @school = @patient.location
   end
 
-  def dps_export
-    date = Time.zone.today.strftime("%Y-%m-%d")
-    campaign_name = campaign.name.parameterize(preserve_case: true)
-    filename = "DPS-export-#{campaign_name}-#{date}.csv"
-    csv = DPSExport.new(unexported_administered_vaccination_records).export_csv
-    send_data(csv, filename:)
+  def export_dps
+    send_data(dps_export.export!, filename: dps_export.filename)
   end
 
-  def dps_export_reset
-    exported_administered_vaccination_records.update_all(
-      exported_to_dps_at: nil
-    )
+  def reset_dps_export
+    dps_export.reset!
 
     flash[:success] = {
       heading: "Vaccination records have been reset for the DPS export"
@@ -44,10 +38,8 @@ class VaccinationRecordsController < ApplicationController
         .includes(
           :batch,
           :campaign,
-          :location,
           :user,
           :vaccine,
-          campaign: :team,
           patient: :location,
           session: :location
         )
@@ -57,17 +49,7 @@ class VaccinationRecordsController < ApplicationController
         .strict_loading
   end
 
-  def administered_vaccination_records
-    @administered_vaccination_records ||= vaccination_records.administered
-  end
-
-  def unexported_administered_vaccination_records
-    @unexported_administered_vaccination_records ||=
-      administered_vaccination_records.where(exported_to_dps_at: nil)
-  end
-
-  def exported_administered_vaccination_records
-    @exported_administered_vaccination_records ||=
-      administered_vaccination_records.where.not(exported_to_dps_at: nil)
+  def dps_export
+    @dps_export ||= DPSExport.new(campaign:)
   end
 end
