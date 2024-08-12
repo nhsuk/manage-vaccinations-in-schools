@@ -69,6 +69,11 @@ copilot svc exec --env test
 copilot svc logs --since 1h --follow
 ```
 
+### Add a new secret
+
+Add an entry to `copilot/webapp/manifest.yml` manually, then run `copilot secret
+init` to add the secrets to the AWS System Manager's Parameters Store.
+
 ## Setting up a new environment
 
 ### Quick start
