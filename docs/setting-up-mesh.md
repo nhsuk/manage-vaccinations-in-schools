@@ -11,7 +11,7 @@ different in each environment. To get these you'll need:
 
 For development, you can run the [MESH Sandbox](https://github.com/NHSDigital/mesh-sandbox)
 locally without either of these, but SSL verification should disabled by setting
-`Settings.mesh.disable_ssl_verification?` to true. For new environments the
+`Settings.mesh.disable_ssl_verification` to true. For new environments the
 steps below will need to be followed.
 
 ## Getting a MESH Mailbox
