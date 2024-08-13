@@ -47,6 +47,19 @@ describe Patient, type: :model do
 
       it { should validate_absence_of(:school) }
     end
+
+    context "with an invalid school" do
+      subject(:patient) do
+        build(:patient, school: create(:location, :generic_clinic))
+      end
+
+      it "is invalid" do
+        expect(patient.valid?).to be(false)
+        expect(patient.errors[:school]).to include(
+          "must be a school location type"
+        )
+      end
+    end
   end
 
   describe "#year_group" do

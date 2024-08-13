@@ -72,6 +72,7 @@ class Patient < ApplicationRecord
             },
             allow_nil: true
   validates :school, absence: true, if: :home_educated
+  validate :school_is_correct_type
 
   encrypts :first_name,
            :last_name,
@@ -109,5 +110,12 @@ class Patient < ApplicationRecord
 
   def remove_spaces_from_nhs_number
     nhs_number&.gsub!(/\s/, "")
+  end
+
+  def school_is_correct_type
+    location = school
+    if location && !location.school?
+      errors.add(:school, "must be a school location type")
+    end
   end
 end
