@@ -507,6 +507,7 @@ GEM
     ruby-graphviz (1.2.5)
       rexml
     ruby-progressbar (1.13.0)
+    rubyzip (2.3.2)
     rufo (0.18.0)
     sanitize (6.1.0)
       crass (~> 1.0.2)
@@ -668,6 +669,7 @@ DEPENDENCIES
   rspec-html-matchers
   rspec-rails
   rubocop-govuk
+  rubyzip
   rufo
   sentry-rails
   sentry-ruby
