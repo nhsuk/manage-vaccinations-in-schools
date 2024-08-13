@@ -41,5 +41,11 @@ RSpec.describe PatientsHelper, type: :helper do
 
       it { should eq("Waterloo Road") }
     end
+
+    context "when home educated" do
+      let(:patient) { create(:patient, :home_educated) }
+
+      it { should eq("Home educated") }
+    end
   end
 end
