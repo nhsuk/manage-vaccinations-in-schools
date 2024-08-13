@@ -215,10 +215,17 @@ describe DPSExportRow do
 
       it { should_not be_nil }
 
-      context "when the session has a location" do
+      context "when the session has a location with a URN" do
         let(:location) { create(:location, :school, urn: "12345") }
 
         it { should eq("12345") }
+      end
+
+      context "when the session has a location without a URN" do
+        let(:location) { create(:location, :generic_clinic) }
+        let(:team) { create(:team, ods_code: "ABC") }
+
+        it { should eq("ABC") }
       end
 
       context "when the session doesn't have a location" do
@@ -234,10 +241,16 @@ describe DPSExportRow do
 
       it { should_not be_nil }
 
-      context "when the session has a location" do
+      context "when the session has a location with a URN" do
         let(:location) { create(:location, :school) }
 
         it { should eq("https://fhir.hl7.org.uk/Id/urn-school-number") }
+      end
+
+      context "when the session has a location without a URN" do
+        let(:location) { create(:location, :generic_clinic) }
+
+        it { should eq("https://fhir.nhs.uk/Id/ods-organization-code") }
       end
 
       context "when the session doesn't have a location" do

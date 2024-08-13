@@ -27,20 +27,22 @@
 #
 #  fk_rails_...  (imported_from_id => immunisation_imports.id)
 #
-class Location < ApplicationRecord
-  self.inheritance_column = :nil
+require "rails_helper"
 
-  audited
+describe Location, type: :model do
+  describe "validations" do
+    context "with a generic clinic" do
+      subject(:location) { build(:location, :generic_clinic) }
 
-  has_many :sessions
-  has_many :patients, foreign_key: :school_id
-  has_many :consent_forms, through: :sessions
-  belongs_to :imported_from, class_name: "ImmunisationImport", optional: true
+      it { should_not validate_presence_of(:urn) }
+      it { should validate_uniqueness_of(:urn) }
+    end
 
-  enum :type, %w[school generic_clinic]
+    context "with a school" do
+      subject(:location) { build(:location, :school, urn: "abc") }
 
-  validates :name, presence: true
-
-  validates :urn, presence: true, if: :school?
-  validates :urn, uniqueness: true, allow_nil: true
+      it { should validate_presence_of(:urn) }
+      it { should validate_uniqueness_of(:urn) }
+    end
+  end
 end

@@ -13,7 +13,7 @@
 #  town             :text
 #  type             :integer          not null
 #  url              :text
-#  urn              :string           not null
+#  urn              :string
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #  imported_from_id :bigint
@@ -36,8 +36,15 @@ FactoryBot.define do
     county { Faker::Address.county }
     postcode { Faker::Address.postcode }
     url { Faker::Internet.url }
-    urn { rand(100_000..999_999).to_s }
 
-    traits_for_enum :type
+    trait :school do
+      type { :school }
+      sequence(:urn, 100_000, &:to_s)
+    end
+
+    trait :generic_clinic do
+      type { :generic_clinic }
+      urn { nil }
+    end
   end
 end
