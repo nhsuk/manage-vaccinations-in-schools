@@ -696,6 +696,7 @@ DEPENDENCIES
   rspec-html-matchers
   rspec-rails
   rubocop-govuk
+  ruby-progressbar
   rubyzip
   rufo
   sentry-rails

@@ -65,6 +65,7 @@ group :development do
   gem "rails-erd"
   gem "rladr"
   gem "rubocop-govuk", require: false
+  gem "ruby-progressbar"
   gem "rufo", require: false
   gem "solargraph", require: false
   gem "solargraph-rails", require: false

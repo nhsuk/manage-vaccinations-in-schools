@@ -56,6 +56,7 @@ namespace :schools do
   task import: :environment do
     require "csv"
     require "zip"
+    require "ruby-progressbar"
 
     zip_file = Rails.root.join("db/data/edubasealldata.zip")
     puts "Starting schools import. Total locations: #{Location.count}"
@@ -65,10 +66,17 @@ namespace :schools do
       csv_content = csv_entry.get_input_stream.read
 
       total_rows = CSV.parse(csv_content).count - 1 # Subtract 1 for header
-      processed_rows = 0
-      progress_bar_width = 50
       batch_size = 1000
       locations = []
+
+      # rubocop:disable Rails/SaveBang
+      progress_bar =
+        ProgressBar.create(
+          total: total_rows,
+          format: "%a %b\u{15E7}%i %p%% %t",
+          progress_mark: " ",
+          remainder_mark: "\u{FF65}"
+        )
 
       CSV.parse(
         csv_content,
@@ -98,12 +106,7 @@ namespace :schools do
           locations.clear
         end
 
-        # Update progress bar
-        processed_rows += 1
-        progress = (processed_rows.to_f / total_rows * progress_bar_width).to_i
-        percent = (processed_rows.to_f / total_rows * 100).round(2)
-        bar = "#" * progress + " " * (progress_bar_width - progress)
-        print "\rProgress: #{processed_rows}/#{total_rows} [#{bar}] #{percent}%"
+        progress_bar.increment
       end
 
       # Import remaining locations in the last incomplete batch
