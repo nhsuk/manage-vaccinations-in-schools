@@ -13,6 +13,7 @@
 #  date_of_birth            :date
 #  first_name               :string
 #  gender_code              :integer          default("not_known"), not null
+#  home_educated            :boolean
 #  last_name                :string
 #  nhs_number               :string
 #  sent_consent_at          :datetime
