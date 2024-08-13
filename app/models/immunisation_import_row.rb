@@ -99,10 +99,11 @@ class ImmunisationImportRow
           date_of_birth: patient_date_of_birth,
           first_name: patient_first_name,
           gender_code: patient_gender_code,
+          home_educated:,
           imported_from:,
           last_name: patient_last_name,
-          school: location,
-          nhs_number: patient_nhs_number
+          nhs_number: patient_nhs_number,
+          school:
         )
   end
 
@@ -228,6 +229,10 @@ class ImmunisationImportRow
     @data["SCHOOL_URN"]&.strip
   end
 
+  def home_educated
+    school_urn == "999999"
+  end
+
   def session_date
     parse_date("DATE_OF_VACCINATION")
   end
@@ -244,6 +249,12 @@ class ImmunisationImportRow
         name: school_name,
         imported_from:
       ).find_or_create_by!(urn: school_urn)
+  end
+
+  def school
+    return unless valid?
+
+    @school ||= home_educated ? nil : location
   end
 
   def session
