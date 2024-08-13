@@ -10,11 +10,13 @@ describe DPSExportRow do
   let(:vaccine) { create(:vaccine, :gardasil_9, dose: 0.5) }
   let(:campaign) { create(:campaign, team:, vaccines: [vaccine]) }
   let(:location) { create(:location, :school) }
+  let(:school) { create(:location, :school) }
   let(:patient_session) do
     create(
       :patient_session,
       patient_attributes: {
-        date_of_birth: "2012-12-29"
+        date_of_birth: "2012-12-29",
+        school:
       },
       session_attributes: {
         campaign:,
