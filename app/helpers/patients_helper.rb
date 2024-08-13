@@ -15,4 +15,8 @@ module PatientsHelper
       "Not provided"
     end
   end
+
+  def patient_school(patient)
+    (school = patient.school).present? ? school.name : "Unknown school"
+  end
 end

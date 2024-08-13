@@ -25,4 +25,21 @@ RSpec.describe PatientsHelper, type: :helper do
       it { should eq("Not provided") }
     end
   end
+
+  describe "#patient_school" do
+    subject(:patient_school) { helper.patient_school(patient) }
+
+    context "without a school" do
+      let(:patient) { create(:patient) }
+
+      it { should eq("Unknown school") }
+    end
+
+    context "with a school" do
+      let(:school) { create(:location, name: "Waterloo Road") }
+      let(:patient) { create(:patient, school:) }
+
+      it { should eq("Waterloo Road") }
+    end
+  end
 end

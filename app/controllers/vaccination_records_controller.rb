@@ -9,7 +9,7 @@ class VaccinationRecordsController < ApplicationController
     @vaccination_record = vaccination_records.find(params[:id])
     @patient = @vaccination_record.patient
     @session = @vaccination_record.session
-    @school = @patient.location
+    @school = @patient.school
   end
 
   def export_dps
@@ -40,7 +40,7 @@ class VaccinationRecordsController < ApplicationController
           :campaign,
           :user,
           :vaccine,
-          patient: :location,
+          patient: :school,
           session: :location
         )
         .recorded

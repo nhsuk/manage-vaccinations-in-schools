@@ -83,7 +83,7 @@ describe "Verbal consent" do
     expect(page).to have_content(
       ["Date of birth", @patient.date_of_birth.to_fs(:long)].join
     )
-    expect(page).to have_content(["School", @patient.location.name].join)
+    expect(page).to have_content(["School", @patient.school.name].join)
 
     expect(page).to have_content(["Name", @patient.parent.name].join)
     expect(page).to have_content(

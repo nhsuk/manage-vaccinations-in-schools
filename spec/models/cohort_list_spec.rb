@@ -127,7 +127,7 @@ describe CohortList, type: :model do
         nhs_number: "1234567890",
         date_of_birth: Date.new(2010, 1, 1),
         full_name: "Jimmy Smith",
-        location:,
+        school: location,
         address_line_1: "10 Downing Street",
         address_town: "London",
         address_postcode: "SW1A 1AA"
@@ -145,7 +145,7 @@ describe CohortList, type: :model do
         nhs_number: "1234567891",
         date_of_birth: Date.new(2010, 1, 2),
         full_name: "Mark Doe",
-        location:,
+        school: location,
         address_line_1: "11 Downing Street",
         address_town: "London",
         address_postcode: "SW1A 1AA"

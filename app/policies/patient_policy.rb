@@ -8,7 +8,7 @@ class PatientPolicy
     end
 
     def resolve
-      @scope.joins(:location)
+      @scope.joins(:school)
     end
   end
 end

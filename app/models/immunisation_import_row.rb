@@ -101,7 +101,7 @@ class ImmunisationImportRow
           gender_code: patient_gender_code,
           imported_from:,
           last_name: patient_last_name,
-          location:,
+          school: location,
           nhs_number: patient_nhs_number
         )
   end

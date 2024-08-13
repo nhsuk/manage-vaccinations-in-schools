@@ -6,7 +6,7 @@
 <% end %>
 
 <%= h1 page_title: @patient.full_name do %>
-  <span class="nhsuk-caption-l"><%= @patient.location.name %></span>
+  <span class="nhsuk-caption-l"><%= patient_school(@patient) %></span>
   <%= @patient.full_name %>
 <% end %>
 

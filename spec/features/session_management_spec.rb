@@ -49,7 +49,7 @@ describe "Session management" do
     @team = create(:team, :with_one_nurse)
     create(:campaign, :hpv, team: @team)
     @location = create(:location)
-    @patient = create(:patient, location: @location, session: nil)
+    @patient = create(:patient, school: @location)
   end
 
   def when_i_go_to_todays_sessions_as_a_nurse
