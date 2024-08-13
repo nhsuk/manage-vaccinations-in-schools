@@ -31,8 +31,20 @@ class ImmunisationImportRow
             },
             if: :administered
 
-  validates :school_name, presence: true
-  validates :school_urn, presence: true
+  SCHOOL_URN_HOME_EDUCATED = "999999"
+  SCHOOL_URN_UNKNOWN = "888888"
+
+  validates :school_name,
+            presence: true,
+            if: -> { school_urn == SCHOOL_URN_UNKNOWN }
+  validates :school_urn,
+            presence: true,
+            inclusion: {
+              in: -> do
+                Location.school.pluck(:urn) +
+                  [SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN]
+              end
+            }
 
   validates :patient_first_name, presence: true
   validates :patient_last_name, presence: true
@@ -237,7 +249,7 @@ class ImmunisationImportRow
   end
 
   def home_educated
-    school_urn == "999999"
+    school_urn == SCHOOL_URN_HOME_EDUCATED
   end
 
   def session_date

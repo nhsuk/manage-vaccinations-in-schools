@@ -28,6 +28,12 @@ describe ImmunisationImport, type: :model do
     create(:immunisation_import, campaign:, csv:, user:)
   end
 
+  before do
+    create(:location, :school, urn: "110158")
+    create(:location, :school, urn: "120026")
+    create(:location, :school, urn: "144012")
+  end
+
   let(:campaign) { create(:campaign, :flu) }
   let(:file) { "valid_flu.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/immunisation_import/#{file}") }
@@ -111,7 +117,7 @@ describe ImmunisationImport, type: :model do
         # stree-ignore
         expect { process! }
           .to change(immunisation_import.vaccination_records, :count).by(7)
-          .and change(immunisation_import.locations, :count).by(1)
+          .and not_change(immunisation_import.locations, :count)
           .and change(immunisation_import.patients, :count).by(7)
           .and change(immunisation_import.sessions, :count).by(1)
           .and change(PatientSession, :count).by(7)
@@ -143,7 +149,7 @@ describe ImmunisationImport, type: :model do
         # stree-ignore
         expect { process! }
           .to change(immunisation_import.vaccination_records, :count).by(7)
-          .and change(immunisation_import.locations, :count).by(1)
+          .and not_change(immunisation_import.locations, :count)
           .and change(immunisation_import.patients, :count).by(7)
           .and change(immunisation_import.sessions, :count).by(1)
           .and change(PatientSession, :count).by(7)
