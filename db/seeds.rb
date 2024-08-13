@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-FEATURE_FLAGS = %i[dev_tools].freeze
+FEATURE_FLAGS = %i[dev_tools mesh_jobs].freeze
 
 FEATURE_FLAGS.each { |flag| Flipper.add(flag) unless Flipper.exist?(flag) }
 
