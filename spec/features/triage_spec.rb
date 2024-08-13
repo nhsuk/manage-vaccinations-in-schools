@@ -34,7 +34,7 @@ describe "Triage" do
     @team = create(:team, :with_one_nurse)
     @campaign = create(:campaign, :hpv, team: @team)
     @batch = @campaign.batches.first
-    location = create(:location)
+    location = create(:location, :school)
     @session = create(:session, campaign: @campaign, location:)
     @patient =
       create(

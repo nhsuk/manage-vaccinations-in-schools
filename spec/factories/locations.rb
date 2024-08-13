@@ -11,6 +11,7 @@
 #  name             :text
 #  postcode         :text
 #  town             :text
+#  type             :integer          not null
 #  url              :text
 #  urn              :string           not null
 #  created_at       :datetime         not null
@@ -36,5 +37,7 @@ FactoryBot.define do
     postcode { Faker::Address.postcode }
     url { Faker::Internet.url }
     urn { rand(100_000..999_999).to_s }
+
+    traits_for_enum :type
   end
 end

@@ -8,7 +8,7 @@ describe CohortList, type: :model do
   let(:team) { create(:team) }
   # Ensure location URN matches the URN in our fixture files
   let!(:location) do
-    Location.find_by(urn: "123456") || create(:location, urn: "123456")
+    Location.find_by(urn: "123456") || create(:location, :school, urn: "123456")
   end
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_list/#{file}") }
 

@@ -26,7 +26,7 @@ describe "Batches" do
   end
 
   def and_there_is_a_vaccination_session_today_with_one_patient_ready_to_vaccinate
-    location = create(:location)
+    location = create(:location, :school)
     session = create(:session, :in_progress, campaign: @campaign, location:)
 
     create(:patient_session, :consent_given_triage_not_needed, session:)

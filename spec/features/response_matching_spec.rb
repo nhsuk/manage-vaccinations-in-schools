@@ -27,7 +27,7 @@ describe "Response matching" do
     @team = create(:team, :with_one_nurse)
     @user = @team.users.first
     @campaign = create(:campaign, :hpv, team: @team)
-    @school = create(:location, name: "Pilot School")
+    @school = create(:location, :school, name: "Pilot School")
     @session =
       create(
         :session,

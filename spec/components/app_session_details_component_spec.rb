@@ -54,7 +54,7 @@ describe AppSessionDetailsComponent, type: :component do
     let(:session) do
       Session.new(
         draft: false,
-        location: create(:location),
+        location: create(:location, :school),
         campaign: create(:campaign, :hpv),
         date:,
         time_of_day: "all_day"
