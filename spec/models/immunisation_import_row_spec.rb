@@ -602,6 +602,8 @@ describe ImmunisationImportRow, type: :model do
   end
 
   describe "#recorded_at" do
+    subject(:recorded_at) { immunisation_import_row.recorded_at }
+
     let(:data) { {} }
 
     it { should_not be_nil }
