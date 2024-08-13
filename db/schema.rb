@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_30_140204) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_13_073740) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -301,7 +301,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_30_140204) do
     t.string "first_name"
     t.string "last_name"
     t.string "common_name"
-    t.bigint "location_id"
+    t.bigint "school_id"
     t.string "address_line_1"
     t.string "address_line_2"
     t.string "address_town"
@@ -313,9 +313,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_30_140204) do
     t.bigint "imported_from_id"
     t.integer "gender_code", default: 0, null: false
     t.index ["imported_from_id"], name: "index_patients_on_imported_from_id"
-    t.index ["location_id"], name: "index_patients_on_location_id"
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
     t.index ["parent_id"], name: "index_patients_on_parent_id"
+    t.index ["school_id"], name: "index_patients_on_school_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -453,7 +453,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_30_140204) do
   add_foreign_key "locations", "immunisation_imports", column: "imported_from_id"
   add_foreign_key "patient_sessions", "users", column: "created_by_user_id"
   add_foreign_key "patients", "immunisation_imports", column: "imported_from_id"
-  add_foreign_key "patients", "locations"
+  add_foreign_key "patients", "locations", column: "school_id"
   add_foreign_key "patients", "parents"
   add_foreign_key "sessions", "immunisation_imports", column: "imported_from_id"
   add_foreign_key "triage", "patient_sessions"

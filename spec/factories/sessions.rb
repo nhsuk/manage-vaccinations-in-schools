@@ -53,10 +53,12 @@ FactoryBot.define do
     end
 
     patients do
-      create_list :patient,
-                  patients_in_session,
-                  sessions: [instance],
-                  location: instance.location
+      create_list(
+        :patient,
+        patients_in_session,
+        sessions: [instance],
+        school: instance.location
+      )
     end
   end
 end

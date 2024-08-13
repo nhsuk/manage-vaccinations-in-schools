@@ -32,7 +32,7 @@ describe AppActivityLogComponent, type: :component do
   let(:campaign) { create(:campaign, team:) }
   let(:location) { create(:location, name: "Hogwarts") }
   let(:session) { create(:session, campaign:, location:) }
-  let(:patient) { create(:patient, location:) }
+  let(:patient) { create(:patient, school: location) }
 
   before do
     create(

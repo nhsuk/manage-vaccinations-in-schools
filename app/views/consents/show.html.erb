@@ -80,7 +80,7 @@
       
         summary_list.with_row do |row|
           row.with_key { "School" }
-          row.with_value { @consent.patient.location.name }
+          row.with_value { patient_school(@consent.patient) }
         end
       end %>
 <% end %>
