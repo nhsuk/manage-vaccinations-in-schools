@@ -77,6 +77,7 @@ namespace :schools do
           progress_mark: " ",
           remainder_mark: "\u{FF65}"
         )
+      # rubocop:enable Rails/SaveBang
 
       CSV.parse(
         csv_content,
@@ -84,6 +85,7 @@ namespace :schools do
         encoding: "ISO-8859-1:UTF-8"
       ) do |row|
         locations << Location.new(
+          type: :school,
           urn: row["URN"],
           name: row["EstablishmentName"],
           address: [
