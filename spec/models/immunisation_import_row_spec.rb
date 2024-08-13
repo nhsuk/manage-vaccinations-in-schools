@@ -267,6 +267,15 @@ describe ImmunisationImportRow, type: :model do
 
       it { should eq(patient) }
     end
+
+    context "when home educated" do
+      let(:data) { valid_data.merge("SCHOOL_URN" => "999999") }
+
+      it "creates a home educated patient" do
+        expect(patient.home_educated).to be(true)
+        expect(patient.school).to be_nil
+      end
+    end
   end
 
   describe "#administered" do
