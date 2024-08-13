@@ -8,12 +8,12 @@ GIT
 
 GIT
   remote: https://github.com/tvararu/audited
-  revision: f52ac706d6e5faaeeab772face93a45e52eee6b8
+  revision: 07df5d24da35ed7ff5d2136fdd7ac310f852d3aa
   branch: encryption
   specs:
-    audited (5.6.0)
-      activerecord (>= 5.2, < 7.2)
-      activesupport (>= 5.2, < 7.2)
+    audited (5.7.0)
+      activerecord (>= 5.2, < 8.0)
+      activesupport (>= 5.2, < 8.0)
 
 GEM
   remote: https://rubygems.org/
