@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+# To get the latest version of the zip:
+# 1. Go to https://get-information-schools.service.gov.uk/Downloads
+# 2. Check "Establishment fields CSV"
+# 3. Submit
+# 4. Download the zip file
+# 5. Place it in db/data/edubasealldata.zip
 namespace :schools do
   desc "Import schools from DfE GIAS CSV"
   task import: :environment do
