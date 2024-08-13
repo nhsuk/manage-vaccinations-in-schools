@@ -608,6 +608,28 @@ describe ImmunisationImportRow, type: :model do
     it { should_not be_nil }
   end
 
+  describe "#care_setting" do
+    subject(:care_setting) { immunisation_import_row.care_setting }
+
+    context "without a value" do
+      let(:data) { {} }
+
+      it { should be_nil }
+    end
+
+    context "with a valid value" do
+      let(:data) { { "CARE_SETTING" => "1" } }
+
+      it { should eq(1) }
+    end
+
+    context "with an invalid value" do
+      let(:data) { { "CARE_SETTING" => "School" } }
+
+      it { should be_nil }
+    end
+  end
+
   describe "#to_vaccination_record" do
     subject(:vaccination_record) do
       immunisation_import_row.to_vaccination_record

@@ -61,6 +61,14 @@ class ImmunisationImportRow
             },
             unless: :administered
 
+  CARE_SETTING_SCHOOL = 1
+  CARE_SETTING_COMMUNITY = 2
+
+  validates :care_setting,
+            inclusion: [CARE_SETTING_SCHOOL, CARE_SETTING_COMMUNITY],
+            allow_nil: true
+  validates :care_setting, presence: true, if: :requires_care_setting?
+
   def initialize(data:, campaign:, user:, imported_from:)
     @data = data
     @campaign = campaign
@@ -236,6 +244,12 @@ class ImmunisationImportRow
     parse_date("DATE_OF_VACCINATION")
   end
 
+  def care_setting
+    Integer(@data["CARE_SETTING"])
+  rescue ArgumentError, TypeError
+    nil
+  end
+
   private
 
   attr_reader :imported_from
@@ -308,6 +322,10 @@ class ImmunisationImportRow
 
   def maximum_dose_sequence
     vaccine.maximum_dose_sequence
+  end
+
+  def requires_care_setting?
+    vaccine&.type == "hpv"
   end
 
   def parse_date(key)
