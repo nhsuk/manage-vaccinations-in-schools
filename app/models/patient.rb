@@ -71,6 +71,7 @@ class Patient < ApplicationRecord
               with: /\A(?:\d\s*){10}\z/
             },
             allow_nil: true
+  validates :school, absence: true, if: :home_educated
 
   encrypts :first_name,
            :last_name,
