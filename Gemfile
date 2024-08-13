@@ -60,6 +60,7 @@ group :development do
   gem "asciidoctor-diagram"
   gem "dockerfile-rails", ">= 1.0.0"
   gem "hotwire-livereload"
+  gem "mechanize"
   gem "prettier_print", require: false
   gem "rails-erd"
   gem "rladr"
