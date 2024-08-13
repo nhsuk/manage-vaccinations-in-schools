@@ -40,7 +40,15 @@
 #
 require "rails_helper"
 
-describe Patient do
+describe Patient, type: :model do
+  describe "validations" do
+    context "when home educated" do
+      subject(:patient) { build(:patient, :home_educated) }
+
+      it { should validate_absence_of(:school) }
+    end
+  end
+
   describe "#year_group" do
     subject { patient.year_group }
 
