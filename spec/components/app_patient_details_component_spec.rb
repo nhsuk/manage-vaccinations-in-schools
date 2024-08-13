@@ -13,7 +13,7 @@ describe AppPatientDetailsComponent, type: :component do
     let(:patient) do
       create(:patient, nhs_number: 1_234_567_890, common_name: "Homer")
     end
-    let(:school) { create(:location) }
+    let(:school) { create(:location, :school) }
     let(:component) { described_class.new(patient:, session:, school:) }
 
     it "renders the patient's full name" do
@@ -85,7 +85,7 @@ describe AppPatientDetailsComponent, type: :component do
         session:
       )
     end
-    let(:school) { create(:location) }
+    let(:school) { create(:location, :school) }
     let(:component) { described_class.new(consent_form:, session:, school:) }
 
     it "renders the child's full name" do

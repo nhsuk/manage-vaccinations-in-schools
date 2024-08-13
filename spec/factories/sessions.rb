@@ -31,7 +31,7 @@ FactoryBot.define do
     transient { patients_in_session { 0 } }
 
     campaign { association :campaign }
-    location
+    location { association :location, :school }
 
     date { Time.zone.today }
     send_consent_at { date - 14.days }

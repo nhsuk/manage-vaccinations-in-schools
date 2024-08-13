@@ -246,6 +246,7 @@ class ImmunisationImportRow
 
     @location ||=
       Location.create_with(
+        type: :school,
         name: school_name,
         imported_from:
       ).find_or_create_by!(urn: school_urn)

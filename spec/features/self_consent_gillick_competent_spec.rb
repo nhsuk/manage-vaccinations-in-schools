@@ -22,7 +22,7 @@ describe "Self-consent" do
   def given_an_hpv_campaign_is_underway
     @team = create(:team, :with_one_nurse)
     campaign = create(:campaign, :hpv, team: @team)
-    location = create(:location, name: "Pilot School")
+    location = create(:location, :school, name: "Pilot School")
     @session =
       create(:session, :in_future, campaign:, location:, patients_in_session: 1)
     @child = @session.patients.first

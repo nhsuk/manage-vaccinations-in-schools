@@ -39,7 +39,7 @@ describe "Immunisation imports" do
 
   def and_an_hpv_campaign_is_underway
     campaign = create(:campaign, :hpv, team: @team)
-    location = create(:location)
+    location = create(:location, :school)
     @session = create(:session, campaign:, location:)
   end
 

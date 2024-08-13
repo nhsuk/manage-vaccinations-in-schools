@@ -11,6 +11,7 @@
 #  name             :text
 #  postcode         :text
 #  town             :text
+#  type             :integer          not null
 #  url              :text
 #  urn              :string           not null
 #  created_at       :datetime         not null
@@ -27,12 +28,16 @@
 #  fk_rails_...  (imported_from_id => immunisation_imports.id)
 #
 class Location < ApplicationRecord
+  self.inheritance_column = :nil
+
   audited
 
   has_many :sessions
   has_many :patients, foreign_key: :school_id
   has_many :consent_forms, through: :sessions
   belongs_to :imported_from, class_name: "ImmunisationImport", optional: true
+
+  enum :type, %w[school generic_clinic]
 
   validates :name, presence: true
   validates :urn, presence: true, uniqueness: true

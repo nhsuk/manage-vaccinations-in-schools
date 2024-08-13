@@ -8,7 +8,7 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
   let(:component) { described_class.new(vaccination_record) }
 
   let(:administered) { true }
-  let(:location) { create(:location, name: "Hogwarts") }
+  let(:location) { create(:location, :school, name: "Hogwarts") }
   let(:campaign) { create(:campaign, vaccines: [vaccine].compact) }
   let(:session) { create(:session, campaign:, location:) }
   let(:patient_session) { create(:patient_session, session:) }

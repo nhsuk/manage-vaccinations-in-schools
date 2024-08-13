@@ -58,7 +58,7 @@ describe "Patient sorting and filtering" do
 
   def given_that_i_am_signed_in
     @team = create(:team, :with_one_nurse)
-    location = create(:location)
+    location = create(:location, :school)
     @user = @team.users.first
     @campaign = create(:campaign, :hpv, team: @team)
     @session =

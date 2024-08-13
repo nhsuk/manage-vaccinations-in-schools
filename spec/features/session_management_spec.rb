@@ -48,7 +48,7 @@ describe "Session management" do
   def given_my_team_is_running_an_hpv_vaccination_campaign
     @team = create(:team, :with_one_nurse)
     create(:campaign, :hpv, team: @team)
-    @location = create(:location)
+    @location = create(:location, :school)
     @patient = create(:patient, school: @location)
   end
 

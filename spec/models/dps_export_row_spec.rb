@@ -9,7 +9,7 @@ describe DPSExportRow do
   let(:team) { create(:team) }
   let(:vaccine) { create(:vaccine, :gardasil_9, dose: 0.5) }
   let(:campaign) { create(:campaign, team:, vaccines: [vaccine]) }
-  let(:location) { create(:location) }
+  let(:location) { create(:location, :school) }
   let(:patient_session) do
     create(
       :patient_session,
@@ -216,7 +216,7 @@ describe DPSExportRow do
       it { should_not be_nil }
 
       context "when the session has a location" do
-        let(:location) { create(:location, urn: "12345") }
+        let(:location) { create(:location, :school, urn: "12345") }
 
         it { should eq("12345") }
       end
@@ -235,7 +235,7 @@ describe DPSExportRow do
       it { should_not be_nil }
 
       context "when the session has a location" do
-        let(:location) { create(:location) }
+        let(:location) { create(:location, :school) }
 
         it { should eq("https://fhir.hl7.org.uk/Id/urn-school-number") }
       end

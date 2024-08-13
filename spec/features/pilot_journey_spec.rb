@@ -47,7 +47,7 @@ describe "Pilot journey" do
   def given_an_hpv_campaign_is_underway
     @team = create(:team, :with_one_nurse)
     @campaign = create(:campaign, :hpv, team: @team)
-    @school = create(:location, name: "Pilot School")
+    @school = create(:location, :school, name: "Pilot School")
   end
 
   def and_i_am_a_nurse_signed_into_the_service

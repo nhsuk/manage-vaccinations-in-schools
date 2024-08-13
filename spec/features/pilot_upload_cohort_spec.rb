@@ -31,7 +31,7 @@ describe "Pilot - upload cohort" do
 
   def given_the_app_is_setup
     @team = create(:team, :with_one_nurse)
-    create(:location, urn: "123456")
+    create(:location, :school, urn: "123456")
     @user = @team.users.first
   end
 
