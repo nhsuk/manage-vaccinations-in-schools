@@ -64,6 +64,11 @@ FactoryBot.define do
     address_town { Faker::Address.city }
     address_postcode { Faker::Address.postcode }
 
+    trait :home_educated do
+      school { nil }
+      home_educated { true }
+    end
+
     trait :consent_given_triage_not_needed do
       consents do
         create_list(:consent, 1, :given, campaign:, patient: instance)

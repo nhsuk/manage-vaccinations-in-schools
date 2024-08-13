@@ -17,6 +17,12 @@ module PatientsHelper
   end
 
   def patient_school(patient)
-    (school = patient.school).present? ? school.name : "Unknown school"
+    if (school = patient.school).present?
+      school.name
+    elsif patient.home_educated
+      "Home educated"
+    else
+      "Unknown school"
+    end
   end
 end
