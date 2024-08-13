@@ -40,6 +40,7 @@ class Location < ApplicationRecord
   enum :type, %w[school generic_clinic]
 
   validates :name, presence: true
+  validates :url, url: true, allow_nil: true
 
   validates :urn, presence: true, if: :school?
   validates :urn, uniqueness: true, allow_nil: true
