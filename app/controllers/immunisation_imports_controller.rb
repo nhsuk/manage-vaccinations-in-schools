@@ -6,7 +6,12 @@ class ImmunisationImportsController < ApplicationController
   layout "two_thirds", only: :new
 
   def index
-    @immunisation_imports = @campaign.immunisation_imports.order(:created_at)
+    @immunisation_imports =
+      @campaign
+        .immunisation_imports
+        .includes(:user)
+        .order(:created_at)
+        .strict_loading
   end
 
   def new
