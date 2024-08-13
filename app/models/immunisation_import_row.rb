@@ -75,8 +75,7 @@ class ImmunisationImportRow
 
     VaccinationRecord.create_with(
       imported_from: @imported_from,
-      recorded_at:,
-      user: @user
+      recorded_at:
     ).find_or_create_by!(
       administered:,
       delivery_method:,
