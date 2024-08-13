@@ -17,6 +17,31 @@ describe ImmunisationImportRow, type: :model do
   let(:user) { create(:user, teams: [team]) }
   let(:immunisation_import) { create(:immunisation_import, campaign:, user:) }
 
+  let(:nhs_number) { "1234567890" }
+  let(:first_name) { "Harry" }
+  let(:last_name) { "Potter" }
+  let(:date_of_birth) { "20120101" }
+  let(:address_postcode) { "SW1A 1AA" }
+  let(:valid_data) do
+    {
+      "ORGANISATION_CODE" => "abc",
+      "VACCINATED" => "Yes",
+      "ANATOMICAL_SITE" => "nasal",
+      "BATCH_EXPIRY_DATE" => "20210101",
+      "BATCH_NUMBER" => "123",
+      "SCHOOL_NAME" => "Hogwarts",
+      "SCHOOL_URN" => "123456",
+      "PERSON_FORENAME" => first_name,
+      "PERSON_SURNAME" => last_name,
+      "PERSON_DOB" => date_of_birth,
+      "PERSON_POSTCODE" => address_postcode,
+      "PERSON_GENDER_CODE" => "Male",
+      "NHS_NUMBER" => nhs_number,
+      "DATE_OF_VACCINATION" => "20240101",
+      "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV"
+    }
+  end
+
   describe "validations" do
     context "with an empty row" do
       let(:data) { {} }
@@ -181,32 +206,6 @@ describe ImmunisationImportRow, type: :model do
 
   describe "#patient" do
     subject(:patient) { immunisation_import_row.patient }
-
-    let(:nhs_number) { "1234567890" }
-    let(:first_name) { "Harry" }
-    let(:last_name) { "Potter" }
-    let(:date_of_birth) { "20120101" }
-    let(:address_postcode) { "SW1A 1AA" }
-
-    let(:valid_data) do
-      {
-        "ORGANISATION_CODE" => "abc",
-        "VACCINATED" => "Yes",
-        "ANATOMICAL_SITE" => "nasal",
-        "BATCH_EXPIRY_DATE" => "20210101",
-        "BATCH_NUMBER" => "123",
-        "SCHOOL_NAME" => "Hogwarts",
-        "SCHOOL_URN" => "123456",
-        "PERSON_FORENAME" => first_name,
-        "PERSON_SURNAME" => last_name,
-        "PERSON_DOB" => date_of_birth,
-        "PERSON_POSTCODE" => address_postcode,
-        "PERSON_GENDER_CODE" => "Male",
-        "NHS_NUMBER" => nhs_number,
-        "DATE_OF_VACCINATION" => "20240101",
-        "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV"
-      }
-    end
 
     context "without patient data" do
       let(:data) { {} }
@@ -607,5 +606,17 @@ describe ImmunisationImportRow, type: :model do
     let(:data) { {} }
 
     it { should_not be_nil }
+  end
+
+  describe "#to_vaccination_record" do
+    subject(:vaccination_record) do
+      immunisation_import_row.to_vaccination_record
+    end
+
+    let(:data) { valid_data }
+
+    it "does not have a vaccinator as that isn't provided in the import" do
+      expect(vaccination_record.user).to be_nil
+    end
   end
 end
