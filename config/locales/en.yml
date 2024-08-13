@@ -89,6 +89,8 @@ en:
               blank: is required but missing
             patient_postcode:
               blank: is required but missing
+            school_urn:
+              inclusion: The school URN is not recognised. If you’ve checked the URN, and you believe it’s valid, contact our support team.
   activerecord:
     attributes:
       consent:

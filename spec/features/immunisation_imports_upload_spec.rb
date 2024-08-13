@@ -6,6 +6,7 @@ describe "Immunisation imports" do
   scenario "User uploads a file and views vaccination records" do
     given_i_am_signed_in
     and_an_hpv_campaign_is_underway
+    and_school_locations_exist
 
     when_i_go_to_the_reports_page
     then_i_should_see_the_upload_link
@@ -41,6 +42,12 @@ describe "Immunisation imports" do
     campaign = create(:campaign, :hpv, team: @team)
     location = create(:location, :school)
     @session = create(:session, campaign:, location:)
+  end
+
+  def and_school_locations_exist
+    create(:location, :school, urn: "110158")
+    create(:location, :school, urn: "120026")
+    create(:location, :school, urn: "144012")
   end
 
   def when_i_go_to_the_reports_page

@@ -42,6 +42,8 @@ describe ImmunisationImportRow, type: :model do
     }
   end
 
+  before { create(:location, :school, urn: "123456") }
+
   describe "validations" do
     context "with an empty row" do
       let(:data) { {} }
