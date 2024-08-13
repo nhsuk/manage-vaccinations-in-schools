@@ -96,9 +96,11 @@ class AppVaccinationRecordDetailsComponent < ViewComponent::Base
         row.with_value { @vaccination_record.recorded_at.to_fs(:long) }
       end
 
-      summary_list.with_row do |row|
-        row.with_key { "Nurse" }
-        row.with_value { @vaccination_record.user.full_name }
+      if @vaccination_record.user.present?
+        summary_list.with_row do |row|
+          row.with_key { "Nurse" }
+          row.with_value { @vaccination_record.user.full_name }
+        end
       end
 
       summary_list.with_row do |row|
