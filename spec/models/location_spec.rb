@@ -8,7 +8,7 @@
 #  address          :text
 #  county           :text
 #  locality         :text
-#  name             :text
+#  name             :text             not null
 #  postcode         :text
 #  town             :text
 #  type             :integer          not null
@@ -31,6 +31,8 @@ require "rails_helper"
 
 describe Location, type: :model do
   describe "validations" do
+    it { should validate_presence_of(:name) }
+
     context "with a generic clinic" do
       subject(:location) { build(:location, :generic_clinic) }
 

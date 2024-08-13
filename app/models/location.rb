@@ -8,7 +8,7 @@
 #  address          :text
 #  county           :text
 #  locality         :text
-#  name             :text
+#  name             :text             not null
 #  postcode         :text
 #  town             :text
 #  type             :integer          not null
