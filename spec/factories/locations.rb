@@ -39,14 +39,16 @@ FactoryBot.define do
     postcode { Faker::Address.postcode }
     url { Faker::Internet.url }
 
-    trait :school do
-      type { :school }
-      sequence(:urn, 100_000, &:to_s)
-    end
-
     trait :generic_clinic do
       type { :generic_clinic }
+      sequence(:ods_code, 10_000, &:to_s)
       urn { nil }
+    end
+
+    trait :school do
+      type { :school }
+      ods_code { nil }
+      sequence(:urn, 100_000, &:to_s)
     end
   end
 end
