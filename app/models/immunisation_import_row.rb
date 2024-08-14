@@ -95,6 +95,7 @@ class ImmunisationImportRow
 
     VaccinationRecord.create_with(
       imported_from: @imported_from,
+      notes:,
       recorded_at:
     ).find_or_create_by!(
       administered:,
@@ -138,6 +139,10 @@ class ImmunisationImportRow
           location:,
           time_of_day: :all_day
         )
+  end
+
+  def notes
+    "Vaccinated at #{school_name}" if school_name.present? && location.nil?
   end
 
   def administered
