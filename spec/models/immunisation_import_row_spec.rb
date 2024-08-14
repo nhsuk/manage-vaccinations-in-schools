@@ -377,6 +377,71 @@ describe ImmunisationImportRow, type: :model do
     end
   end
 
+  describe "#notes" do
+    subject(:notes) { immunisation_import_row.notes }
+
+    context "without data" do
+      let(:data) { {} }
+
+      it { should be_nil }
+    end
+
+    context "with a school" do
+      let(:data) { valid_data }
+
+      it { should be_nil }
+    end
+
+    context "when home educated and community care setting" do
+      let(:data) do
+        valid_data.merge("SCHOOL_URN" => "999999", "CARE_SETTING" => "2")
+      end
+
+      it { should be_nil }
+    end
+
+    context "when home educated and unknown care setting" do
+      let(:data) { valid_data.merge("SCHOOL_URN" => "999999") }
+
+      it { should be_nil }
+    end
+
+    context "with an unknown school and school care setting" do
+      let(:data) do
+        valid_data.merge(
+          "SCHOOL_URN" => "888888",
+          "SCHOOL_NAME" => "Waterloo Road",
+          "CARE_SETTING" => "1"
+        )
+      end
+
+      it { should eq("Vaccinated at Waterloo Road") }
+    end
+
+    context "with an unknown school and community care setting" do
+      let(:data) do
+        valid_data.merge(
+          "SCHOOL_URN" => "888888",
+          "SCHOOL_NAME" => "Waterloo Road",
+          "CARE_SETTING" => "2"
+        )
+      end
+
+      it { should be_nil }
+    end
+
+    context "with an unknown school and unknown case setting" do
+      let(:data) do
+        valid_data.merge(
+          "SCHOOL_URN" => "888888",
+          "SCHOOL_NAME" => "Waterloo Road"
+        )
+      end
+
+      it { should eq("Vaccinated at Waterloo Road") }
+    end
+  end
+
   describe "#administered" do
     subject(:administered) { immunisation_import_row.administered }
 
