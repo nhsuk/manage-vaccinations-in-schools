@@ -123,6 +123,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_19_065914) do
     t.index ["campaign_id"], name: "index_dps_exports_on_campaign_id"
   end
 
+  create_table "dps_exports_vaccination_records", id: false, force: :cascade do |t|
+    t.bigint "dps_export_id", null: false
+    t.bigint "vaccination_record_id", null: false
+    t.index ["dps_export_id", "vaccination_record_id"], name: "index_dps_exports_vaccination_records_uniqueness", unique: true
+    t.index ["vaccination_record_id", "dps_export_id"], name: "index_vaccination_records_dps_exports"
+  end
+
   create_table "flipper_features", force: :cascade do |t|
     t.string "key", null: false
     t.datetime "created_at", null: false
@@ -425,7 +432,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_19_065914) do
     t.text "notes"
     t.bigint "vaccine_id"
     t.bigint "imported_from_id"
-    t.datetime "exported_to_dps_at"
     t.integer "dose_sequence", null: false
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.datetime "administered_at"
