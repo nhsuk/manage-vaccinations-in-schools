@@ -1,5 +1,4 @@
-<%= h1 @campaign.name, page_title: "#{@campaign.name} – School sessions",
-                      size: "l" %>
+<%= content_for :page_title, "#{@campaign.name} – School sessions" %>
 
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
@@ -7,6 +6,8 @@
                                           { text: @campaign.name, href: campaign_path(@campaign) },
                                         ]) %>
 <% end %>
+
+<%= render "name_and_academic_year" %>
 
 <%= render AppSecondaryNavigationComponent.new do |nav|
       nav.with_item(
