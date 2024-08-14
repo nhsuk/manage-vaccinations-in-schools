@@ -185,7 +185,7 @@ class DPSExportRow
   end
 
   def location_code
-    location&.urn.presence || team.ods_code
+    location&.urn.presence || location&.ods_code.presence || team.ods_code
   end
 
   def location_code_type_uri
