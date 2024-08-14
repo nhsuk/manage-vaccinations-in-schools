@@ -6,6 +6,7 @@
 #
 #  id                  :bigint           not null, primary key
 #  brand               :text             not null
+#  discontinued        :boolean          default(FALSE), not null
 #  dose                :decimal(, )      not null
 #  gtin                :text
 #  manufacturer        :text             not null
@@ -42,6 +43,10 @@ FactoryBot.define do
 
     after(:create) do |vaccine, evaluator|
       create_list(:batch, evaluator.batch_count, vaccine:)
+    end
+
+    trait :discontinued do
+      discontinued { true }
     end
 
     trait :flu do
