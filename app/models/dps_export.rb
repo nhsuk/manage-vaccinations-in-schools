@@ -5,7 +5,7 @@
 # Table name: dps_exports
 #
 #  id          :bigint           not null, primary key
-#  filename    :string
+#  filename    :string           not null
 #  sent_at     :datetime
 #  status      :string           default("pending"), not null
 #  created_at  :datetime         not null
@@ -24,6 +24,8 @@
 require "csv"
 
 class DPSExport < ApplicationRecord
+  after_create :set_filename
+
   belongs_to :campaign
 
   def csv
@@ -43,17 +45,17 @@ class DPSExport < ApplicationRecord
     end
   end
 
-  def filename
-    date = Time.zone.today.strftime("%Y-%m-%d")
-    campaign_name = campaign.name.parameterize(preserve_case: true)
-    "Vaccinations-#{campaign_name}-#{date}.csv"
-  end
-
   def reset!
     exported_vaccination_records.update_all(exported_to_dps_at: nil)
   end
 
   private
+
+  def set_filename
+    date = created_at.strftime("%Y-%m-%d")
+    campaign_name = campaign.name.parameterize(preserve_case: true)
+    update!(filename: "Vaccinations-#{campaign_name}-#{date}.csv")
+  end
 
   def vaccination_records
     @vaccination_records ||=

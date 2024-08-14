@@ -5,7 +5,7 @@
 # Table name: dps_exports
 #
 #  id          :bigint           not null, primary key
-#  filename    :string
+#  filename    :string           not null
 #  sent_at     :datetime
 #  status      :string           default("pending"), not null
 #  created_at  :datetime         not null

@@ -109,7 +109,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_14_111051) do
   create_table "dps_exports", force: :cascade do |t|
     t.string "message_id"
     t.string "status", default: "pending", null: false
-    t.string "filename"
+    t.string "filename", null: false
     t.datetime "sent_at", precision: nil
     t.bigint "campaign_id", null: false
     t.datetime "created_at", null: false
