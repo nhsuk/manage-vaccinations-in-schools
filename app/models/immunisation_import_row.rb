@@ -126,6 +126,20 @@ class ImmunisationImportRow
         )
   end
 
+  def session
+    return unless valid?
+
+    @session ||=
+      @campaign
+        .sessions
+        .create_with(imported_from:)
+        .find_or_create_by!(
+          date: session_date,
+          location:,
+          time_of_day: :all_day
+        )
+  end
+
   def administered
     vaccinated = @data["VACCINATED"]&.downcase
 
@@ -270,31 +284,31 @@ class ImmunisationImportRow
     return unless valid?
 
     @location ||=
-      Location.create_with(
-        type: :school,
-        name: school_name,
-        imported_from:
-      ).find_or_create_by!(urn: school_urn)
+      if school.present? &&
+           (care_setting.nil? || care_setting == CARE_SETTING_SCHOOL)
+        school
+      elsif home_educated || care_setting == CARE_SETTING_COMMUNITY
+        generic_clinic
+      end
   end
 
   def school
     return unless valid?
 
-    @school ||= home_educated ? nil : location
+    @school ||=
+      if school_urn != SCHOOL_URN_HOME_EDUCATED &&
+           school_urn != SCHOOL_URN_UNKNOWN
+        Location.find_by!(urn: school_urn)
+      end
   end
 
-  def session
+  def generic_clinic
     return unless valid?
 
-    @session ||=
-      @campaign
-        .sessions
-        .create_with(imported_from:)
-        .find_or_create_by!(
-          date: session_date,
-          location:,
-          time_of_day: :all_day
-        )
+    @generic_clinic ||=
+      Location.create_with(
+        name: "Generic #{@user.team.name} clinic"
+      ).find_or_create_by!(type: :generic_clinic, ods_code: @user.team.ods_code)
   end
 
   def patient_session

@@ -269,12 +269,110 @@ describe ImmunisationImportRow, type: :model do
       it { should eq(patient) }
     end
 
+    context "with a school" do
+      let(:data) { valid_data }
+
+      it "creates a patient with a school" do
+        expect(patient.home_educated).to be(false)
+        expect(patient.school).not_to be_nil
+      end
+    end
+
     context "when home educated" do
       let(:data) { valid_data.merge("SCHOOL_URN" => "999999") }
 
       it "creates a home educated patient" do
         expect(patient.home_educated).to be(true)
         expect(patient.school).to be_nil
+      end
+    end
+
+    context "with an unknown school" do
+      let(:data) { valid_data.merge("SCHOOL_URN" => "888888") }
+
+      it "creates a patient with an unknown school" do
+        expect(patient.home_educated).to be(false)
+        expect(patient.school).to be_nil
+      end
+    end
+  end
+
+  describe "#session" do
+    subject(:session) { immunisation_import_row.session }
+
+    context "without data" do
+      let(:data) { {} }
+
+      it { should be_nil }
+    end
+
+    context "with a school" do
+      let(:data) { valid_data }
+
+      it "sets the location to the patient's school" do
+        expect(session.location).to be_school
+      end
+    end
+
+    context "when home educated and community care setting" do
+      let(:data) do
+        valid_data.merge("SCHOOL_URN" => "999999", "CARE_SETTING" => "2")
+      end
+
+      it "sets the location to a generic clinic" do
+        expect(session.location).to be_generic_clinic
+        expect(session.location.ods_code).to eq(team.ods_code)
+      end
+    end
+
+    context "when home educated and unknown care setting" do
+      let(:data) { valid_data.merge("SCHOOL_URN" => "999999") }
+
+      it "sets the location to a generic clinic" do
+        expect(session.location).to be_generic_clinic
+        expect(session.location.ods_code).to eq(team.ods_code)
+      end
+    end
+
+    context "with an unknown school and school care setting" do
+      let(:data) do
+        valid_data.merge(
+          "SCHOOL_URN" => "888888",
+          "SCHOOL_NAME" => "Waterloo Road",
+          "CARE_SETTING" => "1"
+        )
+      end
+
+      it "doesn't set a location" do
+        expect(session.location).to be_nil
+      end
+    end
+
+    context "with an unknown school and community care setting" do
+      let(:data) do
+        valid_data.merge(
+          "SCHOOL_URN" => "888888",
+          "SCHOOL_NAME" => "Waterloo Road",
+          "CARE_SETTING" => "2"
+        )
+      end
+
+      it "sets the location to a generic clinic" do
+        expect(session.location).to be_generic_clinic
+        expect(session.location.ods_code).to eq(team.ods_code)
+      end
+    end
+
+    context "with an unknown school and unknown case setting" do
+      let(:data) do
+        valid_data.merge(
+          "SCHOOL_URN" => "888888",
+          "SCHOOL_NAME" => "Waterloo Road"
+        )
+      end
+
+      it "doesn't set a location" do
+        expect(session.location).to be_nil
       end
     end
   end
