@@ -4,11 +4,12 @@
 #
 # Table name: campaigns
 #
-#  id         :bigint           not null, primary key
-#  name       :string           not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  team_id    :integer
+#  id            :bigint           not null, primary key
+#  academic_year :integer          not null
+#  name          :string           not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  team_id       :integer
 #
 # Foreign Keys
 #
