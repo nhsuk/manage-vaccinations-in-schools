@@ -9,7 +9,6 @@
 #  delivery_method    :integer
 #  delivery_site      :integer
 #  dose_sequence      :integer          not null
-#  exported_to_dps_at :datetime
 #  notes              :text
 #  reason             :integer
 #  recorded_at        :datetime
