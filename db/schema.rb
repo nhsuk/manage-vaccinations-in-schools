@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_13_124016) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_14_070427) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -259,7 +259,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_13_124016) do
     t.string "urn"
     t.bigint "imported_from_id"
     t.integer "type", null: false
+    t.string "ods_code"
     t.index ["imported_from_id"], name: "index_locations_on_imported_from_id"
+    t.index ["ods_code"], name: "index_locations_on_ods_code", unique: true
     t.index ["urn"], name: "index_locations_on_urn", unique: true
   end
 
