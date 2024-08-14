@@ -29,9 +29,7 @@
 require "rails_helper"
 
 describe HealthQuestion do
-  let(:vaccine) do
-    create :vaccine, type: "tester", brand: "Tester", method: "injection"
-  end
+  let(:vaccine) { create(:vaccine, brand: "Tester", method: "injection") }
   let!(:hqs) { create_list :health_question, 3, vaccine: }
 
   describe ".first_health_question" do

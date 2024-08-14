@@ -26,7 +26,7 @@
 #  index_vaccines_on_snomed_product_term     (snomed_product_term) UNIQUE
 #
 class Vaccine < ApplicationRecord
-  self.inheritance_column = :_type_disabled
+  self.inheritance_column = nil
 
   audited
 
@@ -41,18 +41,18 @@ class Vaccine < ApplicationRecord
   validates :method, presence: true
   validates :snomed_product_code, presence: true, uniqueness: true
   validates :snomed_product_term, presence: true, uniqueness: true
-  validates :type, presence: true
 
   enum :method, %i[injection nasal]
+  enum :type, { flu: "flu", hpv: "hpv" }, validate: true
 
   delegate :first_health_question, to: :health_questions
 
   def contains_gelatine?
-    type.downcase == "flu" && nasal?
+    flu? && nasal?
   end
 
   def common_delivery_sites
-    if type.downcase == "hpv"
+    if hpv?
       %w[left_arm_upper_position right_arm_upper_position]
     else
       raise NotImplementedError,
@@ -61,26 +61,10 @@ class Vaccine < ApplicationRecord
   end
 
   def maximum_dose_sequence
-    if type.downcase == "flu"
-      1
-    elsif type.downcase == "hpv"
-      3
-    else
-      raise NotImplementedError,
-            "Maximum dose sequence not implemented for #{type} vaccines."
-    end
+    { "flu" => 1, "hpv" => 3 }.fetch(type)
   end
 
-  def seasonal?
-    if type.downcase == "flu"
-      true
-    elsif type.downcase == "hpv"
-      false
-    else
-      raise NotImplementedError,
-            "Seasonal not implemented for #{type} vaccines."
-    end
-  end
+  alias_method :seasonal?, :flu?
 
   def available_delivery_sites
     if injection?
@@ -94,29 +78,24 @@ class Vaccine < ApplicationRecord
     end
   end
 
+  AVAILABLE_DELIVERY_METHODS_BY_TYPE = {
+    "hpv" => %w[intramuscular subcutaneous],
+    "flu" => %w[nasal_spray]
+  }.freeze
+
   def available_delivery_methods
-    if type.downcase == "hpv"
-      %w[intramuscular subcutaneous]
-    elsif type.downcase == "flu"
-      %w[nasal_spray]
-    else
-      raise NotImplementedError,
-            "Available delivery methods not implemented for #{type} vaccines."
-    end
+    AVAILABLE_DELIVERY_METHODS_BY_TYPE.fetch(type)
   end
 
+  SNOMED_PROCEDURE_CODE_AND_TERM_BY_TYPE = {
+    "hpv" => [
+      "761841000",
+      "Administration of vaccine product containing only Human papillomavirus antigen (procedure)"
+    ],
+    "flu" => ["822851000000102", "Seasonal influenza vaccination (procedure)"]
+  }.freeze
+
   def snomed_procedure_code_and_term
-    case type.downcase
-    when "hpv"
-      [
-        "761841000",
-        "Administration of vaccine product containing only Human papillomavirus antigen (procedure)"
-      ]
-    when "flu"
-      ["822851000000102", "Seasonal influenza vaccination (procedure)"]
-    else
-      raise NotImplementedError,
-            "SNOMED procedure code and term not implemented for #{type} vaccines."
-    end
+    SNOMED_PROCEDURE_CODE_AND_TERM_BY_TYPE.fetch(type)
   end
 end
