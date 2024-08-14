@@ -30,6 +30,10 @@
 require "rails_helper"
 
 describe Vaccine, type: :model do
+  describe "validation" do
+    it { should validate_inclusion_of(:type).in_array(%w[flu hpv]) }
+  end
+
   describe "#contains_gelatine?" do
     it "returns true if the vaccine is a nasal flu vaccine" do
       vaccine = build(:vaccine, :fluenz_tetra)
@@ -64,19 +68,18 @@ describe Vaccine, type: :model do
   end
 
   describe "#seasonal?" do
-    it "returns true if the vaccine is a flu vaccine" do
-      vaccine = build(:vaccine, :flu)
-      expect(vaccine.seasonal?).to be true
+    subject(:seasonal?) { vaccine.seasonal? }
+
+    context "with a Flu vaccine" do
+      let(:vaccine) { build(:vaccine, :flu) }
+
+      it { should be(true) }
     end
 
-    it "returns false for HPV" do
-      vaccine = build(:vaccine, :gardasil_9)
-      expect(vaccine.seasonal?).to be false
-    end
+    context "with an HPV vaccine" do
+      let(:vaccine) { build(:vaccine, :hpv) }
 
-    it "raises an error for an unknown vaccine type" do
-      vaccine = build(:vaccine, type: "unknown")
-      expect { vaccine.seasonal? }.to raise_error(NotImplementedError)
+      it { should be(false) }
     end
   end
 end
