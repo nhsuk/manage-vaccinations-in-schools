@@ -38,11 +38,10 @@ class Vaccine < ApplicationRecord
   validates :dose, presence: true
   validates :gtin, uniqueness: true, allow_nil: true
   validates :manufacturer, presence: true
-  validates :method, presence: true
   validates :snomed_product_code, presence: true, uniqueness: true
   validates :snomed_product_term, presence: true, uniqueness: true
 
-  enum :method, %i[injection nasal]
+  enum :method, %i[injection nasal], validate: true
   enum :type, { flu: "flu", hpv: "hpv" }, validate: true
 
   delegate :first_health_question, to: :health_questions
@@ -66,16 +65,15 @@ class Vaccine < ApplicationRecord
 
   alias_method :seasonal?, :flu?
 
-  def available_delivery_sites
-    if injection?
+  AVAILABLE_DELIVERY_SITES_BY_METHOD = {
+    "injection" =>
       VaccinationRecord.delivery_sites.keys -
-        %w[left_buttock right_buttock nose]
-    elsif nasal?
-      %w[nose]
-    else
-      raise NotImplementedError,
-            "Available delivery sites not implemented for #{method} vaccine."
-    end
+        %w[left_buttock right_buttock nose],
+    "nasal" => %w[nose]
+  }.freeze
+
+  def available_delivery_sites
+    AVAILABLE_DELIVERY_SITES_BY_METHOD.fetch(method)
   end
 
   AVAILABLE_DELIVERY_METHODS_BY_TYPE = {
