@@ -76,10 +76,12 @@ class VaccinationRecord < ApplicationRecord
   has_one :campaign, through: :session
   has_one :location, through: :session
   has_one :team, through: :campaign
+  has_and_belongs_to_many :dps_exports
 
   scope :administered, -> { where.not(administered_at: nil) }
   scope :recorded, -> { where.not(recorded_at: nil) }
   scope :draft, -> { rewhere(recorded_at: nil) }
+  scope :unexported, -> { where.missing(:dps_exports) }
 
   default_scope { recorded }
 

@@ -25,28 +25,18 @@ require "csv"
 
 class DPSExport < ApplicationRecord
   after_create :set_filename
+  after_create :populate
 
   belongs_to :campaign
+  has_and_belongs_to_many :vaccination_records
 
   def csv
     @csv ||=
       CSV.generate(headers: true, force_quotes: true) do |csv|
         csv << DPSExportRow::FIELDS.map(&:upcase)
 
-        unexported_vaccination_records.each { csv << DPSExportRow.new(_1).to_a }
+        vaccination_records.each { csv << DPSExportRow.new(_1).to_a }
       end
-  end
-
-  def export!
-    csv.tap do
-      unexported_vaccination_records.update_all(
-        exported_to_dps_at: Time.zone.now
-      )
-    end
-  end
-
-  def reset!
-    exported_vaccination_records.update_all(exported_to_dps_at: nil)
   end
 
   private
@@ -57,24 +47,14 @@ class DPSExport < ApplicationRecord
     update!(filename: "Vaccinations-#{campaign_name}-#{date}.csv")
   end
 
-  def vaccination_records
-    @vaccination_records ||=
-      VaccinationRecord
-        .includes(:batch, :location, :patient, :session, :team, :vaccine)
-        .where(sessions: { campaign: })
-        .recorded
-        .administered
-        .order(:recorded_at)
-        .strict_loading
-  end
-
-  def unexported_vaccination_records
-    @unexported_vaccination_records ||=
-      vaccination_records.where(exported_to_dps_at: nil)
-  end
-
-  def exported_vaccination_records
-    @exported_vaccination_records ||=
-      vaccination_records.where.not(exported_to_dps_at: nil)
+  def populate
+    vaccination_records << VaccinationRecord
+      .includes(:batch, :location, :patient, :session, :team, :vaccine)
+      .where(sessions: { campaign: })
+      .recorded
+      .administered
+      .unexported
+      .order(:recorded_at)
+      .strict_loading
   end
 end
