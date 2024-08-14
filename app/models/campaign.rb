@@ -28,4 +28,11 @@ class Campaign < ApplicationRecord
   has_many :triage, dependent: :destroy
   has_many :vaccination_records, through: :patient_sessions
   has_many :dps_exports, dependent: :destroy
+
+  validates :academic_year,
+            presence: true,
+            comparison: {
+              greater_than_or_equal_to: 2000,
+              less_than_or_equal_to: Time.zone.today.year + 5
+            }
 end
