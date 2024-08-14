@@ -16,6 +16,19 @@ namespace :mesh do
     puts response.body
   end
 
+  desc "Track message sent via MESH"
+  task "track_message", [:message_id] => :environment do |_, args|
+    message_id = args[:message_id]
+    response = MESH.track_message(message_id)
+
+    warn response.status unless response.status == 200
+    if $stdout.tty? && response.body.present?
+      puts JSON.pretty_generate(JSON.parse(response.body))
+    else
+      puts response.body
+    end
+  end
+
   desc "Check MESH inbox, listing any messages"
   task "check_inbox" => :environment do
     response = MESH.connection.get("inbox")
