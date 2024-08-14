@@ -49,6 +49,10 @@ module MESH
     connection.post("outbox", Zlib.gzip(data), headers)
   end
 
+  def self.track_message(message_id)
+    connection.get("outbox/tracking", messageID: message_id)
+  end
+
   def self.generate_authorisation
     nonce = SecureRandom.uuid
     nonce_count = 1

@@ -79,6 +79,64 @@ describe MESH do
     end
   end
 
+  describe "#track_message" do
+    let(:response_body) do
+      JSON.generate(
+        {
+          message_id: "MESSAGEID",
+          local_id: "",
+          workflow_id: "dps export",
+          filename: "MESSAGEID.dat",
+          expiry_time: "2024-08-28T13:59:32.079731",
+          upload_timestamp: "2024-08-23T13:59:32.079939",
+          recipient: "X26ABC3",
+          recipient_name: "TESTMB3",
+          recipient_ods_code: "X27",
+          recipient_org_code: "X27",
+          recipient_org_name: "",
+          status_success: true,
+          status: "accepted"
+        }
+      )
+    end
+
+    before do
+      stub_request(
+        :get,
+        "https://localhost:8700/messageexchange/X26ABC1/outbox/tracking?messageID=MESSAGEID"
+      ).to_return(status: 200, body: response_body, headers: {})
+    end
+
+    it "makes a request to the correct endpoint" do
+      described_class.track_message("MESSAGEID")
+
+      expect(
+        a_request(
+          :get,
+          "https://localhost:8700/messageexchange/X26ABC1/outbox/tracking"
+        ).with(
+          query: {
+            "messageID" => "MESSAGEID"
+          },
+          headers: {
+            "Accept-Encoding" => "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
+            "User-Agent" => /Faraday v.+/,
+            "Mex-Clientversion" => "Mavis 1.0.0",
+            "Mex-Osarchitecture" => "mex-osarchitecture test",
+            "Mex-Osname" => "mex-osname test",
+            "Mex-Osversion" => "mex-osversion test"
+          }
+        )
+      ).to have_been_made
+    end
+
+    it "returns the response" do
+      response = described_class.track_message("MESSAGEID")
+      expect(response.body).to eq(response_body)
+      expect(response.status).to eq(200)
+    end
+  end
+
   describe "#generate_authorisation" do
     it "returns the correct string" do
       # Test authorisation header generated with
