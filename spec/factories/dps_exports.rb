@@ -24,5 +24,21 @@
 FactoryBot.define do
   factory :dps_export do
     campaign { association :campaign, :active }
+    sequence(:filename) { |n| "dps_export_#{n}.csv" }
+    status { "pending" }
+
+    trait :with_message_id do
+      sequence(:message_id, &:to_s)
+    end
+
+    trait :accepted do
+      with_message_id
+      status { "accepted" }
+    end
+
+    trait :acknowledged do
+      with_message_id
+      status { "acknowledged" }
+    end
   end
 end
