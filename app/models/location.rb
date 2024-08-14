@@ -44,6 +44,9 @@ class Location < ApplicationRecord
   validates :name, presence: true
   validates :url, url: true, allow_nil: true
 
+  validates :ods_code, presence: true, if: :generic_clinic?
+  validates :ods_code, uniqueness: true, allow_nil: true
+
   validates :urn, presence: true, if: :school?
   validates :urn, uniqueness: true, allow_nil: true
 end

@@ -36,7 +36,10 @@ describe Location, type: :model do
     it { should validate_presence_of(:name) }
 
     context "with a generic clinic" do
-      subject(:location) { build(:location, :generic_clinic) }
+      subject(:location) { build(:location, :generic_clinic, ods_code: "abc") }
+
+      it { should validate_presence_of(:ods_code) }
+      it { should validate_uniqueness_of(:ods_code) }
 
       it { should_not validate_presence_of(:urn) }
       it { should validate_uniqueness_of(:urn) }
@@ -44,6 +47,9 @@ describe Location, type: :model do
 
     context "with a school" do
       subject(:location) { build(:location, :school, urn: "abc") }
+
+      it { should_not validate_presence_of(:ods_code) }
+      it { should validate_uniqueness_of(:ods_code) }
 
       it { should validate_presence_of(:urn) }
       it { should validate_uniqueness_of(:urn) }
