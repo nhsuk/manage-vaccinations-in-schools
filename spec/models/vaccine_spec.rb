@@ -6,6 +6,7 @@
 #
 #  id                  :bigint           not null, primary key
 #  brand               :text             not null
+#  discontinued        :boolean          default(FALSE), not null
 #  dose                :decimal(, )      not null
 #  gtin                :text
 #  manufacturer        :text             not null

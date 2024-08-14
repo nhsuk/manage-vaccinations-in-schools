@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_14_111051) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_14_151845) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -442,6 +442,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_14_111051) do
     t.string "snomed_product_code", null: false
     t.string "snomed_product_term", null: false
     t.text "nivs_name", null: false
+    t.boolean "discontinued", default: false, null: false
     t.index ["gtin"], name: "index_vaccines_on_gtin", unique: true
     t.index ["manufacturer", "brand"], name: "index_vaccines_on_manufacturer_and_brand", unique: true
     t.index ["nivs_name"], name: "index_vaccines_on_nivs_name", unique: true
