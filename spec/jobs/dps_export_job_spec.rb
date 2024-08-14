@@ -6,12 +6,12 @@ describe DPSExportJob, type: :job do
   before { allow(MESH).to receive(:send_file) }
 
   it "sends the DPS export to MESH" do
-    allow(DPSExport).to receive(:create!).and_return(
-      instance_double(DPSExport, export!: "csv")
-    )
+    dps_export_double = instance_double(DPSExport, csv: "csv")
+    allow(DPSExport).to receive(:create!).and_return(dps_export_double)
 
     described_class.perform_now
 
+    expect(dps_export_double).to have_received(:csv)
     expect(MESH).to have_received(:send_file).with(hash_including(data: "csv"))
   end
 end

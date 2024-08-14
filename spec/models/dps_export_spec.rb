@@ -25,23 +25,14 @@ require "rails_helper"
 require "csv"
 
 describe DPSExport, type: :model do
-  subject(:dps_export) { described_class.new(campaign:) }
+  subject(:dps_export) do
+    described_class.create!(campaign:, filename: "test.csv")
+  end
 
   let(:campaign) { patient_session.campaign }
   let(:patient_session) { create(:patient_session) }
 
-  let!(:unexported_vaccination_records) do
-    create_list(:vaccination_record, 2, patient_session:)
-  end
-
-  before do
-    create_list(
-      :vaccination_record,
-      1,
-      patient_session:,
-      exported_to_dps_at: Time.zone.now
-    )
-  end
+  before { create_list(:vaccination_record, 2, patient_session:) }
 
   describe "#csv" do
     subject(:csv) { dps_export.csv }
@@ -92,28 +83,8 @@ describe DPSExport, type: :model do
     describe "body" do
       subject(:rows) { csv.split("\n").drop(1) }
 
-      it "ignores already exported records" do
+      it "contains the existing vaccination records" do
         expect(rows.count).to eq(2)
-      end
-    end
-  end
-
-  describe "#export!" do
-    subject(:export!) { dps_export.export! }
-
-    it "returns the CSV export" do
-      expect(export!).to eq(dps_export.csv)
-    end
-
-    it "updates the exported_to_dps_at timestamp" do
-      Timecop.freeze do
-        expect { export! }.to change {
-          unexported_vaccination_records
-            .first
-            .reload
-            .exported_to_dps_at
-            &.change(nsec: 0)
-        }.from(nil).to(Time.zone.now.change(nsec: 0))
       end
     end
   end
