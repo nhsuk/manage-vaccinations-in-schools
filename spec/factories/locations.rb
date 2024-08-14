@@ -9,6 +9,7 @@
 #  county           :text
 #  locality         :text
 #  name             :text             not null
+#  ods_code         :string
 #  postcode         :text
 #  town             :text
 #  type             :integer          not null
@@ -21,6 +22,7 @@
 # Indexes
 #
 #  index_locations_on_imported_from_id  (imported_from_id)
+#  index_locations_on_ods_code          (ods_code) UNIQUE
 #  index_locations_on_urn               (urn) UNIQUE
 #
 # Foreign Keys
