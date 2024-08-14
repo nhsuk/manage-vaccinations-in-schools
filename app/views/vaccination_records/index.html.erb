@@ -1,3 +1,5 @@
+<% content_for :page_title, "#{@campaign.name} – #{t("vaccination_records.index.title")}" %>
+
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
                                           { text: t("campaigns.index.title"), href: campaigns_path },
@@ -5,7 +7,7 @@
                                         ]) %>
 <% end %>
 
-<%= h1 @campaign.name, page_title: "#{@campaign.name} – #{t("vaccination_records.index.title")}" %>
+<%= render "campaigns/name_and_academic_year" %>
 
 <%= render AppSecondaryNavigationComponent.new do |nav|
       nav.with_item(
