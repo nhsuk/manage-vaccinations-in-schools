@@ -12,6 +12,7 @@ fluenz_tetra:
 cervarix:
   brand: Cervarix
   type: hpv
+  discontinued: true
   method: injection
   manufacturer: GlaxoSmithKline
   nivs_name: Cervarix
@@ -36,6 +37,7 @@ gardasil_9:
 gardasil:
   brand: Gardasil
   type: hpv
+  discontinued: true
   method: injection
   manufacturer: Merck Sharp & Dohme
   nivs_name: Gardasil
@@ -83,6 +85,7 @@ quadrivalent_influenza:
 fluad_tetra:
   brand: Fluad Tetra - aQIV
   type: flu
+  discontinued: true
   method: injection
   manufacturer: Seqirus
   nivs_name: Seqirus Fluad Tetra AQIV
@@ -95,6 +98,7 @@ fluad_tetra:
 flucelvax_tetra:
   brand: Flucelvax Tetra - QIVc
   type: flu
+  discontinued: true
   method: injection
   manufacturer: Seqirus
   nivs_name: Seqirus Flucelvax Tetra QIVC
