@@ -31,6 +31,7 @@ require "rails_helper"
 
 describe Vaccine, type: :model do
   describe "validation" do
+    it { should validate_inclusion_of(:method).in_array(%w[injection nasal]) }
     it { should validate_inclusion_of(:type).in_array(%w[flu hpv]) }
   end
 
