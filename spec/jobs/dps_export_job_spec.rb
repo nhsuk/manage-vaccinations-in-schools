@@ -6,7 +6,7 @@ describe DPSExportJob, type: :job do
   before { allow(MESH).to receive(:send_file) }
 
   it "sends the DPS export to MESH" do
-    allow(DPSExport).to receive(:new).and_return(
+    allow(DPSExport).to receive(:create!).and_return(
       instance_double(DPSExport, export!: "csv")
     )
 

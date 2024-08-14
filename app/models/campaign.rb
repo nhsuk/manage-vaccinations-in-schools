@@ -26,4 +26,5 @@ class Campaign < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_many :triage, dependent: :destroy
   has_many :vaccination_records, through: :patient_sessions
+  has_many :dps_exports, dependent: :destroy
 end

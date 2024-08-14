@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_14_070427) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_14_111051) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -104,6 +104,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_14_070427) do
     t.index ["parent_id"], name: "index_consents_on_parent_id"
     t.index ["patient_id"], name: "index_consents_on_patient_id"
     t.index ["recorded_by_user_id"], name: "index_consents_on_recorded_by_user_id"
+  end
+
+  create_table "dps_exports", force: :cascade do |t|
+    t.string "message_id"
+    t.string "status", default: "pending", null: false
+    t.string "filename"
+    t.datetime "sent_at", precision: nil
+    t.bigint "campaign_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["campaign_id"], name: "index_dps_exports_on_campaign_id"
   end
 
   create_table "flipper_features", force: :cascade do |t|
@@ -447,6 +458,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_14_070427) do
   add_foreign_key "consents", "parents"
   add_foreign_key "consents", "patients"
   add_foreign_key "consents", "users", column: "recorded_by_user_id"
+  add_foreign_key "dps_exports", "campaigns"
   add_foreign_key "gillick_assessments", "patient_sessions"
   add_foreign_key "gillick_assessments", "users", column: "assessor_user_id"
   add_foreign_key "health_questions", "health_questions", column: "follow_up_question_id"
