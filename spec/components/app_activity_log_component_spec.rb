@@ -87,7 +87,7 @@ describe AppActivityLogComponent, type: :component do
   end
 
   include_examples "card",
-                   title: "Vaccinated with Cervarix (HPV)",
+                   title: "Vaccinated with Gardasil 9 (HPV)",
                    date: "31 May 2024 at 12:00pm",
                    notes: "Some notes",
                    by: "Nurse Joy"

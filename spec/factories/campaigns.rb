@@ -31,11 +31,16 @@ FactoryBot.define do
 
     trait :hpv do
       name { "HPV" }
+      vaccines { [association(:vaccine, :gardasil_9, batch_count:)] }
+    end
+
+    trait :hpv_all_vaccines do
+      hpv
       vaccines do
         [
-          create(:vaccine, :cervarix, batch_count:),
-          create(:vaccine, :gardasil, batch_count:),
-          create(:vaccine, :gardasil_9, batch_count:)
+          association(:vaccine, :cervarix, batch_count:),
+          association(:vaccine, :gardasil, batch_count:),
+          association(:vaccine, :gardasil_9, batch_count:)
         ]
       end
     end
@@ -49,21 +54,35 @@ FactoryBot.define do
       name { "Flu" }
       vaccines do
         [
-          create(:vaccine, :adjuvanted_quadrivalent, batch_count:),
-          create(:vaccine, :cell_quadrivalent, batch_count:),
-          create(:vaccine, :fluad_tetra, batch_count:),
-          create(:vaccine, :flucelvax_tetra, batch_count:),
-          create(:vaccine, :fluenz_tetra, batch_count:),
-          create(:vaccine, :quadrivalent_influenza, batch_count:),
-          create(:vaccine, :quadrivalent_influvac_tetra, batch_count:),
-          create(:vaccine, :supemtek, batch_count:)
+          association(:vaccine, :adjuvanted_quadrivalent, batch_count:),
+          association(:vaccine, :cell_quadrivalent, batch_count:),
+          association(:vaccine, :fluenz_tetra, batch_count:),
+          association(:vaccine, :quadrivalent_influenza, batch_count:),
+          association(:vaccine, :quadrivalent_influvac_tetra, batch_count:),
+          association(:vaccine, :supemtek, batch_count:)
+        ]
+      end
+    end
+
+    trait :flu_all_vaccines do
+      flu
+      vaccines do
+        [
+          association(:vaccine, :adjuvanted_quadrivalent, batch_count:),
+          association(:vaccine, :cell_quadrivalent, batch_count:),
+          association(:vaccine, :fluad_tetra, batch_count:),
+          association(:vaccine, :flucelvax_tetra, batch_count:),
+          association(:vaccine, :fluenz_tetra, batch_count:),
+          association(:vaccine, :quadrivalent_influenza, batch_count:),
+          association(:vaccine, :quadrivalent_influvac_tetra, batch_count:),
+          association(:vaccine, :supemtek, batch_count:)
         ]
       end
     end
 
     trait :flu_nasal_only do
       name { "Flu" }
-      vaccines { [create(:vaccine, :fluenz_tetra, batch_count:)] }
+      vaccines { [association(:vaccine, :fluenz_tetra, batch_count:)] }
     end
   end
 end

@@ -34,7 +34,7 @@ describe ImmunisationImport, type: :model do
     create(:location, :school, urn: "144012")
   end
 
-  let(:campaign) { create(:campaign, :flu) }
+  let(:campaign) { create(:campaign, :flu_all_vaccines) }
   let(:file) { "valid_flu.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/immunisation_import/#{file}") }
   let(:team) { create(:team, ods_code: "R1L") }
@@ -77,7 +77,7 @@ describe ImmunisationImport, type: :model do
     before { immunisation_import.parse_rows! }
 
     context "with valid Flu rows" do
-      let(:campaign) { create(:campaign, :flu) }
+      let(:campaign) { create(:campaign, :flu_all_vaccines) }
       let(:file) { "valid_flu.csv" }
 
       it "populates the rows" do
@@ -87,7 +87,7 @@ describe ImmunisationImport, type: :model do
     end
 
     context "with valid HPV rows" do
-      let(:campaign) { create(:campaign, :hpv) }
+      let(:campaign) { create(:campaign, :hpv_all_vaccines) }
       let(:file) { "valid_hpv.csv" }
 
       it "populates the rows" do
@@ -110,7 +110,7 @@ describe ImmunisationImport, type: :model do
     subject(:process!) { immunisation_import.process! }
 
     context "with valid Flu rows" do
-      let(:campaign) { create(:campaign, :flu) }
+      let(:campaign) { create(:campaign, :flu_all_vaccines) }
       let(:file) { "valid_flu.csv" }
 
       it "creates locations, patients, and vaccination records" do
@@ -142,7 +142,7 @@ describe ImmunisationImport, type: :model do
     end
 
     context "with valid HPV rows" do
-      let(:campaign) { create(:campaign, :hpv) }
+      let(:campaign) { create(:campaign, :hpv_all_vaccines) }
       let(:file) { "valid_hpv.csv" }
 
       it "creates locations, patients, and vaccination records" do
@@ -184,7 +184,7 @@ describe ImmunisationImport, type: :model do
     end
 
     context "with an existing patient matching the name" do
-      let(:campaign) { create(:campaign, :flu) }
+      let(:campaign) { create(:campaign, :flu_all_vaccines) }
       let(:file) { "valid_flu.csv" }
 
       let!(:patient) do
