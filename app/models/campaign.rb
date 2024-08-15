@@ -34,6 +34,8 @@ class Campaign < ApplicationRecord
 
   scope :active, -> { where(active: true) }
 
+  validates :name, presence: true
+
   validates :academic_year,
             comparison: {
               greater_than_or_equal_to: 2000,
