@@ -59,5 +59,18 @@ describe Campaign, type: :model do
       it { should validate_presence_of(:start_date) }
       it { should validate_presence_of(:end_date) }
     end
+
+    context "when vaccines don't match type" do
+      subject(:campaign) do
+        build(:campaign, type: "flu", vaccines: [build(:vaccine, type: "hpv")])
+      end
+
+      it "is invalid" do
+        expect(campaign).to be_invalid
+        expect(campaign.errors[:vaccines]).to include(
+          "must match programme type"
+        )
+      end
+    end
   end
 end

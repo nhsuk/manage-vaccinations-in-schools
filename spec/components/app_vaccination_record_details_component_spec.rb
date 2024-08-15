@@ -9,7 +9,9 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
 
   let(:administered) { true }
   let(:location) { create(:location, :school, name: "Hogwarts") }
-  let(:campaign) { create(:campaign, vaccines: [vaccine].compact) }
+  let(:campaign) do
+    create(:campaign, type: vaccine&.type || :hpv, vaccines: [vaccine].compact)
+  end
   let(:session) { create(:session, campaign:, location:) }
   let(:patient_session) { create(:patient_session, session:) }
   let(:vaccine) { create(:vaccine, :gardasil_9) }
