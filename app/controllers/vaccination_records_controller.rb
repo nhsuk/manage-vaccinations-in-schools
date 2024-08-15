@@ -29,7 +29,7 @@ class VaccinationRecordsController < ApplicationController
   private
 
   def campaign
-    @campaign ||= policy_scope(Campaign).find(params[:campaign_id])
+    @campaign ||= policy_scope(Campaign).active.find(params[:campaign_id])
   end
 
   def vaccination_records

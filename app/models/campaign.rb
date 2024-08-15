@@ -32,6 +32,8 @@ class Campaign < ApplicationRecord
   has_many :vaccination_records, through: :patient_sessions
   has_many :dps_exports, dependent: :destroy
 
+  scope :active, -> { where(active: true) }
+
   validates :academic_year,
             presence: true,
             comparison: {

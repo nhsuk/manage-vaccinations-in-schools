@@ -24,13 +24,20 @@ FactoryBot.define do
 
     name { "Campaign" }
     academic_year { Time.zone.today.year }
-    start_date { Date.new(academic_year, 9, 1) }
-    end_date { Date.new(academic_year + 1, 7, 31) }
 
     team
-    vaccines { [association(:vaccine, batch_count:)] }
+
+    trait :active do
+      active { true }
+
+      start_date { Date.new(academic_year, 9, 1) }
+      end_date { Date.new(academic_year + 1, 7, 31) }
+
+      vaccines { [association(:vaccine, batch_count:)] }
+    end
 
     trait :hpv do
+      active
       name { "HPV" }
       vaccines { [association(:vaccine, :gardasil_9, batch_count:)] }
     end
@@ -52,6 +59,7 @@ FactoryBot.define do
     end
 
     trait :flu do
+      active
       name { "Flu" }
       vaccines do
         [

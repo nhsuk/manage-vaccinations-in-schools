@@ -4,7 +4,7 @@ class CampaignsController < ApplicationController
   before_action :set_campaign, except: :index
 
   def index
-    @campaigns = policy_scope(Campaign)
+    @campaigns = campaigns
   end
 
   def show
@@ -18,7 +18,11 @@ class CampaignsController < ApplicationController
 
   private
 
+  def campaigns
+    @campaigns ||= policy_scope(Campaign).active
+  end
+
   def set_campaign
-    @campaign = policy_scope(Campaign).find(params[:id])
+    @campaign = campaigns.find(params[:id])
   end
 end
