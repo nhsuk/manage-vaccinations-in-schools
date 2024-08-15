@@ -10,6 +10,7 @@
 #  end_date      :date
 #  name          :string           not null
 #  start_date    :date
+#  type          :string           not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  team_id       :integer          not null
@@ -27,6 +28,7 @@ describe Campaign, type: :model do
 
   describe "validations" do
     it { should validate_presence_of(:name) }
+    it { should validate_inclusion_of(:type).in_array(%w[flu hpv]) }
     it { should validate_presence_of(:academic_year) }
 
     it do

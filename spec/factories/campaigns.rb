@@ -10,6 +10,7 @@
 #  end_date      :date
 #  name          :string           not null
 #  start_date    :date
+#  type          :string           not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  team_id       :integer          not null
@@ -23,6 +24,7 @@ FactoryBot.define do
     transient { batch_count { 1 } }
 
     name { "Campaign" }
+    type { %w[flu hpv].sample }
     academic_year { Time.zone.today.year }
 
     team
@@ -39,6 +41,7 @@ FactoryBot.define do
     trait :hpv do
       active
       name { "HPV" }
+      type { "hpv" }
       vaccines { [association(:vaccine, :gardasil_9, batch_count:)] }
     end
 
@@ -61,6 +64,7 @@ FactoryBot.define do
     trait :flu do
       active
       name { "Flu" }
+      type { "flu" }
       vaccines do
         [
           association(:vaccine, :adjuvanted_quadrivalent, batch_count:),
