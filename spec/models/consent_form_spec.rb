@@ -708,7 +708,12 @@ describe ConsentForm, type: :model do
   end
 
   it "seeds the health questions when the parent gives consent" do
-    consent_form = create(:consent_form, response: "refused")
+    consent_form =
+      create(
+        :consent_form,
+        campaign: create(:campaign, :hpv),
+        response: "refused"
+      )
 
     consent_form.update!(
       response: "given",

@@ -13,7 +13,7 @@ describe AppPatientPageComponent, type: :component do
     # rubocop:enable RSpec/AnyInstance
   end
 
-  let(:campaign) { create(:campaign) }
+  let(:campaign) { create(:campaign, :hpv) }
   let(:vaccine) { campaign.vaccines.first }
 
   let(:component) do

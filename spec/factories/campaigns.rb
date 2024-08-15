@@ -21,12 +21,13 @@ FactoryBot.define do
   factory :campaign do
     transient { batch_count { 1 } }
 
+    name { "Campaign" }
     academic_year { Time.zone.today.year }
     start_date { Date.new(academic_year, 9, 1) }
     end_date { Date.new(academic_year + 1, 7, 31) }
 
     team
-    hpv
+    vaccines { [association(:vaccine, batch_count:)] }
 
     trait :hpv do
       name { "HPV" }
@@ -40,7 +41,7 @@ FactoryBot.define do
     end
 
     trait :hpv_no_batches do
-      transient { batch_count { 0 } }
+      batch_count { 0 }
       hpv
     end
 

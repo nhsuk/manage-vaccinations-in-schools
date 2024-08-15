@@ -161,6 +161,7 @@ describe Consent do
     consent =
       build(
         :consent,
+        campaign: create(:campaign, :hpv),
         health_answers: [],
         response: "refused",
         reason_for_refusal: "contains_gelatine",
