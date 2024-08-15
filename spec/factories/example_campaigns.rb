@@ -2,6 +2,8 @@
 
 FactoryBot.define do
   factory :example_campaign, parent: :campaign do
+    hpv
+
     transient do
       user { create(:user) }
       # this name and URN matches the data in spec/fixtures/cohort_list/valid_cohort.csv
