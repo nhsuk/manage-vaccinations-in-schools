@@ -15,6 +15,10 @@
 #  updated_at    :datetime         not null
 #  team_id       :integer          not null
 #
+# Indexes
+#
+#  index_campaigns_on_name_and_type_and_academic_year_and_team_id  (name,type,academic_year,team_id) UNIQUE
+#
 # Foreign Keys
 #
 #  fk_rails_...  (team_id => teams.id)
@@ -25,6 +29,8 @@ describe Campaign, type: :model do
   subject(:campaign) do
     build(:campaign, academic_year: 2024, start_date: Date.new(2024, 6, 1))
   end
+
+  it { should normalize(:name).from(" abc ").to("abc") }
 
   describe "validations" do
     it { should validate_presence_of(:name) }
