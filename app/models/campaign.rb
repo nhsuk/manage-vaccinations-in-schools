@@ -35,24 +35,31 @@ class Campaign < ApplicationRecord
   scope :active, -> { where(active: true) }
 
   validates :academic_year,
-            presence: true,
             comparison: {
               greater_than_or_equal_to: 2000,
               less_than_or_equal_to: Time.zone.today.year + 5
-            }
+            },
+            presence: true
 
   validates :start_date,
             comparison: {
               greater_than_or_equal_to: :first_possible_start_date,
               if: :academic_year,
               allow_nil: true
+            },
+            presence: {
+              if: :active
             }
+
   validates :end_date,
             comparison: {
               greater_than_or_equal_to: :start_date,
               less_than_or_equal_to: :last_possible_end_date,
               if: -> { academic_year && start_date },
               allow_nil: true
+            },
+            presence: {
+              if: :active
             }
 
   private
