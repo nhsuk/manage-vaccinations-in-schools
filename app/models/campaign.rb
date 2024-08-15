@@ -10,6 +10,7 @@
 #  end_date      :date
 #  name          :string           not null
 #  start_date    :date
+#  type          :string           not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  team_id       :integer          not null
@@ -19,6 +20,8 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class Campaign < ApplicationRecord
+  self.inheritance_column = nil
+
   audited
 
   belongs_to :team
@@ -31,6 +34,8 @@ class Campaign < ApplicationRecord
   has_many :triage, dependent: :destroy
   has_many :vaccination_records, through: :patient_sessions
   has_many :dps_exports, dependent: :destroy
+
+  enum :type, { flu: "flu", hpv: "hpv" }, validate: true
 
   scope :active, -> { where(active: true) }
 
