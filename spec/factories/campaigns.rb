@@ -15,6 +15,10 @@
 #  updated_at    :datetime         not null
 #  team_id       :integer          not null
 #
+# Indexes
+#
+#  index_campaigns_on_name_and_type_and_academic_year_and_team_id  (name,type,academic_year,team_id) UNIQUE
+#
 # Foreign Keys
 #
 #  fk_rails_...  (team_id => teams.id)

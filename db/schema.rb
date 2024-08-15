@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_15_114839) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_15_134119) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -55,6 +55,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_15_114839) do
     t.date "end_date"
     t.boolean "active", default: false, null: false
     t.string "type", null: false
+    t.index ["name", "type", "academic_year", "team_id"], name: "index_campaigns_on_name_and_type_and_academic_year_and_team_id", unique: true
   end
 
   create_table "campaigns_vaccines", id: false, force: :cascade do |t|
