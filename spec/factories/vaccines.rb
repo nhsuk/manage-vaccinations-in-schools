@@ -99,6 +99,7 @@ FactoryBot.define do
       trait key do
         send(data["type"])
         brand { data["brand"] }
+        discontinued { data.fetch("discontinued", false) }
         dose { data["dose"] }
         manufacturer { data["manufacturer"] }
         add_attribute(:method) { data["method"] }

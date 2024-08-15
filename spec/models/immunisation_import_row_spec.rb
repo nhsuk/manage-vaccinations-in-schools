@@ -170,7 +170,7 @@ describe ImmunisationImportRow, type: :model do
     context "with an invalid dose sequence" do
       let(:campaign) { create(:campaign, :hpv) }
 
-      let(:data) { { "VACCINE_GIVEN" => "Gardasil", "DOSE_SEQUENCE" => "4" } }
+      let(:data) { { "VACCINE_GIVEN" => "Gardasil9", "DOSE_SEQUENCE" => "4" } }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -632,19 +632,21 @@ describe ImmunisationImportRow, type: :model do
     let(:campaign) { create(:campaign, :hpv) }
 
     context "without a value" do
-      let(:data) { { "VACCINE_GIVEN" => "Gardasil" } }
+      let(:data) { { "VACCINE_GIVEN" => "Gardasil9" } }
 
       it { should be_nil }
     end
 
     context "with an invalid value" do
-      let(:data) { { "VACCINE_GIVEN" => "Gardasil", "DOSE_SEQUENCE" => "abc" } }
+      let(:data) do
+        { "VACCINE_GIVEN" => "Gardasil9", "DOSE_SEQUENCE" => "abc" }
+      end
 
       it { should be_nil }
     end
 
     context "with a valid value" do
-      let(:data) { { "VACCINE_GIVEN" => "Gardasil", "DOSE_SEQUENCE" => "1" } }
+      let(:data) { { "VACCINE_GIVEN" => "Gardasil9", "DOSE_SEQUENCE" => "1" } }
 
       it { should eq(1) }
     end
