@@ -40,6 +40,19 @@ namespace :mesh do
 
     response = MESH.connection.put("inbox/#{message}/status/acknowledged")
 
+    puts response.body
+    warn response.status unless response.status == 200
+  end
+
+  desc "Send a file to a mailbox via MESH"
+  task "send_file", %i[to file] => :environment do |_, args|
+    to = args[:to]
+    file = args[:file]
+
+    data = File.read(file)
+    response = MESH.send_file(to:, data:)
+
+    puts response.body
     warn response.status unless response.status == 200
   end
 end
