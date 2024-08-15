@@ -37,4 +37,28 @@ class Campaign < ApplicationRecord
               greater_than_or_equal_to: 2000,
               less_than_or_equal_to: Time.zone.today.year + 5
             }
+
+  validates :start_date,
+            comparison: {
+              greater_than_or_equal_to: :first_possible_start_date,
+              if: :academic_year,
+              allow_nil: true
+            }
+  validates :end_date,
+            comparison: {
+              greater_than_or_equal_to: :start_date,
+              less_than_or_equal_to: :last_possible_end_date,
+              if: -> { academic_year && start_date },
+              allow_nil: true
+            }
+
+  private
+
+  def first_possible_start_date
+    Date.new(academic_year, 1, 1)
+  end
+
+  def last_possible_end_date
+    Date.new(academic_year + 1, 12, 31)
+  end
 end
