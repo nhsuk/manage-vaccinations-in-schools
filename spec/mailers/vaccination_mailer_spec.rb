@@ -3,7 +3,7 @@
 require "rails_helper"
 
 describe VaccinationMailer do
-  let(:campaign) { create(:campaign) }
+  let(:campaign) { create(:campaign, :active) }
   let(:session) { create(:session, campaign:) }
 
   describe "hpv_vaccination_has_taken_place" do

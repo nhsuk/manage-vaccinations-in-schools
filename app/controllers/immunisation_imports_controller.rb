@@ -64,9 +64,10 @@ class ImmunisationImportsController < ApplicationController
 
   def set_campaign
     @campaign =
-      policy_scope(Campaign).includes(:immunisation_imports).find(
-        params[:campaign_id]
-      )
+      policy_scope(Campaign)
+        .active
+        .includes(:immunisation_imports)
+        .find(params[:campaign_id])
   end
 
   def immunisation_import_params

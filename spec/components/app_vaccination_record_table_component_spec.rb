@@ -7,7 +7,7 @@ describe AppVaccinationRecordTableComponent, type: :component do
 
   let(:component) { described_class.new(vaccination_records) }
 
-  let(:campaign) { create(:campaign) }
+  let(:campaign) { create(:campaign, :active) }
   let(:vaccination_records) do
     [
       create(
