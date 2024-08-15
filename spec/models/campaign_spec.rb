@@ -49,5 +49,12 @@ describe Campaign, type: :model do
         Date.new(2024, 6, 1)
       ).is_less_than_or_equal_to(Date.new(2025, 12, 31))
     end
+
+    context "when active" do
+      subject(:campaign) { build(:campaign, :active) }
+
+      it { should validate_presence_of(:start_date) }
+      it { should validate_presence_of(:end_date) }
+    end
   end
 end
