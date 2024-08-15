@@ -35,7 +35,7 @@ FactoryBot.define do
       start_date { Date.new(academic_year, 9, 1) }
       end_date { Date.new(academic_year + 1, 7, 31) }
 
-      vaccines { [association(:vaccine, batch_count:)] }
+      vaccines { [association(:vaccine, type:, batch_count:)] }
     end
 
     trait :hpv do

@@ -69,6 +69,8 @@ class Campaign < ApplicationRecord
               if: :active
             }
 
+  validate :vaccines_match_type
+
   private
 
   def first_possible_start_date
@@ -77,5 +79,12 @@ class Campaign < ApplicationRecord
 
   def last_possible_end_date
     Date.new(academic_year + 1, 12, 31)
+  end
+
+  def vaccines_match_type
+    vaccine_types = vaccines.map(&:type).uniq
+    unless vaccine_types.empty? || vaccine_types == [type]
+      errors.add(:vaccines, "must match programme type")
+    end
   end
 end
