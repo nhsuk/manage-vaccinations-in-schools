@@ -5,12 +5,12 @@
 # Table name: campaigns
 #
 #  id            :bigint           not null, primary key
-#  academic_year :integer          not null
+#  academic_year :integer
 #  active        :boolean          default(FALSE), not null
 #  end_date      :date
-#  name          :string           not null
+#  name          :string
 #  start_date    :date
-#  type          :string           not null
+#  type          :string
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  team_id       :integer          not null
