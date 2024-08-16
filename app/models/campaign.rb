@@ -24,6 +24,8 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class Campaign < ApplicationRecord
+  include WizardFormConcern
+
   self.inheritance_column = nil
 
   audited
@@ -39,35 +41,30 @@ class Campaign < ApplicationRecord
   has_many :vaccination_records, through: :patient_sessions
   has_many :dps_exports, dependent: :destroy
 
-  enum :type, { flu: "flu", hpv: "hpv" }, validate: { if: :active }
+  enum :type, { flu: "flu", hpv: "hpv" }, validate: { allow_nil: true }
 
   scope :active, -> { where(active: true) }
 
   normalizes :name, with: ->(name) { name&.strip }
 
   validates :name,
-            presence: true,
             uniqueness: {
-              scope: %i[type academic_year team_id]
-            },
-            if: :active
+              scope: %i[type academic_year team_id],
+              allow_nil: true
+            }
 
   validates :academic_year,
             comparison: {
               greater_than_or_equal_to: 2000,
-              less_than_or_equal_to: Time.zone.today.year + 5
-            },
-            presence: true,
-            if: :active
+              less_than_or_equal_to: Time.zone.today.year + 5,
+              allow_nil: true
+            }
 
   validates :start_date,
             comparison: {
               greater_than_or_equal_to: :first_possible_start_date,
               if: :academic_year,
               allow_nil: true
-            },
-            presence: {
-              if: :active
             }
 
   validates :end_date,
@@ -76,12 +73,28 @@ class Campaign < ApplicationRecord
               less_than_or_equal_to: :last_possible_end_date,
               if: -> { academic_year && start_date },
               allow_nil: true
-            },
-            presence: {
-              if: :active
             }
 
   validate :vaccines_match_type
+
+  on_wizard_step :details do
+    validates :name, presence: true
+    validates :type, presence: true
+    validates :academic_year, presence: true
+  end
+
+  on_wizard_step :dates do
+    validates :start_date, presence: true
+    validates :end_date, presence: true
+  end
+
+  on_wizard_step :confirm do
+    validates :active, presence: true
+  end
+
+  def form_steps
+    %i[details dates confirm]
+  end
 
   private
 
