@@ -1,4 +1,8 @@
-<%= h1 t(".title"), size: "xl" %>
+<div class="app-heading-group">
+  <%= h1 t(".title"), size: "xl" %>
+
+  <%= govuk_button_to "Create a new vaccination programme", campaigns_path, secondary: true %>
+</div>
 
 <div class="nhsuk-table__panel-with-heading-tab">
   <h3 class="nhsuk-table__heading-tab">Active campaigns</h3>
@@ -18,7 +22,10 @@
             <span class="nhsuk-table-responsive__heading">Name</span>
             <%= link_to campaign.name, campaign_path(campaign) %>
           <% end %>
-          <% row.with_cell(text: campaign_academic_year(campaign)) %>
+          <% row.with_cell do %>
+            <span class="nhsuk-table-responsive__heading">Academic year</span>
+            <%= campaign_academic_year(campaign) %>
+          <% end %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Vaccines</span>
             <%= campaign.vaccines

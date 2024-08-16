@@ -93,6 +93,10 @@ en:
               inclusion: The school URN is not recognised. If you’ve checked the URN, and you believe it’s valid, contact our support team.
   activerecord:
     attributes:
+      campaign:
+        types:
+          flu: Flu
+          hpv: HPV
       consent:
         reason_for_refusals:
           already_vaccinated: Vaccine already received
@@ -198,6 +202,18 @@ en:
               missing_year: Enter a year
             name:
               blank: Enter a batch
+        campaign:
+          attributes:
+            academic_year:
+              blank: Choose an academic year
+            end_date:
+              blank: Enter an end date
+            name:
+              blank: Enter a name
+            start_date:
+              blank: Enter a start date
+            type:
+              inclusion: Choose a programme type
         consent:
           attributes:
             new_or_existing_parent:

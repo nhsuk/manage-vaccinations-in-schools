@@ -45,6 +45,8 @@ class Vaccine < ApplicationRecord
   enum :method, %i[injection nasal], validate: true
   enum :type, { flu: "flu", hpv: "hpv" }, validate: true
 
+  scope :active, -> { where(discontinued: false) }
+
   delegate :first_health_question, to: :health_questions
 
   def contains_gelatine?
