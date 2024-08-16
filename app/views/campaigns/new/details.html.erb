@@ -1,0 +1,26 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(href: campaigns_path, name: "programme") %>
+<% end %>
+
+<%= h1 "Programme details" %>
+
+<%= form_with model: @campaign, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= f.govuk_text_field :name, label: { size: "m" } %>
+
+  <%= f.govuk_collection_radio_buttons :type, Campaign.types.keys.map { [_1, Campaign.human_enum_name(:type, _1)] }, :first, :second, legend: { text: "Programme type" } %>
+
+  <%= f.govuk_radio_buttons_fieldset :academic_year, legend: { text: "Academic year" } do %>
+    <% today_year = Time.zone.today.year %>
+    <% [today_year - 1, today_year, today_year + 1].each_with_index do |academic_year, index| %>
+      <%= f.govuk_radio_button(
+            :academic_year, academic_year.to_s,
+            label: { text: campaign_academic_year(academic_year) },
+            link_errors: index.zero?,
+          ) %>
+    <% end %>
+  <% end %>
+
+  <%= f.govuk_submit %>
+<% end %>

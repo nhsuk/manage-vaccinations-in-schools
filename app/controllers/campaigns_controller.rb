@@ -1,10 +1,21 @@
 # frozen_string_literal: true
 
 class CampaignsController < ApplicationController
-  before_action :set_campaign, except: :index
+  before_action :set_campaign, only: %i[show sessions]
+
+  skip_after_action :verify_policy_scoped, only: :create
 
   def index
     @campaigns = campaigns
+  end
+
+  def create
+    campaign = Campaign.create!(team: current_user.team)
+
+    redirect_to campaign_new_path(
+                  campaign_id: campaign.id,
+                  id: campaign.form_steps.first
+                )
   end
 
   def show

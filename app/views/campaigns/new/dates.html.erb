@@ -1,0 +1,18 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: previous_wizard_path,
+        name: "#{@previous_step} page of programme creation",
+      ) %>
+<% end %>
+
+<%= h1 "When does this programme run?" %>
+
+<%= form_with model: @campaign, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= f.govuk_date_field :start_date, legend: { text: "Start date" } %>
+
+  <%= f.govuk_date_field :end_date, legend: { text: "End date" } %>
+
+  <%= f.govuk_submit %>
+<% end %>
