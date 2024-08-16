@@ -27,15 +27,14 @@ FactoryBot.define do
   factory :campaign do
     transient { batch_count { 1 } }
 
-    name { "Campaign" }
-    type { %w[flu hpv].sample }
-    academic_year { Time.zone.today.year }
-
     team
 
     trait :active do
       active { true }
 
+      name { "Campaign" }
+      type { %w[flu hpv].sample }
+      academic_year { Time.zone.today.year }
       start_date { Date.new(academic_year, 9, 1) }
       end_date { Date.new(academic_year + 1, 7, 31) }
 
