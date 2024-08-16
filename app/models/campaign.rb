@@ -39,24 +39,26 @@ class Campaign < ApplicationRecord
   has_many :vaccination_records, through: :patient_sessions
   has_many :dps_exports, dependent: :destroy
 
-  enum :type, { flu: "flu", hpv: "hpv" }, validate: true
+  enum :type, { flu: "flu", hpv: "hpv" }, validate: { if: :active }
 
   scope :active, -> { where(active: true) }
 
-  normalizes :name, with: ->(name) { name.strip }
+  normalizes :name, with: ->(name) { name&.strip }
 
   validates :name,
             presence: true,
             uniqueness: {
               scope: %i[type academic_year team_id]
-            }
+            },
+            if: :active
 
   validates :academic_year,
             comparison: {
               greater_than_or_equal_to: 2000,
               less_than_or_equal_to: Time.zone.today.year + 5
             },
-            presence: true
+            presence: true,
+            if: :active
 
   validates :start_date,
             comparison: {
