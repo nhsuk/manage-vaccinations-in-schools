@@ -26,21 +26,19 @@
 require "rails_helper"
 
 describe Campaign, type: :model do
+  subject(:campaign) do
+    build(:campaign, academic_year: 2024, start_date: Date.new(2024, 6, 1))
+  end
+
   it { should normalize(:name).from(" abc ").to("abc") }
 
   describe "validations" do
-    subject(:campaign) do
-      build(
-        :campaign,
-        :active,
-        academic_year: 2024,
-        start_date: Date.new(2024, 6, 1)
-      )
-    end
+    it { should validate_presence_of(:name).on(:update) }
 
-    it { should validate_presence_of(:name) }
+    it { should validate_presence_of(:type).on(:update) }
     it { should validate_inclusion_of(:type).in_array(%w[flu hpv]) }
-    it { should validate_presence_of(:academic_year) }
+
+    it { should validate_presence_of(:academic_year).on(:update) }
 
     it do
       expect(campaign).to validate_comparison_of(
@@ -50,7 +48,7 @@ describe Campaign, type: :model do
       )
     end
 
-    it { should validate_presence_of(:start_date) }
+    it { should validate_presence_of(:start_date).on(:update) }
 
     it do
       expect(campaign).to validate_comparison_of(
@@ -58,7 +56,7 @@ describe Campaign, type: :model do
       ).is_greater_than_or_equal_to(Date.new(2024, 1, 1))
     end
 
-    it { should validate_presence_of(:end_date) }
+    it { should validate_presence_of(:end_date).on(:update) }
 
     it do
       expect(campaign).to validate_comparison_of(
