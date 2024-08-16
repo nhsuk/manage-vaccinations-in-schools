@@ -8,8 +8,6 @@ namespace :mesh do
 
   desc "Validate MESH mailbox to let MESH know Mavis is up and running"
   task validate_mailbox: :environment do
-    check_mesh_ready
-
     response = MESH.validate_mailbox
     warn response.status unless response.status == 200
     puts response.headers
