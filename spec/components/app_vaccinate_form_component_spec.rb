@@ -40,7 +40,7 @@ describe AppVaccinateFormComponent, type: :component do
       create :patient_session, :consent_given_triage_not_needed, session:
     end
     let(:vaccination_record) do
-      create :vaccination_record, patient_session:, recorded_at: nil
+      create(:vaccination_record, :not_recorded, patient_session:)
     end
 
     it { should have_field("Yes, they got the HPV vaccine", checked: true) }

@@ -135,7 +135,7 @@ module PatientSessionStateConcern
     end
 
     def vaccination_not_administered?
-      vaccination_record&.administered == false
+      vaccination_record&.not_administered?
     end
 
     def not_gillick_competent?

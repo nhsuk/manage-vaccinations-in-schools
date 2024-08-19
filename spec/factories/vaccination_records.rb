@@ -58,14 +58,14 @@ FactoryBot.define do
     dose_sequence { 1 }
     uuid { SecureRandom.uuid }
 
-    trait :unrecorded do
-      recorded_at { nil }
-      user { nil }
-    end
-
-    trait :unadministered do
+    trait :not_administered do
       administered_at { nil }
       reason { "not_well" }
+    end
+
+    trait :not_recorded do
+      recorded_at { nil }
+      user { nil }
     end
   end
 end

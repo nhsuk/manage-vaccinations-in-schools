@@ -78,7 +78,7 @@ class VaccinationRecord < ApplicationRecord
   has_one :location, through: :session
   has_one :team, through: :campaign
 
-  scope :administered, -> { where(administered: true) }
+  scope :administered, -> { where.not(administered_at: nil) }
   scope :recorded, -> { where.not(recorded_at: nil) }
   scope :draft, -> { rewhere(recorded_at: nil) }
 
@@ -116,19 +116,18 @@ class VaccinationRecord < ApplicationRecord
 
   validates :notes, length: { maximum: 1000 }
 
-  validates :administered, inclusion: [true, false]
   validates :delivery_site,
             presence: true,
             inclusion: {
               in: delivery_sites.keys
             },
-            if: -> { administered && !delivery_site_other }
+            if: -> { administered? && !delivery_site_other }
   validates :delivery_method,
             presence: true,
             inclusion: {
               in: delivery_methods.keys
             },
-            if: -> { administered && delivery_site.present? }
+            if: -> { administered? && delivery_site.present? }
   validates :dose_sequence,
             presence: true,
             comparison: {
@@ -136,7 +135,7 @@ class VaccinationRecord < ApplicationRecord
               less_than_or_equal_to: :maximum_dose_sequence
             }
 
-  validate :batch_vaccine_matches_vaccine, if: -> { recorded? && administered }
+  validate :batch_vaccine_matches_vaccine, if: -> { recorded? && administered? }
 
   on_wizard_step :"delivery-site", exact: true do
     validates :delivery_site,
@@ -163,12 +162,21 @@ class VaccinationRecord < ApplicationRecord
     patient_session.session.location&.name
   end
 
+  def administered?
+    administered_at != nil
+  end
+
   def not_administered?
-    !administered?
+    administered_at.nil?
+  end
+
+  def administered=(value)
+    self.administered_at =
+      ActiveModel::Type::Boolean.new.cast(value) ? Time.zone.now : nil
   end
 
   def recorded?
-    recorded_at.present?
+    recorded_at != nil
   end
 
   def form_steps
