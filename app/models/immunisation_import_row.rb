@@ -15,14 +15,7 @@ class ImmunisationImportRow
               less_than_or_equal_to: :maximum_dose_sequence
             },
             if: -> { administered && vaccine.present? }
-  validates :organisation_code,
-            presence: true,
-            length: {
-              maximum: 5
-            },
-            comparison: {
-              equal_to: :valid_ods_code
-            }
+  validates :organisation_code, comparison: { equal_to: :valid_ods_code }
   validates :recorded_at, presence: true
   validates :vaccine_given,
             inclusion: {
@@ -52,7 +45,7 @@ class ImmunisationImportRow
               less_than_or_equal_to: -> { Date.current }
             }
   validates :patient_gender_code, inclusion: { in: Patient.gender_codes.values }
-  validates :patient_postcode, presence: true, postcode: true
+  validates :patient_postcode, postcode: true
   validate :zero_or_one_existing_patient
 
   validates :session_date,
