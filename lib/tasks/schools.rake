@@ -79,6 +79,16 @@ namespace :schools do
         )
       # rubocop:enable Rails/SaveBang
 
+      # Some URLs from the GIAS CSV are missing the protocol.
+      process_url = ->(url) do
+        return nil if url.blank?
+        url.start_with?("http://", "https://") ? url : "https://#{url}"
+
+        # Legh Vale school has a URL of http:www.leghvale.st-helens.sch.uk
+        # which is not a valid URL.
+        url.gsub!("http:www", "http://www")
+      end
+
       CSV.parse(
         csv_content,
         headers: true,
@@ -96,7 +106,7 @@ namespace :schools do
           town: row["Town"],
           county: row["County (name)"],
           postcode: row["Postcode"],
-          url: row["SchoolWebsite"]
+          url: process_url.call(row["SchoolWebsite"].presence)
         )
 
         if locations.size >= batch_size
