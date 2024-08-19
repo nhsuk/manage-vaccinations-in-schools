@@ -98,7 +98,7 @@ class ImmunisationImportRow
       notes:,
       recorded_at:
     ).find_or_create_by!(
-      administered:,
+      administered_at:,
       delivery_method:,
       delivery_site:,
       dose_sequence:,
@@ -284,6 +284,10 @@ class ImmunisationImportRow
   private
 
   attr_reader :imported_from
+
+  def administered_at
+    administered ? session_date.to_time : nil
+  end
 
   def location
     return unless valid?
