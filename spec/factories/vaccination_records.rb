@@ -5,7 +5,7 @@
 # Table name: vaccination_records
 #
 #  id                 :bigint           not null, primary key
-#  administered       :boolean
+#  administered_at    :datetime
 #  delivery_method    :integer
 #  delivery_site      :integer
 #  dose_sequence      :integer          not null
@@ -54,7 +54,7 @@ FactoryBot.define do
     vaccine { patient_session.session.campaign.vaccines.first }
     batch { vaccine.batches.first }
     user { create :user }
-    administered { true }
+    administered_at { Time.zone.now }
     dose_sequence { 1 }
     uuid { SecureRandom.uuid }
 
@@ -64,7 +64,7 @@ FactoryBot.define do
     end
 
     trait :unadministered do
-      administered { false }
+      administered_at { nil }
       reason { "not_well" }
     end
   end
