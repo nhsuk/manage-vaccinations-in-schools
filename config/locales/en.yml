@@ -213,6 +213,7 @@ en:
             start_date:
               blank: Enter a start date
             type:
+              blank: Choose a programme type
               inclusion: Choose a programme type
         consent:
           attributes:
