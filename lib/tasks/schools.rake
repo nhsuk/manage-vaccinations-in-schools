@@ -100,11 +100,11 @@ namespace :schools do
         )
 
         if locations.size >= batch_size
-          Location.import locations,
-                          on_duplicate_key_update: {
-                            conflict_target: [:urn],
-                            columns: %i[name address town county postcode url]
-                          }
+          Location.import! locations,
+                           on_duplicate_key_update: {
+                             conflict_target: [:urn],
+                             columns: %i[name address town county postcode url]
+                           }
           locations.clear
         end
 
@@ -113,11 +113,11 @@ namespace :schools do
 
       # Import remaining locations in the last incomplete batch
       unless locations.empty?
-        Location.import locations,
-                        on_duplicate_key_update: {
-                          conflict_target: [:urn],
-                          columns: %i[name address town county postcode url]
-                        }
+        Location.import! locations,
+                         on_duplicate_key_update: {
+                           conflict_target: [:urn],
+                           columns: %i[name address town county postcode url]
+                         }
       end
     end
 
