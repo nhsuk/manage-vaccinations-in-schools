@@ -58,7 +58,8 @@ class ImmunisationImportRow
   validates :session_date,
             presence: true,
             comparison: {
-              less_than_or_equal_to: -> { Date.current }
+              greater_than_or_equal_to: :campaign_start_date,
+              less_than_or_equal_to: :campaign_end_date_or_today
             }
   validates :reason,
             inclusion: {
@@ -350,6 +351,14 @@ class ImmunisationImportRow
 
   def maximum_dose_sequence
     vaccine.maximum_dose_sequence
+  end
+
+  def campaign_start_date
+    @campaign.start_date
+  end
+
+  def campaign_end_date_or_today
+    [@campaign.end_date, Date.current].min
   end
 
   def requires_care_setting?

@@ -12,7 +12,7 @@ describe ImmunisationImportRow, type: :model do
     )
   end
 
-  let(:campaign) { create(:campaign, :flu) }
+  let(:campaign) { create(:campaign, :flu, academic_year: 2023) }
   let(:team) { create(:team, ods_code: "abc") }
   let(:user) { create(:user, teams: [team]) }
   let(:immunisation_import) { create(:immunisation_import, campaign:, user:) }
@@ -181,7 +181,7 @@ describe ImmunisationImportRow, type: :model do
     end
 
     context "with valid fields for Flu" do
-      let(:campaign) { create(:campaign, :flu) }
+      let(:campaign) { create(:campaign, :flu, academic_year: 2023) }
 
       let(:data) do
         {
