@@ -39,25 +39,50 @@
 #
 require "rails_helper"
 
-describe VaccinationRecord do
-  it "validates that the vaccine and the batch vaccines match" do
-    patient_session = create(:patient_session)
-    vaccine = patient_session.campaign.vaccines.first
-    different_vaccine = create(:vaccine)
-    batch = create(:batch, vaccine: different_vaccine)
-
-    subject =
-      build(
-        :vaccination_record,
-        administered: true,
-        vaccine:,
-        batch:,
-        patient_session:
-      )
-
-    expect(subject).not_to be_valid
-    expect(subject.errors[:batch_id]).to include(
-      "Choose a batch of the #{vaccine.brand} vaccine"
+describe VaccinationRecord, type: :model do
+  subject(:vaccination_record) do
+    create(
+      :vaccination_record,
+      patient_session:
+        create(:patient_session, session_attributes: { campaign: })
     )
+  end
+
+  let(:campaign) do
+    create(
+      :campaign,
+      :active,
+      academic_year: 2020,
+      start_date: Date.new(2020, 1, 1),
+      end_date: Date.new(2020, 12, 31)
+    )
+  end
+
+  describe "validations" do
+    it "is expected to validate that :administered_at is between the campaign start and end date" do
+      expect(vaccination_record).to validate_comparison_of(
+        :administered_at
+      ).is_greater_than_or_equal_to(Time.zone.local(2020, 1, 1)).is_less_than(
+        Time.zone.local(2021, 1, 1)
+      )
+    end
+
+    context "vaccine and batch doesn't match" do
+      subject(:vaccination_record) do
+        build(:vaccination_record, vaccine:, batch:, patient_session:)
+      end
+
+      let(:patient_session) { create(:patient_session) }
+      let(:vaccine) { patient_session.campaign.vaccines.first }
+      let(:different_vaccine) { create(:vaccine) }
+      let(:batch) { create(:batch, vaccine: different_vaccine) }
+
+      it "has an error" do
+        expect(vaccination_record).to be_invalid
+        expect(vaccination_record.errors[:batch_id]).to include(
+          "Choose a batch of the #{vaccine.brand} vaccine"
+        )
+      end
+    end
   end
 end

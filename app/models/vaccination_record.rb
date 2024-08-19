@@ -117,6 +117,14 @@ class VaccinationRecord < ApplicationRecord
 
   validates :notes, length: { maximum: 1000 }
 
+  validates :administered_at,
+            comparison: {
+              greater_than_or_equal_to: :first_possible_administered_at,
+              less_than: :last_possible_administered_at,
+              allow_nil: true
+            },
+            if: :campaign
+
   validates :delivery_site,
             inclusion: {
               in: delivery_sites.keys
@@ -192,6 +200,14 @@ class VaccinationRecord < ApplicationRecord
   end
 
   private
+
+  def first_possible_administered_at
+    campaign.start_date.in_time_zone
+  end
+
+  def last_possible_administered_at
+    (campaign.end_date + 1.day).in_time_zone
+  end
 
   def maximum_dose_sequence
     vaccine&.maximum_dose_sequence || 1
