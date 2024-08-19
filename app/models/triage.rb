@@ -32,13 +32,17 @@ class Triage < ApplicationRecord
   has_one :campaign, through: :session
 
   enum :status,
-       %i[ready_to_vaccinate do_not_vaccinate needs_follow_up delay_vaccination]
+       %i[
+         ready_to_vaccinate
+         do_not_vaccinate
+         needs_follow_up
+         delay_vaccination
+       ],
+       validate: true
 
   encrypts :notes
 
   validates :notes, length: { maximum: 1000 }
-
-  validates :status, presence: true, inclusion: { in: statuses.keys }
 
   def triage_complete?
     ready_to_vaccinate? || do_not_vaccinate?

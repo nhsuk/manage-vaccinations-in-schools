@@ -89,7 +89,7 @@ class Consent < ApplicationRecord
             if: -> { recorded_at.present? && !via_self_consent? }
 
   on_wizard_step :route do
-    validates :route, inclusion: { in: Consent.routes.keys }, presence: true
+    validates :route, inclusion: { in: Consent.routes.keys }
   end
 
   on_wizard_step :who, exact: true do
@@ -101,19 +101,14 @@ class Consent < ApplicationRecord
   end
 
   on_wizard_step :agree do
-    validates :response,
-              inclusion: {
-                in: Consent.responses.keys
-              },
-              presence: true
+    validates :response, inclusion: { in: Consent.responses.keys }
   end
 
   on_wizard_step :reason do
     validates :reason_for_refusal,
               inclusion: {
                 in: Consent.reason_for_refusals.keys
-              },
-              presence: true
+              }
   end
 
   on_wizard_step :reason_notes do

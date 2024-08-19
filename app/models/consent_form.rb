@@ -124,11 +124,7 @@ class ConsentForm < ApplicationRecord
   end
 
   on_wizard_step :school, exact: true do
-    validates :is_this_their_school,
-              presence: true,
-              inclusion: {
-                in: %w[yes no]
-              }
+    validates :is_this_their_school, inclusion: { in: %w[yes no] }
   end
 
   on_wizard_step :consent do

@@ -60,7 +60,6 @@ class Session < ApplicationRecord
   after_validation :set_timeline_timestamps
 
   validates :time_of_day,
-            presence: true,
             inclusion: {
               in: time_of_days.keys
             },
@@ -73,11 +72,7 @@ class Session < ApplicationRecord
   on_wizard_step :when, exact: true do
     validates :date, presence: true
 
-    validates :time_of_day,
-              presence: true,
-              inclusion: {
-                in: Session.time_of_days.keys
-              }
+    validates :time_of_day, inclusion: { in: Session.time_of_days.keys }
   end
 
   on_wizard_step :cohort, exact: true do
@@ -92,11 +87,7 @@ class Session < ApplicationRecord
                 less_than_or_equal_to: ->(object) { object.date }
               }
 
-    validates :reminder_days_after,
-              presence: true,
-              inclusion: {
-                in: %w[default custom]
-              }
+    validates :reminder_days_after, inclusion: { in: %w[default custom] }
     validates :reminder_days_after_custom,
               presence: true,
               numericality: {
@@ -105,11 +96,7 @@ class Session < ApplicationRecord
               },
               if: -> { reminder_days_after == "custom" }
 
-    validates :close_consent_on,
-              presence: true,
-              inclusion: {
-                in: %w[default custom]
-              }
+    validates :close_consent_on, inclusion: { in: %w[default custom] }
     validates :close_consent_at,
               presence: true,
               if: -> { close_consent_on == "custom" }

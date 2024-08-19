@@ -37,11 +37,7 @@ class Parent < ApplicationRecord
   validates :name, presence: true
   validates :phone, phone: true, if: -> { phone.present? }
   validates :email, presence: true, notify_safe_email: true
-  validates :relationship,
-            inclusion: {
-              in: Parent.relationships.keys
-            },
-            presence: true
+  validates :relationship, inclusion: { in: Parent.relationships.keys }
   validates :relationship_other, presence: true, if: -> { relationship_other? }
   validate :has_parental_responsibility, if: -> { relationship_other? }
   validates :contact_method_other,

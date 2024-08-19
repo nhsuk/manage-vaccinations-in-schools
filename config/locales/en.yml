@@ -67,7 +67,6 @@ en:
               blank: Enter details
               too_long: Enter details that are less than 1000 characters long
             response:
-              blank: Choose an answer
               inclusion: Choose an answer
         immunisation_import_row:
           attributes:
@@ -86,7 +85,7 @@ en:
             patient_first_name:
               multiple_duplicate_match: two or more possible patients match
             patient_gender_code:
-              blank: is required but missing
+              inclusion: is required but missing
             patient_postcode:
               blank: is required but missing
             school_urn:
@@ -268,7 +267,6 @@ en:
             gp_response:
               blank: Choose if your child is registered with a GP
             is_this_their_school:
-              blank: Tell us if this is their school
               inclusion: Tell us if this is their school
             last_name:
               blank: Enter a last name
@@ -284,7 +282,6 @@ en:
               invalid: Enter a valid phone number, like 07700 900 000
               too_long: Enter a phone number that is less than 300 characters long
             parent_relationship:
-              blank: Choose your relationship
               inclusion: Choose a relationship
             parent_relationship_other:
               blank: Enter your relationship
@@ -346,7 +343,6 @@ en:
               invalid: Enter a valid phone number, like 07700 900 000
               too_long: Enter a phone number that is less than 300 characters long
             relationship:
-              blank: Choose a relationship
               inclusion: Choose a relationship
             relationship_other:
               blank: Enter a relationship
@@ -356,7 +352,6 @@ en:
             close_consent_at:
               blank: Choose a date for the deadline
             close_consent_on:
-              blank: Choose a deadline for responses
               inclusion: Choose a deadline for responses
             date:
               blank: Enter a date
@@ -369,7 +364,6 @@ en:
             patients:
               blank: You must choose a cohort to continue
             reminder_days_after:
-              blank: Choose when to send reminders
               inclusion: Choose when to send reminders
             reminder_days_after_custom:
               blank: Choose the number of days after the session to send reminders
@@ -383,7 +377,6 @@ en:
               missing_month: Enter a month
               missing_year: Enter a year
             time_of_day:
-              blank: Select a time of day
               inclusion: Select a time of day
         triage:
           attributes:
@@ -423,9 +416,9 @@ en:
               blank: Choose a batch
               incorrect_vaccine: Choose a batch of the %{vaccine_brand} vaccine
             delivery_method:
-              blank: Choose a method of delivery
+              inclusion: Choose a method of delivery
             delivery_site:
-              blank: Choose a delivery site
+              inclusion: Choose a delivery site
             notes:
               too_long: Enter notes that are less than 1000 characters long
             reason:
