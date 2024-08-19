@@ -380,7 +380,7 @@ GEM
     pg (1.5.7)
     phonelib (0.9.1)
     prettier_print (1.2.1)
-    propshaft (0.9.0)
+    propshaft (0.9.1)
       actionpack (>= 7.0.0)
       activesupport (>= 7.0.0)
       rack
