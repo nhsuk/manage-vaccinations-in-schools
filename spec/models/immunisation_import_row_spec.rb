@@ -815,11 +815,11 @@ describe ImmunisationImportRow, type: :model do
     end
 
     context "with a daylight saving time date" do
-      let(:data) { valid_data.merge("DATE_OF_VACCINATION" => "20230701") }
+      let(:data) { valid_data.merge("DATE_OF_VACCINATION" => "20230901") }
 
       it "sets the administered at time" do
         expect(vaccination_record.administered_at).to eq(
-          Time.new(2023, 7, 1, 12, 0, 0, "+01:00")
+          Time.new(2023, 9, 1, 12, 0, 0, "+01:00")
         )
       end
     end

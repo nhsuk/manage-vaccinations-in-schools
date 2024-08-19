@@ -4,8 +4,9 @@ require "rails_helper"
 require "csv"
 
 describe "Pilot journey" do
-  before { Timecop.freeze(Time.zone.local(2024, 2, 1)) }
-  after { Timecop.return }
+  around do |example|
+    Timecop.freeze(Time.zone.local(2024, 2, 1)) { example.run }
+  end
 
   scenario "Cohorting, session creation, verbal consent, vaccination" do
     # Cohorting
@@ -46,7 +47,7 @@ describe "Pilot journey" do
 
   def given_an_hpv_campaign_is_underway
     @team = create(:team, :with_one_nurse)
-    @campaign = create(:campaign, :hpv, team: @team)
+    @campaign = create(:campaign, :hpv, academic_year: 2023, team: @team)
     @school = create(:location, :school, name: "Pilot School")
   end
 

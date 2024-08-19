@@ -53,7 +53,14 @@ FactoryBot.define do
     vaccine { patient_session.session.campaign.vaccines.first }
     batch { vaccine.batches.first }
     user { create :user }
-    administered_at { Time.zone.now }
+
+    administered_at do
+      Faker::Time.between(
+        from: patient_session.session.campaign.start_date,
+        to: patient_session.session.campaign.end_date
+      )
+    end
+
     dose_sequence { 1 }
     uuid { SecureRandom.uuid }
 

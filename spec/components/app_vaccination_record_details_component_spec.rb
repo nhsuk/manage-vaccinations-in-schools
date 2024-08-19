@@ -7,10 +7,16 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
 
   let(:component) { described_class.new(vaccination_record) }
 
-  let(:administered_at) { Time.zone.local(2023, 6, 9, 12) }
+  let(:administered_at) { Time.zone.local(2024, 9, 6, 12) }
   let(:location) { create(:location, :school, name: "Hogwarts") }
   let(:campaign) do
-    create(:campaign, type: vaccine&.type || :hpv, vaccines: [vaccine].compact)
+    create(
+      :campaign,
+      :active,
+      academic_year: 2024,
+      type: vaccine&.type || :hpv,
+      vaccines: [vaccine].compact
+    )
   end
   let(:session) { create(:session, campaign:, location:) }
   let(:patient_session) { create(:patient_session, session:) }
@@ -166,7 +172,7 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
     it do
       expect(rendered).to have_css(
         ".nhsuk-summary-list__row",
-        text: "Date\n9 June 2023"
+        text: "Date\n6 September 2024"
       )
     end
   end
