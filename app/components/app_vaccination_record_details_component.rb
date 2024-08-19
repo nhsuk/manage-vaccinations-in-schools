@@ -91,9 +91,11 @@ class AppVaccinationRecordDetailsComponent < ViewComponent::Base
         end
       end
 
-      summary_list.with_row do |row|
-        row.with_key { "Date and time" }
-        row.with_value { @vaccination_record.recorded_at.to_fs(:long) }
+      if (administered_at = @vaccination_record.administered_at).present?
+        summary_list.with_row do |row|
+          row.with_key { "Date" }
+          row.with_value { administered_at.to_date.to_fs(:long) }
+        end
       end
 
       if @vaccination_record.user.present?
