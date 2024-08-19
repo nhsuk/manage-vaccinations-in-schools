@@ -41,7 +41,7 @@ describe DPSExport, type: :model do
       subject(:header) { csv.split("\n").first }
 
       it "has all the fields in the correct order" do
-        expect(header.split(",")).to eq %w[
+        expect(header.split("|")).to eq %w[
              "NHS_NUMBER"
              "PERSON_FORENAME"
              "PERSON_SURNAME"

@@ -32,7 +32,7 @@ class DPSExport < ApplicationRecord
 
   def csv
     @csv ||=
-      CSV.generate(headers: true, force_quotes: true) do |csv|
+      CSV.generate(headers: true, force_quotes: true, col_sep: "|") do |csv|
         csv << DPSExportRow::FIELDS.map(&:upcase)
 
         vaccination_records
