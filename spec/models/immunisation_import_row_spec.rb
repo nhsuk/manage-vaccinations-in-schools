@@ -807,5 +807,11 @@ describe ImmunisationImportRow, type: :model do
     it "does not have a vaccinator as that isn't provided in the import" do
       expect(vaccination_record.user).to be_nil
     end
+
+    it "sets the administered at time to the session date" do
+      expect(vaccination_record.administered_at).to eq(
+        Time.zone.local(2024, 1, 1)
+      )
+    end
   end
 end
