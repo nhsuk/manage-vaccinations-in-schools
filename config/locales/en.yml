@@ -70,24 +70,8 @@ en:
               inclusion: Choose an answer
         immunisation_import_row:
           attributes:
-            administered:
-              inclusion: is required but missing
-            batch_expiry_date:
-              blank: is required but missing
-            batch_number:
-              blank: is required but missing
-            delivery_method:
-              blank: is required but missing
-            delivery_site:
-              blank: is required but missing
-            organisation_code:
-              blank: is required but missing
             patient_first_name:
-              multiple_duplicate_match: two or more possible patients match
-            patient_gender_code:
-              inclusion: is required but missing
-            patient_postcode:
-              blank: is required but missing
+              multiple_duplicate_match: Two or more possible patients match the patient first name, last name, date of birth or postcode.
             school_urn:
               inclusion: The school URN is not recognised. If you’ve checked the URN, and you believe it’s valid, contact our support team.
   activerecord:

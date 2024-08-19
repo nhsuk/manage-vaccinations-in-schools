@@ -51,10 +51,10 @@ describe ImmunisationImportRow, type: :model do
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:administered]).to include(
-          "is required but missing"
+          "is not included in the list"
         )
         expect(immunisation_import_row.errors[:organisation_code]).to include(
-          "is required but missing"
+          "can't be blank"
         )
       end
     end
@@ -64,26 +64,26 @@ describe ImmunisationImportRow, type: :model do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:batch_expiry_date]).to include(
-          "is required but missing"
+        expect(immunisation_import_row.errors[:batch_expiry_date]).to eq(
+          ["can't be blank"]
         )
-        expect(immunisation_import_row.errors[:batch_number]).to include(
-          "is required but missing"
+        expect(immunisation_import_row.errors[:batch_number]).to eq(
+          ["can't be blank"]
         )
-        expect(immunisation_import_row.errors[:delivery_site]).to include(
-          "is required but missing"
+        expect(immunisation_import_row.errors[:delivery_site]).to eq(
+          ["can't be blank"]
         )
-        expect(immunisation_import_row.errors[:delivery_method]).to include(
-          "is required but missing"
+        expect(immunisation_import_row.errors[:delivery_method]).to eq(
+          ["can't be blank"]
         )
-        expect(immunisation_import_row.errors[:organisation_code]).to include(
-          "is required but missing"
+        expect(immunisation_import_row.errors[:organisation_code]).to eq(
+          ["can't be blank"]
         )
-        expect(immunisation_import_row.errors[:patient_gender_code]).to include(
-          "is required but missing"
+        expect(immunisation_import_row.errors[:patient_gender_code]).to eq(
+          ["is not included in the list"]
         )
-        expect(immunisation_import_row.errors[:patient_postcode]).to include(
-          "is required but missing"
+        expect(immunisation_import_row.errors[:patient_postcode]).to eq(
+          ["Enter a valid postcode, such as SW1A 1AA"]
         )
       end
     end
@@ -93,11 +93,8 @@ describe ImmunisationImportRow, type: :model do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:organisation_code]).to include(
-          "is too long (maximum is 5 characters)"
-        )
-        expect(immunisation_import_row.errors[:organisation_code]).to include(
-          "must be equal to abc"
+        expect(immunisation_import_row.errors[:organisation_code]).to eq(
+          ["must be equal to abc"]
         )
       end
     end
@@ -108,7 +105,7 @@ describe ImmunisationImportRow, type: :model do
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:patient_postcode]).to include(
-          /Enter a valid postcode/
+          "Enter a valid postcode, such as SW1A 1AA"
         )
       end
     end
@@ -118,8 +115,8 @@ describe ImmunisationImportRow, type: :model do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:patient_postcode]).to include(
-          /Enter a valid postcode/
+        expect(immunisation_import_row.errors[:patient_postcode]).to eq(
+          ["Enter a valid postcode, such as SW1A 1AA"]
         )
       end
     end
@@ -162,7 +159,7 @@ describe ImmunisationImportRow, type: :model do
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:patient_first_name]).to include(
-          /two or more possible patients match/
+          /Two or more possible patients match/
         )
       end
     end
