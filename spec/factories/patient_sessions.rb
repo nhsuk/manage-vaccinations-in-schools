@@ -142,14 +142,15 @@ FactoryBot.define do
         ]
       end
       vaccination_records do
-        create_list(
-          :vaccination_record,
-          1,
-          reason: :already_had,
-          administered: false,
-          user:,
-          patient_session: instance
-        )
+        [
+          association(
+            :vaccination_record,
+            :not_administered,
+            reason: :already_had,
+            user:,
+            patient_session: instance
+          )
+        ]
       end
     end
 
@@ -195,13 +196,7 @@ FactoryBot.define do
         ]
       end
       vaccination_records do
-        create_list(
-          :vaccination_record,
-          1,
-          administered: true,
-          user:,
-          patient_session: instance
-        )
+        [association(:vaccination_record, user:, patient_session: instance)]
       end
     end
 

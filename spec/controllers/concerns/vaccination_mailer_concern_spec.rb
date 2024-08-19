@@ -12,9 +12,7 @@ describe VaccinationMailerConcern do
     let(:consent) { create(:consent, campaign:, route:) }
     let(:patient) { create(:patient, consents: [consent]) }
     let(:patient_session) { create(:patient_session, session:, patient:) }
-    let(:vaccination_record) do
-      create(:vaccination_record, patient_session:, administered:)
-    end
+    let(:vaccination_record) { create(:vaccination_record, patient_session:) }
     let(:administered_mail) { double(deliver_later: true) }
     let(:not_administered_mail) { double(deliver_later: true) }
 
@@ -28,8 +26,6 @@ describe VaccinationMailerConcern do
     end
 
     context "when the vaccination has taken place" do
-      let(:administered) { true }
-
       it "calls hpv_vaccination_has_taken_place" do
         expect(VaccinationMailer).to have_received(
           :hpv_vaccination_has_taken_place
@@ -42,7 +38,9 @@ describe VaccinationMailerConcern do
     end
 
     context "when the vaccination hasn't taken place" do
-      let(:administered) { false }
+      let(:vaccination_record) do
+        create(:vaccination_record, :not_administered, patient_session:)
+      end
 
       it "calls hpv_vaccination_has_not_taken_place" do
         expect(VaccinationMailer).to have_received(

@@ -5,6 +5,10 @@ require "rails_helper"
 describe "HPV Vaccination" do
   include EmailExpectations
 
+  around do |example|
+    Timecop.freeze(Time.zone.local(2024, 2, 1)) { example.run }
+  end
+
   scenario "Administered" do
     given_i_am_signed_in
     when_i_go_to_a_patient_that_is_ready_to_vaccinate
@@ -24,7 +28,7 @@ describe "HPV Vaccination" do
   def given_i_am_signed_in
     team = create(:team, :with_one_nurse)
     location = create(:location, :school)
-    campaign = create(:campaign, :hpv, team:)
+    campaign = create(:campaign, :hpv, academic_year: 2023, team:)
     @batch = campaign.batches.first
     @session = create(:session, campaign:, location:)
     @patient =
