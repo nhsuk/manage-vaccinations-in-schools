@@ -13,7 +13,7 @@ class HealthAnswer
 
   validates :notes, length: { maximum: 1000 }
 
-  validates :response, presence: true, inclusion: { in: %w[yes no] }
+  validates :response, inclusion: { in: %w[yes no] }
   validates :notes, presence: true, if: -> { response == "yes" }
 
   def attributes

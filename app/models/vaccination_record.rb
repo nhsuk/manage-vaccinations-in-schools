@@ -118,13 +118,11 @@ class VaccinationRecord < ApplicationRecord
   validates :notes, length: { maximum: 1000 }
 
   validates :delivery_site,
-            presence: true,
             inclusion: {
               in: delivery_sites.keys
             },
             if: -> { administered? && !delivery_site_other }
   validates :delivery_method,
-            presence: true,
             inclusion: {
               in: delivery_methods.keys
             },
@@ -140,12 +138,10 @@ class VaccinationRecord < ApplicationRecord
 
   on_wizard_step :"delivery-site", exact: true do
     validates :delivery_site,
-              presence: true,
               inclusion: {
                 in: VaccinationRecord.delivery_sites.keys
               }
     validates :delivery_method,
-              presence: true,
               inclusion: {
                 in: VaccinationRecord.delivery_methods.keys
               }

@@ -25,7 +25,6 @@ class ImmunisationImportRow
             }
   validates :recorded_at, presence: true
   validates :vaccine_given,
-            presence: true,
             inclusion: {
               in: :valid_given_vaccines
             },
@@ -38,7 +37,6 @@ class ImmunisationImportRow
             presence: true,
             if: -> { school_urn == SCHOOL_URN_UNKNOWN }
   validates :school_urn,
-            presence: true,
             inclusion: {
               in: -> do
                 Location.school.pluck(:urn) +
@@ -53,11 +51,7 @@ class ImmunisationImportRow
             comparison: {
               less_than_or_equal_to: -> { Date.current }
             }
-  validates :patient_gender_code,
-            presence: true,
-            inclusion: {
-              in: Patient.gender_codes.values
-            }
+  validates :patient_gender_code, inclusion: { in: Patient.gender_codes.values }
   validates :patient_postcode, presence: true, postcode: true
   validate :zero_or_one_existing_patient
 
@@ -67,7 +61,6 @@ class ImmunisationImportRow
               less_than_or_equal_to: -> { Date.current }
             }
   validates :reason,
-            presence: true,
             inclusion: {
               in: VaccinationRecord.reasons.keys.map(&:to_sym)
             },
