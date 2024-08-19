@@ -5,7 +5,7 @@
 # Table name: vaccination_records
 #
 #  id                 :bigint           not null, primary key
-#  administered       :boolean
+#  administered_at    :datetime
 #  delivery_method    :integer
 #  delivery_site      :integer
 #  dose_sequence      :integer          not null
