@@ -808,10 +808,20 @@ describe ImmunisationImportRow, type: :model do
       expect(vaccination_record.user).to be_nil
     end
 
-    it "sets the administered at time to the session date" do
+    it "sets the administered at time" do
       expect(vaccination_record.administered_at).to eq(
-        Time.zone.local(2024, 1, 1)
+        Time.new(2024, 1, 1, 12, 0, 0, "+00:00")
       )
+    end
+
+    context "with a daylight saving time date" do
+      let(:data) { valid_data.merge("DATE_OF_VACCINATION" => "20230701") }
+
+      it "sets the administered at time" do
+        expect(vaccination_record.administered_at).to eq(
+          Time.new(2023, 7, 1, 12, 0, 0, "+01:00")
+        )
+      end
     end
   end
 end

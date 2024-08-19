@@ -286,7 +286,7 @@ class ImmunisationImportRow
   attr_reader :imported_from
 
   def administered_at
-    administered ? session_date.to_time : nil
+    administered ? (session_date.in_time_zone + 12.hours) : nil
   end
 
   def location
