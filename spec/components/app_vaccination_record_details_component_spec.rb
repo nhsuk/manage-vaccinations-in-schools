@@ -7,7 +7,7 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
 
   let(:component) { described_class.new(vaccination_record) }
 
-  let(:administered) { true }
+  let(:administered_at) { Time.zone.local(2023, 6, 9, 12) }
   let(:location) { create(:location, :school, name: "Hogwarts") }
   let(:campaign) do
     create(:campaign, type: vaccine&.type || :hpv, vaccines: [vaccine].compact)
@@ -22,7 +22,7 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
   let(:vaccination_record) do
     create(
       :vaccination_record,
-      administered:,
+      administered_at:,
       batch:,
       vaccine:,
       patient_session:
@@ -38,7 +38,7 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
     end
 
     context "when not administered" do
-      let(:administered) { false }
+      let(:administered_at) { nil }
 
       it do
         expect(rendered).to have_css(
@@ -162,11 +162,11 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
     end
   end
 
-  describe "date and time row" do
+  describe "date row" do
     it do
       expect(rendered).to have_css(
         ".nhsuk-summary-list__row",
-        text: "Date and time\n9 June 2023 at 12:00am"
+        text: "Date\n9 June 2023"
       )
     end
   end
