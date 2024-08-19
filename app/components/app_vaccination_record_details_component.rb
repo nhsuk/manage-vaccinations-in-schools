@@ -38,7 +38,7 @@ class AppVaccinationRecordDetailsComponent < ViewComponent::Base
       summary_list.with_row do |row|
         row.with_key { "Outcome" }
         row.with_value do
-          @vaccination_record.administered ? "Vaccinated" : "Not vaccinated"
+          @vaccination_record.administered? ? "Vaccinated" : "Not vaccinated"
         end
       end
 

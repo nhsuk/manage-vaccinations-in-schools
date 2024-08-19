@@ -95,10 +95,7 @@ describe VaccinationMailer do
     end
     let(:patient_session) { create(:patient_session, session:, patient:) }
     let(:vaccination_record) do
-      create :vaccination_record,
-             patient_session:,
-             administered: false,
-             reason: :not_well
+      create(:vaccination_record, :not_administered, patient_session:)
     end
 
     it { should have_attributes(to: [patient.consents.last.parent.email]) }

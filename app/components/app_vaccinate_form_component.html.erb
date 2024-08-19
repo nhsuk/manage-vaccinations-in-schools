@@ -16,6 +16,7 @@
             :administered, true,
             label: { text: t("vaccinations.form.label.#{@vaccination_record.vaccine.type.downcase}") },
             link_errors: true,
+            checked: @vaccination_record.persisted? && @vaccination_record.administered?,
           ) do %>
         <%= f.govuk_collection_radio_buttons(
               :delivery_site,
@@ -33,6 +34,7 @@
             :administered,
             false,
             label: { text: "No, they did not get it" },
+            checked: @vaccination_record.persisted? && @vaccination_record.not_administered?,
           ) %>
     <% end %>
 
