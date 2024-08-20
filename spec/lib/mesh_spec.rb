@@ -45,7 +45,7 @@ describe MESH do
         ).with(
           headers: {
             "Accept-Encoding" => "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
-            "Content-Type" => "text/csv",
+            "Content-Type" => "application/octet-stream",
             "Content-Encoding" => "gzip",
             "Mex-To" => "TESTBOX",
             "Mex-Workflowid" => "dps export",

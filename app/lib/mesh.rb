@@ -40,7 +40,7 @@ module MESH
 
   def self.send_file(to:, data:)
     headers = {
-      "Content-Type" => "text/csv",
+      "Content-Type" => "application/octet-stream",
       "Content-Encoding" => "gzip",
       "mex-to" => to,
       "mex-workflowid" => "dps export"
