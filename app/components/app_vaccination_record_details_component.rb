@@ -111,6 +111,13 @@ class AppVaccinationRecordDetailsComponent < ViewComponent::Base
           row.with_value { location.name }
         end
       end
+
+      if (notes = @vaccination_record.notes).present?
+        summary_list.with_row do |row|
+          row.with_key { "Notes" }
+          row.with_value { notes }
+        end
+      end
     end
   end
 end

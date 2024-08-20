@@ -24,6 +24,7 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
   let(:batch) do
     create(:batch, name: "ABC", expiry: Date.new(2020, 1, 1), vaccine:)
   end
+  let(:notes) { "Some notes." }
 
   let(:vaccination_record) do
     create(
@@ -31,7 +32,8 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
       administered_at:,
       batch:,
       vaccine:,
-      patient_session:
+      patient_session:,
+      notes:
     )
   end
 
@@ -206,6 +208,21 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
       let(:location) { nil }
 
       it { should_not have_css(".nhsuk-summary-list__row", text: "Location") }
+    end
+  end
+
+  describe "notes row" do
+    it do
+      expect(rendered).to have_css(
+        ".nhsuk-summary-list__row",
+        text: "Notes\nSome notes."
+      )
+    end
+
+    context "when the notes are not present" do
+      let(:notes) { nil }
+
+      it { should_not have_css(".nhsuk-summary-list__row", text: "Notes") }
     end
   end
 end
