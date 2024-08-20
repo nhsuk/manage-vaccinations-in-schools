@@ -25,7 +25,7 @@ describe ImmunisationImportRow, type: :model do
   let(:valid_data) do
     {
       "ORGANISATION_CODE" => "abc",
-      "VACCINATED" => "Yes",
+      "VACCINATED" => "Y",
       "ANATOMICAL_SITE" => "nasal",
       "BATCH_EXPIRY_DATE" => "20210101",
       "BATCH_NUMBER" => "123",
@@ -60,7 +60,7 @@ describe ImmunisationImportRow, type: :model do
     end
 
     context "when missing fields" do
-      let(:data) { { "VACCINATED" => "Yes" } }
+      let(:data) { { "VACCINATED" => "Y" } }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -97,7 +97,7 @@ describe ImmunisationImportRow, type: :model do
     end
 
     context "with an invalid vaccine" do
-      let(:data) { { "VACCINATED" => "Yes", "VACCINE_GIVEN" => "test" } }
+      let(:data) { { "VACCINATED" => "Y", "VACCINE_GIVEN" => "test" } }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
@@ -206,7 +206,7 @@ describe ImmunisationImportRow, type: :model do
       let(:data) do
         {
           "ORGANISATION_CODE" => "abc",
-          "VACCINATED" => "Yes",
+          "VACCINATED" => "Y",
           "BATCH_EXPIRY_DATE" => "20210101",
           "BATCH_NUMBER" => "123",
           "ANATOMICAL_SITE" => "nasal",
@@ -471,25 +471,37 @@ describe ImmunisationImportRow, type: :model do
       it { should be_nil }
     end
 
-    context "with positive vaccinated field" do
+    context "with positive short vaccinated value" do
+      let(:data) { { "VACCINATED" => "Y" } }
+
+      it { should be(true) }
+    end
+
+    context "with positive long vaccinated value" do
       let(:data) { { "VACCINATED" => "Yes" } }
 
       it { should be(true) }
     end
 
-    context "with negative vaccinated field" do
+    context "with negative short vaccinated value" do
+      let(:data) { { "VACCINATED" => "N" } }
+
+      it { should be(false) }
+    end
+
+    context "with negative long vaccinated value" do
       let(:data) { { "VACCINATED" => "No" } }
 
       it { should be(false) }
     end
 
-    context "with an unknown vaccinated field" do
+    context "with an unknown vaccinated value" do
       let(:data) { { "VACCINATED" => "Other" } }
 
       it { should be_nil }
     end
 
-    context "with a vaccine given field" do
+    context "with a vaccine given value" do
       let(:data) { { "VACCINE_GIVEN" => "Vaccine" } }
 
       it { should be(true) }
@@ -538,14 +550,14 @@ describe ImmunisationImportRow, type: :model do
     subject(:reason) { immunisation_import_row.reason }
 
     context "without a reason" do
-      let(:data) { { "VACCINATED" => "No" } }
+      let(:data) { { "VACCINATED" => "N" } }
 
       it { expect(immunisation_import_row).to be_invalid }
     end
 
     context "without an unknown reason" do
       let(:data) do
-        { "VACCINATED" => "No", "REASON_NOT_VACCINATED" => "Unknown" }
+        { "VACCINATED" => "N", "REASON_NOT_VACCINATED" => "Unknown" }
       end
 
       it { expect(immunisation_import_row).to be_invalid }
@@ -553,7 +565,7 @@ describe ImmunisationImportRow, type: :model do
 
     context "with a reason" do
       let(:data) do
-        { "VACCINATED" => "No", "REASON_NOT_VACCINATED" => "Did Not Attend" }
+        { "VACCINATED" => "N", "REASON_NOT_VACCINATED" => "Did Not Attend" }
       end
 
       it { should eq(:absent_from_session) }
