@@ -127,11 +127,9 @@ class ImmunisationImport < ApplicationRecord
     return unless rows
 
     rows.each.with_index do |row, index|
-      next if row.valid?
-
-      # Row 0 is the header row, but humans would call it Row 1. That's also
-      # what it would be shown as in Excel. The first row of data is Row 2.
-      errors.add("row_#{index + 2}".to_sym, row.errors.full_messages)
+      if row.invalid?
+        errors.add("row_#{index + 1}".to_sym, row.errors.full_messages)
+      end
     end
   end
 end

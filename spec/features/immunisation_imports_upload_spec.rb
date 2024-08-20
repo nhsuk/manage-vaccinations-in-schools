@@ -89,7 +89,7 @@ describe "Immunisation imports" do
 
   def then_i_should_see_the_errors_page
     expect(page).to have_content("The vaccinations could not be added")
-    expect(page).to have_content("Row 2")
+    expect(page).to have_content("Row 1")
   end
 
   def and_i_go_back_to_the_upload_page
