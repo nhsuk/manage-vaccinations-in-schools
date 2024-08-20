@@ -1,4 +1,4 @@
-<% page_title = "#{@session.name}" %>
+<% page_title = session_name(@session) %>
 
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [

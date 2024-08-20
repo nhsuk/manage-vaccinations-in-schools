@@ -54,8 +54,6 @@ class Session < ApplicationRecord
 
   default_scope { active }
 
-  delegate :name, to: :location
-
   after_initialize :set_timeline_attributes
   after_validation :set_timeline_timestamps
 

@@ -17,8 +17,10 @@
               colour: "blue",
             ) %><br>
       <% end %>
-      <%= link_to session.location.name, edit_session_path(session), "data-testid": "session-link" %><br>
-      <%= session.location.town %>, <%= session.location.postcode %>
+      <%= link_to session_location(session), edit_session_path(session), "data-testid": "session-link" %>
+      <% if (location = session.location).present? %>
+        <br /><%= location.town %>, <%= location.postcode %>
+      <% end %>
     </p>
   </td>
 </tr>

@@ -3,8 +3,7 @@
         items: [
           { text: "Home", href: dashboard_path },
           { text: t("sessions.index.title"), href: sessions_path },
-          { text: "#{@session.campaign.name} session at #{@session.name}",
-            href: session_path(@session) },
+          { text: session_name(@session), href: session_path(@session) },
         ],
       ) %>
 <% end %>

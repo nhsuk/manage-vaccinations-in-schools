@@ -4,7 +4,7 @@
   <%= render AppBreadcrumbComponent.new(items: [
                                           { text: "Home", href: dashboard_path },
                                           { text: t("sessions.index.title"), href: sessions_path },
-                                          { text: @session.name, active: true },
+                                          { text: session_name(@session), active: true },
                                         ]) %>
 <% end %>
 

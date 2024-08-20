@@ -27,7 +27,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
           ["Site", vaccination_record.human_enum_name(:delivery_site)],
           ["Date", date_summary],
           ["Time", last_action_time.to_fs(:time)],
-          ["Location", @patient_session.session.location.name],
+          ["Location", helpers.session_location(@patient_session.session)],
           ["Vaccinator", clinician_name],
           ["Notes", notes]
         ]
@@ -38,7 +38,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
           ["Time", last_action_time.to_fs(:time)],
           (
             if show_location?
-              ["Location", @patient_session.session.location.name]
+              ["Location", helpers.session_location(@patient_session.session)]
             end
           ),
           ["Decided by", clinician_name],
