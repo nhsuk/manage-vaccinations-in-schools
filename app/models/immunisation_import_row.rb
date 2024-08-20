@@ -171,7 +171,7 @@ class ImmunisationImportRow
   }.freeze
 
   def delivery_site
-    DELIVERY_SITES[@data["ANATOMICAL_SITE"]&.downcase]
+    DELIVERY_SITES[@data["ANATOMICAL_SITE"]&.strip&.downcase]
   end
 
   def delivery_method
