@@ -6,7 +6,6 @@ class ImmunisationImportRow
   validates :administered, inclusion: [true, false]
   validates :batch_expiry_date, presence: true, if: :administered
   validates :batch_number, presence: true, if: :administered
-  validates :delivery_method, presence: true, if: :administered
   validates :delivery_site, presence: true, if: :administered
   validates :dose_sequence,
             comparison: {
