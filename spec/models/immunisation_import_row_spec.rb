@@ -142,6 +142,17 @@ describe ImmunisationImportRow, type: :model do
       end
     end
 
+    context "with an invalid NHS number" do
+      let(:data) { { "NHS_NUMBER" => "abc" } }
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:patient_nhs_number]).to eq(
+          ["is the wrong length (should be 10 characters)"]
+        )
+      end
+    end
+
     context "with an invalid patient date of birth" do
       let(:data) { { "PERSON_DOB" => "21000101" } }
 

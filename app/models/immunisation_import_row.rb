@@ -37,6 +37,7 @@ class ImmunisationImportRow
               end
             }
 
+  validates :patient_nhs_number, length: { is: 10 }, allow_blank: true
   validates :patient_first_name, presence: true
   validates :patient_last_name, presence: true
   validates :patient_date_of_birth,
