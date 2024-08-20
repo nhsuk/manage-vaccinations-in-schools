@@ -102,7 +102,7 @@ describe ImmunisationImport, type: :model do
 
       it "is invalid" do
         expect(immunisation_import).to be_invalid
-        expect(immunisation_import.errors).to include(:row_2)
+        expect(immunisation_import.errors).to include(:row_1)
       end
     end
   end
