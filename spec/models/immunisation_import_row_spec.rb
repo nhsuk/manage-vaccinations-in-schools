@@ -182,8 +182,10 @@ describe ImmunisationImportRow, type: :model do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:patient_first_name]).to include(
-          /Two or more possible patients match/
+        expect(immunisation_import_row.errors[:patient]).to eq(
+          [
+            "Two or more possible patients match the patient first name, last name, date of birth or postcode."
+          ]
         )
       end
     end

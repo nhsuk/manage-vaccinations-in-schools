@@ -391,7 +391,7 @@ class ImmunisationImportRow
 
   def zero_or_one_existing_patient
     if find_existing_patients.count >= 2
-      errors.add(:patient_first_name, :multiple_duplicate_match)
+      errors.add(:patient, :multiple_duplicate_match)
     end
   end
 end
