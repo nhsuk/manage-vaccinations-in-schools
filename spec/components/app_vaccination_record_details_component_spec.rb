@@ -201,5 +201,11 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
         text: "Location\nHogwarts"
       )
     end
+
+    context "when the location is not present" do
+      let(:location) { nil }
+
+      it { should_not have_css(".nhsuk-summary-list__row", text: "Location") }
+    end
   end
 end

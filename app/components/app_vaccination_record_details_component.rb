@@ -105,9 +105,11 @@ class AppVaccinationRecordDetailsComponent < ViewComponent::Base
         end
       end
 
-      summary_list.with_row do |row|
-        row.with_key { "Location" }
-        row.with_value { @vaccination_record.session.location.name }
+      if (location = @vaccination_record.session.location).present?
+        summary_list.with_row do |row|
+          row.with_key { "Location" }
+          row.with_value { location.name }
+        end
       end
     end
   end
