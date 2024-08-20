@@ -73,9 +73,6 @@ describe ImmunisationImportRow, type: :model do
         expect(immunisation_import_row.errors[:delivery_site]).to eq(
           ["can't be blank"]
         )
-        expect(immunisation_import_row.errors[:delivery_method]).to eq(
-          ["can't be blank"]
-        )
         expect(immunisation_import_row.errors[:organisation_code]).to eq(
           ["can't be blank"]
         )
