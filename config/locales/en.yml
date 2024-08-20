@@ -74,6 +74,8 @@ en:
               multiple_duplicate_match: Two or more possible patients match the patient first name, last name, date of birth or postcode.
             school_urn:
               inclusion: The school URN is not recognised. If you’ve checked the URN, and you believe it’s valid, contact our support team.
+            vaccine_given:
+              inclusion: The %{value} vaccine is unknown or not administered as part of this programme.
   activerecord:
     attributes:
       campaign:

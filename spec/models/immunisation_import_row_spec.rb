@@ -99,6 +99,19 @@ describe ImmunisationImportRow, type: :model do
       end
     end
 
+    context "with an invalid vaccine" do
+      let(:data) { { "VACCINATED" => "Yes", "VACCINE_GIVEN" => "test" } }
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:vaccine_given]).to eq(
+          [
+            "The test vaccine is unknown or not administered as part of this programme."
+          ]
+        )
+      end
+    end
+
     context "with an invalid postcode" do
       let(:data) { { "PERSON_POSTCODE" => "ABC DEF" } }
 
