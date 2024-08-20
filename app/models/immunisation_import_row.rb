@@ -126,12 +126,12 @@ class ImmunisationImportRow
   end
 
   def administered
-    vaccinated = @data["VACCINATED"]&.downcase
-
-    if vaccinated == "yes"
-      true
-    elsif vaccinated == "no"
-      false
+    if (vaccinated = @data["VACCINATED"]&.downcase).present?
+      if "yes".start_with?(vaccinated)
+        true
+      elsif "no".start_with?(vaccinated)
+        false
+      end
     elsif @data["VACCINE_GIVEN"].present?
       true
     end
