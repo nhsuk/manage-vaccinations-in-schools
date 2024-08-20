@@ -12,7 +12,7 @@
       <%= link_to "Add a batch", new_vaccine_batch_path(vaccine) %>
     </p>
 
-    <% if vaccine.batches.any? %>
+    <% if (batches = vaccine.batches).present? %>
       <%= govuk_table do |table| %>
         <%= table.with_head do |head| %>
           <%= head.with_row do |row| %>
@@ -24,7 +24,7 @@
         <% end %>
 
         <%= table.with_body do |body| %>
-          <% vaccine.batches.order(:name).each do |batch| %>
+          <% batches.each do |batch| %>
             <% body.with_row do |row| %>
               <% row.with_cell(text: batch.name) do %>
                 <%= batch.name %>
