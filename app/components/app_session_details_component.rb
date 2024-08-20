@@ -8,7 +8,7 @@ class AppSessionDetailsComponent < ViewComponent::Base
   end
 
   def school
-    @session.location.name
+    helpers.session_location(@session)
   end
 
   def vaccine

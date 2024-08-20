@@ -163,10 +163,6 @@ class VaccinationRecord < ApplicationRecord
     validates :batch_id, presence: true
   end
 
-  def location_name
-    patient_session.session.location&.name
-  end
-
   def administered?
     administered_at != nil
   end

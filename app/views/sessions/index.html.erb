@@ -30,9 +30,10 @@
               <% row.with_cell do %>
                 <span class="nhsuk-table-responsive__heading">Location</span>
                 <p class="nhsuk-u-margin-bottom-0 nhsuk-u-secondary-text-color">
-                  <%= link_to session.location.name, session_path(session) %>
-                  <br>
-                  <%= session.location.address %>
+                  <%= link_to session_location(session), session_path(session) %>
+                  <% if (address = session.location&.address).present? %>
+                    <br /><%= address %>
+                  <% end %>
                 </p>
               <% end %>
               <% row.with_cell do %>

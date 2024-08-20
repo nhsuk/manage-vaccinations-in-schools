@@ -2,7 +2,6 @@
 
 class SessionsController < ApplicationController
   before_action :set_session, except: %i[index create]
-  before_action :set_school, only: %i[show]
 
   layout "two_thirds", except: %i[index show]
 
@@ -52,9 +51,5 @@ class SessionsController < ApplicationController
 
   def set_session
     @session = policy_scope(Session).find(params[:id])
-  end
-
-  def set_school
-    @school = @session.location
   end
 end
