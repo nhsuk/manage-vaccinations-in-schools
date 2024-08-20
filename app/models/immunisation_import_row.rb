@@ -9,7 +9,6 @@ class ImmunisationImportRow
   validates :delivery_method, presence: true, if: :administered
   validates :delivery_site, presence: true, if: :administered
   validates :dose_sequence,
-            presence: true,
             comparison: {
               greater_than_or_equal_to: 1,
               less_than_or_equal_to: :maximum_dose_sequence
@@ -41,7 +40,6 @@ class ImmunisationImportRow
   validates :patient_first_name, presence: true
   validates :patient_last_name, presence: true
   validates :patient_date_of_birth,
-            presence: true,
             comparison: {
               less_than_or_equal_to: -> { Date.current }
             }
@@ -50,7 +48,6 @@ class ImmunisationImportRow
   validate :zero_or_one_existing_patient
 
   validates :session_date,
-            presence: true,
             comparison: {
               greater_than_or_equal_to: :campaign_start_date,
               less_than_or_equal_to: :campaign_end_date_or_today
