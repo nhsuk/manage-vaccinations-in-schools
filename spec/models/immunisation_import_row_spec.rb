@@ -51,7 +51,7 @@ describe ImmunisationImportRow, type: :model do
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:administered]).to include(
-          "is not included in the list"
+          "Unable to determine if the vaccination was administered or not."
         )
         expect(immunisation_import_row.errors[:organisation_code]).to include(
           "can't be blank"
