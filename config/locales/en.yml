@@ -70,6 +70,8 @@ en:
               inclusion: Choose an answer
         immunisation_import_row:
           attributes:
+            administered:
+              inclusion: Unable to determine if the vaccination was administered or not.
             patient:
               multiple_duplicate_match: Two or more possible patients match the patient first name, last name, date of birth or postcode.
             school_urn:
