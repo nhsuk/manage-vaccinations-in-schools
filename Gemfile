@@ -37,6 +37,7 @@ gem "propshaft"
 gem "puma", "~> 6.4"
 gem "pundit"
 gem "rainbow"
+gem "ruby-progressbar"
 gem "rubyzip"
 gem "sentry-rails"
 gem "sentry-ruby"
@@ -65,7 +66,6 @@ group :development do
   gem "rails-erd"
   gem "rladr"
   gem "rubocop-govuk", require: false
-  gem "ruby-progressbar"
   gem "rufo", require: false
   gem "solargraph", require: false
   gem "solargraph-rails", require: false
