@@ -28,7 +28,12 @@ describe AppTimestampedEntryComponent, type: :component do
         text: "Summary of a thing",
         timestamp: Time.zone.local(2024, 2, 17, 12, 23, 0),
         recorded_by:
-          create(:user, full_name: "Test User", email: "test@example.com")
+          create(
+            :user,
+            family_name: "User",
+            given_name: "Test",
+            email: "test@example.com"
+          )
       )
     end
 

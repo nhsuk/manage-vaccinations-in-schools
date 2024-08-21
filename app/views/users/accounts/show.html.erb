@@ -3,7 +3,9 @@
 <%= form_for @user, url: users_account_path(@user), method: :patch do |f| %>
   <%= f.govuk_error_summary %>
 
-  <%= f.govuk_text_field :full_name, label: { text: "Full name" } %>
+  <%= f.govuk_text_field :given_name, label: { text: "Given name" } %>
+  <%= f.govuk_text_field :family_name, label: { text: "Family name" } %>
+
   <%= f.govuk_text_field :email, label: { text: "Email address" } %>
   <%= f.govuk_text_field :registration,
                          width: 10,

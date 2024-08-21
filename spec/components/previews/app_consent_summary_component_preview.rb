@@ -61,7 +61,8 @@ class AppConsentSummaryComponentPreview < ViewComponent::Preview
                  recorded_by:
                    build(
                      :user,
-                     full_name: "Nurse Joy",
+                     family_name: "Joy",
+                     given_name: "Nurse",
                      email: "nurse.joy@example.com"
                    )
                }

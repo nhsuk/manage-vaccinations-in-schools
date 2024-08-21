@@ -381,9 +381,12 @@ en:
               invalid: Enter a valid email address, such as j.doe@gmail.com
               taken: This email address is already in use
               too_long: Enter an email address that is less than 255 characters long
-            full_name:
-              blank: Enter your full name
-              too_long: Enter a full name that is less than 255 characters long
+            family_name:
+              blank: Enter your family name
+              too_long: Enter a family name that is less than 255 characters long
+            given_name:
+              blank: Enter your given name
+              too_long: Enter a given name that is less than 255 characters long
             ods_code:
               blank: Enter an ODS code
             password:

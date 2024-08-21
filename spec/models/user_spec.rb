@@ -33,14 +33,16 @@
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
 #  index_users_on_unlock_token          (unlock_token) UNIQUE
 #
-FactoryBot.define do
-  factory :user do
-    sequence(:family_name) { |n| "User #{n}" }
-    given_name { "Test" }
 
-    sequence(:email) { |n| "test-#{n}@example.com" }
-    sequence(:teams) { [Team.first || create(:team)] }
-    password { "power overwhelming!" } # avoid a password that was found in a data breach
-    registration { "SW608658 (HCPC)" }
+require "rails_helper"
+
+describe User, type: :model do
+  subject(:user) { build(:user) }
+
+  describe "validations" do
+    it { should validate_presence_of(:given_name) }
+    it { should validate_presence_of(:family_name) }
+    it { should validate_length_of(:given_name).is_at_most(255) }
+    it { should validate_length_of(:family_name).is_at_most(255) }
   end
 end

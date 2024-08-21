@@ -15,7 +15,8 @@ user =
   User.find_by(email: "nurse.joy@example.com") ||
     FactoryBot.create(
       :user,
-      full_name: "Nurse Joy",
+      family_name: "Joy",
+      given_name: "Nurse",
       email: "nurse.joy@example.com",
       password: "nurse.joy@example.com"
     )

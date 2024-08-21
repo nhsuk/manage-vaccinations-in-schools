@@ -52,7 +52,12 @@ module Users
     end
 
     def user_params
-      params.require(:user).permit(:full_name, :email, :registration)
+      params.require(:user).permit(
+        :email,
+        :family_name,
+        :given_name,
+        :registration
+      )
     end
   end
 end
