@@ -4,6 +4,8 @@ class DPSExportJob < ApplicationJob
   queue_as :default
 
   def perform
+    return unless Flipper.enabled? :mesh_jobs
+
     Campaign.active.find_each do |campaign|
       if campaign.vaccination_records.recorded.administered.unexported.any?
         dps_export = DPSExport.create!(campaign:)

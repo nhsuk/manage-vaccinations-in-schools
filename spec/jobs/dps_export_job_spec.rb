@@ -4,6 +4,7 @@ require "rails_helper"
 
 describe DPSExportJob, type: :job do
   before do
+    allow(Flipper).to receive(:enabled?).with(:mesh_jobs).and_return(true)
     allow(MESH).to receive(:send_file).and_return(response_double)
   end
 
@@ -100,6 +101,19 @@ describe DPSExportJob, type: :job do
       described_class.perform_now
 
       expect(DPSExport.last.status).to eq("failed")
+    end
+  end
+
+  context "mesh_jobs feature flag is disabled" do
+    before do
+      create :vaccination_record
+      allow(Flipper).to receive(:enabled?).with(:mesh_jobs).and_return(false)
+    end
+
+    it "does not send a DPS export" do
+      described_class.perform_now
+
+      expect(MESH).not_to have_received(:send_file)
     end
   end
 end
