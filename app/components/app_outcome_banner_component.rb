@@ -81,7 +81,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def clinician
-    @clinician ||= (vaccination_record || most_recent_triage).user
+    @clinician ||= (vaccination_record || most_recent_triage).performed_by
   end
 
   def notes

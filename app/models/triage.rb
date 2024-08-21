@@ -23,10 +23,11 @@
 #  fk_rails_...  (performed_by_user_id => users.id)
 #
 class Triage < ApplicationRecord
+  include PerformedByConcern
+
   audited associated_with: :patient_session
 
   belongs_to :patient_session
-  belongs_to :user
   has_one :patient, through: :patient_session
   has_one :session, through: :patient_session
   has_one :campaign, through: :session

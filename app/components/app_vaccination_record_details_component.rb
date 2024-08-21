@@ -98,10 +98,10 @@ class AppVaccinationRecordDetailsComponent < ViewComponent::Base
         end
       end
 
-      if @vaccination_record.user.present?
+      if (user = @vaccination_record.performed_by).present?
         summary_list.with_row do |row|
           row.with_key { "Nurse" }
-          row.with_value { @vaccination_record.user.full_name }
+          row.with_value { user.full_name }
         end
       end
 

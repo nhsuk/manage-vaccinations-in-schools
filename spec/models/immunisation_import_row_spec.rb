@@ -837,7 +837,7 @@ describe ImmunisationImportRow, type: :model do
     let(:data) { valid_data }
 
     it "does not have a vaccinator as that isn't provided in the import" do
-      expect(vaccination_record.user).to be_nil
+      expect(vaccination_record.performed_by).to be_nil
     end
 
     it "sets the administered at time" do

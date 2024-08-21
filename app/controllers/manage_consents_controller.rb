@@ -99,7 +99,7 @@ class ManageConsentsController < ApplicationController
   def handle_confirm
     ActiveRecord::Base.transaction do
       if @consent.response_refused?
-        @triage.update! status: "do_not_vaccinate", user: current_user
+        @triage.update!(status: "do_not_vaccinate", performed_by: current_user)
       end
 
       if @triage.persisted?
@@ -146,7 +146,7 @@ class ManageConsentsController < ApplicationController
   end
 
   def handle_triage
-    @triage.assign_attributes triage_params.merge(user: current_user)
+    @triage.assign_attributes(triage_params.merge(performed_by: current_user))
   end
 
   def handle_agree

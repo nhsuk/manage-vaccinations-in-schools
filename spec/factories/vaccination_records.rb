@@ -52,7 +52,8 @@ FactoryBot.define do
     delivery_method { "intramuscular" }
     vaccine { patient_session.session.campaign.vaccines.first }
     batch { vaccine.batches.first }
-    user { create :user }
+
+    performed_by { association :user }
 
     administered_at do
       Faker::Time.between(
@@ -71,7 +72,7 @@ FactoryBot.define do
 
     trait :not_recorded do
       recorded_at { nil }
-      user { nil }
+      performed_by { nil }
     end
   end
 end
