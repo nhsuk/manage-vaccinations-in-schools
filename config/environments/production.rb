@@ -136,11 +136,6 @@ Rails.application.configure do
       cron: "every day at 9am",
       class: "SessionRemindersJob",
       description: "Send session reminder emails to parents"
-    },
-    dps_export: {
-      cron: "every day at 9am",
-      class: "DPSExportJob",
-      description: "Export DPS data via MESH"
     }
   }
 end
