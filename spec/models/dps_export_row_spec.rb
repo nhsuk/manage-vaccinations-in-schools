@@ -26,6 +26,9 @@ describe DPSExportRow do
       }
     )
   end
+  let(:performed_by) { create(:user, family_name: "Doe", given_name: "Jane") }
+  let(:performed_by_given_name) { nil }
+  let(:performed_by_family_name) { nil }
   let(:vaccination_record) do
     create(
       :vaccination_record,
@@ -35,7 +38,9 @@ describe DPSExportRow do
       delivery_site: :left_arm_upper_position,
       dose_sequence: 1,
       patient_session:,
-      performed_by: create(:user, family_name: "Doe", given_name: "Jane"),
+      performed_by:,
+      performed_by_given_name:,
+      performed_by_family_name:,
       recorded_at: Time.zone.local(2024, 7, 23, 19, 31, 47),
       uuid: "ea4860a5-6d97-4f31-b640-f5c50f43bfd2",
       vaccine:
@@ -101,12 +106,40 @@ describe DPSExportRow do
       expect(array[11]).to eq "new"
     end
 
-    it "has performing_professional_forename" do
-      expect(array[12]).to be_nil
+    describe "performing_professional_forename" do
+      subject(:performing_professional_forename) { array[12] }
+
+      it { should eq("Jane") }
+
+      context "without a user" do
+        let(:performed_by) { nil }
+
+        it { should be_nil }
+
+        context "with a name" do
+          let(:performed_by_given_name) { "Jane" }
+
+          it { should eq("Jane") }
+        end
+      end
     end
 
-    it "has performing_professional_surname" do
-      expect(array[13]).to be_nil
+    describe "performing_professional_surname" do
+      subject(:performing_professional_surname) { array[13] }
+
+      it { should eq("Doe") }
+
+      context "without a user" do
+        let(:performed_by) { nil }
+
+        it { should be_nil }
+
+        context "with a name" do
+          let(:performed_by_family_name) { "Doe" }
+
+          it { should eq("Doe") }
+        end
+      end
     end
 
     it "has recorded_date" do

@@ -61,6 +61,11 @@ class ImmunisationImportRow
             allow_nil: true
   validates :care_setting, presence: true, if: :requires_care_setting?
 
+  validates :performed_by_given_name,
+            :performed_by_family_name,
+            presence: true,
+            if: :requires_performed_by?
+
   def initialize(data:, campaign:, user:, imported_from:)
     @data = data
     @campaign = campaign
@@ -79,12 +84,14 @@ class ImmunisationImportRow
       recorded_at:
     ).find_or_create_by!(
       administered_at:,
+      batch:,
       delivery_method:,
       delivery_site:,
       dose_sequence:,
       patient_session:,
+      performed_by_family_name:,
+      performed_by_given_name:,
       reason:,
-      batch:,
       vaccine:
     )
   end
@@ -261,6 +268,14 @@ class ImmunisationImportRow
     nil
   end
 
+  def performed_by_given_name
+    @data["PERFORMING_PROFESSIONAL_FORENAME"]&.strip&.presence
+  end
+
+  def performed_by_family_name
+    @data["PERFORMING_PROFESSIONAL_SURNAME"]&.strip&.presence
+  end
+
   private
 
   attr_reader :imported_from
@@ -348,7 +363,11 @@ class ImmunisationImportRow
   end
 
   def requires_care_setting?
-    vaccine&.type == "hpv"
+    vaccine&.hpv?
+  end
+
+  def requires_performed_by?
+    vaccine&.flu?
   end
 
   def parse_date(key)
