@@ -35,13 +35,22 @@
     <ul class="nhsuk-header__navigation-list nhsuk-header__navigation-list--left-aligned">
       <% if current_user.present? %>
         <li class="nhsuk-header__navigation-item">
-          <%= link_to t("sessions.index.title"), sessions_path, class: "nhsuk-header__navigation-link" %>
+          <%= link_to t("sessions.index.title"), sessions_path,
+                      class: "nhsuk-header__navigation-link",
+                      aria: { current: request.path.start_with?(sessions_path) ?
+                        "true" : nil } %>
         </li>
         <li class="nhsuk-header__navigation-item">
-          <%= link_to t("campaigns.index.title"), campaigns_path, class: "nhsuk-header__navigation-link" %>
+          <%= link_to t("campaigns.index.title"), campaigns_path,
+                      class: "nhsuk-header__navigation-link",
+                      aria: { current: request.path.start_with?(campaigns_path) ?
+                        "true" : nil } %>
         </li>
         <li class="nhsuk-header__navigation-item app-header__navigation-item--divider">
-          <%= link_to t("vaccines.index.title"), vaccines_path, class: "nhsuk-header__navigation-link" %>
+          <%= link_to t("vaccines.index.title"), vaccines_path,
+                      class: "nhsuk-header__navigation-link",
+                      aria: { current: request.path.start_with?(vaccines_path) ?
+                        "true" : nil } %>
         </li>
       <% end %>
       <li class="nhsuk-mobile-menu-container">
