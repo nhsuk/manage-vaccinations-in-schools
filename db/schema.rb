@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_21_120847) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_21_123225) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -388,9 +388,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_21_120847) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "patient_session_id"
-    t.bigint "user_id"
+    t.bigint "performed_by_user_id"
     t.index ["patient_session_id"], name: "index_triage_on_patient_session_id"
-    t.index ["user_id"], name: "index_triage_on_user_id"
+    t.index ["performed_by_user_id"], name: "index_triage_on_performed_by_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -487,7 +487,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_21_120847) do
   add_foreign_key "patients", "parents"
   add_foreign_key "sessions", "immunisation_imports", column: "imported_from_id"
   add_foreign_key "triage", "patient_sessions"
-  add_foreign_key "triage", "users"
+  add_foreign_key "triage", "users", column: "performed_by_user_id"
   add_foreign_key "vaccination_records", "batches"
   add_foreign_key "vaccination_records", "immunisation_imports", column: "imported_from_id"
   add_foreign_key "vaccination_records", "patient_sessions"
