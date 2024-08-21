@@ -4,17 +4,58 @@ require "rails_helper"
 
 describe DPSExportJob, type: :job do
   before do
-    create(:campaign, :active)
-    allow(MESH).to receive(:send_file)
+    allow(MESH).to receive(:send_file).and_return(response_double)
   end
 
-  it "sends the DPS export to MESH" do
-    dps_export_double = instance_double(DPSExport, csv: "csv")
-    allow(DPSExport).to receive(:create!).and_return(dps_export_double)
+  let(:response_double) do
+    instance_double(
+      Faraday::Response,
+      success?: true,
+      body: '{"message_id": "1234"}',
+      status: 202
+    )
+  end
 
-    described_class.perform_now
+  context "with a campaign that has unexported vaccination records" do
+    let!(:vaccination_record) { create :vaccination_record }
 
-    expect(dps_export_double).to have_received(:csv)
-    expect(MESH).to have_received(:send_file).with(hash_including(data: "csv"))
+    it "creates a DPS export and sends it" do
+      campaign = vaccination_record.campaign
+      allow(DPSExport).to receive(:create!).with(campaign:) {
+        instance_double(DPSExport, csv: "csv", update!: nil, id: 1)
+      }
+
+      described_class.perform_now
+
+      expect(MESH).to have_received(:send_file).with(
+        hash_including(data: "csv", to: Settings.mesh.dps_mailbox)
+      )
+    end
+  end
+
+  context "with a campaign that has exported vaccination records" do
+    let!(:vaccination_record) { create :vaccination_record }
+
+    it "does not send anything" do
+      create(
+        :dps_export,
+        campaign: vaccination_record.campaign,
+        vaccination_records: [vaccination_record]
+      )
+
+      described_class.perform_now
+
+      expect(MESH).not_to have_received(:send_file)
+    end
+  end
+
+  context "with a campaign that has no vaccination records" do
+    before { create :campaign, :active }
+
+    it "does not do a DPS export" do
+      described_class.perform_now
+
+      expect(MESH).not_to have_received(:send_file)
+    end
   end
 end
