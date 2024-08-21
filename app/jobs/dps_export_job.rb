@@ -5,8 +5,10 @@ class DPSExportJob < ApplicationJob
 
   def perform
     Campaign.active.find_each do |campaign|
-      data = DPSExport.create!(campaign:).csv
-      MESH.send_file(data:, to: Settings.mesh.dps_mailbox)
+      if campaign.vaccination_records.recorded.administered.unexported.any?
+        data = DPSExport.create!(campaign:).csv
+        MESH.send_file(data:, to: Settings.mesh.dps_mailbox)
+      end
     end
   end
 end
