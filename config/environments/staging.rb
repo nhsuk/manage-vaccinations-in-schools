@@ -9,6 +9,11 @@ Rails.application.configure do
       cron: "every day at 1am",
       class: "MESHValidateMailboxJob",
       description: "Validate MESH mailbox"
+    },
+    dps_export: {
+      cron: "every day at 2am",
+      class: "DPSExportJob",
+      description: "Export DPS data via MESH"
     }
   }
 end
