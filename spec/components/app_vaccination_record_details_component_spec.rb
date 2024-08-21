@@ -182,7 +182,7 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
   describe "nurse row" do
     context "when the user is present" do
       it do
-        expect(subject).to have_css(
+        expect(rendered).to have_css(
           ".nhsuk-summary-list__row",
           text: "Nurse\nTest User"
         )
@@ -191,10 +191,20 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
 
     context "when the user is not present" do
       let(:vaccination_record) do
-        create(:vaccination_record, performed_by: nil)
+        create(
+          :vaccination_record,
+          performed_by: nil,
+          performed_by_given_name: "Test",
+          performed_by_family_name: "User"
+        )
       end
 
-      it { should_not have_css(".nhsuk-summary-list__row", text: "Nurse") }
+      it do
+        expect(rendered).to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Nurse\nTest User"
+        )
+      end
     end
   end
 
