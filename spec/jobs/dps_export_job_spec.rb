@@ -31,6 +31,18 @@ describe DPSExportJob, type: :job do
         hash_including(data: "csv", to: Settings.mesh.dps_mailbox)
       )
     end
+
+    it "sets the status to sent" do
+      described_class.perform_now
+
+      expect(DPSExport.last.status).to eq("sent")
+    end
+
+    it "sets the message_id" do
+      described_class.perform_now
+
+      expect(DPSExport.last.message_id).to eq("1234")
+    end
   end
 
   context "with a campaign that has exported vaccination records" do
@@ -56,6 +68,38 @@ describe DPSExportJob, type: :job do
       described_class.perform_now
 
       expect(MESH).not_to have_received(:send_file)
+    end
+  end
+
+  context "when MESH returns a parseable error" do
+    before { create :vaccination_record }
+
+    let(:response_double) do
+      instance_double(
+        Faraday::Response,
+        success?: false,
+        body:
+          JSON.generate(
+            {
+              "message_id" => "20240821092056779321_E37F1A",
+              "internal_id" => "20240821092056761_487199b9",
+              "detail" => [
+                {
+                  "event" => "SEND",
+                  "code" => "12",
+                  "msg" => "Unregistered to address"
+                }
+              ]
+            }
+          ),
+        status: 417
+      )
+    end
+
+    it "sets the status to failed" do
+      described_class.perform_now
+
+      expect(DPSExport.last.status).to eq("failed")
     end
   end
 end
