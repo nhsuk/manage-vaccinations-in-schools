@@ -3,7 +3,10 @@
 require "rails_helper"
 
 describe DPSExportJob, type: :job do
-  before { allow(MESH).to receive(:send_file) }
+  before do
+    create(:campaign, :active)
+    allow(MESH).to receive(:send_file)
+  end
 
   it "sends the DPS export to MESH" do
     dps_export_double = instance_double(DPSExport, csv: "csv")

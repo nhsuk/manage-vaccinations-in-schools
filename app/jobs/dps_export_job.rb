@@ -4,8 +4,9 @@ class DPSExportJob < ApplicationJob
   queue_as :default
 
   def perform
-    campaign = Campaign.active.first # TODO: Not .first
-    data = DPSExport.create!(campaign:).csv
-    MESH.send_file(data:, to: Settings.mesh.dps_mailbox)
+    Campaign.active.find_each do |campaign|
+      data = DPSExport.create!(campaign:).csv
+      MESH.send_file(data:, to: Settings.mesh.dps_mailbox)
+    end
   end
 end
