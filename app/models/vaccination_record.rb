@@ -38,7 +38,6 @@
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 class VaccinationRecord < ApplicationRecord
-  include PerformedByConcern
   include WizardFormConcern
 
   audited associated_with: :patient_session
@@ -71,6 +70,10 @@ class VaccinationRecord < ApplicationRecord
   belongs_to :imported_from, class_name: "ImmunisationImport", optional: true
   belongs_to :batch, optional: true
   belongs_to :vaccine, optional: true
+  belongs_to :performed_by,
+             class_name: "User",
+             optional: true,
+             foreign_key: :performed_by_user_id
 
   has_one :session, through: :patient_session
   has_one :patient, through: :patient_session

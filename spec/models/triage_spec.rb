@@ -22,29 +22,13 @@
 #  fk_rails_...  (patient_session_id => patient_sessions.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
 #
-class Triage < ApplicationRecord
-  audited associated_with: :patient_session
+require "rails_helper"
 
-  belongs_to :patient_session
+describe Triage, type: :model do
+  subject(:triage) { build(:triage) }
 
-  belongs_to :performed_by,
-             class_name: "User",
-             foreign_key: :performed_by_user_id
-
-  has_one :patient, through: :patient_session
-  has_one :session, through: :patient_session
-  has_one :campaign, through: :session
-
-  enum :status,
-       %i[
-         ready_to_vaccinate
-         do_not_vaccinate
-         needs_follow_up
-         delay_vaccination
-       ],
-       validate: true
-
-  encrypts :notes
-
-  validates :notes, length: { maximum: 1000 }
+  describe "validations" do
+    it { should_not validate_presence_of(:notes) }
+    it { should validate_length_of(:notes).is_at_most(1000) }
+  end
 end

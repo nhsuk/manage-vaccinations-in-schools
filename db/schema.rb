@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_21_123225) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_21_152032) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -383,12 +383,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_21_123225) do
   end
 
   create_table "triage", force: :cascade do |t|
-    t.integer "status"
-    t.text "notes"
+    t.integer "status", null: false
+    t.text "notes", default: "", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "patient_session_id"
-    t.bigint "performed_by_user_id"
+    t.bigint "patient_session_id", null: false
+    t.bigint "performed_by_user_id", null: false
     t.index ["patient_session_id"], name: "index_triage_on_patient_session_id"
     t.index ["performed_by_user_id"], name: "index_triage_on_performed_by_user_id"
   end
