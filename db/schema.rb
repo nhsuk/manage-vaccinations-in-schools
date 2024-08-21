@@ -436,6 +436,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_21_152032) do
     t.integer "dose_sequence", null: false
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.datetime "administered_at"
+    t.string "performed_by_given_name"
+    t.string "performed_by_family_name"
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["imported_from_id"], name: "index_vaccination_records_on_imported_from_id"
     t.index ["patient_session_id"], name: "index_vaccination_records_on_patient_session_id"

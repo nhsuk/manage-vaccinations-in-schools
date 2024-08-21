@@ -4,22 +4,24 @@
 #
 # Table name: vaccination_records
 #
-#  id                   :bigint           not null, primary key
-#  administered_at      :datetime
-#  delivery_method      :integer
-#  delivery_site        :integer
-#  dose_sequence        :integer          not null
-#  notes                :text
-#  reason               :integer
-#  recorded_at          :datetime
-#  uuid                 :uuid             not null
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  batch_id             :bigint
-#  imported_from_id     :bigint
-#  patient_session_id   :bigint           not null
-#  performed_by_user_id :bigint
-#  vaccine_id           :bigint
+#  id                       :bigint           not null, primary key
+#  administered_at          :datetime
+#  delivery_method          :integer
+#  delivery_site            :integer
+#  dose_sequence            :integer          not null
+#  notes                    :text
+#  performed_by_family_name :string
+#  performed_by_given_name  :string
+#  reason                   :integer
+#  recorded_at              :datetime
+#  uuid                     :uuid             not null
+#  created_at               :datetime         not null
+#  updated_at               :datetime         not null
+#  batch_id                 :bigint
+#  imported_from_id         :bigint
+#  patient_session_id       :bigint           not null
+#  performed_by_user_id     :bigint
+#  vaccine_id               :bigint
 #
 # Indexes
 #
@@ -70,10 +72,7 @@ class VaccinationRecord < ApplicationRecord
   belongs_to :imported_from, class_name: "ImmunisationImport", optional: true
   belongs_to :batch, optional: true
   belongs_to :vaccine, optional: true
-  belongs_to :performed_by,
-             class_name: "User",
-             optional: true,
-             foreign_key: :performed_by_user_id
+  belongs_to :performed_by_user, class_name: "User", optional: true
 
   has_one :session, through: :patient_session
   has_one :patient, through: :patient_session
@@ -146,6 +145,13 @@ class VaccinationRecord < ApplicationRecord
               less_than_or_equal_to: :maximum_dose_sequence
             }
 
+  validates :performed_by_family_name,
+            :performed_by_given_name,
+            absence: {
+              if: :performed_by_user
+            },
+            if: :recorded?
+
   validate :batch_vaccine_matches_vaccine, if: -> { recorded? && administered? }
 
   on_wizard_step :"delivery-site", exact: true do
@@ -197,6 +203,25 @@ class VaccinationRecord < ApplicationRecord
     # TODO: this will need to be revisited once it's possible to record half-doses
     # e.g. for the flu programme where a child refuses the second half of the dose
     vaccine.dose * 1
+  end
+
+  def performed_by
+    return performed_by_user if performed_by_user
+
+    if performed_by_given_name.present? || performed_by_family_name.present?
+      OpenStruct.new(
+        given_name: performed_by_given_name,
+        family_name: performed_by_family_name,
+        full_name: [
+          performed_by_given_name,
+          performed_by_family_name
+        ].compact_blank.join(" ")
+      )
+    end
+  end
+
+  def performed_by=(user)
+    self.performed_by_user = user
   end
 
   private

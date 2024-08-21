@@ -38,7 +38,7 @@ class VaccinationRecordsController < ApplicationController
         .includes(
           :batch,
           :campaign,
-          :performed_by,
+          :performed_by_user,
           :vaccine,
           patient: :school,
           session: :location

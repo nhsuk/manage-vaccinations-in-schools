@@ -4,22 +4,24 @@
 #
 # Table name: vaccination_records
 #
-#  id                   :bigint           not null, primary key
-#  administered_at      :datetime
-#  delivery_method      :integer
-#  delivery_site        :integer
-#  dose_sequence        :integer          not null
-#  notes                :text
-#  reason               :integer
-#  recorded_at          :datetime
-#  uuid                 :uuid             not null
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  batch_id             :bigint
-#  imported_from_id     :bigint
-#  patient_session_id   :bigint           not null
-#  performed_by_user_id :bigint
-#  vaccine_id           :bigint
+#  id                       :bigint           not null, primary key
+#  administered_at          :datetime
+#  delivery_method          :integer
+#  delivery_site            :integer
+#  dose_sequence            :integer          not null
+#  notes                    :text
+#  performed_by_family_name :string
+#  performed_by_given_name  :string
+#  reason                   :integer
+#  recorded_at              :datetime
+#  uuid                     :uuid             not null
+#  created_at               :datetime         not null
+#  updated_at               :datetime         not null
+#  batch_id                 :bigint
+#  imported_from_id         :bigint
+#  patient_session_id       :bigint           not null
+#  performed_by_user_id     :bigint
+#  vaccine_id               :bigint
 #
 # Indexes
 #
@@ -73,6 +75,12 @@ FactoryBot.define do
     trait :not_recorded do
       recorded_at { nil }
       performed_by { nil }
+    end
+
+    trait :performed_by_not_user do
+      performed_by { nil }
+      performed_by_given_name { Faker::Name.first_name }
+      performed_by_family_name { Faker::Name.last_name }
     end
   end
 end
