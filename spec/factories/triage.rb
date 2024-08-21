@@ -5,12 +5,12 @@
 # Table name: triage
 #
 #  id                   :bigint           not null, primary key
-#  notes                :text
-#  status               :integer
+#  notes                :text             default(""), not null
+#  status               :integer          not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  patient_session_id   :bigint
-#  performed_by_user_id :bigint
+#  patient_session_id   :bigint           not null
+#  performed_by_user_id :bigint           not null
 #
 # Indexes
 #
@@ -24,10 +24,10 @@
 #
 FactoryBot.define do
   factory :triage do
-    status { :ready_to_vaccinate }
-    notes { nil }
+    notes { "" }
     patient_session { association :patient_session }
     performed_by { association :user }
+    status { :ready_to_vaccinate }
 
     traits_for_enum :status
   end

@@ -48,7 +48,7 @@ class User < ApplicationRecord
   has_and_belongs_to_many :teams
 
   encrypts :email, deterministic: true
-  encrypts :full_name, :family_name, :given_name
+  encrypts :family_name, :given_name
 
   validates :family_name, :given_name, presence: true, length: { maximum: 255 }
 
