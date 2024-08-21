@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_21_101113) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_21_120847) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -429,7 +429,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_21_101113) do
     t.integer "reason"
     t.bigint "batch_id"
     t.integer "delivery_method"
-    t.bigint "user_id"
+    t.bigint "performed_by_user_id"
     t.text "notes"
     t.bigint "vaccine_id"
     t.bigint "imported_from_id"
@@ -439,7 +439,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_21_101113) do
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["imported_from_id"], name: "index_vaccination_records_on_imported_from_id"
     t.index ["patient_session_id"], name: "index_vaccination_records_on_patient_session_id"
-    t.index ["user_id"], name: "index_vaccination_records_on_user_id"
+    t.index ["performed_by_user_id"], name: "index_vaccination_records_on_performed_by_user_id"
     t.index ["vaccine_id"], name: "index_vaccination_records_on_vaccine_id"
   end
 
@@ -491,6 +491,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_21_101113) do
   add_foreign_key "vaccination_records", "batches"
   add_foreign_key "vaccination_records", "immunisation_imports", column: "imported_from_id"
   add_foreign_key "vaccination_records", "patient_sessions"
-  add_foreign_key "vaccination_records", "users"
+  add_foreign_key "vaccination_records", "users", column: "performed_by_user_id"
   add_foreign_key "vaccination_records", "vaccines"
 end
