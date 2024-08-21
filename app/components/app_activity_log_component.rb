@@ -21,7 +21,7 @@ class AppActivityLogComponent < ViewComponent::Base
         title: "Vaccinated with #{helpers.vaccine_heading(_1.vaccine)}",
         time: _1.created_at,
         notes: _1.notes,
-        by: _1.user.full_name
+        by: _1.performed_by.full_name
       }
     end
   end
@@ -32,7 +32,7 @@ class AppActivityLogComponent < ViewComponent::Base
         title: "Triaged decision: #{_1.human_enum_name(:status)}",
         time: _1.created_at,
         notes: _1.notes,
-        by: _1.user.full_name
+        by: _1.performed_by.full_name
       }
     end
   end

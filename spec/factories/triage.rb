@@ -27,7 +27,7 @@ FactoryBot.define do
     status { :ready_to_vaccinate }
     notes { nil }
     patient_session { association :patient_session }
-    user { association :user }
+    performed_by { association :user }
 
     traits_for_enum :status
   end

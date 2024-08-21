@@ -19,15 +19,15 @@ describe AppTriageNotesComponent, type: :component do
       Timecop.freeze(Time.zone.local(2023, 12, 4, 10, 4)) { example.run }
     end
 
-    let(:user) { create(:user, family_name: "Gear", given_name: "Joe") }
+    let(:performed_by) { create(:user, family_name: "Gear", given_name: "Joe") }
 
     before do
       create(
         :triage,
         :ready_to_vaccinate,
         notes: "Some notes",
-        user:,
-        patient_session:
+        patient_session:,
+        performed_by:
       )
     end
 

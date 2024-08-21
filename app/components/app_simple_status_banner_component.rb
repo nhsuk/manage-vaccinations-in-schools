@@ -39,7 +39,7 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
       most_recent_vaccination
     ].compact.max_by(&:created_at)
 
-    most_recent_event&.user&.full_name
+    most_recent_event&.performed_by&.full_name
   end
 
   def state

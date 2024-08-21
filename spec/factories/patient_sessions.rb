@@ -61,14 +61,15 @@ FactoryBot.define do
     trait :triaged_ready_to_vaccinate do
       patient { create :patient, :consent_given_triage_needed, session: }
       triage do
-        create_list(
-          :triage,
-          1,
-          status: :ready_to_vaccinate,
-          notes: "Ok to vaccinate",
-          user:,
-          patient_session: instance
-        )
+        [
+          association(
+            :triage,
+            :ready_to_vaccinate,
+            notes: "Okay to vaccinate",
+            patient_session: instance,
+            performed_by: user
+          )
+        ]
       end
     end
 
@@ -76,11 +77,11 @@ FactoryBot.define do
       patient { create :patient, :consent_given_triage_needed, session: }
       triage do
         [
-          create(
+          association(
             :triage,
-            status: :do_not_vaccinate,
-            user:,
-            patient_session: instance
+            :do_not_vaccinate,
+            patient_session: instance,
+            performed_by: user
           )
         ]
       end
@@ -90,11 +91,11 @@ FactoryBot.define do
       patient { create :patient, :consent_given_triage_needed, session: }
       triage do
         [
-          create(
+          association(
             :triage,
-            status: :needs_follow_up,
-            user:,
-            patient_session: instance
+            :needs_follow_up,
+            patient_session: instance,
+            performed_by: user
           )
         ]
       end
@@ -104,24 +105,25 @@ FactoryBot.define do
       patient { create :patient, :consent_given_triage_needed, session: }
       triage do
         [
-          create(
+          association(
             :triage,
-            status: :delay_vaccination,
-            user:,
-            patient_session: instance
+            :delay_vaccination,
+            patient_session: instance,
+            performed_by: user
           )
         ]
       end
 
       vaccination_records do
-        create_list(
-          :vaccination_record,
-          1,
-          reason: :absent_from_school,
-          administered: false,
-          user:,
-          patient_session: instance
-        )
+        [
+          association(
+            :vaccination_record,
+            :not_administered,
+            patient_session: instance,
+            performed_by: user,
+            reason: :absent_from_school
+          )
+        ]
       end
     end
 
@@ -133,11 +135,11 @@ FactoryBot.define do
       patient { create :patient, :consent_given_triage_needed, session: }
       triage do
         [
-          create(
+          association(
             :triage,
-            status: :ready_to_vaccinate,
-            user:,
-            patient_session: instance
+            :ready_to_vaccinate,
+            patient_session: instance,
+            performed_by: user
           )
         ]
       end
@@ -146,9 +148,9 @@ FactoryBot.define do
           association(
             :vaccination_record,
             :not_administered,
-            reason: :already_had,
-            user:,
-            patient_session: instance
+            patient_session: instance,
+            performed_by: user,
+            reason: :already_had
           )
         ]
       end
@@ -162,24 +164,25 @@ FactoryBot.define do
       patient { create :patient, :consent_given_triage_needed, session: }
       triage do
         [
-          create(
+          association(
             :triage,
-            status: :ready_to_vaccinate,
-            user:,
-            patient_session: instance
+            :ready_to_vaccinate,
+            patient_session: instance,
+            performed_by: user
           )
         ]
       end
 
       vaccination_records do
-        create_list(
-          :vaccination_record,
-          1,
-          reason: :already_had,
-          administered: false,
-          user:,
-          patient_session: instance
-        )
+        [
+          association(
+            :vaccination_record,
+            :not_administered,
+            patient_session: instance,
+            performed_by: user,
+            reason: :already_had
+          )
+        ]
       end
     end
 
@@ -187,16 +190,22 @@ FactoryBot.define do
       patient { create :patient, :consent_given_triage_needed, session: }
       triage do
         [
-          create(
+          association(
             :triage,
-            status: :ready_to_vaccinate,
-            user:,
-            patient_session: instance
+            :ready_to_vaccinate,
+            patient_session: instance,
+            performed_by: user
           )
         ]
       end
       vaccination_records do
-        [association(:vaccination_record, user:, patient_session: instance)]
+        [
+          association(
+            :vaccination_record,
+            patient_session: instance,
+            performed_by: user
+          )
+        ]
       end
     end
 

@@ -8,7 +8,7 @@ describe AppOutcomeBannerComponent, type: :component do
   let(:user) { create :user }
   let(:patient_session) { create :patient_session, user: }
   let(:component) { described_class.new(patient_session:, current_user: user) }
-  let(:triage_nurse_name) { patient_session.triage.last.user.full_name }
+  let(:triage_nurse_name) { patient_session.triage.last.performed_by.full_name }
   let(:patient_name) { patient_session.patient.full_name }
 
   prepend_before do
@@ -82,7 +82,12 @@ describe AppOutcomeBannerComponent, type: :component do
     it { should have_text("Reason\nDo not vaccinate in campaign") }
     it { should have_text("Date\nToday (#{date})") }
     it { should_not have_text("Location") }
-    it { should have_text("Decided by\nYou (#{triage.user.full_name})") }
+
+    it do
+      expect(rendered).to have_text(
+        "Decided by\nYou (#{triage.performed_by.full_name})"
+      )
+    end
 
     context "recorded_at is not today" do
       let(:date) { Time.zone.now - 2.days }

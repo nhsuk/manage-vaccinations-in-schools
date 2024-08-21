@@ -86,7 +86,7 @@ class TriageController < ApplicationController
   end
 
   def process_triage
-    @triage.assign_attributes triage_params.merge(user: current_user)
+    @triage.assign_attributes(triage_params.merge(performed_by: current_user))
     if @triage.save(context: :consent)
       @patient_session.do_triage!
       @patient.consents.each { send_triage_mail(@patient_session, _1) }

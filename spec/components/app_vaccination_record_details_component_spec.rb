@@ -190,7 +190,9 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
     end
 
     context "when the user is not present" do
-      let(:vaccination_record) { create(:vaccination_record, user: nil) }
+      let(:vaccination_record) do
+        create(:vaccination_record, performed_by: nil)
+      end
 
       it { should_not have_css(".nhsuk-summary-list__row", text: "Nurse") }
     end
