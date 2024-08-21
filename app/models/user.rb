@@ -48,9 +48,10 @@ class User < ApplicationRecord
   has_and_belongs_to_many :teams
 
   encrypts :email, deterministic: true
-  encrypts :full_name
+  encrypts :family_name, :given_name
 
-  validates :full_name, presence: true, length: { maximum: 255 }
+  validates :family_name, :given_name, presence: true, length: { maximum: 255 }
+
   validates :registration, length: { maximum: 255 }
   validates :email,
             presence: true,
@@ -63,6 +64,10 @@ class User < ApplicationRecord
   scope :recently_active,
         -> { where(last_sign_in_at: 1.week.ago..Time.current) }
 
+  def full_name
+    [given_name, family_name].join(" ")
+  end
+
   def team
     # TODO: Update the app to properly support multiple teams per user
     teams.first
@@ -74,7 +79,9 @@ class User < ApplicationRecord
         provider: userinfo[:provider],
         uid: userinfo[:uid]
       )
-    user.full_name = userinfo[:info][:name]
+
+    user.family_name = userinfo[:extra][:raw_info][:family_name]
+    user.given_name = userinfo[:extra][:raw_info][:given_name]
     user.email = userinfo[:info][:email]
     user.password = Devise.friendly_token if user.new_record?
 

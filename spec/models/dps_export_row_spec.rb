@@ -36,7 +36,7 @@ describe DPSExportRow do
       dose_sequence: 1,
       patient_session:,
       recorded_at: Time.zone.local(2024, 7, 23, 19, 31, 47),
-      user: create(:user, full_name: "Jane Doe"),
+      user: create(:user, family_name: "Doe", given_name: "Jane"),
       uuid: "ea4860a5-6d97-4f31-b640-f5c50f43bfd2",
       vaccine:
     )

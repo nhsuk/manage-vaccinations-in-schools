@@ -19,7 +19,7 @@ describe AppTriageNotesComponent, type: :component do
       Timecop.freeze(Time.zone.local(2023, 12, 4, 10, 4)) { example.run }
     end
 
-    let(:user) { create(:user, full_name: "Joe Gear") }
+    let(:user) { create(:user, family_name: "Gear", given_name: "Joe") }
 
     before do
       create(

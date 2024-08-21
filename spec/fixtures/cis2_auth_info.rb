@@ -52,13 +52,13 @@ CIS2_AUTH_INFO = {
         }
       ],
       "given_name" => "Nurse",
-      "family_name" => "Flo",
+      "family_name" => "Test",
       "nhsid_user_orgs" => [
         { "org_name" => "LAVENDER TOWN HEALTH", "org_code" => "AB12" },
         { "org_name" => "KANTO HEALTH ORG", "org_code" => "CD34" }
       ],
       "uid" => "555057896106",
-      "email" => "nurse.flo@example.nhs.uk",
+      "email" => "nurse.test@example.nhs.uk",
       "sub" => "123456789012",
       "subname" => "123456789012",
       "iss" => "http://localhost:4000/not/used",
