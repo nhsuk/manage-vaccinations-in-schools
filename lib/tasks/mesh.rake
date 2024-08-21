@@ -2,7 +2,9 @@
 
 namespace :mesh do
   desc "Export DPS data via MESH"
-  task dps_export: :environment do
+  task "dps_export" => :environment do
+    Rails.logger = Logger.new($stdout)
+    Rails.logger.level = Logger::DEBUG
     DPSExportJob.perform_now
   end
 
