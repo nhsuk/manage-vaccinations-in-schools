@@ -108,11 +108,11 @@ class DPSExportRow
   end
 
   def performing_professional_forename
-    # is not required
+    vaccination_record.performed_by&.given_name
   end
 
   def performing_professional_surname
-    # is not required
+    vaccination_record.performed_by&.family_name
   end
 
   def recorded_date

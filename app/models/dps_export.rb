@@ -36,7 +36,15 @@ class DPSExport < ApplicationRecord
         csv << DPSExportRow::FIELDS.map(&:upcase)
 
         vaccination_records
-          .includes(:batch, :location, :patient, :session, :team, :vaccine)
+          .includes(
+            :batch,
+            :location,
+            :patient,
+            :performed_by_user,
+            :session,
+            :team,
+            :vaccine
+          )
           .order(:recorded_at)
           .strict_loading
           .find_each { csv << DPSExportRow.new(_1).to_a }

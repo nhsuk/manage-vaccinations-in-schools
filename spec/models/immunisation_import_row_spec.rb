@@ -38,7 +38,9 @@ describe ImmunisationImportRow, type: :model do
       "PERSON_GENDER_CODE" => "Male",
       "NHS_NUMBER" => nhs_number,
       "DATE_OF_VACCINATION" => "20240101",
-      "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV"
+      "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV",
+      "PERFORMING_PROFESSIONAL_FORENAME" => "John",
+      "PERFORMING_PROFESSIONAL_SURNAME" => "Smith"
     }
   end
 
@@ -218,7 +220,35 @@ describe ImmunisationImportRow, type: :model do
           "PERSON_POSTCODE" => "SW1A 1AA",
           "PERSON_GENDER_CODE" => "Male",
           "DATE_OF_VACCINATION" => "20240101",
-          "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV"
+          "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV",
+          "PERFORMING_PROFESSIONAL_FORENAME" => "John",
+          "PERFORMING_PROFESSIONAL_SURNAME" => "Smith"
+        }
+      end
+
+      it { should be_valid }
+    end
+
+    context "with valid fields for HPV" do
+      let(:campaign) { create(:campaign, :hpv, academic_year: 2023) }
+
+      let(:data) do
+        {
+          "ORGANISATION_CODE" => "abc",
+          "BATCH_EXPIRY_DATE" => "20210101",
+          "BATCH_NUMBER" => "123",
+          "ANATOMICAL_SITE" => "left thigh",
+          "SCHOOL_NAME" => "Hogwarts",
+          "SCHOOL_URN" => "123456",
+          "PERSON_FORENAME" => "Harry",
+          "PERSON_SURNAME" => "Potter",
+          "PERSON_DOB" => "20120101",
+          "PERSON_POSTCODE" => "SW1A 1AA",
+          "PERSON_GENDER_CODE" => "Male",
+          "DATE_OF_VACCINATION" => "20240101",
+          "VACCINE_GIVEN" => "Gardasil9",
+          "DOSE_SEQUENCE" => "1",
+          "CARE_SETTING" => "1"
         }
       end
 
@@ -829,6 +859,42 @@ describe ImmunisationImportRow, type: :model do
     end
   end
 
+  describe "#performed_by_given_name" do
+    subject(:performed_by_given_name) do
+      immunisation_import_row.performed_by_given_name
+    end
+
+    context "without a value" do
+      let(:data) { {} }
+
+      it { should be_nil }
+    end
+
+    context "with a value" do
+      let(:data) { { "PERFORMING_PROFESSIONAL_FORENAME" => "John" } }
+
+      it { should eq("John") }
+    end
+  end
+
+  describe "#performed_by_family_name" do
+    subject(:performed_by_family_name) do
+      immunisation_import_row.performed_by_family_name
+    end
+
+    context "without a value" do
+      let(:data) { {} }
+
+      it { should be_nil }
+    end
+
+    context "with a value" do
+      let(:data) { { "PERFORMING_PROFESSIONAL_SURNAME" => "Smith" } }
+
+      it { should eq("Smith") }
+    end
+  end
+
   describe "#to_vaccination_record" do
     subject(:vaccination_record) do
       immunisation_import_row.to_vaccination_record
@@ -836,8 +902,10 @@ describe ImmunisationImportRow, type: :model do
 
     let(:data) { valid_data }
 
-    it "does not have a vaccinator as that isn't provided in the import" do
-      expect(vaccination_record.performed_by).to be_nil
+    it "has a vaccinator" do
+      expect(vaccination_record.performed_by).to have_attributes(
+        full_name: "John Smith"
+      )
     end
 
     it "sets the administered at time" do
