@@ -5,15 +5,18 @@
       ) %>
 <% end %>
 
-<% title = "Upload a report on #{@campaign.name} vaccinations" %>
-<% hint = "This will go to NHS England and GPs. Make sure the CSV you upload has the same format as your usual reporting template." %>
+<% title = "Upload vaccination records" %>
+<% hint = "These will go to NHS England and GPs. Make sure the CSV you upload has the same format as your usual reporting template." %>
 
 <% content_for :page_title, title %>
 
 <%= form_with model: @immunisation_import, url: campaign_immunisation_imports_path do |f| %>
   <%= f.govuk_error_summary %>
 
-  <%= f.govuk_file_field :csv, label: { text: title, tag: "h1", size: "l" }, hint: { text: hint } %>
+  <%= f.govuk_file_field :csv,
+                         caption: { text: @campaign.name, size: "l" },
+                         label: { text: title, tag: "h1", size: "l" },
+                         hint: { text: hint } %>
 
   <%= f.govuk_submit %>
 <% end %>
