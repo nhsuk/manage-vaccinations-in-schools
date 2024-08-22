@@ -289,55 +289,10 @@ The `cis2` feature flag also needs to be enabled in Flipper for CIS2 logins to w
 
 ## MESH Connection
 
-Mavis connects to the NHS Message Exchange for Social Care and Health (MESH) to
-send data to other services, currently only DPS (see below).
+Mavis connects to the NHS MESH (Message Exchange for Social Care and Health) to
+send data to DPS for upstream reporting of vaccination records.
 
-See the [MESH documentation](docs/mesh.md) for more information
-
-
-## Data Processing Services (DPS) export
-
-### NHS Message Exchange for Social Care and Health (MESH) integration
-
-Upstream reporting to Data Processing Services (DPS) is done using [NHS's MESH
-API](https://digital.nhs.uk/developer/api-catalogue/message-exchange-for-social-care-and-health-api#overview--mesh-authorization-header).
-To test this locally you'll need to download and run NHS's [MESH
-Sandbox](https://github.com/NHSDigital/mesh-sandbox). Clone the repo locally and
-start it with `docker-compose up`. The `development` and `test` environments are
-configured to communicate with MESH at https://localhost:8700/.
-
-### Manually running the DPS export
-
-There are rake tasks that can be used to run the DPS export, and manage MESH mailboxes:
-
-```shell
-rails mesh:dps_export                       # Export DPS data via MESH
-rails mesh:check_inbox                      # Check MESH inbox, listing any messages
-rails mesh:get_message[message]             # Get message from MESH
-rails mesh:ack_message[message]             # Acknowledge message MESH, removing it from inbox
-```
-
-Example of using this in local dev:
-
-```shell
-# Send export to DPS via MESH
-$ rails mesh:dps_export
-
-# Check the DPS mailbox by overriding our MESH mailbox id
-$ MAVIS__MESH__MAILBOX="X26ABC3" rails mesh:check_inbox
-{"messages":["8C3FB2C9F2A7498CBC457592DFE63444"],"links":{"self":"/messageexchange/X26ABC3/inbox"},"approx_inbox_count":1}
-
-# Retrieve the message we sent to DPS
-$ MAVIS__MESH__MAILBOX="X26ABC3" rails mesh:get_message[8C3FB2C9F2A7498CBC457592DFE63444]
-"NHS_NUMBER","PERSON_FORENAME","PERSON_SURNAME","PERSON_DOB","PERSON_GENDER_CODE","PERSON_POSTCODE","DATE_AND_TIME","SITE_CODE","SITE_CODE_TYPE_URI","UNIQUE_ID","UNIQUE_ID_URI","ACTION_FLAG","PERFORMING_PROFESSIONAL_FORENAME","PERFORMING_PROFESSIONAL_SURNAME","RECORDED_DATE","PRIMARY_SOURCE","VACCINATION_PROCEDURE_CODE","VACCINATION_PROCEDURE_TERM","DOSE_SEQUENCE","VACCINE_PRODUCT_CODE","VACCINE_PRODUCT_TERM","VACCINE_MANUFACTURER","BATCH_NUMBER","EXPIRY_DATE","SITE_OF_VACCINATION_CODE","SITE_OF_VACCINATION_TERM","ROUTE_OF_VACCINATION_CODE","ROUTE_OF_VACCINATION_TERM","DOSE_AMOUNT","DOSE_UNIT_CODE","DOSE_UNIT_TERM","INDICATION_CODE","LOCATION_CODE","LOCATION_CODE_TYPE_URI"
-"9998129184","Hector","Terry","20120615","0","Z6W 2YD","20230609T00000000","U1","https://fhir.nhs.uk/Id/ods-organization-code","","","new","Nurse","Joy","20240719","FALSE","761841000","Administration of vaccine product containing only Human papillomavirus antigen (procedure)","","","","Merck Sharp & Dohme (UK) Ltd","DB6519","20240824","368208006","Structure of left upper arm (body structure)","78421000","Intramuscular route (qualifier value)","0.5","258773002","Milliliter (qualifier value)","","",""
-"9997190971","Laureen","Romaguera","20111110","0","ZU5 0AJ","20230609T00000000","U1","https://fhir.nhs.uk/Id/ods-organization-code","","","new","Nurse","Joy","20240719","FALSE","761841000","Administration of vaccine product containing only Human papillomavirus antigen (procedure)","","","","Merck Sharp & Dohme (UK) Ltd","DB6519","20240824","368208006","Structure of left upper arm (body structure)","78421000","Intramuscular route (qualifier value)","0.5","258773002","Milliliter (qualifier value)","","",""
-"9998176999","Zachary","Heaney","20110721","0","Z6 0JJ","20230609T00000000","U1","https://fhir.nhs.uk/Id/ods-organization-code","","","new","Nurse","Joy","20240719","FALSE","761841000","Administration of vaccine product containing only Human papillomavirus antigen (procedure)","","","","Merck Sharp & Dohme (UK) Ltd","DB6519","20240824","368208006","Structure of left upper arm (body structure)","78421000","Intramuscular route (qualifier value)","0.5","258773002","Milliliter (qualifier value)","","",""
-"9992869291","Kim","Dare","20120103","0","WG68 1LP","20230609T00000000","U1","https://fhir.nhs.uk/Id/ods-organization-code","","","new","Nurse","Joy","20240719","FALSE","761841000","Administration of vaccine product containing only Human papillomavirus antigen (procedure)","","","","Merck Sharp & Dohme (UK) Ltd","DB6519","20240824","368208006","Structure of left upper arm (body structure)","78421000","Intramuscular route (qualifier value)","0.5","258773002","Milliliter (qualifier value)","","",""
-
-# Acknowledge the message to remove it from the inbox
-$ MAVIS__MESH__MAILBOX="X26ABC3" rails mesh:ack_message[CF27BFA9FDF74230A9403CFF3047FBBD]
-```
+See the [MESH documentation](docs/mesh.md) for more information.
 
 ## Licence
 
