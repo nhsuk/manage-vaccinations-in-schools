@@ -10,7 +10,7 @@ class AddGivenAndFamilyNameToUsers < ActiveRecord::Migration[7.1]
     User
       .where.not(full_name: [nil, ""])
       .find_each do |user|
-        *given_names, family_name = user.full_name.split
+        *given_names, family_name = user["full_name"].split
         user.update!(given_name: given_names.join(" "), family_name:)
       end
 
