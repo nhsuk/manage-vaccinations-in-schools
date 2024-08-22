@@ -4,6 +4,7 @@ run-name: ${{ github.event_name == 'workflow_dispatch' && format('Deploy to {0}'
 on:
   push:
     branches: [main]
+
   workflow_dispatch:
     inputs:
       environment:
@@ -17,12 +18,17 @@ on:
 jobs:
   copilot:
     name: AWS Copilot deploy
+
     permissions:
       id-token: write
       contents: read
 
+    environment:
+      name: ${{ github.event.inputs.environment || 'test' }}
+      url: https://${{ steps.host-name.outputs.value }}
+
     concurrency:
-      group: ${{ github.ref }}-${{ github.event.inputs.environment }}
+      group: ${{ github.ref }}-${{ github.event.inputs.environment || 'test' }}
       cancel-in-progress: true
 
     runs-on: ubuntu-latest
@@ -45,9 +51,9 @@ jobs:
 
       - name: Deploy the application using AWS Copilot
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            ENVIRONMENT=${{ github.event.inputs.environment }}
-          else
-            ENVIRONMENT=test
-          fi
-          copilot svc deploy --name webapp --env $ENVIRONMENT
+          copilot svc deploy --name webapp --env ${{ github.event.inputs.environment || 'test' }}
+
+      - name: Get host name
+        id: host-name
+        run: |
+          echo "value=$(copilot svc show --name webapp --json | jq -r '.variables[] | select(.name == "MAVIS__HOST") | select(.environment == "${{ github.event.inputs.environment || 'test' }}") | .value')" >> $GITHUB_OUTPUT
