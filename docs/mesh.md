@@ -1,4 +1,4 @@
-# Setting up a connection with NHS Hessage Exchange for Social Care and Health (MESH)
+# Setting up a connection with NHS Message Exchange for Social Care and Health (MESH)
 
 To connect with NHS MESH in the integration or production environments, you'll
 need a mailbox allocated and a TLS certificate generated for you. These are
