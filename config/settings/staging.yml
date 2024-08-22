@@ -1,7 +1,7 @@
 mesh:
   base_url: "https://msg.intspineservices.nhs.uk"
   mailbox: N1G3BOT001
-  dps_mailbox: X26ABC3
+  dps_mailbox: N1G3BOT002
   certificate: |
     -----BEGIN CERTIFICATE-----
     MIIE5TCCA82gAwIBAgIRAJUHcqfZdUo7qTGXmf7K53YwDQYJKoZIhvcNAQELBQAw
