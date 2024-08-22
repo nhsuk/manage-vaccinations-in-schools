@@ -13,14 +13,15 @@ class VaccinationRecordsController < ApplicationController
   end
 
   def export_dps
-    send_data(dps_export.export!, filename: dps_export.filename)
+    send_data(dps_export.csv, filename: dps_export.filename)
   end
 
   def reset_dps_export
-    dps_export.reset!
+    campaign.dps_exports.each { _1.vaccination_records = [] }
 
     flash[:success] = {
-      heading: "Vaccination records have been reset for the DPS export"
+      heading:
+        "DPS export status has been reset for vaccination records in this campaign"
     }
 
     redirect_to campaign_immunisation_imports_path(campaign)
@@ -50,6 +51,6 @@ class VaccinationRecordsController < ApplicationController
   end
 
   def dps_export
-    @dps_export ||= DPSExport.new(campaign:)
+    @dps_export ||= DPSExport.create!(campaign:)
   end
 end
