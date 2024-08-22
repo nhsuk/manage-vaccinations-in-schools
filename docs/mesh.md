@@ -1,4 +1,3 @@
-
 # NHS Message Exchange for Social Care and Health (MESH) integration
 
 ## Initial setup
@@ -70,7 +69,7 @@ configuring Mavis for more detail.
 ## Configuring Mavis
 
 The connection to MESH is configured using Settings (see the YAML files in
-`config/settings/*`). 
+`config/settings/*`).
 
 - **base_url**: Environment-specific URL for MESH
 - **mailbox**: _Secret_ - Mavis' MESH mailbox, requested from ITOC support
@@ -99,6 +98,43 @@ silently.
 
 - **DPSExport** - Sends vaccination records to DPS for processing via MESH. Runs
   nightly and generates a DPS export for each campaign that has unsent records.
+
+## Developing and testing
+
+MESH can be run locally using a Docker container. Clone the [MESH Sandbox repo](https://github.com/NHSDigital/mesh-sandbox) locally and use `docker-compose` to start it:
+
+```
+$ docker-compose up
+[+] Running 1/0
+ ✔ Container mesh_sandbox  Created                                                                                       0.0s
+Attaching to mesh_sandbox
+mesh_sandbox  | INFO:     Started server process [1]
+mesh_sandbox  | INFO:     Waiting for application startup.
+mesh_sandbox  | INFO:     | 2024-08-22 14:02:24 | startup auth_mode: full store_mode: file
+mesh_sandbox  | INFO:     Application startup complete.
+mesh_sandbox  | INFO:     Uvicorn running on https://0.0.0.0:443 (Press CTRL+C to quit)
+mesh_sandbox  | INFO:     | 2024-08-22 14:02:26 | begin ping https://localhost/health
+mesh_sandbox  | INFO:     | 2024-08-22 14:02:26 | end ping https://localhost/health 200 0.0054
+mesh_sandbox  | INFO:     127.0.0.1:46164 - "GET /health HTTP/1.1" 200 OK
+```
+
+(I recommend running it in `tmux` as it logs a ping to the health endpoint every
+second and can get noisy)
+
+Mavis' development environment is configured to connect to a locally running
+sandbox automatically and you can test some of the basic functions using it.
+
+There are several rake tasks that can be used to develop and test MESH features:
+
+```
+$ rails -T mesh
+bin/rails mesh:ack_message[message]  # Acknowledge message MESH, removing it from inbox
+bin/rails mesh:check_inbox           # Check MESH inbox, listing any messages
+bin/rails mesh:dps_export            # Export DPS data via MESH
+bin/rails mesh:get_message[message]  # Get message from MESH
+bin/rails mesh:send_file[to,file]    # Send a file to a mailbox via MESH
+bin/rails mesh:validate_mailbox      # Validate MESH mailbox to let MESH know Mavis is up and running
+```
 
 ## Additional resources
 
