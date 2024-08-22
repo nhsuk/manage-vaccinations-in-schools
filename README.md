@@ -11,9 +11,9 @@ is a prototype used for testing service designs and implementation technology.
 | [Test](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/test)             | [`staging`](config/environments/staging.rb)       |
 | [Training](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/training)     | [`staging`](config/environments/staging.rb)       |
 
-# Development
+## Development
 
-## Prerequisites
+### Prerequisites
 
 This project depends on:
 
@@ -26,7 +26,7 @@ This project depends on:
 The instructions below assume you are using `asdf` to manage the necessary
 versions of the above.
 
-## Application architecture
+### Application architecture
 
 We keep track of architecture decisions in [Architecture Decision Records
 (ADRs)](/adr/).
@@ -37,9 +37,9 @@ We use `rladr` to generate the boilerplate for new records:
 bin/bundle exec rladr new title
 ```
 
-## Development toolchain
+### Development toolchain
 
-### asdf
+#### asdf
 
 This project uses `asdf`. Use the following to install the required tools:
 
@@ -205,11 +205,11 @@ To [generate tests interactively by clicking in a live browser](https://playwrig
 yarn playwright codegen http://localhost:4000
 ```
 
-## Example campaigns
+### Example campaigns
 
 You can generate an example campaign with a few sessions in development by visiting `/reset`.
 
-### Adding a test user
+#### Adding a test user
 
 You can add a new user to an environment using the `add_new_user` rake task:
 
@@ -217,7 +217,7 @@ You can add a new user to an environment using the `add_new_user` rake task:
 rails add_new_user['user@example.com','password123','John Doe',1]
 ```
 
-## Previewing view components
+### Previewing view components
 
 [ViewComponent previews](https://viewcomponent.org/guide/previews.html) are enabled in development and test environments. In development, they are here:
 
@@ -225,7 +225,7 @@ rails add_new_user['user@example.com','password123','John Doe',1]
 
 The previews are defined in `spec/components/previews`.
 
-## Deploying
+### Deploying
 
 This app can be deployed to AWS using AWS Copilot. Once authenticated, you can
 run:
@@ -236,7 +236,7 @@ $ bin/deploy test
 
 See [docs/aws-copilot.md](docs/aws-copilot.md) for more information.
 
-## Notify
+### Notify
 
 When developing locally, emails are sent using the `:file` delivery method, and
 logged to `STDOUT`.
@@ -253,13 +253,13 @@ govuk_notify:
 You should set it to `enabled: false` when you're done testing Notify locally,
 because it's easier to work offline without it.
 
-### Reply-To
+#### Reply-To
 
 GOV.UK Notify can store reply-to email addresses and use them when sending mail.
 Once you've added the reply-to email in GOV.UK Notify, get the UUID and add it to
 the team.
 
-## Care Identity Service (CIS2)
+### Care Identity Service (CIS2)
 
 This service uses [NHS's CIS2 Care Identity Authentication
 service](https://digital.nhs.uk/developer/api-catalogue/nhs-cis2-care-identity-authentication)
