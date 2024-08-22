@@ -3,6 +3,14 @@
 This is a service for recording children vaccinations with the NHS. This version
 is a prototype used for testing service designs and implementation technology.
 
+## Environments
+
+| Name                                                                                         | `RAILS_ENV`                                       |
+| -------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| [Production](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/production) | [`production`](config/environments/production.rb) |
+| [Test](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/test)             | [`staging`](config/environments/staging.rb)       |
+| [Training](https://github.com/nhsuk/manage-vaccinations-in-schools/deployments/training)     | [`staging`](config/environments/staging.rb)       |
+
 # Development
 
 ## Prerequisites
