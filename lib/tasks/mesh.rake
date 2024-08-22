@@ -53,8 +53,12 @@ namespace :mesh do
 
     response = MESH.connection.put("inbox/#{message}/status/acknowledged")
 
-    puts response.body
-    warn response.status unless response.status == 200
+    if response.status == 200
+      puts "200 - Message acknowledged"
+    else
+      warn response.status
+      warn response.body
+    end
   end
 
   desc "Send a file to a mailbox via MESH"
