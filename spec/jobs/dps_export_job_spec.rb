@@ -33,10 +33,10 @@ describe DPSExportJob, type: :job do
       )
     end
 
-    it "sets the status to sent" do
+    it "sets the status to accepted" do
       described_class.perform_now
 
-      expect(DPSExport.last.status).to eq("sent")
+      expect(DPSExport.last.status).to eq("accepted")
     end
 
     it "sets the message_id" do

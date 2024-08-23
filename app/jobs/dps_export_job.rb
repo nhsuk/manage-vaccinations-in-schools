@@ -15,7 +15,7 @@ class DPSExportJob < ApplicationJob
         if response.success?
           mesh_reply = JSON.parse(response.body)
           message_id = mesh_reply.fetch("message_id")
-          dps_export.update!(status: "sent", message_id:)
+          dps_export.update!(status: "accepted", message_id:)
 
           Rails.logger.info(
             "DPS export (#{dps_export.id}) for campaign (#{campaign.id}) sent: " \
