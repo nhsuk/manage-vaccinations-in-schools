@@ -16,6 +16,7 @@
 #  home_educated            :boolean
 #  last_name                :string
 #  nhs_number               :string
+#  pending_changes          :jsonb            not null
 #  sent_consent_at          :datetime
 #  sent_reminder_at         :datetime
 #  session_reminder_sent_at :datetime
