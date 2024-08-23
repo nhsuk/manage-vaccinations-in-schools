@@ -4,13 +4,14 @@
 #
 # Table name: immunisation_imports
 #
-#  id          :bigint           not null, primary key
-#  csv         :text             not null
-#  recorded_at :datetime
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
-#  campaign_id :bigint           not null
-#  user_id     :bigint           not null
+#  id           :bigint           not null, primary key
+#  csv          :text             not null
+#  processed_at :datetime
+#  recorded_at  :datetime
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  campaign_id  :bigint           not null
+#  user_id      :bigint           not null
 #
 # Indexes
 #

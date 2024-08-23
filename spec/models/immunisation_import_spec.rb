@@ -4,13 +4,14 @@
 #
 # Table name: immunisation_imports
 #
-#  id          :bigint           not null, primary key
-#  csv         :text             not null
-#  recorded_at :datetime
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
-#  campaign_id :bigint           not null
-#  user_id     :bigint           not null
+#  id           :bigint           not null, primary key
+#  csv          :text             not null
+#  processed_at :datetime
+#  recorded_at  :datetime
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  campaign_id  :bigint           not null
+#  user_id      :bigint           not null
 #
 # Indexes
 #
@@ -118,7 +119,8 @@ describe ImmunisationImport, type: :model do
       it "creates locations, patients, and vaccination records" do
         # stree-ignore
         expect { process! }
-          .to change(immunisation_import.vaccination_records, :count).by(7)
+          .to change(immunisation_import, :processed_at).from(nil)
+          .and change(immunisation_import.vaccination_records, :count).by(7)
           .and not_change(immunisation_import.locations, :count)
           .and change(immunisation_import.patients, :count).by(7)
           .and change(immunisation_import.sessions, :count).by(1)
@@ -130,7 +132,8 @@ describe ImmunisationImport, type: :model do
 
         # stree-ignore
         expect { immunisation_import.process! }
-          .to not_change(immunisation_import.vaccination_records, :count)
+          .to change(immunisation_import, :processed_at)
+          .and not_change(immunisation_import.vaccination_records, :count)
           .and not_change(immunisation_import.locations, :count)
           .and not_change(immunisation_import.patients, :count)
           .and not_change(immunisation_import.sessions, :count)
@@ -156,7 +159,8 @@ describe ImmunisationImport, type: :model do
       it "creates locations, patients, and vaccination records" do
         # stree-ignore
         expect { process! }
-          .to change(immunisation_import.vaccination_records, :count).by(7)
+          .to change(immunisation_import, :processed_at).from(nil)
+          .and change(immunisation_import.vaccination_records, :count).by(7)
           .and not_change(immunisation_import.locations, :count)
           .and change(immunisation_import.patients, :count).by(7)
           .and change(immunisation_import.sessions, :count).by(1)
@@ -168,7 +172,8 @@ describe ImmunisationImport, type: :model do
 
         # stree-ignore
         expect { immunisation_import.process! }
-          .to not_change(immunisation_import.vaccination_records, :count)
+          .to change(immunisation_import, :processed_at)
+          .and not_change(immunisation_import.vaccination_records, :count)
           .and not_change(immunisation_import.locations, :count)
           .and not_change(immunisation_import.patients, :count)
           .and not_change(immunisation_import.sessions, :count)
