@@ -31,6 +31,13 @@ describe "Immunisation imports" do
 
     when_i_click_on_vaccination_records
     and_i_should_see_the_vaccination_records
+
+    when_i_click_on_the_uploads_tab
+    and_i_click_on_the_upload_link
+    then_i_should_see_the_upload_page
+
+    when_i_upload_a_valid_file
+    then_i_should_see_the_duplicates_page
   end
 
   def given_i_am_signed_in
@@ -140,5 +147,17 @@ describe "Immunisation imports" do
     expect(page).to have_content("NameChyna Pickle")
     expect(page).to have_content("Vaccination record")
     expect(page).to have_content("OutcomeVaccinated")
+  end
+
+  def when_i_click_on_the_uploads_tab
+    click_on "Uploads"
+  end
+
+  alias_method :and_i_click_on_the_upload_link, :when_i_click_on_the_upload_link
+
+  def then_i_should_see_the_duplicates_page
+    expect(page).to have_content(
+      "All records in this CSV file have been uploaded."
+    )
   end
 end
