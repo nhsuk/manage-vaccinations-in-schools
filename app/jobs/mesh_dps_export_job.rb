@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class DPSExportJob < ApplicationJob
-  queue_as :default
+class MESHDPSExportJob < ApplicationJob
+  queue_as :mesh
 
   def perform
     return unless Flipper.enabled? :mesh_jobs
