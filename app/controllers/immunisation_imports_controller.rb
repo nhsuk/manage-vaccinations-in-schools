@@ -36,23 +36,26 @@ class ImmunisationImportsController < ApplicationController
       return
     end
 
-    result = @immunisation_import.process!
+    @immunisation_import.process!
 
-    if result[:new_count].zero? && result[:duplicate_count] != 0
+    if @immunisation_import.new_record_count.zero? &&
+         @immunisation_import.exact_duplicate_record_count != 0
       render :duplicates
       return
     end
 
-    flash[:success] = "#{result[:new_count]} vaccinations uploaded"
+    flash[
+      :success
+    ] = "#{@immunisation_import.new_record_count} vaccinations uploaded"
 
     # TODO: Move to "Check and confirm" page
-    if (duplicate_count = result[:duplicate_count]) > 1
+    if (duplicate_count = @immunisation_import.exact_duplicate_record_count) > 1
       flash[
         :info
       ] = "#{duplicate_count} previously uploaded records were omitted"
     end
 
-    if (ignored_count = result[:ignored_count]) > 1
+    if (ignored_count = @immunisation_import.not_administered_record_count) > 1
       flash[
         :info
       ] = "#{ignored_count} records for children who were not vaccinated were omitted"

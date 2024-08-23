@@ -144,19 +144,20 @@ describe ImmunisationImport, type: :model do
           .and not_change(Batch, :count)
       end
 
-      it "returns statistics on the import" do
-        expect(process!).to eq(
-          { duplicate_count: 0, ignored_count: 4, new_count: 7 }
-        )
+      it "stores statistics on the import" do
+        # stree-ignore
+        expect { process! }
+          .to change(immunisation_import, :exact_duplicate_record_count).to(0)
+          .and change(immunisation_import, :new_record_count).to(7)
+          .and change(immunisation_import, :not_administered_record_count).to(4)
       end
 
       it "ignores and counts duplicate records" do
         build(:immunisation_import, campaign:, csv:, user:).record!
         csv.rewind
 
-        expect(process!).to eq(
-          { duplicate_count: 7, ignored_count: 4, new_count: 0 }
-        )
+        process!
+        expect(immunisation_import.exact_duplicate_record_count).to eq(7)
       end
     end
 
@@ -189,19 +190,24 @@ describe ImmunisationImport, type: :model do
           .and not_change(Batch, :count)
       end
 
-      it "returns statistics on the import" do
-        expect(process!).to eq(
-          { duplicate_count: 0, ignored_count: 0, new_count: 7 }
-        )
+      it "stores statistics on the import" do
+        expect { process! }.to change(
+          immunisation_import,
+          :exact_duplicate_record_count
+        ).to(0).and change(immunisation_import, :new_record_count).to(
+                7
+              ).and change(
+                      immunisation_import,
+                      :not_administered_record_count
+                    ).to(0)
       end
 
       it "ignores and counts duplicate records" do
         build(:immunisation_import, campaign:, csv:, user:).record!
         csv.rewind
 
-        expect(process!).to eq(
-          { duplicate_count: 7, ignored_count: 0, new_count: 0 }
-        )
+        process!
+        expect(immunisation_import.exact_duplicate_record_count).to eq(7)
       end
 
       it "creates a new session for each date" do

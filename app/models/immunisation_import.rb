@@ -67,6 +67,14 @@ class ImmunisationImport < ApplicationRecord
   validate :headers_are_valid
   validate :rows_are_valid
 
+  COUNT_COLUMNS = %i[
+    exact_duplicate_record_count
+    new_record_count
+    not_administered_record_count
+  ].freeze
+
+  validate :counts_are_nil_or_present
+
   def csv=(value)
     super(value.respond_to?(:read) ? value.read : value)
   end
@@ -106,28 +114,26 @@ class ImmunisationImport < ApplicationRecord
     parse_rows! if rows.nil?
     return if invalid?
 
-    stats = { new_count: 0, duplicate_count: 0, ignored_count: 0 }
+    stats = COUNT_COLUMNS.index_with { |_column| 0 }
 
     ActiveRecord::Base.transaction do
       save!
 
-      rows.each_with_object(stats) do |row, hash|
+      rows.each do |row|
         if (vaccination_record = row.to_vaccination_record)
           if vaccination_record.new_record?
             vaccination_record.save!
-            hash[:new_count] += 1
+            stats[:new_record_count] += 1
           else
-            hash[:duplicate_count] += 1
+            stats[:exact_duplicate_record_count] += 1
           end
         else
-          hash[:ignored_count] += 1
+          stats[:not_administered_record_count] += 1
         end
       end
 
-      update!(processed_at: Time.zone.now)
+      update!(processed_at: Time.zone.now, **stats)
     end
-
-    stats
   end
 
   def record!
@@ -177,6 +183,18 @@ class ImmunisationImport < ApplicationRecord
     rows.each.with_index do |row, index|
       if row.invalid?
         errors.add("row_#{index + 1}".to_sym, row.errors.full_messages)
+      end
+    end
+  end
+
+  def counts_are_nil_or_present
+    if processed?
+      COUNT_COLUMNS.each do |column|
+        errors.add(column, :blank) if send(column).nil?
+      end
+    else
+      COUNT_COLUMNS.each do |column|
+        errors.add(column, :present) unless send(column).nil?
       end
     end
   end
