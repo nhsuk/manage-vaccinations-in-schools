@@ -14,7 +14,6 @@ class ImmunisationImportRow
             },
             if: -> { administered && vaccine.present? }
   validates :organisation_code, comparison: { equal_to: :valid_ods_code }
-  validates :recorded_at, presence: true
   validates :vaccine_given,
             inclusion: {
               in: :valid_given_vaccines
@@ -80,8 +79,7 @@ class ImmunisationImportRow
 
     VaccinationRecord.create_with(
       imported_from: @imported_from,
-      notes:,
-      recorded_at:
+      notes:
     ).find_or_initialize_by(
       administered_at:,
       batch:,
@@ -120,7 +118,7 @@ class ImmunisationImportRow
     @session ||=
       @campaign
         .sessions
-        .create_with(imported_from:)
+        .create_with(imported_from:, draft: true)
         .find_or_create_by!(
           date: session_date,
           location:,
@@ -198,10 +196,6 @@ class ImmunisationImportRow
     rescue ArgumentError, TypeError
       nil
     end
-  end
-
-  def recorded_at
-    Time.zone.now
   end
 
   def organisation_code
