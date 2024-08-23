@@ -356,6 +356,13 @@ describe ImmunisationImportRow, type: :model do
       it { should be_nil }
     end
 
+    context "with valid data" do
+      let(:data) { valid_data }
+
+      it { should_not be_nil }
+      it { should be_draft }
+    end
+
     context "with a school" do
       let(:data) { valid_data }
 
@@ -829,14 +836,6 @@ describe ImmunisationImportRow, type: :model do
     end
   end
 
-  describe "#recorded_at" do
-    subject(:recorded_at) { immunisation_import_row.recorded_at }
-
-    let(:data) { {} }
-
-    it { should_not be_nil }
-  end
-
   describe "#care_setting" do
     subject(:care_setting) { immunisation_import_row.care_setting }
 
@@ -901,6 +900,10 @@ describe ImmunisationImportRow, type: :model do
     end
 
     let(:data) { valid_data }
+
+    it "is not recorded" do
+      expect(vaccination_record).not_to be_recorded
+    end
 
     it "has a vaccinator" do
       expect(vaccination_record.performed_by).to have_attributes(
