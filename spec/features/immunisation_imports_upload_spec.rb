@@ -123,13 +123,12 @@ describe "Immunisation imports" do
 
   def and_i_should_see_the_vaccination_records
     expect(page).to have_content(
-      "Full nameNHS numberDate of birthPostcodeVaccinated date"
+      "Full nameNHS numberDate of birthVaccination date"
     )
     expect(page).to have_content("Full name Chyna Pickle")
     expect(page).to have_content(/NHS number.*742.*018.*0008/)
     expect(page).to have_content("Date of birth 12 September 2012")
-    expect(page).to have_content("Postcode LE3 2DA")
-    expect(page).to have_content("Vaccinated date 14 May 2024")
+    expect(page).to have_content("Vaccination date 14 May 2024")
   end
 
   def when_i_click_on_a_vaccination_record
