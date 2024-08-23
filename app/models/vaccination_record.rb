@@ -40,6 +40,7 @@
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 class VaccinationRecord < ApplicationRecord
+  include Recordable
   include WizardFormConcern
 
   audited associated_with: :patient_session
@@ -82,8 +83,6 @@ class VaccinationRecord < ApplicationRecord
   has_and_belongs_to_many :dps_exports
 
   scope :administered, -> { where.not(administered_at: nil) }
-  scope :recorded, -> { where.not(recorded_at: nil) }
-  scope :draft, -> { where(recorded_at: nil) }
   scope :unexported, -> { where.missing(:dps_exports) }
 
   enum :delivery_method,
@@ -182,10 +181,6 @@ class VaccinationRecord < ApplicationRecord
   def administered=(value)
     self.administered_at =
       ActiveModel::Type::Boolean.new.cast(value) ? Time.zone.now : nil
-  end
-
-  def recorded?
-    recorded_at != nil
   end
 
   def form_steps
