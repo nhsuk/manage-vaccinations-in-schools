@@ -246,11 +246,15 @@ describe ImmunisationImport, type: :model do
       let(:file) { "valid_flu.csv" }
 
       it "sets the recorded at time" do
-        expect { record! }.to change(immunisation_import, :recorded_at).from(nil)
+        expect { record! }.to change(immunisation_import, :recorded_at).from(
+          nil
+        )
       end
 
       it "records the vaccination records" do
-        expect { record! }.to change(VaccinationRecord.recorded, :count).from(0).to(7)
+        expect { record! }.to change(VaccinationRecord.recorded, :count).from(
+          0
+        ).to(7)
       end
     end
 
@@ -259,11 +263,15 @@ describe ImmunisationImport, type: :model do
       let(:file) { "valid_hpv.csv" }
 
       it "sets the recorded at time" do
-        expect { record! }.to change(immunisation_import, :recorded_at).from(nil)
+        expect { record! }.to change(immunisation_import, :recorded_at).from(
+          nil
+        )
       end
 
       it "records the vaccination records" do
-        expect { record! }.to change(VaccinationRecord.recorded, :count).from(0).to(7)
+        expect { record! }.to change(VaccinationRecord.recorded, :count).from(
+          0
+        ).to(7)
       end
     end
   end

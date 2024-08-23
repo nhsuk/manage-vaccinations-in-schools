@@ -73,7 +73,7 @@ Rails.application.routes.draw do
 
     resources :immunisation_imports,
               path: "immunisation-imports",
-              only: %i[index new create show]
+              except: :destroy
 
     resources :vaccination_records,
               path: "vaccination-records",

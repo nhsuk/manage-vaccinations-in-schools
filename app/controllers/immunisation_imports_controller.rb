@@ -2,6 +2,8 @@
 
 class ImmunisationImportsController < ApplicationController
   before_action :set_campaign
+  before_action :set_immunisation_import, only: %i[show edit update]
+  before_action :set_vaccination_records, only: %i[edit show]
 
   layout "two_thirds", only: :new
 
@@ -9,6 +11,7 @@ class ImmunisationImportsController < ApplicationController
     @immunisation_imports =
       @campaign
         .immunisation_imports
+        .recorded
         .includes(:user)
         .order(:created_at)
         .strict_loading
@@ -55,21 +58,25 @@ class ImmunisationImportsController < ApplicationController
       ] = "#{ignored_count} records for children who were not vaccinated were omitted"
     end
 
-    redirect_to campaign_immunisation_import_path(
+    redirect_to edit_campaign_immunisation_import_path(
                   @campaign,
                   @immunisation_import
                 )
   end
 
   def show
-    @immunisation_import = @campaign.immunisation_imports.find(params[:id])
+  end
 
-    @vaccination_records =
-      @immunisation_import.vaccination_records.includes(
-        :location,
-        :patient,
-        :session
-      )
+  def edit
+  end
+
+  def update
+    @immunisation_import.record!
+
+    redirect_to campaign_immunisation_import_path(
+                  @campaign,
+                  @immunisation_import
+                )
   end
 
   private
@@ -80,6 +87,19 @@ class ImmunisationImportsController < ApplicationController
         .active
         .includes(:immunisation_imports)
         .find(params[:campaign_id])
+  end
+
+  def set_immunisation_import
+    @immunisation_import = @campaign.immunisation_imports.find(params[:id])
+  end
+
+  def set_vaccination_records
+    @vaccination_records =
+      @immunisation_import.vaccination_records.includes(
+        :location,
+        :patient,
+        :session
+      )
   end
 
   def immunisation_import_params
