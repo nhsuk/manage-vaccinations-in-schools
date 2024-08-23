@@ -191,15 +191,11 @@ describe ImmunisationImport, type: :model do
       end
 
       it "stores statistics on the import" do
-        expect { process! }.to change(
-          immunisation_import,
-          :exact_duplicate_record_count
-        ).to(0).and change(immunisation_import, :new_record_count).to(
-                7
-              ).and change(
-                      immunisation_import,
-                      :not_administered_record_count
-                    ).to(0)
+        # stree-ignore
+        expect { process! }
+          .to change(immunisation_import, :exact_duplicate_record_count).to(0)
+          .and change(immunisation_import, :new_record_count).to(7)
+          .and change(immunisation_import, :not_administered_record_count).to(0)
       end
 
       it "ignores and counts duplicate records" do

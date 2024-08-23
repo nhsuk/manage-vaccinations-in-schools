@@ -44,23 +44,6 @@ class ImmunisationImportsController < ApplicationController
       return
     end
 
-    flash[
-      :success
-    ] = "#{@immunisation_import.new_record_count} vaccinations uploaded"
-
-    # TODO: Move to "Check and confirm" page
-    if (duplicate_count = @immunisation_import.exact_duplicate_record_count) > 1
-      flash[
-        :info
-      ] = "#{duplicate_count} previously uploaded records were omitted"
-    end
-
-    if (ignored_count = @immunisation_import.not_administered_record_count) > 1
-      flash[
-        :info
-      ] = "#{ignored_count} records for children who were not vaccinated were omitted"
-    end
-
     redirect_to edit_campaign_immunisation_import_path(
                   @campaign,
                   @immunisation_import
