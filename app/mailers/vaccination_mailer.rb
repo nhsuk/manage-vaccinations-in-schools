@@ -18,7 +18,7 @@ class VaccinationMailer < ApplicationMailer
   private
 
   def consent
-    @patient_session.patient.consents.order(:created_at).last
+    @patient_session.patient.consents.recorded.order(:created_at).last
   end
 
   def to

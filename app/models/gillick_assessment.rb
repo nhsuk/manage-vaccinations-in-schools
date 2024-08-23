@@ -32,9 +32,8 @@ class GillickAssessment < ApplicationRecord
 
   encrypts :notes
 
-  scope :draft, -> { rewhere(recorded_at: nil) }
+  scope :draft, -> { where(recorded_at: nil) }
   scope :recorded, -> { where.not(recorded_at: nil) }
-  default_scope { recorded }
 
   on_wizard_step :gillick do
     validates :gillick_competent, inclusion: { in: [true, false] }

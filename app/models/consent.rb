@@ -43,7 +43,7 @@ class Consent < ApplicationRecord
   attr_accessor :triage
 
   has_one :consent_form
-  belongs_to :parent, optional: true
+  belongs_to :parent, -> { recorded }, optional: true
   belongs_to :draft_parent,
              -> { draft },
              class_name: "Parent",
@@ -56,12 +56,10 @@ class Consent < ApplicationRecord
              optional: true,
              foreign_key: :recorded_by_user_id
 
-  default_scope { recorded }
-
   scope :submitted_for_campaign,
         ->(campaign) { where(campaign:).where.not(recorded_at: nil) }
   scope :recorded, -> { where.not(recorded_at: nil) }
-  scope :draft, -> { rewhere(recorded_at: nil) }
+  scope :draft, -> { where(recorded_at: nil) }
 
   enum :response, %w[given refused not_provided], prefix: true
   enum :reason_for_refusal,

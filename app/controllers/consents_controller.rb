@@ -47,7 +47,7 @@ class ConsentsController < ApplicationController
   end
 
   def show
-    @consent = @session.campaign.consents.find(params[:consent_id])
+    @consent = @session.campaign.consents.recorded.find(params[:consent_id])
   end
 
   private

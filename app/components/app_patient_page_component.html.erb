@@ -59,7 +59,7 @@
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "All answers to health questions" } %>
     <%= render AppHealthQuestionsComponent.new(
-          consents: @patient_session.consents,
+          consents: @patient_session.consents.recorded,
         ) %>
   <% end %>
 <% end %>
