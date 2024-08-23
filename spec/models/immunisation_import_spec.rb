@@ -132,7 +132,7 @@ describe ImmunisationImport, type: :model do
 
         # stree-ignore
         expect { immunisation_import.process! }
-          .to change(immunisation_import, :processed_at)
+          .to not_change(immunisation_import, :processed_at)
           .and not_change(immunisation_import.vaccination_records, :count)
           .and not_change(immunisation_import.locations, :count)
           .and not_change(immunisation_import.patients, :count)
@@ -145,8 +145,16 @@ describe ImmunisationImport, type: :model do
         expect(process!).to eq(
           { duplicate_count: 0, ignored_count: 4, new_count: 7 }
         )
+      end
 
-        expect(immunisation_import.process!).to eq(
+      it "ignores and counts duplicate records" do
+        process!
+        csv.rewind
+
+        duplicate_immunisation_import =
+          build(:immunisation_import, campaign:, csv:, user:)
+
+        expect(duplicate_immunisation_import.process!).to eq(
           { duplicate_count: 7, ignored_count: 4, new_count: 0 }
         )
       end
@@ -172,7 +180,7 @@ describe ImmunisationImport, type: :model do
 
         # stree-ignore
         expect { immunisation_import.process! }
-          .to change(immunisation_import, :processed_at)
+          .to not_change(immunisation_import, :processed_at)
           .and not_change(immunisation_import.vaccination_records, :count)
           .and not_change(immunisation_import.locations, :count)
           .and not_change(immunisation_import.patients, :count)
@@ -185,8 +193,16 @@ describe ImmunisationImport, type: :model do
         expect(process!).to eq(
           { duplicate_count: 0, ignored_count: 0, new_count: 7 }
         )
+      end
 
-        expect(immunisation_import.process!).to eq(
+      it "ignores and counts duplicate records" do
+        process!
+        csv.rewind
+
+        duplicate_immunisation_import =
+          build(:immunisation_import, campaign:, csv:, user:)
+
+        expect(duplicate_immunisation_import.process!).to eq(
           { duplicate_count: 7, ignored_count: 0, new_count: 0 }
         )
       end

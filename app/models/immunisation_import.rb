@@ -98,12 +98,16 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def process!
+    return if processed?
+
     parse_rows! if rows.nil?
     return if invalid?
 
     stats = { new_count: 0, duplicate_count: 0, ignored_count: 0 }
 
     ActiveRecord::Base.transaction do
+      save!
+
       rows.each_with_object(stats) do |row, hash|
         if (vaccination_record = row.to_vaccination_record)
           if vaccination_record.new_record?

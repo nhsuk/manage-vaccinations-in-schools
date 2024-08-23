@@ -33,8 +33,6 @@ class ImmunisationImportsController < ApplicationController
       return
     end
 
-    @immunisation_import.save!
-
     result = @immunisation_import.process!
 
     if result[:new_count].zero? && result[:duplicate_count] != 0
