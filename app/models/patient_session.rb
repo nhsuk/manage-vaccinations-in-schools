@@ -35,7 +35,7 @@ class PatientSession < ApplicationRecord
              class_name: "User",
              optional: true,
              foreign_key: :created_by_user_id
-  has_one :gillick_assessment
+  has_one :gillick_assessment, -> { recorded }
   has_one :draft_gillick_assessment,
           -> { draft },
           class_name: "GillickAssessment"

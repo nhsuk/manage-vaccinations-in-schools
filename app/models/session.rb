@@ -52,8 +52,6 @@ class Session < ApplicationRecord
   scope :in_progress, -> { where(date: Time.zone.today) }
   scope :future, -> { where(date: Time.zone.tomorrow..) }
 
-  default_scope { active }
-
   after_initialize :set_timeline_attributes
   after_validation :set_timeline_timestamps
 

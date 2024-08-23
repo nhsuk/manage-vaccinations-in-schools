@@ -58,7 +58,7 @@ class ConsentForm < ApplicationRecord
 
   belongs_to :consent, optional: true
   belongs_to :session
-  belongs_to :parent, optional: true
+  belongs_to :parent, -> { recorded }, optional: true
   belongs_to :draft_parent,
              -> { draft },
              class_name: "Parent",

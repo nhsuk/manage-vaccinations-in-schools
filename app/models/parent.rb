@@ -24,8 +24,7 @@ class Parent < ApplicationRecord
   has_one :patient
 
   scope :recorded, -> { where.not(recorded_at: nil) }
-  scope :draft, -> { rewhere(recorded_at: nil) }
-  default_scope { recorded }
+  scope :draft, -> { where(recorded_at: nil) }
 
   attr_accessor :parental_responsibility
 

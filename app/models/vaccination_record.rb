@@ -83,10 +83,8 @@ class VaccinationRecord < ApplicationRecord
 
   scope :administered, -> { where.not(administered_at: nil) }
   scope :recorded, -> { where.not(recorded_at: nil) }
-  scope :draft, -> { rewhere(recorded_at: nil) }
+  scope :draft, -> { where(recorded_at: nil) }
   scope :unexported, -> { where.missing(:dps_exports) }
-
-  default_scope { recorded }
 
   enum :delivery_method,
        %w[intramuscular subcutaneous nasal_spray],

@@ -27,7 +27,7 @@ class SessionPolicy
         Session.where(campaign: nil).or(
           Session.where(campaign: @user.team.campaigns)
         )
-      ).rewhere(draft: true)
+      ).draft
     end
   end
 end

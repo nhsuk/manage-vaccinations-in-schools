@@ -6,7 +6,7 @@
   </p>
 <% end %>
 
-<% if patient_session.consents.present? %>
+<% if consents.present? %>
   <%= govuk_table(classes: "nhsuk-u-margin-bottom-4") do |table| %>
     <%= table.with_head do |head| %>
       <%= head.with_row do |row| %>

@@ -89,7 +89,7 @@ class TriageController < ApplicationController
     @triage.assign_attributes(triage_params.merge(performed_by: current_user))
     if @triage.save(context: :consent)
       @patient_session.do_triage!
-      @patient.consents.each { send_triage_mail(@patient_session, _1) }
+      @patient.consents.recorded.each { send_triage_mail(@patient_session, _1) }
       flash[:success] = {
         heading: "Triage outcome updated for",
         heading_link_text: @patient.full_name,

@@ -26,7 +26,7 @@ task :performance, [] => :environment do |_task, _args|
     VaccinationRecord
       .joins(:team)
       .where(session: { campaigns: { team: teams } })
-      .and(VaccinationRecord.where.not(recorded_at: nil))
+      .and(VaccinationRecord.recorded)
       .count
   puts "#{vaccination_records_total} *Vaccination records (total)*"
 
