@@ -148,13 +148,10 @@ describe ImmunisationImport, type: :model do
       end
 
       it "ignores and counts duplicate records" do
-        process!
+        build(:immunisation_import, campaign:, csv:, user:).record!
         csv.rewind
 
-        duplicate_immunisation_import =
-          build(:immunisation_import, campaign:, csv:, user:)
-
-        expect(duplicate_immunisation_import.process!).to eq(
+        expect(process!).to eq(
           { duplicate_count: 7, ignored_count: 4, new_count: 0 }
         )
       end
@@ -196,13 +193,10 @@ describe ImmunisationImport, type: :model do
       end
 
       it "ignores and counts duplicate records" do
-        process!
+        build(:immunisation_import, campaign:, csv:, user:).record!
         csv.rewind
 
-        duplicate_immunisation_import =
-          build(:immunisation_import, campaign:, csv:, user:)
-
-        expect(duplicate_immunisation_import.process!).to eq(
+        expect(process!).to eq(
           { duplicate_count: 7, ignored_count: 0, new_count: 0 }
         )
       end
@@ -240,6 +234,36 @@ describe ImmunisationImport, type: :model do
 
       it "doesn't update the NHS number on the existing patient" do
         expect { process! }.not_to change(patient, :nhs_number).from(nil)
+      end
+    end
+  end
+
+  describe "#record!" do
+    subject(:record!) { immunisation_import.record! }
+
+    context "with valid Flu rows" do
+      let(:campaign) { create(:campaign, :flu_all_vaccines, academic_year:) }
+      let(:file) { "valid_flu.csv" }
+
+      it "sets the recorded at time" do
+        expect { record! }.to change(immunisation_import, :recorded_at).from(nil)
+      end
+
+      it "records the vaccination records" do
+        expect { record! }.to change(VaccinationRecord.recorded, :count).from(0).to(7)
+      end
+    end
+
+    context "with valid HPV rows" do
+      let(:campaign) { create(:campaign, :hpv_all_vaccines, academic_year:) }
+      let(:file) { "valid_hpv.csv" }
+
+      it "sets the recorded at time" do
+        expect { record! }.to change(immunisation_import, :recorded_at).from(nil)
+      end
+
+      it "records the vaccination records" do
+        expect { record! }.to change(VaccinationRecord.recorded, :count).from(0).to(7)
       end
     end
   end
