@@ -139,30 +139,75 @@ bin/rails mesh:validate_mailbox      # Validate MESH mailbox to let MESH know Ma
 ## DPS (Data Processing Service) Export
 
 Upstream reporting to other NHSE services is done by sending vaccination events
-to DPS via MESH. Here's an example of testing the MESH integration using the DPS
-export functionality:
+to DPS via MESH. Here's an example of testing the MESH integration by triggering
+the jobs manually:
+
+1. Clear out any existing `DPSExport` records for the campaign you want to test with:
+   ```
+   [1] pry(main)> Campaign.find(1).dps_exports.destroy_all
+   ```
+2. Trigger the job to send vaccination records to DPS:
+   ```
+   [2] pry(main)> DPSExportJob.perform_now
+   Performing DPSExportJob (Job ID: 15ff78e8-3d8e-42c8-af1a-086ab4e77ff7) from GoodJob(default)
+   ...
+   DPS export (17) for campaign (1) sent: 202 - {"message_id":"3F5A532496B341798B698FD44A0155F7"}
+   Performed DPSExportJob (Job ID: 15ff78e8-3d8e-42c8-af1a-086ab4e77ff7) from GoodJob(default) in 332.56ms
+   ```
+3. Confirm a `DPSExport` record was created:
+   ```
+   [3] pry(main)> Campaign.find(1).dps_exports
+   => [#<DPSExport:0x000000014d37cd20
+     id: 17,
+     message_id: "3F5A532496B341798B698FD44A0155F7",
+     status: "accepted",
+     filename: "Vaccinations-HPV-2024-08-23.csv",
+     sent_at: nil,
+     campaign_id: 1,
+     created_at: Fri, 23 Aug 2024 16:42:29.679686000 BST +01:00,
+     updated_at: Fri, 23 Aug 2024 16:42:29.742197000 BST +01:00>]
+   ```
+4. Confirm the message has arrived using a Rake task:
+   ```
+   $ MAVIS__MESH__MAILBOX=X26ABC3 MAVIS__MESH__PASSWORD=password rails mesh:check_inbox
+   {"messages":["3F5A532496B341798B698FD44A0155F7"],"links":{"self":"/messageexchange/X26ABC3/inbox"},"approx_inbox_count":1}
+   ```
+5. (Optional) Confirm the export file's contents:
+   ```
+   $ MAVIS__MESH__MAILBOX=X26ABC3 MAVIS__MESH__PASSWORD=password rails mesh:get_message[3F5A532496B341798B698FD44A0155F7]
+   "NHS_NUMBER"|"PERSON_FORENAME"|"PERSON_SURNAME"|"PERSON_DOB"|"PERSON_GENDER_CODE"|"PERSON_POSTCODE"|"DATE_AND_TIME"|"SITE_CODE"|"SITE_CODE_TYPE_URI"|"UNIQUE_ID"|"UNIQUE_ID_URI"|"ACTION_FLAG"|"PERFORMING_PROFESSIONAL_FORENAME"|"PERFORMING_PROFESSIONAL_SURNAME"|"RECORDED_DATE"|"PRIMARY_SOURCE"|"VACCINATION_PROCEDURE_CODE"|"VACCINATION_PROCEDURE_TERM"|"DOSE_SEQUENCE"|"VACCINE_PRODUCT_CODE"|"VACCINE_PRODUCT_TERM"|"VACCINE_MANUFACTURER"|"BATCH_NUMBER"|"EXPIRY_DATE"|"SITE_OF_VACCINATION_CODE"|"SITE_OF_VACCINATION_TERM"|"ROUTE_OF_VACCINATION_CODE"|"ROUTE_OF_VACCINATION_TERM"|"DOSE_AMOUNT"|"DOSE_UNIT_CODE"|"DOSE_UNIT_TERM"|"INDICATION_CODE"|"LOCATION_CODE"|"LOCATION_CODE_TYPE_URI"
+   "9992686766"|"Brenton"|"Waters"|"20120818"|"0"|"UC0W 0JL"|"20230609T00000000"|"U1"|"https://fhir.nhs.uk/Id/ods-organization-code"|"496e37d8-d1ab-4e12-a3a3-9c2e136a0504"|"https://manage-vaccinations-in-schools.nhs.uk/vaccination-records"|"new"|""|""|"20240821"|"TRUE"|"761841000"|"Administration of vaccine product containing only Human papillomavirus antigen (procedure)"|"1"|"33493111000001108"|"Gardasil 9 vaccine suspension for injection 0.5ml pre-filled syringes (Merck Sharp & Dohme (UK) Ltd) (product)"|"Merck Sharp & Dohme"|"CD5472"|"20240930"|"368208006"|"Structure of left upper arm (body structure)"|"78421000"|"Intramuscular route (qualifier value)"|"0.5"|"258773002"|"Milliliter (qualifier value)"|""|"123456"|"https://fhir.hl7.org.uk/Id/urn-school-number"
+   ...
+   ```
+6. Acknowledge the message:
+   ```
+   $ MAVIS__MESH__MAILBOX=X26ABC3 MAVIS__MESH__PASSWORD=password rails mesh:ack_message[3F5A532496B341798B698FD44A0155F7]
+   200 - Message acknowledged
+   ```
+7. Trigger the track message job, and note that the `DPSExport`'s status is changed:
+   ```
+   [4] pry(main)> MESHTrackDPSExportsJob.perform_now
+   Performing MESHTrackDPSExportsJob (Job ID: c7d99e05-1f67-4e76-8140-473a38a79090) from GoodJob(mesh)
+   ...
+   Performed MESHTrackDPSExportsJob (Job ID: c7d99e05-1f67-4e76-8140-473a38a79090) from GoodJob(mesh) in 50.97ms
+   ↳ (pry):3:in `__pry__'
+   => [#<DPSExport:0x000000014d2b0158
+     id: 17,
+     message_id: "3F5A532496B341798B698FD44A0155F7",
+     status: "acknowledged",
+     filename: "Vaccinations-HPV-2024-08-23.csv",
+     sent_at: nil,
+     campaign_id: 1,
+     created_at: Fri, 23 Aug 2024 16:42:29.679686000 BST +01:00,
+     updated_at: Fri, 23 Aug 2024 16:48:54.371976000 BST +01:00>]
+   ```
+
+The DPS export can also be sent through the cmdline without triggering the job:
 
 ```
 $ rails mesh:dps_export
 D, [2024-08-22T16:12:14.878651 #98067] DEBUG -- :   Flipper feature(mesh_jobs) enabled? true (6.0ms)  [ actors=nil gate_name=boolean ]
 I, [2024-08-22T16:12:15.237132 #98067]  INFO -- : DPS export (2) for campaign (1) sent: 202 - {"message_id":"B18FA3D33F994615988FE5AFA20143D7"}
-
-# Check the inbox. The command above sent the file to the mailbox X26ABC3, which
-# is configured as DPS' mailbox. Here we override Mavis' mailbox with DPS' so we
-# can see what we sent to it.
-$ MAVIS__MESH__MAILBOX=X26ABC3 MAVIS__MESH__PASSWORD=password rails mesh:check_inbox
-{"messages":["B18FA3D33F994615988FE5AFA20143D7"],"links":{"self":"/messageexchange/X26ABC3/inbox"},"approx_inbox_count":1}
-
-# Retrieve the file that was sent
-$ MAVIS__MESH__MAILBOX=X26ABC3 MAVIS__MESH__PASSWORD=password rails mesh:get_message[B18FA3D33F994615988FE5AFA20143D7]
-"NHS_NUMBER"|"PERSON_FORENAME"|"PERSON_SURNAME"|"PERSON_DOB"|"PERSON_GENDER_CODE"|"PERSON_POSTCODE"|"DATE_AND_TIME"|"SITE_CODE"|"SITE_CODE_TYPE_URI"|"UNIQUE_ID"|"UNIQUE_ID_URI"|"ACTION_FLAG"|"PERFORMING_PROFESSIONAL_FORENAME"|"PERFORMING_PROFESSIONAL_SURNAME"|"RECORDED_DATE"|"PRIMARY_SOURCE"|"VACCINATION_PROCEDURE_CODE"|"VACCINATION_PROCEDURE_TERM"|"DOSE_SEQUENCE"|"VACCINE_PRODUCT_CODE"|"VACCINE_PRODUCT_TERM"|"VACCINE_MANUFACTURER"|"BATCH_NUMBER"|"EXPIRY_DATE"|"SITE_OF_VACCINATION_CODE"|"SITE_OF_VACCINATION_TERM"|"ROUTE_OF_VACCINATION_CODE"|"ROUTE_OF_VACCINATION_TERM"|"DOSE_AMOUNT"|"DOSE_UNIT_CODE"|"DOSE_UNIT_TERM"|"INDICATION_CODE"|"LOCATION_CODE"|"LOCATION_CODE_TYPE_URI"
-"9992686766"|"Brenton"|"Waters"|"20120818"|"0"|"UC0W 0JL"|"20230609T00000000"|"U1"|"https://fhir.nhs.uk/Id/ods-organization-code"|"496e37d8-d1ab-4e12-a3a3-9c2e136a0504"|"https://manage-vaccinations-in-schools.nhs.uk/vaccination-records"|"new"|""|""|"20240821"|"TRUE"|"761841000"|"Administration of vaccine product containing only Human papillomavirus antigen (procedure)"|"1"|"33493111000001108"|"Gardasil 9 vaccine suspension for injection 0.5ml pre-filled syringes (Merck Sharp & Dohme (UK) Ltd) (product)"|"Merck Sharp & Dohme"|"CD5472"|"20240930"|"368208006"|"Structure of left upper arm (body structure)"|"78421000"|"Intramuscular route (qualifier value)"|"0.5"|"258773002"|"Milliliter (qualifier value)"|""|"123456"|"https://fhir.hl7.org.uk/Id/urn-school-number"
-"9993218626"|"Cameron"|"Hauck"|"20120107"|"0"|"H3A 7BX"|"20230609T00000000"|"U1"|"https://fhir.nhs.uk/Id/ods-organization-code"|"d7199929-9af5-4b37-b2ba-831da7680d30"|"https://manage-vaccinations-in-schools.nhs.uk/vaccination-records"|"new"|""|""|"20240821"|"TRUE"|"761841000"|"Administration of vaccine product containing only Human papillomavirus antigen (procedure)"|"1"|"33493111000001108"|"Gardasil 9 vaccine suspension for injection 0.5ml pre-filled syringes (Merck Sharp & Dohme (UK) Ltd) (product)"|"Merck Sharp & Dohme"|"CD5472"|"20240930"|"368208006"|"Structure of left upper arm (body structure)"|"78421000"|"Intramuscular route (qualifier value)"|"0.5"|"258773002"|"Milliliter (qualifier value)"|""|"123456"|"https://fhir.hl7.org.uk/Id/urn-school-number"
-"9996745082"|"Lenard"|"Monahan"|"20120211"|"0"|"NA4 3AJ"|"20230609T00000000"|"U1"|"https://fhir.nhs.uk/Id/ods-organization-code"|"2004af84-c9e3-47e2-819f-b4010ddc7649"|"https://manage-vaccinations-in-schools.nhs.uk/vaccination-records"|"new"|""|""|"20240821"|"TRUE"|"761841000"|"Administration of vaccine product containing only Human papillomavirus antigen (procedure)"|"1"|"33493111000001108"|"Gardasil 9 vaccine suspension for injection 0.5ml pre-filled syringes (Merck Sharp & Dohme (UK) Ltd) (product)"|"Merck Sharp & Dohme"|"CD5472"|"20240930"|"368208006"|"Structure of left upper arm (body structure)"|"78421000"|"Intramuscular route (qualifier value)"|"0.5"|"258773002"|"Milliliter (qualifier value)"|""|"123456"|"https://fhir.hl7.org.uk/Id/urn-school-number"
-"9994219804"|"Dion"|"Collins"|"20120109"|"0"|"IT9 4ZN"|"20230609T00000000"|"U1"|"https://fhir.nhs.uk/Id/ods-organization-code"|"d19166d5-d150-4a57-89b1-5e7bc4658776"|"https://manage-vaccinations-in-schools.nhs.uk/vaccination-records"|"new"|""|""|"20240821"|"TRUE"|"761841000"|"Administration of vaccine product containing only Human papillomavirus antigen (procedure)"|"1"|"33493111000001108"|"Gardasil 9 vaccine suspension for injection 0.5ml pre-filled syringes (Merck Sharp & Dohme (UK) Ltd) (product)"|"Merck Sharp & Dohme"|"CD5472"|"20240930"|"368208006"|"Structure of left upper arm (body structure)"|"78421000"|"Intramuscular route (qualifier value)"|"0.5"|"258773002"|"Milliliter (qualifier value)"|""|"123456"|"https://fhir.hl7.org.uk/Id/urn-school-number"
-
-# Acknowledge the message to remove it from the inbox
-$ MAVIS__MESH__MAILBOX=X26ABC3 MAVIS__MESH__PASSWORD=password rails mesh:ack_message[B18FA3D33F994615988FE5AFA20143D7]
 ```
 
 ## Additional resources
