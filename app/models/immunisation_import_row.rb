@@ -82,7 +82,7 @@ class ImmunisationImportRow
       imported_from: @imported_from,
       notes:,
       recorded_at:
-    ).find_or_create_by!(
+    ).find_or_initialize_by(
       administered_at:,
       batch:,
       delivery_method:,

@@ -138,7 +138,13 @@ describe ImmunisationImport, type: :model do
       end
 
       it "returns statistics on the import" do
-        expect(process!).to eq({ count: 7, ignored_count: 4 })
+        expect(process!).to eq(
+          { duplicate_count: 0, ignored_count: 4, new_count: 7 }
+        )
+
+        expect(immunisation_import.process!).to eq(
+          { duplicate_count: 7, ignored_count: 4, new_count: 0 }
+        )
       end
     end
 
@@ -170,7 +176,13 @@ describe ImmunisationImport, type: :model do
       end
 
       it "returns statistics on the import" do
-        expect(process!).to eq({ count: 7, ignored_count: 0 })
+        expect(process!).to eq(
+          { duplicate_count: 0, ignored_count: 0, new_count: 7 }
+        )
+
+        expect(immunisation_import.process!).to eq(
+          { duplicate_count: 7, ignored_count: 0, new_count: 0 }
+        )
       end
 
       it "creates a new session for each date" do
