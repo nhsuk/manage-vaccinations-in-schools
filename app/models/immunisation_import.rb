@@ -6,14 +6,17 @@ require "csv"
 #
 # Table name: immunisation_imports
 #
-#  id           :bigint           not null, primary key
-#  csv          :text             not null
-#  processed_at :datetime
-#  recorded_at  :datetime
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
-#  campaign_id  :bigint           not null
-#  user_id      :bigint           not null
+#  id                            :bigint           not null, primary key
+#  csv                           :text             not null
+#  exact_duplicate_record_count  :integer
+#  new_record_count              :integer
+#  not_administered_record_count :integer
+#  processed_at                  :datetime
+#  recorded_at                   :datetime
+#  created_at                    :datetime         not null
+#  updated_at                    :datetime         not null
+#  campaign_id                   :bigint           not null
+#  user_id                       :bigint           not null
 #
 # Indexes
 #
