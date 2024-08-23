@@ -6,13 +6,14 @@ require "csv"
 #
 # Table name: immunisation_imports
 #
-#  id          :bigint           not null, primary key
-#  csv         :text             not null
-#  recorded_at :datetime
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
-#  campaign_id :bigint           not null
-#  user_id     :bigint           not null
+#  id           :bigint           not null, primary key
+#  csv          :text             not null
+#  processed_at :datetime
+#  recorded_at  :datetime
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  campaign_id  :bigint           not null
+#  user_id      :bigint           not null
 #
 # Indexes
 #
@@ -67,6 +68,10 @@ class ImmunisationImport < ApplicationRecord
     super(value.respond_to?(:read) ? value.read : value)
   end
 
+  def processed?
+    processed_at != nil
+  end
+
   def load_data!
     return if invalid?
 
@@ -111,7 +116,11 @@ class ImmunisationImport < ApplicationRecord
           hash[:ignored_count] += 1
         end
       end
+
+      update!(processed_at: Time.zone.now)
     end
+
+    stats
   end
 
   private
