@@ -127,6 +127,26 @@ class ImmunisationImport < ApplicationRecord
     stats
   end
 
+  def record!
+    return if recorded?
+
+    process! unless processed?
+    return if invalid?
+
+    recorded_at = Time.zone.now
+
+    ActiveRecord::Base.transaction do
+      vaccination_records.draft.each do |vaccination_record|
+        if vaccination_record.session.draft?
+          vaccination_record.session.update!(draft: false)
+        end
+        vaccination_record.update!(recorded_at:)
+      end
+
+      update!(recorded_at:)
+    end
+  end
+
   private
 
   def csv_is_valid
