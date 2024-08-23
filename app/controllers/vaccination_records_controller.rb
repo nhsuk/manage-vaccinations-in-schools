@@ -17,12 +17,9 @@ class VaccinationRecordsController < ApplicationController
   end
 
   def reset_dps_export
-    campaign.dps_exports.each { _1.vaccination_records = [] }
+    campaign.dps_exports.destroy_all
 
-    flash[:success] = {
-      heading:
-        "DPS export status has been reset for vaccination records in this campaign"
-    }
+    flash[:success] = { heading: "DPS exports have been reset for campaign" }
 
     redirect_to campaign_immunisation_imports_path(campaign)
   end
