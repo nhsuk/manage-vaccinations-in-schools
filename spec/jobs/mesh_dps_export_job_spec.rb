@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe DPSExportJob, type: :job do
+describe MESHDPSExportJob, type: :job do # rubocop:disable RSpec/SpecFilePathFormat
   before do
     allow(Flipper).to receive(:enabled?).with(:mesh_jobs).and_return(true)
     allow(MESH).to receive(:send_file).and_return(response_double)

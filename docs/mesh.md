@@ -148,11 +148,11 @@ the jobs manually:
    ```
 2. Trigger the job to send vaccination records to DPS:
    ```
-   [2] pry(main)> DPSExportJob.perform_now
-   Performing DPSExportJob (Job ID: 15ff78e8-3d8e-42c8-af1a-086ab4e77ff7) from GoodJob(default)
+   [2] pry(main)> MESHDPSExportJob.perform_now
+   Performing MESHDPSExportJob (Job ID: 15ff78e8-3d8e-42c8-af1a-086ab4e77ff7) from GoodJob(default)
    ...
    DPS export (17) for campaign (1) sent: 202 - {"message_id":"3F5A532496B341798B698FD44A0155F7"}
-   Performed DPSExportJob (Job ID: 15ff78e8-3d8e-42c8-af1a-086ab4e77ff7) from GoodJob(default) in 332.56ms
+   Performed MESHDPSExportJob (Job ID: 15ff78e8-3d8e-42c8-af1a-086ab4e77ff7) from GoodJob(default) in 332.56ms
    ```
 3. Confirm a `DPSExport` record was created:
    ```

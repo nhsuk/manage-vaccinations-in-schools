@@ -5,7 +5,7 @@ namespace :mesh do
   task "dps_export" => :environment do
     Rails.logger = Logger.new($stdout)
     Rails.logger.level = Logger::DEBUG
-    DPSExportJob.perform_now
+    MESHDPSExportJob.perform_now
   end
 
   desc "Validate MESH mailbox to let MESH know Mavis is up and running"
