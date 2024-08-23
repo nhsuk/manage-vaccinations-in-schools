@@ -23,7 +23,10 @@ describe "Immunisation imports" do
 
     when_i_upload_a_valid_file
     then_i_should_see_the_success_banner
-    and_i_should_see_the_upload
+    and_i_should_see_the_vaccination_records
+
+    when_i_click_on_upload_records
+    then_i_should_see_the_upload
     and_i_should_see_the_vaccination_records
 
     when_i_click_on_a_vaccination_record
@@ -115,12 +118,6 @@ describe "Immunisation imports" do
     expect(page).to have_content("7 vaccinations uploaded")
   end
 
-  def and_i_should_see_the_upload
-    expect(page).to have_content("Uploaded on")
-    expect(page).to have_content("Uploaded byTest User")
-    expect(page).to have_content("CampaignHPV")
-  end
-
   def and_i_should_see_the_vaccination_records
     expect(page).to have_content(
       "Full nameNHS numberDate of birthVaccination date"
@@ -129,6 +126,16 @@ describe "Immunisation imports" do
     expect(page).to have_content(/NHS number.*742.*018.*0008/)
     expect(page).to have_content("Date of birth 12 September 2012")
     expect(page).to have_content("Vaccination date 14 May 2024")
+  end
+
+  def when_i_click_on_upload_records
+    click_on "Upload records"
+  end
+
+  def then_i_should_see_the_upload
+    expect(page).to have_content("Uploaded on")
+    expect(page).to have_content("Uploaded byTest User")
+    expect(page).to have_content("CampaignHPV")
   end
 
   def when_i_click_on_a_vaccination_record

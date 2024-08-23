@@ -1,0 +1,18 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: new_campaign_immunisation_import_path(@campaign),
+        name: @campaign.name,
+      ) %>
+<% end %>
+
+<% title = "Check and confirm" %>
+
+<span class="nhsuk-caption-l"><%= @campaign.name %></span>
+<%= h1 title, page_title: "#{@campaign.name} – #{title}" %>
+
+<%= govuk_button_to "Upload records", campaign_immunisation_import_path(
+      @campaign,
+      @immunisation_import
+    ), method: :put %>
+
+<%= render AppVaccinationRecordTableComponent.new(@vaccination_records, new_records: true) %>

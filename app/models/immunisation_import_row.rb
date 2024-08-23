@@ -77,21 +77,22 @@ class ImmunisationImportRow
 
     return unless administered
 
-    VaccinationRecord.create_with(
-      imported_from: @imported_from,
-      notes:
-    ).find_or_initialize_by(
-      administered_at:,
-      batch:,
-      delivery_method:,
-      delivery_site:,
-      dose_sequence:,
-      patient_session:,
-      performed_by_family_name:,
-      performed_by_given_name:,
-      reason:,
-      vaccine:
-    )
+    VaccinationRecord
+      .recorded
+      .or(VaccinationRecord.where(imported_from:))
+      .create_with(imported_from:, notes:, recorded_at: nil)
+      .find_or_initialize_by(
+        administered_at:,
+        batch:,
+        delivery_method:,
+        delivery_site:,
+        dose_sequence:,
+        patient_session:,
+        performed_by_family_name:,
+        performed_by_given_name:,
+        reason:,
+        vaccine:
+      )
   end
 
   def patient
@@ -118,6 +119,8 @@ class ImmunisationImportRow
     @session ||=
       @campaign
         .sessions
+        .active
+        .or(Session.where(imported_from:))
         .create_with(imported_from:, draft: true)
         .find_or_create_by!(
           date: session_date,
