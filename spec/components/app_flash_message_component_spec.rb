@@ -37,7 +37,7 @@ describe AppFlashMessageComponent, type: :component do
     let(:flash) { { success: "Success message" } }
 
     it "puts the text in the banner heading" do
-      expect(rendered.css(".nhsuk-notification-banner__heading").text).to(
+      expect(rendered.css(".govuk-notification-banner__heading").text).to(
         include("Success message")
       )
     end
@@ -47,13 +47,13 @@ describe AppFlashMessageComponent, type: :component do
     let(:flash) { { success: ["Success message", "You win!"] } }
 
     it "puts the first line into the banner heading" do
-      expect(rendered.css(".nhsuk-notification-banner__heading").text).to(
+      expect(rendered.css(".govuk-notification-banner__heading").text).to(
         include("Success message")
       )
     end
 
     it "puts the rest of the lines into the banner body" do
-      expect(rendered.css(".nhsuk-notification-banner__content").text).to(
+      expect(rendered.css(".govuk-notification-banner__content").text).to(
         include("You win!")
       )
     end
@@ -73,19 +73,19 @@ describe AppFlashMessageComponent, type: :component do
     end
 
     it "puts the title into the banner title" do
-      expect(rendered.css(".nhsuk-notification-banner__title").text).to(
+      expect(rendered.css(".govuk-notification-banner__title").text).to(
         include("Success title")
       )
     end
 
     it "puts the heading into the banner heading" do
-      expect(rendered.css(".nhsuk-notification-banner__heading").text).to(
+      expect(rendered.css(".govuk-notification-banner__heading").text).to(
         include("Success heading")
       )
     end
 
     it "puts the body into the main content" do
-      expect(rendered.css(".nhsuk-notification-banner__content").text).to(
+      expect(rendered.css(".govuk-notification-banner__content").text).to(
         include("Success body")
       )
     end
@@ -93,7 +93,7 @@ describe AppFlashMessageComponent, type: :component do
 
   describe "the role attribute" do
     subject do
-      rendered.css(".nhsuk-notification-banner").attribute("role").value
+      rendered.css(".govuk-notification-banner").attribute("role").value
     end
 
     context "when a success flash key is provided" do
@@ -137,7 +137,7 @@ describe AppFlashMessageComponent, type: :component do
   end
 
   describe "the title" do
-    subject { rendered.css(".nhsuk-notification-banner__title").text.strip }
+    subject { rendered.css(".govuk-notification-banner__title").text.strip }
 
     context "when a title is provided" do
       let(:flash) { { info: { title: "Title text", body: "Message" } } }
@@ -154,19 +154,19 @@ describe AppFlashMessageComponent, type: :component do
 
   describe "the banner class" do
     subject do
-      rendered.css(".nhsuk-notification-banner").attribute("class").value
+      rendered.css(".govuk-notification-banner").attribute("class").value
     end
 
     context "when a info flash key is provided" do
       let(:flash) { { info: "Info message" } }
 
-      it { should include "nhsuk-notification-banner--info" }
+      it { should include "govuk-notification-banner--info" }
     end
 
     context "when a success flash key is provided" do
       let(:flash) { { success: "Success message" } }
 
-      it { should include "nhsuk-notification-banner--success" }
+      it { should include "govuk-notification-banner--success" }
     end
   end
 end
