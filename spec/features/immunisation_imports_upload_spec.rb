@@ -22,7 +22,7 @@ describe "Immunisation imports" do
     and_i_go_back_to_the_upload_page
 
     when_i_upload_a_valid_file
-    then_i_should_see_the_success_banner
+    then_i_should_see_the_success_heading
     and_i_should_see_the_vaccination_records
 
     when_i_click_on_upload_records
@@ -114,8 +114,8 @@ describe "Immunisation imports" do
     click_on "Continue"
   end
 
-  def then_i_should_see_the_success_banner
-    expect(page).to have_content("7 vaccinations uploaded")
+  def then_i_should_see_the_success_heading
+    expect(page).to have_content("7 new vaccination records")
   end
 
   def and_i_should_see_the_vaccination_records
