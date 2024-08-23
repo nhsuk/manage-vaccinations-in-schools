@@ -93,13 +93,22 @@ class ImmunisationImport < ApplicationRecord
     parse_rows! if rows.nil?
     return if invalid?
 
-    vaccination_records =
-      ActiveRecord::Base.transaction { rows.map(&:to_vaccination_record) }
+    stats = { new_count: 0, duplicate_count: 0, ignored_count: 0 }
 
-    {
-      count: vaccination_records.compact.count,
-      ignored_count: vaccination_records.count(&:nil?)
-    }
+    ActiveRecord::Base.transaction do
+      rows.each_with_object(stats) do |row, hash|
+        if (vaccination_record = row.to_vaccination_record)
+          if vaccination_record.new_record?
+            vaccination_record.save!
+            hash[:new_count] += 1
+          else
+            hash[:duplicate_count] += 1
+          end
+        else
+          hash[:ignored_count] += 1
+        end
+      end
+    end
   end
 
   private
