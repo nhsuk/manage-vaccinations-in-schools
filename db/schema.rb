@@ -268,8 +268,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_27_081332) do
     t.bigint "campaign_id", null: false
     t.datetime "recorded_at"
     t.datetime "processed_at"
-    t.integer "new_record_count"
     t.integer "exact_duplicate_record_count"
+    t.integer "new_record_count"
     t.integer "not_administered_record_count"
     t.text "csv_filename", null: false
     t.datetime "csv_removed_at"
@@ -347,6 +347,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_27_081332) do
     t.bigint "imported_from_id"
     t.integer "gender_code", default: 0, null: false
     t.boolean "home_educated"
+    t.jsonb "pending_changes", default: {}, null: false
     t.index ["imported_from_id"], name: "index_patients_on_imported_from_id"
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
     t.index ["parent_id"], name: "index_patients_on_parent_id"
