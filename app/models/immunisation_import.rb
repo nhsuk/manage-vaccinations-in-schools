@@ -8,6 +8,7 @@ require "csv"
 #
 #  id          :bigint           not null, primary key
 #  csv         :text             not null
+#  recorded_at :datetime
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #  campaign_id :bigint           not null
@@ -37,6 +38,9 @@ class ImmunisationImport < ApplicationRecord
     has_many :sessions
     has_many :patients
   end
+
+  scope :draft, -> { where(recorded_at: nil) }
+  scope :recorded, -> { where.not(recorded_at: nil) }
 
   REQUIRED_HEADERS = %w[
     ORGANISATION_CODE
