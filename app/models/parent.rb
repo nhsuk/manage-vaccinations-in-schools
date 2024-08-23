@@ -17,14 +17,13 @@
 #  updated_at           :datetime         not null
 #
 class Parent < ApplicationRecord
+  include Recordable
+
   audited
 
   before_save :reset_unused_fields
 
   has_one :patient
-
-  scope :recorded, -> { where.not(recorded_at: nil) }
-  scope :draft, -> { where(recorded_at: nil) }
 
   attr_accessor :parental_responsibility
 
@@ -84,10 +83,6 @@ class Parent < ApplicationRecord
     else
       errors.add(:parental_responsibility, :inclusion_on_consent_form)
     end
-  end
-
-  def recorded?
-    recorded_at.present?
   end
 
   private

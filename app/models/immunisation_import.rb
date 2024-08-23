@@ -25,6 +25,8 @@ require "csv"
 #  fk_rails_...  (user_id => users.id)
 #
 class ImmunisationImport < ApplicationRecord
+  include Recordable
+
   attr_accessor :csv_is_malformed, :data, :rows
 
   encrypts :csv
@@ -38,9 +40,6 @@ class ImmunisationImport < ApplicationRecord
     has_many :sessions
     has_many :patients
   end
-
-  scope :draft, -> { where(recorded_at: nil) }
-  scope :recorded, -> { where.not(recorded_at: nil) }
 
   REQUIRED_HEADERS = %w[
     ORGANISATION_CODE

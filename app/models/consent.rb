@@ -34,7 +34,9 @@
 #
 
 class Consent < ApplicationRecord
+  include Recordable
   include WizardFormConcern
+
   audited
 
   before_save :reset_unused_fields
@@ -56,10 +58,7 @@ class Consent < ApplicationRecord
              optional: true,
              foreign_key: :recorded_by_user_id
 
-  scope :submitted_for_campaign,
-        ->(campaign) { where(campaign:).where.not(recorded_at: nil) }
-  scope :recorded, -> { where.not(recorded_at: nil) }
-  scope :draft, -> { where(recorded_at: nil) }
+  scope :submitted_for_campaign, ->(campaign) { recorded.where(campaign:) }
 
   enum :response, %w[given refused not_provided], prefix: true
   enum :reason_for_refusal,
@@ -190,10 +189,6 @@ class Consent < ApplicationRecord
       reason_for_refusal_already_vaccinated? ||
       reason_for_refusal_will_be_vaccinated_elsewhere? ||
       reason_for_refusal_medical_reasons? || reason_for_refusal_other?
-  end
-
-  def recorded?
-    recorded_at.present?
   end
 
   def new_or_existing_parent=(value)
