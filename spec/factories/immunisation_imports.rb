@@ -6,6 +6,7 @@
 #
 #  id          :bigint           not null, primary key
 #  csv         :text             not null
+#  recorded_at :datetime
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #  campaign_id :bigint           not null
