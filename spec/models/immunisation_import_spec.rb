@@ -48,6 +48,12 @@ describe ImmunisationImport, type: :model do
 
   it { should validate_presence_of(:csv) }
 
+  it "raises if processed without updating the statistics" do
+    expect {
+      immunisation_import.update!(processed_at: Time.zone.now)
+    }.to raise_error(/Count statistics must be set/)
+  end
+
   describe "#load_data!" do
     before { immunisation_import.load_data! }
 
