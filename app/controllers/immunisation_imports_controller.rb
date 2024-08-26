@@ -5,7 +5,7 @@ class ImmunisationImportsController < ApplicationController
   before_action :set_immunisation_import, only: %i[show edit update]
   before_action :set_vaccination_records, only: %i[edit show]
 
-  layout "two_thirds", only: :new
+  layout "application", except: :new
 
   def index
     @immunisation_imports =

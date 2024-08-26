@@ -4,8 +4,6 @@ module ParentInterface
   class ConsentFormsController < ConsentForms::BaseController
     include ConsentFormMailerConcern
 
-    layout "two_thirds"
-
     skip_before_action :set_consent_form, only: %i[start create deadline_passed]
     skip_before_action :authenticate_consent_form_user!,
                        only: %i[start create deadline_passed]

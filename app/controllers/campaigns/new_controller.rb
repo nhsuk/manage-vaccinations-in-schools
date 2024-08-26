@@ -9,8 +9,6 @@ class Campaigns::NewController < ApplicationController
 
   skip_after_action :verify_policy_scoped
 
-  layout "two_thirds"
-
   def show
     render_wizard
   end

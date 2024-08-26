@@ -3,8 +3,6 @@
 class BatchesController < ApplicationController
   include TodaysBatchConcern
 
-  layout "two_thirds"
-
   before_action :set_vaccine
   before_action :set_batch, only: %i[edit update]
 

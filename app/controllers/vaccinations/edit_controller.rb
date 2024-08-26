@@ -13,8 +13,6 @@ class Vaccinations::EditController < ApplicationController
   before_action :set_steps
   before_action :setup_wizard_translated
 
-  layout "two_thirds"
-
   def show
     render_wizard
   end

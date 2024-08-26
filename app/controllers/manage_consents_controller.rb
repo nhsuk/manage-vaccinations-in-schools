@@ -4,8 +4,6 @@ class ManageConsentsController < ApplicationController
   include Wicked::Wizard::Translated # For custom URLs, see en.yml wicked
   include TriageMailerConcern
 
-  layout "two_thirds"
-
   before_action :set_route
   before_action :set_session
   before_action :set_patient
