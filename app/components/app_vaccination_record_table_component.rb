@@ -13,10 +13,9 @@ class AppVaccinationRecordTableComponent < ViewComponent::Base
   attr_reader :vaccination_records, :new_records
 
   def heading
-    [
-      vaccination_records.count.to_s,
-      new_records ? "new" : nil,
-      "vaccination records"
-    ].compact.join(" ")
+    pluralize(
+      vaccination_records.count,
+      new_records ? "new vaccination record" : "vaccination record"
+    )
   end
 end
