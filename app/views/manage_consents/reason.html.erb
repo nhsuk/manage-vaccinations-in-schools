@@ -8,7 +8,7 @@
 <% title = "Why are they refusing to give consent?" %>
 <% content_for :page_title, title %>
 
-<%= form_for @consent, url: wizard_path, method: :put do |f| %>
+<%= form_with model: @consent, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
   <%= f.govuk_radio_buttons_fieldset(:reason_for_refusal,
                                      caption: { size: "l",

@@ -7,7 +7,7 @@
 
 <% content_for :page_title, "Details of your assessment" %>
 
-<%= form_for @assessment, url: wizard_path, method: :put do |f| %>
+<%= form_with model: @assessment, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
   <%= f.govuk_text_area :notes, caption: { size: "l",
                                            text: @patient.full_name },

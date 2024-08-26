@@ -41,8 +41,8 @@
           )
         end %>
 
-    <%= form_tag match_consent_form_path(@consent_form.id, patient_session_id: @patient_session.id) do %>
-      <%= submit_tag "Link response with record", class: "nhsuk-button" %>
+    <%= form_with url: match_consent_form_path(@consent_form.id, patient_session_id: @patient_session.id) do |f| %>
+      <%= f.govuk_submit "Link response with record" %>
     <% end %>
   </div>
 </div>

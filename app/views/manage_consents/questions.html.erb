@@ -14,7 +14,7 @@
   <%= page_title %>
 <% end %>
 
-<%= form_for @consent, url: wizard_path do |f| %>
+<%= form_with model: @consent, url: wizard_path do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <% @consent.health_answers.each_with_index do |health_answer, index| %>

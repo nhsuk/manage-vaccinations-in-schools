@@ -85,9 +85,9 @@
   </div>
 </div>
 
-<%= form_for @draft_vaccination_record,
-             url: wizard_path,
-             method: :put do |f| %>
+<%= form_with model: @draft_vaccination_record,
+              url: wizard_path,
+              method: :put do |f| %>
 
     <% content_for(:before_content) { f.govuk_error_summary } %>
 

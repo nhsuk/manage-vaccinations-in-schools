@@ -44,11 +44,11 @@ describe "Verbal consent" do
     click_button "Continue"
 
     # Health questions
-    find_all(".edit_consent .nhsuk-fieldset")[0].choose "Yes"
-    find_all(".edit_consent .nhsuk-fieldset")[0].fill_in "Give details",
+    find_all(".nhsuk-fieldset")[0].choose "Yes"
+    find_all(".nhsuk-fieldset")[0].fill_in "Give details",
               with: "moar allergies"
-    find_all(".edit_consent .nhsuk-fieldset")[1].choose "No"
-    find_all(".edit_consent .nhsuk-fieldset")[2].choose "No"
+    find_all(".nhsuk-fieldset")[1].choose "No"
+    find_all(".nhsuk-fieldset")[2].choose "No"
     click_button "Continue"
 
     choose "No, keep in triage"

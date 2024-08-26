@@ -16,7 +16,7 @@
   </p>
 <% end %>
 
-<%= form_for @consent_form, url: wizard_path, method: :put do |f| %>
+<%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_radio_buttons_fieldset(:is_this_their_school,
