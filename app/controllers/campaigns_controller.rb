@@ -5,7 +5,7 @@ class CampaignsController < ApplicationController
 
   skip_after_action :verify_policy_scoped, only: :create
 
-  layout "application"
+  layout "full"
 
   def index
     @campaigns = campaigns

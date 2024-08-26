@@ -13,7 +13,7 @@ class TriageController < ApplicationController
 
   after_action :verify_policy_scoped, only: %i[index create new]
 
-  layout "application", only: :index
+  layout "full", only: :index
 
   def index
     all_patient_sessions =

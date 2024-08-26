@@ -3,7 +3,7 @@
 class SessionsController < ApplicationController
   before_action :set_session, except: %i[index create]
 
-  layout "application", only: :edit
+  layout "full", only: :edit
 
   def create
     skip_policy_scope
