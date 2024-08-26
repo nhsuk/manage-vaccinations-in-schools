@@ -1,9 +1,9 @@
-<%= h1 "Change your password", size: "xl" %>
-
 <%= form_with model: resource, as: resource_name, url: password_path(resource_name), method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
   <%= f.hidden_field :reset_password_token %>
 
-  <%= f.govuk_error_summary %>
+  <%= h1 "Change your password", size: "xl" %>
 
   <%= f.govuk_password_field :password, autocomplete: "new-password",
                                         label: { text: "New password" } %>

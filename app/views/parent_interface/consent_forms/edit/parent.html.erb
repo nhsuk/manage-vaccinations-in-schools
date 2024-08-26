@@ -5,10 +5,11 @@
       ) %>
 <% end %>
 
-<%= h1 "About you" %>
 
 <%= form_with model: @consent_form.draft_parent, url: wizard_path, method: :put do |f| %>
-  <% content_for(:before_content) { f.govuk_error_summary } %>
+  <%= f.govuk_error_summary %>
+
+  <%= h1 "About you" %>
 
   <%= f.govuk_text_field :name, label: { text: "Your name" } %>
 

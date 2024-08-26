@@ -5,11 +5,12 @@
      class: "nhsuk-card",
      builder: GOVUKDesignSystemFormBuilder::FormBuilder,
    ) do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
   <div class="nhsuk-card__content">
     <h2 class="nhsuk-card__heading nhsuk-heading-m">
       Did they get the <%= campaign_name %> vaccine?
     </h2>
-    <% content_for(:before_content) { f.govuk_error_summary } %>
 
     <%= f.govuk_radio_buttons_fieldset(:administered, legend: nil) do %>
       <%= f.govuk_radio_button(

@@ -2,10 +2,10 @@
   <%= render AppBacklinkComponent.new(href: campaigns_path, name: "programme") %>
 <% end %>
 
-<%= h1 "Programme details" %>
-
 <%= form_with model: @campaign, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
+
+  <%= h1 "Programme details" %>
 
   <%= f.govuk_text_field :name, label: { size: "m" } %>
 

@@ -5,10 +5,10 @@
       ) %>
 <% end %>
 
-<%= h1 "Check and confirm" %>
-
 <%= form_with model: @campaign, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
+
+  <%= h1 "Check and confirm" %>
 
   <%= render AppCardComponent.new do |card| %>
     <% card.with_heading { "New programme details" } %>

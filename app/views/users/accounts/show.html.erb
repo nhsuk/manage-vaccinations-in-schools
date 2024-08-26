@@ -1,7 +1,7 @@
-<%= h1 "Your account", size: "xl" %>
-
 <%= form_with model: @user, url: users_account_path(@user), method: :patch do |f| %>
   <%= f.govuk_error_summary %>
+
+  <%= h1 "Your account", size: "xl" %>
 
   <%= f.govuk_text_field :given_name, label: { text: "Given name" } %>
   <%= f.govuk_text_field :family_name, label: { text: "Family name" } %>

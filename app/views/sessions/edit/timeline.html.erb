@@ -7,6 +7,7 @@
 
 <%= form_with model: @session, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
+
   <%= h1 "What’s the timeline for consent requests?" %>
 
   <%= govuk_inset_text do %>
