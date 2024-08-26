@@ -15,7 +15,7 @@ class VaccinationsController < ApplicationController
   before_action :set_batches, only: %i[batch update_batch]
   before_action :set_section_and_tab, only: %i[create]
 
-  layout "two_thirds", except: :index
+  layout "application", only: :index
 
   def index
     all_patient_sessions =
@@ -66,7 +66,9 @@ class VaccinationsController < ApplicationController
                     id: @draft_vaccination_record.form_steps.first
                   )
     else
-      render "patients/show", status: :unprocessable_entity
+      render "patients/show",
+             layout: "two_thirds",
+             status: :unprocessable_entity
     end
   end
 

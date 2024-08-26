@@ -8,11 +8,12 @@ class TriageController < ApplicationController
   before_action :set_session, only: %i[index create new]
   before_action :set_patient, only: %i[create new]
   before_action :set_patient_session, only: %i[create new]
+  before_action :set_triage, only: %i[create new]
   before_action :set_section_and_tab, only: %i[create new]
 
   after_action :verify_policy_scoped, only: %i[index create new]
 
-  layout "two_thirds", except: %i[index]
+  layout "application", only: :index
 
   def index
     all_patient_sessions =
@@ -41,12 +42,24 @@ class TriageController < ApplicationController
   end
 
   def new
-    @triage = @patient_session.triage.new
   end
 
   def create
-    @triage = @patient_session.triage.new
-    process_triage
+    @triage.assign_attributes(triage_params.merge(performed_by: current_user))
+    if @triage.save(context: :consent)
+      @patient_session.do_triage!
+      @patient.consents.recorded.each { send_triage_mail(@patient_session, _1) }
+      flash[:success] = {
+        heading: "Triage outcome updated for",
+        heading_link_text: @patient.full_name,
+        heading_link_href: session_patient_path(@session, id: @patient.id)
+      }
+      redirect_to redirect_path
+    else
+      render "patients/show",
+             layout: "two_thirds",
+             status: :unprocessable_entity
+    end
   end
 
   private
@@ -66,6 +79,10 @@ class TriageController < ApplicationController
     @patient_session = @patient.patient_sessions.find_by(session: @session)
   end
 
+  def set_triage
+    @triage = @patient_session.triage.new
+  end
+
   def set_section_and_tab
     @section = params[:section]
     @tab = params[:tab]
@@ -82,22 +99,6 @@ class TriageController < ApplicationController
       session_consents_tab_path(@session, tab: params[:tab])
     else # if current_section is triage or anything else
       session_triage_path(@session)
-    end
-  end
-
-  def process_triage
-    @triage.assign_attributes(triage_params.merge(performed_by: current_user))
-    if @triage.save(context: :consent)
-      @patient_session.do_triage!
-      @patient.consents.recorded.each { send_triage_mail(@patient_session, _1) }
-      flash[:success] = {
-        heading: "Triage outcome updated for",
-        heading_link_text: @patient.full_name,
-        heading_link_href: session_patient_path(@session, id: @patient.id)
-      }
-      redirect_to redirect_path
-    else
-      render "patients/show", status: :unprocessable_entity
     end
   end
 end

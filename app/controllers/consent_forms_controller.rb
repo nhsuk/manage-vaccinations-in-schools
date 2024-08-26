@@ -4,6 +4,8 @@ class ConsentFormsController < ApplicationController
   before_action :set_consent_form, except: %i[unmatched_responses]
   skip_after_action :verify_policy_scoped
 
+  layout "application"
+
   def unmatched_responses
     @session = policy_scope(Session).find(params.fetch(:session_id))
     @unmatched_consent_responses = @session.unmatched_consent_forms

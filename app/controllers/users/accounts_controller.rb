@@ -11,8 +11,6 @@ module Users
     skip_after_action :verify_policy_scoped,
                       only: %i[team_not_found role_not_found]
 
-    layout "two_thirds"
-
     def show
     end
 

@@ -3,8 +3,6 @@
 class GillickAssessmentsController < ApplicationController
   include Wicked::Wizard
 
-  layout "two_thirds"
-
   before_action :set_patient
   before_action :set_session
   before_action :set_patient_session

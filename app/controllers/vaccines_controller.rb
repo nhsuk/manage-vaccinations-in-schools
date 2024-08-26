@@ -3,8 +3,6 @@
 class VaccinesController < ApplicationController
   include TodaysBatchConcern
 
-  layout "two_thirds"
-
   def index
     @vaccines = vaccines
     @todays_batch_id = todays_batch_id

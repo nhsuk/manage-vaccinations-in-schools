@@ -25,6 +25,8 @@ class ApplicationController < ActionController::Base
 
   default_form_builder(GOVUKDesignSystemFormBuilder::FormBuilder)
 
+  layout "two_thirds"
+
   private
 
   def set_header_path

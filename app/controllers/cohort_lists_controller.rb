@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class CohortListsController < ApplicationController
-  layout "two_thirds"
-
   skip_after_action :verify_policy_scoped, only: %i[new create success]
 
   before_action :set_team, only: %i[new create]

@@ -3,8 +3,6 @@
 class EditSessionsController < ApplicationController
   include Wicked::Wizard::Translated # For custom URLs, see en.yml wicked
 
-  layout "two_thirds"
-
   before_action :set_session
   before_action :set_steps
   before_action :setup_wizard_translated

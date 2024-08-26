@@ -4,8 +4,6 @@ module ParentInterface
   class ConsentForms::EditController < ConsentForms::BaseController
     include Wicked::Wizard::Translated # For custom URLs, see en.yml wicked
 
-    layout "two_thirds"
-
     before_action :set_steps
     before_action :setup_wizard_translated
     before_action :validate_params, only: %i[update]
