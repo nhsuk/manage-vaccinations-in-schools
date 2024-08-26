@@ -45,6 +45,8 @@ class ImmunisationImport < ApplicationRecord
     has_many :patients
   end
 
+  before_save :ensure_processed_with_count_statistics
+
   REQUIRED_HEADERS = %w[
     ORGANISATION_CODE
     SCHOOL_URN
@@ -72,8 +74,6 @@ class ImmunisationImport < ApplicationRecord
     new_record_count
     not_administered_record_count
   ].freeze
-
-  validate :counts_are_nil_or_present
 
   def csv=(value)
     super(value.respond_to?(:read) ? value.read : value)
@@ -187,15 +187,11 @@ class ImmunisationImport < ApplicationRecord
     end
   end
 
-  def counts_are_nil_or_present
-    if processed?
-      COUNT_COLUMNS.each do |column|
-        errors.add(column, :blank) if send(column).nil?
-      end
-    else
-      COUNT_COLUMNS.each do |column|
-        errors.add(column, :present) unless send(column).nil?
-      end
+  def ensure_processed_with_count_statistics
+    if processed? && COUNT_COLUMNS.any? { |column| send(column).nil? }
+      raise "Count statistics must be set for a processed import."
+    elsif !processed? && COUNT_COLUMNS.any? { |column| !send(column).nil? }
+      raise "Count statistics must not be set for a non-processed import."
     end
   end
 end
