@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EditSessionsController < ApplicationController
+class Sessions::EditController < ApplicationController
   include Wicked::Wizard::Translated # For custom URLs, see en.yml wicked
 
   before_action :set_session
