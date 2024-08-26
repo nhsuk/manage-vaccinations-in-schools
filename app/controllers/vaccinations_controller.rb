@@ -15,8 +15,6 @@ class VaccinationsController < ApplicationController
   before_action :set_batches, only: %i[batch update_batch]
   before_action :set_section_and_tab, only: %i[create]
 
-  layout "full", only: :index
-
   def index
     all_patient_sessions =
       @session
@@ -43,7 +41,7 @@ class VaccinationsController < ApplicationController
     @patient_sessions = grouped_patient_sessions.fetch(@current_tab, [])
 
     respond_to do |format|
-      format.html
+      format.html { render layout: "full" }
       format.json { render json: @patient_outcomes.map(&:first).index_by(&:id) }
     end
 
@@ -66,9 +64,7 @@ class VaccinationsController < ApplicationController
                     id: @draft_vaccination_record.form_steps.first
                   )
     else
-      render "patients/show",
-             layout: "two_thirds",
-             status: :unprocessable_entity
+      render "patients/show", status: :unprocessable_entity
     end
   end
 

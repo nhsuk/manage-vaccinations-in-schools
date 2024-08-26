@@ -6,8 +6,6 @@ class ConsentsController < ApplicationController
 
   before_action :set_session
 
-  layout "full", only: :index
-
   def index
     all_patient_sessions =
       @session
@@ -44,6 +42,8 @@ class ConsentsController < ApplicationController
     sort_and_filter_patients!(@patient_sessions)
 
     session[:current_section] = "consents"
+
+    render layout: "full"
   end
 
   def show

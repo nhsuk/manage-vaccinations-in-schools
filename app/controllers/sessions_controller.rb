@@ -3,8 +3,6 @@
 class SessionsController < ApplicationController
   before_action :set_session, except: %i[index create]
 
-  layout "full", only: :edit
-
   def create
     skip_policy_scope
 
@@ -18,6 +16,8 @@ class SessionsController < ApplicationController
   def index
     @sessions_by_type =
       policy_scope(Session).active.in_progress.group_by(&:type)
+
+    render layout: "full"
   end
 
   def show

@@ -13,8 +13,6 @@ class TriageController < ApplicationController
 
   after_action :verify_policy_scoped, only: %i[index create new]
 
-  layout "full", only: :index
-
   def index
     all_patient_sessions =
       @session
@@ -39,6 +37,8 @@ class TriageController < ApplicationController
     sort_and_filter_patients!(@patient_sessions)
 
     session[:current_section] = "triage"
+
+    render layout: "full"
   end
 
   def new
@@ -56,9 +56,7 @@ class TriageController < ApplicationController
       }
       redirect_to redirect_path
     else
-      render "patients/show",
-             layout: "two_thirds",
-             status: :unprocessable_entity
+      render "patients/show", status: :unprocessable_entity
     end
   end
 
