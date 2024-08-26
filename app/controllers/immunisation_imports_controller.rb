@@ -5,8 +5,6 @@ class ImmunisationImportsController < ApplicationController
   before_action :set_immunisation_import, only: %i[show edit update]
   before_action :set_vaccination_records, only: %i[edit show]
 
-  layout "full", except: :new
-
   def index
     @immunisation_imports =
       @campaign
@@ -15,6 +13,8 @@ class ImmunisationImportsController < ApplicationController
         .includes(:user)
         .order(:created_at)
         .strict_loading
+
+    render layout: "full"
   end
 
   def new

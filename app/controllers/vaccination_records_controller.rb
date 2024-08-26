@@ -3,6 +3,8 @@
 class VaccinationRecordsController < ApplicationController
   def index
     @vaccination_records = vaccination_records
+
+    render layout: "full"
   end
 
   def show
