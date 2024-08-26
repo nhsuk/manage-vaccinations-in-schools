@@ -14,13 +14,14 @@
   <%= page_title %>
 <% end %>
 
-<%= form_with model: @batch, url: vaccine_batches_path(@vaccine), method: :post do |form| %>
-  <%= form.govuk_error_summary %>
+<%= form_with model: @batch, url: vaccine_batches_path(@vaccine), method: :post do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <%= form.govuk_text_field :name, label: { text: "Batch" }, width: 10 %>
-  <%= form.govuk_date_field :expiry,
-                            legend: { text: "Expiry date", size: "s" },
-                            hint: { text: "For example, 27 10 2025" },
-                            link_errors: true %>
-  <%= form.govuk_submit "Add batch" %>
+  <%= f.govuk_text_field :name, label: { text: "Batch" }, width: 10 %>
+  <%= f.govuk_date_field :expiry,
+                         legend: { text: "Expiry date", size: "s" },
+                         hint: { text: "For example, 27 10 2025" },
+                         link_errors: true %>
+
+  <%= f.govuk_submit "Add batch" %>
 <% end %>

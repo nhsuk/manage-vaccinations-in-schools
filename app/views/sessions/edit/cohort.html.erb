@@ -7,6 +7,7 @@
 
 <%= form_with model: @session, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
+
   <%= h1 "Choose cohort for this session" %>
 
   <%= govuk_table(classes: "app-table--select-cohort",

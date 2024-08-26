@@ -88,22 +88,22 @@
 <%= form_with model: @draft_vaccination_record,
               url: wizard_path,
               method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
 
-    <% content_for(:before_content) { f.govuk_error_summary } %>
-
-    <div class="nhsuk-card">
-      <div class="nhsuk-card__content">
-        <%= f.govuk_text_area :notes,
-                              label: {
-                                text: "Add notes",
-                                size: "m",
-                                class: "nhsuk-u-margin-bottom-3",
-                              },
-                              hint: {
-                                text: "For example, if the child had a reaction to the vaccine",
-                              },
-                              rows: 5 %>
-      </div>
+  <div class="nhsuk-card">
+    <div class="nhsuk-card__content">
+      <%= f.govuk_text_area :notes,
+                            label: {
+                              text: "Add notes",
+                              size: "m",
+                              class: "nhsuk-u-margin-bottom-3",
+                            },
+                            hint: {
+                              text: "For example, if the child had a reaction to the vaccine",
+                            },
+                            rows: 5 %>
     </div>
-  <%= f.submit "Confirm", class: "nhsuk-button" %>
+  </div>
+
+  <%= f.govuk_submit "Confirm" %>
 <% end %>

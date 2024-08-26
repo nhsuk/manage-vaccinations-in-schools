@@ -5,13 +5,10 @@
       ) %>
 <% end %>
 
-<% title = t("consent_forms.reason_notes.title.#{@consent_form.reason}") %>
-<% content_for :page_title, title %>
-
-<%= h1 title %>
-
 <%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
-  <% content_for(:before_content) { f.govuk_error_summary } %>
+  <%= f.govuk_error_summary %>
+
+  <%= h1 t(@consent_form.reason, scope: %i[consent_forms reason_notes title]) %>
 
   <%= f.govuk_text_area :reason_notes,
                         label: { text: "Give details" + (@consent_form.reason_notes_must_be_provided? ? "" : " (optional)") } %>

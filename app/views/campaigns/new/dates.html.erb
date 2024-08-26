@@ -5,10 +5,10 @@
       ) %>
 <% end %>
 
-<%= h1 "When does this programme run?" %>
-
 <%= form_with model: @campaign, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
+
+  <%= h1 "When does this programme run?" %>
 
   <%= f.govuk_date_field :start_date, legend: { text: "Start date" } %>
 

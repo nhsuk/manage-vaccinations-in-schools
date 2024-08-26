@@ -5,10 +5,10 @@
       ) %>
 <% end %>
 
-<%= h1 "Home address" %>
-
 <%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
-  <% content_for(:before_content) { f.govuk_error_summary } %>
+  <%= f.govuk_error_summary %>
+
+  <%= h1 "Home address" %>
 
   <%= f.govuk_text_field :address_line_1,
                          label: { text: "Address line 1" } %>

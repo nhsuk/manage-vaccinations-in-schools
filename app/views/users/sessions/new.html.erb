@@ -1,7 +1,7 @@
-<%= h1 "Log in", size: "xl" %>
-
 <%= form_with model: resource, as: resource_name, url: user_session_path do |f| %>
   <%= f.govuk_error_summary %>
+
+  <%= h1 "Log in", size: "xl" %>
 
   <%= f.govuk_email_field :email, autocomplete: "email", label: { text: "Email address" } %>
   <%= f.govuk_password_field :password, autocomplete: "current-password", label: { text: "Password" } %>

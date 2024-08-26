@@ -5,16 +5,18 @@
       ) %>
 <% end %>
 
+<% title = "Which school is it at?" %>
+<% content_for :page_title, title %>
+
 <%= form_with model: @session, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
-  <%= h1 "Which school is it at?" %>
 
   <%= f.govuk_collection_radio_buttons(
         :location_id,
         @locations,
         :id,
         :name,
-        legend: nil,
+        legend: { text: title, tag: "h1", size: "l" },
       ) %>
 
   <%= f.govuk_submit "Continue" %>

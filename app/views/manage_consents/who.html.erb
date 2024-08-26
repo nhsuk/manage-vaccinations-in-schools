@@ -15,7 +15,7 @@
 <% end %>
 
 <%= form_with model: @consent, url: wizard_path, method: :put do |f| %>
-  <%= f.govuk_error_summary %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_radio_buttons_fieldset(:new_or_existing_parent, legend: nil) do %>
     <% @parent_options.each.with_index do |parent, i| %>
