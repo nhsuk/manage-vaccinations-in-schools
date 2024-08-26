@@ -172,7 +172,7 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
     it do
       expect(rendered).to have_css(
         ".nhsuk-summary-list__row",
-        text: "Date\n6 September 2024"
+        text: "Vaccination date\n6 September 2024 at 12:00pm"
       )
     end
   end

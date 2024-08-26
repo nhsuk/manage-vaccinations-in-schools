@@ -23,7 +23,15 @@ describe AppVaccinationRecordTableComponent, type: :component do
           campaign:
         }
       )
-    ] + create_list(:vaccination_record, 9, session_attributes: { campaign: })
+    ] + create_list(:vaccination_record, 4, session_attributes: { campaign: }) +
+      create_list(
+        :vaccination_record,
+        5,
+        :not_administered,
+        session_attributes: {
+          campaign:
+        }
+      )
   end
 
   it "renders a heading tab" do
