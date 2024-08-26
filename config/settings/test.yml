@@ -9,3 +9,10 @@ mesh:
   password: password
   dps_mailbox: X26ABC3
   shared_key: TestKey
+
+pds:
+  base_url: "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4"
+
+nhs_api:
+  base_url: "https://sandbox.api.service.nhs.uk"
+  jwt_private_key: "SUPER PRIVATE KEY"

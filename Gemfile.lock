@@ -675,6 +675,7 @@ DEPENDENCIES
   jbuilder
   jsbundling-rails
   jsonb_accessor
+  jwt
   mail-notify
   mechanize
   okcomputer
