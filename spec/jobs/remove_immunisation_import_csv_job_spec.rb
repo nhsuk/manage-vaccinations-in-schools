@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe RemoveImmunisationImportCSVJob, type: :job do
   let(:immunisation_import_to_remove) do
     create(:immunisation_import, created_at: Time.zone.now - 90.days)

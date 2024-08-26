@@ -91,10 +91,17 @@ class AppVaccinationRecordDetailsComponent < ViewComponent::Base
         end
       end
 
+      if (location = @vaccination_record.session.location).present?
+        summary_list.with_row do |row|
+          row.with_key { "Location" }
+          row.with_value { location.name }
+        end
+      end
+
       if (administered_at = @vaccination_record.administered_at).present?
         summary_list.with_row do |row|
-          row.with_key { "Date" }
-          row.with_value { administered_at.to_date.to_fs(:long) }
+          row.with_key { "Vaccination date" }
+          row.with_value { administered_at.to_fs(:long) }
         end
       end
 
@@ -102,13 +109,6 @@ class AppVaccinationRecordDetailsComponent < ViewComponent::Base
         summary_list.with_row do |row|
           row.with_key { "Nurse" }
           row.with_value { user.full_name }
-        end
-      end
-
-      if (location = @vaccination_record.session.location).present?
-        summary_list.with_row do |row|
-          row.with_key { "Location" }
-          row.with_value { location.name }
         end
       end
 

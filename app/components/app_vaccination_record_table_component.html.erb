@@ -27,9 +27,12 @@
             <span class="nhsuk-table-responsive__heading">Date of birth</span>
             <%= vaccination_record.patient.date_of_birth.to_fs(:long) %>
           <% end %>
+
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Vaccination date</span>
-            <%= vaccination_record.administered_at.to_date.to_fs(:long) %>
+            <% if (administered_at = vaccination_record.administered_at).present? %>
+              <%= administered_at.to_date.to_fs(:long) %>
+            <% end %>
           <% end %>
         <% end %>
       <% end %>
