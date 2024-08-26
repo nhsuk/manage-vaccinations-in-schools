@@ -14,9 +14,9 @@
   <%= page_title %>
 <% end %>
 
-<%= form_for @draft_vaccination_record,
-             url: wizard_path,
-             method: :put do |f| %>
+<%= form_with model: @draft_vaccination_record,
+              url: wizard_path,
+              method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
   <%= f.govuk_collection_radio_buttons(

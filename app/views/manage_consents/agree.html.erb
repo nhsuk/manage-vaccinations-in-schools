@@ -8,7 +8,7 @@
 <% title = t("consents.edit_consent.title.#{@session.type.downcase}") %>
 <% content_for :page_title, title %>
 
-<%= form_for @consent, url: form_path_for(@consent), method: form_method_for(@consent) do |f| %>
+<%= form_with model: @consent, url: form_path_for(@consent), method: form_method_for(@consent) do |f| %>
   <%= f.govuk_error_summary %>
   <% if include_clone_fields_for(@consent) %>
     <%= hidden_field_tag :clone_consent_id, @consent.id %>

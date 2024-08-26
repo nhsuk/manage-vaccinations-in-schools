@@ -54,9 +54,9 @@ describe "Verbal consent" do
     click_button "Continue"
 
     # Health questions
-    find_all(".edit_consent .nhsuk-fieldset")[0].choose "No"
-    find_all(".edit_consent .nhsuk-fieldset")[1].choose "No"
-    find_all(".edit_consent .nhsuk-fieldset")[2].choose "No"
+    find_all(".nhsuk-fieldset")[0].choose "No"
+    find_all(".nhsuk-fieldset")[1].choose "No"
+    find_all(".nhsuk-fieldset")[2].choose "No"
     click_button "Continue"
 
     choose "Yes, it’s safe to vaccinate"

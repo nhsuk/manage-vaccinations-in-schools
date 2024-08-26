@@ -12,7 +12,7 @@
   their name has changed, tell us their current name.
 </p>
 
-<%= form_for @consent_form, url: wizard_path, method: :put do |f| %>
+<%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_text_field :first_name, label: { text: "First name" } %>

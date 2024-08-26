@@ -5,7 +5,7 @@
       ) %>
 <% end %>
 
-<%= form_for @session, url: wizard_path, method: :put do |f| %>
+<%= form_with model: @session, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
   <%= h1 "When is the session?" %>
 

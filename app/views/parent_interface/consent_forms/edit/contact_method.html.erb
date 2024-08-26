@@ -8,7 +8,7 @@
 <% title = "Phone contact method" %>
 <% content_for :page_title, title %>
 
-<%= form_for @consent_form.draft_parent, url: wizard_path, method: :put do |f| %>
+<%= form_with model: @consent_form.draft_parent, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_radio_buttons_fieldset(:contact_method,

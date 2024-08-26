@@ -18,7 +18,7 @@
   <%= page_title %>
 <% end %>
 
-<%= form_for @parent, url: wizard_path, method: :put do |f| %>
+<%= form_with model: @parent, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <% unless @parent.recorded? %>

@@ -8,9 +8,9 @@
 <% title = t("vaccinations.reason.title.#{@session.type.downcase}") %>
 <% content_for :page_title, title %>
 
-<%= form_for @draft_vaccination_record,
-             url: wizard_path,
-             method: :put do |f| %>
+<%= form_with model: @draft_vaccination_record,
+              url: wizard_path,
+              method: :put do |f| %>
     <%= f.govuk_error_summary %>
 
     <%= f.govuk_radio_buttons_fieldset(:reason,

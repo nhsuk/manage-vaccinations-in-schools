@@ -8,7 +8,7 @@
 <% title = "Is your child registered with a GP?" %>
 <% content_for :page_title, title %>
 
-<%= form_for @consent_form, url: wizard_path, method: :put do |f| %>
+<%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_radio_buttons_fieldset(:gp_response,

@@ -8,7 +8,7 @@
 <% title = "How was the response given?" %>
 <% content_for :page_title, title %>
 
-<%= form_for @consent, url: wizard_path do |f| %>
+<%= form_with model: @consent, url: wizard_path do |f| %>
   <%= f.govuk_error_summary %>
 
   <%= f.govuk_collection_radio_buttons :route,

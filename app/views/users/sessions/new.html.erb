@@ -1,6 +1,6 @@
 <%= h1 "Log in", size: "xl" %>
 
-<%= form_for(resource, as: resource_name, url: user_session_path) do |f| %>
+<%= form_with model: resource, as: resource_name, url: user_session_path do |f| %>
   <%= f.govuk_error_summary %>
 
   <%= f.govuk_email_field :email, autocomplete: "email", label: { text: "Email address" } %>
