@@ -3,7 +3,7 @@
 class ImmunisationImportsController < ApplicationController
   before_action :set_campaign
 
-  layout "application", except: :new
+  layout "full", except: :new
 
   def index
     @immunisation_imports =

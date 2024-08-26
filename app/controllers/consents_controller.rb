@@ -6,7 +6,7 @@ class ConsentsController < ApplicationController
 
   before_action :set_session
 
-  layout "application", only: :index
+  layout "full", only: :index
 
   def index
     all_patient_sessions =

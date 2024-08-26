@@ -1,0 +1,11 @@
+<% content_for :content do %>
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <%= yield :before_content %>
+
+      <%= yield %>
+    </div>
+  </div>
+<% end %>
+
+<%= render template: 'layouts/application' %>
