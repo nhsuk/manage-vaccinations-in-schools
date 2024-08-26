@@ -99,7 +99,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :edit_sessions, only: %i[show update], path: "edit", as: :edit
+    resources :edit, controller: "sessions/edit", only: %i[show update]
 
     constraints -> { Flipper.enabled?(:dev_tools) } do
       put "make-in-progress", to: "sessions#make_in_progress", on: :member
