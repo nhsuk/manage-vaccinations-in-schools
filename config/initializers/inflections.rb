@@ -13,11 +13,13 @@
 # end
 
 ActiveSupport::Inflector.inflections(:en) do |inflect|
+  inflect.acronym "API"
   inflect.acronym "CSRF"
   inflect.acronym "CSV"
   inflect.acronym "DPS"
   inflect.acronym "FHIR"
   inflect.acronym "MESH"
+  inflect.acronym "NHS"
   inflect.acronym "ODS"
   inflect.acronym "PDS"
   inflect.uncountable "triage"
