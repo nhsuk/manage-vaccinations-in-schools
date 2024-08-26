@@ -403,6 +403,10 @@ en:
           attributes:
             administered:
               inclusion: Choose if they got the vaccine
+            administered_at:
+              blank: Enter a date and time
+              greater_than_or_equal_to: Date and time must be after the campaign started
+              less_than: Date and time must be before the campaign ended
             batch_id:
               blank: Choose a batch
               incorrect_vaccine: Choose a batch of the %{vaccine_brand} vaccine
