@@ -102,6 +102,15 @@ class AppVaccinationRecordDetailsComponent < ViewComponent::Base
         summary_list.with_row do |row|
           row.with_key { "Vaccination date" }
           row.with_value { administered_at.to_fs(:long) }
+          row.with_action(
+            text: "Change",
+            visually_hidden_text: "vaccination date",
+            href:
+              campaign_vaccination_record_edit_date_and_time_path(
+                @vaccination_record.campaign,
+                @vaccination_record
+              )
+          )
         end
       end
 

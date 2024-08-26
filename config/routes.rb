@@ -82,6 +82,13 @@ Rails.application.routes.draw do
       constraints -> { Flipper.enabled?(:dev_tools) } do
         post "reset-dps-export", on: :collection
       end
+
+      get "edit/date-and-time",
+          controller: "vaccination_records/edit",
+          action: "edit_date_and_time"
+      put "edit/date-and-time",
+          controller: "vaccination_records/edit",
+          action: "update_date_and_time"
     end
   end
 
