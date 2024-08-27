@@ -5,8 +5,9 @@
 # Table name: immunisation_imports
 #
 #  id                            :bigint           not null, primary key
-#  csv_data                      :text             not null
+#  csv_data                      :text
 #  csv_filename                  :text             not null
+#  csv_removed_at                :datetime
 #  exact_duplicate_record_count  :integer
 #  new_record_count              :integer
 #  not_administered_record_count :integer
