@@ -5,7 +5,7 @@
 # Table name: immunisation_imports
 #
 #  id                            :bigint           not null, primary key
-#  csv                           :text             not null
+#  csv_data                      :text             not null
 #  csv_filename                  :text             not null
 #  exact_duplicate_record_count  :integer
 #  new_record_count              :integer
@@ -46,7 +46,7 @@ describe ImmunisationImport, type: :model do
   let(:team) { create(:team, ods_code: "R1L") }
   let(:user) { create(:user, teams: [team]) }
 
-  it { should validate_presence_of(:csv) }
+  it { should validate_presence_of(:csv_data) }
   it { should validate_presence_of(:csv_filename) }
 
   it "raises if processed without updating the statistics" do
@@ -56,7 +56,9 @@ describe ImmunisationImport, type: :model do
   end
 
   describe "#csv=" do
-    before { immunisation_import.csv = csv }
+    it "sets the data" do
+      expect(immunisation_import.csv_data).not_to be_empty
+    end
 
     it "sets the filename" do
       expect(immunisation_import.csv_filename).to eq("valid_flu.csv")

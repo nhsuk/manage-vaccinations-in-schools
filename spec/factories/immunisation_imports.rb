@@ -5,7 +5,7 @@
 # Table name: immunisation_imports
 #
 #  id                            :bigint           not null, primary key
-#  csv                           :text             not null
+#  csv_data                      :text             not null
 #  csv_filename                  :text             not null
 #  exact_duplicate_record_count  :integer
 #  new_record_count              :integer
@@ -32,7 +32,7 @@ FactoryBot.define do
     association :campaign
     association :user
 
-    csv { "my,csv\n" }
+    csv_data { "my,csv\n" }
     csv_filename { Faker::File.file_name(ext: "csv") }
   end
 end
