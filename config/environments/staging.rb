@@ -19,6 +19,11 @@ Rails.application.configure do
       cron: "every day at 3am",
       class: "MESHTrackDPSExportsJob",
       description: "Track the status of DPS exports"
+    },
+    remove_immunisation_import_csv: {
+      cron: "every day at 1am",
+      class: "RemoveImmunisationImportCSVJob",
+      description: "Remove CSV data from old immunisation imports"
     }
   }
 end
