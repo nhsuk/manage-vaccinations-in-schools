@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_23_151709) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_27_075248) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -271,6 +271,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_23_151709) do
     t.integer "new_record_count"
     t.integer "exact_duplicate_record_count"
     t.integer "not_administered_record_count"
+    t.text "csv_filename", null: false
     t.index ["campaign_id"], name: "index_immunisation_imports_on_campaign_id"
     t.index ["user_id"], name: "index_immunisation_imports_on_user_id"
   end
