@@ -5,9 +5,7 @@ require "rails_helper"
 describe "HPV Vaccination" do
   include EmailExpectations
 
-  around do |example|
-    Timecop.freeze(Time.zone.local(2024, 2, 1)) { example.run }
-  end
+  around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
   scenario "Administered" do
     given_i_am_signed_in

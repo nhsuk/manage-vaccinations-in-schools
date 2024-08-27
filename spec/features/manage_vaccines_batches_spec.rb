@@ -3,8 +3,7 @@
 require "rails_helper"
 
 describe "Batches" do
-  before { Timecop.freeze(Time.zone.local(2024, 2, 29)) }
-  after { Timecop.return }
+  around { |example| travel_to(Time.zone.local(2024, 2, 29)) { example.run } }
 
   scenario "Adding and editing batches" do
     given_my_team_is_running_an_hpv_vaccination_campaign

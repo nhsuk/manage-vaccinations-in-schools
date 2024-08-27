@@ -32,8 +32,7 @@ describe AgeConcern do
       it { should eq 10 }
 
       context "today is a leap day" do
-        before { Timecop.freeze(Date.new(2020, 2, 29)) }
-        after { Timecop.return }
+        around { |example| travel_to(Date.new(2020, 2, 29)) { example.run } }
 
         it { should eq 10 }
       end
@@ -45,8 +44,7 @@ describe AgeConcern do
       it { should eq 10 }
 
       context "today is a leap day" do
-        before { Timecop.freeze(Date.new(2020, 2, 29)) }
-        after { Timecop.return }
+        around { |example| travel_to(Date.new(2020, 2, 29)) { example.run } }
 
         it { should eq 10 }
       end
@@ -58,8 +56,7 @@ describe AgeConcern do
       it { should eq 9 }
 
       context "today is a leap day" do
-        before { Timecop.freeze(Date.new(2020, 2, 29)) }
-        after { Timecop.return }
+        around { |example| travel_to(Date.new(2020, 2, 29)) { example.run } }
 
         it { should eq 9 }
       end

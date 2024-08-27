@@ -16,7 +16,7 @@ describe AppTriageNotesComponent, type: :component do
 
   context "a single triage note is present" do
     around do |example|
-      Timecop.freeze(Time.zone.local(2023, 12, 4, 10, 4)) { example.run }
+      travel_to(Time.zone.local(2023, 12, 4, 10, 4)) { example.run }
     end
 
     let(:performed_by) { create(:user, family_name: "Gear", given_name: "Joe") }

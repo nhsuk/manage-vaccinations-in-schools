@@ -141,7 +141,7 @@ describe MESH do
     it "returns the correct string" do
       # Test authorisation header generated with
       # https://nhsdigital.github.io/mesh_validate_auth_header/
-      Timecop.freeze(Time.zone.local(2022, 2, 22, 22, 22, 22)) do
+      travel_to(Time.zone.local(2022, 2, 22, 22, 22, 22)) do
         allow(SecureRandom).to receive(:uuid).and_return(
           "deadbeef-dead-beef-dead-beef00031337"
         )

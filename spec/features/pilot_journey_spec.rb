@@ -4,9 +4,7 @@ require "rails_helper"
 require "csv"
 
 describe "Pilot journey" do
-  around do |example|
-    Timecop.freeze(Time.zone.local(2024, 2, 1)) { example.run }
-  end
+  around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
   scenario "Cohorting, session creation, verbal consent, vaccination" do
     # Cohorting
@@ -171,7 +169,7 @@ describe "Pilot journey" do
   end
 
   def given_the_day_of_the_session_comes
-    Timecop.travel(2024, 3, 1)
+    travel_to(Time.zone.local(2024, 3, 1))
     sign_in @team.users.first
   end
 

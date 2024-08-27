@@ -65,8 +65,7 @@ describe Patient, type: :model do
   describe "#year_group" do
     subject { patient.year_group }
 
-    before { Timecop.freeze(date) }
-    after { Timecop.return }
+    around { |example| travel_to(date) { example.run } }
 
     let(:patient) { described_class.new(date_of_birth: dob) }
 
