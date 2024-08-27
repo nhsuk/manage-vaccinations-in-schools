@@ -100,6 +100,7 @@ RSpec.configure do |config|
 
   config.after(:each, type: :system) { WebMock.enable! }
 
+  config.include ActiveSupport::Testing::TimeHelpers
   config.include ActiveJob::TestHelper, type: :feature
   config.include Devise::Test::IntegrationHelpers, type: :feature
   config.include Devise::Test::IntegrationHelpers, type: :system
