@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe CohortList, type: :model do
   subject(:cohort_list) { described_class.new(csv:, team:) }
 

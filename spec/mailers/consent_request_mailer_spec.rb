@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe ConsentRequestMailer, type: :mailer do
   describe "#consent_request" do
     subject(:mail) { described_class.consent_request(session, patient) }

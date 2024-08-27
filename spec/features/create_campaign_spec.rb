@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe "Create campaign" do
   before do
     given_i_am_signed_in

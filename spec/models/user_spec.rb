@@ -34,8 +34,6 @@
 #  index_users_on_unlock_token          (unlock_token) UNIQUE
 #
 
-require "rails_helper"
-
 describe User, type: :model do
   subject(:user) { build(:user) }
 

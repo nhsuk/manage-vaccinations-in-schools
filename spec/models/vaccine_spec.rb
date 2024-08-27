@@ -27,8 +27,6 @@
 #  index_vaccines_on_snomed_product_term     (snomed_product_term) UNIQUE
 #
 
-require "rails_helper"
-
 describe Vaccine, type: :model do
   describe "validation" do
     it { should validate_inclusion_of(:method).in_array(%w[injection nasal]) }

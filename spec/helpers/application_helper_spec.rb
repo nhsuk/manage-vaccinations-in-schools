@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe ApplicationHelper do
   describe "#h1" do
     context "when called with only text" do

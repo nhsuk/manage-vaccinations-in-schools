@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 shared_examples "card" do |params|
   title, date, notes, by = params.values_at(:title, :date, :notes, :by)
   it "renders card '#{title}'" do

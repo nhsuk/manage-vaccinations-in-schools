@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe VaccinationMailer do
   let(:campaign) { create(:campaign, :active) }
   let(:session) { create(:session, campaign:) }

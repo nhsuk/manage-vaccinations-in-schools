@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 RSpec.describe SessionsHelper, type: :helper do
   let(:campaign) { build(:campaign, name: "Flu") }
   let(:location) { build(:location, name: "Waterloo Road") }

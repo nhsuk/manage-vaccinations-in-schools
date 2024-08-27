@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe ImmunisationImportRow, type: :model do
   subject(:immunisation_import_row) do
     described_class.new(

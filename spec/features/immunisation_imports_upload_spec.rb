@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe "Immunisation imports" do
   scenario "User uploads a file and views vaccination records" do
     given_i_am_signed_in

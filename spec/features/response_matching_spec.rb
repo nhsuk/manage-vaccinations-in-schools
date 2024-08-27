@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe "Response matching" do
   scenario "Users can match responses to patient records" do
     given_the_app_is_setup

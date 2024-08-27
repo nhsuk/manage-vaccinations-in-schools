@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe MESHDPSExportJob, type: :job do # rubocop:disable RSpec/SpecFilePathFormat
   before do
     allow(Flipper).to receive(:enabled?).with(:mesh_jobs).and_return(true)

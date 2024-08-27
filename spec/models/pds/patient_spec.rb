@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe PDS::Patient do
   describe ".find" do
     let(:json_response) do

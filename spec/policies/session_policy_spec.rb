@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe SessionPolicy do
   describe "Scope#resolve" do
     subject { SessionPolicy::Scope.new(user, Session).resolve }

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe ConsentRequestsSessionBatchJob, type: :job do
   before { ActionMailer::Base.deliveries.clear }
 

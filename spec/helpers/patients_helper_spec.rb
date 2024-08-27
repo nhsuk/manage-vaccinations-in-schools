@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 RSpec.describe PatientsHelper, type: :helper do
   describe "#format_nhs_number" do
     subject(:formatted_nhs_number) { helper.format_nhs_number(nhs_number) }

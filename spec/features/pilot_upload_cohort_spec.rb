@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe "Pilot - upload cohort" do
   scenario "User uploads a cohort list" do
     given_the_app_is_setup

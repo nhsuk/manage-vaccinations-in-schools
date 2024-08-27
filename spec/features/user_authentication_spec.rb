@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe "User authentication" do
   scenario "going through the start page then signing out" do
     given_that_i_have_an_account

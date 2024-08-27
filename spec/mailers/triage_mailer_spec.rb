@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe TriageMailer, type: :mailer do
   describe "#vaccination_will_happen" do
     subject(:mail) do

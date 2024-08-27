@@ -22,7 +22,6 @@
 #
 #  fk_rails_...  (created_by_user_id => users.id)
 #
-require "rails_helper"
 
 describe PatientSession do
   describe "#triage" do

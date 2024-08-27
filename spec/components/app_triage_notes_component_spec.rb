@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe AppTriageNotesComponent, type: :component do
   subject(:rendered) { render_inline(component) }
 

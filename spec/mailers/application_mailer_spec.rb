@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe ApplicationMailer, type: :mailer do
   subject { described_class.new }
 

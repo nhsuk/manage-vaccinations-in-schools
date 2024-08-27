@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 RSpec.describe CampaignsHelper, type: :helper do
   describe "#campaign_academic_year" do
     subject(:campaign_academic_year) { helper.campaign_academic_year(campaign) }

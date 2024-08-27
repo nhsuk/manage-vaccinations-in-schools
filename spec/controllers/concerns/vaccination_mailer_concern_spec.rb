@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe VaccinationMailerConcern do
   let(:sample) { Class.new { include VaccinationMailerConcern }.new }
 

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe SessionRemindersJob do
   before do
     Flipper.enable(:scheduled_emails)

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe "User account" do
   scenario "Users can edit their account details" do
     given_that_i_am_signed_in

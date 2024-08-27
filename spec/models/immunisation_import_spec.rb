@@ -26,7 +26,6 @@
 #  fk_rails_...  (campaign_id => campaigns.id)
 #  fk_rails_...  (user_id => users.id)
 #
-require "rails_helper"
 
 describe ImmunisationImport, type: :model do
   subject(:immunisation_import) do

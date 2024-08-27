@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe VaccinationsController, type: :routing do
   describe "routing" do
     it "routes to #index" do

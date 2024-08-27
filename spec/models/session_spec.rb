@@ -26,7 +26,6 @@
 #
 #  fk_rails_...  (imported_from_id => immunisation_imports.id)
 #
-require "rails_helper"
 
 describe Session do
   describe "validations" do

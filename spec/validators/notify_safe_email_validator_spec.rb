@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe NotifySafeEmailValidator do
   subject(:model) do
     cls =

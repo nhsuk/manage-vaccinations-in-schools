@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 require "fixtures/cis2_auth_info"
 
 describe "User CIS2 authentication" do

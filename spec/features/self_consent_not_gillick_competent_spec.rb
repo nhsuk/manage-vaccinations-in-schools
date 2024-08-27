@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe "Not Gillick competent" do
   after { travel_back }
 

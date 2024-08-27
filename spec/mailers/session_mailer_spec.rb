@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe SessionMailer, type: :mailer do
   describe "#session_reminder" do
     subject(:mail) { described_class.session_reminder(session:, patient:) }

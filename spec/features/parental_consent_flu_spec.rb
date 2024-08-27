@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe "Parental consent" do
   scenario "Flu campaign" do
     given_a_flu_campaign_is_underway

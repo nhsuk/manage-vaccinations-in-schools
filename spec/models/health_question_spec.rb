@@ -26,7 +26,6 @@
 #  fk_rails_...  (next_question_id => health_questions.id)
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
-require "rails_helper"
 
 describe HealthQuestion do
   let(:vaccine) { create(:vaccine, brand: "Tester", method: "injection") }

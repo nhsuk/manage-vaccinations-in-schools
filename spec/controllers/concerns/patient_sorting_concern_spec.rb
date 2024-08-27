@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe PatientSortingConcern do
   subject { klass.new(params) }
 

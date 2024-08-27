@@ -21,7 +21,7 @@
 #
 #  fk_rails_...  (campaign_id => campaigns.id)
 #
-require "rails_helper"
+
 require "csv"
 
 describe DPSExport, type: :model do
