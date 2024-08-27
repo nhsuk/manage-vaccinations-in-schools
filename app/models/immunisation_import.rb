@@ -8,6 +8,7 @@ require "csv"
 #
 #  id                            :bigint           not null, primary key
 #  csv                           :text             not null
+#  csv_filename                  :text             not null
 #  exact_duplicate_record_count  :integer
 #  new_record_count              :integer
 #  not_administered_record_count :integer
