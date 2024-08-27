@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe MESHTrackDPSExportsJob do
   before do
     ActiveJob::Base.queue_adapter.enqueued_jobs.clear

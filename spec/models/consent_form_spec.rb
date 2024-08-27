@@ -40,7 +40,6 @@
 #  fk_rails_...  (parent_id => parents.id)
 #  fk_rails_...  (session_id => sessions.id)
 #
-require "rails_helper"
 
 describe ConsentForm, type: :model do
   describe "Validations" do

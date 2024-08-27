@@ -16,7 +16,6 @@
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #
-require "rails_helper"
 
 describe Parent do
   describe "#phone_contact_method_description" do

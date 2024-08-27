@@ -22,7 +22,6 @@
 #  fk_rails_...  (patient_session_id => patient_sessions.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
 #
-require "rails_helper"
 
 describe Triage, type: :model do
   subject(:triage) { build(:triage) }

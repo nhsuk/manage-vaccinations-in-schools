@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 RSpec.feature "Parental consent change answers" do
   before { given_a_flu_campaign_is_underway }
 

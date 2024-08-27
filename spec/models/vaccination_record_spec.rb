@@ -39,7 +39,6 @@
 #  fk_rails_...  (performed_by_user_id => users.id)
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
-require "rails_helper"
 
 describe VaccinationRecord, type: :model do
   subject(:vaccination_record) do

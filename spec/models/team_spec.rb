@@ -20,8 +20,6 @@
 #  index_teams_on_ods_code  (ods_code) UNIQUE
 #
 
-require "rails_helper"
-
 describe Team, type: :model do
   subject(:team) { build(:team) }
 

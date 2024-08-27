@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe "Batches" do
   around { |example| travel_to(Time.zone.local(2024, 2, 29)) { example.run } }
 

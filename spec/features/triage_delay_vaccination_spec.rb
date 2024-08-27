@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe "Triage" do
   scenario "delay vaccination" do
     given_a_campaign_with_a_running_session

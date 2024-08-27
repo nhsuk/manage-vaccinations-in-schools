@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe PatientSessionPolicy do
   let(:patient_session) { create :patient_session }
   let(:another_teams_patient_session) do

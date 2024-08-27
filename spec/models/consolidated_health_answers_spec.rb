@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe ConsolidatedHealthAnswers do
   it "returns a questionnaire from one responder in the order it was given, including notes" do
     subject.add_answer(

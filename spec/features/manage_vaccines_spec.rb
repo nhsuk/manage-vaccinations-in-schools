@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe "Manage vaccines" do
   scenario "Viewing a vaccine" do
     given_my_team_is_running_an_hpv_vaccination_campaign

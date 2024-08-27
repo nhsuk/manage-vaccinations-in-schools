@@ -38,7 +38,6 @@
 #  fk_rails_...  (parent_id => parents.id)
 #  fk_rails_...  (school_id => locations.id)
 #
-require "rails_helper"
 
 describe Patient, type: :model do
   describe "validations" do

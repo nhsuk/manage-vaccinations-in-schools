@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe "User authorisation" do
   scenario "Users are unable to access other teams' pages" do
     given_an_hpv_campaign_is_underway_with_two_teams

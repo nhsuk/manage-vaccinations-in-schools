@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe PatientSessionStateConcern do
   subject(:fsm) { fake_state_machine_class.new }
 

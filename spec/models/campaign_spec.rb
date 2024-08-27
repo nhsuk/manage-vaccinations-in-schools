@@ -23,7 +23,6 @@
 #
 #  fk_rails_...  (team_id => teams.id)
 #
-require "rails_helper"
 
 describe Campaign, type: :model do
   subject(:campaign) do

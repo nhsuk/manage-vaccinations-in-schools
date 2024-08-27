@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe "Patient sorting and filtering" do
   scenario "Users can sort and filter patients" do
     given_that_i_am_signed_in

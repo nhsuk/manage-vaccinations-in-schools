@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-require "rails_helper"
 require "govuk_helper"
-# Dir[File.join('./spec', 'components', 'shared', '*.rb')].sort.each { |file| require file }
 
-describe(AppTabComponent, type: :component) do
+describe AppTabComponent, type: :component do
   subject! do
     render_inline(described_class.new(**kwargs)) do |component|
       tabs.each { |label, content| component.with_tab(label:) { content } }

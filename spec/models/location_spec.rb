@@ -29,7 +29,6 @@
 #
 #  fk_rails_...  (imported_from_id => immunisation_imports.id)
 #
-require "rails_helper"
 
 describe Location, type: :model do
   describe "validations" do

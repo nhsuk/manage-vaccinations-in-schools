@@ -32,7 +32,6 @@
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (recorded_by_user_id => users.id)
 #
-require "rails_helper"
 
 describe Consent do
   describe "when consent given by parent or guardian, all health questions are no" do

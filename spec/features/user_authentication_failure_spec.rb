@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe "User authentication failure" do
   scenario "user enters wrong username or password" do
     given_that_i_have_an_account

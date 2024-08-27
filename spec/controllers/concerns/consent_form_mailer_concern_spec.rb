@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe ConsentFormMailerConcern do
   subject { Class.new { include ConsentFormMailerConcern }.new }
 

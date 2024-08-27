@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe ConsentFormMailer, type: :mailer do
   describe "#confirmation_injection" do
     it "calls template_mail with correct reason_for_refusal" do

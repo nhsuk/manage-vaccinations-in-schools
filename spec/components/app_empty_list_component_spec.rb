@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe AppEmptyListComponent, type: :component do
   subject { page }
 
