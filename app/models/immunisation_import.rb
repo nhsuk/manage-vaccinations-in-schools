@@ -65,7 +65,13 @@ class ImmunisationImport < ApplicationRecord
     ANATOMICAL_SITE
   ].freeze
 
-  validates :csv_data, presence: true
+  validates :csv_data,
+            absence: {
+              if: :csv_removed?
+            },
+            presence: {
+              unless: :csv_removed?
+            }
   validates :csv_filename, presence: true
 
   validate :csv_is_valid
@@ -82,6 +88,10 @@ class ImmunisationImport < ApplicationRecord
   def csv=(file)
     self.csv_data = file.read
     self.csv_filename = file.original_filename
+  end
+
+  def csv_removed?
+    csv_removed_at != nil
   end
 
   def processed?
@@ -157,6 +167,10 @@ class ImmunisationImport < ApplicationRecord
 
       update!(recorded_at:)
     end
+  end
+
+  def remove!
+    update!(csv_data: nil, csv_removed_at: Time.zone.now)
   end
 
   private

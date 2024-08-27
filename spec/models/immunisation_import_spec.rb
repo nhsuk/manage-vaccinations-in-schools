@@ -48,8 +48,18 @@ describe ImmunisationImport, type: :model do
   let(:team) { create(:team, ods_code: "R1L") }
   let(:user) { create(:user, teams: [team]) }
 
-  it { should validate_presence_of(:csv_data) }
-  it { should validate_presence_of(:csv_filename) }
+  describe "validations" do
+    it { should validate_presence_of(:csv_data) }
+    it { should validate_presence_of(:csv_filename) }
+
+    context "when the CSV has been removed" do
+      subject(:immunisation_import) do
+        create(:immunisation_import, :csv_removed)
+      end
+
+      it { should validate_absence_of(:csv_data) }
+    end
+  end
 
   it "raises if processed without updating the statistics" do
     expect {
@@ -64,6 +74,18 @@ describe ImmunisationImport, type: :model do
 
     it "sets the filename" do
       expect(immunisation_import.csv_filename).to eq("valid_flu.csv")
+    end
+  end
+
+  describe "#csv_removed?" do
+    subject(:csv_removed?) { immunisation_import.csv_removed? }
+
+    it { should be false }
+
+    context "when csv_removed_at is set" do
+      before { immunisation_import.csv_removed_at = Time.zone.now }
+
+      it { should be true }
     end
   end
 
@@ -297,6 +319,23 @@ describe ImmunisationImport, type: :model do
           0
         ).to(7)
       end
+    end
+  end
+
+  describe "#remove!" do
+    subject(:remove!) { immunisation_import.remove! }
+
+    let(:today) { Time.zone.local(2020, 1, 1) }
+
+    it "clears the data" do
+      expect { remove! }.to change(immunisation_import, :csv_data).to(nil)
+    end
+
+    it "sets the date/time" do
+      expect { travel_to(today) { remove! } }.to change(
+        immunisation_import,
+        :csv_removed_at
+      ).from(nil).to(today)
     end
   end
 end
