@@ -97,4 +97,53 @@ describe Patient, type: :model do
       it { should eq 3 }
     end
   end
+
+  describe "#stage_changes" do
+    let(:patient) { create(:patient, first_name: "John", last_name: "Doe") }
+
+    it "stages new changes in pending_changes" do
+      patient.stage_changes(first_name: "Jane", address_line_1: "123 New St")
+
+      expect(patient.pending_changes).to eq(
+        { "first_name" => "Jane", "address_line_1" => "123 New St" }
+      )
+    end
+
+    it "does not stage unchanged attributes" do
+      patient.stage_changes(first_name: "John", last_name: "Smith")
+
+      expect(patient.pending_changes).to eq({ "last_name" => "Smith" })
+    end
+
+    it "does not stage blank values" do
+      patient.stage_changes(
+        first_name: "",
+        last_name: nil,
+        address_line_1: "123 New St"
+      )
+
+      expect(patient.pending_changes).to eq(
+        { "address_line_1" => "123 New St" }
+      )
+    end
+
+    it "updates the pending_changes attribute" do
+      expect { patient.stage_changes(first_name: "Jane") }.to change {
+        patient.reload.pending_changes
+      }.from({}).to({ "first_name" => "Jane" })
+    end
+
+    it "does not update other attributes directly" do
+      patient.stage_changes(first_name: "Jane", last_name: "Smith")
+
+      expect(patient.first_name).to eq("John")
+      expect(patient.last_name).to eq("Doe")
+    end
+
+    it "does not save any changes if no valid changes are provided" do
+      expect { patient.stage_changes(first_name: "John") }.not_to(
+        change { patient.reload.pending_changes }
+      )
+    end
+  end
 end

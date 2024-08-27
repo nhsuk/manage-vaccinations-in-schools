@@ -99,18 +99,12 @@ class ImmunisationImportRow
     return unless valid?
 
     @patient ||=
-      find_existing_patients.first ||
-        Patient.create!(
-          address_postcode: patient_postcode,
-          date_of_birth: patient_date_of_birth,
-          first_name: patient_first_name,
-          gender_code: patient_gender_code,
-          home_educated:,
-          imported_from:,
-          last_name: patient_last_name,
-          nhs_number: patient_nhs_number,
-          school:
-        )
+      if (existing_patient = find_existing_patients.first)
+        existing_patient.stage_changes(staged_patient_attributes)
+        existing_patient
+      else
+        Patient.create!(patient_attributes)
+      end
   end
 
   def session
@@ -401,5 +395,25 @@ class ImmunisationImportRow
     if find_existing_patients.count >= 2
       errors.add(:patient, :multiple_duplicate_match)
     end
+  end
+
+  def patient_attributes
+    {
+      address_postcode: patient_postcode,
+      date_of_birth: patient_date_of_birth,
+      first_name: patient_first_name,
+      gender_code: patient_gender_code,
+      home_educated:,
+      imported_from:,
+      last_name: patient_last_name,
+      nhs_number: patient_nhs_number,
+      school:
+    }
+  end
+
+  def staged_patient_attributes
+    patient_attributes.except(:imported_from, :school).merge(
+      school_id: patient_attributes[:school]&.id
+    )
   end
 end
