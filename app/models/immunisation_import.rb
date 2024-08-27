@@ -47,6 +47,8 @@ class ImmunisationImport < ApplicationRecord
     has_many :patients
   end
 
+  scope :csv_not_removed, -> { where(csv_removed_at: nil) }
+
   before_save :ensure_processed_with_count_statistics
 
   REQUIRED_HEADERS = %w[
@@ -170,6 +172,7 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def remove!
+    return if csv_removed?
     update!(csv_data: nil, csv_removed_at: Time.zone.now)
   end
 
