@@ -47,11 +47,20 @@ describe ImmunisationImport, type: :model do
   let(:user) { create(:user, teams: [team]) }
 
   it { should validate_presence_of(:csv) }
+  it { should validate_presence_of(:csv_filename) }
 
   it "raises if processed without updating the statistics" do
     expect {
       immunisation_import.update!(processed_at: Time.zone.now)
     }.to raise_error(/Count statistics must be set/)
+  end
+
+  describe "#csv=" do
+    before { immunisation_import.csv = csv }
+
+    it "sets the filename" do
+      expect(immunisation_import.csv_filename).to eq("valid_flu.csv")
+    end
   end
 
   describe "#load_data!" do

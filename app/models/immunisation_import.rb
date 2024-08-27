@@ -64,6 +64,8 @@ class ImmunisationImport < ApplicationRecord
     ANATOMICAL_SITE
   ].freeze
 
+  validates :csv_filename, presence: true
+
   validates :csv, presence: true
   validate :csv_is_valid
   validate :csv_has_records
@@ -78,6 +80,7 @@ class ImmunisationImport < ApplicationRecord
 
   def csv=(value)
     super(value.respond_to?(:read) ? value.read : value)
+    self.csv_filename = value.original_filename if value.respond_to?(:read)
   end
 
   def processed?

@@ -33,5 +33,6 @@ FactoryBot.define do
     association :user
 
     csv { "my,csv\n" }
+    csv_filename { Faker::File.file_name(ext: "csv") }
   end
 end
