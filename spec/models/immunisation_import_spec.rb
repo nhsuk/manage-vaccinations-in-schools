@@ -281,6 +281,34 @@ describe ImmunisationImport, type: :model do
         expect { process! }.not_to change(patient, :nhs_number).from(nil)
       end
     end
+
+    context "with a patient record that has different attributes" do
+      let(:campaign) { create(:campaign, :hpv_all_vaccines, academic_year:) }
+      let(:file) { "valid_hpv_with_changes.csv" }
+      let!(:existing_patient) do
+        create(
+          :patient,
+          nhs_number: "7420180008",
+          first_name: "Chyna",
+          last_name: "Pickle",
+          date_of_birth: Date.new(2012, 9, 12),
+          gender_code: 9, # Not Specified
+          address_postcode: "LE3 2DA"
+        )
+      end
+
+      it "identifies potential changes in the patient record" do
+        expect { process! }.not_to change(Patient, :count)
+
+        existing_patient.reload
+        expect(existing_patient.pending_changes).to eq(
+          "date_of_birth" => "2012-09-13",
+          "gender_code" => 2,
+          "address_postcode" => "LE3 2DB",
+          "school_id" => Location.find_by(urn: "110158").id
+        )
+      end
+    end
   end
 
   describe "#record!" do
