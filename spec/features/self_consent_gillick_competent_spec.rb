@@ -3,7 +3,7 @@
 require "rails_helper"
 
 describe "Self-consent" do
-  after { Timecop.return }
+  after { travel_back }
 
   scenario "No consent from parent, the child is Gillick competent so can self-consent" do
     given_an_hpv_campaign_is_underway
@@ -29,7 +29,7 @@ describe "Self-consent" do
   end
 
   def and_it_is_the_day_of_a_vaccination_session
-    Timecop.freeze(@session.date)
+    travel_to(@session.date)
   end
 
   def and_there_is_a_child_without_parental_consent

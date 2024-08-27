@@ -5,8 +5,7 @@ require "rails_helper"
 describe "Session management" do
   include EmailExpectations
 
-  before { Timecop.freeze(Time.zone.local(2024, 2, 29)) }
-  after { Timecop.return }
+  around { |example| travel_to(Time.zone.local(2024, 2, 29)) { example.run } }
 
   scenario "Adding a new session, closing consent" do
     given_my_team_is_running_an_hpv_vaccination_campaign
@@ -140,7 +139,7 @@ describe "Session management" do
   end
 
   def when_the_deadline_has_passed
-    Timecop.travel(2024, 3, 10)
+    travel_to(Time.zone.local(2024, 3, 10))
   end
 
   def then_they_can_no_longer_give_consent

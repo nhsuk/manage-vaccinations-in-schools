@@ -3,7 +3,7 @@
 require "rails_helper"
 
 describe "Not Gillick competent" do
-  after { Timecop.return }
+  after { travel_back }
 
   scenario "No consent from parent, the child is not Gillick competent" do
     given_an_hpv_campaign_is_underway
@@ -24,7 +24,7 @@ describe "Not Gillick competent" do
   end
 
   def and_it_is_the_day_of_a_vaccination_session
-    Timecop.freeze(@session.date)
+    travel_to(@session.date)
   end
 
   def and_there_is_a_child_without_parental_consent
