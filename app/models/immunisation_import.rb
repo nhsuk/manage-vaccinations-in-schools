@@ -7,7 +7,7 @@ require "csv"
 # Table name: immunisation_imports
 #
 #  id                            :bigint           not null, primary key
-#  csv                           :text             not null
+#  csv_data                      :text             not null
 #  csv_filename                  :text             not null
 #  exact_duplicate_record_count  :integer
 #  new_record_count              :integer
@@ -64,9 +64,9 @@ class ImmunisationImport < ApplicationRecord
     ANATOMICAL_SITE
   ].freeze
 
+  validates :csv_data, presence: true
   validates :csv_filename, presence: true
 
-  validates :csv, presence: true
   validate :csv_is_valid
   validate :csv_has_records
   validate :headers_are_valid
@@ -78,9 +78,9 @@ class ImmunisationImport < ApplicationRecord
     not_administered_record_count
   ].freeze
 
-  def csv=(value)
-    super(value.respond_to?(:read) ? value.read : value)
-    self.csv_filename = value.original_filename if value.respond_to?(:read)
+  def csv=(file)
+    self.csv_data = file.read
+    self.csv_filename = file.original_filename
   end
 
   def processed?
@@ -90,11 +90,9 @@ class ImmunisationImport < ApplicationRecord
   def load_data!
     return if invalid?
 
-    self.data ||= CSV.parse(csv, headers: true, skip_blanks: true)
+    self.data ||= CSV.parse(csv_data, headers: true, skip_blanks: true)
   rescue CSV::MalformedCSVError
     self.csv_is_malformed = true
-  ensure
-    csv.close if csv.respond_to?(:close)
   end
 
   def parse_rows!
