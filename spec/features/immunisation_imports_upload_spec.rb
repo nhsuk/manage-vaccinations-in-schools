@@ -96,7 +96,7 @@ describe "Immunisation imports" do
   end
 
   def then_i_should_see_the_errors_page
-    expect(page).to have_content("The vaccinations could not be added")
+    expect(page).to have_content("Vaccination records cannot be uploaded")
     expect(page).to have_content("Row 1")
   end
 
