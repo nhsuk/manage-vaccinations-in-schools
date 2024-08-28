@@ -5,12 +5,13 @@
       ) %>
 <% end %>
 
-<% title = "The vaccinations could not be added" %>
+<% title = "Vaccination records cannot be uploaded" %>
 
 <%= h1 title, page_title: "#{@campaign.name} – #{title}" %>
 
-<p>
-  It wasn’t possible to add the vaccinations due to the following errors in the uploaded CSV file:
+<p class="nhsuk-body">
+  The records cannot be uploaded due to errors in the CSV file.
+  When fixing these errors, note that the header does not count as a row.
 </p>
 
 <% @immunisation_import.errors.each do |error| %>
