@@ -294,6 +294,13 @@ send data to DPS for upstream reporting of vaccination records.
 
 See the [MESH documentation](docs/mesh.md) for more information.
 
+## NHS Personal Demographic Service (PDS) Connection
+
+Mavis is also configured to connect to PDS to retrieve patient information such
+as NHS numbers.
+
+See the [PDS documentation](docs/pds.md) for more information.
+
 ## Licence
 
 [MIT](LICENCE).
