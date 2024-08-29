@@ -14,6 +14,8 @@ module NHS::API
     end
 
     def connection
+      return connection_sans_auth if Settings.nhs_api.disable_authentication
+
       connection_sans_auth.tap do |conn|
         conn.headers["Authorization"] = "Bearer #{access_token}"
       end

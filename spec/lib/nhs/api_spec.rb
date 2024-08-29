@@ -32,6 +32,14 @@ describe NHS::API do
         authorization: "Bearer ONEAUTHAPI"
       )
     end
+
+    it "doesn't set the auth header when disabled" do
+      Settings.nhs_api.disable_authentication = true
+
+      expect(described_class.connection.headers).not_to have_key(:authorization)
+    ensure
+      Settings.reload!
+    end
   end
 
   describe ".access_token" do
