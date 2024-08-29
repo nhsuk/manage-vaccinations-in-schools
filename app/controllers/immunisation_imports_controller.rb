@@ -54,6 +54,7 @@ class ImmunisationImportsController < ApplicationController
   end
 
   def edit
+    render layout: "full"
   end
 
   def update

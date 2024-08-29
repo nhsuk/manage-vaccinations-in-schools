@@ -32,6 +32,8 @@ class SessionsController < ApplicationController
 
     @counts =
       SessionStats.new(patient_sessions: @patient_sessions, session: @session)
+
+    render layout: "full"
   end
 
   def edit
