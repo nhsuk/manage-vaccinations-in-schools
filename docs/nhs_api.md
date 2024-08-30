@@ -13,7 +13,10 @@ we need to create an API key and a signed JWT. Instructions for each:
 ## Mavis setup
 
 The API key and the JWT private key are accessed through Settings in the
-`nhs_api` section. See the relevant settings YAML files for examples.
+`nhs_api` section. See the relevant settings YAML files for examples. For
+deployed environments these need to be set in the app secrets. `copilot` is
+configured to pull these values from there, and you can add values with to it
+with `copilot secret init`.
 
 ### Setting up local dev to use the INT environment
 
