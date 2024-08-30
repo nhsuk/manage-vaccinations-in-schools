@@ -32,3 +32,6 @@ mesh:
     rkApI3ca+7DwjX1Jrtp8+CEo4O/+Pp1NtnnEoamrvG5sSKC8wzrgQ66Y4vQz4EAU
     K26SJt+XLua6
     -----END CERTIFICATE-----
+
+nhs_api:
+  base_url: "https://int.api.service.nhs.uk"
