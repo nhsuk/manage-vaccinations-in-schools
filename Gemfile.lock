@@ -273,7 +273,7 @@ GEM
       activerecord (>= 6.1)
       activesupport (>= 6.1)
       pg (>= 0.18.1)
-    jwt (2.8.1)
+    jwt (2.8.2)
       base64
     kramdown (2.4.0)
       rexml
