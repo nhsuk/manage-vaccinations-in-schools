@@ -1,0 +1,125 @@
+{
+  "entry": [
+    {
+      "fullUrl": "https://int.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/9449306168",
+      "resource": {
+        "address": [
+          {
+            "extension": [
+              {
+                "extension": [
+                  {
+                    "url": "type",
+                    "valueCoding": {
+                      "code": "PAF",
+                      "system": "https://fhir.hl7.org.uk/CodeSystem/UKCore-AddressKeyType"
+                    }
+                  },
+                  {
+                    "url": "value",
+                    "valueString": "07352931"
+                  }
+                ],
+                "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-AddressKey"
+              }
+            ],
+            "id": "gon1",
+            "line": ["103 PRESTON LANE", "TADWORTH", "SURREY"],
+            "period": {
+              "start": "2011-06-23"
+            },
+            "postalCode": "KT20 5HJ",
+            "use": "home"
+          }
+        ],
+        "birthDate": "1939-01-09",
+        "gender": "female",
+        "generalPractitioner": [
+          {
+            "id": "dp7s",
+            "identifier": {
+              "period": {
+                "start": "1951-08-09"
+              },
+              "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+              "value": "H81109"
+            },
+            "type": "Organization"
+          }
+        ],
+        "id": "9449306168",
+        "identifier": [
+          {
+            "extension": [
+              {
+                "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-NHSNumberVerificationStatus",
+                "valueCodeableConcept": {
+                  "coding": [
+                    {
+                      "code": "01",
+                      "display": "Number present and verified",
+                      "system": "https://fhir.hl7.org.uk/CodeSystem/UKCore-NHSNumberVerificationStatus",
+                      "version": "1.0.0"
+                    }
+                  ]
+                }
+              }
+            ],
+            "system": "https://fhir.nhs.uk/Id/nhs-number",
+            "value": "9449306168"
+          }
+        ],
+        "meta": {
+          "security": [
+            {
+              "code": "U",
+              "display": "unrestricted",
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality"
+            }
+          ],
+          "versionId": "6"
+        },
+        "name": [
+          {
+            "family": "LAWMAN",
+            "given": ["ELDREDA"],
+            "id": "frs8",
+            "period": {
+              "start": "1978-06-14"
+            },
+            "prefix": ["MS"],
+            "use": "usual"
+          }
+        ],
+        "resourceType": "Patient",
+        "telecom": [
+          {
+            "id": "6FF70BFB",
+            "period": {
+              "start": "2021-12-15"
+            },
+            "system": "email",
+            "use": "home",
+            "value": "jagdish.khunti1@nhs.net"
+          },
+          {
+            "id": "4B88618D",
+            "period": {
+              "start": "2021-12-15"
+            },
+            "system": "phone",
+            "use": "mobile",
+            "value": "07463657671"
+          }
+        ]
+      },
+      "search": {
+        "score": 1
+      }
+    }
+  ],
+  "resourceType": "Bundle",
+  "timestamp": "2024-08-31T10:40:34+00:00",
+  "total": 1,
+  "type": "searchset"
+}

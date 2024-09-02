@@ -7,16 +7,8 @@ class PDS::Patient
 
   class << self
     def find(nhs_number)
-      response =
-        JSON.parse(
-          Net::HTTP.get(
-            URI(
-              "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/#{nhs_number}"
-            ),
-            "X-Request-ID": SecureRandom.uuid
-          )
-        )
-      from_pds_fhir_response(response)
+      response = NHS::PDS::Patient.find(nhs_number)
+      from_pds_fhir_response(JSON.parse(response.body))
     end
 
     private
