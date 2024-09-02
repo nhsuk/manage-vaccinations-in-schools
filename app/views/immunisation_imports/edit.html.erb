@@ -41,7 +41,7 @@
       @immunisation_import
     ), method: :put %>
 
-<% if @patients.present? %>
+<% if @patients.present? && Flipper.enabled?(:import_review) %>
   <div class="nhsuk-table__panel-with-heading-tab">
     <h3 class="nhsuk-table__heading-tab">
       <%= pluralize(@patients.count, "duplicate record") %>
