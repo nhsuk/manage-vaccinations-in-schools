@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Immunisation imports duplicates" do
+  before { Flipper.enable(:import_review) }
+
   scenario "User reviews and selects between duplicate records" do
     given_i_am_signed_in
     and_an_hpv_campaign_is_underway
