@@ -73,7 +73,11 @@ Rails.application.routes.draw do
 
     resources :immunisation_imports,
               path: "immunisation-imports",
-              except: :destroy
+              except: :destroy do
+      resources :patients,
+                only: %i[show update],
+                controller: "immunisation_imports/patients"
+    end
 
     resources :vaccination_records,
               path: "vaccination-records",

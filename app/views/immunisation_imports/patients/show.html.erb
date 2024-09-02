@@ -1,0 +1,111 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: campaign_immunisation_import_path(@campaign, @immunisation_import),
+        name: @campaign.name,
+      ) %>
+<% end %>
+
+<% title = "Review duplicate vaccination record" %>
+
+<span class="nhsuk-caption-l"><%= @patient.full_name %></span>
+<%= h1 title, page_title: "#{@patient.full_name} – #{title}" %>
+
+<div class="nhsuk-warning-callout">
+  <h3 class="nhsuk-warning-callout__label">
+    <span class="nhsuk-u-visually-hidden">Important: </span>
+    This record needs reviewing
+  </h3>
+
+  <p>
+    A field in a duplicate record does not match that in a previously uploaded
+    record
+  </p>
+</div>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-half">
+    <%= render AppCardComponent.new(colour: "blue") do |c| %>
+      <% c.with_heading { "Duplicate record" } %>
+      <h3 class="nhsuk-heading-s">Duplicate child record</h3>
+      <%= govuk_summary_list do |summary_list| %>
+        <% summary_list.with_row do |row| %>
+          <% row.with_key { "NHS number" } %>
+          <% row.with_value { format_nhs_number(@patient.nhs_number) } %>
+        <% end %>
+        <% summary_list.with_row do |row| %>
+          <% row.with_key { "Full name" } %>
+          <% row.with_value { @patient.full_name } %>
+        <% end %>
+        <% summary_list.with_row do |row| %>
+          <% row.with_key { "Date of birth" } %>
+          <% row.with_value { @patient.date_of_birth.to_fs(:long) } %>
+        <% end %>
+        <% summary_list.with_row do |row| %>
+          <% row.with_key { "Sex" } %>
+          <% row.with_value { @patient.gender_code.humanize } %>
+        <% end %>
+        <% summary_list.with_row do |row| %>
+          <% row.with_key { "Postcode" } %>
+          <% row.with_value { @patient.address_postcode } %>
+        <% end %>
+        <% summary_list.with_row do |row| %>
+          <% row.with_key { "School" } %>
+          <% row.with_value { @patient.school&.name } %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="nhsuk-grid-column-one-half">
+    <%= render AppCardComponent.new(colour: "blue") do |c| %>
+      <% c.with_heading { "Previously uploaded record" } %>
+      <h3 class="nhsuk-heading-s">Previously uploaded child record</h3>
+      <%= govuk_summary_list do |summary_list| %>
+        <% summary_list.with_row do |row| %>
+          <% row.with_key { "NHS number" } %>
+          <% row.with_value { format_nhs_number(@patient.nhs_number) } %>
+        <% end %>
+        <% summary_list.with_row do |row| %>
+          <% row.with_key { "Full name" } %>
+          <% row.with_value { @patient.full_name } %>
+        <% end %>
+        <% summary_list.with_row do |row| %>
+          <% row.with_key { "Date of birth" } %>
+          <% row.with_value { @patient.date_of_birth.to_fs(:long) } %>
+        <% end %>
+        <% summary_list.with_row do |row| %>
+          <% row.with_key { "Sex" } %>
+          <% row.with_value { @patient.gender_code.humanize } %>
+        <% end %>
+        <% summary_list.with_row do |row| %>
+          <% row.with_key { "Postcode" } %>
+          <% row.with_value { @patient.address_postcode } %>
+        <% end %>
+        <% summary_list.with_row do |row| %>
+          <% row.with_key { "School" } %>
+          <% row.with_value { @patient.school&.name } %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<%= form_with(
+      model: @immunisation_import,
+      url: campaign_immunisation_import_patient_path(@campaign,
+                                                     @immunisation_import),
+      method: :put,
+      class: "nhsuk-u-width-one-half",
+    ) do |f| %>
+  <%= f.govuk_radio_buttons_fieldset(:keep_record,
+                                     legend: { text: "Which record do you want to keep?" }) do %>
+    <%= f.govuk_radio_button :keep_record, "duplicate",
+                             label: { text: "Use duplicate record" },
+                             hint: { text: "The duplicate record will replace the previously uploaded record." } %>
+    <%= f.govuk_radio_button :keep_record, "previous",
+                             label: { text: "Keep previously uploaded record" },
+                             hint: { text: "The previously uploaded record will be kept and the duplicate record will be discarded." } %>
+  <% end %>
+
+  <%= f.govuk_submit "Resolve duplicate" %>
+<% end %>
