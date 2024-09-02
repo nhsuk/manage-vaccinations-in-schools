@@ -4,6 +4,7 @@ class ImmunisationImportsController < ApplicationController
   before_action :set_campaign
   before_action :set_immunisation_import, only: %i[show edit update]
   before_action :set_vaccination_records, only: %i[edit show]
+  before_action :set_patients_with_changes, only: %i[edit]
 
   def index
     @immunisation_imports =
@@ -87,6 +88,14 @@ class ImmunisationImportsController < ApplicationController
         :patient,
         :session
       )
+  end
+
+  def set_patients_with_changes
+    @patients =
+      @vaccination_records
+        .map(&:patient)
+        .select { _1.pending_changes.present? }
+        .uniq
   end
 
   def immunisation_import_params
