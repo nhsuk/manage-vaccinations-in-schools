@@ -27,7 +27,7 @@ class ManageConsentsController < ApplicationController
   def create
     @consent = Consent.create! create_params
 
-    set_steps # The form_steps can change after certain attrs change
+    set_steps # The wizard_steps can change after certain attrs change
     setup_wizard_translated # Next/previous steps can change after steps change
 
     redirect_to action: :show, id: steps.first, consent_id: @consent.id
@@ -53,7 +53,7 @@ class ManageConsentsController < ApplicationController
         ActiveRecord::Base.transaction do
           model.save!
 
-          @consent.assign_attributes(form_step: current_step)
+          @consent.assign_attributes(wizard_step: current_step)
           @consent.save! # in case the @consent.draft_parent was nil previously
         end
       end
@@ -68,7 +68,7 @@ class ManageConsentsController < ApplicationController
       @consent.assign_attributes(update_params)
     end
 
-    set_steps # The form_steps can change after certain attrs change
+    set_steps # The wizard_steps can change after certain attrs change
     setup_wizard_translated # Next/previous steps can change after steps change
 
     render_wizard model
@@ -123,12 +123,12 @@ class ManageConsentsController < ApplicationController
   end
 
   def handle_questions
-    questions_attrs = update_params.except(:form_step).values
+    questions_attrs = update_params.except(:wizard_step).values
     @consent.health_answers.each_with_index do |ha, index|
       ha.assign_attributes(questions_attrs[index])
     end
 
-    @consent.assign_attributes(form_step: current_step)
+    @consent.assign_attributes(wizard_step: current_step)
   end
 
   def handle_who
@@ -234,7 +234,7 @@ class ManageConsentsController < ApplicationController
     params
       .fetch(:consent, {})
       .permit(permitted_attributes)
-      .merge(form_step: current_step)
+      .merge(wizard_step: current_step)
   end
 
   def parent_params
@@ -267,6 +267,6 @@ class ManageConsentsController < ApplicationController
     # lifecycle, we need to clear the cache.
     @wizard_translations = nil
 
-    self.steps = @consent.form_steps
+    self.steps = @consent.wizard_steps
   end
 end

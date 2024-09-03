@@ -29,10 +29,10 @@
 
 describe Session do
   describe "validations" do
-    context "when form_step is location" do
-      subject { build(:session, form_step:, campaign:) }
+    context "when wizard_step is location" do
+      subject { build(:session, wizard_step:, campaign:) }
 
-      let(:form_step) { :location }
+      let(:wizard_step) { :location }
       let(:team) { create(:team) }
       let(:campaign) { create(:campaign, team:) }
 

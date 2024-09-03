@@ -2,12 +2,12 @@
 
 class Dummy
   include ActiveModel::Model
-  include WizardFormConcern
+  include WizardStepConcern
 end
 
-describe WizardFormConcern do
-  describe ".form_step" do
-    subject { Dummy.new.form_step }
+describe WizardStepConcern do
+  describe ".wizard_step" do
+    subject { Dummy.new.wizard_step }
 
     it { should be_nil }
   end
@@ -19,7 +19,7 @@ describe WizardFormConcern do
       Dummy.class_eval do
         attr_accessor :foo, :bar, :qux
 
-        def form_steps
+        def wizard_steps
           %i[first_step optional_step last_step]
         end
 
@@ -52,7 +52,7 @@ describe WizardFormConcern do
 
     context "when updating on the first step" do
       before do
-        subject.form_step = :first_step
+        subject.wizard_step = :first_step
         subject.valid?(:update)
       end
 
@@ -66,7 +66,7 @@ describe WizardFormConcern do
 
     context "when updating on the optional step" do
       before do
-        subject.form_step = :optional_step
+        subject.wizard_step = :optional_step
         subject.valid?(:update)
       end
 
@@ -80,7 +80,7 @@ describe WizardFormConcern do
 
     context "when updating on the last step" do
       before do
-        subject.form_step = :last_step
+        subject.wizard_step = :last_step
         subject.valid?(:update)
       end
 

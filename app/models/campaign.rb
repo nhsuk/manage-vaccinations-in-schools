@@ -24,7 +24,7 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class Campaign < ApplicationRecord
-  include WizardFormConcern
+  include WizardStepConcern
 
   self.inheritance_column = nil
 
@@ -93,7 +93,7 @@ class Campaign < ApplicationRecord
     validates :active, presence: true
   end
 
-  def form_steps
+  def wizard_steps
     %i[details dates confirm]
   end
 

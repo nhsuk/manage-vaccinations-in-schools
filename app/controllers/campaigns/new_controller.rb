@@ -14,9 +14,9 @@ class Campaigns::NewController < ApplicationController
   end
 
   def update
-    params = send("#{current_step}_params")
+    params = send("#{step}_params")
 
-    @campaign.assign_attributes(form_step: current_step, **params)
+    @campaign.assign_attributes(wizard_step: step, **params)
 
     render_wizard(@campaign)
   end
@@ -31,15 +31,11 @@ class Campaigns::NewController < ApplicationController
   end
 
   def set_steps
-    self.steps = @campaign.form_steps
+    self.steps = @campaign.wizard_steps
   end
 
   def finish_wizard_path
     campaign_path(@campaign)
-  end
-
-  def current_step
-    @current_step ||= wizard_value(step).to_sym
   end
 
   def details_params
