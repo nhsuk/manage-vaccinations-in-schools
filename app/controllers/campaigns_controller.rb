@@ -13,11 +13,7 @@ class CampaignsController < ApplicationController
 
   def create
     campaign = Campaign.create!(team: current_user.team)
-
-    redirect_to campaign_new_path(
-                  campaign_id: campaign.id,
-                  id: campaign.wizard_steps.first
-                )
+    redirect_to campaign_edit_path(campaign, Wicked::FIRST_STEP)
   end
 
   def show
