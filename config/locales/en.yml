@@ -204,6 +204,7 @@ en:
               blank: Choose a programme type
               inclusion: Choose a programme type
             vaccines:
+              blank: Choose the vaccines this programme administers
               match_type: Vaccines must be suitable for the programme type
         consent:
           attributes:

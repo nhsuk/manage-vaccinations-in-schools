@@ -48,6 +48,7 @@
         <%= summary_list.with_row do |row| %>
           <%= row.with_key { "Vaccines" } %>
           <%= row.with_value { @campaign.vaccines.map(&:brand).join("<br>").html_safe } %>
+          <%= row.with_action(text: "Change", href: campaign_edit_path(@campaign, :vaccines), visually_hidden_text: "vaccines") %>
         <% end %>
       <% end %>
     <% end %>
