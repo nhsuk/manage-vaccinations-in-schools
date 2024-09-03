@@ -42,7 +42,7 @@
 #
 
 class ConsentForm < ApplicationRecord
-  include WizardFormConcern
+  include WizardStepConcern
   include AgeConcern
 
   before_save :reset_unused_fields
@@ -166,7 +166,7 @@ class ConsentForm < ApplicationRecord
     [first_name, last_name].join(" ")
   end
 
-  def form_steps
+  def wizard_steps
     [
       :name,
       :date_of_birth,

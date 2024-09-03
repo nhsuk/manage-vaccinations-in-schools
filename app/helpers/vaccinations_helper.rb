@@ -41,7 +41,7 @@ module VaccinationsHelper
 
   # rubocop:disable Rails/HelperInstanceVariable
   def vaccinations_back_link_path
-    if current_step?(@draft_vaccination_record.form_steps.first.to_s)
+    if current_step?(@draft_vaccination_record.wizard_steps.first.to_s)
       session_patient_path(@session, id: @patient.id)
     else
       previous_wizard_path

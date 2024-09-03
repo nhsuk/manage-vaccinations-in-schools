@@ -29,7 +29,7 @@ class Sessions::EditController < ApplicationController
       ActiveRecord::Base.transaction do
         @session.assign_attributes(
           patient_ids: update_params[:patient_ids] || [],
-          form_step: current_step
+          wizard_step: current_step
         )
         @session.patient_sessions.update_all(
           created_by_user_id: current_user.id
@@ -86,11 +86,11 @@ class Sessions::EditController < ApplicationController
     params
       .fetch(:session, {})
       .permit(permitted_attributes)
-      .merge(form_step: current_step)
+      .merge(wizard_step: current_step)
   end
 
   def set_steps
-    self.steps = @session.form_steps
+    self.steps = @session.wizard_steps
     @previous_step = previous_step
   end
 

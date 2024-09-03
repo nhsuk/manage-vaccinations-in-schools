@@ -73,7 +73,7 @@ class Vaccinations::EditController < ApplicationController
     params
       .fetch(:vaccination_record, {})
       .permit(permitted_attributes)
-      .merge(form_step: current_step)
+      .merge(wizard_step: current_step)
   end
 
   def set_steps
@@ -82,7 +82,7 @@ class Vaccinations::EditController < ApplicationController
     # lifecycle, we need to clear the cache.
     @wizard_translations = nil
 
-    self.steps = @draft_vaccination_record.form_steps
+    self.steps = @draft_vaccination_record.wizard_steps
   end
 
   def set_draft_vaccination_record

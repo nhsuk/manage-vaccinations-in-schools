@@ -24,11 +24,9 @@ class GillickAssessmentsController < ApplicationController
   end
 
   def update
-    case current_step
+    case step
     when :gillick, :notes
-      @assessment.assign_attributes(
-        gillick_params.merge(form_step: current_step)
-      )
+      @assessment.assign_attributes(gillick_params.merge(wizard_step: step))
     when :confirm
       @assessment.assign_attributes(recorded_at: Time.zone.now)
     end
@@ -59,15 +57,11 @@ class GillickAssessmentsController < ApplicationController
   end
 
   def set_steps
-    self.steps = GillickAssessment.form_steps
+    self.steps = GillickAssessment.wizard_steps
   end
 
   def finish_wizard_path
     session_patient_path(id: @patient.id)
-  end
-
-  def current_step
-    @current_step ||= wizard_value(step).to_sym
   end
 
   def gillick_params

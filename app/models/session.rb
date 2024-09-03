@@ -27,7 +27,7 @@
 #  fk_rails_...  (imported_from_id => immunisation_imports.id)
 #
 class Session < ApplicationRecord
-  include WizardFormConcern
+  include WizardStepConcern
   audited
 
   DEFAULT_DAYS_FOR_REMINDER = 2
@@ -110,7 +110,7 @@ class Session < ApplicationRecord
     date.to_date == Time.zone.today
   end
 
-  def form_steps
+  def wizard_steps
     %i[location when cohort timeline confirm]
   end
 

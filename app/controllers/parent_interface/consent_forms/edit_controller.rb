@@ -21,7 +21,7 @@ module ParentInterface
         @health_answer.assign_attributes(health_answer_params)
 
         @consent_form.assign_attributes(
-          form_step: current_step,
+          wizard_step: current_step,
           health_question_number: @question_number
         )
       elsif current_step.in?(%i[parent contact_method])
@@ -38,13 +38,13 @@ module ParentInterface
         end
 
         if model.valid?
-          @consent_form.update!(form_step: current_step, draft_parent: model)
+          @consent_form.update!(wizard_step: current_step, draft_parent: model)
         end
       else
         @consent_form.assign_attributes(update_params)
       end
 
-      set_steps # The form_steps can change after certain attrs change
+      set_steps # The wizard_steps can change after certain attrs change
       setup_wizard_translated # Next/previous steps can change after steps change
 
       if current_step == :school && @consent_form.is_this_their_school == "no"
@@ -95,7 +95,7 @@ module ParentInterface
       params
         .fetch(:consent_form, {})
         .permit(permitted_attributes)
-        .merge(form_step: current_step)
+        .merge(wizard_step: current_step)
     end
 
     def parent_params
@@ -123,7 +123,7 @@ module ParentInterface
       # lifecycle, we need to clear the cache.
       @wizard_translations = nil
 
-      self.steps = @consent_form.form_steps
+      self.steps = @consent_form.wizard_steps
     end
 
     def set_health_answer

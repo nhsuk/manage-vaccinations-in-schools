@@ -16,7 +16,7 @@ class CampaignsController < ApplicationController
 
     redirect_to campaign_new_path(
                   campaign_id: campaign.id,
-                  id: campaign.form_steps.first
+                  id: campaign.wizard_steps.first
                 )
   end
 

@@ -15,7 +15,7 @@ module ManageConsentsHelper
 
   # rubocop:disable Rails/HelperInstanceVariable
   def back_link_path
-    if @consent.form_steps.first == @current_step
+    if @consent.wizard_steps.first == @current_step
       session_patient_path(@session, id: @patient.id)
     else
       previous_wizard_path

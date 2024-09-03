@@ -46,7 +46,7 @@ describe ConsentForm, type: :model do
     subject(:consent_form) do
       build(
         :consent_form,
-        form_step:,
+        wizard_step:,
         use_common_name:,
         response:,
         reason:,
@@ -63,8 +63,8 @@ describe ConsentForm, type: :model do
     let(:health_answers) { [] }
     let(:session) { build(:session) }
 
-    context "when form_step is nil" do
-      let(:form_step) { nil }
+    context "when wizard_step is nil" do
+      let(:wizard_step) { nil }
 
       it { should validate_presence_of(:first_name).on(:update) }
       it { should validate_presence_of(:last_name).on(:update) }
@@ -73,8 +73,8 @@ describe ConsentForm, type: :model do
       it { should validate_presence_of(:response).on(:update) }
     end
 
-    context "when form_step is :name" do
-      let(:form_step) { :name }
+    context "when wizard_step is :name" do
+      let(:wizard_step) { :name }
 
       it { should validate_presence_of(:first_name).on(:update) }
       it { should validate_presence_of(:last_name).on(:update) }
@@ -86,8 +86,8 @@ describe ConsentForm, type: :model do
       end
     end
 
-    context "when form_step is :date_of_birth" do
-      let(:form_step) { :date_of_birth }
+    context "when wizard_step is :date_of_birth" do
+      let(:wizard_step) { :date_of_birth }
 
       context "runs validations from previous steps" do
         it { should validate_presence_of(:first_name).on(:update) }
@@ -101,8 +101,8 @@ describe ConsentForm, type: :model do
       #       .on(:update) }
     end
 
-    context "when form_step is :school" do
-      let(:form_step) { :school }
+    context "when wizard_step is :school" do
+      let(:wizard_step) { :school }
 
       context "runs validations from previous steps" do
         it { should validate_presence_of(:first_name).on(:update) }
@@ -116,8 +116,8 @@ describe ConsentForm, type: :model do
       end
     end
 
-    context "when form_step is :parent" do
-      let(:form_step) { :parent }
+    context "when wizard_step is :parent" do
+      let(:wizard_step) { :parent }
 
       context "runs validations from previous steps" do
         it { should validate_presence_of(:first_name).on(:update) }
@@ -127,8 +127,8 @@ describe ConsentForm, type: :model do
       it { should_not validate_presence_of(:is_this_their_school).on(:update) }
     end
 
-    context "when form_step is :consent" do
-      let(:form_step) { :consent }
+    context "when wizard_step is :consent" do
+      let(:wizard_step) { :consent }
 
       context "runs validations from previous steps" do
         it { should validate_presence_of(:first_name).on(:update) }
@@ -138,9 +138,9 @@ describe ConsentForm, type: :model do
       it { should validate_presence_of(:response).on(:update) }
     end
 
-    context "when form_step is :reason" do
+    context "when wizard_step is :reason" do
       let(:response) { "refused" }
-      let(:form_step) { :reason }
+      let(:wizard_step) { :reason }
 
       context "runs validations from previous steps" do
         it { should validate_presence_of(:first_name).on(:update) }
@@ -150,10 +150,10 @@ describe ConsentForm, type: :model do
       it { should validate_presence_of(:reason).on(:update) }
     end
 
-    context "when form_step is :reason_notes" do
+    context "when wizard_step is :reason_notes" do
       let(:response) { "refused" }
       let(:reason) { "medical_reasons" }
-      let(:form_step) { :reason_notes }
+      let(:wizard_step) { :reason_notes }
 
       context "runs validations from previous steps" do
         it { should validate_presence_of(:first_name).on(:update) }
@@ -163,13 +163,13 @@ describe ConsentForm, type: :model do
       it { should validate_presence_of(:reason_notes).on(:update) }
     end
 
-    context "when form_step is :injection" do
+    context "when wizard_step is :injection" do
       # currently injection alternative only offered during flu campaign
       let(:session) { build(:session, campaign: build(:campaign, :flu)) }
 
       let(:response) { "refused" }
       let(:reason) { "contains_gelatine" }
-      let(:form_step) { :injection }
+      let(:wizard_step) { :injection }
 
       context "runs validations from previous steps" do
         it { should validate_presence_of(:first_name).on(:update) }
@@ -186,9 +186,9 @@ describe ConsentForm, type: :model do
       # end
     end
 
-    context "when form_step is :gp" do
+    context "when wizard_step is :gp" do
       let(:response) { "given" }
-      let(:form_step) { :gp }
+      let(:wizard_step) { :gp }
 
       context "runs validations from previous steps" do
         it { should validate_presence_of(:first_name).on(:update) }
@@ -204,9 +204,9 @@ describe ConsentForm, type: :model do
       end
     end
 
-    context "when form_step is :address" do
+    context "when wizard_step is :address" do
       let(:response) { "given" }
-      let(:form_step) { :address }
+      let(:wizard_step) { :address }
 
       context "runs validations from previous steps" do
         it { should validate_presence_of(:first_name).on(:update) }
@@ -225,10 +225,10 @@ describe ConsentForm, type: :model do
       end
     end
 
-    context "when form_step is :health_question" do
+    context "when wizard_step is :health_question" do
       let(:response) { "given" }
       let(:gp_response) { "yes" }
-      let(:form_step) { :health_question }
+      let(:wizard_step) { :health_question }
       let(:health_answers) do
         [
           HealthAnswer.new(
@@ -300,11 +300,11 @@ describe ConsentForm, type: :model do
     end
   end
 
-  describe "#form_steps" do
+  describe "#wizard_steps" do
     it "does not ask for reason for refusal when patient gives consent" do
       consent_form = build(:consent_form, response: "given")
-      expect(consent_form.form_steps).not_to include(:reason)
-      expect(consent_form.form_steps).not_to include(:injection)
+      expect(consent_form.wizard_steps).not_to include(:reason)
+      expect(consent_form.wizard_steps).not_to include(:injection)
     end
 
     context "for a flu campaign, when patient refuses consent" do
@@ -318,8 +318,8 @@ describe ConsentForm, type: :model do
             reason: "contains_gelatine",
             session:
           )
-        expect(consent_form.form_steps).to include(:reason)
-        expect(consent_form.form_steps).to include(:injection)
+        expect(consent_form.wizard_steps).to include(:reason)
+        expect(consent_form.wizard_steps).to include(:injection)
       end
 
       it "doesn't offer an injection alternative if the child has already received vaccine" do
@@ -330,8 +330,8 @@ describe ConsentForm, type: :model do
             reason: "already_vaccinated",
             session:
           )
-        expect(consent_form.form_steps).to include(:reason)
-        expect(consent_form.form_steps).not_to include(:injection)
+        expect(consent_form.wizard_steps).to include(:reason)
+        expect(consent_form.wizard_steps).not_to include(:injection)
       end
     end
 
@@ -345,13 +345,13 @@ describe ConsentForm, type: :model do
             reason: "medical_reasons",
             session: build(:session, campaign: build(:campaign, :hpv))
           )
-        expect(consent_form.form_steps).not_to include(:injection)
+        expect(consent_form.wizard_steps).not_to include(:injection)
       end
     end
 
     it "does not ask for gp details when patient refuses consent" do
       consent_form = build(:consent_form, response: "refused")
-      expect(consent_form.form_steps).not_to include(:gp)
+      expect(consent_form.wizard_steps).not_to include(:gp)
     end
 
     it "asks for details when patient refuses for a few different reasons" do
@@ -365,7 +365,7 @@ describe ConsentForm, type: :model do
       ].each do |reason|
         consent_form =
           build(:consent_form, response: "refused", reason:, session:)
-        expect(consent_form.form_steps).to include(:reason_notes)
+        expect(consent_form.wizard_steps).to include(:reason_notes)
       end
     end
 
@@ -375,14 +375,14 @@ describe ConsentForm, type: :model do
       %w[contains_gelatine personal_choice].each do |reason|
         consent_form =
           build(:consent_form, response: "refused", reason:, session:)
-        expect(consent_form.form_steps).not_to include(:reason_notes)
+        expect(consent_form.wizard_steps).not_to include(:reason_notes)
       end
     end
 
     it "asks for gp details, address when patient gives consent" do
       consent_form = build(:consent_form, response: "given")
-      expect(consent_form.form_steps).to include(:gp)
-      expect(consent_form.form_steps).to include(:address)
+      expect(consent_form.wizard_steps).to include(:gp)
+      expect(consent_form.wizard_steps).to include(:address)
     end
   end
 

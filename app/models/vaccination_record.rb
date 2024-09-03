@@ -41,7 +41,7 @@
 #
 class VaccinationRecord < ApplicationRecord
   include Recordable
-  include WizardFormConcern
+  include WizardStepConcern
 
   audited associated_with: :patient_session
 
@@ -183,7 +183,7 @@ class VaccinationRecord < ApplicationRecord
       ActiveModel::Type::Boolean.new.cast(value) ? Time.zone.now : nil
   end
 
-  def form_steps
+  def wizard_steps
     [
       ("delivery-site" if administered? && delivery_site_other),
       (:batch if administered? && todays_batch.nil?),

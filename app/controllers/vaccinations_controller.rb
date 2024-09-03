@@ -61,7 +61,7 @@ class VaccinationsController < ApplicationController
       redirect_to session_patient_vaccinations_edit_path(
                     @session,
                     patient_id: @patient.id,
-                    id: @draft_vaccination_record.form_steps.first
+                    id: @draft_vaccination_record.wizard_steps.first
                   )
     else
       render "patients/show", status: :unprocessable_entity

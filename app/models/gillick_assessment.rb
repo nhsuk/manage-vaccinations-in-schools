@@ -25,7 +25,7 @@
 #
 class GillickAssessment < ApplicationRecord
   include Recordable
-  include WizardFormConcern
+  include WizardStepConcern
 
   audited
 
@@ -42,11 +42,11 @@ class GillickAssessment < ApplicationRecord
     validates :notes, length: { maximum: 1000 }, presence: true
   end
 
-  def self.form_steps
+  def self.wizard_steps
     %i[gillick notes confirm]
   end
 
-  def form_steps
-    self.class.form_steps
+  def wizard_steps
+    self.class.wizard_steps
   end
 end

@@ -35,7 +35,7 @@
 
 class Consent < ApplicationRecord
   include Recordable
-  include WizardFormConcern
+  include WizardStepConcern
 
   audited
 
@@ -120,7 +120,7 @@ class Consent < ApplicationRecord
     validate :triage_valid?
   end
 
-  def form_steps
+  def wizard_steps
     [
       (:who unless via_self_consent?),
       (:parent_details unless via_self_consent?),
