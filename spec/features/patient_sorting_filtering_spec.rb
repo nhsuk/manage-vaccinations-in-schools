@@ -79,6 +79,7 @@ describe "Patient sorting and filtering" do
 
   def when_i_click_on_the_name_header
     click_link "Full name"
+    sleep 0.1
   end
 
   def when_i_click_on_the_dob_header
