@@ -197,5 +197,6 @@ describe "Create and edit campaigns" do
   def then_i_should_see_the_edit_confirm_page
     expect(page).to have_content("Edit programme")
     expect(page).to have_content("Programme details")
+    expect(page).to have_content("Vaccines")
   end
 end

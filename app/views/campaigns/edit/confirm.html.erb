@@ -20,7 +20,7 @@
       <% end %>
 
       <%= summary_list.with_row do |row| %>
-        <%= row.with_key { "Type" } %>
+        <%= row.with_key { "Programme type" } %>
         <%= row.with_value { @campaign.human_enum_name(:type) } %>
       <% end %>
 
@@ -37,6 +37,13 @@
       <%= summary_list.with_row do |row| %>
         <%= row.with_key { "End date" } %>
         <%= row.with_value { @campaign.end_date.to_fs(:long) } %>
+      <% end %>
+
+      <% if @campaign.active %>
+        <%= summary_list.with_row do |row| %>
+          <%= row.with_key { "Vaccines" } %>
+          <%= row.with_value { @campaign.vaccines.map(&:brand).join("<br>").html_safe } %>
+        <% end %>
       <% end %>
     <% end %>
   <% end %>

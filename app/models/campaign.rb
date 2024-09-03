@@ -102,7 +102,7 @@ class Campaign < ApplicationRecord
   def vaccines_match_type
     vaccine_types = vaccines.map(&:type).uniq
     unless vaccine_types.empty? || vaccine_types == [type]
-      errors.add(:vaccines, "must match programme type")
+      errors.add(:vaccines, :match_type)
     end
   end
 end
