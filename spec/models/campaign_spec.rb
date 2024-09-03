@@ -26,7 +26,12 @@
 
 describe Campaign, type: :model do
   subject(:campaign) do
-    build(:campaign, academic_year: 2024, start_date: Date.new(2024, 6, 1))
+    build(
+      :campaign,
+      academic_year: 2024,
+      start_date: Date.new(2024, 9, 1),
+      end_date: Date.new(2025, 7, 31)
+    )
   end
 
   it { should normalize(:name).from(" abc ").to("abc") }
@@ -40,29 +45,28 @@ describe Campaign, type: :model do
     it { should validate_presence_of(:academic_year).on(:update) }
 
     it do
-      expect(campaign).to validate_comparison_of(
-        :academic_year
-      ).is_greater_than_or_equal_to(2000).is_less_than_or_equal_to(
-        Time.zone.today.year + 5
-      )
+      expect(campaign).to validate_comparison_of(:academic_year)
+        .on(:update)
+        .is_greater_than_or_equal_to(2000)
+        .is_less_than_or_equal_to(Time.zone.today.year + 5)
     end
 
     it { should validate_presence_of(:start_date).on(:update) }
 
     it do
-      expect(campaign).to validate_comparison_of(
-        :start_date
-      ).is_greater_than_or_equal_to(Date.new(2024, 1, 1))
+      expect(campaign).to validate_comparison_of(:start_date)
+        .on(:update)
+        .is_greater_than_or_equal_to(Date.new(2024, 1, 1))
+        .is_less_than(Date.new(2025, 7, 31))
     end
 
     it { should validate_presence_of(:end_date).on(:update) }
 
     it do
-      expect(campaign).to validate_comparison_of(
-        :end_date
-      ).is_greater_than_or_equal_to(
-        Date.new(2024, 6, 1)
-      ).is_less_than_or_equal_to(Date.new(2025, 12, 31))
+      expect(campaign).to validate_comparison_of(:end_date)
+        .on(:update)
+        .is_greater_than(Date.new(2024, 9, 1))
+        .is_less_than_or_equal_to(Date.new(2025, 12, 31))
     end
 
     context "when vaccines don't match type" do
