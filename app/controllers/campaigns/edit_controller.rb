@@ -22,10 +22,7 @@ class Campaigns::EditController < ApplicationController
   private
 
   def set_campaign
-    @campaign =
-      policy_scope(Campaign).where(
-        active: params[:id] == Wicked::FINISH_STEP
-      ).find(params[:campaign_id])
+    @campaign = policy_scope(Campaign).find(params[:campaign_id])
   end
 
   def set_steps
@@ -45,6 +42,8 @@ class Campaigns::EditController < ApplicationController
   end
 
   def confirm_params
+    return {} if @campaign.active
+
     { active: true, vaccines: Vaccine.active.where(type: @campaign.type) }
   end
 end
