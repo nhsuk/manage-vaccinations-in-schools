@@ -1,0 +1,18 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: @campaign.active ? campaign_edit_path(@campaign, :confirm) : previous_wizard_path,
+        name: @campaign.active ? "edit programme" : "#{@previous_step} page of programme creation",
+      ) %>
+<% end %>
+
+<% title = "Which vaccine(s) does this programme administer?" %>
+
+<% content_for :page_title, title %>
+
+<%= form_with model: @campaign, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= f.govuk_collection_check_boxes :vaccine_ids, Vaccine.where(type: @campaign.type), :id, :brand, legend: { text: title, tag: "h1", size: "l" } %>
+
+  <%= f.govuk_submit %>
+<% end %>

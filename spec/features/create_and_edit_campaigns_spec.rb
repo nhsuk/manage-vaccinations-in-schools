@@ -4,7 +4,8 @@ describe "Create and edit campaigns" do
   before { given_i_am_signed_in }
 
   scenario "User creates a Flu campaign" do
-    given_active_and_discontinued_flu_vaccines_exist
+    given_active_flu_vaccines_exist
+    and_discontinued_flu_vaccines_exist
 
     when_i_go_to_the_campaigns_page
     and_i_click_on_the_new_campaign_button
@@ -28,6 +29,7 @@ describe "Create and edit campaigns" do
 
   scenario "User edits a Flu campaign" do
     given_a_flu_campaign_exists
+    and_discontinued_flu_vaccines_exist
 
     when_i_go_to_the_campaigns_page
     and_i_click_on_the_flu_campaign
@@ -44,13 +46,19 @@ describe "Create and edit campaigns" do
     and_i_click_continue
     then_i_should_see_the_edit_confirm_page
 
+    when_i_click_on_change_vaccines
+    and_i_select_the_flu_vaccines
+    and_i_click_continue
+    then_i_should_see_the_edit_confirm_page
+
     when_i_confirm_the_campaign
     then_i_should_see_the_campaign_page
     and_i_should_see_the_flu_campaign
   end
 
   scenario "User creates an HPV campaign" do
-    given_active_and_discontinued_hpv_vaccines_exist
+    given_active_hpv_vaccines_exist
+    and_discontinued_hpv_vaccines_exist
 
     when_i_go_to_the_campaigns_page
     and_i_click_on_the_new_campaign_button
@@ -74,6 +82,7 @@ describe "Create and edit campaigns" do
 
   scenario "User edits an HPV campaign" do
     given_an_hpv_campaign_exists
+    and_discontinued_hpv_vaccines_exist
 
     when_i_go_to_the_campaigns_page
     and_i_click_on_the_hpv_campaign
@@ -90,6 +99,11 @@ describe "Create and edit campaigns" do
     and_i_click_continue
     then_i_should_see_the_edit_confirm_page
 
+    when_i_click_on_change_vaccines
+    and_i_select_the_hpv_vaccines
+    and_i_click_continue
+    then_i_should_see_the_edit_confirm_page
+
     when_i_confirm_the_campaign
     then_i_should_see_the_campaign_page
     and_i_should_see_the_hpv_campaign
@@ -100,13 +114,21 @@ describe "Create and edit campaigns" do
     sign_in @team.users.first
   end
 
-  def given_active_and_discontinued_flu_vaccines_exist
+  def given_active_flu_vaccines_exist
     create(:vaccine, :adjuvanted_quadrivalent)
-    create(:vaccine, :fluad_tetra)
   end
 
-  def given_active_and_discontinued_hpv_vaccines_exist
+  def and_discontinued_flu_vaccines_exist
+    create(:vaccine, :fluad_tetra)
+    create(:vaccine, :flucelvax_tetra)
+  end
+
+  def given_active_hpv_vaccines_exist
     create(:vaccine, :gardasil_9)
+  end
+
+  def and_discontinued_hpv_vaccines_exist
+    create(:vaccine, :cervarix)
     create(:vaccine, :gardasil)
   end
 
@@ -240,5 +262,19 @@ describe "Create and edit campaigns" do
 
   def when_i_click_on_change_start_date
     within(".nhsuk-summary-list__row", text: "Start date") { click_on "Change" }
+  end
+
+  def when_i_click_on_change_vaccines
+    within(".nhsuk-summary-list__row", text: "Vaccines") { click_on "Change" }
+  end
+
+  def and_i_select_the_flu_vaccines
+    check "Fluad Tetra - aQIV"
+    check "Flucelvax Tetra - QIVc"
+  end
+
+  def and_i_select_the_hpv_vaccines
+    check "Cervarix"
+    check "Gardasil"
   end
 end

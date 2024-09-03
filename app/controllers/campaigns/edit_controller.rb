@@ -48,6 +48,10 @@ class Campaigns::EditController < ApplicationController
     params.require(:campaign).permit(:start_date, :end_date)
   end
 
+  def vaccines_params
+    params.require(:campaign).permit(vaccine_ids: [])
+  end
+
   def confirm_params
     { active: true }
   end

@@ -79,6 +79,10 @@ class Campaign < ApplicationRecord
               }
   end
 
+  on_wizard_step :vaccines do
+    validates :vaccines, presence: true
+  end
+
   on_wizard_step :confirm do
     validates :active, presence: true
   end
@@ -86,7 +90,15 @@ class Campaign < ApplicationRecord
   validate :vaccines_match_type
 
   def wizard_steps
-    %i[details dates confirm]
+    [:details, :dates, (:vaccines if active), :confirm].compact
+  end
+
+  def vaccine_ids
+    @vaccine_ids ||= vaccines.map(&:id)
+  end
+
+  def vaccine_ids=(ids)
+    self.vaccines = Vaccine.where(id: ids)
   end
 
   private
