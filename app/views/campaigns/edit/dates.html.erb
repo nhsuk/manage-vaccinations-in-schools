@@ -1,7 +1,7 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: previous_wizard_path,
-        name: "#{@previous_step} page of programme creation",
+        href: @campaign.active ? campaign_edit_path(@campaign, :confirm) : previous_wizard_path,
+        name: @campaign.active ? "edit programme" : "#{@previous_step} page of programme creation",
       ) %>
 <% end %>
 

@@ -16,6 +16,12 @@ class Campaigns::EditController < ApplicationController
 
     @campaign.assign_attributes(wizard_step: step, **params)
 
+    if current_step?(:details) && @campaign.type_changed?
+      @campaign.vaccines = Vaccine.active.where(type: @campaign.type)
+    end
+
+    jump_to(:confirm) if @campaign.active && !current_step?(:confirm)
+
     render_wizard(@campaign)
   end
 
@@ -43,8 +49,6 @@ class Campaigns::EditController < ApplicationController
   end
 
   def confirm_params
-    return {} if @campaign.active
-
-    { active: true, vaccines: Vaccine.active.where(type: @campaign.type) }
+    { active: true }
   end
 end
