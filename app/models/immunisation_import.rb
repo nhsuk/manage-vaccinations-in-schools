@@ -35,7 +35,7 @@ class ImmunisationImport < ApplicationRecord
 
   attr_accessor :csv_is_malformed, :data, :rows
 
-  encrypts :csv
+  encrypts :csv_data
 
   belongs_to :user
   belongs_to :campaign
