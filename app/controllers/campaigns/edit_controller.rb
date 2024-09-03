@@ -22,7 +22,8 @@ class Campaigns::EditController < ApplicationController
   private
 
   def set_campaign
-    @campaign = policy_scope(Campaign).find(params[:campaign_id])
+    @campaign =
+      policy_scope(Campaign).includes(:vaccines).find(params[:campaign_id])
   end
 
   def set_steps

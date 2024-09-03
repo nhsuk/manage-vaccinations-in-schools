@@ -77,7 +77,7 @@ describe Campaign, type: :model do
       it "is invalid" do
         expect(campaign).to be_invalid
         expect(campaign.errors[:vaccines]).to include(
-          "must match programme type"
+          /must be suitable for the programme type/
         )
       end
     end

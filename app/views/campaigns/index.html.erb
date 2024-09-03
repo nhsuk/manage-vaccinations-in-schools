@@ -28,9 +28,7 @@
           <% end %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Vaccines</span>
-            <%= campaign.vaccines
-                  .map { |vaccine| vaccine.brand }
-                  .join("<br>").html_safe %>
+            <%= campaign.vaccines.map(&:brand).join("<br>").html_safe %>
           <% end %>
         <% end %>
       <% end %>

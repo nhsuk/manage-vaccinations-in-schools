@@ -203,6 +203,8 @@ en:
             type:
               blank: Choose a programme type
               inclusion: Choose a programme type
+            vaccines:
+              match_type: Vaccines must be suitable for the programme type
         consent:
           attributes:
             new_or_existing_parent:
