@@ -30,10 +30,18 @@ describe "Create and edit campaigns" do
     given_a_flu_campaign_exists
 
     when_i_go_to_the_campaigns_page
-    then_i_should_see_the_flu_campaign_and_vaccines
-
-    when_i_click_on_the_flu_campaign
+    and_i_click_on_the_flu_campaign
     and_i_click_edit_campaign
+    then_i_should_see_the_edit_confirm_page
+
+    when_i_click_on_change_name
+    and_i_fill_in_flu_details
+    and_i_click_continue
+    then_i_should_see_the_edit_confirm_page
+
+    when_i_click_on_change_start_date
+    and_i_fill_in_the_dates
+    and_i_click_continue
     then_i_should_see_the_edit_confirm_page
 
     when_i_confirm_the_campaign
@@ -68,10 +76,18 @@ describe "Create and edit campaigns" do
     given_an_hpv_campaign_exists
 
     when_i_go_to_the_campaigns_page
-    then_i_should_see_the_hpv_campaign_and_vaccines
-
-    when_i_click_on_the_hpv_campaign
+    and_i_click_on_the_hpv_campaign
     and_i_click_edit_campaign
+    then_i_should_see_the_edit_confirm_page
+
+    when_i_click_on_change_name
+    and_i_fill_in_hpv_details
+    and_i_click_continue
+    then_i_should_see_the_edit_confirm_page
+
+    when_i_click_on_change_start_date
+    and_i_fill_in_the_dates
+    and_i_click_continue
     then_i_should_see_the_edit_confirm_page
 
     when_i_confirm_the_campaign
@@ -95,11 +111,23 @@ describe "Create and edit campaigns" do
   end
 
   def given_a_flu_campaign_exists
-    create(:campaign, :flu, academic_year: 2025, team: @team)
+    create(
+      :campaign,
+      :flu,
+      name: "Flu - to be renamed",
+      academic_year: 2024,
+      team: @team
+    )
   end
 
   def given_an_hpv_campaign_exists
-    create(:campaign, :hpv, academic_year: 2025, team: @team)
+    create(
+      :campaign,
+      :hpv,
+      name: "HPV - to be renamed",
+      academic_year: 2024,
+      team: @team
+    )
   end
 
   def when_i_go_to_the_campaigns_page
@@ -121,11 +149,15 @@ describe "Create and edit campaigns" do
     choose "2025/26"
   end
 
+  alias_method :and_i_fill_in_flu_details, :when_i_fill_in_flu_details
+
   def when_i_fill_in_hpv_details
     fill_in "Name", with: "HPV"
     choose "HPV"
     choose "2025/26"
   end
+
+  alias_method :and_i_fill_in_hpv_details, :when_i_fill_in_hpv_details
 
   def and_i_click_continue
     click_on "Continue"
@@ -148,6 +180,8 @@ describe "Create and edit campaigns" do
       fill_in "Year", with: "2026"
     end
   end
+
+  alias_method :and_i_fill_in_the_dates, :when_i_fill_in_the_dates
 
   def then_i_should_see_the_new_confirm_page
     expect(page).to have_content("Check and confirm")
@@ -182,11 +216,11 @@ describe "Create and edit campaigns" do
     )
   end
 
-  def when_i_click_on_the_flu_campaign
+  def and_i_click_on_the_flu_campaign
     click_on "Flu"
   end
 
-  def when_i_click_on_the_hpv_campaign
+  def and_i_click_on_the_hpv_campaign
     click_on "HPV"
   end
 
@@ -198,5 +232,13 @@ describe "Create and edit campaigns" do
     expect(page).to have_content("Edit programme")
     expect(page).to have_content("Programme details")
     expect(page).to have_content("Vaccines")
+  end
+
+  def when_i_click_on_change_name
+    within(".nhsuk-summary-list__row", text: "Name") { click_on "Change" }
+  end
+
+  def when_i_click_on_change_start_date
+    within(".nhsuk-summary-list__row", text: "Start date") { click_on "Change" }
   end
 end

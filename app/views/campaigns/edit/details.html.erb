@@ -1,5 +1,8 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(href: campaigns_path, name: "programme") %>
+  <%= render AppBacklinkComponent.new(
+        href: @campaign.active ? campaign_edit_path(@campaign, :confirm) : campaigns_path,
+        name: @campaign.active ? "edit programme" : "vaccination programmes",
+      ) %>
 <% end %>
 
 <%= form_with model: @campaign, url: wizard_path, method: :put do |f| %>
