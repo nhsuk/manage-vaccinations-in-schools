@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
-describe "Create campaign" do
-  before do
-    given_i_am_signed_in
-    and_active_and_discontinued_vaccines_exist
-  end
+describe "Create and edit campaigns" do
+  before { given_i_am_signed_in }
 
   scenario "User creates a Flu campaign" do
+    given_active_and_discontinued_flu_vaccines_exist
+
     when_i_go_to_the_campaigns_page
     and_i_click_on_the_new_campaign_button
     then_i_should_see_the_details_page
@@ -27,7 +26,18 @@ describe "Create campaign" do
     then_i_should_see_the_flu_campaign_and_vaccines
   end
 
+  scenario "User edits a Flu campaign" do
+    given_a_flu_campaign_exists
+
+    when_i_go_to_the_campaigns_page
+    then_i_should_see_the_flu_campaign_and_vaccines
+
+    when_i_click_on_the_flu_campaign
+  end
+
   scenario "User creates an HPV campaign" do
+    given_active_and_discontinued_hpv_vaccines_exist
+
     when_i_go_to_the_campaigns_page
     and_i_click_on_the_new_campaign_button
     then_i_should_see_the_details_page
@@ -48,17 +58,36 @@ describe "Create campaign" do
     then_i_should_see_the_hpv_campaign_and_vaccines
   end
 
+  scenario "User edits an HPV campaign" do
+    given_an_hpv_campaign_exists
+
+    when_i_go_to_the_campaigns_page
+    then_i_should_see_the_hpv_campaign_and_vaccines
+
+    when_i_click_on_the_hpv_campaign
+  end
+
   def given_i_am_signed_in
     @team = create(:team, :with_one_nurse, ods_code: "R1L")
     sign_in @team.users.first
   end
 
-  def and_active_and_discontinued_vaccines_exist
+  def given_active_and_discontinued_flu_vaccines_exist
+    create(:vaccine, :adjuvanted_quadrivalent)
+    create(:vaccine, :fluad_tetra)
+  end
+
+  def given_active_and_discontinued_hpv_vaccines_exist
     create(:vaccine, :gardasil_9)
     create(:vaccine, :gardasil)
+  end
 
-    create(:vaccine, :fluenz_tetra)
-    create(:vaccine, :fluad_tetra)
+  def given_a_flu_campaign_exists
+    create(:campaign, :flu, academic_year: 2025, team: @team)
+  end
+
+  def given_an_hpv_campaign_exists
+    create(:campaign, :hpv, academic_year: 2025, team: @team)
   end
 
   def when_i_go_to_the_campaigns_page
@@ -130,7 +159,7 @@ describe "Create campaign" do
 
   def then_i_should_see_the_flu_campaign_and_vaccines
     expect(page).to have_content(
-      "Name Flu Academic year 2025/26 Vaccines Fluenz Tetra - LAIV"
+      "Name Flu Academic year 2025/26 Vaccines Adjuvanted Quadrivalent - aQIV"
     )
   end
 
@@ -138,5 +167,13 @@ describe "Create campaign" do
     expect(page).to have_content(
       "Name HPV Academic year 2025/26 Vaccines Gardasil 9"
     )
+  end
+
+  def when_i_click_on_the_flu_campaign
+    click_on "Flu"
+  end
+
+  def when_i_click_on_the_hpv_campaign
+    click_on "HPV"
   end
 end
