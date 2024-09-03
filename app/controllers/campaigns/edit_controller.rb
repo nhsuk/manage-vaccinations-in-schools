@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 
-class Campaigns::NewController < ApplicationController
+class Campaigns::EditController < ApplicationController
   include Wicked::Wizard
 
   before_action :set_campaign
   before_action :set_steps
   before_action :setup_wizard
-
-  skip_after_action :verify_policy_scoped
 
   def show
     render_wizard

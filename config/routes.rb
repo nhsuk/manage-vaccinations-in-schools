@@ -66,10 +66,10 @@ Rails.application.routes.draw do
   resources :campaigns, only: %i[index create show] do
     get "sessions", on: :member
 
-    resource :new,
-             controller: "campaigns/new",
+    resource :edit,
+             controller: "campaigns/edit",
              only: %i[show update],
-             path: "new/:id"
+             path: "edit/:id"
 
     resources :immunisation_imports,
               path: "immunisation-imports",
