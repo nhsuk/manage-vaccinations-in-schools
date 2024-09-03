@@ -31,9 +31,8 @@ require "csv"
 #  fk_rails_...  (user_id => users.id)
 #
 class ImmunisationImport < ApplicationRecord
+  include CSVImportable
   include Recordable
-
-  attr_accessor :csv_is_malformed, :data, :rows
 
   encrypts :csv_data
 
@@ -51,51 +50,11 @@ class ImmunisationImport < ApplicationRecord
 
   before_save :ensure_processed_with_count_statistics
 
-  REQUIRED_HEADERS = %w[
-    ORGANISATION_CODE
-    SCHOOL_URN
-    SCHOOL_NAME
-    NHS_NUMBER
-    PERSON_FORENAME
-    PERSON_SURNAME
-    PERSON_DOB
-    PERSON_POSTCODE
-    DATE_OF_VACCINATION
-    VACCINE_GIVEN
-    BATCH_NUMBER
-    BATCH_EXPIRY_DATE
-    ANATOMICAL_SITE
-  ].freeze
-
-  validates :csv,
-            absence: {
-              if: :csv_removed?
-            },
-            presence: {
-              unless: :csv_removed?
-            }
-  validates :csv_filename, presence: true
-
-  validate :csv_is_valid
-  validate :csv_has_records
-  validate :headers_are_valid
-  validate :rows_are_valid
-
   COUNT_COLUMNS = %i[
     exact_duplicate_record_count
     new_record_count
     not_administered_record_count
   ].freeze
-
-  def csv=(file)
-    self.csv_data = file&.read
-    self.csv_filename = file&.original_filename
-  end
-
-  # Needed so that validations match the form field name.
-  def csv
-    csv_data
-  end
 
   def csv_removed?
     csv_removed_at != nil
@@ -103,29 +62,6 @@ class ImmunisationImport < ApplicationRecord
 
   def processed?
     processed_at != nil
-  end
-
-  def load_data!
-    return if invalid?
-
-    self.data ||= CSV.parse(csv_data, headers: true, skip_blanks: true)
-  rescue CSV::MalformedCSVError
-    self.csv_is_malformed = true
-  end
-
-  def parse_rows!
-    load_data! if data.nil?
-    return if invalid?
-
-    self.rows =
-      data.map do |row_data|
-        ImmunisationImportRow.new(
-          data: row_data,
-          campaign:,
-          user:,
-          imported_from: self
-        )
-      end
   end
 
   def process!
@@ -183,33 +119,31 @@ class ImmunisationImport < ApplicationRecord
 
   private
 
-  def csv_is_valid
-    return unless csv_is_malformed
-
-    errors.add(:csv, :invalid)
+  def required_headers
+    %w[
+      ORGANISATION_CODE
+      SCHOOL_URN
+      SCHOOL_NAME
+      NHS_NUMBER
+      PERSON_FORENAME
+      PERSON_SURNAME
+      PERSON_DOB
+      PERSON_POSTCODE
+      DATE_OF_VACCINATION
+      VACCINE_GIVEN
+      BATCH_NUMBER
+      BATCH_EXPIRY_DATE
+      ANATOMICAL_SITE
+    ]
   end
 
-  def csv_has_records
-    return unless data
-
-    errors.add(:csv, :empty) if data.empty?
-  end
-
-  def headers_are_valid
-    return unless data
-
-    missing_headers = REQUIRED_HEADERS - data.headers
-    errors.add(:csv, :missing_headers, missing_headers:) if missing_headers.any?
-  end
-
-  def rows_are_valid
-    return unless rows
-
-    rows.each.with_index do |row, index|
-      if row.invalid?
-        errors.add("row_#{index + 1}".to_sym, row.errors.full_messages)
-      end
-    end
+  def parse_row(row_data)
+    ImmunisationImportRow.new(
+      data: row_data,
+      campaign:,
+      user:,
+      imported_from: self
+    )
   end
 
   def ensure_processed_with_count_statistics
