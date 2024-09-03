@@ -17,7 +17,6 @@ describe "Pilot - upload cohort" do
 
     when_i_upload_a_cohort_file_with_invalid_headers
     then_i_should_the_errors_page_with_invalid_headers
-    and_i_should_be_able_to_go_back_to_the_upload_page
 
     when_i_upload_a_cohort_file_with_invalid_fields
     then_i_should_the_errors_page_with_invalid_fields
@@ -84,12 +83,7 @@ describe "Pilot - upload cohort" do
   end
 
   def then_i_should_the_errors_page_with_invalid_headers
-    expect(page).to have_content("The cohort list could not be added")
-    expect(page).to have_content("CSV")
-  end
-
-  def and_i_should_be_able_to_go_back_to_the_upload_page
-    click_on "Back to cohort upload page"
+    expect(page).to have_content("The file is missing the following headers")
   end
 
   def when_i_upload_a_cohort_file_with_invalid_fields
