@@ -50,7 +50,6 @@ class ImmunisationImportRow
               greater_than_or_equal_to: :campaign_start_date,
               less_than_or_equal_to: :campaign_end_date_or_today
             }
-  validates :reason, presence: true, if: -> { administered == false }
 
   CARE_SETTING_SCHOOL = 1
   CARE_SETTING_COMMUNITY = 2
@@ -90,7 +89,6 @@ class ImmunisationImportRow
         patient_session:,
         performed_by_family_name:,
         performed_by_given_name:,
-        reason:,
         vaccine:
       )
   end
@@ -145,16 +143,6 @@ class ImmunisationImportRow
 
   def batch_number
     @data["BATCH_NUMBER"]&.strip
-  end
-
-  REASONS = {
-    "did not attend" => :absent_from_session,
-    "vaccination contraindicated" => :contraindications,
-    "unwell" => :not_well
-  }.freeze
-
-  def reason
-    REASONS[@data["REASON_NOT_VACCINATED"]&.strip&.downcase]
   end
 
   DELIVERY_SITES = {
