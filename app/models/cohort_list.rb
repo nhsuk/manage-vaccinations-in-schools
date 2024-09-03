@@ -5,7 +5,9 @@ require "csv"
 class CohortList
   include ActiveModel::Model
 
-  EXPECTED_HEADERS = %w[
+  attr_accessor :csv_data, :csv_is_malformed, :data, :rows
+
+  REQUIRED_HEADERS = %w[
     SCHOOL_URN
     SCHOOL_NAME
     PARENT_NAME
@@ -23,41 +25,47 @@ class CohortList
     CHILD_NHS_NUMBER
   ].freeze
 
-  attr_accessor :csv, :csv_is_malformed, :data, :missing_headers, :rows, :team
-
   validates :csv, presence: true
+
   validate :csv_is_valid
+  validate :csv_has_records
   validate :headers_are_valid
   validate :rows_are_valid
+
+  def csv=(file)
+    self.csv_data = file&.read
+  end
+
+  # Needed so that validations match the form field name.
+  def csv
+    csv_data
+  end
 
   def load_data!
     return if invalid?
 
-    self.data ||= CSV.parse(csv.read, headers: true, skip_blanks: true)
+    self.data ||= CSV.parse(csv_data, headers: true, skip_blanks: true)
   rescue CSV::MalformedCSVError
     self.csv_is_malformed = true
-  ensure
-    csv.close if csv.respond_to?(:close)
   end
 
   def parse_rows!
-    if (EXPECTED_HEADERS - data.headers) != []
-      self.missing_headers = EXPECTED_HEADERS - data.headers
-      return
-    end
+    load_data! if data.nil?
+    return if invalid?
 
     self.rows =
       data.map do |raw_row|
         CohortListRow.new(
           raw_row
             .to_h
-            .slice(*EXPECTED_HEADERS) # Remove extra columns
+            .slice(*REQUIRED_HEADERS) # Remove extra columns
             .transform_keys { _1.downcase.to_sym }
         )
       end
   end
 
-  def generate_patients!
+  def process!
+    parse_rows! if rows.nil?
     return if invalid?
 
     rows.each do |row|
@@ -78,25 +86,26 @@ class CohortList
     errors.add(:csv, :invalid)
   end
 
-  def headers_are_valid
-    return unless missing_headers
+  def csv_has_records
+    return unless data
 
-    html_missing_headers = missing_headers.map { "<code>#{_1}</code>" }
-    errors.add(
-      :csv,
-      "The file is missing the following headers: #{html_missing_headers.join(", ")}"
-    )
+    errors.add(:csv, :empty) if data.empty?
+  end
+
+  def headers_are_valid
+    return unless data
+
+    missing_headers = REQUIRED_HEADERS - data.headers
+    errors.add(:csv, :missing_headers, missing_headers:) if missing_headers.any?
   end
 
   def rows_are_valid
     return unless rows
 
     rows.each.with_index do |row, index|
-      next if row.valid?
-
-      # Row 0 is the header row, but humans would call it Row 1. That's also
-      # what it would be shown as in Excel. The first row of data is Row 2.
-      errors.add("row_#{index + 2}".to_sym, row.errors.full_messages)
+      if row.invalid?
+        errors.add("row_#{index + 1}".to_sym, row.errors.full_messages)
+      end
     end
   end
 end

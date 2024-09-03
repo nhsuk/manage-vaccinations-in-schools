@@ -23,8 +23,9 @@ en:
           attributes:
             csv:
               blank: Choose a file
+              empty: Choose a CSV file with at least one record
               invalid: Choose a CSV file in the correct format
-              too_large: Choose a CSV with %{remaining} or fewer rows
+              missing_headers: "The file is missing the following headers: %{missing_headers}"
         cohort_list_row:
           attributes:
             child_address_line_1:

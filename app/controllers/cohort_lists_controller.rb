@@ -6,7 +6,7 @@ class CohortListsController < ApplicationController
   before_action :set_team, only: %i[new create]
 
   def new
-    @cohort_list = CohortList.new(team: @team)
+    @cohort_list = CohortList.new
   end
 
   def create
@@ -20,11 +20,12 @@ class CohortListsController < ApplicationController
 
     @cohort_list.parse_rows!
     if @cohort_list.invalid?
-      render :errors, status: :unprocessable_entity, layout: "application"
+      render :errors, status: :unprocessable_entity
       return
     end
 
-    @cohort_list.generate_patients!
+    @cohort_list.process!
+
     session[:last_cohort_upload_count] = @cohort_list.rows.count
 
     redirect_to action: :success
@@ -37,7 +38,7 @@ class CohortListsController < ApplicationController
   private
 
   def cohort_list_params
-    params.fetch(:cohort_list, {}).permit(:csv).merge(team: @team)
+    params.fetch(:cohort_list, {}).permit(:csv)
   end
 
   def set_team
