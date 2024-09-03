@@ -1,17 +1,17 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: previous_wizard_path,
-        name: "#{@previous_step} page of programme creation",
+        href: @campaign.active ? campaign_path(@campaign) : previous_wizard_path,
+        name: @campaign.active ? @campaign.name : "#{@previous_step} page of programme creation",
       ) %>
 <% end %>
 
 <%= form_with model: @campaign, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
-  <%= h1 "Check and confirm" %>
+  <%= h1 @campaign.active ? "Edit programme" : "Check and confirm" %>
 
   <%= render AppCardComponent.new do |card| %>
-    <% card.with_heading { "New programme details" } %>
+    <% card.with_heading { @campaign.active ? "Programme details" : "New programme details" } %>
 
     <%= govuk_summary_list do |summary_list| %>
       <%= summary_list.with_row do |row| %>

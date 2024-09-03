@@ -16,7 +16,7 @@ describe "Create and edit campaigns" do
 
     when_i_fill_in_the_dates
     and_i_click_continue
-    then_i_should_see_the_confirm_page
+    then_i_should_see_the_new_confirm_page
 
     when_i_confirm_the_campaign
     then_i_should_see_the_campaign_page
@@ -33,6 +33,12 @@ describe "Create and edit campaigns" do
     then_i_should_see_the_flu_campaign_and_vaccines
 
     when_i_click_on_the_flu_campaign
+    and_i_click_edit_campaign
+    then_i_should_see_the_edit_confirm_page
+
+    when_i_confirm_the_campaign
+    then_i_should_see_the_campaign_page
+    and_i_should_see_the_flu_campaign
   end
 
   scenario "User creates an HPV campaign" do
@@ -48,7 +54,7 @@ describe "Create and edit campaigns" do
 
     when_i_fill_in_the_dates
     and_i_click_continue
-    then_i_should_see_the_confirm_page
+    then_i_should_see_the_new_confirm_page
 
     when_i_confirm_the_campaign
     then_i_should_see_the_campaign_page
@@ -65,6 +71,12 @@ describe "Create and edit campaigns" do
     then_i_should_see_the_hpv_campaign_and_vaccines
 
     when_i_click_on_the_hpv_campaign
+    and_i_click_edit_campaign
+    then_i_should_see_the_edit_confirm_page
+
+    when_i_confirm_the_campaign
+    then_i_should_see_the_campaign_page
+    and_i_should_see_the_hpv_campaign
   end
 
   def given_i_am_signed_in
@@ -137,8 +149,9 @@ describe "Create and edit campaigns" do
     end
   end
 
-  def then_i_should_see_the_confirm_page
+  def then_i_should_see_the_new_confirm_page
     expect(page).to have_content("Check and confirm")
+    expect(page).to have_content("New programme details")
   end
 
   def when_i_confirm_the_campaign
@@ -175,5 +188,14 @@ describe "Create and edit campaigns" do
 
   def when_i_click_on_the_hpv_campaign
     click_on "HPV"
+  end
+
+  def and_i_click_edit_campaign
+    click_on "Edit programme"
+  end
+
+  def then_i_should_see_the_edit_confirm_page
+    expect(page).to have_content("Edit programme")
+    expect(page).to have_content("Programme details")
   end
 end

@@ -27,3 +27,9 @@
         href: campaign_immunisation_imports_path(@campaign),
       )
     end %>
+
+<ul class="app-action-list">
+  <li class="app-action-list__item">
+    <%= govuk_link_to "Edit programme", campaign_edit_path(@campaign, :confirm) %>
+  </li>
+</ul>
