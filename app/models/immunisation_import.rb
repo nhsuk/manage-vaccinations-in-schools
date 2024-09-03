@@ -67,7 +67,7 @@ class ImmunisationImport < ApplicationRecord
     ANATOMICAL_SITE
   ].freeze
 
-  validates :csv_data,
+  validates :csv,
             absence: {
               if: :csv_removed?
             },
@@ -88,8 +88,13 @@ class ImmunisationImport < ApplicationRecord
   ].freeze
 
   def csv=(file)
-    self.csv_data = file.read
-    self.csv_filename = file.original_filename
+    self.csv_data = file&.read
+    self.csv_filename = file&.original_filename
+  end
+
+  # Needed so that validations match the form field name.
+  def csv
+    csv_data
   end
 
   def csv_removed?

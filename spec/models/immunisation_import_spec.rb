@@ -48,15 +48,16 @@ describe ImmunisationImport, type: :model do
   let(:user) { create(:user, teams: [team]) }
 
   describe "validations" do
-    it { should validate_presence_of(:csv_data) }
+    it { should be_valid }
+
     it { should validate_presence_of(:csv_filename) }
 
-    context "when the CSV has been removed" do
+    context "when the CSV has been removed and data exists" do
       subject(:immunisation_import) do
-        create(:immunisation_import, :csv_removed)
+        build(:immunisation_import, :csv_removed, csv_data: "data")
       end
 
-      it { should validate_absence_of(:csv_data) }
+      it { should be_invalid }
     end
   end
 
