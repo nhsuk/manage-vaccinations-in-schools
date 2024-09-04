@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require "csv"
-
-class CohortList
+class CohortImport
   include ActiveModel::Model
   include CSVImportable
 
@@ -45,7 +43,7 @@ class CohortList
   end
 
   def parse_row(row_data)
-    CohortListRow.new(
+    CohortImportRow.new(
       row_data
         .to_h
         .slice(*required_headers) # Remove extra columns

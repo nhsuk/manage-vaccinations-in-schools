@@ -9,7 +9,7 @@ describe "Pilot journey" do
     # Cohorting
     given_an_hpv_programme_is_underway
     and_i_am_a_nurse_signed_into_the_service
-    when_i_upload_the_cohort_list_containing_one_child
+    when_i_upload_the_cohort_import_containing_one_child
     then_i_see_that_the_cohort_has_been_uploaded
 
     # Session creation
@@ -53,7 +53,7 @@ describe "Pilot journey" do
     visit "/dashboard"
   end
 
-  def when_i_upload_the_cohort_list_containing_one_child
+  def when_i_upload_the_cohort_import_containing_one_child
     cohort_data = {
       "SCHOOL_URN" => @school.urn.to_s,
       "SCHOOL_NAME" => "Pilot School",
@@ -75,13 +75,13 @@ describe "Pilot journey" do
     @registered_parents_csv =
       CSV::Table.new([CSV::Row.new(cohort_data.keys, cohort_data.values)])
 
-    csv_file = Tempfile.new("cohort_list.csv", Rails.root.join("tmp"))
+    csv_file = Tempfile.new("cohort_import.csv", Rails.root.join("tmp"))
     csv_file.write(@registered_parents_csv.to_csv)
     csv_file.close
 
     visit "/pilot"
     click_on "Upload the cohort list"
-    attach_file "cohort_list[csv]", csv_file.path
+    attach_file "cohort_import[csv]", csv_file.path
     click_on "Upload the cohort list"
   end
 

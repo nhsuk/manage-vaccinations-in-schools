@@ -9,7 +9,7 @@
                                         ]) %>
 <% end %>
 
-<%= form_with model: @cohort_list, url: pilot_cohort_path do |f| %>
+<%= form_with model: @cohort_import, url: pilot_cohort_path do |f| %>
   <%= f.govuk_error_summary %>
 
   <%= f.govuk_file_field :csv,

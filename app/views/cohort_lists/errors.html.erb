@@ -12,7 +12,7 @@
   uploaded CSV file:
 </p>
 
-<% @cohort_list.errors.each do |error| %>
+<% @cohort_import.errors.each do |error| %>
   <h2 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">
     <% if error.attribute == :csv %>
       CSV

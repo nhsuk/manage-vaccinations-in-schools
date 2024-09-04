@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "csv"
-
 # == Schema Information
 #
 # Table name: immunisation_imports

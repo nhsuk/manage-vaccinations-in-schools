@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-describe CohortList, type: :model do
-  subject(:cohort_list) { described_class.new(csv:) }
+describe CohortImport, type: :model do
+  subject(:cohort_import) { described_class.new(csv:) }
 
   # Ensure location URN matches the URN in our fixture files
   let!(:location) do
     Location.find_by(urn: "123456") || create(:location, :school, urn: "123456")
   end
-  let(:csv) { fixture_file_upload("spec/fixtures/cohort_list/#{file}") }
+  let(:csv) { fixture_file_upload("spec/fixtures/cohort_import/#{file}") }
 
   describe "#load_data!" do
-    subject(:load_data!) { cohort_list.load_data! }
+    subject(:load_data!) { cohort_import.load_data! }
 
     before { load_data! }
 
@@ -18,8 +18,8 @@ describe CohortList, type: :model do
       let(:csv) { nil }
 
       it "is invalid" do
-        expect(cohort_list).to be_invalid
-        expect(cohort_list.errors[:csv]).to include(/Choose/)
+        expect(cohort_import).to be_invalid
+        expect(cohort_import.errors[:csv]).to include(/Choose/)
       end
     end
 
@@ -27,14 +27,14 @@ describe CohortList, type: :model do
       let(:file) { "malformed.csv" }
 
       it "is invalid" do
-        expect(cohort_list).to be_invalid
-        expect(cohort_list.errors[:csv]).to include(/correct format/)
+        expect(cohort_import).to be_invalid
+        expect(cohort_import.errors[:csv]).to include(/correct format/)
       end
     end
   end
 
   describe "#parse_rows!" do
-    subject(:parse_rows!) { cohort_list.parse_rows! }
+    subject(:parse_rows!) { cohort_import.parse_rows! }
 
     before { parse_rows! }
 
@@ -42,8 +42,8 @@ describe CohortList, type: :model do
       let(:file) { "invalid_headers.csv" }
 
       it "populates header errors" do
-        expect(cohort_list).to be_invalid
-        expect(cohort_list.errors[:csv]).to include(/missing.*headers/)
+        expect(cohort_import).to be_invalid
+        expect(cohort_import.errors[:csv]).to include(/missing.*headers/)
       end
     end
 
@@ -51,8 +51,8 @@ describe CohortList, type: :model do
       let(:file) { "invalid_fields.csv" }
 
       it "populates rows" do
-        expect(cohort_list).to be_invalid
-        expect(cohort_list.rows).not_to be_empty
+        expect(cohort_import).to be_invalid
+        expect(cohort_import.rows).not_to be_empty
       end
     end
 
@@ -60,7 +60,7 @@ describe CohortList, type: :model do
       let(:file) { "valid_cohort_extra_fields.csv" }
 
       it "populates rows" do
-        expect(cohort_list).to be_valid
+        expect(cohort_import).to be_valid
       end
     end
 
@@ -68,26 +68,26 @@ describe CohortList, type: :model do
       let(:file) { "valid_cohort.csv" }
 
       it "is valid" do
-        expect(cohort_list).to be_valid
+        expect(cohort_import).to be_valid
       end
 
       it "accepts NHS numbers with spaces, removes spaces" do
-        expect(cohort_list).to be_valid
-        expect(cohort_list.rows.second.to_patient[:nhs_number]).to eq(
+        expect(cohort_import).to be_valid
+        expect(cohort_import.rows.second.to_patient[:nhs_number]).to eq(
           "1234567891"
         )
       end
 
       it "parses dates in the ISO8601 format" do
-        expect(cohort_list).to be_valid
-        expect(cohort_list.rows.first.to_patient[:date_of_birth]).to eq(
+        expect(cohort_import).to be_valid
+        expect(cohort_import.rows.first.to_patient[:date_of_birth]).to eq(
           Date.new(2010, 1, 1)
         )
       end
 
       it "parses dates in the DD/MM/YYYY format" do
-        expect(cohort_list).to be_valid
-        expect(cohort_list.rows.second.to_patient[:date_of_birth]).to eq(
+        expect(cohort_import).to be_valid
+        expect(cohort_import.rows.second.to_patient[:date_of_birth]).to eq(
           Date.new(2010, 1, 2)
         )
       end
@@ -95,7 +95,7 @@ describe CohortList, type: :model do
   end
 
   describe "#process!" do
-    subject(:process!) { cohort_list.process! }
+    subject(:process!) { cohort_import.process! }
 
     let(:file) { "valid_cohort.csv" }
 
