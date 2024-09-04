@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CohortListRow
+class CohortImportRow
   include ActiveModel::Model
 
   attr_accessor :school_urn,

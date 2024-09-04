@@ -51,8 +51,8 @@ describe "Pilot - upload cohort" do
 
   def when_i_upload_the_cohort_file
     attach_file(
-      "cohort_list[csv]",
-      "spec/fixtures/cohort_list/valid_cohort.csv"
+      "cohort_import[csv]",
+      "spec/fixtures/cohort_import/valid_cohort.csv"
     )
     click_on "Upload the cohort list"
   end
@@ -70,14 +70,17 @@ describe "Pilot - upload cohort" do
   end
 
   def when_i_upload_a_malformed_csv
-    attach_file("cohort_list[csv]", "spec/fixtures/cohort_list/malformed.csv")
+    attach_file(
+      "cohort_import[csv]",
+      "spec/fixtures/cohort_import/malformed.csv"
+    )
     click_on "Upload the cohort list"
   end
 
   def when_i_upload_a_cohort_file_with_invalid_headers
     attach_file(
-      "cohort_list[csv]",
-      "spec/fixtures/cohort_list/invalid_headers.csv"
+      "cohort_import[csv]",
+      "spec/fixtures/cohort_import/invalid_headers.csv"
     )
     click_on "Upload the cohort list"
   end
@@ -88,8 +91,8 @@ describe "Pilot - upload cohort" do
 
   def when_i_upload_a_cohort_file_with_invalid_fields
     attach_file(
-      "cohort_list[csv]",
-      "spec/fixtures/cohort_list/invalid_fields.csv"
+      "cohort_import[csv]",
+      "spec/fixtures/cohort_import/invalid_fields.csv"
     )
     click_on "Upload the cohort list"
   end

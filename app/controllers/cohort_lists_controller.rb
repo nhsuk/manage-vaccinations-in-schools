@@ -6,27 +6,27 @@ class CohortListsController < ApplicationController
   before_action :set_team, only: %i[new create]
 
   def new
-    @cohort_list = CohortList.new
+    @cohort_import = CohortImport.new
   end
 
   def create
-    @cohort_list = CohortList.new(cohort_list_params)
+    @cohort_import = CohortImport.new(cohort_import_params)
 
-    @cohort_list.load_data!
-    if @cohort_list.invalid?
+    @cohort_import.load_data!
+    if @cohort_import.invalid?
       render :new, status: :unprocessable_entity
       return
     end
 
-    @cohort_list.parse_rows!
-    if @cohort_list.invalid?
+    @cohort_import.parse_rows!
+    if @cohort_import.invalid?
       render :errors, status: :unprocessable_entity
       return
     end
 
-    @cohort_list.process!
+    @cohort_import.process!
 
-    session[:last_cohort_upload_count] = @cohort_list.rows.count
+    session[:last_cohort_upload_count] = @cohort_import.rows.count
 
     redirect_to action: :success
   end
@@ -37,8 +37,8 @@ class CohortListsController < ApplicationController
 
   private
 
-  def cohort_list_params
-    params.fetch(:cohort_list, {}).permit(:csv)
+  def cohort_import_params
+    params.fetch(:cohort_import, {}).permit(:csv)
   end
 
   def set_team
