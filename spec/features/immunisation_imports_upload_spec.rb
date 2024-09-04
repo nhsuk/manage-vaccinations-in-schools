@@ -23,7 +23,11 @@ describe "Immunisation imports" do
     then_i_should_see_the_success_heading
     and_i_should_see_the_vaccination_records
 
-    when_i_click_on_upload_records
+    when_i_click_on_a_vaccination_record
+    then_i_should_see_the_vaccination_record
+
+    when_i_go_back
+    and_i_click_on_upload_records
     then_i_should_see_the_upload
     and_i_should_see_the_vaccination_records
 
@@ -126,7 +130,11 @@ describe "Immunisation imports" do
     expect(page).to have_content("Vaccination date 14 May 2024")
   end
 
-  def when_i_click_on_upload_records
+  def when_i_go_back
+    click_on "Back to check and confirm upload"
+  end
+
+  def and_i_click_on_upload_records
     click_on "Upload records"
   end
 
@@ -149,7 +157,7 @@ describe "Immunisation imports" do
     expect(page).to have_content("Chyna Pickle")
     expect(page).to have_content("Child record")
     expect(page).to have_content("NameChyna Pickle")
-    expect(page).to have_content("Vaccination record")
+    expect(page).to have_content("Vaccination details")
     expect(page).to have_content("OutcomeVaccinated")
   end
 

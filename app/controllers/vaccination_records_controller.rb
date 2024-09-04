@@ -2,7 +2,7 @@
 
 class VaccinationRecordsController < ApplicationController
   def index
-    @vaccination_records = vaccination_records
+    @vaccination_records = vaccination_records.recorded
 
     render layout: "full"
   end
@@ -38,12 +38,12 @@ class VaccinationRecordsController < ApplicationController
         .includes(
           :batch,
           :campaign,
+          :imported_from,
           :performed_by_user,
           :vaccine,
           patient: :school,
           session: :location
         )
-        .recorded
         .where(campaign:)
         .order(:recorded_at)
         .strict_loading
