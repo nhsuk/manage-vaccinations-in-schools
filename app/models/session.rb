@@ -98,6 +98,10 @@ class Session < ApplicationRecord
               if: -> { close_consent_on == "custom" }
   end
 
+  def active?
+    !draft
+  end
+
   def health_questions
     campaign.vaccines.first.health_questions
   end
