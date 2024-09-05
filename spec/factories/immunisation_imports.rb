@@ -15,17 +15,17 @@
 #  recorded_at                   :datetime
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
-#  campaign_id                   :bigint           not null
+#  programme_id                  :bigint           not null
 #  user_id                       :bigint           not null
 #
 # Indexes
 #
-#  index_immunisation_imports_on_campaign_id  (campaign_id)
-#  index_immunisation_imports_on_user_id      (user_id)
+#  index_immunisation_imports_on_programme_id  (programme_id)
+#  index_immunisation_imports_on_user_id       (user_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (campaign_id => campaigns.id)
+#  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (user_id => users.id)
 #
 FactoryBot.define do

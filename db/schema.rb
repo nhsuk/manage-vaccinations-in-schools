@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_05_113128) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_05_153407) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -45,26 +45,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_05_113128) do
     t.index ["vaccine_id"], name: "index_batches_on_vaccine_id"
   end
 
-  create_table "campaigns", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "team_id", null: false
-    t.integer "academic_year"
-    t.date "start_date"
-    t.date "end_date"
-    t.boolean "active", default: false, null: false
-    t.string "type"
-    t.index ["name", "type", "academic_year", "team_id"], name: "index_campaigns_on_name_and_type_and_academic_year_and_team_id", unique: true
-  end
-
-  create_table "campaigns_vaccines", id: false, force: :cascade do |t|
-    t.bigint "campaign_id", null: false
-    t.bigint "vaccine_id", null: false
-    t.index ["campaign_id", "vaccine_id"], name: "index_campaigns_vaccines_on_campaign_id_and_vaccine_id"
-    t.index ["vaccine_id", "campaign_id"], name: "index_campaigns_vaccines_on_vaccine_id_and_campaign_id"
-  end
-
   create_table "consent_forms", force: :cascade do |t|
     t.bigint "session_id", null: false
     t.datetime "recorded_at"
@@ -95,7 +75,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_05_113128) do
 
   create_table "consents", force: :cascade do |t|
     t.bigint "patient_id", null: false
-    t.bigint "campaign_id", null: false
+    t.bigint "programme_id", null: false
     t.integer "response"
     t.integer "reason_for_refusal"
     t.text "reason_for_refusal_notes"
@@ -106,9 +86,9 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_05_113128) do
     t.jsonb "health_answers", default: []
     t.bigint "recorded_by_user_id"
     t.bigint "parent_id"
-    t.index ["campaign_id"], name: "index_consents_on_campaign_id"
     t.index ["parent_id"], name: "index_consents_on_parent_id"
     t.index ["patient_id"], name: "index_consents_on_patient_id"
+    t.index ["programme_id"], name: "index_consents_on_programme_id"
     t.index ["recorded_by_user_id"], name: "index_consents_on_recorded_by_user_id"
   end
 
@@ -117,10 +97,10 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_05_113128) do
     t.string "status", default: "pending", null: false
     t.string "filename", null: false
     t.datetime "sent_at", precision: nil
-    t.bigint "campaign_id", null: false
+    t.bigint "programme_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["campaign_id"], name: "index_dps_exports_on_campaign_id"
+    t.index ["programme_id"], name: "index_dps_exports_on_programme_id"
   end
 
   create_table "dps_exports_vaccination_records", id: false, force: :cascade do |t|
@@ -265,7 +245,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_05_113128) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "campaign_id", null: false
+    t.bigint "programme_id", null: false
     t.datetime "recorded_at"
     t.datetime "processed_at"
     t.integer "new_record_count"
@@ -273,7 +253,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_05_113128) do
     t.integer "not_administered_record_count"
     t.text "csv_filename", null: false
     t.datetime "csv_removed_at"
-    t.index ["campaign_id"], name: "index_immunisation_imports_on_campaign_id"
+    t.index ["programme_id"], name: "index_immunisation_imports_on_programme_id"
     t.index ["user_id"], name: "index_immunisation_imports_on_user_id"
   end
 
@@ -354,20 +334,40 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_05_113128) do
     t.index ["school_id"], name: "index_patients_on_school_id"
   end
 
+  create_table "programmes", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "team_id", null: false
+    t.integer "academic_year"
+    t.date "start_date"
+    t.date "end_date"
+    t.boolean "active", default: false, null: false
+    t.string "type"
+    t.index ["name", "type", "academic_year", "team_id"], name: "idx_on_name_type_academic_year_team_id_f5cd28cbec", unique: true
+  end
+
+  create_table "programmes_vaccines", id: false, force: :cascade do |t|
+    t.bigint "programme_id", null: false
+    t.bigint "vaccine_id", null: false
+    t.index ["programme_id", "vaccine_id"], name: "index_programmes_vaccines_on_programme_id_and_vaccine_id"
+    t.index ["vaccine_id", "programme_id"], name: "index_programmes_vaccines_on_vaccine_id_and_programme_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.date "date"
     t.bigint "location_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "campaign_id"
+    t.bigint "programme_id"
     t.boolean "active", default: false, null: false
     t.date "send_consent_at"
     t.date "send_reminders_at"
     t.date "close_consent_at"
     t.integer "time_of_day"
     t.bigint "imported_from_id"
-    t.index ["campaign_id"], name: "index_sessions_on_campaign_id"
     t.index ["imported_from_id"], name: "index_sessions_on_imported_from_id"
+    t.index ["programme_id"], name: "index_sessions_on_programme_id"
   end
 
   create_table "teams", force: :cascade do |t|
@@ -474,27 +474,27 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_05_113128) do
   end
 
   add_foreign_key "batches", "vaccines"
-  add_foreign_key "campaigns", "teams"
   add_foreign_key "consent_forms", "consents"
   add_foreign_key "consent_forms", "parents"
   add_foreign_key "consent_forms", "sessions"
-  add_foreign_key "consents", "campaigns"
   add_foreign_key "consents", "parents"
   add_foreign_key "consents", "patients"
+  add_foreign_key "consents", "programmes"
   add_foreign_key "consents", "users", column: "recorded_by_user_id"
-  add_foreign_key "dps_exports", "campaigns"
+  add_foreign_key "dps_exports", "programmes"
   add_foreign_key "gillick_assessments", "patient_sessions"
   add_foreign_key "gillick_assessments", "users", column: "assessor_user_id"
   add_foreign_key "health_questions", "health_questions", column: "follow_up_question_id"
   add_foreign_key "health_questions", "health_questions", column: "next_question_id"
   add_foreign_key "health_questions", "vaccines"
-  add_foreign_key "immunisation_imports", "campaigns"
+  add_foreign_key "immunisation_imports", "programmes"
   add_foreign_key "immunisation_imports", "users"
   add_foreign_key "locations", "immunisation_imports", column: "imported_from_id"
   add_foreign_key "patient_sessions", "users", column: "created_by_user_id"
   add_foreign_key "patients", "immunisation_imports", column: "imported_from_id"
   add_foreign_key "patients", "locations", column: "school_id"
   add_foreign_key "patients", "parents"
+  add_foreign_key "programmes", "teams"
   add_foreign_key "sessions", "immunisation_imports", column: "imported_from_id"
   add_foreign_key "triage", "patient_sessions"
   add_foreign_key "triage", "users", column: "performed_by_user_id"
