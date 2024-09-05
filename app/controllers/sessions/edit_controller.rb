@@ -22,6 +22,8 @@ class Sessions::EditController < ApplicationController
     case current_step
     when :confirm
       @session.draft = false
+      @session.patient_sessions.update_all(active: true)
+
       if @session.send_consent_at.today?
         ConsentRequestsSessionBatchJob.perform_later(@session)
       end
