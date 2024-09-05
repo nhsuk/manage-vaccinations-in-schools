@@ -5,7 +5,6 @@
 # Table name: patient_sessions
 #
 #  id                 :bigint           not null, primary key
-#  state              :string
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #  created_by_user_id :bigint
