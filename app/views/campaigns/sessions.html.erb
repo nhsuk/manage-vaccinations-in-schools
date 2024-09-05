@@ -15,6 +15,10 @@
         href: campaign_path(@campaign),
       )
       nav.with_item(
+        text: t("campaigns.patients.title"),
+        href: patients_campaign_path(@campaign),
+      )
+      nav.with_item(
         text: "School sessions",
         href: sessions_campaign_path(@campaign),
         selected: true,

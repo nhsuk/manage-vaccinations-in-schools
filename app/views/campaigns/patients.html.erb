@@ -1,8 +1,9 @@
-<% content_for :page_title, "#{@campaign.name} – Overview" %>
+<%= content_for :page_title, "#{@campaign.name} – #{t("campaigns.patients.title")}" %>
 
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
                                           { text: t("campaigns.index.title"), href: campaigns_path },
+                                          { text: @campaign.name, href: campaign_path(@campaign) },
                                         ]) %>
 <% end %>
 
@@ -12,11 +13,11 @@
       nav.with_item(
         text: "Overview",
         href: campaign_path(@campaign),
-        selected: true,
       )
       nav.with_item(
         text: t("campaigns.patients.title"),
         href: patients_campaign_path(@campaign),
+        selected: true,
       )
       nav.with_item(
         text: "School sessions",
@@ -31,9 +32,3 @@
         href: campaign_immunisation_imports_path(@campaign),
       )
     end %>
-
-<ul class="app-action-list">
-  <li class="app-action-list__item">
-    <%= govuk_link_to "Edit programme", campaign_edit_path(@campaign, :confirm) %>
-  </li>
-</ul>
