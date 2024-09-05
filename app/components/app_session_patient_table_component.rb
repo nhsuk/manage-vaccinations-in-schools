@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AppPatientTableComponent < ViewComponent::Base
+class AppSessionPatientTableComponent < ViewComponent::Base
   attr_reader :params
 
   def initialize(

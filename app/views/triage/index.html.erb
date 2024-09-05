@@ -20,7 +20,7 @@
   <% end %>
 <% end %>
 
-<%= render AppPatientTableComponent.new(
+<%= render AppSessionPatientTableComponent.new(
       patient_sessions: @patient_sessions,
       caption: t("patients_table.#{@current_tab}.caption",
                  children: pluralize_child(@patient_sessions.count)),
