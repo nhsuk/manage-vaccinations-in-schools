@@ -13,14 +13,14 @@
 #  time_of_day       :integer
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
-#  campaign_id       :bigint
 #  imported_from_id  :bigint
 #  location_id       :bigint
+#  programme_id      :bigint
 #
 # Indexes
 #
-#  index_sessions_on_campaign_id       (campaign_id)
 #  index_sessions_on_imported_from_id  (imported_from_id)
+#  index_sessions_on_programme_id      (programme_id)
 #
 # Foreign Keys
 #
