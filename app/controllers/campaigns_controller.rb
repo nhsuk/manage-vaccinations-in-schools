@@ -20,6 +20,7 @@ class CampaignsController < ApplicationController
   end
 
   def patients
+    @patients = @campaign.patients.active
   end
 
   def sessions

@@ -32,3 +32,5 @@
         href: campaign_immunisation_imports_path(@campaign),
       )
     end %>
+
+<%= render AppPatientTableComponent.new(@patients, campaign: @campaign) %>
