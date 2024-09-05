@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_27_081332) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_05_090242) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -268,8 +268,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_27_081332) do
     t.bigint "campaign_id", null: false
     t.datetime "recorded_at"
     t.datetime "processed_at"
-    t.integer "exact_duplicate_record_count"
     t.integer "new_record_count"
+    t.integer "exact_duplicate_record_count"
     t.integer "not_administered_record_count"
     t.text "csv_filename", null: false
     t.datetime "csv_removed_at"
@@ -320,7 +320,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_27_081332) do
     t.bigint "patient_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "state"
     t.bigint "created_by_user_id"
     t.index ["created_by_user_id"], name: "index_patient_sessions_on_created_by_user_id"
     t.index ["patient_id", "session_id"], name: "index_patient_sessions_on_patient_id_and_session_id", unique: true
