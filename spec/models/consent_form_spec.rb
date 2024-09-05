@@ -592,7 +592,7 @@ describe ConsentForm, type: :model do
       create_list(
         :patient,
         patients_in_session,
-        sessions: [session],
+        session:,
         address_postcode: "SW1A 1AA"
       )
     end

@@ -26,11 +26,7 @@ describe "HPV Vaccination" do
     @batch = campaign.batches.first
     @session = create(:session, campaign:, location:)
     @patient =
-      create(
-        :patient_session,
-        :consent_given_triage_not_needed,
-        session: @session
-      ).patient
+      create(:patient, :consent_given_triage_not_needed, session: @session)
 
     sign_in team.users.first
   end

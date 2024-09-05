@@ -64,63 +64,51 @@ FactoryBot.define do
     address_town { Faker::Address.city }
     address_postcode { Faker::Address.postcode }
 
+    after(:create) do |patient, evaluator|
+      if evaluator.session
+        create(:patient_session, patient:, session: evaluator.session)
+      end
+    end
+
     trait :home_educated do
       school { nil }
       home_educated { true }
     end
 
     trait :consent_given_triage_not_needed do
-      consents do
-        create_list(:consent, 1, :given, campaign:, patient: instance)
-      end
+      consents { [association(:consent, :given, campaign:)] }
     end
 
     trait :consent_given_triage_needed do
       consents do
-        create_list(
-          :consent,
-          1,
-          :given,
-          :health_question_notes,
-          campaign:,
-          patient: instance
-        )
+        [association(:consent, :given, :health_question_notes, campaign:)]
       end
     end
 
     trait :consent_refused do
-      consents do
-        create_list(
-          :consent,
-          1,
-          :refused,
-          :from_mum,
-          campaign:,
-          patient: instance
-        )
-      end
+      consents { [association(:consent, :refused, :from_mum, campaign:)] }
     end
 
     trait :consent_refused_with_notes do
       consents do
-        create_list(
-          :consent,
-          1,
-          :refused,
-          :from_mum,
-          campaign:,
-          reason_for_refusal: "already_vaccinated",
-          reason_for_refusal_notes: "Already had the vaccine at the GP",
-          patient: instance
-        )
+        [
+          association(
+            :consent,
+            :refused,
+            :from_mum,
+            campaign:,
+            reason_for_refusal: "already_vaccinated",
+            reason_for_refusal_notes: "Already had the vaccine at the GP"
+          )
+        ]
       end
     end
 
     trait :consent_conflicting do
       consents do
         [
-          create(:consent, :refused, :from_mum, campaign:, patient: instance),
-          create(:consent, :given, :from_dad, campaign:, patient: instance)
+          association(:consent, :refused, :from_mum, campaign:),
+          association(:consent, :given, :from_dad, campaign:)
         ]
       end
     end

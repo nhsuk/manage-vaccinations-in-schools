@@ -15,8 +15,8 @@ describe "Verbal consent" do
   def given_i_am_signed_in
     team = create(:team, :with_one_nurse)
     campaign = create(:campaign, :hpv, team:)
-    @session = create(:session, campaign:, patients_in_session: 1)
-    @patient = @session.patients.first
+    @session = create(:session, campaign:)
+    @patient = create(:patient, session: @session)
 
     sign_in team.users.first
   end

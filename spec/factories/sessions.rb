@@ -28,8 +28,6 @@
 #
 FactoryBot.define do
   factory :session do
-    transient { patients_in_session { 0 } }
-
     campaign { association :campaign, :active }
     location { association :location, :school }
 
@@ -60,16 +58,6 @@ FactoryBot.define do
 
     trait :in_past do
       date { Time.zone.now - 1.week }
-    end
-
-    patients do
-      Array.new(patients_in_session) do
-        association(
-          :patient,
-          school: instance.location,
-          patient_sessions: [association(:patient_session, session: instance)]
-        )
-      end
     end
   end
 end

@@ -29,9 +29,7 @@ describe AppSessionDetailsComponent, type: :component do
   end
 
   context "for a session with only 1 patient" do
-    let(:session) do
-      create(:session, date:, close_consent_at:, patients_in_session: 1)
-    end
+    before { create(:patient, session:) }
 
     it "pluralizes 'child' correctly" do
       expect(component.cohort).to eq "1 child"
@@ -39,9 +37,7 @@ describe AppSessionDetailsComponent, type: :component do
   end
 
   context "for a session with more than 1 patient" do
-    let(:session) do
-      create(:session, date:, close_consent_at:, patients_in_session: 2)
-    end
+    before { create_list(:patient, 2, session:) }
 
     it "pluralizes 'child' correctly" do
       expect(component.cohort).to eq "2 children"

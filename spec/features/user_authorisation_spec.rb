@@ -26,18 +26,16 @@ describe "User authorisation" do
       create(:campaign, :hpv, team: @other_team, vaccines: [vaccine])
     location = create(:location, :school, name: "Pilot School")
     other_location = create(:location, :school, name: "Other School")
-    @session =
-      create(:session, :in_future, campaign:, location:, patients_in_session: 1)
+    @session = create(:session, :in_future, campaign:, location:)
     @other_session =
       create(
         :session,
         :in_future,
         campaign: other_campaign,
-        location: other_location,
-        patients_in_session: 1
+        location: other_location
       )
-    @child = @session.patients.first
-    @other_child = @other_session.patients.first
+    @child = create(:patient, session: @session)
+    @other_child = create(:patient, session: @other_session)
   end
 
   def when_i_sign_in_as_a_nurse_from_one_team

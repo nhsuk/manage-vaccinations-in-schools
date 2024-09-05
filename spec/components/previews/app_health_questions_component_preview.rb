@@ -68,6 +68,6 @@ class AppHealthQuestionsComponentPreview < ViewComponent::Preview
 
   def setup
     @campaign = create(:campaign, :hpv, team: Team.first || create(:team))
-    @session = create(:session, patients_in_session: 0, campaign:)
+    @session = create(:session, campaign:)
   end
 end

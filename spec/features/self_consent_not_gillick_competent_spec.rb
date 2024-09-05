@@ -16,9 +16,8 @@ describe "Not Gillick competent" do
     @team = create(:team, :with_one_nurse)
     campaign = create(:campaign, :hpv, team: @team)
     location = create(:location, :school, name: "Pilot School")
-    @session =
-      create(:session, :in_future, campaign:, location:, patients_in_session: 1)
-    @child = @session.patients.first
+    @session = create(:session, :in_future, campaign:, location:)
+    @child = create(:patient, session: @session)
   end
 
   def and_it_is_the_day_of_a_vaccination_session

@@ -41,13 +41,7 @@
 #
 
 describe VaccinationRecord, type: :model do
-  subject(:vaccination_record) do
-    create(
-      :vaccination_record,
-      patient_session:
-        create(:patient_session, session_attributes: { campaign: })
-    )
-  end
+  subject(:vaccination_record) { create(:vaccination_record, campaign:) }
 
   let(:campaign) do
     create(
