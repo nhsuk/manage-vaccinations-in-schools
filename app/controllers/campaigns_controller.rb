@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CampaignsController < ApplicationController
-  before_action :set_campaign, only: %i[show sessions]
+  before_action :set_campaign, except: %i[index create]
 
   skip_after_action :verify_policy_scoped, only: :create
 
@@ -17,6 +17,9 @@ class CampaignsController < ApplicationController
   end
 
   def show
+  end
+
+  def patients
   end
 
   def sessions

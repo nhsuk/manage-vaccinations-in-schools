@@ -427,6 +427,8 @@ en:
   campaigns:
     index:
       title: Vaccination programmes
+    patients:
+      title: Cohort
   consent_forms:
     confirm:
       consent_card_title:

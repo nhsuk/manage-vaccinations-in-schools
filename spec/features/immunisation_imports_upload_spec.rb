@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe "Immunisation imports" do
-  scenario "User uploads a file and views vaccination records" do
+  scenario "User uploads a file, views cohort and vaccination records" do
     given_i_am_signed_in
     and_an_hpv_campaign_is_underway
     and_school_locations_exist
@@ -34,8 +34,11 @@ describe "Immunisation imports" do
     when_i_click_on_a_vaccination_record
     then_i_should_see_the_vaccination_record
 
+    when_i_click_on_cohort
+    then_i_should_see_the_cohort
+
     when_i_click_on_vaccination_records
-    and_i_should_see_the_vaccination_records
+    then_i_should_see_the_vaccination_records
 
     when_i_click_on_the_uploads_tab
     and_i_click_on_the_upload_link
@@ -120,7 +123,7 @@ describe "Immunisation imports" do
     expect(page).to have_content("7 new vaccination records")
   end
 
-  def and_i_should_see_the_vaccination_records
+  def then_i_should_see_the_vaccination_records
     expect(page).to have_content(
       "Full nameNHS numberDate of birthVaccination date"
     )
@@ -129,6 +132,9 @@ describe "Immunisation imports" do
     expect(page).to have_content("Date of birth 12 September 2012")
     expect(page).to have_content("Vaccination date 14 May 2024")
   end
+
+  alias_method :and_i_should_see_the_vaccination_records,
+               :then_i_should_see_the_vaccination_records
 
   def when_i_go_back
     click_on "Back to check and confirm upload"
@@ -146,6 +152,15 @@ describe "Immunisation imports" do
 
   def when_i_click_on_a_vaccination_record
     click_on "Chyna Pickle"
+  end
+
+  def when_i_click_on_cohort
+    click_on "HPV"
+    click_on "Cohort"
+  end
+
+  def then_i_should_see_the_cohort
+    # TODO: to be built
   end
 
   def when_i_click_on_vaccination_records
