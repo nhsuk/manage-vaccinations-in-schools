@@ -56,7 +56,6 @@ FactoryBot.define do
     first_name { Faker::Name.first_name }
     last_name { Faker::Name.last_name }
     date_of_birth { Faker::Date.birthday(min_age: 12, max_age: 13) }
-    patient_sessions { [] }
     school { session&.location }
     parent { create(:parent, last_name:) }
 

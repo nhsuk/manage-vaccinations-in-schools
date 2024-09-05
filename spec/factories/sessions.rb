@@ -53,12 +53,13 @@ FactoryBot.define do
     end
 
     patients do
-      create_list(
-        :patient,
-        patients_in_session,
-        sessions: [instance],
-        school: instance.location
-      )
+      Array.new(patients_in_session) do
+        association(
+          :patient,
+          school: instance.location,
+          patient_sessions: [association(:patient_session, session: instance)]
+        )
+      end
     end
   end
 end

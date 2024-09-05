@@ -4,7 +4,7 @@ describe AppOutcomeBannerComponent, type: :component do
   subject(:rendered) { render_inline(component) }
 
   let(:user) { create :user }
-  let(:patient_session) { create :patient_session, user: }
+  let(:patient_session) { create :patient_session, created_by: user }
   let(:component) { described_class.new(patient_session:, current_user: user) }
   let(:triage_nurse_name) { patient_session.triage.last.performed_by.full_name }
   let(:patient_name) { patient_session.patient.full_name }
@@ -33,7 +33,7 @@ describe AppOutcomeBannerComponent, type: :component do
       create(
         :patient_session,
         :vaccinated,
-        user:,
+        created_by: user,
         session_attributes: {
           campaign:
         }
@@ -68,7 +68,7 @@ describe AppOutcomeBannerComponent, type: :component do
 
   context "state is triaged_do_not_vaccinate" do
     let(:patient_session) do
-      create :patient_session, :triaged_do_not_vaccinate, user:
+      create :patient_session, :triaged_do_not_vaccinate, created_by: user
     end
     let(:vaccination_record) { patient_session.vaccination_records.first }
     let(:location) { patient_session.session.location }
