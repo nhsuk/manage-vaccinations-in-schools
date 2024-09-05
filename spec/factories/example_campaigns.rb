@@ -23,7 +23,7 @@ FactoryBot.define do
 
       create(:session, :in_progress, campaign:, location:).tap do |session|
         patients_without_consent =
-          create_list(:patient_session, 4, session:, user:)
+          create_list(:patient_session, 4, session:, created_by: user)
         unmatched_patients = patients_without_consent.sample(2).map(&:patient)
         unmatched_patients.each do |patient|
           create(
@@ -40,24 +40,36 @@ FactoryBot.define do
           4,
           :consent_given_triage_not_needed,
           session:,
-          user:
+          created_by: user
         )
         create_list(
           :patient_session,
           4,
           :consent_given_triage_needed,
           session:,
-          user:
+          created_by: user
         )
         create_list(
           :patient_session,
           4,
           :triaged_ready_to_vaccinate,
           session:,
-          user:
+          created_by: user
         )
-        create_list(:patient_session, 4, :consent_refused, session:, user:)
-        create_list(:patient_session, 2, :consent_conflicting, session:, user:)
+        create_list(
+          :patient_session,
+          4,
+          :consent_refused,
+          session:,
+          created_by: user
+        )
+        create_list(
+          :patient_session,
+          2,
+          :consent_conflicting,
+          session:,
+          created_by: user
+        )
       end
     end
   end
@@ -68,9 +80,27 @@ FactoryBot.define do
       user = context.user
 
       create(:session, :in_past, campaign:, location:).tap do |session|
-        create_list(:patient_session, 4, :vaccinated, session:, user:)
-        create_list(:patient_session, 4, :delay_vaccination, session:, user:)
-        create_list(:patient_session, 4, :unable_to_vaccinate, session:, user:)
+        create_list(
+          :patient_session,
+          4,
+          :vaccinated,
+          session:,
+          created_by: user
+        )
+        create_list(
+          :patient_session,
+          4,
+          :delay_vaccination,
+          session:,
+          created_by: user
+        )
+        create_list(
+          :patient_session,
+          4,
+          :unable_to_vaccinate,
+          session:,
+          created_by: user
+        )
       end
     end
   end
@@ -82,7 +112,7 @@ FactoryBot.define do
 
       create(:session, :in_future, campaign:, location:).tap do |session|
         patients_without_consent =
-          create_list(:patient_session, 16, session:, user:)
+          create_list(:patient_session, 16, session:, created_by: user)
         unmatched_patients = patients_without_consent.sample(8).map(&:patient)
         unmatched_patients.each do |patient|
           create(
@@ -98,17 +128,29 @@ FactoryBot.define do
           8,
           :consent_given_triage_not_needed,
           session:,
-          user:
+          created_by: user
         )
         create_list(
           :patient_session,
           8,
           :consent_given_triage_needed,
           session:,
-          user:
+          created_by: user
         )
-        create_list(:patient_session, 8, :consent_refused, session:, user:)
-        create_list(:patient_session, 4, :consent_conflicting, session:, user:)
+        create_list(
+          :patient_session,
+          8,
+          :consent_refused,
+          session:,
+          created_by: user
+        )
+        create_list(
+          :patient_session,
+          4,
+          :consent_conflicting,
+          session:,
+          created_by: user
+        )
       end
     end
   end
