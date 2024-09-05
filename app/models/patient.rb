@@ -118,6 +118,19 @@ class Patient < ApplicationRecord
     update!(pending_changes:) if pending_changes.any?
   end
 
+  def with_pending_changes
+    return self if pending_changes.blank?
+
+    dup.tap do |patient|
+      patient.clear_changes_information
+      pending_changes.each do |attr, value|
+        if patient.respond_to?("#{attr}=")
+          patient.public_send("#{attr}=", value)
+        end
+      end
+    end
+  end
+
   private
 
   def remove_spaces_from_nhs_number

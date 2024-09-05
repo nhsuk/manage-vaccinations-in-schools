@@ -146,4 +146,18 @@ describe Patient, type: :model do
       )
     end
   end
+
+  describe "#with_pending_changes" do
+    let(:patient) { create(:patient) }
+
+    it "returns the patient with pending changes applied" do
+      patient.stage_changes(first_name: "Jane")
+      expect(patient.first_name_changed?).to be(false)
+
+      changed_patient = patient.with_pending_changes
+      expect(changed_patient.first_name_changed?).to be(true)
+      expect(changed_patient.last_name_changed?).to be(false)
+      expect(changed_patient.first_name).to eq("Jane")
+    end
+  end
 end
