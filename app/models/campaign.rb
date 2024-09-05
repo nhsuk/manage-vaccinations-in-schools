@@ -93,6 +93,10 @@ class Campaign < ApplicationRecord
     [:details, :dates, (:vaccines if active), :confirm].compact
   end
 
+  def draft?
+    !active
+  end
+
   def vaccine_ids
     @vaccine_ids ||= vaccines.map(&:id)
   end
