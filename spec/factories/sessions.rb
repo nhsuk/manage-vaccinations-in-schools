@@ -40,6 +40,16 @@ FactoryBot.define do
 
     time_of_day { %w[morning afternoon all_day].sample }
 
+    active { campaign.active }
+
+    trait :active do
+      active { true }
+    end
+
+    trait :draft do
+      active { false }
+    end
+
     trait :in_progress do
       date { Time.zone.now }
     end

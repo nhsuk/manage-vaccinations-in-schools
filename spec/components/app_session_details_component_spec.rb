@@ -51,7 +51,6 @@ describe AppSessionDetailsComponent, type: :component do
   context "for a session with the minimum amount of information" do
     let(:session) do
       Session.new(
-        draft: false,
         location: create(:location, :school),
         campaign: create(:campaign, :hpv),
         date:,

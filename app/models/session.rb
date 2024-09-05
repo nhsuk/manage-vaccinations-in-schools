@@ -46,8 +46,8 @@ class Session < ApplicationRecord
 
   enum :time_of_day, %w[morning afternoon all_day]
 
-  scope :active, -> { where(draft: false) }
-  scope :draft, -> { where(draft: true) }
+  scope :active, -> { where(active: true) }
+  scope :draft, -> { where(active: false) }
   scope :past, -> { where(date: ..Time.zone.yesterday) }
   scope :in_progress, -> { where(date: Time.zone.today) }
   scope :future, -> { where(date: Time.zone.tomorrow..) }

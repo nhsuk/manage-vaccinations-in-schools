@@ -27,7 +27,7 @@
 #  fk_rails_...  (imported_from_id => immunisation_imports.id)
 #
 
-describe Session do
+describe Session, type: :model do
   describe "validations" do
     context "when wizard_step is location" do
       subject { build(:session, wizard_step:, campaign:) }
@@ -37,6 +37,18 @@ describe Session do
       let(:campaign) { create(:campaign, team:) }
 
       it { should validate_presence_of(:location_id).on(:update) }
+    end
+  end
+
+  describe "scopes" do
+    describe "#active" do
+      subject(:scope) { described_class.active }
+
+      let!(:active_session) { create(:session) }
+      let!(:draft_session) { create(:session, :draft) }
+
+      it { should include(active_session) }
+      it { should_not include(draft_session) }
     end
   end
 
@@ -60,16 +72,5 @@ describe Session do
 
       it { should be_falsey }
     end
-  end
-
-  describe ".active scope" do
-    subject { described_class.active }
-
-    let(:campaign) { create(:campaign) }
-    let!(:active_session) { create(:session, campaign:) }
-    let!(:draft_session) { create(:session, campaign:, draft: true) }
-
-    it { should include active_session }
-    it { should_not include draft_session }
   end
 end

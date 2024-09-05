@@ -21,7 +21,7 @@ class Sessions::EditController < ApplicationController
   def update
     case current_step
     when :confirm
-      @session.draft = false
+      @session.active = true
       @session.patient_sessions.update_all(active: true)
 
       if @session.send_consent_at.today?
@@ -109,16 +109,14 @@ class Sessions::EditController < ApplicationController
       @session
         .location
         .patients
-        .where(
-          "NOT EXISTS (:sessions)",
-          sessions:
-            Session
-              .select(1)
-              .joins(:patient_sessions)
-              .where(
-                "patient_sessions.patient_id = patients.id AND draft = false AND campaign_id = :campaign_id",
-                campaign_id: @session.campaign_id
-              )
+        .where.not(
+          Session
+            .joins(:patient_sessions)
+            .active
+            .where(campaign: @session.campaign)
+            .where("patient_sessions.patient_id = patients.id")
+            .arel
+            .exists
         )
         .sort_by(&:last_name)
   end

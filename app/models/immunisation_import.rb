@@ -107,7 +107,7 @@ class ImmunisationImport < ApplicationRecord
         end
 
         if (session = vaccination_record.session).draft?
-          session.update!(draft: false)
+          session.update!(active: true)
         end
 
         vaccination_record.update!(recorded_at:)
