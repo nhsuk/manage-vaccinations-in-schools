@@ -69,18 +69,18 @@ class VaccinationRecord < ApplicationRecord
     nasal_spray: ["46713006", "Nasal route (qualifier value)"]
   }.with_indifferent_access
 
-  belongs_to :patient_session
-  belongs_to :imported_from, class_name: "ImmunisationImport", optional: true
   belongs_to :batch, optional: true
-  belongs_to :vaccine, optional: true
+  belongs_to :imported_from, class_name: "ImmunisationImport", optional: true
+  belongs_to :patient_session
   belongs_to :performed_by_user, class_name: "User", optional: true
+  belongs_to :vaccine, optional: true
+  has_and_belongs_to_many :dps_exports
 
-  has_one :session, through: :patient_session
   has_one :patient, through: :patient_session
+  has_one :session, through: :patient_session
   has_one :campaign, through: :session
   has_one :location, through: :session
   has_one :team, through: :campaign
-  has_and_belongs_to_many :dps_exports
 
   scope :administered, -> { where.not(administered_at: nil) }
   scope :unexported, -> { where.missing(:dps_exports) }
