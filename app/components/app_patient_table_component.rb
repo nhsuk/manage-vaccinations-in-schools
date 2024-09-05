@@ -30,7 +30,6 @@ class AppPatientTableComponent < ViewComponent::Base
   def href_for(patient:)
     patient_session = patient_session_for(patient:)
     session = patient_session.session
-    section = "vaccinations"
 
     tab =
       if patient_session.vaccination_administered?
@@ -41,7 +40,7 @@ class AppPatientTableComponent < ViewComponent::Base
         "vaccinate"
       end
 
-    session_patient_path(session, patient, section:, tab:)
+    session_patient_path(session, patient, section: "vaccinations", tab:)
   end
 
   def patient_session_for(patient:)
