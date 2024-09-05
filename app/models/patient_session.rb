@@ -24,6 +24,8 @@
 #
 
 class PatientSession < ApplicationRecord
+  include Draftable
+
   audited
   has_associated_audits
 
@@ -49,12 +51,6 @@ class PatientSession < ApplicationRecord
            end,
            through: :patient,
            class_name: "Consent"
-
-  scope :active, -> { where(active: true) }
-
-  def draft?
-    !active
-  end
 
   def vaccination_record
     # HACK: in future, it will be possible to have multiple vaccination records for a patient session
