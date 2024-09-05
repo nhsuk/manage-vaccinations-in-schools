@@ -41,6 +41,7 @@ class Campaign < ApplicationRecord
 
   has_many :batches, through: :vaccines
   has_many :patient_sessions, through: :sessions
+  has_many :patients, through: :patient_sessions
   has_many :vaccination_records, through: :patient_sessions
 
   enum :type, { flu: "flu", hpv: "hpv" }, validate: { allow_nil: true }
