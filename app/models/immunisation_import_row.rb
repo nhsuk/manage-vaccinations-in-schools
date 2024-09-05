@@ -121,6 +121,16 @@ class ImmunisationImportRow
         )
   end
 
+  def patient_session
+    return unless valid?
+
+    @patient_session ||=
+      PatientSession.create_with(created_by: @user).find_or_create_by!(
+        patient:,
+        session:
+      )
+  end
+
   def notes
     "Vaccinated at #{school_name}" if school_name.present? && location.nil?
   end
@@ -292,16 +302,6 @@ class ImmunisationImportRow
       Location.create_with(
         name: "Generic #{@user.team.name} clinic"
       ).find_or_create_by!(type: :generic_clinic, ods_code: @user.team.ods_code)
-  end
-
-  def patient_session
-    return unless valid?
-
-    @patient_session ||=
-      PatientSession.create_with(created_by: @user).find_or_create_by!(
-        patient:,
-        session:
-      )
   end
 
   def vaccine
