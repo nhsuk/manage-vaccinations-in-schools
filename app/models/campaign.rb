@@ -24,6 +24,7 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class Campaign < ApplicationRecord
+  include Draftable
   include WizardStepConcern
 
   self.inheritance_column = nil
@@ -43,8 +44,6 @@ class Campaign < ApplicationRecord
   has_many :vaccination_records, through: :patient_sessions
 
   enum :type, { flu: "flu", hpv: "hpv" }, validate: { allow_nil: true }
-
-  scope :active, -> { where(active: true) }
 
   normalizes :name, with: ->(name) { name&.strip }
 

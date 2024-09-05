@@ -27,7 +27,9 @@
 #  fk_rails_...  (imported_from_id => immunisation_imports.id)
 #
 class Session < ApplicationRecord
+  include Draftable
   include WizardStepConcern
+
   audited
 
   DEFAULT_DAYS_FOR_REMINDER = 2
@@ -46,8 +48,6 @@ class Session < ApplicationRecord
 
   enum :time_of_day, %w[morning afternoon all_day]
 
-  scope :active, -> { where(active: true) }
-  scope :draft, -> { where(active: false) }
   scope :past, -> { where(date: ..Time.zone.yesterday) }
   scope :in_progress, -> { where(date: Time.zone.today) }
   scope :future, -> { where(date: Time.zone.tomorrow..) }
@@ -55,11 +55,7 @@ class Session < ApplicationRecord
   after_initialize :set_timeline_attributes
   after_validation :set_timeline_timestamps
 
-  validates :time_of_day,
-            inclusion: {
-              in: time_of_days.keys
-            },
-            unless: -> { draft? }
+  validates :time_of_day, inclusion: { in: time_of_days.keys }, unless: :draft?
 
   on_wizard_step :location, exact: true do
     validates :location_id, presence: true
@@ -96,10 +92,6 @@ class Session < ApplicationRecord
     validates :close_consent_at,
               presence: true,
               if: -> { close_consent_on == "custom" }
-  end
-
-  def draft?
-    !active
   end
 
   def health_questions

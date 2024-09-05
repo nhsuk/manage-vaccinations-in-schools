@@ -33,7 +33,7 @@ FactoryBot.define do
     patient { association :patient, session:, **patient_attributes }
     created_by { association :user }
 
-    active { session.active? }
+    active { session.active }
 
     trait :active do
       active { true }
