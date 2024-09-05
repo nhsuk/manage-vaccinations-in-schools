@@ -42,13 +42,13 @@
 FactoryBot.define do
   factory :vaccination_record do
     transient do
-      patient_attributes { {} }
-      session_attributes { {} }
+      campaign { association :campaign, :active }
+      session { association :session, campaign: }
+      patient { association :patient }
     end
 
-    patient_session do
-      association :patient_session, patient_attributes:, session_attributes:
-    end
+    patient_session { association :patient_session, patient:, session: }
+
     recorded_at { "2023-06-09" }
     delivery_site { "left_arm_upper_position" }
     delivery_method { "intramuscular" }

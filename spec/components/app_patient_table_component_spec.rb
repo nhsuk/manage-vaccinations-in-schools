@@ -11,9 +11,7 @@ describe AppPatientTableComponent, type: :component do
 
   let(:section) { :consent }
   let(:campaign) { create(:campaign) }
-  let(:patient_sessions) do
-    create_list(:patient_session, 2, session_attributes: { campaign: })
-  end
+  let(:patient_sessions) { create_list(:patient_session, 2, campaign:) }
   let(:columns) { %i[name dob] }
   let(:params) { { session_id: 1, section:, tab: :needed } }
   let(:args) do
@@ -38,16 +36,13 @@ describe AppPatientTableComponent, type: :component do
 
   describe "when the patient has a common name" do
     let(:patient_sessions) do
-      create_list(
-        :patient_session,
-        2,
-        session_attributes: {
-          campaign:
-        },
-        patient_attributes: {
-          common_name: "Bobby"
-        }
-      )
+      [
+        create(
+          :patient_session,
+          campaign:,
+          patient: create(:patient, common_name: "Bobby")
+        )
+      ]
     end
 
     it "includes the patient's common name" do

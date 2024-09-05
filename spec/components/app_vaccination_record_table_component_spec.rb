@@ -11,27 +11,19 @@ describe AppVaccinationRecordTableComponent, type: :component do
       create(
         :vaccination_record,
         administered_at: Time.zone.local(2020, 9, 1),
-        patient_attributes: {
-          first_name: "John",
-          last_name: "Smith",
-          nhs_number: "9999999999",
-          date_of_birth: Date.new(2000, 5, 28),
-          address_postcode: "SW1A 2AA"
-        },
-        session_attributes: {
-          date: Date.new(2020, 9, 1),
-          campaign:
-        }
+        patient:
+          create(
+            :patient,
+            first_name: "John",
+            last_name: "Smith",
+            nhs_number: "9999999999",
+            date_of_birth: Date.new(2000, 5, 28),
+            address_postcode: "SW1A 2AA"
+          ),
+        session: create(:session, campaign:, date: Date.new(2020, 9, 1))
       )
-    ] + create_list(:vaccination_record, 4, session_attributes: { campaign: }) +
-      create_list(
-        :vaccination_record,
-        5,
-        :not_administered,
-        session_attributes: {
-          campaign:
-        }
-      )
+    ] + create_list(:vaccination_record, 4, campaign:) +
+      create_list(:vaccination_record, 5, :not_administered, campaign:)
   end
 
   it "renders a heading tab" do

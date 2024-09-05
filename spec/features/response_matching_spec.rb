@@ -26,15 +26,9 @@ describe "Response matching" do
     @user = @team.users.first
     @campaign = create(:campaign, :hpv, team: @team)
     @school = create(:location, :school, name: "Pilot School")
-    @session =
-      create(
-        :session,
-        location: @school,
-        campaign: @campaign,
-        patients_in_session: 1
-      )
+    @session = create(:session, location: @school, campaign: @campaign)
     @consent_form = create(:consent_form, :recorded, session: @session)
-    @patient = @session.patients.first
+    @patient = create(:patient, session: @session)
   end
 
   def when_i_go_to_the_campaigns_page

@@ -23,9 +23,8 @@ describe "Parental consent" do
     @team = create(:team, :with_one_nurse)
     campaign = create(:campaign, :flu, team: @team)
     location = create(:location, :school, name: "Pilot School")
-    @session =
-      create(:session, :in_future, campaign:, location:, patients_in_session: 1)
-    @child = @session.patients.first
+    @session = create(:session, :in_future, campaign:, location:)
+    @child = create(:patient, session: @session)
   end
 
   def when_i_go_to_the_consent_form

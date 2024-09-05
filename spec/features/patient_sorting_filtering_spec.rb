@@ -59,10 +59,8 @@ describe "Patient sorting and filtering" do
     location = create(:location, :school)
     @user = @team.users.first
     @campaign = create(:campaign, :hpv, team: @team)
-    @session =
-      create(:session, campaign: @campaign, location:, patients_in_session: 4)
-    @session
-      .patients
+    @session = create(:session, campaign: @campaign, location:)
+    create_list(:patient, 4, session: @session)
       .zip(
         %w[Alex Blair Casey Cassidy],
         %w[2000-01-01 2001-01-01 2002-01-01 2002-01-02]

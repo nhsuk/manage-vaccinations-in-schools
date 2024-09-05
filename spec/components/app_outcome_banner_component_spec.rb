@@ -30,14 +30,7 @@ describe AppOutcomeBannerComponent, type: :component do
   context "state is vaccinated" do
     let(:campaign) { create(:campaign, :hpv) }
     let(:patient_session) do
-      create(
-        :patient_session,
-        :vaccinated,
-        created_by: user,
-        session_attributes: {
-          campaign:
-        }
-      )
+      create(:patient_session, :vaccinated, created_by: user, campaign:)
     end
     let(:vaccination_record) { patient_session.vaccination_records.first }
     let(:vaccine) { patient_session.session.campaign.vaccines.first }

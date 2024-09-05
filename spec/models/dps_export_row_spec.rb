@@ -12,19 +12,11 @@ describe DPSExportRow do
   end
   let(:location) { create(:location, :school) }
   let(:school) { create(:location, :school) }
-  let(:patient_session) do
-    create(
-      :patient_session,
-      patient_attributes: {
-        date_of_birth: "2012-12-29",
-        school:
-      },
-      session_attributes: {
-        campaign:,
-        location:
-      }
-    )
+  let(:patient) do
+    create(:patient, date_of_birth: Date.new(2012, 12, 29), school:)
   end
+  let(:session) { create(:session, campaign:, location:) }
+  let(:patient_session) { create(:patient_session, patient:, session:) }
   let(:performed_by) { create(:user, family_name: "Doe", given_name: "Jane") }
   let(:performed_by_given_name) { nil }
   let(:performed_by_family_name) { nil }
