@@ -22,5 +22,8 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "NHS"
   inflect.acronym "ODS"
   inflect.acronym "PDS"
+
+  inflect.irregular "child", "children"
+
   inflect.uncountable "triage"
 end
