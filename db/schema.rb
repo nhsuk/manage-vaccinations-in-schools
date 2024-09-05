@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_05_090740) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_05_113128) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -360,7 +360,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_05_090740) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "campaign_id"
-    t.boolean "draft", default: false
+    t.boolean "active", default: false, null: false
     t.date "send_consent_at"
     t.date "send_reminders_at"
     t.date "close_consent_at"
