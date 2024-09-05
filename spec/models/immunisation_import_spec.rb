@@ -330,6 +330,12 @@ describe ImmunisationImport, type: :model do
           0
         ).to(7)
       end
+
+      it "activates the patient sessions" do
+        expect { record! }.to change(PatientSession.active, :count).from(0).to(
+          7
+        )
+      end
     end
 
     context "with valid HPV rows" do
@@ -346,6 +352,12 @@ describe ImmunisationImport, type: :model do
         expect { record! }.to change(VaccinationRecord.recorded, :count).from(
           0
         ).to(7)
+      end
+
+      it "activates the patient sessions" do
+        expect { record! }.to change(PatientSession.active, :count).from(0).to(
+          7
+        )
       end
     end
   end

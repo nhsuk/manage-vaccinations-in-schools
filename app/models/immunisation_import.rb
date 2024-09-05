@@ -102,9 +102,14 @@ class ImmunisationImport < ApplicationRecord
 
     ActiveRecord::Base.transaction do
       vaccination_records.draft.each do |vaccination_record|
-        if vaccination_record.session.draft?
-          vaccination_record.session.update!(draft: false)
+        if (patient_session = vaccination_record.patient_session).draft?
+          patient_session.update!(active: true)
         end
+
+        if (session = vaccination_record.session).draft?
+          session.update!(draft: false)
+        end
+
         vaccination_record.update!(recorded_at:)
       end
 
