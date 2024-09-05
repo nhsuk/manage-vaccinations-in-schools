@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AppPatientTableComponentPreview < ViewComponent::Preview
+class AppSessionPatientTableComponentPreview < ViewComponent::Preview
   include FactoryBot::Syntax::Methods
 
   def check_consent
@@ -10,7 +10,7 @@ class AppPatientTableComponentPreview < ViewComponent::Preview
     # add a common name to one of the patients
     patient_sessions.first.patient.update!(common_name: "Bobby")
 
-    render AppPatientTableComponent.new(
+    render AppSessionPatientTableComponent.new(
              patient_sessions:,
              caption: I18n.t("states.consent_given.title"),
              columns: %i[name dob],
@@ -32,7 +32,7 @@ class AppPatientTableComponentPreview < ViewComponent::Preview
     consent_form =
       create(:consent_form, session: patient_sessions.first.session)
 
-    render AppPatientTableComponent.new(
+    render AppSessionPatientTableComponent.new(
              patient_sessions:,
              columns: %i[name postcode dob select_for_matching],
              route: :matching,

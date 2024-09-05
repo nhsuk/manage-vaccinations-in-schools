@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppPatientTableComponent, type: :component do
+describe AppSessionPatientTableComponent, type: :component do
   subject(:rendered) { render_inline(component) }
 
   before do
