@@ -113,7 +113,7 @@ class ImmunisationImportRow
         .sessions
         .active
         .or(Session.where(imported_from:))
-        .create_with(imported_from:, draft: true)
+        .create_with(imported_from:, active: false)
         .find_or_create_by!(
           date: session_date,
           location:,

@@ -8,7 +8,7 @@ class SessionsController < ApplicationController
 
     campaign = current_user.team.campaigns.first
 
-    @session = Session.create!(draft: true, campaign:)
+    @session = Session.create!(active: false, campaign:)
 
     redirect_to session_edit_path(@session, :location)
   end

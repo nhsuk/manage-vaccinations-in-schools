@@ -26,8 +26,8 @@ describe SessionPolicy do
     let(:team) { create :team }
     let(:user) { create :user, teams: [team] }
     let(:location) { create(:location, :school) }
-    let(:campaign) { create :campaign, team: }
-    let(:draft_session) { create :session, draft: true, location:, campaign: }
+    let(:campaign) { create :campaign, :active, team: }
+    let(:draft_session) { create :session, :draft, location:, campaign: }
     let(:session) { create :session, location:, campaign: }
 
     it { should include draft_session }
@@ -35,16 +35,14 @@ describe SessionPolicy do
 
     context "location and campaign are nil" do
       let(:draft_session) do
-        create :session, draft: true, location: nil, campaign: nil
+        create :session, :draft, location: nil, campaign: nil
       end
 
       it { should include draft_session }
     end
 
     context "campaign is set but not location" do
-      let(:draft_session) do
-        create :session, draft: true, location: nil, campaign:
-      end
+      let(:draft_session) { create :session, :draft, location: nil, campaign: }
 
       it { should include draft_session }
     end

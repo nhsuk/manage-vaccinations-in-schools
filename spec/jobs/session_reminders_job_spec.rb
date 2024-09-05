@@ -6,7 +6,7 @@ describe SessionRemindersJob do
     ActiveJob::Base.queue_adapter.enqueued_jobs.clear
   end
 
-  let(:campaign) { create(:campaign) }
+  let(:campaign) { create(:campaign, :active) }
 
   it "enqueues SessionRemdindersJob for each session happening tomorrow" do
     tomorrow_session = create(:session, date: Date.tomorrow, campaign:)
@@ -22,10 +22,8 @@ describe SessionRemindersJob do
 
   context "with draft and active sessions" do
     it "enqueues ConsentRemindersSessionBatchJob for each active sessions" do
-      active_session =
-        create(:session, draft: false, date: Date.tomorrow, campaign:)
-      _draft_session =
-        create(:session, draft: true, date: Date.tomorrow, campaign:)
+      active_session = create(:session, date: Date.tomorrow, campaign:)
+      _draft_session = create(:session, :draft, date: Date.tomorrow, campaign:)
 
       described_class.perform_now
       expect(SessionRemindersBatchJob).to have_been_enqueued.once
