@@ -27,32 +27,9 @@
     <%= render AppCardComponent.new(colour: "blue") do |c| %>
       <% c.with_heading { "Duplicate record" } %>
       <h3 class="nhsuk-heading-s">Duplicate child record</h3>
-      <%= govuk_summary_list do |summary_list| %>
-        <% summary_list.with_row do |row| %>
-          <% row.with_key { "NHS number" } %>
-          <% row.with_value { format_nhs_number(@patient.nhs_number) } %>
-        <% end %>
-        <% summary_list.with_row do |row| %>
-          <% row.with_key { "Full name" } %>
-          <% row.with_value { @patient.full_name } %>
-        <% end %>
-        <% summary_list.with_row do |row| %>
-          <% row.with_key { "Date of birth" } %>
-          <% row.with_value { @patient.date_of_birth.to_fs(:long) } %>
-        <% end %>
-        <% summary_list.with_row do |row| %>
-          <% row.with_key { "Sex" } %>
-          <% row.with_value { @patient.gender_code.humanize } %>
-        <% end %>
-        <% summary_list.with_row do |row| %>
-          <% row.with_key { "Postcode" } %>
-          <% row.with_value { @patient.address_postcode } %>
-        <% end %>
-        <% summary_list.with_row do |row| %>
-          <% row.with_key { "School" } %>
-          <% row.with_value { @patient.school&.name } %>
-        <% end %>
-      <% end %>
+      <%= render AppPatientSummaryComponent.new(
+            patient: @patient.with_pending_changes,
+          ) %>
     <% end %>
   </div>
 
@@ -60,32 +37,9 @@
     <%= render AppCardComponent.new(colour: "blue") do |c| %>
       <% c.with_heading { "Previously uploaded record" } %>
       <h3 class="nhsuk-heading-s">Previously uploaded child record</h3>
-      <%= govuk_summary_list do |summary_list| %>
-        <% summary_list.with_row do |row| %>
-          <% row.with_key { "NHS number" } %>
-          <% row.with_value { format_nhs_number(@patient.nhs_number) } %>
-        <% end %>
-        <% summary_list.with_row do |row| %>
-          <% row.with_key { "Full name" } %>
-          <% row.with_value { @patient.full_name } %>
-        <% end %>
-        <% summary_list.with_row do |row| %>
-          <% row.with_key { "Date of birth" } %>
-          <% row.with_value { @patient.date_of_birth.to_fs(:long) } %>
-        <% end %>
-        <% summary_list.with_row do |row| %>
-          <% row.with_key { "Sex" } %>
-          <% row.with_value { @patient.gender_code.humanize } %>
-        <% end %>
-        <% summary_list.with_row do |row| %>
-          <% row.with_key { "Postcode" } %>
-          <% row.with_value { @patient.address_postcode } %>
-        <% end %>
-        <% summary_list.with_row do |row| %>
-          <% row.with_key { "School" } %>
-          <% row.with_value { @patient.school&.name } %>
-        <% end %>
-      <% end %>
+      <%= render AppPatientSummaryComponent.new(
+            patient: @patient,
+          ) %>
     <% end %>
   </div>
 </div>
