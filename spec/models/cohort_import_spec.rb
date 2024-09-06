@@ -27,11 +27,14 @@
 describe CohortImport, type: :model do
   subject(:cohort_import) { build(:cohort_import, csv:) }
 
+  let(:file) { "valid_cohort.csv" }
+  let(:csv) { fixture_file_upload("spec/fixtures/cohort_import/#{file}") }
   # Ensure location URN matches the URN in our fixture files
   let!(:location) do
     Location.find_by(urn: "123456") || create(:location, :school, urn: "123456")
   end
-  let(:csv) { fixture_file_upload("spec/fixtures/cohort_import/#{file}") }
+
+  it_behaves_like "a CSVImportable model"
 
   describe "#load_data!" do
     subject(:load_data!) { cohort_import.load_data! }

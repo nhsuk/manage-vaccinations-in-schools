@@ -137,10 +137,10 @@ Rails.application.configure do
       class: "SessionRemindersJob",
       description: "Send session reminder emails to parents"
     },
-    remove_immunisation_import_csv: {
+    remove_import_csv: {
       cron: "every day at 1am",
-      class: "RemoveImmunisationImportCSVJob",
-      description: "Remove CSV data from old immunisation imports"
+      class: "RemoveImportCSVJob",
+      description: "Remove CSV data from old cohort and immunisation imports"
     }
   }
 end
