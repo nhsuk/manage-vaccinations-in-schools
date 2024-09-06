@@ -4,7 +4,7 @@ describe "Batches" do
   around { |example| travel_to(Time.zone.local(2024, 2, 29)) { example.run } }
 
   scenario "Adding and editing batches" do
-    given_my_team_is_running_an_hpv_vaccination_campaign
+    given_my_team_is_running_an_hpv_vaccination_programme
     and_there_is_a_vaccination_session_today_with_one_patient_ready_to_vaccinate
 
     when_i_manage_vaccines
@@ -17,14 +17,14 @@ describe "Batches" do
     then_i_see_the_updated_expiry_date_on_the_vaccines_page
   end
 
-  def given_my_team_is_running_an_hpv_vaccination_campaign
+  def given_my_team_is_running_an_hpv_vaccination_programme
     @team = create(:team, :with_one_nurse)
-    @campaign = create(:campaign, :hpv_no_batches, team: @team)
+    @programme = create(:programme, :hpv_no_batches, team: @team)
   end
 
   def and_there_is_a_vaccination_session_today_with_one_patient_ready_to_vaccinate
     location = create(:location, :school)
-    session = create(:session, :in_progress, campaign: @campaign, location:)
+    session = create(:session, :in_progress, programme: @programme, location:)
 
     create(:patient_session, :consent_given_triage_not_needed, session:)
 

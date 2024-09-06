@@ -4,9 +4,9 @@ describe PatientSessionPolicy do
   let(:patient_session) { create :patient_session }
   let(:another_teams_patient_session) do
     create :patient_session,
-           session: create(:session, campaign: create(:campaign, :flu))
+           session: create(:session, programme: create(:programme, :flu))
   end
-  let(:team) { patient_session.session.campaign.team }
+  let(:team) { patient_session.session.programme.team }
   let(:user) { create :user, teams: [team] }
 
   describe "Scope#resolve" do

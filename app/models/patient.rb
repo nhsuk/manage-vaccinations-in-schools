@@ -54,7 +54,7 @@ class Patient < ApplicationRecord
   has_many :sessions, through: :patient_sessions
   has_many :triage, through: :patient_sessions
   has_many :vaccination_records, through: :patient_sessions
-  has_many :campaigns, through: :sessions
+  has_many :programmes, through: :sessions
 
   # https://www.datadictionary.nhs.uk/attributes/person_gender_code.html
   enum :gender_code, { not_known: 0, male: 1, female: 2, not_specified: 9 }

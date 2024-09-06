@@ -14,6 +14,6 @@ module SessionsHelper
   end
 
   def session_name(session)
-    "#{session.campaign.name} session at #{session_location(session, part_of_sentence: true)}"
+    "#{session.programme.name} session at #{session_location(session, part_of_sentence: true)}"
   end
 end

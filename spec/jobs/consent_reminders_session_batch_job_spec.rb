@@ -4,16 +4,16 @@ describe ConsentRemindersSessionBatchJob, type: :job do
   before { ActionMailer::Base.deliveries.clear }
 
   it "only sends emails to patients parents to whom they have not been sent yet" do
-    campaign = create(:campaign)
+    programme = create(:programme)
     patient_with_reminder_sent =
       build(:patient, sent_reminder_at: Time.zone.today)
     patient_not_sent_reminder = build(:patient)
     patient_with_consent =
-      build(:patient, :consent_given_triage_not_needed, campaign:)
+      build(:patient, :consent_given_triage_not_needed, programme:)
     session =
       create(
         :session,
-        campaign:,
+        programme:,
         patients: [
           patient_with_reminder_sent,
           patient_not_sent_reminder,

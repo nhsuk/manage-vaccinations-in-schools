@@ -29,9 +29,9 @@ endif::[]
 
 == Introduction and Goals
 
-This is the pilot a service to manage vaccinations in schools and during 
-catch-up clinics. This service will provide e-consent, campaign management and 
-point-of-care services for SAIS teams and parents. The goal is for this service 
+This is the pilot a service to manage vaccinations in schools and during
+catch-up clinics. This service will provide e-consent, programme management and
+point-of-care services for SAIS teams and parents. The goal is for this service
 to integrate with the national vaccination record to record vaccinations.
 
 This service is in Alpha and this pilot is being used in to explore designs and
@@ -43,8 +43,8 @@ non-functional requirements which have been, where possible, de-emphasised.
 
 .Functional Requirements
 
-* Allow SAIS teams to deliver vaccination campaigns.
-** Manage vaccination campaigns including location and cohort information.
+* Allow SAIS teams to deliver vaccination programmes.
+** Manage vaccination programmes including location and cohort information.
 ** Create consent invites.
 ** Record vaccinations administered.
 * Allow parents to respond to consent requests.
@@ -129,7 +129,7 @@ SAIS Team::
 Team responsible for performing vaccinations on school-aged children.
 
 Parents::
-Parents are notified of the planned vaccination campaign and invited to give
+Parents are notified of the planned vaccination programme and invited to give
 consent for their children to be vaccinated.
 
 Manage vaccinations in schools service::
@@ -203,7 +203,7 @@ storage. This is managed by the service worker, see the offline documentation
 for more information.
 
 Database::
-Relational storage used to store application data including campaign data,
+Relational storage used to store application data including programme data,
 consent responses and vaccination events. In the case of the vaccination events,
 this data would be uploaded to the national vaccination record and this data
 store would be used as temporary storage. However during the alpha phase
@@ -233,7 +233,7 @@ include::deployment.adoc[leveloffset=+1,lines=24..-1]
 == Components
 
 * Authentication
-* Campaign management - creation, update, etc
-* Campaign operations and vaccination recording
+* Programme management - creation, update, etc
+* Programme operations and vaccination recording
 * Offline support - Browser-based component
 * FHIR server synchronisation

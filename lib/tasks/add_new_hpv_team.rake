@@ -3,7 +3,7 @@
 require_relative "../task_helpers"
 
 desc <<-DESC
-  Add a new HPV team consisting of a team, campaign, vaccine, and
+  Add a new HPV team consisting of a team, programme, vaccine, and
   health questions.
 
   Usage:
@@ -44,7 +44,7 @@ task :add_new_hpv_team,
         reply_to_id:
       )
 
-    campaign = Campaign.create!(name: "HPV", team:)
+    programme = Programme.create!(name: "HPV", team:)
     vaccine =
       Vaccine.create!(type: "HPV", brand: "Gardasil 9", method: "injection")
 
@@ -66,10 +66,10 @@ task :add_new_hpv_team,
     health_questions[0].update!(next_question_id: health_questions[1].id)
     health_questions[1].update!(next_question_id: health_questions[2].id)
 
-    campaign.vaccines << vaccine
+    programme.vaccines << vaccine
 
     puts "Team #{team.name} (ID: #{team.id}) added.
-  Campaign #{campaign.name} (ID: #{campaign.id}) added.
+  Programme #{programme.name} (ID: #{programme.id}) added.
   HPV vaccine (ID: #{vaccine.id}) added."
   end
 end

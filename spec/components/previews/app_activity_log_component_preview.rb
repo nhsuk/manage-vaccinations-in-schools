@@ -11,13 +11,13 @@ class AppActivityLogComponentPreview < ViewComponent::Preview
 
   private
 
-  attr_reader :patient_session, :campaign, :session, :patient, :consents
+  attr_reader :patient_session, :programme, :session, :patient, :consents
 
   def setup
     @team = Team.first
-    @campaign = @team.campaigns.first
+    @programme = @team.programmes.first
     @user = @team.users.first
-    @session = @campaign.sessions.first
+    @session = @programme.sessions.first
     @location = @session.location
     @patient = create(:patient, location: @location)
 
@@ -26,7 +26,7 @@ class AppActivityLogComponentPreview < ViewComponent::Preview
         :consent,
         :given,
         :from_mum,
-        campaign: @campaign,
+        programme: @programme,
         patient: @patient,
         parent: create(:parent, :mum, name: "Jane Doe"),
         recorded_at: Time.zone.parse("2024-05-30 12:00")
@@ -35,7 +35,7 @@ class AppActivityLogComponentPreview < ViewComponent::Preview
         :consent,
         :refused,
         :from_dad,
-        campaign: @campaign,
+        programme: @programme,
         patient: @patient,
         parent: create(:parent, :dad, name: "John Doe"),
         recorded_at: Time.zone.parse("2024-05-30 13:00")

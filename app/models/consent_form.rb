@@ -64,8 +64,8 @@ class ConsentForm < ApplicationRecord
              class_name: "Parent",
              optional: true,
              foreign_key: :parent_id
-  has_one :campaign, through: :session
-  has_one :team, through: :campaign
+  has_one :programme, through: :session
+  has_one :team, through: :programme
 
   enum :response, %w[given refused not_provided], prefix: "consent"
   enum :reason,
@@ -217,7 +217,7 @@ class ConsentForm < ApplicationRecord
   def gelatine_content_status_in_vaccines
     # we don't YET track the vaccine type that the user is agreeing to in the consent form,
     # so we have to check all vaccines
-    # there might not be a true or false answer if there are multiple vaccines in the campaign
+    # there might not be a true or false answer if there are multiple vaccines in the programme
     # (e.g. flu nasal and flu injection)
     possible_answers = vaccines.map(&:contains_gelatine?)
     if possible_answers.uniq.length == 1
@@ -264,7 +264,7 @@ class ConsentForm < ApplicationRecord
   end
 
   def injection_offered_as_alternative?
-    refused_and_not_had_it_already? && session.campaign.name == "Flu"
+    refused_and_not_had_it_already? && session.programme.name == "Flu"
     # checking for flu here is a simplification
     # the actual logic is: if the parent has refused a nasal vaccine AND the session is for a nasal vaccine
     # AND the SAIS team offers an alternative injection vaccine, then show the injection step
@@ -277,7 +277,7 @@ class ConsentForm < ApplicationRecord
   end
 
   def vaccines
-    session.campaign.vaccines
+    session.programme.vaccines
   end
 
   def health_answers_valid?
@@ -332,7 +332,7 @@ class ConsentForm < ApplicationRecord
 
   def seed_health_questions
     return unless health_answers.empty?
-    vaccine = campaign.vaccines.first
+    vaccine = programme.vaccines.first
     self.health_answers = vaccine.health_questions.to_health_answers
   end
 end

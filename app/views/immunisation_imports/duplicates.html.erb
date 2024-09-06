@@ -1,18 +1,18 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: new_campaign_immunisation_import_path(@campaign),
-        name: @campaign.name,
+        href: new_programme_immunisation_import_path(@programme),
+        name: @programme.name,
       ) %>
 <% end %>
 
 <% title = "Vaccination records already uploaded" %>
 
-<%= h1 title, page_title: "#{@campaign.name} – #{title}" %>
+<%= h1 title, page_title: "#{@programme.name} – #{title}" %>
 
 <p>
   All records in this CSV file have been uploaded.
 </p>
 
 <p>
-  <%= govuk_link_to "Upload new vaccination records", new_campaign_immunisation_import_path %>
+  <%= govuk_link_to "Upload new vaccination records", new_programme_immunisation_import_path %>
 </p>

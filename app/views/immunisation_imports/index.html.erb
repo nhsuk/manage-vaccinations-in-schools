@@ -1,39 +1,39 @@
-<%= content_for :page_title, "#{@campaign.name} – #{t("immunisation_imports.index.title")}" %>
+<%= content_for :page_title, "#{@programme.name} – #{t("immunisation_imports.index.title")}" %>
 
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
-                                          { text: t("campaigns.index.title"), href: campaigns_path },
-                                          { text: @campaign.name, href: campaign_path(@campaign) },
+                                          { text: t("programmes.index.title"), href: programmes_path },
+                                          { text: @programme.name, href: programme_path(@programme) },
                                         ]) %>
 <% end %>
 
-<%= render "campaigns/name_and_academic_year" %>
+<%= render "programmes/name_and_academic_year" %>
 
 <%= render AppSecondaryNavigationComponent.new do |nav|
       nav.with_item(
         text: "Overview",
-        href: campaign_path(@campaign),
+        href: programme_path(@programme),
       )
       nav.with_item(
-        text: t("campaigns.patients.title"),
-        href: patients_campaign_path(@campaign),
+        text: t("programmes.patients.title"),
+        href: patients_programme_path(@programme),
       )
       nav.with_item(
         text: "School sessions",
-        href: sessions_campaign_path(@campaign),
+        href: sessions_programme_path(@programme),
       )
       nav.with_item(
         text: t("vaccination_records.index.title"),
-        href: campaign_vaccination_records_path(@campaign),
+        href: programme_vaccination_records_path(@programme),
       )
       nav.with_item(
         text: t("immunisation_imports.index.title"),
-        href: campaign_immunisation_imports_path(@campaign),
+        href: programme_immunisation_imports_path(@programme),
         selected: true,
       )
     end %>
 <p class="app-action-list">
-  <%= govuk_link_to "Upload new vaccination records", new_campaign_immunisation_import_path %>
+  <%= govuk_link_to "Upload new vaccination records", new_programme_immunisation_import_path %>
 </p>
 
 <div class="nhsuk-table__panel-with-heading-tab">
@@ -53,7 +53,7 @@
         <% body.with_row do |row| %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Upload date</span>
-            <%= govuk_link_to immunisation_import.created_at.to_fs(:long), campaign_immunisation_import_path(@campaign, immunisation_import) %>
+            <%= govuk_link_to immunisation_import.created_at.to_fs(:long), programme_immunisation_import_path(@programme, immunisation_import) %>
           <% end %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Uploaded by</span>
@@ -71,7 +71,7 @@
 
 <% content_for :after_main do %>
   <%= render(AppDevToolsComponent.new) do %>
-    <%= govuk_button_to "Download DPS export", export_dps_campaign_vaccination_records_path(@campaign) %>
-    <%= govuk_button_to "Reset DPS export for campaign", reset_dps_export_campaign_vaccination_records_path(@campaign) %>
+    <%= govuk_button_to "Download DPS export", export_dps_programme_vaccination_records_path(@programme) %>
+    <%= govuk_button_to "Reset DPS export for programme", reset_dps_export_programme_vaccination_records_path(@programme) %>
   <% end %>
 <% end %>

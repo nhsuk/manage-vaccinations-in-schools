@@ -2,7 +2,7 @@
 
 describe "User authorisation" do
   scenario "Users are unable to access other teams' pages" do
-    given_an_hpv_campaign_is_underway_with_two_teams
+    given_an_hpv_programme_is_underway_with_two_teams
     when_i_sign_in_as_a_nurse_from_one_team
     and_i_go_to_the_consent_page
     then_i_should_only_see_my_patients
@@ -17,21 +17,21 @@ describe "User authorisation" do
     then_i_should_see_page_not_found
   end
 
-  def given_an_hpv_campaign_is_underway_with_two_teams
+  def given_an_hpv_programme_is_underway_with_two_teams
     @team = create(:team, :with_one_nurse)
     @other_team = create(:team, :with_one_nurse)
     vaccine = create(:vaccine, :hpv)
-    campaign = create(:campaign, :hpv, team: @team, vaccines: [vaccine])
-    other_campaign =
-      create(:campaign, :hpv, team: @other_team, vaccines: [vaccine])
+    programme = create(:programme, :hpv, team: @team, vaccines: [vaccine])
+    other_programme =
+      create(:programme, :hpv, team: @other_team, vaccines: [vaccine])
     location = create(:location, :school, name: "Pilot School")
     other_location = create(:location, :school, name: "Other School")
-    @session = create(:session, :in_future, campaign:, location:)
+    @session = create(:session, :in_future, programme:, location:)
     @other_session =
       create(
         :session,
         :in_future,
-        campaign: other_campaign,
+        programme: other_programme,
         location: other_location
       )
     @child = create(:patient, session: @session)

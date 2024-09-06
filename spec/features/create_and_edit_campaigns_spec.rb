@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-describe "Create and edit campaigns" do
+describe "Create and edit programmes" do
   before { given_i_am_signed_in }
 
-  scenario "User creates a Flu campaign" do
+  scenario "User creates a Flu programme" do
     given_active_flu_vaccines_exist
     and_discontinued_flu_vaccines_exist
 
-    when_i_go_to_the_campaigns_page
-    and_i_click_on_the_new_campaign_button
+    when_i_go_to_the_programmes_page
+    and_i_click_on_the_new_programme_button
     then_i_should_see_the_details_page
 
     when_i_fill_in_flu_details
@@ -19,21 +19,21 @@ describe "Create and edit campaigns" do
     and_i_click_continue
     then_i_should_see_the_new_confirm_page
 
-    when_i_confirm_the_campaign
-    then_i_should_see_the_campaign_page
-    and_i_should_see_the_flu_campaign
+    when_i_confirm_the_programme
+    then_i_should_see_the_programme_page
+    and_i_should_see_the_flu_programme
 
-    when_i_go_to_the_campaigns_page
-    then_i_should_see_the_flu_campaign_and_vaccines
+    when_i_go_to_the_programmes_page
+    then_i_should_see_the_flu_programme_and_vaccines
   end
 
-  scenario "User edits a Flu campaign" do
-    given_a_flu_campaign_exists
+  scenario "User edits a Flu programme" do
+    given_a_flu_programme_exists
     and_discontinued_flu_vaccines_exist
 
-    when_i_go_to_the_campaigns_page
-    and_i_click_on_the_flu_campaign
-    and_i_click_edit_campaign
+    when_i_go_to_the_programmes_page
+    and_i_click_on_the_flu_programme
+    and_i_click_edit_programme
     then_i_should_see_the_edit_confirm_page
 
     when_i_click_on_change_name
@@ -51,17 +51,17 @@ describe "Create and edit campaigns" do
     and_i_click_continue
     then_i_should_see_the_edit_confirm_page
 
-    when_i_confirm_the_campaign
-    then_i_should_see_the_campaign_page
-    and_i_should_see_the_flu_campaign
+    when_i_confirm_the_programme
+    then_i_should_see_the_programme_page
+    and_i_should_see_the_flu_programme
   end
 
-  scenario "User creates an HPV campaign" do
+  scenario "User creates an HPV programme" do
     given_active_hpv_vaccines_exist
     and_discontinued_hpv_vaccines_exist
 
-    when_i_go_to_the_campaigns_page
-    and_i_click_on_the_new_campaign_button
+    when_i_go_to_the_programmes_page
+    and_i_click_on_the_new_programme_button
     then_i_should_see_the_details_page
 
     when_i_fill_in_hpv_details
@@ -72,21 +72,21 @@ describe "Create and edit campaigns" do
     and_i_click_continue
     then_i_should_see_the_new_confirm_page
 
-    when_i_confirm_the_campaign
-    then_i_should_see_the_campaign_page
-    and_i_should_see_the_hpv_campaign
+    when_i_confirm_the_programme
+    then_i_should_see_the_programme_page
+    and_i_should_see_the_hpv_programme
 
-    when_i_go_to_the_campaigns_page
-    then_i_should_see_the_hpv_campaign_and_vaccines
+    when_i_go_to_the_programmes_page
+    then_i_should_see_the_hpv_programme_and_vaccines
   end
 
-  scenario "User edits an HPV campaign" do
-    given_an_hpv_campaign_exists
+  scenario "User edits an HPV programme" do
+    given_an_hpv_programme_exists
     and_discontinued_hpv_vaccines_exist
 
-    when_i_go_to_the_campaigns_page
-    and_i_click_on_the_hpv_campaign
-    and_i_click_edit_campaign
+    when_i_go_to_the_programmes_page
+    and_i_click_on_the_hpv_programme
+    and_i_click_edit_programme
     then_i_should_see_the_edit_confirm_page
 
     when_i_click_on_change_name
@@ -104,9 +104,9 @@ describe "Create and edit campaigns" do
     and_i_click_continue
     then_i_should_see_the_edit_confirm_page
 
-    when_i_confirm_the_campaign
-    then_i_should_see_the_campaign_page
-    and_i_should_see_the_hpv_campaign
+    when_i_confirm_the_programme
+    then_i_should_see_the_programme_page
+    and_i_should_see_the_hpv_programme
   end
 
   def given_i_am_signed_in
@@ -132,9 +132,9 @@ describe "Create and edit campaigns" do
     create(:vaccine, :gardasil)
   end
 
-  def given_a_flu_campaign_exists
+  def given_a_flu_programme_exists
     create(
-      :campaign,
+      :programme,
       :flu,
       name: "Flu - to be renamed",
       academic_year: 2024,
@@ -142,9 +142,9 @@ describe "Create and edit campaigns" do
     )
   end
 
-  def given_an_hpv_campaign_exists
+  def given_an_hpv_programme_exists
     create(
-      :campaign,
+      :programme,
       :hpv,
       name: "HPV - to be renamed",
       academic_year: 2024,
@@ -152,12 +152,12 @@ describe "Create and edit campaigns" do
     )
   end
 
-  def when_i_go_to_the_campaigns_page
+  def when_i_go_to_the_programmes_page
     visit "/dashboard"
     click_on "Vaccination programmes", match: :first
   end
 
-  def and_i_click_on_the_new_campaign_button
+  def and_i_click_on_the_new_programme_button
     click_on "Create a new vaccination programme"
   end
 
@@ -210,43 +210,43 @@ describe "Create and edit campaigns" do
     expect(page).to have_content("New programme details")
   end
 
-  def when_i_confirm_the_campaign
+  def when_i_confirm_the_programme
     click_on "Save changes"
   end
 
-  def then_i_should_see_the_campaign_page
+  def then_i_should_see_the_programme_page
     expect(page).to have_content("Vaccination programmes")
   end
 
-  def and_i_should_see_the_flu_campaign
+  def and_i_should_see_the_flu_programme
     expect(page).to have_content("Flu\n2025/26")
   end
 
-  def and_i_should_see_the_hpv_campaign
+  def and_i_should_see_the_hpv_programme
     expect(page).to have_content("HPV\n2025/26")
   end
 
-  def then_i_should_see_the_flu_campaign_and_vaccines
+  def then_i_should_see_the_flu_programme_and_vaccines
     expect(page).to have_content(
       "Name Flu Academic year 2025/26 Vaccines Adjuvanted Quadrivalent - aQIV"
     )
   end
 
-  def then_i_should_see_the_hpv_campaign_and_vaccines
+  def then_i_should_see_the_hpv_programme_and_vaccines
     expect(page).to have_content(
       "Name HPV Academic year 2025/26 Vaccines Gardasil 9"
     )
   end
 
-  def and_i_click_on_the_flu_campaign
+  def and_i_click_on_the_flu_programme
     click_on "Flu"
   end
 
-  def and_i_click_on_the_hpv_campaign
+  def and_i_click_on_the_hpv_programme
     click_on "HPV"
   end
 
-  def and_i_click_edit_campaign
+  def and_i_click_edit_programme
     click_on "Edit programme"
   end
 

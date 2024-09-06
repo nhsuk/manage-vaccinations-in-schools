@@ -1,7 +1,7 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: campaign_immunisation_import_path(@campaign, @immunisation_import),
-        name: @campaign.name,
+        href: programme_immunisation_import_path(@programme, @immunisation_import),
+        name: @programme.name,
       ) %>
 <% end %>
 
@@ -46,8 +46,8 @@
 
 <%= form_with(
       model: @immunisation_import,
-      url: campaign_immunisation_import_patient_path(@campaign,
-                                                     @immunisation_import),
+      url: programme_immunisation_import_patient_path(@programme,
+                                                      @immunisation_import),
       method: :put,
       class: "nhsuk-u-width-one-half",
     ) do |f| %>

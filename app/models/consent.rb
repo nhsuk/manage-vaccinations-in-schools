@@ -52,13 +52,13 @@ class Consent < ApplicationRecord
              optional: true,
              foreign_key: :parent_id
   belongs_to :patient
-  belongs_to :campaign
+  belongs_to :programme
   belongs_to :recorded_by,
              class_name: "User",
              optional: true,
              foreign_key: :recorded_by_user_id
 
-  scope :submitted_for_campaign, ->(campaign) { recorded.where(campaign:) }
+  scope :submitted_for_programme, ->(programme) { recorded.where(programme:) }
 
   enum :response, %w[given refused not_provided], prefix: true
   enum :reason_for_refusal,
@@ -169,7 +169,7 @@ class Consent < ApplicationRecord
       consent =
         create!(
           consent_form:,
-          campaign: consent_form.session.campaign,
+          programme: consent_form.session.programme,
           patient: patient_session.patient,
           parent:,
           reason_for_refusal: consent_form.reason,
@@ -240,7 +240,7 @@ class Consent < ApplicationRecord
 
   def seed_health_questions
     return unless health_answers.empty?
-    vaccine = campaign.vaccines.first # assumes all vaccines in the campaign have the same questions
+    vaccine = programme.vaccines.first # assumes all vaccines in the programme have the same questions
     self.health_answers = vaccine.health_questions.to_health_answers
   end
 end

@@ -34,7 +34,7 @@ records requires a more advanced approach.
 == Feature overview
 
 The service's current design is for SAIS team members to be able to select
-specific campaigns to be saved (after being encrypted) for offline use. The user
+specific programmes to be saved (after being encrypted) for offline use. The user
 is then be able to retrieve and view saved patient information, including
 consent status and other info (e.g. past vaccination history), before performing
 the vaccination. When the vaccination is performed, the event will be recorded
@@ -90,17 +90,17 @@ include::diagrams/working-online-sequence-diagram.puml[]
 endif::[]
 
 
-.Saving a campaign for offline
-When the user is ready, they save a campaign to be run while offline:
+.Saving a programme for offline
+When the user is ready, they save a programme to be run while offline:
 
 ifdef::env-github[]
-image::{diagram-path-url}/diagrams/saving-campaign-for-offline-sequence-diagram.puml[Saving campaign for offline sequence diagram]
+image::{diagram-path-url}/diagrams/saving-programme-for-offline-sequence-diagram.puml[Saving programme for offline sequence diagram]
 endif::[]
 
 ifndef::env-github[]
 [plantuml,align="center"]
 ----
-include::diagrams/saving-campaign-for-offline-sequence-diagram.puml[]
+include::diagrams/saving-programme-for-offline-sequence-diagram.puml[]
 ----
 endif::[]
 

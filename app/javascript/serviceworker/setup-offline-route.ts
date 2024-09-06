@@ -17,18 +17,18 @@ export const setupOfflineRouteHandler = async ({ request }) => {
 
     await initCache(password);
 
-    const campaignId = getCampaignIdFromURL(request.url);
+    const programmeId = getCampaignIdFromURL(request.url);
     await addAll([
       css,
       js,
       `/favicon.ico`,
       `/start`,
       `/dashboard`,
-      `/sessions/${campaignId}`,
-      `/sessions/${campaignId}/vaccinations`,
-      `/sessions/${campaignId}/vaccinations.json`,
-      `/sessions/${campaignId}/vaccinations/record-template`,
-      `/sessions/${campaignId}/vaccinations/show-template`,
+      `/sessions/${programmeId}`,
+      `/sessions/${programmeId}/vaccinations`,
+      `/sessions/${programmeId}/vaccinations.json`,
+      `/sessions/${programmeId}/vaccinations/record-template`,
+      `/sessions/${programmeId}/vaccinations/show-template`,
     ]);
   }
 

@@ -16,7 +16,7 @@ SystemDb_Ext(pds, "PDS", "")
 
 AddRelTag("optional", $textColor="black", $lineColor="black", $lineStyle="dashed")
 
-Rel(sais, manage, "Manage campaigns")
+Rel(sais, manage, "Manage programmes")
 Rel(sais, manage, "Record Child Vaccination")
 Rel(parents, manage, "Consent response")
 Rel(manage, vaccineRecord, "Updates Child Vaccination History", $tags="optional")

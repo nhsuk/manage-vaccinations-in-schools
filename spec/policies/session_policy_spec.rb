@@ -7,13 +7,13 @@ describe SessionPolicy do
     let(:users_team) { create :team }
     let(:another_team) { create :team }
     let(:user) { create :user, teams: [users_team] }
-    let(:users_teams_campaign) { create :campaign, team: users_team }
-    let(:another_teams_campaign) { create :campaign, team: another_team }
+    let(:users_teams_programme) { create :programme, team: users_team }
+    let(:another_teams_programme) { create :programme, team: another_team }
     let(:users_teams_session) do
-      create :session, campaign: users_teams_campaign
+      create :session, programme: users_teams_programme
     end
     let(:another_teams_session) do
-      create :session, campaign: another_teams_campaign
+      create :session, programme: another_teams_programme
     end
 
     it { should include users_teams_session }
@@ -26,23 +26,23 @@ describe SessionPolicy do
     let(:team) { create :team }
     let(:user) { create :user, teams: [team] }
     let(:location) { create(:location, :school) }
-    let(:campaign) { create :campaign, :active, team: }
-    let(:draft_session) { create :session, :draft, location:, campaign: }
-    let(:session) { create :session, location:, campaign: }
+    let(:programme) { create :programme, :active, team: }
+    let(:draft_session) { create :session, :draft, location:, programme: }
+    let(:session) { create :session, location:, programme: }
 
     it { should include draft_session }
     it { should_not include session }
 
-    context "location and campaign are nil" do
+    context "location and programme are nil" do
       let(:draft_session) do
-        create :session, :draft, location: nil, campaign: nil
+        create :session, :draft, location: nil, programme: nil
       end
 
       it { should include draft_session }
     end
 
-    context "campaign is set but not location" do
-      let(:draft_session) { create :session, :draft, location: nil, campaign: }
+    context "programme is set but not location" do
+      let(:draft_session) { create :session, :draft, location: nil, programme: }
 
       it { should include draft_session }
     end

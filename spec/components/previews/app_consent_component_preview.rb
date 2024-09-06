@@ -55,10 +55,10 @@ class AppConsentComponentPreview < ViewComponent::Preview
 
   private
 
-  attr_reader :campaign, :session
+  attr_reader :programme, :session
 
   def setup
-    @campaign = create(:campaign, :hpv, team: Team.first || create(:team))
-    @session = create(:session, campaign:)
+    @programme = create(:programme, :hpv, team: Team.first || create(:team))
+    @session = create(:session, programme:)
   end
 end

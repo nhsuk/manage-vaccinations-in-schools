@@ -26,10 +26,10 @@ require "csv"
 
 describe DPSExport, type: :model do
   subject(:dps_export) do
-    described_class.create!(campaign:, filename: "test.csv")
+    described_class.create!(programme:, filename: "test.csv")
   end
 
-  let(:campaign) { patient_session.campaign }
+  let(:programme) { patient_session.programme }
   let(:patient_session) { create(:patient_session) }
 
   before { create_list(:vaccination_record, 2, patient_session:) }

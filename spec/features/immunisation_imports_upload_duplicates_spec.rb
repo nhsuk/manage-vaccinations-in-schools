@@ -5,7 +5,7 @@ describe "Immunisation imports duplicates" do
 
   scenario "User reviews and selects between duplicate records" do
     given_i_am_signed_in
-    and_an_hpv_campaign_is_underway
+    and_an_hpv_programme_is_underway
     and_an_existing_patient_record_exists
 
     when_i_go_to_the_reports_page
@@ -26,11 +26,11 @@ describe "Immunisation imports duplicates" do
     sign_in @team.users.first
   end
 
-  def and_an_hpv_campaign_is_underway
-    @campaign =
-      create(:campaign, :hpv_all_vaccines, academic_year: 2023, team: @team)
+  def and_an_hpv_programme_is_underway
+    @programme =
+      create(:programme, :hpv_all_vaccines, academic_year: 2023, team: @team)
     @location = create(:location, :school, urn: "110158")
-    @session = create(:session, campaign: @campaign, location: @location)
+    @session = create(:session, programme: @programme, location: @location)
   end
 
   def and_an_existing_patient_record_exists

@@ -3,7 +3,7 @@
 describe "Response matching" do
   scenario "Users can match responses to patient records" do
     given_the_app_is_setup
-    when_i_go_to_the_campaigns_page
+    when_i_go_to_the_programmes_page
     and_i_click_on_the_check_consent_responses_link
     then_i_see_the_unmatched_responses_link
 
@@ -24,20 +24,20 @@ describe "Response matching" do
   def given_the_app_is_setup
     @team = create(:team, :with_one_nurse)
     @user = @team.users.first
-    @campaign = create(:campaign, :hpv, team: @team)
+    @programme = create(:programme, :hpv, team: @team)
     @school = create(:location, :school, name: "Pilot School")
-    @session = create(:session, location: @school, campaign: @campaign)
+    @session = create(:session, location: @school, programme: @programme)
     @consent_form = create(:consent_form, :recorded, session: @session)
     @patient = create(:patient, session: @session)
   end
 
-  def when_i_go_to_the_campaigns_page
+  def when_i_go_to_the_programmes_page
     sign_in @user
-    visit campaigns_path
+    visit programmes_path
   end
 
   def and_i_click_on_the_check_consent_responses_link
-    click_on @campaign.name
+    click_on @programme.name
     click_on "School sessions"
     click_on @school.name
     click_on "Check consent responses"

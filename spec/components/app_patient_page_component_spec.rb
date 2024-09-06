@@ -11,8 +11,8 @@ describe AppPatientPageComponent, type: :component do
     # rubocop:enable RSpec/AnyInstance
   end
 
-  let(:campaign) { create(:campaign, :hpv) }
-  let(:vaccine) { campaign.vaccines.first }
+  let(:programme) { create(:programme, :hpv) }
+  let(:vaccine) { programme.vaccines.first }
 
   let(:component) do
     described_class.new(
@@ -30,7 +30,7 @@ describe AppPatientPageComponent, type: :component do
         :patient_session,
         :consent_given_triage_needed,
         :session_in_progress,
-        campaign:
+        programme:
       )
     end
 
@@ -61,7 +61,7 @@ describe AppPatientPageComponent, type: :component do
         :patient_session,
         :triaged_ready_to_vaccinate,
         :session_in_progress,
-        campaign:
+        programme:
       )
     end
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ImmunisationImports::PatientsController < ApplicationController
-  before_action :set_campaign
+  before_action :set_programme
   before_action :set_immunisation_import
   before_action :set_patient
 
@@ -14,17 +14,17 @@ class ImmunisationImports::PatientsController < ApplicationController
 
   private
 
-  def set_campaign
-    @campaign =
-      policy_scope(Campaign)
+  def set_programme
+    @programme =
+      policy_scope(Programme)
         .active
         .includes(:immunisation_imports)
-        .find(params[:campaign_id])
+        .find(params[:programme_id])
   end
 
   def set_immunisation_import
     @immunisation_import =
-      @campaign.immunisation_imports.find(params[:immunisation_import_id])
+      @programme.immunisation_imports.find(params[:immunisation_import_id])
   end
 
   def set_patient

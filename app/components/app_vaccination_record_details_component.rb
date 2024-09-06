@@ -106,8 +106,8 @@ class AppVaccinationRecordDetailsComponent < ViewComponent::Base
             text: "Change",
             visually_hidden_text: "vaccination date",
             href:
-              campaign_vaccination_record_edit_date_and_time_path(
-                @vaccination_record.campaign,
+              programme_vaccination_record_edit_date_and_time_path(
+                @vaccination_record.programme,
                 @vaccination_record
               )
           )

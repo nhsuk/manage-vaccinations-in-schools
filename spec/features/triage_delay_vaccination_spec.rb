@@ -2,7 +2,7 @@
 
 describe "Triage" do
   scenario "delay vaccination" do
-    given_a_campaign_with_a_running_session
+    given_a_programme_with_a_running_session
     and_i_am_signed_in
     when_i_go_to_the_triage_page
 
@@ -21,12 +21,12 @@ describe "Triage" do
     and_i_am_able_to_record_a_vaccination
   end
 
-  def given_a_campaign_with_a_running_session
+  def given_a_programme_with_a_running_session
     @team = create(:team, :with_one_nurse)
-    campaign = create(:campaign, :hpv, team: @team)
+    programme = create(:programme, :hpv, team: @team)
     @school = create(:location, :school)
     session =
-      create(:session, campaign:, location: @school, date: Time.zone.today)
+      create(:session, programme:, location: @school, date: Time.zone.today)
     @patient =
       create(:patient_session, :consent_given_triage_needed, session:).patient
   end

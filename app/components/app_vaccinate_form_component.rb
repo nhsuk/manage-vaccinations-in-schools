@@ -34,8 +34,8 @@ class AppVaccinateFormComponent < ViewComponent::Base
     @patient_session.session
   end
 
-  def campaign_name
-    @patient_session.campaign.name
+  def programme_name
+    @patient_session.programme.name
   end
 
   def vaccine

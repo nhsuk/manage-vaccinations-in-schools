@@ -6,7 +6,7 @@ describe "Parental consent" do
   before { Flipper.enable(:parent_contact_method) }
 
   scenario "Authentication" do
-    given_an_hpv_campaign_is_underway
+    given_an_hpv_programme_is_underway
     when_i_go_to_the_consent_form
     then_i_see_the_start_page
 
@@ -23,11 +23,11 @@ describe "Parental consent" do
     then_i_see_the_start_page
   end
 
-  def given_an_hpv_campaign_is_underway
+  def given_an_hpv_programme_is_underway
     @team = create(:team, :with_one_nurse)
-    campaign = create(:campaign, :hpv, team: @team)
+    programme = create(:programme, :hpv, team: @team)
     location = create(:location, :school, name: "Pilot School")
-    @session = create(:session, :in_future, campaign:, location:)
+    @session = create(:session, :in_future, programme:, location:)
     @child = create(:patient, session: @session)
   end
 

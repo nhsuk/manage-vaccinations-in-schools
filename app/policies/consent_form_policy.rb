@@ -8,8 +8,8 @@ class ConsentFormPolicy
     end
 
     def resolve
-      @scope.joins(session: :campaign).where(
-        campaign: {
+      @scope.joins(session: :programme).where(
+        programme: {
           team_id: @user.teams.ids
         }
       )

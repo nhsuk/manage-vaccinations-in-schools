@@ -17,7 +17,7 @@ task :performance, [] => :environment do |_task, _args|
   consent_forms_total =
     ConsentForm
       .joins(:team)
-      .where(session: { campaigns: { team: teams } })
+      .where(session: { programmes: { team: teams } })
       .and(ConsentForm.where.not(recorded_at: nil))
       .count
   puts "#{consent_forms_total} *Consents returned (total)*"
@@ -25,7 +25,7 @@ task :performance, [] => :environment do |_task, _args|
   vaccination_records_total =
     VaccinationRecord
       .joins(:team)
-      .where(session: { campaigns: { team: teams } })
+      .where(session: { programmes: { team: teams } })
       .and(VaccinationRecord.recorded)
       .count
   puts "#{vaccination_records_total} *Vaccination records (total)*"
@@ -39,7 +39,7 @@ task :performance, [] => :environment do |_task, _args|
     users = "#{team.users.recently_active.count}/#{team.users.count}"
     puts ":busts_in_silhouette: Active users: #{users} users signed in in the last week"
 
-    team.campaigns.first.sessions.active.each do |session|
+    team.programme.sessions.active.each do |session|
       puts ""
       puts ":school: *#{session.location.name}*"
 

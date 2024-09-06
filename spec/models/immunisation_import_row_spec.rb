@@ -4,16 +4,16 @@ describe ImmunisationImportRow, type: :model do
   subject(:immunisation_import_row) do
     described_class.new(
       data:,
-      campaign:,
+      programme:,
       user:,
       imported_from: immunisation_import
     )
   end
 
-  let(:campaign) { create(:campaign, :flu, academic_year: 2023) }
+  let(:programme) { create(:programme, :flu, academic_year: 2023) }
   let(:team) { create(:team, ods_code: "abc") }
   let(:user) { create(:user, teams: [team]) }
-  let(:immunisation_import) { create(:immunisation_import, campaign:, user:) }
+  let(:immunisation_import) { create(:immunisation_import, programme:, user:) }
 
   let(:nhs_number) { "1234567890" }
   let(:first_name) { "Harry" }
@@ -188,7 +188,7 @@ describe ImmunisationImportRow, type: :model do
     end
 
     context "with an invalid dose sequence" do
-      let(:campaign) { create(:campaign, :hpv) }
+      let(:programme) { create(:programme, :hpv) }
 
       let(:data) { { "VACCINE_GIVEN" => "Gardasil9", "DOSE_SEQUENCE" => "4" } }
 
@@ -201,7 +201,7 @@ describe ImmunisationImportRow, type: :model do
     end
 
     context "with valid fields for Flu" do
-      let(:campaign) { create(:campaign, :flu, academic_year: 2023) }
+      let(:programme) { create(:programme, :flu, academic_year: 2023) }
 
       let(:data) do
         {
@@ -228,7 +228,7 @@ describe ImmunisationImportRow, type: :model do
     end
 
     context "with valid fields for HPV" do
-      let(:campaign) { create(:campaign, :hpv, academic_year: 2023) }
+      let(:programme) { create(:programme, :hpv, academic_year: 2023) }
 
       let(:data) do
         {
@@ -687,7 +687,7 @@ describe ImmunisationImportRow, type: :model do
   describe "#dose_sequence" do
     subject(:dose_sequence) { immunisation_import_row.dose_sequence }
 
-    let(:campaign) { create(:campaign, :hpv) }
+    let(:programme) { create(:programme, :hpv) }
 
     context "without a value" do
       let(:data) { { "VACCINE_GIVEN" => "Gardasil9" } }

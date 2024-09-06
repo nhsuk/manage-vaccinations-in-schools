@@ -57,7 +57,7 @@ en:
         absent_from_school: "%{full_name} was absent from school"
         absent_from_session: "%{full_name} was absent from the session"
         gave_consent: "Their %{who_responded} gave consent"
-        triaged_do_not_vaccinate: "Do not vaccinate in campaign"
+        triaged_do_not_vaccinate: "Do not vaccinate in programme"
         unable_to_vaccinate: "Refused vaccine"
     unable_to_vaccinate_not_gillick_competent:
       colour: red

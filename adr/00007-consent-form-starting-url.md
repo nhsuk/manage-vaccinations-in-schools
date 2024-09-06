@@ -92,7 +92,7 @@ GET /sessions/:session_id/consent/confirm -> ParentalConsentController#confirm
 
 ### Option 4: Vaccine-specific URL
 
-It may be sufficient to only provide a campaign identifier as part of the URL.
+It may be sufficient to only provide a programme identifier as part of the URL.
 This would work similarly to the option to provide a session id, however we may
 need to get information from the parent about what school their child goes to.
 
@@ -114,8 +114,8 @@ risks. This could be used by parents who can't locate the consent invitation
 email, or ones who never received it but have children in the class.
 
 At the very least we will need to know which vaccine the consent form is for,
-and almost certainly we'll need to know which campaign specifically. Having the
-campaign will tell us in addition to the vaccine, which year and school. The
+and almost certainly we'll need to know which programme specifically. Having the
+programme will tell us in addition to the vaccine, which year and school. The
 year will be useful as vaccines can change year on year, and the school
 information may be part of the consent form to confirm attendance information.
 

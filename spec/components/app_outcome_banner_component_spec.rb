@@ -28,12 +28,12 @@ describe AppOutcomeBannerComponent, type: :component do
   end
 
   context "state is vaccinated" do
-    let(:campaign) { create(:campaign, :hpv) }
+    let(:programme) { create(:programme, :hpv) }
     let(:patient_session) do
-      create(:patient_session, :vaccinated, created_by: user, campaign:)
+      create(:patient_session, :vaccinated, created_by: user, programme:)
     end
     let(:vaccination_record) { patient_session.vaccination_records.first }
-    let(:vaccine) { patient_session.session.campaign.vaccines.first }
+    let(:vaccine) { patient_session.session.programme.vaccines.first }
     let(:location) { patient_session.session.location }
     let(:batch) { vaccine.batches.first }
     let(:date) { vaccination_record.recorded_at.to_date.to_fs(:long) }
@@ -70,7 +70,7 @@ describe AppOutcomeBannerComponent, type: :component do
 
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
-    it { should have_text("Reason\nDo not vaccinate in campaign") }
+    it { should have_text("Reason\nDo not vaccinate in programme") }
     it { should have_text("Date\nToday (#{date})") }
     it { should_not have_text("Location") }
 

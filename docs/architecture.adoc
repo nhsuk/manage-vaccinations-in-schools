@@ -30,11 +30,11 @@ endif::[]
 
 == Introduction and Goals
 
-This is the prototype a service to manage vaccinations in schools and during 
-catch-up clinics. This service will provide e-consent, campaign management and 
-point-of-care services for SAIS teams and parents. The goal is for this service 
-to integrate with the national vaccination record to record vaccinations. 
-However, integration with the national vaccination record will not be part of 
+This is the prototype a service to manage vaccinations in schools and during
+catch-up clinics. This service will provide e-consent, programme management and
+point-of-care services for SAIS teams and parents. The goal is for this service
+to integrate with the national vaccination record to record vaccinations.
+However, integration with the national vaccination record will not be part of
 this phase.
 
 This service is in Alpha and this pilot is being used in to explore designs and
@@ -46,8 +46,8 @@ non-functional requirements which have been, where possible, de-emphasised.
 
 ==== Functional Requirements
 
-.Vaccination campaign management
-* Create and manage vaccination campaigns
+.Vaccination programme management
+* Create and manage vaccination programmes
 * Create and manage vaccines and batches
 * Create and manage sessions
 * Manage session cohorts
@@ -77,7 +77,7 @@ non-functional requirements which have been, where possible, de-emphasised.
 .User authentication
 * Users are authenticated with the NHS Care Identity Service (CIS2)
 * Users are part of a SAIS team and have restricted access to only those
-  campaign and session data owned by their team
+  programme and session data owned by their team
 * User SAIS team information is retrieved from NHS CIS2
 * Access to functionality will be tied to user's roles as defined in the
     national RBAC, fox example only nurses are authorised to record a
@@ -121,7 +121,7 @@ SAIS Team::
 Team responsible for performing vaccinations on school-aged children.
 
 Parents::
-Parents are notified of the planned vaccination campaign and invited to give
+Parents are notified of the planned vaccination programme and invited to give
 consent for their children to be vaccinated.
 
 NHS Personal demographic service (PDS)::
@@ -175,7 +175,7 @@ include::diagrams/component-view.puml[]
 endif::[]
 
 Database::
-Relational storage used to store application data including campaign data,
+Relational storage used to store application data including programme data,
 consent responses and vaccination events. In the case of the vaccination events,
 this data would be uploaded to the national vaccination record and this data
 store would be used as temporary storage. However during the alpha phase
@@ -205,7 +205,7 @@ include::deployment.adoc[leveloffset=+1,lines=24..-1]
 == Components
 
 * Authentication
-* Campaign management - creation, update, etc
-* Campaign operations and vaccination recording
+* Programme management - creation, update, etc
+* Programme operations and vaccination recording
 * Offline support - Browser-based component
 * FHIR server synchronisation

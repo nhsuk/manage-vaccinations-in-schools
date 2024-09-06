@@ -5,10 +5,10 @@ participant "Front-End" as frontend
 participant "Service Worker" as sw
 participant "Server App" as server
 
-user -> frontend: Click "Save campaign for offline use"\n on campaign page
-frontend -> sw: message("Save campaign 1 for offline")
+user -> frontend: Click "Save programme for offline use"\n on programme page
+frontend -> sw: message("Save programme 1 for offline")
 note over sw, server: The service worker requests resources it will need for offline use.
-sw -> server: get campaign pages and data
+sw -> server: get programme pages and data
 sw <-- server: requested resources
 
 @enduml

@@ -11,9 +11,9 @@ note left: Service worker checks if it can access the server
 note right: No response
 sw -> sw: set status to offline
 
-user -> frontend: View campaign
-frontend -> sw: get campaign pages
-frontend <-- sw: campaign page
+user -> frontend: View programme
+frontend -> sw: get programme pages
+frontend <-- sw: programme page
 
 user -> frontend: Record vaccination
 frontend -> sw: post vaccination record

@@ -46,9 +46,9 @@ FactoryBot.define do
   factory :patient do
     transient do
       # Used for associations like consent and triage that need to be
-      # associated with a campaign
+      # associated with a programme
       session { nil }
-      campaign { session&.campaign }
+      programme { session&.programme }
     end
 
     nhs_number { Faker::NationalHealthService.test_number.gsub(/\s+/, "") }
@@ -76,17 +76,17 @@ FactoryBot.define do
     end
 
     trait :consent_given_triage_not_needed do
-      consents { [association(:consent, :given, campaign:)] }
+      consents { [association(:consent, :given, programme:)] }
     end
 
     trait :consent_given_triage_needed do
       consents do
-        [association(:consent, :given, :health_question_notes, campaign:)]
+        [association(:consent, :given, :health_question_notes, programme:)]
       end
     end
 
     trait :consent_refused do
-      consents { [association(:consent, :refused, :from_mum, campaign:)] }
+      consents { [association(:consent, :refused, :from_mum, programme:)] }
     end
 
     trait :consent_refused_with_notes do
@@ -96,7 +96,7 @@ FactoryBot.define do
             :consent,
             :refused,
             :from_mum,
-            campaign:,
+            programme:,
             reason_for_refusal: "already_vaccinated",
             reason_for_refusal_notes: "Already had the vaccine at the GP"
           )
@@ -107,8 +107,8 @@ FactoryBot.define do
     trait :consent_conflicting do
       consents do
         [
-          association(:consent, :refused, :from_mum, campaign:),
-          association(:consent, :given, :from_dad, campaign:)
+          association(:consent, :refused, :from_mum, programme:),
+          association(:consent, :given, :from_dad, programme:)
         ]
       end
     end

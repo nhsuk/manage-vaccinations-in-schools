@@ -4,7 +4,7 @@ describe "Self-consent" do
   after { travel_back }
 
   scenario "No consent from parent, the child is Gillick competent so can self-consent" do
-    given_an_hpv_campaign_is_underway
+    given_an_hpv_programme_is_underway
     and_it_is_the_day_of_a_vaccination_session
     and_there_is_a_child_without_parental_consent
 
@@ -17,11 +17,11 @@ describe "Self-consent" do
     and_the_child_should_be_safe_to_vaccinate
   end
 
-  def given_an_hpv_campaign_is_underway
+  def given_an_hpv_programme_is_underway
     @team = create(:team, :with_one_nurse)
-    campaign = create(:campaign, :hpv, team: @team)
+    programme = create(:programme, :hpv, team: @team)
     location = create(:location, :school, name: "Pilot School")
-    @session = create(:session, :in_future, campaign:, location:)
+    @session = create(:session, :in_future, programme:, location:)
     @child = create(:patient, session: @session)
   end
 

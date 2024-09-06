@@ -30,11 +30,11 @@
 describe Session, type: :model do
   describe "validations" do
     context "when wizard_step is location" do
-      subject { build(:session, wizard_step:, campaign:) }
+      subject { build(:session, wizard_step:, programme:) }
 
       let(:wizard_step) { :location }
       let(:team) { create(:team) }
-      let(:campaign) { create(:campaign, team:) }
+      let(:programme) { create(:programme, team:) }
 
       it { should validate_presence_of(:location_id).on(:update) }
     end

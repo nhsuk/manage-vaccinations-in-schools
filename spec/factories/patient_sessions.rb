@@ -24,9 +24,9 @@
 #
 FactoryBot.define do
   factory :patient_session do
-    transient { campaign { association :campaign, :active } }
+    transient { programme { association :programme, :active } }
 
-    session { association :session, campaign: }
+    session { association :session, programme: }
     patient { association :patient }
     created_by { association :user }
 
@@ -46,7 +46,7 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_not_needed,
-                    campaign: session.campaign
+                    programme: session.programme
       end
     end
 
@@ -54,13 +54,13 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    campaign: session.campaign
+                    programme: session.programme
       end
     end
 
     trait :consent_refused do
       patient do
-        association :patient, :consent_refused, campaign: session.campaign
+        association :patient, :consent_refused, programme: session.programme
       end
     end
 
@@ -68,13 +68,13 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_refused_with_notes,
-                    campaign: session.campaign
+                    programme: session.programme
       end
     end
 
     trait :consent_conflicting do
       patient do
-        association :patient, :consent_conflicting, campaign: session.campaign
+        association :patient, :consent_conflicting, programme: session.programme
       end
     end
 
@@ -82,7 +82,7 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    campaign: session.campaign
+                    programme: session.programme
       end
 
       triage do
@@ -101,7 +101,7 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    campaign: session.campaign
+                    programme: session.programme
       end
 
       triage do
@@ -113,7 +113,7 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    campaign: session.campaign
+                    programme: session.programme
       end
 
       triage do
@@ -125,7 +125,7 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    campaign: session.campaign
+                    programme: session.programme
       end
 
       triage do
@@ -149,7 +149,7 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_not_needed,
-                    campaign: session.campaign
+                    programme: session.programme
       end
     end
 
@@ -157,7 +157,7 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    campaign: session.campaign
+                    programme: session.programme
       end
 
       triage do
@@ -183,7 +183,7 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    campaign: session.campaign
+                    programme: session.programme
       end
 
       triage do
@@ -207,7 +207,7 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    campaign: session.campaign
+                    programme: session.programme
       end
 
       triage do
@@ -226,7 +226,7 @@ FactoryBot.define do
     end
 
     trait :session_in_progress do
-      session { association :session, :in_progress, campaign: }
+      session { association :session, :in_progress, programme: }
     end
 
     trait :not_gillick_competent do

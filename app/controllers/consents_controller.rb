@@ -13,7 +13,7 @@ class ConsentsController < ApplicationController
         .active
         .strict_loading
         .includes(
-          :campaign,
+          :programme,
           :gillick_assessment,
           { consents: :parent },
           :patient,
@@ -48,7 +48,7 @@ class ConsentsController < ApplicationController
   end
 
   def show
-    @consent = @session.campaign.consents.recorded.find(params[:consent_id])
+    @consent = @session.programme.consents.recorded.find(params[:consent_id])
   end
 
   private

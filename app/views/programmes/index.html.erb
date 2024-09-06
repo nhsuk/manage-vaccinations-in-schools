@@ -1,7 +1,7 @@
 <div class="app-heading-group">
   <%= h1 t(".title"), size: "xl" %>
 
-  <%= govuk_button_to "Create a new vaccination programme", campaigns_path, secondary: true %>
+  <%= govuk_button_to "Create a new vaccination programme", programmes_path, secondary: true %>
 </div>
 
 <div class="nhsuk-table__panel-with-heading-tab">
@@ -16,19 +16,19 @@
     <% end %>
 
     <% table.with_body do |body| %>
-      <% @campaigns.each do |campaign| %>
+      <% @programmes.each do |programme| %>
         <% body.with_row do |row| %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Name</span>
-            <%= link_to campaign.name, campaign_path(campaign) %>
+            <%= link_to programme.name, programme_path(programme) %>
           <% end %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Academic year</span>
-            <%= campaign_academic_year(campaign) %>
+            <%= programme_academic_year(programme) %>
           <% end %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Vaccines</span>
-            <%= campaign.vaccines.map(&:brand).join("<br>").html_safe %>
+            <%= programme.vaccines.map(&:brand).join("<br>").html_safe %>
           <% end %>
         <% end %>
       <% end %>

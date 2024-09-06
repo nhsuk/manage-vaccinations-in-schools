@@ -7,7 +7,7 @@ describe "Pilot journey" do
 
   scenario "Cohorting, session creation, verbal consent, vaccination" do
     # Cohorting
-    given_an_hpv_campaign_is_underway
+    given_an_hpv_programme_is_underway
     and_i_am_a_nurse_signed_into_the_service
     when_i_upload_the_cohort_list_containing_one_child
     then_i_see_that_the_cohort_has_been_uploaded
@@ -42,9 +42,9 @@ describe "Pilot journey" do
     then_i_see_the_populated_activity_log
   end
 
-  def given_an_hpv_campaign_is_underway
+  def given_an_hpv_programme_is_underway
     @team = create(:team, :with_one_nurse)
-    @campaign = create(:campaign, :hpv, academic_year: 2023, team: @team)
+    @programme = create(:programme, :hpv, academic_year: 2023, team: @team)
     @school = create(:location, :school, name: "Pilot School")
   end
 
@@ -218,7 +218,7 @@ describe "Pilot journey" do
     choose "Left arm (upper position)"
     click_button "Continue"
 
-    choose @campaign.vaccines.first.batches.first.name
+    choose @programme.vaccines.first.batches.first.name
     click_button "Continue"
 
     click_button "Confirm"

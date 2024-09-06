@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe SessionsHelper, type: :helper do
-  let(:campaign) { build(:campaign, name: "Flu") }
+  let(:programme) { build(:programme, name: "Flu") }
   let(:location) { build(:location, name: "Waterloo Road") }
-  let(:session) { build(:session, campaign:, location:) }
+  let(:session) { build(:session, programme:, location:) }
 
   describe "#session_location" do
     subject(:session_location) { helper.session_location(session) }

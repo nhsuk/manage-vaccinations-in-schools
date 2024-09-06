@@ -4,8 +4,8 @@ import { add } from "./store";
 
 const getCampaignIdFromURL = (url) => url.match("/sessions/(\\d+)/")[1];
 
-const recordTemplateURL = (campaignId) =>
-  `/sessions/${campaignId}/vaccinations/record-template`;
+const recordTemplateURL = (programmeId) =>
+  `/sessions/${programmeId}/vaccinations/record-template`;
 
 export const recordRoute = new RegExp(
   "/sessions/(\\d+)/vaccinations/(\\d+)/record$",
@@ -20,12 +20,12 @@ export const recordRouteHandler = async ({ request }) => {
 
     var response = await fetch(clonedRequest, { method: "POST" });
   } catch (err) {
-    const campaignId = getCampaignIdFromURL(request.url);
-    const campaignUrl = recordTemplateURL(campaignId);
+    const programmeId = getCampaignIdFromURL(request.url);
+    const programmeUrl = recordTemplateURL(programmeId);
 
     add("delayedRequests", clonedRequest.url, data);
 
-    var response = await match(campaignUrl);
+    var response = await match(programmeUrl);
   }
 
   return response;

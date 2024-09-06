@@ -6,7 +6,7 @@ describe "Parental consent" do
   before { Flipper.enable(:parent_contact_method) }
 
   scenario "Consent form exactly matches the cohort" do
-    given_an_hpv_campaign_is_underway
+    given_an_hpv_programme_is_underway
     when_a_nurse_checks_consent_responses
     then_there_should_be_no_consent_for_my_child
 
@@ -31,11 +31,11 @@ describe "Parental consent" do
     then_the_patient_should_be_ready_to_vaccinate
   end
 
-  def given_an_hpv_campaign_is_underway
+  def given_an_hpv_programme_is_underway
     @team = create(:team, :with_one_nurse)
-    campaign = create(:campaign, :hpv, team: @team)
+    programme = create(:programme, :hpv, team: @team)
     location = create(:location, :school, name: "Pilot School")
-    @session = create(:session, :in_future, campaign:, location:)
+    @session = create(:session, :in_future, programme:, location:)
     @child = create(:patient, session: @session)
   end
 

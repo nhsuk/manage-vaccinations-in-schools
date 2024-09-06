@@ -4,7 +4,7 @@ feature "Verbal consent" do
   include EmailExpectations
 
   scenario "Given when previously refused" do
-    given_an_hpv_campaign_is_underway
+    given_an_hpv_programme_is_underway
     and_a_parent_has_refused_consent_for_their_child
     and_i_am_logged_in_as_a_nurse
 
@@ -14,11 +14,11 @@ feature "Verbal consent" do
     and_the_child_is_shown_as_having_consent_given
   end
 
-  def given_an_hpv_campaign_is_underway
+  def given_an_hpv_programme_is_underway
     @team = create(:team, :with_one_nurse)
-    campaign = create(:campaign, :hpv, team: @team)
+    programme = create(:programme, :hpv, team: @team)
     location = create(:location, :school, name: "Pilot School")
-    @session = create(:session, :in_future, campaign:, location:)
+    @session = create(:session, :in_future, programme:, location:)
   end
 
   def and_a_parent_has_refused_consent_for_their_child

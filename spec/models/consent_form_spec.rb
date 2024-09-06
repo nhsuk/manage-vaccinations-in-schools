@@ -164,8 +164,8 @@ describe ConsentForm, type: :model do
     end
 
     context "when wizard_step is :injection" do
-      # currently injection alternative only offered during flu campaign
-      let(:session) { build(:session, campaign: build(:campaign, :flu)) }
+      # currently injection alternative only offered during flu programme
+      let(:session) { build(:session, programme: build(:programme, :flu)) }
 
       let(:response) { "refused" }
       let(:reason) { "contains_gelatine" }
@@ -307,8 +307,8 @@ describe ConsentForm, type: :model do
       expect(consent_form.wizard_steps).not_to include(:injection)
     end
 
-    context "for a flu campaign, when patient refuses consent" do
-      let(:session) { build(:session, campaign: build(:campaign, :flu)) }
+    context "for a flu programme, when patient refuses consent" do
+      let(:session) { build(:session, programme: build(:programme, :flu)) }
 
       it "offers an injection alternative if the child hasn't received vaccine elsewhere" do
         consent_form =
@@ -335,15 +335,15 @@ describe ConsentForm, type: :model do
       end
     end
 
-    context "for an HPV campaign, when patient refuses consent" do
+    context "for an HPV programme, when patient refuses consent" do
       it "does not offer an injection alternative" do
-        # this assumes that the HPV campaign does not offer nasal spray vaccines, which is true in 2024
+        # this assumes that the HPV programme does not offer nasal spray vaccines, which is true in 2024
         consent_form =
           build(
             :consent_form,
             response: "refused",
             reason: "medical_reasons",
-            session: build(:session, campaign: build(:campaign, :hpv))
+            session: build(:session, programme: build(:programme, :hpv))
           )
         expect(consent_form.wizard_steps).not_to include(:injection)
       end
@@ -528,29 +528,30 @@ describe ConsentForm, type: :model do
   end
 
   describe "#gelatine_content_status_in_vaccines" do
-    it "returns :maybe if the flu campaign offers both injection and nasal vaccines" do
+    it "returns :maybe if the flu programme offers both injection and nasal vaccines" do
       consent_form =
         build(
           :consent_form,
-          session: build(:session, campaign: build(:campaign, :flu))
+          session: build(:session, programme: build(:programme, :flu))
         )
       expect(consent_form.gelatine_content_status_in_vaccines).to eq(:maybe)
     end
 
-    it "returns false if the flu campaign only offers injection vaccines" do
+    it "returns false if the flu programme only offers injection vaccines" do
       consent_form =
         build(
           :consent_form,
-          session: build(:session, campaign: build(:campaign, :flu_nasal_only))
+          session:
+            build(:session, programme: build(:programme, :flu_nasal_only))
         )
       expect(consent_form.gelatine_content_status_in_vaccines).to be(true)
     end
 
-    it "returns false for an HPV campaign" do
+    it "returns false for an HPV programme" do
       consent_form =
         build(
           :consent_form,
-          session: build(:session, campaign: build(:campaign, :hpv))
+          session: build(:session, programme: build(:programme, :hpv))
         )
       expect(consent_form.gelatine_content_status_in_vaccines).to be(false)
     end
@@ -558,7 +559,7 @@ describe ConsentForm, type: :model do
 
   describe "scope unmatched" do
     let(:session) { create(:session) }
-    let(:consent) { create(:consent, campaign: session.campaign) }
+    let(:consent) { create(:consent, programme: session.programme) }
     let(:unmatched_consent_form) do
       create(:consent_form, consent: nil, session:)
     end
@@ -572,7 +573,7 @@ describe ConsentForm, type: :model do
 
   describe "scope recorded" do
     let(:session) { create(:session) }
-    let(:consent) { create(:consent, campaign: session.campaign) }
+    let(:consent) { create(:consent, programme: session.programme) }
     let(:recorded_consent_form) do
       create(:consent_form, :recorded, consent:, session:)
     end
@@ -708,7 +709,7 @@ describe ConsentForm, type: :model do
     consent_form =
       create(
         :consent_form,
-        campaign: create(:campaign, :hpv),
+        programme: create(:programme, :hpv),
         response: "refused"
       )
 

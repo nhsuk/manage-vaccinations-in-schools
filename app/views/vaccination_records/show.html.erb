@@ -1,14 +1,14 @@
 <% content_for :before_main do %>
   <% if @vaccination_record.recorded? %>
     <%= render AppBreadcrumbComponent.new(items: [
-                                            { text: t("campaigns.index.title"), href: campaigns_path },
-                                            { text: @campaign.name, href: campaign_vaccination_records_path(@campaign) },
-                                            { text: t("vaccination_records.index.title"), href: campaign_vaccination_records_path(@campaign) },
+                                            { text: t("programmes.index.title"), href: programmes_path },
+                                            { text: @programme.name, href: programme_vaccination_records_path(@programme) },
+                                            { text: t("vaccination_records.index.title"), href: programme_vaccination_records_path(@programme) },
                                           ]) %>
   <% elsif (immunisation_import = @vaccination_record.imported_from) %>
     <%= render AppBacklinkComponent.new(
-          href: edit_campaign_immunisation_import_path(
-            @campaign,
+          href: edit_programme_immunisation_import_path(
+            @programme,
             immunisation_import
           ),
           name: "check and confirm upload",

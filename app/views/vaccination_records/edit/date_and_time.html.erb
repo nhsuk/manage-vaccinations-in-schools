@@ -2,12 +2,12 @@
 
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: campaign_vaccination_record_path(@campaign, @vaccination_record),
+        href: programme_vaccination_record_path(@programme, @vaccination_record),
         name: patient.full_name,
       ) %>
 <% end %>
 
-<%= form_with model: @vaccination_record, url: campaign_vaccination_record_edit_date_and_time_path(@campaign, @vaccination_record), method: :put do |f| %>
+<%= form_with model: @vaccination_record, url: programme_vaccination_record_edit_date_and_time_path(@programme, @vaccination_record), method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
   <span class="nhsuk-caption-l"><%= patient.full_name %></span>

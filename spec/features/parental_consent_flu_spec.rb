@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 describe "Parental consent" do
-  scenario "Flu campaign" do
-    given_a_flu_campaign_is_underway
+  scenario "Flu programme" do
+    given_a_flu_programme_is_underway
     when_i_go_to_the_consent_form
     then_i_see_the_consent_form
 
@@ -19,11 +19,11 @@ describe "Parental consent" do
     then_i_see_the_confirmation_page
   end
 
-  def given_a_flu_campaign_is_underway
+  def given_a_flu_programme_is_underway
     @team = create(:team, :with_one_nurse)
-    campaign = create(:campaign, :flu, team: @team)
+    programme = create(:programme, :flu, team: @team)
     location = create(:location, :school, name: "Pilot School")
-    @session = create(:session, :in_future, campaign:, location:)
+    @session = create(:session, :in_future, programme:, location:)
     @child = create(:patient, session: @session)
   end
 

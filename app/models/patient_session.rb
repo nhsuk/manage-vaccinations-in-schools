@@ -42,12 +42,14 @@ class PatientSession < ApplicationRecord
           -> { draft },
           class_name: "GillickAssessment"
 
-  has_one :campaign, through: :session
+  has_one :programme, through: :session
   has_many :triage, -> { order(:updated_at) }
   has_many :vaccination_records
   has_many :consents,
            ->(patient_session) do
-             submitted_for_campaign(patient_session.campaign).includes(:parent)
+             submitted_for_programme(patient_session.programme).includes(
+               :parent
+             )
            end,
            through: :patient,
            class_name: "Consent"
@@ -61,7 +63,7 @@ class PatientSession < ApplicationRecord
     # HACK: this code will need to be revisited in future as it only really works for HPV, where we only have one
     # vaccine. It is likely to fail for the Doubles programme as that has 2 vaccines. It is also likely to fail for
     # the flu programme for the SAIS teams that offer both nasal and injectable vaccines.
-    vaccine = campaign&.vaccines&.first
+    vaccine = programme&.vaccines&.first
     vaccination_records
       .draft
       .create_with(vaccine:)

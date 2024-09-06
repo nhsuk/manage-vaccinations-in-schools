@@ -19,7 +19,7 @@ class DevController < ApplicationController
   def random_consent_form
     Faker::Config.locale = "en-GB"
     @session = Session.find(params.fetch(:session_id))
-    @vaccine = @session.campaign.vaccines.first
+    @vaccine = @session.programme.vaccines.first
     @consent_form =
       FactoryBot.build(:consent_form, :draft, session_id: @session.id)
     @consent_form.health_answers = @vaccine.health_questions.to_health_answers

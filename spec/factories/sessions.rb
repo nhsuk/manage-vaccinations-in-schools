@@ -28,7 +28,7 @@
 #
 FactoryBot.define do
   factory :session do
-    campaign { association :campaign, :active }
+    programme { association :programme, :active }
     location { association :location, :school }
 
     date { Time.zone.today }
@@ -38,7 +38,7 @@ FactoryBot.define do
 
     time_of_day { %w[morning afternoon all_day].sample }
 
-    active { campaign.active }
+    active { programme.active }
 
     trait :active do
       active { true }

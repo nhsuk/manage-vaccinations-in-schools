@@ -1,14 +1,14 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: new_campaign_immunisation_import_path(@campaign),
-        name: @campaign.name,
+        href: new_programme_immunisation_import_path(@programme),
+        name: @programme.name,
       ) %>
 <% end %>
 
 <% title = "Check and confirm" %>
 
-<span class="nhsuk-caption-l"><%= @campaign.name %></span>
-<%= h1 title, page_title: "#{@campaign.name} – #{title}" %>
+<span class="nhsuk-caption-l"><%= @programme.name %></span>
+<%= h1 title, page_title: "#{@programme.name} – #{title}" %>
 
 <% if @immunisation_import.exact_duplicate_record_count > 1 ||
       @immunisation_import.not_administered_record_count > 1 %>
@@ -36,8 +36,8 @@
   </div>
 <% end %>
 
-<%= govuk_button_to "Upload records", campaign_immunisation_import_path(
-      @campaign,
+<%= govuk_button_to "Upload records", programme_immunisation_import_path(
+      @programme,
       @immunisation_import
     ), method: :put %>
 
@@ -76,8 +76,8 @@
 
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Actions</span>
-              <%= govuk_link_to campaign_immunisation_import_patient_path(
-                    @campaign,
+              <%= govuk_link_to programme_immunisation_import_patient_path(
+                    @programme,
                     @immunisation_import,
                     patient
                   ) do %>

@@ -1,0 +1,36 @@
+<%= content_for :page_title, "#{@programme.name} – #{t("programmes.patients.title")}" %>
+
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: t("programmes.index.title"), href: programmes_path },
+                                          { text: @programme.name, href: programme_path(@programme) },
+                                        ]) %>
+<% end %>
+
+<%= render "name_and_academic_year" %>
+
+<%= render AppSecondaryNavigationComponent.new do |nav|
+      nav.with_item(
+        text: "Overview",
+        href: programme_path(@programme),
+      )
+      nav.with_item(
+        text: t("programmes.patients.title"),
+        href: patients_programme_path(@programme),
+        selected: true,
+      )
+      nav.with_item(
+        text: "School sessions",
+        href: sessions_programme_path(@programme),
+      )
+      nav.with_item(
+        text: t("vaccination_records.index.title"),
+        href: programme_vaccination_records_path(@programme),
+      )
+      nav.with_item(
+        text: t("immunisation_imports.index.title"),
+        href: programme_immunisation_imports_path(@programme),
+      )
+    end %>
+
+<%= render AppPatientTableComponent.new(@patients, programme: @programme) %>

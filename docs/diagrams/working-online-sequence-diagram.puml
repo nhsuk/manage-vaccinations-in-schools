@@ -5,11 +5,11 @@ participant "Front-End" as frontend
 participant "Service Worker" as sw
 participant "Server App" as server
 
-user -> frontend: View campaign
-frontend -> sw: get campaign pages
-sw -> server: get campaign pages
-sw <-- server: campaign page
-frontend <-- sw: campaign page
+user -> frontend: View programme
+frontend -> sw: get programme pages
+sw -> server: get programme pages
+sw <-- server: programme page
+frontend <-- sw: programme page
 
 user -> frontend: Record vaccination
 frontend -> sw: post vaccination record

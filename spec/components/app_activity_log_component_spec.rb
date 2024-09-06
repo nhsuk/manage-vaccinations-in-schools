@@ -29,9 +29,9 @@ describe AppActivityLogComponent, type: :component do
   let(:user) do
     create(:user, teams: [team], family_name: "Joy", given_name: "Nurse")
   end
-  let(:campaign) { create(:campaign, :hpv, team:) }
+  let(:programme) { create(:programme, :hpv, team:) }
   let(:location) { create(:location, :school, name: "Hogwarts") }
-  let(:session) { create(:session, campaign:, location:) }
+  let(:session) { create(:session, programme:, location:) }
   let(:patient) { create(:patient, school: location) }
 
   before do
@@ -39,7 +39,7 @@ describe AppActivityLogComponent, type: :component do
       :consent,
       :given,
       :from_mum,
-      campaign:,
+      programme:,
       patient:,
       parent: create(:parent, :mum, name: "Jane Doe"),
       recorded_at: Time.zone.parse("2024-05-30 12:00")
@@ -48,7 +48,7 @@ describe AppActivityLogComponent, type: :component do
       :consent,
       :refused,
       :from_dad,
-      campaign:,
+      programme:,
       patient:,
       parent: create(:parent, :dad, name: "John Doe"),
       recorded_at: Time.zone.parse("2024-05-30 13:00")

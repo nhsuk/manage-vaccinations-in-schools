@@ -1,7 +1,7 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: campaign_immunisation_imports_path(@campaign),
-        name: @campaign.name,
+        href: programme_immunisation_imports_path(@programme),
+        name: @programme.name,
       ) %>
 <% end %>
 
@@ -10,11 +10,11 @@
 
 <% content_for :page_title, title %>
 
-<%= form_with model: @immunisation_import, url: campaign_immunisation_imports_path do |f| %>
+<%= form_with model: @immunisation_import, url: programme_immunisation_imports_path do |f| %>
   <%= f.govuk_error_summary %>
 
   <%= f.govuk_file_field :csv,
-                         caption: { text: @campaign.name, size: "l" },
+                         caption: { text: @programme.name, size: "l" },
                          label: { text: title, tag: "h1", size: "l" },
                          hint: { text: hint } %>
 
