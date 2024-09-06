@@ -10,7 +10,8 @@ class CohortListsController < ApplicationController
   end
 
   def create
-    @cohort_import = CohortImport.new(cohort_import_params)
+    @cohort_import =
+      CohortImport.new(uploaded_by: current_user, **cohort_import_params)
 
     @cohort_import.load_data!
     if @cohort_import.invalid?

@@ -36,8 +36,6 @@ class ImmunisationImport < ApplicationRecord
 
   belongs_to :programme
 
-  belongs_to :uploaded_by, class_name: "User", foreign_key: :uploaded_by_user_id
-
   with_options dependent: :restrict_with_exception,
                foreign_key: :imported_from_id do
     has_many :vaccination_records

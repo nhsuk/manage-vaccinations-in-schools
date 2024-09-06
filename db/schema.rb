@@ -45,6 +45,20 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_06_093003) do
     t.index ["vaccine_id"], name: "index_batches_on_vaccine_id"
   end
 
+  create_table "cohort_imports", force: :cascade do |t|
+    t.datetime "csv_removed_at"
+    t.datetime "processed_at"
+    t.datetime "recorded_at"
+    t.text "csv_data"
+    t.text "csv_filename"
+    t.integer "new_record_count"
+    t.integer "exact_duplicate_record_count"
+    t.bigint "uploaded_by_user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["uploaded_by_user_id"], name: "index_cohort_imports_on_uploaded_by_user_id"
+  end
+
   create_table "consent_forms", force: :cascade do |t|
     t.bigint "session_id", null: false
     t.datetime "recorded_at"
@@ -474,6 +488,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_06_093003) do
   end
 
   add_foreign_key "batches", "vaccines"
+  add_foreign_key "cohort_imports", "users", column: "uploaded_by_user_id"
   add_foreign_key "consent_forms", "consents"
   add_foreign_key "consent_forms", "parents"
   add_foreign_key "consent_forms", "sessions"

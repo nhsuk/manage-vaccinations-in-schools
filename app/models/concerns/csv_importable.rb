@@ -8,6 +8,10 @@ module CSVImportable
   included do
     attr_accessor :csv_is_malformed, :data, :rows
 
+    belongs_to :uploaded_by,
+               class_name: "User",
+               foreign_key: :uploaded_by_user_id
+
     validates :csv,
               absence: {
                 if: -> { try(:csv_removed?) || false }

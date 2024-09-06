@@ -19,13 +19,6 @@ en:
         school_urn: <code>SCHOOL_URN</code>
     errors:
       models:
-        cohort_import:
-          attributes:
-            csv:
-              blank: Choose a file
-              empty: Choose a CSV file with at least one record
-              invalid: Choose a CSV file in the correct format
-              missing_headers: "The file is missing the following headers: %{missing_headers}"
         cohort_import_row:
           attributes:
             child_address_line_1:
@@ -190,6 +183,13 @@ en:
               missing_year: Enter a year
             name:
               blank: Enter a batch
+        cohort_import:
+          attributes:
+            csv:
+              blank: Choose a file
+              empty: Choose a CSV file with at least one record
+              invalid: Choose a CSV file in the correct format
+              missing_headers: "The file is missing the following headers: %{missing_headers}"
         consent:
           attributes:
             new_or_existing_parent:
