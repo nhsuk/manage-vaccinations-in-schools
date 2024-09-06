@@ -27,24 +27,6 @@
 class CohortImport < ApplicationRecord
   include CSVImportable
 
-  def process!
-    parse_rows! if rows.nil?
-    return if invalid?
-
-    ActiveRecord::Base.transaction do
-      save!
-
-      rows.each do |row|
-        location = Location.find_by(urn: row.school_urn)
-        patient =
-          location.patients.new(
-            row.to_patient.merge(parent: Parent.new(row.to_parent))
-          )
-        patient.save!
-      end
-    end
-  end
-
   private
 
   def required_headers
@@ -67,6 +49,10 @@ class CohortImport < ApplicationRecord
     ]
   end
 
+  def count_columns
+    %i[new_record_count exact_duplicate_record_count]
+  end
+
   def parse_row(row_data)
     CohortImportRow.new(
       row_data
@@ -74,5 +60,15 @@ class CohortImport < ApplicationRecord
         .slice(*required_headers) # Remove extra columns
         .transform_keys { _1.downcase.to_sym }
     )
+  end
+
+  def process_row(row)
+    location = Location.find_by(urn: row.school_urn)
+
+    location.patients.create!(
+      row.to_patient.merge(parent: Parent.new(row.to_parent))
+    )
+
+    :new_record_count
   end
 end

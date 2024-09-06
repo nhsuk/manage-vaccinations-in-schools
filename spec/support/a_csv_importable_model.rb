@@ -14,6 +14,22 @@ shared_examples_for "a CSVImportable model" do
 
       it { should be_invalid }
     end
+
+    it "raises if processed without updating the statistics" do
+      expect { subject.update!(processed_at: Time.zone.now) }.to raise_error(
+        /Count statistics must be set/
+      )
+    end
+  end
+
+  describe "#csv=" do
+    it "sets the data" do
+      expect(subject.csv_data).not_to be_empty
+    end
+
+    it "sets the filename" do
+      expect(subject.csv_filename).not_to be_empty
+    end
   end
 
   describe "#csv_removed?" do
@@ -27,6 +43,17 @@ shared_examples_for "a CSVImportable model" do
       it "is true" do
         expect(subject.csv_removed?).to be true
       end
+    end
+  end
+
+  describe "#process!" do
+    let(:today) { Time.zone.local(2025, 1, 1) }
+
+    it "sets processed_at" do
+      expect { travel_to(today) { subject.process! } }.to change(
+        subject,
+        :processed_at
+      ).from(nil).to(today)
     end
   end
 

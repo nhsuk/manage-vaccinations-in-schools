@@ -42,46 +42,6 @@ class ImmunisationImport < ApplicationRecord
     has_many :patients
   end
 
-  before_save :ensure_processed_with_count_statistics
-
-  COUNT_COLUMNS = %i[
-    exact_duplicate_record_count
-    new_record_count
-    not_administered_record_count
-  ].freeze
-
-  def processed?
-    processed_at != nil
-  end
-
-  def process!
-    return if processed?
-
-    parse_rows! if rows.nil?
-    return if invalid?
-
-    stats = COUNT_COLUMNS.index_with { |_column| 0 }
-
-    ActiveRecord::Base.transaction do
-      save!
-
-      rows.each do |row|
-        if (vaccination_record = row.to_vaccination_record)
-          if vaccination_record.new_record?
-            vaccination_record.save!
-            stats[:new_record_count] += 1
-          else
-            stats[:exact_duplicate_record_count] += 1
-          end
-        else
-          stats[:not_administered_record_count] += 1
-        end
-      end
-
-      update!(processed_at: Time.zone.now, **stats)
-    end
-  end
-
   def record!
     return if recorded?
 
@@ -127,6 +87,14 @@ class ImmunisationImport < ApplicationRecord
     ]
   end
 
+  def count_columns
+    %i[
+      exact_duplicate_record_count
+      new_record_count
+      not_administered_record_count
+    ]
+  end
+
   def parse_row(row_data)
     ImmunisationImportRow.new(
       data: row_data,
@@ -136,11 +104,16 @@ class ImmunisationImport < ApplicationRecord
     )
   end
 
-  def ensure_processed_with_count_statistics
-    if processed? && COUNT_COLUMNS.any? { |column| send(column).nil? }
-      raise "Count statistics must be set for a processed import."
-    elsif !processed? && COUNT_COLUMNS.any? { |column| !send(column).nil? }
-      raise "Count statistics must not be set for a non-processed import."
+  def process_row(row)
+    if (vaccination_record = row.to_vaccination_record)
+      if vaccination_record.new_record?
+        vaccination_record.save!
+        :new_record_count
+      else
+        :exact_duplicate_record_count
+      end
+    else
+      :not_administered_record_count
     end
   end
 end

@@ -49,22 +49,6 @@ describe ImmunisationImport, type: :model do
 
   it_behaves_like "a CSVImportable model"
 
-  it "raises if processed without updating the statistics" do
-    expect {
-      immunisation_import.update!(processed_at: Time.zone.now)
-    }.to raise_error(/Count statistics must be set/)
-  end
-
-  describe "#csv=" do
-    it "sets the data" do
-      expect(immunisation_import.csv_data).not_to be_empty
-    end
-
-    it "sets the filename" do
-      expect(immunisation_import.csv_filename).to eq("valid_flu.csv")
-    end
-  end
-
   describe "#load_data!" do
     before { immunisation_import.load_data! }
 
