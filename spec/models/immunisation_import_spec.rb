@@ -16,22 +16,22 @@
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  programme_id                  :bigint           not null
-#  user_id                       :bigint           not null
+#  uploaded_by_user_id           :bigint           not null
 #
 # Indexes
 #
-#  index_immunisation_imports_on_programme_id  (programme_id)
-#  index_immunisation_imports_on_user_id       (user_id)
+#  index_immunisation_imports_on_programme_id         (programme_id)
+#  index_immunisation_imports_on_uploaded_by_user_id  (uploaded_by_user_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (programme_id => programmes.id)
-#  fk_rails_...  (user_id => users.id)
+#  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 
 describe ImmunisationImport, type: :model do
   subject(:immunisation_import) do
-    create(:immunisation_import, programme:, csv:, user:)
+    create(:immunisation_import, programme:, csv:, uploaded_by:)
   end
 
   before do
@@ -45,7 +45,7 @@ describe ImmunisationImport, type: :model do
   let(:file) { "valid_flu.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/immunisation_import/#{file}") }
   let(:team) { create(:team, ods_code: "R1L") }
-  let(:user) { create(:user, teams: [team]) }
+  let(:uploaded_by) { create(:user, teams: [team]) }
 
   describe "validations" do
     it { should be_valid }
@@ -194,7 +194,7 @@ describe ImmunisationImport, type: :model do
       end
 
       it "ignores and counts duplicate records" do
-        build(:immunisation_import, programme:, csv:, user:).record!
+        build(:immunisation_import, programme:, csv:, uploaded_by:).record!
         csv.rewind
 
         process!
@@ -240,7 +240,7 @@ describe ImmunisationImport, type: :model do
       end
 
       it "ignores and counts duplicate records" do
-        build(:immunisation_import, programme:, csv:, user:).record!
+        build(:immunisation_import, programme:, csv:, uploaded_by:).record!
         csv.rewind
 
         process!

@@ -16,7 +16,7 @@
 
     <%= summary_list.with_row do |row| %>
       <%= row.with_key { "Uploaded by" } %>
-      <%= row.with_value { @immunisation_import.user.full_name } %>
+      <%= row.with_value { @immunisation_import.uploaded_by.full_name } %>
     <% end %>
 
     <%= summary_list.with_row do |row| %>

@@ -11,7 +11,7 @@ class ImmunisationImportsController < ApplicationController
       @programme
         .immunisation_imports
         .recorded
-        .includes(:user)
+        .includes(:uploaded_by)
         .order(:created_at)
         .strict_loading
 
@@ -23,7 +23,12 @@ class ImmunisationImportsController < ApplicationController
   end
 
   def create
-    @immunisation_import = ImmunisationImport.new(immunisation_import_params)
+    @immunisation_import =
+      ImmunisationImport.new(
+        uploaded_by: current_user,
+        programme: @programme,
+        **immunisation_import_params
+      )
 
     @immunisation_import.load_data!
     if @immunisation_import.invalid?
@@ -99,9 +104,6 @@ class ImmunisationImportsController < ApplicationController
   end
 
   def immunisation_import_params
-    params
-      .fetch(:immunisation_import, {})
-      .permit(:csv)
-      .merge(user: current_user, programme: @programme)
+    params.fetch(:immunisation_import, {}).permit(:csv)
   end
 end

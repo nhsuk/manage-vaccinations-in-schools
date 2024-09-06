@@ -34,7 +34,7 @@
 #  index_users_on_unlock_token          (unlock_token) UNIQUE
 #
 FactoryBot.define do
-  factory :user do
+  factory :user, aliases: %i[uploaded_by] do
     sequence(:family_name) { |n| "User #{n}" }
     given_name { "Test" }
 
