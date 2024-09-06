@@ -29,6 +29,8 @@ module CSVImportable
     validate :csv_has_records
     validate :headers_are_valid
     validate :rows_are_valid
+
+    before_save :ensure_processed_with_count_statistics
   end
 
   def csv=(file)
@@ -58,6 +60,30 @@ module CSVImportable
     return if invalid?
 
     self.rows = data.map { |row_data| parse_row(row_data) }
+  end
+
+  def processed?
+    processed_at != nil
+  end
+
+  def process!
+    return if processed?
+
+    parse_rows! if rows.nil?
+    return if invalid?
+
+    counts = count_columns.index_with(0)
+
+    ActiveRecord::Base.transaction do
+      save!
+
+      rows.each do |row|
+        count_column_to_increment = process_row(row)
+        counts[count_column_to_increment] += 1
+      end
+
+      update!(processed_at: Time.zone.now, **counts)
+    end
   end
 
   def remove!
@@ -91,6 +117,14 @@ module CSVImportable
       if row.invalid?
         errors.add("row_#{index + 1}".to_sym, row.errors.full_messages)
       end
+    end
+  end
+
+  def ensure_processed_with_count_statistics
+    if processed? && count_columns.any? { |column| send(column).nil? }
+      raise "Count statistics must be set for a processed import."
+    elsif !processed? && count_columns.any? { |column| !send(column).nil? }
+      raise "Count statistics must not be set for a non-processed import."
     end
   end
 end
