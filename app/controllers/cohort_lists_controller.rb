@@ -27,6 +27,8 @@ class CohortListsController < ApplicationController
 
     @cohort_import.process!
 
+    @cohort_import.record!
+
     session[:last_cohort_upload_count] = @cohort_import.rows.count
 
     redirect_to action: :success

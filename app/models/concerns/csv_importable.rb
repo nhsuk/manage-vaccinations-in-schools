@@ -5,6 +5,8 @@ require "csv"
 module CSVImportable
   extend ActiveSupport::Concern
 
+  include Recordable
+
   included do
     attr_accessor :csv_is_malformed, :data, :rows
 
@@ -83,6 +85,18 @@ module CSVImportable
       end
 
       update!(processed_at: Time.zone.now, **counts)
+    end
+  end
+
+  def record!
+    return if recorded?
+
+    process! unless processed?
+    return if invalid?
+
+    ActiveRecord::Base.transaction do
+      record_rows
+      update!(recorded_at: Time.zone.now)
     end
   end
 

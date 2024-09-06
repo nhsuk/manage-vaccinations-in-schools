@@ -30,7 +30,6 @@
 #
 class ImmunisationImport < ApplicationRecord
   include CSVImportable
-  include Recordable
 
   belongs_to :programme
 
@@ -40,31 +39,6 @@ class ImmunisationImport < ApplicationRecord
     has_many :locations
     has_many :sessions
     has_many :patients
-  end
-
-  def record!
-    return if recorded?
-
-    process! unless processed?
-    return if invalid?
-
-    recorded_at = Time.zone.now
-
-    ActiveRecord::Base.transaction do
-      vaccination_records.draft.each do |vaccination_record|
-        if (patient_session = vaccination_record.patient_session).draft?
-          patient_session.update!(active: true)
-        end
-
-        if (session = vaccination_record.session).draft?
-          session.update!(active: true)
-        end
-
-        vaccination_record.update!(recorded_at:)
-      end
-
-      update!(recorded_at:)
-    end
   end
 
   private
@@ -114,6 +88,20 @@ class ImmunisationImport < ApplicationRecord
       end
     else
       :not_administered_record_count
+    end
+  end
+
+  def record_rows
+    vaccination_records.draft.each do |vaccination_record|
+      if (patient_session = vaccination_record.patient_session).draft?
+        patient_session.update!(active: true)
+      end
+
+      if (session = vaccination_record.session).draft?
+        session.update!(active: true)
+      end
+
+      vaccination_record.update!(recorded_at: Time.zone.now)
     end
   end
 end
