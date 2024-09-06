@@ -29,13 +29,10 @@ class CohortListsController < ApplicationController
 
     @cohort_import.record!
 
-    session[:last_cohort_upload_count] = @cohort_import.rows.count
-
     redirect_to action: :success
   end
 
   def success
-    @count = session.delete(:last_cohort_upload_count)
   end
 
   private
