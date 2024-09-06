@@ -31,13 +31,17 @@ class CohortImport < ApplicationRecord
     parse_rows! if rows.nil?
     return if invalid?
 
-    rows.each do |row|
-      location = Location.find_by(urn: row.school_urn)
-      patient =
-        location.patients.new(
-          row.to_patient.merge(parent: Parent.new(row.to_parent))
-        )
-      patient.save!
+    ActiveRecord::Base.transaction do
+      save!
+
+      rows.each do |row|
+        location = Location.find_by(urn: row.school_urn)
+        patient =
+          location.patients.new(
+            row.to_patient.merge(parent: Parent.new(row.to_parent))
+          )
+        patient.save!
+      end
     end
   end
 
