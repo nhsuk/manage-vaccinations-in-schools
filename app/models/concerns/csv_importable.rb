@@ -8,6 +8,8 @@ module CSVImportable
   included do
     attr_accessor :csv_is_malformed, :data, :rows
 
+    encrypts :csv_data
+
     belongs_to :uploaded_by,
                class_name: "User",
                foreign_key: :uploaded_by_user_id

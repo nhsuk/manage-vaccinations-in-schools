@@ -32,8 +32,6 @@ class ImmunisationImport < ApplicationRecord
   include CSVImportable
   include Recordable
 
-  encrypts :csv_data
-
   belongs_to :programme
 
   with_options dependent: :restrict_with_exception,
