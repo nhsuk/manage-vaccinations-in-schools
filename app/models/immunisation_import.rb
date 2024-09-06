@@ -44,8 +44,6 @@ class ImmunisationImport < ApplicationRecord
     has_many :patients
   end
 
-  scope :csv_not_removed, -> { where(csv_removed_at: nil) }
-
   before_save :ensure_processed_with_count_statistics
 
   COUNT_COLUMNS = %i[
@@ -53,10 +51,6 @@ class ImmunisationImport < ApplicationRecord
     new_record_count
     not_administered_record_count
   ].freeze
-
-  def csv_removed?
-    csv_removed_at != nil
-  end
 
   def processed?
     processed_at != nil
@@ -113,11 +107,6 @@ class ImmunisationImport < ApplicationRecord
 
       update!(recorded_at:)
     end
-  end
-
-  def remove!
-    return if csv_removed?
-    update!(csv_data: nil, csv_removed_at: Time.zone.now)
   end
 
   private

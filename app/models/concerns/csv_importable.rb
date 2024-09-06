@@ -12,12 +12,14 @@ module CSVImportable
                class_name: "User",
                foreign_key: :uploaded_by_user_id
 
+    scope :csv_not_removed, -> { where(csv_removed_at: nil) }
+
     validates :csv,
               absence: {
-                if: -> { try(:csv_removed?) || false }
+                if: :csv_removed?
               },
               presence: {
-                unless: -> { try(:csv_removed?) || false }
+                unless: :csv_removed?
               }
     validates :csv_filename, presence: true
 
@@ -37,6 +39,10 @@ module CSVImportable
     csv_data
   end
 
+  def csv_removed?
+    csv_removed_at != nil
+  end
+
   def load_data!
     return if invalid?
 
@@ -50,6 +56,11 @@ module CSVImportable
     return if invalid?
 
     self.rows = data.map { |row_data| parse_row(row_data) }
+  end
+
+  def remove!
+    return if csv_removed?
+    update!(csv_data: nil, csv_removed_at: Time.zone.now)
   end
 
   def csv_is_valid
