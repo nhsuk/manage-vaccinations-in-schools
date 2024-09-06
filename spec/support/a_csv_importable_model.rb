@@ -57,6 +57,17 @@ shared_examples_for "a CSVImportable model" do
     end
   end
 
+  describe "#record!" do
+    let(:today) { Time.zone.local(2025, 1, 1) }
+
+    it "sets recorded_at" do
+      expect { travel_to(today) { subject.record! } }.to change(
+        subject,
+        :recorded_at
+      ).from(nil).to(today)
+    end
+  end
+
   describe "#remove!" do
     let(:today) { Time.zone.local(2020, 1, 1) }
 

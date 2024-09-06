@@ -71,4 +71,8 @@ class CohortImport < ApplicationRecord
 
     :new_record_count
   end
+
+  def record_rows
+    # TODO: implement this when we create draft patients
+  end
 end

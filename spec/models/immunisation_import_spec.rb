@@ -279,12 +279,6 @@ describe ImmunisationImport, type: :model do
       let(:programme) { create(:programme, :flu_all_vaccines, academic_year:) }
       let(:file) { "valid_flu.csv" }
 
-      it "sets the recorded at time" do
-        expect { record! }.to change(immunisation_import, :recorded_at).from(
-          nil
-        )
-      end
-
       it "records the vaccination records" do
         expect { record! }.to change(VaccinationRecord.recorded, :count).from(
           0
@@ -301,12 +295,6 @@ describe ImmunisationImport, type: :model do
     context "with valid HPV rows" do
       let(:programme) { create(:programme, :hpv_all_vaccines, academic_year:) }
       let(:file) { "valid_hpv.csv" }
-
-      it "sets the recorded at time" do
-        expect { record! }.to change(immunisation_import, :recorded_at).from(
-          nil
-        )
-      end
 
       it "records the vaccination records" do
         expect { record! }.to change(VaccinationRecord.recorded, :count).from(
