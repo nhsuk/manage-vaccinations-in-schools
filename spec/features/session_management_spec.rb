@@ -6,7 +6,7 @@ describe "Session management" do
   around { |example| travel_to(Time.zone.local(2024, 2, 29)) { example.run } }
 
   scenario "Adding a new session, closing consent" do
-    given_my_team_is_running_an_hpv_vaccination_campaign
+    given_my_team_is_running_an_hpv_vaccination_programme
     when_i_go_to_todays_sessions_as_a_nurse
     then_i_see_no_sessions
 
@@ -42,9 +42,9 @@ describe "Session management" do
     then_i_see_the_new_session
   end
 
-  def given_my_team_is_running_an_hpv_vaccination_campaign
+  def given_my_team_is_running_an_hpv_vaccination_programme
     @team = create(:team, :with_one_nurse)
-    create(:campaign, :hpv, team: @team)
+    create(:programme, :hpv, team: @team)
     @location = create(:location, :school)
     @patient = create(:patient, school: @location)
   end

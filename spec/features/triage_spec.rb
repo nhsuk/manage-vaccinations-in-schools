@@ -4,7 +4,7 @@ describe "Triage" do
   include EmailExpectations
 
   scenario "nurse can triage a patient" do
-    given_a_campaign_with_a_running_session
+    given_a_programme_with_a_running_session
     when_i_go_to_the_patient_that_needs_triage
     then_i_see_the_triage_options
 
@@ -28,12 +28,12 @@ describe "Triage" do
     and_vaccination_will_happen_emails_are_sent_to_both_parents
   end
 
-  def given_a_campaign_with_a_running_session
+  def given_a_programme_with_a_running_session
     @team = create(:team, :with_one_nurse)
-    @campaign = create(:campaign, :hpv, team: @team)
-    @batch = @campaign.batches.first
+    @programme = create(:programme, :hpv, team: @team)
+    @batch = @programme.batches.first
     location = create(:location, :school)
-    @session = create(:session, campaign: @campaign, location:)
+    @session = create(:session, programme: @programme, location:)
     @patient =
       create(
         :patient_session,
@@ -45,7 +45,7 @@ describe "Triage" do
       :health_question_notes,
       :from_granddad,
       patient: @patient,
-      campaign: @campaign
+      programme: @programme
     )
     @patient.reload # Make sure both consents are accessible
   end

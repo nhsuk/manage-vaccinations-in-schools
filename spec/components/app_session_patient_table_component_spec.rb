@@ -10,8 +10,8 @@ describe AppSessionPatientTableComponent, type: :component do
   end
 
   let(:section) { :consent }
-  let(:campaign) { create(:campaign) }
-  let(:patient_sessions) { create_list(:patient_session, 2, campaign:) }
+  let(:programme) { create(:programme) }
+  let(:patient_sessions) { create_list(:patient_session, 2, programme:) }
   let(:columns) { %i[name dob] }
   let(:params) { { session_id: 1, section:, tab: :needed } }
   let(:args) do
@@ -39,7 +39,7 @@ describe AppSessionPatientTableComponent, type: :component do
       [
         create(
           :patient_session,
-          campaign:,
+          programme:,
           patient: create(:patient, common_name: "Bobby")
         )
       ]

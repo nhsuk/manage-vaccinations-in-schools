@@ -78,7 +78,7 @@ describe Consent do
       it "copies over attributes from consent_form" do
         expect(consent.reload).to(
           have_attributes(
-            campaign: session.campaign,
+            programme: session.programme,
             patient: patient_session.patient,
             consent_form:,
             reason_for_refusal: consent_form.reason,
@@ -116,12 +116,12 @@ describe Consent do
 
   describe "#recorded scope" do
     let(:patient) { create(:patient) }
-    let(:campaign) { create(:campaign) }
+    let(:programme) { create(:programme) }
 
     it "returns only consents that have been recorded" do
       consent =
-        create(:consent, patient:, recorded_at: Time.zone.now, campaign:)
-      create(:consent, :draft, patient:, campaign:)
+        create(:consent, patient:, recorded_at: Time.zone.now, programme:)
+      create(:consent, :draft, patient:, programme:)
 
       expect(patient.consents.unscope(where: :recorded).recorded).to eq(
         [consent]
@@ -147,7 +147,7 @@ describe Consent do
     consent =
       build(
         :consent,
-        campaign: create(:campaign, :hpv),
+        programme: create(:programme, :hpv),
         health_answers: [],
         response: "refused",
         reason_for_refusal: "contains_gelatine",
@@ -162,7 +162,7 @@ describe Consent do
 
     expect(consent.health_answers).not_to be_empty
     expect(consent.health_answers.count).to eq(
-      consent.campaign.vaccines.first.health_questions.count
+      consent.programme.vaccines.first.health_questions.count
     )
     expect(consent.health_answers.map(&:response)).to all(be_nil)
   end

@@ -15,12 +15,12 @@ describe MESHDPSExportJob, type: :job do # rubocop:disable RSpec/SpecFilePathFor
     )
   end
 
-  context "with a campaign that has unexported vaccination records" do
+  context "with a programme that has unexported vaccination records" do
     let!(:vaccination_record) { create :vaccination_record }
 
     it "creates a DPS export and sends it" do
-      campaign = vaccination_record.campaign
-      allow(DPSExport).to receive(:create!).with(campaign:) {
+      programme = vaccination_record.programme
+      allow(DPSExport).to receive(:create!).with(programme:) {
         instance_double(DPSExport, csv: "csv", update!: nil, id: 1)
       }
 
@@ -44,13 +44,13 @@ describe MESHDPSExportJob, type: :job do # rubocop:disable RSpec/SpecFilePathFor
     end
   end
 
-  context "with a campaign that has exported vaccination records" do
+  context "with a programme that has exported vaccination records" do
     let!(:vaccination_record) { create :vaccination_record }
 
     it "does not send anything" do
       create(
         :dps_export,
-        campaign: vaccination_record.campaign,
+        programme: vaccination_record.programme,
         vaccination_records: [vaccination_record]
       )
 
@@ -60,8 +60,8 @@ describe MESHDPSExportJob, type: :job do # rubocop:disable RSpec/SpecFilePathFor
     end
   end
 
-  context "with a campaign that has no vaccination records" do
-    before { create :campaign, :active }
+  context "with a programme that has no vaccination records" do
+    before { create :programme, :active }
 
     it "does not do a DPS export" do
       described_class.perform_now

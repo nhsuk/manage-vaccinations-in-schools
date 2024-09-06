@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CampaignPolicy
+class ProgrammePolicy
   class Scope
     def initialize(user, scope)
       @user = user

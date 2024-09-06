@@ -16,7 +16,7 @@ requests to the server when the user has no or spotty connectivity, and reply
 to those requests with offline pages.
 
 Our pages contain sensitive data, as they need to display the names, NHS
-numbers, and date of births of patients involved in a vaccination campaign.
+numbers, and date of births of patients involved in a vaccination programme.
 
 This data needs to be stored securely, otherwise any offline capabilities are
 functionally equivalent to downloading a plaintext Excel or CSV of patient

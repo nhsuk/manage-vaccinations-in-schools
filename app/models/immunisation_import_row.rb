@@ -47,8 +47,8 @@ class ImmunisationImportRow
 
   validates :session_date,
             comparison: {
-              greater_than_or_equal_to: :campaign_start_date,
-              less_than_or_equal_to: :campaign_end_date_or_today
+              greater_than_or_equal_to: :programme_start_date,
+              less_than_or_equal_to: :programme_end_date_or_today
             }
 
   CARE_SETTING_SCHOOL = 1
@@ -64,9 +64,9 @@ class ImmunisationImportRow
             presence: true,
             if: :requires_performed_by?
 
-  def initialize(data:, campaign:, user:, imported_from:)
+  def initialize(data:, programme:, user:, imported_from:)
     @data = data
-    @campaign = campaign
+    @programme = programme
     @user = user
     @imported_from = imported_from
   end
@@ -109,7 +109,7 @@ class ImmunisationImportRow
     return unless valid?
 
     @session ||=
-      @campaign
+      @programme
         .sessions
         .active
         .or(Session.where(imported_from:))
@@ -307,7 +307,7 @@ class ImmunisationImportRow
   def vaccine
     return unless administered
 
-    @vaccine ||= @campaign.vaccines.find_by(nivs_name: vaccine_given)
+    @vaccine ||= @programme.vaccines.find_by(nivs_name: vaccine_given)
   end
 
   def batch
@@ -326,19 +326,19 @@ class ImmunisationImportRow
   end
 
   def valid_given_vaccines
-    @campaign.vaccines.pluck(:nivs_name)
+    @programme.vaccines.pluck(:nivs_name)
   end
 
   def maximum_dose_sequence
     vaccine.maximum_dose_sequence
   end
 
-  def campaign_start_date
-    @campaign.start_date
+  def programme_start_date
+    @programme.start_date
   end
 
-  def campaign_end_date_or_today
-    [@campaign.end_date, Date.current].min
+  def programme_end_date_or_today
+    [@programme.end_date, Date.current].min
   end
 
   def requires_care_setting?

@@ -97,7 +97,7 @@ silently.
   NHS England Digital](https://digital.nhs.uk/developer/api-catalogue/message-exchange-for-social-care-and-health-api#post-/messageexchange/-mailbox_id-)
 
 - **DPSExport** - Sends vaccination records to DPS for processing via MESH. Runs
-  nightly and generates a DPS export for each campaign that has unsent records.
+  nightly and generates a DPS export for each programme that has unsent records.
 
 ## Developing and testing
 
@@ -142,16 +142,16 @@ Upstream reporting to other NHSE services is done by sending vaccination events
 to DPS via MESH. Here's an example of testing the MESH integration by triggering
 the jobs manually:
 
-1. Clear out any existing `DPSExport` records for the campaign you want to test with:
+1. Clear out any existing `DPSExport` records for the programme you want to test with:
    ```
-   [1] pry(main)> Campaign.find(1).dps_exports.destroy_all
+   [1] pry(main)> Programme.find(1).dps_exports.destroy_all
    ```
 2. Trigger the job to send vaccination records to DPS:
    ```
    [2] pry(main)> MESHDPSExportJob.perform_now
    Performing MESHDPSExportJob (Job ID: 15ff78e8-3d8e-42c8-af1a-086ab4e77ff7) from GoodJob(default)
    ...
-   DPS export (17) for campaign (1) sent: 202 - {"message_id":"3F5A532496B341798B698FD44A0155F7"}
+   DPS export (17) for programme (1) sent: 202 - {"message_id":"3F5A532496B341798B698FD44A0155F7"}
    Performed MESHDPSExportJob (Job ID: 15ff78e8-3d8e-42c8-af1a-086ab4e77ff7) from GoodJob(default) in 332.56ms
    ```
 3. Confirm a `DPSExport` record was created:
@@ -163,7 +163,7 @@ the jobs manually:
      status: "accepted",
      filename: "Vaccinations-HPV-2024-08-23.csv",
      sent_at: nil,
-     campaign_id: 1,
+     programme_id: 1,
      created_at: Fri, 23 Aug 2024 16:42:29.679686000 BST +01:00,
      updated_at: Fri, 23 Aug 2024 16:42:29.742197000 BST +01:00>]
    ```
@@ -197,7 +197,7 @@ the jobs manually:
      status: "acknowledged",
      filename: "Vaccinations-HPV-2024-08-23.csv",
      sent_at: nil,
-     campaign_id: 1,
+     programme_id: 1,
      created_at: Fri, 23 Aug 2024 16:42:29.679686000 BST +01:00,
      updated_at: Fri, 23 Aug 2024 16:48:54.371976000 BST +01:00>]
    ```
@@ -207,7 +207,7 @@ The DPS export can also be sent through the cmdline without triggering the job:
 ```
 $ rails mesh:dps_export
 D, [2024-08-22T16:12:14.878651 #98067] DEBUG -- :   Flipper feature(mesh_jobs) enabled? true (6.0ms)  [ actors=nil gate_name=boolean ]
-I, [2024-08-22T16:12:15.237132 #98067]  INFO -- : DPS export (2) for campaign (1) sent: 202 - {"message_id":"B18FA3D33F994615988FE5AFA20143D7"}
+I, [2024-08-22T16:12:15.237132 #98067]  INFO -- : DPS export (2) for programme (1) sent: 202 - {"message_id":"B18FA3D33F994615988FE5AFA20143D7"}
 ```
 
 ## Additional resources

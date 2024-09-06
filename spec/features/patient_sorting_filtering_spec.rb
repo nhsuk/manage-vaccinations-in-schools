@@ -58,8 +58,8 @@ describe "Patient sorting and filtering" do
     @team = create(:team, :with_one_nurse)
     location = create(:location, :school)
     @user = @team.users.first
-    @campaign = create(:campaign, :hpv, team: @team)
-    @session = create(:session, campaign: @campaign, location:)
+    @programme = create(:programme, :hpv, team: @team)
+    @session = create(:session, programme: @programme, location:)
     create_list(:patient, 4, session: @session)
       .zip(
         %w[Alex Blair Casey Cassidy],

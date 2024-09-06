@@ -1,11 +1,11 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: @campaign.active ? campaign_edit_path(@campaign, :confirm) : previous_wizard_path,
-        name: @campaign.active ? "edit programme" : "#{@previous_step} page of programme creation",
+        href: @programme.active ? programme_edit_path(@programme, :confirm) : previous_wizard_path,
+        name: @programme.active ? "edit programme" : "#{@previous_step} page of programme creation",
       ) %>
 <% end %>
 
-<%= form_with model: @campaign, url: wizard_path, method: :put do |f| %>
+<%= form_with model: @programme, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
   <%= h1 "When does this programme run?" %>

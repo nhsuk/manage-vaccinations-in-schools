@@ -6,9 +6,9 @@ class SessionsController < ApplicationController
   def create
     skip_policy_scope
 
-    campaign = current_user.team.campaigns.first
+    programme = current_user.team.programmes.first
 
-    @session = Session.create!(active: false, campaign:)
+    @session = Session.create!(active: false, programme:)
 
     redirect_to session_edit_path(@session, :location)
   end
@@ -23,7 +23,7 @@ class SessionsController < ApplicationController
   def show
     @patient_sessions =
       @session.patient_sessions.strict_loading.includes(
-        :campaign,
+        :programme,
         :gillick_assessment,
         { consents: :parent },
         :triage,

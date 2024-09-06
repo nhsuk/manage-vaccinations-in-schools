@@ -20,7 +20,7 @@
 #  index_teams_on_ods_code  (ods_code) UNIQUE
 #
 class Team < ApplicationRecord
-  has_many :campaigns
+  has_many :programmes
   has_and_belongs_to_many :users
 
   validates :email, presence: true, notify_safe_email: true
@@ -28,8 +28,8 @@ class Team < ApplicationRecord
   validates :ods_code, presence: true, uniqueness: true
   validates :phone, presence: true, phone: true
 
-  def campaign
-    # TODO: Update the app to properly support multiple campaigns per team
-    campaigns.first
+  def programme
+    # TODO: Update the app to properly support multiple programmes per team
+    programmes.first
   end
 end

@@ -205,9 +205,9 @@ To [generate tests interactively by clicking in a live browser](https://playwrig
 yarn playwright codegen http://localhost:4000
 ```
 
-### Example campaigns
+### Example programmes
 
-You can generate an example campaign with a few sessions in development by visiting `/reset`.
+You can generate an example programme with a few sessions in development by visiting `/reset`.
 
 #### Adding a test user
 

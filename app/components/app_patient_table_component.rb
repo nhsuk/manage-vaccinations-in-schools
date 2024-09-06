@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 class AppPatientTableComponent < ViewComponent::Base
-  def initialize(patients, campaign:)
+  def initialize(patients, programme:)
     super
 
     @patients = patients
-    @campaign = campaign
+    @programme = programme
   end
 
   private
 
-  attr_reader :patients, :campaign
+  attr_reader :patients, :programme
 
   def heading
     "#{pluralize(patients.count, "child")} in this programme’s cohort"
@@ -45,6 +45,6 @@ class AppPatientTableComponent < ViewComponent::Base
 
   def patient_session_for(patient:)
     # TODO: handle multiple patient sessions
-    campaign.patient_sessions.active.order(:created_at).find_by(patient:)
+    programme.patient_sessions.active.order(:created_at).find_by(patient:)
   end
 end

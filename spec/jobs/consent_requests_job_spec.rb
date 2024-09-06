@@ -6,13 +6,13 @@ describe ConsentRequestsJob, type: :job do
     ActiveJob::Base.queue_adapter.enqueued_jobs.clear
   end
 
-  let(:campaign) { create(:campaign, :active) }
+  let(:programme) { create(:programme, :active) }
 
   context "with draft and active sessions" do
     it "enqueues ConsentRequestsSessionBatchJob for each active sessions" do
       active_session =
-        create(:session, send_consent_at: Time.zone.today, campaign:)
-      _draft_session = create(:session, :draft, campaign:)
+        create(:session, send_consent_at: Time.zone.today, programme:)
+      _draft_session = create(:session, :draft, programme:)
 
       described_class.perform_now
       expect(ConsentRequestsSessionBatchJob).to have_been_enqueued.once
@@ -25,9 +25,9 @@ describe ConsentRequestsJob, type: :job do
   context "with sessions set to send consent today and in the future" do
     it "enqueues ConsentRequestsSessionBatchJob for the session set to send consent today" do
       active_session =
-        create(:session, send_consent_at: Time.zone.today, campaign:)
+        create(:session, send_consent_at: Time.zone.today, programme:)
       _later_session =
-        create(:session, send_consent_at: 2.days.from_now, campaign:)
+        create(:session, send_consent_at: 2.days.from_now, programme:)
 
       described_class.perform_now
       expect(ConsentRequestsSessionBatchJob).to have_been_enqueued.once

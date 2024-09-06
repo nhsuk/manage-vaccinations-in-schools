@@ -3,7 +3,7 @@
 describe "Edit vaccination record" do
   scenario "User edits the date/time" do
     given_i_am_signed_in
-    and_an_hpv_campaign_is_underway
+    and_an_hpv_programme_is_underway
     and_a_vaccination_record_exists
 
     when_i_go_to_the_vaccination_records_page
@@ -27,10 +27,10 @@ describe "Edit vaccination record" do
     sign_in @team.users.first
   end
 
-  def and_an_hpv_campaign_is_underway
-    campaign = create(:campaign, :hpv, academic_year: 2023, team: @team)
+  def and_an_hpv_programme_is_underway
+    programme = create(:programme, :hpv, academic_year: 2023, team: @team)
     location = create(:location, :school)
-    @session = create(:session, campaign:, location:)
+    @session = create(:session, programme:, location:)
   end
 
   def and_a_vaccination_record_exists

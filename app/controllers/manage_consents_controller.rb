@@ -210,7 +210,7 @@ class ManageConsentsController < ApplicationController
   def create_params
     {
       patient: @patient,
-      campaign: @session.campaign,
+      programme: @session.programme,
       recorded_by: current_user
     }.tap do |attrs|
       attrs[:route] = :self_consent if @patient_session.gillick_competent?

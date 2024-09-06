@@ -2,7 +2,7 @@
 
 class VaccinationRecords::EditController < ApplicationController
   before_action :set_vaccination_record
-  before_action :set_campaign
+  before_action :set_programme
 
   def edit_date_and_time
     render :date_and_time
@@ -15,8 +15,8 @@ class VaccinationRecords::EditController < ApplicationController
       @vaccination_record.errors.add(:administered_at, :blank)
       render :date_and_time, status: :unprocessable_entity
     elsif @vaccination_record.save
-      redirect_to campaign_vaccination_record_path(
-                    @campaign,
+      redirect_to programme_vaccination_record_path(
+                    @programme,
                     @vaccination_record
                   )
     else
@@ -29,13 +29,13 @@ class VaccinationRecords::EditController < ApplicationController
   def set_vaccination_record
     @vaccination_record =
       policy_scope(VaccinationRecord)
-        .where(campaign: params[:campaign_id])
-        .includes(:campaign)
+        .where(programme: params[:programme_id])
+        .includes(:programme)
         .find(params[:vaccination_record_id])
   end
 
-  def set_campaign
-    @campaign = @vaccination_record.campaign
+  def set_programme
+    @programme = @vaccination_record.programme
   end
 
   def vaccination_record_params

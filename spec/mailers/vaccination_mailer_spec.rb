@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 describe VaccinationMailer do
-  let(:campaign) { create(:campaign, :active) }
-  let(:session) { create(:session, campaign:) }
+  let(:programme) { create(:programme, :active) }
+  let(:session) { create(:session, programme:) }
 
   describe "hpv_vaccination_has_taken_place" do
     subject(:mail) do
@@ -10,7 +10,7 @@ describe VaccinationMailer do
     end
 
     let(:patient) do
-      create(:patient, consents: [build(:consent_given, campaign:)])
+      create(:patient, consents: [build(:consent_given, programme:)])
     end
     let(:patient_session) { create(:patient_session, patient:, session:) }
     let(:vaccination_record) { create(:vaccination_record, patient_session:) }
@@ -89,7 +89,7 @@ describe VaccinationMailer do
     end
 
     let(:patient) do
-      create(:patient, consents: [build(:consent_given, campaign:)])
+      create(:patient, consents: [build(:consent_given, programme:)])
     end
     let(:patient_session) { create(:patient_session, session:, patient:) }
     let(:vaccination_record) do

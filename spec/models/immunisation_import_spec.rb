@@ -31,7 +31,7 @@
 
 describe ImmunisationImport, type: :model do
   subject(:immunisation_import) do
-    create(:immunisation_import, campaign:, csv:, user:)
+    create(:immunisation_import, programme:, csv:, user:)
   end
 
   before do
@@ -41,7 +41,7 @@ describe ImmunisationImport, type: :model do
   end
 
   let(:academic_year) { 2023 }
-  let(:campaign) { create(:campaign, :flu_all_vaccines, academic_year:) }
+  let(:programme) { create(:programme, :flu_all_vaccines, academic_year:) }
   let(:file) { "valid_flu.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/immunisation_import/#{file}") }
   let(:team) { create(:team, ods_code: "R1L") }
@@ -124,7 +124,7 @@ describe ImmunisationImport, type: :model do
     before { immunisation_import.parse_rows! }
 
     context "with valid Flu rows" do
-      let(:campaign) { create(:campaign, :flu_all_vaccines, academic_year:) }
+      let(:programme) { create(:programme, :flu_all_vaccines, academic_year:) }
       let(:file) { "valid_flu.csv" }
 
       it "populates the rows" do
@@ -134,7 +134,7 @@ describe ImmunisationImport, type: :model do
     end
 
     context "with valid HPV rows" do
-      let(:campaign) { create(:campaign, :hpv_all_vaccines, academic_year:) }
+      let(:programme) { create(:programme, :hpv_all_vaccines, academic_year:) }
       let(:file) { "valid_hpv.csv" }
 
       it "populates the rows" do
@@ -157,7 +157,7 @@ describe ImmunisationImport, type: :model do
     subject(:process!) { immunisation_import.process! }
 
     context "with valid Flu rows" do
-      let(:campaign) { create(:campaign, :flu_all_vaccines, academic_year:) }
+      let(:programme) { create(:programme, :flu_all_vaccines, academic_year:) }
       let(:file) { "valid_flu.csv" }
 
       it "creates locations, patients, and vaccination records" do
@@ -194,7 +194,7 @@ describe ImmunisationImport, type: :model do
       end
 
       it "ignores and counts duplicate records" do
-        build(:immunisation_import, campaign:, csv:, user:).record!
+        build(:immunisation_import, programme:, csv:, user:).record!
         csv.rewind
 
         process!
@@ -203,7 +203,7 @@ describe ImmunisationImport, type: :model do
     end
 
     context "with valid HPV rows" do
-      let(:campaign) { create(:campaign, :hpv_all_vaccines, academic_year:) }
+      let(:programme) { create(:programme, :hpv_all_vaccines, academic_year:) }
       let(:file) { "valid_hpv.csv" }
 
       it "creates locations, patients, and vaccination records" do
@@ -240,7 +240,7 @@ describe ImmunisationImport, type: :model do
       end
 
       it "ignores and counts duplicate records" do
-        build(:immunisation_import, campaign:, csv:, user:).record!
+        build(:immunisation_import, programme:, csv:, user:).record!
         csv.rewind
 
         process!
@@ -259,7 +259,7 @@ describe ImmunisationImport, type: :model do
     end
 
     context "with an existing patient matching the name" do
-      let(:campaign) { create(:campaign, :flu_all_vaccines, academic_year:) }
+      let(:programme) { create(:programme, :flu_all_vaccines, academic_year:) }
       let(:file) { "valid_flu.csv" }
 
       let!(:patient) do
@@ -284,7 +284,7 @@ describe ImmunisationImport, type: :model do
     end
 
     context "with a patient record that has different attributes" do
-      let(:campaign) { create(:campaign, :hpv_all_vaccines, academic_year:) }
+      let(:programme) { create(:programme, :hpv_all_vaccines, academic_year:) }
       let(:file) { "valid_hpv_with_changes.csv" }
       let!(:existing_patient) do
         create(
@@ -316,7 +316,7 @@ describe ImmunisationImport, type: :model do
     subject(:record!) { immunisation_import.record! }
 
     context "with valid Flu rows" do
-      let(:campaign) { create(:campaign, :flu_all_vaccines, academic_year:) }
+      let(:programme) { create(:programme, :flu_all_vaccines, academic_year:) }
       let(:file) { "valid_flu.csv" }
 
       it "sets the recorded at time" do
@@ -339,7 +339,7 @@ describe ImmunisationImport, type: :model do
     end
 
     context "with valid HPV rows" do
-      let(:campaign) { create(:campaign, :hpv_all_vaccines, academic_year:) }
+      let(:programme) { create(:programme, :hpv_all_vaccines, academic_year:) }
       let(:file) { "valid_hpv.csv" }
 
       it "sets the recorded at time" do

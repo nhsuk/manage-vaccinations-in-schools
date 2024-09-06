@@ -1,13 +1,13 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: new_campaign_immunisation_import_path(@campaign),
-        name: @campaign.name,
+        href: new_programme_immunisation_import_path(@programme),
+        name: @programme.name,
       ) %>
 <% end %>
 
 <% title = "Vaccination records cannot be uploaded" %>
 
-<%= h1 title, page_title: "#{@campaign.name} – #{title}" %>
+<%= h1 title, page_title: "#{@programme.name} – #{title}" %>
 
 <p class="nhsuk-body">
   The records cannot be uploaded due to errors in the CSV file.

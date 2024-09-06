@@ -2,7 +2,7 @@
 
 describe "Manage vaccines" do
   scenario "Viewing a vaccine" do
-    given_my_team_is_running_an_hpv_vaccination_campaign
+    given_my_team_is_running_an_hpv_vaccination_programme
 
     when_i_manage_vaccines
     then_i_see_an_hpv_vaccine_listed
@@ -13,10 +13,10 @@ describe "Manage vaccines" do
     then_i_see_the_vaccine_list
   end
 
-  def given_my_team_is_running_an_hpv_vaccination_campaign
+  def given_my_team_is_running_an_hpv_vaccination_programme
     @team = create(:team, :with_one_nurse)
-    @campaign = create(:campaign, :hpv_no_batches, team: @team)
-    @vaccine = @campaign.vaccines.first
+    @programme = create(:programme, :hpv_no_batches, team: @team)
+    @vaccine = @programme.vaccines.first
   end
 
   def when_i_manage_vaccines

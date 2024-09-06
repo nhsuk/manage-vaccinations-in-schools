@@ -11,7 +11,7 @@ describe ConsentFormMailer, type: :mailer do
               response: "refused",
               reason: :contains_gelatine,
               recorded_at: Date.new(2021, 1, 1),
-              session: create(:session, campaign: create(:campaign, :flu))
+              session: create(:session, programme: create(:programme, :flu))
             )
         )
 
@@ -40,7 +40,7 @@ describe ConsentFormMailer, type: :mailer do
           build(
             :consent,
             recorded_at: Date.new(2021, 1, 1),
-            campaign: session.campaign
+            programme: session.programme
           )
         mail = described_class.give_feedback(consent:, session:)
 

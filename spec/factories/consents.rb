@@ -40,7 +40,7 @@ FactoryBot.define do
     end
 
     patient
-    campaign
+    programme
     response { "given" }
     route { "website" }
     recorded_at { Time.zone.now }

@@ -2,7 +2,7 @@
 
 # == Schema Information
 #
-# Table name: campaigns
+# Table name: programmes
 #
 #  id            :bigint           not null, primary key
 #  academic_year :integer
@@ -17,14 +17,14 @@
 #
 # Indexes
 #
-#  index_campaigns_on_name_and_type_and_academic_year_and_team_id  (name,type,academic_year,team_id) UNIQUE
+#  idx_on_name_type_academic_year_team_id_f5cd28cbec  (name,type,academic_year,team_id) UNIQUE
 #
 # Foreign Keys
 #
 #  fk_rails_...  (team_id => teams.id)
 #
 FactoryBot.define do
-  factory :campaign do
+  factory :programme do
     transient { batch_count { 1 } }
 
     team
@@ -32,7 +32,7 @@ FactoryBot.define do
     trait :active do
       active { true }
 
-      name { "Campaign" }
+      name { "Programme" }
       type { %w[flu hpv].sample }
       academic_year { Time.zone.today.year }
       start_date { Date.new(academic_year, 9, 1) }

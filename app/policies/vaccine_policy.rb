@@ -8,7 +8,7 @@ class VaccinePolicy
     end
 
     def resolve
-      @scope.joins(:campaigns).where(campaigns: { team_id: @user.teams.ids })
+      @scope.joins(:programmes).where(programmes: { team_id: @user.teams.ids })
     end
   end
 end

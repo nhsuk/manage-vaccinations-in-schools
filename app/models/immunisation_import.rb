@@ -37,7 +37,7 @@ class ImmunisationImport < ApplicationRecord
   encrypts :csv_data
 
   belongs_to :user
-  belongs_to :campaign
+  belongs_to :programme
   with_options dependent: :restrict_with_exception,
                foreign_key: :imported_from_id do
     has_many :vaccination_records
@@ -145,7 +145,7 @@ class ImmunisationImport < ApplicationRecord
   def parse_row(row_data)
     ImmunisationImportRow.new(
       data: row_data,
-      campaign:,
+      programme:,
       user:,
       imported_from: self
     )

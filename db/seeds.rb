@@ -24,7 +24,7 @@ Audited
   .audit_class
   .as_user(user) do
     FactoryBot.create(
-      :example_campaign,
+      :example_programme,
       :in_progress,
       :in_past,
       :in_future,

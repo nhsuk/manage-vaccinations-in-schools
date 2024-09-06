@@ -81,10 +81,6 @@ en:
               inclusion: The %{value} vaccine is unknown or not administered as part of this programme.
   activerecord:
     attributes:
-      campaign:
-        types:
-          flu: Flu
-          hpv: HPV
       consent:
         reason_for_refusals:
           already_vaccinated: Vaccine already received
@@ -154,10 +150,14 @@ en:
           no_consent: No consent
           no_outcome: No outcome yet
           vaccinated: Vaccinated
+      programme:
+        types:
+          flu: Flu
+          hpv: HPV
       triage:
         statuses:
           delay_vaccination: Delay vaccination to a later date
-          do_not_vaccinate: Do not vaccinate in campaign
+          do_not_vaccinate: Do not vaccinate in programme
           needs_follow_up: Keep in triage
           ready_to_vaccinate: Safe to vaccinate
       vaccination_record:
@@ -190,22 +190,6 @@ en:
               missing_year: Enter a year
             name:
               blank: Enter a batch
-        campaign:
-          attributes:
-            academic_year:
-              blank: Choose an academic year
-            end_date:
-              blank: Enter an end date
-            name:
-              blank: Enter a name
-            start_date:
-              blank: Enter a start date
-            type:
-              blank: Choose a programme type
-              inclusion: Choose a programme type
-            vaccines:
-              blank: Choose the vaccines this programme administers
-              match_type: Vaccines must be suitable for the programme type
         consent:
           attributes:
             new_or_existing_parent:
@@ -339,6 +323,22 @@ en:
             relationship_other:
               blank: Enter a relationship
               too_long: Enter a relationship that is less than 300 characters long
+        programme:
+          attributes:
+            academic_year:
+              blank: Choose an academic year
+            end_date:
+              blank: Enter an end date
+            name:
+              blank: Enter a name
+            start_date:
+              blank: Enter a start date
+            type:
+              blank: Choose a programme type
+              inclusion: Choose a programme type
+            vaccines:
+              blank: Choose the vaccines this programme administers
+              match_type: Vaccines must be suitable for the programme type
         session:
           attributes:
             close_consent_at:
@@ -409,8 +409,8 @@ en:
               inclusion: Choose if they got the vaccine
             administered_at:
               blank: Enter a date and time
-              greater_than_or_equal_to: Date and time must be after the campaign started
-              less_than: Date and time must be before the campaign ended
+              greater_than_or_equal_to: Date and time must be after the programme started
+              less_than: Date and time must be before the programme ended
             batch_id:
               blank: Choose a batch
               incorrect_vaccine: Choose a batch of the %{vaccine_brand} vaccine
@@ -424,11 +424,6 @@ en:
               inclusion: Choose a reason
             site:
               blank: Choose a site
-  campaigns:
-    index:
-      title: Vaccination programmes
-    patients:
-      title: Cohort
   consent_forms:
     confirm:
       consent_card_title:
@@ -569,6 +564,11 @@ en:
     vaccinated:
       caption: "%{children} vaccinated"
       label: Vaccinated
+  programmes:
+    index:
+      title: Vaccination programmes
+    patients:
+      title: Cohort
   service:
     email: england.mavis@nhs.net
   sessions:

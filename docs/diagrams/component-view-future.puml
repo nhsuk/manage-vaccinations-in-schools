@@ -34,7 +34,7 @@ SystemDb_Ext(pds, "PDS", "", $tags="outside_context")
 
 AddRelTag("optional", $textColor="black", $lineColor="black", $lineStyle="dashed")
 
-Rel(sais, pages, "Manage campaigns")
+Rel(sais, pages, "Manage programmes")
 Rel(sais, pages, "Record Child Vaccination")
 Rel(parents, pages, "Consent response")
 Rel(pages, serviceWorker, "Request Assets", "internal fetch")

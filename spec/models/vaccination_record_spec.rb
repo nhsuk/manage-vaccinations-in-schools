@@ -41,11 +41,11 @@
 #
 
 describe VaccinationRecord, type: :model do
-  subject(:vaccination_record) { create(:vaccination_record, campaign:) }
+  subject(:vaccination_record) { create(:vaccination_record, programme:) }
 
-  let(:campaign) do
+  let(:programme) do
     create(
-      :campaign,
+      :programme,
       :active,
       academic_year: 2020,
       start_date: Date.new(2020, 1, 1),
@@ -54,7 +54,7 @@ describe VaccinationRecord, type: :model do
   end
 
   describe "validations" do
-    it "is expected to validate that :administered_at is between the campaign start and end date" do
+    it "is expected to validate that :administered_at is between the programme start and end date" do
       expect(vaccination_record).to validate_comparison_of(
         :administered_at
       ).is_greater_than_or_equal_to(Time.zone.local(2020, 1, 1)).is_less_than(
@@ -68,7 +68,7 @@ describe VaccinationRecord, type: :model do
       end
 
       let(:patient_session) { create(:patient_session) }
-      let(:vaccine) { patient_session.campaign.vaccines.first }
+      let(:vaccine) { patient_session.programme.vaccines.first }
       let(:different_vaccine) { create(:vaccine) }
       let(:batch) { create(:batch, vaccine: different_vaccine) }
 

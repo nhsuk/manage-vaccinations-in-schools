@@ -30,7 +30,7 @@
 #
 FactoryBot.define do
   factory :immunisation_import do
-    association :campaign
+    association :programme
     association :user
 
     csv_data { "my,csv\n" }

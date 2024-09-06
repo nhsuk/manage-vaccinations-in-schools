@@ -1,9 +1,9 @@
-<%= content_for :page_title, "#{@campaign.name} – School sessions" %>
+<%= content_for :page_title, "#{@programme.name} – School sessions" %>
 
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
-                                          { text: t("campaigns.index.title"), href: campaigns_path },
-                                          { text: @campaign.name, href: campaign_path(@campaign) },
+                                          { text: t("programmes.index.title"), href: programmes_path },
+                                          { text: @programme.name, href: programme_path(@programme) },
                                         ]) %>
 <% end %>
 
@@ -12,24 +12,24 @@
 <%= render AppSecondaryNavigationComponent.new do |nav|
       nav.with_item(
         text: "Overview",
-        href: campaign_path(@campaign),
+        href: programme_path(@programme),
       )
       nav.with_item(
-        text: t("campaigns.patients.title"),
-        href: patients_campaign_path(@campaign),
+        text: t("programmes.patients.title"),
+        href: patients_programme_path(@programme),
       )
       nav.with_item(
         text: "School sessions",
-        href: sessions_campaign_path(@campaign),
+        href: sessions_programme_path(@programme),
         selected: true,
       )
       nav.with_item(
         text: t("vaccination_records.index.title"),
-        href: campaign_vaccination_records_path(@campaign),
+        href: programme_vaccination_records_path(@programme),
       )
       nav.with_item(
         text: t("immunisation_imports.index.title"),
-        href: campaign_immunisation_imports_path(@campaign),
+        href: programme_immunisation_imports_path(@programme),
       )
     end %>
 

@@ -78,9 +78,9 @@ class VaccinationRecord < ApplicationRecord
 
   has_one :patient, through: :patient_session
   has_one :session, through: :patient_session
-  has_one :campaign, through: :session
+  has_one :programme, through: :session
   has_one :location, through: :session
-  has_one :team, through: :campaign
+  has_one :team, through: :programme
 
   scope :administered, -> { where.not(administered_at: nil) }
   scope :unexported, -> { where.missing(:dps_exports) }
@@ -123,7 +123,7 @@ class VaccinationRecord < ApplicationRecord
               less_than: :last_possible_administered_at,
               allow_nil: true
             },
-            if: :campaign
+            if: :programme
 
   validates :delivery_site,
             inclusion: {
@@ -220,11 +220,11 @@ class VaccinationRecord < ApplicationRecord
   private
 
   def first_possible_administered_at
-    campaign.start_date.in_time_zone
+    programme.start_date.in_time_zone
   end
 
   def last_possible_administered_at
-    (campaign.end_date + 1.day).in_time_zone
+    (programme.end_date + 1.day).in_time_zone
   end
 
   def maximum_dose_sequence

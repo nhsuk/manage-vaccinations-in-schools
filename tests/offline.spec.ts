@@ -38,7 +38,7 @@ test.skip("Works offline", async ({ page, context }) => {
   await expect(page.locator("h2")).toContainText("HPV");
 
   await page.getByTestId("session-link").click();
-  await expect(page.locator("h1")).toContainText("HPV campaign");
+  await expect(page.locator("h1")).toContainText("HPV programme");
 
   await page.getByTestId("save-offline").click();
   await expect(page.locator("h1")).toContainText("Create a password");
@@ -51,7 +51,7 @@ test.skip("Works offline", async ({ page, context }) => {
   await goOffline();
 
   await page.getByTestId("session-link").click();
-  await expect(page.locator("h1")).toContainText("HPV campaign");
+  await expect(page.locator("h1")).toContainText("HPV programme");
 
   await page.getByRole("link", { name: "Record vaccinations" }).click();
   await expect(page.getByTestId("child-status").nth(0)).toContainText(

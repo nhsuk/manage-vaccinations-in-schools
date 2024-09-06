@@ -13,9 +13,9 @@ describe ApplicationMailer, type: :mailer do
     )
   end
   let(:location) { create(:location, :school, name: "Hogwarts") }
-  let(:campaign) { create(:campaign, :hpv, team:) }
+  let(:programme) { create(:programme, :hpv, team:) }
   let(:session) do
-    create(:session, campaign:, location:, date: Date.new(2100, 1, 1))
+    create(:session, programme:, location:, date: Date.new(2100, 1, 1))
   end
   let(:parent) { create(:parent, name: "Parent Doe", email: "foo@bar.com") }
   let(:patient) do

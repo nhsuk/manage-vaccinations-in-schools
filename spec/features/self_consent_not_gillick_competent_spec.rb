@@ -4,7 +4,7 @@ describe "Not Gillick competent" do
   after { travel_back }
 
   scenario "No consent from parent, the child is not Gillick competent" do
-    given_an_hpv_campaign_is_underway
+    given_an_hpv_programme_is_underway
     and_it_is_the_day_of_a_vaccination_session
     and_there_is_a_child_without_parental_consent
 
@@ -12,11 +12,11 @@ describe "Not Gillick competent" do
     then_the_child_cannot_give_their_own_consent
   end
 
-  def given_an_hpv_campaign_is_underway
+  def given_an_hpv_programme_is_underway
     @team = create(:team, :with_one_nurse)
-    campaign = create(:campaign, :hpv, team: @team)
+    programme = create(:programme, :hpv, team: @team)
     location = create(:location, :school, name: "Pilot School")
-    @session = create(:session, :in_future, campaign:, location:)
+    @session = create(:session, :in_future, programme:, location:)
     @child = create(:patient, session: @session)
   end
 

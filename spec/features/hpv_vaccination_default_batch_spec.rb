@@ -20,11 +20,11 @@ describe "HPV Vaccination" do
   end
 
   def given_i_am_signed_in
-    campaign = create(:example_campaign, :in_progress, academic_year: 2023)
-    team = campaign.team
-    @batch = campaign.batches.first
-    @batch2 = campaign.batches.second
-    @session = campaign.sessions.first
+    programme = create(:example_programme, :in_progress, academic_year: 2023)
+    team = programme.team
+    @batch = programme.batches.first
+    @batch2 = programme.batches.second
+    @session = programme.sessions.first
     @patient, @patient2 =
       @session
         .patient_sessions

@@ -104,7 +104,7 @@ class Sessions::EditController < ApplicationController
   def set_patients
     # Get a list of patients but ensure we don't include patients that are
     # already in other sessions, if those sessions are active (not draft) and
-    # for the same vaccine/campaign.
+    # for the same vaccine/programme.
     @patients =
       @session
         .location
@@ -113,7 +113,7 @@ class Sessions::EditController < ApplicationController
           Session
             .joins(:patient_sessions)
             .active
-            .where(campaign: @session.campaign)
+            .where(programme: @session.programme)
             .where("patient_sessions.patient_id = patients.id")
             .arel
             .exists

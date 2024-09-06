@@ -31,7 +31,7 @@ class AppHealthQuestionsComponentPreview < ViewComponent::Preview
       :given,
       :no_contraindications,
       patient: patient_session.patient,
-      campaign:
+      programme:
     )
 
     render AppHealthQuestionsComponent.new(consents: patient_session.consents)
@@ -51,7 +51,7 @@ class AppHealthQuestionsComponentPreview < ViewComponent::Preview
         :health_question_notes,
         :from_dad,
         patient: patient_session.patient,
-        campaign:
+        programme:
       )
 
     dad_consent.health_answers.first.notes = "They fainted once"
@@ -64,10 +64,10 @@ class AppHealthQuestionsComponentPreview < ViewComponent::Preview
 
   private
 
-  attr_reader :campaign, :session
+  attr_reader :programme, :session
 
   def setup
-    @campaign = create(:campaign, :hpv, team: Team.first || create(:team))
-    @session = create(:session, campaign:)
+    @programme = create(:programme, :hpv, team: Team.first || create(:team))
+    @session = create(:session, programme:)
   end
 end

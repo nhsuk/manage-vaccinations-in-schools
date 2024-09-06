@@ -63,18 +63,16 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :campaigns, only: %i[index create show] do
+  resources :programmes, only: %i[index create show] do
     member do
       get "patients"
       get "sessions"
     end
 
     resource :edit,
-             controller: "campaigns/edit",
+             controller: "programmes/edit",
              only: %i[show update],
              path: "edit/:id"
-
-    resources :patients, controller: "campaigns/patients", only: %i[index]
 
     resources :immunisation_imports,
               path: "immunisation-imports",

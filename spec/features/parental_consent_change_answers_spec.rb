@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.feature "Parental consent change answers" do
-  before { given_a_flu_campaign_is_underway }
+  before { given_a_flu_programme_is_underway }
 
   scenario "Health questions contain Yes answers" do
     when_i_go_to_a_prefilled_consent_form
@@ -71,11 +71,11 @@ RSpec.feature "Parental consent change answers" do
     then_i_see_the_first_health_question
   end
 
-  def given_a_flu_campaign_is_underway
+  def given_a_flu_programme_is_underway
     @team = create(:team, :with_one_nurse)
-    campaign = create(:campaign, :flu, team: @team)
+    programme = create(:programme, :flu, team: @team)
     location = create(:location, :school, name: "Pilot School")
-    @session = create(:session, :in_future, campaign:, location:)
+    @session = create(:session, :in_future, programme:, location:)
     @child = create(:patient, session: @session)
   end
 

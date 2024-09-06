@@ -20,7 +20,7 @@ class TriageController < ApplicationController
         .active
         .strict_loading
         .includes(
-          :campaign,
+          :programme,
           :gillick_assessment,
           :patient,
           :triage,

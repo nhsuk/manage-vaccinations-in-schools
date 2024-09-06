@@ -8,14 +8,14 @@ class SessionPolicy
     end
 
     def resolve
-      @scope.joins(:campaign).where(campaign: { team_id: @user.teams.ids })
+      @scope.joins(:programme).where(programme: { team_id: @user.teams.ids })
     end
   end
 
   class DraftScope
     # When dealing with draft sessions we need to account for the possibility
-    # that the campaign or location fields aren't set yet, e.g. during creation.
-    # Users can see draft sessions with no location or campaign.
+    # that the programme or location fields aren't set yet, e.g. during creation.
+    # Users can see draft sessions with no location or programme.
 
     def initialize(user, scope)
       @user = user
@@ -24,8 +24,8 @@ class SessionPolicy
 
     def resolve
       @scope.and(
-        Session.where(campaign: nil).or(
-          Session.where(campaign: @user.team.campaigns)
+        Session.where(programme: nil).or(
+          Session.where(programme: @user.team.programmes)
         )
       ).draft
     end

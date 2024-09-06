@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :example_campaign, parent: :campaign do
+  factory :example_programme, parent: :programme do
     hpv
 
     transient do
@@ -17,11 +17,11 @@ FactoryBot.define do
   end
 
   trait :in_progress do
-    after(:create) do |campaign, context|
+    after(:create) do |programme, context|
       location = context.location
       user = context.user
 
-      create(:session, :in_progress, campaign:, location:).tap do |session|
+      create(:session, :in_progress, programme:, location:).tap do |session|
         patients_without_consent =
           create_list(:patient_session, 4, session:, created_by: user)
         unmatched_patients = patients_without_consent.sample(2).map(&:patient)
@@ -75,11 +75,11 @@ FactoryBot.define do
   end
 
   trait :in_past do
-    after(:create) do |campaign, context|
+    after(:create) do |programme, context|
       location = context.location
       user = context.user
 
-      create(:session, :in_past, campaign:, location:).tap do |session|
+      create(:session, :in_past, programme:, location:).tap do |session|
         create_list(
           :patient_session,
           4,
@@ -106,11 +106,11 @@ FactoryBot.define do
   end
 
   trait :in_future do
-    after(:create) do |campaign, context|
+    after(:create) do |programme, context|
       location = context.location
       user = context.user
 
-      create(:session, :in_future, campaign:, location:).tap do |session|
+      create(:session, :in_future, programme:, location:).tap do |session|
         patients_without_consent =
           create_list(:patient_session, 16, session:, created_by: user)
         unmatched_patients = patients_without_consent.sample(8).map(&:patient)

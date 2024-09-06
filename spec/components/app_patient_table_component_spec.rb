@@ -3,10 +3,10 @@
 describe AppPatientTableComponent, type: :component do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(patients, campaign:) }
+  let(:component) { described_class.new(patients, programme:) }
 
-  let(:campaign) { create(:campaign, :active, academic_year: 2020) }
-  let(:session) { create(:session, campaign:) }
+  let(:programme) { create(:programme, :active, academic_year: 2020) }
+  let(:session) { create(:session, programme:) }
   let(:patients) do
     [
       create(

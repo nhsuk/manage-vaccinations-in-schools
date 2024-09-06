@@ -1,7 +1,7 @@
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
-                                          { text: t("campaigns.index.title"), href: campaigns_path },
-                                          { text: @campaign.name, href: campaign_path(@campaign) },
-                                          { text: t("immunisation_imports.index.title"), href: campaign_immunisation_imports_path(@campaign) },
+                                          { text: t("programmes.index.title"), href: programmes_path },
+                                          { text: @programme.name, href: programme_path(@programme) },
+                                          { text: t("immunisation_imports.index.title"), href: programme_immunisation_imports_path(@programme) },
                                         ]) %>
 <% end %>

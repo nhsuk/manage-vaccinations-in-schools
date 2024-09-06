@@ -42,8 +42,8 @@
 FactoryBot.define do
   factory :vaccination_record do
     transient do
-      campaign { association :campaign, :active }
-      session { association :session, campaign: }
+      programme { association :programme, :active }
+      session { association :session, programme: }
       patient { association :patient }
     end
 
@@ -52,15 +52,15 @@ FactoryBot.define do
     recorded_at { "2023-06-09" }
     delivery_site { "left_arm_upper_position" }
     delivery_method { "intramuscular" }
-    vaccine { patient_session.session.campaign.vaccines.first }
+    vaccine { patient_session.session.programme.vaccines.first }
     batch { vaccine.batches.first }
 
     performed_by { association :user }
 
     administered_at do
       Faker::Time.between(
-        from: patient_session.session.campaign.start_date,
-        to: patient_session.session.campaign.end_date
+        from: patient_session.session.programme.start_date,
+        to: patient_session.session.programme.end_date
       )
     end
 

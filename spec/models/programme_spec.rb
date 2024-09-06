@@ -2,7 +2,7 @@
 
 # == Schema Information
 #
-# Table name: campaigns
+# Table name: programmes
 #
 #  id            :bigint           not null, primary key
 #  academic_year :integer
@@ -17,17 +17,17 @@
 #
 # Indexes
 #
-#  index_campaigns_on_name_and_type_and_academic_year_and_team_id  (name,type,academic_year,team_id) UNIQUE
+#  idx_on_name_type_academic_year_team_id_f5cd28cbec  (name,type,academic_year,team_id) UNIQUE
 #
 # Foreign Keys
 #
 #  fk_rails_...  (team_id => teams.id)
 #
 
-describe Campaign, type: :model do
-  subject(:campaign) do
+describe Programme, type: :model do
+  subject(:programme) do
     build(
-      :campaign,
+      :programme,
       academic_year: 2024,
       start_date: Date.new(2024, 9, 1),
       end_date: Date.new(2025, 7, 31)
@@ -45,7 +45,7 @@ describe Campaign, type: :model do
     it { should validate_presence_of(:academic_year).on(:update) }
 
     it do
-      expect(campaign).to validate_comparison_of(:academic_year)
+      expect(programme).to validate_comparison_of(:academic_year)
         .on(:update)
         .is_greater_than_or_equal_to(2000)
         .is_less_than_or_equal_to(Time.zone.today.year + 5)
@@ -54,7 +54,7 @@ describe Campaign, type: :model do
     it { should validate_presence_of(:start_date).on(:update) }
 
     it do
-      expect(campaign).to validate_comparison_of(:start_date)
+      expect(programme).to validate_comparison_of(:start_date)
         .on(:update)
         .is_greater_than_or_equal_to(Date.new(2024, 1, 1))
         .is_less_than(Date.new(2025, 7, 31))
@@ -63,20 +63,20 @@ describe Campaign, type: :model do
     it { should validate_presence_of(:end_date).on(:update) }
 
     it do
-      expect(campaign).to validate_comparison_of(:end_date)
+      expect(programme).to validate_comparison_of(:end_date)
         .on(:update)
         .is_greater_than(Date.new(2024, 9, 1))
         .is_less_than_or_equal_to(Date.new(2025, 12, 31))
     end
 
     context "when vaccines don't match type" do
-      subject(:campaign) do
-        build(:campaign, type: "flu", vaccines: [build(:vaccine, type: "hpv")])
+      subject(:programme) do
+        build(:programme, type: "flu", vaccines: [build(:vaccine, type: "hpv")])
       end
 
       it "is invalid" do
-        expect(campaign).to be_invalid
-        expect(campaign.errors[:vaccines]).to include(
+        expect(programme).to be_invalid
+        expect(programme.errors[:vaccines]).to include(
           /must be suitable for the programme type/
         )
       end

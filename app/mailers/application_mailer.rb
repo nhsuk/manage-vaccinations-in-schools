@@ -15,7 +15,7 @@ class ApplicationMailer < Mail::Notify::Mailer
   end
 
   def reply_to_id
-    @session.campaign.team.reply_to_id
+    @session.programme.team.reply_to_id
   end
 
   def personalisation
@@ -69,18 +69,18 @@ class ApplicationMailer < Mail::Notify::Mailer
   end
 
   def team_email
-    @session.campaign.team.email
+    @session.programme.team.email
   end
 
   def team_name
-    @session.campaign.team.name
+    @session.programme.team.name
   end
 
   def team_phone
-    @session.campaign.team.phone
+    @session.programme.team.phone
   end
 
   def vaccination
-    "#{@session.campaign.name} vaccination"
+    "#{@session.programme.name} vaccination"
   end
 end

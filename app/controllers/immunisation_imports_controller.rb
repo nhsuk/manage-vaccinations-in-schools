@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 class ImmunisationImportsController < ApplicationController
-  before_action :set_campaign
+  before_action :set_programme
   before_action :set_immunisation_import, only: %i[show edit update]
   before_action :set_vaccination_records, only: %i[edit show]
   before_action :set_patients_with_changes, only: %i[edit]
 
   def index
     @immunisation_imports =
-      @campaign
+      @programme
         .immunisation_imports
         .recorded
         .includes(:user)
@@ -45,8 +45,8 @@ class ImmunisationImportsController < ApplicationController
       return
     end
 
-    redirect_to edit_campaign_immunisation_import_path(
-                  @campaign,
+    redirect_to edit_programme_immunisation_import_path(
+                  @programme,
                   @immunisation_import
                 )
   end
@@ -61,24 +61,24 @@ class ImmunisationImportsController < ApplicationController
   def update
     @immunisation_import.record!
 
-    redirect_to campaign_immunisation_import_path(
-                  @campaign,
+    redirect_to programme_immunisation_import_path(
+                  @programme,
                   @immunisation_import
                 )
   end
 
   private
 
-  def set_campaign
-    @campaign =
-      policy_scope(Campaign)
+  def set_programme
+    @programme =
+      policy_scope(Programme)
         .active
         .includes(:immunisation_imports)
-        .find(params[:campaign_id])
+        .find(params[:programme_id])
   end
 
   def set_immunisation_import
-    @immunisation_import = @campaign.immunisation_imports.find(params[:id])
+    @immunisation_import = @programme.immunisation_imports.find(params[:id])
   end
 
   def set_vaccination_records
@@ -102,6 +102,6 @@ class ImmunisationImportsController < ApplicationController
     params
       .fetch(:immunisation_import, {})
       .permit(:csv)
-      .merge(user: current_user, campaign: @campaign)
+      .merge(user: current_user, programme: @programme)
   end
 end

@@ -2,7 +2,7 @@
 
 ## The need for secure offline storage
 
-Our application allows School Age Immunisation Services (SAIS) nurses to run vaccination campaigns in schools. The nurses do not always have access to internet in these schools.
+Our application allows School Age Immunisation Services (SAIS) nurses to run vaccination programmes in schools. The nurses do not always have access to internet in these schools.
 
 As such, our application needs offline capabilities, and the offline data needs to be stored securely.
 

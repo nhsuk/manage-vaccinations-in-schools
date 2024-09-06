@@ -19,17 +19,19 @@ class VaccinationRecordsController < ApplicationController
   end
 
   def reset_dps_export
-    campaign.dps_exports.destroy_all
+    programme.dps_exports.destroy_all
 
-    flash[:success] = { heading: "DPS exports have been reset for campaign" }
+    flash[:success] = {
+      heading: "DPS exports have been reset for the programme"
+    }
 
-    redirect_to campaign_immunisation_imports_path(campaign)
+    redirect_to programme_immunisation_imports_path(programme)
   end
 
   private
 
-  def campaign
-    @campaign ||= policy_scope(Campaign).active.find(params[:campaign_id])
+  def programme
+    @programme ||= policy_scope(Programme).active.find(params[:programme_id])
   end
 
   def vaccination_records
@@ -37,19 +39,19 @@ class VaccinationRecordsController < ApplicationController
       policy_scope(VaccinationRecord)
         .includes(
           :batch,
-          :campaign,
+          :programme,
           :imported_from,
           :performed_by_user,
           :vaccine,
           patient: :school,
           session: :location
         )
-        .where(campaign:)
+        .where(programme:)
         .order(:recorded_at)
         .strict_loading
   end
 
   def dps_export
-    @dps_export ||= DPSExport.create!(campaign:)
+    @dps_export ||= DPSExport.create!(programme:)
   end
 end

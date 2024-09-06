@@ -49,11 +49,11 @@ describe PatientSession do
   describe "#latest_consents" do
     subject { patient_session.latest_consents }
 
-    let(:campaign) { create(:campaign) }
-    let(:patient_session) { create(:patient_session, campaign:, patient:) }
+    let(:programme) { create(:programme) }
+    let(:patient_session) { create(:patient_session, programme:, patient:) }
 
     context "multiple consent given responses from different parents" do
-      let(:consents) { build_list(:consent, 2, campaign:, response: :given) }
+      let(:consents) { build_list(:consent, 2, programme:, response: :given) }
       let(:patient) { create(:patient, consents:) }
 
       it "groups consents by parent name" do
@@ -64,10 +64,10 @@ describe PatientSession do
     context "multiple consent responses from same parents" do
       let(:parent) { create(:parent) }
       let(:refused_consent) do
-        build :consent, campaign:, parent:, response: :refused
+        build :consent, programme:, parent:, response: :refused
       end
       let(:given_consent) do
-        build :consent, campaign:, parent:, response: :given
+        build :consent, programme:, parent:, response: :given
       end
       let(:patient) do
         create(:patient, consents: [refused_consent, given_consent])
@@ -82,13 +82,13 @@ describe PatientSession do
       let(:parent) { create(:parent) }
       let(:refused_recorded_consent) do
         build :consent,
-              campaign:,
+              programme:,
               parent:,
               recorded_at: 1.day.ago,
               response: :refused
       end
       let(:given_draft_consent) do
-        build :consent, :draft, campaign:, parent:, response: :given
+        build :consent, :draft, programme:, parent:, response: :given
       end
       let(:patient) do
         create(

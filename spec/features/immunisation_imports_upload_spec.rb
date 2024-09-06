@@ -3,7 +3,7 @@
 describe "Immunisation imports" do
   scenario "User uploads a file, views cohort and vaccination records" do
     given_i_am_signed_in
-    and_an_hpv_campaign_is_underway
+    and_an_hpv_programme_is_underway
     and_school_locations_exist
 
     when_i_go_to_the_reports_page
@@ -53,11 +53,11 @@ describe "Immunisation imports" do
     sign_in @team.users.first
   end
 
-  def and_an_hpv_campaign_is_underway
-    campaign =
-      create(:campaign, :hpv_all_vaccines, academic_year: 2023, team: @team)
+  def and_an_hpv_programme_is_underway
+    programme =
+      create(:programme, :hpv_all_vaccines, academic_year: 2023, team: @team)
     location = create(:location, :school)
-    @session = create(:session, campaign:, location:)
+    @session = create(:session, programme:, location:)
   end
 
   def and_school_locations_exist

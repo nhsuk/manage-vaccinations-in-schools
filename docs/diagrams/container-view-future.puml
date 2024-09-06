@@ -29,7 +29,7 @@ AddRelTag("optional", $textColor="black", $lineColor="black", $lineStyle="dashed
 
 Rel(server, browser, "Code and assets", "HTTPS")
 Rel(browser, server, "Requests pages", "HTTPS")
-Rel(sais, browser, "Manage campaigns")
+Rel(sais, browser, "Manage programmes")
 Rel(sais, browser, "Record Child Vaccination")
 Rel(parents, browser, "Consent response")
 Rel(server, govukNotify, "Send email and SMS")

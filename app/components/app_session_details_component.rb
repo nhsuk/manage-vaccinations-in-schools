@@ -12,7 +12,7 @@ class AppSessionDetailsComponent < ViewComponent::Base
   end
 
   def vaccine
-    @session.campaign.name
+    @session.programme.name
   end
 
   def date

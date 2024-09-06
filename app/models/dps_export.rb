@@ -27,7 +27,7 @@ class DPSExport < ApplicationRecord
   before_create :set_filename
   before_create :set_vaccination_records
 
-  belongs_to :campaign
+  belongs_to :programme
   has_and_belongs_to_many :vaccination_records
 
   def csv
@@ -55,12 +55,12 @@ class DPSExport < ApplicationRecord
 
   def set_filename
     date = Time.zone.today.strftime("%Y-%m-%d")
-    campaign_name = campaign.name.parameterize(preserve_case: true)
-    self.filename = "Vaccinations-#{campaign_name}-#{date}.csv"
+    programme_name = programme.name.parameterize(preserve_case: true)
+    self.filename = "Vaccinations-#{programme_name}-#{date}.csv"
   end
 
   def set_vaccination_records
     self.vaccination_records =
-      campaign.vaccination_records.recorded.administered.unexported
+      programme.vaccination_records.recorded.administered.unexported
   end
 end

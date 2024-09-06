@@ -38,8 +38,8 @@ class Session < ApplicationRecord
                 :reminder_days_after_custom,
                 :close_consent_on
 
-  delegate :team, to: :campaign
-  belongs_to :campaign, optional: true
+  delegate :team, to: :programme
+  belongs_to :programme, optional: true
   belongs_to :location, optional: true
   belongs_to :imported_from, class_name: "ImmunisationImport", optional: true
   has_many :consent_forms
@@ -95,11 +95,11 @@ class Session < ApplicationRecord
   end
 
   def health_questions
-    campaign.vaccines.first.health_questions
+    programme.vaccines.first.health_questions
   end
 
   def type
-    campaign.name
+    programme.name
   end
 
   def in_progress?
