@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_05_153407) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_06_093003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -242,7 +242,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_05_153407) do
 
   create_table "immunisation_imports", force: :cascade do |t|
     t.text "csv_data"
-    t.bigint "user_id", null: false
+    t.bigint "uploaded_by_user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "programme_id", null: false
@@ -254,7 +254,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_05_153407) do
     t.text "csv_filename", null: false
     t.datetime "csv_removed_at"
     t.index ["programme_id"], name: "index_immunisation_imports_on_programme_id"
-    t.index ["user_id"], name: "index_immunisation_imports_on_user_id"
+    t.index ["uploaded_by_user_id"], name: "index_immunisation_imports_on_uploaded_by_user_id"
   end
 
   create_table "locations", force: :cascade do |t|
@@ -488,7 +488,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_05_153407) do
   add_foreign_key "health_questions", "health_questions", column: "next_question_id"
   add_foreign_key "health_questions", "vaccines"
   add_foreign_key "immunisation_imports", "programmes"
-  add_foreign_key "immunisation_imports", "users"
+  add_foreign_key "immunisation_imports", "users", column: "uploaded_by_user_id"
   add_foreign_key "locations", "immunisation_imports", column: "imported_from_id"
   add_foreign_key "patient_sessions", "users", column: "created_by_user_id"
   add_foreign_key "patients", "immunisation_imports", column: "imported_from_id"

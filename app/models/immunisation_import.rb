@@ -18,17 +18,17 @@ require "csv"
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  programme_id                  :bigint           not null
-#  user_id                       :bigint           not null
+#  uploaded_by_user_id           :bigint           not null
 #
 # Indexes
 #
-#  index_immunisation_imports_on_programme_id  (programme_id)
-#  index_immunisation_imports_on_user_id       (user_id)
+#  index_immunisation_imports_on_programme_id         (programme_id)
+#  index_immunisation_imports_on_uploaded_by_user_id  (uploaded_by_user_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (programme_id => programmes.id)
-#  fk_rails_...  (user_id => users.id)
+#  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 class ImmunisationImport < ApplicationRecord
   include CSVImportable
@@ -36,8 +36,10 @@ class ImmunisationImport < ApplicationRecord
 
   encrypts :csv_data
 
-  belongs_to :user
   belongs_to :programme
+
+  belongs_to :uploaded_by, class_name: "User", foreign_key: :uploaded_by_user_id
+
   with_options dependent: :restrict_with_exception,
                foreign_key: :imported_from_id do
     has_many :vaccination_records
@@ -146,7 +148,7 @@ class ImmunisationImport < ApplicationRecord
     ImmunisationImportRow.new(
       data: row_data,
       programme:,
-      user:,
+      user: uploaded_by,
       imported_from: self
     )
   end
