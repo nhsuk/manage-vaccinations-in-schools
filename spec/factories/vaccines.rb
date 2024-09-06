@@ -33,7 +33,7 @@ FactoryBot.define do
     type { %w[flu hpv].sample }
     brand { Faker::Commerce.product_name }
     manufacturer { Faker::Company.name }
-    nivs_name { brand }
+    sequence(:nivs_name) { |n| "#{brand.parameterize}-#{n}" }
     dose { Faker::Number.decimal(l_digits: 0) }
     snomed_product_code { Faker::Number.decimal_part(digits: 17) }
     snomed_product_term { Faker::Lorem.sentence }
