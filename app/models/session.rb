@@ -122,6 +122,10 @@ class Session < ApplicationRecord
     consent_forms.unmatched.recorded.order(:recorded_at)
   end
 
+  def open_for_consent?
+    close_consent_at&.future?
+  end
+
   private
 
   def set_timeline_attributes
