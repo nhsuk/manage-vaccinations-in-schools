@@ -58,7 +58,7 @@ module ParentInterface
     end
 
     def check_if_past_deadline
-      return if @session.close_consent_at.future?
+      return if @session.open_for_consent?
 
       redirect_to action: :deadline_passed
     end

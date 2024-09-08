@@ -59,5 +59,11 @@ FactoryBot.define do
     trait :in_past do
       date { Time.zone.now - 1.week }
     end
+
+    trait :minimal do
+      send_consent_at { nil }
+      send_reminders_at { nil }
+      close_consent_at { nil }
+    end
   end
 end
