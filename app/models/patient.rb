@@ -22,20 +22,17 @@
 #  session_reminder_sent_at :datetime
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
-#  imported_from_id         :bigint
 #  parent_id                :bigint
 #  school_id                :bigint
 #
 # Indexes
 #
-#  index_patients_on_imported_from_id  (imported_from_id)
-#  index_patients_on_nhs_number        (nhs_number) UNIQUE
-#  index_patients_on_parent_id         (parent_id)
-#  index_patients_on_school_id         (school_id)
+#  index_patients_on_nhs_number  (nhs_number) UNIQUE
+#  index_patients_on_parent_id   (parent_id)
+#  index_patients_on_school_id   (school_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (imported_from_id => immunisation_imports.id)
 #  fk_rails_...  (parent_id => parents.id)
 #  fk_rails_...  (school_id => locations.id)
 #

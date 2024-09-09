@@ -4,30 +4,24 @@
 #
 # Table name: locations
 #
-#  id               :bigint           not null, primary key
-#  address          :text
-#  county           :text
-#  locality         :text
-#  name             :text             not null
-#  ods_code         :string
-#  postcode         :text
-#  town             :text
-#  type             :integer          not null
-#  url              :text
-#  urn              :string
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  imported_from_id :bigint
+#  id         :bigint           not null, primary key
+#  address    :text
+#  county     :text
+#  locality   :text
+#  name       :text             not null
+#  ods_code   :string
+#  postcode   :text
+#  town       :text
+#  type       :integer          not null
+#  url        :text
+#  urn        :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
 #
 # Indexes
 #
-#  index_locations_on_imported_from_id  (imported_from_id)
-#  index_locations_on_ods_code          (ods_code) UNIQUE
-#  index_locations_on_urn               (urn) UNIQUE
-#
-# Foreign Keys
-#
-#  fk_rails_...  (imported_from_id => immunisation_imports.id)
+#  index_locations_on_ods_code  (ods_code) UNIQUE
+#  index_locations_on_urn       (urn) UNIQUE
 #
 
 describe Location, type: :model do

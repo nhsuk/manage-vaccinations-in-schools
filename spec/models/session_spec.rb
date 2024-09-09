@@ -13,18 +13,12 @@
 #  time_of_day       :integer
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
-#  imported_from_id  :bigint
 #  location_id       :bigint
 #  programme_id      :bigint
 #
 # Indexes
 #
-#  index_sessions_on_imported_from_id  (imported_from_id)
-#  index_sessions_on_programme_id      (programme_id)
-#
-# Foreign Keys
-#
-#  fk_rails_...  (imported_from_id => immunisation_imports.id)
+#  index_sessions_on_programme_id  (programme_id)
 #
 
 describe Session, type: :model do
