@@ -5,11 +5,12 @@
   <%= render AppBreadcrumbComponent.new(items: [
                                           { text: "Home", href: dashboard_path },
                                           { text: t("programmes.index.title"), href: programmes_path },
+                                          { text: @programme.name, href: programme_path(@programme) },
                                           { text: page_title },
                                         ]) %>
 <% end %>
 
-<%= form_with model: @cohort_import, url: pilot_cohort_path do |f| %>
+<%= form_with model: @cohort_import, url: programme_cohort_path(@programme) do |f| %>
   <%= f.govuk_error_summary %>
 
   <%= f.govuk_file_field :csv,

@@ -4,6 +4,7 @@ class CohortListsController < ApplicationController
   skip_after_action :verify_policy_scoped, only: %i[new create success]
 
   before_action :set_team, only: %i[new create]
+  before_action :set_programme, only: %i[new create]
 
   def new
     @cohort_import = CohortImport.new
@@ -43,5 +44,9 @@ class CohortListsController < ApplicationController
 
   def set_team
     @team = current_user.team
+  end
+
+  def set_programme
+    @programme = policy_scope(Programme).find(params[:programme_id])
   end
 end
