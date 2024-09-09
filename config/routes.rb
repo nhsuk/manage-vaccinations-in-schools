@@ -56,8 +56,6 @@ Rails.application.routes.draw do
   get "/csrf", to: "csrf#new"
 
   resource :pilot, only: [] do
-    get "/", to: "pilot#manage", as: :manage
-
     resource :cohort_list, as: :cohort, only: %i[new create] do
       get "success", on: :collection
     end
