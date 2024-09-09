@@ -14,7 +14,7 @@ describe ConsentRequestsSessionBatchJob, type: :job do
       )
 
     expect { described_class.perform_now(session) }.to send_email(
-      to: patient_not_sent_consent.parent.email
+      to: patient_not_sent_consent.parents.first.email
     )
 
     expect(ActionMailer::Base.deliveries.count).to eq(1)

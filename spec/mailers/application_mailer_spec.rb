@@ -19,7 +19,7 @@ describe ApplicationMailer, type: :mailer do
   end
   let(:parent) { create(:parent, name: "Parent Doe", email: "foo@bar.com") }
   let(:patient) do
-    create(:patient, first_name: "John", last_name: "Doe", parent:)
+    create(:patient, first_name: "John", last_name: "Doe", parents: [parent])
   end
   let(:patient_session) { create(:patient_session, patient:, session:) }
 

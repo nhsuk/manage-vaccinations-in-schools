@@ -54,7 +54,7 @@ FactoryBot.define do
     last_name { Faker::Name.last_name }
     date_of_birth { Faker::Date.birthday(min_age: 12, max_age: 13) }
     school { session&.location }
-    parent { create(:parent, last_name:) }
+    parents { [create(:parent, last_name:)] }
 
     address_line_1 { Faker::Address.street_address }
     address_line_2 { Faker::Address.secondary_address }

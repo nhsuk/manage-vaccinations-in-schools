@@ -11,7 +11,11 @@ class ApplicationMailer < Mail::Notify::Mailer
   end
 
   def to
-    @patient.parent.email
+    if @patient.respond_to?(:parent)
+      @patient.parent.email
+    else
+      @patient.parents.first.email
+    end
   end
 
   def reply_to_id
@@ -53,7 +57,11 @@ class ApplicationMailer < Mail::Notify::Mailer
   end
 
   def parent_name
-    @patient.parent.name
+    if @patient.respond_to?(:parent)
+      @patient.parent.name
+    else
+      @patient.parents.first.name
+    end
   end
 
   def location_name

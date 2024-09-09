@@ -45,7 +45,7 @@ FactoryBot.define do
     route { "website" }
     recorded_at { Time.zone.now }
 
-    parent { patient.parent }
+    parent { patient.parents.first }
 
     health_answers do
       health_questions_list.map do |question|
@@ -74,21 +74,15 @@ FactoryBot.define do
 
     trait :from_mum do
       parent do
-        if patient.parent.relationship_mother?
-          patient.parent
-        else
+        patient.parents.find(&:relationship_mother?) ||
           create(:parent, :mum, last_name: patient.last_name)
-        end
       end
     end
 
     trait :from_dad do
       parent do
-        if patient.parent.relationship_father?
-          patient.parent
-        else
+        patient.parents.find(&:relationship_father?) ||
           create(:parent, :dad, last_name: patient.last_name)
-        end
       end
     end
 
@@ -134,7 +128,9 @@ FactoryBot.define do
 
     trait :draft do
       recorded_at { nil }
-      draft_parent { patient.parent.tap { _1.update!(recorded_at: nil) } }
+      draft_parent do
+        patient.parents.first.tap { _1.update!(recorded_at: nil) }
+      end
     end
   end
 end

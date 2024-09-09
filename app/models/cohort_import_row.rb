@@ -38,7 +38,7 @@ class CohortImportRow
       first_name:,
       last_name:,
       nhs_number:,
-      parent:,
+      parents: [parent],
       school:
     }
 

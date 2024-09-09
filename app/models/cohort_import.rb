@@ -77,7 +77,7 @@ class CohortImport < ApplicationRecord
 
     patient.save!
 
-    link_records(patient, patient.parent)
+    link_records(patient, *patient.parents)
 
     count_column_to_increment
   end
