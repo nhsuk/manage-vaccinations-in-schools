@@ -79,8 +79,11 @@ describe "Pilot journey" do
     csv_file.write(@registered_parents_csv.to_csv)
     csv_file.close
 
-    visit "/pilot"
-    click_on "Upload the cohort list"
+    visit "/dashboard"
+    click_on "Vaccination programmes", match: :first
+    click_on "HPV"
+    click_on "Cohort"
+    click_on "Add children to programme cohort"
     attach_file "cohort_import[csv]", csv_file.path
     click_on "Upload the cohort list"
   end

@@ -3,10 +3,10 @@
 describe "Pilot - upload cohort" do
   scenario "User uploads a cohort list" do
     given_the_app_is_setup
-    when_i_visit_the_pilot_dashboard
-    then_i_should_see_the_manage_pilot_page
+    and_an_hpv_programme_is_underway
 
-    when_i_click_the_upload_cohort_link
+    when_i_visit_the_cohort_page_for_the_hpv_programme
+    and_i_start_adding_children_to_the_cohort
     then_i_should_see_the_upload_cohort_page
 
     when_i_continue_without_uploading_a_file
@@ -32,17 +32,20 @@ describe "Pilot - upload cohort" do
     @user = @team.users.first
   end
 
-  def when_i_visit_the_pilot_dashboard
+  def and_an_hpv_programme_is_underway
+    create(:programme, :hpv, academic_year: 2023, team: @team)
+  end
+
+  def when_i_visit_the_cohort_page_for_the_hpv_programme
     sign_in @user
-    visit "/pilot"
+    visit "/dashboard"
+    click_on "Vaccination programmes", match: :first
+    click_on "HPV"
+    click_on "Cohort"
   end
 
-  def then_i_should_see_the_manage_pilot_page
-    expect(page).to have_content("Manage pilot")
-  end
-
-  def when_i_click_the_upload_cohort_link
-    click_on "Upload the cohort list"
+  def and_i_start_adding_children_to_the_cohort
+    click_on "Add children to programme cohort"
   end
 
   def then_i_should_see_the_upload_cohort_page
