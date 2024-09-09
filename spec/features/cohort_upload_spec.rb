@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Pilot - upload cohort" do
+describe "Cohort upload" do
   scenario "User uploads a cohort list" do
     given_the_app_is_setup
     and_an_hpv_programme_is_underway
