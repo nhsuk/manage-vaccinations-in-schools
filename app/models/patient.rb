@@ -41,7 +41,6 @@ class Patient < ApplicationRecord
 
   audited
 
-  belongs_to :imported_from, class_name: "ImmunisationImport", optional: true
   belongs_to :parent, optional: true
   belongs_to :school, class_name: "Location", optional: true
 
@@ -52,6 +51,9 @@ class Patient < ApplicationRecord
   has_many :triage, through: :patient_sessions
   has_many :vaccination_records, through: :patient_sessions
   has_many :programmes, through: :sessions
+
+  has_and_belongs_to_many :cohort_imports
+  has_and_belongs_to_many :immunisation_imports
 
   # https://www.datadictionary.nhs.uk/attributes/person_gender_code.html
   enum :gender_code, { not_known: 0, male: 1, female: 2, not_specified: 9 }

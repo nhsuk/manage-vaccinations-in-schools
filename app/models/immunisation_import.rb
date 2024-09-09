@@ -33,13 +33,12 @@ class ImmunisationImport < ApplicationRecord
 
   belongs_to :programme
 
-  with_options dependent: :restrict_with_exception,
-               foreign_key: :imported_from_id do
-    has_many :vaccination_records
-    has_many :locations
-    has_many :sessions
-    has_many :patients
-  end
+  has_and_belongs_to_many :batches
+  has_and_belongs_to_many :locations
+  has_and_belongs_to_many :patient_sessions
+  has_and_belongs_to_many :patients
+  has_and_belongs_to_many :sessions
+  has_and_belongs_to_many :vaccination_records
 
   private
 

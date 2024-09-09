@@ -23,7 +23,10 @@ class Batch < ApplicationRecord
   audited
 
   belongs_to :vaccine
+
   has_many :vaccination_records
+
+  has_and_belongs_to_many :immunisation_imports
 
   validates :name, presence: true
   validates :expiry, presence: true

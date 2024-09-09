@@ -31,7 +31,8 @@ class Location < ApplicationRecord
   has_many :sessions
   has_many :patients, foreign_key: :school_id
   has_many :consent_forms, through: :sessions
-  belongs_to :imported_from, class_name: "ImmunisationImport", optional: true
+
+  has_and_belongs_to_many :immunisation_imports
 
   enum :type, %w[school generic_clinic]
 

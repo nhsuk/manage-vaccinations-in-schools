@@ -37,6 +37,7 @@ class PatientSession < ApplicationRecord
              class_name: "User",
              optional: true,
              foreign_key: :created_by_user_id
+
   has_one :gillick_assessment, -> { recorded }
   has_one :draft_gillick_assessment,
           -> { draft },
@@ -53,6 +54,8 @@ class PatientSession < ApplicationRecord
            end,
            through: :patient,
            class_name: "Consent"
+
+  has_and_belongs_to_many :immunisation_imports
 
   def vaccination_record
     # HACK: in future, it will be possible to have multiple vaccination records for a patient session
