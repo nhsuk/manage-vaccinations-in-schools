@@ -69,38 +69,48 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def parse_row(row_data)
-    ImmunisationImportRow.new(
-      data: row_data,
-      programme:,
-      user: uploaded_by,
-      imported_from: self
-    )
+    ImmunisationImportRow.new(data: row_data, programme:, user: uploaded_by)
   end
 
   def process_row(row)
     if (vaccination_record = row.to_vaccination_record)
-      if vaccination_record.new_record?
-        vaccination_record.save!
-        :new_record_count
-      else
-        :exact_duplicate_record_count
-      end
+      count_column_to_increment =
+        (
+          if vaccination_record.new_record? || vaccination_record.draft?
+            :new_record_count
+          else
+            :exact_duplicate_record_count
+          end
+        )
+
+      vaccination_record.save!
+
+      link_records(
+        vaccination_record,
+        vaccination_record.batch,
+        vaccination_record.location,
+        vaccination_record.patient,
+        vaccination_record.patient_session,
+        vaccination_record.session
+      )
+
+      count_column_to_increment
     else
       :not_administered_record_count
     end
   end
 
-  def record_rows
-    vaccination_records.draft.each do |vaccination_record|
-      if (patient_session = vaccination_record.patient_session).draft?
-        patient_session.update!(active: true)
+  def link_records(*records)
+    records.each do |record|
+      unless record.immunisation_imports.exists?(id)
+        record.immunisation_imports << self
       end
-
-      if (session = vaccination_record.session).draft?
-        session.update!(active: true)
-      end
-
-      vaccination_record.update!(recorded_at: Time.zone.now)
     end
+  end
+
+  def record_rows
+    patient_sessions.draft.update_all(active: true)
+    sessions.draft.update_all(active: true)
+    vaccination_records.draft.update_all(recorded_at: Time.zone.now)
   end
 end

@@ -26,4 +26,6 @@
   <% end %>
 <% end %>
 
-<%= render AppVaccinationRecordTableComponent.new(@vaccination_records) %>
+<%= render AppVaccinationRecordTableComponent.new(
+      @immunisation_import.recorded? ? @vaccination_records.recorded : @vaccination_records.draft
+    ) %>
