@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_06_093003) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_09_085842) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -45,6 +45,12 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_06_093003) do
     t.index ["vaccine_id"], name: "index_batches_on_vaccine_id"
   end
 
+  create_table "batches_immunisation_imports", id: false, force: :cascade do |t|
+    t.bigint "immunisation_import_id", null: false
+    t.bigint "batch_id", null: false
+    t.index ["immunisation_import_id", "batch_id"], name: "idx_on_immunisation_import_id_batch_id_d039b76103", unique: true
+  end
+
   create_table "cohort_imports", force: :cascade do |t|
     t.datetime "csv_removed_at"
     t.datetime "processed_at"
@@ -57,6 +63,12 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_06_093003) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["uploaded_by_user_id"], name: "index_cohort_imports_on_uploaded_by_user_id"
+  end
+
+  create_table "cohort_imports_patients", id: false, force: :cascade do |t|
+    t.bigint "cohort_import_id", null: false
+    t.bigint "patient_id", null: false
+    t.index ["cohort_import_id", "patient_id"], name: "idx_on_cohort_import_id_patient_id_7864d1a8b0", unique: true
   end
 
   create_table "consent_forms", force: :cascade do |t|
@@ -271,6 +283,36 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_06_093003) do
     t.index ["uploaded_by_user_id"], name: "index_immunisation_imports_on_uploaded_by_user_id"
   end
 
+  create_table "immunisation_imports_locations", id: false, force: :cascade do |t|
+    t.bigint "immunisation_import_id", null: false
+    t.bigint "location_id", null: false
+    t.index ["immunisation_import_id", "location_id"], name: "idx_on_immunisation_import_id_location_id_2643f47d5c", unique: true
+  end
+
+  create_table "immunisation_imports_patient_sessions", id: false, force: :cascade do |t|
+    t.bigint "immunisation_import_id", null: false
+    t.bigint "patient_session_id", null: false
+    t.index ["immunisation_import_id", "patient_session_id"], name: "idx_on_immunisation_import_id_patient_session_id_b5003c646e", unique: true
+  end
+
+  create_table "immunisation_imports_patients", id: false, force: :cascade do |t|
+    t.bigint "immunisation_import_id", null: false
+    t.bigint "patient_id", null: false
+    t.index ["immunisation_import_id", "patient_id"], name: "idx_on_immunisation_import_id_patient_id_6dc58d875d", unique: true
+  end
+
+  create_table "immunisation_imports_sessions", id: false, force: :cascade do |t|
+    t.bigint "immunisation_import_id", null: false
+    t.bigint "session_id", null: false
+    t.index ["immunisation_import_id", "session_id"], name: "idx_on_immunisation_import_id_session_id_f8b87b9417", unique: true
+  end
+
+  create_table "immunisation_imports_vaccination_records", id: false, force: :cascade do |t|
+    t.bigint "immunisation_import_id", null: false
+    t.bigint "vaccination_record_id", null: false
+    t.index ["immunisation_import_id", "vaccination_record_id"], name: "idx_on_immunisation_import_id_vaccination_record_id_588e859772", unique: true
+  end
+
   create_table "locations", force: :cascade do |t|
     t.text "name", null: false
     t.text "address"
@@ -282,10 +324,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_06_093003) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "urn"
-    t.bigint "imported_from_id"
     t.integer "type", null: false
     t.string "ods_code"
-    t.index ["imported_from_id"], name: "index_locations_on_imported_from_id"
     t.index ["ods_code"], name: "index_locations_on_ods_code", unique: true
     t.index ["urn"], name: "index_locations_on_urn", unique: true
   end
@@ -338,11 +378,9 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_06_093003) do
     t.datetime "sent_reminder_at"
     t.datetime "session_reminder_sent_at"
     t.bigint "parent_id"
-    t.bigint "imported_from_id"
     t.integer "gender_code", default: 0, null: false
     t.boolean "home_educated"
     t.jsonb "pending_changes", default: {}, null: false
-    t.index ["imported_from_id"], name: "index_patients_on_imported_from_id"
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
     t.index ["parent_id"], name: "index_patients_on_parent_id"
     t.index ["school_id"], name: "index_patients_on_school_id"
@@ -379,8 +417,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_06_093003) do
     t.date "send_reminders_at"
     t.date "close_consent_at"
     t.integer "time_of_day"
-    t.bigint "imported_from_id"
-    t.index ["imported_from_id"], name: "index_sessions_on_imported_from_id"
     t.index ["programme_id"], name: "index_sessions_on_programme_id"
   end
 
@@ -454,14 +490,12 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_06_093003) do
     t.bigint "performed_by_user_id"
     t.text "notes"
     t.bigint "vaccine_id"
-    t.bigint "imported_from_id"
     t.integer "dose_sequence", null: false
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.datetime "administered_at"
     t.string "performed_by_given_name"
     t.string "performed_by_family_name"
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
-    t.index ["imported_from_id"], name: "index_vaccination_records_on_imported_from_id"
     t.index ["patient_session_id"], name: "index_vaccination_records_on_patient_session_id"
     t.index ["performed_by_user_id"], name: "index_vaccination_records_on_performed_by_user_id"
     t.index ["vaccine_id"], name: "index_vaccination_records_on_vaccine_id"
@@ -488,7 +522,11 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_06_093003) do
   end
 
   add_foreign_key "batches", "vaccines"
+  add_foreign_key "batches_immunisation_imports", "batches"
+  add_foreign_key "batches_immunisation_imports", "immunisation_imports"
   add_foreign_key "cohort_imports", "users", column: "uploaded_by_user_id"
+  add_foreign_key "cohort_imports_patients", "cohort_imports"
+  add_foreign_key "cohort_imports_patients", "patients"
   add_foreign_key "consent_forms", "consents"
   add_foreign_key "consent_forms", "parents"
   add_foreign_key "consent_forms", "sessions"
@@ -504,17 +542,23 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_06_093003) do
   add_foreign_key "health_questions", "vaccines"
   add_foreign_key "immunisation_imports", "programmes"
   add_foreign_key "immunisation_imports", "users", column: "uploaded_by_user_id"
-  add_foreign_key "locations", "immunisation_imports", column: "imported_from_id"
+  add_foreign_key "immunisation_imports_locations", "immunisation_imports"
+  add_foreign_key "immunisation_imports_locations", "locations"
+  add_foreign_key "immunisation_imports_patient_sessions", "immunisation_imports"
+  add_foreign_key "immunisation_imports_patient_sessions", "patient_sessions"
+  add_foreign_key "immunisation_imports_patients", "immunisation_imports"
+  add_foreign_key "immunisation_imports_patients", "patients"
+  add_foreign_key "immunisation_imports_sessions", "immunisation_imports"
+  add_foreign_key "immunisation_imports_sessions", "sessions"
+  add_foreign_key "immunisation_imports_vaccination_records", "immunisation_imports"
+  add_foreign_key "immunisation_imports_vaccination_records", "vaccination_records"
   add_foreign_key "patient_sessions", "users", column: "created_by_user_id"
-  add_foreign_key "patients", "immunisation_imports", column: "imported_from_id"
   add_foreign_key "patients", "locations", column: "school_id"
   add_foreign_key "patients", "parents"
   add_foreign_key "programmes", "teams"
-  add_foreign_key "sessions", "immunisation_imports", column: "imported_from_id"
   add_foreign_key "triage", "patient_sessions"
   add_foreign_key "triage", "users", column: "performed_by_user_id"
   add_foreign_key "vaccination_records", "batches"
-  add_foreign_key "vaccination_records", "immunisation_imports", column: "imported_from_id"
   add_foreign_key "vaccination_records", "patient_sessions"
   add_foreign_key "vaccination_records", "users", column: "performed_by_user_id"
   add_foreign_key "vaccination_records", "vaccines"
