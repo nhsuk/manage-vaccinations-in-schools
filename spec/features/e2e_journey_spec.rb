@@ -2,7 +2,7 @@
 
 require "csv"
 
-describe "Pilot journey" do
+describe "End-to-end journey" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
   scenario "Cohorting, session creation, verbal consent, vaccination" do
