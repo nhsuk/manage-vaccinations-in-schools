@@ -41,7 +41,7 @@ class Patient < ApplicationRecord
 
   audited
 
-  belongs_to :parent, optional: true
+  has_and_belongs_to_many :parents
   belongs_to :school, class_name: "Location", optional: true
 
   has_many :consents
