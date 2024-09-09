@@ -90,7 +90,7 @@ Rails.application.routes.draw do
           action: "update_date_and_time"
     end
 
-    resource :cohort_list, as: :cohort, only: %i[new create] do
+    resource :cohort_import, as: :cohort, only: %i[new create] do
       get "success", on: :collection
     end
   end
