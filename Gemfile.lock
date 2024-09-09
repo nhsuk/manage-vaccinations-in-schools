@@ -372,7 +372,7 @@ GEM
     parser (3.3.3.0)
       ast (~> 2.4.1)
       racc
-    pg (1.5.7)
+    pg (1.5.8)
     phonelib (0.9.1)
     prettier_print (1.2.1)
     propshaft (0.9.1)
