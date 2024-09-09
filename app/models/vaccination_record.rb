@@ -67,11 +67,12 @@ class VaccinationRecord < ApplicationRecord
   }.with_indifferent_access
 
   belongs_to :batch, optional: true
-  belongs_to :imported_from, class_name: "ImmunisationImport", optional: true
   belongs_to :patient_session
   belongs_to :performed_by_user, class_name: "User", optional: true
   belongs_to :vaccine, optional: true
+
   has_and_belongs_to_many :dps_exports
+  has_and_belongs_to_many :immunisation_imports
 
   has_one :patient, through: :patient_session
   has_one :session, through: :patient_session

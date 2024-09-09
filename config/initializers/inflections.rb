@@ -23,6 +23,7 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "ODS"
   inflect.acronym "PDS"
 
+  inflect.irregular "batch", "batches"
   inflect.irregular "child", "children"
 
   inflect.uncountable "triage"

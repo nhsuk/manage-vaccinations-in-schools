@@ -33,12 +33,15 @@ class Session < ApplicationRecord
                 :close_consent_on
 
   delegate :team, to: :programme
+
   belongs_to :programme, optional: true
   belongs_to :location, optional: true
-  belongs_to :imported_from, class_name: "ImmunisationImport", optional: true
+
   has_many :consent_forms
   has_many :patient_sessions
   has_many :patients, through: :patient_sessions
+
+  has_and_belongs_to_many :immunisation_imports
 
   enum :time_of_day, %w[morning afternoon all_day]
 
