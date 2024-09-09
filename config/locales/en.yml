@@ -63,15 +63,50 @@ en:
             response:
               inclusion: Choose an answer
         immunisation_import_row:
+          format: "`%{attribute}`: %{message}"
           attributes:
             administered:
-              inclusion: Unable to determine if the vaccination was administered or not.
+              inclusion: You need to record whether the child was vaccinated or not. Enter ‘Y’ or ‘N’ in the ‘vaccinated’ column.
+            batch_expiry_date:
+              blank: Enter a batch expiry date.
+            batch_number:
+              blank: Enter a batch number.
+            care_setting:
+              blank: Enter a care setting.
+              inclusion: Enter a valid care setting.
+            delivery_site:
+              blank: Enter an anatomical site.
+            dose_sequence:
+              blank: The dose sequence number cannot be greater than 3. Enter a dose sequence number, for example, 1, 2 or 3.
+            organisation_code:
+              blank: Enter an organisation code that matches the current team.
+              equal_to: Enter an organisation code that matches the current team.
             patient:
               multiple_duplicate_match: Two or more possible patients match the patient first name, last name, date of birth or postcode.
+            patient_date_of_birth:
+              blank: Enter a date of birth in the correct format.
+            patient_first_name:
+              blank: Enter a first name.
+            patient_gender_code:
+              blank: Enter a gender or gender code.
+              inclusion: Enter a gender or gender code.
+            patient_last_name:
+              blank: Enter a last name.
+            patient_nhs_number:
+              blank: Enter an NHS number with 10 characters.
+              wrong_length: Enter an NHS number with 10 characters.
+            patient_postcode:
+              blank: Enter a postcode in the correct format, like SW17 7AE.
+            school_name:
+              blank: Enter a school name.
             school_urn:
               inclusion: The school URN is not recognised. If you’ve checked the URN, and you believe it’s valid, contact our support team.
+            session_date:
+              blank: Enter a date in the correct format.
+              greater_than_or_equal_to: The vaccination date is outside the campaign. Enter a date after the campaign started and before it ended.
+              less_than_or_equal_to: The vaccination date is outside the campaign. Enter a date after the campaign started and before it ended.
             vaccine_given:
-              inclusion: The %{value} vaccine is unknown or not administered as part of this programme.
+              inclusion: Enter a valid vaccine, eg Gardasil 9.
   activerecord:
     attributes:
       consent:

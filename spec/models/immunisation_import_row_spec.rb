@@ -53,10 +53,10 @@ describe ImmunisationImportRow, type: :model do
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:administered]).to include(
-          "Unable to determine if the vaccination was administered or not."
+          /You need to record whether the child was vaccinated or not/
         )
         expect(immunisation_import_row.errors[:organisation_code]).to include(
-          "can't be blank"
+          "Enter an organisation code that matches the current team."
         )
       end
     end
@@ -67,19 +67,19 @@ describe ImmunisationImportRow, type: :model do
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:batch_expiry_date]).to eq(
-          ["can't be blank"]
+          ["Enter a batch expiry date."]
         )
         expect(immunisation_import_row.errors[:batch_number]).to eq(
-          ["can't be blank"]
+          ["Enter a batch number."]
         )
         expect(immunisation_import_row.errors[:delivery_site]).to eq(
-          ["can't be blank"]
+          ["Enter an anatomical site."]
         )
         expect(immunisation_import_row.errors[:organisation_code]).to eq(
-          ["can't be blank"]
+          ["Enter an organisation code that matches the current team."]
         )
         expect(immunisation_import_row.errors[:patient_gender_code]).to eq(
-          ["is not included in the list"]
+          ["Enter a gender or gender code."]
         )
         expect(immunisation_import_row.errors[:patient_postcode]).to eq(
           ["Enter a valid postcode, such as SW1A 1AA"]
@@ -93,7 +93,7 @@ describe ImmunisationImportRow, type: :model do
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:organisation_code]).to eq(
-          ["must be equal to abc"]
+          ["Enter an organisation code that matches the current team."]
         )
       end
     end
@@ -104,9 +104,7 @@ describe ImmunisationImportRow, type: :model do
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:vaccine_given]).to eq(
-          [
-            "The test vaccine is unknown or not administered as part of this programme."
-          ]
+          ["Enter a valid vaccine, eg Gardasil 9."]
         )
       end
     end
@@ -147,7 +145,7 @@ describe ImmunisationImportRow, type: :model do
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:patient_nhs_number]).to eq(
-          ["is the wrong length (should be 10 characters)"]
+          ["Enter an NHS number with 10 characters."]
         )
       end
     end
