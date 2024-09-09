@@ -65,9 +65,12 @@ class CohortImport < ApplicationRecord
   def process_row(row)
     location = Location.find_by(urn: row.school_urn)
 
-    location.patients.create!(
-      row.to_patient.merge(parent: Parent.new(row.to_parent))
-    )
+    patient =
+      location.patients.create!(
+        row.to_patient.merge(parent: Parent.new(row.to_parent))
+      )
+
+    patient.cohort_imports << self unless patient.cohort_imports.exists?(id)
 
     :new_record_count
   end

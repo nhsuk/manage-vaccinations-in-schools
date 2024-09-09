@@ -5,7 +5,7 @@
                                             { text: @programme.name, href: programme_vaccination_records_path(@programme) },
                                             { text: t("vaccination_records.index.title"), href: programme_vaccination_records_path(@programme) },
                                           ]) %>
-  <% elsif (immunisation_import = @vaccination_record.imported_from) %>
+  <% elsif (immunisation_import = @vaccination_record.immunisation_imports.sort_by(&:created_at).last) %>
     <%= render AppBacklinkComponent.new(
           href: edit_programme_immunisation_import_path(
             @programme,

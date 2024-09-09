@@ -125,11 +125,11 @@ describe ImmunisationImport, type: :model do
         expect { process! }
           .to change(immunisation_import, :processed_at).from(nil)
           .and change(immunisation_import.vaccination_records, :count).by(7)
-          .and not_change(immunisation_import.locations, :count)
+          .and change(immunisation_import.locations, :count).by(1)
           .and change(immunisation_import.patients, :count).by(7)
           .and change(immunisation_import.sessions, :count).by(1)
-          .and change(PatientSession, :count).by(7)
-          .and change(Batch, :count).by(4)
+          .and change(immunisation_import.patient_sessions, :count).by(7)
+          .and change(immunisation_import.batches, :count).by(4)
 
         # Second import should not duplicate the vaccination records if they're
         # identical.
@@ -137,10 +137,10 @@ describe ImmunisationImport, type: :model do
         # stree-ignore
         expect { immunisation_import.process! }
           .to not_change(immunisation_import, :processed_at)
-          .and not_change(immunisation_import.vaccination_records, :count)
-          .and not_change(immunisation_import.locations, :count)
-          .and not_change(immunisation_import.patients, :count)
-          .and not_change(immunisation_import.sessions, :count)
+          .and not_change(VaccinationRecord, :count)
+          .and not_change(Location, :count)
+          .and not_change(Patient, :count)
+          .and not_change(Session, :count)
           .and not_change(PatientSession, :count)
           .and not_change(Batch, :count)
       end
@@ -171,11 +171,11 @@ describe ImmunisationImport, type: :model do
         expect { process! }
           .to change(immunisation_import, :processed_at).from(nil)
           .and change(immunisation_import.vaccination_records, :count).by(7)
-          .and not_change(immunisation_import.locations, :count)
+          .and change(immunisation_import.locations, :count).by(1)
           .and change(immunisation_import.patients, :count).by(7)
           .and change(immunisation_import.sessions, :count).by(1)
-          .and change(PatientSession, :count).by(7)
-          .and change(Batch, :count).by(5)
+          .and change(immunisation_import.patient_sessions, :count).by(7)
+          .and change(immunisation_import.batches, :count).by(5)
 
         # Second import should not duplicate the vaccination records if they're
         # identical.
@@ -183,10 +183,10 @@ describe ImmunisationImport, type: :model do
         # stree-ignore
         expect { immunisation_import.process! }
           .to not_change(immunisation_import, :processed_at)
-          .and not_change(immunisation_import.vaccination_records, :count)
-          .and not_change(immunisation_import.locations, :count)
-          .and not_change(immunisation_import.patients, :count)
-          .and not_change(immunisation_import.sessions, :count)
+          .and not_change(VaccinationRecord, :count)
+          .and not_change(Location, :count)
+          .and not_change(Patient, :count)
+          .and not_change(Session, :count)
           .and not_change(PatientSession, :count)
           .and not_change(Batch, :count)
       end
@@ -233,9 +233,7 @@ describe ImmunisationImport, type: :model do
       end
 
       it "doesn't create an additional patient" do
-        expect { process! }.to change(immunisation_import.patients, :count).by(
-          6
-        )
+        expect { process! }.to change(Patient, :count).by(6)
       end
 
       it "doesn't update the NHS number on the existing patient" do

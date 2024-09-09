@@ -39,9 +39,9 @@ class VaccinationRecordsController < ApplicationController
       policy_scope(VaccinationRecord)
         .includes(
           :batch,
-          :programme,
-          :imported_from,
+          :immunisation_imports,
           :performed_by_user,
+          :programme,
           :vaccine,
           patient: :school,
           session: :location

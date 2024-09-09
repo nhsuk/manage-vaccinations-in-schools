@@ -64,11 +64,10 @@ class ImmunisationImportRow
             presence: true,
             if: :requires_performed_by?
 
-  def initialize(data:, programme:, user:, imported_from:)
+  def initialize(data:, programme:, user:)
     @data = data
     @programme = programme
     @user = user
-    @imported_from = imported_from
   end
 
   def to_vaccination_record
@@ -76,21 +75,20 @@ class ImmunisationImportRow
 
     return unless administered
 
-    VaccinationRecord
-      .recorded
-      .or(VaccinationRecord.where(imported_from:))
-      .create_with(imported_from:, notes:, recorded_at: nil)
-      .find_or_initialize_by(
-        administered_at:,
-        batch:,
-        delivery_method:,
-        delivery_site:,
-        dose_sequence:,
-        patient_session:,
-        performed_by_family_name:,
-        performed_by_given_name:,
-        vaccine:
-      )
+    VaccinationRecord.create_with(
+      notes:,
+      recorded_at: nil
+    ).find_or_initialize_by(
+      administered_at:,
+      batch:,
+      delivery_method:,
+      delivery_site:,
+      dose_sequence:,
+      patient_session:,
+      performed_by_family_name:,
+      performed_by_given_name:,
+      vaccine:
+    )
   end
 
   def patient
@@ -111,9 +109,7 @@ class ImmunisationImportRow
     @session ||=
       @programme
         .sessions
-        .active
-        .or(Session.where(imported_from:))
-        .create_with(imported_from:, active: false)
+        .create_with(active: false)
         .find_or_create_by!(
           date: session_date,
           location:,
@@ -267,8 +263,6 @@ class ImmunisationImportRow
 
   private
 
-  attr_reader :imported_from
-
   def administered_at
     administered ? (session_date.in_time_zone + 12.hours) : nil
   end
@@ -392,7 +386,6 @@ class ImmunisationImportRow
       first_name: patient_first_name,
       gender_code: patient_gender_code,
       home_educated:,
-      imported_from:,
       last_name: patient_last_name,
       nhs_number: patient_nhs_number,
       school:
@@ -400,7 +393,7 @@ class ImmunisationImportRow
   end
 
   def staged_patient_attributes
-    patient_attributes.except(:imported_from, :school).merge(
+    patient_attributes.except(:school).merge(
       school_id: patient_attributes[:school]&.id
     )
   end

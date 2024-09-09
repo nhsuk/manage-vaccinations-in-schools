@@ -28,16 +28,6 @@ class ImmunisationImports::PatientsController < ApplicationController
   end
 
   def set_patient
-    @patient =
-      Patient
-        .joins(patient_sessions: :vaccination_records)
-        .where(
-          patient_sessions: {
-            vaccination_records: {
-              imported_from: @immunisation_import
-            }
-          }
-        )
-        .find(params[:id])
+    @patient = @immunisation_import.patients.find(params[:id])
   end
 end

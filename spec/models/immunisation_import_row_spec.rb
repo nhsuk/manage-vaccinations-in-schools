@@ -2,20 +2,12 @@
 
 describe ImmunisationImportRow, type: :model do
   subject(:immunisation_import_row) do
-    described_class.new(
-      data:,
-      programme:,
-      user: uploaded_by,
-      imported_from: immunisation_import
-    )
+    described_class.new(data:, programme:, user: uploaded_by)
   end
 
   let(:programme) { create(:programme, :flu, academic_year: 2023) }
   let(:team) { create(:team, ods_code: "abc") }
   let(:uploaded_by) { create(:user, teams: [team]) }
-  let(:immunisation_import) do
-    create(:immunisation_import, programme:, uploaded_by:)
-  end
 
   let(:nhs_number) { "1234567890" }
   let(:first_name) { "Harry" }
