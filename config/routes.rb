@@ -55,12 +55,6 @@ Rails.application.routes.draw do
 
   get "/csrf", to: "csrf#new"
 
-  resource :pilot, only: [] do
-    resource :cohort_list, as: :cohort, only: %i[new create] do
-      get "success", on: :collection
-    end
-  end
-
   resources :programmes, only: %i[index create show] do
     member do
       get "patients"
@@ -94,6 +88,10 @@ Rails.application.routes.draw do
       put "edit/date-and-time",
           controller: "vaccination_records/edit",
           action: "update_date_and_time"
+    end
+
+    resource :cohort_list, as: :cohort, only: %i[new create] do
+      get "success", on: :collection
     end
   end
 
