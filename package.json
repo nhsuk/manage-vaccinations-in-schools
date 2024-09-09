@@ -20,7 +20,7 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@playwright/test": "^1.46.1",
+    "@playwright/test": "^1.47.0",
     "@prettier/plugin-ruby": "^4.0.4",
     "@types/jest": "^29.5.12",
     "esbuild-jest": "^0.5.0",
