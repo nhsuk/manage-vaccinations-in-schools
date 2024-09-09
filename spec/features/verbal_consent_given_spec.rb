@@ -33,12 +33,12 @@ describe "Verbal consent" do
       "Choose who you are trying to get consent from"
     )
 
-    choose "#{@patient.parent.name} (#{@patient.parent.relationship_label})"
+    choose "#{@patient.parents.first.name} (#{@patient.parents.first.relationship_label})"
     click_button "Continue"
 
     # Details for parent or guardian
     expect(page).to have_content(
-      "Details for #{@patient.parent.name} (#{@patient.parent.relationship_label})"
+      "Details for #{@patient.parents.first.name} (#{@patient.parents.first.relationship_label})"
     )
     # don't change any details
     click_button "Continue"
@@ -76,11 +76,10 @@ describe "Verbal consent" do
   end
 
   def and_i_can_see_the_consent_response_details
-    click_link @patient.parent.name
+    parent = @patient.parents.first
+    click_link parent.name
 
-    expect(page).to have_content(
-      "Consent response from #{@patient.parent.name}"
-    )
+    expect(page).to have_content("Consent response from #{parent.name}")
     expect(page).to have_content(
       ["Response date", Time.zone.today.to_fs(:long)].join
     )
@@ -93,16 +92,16 @@ describe "Verbal consent" do
     )
     expect(page).to have_content(["School", @patient.school.name].join)
 
-    expect(page).to have_content(["Name", @patient.parent.name].join)
+    expect(page).to have_content(["Name", parent.name].join)
     expect(page).to have_content(
-      ["Relationship", @patient.parent.relationship_label].join
+      ["Relationship", parent.relationship_label].join
     )
-    expect(page).to have_content(["Email address", @patient.parent.email].join)
-    expect(page).to have_content(["Phone number", @patient.parent.phone].join)
+    expect(page).to have_content(["Email address", parent.email].join)
+    expect(page).to have_content(["Phone number", parent.phone].join)
 
     expect(page).to have_content("Answers to health questions")
     expect(page).to have_content(
-      "#{@patient.parent.relationship_label} responded: No",
+      "#{parent.relationship_label} responded: No",
       count: 3
     )
   end
@@ -112,6 +111,6 @@ describe "Verbal consent" do
 
     expect(sent_emails.last).to be_sent_with_govuk_notify.using_template(
       EMAILS[:parental_consent_confirmation]
-    ).to(@patient.parent.email)
+    ).to(@patient.parents.first.email)
   end
 end

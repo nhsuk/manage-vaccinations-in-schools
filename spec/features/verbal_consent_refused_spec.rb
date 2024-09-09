@@ -28,7 +28,7 @@ describe "Verbal consent" do
     click_button "Get consent"
 
     # Who are you trying to get consent from?
-    choose @patient.parent.name
+    choose @patient.parents.first.name
     click_button "Continue"
 
     # Details for parent or guardian: leave prepopulated details
@@ -52,7 +52,7 @@ describe "Verbal consent" do
 
     # Confirm
     expect(page).to have_content(["Decision", "Consent refused"].join)
-    expect(page).to have_content(["Name", @patient.parent.name].join)
+    expect(page).to have_content(["Name", @patient.parents.first.name].join)
     click_button "Confirm"
 
     expect(page).to have_content("Check consent responses")
@@ -65,7 +65,8 @@ describe "Verbal consent" do
   end
 
   def and_i_can_see_the_consent_response_details
-    click_link @patient.parent.name
+    parent = @patient.parents.first
+    click_link parent.name
 
     expect(page).to have_content(
       ["Response date", Time.zone.today.to_fs(:long)].join
@@ -83,18 +84,18 @@ describe "Verbal consent" do
     )
     expect(page).to have_content(["School", @patient.school.name].join)
 
-    expect(page).to have_content(["Name", @patient.parent.name].join)
+    expect(page).to have_content(["Name", parent.name].join)
     expect(page).to have_content(
-      ["Relationship", @patient.parent.relationship_label].join
+      ["Relationship", parent.relationship_label].join
     )
-    expect(page).to have_content(["Email address", @patient.parent.email].join)
-    expect(page).to have_content(["Phone number", @patient.parent.phone].join)
+    expect(page).to have_content(["Email address", parent.email].join)
+    expect(page).to have_content(["Phone number", parent.phone].join)
 
     expect(page).not_to have_content("Answers to health questions")
   end
 
   def then_an_email_is_sent_to_the_parent_confirming_the_refusal
-    expect_email_to @patient.parent.email,
+    expect_email_to @patient.parents.first.email,
                     EMAILS[:parental_consent_confirmation_refused]
   end
 end

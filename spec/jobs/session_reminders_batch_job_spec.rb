@@ -8,7 +8,7 @@ describe SessionRemindersBatchJob, type: :job do
     session = create(:session, patients: [patient], date: 1.day.from_now)
 
     expect { described_class.perform_now(session) }.to send_email(
-      to: patient.parent.email
+      to: patient.parents.first.email
     )
 
     expect(ActionMailer::Base.deliveries.count).to eq(1)
@@ -19,7 +19,7 @@ describe SessionRemindersBatchJob, type: :job do
     session = create(:session, patients: [patient], date: 1.day.from_now)
 
     expect { described_class.perform_now(session) }.not_to send_email(
-      to: patient.parent.email
+      to: patient.parents.first.email
     )
   end
 

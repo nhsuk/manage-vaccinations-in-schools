@@ -135,14 +135,14 @@ describe CohortImport, type: :model do
         address_postcode: "SW1A 1AA"
       )
 
-      expect(Patient.first.parent).to have_attributes(
+      expect(Patient.first.parents.first).to have_attributes(
         name: "John Smith",
         relationship: "father",
         phone: "07412345678",
         email: "john@example.com"
       )
 
-      expect(Patient.first.parent).not_to be_recorded
+      expect(Patient.first.parents.first).not_to be_recorded
 
       expect(Patient.second).to have_attributes(
         nhs_number: "1234567891",
@@ -154,9 +154,9 @@ describe CohortImport, type: :model do
         address_postcode: "SW1A 1AA"
       )
 
-      expect(Patient.second.parent).not_to be_recorded
+      expect(Patient.second.parents.first).not_to be_recorded
 
-      expect(Patient.second.parent).to have_attributes(
+      expect(Patient.second.parents.first).to have_attributes(
         name: "Jane Doe",
         relationship: "mother",
         phone: "07412345679",

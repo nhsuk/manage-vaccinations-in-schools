@@ -27,7 +27,7 @@ describe "Verbal consent" do
     click_button "Get consent"
 
     # Who are you trying to get consent from?
-    choose @patient.parent.name
+    choose @patient.parents.first.name
     click_button "Continue"
 
     # Details for parent or guardian: leave existing contact details
@@ -69,6 +69,6 @@ describe "Verbal consent" do
 
     expect(sent_emails.last).to be_sent_with_govuk_notify.using_template(
       EMAILS[:triage_vaccination_will_happen]
-    ).to(@patient.parent.email)
+    ).to(@patient.parents.first.email)
   end
 end

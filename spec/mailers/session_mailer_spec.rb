@@ -7,7 +7,7 @@ describe SessionMailer, type: :mailer do
     let(:patient) { create(:patient, common_name: "Joey") }
     let(:session) { create(:session, patients: [patient]) }
 
-    it { should have_attributes(to: [patient.parent.email]) }
+    it { should have_attributes(to: [patient.parents.first.email]) }
 
     describe "personalisation" do
       subject { mail.message.header["personalisation"].unparsed_value }

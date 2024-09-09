@@ -175,7 +175,7 @@ class ManageConsentsController < ApplicationController
   def set_parent_options
     @parent_options =
       (
-        [@patient.parent] +
+        @patient.parents +
           @patient_session.consents.recorded.includes(:parent).map(&:parent)
       ).compact.uniq.sort_by(&:name)
   end

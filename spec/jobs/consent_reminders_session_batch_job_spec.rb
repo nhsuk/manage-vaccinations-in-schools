@@ -22,7 +22,7 @@ describe ConsentRemindersSessionBatchJob, type: :job do
       )
 
     expect { described_class.perform_now(session) }.to send_email(
-      to: patient_not_sent_reminder.parent.email
+      to: patient_not_sent_reminder.parents.first.email
     )
 
     expect(ActionMailer::Base.deliveries.count).to eq(1)
