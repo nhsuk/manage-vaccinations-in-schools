@@ -356,6 +356,13 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_10_085953) do
     t.datetime "recorded_at"
   end
 
+  create_table "parents_patients", id: false, force: :cascade do |t|
+    t.bigint "parent_id", null: false
+    t.bigint "patient_id", null: false
+    t.index ["parent_id", "patient_id"], name: "index_parents_patients_on_parent_id_and_patient_id"
+    t.index ["patient_id", "parent_id"], name: "index_parents_patients_on_patient_id_and_parent_id"
+  end
+
   create_table "patient_sessions", force: :cascade do |t|
     t.bigint "session_id", null: false
     t.bigint "patient_id", null: false
@@ -561,6 +568,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_10_085953) do
   add_foreign_key "immunisation_imports_sessions", "sessions"
   add_foreign_key "immunisation_imports_vaccination_records", "immunisation_imports"
   add_foreign_key "immunisation_imports_vaccination_records", "vaccination_records"
+  add_foreign_key "parents_patients", "parents"
+  add_foreign_key "parents_patients", "patients"
   add_foreign_key "patient_sessions", "users", column: "created_by_user_id"
   add_foreign_key "patients", "locations", column: "school_id"
   add_foreign_key "patients", "parents"
