@@ -3,51 +3,25 @@
 class CohortImportRow
   include ActiveModel::Model
 
-  attr_accessor :school_urn,
-                :school_name,
-                :parent_name,
-                :parent_relationship,
-                :parent_email,
-                :parent_phone,
-                :child_first_name,
-                :child_last_name,
-                :child_common_name,
-                :child_date_of_birth,
-                :child_address_line_1,
-                :child_address_line_2,
-                :child_address_town,
-                :child_address_postcode,
-                :child_nhs_number
+  validates :school_urn, inclusion: { in: -> { Location.school.pluck(:urn) } }
 
-  validates :school_urn, presence: true
-  validate :school_urn_is_valid, if: -> { school_urn.present? }
+  validates :nhs_number, length: { is: 10 }, allow_blank: true
+  validates :first_name, presence: true
+  validates :last_name, presence: true
+  validates :date_of_birth, presence: true
+  validates :address_line_1, presence: true
+  validates :address_town, presence: true
+  validates :address_postcode, presence: true
+  validates :address_postcode, postcode: true
+
   validates :parent_name, presence: true
   validates :parent_relationship, presence: true
-  validates :parent_email, presence: true
-  validates :parent_email,
-            notify_safe_email: true,
-            if: -> { parent_email.present? }
+  validates :parent_email, presence: true, notify_safe_email: true
   validates :parent_phone, phone: true, if: -> { parent_phone.present? }
-  validates :child_first_name, presence: true
-  validates :child_last_name, presence: true
-  validates :child_date_of_birth, presence: true
-  validates :child_date_of_birth,
-            format: {
-              with: /\A(\d{4}-\d{2}-\d{2}|\d{2}\/\d{2}\/\d{4})\z/
-            },
-            if: -> { child_date_of_birth.present? }
-  validates :child_address_line_1, presence: true
-  validates :child_address_town, presence: true
-  validates :child_address_postcode, presence: true
-  validates :child_address_postcode,
-            postcode: true,
-            if: -> { child_address_postcode.present? }
-  validates :child_nhs_number, presence: true
-  validates :child_nhs_number,
-            format: {
-              with: /\A(?:\d\s*){10}\z/
-            },
-            if: -> { child_nhs_number.present? }
+
+  def initialize(data:)
+    @data = data
+  end
 
   def to_patient
     {
@@ -71,43 +45,65 @@ class CohortImportRow
     )
   end
 
-  private
-
-  def common_name
-    child_common_name
-  end
-
-  def date_of_birth
-    Date.parse(child_date_of_birth)
-  end
-
-  def first_name
-    child_first_name
-  end
-
-  def last_name
-    child_last_name
+  def school_urn
+    @data["SCHOOL_URN"]&.strip
   end
 
   def nhs_number
-    child_nhs_number&.gsub(/\s/, "")
+    @data["CHILD_NHS_NUMBER"]&.gsub(/\s/, "").presence
+  end
+
+  def first_name
+    @data["CHILD_FIRST_NAME"]&.strip
+  end
+
+  def last_name
+    @data["CHILD_LAST_NAME"]&.strip
+  end
+
+  def common_name
+    @data["CHILD_COMMON_NAME"]&.strip.presence
+  end
+
+  def date_of_birth
+    Date.parse(@data["CHILD_DATE_OF_BIRTH"])
+  rescue ArgumentError, TypeError
+    nil
   end
 
   def address_line_1
-    child_address_line_1
+    @data["CHILD_ADDRESS_LINE_1"]&.strip
   end
 
   def address_line_2
-    child_address_line_2
+    @data["CHILD_ADDRESS_LINE_2"]&.strip
   end
 
   def address_town
-    child_address_town
+    @data["CHILD_ADDRESS_TOWN"]&.strip
   end
 
   def address_postcode
-    child_address_postcode
+    @data["CHILD_ADDRESS_POSTCODE"]&.strip
   end
+
+  def parent_name
+    @data["PARENT_NAME"]&.strip
+  end
+
+  def parent_relationship
+    @data["PARENT_RELATIONSHIP"]&.strip
+  end
+
+  def parent_email
+    @data["PARENT_EMAIL"]&.downcase&.strip
+  end
+
+  def parent_phone
+    @data["PARENT_PHONE"]&.gsub(/\s/, "")
+  end
+
+  private
 
   def parent_relationship_hash
     case parent_relationship
@@ -120,11 +116,5 @@ class CohortImportRow
     else
       { relationship: "other", relationship_other: parent_relationship }
     end
-  end
-
-  def school_urn_is_valid
-    Location.find_by!(urn: school_urn)
-  rescue ActiveRecord::RecordNotFound
-    errors.add(:school_urn, :invalid)
   end
 end
