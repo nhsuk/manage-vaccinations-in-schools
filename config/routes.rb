@@ -74,6 +74,10 @@ Rails.application.routes.draw do
                 controller: "immunisation_imports/patients"
     end
 
+    resources :cohort_imports, path: "cohort-imports", only: %i[new create] do
+      get "success", on: :collection
+    end
+
     resources :vaccination_records,
               path: "vaccination-records",
               only: %i[index show] do
@@ -88,10 +92,6 @@ Rails.application.routes.draw do
       put "edit/date-and-time",
           controller: "vaccination_records/edit",
           action: "update_date_and_time"
-    end
-
-    resource :cohort_import, as: :cohort, only: %i[new create] do
-      get "success", on: :collection
     end
   end
 
