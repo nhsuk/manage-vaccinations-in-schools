@@ -1,9 +1,0 @@
-<% page_title = "Cohort data uploaded" %>
-<% content_for :page_title, page_title %>
-
-<%= govuk_panel(title_text: page_title, classes: "nhsuk-u-margin-bottom-6") do %>
-  <%= pluralize(@count, "child") %> <%= @count == 1 ? "has" : "have" %>
-  been added to the pilot cohort
-<% end %>
-
-<p>You can select children from this cohort when adding a new session.</p>

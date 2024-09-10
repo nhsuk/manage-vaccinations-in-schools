@@ -2,6 +2,8 @@
 
 class CohortImportsController < ApplicationController
   before_action :set_programme
+  before_action :set_cohort_import, only: %i[show]
+  before_action :set_patients, only: %i[show]
 
   def new
     @cohort_import = CohortImport.new
@@ -32,16 +34,25 @@ class CohortImportsController < ApplicationController
 
     @cohort_import.record!
 
-    redirect_to action: :success
+    redirect_to programme_cohort_import_path(@programme, @cohort_import)
   end
 
-  def success
+  def show
   end
 
   private
 
   def set_programme
     @programme = policy_scope(Programme).active.find(params[:programme_id])
+  end
+
+  def set_cohort_import
+    # TODO: @programme.cohort_imports.find
+    @cohort_import = CohortImport.find(params[:id])
+  end
+
+  def set_patients
+    @patients = @cohort_import.patients
   end
 
   def cohort_import_params
