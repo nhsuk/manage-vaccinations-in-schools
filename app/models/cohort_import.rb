@@ -5,6 +5,7 @@
 # Table name: cohort_imports
 #
 #  id                           :bigint           not null, primary key
+#  changed_record_count         :integer
 #  csv_data                     :text
 #  csv_filename                 :text
 #  csv_removed_at               :datetime
@@ -53,7 +54,7 @@ class CohortImport < ApplicationRecord
   end
 
   def count_columns
-    %i[new_record_count exact_duplicate_record_count]
+    %i[new_record_count changed_record_count exact_duplicate_record_count]
   end
 
   def parse_row(row_data)
