@@ -18,9 +18,9 @@ class AppPatientTableComponent < ViewComponent::Base
 
   def outcome_for(patient:)
     patient_session = patient_session_for(patient:)
-    if patient_session.vaccination_administered?
+    if patient_session&.vaccination_administered?
       govuk_tag(text: "Vaccinated", colour: "green")
-    elsif patient_session.vaccination_not_administered?
+    elsif patient_session&.vaccination_not_administered?
       govuk_tag(text: "Could not vaccinate", colour: "red")
     else
       govuk_tag(text: "No outcome yet", colour: "grey")
@@ -29,6 +29,8 @@ class AppPatientTableComponent < ViewComponent::Base
 
   def href_for(patient:)
     patient_session = patient_session_for(patient:)
+    return nil if patient_session.nil?
+
     session = patient_session.session
 
     tab =

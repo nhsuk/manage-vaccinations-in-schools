@@ -147,7 +147,7 @@ describe "Immunisation imports" do
   def then_i_should_see_the_upload
     expect(page).to have_content("Uploaded on")
     expect(page).to have_content("Uploaded byTest User")
-    expect(page).to have_content("CampaignHPV")
+    expect(page).to have_content("ProgrammeHPV")
   end
 
   def when_i_click_on_a_vaccination_record

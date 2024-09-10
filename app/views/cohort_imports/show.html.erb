@@ -2,14 +2,14 @@
   <%= render AppBreadcrumbComponent.new(items: [
                                           { text: t("programmes.index.title"), href: programmes_path },
                                           { text: @programme.name, href: programme_path(@programme) },
-                                          { text: t("immunisation_imports.index.title"), href: programme_immunisation_imports_path(@programme) },
+                                          { text: t("programmes.patients.title"), href: patients_programme_path(@programme) },
                                         ]) %>
 <% end %>
 
-<%= h1 "Vaccination report (uploaded #{@immunisation_import.created_at.to_fs(:long)})" %>
+<%= h1 "Cohort report (uploaded #{@cohort_import.created_at.to_fs(:long)})" %>
 
 <%= render AppCardComponent.new do |card| %>
-  <% card.with_heading { "Vaccination report" } %>
+  <% card.with_heading { "Cohort report" } %>
 
   <%= govuk_summary_list(
         classes: %w[app-summary-list--no-bottom-border
@@ -17,12 +17,12 @@
       ) do |summary_list| %>
     <%= summary_list.with_row do |row| %>
       <%= row.with_key { "Uploaded on" } %>
-      <%= row.with_value { @immunisation_import.created_at.to_fs(:long) } %>
+      <%= row.with_value { @cohort_import.created_at.to_fs(:long) } %>
     <% end %>
 
     <%= summary_list.with_row do |row| %>
       <%= row.with_key { "Uploaded by" } %>
-      <%= row.with_value { @immunisation_import.uploaded_by.full_name } %>
+      <%= row.with_value { @cohort_import.uploaded_by.full_name } %>
     <% end %>
 
     <%= summary_list.with_row do |row| %>
@@ -32,6 +32,4 @@
   <% end %>
 <% end %>
 
-<%= render AppVaccinationRecordTableComponent.new(
-      @immunisation_import.recorded? ? @vaccination_records.recorded : @vaccination_records.draft
-    ) %>
+<%= render AppPatientTableComponent.new(@patients, programme: @programme) %>

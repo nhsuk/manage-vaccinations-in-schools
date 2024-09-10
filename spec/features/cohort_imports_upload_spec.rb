@@ -23,7 +23,8 @@ describe "Cohort imports" do
     and_i_go_back_to_the_upload_page
 
     when_i_upload_a_valid_file
-    then_i_should_see_the_success_page
+    then_i_should_see_the_upload
+    and_i_should_see_the_patients
 
     when_i_visit_the_cohort_page_for_the_hpv_programme
     and_i_start_adding_children_to_the_cohort
@@ -67,8 +68,18 @@ describe "Cohort imports" do
     click_on "Continue"
   end
 
-  def then_i_should_see_the_success_page
-    expect(page).to have_content("Cohort data uploaded")
+  def then_i_should_see_the_upload
+    expect(page).to have_content("Uploaded on")
+    expect(page).to have_content("Uploaded byTest User")
+    expect(page).to have_content("ProgrammeHPV")
+  end
+
+  def and_i_should_see_the_patients
+    expect(page).to have_content("Full nameNHS numberDate of birthOutcome")
+    expect(page).to have_content("Jimmy Smith")
+    expect(page).to have_content(/NHS number.*123.*456.*7890/)
+    expect(page).to have_content("Date of birth 1 January 2010")
+    expect(page).to have_content("Outcome No outcome yet")
   end
 
   def when_i_continue_without_uploading_a_file

@@ -89,7 +89,7 @@ describe "End-to-end journey" do
   end
 
   def then_i_see_that_the_cohort_has_been_uploaded
-    expect(page).to have_content("Cohort data uploaded")
+    expect(page).to have_content("Cohort report")
   end
 
   def when_i_start_creating_a_new_session_by_choosing_school_and_time
