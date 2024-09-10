@@ -31,6 +31,11 @@ class CohortImport < ApplicationRecord
   has_and_belongs_to_many :parents
   has_and_belongs_to_many :patients
 
+  def processed_only_exact_duplicates?
+    new_record_count.zero? && changed_record_count.zero? &&
+      exact_duplicate_record_count != 0
+  end
+
   private
 
   def required_headers

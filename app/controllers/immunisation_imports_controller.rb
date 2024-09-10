@@ -44,8 +44,7 @@ class ImmunisationImportsController < ApplicationController
 
     @immunisation_import.process!
 
-    if @immunisation_import.new_record_count.zero? &&
-         @immunisation_import.exact_duplicate_record_count != 0
+    if @immunisation_import.processed_only_exact_duplicates?
       render :duplicates
       return
     end

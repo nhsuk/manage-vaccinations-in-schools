@@ -15,15 +15,22 @@ describe "Cohort imports" do
     when_i_upload_a_malformed_csv
     then_i_should_see_an_error
 
-    when_i_upload_a_cohort_file_with_invalid_headers
+    when_i_upload_a_file_with_invalid_headers
     then_i_should_the_errors_page_with_invalid_headers
 
-    when_i_upload_a_cohort_file_with_invalid_fields
+    when_i_upload_a_file_with_invalid_fields
     then_i_should_the_errors_page_with_invalid_fields
     and_i_go_back_to_the_upload_page
 
-    when_i_upload_the_cohort_file
+    when_i_upload_a_valid_file
     then_i_should_see_the_success_page
+
+    when_i_visit_the_cohort_page_for_the_hpv_programme
+    and_i_start_adding_children_to_the_cohort
+    then_i_should_see_the_upload_cohort_page
+
+    when_i_upload_a_valid_file
+    then_i_should_see_the_duplicates_page
   end
 
   def given_the_app_is_setup
@@ -52,7 +59,7 @@ describe "Cohort imports" do
     expect(page).to have_content("Upload cohort records")
   end
 
-  def when_i_upload_the_cohort_file
+  def when_i_upload_a_valid_file
     attach_file(
       "cohort_import[csv]",
       "spec/fixtures/cohort_import/valid_cohort.csv"
@@ -80,7 +87,7 @@ describe "Cohort imports" do
     click_on "Continue"
   end
 
-  def when_i_upload_a_cohort_file_with_invalid_headers
+  def when_i_upload_a_file_with_invalid_headers
     attach_file(
       "cohort_import[csv]",
       "spec/fixtures/cohort_import/invalid_headers.csv"
@@ -92,7 +99,7 @@ describe "Cohort imports" do
     expect(page).to have_content("The file is missing the following headers")
   end
 
-  def when_i_upload_a_cohort_file_with_invalid_fields
+  def when_i_upload_a_file_with_invalid_fields
     attach_file(
       "cohort_import[csv]",
       "spec/fixtures/cohort_import/invalid_fields.csv"
@@ -107,5 +114,11 @@ describe "Cohort imports" do
 
   def and_i_go_back_to_the_upload_page
     click_on "Back"
+  end
+
+  def then_i_should_see_the_duplicates_page
+    expect(page).to have_content(
+      "All records in this CSV file have been uploaded."
+    )
   end
 end
