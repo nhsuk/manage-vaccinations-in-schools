@@ -757,31 +757,31 @@ describe ImmunisationImportRow, type: :model do
       context "with an unknown value" do
         let(:data) { { key => "unknown" } }
 
-        it { should be_nil }
+        it { should eq("unknown") }
       end
 
       context "with a 'not known' value" do
         let(:data) { { key => "Not Known" } }
 
-        it { should eq(0) }
+        it { should eq("not_known") }
       end
 
       context "with a 'male' value" do
         let(:data) { { key => "Male" } }
 
-        it { should eq(1) }
+        it { should eq("male") }
       end
 
       context "with a 'female' value" do
         let(:data) { { key => "Female" } }
 
-        it { should eq(2) }
+        it { should eq("female") }
       end
 
       context "with a 'not specified' value" do
         let(:data) { { key => "Not Specified" } }
 
-        it { should eq(9) }
+        it { should eq("not_specified") }
       end
     end
 

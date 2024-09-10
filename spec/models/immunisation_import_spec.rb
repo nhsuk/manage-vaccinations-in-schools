@@ -251,7 +251,7 @@ describe ImmunisationImport, type: :model do
           first_name: "Chyna",
           last_name: "Pickle",
           date_of_birth: Date.new(2012, 9, 12),
-          gender_code: 9, # Not Specified
+          gender_code: "not_specified",
           address_postcode: "LE3 2DA"
         )
       end
@@ -262,7 +262,7 @@ describe ImmunisationImport, type: :model do
         existing_patient.reload
         expect(existing_patient.pending_changes).to eq(
           "date_of_birth" => "2012-09-13",
-          "gender_code" => 2,
+          "gender_code" => "female",
           "address_postcode" => "LE3 2DB",
           "school_id" => Location.find_by(urn: "110158").id
         )
