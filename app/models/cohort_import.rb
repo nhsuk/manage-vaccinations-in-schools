@@ -85,6 +85,8 @@ class CohortImport < ApplicationRecord
   end
 
   def record_rows
-    # TODO: implement this when we create draft patients
+    # TODO: mark patients as recorded
+
+    parents.draft.update_all(recorded_at: Time.zone.now)
   end
 end
