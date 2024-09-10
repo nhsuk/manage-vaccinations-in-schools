@@ -52,6 +52,8 @@ en:
                 07700 900 982 or +44 808 157 0192
             parent_relationship:
               blank: is required but missing
+            patient:
+              multiple_duplicate_match: Two or more possible patients match the patient first name, last name, date of birth or postcode.
             school_urn:
               blank: is required but missing
               invalid: ‘%{value}’ is not a known school URN

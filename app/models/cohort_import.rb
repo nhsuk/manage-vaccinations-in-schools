@@ -62,16 +62,24 @@ class CohortImport < ApplicationRecord
   end
 
   def process_row(row)
-    location = Location.find_by(urn: row.school_urn)
+    patient = row.to_patient
 
-    patient =
-      location.patients.create!(
-        row.to_patient.merge(parent: Parent.new(row.to_parent))
+    count_column_to_increment =
+      (
+        if patient.new_record?
+          :new_record_count
+        elsif patient.changed?
+          :changed_record_count
+        else
+          :exact_duplicate_record_count
+        end
       )
+
+    patient.save!
 
     link_records(patient, patient.parent)
 
-    :new_record_count
+    count_column_to_increment
   end
 
   def link_records(*records)

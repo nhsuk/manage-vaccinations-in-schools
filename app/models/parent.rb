@@ -29,10 +29,18 @@ class Parent < ApplicationRecord
 
   attr_accessor :parental_responsibility
 
-  enum :contact_method, %w[text voice other any], prefix: true
-  enum :relationship, %w[mother father guardian other], prefix: true
+  enum :contact_method,
+       %w[text voice other any],
+       prefix: true,
+       validate: {
+         allow_nil: true
+       }
+  enum :relationship,
+       %w[mother father guardian other],
+       prefix: true,
+       validate: true
 
-  encrypts :email, :name, :phone, :relationship_other
+  encrypts :email, :name, :phone, :relationship_other, deterministic: true
 
   normalizes :phone,
              with: ->(str) { str.blank? ? nil : str.to_s.gsub(/\s/, "") }
@@ -41,7 +49,6 @@ class Parent < ApplicationRecord
   validates :name, presence: true
   validates :phone, phone: true, if: -> { phone.present? }
   validates :email, presence: true, notify_safe_email: true
-  validates :relationship, inclusion: { in: Parent.relationships.keys }
   validates :relationship_other, presence: true, if: -> { relationship_other? }
   validate :has_parental_responsibility, if: -> { relationship_other? }
   validates :contact_method_other,
