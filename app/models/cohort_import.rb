@@ -58,12 +58,7 @@ class CohortImport < ApplicationRecord
   end
 
   def parse_row(row_data)
-    CohortImportRow.new(
-      row_data
-        .to_h
-        .slice(*required_headers) # Remove extra columns
-        .transform_keys { _1.downcase.to_sym }
-    )
+    CohortImportRow.new(data: row_data)
   end
 
   def process_row(row)
