@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_10_085953) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_10_125625) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -391,12 +391,10 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_10_085953) do
     t.datetime "sent_consent_at"
     t.datetime "sent_reminder_at"
     t.datetime "session_reminder_sent_at"
-    t.bigint "parent_id"
     t.integer "gender_code", default: 0, null: false
     t.boolean "home_educated"
     t.jsonb "pending_changes", default: {}, null: false
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
-    t.index ["parent_id"], name: "index_patients_on_parent_id"
     t.index ["school_id"], name: "index_patients_on_school_id"
   end
 
@@ -572,7 +570,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_10_085953) do
   add_foreign_key "parents_patients", "patients"
   add_foreign_key "patient_sessions", "users", column: "created_by_user_id"
   add_foreign_key "patients", "locations", column: "school_id"
-  add_foreign_key "patients", "parents"
   add_foreign_key "programmes", "teams"
   add_foreign_key "triage", "patient_sessions"
   add_foreign_key "triage", "users", column: "performed_by_user_id"

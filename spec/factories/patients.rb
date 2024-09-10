@@ -22,18 +22,15 @@
 #  session_reminder_sent_at :datetime
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
-#  parent_id                :bigint
 #  school_id                :bigint
 #
 # Indexes
 #
 #  index_patients_on_nhs_number  (nhs_number) UNIQUE
-#  index_patients_on_parent_id   (parent_id)
 #  index_patients_on_school_id   (school_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (parent_id => parents.id)
 #  fk_rails_...  (school_id => locations.id)
 #
 
