@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
 class CohortImportsController < ApplicationController
-  skip_after_action :verify_policy_scoped, only: %i[new create success]
-
-  before_action :set_team, only: %i[new create]
-  before_action :set_programme, only: %i[new create]
+  before_action :set_programme
 
   def new
     @cohort_import = CohortImport.new
@@ -38,15 +35,11 @@ class CohortImportsController < ApplicationController
 
   private
 
+  def set_programme
+    @programme = policy_scope(Programme).active.find(params[:programme_id])
+  end
+
   def cohort_import_params
     params.fetch(:cohort_import, {}).permit(:csv)
-  end
-
-  def set_team
-    @team = current_user.team
-  end
-
-  def set_programme
-    @programme = policy_scope(Programme).find(params[:programme_id])
   end
 end

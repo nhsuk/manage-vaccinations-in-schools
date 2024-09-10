@@ -34,6 +34,7 @@
     end %>
 
 <p class="app-action-list">
-  <%= link_to "Add children to programme cohort", new_programme_cohort_path(@programme) %>
+  <%= link_to "Add children to programme cohort", new_programme_cohort_import_path(@programme) %>
 </p>
+
 <%= render AppPatientTableComponent.new(@patients, programme: @programme) %>
