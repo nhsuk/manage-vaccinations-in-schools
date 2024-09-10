@@ -34,6 +34,10 @@ class Parent < ApplicationRecord
 
   encrypts :email, :name, :phone, :relationship_other
 
+  normalizes :phone,
+             with: ->(str) { str.blank? ? nil : str.to_s.gsub(/\s/, "") }
+  normalizes :email, with: ->(str) { str.nil? ? nil : str.to_s.downcase.strip }
+
   validates :name, presence: true
   validates :phone, phone: true, if: -> { phone.present? }
   validates :email, presence: true, notify_safe_email: true
@@ -64,14 +68,6 @@ class Parent < ApplicationRecord
     else
       human_enum_name(:contact_method)
     end
-  end
-
-  def phone=(str)
-    super str.blank? ? nil : str.to_s.gsub(/\s/, "")
-  end
-
-  def email=(str)
-    super str.nil? ? nil : str.to_s.downcase.strip
   end
 
   def has_parental_responsibility
