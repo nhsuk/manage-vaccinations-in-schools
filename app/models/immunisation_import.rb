@@ -40,6 +40,10 @@ class ImmunisationImport < ApplicationRecord
   has_and_belongs_to_many :sessions
   has_and_belongs_to_many :vaccination_records
 
+  def processed_only_exact_duplicates?
+    new_record_count.zero? && exact_duplicate_record_count != 0
+  end
+
   private
 
   def required_headers

@@ -25,6 +25,11 @@ class CohortImportsController < ApplicationController
 
     @cohort_import.process!
 
+    if @cohort_import.processed_only_exact_duplicates?
+      render :duplicates
+      return
+    end
+
     @cohort_import.record!
 
     redirect_to action: :success

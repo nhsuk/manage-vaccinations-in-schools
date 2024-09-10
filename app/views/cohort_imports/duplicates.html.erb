@@ -1,0 +1,18 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: new_programme_cohort_import_path(@programme),
+        name: @programme.name,
+      ) %>
+<% end %>
+
+<% title = "Cohort records already uploaded" %>
+
+<%= h1 title, page_title: "#{@programme.name} – #{title}" %>
+
+<p>
+  All records in this CSV file have been uploaded.
+</p>
+
+<p>
+  <%= govuk_link_to "Upload new cohort records", new_programme_cohort_import_path %>
+</p>
