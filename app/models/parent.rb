@@ -25,6 +25,8 @@ class Parent < ApplicationRecord
 
   has_one :patient
 
+  has_and_belongs_to_many :cohort_imports
+
   attr_accessor :parental_responsibility
 
   enum :contact_method, %w[text voice other any], prefix: true
