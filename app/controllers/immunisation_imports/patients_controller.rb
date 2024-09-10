@@ -44,11 +44,7 @@ class ImmunisationImports::PatientsController < ApplicationController
   end
 
   def set_form
-    apply_changes =
-      params
-        .fetch(:patient_changes_form, {})
-        .permit(:apply_changes)
-        .fetch(:apply_changes, nil)
+    apply_changes = params.dig(:patient_changes_form, :apply_changes)
 
     @form = PatientChangesForm.new(patient: @patient, apply_changes:)
   end
