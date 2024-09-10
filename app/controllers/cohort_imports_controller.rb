@@ -2,8 +2,8 @@
 
 class CohortImportsController < ApplicationController
   before_action :set_programme
-  before_action :set_cohort_import, only: %i[show]
-  before_action :set_patients, only: %i[show]
+  before_action :set_cohort_import, only: %i[show edit update]
+  before_action :set_patients, only: %i[show edit]
 
   def new
     @cohort_import = CohortImport.new
@@ -15,29 +15,34 @@ class CohortImportsController < ApplicationController
 
     @cohort_import.load_data!
     if @cohort_import.invalid?
-      render :new, status: :unprocessable_entity
-      return
+      render :new, status: :unprocessable_entity and return
     end
 
     @cohort_import.parse_rows!
     if @cohort_import.invalid?
-      render :errors, status: :unprocessable_entity
-      return
+      render :errors, status: :unprocessable_entity and return
     end
 
     @cohort_import.process!
 
     if @cohort_import.processed_only_exact_duplicates?
-      render :duplicates
-      return
+      render :duplicates and return
     end
 
-    @cohort_import.record!
-
-    redirect_to programme_cohort_import_path(@programme, @cohort_import)
+    redirect_to edit_programme_cohort_import_path(@programme, @cohort_import)
   end
 
   def show
+  end
+
+  def edit
+    render layout: "full"
+  end
+
+  def update
+    @cohort_import.record!
+
+    redirect_to programme_cohort_import_path(@programme, @cohort_import)
   end
 
   private

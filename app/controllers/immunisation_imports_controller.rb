@@ -3,7 +3,7 @@
 class ImmunisationImportsController < ApplicationController
   before_action :set_programme
   before_action :set_immunisation_import, only: %i[show edit update]
-  before_action :set_vaccination_records, only: %i[edit show]
+  before_action :set_vaccination_records, only: %i[show edit]
   before_action :set_patients_with_changes, only: %i[edit]
 
   def index
@@ -32,21 +32,18 @@ class ImmunisationImportsController < ApplicationController
 
     @immunisation_import.load_data!
     if @immunisation_import.invalid?
-      render :new, status: :unprocessable_entity
-      return
+      render :new, status: :unprocessable_entity and return
     end
 
     @immunisation_import.parse_rows!
     if @immunisation_import.invalid?
-      render :errors, status: :unprocessable_entity
-      return
+      render :errors, status: :unprocessable_entity and return
     end
 
     @immunisation_import.process!
 
     if @immunisation_import.processed_only_exact_duplicates?
-      render :duplicates
-      return
+      render :duplicates and return
     end
 
     redirect_to edit_programme_immunisation_import_path(
