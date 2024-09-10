@@ -157,12 +157,18 @@ class Patient < ApplicationRecord
 
     dup.tap do |patient|
       patient.clear_changes_information
-      pending_changes.each do |attr, value|
-        if patient.respond_to?("#{attr}=")
-          patient.public_send("#{attr}=", value)
-        end
-      end
+      pending_changes.each { patient.public_send("#{_1}=", _2) }
     end
+  end
+
+  def apply_pending_changes!
+    pending_changes.each { public_send("#{_1}=", _2) }
+    discard_pending_changes!
+  end
+
+  def discard_pending_changes!
+    self.pending_changes = {}
+    save!
   end
 
   private
