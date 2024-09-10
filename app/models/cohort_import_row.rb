@@ -142,19 +142,13 @@ class CohortImportRow
 
   def find_existing_patients
     @find_existing_patients ||=
-      begin
-        if nhs_number.present? &&
-             (patient = Patient.find_by(nhs_number:)).present?
-          return [patient]
-        end
-
-        Patient
-          .where(first_name:, last_name:, date_of_birth:)
-          .or(Patient.where(first_name:, last_name:, address_postcode:))
-          .or(Patient.where(first_name:, date_of_birth:, address_postcode:))
-          .or(Patient.where(last_name:, date_of_birth:, address_postcode:))
-          .to_a
-      end
+      Patient.find_existing(
+        nhs_number:,
+        first_name:,
+        last_name:,
+        date_of_birth:,
+        address_postcode:
+      )
   end
 
   def zero_or_one_existing_patient

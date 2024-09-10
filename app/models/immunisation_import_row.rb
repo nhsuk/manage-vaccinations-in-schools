@@ -351,26 +351,13 @@ class ImmunisationImportRow
 
   def find_existing_patients
     @find_existing_patients ||=
-      begin
-        if patient_nhs_number.present? &&
-             (
-               patient = Patient.find_by(nhs_number: patient_nhs_number)
-             ).present?
-          return [patient]
-        end
-
-        first_name = patient_first_name
-        last_name = patient_last_name
-        date_of_birth = patient_date_of_birth
-        address_postcode = patient_postcode
-
-        Patient
-          .where(first_name:, last_name:, date_of_birth:)
-          .or(Patient.where(first_name:, last_name:, address_postcode:))
-          .or(Patient.where(first_name:, date_of_birth:, address_postcode:))
-          .or(Patient.where(last_name:, date_of_birth:, address_postcode:))
-          .to_a
-      end
+      Patient.find_existing(
+        nhs_number: patient_nhs_number,
+        first_name: patient_first_name,
+        last_name: patient_last_name,
+        date_of_birth: patient_date_of_birth,
+        address_postcode: patient_postcode
+      )
   end
 
   def zero_or_one_existing_patient

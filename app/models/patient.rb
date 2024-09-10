@@ -73,6 +73,14 @@ class Patient < ApplicationRecord
           )
         end
 
+  scope :matching_three_of,
+        ->(first_name:, last_name:, date_of_birth:, address_postcode:) do
+          where(first_name:, last_name:, date_of_birth:)
+            .or(Patient.where(first_name:, last_name:, address_postcode:))
+            .or(Patient.where(first_name:, date_of_birth:, address_postcode:))
+            .or(Patient.where(last_name:, date_of_birth:, address_postcode:))
+        end
+
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :date_of_birth, presence: true
@@ -95,6 +103,25 @@ class Patient < ApplicationRecord
   encrypts :address_line_1, :address_line_2, :address_town
 
   before_save :remove_spaces_from_nhs_number
+
+  def self.find_existing(
+    nhs_number:,
+    first_name:,
+    last_name:,
+    date_of_birth:,
+    address_postcode:
+  )
+    if nhs_number.present? && (patient = Patient.find_by(nhs_number:)).present?
+      return [patient]
+    end
+
+    Patient.matching_three_of(
+      first_name:,
+      last_name:,
+      date_of_birth:,
+      address_postcode:
+    ).to_a
+  end
 
   def full_name
     "#{first_name} #{last_name}"
