@@ -19,30 +19,48 @@ class CohortImportRow
   validates :parent_email, presence: true, notify_safe_email: true
   validates :parent_phone, phone: true, if: -> { parent_phone.present? }
 
+  validate :zero_or_one_existing_patient
+
   def initialize(data:)
     @data = data
   end
 
   def to_patient
-    {
+    return unless valid?
+
+    attributes = {
+      address_line_1:,
+      address_line_2:,
+      address_postcode:,
+      address_town:,
       common_name:,
       date_of_birth:,
       first_name:,
       last_name:,
       nhs_number:,
-      address_line_1:,
-      address_line_2:,
-      address_town:,
-      address_postcode:
+      parent:,
+      school:
     }
+
+    if (existing_patient = find_existing_patients.first)
+      # TODO: use stage_changes
+      existing_patient.assign_attributes(attributes)
+      existing_patient
+    else
+      Patient.new(attributes)
+    end
   end
 
-  def to_parent
-    parent_relationship_hash.merge(
-      email: parent_email,
-      name: parent_name,
-      phone: parent_phone
-    )
+  def parent
+    return unless valid?
+
+    @parent ||=
+      Parent.find_or_create_by!(
+        email: parent_email,
+        name: parent_name,
+        phone: parent_phone,
+        **parent_relationship_hash
+      )
   end
 
   def school_urn
@@ -105,6 +123,10 @@ class CohortImportRow
 
   private
 
+  def school
+    @school ||= Location.school.find_by!(urn: school_urn)
+  end
+
   def parent_relationship_hash
     case parent_relationship
     when "Mother"
@@ -115,6 +137,29 @@ class CohortImportRow
       { relationship: "guardian" }
     else
       { relationship: "other", relationship_other: parent_relationship }
+    end
+  end
+
+  def find_existing_patients
+    @find_existing_patients ||=
+      begin
+        if nhs_number.present? &&
+             (patient = Patient.find_by(nhs_number:)).present?
+          return [patient]
+        end
+
+        Patient
+          .where(first_name:, last_name:, date_of_birth:)
+          .or(Patient.where(first_name:, last_name:, address_postcode:))
+          .or(Patient.where(first_name:, date_of_birth:, address_postcode:))
+          .or(Patient.where(last_name:, date_of_birth:, address_postcode:))
+          .to_a
+      end
+  end
+
+  def zero_or_one_existing_patient
+    if find_existing_patients.count >= 2
+      errors.add(:patient, :multiple_duplicate_match)
     end
   end
 end

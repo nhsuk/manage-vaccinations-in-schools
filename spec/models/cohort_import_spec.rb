@@ -162,6 +162,46 @@ describe CohortImport, type: :model do
         phone: "07412345679",
         email: "jane@example.com"
       )
+
+      # Second import should not duplicate the patients if they're identical.
+
+      # stree-ignore
+      expect { cohort_import.process! }
+        .to not_change(cohort_import, :processed_at)
+        .and not_change(Patient, :count)
+        .and not_change(Parent, :count)
+    end
+
+    it "stores statistics on the import" do
+      # stree-ignore
+      expect { process! }
+        .to change(cohort_import, :exact_duplicate_record_count).to(0)
+        .and change(cohort_import, :new_record_count).to(2)
+        .and change(cohort_import, :changed_record_count).to(0)
+    end
+
+    it "ignores and counts duplicate records" do
+      build(:cohort_import, csv:).record!
+      csv.rewind
+
+      process!
+      expect(cohort_import.exact_duplicate_record_count).to eq(2)
+    end
+
+    context "with an existing patient matching the name" do
+      before do
+        create(
+          :patient,
+          first_name: "Jimmy",
+          last_name: "Smith",
+          date_of_birth: Date.new(2010, 1, 1),
+          nhs_number: nil
+        )
+      end
+
+      it "doesn't create an additional patient" do
+        expect { process! }.to change(Patient, :count).by(1)
+      end
     end
   end
 
