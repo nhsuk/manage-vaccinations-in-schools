@@ -41,7 +41,7 @@ class ImmunisationImportRow
             comparison: {
               less_than_or_equal_to: -> { Date.current }
             }
-  validates :patient_gender_code, inclusion: { in: Patient.gender_codes.values }
+  validates :patient_gender_code, inclusion: { in: Patient.gender_codes.keys }
   validates :patient_postcode, postcode: true
   validate :zero_or_one_existing_patient
 
@@ -209,16 +209,9 @@ class ImmunisationImportRow
     parse_date("PERSON_DOB")
   end
 
-  PATIENT_GENDER_CODES = {
-    "not known" => 0,
-    "male" => 1,
-    "female" => 2,
-    "not specified" => 9
-  }.freeze
-
   def patient_gender_code
     gender_code = @data["PERSON_GENDER_CODE"] || @data["PERSON_GENDER"]
-    PATIENT_GENDER_CODES[gender_code&.strip&.downcase]
+    gender_code&.strip&.downcase&.gsub(" ", "_")
   end
 
   def patient_postcode
