@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
 describe ConsentRequestMailer, type: :mailer do
+  let(:parent) { create(:parent) }
+
   describe "#consent_request" do
-    subject(:mail) { described_class.consent_request(session, patient) }
+    subject(:mail) { described_class.consent_request(session, patient, parent) }
 
     let(:patient) { create(:patient) }
     let(:session) { create(:session, patients: [patient]) }
 
-    it { should have_attributes(to: [patient.parents.first.email]) }
+    it { should have_attributes(to: [parent.email]) }
 
     describe "personalisation" do
       subject { mail.message.header["personalisation"].unparsed_value }
@@ -35,12 +37,14 @@ describe ConsentRequestMailer, type: :mailer do
   end
 
   describe "#consent_reminder" do
-    subject(:mail) { described_class.consent_reminder(session, patient) }
+    subject(:mail) do
+      described_class.consent_reminder(session, patient, parent)
+    end
 
     let(:patient) { create(:patient) }
     let(:session) { create(:session, patients: [patient]) }
 
-    it { should have_attributes(to: [patient.parents.first.email]) }
+    it { should have_attributes(to: [parent.email]) }
 
     describe "personalisation" do
       subject { mail.message.header["personalisation"].unparsed_value }

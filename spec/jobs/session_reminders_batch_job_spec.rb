@@ -4,14 +4,15 @@ describe SessionRemindersBatchJob, type: :job do
   before { ActionMailer::Base.deliveries.clear }
 
   it "sends emails to all patients' parents" do
-    patient = create(:patient)
+    parents = create_list(:parent, 2)
+    patient = create(:patient, parents:)
     session = create(:session, patients: [patient], date: 1.day.from_now)
 
     expect { described_class.perform_now(session) }.to send_email(
-      to: patient.parents.first.email
-    )
+      to: parents.first.email
+    ).and send_email(to: parents.second.email)
 
-    expect(ActionMailer::Base.deliveries.count).to eq(1)
+    expect(ActionMailer::Base.deliveries.count).to eq(2)
   end
 
   it "does not send a reminder if one has already been sent" do

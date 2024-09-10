@@ -5,9 +5,10 @@ describe ConsentRemindersSessionBatchJob, type: :job do
 
   it "only sends emails to patients parents to whom they have not been sent yet" do
     programme = create(:programme)
+    parents = create_list(:parent, 2)
     patient_with_reminder_sent =
       build(:patient, sent_reminder_at: Time.zone.today)
-    patient_not_sent_reminder = build(:patient)
+    patient_not_sent_reminder = build(:patient, parents:)
     patient_with_consent =
       build(:patient, :consent_given_triage_not_needed, programme:)
     session =
@@ -22,10 +23,10 @@ describe ConsentRemindersSessionBatchJob, type: :job do
       )
 
     expect { described_class.perform_now(session) }.to send_email(
-      to: patient_not_sent_reminder.parents.first.email
-    )
+      to: parents.first.email
+    ).and send_email(to: parents.second.email)
 
-    expect(ActionMailer::Base.deliveries.count).to eq(1)
+    expect(ActionMailer::Base.deliveries.count).to eq(2)
   end
 
   it "updates the sent_reminder_at attribute for patients" do

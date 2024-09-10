@@ -2,10 +2,13 @@
 
 describe SessionMailer, type: :mailer do
   describe "#session_reminder" do
-    subject(:mail) { described_class.session_reminder(session:, patient:) }
+    subject(:mail) do
+      described_class.session_reminder(session:, patient:, parent:)
+    end
 
     let(:patient) { create(:patient, common_name: "Joey") }
     let(:session) { create(:session, patients: [patient]) }
+    let(:parent) { patient.parents.first }
 
     it { should have_attributes(to: [patient.parents.first.email]) }
 
