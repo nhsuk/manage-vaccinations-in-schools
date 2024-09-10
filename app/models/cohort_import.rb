@@ -73,9 +73,15 @@ class CohortImport < ApplicationRecord
         row.to_patient.merge(parent: Parent.new(row.to_parent))
       )
 
-    patient.cohort_imports << self unless patient.cohort_imports.exists?(id)
+    link_records(patient, patient.parent)
 
     :new_record_count
+  end
+
+  def link_records(*records)
+    records.each do |record|
+      record.cohort_imports << self unless record.cohort_imports.exists?(id)
+    end
   end
 
   def record_rows

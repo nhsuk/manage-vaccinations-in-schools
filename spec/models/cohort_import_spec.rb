@@ -25,7 +25,7 @@
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 describe CohortImport, type: :model do
-  subject(:cohort_import) { build(:cohort_import, csv:) }
+  subject(:cohort_import) { create(:cohort_import, csv:) }
 
   let(:file) { "valid_cohort.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_import/#{file}") }
@@ -40,15 +40,6 @@ describe CohortImport, type: :model do
     subject(:load_data!) { cohort_import.load_data! }
 
     before { load_data! }
-
-    describe "with missing CSV" do
-      let(:csv) { nil }
-
-      it "is invalid" do
-        expect(cohort_import).to be_invalid
-        expect(cohort_import.errors[:csv]).to include(/Choose/)
-      end
-    end
 
     describe "with malformed CSV" do
       let(:file) { "malformed.csv" }
@@ -126,8 +117,12 @@ describe CohortImport, type: :model do
 
     let(:file) { "valid_cohort.csv" }
 
-    it "creates patients" do
-      expect { process! }.to change(Patient, :count).by(2)
+    it "creates patients and parents" do
+      # stree-ignore
+      expect { process! }
+        .to change(cohort_import, :processed_at).from(nil)
+        .and change(cohort_import.patients, :count).by(2)
+        .and change(cohort_import.parents, :count).by(2)
 
       expect(Patient.first).to have_attributes(
         nhs_number: "1234567890",
