@@ -140,7 +140,8 @@ describe CohortImport, type: :model do
         phone: "07412345678",
         email: "john@example.com"
       )
-      expect(Patient.first.parent.recorded_at).to be_present
+
+      expect(Patient.first.parent).not_to be_recorded
 
       expect(Patient.second).to have_attributes(
         nhs_number: "1234567891",
@@ -151,7 +152,8 @@ describe CohortImport, type: :model do
         address_town: "London",
         address_postcode: "SW1A 1AA"
       )
-      expect(Patient.second.parent.recorded_at).to be_present
+
+      expect(Patient.second.parent).not_to be_recorded
 
       expect(Patient.second.parent).to have_attributes(
         name: "Jane Doe",
@@ -159,6 +161,16 @@ describe CohortImport, type: :model do
         phone: "07412345679",
         email: "jane@example.com"
       )
+    end
+  end
+
+  describe "#record!" do
+    subject(:record!) { cohort_import.record! }
+
+    let(:file) { "valid_cohort.csv" }
+
+    it "records the parents" do
+      expect { record! }.to change(Parent.recorded, :count).from(0).to(2)
     end
   end
 end
