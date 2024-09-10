@@ -83,6 +83,76 @@ describe Patient, type: :model do
     end
   end
 
+  describe "#find_existing" do
+    subject(:find_existing) do
+      described_class.find_existing(
+        nhs_number:,
+        first_name:,
+        last_name:,
+        date_of_birth:,
+        address_postcode:
+      )
+    end
+
+    let(:nhs_number) { "0123456789" }
+    let(:first_name) { "John" }
+    let(:last_name) { "Smith" }
+    let(:date_of_birth) { Date.new(1999, 1, 1) }
+    let(:address_postcode) { "SW1A 1AA" }
+
+    context "with no matches" do
+      let(:patient) { create(:patient) }
+
+      it { should_not include(patient) }
+    end
+
+    context "with a matching NHS number" do
+      let!(:patient) { create(:patient, nhs_number:) }
+
+      it { should include(patient) }
+
+      context "when other patients match too" do
+        let(:other_patient) do
+          create(:patient, first_name:, last_name:, date_of_birth:)
+        end
+
+        it { should_not include(other_patient) }
+      end
+    end
+
+    context "with matching first name, last name and date of birth" do
+      let(:patient) do
+        create(:patient, first_name:, last_name:, date_of_birth:)
+      end
+
+      it { should include(patient) }
+    end
+
+    context "with matching first name, last name and postcode" do
+      let(:patient) do
+        create(:patient, first_name:, last_name:, address_postcode:)
+      end
+
+      it { should include(patient) }
+    end
+
+    context "with matching first name, date of birth and postcode" do
+      let(:patient) do
+        create(:patient, first_name:, date_of_birth:, address_postcode:)
+      end
+
+      it { should include(patient) }
+    end
+
+    context "with matching last name, date of birth and postcode" do
+      let(:patient) do
+        create(:patient, last_name:, date_of_birth:, address_postcode:)
+      end
+
+      it { should include(patient) }
+    end
+  end
+
   describe "#year_group" do
     subject { patient.year_group }
 
