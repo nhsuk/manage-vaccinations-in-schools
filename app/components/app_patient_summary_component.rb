@@ -71,7 +71,7 @@ class AppPatientSummaryComponent < ViewComponent::Base
   end
 
   def format_school
-    highlight_if(@patient.school.name, @patient.school_id_changed?)
+    highlight_if(@patient.school&.name, @patient.school_id_changed?)
   end
 
   def highlight_if(value, condition)
