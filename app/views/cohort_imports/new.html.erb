@@ -1,20 +1,22 @@
-<% page_title = "Upload the cohort list" %>
-<% content_for(:page_title, page_title) %>
-
 <% content_for :before_main do %>
-  <%= render AppBreadcrumbComponent.new(items: [
-                                          { text: "Home", href: dashboard_path },
-                                          { text: t("programmes.index.title"), href: programmes_path },
-                                          { text: @programme.name, href: programme_path(@programme) },
-                                          { text: page_title },
-                                        ]) %>
+  <%= render AppBacklinkComponent.new(
+        href: patients_programme_path(@programme),
+        name: @programme.name,
+      ) %>
 <% end %>
+
+<% title = "Upload cohort records" %>
+<% hint = "Make sure the CSV you upload has the same format as your standard cohort template. " %>
+
+<% content_for :page_title, title %>
 
 <%= form_with model: @cohort_import, url: programme_cohort_imports_path do |f| %>
   <%= f.govuk_error_summary %>
 
   <%= f.govuk_file_field :csv,
-                         label: { text: page_title, tag: "h1", size: "l" } %>
+                         caption: { text: @programme.name, size: "l" },
+                         label: { text: title, tag: "h1", size: "l" },
+                         hint: { text: hint } %>
 
-  <%= f.govuk_submit "Upload the cohort list" %>
+  <%= f.govuk_submit %>
 <% end %>

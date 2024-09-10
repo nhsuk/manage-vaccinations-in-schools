@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe "Cohort upload" do
-  scenario "User uploads a cohort list" do
+describe "Cohort imports" do
+  scenario "User uploads a file" do
     given_the_app_is_setup
     and_an_hpv_programme_is_underway
 
@@ -20,7 +20,7 @@ describe "Cohort upload" do
 
     when_i_upload_a_cohort_file_with_invalid_fields
     then_i_should_the_errors_page_with_invalid_fields
-    and_i_should_be_able_to_go_to_the_upload_page
+    and_i_go_back_to_the_upload_page
 
     when_i_upload_the_cohort_file
     then_i_should_see_the_success_page
@@ -49,7 +49,7 @@ describe "Cohort upload" do
   end
 
   def then_i_should_see_the_upload_cohort_page
-    expect(page).to have_content("Upload the cohort list")
+    expect(page).to have_content("Upload cohort records")
   end
 
   def when_i_upload_the_cohort_file
@@ -57,7 +57,7 @@ describe "Cohort upload" do
       "cohort_import[csv]",
       "spec/fixtures/cohort_import/valid_cohort.csv"
     )
-    click_on "Upload the cohort list"
+    click_on "Continue"
   end
 
   def then_i_should_see_the_success_page
@@ -65,7 +65,7 @@ describe "Cohort upload" do
   end
 
   def when_i_continue_without_uploading_a_file
-    click_on "Upload the cohort list"
+    click_on "Continue"
   end
 
   def then_i_should_see_an_error
@@ -77,7 +77,7 @@ describe "Cohort upload" do
       "cohort_import[csv]",
       "spec/fixtures/cohort_import/malformed.csv"
     )
-    click_on "Upload the cohort list"
+    click_on "Continue"
   end
 
   def when_i_upload_a_cohort_file_with_invalid_headers
@@ -85,7 +85,7 @@ describe "Cohort upload" do
       "cohort_import[csv]",
       "spec/fixtures/cohort_import/invalid_headers.csv"
     )
-    click_on "Upload the cohort list"
+    click_on "Continue"
   end
 
   def then_i_should_the_errors_page_with_invalid_headers
@@ -97,15 +97,15 @@ describe "Cohort upload" do
       "cohort_import[csv]",
       "spec/fixtures/cohort_import/invalid_fields.csv"
     )
-    click_on "Upload the cohort list"
+    click_on "Continue"
   end
 
   def then_i_should_the_errors_page_with_invalid_fields
-    expect(page).to have_content("The cohort list could not be added")
+    expect(page).to have_content("Cohort records cannot be uploaded")
     expect(page).to have_content("Row 2")
   end
 
-  def and_i_should_be_able_to_go_to_the_upload_page
-    click_on "Upload a new cohort list"
+  def and_i_go_back_to_the_upload_page
+    click_on "Back"
   end
 end

@@ -85,7 +85,7 @@ describe "End-to-end journey" do
     click_on "Cohort"
     click_on "Add children to programme cohort"
     attach_file "cohort_import[csv]", csv_file.path
-    click_on "Upload the cohort list"
+    click_on "Continue"
   end
 
   def then_i_see_that_the_cohort_has_been_uploaded
