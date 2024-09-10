@@ -5,6 +5,7 @@
 # Table name: cohort_imports
 #
 #  id                           :bigint           not null, primary key
+#  changed_record_count         :integer
 #  csv_data                     :text
 #  csv_filename                 :text
 #  csv_removed_at               :datetime
