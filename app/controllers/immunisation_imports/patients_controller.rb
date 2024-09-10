@@ -4,12 +4,24 @@ class ImmunisationImports::PatientsController < ApplicationController
   before_action :set_programme
   before_action :set_immunisation_import
   before_action :set_patient
+  before_action :set_form
 
   def show
     render layout: "full"
   end
 
   def update
+    if @form.save
+      redirect_to edit_programme_immunisation_import_path(
+                    @programme,
+                    @immunisation_import
+                  ),
+                  flash: {
+                    success: "Vaccination record updated"
+                  }
+    else
+      render :show, status: :unprocessable_entity, layout: "full" and return
+    end
   end
 
   private
@@ -29,5 +41,15 @@ class ImmunisationImports::PatientsController < ApplicationController
 
   def set_patient
     @patient = @immunisation_import.patients.find(params[:id])
+  end
+
+  def set_form
+    apply_changes =
+      params
+        .fetch(:patient_changes_form, {})
+        .permit(:apply_changes)
+        .fetch(:apply_changes, nil)
+
+    @form = PatientChangesForm.new(patient: @patient, apply_changes:)
   end
 end
