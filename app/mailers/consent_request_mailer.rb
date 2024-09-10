@@ -3,17 +3,17 @@
 class ConsentRequestMailer < ApplicationMailer
   include Rails.application.routes.url_helpers
 
-  def consent_request(session, patient)
+  def consent_request(session, patient, parent)
     template_mail(
       EMAILS[:hpv_session_consent_request],
-      **opts(session, patient)
+      **opts(session, patient, parent)
     )
   end
 
-  def consent_reminder(session, patient)
+  def consent_reminder(session, patient, parent)
     template_mail(
       EMAILS[:hpv_session_consent_reminder],
-      **opts(session, patient)
+      **opts(session, patient, parent)
     )
   end
 
@@ -27,9 +27,10 @@ class ConsentRequestMailer < ApplicationMailer
     end
   end
 
-  def opts(session, patient)
+  def opts(session, patient, parent)
     @session = session
     @patient = patient
+    @parent = parent
 
     { to:, reply_to_id:, personalisation: consent_request_personalisation }
   end

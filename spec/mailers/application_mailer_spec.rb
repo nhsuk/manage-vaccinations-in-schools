@@ -25,7 +25,7 @@ describe ApplicationMailer, type: :mailer do
 
   describe "#opts" do
     it "returns correct options" do
-      expect(subject.send(:opts, patient_session)).to eq(
+      expect(subject.send(:opts, patient_session, parent)).to eq(
         {
           to: "foo@bar.com",
           reply_to_id: "notify-reply-to-id",

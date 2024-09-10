@@ -43,12 +43,9 @@ class ConsentFormMailer < ApplicationMailer
     @consent = consent
     @patient = consent_form || consent.patient
     @session = session || consent_form.session
+    @parent = consent_form&.parent || consent.parent
 
     { to:, reply_to_id:, personalisation: consent_form_personalisation }
-  end
-
-  def to
-    @consent_form&.parent&.email || @consent.parent.email
   end
 
   def consent_form_personalisation

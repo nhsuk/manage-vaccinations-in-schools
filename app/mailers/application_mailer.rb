@@ -3,19 +3,16 @@
 class ApplicationMailer < Mail::Notify::Mailer
   private
 
-  def opts(patient_session)
+  def opts(patient_session, parent)
     @patient = patient_session.patient
     @session = patient_session.session
+    @parent = parent
 
     { to:, reply_to_id:, personalisation: }
   end
 
   def to
-    if @patient.respond_to?(:parent)
-      @patient.parent.email
-    else
-      @patient.parents.first.email
-    end
+    @parent.email
   end
 
   def reply_to_id
@@ -57,11 +54,7 @@ class ApplicationMailer < Mail::Notify::Mailer
   end
 
   def parent_name
-    if @patient.respond_to?(:parent)
-      @patient.parent.name
-    else
-      @patient.parents.first.name
-    end
+    @parent.name
   end
 
   def location_name

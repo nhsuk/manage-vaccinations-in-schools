@@ -27,7 +27,7 @@ describe "Session management" do
 
     when_i_confirm
     then_i_should_see_the_session_details
-    and_the_parent_should_receive_a_consent_request
+    and_the_parents_should_receive_a_consent_request
 
     when_i_go_to_todays_sessions_as_a_nurse
     then_i_see_no_sessions
@@ -122,11 +122,10 @@ describe "Session management" do
     expect(page).to have_content(@location.name.to_s)
   end
 
-  def and_the_parent_should_receive_a_consent_request
-    expect_email_to(
-      @patient.parents.first.email,
-      EMAILS[:hpv_session_consent_request]
-    )
+  def and_the_parents_should_receive_a_consent_request
+    @patient.parents.each do |parent|
+      expect_email_to(parent.email, EMAILS[:hpv_session_consent_request])
+    end
   end
 
   def when_the_parent_visits_the_consent_form
