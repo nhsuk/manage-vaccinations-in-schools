@@ -16,9 +16,13 @@ describe "Immunisation imports duplicates" do
     when_i_review_the_duplicate_record
     then_i_should_see_the_duplicate_record
 
-    # when_i_select_the_new_record
-    # and_i_confirm_my_selection
-    # then_i_should_see_a_success_message
+    when_i_submit_the_form_without_choosing_anything
+    then_i_should_see_a_validation_error
+
+    when_i_select_the_duplicate_record
+    and_i_confirm_my_selection
+    then_i_should_see_a_success_message
+    and_the_record_should_be_updated
   end
 
   def given_i_am_signed_in
@@ -70,16 +74,18 @@ describe "Immunisation imports duplicates" do
     expect(page).to have_content("1 duplicate record needs review")
   end
 
-  def when_i_select_the_new_record
-    choose "Use new record"
+  def when_i_select_the_duplicate_record
+    choose "Use duplicate record"
   end
 
-  def and_i_confirm_my_selection
-    click_on "Confirm"
+  def when_i_submit_the_form_without_choosing_anything
+    click_on "Resolve duplicate"
   end
+  alias_method :and_i_confirm_my_selection,
+               :when_i_submit_the_form_without_choosing_anything
 
   def then_i_should_see_a_success_message
-    expect(page).to have_content("Duplicate record reviewed successfully")
+    expect(page).to have_content("Vaccination record updated")
   end
 
   def when_i_review_the_duplicate_record
@@ -88,5 +94,16 @@ describe "Immunisation imports duplicates" do
 
   def then_i_should_see_the_duplicate_record
     expect(page).to have_content("This record needs reviewing")
+  end
+
+  def and_the_record_should_be_updated
+    @existing_patient.reload
+    expect(@existing_patient.first_name).to eq("Chyna")
+    expect(@existing_patient.last_name).to eq("Pickle")
+    expect(@existing_patient.pending_changes).to eq({})
+  end
+
+  def then_i_should_see_a_validation_error
+    expect(page).to have_content("There is a problem")
   end
 end
