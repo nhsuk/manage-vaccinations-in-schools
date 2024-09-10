@@ -109,6 +109,10 @@ en:
               less_than_or_equal_to: The vaccination date is outside the campaign. Enter a date after the campaign started and before it ended.
             vaccine_given:
               inclusion: Enter a valid vaccine, eg Gardasil 9.
+        patient_changes_form:
+          attributes:
+            apply_changes:
+              inclusion: Choose which record to keep
   activerecord:
     attributes:
       consent:
