@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_11_171139) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_11_195744) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -64,6 +64,12 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_11_171139) do
     t.datetime "updated_at", null: false
     t.integer "changed_record_count"
     t.index ["uploaded_by_user_id"], name: "index_cohort_imports_on_uploaded_by_user_id"
+  end
+
+  create_table "cohort_imports_parent_relationships", id: false, force: :cascade do |t|
+    t.bigint "cohort_import_id", null: false
+    t.bigint "parent_relationship_id", null: false
+    t.index ["cohort_import_id", "parent_relationship_id"], name: "idx_on_cohort_import_id_parent_relationship_id_c65e20d1f8", unique: true
   end
 
   create_table "cohort_imports_parents", id: false, force: :cascade do |t|
@@ -343,6 +349,18 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_11_171139) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "parent_relationships", force: :cascade do |t|
+    t.bigint "parent_id", null: false
+    t.bigint "patient_id", null: false
+    t.string "type", null: false
+    t.string "other_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["parent_id", "patient_id"], name: "index_parent_relationships_on_parent_id_and_patient_id", unique: true
+    t.index ["parent_id"], name: "index_parent_relationships_on_parent_id"
+    t.index ["patient_id"], name: "index_parent_relationships_on_patient_id"
+  end
+
   create_table "parents", force: :cascade do |t|
     t.string "name"
     t.string "email"
@@ -537,12 +555,13 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_11_171139) do
   add_foreign_key "batches_immunisation_imports", "batches"
   add_foreign_key "batches_immunisation_imports", "immunisation_imports"
   add_foreign_key "cohort_imports", "users", column: "uploaded_by_user_id"
+  add_foreign_key "cohort_imports_parent_relationships", "cohort_imports"
+  add_foreign_key "cohort_imports_parent_relationships", "parent_relationships"
   add_foreign_key "cohort_imports_parents", "cohort_imports"
   add_foreign_key "cohort_imports_parents", "parents"
   add_foreign_key "cohort_imports_patients", "cohort_imports"
   add_foreign_key "cohort_imports_patients", "patients"
   add_foreign_key "consent_forms", "consents"
-  add_foreign_key "consent_forms", "parents"
   add_foreign_key "consent_forms", "sessions"
   add_foreign_key "consents", "parents"
   add_foreign_key "consents", "patients"
@@ -566,6 +585,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_11_171139) do
   add_foreign_key "immunisation_imports_sessions", "sessions"
   add_foreign_key "immunisation_imports_vaccination_records", "immunisation_imports"
   add_foreign_key "immunisation_imports_vaccination_records", "vaccination_records"
+  add_foreign_key "parent_relationships", "parents"
+  add_foreign_key "parent_relationships", "patients"
   add_foreign_key "parents_patients", "parents"
   add_foreign_key "parents_patients", "patients"
   add_foreign_key "patient_sessions", "users", column: "created_by_user_id"

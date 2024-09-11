@@ -157,6 +157,10 @@ en:
         relationships:
           father: dad
           mother: mum
+      parent_relationship:
+        types:
+          father: dad
+          mother: mum
       patient:
         year_group:
           "-1": Reception -1
