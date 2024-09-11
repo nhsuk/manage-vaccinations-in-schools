@@ -12,7 +12,7 @@
 #  privacy_policy_url :string
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  reply_to_id        :string
+#  reply_to_id        :uuid
 #
 # Indexes
 #
@@ -31,7 +31,6 @@ FactoryBot.define do
     phone { "01234 567890" }
     ods_code { "U#{identifier}" }
     privacy_policy_url { "https://example.com/privacy" }
-    reply_to_id { "reply-to-id-team-#{identifier}" }
 
     trait :with_one_nurse do
       transient do

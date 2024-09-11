@@ -9,7 +9,7 @@ describe ApplicationMailer, type: :mailer do
       email: "team@email.com",
       name: "Teamy McTeamface",
       phone: "01234567890",
-      reply_to_id: "notify-reply-to-id"
+      reply_to_id: "3aaa2f8d-ef8c-47db-a26f-9ada29852db2"
     )
   end
   let(:location) { create(:location, :school, name: "Hogwarts") }
@@ -28,7 +28,7 @@ describe ApplicationMailer, type: :mailer do
       expect(subject.send(:opts, patient_session, parent)).to eq(
         {
           to: "foo@bar.com",
-          reply_to_id: "notify-reply-to-id",
+          reply_to_id: "3aaa2f8d-ef8c-47db-a26f-9ada29852db2",
           personalisation: {
             full_and_preferred_patient_name: "John Doe",
             location_name: "Hogwarts",
