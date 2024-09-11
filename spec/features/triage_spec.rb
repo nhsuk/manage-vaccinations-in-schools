@@ -98,30 +98,30 @@ describe "Triage" do
 
   def and_needs_triage_emails_are_sent_to_both_parents
     expect_email_to @patient.consents.first.parent.email,
-                    EMAILS[:parental_consent_confirmation_needs_triage],
+                    :parental_consent_confirmation_needs_triage,
                     :any
     expect_email_to @patient.consents.second.parent.email,
-                    EMAILS[:parental_consent_confirmation_needs_triage],
+                    :parental_consent_confirmation_needs_triage,
                     :any
     ActionMailer::Base.deliveries.clear
   end
 
   def and_vaccination_wont_happen_emails_are_sent_to_both_parents
     expect_email_to @patient.consents.first.parent.email,
-                    EMAILS[:triage_vaccination_wont_happen],
+                    :triage_vaccination_wont_happen,
                     :any
     expect_email_to @patient.consents.second.parent.email,
-                    EMAILS[:triage_vaccination_wont_happen],
+                    :triage_vaccination_wont_happen,
                     :any
     ActionMailer::Base.deliveries.clear
   end
 
   def and_vaccination_will_happen_emails_are_sent_to_both_parents
     expect_email_to @patient.consents.first.parent.email,
-                    EMAILS[:triage_vaccination_will_happen],
+                    :triage_vaccination_will_happen,
                     :any
     expect_email_to @patient.consents.second.parent.email,
-                    EMAILS[:triage_vaccination_will_happen],
+                    :triage_vaccination_will_happen,
                     :any
     ActionMailer::Base.deliveries.clear
   end

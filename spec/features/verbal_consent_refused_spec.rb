@@ -96,6 +96,6 @@ describe "Verbal consent" do
 
   def then_an_email_is_sent_to_the_parent_confirming_the_refusal
     expect_email_to @patient.parents.first.email,
-                    EMAILS[:parental_consent_confirmation_refused]
+                    :parental_consent_confirmation_refused
   end
 end

@@ -107,10 +107,9 @@ describe "Verbal consent" do
   end
 
   def then_an_email_is_sent_to_the_parent_confirming_their_consent
-    expect(sent_emails.count).to eq 1
-
-    expect(sent_emails.last).to be_sent_with_govuk_notify.using_template(
-      EMAILS[:parental_consent_confirmation]
-    ).to(@patient.parents.first.email)
+    expect_email_to(
+      @patient.parents.first.email,
+      :parental_consent_confirmation
+    )
   end
 end

@@ -21,11 +21,10 @@ describe ApplicationMailer, type: :mailer do
   let(:patient) do
     create(:patient, first_name: "John", last_name: "Doe", parents: [parent])
   end
-  let(:patient_session) { create(:patient_session, patient:, session:) }
 
   describe "#opts" do
     it "returns correct options" do
-      expect(subject.send(:opts, patient_session, parent)).to eq(
+      expect(subject.send(:opts, session, patient, parent)).to eq(
         {
           to: "foo@bar.com",
           reply_to_id: "notify-reply-to-id",

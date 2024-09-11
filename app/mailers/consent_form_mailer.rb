@@ -2,54 +2,64 @@
 
 class ConsentFormMailer < ApplicationMailer
   def confirmation(consent_form: nil, consent: nil, session: nil)
-    template_mail(
-      EMAILS[:parental_consent_confirmation],
-      **opts(consent_form:, consent:, session:)
+    app_template_mail(
+      :parental_consent_confirmation,
+      consent_form,
+      consent,
+      session
     )
   end
 
   def confirmation_needs_triage(consent_form: nil, consent: nil, session: nil)
-    template_mail(
-      EMAILS[:parental_consent_confirmation_needs_triage],
-      **opts(consent_form:, consent:, session:)
+    app_template_mail(
+      :parental_consent_confirmation_needs_triage,
+      consent_form,
+      consent,
+      session
     )
   end
 
   def confirmation_injection(consent_form: nil, consent: nil, session: nil)
-    template_mail(
-      EMAILS[:parental_consent_confirmation_injection],
-      **opts(consent_form:, consent:, session:)
+    app_template_mail(
+      :parental_consent_confirmation_injection,
+      consent_form,
+      consent,
+      session
     )
   end
 
   def confirmation_refused(consent_form: nil, consent: nil, session: nil)
-    template_mail(
-      EMAILS[:parental_consent_confirmation_refused],
-      **opts(consent_form:, consent:, session:)
+    app_template_mail(
+      :parental_consent_confirmation_refused,
+      consent_form,
+      consent,
+      session
     )
   end
 
   def give_feedback(consent_form: nil, consent: nil, session: nil)
-    template_mail(
-      EMAILS[:parental_consent_give_feedback],
-      **opts(consent_form:, consent:, session:)
+    app_template_mail(
+      :parental_consent_give_feedback,
+      consent_form,
+      consent,
+      session
     )
   end
 
   private
 
-  def opts(consent_form:, consent:, session: nil)
+  def opts(consent_form, consent, session = nil)
     @consent_form = consent_form
     @consent = consent
-    @patient = consent_form || consent.patient
-    @session = session || consent_form.session
-    @parent = consent_form&.parent || consent.parent
 
-    { to:, reply_to_id:, personalisation: consent_form_personalisation }
+    patient = consent_form || consent.patient
+    parent = consent_form&.parent || consent.parent
+
+    super(session || consent_form.session, patient, parent)
   end
 
-  def consent_form_personalisation
-    personalisation.merge(reason_for_refusal:, survey_deadline_date:)
+  def personalisation
+    super.merge(reason_for_refusal:, survey_deadline_date:)
   end
 
   def reason_for_refusal

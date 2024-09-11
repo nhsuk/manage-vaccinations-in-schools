@@ -141,18 +141,12 @@ describe "Parental consent" do
       "#{@child.full_name} will get their HPV vaccination at school"
     )
 
-    perform_enqueued_jobs
-
-    mails = ActionMailer::Base.deliveries
-    expect(mails.count).to eq(2)
-
-    expect(mails.first).to be_sent_with_govuk_notify.using_template(
-      EMAILS[:parental_consent_confirmation]
-    ).to("jane@example.com")
-
-    expect(mails.second).to be_sent_with_govuk_notify.using_template(
-      EMAILS[:parental_consent_give_feedback]
-    ).to("jane@example.com")
+    expect_email_to("jane@example.com", :parental_consent_confirmation)
+    expect_email_to(
+      "jane@example.com",
+      :parental_consent_give_feedback,
+      :second
+    )
   end
 
   def when_the_nurse_checks_the_consent_responses

@@ -74,7 +74,7 @@ describe "HPV Vaccination" do
   def and_an_email_is_sent_to_the_parent_confirming_the_delay
     expect_email_to(
       @patient.consents.last.parent.email,
-      EMAILS[:confirmation_the_hpv_vaccination_didnt_happen]
+      :confirmation_the_hpv_vaccination_didnt_happen
     )
   end
 end

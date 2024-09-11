@@ -2,44 +2,32 @@
 
 class VaccinationMailer < ApplicationMailer
   def hpv_vaccination_has_taken_place(vaccination_record:)
-    template_mail(
-      EMAILS[:confirmation_the_hpv_vaccination_has_taken_place],
-      **opts(vaccination_record)
+    app_template_mail(
+      :confirmation_the_hpv_vaccination_has_taken_place,
+      vaccination_record
     )
   end
 
   def hpv_vaccination_has_not_taken_place(vaccination_record:)
-    template_mail(
-      EMAILS[:confirmation_the_hpv_vaccination_didnt_happen],
-      **opts(vaccination_record)
+    app_template_mail(
+      :confirmation_the_hpv_vaccination_didnt_happen,
+      vaccination_record
     )
   end
 
   private
 
-  def consent
-    @patient_session.patient.consents.recorded.order(:created_at).last
-  end
-
-  def to
-    consent.parent.email
-  end
-
-  def parent_name
-    consent.parent.name
-  end
-
   def opts(vaccination_record)
     @vaccination_record = vaccination_record
     @patient_session = vaccination_record.patient_session
-    @session = vaccination_record.patient_session.session
-    @patient = vaccination_record.patient_session.patient
+    @consent =
+      @patient_session.patient.consents.recorded.order(:created_at).last
 
-    { to:, reply_to_id:, personalisation: vaccination_personalisation }
+    super(@patient_session.session, @patient_session.patient, @consent.parent)
   end
 
-  def vaccination_personalisation
-    personalisation.merge(
+  def personalisation
+    super.merge(
       batch_name:,
       day_month_year_of_vaccination:,
       reason_did_not_vaccinate:,

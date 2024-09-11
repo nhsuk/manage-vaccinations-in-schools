@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-describe VaccinationMailer do
+describe VaccinationMailer, type: :mailer do
   let(:programme) { create(:programme, :active) }
   let(:session) { create(:session, programme:) }
 
-  describe "hpv_vaccination_has_taken_place" do
+  describe "#hpv_vaccination_has_taken_place" do
     subject(:mail) do
       described_class.hpv_vaccination_has_taken_place(vaccination_record:)
     end
@@ -19,7 +19,7 @@ describe VaccinationMailer do
 
     it "has the correct template" do
       expect(mail).to be_sent_with_govuk_notify.using_template(
-        EMAILS[:confirmation_the_hpv_vaccination_has_taken_place]
+        :confirmation_the_hpv_vaccination_has_taken_place
       )
     end
 
@@ -83,7 +83,7 @@ describe VaccinationMailer do
     end
   end
 
-  describe "hpv_vaccination_has_not_place" do
+  describe "#hpv_vaccination_has_not_place" do
     subject(:mail) do
       described_class.hpv_vaccination_has_not_taken_place(vaccination_record:)
     end
@@ -100,7 +100,7 @@ describe VaccinationMailer do
 
     it "has the correct template" do
       expect(mail).to be_sent_with_govuk_notify.using_template(
-        EMAILS[:confirmation_the_hpv_vaccination_didnt_happen]
+        :confirmation_the_hpv_vaccination_didnt_happen
       )
     end
 
