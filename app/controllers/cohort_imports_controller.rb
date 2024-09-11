@@ -40,6 +40,19 @@ class CohortImportsController < ApplicationController
   end
 
   def update
+    @cohort_import.patients.each do |patient|
+      cohort =
+        Cohort
+          .where(team: @programme.team)
+          .where(
+            "start_date <= ? AND end_date >= ?",
+            patient.date_of_birth,
+            patient.date_of_birth
+          )
+          .first
+      patient.update!(cohort:)
+    end
+
     @cohort_import.record!
 
     redirect_to programme_cohort_import_path(@programme, @cohort_import)

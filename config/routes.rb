@@ -61,6 +61,8 @@ Rails.application.routes.draw do
       get "sessions"
     end
 
+    resources :cohorts, only: %i[show]
+
     resource :edit,
              controller: "programmes/edit",
              only: %i[show update],
