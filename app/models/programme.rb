@@ -45,6 +45,8 @@ class Programme < ApplicationRecord
   has_many :patients, through: :patient_sessions
   has_many :vaccination_records, through: :patient_sessions
 
+  has_and_belongs_to_many :cohorts
+
   enum :type, { flu: "flu", hpv: "hpv" }, validate: { allow_nil: true }
 
   normalizes :name, with: ->(name) { name&.strip }

@@ -23,4 +23,6 @@ class Cohort < ApplicationRecord
   belongs_to :team
 
   has_many :patients
+
+  has_and_belongs_to_many :programmes
 end
