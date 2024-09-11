@@ -16,7 +16,12 @@ task :send_consent_reminders, %i[session_id] => :environment do |_task, args|
   if response.downcase.starts_with? "y"
     patients.each do |patient|
       puts "sending mail for patient #{patient.id}"
-      ConsentRequestMailer.consent_reminder(session, patient).deliver_now
+      patient.parents.each do |parent|
+        ConsentRequestMailer
+          .with(parent:, patient:, session:)
+          .consent_reminder
+          .deliver_now
+      end
     end
   end
 end
