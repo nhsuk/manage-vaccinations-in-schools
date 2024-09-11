@@ -28,6 +28,7 @@
 class CohortImport < ApplicationRecord
   include CSVImportable
 
+  has_and_belongs_to_many :parent_relationships
   has_and_belongs_to_many :parents
   has_and_belongs_to_many :patients
 
