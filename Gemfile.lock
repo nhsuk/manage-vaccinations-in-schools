@@ -675,6 +675,7 @@ DEPENDENCIES
   jwt
   mail-notify
   mechanize
+  notifications-ruby-client
   okcomputer
   omniauth-rails_csrf_protection
   omniauth_openid_connect
