@@ -76,7 +76,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
     if clinician == @current_user
       "You (#{clinician.full_name})"
     else
-      clinician.full_name
+      clinician&.full_name
     end
   end
 
