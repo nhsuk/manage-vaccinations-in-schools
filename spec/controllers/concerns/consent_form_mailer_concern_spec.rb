@@ -1,70 +1,60 @@
 # frozen_string_literal: true
 
 describe ConsentFormMailerConcern do
-  subject { Class.new { include ConsentFormMailerConcern }.new }
+  subject(:sample) { Class.new { include ConsentFormMailerConcern }.new }
 
-  let(:consent_form) { build(:consent_form) }
-  let(:mail) { double(deliver_later: true) }
-
-  before do
-    allow(ConsentFormMailer).to receive_messages(
-      confirmation: mail,
-      confirmation_needs_triage: mail,
-      confirmation_injection: mail,
-      confirmation_refused: mail,
-      give_feedback: mail
-    )
-  end
+  let(:consent_form) { create(:consent_form) }
 
   describe "#send_record_mail" do
-    it "sends confirmation_injection mail when user agrees to be contacted" do
-      consent_form.contact_injection = true
-      subject.send_record_mail(consent_form)
+    subject(:send_record_mail) { sample.send_record_mail(consent_form) }
 
-      expect(ConsentFormMailer).to have_received(:confirmation_injection).with(
-        consent_form:
-      )
-      expect(mail).to have_received(:deliver_later).with(no_args).once
+    it "sends a confirmation email" do
+      expect { send_record_mail }.to have_enqueued_mail(
+        ConsentFormMailer,
+        :confirmation
+      ).with(params: { consent_form: }, args: [])
     end
 
-    it "sends confirmation_refused mail when user refuses consent" do
-      consent_form.response = :refused
-      subject.send_record_mail(consent_form)
+    it "sends a feedback email" do
+      today = Time.zone.local(2024, 1, 1)
 
-      expect(ConsentFormMailer).to have_received(:confirmation_refused).with(
-        consent_form:
-      )
-      expect(mail).to have_received(:deliver_later).with(no_args).once
+      expect { travel_to(today) { send_record_mail } }.to have_enqueued_mail(
+        ConsentFormMailer,
+        :give_feedback
+      ).with(params: { consent_form: }, args: []).at(today + 1.hour)
     end
 
-    it "sends confirmation_needs_triage mail when a health question is yes" do
-      consent_form.health_answers.last.response = "yes"
-      subject.send_record_mail(consent_form)
+    context "when user agrees to be contacted about injections" do
+      before { consent_form.contact_injection = true }
 
-      expect(ConsentFormMailer).to have_received(
-        :confirmation_needs_triage
-      ).with(consent_form:)
-      expect(mail).to have_received(:deliver_later).with(no_args).once
+      it "sends an injection confirmation email" do
+        expect { send_record_mail }.to have_enqueued_mail(
+          ConsentFormMailer,
+          :confirmation_injection
+        ).with(params: { consent_form: }, args: [])
+      end
     end
 
-    it "sends confirmation mail when user agrees to consent" do
-      subject.send_record_mail(consent_form)
+    context "when user refuses consent" do
+      before { consent_form.response = :refused }
 
-      expect(ConsentFormMailer).to have_received(:confirmation).with(
-        consent_form:
-      )
-      expect(mail).to have_received(:deliver_later).with(no_args).once
+      it "sends an confirmation refused email" do
+        expect { send_record_mail }.to have_enqueued_mail(
+          ConsentFormMailer,
+          :confirmation_refused
+        ).with(params: { consent_form: }, args: [])
+      end
     end
-  end
 
-  describe "#send_feedback_request_mail" do
-    it "sends an email" do
-      subject.send_feedback_request_mail(consent_form:)
+    context "when a health question is yes" do
+      before { consent_form.health_answers.last.response = "yes" }
 
-      expect(ConsentFormMailer).to have_received(:give_feedback).with(
-        consent_form:
-      )
-      expect(mail).to have_received(:deliver_later).with(wait: 1.hour).once
+      it "sends an confirmation needs triage email" do
+        expect { send_record_mail }.to have_enqueued_mail(
+          ConsentFormMailer,
+          :confirmation_needs_triage
+        ).with(params: { consent_form: }, args: [])
+      end
     end
   end
 end

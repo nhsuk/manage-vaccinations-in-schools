@@ -7,24 +7,27 @@ module TriageMailerConcern
     session = patient_session.session
 
     if send_vaccination_will_happen_email?(patient_session, consent)
-      TriageMailer.vaccination_will_happen(
-        patient_session,
-        consent
-      ).deliver_later
+      TriageMailer
+        .with(consent:, session:)
+        .vaccination_will_happen
+        .deliver_later
     elsif send_vaccination_wont_happen_email?(patient_session, consent)
-      TriageMailer.vaccination_wont_happen(
-        patient_session,
-        consent
-      ).deliver_later
+      TriageMailer
+        .with(consent:, session:)
+        .vaccination_wont_happen
+        .deliver_later
     elsif consent.response_refused?
-      ConsentFormMailer.confirmation_refused(consent:, session:).deliver_later
+      ConsentFormMailer
+        .with(consent:, session:)
+        .confirmation_refused
+        .deliver_later
     elsif consent.triage_needed?
-      ConsentFormMailer.confirmation_needs_triage(
-        consent:,
-        session:
-      ).deliver_later
+      ConsentFormMailer
+        .with(consent:, session:)
+        .confirmation_needs_triage
+        .deliver_later
     else
-      ConsentFormMailer.confirmation(consent:, session:).deliver_later
+      ConsentFormMailer.with(consent:, session:).confirmation.deliver_later
     end
   end
 
