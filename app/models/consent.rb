@@ -79,11 +79,9 @@ class Consent < ApplicationRecord
 
   validates :reason_for_refusal_notes, length: { maximum: 1000 }
 
-  validates :route, presence: true, if: -> { recorded_at.present? }
+  validates :route, presence: true, if: :recorded?
 
-  validates :parent,
-            presence: true,
-            if: -> { recorded_at.present? && !via_self_consent? }
+  validates :parent, presence: true, if: -> { recorded? && !via_self_consent? }
 
   on_wizard_step :route do
     validates :route, inclusion: { in: Consent.routes.keys }
@@ -201,8 +199,7 @@ class Consent < ApplicationRecord
   private
 
   def parent_present_unless_self_consent
-    if recorded_at.nil? && !via_self_consent? && draft_parent.nil? &&
-         parent.nil?
+    if draft? && !via_self_consent? && draft_parent.nil? && parent.nil?
       errors.add(:draft_parent, :blank)
     end
   end
