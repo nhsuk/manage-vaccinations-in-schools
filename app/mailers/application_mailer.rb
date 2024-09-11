@@ -3,9 +3,16 @@
 class ApplicationMailer < Mail::Notify::Mailer
   private
 
-  def opts(patient_session, parent)
-    @patient = patient_session.patient
-    @session = patient_session.session
+  def app_template_mail(template_name, *opts_args, **opts_kwargs)
+    template_mail(
+      GOVUK_NOTIFY_EMAIL_TEMPLATES.fetch(template_name),
+      **opts(*opts_args, **opts_kwargs)
+    )
+  end
+
+  def opts(session, patient, parent)
+    @session = session
+    @patient = patient
     @parent = parent
 
     { to:, reply_to_id:, personalisation: }

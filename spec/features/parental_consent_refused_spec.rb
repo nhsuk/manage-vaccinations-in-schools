@@ -115,14 +115,11 @@ describe "Parental consent" do
       Time.zone.parse(enqueued_jobs.second["scheduled_at"]).to_i
     ).to be_within(1.second).of(1.hour.from_now.to_i)
 
-    expect_email_to "jane@example.com",
-                    EMAILS[:parental_consent_confirmation_refused]
+    expect_email_to "jane@example.com", :parental_consent_confirmation_refused
   end
 
   def and_i_receive_an_email_prompting_me_to_give_feedback
-    expect_email_to "jane@example.com",
-                    EMAILS[:parental_consent_give_feedback],
-                    :second
+    expect_email_to "jane@example.com", :parental_consent_give_feedback, :second
     expect(ActionMailer::Base.deliveries.count).to eq(2)
   end
 

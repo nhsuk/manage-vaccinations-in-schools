@@ -7,10 +7,13 @@ RSpec::Matchers.matcher :be_sent_with_govuk_notify do
       return false
     end
 
-    [
-      @template.nil? || actual.template_id == @template,
-      @to_email.nil? || actual.to == [@to_email]
-    ].all?
+    template_matches =
+      @template.nil? || actual.template_id == @template ||
+        actual.template_id == GOVUK_NOTIFY_EMAIL_TEMPLATES[@template.to_sym]
+
+    to_matches = @to_email.nil? || actual.to == [@to_email]
+
+    template_matches && to_matches
   end
 
   chain :using_template do |template|

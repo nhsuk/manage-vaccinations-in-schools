@@ -4,22 +4,24 @@ class TriageMailer < ApplicationMailer
   def vaccination_will_happen(patient_session, consent)
     @patient_session = patient_session
     @consent = consent
-    @parent = consent.parent
 
-    template_mail(
-      EMAILS[:triage_vaccination_will_happen],
-      **opts(patient_session, @parent)
+    app_template_mail(
+      :triage_vaccination_will_happen,
+      patient_session.session,
+      patient_session.patient,
+      consent.parent
     )
   end
 
   def vaccination_wont_happen(patient_session, consent)
     @patient_session = patient_session
     @consent = consent
-    @parent = consent.parent
 
-    template_mail(
-      EMAILS[:triage_vaccination_wont_happen],
-      **opts(patient_session, @parent)
+    app_template_mail(
+      :triage_vaccination_wont_happen,
+      patient_session.session,
+      patient_session.patient,
+      consent.parent
     )
   end
 end

@@ -124,7 +124,10 @@ describe "Session management" do
 
   def and_the_parents_should_receive_a_consent_request
     @patient.parents.each do |parent|
-      expect_email_to(parent.email, EMAILS[:hpv_session_consent_request])
+      expect_email_to(
+        parent.email,
+        GOVUK_NOTIFY_EMAIL_TEMPLATES.fetch(:hpv_session_consent_request)
+      )
     end
   end
 

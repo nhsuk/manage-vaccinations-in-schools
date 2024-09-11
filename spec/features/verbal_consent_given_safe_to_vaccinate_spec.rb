@@ -65,10 +65,9 @@ describe "Verbal consent" do
   end
 
   def then_an_email_is_sent_to_the_parent_that_vaccination_will_happen
-    expect(sent_emails).not_to be_empty
-
-    expect(sent_emails.last).to be_sent_with_govuk_notify.using_template(
-      EMAILS[:triage_vaccination_will_happen]
-    ).to(@patient.parents.first.email)
+    expect_email_to(
+      @patient.parents.first.email,
+      :triage_vaccination_will_happen
+    )
   end
 end
