@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-describe SessionMailer, type: :mailer do
+describe SessionMailer do
   describe "#session_reminder" do
     subject(:mail) do
-      described_class.session_reminder(session:, patient:, parent:)
+      described_class.with(session:, patient:, parent:).session_reminder
     end
 
     let(:patient) { create(:patient, common_name: "Joey") }
@@ -13,10 +13,12 @@ describe SessionMailer, type: :mailer do
     it { should have_attributes(to: [patient.parents.first.email]) }
 
     describe "personalisation" do
-      subject { mail.message.header["personalisation"].unparsed_value }
+      subject(:personalisation) do
+        mail.message.header["personalisation"].unparsed_value
+      end
 
       it "sets the personalisation" do
-        expect(subject.keys).to include(
+        expect(personalisation.keys).to include(
           :full_and_preferred_patient_name,
           :location_name,
           :long_date,

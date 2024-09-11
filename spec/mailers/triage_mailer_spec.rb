@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-describe TriageMailer, type: :mailer do
+describe TriageMailer do
+  let(:session) { patient_session.session }
+
   describe "#vaccination_will_happen" do
     subject(:mail) do
-      described_class.vaccination_will_happen(patient_session, consent)
+      described_class.with(consent:, session:).vaccination_will_happen
     end
 
     let(:patient_session) do
@@ -22,7 +24,7 @@ describe TriageMailer, type: :mailer do
 
   describe "#vaccination_wont_happen" do
     subject(:mail) do
-      described_class.vaccination_wont_happen(patient_session, consent)
+      described_class.with(consent:, session:).vaccination_wont_happen
     end
 
     let(:patient_session) { create(:patient_session, :consent_refused) }

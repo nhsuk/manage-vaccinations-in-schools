@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
-describe ConsentRequestMailer, type: :mailer do
+describe ConsentRequestMailer do
   let(:parent) { create(:parent) }
 
   describe "#consent_request" do
-    subject(:mail) { described_class.consent_request(session, patient, parent) }
+    subject(:mail) do
+      described_class.with(session:, patient:, parent:).consent_request
+    end
 
     let(:patient) { create(:patient) }
     let(:session) { create(:session, patients: [patient]) }
@@ -12,13 +14,15 @@ describe ConsentRequestMailer, type: :mailer do
     it { should have_attributes(to: [parent.email]) }
 
     describe "personalisation" do
-      subject { mail.message.header["personalisation"].unparsed_value }
+      subject(:personalisation) do
+        mail.message.header["personalisation"].unparsed_value
+      end
 
       it { should include(session_date: session.date.strftime("%A %-d %B")) }
       it { should include(session_short_date: session.date.strftime("%-d %B")) }
 
       it do
-        expect(subject).to include(
+        expect(personalisation).to include(
           close_consent_date: session.close_consent_at.strftime("%A %-d %B")
         )
       end
@@ -38,7 +42,7 @@ describe ConsentRequestMailer, type: :mailer do
 
   describe "#consent_reminder" do
     subject(:mail) do
-      described_class.consent_reminder(session, patient, parent)
+      described_class.with(session:, patient:, parent:).consent_reminder
     end
 
     let(:patient) { create(:patient) }
@@ -47,18 +51,20 @@ describe ConsentRequestMailer, type: :mailer do
     it { should have_attributes(to: [parent.email]) }
 
     describe "personalisation" do
-      subject { mail.message.header["personalisation"].unparsed_value }
+      subject(:personalisation) do
+        mail.message.header["personalisation"].unparsed_value
+      end
 
       it { should include(session_date: session.date.strftime("%A %-d %B")) }
 
       it do
-        expect(subject).to include(
+        expect(personalisation).to include(
           close_consent_date: session.close_consent_at.strftime("%A %-d %B")
         )
       end
 
       it do
-        expect(subject).to include(
+        expect(personalisation).to include(
           close_consent_short_date: session.close_consent_at.strftime("%-d %B")
         )
       end
@@ -68,7 +74,7 @@ describe ConsentRequestMailer, type: :mailer do
       it { should include(team_phone: session.team.phone) }
 
       it "uses the consent url for the session" do
-        expect(subject).to include(
+        expect(personalisation).to include(
           consent_link:
             start_session_parent_interface_consent_forms_url(session)
         )

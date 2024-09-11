@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-describe VaccinationMailer, type: :mailer do
+describe VaccinationMailer do
   let(:programme) { create(:programme, :active) }
   let(:session) { create(:session, programme:) }
 
   describe "#hpv_vaccination_has_taken_place" do
     subject(:mail) do
-      described_class.hpv_vaccination_has_taken_place(vaccination_record:)
+      described_class.with(vaccination_record:).hpv_vaccination_has_taken_place
     end
 
     let(:patient) do
@@ -15,11 +15,13 @@ describe VaccinationMailer, type: :mailer do
     let(:patient_session) { create(:patient_session, patient:, session:) }
     let(:vaccination_record) { create(:vaccination_record, patient_session:) }
 
-    it { should have_attributes(to: [patient.consents.last.parent.email]) }
-
-    it "has the correct template" do
-      expect(mail).to be_sent_with_govuk_notify.using_template(
-        :confirmation_the_hpv_vaccination_has_taken_place
+    it do
+      expect(mail).to have_attributes(
+        to: [patient.consents.last.parent.email],
+        template_id:
+          GOVUK_NOTIFY_EMAIL_TEMPLATES[
+            :confirmation_the_hpv_vaccination_has_taken_place
+          ]
       )
     end
 
@@ -85,7 +87,9 @@ describe VaccinationMailer, type: :mailer do
 
   describe "#hpv_vaccination_has_not_place" do
     subject(:mail) do
-      described_class.hpv_vaccination_has_not_taken_place(vaccination_record:)
+      described_class.with(
+        vaccination_record:
+      ).hpv_vaccination_has_not_taken_place
     end
 
     let(:patient) do
@@ -96,11 +100,13 @@ describe VaccinationMailer, type: :mailer do
       create(:vaccination_record, :not_administered, patient_session:)
     end
 
-    it { should have_attributes(to: [patient.consents.last.parent.email]) }
-
-    it "has the correct template" do
-      expect(mail).to be_sent_with_govuk_notify.using_template(
-        :confirmation_the_hpv_vaccination_didnt_happen
+    it do
+      expect(mail).to have_attributes(
+        to: [patient.consents.last.parent.email],
+        template_id:
+          GOVUK_NOTIFY_EMAIL_TEMPLATES[
+            :confirmation_the_hpv_vaccination_didnt_happen
+          ]
       )
     end
 

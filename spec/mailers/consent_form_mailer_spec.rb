@@ -1,20 +1,21 @@
 # frozen_string_literal: true
 
-describe ConsentFormMailer, type: :mailer do
+describe ConsentFormMailer do
   describe "#confirmation_injection" do
-    it "calls template_mail with correct reason_for_refusal" do
-      mail =
-        described_class.confirmation_injection(
-          consent_form:
-            build(
-              :consent_form,
-              response: "refused",
-              reason: :contains_gelatine,
-              recorded_at: Date.new(2021, 1, 1),
-              session: create(:session, programme: create(:programme, :flu))
-            )
-        )
+    subject(:mail) do
+      described_class.with(consent_form:).confirmation_injection
+    end
 
+    let(:consent_form) do
+      create(
+        :consent_form,
+        :refused,
+        reason: :contains_gelatine,
+        session: create(:session, programme: create(:programme, :flu))
+      )
+    end
+
+    it "calls template_mail with correct reason_for_refusal" do
       expect(mail.message.header["personalisation"].unparsed_value).to include(
         reason_for_refusal: "of the gelatine in the nasal spray"
       )
@@ -23,10 +24,13 @@ describe ConsentFormMailer, type: :mailer do
 
   describe "#give_feedback" do
     context "with a consent form" do
-      it "calls template_mail with correct survey_deadline_date" do
-        consent_form = build(:consent_form, recorded_at: Date.new(2021, 1, 1))
-        mail = described_class.give_feedback(consent_form:)
+      subject(:mail) { described_class.with(consent_form:).give_feedback }
 
+      let(:consent_form) do
+        create(:consent_form, :recorded, recorded_at: Date.new(2021, 1, 1))
+      end
+
+      it "calls template_mail with correct survey_deadline_date" do
         expect(
           mail.message.header["personalisation"].unparsed_value
         ).to include(survey_deadline_date: "8 January 2021")
@@ -34,16 +38,18 @@ describe ConsentFormMailer, type: :mailer do
     end
 
     context "with a consent record" do
-      it "calls template_mail with correct survey_deadline_date" do
-        session = build(:session)
-        consent =
-          build(
-            :consent,
-            recorded_at: Date.new(2021, 1, 1),
-            programme: session.programme
-          )
-        mail = described_class.give_feedback(consent:, session:)
+      subject(:mail) { described_class.with(consent:, session:).give_feedback }
 
+      let(:session) { create(:session) }
+      let(:consent) do
+        create(
+          :consent,
+          recorded_at: Date.new(2021, 1, 1),
+          programme: session.programme
+        )
+      end
+
+      it "calls template_mail with correct survey_deadline_date" do
         expect(
           mail.message.header["personalisation"].unparsed_value
         ).to include(survey_deadline_date: "8 January 2021")
