@@ -83,6 +83,12 @@ FactoryBot.define do
       ]
     end
 
+    trait :refused do
+      response { :refused }
+      reason { :personal_choice }
+      health_answers { [] }
+    end
+
     trait :with_health_answers_no_branching do
       health_answers do
         [
