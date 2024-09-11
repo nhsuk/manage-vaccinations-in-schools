@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_11_112407) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_11_113535) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -419,6 +419,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_11_112407) do
     t.date "end_date"
     t.boolean "active", default: false, null: false
     t.string "type"
+    t.integer "year_groups", default: [], array: true
     t.index ["name", "type", "academic_year", "team_id"], name: "idx_on_name_type_academic_year_team_id_f5cd28cbec", unique: true
   end
 

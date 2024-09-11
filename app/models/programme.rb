@@ -11,6 +11,7 @@
 #  name          :string
 #  start_date    :date
 #  type          :string
+#  year_groups   :integer          default([]), is an Array
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  team_id       :integer          not null
