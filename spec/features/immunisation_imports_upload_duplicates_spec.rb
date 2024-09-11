@@ -34,7 +34,14 @@ describe "Immunisation imports duplicates" do
     @programme =
       create(:programme, :hpv_all_vaccines, academic_year: 2023, team: @team)
     @location = create(:location, :school, urn: "110158")
-    @session = create(:session, programme: @programme, location: @location)
+    @session =
+      create(
+        :session,
+        programme: @programme,
+        location: @location,
+        date: Date.new(2024, 5, 14),
+        time_of_day: :all_day
+      )
   end
 
   def and_an_existing_patient_record_exists
@@ -48,6 +55,44 @@ describe "Immunisation imports duplicates" do
         gender_code: :female,
         address_postcode: "QG53 3OA",
         school: @location
+      )
+    @already_vaccinated_patient =
+      create(
+        :patient,
+        first_name: "Caden",
+        last_name: "Attwater",
+        nhs_number: "4146825652", # Third row of valid_hpv.csv
+        date_of_birth: Date.new(2012, 9, 14),
+        gender_code: :male,
+        address_postcode: "LE1 2DA",
+        school: @location
+      )
+    @patient_session =
+      create(
+        :patient_session,
+        patient: @already_vaccinated_patient,
+        session: @session
+      )
+    @vaccine = @programme.vaccines.find_by(nivs_name: "Gardasil9")
+    @batch =
+      create(
+        :batch,
+        vaccine: @vaccine,
+        expiry: Date.new(2022, 7, 30),
+        name: "123013325"
+      )
+    @previous_vaccination_record =
+      create(
+        :vaccination_record,
+        administered_at: @session.date.in_time_zone + 12.hours,
+        notes: "Foo",
+        recorded_at: Time.zone.yesterday,
+        batch: @batch,
+        delivery_method: :intramuscular,
+        delivery_site: :left_thigh,
+        dose_sequence: 1,
+        patient_session: @patient_session,
+        vaccine: @vaccine
       )
   end
 
