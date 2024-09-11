@@ -43,11 +43,11 @@
     <% end %>
   <% end %>
 
-  <%= f.govuk_text_field :email, label: { text: "Email address" } %>
+  <%= f.govuk_email_field :email, label: { text: "Email address" } %>
 
-  <%= f.govuk_text_field :phone,
-                         label: { text: "Phone number (optional)" },
-                         hint: { text: "Someone might call you about your child’s vaccination" } %>
+  <%= f.govuk_phone_field :phone,
+                          label: { text: "Phone number (optional)" },
+                          hint: { text: "Someone might call you about your child’s vaccination" } %>
 
   <div class="nhsuk-u-margin-top-6">
     <%= f.govuk_submit "Continue" %>

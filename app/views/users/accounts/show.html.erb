@@ -6,7 +6,8 @@
   <%= f.govuk_text_field :given_name, label: { text: "Given name" } %>
   <%= f.govuk_text_field :family_name, label: { text: "Family name" } %>
 
-  <%= f.govuk_text_field :email, label: { text: "Email address" } %>
+  <%= f.govuk_email_field :email, label: { text: "Email address" } %>
+
   <%= f.govuk_text_field :registration,
                          width: 10,
                          label: { text: "Registration number" },
