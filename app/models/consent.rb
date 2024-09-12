@@ -161,14 +161,16 @@ class Consent < ApplicationRecord
   end
 
   def self.from_consent_form!(consent_form, patient_session)
+    patient = patient_session.patient
+
     ActiveRecord::Base.transaction do
-      parent = consent_form.parent.dup
+      parent = consent_form.find_or_create_parent_with_relationship_to(patient:)
 
       consent =
         create!(
           consent_form:,
           programme: consent_form.session.programme,
-          patient: patient_session.patient,
+          patient:,
           parent:,
           reason_for_refusal: consent_form.reason,
           reason_for_refusal_notes: consent_form.reason_notes,
@@ -177,7 +179,9 @@ class Consent < ApplicationRecord
           route: "website",
           health_answers: consent_form.health_answers
         )
+
       patient_session.do_consent! if patient_session.may_do_consent?
+
       consent
     end
   end
