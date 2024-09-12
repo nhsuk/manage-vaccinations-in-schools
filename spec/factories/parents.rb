@@ -11,8 +11,6 @@
 #  name                         :string
 #  phone                        :string
 #  recorded_at                  :datetime
-#  relationship                 :integer
-#  relationship_other           :string
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #

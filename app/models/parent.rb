@@ -11,8 +11,6 @@
 #  name                         :string
 #  phone                        :string
 #  recorded_at                  :datetime
-#  relationship                 :integer
-#  relationship_other           :string
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #
@@ -74,7 +72,5 @@ class Parent < ApplicationRecord
     self.contact_method_type = nil if phone.blank?
 
     self.contact_method_other_details = nil unless contact_method_other?
-
-    self.relationship_other = nil if relationship != "other"
   end
 end
