@@ -5,10 +5,10 @@ describe ConsentRemindersSessionBatchJob do
     programme = create(:programme)
     parents = create_list(:parent, 2)
     patient_with_reminder_sent =
-      build(:patient, sent_reminder_at: Time.zone.today)
-    patient_not_sent_reminder = build(:patient, parents:)
+      create(:patient, sent_reminder_at: Time.zone.today)
+    patient_not_sent_reminder = create(:patient, parents:)
     patient_with_consent =
-      build(:patient, :consent_given_triage_not_needed, programme:)
+      create(:patient, :consent_given_triage_not_needed, programme:)
     session =
       create(
         :session,

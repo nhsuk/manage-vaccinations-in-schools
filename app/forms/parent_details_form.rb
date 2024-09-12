@@ -24,7 +24,7 @@ class ParentDetailsForm
               }
   end
 
-  with_options if: -> { relationship_type == "other" } do
+  with_options if: :requires_parental_responsibility? do
     validates :relationship_other_name, presence: true, length: { maximum: 300 }
     validates :parental_responsibility, inclusion: [true]
   end
@@ -54,5 +54,9 @@ class ParentDetailsForm
 
   def can_change_name_or_relationship?
     parent.draft?
+  end
+
+  def requires_parental_responsibility?
+    can_change_name_or_relationship? && relationship_type == "other"
   end
 end

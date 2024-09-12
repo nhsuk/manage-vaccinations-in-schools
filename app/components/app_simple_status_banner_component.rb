@@ -21,12 +21,7 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
   end
 
   def who_refused
-    @patient_session
-      .consents
-      .response_refused
-      .map(&:who_responded)
-      .last
-      &.capitalize
+    @patient_session.consents.response_refused.map(&:who_responded).last
   end
 
   def full_name

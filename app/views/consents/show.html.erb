@@ -98,7 +98,7 @@
         
           summary_list.with_row do |row|
             row.with_key { "Relationship" }
-            row.with_value { @consent.parent.relationship_label.humanize }
+            row.with_value { @consent.parent_relationship.label }
           end
         
           if @consent.parent.email.present?

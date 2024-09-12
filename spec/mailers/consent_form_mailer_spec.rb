@@ -9,6 +9,7 @@ describe ConsentFormMailer do
     let(:consent_form) do
       create(
         :consent_form,
+        :recorded,
         :refused,
         reason: :contains_gelatine,
         session: create(:session, programme: create(:programme, :flu))
@@ -44,6 +45,7 @@ describe ConsentFormMailer do
       let(:consent) do
         create(
           :consent,
+          :recorded,
           recorded_at: Date.new(2021, 1, 1),
           programme: session.programme
         )

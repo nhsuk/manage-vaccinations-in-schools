@@ -84,7 +84,7 @@ describe "Verbal consent" do
 
     expect(page).to have_content(["Name", parent.name].join)
     expect(page).to have_content(
-      ["Relationship", parent.relationship_label].join
+      ["Relationship", parent.relationship_to(patient: @patient).label].join
     )
     expect(page).to have_content(["Email address", parent.email].join)
     expect(page).to have_content(["Phone number", parent.phone].join)
