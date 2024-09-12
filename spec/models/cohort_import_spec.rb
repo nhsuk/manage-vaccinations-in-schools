@@ -137,10 +137,11 @@ describe CohortImport, type: :model do
 
       expect(Patient.first.parents.first).to have_attributes(
         name: "John Smith",
-        relationship: "father",
         phone: "07412345678",
         email: "john@example.com"
       )
+
+      expect(Patient.first.parent_relationships.first).to be_father
 
       expect(Patient.first.parents.first).not_to be_recorded
 
@@ -158,10 +159,11 @@ describe CohortImport, type: :model do
 
       expect(Patient.second.parents.first).to have_attributes(
         name: "Jane Doe",
-        relationship: "mother",
         phone: "07412345679",
         email: "jane@example.com"
       )
+
+      expect(Patient.second.parent_relationships.first).to be_mother
 
       # Second import should not duplicate the patients if they're identical.
 

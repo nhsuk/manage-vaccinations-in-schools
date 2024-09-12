@@ -68,22 +68,28 @@ class CohortImport < ApplicationRecord
   end
 
   def process_row(row)
+    parent = row.to_parent
     patient = row.to_patient
+    parent_relationship = row.to_parent_relationship(parent, patient)
 
     count_column_to_increment =
       (
-        if patient.new_record?
+        if parent.new_record? || patient.new_record? ||
+             parent_relationship.new_record?
           :new_record_count
-        elsif patient.changed?
+        elsif parent.changed? || patient.changed? ||
+              parent_relationship.changed?
           :changed_record_count
         else
           :exact_duplicate_record_count
         end
       )
 
+    parent.save!
     patient.save!
+    parent_relationship.save!
 
-    link_records(patient, *patient.parents)
+    link_records(parent, patient, parent_relationship)
 
     count_column_to_increment
   end

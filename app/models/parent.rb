@@ -23,12 +23,10 @@ class Parent < ApplicationRecord
 
   before_save :reset_unused_fields
 
-  has_one :patient
   has_many :parent_relationships
+  has_many :patients, through: :parent_relationships
 
   has_and_belongs_to_many :cohort_imports
-
-  attr_accessor :parental_responsibility
 
   enum :contact_method_type,
        { any: "any", other: "other", text: "text", voice: "voice" },
@@ -36,11 +34,6 @@ class Parent < ApplicationRecord
        validate: {
          allow_nil: true
        }
-
-  enum :relationship,
-       %w[mother father guardian other],
-       prefix: true,
-       validate: true
 
   encrypts :email, :name, :phone, :relationship_other, deterministic: true
   encrypts :contact_method_other_details
@@ -52,13 +45,10 @@ class Parent < ApplicationRecord
   validates :name, presence: true
   validates :phone, phone: { allow_blank: true }
   validates :email, presence: true, notify_safe_email: true
-  validates :relationship_other, presence: true, if: -> { relationship_other? }
-  validate :has_parental_responsibility, if: -> { relationship_other? }
   validates :contact_method_other_details,
             :email,
             :name,
             :phone,
-            :relationship_other,
             length: {
               maximum: 300
             }
@@ -66,12 +56,8 @@ class Parent < ApplicationRecord
             presence: true,
             if: :contact_method_other?
 
-  def relationship_label
-    if relationship == "other"
-      relationship_other
-    else
-      human_enum_name(:relationship)
-    end.capitalize
+  def relationship_to(patient:)
+    parent_relationships.find { _1.patient == patient }
   end
 
   def contact_method_description
@@ -80,13 +66,6 @@ class Parent < ApplicationRecord
     else
       human_enum_name(:contact_method_type)
     end
-  end
-
-  def has_parental_responsibility
-    return if parental_responsibility == "yes"
-    return if parental_responsibility == "no"
-
-    errors.add(:parental_responsibility, :inclusion)
   end
 
   private

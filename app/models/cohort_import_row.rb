@@ -25,6 +25,14 @@ class CohortImportRow
     @data = data
   end
 
+  def to_parent
+    return unless valid?
+
+    Parent
+      .find_or_initialize_by(email: parent_email, name: parent_name)
+      .tap { _1.assign_attributes(phone: parent_phone) }
+  end
+
   def to_patient
     return unless valid?
 
@@ -38,12 +46,10 @@ class CohortImportRow
       first_name:,
       last_name:,
       nhs_number:,
-      parents: [parent],
       school:
     }
 
     if (existing_patient = find_existing_patients.first)
-      # TODO: use stage_changes
       existing_patient.assign_attributes(attributes)
       existing_patient
     else
@@ -51,16 +57,24 @@ class CohortImportRow
     end
   end
 
-  def parent
+  def to_parent_relationship(parent, patient)
     return unless valid?
 
-    @parent ||=
-      Parent.find_or_create_by!(
-        email: parent_email,
-        name: parent_name,
-        phone: parent_phone,
-        **parent_relationship_hash
-      )
+    attributes =
+      case parent_relationship
+      when "Mother"
+        { type: "mother" }
+      when "Father"
+        { type: "father" }
+      when "Guardian"
+        { type: "guardian" }
+      else
+        { type: "other", other: parent_relationship }
+      end
+
+    ParentRelationship
+      .find_or_initialize_by(parent:, patient:)
+      .tap { _1.assign_attributes(attributes) }
   end
 
   def school_urn
@@ -125,19 +139,6 @@ class CohortImportRow
 
   def school
     @school ||= Location.school.find_by!(urn: school_urn)
-  end
-
-  def parent_relationship_hash
-    case parent_relationship
-    when "Mother"
-      { relationship: "mother" }
-    when "Father"
-      { relationship: "father" }
-    when "Guardian"
-      { relationship: "guardian" }
-    else
-      { relationship: "other", relationship_other: parent_relationship }
-    end
   end
 
   def find_existing_patients

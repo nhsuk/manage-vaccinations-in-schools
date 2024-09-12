@@ -140,12 +140,12 @@ class Consent < ApplicationRecord
     response_given? && health_answers_require_follow_up?
   end
 
+  def parent_relationship
+    (draft_parent || parent)&.relationship_to(patient:)
+  end
+
   def who_responded
-    if via_self_consent?
-      "Child (Gillick competent)"
-    else
-      (draft_parent || parent).relationship_label
-    end
+    via_self_consent? ? "Child (Gillick competent)" : parent_relationship.label
   end
 
   def health_answers_require_follow_up?

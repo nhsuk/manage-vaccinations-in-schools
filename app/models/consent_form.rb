@@ -298,13 +298,7 @@ class ConsentForm < ApplicationRecord
 
   def find_or_create_parent_with_relationship_to(patient:)
     Parent
-      .create_with(
-        recorded_at: Time.zone.now,
-        # TODO: To be removed
-        relationship: parent_relationship_type,
-        relationship_other: parent_relationship_other_name,
-        parental_responsibility: "yes"
-      )
+      .create_with(recorded_at: Time.zone.now)
       .find_or_initialize_by(name: parent_name, email: parent_email)
       .tap do |parent|
         parent.update!(phone: parent_phone)

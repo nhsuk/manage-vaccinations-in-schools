@@ -34,15 +34,13 @@
 #  fk_rails_...  (school_id => locations.id)
 #
 
-require_relative "../support/faker/national_health_service"
-
 FactoryBot.define do
   factory :patient do
     transient do
-      # Used for associations like consent and triage that need to be
-      # associated with a programme
       session { nil }
       programme { session&.programme }
+
+      parents { [create(:parent, :recorded, last_name:)] }
     end
 
     nhs_number { Faker::NationalHealthService.test_number.gsub(/\s+/, "") }
@@ -51,7 +49,6 @@ FactoryBot.define do
     last_name { Faker::Name.last_name }
     date_of_birth { Faker::Date.birthday(min_age: 12, max_age: 13) }
     school { session&.location }
-    parents { [create(:parent, last_name:)] }
 
     address_line_1 { Faker::Address.street_address }
     address_line_2 { Faker::Address.secondary_address }
@@ -62,6 +59,10 @@ FactoryBot.define do
       if evaluator.session
         create(:patient_session, patient:, session: evaluator.session)
       end
+
+      evaluator.parents.each do |parent|
+        create(:parent_relationship, parent:, patient:)
+      end
     end
 
     trait :home_educated do
@@ -70,17 +71,49 @@ FactoryBot.define do
     end
 
     trait :consent_given_triage_not_needed do
-      consents { [association(:consent, :given, programme:)] }
+      consents do
+        [
+          association(
+            :consent,
+            :recorded,
+            :given,
+            :from_mum,
+            patient: instance,
+            programme:
+          )
+        ]
+      end
     end
 
     trait :consent_given_triage_needed do
       consents do
-        [association(:consent, :given, :health_question_notes, programme:)]
+        [
+          association(
+            :consent,
+            :recorded,
+            :given,
+            :from_mum,
+            :health_question_notes,
+            patient: instance,
+            programme:
+          )
+        ]
       end
     end
 
     trait :consent_refused do
-      consents { [association(:consent, :refused, :from_mum, programme:)] }
+      consents do
+        [
+          association(
+            :consent,
+            :recorded,
+            :refused,
+            :from_mum,
+            patient: instance,
+            programme:
+          )
+        ]
+      end
     end
 
     trait :consent_refused_with_notes do
@@ -88,8 +121,10 @@ FactoryBot.define do
         [
           association(
             :consent,
+            :recorded,
             :refused,
             :from_mum,
+            patient: instance,
             programme:,
             reason_for_refusal: "already_vaccinated",
             reason_for_refusal_notes: "Already had the vaccine at the GP"
@@ -101,8 +136,22 @@ FactoryBot.define do
     trait :consent_conflicting do
       consents do
         [
-          association(:consent, :refused, :from_mum, programme:),
-          association(:consent, :given, :from_dad, programme:)
+          association(
+            :consent,
+            :recorded,
+            :refused,
+            :from_mum,
+            patient: instance,
+            programme:
+          ),
+          association(
+            :consent,
+            :recorded,
+            :given,
+            :from_dad,
+            patient: instance,
+            programme:
+          )
         ]
       end
     end

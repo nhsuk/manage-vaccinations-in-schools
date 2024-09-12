@@ -93,17 +93,5 @@ describe Parent do
       expect(subject.contact_method_type).to be_nil
       expect(subject.contact_method_other_details).to be_nil
     end
-
-    it "resets relationship_other if relationship is updated" do
-      subject =
-        build(
-          :parent,
-          relationship: "other",
-          relationship_other: "granddad",
-          parental_responsibility: "yes"
-        )
-      subject.update!(relationship: "mother")
-      expect(subject.relationship_other).to be_nil
-    end
   end
 end
