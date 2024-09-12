@@ -39,7 +39,9 @@ describe "Triage" do
         session: @session
       ).patient
     create(
-      :consent_given,
+      :consent,
+      :given,
+      :recorded,
       :health_question_notes,
       :from_granddad,
       patient: @patient,

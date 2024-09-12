@@ -25,7 +25,7 @@ module ParentInterface
           health_question_number: @question_number
         )
       else
-        @consent_form.assign_attributes(update_params)
+        model.assign_attributes(update_params)
       end
 
       if current_step == :school && @consent_form.is_this_their_school == "no"

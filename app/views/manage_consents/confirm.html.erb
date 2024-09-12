@@ -100,7 +100,7 @@
         
           summary_list.with_row do |row|
             row.with_key { "Relationship" }
-            row.with_value { @parent.relationship_label.humanize }
+            row.with_value { @parent_relationship.label }
             row.with_action(text: "Change", href: wizard_path(:who), visually_hidden_text: "parent relationship")
           end
         

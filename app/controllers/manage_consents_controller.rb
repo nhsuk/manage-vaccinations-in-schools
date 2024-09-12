@@ -7,12 +7,18 @@ class ManageConsentsController < ApplicationController
   before_action :set_route
   before_action :set_session
   before_action :set_patient
-  before_action :set_consent, except: %i[create]
-  before_action :set_steps, except: %i[create]
-  before_action :setup_wizard_translated, except: %i[create]
+  before_action :set_consent, except: :create
+  before_action :set_steps, except: :create
+  before_action :setup_wizard_translated, except: :create
   before_action :set_parent,
-                except: %i[create],
-                if: -> { step.in?(%w[parent-details confirm]) }
+                except: :create,
+                if: -> { %w[parent-details confirm].include?(step) }
+  before_action :set_parent_relationship,
+                except: :create,
+                if: -> { %w[parent-details confirm].include?(step) }
+  before_action :set_parent_details_form,
+                except: :create,
+                if: -> { step == "parent-details" }
   before_action :set_patient_session
   before_action :set_parent_options,
                 only: %i[show update],
@@ -46,15 +52,15 @@ class ManageConsentsController < ApplicationController
     when :confirm
       handle_confirm
     when :parent_details
-      model = @parent
+      model = @parent_details_form
       handle_parent_details
 
       if model.valid?
         ActiveRecord::Base.transaction do
-          model.save!
-
-          @consent.assign_attributes(wizard_step: current_step)
-          @consent.save! # in case the @consent.draft_parent was nil previously
+          if model.save
+            @consent.assign_attributes(wizard_step: current_step)
+            @consent.save! # in case the @consent.draft_parent was nil previously
+          end
         end
       end
     when :questions
@@ -139,7 +145,7 @@ class ManageConsentsController < ApplicationController
   end
 
   def handle_parent_details
-    @parent.assign_attributes parent_params
+    @parent_details_form.assign_attributes(parent_details_params)
     @consent.draft_parent = @parent
   end
 
@@ -190,11 +196,25 @@ class ManageConsentsController < ApplicationController
       end
   end
 
-  def set_consent
-    @consent =
-      policy_scope(Consent).unscope(where: :recorded_at).find(
-        params[:consent_id]
+  def set_parent_relationship
+    @parent_relationship = @parent&.relationship_to(patient: @patient)
+  end
+
+  def set_parent_details_form
+    @parent_details_form =
+      ParentDetailsForm.new(
+        parent: @parent,
+        patient: @patient,
+        email: @parent.email,
+        name: @parent.name,
+        phone: @parent.phone,
+        relationship_type: @parent_relationship&.type,
+        relationship_other_name: @parent_relationship&.other_name
       )
+  end
+
+  def set_consent
+    @consent = policy_scope(Consent).find(params[:consent_id])
     @consent.new_or_existing_parent =
       session[:manage_consents_new_or_existing_parent_id]
   end
@@ -237,14 +257,14 @@ class ManageConsentsController < ApplicationController
       .merge(wizard_step: current_step)
   end
 
-  def parent_params
-    params.fetch(:parent, {}).permit(
+  def parent_details_params
+    params.require(:parent_details_form).permit(
       :name,
       :email,
+      :parental_responsibility,
       :phone,
-      :relationship,
-      :relationship_other,
-      :parental_responsibility
+      :relationship_type,
+      :relationship_other_name
     )
   end
 

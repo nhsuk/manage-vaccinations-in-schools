@@ -34,26 +34,29 @@ describe AppActivityLogComponent, type: :component do
   let(:session) { create(:session, programme:, location:) }
   let(:patient) { create(:patient, school: location) }
 
+  let(:mum) { create(:parent, :recorded, name: "Jane Doe") }
+  let(:dad) { create(:parent, :recorded, name: "John Doe") }
+
   before do
+    create(:parent_relationship, :mother, parent: mum, patient:)
+    create(:parent_relationship, :father, parent: dad, patient:)
+
     create(
       :consent,
       :given,
-      :from_mum,
       programme:,
       patient:,
-      parent: create(:parent, :mum, name: "Jane Doe"),
+      parent: mum,
       recorded_at: Time.zone.parse("2024-05-30 12:00")
     )
     create(
       :consent,
       :refused,
-      :from_dad,
       programme:,
       patient:,
-      parent: create(:parent, :dad, name: "John Doe"),
+      parent: dad,
       recorded_at: Time.zone.parse("2024-05-30 13:00")
     )
-
     create(
       :triage,
       :needs_follow_up,

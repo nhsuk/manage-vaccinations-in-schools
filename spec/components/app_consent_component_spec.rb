@@ -8,7 +8,7 @@ describe AppConsentComponent, type: :component do
   end
 
   let(:consent) { patient_session.consents.first }
-  let(:relation) { consent.parent.relationship_label.capitalize }
+  let(:relation) { consent.parent_relationship.label }
 
   context "consent is not present" do
     let(:patient_session) { create(:patient_session) }

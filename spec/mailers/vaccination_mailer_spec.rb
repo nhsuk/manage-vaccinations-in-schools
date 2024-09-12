@@ -10,7 +10,7 @@ describe VaccinationMailer do
     end
 
     let(:patient) do
-      create(:patient, consents: [build(:consent_given, programme:)])
+      create(:patient, :consent_given_triage_not_needed, programme:)
     end
     let(:patient_session) { create(:patient_session, patient:, session:) }
     let(:vaccination_record) { create(:vaccination_record, patient_session:) }
@@ -93,7 +93,7 @@ describe VaccinationMailer do
     end
 
     let(:patient) do
-      create(:patient, consents: [build(:consent_given, programme:)])
+      create(:patient, :consent_given_triage_not_needed, programme:)
     end
     let(:patient_session) { create(:patient_session, session:, patient:) }
     let(:vaccination_record) do

@@ -31,12 +31,14 @@ describe "Verbal consent" do
       "Choose who you are trying to get consent from"
     )
 
-    choose "#{@patient.parents.first.name} (#{@patient.parents.first.relationship_label})"
+    parent = @patient.parents.first
+
+    choose "#{parent.name} (#{parent.relationship_to(patient: @patient).label})"
     click_button "Continue"
 
     # Details for parent or guardian
     expect(page).to have_content(
-      "Details for #{@patient.parents.first.name} (#{@patient.parents.first.relationship_label})"
+      "Details for #{parent.name} (#{parent.relationship_to(patient: @patient).label})"
     )
     # don't change any details
     click_button "Continue"
@@ -92,14 +94,14 @@ describe "Verbal consent" do
 
     expect(page).to have_content(["Name", parent.name].join)
     expect(page).to have_content(
-      ["Relationship", parent.relationship_label].join
+      ["Relationship", parent.relationship_to(patient: @patient).label].join
     )
     expect(page).to have_content(["Email address", parent.email].join)
     expect(page).to have_content(["Phone number", parent.phone].join)
 
     expect(page).to have_content("Answers to health questions")
     expect(page).to have_content(
-      "#{parent.relationship_label} responded: No",
+      "#{parent.relationship_to(patient: @patient).label} responded: No",
       count: 3
     )
   end

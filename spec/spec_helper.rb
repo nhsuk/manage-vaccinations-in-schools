@@ -111,6 +111,7 @@ require "capybara/cuprite"
 require "capybara-screenshot/rspec"
 
 Faker::Config.locale = "en-GB"
+
 Capybara.register_driver(:cuprite_custom) do |app|
   Capybara::Cuprite::Driver.new(
     app,
