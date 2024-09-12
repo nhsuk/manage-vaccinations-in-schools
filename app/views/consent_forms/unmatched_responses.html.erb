@@ -28,7 +28,7 @@
             body.with_row do |row|
               row.with_cell(text: consent_form.recorded_at&.to_date&.to_fs(:long))
               row.with_cell(text: consent_form.full_name)
-              row.with_cell(text: consent_form.parent.name)
+              row.with_cell(text: consent_form.parent_name)
               row.with_cell(text: govuk_link_to("Find match", consent_form))
             end
           end

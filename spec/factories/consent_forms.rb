@@ -70,6 +70,7 @@ FactoryBot.define do
     parent_contact_method_other_details do
       parent_contact_method_type == "other" ? "Other details." : nil
     end
+    parental_responsibility { "yes" }
 
     session
     health_answers do

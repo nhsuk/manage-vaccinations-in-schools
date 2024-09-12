@@ -17,7 +17,7 @@ class CohortImportRow
   validates :parent_name, presence: true
   validates :parent_relationship, presence: true
   validates :parent_email, presence: true, notify_safe_email: true
-  validates :parent_phone, phone: true, if: -> { parent_phone.present? }
+  validates :parent_phone, phone: { allow_blank: true }
 
   validate :zero_or_one_existing_patient
 

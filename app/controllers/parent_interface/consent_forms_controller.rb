@@ -40,7 +40,6 @@ module ParentInterface
 
     def record
       ActiveRecord::Base.transaction do
-        @consent_form.draft_parent.update!(recorded_at: Time.zone.now)
         @consent_form.update!(recorded_at: Time.zone.now)
       end
 

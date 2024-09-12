@@ -7,8 +7,7 @@ module ParentInterface
     before_action :set_steps
     before_action :setup_wizard_translated
     before_action :validate_params, only: %i[update]
-    before_action :set_parent
-    before_action :set_health_answer, if: -> { is_health_question_step? }
+    before_action :set_health_answer, if: :is_health_question_step?
     before_action :set_follow_up_changes_start_page, only: %i[show]
 
     def show
@@ -17,44 +16,35 @@ module ParentInterface
 
     def update
       model = @consent_form
+
       if is_health_question_step?
         @health_answer.assign_attributes(health_answer_params)
 
-        @consent_form.assign_attributes(
+        model.assign_attributes(
           wizard_step: current_step,
           health_question_number: @question_number
         )
-      elsif current_step.in?(%i[parent contact_method])
-        model = @consent_form.draft_parent
-        model.assign_attributes(parent_params)
-
-        if @consent_form.draft_parent.parental_responsibility == "no"
-          return(
-            redirect_to session_parent_interface_consent_form_cannot_consent_responsibility_path(
-                          @session,
-                          @consent_form
-                        )
-          )
-        end
-
-        if model.valid?
-          @consent_form.update!(wizard_step: current_step, draft_parent: model)
-        end
       else
         @consent_form.assign_attributes(update_params)
       end
 
+      if current_step == :school && @consent_form.is_this_their_school == "no"
+        redirect_to session_parent_interface_consent_form_cannot_consent_school_path(
+                      @session,
+                      @consent_form
+                    ) and return
+      end
+
+      if current_step == :parent &&
+           @consent_form.parental_responsibility == "no"
+        redirect_to session_parent_interface_consent_form_cannot_consent_responsibility_path(
+                      @session,
+                      @consent_form
+                    ) and return
+      end
+
       set_steps # The wizard_steps can change after certain attrs change
       setup_wizard_translated # Next/previous steps can change after steps change
-
-      if current_step == :school && @consent_form.is_this_their_school == "no"
-        return(
-          redirect_to session_parent_interface_consent_form_cannot_consent_school_path(
-                        @session,
-                        @consent_form
-                      )
-        )
-      end
 
       skip_to_confirm_or_next_health_question
 
@@ -83,7 +73,18 @@ module ParentInterface
           date_of_birth(1i)
         ],
         school: %i[is_this_their_school],
-        contact_method: %i[contact_method_type contact_method_other_details],
+        parent: %i[
+          parent_email
+          parent_name
+          parent_phone
+          parent_relationship_other_name
+          parent_relationship_type
+          parental_responsibility
+        ],
+        contact_method: %i[
+          parent_contact_method_type
+          parent_contact_method_other_details
+        ],
         consent: %i[response],
         reason: %i[reason],
         reason_notes: %i[reason_notes],
@@ -96,21 +97,6 @@ module ParentInterface
         .fetch(:consent_form, {})
         .permit(permitted_attributes)
         .merge(wizard_step: current_step)
-    end
-
-    def parent_params
-      params.fetch(:parent, {}).permit(
-        %i[
-          name
-          email
-          phone
-          relationship
-          relationship_other
-          contact_method_type
-          contact_method_other_details
-          parental_responsibility
-        ]
-      )
     end
 
     def health_answer_params
@@ -130,10 +116,6 @@ module ParentInterface
       @question_number = params.fetch(:question_number, "0").to_i
 
       @health_answer = @consent_form.health_answers[@question_number]
-    end
-
-    def set_parent
-      @consent_form.build_draft_parent if @consent_form.draft_parent.blank?
     end
 
     def validate_params

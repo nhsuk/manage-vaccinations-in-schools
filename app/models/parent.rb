@@ -50,7 +50,7 @@ class Parent < ApplicationRecord
   normalizes :email, with: ->(str) { str.nil? ? nil : str.to_s.downcase.strip }
 
   validates :name, presence: true
-  validates :phone, phone: true, if: -> { phone.present? }
+  validates :phone, phone: { allow_blank: true }
   validates :email, presence: true, notify_safe_email: true
   validates :relationship_other, presence: true, if: -> { relationship_other? }
   validate :has_parental_responsibility, if: -> { relationship_other? }
@@ -84,15 +84,9 @@ class Parent < ApplicationRecord
 
   def has_parental_responsibility
     return if parental_responsibility == "yes"
-    if parental_responsibility == "no" && validation_context != :manage_consent
-      return
-    end
+    return if parental_responsibility == "no"
 
-    if validation_context == :manage_consent
-      errors.add(:parental_responsibility, :inclusion)
-    else
-      errors.add(:parental_responsibility, :inclusion_on_consent_form)
-    end
+    errors.add(:parental_responsibility, :inclusion)
   end
 
   private

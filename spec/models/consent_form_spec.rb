@@ -45,7 +45,7 @@
 #  fk_rails_...  (session_id => sessions.id)
 #
 
-describe ConsentForm, type: :model do
+describe ConsentForm do
   describe "Validations" do
     subject(:consent_form) do
       build(

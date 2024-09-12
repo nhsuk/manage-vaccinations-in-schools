@@ -10,7 +10,7 @@
   <div class="nhsuk-grid-column-two-thirds">
     <%= h1 page_title: do %>
       <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
-        Consent response from <%= @consent_form.parent.name %>
+        Consent response from <%= @consent_form.parent_name %>
       </span>
       <%= page_title %>
     <% end %>
@@ -24,11 +24,11 @@
     <%= render AppCardComponent.new do |c|
           c.with_heading { "Consent response" }
           render AppConsentSummaryComponent.new(
-            name: @consent_form.parent.name,
-            relationship: @consent_form.who_responded,
+            name: @consent_form.parent_name,
+            relationship: @consent_form.parent_relationship_label,
             contact: {
-              phone: @consent_form.parent.phone,
-              email: @consent_form.parent.email,
+              phone: @consent_form.parent_phone,
+              email: @consent_form.parent_email,
             },
             response: {
               text: @consent_form.summary_with_route,
