@@ -132,7 +132,7 @@ en:
           phone: By phone
           website: Online
       consent_form:
-        contact_methods:
+        contact_method_types:
           any: I do not have specific needs
           other: Other
           text: I can only receive text messages
@@ -292,6 +292,11 @@ en:
             last_name:
               blank: Enter a last name
               too_long: Enter a last name that is less than 300 characters long
+            parent_contact_method_type:
+              inclusion: Choose a contact method
+            parent_contact_method_other_details:
+              blank: Enter details about how to contact you
+              too_long: Enter details that are less than 300 characters long
             parent_email:
               blank: Enter your email address
               invalid: Enter a valid email address, such as j.doe@gmail.com
@@ -302,9 +307,9 @@ en:
             parent_phone:
               invalid: Enter a valid phone number, like 07700 900 000
               too_long: Enter a phone number that is less than 300 characters long
-            parent_relationship:
+            parent_relationship_type:
               inclusion: Choose a relationship
-            parent_relationship_other:
+            parent_relationship_other_name:
               blank: Enter your relationship
               too_long: Enter a relationship that are less than 300 characters long
             parental_responsibility:
@@ -344,9 +349,9 @@ en:
               confirmation: The password and confirmation do not match
         parent:
           attributes:
-            contact_method:
+            contact_method_type:
               inclusion: Choose a contact method
-            contact_method_other:
+            contact_method_other_details:
               blank: Enter details about how to contact you
               too_long: Enter details that are less than 300 characters long
             email:
@@ -358,7 +363,6 @@ en:
               too_long: Enter a name that is less than 300 characters long
             parental_responsibility:
               inclusion: Choose whether there is parental responsibility
-              inclusion_on_consent_form: You need parental responsibility to give consent
             phone:
               blank: Enter a phone number
               invalid: Enter a valid phone number, like 07700 900 000

@@ -53,7 +53,7 @@ class ConsentFormMailer < ApplicationMailer
     @consent = consent
 
     patient = consent_form || consent.patient
-    parent = consent_form&.parent || consent.parent
+    parent = consent_form || consent.parent
 
     super(session || consent_form.session, patient, parent)
   end

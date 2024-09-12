@@ -79,6 +79,19 @@ class ConsentForm < ApplicationRecord
        prefix: "refused_because"
   enum :gp_response, %w[yes no dont_know], prefix: true
 
+  enum :parent_contact_method_type,
+       Parent.contact_method_types,
+       prefix: :parent_contact_method,
+       validate: {
+         allow_nil: true
+       }
+  enum :parent_relationship_type,
+       ParentRelationship.types,
+       prefix: :parent_relationship,
+       validate: {
+         allow_nil: true
+       }
+
   serialize :health_answers, coder: HealthAnswer::ArraySerializer
 
   encrypts :address_line_1,
@@ -90,6 +103,11 @@ class ConsentForm < ApplicationRecord
            :gp_name,
            :health_answers,
            :last_name,
+           :parent_contact_method_other_details,
+           :parent_email,
+           :parent_name,
+           :parent_phone,
+           :parent_relationship_other_name,
            :reason_notes
 
   validates :address_line_1,
@@ -99,9 +117,22 @@ class ConsentForm < ApplicationRecord
             :first_name,
             :gp_name,
             :last_name,
+            :parent_contact_method_other_details,
+            :parent_name,
+            :parent_relationship_other_name,
             length: {
               maximum: 300
             }
+
+  validates :parent_contact_method_other_details,
+            presence: true,
+            if: :parent_contact_method_other?
+
+  validates :parent_phone, phone: { allow_blank: true }
+
+  validates :parent_relationship_other_name,
+            presence: true,
+            if: :parent_relationship_other?
 
   validates :reason_notes, length: { maximum: 1000 }
 
@@ -124,6 +155,24 @@ class ConsentForm < ApplicationRecord
 
   on_wizard_step :school, exact: true do
     validates :is_this_their_school, inclusion: { in: %w[yes no] }
+  end
+
+  on_wizard_step :parent do
+    validates :parent_name, presence: true
+    validates :parent_email, notify_safe_email: true
+    validates :parent_relationship_type, presence: true
+  end
+
+  validates :parental_responsibility,
+            inclusion: {
+              in: ["yes"]
+            },
+            if: ->(object) do
+              object.parent_relationship_other? && object.wizard_step == :parent
+            end
+
+  on_wizard_step :contact_method do
+    validates :parent_contact_method_type, presence: true
   end
 
   on_wizard_step :consent do
@@ -209,10 +258,6 @@ class ConsentForm < ApplicationRecord
     health_answers.any? { _1.response == "yes" }
   end
 
-  def who_responded
-    parent&.relationship_label
-  end
-
   def gelatine_content_status_in_vaccines
     # we don't YET track the vaccine type that the user is agreeing to in the consent form,
     # so we have to check all vaccines
@@ -278,6 +323,20 @@ class ConsentForm < ApplicationRecord
     "#{human_enum_name(:response).capitalize} (online)"
   end
 
+  def parent_contact_method_description
+    Parent.new(
+      contact_method_type: parent_contact_method_type,
+      contact_method_other_details: parent_contact_method_other_details
+    ).contact_method_description
+  end
+
+  def parent_relationship_label
+    ParentRelationship.new(
+      type: parent_relationship_type,
+      other_name: parent_relationship_other_name
+    ).label
+  end
+
   private
 
   def refused_and_not_had_it_already?
@@ -320,7 +379,7 @@ class ConsentForm < ApplicationRecord
   end
 
   def ask_for_contact_method?
-    Flipper.enabled?(:parent_contact_method) && draft_parent&.phone.present?
+    Flipper.enabled?(:parent_contact_method) && parent_phone.present?
   end
 
   # Because there are branching paths in the consent form journey, fields
@@ -339,6 +398,12 @@ class ConsentForm < ApplicationRecord
 
       self.health_answers = []
     end
+
+    self.parent_contact_method_type = nil if parent_phone.blank?
+    self.parent_contact_method_other_details =
+      nil unless parent_contact_method_other?
+
+    self.parent_relationship_other_name = nil unless parent_relationship_other?
 
     if consent_given?
       self.contact_injection = nil

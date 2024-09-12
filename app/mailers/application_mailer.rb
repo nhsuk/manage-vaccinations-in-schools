@@ -19,7 +19,7 @@ class ApplicationMailer < Mail::Notify::Mailer
   end
 
   def to
-    @parent.email
+    @parent.is_a?(ConsentForm) ? @parent.parent_email : @parent.email
   end
 
   def reply_to_id
@@ -61,7 +61,7 @@ class ApplicationMailer < Mail::Notify::Mailer
   end
 
   def parent_name
-    @parent.name
+    @parent.is_a?(ConsentForm) ? @parent.parent_name : @parent.name
   end
 
   def location_name
