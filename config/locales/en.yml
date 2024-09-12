@@ -149,7 +149,7 @@ en:
           not_provided: Not provided
           refused: Consent refused
       parent:
-        contact_methods:
+        contact_method_types:
           any: No specific needs
           other: Other
           text: Can only receive text messages

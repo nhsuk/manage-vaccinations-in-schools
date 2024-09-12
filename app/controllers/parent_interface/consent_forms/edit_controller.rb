@@ -83,7 +83,7 @@ module ParentInterface
           date_of_birth(1i)
         ],
         school: %i[is_this_their_school],
-        contact_method: %i[contact_method contact_method_other],
+        contact_method: %i[contact_method_type contact_method_other_details],
         consent: %i[response],
         reason: %i[reason],
         reason_notes: %i[reason_notes],
@@ -106,8 +106,8 @@ module ParentInterface
           phone
           relationship
           relationship_other
-          contact_method
-          contact_method_other
+          contact_method_type
+          contact_method_other_details
           parental_responsibility
         ]
       )

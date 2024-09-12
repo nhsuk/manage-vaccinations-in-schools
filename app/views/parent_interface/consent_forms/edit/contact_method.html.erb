@@ -11,21 +11,21 @@
 <%= form_with model: @consent_form.draft_parent, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
-  <%= f.govuk_radio_buttons_fieldset(:contact_method,
+  <%= f.govuk_radio_buttons_fieldset(:contact_method_type,
                                      legend: { size: "l", text: title, tag: "h1" },
                                      hint: { text: "Tell us if you have specific needs" }) do %>
-    <%= f.govuk_radio_button :contact_method, "text",
+    <%= f.govuk_radio_button :contact_method_type, "text",
                              label: { text: "I can only receive text messages" },
                              link_errors: true %>
-    <%= f.govuk_radio_button :contact_method, "voice",
+    <%= f.govuk_radio_button :contact_method_type, "voice",
                              label: { text: "I can only receive voice calls" } %>
-    <%= f.govuk_radio_button :contact_method, "other",
+    <%= f.govuk_radio_button :contact_method_type, "other",
                              label: { text: "Other" } do %>
-      <%= f.govuk_text_area :contact_method_other,
+      <%= f.govuk_text_area :contact_method_other_details,
                             label: { text: "Give details" } %>
     <% end %>
     <%= f.govuk_radio_divider %>
-    <%= f.govuk_radio_button :contact_method, "any",
+    <%= f.govuk_radio_button :contact_method_type, "any",
                              label: { text: "I do not have specific needs" } %>
   <% end %>
 
