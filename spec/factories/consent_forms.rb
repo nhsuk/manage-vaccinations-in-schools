@@ -46,8 +46,6 @@
 #
 FactoryBot.define do
   factory :consent_form do
-    transient { random { Random.new } }
-
     first_name { Faker::Name.first_name }
     last_name { Faker::Name.last_name }
     use_common_name { false }
@@ -73,6 +71,7 @@ FactoryBot.define do
     parental_responsibility { "yes" }
 
     session
+
     health_answers do
       [
         HealthAnswer.new(

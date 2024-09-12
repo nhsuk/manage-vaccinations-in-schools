@@ -35,17 +35,15 @@
 FactoryBot.define do
   factory :consent do
     transient do
-      random { Random.new }
       health_questions_list { ["Is there anything else we should know?"] }
     end
 
-    patient
     programme
+    patient
+    parent { patient.parents.first }
+
     response { "given" }
     route { "website" }
-    recorded_at { Time.zone.now }
-
-    parent { patient.parents.first }
 
     health_answers do
       health_questions_list.map do |question|
@@ -53,11 +51,12 @@ FactoryBot.define do
       end
     end
 
-    factory :consent_given do
+    trait :given do
       response { :given }
     end
 
     trait :given_verbally do
+      given
       route { "phone" }
       recorded_by { create(:user) }
     end
@@ -68,22 +67,22 @@ FactoryBot.define do
       health_answers { [] }
     end
 
-    factory :consent_refused do
-      refused
-    end
-
     trait :from_mum do
       parent do
-        patient.parents.find(&:relationship_mother?) ||
-          create(:parent, :mum, last_name: patient.last_name)
+        patient.parent_relationships.find(&:mother?)&.parent ||
+          create(:parent_relationship, :mother, patient:).parent
       end
     end
 
     trait :from_dad do
       parent do
-        patient.parents.find(&:relationship_father?) ||
-          create(:parent, :dad, last_name: patient.last_name)
+        patient.parent_relationships.find(&:father?)&.parent ||
+          create(:parent_relationship, :father, patient:).parent
       end
+    end
+
+    trait :from_granddad do
+      parent { create(:parent_relationship, :granddad, patient:).parent }
     end
 
     trait :health_question_notes do
@@ -114,23 +113,12 @@ FactoryBot.define do
       health_question_notes
     end
 
-    trait :from_granddad do
-      parent do
-        create(
-          :parent,
-          relationship: :other,
-          relationship_other: "Granddad",
-          parental_responsibility: "yes",
-          last_name: patient.last_name
-        )
-      end
+    trait :recorded do
+      recorded_at { Time.zone.now }
     end
 
     trait :draft do
       recorded_at { nil }
-      draft_parent do
-        patient.parents.first.tap { _1.update!(recorded_at: nil) }
-      end
     end
   end
 end

@@ -19,24 +19,13 @@
 FactoryBot.define do
   factory :parent do
     transient do
-      random { Random.new }
-
-      sex { %w[male female].sample(random:) }
+      first_name { Faker::Name.first_name }
       last_name { Faker::Name.last_name }
-      first_name do
-        if sex == "male"
-          Faker::Name.masculine_name
-        else
-          Faker::Name.feminine_name
-        end
-      end
     end
 
     name { "#{first_name} #{last_name}" }
-    relationship { sex == "male" ? "father" : "mother" }
-    email { "#{name.downcase.gsub(" ", ".")}#{random.rand(100)}@example.com" }
-    phone { "07700 900#{random.rand(0..999).to_s.rjust(3, "0")}" }
-    recorded_at { Time.zone.now }
+    email { Faker::Internet.email }
+    phone { "07700 900#{rand(0..999).to_s.rjust(3, "0")}" }
 
     trait :contact_method_any do
       contact_method_type { "any" }
@@ -55,18 +44,12 @@ FactoryBot.define do
       contact_method_other_details { "Other details." }
     end
 
-    trait :mum do
-      transient { sex { "female" } }
-      relationship { "mother" }
+    trait :recorded do
+      recorded_at { Time.zone.now }
     end
 
-    trait :dad do
-      transient { sex { "male" } }
-      relationship { "father" }
-    end
-
-    trait :randomly_mum_or_dad do
-      send %i[mum dad].sample
+    trait :draft do
+      recorded_at { nil }
     end
   end
 end

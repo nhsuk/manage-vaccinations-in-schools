@@ -36,7 +36,7 @@
 describe Consent do
   describe "when consent given by parent or guardian, all health questions are no" do
     it "does not require triage" do
-      response = build(:consent_given)
+      response = build(:consent, :given)
 
       expect(response).not_to be_triage_needed
     end
@@ -51,13 +51,13 @@ describe Consent do
           response: "yes"
         )
       ]
-      response = build(:consent_given, health_answers:)
+      response = build(:consent, :given, health_answers:)
 
       expect(response).to be_triage_needed
     end
 
     it "returns notes need triage" do
-      response = build(:consent_given, :health_question_notes)
+      response = build(:consent, :given, :health_question_notes)
 
       expect(response.reasons_triage_needed).to eq(
         ["Health questions need triage"]
@@ -72,7 +72,7 @@ describe Consent do
       end
 
       let(:session) { create(:session) }
-      let(:consent_form) { create(:consent_form, session:) }
+      let(:consent_form) { create(:consent_form, :recorded, session:) }
       let(:patient_session) { create(:patient_session, session:) }
 
       it "copies over attributes from consent_form" do

@@ -47,58 +47,68 @@ describe PatientSession do
   end
 
   describe "#latest_consents" do
-    subject { patient_session.latest_consents }
+    subject(:latest_consents) { patient_session.latest_consents }
 
     let(:programme) { create(:programme) }
     let(:patient_session) { create(:patient_session, programme:, patient:) }
 
     context "multiple consent given responses from different parents" do
-      let(:consents) { build_list(:consent, 2, programme:, response: :given) }
-      let(:patient) { create(:patient, consents:) }
+      let(:parents) { create_list(:parent, 2, :recorded) }
+      let(:consents) do
+        [
+          build(:consent, :recorded, :given, parent: parents.first, programme:),
+          build(:consent, :recorded, :given, parent: parents.second, programme:)
+        ]
+      end
+      let(:patient) { create(:patient, parents:, consents:) }
 
       it "groups consents by parent name" do
-        expect(subject).to contain_exactly(consents.first, consents.second)
+        expect(latest_consents).to contain_exactly(
+          consents.first,
+          consents.second
+        )
       end
     end
 
     context "multiple consent responses from same parents" do
-      let(:parent) { create(:parent) }
+      let(:parent) { create(:parent, :recorded) }
       let(:refused_consent) do
-        build :consent, programme:, parent:, response: :refused
+        build(:consent, :recorded, :refused, programme:, parent:)
       end
       let(:given_consent) do
-        build :consent, programme:, parent:, response: :given
-      end
-      let(:patient) do
-        create(:patient, consents: [refused_consent, given_consent])
-      end
-
-      it "returns the latest consent for each parent" do
-        expect(subject).to eq [given_consent]
-      end
-    end
-
-    context "multiple consent responses from same parent where one is draft" do
-      let(:parent) { create(:parent) }
-      let(:refused_recorded_consent) do
-        build :consent,
-              programme:,
-              parent:,
-              recorded_at: 1.day.ago,
-              response: :refused
-      end
-      let(:given_draft_consent) do
-        build :consent, :draft, programme:, parent:, response: :given
+        build(:consent, :recorded, :given, programme:, parent:)
       end
       let(:patient) do
         create(
           :patient,
+          parents: [parent],
+          consents: [refused_consent, given_consent]
+        )
+      end
+
+      it "returns the latest consent for each parent" do
+        expect(latest_consents).to eq [given_consent]
+      end
+    end
+
+    context "multiple consent responses from same parent where one is draft" do
+      let(:parent) { create(:parent, :recorded) }
+      let(:refused_recorded_consent) do
+        build(:consent, :recorded, :refused, programme:, parent:)
+      end
+      let(:given_draft_consent) do
+        build(:consent, :draft, :given, programme:, parent:)
+      end
+      let(:patient) do
+        create(
+          :patient,
+          parents: [parent],
           consents: [refused_recorded_consent, given_draft_consent]
         )
       end
 
       it "does not return a draft consent record" do
-        expect(subject).to eq [refused_recorded_consent]
+        expect(latest_consents).to eq [refused_recorded_consent]
       end
     end
   end

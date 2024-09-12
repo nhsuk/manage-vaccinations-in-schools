@@ -38,7 +38,6 @@ class Patient < ApplicationRecord
 
   audited
 
-  has_and_belongs_to_many :parents
   belongs_to :school, class_name: "Location", optional: true
 
   has_many :consents
@@ -48,6 +47,7 @@ class Patient < ApplicationRecord
   has_many :sessions, through: :patient_sessions
   has_many :triage, through: :patient_sessions
   has_many :vaccination_records, through: :patient_sessions
+  has_many :parents, through: :parent_relationships
   has_many :programmes, through: :sessions
 
   has_and_belongs_to_many :cohort_imports
@@ -119,6 +119,10 @@ class Patient < ApplicationRecord
       date_of_birth:,
       address_postcode:
     ).to_a
+  end
+
+  def relationship_to(parent:)
+    parent_relationships.find { _1.parent == parent }
   end
 
   def full_name
