@@ -109,6 +109,26 @@ en:
               less_than_or_equal_to: The vaccination date is outside the campaign. Enter a date after the campaign started and before it ended.
             vaccine_given:
               inclusion: Enter a valid vaccine, eg Gardasil 9.
+        parent_details_form:
+          attributes:
+            email:
+              blank: Enter an email address
+              invalid: Enter a valid email address, such as j.doe@gmail.com
+              too_long: Enter a email address that is less than 300 characters long
+            name:
+              blank: Enter a name
+              too_long: Enter a name that is less than 300 characters long
+            parental_responsibility:
+              inclusion: Choose whether there is parental responsibility
+            phone:
+              blank: Enter a phone number
+              invalid: Enter a valid phone number, like 07700 900 000
+              too_long: Enter a phone number that is less than 300 characters long
+            relationship_type:
+              inclusion: Choose a relationship
+            relationship_other_name:
+              blank: Enter a relationship
+              too_long: Enter a relationship that is less than 300 characters long
         patient_changes_form:
           attributes:
             apply_changes:
@@ -354,24 +374,6 @@ en:
             contact_method_other_details:
               blank: Enter details about how to contact you
               too_long: Enter details that are less than 300 characters long
-            email:
-              blank: Enter an email address
-              invalid: Enter a valid email address, such as j.doe@gmail.com
-              too_long: Enter a email address that is less than 300 characters long
-            name:
-              blank: Enter a name
-              too_long: Enter a name that is less than 300 characters long
-            parental_responsibility:
-              inclusion: Choose whether there is parental responsibility
-            phone:
-              blank: Enter a phone number
-              invalid: Enter a valid phone number, like 07700 900 000
-              too_long: Enter a phone number that is less than 300 characters long
-            relationship:
-              inclusion: Choose a relationship
-            relationship_other:
-              blank: Enter a relationship
-              too_long: Enter a relationship that is less than 300 characters long
         programme:
           attributes:
             academic_year:
