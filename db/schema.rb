@@ -106,9 +106,14 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_12_175807) do
     t.string "address_postcode"
     t.jsonb "health_answers", default: [], null: false
     t.bigint "consent_id"
-    t.bigint "parent_id"
+    t.string "parent_contact_method_other_details"
+    t.string "parent_contact_method_type"
+    t.string "parent_email"
+    t.string "parent_name"
+    t.string "parent_phone"
+    t.string "parent_relationship_other_name"
+    t.string "parent_relationship_type"
     t.index ["consent_id"], name: "index_consent_forms_on_consent_id"
-    t.index ["parent_id"], name: "index_consent_forms_on_parent_id"
     t.index ["session_id"], name: "index_consent_forms_on_session_id"
   end
 

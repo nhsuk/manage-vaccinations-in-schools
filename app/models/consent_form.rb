@@ -4,40 +4,44 @@
 #
 # Table name: consent_forms
 #
-#  id                :bigint           not null, primary key
-#  address_line_1    :string
-#  address_line_2    :string
-#  address_postcode  :string
-#  address_town      :string
-#  common_name       :text
-#  contact_injection :boolean
-#  date_of_birth     :date
-#  first_name        :text
-#  gp_name           :string
-#  gp_response       :integer
-#  health_answers    :jsonb            not null
-#  last_name         :text
-#  reason            :integer
-#  reason_notes      :text
-#  recorded_at       :datetime
-#  response          :integer
-#  use_common_name   :boolean
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
-#  consent_id        :bigint
-#  parent_id         :bigint
-#  session_id        :bigint           not null
+#  id                                  :bigint           not null, primary key
+#  address_line_1                      :string
+#  address_line_2                      :string
+#  address_postcode                    :string
+#  address_town                        :string
+#  common_name                         :text
+#  contact_injection                   :boolean
+#  date_of_birth                       :date
+#  first_name                          :text
+#  gp_name                             :string
+#  gp_response                         :integer
+#  health_answers                      :jsonb            not null
+#  last_name                           :text
+#  parent_contact_method_other_details :string
+#  parent_contact_method_type          :string
+#  parent_email                        :string
+#  parent_name                         :string
+#  parent_phone                        :string
+#  parent_relationship_other_name      :string
+#  parent_relationship_type            :string
+#  reason                              :integer
+#  reason_notes                        :text
+#  recorded_at                         :datetime
+#  response                            :integer
+#  use_common_name                     :boolean
+#  created_at                          :datetime         not null
+#  updated_at                          :datetime         not null
+#  consent_id                          :bigint
+#  session_id                          :bigint           not null
 #
 # Indexes
 #
 #  index_consent_forms_on_consent_id  (consent_id)
-#  index_consent_forms_on_parent_id   (parent_id)
 #  index_consent_forms_on_session_id  (session_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (consent_id => consents.id)
-#  fk_rails_...  (parent_id => parents.id)
 #  fk_rails_...  (session_id => sessions.id)
 #
 
@@ -58,12 +62,7 @@ class ConsentForm < ApplicationRecord
 
   belongs_to :consent, optional: true
   belongs_to :session
-  belongs_to :parent, -> { recorded }, optional: true
-  belongs_to :draft_parent,
-             -> { draft },
-             class_name: "Parent",
-             optional: true,
-             foreign_key: :parent_id
+
   has_one :programme, through: :session
   has_one :team, through: :programme
 

@@ -4,40 +4,44 @@
 #
 # Table name: consent_forms
 #
-#  id                :bigint           not null, primary key
-#  address_line_1    :string
-#  address_line_2    :string
-#  address_postcode  :string
-#  address_town      :string
-#  common_name       :text
-#  contact_injection :boolean
-#  date_of_birth     :date
-#  first_name        :text
-#  gp_name           :string
-#  gp_response       :integer
-#  health_answers    :jsonb            not null
-#  last_name         :text
-#  reason            :integer
-#  reason_notes      :text
-#  recorded_at       :datetime
-#  response          :integer
-#  use_common_name   :boolean
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
-#  consent_id        :bigint
-#  parent_id         :bigint
-#  session_id        :bigint           not null
+#  id                                  :bigint           not null, primary key
+#  address_line_1                      :string
+#  address_line_2                      :string
+#  address_postcode                    :string
+#  address_town                        :string
+#  common_name                         :text
+#  contact_injection                   :boolean
+#  date_of_birth                       :date
+#  first_name                          :text
+#  gp_name                             :string
+#  gp_response                         :integer
+#  health_answers                      :jsonb            not null
+#  last_name                           :text
+#  parent_contact_method_other_details :string
+#  parent_contact_method_type          :string
+#  parent_email                        :string
+#  parent_name                         :string
+#  parent_phone                        :string
+#  parent_relationship_other_name      :string
+#  parent_relationship_type            :string
+#  reason                              :integer
+#  reason_notes                        :text
+#  recorded_at                         :datetime
+#  response                            :integer
+#  use_common_name                     :boolean
+#  created_at                          :datetime         not null
+#  updated_at                          :datetime         not null
+#  consent_id                          :bigint
+#  session_id                          :bigint           not null
 #
 # Indexes
 #
 #  index_consent_forms_on_consent_id  (consent_id)
-#  index_consent_forms_on_parent_id   (parent_id)
 #  index_consent_forms_on_session_id  (session_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (consent_id => consents.id)
-#  fk_rails_...  (parent_id => parents.id)
 #  fk_rails_...  (session_id => sessions.id)
 #
 FactoryBot.define do
@@ -48,7 +52,6 @@ FactoryBot.define do
     last_name { Faker::Name.last_name }
     use_common_name { false }
     date_of_birth { Faker::Date.birthday(min_age: 3, max_age: 9) }
-    parent { create(:parent, :randomly_mum_or_dad) }
     response { "given" }
     gp_response { "yes" }
     gp_name { Faker::Name.name }
@@ -56,7 +59,17 @@ FactoryBot.define do
     address_town { Faker::Address.city }
     address_postcode { Faker::Address.postcode }
 
-    # use_common_name { false }
+    parent_email { Faker::Internet.email }
+    parent_name { "#{Faker::Name.first_name}} #{last_name}" }
+    parent_phone { "07700 900#{rand(0..999).to_s.rjust(3, "0")}" }
+    parent_relationship_other_name do
+      parent_relationship_type == "other" ? "Other" : nil
+    end
+    parent_relationship_type { ParentRelationship.types.keys.sample }
+    parent_contact_method_type { Parent.contact_method_types.keys.sample }
+    parent_contact_method_other_details do
+      parent_contact_method_type == "other" ? "Other details." : nil
+    end
 
     session
     health_answers do
@@ -127,8 +140,6 @@ FactoryBot.define do
 
     trait :draft do
       recorded_at { nil }
-      parent { nil }
-      draft_parent { create(:parent, :randomly_mum_or_dad, recorded_at: nil) }
     end
   end
 end
