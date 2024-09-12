@@ -42,6 +42,7 @@ class Patient < ApplicationRecord
   belongs_to :school, class_name: "Location", optional: true
 
   has_many :consents
+  has_many :parent_relationships
   has_many :patient_sessions
 
   has_many :sessions, through: :patient_sessions

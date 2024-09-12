@@ -24,6 +24,7 @@ class Parent < ApplicationRecord
   before_save :reset_unused_fields
 
   has_one :patient
+  has_many :parent_relationships
 
   has_and_belongs_to_many :cohort_imports
 

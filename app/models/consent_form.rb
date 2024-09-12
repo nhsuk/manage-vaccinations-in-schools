@@ -251,6 +251,29 @@ class ConsentForm < ApplicationRecord
     patients.first
   end
 
+  def find_or_create_parent_with_relationship_to(patient:)
+    Parent
+      .create_with(
+        recorded_at: Time.zone.now,
+        # TODO: To be removed
+        relationship: parent_relationship_type,
+        relationship_other: parent_relationship_other_name,
+        parental_responsibility: "yes"
+      )
+      .find_or_initialize_by(name: parent_name, email: parent_email)
+      .tap do |parent|
+        parent.update!(phone: parent_phone)
+
+        parent
+          .parent_relationships
+          .find_or_initialize_by(patient:)
+          .update!(
+            type: parent_relationship_type,
+            other_name: parent_relationship_other_name
+          )
+      end
+  end
+
   def summary_with_route
     "#{human_enum_name(:response).capitalize} (online)"
   end

@@ -48,7 +48,7 @@ module ParentInterface
 
       send_record_mail(@consent_form)
 
-      ConsentFormMatchingJob.perform_later(@consent_form.id)
+      ConsentFormMatchingJob.perform_later(@consent_form)
     end
 
     private

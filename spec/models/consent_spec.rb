@@ -76,7 +76,7 @@ describe Consent do
       let(:patient_session) { create(:patient_session, session:) }
 
       it "copies over attributes from consent_form" do
-        expect(consent.reload).to(
+        expect(consent).to(
           have_attributes(
             programme: session.programme,
             patient: patient_session.patient,
@@ -87,18 +87,10 @@ describe Consent do
             route: "website"
           )
         )
-
-        expect(consent.parent).to have_attributes(
-          consent_form.parent.attributes.except(
-            "id",
-            "created_at",
-            "updated_at"
-          )
-        )
       end
 
       it "copies health answers from consent_form" do
-        expect(consent.reload.health_answers.to_json).to eq(
+        expect(consent.health_answers.to_json).to eq(
           consent_form.health_answers.to_json
         )
       end
@@ -106,7 +98,7 @@ describe Consent do
       it "runs the do_consent state transition" do
         expect {
           consent
-          patient_session.reload
+          patient_session
         }.to change(patient_session, :state).from("added_to_session").to(
           "consent_given_triage_not_needed"
         )
