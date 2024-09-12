@@ -4,17 +4,17 @@
 #
 # Table name: parents
 #
-#  id                   :bigint           not null, primary key
-#  contact_method       :integer
-#  contact_method_other :text
-#  email                :string
-#  name                 :string
-#  phone                :string
-#  recorded_at          :datetime
-#  relationship         :integer
-#  relationship_other   :string
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
+#  id                           :bigint           not null, primary key
+#  contact_method_other_details :text
+#  contact_method_type          :string
+#  email                        :string
+#  name                         :string
+#  phone                        :string
+#  recorded_at                  :datetime
+#  relationship                 :integer
+#  relationship_other           :string
+#  created_at                   :datetime         not null
+#  updated_at                   :datetime         not null
 #
 class Parent < ApplicationRecord
   include Recordable
@@ -29,18 +29,20 @@ class Parent < ApplicationRecord
 
   attr_accessor :parental_responsibility
 
-  enum :contact_method,
-       %w[text voice other any],
-       prefix: true,
+  enum :contact_method_type,
+       { any: "any", other: "other", text: "text", voice: "voice" },
+       prefix: :contact_method,
        validate: {
          allow_nil: true
        }
+
   enum :relationship,
        %w[mother father guardian other],
        prefix: true,
        validate: true
 
   encrypts :email, :name, :phone, :relationship_other, deterministic: true
+  encrypts :contact_method_other_details
 
   normalizes :phone,
              with: ->(str) { str.blank? ? nil : str.to_s.gsub(/\s/, "") }
@@ -51,7 +53,7 @@ class Parent < ApplicationRecord
   validates :email, presence: true, notify_safe_email: true
   validates :relationship_other, presence: true, if: -> { relationship_other? }
   validate :has_parental_responsibility, if: -> { relationship_other? }
-  validates :contact_method_other,
+  validates :contact_method_other_details,
             :email,
             :name,
             :phone,
@@ -59,7 +61,9 @@ class Parent < ApplicationRecord
             length: {
               maximum: 300
             }
-  validates :contact_method_other, presence: true, if: :contact_method_other?
+  validates :contact_method_other_details,
+            presence: true,
+            if: :contact_method_other?
 
   def relationship_label
     if relationship == "other"
@@ -69,11 +73,11 @@ class Parent < ApplicationRecord
     end.capitalize
   end
 
-  def phone_contact_method_description
-    if contact_method_other.present?
-      "Other – #{contact_method_other}"
+  def contact_method_description
+    if contact_method_other?
+      "Other – #{contact_method_other_details}"
     else
-      human_enum_name(:contact_method)
+      human_enum_name(:contact_method_type)
     end
   end
 
@@ -93,10 +97,9 @@ class Parent < ApplicationRecord
   private
 
   def reset_unused_fields
-    if phone.blank?
-      self.contact_method = nil
-      self.contact_method_other = nil
-    end
+    self.contact_method_type = nil if phone.blank?
+
+    self.contact_method_other_details = nil unless contact_method_other?
 
     self.relationship_other = nil if relationship != "other"
   end
