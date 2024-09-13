@@ -3,12 +3,13 @@
 describe VaccinationMailer do
   let(:programme) { create(:programme, :active) }
   let(:session) { create(:session, programme:) }
-  let(:parent) { patient.consents.last.parent }
+  let(:consent) { patient.consents.last }
+  let(:parent) { consent.parent }
 
   describe "#hpv_vaccination_has_taken_place" do
     subject(:mail) do
       described_class.with(
-        parent:,
+        consent:,
         vaccination_record:
       ).hpv_vaccination_has_taken_place
     end
@@ -86,7 +87,7 @@ describe VaccinationMailer do
   describe "#hpv_vaccination_has_not_place" do
     subject(:mail) do
       described_class.with(
-        parent:,
+        consent:,
         vaccination_record:
       ).hpv_vaccination_has_not_taken_place
     end

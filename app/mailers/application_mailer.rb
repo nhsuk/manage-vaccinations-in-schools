@@ -25,30 +25,31 @@ class ApplicationMailer < Mail::Notify::Mailer
   end
 
   def patient_session
-    @patient_session ||=
-      params[:patient_session] || vaccination_record&.patient_session
+    @patient_session ||= params[:patient_session]
   end
 
   def patient
-    @patient ||=
-      params[:patient] || consent&.patient || patient_session&.patient
+    @patient ||= params[:patient]
   end
 
   def parent
-    @parent ||= params[:parent] || consent&.parent
+    @parent ||= params[:parent]
   end
 
   def session
-    @session ||=
-      params[:session] || consent_form&.session || patient_session&.session
+    @session ||= params[:session]
   end
 
   def to
-    consent_form&.parent_email || parent.email
+    consent_form&.parent_email || consent&.parent&.email || parent.email
   end
 
   def reply_to_id
-    session.programme.team.reply_to_id
+    programme =
+      session&.programme || consent&.programme ||
+        consent_form&.session&.programme || patient_session&.programme
+
+    programme.team.reply_to_id
   end
 
   def personalisation
@@ -57,6 +58,7 @@ class ApplicationMailer < Mail::Notify::Mailer
       consent_form:,
       parent:,
       patient:,
+      patient_session:,
       session:,
       vaccination_record:
     )
