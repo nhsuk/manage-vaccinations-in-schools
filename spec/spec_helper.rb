@@ -197,6 +197,8 @@ RSpec.configure do |config|
 
   config.after(:each, type: :system) { WebMock.enable! }
 
+  config.before { ActionMailer::Base.deliveries.clear }
+
   config.include ActiveJob::TestHelper, type: :feature
   config.include ActiveSupport::Testing::TimeHelpers
   config.include Capybara::RSpecMatchers, type: :component

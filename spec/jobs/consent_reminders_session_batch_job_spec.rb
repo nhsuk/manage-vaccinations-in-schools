@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-describe ConsentRemindersSessionBatchJob, type: :job do
-  before { ActionMailer::Base.deliveries.clear }
-
+describe ConsentRemindersSessionBatchJob do
   it "only sends emails to patients parents to whom they have not been sent yet" do
     programme = create(:programme)
     parents = create_list(:parent, 2)

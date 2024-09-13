@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-describe SessionRemindersBatchJob, type: :job do
-  before { ActionMailer::Base.deliveries.clear }
-
+describe SessionRemindersBatchJob do
   it "sends emails to all patients' parents" do
     parents = create_list(:parent, 2)
     patient = create(:patient, parents:)
