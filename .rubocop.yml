@@ -33,6 +33,10 @@ Rails/UnknownEnv:
     - staging
     - test
 
+RSpec/BeforeAfterAll:
+  Exclude:
+    - spec/jobs/text_delivery_job_spec.rb
+
 RSpec/ContextWording:
   Enabled: false
 
