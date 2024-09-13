@@ -35,9 +35,7 @@ class ApplicationMailer < Mail::Notify::Mailer
   end
 
   def parent
-    @parent ||=
-      params[:parent] || consent&.parent ||
-        patient&.consents&.recorded&.order(:created_at)&.last&.parent
+    @parent ||= params[:parent] || consent&.parent
   end
 
   def session
