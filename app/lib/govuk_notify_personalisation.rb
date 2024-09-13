@@ -4,18 +4,21 @@ class GovukNotifyPersonalisation
   include Rails.application.routes.url_helpers
 
   def initialize(
-    session:,
     consent: nil,
     consent_form: nil,
     parent: nil,
     patient: nil,
+    patient_session: nil,
+    session: nil,
     vaccination_record: nil
   )
+    patient_session ||= vaccination_record&.patient_session
+
     @consent = consent
     @consent_form = consent_form
-    @parent = parent
-    @patient = patient
-    @session = session
+    @parent = parent || consent&.parent
+    @patient = patient || consent&.patient || patient_session&.patient
+    @session = session || consent_form&.session || patient_session&.session
     @vaccination_record = vaccination_record
   end
 

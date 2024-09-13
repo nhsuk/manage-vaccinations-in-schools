@@ -28,6 +28,7 @@ describe TextDeliveryJob do
         consent_form:,
         parent:,
         patient:,
+        patient_session:,
         vaccination_record:
       )
     end
@@ -40,6 +41,7 @@ describe TextDeliveryJob do
     let(:consent) { nil }
     let(:consent_form) { nil }
     let(:patient) { create(:patient) }
+    let(:patient_session) { nil }
     let(:vaccination_record) { nil }
 
     after { perform }
@@ -51,6 +53,7 @@ describe TextDeliveryJob do
         consent_form:,
         parent:,
         patient:,
+        patient_session:,
         vaccination_record:
       )
     end

@@ -5,20 +5,22 @@ class TextDeliveryJob < ApplicationJob
 
   def perform(
     template_name,
-    session:,
     consent: nil,
     consent_form: nil,
     parent: nil,
     patient: nil,
+    patient_session: nil,
+    session: nil,
     vaccination_record: nil
   )
     template_id = GOVUK_NOTIFY_TEXT_TEMPLATES[template_name.to_sym]
     raise UnknownTemplate if template_id.nil?
 
-    phone_number = consent_form&.parent_phone || parent&.phone
+    phone_number =
+      consent_form&.parent_phone || consent&.parent&.phone || parent&.phone
     return if phone_number.nil?
 
-    unless consent_form&.parent_phone_receive_updates ||
+    unless consent_form&.parent_phone_receive_updates || consent&.parent ||
              parent&.phone_receive_updates
       return
     end
@@ -30,6 +32,7 @@ class TextDeliveryJob < ApplicationJob
         consent_form:,
         parent:,
         patient:,
+        patient_session:,
         vaccination_record:
       )
 
