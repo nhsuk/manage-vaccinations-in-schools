@@ -35,6 +35,7 @@
 #
 class Patient < ApplicationRecord
   include AgeConcern
+  include PendingChangesConcern
 
   audited
 
@@ -144,36 +145,6 @@ class Patient < ApplicationRecord
     [address_line_1, address_line_2, address_town, address_postcode].reject(
       &:blank?
     )
-  end
-
-  def stage_changes(attributes)
-    pending_changes =
-      attributes.each_with_object({}) do |(attr, new_value), staged_changes|
-        current_value = public_send(attr)
-        staged_changes[attr.to_s] = new_value if new_value.present? &&
-          new_value != current_value
-      end
-
-    update!(pending_changes:) if pending_changes.any?
-  end
-
-  def with_pending_changes
-    return self if pending_changes.blank?
-
-    dup.tap do |patient|
-      patient.clear_changes_information
-      pending_changes.each { patient.public_send("#{_1}=", _2) }
-    end
-  end
-
-  def apply_pending_changes!
-    pending_changes.each { public_send("#{_1}=", _2) }
-    discard_pending_changes!
-  end
-
-  def discard_pending_changes!
-    self.pending_changes = {}
-    save!
   end
 
   private
