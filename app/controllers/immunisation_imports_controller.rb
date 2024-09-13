@@ -93,10 +93,7 @@ class ImmunisationImportsController < ApplicationController
 
   def set_patients_with_changes
     @patients =
-      @vaccination_records
-        .map(&:patient)
-        .select { _1.pending_changes.present? }
-        .uniq
+      @immunisation_import.patients.where.not(pending_changes: {}).uniq
   end
 
   def immunisation_import_params
