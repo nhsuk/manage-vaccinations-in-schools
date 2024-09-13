@@ -5,10 +5,10 @@ class GovukNotifyPersonalisation
 
   def initialize(
     session:,
-    patient: nil,
     consent: nil,
     consent_form: nil,
     parent: nil,
+    patient: nil,
     vaccination_record: nil
   )
     @consent = consent
