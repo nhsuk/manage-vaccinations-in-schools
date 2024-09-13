@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe "Verbal consent" do
-  include EmailExpectations
-
   scenario "Given, with health notes but safe to vaccinate" do
     given_i_am_signed_in
 

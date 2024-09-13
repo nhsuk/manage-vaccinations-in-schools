@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe "Triage" do
-  include EmailExpectations
-
   scenario "nurse can triage a patient" do
     given_a_programme_with_a_running_session
     when_i_go_to_the_patient_that_needs_triage
