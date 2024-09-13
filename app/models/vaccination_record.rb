@@ -10,6 +10,7 @@
 #  delivery_site            :integer
 #  dose_sequence            :integer          not null
 #  notes                    :text
+#  pending_changes          :jsonb
 #  performed_by_family_name :string
 #  performed_by_given_name  :string
 #  reason                   :integer
@@ -39,6 +40,7 @@
 class VaccinationRecord < ApplicationRecord
   include Recordable
   include WizardStepConcern
+  include PendingChangesConcern
 
   audited associated_with: :patient_session
 
