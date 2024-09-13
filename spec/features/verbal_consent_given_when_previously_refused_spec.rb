@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 feature "Verbal consent" do
-  include EmailExpectations
-
   scenario "Given when previously refused" do
     given_an_hpv_programme_is_underway
     and_a_parent_has_refused_consent_for_their_child

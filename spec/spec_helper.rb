@@ -197,11 +197,12 @@ RSpec.configure do |config|
 
   config.after(:each, type: :system) { WebMock.enable! }
 
-  config.include ActiveSupport::Testing::TimeHelpers
   config.include ActiveJob::TestHelper, type: :feature
+  config.include ActiveSupport::Testing::TimeHelpers
+  config.include Capybara::RSpecMatchers, type: :component
   config.include Devise::Test::IntegrationHelpers, type: :feature
   config.include Devise::Test::IntegrationHelpers, type: :system
+  config.include EmailExpectations, type: :feature
   config.include FactoryBot::Syntax::Methods
   config.include ViewComponent::TestHelpers, type: :component
-  config.include Capybara::RSpecMatchers, type: :component
 end

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe "Parental consent" do
-  include EmailExpectations
-
   before { Flipper.enable(:parent_contact_method) }
 
   scenario "Consent form exactly matches the cohort" do

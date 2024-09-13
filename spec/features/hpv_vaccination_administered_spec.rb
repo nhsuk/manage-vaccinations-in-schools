@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe "HPV Vaccination" do
-  include EmailExpectations
-
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
   scenario "Administered" do
