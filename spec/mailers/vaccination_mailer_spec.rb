@@ -3,10 +3,14 @@
 describe VaccinationMailer do
   let(:programme) { create(:programme, :active) }
   let(:session) { create(:session, programme:) }
+  let(:parent) { patient.consents.last.parent }
 
   describe "#hpv_vaccination_has_taken_place" do
     subject(:mail) do
-      described_class.with(vaccination_record:).hpv_vaccination_has_taken_place
+      described_class.with(
+        parent:,
+        vaccination_record:
+      ).hpv_vaccination_has_taken_place
     end
 
     let(:patient) do
@@ -17,7 +21,7 @@ describe VaccinationMailer do
 
     it do
       expect(mail).to have_attributes(
-        to: [patient.consents.last.parent.email],
+        to: [parent.email],
         template_id:
           GOVUK_NOTIFY_EMAIL_TEMPLATES[
             :confirmation_the_hpv_vaccination_has_taken_place
@@ -41,12 +45,6 @@ describe VaccinationMailer do
           :team_name,
           :team_phone,
           :today_or_date_of_vaccination
-        )
-      end
-
-      it "sets the correct parent name" do
-        expect(personalisation).to include(
-          parent_name: patient.consents.last.parent.name
         )
       end
 
@@ -88,6 +86,7 @@ describe VaccinationMailer do
   describe "#hpv_vaccination_has_not_place" do
     subject(:mail) do
       described_class.with(
+        parent:,
         vaccination_record:
       ).hpv_vaccination_has_not_taken_place
     end
@@ -102,7 +101,7 @@ describe VaccinationMailer do
 
     it do
       expect(mail).to have_attributes(
-        to: [patient.consents.last.parent.email],
+        to: [parent.email],
         template_id:
           GOVUK_NOTIFY_EMAIL_TEMPLATES[
             :confirmation_the_hpv_vaccination_didnt_happen
@@ -125,12 +124,6 @@ describe VaccinationMailer do
           :team_email,
           :team_name,
           :team_phone
-        )
-      end
-
-      it "sets the correct parent name" do
-        expect(personalisation).to include(
-          parent_name: patient.consents.last.parent.name
         )
       end
     end

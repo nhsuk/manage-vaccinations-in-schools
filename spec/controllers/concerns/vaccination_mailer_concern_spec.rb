@@ -21,7 +21,7 @@ describe VaccinationMailerConcern do
         expect { send_vaccination_mail }.to have_enqueued_mail(
           VaccinationMailer,
           :hpv_vaccination_has_taken_place
-        ).with(params: { vaccination_record: }, args: [])
+        ).with(params: { consent:, vaccination_record: }, args: [])
       end
     end
 
@@ -34,7 +34,7 @@ describe VaccinationMailerConcern do
         expect { send_vaccination_mail }.to have_enqueued_mail(
           VaccinationMailer,
           :hpv_vaccination_has_not_taken_place
-        ).with(params: { vaccination_record: }, args: [])
+        ).with(params: { consent:, vaccination_record: }, args: [])
       end
     end
 

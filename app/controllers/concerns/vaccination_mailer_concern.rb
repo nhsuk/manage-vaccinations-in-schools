@@ -13,7 +13,7 @@ module VaccinationMailerConcern
         .last
     return if consent.route == "self_consent"
 
-    mailer = VaccinationMailer.with(vaccination_record:)
+    mailer = VaccinationMailer.with(consent:, vaccination_record:)
 
     if vaccination_record.administered?
       mailer.hpv_vaccination_has_taken_place.deliver_later
