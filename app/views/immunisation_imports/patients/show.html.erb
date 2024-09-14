@@ -31,6 +31,10 @@
       <%= render AppPatientSummaryComponent.new(
             patient: @patient.with_pending_changes,
           ) %>
+      <h3 class="nhsuk-heading-s">Duplicate vaccination record</h3>
+      <%= render AppVaccinationRecordDetailsComponent.new(
+            @vaccination_record.with_pending_changes
+          ) %>
     <% end %>
   </div>
 
@@ -40,6 +44,10 @@
       <h3 class="nhsuk-heading-s">Previously uploaded child record</h3>
       <%= render AppPatientSummaryComponent.new(
             patient: @patient,
+          ) %>
+      <h3 class="nhsuk-heading-s">Previously uploaded vaccination record</h3>
+      <%= render AppVaccinationRecordDetailsComponent.new(
+            @vaccination_record
           ) %>
     <% end %>
   </div>
