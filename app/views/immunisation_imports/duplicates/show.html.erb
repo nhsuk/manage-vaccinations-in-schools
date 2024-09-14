@@ -55,9 +55,9 @@
 
 <%= form_with(
       model: @form,
-      url: programme_immunisation_import_patient_path(@programme,
-                                                      @immunisation_import,
-                                                      @patient),
+      url: programme_immunisation_import_duplicate_path(@programme,
+                                                        @immunisation_import,
+                                                        @patient),
       method: :put,
       class: "nhsuk-u-width-one-half",
     ) do |f| %>

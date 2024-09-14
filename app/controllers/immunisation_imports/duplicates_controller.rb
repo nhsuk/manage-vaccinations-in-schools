@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ImmunisationImports::PatientsController < ApplicationController
+class ImmunisationImports::DuplicatesController < ApplicationController
   before_action :set_programme
   before_action :set_immunisation_import
   before_action :set_patient
