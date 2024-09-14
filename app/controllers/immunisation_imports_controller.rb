@@ -4,7 +4,7 @@ class ImmunisationImportsController < ApplicationController
   before_action :set_programme
   before_action :set_immunisation_import, only: %i[show edit update]
   before_action :set_vaccination_records, only: %i[show edit]
-  before_action :set_patients_with_changes, only: %i[edit]
+  before_action :set_vaccination_records_with_pending_changes, only: %i[edit]
 
   def index
     @immunisation_imports =
@@ -91,11 +91,10 @@ class ImmunisationImportsController < ApplicationController
       )
   end
 
-  def set_patients_with_changes
-    @patients =
-      @immunisation_import
-        .patients
-        .left_joins(:vaccination_records)
+  def set_vaccination_records_with_pending_changes
+    @vaccination_records_with_pending_changes =
+      @vaccination_records
+        .left_joins(:patient)
         .where(
           "patients.pending_changes != '{}' OR vaccination_records.pending_changes != '{}'"
         )
