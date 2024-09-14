@@ -41,11 +41,14 @@
       @immunisation_import
     ), method: :put %>
 
-<% if @patients.present? && Flipper.enabled?(:import_review) %>
+<% if @vaccination_records_with_pending_changes.present? &&
+      Flipper.enabled?(:import_review) %>
   <div class="nhsuk-table__panel-with-heading-tab">
     <h3 class="nhsuk-table__heading-tab">
-      <%= pluralize(@patients.count, "duplicate record") %>
-      <%= @patients.count == 1 ? "needs" : "need" %> review
+      <%= pluralize(@vaccination_records_with_pending_changes.count,
+                    "duplicate record") %>
+      <%= @vaccination_records_with_pending_changes.count == 1 ?
+            "needs" : "need" %> review
     </h3>
     <%= govuk_table(html_attributes: {
                       class: "nhsuk-table-responsive",
@@ -59,11 +62,11 @@
       <% end %>
 
       <% table.with_body do |body| %>
-        <% @patients.each do |patient| %>
+        <% @vaccination_records_with_pending_changes.each do |vaccination_record| %>
           <% body.with_row do |row| %>
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Child record</span>
-              <%= patient.full_name %>
+              <%= vaccination_record.patient.full_name %>
             <% end %>
 
             <% row.with_cell do %>
@@ -79,11 +82,11 @@
               <%= govuk_link_to programme_immunisation_import_duplicate_path(
                     @programme,
                     @immunisation_import,
-                    patient
+                    vaccination_record
                   ) do %>
                 Review
                 <span class="nhsuk-u-visually-hidden">
-                  <%= patient.full_name %>
+                  <%= vaccination_record.patient.full_name %>
                 </span>
               <% end %>
             <% end %>

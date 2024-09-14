@@ -3,6 +3,7 @@
 class ImmunisationImports::DuplicatesController < ApplicationController
   before_action :set_programme
   before_action :set_immunisation_import
+  before_action :set_vaccination_record
   before_action :set_patient
   before_action :set_form
 
@@ -39,8 +40,13 @@ class ImmunisationImports::DuplicatesController < ApplicationController
       @programme.immunisation_imports.find(params[:immunisation_import_id])
   end
 
+  def set_vaccination_record
+    @vaccination_record =
+      @immunisation_import.vaccination_records.find(params[:id])
+  end
+
   def set_patient
-    @patient = @immunisation_import.patients.find(params[:id])
+    @patient = @vaccination_record.patient
   end
 
   def set_form
