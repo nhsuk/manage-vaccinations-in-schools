@@ -75,20 +75,32 @@ class ImmunisationImportRow
 
     return unless administered
 
-    VaccinationRecord.create_with(
-      notes:,
-      recorded_at: nil
-    ).find_or_initialize_by(
-      administered_at:,
-      batch:,
-      delivery_method:,
-      delivery_site:,
-      dose_sequence:,
-      patient_session:,
-      performed_by_family_name:,
-      performed_by_given_name:,
-      vaccine:
-    )
+    vaccination_record =
+      VaccinationRecord.create_with(
+        notes:,
+        recorded_at: nil
+      ).find_or_initialize_by(
+        administered_at:,
+        dose_sequence:,
+        patient_session:,
+        performed_by_family_name:,
+        performed_by_given_name:,
+        vaccine:
+      )
+
+    if vaccination_record.persisted?
+      vaccination_record.stage_changes(
+        batch_id: batch.id,
+        delivery_method:,
+        delivery_site:
+      )
+    else
+      vaccination_record.batch = batch
+      vaccination_record.delivery_method = delivery_method
+      vaccination_record.delivery_site = delivery_site
+    end
+
+    vaccination_record
   end
 
   def patient
