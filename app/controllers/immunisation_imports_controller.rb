@@ -93,7 +93,13 @@ class ImmunisationImportsController < ApplicationController
 
   def set_patients_with_changes
     @patients =
-      @immunisation_import.patients.where.not(pending_changes: {}).uniq
+      @immunisation_import
+        .patients
+        .left_joins(:vaccination_records)
+        .where(
+          "patients.pending_changes != '{}' OR vaccination_records.pending_changes != '{}'"
+        )
+        .distinct
   end
 
   def immunisation_import_params
