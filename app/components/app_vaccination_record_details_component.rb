@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 class AppVaccinationRecordDetailsComponent < ViewComponent::Base
-  def initialize(vaccination_record)
+  def initialize(vaccination_record, change_links: false)
     super
 
     @vaccination_record = vaccination_record
     @vaccine = vaccination_record.vaccine
     @batch = vaccination_record.batch
+    @change_links = change_links
   end
 
   def dose_number
@@ -102,15 +103,17 @@ class AppVaccinationRecordDetailsComponent < ViewComponent::Base
         summary_list.with_row do |row|
           row.with_key { "Vaccination date" }
           row.with_value { administered_at.to_fs(:long) }
-          row.with_action(
-            text: "Change",
-            visually_hidden_text: "vaccination date",
-            href:
-              programme_vaccination_record_edit_date_and_time_path(
-                @vaccination_record.programme,
-                @vaccination_record
-              )
-          )
+          if @change_links
+            row.with_action(
+              text: "Change",
+              visually_hidden_text: "vaccination date",
+              href:
+                programme_vaccination_record_edit_date_and_time_path(
+                  @vaccination_record.programme,
+                  @vaccination_record
+                )
+            )
+          end
         end
       end
 
