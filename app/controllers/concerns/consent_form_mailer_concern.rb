@@ -4,7 +4,7 @@ module ConsentFormMailerConcern
   extend ActiveSupport::Concern
 
   def send_record_mail(consent_form)
-    mailer = ConsentFormMailer.with(consent_form:)
+    mailer = ConsentMailer.with(consent_form:)
 
     if consent_form.contact_injection?
       mailer.confirmation_injection.deliver_later

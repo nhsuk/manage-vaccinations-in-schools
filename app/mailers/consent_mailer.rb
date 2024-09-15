@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ConsentFormMailer < ApplicationMailer
+class ConsentMailer < ApplicationMailer
   def confirmation
     app_template_mail(:parental_consent_confirmation)
   end
@@ -19,5 +19,13 @@ class ConsentFormMailer < ApplicationMailer
 
   def give_feedback
     app_template_mail(:parental_consent_give_feedback)
+  end
+
+  def request
+    app_template_mail(:hpv_session_consent_request)
+  end
+
+  def reminder
+    app_template_mail(:hpv_session_consent_reminder)
   end
 end

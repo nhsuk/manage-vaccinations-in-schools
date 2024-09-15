@@ -10,7 +10,7 @@ describe ConsentFormMailerConcern do
 
     it "sends a confirmation email" do
       expect { send_record_mail }.to have_enqueued_mail(
-        ConsentFormMailer,
+        ConsentMailer,
         :confirmation
       ).with(params: { consent_form: }, args: [])
     end
@@ -19,7 +19,7 @@ describe ConsentFormMailerConcern do
       today = Time.zone.local(2024, 1, 1)
 
       expect { travel_to(today) { send_record_mail } }.to have_enqueued_mail(
-        ConsentFormMailer,
+        ConsentMailer,
         :give_feedback
       ).with(params: { consent_form: }, args: []).at(today + 1.hour)
     end
@@ -29,7 +29,7 @@ describe ConsentFormMailerConcern do
 
       it "sends an injection confirmation email" do
         expect { send_record_mail }.to have_enqueued_mail(
-          ConsentFormMailer,
+          ConsentMailer,
           :confirmation_injection
         ).with(params: { consent_form: }, args: [])
       end
@@ -40,7 +40,7 @@ describe ConsentFormMailerConcern do
 
       it "sends an confirmation refused email" do
         expect { send_record_mail }.to have_enqueued_mail(
-          ConsentFormMailer,
+          ConsentMailer,
           :confirmation_refused
         ).with(params: { consent_form: }, args: [])
       end
@@ -51,7 +51,7 @@ describe ConsentFormMailerConcern do
 
       it "sends an confirmation needs triage email" do
         expect { send_record_mail }.to have_enqueued_mail(
-          ConsentFormMailer,
+          ConsentMailer,
           :confirmation_needs_triage
         ).with(params: { consent_form: }, args: [])
       end
