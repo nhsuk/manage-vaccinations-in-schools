@@ -763,6 +763,54 @@ describe ConsentForm do
     end
   end
 
+  describe "#parent_phone=" do
+    subject(:normalised_parent_phone) do
+      build(:consent_form, parent_phone: phone).parent_phone
+    end
+
+    context "with non-numeric characters" do
+      let(:phone) { "01234 567890" }
+
+      it { should eq("01234567890") }
+    end
+
+    context "when nil" do
+      let(:phone) { nil }
+
+      it { should be_nil }
+    end
+
+    context "when blank" do
+      let(:phone) { "" }
+
+      it { should be_nil }
+    end
+  end
+
+  describe "#parent_email=" do
+    subject(:normalised_parent_email) do
+      build(:consent_form, parent_email: email).parent_email
+    end
+
+    context "with whitespace and capitalised letters" do
+      let(:email) { "  joHn@doe.com " }
+
+      it { should eq("john@doe.com") }
+    end
+
+    context "when nil" do
+      let(:email) { nil }
+
+      it { should be_nil }
+    end
+
+    context "when blank" do
+      let(:email) { "" }
+
+      it { should be_nil }
+    end
+  end
+
   it "resets unused fields" do
     session = create(:session)
 
