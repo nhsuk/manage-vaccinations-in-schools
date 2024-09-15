@@ -54,9 +54,8 @@ module ManageVaccinations
     #
     # These settings can be overridden in specific environments using the files
     # in config/environments, which are processed later.
-    #
-    # config.time_zone = "Central Time (US & Canada)"
-    # config.eager_load_paths << Rails.root.join("extras")
+
+    config.time_zone = "London"
 
     config.assets.paths << Rails.root.join(
       "node_modules/govuk-frontend/dist/govuk/assets"
@@ -64,16 +63,13 @@ module ManageVaccinations
 
     config.exceptions_app = routes
 
-    config.time_zone = "London"
-
     config.active_job.queue_adapter = :good_job
     config.good_job.execution_mode = :async
 
-    config.view_component.preview_paths << Rails
-      .root
-      .join("spec/components/previews")
-      .to_s
     config.view_component.default_preview_layout = "component_preview"
     config.view_component.preview_controller = "ComponentPreviewsController"
+    config.view_component.preview_paths << Rails.root.join(
+      "spec/components/previews"
+    )
   end
 end
