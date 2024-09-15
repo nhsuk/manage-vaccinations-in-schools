@@ -22,6 +22,7 @@
 #  parent_email                        :string
 #  parent_name                         :string
 #  parent_phone                        :string
+#  parent_phone_receive_updates        :boolean          default(FALSE), not null
 #  parent_relationship_other_name      :string
 #  parent_relationship_type            :string
 #  reason                              :integer

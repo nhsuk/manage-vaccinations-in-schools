@@ -22,6 +22,7 @@
 #  parent_email                        :string
 #  parent_name                         :string
 #  parent_phone                        :string
+#  parent_phone_receive_updates        :boolean          default(FALSE), not null
 #  parent_relationship_other_name      :string
 #  parent_relationship_type            :string
 #  reason                              :integer
@@ -60,6 +61,7 @@ FactoryBot.define do
     parent_email { Faker::Internet.email }
     parent_name { "#{Faker::Name.first_name}} #{last_name}" }
     parent_phone { "07700 900#{rand(0..999).to_s.rjust(3, "0")}" }
+    parent_phone_receive_updates { [true, false].sample }
     parent_relationship_other_name do
       parent_relationship_type == "other" ? "Other" : nil
     end

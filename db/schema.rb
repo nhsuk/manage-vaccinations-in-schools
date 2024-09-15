@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_15_143423) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_15_153735) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -113,6 +113,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_15_143423) do
     t.string "parent_phone"
     t.string "parent_relationship_other_name"
     t.string "parent_relationship_type"
+    t.boolean "parent_phone_receive_updates", default: false, null: false
     t.index ["consent_id"], name: "index_consent_forms_on_consent_id"
     t.index ["session_id"], name: "index_consent_forms_on_session_id"
   end
@@ -375,6 +376,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_15_143423) do
     t.datetime "updated_at", null: false
     t.datetime "recorded_at"
     t.string "contact_method_type"
+    t.boolean "phone_receive_updates", default: false, null: false
   end
 
   create_table "parents_patients", id: false, force: :cascade do |t|
