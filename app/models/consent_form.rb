@@ -134,7 +134,13 @@ class ConsentForm < ApplicationRecord
             presence: true,
             if: :parent_contact_method_other?
 
-  validates :parent_phone, phone: { allow_blank: true }
+  validates :parent_phone,
+            presence: {
+              if: :parent_phone_receive_updates
+            },
+            phone: {
+              allow_blank: true
+            }
 
   validates :parent_relationship_other_name,
             presence: true,

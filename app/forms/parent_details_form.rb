@@ -14,7 +14,13 @@ class ParentDetailsForm
   attribute :relationship_type, :string
 
   validates :email, presence: true, notify_safe_email: true
-  validates :phone, phone: { allow_blank: true }
+  validates :phone,
+            presence: {
+              if: :phone_receive_updates
+            },
+            phone: {
+              allow_blank: true
+            }
 
   with_options if: :can_change_name_or_relationship? do
     validates :name, presence: true

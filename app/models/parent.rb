@@ -41,7 +41,13 @@ class Parent < ApplicationRecord
   normalizes :email, with: -> { _1.blank? ? nil : _1.to_s.downcase.strip }
 
   validates :name, presence: true
-  validates :phone, phone: { allow_blank: true }
+  validates :phone,
+            presence: {
+              if: :phone_receive_updates
+            },
+            phone: {
+              allow_blank: true
+            }
   validates :email, presence: true, notify_safe_email: true
   validates :contact_method_other_details,
             :email,
@@ -70,7 +76,6 @@ class Parent < ApplicationRecord
 
   def reset_unused_fields
     self.contact_method_type = nil if phone.blank?
-
     self.contact_method_other_details = nil unless contact_method_other?
   end
 end
