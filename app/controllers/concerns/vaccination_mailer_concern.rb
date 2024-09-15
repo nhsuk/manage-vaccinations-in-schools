@@ -13,13 +13,7 @@ module VaccinationMailerConcern
         :hpv_vaccination_has_not_taken_place
       end
 
-    consents =
-      patient_session
-        .latest_consents
-        .select(&:response_given?)
-        .reject(&:via_self_consent?)
-
-    consents.each do |consent|
+    patient_session.consents_to_send_communication.each do |consent|
       VaccinationMailer
         .with(consent:, vaccination_record:)
         .public_send(action_name)

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 describe SessionMailer do
-  describe "#session_reminder" do
+  describe "#reminder" do
     subject(:mail) do
-      described_class.with(session:, patient:, parent:).session_reminder
+      described_class.with(session:, patient:, parent:).reminder
     end
 
     let(:patient) { create(:patient, common_name: "Joey") }
