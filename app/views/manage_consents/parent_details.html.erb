@@ -42,7 +42,7 @@
         <%= f.govuk_radio_buttons_fieldset(:parental_responsibility,
                                            legend: { size: "s",
                                                      text: "Do they have parental responsibility?" },
-                                           hint: { text: "This means they have legal rights and duties relating to the child" }) do %>
+                                           hint: { text: "They have the legal rights and duties relating to the child" }) do %>
           <%= f.govuk_radio_button :parental_responsibility, "yes",
                                    label: { text: "Yes" }, link_errors: true %>
           <%= f.govuk_radio_button :parental_responsibility, "no",
@@ -55,6 +55,10 @@
   <%= f.govuk_email_field :email, label: { text: "Email address" } %>
 
   <%= f.govuk_phone_field :phone, label: { text: "Phone number" } %>
+
+  <%= f.govuk_check_boxes_fieldset :parent_phone_receive_updates, multiple: false, legend: nil do %>
+    <%= f.govuk_check_box :parent_phone_receive_updates, 1, 0, multiple: false, link_errors: true, label: { text: "Get updates by text message" } %>
+  <% end %>
 
   <div class="nhsuk-u-margin-top-6">
     <%= f.govuk_submit "Continue" %>

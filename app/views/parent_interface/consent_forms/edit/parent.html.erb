@@ -45,6 +45,10 @@
                           label: { text: "Phone number (optional)" },
                           hint: { text: "Someone might call you about your child’s vaccination" } %>
 
+  <%= f.govuk_check_boxes_fieldset :parent_phone_receive_updates, multiple: false, legend: nil do %>
+    <%= f.govuk_check_box :parent_phone_receive_updates, 1, 0, multiple: false, link_errors: true, label: { text: "Tick this box if you’d like to get updates by text message" } %>
+  <% end %>
+
   <div class="nhsuk-u-margin-top-6">
     <%= f.govuk_submit "Continue" %>
   </div>

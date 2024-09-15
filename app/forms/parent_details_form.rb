@@ -9,6 +9,7 @@ class ParentDetailsForm
   attribute :email, :string
   attribute :name, :string
   attribute :phone, :string
+  attribute :phone_receive_updates, :boolean
   attribute :parental_responsibility, :boolean
   attribute :relationship_other_name, :string
   attribute :relationship_type, :string
@@ -42,6 +43,7 @@ class ParentDetailsForm
       parent.email = email
       parent.name = name if can_change_name_or_relationship?
       parent.phone = phone
+      parent.phone_receive_updates = phone_receive_updates || false
       parent.save!
 
       if can_change_name_or_relationship?

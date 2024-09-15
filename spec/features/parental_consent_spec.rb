@@ -68,6 +68,7 @@ describe "Parental consent" do
     choose "Mum" # Your relationship to the child
     fill_in "Email address", with: "jane@example.com"
     fill_in "Phone number", with: "07123456789"
+    check "Tick this box if you’d like to get updates by text message"
     click_on "Continue"
 
     expect(page).to have_content("Phone contact method")
