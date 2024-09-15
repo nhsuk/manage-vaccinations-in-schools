@@ -38,7 +38,7 @@ class Vaccinations::EditController < ApplicationController
     )
 
     if @draft_vaccination_record.save
-      send_vaccination_mail(@draft_vaccination_record)
+      send_vaccination_confirmation(@draft_vaccination_record)
       @patient_session.do_vaccination!
 
       session.delete(:delivery_site_other)
