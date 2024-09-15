@@ -16,7 +16,12 @@ class TextDeliveryJob < ApplicationJob
     raise UnknownTemplate if template_id.nil?
 
     phone_number = consent_form&.parent_phone || parent&.phone
-    raise MissingPhoneNumber if phone_number.nil?
+    return if phone_number.nil?
+
+    unless consent_form&.parent_phone_receive_updates ||
+             parent&.phone_receive_updates
+      return
+    end
 
     personalisation =
       GovukNotifyPersonalisation.call(
@@ -47,8 +52,5 @@ class TextDeliveryJob < ApplicationJob
   end
 
   class UnknownTemplate < StandardError
-  end
-
-  class MissingPhoneNumber < StandardError
   end
 end
