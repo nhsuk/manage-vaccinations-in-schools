@@ -6,6 +6,7 @@
 #
 #  id                 :bigint           not null, primary key
 #  active             :boolean          default(FALSE), not null
+#  reminder_sent_at   :datetime
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #  created_by_user_id :bigint
@@ -56,6 +57,8 @@ class PatientSession < ApplicationRecord
            class_name: "Consent"
 
   has_and_belongs_to_many :immunisation_imports
+
+  scope :reminder_not_sent, -> { where(reminder_sent_at: nil) }
 
   def vaccination_record
     # HACK: in future, it will be possible to have multiple vaccination records for a patient session

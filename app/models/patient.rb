@@ -19,7 +19,6 @@
 #  last_name                :string
 #  nhs_number               :string
 #  pending_changes          :jsonb            not null
-#  session_reminder_sent_at :datetime
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
 #  school_id                :bigint
@@ -64,7 +63,6 @@ class Patient < ApplicationRecord
         -> { includes(:consents).where(consents: { id: nil }) }
   scope :needing_consent_reminder,
         -> { without_consent.consent_reminder_not_sent }
-  scope :not_reminded_about_session, -> { where(session_reminder_sent_at: nil) }
 
   scope :active,
         -> do
