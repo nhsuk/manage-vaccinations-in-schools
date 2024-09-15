@@ -9,6 +9,11 @@ class SessionRemindersJob < ApplicationJob
     patient_sessions.each do |patient_session|
       patient_session.consents_to_send_communication.each do |consent|
         SessionMailer.with(consent:, patient_session:).reminder.deliver_later
+        TextDeliveryJob.perform_later(
+          :session_reminder,
+          consent:,
+          patient_session:
+        )
       end
 
       patient_session.update!(reminder_sent_at: Time.zone.now)

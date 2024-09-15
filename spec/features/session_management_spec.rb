@@ -123,6 +123,7 @@ describe "Session management" do
   def and_the_parents_should_receive_a_consent_request
     @patient.parents.each do |parent|
       expect_email_to(parent.email, :hpv_session_consent_request, :any)
+      expect_text_to(parent.phone, :consent_request, :any)
     end
   end
 
