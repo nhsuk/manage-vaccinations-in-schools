@@ -34,7 +34,9 @@ describe TextDeliveryJob do
 
     let(:template_name) { GOVUK_NOTIFY_TEXT_TEMPLATES.keys.first }
     let(:session) { create(:session) }
-    let(:parent) { create(:parent, phone: "01234567890") }
+    let(:parent) do
+      create(:parent, phone: "01234567890", phone_receive_updates: true)
+    end
     let(:consent) { nil }
     let(:consent_form) { nil }
     let(:patient) { create(:patient) }
@@ -61,8 +63,30 @@ describe TextDeliveryJob do
       )
     end
 
+    context "when the parent doesn't want to receive updates" do
+      let(:parent) { create(:parent, phone_receive_updates: false) }
+
+      it "doesn't send a text" do
+        expect(notifications_client).not_to receive(:send_sms)
+      end
+    end
+
+    context "when the parent doesn't have a phone number" do
+      let(:parent) { create(:parent, phone: nil) }
+
+      it "doesn't send a text" do
+        expect(notifications_client).not_to receive(:send_sms)
+      end
+    end
+
     context "with a consent form" do
-      let(:consent_form) { create(:consent_form, parent_phone: "01234567890") }
+      let(:consent_form) do
+        create(
+          :consent_form,
+          parent_phone: "01234567890",
+          parent_phone_receive_updates: true
+        )
+      end
       let(:parent) { nil }
       let(:patient) { nil }
 
@@ -72,6 +96,24 @@ describe TextDeliveryJob do
           template_id: GOVUK_NOTIFY_TEXT_TEMPLATES[template_name],
           personalisation: an_instance_of(Hash)
         )
+      end
+
+      context "when the parent doesn't want to receive updates" do
+        let(:consent_form) do
+          create(:consent_form, parent_phone_receive_updates: false)
+        end
+
+        it "doesn't send a text" do
+          expect(notifications_client).not_to receive(:send_sms)
+        end
+      end
+
+      context "when the parent doesn't have a phone number" do
+        let(:consent_form) { create(:consent_form, parent_phone: nil) }
+
+        it "doesn't send a text" do
+          expect(notifications_client).not_to receive(:send_sms)
+        end
       end
     end
   end

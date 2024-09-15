@@ -25,7 +25,7 @@ FactoryBot.define do
     name { "#{first_name} #{last_name}" }
     email { Faker::Internet.email }
     phone { "07700 900#{rand(0..999).to_s.rjust(3, "0")}" }
-    phone_receive_updates { [true, false].sample }
+    phone_receive_updates { phone.present? ? [true, false].sample : false }
 
     trait :contact_method_any do
       contact_method_type { "any" }
