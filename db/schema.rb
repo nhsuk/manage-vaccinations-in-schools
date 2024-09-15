@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_13_133502) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_15_140038) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -409,8 +409,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_13_133502) do
     t.string "address_line_2"
     t.string "address_town"
     t.string "address_postcode"
-    t.datetime "sent_consent_at"
-    t.datetime "sent_reminder_at"
+    t.datetime "consent_request_sent_at"
+    t.datetime "consent_reminder_sent_at"
     t.datetime "session_reminder_sent_at"
     t.integer "gender_code", default: 0, null: false
     t.boolean "home_educated"
@@ -446,8 +446,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_13_133502) do
     t.datetime "updated_at", null: false
     t.bigint "programme_id"
     t.boolean "active", default: false, null: false
-    t.date "send_consent_at"
-    t.date "send_reminders_at"
+    t.date "send_consent_requests_at"
+    t.date "send_consent_reminders_at"
     t.date "close_consent_at"
     t.integer "time_of_day"
     t.index ["programme_id"], name: "index_sessions_on_programme_id"

@@ -10,6 +10,8 @@
 #  address_postcode         :string
 #  address_town             :string
 #  common_name              :string
+#  consent_reminder_sent_at :datetime
+#  consent_request_sent_at  :datetime
 #  date_of_birth            :date
 #  first_name               :string
 #  gender_code              :integer          default("not_known"), not null
@@ -17,8 +19,6 @@
 #  last_name                :string
 #  nhs_number               :string
 #  pending_changes          :jsonb            not null
-#  sent_consent_at          :datetime
-#  sent_reminder_at         :datetime
 #  session_reminder_sent_at :datetime
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
