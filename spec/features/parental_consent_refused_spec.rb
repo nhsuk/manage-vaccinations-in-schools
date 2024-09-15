@@ -17,6 +17,7 @@ describe "Parental consent" do
     when_i_confirm_my_answers
     then_i_see_the_confirmation_page
     and_i_receive_an_email_confirming_that_my_child_wont_be_vaccinated
+    and_i_receive_a_text_confirming_that_my_child_wont_be_vaccinated
     and_i_receive_an_email_prompting_me_to_give_feedback
 
     when_the_nurse_checks_the_consent_responses
@@ -82,6 +83,7 @@ describe "Parental consent" do
     choose "Mum" # Your relationship to the child
     fill_in "Email address", with: "jane@example.com"
     fill_in "Phone number", with: "07123456789"
+    check "Tick this box if you’d like to get updates by text message"
     click_on "Continue"
 
     expect(page).to have_content("Phone contact method")
@@ -110,10 +112,14 @@ describe "Parental consent" do
   def and_i_receive_an_email_confirming_that_my_child_wont_be_vaccinated
     expect(enqueued_jobs.first["scheduled_at"]).to be_nil
     expect(
-      Time.zone.parse(enqueued_jobs.second["scheduled_at"]).to_i
+      Time.zone.parse(enqueued_jobs.third["scheduled_at"]).to_i
     ).to be_within(1.second).of(1.hour.from_now.to_i)
 
     expect_email_to "jane@example.com", :parental_consent_confirmation_refused
+  end
+
+  def and_i_receive_a_text_confirming_that_my_child_wont_be_vaccinated
+    expect_text_to "07123456789", :consent_refused
   end
 
   def and_i_receive_an_email_prompting_me_to_give_feedback

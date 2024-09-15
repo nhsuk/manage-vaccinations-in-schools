@@ -81,4 +81,8 @@ describe "Verbal consent" do
   def then_an_email_is_sent_to_the_parent_confirming_their_consent
     expect_email_to("jsmith@example.com", :parental_consent_confirmation)
   end
+
+  def and_i_a_text_is_sent_to_the_parent_confirming_their_consent
+    expect_text_to("07987654321", :consent_given)
+  end
 end
