@@ -47,35 +47,42 @@
 #
 
 describe ConsentForm do
-  describe "Validations" do
+  describe "validations" do
     subject(:consent_form) do
       build(
         :consent_form,
-        wizard_step:,
-        use_common_name:,
-        response:,
-        reason:,
         gp_response:,
         health_answers:,
-        session:
+        parent_phone_receive_updates:,
+        reason:,
+        response:,
+        session:,
+        use_common_name:,
+        wizard_step:
       )
     end
 
-    let(:use_common_name) { false }
-    let(:response) { nil }
-    let(:reason) { nil }
     let(:gp_response) { nil }
     let(:health_answers) { [] }
+    let(:parent_phone_receive_updates) { false }
+    let(:reason) { nil }
+    let(:response) { nil }
     let(:session) { build(:session) }
+    let(:use_common_name) { false }
+    let(:wizard_step) { nil }
 
-    context "when wizard_step is nil" do
-      let(:wizard_step) { nil }
+    it { should validate_presence_of(:first_name).on(:update) }
+    it { should validate_presence_of(:last_name).on(:update) }
+    it { should validate_presence_of(:date_of_birth).on(:update) }
+    it { should_not validate_presence_of(:is_this_their_school).on(:update) }
+    it { should validate_presence_of(:response).on(:update) }
 
-      it { should validate_presence_of(:first_name).on(:update) }
-      it { should validate_presence_of(:last_name).on(:update) }
-      it { should validate_presence_of(:date_of_birth).on(:update) }
-      it { should_not validate_presence_of(:is_this_their_school).on(:update) }
-      it { should validate_presence_of(:response).on(:update) }
+    it { should_not validate_presence_of(:parent_phone) }
+
+    context "when users wants to receive text updates" do
+      let(:parent_phone_receive_updates) { true }
+
+      it { should validate_presence_of(:parent_phone) }
     end
 
     context "when wizard_step is :name" do

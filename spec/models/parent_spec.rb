@@ -17,6 +17,16 @@
 #
 
 describe Parent do
+  describe "validations" do
+    it { should_not validate_presence_of(:phone) }
+
+    context "when users wants to receive text updates" do
+      subject(:parent) { build(:parent, phone_receive_updates: true) }
+
+      it { should validate_presence_of(:phone) }
+    end
+  end
+
   describe "#contact_method_description" do
     subject(:contact_method_description) { parent.contact_method_description }
 
@@ -102,7 +112,8 @@ describe Parent do
 
   describe "#reset_unused_fields" do
     it "resets contact method fields when phone number is removed" do
-      subject = build(:parent, :contact_method_other)
+      subject =
+        build(:parent, :contact_method_other, phone_receive_updates: false)
       subject.update!(phone: nil)
       expect(subject.contact_method_type).to be_nil
       expect(subject.contact_method_other_details).to be_nil
