@@ -6,6 +6,7 @@ describe SessionRemindersBatchJob do
   let(:parents) { create_list(:parent, 2, :recorded) }
   let(:patient) { create(:patient, parents:) }
   let(:session) { create(:session, patients: [patient], date: 1.day.from_now) }
+  let(:patient_session) { PatientSession.find_by!(patient:, session:) }
 
   context "when consent has been given" do
     before do
@@ -32,14 +33,14 @@ describe SessionRemindersBatchJob do
     end
 
     it "does not send a reminder if one has already been sent" do
-      patient.update!(session_reminder_sent_at: Time.zone.now)
+      patient_session.update!(reminder_sent_at: Time.zone.now)
       expect { perform_now }.not_to send_email(to: parents.first.email)
     end
   end
 
-  it "updates the session_reminder_sent_at attribute for patients" do
+  it "updates the reminder_sent_at attribute for patient sessions" do
     expect { perform_now }.to(
-      change { patient.reload.session_reminder_sent_at }
+      change { patient_session.reload.reminder_sent_at }
     )
   end
 end

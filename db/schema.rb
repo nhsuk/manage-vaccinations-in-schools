@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_15_140038) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_15_143423) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -391,6 +391,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_15_140038) do
     t.datetime "updated_at", null: false
     t.bigint "created_by_user_id"
     t.boolean "active", default: false, null: false
+    t.datetime "reminder_sent_at"
     t.index ["created_by_user_id"], name: "index_patient_sessions_on_created_by_user_id"
     t.index ["patient_id", "session_id"], name: "index_patient_sessions_on_patient_id_and_session_id", unique: true
     t.index ["session_id", "patient_id"], name: "index_patient_sessions_on_session_id_and_patient_id", unique: true
@@ -411,7 +412,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_15_140038) do
     t.string "address_postcode"
     t.datetime "consent_request_sent_at"
     t.datetime "consent_reminder_sent_at"
-    t.datetime "session_reminder_sent_at"
     t.integer "gender_code", default: 0, null: false
     t.boolean "home_educated"
     t.jsonb "pending_changes", default: {}, null: false
