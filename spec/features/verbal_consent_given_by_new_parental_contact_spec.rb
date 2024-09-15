@@ -34,6 +34,7 @@ describe "Verbal consent" do
     choose "Mum"
     fill_in "Email address", with: "jsmith@example.com"
     fill_in "Phone number", with: "07987654321"
+    check "Get updates by text"
     click_button "Continue"
   end
 

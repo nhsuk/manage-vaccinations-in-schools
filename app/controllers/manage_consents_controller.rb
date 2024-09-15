@@ -263,6 +263,7 @@ class ManageConsentsController < ApplicationController
       :email,
       :parental_responsibility,
       :phone,
+      :phone_receive_updates,
       :relationship_type,
       :relationship_other_name
     )

@@ -77,6 +77,7 @@ module ParentInterface
           parent_email
           parent_name
           parent_phone
+          parent_phone_receive_updates
           parent_relationship_other_name
           parent_relationship_type
           parental_responsibility
