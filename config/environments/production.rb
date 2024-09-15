@@ -117,7 +117,7 @@ Rails.application.configure do
   }
   config.action_mailer.delivery_method = :notify
   config.action_mailer.notify_settings = {
-    api_key: Settings.govuk_notify&.api_key
+    api_key: Settings.govuk_notify.api_key
   }
 
   config.good_job.enable_cron = true
