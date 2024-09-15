@@ -313,7 +313,10 @@ class ConsentForm < ApplicationRecord
       .create_with(recorded_at: Time.zone.now)
       .find_or_initialize_by(name: parent_name, email: parent_email)
       .tap do |parent|
-        parent.update!(phone: parent_phone)
+        parent.update!(
+          phone: parent_phone,
+          phone_receive_updates: parent_phone_receive_updates
+        )
 
         parent
           .parent_relationships
