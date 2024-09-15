@@ -33,9 +33,26 @@ describe SessionRemindersJob do
       ).with(params: { consent:, patient_session: }, args: [])
     end
 
-    it "does not send a reminder if one has already been sent" do
-      patient_session.update!(reminder_sent_at: Time.zone.now)
-      expect { perform_now }.not_to have_enqueued_mail(SessionMailer, :reminder)
+    it "sends a text to the parent who consented" do
+      expect { perform_now }.to have_enqueued_text(:session_reminder).with(
+        consent:,
+        patient_session:
+      )
+    end
+
+    context "when already sent" do
+      before { patient_session.update!(reminder_sent_at: Time.zone.now) }
+
+      it "doesn't send a reminder email" do
+        expect { perform_now }.not_to have_enqueued_mail(
+          SessionMailer,
+          :reminder
+        )
+      end
+
+      it "doesn't sent a reminder text" do
+        expect { perform_now }.not_to have_enqueued_text(:session_reminder)
+      end
     end
 
     it "updates the reminder_sent_at attribute for patient sessions" do
