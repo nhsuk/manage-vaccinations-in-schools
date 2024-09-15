@@ -11,7 +11,7 @@ describe VaccinationMailerConcern do
     let(:route) { "website" }
     let(:programme) { create(:programme, :active) }
     let(:session) { create(:session, programme:) }
-    let(:consent) { create(:consent, programme:, route:) }
+    let(:consent) { create(:consent, :given, :recorded, programme:, route:) }
     let(:patient) { create(:patient, consents: [consent]) }
     let(:patient_session) { create(:patient_session, session:, patient:) }
     let(:vaccination_record) { create(:vaccination_record, patient_session:) }

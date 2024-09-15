@@ -4,21 +4,26 @@ module VaccinationMailerConcern
   extend ActiveSupport::Concern
 
   def send_vaccination_mail(vaccination_record)
-    consent =
-      vaccination_record
-        .patient_session
-        .patient
-        .consents
-        .order(:created_at)
-        .last
-    return if consent.route == "self_consent"
+    patient_session = vaccination_record.patient_session
 
-    mailer = VaccinationMailer.with(consent:, vaccination_record:)
+    action_name =
+      if vaccination_record.administered?
+        :hpv_vaccination_has_taken_place
+      else
+        :hpv_vaccination_has_not_taken_place
+      end
 
-    if vaccination_record.administered?
-      mailer.hpv_vaccination_has_taken_place.deliver_later
-    else
-      mailer.hpv_vaccination_has_not_taken_place.deliver_later
+    consents =
+      patient_session
+        .latest_consents
+        .select(&:response_given?)
+        .reject(&:via_self_consent?)
+
+    consents.each do |consent|
+      VaccinationMailer
+        .with(consent:, vaccination_record:)
+        .public_send(action_name)
+        .deliver_later
     end
   end
 end
