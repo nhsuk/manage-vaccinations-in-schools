@@ -3,9 +3,9 @@
 describe VaccinationMailerConcern do
   let(:sample) { Class.new { include VaccinationMailerConcern }.new }
 
-  describe "#send_vaccination_mail" do
-    subject(:send_vaccination_mail) do
-      sample.send_vaccination_mail(vaccination_record)
+  describe "#send_vaccination_confirmation" do
+    subject(:send_vaccination_confirmation) do
+      sample.send_vaccination_confirmation(vaccination_record)
     end
 
     let(:route) { "website" }
@@ -17,11 +17,17 @@ describe VaccinationMailerConcern do
     let(:vaccination_record) { create(:vaccination_record, patient_session:) }
 
     context "when the vaccination has taken place" do
-      it "calls hpv_vaccination_has_taken_place" do
-        expect { send_vaccination_mail }.to have_enqueued_mail(
+      it "sends an email" do
+        expect { send_vaccination_confirmation }.to have_enqueued_mail(
           VaccinationMailer,
           :hpv_vaccination_has_taken_place
         ).with(params: { consent:, vaccination_record: }, args: [])
+      end
+
+      it "sends a text message" do
+        expect { send_vaccination_confirmation }.to have_enqueued_text(
+          :vaccination_has_taken_place
+        ).with(consent:, vaccination_record:)
       end
     end
 
@@ -30,11 +36,17 @@ describe VaccinationMailerConcern do
         create(:vaccination_record, :not_administered, patient_session:)
       end
 
-      it "calls hpv_vaccination_has_not_taken_place" do
-        expect { send_vaccination_mail }.to have_enqueued_mail(
+      it "sends an email" do
+        expect { send_vaccination_confirmation }.to have_enqueued_mail(
           VaccinationMailer,
           :hpv_vaccination_has_not_taken_place
         ).with(params: { consent:, vaccination_record: }, args: [])
+      end
+
+      it "sends a text message" do
+        expect { send_vaccination_confirmation }.to have_enqueued_text(
+          :vaccination_didnt_happen
+        ).with(consent:, vaccination_record:)
       end
     end
 
@@ -42,8 +54,12 @@ describe VaccinationMailerConcern do
       let(:route) { "self_consent" }
       let(:vaccination_record) { create(:vaccination_record, patient_session:) }
 
-      it "does not send an email" do
-        expect { send_vaccination_mail }.not_to have_enqueued_mail
+      it "doesn't send an email" do
+        expect { send_vaccination_confirmation }.not_to have_enqueued_mail
+      end
+
+      it "doesn't send a text message" do
+        expect { send_vaccination_confirmation }.not_to have_enqueued_text
       end
     end
   end

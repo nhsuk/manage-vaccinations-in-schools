@@ -15,6 +15,7 @@ describe "HPV Vaccination" do
     when_i_go_to_the_patient
     then_i_see_that_the_status_is_could_not_vaccinate
     and_an_email_is_sent_saying_the_vaccination_didnt_happen
+    and_a_text_is_sent_saying_the_vaccination_didnt_happen
   end
 
   def given_i_am_signed_in
@@ -76,6 +77,13 @@ describe "HPV Vaccination" do
     expect_email_to(
       @patient.consents.last.parent.email,
       :confirmation_the_hpv_vaccination_didnt_happen
+    )
+  end
+
+  def and_a_text_is_sent_saying_the_vaccination_didnt_happen
+    expect_text_to(
+      @patient.consents.last.parent.phone,
+      :vaccination_didnt_happen
     )
   end
 end
