@@ -37,9 +37,8 @@ class Parent < ApplicationRecord
   encrypts :email, :name, :phone, :relationship_other, deterministic: true
   encrypts :contact_method_other_details
 
-  normalizes :phone,
-             with: ->(str) { str.blank? ? nil : str.to_s.gsub(/\s/, "") }
-  normalizes :email, with: ->(str) { str.nil? ? nil : str.to_s.downcase.strip }
+  normalizes :phone, with: -> { _1.blank? ? nil : _1.to_s.gsub(/\s/, "") }
+  normalizes :email, with: -> { _1.blank? ? nil : _1.to_s.downcase.strip }
 
   validates :name, presence: true
   validates :phone, phone: { allow_blank: true }

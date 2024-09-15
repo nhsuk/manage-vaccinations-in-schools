@@ -111,6 +111,11 @@ class ConsentForm < ApplicationRecord
            :parent_relationship_other_name,
            :reason_notes
 
+  normalizes :parent_phone,
+             with: -> { _1.blank? ? nil : _1.to_s.gsub(/\s/, "") }
+  normalizes :parent_email,
+             with: -> { _1.blank? ? nil : _1.to_s.downcase.strip }
+
   validates :address_line_1,
             :address_line_2,
             :address_town,

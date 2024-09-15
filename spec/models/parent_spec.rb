@@ -57,31 +57,46 @@ describe Parent do
   end
 
   describe "#phone=" do
-    it "strips non-numeric characters" do
-      subject = build(:parent, phone: "01234 567890")
-      expect(subject.phone).to eq("01234567890")
+    subject(:normalised_phone) { build(:parent, phone:).phone }
+
+    context "with non-numeric characters" do
+      let(:phone) { "01234 567890" }
+
+      it { should eq("01234567890") }
     end
 
-    it "leaves nil as nil" do
-      subject = build(:parent, phone: nil)
-      expect(subject.phone).to be_nil
+    context "when nil" do
+      let(:phone) { nil }
+
+      it { should be_nil }
     end
 
-    it "sets the phone number to nil if it's blank" do
-      subject = build(:parent, phone: " ")
-      expect(subject.phone).to be_nil
+    context "when blank" do
+      let(:phone) { "" }
+
+      it { should be_nil }
     end
   end
 
   describe "#email=" do
-    it "strips whitespace and downcases the email" do
-      subject = build(:parent, email: "  joHn@doe.com ")
-      expect(subject.email).to eq("john@doe.com")
+    subject(:normalised_email) { build(:parent, email:).email }
+
+    context "with whitespace and capitalised letters" do
+      let(:email) { "  joHn@doe.com " }
+
+      it { should eq("john@doe.com") }
     end
 
-    it "leaves nil as nil" do
-      subject = build(:parent, email: nil)
-      expect(subject.email).to be_nil
+    context "when nil" do
+      let(:email) { nil }
+
+      it { should be_nil }
+    end
+
+    context "when blank" do
+      let(:email) { "" }
+
+      it { should be_nil }
     end
   end
 
