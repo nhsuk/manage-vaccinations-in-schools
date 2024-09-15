@@ -44,7 +44,7 @@ describe TriageMailerConcern do
 
       it "sends an email saying vaccination will happen" do
         expect { send_triage_mail }.to have_enqueued_mail(
-          ConsentFormMailer,
+          ConsentMailer,
           :confirmation
         ).with(params: { consent:, session: }, args: [])
       end
@@ -57,7 +57,7 @@ describe TriageMailerConcern do
 
       it "sends an email saying triage is required" do
         expect { send_triage_mail }.to have_enqueued_mail(
-          ConsentFormMailer,
+          ConsentMailer,
           :confirmation_needs_triage
         ).with(params: { consent:, session: }, args: [])
       end
@@ -68,7 +68,7 @@ describe TriageMailerConcern do
 
       it "sends an email confirming they've refused consent" do
         expect { send_triage_mail }.to have_enqueued_mail(
-          ConsentFormMailer,
+          ConsentMailer,
           :confirmation_refused
         ).with(params: { consent:, session: }, args: [])
       end

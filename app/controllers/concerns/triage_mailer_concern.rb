@@ -17,17 +17,14 @@ module TriageMailerConcern
         .vaccination_wont_happen
         .deliver_later
     elsif consent.response_refused?
-      ConsentFormMailer
-        .with(consent:, session:)
-        .confirmation_refused
-        .deliver_later
+      ConsentMailer.with(consent:, session:).confirmation_refused.deliver_later
     elsif consent.triage_needed?
-      ConsentFormMailer
+      ConsentMailer
         .with(consent:, session:)
         .confirmation_needs_triage
         .deliver_later
     else
-      ConsentFormMailer.with(consent:, session:).confirmation.deliver_later
+      ConsentMailer.with(consent:, session:).confirmation.deliver_later
     end
   end
 

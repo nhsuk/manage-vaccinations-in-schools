@@ -17,10 +17,7 @@ task :send_consent_reminders, %i[session_id] => :environment do |_task, args|
     patients.each do |patient|
       puts "sending mail for patient #{patient.id}"
       patient.parents.each do |parent|
-        ConsentRequestMailer
-          .with(parent:, patient:, session:)
-          .consent_reminder
-          .deliver_now
+        ConsentMailer.with(parent:, patient:, session:).reminder.deliver_now
       end
     end
   end
