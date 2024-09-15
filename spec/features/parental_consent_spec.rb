@@ -20,6 +20,7 @@ describe "Parental consent" do
 
     when_i_submit_the_consent_form
     then_i_get_a_confirmation_email_and_scheduled_survey_email
+    and_i_get_a_confirmation_text
 
     when_the_nurse_checks_the_consent_responses
     then_they_see_that_the_child_has_consent
@@ -146,6 +147,10 @@ describe "Parental consent" do
       :parental_consent_give_feedback,
       :second
     )
+  end
+
+  def and_i_get_a_confirmation_text
+    expect_text_to("07123456789", :consent_given)
   end
 
   def when_the_nurse_checks_the_consent_responses

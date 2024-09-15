@@ -5,8 +5,8 @@ describe "Verbal consent" do
     given_i_am_signed_in
 
     when_i_record_that_verbal_consent_was_given
-
     then_an_email_is_sent_to_the_parent_confirming_their_consent
+    and_a_text_is_sent_to_the_parent_confirming_their_consent
     and_the_patients_status_is_safe_to_vaccinate
     and_i_can_see_the_consent_response_details
   end
@@ -111,5 +111,9 @@ describe "Verbal consent" do
       @patient.parents.first.email,
       :parental_consent_confirmation
     )
+  end
+
+  def and_a_text_is_sent_to_the_parent_confirming_their_consent
+    expect_text_to(@patient.parents.first.phone, :consent_given)
   end
 end

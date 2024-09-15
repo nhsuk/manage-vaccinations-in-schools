@@ -17,6 +17,12 @@ class ConsentRequestsSessionBatchJob < ApplicationJob
     session.patients.consent_request_not_sent.each do |patient|
       patient.parents.each do |parent|
         ConsentMailer.with(parent:, patient:, session:).request.deliver_now
+        TextDeliveryJob.perform_later(
+          :consent_request,
+          parent:,
+          patient:,
+          session:
+        )
       end
 
       patient.update!(consent_request_sent_at: Time.zone.now)

@@ -7,6 +7,7 @@ describe "Verbal consent" do
     when_i_record_the_consent_refusal_and_reason
 
     then_an_email_is_sent_to_the_parent_confirming_the_refusal
+    and_a_text_is_sent_to_the_parent_confirming_the_refusal
     and_the_patients_status_is_do_not_vaccinate
     and_i_can_see_the_consent_response_details
   end
@@ -95,5 +96,9 @@ describe "Verbal consent" do
   def then_an_email_is_sent_to_the_parent_confirming_the_refusal
     expect_email_to @patient.parents.first.email,
                     :parental_consent_confirmation_refused
+  end
+
+  def and_a_text_is_sent_to_the_parent_confirming_the_refusal
+    expect_text_to @patient.parents.first.phone, :consent_refused
   end
 end

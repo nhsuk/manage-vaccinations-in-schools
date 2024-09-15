@@ -3,9 +3,9 @@
 describe TriageMailerConcern do
   let(:sample_class) { Class.new { include TriageMailerConcern }.new }
 
-  describe "#send_triage_mail" do
-    subject(:send_triage_mail) do
-      sample_class.send_triage_mail(patient_session, consent)
+  describe "#send_triage_confirmation" do
+    subject(:send_triage_confirmation) do
+      sample_class.send_triage_confirmation(patient_session, consent)
     end
 
     let(:session) { patient_session.session }
@@ -17,10 +17,14 @@ describe TriageMailerConcern do
       end
 
       it "sends an email saying triage was needed and vaccination will happen" do
-        expect { send_triage_mail }.to have_enqueued_mail(
+        expect { send_triage_confirmation }.to have_enqueued_mail(
           TriageMailer,
           :vaccination_will_happen
         ).with(params: { consent:, session: }, args: [])
+      end
+
+      it "doesn't send a text message" do
+        expect { send_triage_confirmation }.not_to have_enqueued_text
       end
     end
 
@@ -30,10 +34,14 @@ describe TriageMailerConcern do
       end
 
       it "sends an email saying triage was needed but vaccination won't happen" do
-        expect { send_triage_mail }.to have_enqueued_mail(
+        expect { send_triage_confirmation }.to have_enqueued_mail(
           TriageMailer,
           :vaccination_wont_happen
         ).with(params: { consent:, session: }, args: [])
+      end
+
+      it "doesn't send a text message" do
+        expect { send_triage_confirmation }.not_to have_enqueued_text
       end
     end
 
@@ -43,10 +51,16 @@ describe TriageMailerConcern do
       end
 
       it "sends an email saying vaccination will happen" do
-        expect { send_triage_mail }.to have_enqueued_mail(
+        expect { send_triage_confirmation }.to have_enqueued_mail(
           ConsentMailer,
           :confirmation
         ).with(params: { consent:, session: }, args: [])
+      end
+
+      it "sends a text message" do
+        expect { send_triage_confirmation }.to have_enqueued_text(
+          :consent_given
+        ).with(consent:, session:)
       end
     end
 
@@ -56,10 +70,14 @@ describe TriageMailerConcern do
       end
 
       it "sends an email saying triage is required" do
-        expect { send_triage_mail }.to have_enqueued_mail(
+        expect { send_triage_confirmation }.to have_enqueued_mail(
           ConsentMailer,
           :confirmation_needs_triage
         ).with(params: { consent:, session: }, args: [])
+      end
+
+      it "doesn't send a text message" do
+        expect { send_triage_confirmation }.not_to have_enqueued_text
       end
     end
 
@@ -67,10 +85,16 @@ describe TriageMailerConcern do
       let(:patient_session) { create(:patient_session, :consent_refused) }
 
       it "sends an email confirming they've refused consent" do
-        expect { send_triage_mail }.to have_enqueued_mail(
+        expect { send_triage_confirmation }.to have_enqueued_mail(
           ConsentMailer,
           :confirmation_refused
         ).with(params: { consent:, session: }, args: [])
+      end
+
+      it "sends a text message" do
+        expect { send_triage_confirmation }.to have_enqueued_text(
+          :consent_refused
+        ).with(consent:, session:)
       end
     end
   end
