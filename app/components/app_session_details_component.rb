@@ -29,14 +29,14 @@ class AppSessionDetailsComponent < ViewComponent::Base
   end
 
   def consent_requests
-    if @session.send_consent_at.present?
-      "Send on #{@session.send_consent_at.to_fs(:long_day_of_week)}"
+    if (date = @session.send_consent_requests_at).present?
+      "Send on #{date.to_fs(:long_day_of_week)}"
     end
   end
 
-  def reminders
-    if @session.send_reminders_at.present?
-      "Send on #{@session.send_reminders_at.to_fs(:long_day_of_week)}"
+  def consent_reminders
+    if (date = @session.send_consent_reminders_at).present?
+      "Send on #{date.to_fs(:long_day_of_week)}"
     end
   end
 

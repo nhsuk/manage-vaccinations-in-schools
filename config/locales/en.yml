@@ -409,7 +409,7 @@ en:
               blank: Choose the number of days after the session to send reminders
               greater_than_or_equal_to: Choose a number between 2 and 7
               less_than_or_equal_to: Choose a number between 2 and 7
-            send_consent_at:
+            send_consent_requests_at:
               blank: Choose a date to send consent requests
               greater_than_or_equal_to: Enter a date that is not in the past
               less_than_or_equal_to: Enter a date before the session

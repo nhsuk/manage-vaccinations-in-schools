@@ -5,7 +5,7 @@ describe ConsentRemindersSessionBatchJob do
     programme = create(:programme)
     parents = create_list(:parent, 2)
     patient_with_reminder_sent =
-      create(:patient, sent_reminder_at: Time.zone.today)
+      create(:patient, consent_reminder_sent_at: Time.zone.today)
     patient_not_sent_reminder = create(:patient, parents:)
     patient_with_consent =
       create(:patient, :consent_given_triage_not_needed, programme:)
@@ -27,11 +27,11 @@ describe ConsentRemindersSessionBatchJob do
     expect(ActionMailer::Base.deliveries.count).to eq(2)
   end
 
-  it "updates the sent_reminder_at attribute for patients" do
-    patient = create(:patient, sent_reminder_at: nil)
+  it "updates the consent_reminder_sent_at attribute for patients" do
+    patient = create(:patient)
     session = create(:session, patients: [patient])
 
     described_class.perform_now(session)
-    expect(patient.reload.sent_reminder_at).to be_today
+    expect(patient.reload.consent_reminder_sent_at).to be_today
   end
 end

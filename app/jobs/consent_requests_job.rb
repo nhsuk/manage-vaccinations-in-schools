@@ -9,10 +9,8 @@ class ConsentRequestsJob < ApplicationJob
   def perform(*_args)
     return unless Flipper.enabled?(:scheduled_emails)
 
-    Session.active.each do |session|
-      if session.send_consent_at&.today?
-        ConsentRequestsSessionBatchJob.perform_later(session)
-      end
+    Session.send_consent_requests_today.each do |session|
+      ConsentRequestsSessionBatchJob.perform_later(session)
     end
   end
 end
