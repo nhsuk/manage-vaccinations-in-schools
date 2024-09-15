@@ -89,6 +89,15 @@ describe Consent do
         )
       end
 
+      it "creates a parent" do
+        expect(consent.parent).to have_attributes(
+          name: consent_form.parent_name,
+          email: consent_form.parent_email,
+          phone: consent_form.parent_phone,
+          phone_receive_updates: consent_form.parent_phone_receive_updates
+        )
+      end
+
       it "copies health answers from consent_form" do
         expect(consent.health_answers.to_json).to eq(
           consent_form.health_answers.to_json

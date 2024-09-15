@@ -30,7 +30,13 @@ class CohortImportRow
 
     Parent
       .find_or_initialize_by(email: parent_email, name: parent_name)
-      .tap { _1.assign_attributes(phone: parent_phone) }
+      .tap do |parent|
+        parent.assign_attributes(
+          phone: parent_phone,
+          phone_receive_updates:
+            parent_phone.present? ? parent.phone_receive_updates : false
+        )
+      end
   end
 
   def to_patient
