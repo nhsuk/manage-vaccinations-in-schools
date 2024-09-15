@@ -8,7 +8,8 @@ describe ConsentRemindersJob, type: :job do
 
   context "with draft and active sessions" do
     it "enqueues ConsentRemindersSessionBatchJob for each active sessions" do
-      active_session = create(:session, send_reminders_at: Time.zone.today)
+      active_session =
+        create(:session, send_consent_reminders_at: Time.zone.today)
       _draft_session =
         create(:session, :draft, programme: active_session.programme)
 
@@ -22,11 +23,12 @@ describe ConsentRemindersJob, type: :job do
 
   context "with sessions set to send consent today and in the future" do
     it "enqueues ConsentRemindersSessionBatchJob for the session set to send consent today" do
-      active_session = create(:session, send_reminders_at: Time.zone.today)
+      active_session =
+        create(:session, send_consent_reminders_at: Time.zone.today)
       _later_session =
         create(
           :session,
-          send_reminders_at: 2.days.from_now,
+          send_consent_reminders_at: 2.days.from_now,
           programme: active_session.programme
         )
 

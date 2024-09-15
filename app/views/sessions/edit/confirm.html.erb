@@ -9,7 +9,7 @@
 
 <%= render AppSessionDetailsComponent.new(session: @session) %>
 
-<% if @session.send_consent_at.today? %>
+<% if @session.send_consent_requests_at.today? %>
   <%= govuk_inset_text do %>
     <span class="nhsuk-visually-hidden">Information: </span>
 

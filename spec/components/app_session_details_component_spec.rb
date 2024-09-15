@@ -58,8 +58,8 @@ describe AppSessionDetailsComponent, type: :component do
       expect(component.consent_requests).to be_nil
     end
 
-    it "does not render the reminders" do
-      expect(component.reminders).to be_nil
+    it "does not render the consent reminders" do
+      expect(component.consent_reminders).to be_nil
     end
 
     it "does not render the deadline for responses" do

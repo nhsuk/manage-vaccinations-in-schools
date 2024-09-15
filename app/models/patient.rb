@@ -57,12 +57,13 @@ class Patient < ApplicationRecord
   # https://www.datadictionary.nhs.uk/attributes/person_gender_code.html
   enum :gender_code, { not_known: 0, male: 1, female: 2, not_specified: 9 }
 
-  scope :consent_not_sent, -> { where(sent_consent_at: nil) }
-  scope :reminder_not_sent, -> { where(sent_reminder_at: nil) }
+  scope :consent_request_not_sent, -> { where(consent_request_sent_at: nil) }
+  scope :consent_reminder_not_sent, -> { where(consent_reminder_sent_at: nil) }
 
   scope :without_consent,
         -> { includes(:consents).where(consents: { id: nil }) }
-  scope :needing_consent_reminder, -> { without_consent.reminder_not_sent }
+  scope :needing_consent_reminder,
+        -> { without_consent.consent_reminder_not_sent }
   scope :not_reminded_about_session, -> { where(session_reminder_sent_at: nil) }
 
   scope :active,

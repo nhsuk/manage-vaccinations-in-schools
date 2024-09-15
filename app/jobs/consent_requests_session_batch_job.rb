@@ -14,11 +14,12 @@ class ConsentRequestsSessionBatchJob < ApplicationJob
   queue_as :default
 
   def perform(session)
-    session.patients.consent_not_sent.each do |patient|
+    session.patients.consent_request_not_sent.each do |patient|
       patient.parents.each do |parent|
         ConsentMailer.with(parent:, patient:, session:).request.deliver_now
       end
-      patient.update!(sent_consent_at: Time.zone.now)
+
+      patient.update!(consent_request_sent_at: Time.zone.now)
     end
   end
 end

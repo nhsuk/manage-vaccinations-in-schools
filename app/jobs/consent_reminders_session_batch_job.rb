@@ -18,7 +18,8 @@ class ConsentRemindersSessionBatchJob < ApplicationJob
       patient.parents.each do |parent|
         ConsentMailer.with(parent:, patient:, session:).reminder.deliver_now
       end
-      patient.update!(sent_reminder_at: Time.zone.now)
+
+      patient.update!(consent_reminder_sent_at: Time.zone.now)
     end
   end
 end

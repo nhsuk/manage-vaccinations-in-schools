@@ -9,10 +9,8 @@ class SessionRemindersJob < ApplicationJob
   def perform(*_args)
     return unless Flipper.enabled?(:scheduled_emails)
 
-    Session.active.each do |session|
-      if session.date == Time.zone.tomorrow
-        SessionRemindersBatchJob.perform_later(session)
-      end
+    Session.active.tomorrow.each do |session|
+      SessionRemindersBatchJob.perform_later(session)
     end
   end
 end

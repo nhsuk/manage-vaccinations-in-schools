@@ -48,6 +48,12 @@ class Session < ApplicationRecord
   scope :past, -> { where(date: ..Time.zone.yesterday) }
   scope :in_progress, -> { where(date: Time.zone.today) }
   scope :future, -> { where(date: Time.zone.tomorrow..) }
+  scope :tomorrow, -> { where(date: Time.zone.tomorrow) }
+
+  scope :send_consent_requests_today,
+        -> { active.where(send_consent_requests_at: Time.zone.today) }
+  scope :send_consent_reminders_today,
+        -> { active.where(send_consent_reminders_at: Time.zone.today) }
 
   after_initialize :set_timeline_attributes
   after_validation :set_timeline_timestamps
@@ -69,7 +75,7 @@ class Session < ApplicationRecord
   end
 
   on_wizard_step :timeline, exact: true do
-    validates :send_consent_at,
+    validates :send_consent_requests_at,
               presence: true,
               comparison: {
                 greater_than_or_equal_to: -> { Time.zone.today },
@@ -108,11 +114,11 @@ class Session < ApplicationRecord
   end
 
   def days_between_consent_and_session
-    (date - send_consent_at).to_i
+    (date - send_consent_requests_at).to_i
   end
 
   def days_between_consent_and_reminder
-    (send_reminders_at - send_consent_at).to_i
+    (send_consent_reminders_at - send_consent_requests_at).to_i
   end
 
   def unmatched_consent_forms
@@ -126,8 +132,9 @@ class Session < ApplicationRecord
   private
 
   def set_timeline_attributes
-    unless send_reminders_at.nil?
-      if send_consent_at + DEFAULT_DAYS_FOR_REMINDER.days == send_reminders_at
+    unless send_consent_reminders_at.nil?
+      if send_consent_requests_at + DEFAULT_DAYS_FOR_REMINDER.days ==
+           send_consent_reminders_at
         self.reminder_days_after = "default"
       else
         self.reminder_days_after = "custom"
@@ -154,7 +161,8 @@ class Session < ApplicationRecord
     close_consent_on =
       self.close_consent_on == "default" ? date : close_consent_at
 
-    self.send_reminders_at = send_consent_at + reminder_days_after.days
+    self.send_consent_reminders_at =
+      send_consent_requests_at + reminder_days_after.days
     self.close_consent_at = close_consent_on
   end
 end

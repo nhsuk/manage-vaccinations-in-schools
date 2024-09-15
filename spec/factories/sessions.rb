@@ -26,8 +26,8 @@ FactoryBot.define do
     location { association :location, :school }
 
     date { Time.zone.today }
-    send_consent_at { date - 14.days }
-    send_reminders_at { send_consent_at + 7.days }
+    send_consent_requests_at { date - 14.days }
+    send_consent_reminders_at { send_consent_requests_at + 7.days }
     close_consent_at { date }
 
     time_of_day { %w[morning afternoon all_day].sample }
@@ -55,8 +55,8 @@ FactoryBot.define do
     end
 
     trait :minimal do
-      send_consent_at { nil }
-      send_reminders_at { nil }
+      send_consent_requests_at { nil }
+      send_consent_reminders_at { nil }
       close_consent_at { nil }
     end
   end

@@ -24,7 +24,7 @@ class Sessions::EditController < ApplicationController
       @session.active = true
       @session.patient_sessions.update_all(active: true)
 
-      if @session.send_consent_at.today?
+      if @session.send_consent_requests_at.today?
         ConsentRequestsSessionBatchJob.perform_later(@session)
       end
     when :cohort
@@ -75,9 +75,9 @@ class Sessions::EditController < ApplicationController
         patient_ids: []
       },
       timeline: %i[
-        send_consent_at(3i)
-        send_consent_at(2i)
-        send_consent_at(1i)
+        send_consent_requests_at(3i)
+        send_consent_requests_at(2i)
+        send_consent_requests_at(1i)
         reminder_days_after
         reminder_days_after_custom
         close_consent_on
@@ -139,13 +139,13 @@ class Sessions::EditController < ApplicationController
     when :timeline
       validator =
         DateParamsValidator.new(
-          field_name: :send_consent_at,
+          field_name: :send_consent_requests_at,
           object: @session,
           params: update_params
         )
 
       unless validator.date_params_valid?
-        @session.send_consent_at = validator.date_params_as_struct
+        @session.send_consent_requests_at = validator.date_params_as_struct
         render_wizard nil, status: :unprocessable_entity
       end
     end

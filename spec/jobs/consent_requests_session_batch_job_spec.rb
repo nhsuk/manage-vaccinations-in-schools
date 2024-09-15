@@ -5,7 +5,7 @@ describe ConsentRequestsSessionBatchJob do
 
   it "only sends emails to patient's parents to whom they have not been sent yet" do
     patient_with_consent_sent =
-      create(:patient, sent_consent_at: Time.zone.today)
+      create(:patient, consent_request_sent_at: Time.zone.today)
     patient_not_sent_consent =
       create(:patient, parents: parents_of_patient_without_consent_sent)
     session =
@@ -21,11 +21,11 @@ describe ConsentRequestsSessionBatchJob do
     expect(ActionMailer::Base.deliveries.count).to eq(2)
   end
 
-  it "updates the sent_consent_at attribute for patients" do
-    patient = create(:patient, sent_consent_at: nil)
+  it "updates the consent_request_sent_at attribute for patients" do
+    patient = create(:patient)
     session = create(:session, patients: [patient])
 
     described_class.perform_now(session)
-    expect(patient.reload.sent_consent_at).to be_today
+    expect(patient.reload.consent_request_sent_at).to be_today
   end
 end
