@@ -50,8 +50,13 @@ class ImmunisationImports::DuplicatesController < ApplicationController
   end
 
   def set_form
-    apply_changes = params.dig(:patient_changes_form, :apply_changes)
+    apply_changes =
+      params.dig(:immunisation_import_duplicate_form, :apply_changes)
 
-    @form = PatientChangesForm.new(patient: @patient, apply_changes:)
+    @form =
+      ImmunisationImportDuplicateForm.new(
+        vaccination_record: @vaccination_record,
+        apply_changes:
+      )
   end
 end
