@@ -43,7 +43,7 @@ class Session < ApplicationRecord
 
   has_and_belongs_to_many :immunisation_imports
 
-  enum :time_of_day, %w[morning afternoon all_day]
+  enum :time_of_day, %w[morning afternoon all_day], validate: { if: :active? }
 
   scope :past, -> { where(date: ..Time.zone.yesterday) }
   scope :in_progress, -> { where(date: Time.zone.today) }
@@ -57,8 +57,6 @@ class Session < ApplicationRecord
 
   after_initialize :set_timeline_attributes
   after_validation :set_timeline_timestamps
-
-  validates :time_of_day, inclusion: { in: time_of_days.keys }, unless: :draft?
 
   on_wizard_step :location, exact: true do
     validates :location_id, presence: true
