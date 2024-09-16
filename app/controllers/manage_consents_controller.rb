@@ -208,6 +208,7 @@ class ManageConsentsController < ApplicationController
         email: @parent.email,
         name: @parent.name,
         phone: @parent.phone,
+        phone_receive_updates: @parent.phone_receive_updates,
         relationship_type: @parent_relationship&.type,
         relationship_other_name: @parent_relationship&.other_name
       )
