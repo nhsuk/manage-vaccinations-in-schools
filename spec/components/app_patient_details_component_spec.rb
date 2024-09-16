@@ -8,8 +8,14 @@ describe AppPatientDetailsComponent, type: :component do
   let(:session) { create(:session) }
 
   context "with a patient object" do
+    let(:parent) { create(:parent) }
     let(:patient) do
-      create(:patient, nhs_number: 1_234_567_890, common_name: "Homer")
+      create(
+        :patient,
+        nhs_number: 1_234_567_890,
+        common_name: "Homer",
+        parents: [parent]
+      )
     end
     let(:school) { create(:location, :school) }
     let(:component) { described_class.new(patient:, session:, school:) }
@@ -61,6 +67,14 @@ describe AppPatientDetailsComponent, type: :component do
           text: "123\u00A0\u200D456\u00A0\u200D7890"
         )
       )
+    end
+
+    it "renders the patient's parents" do
+      expect(page).to(
+        have_css(".nhsuk-summary-list__key", text: "Parent or guardian")
+      )
+      expect(page).to(have_css(".nhsuk-summary-list__row", text: parent.name))
+      expect(page).to(have_css(".nhsuk-summary-list__row", text: parent.phone))
     end
 
     context "without a preferred name" do
@@ -142,6 +156,18 @@ describe AppPatientDetailsComponent, type: :component do
     it "renders 'Not provided' for the NHS number" do
       expect(page).to(
         have_css(".nhsuk-summary-list__row", text: "NHS numberNot provided")
+      )
+    end
+
+    it "renders the parent details" do
+      expect(page).to(
+        have_css(".nhsuk-summary-list__key", text: "Parent or guardian")
+      )
+      expect(page).to(
+        have_css(".nhsuk-summary-list__row", text: consent_form.parent_name)
+      )
+      expect(page).to(
+        have_css(".nhsuk-summary-list__row", text: consent_form.parent_phone)
       )
     end
 
