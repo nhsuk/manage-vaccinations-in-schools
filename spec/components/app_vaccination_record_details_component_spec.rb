@@ -22,6 +22,9 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
   let(:batch) do
     create(:batch, name: "ABC", expiry: Date.new(2020, 1, 1), vaccine:)
   end
+  let(:other_batch) do
+    create(:batch, name: "DEF", expiry: Date.new(2021, 1, 1), vaccine:)
+  end
   let(:notes) { "Some notes." }
 
   let(:vaccination_record) do
@@ -31,7 +34,14 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
       batch:,
       vaccine:,
       patient_session:,
-      notes:
+      delivery_method: :intramuscular,
+      delivery_site: :left_arm_upper_position,
+      notes:,
+      pending_changes: {
+        batch_id: other_batch&.id,
+        delivery_method: :nasal_spray,
+        delivery_site: :nose
+      }
     )
   end
 
@@ -66,6 +76,7 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
     context "without a vaccine" do
       let(:vaccine) { nil }
       let(:batch) { nil }
+      let(:other_batch) { nil }
 
       it { should_not have_css(".nhsuk-summary-list__row", text: "Vaccine") }
     end
@@ -100,6 +111,7 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
     context "without a vaccine" do
       let(:vaccine) { nil }
       let(:batch) { nil }
+      let(:other_batch) { nil }
 
       it do
         expect(subject).not_to have_css(
@@ -142,6 +154,7 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
     context "without a vaccine" do
       let(:vaccine) { nil }
       let(:batch) { nil }
+      let(:other_batch) { nil }
 
       it { should_not have_css(".nhsuk-summary-list__row", text: "Batch ID") }
     end
@@ -158,6 +171,7 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
     context "without a vaccine" do
       let(:vaccine) { nil }
       let(:batch) { nil }
+      let(:other_batch) { nil }
 
       it do
         expect(rendered).not_to have_css(
@@ -233,6 +247,19 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
       let(:notes) { nil }
 
       it { should_not have_css(".nhsuk-summary-list__row", text: "Notes") }
+    end
+  end
+
+  describe "with pending changes" do
+    let(:component) do
+      described_class.new(vaccination_record.with_pending_changes)
+    end
+
+    it "highlights changed fields" do
+      expect(rendered).to have_css(".app-highlight", text: "Nasal spray")
+      expect(rendered).to have_css(".app-highlight", text: "Nose")
+      expect(rendered).to have_css(".app-highlight", text: "DEF")
+      expect(rendered).to have_css(".app-highlight", text: "1 January 2021")
     end
   end
 end

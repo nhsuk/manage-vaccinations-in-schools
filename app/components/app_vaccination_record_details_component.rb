@@ -110,19 +110,31 @@ class AppVaccinationRecordDetailsComponent < ViewComponent::Base
   private
 
   def outcome_value
-    @vaccination_record.administered? ? "Vaccinated" : "Not vaccinated"
+    highlight_if(
+      @vaccination_record.administered? ? "Vaccinated" : "Not vaccinated",
+      @vaccination_record.administered_at_changed?
+    )
   end
 
   def vaccine_value
-    helpers.vaccine_heading(@vaccine)
+    highlight_if(
+      helpers.vaccine_heading(@vaccine),
+      @vaccination_record.vaccine_id_changed?
+    )
   end
 
   def delivery_method_value
-    @vaccination_record.human_enum_name(:delivery_method)
+    highlight_if(
+      @vaccination_record.human_enum_name(:delivery_method),
+      @vaccination_record.delivery_method_changed?
+    )
   end
 
   def delivery_site_value
-    @vaccination_record.human_enum_name(:delivery_site)
+    highlight_if(
+      @vaccination_record.human_enum_name(:delivery_site),
+      @vaccination_record.delivery_site_changed?
+    )
   end
 
   def dose_volume_value
@@ -130,11 +142,14 @@ class AppVaccinationRecordDetailsComponent < ViewComponent::Base
   end
 
   def batch_id_value
-    @batch.name
+    highlight_if(@batch.name, @vaccination_record.batch_id_changed?)
   end
 
   def batch_expiry_value
-    @batch.expiry.to_fs(:long)
+    highlight_if(
+      @batch.expiry.to_fs(:long),
+      @vaccination_record.batch_id_changed?
+    )
   end
 
   def location_value
@@ -142,19 +157,25 @@ class AppVaccinationRecordDetailsComponent < ViewComponent::Base
   end
 
   def vaccination_date_value
-    @vaccination_record.administered_at.to_fs(:long)
+    highlight_if(
+      @vaccination_record.administered_at.to_fs(:long),
+      @vaccination_record.administered_at_changed?
+    )
   end
 
   def nurse_value
-    @vaccination_record.performed_by.full_name
+    highlight_if(
+      @vaccination_record.performed_by.full_name,
+      @vaccination_record.performed_by_user_id_changed?
+    )
   end
 
   def notes_value
-    @vaccination_record.notes
+    highlight_if(@vaccination_record.notes, @vaccination_record.notes_changed?)
   end
 
   def dose_number_value
-    dose_number
+    highlight_if(dose_number, @vaccination_record.dose_sequence_changed?)
   end
 
   def dose_number
@@ -177,5 +198,9 @@ class AppVaccinationRecordDetailsComponent < ViewComponent::Base
     else
       @vaccination_record.dose_sequence.ordinalize
     end
+  end
+
+  def highlight_if(value, condition)
+    condition ? tag.span(value, class: "app-highlight") : value
   end
 end
