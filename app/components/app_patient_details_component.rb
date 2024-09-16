@@ -68,6 +68,13 @@ class AppPatientDetailsComponent < ViewComponent::Base
         row.with_key { "NHS number" }
         row.with_value { helpers.format_nhs_number(nhs_number) }
       end
+
+      if parent_or_guardians.present?
+        summary_list.with_row do |row|
+          row.with_key { "Parent or guardian" }
+          row.with_value { parent_or_guardians_formatted }
+        end
+      end
     end
   end
 
@@ -106,5 +113,43 @@ class AppPatientDetailsComponent < ViewComponent::Base
 
   def nhs_number
     @object.try(:nhs_number)
+  end
+
+  def parent_or_guardians
+    @parent_or_guardians ||=
+      if @object.is_a?(ConsentForm)
+        [
+          {
+            name: @object.parent_name,
+            relationship: @object.parent_relationship_label,
+            phone: @object.parent_phone
+          }
+        ]
+      else
+        @object.parent_relationships.map do |parent_relationship|
+          {
+            name: parent_relationship.parent.name,
+            relationship: parent_relationship.label,
+            phone: parent_relationship.parent.phone
+          }
+        end
+      end
+  end
+
+  def parent_or_guardians_formatted
+    tag.ul(class: "nhsuk-list") do
+      safe_join(
+        parent_or_guardians.map do |parent_or_guardian|
+          tag.li do
+            [
+              "#{parent_or_guardian[:name]} (#{parent_or_guardian[:relationship]})",
+              if (phone = parent_or_guardian[:phone]).present?
+                tag.span(phone, class: "nhsuk-u-secondary-text-color")
+              end
+            ].compact.join(tag.br).html_safe
+          end
+        end
+      )
+    end
   end
 end
