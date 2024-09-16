@@ -6,7 +6,13 @@
 <% end %>
 
 <% title = "Upload vaccination records" %>
-<% hint = "These will go to NHS England and GPs. Make sure the CSV you upload has the same format as your usual reporting template." %>
+<% hint = if @programme.hpv?
+       "These will go to NHS England. Make sure the CSV you upload has the same format as your usual reporting template."
+     elsif @programme.flu?
+       "These will go to NHS England and GPs. Make sure the CSV you upload has the same format as your usual reporting template."
+     else
+       "Make sure the CSV you upload has the same format as your usual reporting template."
+     end %>
 
 <% content_for :page_title, title %>
 
