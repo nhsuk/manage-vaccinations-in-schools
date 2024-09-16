@@ -6,6 +6,8 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   skip_before_action :authenticate_user!
   skip_after_action :verify_policy_scoped
 
+  before_action :verify_cis2_response, only: %i[cis2]
+
   def cis2
     set_cis2_session_info
 
@@ -20,6 +22,23 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   end
 
   private
+
+  def verify_cis2_response
+    if user_cis2_info["uid"] != user_cis2_info["extra"]["raw_info"]["sub"]
+      raise "cis2 authentication: uid does not match sub cliam"
+    elsif Integer(raw_cis2_info[:id_assurance_level]) < 3
+      raise "cis2 authentication: id_assurance_level too low" \
+              " (#{raw_cis2_info[:id_assurance_level]} != 3)"
+    elsif Integer(raw_cis2_info[:authentication_assurance_level]) <
+          Settings.cis2.authentication_assurance_level
+      raise "cis2 authentication: authentication_assurance_level too low" \
+              " (#{raw_cis2_info[:authentication_assurance_level]} < " \
+              " #{Settings.cis2.authentication_assurance_level})"
+    elsif Time.zone.at(raw_cis2_info[:auth_time]) < 5.minutes.ago
+      raise "cis2 authentication: auth_time too old" \
+              " (#{raw_cis2_info[:auth_time]})"
+    end
+  end
 
   def user_cis2_info
     request.env["omniauth.auth"]
