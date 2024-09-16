@@ -198,7 +198,10 @@ RSpec.configure do |config|
 
   config.after(:each, type: :system) { WebMock.enable! }
 
-  config.before { ActionMailer::Base.deliveries.clear }
+  config.before do
+    ActionMailer::Base.deliveries.clear
+    TextDeliveryJob.deliveries.clear
+  end
 
   config.include ActiveJob::TestHelper, type: :feature
   config.include ActiveSupport::Testing::TimeHelpers
@@ -207,5 +210,6 @@ RSpec.configure do |config|
   config.include Devise::Test::IntegrationHelpers, type: :system
   config.include EmailExpectations, type: :feature
   config.include FactoryBot::Syntax::Methods
+  config.include TextExpectations, type: :feature
   config.include ViewComponent::TestHelpers, type: :component
 end
