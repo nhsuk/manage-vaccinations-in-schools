@@ -26,6 +26,11 @@ describe "Immunisation imports duplicates" do
 
     when_i_review_the_second_duplicate_record
     then_i_should_see_the_second_duplicate_record
+
+    when_i_choose_to_keep_the_duplicate_record
+    and_i_confirm_my_selection
+    then_i_should_see_a_success_message
+    and_the_second_record_should_be_updated
   end
 
   def given_i_am_signed_in
@@ -165,5 +170,12 @@ describe "Immunisation imports duplicates" do
 
   def when_i_review_the_second_duplicate_record
     click_on "Review Caden Attwater"
+  end
+
+  def and_the_second_record_should_be_updated
+    @previous_vaccination_record.reload
+    expect(@previous_vaccination_record.delivery_method).to eq("intramuscular")
+    expect(@previous_vaccination_record.delivery_site).to eq("left_thigh")
+    expect(@previous_vaccination_record.pending_changes).to eq({})
   end
 end
