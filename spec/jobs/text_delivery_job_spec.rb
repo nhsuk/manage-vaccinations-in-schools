@@ -35,9 +35,7 @@ describe TextDeliveryJob do
 
     let(:template_name) { GOVUK_NOTIFY_TEXT_TEMPLATES.keys.first }
     let(:session) { create(:session) }
-    let(:parent) do
-      create(:parent, phone: "01234567890", phone_receive_updates: true)
-    end
+    let(:parent) { create(:parent, phone: "01234567890") }
     let(:consent) { nil }
     let(:consent_form) { nil }
     let(:patient) { create(:patient) }
@@ -83,13 +81,7 @@ describe TextDeliveryJob do
     end
 
     context "with a consent form" do
-      let(:consent_form) do
-        create(
-          :consent_form,
-          parent_phone: "01234567890",
-          parent_phone_receive_updates: true
-        )
-      end
+      let(:consent_form) { create(:consent_form, parent_phone: "01234567890") }
       let(:parent) { nil }
       let(:patient) { nil }
 

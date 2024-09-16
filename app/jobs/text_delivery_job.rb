@@ -38,6 +38,8 @@ class TextDeliveryJob < ApplicationJob
 
     if self.class.send_via_notify?
       self.class.client.send_sms(phone_number:, template_id:, personalisation:)
+    elsif self.class.send_via_test?
+      self.class.deliveries << { phone_number:, template_id:, personalisation: }
     else
       Rails.logger.info "Sending text message to #{phone_number} with template #{template_id}"
     end
@@ -50,8 +52,16 @@ class TextDeliveryJob < ApplicationJob
       )
   end
 
+  def self.deliveries
+    @deliveries ||= []
+  end
+
   def self.send_via_notify?
     Rails.configuration.action_mailer.delivery_method == :notify
+  end
+
+  def self.send_via_test?
+    Rails.configuration.action_mailer.delivery_method == :test
   end
 
   class UnknownTemplate < StandardError

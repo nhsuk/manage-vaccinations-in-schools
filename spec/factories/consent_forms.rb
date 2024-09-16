@@ -61,9 +61,7 @@ FactoryBot.define do
     parent_email { Faker::Internet.email }
     parent_name { "#{Faker::Name.first_name}} #{last_name}" }
     parent_phone { "07700 900#{rand(0..999).to_s.rjust(3, "0")}" }
-    parent_phone_receive_updates do
-      parent_phone.present? ? [true, false].sample : false
-    end
+    parent_phone_receive_updates { parent_phone.present? }
     parent_relationship_other_name do
       parent_relationship_type == "other" ? "Other" : nil
     end
