@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-class PatientChangesForm
+class ImmunisationImportDuplicateForm
   include ActiveModel::Model
 
-  attr_accessor :patient, :apply_changes
+  attr_accessor :vaccination_record, :apply_changes
 
   validates :apply_changes, inclusion: { in: %w[apply discard] }
 
@@ -12,9 +12,9 @@ class PatientChangesForm
 
     ActiveRecord::Base.transaction do
       if apply_changes == "apply"
-        patient.apply_pending_changes!
+        vaccination_record.patient.apply_pending_changes!
       elsif apply_changes == "discard"
-        patient.discard_pending_changes!
+        vaccination_record.discard_pending_changes!
       end
     end
 
