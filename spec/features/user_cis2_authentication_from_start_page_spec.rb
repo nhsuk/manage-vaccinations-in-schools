@@ -28,6 +28,9 @@ describe "User CIS2 authentication" do
     then_i_see_the_dashboard
     and_i_am_logged_in
 
+    when_i_click_the_change_role_button
+    then_i_see_the_dashboard
+
     when_i_log_out
     then_i_am_on_the_start_page
     and_i_am_logged_out
@@ -77,6 +80,14 @@ describe "User CIS2 authentication" do
   def and_i_am_logged_in
     expect(page).to have_content "Nurse Test"
     expect(page).to have_button "Log out"
+  end
+
+  def when_i_click_the_change_role_button
+    click_button "Change role"
+  end
+
+  def then_i_see_the_sessions_page
+    expect(page).to have_current_path sessions_path
   end
 
   def when_i_log_out
