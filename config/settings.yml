@@ -2,3 +2,6 @@ allow_dev_phone_numbers: false
 support_username: manage
 support_password: vaccinations
 web_concurrency: 2
+
+cis2:
+  authentication_assurance_level: 3
