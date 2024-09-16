@@ -301,14 +301,7 @@ Devise.setup do |config|
       {
         setup:,
         name: :cis2,
-        scope: %i[
-          openid
-          profile
-          email
-          nationalrbacaccess
-          associatedorgs
-          professionalmemberships
-        ],
+        scope: %i[openid profile email nationalrbacaccess associatedorgs],
         response_type: :code,
         # uid_field: "preferred_username",
         issuer: Settings.cis2.issuer,
