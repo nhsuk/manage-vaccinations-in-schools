@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_17_165802) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_17_170959) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -434,6 +434,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_17_165802) do
     t.integer "gender_code", default: 0, null: false
     t.boolean "home_educated"
     t.jsonb "pending_changes", default: {}, null: false
+    t.datetime "recorded_at"
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
     t.index ["school_id"], name: "index_patients_on_school_id"
   end
