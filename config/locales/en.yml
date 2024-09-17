@@ -178,27 +178,6 @@ en:
         types:
           father: dad
           mother: mum
-      patient:
-        year_group:
-          "-1": Reception -1
-          "-2": Reception -2
-          "-3": Reception -3
-          "-4": Reception -4
-          "0": Reception
-          "1": Year 1
-          "10": Year 10
-          "11": Year 11
-          "12": Year 12
-          "13": Year 13
-          "14": Year 14
-          "2": Year 2
-          "3": Year 3
-          "4": Year 4
-          "5": Year 5
-          "6": Year 6
-          "7": Year 7
-          "8": Year 8
-          "9": Year 9
       patient_session:
         outcomes:
           could_not_vaccinate: Could not vaccinate
