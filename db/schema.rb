@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_17_081910) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_17_091724) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -92,6 +92,12 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_17_081910) do
     t.datetime "updated_at", null: false
     t.index ["team_id", "academic_year", "year_group"], name: "index_cohorts_on_team_id_and_academic_year_and_year_group", unique: true
     t.index ["team_id"], name: "index_cohorts_on_team_id"
+  end
+
+  create_table "cohorts_patients", id: false, force: :cascade do |t|
+    t.bigint "cohort_id", null: false
+    t.bigint "patient_id", null: false
+    t.index ["cohort_id", "patient_id"], name: "index_cohorts_patients_on_cohort_id_and_patient_id", unique: true
   end
 
   create_table "consent_forms", force: :cascade do |t|
@@ -578,6 +584,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_17_081910) do
   add_foreign_key "cohort_imports_patients", "cohort_imports"
   add_foreign_key "cohort_imports_patients", "patients"
   add_foreign_key "cohorts", "teams"
+  add_foreign_key "cohorts_patients", "cohorts"
+  add_foreign_key "cohorts_patients", "patients"
   add_foreign_key "consent_forms", "consents"
   add_foreign_key "consent_forms", "sessions"
   add_foreign_key "consents", "parents"
