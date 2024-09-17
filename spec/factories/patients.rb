@@ -47,7 +47,7 @@ FactoryBot.define do
       parents { [create(:parent, :recorded, last_name:)] }
     end
 
-    cohort { association :cohort, team: }
+    cohort { Cohort.find_or_create_by_date_of_birth!(date_of_birth, team:) }
 
     recorded_at { Time.zone.now }
 
