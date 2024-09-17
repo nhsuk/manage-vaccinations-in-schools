@@ -26,18 +26,6 @@ class CohortImportRow
     @team = team
   end
 
-  def to_cohort
-    return unless valid?
-
-    # Children normally start school the September after their 4th birthday.
-    # https://www.gov.uk/schools-admissions/school-starting-age
-
-    reception_starting_year =
-      date_of_birth.year + (date_of_birth.month >= 9 ? 5 : 4)
-
-    Cohort.find_or_initialize_by(team: @team, reception_starting_year:)
-  end
-
   def to_parent
     return unless valid?
 
@@ -65,7 +53,8 @@ class CohortImportRow
       first_name:,
       last_name:,
       nhs_number:,
-      school:
+      school:,
+      cohort:
     }
 
     if (existing_patient = find_existing_patients.first)
@@ -155,6 +144,11 @@ class CohortImportRow
   end
 
   private
+
+  def cohort
+    @cohort ||=
+      Cohort.find_or_create_by_date_of_birth!(date_of_birth, team: @team)
+  end
 
   def school
     @school ||= Location.school.find_by!(urn: school_urn)
