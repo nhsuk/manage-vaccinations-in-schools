@@ -5,8 +5,8 @@ describe ImmunisationImportRow, type: :model do
     described_class.new(data:, programme:, user: uploaded_by)
   end
 
-  let(:programme) { create(:programme, :flu, academic_year: 2023) }
   let(:team) { create(:team, ods_code: "abc") }
+  let(:programme) { create(:programme, :flu, academic_year: 2023, team:) }
   let(:uploaded_by) { create(:user, teams: [team]) }
 
   let(:nhs_number) { "1234567890" }
@@ -180,7 +180,7 @@ describe ImmunisationImportRow, type: :model do
     end
 
     context "with an invalid dose sequence" do
-      let(:programme) { create(:programme, :hpv) }
+      let(:programme) { create(:programme, :hpv, team:) }
 
       let(:data) { { "VACCINE_GIVEN" => "Gardasil9", "DOSE_SEQUENCE" => "4" } }
 
@@ -193,7 +193,7 @@ describe ImmunisationImportRow, type: :model do
     end
 
     context "with valid fields for Flu" do
-      let(:programme) { create(:programme, :flu, academic_year: 2023) }
+      let(:programme) { create(:programme, :flu, academic_year: 2023, team:) }
 
       let(:data) do
         {
@@ -220,7 +220,7 @@ describe ImmunisationImportRow, type: :model do
     end
 
     context "with valid fields for HPV" do
-      let(:programme) { create(:programme, :hpv, academic_year: 2023) }
+      let(:programme) { create(:programme, :hpv, academic_year: 2023, team:) }
 
       let(:data) do
         {
@@ -348,6 +348,24 @@ describe ImmunisationImportRow, type: :model do
       it "creates a patient with an unknown school" do
         expect(patient.home_educated).to be(false)
         expect(patient.school).to be_nil
+      end
+    end
+
+    describe "#cohort" do
+      subject(:cohort) { patient.cohort }
+
+      let(:data) { valid_data.merge("PERSON_DOB" => date_of_birth) }
+
+      context "with a date of birth before September" do
+        let(:date_of_birth) { "20000831" }
+
+        it { should have_attributes(team:, reception_starting_year: 2004) }
+      end
+
+      context "with a date of birth after September" do
+        let(:date_of_birth) { "20000901" }
+
+        it { should have_attributes(team:, reception_starting_year: 2005) }
       end
     end
   end
@@ -694,7 +712,7 @@ describe ImmunisationImportRow, type: :model do
   describe "#dose_sequence" do
     subject(:dose_sequence) { immunisation_import_row.dose_sequence }
 
-    let(:programme) { create(:programme, :hpv) }
+    let(:programme) { create(:programme, :hpv, team:) }
 
     context "without a value" do
       let(:data) { { "VACCINE_GIVEN" => "Gardasil9" } }
