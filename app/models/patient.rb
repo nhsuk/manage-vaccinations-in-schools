@@ -67,13 +67,6 @@ class Patient < ApplicationRecord
   scope :needing_consent_reminder,
         -> { without_consent.consent_reminder_not_sent }
 
-  scope :active,
-        -> do
-          where(
-            PatientSession.active.where("patient_id = patients.id").arel.exists
-          )
-        end
-
   scope :matching_three_of,
         ->(first_name:, last_name:, date_of_birth:, address_postcode:) do
           where(first_name:, last_name:, date_of_birth:)

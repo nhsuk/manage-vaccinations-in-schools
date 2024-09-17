@@ -113,8 +113,11 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def record_rows
-    patient_sessions.draft.update_all(active: true)
-    sessions.draft.update_all(active: true)
-    vaccination_records.draft.update_all(recorded_at: Time.zone.now)
+    Time.zone.now.tap do |recorded_at|
+      patient_sessions.draft.update_all(active: true)
+      patients.draft.update_all(recorded_at:)
+      sessions.draft.update_all(active: true)
+      vaccination_records.draft.update_all(recorded_at:)
+    end
   end
 end

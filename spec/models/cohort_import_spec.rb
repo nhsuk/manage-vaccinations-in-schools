@@ -142,7 +142,8 @@ describe CohortImport do
         school: location,
         address_line_1: "10 Downing Street",
         address_town: "London",
-        address_postcode: "SW1A 1AA"
+        address_postcode: "SW1A 1AA",
+        recorded_at: nil
       )
 
       expect(Patient.first.parents.first).to have_attributes(
@@ -162,7 +163,8 @@ describe CohortImport do
         school: location,
         address_line_1: "11 Downing Street",
         address_town: "London",
-        address_postcode: "SW1A 1AA"
+        address_postcode: "SW1A 1AA",
+        recorded_at: nil
       )
 
       expect(Patient.second.parents.first).not_to be_recorded
@@ -222,6 +224,10 @@ describe CohortImport do
     subject(:record!) { cohort_import.record! }
 
     let(:file) { "valid_cohort.csv" }
+
+    it "records the patients" do
+      expect { record! }.to change(Patient.recorded, :count).from(0).to(2)
+    end
 
     it "records the parents" do
       expect { record! }.to change(Parent.recorded, :count).from(0).to(2)

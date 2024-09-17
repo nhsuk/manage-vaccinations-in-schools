@@ -56,30 +56,6 @@ describe Patient, type: :model do
     end
   end
 
-  describe "scopes" do
-    describe "#active" do
-      subject(:active) { described_class.active }
-
-      context "with a patient belonging to no sessions" do
-        before { create(:patient) }
-
-        it { should be_empty }
-      end
-
-      context "with a patient belonging to a draft session" do
-        before { create(:patient_session, :draft) }
-
-        it { should be_empty }
-      end
-
-      context "with a patient belonging to an active session" do
-        let!(:patient) { create(:patient_session, :active).patient }
-
-        it { should include(patient) }
-      end
-    end
-  end
-
   describe "#find_existing" do
     subject(:find_existing) do
       described_class.find_existing(
