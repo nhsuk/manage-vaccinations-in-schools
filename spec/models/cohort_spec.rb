@@ -30,6 +30,28 @@ describe Cohort do
     end
   end
 
+  describe "scopes" do
+    describe "#for_year_groups" do
+      subject(:scope) { described_class.for_year_groups(year_groups) }
+
+      let(:year_groups) { [1, 2, 3] }
+      let(:today) { Date.new(2000, 9, 1) }
+
+      let!(:year_one) { create(:cohort, reception_starting_year: 1999) }
+      let!(:year_two) { create(:cohort, reception_starting_year: 1998) }
+      let!(:year_three) { create(:cohort, reception_starting_year: 1997) }
+
+      before do
+        create(:cohort, reception_starting_year: 2000) # reception
+        create(:cohort, reception_starting_year: 1996) # year 4
+      end
+
+      around { |example| travel_to(today) { example.run } }
+
+      it { should contain_exactly(year_one, year_two, year_three) }
+    end
+  end
+
   describe "#find_or_create_by_date_of_birth!" do
     subject(:find_or_create_by_date_of_birth!) do
       described_class.find_or_create_by_date_of_birth!(date_of_birth, team:)
