@@ -32,7 +32,9 @@ class Programme < ApplicationRecord
   audited
 
   belongs_to :team
+
   has_and_belongs_to_many :vaccines
+
   has_many :consents, dependent: :destroy
   has_many :dps_exports, dependent: :destroy
   has_many :immunisation_imports, dependent: :destroy
@@ -40,6 +42,7 @@ class Programme < ApplicationRecord
   has_many :triage, dependent: :destroy
 
   has_many :batches, through: :vaccines
+  has_many :cohort_imports, through: :team
   has_many :patient_sessions, through: :sessions
   has_many :patients, through: :patient_sessions
   has_many :vaccination_records, through: :patient_sessions

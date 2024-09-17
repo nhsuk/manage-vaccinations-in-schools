@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_17_091724) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_17_105059) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -63,6 +63,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_17_091724) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "changed_record_count"
+    t.bigint "team_id", null: false
+    t.index ["team_id"], name: "index_cohort_imports_on_team_id"
     t.index ["uploaded_by_user_id"], name: "index_cohort_imports_on_uploaded_by_user_id"
   end
 
@@ -576,6 +578,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_17_091724) do
   add_foreign_key "batches", "vaccines"
   add_foreign_key "batches_immunisation_imports", "batches"
   add_foreign_key "batches_immunisation_imports", "immunisation_imports"
+  add_foreign_key "cohort_imports", "teams"
   add_foreign_key "cohort_imports", "users", column: "uploaded_by_user_id"
   add_foreign_key "cohort_imports_parent_relationships", "cohort_imports"
   add_foreign_key "cohort_imports_parent_relationships", "parent_relationships"
