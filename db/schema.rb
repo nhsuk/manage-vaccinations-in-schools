@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_17_141101) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_17_165802) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -417,18 +417,18 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_17_141101) do
   end
 
   create_table "patients", force: :cascade do |t|
-    t.date "date_of_birth"
+    t.date "date_of_birth", null: false
     t.string "nhs_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "first_name"
-    t.string "last_name"
+    t.string "first_name", null: false
+    t.string "last_name", null: false
     t.string "common_name"
     t.bigint "school_id"
     t.string "address_line_1"
     t.string "address_line_2"
     t.string "address_town"
-    t.string "address_postcode"
+    t.string "address_postcode", null: false
     t.datetime "consent_request_sent_at"
     t.datetime "consent_reminder_sent_at"
     t.integer "gender_code", default: 0, null: false
