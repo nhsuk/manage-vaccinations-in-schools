@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_15_153735) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_17_081910) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -82,6 +82,16 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_15_153735) do
     t.bigint "cohort_import_id", null: false
     t.bigint "patient_id", null: false
     t.index ["cohort_import_id", "patient_id"], name: "idx_on_cohort_import_id_patient_id_7864d1a8b0", unique: true
+  end
+
+  create_table "cohorts", force: :cascade do |t|
+    t.bigint "team_id", null: false
+    t.integer "academic_year", null: false
+    t.integer "year_group", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["team_id", "academic_year", "year_group"], name: "index_cohorts_on_team_id_and_academic_year_and_year_group", unique: true
+    t.index ["team_id"], name: "index_cohorts_on_team_id"
   end
 
   create_table "consent_forms", force: :cascade do |t|
@@ -567,6 +577,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_15_153735) do
   add_foreign_key "cohort_imports_parents", "parents"
   add_foreign_key "cohort_imports_patients", "cohort_imports"
   add_foreign_key "cohort_imports_patients", "patients"
+  add_foreign_key "cohorts", "teams"
   add_foreign_key "consent_forms", "consents"
   add_foreign_key "consent_forms", "sessions"
   add_foreign_key "consents", "parents"
