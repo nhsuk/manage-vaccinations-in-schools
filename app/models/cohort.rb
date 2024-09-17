@@ -22,7 +22,7 @@
 class Cohort < ApplicationRecord
   belongs_to :team
 
-  has_and_belongs_to_many :patients
+  has_many :patients
 
   def year_group
     today = Time.zone.today

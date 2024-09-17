@@ -11,10 +11,11 @@ describe PendingChangesConcern do
 
   let(:model) do
     model_class.create(
-      first_name: "John",
-      last_name: "Doe",
+      address_postcode: "",
+      cohort_id: create(:cohort).id,
       date_of_birth: Time.zone.now,
-      address_postcode: ""
+      first_name: "John",
+      last_name: "Doe"
     )
   end
 
