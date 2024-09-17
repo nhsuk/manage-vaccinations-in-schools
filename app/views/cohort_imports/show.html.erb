@@ -2,7 +2,7 @@
   <%= render AppBreadcrumbComponent.new(items: [
                                           { text: t("programmes.index.title"), href: programmes_path },
                                           { text: @programme.name, href: programme_path(@programme) },
-                                          { text: t("programmes.patients.title"), href: patients_programme_path(@programme) },
+                                          { text: t("cohorts.index.title"), href: programme_cohorts_path(@programme) },
                                         ]) %>
 <% end %>
 

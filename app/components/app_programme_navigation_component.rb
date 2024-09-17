@@ -18,9 +18,9 @@ class AppProgrammeNavigationComponent < ViewComponent::Base
       ) { "Overview" }
 
       nav.with_item(
-        href: patients_programme_path(programme),
-        selected: active == :patients
-      ) { I18n.t("programmes.patients.title") }
+        href: programme_cohorts_path(programme),
+        selected: active == :cohorts
+      ) { I18n.t("cohorts.index.title") }
 
       nav.with_item(
         href: sessions_programme_path(programme),

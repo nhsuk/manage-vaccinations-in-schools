@@ -12,10 +12,6 @@ class ProgrammesController < ApplicationController
   def show
   end
 
-  def patients
-    @patients = @programme.patients.recorded
-  end
-
   def sessions
     @in_progress_sessions = @programme.sessions.active.in_progress
     @future_sessions = @programme.sessions.active.future
