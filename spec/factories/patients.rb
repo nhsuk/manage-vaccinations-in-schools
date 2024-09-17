@@ -22,15 +22,18 @@
 #  recorded_at              :datetime
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
+#  cohort_id                :bigint           not null
 #  school_id                :bigint
 #
 # Indexes
 #
+#  index_patients_on_cohort_id   (cohort_id)
 #  index_patients_on_nhs_number  (nhs_number) UNIQUE
 #  index_patients_on_school_id   (school_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (cohort_id => cohorts.id)
 #  fk_rails_...  (school_id => locations.id)
 #
 
@@ -39,9 +42,12 @@ FactoryBot.define do
     transient do
       session { nil }
       programme { session&.programme }
+      team { programme&.team || association(:team) }
 
       parents { [create(:parent, :recorded, last_name:)] }
     end
+
+    cohort { association :cohort, team: }
 
     recorded_at { Time.zone.now }
 

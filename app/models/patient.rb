@@ -22,15 +22,18 @@
 #  recorded_at              :datetime
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
+#  cohort_id                :bigint           not null
 #  school_id                :bigint
 #
 # Indexes
 #
+#  index_patients_on_cohort_id   (cohort_id)
 #  index_patients_on_nhs_number  (nhs_number) UNIQUE
 #  index_patients_on_school_id   (school_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (cohort_id => cohorts.id)
 #  fk_rails_...  (school_id => locations.id)
 #
 class Patient < ApplicationRecord
@@ -40,6 +43,7 @@ class Patient < ApplicationRecord
 
   audited
 
+  belongs_to :cohort
   belongs_to :school, class_name: "Location", optional: true
 
   has_many :consents
@@ -52,7 +56,6 @@ class Patient < ApplicationRecord
   has_many :parents, through: :parent_relationships
   has_many :programmes, through: :sessions
 
-  has_and_belongs_to_many :cohorts
   has_and_belongs_to_many :cohort_imports
   has_and_belongs_to_many :immunisation_imports
 

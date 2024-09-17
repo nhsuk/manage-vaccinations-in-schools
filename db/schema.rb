@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_17_170959) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_17_172252) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -93,12 +93,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_17_170959) do
     t.datetime "updated_at", null: false
     t.index ["team_id", "reception_starting_year"], name: "index_cohorts_on_team_id_and_reception_starting_year", unique: true
     t.index ["team_id"], name: "index_cohorts_on_team_id"
-  end
-
-  create_table "cohorts_patients", id: false, force: :cascade do |t|
-    t.bigint "cohort_id", null: false
-    t.bigint "patient_id", null: false
-    t.index ["cohort_id", "patient_id"], name: "index_cohorts_patients_on_cohort_id_and_patient_id", unique: true
   end
 
   create_table "consent_forms", force: :cascade do |t|
@@ -435,6 +429,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_17_170959) do
     t.boolean "home_educated"
     t.jsonb "pending_changes", default: {}, null: false
     t.datetime "recorded_at"
+    t.bigint "cohort_id", null: false
+    t.index ["cohort_id"], name: "index_patients_on_cohort_id"
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
     t.index ["school_id"], name: "index_patients_on_school_id"
   end
@@ -587,8 +583,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_17_170959) do
   add_foreign_key "cohort_imports_patients", "cohort_imports"
   add_foreign_key "cohort_imports_patients", "patients"
   add_foreign_key "cohorts", "teams"
-  add_foreign_key "cohorts_patients", "cohorts"
-  add_foreign_key "cohorts_patients", "patients"
   add_foreign_key "consent_forms", "consents"
   add_foreign_key "consent_forms", "sessions"
   add_foreign_key "consents", "parents"
@@ -618,6 +612,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_17_170959) do
   add_foreign_key "parents_patients", "parents"
   add_foreign_key "parents_patients", "patients"
   add_foreign_key "patient_sessions", "users", column: "created_by_user_id"
+  add_foreign_key "patients", "cohorts"
   add_foreign_key "patients", "locations", column: "school_id"
   add_foreign_key "programmes", "teams"
   add_foreign_key "triage", "patient_sessions"
