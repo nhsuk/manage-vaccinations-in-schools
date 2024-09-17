@@ -20,7 +20,7 @@ class ProgrammesController < ApplicationController
   end
 
   def patients
-    @patients = @programme.patients.active
+    @patients = @programme.patients.recorded
   end
 
   def sessions
