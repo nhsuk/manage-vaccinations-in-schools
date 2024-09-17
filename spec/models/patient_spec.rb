@@ -7,16 +7,16 @@
 #  id                       :bigint           not null, primary key
 #  address_line_1           :string
 #  address_line_2           :string
-#  address_postcode         :string
+#  address_postcode         :string           not null
 #  address_town             :string
 #  common_name              :string
 #  consent_reminder_sent_at :datetime
 #  consent_request_sent_at  :datetime
-#  date_of_birth            :date
-#  first_name               :string
+#  date_of_birth            :date             not null
+#  first_name               :string           not null
 #  gender_code              :integer          default("not_known"), not null
 #  home_educated            :boolean
-#  last_name                :string
+#  last_name                :string           not null
 #  nhs_number               :string
 #  pending_changes          :jsonb            not null
 #  created_at               :datetime         not null

@@ -9,7 +9,14 @@ describe PendingChangesConcern do
     end
   end
 
-  let(:model) { model_class.create(first_name: "John", last_name: "Doe") }
+  let(:model) do
+    model_class.create(
+      first_name: "John",
+      last_name: "Doe",
+      date_of_birth: Time.zone.now,
+      address_postcode: ""
+    )
+  end
 
   describe "#stage_changes" do
     it "stages new changes in pending_changes" do
