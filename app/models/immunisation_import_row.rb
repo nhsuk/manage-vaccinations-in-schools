@@ -272,6 +272,16 @@ class ImmunisationImportRow
     administered ? (session_date.in_time_zone + 12.hours) : nil
   end
 
+  def cohort
+    return unless valid?
+
+    @cohort ||=
+      Cohort.find_or_create_by_date_of_birth!(
+        patient_date_of_birth,
+        team: @programme.team
+      )
+  end
+
   def location
     return unless valid?
 
@@ -374,6 +384,7 @@ class ImmunisationImportRow
   def patient_attributes
     {
       address_postcode: patient_postcode,
+      cohort:,
       date_of_birth: patient_date_of_birth,
       first_name: patient_first_name,
       gender_code: patient_gender_code,
@@ -385,7 +396,8 @@ class ImmunisationImportRow
   end
 
   def staged_patient_attributes
-    patient_attributes.except(:school).merge(
+    patient_attributes.except(:cohort, :school).merge(
+      cohort_id: patient_attributes[:cohort]&.id,
       school_id: patient_attributes[:school]&.id
     )
   end

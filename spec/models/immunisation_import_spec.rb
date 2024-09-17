@@ -259,11 +259,11 @@ describe ImmunisationImport, type: :model do
       it "identifies potential changes in the patient record" do
         expect { process! }.not_to change(Patient, :count)
 
-        existing_patient.reload
-        expect(existing_patient.pending_changes).to eq(
+        expect(existing_patient.reload.pending_changes).to eq(
+          "address_postcode" => "LE3 2DB",
+          "cohort_id" => programme.team.cohorts.first.id,
           "date_of_birth" => "2012-09-13",
           "gender_code" => "female",
-          "address_postcode" => "LE3 2DB",
           "school_id" => Location.find_by(urn: "110158").id
         )
       end
