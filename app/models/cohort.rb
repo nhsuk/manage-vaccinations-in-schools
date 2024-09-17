@@ -23,4 +23,17 @@ class Cohort < ApplicationRecord
   belongs_to :team
 
   has_and_belongs_to_many :patients
+
+  def year_group
+    today = Time.zone.today
+
+    academic_year =
+      if today.month >= 9
+        today.year
+      else
+        today.year - 1
+      end
+
+    academic_year - reception_starting_year
+  end
 end
