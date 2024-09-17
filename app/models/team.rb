@@ -21,6 +21,8 @@
 #
 class Team < ApplicationRecord
   has_many :programmes
+  has_many :cohort_imports
+
   has_and_belongs_to_many :users
 
   validates :email, presence: true, notify_safe_email: true

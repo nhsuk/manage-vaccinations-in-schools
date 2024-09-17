@@ -25,8 +25,8 @@ class ImmunisationImportsController < ApplicationController
   def create
     @immunisation_import =
       ImmunisationImport.new(
-        uploaded_by: current_user,
         programme: @programme,
+        uploaded_by: current_user,
         **immunisation_import_params
       )
 

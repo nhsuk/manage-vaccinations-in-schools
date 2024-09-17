@@ -15,18 +15,22 @@
 #  recorded_at                  :datetime
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
+#  team_id                      :bigint           not null
 #  uploaded_by_user_id          :bigint           not null
 #
 # Indexes
 #
+#  index_cohort_imports_on_team_id              (team_id)
 #  index_cohort_imports_on_uploaded_by_user_id  (uploaded_by_user_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (team_id => teams.id)
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 FactoryBot.define do
   factory :cohort_import do
+    team
     uploaded_by
 
     csv_data { "my,csv\n" }

@@ -11,7 +11,11 @@ class CohortImportsController < ApplicationController
 
   def create
     @cohort_import =
-      CohortImport.new(uploaded_by: current_user, **cohort_import_params)
+      CohortImport.new(
+        team: @programme.team,
+        uploaded_by: current_user,
+        **cohort_import_params
+      )
 
     @cohort_import.load_data!
     if @cohort_import.invalid?
@@ -52,8 +56,7 @@ class CohortImportsController < ApplicationController
   end
 
   def set_cohort_import
-    # TODO: @programme.cohort_imports.find
-    @cohort_import = CohortImport.find(params[:id])
+    @cohort_import = @programme.team.cohort_imports.find(params[:id])
   end
 
   def set_patients
