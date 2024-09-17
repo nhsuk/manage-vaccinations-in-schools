@@ -27,6 +27,24 @@ describe CohortImportRow do
 
   before { create(:location, :school, urn: "123456") }
 
+  describe "#to_cohort" do
+    subject(:cohort) { cohort_import_row.to_cohort }
+
+    let(:data) { valid_data.merge("CHILD_DATE_OF_BIRTH" => date_of_birth) }
+
+    context "with a date of birth before September" do
+      let(:date_of_birth) { "2000-08-31" }
+
+      it { should have_attributes(team:, reception_starting_year: 2004) }
+    end
+
+    context "with a date of birth after September" do
+      let(:date_of_birth) { "2000-09-01" }
+
+      it { should have_attributes(team:, reception_starting_year: 2005) }
+    end
+  end
+
   describe "#to_parent" do
     subject(:parent) { cohort_import_row.to_parent }
 
