@@ -23,7 +23,31 @@ describe Cohort do
   subject(:cohort) { build(:cohort) }
 
   describe "validations" do
-    it { should be_valid }
+    it do
+      expect(cohort).to validate_comparison_of(
+        :reception_starting_year
+      ).is_greater_than_or_equal_to(1990)
+    end
+  end
+
+  describe "#find_or_create_by_date_of_birth!" do
+    subject(:find_or_create_by_date_of_birth!) do
+      described_class.find_or_create_by_date_of_birth!(date_of_birth, team:)
+    end
+
+    let(:team) { build(:team) }
+
+    context "with a date of birth before September" do
+      let(:date_of_birth) { Date.new(2000, 8, 31) }
+
+      it { should have_attributes(team:, reception_starting_year: 2004) }
+    end
+
+    context "with a date of birth after September" do
+      let(:date_of_birth) { Date.new(2000, 9, 1) }
+
+      it { should have_attributes(team:, reception_starting_year: 2005) }
+    end
   end
 
   describe "#year_group" do

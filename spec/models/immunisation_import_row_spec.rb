@@ -273,7 +273,12 @@ describe ImmunisationImportRow, type: :model do
       let(:data) { valid_data }
 
       let(:patient) do
-        create(:patient, first_name:, last_name:, date_of_birth:)
+        create(
+          :patient,
+          first_name:,
+          last_name:,
+          date_of_birth: Date.parse(date_of_birth)
+        )
       end
 
       it { should eq(patient) }
@@ -293,7 +298,12 @@ describe ImmunisationImportRow, type: :model do
       let(:data) { valid_data }
 
       let(:patient) do
-        create(:patient, first_name:, date_of_birth:, address_postcode:)
+        create(
+          :patient,
+          first_name:,
+          date_of_birth: Date.parse(date_of_birth),
+          address_postcode:
+        )
       end
 
       it { should eq(patient) }
@@ -303,7 +313,12 @@ describe ImmunisationImportRow, type: :model do
       let(:data) { valid_data }
 
       let(:patient) do
-        create(:patient, last_name:, date_of_birth:, address_postcode:)
+        create(
+          :patient,
+          last_name:,
+          date_of_birth: Date.parse(date_of_birth),
+          address_postcode:
+        )
       end
 
       it { should eq(patient) }

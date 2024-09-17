@@ -15,13 +15,13 @@ describe PatientSortingConcern do
   end
 
   let(:alex) do
-    create(:patient, first_name: "Alex", date_of_birth: "2010-01-01")
+    create(:patient, first_name: "Alex", date_of_birth: Date.new(2010, 1, 1))
   end
   let(:blair) do
-    create(:patient, first_name: "Blair", date_of_birth: "2010-01-02")
+    create(:patient, first_name: "Blair", date_of_birth: Date.new(2010, 1, 2))
   end
   let(:casey) do
-    create(:patient, first_name: "Casey", date_of_birth: "2010-01-03")
+    create(:patient, first_name: "Casey", date_of_birth: Date.new(2010, 1, 3))
   end
 
   let(:session) { create(:session) }

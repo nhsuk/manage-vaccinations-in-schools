@@ -24,6 +24,21 @@ class Cohort < ApplicationRecord
 
   has_many :patients
 
+  validates :reception_starting_year,
+            comparison: {
+              greater_than_or_equal_to: 1990
+            }
+
+  def self.find_or_create_by_date_of_birth!(date_of_birth, team:)
+    # Children normally start school the September after their 4th birthday.
+    # https://www.gov.uk/schools-admissions/school-starting-age
+
+    reception_starting_year =
+      date_of_birth.year + (date_of_birth.month >= 9 ? 5 : 4)
+
+    Cohort.find_or_create_by!(team:, reception_starting_year:)
+  end
+
   def year_group
     today = Time.zone.today
 

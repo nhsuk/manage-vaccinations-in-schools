@@ -61,7 +61,7 @@ describe AppCompareConsentFormAndPatientComponent, type: :component do
         :patient,
         first_name: "Jane", # different
         last_name: consent_form.last_name,
-        date_of_birth: "2000-01-02", #different
+        date_of_birth: Date.new(2000, 1, 2), # different
         address_line_1: "2 Main Street", # different
         address_line_2: consent_form.address_line_2,
         address_town: consent_form.address_town,
