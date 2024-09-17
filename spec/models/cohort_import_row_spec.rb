@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
-describe CohortImportRow, type: :model do
-  subject(:cohort_import_row) { described_class.new(data:) }
+describe CohortImportRow do
+  subject(:cohort_import_row) { described_class.new(data:, team:) }
+
+  let(:team) { create(:team) }
 
   let(:valid_data) do
     {

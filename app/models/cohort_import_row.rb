@@ -21,8 +21,9 @@ class CohortImportRow
 
   validate :zero_or_one_existing_patient
 
-  def initialize(data:)
+  def initialize(data:, team:)
     @data = data
+    @team = team
   end
 
   def to_parent
