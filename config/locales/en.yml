@@ -452,6 +452,9 @@ en:
               inclusion: Choose a reason
             site:
               blank: Choose a site
+  cohorts:
+    index:
+      title: Cohorts
   consent_forms:
     confirm:
       consent_card_title:
@@ -598,8 +601,6 @@ en:
   programmes:
     index:
       title: Vaccination programmes
-    patients:
-      title: Cohort
   service:
     email: england.mavis@nhs.net
   sessions:

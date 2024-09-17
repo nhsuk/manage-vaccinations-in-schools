@@ -56,10 +56,11 @@ Rails.application.routes.draw do
   get "/csrf", to: "csrf#new"
 
   resources :programmes, only: %i[index show] do
-    member do
-      get "patients"
-      get "sessions"
-    end
+    get "sessions", on: :member
+
+    resources :cohorts, only: :index
+
+    resources :cohort_imports, path: "cohort-imports", except: %i[index destroy]
 
     resources :immunisation_imports,
               path: "immunisation-imports",
@@ -70,8 +71,6 @@ Rails.application.routes.draw do
     end
 
     resources :import_issues, path: "import-issues", only: %i[index show update]
-
-    resources :cohort_imports, path: "cohort-imports", except: %i[index destroy]
 
     resources :vaccination_records,
               path: "vaccination-records",
