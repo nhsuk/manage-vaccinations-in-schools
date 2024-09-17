@@ -73,7 +73,6 @@ class CohortImport < ApplicationRecord
   end
 
   def process_row(row)
-    cohort = row.to_cohort
     parent = row.to_parent
     patient = row.to_patient
     parent_relationship = row.to_parent_relationship(parent, patient)
@@ -91,12 +90,9 @@ class CohortImport < ApplicationRecord
         end
       )
 
-    cohort.save!
     parent.save!
     patient.save!
     parent_relationship.save!
-
-    cohort.patients << patient unless cohort.patients.include?(patient)
 
     link_records(parent, patient, parent_relationship)
 

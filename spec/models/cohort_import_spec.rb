@@ -196,7 +196,7 @@ describe CohortImport do
     end
 
     it "ignores and counts duplicate records" do
-      build(:cohort_import, csv:).record!
+      build(:cohort_import, csv:, team:).record!
       csv.rewind
 
       process!
