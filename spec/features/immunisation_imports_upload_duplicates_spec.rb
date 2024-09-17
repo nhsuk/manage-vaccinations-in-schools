@@ -75,6 +75,17 @@ describe "Immunisation imports duplicates" do
         address_postcode: "LE1 2DA",
         school: @location
       )
+    @third_patient =
+      create(
+        :patient,
+        first_name: "Joanna",
+        last_name: "Hamilton",
+        nhs_number: "2675725722", # Fourth row of valid_hpv.csv
+        date_of_birth: Date.new(2012, 9, 14),
+        gender_code: :female,
+        address_postcode: "LE8 2DA",
+        school: @location
+      )
     @patient_session =
       create(
         :patient_session,
@@ -124,7 +135,7 @@ describe "Immunisation imports duplicates" do
   end
 
   def then_i_should_see_the_edit_page_with_duplicate_records
-    expect(page).to have_content("2 duplicate records need review")
+    expect(page).to have_content("3 duplicate records need review")
   end
 
   def when_i_choose_to_keep_the_duplicate_record
