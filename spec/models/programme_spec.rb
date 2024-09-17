@@ -89,7 +89,7 @@ describe Programme, type: :model do
     context "with a Flu programme" do
       let(:programme) { build(:programme, :flu) }
 
-      it { should eq([4, 5, 6, 7, 8, 9, 10, 11]) }
+      it { should eq([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]) }
     end
 
     context "with an HPV programme" do
