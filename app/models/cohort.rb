@@ -29,6 +29,16 @@ class Cohort < ApplicationRecord
               greater_than_or_equal_to: 1990
             }
 
+  scope :for_year_groups,
+        ->(year_groups) do
+          academic_year = Time.zone.today.academic_year
+
+          reception_starting_years =
+            year_groups.map { |year_group| academic_year - year_group }
+
+          where(reception_starting_year: reception_starting_years)
+        end
+
   def self.find_or_create_by_date_of_birth!(date_of_birth, team:)
     # Children normally start school the September after their 4th birthday.
     # https://www.gov.uk/schools-admissions/school-starting-age
