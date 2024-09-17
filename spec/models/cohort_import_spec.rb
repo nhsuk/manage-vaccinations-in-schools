@@ -29,8 +29,9 @@
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 describe CohortImport do
-  subject(:cohort_import) { create(:cohort_import, csv:) }
+  subject(:cohort_import) { create(:cohort_import, csv:, team:) }
 
+  let(:team) { create(:team) }
   let(:file) { "valid_cohort.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_import/#{file}") }
   # Ensure location URN matches the URN in our fixture files
@@ -127,6 +128,12 @@ describe CohortImport do
         .to change(cohort_import, :processed_at).from(nil)
         .and change(cohort_import.patients, :count).by(2)
         .and change(cohort_import.parents, :count).by(2)
+        .and change(team.cohorts, :count).by(1)
+
+      expect(Cohort.first).to have_attributes(
+        patients: Patient.all,
+        reception_starting_year: 2014
+      )
 
       expect(Patient.first).to have_attributes(
         nhs_number: "1234567890",
@@ -175,6 +182,7 @@ describe CohortImport do
         .to not_change(cohort_import, :processed_at)
         .and not_change(Patient, :count)
         .and not_change(Parent, :count)
+        .and not_change(Cohort, :count)
     end
 
     it "stores statistics on the import" do
