@@ -19,6 +19,7 @@
 #  last_name                :string           not null
 #  nhs_number               :string
 #  pending_changes          :jsonb            not null
+#  recorded_at              :datetime
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
 #  school_id                :bigint

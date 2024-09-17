@@ -19,6 +19,7 @@
 #  last_name                :string           not null
 #  nhs_number               :string
 #  pending_changes          :jsonb            not null
+#  recorded_at              :datetime
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
 #  school_id                :bigint
@@ -42,6 +43,8 @@ FactoryBot.define do
       parents { [create(:parent, :recorded, last_name:)] }
     end
 
+    recorded_at { Time.zone.now }
+
     nhs_number { Faker::NationalHealthService.test_number.gsub(/\s+/, "") }
 
     first_name { Faker::Name.first_name }
@@ -62,6 +65,10 @@ FactoryBot.define do
       evaluator.parents.each do |parent|
         create(:parent_relationship, parent:, patient:)
       end
+    end
+
+    trait :draft do
+      recorded_at { nil }
     end
 
     trait :home_educated do
