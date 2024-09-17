@@ -20,8 +20,9 @@
 #  index_teams_on_ods_code  (ods_code) UNIQUE
 #
 class Team < ApplicationRecord
-  has_many :programmes
   has_many :cohort_imports
+  has_many :cohorts
+  has_many :programmes
 
   has_and_belongs_to_many :users
 
