@@ -82,4 +82,20 @@ describe Programme, type: :model do
       end
     end
   end
+
+  describe "#year_groups" do
+    subject(:year_groups) { programme.year_groups }
+
+    context "with a Flu programme" do
+      let(:programme) { build(:programme, :flu) }
+
+      it { should eq([4, 5, 6, 7, 8, 9, 10, 11]) }
+    end
+
+    context "with an HPV programme" do
+      let(:programme) { build(:programme, :hpv) }
+
+      it { should eq([8, 9, 10, 11]) }
+    end
+  end
 end
