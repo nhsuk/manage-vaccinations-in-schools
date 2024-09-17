@@ -50,6 +50,7 @@ class Patient < ApplicationRecord
   has_many :parents, through: :parent_relationships
   has_many :programmes, through: :sessions
 
+  has_and_belongs_to_many :cohorts
   has_and_belongs_to_many :cohort_imports
   has_and_belongs_to_many :immunisation_imports
 
