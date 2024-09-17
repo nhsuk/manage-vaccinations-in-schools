@@ -108,7 +108,7 @@ class Programme < ApplicationRecord
     self.vaccines = Vaccine.where(id: ids)
   end
 
-  YEAR_GROUPS_BY_TYPE = { "flu" => (4..11).to_a, "hpv" => (8..11).to_a }.freeze
+  YEAR_GROUPS_BY_TYPE = { "flu" => (0..11).to_a, "hpv" => (8..11).to_a }.freeze
 
   def year_groups
     YEAR_GROUPS_BY_TYPE.fetch(type)
