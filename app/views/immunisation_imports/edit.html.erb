@@ -41,8 +41,7 @@
       @immunisation_import
     ), method: :put %>
 
-<% if @vaccination_records_with_pending_changes.present? &&
-      Flipper.enabled?(:import_review) %>
+<% if @vaccination_records_with_pending_changes.present? %>
   <div class="nhsuk-table__panel-with-heading-tab">
     <h3 class="nhsuk-table__heading-tab">
       <%= pluralize(@vaccination_records_with_pending_changes.count,
