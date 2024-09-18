@@ -133,10 +133,7 @@ class Patient < ApplicationRecord
   end
 
   def year_group
-    first_school_year = date_of_birth.year + 5
-    first_school_year += 1 if date_of_birth.month >= 9
-    Time.zone.today.year - first_school_year +
-      (Time.zone.today.month >= 9 ? 1 : 0)
+    Time.zone.today.academic_year - (date_of_birth.academic_year + 5)
   end
 
   def address_fields

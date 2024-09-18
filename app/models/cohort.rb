@@ -33,22 +33,11 @@ class Cohort < ApplicationRecord
     # Children normally start school the September after their 4th birthday.
     # https://www.gov.uk/schools-admissions/school-starting-age
 
-    reception_starting_year =
-      date_of_birth.year + (date_of_birth.month >= 9 ? 5 : 4)
-
+    reception_starting_year = date_of_birth.academic_year + 5
     Cohort.find_or_create_by!(team:, reception_starting_year:)
   end
 
   def year_group
-    today = Time.zone.today
-
-    academic_year =
-      if today.month >= 9
-        today.year
-      else
-        today.year - 1
-      end
-
-    academic_year - reception_starting_year
+    Time.zone.today.academic_year - reception_starting_year
   end
 end

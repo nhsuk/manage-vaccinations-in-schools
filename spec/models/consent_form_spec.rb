@@ -643,7 +643,7 @@ describe ConsentForm do
           2,
           first_name: "John",
           last_name: "Doe",
-          date_of_birth: 10.years.ago,
+          date_of_birth: 10.years.ago.to_date,
           sessions: [session]
         )
       end

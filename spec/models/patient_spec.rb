@@ -37,7 +37,7 @@
 #  fk_rails_...  (school_id => locations.id)
 #
 
-describe Patient, type: :model do
+describe Patient do
   describe "validations" do
     context "when home educated" do
       subject(:patient) { build(:patient, :home_educated) }
