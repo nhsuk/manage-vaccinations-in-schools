@@ -62,18 +62,6 @@ class Programme < ApplicationRecord
               less_than_or_equal_to: Time.zone.today.year + 5
             }
 
-  validates :start_date,
-            comparison: {
-              greater_than_or_equal_to: :first_possible_start_date,
-              less_than: :end_date
-            }
-
-  validates :end_date,
-            comparison: {
-              greater_than: :start_date,
-              less_than_or_equal_to: :last_possible_end_date
-            }
-
   validates :vaccines, presence: true
 
   validate :vaccines_match_type
@@ -97,14 +85,6 @@ class Programme < ApplicationRecord
   end
 
   private
-
-  def first_possible_start_date
-    Date.new(academic_year || 2000, 1, 1)
-  end
-
-  def last_possible_end_date
-    Date.new((academic_year || 2000) + 1, 12, 31)
-  end
 
   def vaccines_match_type
     vaccine_types = vaccines.map(&:type).uniq

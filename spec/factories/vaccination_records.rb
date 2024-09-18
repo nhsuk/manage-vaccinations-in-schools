@@ -55,12 +55,7 @@ FactoryBot.define do
 
     performed_by { association :user }
 
-    administered_at do
-      Faker::Time.between(
-        from: patient_session.session.programme.start_date,
-        to: patient_session.session.programme.end_date
-      )
-    end
+    administered_at { Time.zone.now }
 
     dose_sequence { 1 }
     uuid { SecureRandom.uuid }

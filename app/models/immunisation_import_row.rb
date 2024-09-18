@@ -47,8 +47,8 @@ class ImmunisationImportRow
 
   validates :session_date,
             comparison: {
-              greater_than_or_equal_to: :programme_start_date,
-              less_than_or_equal_to: :programme_end_date_or_today
+              greater_than_or_equal_to: Date.new(2021, 9, 1),
+              less_than_or_equal_to: -> { Date.current }
             }
 
   CARE_SETTING_SCHOOL = 1
@@ -340,14 +340,6 @@ class ImmunisationImportRow
 
   def maximum_dose_sequence
     vaccine.maximum_dose_sequence
-  end
-
-  def programme_start_date
-    @programme.start_date
-  end
-
-  def programme_end_date_or_today
-    [@programme.end_date, Date.current].min
   end
 
   def requires_care_setting?
