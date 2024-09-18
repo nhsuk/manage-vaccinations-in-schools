@@ -65,13 +65,15 @@ describe PendingChangesConcern do
   end
 
   describe "#with_pending_changes" do
-    it "returns the model with pending changes applied" do
+    it "returns model with pending changes applied, does not modify original" do
       model.stage_changes(first_name: "Jane")
       expect(model.first_name).to eq("John")
 
       changed_model = model.with_pending_changes
       expect(changed_model.first_name).to eq("Jane")
       expect(changed_model.last_name).to eq("Doe")
+
+      expect(model.first_name).to eq("John")
     end
   end
 end

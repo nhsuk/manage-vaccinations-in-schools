@@ -21,7 +21,8 @@ module PendingChangesConcern
   def with_pending_changes
     return self if pending_changes.blank?
 
-    dup.tap do |record|
+    # Use `becomes` instead of `dup` or `clone` to preserve loaded associations.
+    becomes(self.class).tap do |record|
       record.clear_changes_information
       pending_changes.each do |attr, value|
         record.public_send("#{attr}=", value)
