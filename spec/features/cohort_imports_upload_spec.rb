@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Cohort imports" do
+  around { |example| travel_to(Date.new(2023, 5, 20)) { example.run } }
+
   scenario "User uploads a file" do
     given_the_app_is_setup
     and_an_hpv_programme_is_underway
@@ -28,6 +30,12 @@ describe "Cohort imports" do
     when_i_click_on_upload_records
     then_i_should_see_the_upload
     and_i_should_see_the_patients
+
+    when_i_visit_the_cohort_page_for_the_hpv_programme
+    then_i_should_see_the_cohorts
+
+    when_i_click_on_the_cohort
+    then_i_should_see_the_children
 
     when_i_visit_the_cohort_page_for_the_hpv_programme
     and_i_start_adding_children_to_the_cohort
@@ -87,6 +95,23 @@ describe "Cohort imports" do
     expect(page).to have_content("Uploaded on")
     expect(page).to have_content("Uploaded byTest User")
     expect(page).to have_content("ProgrammeHPV")
+  end
+
+  def then_i_should_see_the_cohorts
+    expect(page).to have_content("Year 8")
+  end
+
+  def when_i_click_on_the_cohort
+    click_on "Year 8"
+  end
+
+  def then_i_should_see_the_children
+    expect(page).to have_content("2 children")
+    expect(page).to have_content("Full nameNHS numberDate of birthPostcode")
+    expect(page).to have_content("Full name Jimmy Smith")
+    expect(page).to have_content(/NHS number.*123.*456.*7890/)
+    expect(page).to have_content("Date of birth 1 January 2010")
+    expect(page).to have_content("Postcode SW1A 1AA")
   end
 
   def when_i_continue_without_uploading_a_file

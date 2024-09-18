@@ -58,7 +58,7 @@ Rails.application.routes.draw do
   resources :programmes, only: %i[index show] do
     get "sessions", on: :member
 
-    resources :cohorts, only: :index
+    resources :cohorts, only: %i[index show]
 
     resources :cohort_imports, path: "cohort-imports", except: %i[index destroy]
 
