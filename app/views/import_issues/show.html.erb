@@ -1,0 +1,84 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: programme_import_issues_path(@programme),
+        name: @programme.name,
+      ) %>
+<% end %>
+
+<% title = "Review duplicate vaccination record" %>
+
+<span class="nhsuk-caption-l"><%= @vaccination_record.patient.full_name %></span>
+<%= h1 title, page_title: "#{@vaccination_record.patient.full_name} – #{title}" %>
+
+<div class="nhsuk-warning-callout">
+  <h3 class="nhsuk-warning-callout__label">
+    <span class="nhsuk-u-visually-hidden">Important: </span>
+    This record needs reviewing
+  </h3>
+
+  <p>
+    A field in a duplicate record does not match that in a previously uploaded
+    record
+  </p>
+</div>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-half">
+    <%= render AppCardComponent.new(colour: "blue") do |c| %>
+      <% c.with_heading { "Duplicate record" } %>
+      <h3 class="nhsuk-heading-s">Duplicate child record</h3>
+      <%= render AppPatientSummaryComponent.new(
+            patient: @vaccination_record.patient.with_pending_changes,
+          ) %>
+      <h3 class="nhsuk-heading-s">Duplicate vaccination record</h3>
+      <%= render AppVaccinationRecordDetailsComponent.new(
+            @vaccination_record.with_pending_changes
+          ) %>
+    <% end %>
+  </div>
+
+  <div class="nhsuk-grid-column-one-half">
+    <%= render AppCardComponent.new(colour: "blue") do |c| %>
+      <% c.with_heading { "Previously uploaded record" } %>
+      <h3 class="nhsuk-heading-s">Previously uploaded child record</h3>
+      <%= render AppPatientSummaryComponent.new(
+            patient: @vaccination_record.patient,
+          ) %>
+      <h3 class="nhsuk-heading-s">Previously uploaded vaccination record</h3>
+      <%= render AppVaccinationRecordDetailsComponent.new(
+            @vaccination_record
+          ) %>
+    <% end %>
+  </div>
+</div>
+
+<%= form_with(
+      model: @form,
+      url: programme_import_issue_path(@programme,
+                                       @vaccination_record),
+      method: :put,
+      class: "nhsuk-u-width-one-half",
+    ) do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
+  <%= f.govuk_radio_buttons_fieldset(
+        :apply_changes,
+        legend: { text: "Which record do you want to keep?" },
+      ) do %>
+    <%= f.govuk_radio_button(
+          :apply_changes, "apply",
+          label: { text: "Use duplicate record" },
+          hint: { text: "The duplicate record will replace the previously " \
+          "uploaded record." },
+          link_errors: true,
+        ) %>
+    <%= f.govuk_radio_button(
+          :apply_changes, "discard",
+          label: { text: "Keep previously uploaded record" },
+          hint: { text: "The previously uploaded record will be kept and the " \
+          "duplicate record will be discarded." },
+        ) %>
+  <% end %>
+
+  <%= f.govuk_submit "Resolve duplicate" %>
+<% end %>
