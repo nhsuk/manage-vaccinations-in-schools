@@ -353,14 +353,6 @@ en:
               too_long: Enter details that are less than 300 characters long
         programme:
           attributes:
-            academic_year:
-              blank: Choose an academic year
-            end_date:
-              blank: Enter an end date
-            name:
-              blank: Enter a name
-            start_date:
-              blank: Enter a start date
             type:
               blank: Choose a programme type
               inclusion: Choose a programme type
