@@ -25,7 +25,6 @@
 #
 class Programme < ApplicationRecord
   include Draftable
-  include WizardStepConcern
 
   self.inheritance_column = nil
 
@@ -64,50 +63,38 @@ class Programme < ApplicationRecord
 
   normalizes :name, with: ->(name) { name&.strip }
 
-  on_wizard_step :details do
-    validates :name,
-              presence: true,
-              uniqueness: {
-                scope: %i[type academic_year team_id],
-                allow_nil: true
-              }
+  validates :name,
+            presence: true,
+            uniqueness: {
+              scope: %i[type academic_year team_id],
+              allow_nil: true
+            }
 
-    validates :type, presence: true
+  validates :type, presence: true
 
-    validates :academic_year,
-              comparison: {
-                greater_than_or_equal_to: 2000,
-                less_than_or_equal_to: Time.zone.today.year + 5
-              }
-  end
+  validates :academic_year,
+            comparison: {
+              greater_than_or_equal_to: 2000,
+              less_than_or_equal_to: Time.zone.today.year + 5
+            }
 
-  on_wizard_step :dates do
-    validates :start_date,
-              comparison: {
-                greater_than_or_equal_to: :first_possible_start_date,
-                less_than: :end_date
-              }
+  validates :start_date,
+            comparison: {
+              greater_than_or_equal_to: :first_possible_start_date,
+              less_than: :end_date
+            }
 
-    validates :end_date,
-              comparison: {
-                greater_than: :start_date,
-                less_than_or_equal_to: :last_possible_end_date
-              }
-  end
+  validates :end_date,
+            comparison: {
+              greater_than: :start_date,
+              less_than_or_equal_to: :last_possible_end_date
+            }
 
-  on_wizard_step :vaccines do
-    validates :vaccines, presence: true
-  end
+  validates :vaccines, presence: true
 
-  on_wizard_step :confirm do
-    validates :active, presence: true
-  end
+  validates :active, presence: true
 
   validate :vaccines_match_type
-
-  def wizard_steps
-    [:details, :dates, (:vaccines if active), :confirm].compact
-  end
 
   def draft?
     !active

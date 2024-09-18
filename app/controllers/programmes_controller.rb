@@ -1,19 +1,12 @@
 # frozen_string_literal: true
 
 class ProgrammesController < ApplicationController
-  before_action :set_programme, except: %i[index create]
-
-  skip_after_action :verify_policy_scoped, only: :create
+  before_action :set_programme, except: :index
 
   layout "full"
 
   def index
     @programmes = programmes
-  end
-
-  def create
-    programme = Programme.create!(team: current_user.team)
-    redirect_to programme_edit_path(programme, Wicked::FIRST_STEP)
   end
 
   def show
