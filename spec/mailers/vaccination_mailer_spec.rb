@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe VaccinationMailer do
-  let(:programme) { create(:programme, :active) }
+  let(:programme) { create(:programme) }
   let(:session) { create(:session, programme:) }
   let(:consent) { patient.consents.last }
   let(:parent) { consent.parent }

@@ -44,7 +44,6 @@ describe VaccinationRecord, type: :model do
   let(:programme) do
     create(
       :programme,
-      :active,
       academic_year: 2020,
       start_date: Date.new(2020, 1, 1),
       end_date: Date.new(2020, 12, 31)

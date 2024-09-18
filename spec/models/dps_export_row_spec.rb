@@ -8,7 +8,7 @@ describe DPSExportRow do
   let(:team) { create(:team) }
   let(:vaccine) { create(:vaccine, :gardasil_9, dose: 0.5) }
   let(:programme) do
-    create(:programme, :active, type: vaccine.type, team:, vaccines: [vaccine])
+    create(:programme, type: vaccine.type, team:, vaccines: [vaccine])
   end
   let(:location) { create(:location, :school) }
   let(:school) { create(:location, :school) }

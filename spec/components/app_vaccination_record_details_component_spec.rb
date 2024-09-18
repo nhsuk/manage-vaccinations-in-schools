@@ -10,7 +10,6 @@ describe AppVaccinationRecordDetailsComponent, type: :component do
   let(:programme) do
     create(
       :programme,
-      :active,
       academic_year: 2024,
       type: vaccine&.type || :hpv,
       vaccines: [vaccine].compact

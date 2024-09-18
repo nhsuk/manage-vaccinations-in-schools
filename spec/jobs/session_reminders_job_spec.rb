@@ -5,7 +5,7 @@ describe SessionRemindersJob do
 
   before { Flipper.enable(:scheduled_emails) }
 
-  let(:programme) { create(:programme, :active) }
+  let(:programme) { create(:programme) }
   let(:parents) { create_list(:parent, 2, :recorded) }
   let(:patient) { create(:patient, parents:) }
 

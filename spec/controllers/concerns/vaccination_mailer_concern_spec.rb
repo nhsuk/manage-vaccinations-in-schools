@@ -9,7 +9,7 @@ describe VaccinationMailerConcern do
     end
 
     let(:route) { "website" }
-    let(:programme) { create(:programme, :active) }
+    let(:programme) { create(:programme) }
     let(:session) { create(:session, programme:) }
     let(:consent) { create(:consent, :given, :recorded, programme:, route:) }
     let(:patient) { create(:patient, consents: [consent]) }

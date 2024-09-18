@@ -25,7 +25,7 @@
 #
 FactoryBot.define do
   factory :patient_session do
-    transient { programme { association :programme, :active } }
+    transient { programme { association :programme } }
 
     session { association :session, programme: }
     patient

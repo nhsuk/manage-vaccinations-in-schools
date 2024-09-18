@@ -15,7 +15,7 @@ describe MESHTrackDPSExportsJob do
 
   let(:response_status) { "acknowledged" }
 
-  let(:programme) { create :programme, :active }
+  let(:programme) { create :programme }
   let!(:dps_export) { create :dps_export, :accepted, programme: }
 
   it "only calls MESH.track_message for dps_exports that have accepted status" do

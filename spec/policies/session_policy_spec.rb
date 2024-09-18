@@ -26,7 +26,7 @@ describe SessionPolicy do
     let(:team) { create :team }
     let(:user) { create :user, teams: [team] }
     let(:location) { create(:location, :school) }
-    let(:programme) { create :programme, :active, team: }
+    let(:programme) { create :programme, team: }
     let(:draft_session) { create :session, :draft, location:, programme: }
     let(:session) { create :session, location:, programme: }
 
