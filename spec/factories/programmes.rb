@@ -6,7 +6,6 @@
 #
 #  id            :bigint           not null, primary key
 #  academic_year :integer
-#  active        :boolean          default(FALSE), not null
 #  end_date      :date
 #  name          :string
 #  start_date    :date
@@ -28,8 +27,6 @@ FactoryBot.define do
     transient { batch_count { 1 } }
 
     team
-
-    active { true }
 
     name { "Programme" }
     type { %w[flu hpv].sample }

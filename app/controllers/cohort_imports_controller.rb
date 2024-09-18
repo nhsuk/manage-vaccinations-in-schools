@@ -52,7 +52,7 @@ class CohortImportsController < ApplicationController
   private
 
   def set_programme
-    @programme = policy_scope(Programme).active.find(params[:programme_id])
+    @programme = policy_scope(Programme).find(params[:programme_id])
   end
 
   def set_cohort_import

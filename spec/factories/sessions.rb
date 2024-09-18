@@ -32,11 +32,7 @@ FactoryBot.define do
 
     time_of_day { %w[morning afternoon all_day].sample }
 
-    active { programme.active }
-
-    trait :active do
-      active { true }
-    end
+    active { true }
 
     trait :draft do
       active { false }

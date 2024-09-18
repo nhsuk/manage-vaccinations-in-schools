@@ -25,7 +25,7 @@ class ProgrammesController < ApplicationController
   private
 
   def programmes
-    @programmes ||= policy_scope(Programme).active
+    @programmes ||= policy_scope(Programme)
   end
 
   def set_programme

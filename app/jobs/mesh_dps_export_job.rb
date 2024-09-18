@@ -6,7 +6,7 @@ class MESHDPSExportJob < ApplicationJob
   def perform
     return unless Flipper.enabled? :mesh_jobs
 
-    Programme.active.find_each do |programme|
+    Programme.find_each do |programme|
       if programme.vaccination_records.recorded.administered.unexported.any?
         dps_export = DPSExport.create!(programme:)
         response =
