@@ -738,9 +738,33 @@ describe ConsentForm do
     expect(consent_form.health_answers).not_to be_empty
   end
 
-  it "removes the health questions when the parent refuses consent" do
+  it "removes the health questions when the parent refuses consent for flu" do
     consent_form =
-      create(:consent_form, :with_health_answers_no_branching, response: nil)
+      create(
+        :consent_form,
+        :with_health_answers_no_branching,
+        programme: create(:programme, :flu),
+        response: nil
+      )
+
+    consent_form.update!(
+      response: "refused",
+      reason: "personal_choice",
+      contact_injection: false
+    )
+    consent_form.reload
+
+    expect(consent_form.health_answers).to be_empty
+  end
+
+  it "removes the health questions when the parent refuses consent for HPV" do
+    consent_form =
+      create(
+        :consent_form,
+        :with_health_answers_no_branching,
+        programme: create(:programme, :hpv),
+        response: nil
+      )
 
     consent_form.update!(response: "refused", reason: "personal_choice")
     consent_form.reload

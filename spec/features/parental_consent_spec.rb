@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe "Parental consent" do
-  before { Flipper.enable(:parent_contact_method) }
-
   scenario "Consent form exactly matches the cohort" do
     given_an_hpv_programme_is_underway
     when_a_nurse_checks_consent_responses

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe "Parental consent" do
-  before { Flipper.enable(:parent_contact_method) }
-
   scenario "Authentication" do
     given_an_hpv_programme_is_underway
     when_i_go_to_the_consent_form
