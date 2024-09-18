@@ -54,15 +54,6 @@ class Programme < ApplicationRecord
 
   enum :type, { flu: "flu", hpv: "hpv" }, validate: { allow_nil: true }
 
-  normalizes :name, with: ->(name) { name&.strip }
-
-  validates :name,
-            presence: true,
-            uniqueness: {
-              scope: %i[type academic_year team_id],
-              allow_nil: true
-            }
-
   validates :type, presence: true
 
   validates :academic_year,
@@ -86,6 +77,10 @@ class Programme < ApplicationRecord
   validates :vaccines, presence: true
 
   validate :vaccines_match_type
+
+  def name
+    human_enum_name(:type)
+  end
 
   def vaccine_ids
     @vaccine_ids ||= vaccines.map(&:id)
