@@ -27,10 +27,10 @@ class Programme < ApplicationRecord
 
   has_and_belongs_to_many :vaccines
 
-  has_many :consents, dependent: :destroy
-  has_many :dps_exports, dependent: :destroy
-  has_many :immunisation_imports, dependent: :destroy
-  has_many :sessions, dependent: :destroy
+  has_many :consents
+  has_many :dps_exports
+  has_many :immunisation_imports
+  has_many :sessions
 
   has_many :batches, through: :vaccines
   has_many :cohort_imports, through: :team
