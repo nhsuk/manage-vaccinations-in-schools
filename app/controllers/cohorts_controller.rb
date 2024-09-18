@@ -6,11 +6,20 @@ class CohortsController < ApplicationController
   layout "full"
 
   def index
-    @cohorts =
+    cohorts =
       policy_scope(Cohort)
+        .select("cohorts.*", "COUNT(patients.id) AS patient_count")
         .for_year_groups(@programme.year_groups)
-        .order(:reception_starting_year)
-        .includes(:recorded_patients)
+        .left_outer_joins(:patients)
+        .merge(Patient.recorded)
+        .group("cohorts.id")
+        .index_by(&:year_group)
+
+    @programme.year_groups.each do |year_group|
+      cohorts[year_group] ||= OpenStruct.new(year_group:, patient_count: 0)
+    end
+
+    @cohorts = cohorts.sort.map { _2 }
   end
 
   def show
