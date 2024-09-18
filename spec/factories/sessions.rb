@@ -22,7 +22,7 @@
 #
 FactoryBot.define do
   factory :session do
-    programme { association :programme, :active }
+    programme
     location { association :location, :school }
 
     date { Time.zone.today }

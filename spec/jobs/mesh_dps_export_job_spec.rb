@@ -61,7 +61,7 @@ describe MESHDPSExportJob, type: :job do # rubocop:disable RSpec/SpecFilePathFor
   end
 
   context "with a programme that has no vaccination records" do
-    before { create :programme, :active }
+    before { create :programme }
 
     it "does not do a DPS export" do
       described_class.perform_now

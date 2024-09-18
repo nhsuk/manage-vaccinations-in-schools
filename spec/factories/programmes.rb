@@ -29,20 +29,17 @@ FactoryBot.define do
 
     team
 
-    trait :active do
-      active { true }
+    active { true }
 
-      name { "Programme" }
-      type { %w[flu hpv].sample }
-      academic_year { Time.zone.today.year }
-      start_date { Date.new(academic_year, 9, 1) }
-      end_date { Date.new(academic_year + 1, 7, 31) }
+    name { "Programme" }
+    type { %w[flu hpv].sample }
+    academic_year { Time.zone.today.year }
+    start_date { Date.new(academic_year, 9, 1) }
+    end_date { Date.new(academic_year + 1, 7, 31) }
 
-      vaccines { [association(:vaccine, type:, batch_count:)] }
-    end
+    vaccines { [association(:vaccine, type:, batch_count:)] }
 
     trait :hpv do
-      active
       name { "HPV" }
       type { "hpv" }
       vaccines { [association(:vaccine, :gardasil_9, batch_count:)] }
@@ -65,7 +62,6 @@ FactoryBot.define do
     end
 
     trait :flu do
-      active
       name { "Flu" }
       type { "flu" }
       vaccines do

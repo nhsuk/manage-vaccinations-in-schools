@@ -6,7 +6,7 @@ describe ConsentRequestsJob, type: :job do
     ActiveJob::Base.queue_adapter.enqueued_jobs.clear
   end
 
-  let(:programme) { create(:programme, :active) }
+  let(:programme) { create(:programme) }
 
   context "with draft and active sessions" do
     it "enqueues ConsentRequestsSessionBatchJob for each active sessions" do

@@ -23,7 +23,7 @@
 #
 FactoryBot.define do
   factory :dps_export do
-    programme { association :programme, :active }
+    programme
     sequence(:filename) { |n| "dps_export_#{n}.csv" }
     status { "pending" }
 
