@@ -220,7 +220,8 @@ describe "Immunisation imports duplicates" do
   end
 
   def then_i_should_see_import_issues_with_the_count
-    expect(page).to have_link("Import issues (1)")
+    expect(page).to have_link("Import issues")
+    expect(page).to have_selector(".app-count", text: "( 1 )")
   end
 
   def when_i_go_to_import_issues
