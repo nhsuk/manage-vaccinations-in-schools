@@ -25,8 +25,6 @@ FactoryBot.define do
     team
 
     type { %w[flu hpv].sample }
-    academic_year { Time.zone.today.year }
-
     vaccines { [association(:vaccine, type:, batch_count:)] }
 
     trait :hpv do

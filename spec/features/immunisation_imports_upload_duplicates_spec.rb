@@ -56,8 +56,7 @@ describe "Immunisation imports duplicates" do
   end
 
   def and_an_hpv_programme_is_underway
-    @programme =
-      create(:programme, :hpv_all_vaccines, academic_year: 2023, team: @team)
+    @programme = create(:programme, :hpv_all_vaccines, team: @team)
     @location = create(:location, :school, urn: "110158")
     @session =
       create(

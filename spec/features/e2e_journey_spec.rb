@@ -44,7 +44,7 @@ describe "End-to-end journey" do
 
   def given_an_hpv_programme_is_underway
     @team = create(:team, :with_one_nurse)
-    @programme = create(:programme, :hpv, academic_year: 2023, team: @team)
+    @programme = create(:programme, :hpv, team: @team)
     @school = create(:location, :school, name: "Pilot School")
   end
 

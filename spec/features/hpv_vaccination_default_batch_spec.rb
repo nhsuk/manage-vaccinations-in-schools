@@ -20,7 +20,7 @@ describe "HPV Vaccination" do
   end
 
   def given_i_am_signed_in
-    programme = create(:example_programme, :in_progress, academic_year: 2023)
+    programme = create(:example_programme, :in_progress)
     team = programme.team
     @batch = programme.batches.first
     @batch2 = programme.batches.second
