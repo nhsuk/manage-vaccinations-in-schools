@@ -49,10 +49,13 @@ class Programme < ApplicationRecord
 
   has_many :import_issues,
            -> do
-             joins(:patient).where(
-               "patients.pending_changes != '{}' OR vaccination_records.pending_changes != '{}'"
-             ).distinct
-             #  .strict_loading # TODO: Uncomment this
+             joins(:patient)
+               .where(
+                 "patients.pending_changes != '{}' OR vaccination_records.pending_changes != '{}'"
+               )
+               .distinct
+               .includes(:vaccine, :batch, session: :location, patient: :school)
+               .strict_loading
            end,
            through: :immunisation_imports,
            source: :vaccination_records
