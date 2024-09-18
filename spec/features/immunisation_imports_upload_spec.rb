@@ -129,7 +129,7 @@ describe "Immunisation imports" do
     )
     expect(page).to have_content("Full name Chyna Pickle")
     expect(page).to have_content(/NHS number.*742.*018.*0008/)
-    expect(page).to have_content("Date of birth 12 September 2012")
+    expect(page).to have_content("Date of birth 12 September 2010")
     expect(page).to have_content("Vaccination date 14 May 2024")
   end
 
@@ -163,7 +163,7 @@ describe "Immunisation imports" do
     expect(page).to have_content("Full nameNHS numberDate of birthPostcode")
     expect(page).to have_content("Full name Chyna Pickle")
     expect(page).to have_content(/NHS number.*742.*018.*0008/)
-    expect(page).to have_content("Date of birth 12 September 2012")
+    expect(page).to have_content("Date of birth 12 September 2010")
     expect(page).to have_content("Postcode LE3 2DA")
   end
 
