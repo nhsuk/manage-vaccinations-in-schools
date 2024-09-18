@@ -51,7 +51,7 @@ FactoryBot.define do
 
     recorded_at { Time.zone.now }
 
-    nhs_number { Faker::NationalHealthService.test_number.gsub(/\s+/, "") }
+    nhs_number { Faker::NationalHealthService.british_number.gsub(/\s+/, "") }
 
     first_name { Faker::Name.first_name }
     last_name { Faker::Name.last_name }
