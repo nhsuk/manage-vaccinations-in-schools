@@ -13,4 +13,4 @@
 
 <%= govuk_button_link_to "Import child records", new_programme_cohort_import_path(@programme), class: "app-button--secondary" %>
 
-<%= render AppPatientTableComponent.new(@patients, programme: @programme) %>
+<%= render AppPatientTableComponent.new(@patients) %>

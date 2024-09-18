@@ -6,7 +6,7 @@
         <% row.with_cell(text: "Full name") %>
         <% row.with_cell(text: "NHS number") %>
         <% row.with_cell(text: "Date of birth") %>
-        <% row.with_cell(text: "Outcome") %>
+        <% row.with_cell(text: "Postcode") %>
       <% end %>
     <% end %>
 
@@ -15,7 +15,7 @@
         <% body.with_row do |row| %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Full name</span>
-            <%= govuk_link_to patient.full_name, href_for(patient:) %>
+            <%= patient.full_name %>
           <% end %>
 
           <% row.with_cell do %>
@@ -29,8 +29,8 @@
           <% end %>
 
           <% row.with_cell do %>
-            <span class="nhsuk-table-responsive__heading">Outcome</span>
-            <%= outcome_for(patient:) %>
+            <span class="nhsuk-table-responsive__heading">Postcode</span>
+            <%= patient.address_postcode %>
           <% end %>
         <% end %>
       <% end %>
