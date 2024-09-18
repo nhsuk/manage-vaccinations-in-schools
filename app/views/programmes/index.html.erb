@@ -6,7 +6,6 @@
     <% table.with_head do |head| %>
       <% head.with_row do |row| %>
         <% row.with_cell(text: "Name") %>
-        <% row.with_cell(text: "Academic year") %>
         <% row.with_cell(text: "Vaccines") %>
       <% end %>
     <% end %>
@@ -17,10 +16,6 @@
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Name</span>
             <%= link_to programme.name, programme_path(programme) %>
-          <% end %>
-          <% row.with_cell do %>
-            <span class="nhsuk-table-responsive__heading">Academic year</span>
-            <%= programme_academic_year(programme) %>
           <% end %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Vaccines</span>

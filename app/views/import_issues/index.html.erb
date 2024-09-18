@@ -7,7 +7,7 @@
                                         ]) %>
 <% end %>
 
-<%= render "programmes/name_and_academic_year" %>
+<h1 class="nhsuk-heading-l"><%= @programme.name %></h1>
 
 <%= render AppProgrammeNavigationComponent.new(@programme, active: :import_issues) %>
 
