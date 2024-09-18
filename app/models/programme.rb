@@ -31,7 +31,6 @@ class Programme < ApplicationRecord
   has_many :dps_exports, dependent: :destroy
   has_many :immunisation_imports, dependent: :destroy
   has_many :sessions, dependent: :destroy
-  has_many :triage, dependent: :destroy
 
   has_many :batches, through: :vaccines
   has_many :cohort_imports, through: :team
