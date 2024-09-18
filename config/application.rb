@@ -28,7 +28,7 @@ module ManageVaccinations
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
-    config.autoload_lib(ignore: %w[tasks])
+    config.autoload_lib(ignore: %w[core_ext tasks])
 
     # DB_SECRET is a JSON string containing the database credentials on AWS.
     # We need to parse it in order to set the DATABASE_URL variable.
