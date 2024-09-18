@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_18_110301) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_18_134823) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -436,15 +436,11 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_18_110301) do
   end
 
   create_table "programmes", force: :cascade do |t|
-    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "team_id", null: false
-    t.integer "academic_year"
-    t.date "start_date"
-    t.date "end_date"
-    t.string "type"
-    t.index ["name", "type", "academic_year", "team_id"], name: "idx_on_name_type_academic_year_team_id_f5cd28cbec", unique: true
+    t.string "type", null: false
+    t.index ["team_id", "type"], name: "index_programmes_on_team_id_and_type", unique: true
   end
 
   create_table "programmes_vaccines", id: false, force: :cascade do |t|
