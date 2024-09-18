@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_17_172252) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_18_084709) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -544,7 +544,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_17_172252) do
     t.datetime "administered_at"
     t.string "performed_by_given_name"
     t.string "performed_by_family_name"
-    t.jsonb "pending_changes"
+    t.jsonb "pending_changes", default: {}, null: false
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["patient_session_id"], name: "index_vaccination_records_on_patient_session_id"
     t.index ["performed_by_user_id"], name: "index_vaccination_records_on_performed_by_user_id"

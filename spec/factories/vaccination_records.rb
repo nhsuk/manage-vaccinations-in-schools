@@ -10,7 +10,7 @@
 #  delivery_site            :integer
 #  dose_sequence            :integer          not null
 #  notes                    :text
-#  pending_changes          :jsonb
+#  pending_changes          :jsonb            not null
 #  performed_by_family_name :string
 #  performed_by_given_name  :string
 #  reason                   :integer
