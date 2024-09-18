@@ -140,7 +140,7 @@ describe "Immunisation imports duplicates" do
   end
 
   def and_i_click_on_the_upload_link
-    click_on "Upload new vaccination records"
+    click_on "Import vaccination records"
   end
 
   def and_i_upload_a_file_with_duplicate_records

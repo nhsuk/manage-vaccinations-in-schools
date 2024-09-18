@@ -56,7 +56,7 @@ describe "Cohort imports" do
   end
 
   def and_i_start_adding_children_to_the_cohort
-    click_on "Add children to programme cohort"
+    click_on "Import child records"
   end
 
   def then_i_should_see_the_upload_cohort_page

@@ -11,9 +11,7 @@
 
 <%= render AppProgrammeNavigationComponent.new(@programme, active: :immunisation_imports) %>
 
-<p class="app-action-list">
-  <%= govuk_link_to "Upload new vaccination records", new_programme_immunisation_import_path %>
-</p>
+<%= govuk_button_link_to "Import vaccination records", new_programme_immunisation_import_path, class: "app-button--secondary" %>
 
 <% if @immunisation_imports.any? %>
   <div class="nhsuk-table__panel-with-heading-tab">
