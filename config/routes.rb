@@ -74,6 +74,8 @@ Rails.application.routes.draw do
                 controller: "immunisation_imports/duplicates"
     end
 
+    resources :import_issues, path: "import-issues", only: %i[index show update]
+
     resources :cohort_imports, path: "cohort-imports", except: %i[index destroy]
 
     resources :vaccination_records,

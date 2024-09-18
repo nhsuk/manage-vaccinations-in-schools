@@ -526,6 +526,9 @@ en:
   immunisation_imports:
     index:
       title: Uploads
+  import_issues:
+    index:
+      title: Import issues
   mailers:
     consent_form_mailer:
       reasons_for_refusal:
