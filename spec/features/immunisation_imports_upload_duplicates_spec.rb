@@ -31,6 +31,15 @@ describe "Immunisation imports duplicates" do
     and_i_confirm_my_selection
     then_i_should_see_a_success_message
     and_the_second_record_should_be_updated
+
+    when_i_upload_the_records
+    then_i_should_see_the_vaccination_upload_report
+
+    when_i_go_to_the_programme
+    then_i_should_see_import_issues_with_the_count
+
+    when_i_go_to_import_issues
+    then_i_should_see_that_a_record_needs_review
   end
 
   def given_i_am_signed_in
@@ -188,5 +197,29 @@ describe "Immunisation imports duplicates" do
     expect(@previous_vaccination_record.delivery_method).to eq("intramuscular")
     expect(@previous_vaccination_record.delivery_site).to eq("left_thigh")
     expect(@previous_vaccination_record.pending_changes).to eq({})
+  end
+
+  def when_i_upload_the_records
+    click_button "Upload records"
+  end
+
+  def then_i_should_see_the_vaccination_upload_report
+    expect(page).to have_content("Vaccination report")
+  end
+
+  def when_i_go_to_the_programme
+    click_link "HPV"
+  end
+
+  def then_i_should_see_import_issues_with_the_count
+    expect(page).to have_link("Import issues (1)")
+  end
+
+  def when_i_go_to_import_issues
+    click_link "Import issues"
+  end
+
+  def then_i_should_see_that_a_record_needs_review
+    expect(page).to have_content("1 imported record needs review")
   end
 end
