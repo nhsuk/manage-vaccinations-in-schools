@@ -72,11 +72,11 @@ describe "Cohort imports" do
   end
 
   def and_i_should_see_the_patients
-    expect(page).to have_content("Full nameNHS numberDate of birthOutcome")
+    expect(page).to have_content("Full nameNHS numberDate of birthPostcode")
     expect(page).to have_content("Jimmy Smith")
     expect(page).to have_content(/NHS number.*123.*456.*7890/)
     expect(page).to have_content("Date of birth 1 January 2010")
-    expect(page).to have_content("Outcome No outcome yet")
+    expect(page).to have_content("Postcode SW1A 1AA")
   end
 
   def when_i_click_on_upload_records
