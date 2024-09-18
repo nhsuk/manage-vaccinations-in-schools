@@ -15,6 +15,6 @@ class VaccinesController < ApplicationController
   private
 
   def vaccines
-    @vaccines ||= policy_scope(Vaccine).includes(:batches).order(:name)
+    @vaccines ||= policy_scope(Vaccine).includes(:batches).order(:brand)
   end
 end

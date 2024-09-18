@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe SessionsHelper, type: :helper do
-  let(:programme) { build(:programme, name: "Flu") }
+RSpec.describe SessionsHelper do
+  let(:programme) { build(:programme, :flu) }
   let(:location) { build(:location, name: "Waterloo Road") }
   let(:session) { build(:session, programme:, location:) }
 

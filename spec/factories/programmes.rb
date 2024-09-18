@@ -24,7 +24,6 @@ FactoryBot.define do
 
     team
 
-    name { "Programme" }
     type { %w[flu hpv].sample }
     academic_year { Time.zone.today.year }
     start_date { Date.new(academic_year, 9, 1) }
@@ -33,7 +32,6 @@ FactoryBot.define do
     vaccines { [association(:vaccine, type:, batch_count:)] }
 
     trait :hpv do
-      name { "HPV" }
       type { "hpv" }
       vaccines { [association(:vaccine, :gardasil_9, batch_count:)] }
     end
@@ -55,7 +53,6 @@ FactoryBot.define do
     end
 
     trait :flu do
-      name { "Flu" }
       type { "flu" }
       vaccines do
         [
@@ -86,7 +83,7 @@ FactoryBot.define do
     end
 
     trait :flu_nasal_only do
-      name { "Flu" }
+      flu
       vaccines { [association(:vaccine, :fluenz_tetra, batch_count:)] }
     end
   end

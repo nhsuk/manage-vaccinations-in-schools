@@ -19,50 +19,12 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 
-describe Programme, type: :model do
-  subject(:programme) do
-    build(
-      :programme,
-      academic_year: 2024,
-      start_date: Date.new(2024, 9, 1),
-      end_date: Date.new(2025, 7, 31)
-    )
-  end
-
-  it { should normalize(:name).from(" abc ").to("abc") }
+describe Programme do
+  subject(:programme) { build(:programme) }
 
   describe "validations" do
-    it { should validate_presence_of(:name).on(:update) }
-
-    it { should validate_presence_of(:type).on(:update) }
+    it { should validate_presence_of(:type) }
     it { should validate_inclusion_of(:type).in_array(%w[flu hpv]) }
-
-    it { should validate_presence_of(:academic_year).on(:update) }
-
-    it do
-      expect(programme).to validate_comparison_of(:academic_year)
-        .on(:update)
-        .is_greater_than_or_equal_to(2000)
-        .is_less_than_or_equal_to(Time.zone.today.year + 5)
-    end
-
-    it { should validate_presence_of(:start_date).on(:update) }
-
-    it do
-      expect(programme).to validate_comparison_of(:start_date)
-        .on(:update)
-        .is_greater_than_or_equal_to(Date.new(2024, 1, 1))
-        .is_less_than(Date.new(2025, 7, 31))
-    end
-
-    it { should validate_presence_of(:end_date).on(:update) }
-
-    it do
-      expect(programme).to validate_comparison_of(:end_date)
-        .on(:update)
-        .is_greater_than(Date.new(2024, 9, 1))
-        .is_less_than_or_equal_to(Date.new(2025, 12, 31))
-    end
 
     context "when vaccines don't match type" do
       subject(:programme) do
@@ -75,6 +37,22 @@ describe Programme, type: :model do
           /must be suitable for the programme type/
         )
       end
+    end
+  end
+
+  describe "#name" do
+    subject(:name) { programme.name }
+
+    context "with a Flu programme" do
+      let(:programme) { build(:programme, :flu) }
+
+      it { should eq("Flu") }
+    end
+
+    context "with an HPV programme" do
+      let(:programme) { build(:programme, :hpv) }
+
+      it { should eq("HPV") }
     end
   end
 
