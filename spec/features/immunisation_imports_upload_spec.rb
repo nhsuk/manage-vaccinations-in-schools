@@ -165,7 +165,10 @@ describe "Immunisation imports" do
   end
 
   def then_i_should_see_the_cohorts
-    expect(page).to have_content("Year 8")
+    expect(page).to have_content("Year 8\n7 children")
+    expect(page).to have_content("Year 9\n0 children")
+    expect(page).to have_content("Year 10\n0 children")
+    expect(page).to have_content("Year 11\n0 children")
   end
 
   def when_i_click_on_the_cohort
