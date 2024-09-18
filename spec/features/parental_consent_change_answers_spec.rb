@@ -119,6 +119,10 @@ RSpec.feature "Parental consent change answers" do
     choose "Yes" # Parental responsibility
     click_button "Continue"
 
+    expect(page).to have_content("Phone contact method")
+    choose "I do not have specific needs"
+    click_on "Continue"
+
     # BUG: The page should be the consent confirm page, but because we
     # encountered a validation error, the skip_to_confirm flag gets lost and we
     # end up on the next page in the wizard.

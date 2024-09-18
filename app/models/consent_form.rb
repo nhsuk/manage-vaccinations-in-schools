@@ -232,7 +232,7 @@ class ConsentForm < ApplicationRecord
       :date_of_birth,
       :school,
       :parent,
-      (:contact_method if ask_for_contact_method?),
+      (:contact_method if parent_phone.present?),
       :consent,
       (:reason if consent_refused?),
       (:reason_notes if consent_refused? && reason_notes_must_be_provided?),
@@ -385,10 +385,6 @@ class ConsentForm < ApplicationRecord
       end
     end
     true
-  end
-
-  def ask_for_contact_method?
-    Flipper.enabled?(:parent_contact_method) && parent_phone.present?
   end
 
   # Because there are branching paths in the consent form journey, fields
