@@ -2,10 +2,17 @@
 
 return unless Rails.env.development?
 
-require Rails.root.join("lib/core_extensions/action_dispatch/file_handler.rb")
-
 module ActionDispatch
   class FileHandler
-    prepend CoreExtensions::ActionDispatch::FileHandler
+    def attempt(env)
+      result = super(env)
+
+      if result
+        request = Rack::Request.new env
+        Rails.logger.debug("Serving static asset: #{request.path_info}")
+      end
+
+      result
+    end
   end
 end
