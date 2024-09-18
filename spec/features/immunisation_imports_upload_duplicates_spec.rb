@@ -40,6 +40,9 @@ describe "Immunisation imports duplicates" do
 
     when_i_go_to_import_issues
     then_i_should_see_that_a_record_needs_review
+
+    when_i_review_the_third_duplicate_record
+    then_i_should_see_the_third_duplicate_record
   end
 
   def given_i_am_signed_in
@@ -221,5 +224,15 @@ describe "Immunisation imports duplicates" do
 
   def then_i_should_see_that_a_record_needs_review
     expect(page).to have_content("1 imported record needs review")
+  end
+
+  def when_i_review_the_third_duplicate_record
+    click_on "Review Joanna Hamilton"
+  end
+
+  def then_i_should_see_the_third_duplicate_record
+    expect(page).to have_content("This record needs reviewing")
+    expect(page).to have_content("Full nameBerry Hamilton")
+    expect(page).to have_content("Full nameJoanna Hamilton")
   end
 end

@@ -123,7 +123,7 @@ class Programme < ApplicationRecord
       )
       .distinct
       .includes(:patient, :immunisation_imports)
-      .strict_loading
+    # .strict_loading TODO: Uncomment this
   end
 
   private
