@@ -13,35 +13,43 @@ class AppProgrammeNavigationComponent < ViewComponent::Base
   def call
     render AppSecondaryNavigationComponent.new do |nav|
       nav.with_item(
-        text: "Overview",
         href: programme_path(programme),
         selected: active == :overview
-      )
+      ) { "Overview" }
+
       nav.with_item(
-        text: I18n.t("programmes.patients.title"),
         href: patients_programme_path(programme),
         selected: active == :patients
-      )
+      ) { I18n.t("programmes.patients.title") }
+
       nav.with_item(
-        text: "School sessions",
         href: sessions_programme_path(programme),
         selected: active == :sessions
-      )
+      ) { "School sessions" }
+
       nav.with_item(
-        text: I18n.t("vaccination_records.index.title"),
         href: programme_vaccination_records_path(programme),
         selected: active == :vaccination_records
-      )
+      ) { I18n.t("vaccination_records.index.title") }
+
       nav.with_item(
-        text: I18n.t("immunisation_imports.index.title"),
         href: programme_immunisation_imports_path(programme),
         selected: active == :immunisation_imports
-      )
+      ) { I18n.t("immunisation_imports.index.title") }
+
       nav.with_item(
-        text: I18n.t("import_issues.index.title"),
         href: programme_import_issues_path(programme),
         selected: active == :import_issues
-      )
+      ) { import_issues_text }
     end
+  end
+
+  private
+
+  def import_issues_text
+    count = programme.import_issues.count
+    base_text = I18n.t("import_issues.index.title")
+
+    safe_join([base_text, " ", render(AppCountComponent.new(count:))])
   end
 end
