@@ -52,11 +52,7 @@ class Programme < ApplicationRecord
            through: :immunisation_imports,
            source: :vaccination_records
 
-  enum :type, { flu: "flu", hpv: "hpv" }, validate: { allow_nil: true }
-
-  validates :type, presence: true
-
-  validates :vaccines, presence: true
+  enum :type, { flu: "flu", hpv: "hpv" }, validate: true
 
   validate :vaccines_match_type
 
@@ -81,6 +77,8 @@ class Programme < ApplicationRecord
   private
 
   def vaccines_match_type
+    errors.add(:vaccines, :blank) if vaccines.empty?
+
     vaccine_types = vaccines.map(&:type).uniq
     unless vaccine_types.empty? || vaccine_types == [type]
       errors.add(:vaccines, :match_type)
