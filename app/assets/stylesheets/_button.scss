@@ -4,11 +4,6 @@ $app-cis2-button-active-color: #003087;
 $app-cis2-button-shadow-color: #003087;
 $button-shadow-size: 4px;
 
-.app-button--small {
-  @include nhsuk-typography-responsive(16);
-  padding: nhsuk-spacing(1) 12px;
-}
-
 .nhsuk-button {
   .nhsuk-table & {
     margin-bottom: 0;
@@ -44,5 +39,69 @@ $button-shadow-size: 4px;
     box-shadow: none;
     color: $nhsuk-button-text-color;
     top: $button-shadow-size;
+  }
+}
+
+// Proposed secondary button style
+// See https://github.com/nhsuk/nhsapp-frontend/issues/12
+// See https://github.com/nhsuk/nhs-app-design-styles-components-patterns
+@mixin app-button-secondary($button-color) {
+  background-color: transparent;
+  border-bottom: 0;
+  border-color: $button-color;
+  box-shadow: 0 4px 0 $button-color;
+  color: $button-color;
+  // Adjust padding to account for removal of 2px bottom border
+  padding-bottom: 13px;
+  padding-top: 13px;
+
+  &:link,
+  &:visited {
+    color: $button-color;
+  }
+
+  &:hover {
+    background-color: rgba($button-color, 10%);
+    color: $button-color;
+  }
+
+  &:focus {
+    background-color: $nhsuk-focus-color;
+    border-color: $nhsuk-focus-color;
+    color: $nhsuk-focus-text-color;
+  }
+
+  &:active {
+    background-color: rgba($button-color, 15%);
+    border-color: $button-color;
+    border-bottom: 2px solid; // Reintroduce 2px bottom border
+    color: $button-color;
+    // Revert padding to account for reintroduction of 2px bottom border
+    padding-bottom: 12px;
+    padding-top: 12px;
+  }
+
+  &:focus:visited:active {
+    // Override .nhsuk-button turning colour white
+    color: $button-color;
+  }
+}
+
+.app-button--secondary {
+  @include app-button-secondary($nhsuk-link-color);
+}
+
+.app-button--secondary-warning {
+  @include app-button-secondary($nhsuk-warning-button-color);
+}
+
+.app-button--small {
+  @include nhsuk-typography-responsive(16);
+  padding: nhsuk-spacing(1) 12px;
+
+  &.app-button--secondary,
+  &.app-button--secondary-warning {
+    padding-bottom: #{nhsuk-spacing(1) + 1px};
+    padding-top: #{nhsuk-spacing(1) + 1px};
   }
 }
