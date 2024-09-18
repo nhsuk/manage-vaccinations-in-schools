@@ -47,6 +47,16 @@ class Programme < ApplicationRecord
   has_many :patients, through: :patient_sessions
   has_many :vaccination_records, through: :patient_sessions
 
+  has_many :import_issues,
+           -> do
+             joins(:patient).where(
+               "patients.pending_changes != '{}' OR vaccination_records.pending_changes != '{}'"
+             ).distinct
+             #  .strict_loading # TODO: Uncomment this
+           end,
+           through: :immunisation_imports,
+           source: :vaccination_records
+
   enum :type, { flu: "flu", hpv: "hpv" }, validate: { allow_nil: true }
 
   normalizes :name, with: ->(name) { name&.strip }
@@ -112,18 +122,6 @@ class Programme < ApplicationRecord
 
   def year_groups
     YEAR_GROUPS_BY_TYPE.fetch(type)
-  end
-
-  def import_issues
-    VaccinationRecord
-      .joins(:immunisation_imports, :patient)
-      .where(immunisation_imports: { programme: self })
-      .where(
-        "patients.pending_changes != '{}' OR vaccination_records.pending_changes != '{}'"
-      )
-      .distinct
-      .includes(:patient, :immunisation_imports)
-    # .strict_loading TODO: Uncomment this
   end
 
   private
