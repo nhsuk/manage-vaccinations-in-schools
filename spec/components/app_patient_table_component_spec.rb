@@ -5,8 +5,6 @@ describe AppPatientTableComponent, type: :component do
 
   let(:component) { described_class.new(patients) }
 
-  let(:programme) { create(:programme, academic_year: 2020) }
-  let(:session) { create(:session, programme:) }
   let(:patients) do
     [
       create(

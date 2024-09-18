@@ -56,12 +56,6 @@ class Programme < ApplicationRecord
 
   validates :type, presence: true
 
-  validates :academic_year,
-            comparison: {
-              greater_than_or_equal_to: 2000,
-              less_than_or_equal_to: Time.zone.today.year + 5
-            }
-
   validates :vaccines, presence: true
 
   validate :vaccines_match_type

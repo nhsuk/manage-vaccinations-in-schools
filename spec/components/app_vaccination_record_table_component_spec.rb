@@ -5,7 +5,7 @@ describe AppVaccinationRecordTableComponent, type: :component do
 
   let(:component) { described_class.new(vaccination_records) }
 
-  let(:programme) { create(:programme, academic_year: 2020) }
+  let(:programme) { create(:programme) }
   let(:vaccination_records) do
     [
       create(
