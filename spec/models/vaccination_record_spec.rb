@@ -38,27 +38,12 @@
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 
-describe VaccinationRecord, type: :model do
+describe VaccinationRecord do
   subject(:vaccination_record) { create(:vaccination_record, programme:) }
 
-  let(:programme) do
-    create(
-      :programme,
-      academic_year: 2020,
-      start_date: Date.new(2020, 1, 1),
-      end_date: Date.new(2020, 12, 31)
-    )
-  end
+  let(:programme) { create(:programme) }
 
   describe "validations" do
-    it "is expected to validate that :administered_at is between the programme start and end date" do
-      expect(vaccination_record).to validate_comparison_of(
-        :administered_at
-      ).is_greater_than_or_equal_to(Time.zone.local(2020, 1, 1)).is_less_than(
-        Time.zone.local(2021, 1, 1)
-      )
-    end
-
     context "vaccine and batch doesn't match" do
       subject(:vaccination_record) do
         build(:vaccination_record, vaccine:, batch:, patient_session:)

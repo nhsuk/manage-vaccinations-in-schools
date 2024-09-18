@@ -26,8 +26,6 @@ FactoryBot.define do
 
     type { %w[flu hpv].sample }
     academic_year { Time.zone.today.year }
-    start_date { Date.new(academic_year, 9, 1) }
-    end_date { Date.new(academic_year + 1, 7, 31) }
 
     vaccines { [association(:vaccine, type:, batch_count:)] }
 

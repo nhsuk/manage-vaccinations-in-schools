@@ -6,7 +6,7 @@ describe ImmunisationImportRow, type: :model do
   end
 
   let(:team) { create(:team, ods_code: "abc") }
-  let(:programme) { create(:programme, :flu, academic_year: 2023, team:) }
+  let(:programme) { create(:programme, :flu, team:) }
   let(:uploaded_by) { create(:user, teams: [team]) }
 
   let(:nhs_number) { "1234567890" }
@@ -193,7 +193,7 @@ describe ImmunisationImportRow, type: :model do
     end
 
     context "with valid fields for Flu" do
-      let(:programme) { create(:programme, :flu, academic_year: 2023, team:) }
+      let(:programme) { create(:programme, :flu, team:) }
 
       let(:data) do
         {
@@ -220,7 +220,7 @@ describe ImmunisationImportRow, type: :model do
     end
 
     context "with valid fields for HPV" do
-      let(:programme) { create(:programme, :hpv, academic_year: 2023, team:) }
+      let(:programme) { create(:programme, :hpv, team:) }
 
       let(:data) do
         {

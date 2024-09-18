@@ -105,8 +105,8 @@ en:
               inclusion: The school URN is not recognised. If you’ve checked the URN, and you believe it’s valid, contact our support team.
             session_date:
               blank: Enter a date in the correct format.
-              greater_than_or_equal_to: The vaccination date is outside the campaign. Enter a date after the campaign started and before it ended.
-              less_than_or_equal_to: The vaccination date is outside the campaign. Enter a date after the campaign started and before it ended.
+              greater_than_or_equal_to: The vaccination date is outside the programme. Enter a date after the programme started.
+              less_than_or_equal_to: The vaccination date is outside the programme. Enter a date before today.
             vaccine_given:
               inclusion: Enter a valid vaccine, eg Gardasil 9.
         parent_details_form:
@@ -429,8 +429,6 @@ en:
               inclusion: Choose if they got the vaccine
             administered_at:
               blank: Enter a date and time
-              greater_than_or_equal_to: Date and time must be after the programme started
-              less_than: Date and time must be before the programme ended
             batch_id:
               blank: Choose a batch
               incorrect_vaccine: Choose a batch of the %{vaccine_brand} vaccine
