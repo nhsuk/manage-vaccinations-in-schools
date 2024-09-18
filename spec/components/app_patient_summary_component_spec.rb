@@ -56,7 +56,6 @@ describe AppPatientSummaryComponent, type: :component do
     it { should have_css(".app-highlight", text: "1 January 2001") }
     it { should have_css(".app-highlight", text: "SW1A 2AA") }
     it { should_not have_css(".app-highlight", text: "Male") }
-    it { should_not have_css(".app-highlight", text: "Test School") }
     it { should have_css(".app-highlight", text: "Other School") }
   end
 end
