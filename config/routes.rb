@@ -55,16 +55,11 @@ Rails.application.routes.draw do
 
   get "/csrf", to: "csrf#new"
 
-  resources :programmes, only: %i[index create show] do
+  resources :programmes, only: %i[index show] do
     member do
       get "patients"
       get "sessions"
     end
-
-    resource :edit,
-             controller: "programmes/edit",
-             only: %i[show update],
-             path: "edit/:id"
 
     resources :immunisation_imports,
               path: "immunisation-imports",

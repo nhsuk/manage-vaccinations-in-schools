@@ -9,9 +9,3 @@
 <%= render "name_and_academic_year" %>
 
 <%= render AppProgrammeNavigationComponent.new(@programme, active: :overview) %>
-
-<ul class="app-action-list">
-  <li class="app-action-list__item">
-    <%= govuk_link_to "Edit programme", programme_edit_path(@programme, :confirm) %>
-  </li>
-</ul>
