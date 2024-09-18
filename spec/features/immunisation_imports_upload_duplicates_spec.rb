@@ -43,6 +43,11 @@ describe "Immunisation imports duplicates" do
 
     when_i_review_the_third_duplicate_record
     then_i_should_see_the_third_duplicate_record
+
+    when_i_choose_to_keep_the_duplicate_record
+    and_i_confirm_my_selection
+    then_i_should_see_a_success_message
+    and_the_third_record_should_be_updated
   end
 
   def given_i_am_signed_in
@@ -234,5 +239,12 @@ describe "Immunisation imports duplicates" do
     expect(page).to have_content("This record needs reviewing")
     expect(page).to have_content("Full nameBerry Hamilton")
     expect(page).to have_content("Full nameJoanna Hamilton")
+  end
+
+  def and_the_third_record_should_be_updated
+    @third_patient.reload
+    expect(@third_patient.first_name).to eq("Berry")
+    expect(@third_patient.last_name).to eq("Hamilton")
+    expect(@third_patient.pending_changes).to eq({})
   end
 end

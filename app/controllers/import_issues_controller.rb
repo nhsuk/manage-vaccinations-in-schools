@@ -2,8 +2,8 @@
 
 class ImportIssuesController < ApplicationController
   before_action :set_programme
-  before_action :set_vaccination_record, only: :show
-  before_action :set_form, only: :show
+  before_action :set_vaccination_record, only: %i[show update]
+  before_action :set_form, only: %i[show update]
 
   def index
     @import_issues = @programme.import_issues
@@ -13,6 +13,17 @@ class ImportIssuesController < ApplicationController
 
   def show
     render layout: "full"
+  end
+
+  def update
+    if @form.save
+      redirect_to programme_import_issues_path(@programme),
+                  flash: {
+                    success: "Vaccination record updated"
+                  }
+    else
+      render :show, status: :unprocessable_entity, layout: "full" and return
+    end
   end
 
   private
