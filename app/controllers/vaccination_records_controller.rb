@@ -31,7 +31,7 @@ class VaccinationRecordsController < ApplicationController
   private
 
   def programme
-    @programme ||= policy_scope(Programme).active.find(params[:programme_id])
+    @programme ||= policy_scope(Programme).find(params[:programme_id])
   end
 
   def vaccination_records

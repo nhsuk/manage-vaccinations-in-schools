@@ -6,7 +6,6 @@
 #
 #  id            :bigint           not null, primary key
 #  academic_year :integer
-#  active        :boolean          default(FALSE), not null
 #  end_date      :date
 #  name          :string
 #  start_date    :date
@@ -24,8 +23,6 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class Programme < ApplicationRecord
-  include Draftable
-
   self.inheritance_column = nil
 
   audited
@@ -92,13 +89,7 @@ class Programme < ApplicationRecord
 
   validates :vaccines, presence: true
 
-  validates :active, presence: true
-
   validate :vaccines_match_type
-
-  def draft?
-    !active
-  end
 
   def vaccine_ids
     @vaccine_ids ||= vaccines.map(&:id)

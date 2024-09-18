@@ -29,10 +29,9 @@ class ImportIssuesController < ApplicationController
 
   def set_programme
     @programme =
-      policy_scope(Programme)
-        .active
-        .includes(:immunisation_imports)
-        .find(params[:programme_id])
+      policy_scope(Programme).includes(:immunisation_imports).find(
+        params[:programme_id]
+      )
   end
 
   def set_vaccination_record

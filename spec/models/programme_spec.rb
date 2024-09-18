@@ -6,7 +6,6 @@
 #
 #  id            :bigint           not null, primary key
 #  academic_year :integer
-#  active        :boolean          default(FALSE), not null
 #  end_date      :date
 #  name          :string
 #  start_date    :date

@@ -72,10 +72,9 @@ class ImmunisationImportsController < ApplicationController
 
   def set_programme
     @programme =
-      policy_scope(Programme)
-        .active
-        .includes(:immunisation_imports)
-        .find(params[:programme_id])
+      policy_scope(Programme).includes(:immunisation_imports).find(
+        params[:programme_id]
+      )
   end
 
   def set_immunisation_import
