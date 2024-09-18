@@ -9,29 +9,7 @@
 
 <%= render "name_and_academic_year" %>
 
-<%= render AppSecondaryNavigationComponent.new do |nav|
-      nav.with_item(
-        text: "Overview",
-        href: programme_path(@programme),
-      )
-      nav.with_item(
-        text: t("programmes.patients.title"),
-        href: patients_programme_path(@programme),
-        selected: true,
-      )
-      nav.with_item(
-        text: "School sessions",
-        href: sessions_programme_path(@programme),
-      )
-      nav.with_item(
-        text: t("vaccination_records.index.title"),
-        href: programme_vaccination_records_path(@programme),
-      )
-      nav.with_item(
-        text: t("immunisation_imports.index.title"),
-        href: programme_immunisation_imports_path(@programme),
-      )
-    end %>
+<%= render AppProgrammeNavigationComponent.new(@programme, active: :patients) %>
 
 <p class="app-action-list">
   <%= link_to "Add children to programme cohort", new_programme_cohort_import_path(@programme) %>

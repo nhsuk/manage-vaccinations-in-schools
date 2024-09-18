@@ -9,29 +9,7 @@
 
 <%= render "name_and_academic_year" %>
 
-<%= render AppSecondaryNavigationComponent.new do |nav|
-      nav.with_item(
-        text: "Overview",
-        href: programme_path(@programme),
-      )
-      nav.with_item(
-        text: t("programmes.patients.title"),
-        href: patients_programme_path(@programme),
-      )
-      nav.with_item(
-        text: "School sessions",
-        href: sessions_programme_path(@programme),
-        selected: true,
-      )
-      nav.with_item(
-        text: t("vaccination_records.index.title"),
-        href: programme_vaccination_records_path(@programme),
-      )
-      nav.with_item(
-        text: t("immunisation_imports.index.title"),
-        href: programme_immunisation_imports_path(@programme),
-      )
-    end %>
+<%= render AppProgrammeNavigationComponent.new(@programme, active: :sessions) %>
 
 <% [[@in_progress_sessions, "In progress sessions"],
     [@future_sessions, "Planned sessions"],
