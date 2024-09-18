@@ -4,19 +4,15 @@
 #
 # Table name: programmes
 #
-#  id            :bigint           not null, primary key
-#  academic_year :integer
-#  end_date      :date
-#  name          :string
-#  start_date    :date
-#  type          :string
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  team_id       :integer          not null
+#  id         :bigint           not null, primary key
+#  type       :string           not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  team_id    :integer          not null
 #
 # Indexes
 #
-#  idx_on_name_type_academic_year_team_id_f5cd28cbec  (name,type,academic_year,team_id) UNIQUE
+#  index_programmes_on_team_id_and_type  (team_id,type) UNIQUE
 #
 # Foreign Keys
 #
