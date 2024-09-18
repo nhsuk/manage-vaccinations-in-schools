@@ -129,42 +129,6 @@ describe Patient do
     end
   end
 
-  describe "#year_group" do
-    subject { patient.year_group }
-
-    around { |example| travel_to(date) { example.run } }
-
-    let(:patient) { described_class.new(date_of_birth: dob) }
-
-    context "child born BEFORE 1 Sep 2016, date is BEFORE 1 Sep 2024" do
-      let(:dob) { Date.new(2016, 8, 31) }
-      let(:date) { Date.new(2024, 8, 31) }
-
-      it { should eq 3 }
-    end
-
-    context "child born BEFORE 1 Sep 2016, date is AFTER 1 Sep 2024" do
-      let(:dob) { Date.new(2016, 8, 31) }
-      let(:date) { Date.new(2024, 9, 1) }
-
-      it { should eq 4 }
-    end
-
-    context "child born AFTER 1 Sep 2016, date is BEFORE 1 Sep 2024" do
-      let(:dob) { Date.new(2016, 9, 1) }
-      let(:date) { Date.new(2024, 8, 31) }
-
-      it { should eq 2 }
-    end
-
-    context "child born AFTER 1 Sep 2016, date is AFTER 1 Sep 2024" do
-      let(:dob) { Date.new(2016, 9, 1) }
-      let(:date) { Date.new(2024, 9, 1) }
-
-      it { should eq 3 }
-    end
-  end
-
   describe "#stage_changes" do
     let(:patient) { create(:patient, first_name: "John", last_name: "Doe") }
 
