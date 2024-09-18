@@ -101,6 +101,8 @@ class Patient < ApplicationRecord
 
   before_save :remove_spaces_from_nhs_number
 
+  delegate :year_group, to: :cohort
+
   def self.find_existing(
     nhs_number:,
     first_name:,
@@ -130,10 +132,6 @@ class Patient < ApplicationRecord
 
   def as_json(options = {})
     super.merge("full_name" => full_name, "age" => age)
-  end
-
-  def year_group
-    Time.zone.today.academic_year - (date_of_birth.academic_year + 5)
   end
 
   def address_fields
