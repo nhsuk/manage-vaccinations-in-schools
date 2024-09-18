@@ -1,0 +1,11 @@
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: t("programmes.index.title"), href: programmes_path },
+                                          { text: @programme.name, href: programme_path(@programme) },
+                                          { text: t("cohorts.index.title"), href: programme_cohorts_path(@programme) },
+                                        ]) %>
+<% end %>
+
+<%= h1 format_year_group(@cohort.year_group) %>
+
+<%= render AppPatientTableComponent.new(@patients) %>

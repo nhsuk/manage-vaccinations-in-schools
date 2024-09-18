@@ -23,6 +23,7 @@ class Cohort < ApplicationRecord
   belongs_to :team
 
   has_many :patients
+  has_many :recorded_patients, -> { recorded }, class_name: "Patient"
 
   validates :reception_starting_year,
             comparison: {

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Immunisation imports" do
+  around { |example| travel_to(Date.new(2024, 5, 20)) { example.run } }
+
   scenario "User uploads a file, views cohort and vaccination records" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
@@ -34,8 +36,11 @@ describe "Immunisation imports" do
     when_i_click_on_a_vaccination_record
     then_i_should_see_the_vaccination_record
 
-    when_i_click_on_cohort
-    then_i_should_see_the_cohort
+    when_i_click_on_cohorts
+    then_i_should_see_the_cohorts
+
+    when_i_click_on_the_cohort
+    then_i_should_see_the_children
 
     when_i_click_on_vaccination_records
     then_i_should_see_the_vaccination_records
@@ -154,12 +159,20 @@ describe "Immunisation imports" do
     click_on "Chyna Pickle"
   end
 
-  def when_i_click_on_cohort
+  def when_i_click_on_cohorts
     click_on "HPV"
-    click_on "Cohort"
+    click_on "Cohorts"
   end
 
-  def then_i_should_see_the_cohort
+  def then_i_should_see_the_cohorts
+    expect(page).to have_content("Year 8")
+  end
+
+  def when_i_click_on_the_cohort
+    click_on "Year 8"
+  end
+
+  def then_i_should_see_the_children
     expect(page).to have_content("Full nameNHS numberDate of birthPostcode")
     expect(page).to have_content("Full name Chyna Pickle")
     expect(page).to have_content(/NHS number.*742.*018.*0008/)

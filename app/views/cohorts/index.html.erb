@@ -13,4 +13,13 @@
 
 <%= govuk_button_link_to "Import child records", new_programme_cohort_import_path(@programme), class: "app-button--secondary" %>
 
-<%= render AppPatientTableComponent.new(@patients) %>
+<ul class="nhsuk-grid-row nhsuk-card-group">
+  <% @cohorts.each do |cohort| %>
+    <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item">
+      <%= render AppCardComponent.new(link_to: programme_cohort_path(@programme, cohort)) do |card| %>
+        <% card.with_heading { format_year_group(cohort.year_group) } %>
+        <% card.with_description { pluralize(cohort.recorded_patients.count, "child") } %>
+      <% end %>
+    </li>
+  <% end %>
+</ul>
