@@ -114,6 +114,18 @@ class Programme < ApplicationRecord
     YEAR_GROUPS_BY_TYPE.fetch(type)
   end
 
+  def import_issues
+    VaccinationRecord
+      .joins(:immunisation_imports, :patient)
+      .where(immunisation_imports: { programme: self })
+      .where(
+        "patients.pending_changes != '{}' OR vaccination_records.pending_changes != '{}'"
+      )
+      .distinct
+      .includes(:patient, :immunisation_imports)
+      .strict_loading
+  end
+
   private
 
   def first_possible_start_date
