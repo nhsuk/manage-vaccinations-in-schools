@@ -15,6 +15,10 @@ en:
         parent_1_name: <code>PARENT_1_NAME</code>
         parent_1_phone: <code>PARENT_1_PHONE</code>
         parent_1_relationship: <code>PARENT_1_RELATIONSHIP</code>
+        parent_2_email: <code>PARENT_2_EMAIL</code>
+        parent_2_name: <code>PARENT_2_NAME</code>
+        parent_2_phone: <code>PARENT_2_PHONE</code>
+        parent_2_relationship: <code>PARENT_2_RELATIONSHIP</code>
         school_urn: <code>SCHOOL_URN</code>
     errors:
       models:

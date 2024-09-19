@@ -126,8 +126,8 @@ describe CohortImport do
       # stree-ignore
       expect { process! }
         .to change(cohort_import, :processed_at).from(nil)
-        .and change(cohort_import.patients, :count).by(2)
-        .and change(cohort_import.parents, :count).by(2)
+        .and change(cohort_import.patients, :count).by(3)
+        .and change(cohort_import.parents, :count).by(3)
         .and change(team.cohorts, :count).by(1)
 
       expect(Cohort.first).to have_attributes(
@@ -138,6 +138,19 @@ describe CohortImport do
       expect(Patient.first).to have_attributes(
         nhs_number: "1234567890",
         date_of_birth: Date.new(2010, 1, 1),
+        full_name: "Jennifer Clarke",
+        school: location,
+        address_line_1: "10 Downing Street",
+        address_town: "London",
+        address_postcode: "SW1A 1AA",
+        recorded_at: nil
+      )
+
+      expect(Patient.first.parents).to be_empty
+
+      expect(Patient.second).to have_attributes(
+        nhs_number: "1234567891",
+        date_of_birth: Date.new(2010, 1, 2),
         full_name: "Jimmy Smith",
         school: location,
         address_line_1: "10 Downing Street",
@@ -146,19 +159,20 @@ describe CohortImport do
         recorded_at: nil
       )
 
-      expect(Patient.first.parents.first).to have_attributes(
+      expect(Patient.second.parents.count).to eq(1)
+
+      expect(Patient.second.parents.first).to have_attributes(
         name: "John Smith",
         phone: "07412345678",
-        email: "john@example.com"
+        email: "john@example.com",
+        recorded_at: nil
       )
 
-      expect(Patient.first.parent_relationships.first).to be_father
+      expect(Patient.second.parent_relationships.first).to be_father
 
-      expect(Patient.first.parents.first).not_to be_recorded
-
-      expect(Patient.second).to have_attributes(
-        nhs_number: "1234567891",
-        date_of_birth: Date.new(2010, 1, 2),
+      expect(Patient.third).to have_attributes(
+        nhs_number: "1234567892",
+        date_of_birth: Date.new(2010, 1, 3),
         full_name: "Mark Doe",
         school: location,
         address_line_1: "11 Downing Street",
@@ -167,15 +181,24 @@ describe CohortImport do
         recorded_at: nil
       )
 
-      expect(Patient.second.parents.first).not_to be_recorded
+      expect(Patient.third.parents.count).to eq(2)
 
-      expect(Patient.second.parents.first).to have_attributes(
+      expect(Patient.third.parents.first).to have_attributes(
         name: "Jane Doe",
         phone: "07412345679",
-        email: "jane@example.com"
+        email: "jane@example.com",
+        recorded_at: nil
       )
 
-      expect(Patient.second.parent_relationships.first).to be_mother
+      expect(Patient.third.parents.first).to have_attributes(
+        name: "Jane Doe",
+        phone: "07412345679",
+        email: "jane@example.com",
+        recorded_at: nil
+      )
+
+      expect(Patient.third.parent_relationships.first).to be_mother
+      expect(Patient.third.parent_relationships.second).to be_father
 
       # Second import should not duplicate the patients if they're identical.
 
@@ -191,7 +214,7 @@ describe CohortImport do
       # stree-ignore
       expect { process! }
         .to change(cohort_import, :exact_duplicate_record_count).to(0)
-        .and change(cohort_import, :new_record_count).to(2)
+        .and change(cohort_import, :new_record_count).to(3)
         .and change(cohort_import, :changed_record_count).to(0)
     end
 
@@ -200,7 +223,7 @@ describe CohortImport do
       csv.rewind
 
       process!
-      expect(cohort_import.exact_duplicate_record_count).to eq(2)
+      expect(cohort_import.exact_duplicate_record_count).to eq(3)
     end
 
     context "with an existing patient matching the name" do
@@ -209,13 +232,13 @@ describe CohortImport do
           :patient,
           first_name: "Jimmy",
           last_name: "Smith",
-          date_of_birth: Date.new(2010, 1, 1),
+          date_of_birth: Date.new(2010, 1, 2),
           nhs_number: nil
         )
       end
 
       it "doesn't create an additional patient" do
-        expect { process! }.to change(Patient, :count).by(1)
+        expect { process! }.to change(Patient, :count).by(2)
       end
     end
   end
@@ -226,11 +249,11 @@ describe CohortImport do
     let(:file) { "valid_cohort.csv" }
 
     it "records the patients" do
-      expect { record! }.to change(Patient.recorded, :count).from(0).to(2)
+      expect { record! }.to change(Patient.recorded, :count).from(0).to(3)
     end
 
     it "records the parents" do
-      expect { record! }.to change(Parent.recorded, :count).from(0).to(2)
+      expect { record! }.to change(Parent.recorded, :count).from(0).to(3)
     end
   end
 end
