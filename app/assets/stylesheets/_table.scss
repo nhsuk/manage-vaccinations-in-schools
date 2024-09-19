@@ -33,6 +33,20 @@
   }
 }
 
+.app-table--small {
+  th,
+  td {
+    @include nhsuk-typography-responsive(16);
+    @include nhsuk-responsive-padding(2, "bottom");
+    @include nhsuk-responsive-padding(3, "right");
+    @include nhsuk-responsive-padding(2, "top");
+  }
+
+  caption {
+    @include nhsuk-font($size: 19, $weight: bold);
+  }
+}
+
 // Use same bottom margin for responsive table as non-responsive table
 .nhsuk-table-responsive {
   @include nhsuk-responsive-margin(7, "bottom");
