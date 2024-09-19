@@ -33,7 +33,7 @@
           table.with_body do |body|
             body.with_row do |row|
               row.with_cell do
-                tag.code("CHILD_FIRST_NAME", class: "x-nhsuk-code x-nhsuk-code--inline")
+                tag.code("CHILD_FIRST_NAME")
               end
               row.with_cell do
                 tag.strong("Required")
@@ -42,7 +42,7 @@
         
             body.with_row do |row|
               row.with_cell do
-                tag.code("CHILD_LAST_NAME", class: "x-nhsuk-code x-nhsuk-code--inline")
+                tag.code("CHILD_LAST_NAME")
               end
               row.with_cell do
                 tag.strong("Required")
@@ -51,7 +51,7 @@
         
             body.with_row do |row|
               row.with_cell do
-                tag.code("CHILD_DATE_OF_BIRTH", class: "x-nhsuk-code x-nhsuk-code--inline")
+                tag.code("CHILD_DATE_OF_BIRTH")
               end
               row.with_cell do
                 tag.strong("Required")
@@ -60,35 +60,35 @@
         
             body.with_row do |row|
               row.with_cell do
-                tag.code("CHILD_NHS_NUMBER", class: "x-nhsuk-code x-nhsuk-code--inline")
+                tag.code("CHILD_NHS_NUMBER")
               end
               row.with_cell(text: "Optional, must be 10 digits and numeric")
             end
         
             body.with_row do |row|
               row.with_cell do
-                tag.code("CHILD_ADDRESS_LINE_1", class: "x-nhsuk-code x-nhsuk-code--inline")
+                tag.code("CHILD_ADDRESS_LINE_1")
               end
               row.with_cell(text: "Optional")
             end
         
             body.with_row do |row|
               row.with_cell do
-                tag.code("CHILD_ADDRESS_LINE_2", class: "x-nhsuk-code x-nhsuk-code--inline")
+                tag.code("CHILD_ADDRESS_LINE_2")
               end
               row.with_cell(text: "Optional")
             end
         
             body.with_row do |row|
               row.with_cell do
-                tag.code("CHILD_ADDRESS_TOWN", class: "x-nhsuk-code x-nhsuk-code--inline")
+                tag.code("CHILD_ADDRESS_TOWN")
               end
               row.with_cell(text: "Optional")
             end
         
             body.with_row do |row|
               row.with_cell do
-                tag.code("CHILD_ADDRESS_POSTCODE", class: "x-nhsuk-code x-nhsuk-code--inline")
+                tag.code("CHILD_ADDRESS_POSTCODE")
               end
               row.with_cell do
                 tag.strong("Required") + ", must be formatted as a valid postcode."
@@ -97,7 +97,7 @@
         
             body.with_row do |row|
               row.with_cell do
-                tag.code("CHILD_SCHOOL_URN", class: "x-nhsuk-code x-nhsuk-code--inline")
+                tag.code("CHILD_SCHOOL_URN")
               end
               row.with_cell do
                 tag.strong("Required") + ", must be 6 digits and numeric."
@@ -107,28 +107,28 @@
             %w(PARENT_1 PARENT_2).each do |prefix|
               body.with_row do |row|
                 row.with_cell do
-                  tag.code("#{prefix}_NAME", class: "x-nhsuk-code x-nhsuk-code--inline")
+                  tag.code("#{prefix}_NAME")
                 end
                 row.with_cell(text: "Optional")
               end
         
               body.with_row do |row|
                 row.with_cell do
-                  tag.code("#{prefix}_RELATIONSHIP", class: "x-nhsuk-code x-nhsuk-code--inline")
+                  tag.code("#{prefix}_RELATIONSHIP")
                 end
                 row.with_cell(text: "Optional, must be one of: Mother, Father, Guardian")
               end
         
               body.with_row do |row|
                 row.with_cell do
-                  tag.code("#{prefix}_EMAIL", class: "x-nhsuk-code x-nhsuk-code--inline")
+                  tag.code("#{prefix}_EMAIL")
                 end
                 row.with_cell(text: "Optional, must be formatted as a valid email address.")
               end
         
               body.with_row do |row|
                 row.with_cell do
-                  tag.code("#{prefix}_PHONE", class: "x-nhsuk-code x-nhsuk-code--inline")
+                  tag.code("#{prefix}_PHONE")
                 end
                 row.with_cell(text: "Optional, must be formatted as a valid phone number.")
               end
