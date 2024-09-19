@@ -26,13 +26,14 @@ describe CohortImportRow do
 
   before { create(:location, :school, urn: "123456") }
 
-  describe "#to_parent" do
-    subject(:parent) { cohort_import_row.to_parent }
+  describe "#to_parents" do
+    subject(:parents) { cohort_import_row.to_parents }
 
     let(:data) { valid_data }
 
-    it do
-      expect(parent).to have_attributes(
+    it "returns a parent" do
+      expect(parents.count).to eq(1)
+      expect(parents.first).to have_attributes(
         name: "John Smith",
         email: "john@example.com",
         phone: "07412345678",
@@ -45,10 +46,10 @@ describe CohortImportRow do
         create(:parent, name: "John Smith", email: "john@example.com")
       end
 
-      it { should eq(existing_parent) }
+      it { should eq([existing_parent]) }
 
       it "doesn't change phone_receive_updates" do
-        expect(parent.phone_receive_updates).to eq(
+        expect(parents.first.phone_receive_updates).to eq(
           existing_parent.phone_receive_updates
         )
       end
@@ -78,6 +79,22 @@ describe CohortImportRow do
 
         it { should have_attributes(team:, reception_starting_year: 2005) }
       end
+    end
+  end
+
+  describe "#to_parent_relationships" do
+    subject(:parent_relationships) do
+      cohort_import_row.to_parent_relationships(
+        cohort_import_row.to_parents,
+        cohort_import_row.to_patient
+      )
+    end
+
+    let(:data) { valid_data }
+
+    it "returns a parent relationship" do
+      expect(parent_relationships.count).to eq(1)
+      expect(parent_relationships.first).to be_father
     end
   end
 end

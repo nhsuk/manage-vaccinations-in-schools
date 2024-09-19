@@ -26,18 +26,28 @@ class CohortImportRow
     @team = team
   end
 
-  def to_parent
+  def to_parents
     return unless valid?
 
-    Parent
-      .find_or_initialize_by(email: parent_email, name: parent_name)
-      .tap do |parent|
-        parent.assign_attributes(
-          phone: parent_phone,
-          phone_receive_updates:
-            parent_phone.present? ? parent.phone_receive_updates : false
-        )
-      end
+    parents = [{ email: parent_email, name: parent_name, phone: parent_phone }]
+
+    parents.map do |attributes|
+      Parent
+        .find_or_initialize_by(attributes.slice(:email, :name))
+        .tap do |parent|
+          parent.assign_attributes(
+            phone: attributes[:phone],
+            phone_receive_updates:
+              (
+                if attributes[:phone].present?
+                  parent.phone_receive_updates
+                else
+                  false
+                end
+              )
+          )
+        end
+    end
   end
 
   def to_patient
@@ -65,24 +75,18 @@ class CohortImportRow
     end
   end
 
-  def to_parent_relationship(parent, patient)
+  def to_parent_relationships(parents, patient)
     return unless valid?
 
-    attributes =
-      case parent_relationship
-      when "Mother"
-        { type: "mother" }
-      when "Father"
-        { type: "father" }
-      when "Guardian"
-        { type: "guardian" }
-      else
-        { type: "other", other: parent_relationship }
-      end
+    parent_relationships = [parent_relationship_attributes]
 
-    ParentRelationship
-      .find_or_initialize_by(parent:, patient:)
-      .tap { _1.assign_attributes(attributes) }
+    parents
+      .zip(parent_relationships)
+      .map do |parent, attributes|
+        ParentRelationship
+          .find_or_initialize_by(parent:, patient:)
+          .tap { _1.assign_attributes(attributes) }
+      end
   end
 
   def school_urn
@@ -152,6 +156,19 @@ class CohortImportRow
 
   def school
     @school ||= Location.school.find_by!(urn: school_urn)
+  end
+
+  def parent_relationship_attributes
+    case parent_relationship
+    when "Mother"
+      { type: "mother" }
+    when "Father"
+      { type: "father" }
+    when "Guardian"
+      { type: "guardian" }
+    else
+      { type: "other", other: parent_relationship }
+    end
   end
 
   def find_existing_patients
