@@ -64,6 +64,7 @@ describe "End-to-end journey" do
       "CHILD_FIRST_NAME" => "Bobby",
       "CHILD_LAST_NAME" => "Tables",
       "CHILD_NHS_NUMBER" => "999 888 6666",
+      "CHILD_SCHOOL_URN" => @school.urn.to_s,
       "PARENT_1_EMAIL" => "daddy.tests@example.com",
       "PARENT_1_NAME" => "Big Daddy Tests",
       "PARENT_1_PHONE" => "07123456789",
@@ -71,8 +72,7 @@ describe "End-to-end journey" do
       "PARENT_2_EMAIL" => "",
       "PARENT_2_NAME" => "",
       "PARENT_2_PHONE" => "",
-      "PARENT_2_RELATIONSHIP" => "",
-      "SCHOOL_URN" => @school.urn.to_s
+      "PARENT_2_RELATIONSHIP" => ""
     }
 
     @registered_parents_csv =

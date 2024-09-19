@@ -55,6 +55,7 @@ class CohortImport < ApplicationRecord
       CHILD_FIRST_NAME
       CHILD_LAST_NAME
       CHILD_NHS_NUMBER
+      CHILD_SCHOOL_URN
       PARENT_1_EMAIL
       PARENT_1_NAME
       PARENT_1_PHONE
@@ -63,7 +64,6 @@ class CohortImport < ApplicationRecord
       PARENT_2_NAME
       PARENT_2_PHONE
       PARENT_2_RELATIONSHIP
-      SCHOOL_URN
     ]
   end
 
