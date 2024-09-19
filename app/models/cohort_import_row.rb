@@ -3,12 +3,21 @@
 class CohortImportRow
   include ActiveModel::Model
 
+  SCHOOL_URN_HOME_EDUCATED = "999999"
+  SCHOOL_URN_UNKNOWN = "888888"
+
   validates :address_postcode, postcode: true
   validates :date_of_birth, presence: true
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :nhs_number, length: { is: 10 }, allow_blank: true
-  validates :school_urn, inclusion: { in: -> { Location.school.pluck(:urn) } }
+  validates :school_urn,
+            inclusion: {
+              in: -> do
+                Location.school.pluck(:urn) +
+                  [SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN]
+              end
+            }
 
   with_options if: :parent_1_exists? do
     validates :parent_1_name, presence: true
@@ -70,13 +79,14 @@ class CohortImportRow
       address_line_2:,
       address_postcode:,
       address_town:,
+      cohort:,
       common_name:,
       date_of_birth:,
       first_name:,
+      home_educated:,
       last_name:,
       nhs_number:,
-      school:,
-      cohort:
+      school:
     }
 
     if (existing_patient = find_existing_patients.first)
@@ -186,7 +196,18 @@ class CohortImportRow
   end
 
   def school
-    @school ||= Location.school.find_by!(urn: school_urn)
+    @school ||=
+      unless [SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN].include?(school_urn)
+        Location.school.find_by!(urn: school_urn)
+      end
+  end
+
+  def home_educated
+    if school_urn == SCHOOL_URN_UNKNOWN
+      nil
+    else
+      school_urn == SCHOOL_URN_HOME_EDUCATED
+    end
   end
 
   def parent_1_exists?

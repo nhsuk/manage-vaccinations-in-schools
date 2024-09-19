@@ -5,6 +5,8 @@ describe CohortImportRow do
 
   let(:team) { create(:team) }
 
+  let(:school_urn) { "123456" }
+
   let(:valid_data) do
     {
       "CHILD_ADDRESS_LINE_1" => "10 Downing Street",
@@ -16,7 +18,7 @@ describe CohortImportRow do
       "CHILD_FIRST_NAME" => "Jimmy",
       "CHILD_LAST_NAME" => "Smith",
       "CHILD_NHS_NUMBER" => "1234567890",
-      "CHILD_SCHOOL_URN" => "123456"
+      "CHILD_SCHOOL_URN" => school_urn
     }
   end
 
@@ -103,6 +105,14 @@ describe CohortImportRow do
 
     it { should_not be_nil }
 
+    it { should have_attributes(home_educated: false) }
+
+    context "when home educated" do
+      let(:school_urn) { "999999" }
+
+      it { should have_attributes(home_educated: true) }
+    end
+
     describe "#cohort" do
       subject(:cohort) { patient.cohort }
 
@@ -118,6 +128,28 @@ describe CohortImportRow do
         let(:date_of_birth) { "2000-09-01" }
 
         it { should have_attributes(team:, reception_starting_year: 2005) }
+      end
+    end
+
+    describe "#school" do
+      subject(:school) { patient.school }
+
+      context "with a school location" do
+        let(:school_urn) { "123456" }
+
+        it { should eq(Location.first) }
+      end
+
+      context "with an unknown school" do
+        let(:school_urn) { "888888" }
+
+        it { should be_nil }
+      end
+
+      context "when home educated" do
+        let(:school_urn) { "999999" }
+
+        it { should be_nil }
       end
     end
   end
