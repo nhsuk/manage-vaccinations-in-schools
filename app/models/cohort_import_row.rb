@@ -14,10 +14,19 @@ class CohortImportRow
   validates :address_postcode, presence: true
   validates :address_postcode, postcode: true
 
-  validates :parent_name, presence: true
-  validates :parent_relationship, presence: true
-  validates :parent_email, presence: true, notify_safe_email: true
-  validates :parent_phone, phone: { allow_blank: true }
+  with_options if: :parent_1_exists? do
+    validates :parent_1_name, presence: true
+    validates :parent_1_relationship, presence: true
+    validates :parent_1_email, presence: true, notify_safe_email: true
+    validates :parent_1_phone, phone: { allow_blank: true }
+  end
+
+  with_options if: :parent_2_exists? do
+    validates :parent_2_name, presence: true
+    validates :parent_2_relationship, presence: true
+    validates :parent_2_email, presence: true, notify_safe_email: true
+    validates :parent_2_phone, phone: { allow_blank: true }
+  end
 
   validate :zero_or_one_existing_patient
 
@@ -29,7 +38,14 @@ class CohortImportRow
   def to_parents
     return unless valid?
 
-    parents = [{ email: parent_email, name: parent_name, phone: parent_phone }]
+    parents = [
+      if parent_1_exists?
+        { email: parent_1_email, name: parent_1_name, phone: parent_1_phone }
+      end,
+      if parent_2_exists?
+        { email: parent_2_email, name: parent_2_name, phone: parent_2_phone }
+      end
+    ].compact
 
     parents.map do |attributes|
       Parent
@@ -78,7 +94,10 @@ class CohortImportRow
   def to_parent_relationships(parents, patient)
     return unless valid?
 
-    parent_relationships = [parent_relationship_attributes]
+    parent_relationships =
+      [parent_1_relationship, parent_2_relationship].compact_blank.map do
+        parent_relationship_attributes(_1)
+      end
 
     parents
       .zip(parent_relationships)
@@ -131,20 +150,36 @@ class CohortImportRow
     @data["CHILD_ADDRESS_POSTCODE"]&.strip
   end
 
-  def parent_name
+  def parent_1_name
     @data["PARENT_1_NAME"]&.strip
   end
 
-  def parent_relationship
+  def parent_1_relationship
     @data["PARENT_1_RELATIONSHIP"]&.strip
   end
 
-  def parent_email
+  def parent_1_email
     @data["PARENT_1_EMAIL"]&.downcase&.strip
   end
 
-  def parent_phone
+  def parent_1_phone
     @data["PARENT_1_PHONE"]&.gsub(/\s/, "")
+  end
+
+  def parent_2_name
+    @data["PARENT_2_NAME"]&.strip
+  end
+
+  def parent_2_relationship
+    @data["PARENT_2_RELATIONSHIP"]&.strip
+  end
+
+  def parent_2_email
+    @data["PARENT_2_EMAIL"]&.downcase&.strip
+  end
+
+  def parent_2_phone
+    @data["PARENT_2_PHONE"]&.gsub(/\s/, "")
   end
 
   private
@@ -158,8 +193,20 @@ class CohortImportRow
     @school ||= Location.school.find_by!(urn: school_urn)
   end
 
-  def parent_relationship_attributes
-    case parent_relationship
+  def parent_1_exists?
+    [parent_1_name, parent_1_relationship, parent_1_email, parent_1_phone].any?(
+      &:present?
+    )
+  end
+
+  def parent_2_exists?
+    [parent_2_name, parent_2_relationship, parent_2_email, parent_2_phone].any?(
+      &:present?
+    )
+  end
+
+  def parent_relationship_attributes(relationship)
+    case relationship
     when "Mother"
       { type: "mother" }
     when "Father"
@@ -167,7 +214,7 @@ class CohortImportRow
     when "Guardian"
       { type: "guardian" }
     else
-      { type: "other", other: parent_relationship }
+      { type: "other", other: relationship }
     end
   end
 

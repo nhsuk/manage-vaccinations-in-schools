@@ -68,6 +68,10 @@ describe "End-to-end journey" do
       "PARENT_1_NAME" => "Big Daddy Tests",
       "PARENT_1_PHONE" => "07123456789",
       "PARENT_1_RELATIONSHIP" => "Father",
+      "PARENT_2_EMAIL" => "",
+      "PARENT_2_NAME" => "",
+      "PARENT_2_PHONE" => "",
+      "PARENT_2_RELATIONSHIP" => "",
       "SCHOOL_URN" => @school.urn.to_s
     }
 

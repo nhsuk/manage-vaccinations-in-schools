@@ -16,11 +16,26 @@ describe CohortImportRow do
       "CHILD_FIRST_NAME" => "Jimmy",
       "CHILD_LAST_NAME" => "Smith",
       "CHILD_NHS_NUMBER" => "1234567890",
+      "SCHOOL_NAME" => "Surrey Primary",
+      "SCHOOL_URN" => "123456"
+    }
+  end
+
+  let(:parent_1_data) do
+    {
       "PARENT_1_EMAIL" => "john@example.com",
       "PARENT_1_NAME" => "John Smith",
       "PARENT_1_PHONE" => "07412345678",
-      "PARENT_1_RELATIONSHIP" => "Father",
-      "SCHOOL_URN" => "123456"
+      "PARENT_1_RELATIONSHIP" => "Father"
+    }
+  end
+
+  let(:parent_2_data) do
+    {
+      "PARENT_2_EMAIL" => "jenny@example.com",
+      "PARENT_2_NAME" => "Jenny Smith",
+      "PARENT_2_PHONE" => "07412345678",
+      "PARENT_2_RELATIONSHIP" => "Mother"
     }
   end
 
@@ -31,19 +46,45 @@ describe CohortImportRow do
 
     let(:data) { valid_data }
 
-    it "returns a parent" do
-      expect(parents.count).to eq(1)
-      expect(parents.first).to have_attributes(
-        name: "John Smith",
-        email: "john@example.com",
-        phone: "07412345678",
-        phone_receive_updates: false
-      )
+    it { should be_empty }
+
+    context "with one parent" do
+      let(:data) { valid_data.merge(parent_1_data) }
+
+      it "returns a parent" do
+        expect(parents.count).to eq(1)
+        expect(parents.first).to have_attributes(
+          name: "John Smith",
+          email: "john@example.com",
+          phone: "07412345678",
+          phone_receive_updates: false
+        )
+      end
+    end
+
+    context "with two parents" do
+      let(:data) { valid_data.merge(parent_1_data).merge(parent_2_data) }
+
+      it "returns two parents" do
+        expect(parents.count).to eq(2)
+        expect(parents.first).to have_attributes(
+          name: "John Smith",
+          email: "john@example.com",
+          phone: "07412345678"
+        )
+        expect(parents.second).to have_attributes(
+          name: "Jenny Smith",
+          email: "jenny@example.com",
+          phone: "07412345678"
+        )
+      end
     end
 
     context "with an existing parent" do
+      let(:data) { valid_data.merge(parent_2_data) }
+
       let!(:existing_parent) do
-        create(:parent, name: "John Smith", email: "john@example.com")
+        create(:parent, name: "Jenny Smith", email: "jenny@example.com")
       end
 
       it { should eq([existing_parent]) }
@@ -92,9 +133,25 @@ describe CohortImportRow do
 
     let(:data) { valid_data }
 
-    it "returns a parent relationship" do
-      expect(parent_relationships.count).to eq(1)
-      expect(parent_relationships.first).to be_father
+    it { should be_empty }
+
+    context "with one parent" do
+      let(:data) { valid_data.merge(parent_1_data) }
+
+      it "returns a parent relationship" do
+        expect(parent_relationships.count).to eq(1)
+        expect(parent_relationships.first).to be_father
+      end
+    end
+
+    context "with two parents" do
+      let(:data) { valid_data.merge(parent_1_data).merge(parent_2_data) }
+
+      it "returns two parent relationships" do
+        expect(parent_relationships.count).to eq(2)
+        expect(parent_relationships.first).to be_father
+        expect(parent_relationships.second).to be_mother
+      end
     end
   end
 end

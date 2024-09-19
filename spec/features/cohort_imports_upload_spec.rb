@@ -98,7 +98,7 @@ describe "Cohort imports" do
   end
 
   def then_i_should_see_the_cohorts
-    expect(page).to have_content("Year 8\n2 children")
+    expect(page).to have_content("Year 8\n3 children")
     expect(page).to have_content("Year 9\nNo children")
     expect(page).to have_content("Year 10\nNo children")
     expect(page).to have_content("Year 11\nNo children")
@@ -109,7 +109,7 @@ describe "Cohort imports" do
   end
 
   def then_i_should_see_the_children
-    expect(page).to have_content("2 children")
+    expect(page).to have_content("3 children")
     expect(page).to have_content("Full nameNHS numberDate of birthPostcode")
     expect(page).to have_content("Full name Jimmy Smith")
     expect(page).to have_content(/NHS number.*123.*456.*7890/)
