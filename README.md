@@ -287,6 +287,12 @@ cis2:
 
 The `cis2` feature flag also needs to be enabled in Flipper for CIS2 logins to work.
 
+## Rake tasks
+
+- `vaccines:seed`
+
+See the [Rake tasks documentation](docs/rake-tasks.md) for more information.
+
 ## MESH Connection
 
 Mavis connects to the NHS MESH (Message Exchange for Social Care and Health) to
