@@ -1,5 +1,14 @@
 # Rake Tasks
 
+## Programmes
+
+### `programmes:create[team_id,type]`
+
+- `team_id` - The ID of the team.
+- `type` - Either `flu` or `hpv`.
+
+This creates a new programme attached to a particular team.
+
 ## Vaccines
 
 ### `vaccines:add_to_programme[programme_id, vaccine_nivs_name]`
