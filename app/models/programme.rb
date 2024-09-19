@@ -45,7 +45,13 @@ class Programme < ApplicationRecord
                  "patients.pending_changes != '{}' OR vaccination_records.pending_changes != '{}'"
                )
                .distinct
-               .includes(:vaccine, :batch, session: :location, patient: :school)
+               .includes(
+                 :vaccine,
+                 :batch,
+                 :patient_session,
+                 session: :location,
+                 patient: :school
+               )
                .strict_loading
            end,
            through: :immunisation_imports,
