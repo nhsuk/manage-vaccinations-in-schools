@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Cohort imports" do
+describe "Import child records" do
   around { |example| travel_to(Date.new(2023, 5, 20)) { example.run } }
 
   scenario "User uploads a file" do
@@ -9,7 +9,7 @@ describe "Cohort imports" do
 
     when_i_visit_the_cohort_page_for_the_hpv_programme
     and_i_start_adding_children_to_the_cohort
-    then_i_should_see_the_upload_cohort_page
+    then_i_should_see_the_import_page
 
     when_i_continue_without_uploading_a_file
     then_i_should_see_an_error
@@ -39,7 +39,7 @@ describe "Cohort imports" do
 
     when_i_visit_the_cohort_page_for_the_hpv_programme
     and_i_start_adding_children_to_the_cohort
-    then_i_should_see_the_upload_cohort_page
+    then_i_should_see_the_import_page
 
     when_i_upload_a_valid_file
     then_i_should_see_the_duplicates_page
@@ -67,8 +67,8 @@ describe "Cohort imports" do
     click_on "Import child records"
   end
 
-  def then_i_should_see_the_upload_cohort_page
-    expect(page).to have_content("Upload cohort records")
+  def then_i_should_see_the_import_page
+    expect(page).to have_content("Import child records")
   end
 
   def when_i_upload_a_valid_file
