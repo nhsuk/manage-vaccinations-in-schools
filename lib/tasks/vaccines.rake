@@ -39,4 +39,25 @@ namespace :vaccines do
       )
     end
   end
+
+  desc "Add a vaccine to a programme."
+  task :add_to_programme,
+       %i[programme_id vaccine_nivs_name] => :environment do |_, args|
+    programme = Programme.find_by(id: args[:programme_id])
+    vaccine = Vaccine.find_by(nivs_name: args[:vaccine_nivs_name])
+
+    if programme.nil? || vaccine.nil?
+      raise "Could not find programme or vaccine."
+    end
+
+    if programme.vaccines.include?(vaccine)
+      raise "Vaccine is already part of the programme."
+    end
+
+    if vaccine.type != programme.type
+      raise "Vaccine is not suitable for this programme type."
+    end
+
+    programme.vaccines << vaccine
+  end
 end
