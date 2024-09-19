@@ -155,7 +155,7 @@ describe ImmunisationImportRow, type: :model do
         {
           "PERSON_FORENAME" => "John",
           "PERSON_SURNAME" => "Smith",
-          "PERSON_DOB" => "19900101"
+          "PERSON_DOB" => "19900901"
         }
       end
 
@@ -165,7 +165,7 @@ describe ImmunisationImportRow, type: :model do
           2,
           first_name: "John",
           last_name: "Smith",
-          date_of_birth: Date.new(1990, 1, 1)
+          date_of_birth: Date.new(1990, 9, 1)
         )
       end
 
@@ -359,13 +359,13 @@ describe ImmunisationImportRow, type: :model do
       context "with a date of birth before September" do
         let(:date_of_birth) { "20000831" }
 
-        it { should have_attributes(team:, reception_starting_year: 2004) }
+        it { should have_attributes(team:, birth_academic_year: 1999) }
       end
 
       context "with a date of birth after September" do
         let(:date_of_birth) { "20000901" }
 
-        it { should have_attributes(team:, reception_starting_year: 2005) }
+        it { should have_attributes(team:, birth_academic_year: 2000) }
       end
     end
   end

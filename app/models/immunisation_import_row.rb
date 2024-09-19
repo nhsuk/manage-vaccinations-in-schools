@@ -280,8 +280,8 @@ class ImmunisationImportRow
     return unless valid?
 
     @cohort ||=
-      Cohort.find_or_create_by_date_of_birth!(
-        patient_date_of_birth,
+      Cohort.find_or_create_by!(
+        birth_academic_year: patient_date_of_birth.academic_year,
         team: @programme.team
       )
   end
