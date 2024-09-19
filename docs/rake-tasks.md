@@ -9,6 +9,21 @@
 
 This creates a new programme attached to a particular team.
 
+## Teams
+
+### `teams:create_hpv[email,name,phone,ods_code,privacy_policy_url,reply_to_id]`
+
+- `email` - The email address of the team.
+- `name` - The unique name of the team.
+- `phone` - The phone number of the team.
+- `ods_code` - The unique ODS code for the team.
+- `privacy_policy_url` - The URL of the team’s privacy policy (optional).
+- `reply_to_id` - The team’s GOV.UK Notify reply to UUID (optional).
+
+If none of the arguments are provided (`rake teams:create_hpv`), the user will be prompted for responses.
+
+This creates a new team with an HPV programme.
+
 ## Vaccines
 
 ### `vaccines:add_to_programme[programme_id, vaccine_nivs_name]`
