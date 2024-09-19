@@ -309,6 +309,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_19_163618) do
     t.integer "not_administered_record_count"
     t.text "csv_filename", null: false
     t.datetime "csv_removed_at"
+    t.integer "changed_record_count"
     t.index ["programme_id"], name: "index_immunisation_imports_on_programme_id"
     t.index ["uploaded_by_user_id"], name: "index_immunisation_imports_on_uploaded_by_user_id"
   end
