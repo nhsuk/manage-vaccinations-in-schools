@@ -249,7 +249,7 @@ describe ImmunisationImport, type: :model do
           nhs_number: "7420180008",
           first_name: "Chyna",
           last_name: "Pickle",
-          date_of_birth: Date.new(2012, 9, 12),
+          date_of_birth: Date.new(2011, 9, 12),
           gender_code: "not_specified",
           address_postcode: "LE3 2DA"
         )
@@ -261,7 +261,7 @@ describe ImmunisationImport, type: :model do
         expect(existing_patient.reload.pending_changes).to eq(
           "address_postcode" => "LE3 2DB",
           "cohort_id" => programme.team.cohorts.first.id,
-          "date_of_birth" => "2012-09-13",
+          "date_of_birth" => "2011-09-13",
           "gender_code" => "female",
           "school_id" => Location.find_by(urn: "110158").id
         )

@@ -12,6 +12,7 @@ class CohortImportsController < ApplicationController
   def create
     @cohort_import =
       CohortImport.new(
+        programme: @programme,
         team: @programme.team,
         uploaded_by: current_user,
         **cohort_import_params

@@ -60,7 +60,7 @@ describe "End-to-end journey" do
       "CHILD_ADDRESS_POSTCODE" => "TE1 1ST",
       "CHILD_ADDRESS_TOWN" => "Testville",
       "CHILD_COMMON_NAME" => "Drop Table",
-      "CHILD_DATE_OF_BIRTH" => "2020-01-01",
+      "CHILD_DATE_OF_BIRTH" => "2011-01-01",
       "CHILD_FIRST_NAME" => "Bobby",
       "CHILD_LAST_NAME" => "Tables",
       "CHILD_NHS_NUMBER" => "999 888 6666",

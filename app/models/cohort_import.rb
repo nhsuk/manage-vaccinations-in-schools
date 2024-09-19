@@ -32,6 +32,7 @@ class CohortImport < ApplicationRecord
   include CSVImportable
 
   belongs_to :team
+  attr_accessor :programme
 
   has_and_belongs_to_many :parent_relationships
   has_and_belongs_to_many :parents
@@ -72,7 +73,7 @@ class CohortImport < ApplicationRecord
   end
 
   def parse_row(row_data)
-    CohortImportRow.new(data: row_data, team:)
+    CohortImportRow.new(data: row_data, programme:)
   end
 
   def process_row(row)

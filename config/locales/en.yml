@@ -24,21 +24,22 @@ en:
       models:
         cohort_import_row:
           attributes:
-            child_address_line_1:
+            address_line_1:
               blank: is required but missing
-            child_address_postcode:
-              blank: is required but missing111
+            address_postcode:
+              blank: is required but missing
               invalid_postcode: ‘%{value}’ should be a postcode, like SW1A 1AA
-            child_address_town:
+            address_town:
               blank: is required but missing
-            child_date_of_birth:
+            date_of_birth:
               blank: is required but missing
               invalid: ‘%{value}’ should be formatted as YYYY-MM-DD
-            child_first_name:
+              inclusion: is not part of this programme
+            first_name:
               blank: is required but missing
-            child_last_name:
+            last_name:
               blank: is required but missing
-            child_nhs_number:
+            nhs_number:
               blank: is required but missing
               invalid: ‘%{value}’ should be a valid NHS number, like 999 888 7777
             parent_email:
@@ -90,6 +91,7 @@ en:
               multiple_duplicate_match: Two or more possible patients match the patient first name, last name, date of birth or postcode.
             patient_date_of_birth:
               blank: Enter a date of birth in the correct format.
+              inclusion: is not part of this programme
             patient_first_name:
               blank: Enter a first name.
             patient_gender_code:

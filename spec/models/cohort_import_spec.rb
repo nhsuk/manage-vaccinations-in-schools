@@ -29,9 +29,10 @@
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 describe CohortImport do
-  subject(:cohort_import) { create(:cohort_import, csv:, team:) }
+  subject(:cohort_import) { create(:cohort_import, csv:, programme:, team:) }
 
-  let(:team) { create(:team) }
+  let(:programme) { create(:programme) }
+  let(:team) { programme.team }
   let(:file) { "valid_cohort.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_import/#{file}") }
   # Ensure location URN matches the URN in our fixture files
@@ -219,7 +220,7 @@ describe CohortImport do
     end
 
     it "ignores and counts duplicate records" do
-      build(:cohort_import, csv:, team:).record!
+      build(:cohort_import, csv:, team:, programme:).record!
       csv.rewind
 
       process!
