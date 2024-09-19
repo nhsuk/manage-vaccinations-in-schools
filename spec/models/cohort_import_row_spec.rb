@@ -16,8 +16,7 @@ describe CohortImportRow do
       "CHILD_FIRST_NAME" => "Jimmy",
       "CHILD_LAST_NAME" => "Smith",
       "CHILD_NHS_NUMBER" => "1234567890",
-      "SCHOOL_NAME" => "Surrey Primary",
-      "SCHOOL_URN" => "123456"
+      "CHILD_SCHOOL_URN" => "123456"
     }
   end
 

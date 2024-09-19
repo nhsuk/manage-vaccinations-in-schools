@@ -3,13 +3,12 @@
 class CohortImportRow
   include ActiveModel::Model
 
-  validates :school_urn, inclusion: { in: -> { Location.school.pluck(:urn) } }
-
   validates :address_postcode, postcode: true
   validates :date_of_birth, presence: true
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :nhs_number, length: { is: 10 }, allow_blank: true
+  validates :school_urn, inclusion: { in: -> { Location.school.pluck(:urn) } }
 
   with_options if: :parent_1_exists? do
     validates :parent_1_name, presence: true
@@ -106,7 +105,7 @@ class CohortImportRow
   end
 
   def school_urn
-    @data["SCHOOL_URN"]&.strip
+    @data["CHILD_SCHOOL_URN"]&.strip
   end
 
   def nhs_number
