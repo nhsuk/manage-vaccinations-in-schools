@@ -24,7 +24,7 @@ task :add_health_questions,
   puts "Existing health questions for #{team.name}'s #{vaccine.type} vaccine #{vaccine.brand}"
   if existing_health_questions.any?
     existing_health_questions.each do |health_question|
-      puts Rainbow("  #{health_question.question}").yellow
+      puts Rainbow("  #{health_question.title}").yellow
     end
   else
     puts Rainbow("  [none]").black
@@ -63,7 +63,7 @@ task :add_health_questions,
   puts "\nThese will be the health questions for #{team.name}'s #{vaccine.type} vaccine #{vaccine.brand}:"
   unless replace
     existing_health_questions.each do |health_question|
-      puts Rainbow("  [old] #{health_question.question}").black
+      puts Rainbow("  [old] #{health_question.title}").black
     end
   end
   health_questions.each do |health_question|
@@ -87,7 +87,7 @@ def update_health_questions(vaccine:, health_questions:, replace:)
 
   hq_objects =
     health_questions.map do |health_question|
-      HealthQuestion.new(question: health_question)
+      HealthQuestion.new(title: health_question)
     end
   vaccine.health_questions << hq_objects
 
