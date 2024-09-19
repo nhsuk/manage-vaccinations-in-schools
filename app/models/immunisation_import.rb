@@ -42,7 +42,8 @@ class ImmunisationImport < ApplicationRecord
   has_and_belongs_to_many :vaccination_records
 
   def processed_only_exact_duplicates?
-    new_record_count.zero? && exact_duplicate_record_count != 0
+    new_record_count.zero? && changed_record_count.zero? &&
+      exact_duplicate_record_count != 0
   end
 
   private
@@ -69,6 +70,7 @@ class ImmunisationImport < ApplicationRecord
     %i[
       exact_duplicate_record_count
       new_record_count
+      changed_record_count
       not_administered_record_count
     ]
   end
@@ -83,6 +85,9 @@ class ImmunisationImport < ApplicationRecord
         (
           if vaccination_record.new_record? || vaccination_record.draft?
             :new_record_count
+          elsif vaccination_record.pending_changes.any? ||
+                vaccination_record.patient.pending_changes.any?
+            :changed_record_count
           else
             :exact_duplicate_record_count
           end
