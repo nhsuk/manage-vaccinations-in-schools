@@ -46,7 +46,7 @@ class HealthAnswer
 
     health_questions.map do |hq|
       new id: hq_id_map[hq.id],
-          question: hq.question,
+          question: hq.title,
           response: nil,
           notes: nil,
           hint: hq.hint,
