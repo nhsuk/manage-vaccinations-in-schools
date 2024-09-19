@@ -24,8 +24,7 @@ class AppSessionDetailsComponent < ViewComponent::Base
   end
 
   def cohort
-    patients_count = @session.patients.count
-    pluralize(patients_count, "child")
+    I18n.t("children", count: @session.patients.count)
   end
 
   def consent_requests

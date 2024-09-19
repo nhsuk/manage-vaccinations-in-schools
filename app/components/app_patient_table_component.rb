@@ -12,6 +12,6 @@ class AppPatientTableComponent < ViewComponent::Base
   attr_reader :patients
 
   def heading
-    pluralize(patients.count, "child")
+    I18n.t("children", count: patients.count)
   end
 end
