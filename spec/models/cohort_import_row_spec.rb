@@ -16,10 +16,10 @@ describe CohortImportRow do
       "CHILD_FIRST_NAME" => "Jimmy",
       "CHILD_LAST_NAME" => "Smith",
       "CHILD_NHS_NUMBER" => "1234567890",
-      "PARENT_EMAIL" => "john@example.com",
-      "PARENT_NAME" => "John Smith",
-      "PARENT_PHONE" => "07412345678",
-      "PARENT_RELATIONSHIP" => "Father",
+      "PARENT_1_EMAIL" => "john@example.com",
+      "PARENT_1_NAME" => "John Smith",
+      "PARENT_1_PHONE" => "07412345678",
+      "PARENT_1_RELATIONSHIP" => "Father",
       "SCHOOL_URN" => "123456"
     }
   end

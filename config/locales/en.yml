@@ -2,19 +2,19 @@ en:
   activemodel:
     attributes:
       cohort_import_row:
-        child_address_line_1: <code>CHILD_ADDRESS_LINE_1</code>
-        child_address_line_2: <code>CHILD_ADDRESS_LINE_2</code>
-        child_address_postcode: <code>CHILD_ADDRESS_POSTCODE</code>
-        child_address_town: <code>CHILD_ADDRESS_TOWN</code>
-        child_common_name: <code>CHILD_COMMON_NAME</code>
-        child_date_of_birth: <code>CHILD_DATE_OF_BIRTH</code>
-        child_first_name: <code>CHILD_FIRST_NAME</code>
-        child_last_name: <code>CHILD_LAST_NAME</code>
-        child_nhs_number: <code>CHILD_NHS_NUMBER</code>
-        parent_email: <code>PARENT_EMAIL</code>
-        parent_name: <code>PARENT_NAME</code>
-        parent_phone: <code>PARENT_PHONE</code>
-        parent_relationship: <code>PARENT_RELATIONSHIP</code>
+        address_line_1: <code>CHILD_ADDRESS_LINE_1</code>
+        address_line_2: <code>CHILD_ADDRESS_LINE_2</code>
+        address_postcode: <code>CHILD_ADDRESS_POSTCODE</code>
+        address_town: <code>CHILD_ADDRESS_TOWN</code>
+        common_name: <code>CHILD_COMMON_NAME</code>
+        date_of_birth: <code>CHILD_DATE_OF_BIRTH</code>
+        first_name: <code>CHILD_FIRST_NAME</code>
+        last_name: <code>CHILD_LAST_NAME</code>
+        nhs_number: <code>CHILD_NHS_NUMBER</code>
+        parent_1_email: <code>PARENT_1_EMAIL</code>
+        parent_1_name: <code>PARENT_1_NAME</code>
+        parent_1_phone: <code>PARENT_1_PHONE</code>
+        parent_1_relationship: <code>PARENT_1_RELATIONSHIP</code>
         school_urn: <code>SCHOOL_URN</code>
     errors:
       models:

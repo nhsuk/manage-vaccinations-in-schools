@@ -128,19 +128,19 @@ class CohortImportRow
   end
 
   def parent_name
-    @data["PARENT_NAME"]&.strip
+    @data["PARENT_1_NAME"]&.strip
   end
 
   def parent_relationship
-    @data["PARENT_RELATIONSHIP"]&.strip
+    @data["PARENT_1_RELATIONSHIP"]&.strip
   end
 
   def parent_email
-    @data["PARENT_EMAIL"]&.downcase&.strip
+    @data["PARENT_1_EMAIL"]&.downcase&.strip
   end
 
   def parent_phone
-    @data["PARENT_PHONE"]&.gsub(/\s/, "")
+    @data["PARENT_1_PHONE"]&.gsub(/\s/, "")
   end
 
   private
