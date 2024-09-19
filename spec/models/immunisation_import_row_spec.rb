@@ -346,7 +346,7 @@ describe ImmunisationImportRow, type: :model do
       let(:data) { valid_data.merge("SCHOOL_URN" => "888888") }
 
       it "creates a patient with an unknown school" do
-        expect(patient.home_educated).to be(false)
+        expect(patient.home_educated).to be_nil
         expect(patient.school).to be_nil
       end
     end

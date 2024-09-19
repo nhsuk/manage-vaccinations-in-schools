@@ -245,7 +245,11 @@ class ImmunisationImportRow
   end
 
   def home_educated
-    school_urn == SCHOOL_URN_HOME_EDUCATED
+    if school_urn == SCHOOL_URN_UNKNOWN
+      nil
+    else
+      school_urn == SCHOOL_URN_HOME_EDUCATED
+    end
   end
 
   def session_date
