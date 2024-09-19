@@ -4,16 +4,16 @@
 #
 # Table name: cohorts
 #
-#  id                      :bigint           not null, primary key
-#  reception_starting_year :integer          not null
-#  created_at              :datetime         not null
-#  updated_at              :datetime         not null
-#  team_id                 :bigint           not null
+#  id                  :bigint           not null, primary key
+#  birth_academic_year :integer          not null
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  team_id             :bigint           not null
 #
 # Indexes
 #
-#  index_cohorts_on_team_id                              (team_id)
-#  index_cohorts_on_team_id_and_reception_starting_year  (team_id,reception_starting_year) UNIQUE
+#  index_cohorts_on_team_id                          (team_id)
+#  index_cohorts_on_team_id_and_birth_academic_year  (team_id,birth_academic_year) UNIQUE
 #
 # Foreign Keys
 #
@@ -22,6 +22,6 @@
 FactoryBot.define do
   factory :cohort do
     team
-    reception_starting_year { Time.zone.today.year }
+    birth_academic_year { Time.zone.today.year - 10 }
   end
 end

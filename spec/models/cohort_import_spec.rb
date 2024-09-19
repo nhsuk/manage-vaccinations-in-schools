@@ -132,7 +132,7 @@ describe CohortImport do
 
       expect(Cohort.first).to have_attributes(
         patients: Patient.all,
-        reception_starting_year: 2014
+        birth_academic_year: 2009
       )
 
       expect(Patient.first).to have_attributes(

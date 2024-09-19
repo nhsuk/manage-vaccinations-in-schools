@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_19_070826) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_19_163618) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -88,10 +88,10 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_19_070826) do
 
   create_table "cohorts", force: :cascade do |t|
     t.bigint "team_id", null: false
-    t.integer "reception_starting_year", null: false
+    t.integer "birth_academic_year", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["team_id", "reception_starting_year"], name: "index_cohorts_on_team_id_and_reception_starting_year", unique: true
+    t.index ["team_id", "birth_academic_year"], name: "index_cohorts_on_team_id_and_birth_academic_year", unique: true
     t.index ["team_id"], name: "index_cohorts_on_team_id"
   end
 

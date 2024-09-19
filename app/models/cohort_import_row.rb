@@ -192,7 +192,10 @@ class CohortImportRow
 
   def cohort
     @cohort ||=
-      Cohort.find_or_create_by_date_of_birth!(date_of_birth, team: @team)
+      Cohort.find_or_create_by!(
+        birth_academic_year: date_of_birth.academic_year,
+        team: @team
+      )
   end
 
   def school
