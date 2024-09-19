@@ -55,10 +55,32 @@ class CohortImport < ApplicationRecord
       CHILD_FIRST_NAME
       CHILD_LAST_NAME
       CHILD_NHS_NUMBER
+      <<<<<<<
+      HEAD
       PARENT_EMAIL
       PARENT_NAME
       PARENT_PHONE
       PARENT_RELATIONSHIP
+      |||||||
+      parent
+      of
+      3f521a71
+      (Rename
+      cohort
+      parent
+      columns)
+      =======
+      PARENT_1_EMAIL
+      PARENT_1_NAME
+      PARENT_1_PHONE
+      PARENT_1_RELATIONSHIP
+      SCHOOL_NAME
+      >>>>>>>
+      3f521a71
+      (Rename
+      cohort
+      parent
+      columns)
       SCHOOL_URN
     ]
   end
