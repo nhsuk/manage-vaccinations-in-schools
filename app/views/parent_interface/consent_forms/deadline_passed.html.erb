@@ -1,13 +1,9 @@
-<%= h1 "You can no longer use this service" %>
+<%= h1 "You can no longer submit a consent response" %>
 
-<p>
-  The deadline for responding has passed. This means you can no longer take
-  part in the pilot.
-</p>
+<p class="nhsuk-body">The deadline for responding has passed.</p>
 
-<p>
-  If you have any questions, please contact the local health team by calling
-  <%= @session.programme.team.phone %>, or email
-  <a class="nhsuk-link" href="mailto:<%= @session.programme.team.email %>">
-    <%= @session.programme.team.email %></a>.
+<h2 class="nhsuk-heading-m">You can still book a clinic appointment</h2>
+
+<p class="govuk-body">
+  Contact <% govuk_link_to @session.programme.team.email, "mailto:#{@session.programme.team.email}" %> to book a clinic appointment.
 </p>
