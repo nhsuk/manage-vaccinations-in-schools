@@ -55,21 +55,20 @@ describe "End-to-end journey" do
 
   def when_i_upload_the_cohort_import_containing_one_child
     cohort_data = {
-      "SCHOOL_URN" => @school.urn.to_s,
-      "SCHOOL_NAME" => "Pilot School",
-      "PARENT_NAME" => "Big Daddy Tests",
-      "PARENT_RELATIONSHIP" => "Father",
-      "PARENT_EMAIL" => "daddy.tests@example.com",
-      "PARENT_PHONE" => "07123456789",
-      "CHILD_FIRST_NAME" => "Bobby",
-      "CHILD_LAST_NAME" => "Tables",
-      "CHILD_COMMON_NAME" => "Drop Table",
-      "CHILD_DATE_OF_BIRTH" => "2020-01-01",
       "CHILD_ADDRESS_LINE_1" => "1 Test Street",
       "CHILD_ADDRESS_LINE_2" => "2nd Floor",
-      "CHILD_ADDRESS_TOWN" => "Testville",
       "CHILD_ADDRESS_POSTCODE" => "TE1 1ST",
-      "CHILD_NHS_NUMBER" => "999 888 6666"
+      "CHILD_ADDRESS_TOWN" => "Testville",
+      "CHILD_COMMON_NAME" => "Drop Table",
+      "CHILD_DATE_OF_BIRTH" => "2020-01-01",
+      "CHILD_FIRST_NAME" => "Bobby",
+      "CHILD_LAST_NAME" => "Tables",
+      "CHILD_NHS_NUMBER" => "999 888 6666",
+      "PARENT_EMAIL" => "daddy.tests@example.com",
+      "PARENT_NAME" => "Big Daddy Tests",
+      "PARENT_PHONE" => "07123456789",
+      "PARENT_RELATIONSHIP" => "Father",
+      "SCHOOL_URN" => @school.urn.to_s
     }
 
     @registered_parents_csv =

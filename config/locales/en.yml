@@ -15,7 +15,6 @@ en:
         parent_name: <code>PARENT_NAME</code>
         parent_phone: <code>PARENT_PHONE</code>
         parent_relationship: <code>PARENT_RELATIONSHIP</code>
-        school_name: <code>SCHOOL_NAME</code>
         school_urn: <code>SCHOOL_URN</code>
     errors:
       models:
