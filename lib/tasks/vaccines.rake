@@ -21,6 +21,22 @@ namespace :vaccines do
       vaccine.type = data["type"]
 
       vaccine.save!
+
+      next if vaccine.flu? || vaccine.health_questions.exists?
+
+      vaccine.health_questions.create!(
+        title: "Does your child have any severe allergies?",
+        next_question:
+          vaccine.health_questions.create!(
+            title:
+              "Does your child have any medical conditions for which they receive treatment?",
+            next_question:
+              vaccine.health_questions.create!(
+                title:
+                  "Has your child ever had a severe reaction to any medicines, including vaccines?"
+              )
+          )
+      )
     end
   end
 end
