@@ -302,6 +302,9 @@ Devise.setup do |config|
         setup:,
         name: :cis2,
         scope: %i[openid profile email nationalrbacaccess associatedorgs],
+        extra_authorize_params: {
+          max_age: 300
+        },
         response_type: :code,
         # uid_field: "preferred_username",
         issuer: Settings.cis2.issuer,
