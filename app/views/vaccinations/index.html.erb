@@ -37,7 +37,7 @@
 <%= render AppSessionPatientTableComponent.new(
       patient_sessions: @patient_sessions,
       caption: t("patients_table.#{@current_tab}.caption",
-                 children: pluralize_child(@patient_sessions.count)),
+                 children: t("children", count: @patient_sessions.count)),
       columns: @current_tab == :vaccinate ?
         %i[name dob action] :
         %i[name dob outcome],

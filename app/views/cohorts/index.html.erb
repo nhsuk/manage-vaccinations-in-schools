@@ -18,7 +18,7 @@
     <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item">
       <%= render AppCardComponent.new(link_to: cohort.patient_count > 0 ? programme_cohort_path(@programme, cohort) : nil) do |card| %>
         <% card.with_heading { format_year_group(cohort.year_group) } %>
-        <% card.with_description { pluralize(cohort.patient_count, "child") } %>
+        <% card.with_description { t("children", count: cohort.patient_count) } %>
       <% end %>
     </li>
   <% end %>

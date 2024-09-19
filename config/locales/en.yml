@@ -442,6 +442,10 @@ en:
               inclusion: Choose a reason
             site:
               blank: Choose a site
+  children:
+    zero: No children
+    one: 1 child
+    other: "%{count} children"
   cohorts:
     index:
       title: Cohorts
