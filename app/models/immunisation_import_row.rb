@@ -37,12 +37,10 @@ class ImmunisationImportRow
   validates :patient_nhs_number, length: { is: 10 }, allow_blank: true
   validates :patient_first_name, presence: true
   validates :patient_last_name, presence: true
-  validates :patient_date_of_birth,
-            comparison: {
-              less_than_or_equal_to: -> { Date.current }
-            }
+  validates :patient_date_of_birth, presence: true
   validates :patient_gender_code, inclusion: { in: Patient.gender_codes.keys }
   validates :patient_postcode, postcode: true
+  validate :date_of_birth_in_a_valid_year_group
   validate :zero_or_one_existing_patient
 
   validates :session_date,
@@ -358,6 +356,14 @@ class ImmunisationImportRow
     Date.strptime(@data[key]&.strip, "%Y%m%d")
   rescue ArgumentError, TypeError
     nil
+  end
+
+  def date_of_birth_in_a_valid_year_group
+    return if patient_date_of_birth.nil?
+
+    unless @programme.year_groups.include?(patient_date_of_birth.year_group)
+      errors.add(:patient_date_of_birth, :inclusion)
+    end
   end
 
   def find_existing_patients

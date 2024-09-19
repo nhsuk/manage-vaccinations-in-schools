@@ -150,6 +150,17 @@ describe ImmunisationImportRow, type: :model do
       end
     end
 
+    context "when date of birth is outside the programme year group" do
+      let(:data) { { "PERSON_DOB" => "19900101" } }
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(
+          immunisation_import_row.errors[:patient_date_of_birth]
+        ).to contain_exactly("is not part of this programme")
+      end
+    end
+
     context "with more than two matching patients" do
       let(:data) do
         {
@@ -352,20 +363,21 @@ describe ImmunisationImportRow, type: :model do
     end
 
     describe "#cohort" do
-      subject(:cohort) { patient.cohort }
+      subject(:cohort) { travel_to(today) { patient.cohort } }
 
-      let(:data) { valid_data.merge("PERSON_DOB" => date_of_birth) }
+      let(:data) { valid_data }
+      let(:today) { Date.new(2024, 9, 1) }
 
       context "with a date of birth before September" do
-        let(:date_of_birth) { "20000831" }
+        let(:date_of_birth) { "20130831" }
 
-        it { should have_attributes(team:, birth_academic_year: 1999) }
+        it { should have_attributes(team:, birth_academic_year: 2012) }
       end
 
       context "with a date of birth after September" do
-        let(:date_of_birth) { "20000901" }
+        let(:date_of_birth) { "20130901" }
 
-        it { should have_attributes(team:, birth_academic_year: 2000) }
+        it { should have_attributes(team:, birth_academic_year: 2013) }
       end
     end
   end

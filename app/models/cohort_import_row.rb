@@ -18,6 +18,7 @@ class CohortImportRow
                   [SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN]
               end
             }
+  validate :date_of_birth_in_a_valid_year_group
 
   with_options if: :parent_1_exists? do
     validates :parent_1_name, presence: true
@@ -35,9 +36,9 @@ class CohortImportRow
 
   validate :zero_or_one_existing_patient
 
-  def initialize(data:, team:)
+  def initialize(data:, programme:)
     @data = data
-    @team = team
+    @programme = programme
   end
 
   def to_parents
@@ -194,7 +195,7 @@ class CohortImportRow
     @cohort ||=
       Cohort.find_or_create_by!(
         birth_academic_year: date_of_birth.academic_year,
-        team: @team
+        team: @programme.team
       )
   end
 
@@ -235,6 +236,14 @@ class CohortImportRow
       { type: "guardian" }
     else
       { type: "other", other: relationship }
+    end
+  end
+
+  def date_of_birth_in_a_valid_year_group
+    return if date_of_birth.nil?
+
+    unless @programme.year_groups.include?(date_of_birth.year_group)
+      errors.add(:date_of_birth, :inclusion)
     end
   end
 

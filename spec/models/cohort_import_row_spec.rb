@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 describe CohortImportRow do
-  subject(:cohort_import_row) { described_class.new(data:, team:) }
+  subject(:cohort_import_row) { described_class.new(data:, programme:) }
 
-  let(:team) { create(:team) }
+  let(:programme) { create(:programme) }
 
   let(:school_urn) { "123456" }
 
@@ -41,6 +41,23 @@ describe CohortImportRow do
   end
 
   before { create(:location, :school, urn: "123456") }
+
+  describe "validations" do
+    let(:data) { valid_data }
+
+    it { should be_valid }
+
+    context "when date of birth is outside the programme year group" do
+      let(:data) { valid_data.merge("CHILD_DATE_OF_BIRTH" => "1990-01-01") }
+
+      it "is invalid" do
+        expect(cohort_import_row).to be_invalid
+        expect(cohort_import_row.errors[:date_of_birth]).to contain_exactly(
+          "is not part of this programme"
+        )
+      end
+    end
+  end
 
   describe "#to_parents" do
     subject(:parents) { cohort_import_row.to_parents }
@@ -114,20 +131,31 @@ describe CohortImportRow do
     end
 
     describe "#cohort" do
-      subject(:cohort) { patient.cohort }
+      subject(:cohort) { travel_to(today) { patient.cohort } }
 
+      let(:today) { Date.new(2013, 9, 1) }
       let(:data) { valid_data.merge("CHILD_DATE_OF_BIRTH" => date_of_birth) }
 
       context "with a date of birth before September" do
         let(:date_of_birth) { "2000-08-31" }
 
-        it { should have_attributes(team:, birth_academic_year: 1999) }
+        it do
+          expect(cohort).to have_attributes(
+            team: programme.team,
+            birth_academic_year: 1999
+          )
+        end
       end
 
       context "with a date of birth after September" do
         let(:date_of_birth) { "2000-09-01" }
 
-        it { should have_attributes(team:, birth_academic_year: 2000) }
+        it do
+          expect(cohort).to have_attributes(
+            team: programme.team,
+            birth_academic_year: 2000
+          )
+        end
       end
     end
 
