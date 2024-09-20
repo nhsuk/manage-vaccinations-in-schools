@@ -28,7 +28,7 @@ FactoryBot.define do
     transient { programme { association :programme } }
 
     session { association :session, programme: }
-    patient
+    patient { association :patient, school: session.location }
     created_by
 
     active { session.active }
@@ -47,7 +47,8 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_not_needed,
-                    programme: session.programme
+                    programme: session.programme,
+                    school: session.location
       end
     end
 
@@ -55,13 +56,17 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    programme: session.programme
+                    programme: session.programme,
+                    school: session.location
       end
     end
 
     trait :consent_refused do
       patient do
-        association :patient, :consent_refused, programme: session.programme
+        association :patient,
+                    :consent_refused,
+                    programme: session.programme,
+                    school: session.location
       end
     end
 
@@ -69,13 +74,17 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_refused_with_notes,
-                    programme: session.programme
+                    programme: session.programme,
+                    school: session.location
       end
     end
 
     trait :consent_conflicting do
       patient do
-        association :patient, :consent_conflicting, programme: session.programme
+        association :patient,
+                    :consent_conflicting,
+                    programme: session.programme,
+                    school: session.location
       end
     end
 
@@ -83,7 +92,8 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    programme: session.programme
+                    programme: session.programme,
+                    school: session.location
       end
 
       triage do
@@ -102,7 +112,8 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    programme: session.programme
+                    programme: session.programme,
+                    school: session.location
       end
 
       triage do
@@ -114,7 +125,8 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    programme: session.programme
+                    programme: session.programme,
+                    school: session.location
       end
 
       triage do
@@ -126,7 +138,8 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    programme: session.programme
+                    programme: session.programme,
+                    school: session.location
       end
 
       triage do
@@ -150,7 +163,8 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_not_needed,
-                    programme: session.programme
+                    programme: session.programme,
+                    school: session.location
       end
     end
 
@@ -158,7 +172,8 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    programme: session.programme
+                    programme: session.programme,
+                    school: session.location
       end
 
       triage do
@@ -184,7 +199,8 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    programme: session.programme
+                    programme: session.programme,
+                    school: session.location
       end
 
       triage do
@@ -208,7 +224,8 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    programme: session.programme
+                    programme: session.programme,
+                    school: session.location
       end
 
       triage do
