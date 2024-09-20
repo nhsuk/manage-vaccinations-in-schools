@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "csv"
-
 describe DPSExportRow do
   subject(:row) { described_class.new(vaccination_record) }
 
