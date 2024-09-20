@@ -132,4 +132,18 @@ namespace :schools do
 
     puts "\nSchools import completed. Total locations: #{Location.count}"
   end
+
+  desc "Add a school to a team."
+  task :add_to_team, %i[team_id urn] => :environment do |_task, args|
+    team = Team.find_by(id: args[:team_id])
+    location = Location.school.find_by(urn: args[:urn])
+
+    raise "Could not find location or team." if location.nil? || team.nil?
+
+    unless location.team.nil?
+      raise "School already belongs to #{location.team.name}."
+    end
+
+    location.update!(team:)
+  end
 end
