@@ -66,7 +66,7 @@ describe "Session management" do
   end
 
   def when_i_choose_a_school
-    choose @location.name
+    select @location.name
     click_button "Continue"
   end
 

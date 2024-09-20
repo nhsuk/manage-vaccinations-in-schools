@@ -11,12 +11,17 @@
 <%= form_with model: @session, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
-  <%= f.govuk_collection_radio_buttons(
-        :location_id,
-        @locations,
-        :id,
-        :name,
-        legend: { text: title, tag: "h1", size: "l" },
+  <%= render DfE::Autocomplete::View.new(
+        f,
+        attribute_name: :location_id,
+        form_field: f.govuk_select(
+          :location_id,
+          options_for_select(
+            dfe_autocomplete_options(@locations),
+            f.object.id,
+          ),
+          label: { text: title, tag: "h1", size: "l" },
+        ),
       ) %>
 
   <%= f.govuk_submit "Continue" %>

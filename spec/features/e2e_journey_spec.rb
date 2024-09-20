@@ -99,7 +99,7 @@ describe "End-to-end journey" do
     click_on "Add a new session"
 
     expect(page).to have_content("Which school is it at?")
-    choose "Pilot School"
+    select "Pilot School"
     click_on "Continue"
 
     expect(page).to have_content("When is the session?")
