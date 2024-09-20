@@ -647,13 +647,13 @@ describe ImmunisationImportRow, type: :model do
     context "with a nasal anatomical site" do
       let(:data) { { "ANATOMICAL_SITE" => "nasal" } }
 
-      it { should eq(:nasal_spray) }
+      it { should eq("nasal_spray") }
     end
 
     context "with a non-nasal anatomical site" do
       let(:data) { { "ANATOMICAL_SITE" => "left thigh" } }
 
-      it { should eq(:intramuscular) }
+      it { should eq("intramuscular") }
     end
 
     context "with an unknown anatomical site" do
@@ -675,43 +675,43 @@ describe ImmunisationImportRow, type: :model do
     context "with a left thigh anatomical site" do
       let(:data) { { "ANATOMICAL_SITE" => "left thigh" } }
 
-      it { should eq(:left_thigh) }
+      it { should eq("left_thigh") }
     end
 
     context "with a right thigh anatomical site" do
       let(:data) { { "ANATOMICAL_SITE" => "right thigh" } }
 
-      it { should eq(:right_thigh) }
+      it { should eq("right_thigh") }
     end
 
     context "with a left upper arm anatomical site" do
       let(:data) { { "ANATOMICAL_SITE" => "left upper arm" } }
 
-      it { should eq(:left_arm_upper_position) }
+      it { should eq("left_arm_upper_position") }
     end
 
     context "with a right upper arm anatomical site" do
       let(:data) { { "ANATOMICAL_SITE" => "right upper arm" } }
 
-      it { should eq(:right_arm_upper_position) }
+      it { should eq("right_arm_upper_position") }
     end
 
     context "with a left buttock anatomical site" do
       let(:data) { { "ANATOMICAL_SITE" => "left buttock" } }
 
-      it { should eq(:left_buttock) }
+      it { should eq("left_buttock") }
     end
 
     context "with a right buttock anatomical site" do
       let(:data) { { "ANATOMICAL_SITE" => "right buttock" } }
 
-      it { should eq(:right_buttock) }
+      it { should eq("right_buttock") }
     end
 
     context "with a nasal anatomical site" do
       let(:data) { { "ANATOMICAL_SITE" => "nasal" } }
 
-      it { should eq(:nose) }
+      it { should eq("nose") }
     end
 
     context "with an unknown anatomical site" do

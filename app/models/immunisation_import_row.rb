@@ -162,13 +162,13 @@ class ImmunisationImportRow
   end
 
   DELIVERY_SITES = {
-    "left thigh" => :left_thigh,
-    "right thigh" => :right_thigh,
-    "left upper arm" => :left_arm_upper_position,
-    "right upper arm" => :right_arm_upper_position,
-    "left buttock" => :left_buttock,
-    "right buttock" => :right_buttock,
-    "nasal" => :nose
+    "left thigh" => "left_thigh",
+    "right thigh" => "right_thigh",
+    "left upper arm" => "left_arm_upper_position",
+    "right upper arm" => "right_arm_upper_position",
+    "left buttock" => "left_buttock",
+    "right buttock" => "right_buttock",
+    "nasal" => "nose"
   }.freeze
 
   def delivery_site
@@ -178,10 +178,10 @@ class ImmunisationImportRow
   def delivery_method
     return unless delivery_site
 
-    if delivery_site == :nose
-      :nasal_spray
+    if delivery_site == "nose"
+      "nasal_spray"
     else
-      :intramuscular
+      "intramuscular"
     end
   end
 
