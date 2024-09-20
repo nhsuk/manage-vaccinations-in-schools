@@ -18,8 +18,8 @@
             ) %><br>
       <% end %>
       <%= link_to session_location(session), edit_session_path(session), "data-testid": "session-link" %>
-      <% if (location = session.location).present? %>
-        <br /><%= location.address_town %>, <%= location.address_postcode %>
+      <% if (location = session.location)&.has_address? %>
+        <br /><%= format_address_single_line(location) %>
       <% end %>
     </p>
   </td>

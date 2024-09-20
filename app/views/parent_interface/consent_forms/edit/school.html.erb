@@ -12,7 +12,7 @@
     <span class="nhsuk-heading-m nhsuk-u-margin-bottom-0">
       <%= @session.location.name %>
     </span>
-    <%= @session.location.address_postcode %>
+    <%= format_address_single_line(@session.location) %>
   </p>
 <% end %>
 

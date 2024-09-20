@@ -21,8 +21,8 @@ class AppMatchingCriteriaComponent < ViewComponent::Base
     @consent_form.has_address?
   end
 
-  def address_parts
-    @consent_form.address_parts
+  def address
+    helpers.format_address_single_line(@consent_form)
   end
 
   def parent_guardian_or_other
