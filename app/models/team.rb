@@ -22,7 +22,9 @@
 class Team < ApplicationRecord
   has_many :cohort_imports
   has_many :cohorts
+  has_many :locations
   has_many :programmes
+  has_many :schools, -> { school }, class_name: "Location"
 
   has_and_belongs_to_many :users
 

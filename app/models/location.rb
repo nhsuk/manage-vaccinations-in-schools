@@ -17,16 +17,24 @@
 #  urn        :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  team_id    :bigint
 #
 # Indexes
 #
 #  index_locations_on_ods_code  (ods_code) UNIQUE
+#  index_locations_on_team_id   (team_id)
 #  index_locations_on_urn       (urn) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (team_id => teams.id)
 #
 class Location < ApplicationRecord
   self.inheritance_column = :nil
 
   audited
+
+  belongs_to :team, optional: true
 
   has_many :sessions
   has_many :patients, foreign_key: :school_id
