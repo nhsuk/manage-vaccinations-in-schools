@@ -29,6 +29,8 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class Location < ApplicationRecord
+  include AddressConcern
+
   self.inheritance_column = :nil
 
   audited

@@ -37,6 +37,7 @@
 #  fk_rails_...  (school_id => locations.id)
 #
 class Patient < ApplicationRecord
+  include AddressConcern
   include AgeConcern
   include PendingChangesConcern
   include Recordable
@@ -132,12 +133,6 @@ class Patient < ApplicationRecord
 
   def as_json(options = {})
     super.merge("full_name" => full_name, "age" => age)
-  end
-
-  def address_fields
-    [address_line_1, address_line_2, address_town, address_postcode].reject(
-      &:blank?
-    )
   end
 
   private

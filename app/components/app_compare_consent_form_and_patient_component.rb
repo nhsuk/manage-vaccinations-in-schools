@@ -20,7 +20,7 @@ class AppCompareConsentFormAndPatientComponent < ViewComponent::Base
   end
 
   def address_match?
-    consent_form.address_fields == patient.address_fields
+    consent_form.address_parts == patient.address_parts
   end
 
   def mark(text, opts)

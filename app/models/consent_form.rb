@@ -47,8 +47,9 @@
 #
 
 class ConsentForm < ApplicationRecord
-  include WizardStepConcern
+  include AddressConcern
   include AgeConcern
+  include WizardStepConcern
 
   before_save :reset_unused_fields
 
@@ -286,12 +287,6 @@ class ConsentForm < ApplicationRecord
   def reason_notes_must_be_provided?
     refused_because_other? || refused_because_will_be_vaccinated_elsewhere? ||
       refused_because_medical_reasons? || refused_because_already_vaccinated?
-  end
-
-  def address_fields
-    [address_line_1, address_line_2, address_town, address_postcode].reject(
-      &:blank?
-    )
   end
 
   def find_matching_patient
