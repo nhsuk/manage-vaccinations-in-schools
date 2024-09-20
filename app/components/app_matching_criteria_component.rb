@@ -18,7 +18,7 @@ class AppMatchingCriteriaComponent < ViewComponent::Base
   end
 
   def address_present?
-    address_parts.any?
+    @consent_form.has_address?
   end
 
   def address_parts

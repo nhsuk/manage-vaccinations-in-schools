@@ -11,4 +11,8 @@ module AddressConcern
       address_postcode
     ].compact_blank
   end
+
+  def has_address?
+    address_parts.present?
+  end
 end
