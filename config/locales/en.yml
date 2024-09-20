@@ -527,7 +527,7 @@ en:
         will_be_vaccinated_elsewhere: Where will their child get their vaccination?
   immunisation_imports:
     index:
-      title: Uploads
+      title: Imports
   import_issues:
     index:
       title: Import issues
@@ -610,7 +610,7 @@ en:
     no_results: No results
   vaccination_records:
     index:
-      title: Vaccination records
+      title: Vaccinations
   vaccinations:
     reason:
       title:

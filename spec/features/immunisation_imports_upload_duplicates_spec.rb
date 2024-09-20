@@ -131,9 +131,9 @@ describe "Immunisation imports duplicates" do
 
   def when_i_go_to_the_reports_page
     visit "/dashboard"
-    click_on "Vaccination programmes", match: :first
+    click_on "Programmes", match: :first
     click_on "HPV"
-    click_on "Uploads"
+    click_on "Imports"
   end
 
   def and_i_click_on_the_upload_link

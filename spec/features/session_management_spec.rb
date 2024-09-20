@@ -50,7 +50,7 @@ describe "Session management" do
   def when_i_go_to_todays_sessions_as_a_nurse
     sign_in @team.users.first
     visit "/dashboard"
-    click_link "Today’s sessions", match: :first
+    click_link "School sessions", match: :first
   end
 
   def then_i_see_no_sessions
