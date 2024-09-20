@@ -13,7 +13,7 @@ class ImmunisationImportRow
               less_than_or_equal_to: :maximum_dose_sequence
             },
             if: -> { administered && vaccine.present? }
-  validates :organisation_code, comparison: { equal_to: :valid_ods_code }
+  validates :organisation_code, comparison: { equal_to: :ods_code }
   validates :vaccine_given,
             inclusion: {
               in: :valid_given_vaccines
@@ -274,13 +274,19 @@ class ImmunisationImportRow
     administered ? (session_date.in_time_zone + 12.hours) : nil
   end
 
+  def team
+    @user.team
+  end
+
+  delegate :ods_code, to: :team
+
   def cohort
     return unless valid?
 
     @cohort ||=
       Cohort.find_or_create_by!(
         birth_academic_year: patient_date_of_birth.academic_year,
-        team: @programme.team
+        team:
       )
   end
 
@@ -311,8 +317,9 @@ class ImmunisationImportRow
 
     @generic_clinic ||=
       Location.create_with(
-        name: "Generic #{@user.team.name} clinic"
-      ).find_or_create_by!(type: :generic_clinic, ods_code: @user.team.ods_code)
+        name: "Generic #{team.name} clinic",
+        team:
+      ).find_or_create_by!(type: :generic_clinic, ods_code:)
   end
 
   def vaccine
@@ -330,10 +337,6 @@ class ImmunisationImportRow
         expiry: batch_expiry_date,
         name: batch_number
       )
-  end
-
-  def valid_ods_code
-    @user.team.ods_code
   end
 
   def valid_given_vaccines
