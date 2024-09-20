@@ -61,7 +61,7 @@
         if @consent.consent_form.present?
           summary_list.with_row do |row|
             row.with_key { "Home address" }
-            row.with_value { format_address(@consent.consent_form) }
+            row.with_value { format_address_multi_line(@consent.consent_form) }
           end
       
           summary_list.with_row do |row|

@@ -1,18 +1,6 @@
 # frozen_string_literal: true
 
 module ConsentFormsHelper
-  def format_address(consent_form)
-    safe_join(
-      [
-        consent_form.address_line_1,
-        consent_form.address_line_2,
-        consent_form.address_town,
-        consent_form.address_postcode
-      ].reject(&:blank?),
-      tag.br
-    )
-  end
-
   def health_answer_response(health_answer)
     if health_answer.response == "yes"
       "Yes – #{health_answer.notes}"

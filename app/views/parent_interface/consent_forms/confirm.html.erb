@@ -95,7 +95,7 @@
         if @consent_form.consent_given?
           summary_list.with_row do |row|
             row.with_key { "Address" }
-            row.with_value { format_address(@consent_form) }
+            row.with_value { format_address_multi_line(@consent_form) }
             row.with_action(
               text: "Change",
               href: change_link[:address],
