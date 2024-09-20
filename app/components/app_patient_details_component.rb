@@ -39,7 +39,7 @@ class AppPatientDetailsComponent < ViewComponent::Base
       if address_present?
         summary_list.with_row do |row|
           row.with_key { "Address" }
-          row.with_value { address_formatted }
+          row.with_value { helpers.format_address_multi_line(@object) }
         end
       end
 
@@ -93,18 +93,6 @@ class AppPatientDetailsComponent < ViewComponent::Base
       @object.try(:address_line_2).present? ||
       @object.try(:address_town).present? ||
       @object.try(:address_postcode).present?
-  end
-
-  def address_formatted
-    safe_join(
-      [
-        @object.address_line_1,
-        @object.address_line_2,
-        @object.address_town,
-        @object.address_postcode
-      ].reject(&:blank?),
-      tag.br
-    )
   end
 
   def gp_response_present?

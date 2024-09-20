@@ -28,8 +28,8 @@
     <%= table.with_body do |body| %>
       <%= body.with_row do |row| %>
         <%= row.with_cell(text: "Address", header: true) %>
-        <%= row.with_cell(text: mark(safe_join(consent_form.address_fields, tag.br), unless: address_match?)) %>
-        <%= row.with_cell(text: safe_join(patient.address_fields, tag.br)) %>
+        <%= row.with_cell(text: mark(helpers.format_address_multi_line(consent_form), unless: address_match?)) %>
+        <%= row.with_cell(text: helpers.format_address_multi_line(patient)) %>
       <% end %>
     <% end %>
   <% end %>
