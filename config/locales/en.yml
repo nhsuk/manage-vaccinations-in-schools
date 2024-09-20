@@ -599,12 +599,12 @@ en:
       label: Vaccinated
   programmes:
     index:
-      title: Vaccination programmes
+      title: Programmes
   service:
     email: england.mavis@nhs.net
   sessions:
     index:
-      title: Today’s sessions
+      title: School sessions
   table:
     no_filtered_results: We couldn’t find any children that matched your filters.
     no_results: No results

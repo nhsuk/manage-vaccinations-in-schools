@@ -2,25 +2,26 @@
 
 <ul class="nhsuk-grid-row nhsuk-card-group">
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(link_to: sessions_path) do |c| %>
-      <% c.with_heading { t("sessions.index.title") } %>
+    <%= render AppCardComponent.new(link_to: programmes_path) do |c| %>
+      <% c.with_heading { t("programmes.index.title") } %>
       <p class="nhsuk-body">Use this area to:</p>
       <ul class="nhsuk-list nhsuk-list--bullet">
-        <li>register attendance</li>
-        <li>record vaccinations</li>
-        <li>review session outcomes</li>
+        <li>import child records</li>
+        <li>organise school sessions</li>
+        <li>report vaccinations</li>
       </ul>
     <% end %>
   </li>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(link_to: programmes_path) do |c| %>
-      <% c.with_heading { t("programmes.index.title") } %>
+    <%= render AppCardComponent.new(link_to: sessions_path) do |c| %>
+      <% c.with_heading { t("sessions.index.title") } %>
       <p class="nhsuk-body">Use this area to:</p>
       <ul class="nhsuk-list nhsuk-list--bullet">
-        <li>create new programmes</li>
         <li>review consent responses</li>
         <li>triage health records</li>
+        <li>record vaccinations</li>
+        <li>review session outcomes</li>
       </ul>
     <% end %>
   </li>
