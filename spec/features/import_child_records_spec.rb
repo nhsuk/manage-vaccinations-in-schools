@@ -58,7 +58,7 @@ describe "Import child records" do
   def when_i_visit_the_cohort_page_for_the_hpv_programme
     sign_in @user
     visit "/dashboard"
-    click_on "Vaccination programmes", match: :first
+    click_on "Programmes", match: :first
     click_on "HPV"
     click_on "Cohort"
   end

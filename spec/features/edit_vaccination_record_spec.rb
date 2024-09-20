@@ -45,9 +45,9 @@ describe "Edit vaccination record" do
   def when_i_go_to_the_vaccination_records_page
     visit "/dashboard"
 
-    click_on "Vaccination programmes", match: :first
+    click_on "Programmes", match: :first
     click_on "HPV"
-    click_on "Vaccination records"
+    click_on "Vaccinations"
   end
 
   def then_i_should_see_the_vaccination_records

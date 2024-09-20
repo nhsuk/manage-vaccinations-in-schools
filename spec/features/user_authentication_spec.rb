@@ -79,6 +79,6 @@ describe "User authentication" do
 
   def then_i_see_the_sessions_page
     expect(page).to have_current_path sessions_path, ignore_query: true
-    expect(page).to have_content "Today’s sessions"
+    expect(page).to have_content "School sessions"
   end
 end

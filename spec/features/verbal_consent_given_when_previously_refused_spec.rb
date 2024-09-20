@@ -32,9 +32,9 @@ feature "Verbal consent" do
     @refusing_parent = @session.patient_sessions.first.consents.first.parent
 
     visit "/dashboard"
-    click_on "Vaccination programmes", match: :first
+    click_on "Programmes", match: :first
     click_on "HPV"
-    click_on "School sessions"
+    click_on "Schools"
     click_on "Pilot School"
     click_on "Check consent responses"
     click_on "Refused"
