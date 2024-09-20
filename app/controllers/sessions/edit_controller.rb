@@ -98,7 +98,11 @@ class Sessions::EditController < ApplicationController
 
   def set_locations
     # TODO: Use an autocomplete instead.
-    @locations = policy_scope(Location).order(:name).limit(100)
+    @locations =
+      policy_scope(Location)
+        .order(:name)
+        .limit(100)
+        .map { OpenStruct.new(name: _1.name, value: _1.id) }
   end
 
   def set_patients
