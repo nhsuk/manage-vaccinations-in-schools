@@ -97,14 +97,12 @@ namespace :schools do
           type: :school,
           urn: row["URN"],
           name: row["EstablishmentName"],
-          address: [
-            row["Street"],
-            row["Locality"],
-            row["Address3"]
-          ].compact.join(", "),
-          town: row["Town"],
-          county: row["County (name)"],
-          postcode: row["Postcode"],
+          address_line_1: row["Street"],
+          address_line_2: [row["Locality"], row["Address3"]].compact_blank.join(
+            ", "
+          ),
+          address_town: row["Town"],
+          address_postcode: row["Postcode"],
           url: process_url.call(row["SchoolWebsite"].presence)
         )
 
@@ -112,7 +110,14 @@ namespace :schools do
           Location.import! locations,
                            on_duplicate_key_update: {
                              conflict_target: [:urn],
-                             columns: %i[name address town county postcode url]
+                             columns: %i[
+                               name
+                               address_line_1
+                               address_line_2
+                               address_town
+                               address_postcode
+                               url
+                             ]
                            }
           locations.clear
         end
@@ -125,7 +130,14 @@ namespace :schools do
         Location.import! locations,
                          on_duplicate_key_update: {
                            conflict_target: [:urn],
-                           columns: %i[name address town county postcode url]
+                           columns: %i[
+                             name
+                             address_line_1
+                             address_line_2
+                             address_town
+                             address_postcode
+                             url
+                           ]
                          }
       end
     end

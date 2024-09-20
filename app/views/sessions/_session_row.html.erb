@@ -19,7 +19,7 @@
       <% end %>
       <%= link_to session_location(session), edit_session_path(session), "data-testid": "session-link" %>
       <% if (location = session.location).present? %>
-        <br /><%= location.town %>, <%= location.postcode %>
+        <br /><%= location.address_town %>, <%= location.address_postcode %>
       <% end %>
     </p>
   </td>

@@ -4,20 +4,19 @@
 #
 # Table name: locations
 #
-#  id         :bigint           not null, primary key
-#  address    :text
-#  county     :text
-#  locality   :text
-#  name       :text             not null
-#  ods_code   :string
-#  postcode   :text
-#  town       :text
-#  type       :integer          not null
-#  url        :text
-#  urn        :string
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  team_id    :bigint
+#  id               :bigint           not null, primary key
+#  address_line_1   :text
+#  address_line_2   :text
+#  address_postcode :text
+#  address_town     :text
+#  name             :text             not null
+#  ods_code         :string
+#  type             :integer          not null
+#  url              :text
+#  urn              :string
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  team_id          :bigint
 #
 # Indexes
 #
@@ -32,11 +31,11 @@
 FactoryBot.define do
   factory :location do
     name { Faker::Educator.primary_school }
-    address { Faker::Address.street_address }
-    locality { "" }
-    town { Faker::Address.city }
-    county { Faker::Address.county }
-    postcode { Faker::Address.postcode }
+
+    address_line_1 { Faker::Address.street_address }
+    address_town { Faker::Address.city }
+    address_postcode { Faker::Address.postcode }
+
     url { Faker::Internet.url }
 
     trait :generic_clinic do

@@ -31,7 +31,7 @@
                 <span class="nhsuk-table-responsive__heading">Location</span>
                 <p class="nhsuk-u-margin-bottom-0 nhsuk-u-secondary-text-color">
                   <%= link_to session_location(session), session_path(session) %>
-                  <% if (address = session.location&.address).present? %>
+                  <% if (address = session.location&.address_line_1).present? %>
                     <br /><%= address %>
                   <% end %>
                 </p>
