@@ -22,8 +22,6 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 
-require "csv"
-
 describe DPSExport, type: :model do
   subject(:dps_export) do
     described_class.create!(programme:, filename: "test.csv")

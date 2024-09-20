@@ -12,6 +12,7 @@ gem "awesome_print"
 gem "bootsnap", require: false
 gem "config"
 gem "cssbundling-rails"
+gem "csv"
 gem "devise"
 gem "devise-pwned_password"
 gem "factory_bot_rails"

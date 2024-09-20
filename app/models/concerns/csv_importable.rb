@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "csv"
-
 module CSVImportable
   extend ActiveSupport::Concern
 

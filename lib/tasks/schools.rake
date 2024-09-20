@@ -54,7 +54,6 @@ namespace :schools do
 
   desc "Import schools from DfE GIAS CSV"
   task import: :environment do
-    require "csv"
     require "zip"
     require "ruby-progressbar"
 

@@ -21,8 +21,6 @@
 #
 #  fk_rails_...  (programme_id => programmes.id)
 #
-require "csv"
-
 class DPSExport < ApplicationRecord
   before_create :set_filename
   before_create :set_vaccination_records
