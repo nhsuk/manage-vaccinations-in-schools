@@ -15,6 +15,9 @@ gem "cssbundling-rails"
 gem "csv"
 gem "devise"
 gem "devise-pwned_password"
+gem "dfe-autocomplete",
+    require: "dfe/autocomplete",
+    github: "DFE-Digital/dfe-autocomplete"
 gem "factory_bot_rails"
 gem "faker"
 gem "faraday"
