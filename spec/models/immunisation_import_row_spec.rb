@@ -413,7 +413,10 @@ describe ImmunisationImportRow, type: :model do
 
       it "sets the location to a generic clinic" do
         expect(session.location).to be_generic_clinic
-        expect(session.location.ods_code).to eq(team.ods_code)
+        expect(session.location).to have_attributes(
+          team:,
+          ods_code: team.ods_code
+        )
       end
     end
 
@@ -422,7 +425,10 @@ describe ImmunisationImportRow, type: :model do
 
       it "sets the location to a generic clinic" do
         expect(session.location).to be_generic_clinic
-        expect(session.location.ods_code).to eq(team.ods_code)
+        expect(session.location).to have_attributes(
+          team:,
+          ods_code: team.ods_code
+        )
       end
     end
 
@@ -451,7 +457,10 @@ describe ImmunisationImportRow, type: :model do
 
       it "sets the location to a generic clinic" do
         expect(session.location).to be_generic_clinic
-        expect(session.location.ods_code).to eq(team.ods_code)
+        expect(session.location).to have_attributes(
+          team:,
+          ods_code: team.ods_code
+        )
       end
     end
 
