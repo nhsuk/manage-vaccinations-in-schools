@@ -18,16 +18,11 @@ class AppMatchingCriteriaComponent < ViewComponent::Base
   end
 
   def address_present?
-    address_fields.any?
+    address_parts.any?
   end
 
-  def address_fields
-    [
-      @consent_form.address_line_1,
-      @consent_form.address_line_2,
-      @consent_form.address_town,
-      @consent_form.address_postcode
-    ].reject(&:blank?)
+  def address_parts
+    @consent_form.address_parts
   end
 
   def parent_guardian_or_other
