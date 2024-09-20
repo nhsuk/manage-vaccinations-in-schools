@@ -9,6 +9,15 @@
 
 This creates a new programme attached to a particular team.
 
+## Schools
+
+### `schools:add_to_team[team_id,urn]`
+
+- `team_id` - The ID of the team.
+- `urn` - The URN of the school to add.
+
+This adds a school to the list of schools that a particular team manages.
+
 ## Teams
 
 ### `teams:create_hpv[email,name,phone,ods_code,privacy_policy_url,reply_to_id]`
