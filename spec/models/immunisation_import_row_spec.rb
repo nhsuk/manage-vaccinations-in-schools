@@ -415,7 +415,8 @@ describe ImmunisationImportRow, type: :model do
         expect(session.location).to be_generic_clinic
         expect(session.location).to have_attributes(
           team:,
-          ods_code: team.ods_code
+          ods_code: team.ods_code,
+          year_groups: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
         )
       end
     end
@@ -427,7 +428,8 @@ describe ImmunisationImportRow, type: :model do
         expect(session.location).to be_generic_clinic
         expect(session.location).to have_attributes(
           team:,
-          ods_code: team.ods_code
+          ods_code: team.ods_code,
+          year_groups: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
         )
       end
     end

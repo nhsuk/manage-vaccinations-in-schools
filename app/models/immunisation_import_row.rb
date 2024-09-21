@@ -316,10 +316,14 @@ class ImmunisationImportRow
     return unless valid?
 
     @generic_clinic ||=
-      Location.create_with(
-        name: "Generic #{team.name} clinic",
-        team:
-      ).find_or_create_by!(type: :generic_clinic, ods_code:)
+      Location
+        .create_with(name: "Generic #{team.name} clinic", team:)
+        .find_or_create_by!(type: :generic_clinic, ods_code:)
+        .tap do
+          _1.update!(
+            year_groups: (_1.year_groups + @programme.year_groups).sort.uniq
+          )
+        end
   end
 
   def vaccine
