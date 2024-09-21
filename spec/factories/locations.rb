@@ -50,5 +50,15 @@ FactoryBot.define do
       ods_code { nil }
       sequence(:urn, 100_000, &:to_s)
     end
+
+    trait :primary do
+      school
+      year_groups { (0..6).to_a }
+    end
+
+    trait :secondary do
+      school
+      year_groups { (7..11).to_a }
+    end
   end
 end

@@ -46,6 +46,14 @@ class Location < ApplicationRecord
 
   enum :type, %w[school generic_clinic]
 
+  scope :for_programme,
+        ->(programme) do
+          where(team: programme.team).where(
+            "year_groups && ARRAY[?]::integer[]",
+            programme.year_groups
+          )
+        end
+
   validates :name, presence: true
   validates :url, url: true, allow_nil: true
 

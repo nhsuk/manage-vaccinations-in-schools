@@ -30,7 +30,23 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 
-describe Location, type: :model do
+describe Location do
+  describe "scopes" do
+    describe "#for_programme" do
+      subject(:for_programme) { described_class.for_programme(programme) }
+
+      let(:team) { create(:team) }
+      let(:programme) { create(:programme, :hpv, team:) } # 8-11
+      let(:matching) { create(:location, :secondary, team:) } # 7-11
+      let(:mismatch_year_group) { create(:location, :primary, team:) } # 0-6
+      let(:mismatch_team) { create(:location, :secondary) }
+
+      it { should include(matching) }
+      it { should_not include(mismatch_year_group) }
+      it { should_not include(mismatch_team) }
+    end
+  end
+
   describe "validations" do
     it { should validate_presence_of(:name) }
 
