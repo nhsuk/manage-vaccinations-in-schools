@@ -88,6 +88,12 @@ namespace :schools do
         url.gsub!("http:www", "http://www")
       end
 
+      process_year_groups = ->(row) do
+        low_year_group = row["StatutoryLowAge"].to_i - 4
+        high_year_group = row["StatutoryHighAge"].to_i - 5
+        (low_year_group..high_year_group).to_a
+      end
+
       CSV.parse(
         csv_content,
         headers: true,
@@ -103,7 +109,8 @@ namespace :schools do
           ),
           address_town: row["Town"],
           address_postcode: row["Postcode"],
-          url: process_url.call(row["SchoolWebsite"].presence)
+          url: process_url.call(row["SchoolWebsite"].presence),
+          year_groups: process_year_groups.call(row)
         )
 
         if locations.size >= batch_size
@@ -117,6 +124,7 @@ namespace :schools do
                                address_town
                                address_postcode
                                url
+                               year_groups
                              ]
                            }
           locations.clear
@@ -137,6 +145,7 @@ namespace :schools do
                              address_town
                              address_postcode
                              url
+                             year_groups
                            ]
                          }
       end
