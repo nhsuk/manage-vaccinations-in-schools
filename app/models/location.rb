@@ -14,6 +14,7 @@
 #  type             :integer          not null
 #  url              :text
 #  urn              :string
+#  year_groups      :integer          default([]), not null, is an Array
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #  team_id          :bigint
