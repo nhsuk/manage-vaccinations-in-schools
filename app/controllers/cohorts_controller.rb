@@ -9,7 +9,7 @@ class CohortsController < ApplicationController
     cohorts =
       policy_scope(Cohort)
         .select("cohorts.*", "COUNT(patients.id) AS patient_count")
-        .for_year_groups(@programme.year_groups)
+        .for_programme(@programme)
         .left_outer_joins(:patients)
         .merge(Patient.recorded)
         .group("cohorts.id")
