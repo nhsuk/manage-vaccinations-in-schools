@@ -22,14 +22,6 @@
 describe Cohort do
   subject(:cohort) { build(:cohort) }
 
-  describe "validations" do
-    it do
-      expect(cohort).to validate_comparison_of(
-        :birth_academic_year
-      ).is_greater_than_or_equal_to(1990)
-    end
-  end
-
   describe "scopes" do
     describe "#for_year_groups" do
       subject(:scope) { described_class.for_year_groups(year_groups) }
@@ -49,6 +41,14 @@ describe Cohort do
       around { |example| travel_to(today) { example.run } }
 
       it { should contain_exactly(year_one, year_two, year_three) }
+    end
+  end
+
+  describe "validations" do
+    it do
+      expect(cohort).to validate_comparison_of(
+        :birth_academic_year
+      ).is_greater_than_or_equal_to(1990)
     end
   end
 

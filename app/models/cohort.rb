@@ -36,6 +36,13 @@ class Cohort < ApplicationRecord
           where(birth_academic_year: birth_academic_years)
         end
 
+  scope :for_programme,
+        ->(programme) do
+          where(team_id: programme.team_id).for_year_groups(
+            programme.year_groups
+          )
+        end
+
   def year_group
     Date.new(birth_academic_year, 9, 1).year_group
   end
