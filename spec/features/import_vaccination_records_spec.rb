@@ -45,8 +45,8 @@ describe "Immunisation imports" do
     when_i_click_on_vaccination_records
     then_i_should_see_the_vaccination_records
 
-    when_i_click_on_the_vaccinations_tab
-    and_i_click_on_the_upload_link
+    when_i_click_on_the_imports_tab
+    and_i_choose_to_import_child_records
     then_i_should_see_the_upload_page
 
     when_i_upload_a_valid_file
@@ -84,6 +84,16 @@ describe "Immunisation imports" do
 
   def when_i_click_on_the_upload_link
     click_on "Import vaccination records"
+  end
+
+  def when_i_click_on_the_imports_tab
+    click_on "Imports"
+  end
+
+  def and_i_choose_to_import_child_records
+    click_on "Import records"
+    choose "Vaccination records"
+    click_on "Continue"
   end
 
   def then_i_should_see_the_upload_page

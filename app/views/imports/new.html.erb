@@ -1,0 +1,28 @@
+<% title = "What type of records are you importing?" %>
+
+<% content_for :page_title, title %>
+
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: programme_imports_path,
+        name: "imports",
+      ) %>
+<% end %>
+
+<%= form_with(url: programme_imports_path) do |f| %>
+  <%= f.govuk_radio_buttons_fieldset(:type, legend: { text: title, tag: "h1", size: "l" }) do %>
+    <%= f.govuk_radio_button(
+          :type, :children,
+          label: { text: "Child records" },
+          hint: { text: "Records of children from a CHIS, local authority or school, used to create cohorts " },
+          link_errors: true,
+        ) %>
+    <%= f.govuk_radio_button(
+          :type, :vaccinations,
+          label: { text: "Vaccination records" },
+          hint: { text: "Records of previous vaccinations to be reported to GPs and/or NHS England" },
+        ) %>
+  <% end %>
+
+  <%= f.govuk_submit %>
+<% end %>
