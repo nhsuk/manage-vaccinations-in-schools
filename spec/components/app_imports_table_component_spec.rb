@@ -6,8 +6,25 @@ describe AppImportsTableComponent, type: :component do
   let(:component) { described_class.new(programme) }
 
   let(:programme) { create(:programme) }
+  let(:team) { programme.team }
 
   before do
+    cohort_imports =
+      [
+        create(
+          :cohort_import,
+          :recorded,
+          team:,
+          created_at: Date.new(2020, 1, 1),
+          uploaded_by:
+            create(:user, given_name: "Jennifer", family_name: "Smith")
+        )
+      ] + create_list(:cohort_import, 4, :recorded, team:)
+
+    cohort_imports.each do |cohort_import|
+      create(:patient, cohort_imports: [cohort_import])
+    end
+
     immunisation_imports =
       [
         create(
@@ -17,7 +34,7 @@ describe AppImportsTableComponent, type: :component do
           created_at: Date.new(2020, 1, 1),
           uploaded_by: create(:user, given_name: "John", family_name: "Smith")
         )
-      ] + create_list(:immunisation_import, 9, :recorded, programme:)
+      ] + create_list(:immunisation_import, 4, :recorded, programme:)
 
     immunisation_imports.each do |immunisation_import|
       create(
@@ -38,6 +55,7 @@ describe AppImportsTableComponent, type: :component do
   it "renders the headers" do
     expect(rendered).to have_css(".nhsuk-table__header", text: "Imported on")
     expect(rendered).to have_css(".nhsuk-table__header", text: "Imported by")
+    expect(rendered).to have_css(".nhsuk-table__header", text: "Import type")
     expect(rendered).to have_css(".nhsuk-table__header", text: "Records")
   end
 
@@ -50,7 +68,13 @@ describe AppImportsTableComponent, type: :component do
       ".nhsuk-table__cell",
       text: "1 January 2020 at 12:00am"
     )
+    expect(rendered).to have_css(".nhsuk-table__cell", text: "Child record")
+    expect(rendered).to have_css(
+      ".nhsuk-table__cell",
+      text: "Vaccination record"
+    )
     expect(rendered).to have_css(".nhsuk-table__cell", text: "John Smith")
+    expect(rendered).to have_css(".nhsuk-table__cell", text: "Jennifer Smith")
     expect(rendered).to have_css(".nhsuk-table__cell", text: "1")
   end
 end

@@ -31,6 +31,9 @@ describe "Import child records" do
     then_i_should_see_the_upload
     and_i_should_see_the_patients
 
+    when_i_click_on_the_imports_tab
+    then_i_should_see_the_import
+
     when_i_visit_the_cohort_page_for_the_hpv_programme
     then_i_should_see_the_cohorts
 
@@ -95,6 +98,15 @@ describe "Import child records" do
     expect(page).to have_content("Uploaded on")
     expect(page).to have_content("Uploaded byTest User")
     expect(page).to have_content("ProgrammeHPV")
+  end
+
+  def when_i_click_on_the_imports_tab
+    click_on "HPV"
+    click_on "Imports"
+  end
+
+  def then_i_should_see_the_import
+    expect(page).to have_content("1 import")
   end
 
   def then_i_should_see_the_cohorts
