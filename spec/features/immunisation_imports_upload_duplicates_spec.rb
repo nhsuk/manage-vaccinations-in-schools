@@ -6,7 +6,7 @@ describe "Immunisation imports duplicates" do
     and_an_hpv_programme_is_underway
     and_an_existing_patient_record_exists
 
-    when_i_go_to_the_reports_page
+    when_i_go_to_the_vaccinations_page
     and_i_click_on_the_upload_link
     and_i_upload_a_file_with_duplicate_records
     then_i_should_see_the_edit_page_with_duplicate_records
@@ -129,11 +129,11 @@ describe "Immunisation imports duplicates" do
       )
   end
 
-  def when_i_go_to_the_reports_page
+  def when_i_go_to_the_vaccinations_page
     visit "/dashboard"
     click_on "Programmes", match: :first
     click_on "HPV"
-    click_on "Imports"
+    click_on "Vaccinations"
   end
 
   def and_i_click_on_the_upload_link
