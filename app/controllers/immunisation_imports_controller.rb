@@ -6,18 +6,6 @@ class ImmunisationImportsController < ApplicationController
   before_action :set_vaccination_records, only: %i[show edit]
   before_action :set_vaccination_records_with_pending_changes, only: %i[edit]
 
-  def index
-    @immunisation_imports =
-      @programme
-        .immunisation_imports
-        .recorded
-        .includes(:uploaded_by)
-        .order(:created_at)
-        .strict_loading
-
-    render layout: "full"
-  end
-
   def new
     @immunisation_import = ImmunisationImport.new
   end

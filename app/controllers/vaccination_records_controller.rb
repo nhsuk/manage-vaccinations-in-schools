@@ -25,7 +25,7 @@ class VaccinationRecordsController < ApplicationController
       heading: "DPS exports have been reset for the programme"
     }
 
-    redirect_to programme_immunisation_imports_path(programme)
+    redirect_to programme_vaccination_records_path(programme)
   end
 
   private

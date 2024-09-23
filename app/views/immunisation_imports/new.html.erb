@@ -1,7 +1,7 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: programme_immunisation_imports_path(@programme),
-        name: @programme.name,
+        href: programme_vaccination_records_path(@programme),
+        name: "vaccinations",
       ) %>
 <% end %>
 

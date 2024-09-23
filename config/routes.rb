@@ -58,9 +58,9 @@ Rails.application.routes.draw do
   resources :programmes, only: %i[index show] do
     get "sessions", on: :member
 
-    resources :cohorts, only: %i[index show]
-
     resources :cohort_imports, path: "cohort-imports", except: %i[index destroy]
+
+    resources :cohorts, only: %i[index show]
 
     resources :immunisation_imports,
               path: "immunisation-imports",
@@ -71,6 +71,8 @@ Rails.application.routes.draw do
     end
 
     resources :import_issues, path: "import-issues", only: %i[index show update]
+
+    resources :imports, only: :index
 
     resources :vaccination_records,
               path: "vaccination-records",
