@@ -1,0 +1,102 @@
+#!/usr/bin/env ruby
+
+# load rails
+require_relative '../config/environment'
+require 'csv'
+
+Faker::Config.locale = "en-GB"
+
+def date_of_birth_for_year(academic_year, year_group)
+  academic_year = academic_year.to_s
+  year_group = year_group.to_s
+
+  if ('8'..'11').include?(year_group)
+    start_date = Date.new(academic_year.to_i - (year_group.to_i + 5), 9, 1)
+    end_date = Date.new(academic_year.to_i - (year_group.to_i + 4), 8, 31)
+    rand(start_date..end_date)
+  else
+    raise "Unknown year group: #{year_group}"
+  end
+end
+
+# 1. SAIS team's admins will upload their entire year 8, 9, 10 and 11 nominal
+# rolls into Mavis as one or more cohort uploads. Based on the date of birth
+# of the child, Mavis will automatically sort the children into the correct
+# HPV cohort. If they don't fit into any of the cohorts, then Mavis will
+# raise an error and won't import them.
+
+team = User.find_by(email: 'nurse.joy@example.com').team
+
+# read a CSV file with three columns: `urn`, `number_of_pupils` and `year_estimate`
+school_data = CSV.read('scratchpad/school-class-sizes.csv', headers: true)
+
+CSV.open('scratchpad/nominal_roll.csv', 'w') do |csv|
+  csv << CohortImport.new.send(:required_headers)
+
+  school_data.each do |row|
+    urn = row['urn']
+    year_estimate = row['year_estimate'].to_i
+
+    school = Location.find_by(urn:)
+
+    # Here we create the nominal rolls for year 8, 9, 10 and 11
+
+    students = []
+
+    (8..11).each do |year_group|
+      students += FactoryBot.build_list(:patient, year_estimate, school:, date_of_birth: date_of_birth_for_year(2024, year_group), team:)
+    end
+
+    students.each do |student|
+      csv << [
+        student.address_line_1,
+        student.address_line_2,
+        student.address_postcode,
+        student.address_town,
+        student.common_name,
+        student.date_of_birth,
+        student.first_name,
+        student.last_name,
+        student.nhs_number,
+        student.school.urn,
+        student.parents.first&.email,
+        student.parents.first&.name,
+        student.parents.first&.phone,
+        student.parents.first&.relationship,
+        student.parents.second&.email,
+        student.parents.second&.name,
+        student.parents.second&.phone,
+        student.parents.second&.relationship
+      ]
+    end
+  end
+end
+
+#
+# 2. The admin team will bulk-upload vaccination records of those children in
+# year 9, 10 and 11 who have already been vaccinated in the previous years'
+# programmes.
+#
+# 3. Using Mavis' one record per child model, Mavis will therefore know which
+# children from each cohort are already vaccinated, and which are eligible
+# for vaccination in this programme
+#
+# 4. When lead nurses receive the class lists for year 8, 9, 10 and 11 back
+# from schools, they will upload these directly into Mavis as cohort records
+# (separate uploads by school).
+#
+# 5. Mavis automatically matches the new records to those already in the
+# system, and adds the new parent contact information to existing child
+# records where it does not already exist. Where Mavis cannot reliably find
+# an exact match to a child, the nurse will be prompted to find the correct
+# match manually, or create a new record if the child is new to the area.
+#
+# 6. Records for any children who were previously thought to be in that
+# school but weren't on the class list will be flagged to the nurse to be
+# moved to the "unknown school" list.
+#
+# 7. Once the class lists are uploaded for a given school, the lead nurse can
+# add a new school session, select the school and select that HPV will be the
+# only vaccination type available. The nurse will then see a list of all
+# eligible children from all active programs who have not yet had the HPV
+# vaccination, to add them to the school session.
