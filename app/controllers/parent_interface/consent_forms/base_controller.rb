@@ -34,6 +34,10 @@ module ParentInterface
       @service_name = "Give or refuse consent for vaccinations"
     end
 
+    def set_secondary_navigation
+      @show_secondary_navigation = false
+    end
+
     def set_privacy_policy_url
       @privacy_policy_url = @session.programme.team.privacy_policy_url
     end
