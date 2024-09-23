@@ -3,7 +3,7 @@
   "private": "true",
   "dependencies": {
     "@hotwired/stimulus": "^3.2.2",
-    "@hotwired/turbo-rails": "^8.0.9",
+    "@hotwired/turbo-rails": "^8.0.10",
     "dfe-autocomplete": "github:DFE-Digital/dfe-autocomplete",
     "esbuild": "^0.23.1",
     "govuk-frontend": "^5.6.0",
