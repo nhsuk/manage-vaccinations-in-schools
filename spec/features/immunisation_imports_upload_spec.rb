@@ -8,7 +8,7 @@ describe "Immunisation imports" do
     and_an_hpv_programme_is_underway
     and_school_locations_exist
 
-    when_i_go_to_the_reports_page
+    when_i_go_to_the_vaccinations_page
     then_i_should_see_the_upload_link
 
     when_i_click_on_the_upload_link
@@ -45,7 +45,7 @@ describe "Immunisation imports" do
     when_i_click_on_vaccination_records
     then_i_should_see_the_vaccination_records
 
-    when_i_click_on_the_uploads_tab
+    when_i_click_on_the_vaccinations_tab
     and_i_click_on_the_upload_link
     then_i_should_see_the_upload_page
 
@@ -70,12 +70,12 @@ describe "Immunisation imports" do
     create(:location, :school, urn: "144012")
   end
 
-  def when_i_go_to_the_reports_page
+  def when_i_go_to_the_vaccinations_page
     visit "/dashboard"
 
     click_on "Programmes", match: :first
     click_on "HPV"
-    click_on "Imports"
+    click_on "Vaccinations"
   end
 
   def then_i_should_see_the_upload_link
@@ -195,8 +195,8 @@ describe "Immunisation imports" do
     expect(page).to have_content("OutcomeVaccinated")
   end
 
-  def when_i_click_on_the_uploads_tab
-    click_on "Imports"
+  def when_i_click_on_the_vaccinations_tab
+    click_on "Vaccinations"
   end
 
   alias_method :and_i_click_on_the_upload_link, :when_i_click_on_the_upload_link
