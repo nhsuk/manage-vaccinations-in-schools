@@ -177,7 +177,7 @@ GEM
       pwned (~> 2.4)
     diff-lcs (1.5.1)
     docile (1.4.0)
-    dockerfile-rails (1.6.17)
+    dockerfile-rails (1.6.18)
       rails (>= 3.0.0)
     domain_name (0.6.20240107)
     drb (2.2.1)
@@ -337,7 +337,7 @@ GEM
     net-http-digest_auth (1.4.1)
     net-http-persistent (4.0.2)
       connection_pool (~> 2.2)
-    net-imap (0.4.15)
+    net-imap (0.4.16)
       date
       net-protocol
     net-pop (0.1.2)
