@@ -14,3 +14,10 @@
 <%= govuk_button_link_to "Import vaccination records", new_programme_immunisation_import_path, class: "app-button--secondary" %>
 
 <%= render AppVaccinationRecordTableComponent.new(@vaccination_records) %>
+
+<% content_for :after_main do %>
+  <%= render(AppDevToolsComponent.new) do %>
+    <%= govuk_button_to "Download DPS export", export_dps_programme_vaccination_records_path(@programme) %>
+    <%= govuk_button_to "Reset DPS export for programme", reset_dps_export_programme_vaccination_records_path(@programme) %>
+  <% end %>
+<% end %>
