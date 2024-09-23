@@ -41,5 +41,19 @@ FactoryBot.define do
       csv_data { nil }
       csv_removed_at { Time.zone.now }
     end
+
+    trait :processed do
+      processed_at { Time.zone.now }
+
+      changed_record_count { 0 }
+      exact_duplicate_record_count { 0 }
+      new_record_count { 0 }
+      not_administered_record_count { 0 }
+    end
+
+    trait :recorded do
+      processed
+      recorded_at { Time.zone.now }
+    end
   end
 end

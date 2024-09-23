@@ -1,0 +1,32 @@
+<div class="nhsuk-table__panel-with-heading-tab">
+  <h3 class="nhsuk-table__heading-tab"><%= pluralize(imports.count, "import") %></h3>
+
+  <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
+    <% table.with_head do |head| %>
+      <% head.with_row do |row| %>
+        <% row.with_cell(text: "Imported on") %>
+        <% row.with_cell(text: "Imported by") %>
+        <% row.with_cell(text: "Records", numeric: true) %>
+      <% end %>
+    <% end %>
+
+    <% table.with_body do |body| %>
+      <% imports.each do |import| %>
+        <% body.with_row do |row| %>
+          <% row.with_cell do %>
+            <span class="nhsuk-table-responsive__heading">Imported on</span>
+            <%= govuk_link_to import.created_at.to_fs(:long), programme_immunisation_import_path(@programme, import) %>
+          <% end %>
+          <% row.with_cell do %>
+            <span class="nhsuk-table-responsive__heading">Imported by</span>
+            <%= import.uploaded_by.full_name %>
+          <% end %>
+          <% row.with_cell(numeric: true) do %>
+            <span class="nhsuk-table-responsive__heading">Records</span>
+            <%= import.record_count %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
