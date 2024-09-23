@@ -6,6 +6,7 @@
       <% head.with_row do |row| %>
         <% row.with_cell(text: "Imported on") %>
         <% row.with_cell(text: "Imported by") %>
+        <% row.with_cell(text: "Import type") %>
         <% row.with_cell(text: "Records", numeric: true) %>
       <% end %>
     <% end %>
@@ -15,15 +16,19 @@
         <% body.with_row do |row| %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Imported on</span>
-            <%= govuk_link_to import.created_at.to_fs(:long), programme_immunisation_import_path(@programme, import) %>
+            <%= govuk_link_to import[:created_at].to_fs(:long), import[:path] %>
           <% end %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Imported by</span>
-            <%= import.uploaded_by.full_name %>
+            <%= import[:uploaded_by].full_name %>
+          <% end %>
+          <% row.with_cell do %>
+            <span class="nhsuk-table-responsive__heading">Import type</span>
+            <%= import[:record_type] %>
           <% end %>
           <% row.with_cell(numeric: true) do %>
             <span class="nhsuk-table-responsive__heading">Records</span>
-            <%= import.record_count %>
+            <%= import[:record_count] %>
           <% end %>
         <% end %>
       <% end %>
