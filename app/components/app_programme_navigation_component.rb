@@ -33,9 +33,9 @@ class AppProgrammeNavigationComponent < ViewComponent::Base
       ) { I18n.t("vaccination_records.index.title") }
 
       nav.with_item(
-        href: programme_immunisation_imports_path(programme),
-        selected: active == :immunisation_imports
-      ) { I18n.t("immunisation_imports.index.title") }
+        href: programme_imports_path(programme),
+        selected: active == :imports
+      ) { I18n.t("imports.index.title") }
 
       nav.with_item(
         href: programme_import_issues_path(programme),

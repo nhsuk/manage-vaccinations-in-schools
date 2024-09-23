@@ -525,7 +525,7 @@ en:
         other: Why are they refusing to give consent?
         personal_choice: Why are they refusing to give consent?
         will_be_vaccinated_elsewhere: Where will their child get their vaccination?
-  immunisation_imports:
+  imports:
     index:
       title: Imports
   import_issues:

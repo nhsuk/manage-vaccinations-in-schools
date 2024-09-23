@@ -1,4 +1,4 @@
-<%= content_for :page_title, "#{@programme.name} – #{t("immunisation_imports.index.title")}" %>
+<%= content_for :page_title, "#{@programme.name} – #{t("imports.index.title")}" %>
 
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
@@ -9,7 +9,7 @@
 
 <h1 class="nhsuk-heading-l"><%= @programme.name %></h1>
 
-<%= render AppProgrammeNavigationComponent.new(@programme, active: :immunisation_imports) %>
+<%= render AppProgrammeNavigationComponent.new(@programme, active: :imports) %>
 
 <% if @immunisation_imports.any? %>
   <div class="nhsuk-table__panel-with-heading-tab">
