@@ -40,8 +40,8 @@ describe "Import child records" do
     when_i_click_on_the_cohort
     then_i_should_see_the_children
 
-    when_i_visit_the_cohort_page_for_the_hpv_programme
-    and_i_start_adding_children_to_the_cohort
+    when_i_click_on_the_imports_tab
+    and_i_choose_to_import_child_records
     then_i_should_see_the_import_page
 
     when_i_upload_a_valid_file
@@ -68,6 +68,12 @@ describe "Import child records" do
 
   def and_i_start_adding_children_to_the_cohort
     click_on "Import child records"
+  end
+
+  def and_i_choose_to_import_child_records
+    click_on "Import records"
+    choose "Child records"
+    click_on "Continue"
   end
 
   def then_i_should_see_the_import_page

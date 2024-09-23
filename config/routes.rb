@@ -64,7 +64,7 @@ Rails.application.routes.draw do
 
     resources :immunisation_imports,
               path: "immunisation-imports",
-              except: :destroy do
+              except: %i[index destroy] do
       resources :duplicates,
                 only: %i[show update],
                 controller: "immunisation_imports/duplicates"
@@ -72,7 +72,7 @@ Rails.application.routes.draw do
 
     resources :import_issues, path: "import-issues", only: %i[index show update]
 
-    resources :imports, only: :index
+    resources :imports, only: %i[index new create]
 
     resources :vaccination_records,
               path: "vaccination-records",

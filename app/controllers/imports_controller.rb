@@ -15,6 +15,21 @@ class ImportsController < ApplicationController
     render layout: "full"
   end
 
+  def new
+  end
+
+  def create
+    redirect_to(
+      if params[:type] == "vaccinations"
+        new_programme_immunisation_import_path(@programme)
+      elsif params[:type] == "children"
+        new_programme_cohort_import_path(@programme)
+      else
+        new_programme_import_path(@programme)
+      end
+    )
+  end
+
   private
 
   def set_programme
