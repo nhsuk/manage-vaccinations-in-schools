@@ -38,7 +38,9 @@ describe "Response matching" do
 
   def and_i_click_on_the_check_consent_responses_link
     click_on @programme.name
-    click_on "School sessions"
+    within ".app-secondary-navigation" do
+      click_on "School sessions"
+    end
     click_on @school.name
     click_on "Check consent responses"
   end

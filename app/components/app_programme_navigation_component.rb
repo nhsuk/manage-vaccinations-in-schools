@@ -25,7 +25,7 @@ class AppProgrammeNavigationComponent < ViewComponent::Base
       nav.with_item(
         href: sessions_programme_path(programme),
         selected: active == :sessions
-      ) { "Schools" }
+      ) { I18n.t("sessions.index.title") }
 
       nav.with_item(
         href: programme_vaccination_records_path(programme),

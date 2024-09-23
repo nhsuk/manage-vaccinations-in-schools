@@ -46,7 +46,9 @@ describe "User authorisation" do
     visit "/dashboard"
     click_on "Programmes", match: :first
     click_on "HPV"
-    click_on "Schools"
+    within ".app-secondary-navigation" do
+      click_on "School sessions"
+    end
     click_on "Pilot School"
     click_on "Check consent responses"
   end

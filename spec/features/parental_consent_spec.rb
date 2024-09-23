@@ -42,7 +42,9 @@ describe "Parental consent" do
 
     click_on "Programmes", match: :first
     click_on "HPV"
-    click_on "Schools"
+    within ".app-secondary-navigation" do
+      click_on "School sessions"
+    end
     click_on "Pilot School"
     click_on "Check consent responses"
   end
@@ -154,9 +156,12 @@ describe "Parental consent" do
   def when_the_nurse_checks_the_consent_responses
     sign_in @team.users.first
     visit "/dashboard"
+
     click_on "Programmes", match: :first
     click_on "HPV"
-    click_on "Schools"
+    within ".app-secondary-navigation" do
+      click_on "School sessions"
+    end
     click_on "Pilot School"
     click_on "Check consent responses"
   end
