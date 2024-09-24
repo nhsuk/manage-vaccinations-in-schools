@@ -55,15 +55,10 @@ class Sessions::EditController < ApplicationController
   end
 
   def set_session
-    policy_scope_class =
-      if params[:id] == "wicked_finish"
-        SessionPolicy::Scope
-      else
-        SessionPolicy::DraftScope
-      end
-
     @session =
-      policy_scope(Session, policy_scope_class:).find(params[:session_id])
+      policy_scope(Session).where(
+        active: params[:id] == Wicked::FINISH_STEP
+      ).find(params[:session_id])
   end
 
   def update_params

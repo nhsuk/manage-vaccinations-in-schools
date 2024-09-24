@@ -31,7 +31,7 @@ describe "Triage" do
     @programme = create(:programme, :hpv, team: @team)
     @batch = @programme.batches.first
     location = create(:location, :school)
-    @session = create(:session, programme: @programme, location:)
+    @session = create(:session, team: @team, programme: @programme, location:)
     @patient =
       create(
         :patient_session,
