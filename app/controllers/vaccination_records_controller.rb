@@ -42,7 +42,7 @@ class VaccinationRecordsController < ApplicationController
           :performed_by_user,
           :programme,
           :vaccine,
-          patient: [:school, { parent_relationships: :parent }],
+          patient: [:cohort, :school, { parent_relationships: :parent }],
           session: :location
         )
         .where(programme:)

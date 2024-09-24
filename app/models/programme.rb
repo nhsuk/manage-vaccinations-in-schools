@@ -50,7 +50,7 @@ class Programme < ApplicationRecord
                  :batch,
                  :patient_session,
                  session: :location,
-                 patient: :school
+                 patient: %i[cohort school]
                )
                .strict_loading
            end,
