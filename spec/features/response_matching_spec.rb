@@ -28,7 +28,8 @@ describe "Response matching" do
     @school = create(:location, :school, name: "Pilot School")
     @session =
       create(:session, location: @school, team: @team, programme: @programme)
-    @consent_form = create(:consent_form, :recorded, session: @session)
+    @consent_form =
+      create(:consent_form, :recorded, programme: @programme, session: @session)
     @patient = create(:patient, session: @session)
   end
 

@@ -15,7 +15,8 @@ module ParentInterface
     end
 
     def create
-      consent_form = @session.consent_forms.create!
+      consent_form =
+        @session.consent_forms.create!(programme: @session.programme)
 
       session[:consent_form_id] = consent_form.id
 

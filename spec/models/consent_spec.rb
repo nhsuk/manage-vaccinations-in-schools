@@ -71,14 +71,17 @@ describe Consent do
         described_class.from_consent_form!(consent_form, patient_session)
       end
 
-      let(:session) { create(:session) }
-      let(:consent_form) { create(:consent_form, :recorded, session:) }
+      let(:programme) { create(:programme) }
+      let(:session) { create(:session, programme:) }
+      let(:consent_form) do
+        create(:consent_form, :recorded, programme:, session:)
+      end
       let(:patient_session) { create(:patient_session, session:) }
 
       it "copies over attributes from consent_form" do
         expect(consent).to(
           have_attributes(
-            programme: session.programme,
+            programme:,
             patient: patient_session.patient,
             consent_form:,
             reason_for_refusal: consent_form.reason,

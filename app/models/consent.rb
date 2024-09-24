@@ -169,7 +169,7 @@ class Consent < ApplicationRecord
       consent =
         create!(
           consent_form:,
-          programme: consent_form.session.programme,
+          programme: consent_form.programme,
           patient:,
           parent:,
           reason_for_refusal: consent_form.reason,

@@ -33,16 +33,19 @@
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
 #  consent_id                          :bigint
+#  programme_id                        :bigint           not null
 #  session_id                          :bigint           not null
 #
 # Indexes
 #
-#  index_consent_forms_on_consent_id  (consent_id)
-#  index_consent_forms_on_session_id  (session_id)
+#  index_consent_forms_on_consent_id    (consent_id)
+#  index_consent_forms_on_programme_id  (programme_id)
+#  index_consent_forms_on_session_id    (session_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (consent_id => consents.id)
+#  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (session_id => sessions.id)
 #
 
@@ -57,6 +60,7 @@ describe ConsentForm do
         reason:,
         response:,
         session:,
+        programme:,
         use_common_name:,
         wizard_step:
       )
@@ -67,7 +71,8 @@ describe ConsentForm do
     let(:parent_phone_receive_updates) { false }
     let(:reason) { nil }
     let(:response) { nil }
-    let(:session) { build(:session) }
+    let(:programme) { build(:programme) }
+    let(:session) { build(:session, programme:) }
     let(:use_common_name) { false }
     let(:wizard_step) { nil }
 
@@ -177,7 +182,7 @@ describe ConsentForm do
 
     context "when wizard_step is :injection" do
       # currently injection alternative only offered during flu programme
-      let(:session) { build(:session, programme: build(:programme, :flu)) }
+      let(:programme) { build(:programme, :flu) }
 
       let(:response) { "refused" }
       let(:reason) { "contains_gelatine" }
@@ -320,7 +325,7 @@ describe ConsentForm do
     end
 
     context "for a flu programme, when patient refuses consent" do
-      let(:session) { build(:session, programme: build(:programme, :flu)) }
+      let(:programme) { build(:programme, :flu) }
 
       it "offers an injection alternative if the child hasn't received vaccine elsewhere" do
         consent_form =
@@ -328,7 +333,7 @@ describe ConsentForm do
             :consent_form,
             response: "refused",
             reason: "contains_gelatine",
-            session:
+            programme:
           )
         expect(consent_form.wizard_steps).to include(:reason)
         expect(consent_form.wizard_steps).to include(:injection)
@@ -340,7 +345,7 @@ describe ConsentForm do
             :consent_form,
             response: "refused",
             reason: "already_vaccinated",
-            session:
+            programme:
           )
         expect(consent_form.wizard_steps).to include(:reason)
         expect(consent_form.wizard_steps).not_to include(:injection)
@@ -353,9 +358,9 @@ describe ConsentForm do
         consent_form =
           build(
             :consent_form,
+            programme: build(:programme, :hpv),
             response: "refused",
-            reason: "medical_reasons",
-            session: build(:session, programme: build(:programme, :hpv))
+            reason: "medical_reasons"
           )
         expect(consent_form.wizard_steps).not_to include(:injection)
       end
@@ -541,30 +546,18 @@ describe ConsentForm do
 
   describe "#gelatine_content_status_in_vaccines" do
     it "returns :maybe if the flu programme offers both injection and nasal vaccines" do
-      consent_form =
-        build(
-          :consent_form,
-          session: build(:session, programme: build(:programme, :flu))
-        )
+      consent_form = build(:consent_form, programme: build(:programme, :flu))
       expect(consent_form.gelatine_content_status_in_vaccines).to eq(:maybe)
     end
 
     it "returns false if the flu programme only offers injection vaccines" do
       consent_form =
-        build(
-          :consent_form,
-          session:
-            build(:session, programme: build(:programme, :flu_nasal_only))
-        )
+        build(:consent_form, programme: build(:programme, :flu_nasal_only))
       expect(consent_form.gelatine_content_status_in_vaccines).to be(true)
     end
 
     it "returns false for an HPV programme" do
-      consent_form =
-        build(
-          :consent_form,
-          session: build(:session, programme: build(:programme, :hpv))
-        )
+      consent_form = build(:consent_form, programme: build(:programme, :hpv))
       expect(consent_form.gelatine_content_status_in_vaccines).to be(false)
     end
   end

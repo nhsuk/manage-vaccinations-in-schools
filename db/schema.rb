@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_24_103231) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_24_112619) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -125,7 +125,9 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_24_103231) do
     t.string "parent_relationship_other_name"
     t.string "parent_relationship_type"
     t.boolean "parent_phone_receive_updates", default: false, null: false
+    t.bigint "programme_id", null: false
     t.index ["consent_id"], name: "index_consent_forms_on_consent_id"
+    t.index ["programme_id"], name: "index_consent_forms_on_programme_id"
     t.index ["session_id"], name: "index_consent_forms_on_session_id"
   end
 
@@ -463,8 +465,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_24_103231) do
     t.date "send_consent_reminders_at"
     t.date "close_consent_at"
     t.integer "time_of_day"
-    t.bigint "programme_id"
     t.bigint "team_id", null: false
+    t.bigint "programme_id"
     t.index ["programme_id"], name: "index_sessions_on_programme_id"
     t.index ["team_id"], name: "index_sessions_on_team_id"
   end
@@ -584,6 +586,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_24_103231) do
   add_foreign_key "cohort_imports_patients", "patients"
   add_foreign_key "cohorts", "teams"
   add_foreign_key "consent_forms", "consents"
+  add_foreign_key "consent_forms", "programmes"
   add_foreign_key "consent_forms", "sessions"
   add_foreign_key "consents", "parents"
   add_foreign_key "consents", "patients"
