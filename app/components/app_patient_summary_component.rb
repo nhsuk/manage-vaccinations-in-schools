@@ -1,10 +1,19 @@
 # frozen_string_literal: true
 
 class AppPatientSummaryComponent < ViewComponent::Base
-  def initialize(patient:)
+  def initialize(
+    patient,
+    show_common_name: false,
+    show_address: false,
+    show_parent_or_guardians: false
+  )
     super
 
     @patient = patient
+
+    @show_common_name = show_common_name
+    @show_address = show_address
+    @show_parent_or_guardians = show_parent_or_guardians
   end
 
   def call
@@ -17,6 +26,12 @@ class AppPatientSummaryComponent < ViewComponent::Base
         row.with_key { "Full name" }
         row.with_value { format_full_name }
       end
+      if @show_common_name && (common_name = @patient.common_name).present?
+        summary_list.with_row do |row|
+          row.with_key { "Known as" }
+          row.with_value { common_name }
+        end
+      end
       summary_list.with_row do |row|
         row.with_key { "Date of birth" }
         row.with_value { format_date_of_birth }
@@ -25,13 +40,28 @@ class AppPatientSummaryComponent < ViewComponent::Base
         row.with_key { "Sex" }
         row.with_value { format_gender_code }
       end
-      summary_list.with_row do |row|
-        row.with_key { "Postcode" }
-        row.with_value { format_postcode }
+      if @show_address
+        summary_list.with_row do |row|
+          row.with_key { "Address" }
+          row.with_value { format_address }
+        end
+      else
+        summary_list.with_row do |row|
+          row.with_key { "Postcode" }
+          row.with_value { format_postcode }
+        end
       end
       summary_list.with_row do |row|
         row.with_key { "School" }
         row.with_value { format_school }
+      end
+      if @show_parent_or_guardians && @patient.parent_relationships.present?
+        summary_list.with_row do |row|
+          row.with_key do
+            "Parent or guardian".pluralize(@patient.parent_relationships.count)
+          end
+          row.with_value { format_parent_or_guardians }
+        end
       end
     end
   end
@@ -54,7 +84,7 @@ class AppPatientSummaryComponent < ViewComponent::Base
 
   def format_date_of_birth
     highlight_if(
-      @patient.date_of_birth.to_date.to_fs(:long),
+      "#{@patient.date_of_birth.to_fs(:long)} (aged #{@patient.age})",
       @patient.date_of_birth_changed?
     )
   end
@@ -66,12 +96,36 @@ class AppPatientSummaryComponent < ViewComponent::Base
     )
   end
 
+  def format_address
+    highlight_if(
+      helpers.format_address_multi_line(@patient),
+      @patient.address_changed?
+    )
+  end
+
   def format_postcode
     highlight_if(@patient.address_postcode, @patient.address_postcode_changed?)
   end
 
   def format_school
     highlight_if(@patient.school&.name, @patient.school_id_changed?)
+  end
+
+  def format_parent_or_guardians
+    tag.ul(class: "nhsuk-list") do
+      safe_join(
+        @patient.parent_relationships.map do |parent_relationship|
+          tag.li do
+            [
+              "#{parent_relationship.parent.name} (#{parent_relationship.label})",
+              if (phone = parent_relationship.parent.phone).present?
+                tag.span(phone, class: "nhsuk-u-secondary-text-color")
+              end
+            ].compact.join(tag.br).html_safe
+          end
+        end
+      )
+    end
   end
 
   def highlight_if(value, condition)

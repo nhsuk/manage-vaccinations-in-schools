@@ -17,13 +17,9 @@
     <%= render AppCardComponent.new(colour: "blue") do |c| %>
       <% c.with_heading { "Duplicate record" } %>
       <h3 class="nhsuk-heading-s">Duplicate child record</h3>
-      <%= render AppPatientSummaryComponent.new(
-            patient: @vaccination_record.patient.with_pending_changes,
-          ) %>
+      <%= render AppPatientSummaryComponent.new(@vaccination_record.patient.with_pending_changes) %>
       <h3 class="nhsuk-heading-s">Duplicate vaccination record</h3>
-      <%= render AppVaccinationRecordSummaryComponent.new(
-            @vaccination_record.with_pending_changes
-          ) %>
+      <%= render AppVaccinationRecordSummaryComponent.new(@vaccination_record.with_pending_changes) %>
     <% end %>
   </div>
 
@@ -31,13 +27,9 @@
     <%= render AppCardComponent.new(colour: "blue") do |c| %>
       <% c.with_heading { "Previously uploaded record" } %>
       <h3 class="nhsuk-heading-s">Previously uploaded child record</h3>
-      <%= render AppPatientSummaryComponent.new(
-            patient: @vaccination_record.patient,
-          ) %>
+      <%= render AppPatientSummaryComponent.new(@vaccination_record.patient) %>
       <h3 class="nhsuk-heading-s">Previously uploaded vaccination record</h3>
-      <%= render AppVaccinationRecordSummaryComponent.new(
-            @vaccination_record
-          ) %>
+      <%= render AppVaccinationRecordSummaryComponent.new(@vaccination_record) %>
     <% end %>
   </div>
 </div>

@@ -60,7 +60,7 @@ describe "Edit vaccination record" do
   end
 
   def then_i_should_see_the_vaccination_record
-    expect(page).to have_content("NameJohn Smith")
+    expect(page).to have_content("Full nameJohn Smith")
   end
 
   def when_i_click_on_the_change_link
