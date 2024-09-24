@@ -19,7 +19,9 @@ class AppSessionPatientTableComponentPreview < ViewComponent::Preview
   end
 
   def matching_consent_form_to_a_patient
-    patient_sessions = create_list(:patient_session, 2, :added_to_session)
+    programme = create(:programme)
+    patient_sessions =
+      create_list(:patient_session, 2, :added_to_session, programme:)
 
     # add a common name to one of the patients above
     patient_sessions.first.patient.update!(common_name: "Bobby")
@@ -30,7 +32,7 @@ class AppSessionPatientTableComponentPreview < ViewComponent::Preview
     end
 
     consent_form =
-      create(:consent_form, session: patient_sessions.first.session)
+      create(:consent_form, programme:, session: patient_sessions.first.session)
 
     render AppSessionPatientTableComponent.new(
              patient_sessions:,

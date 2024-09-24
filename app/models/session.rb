@@ -64,6 +64,8 @@ class Session < ApplicationRecord
   after_initialize :set_timeline_attributes
   after_validation :set_timeline_timestamps
 
+  validate :programmes_part_of_team
+
   on_wizard_step :location, exact: true do
     validates :location_id, presence: true
   end
@@ -126,6 +128,12 @@ class Session < ApplicationRecord
   end
 
   private
+
+  def programmes_part_of_team
+    return if programmes.empty?
+
+    errors.add(:programmes, :inclusion) if programmes.map(&:team).uniq != [team]
+  end
 
   def set_timeline_attributes
     unless send_consent_reminders_at.nil?

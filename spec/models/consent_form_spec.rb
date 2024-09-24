@@ -567,9 +567,11 @@ describe ConsentForm do
     let(:session) { create(:session, programme:) }
     let(:consent) { create(:consent, programme:) }
     let(:unmatched_consent_form) do
-      create(:consent_form, consent: nil, session:)
+      create(:consent_form, consent: nil, programme:, session:)
     end
-    let(:matched_consent_form) { create(:consent_form, consent:, session:) }
+    let(:matched_consent_form) do
+      create(:consent_form, consent:, programme:, session:)
+    end
 
     it "returns unmatched consent forms" do
       expect(described_class.unmatched).to include unmatched_consent_form
@@ -582,9 +584,11 @@ describe ConsentForm do
     let(:session) { create(:session, programme:) }
     let(:consent) { create(:consent, programme:) }
     let(:recorded_consent_form) do
-      create(:consent_form, :recorded, consent:, session:)
+      create(:consent_form, :recorded, programme:, consent:, session:)
     end
-    let(:draft_consent_form) { create(:consent_form, consent:, session:) }
+    let(:draft_consent_form) do
+      create(:consent_form, programme:, consent:, session:)
+    end
 
     it "returns unmatched consent forms" do
       expect(described_class.recorded).to include recorded_consent_form
@@ -838,16 +842,25 @@ describe ConsentForm do
   end
 
   it "resets unused fields" do
-    session = create(:session)
+    programme = create(:programme)
+
+    session = create(:session, programme:)
 
     consent_form =
-      build(:consent_form, common_name: "John", use_common_name: true, session:)
+      build(
+        :consent_form,
+        programme:,
+        common_name: "John",
+        use_common_name: true,
+        session:
+      )
     consent_form.update!(use_common_name: false)
     expect(consent_form.common_name).to be_nil
 
     consent_form =
       build(
         :consent_form,
+        programme:,
         response: "refused",
         reason: "contains_gelatine",
         reason_notes: "I'm vegan",
@@ -858,11 +871,17 @@ describe ConsentForm do
     expect(consent_form.reason_notes).to be_nil
 
     consent_form =
-      build(:consent_form, gp_response: "yes", gp_name: "Dr. Foo", session:)
+      build(
+        :consent_form,
+        programme:,
+        gp_response: "yes",
+        gp_name: "Dr. Foo",
+        session:
+      )
     consent_form.update!(gp_response: "no")
     expect(consent_form.gp_name).to be_nil
 
-    consent_form = build(:consent_form, session:)
+    consent_form = build(:consent_form, programme:, session:)
     consent_form.update!(response: "refused")
     expect(consent_form.gp_response).to be_nil
     expect(consent_form.address_line_1).to be_nil

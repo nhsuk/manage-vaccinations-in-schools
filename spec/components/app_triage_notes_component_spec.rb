@@ -4,7 +4,9 @@ describe AppTriageNotesComponent, type: :component do
   subject(:rendered) { render_inline(component) }
 
   let(:component) { described_class.new(patient_session:) }
-  let(:patient_session) { create(:patient_session) }
+
+  let(:programme) { create(:programme) }
+  let(:patient_session) { create(:patient_session, programme:) }
 
   context "triage notes are not present" do
     it "does not render" do
@@ -23,6 +25,7 @@ describe AppTriageNotesComponent, type: :component do
       create(
         :triage,
         :ready_to_vaccinate,
+        programme:,
         notes: "Some notes",
         patient_session:,
         performed_by:
@@ -41,7 +44,7 @@ describe AppTriageNotesComponent, type: :component do
   end
 
   context "multiple triage notes are present" do
-    before { create_list(:triage, 2, patient_session:) }
+    before { create_list(:triage, 2, programme:, patient_session:) }
 
     it "renders" do
       expect(component).to be_render

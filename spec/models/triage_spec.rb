@@ -26,8 +26,8 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 
-describe Triage, type: :model do
-  subject(:triage) { build(:triage) }
+describe Triage do
+  subject(:triage) { create(:triage) }
 
   describe "validations" do
     it { should_not validate_presence_of(:notes) }

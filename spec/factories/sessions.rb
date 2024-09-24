@@ -26,10 +26,10 @@
 #
 FactoryBot.define do
   factory :session do
-    transient { programme { association :programme, team: } }
+    transient { programme { association :programme } }
 
-    team
     programmes { [programme] }
+    team { programmes.first&.team || association(:team) }
     location { association :location, :school }
 
     date { Time.zone.today }
