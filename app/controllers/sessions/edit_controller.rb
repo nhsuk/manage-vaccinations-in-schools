@@ -104,20 +104,17 @@ class Sessions::EditController < ApplicationController
     # Get a list of patients but ensure we don't include patients that are
     # already in other sessions, if those sessions are active (not draft) and
     # for the same vaccine/programme.
+    patients_in_active_sessions_and_same_team =
+      Patient
+        .joins(:patient_sessions)
+        .joins(:sessions)
+        .where(sessions: { active: true, team: @session.team })
     @patients =
       @session
         .location
         .patients
-        .where.not(
-          Session
-            .joins(:patient_sessions)
-            .active
-            .where(team: @session.team)
-            .where("patient_sessions.patient_id = patients.id")
-            .arel
-            .exists
-        )
-        .sort_by(&:last_name)
+        .where.not(id: patients_in_active_sessions_and_same_team)
+        .sort_by(&:last_name) # Sort by instead of order due to encryption
   end
 
   def validate_params
