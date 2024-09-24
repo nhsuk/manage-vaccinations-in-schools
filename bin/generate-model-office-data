@@ -34,17 +34,24 @@ CSV.open('scratchpad/nominal_roll.csv', 'w') do |csv|
   csv << CohortImport.new.send(:required_headers)
 
   school_data.each do |row|
+    print "."
     urn = row['urn']
     year_estimate = row['year_estimate'].to_i
 
     school = Location.find_by(urn:)
 
-    # Here we create the nominal rolls for year 8, 9, 10 and 11
-
     students = []
-
+    # Here we create the nominal rolls for year 8, 9, 10 and 11
     (8..11).each do |year_group|
-      students += FactoryBot.build_list(:patient, year_estimate, school:, date_of_birth: date_of_birth_for_year(2024, year_group), team:)
+      year_estimate.times do
+        student = FactoryBot.build(:patient, school:, date_of_birth: date_of_birth_for_year(2024, year_group), team:)
+        until student.valid?
+          # fix the nhs number
+          student.nhs_number = Faker::NationalHealthService.british_number.gsub(/\s+/, "")
+        end
+        student.save!
+        students << student
+      end
     end
 
     students.each do |student|
