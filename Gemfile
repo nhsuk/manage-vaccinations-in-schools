@@ -9,6 +9,7 @@ gem "rails", "~> 7.2.1"
 gem "activerecord-import"
 gem "audited", git: "https://github.com/tvararu/audited", branch: "encryption"
 gem "awesome_print"
+gem "benchmark"
 gem "bootsnap", require: false
 gem "config"
 gem "cssbundling-rails"

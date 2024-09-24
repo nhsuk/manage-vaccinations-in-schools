@@ -660,6 +660,7 @@ DEPENDENCIES
   asciidoctor-diagram
   audited!
   awesome_print
+  benchmark
   bootsnap
   brakeman
   capybara
