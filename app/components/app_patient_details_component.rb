@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AppPatientDetailsComponent < ViewComponent::Base
-  def initialize(patient: nil, consent_form: nil, school: nil)
+  def initialize(patient: nil, consent_form: nil)
     super
 
     unless patient || consent_form
@@ -9,7 +9,7 @@ class AppPatientDetailsComponent < ViewComponent::Base
     end
 
     @object = patient || consent_form
-    @school = school
+    @school = patient&.school
   end
 
   def call
