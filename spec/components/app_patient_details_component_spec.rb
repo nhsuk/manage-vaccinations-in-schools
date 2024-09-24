@@ -5,8 +5,6 @@ describe AppPatientDetailsComponent, type: :component do
 
   before { render_inline(component) }
 
-  let(:session) { create(:session) }
-
   context "with a patient object" do
     let(:parent) { create(:parent) }
     let(:patient) do
@@ -18,7 +16,7 @@ describe AppPatientDetailsComponent, type: :component do
       )
     end
     let(:school) { create(:location, :school) }
-    let(:component) { described_class.new(patient:, session:, school:) }
+    let(:component) { described_class.new(patient:, school:) }
 
     it "renders the patient's full name" do
       expect(page).to(
@@ -90,15 +88,10 @@ describe AppPatientDetailsComponent, type: :component do
 
   context "with a consent_form object" do
     let(:consent_form) do
-      create(
-        :consent_form,
-        common_name: "Homer",
-        use_common_name: true,
-        session:
-      )
+      create(:consent_form, common_name: "Homer", use_common_name: true)
     end
     let(:school) { create(:location, :school) }
-    let(:component) { described_class.new(consent_form:, session:, school:) }
+    let(:component) { described_class.new(consent_form:, school:) }
 
     it "renders the child's full name" do
       expect(page).to(
@@ -172,7 +165,7 @@ describe AppPatientDetailsComponent, type: :component do
     end
 
     context "without a common name" do
-      let(:consent_form) { create(:consent_form, common_name: nil, session:) }
+      let(:consent_form) { create(:consent_form, common_name: nil) }
 
       it "does not render known as" do
         expect(page).not_to(
@@ -182,7 +175,7 @@ describe AppPatientDetailsComponent, type: :component do
     end
 
     context "when child does not have a date of birth on record" do
-      let(:consent_form) { create(:consent_form, date_of_birth: nil, session:) }
+      let(:consent_form) { create(:consent_form, date_of_birth: nil) }
 
       it "does not render the child's date of birth" do
         expect(page).not_to(
@@ -197,8 +190,7 @@ describe AppPatientDetailsComponent, type: :component do
           :consent_form,
           common_name: "Homer",
           gp_name: nil,
-          gp_response: "no",
-          session:
+          gp_response: "no"
         )
       end
 
@@ -219,8 +211,7 @@ describe AppPatientDetailsComponent, type: :component do
           :consent_form,
           common_name: "Homer",
           gp_name: nil,
-          gp_response: "dont_know",
-          session:
+          gp_response: "dont_know"
         )
       end
 
