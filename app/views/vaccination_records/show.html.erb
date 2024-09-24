@@ -20,7 +20,7 @@
 
 <%= render AppCardComponent.new do |c| %>
   <% c.with_heading { "Child record" } %>
-  <%= render AppPatientDetailsComponent.new(patient: @patient, session: @session, school: @school) %>
+  <%= render AppPatientDetailsComponent.new(patient: @patient, school: @school) %>
 <% end %>
 
 <%= render AppCardComponent.new do |c| %>
