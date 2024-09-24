@@ -14,17 +14,14 @@
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  location_id               :bigint
-#  programme_id              :bigint
 #  team_id                   :bigint           not null
 #
 # Indexes
 #
-#  index_sessions_on_programme_id  (programme_id)
-#  index_sessions_on_team_id       (team_id)
+#  index_sessions_on_team_id  (team_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (team_id => teams.id)
 #
 class Session < ApplicationRecord
@@ -40,7 +37,6 @@ class Session < ApplicationRecord
                 :close_consent_on
 
   belongs_to :team
-  belongs_to :programme, optional: true
   belongs_to :location, optional: true
 
   has_many :consent_forms
@@ -48,6 +44,7 @@ class Session < ApplicationRecord
   has_many :patients, through: :patient_sessions
 
   has_and_belongs_to_many :immunisation_imports
+  has_and_belongs_to_many :programmes
 
   enum :time_of_day, %w[morning afternoon all_day], validate: { if: :active? }
 
