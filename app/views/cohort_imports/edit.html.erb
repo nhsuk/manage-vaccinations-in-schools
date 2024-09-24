@@ -12,12 +12,7 @@
 
 <% if @cohort_import.exact_duplicate_record_count > 1 ||
       @cohort_import.changed_record_count > 1 %>
-  <div class="nhsuk-warning-callout">
-    <h3 class="nhsuk-warning-callout__label">
-      <span class="nhsuk-u-visually-hidden">Important: </span>
-      Uploaded records will differ from the file
-    </h3>
-
+  <%= render AppWarningCalloutComponent.new(heading: "Uploaded records will differ from file") do %>
     <ul class="nhsuk-list nhsuk-list--bullet">
       <% if @cohort_import.exact_duplicate_record_count > 1 %>
         <li>
@@ -32,7 +27,7 @@
         </li>
       <% end %>
     </ul>
-  </div>
+  <% end %>
 <% end %>
 
 <%= govuk_button_to "Upload records", programme_cohort_import_path(

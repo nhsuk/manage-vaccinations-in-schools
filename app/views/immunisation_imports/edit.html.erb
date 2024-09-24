@@ -12,12 +12,7 @@
 
 <% if @immunisation_import.exact_duplicate_record_count > 1 ||
       @immunisation_import.not_administered_record_count > 1 %>
-  <div class="nhsuk-warning-callout">
-    <h3 class="nhsuk-warning-callout__label">
-      <span class="nhsuk-u-visually-hidden">Important: </span>
-      Uploaded records will differ from the file
-    </h3>
-
+  <%= render AppWarningCalloutComponent.new(heading: "Uploaded records will differ from file") do %>
     <ul class="nhsuk-list nhsuk-list--bullet">
       <% if @immunisation_import.exact_duplicate_record_count > 1 %>
         <li>
@@ -33,7 +28,7 @@
         </li>
       <% end %>
     </ul>
-  </div>
+  <% end %>
 <% end %>
 
 <%= govuk_button_to "Upload records", programme_immunisation_import_path(

@@ -11,17 +11,7 @@
 <span class="nhsuk-caption-l"><%= @patient.full_name %></span>
 <%= h1 title, page_title: "#{@patient.full_name} – #{title}" %>
 
-<div class="nhsuk-warning-callout">
-  <h3 class="nhsuk-warning-callout__label">
-    <span class="nhsuk-u-visually-hidden">Important: </span>
-    This record needs reviewing
-  </h3>
-
-  <p>
-    A field in a duplicate record does not match that in a previously uploaded
-    record
-  </p>
-</div>
+<%= render AppWarningCalloutComponent.new(heading: "This record needs reviewing", description: "A field in a duplicate record does not match that in a previously uploaded record.") %>
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-one-half">
