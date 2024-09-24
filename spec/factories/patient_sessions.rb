@@ -151,6 +151,7 @@ FactoryBot.define do
           association(
             :vaccination_record,
             :not_administered,
+            programme: session.programme,
             patient_session: instance,
             performed_by: created_by,
             reason: :absent_from_school
@@ -185,6 +186,7 @@ FactoryBot.define do
           association(
             :vaccination_record,
             :not_administered,
+            programme: session.programme,
             patient_session: instance,
             performed_by: created_by,
             reason: :already_had
@@ -212,6 +214,7 @@ FactoryBot.define do
           association(
             :vaccination_record,
             :not_administered,
+            programme: session.programme,
             patient_session: instance,
             performed_by: created_by,
             reason: :already_had
@@ -236,6 +239,7 @@ FactoryBot.define do
         [
           association(
             :vaccination_record,
+            programme: session.programme,
             patient_session: instance,
             performed_by: created_by
           )

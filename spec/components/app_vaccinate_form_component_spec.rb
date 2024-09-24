@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppVaccinateFormComponent, type: :component do
+describe AppVaccinateFormComponent do
   subject(:rendered) { render_inline(component) }
 
   let(:heading) { "A Heading" }
@@ -11,7 +11,7 @@ describe AppVaccinateFormComponent, type: :component do
   let(:patient_session) do
     create :patient_session, :consent_given_triage_not_needed, session:
   end
-  let(:vaccination_record) { VaccinationRecord.new(vaccine:) }
+  let(:vaccination_record) { VaccinationRecord.new(programme:, vaccine:) }
   let(:component) do
     described_class.new(
       patient_session:,
@@ -38,7 +38,7 @@ describe AppVaccinateFormComponent, type: :component do
       create :patient_session, :consent_given_triage_not_needed, session:
     end
     let(:vaccination_record) do
-      create(:vaccination_record, :not_recorded, patient_session:)
+      create(:vaccination_record, :not_recorded, programme:, patient_session:)
     end
 
     it { should have_field("Yes, they got the HPV vaccine", checked: true) }

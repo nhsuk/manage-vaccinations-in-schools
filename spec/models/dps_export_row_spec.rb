@@ -21,6 +21,7 @@ describe DPSExportRow do
   let(:vaccination_record) do
     create(
       :vaccination_record,
+      programme:,
       batch: create(:batch, vaccine:, name: "AB1234", expiry: "2025-07-01"),
       created_at: Time.zone.local(2024, 6, 12, 11, 28, 31),
       delivery_method: :intramuscular,

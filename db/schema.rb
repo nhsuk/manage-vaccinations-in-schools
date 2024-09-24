@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_24_112619) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_24_124154) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -547,9 +547,11 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_24_112619) do
     t.string "performed_by_given_name"
     t.string "performed_by_family_name"
     t.jsonb "pending_changes", default: {}, null: false
+    t.bigint "programme_id", null: false
     t.index ["batch_id"], name: "index_vaccination_records_on_batch_id"
     t.index ["patient_session_id"], name: "index_vaccination_records_on_patient_session_id"
     t.index ["performed_by_user_id"], name: "index_vaccination_records_on_performed_by_user_id"
+    t.index ["programme_id"], name: "index_vaccination_records_on_programme_id"
     t.index ["vaccine_id"], name: "index_vaccination_records_on_vaccine_id"
   end
 
@@ -625,6 +627,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_24_112619) do
   add_foreign_key "triage", "users", column: "performed_by_user_id"
   add_foreign_key "vaccination_records", "batches"
   add_foreign_key "vaccination_records", "patient_sessions"
+  add_foreign_key "vaccination_records", "programmes"
   add_foreign_key "vaccination_records", "users", column: "performed_by_user_id"
   add_foreign_key "vaccination_records", "vaccines"
 end
