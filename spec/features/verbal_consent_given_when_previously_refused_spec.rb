@@ -16,7 +16,7 @@ feature "Verbal consent" do
     @team = create(:team, :with_one_nurse)
     programme = create(:programme, :hpv, team: @team)
     location = create(:location, :school, name: "Pilot School")
-    @session = create(:session, :in_future, programme:, location:)
+    @session = create(:session, :in_future, team: @team, programme:, location:)
   end
 
   def and_a_parent_has_refused_consent_for_their_child

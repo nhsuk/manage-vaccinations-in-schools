@@ -26,11 +26,12 @@ describe "User authorisation" do
       create(:programme, :hpv, team: @other_team, vaccines: [vaccine])
     location = create(:location, :school, name: "Pilot School")
     other_location = create(:location, :school, name: "Other School")
-    @session = create(:session, :in_future, programme:, location:)
+    @session = create(:session, :in_future, team: @team, programme:, location:)
     @other_session =
       create(
         :session,
         :in_future,
+        team: @other_team,
         programme: other_programme,
         location: other_location
       )

@@ -22,7 +22,13 @@ FactoryBot.define do
         location = context.location
         user = context.user
 
-        create(:session, :in_progress, programme:, location:).tap do |session|
+        create(
+          :session,
+          :in_progress,
+          team: programme.team,
+          programme:,
+          location:
+        ).tap do |session|
           patients_without_consent =
             create_list(:patient_session, 4, session:, created_by: user)
           unmatched_patients = patients_without_consent.sample(2).map(&:patient)
@@ -80,7 +86,13 @@ FactoryBot.define do
         location = context.location
         user = context.user
 
-        create(:session, :in_past, programme:, location:).tap do |session|
+        create(
+          :session,
+          :in_past,
+          team: programme.team,
+          programme:,
+          location:
+        ).tap do |session|
           create_list(
             :patient_session,
             4,
@@ -111,7 +123,13 @@ FactoryBot.define do
         location = context.location
         user = context.user
 
-        create(:session, :in_future, programme:, location:).tap do |session|
+        create(
+          :session,
+          :in_future,
+          team: programme.team,
+          programme:,
+          location:
+        ).tap do |session|
           patients_without_consent =
             create_list(:patient_session, 16, session:, created_by: user)
           unmatched_patients = patients_without_consent.sample(8).map(&:patient)

@@ -26,7 +26,13 @@ describe "Triage" do
     programme = create(:programme, :hpv, team: @team)
     @school = create(:location, :school)
     session =
-      create(:session, programme:, location: @school, date: Time.zone.today)
+      create(
+        :session,
+        team: @team,
+        programme:,
+        location: @school,
+        date: Time.zone.today
+      )
     @patient =
       create(:patient_session, :consent_given_triage_needed, session:).patient
   end
