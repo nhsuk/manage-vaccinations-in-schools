@@ -15,10 +15,17 @@
 #  updated_at                :datetime         not null
 #  location_id               :bigint
 #  programme_id              :bigint
+#  team_id                   :bigint           not null
 #
 # Indexes
 #
 #  index_sessions_on_programme_id  (programme_id)
+#  index_sessions_on_team_id       (team_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (programme_id => programmes.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 class Session < ApplicationRecord
   include Draftable
@@ -32,8 +39,7 @@ class Session < ApplicationRecord
                 :reminder_days_after_custom,
                 :close_consent_on
 
-  delegate :team, to: :programme
-
+  belongs_to :team
   belongs_to :programme, optional: true
   belongs_to :location, optional: true
 

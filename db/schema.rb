@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_21_204949) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_24_103231) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -458,13 +458,15 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_21_204949) do
     t.bigint "location_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "programme_id"
     t.boolean "active", default: false, null: false
     t.date "send_consent_requests_at"
     t.date "send_consent_reminders_at"
     t.date "close_consent_at"
     t.integer "time_of_day"
+    t.bigint "programme_id"
+    t.bigint "team_id", null: false
     t.index ["programme_id"], name: "index_sessions_on_programme_id"
+    t.index ["team_id"], name: "index_sessions_on_team_id"
   end
 
   create_table "teams", force: :cascade do |t|
@@ -614,6 +616,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_21_204949) do
   add_foreign_key "patients", "cohorts"
   add_foreign_key "patients", "locations", column: "school_id"
   add_foreign_key "programmes", "teams"
+  add_foreign_key "sessions", "programmes"
+  add_foreign_key "sessions", "teams"
   add_foreign_key "triage", "patient_sessions"
   add_foreign_key "triage", "users", column: "performed_by_user_id"
   add_foreign_key "vaccination_records", "batches"

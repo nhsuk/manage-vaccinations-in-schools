@@ -8,7 +8,8 @@ class SessionsController < ApplicationController
 
     programme = current_user.team.programmes.first
 
-    @session = Session.create!(active: false, programme:)
+    @session =
+      Session.create!(active: false, team: current_user.team, programme:)
 
     redirect_to session_edit_path(@session, :location)
   end

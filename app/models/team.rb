@@ -25,6 +25,7 @@ class Team < ApplicationRecord
   has_many :locations
   has_many :programmes
   has_many :schools, -> { school }, class_name: "Location"
+  has_many :sessions
 
   has_and_belongs_to_many :users
 
