@@ -225,7 +225,11 @@ class ManageConsentsController < ApplicationController
   end
 
   def set_triage
-    @triage = Triage.find_or_initialize_by(patient_session: @patient_session)
+    @triage =
+      Triage.find_or_initialize_by(
+        programme: @session.programme,
+        patient_session: @patient_session
+      )
   end
 
   def create_params

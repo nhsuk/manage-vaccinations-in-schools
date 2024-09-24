@@ -82,7 +82,11 @@ class TriageController < ApplicationController
   end
 
   def set_triage
-    @triage = @patient_session.triage.new
+    @triage =
+      Triage.new(
+        programme: @session.programme,
+        patient_session: @patient_session
+      )
   end
 
   def set_section_and_tab
