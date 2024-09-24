@@ -92,7 +92,7 @@ class Sessions::EditController < ApplicationController
   end
 
   def set_locations
-    # TODO: Use an autocomplete instead.
+    # TODO: Don't use limit.
     @locations =
       policy_scope(Location)
         .order(:name)
