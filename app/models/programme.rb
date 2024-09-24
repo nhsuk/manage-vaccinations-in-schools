@@ -32,12 +32,12 @@ class Programme < ApplicationRecord
   has_many :dps_exports
   has_many :immunisation_imports
   has_many :sessions
+  has_many :vaccination_records
 
   has_many :batches, through: :vaccines
   has_many :cohort_imports, through: :team
   has_many :patient_sessions, through: :sessions
   has_many :patients, through: :patient_sessions
-  has_many :vaccination_records, through: :patient_sessions
 
   has_many :import_issues,
            -> do

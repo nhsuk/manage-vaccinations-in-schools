@@ -21,6 +21,7 @@
 #  batch_id                 :bigint
 #  patient_session_id       :bigint           not null
 #  performed_by_user_id     :bigint
+#  programme_id             :bigint           not null
 #  vaccine_id               :bigint
 #
 # Indexes
@@ -28,6 +29,7 @@
 #  index_vaccination_records_on_batch_id              (batch_id)
 #  index_vaccination_records_on_patient_session_id    (patient_session_id)
 #  index_vaccination_records_on_performed_by_user_id  (performed_by_user_id)
+#  index_vaccination_records_on_programme_id          (programme_id)
 #  index_vaccination_records_on_vaccine_id            (vaccine_id)
 #
 # Foreign Keys
@@ -35,6 +37,7 @@
 #  fk_rails_...  (batch_id => batches.id)
 #  fk_rails_...  (patient_session_id => patient_sessions.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
+#  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 

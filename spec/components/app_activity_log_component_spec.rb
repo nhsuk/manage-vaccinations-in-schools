@@ -12,7 +12,7 @@ shared_examples "card" do |params|
   end
 end
 
-describe AppActivityLogComponent, type: :component do
+describe AppActivityLogComponent do
   subject { page }
 
   let(:team) { create(:team) }
@@ -75,6 +75,7 @@ describe AppActivityLogComponent, type: :component do
 
     create(
       :vaccination_record,
+      programme:,
       patient_session:,
       created_at: Time.zone.parse("2024-05-31 12:00"),
       performed_by: user,

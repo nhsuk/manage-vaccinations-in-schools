@@ -78,6 +78,7 @@ class ImmunisationImportRow
         notes:,
         recorded_at: nil
       ).find_or_initialize_by(
+        programme: @programme,
         administered_at:,
         dose_sequence:,
         patient_session:,

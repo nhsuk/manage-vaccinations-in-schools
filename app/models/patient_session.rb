@@ -72,7 +72,7 @@ class PatientSession < ApplicationRecord
     vaccine = programme&.vaccines&.first
     vaccination_records
       .draft
-      .create_with(vaccine:)
+      .create_with(programme:, vaccine:)
       .find_or_initialize_by(recorded_at: nil)
   end
 

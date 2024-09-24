@@ -22,15 +22,14 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 
-describe DPSExport, type: :model do
+describe DPSExport do
   subject(:dps_export) do
     described_class.create!(programme:, filename: "test.csv")
   end
 
-  let(:programme) { patient_session.programme }
-  let(:patient_session) { create(:patient_session) }
+  let(:programme) { create(:programme) }
 
-  before { create_list(:vaccination_record, 2, patient_session:) }
+  before { create_list(:vaccination_record, 2, programme:) }
 
   describe "#csv" do
     subject(:csv) { dps_export.csv }
