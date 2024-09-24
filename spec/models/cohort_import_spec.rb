@@ -257,4 +257,18 @@ describe CohortImport do
       expect { record! }.to change(Parent.recorded, :count).from(0).to(3)
     end
   end
+
+  describe "performance" do
+    let(:file) { "valid_cohort_large.csv" }
+
+    it "profiles the time taken by each step", :performance do
+      Benchmark.bm do
+        _1.report("load_data!") { cohort_import.load_data! }
+        _1.report("parse_rows!") { cohort_import.parse_rows! }
+        _1.report("process!") { cohort_import.process! }
+      end
+
+      expect(subject).to be_valid
+    end
+  end
 end

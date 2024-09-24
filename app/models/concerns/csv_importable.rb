@@ -74,13 +74,60 @@ module CSVImportable
 
     counts = count_columns.index_with(0)
 
+    all_parents = []
+    all_patients = []
+    all_relationships = []
+
     ActiveRecord::Base.transaction do
       save!
 
       rows.each do |row|
-        count_column_to_increment = process_row(row)
+        parents = row.to_parents
+        patient = row.to_patient
+        parent_relationships = row.to_parent_relationships(parents, patient)
+
+        all_parents.concat(parents)
+        all_patients << patient
+        all_relationships.concat(parent_relationships)
+
+        count_column_to_increment =
+          if parents.any?(&:new_record?) || patient.new_record? ||
+               parent_relationships.any?(&:new_record?)
+            :new_record_count
+          elsif parents.any?(&:changed?) || patient.changed? ||
+                parent_relationships.any?(&:changed?)
+            :changed_record_count
+          else
+            :exact_duplicate_record_count
+          end
+
         counts[count_column_to_increment] += 1
       end
+
+      Parent.import(
+        all_parents,
+        on_duplicate_key_update: {
+          conflict_target: [:id],
+          columns: [:updated_at]
+        }
+      )
+      Patient.import(
+        all_patients,
+        on_duplicate_key_update: {
+          conflict_target: [:id],
+          columns: [:updated_at]
+        }
+      )
+      ParentRelationship.import(
+        all_relationships,
+        on_duplicate_key_update: {
+          conflict_target: [:id],
+          columns: [:updated_at]
+        }
+      )
+
+      all_records = all_parents + all_patients + all_relationships
+      link_records(*all_records)
 
       update!(processed_at: Time.zone.now, **counts)
     end

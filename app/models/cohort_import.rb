@@ -94,9 +94,27 @@ class CohortImport < ApplicationRecord
         end
       )
 
-    parents.each(&:save!)
-    patient.save!
-    parent_relationships.each(&:save!)
+    Parent.import(
+      parents,
+      on_duplicate_key_update: {
+        conflict_target: [:id],
+        columns: [:updated_at]
+      }
+    )
+    Patient.import(
+      [patient],
+      on_duplicate_key_update: {
+        conflict_target: [:id],
+        columns: [:updated_at]
+      }
+    )
+    ParentRelationship.import(
+      parent_relationships,
+      on_duplicate_key_update: {
+        conflict_target: [:id],
+        columns: [:updated_at]
+      }
+    )
 
     link_records(*parents, *parent_relationships, patient)
 
