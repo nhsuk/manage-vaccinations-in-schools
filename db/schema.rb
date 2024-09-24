@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_24_130058) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_24_140304) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -448,6 +448,12 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_24_130058) do
     t.index ["team_id", "type"], name: "index_programmes_on_team_id_and_type", unique: true
   end
 
+  create_table "programmes_sessions", id: false, force: :cascade do |t|
+    t.bigint "session_id", null: false
+    t.bigint "programme_id", null: false
+    t.index ["session_id", "programme_id"], name: "index_programmes_sessions_on_session_id_and_programme_id", unique: true
+  end
+
   create_table "programmes_vaccines", id: false, force: :cascade do |t|
     t.bigint "programme_id", null: false
     t.bigint "vaccine_id", null: false
@@ -466,8 +472,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_24_130058) do
     t.date "close_consent_at"
     t.integer "time_of_day"
     t.bigint "team_id", null: false
-    t.bigint "programme_id"
-    t.index ["programme_id"], name: "index_sessions_on_programme_id"
     t.index ["team_id"], name: "index_sessions_on_team_id"
   end
 
@@ -623,7 +627,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_24_130058) do
   add_foreign_key "patients", "cohorts"
   add_foreign_key "patients", "locations", column: "school_id"
   add_foreign_key "programmes", "teams"
-  add_foreign_key "sessions", "programmes"
+  add_foreign_key "programmes_sessions", "programmes"
+  add_foreign_key "programmes_sessions", "sessions"
   add_foreign_key "sessions", "teams"
   add_foreign_key "triage", "patient_sessions"
   add_foreign_key "triage", "programmes"

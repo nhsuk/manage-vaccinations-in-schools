@@ -25,13 +25,13 @@ class Programme < ApplicationRecord
 
   belongs_to :team
 
+  has_and_belongs_to_many :sessions
   has_and_belongs_to_many :vaccines
 
   has_many :consent_forms
   has_many :consents
   has_many :dps_exports
   has_many :immunisation_imports
-  has_many :sessions
   has_many :triages
   has_many :vaccination_records
 

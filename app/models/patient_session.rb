@@ -44,7 +44,7 @@ class PatientSession < ApplicationRecord
           -> { draft },
           class_name: "GillickAssessment"
 
-  has_one :programme, through: :session
+  has_one :team, through: :session
   has_many :triage, -> { order(:updated_at) }
   has_many :vaccination_records
   has_many :consents,
