@@ -19,6 +19,9 @@ CIS2_AUTH_INFO = {
   },
   "extra" => {
     "raw_info" => {
+      "id_assurance_level" => "3",
+      "authentication_assurance_level" => "3",
+      "auth_time" => Time.zone.now.to_i,
       "nhsid_useruid" => "123456789012",
       "name" => "Flo Nurse",
       "nhsid_nrbac_roles" => [
