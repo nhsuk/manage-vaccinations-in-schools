@@ -10,7 +10,7 @@
 <span class="nhsuk-caption-l"><%= @programme.name %></span>
 <%= h1 title, page_title: "#{@programme.name} – #{title}" %>
 
-<% if @immunisation_import.exact_duplicate_record_count > 1 ||
+<% if @immunisation_import.exact_duplicate_record_count > 1 || @immunisation_import.changed_record_count > 1 ||
       @immunisation_import.not_administered_record_count > 1 %>
   <%= render AppWarningCalloutComponent.new(heading: "Uploaded records will differ from file") do %>
     <ul class="nhsuk-list nhsuk-list--bullet">
@@ -18,6 +18,12 @@
         <li>
           <%= @immunisation_import.exact_duplicate_record_count %> previously
           uploaded records were omitted
+        </li>
+      <% end %>
+
+      <% if @immunisation_import.changed_record_count > 1 %>
+        <li>
+          <%= @immunisation_import.changed_record_count %> previously uploaded records were updated
         </li>
       <% end %>
 
