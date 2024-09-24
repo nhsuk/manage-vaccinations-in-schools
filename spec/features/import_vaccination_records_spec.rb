@@ -200,7 +200,7 @@ describe "Immunisation imports" do
   def then_i_should_see_the_vaccination_record
     expect(page).to have_content("Chyna Pickle")
     expect(page).to have_content("Child record")
-    expect(page).to have_content("NameChyna Pickle")
+    expect(page).to have_content("Full nameChyna Pickle")
     expect(page).to have_content("Vaccination details")
     expect(page).to have_content("OutcomeVaccinated")
   end

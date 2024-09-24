@@ -15,4 +15,9 @@ module AddressConcern
   def has_address?
     address_parts.present?
   end
+
+  def address_changed?
+    address_line_1_changed? || address_line_2_changed? ||
+      address_town_changed? || address_postcode_changed?
+  end
 end
