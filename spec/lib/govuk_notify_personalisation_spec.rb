@@ -8,6 +8,7 @@ describe GovukNotifyPersonalisation do
       consent:,
       consent_form:,
       parent:,
+      programme:,
       vaccination_record:
     )
   end

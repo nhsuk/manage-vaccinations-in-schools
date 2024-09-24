@@ -13,7 +13,7 @@ describe DPSExportRow do
   let(:patient) do
     create(:patient, date_of_birth: Date.new(2012, 12, 29), school:)
   end
-  let(:session) { create(:session, programme:, location:) }
+  let(:session) { create(:session, team:, programme:, location:) }
   let(:patient_session) { create(:patient_session, patient:, session:) }
   let(:performed_by) { create(:user, family_name: "Doe", given_name: "Jane") }
   let(:performed_by_given_name) { nil }
@@ -71,7 +71,7 @@ describe DPSExportRow do
     end
 
     it "has site_code" do
-      expect(array[7]).to eq vaccination_record.programme.team.ods_code
+      expect(array[7]).to eq vaccination_record.team.ods_code
     end
 
     it "has site_code_type_uri" do

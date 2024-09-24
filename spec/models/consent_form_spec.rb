@@ -563,8 +563,9 @@ describe ConsentForm do
   end
 
   describe "scope unmatched" do
-    let(:session) { create(:session) }
-    let(:consent) { create(:consent, programme: session.programme) }
+    let(:programme) { create(:programme) }
+    let(:session) { create(:session, programme:) }
+    let(:consent) { create(:consent, programme:) }
     let(:unmatched_consent_form) do
       create(:consent_form, consent: nil, session:)
     end
@@ -577,8 +578,9 @@ describe ConsentForm do
   end
 
   describe "scope recorded" do
-    let(:session) { create(:session) }
-    let(:consent) { create(:consent, programme: session.programme) }
+    let(:programme) { create(:programme) }
+    let(:session) { create(:session, programme:) }
+    let(:consent) { create(:consent, programme:) }
     let(:recorded_consent_form) do
       create(:consent_form, :recorded, consent:, session:)
     end

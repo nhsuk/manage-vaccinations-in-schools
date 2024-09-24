@@ -58,7 +58,7 @@ class Consent < ApplicationRecord
              optional: true,
              foreign_key: :recorded_by_user_id
 
-  scope :submitted_for_programme, ->(programme) { recorded.where(programme:) }
+  has_one :team, through: :programme
 
   enum :response, %w[given refused not_provided], prefix: true
   enum :reason_for_refusal,

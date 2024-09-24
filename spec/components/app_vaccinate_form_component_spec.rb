@@ -9,9 +9,15 @@ describe AppVaccinateFormComponent do
   let(:session) { create(:session, :in_progress, programme:) }
   let(:vaccine) { programme.vaccines.first }
   let(:patient_session) do
-    create :patient_session, :consent_given_triage_not_needed, session:
+    create(
+      :patient_session,
+      :consent_given_triage_not_needed,
+      programme:,
+      session:
+    )
   end
-  let(:vaccination_record) { VaccinationRecord.new(programme:, vaccine:) }
+  let(:vaccination_record) { build(:vaccination_record, programme:, vaccine:) }
+
   let(:component) do
     described_class.new(
       patient_session:,
@@ -35,7 +41,12 @@ describe AppVaccinateFormComponent do
 
   context "patient has unrecorded vaccination record" do
     let(:patient_session) do
-      create :patient_session, :consent_given_triage_not_needed, session:
+      create(
+        :patient_session,
+        :consent_given_triage_not_needed,
+        programme:,
+        session:
+      )
     end
     let(:vaccination_record) do
       create(:vaccination_record, :not_recorded, programme:, patient_session:)

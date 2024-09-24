@@ -5,7 +5,7 @@
       ) %>
 <% end %>
 
-<% title = t("consent_forms.consent.title.#{@session.type.downcase}") %>
+<% title = t("consent_forms.consent.title.#{@consent_form.programme.type}") %>
 <% content_for :page_title, title %>
 
 <%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
@@ -13,9 +13,9 @@
 
   <%= f.govuk_radio_buttons_fieldset(:response,
                                      legend: { size: "l", text: title, tag: "h1" },
-                                     hint: { text: t("consent_forms.consent.hint.#{@session.type.downcase}") }) do %>
+                                     hint: { text: t("consent_forms.consent.hint.#{@consent_form.programme.type}") }) do %>
     <%= f.govuk_radio_button :response, "given",
-                             label: { text: t("consent_forms.consent.i_agree.#{@session.type.downcase}") },
+                             label: { text: t("consent_forms.consent.i_agree.#{@consent_form.programme.type}") },
                              link_errors: true %>
     <%= f.govuk_radio_button :response, "refused",
                              label: { text: "No" } %>

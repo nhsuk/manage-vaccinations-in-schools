@@ -5,7 +5,7 @@
       ) %>
 <% end %>
 
-<% title = t("vaccinations.reason.title.#{@session.type.downcase}") %>
+<% title = t("vaccinations.reason.title.#{@draft_vaccination_record.programme.type}") %>
 <% content_for :page_title, title %>
 
 <%= form_with model: @draft_vaccination_record,

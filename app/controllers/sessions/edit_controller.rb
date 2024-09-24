@@ -112,7 +112,7 @@ class Sessions::EditController < ApplicationController
           Session
             .joins(:patient_sessions)
             .active
-            .where(programme: @session.programme)
+            .where(team: @session.team)
             .where("patient_sessions.patient_id = patients.id")
             .arel
             .exists

@@ -24,16 +24,4 @@ RSpec.describe SessionsHelper do
       end
     end
   end
-
-  describe "#session_name" do
-    subject(:session_name) { helper.session_name(session) }
-
-    it { should eq("Flu session at Waterloo Road") }
-
-    context "when location is nil" do
-      let(:location) { nil }
-
-      it { should eq("Flu session at unknown location") }
-    end
-  end
 end

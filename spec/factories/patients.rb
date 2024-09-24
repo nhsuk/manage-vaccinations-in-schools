@@ -41,7 +41,7 @@ FactoryBot.define do
   factory :patient do
     transient do
       session { nil }
-      programme { session&.programme }
+      programme { session&.programmes&.first }
       team { programme&.team || association(:team) }
 
       parents { [create(:parent, :recorded, last_name:)] }

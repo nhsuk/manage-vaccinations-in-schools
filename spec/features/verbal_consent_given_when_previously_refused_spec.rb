@@ -14,14 +14,26 @@ feature "Verbal consent" do
 
   def given_an_hpv_programme_is_underway
     @team = create(:team, :with_one_nurse)
-    programme = create(:programme, :hpv, team: @team)
+    @programme = create(:programme, :hpv, team: @team)
     location = create(:location, :school, name: "Pilot School")
-    @session = create(:session, :in_future, team: @team, programme:, location:)
+    @session =
+      create(
+        :session,
+        :in_future,
+        team: @team,
+        programme: @programme,
+        location:
+      )
   end
 
   def and_a_parent_has_refused_consent_for_their_child
     @child =
-      create(:patient_session, :consent_refused, session: @session).patient
+      create(
+        :patient_session,
+        :consent_refused,
+        programme: @programme,
+        session: @session
+      ).patient
   end
 
   def and_i_am_logged_in_as_a_nurse

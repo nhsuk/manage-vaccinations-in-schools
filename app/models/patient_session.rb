@@ -45,11 +45,13 @@ class PatientSession < ApplicationRecord
           class_name: "GillickAssessment"
 
   has_one :team, through: :session
+  has_many :programmes, through: :session
+
   has_many :triage, -> { order(:updated_at) }
   has_many :vaccination_records
   has_many :consents,
            ->(patient_session) do
-             submitted_for_programme(patient_session.programme).includes(
+             recorded.where(programme: patient_session.programmes).includes(
                :parent
              )
            end,
@@ -69,10 +71,12 @@ class PatientSession < ApplicationRecord
     # HACK: this code will need to be revisited in future as it only really works for HPV, where we only have one
     # vaccine. It is likely to fail for the Doubles programme as that has 2 vaccines. It is also likely to fail for
     # the flu programme for the SAIS teams that offer both nasal and injectable vaccines.
-    vaccine = programme&.vaccines&.first
+
+    programme = programmes.first
+
     vaccination_records
       .draft
-      .create_with(programme:, vaccine:)
+      .create_with(programme:, vaccine: programme.vaccines.first)
       .find_or_initialize_by(recorded_at: nil)
   end
 

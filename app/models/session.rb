@@ -41,10 +41,13 @@ class Session < ApplicationRecord
 
   has_many :consent_forms
   has_many :patient_sessions
-  has_many :patients, through: :patient_sessions
 
   has_and_belongs_to_many :immunisation_imports
   has_and_belongs_to_many :programmes
+
+  has_many :patients, through: :patient_sessions
+  has_many :vaccines, through: :programmes
+  has_many :batches, through: :vaccines
 
   enum :time_of_day, %w[morning afternoon all_day], validate: { if: :active? }
 
@@ -96,14 +99,6 @@ class Session < ApplicationRecord
     validates :close_consent_at,
               presence: true,
               if: -> { close_consent_on == "custom" }
-  end
-
-  def health_questions
-    programme.vaccines.first.health_questions
-  end
-
-  def type
-    programme.name
   end
 
   def in_progress?

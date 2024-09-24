@@ -1,4 +1,4 @@
-<% title = t("consent_forms.confirmation_agreed.title.#{@session.type.downcase}",
+<% title = t("consent_forms.confirmation_agreed.title.#{@consent_form.programme.type}",
             full_name: @consent_form.full_name,
             date: @session.date.to_fs(:long)) %>
 <% content_for :page_title, title %>

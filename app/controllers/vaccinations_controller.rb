@@ -22,7 +22,7 @@ class VaccinationsController < ApplicationController
         .active
         .strict_loading
         .includes(
-          :programme,
+          :programmes,
           :gillick_assessment,
           :patient,
           :triage,
@@ -161,7 +161,7 @@ class VaccinationsController < ApplicationController
   end
 
   def set_batches
-    @batches = @session.programme.batches.order(expiry: :asc, name: :asc)
+    @batches = @session.batches.order(expiry: :asc, name: :asc)
   end
 
   def set_section_and_tab

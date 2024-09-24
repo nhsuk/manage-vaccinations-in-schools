@@ -213,7 +213,7 @@ describe "End-to-end journey" do
 
   def when_i_click_on_the_vaccination_section
     click_link "Back to consents page"
-    click_link "HPV session at Pilot School"
+    click_link "Pilot School"
     click_link "Record vaccinations"
     click_link "Vaccinate ( 1 )"
   end

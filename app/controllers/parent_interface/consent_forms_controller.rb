@@ -12,11 +12,15 @@ module ParentInterface
     before_action :check_if_past_deadline, except: %i[deadline_passed]
 
     def start
+      # TODO: handle multiple programmes
+      @programme = @session.programmes.first
     end
 
     def create
-      consent_form =
-        @session.consent_forms.create!(programme: @session.programme)
+      # TODO: handle multiple programmes
+      programme = @session.programmes.first
+
+      consent_form = @session.consent_forms.create!(programme:)
 
       session[:consent_form_id] = consent_form.id
 
