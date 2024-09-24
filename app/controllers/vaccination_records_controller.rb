@@ -11,7 +11,6 @@ class VaccinationRecordsController < ApplicationController
     @vaccination_record = vaccination_records.find(params[:id])
     @patient = @vaccination_record.patient
     @session = @vaccination_record.session
-    @school = @patient.school
   end
 
   def export_dps

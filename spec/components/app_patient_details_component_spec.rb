@@ -1,22 +1,24 @@
 # frozen_string_literal: true
 
-describe AppPatientDetailsComponent, type: :component do
+describe AppPatientDetailsComponent do
   subject { page }
 
   before { render_inline(component) }
 
   context "with a patient object" do
     let(:parent) { create(:parent) }
+    let(:school) { create(:location, :school) }
     let(:patient) do
       create(
         :patient,
         nhs_number: 1_234_567_890,
         common_name: "Homer",
-        parents: [parent]
+        parents: [parent],
+        school:,
       )
     end
-    let(:school) { create(:location, :school) }
-    let(:component) { described_class.new(patient:, school:) }
+
+    let(:component) { described_class.new(patient:) }
 
     it "renders the patient's full name" do
       expect(page).to(
@@ -90,8 +92,7 @@ describe AppPatientDetailsComponent, type: :component do
     let(:consent_form) do
       create(:consent_form, common_name: "Homer", use_common_name: true)
     end
-    let(:school) { create(:location, :school) }
-    let(:component) { described_class.new(consent_form:, school:) }
+    let(:component) { described_class.new(consent_form:) }
 
     it "renders the child's full name" do
       expect(page).to(
@@ -131,12 +132,6 @@ describe AppPatientDetailsComponent, type: :component do
               "#{consent_form.address_town}" \
               "#{consent_form.address_postcode}"
         )
-      )
-    end
-
-    it "renders the school name" do
-      expect(page).to(
-        have_css(".nhsuk-summary-list__row", text: "School#{school.name}")
       )
     end
 
