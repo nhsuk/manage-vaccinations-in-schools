@@ -33,16 +33,19 @@
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
 #  consent_id                          :bigint
+#  programme_id                        :bigint           not null
 #  session_id                          :bigint           not null
 #
 # Indexes
 #
-#  index_consent_forms_on_consent_id  (consent_id)
-#  index_consent_forms_on_session_id  (session_id)
+#  index_consent_forms_on_consent_id    (consent_id)
+#  index_consent_forms_on_programme_id  (programme_id)
+#  index_consent_forms_on_session_id    (session_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (consent_id => consents.id)
+#  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (session_id => sessions.id)
 #
 
@@ -62,10 +65,10 @@ class ConsentForm < ApplicationRecord
 
   audited
 
+  belongs_to :programme
   belongs_to :consent, optional: true
   belongs_to :session
 
-  has_one :programme, through: :session
   has_one :team, through: :programme
 
   enum :response, %w[given refused not_provided], prefix: "consent"
@@ -219,6 +222,8 @@ class ConsentForm < ApplicationRecord
     validate :health_answers_valid?
   end
 
+  delegate :vaccines, to: :programme
+
   def address_postcode=(str)
     super str.nil? ? nil : UKPostcode.parse(str.to_s).to_s
   end
@@ -349,7 +354,7 @@ class ConsentForm < ApplicationRecord
   end
 
   def injection_offered_as_alternative?
-    refused_and_not_had_it_already? && session.programme.name == "Flu"
+    refused_and_not_had_it_already? && programme.flu?
     # checking for flu here is a simplification
     # the actual logic is: if the parent has refused a nasal vaccine AND the session is for a nasal vaccine
     # AND the SAIS team offers an alternative injection vaccine, then show the injection step
@@ -359,10 +364,6 @@ class ConsentForm < ApplicationRecord
     #
     # so a more true-to-life implementation would be:
     # refused_nasal? && not_had_it_already? && injection_offered_as_alternative?
-  end
-
-  def vaccines
-    session.programme.vaccines
   end
 
   def health_answers_valid?
