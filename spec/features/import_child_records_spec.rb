@@ -25,7 +25,11 @@ describe "Import child records" do
     and_i_go_back_to_the_upload_page
 
     when_i_upload_a_valid_file
-    and_i_should_see_the_patients
+    then_i_should_see_the_holding_page
+
+    when_i_wait_for_the_background_job_to_complete
+    and_i_refresh_the_page
+    then_i_should_see_the_patients
 
     when_i_click_on_upload_records
     then_i_should_see_the_upload
@@ -43,9 +47,6 @@ describe "Import child records" do
     when_i_click_on_the_imports_tab
     and_i_choose_to_import_child_records
     then_i_should_see_the_import_page
-
-    when_i_upload_a_valid_file
-    then_i_should_see_the_duplicates_page
   end
 
   def given_the_app_is_setup
@@ -88,13 +89,14 @@ describe "Import child records" do
     click_on "Continue"
   end
 
-  def and_i_should_see_the_patients
+  def then_i_should_see_the_patients
     expect(page).to have_content("Full nameNHS numberDate of birthPostcode")
     expect(page).to have_content("Jimmy Smith")
     expect(page).to have_content(/NHS number.*123.*456.*7890/)
     expect(page).to have_content("Date of birth 1 January 2010")
     expect(page).to have_content("Postcode SW1A 1AA")
   end
+  alias_method :and_i_should_see_the_patients, :then_i_should_see_the_patients
 
   def when_i_click_on_upload_records
     click_on "Upload records"
@@ -180,9 +182,15 @@ describe "Import child records" do
     click_on "Back"
   end
 
-  def then_i_should_see_the_duplicates_page
-    expect(page).to have_content(
-      "All records in this CSV file have been uploaded."
-    )
+  def then_i_should_see_the_holding_page
+    expect(page).to have_content("This import is still processing")
+  end
+
+  def when_i_wait_for_the_background_job_to_complete
+    perform_enqueued_jobs
+  end
+
+  def and_i_refresh_the_page
+    visit current_path
   end
 end

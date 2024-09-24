@@ -10,29 +10,35 @@
 <span class="nhsuk-caption-l"><%= @programme.name %></span>
 <%= h1 title, page_title: "#{@programme.name} – #{title}" %>
 
-<% if @cohort_import.exact_duplicate_record_count > 1 ||
-      @cohort_import.changed_record_count > 1 %>
-  <%= render AppWarningCalloutComponent.new(heading: "Uploaded records will differ from file") do %>
-    <ul class="nhsuk-list nhsuk-list--bullet">
-      <% if @cohort_import.exact_duplicate_record_count > 1 %>
-        <li>
-          <%= @cohort_import.exact_duplicate_record_count %> previously
-          uploaded records were omitted
-        </li>
-      <% end %>
+<% unless @cohort_import.processed? %>
+  <p>
+    This import is still processing. Please check back later.
+  </p>
+<% else %>
+  <% if @cohort_import.exact_duplicate_record_count > 1 ||
+        @cohort_import.changed_record_count > 1 %>
+    <%= render AppWarningCalloutComponent.new(heading: "Uploaded records will differ from file") do %>
+      <ul class="nhsuk-list nhsuk-list--bullet">
+        <% if @cohort_import.exact_duplicate_record_count > 1 %>
+          <li>
+            <%= @cohort_import.exact_duplicate_record_count %> previously
+            uploaded records were omitted
+          </li>
+        <% end %>
 
-      <% if @cohort_import.changed_record_count > 1 %>
-        <li>
-          <%= @cohort_import.changed_record_count %> previously uploaded records were updated
-        </li>
-      <% end %>
-    </ul>
+        <% if @cohort_import.changed_record_count > 1 %>
+          <li>
+            <%= @cohort_import.changed_record_count %> previously uploaded records were updated
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
   <% end %>
+
+  <%= govuk_button_to "Upload records", programme_cohort_import_path(
+        @programme,
+        @cohort_import
+      ), method: :put %>
+
+  <%= render AppPatientTableComponent.new(@patients) %>
 <% end %>
-
-<%= govuk_button_to "Upload records", programme_cohort_import_path(
-      @programme,
-      @cohort_import
-    ), method: :put %>
-
-<%= render AppPatientTableComponent.new(@patients) %>

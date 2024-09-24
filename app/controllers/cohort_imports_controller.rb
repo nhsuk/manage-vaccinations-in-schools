@@ -28,11 +28,9 @@ class CohortImportsController < ApplicationController
       render :errors, status: :unprocessable_entity and return
     end
 
-    @cohort_import.process!
+    @cohort_import.save!
 
-    if @cohort_import.processed_only_exact_duplicates?
-      render :duplicates and return
-    end
+    ProcessCohortImportJob.perform_later(@programme, @cohort_import)
 
     redirect_to edit_programme_cohort_import_path(@programme, @cohort_import)
   end
