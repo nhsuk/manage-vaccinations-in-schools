@@ -1,17 +1,17 @@
 en:
   helpers:
     legend:
-      immunisation_import_duplicate_form:
+      import_duplicate_form:
         apply_changes: Which record do you want to keep?
 
     hint:
-      immunisation_import_duplicate_form:
+      import_duplicate_form:
         apply_changes_options:
           apply: The duplicate record will replace the previously uploaded record.
           discard: The previously uploaded record will be kept and the duplicate record will be discarded.
 
     label:
-      immunisation_import_duplicate_form:
+      import_duplicate_form:
         apply_changes_options:
           apply: Use duplicate record
           discard: Keep previously uploaded record
