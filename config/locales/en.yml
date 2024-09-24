@@ -134,7 +134,7 @@ en:
             relationship_other_name:
               blank: Enter a relationship
               too_long: Enter a relationship that is less than 300 characters long
-        patient_changes_form:
+        immunisation_import_duplicate_form:
           attributes:
             apply_changes:
               inclusion: Choose which record to keep

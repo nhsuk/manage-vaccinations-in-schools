@@ -53,24 +53,7 @@
     ) do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <%= f.govuk_radio_buttons_fieldset(
-        :apply_changes,
-        legend: { text: "Which record do you want to keep?" },
-      ) do %>
-    <%= f.govuk_radio_button(
-          :apply_changes, "apply",
-          label: { text: "Use duplicate record" },
-          hint: { text: "The duplicate record will replace the previously " \
-          "uploaded record." },
-          link_errors: true,
-        ) %>
-    <%= f.govuk_radio_button(
-          :apply_changes, "discard",
-          label: { text: "Keep previously uploaded record" },
-          hint: { text: "The previously uploaded record will be kept and the " \
-          "duplicate record will be discarded." },
-        ) %>
-  <% end %>
+  <%= f.govuk_collection_radio_buttons :apply_changes, %i[apply discard], :itself, nil %>
 
   <%= f.govuk_submit "Resolve duplicate" %>
 <% end %>
