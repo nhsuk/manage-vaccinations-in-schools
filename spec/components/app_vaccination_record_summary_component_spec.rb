@@ -22,6 +22,7 @@ describe AppVaccinationRecordSummaryComponent do
   let(:vaccination_record) do
     create(
       :vaccination_record,
+      programme:,
       administered_at:,
       batch:,
       vaccine:,

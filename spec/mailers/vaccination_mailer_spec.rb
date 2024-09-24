@@ -18,7 +18,9 @@ describe VaccinationMailer do
       create(:patient, :consent_given_triage_not_needed, programme:)
     end
     let(:patient_session) { create(:patient_session, patient:, session:) }
-    let(:vaccination_record) { create(:vaccination_record, patient_session:) }
+    let(:vaccination_record) do
+      create(:vaccination_record, programme:, patient_session:)
+    end
 
     it do
       expect(mail).to have_attributes(
@@ -66,7 +68,12 @@ describe VaccinationMailer do
         subject { personalisation[:today_or_date_of_vaccination] }
 
         let(:vaccination_record) do
-          create(:vaccination_record, patient_session:, recorded_at:)
+          create(
+            :vaccination_record,
+            programme:,
+            patient_session:,
+            recorded_at:
+          )
         end
 
         context "when the vaccination was recorded today" do
@@ -97,7 +104,12 @@ describe VaccinationMailer do
     end
     let(:patient_session) { create(:patient_session, session:, patient:) }
     let(:vaccination_record) do
-      create(:vaccination_record, :not_administered, patient_session:)
+      create(
+        :vaccination_record,
+        :not_administered,
+        programme:,
+        patient_session:
+      )
     end
 
     it do

@@ -10,6 +10,7 @@ describe AppVaccinationRecordTableComponent, type: :component do
     [
       create(
         :vaccination_record,
+        programme:,
         administered_at: Time.zone.local(2020, 9, 1),
         patient:
           create(

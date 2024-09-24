@@ -25,11 +25,14 @@
 #
 
 describe PatientSession do
+  let(:programme) { create(:programme) }
+
   describe "#triage" do
     it "returns the triage records in ascending order" do
-      patient_session = create(:patient_session)
-      later_triage = create(:triage, patient_session:)
-      earlier_triage = create(:triage, patient_session:, updated_at: 1.day.ago)
+      patient_session = create(:patient_session, programme:)
+      later_triage = create(:triage, programme:, patient_session:)
+      earlier_triage =
+        create(:triage, programme:, patient_session:, updated_at: 1.day.ago)
 
       expect(patient_session.triage).to eq [earlier_triage, later_triage]
     end
@@ -37,10 +40,12 @@ describe PatientSession do
 
   describe "#vaccine_record" do
     it "returns the last non-draft vaccination record" do
-      patient_session = create(:patient_session)
-      vaccination_record = create(:vaccination_record, patient_session:)
+      patient_session = create(:patient_session, programme:)
+      vaccination_record =
+        create(:vaccination_record, programme:, patient_session:)
       vaccination_record.update!(recorded_at: 1.day.ago)
-      draft_vaccination_record = create(:vaccination_record, patient_session:)
+      draft_vaccination_record =
+        create(:vaccination_record, programme:, patient_session:)
       draft_vaccination_record.update!(recorded_at: nil)
 
       expect(patient_session.vaccination_record).to eq vaccination_record
@@ -50,7 +55,6 @@ describe PatientSession do
   describe "#latest_consents" do
     subject(:latest_consents) { patient_session.latest_consents }
 
-    let(:programme) { create(:programme) }
     let(:patient_session) { create(:patient_session, programme:, patient:) }
 
     context "multiple consent given responses from different parents" do
@@ -116,15 +120,21 @@ describe PatientSession do
 
   describe "#latest_triage" do
     it "returns the latest triage record" do
-      patient_session = create(:patient_session)
+      patient_session = create(:patient_session, programme:)
       create(
         :triage,
+        programme:,
         status: :needs_follow_up,
         created_at: 1.day.ago,
         patient_session:
       )
       later_triage =
-        create(:triage, status: :ready_to_vaccinate, patient_session:)
+        create(
+          :triage,
+          programme:,
+          status: :ready_to_vaccinate,
+          patient_session:
+        )
 
       expect(patient_session.latest_triage).to eq later_triage
     end

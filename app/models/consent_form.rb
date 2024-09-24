@@ -120,6 +120,8 @@ class ConsentForm < ApplicationRecord
   normalizes :parent_email,
              with: -> { _1.blank? ? nil : _1.to_s.downcase.strip }
 
+  validates :programme, inclusion: { in: -> { _1.session.programmes } }
+
   validates :address_line_1,
             :address_line_2,
             :address_town,

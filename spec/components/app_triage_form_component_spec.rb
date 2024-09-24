@@ -3,7 +3,8 @@
 describe AppTriageFormComponent, type: :component do
   subject(:rendered) { render_inline(component) }
 
-  let(:patient_session) { create(:patient_session) }
+  let(:programme) { create(:programme) }
+  let(:patient_session) { create(:patient_session, programme:) }
   let(:component) { described_class.new(patient_session:, url: "#") }
 
   it { should have_text("Is it safe to vaccinate") }
@@ -19,7 +20,7 @@ describe AppTriageFormComponent, type: :component do
     end
 
     context "patient_session has existing triage" do
-      before { create(:triage, :needs_follow_up, patient_session:) }
+      before { create(:triage, :needs_follow_up, programme:, patient_session:) }
 
       it { should_not be_nil }
       it { should be_needs_follow_up }

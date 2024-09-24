@@ -60,7 +60,11 @@ describe AppSessionPatientTableComponent, type: :component do
         patient_sessions:,
         section: :matching,
         consent_form:
-          create(:consent_form, session: patient_sessions.first.session),
+          create(
+            :consent_form,
+            programme:,
+            session: patient_sessions.first.session
+          ),
         columns: %i[name postcode dob select_for_matching]
       )
     end

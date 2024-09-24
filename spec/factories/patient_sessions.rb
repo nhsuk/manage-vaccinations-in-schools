@@ -101,6 +101,7 @@ FactoryBot.define do
           association(
             :triage,
             :ready_to_vaccinate,
+            programme:,
             notes: "Okay to vaccinate",
             performed_by: created_by
           )
@@ -117,7 +118,14 @@ FactoryBot.define do
       end
 
       triage do
-        [association(:triage, :do_not_vaccinate, performed_by: created_by)]
+        [
+          association(
+            :triage,
+            :do_not_vaccinate,
+            programme:,
+            performed_by: created_by
+          )
+        ]
       end
     end
 
@@ -130,7 +138,14 @@ FactoryBot.define do
       end
 
       triage do
-        [association(:triage, :needs_follow_up, performed_by: created_by)]
+        [
+          association(
+            :triage,
+            :needs_follow_up,
+            programme:,
+            performed_by: created_by
+          )
+        ]
       end
     end
 
@@ -143,7 +158,14 @@ FactoryBot.define do
       end
 
       triage do
-        [association(:triage, :delay_vaccination, performed_by: created_by)]
+        [
+          association(
+            :triage,
+            :delay_vaccination,
+            programme:,
+            performed_by: created_by
+          )
+        ]
       end
 
       vaccination_records do
@@ -178,7 +200,14 @@ FactoryBot.define do
       end
 
       triage do
-        [association(:triage, :ready_to_vaccinate, performed_by: created_by)]
+        [
+          association(
+            :triage,
+            :ready_to_vaccinate,
+            programme:,
+            performed_by: created_by
+          )
+        ]
       end
 
       vaccination_records do
@@ -206,7 +235,14 @@ FactoryBot.define do
       end
 
       triage do
-        [association(:triage, :ready_to_vaccinate, performed_by: created_by)]
+        [
+          association(
+            :triage,
+            :ready_to_vaccinate,
+            programme:,
+            performed_by: created_by
+          )
+        ]
       end
 
       vaccination_records do
@@ -232,7 +268,14 @@ FactoryBot.define do
       end
 
       triage do
-        [association(:triage, :ready_to_vaccinate, performed_by: created_by)]
+        [
+          association(
+            :triage,
+            :ready_to_vaccinate,
+            programme:,
+            performed_by: created_by
+          )
+        ]
       end
 
       vaccination_records do

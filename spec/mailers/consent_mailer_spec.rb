@@ -6,13 +6,15 @@ describe ConsentMailer do
       described_class.with(consent_form:).confirmation_injection
     end
 
+    let(:programme) { create(:programme, :flu) }
     let(:consent_form) do
       create(
         :consent_form,
         :recorded,
         :refused,
         reason: :contains_gelatine,
-        session: create(:session, programme: create(:programme, :flu))
+        programme:,
+        session: create(:session, programme:)
       )
     end
 

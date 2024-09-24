@@ -14,7 +14,9 @@ describe VaccinationMailerConcern do
     let(:consent) { create(:consent, :given, :recorded, programme:, route:) }
     let(:patient) { create(:patient, consents: [consent]) }
     let(:patient_session) { create(:patient_session, session:, patient:) }
-    let(:vaccination_record) { create(:vaccination_record, patient_session:) }
+    let(:vaccination_record) do
+      create(:vaccination_record, programme:, patient_session:)
+    end
 
     context "when the vaccination has taken place" do
       it "sends an email" do
@@ -33,7 +35,12 @@ describe VaccinationMailerConcern do
 
     context "when the vaccination hasn't taken place" do
       let(:vaccination_record) do
-        create(:vaccination_record, :not_administered, patient_session:)
+        create(
+          :vaccination_record,
+          :not_administered,
+          programme:,
+          patient_session:
+        )
       end
 
       it "sends an email" do
@@ -52,7 +59,9 @@ describe VaccinationMailerConcern do
 
     context "when the consent was done through gillick assessment" do
       let(:route) { "self_consent" }
-      let(:vaccination_record) { create(:vaccination_record, patient_session:) }
+      let(:vaccination_record) do
+        create(:vaccination_record, programme:, patient_session:)
+      end
 
       it "doesn't send an email" do
         expect { send_vaccination_confirmation }.not_to have_enqueued_mail

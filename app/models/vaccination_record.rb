@@ -118,6 +118,8 @@ class VaccinationRecord < ApplicationRecord
 
   encrypts :notes
 
+  validates :programme, inclusion: { in: -> { _1.patient_session.programmes } }
+
   validates :notes, length: { maximum: 1000 }
 
   validates :delivery_site,
