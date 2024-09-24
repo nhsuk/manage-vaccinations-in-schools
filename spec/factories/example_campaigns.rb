@@ -30,12 +30,19 @@ FactoryBot.define do
           location:
         ).tap do |session|
           patients_without_consent =
-            create_list(:patient_session, 4, session:, created_by: user)
+            create_list(
+              :patient_session,
+              4,
+              programme:,
+              session:,
+              created_by: user
+            )
           unmatched_patients = patients_without_consent.sample(2).map(&:patient)
           unmatched_patients.each do |patient|
             create(
               :consent_form,
               :recorded,
+              programme:,
               first_name: patient.first_name,
               last_name: patient.last_name,
               session:
@@ -46,6 +53,7 @@ FactoryBot.define do
             :patient_session,
             4,
             :consent_given_triage_not_needed,
+            programme:,
             session:,
             created_by: user
           )
@@ -53,6 +61,7 @@ FactoryBot.define do
             :patient_session,
             4,
             :consent_given_triage_needed,
+            programme:,
             session:,
             created_by: user
           )
@@ -60,6 +69,7 @@ FactoryBot.define do
             :patient_session,
             4,
             :triaged_ready_to_vaccinate,
+            programme:,
             session:,
             created_by: user
           )
@@ -67,6 +77,7 @@ FactoryBot.define do
             :patient_session,
             4,
             :consent_refused,
+            programme:,
             session:,
             created_by: user
           )
@@ -74,6 +85,7 @@ FactoryBot.define do
             :patient_session,
             2,
             :consent_conflicting,
+            programme:,
             session:,
             created_by: user
           )
@@ -97,6 +109,7 @@ FactoryBot.define do
             :patient_session,
             4,
             :vaccinated,
+            programme:,
             session:,
             created_by: user
           )
@@ -104,6 +117,7 @@ FactoryBot.define do
             :patient_session,
             4,
             :delay_vaccination,
+            programme:,
             session:,
             created_by: user
           )
@@ -111,6 +125,7 @@ FactoryBot.define do
             :patient_session,
             4,
             :unable_to_vaccinate,
+            programme:,
             session:,
             created_by: user
           )
@@ -131,12 +146,19 @@ FactoryBot.define do
           location:
         ).tap do |session|
           patients_without_consent =
-            create_list(:patient_session, 16, session:, created_by: user)
+            create_list(
+              :patient_session,
+              16,
+              programme:,
+              session:,
+              created_by: user
+            )
           unmatched_patients = patients_without_consent.sample(8).map(&:patient)
           unmatched_patients.each do |patient|
             create(
               :consent_form,
               :recorded,
+              programme:,
               first_name: patient.first_name,
               last_name: patient.last_name,
               session:
@@ -146,6 +168,7 @@ FactoryBot.define do
             :patient_session,
             8,
             :consent_given_triage_not_needed,
+            programme:,
             session:,
             created_by: user
           )
@@ -153,6 +176,7 @@ FactoryBot.define do
             :patient_session,
             8,
             :consent_given_triage_needed,
+            programme:,
             session:,
             created_by: user
           )
@@ -160,6 +184,7 @@ FactoryBot.define do
             :patient_session,
             8,
             :consent_refused,
+            programme:,
             session:,
             created_by: user
           )
@@ -167,6 +192,7 @@ FactoryBot.define do
             :patient_session,
             4,
             :consent_conflicting,
+            programme:,
             session:,
             created_by: user
           )

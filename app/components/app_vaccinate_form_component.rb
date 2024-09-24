@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AppVaccinateFormComponent < ViewComponent::Base
-  def initialize(patient_session:, section:, tab:, vaccination_record: nil)
+  def initialize(patient_session:, section:, tab:, vaccination_record:)
     super
 
     @patient_session = patient_session
@@ -35,7 +35,7 @@ class AppVaccinateFormComponent < ViewComponent::Base
   end
 
   def programme_name
-    @patient_session.programme.name
+    @vaccination_record.programme.name
   end
 
   def vaccine

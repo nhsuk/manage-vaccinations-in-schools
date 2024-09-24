@@ -20,7 +20,7 @@ class TriageController < ApplicationController
         .active
         .strict_loading
         .includes(
-          :programme,
+          :programmes,
           :gillick_assessment,
           :patient,
           :triage,
@@ -84,7 +84,7 @@ class TriageController < ApplicationController
   def set_triage
     @triage =
       Triage.new(
-        programme: @session.programme,
+        programme: @session.programmes.first, # TODO: handle multiple programmes
         patient_session: @patient_session
       )
   end

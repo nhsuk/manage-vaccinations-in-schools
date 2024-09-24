@@ -8,8 +8,4 @@ module SessionsHelper
       part_of_sentence ? "unknown location" : "Unknown location"
     end
   end
-
-  def session_name(session)
-    "#{session.programme.name} session at #{session_location(session, part_of_sentence: true)}"
-  end
 end

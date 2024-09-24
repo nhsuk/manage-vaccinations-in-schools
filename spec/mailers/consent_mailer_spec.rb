@@ -41,13 +41,14 @@ describe ConsentMailer do
     context "with a consent record" do
       subject(:mail) { described_class.with(consent:, session:).give_feedback }
 
-      let(:session) { create(:session) }
+      let(:programme) { create(:programme) }
+      let(:session) { create(:session, programme:) }
       let(:consent) do
         create(
           :consent,
           :recorded,
           recorded_at: Date.new(2021, 1, 1),
-          programme: session.programme
+          programme:
         )
       end
 

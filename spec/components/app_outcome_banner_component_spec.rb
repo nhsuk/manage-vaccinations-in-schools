@@ -33,7 +33,7 @@ describe AppOutcomeBannerComponent, type: :component do
       create(:patient_session, :vaccinated, created_by: user, programme:)
     end
     let(:vaccination_record) { patient_session.vaccination_records.first }
-    let(:vaccine) { patient_session.session.programme.vaccines.first }
+    let(:vaccine) { programme.vaccines.first }
     let(:location) { patient_session.session.location }
     let(:batch) { vaccine.batches.first }
     let(:date) { vaccination_record.recorded_at.to_date.to_fs(:long) }

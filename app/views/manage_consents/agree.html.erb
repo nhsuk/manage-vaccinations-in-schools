@@ -5,7 +5,7 @@
       ) %>
 <% end %>
 
-<% title = t("consents.edit_consent.title.#{@session.type.downcase}") %>
+<% title = t("consents.edit_consent.title.#{@consent.programme.type}") %>
 <% content_for :page_title, title %>
 
 <%= form_with model: @consent, url: form_path_for(@consent), method: form_method_for(@consent) do |f| %>

@@ -3,13 +3,12 @@
   <%= govuk_button_to("Add a new session", sessions_path, secondary: true) %>
 </div>
 
-<% if @sessions_by_type.empty? %>
+<% if @sessions.empty? %>
   <p>There are no sessions scheduled for today.</p>
-<% end %>
-
-<% @sessions_by_type.each do |programme_type, sessions| %>
+<% else %>
   <div class="nhsuk-table__panel-with-heading-tab">
-    <h3 class="nhsuk-table__heading-tab"><%= programme_type %></h3>
+    <h3 class="nhsuk-table__heading-tab"><%= pluralize(@sessions.count, "sessions") %></h3>
+
     <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
       <% table.with_head do |head| %>
         <% head.with_row do |row| %>
@@ -20,26 +19,24 @@
       <% end %>
 
       <% table.with_body do |body| %>
-        <% @sessions_by_type.each do |programme_type, sessions| %>
-          <% sessions.each do |session| %>
-            <% body.with_row do |row| %>
-              <% row.with_cell do %>
-                <span class="nhsuk-table-responsive__heading">Time</span>
-                <%= session.time_of_day.humanize %>
-              <% end %>
-              <% row.with_cell do %>
-                <span class="nhsuk-table-responsive__heading">Location</span>
-                <p class="nhsuk-u-margin-bottom-0 nhsuk-u-secondary-text-color">
-                  <%= link_to session_location(session), session_path(session) %>
-                  <% if (location = session.location)&.has_address? %>
-                    <br /><%= format_address_single_line(location) %>
-                  <% end %>
-                </p>
-              <% end %>
-              <% row.with_cell do %>
-                <span class="nhsuk-table-responsive__heading">Cohort</span>
-                <%= session.patients.count %>
-              <% end %>
+        <% @sessions.each do |session| %>
+          <% body.with_row do |row| %>
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Time</span>
+              <%= session.time_of_day.humanize %>
+            <% end %>
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Location</span>
+              <p class="nhsuk-u-margin-bottom-0 nhsuk-u-secondary-text-color">
+                <%= link_to session_location(session), session_path(session) %>
+                <% if (location = session.location)&.has_address? %>
+                  <br /><%= format_address_single_line(location) %>
+                <% end %>
+              </p>
+            <% end %>
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Cohort</span>
+              <%= session.patients.count %>
             <% end %>
           <% end %>
         <% end %>

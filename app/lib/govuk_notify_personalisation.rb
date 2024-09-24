@@ -9,6 +9,7 @@ class GovukNotifyPersonalisation
     parent: nil,
     patient: nil,
     patient_session: nil,
+    programme: nil,
     session: nil,
     vaccination_record: nil
   )
@@ -18,7 +19,13 @@ class GovukNotifyPersonalisation
     @consent_form = consent_form
     @parent = parent || consent&.parent
     @patient = patient || consent&.patient || patient_session&.patient
+    @programme =
+      programme || vaccination_record&.programme || consent_form&.programme ||
+        consent&.programme
     @session = session || consent_form&.session || patient_session&.session
+    @team =
+      programme&.team || session&.team || patient_session&.team ||
+        consent_form&.team || consent&.team || vaccination_record&.team
     @vaccination_record = vaccination_record
   end
 
@@ -61,7 +68,9 @@ class GovukNotifyPersonalisation
               :consent_form,
               :parent,
               :patient,
+              :programme,
               :session,
+              :team,
               :vaccination_record
 
   def batch_name
@@ -111,7 +120,7 @@ class GovukNotifyPersonalisation
   end
 
   def programme_name
-    session.programme.name
+    programme&.name
   end
 
   def reason_did_not_vaccinate
@@ -168,15 +177,15 @@ class GovukNotifyPersonalisation
   end
 
   def team_email
-    session.programme.team.email
+    team.email
   end
 
   def team_name
-    session.programme.team.name
+    team.name
   end
 
   def team_phone
-    session.programme.team.phone
+    team.phone
   end
 
   def today_or_date_of_vaccination

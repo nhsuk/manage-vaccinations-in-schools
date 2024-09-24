@@ -18,13 +18,13 @@
 <%= h1 "Check your answers and confirm" %>
 
 <%= render AppCardComponent.new do |c| %>
-  <% c.with_heading { t("consent_forms.confirm.consent_card_title.#{@consent_form.session.type.downcase}") } %>
+  <% c.with_heading { t("consent_forms.confirm.consent_card_title.#{@consent_form.programme.type}") } %>
   <%= govuk_summary_list classes: "app-summary-list--no-bottom-border" do |summary_list|
         summary_list.with_row do |row|
           row.with_key { "Do you agree?" }
           row.with_value {
             @consent_form.consent_given? ?
-              t("consent_forms.confirm.i_agree.#{@consent_form.session.type.downcase}") :
+              t("consent_forms.confirm.i_agree.#{@consent_form.programme.type}") :
               "No"
           }
           row.with_action(text: "Change",

@@ -196,7 +196,7 @@ describe "Parental consent" do
   end
 
   def when_they_check_triage
-    click_link "HPV session at Pilot School"
+    click_link "Pilot School"
     click_on "Triage health questions"
     click_on "No triage needed"
   end

@@ -39,7 +39,7 @@ module ParentInterface
     end
 
     def set_privacy_policy_url
-      @privacy_policy_url = @session.programme.team.privacy_policy_url
+      @privacy_policy_url = @session.team.privacy_policy_url
     end
   end
 end

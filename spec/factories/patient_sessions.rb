@@ -47,7 +47,7 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_not_needed,
-                    programme: session.programme,
+                    programme:,
                     school: session.location
       end
     end
@@ -56,7 +56,7 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    programme: session.programme,
+                    programme:,
                     school: session.location
       end
     end
@@ -65,7 +65,7 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_refused,
-                    programme: session.programme,
+                    programme:,
                     school: session.location
       end
     end
@@ -74,7 +74,7 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_refused_with_notes,
-                    programme: session.programme,
+                    programme:,
                     school: session.location
       end
     end
@@ -83,7 +83,7 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_conflicting,
-                    programme: session.programme,
+                    programme:,
                     school: session.location
       end
     end
@@ -92,7 +92,7 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    programme: session.programme,
+                    programme:,
                     school: session.location
       end
 
@@ -112,7 +112,7 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    programme: session.programme,
+                    programme:,
                     school: session.location
       end
 
@@ -125,7 +125,7 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    programme: session.programme,
+                    programme:,
                     school: session.location
       end
 
@@ -138,7 +138,7 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    programme: session.programme,
+                    programme:,
                     school: session.location
       end
 
@@ -151,7 +151,7 @@ FactoryBot.define do
           association(
             :vaccination_record,
             :not_administered,
-            programme: session.programme,
+            programme:,
             patient_session: instance,
             performed_by: created_by,
             reason: :absent_from_school
@@ -164,7 +164,7 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_not_needed,
-                    programme: session.programme,
+                    programme:,
                     school: session.location
       end
     end
@@ -173,7 +173,7 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    programme: session.programme,
+                    programme:,
                     school: session.location
       end
 
@@ -186,7 +186,7 @@ FactoryBot.define do
           association(
             :vaccination_record,
             :not_administered,
-            programme: session.programme,
+            programme:,
             patient_session: instance,
             performed_by: created_by,
             reason: :already_had
@@ -201,7 +201,7 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    programme: session.programme,
+                    programme:,
                     school: session.location
       end
 
@@ -214,7 +214,7 @@ FactoryBot.define do
           association(
             :vaccination_record,
             :not_administered,
-            programme: session.programme,
+            programme:,
             patient_session: instance,
             performed_by: created_by,
             reason: :already_had
@@ -227,7 +227,7 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
-                    programme: session.programme,
+                    programme:,
                     school: session.location
       end
 
@@ -239,7 +239,7 @@ FactoryBot.define do
         [
           association(
             :vaccination_record,
-            programme: session.programme,
+            programme:,
             patient_session: instance,
             performed_by: created_by
           )

@@ -49,11 +49,17 @@ describe VaccinationRecord do
   describe "validations" do
     context "vaccine and batch doesn't match" do
       subject(:vaccination_record) do
-        build(:vaccination_record, vaccine:, batch:, patient_session:)
+        build(
+          :vaccination_record,
+          programme:,
+          vaccine:,
+          batch:,
+          patient_session:
+        )
       end
 
-      let(:patient_session) { create(:patient_session) }
-      let(:vaccine) { patient_session.programme.vaccines.first }
+      let(:patient_session) { create(:patient_session, programme:) }
+      let(:vaccine) { programme.vaccines.first }
       let(:different_vaccine) { create(:vaccine) }
       let(:batch) { create(:batch, vaccine: different_vaccine) }
 

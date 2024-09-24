@@ -11,8 +11,8 @@ class AppSessionSummaryCardComponent < ViewComponent::Base
     helpers.session_location(@session)
   end
 
-  def vaccine
-    @session.programme.name
+  def vaccines
+    @session.programmes.map(&:name)
   end
 
   def date

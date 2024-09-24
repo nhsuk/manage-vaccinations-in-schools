@@ -3,44 +3,55 @@
 describe PatientTabsConcern do
   subject { Class.new { include PatientTabsConcern }.new }
 
-  let(:session) { create(:session) }
+  let(:programme) { create(:programme) }
+  let(:session) { create(:session, programme:) }
 
   let(:added_to_session) do
-    create(:patient_session, :added_to_session, session:)
+    create(:patient_session, :added_to_session, programme:, session:)
   end
   let(:consent_conflicts) do
-    create(:patient_session, :consent_conflicting, session:)
+    create(:patient_session, :consent_conflicting, programme:, session:)
   end
   let(:consent_given_triage_not_needed) do
-    create(:patient_session, :consent_given_triage_not_needed, session:)
+    create(
+      :patient_session,
+      :consent_given_triage_not_needed,
+      programme:,
+      session:
+    )
   end
   let(:consent_given_triage_needed) do
-    create(:patient_session, :consent_given_triage_needed, session:)
+    create(:patient_session, :consent_given_triage_needed, programme:, session:)
   end
-  let(:consent_refused) { create(:patient_session, :consent_refused, session:) }
+  let(:consent_refused) do
+    create(:patient_session, :consent_refused, programme:, session:)
+  end
   let(:delay_vaccination) do
-    create(:patient_session, :delay_vaccination, session:)
+    create(:patient_session, :delay_vaccination, programme:, session:)
   end
   let(:triaged_do_not_vaccinate) do
-    create(:patient_session, :triaged_do_not_vaccinate, session:)
+    create(:patient_session, :triaged_do_not_vaccinate, programme:, session:)
   end
   let(:triaged_kept_in_triage) do
-    create(:patient_session, :triaged_kept_in_triage, session:)
+    create(:patient_session, :triaged_kept_in_triage, programme:, session:)
   end
   let(:triaged_ready_to_vaccinate) do
-    create(:patient_session, :triaged_ready_to_vaccinate, session:)
+    create(:patient_session, :triaged_ready_to_vaccinate, programme:, session:)
   end
   let(:unable_to_vaccinate) do
-    create(:patient_session, :unable_to_vaccinate, session:)
+    create(:patient_session, :unable_to_vaccinate, programme:, session:)
   end
   let(:unable_to_vaccinate_not_gillick_competent) do
     create(
       :patient_session,
       :unable_to_vaccinate_not_gillick_competent,
+      programme:,
       session:
     )
   end
-  let(:vaccinated) { create(:patient_session, :vaccinated, session:) }
+  let(:vaccinated) do
+    create(:patient_session, :vaccinated, programme:, session:)
+  end
 
   let(:patient_sessions) do
     [

@@ -6,17 +6,16 @@ class SessionsController < ApplicationController
   def create
     skip_policy_scope
 
-    programme = current_user.team.programmes.first
+    team = current_user.team
 
     @session =
-      Session.create!(active: false, team: current_user.team, programme:)
+      Session.create!(active: false, team:, programmes: team.programmes)
 
     redirect_to session_edit_path(@session, :location)
   end
 
   def index
-    @sessions_by_type =
-      policy_scope(Session).active.in_progress.group_by(&:type)
+    @sessions = policy_scope(Session).active.in_progress
 
     render layout: "full"
   end
@@ -24,7 +23,7 @@ class SessionsController < ApplicationController
   def show
     @patient_sessions =
       @session.patient_sessions.strict_loading.includes(
-        :programme,
+        :programmes,
         :gillick_assessment,
         { consents: :parent },
         :triage,

@@ -31,7 +31,7 @@ class ManageConsentsController < ApplicationController
                 if: -> { wizard_value(step).present? }
 
   def create
-    @consent = Consent.create! create_params
+    @consent = Consent.create!(create_params)
 
     set_steps # The wizard_steps can change after certain attrs change
     setup_wizard_translated # Next/previous steps can change after steps change
@@ -157,8 +157,11 @@ class ManageConsentsController < ApplicationController
     response_was_given = @consent.response_given?
     @consent.assign_attributes(update_params)
 
+    programme = @session.programmes.first # TODO: handle multiple programmes
+
     if !response_was_given && @consent.response_given?
-      @consent.health_answers = @session.health_questions.to_health_answers
+      @consent.health_answers =
+        programme.vaccines.first.health_questions.to_health_answers
       @consent.reason_for_refusal = nil
     elsif response_was_given && !@consent.response_given?
       @consent.health_answers = []
@@ -227,7 +230,7 @@ class ManageConsentsController < ApplicationController
   def set_triage
     @triage =
       Triage.find_or_initialize_by(
-        programme: @session.programme,
+        programme: @session.programmes.first, # TODO: handle multiple programmes
         patient_session: @patient_session
       )
   end
@@ -235,7 +238,7 @@ class ManageConsentsController < ApplicationController
   def create_params
     {
       patient: @patient,
-      programme: @session.programme,
+      programme: @session.programmes.first, # TODO: handle multiple programmes
       recorded_by: current_user
     }.tap do |attrs|
       attrs[:route] = :self_consent if @patient_session.gillick_competent?
