@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AppVaccinationRecordDetailsComponent < ViewComponent::Base
+class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   def initialize(vaccination_record, change_links: false)
     super
 
