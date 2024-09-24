@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppPatientSummaryComponent, type: :component do
+describe AppPatientSummaryComponent do
   subject { page }
 
   before { render_inline(component) }

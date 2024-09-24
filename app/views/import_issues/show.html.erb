@@ -21,7 +21,7 @@
             patient: @vaccination_record.patient.with_pending_changes,
           ) %>
       <h3 class="nhsuk-heading-s">Duplicate vaccination record</h3>
-      <%= render AppVaccinationRecordDetailsComponent.new(
+      <%= render AppVaccinationRecordSummaryComponent.new(
             @vaccination_record.with_pending_changes
           ) %>
     <% end %>
@@ -35,7 +35,7 @@
             patient: @vaccination_record.patient,
           ) %>
       <h3 class="nhsuk-heading-s">Previously uploaded vaccination record</h3>
-      <%= render AppVaccinationRecordDetailsComponent.new(
+      <%= render AppVaccinationRecordSummaryComponent.new(
             @vaccination_record
           ) %>
     <% end %>

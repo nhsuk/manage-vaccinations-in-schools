@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppVaccinationRecordDetailsComponent, type: :component do
+describe AppVaccinationRecordSummaryComponent do
   subject(:rendered) { render_inline(component) }
 
   let(:component) { described_class.new(vaccination_record) }

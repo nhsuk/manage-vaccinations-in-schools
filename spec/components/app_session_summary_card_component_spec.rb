@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppSessionDetailsComponent, type: :component do
+describe AppSessionSummaryCardComponent do
   subject { page }
 
   before { render_inline(component) }

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AppSessionDetailsComponent < ViewComponent::Base
+class AppSessionSummaryCardComponent < ViewComponent::Base
   def initialize(session:)
     super
 
