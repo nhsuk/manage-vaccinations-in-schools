@@ -59,6 +59,7 @@ describe "Immunisation imports duplicates" do
     @session =
       create(
         :session,
+        team: @team,
         programme: @programme,
         location: @location,
         date: Date.new(2024, 5, 14),

@@ -15,14 +15,22 @@
 #  updated_at                :datetime         not null
 #  location_id               :bigint
 #  programme_id              :bigint
+#  team_id                   :bigint           not null
 #
 # Indexes
 #
 #  index_sessions_on_programme_id  (programme_id)
+#  index_sessions_on_team_id       (team_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (programme_id => programmes.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 FactoryBot.define do
   factory :session do
-    programme
+    team
+    programme { association :programme, team: }
     location { association :location, :school }
 
     date { Time.zone.today }

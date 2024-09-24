@@ -117,14 +117,13 @@ class ImmunisationImportRow
     return unless valid?
 
     @session ||=
-      @programme
-        .sessions
-        .create_with(active: false)
-        .find_or_create_by!(
-          date: session_date,
-          location:,
-          time_of_day: :all_day
-        )
+      Session.create_with(active: false).find_or_create_by!(
+        team:,
+        programme: @programme,
+        date: session_date,
+        location:,
+        time_of_day: :all_day
+      )
   end
 
   def patient_session
