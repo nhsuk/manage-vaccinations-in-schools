@@ -114,6 +114,10 @@ en:
               less_than_or_equal_to: The vaccination date is outside the programme. Enter a date before today.
             vaccine_given:
               inclusion: Enter a valid vaccine, eg Gardasil 9.
+        import_duplicate_form:
+          attributes:
+            apply_changes:
+              inclusion: Choose which record to keep
         parent_details_form:
           attributes:
             email:
@@ -134,10 +138,6 @@ en:
             relationship_other_name:
               blank: Enter a relationship
               too_long: Enter a relationship that is less than 300 characters long
-        immunisation_import_duplicate_form:
-          attributes:
-            apply_changes:
-              inclusion: Choose which record to keep
   activerecord:
     attributes:
       consent:

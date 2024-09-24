@@ -49,13 +49,8 @@ class ImmunisationImports::DuplicatesController < ApplicationController
   end
 
   def set_form
-    apply_changes =
-      params.dig(:immunisation_import_duplicate_form, :apply_changes)
+    apply_changes = params.dig(:import_duplicate_form, :apply_changes)
 
-    @form =
-      ImmunisationImportDuplicateForm.new(
-        vaccination_record: @vaccination_record,
-        apply_changes:
-      )
+    @form = ImportDuplicateForm.new(object: @vaccination_record, apply_changes:)
   end
 end
