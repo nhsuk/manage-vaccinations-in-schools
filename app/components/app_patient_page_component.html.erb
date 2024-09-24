@@ -12,7 +12,7 @@
 
 <%= render AppCardComponent.new do |c| %>
   <% c.with_heading { "Child details" } %>
-  <%= render AppPatientDetailsComponent.new(patient:) %>
+  <%= render AppPatientDetailsComponent.new(patient) %>
 <% end %>
 
 <% if gillick_assessment_applicable? %>
