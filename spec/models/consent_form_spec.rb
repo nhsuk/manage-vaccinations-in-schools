@@ -118,8 +118,8 @@ describe ConsentForm do
       #       .on(:update) }
     end
 
-    context "when wizard_step is :school" do
-      let(:wizard_step) { :school }
+    context "when wizard_step is :confirm_school" do
+      let(:wizard_step) { :confirm_school }
 
       context "runs validations from previous steps" do
         it { should validate_presence_of(:first_name).on(:update) }

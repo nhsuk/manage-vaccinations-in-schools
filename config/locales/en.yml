@@ -634,6 +634,7 @@ en:
     batch: batch
     cohort: cohort
     confirm: confirm
+    confirm_school: confirm-school
     consent: consent
     contact_method: contact-method
     date_of_birth: date-of-birth

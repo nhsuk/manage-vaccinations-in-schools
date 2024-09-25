@@ -171,7 +171,7 @@ class ConsentForm < ApplicationRecord
               }
   end
 
-  on_wizard_step :school, exact: true do
+  on_wizard_step :confirm_school, exact: true do
     validates :is_this_their_school, inclusion: { in: %w[yes no] }
   end
 
@@ -238,7 +238,7 @@ class ConsentForm < ApplicationRecord
     [
       :name,
       :date_of_birth,
-      :school,
+      :confirm_school,
       :parent,
       (:contact_method if parent_phone.present?),
       :consent,
