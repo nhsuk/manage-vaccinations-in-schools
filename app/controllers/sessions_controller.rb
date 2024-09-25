@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SessionsController < ApplicationController
-  before_action :set_session, except: %i[index create]
+  before_action :set_session, except: %i[index planned completed create]
 
   def create
     skip_policy_scope
@@ -21,6 +21,18 @@ class SessionsController < ApplicationController
 
   def index
     @sessions = policy_scope(Session).active.today
+
+    render layout: "full"
+  end
+
+  def planned
+    @sessions = policy_scope(Session).active.planned
+
+    render layout: "full"
+  end
+
+  def completed
+    @sessions = policy_scope(Session).active.completed
 
     render layout: "full"
   end

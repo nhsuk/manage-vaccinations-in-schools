@@ -30,6 +30,9 @@ describe "Session management" do
     when_i_go_to_todays_sessions_as_a_nurse
     then_i_see_no_sessions
 
+    when_i_go_to_planned_sessions_as_a_nurse
+    then_i_see_the_new_session
+
     when_the_parent_visits_the_consent_form
     then_they_can_give_consent
 
@@ -38,6 +41,9 @@ describe "Session management" do
 
     when_i_go_to_todays_sessions_as_a_nurse
     then_i_see_the_new_session
+
+    when_i_go_to_planned_sessions_as_a_nurse
+    then_i_see_no_sessions
   end
 
   def given_my_team_is_running_an_hpv_vaccination_programme
@@ -51,6 +57,13 @@ describe "Session management" do
     sign_in @team.users.first
     visit "/dashboard"
     click_link "School sessions", match: :first
+  end
+
+  def when_i_go_to_planned_sessions_as_a_nurse
+    sign_in @team.users.first
+    visit "/dashboard"
+    click_link "School sessions", match: :first
+    click_link "Planned"
   end
 
   def then_i_see_no_sessions
