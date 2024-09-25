@@ -20,6 +20,6 @@ RSpec.describe AddressHelper do
   describe "#format_address_single_line" do
     subject(:formatted_string) { helper.format_address_single_line(location) }
 
-    it { should eq("10 Downing Street, London. SW1A 1AA") }
+    it { should eq("10 Downing Street, London, SW1A 1AA") }
   end
 end
