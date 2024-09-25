@@ -50,15 +50,15 @@ FactoryBot.define do
       active { false }
     end
 
-    trait :in_progress do
+    trait :today do
       date { Date.current }
     end
 
-    trait :in_future do
+    trait :planned do
       date { Date.current + 1.week }
     end
 
-    trait :in_past do
+    trait :completed do
       date { Date.current - 1.week }
     end
 

@@ -6,7 +6,7 @@ describe AppVaccinateFormComponent do
   let(:heading) { "A Heading" }
   let(:body) { "A Body" }
   let(:programme) { create(:programme, :hpv) }
-  let(:session) { create(:session, :in_progress, programme:) }
+  let(:session) { create(:session, :today, programme:) }
   let(:vaccine) { programme.vaccines.first }
   let(:patient_session) do
     create(
@@ -65,13 +65,13 @@ describe AppVaccinateFormComponent do
       end
 
       context "session is in progress" do
-        let(:session) { create(:session, :in_progress, programme:) }
+        let(:session) { create(:session, :today, programme:) }
 
         it { should be_falsey }
       end
 
       context "session is in the future" do
-        let(:session) { create(:session, :in_future, programme:) }
+        let(:session) { create(:session, :planned, programme:) }
 
         it { should be_falsey }
       end
@@ -83,13 +83,13 @@ describe AppVaccinateFormComponent do
       end
 
       context "session is progress" do
-        let(:session) { create(:session, :in_progress, programme:) }
+        let(:session) { create(:session, :today, programme:) }
 
         it { should be_truthy }
       end
 
       context "session is in the future" do
-        let(:session) { create(:session, :in_future, programme:) }
+        let(:session) { create(:session, :planned, programme:) }
 
         it { should be_falsey }
       end

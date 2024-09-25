@@ -49,23 +49,23 @@ describe Session, type: :model do
     end
   end
 
-  describe "#in_progress?" do
-    subject { session.in_progress? }
+  describe "#today?" do
+    subject { session.today? }
 
     context "when the session is scheduled for today" do
-      let(:session) { create(:session, :in_progress) }
+      let(:session) { create(:session, :today) }
 
       it { should be_truthy }
     end
 
     context "when the session is scheduled in the past" do
-      let(:session) { create(:session, :in_past) }
+      let(:session) { create(:session, :completed) }
 
       it { should be_falsey }
     end
 
     context "when the session is scheduled in the future" do
-      let(:session) { create(:session, :in_future) }
+      let(:session) { create(:session, :planned) }
 
       it { should be_falsey }
     end

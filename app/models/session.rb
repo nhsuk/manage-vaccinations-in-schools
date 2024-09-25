@@ -50,21 +50,33 @@ class Session < ApplicationRecord
   has_many :vaccines, through: :programmes
   has_many :batches, through: :vaccines
 
-  scope :for_date,
-        ->(value) do
+  scope :today,
+        -> do
           where(
-            SessionDate
-              .where("session_id = sessions.id")
-              .where(value:)
-              .arel
-              .exists
+            "? BETWEEN (?) AND (?)",
+            Date.current,
+            SessionDate.for_session.select("MIN(value)"),
+            SessionDate.for_session.select("MAX(value)")
           )
         end
 
-  scope :past, -> { for_date(..Time.zone.yesterday) }
-  scope :in_progress, -> { for_date(Time.zone.today) }
-  scope :future, -> { for_date(Time.zone.tomorrow..) }
-  scope :tomorrow, -> { for_date(Time.zone.tomorrow) }
+  scope :planned,
+        -> do
+          where(
+            "? < (?)",
+            Date.current,
+            SessionDate.for_session.select("MIN(value)")
+          )
+        end
+
+  scope :completed,
+        -> do
+          where(
+            "? > (?)",
+            Date.current,
+            SessionDate.for_session.select("MAX(value)")
+          )
+        end
 
   scope :send_consent_requests_today,
         -> { active.where(send_consent_requests_at: Time.zone.today) }
@@ -115,8 +127,9 @@ class Session < ApplicationRecord
               if: -> { close_consent_on == "custom" }
   end
 
-  def in_progress?
-    dates.map(&:value).include?(Date.current)
+  def today?
+    Date.current >= dates.map(&:value).min &&
+      Date.current <= dates.map(&:value).max
   end
 
   def wizard_steps

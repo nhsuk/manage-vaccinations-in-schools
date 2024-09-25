@@ -291,7 +291,7 @@ FactoryBot.define do
     end
 
     trait :session_in_progress do
-      session { association :session, :in_progress, programme: }
+      session { association :session, :today, programme: }
     end
 
     trait :not_gillick_competent do
