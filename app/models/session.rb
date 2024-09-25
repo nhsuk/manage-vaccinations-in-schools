@@ -40,6 +40,7 @@ class Session < ApplicationRecord
   belongs_to :location, optional: true
 
   has_many :consent_forms
+  has_many :dates, class_name: "SessionDate"
   has_many :patient_sessions
 
   has_and_belongs_to_many :immunisation_imports
