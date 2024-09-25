@@ -1,7 +1,15 @@
+<% content_for :page_title, "#{t(".title")} – Active" %>
+
 <div class="app-heading-group">
   <%= h1 t(".title"), size: "xl" %>
   <%= govuk_button_to("Add a new session", sessions_path, secondary: true) %>
 </div>
+
+<%= render AppSecondaryNavigationComponent.new do |nav|
+      nav.with_item(href: sessions_path, text: "Active", selected: true)
+      nav.with_item(href: planned_sessions_path, text: "Planned")
+      nav.with_item(href: completed_sessions_path, text: "Completed")
+    end %>
 
 <% if @sessions.empty? %>
   <p>There are no sessions scheduled for today.</p>

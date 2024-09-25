@@ -105,6 +105,11 @@ Rails.application.routes.draw do
       end
     end
 
+    collection do
+      get "planned"
+      get "completed"
+    end
+
     resources :edit, controller: "sessions/edit", only: %i[show update]
 
     constraints -> { Flipper.enabled?(:dev_tools) } do
