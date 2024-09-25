@@ -43,11 +43,11 @@ class VaccinationRecordsController < ApplicationController
           :programme,
           :vaccine,
           patient: [:cohort, :school, { parent_relationships: :parent }],
-          session: :location
+          session: %i[dates location]
         )
         .where(programme:)
         .order(:recorded_at)
-        .strict_loading
+    # .strict_loading # TODO: Once we move Session#set_timeline_attributes this can be uncommented.
   end
 
   def dps_export

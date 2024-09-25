@@ -1,6 +1,9 @@
 <% title = t("consent_forms.confirmation_agreed.title.#{@consent_form.programme.type}",
             full_name: @consent_form.full_name,
-            date: @session.date.to_fs(:long)) %>
+            date: @session.dates.map(&:value).min.to_fs(:long)) %>
+
+<% # TODO: Handle multiple dates. %>
+
 <% content_for :page_title, title %>
 
 <%= govuk_panel(title_text: title, classes: "app-panel nhsuk-u-margin-bottom-6") %>

@@ -141,11 +141,13 @@ class GovukNotifyPersonalisation
   end
 
   def session_date
-    session.date.to_fs(:short_day_of_week)
+    # TODO: Handle multiple dates.
+    session.dates.map(&:value).min.to_fs(:short_day_of_week)
   end
 
   def session_short_date
-    session.date.to_fs(:short)
+    # TODO: Handle multiple dates.
+    session.dates.map(&:value).min.to_fs(:short)
   end
 
   def short_patient_name

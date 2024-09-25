@@ -119,7 +119,7 @@ describe "Immunisation imports duplicates" do
       create(
         :vaccination_record,
         programme: @programme,
-        administered_at: @session.date.in_time_zone + 12.hours,
+        administered_at: @session.dates.first.value.in_time_zone + 12.hours,
         notes: "Foo",
         recorded_at: Time.zone.yesterday,
         batch: @batch,

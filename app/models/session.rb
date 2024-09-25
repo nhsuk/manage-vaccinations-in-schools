@@ -31,7 +31,8 @@ class Session < ApplicationRecord
 
   DEFAULT_DAYS_FOR_REMINDER = 2
 
-  attr_accessor :reminder_days_after,
+  attr_accessor :date,
+                :reminder_days_after,
                 :reminder_days_after_custom,
                 :close_consent_on
 
@@ -51,10 +52,21 @@ class Session < ApplicationRecord
 
   enum :time_of_day, %w[morning afternoon all_day], validate: { if: :active? }
 
-  scope :past, -> { where(date: ..Time.zone.yesterday) }
-  scope :in_progress, -> { where(date: Time.zone.today) }
-  scope :future, -> { where(date: Time.zone.tomorrow..) }
-  scope :tomorrow, -> { where(date: Time.zone.tomorrow) }
+  scope :for_date,
+        ->(value) do
+          where(
+            SessionDate
+              .where("session_id = sessions.id")
+              .where(value:)
+              .arel
+              .exists
+          )
+        end
+
+  scope :past, -> { for_date(..Time.zone.yesterday) }
+  scope :in_progress, -> { for_date(Time.zone.today) }
+  scope :future, -> { for_date(Time.zone.tomorrow..) }
+  scope :tomorrow, -> { for_date(Time.zone.tomorrow) }
 
   scope :send_consent_requests_today,
         -> { active.where(send_consent_requests_at: Time.zone.today) }
@@ -63,6 +75,8 @@ class Session < ApplicationRecord
 
   after_initialize :set_timeline_attributes
   after_validation :set_timeline_timestamps
+
+  after_save :ensure_session_date_exists
 
   validate :programmes_part_of_team
 
@@ -85,7 +99,9 @@ class Session < ApplicationRecord
               presence: true,
               comparison: {
                 greater_than_or_equal_to: -> { Time.zone.today },
-                less_than_or_equal_to: ->(object) { object.date }
+                less_than_or_equal_to: ->(object) do
+                  object.dates.map(&:value).min
+                end
               }
 
     validates :reminder_days_after, inclusion: { in: %w[default custom] }
@@ -104,7 +120,7 @@ class Session < ApplicationRecord
   end
 
   def in_progress?
-    date.to_date == Time.zone.today
+    dates.map(&:value).include?(Date.current)
   end
 
   def wizard_steps
@@ -112,7 +128,7 @@ class Session < ApplicationRecord
   end
 
   def days_between_consent_and_session
-    (date - send_consent_requests_at).to_i
+    (dates.map(&:value).min - send_consent_requests_at).to_i
   end
 
   def days_between_consent_and_reminder
@@ -147,7 +163,8 @@ class Session < ApplicationRecord
     end
 
     unless close_consent_at.nil?
-      self.close_consent_on = close_consent_at == date ? "default" : "custom"
+      self.close_consent_on =
+        close_consent_at == dates.map(&:value).min ? "default" : "custom"
     end
   end
 
@@ -163,10 +180,26 @@ class Session < ApplicationRecord
         end
       )
     close_consent_on =
-      self.close_consent_on == "default" ? date : close_consent_at
+      (
+        if self.close_consent_on == "default"
+          dates.map(&:value).min
+        else
+          close_consent_at
+        end
+      )
 
     self.send_consent_reminders_at =
       send_consent_requests_at + reminder_days_after.days
     self.close_consent_at = close_consent_on
+  end
+
+  def ensure_session_date_exists
+    return if date.nil?
+
+    # TODO: Replace with UI to add/remove dates.
+    ActiveRecord::Base.transaction do
+      dates.delete_all
+      dates.create!(value: date)
+    end
   end
 end
