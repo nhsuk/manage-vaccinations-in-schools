@@ -9,7 +9,12 @@ class SessionsController < ApplicationController
     team = current_user.team
 
     @session =
-      Session.create!(active: false, team:, programmes: team.programmes)
+      Session.create!(
+        active: false,
+        academic_year: Date.current.academic_year,
+        team:,
+        programmes: team.programmes
+      )
 
     redirect_to session_edit_path(@session, :location)
   end
