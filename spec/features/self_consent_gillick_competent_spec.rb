@@ -21,7 +21,7 @@ describe "Self-consent" do
     @team = create(:team, :with_one_nurse)
     programme = create(:programme, :hpv, team: @team)
     location = create(:location, :school, name: "Pilot School")
-    @session = create(:session, :in_future, team: @team, programme:, location:)
+    @session = create(:session, :planned, team: @team, programme:, location:)
     @child = create(:patient, session: @session)
   end
 

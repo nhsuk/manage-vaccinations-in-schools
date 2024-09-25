@@ -13,9 +13,9 @@ class ProgrammesController < ApplicationController
   end
 
   def sessions
-    @in_progress_sessions = @programme.sessions.active.in_progress
-    @future_sessions = @programme.sessions.active.future
-    @past_sessions = @programme.sessions.active.past
+    @today_sessions = @programme.sessions.active.today
+    @planned_sessions = @programme.sessions.active.planned
+    @completed_sessions = @programme.sessions.active.completed
   end
 
   private

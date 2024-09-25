@@ -11,7 +11,7 @@ describe "Parental consent for a backfilled session" do
     @team = create(:team, :with_one_nurse)
     programme = create(:programme, :hpv, team: @team)
     location = create(:location, :school, name: "Pilot School")
-    @session = create(:session, :in_past, :minimal, programme:, location:)
+    @session = create(:session, :completed, :minimal, programme:, location:)
   end
 
   def when_i_go_to_the_consent_form

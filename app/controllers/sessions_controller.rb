@@ -20,7 +20,7 @@ class SessionsController < ApplicationController
   end
 
   def index
-    @sessions = policy_scope(Session).active.in_progress
+    @sessions = policy_scope(Session).active.today
 
     render layout: "full"
   end

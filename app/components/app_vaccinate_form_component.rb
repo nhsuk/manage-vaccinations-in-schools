@@ -21,7 +21,7 @@ class AppVaccinateFormComponent < ViewComponent::Base
   end
 
   def render?
-    @patient_session.next_step == :vaccinate && session.in_progress?
+    @patient_session.next_step == :vaccinate && session.today?
   end
 
   private

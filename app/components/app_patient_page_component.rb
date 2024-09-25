@@ -31,7 +31,7 @@ class AppPatientPageComponent < ViewComponent::Base
   end
 
   def gillick_assessment_applicable?
-    patient_session.session.in_progress?
+    patient_session.session.today?
   end
 
   def gillick_assessment_recorded?

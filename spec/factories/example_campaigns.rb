@@ -24,7 +24,7 @@ FactoryBot.define do
 
         create(
           :session,
-          :in_progress,
+          :today,
           team: programme.team,
           programme:,
           location:
@@ -100,7 +100,7 @@ FactoryBot.define do
 
         create(
           :session,
-          :in_past,
+          :completed,
           team: programme.team,
           programme:,
           location:
@@ -140,7 +140,7 @@ FactoryBot.define do
 
         create(
           :session,
-          :in_future,
+          :planned,
           team: programme.team,
           programme:,
           location:
