@@ -28,7 +28,8 @@ module ParentInterface
         model.assign_attributes(update_params)
       end
 
-      if current_step == :school && @consent_form.is_this_their_school == "no"
+      if current_step == :confirm_school &&
+           @consent_form.is_this_their_school == "no"
         redirect_to session_parent_interface_consent_form_cannot_consent_school_path(
                       @session,
                       @consent_form
@@ -72,7 +73,7 @@ module ParentInterface
           date_of_birth(2i)
           date_of_birth(1i)
         ],
-        school: %i[is_this_their_school],
+        confirm_school: %i[is_this_their_school],
         parent: %i[
           parent_email
           parent_name

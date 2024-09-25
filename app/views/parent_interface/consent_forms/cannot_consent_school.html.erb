@@ -1,6 +1,6 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: session_parent_interface_consent_form_edit_path(@session, @consent_form, :school),
+        href: session_parent_interface_consent_form_edit_path(@session, @consent_form, "confirm-school"),
         name: "edit school page",
       ) %>
 <% end %>
