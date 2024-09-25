@@ -2,7 +2,7 @@
 
 require "govuk_helper"
 
-describe AppSecondaryNavigationComponent, type: :component do
+describe AppSecondaryNavigationComponent do
   subject { rendered_content }
 
   before { render_inline(component) }

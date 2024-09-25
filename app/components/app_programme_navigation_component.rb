@@ -14,33 +14,39 @@ class AppProgrammeNavigationComponent < ViewComponent::Base
     render AppSecondaryNavigationComponent.new do |nav|
       nav.with_item(
         href: programme_path(programme),
+        text: "Overview",
         selected: active == :overview
-      ) { "Overview" }
+      )
 
       nav.with_item(
         href: programme_cohorts_path(programme),
+        text: I18n.t("cohorts.index.title"),
         selected: active == :cohorts
-      ) { I18n.t("cohorts.index.title") }
+      )
 
       nav.with_item(
         href: sessions_programme_path(programme),
+        text: I18n.t("sessions.index.title"),
         selected: active == :sessions
-      ) { I18n.t("sessions.index.title") }
+      )
 
       nav.with_item(
         href: programme_vaccination_records_path(programme),
+        text: I18n.t("vaccination_records.index.title"),
         selected: active == :vaccination_records
-      ) { I18n.t("vaccination_records.index.title") }
+      )
 
       nav.with_item(
         href: programme_imports_path(programme),
+        text: I18n.t("imports.index.title"),
         selected: active == :imports
-      ) { I18n.t("imports.index.title") }
+      )
 
       nav.with_item(
         href: programme_import_issues_path(programme),
+        text: import_issues_text,
         selected: active == :import_issues
-      ) { import_issues_text }
+      )
     end
   end
 
