@@ -14,7 +14,7 @@
     <span class="nhsuk-visually-hidden">Information: </span>
 
     <p>
-      Session scheduled for <%= @session.date.to_fs(:long_day_of_week) %> (<%= @session.human_enum_name(:time_of_day) %>)
+      First session scheduled for <%= @session.dates.map(&:value).min.to_fs(:long_day_of_week) %> (<%= @session.human_enum_name(:time_of_day) %>)
     </p>
   <% end %>
 

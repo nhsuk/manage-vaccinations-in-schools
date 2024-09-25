@@ -21,7 +21,7 @@ describe "Not Gillick competent" do
   end
 
   def and_it_is_the_day_of_a_vaccination_session
-    travel_to(@session.date)
+    travel_to(@session.dates.first.value)
   end
 
   def and_there_is_a_child_without_parental_consent

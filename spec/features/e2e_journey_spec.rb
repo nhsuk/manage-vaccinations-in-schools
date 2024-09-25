@@ -148,7 +148,7 @@ describe "End-to-end journey" do
     expect(page).to have_content(
       "Deadline for responsesAllow responses until the day of the session"
     )
-    expect(page).to have_content("DateFriday 1 March 2024")
+    expect(page).to have_content("DatesFriday 1 March 2024")
 
     click_on "Confirm"
   end

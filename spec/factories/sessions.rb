@@ -25,7 +25,10 @@
 #
 FactoryBot.define do
   factory :session do
-    transient { programme { association :programme } }
+    transient do
+      date { Date.current }
+      programme { association :programme }
+    end
 
     programmes { [programme] }
     team { programmes.first&.team || association(:team) }
@@ -38,6 +41,11 @@ FactoryBot.define do
     time_of_day { %w[morning afternoon all_day].sample }
 
     active { true }
+
+    after(:create) do |session, evaluator|
+      next if (date = evaluator.date).nil?
+      create(:session_date, session:, value: date)
+    end
 
     trait :draft do
       active { false }

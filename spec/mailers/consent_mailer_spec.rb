@@ -67,7 +67,8 @@ describe ConsentMailer do
 
     let(:patient) { create(:patient) }
     let(:parent) { patient.parents.first }
-    let(:session) { create(:session, patients: [patient]) }
+    let(:date) { Date.current }
+    let(:session) { create(:session, date:, patients: [patient]) }
 
     it { should have_attributes(to: [parent.email]) }
 
@@ -76,8 +77,8 @@ describe ConsentMailer do
         mail.message.header["personalisation"].unparsed_value
       end
 
-      it { should include(session_date: session.date.strftime("%A %-d %B")) }
-      it { should include(session_short_date: session.date.strftime("%-d %B")) }
+      it { should include(session_date: date.strftime("%A %-d %B")) }
+      it { should include(session_short_date: date.strftime("%-d %B")) }
 
       it do
         expect(personalisation).to include(
@@ -105,6 +106,7 @@ describe ConsentMailer do
 
     let(:patient) { create(:patient) }
     let(:parent) { patient.parents.first }
+    let(:date) { Date.current }
     let(:session) { create(:session, patients: [patient]) }
 
     it { should have_attributes(to: [parent.email]) }
@@ -114,7 +116,7 @@ describe ConsentMailer do
         mail.message.header["personalisation"].unparsed_value
       end
 
-      it { should include(session_date: session.date.strftime("%A %-d %B")) }
+      it { should include(session_date: date.strftime("%A %-d %B")) }
 
       it do
         expect(personalisation).to include(

@@ -213,7 +213,9 @@ describe ImmunisationImport, type: :model do
         expect(immunisation_import.sessions.count).to eq(1)
 
         session = immunisation_import.sessions.first
-        expect(session.date).to eq(Date.new(2024, 5, 14))
+        expect(session.dates.map(&:value)).to contain_exactly(
+          Date.new(2024, 5, 14)
+        )
         expect(session.time_of_day).to eq("all_day")
       end
     end

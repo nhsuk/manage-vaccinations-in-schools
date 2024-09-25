@@ -1,5 +1,3 @@
-<% page_title = session_location(@session) %>
-
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
                                           { text: "Home", href: dashboard_path },
@@ -8,13 +6,7 @@
                                         ]) %>
 <% end %>
 
-<%= h1 page_title: do %>
-  <%= page_title %>
-  <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
-    <%= @session.date.to_fs(:long) %> (<%= @session.human_enum_name(:time_of_day) %>) ·
-    <%= t("children", count: @patient_sessions.size) %> in cohort
-  </span>
-<% end %>
+<%= h1 session_location(@session) %>
 
 <p class="nhsuk-body nhsuk-u-margin-bottom-7">
   <%= govuk_tag(text: "In progress", colour: "blue", classes: "nhsuk-u-margin-right-3") %>

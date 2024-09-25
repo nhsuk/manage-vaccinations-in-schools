@@ -15,8 +15,8 @@ class AppSessionSummaryCardComponent < ViewComponent::Base
     @session.programmes.map(&:name)
   end
 
-  def date
-    @session.date.to_fs(:long_day_of_week)
+  def dates
+    safe_join(@session.dates.map { _1.value.to_fs(:long_day_of_week) }, tag.br)
   end
 
   def time
@@ -42,7 +42,7 @@ class AppSessionSummaryCardComponent < ViewComponent::Base
   def deadline_for_responses
     return nil if @session.close_consent_at.blank?
 
-    if @session.date == @session.close_consent_at
+    if @session.dates.map(&:value).min == @session.close_consent_at
       "Allow responses until the day of the session"
     else
       close_consent_at = @session.close_consent_at.to_fs(:long_day_of_week)

@@ -118,17 +118,32 @@ class ImmunisationImportRow
     return unless valid?
 
     @session ||=
-      Session
-        .create_with(active: false)
-        .find_or_create_by!(
-          team:,
-          date: session_date,
-          location:,
-          time_of_day: :all_day
-        )
-        .tap do
-          _1.programmes << @programme unless _1.programmes.include?(@programme)
+      if (
+           session =
+             Session.for_date(session_date).find_by(
+               team:,
+               location:,
+               time_of_day: :all_day
+             )
+         )
+        unless session.programmes.include?(@programme)
+          session.programmes << @programme
         end
+        session
+      else
+        ActiveRecord::Base.transaction do
+          session =
+            Session.create!(
+              active: false,
+              team:,
+              location:,
+              time_of_day: :all_day
+            )
+          session.dates.create!(value: session_date)
+          session.programmes << @programme
+          session
+        end
+      end
   end
 
   def patient_session
