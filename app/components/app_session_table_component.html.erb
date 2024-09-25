@@ -1,0 +1,77 @@
+<div class="nhsuk-table__panel-with-heading-tab">
+  <h3 class="nhsuk-table__heading-tab"><%= heading %></h3>
+
+  <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
+    <% table.with_head do |head| %>
+      <% head.with_row do |row| %>
+        <% row.with_cell(text: "Location") %>
+        <% row.with_cell(text: "Dates") %>
+        <% row.with_cell(text: "Programmes") if show_programmes %>
+        <% row.with_cell(text: "Consent period") if show_consent_period %>
+        <% row.with_cell(text: "Children", numeric: true) %>
+      <% end %>
+    <% end %>
+
+    <% table.with_body do |body| %>
+      <% sessions.each do |session| %>
+        <% body.with_row do |row| %>
+          <% row.with_cell do %>
+            <span class="nhsuk-table-responsive__heading">Location</span>
+
+            <span>
+              <%= govuk_link_to session.location.name, session_path(session) %>
+
+              <% if (location = session.location).has_address? %>
+                <br />
+                <span class="nhsuk-u-secondary-text-color">
+                  <%= helpers.format_address_single_line(location) %>
+                </span>
+              <% end %>
+            </span>
+          <% end %>
+
+          <% row.with_cell do %>
+            <span class="nhsuk-table-responsive__heading">Dates</span>
+
+            <ul class="nhsuk-list">
+              <% session.dates.each do |date| %>
+                <li><%= date.value.to_fs(:long) %></li>
+              <% end %>
+            </ul>
+          <% end %>
+
+          <% if show_programmes %>
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Programmes</span>
+
+              <ul class="nhsuk-list">
+                <% session.programmes.each do |programme| %>
+                  <li><%= programme.name %></li>
+                <% end %>
+              </ul>
+            <% end %>
+          <% end %>
+
+          <% if show_consent_period %>
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Consent period</span>
+
+              <% if session.close_consent_at.nil? %>
+                n/a
+              <% elsif session.close_consent_at.past? %>
+                <%= "Closed #{session.close_consent_at.to_fs(:short)}" %>
+              <% else %>
+                <%= "Open until #{session.close_consent_at.to_fs(:short)}" %>
+              <% end %>
+            <% end %>
+          <% end %>
+
+          <% row.with_cell(numeric: true) do %>
+            <span class="nhsuk-table-responsive__heading">Children</span>
+            <%= (count = session.patients.count).zero? ? "None" : count %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
