@@ -5,6 +5,7 @@
 # Table name: sessions
 #
 #  id                        :bigint           not null, primary key
+#  academic_year             :integer          not null
 #  active                    :boolean          default(FALSE), not null
 #  close_consent_at          :date
 #  send_consent_reminders_at :date

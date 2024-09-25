@@ -5,6 +5,7 @@
 # Table name: sessions
 #
 #  id                        :bigint           not null, primary key
+#  academic_year             :integer          not null
 #  active                    :boolean          default(FALSE), not null
 #  close_consent_at          :date
 #  send_consent_reminders_at :date
@@ -29,6 +30,7 @@ FactoryBot.define do
       programme { association :programme }
     end
 
+    academic_year { date.academic_year }
     programmes { [programme] }
     team { programmes.first&.team || association(:team) }
     location { association :location, :school }
@@ -49,15 +51,15 @@ FactoryBot.define do
     end
 
     trait :in_progress do
-      date { Time.zone.now }
+      date { Date.current }
     end
 
     trait :in_future do
-      date { Time.zone.now + 1.week }
+      date { Date.current + 1.week }
     end
 
     trait :in_past do
-      date { Time.zone.now - 1.week }
+      date { Date.current - 1.week }
     end
 
     trait :minimal do
