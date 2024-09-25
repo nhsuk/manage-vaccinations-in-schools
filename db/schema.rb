@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_25_081048) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_25_121323) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -469,7 +469,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_25_081048) do
   end
 
   create_table "sessions", force: :cascade do |t|
-    t.date "date"
     t.bigint "location_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -477,7 +476,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_25_081048) do
     t.date "send_consent_requests_at"
     t.date "send_consent_reminders_at"
     t.date "close_consent_at"
-    t.integer "time_of_day"
     t.bigint "team_id", null: false
     t.index ["team_id"], name: "index_sessions_on_team_id"
   end

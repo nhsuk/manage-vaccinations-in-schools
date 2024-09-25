@@ -19,10 +19,6 @@ class AppSessionSummaryCardComponent < ViewComponent::Base
     safe_join(@session.dates.map { _1.value.to_fs(:long_day_of_week) }, tag.br)
   end
 
-  def time
-    @session.human_enum_name(:time_of_day)
-  end
-
   def cohort
     I18n.t("children", count: @session.patients.count)
   end

@@ -15,17 +15,5 @@
                          hint: { text: "For example, 27 3 2017" },
                          link_errors: true %>
 
-  <%= f.govuk_collection_radio_buttons(
-        :time_of_day,
-        Session.time_of_days.keys.map do
-          [_1, Session.human_enum_name("time_of_days", _1)]
-        end,
-        :first,
-        :second,
-        legend: {
-          text: "Time",
-        },
-      ) %>
-
   <%= f.govuk_submit "Continue" %>
 <% end %>

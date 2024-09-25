@@ -64,7 +64,7 @@ class Sessions::EditController < ApplicationController
   def update_params
     permitted_attributes = {
       location: [:location_id],
-      when: %i[date(3i) date(2i) date(1i) time_of_day],
+      when: %i[date(3i) date(2i) date(1i)],
       cohort: {
         all_patients: nil,
         patient_ids: []
@@ -129,7 +129,6 @@ class Sessions::EditController < ApplicationController
 
       unless validator.date_params_valid?
         @session.date = validator.date_params_as_struct
-        @session.time_of_day = update_params[:time_of_day]
         render_wizard nil, status: :unprocessable_entity
       end
     when :timeline

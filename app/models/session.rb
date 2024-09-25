@@ -9,7 +9,6 @@
 #  close_consent_at          :date
 #  send_consent_reminders_at :date
 #  send_consent_requests_at  :date
-#  time_of_day               :integer
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  location_id               :bigint
@@ -50,8 +49,6 @@ class Session < ApplicationRecord
   has_many :vaccines, through: :programmes
   has_many :batches, through: :vaccines
 
-  enum :time_of_day, %w[morning afternoon all_day], validate: { if: :active? }
-
   scope :for_date,
         ->(value) do
           where(
@@ -86,8 +83,6 @@ class Session < ApplicationRecord
 
   on_wizard_step :when, exact: true do
     validates :date, presence: true
-
-    validates :time_of_day, inclusion: { in: Session.time_of_days.keys }
   end
 
   on_wizard_step :cohort, exact: true do

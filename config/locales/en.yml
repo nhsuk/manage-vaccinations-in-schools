@@ -393,8 +393,6 @@ en:
               missing_day: Enter a day
               missing_month: Enter a month
               missing_year: Enter a year
-            time_of_day:
-              inclusion: Select a time of day
         triage:
           attributes:
             notes:

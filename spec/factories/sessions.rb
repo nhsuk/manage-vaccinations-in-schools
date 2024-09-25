@@ -9,7 +9,6 @@
 #  close_consent_at          :date
 #  send_consent_reminders_at :date
 #  send_consent_requests_at  :date
-#  time_of_day               :integer
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  location_id               :bigint
@@ -37,8 +36,6 @@ FactoryBot.define do
     send_consent_requests_at { date - 14.days }
     send_consent_reminders_at { send_consent_requests_at + 7.days }
     close_consent_at { date }
-
-    time_of_day { %w[morning afternoon all_day].sample }
 
     active { true }
 
