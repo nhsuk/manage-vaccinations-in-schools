@@ -38,4 +38,4 @@ Team.find_by(ods_code: "Y51") ||
 
 Rake::Task["vaccines:seed"].execute
 
-Rake::Task["schools:import"].execute
+Rake::Task["schools:import"].execute unless Rails.env.test?
