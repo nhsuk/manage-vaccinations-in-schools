@@ -27,7 +27,7 @@ class SessionRemindersJob < ApplicationJob
       .includes(:consents)
       .joins(:session)
       .merge(
-        Session.active.where(
+        Session.where(
           SessionDate.for_session.where(value: Date.tomorrow).arel.exists
         )
       )

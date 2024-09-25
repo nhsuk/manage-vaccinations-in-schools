@@ -31,7 +31,7 @@ FactoryBot.define do
     patient { association :patient, school: session.location }
     created_by
 
-    active { session.active }
+    active { session.dates.exists? }
 
     trait :active do
       active { true }

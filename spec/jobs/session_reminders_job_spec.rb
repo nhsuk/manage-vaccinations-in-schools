@@ -81,20 +81,4 @@ describe SessionRemindersJob do
       expect { perform_now }.not_to have_enqueued_mail(SessionMailer, :reminder)
     end
   end
-
-  context "for a draft session tomorrow" do
-    before do
-      create(
-        :session,
-        :draft,
-        programme:,
-        date: Date.tomorrow,
-        patients: [patient]
-      )
-    end
-
-    it "doesn't send an email" do
-      expect { perform_now }.not_to have_enqueued_mail(SessionMailer, :reminder)
-    end
-  end
 end
