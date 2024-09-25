@@ -49,8 +49,7 @@ describe AppSessionSummaryCardComponent do
       Session.new(
         location: create(:location, :school),
         programmes: [create(:programme, :hpv)],
-        date:,
-        time_of_day: "all_day"
+        date:
       )
     end
 

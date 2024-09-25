@@ -21,7 +21,6 @@
       <% table.with_head do |head| %>
         <% head.with_row do |row| %>
           <% row.with_cell(text: "Dates") %>
-          <% row.with_cell(text: "Time") %>
           <% row.with_cell(text: "Location") %>
           <% row.with_cell(text: "Consent period") %>
           <% row.with_cell(text: "Cohort") %>
@@ -34,10 +33,6 @@
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Dates</span>
               <%= safe_join(session.dates.map { _1.value.to_fs(:long) }, tag.br) %>
-            <% end %>
-            <% row.with_cell do %>
-              <span class="nhsuk-table-responsive__heading">Time</span>
-              <%= session.time_of_day.humanize %>
             <% end %>
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Location</span>

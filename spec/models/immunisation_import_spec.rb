@@ -216,7 +216,6 @@ describe ImmunisationImport, type: :model do
         expect(session.dates.map(&:value)).to contain_exactly(
           Date.new(2024, 5, 14)
         )
-        expect(session.time_of_day).to eq("all_day")
       end
     end
 

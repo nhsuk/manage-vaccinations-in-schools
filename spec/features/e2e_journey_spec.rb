@@ -108,7 +108,6 @@ describe "End-to-end journey" do
     fill_in "Day", with: "1"
     fill_in "Month", with: "3"
     fill_in "Year", with: "2024"
-    choose "Morning"
     click_on "Continue"
   end
 
@@ -138,7 +137,6 @@ describe "End-to-end journey" do
 
     expect(page).to have_content("Check and confirm details")
     expect(page).to have_content("Pilot School")
-    expect(page).to have_content("Morning")
     expect(page).to have_content("1 child")
 
     expect(page).to have_content(

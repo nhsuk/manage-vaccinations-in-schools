@@ -78,8 +78,6 @@ describe "Session management" do
     fill_in "Day", with: "10"
     fill_in "Month", with: "03"
     fill_in "Year", with: "2024"
-
-    choose "Morning"
     click_button "Continue"
   end
 

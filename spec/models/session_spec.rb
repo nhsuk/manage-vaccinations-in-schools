@@ -9,7 +9,6 @@
 #  close_consent_at          :date
 #  send_consent_reminders_at :date
 #  send_consent_requests_at  :date
-#  time_of_day               :integer
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  location_id               :bigint

@@ -62,8 +62,7 @@ describe "Immunisation imports duplicates" do
         team: @team,
         programme: @programme,
         location: @location,
-        date: Date.new(2024, 5, 14),
-        time_of_day: :all_day
+        date: Date.new(2024, 5, 14)
       )
   end
 
