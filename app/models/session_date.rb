@@ -22,5 +22,22 @@ class SessionDate < ApplicationRecord
 
   belongs_to :session
 
-  validates :value, uniqueness: { scope: :session }
+  validates :value,
+            uniqueness: {
+              scope: :session
+            },
+            comparison: {
+              greater_than_or_equal_to: :earliest_possible_value,
+              less_than_or_equal_to: :latest_possible_value
+            }
+
+  private
+
+  def earliest_possible_value
+    Date.new((session || Date.current).academic_year, 9, 1)
+  end
+
+  def latest_possible_value
+    Date.new((session || Date.current).academic_year + 1, 8, 31)
+  end
 end
