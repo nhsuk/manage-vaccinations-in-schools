@@ -38,14 +38,53 @@ describe Session, type: :model do
   end
 
   describe "scopes" do
+    let!(:active_session) { create(:session) }
+    let!(:draft_session) { create(:session, :draft) }
+    let!(:today_session) { create(:session, :today) }
+    let!(:past_session) { create(:session, :completed) }
+    let!(:future_session) { create(:session, :planned) }
+    let!(:session_with_dates_encompassing_today) do
+      create(
+        :session,
+        dates: [
+          create(:session_date, value: Date.yesterday),
+          create(:session_date, value: Date.current + 1.week)
+        ]
+      )
+    end
+
     describe "#active" do
       subject(:scope) { described_class.active }
 
-      let!(:active_session) { create(:session) }
-      let!(:draft_session) { create(:session, :draft) }
-
       it { should include(active_session) }
       it { should_not include(draft_session) }
+    end
+
+    describe "#today" do
+      subject(:scope) { described_class.today }
+
+      it do
+        expect(subject).to include(
+          today_session,
+          session_with_dates_encompassing_today
+        )
+      end
+
+      it { should_not include(past_session, future_session) }
+    end
+
+    describe "#completed" do
+      subject(:scope) { described_class.completed }
+
+      it { should include(past_session) }
+      it { should_not include(active_session, draft_session, future_session) }
+    end
+
+    describe "#planned" do
+      subject(:scope) { described_class.planned }
+
+      it { should include(future_session) }
+      it { should_not include(active_session, draft_session, past_session) }
     end
   end
 
