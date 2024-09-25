@@ -6,7 +6,6 @@
 #
 #  id                        :bigint           not null, primary key
 #  academic_year             :integer          not null
-#  active                    :boolean          default(FALSE), not null
 #  close_consent_at          :date
 #  send_consent_reminders_at :date
 #  send_consent_requests_at  :date
@@ -30,24 +29,20 @@ FactoryBot.define do
       programme { association :programme }
     end
 
-    academic_year { date.academic_year }
+    academic_year { (date || Date.current).academic_year }
     programmes { [programme] }
     team { programmes.first&.team || association(:team) }
     location { association :location, :school }
 
-    send_consent_requests_at { date - 14.days }
-    send_consent_reminders_at { send_consent_requests_at + 7.days }
+    send_consent_requests_at { date - 14.days if date }
+    send_consent_reminders_at do
+      send_consent_requests_at + 7.days if send_consent_requests_at
+    end
     close_consent_at { date }
-
-    active { true }
 
     after(:create) do |session, evaluator|
       next if (date = evaluator.date).nil?
       create(:session_date, session:, value: date)
-    end
-
-    trait :draft do
-      active { false }
     end
 
     trait :today do

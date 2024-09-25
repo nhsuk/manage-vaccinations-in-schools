@@ -6,7 +6,6 @@
 #
 #  id                        :bigint           not null, primary key
 #  academic_year             :integer          not null
-#  active                    :boolean          default(FALSE), not null
 #  close_consent_at          :date
 #  send_consent_reminders_at :date
 #  send_consent_requests_at  :date
@@ -24,7 +23,6 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class Session < ApplicationRecord
-  include Draftable
   include WizardStepConcern
 
   audited
@@ -79,9 +77,9 @@ class Session < ApplicationRecord
         end
 
   scope :send_consent_requests_today,
-        -> { active.where(send_consent_requests_at: Time.zone.today) }
+        -> { where(send_consent_requests_at: Time.zone.today) }
   scope :send_consent_reminders_today,
-        -> { active.where(send_consent_reminders_at: Time.zone.today) }
+        -> { where(send_consent_reminders_at: Time.zone.today) }
 
   after_initialize :set_timeline_attributes
   after_validation :set_timeline_timestamps

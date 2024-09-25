@@ -10,7 +10,6 @@ class SessionsController < ApplicationController
 
     @session =
       Session.create!(
-        active: false,
         academic_year: Date.current.academic_year,
         team:,
         programmes: team.programmes
@@ -20,19 +19,19 @@ class SessionsController < ApplicationController
   end
 
   def index
-    @sessions = policy_scope(Session).active.today
+    @sessions = policy_scope(Session).today
 
     render layout: "full"
   end
 
   def planned
-    @sessions = policy_scope(Session).active.planned
+    @sessions = policy_scope(Session).planned
 
     render layout: "full"
   end
 
   def completed
-    @sessions = policy_scope(Session).active.completed
+    @sessions = policy_scope(Session).completed
 
     render layout: "full"
   end

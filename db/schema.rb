@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_25_132918) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_25_153539) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -472,7 +472,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_25_132918) do
     t.bigint "location_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "active", default: false, null: false
     t.date "send_consent_requests_at"
     t.date "send_consent_reminders_at"
     t.date "close_consent_at"

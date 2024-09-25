@@ -21,7 +21,6 @@ class Sessions::EditController < ApplicationController
   def update
     case current_step
     when :confirm
-      @session.active = true
       @session.patient_sessions.update_all(active: true)
 
       if @session.send_consent_requests_at.today?
@@ -55,10 +54,7 @@ class Sessions::EditController < ApplicationController
   end
 
   def set_session
-    @session =
-      policy_scope(Session).where(
-        active: params[:id] == Wicked::FINISH_STEP
-      ).find(params[:session_id])
+    @session = policy_scope(Session).find(params[:session_id])
   end
 
   def update_params
@@ -104,16 +100,16 @@ class Sessions::EditController < ApplicationController
     # Get a list of patients but ensure we don't include patients that are
     # already in other sessions, if those sessions are active (not draft) and
     # for the same vaccine/programme.
-    patients_in_active_sessions_and_same_team =
+    patients_in_sessions_and_same_team =
       Patient
         .joins(:patient_sessions)
         .joins(:sessions)
-        .where(sessions: { active: true, team: @session.team })
+        .where(sessions: { team: @session.team })
     @patients =
       @session
         .location
         .patients
-        .where.not(id: patients_in_active_sessions_and_same_team)
+        .where.not(id: patients_in_sessions_and_same_team)
         .sort_by(&:last_name) # Sort by instead of order due to encryption
   end
 

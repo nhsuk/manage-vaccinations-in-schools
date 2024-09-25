@@ -13,9 +13,9 @@ class ProgrammesController < ApplicationController
   end
 
   def sessions
-    @today_sessions = @programme.sessions.active.today
-    @planned_sessions = @programme.sessions.active.planned
-    @completed_sessions = @programme.sessions.active.completed
+    @today_sessions = @programme.sessions.today
+    @planned_sessions = @programme.sessions.planned
+    @completed_sessions = @programme.sessions.completed
   end
 
   private
