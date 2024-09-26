@@ -16,5 +16,5 @@
     [@completed_sessions, "completed session"]]
      .select { |sessions, _| sessions.any? }.each do |sessions, description| %>
 
-  <%= render AppSessionTableComponent.new(sessions, description:, show_consent_period: true) %>
+  <%= render AppSessionTableComponent.new(sessions, description:, show_dates: true, show_consent_period: true) %>
 <% end %>

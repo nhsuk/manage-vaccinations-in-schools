@@ -5,7 +5,7 @@
     <% table.with_head do |head| %>
       <% head.with_row do |row| %>
         <% row.with_cell(text: "Location") %>
-        <% row.with_cell(text: "Dates") %>
+        <% row.with_cell(text: "Dates") if show_dates %>
         <% row.with_cell(text: "Programmes") if show_programmes %>
         <% row.with_cell(text: "Consent period") if show_consent_period %>
         <% row.with_cell(text: "Children", numeric: true) %>
@@ -30,14 +30,16 @@
             </span>
           <% end %>
 
-          <% row.with_cell do %>
-            <span class="nhsuk-table-responsive__heading">Dates</span>
+          <% if show_dates %>
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Dates</span>
 
-            <ul class="nhsuk-list">
-              <% session.dates.each do |date| %>
-                <li><%= date.value.to_fs(:long) %></li>
-              <% end %>
-            </ul>
+              <ul class="nhsuk-list">
+                <% session.dates.each do |date| %>
+                  <li><%= date.value.to_fs(:long) %></li>
+                <% end %>
+              </ul>
+            <% end %>
           <% end %>
 
           <% if show_programmes %>
