@@ -25,7 +25,7 @@
                 <%= govuk_link_to helpers.session_location(session), session_path(session) %>
               <% end %>
 
-              <% if (location = session.location).has_address? %>
+              <% if (location = session.location)&.has_address? %>
                 <br />
                 <span class="nhsuk-u-secondary-text-color">
                   <%= helpers.format_address_single_line(location) %>
