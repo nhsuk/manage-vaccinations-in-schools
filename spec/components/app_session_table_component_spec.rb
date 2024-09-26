@@ -31,7 +31,6 @@ describe AppSessionTableComponent do
 
   it "renders the headers" do
     expect(rendered).to have_css(".nhsuk-table__header", text: "Location")
-    expect(rendered).to have_css(".nhsuk-table__header", text: "Dates")
     expect(rendered).to have_css(".nhsuk-table__header", text: "Children")
   end
 
@@ -43,10 +42,15 @@ describe AppSessionTableComponent do
 
     expect(rendered).to have_css(".nhsuk-table__cell", text: "Waterloo Road")
 
-    expect(rendered).to have_css(".nhsuk-table__cell", text: "1 October 2024")
-
     expect(rendered).to have_css(".nhsuk-table__cell", text: "5")
     expect(rendered).to have_css(".nhsuk-table__cell", text: "None")
+  end
+
+  context "when showing dates" do
+    let(:component) { described_class.new(sessions, show_dates: true) }
+
+    it { should have_css(".nhsuk-table__header", text: "Dates") }
+    it { should have_css(".nhsuk-table__cell", text: "1 October 2024") }
   end
 
   context "when showing programmes" do

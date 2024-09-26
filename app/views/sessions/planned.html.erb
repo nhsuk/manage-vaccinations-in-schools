@@ -11,5 +11,5 @@
 <% if @sessions.empty? %>
   <p>There are no sessions planned.</p>
 <% else %>
-  <%= render AppSessionTableComponent.new(@sessions, description: "planned session", show_programmes: true) %>
+  <%= render AppSessionTableComponent.new(@sessions, description: "planned session", show_dates: true, show_programmes: true) %>
 <% end %>
