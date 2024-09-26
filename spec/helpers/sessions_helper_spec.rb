@@ -43,4 +43,38 @@ RSpec.describe SessionsHelper do
       end
     end
   end
+
+  describe "#session_status_tag" do
+    subject(:session_status_tag) { helper.session_status_tag(session) }
+
+    context "when unscheduled" do
+      let(:session) { create(:session, :unscheduled) }
+
+      it do
+        expect(session_status_tag).to eq(
+          "<strong class=\"nhsuk-tag nhsuk-tag--purple\">No sessions scheduled</strong>"
+        )
+      end
+    end
+
+    context "when completed" do
+      let(:session) { create(:session, :completed) }
+
+      it do
+        expect(session_status_tag).to eq(
+          "<strong class=\"nhsuk-tag nhsuk-tag--green\">All sessions completed</strong>"
+        )
+      end
+    end
+
+    context "when scheduled" do
+      let(:session) { create(:session, :scheduled) }
+
+      it do
+        expect(session_status_tag).to eq(
+          "<strong class=\"nhsuk-tag\">Session in progress</strong>"
+        )
+      end
+    end
+  end
 end
