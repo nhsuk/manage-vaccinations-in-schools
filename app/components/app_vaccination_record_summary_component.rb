@@ -153,7 +153,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def location_value
-    @vaccination_record.session.location.name
+    helpers.session_location(@vaccination_record.session)
   end
 
   def vaccination_date_value
