@@ -125,6 +125,10 @@ class Session < ApplicationRecord
     dates.map(&:value).include?(Date.current)
   end
 
+  def unscheduled?
+    dates.empty?
+  end
+
   def wizard_steps
     %i[when cohort timeline confirm]
   end

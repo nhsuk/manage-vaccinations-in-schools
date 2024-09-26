@@ -69,7 +69,7 @@ describe Session do
   end
 
   describe "#today?" do
-    subject { session.today? }
+    subject(:today?) { session.today? }
 
     context "when the session is scheduled for today" do
       let(:session) { create(:session, :today) }
@@ -87,6 +87,20 @@ describe Session do
       let(:session) { create(:session, :scheduled) }
 
       it { should be_falsey }
+    end
+  end
+
+  describe "#unscheduled?" do
+    subject(:unscheduled?) { session.unscheduled? }
+
+    let(:session) { create(:session, date: nil) }
+
+    it { should be(true) }
+
+    context "with a date" do
+      before { create(:session_date, session:) }
+
+      it { should be(false) }
     end
   end
 end
