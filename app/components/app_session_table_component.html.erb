@@ -20,9 +20,9 @@
 
             <span>
               <% if session.new_record? %>
-                <%= govuk_link_to session.location.name, new_session_path(session, location_id: session.location.id) %>
+                <%= govuk_link_to helpers.session_location(session), new_session_path(session, location_id: session.location.id) %>
               <% else %>
-                <%= govuk_link_to session.location.name, session_path(session) %>
+                <%= govuk_link_to helpers.session_location(session), session_path(session) %>
               <% end %>
 
               <% if (location = session.location).has_address? %>

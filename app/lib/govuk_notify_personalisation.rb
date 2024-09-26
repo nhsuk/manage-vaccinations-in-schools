@@ -112,7 +112,7 @@ class GovukNotifyPersonalisation
   end
 
   def location_name
-    session.location.name
+    session.location&.name
   end
 
   def parent_name
