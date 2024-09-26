@@ -3,7 +3,26 @@
 RSpec.describe SessionsHelper do
   let(:programme) { build(:programme, :flu) }
   let(:location) { build(:location, name: "Waterloo Road") }
-  let(:session) { build(:session, programme:, location:) }
+  let(:close_consent_at) { nil }
+  let(:session) { build(:session, programme:, close_consent_at:, location:) }
+
+  describe "#session_consent_period" do
+    subject(:session_consent_period) { helper.session_consent_period(session) }
+
+    it { should eq("Not provided") }
+
+    context "when in the past" do
+      let(:close_consent_at) { Date.yesterday }
+
+      it { should start_with("Closed ") }
+    end
+
+    context "when in the future" do
+      let(:close_consent_at) { Date.tomorrow }
+
+      it { should start_with("Open until ") }
+    end
+  end
 
   describe "#session_location" do
     subject(:session_location) { helper.session_location(session) }
