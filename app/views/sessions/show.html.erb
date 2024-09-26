@@ -69,7 +69,7 @@
     <%= render AppSessionSummaryComponent.new(@session) %>
 
     <% unless @session.unscheduled? %>
-      <%= govuk_button_link_to "Edit session", edit_session_path(session), secondary: true %>
+      <%= govuk_button_link_to "Edit session", edit_session_path(@session), class: "app-button--secondary" %>
     <% end %>
   </div>
 </div>
