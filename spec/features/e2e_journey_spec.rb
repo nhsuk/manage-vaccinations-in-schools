@@ -100,6 +100,7 @@ describe "End-to-end journey" do
     click_on "School sessions"
     click_on "Unscheduled"
     click_on "Pilot School"
+    click_on "Schedule sessions"
 
     expect(page).to have_content("When is the session?")
     fill_in "Day", with: "1"
