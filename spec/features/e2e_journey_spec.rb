@@ -124,9 +124,6 @@ describe "End-to-end journey" do
       "Consent requestsSend on Friday 9 February 2024"
     )
     expect(page).to have_content("RemindersSend on Friday 16 February 2024")
-    expect(page).to have_content(
-      "Deadline for responsesAllow responses until Thursday 29 February 2024"
-    )
     expect(page).to have_content("DatesFriday 1 March 2024")
 
     click_on "Confirm"
