@@ -5,10 +5,15 @@ describe "Session management" do
 
   scenario "Adding a new session, closing consent" do
     given_my_team_is_running_an_hpv_vaccination_programme
+
     when_i_go_to_todays_sessions_as_a_nurse
     then_i_see_no_sessions
 
-    when_i_add_a_new_session
+    when_i_go_to_unscheduled_sessions
+    then_i_see_the_school
+
+    when_i_go_to_todays_sessions_as_a_nurse
+    and_i_add_a_new_session
     then_i_see_the_list_of_schools
 
     when_i_choose_a_school
@@ -31,7 +36,7 @@ describe "Session management" do
     then_i_see_no_sessions
 
     when_i_go_to_scheduled_sessions
-    then_i_see_the_new_session
+    then_i_see_the_school
 
     when_the_parent_visits_the_consent_form
     then_they_can_give_consent
@@ -40,10 +45,13 @@ describe "Session management" do
     then_they_can_no_longer_give_consent
 
     when_i_go_to_todays_sessions_as_a_nurse
-    then_i_see_the_new_session
+    then_i_see_the_school
+
+    when_i_go_to_unscheduled_sessions
+    then_i_see_no_sessions
 
     when_i_go_to_scheduled_sessions
-    then_i_see_the_new_session
+    then_i_see_the_school
 
     when_i_go_to_completed_sessions
     then_i_see_no_sessions
@@ -52,7 +60,7 @@ describe "Session management" do
   def given_my_team_is_running_an_hpv_vaccination_programme
     @team = create(:team, :with_one_nurse)
     create(:programme, :hpv, team: @team)
-    @location = create(:location, :school)
+    @location = create(:location, :secondary, team: @team)
     @patient = create(:patient, school: @location)
   end
 
@@ -60,6 +68,10 @@ describe "Session management" do
     sign_in @team.users.first
     visit "/dashboard"
     click_link "School sessions", match: :first
+  end
+
+  def when_i_go_to_unscheduled_sessions
+    click_link "Unscheduled"
   end
 
   def when_i_go_to_scheduled_sessions
@@ -74,7 +86,7 @@ describe "Session management" do
     expect(page).to have_content(/There are no (sessions|schools)/)
   end
 
-  def when_i_add_a_new_session
+  def and_i_add_a_new_session
     click_button "Add a new session"
   end
 
@@ -161,7 +173,7 @@ describe "Session management" do
     expect(page).to have_content("The deadline for responding has passed")
   end
 
-  def then_i_see_the_new_session
+  def then_i_see_the_school
     expect(page).to have_content(@location.name)
   end
 end

@@ -106,8 +106,9 @@ Rails.application.routes.draw do
     end
 
     collection do
-      get "scheduled"
       get "completed"
+      get "scheduled"
+      get "unscheduled"
     end
 
     resources :edit, controller: "sessions/edit", only: %i[show update]
