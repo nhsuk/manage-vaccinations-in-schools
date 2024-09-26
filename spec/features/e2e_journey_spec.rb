@@ -117,14 +117,13 @@ describe "End-to-end journey" do
 
   def and_confirm_the_session_details
     expect(page).to have_content("Check and confirm details")
-    expect(page).to have_content("Pilot School")
-    expect(page).to have_content("1 child")
 
+    expect(page).to have_content("ProgrammesHPV")
+    expect(page).to have_content("Session datesFriday 1 March 2024")
     expect(page).to have_content(
       "Consent requestsSend on Friday 9 February 2024"
     )
     expect(page).to have_content("RemindersSend on Friday 16 February 2024")
-    expect(page).to have_content("DatesFriday 1 March 2024")
 
     click_on "Confirm"
   end

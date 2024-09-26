@@ -6,27 +6,11 @@ describe AppSessionSummaryCardComponent do
   before { render_inline(component) }
 
   let(:component) { described_class.new(session:) }
-  let(:date) { Time.zone.today }
+  let(:date) { Date.new(2024, 1, 1) }
   let(:close_consent_at) { date }
   let(:session) { create(:session, date:, close_consent_at:) }
 
-  it { should have_content(session.location.name) }
-
-  context "for a session with only 1 patient" do
-    before { create(:patient, session:) }
-
-    it "pluralizes 'child' correctly" do
-      expect(component.cohort).to eq "1 child"
-    end
-  end
-
-  context "for a session with more than 1 patient" do
-    before { create_list(:patient, 2, session:) }
-
-    it "pluralizes 'child' correctly" do
-      expect(component.cohort).to eq "2 children"
-    end
-  end
+  it { should have_content("1 January 2024") }
 
   context "for a session with the minimum amount of information" do
     let(:session) do

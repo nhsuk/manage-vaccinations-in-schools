@@ -7,20 +7,16 @@ class AppSessionSummaryCardComponent < ViewComponent::Base
     @session = session
   end
 
-  def school
-    helpers.session_location(@session)
+  def programmes
+    safe_join(@session.programmes.map(&:name), tag.br)
   end
 
-  def vaccines
-    @session.programmes.map(&:name)
-  end
-
-  def dates
-    safe_join(@session.dates.map { _1.value.to_fs(:long_day_of_week) }, tag.br)
-  end
-
-  def cohort
-    I18n.t("children", count: @session.patients.count)
+  def session_dates
+    if (dates = @session.dates).present?
+      safe_join(dates.map { _1.value.to_fs(:long_day_of_week) }, tag.br)
+    else
+      "Not provided"
+    end
   end
 
   def consent_requests
