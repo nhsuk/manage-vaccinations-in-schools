@@ -17,6 +17,10 @@ FactoryBot.define do
 
     team { user.team || create(:team, users: [user]) }
 
+    after(:create) do |_programme, context|
+      create_list(:location, 20, :school, team: context.team)
+    end
+
     trait :in_progress do
       after(:create) do |programme, context|
         location = context.location
