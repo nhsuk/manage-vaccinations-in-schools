@@ -34,15 +34,4 @@ class AppSessionSummaryCardComponent < ViewComponent::Base
       "Send on #{date.to_fs(:long_day_of_week)}"
     end
   end
-
-  def deadline_for_responses
-    return nil if @session.close_consent_at.blank?
-
-    if @session.dates.map(&:value).min == @session.close_consent_at
-      "Allow responses until the day of the session"
-    else
-      close_consent_at = @session.close_consent_at.to_fs(:long_day_of_week)
-      "Allow responses until #{close_consent_at}"
-    end
-  end
 end

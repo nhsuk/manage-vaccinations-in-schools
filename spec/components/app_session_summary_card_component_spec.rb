@@ -12,22 +12,6 @@ describe AppSessionSummaryCardComponent do
 
   it { should have_content(session.location.name) }
 
-  context "when the deadline is the same day as the session" do
-    let(:close_consent_at) { date }
-
-    it { should have_content "Allow responses until the day of the session" }
-  end
-
-  context "when the deadline is the day before the session" do
-    let(:close_consent_at) { date - 1.day }
-
-    it do
-      expect(
-        subject
-      ).to have_content "Allow responses until #{close_consent_at.to_fs(:long_day_of_week)}"
-    end
-  end
-
   context "for a session with only 1 patient" do
     before { create(:patient, session:) }
 
@@ -59,10 +43,6 @@ describe AppSessionSummaryCardComponent do
 
     it "does not render the consent reminders" do
       expect(component.consent_reminders).to be_nil
-    end
-
-    it "does not render the deadline for responses" do
-      expect(component.deadline_for_responses).to be_nil
     end
   end
 end
