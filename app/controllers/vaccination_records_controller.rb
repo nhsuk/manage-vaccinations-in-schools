@@ -47,7 +47,7 @@ class VaccinationRecordsController < ApplicationController
         )
         .where(programme:)
         .order(:recorded_at)
-    # .strict_loading # TODO: Once we move Session#set_timeline_attributes this can be uncommented.
+        .strict_loading
   end
 
   def dps_export
