@@ -28,12 +28,7 @@ class Session < ApplicationRecord
 
   audited
 
-  DEFAULT_DAYS_FOR_REMINDER = 2
-
-  attr_accessor :date,
-                :reminder_days_after,
-                :reminder_days_after_custom,
-                :close_consent_on
+  attr_accessor :date
 
   belongs_to :team
   belongs_to :location, optional: true
@@ -81,9 +76,6 @@ class Session < ApplicationRecord
 
   after_initialize :set_programmes
 
-  after_initialize :set_timeline_attributes
-  after_validation :set_timeline_timestamps
-
   after_save :ensure_session_date_exists
 
   validate :programmes_part_of_team
@@ -94,31 +86,6 @@ class Session < ApplicationRecord
 
   on_wizard_step :cohort, exact: true do
     validates :patients, presence: true
-  end
-
-  on_wizard_step :timeline, exact: true do
-    validates :send_consent_requests_at,
-              presence: true,
-              comparison: {
-                greater_than_or_equal_to: -> { Time.zone.today },
-                less_than_or_equal_to: ->(object) do
-                  object.dates.map(&:value).min
-                end
-              }
-
-    validates :reminder_days_after, inclusion: { in: %w[default custom] }
-    validates :reminder_days_after_custom,
-              presence: true,
-              numericality: {
-                greater_than_or_equal_to: 2,
-                less_than_or_equal_to: 7
-              },
-              if: -> { reminder_days_after == "custom" }
-
-    validates :close_consent_on, inclusion: { in: %w[default custom] }
-    validates :close_consent_at,
-              presence: true,
-              if: -> { close_consent_on == "custom" }
   end
 
   def today?
@@ -134,16 +101,30 @@ class Session < ApplicationRecord
     Date.current > dates.map(&:value).max
   end
 
+  def set_consent_dates
+    if dates.empty?
+      self.send_consent_requests_at = nil
+      self.send_consent_reminders_at = nil
+      self.close_consent_at = nil
+    else
+      earliest_date = dates.map(&:value).min
+
+      self.send_consent_requests_at =
+        earliest_date -
+          team.days_between_first_session_and_consent_requests.days
+
+      self.send_consent_reminders_at =
+        send_consent_requests_at +
+          team.days_between_consent_requests_and_first_reminders.days
+
+      latest_date = dates.map(&:value).max
+
+      self.close_consent_at = latest_date - 1.day
+    end
+  end
+
   def wizard_steps
-    %i[when cohort timeline confirm]
-  end
-
-  def days_between_consent_and_session
-    (dates.map(&:value).min - send_consent_requests_at).to_i
-  end
-
-  def days_between_consent_and_reminder
-    (send_consent_reminders_at - send_consent_requests_at).to_i
+    %i[when cohort confirm]
   end
 
   def unmatched_consent_forms
@@ -170,55 +151,22 @@ class Session < ApplicationRecord
       team.programmes.select { _1.year_groups.intersect?(location.year_groups) }
   end
 
-  def set_timeline_attributes
-    unless send_consent_reminders_at.nil?
-      if send_consent_requests_at + DEFAULT_DAYS_FOR_REMINDER.days ==
-           send_consent_reminders_at
-        self.reminder_days_after = "default"
-      else
-        self.reminder_days_after = "custom"
-        self.reminder_days_after_custom = days_between_consent_and_reminder
-      end
-    end
-
-    unless close_consent_at.nil?
-      self.close_consent_on =
-        close_consent_at == dates.map(&:value).min ? "default" : "custom"
-    end
-  end
-
-  def set_timeline_timestamps
-    return if errors.any? || reminder_days_after.nil?
-
-    reminder_days_after =
-      (
-        if self.reminder_days_after == "default"
-          DEFAULT_DAYS_FOR_REMINDER
-        else
-          reminder_days_after_custom.to_i
-        end
-      )
-    close_consent_on =
-      (
-        if self.close_consent_on == "default"
-          dates.map(&:value).min
-        else
-          close_consent_at
-        end
-      )
-
-    self.send_consent_reminders_at =
-      send_consent_requests_at + reminder_days_after.days
-    self.close_consent_at = close_consent_on
-  end
-
   def ensure_session_date_exists
     return if date.nil?
 
     # TODO: Replace with UI to add/remove dates.
     ActiveRecord::Base.transaction do
-      dates.delete_all
+      dates.destroy_all
       dates.create!(value: date)
+
+      set_consent_dates
+
+      # Temporary: to avoid callbacks calling this method again.
+      update_columns(
+        send_consent_requests_at:,
+        send_consent_reminders_at:,
+        close_consent_at:
+      )
     end
   end
 end

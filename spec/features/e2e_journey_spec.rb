@@ -13,7 +13,7 @@ describe "End-to-end journey" do
     # Session creation
     when_i_start_creating_a_new_session_by_choosing_school_and_time
     and_select_the_children_for_the_cohort
-    and_enter_timelines_and_confirm_the_session_details
+    and_confirm_the_session_details
     then_i_see_the_session_page
 
     when_i_look_at_children_that_need_consent_responses
@@ -115,34 +115,17 @@ describe "End-to-end journey" do
     click_on "Continue"
   end
 
-  def and_enter_timelines_and_confirm_the_session_details
-    expect(page).to have_content("What’s the timeline for consent requests?")
-    within("fieldset", text: "Consent requests") do
-      fill_in "Day", with: "27"
-      fill_in "Month", with: "2"
-      fill_in "Year", with: "2024"
-    end
-
-    within("fieldset", text: "Reminders") do
-      choose "2 days after the first consent request"
-    end
-
-    within("fieldset", text: "Deadline for responses") do
-      choose "Allow responses until the day of the session"
-    end
-
-    click_on "Continue"
-
+  def and_confirm_the_session_details
     expect(page).to have_content("Check and confirm details")
     expect(page).to have_content("Pilot School")
     expect(page).to have_content("1 child")
 
     expect(page).to have_content(
-      "Consent requestsSend on Tuesday 27 February 2024"
+      "Consent requestsSend on Friday 9 February 2024"
     )
-    expect(page).to have_content("RemindersSend on Thursday 29 February 2024")
+    expect(page).to have_content("RemindersSend on Friday 16 February 2024")
     expect(page).to have_content(
-      "Deadline for responsesAllow responses until the day of the session"
+      "Deadline for responsesAllow responses until Thursday 29 February 2024"
     )
     expect(page).to have_content("DatesFriday 1 March 2024")
 

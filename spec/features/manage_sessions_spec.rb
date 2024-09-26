@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe "Manage sessions" do
-  around { |example| travel_to(Time.zone.local(2024, 2, 29)) { example.run } }
+  around { |example| travel_to(Time.zone.local(2024, 2, 18)) { example.run } }
 
   scenario "Adding a new session, closing consent" do
     given_my_team_is_running_an_hpv_vaccination_programme
@@ -22,9 +22,6 @@ describe "Manage sessions" do
     then_i_see_the_cohort_step
 
     when_i_choose_the_cohort
-    then_i_see_the_timeline_page
-
-    when_i_choose_the_timeline
     then_i_see_the_confirmation_page
 
     when_i_confirm
@@ -115,22 +112,6 @@ describe "Manage sessions" do
   end
 
   def when_i_choose_the_cohort
-    click_button "Continue"
-  end
-
-  def then_i_see_the_timeline_page
-    expect(page).to have_content("What’s the timeline for consent requests?")
-  end
-
-  def when_i_choose_the_timeline
-    fill_in "Day", with: "29", match: :first
-    fill_in "Month", with: "02", match: :first
-    fill_in "Year", with: "2024", match: :first
-
-    choose "2 days after the first consent request"
-
-    choose "Allow responses until the day of the session"
-
     click_button "Continue"
   end
 
