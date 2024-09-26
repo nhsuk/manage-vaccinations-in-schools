@@ -296,6 +296,10 @@ Devise.setup do |config|
         end
       end
 
+    OpenIDConnect.http_config do |http_client|
+      http_client.ssl_config.min_version = :TLS1_2
+    end
+
     config.omniauth(
       :openid_connect,
       {
