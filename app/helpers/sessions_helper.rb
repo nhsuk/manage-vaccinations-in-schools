@@ -18,4 +18,14 @@ module SessionsHelper
       part_of_sentence ? "unknown location" : "Unknown location"
     end
   end
+
+  def session_status_tag(session)
+    if session.unscheduled?
+      govuk_tag(text: "No sessions scheduled", colour: "purple")
+    elsif session.completed?
+      govuk_tag(text: "All sessions completed", colour: "green")
+    else
+      govuk_tag(text: "Session in progress")
+    end
+  end
 end
