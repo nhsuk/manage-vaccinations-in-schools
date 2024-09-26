@@ -91,7 +91,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :sessions, only: %i[create edit index show] do
+  resources :sessions, only: %i[new edit index show] do
     namespace :parent_interface, path: "/" do
       resources :consent_forms, path: :consents, only: [:create] do
         get "start", on: :collection

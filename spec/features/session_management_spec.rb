@@ -11,12 +11,7 @@ describe "Session management" do
 
     when_i_go_to_unscheduled_sessions
     then_i_see_the_school
-
-    when_i_go_to_todays_sessions_as_a_nurse
-    and_i_add_a_new_session
-    then_i_see_the_list_of_schools
-
-    when_i_choose_a_school
+    then_i_click_on_the_school
     then_i_see_the_date_step
 
     when_i_choose_the_date
@@ -86,17 +81,8 @@ describe "Session management" do
     expect(page).to have_content(/There are no (sessions|schools)/)
   end
 
-  def and_i_add_a_new_session
-    click_button "Add a new session"
-  end
-
-  def then_i_see_the_list_of_schools
-    expect(page).to have_content(@location.name)
-  end
-
-  def when_i_choose_a_school
-    select @location.name
-    click_button "Continue"
+  def then_i_click_on_the_school
+    click_link @location.name
   end
 
   def then_i_see_the_date_step

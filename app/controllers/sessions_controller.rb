@@ -2,19 +2,16 @@
 
 class SessionsController < ApplicationController
   before_action :set_session,
-                except: %i[index scheduled unscheduled completed create]
+                except: %i[new index scheduled unscheduled completed]
 
-  def create
-    skip_policy_scope
+  skip_after_action :verify_policy_scoped, only: :new
 
-    @session =
-      Session.create!(
-        academic_year: Date.current.academic_year,
-        team:,
-        programmes: team.programmes
-      )
+  def new
+    location = team.schools.find(params[:location_id])
 
-    redirect_to session_edit_path(@session, :location)
+    session = Session.find_or_create_by!(team:, academic_year:, location:)
+
+    redirect_to session_edit_path(session, Wicked::FIRST_STEP)
   end
 
   def index
@@ -30,8 +27,6 @@ class SessionsController < ApplicationController
   end
 
   def unscheduled
-    academic_year = Date.current.academic_year
-
     @sessions =
       policy_scope(Session).unscheduled +
         team
@@ -80,6 +75,10 @@ class SessionsController < ApplicationController
   private
 
   delegate :team, to: :current_user
+
+  def academic_year
+    Date.current.academic_year
+  end
 
   def set_session
     @session = policy_scope(Session).find(params[:id])

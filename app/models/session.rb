@@ -87,10 +87,6 @@ class Session < ApplicationRecord
 
   validate :programmes_part_of_team
 
-  on_wizard_step :location, exact: true do
-    validates :location_id, presence: true
-  end
-
   on_wizard_step :when, exact: true do
     validates :date, presence: true
   end
@@ -129,7 +125,7 @@ class Session < ApplicationRecord
   end
 
   def wizard_steps
-    %i[location when cohort timeline confirm]
+    %i[when cohort timeline confirm]
   end
 
   def days_between_consent_and_session
