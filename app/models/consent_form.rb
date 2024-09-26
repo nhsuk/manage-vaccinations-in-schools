@@ -72,6 +72,7 @@ class ConsentForm < ApplicationRecord
   belongs_to :session
 
   has_one :team, through: :programme
+  has_many :eligible_schools, through: :team, source: :schools
 
   enum :response, %w[given refused not_provided], prefix: "consent"
   enum :reason,
@@ -173,8 +174,16 @@ class ConsentForm < ApplicationRecord
               }
   end
 
-  on_wizard_step :confirm_school, exact: true do
+  on_wizard_step :confirm_school do
     validates :location_confirmed, inclusion: { in: [true, false] }
+  end
+
+  on_wizard_step :school do
+    validates :location_id,
+              presence: true,
+              inclusion: {
+                in: -> { _1.eligible_schools.pluck(:id) }
+              }
   end
 
   on_wizard_step :parent do
@@ -241,6 +250,7 @@ class ConsentForm < ApplicationRecord
       :name,
       :date_of_birth,
       :confirm_school,
+      (:school if choose_school?),
       :parent,
       (:contact_method if parent_phone.present?),
       :consent,
@@ -426,5 +436,9 @@ class ConsentForm < ApplicationRecord
     return unless health_answers.empty?
     vaccine = programme.vaccines.first
     self.health_answers = vaccine.health_questions.to_health_answers
+  end
+
+  def choose_school?
+    !location_confirmed && Flipper.enabled?(:consent_form_choose_school)
   end
 end
