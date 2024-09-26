@@ -55,18 +55,6 @@ describe Session do
     end
   end
 
-  describe "validations" do
-    context "when wizard_step is location" do
-      subject { build(:session, wizard_step:, programme:) }
-
-      let(:wizard_step) { :location }
-      let(:team) { create(:team) }
-      let(:programme) { create(:programme, team:) }
-
-      it { should validate_presence_of(:location_id).on(:update) }
-    end
-  end
-
   it "sets default programmes when creating a new session" do
     team = create(:team)
     location = create(:location, :primary)

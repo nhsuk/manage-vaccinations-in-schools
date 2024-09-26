@@ -43,7 +43,7 @@ describe "End-to-end journey" do
   def given_an_hpv_programme_is_underway
     @team = create(:team, :with_one_nurse)
     @programme = create(:programme, :hpv, team: @team)
-    @school = create(:location, :school, name: "Pilot School")
+    @school = create(:location, :secondary, team: @team, name: "Pilot School")
   end
 
   def and_i_am_a_nurse_signed_into_the_service
@@ -98,11 +98,8 @@ describe "End-to-end journey" do
 
   def when_i_start_creating_a_new_session_by_choosing_school_and_time
     click_on "School sessions"
-    click_on "Add a new session"
-
-    expect(page).to have_content("Which school is it at?")
-    select "Pilot School"
-    click_on "Continue"
+    click_on "Unscheduled"
+    click_on "Pilot School"
 
     expect(page).to have_content("When is the session?")
     fill_in "Day", with: "1"

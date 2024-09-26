@@ -1,9 +1,6 @@
 <% content_for :page_title, "#{t(".title")} – Active" %>
 
-<div class="app-heading-group">
-  <%= h1 t(".title"), size: "xl" %>
-  <%= govuk_button_to("Add a new session", sessions_path, secondary: true) %>
-</div>
+<%= h1 t(".title"), size: "xl" %>
 
 <%= render AppSecondaryNavigationComponent.new do |nav|
       nav.with_item(href: sessions_path, text: "Today", selected: true)
