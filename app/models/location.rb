@@ -54,6 +54,18 @@ class Location < ApplicationRecord
           )
         end
 
+  scope :has_no_session,
+        ->(academic_year) do
+          where.not(
+            Session
+              .where(academic_year:)
+              .where("location_id = locations.id")
+              .where("team_id = locations.team_id")
+              .arel
+              .exists
+          )
+        end
+
   validates :name, presence: true
   validates :url, url: true, allow_nil: true
 
