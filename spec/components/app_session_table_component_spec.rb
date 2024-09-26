@@ -13,8 +13,9 @@ describe AppSessionTableComponent do
         date: Date.new(2024, 10, 1),
         location: create(:location, :school, name: "Waterloo Road"),
         programme: create(:programme, :hpv)
-      )
-    ] + create_list(:session, 9)
+      ),
+      create(:session, location: nil)
+    ] + create_list(:session, 8)
   end
 
   before { create_list(:patient, 5, session: sessions.first) }
