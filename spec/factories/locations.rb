@@ -53,11 +53,13 @@ FactoryBot.define do
 
     trait :primary do
       school
+      name { Faker::Educator.primary_school }
       year_groups { (0..6).to_a }
     end
 
     trait :secondary do
       school
+      name { Faker::Educator.secondary_school }
       year_groups { (7..11).to_a }
     end
   end

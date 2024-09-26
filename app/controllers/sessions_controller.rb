@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
 class SessionsController < ApplicationController
-  before_action :set_session, except: %i[index scheduled completed create]
+  before_action :set_session,
+                except: %i[index scheduled unscheduled completed create]
 
   def create
     skip_policy_scope
-
-    team = current_user.team
 
     @session =
       Session.create!(
@@ -26,6 +25,19 @@ class SessionsController < ApplicationController
 
   def scheduled
     @sessions = policy_scope(Session).scheduled
+
+    render layout: "full"
+  end
+
+  def unscheduled
+    academic_year = Date.current.academic_year
+
+    @sessions =
+      policy_scope(Session).unscheduled +
+        team
+          .schools
+          .has_no_session(academic_year)
+          .map { |location| Session.new(team:, location:, academic_year:) }
 
     render layout: "full"
   end
@@ -66,6 +78,8 @@ class SessionsController < ApplicationController
   end
 
   private
+
+  delegate :team, to: :current_user
 
   def set_session
     @session = policy_scope(Session).find(params[:id])
