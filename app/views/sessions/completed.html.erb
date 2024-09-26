@@ -9,7 +9,7 @@
     end %>
 
 <% if @sessions.empty? %>
-  <p>There are no sessions completed.</p>
+  <p class="nhsuk-body"><%= t(".table_heading.zero") %></p>
 <% else %>
-  <%= render AppSessionTableComponent.new(@sessions, description: "completed session", show_dates: true, show_programmes: true) %>
+  <%= render AppSessionTableComponent.new(@sessions, heading: t(".table_heading", count: @sessions.count), show_dates: true, show_programmes: true) %>
 <% end %>

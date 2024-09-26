@@ -598,11 +598,35 @@ en:
   programmes:
     index:
       title: Programmes
+    sessions:
+      table_headings:
+        completed: All sessions completed
+        scheduled: Sessions scheduled
+        unscheduled: No sessions scheduled
   service:
     email: england.mavis@nhs.net
   sessions:
     index:
       title: School sessions
+      table_heading:
+        zero: There are no sessions scheduled for today.
+        one: 1 session today
+        other: "%{count} sessions today"
+    completed:
+      table_heading:
+        zero: There are no schools with all sessions completed.
+        one: 1 school with all sessions completed
+        other: "%{count} schools with all sessions completed"
+    scheduled:
+      table_heading:
+        zero: There are no schools with sessions scheduled.
+        one: 1 school with sessions scheduled
+        other: "%{count} schools with sessions scheduled"
+    unscheduled:
+      table_heading:
+        zero: There are no schools with no sessions scheduled.
+        one: 1 school with no sessions scheduled
+        other: "%{count} schools with no sessions scheduled"
   table:
     no_filtered_results: We couldn’t find any children that matched your filters.
     no_results: No results

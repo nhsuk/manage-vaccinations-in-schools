@@ -71,7 +71,7 @@ describe "Session management" do
   end
 
   def then_i_see_no_sessions
-    expect(page).to have_content("There are no sessions")
+    expect(page).to have_content(/There are no (sessions|schools)/)
   end
 
   def when_i_add_a_new_session

@@ -23,7 +23,7 @@ describe AppSessionTableComponent do
 
   context "with a custom description" do
     let(:component) do
-      described_class.new(sessions, description: "active sessions")
+      described_class.new(sessions, heading: "10 active sessions")
     end
 
     it { should have_content("10 active sessions") }
