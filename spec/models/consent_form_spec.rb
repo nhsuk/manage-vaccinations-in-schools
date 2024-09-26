@@ -83,7 +83,7 @@ describe ConsentForm do
     it { should validate_presence_of(:first_name).on(:update) }
     it { should validate_presence_of(:last_name).on(:update) }
     it { should validate_presence_of(:date_of_birth).on(:update) }
-    it { should_not validate_presence_of(:is_this_their_school).on(:update) }
+    it { should_not validate_presence_of(:location_confirmed).on(:update) }
     it { should validate_presence_of(:response).on(:update) }
 
     it { should_not validate_presence_of(:parent_phone) }
@@ -122,21 +122,6 @@ describe ConsentForm do
       #       .on(:update) }
     end
 
-    context "when wizard_step is :confirm_school" do
-      let(:wizard_step) { :confirm_school }
-
-      context "runs validations from previous steps" do
-        it { should validate_presence_of(:first_name).on(:update) }
-        it { should validate_presence_of(:date_of_birth).on(:update) }
-      end
-
-      it do
-        expect(subject).to validate_inclusion_of(
-          :is_this_their_school
-        ).in_array(%w[yes no]).on(:update)
-      end
-    end
-
     context "when wizard_step is :parent" do
       let(:wizard_step) { :parent }
 
@@ -144,8 +129,6 @@ describe ConsentForm do
         it { should validate_presence_of(:first_name).on(:update) }
         it { should validate_presence_of(:date_of_birth).on(:update) }
       end
-
-      it { should_not validate_presence_of(:is_this_their_school).on(:update) }
     end
 
     context "when wizard_step is :consent" do

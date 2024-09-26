@@ -1,0 +1,37 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: backlink_path,
+        name: "previous page",
+      ) %>
+<% end %>
+
+<%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= h1 "What school does your child go to?" %>
+
+  <p>
+    You can only use this service if your child&apos;s school is listed here.
+    If it&apos;s not, contact <%= mail_to @session.team.email %>.
+    If you&apos;ve moved recently, it&apos;s important to mention this.
+  </p>
+
+  <%= render DfE::Autocomplete::View.new(
+        f,
+        attribute_name: :location_id,
+        form_field: f.govuk_select(
+          :location_id,
+          options_for_select(
+            dfe_autocomplete_options(
+              @consent_form.eligible_schools.map {
+                OpenStruct.new(name: _1.name, value: _1.id)
+              }
+            ),
+            f.object.id,
+          ),
+          label: { text: "Select a school" },
+        ),
+      ) %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>
