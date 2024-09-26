@@ -39,11 +39,6 @@ class Team < ApplicationRecord
   validates :ods_code, presence: true, uniqueness: true
   validates :phone, presence: true, phone: true
 
-  def programme
-    # TODO: Update the app to properly support multiple programmes per team
-    programmes.first
-  end
-
   def weeks_between_first_session_and_consent_requests
     (days_between_first_session_and_consent_requests / 7).to_i
   end
