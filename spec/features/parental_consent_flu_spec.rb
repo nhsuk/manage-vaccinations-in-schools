@@ -23,7 +23,7 @@ describe "Parental consent" do
     @team = create(:team, :with_one_nurse)
     programme = create(:programme, :flu, team: @team)
     location = create(:location, :school, name: "Pilot School")
-    @session = create(:session, :planned, programme:, location:)
+    @session = create(:session, :scheduled, programme:, location:)
     @child = create(:patient, session: @session)
   end
 

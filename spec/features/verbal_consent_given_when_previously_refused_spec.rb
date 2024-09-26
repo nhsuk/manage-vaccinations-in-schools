@@ -17,7 +17,13 @@ feature "Verbal consent" do
     @programme = create(:programme, :hpv, team: @team)
     location = create(:location, :school, name: "Pilot School")
     @session =
-      create(:session, :planned, team: @team, programme: @programme, location:)
+      create(
+        :session,
+        :scheduled,
+        team: @team,
+        programme: @programme,
+        location:
+      )
   end
 
   def and_a_parent_has_refused_consent_for_their_child

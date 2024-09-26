@@ -34,11 +34,15 @@
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Dates</span>
 
-              <ul class="nhsuk-list">
-                <% session.dates.each do |date| %>
-                  <li><%= date.value.to_fs(:long) %></li>
-                <% end %>
-              </ul>
+              <% if (dates = session.dates).present? %>
+                <ul class="nhsuk-list">
+                  <% dates.each do |date| %>
+                    <li><%= date.value.to_fs(:long) %></li>
+                  <% end %>
+                </ul>
+              <% else %>
+                None scheduled
+              <% end %>
             <% end %>
           <% end %>
 

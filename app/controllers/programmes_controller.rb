@@ -13,8 +13,7 @@ class ProgrammesController < ApplicationController
   end
 
   def sessions
-    @today_sessions = @programme.sessions.today
-    @planned_sessions = @programme.sessions.planned
+    @scheduled_sessions = @programme.sessions.scheduled
     @completed_sessions = @programme.sessions.completed
   end
 

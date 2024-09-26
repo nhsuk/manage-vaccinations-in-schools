@@ -71,7 +71,7 @@ describe AppVaccinateFormComponent do
       end
 
       context "session is in the future" do
-        let(:session) { create(:session, :planned, programme:) }
+        let(:session) { create(:session, :scheduled, programme:) }
 
         it { should be_falsey }
       end
@@ -89,7 +89,7 @@ describe AppVaccinateFormComponent do
       end
 
       context "session is in the future" do
-        let(:session) { create(:session, :planned, programme:) }
+        let(:session) { create(:session, :scheduled, programme:) }
 
         it { should be_falsey }
       end

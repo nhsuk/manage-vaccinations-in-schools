@@ -12,7 +12,7 @@ describe ConsentRequestsJob, type: :job do
     it "enqueues ConsentRequestsSessionBatchJob for each active sessions" do
       active_session =
         create(:session, send_consent_requests_at: Time.zone.today, programme:)
-      _unplanned_session = create(:session, date: nil, programme:)
+      _unscheduled_session = create(:session, :unscheduled, programme:)
 
       described_class.perform_now
       expect(ConsentRequestsSessionBatchJob).to have_been_enqueued.once

@@ -30,7 +30,7 @@ describe "Session management" do
     when_i_go_to_todays_sessions_as_a_nurse
     then_i_see_no_sessions
 
-    when_i_go_to_planned_sessions_as_a_nurse
+    when_i_go_to_scheduled_sessions
     then_i_see_the_new_session
 
     when_the_parent_visits_the_consent_form
@@ -42,7 +42,10 @@ describe "Session management" do
     when_i_go_to_todays_sessions_as_a_nurse
     then_i_see_the_new_session
 
-    when_i_go_to_planned_sessions_as_a_nurse
+    when_i_go_to_scheduled_sessions
+    then_i_see_the_new_session
+
+    when_i_go_to_completed_sessions
     then_i_see_no_sessions
   end
 
@@ -59,11 +62,12 @@ describe "Session management" do
     click_link "School sessions", match: :first
   end
 
-  def when_i_go_to_planned_sessions_as_a_nurse
-    sign_in @team.users.first
-    visit "/dashboard"
-    click_link "School sessions", match: :first
-    click_link "Planned"
+  def when_i_go_to_scheduled_sessions
+    click_link "Scheduled"
+  end
+
+  def when_i_go_to_completed_sessions
+    click_link "Completed"
   end
 
   def then_i_see_no_sessions

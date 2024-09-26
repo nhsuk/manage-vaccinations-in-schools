@@ -11,8 +11,7 @@
 
 <%= render AppProgrammeNavigationComponent.new(@programme, active: :sessions) %>
 
-<% [[@today_sessions, "active session"],
-    [@planned_sessions, "planned session"],
+<% [[@scheduled_sessions, "scheduled session"],
     [@completed_sessions, "completed session"]]
      .select { |sessions, _| sessions.any? }.each do |sessions, description| %>
 

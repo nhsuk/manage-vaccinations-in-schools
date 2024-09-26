@@ -22,7 +22,7 @@ describe AppConsentComponent, type: :component do
 
   context "consent is not present and session is not in progress" do
     let(:patient_session) do
-      create(:patient_session, session: create(:session, :planned))
+      create(:patient_session, session: create(:session, :scheduled))
     end
 
     it { should_not have_css("button", text: "Assess Gillick competence") }
