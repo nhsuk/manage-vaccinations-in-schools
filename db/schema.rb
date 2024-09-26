@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_26_110216) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_26_135241) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -493,6 +493,11 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_26_110216) do
     t.string "ods_code", null: false
     t.uuid "reply_to_id"
     t.string "phone"
+    t.integer "days_between_first_session_and_consent_requests", default: 21, null: false
+    t.integer "days_between_consent_requests_and_first_reminders", default: 7, null: false
+    t.integer "days_between_subsequent_consent_reminders", default: 7, null: false
+    t.integer "maximum_number_of_consent_reminders", default: 4, null: false
+    t.boolean "send_updates_by_text", default: false, null: false
     t.index ["name"], name: "index_teams_on_name", unique: true
     t.index ["ods_code"], name: "index_teams_on_ods_code", unique: true
   end
