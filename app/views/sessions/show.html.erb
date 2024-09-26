@@ -8,10 +8,11 @@
 
 <%= h1 session_location(@session) %>
 
-<p class="nhsuk-body nhsuk-u-margin-bottom-7">
-  <%= govuk_tag(text: "In progress", colour: "blue", classes: "nhsuk-u-margin-right-3") %>
-  <%= link_to "View session", edit_session_path %>
-</p>
+<ul class="app-action-list">
+  <li class="app-action-list__item">
+    <%= session_status_tag(@session) %>
+  </li>
+</ul>
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-two-thirds">
