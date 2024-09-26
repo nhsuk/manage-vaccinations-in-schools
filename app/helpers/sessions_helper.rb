@@ -1,6 +1,16 @@
 # frozen_string_literal: true
 
 module SessionsHelper
+  def session_consent_period(session)
+    if session.close_consent_at.nil?
+      "Not provided"
+    elsif session.close_consent_at.past?
+      "Closed #{session.close_consent_at.to_fs(:short)}"
+    else
+      "Open until #{session.close_consent_at.to_fs(:short)}"
+    end
+  end
+
   def session_location(session, part_of_sentence: false)
     if (location = session.location).present?
       location.name
