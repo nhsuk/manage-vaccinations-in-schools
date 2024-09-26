@@ -1,13 +1,13 @@
-<% page_title = "Session details" %>
-
 <% content_for :before_main do %>
-  <%= render AppBreadcrumbComponent.new(items: [
-                                          { text: "Home", href: dashboard_path },
-                                          { text: t("sessions.index.title"), href: sessions_path },
-                                          { text: session_location(@session), href: session_path(@session) },
-                                        ]) %>
+  <%= render AppBacklinkComponent.new(
+        href: session_path(@session),
+        name: session_location(@session),
+      ) %>
 <% end %>
 
-<%= h1 page_title %>
+<%= h1 "Edit session" do %>
+  <span class="nhsuk-caption-l"><%= session_location(@session) %></span>
+  Edit session
+<% end %>
 
-<%= render AppSessionSummaryCardComponent.new(session: @session) %>
+<%= render AppSessionSummaryCardComponent.new(@session) %>

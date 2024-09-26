@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 describe AppSessionSummaryCardComponent do
-  subject { page }
+  subject(:rendered) { render_inline(component) }
 
-  before { render_inline(component) }
+  let(:component) { described_class.new(session) }
 
-  let(:component) { described_class.new(session:) }
   let(:date) { Date.new(2024, 1, 1) }
   let(:close_consent_at) { date }
   let(:session) { create(:session, date:, close_consent_at:) }

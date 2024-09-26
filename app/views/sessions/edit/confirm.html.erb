@@ -7,7 +7,7 @@
 
 <%= h1 "Check and confirm details" %>
 
-<%= render AppSessionSummaryCardComponent.new(session: @session) %>
+<%= render AppSessionSummaryCardComponent.new(@session) %>
 
 <% if @session.send_consent_requests_at.today? %>
   <%= govuk_inset_text do %>
