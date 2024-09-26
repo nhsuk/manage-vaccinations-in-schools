@@ -129,6 +129,11 @@ class Session < ApplicationRecord
     dates.empty?
   end
 
+  def completed?
+    return false if unscheduled?
+    Date.current > dates.map(&:value).max
+  end
+
   def wizard_steps
     %i[when cohort timeline confirm]
   end

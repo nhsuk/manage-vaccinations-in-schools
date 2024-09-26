@@ -103,4 +103,24 @@ describe Session do
       it { should be(false) }
     end
   end
+
+  describe "#completed?" do
+    subject(:scheduled?) { session.completed? }
+
+    let(:session) { create(:session, date: nil) }
+
+    it { should be(false) }
+
+    context "with a date before today" do
+      before { create(:session_date, session:, value: Date.yesterday) }
+
+      it { should be(true) }
+    end
+
+    context "with a date after today" do
+      before { create(:session_date, session:, value: Date.tomorrow) }
+
+      it { should be(false) }
+    end
+  end
 end
