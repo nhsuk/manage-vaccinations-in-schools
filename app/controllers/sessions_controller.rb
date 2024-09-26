@@ -11,7 +11,7 @@ class SessionsController < ApplicationController
 
     session = Session.find_or_create_by!(team:, academic_year:, location:)
 
-    redirect_to session_edit_path(session, Wicked::FIRST_STEP)
+    redirect_to session_path(session)
   end
 
   def index

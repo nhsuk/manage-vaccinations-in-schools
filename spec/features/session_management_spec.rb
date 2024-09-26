@@ -11,7 +11,11 @@ describe "Session management" do
 
     when_i_go_to_unscheduled_sessions
     then_i_see_the_school
-    then_i_click_on_the_school
+
+    when_i_click_on_the_school
+    then_i_see_the_school_session
+
+    when_i_click_on_schedule_sessions
     then_i_see_the_date_step
 
     when_i_choose_the_date
@@ -81,8 +85,18 @@ describe "Session management" do
     expect(page).to have_content(/There are no (sessions|schools)/)
   end
 
-  def then_i_click_on_the_school
+  def when_i_click_on_the_school
     click_link @location.name
+  end
+
+  def then_i_see_the_school_session
+    expect(page).to have_content(@location.name)
+    expect(page).to have_content("No sessions scheduled")
+    expect(page).to have_content("Schedule sessions")
+  end
+
+  def when_i_click_on_schedule_sessions
+    click_link "Schedule sessions"
   end
 
   def then_i_see_the_date_step
