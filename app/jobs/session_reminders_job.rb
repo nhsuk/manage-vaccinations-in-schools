@@ -26,11 +26,7 @@ class SessionRemindersJob < ApplicationJob
     PatientSession
       .includes(:consents)
       .joins(:session)
-      .merge(
-        Session.where(
-          SessionDate.for_session.where(value: Date.tomorrow).arel.exists
-        )
-      )
+      .merge(Session.has_date(Date.tomorrow))
       .reminder_not_sent
   end
 end

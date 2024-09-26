@@ -49,7 +49,11 @@ FactoryBot.define do
       date { Date.current }
     end
 
-    trait :planned do
+    trait :unscheduled do
+      date { nil }
+    end
+
+    trait :scheduled do
       date { Date.current + 1.week }
     end
 

@@ -23,7 +23,38 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 
-describe Session, type: :model do
+describe Session do
+  describe "scopes" do
+    let!(:today_session) { create(:session, :today) }
+    let!(:unscheduled_session) { create(:session, :unscheduled) }
+    let!(:completed_session) { create(:session, :completed) }
+    let!(:scheduled_session) { create(:session, :scheduled) }
+
+    describe "#today" do
+      subject(:scope) { described_class.today }
+
+      it { should contain_exactly(today_session) }
+    end
+
+    describe "#unscheduled" do
+      subject(:scope) { described_class.unscheduled }
+
+      it { should contain_exactly(unscheduled_session) }
+    end
+
+    describe "#scheduled" do
+      subject(:scope) { described_class.scheduled }
+
+      it { should contain_exactly(today_session, scheduled_session) }
+    end
+
+    describe "#completed" do
+      subject(:scope) { described_class.completed }
+
+      it { should contain_exactly(completed_session) }
+    end
+  end
+
   describe "validations" do
     context "when wizard_step is location" do
       subject { build(:session, wizard_step:, programme:) }
@@ -33,49 +64,6 @@ describe Session, type: :model do
       let(:programme) { create(:programme, team:) }
 
       it { should validate_presence_of(:location_id).on(:update) }
-    end
-  end
-
-  describe "scopes" do
-    let!(:active_session) { create(:session) }
-    let!(:today_session) { create(:session, :today) }
-    let!(:past_session) { create(:session, :completed) }
-    let!(:future_session) { create(:session, :planned) }
-    let!(:session_with_dates_encompassing_today) do
-      create(
-        :session,
-        dates: [
-          create(:session_date, value: Date.yesterday),
-          create(:session_date, value: Date.current + 1.week)
-        ]
-      )
-    end
-
-    describe "#today" do
-      subject(:scope) { described_class.today }
-
-      it do
-        expect(subject).to include(
-          today_session,
-          session_with_dates_encompassing_today
-        )
-      end
-
-      it { should_not include(past_session, future_session) }
-    end
-
-    describe "#completed" do
-      subject(:scope) { described_class.completed }
-
-      it { should include(past_session) }
-      it { should_not include(active_session, future_session) }
-    end
-
-    describe "#planned" do
-      subject(:scope) { described_class.planned }
-
-      it { should include(future_session) }
-      it { should_not include(active_session, past_session) }
     end
   end
 
@@ -95,7 +83,7 @@ describe Session, type: :model do
     end
 
     context "when the session is scheduled in the future" do
-      let(:session) { create(:session, :planned) }
+      let(:session) { create(:session, :scheduled) }
 
       it { should be_falsey }
     end

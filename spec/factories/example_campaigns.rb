@@ -140,7 +140,7 @@ FactoryBot.define do
 
         create(
           :session,
-          :planned,
+          :scheduled,
           team: programme.team,
           programme:,
           location:

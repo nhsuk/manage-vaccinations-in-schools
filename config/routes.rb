@@ -106,7 +106,7 @@ Rails.application.routes.draw do
     end
 
     collection do
-      get "planned"
+      get "scheduled"
       get "completed"
     end
 

@@ -48,22 +48,19 @@ class Session < ApplicationRecord
   has_many :vaccines, through: :programmes
   has_many :batches, through: :vaccines
 
-  scope :today,
-        -> do
-          where(
-            "? BETWEEN (?) AND (?)",
-            Date.current,
-            SessionDate.for_session.select("MIN(value)"),
-            SessionDate.for_session.select("MAX(value)")
-          )
-        end
+  scope :has_date,
+        ->(value) { where(SessionDate.for_session.where(value:).arel.exists) }
 
-  scope :planned,
+  scope :today, -> { has_date(Date.current) }
+
+  scope :unscheduled, -> { where.not(SessionDate.for_session.arel.exists) }
+
+  scope :scheduled,
         -> do
           where(
-            "? < (?)",
+            "? <= (?)",
             Date.current,
-            SessionDate.for_session.select("MIN(value)")
+            SessionDate.for_session.select("MAX(value)")
           )
         end
 
@@ -126,8 +123,7 @@ class Session < ApplicationRecord
   end
 
   def today?
-    Date.current >= dates.map(&:value).min &&
-      Date.current <= dates.map(&:value).max
+    dates.map(&:value).include?(Date.current)
   end
 
   def wizard_steps
