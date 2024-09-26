@@ -78,6 +78,8 @@ class Session < ApplicationRecord
   scope :send_consent_reminders_today,
         -> { where(send_consent_reminders_at: Time.zone.today) }
 
+  after_initialize :set_programmes
+
   after_initialize :set_timeline_attributes
   after_validation :set_timeline_timestamps
 
@@ -152,6 +154,14 @@ class Session < ApplicationRecord
     return if programmes.empty?
 
     errors.add(:programmes, :inclusion) if programmes.map(&:team).uniq != [team]
+  end
+
+  def set_programmes
+    return unless new_record?
+    return if location.nil? || team.nil?
+
+    self.programmes =
+      team.programmes.select { _1.year_groups.intersect?(location.year_groups) }
   end
 
   def set_timeline_attributes

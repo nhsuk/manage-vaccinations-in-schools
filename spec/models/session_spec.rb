@@ -67,6 +67,18 @@ describe Session do
     end
   end
 
+  it "sets default programmes when creating a new session" do
+    team = create(:team)
+    location = create(:location, :primary)
+    hpv_programme = create(:programme, :hpv, team:)
+    flu_programme = create(:programme, :flu, team:)
+
+    session = described_class.new(team:, location:)
+
+    expect(session.programmes).to include(flu_programme)
+    expect(session.programmes).not_to include(hpv_programme)
+  end
+
   describe "#today?" do
     subject { session.today? }
 
