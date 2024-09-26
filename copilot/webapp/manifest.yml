@@ -57,6 +57,16 @@ secrets:
   MAVIS__NHS_API__JWT_PRIVATE_KEY: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/MAVIS__NHS_API__JWT_PRIVATE_KEY
 
 environments:
+  accessibility:
+    http:
+      alias:
+        - "accessibility.mavistesting.com"
+    deployments:
+      rolling: recreate # Disables blue-green deployment for speed
+    variables:
+      RAILS_ENV: staging
+      MAVIS__HOST: "accessibility.mavistesting.com"
+      MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "accessibility.mavistesting.com"
   test:
     count: 2
     http:
