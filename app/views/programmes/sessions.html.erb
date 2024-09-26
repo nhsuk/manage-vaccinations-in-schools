@@ -11,9 +11,9 @@
 
 <%= render AppProgrammeNavigationComponent.new(@programme, active: :sessions) %>
 
-<% [[@scheduled_sessions, "scheduled session"],
-    [@completed_sessions, "completed session"]]
-     .select { |sessions, _| sessions.any? }.each do |sessions, description| %>
+<% [[@scheduled_sessions, "Sessions scheduled"],
+    [@completed_sessions, "All sessions completed"]]
+     .select { |sessions, _| sessions.any? }.each do |sessions, heading| %>
 
-  <%= render AppSessionTableComponent.new(sessions, description:, show_dates: true, show_consent_period: true) %>
+  <%= render AppSessionTableComponent.new(sessions, heading:, show_dates: true, show_consent_period: true) %>
 <% end %>

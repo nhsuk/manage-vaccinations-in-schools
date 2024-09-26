@@ -12,7 +12,7 @@
     end %>
 
 <% if @sessions.empty? %>
-  <p>There are no sessions scheduled for today.</p>
+  <p class="nhsuk-body"><%= t(".table_heading.zero") %></p>
 <% else %>
-  <%= render AppSessionTableComponent.new(@sessions, description: "active session", show_programmes: true) %>
+  <%= render AppSessionTableComponent.new(@sessions, heading: t(".table_heading", count: @sessions.count), show_programmes: true) %>
 <% end %>

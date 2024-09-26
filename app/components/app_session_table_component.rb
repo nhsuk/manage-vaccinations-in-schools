@@ -3,7 +3,7 @@
 class AppSessionTableComponent < ViewComponent::Base
   def initialize(
     sessions,
-    description: "sessions",
+    heading: nil,
     show_dates: false,
     show_programmes: false,
     show_consent_period: false
@@ -11,7 +11,7 @@ class AppSessionTableComponent < ViewComponent::Base
     super
 
     @sessions = sessions
-    @description = description
+    @heading = heading || pluralize(sessions.count, "session")
     @show_dates = show_dates
     @show_programmes = show_programmes
     @show_consent_period = show_consent_period
@@ -19,9 +19,9 @@ class AppSessionTableComponent < ViewComponent::Base
 
   private
 
-  attr_reader :sessions, :show_dates, :show_programmes, :show_consent_period
-
-  def heading
-    pluralize(sessions.count, @description)
-  end
+  attr_reader :sessions,
+              :heading,
+              :show_dates,
+              :show_programmes,
+              :show_consent_period
 end
