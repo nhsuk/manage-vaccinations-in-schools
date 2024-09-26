@@ -16,7 +16,8 @@
 #
 # Indexes
 #
-#  index_sessions_on_team_id  (team_id)
+#  index_sessions_on_team_id                                    (team_id)
+#  index_sessions_on_team_id_and_location_id_and_academic_year  (team_id,location_id,academic_year) UNIQUE
 #
 # Foreign Keys
 #

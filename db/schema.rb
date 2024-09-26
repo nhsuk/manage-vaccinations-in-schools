@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_25_153539) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_26_104802) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -477,6 +477,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_25_153539) do
     t.date "close_consent_at"
     t.bigint "team_id", null: false
     t.integer "academic_year", null: false
+    t.index ["team_id", "location_id", "academic_year"], name: "index_sessions_on_team_id_and_location_id_and_academic_year", unique: true
     t.index ["team_id"], name: "index_sessions_on_team_id"
   end
 
