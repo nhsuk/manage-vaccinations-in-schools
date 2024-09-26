@@ -33,7 +33,7 @@
 describe Location do
   describe "scopes" do
     describe "#for_programme" do
-      subject(:for_programme) { described_class.for_programme(programme) }
+      subject(:scope) { described_class.for_programme(programme) }
 
       let(:team) { create(:team) }
       let(:programme) { create(:programme, :hpv, team:) } # 8-11
@@ -44,6 +44,26 @@ describe Location do
       it { should include(matching) }
       it { should_not include(mismatch_year_group) }
       it { should_not include(mismatch_team) }
+    end
+
+    describe "#has_no_session" do
+      subject(:scope) { described_class.has_no_session(academic_year) }
+
+      let(:academic_year) { 2024 }
+
+      let(:location_with_session) { create(:session).location }
+      let(:location_without_session) { create(:location, :school) }
+      let(:location_with_session_in_different_year) do
+        create(
+          :session,
+          academic_year: 2023,
+          date: Date.new(2023, 9, 1)
+        ).location
+      end
+
+      it { should include(location_without_session) }
+      it { should_not include(location_with_session) }
+      it { should include(location_with_session_in_different_year) }
     end
   end
 
