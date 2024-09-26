@@ -17,6 +17,7 @@
 #  gp_response                         :integer
 #  health_answers                      :jsonb            not null
 #  last_name                           :text
+#  location_confirmed                  :boolean
 #  parent_contact_method_other_details :string
 #  parent_contact_method_type          :string
 #  parent_email                        :string
@@ -33,18 +34,21 @@
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
 #  consent_id                          :bigint
+#  location_id                         :bigint
 #  programme_id                        :bigint           not null
 #  session_id                          :bigint           not null
 #
 # Indexes
 #
 #  index_consent_forms_on_consent_id    (consent_id)
+#  index_consent_forms_on_location_id   (location_id)
 #  index_consent_forms_on_programme_id  (programme_id)
 #  index_consent_forms_on_session_id    (session_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (consent_id => consents.id)
+#  fk_rails_...  (location_id => locations.id)
 #  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (session_id => sessions.id)
 #
@@ -59,9 +63,7 @@ class ConsentForm < ApplicationRecord
   scope :unmatched, -> { where(consent_id: nil) }
   scope :recorded, -> { where.not(recorded_at: nil) }
 
-  attr_accessor :health_question_number,
-                :is_this_their_school,
-                :parental_responsibility
+  attr_accessor :health_question_number, :parental_responsibility
 
   audited
 
@@ -172,7 +174,7 @@ class ConsentForm < ApplicationRecord
   end
 
   on_wizard_step :confirm_school, exact: true do
-    validates :is_this_their_school, inclusion: { in: %w[yes no] }
+    validates :location_confirmed, inclusion: { in: [true, false] }
   end
 
   on_wizard_step :parent do
