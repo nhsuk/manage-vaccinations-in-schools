@@ -218,6 +218,8 @@ Rails.application.routes.draw do
     get "/:tab", to: "errors#not_found", as: "section_tab"
   end
 
+  get "/team/settings", to: "teams#settings"
+
   resources :vaccines, only: %i[index show] do
     resources :batches, only: %i[create edit new update] do
       post "make-default", on: :member, as: :make_default

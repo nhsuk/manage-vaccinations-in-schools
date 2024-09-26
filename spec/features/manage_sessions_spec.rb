@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Session management" do
+describe "Manage sessions" do
   around { |example| travel_to(Time.zone.local(2024, 2, 29)) { example.run } }
 
   scenario "Adding a new session, closing consent" do

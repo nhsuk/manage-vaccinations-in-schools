@@ -43,4 +43,12 @@ class Team < ApplicationRecord
     # TODO: Update the app to properly support multiple programmes per team
     programmes.first
   end
+
+  def weeks_between_first_session_and_consent_requests
+    (days_between_first_session_and_consent_requests / 7).to_i
+  end
+
+  def weeks_between_first_session_and_consent_requests=(value)
+    self.days_between_first_session_and_consent_requests = value * 7
+  end
 end
