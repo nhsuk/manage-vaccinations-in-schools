@@ -8,7 +8,7 @@ class SessionPolicy
     end
 
     def resolve
-      @scope.where(team_id: @user.teams.ids)
+      @scope.where(team: @user.teams)
     end
   end
 end

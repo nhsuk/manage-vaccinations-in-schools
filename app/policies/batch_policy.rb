@@ -8,9 +8,9 @@ class BatchPolicy
     end
 
     def resolve
-      @scope.joins(vaccine: { programmes: :team }).where(
-        teams: {
-          id: @user.teams.ids
+      @scope.joins(vaccine: :programmes).where(
+        programmes: {
+          team: @user.teams
         }
       )
     end
