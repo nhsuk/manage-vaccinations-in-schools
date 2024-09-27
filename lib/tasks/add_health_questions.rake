@@ -6,27 +6,23 @@ desc <<-DESC
   Add health questions to a vaccine.
 
   Usage:
-    rake add_health_questions[team_id,vaccine_id,replace]
+    rake add_health_questions[programme,vaccine_id,replace]
 
-  The vaccine must belong to the team given, this is a safety check.
+  The vaccine must belong to the programme given, this is a safety check.
 
   Use "replace" for the replace arg to replace the existing health questions.
 
   Example:
 
-    rake add_health_questions[1,1,replace]
+    rake add_health_questions[hpv,1,replace]
 DESC
 task :add_health_questions,
-     %i[team_id vaccine_id replace] => :environment do |_task, args|
-  team = Team.find(args[:team_id])
-  vaccine =
-    team
-      .programmes
-      .flat_map(&:vaccines)
-      .find { |v| v.id == args[:vaccine_id].to_i }
-  raise "Vaccine not found for the given team" if vaccine.nil?
+     %i[programme vaccine_id replace] => :environment do |_task, args|
+  programme = Programme.find_by!(type: args[:programme])
+  vaccine = programme.vaccines.find_by(id: args[:vaccine_id])
+  raise "Vaccine not found for the given programme" if vaccine.nil?
   existing_health_questions = vaccine.health_questions.in_order
-  puts "Existing health questions for #{team.name}'s #{vaccine.type} vaccine #{vaccine.brand}"
+  puts "Existing health questions for #{programme.name}'s vaccine #{vaccine.brand}"
   if existing_health_questions.any?
     existing_health_questions.each do |health_question|
       puts Rainbow("  #{health_question.title}").yellow
@@ -65,7 +61,7 @@ task :add_health_questions,
     next
   end
 
-  puts "\nThese will be the health questions for #{team.name}'s #{vaccine.type} vaccine #{vaccine.brand}:"
+  puts "\nThese will be the health questions for #{programme.name}'s #{vaccine.type} vaccine #{vaccine.brand}:"
   unless replace
     existing_health_questions.each do |health_question|
       puts Rainbow("  [old] #{health_question.title}").black
