@@ -31,7 +31,6 @@
 class CohortImport < ApplicationRecord
   include CSVImportable
 
-  belongs_to :team
   attr_accessor :programme
 
   has_and_belongs_to_many :parent_relationships

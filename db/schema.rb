@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_26_135241) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_27_085819) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -315,7 +315,9 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_26_135241) do
     t.text "csv_filename", null: false
     t.datetime "csv_removed_at"
     t.integer "changed_record_count"
+    t.bigint "team_id", null: false
     t.index ["programme_id"], name: "index_immunisation_imports_on_programme_id"
+    t.index ["team_id"], name: "index_immunisation_imports_on_team_id"
     t.index ["uploaded_by_user_id"], name: "index_immunisation_imports_on_uploaded_by_user_id"
   end
 
@@ -622,6 +624,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_26_135241) do
   add_foreign_key "health_questions", "health_questions", column: "next_question_id"
   add_foreign_key "health_questions", "vaccines"
   add_foreign_key "immunisation_imports", "programmes"
+  add_foreign_key "immunisation_imports", "teams"
   add_foreign_key "immunisation_imports", "users", column: "uploaded_by_user_id"
   add_foreign_key "immunisation_imports_locations", "immunisation_imports"
   add_foreign_key "immunisation_imports_locations", "locations"
