@@ -7,6 +7,8 @@ FactoryBot.define do
     transient do
       user { create(:user) }
 
+      team { user.team || create(:team, users: [user]) }
+
       # this name and URN matches the data in spec/fixtures/cohort_import/valid_cohort.csv
       location do
         create(:location, :school, name: "Surrey Primary", urn: "123456", team:)
@@ -20,9 +22,9 @@ FactoryBot.define do
       batch_count { 4 }
     end
 
-    team { user.team || create(:team, users: [user]) }
+    after(:create) do |programme, context|
+      create(:team_programme, programme:, team: context.team)
 
-    after(:create) do |_programme, context|
       create_list(:location, 20, :school, team: context.team)
     end
 

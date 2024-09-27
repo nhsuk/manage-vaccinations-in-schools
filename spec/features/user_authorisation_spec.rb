@@ -18,12 +18,12 @@ describe "User authorisation" do
   end
 
   def given_an_hpv_programme_is_underway_with_two_teams
-    @team = create(:team, :with_one_nurse)
-    @other_team = create(:team, :with_one_nurse)
     vaccine = create(:vaccine, :hpv)
-    programme = create(:programme, :hpv, team: @team, vaccines: [vaccine])
-    other_programme =
-      create(:programme, :hpv, team: @other_team, vaccines: [vaccine])
+    programme = create(:programme, :hpv, vaccines: [vaccine])
+
+    @team = create(:team, :with_one_nurse, programmes: [programme])
+    @other_team = create(:team, :with_one_nurse, programmes: [programme])
+
     location = create(:location, :school, name: "Pilot School")
     other_location = create(:location, :school, name: "Other School")
     @session = create(:session, :scheduled, team: @team, programme:, location:)
@@ -32,7 +32,7 @@ describe "User authorisation" do
         :session,
         :scheduled,
         team: @other_team,
-        programme: other_programme,
+        programme:,
         location: other_location
       )
     @child = create(:patient, session: @session)

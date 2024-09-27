@@ -13,7 +13,7 @@ describe PatientSessionPolicy do
       session: create(:session, team:, programme:)
     )
   end
-  let(:another_teams_patient_session) { create(:patient_session) }
+  let(:another_teams_patient_session) { create(:patient_session, programme:) }
 
   describe "Scope#resolve" do
     subject { PatientSessionPolicy::Scope.new(user, PatientSession).resolve }

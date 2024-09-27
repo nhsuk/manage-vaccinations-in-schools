@@ -15,6 +15,8 @@ namespace :teams do
          :environment do |_task, args|
     include TaskHelpers
 
+    Rake::Task["programmes:create"].invoke("hpv")
+
     raise "Ensure vaccines exist before creating a team." unless Vaccine.exists?
 
     if args.to_a.empty? && $stdin.isatty && $stdout.isatty
@@ -46,9 +48,9 @@ namespace :teams do
           reply_to_id:
         )
 
-      puts "New #{team.name} team with ID #{team.id} created."
+      TeamProgramme.create!(team:, programme: Programme.find_by!(type: "hpv"))
 
-      Rake::Task["programmes:create"].invoke(team.id, "hpv")
+      puts "New #{team.name} team with ID #{team.id} created."
     end
   end
 end

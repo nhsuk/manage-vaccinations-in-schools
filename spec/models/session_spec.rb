@@ -26,10 +26,12 @@
 
 describe Session do
   describe "scopes" do
-    let!(:today_session) { create(:session, :today) }
-    let!(:unscheduled_session) { create(:session, :unscheduled) }
-    let!(:completed_session) { create(:session, :completed) }
-    let!(:scheduled_session) { create(:session, :scheduled) }
+    let(:programme) { create(:programme) }
+
+    let!(:today_session) { create(:session, :today, programme:) }
+    let!(:unscheduled_session) { create(:session, :unscheduled, programme:) }
+    let!(:completed_session) { create(:session, :completed, programme:) }
+    let!(:scheduled_session) { create(:session, :scheduled, programme:) }
 
     describe "#today" do
       subject(:scope) { described_class.today }

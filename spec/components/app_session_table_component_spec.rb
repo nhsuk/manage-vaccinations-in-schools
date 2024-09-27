@@ -5,6 +5,7 @@ describe AppSessionTableComponent do
 
   let(:component) { described_class.new(sessions) }
 
+  let(:programme) { create(:programme, :hpv) }
   let(:sessions) do
     [
       create(
@@ -12,10 +13,10 @@ describe AppSessionTableComponent do
         academic_year: 2024,
         date: Date.new(2024, 10, 1),
         location: create(:location, :school, name: "Waterloo Road"),
-        programme: create(:programme, :hpv)
+        programme:
       ),
-      create(:session, location: nil)
-    ] + create_list(:session, 8)
+      create(:session, programme:, location: nil)
+    ] + create_list(:session, 8, programme:)
   end
 
   before { create_list(:patient, 5, session: sessions.first) }

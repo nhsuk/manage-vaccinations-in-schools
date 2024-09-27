@@ -22,8 +22,8 @@ describe "Triage" do
   end
 
   def given_a_programme_with_a_running_session
-    @team = create(:team, :with_one_nurse)
-    programme = create(:programme, :hpv, team: @team)
+    programme = create(:programme, :hpv)
+    @team = create(:team, :with_one_nurse, programmes: [programme])
     @school = create(:location, :school)
     session =
       create(

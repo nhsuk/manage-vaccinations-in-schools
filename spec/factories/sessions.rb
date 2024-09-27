@@ -32,7 +32,7 @@ FactoryBot.define do
 
     academic_year { (date || Date.current).academic_year }
     programmes { [programme] }
-    team { programmes.first&.team || association(:team) }
+    team { association(:team, programmes:) }
     location { association :location, :school, team: }
 
     send_consent_requests_at { date - 14.days if date }

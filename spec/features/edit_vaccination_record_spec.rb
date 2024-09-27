@@ -28,9 +28,10 @@ describe "Edit vaccination record" do
   end
 
   def and_an_hpv_programme_is_underway
-    @programme = create(:programme, :hpv, team: @team)
+    @programme = create(:programme, :hpv)
+    create(:team_programme, team: @team, programme: @programme)
     location = create(:location, :school)
-    @session = create(:session, programme: @programme, location:)
+    @session = create(:session, team: @team, programme: @programme, location:)
   end
 
   def and_a_vaccination_record_exists

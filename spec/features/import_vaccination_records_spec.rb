@@ -59,7 +59,8 @@ describe "Immunisation imports" do
   end
 
   def and_an_hpv_programme_is_underway
-    programme = create(:programme, :hpv_all_vaccines, team: @team)
+    programme = create(:programme, :hpv_all_vaccines)
+    create(:team_programme, team: @team, programme:)
     location = create(:location, :school)
     @session = create(:session, programme:, location:)
   end

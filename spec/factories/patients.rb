@@ -42,7 +42,9 @@ FactoryBot.define do
     transient do
       session { nil }
       programme { session&.programmes&.first }
-      team { programme&.team || association(:team) }
+      team do
+        session&.team || association(:team, programmes: [programme].compact)
+      end
 
       parents { [create(:parent, :recorded, last_name:)] }
     end

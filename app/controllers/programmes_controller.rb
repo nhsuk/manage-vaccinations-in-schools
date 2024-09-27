@@ -6,7 +6,7 @@ class ProgrammesController < ApplicationController
   layout "full"
 
   def index
-    @programmes = programmes
+    @programmes = policy_scope(Programme)
   end
 
   def show
@@ -32,11 +32,7 @@ class ProgrammesController < ApplicationController
 
   private
 
-  def programmes
-    @programmes ||= policy_scope(Programme)
-  end
-
   def set_programme
-    @programme = programmes.find(params[:id])
+    @programme = policy_scope(Programme).find(params[:id])
   end
 end

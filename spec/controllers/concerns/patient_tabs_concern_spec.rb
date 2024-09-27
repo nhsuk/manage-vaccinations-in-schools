@@ -197,12 +197,12 @@ describe PatientTabsConcern do
   end
 
   describe "#count_patient_sessions" do
-    let(:session) { create(:session) }
+    let(:session) { create(:session, programme:) }
     let(:no_consent_patient_sessions) do
-      create_list(:patient_session, 2, session:)
+      create_list(:patient_session, 2, programme:, session:)
     end
     let(:refuser_patient_session) do
-      create(:patient_session, :consent_refused, session:)
+      create(:patient_session, :consent_refused, programme:, session:)
     end
 
     it "counts patient session groups" do

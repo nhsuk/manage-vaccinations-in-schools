@@ -2,12 +2,11 @@
 
 ## Programmes
 
-### `programmes:create[team_id,type]`
+### `programmes:create[type]`
 
-- `team_id` - The ID of the team.
 - `type` - Either `flu` or `hpv`.
 
-This creates a new programme attached to a particular team.
+This creates a new programme.
 
 ## Schools
 

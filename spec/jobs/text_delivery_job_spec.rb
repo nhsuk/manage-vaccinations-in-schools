@@ -34,7 +34,8 @@ describe TextDeliveryJob do
     end
 
     let(:template_name) { GOVUK_NOTIFY_TEXT_TEMPLATES.keys.first }
-    let(:session) { create(:session) }
+    let(:programme) { create(:programme) }
+    let(:session) { create(:session, programme:) }
     let(:parent) { create(:parent, phone: "01234567890") }
     let(:consent) { nil }
     let(:consent_form) { nil }
@@ -81,7 +82,9 @@ describe TextDeliveryJob do
     end
 
     context "with a consent form" do
-      let(:consent_form) { create(:consent_form, parent_phone: "01234567890") }
+      let(:consent_form) do
+        create(:consent_form, programme:, session:, parent_phone: "01234567890")
+      end
       let(:parent) { nil }
       let(:patient) { nil }
 
@@ -95,7 +98,12 @@ describe TextDeliveryJob do
 
       context "when the parent doesn't want to receive updates" do
         let(:consent_form) do
-          create(:consent_form, parent_phone_receive_updates: false)
+          create(
+            :consent_form,
+            programme:,
+            session:,
+            parent_phone_receive_updates: false
+          )
         end
 
         it "doesn't send a text" do
@@ -104,7 +112,9 @@ describe TextDeliveryJob do
       end
 
       context "when the parent doesn't have a phone number" do
-        let(:consent_form) { create(:consent_form, parent_phone: nil) }
+        let(:consent_form) do
+          create(:consent_form, programme:, session:, parent_phone: nil)
+        end
 
         it "doesn't send a text" do
           expect(notifications_client).not_to receive(:send_sms)
