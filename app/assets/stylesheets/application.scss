@@ -33,6 +33,7 @@ $color_app-dark-orange: darken(
 
 // Application components
 @import "action_list";
+@import "autocomplete";
 @import "button";
 @import "button-group";
 @import "card";
