@@ -3,11 +3,11 @@
 describe DPSExportRow do
   subject(:row) { described_class.new(vaccination_record) }
 
-  let(:team) { create(:team) }
-  let(:vaccine) { create(:vaccine, :gardasil_9, dose: 0.5) }
   let(:programme) do
-    create(:programme, type: vaccine.type, team:, vaccines: [vaccine])
+    create(:programme, type: vaccine.type, vaccines: [vaccine])
   end
+  let(:team) { create(:team, programmes: [programme]) }
+  let(:vaccine) { create(:vaccine, :gardasil_9, dose: 0.5) }
   let(:location) { create(:location, :school) }
   let(:school) { create(:location, :school) }
   let(:patient) do
@@ -256,7 +256,7 @@ describe DPSExportRow do
 
       context "when the session doesn't have a location" do
         let(:location) { nil }
-        let(:team) { create(:team, ods_code: "ABC") }
+        let(:team) { create(:team, ods_code: "ABC", programmes: [programme]) }
 
         it { should eq("ABC") }
       end

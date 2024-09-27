@@ -47,6 +47,8 @@ class User < ApplicationRecord
 
   has_and_belongs_to_many :teams
 
+  has_many :programmes, through: :teams
+
   encrypts :email, deterministic: true
   encrypts :family_name, :given_name
 

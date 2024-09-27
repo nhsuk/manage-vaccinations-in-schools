@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 describe PatientSessionPolicy do
-  let(:team) { create(:team) }
+  let(:programme) { create(:programme) }
+
+  let(:team) { create(:team, programmes: [programme]) }
   let(:user) { create(:user, teams: [team]) }
 
-  let(:programme) { create(:programme, team:) }
   let(:patient_session) do
     create(
       :patient_session,

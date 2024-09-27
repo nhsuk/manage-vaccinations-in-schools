@@ -13,21 +13,24 @@ describe GovukNotifyPersonalisation do
     )
   end
 
+  let(:programme) { create(:programme, :flu) }
   let(:team) do
     create(
       :team,
       name: "Team",
       email: "team@example.com",
-      phone: "01234 567890"
+      phone: "01234 567890",
+      programmes: [programme]
     )
   end
-  let(:programme) { create(:programme, :flu, team:) }
+
   let(:patient) { create(:patient, first_name: "John", last_name: "Smith") }
   let(:location) { create(:location, :school, name: "Hogwarts") }
   let(:session) do
     create(
       :session,
       location:,
+      team:,
       programme:,
       close_consent_at: Date.new(2024, 1, 1),
       date: Date.new(2024, 1, 1)
