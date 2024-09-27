@@ -101,6 +101,10 @@ class Session < ApplicationRecord
     Date.current > dates.map(&:value).max
   end
 
+  def year_groups
+    programmes.flat_map(&:year_groups).uniq.sort
+  end
+
   def set_consent_dates
     if dates.empty?
       self.send_consent_requests_at = nil
