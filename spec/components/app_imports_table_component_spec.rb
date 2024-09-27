@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-describe AppImportsTableComponent, type: :component do
+describe AppImportsTableComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(programme) }
+  let(:component) { described_class.new(team:, programme:) }
 
+  let(:team) { create(:team) }
   let(:programme) { create(:programme) }
-  let(:team) { programme.team }
 
   before do
     cohort_imports =
@@ -30,11 +30,12 @@ describe AppImportsTableComponent, type: :component do
         create(
           :immunisation_import,
           :recorded,
+          team:,
           programme:,
           created_at: Date.new(2020, 1, 1),
           uploaded_by: create(:user, given_name: "John", family_name: "Smith")
         )
-      ] + create_list(:immunisation_import, 4, :recorded, programme:)
+      ] + create_list(:immunisation_import, 4, :recorded, team:, programme:)
 
     immunisation_imports.each do |immunisation_import|
       create(

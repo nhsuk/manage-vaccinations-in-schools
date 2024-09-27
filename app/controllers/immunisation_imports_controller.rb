@@ -60,14 +60,14 @@ class ImmunisationImportsController < ApplicationController
   private
 
   def set_programme
-    @programme =
-      policy_scope(Programme).includes(:immunisation_imports).find(
-        params[:programme_id]
-      )
+    @programme = policy_scope(Programme).find(params[:programme_id])
   end
 
   def set_immunisation_import
-    @immunisation_import = @programme.immunisation_imports.find(params[:id])
+    @immunisation_import =
+      policy_scope(ImmunisationImport).where(programme: @programme).find(
+        params[:id]
+      )
   end
 
   def set_vaccination_records

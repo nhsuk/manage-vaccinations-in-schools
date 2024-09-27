@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class AppImportsTableComponent < ViewComponent::Base
-  def initialize(programme)
+  def initialize(team:, programme:)
     super
 
+    @team = team
     @programme = programme
   end
 
@@ -13,8 +14,7 @@ class AppImportsTableComponent < ViewComponent::Base
 
   private
 
-  attr_reader :programme
-  delegate :team, to: :programme
+  attr_reader :team, :programme
 
   def imports
     @imports ||=
@@ -49,7 +49,7 @@ class AppImportsTableComponent < ViewComponent::Base
         "immunisation_imports.*",
         "COUNT(vaccination_records.id) AS record_count"
       )
-      .where(programme:)
+      .where(team:, programme:)
       .left_outer_joins(:vaccination_records)
       .includes(:uploaded_by)
       .merge(VaccinationRecord.recorded)
