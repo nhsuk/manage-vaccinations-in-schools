@@ -17,23 +17,10 @@ describe ConsentFormMailerConcern do
       ).with(params: { consent_form: }, args: [])
     end
 
-    it "sends a conset given text" do
+    it "sends a consent given text" do
       expect { send_consent_form_confirmation }.to have_enqueued_text(
         :consent_given
       ).with(consent_form:)
-    end
-
-    it "sends a feedback email" do
-      today = Time.zone.local(2024, 1, 1)
-
-      expect {
-        travel_to(today) { send_consent_form_confirmation }
-      }.to have_enqueued_mail(ConsentMailer, :give_feedback).with(
-        params: {
-          consent_form:
-        },
-        args: []
-      ).at(today + 1.hour)
     end
 
     context "when user agrees to be contacted about injections" do

@@ -142,11 +142,6 @@ describe "Parental consent" do
     )
 
     expect_email_to("jane@example.com", :parental_consent_confirmation)
-    expect_email_to(
-      "jane@example.com",
-      :parental_consent_give_feedback,
-      :second
-    )
   end
 
   def and_i_get_a_confirmation_text

@@ -17,7 +17,5 @@ module ConsentFormMailerConcern
       mailer.confirmation.deliver_later
       TextDeliveryJob.perform_later(:consent_given, consent_form:)
     end
-
-    mailer.give_feedback.deliver_later(wait: 1.hour)
   end
 end
