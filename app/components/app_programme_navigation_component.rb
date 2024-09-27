@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 class AppProgrammeNavigationComponent < ViewComponent::Base
-  attr_reader :programme, :active
+  attr_reader :programme, :team, :active
 
-  def initialize(programme, active:)
+  def initialize(programme, team:, active:)
     super
 
     @programme = programme
+    @team = team
     @active = active
   end
 
@@ -53,7 +54,14 @@ class AppProgrammeNavigationComponent < ViewComponent::Base
   private
 
   def import_issues_text
-    count = programme.import_issues.count
+    count =
+      team
+        .vaccination_records
+        .where(programme:)
+        .with_pending_changes
+        .distinct
+        .count
+
     base_text = I18n.t("import_issues.index.title")
 
     safe_join([base_text, " ", render(AppCountComponent.new(count:))])

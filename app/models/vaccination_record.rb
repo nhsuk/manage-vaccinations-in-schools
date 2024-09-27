@@ -88,6 +88,13 @@ class VaccinationRecord < ApplicationRecord
   scope :administered, -> { where.not(administered_at: nil) }
   scope :unexported, -> { where.missing(:dps_exports) }
 
+  scope :with_pending_changes,
+        -> do
+          joins(:patient).where(
+            "patients.pending_changes != '{}' OR vaccination_records.pending_changes != '{}'"
+          )
+        end
+
   enum :delivery_method,
        %w[intramuscular subcutaneous nasal_spray],
        prefix: true

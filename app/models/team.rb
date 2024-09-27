@@ -33,6 +33,9 @@ class Team < ApplicationRecord
   has_many :schools, -> { school }, class_name: "Location"
   has_many :sessions
 
+  has_many :patient_sessions, through: :sessions
+  has_many :vaccination_records, through: :patient_sessions
+
   has_and_belongs_to_many :users
 
   validates :email, presence: true, notify_safe_email: true

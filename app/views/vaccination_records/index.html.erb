@@ -9,7 +9,7 @@
 
 <h1 class="nhsuk-heading-l"><%= @programme.name %></h1>
 
-<%= render AppProgrammeNavigationComponent.new(@programme, active: :vaccination_records) %>
+<%= render AppProgrammeNavigationComponent.new(@programme, team: current_user.team, active: :vaccination_records) %>
 
 <%= govuk_button_link_to "Import vaccination records", new_programme_immunisation_import_path, class: "app-button--secondary" %>
 

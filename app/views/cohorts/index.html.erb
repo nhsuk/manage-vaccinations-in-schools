@@ -9,7 +9,7 @@
 
 <h1 class="nhsuk-heading-l"><%= @programme.name %></h1>
 
-<%= render AppProgrammeNavigationComponent.new(@programme, active: :cohorts) %>
+<%= render AppProgrammeNavigationComponent.new(@programme, team: current_user.team, active: :cohorts) %>
 
 <%= govuk_button_link_to "Import child records", new_programme_cohort_import_path(@programme), class: "app-button--secondary" %>
 

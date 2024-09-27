@@ -39,25 +39,6 @@ class Programme < ApplicationRecord
   has_many :patient_sessions, through: :sessions
   has_many :patients, through: :patient_sessions
 
-  has_many :import_issues,
-           -> do
-             joins(:patient)
-               .where(
-                 "patients.pending_changes != '{}' OR vaccination_records.pending_changes != '{}'"
-               )
-               .distinct
-               .includes(
-                 :vaccine,
-                 :batch,
-                 :patient_session,
-                 session: :location,
-                 patient: %i[cohort school]
-               )
-               .strict_loading
-           end,
-           through: :immunisation_imports,
-           source: :vaccination_records
-
   enum :type, { flu: "flu", hpv: "hpv" }, validate: true
 
   validate :vaccines_match_type
