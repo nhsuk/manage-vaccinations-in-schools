@@ -23,6 +23,7 @@
         <% @consent_form.eligible_schools.each do |school| %>
           <%= tag.option(school.name,
                          value: school.id,
+                         selected: school.id == @consent_form.location_id,
                          data: { hint: school.address_parts.join(", ") }) %>
         <% end %>
   <% end %>
