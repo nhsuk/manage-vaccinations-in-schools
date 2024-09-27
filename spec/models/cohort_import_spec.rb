@@ -31,8 +31,9 @@
 describe CohortImport do
   subject(:cohort_import) { create(:cohort_import, csv:, programme:, team:) }
 
-  let(:programme) { create(:programme) }
-  let(:team) { programme.team }
+  let(:team) { create(:team) }
+  let(:programme) { create(:programme, team:) }
+
   let(:file) { "valid_cohort.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_import/#{file}") }
   # Ensure location URN matches the URN in our fixture files

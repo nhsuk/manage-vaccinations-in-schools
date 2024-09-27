@@ -46,12 +46,9 @@ class Location < ApplicationRecord
 
   enum :type, %w[school generic_clinic]
 
-  scope :for_programme,
-        ->(programme) do
-          where(team: programme.team).where(
-            "year_groups && ARRAY[?]::integer[]",
-            programme.year_groups
-          )
+  scope :for_year_groups,
+        ->(year_groups) do
+          where("year_groups && ARRAY[?]::integer[]", year_groups)
         end
 
   scope :has_no_session,

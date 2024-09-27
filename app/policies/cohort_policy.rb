@@ -8,7 +8,7 @@ class CohortPolicy
     end
 
     def resolve
-      @scope.where(team: @user.team)
+      @scope.where(team: @user.teams)
     end
   end
 end
