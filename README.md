@@ -289,11 +289,9 @@ The `cis2` feature flag also needs to be enabled in Flipper for CIS2 logins to w
 
 ## Rake tasks
 
-- `programmes:create[type]`
 - `schools:add_to_team[team_id,urn]`
 - `teams:create_hpv[email,name,phone,ods_code,privacy_policy_url,reply_to_id]`
-- `vaccines:add_to_programme[programme_id,vaccine_nivs_name]`
-- `vaccines:seed`
+- `vaccines:seed[type]`
 
 See the [Rake tasks documentation](docs/rake-tasks.md) for more information.
 

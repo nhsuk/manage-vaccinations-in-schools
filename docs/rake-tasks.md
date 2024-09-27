@@ -1,13 +1,5 @@
 # Rake Tasks
 
-## Programmes
-
-### `programmes:create[type]`
-
-- `type` - Either `flu` or `hpv`.
-
-This creates a new programme.
-
 ## Schools
 
 ### `schools:add_to_team[team_id,urn]`
@@ -34,14 +26,9 @@ This creates a new team with an HPV programme.
 
 ## Vaccines
 
-### `vaccines:add_to_programme[programme_id, vaccine_nivs_name]`
+### `vaccines:seed[type]`
 
-- `programme_id` - The ID of the programme.
-- `vaccine_nivs_name` - The NIVS name of the vaccine.
-
-This adds a vaccine to a programme.
-
-### `vaccines:seed`
+- `type` - The type of vaccine, either `flu` or `hpv`. (optional)
 
 This creates the default set of vaccine records, or if they already exist, updates any existing vaccine records to match the default set.
 
