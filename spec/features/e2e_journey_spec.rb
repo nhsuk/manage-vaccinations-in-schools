@@ -12,7 +12,6 @@ describe "End-to-end journey" do
 
     # Session creation
     when_i_start_creating_a_new_session_by_choosing_school_and_time
-    and_select_the_children_for_the_cohort
     and_confirm_the_session_details
     then_i_see_the_session_page
 
@@ -106,12 +105,6 @@ describe "End-to-end journey" do
     fill_in "Day", with: "1"
     fill_in "Month", with: "3"
     fill_in "Year", with: "2024"
-    click_on "Continue"
-  end
-
-  def and_select_the_children_for_the_cohort
-    expect(page).to have_content("Choose cohort for this session")
-    check "Bobby Tables"
     click_on "Continue"
   end
 

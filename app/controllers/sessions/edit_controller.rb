@@ -6,12 +6,6 @@ class Sessions::EditController < ApplicationController
   before_action :set_session
   before_action :set_steps
   before_action :setup_wizard_translated
-  before_action :set_locations,
-                only: %i[show update],
-                if: -> { current_step == :location }
-  before_action :set_patients,
-                only: %i[show update],
-                if: -> { current_step == :cohort }
   before_action :validate_params, only: %i[update]
 
   def show
@@ -25,16 +19,6 @@ class Sessions::EditController < ApplicationController
 
       if @session.send_consent_requests_at.today?
         ConsentRequestsSessionBatchJob.perform_later(@session)
-      end
-    when :cohort
-      ActiveRecord::Base.transaction do
-        @session.assign_attributes(
-          patient_ids: update_params[:patient_ids] || [],
-          wizard_step: current_step
-        )
-        @session.patient_sessions.update_all(
-          created_by_user_id: current_user.id
-        )
       end
     else
       @session.assign_attributes update_params
@@ -58,23 +42,9 @@ class Sessions::EditController < ApplicationController
   end
 
   def update_params
-    permitted_attributes = {
-      location: [:location_id],
-      when: %i[date(3i) date(2i) date(1i)],
-      cohort: {
-        all_patients: nil,
-        patient_ids: []
-      },
-      timeline: %i[
-        send_consent_requests_at(3i)
-        send_consent_requests_at(2i)
-        send_consent_requests_at(1i)
-        reminder_days_after
-        reminder_days_after_custom
-        close_consent_on
-        close_consent_at
-      ]
-    }.fetch(current_step)
+    permitted_attributes = { when: %i[date(3i) date(2i) date(1i)] }.fetch(
+      current_step
+    )
 
     params
       .fetch(:session, {})
@@ -85,32 +55,6 @@ class Sessions::EditController < ApplicationController
   def set_steps
     self.steps = @session.wizard_steps
     @previous_step = previous_step
-  end
-
-  def set_locations
-    # TODO: Don't use limit.
-    @locations =
-      policy_scope(Location)
-        .order(:name)
-        .limit(100)
-        .map { OpenStruct.new(name: _1.name, value: _1.id) }
-  end
-
-  def set_patients
-    # Get a list of patients but ensure we don't include patients that are
-    # already in other sessions, if those sessions are active (not draft) and
-    # for the same vaccine/programme.
-    patients_in_sessions_and_same_team =
-      Patient
-        .joins(:patient_sessions)
-        .joins(:sessions)
-        .where(sessions: { team: @session.team })
-    @patients =
-      @session
-        .location
-        .patients
-        .where.not(id: patients_in_sessions_and_same_team)
-        .sort_by(&:last_name) # Sort by instead of order due to encryption
   end
 
   def validate_params
@@ -125,18 +69,6 @@ class Sessions::EditController < ApplicationController
 
       unless validator.date_params_valid?
         @session.date = validator.date_params_as_struct
-        render_wizard nil, status: :unprocessable_entity
-      end
-    when :timeline
-      validator =
-        DateParamsValidator.new(
-          field_name: :send_consent_requests_at,
-          object: @session,
-          params: update_params
-        )
-
-      unless validator.date_params_valid?
-        @session.send_consent_requests_at = validator.date_params_as_struct
         render_wizard nil, status: :unprocessable_entity
       end
     end

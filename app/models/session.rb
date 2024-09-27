@@ -84,10 +84,6 @@ class Session < ApplicationRecord
     validates :date, presence: true
   end
 
-  on_wizard_step :cohort, exact: true do
-    validates :patients, presence: true
-  end
-
   def today?
     dates.map(&:value).include?(Date.current)
   end
@@ -163,7 +159,7 @@ class Session < ApplicationRecord
   end
 
   def wizard_steps
-    %i[when cohort confirm]
+    %i[when confirm]
   end
 
   def unmatched_consent_forms

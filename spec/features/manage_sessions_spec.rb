@@ -19,9 +19,6 @@ describe "Manage sessions" do
     then_i_see_the_date_step
 
     when_i_choose_the_date
-    then_i_see_the_cohort_step
-
-    when_i_choose_the_cohort
     then_i_see_the_confirmation_page
 
     when_i_confirm
@@ -57,7 +54,13 @@ describe "Manage sessions" do
     programme = create(:programme, :hpv)
     @team = create(:team, :with_one_nurse, programmes: [programme])
     @location = create(:location, :secondary, team: @team)
-    @patient = create(:patient, school: @location)
+    @patient =
+      create(
+        :patient,
+        date_of_birth: 13.years.ago.to_date,
+        school: @location,
+        team: @team
+      )
   end
 
   def when_i_go_to_todays_sessions_as_a_nurse
@@ -104,14 +107,6 @@ describe "Manage sessions" do
     fill_in "Day", with: "10"
     fill_in "Month", with: "03"
     fill_in "Year", with: "2024"
-    click_button "Continue"
-  end
-
-  def then_i_see_the_cohort_step
-    expect(page).to have_content("Choose cohort for this session")
-  end
-
-  def when_i_choose_the_cohort
     click_button "Continue"
   end
 

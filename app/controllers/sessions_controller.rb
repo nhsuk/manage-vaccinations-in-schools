@@ -9,7 +9,12 @@ class SessionsController < ApplicationController
   def new
     location = team.schools.find(params[:location_id])
 
-    session = Session.find_or_create_by!(team:, academic_year:, location:)
+    session =
+      ActiveRecord::Base.transaction do
+        Session.find_or_create_by!(team:, academic_year:, location:).tap(
+          &:create_patient_sessions!
+        )
+      end
 
     redirect_to session_path(session)
   end
