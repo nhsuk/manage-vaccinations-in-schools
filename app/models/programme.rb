@@ -8,22 +8,15 @@
 #  type       :string           not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  team_id    :integer          not null
 #
 # Indexes
 #
-#  index_programmes_on_team_id_and_type  (team_id,type) UNIQUE
-#
-# Foreign Keys
-#
-#  fk_rails_...  (team_id => teams.id)
+#  index_programmes_on_type  (type) UNIQUE
 #
 class Programme < ApplicationRecord
   self.inheritance_column = nil
 
   audited
-
-  belongs_to :team
 
   has_and_belongs_to_many :sessions
   has_and_belongs_to_many :vaccines
@@ -32,13 +25,14 @@ class Programme < ApplicationRecord
   has_many :consents
   has_many :dps_exports
   has_many :immunisation_imports
+  has_many :team_programmes
   has_many :triages
   has_many :vaccination_records
-  has_many :teams
 
   has_many :batches, through: :vaccines
   has_many :patient_sessions, through: :sessions
   has_many :patients, through: :patient_sessions
+  has_many :teams, through: :team_programmes
 
   enum :type, { flu: "flu", hpv: "hpv" }, validate: true
 
