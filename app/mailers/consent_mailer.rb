@@ -17,10 +17,6 @@ class ConsentMailer < ApplicationMailer
     app_template_mail(:parental_consent_confirmation_refused)
   end
 
-  def give_feedback
-    app_template_mail(:parental_consent_give_feedback)
-  end
-
   def request
     app_template_mail(:hpv_session_consent_request)
   end

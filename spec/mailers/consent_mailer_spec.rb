@@ -25,43 +25,6 @@ describe ConsentMailer do
     end
   end
 
-  describe "#give_feedback" do
-    context "with a consent form" do
-      subject(:mail) { described_class.with(consent_form:).give_feedback }
-
-      let(:consent_form) do
-        create(:consent_form, :recorded, recorded_at: Date.new(2021, 1, 1))
-      end
-
-      it "calls template_mail with correct survey_deadline_date" do
-        expect(
-          mail.message.header["personalisation"].unparsed_value
-        ).to include(survey_deadline_date: "8 January 2021")
-      end
-    end
-
-    context "with a consent record" do
-      subject(:mail) { described_class.with(consent:, session:).give_feedback }
-
-      let(:programme) { create(:programme) }
-      let(:session) { create(:session, programme:) }
-      let(:consent) do
-        create(
-          :consent,
-          :recorded,
-          recorded_at: Date.new(2021, 1, 1),
-          programme:
-        )
-      end
-
-      it "calls template_mail with correct survey_deadline_date" do
-        expect(
-          mail.message.header["personalisation"].unparsed_value
-        ).to include(survey_deadline_date: "8 January 2021")
-      end
-    end
-  end
-
   describe "#request" do
     subject(:mail) { described_class.with(session:, patient:, parent:).request }
 
