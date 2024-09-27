@@ -6,6 +6,7 @@
 
     <title><%= page_title(@service_name) %></title>
 
+    <%= stylesheet_link_tag "accessible-autocomplete.min", "data-turbo-track": Rails.env.development? ? "" : "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": Rails.env.development? ? "" : "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": Rails.env.development? ? "" : "reload", defer: true %>
 
