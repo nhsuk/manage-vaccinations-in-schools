@@ -71,7 +71,7 @@ class ConsentForm < ApplicationRecord
   belongs_to :consent, optional: true
   belongs_to :session
 
-  has_one :team, through: :programme
+  has_one :team, through: :session
   has_many :eligible_schools, through: :team, source: :schools
 
   enum :response, %w[given refused not_provided], prefix: "consent"

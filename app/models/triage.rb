@@ -37,7 +37,7 @@ class Triage < ApplicationRecord
 
   has_one :patient, through: :patient_session
   has_one :session, through: :patient_session
-  has_one :team, through: :programme
+  has_one :team, through: :session
 
   enum :status,
        %i[
