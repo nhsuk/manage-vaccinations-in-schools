@@ -96,6 +96,7 @@ FactoryBot.define do
             :given,
             :from_mum,
             patient: instance,
+            team:,
             programme:
           )
         ]
@@ -112,6 +113,7 @@ FactoryBot.define do
             :from_mum,
             :health_question_notes,
             patient: instance,
+            team:,
             programme:
           )
         ]
@@ -127,6 +129,7 @@ FactoryBot.define do
             :refused,
             :from_mum,
             patient: instance,
+            team:,
             programme:
           )
         ]
@@ -142,6 +145,7 @@ FactoryBot.define do
             :refused,
             :from_mum,
             patient: instance,
+            team:,
             programme:,
             reason_for_refusal: "already_vaccinated",
             reason_for_refusal_notes: "Already had the vaccine at the GP"
@@ -159,6 +163,7 @@ FactoryBot.define do
             :refused,
             :from_mum,
             patient: instance,
+            team:,
             programme:
           ),
           association(
@@ -167,6 +172,7 @@ FactoryBot.define do
             :given,
             :from_dad,
             patient: instance,
+            team:,
             programme:
           )
         ]

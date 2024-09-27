@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_27_085819) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_27_111052) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -147,10 +147,12 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_27_085819) do
     t.jsonb "health_answers", default: []
     t.bigint "recorded_by_user_id"
     t.bigint "parent_id"
+    t.bigint "team_id", null: false
     t.index ["parent_id"], name: "index_consents_on_parent_id"
     t.index ["patient_id"], name: "index_consents_on_patient_id"
     t.index ["programme_id"], name: "index_consents_on_programme_id"
     t.index ["recorded_by_user_id"], name: "index_consents_on_recorded_by_user_id"
+    t.index ["team_id"], name: "index_consents_on_team_id"
   end
 
   create_table "dps_exports", force: :cascade do |t|
@@ -624,6 +626,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_27_085819) do
   add_foreign_key "consents", "parents"
   add_foreign_key "consents", "patients"
   add_foreign_key "consents", "programmes"
+  add_foreign_key "consents", "teams"
   add_foreign_key "consents", "users", column: "recorded_by_user_id"
   add_foreign_key "dps_exports", "programmes"
   add_foreign_key "gillick_assessments", "patient_sessions"

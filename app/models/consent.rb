@@ -17,6 +17,7 @@
 #  patient_id               :bigint           not null
 #  programme_id             :bigint           not null
 #  recorded_by_user_id      :bigint
+#  team_id                  :bigint           not null
 #
 # Indexes
 #
@@ -24,6 +25,7 @@
 #  index_consents_on_patient_id           (patient_id)
 #  index_consents_on_programme_id         (programme_id)
 #  index_consents_on_recorded_by_user_id  (recorded_by_user_id)
+#  index_consents_on_team_id              (team_id)
 #
 # Foreign Keys
 #
@@ -31,6 +33,7 @@
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (recorded_by_user_id => users.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 
 class Consent < ApplicationRecord
@@ -44,6 +47,9 @@ class Consent < ApplicationRecord
   attr_reader :new_or_existing_parent
   attr_accessor :triage
 
+  belongs_to :team
+  belongs_to :programme
+
   has_one :consent_form
   belongs_to :parent, -> { recorded }, optional: true
   belongs_to :draft_parent,
@@ -52,13 +58,10 @@ class Consent < ApplicationRecord
              optional: true,
              foreign_key: :parent_id
   belongs_to :patient
-  belongs_to :programme
   belongs_to :recorded_by,
              class_name: "User",
              optional: true,
              foreign_key: :recorded_by_user_id
-
-  has_one :team, through: :programme
 
   enum :response, %w[given refused not_provided], prefix: true
   enum :reason_for_refusal,
@@ -169,6 +172,7 @@ class Consent < ApplicationRecord
       consent =
         create!(
           consent_form:,
+          team: consent_form.session.team,
           programme: consent_form.programme,
           patient:,
           parent:,
