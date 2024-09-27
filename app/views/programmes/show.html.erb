@@ -8,4 +8,4 @@
 
 <h1 class="nhsuk-heading-l"><%= @programme.name %></h1>
 
-<%= render AppProgrammeNavigationComponent.new(@programme, active: :overview) %>
+<%= render AppProgrammeNavigationComponent.new(@programme, team: current_user.team, active: :overview) %>

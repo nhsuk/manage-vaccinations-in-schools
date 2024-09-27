@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
 class ImportIssuesController < ApplicationController
-  before_action :set_programme
+  before_action :set_programme, :set_import_issues
   before_action :set_vaccination_record, only: %i[show update]
   before_action :set_form, only: %i[show update]
 
   layout "full"
 
   def index
-    @import_issues = @programme.import_issues
   end
 
   def show
@@ -28,14 +27,27 @@ class ImportIssuesController < ApplicationController
   private
 
   def set_programme
-    @programme =
-      policy_scope(Programme).includes(:immunisation_imports).find(
-        params[:programme_id]
-      )
+    @programme = policy_scope(Programme).find(params[:programme_id])
+  end
+
+  def set_import_issues
+    @import_issues =
+      policy_scope(VaccinationRecord)
+        .where(programme: @programme)
+        .with_pending_changes
+        .distinct
+        .includes(
+          :vaccine,
+          :batch,
+          :patient_session,
+          session: :location,
+          patient: %i[cohort school]
+        )
+        .strict_loading
   end
 
   def set_vaccination_record
-    @vaccination_record = @programme.import_issues.find(params[:id])
+    @vaccination_record = @import_issues.find(params[:id])
   end
 
   def set_form
