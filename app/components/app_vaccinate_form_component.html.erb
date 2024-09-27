@@ -15,7 +15,7 @@
     <%= f.govuk_radio_buttons_fieldset(:administered, legend: nil) do %>
       <%= f.govuk_radio_button(
             :administered, true,
-            label: { text: t("vaccinations.form.label.#{@vaccination_record.vaccine.type}") },
+            label: { text: t("vaccinations.form.label.#{@vaccination_record.programme.type}") },
             link_errors: true,
             checked: @vaccination_record.persisted? && @vaccination_record.administered?,
           ) do %>

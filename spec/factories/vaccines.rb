@@ -14,7 +14,6 @@
 #  nivs_name           :text             not null
 #  snomed_product_code :string           not null
 #  snomed_product_term :string           not null
-#  type                :string           not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  programme_id        :bigint           not null
@@ -34,10 +33,12 @@
 #
 FactoryBot.define do
   factory :vaccine do
-    transient { batch_count { 1 } }
+    transient do
+      batch_count { 1 }
+      type { %w[flu hpv].sample }
+    end
 
-    type { %w[flu hpv].sample }
-    programme { Programme.find_or_create_by!(type:) }
+    programme { association :programme, type: }
 
     brand { Faker::Commerce.product_name }
     manufacturer { Faker::Company.name }

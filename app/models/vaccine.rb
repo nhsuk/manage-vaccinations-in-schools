@@ -14,7 +14,6 @@
 #  nivs_name           :text             not null
 #  snomed_product_code :string           not null
 #  snomed_product_term :string           not null
-#  type                :string           not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  programme_id        :bigint           not null
@@ -51,18 +50,17 @@ class Vaccine < ApplicationRecord
   validates :snomed_product_term, presence: true, uniqueness: true
 
   enum :method, %i[injection nasal], validate: true
-  enum :type, { flu: "flu", hpv: "hpv" }, validate: true
 
   scope :active, -> { where(discontinued: false) }
 
   delegate :first_health_question, to: :health_questions
 
   def contains_gelatine?
-    flu? && nasal?
+    programme.flu? && nasal?
   end
 
   def common_delivery_sites
-    if hpv?
+    if programme.hpv?
       %w[left_arm_upper_position right_arm_upper_position]
     else
       raise NotImplementedError,
@@ -71,10 +69,12 @@ class Vaccine < ApplicationRecord
   end
 
   def maximum_dose_sequence
-    { "flu" => 1, "hpv" => 3 }.fetch(type)
+    { "flu" => 1, "hpv" => 3 }.fetch(programme.type)
   end
 
-  alias_method :seasonal?, :flu?
+  def seasonal?
+    programme.flu?
+  end
 
   AVAILABLE_DELIVERY_SITES_BY_METHOD = {
     "injection" =>
@@ -93,7 +93,7 @@ class Vaccine < ApplicationRecord
   }.freeze
 
   def available_delivery_methods
-    AVAILABLE_DELIVERY_METHODS_BY_TYPE.fetch(type)
+    AVAILABLE_DELIVERY_METHODS_BY_TYPE.fetch(programme.type)
   end
 
   SNOMED_PROCEDURE_CODE_AND_TERM_BY_TYPE = {
@@ -105,6 +105,6 @@ class Vaccine < ApplicationRecord
   }.freeze
 
   def snomed_procedure_code_and_term
-    SNOMED_PROCEDURE_CODE_AND_TERM_BY_TYPE.fetch(type)
+    SNOMED_PROCEDURE_CODE_AND_TERM_BY_TYPE.fetch(programme.type)
   end
 end

@@ -116,9 +116,7 @@ describe AppVaccinationRecordSummaryComponent do
   end
 
   describe "dose number row" do
-    context "for HPV vaccine" do
-      let(:vaccine) { create(:vaccine, :hpv) }
-
+    context "for an HPV programme" do
       before { vaccination_record.dose_sequence = 2 }
 
       it do
@@ -129,8 +127,8 @@ describe AppVaccinationRecordSummaryComponent do
       end
     end
 
-    context "for a seasonal vaccine (e.g. flu)" do
-      let(:vaccine) { create(:vaccine, :flu) }
+    context "for a seasonal programme" do
+      let(:programme) { create(:programme, :flu) }
 
       it do
         expect(subject).not_to have_css(

@@ -58,7 +58,7 @@ describe HealthQuestion do
     end
 
     it "ignores health questions outside of the scoped collection" do
-      create :health_question
+      create(:health_question, vaccine:)
 
       hqs.first.update! next_question: hqs.second
       hqs.second.update! next_question: hqs.third
@@ -78,7 +78,7 @@ describe HealthQuestion do
     end
 
     it "ignores health questions outside of the scoped collection" do
-      create :health_question
+      create(:health_question, vaccine:)
 
       hqs.first.update! next_question: hqs.second
       hqs.second.update! next_question: hqs.third

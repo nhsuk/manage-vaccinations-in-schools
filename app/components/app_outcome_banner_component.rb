@@ -56,7 +56,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def vaccine_summary
-    type = I18n.t("vaccines.#{vaccination_record.vaccine.type}")
+    type = vaccination_record.programme.name
     brand = vaccination_record.vaccine.brand
     batch = vaccination_record.batch.name
     "#{type} (#{brand}, #{batch})"
