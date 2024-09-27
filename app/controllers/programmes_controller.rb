@@ -19,12 +19,12 @@ class ProgrammesController < ApplicationController
 
     @unscheduled_sessions =
       @programme.sessions.unscheduled +
-        Location
+        policy_scope(Location)
           .school
-          .for_programme(@programme)
+          .for_year_groups(@programme.year_groups)
           .has_no_session(academic_year)
           .map do |location|
-            Session.new(team: @programme.team, location:, academic_year:)
+            Session.new(team: current_user.team, location:, academic_year:)
           end
 
     @completed_sessions = @programme.sessions.completed

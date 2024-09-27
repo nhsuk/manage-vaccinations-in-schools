@@ -13,7 +13,7 @@ class CohortImportsController < ApplicationController
     @cohort_import =
       CohortImport.new(
         programme: @programme,
-        team: @programme.team,
+        team: current_user.team,
         uploaded_by: current_user,
         **cohort_import_params
       )
@@ -56,7 +56,7 @@ class CohortImportsController < ApplicationController
   end
 
   def set_cohort_import
-    @cohort_import = @programme.team.cohort_imports.find(params[:id])
+    @cohort_import = policy_scope(CohortImport).find(params[:id])
   end
 
   def set_patients

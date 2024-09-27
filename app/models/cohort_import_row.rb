@@ -36,8 +36,9 @@ class CohortImportRow
 
   validate :zero_or_one_existing_patient
 
-  def initialize(data:, programme:)
+  def initialize(data:, team:, programme:)
     @data = data
+    @team = team
     @programme = programme
   end
 
@@ -195,7 +196,7 @@ class CohortImportRow
     @cohort ||=
       Cohort.find_or_create_by!(
         birth_academic_year: date_of_birth.academic_year,
-        team: @programme.team
+        team: @team
       )
   end
 

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 describe CohortImportRow do
-  subject(:cohort_import_row) { described_class.new(data:, programme:) }
+  subject(:cohort_import_row) { described_class.new(data:, team:, programme:) }
 
+  let(:team) { create(:team) }
   let(:programme) { create(:programme) }
 
   let(:school_urn) { "123456" }
@@ -140,10 +141,7 @@ describe CohortImportRow do
         let(:date_of_birth) { "2000-08-31" }
 
         it do
-          expect(cohort).to have_attributes(
-            team: programme.team,
-            birth_academic_year: 1999
-          )
+          expect(cohort).to have_attributes(team:, birth_academic_year: 1999)
         end
       end
 
@@ -151,10 +149,7 @@ describe CohortImportRow do
         let(:date_of_birth) { "2000-09-01" }
 
         it do
-          expect(cohort).to have_attributes(
-            team: programme.team,
-            birth_academic_year: 2000
-          )
+          expect(cohort).to have_attributes(team:, birth_academic_year: 2000)
         end
       end
     end

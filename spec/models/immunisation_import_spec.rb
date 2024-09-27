@@ -33,9 +33,9 @@
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 
-describe ImmunisationImport, type: :model do
+describe ImmunisationImport do
   subject(:immunisation_import) do
-    create(:immunisation_import, programme:, csv:, uploaded_by:)
+    create(:immunisation_import, team:, programme:, csv:, uploaded_by:)
   end
 
   before do
@@ -44,10 +44,11 @@ describe ImmunisationImport, type: :model do
     create(:location, :school, urn: "144012")
   end
 
+  let(:team) { create(:team, ods_code: "R1L") }
   let(:programme) { create(:programme, :flu_all_vaccines, team:) }
+
   let(:file) { "valid_flu.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/immunisation_import/#{file}") }
-  let(:team) { create(:team, ods_code: "R1L") }
   let(:uploaded_by) { create(:user, teams: [team]) }
 
   it_behaves_like "a CSVImportable model"
@@ -265,7 +266,7 @@ describe ImmunisationImport, type: :model do
 
         expect(existing_patient.reload.pending_changes).to eq(
           "address_postcode" => "LE3 2DB",
-          "cohort_id" => programme.team.cohorts.first.id,
+          "cohort_id" => team.cohorts.first.id,
           "date_of_birth" => "2011-09-13",
           "gender_code" => "female",
           "school_id" => Location.find_by(urn: "110158").id

@@ -72,7 +72,7 @@ class CohortImport < ApplicationRecord
   end
 
   def parse_row(row_data)
-    CohortImportRow.new(data: row_data, programme:)
+    CohortImportRow.new(data: row_data, team:, programme:)
   end
 
   def process_row(row)
