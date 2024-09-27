@@ -19,7 +19,12 @@ DESC
 task :add_health_questions,
      %i[team_id vaccine_id replace] => :environment do |_task, args|
   team = Team.find(args[:team_id])
-  vaccine = team.programme.vaccines.find(args[:vaccine_id])
+  vaccine =
+    team
+      .programmes
+      .flat_map(&:vaccines)
+      .find { |v| v.id == args[:vaccine_id].to_i }
+  raise "Vaccine not found for the given team" if vaccine.nil?
   existing_health_questions = vaccine.health_questions.in_order
   puts "Existing health questions for #{team.name}'s #{vaccine.type} vaccine #{vaccine.brand}"
   if existing_health_questions.any?
