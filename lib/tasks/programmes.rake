@@ -19,6 +19,8 @@ namespace :programmes do
 
     programme = Programme.create!(team:, type:, vaccines:)
 
+    TeamProgramme.create!(team:, programme:)
+
     puts "New #{programme.name} programme with ID #{programme.id} created."
     puts "Vaccines: #{vaccines.map(&:brand).join(", ")}"
   end
