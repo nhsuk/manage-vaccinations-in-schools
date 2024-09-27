@@ -17,6 +17,7 @@
 #  patient_id               :bigint           not null
 #  programme_id             :bigint           not null
 #  recorded_by_user_id      :bigint
+#  team_id                  :bigint           not null
 #
 # Indexes
 #
@@ -24,6 +25,7 @@
 #  index_consents_on_patient_id           (patient_id)
 #  index_consents_on_programme_id         (programme_id)
 #  index_consents_on_recorded_by_user_id  (recorded_by_user_id)
+#  index_consents_on_team_id              (team_id)
 #
 # Foreign Keys
 #
@@ -31,6 +33,7 @@
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (recorded_by_user_id => users.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 FactoryBot.define do
   factory :consent do
@@ -39,6 +42,8 @@ FactoryBot.define do
     end
 
     programme
+    team { programme.team }
+
     patient
     parent { patient.parents.first }
 

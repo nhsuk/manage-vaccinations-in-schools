@@ -8,7 +8,7 @@ class ConsentPolicy
     end
 
     def resolve
-      @scope.joins(:programme).where(programme: { team_id: @user.teams.ids })
+      @scope.where(team: @user.teams)
     end
   end
 end
