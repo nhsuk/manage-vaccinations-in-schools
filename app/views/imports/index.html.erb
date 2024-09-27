@@ -13,4 +13,4 @@
 
 <%= govuk_button_link_to "Import records", new_programme_import_path, class: "app-button--secondary" %>
 
-<%= render AppImportsTableComponent.new(@programme) %>
+<%= render AppImportsTableComponent.new(team: @team, programme: @programme) %>
