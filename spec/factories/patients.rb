@@ -180,5 +180,11 @@ FactoryBot.define do
         ]
       end
     end
+
+    trait :vaccinated do
+      after(:create) do |patient, evaluator|
+        create(:vaccination_record, patient:, programme: evaluator.programme)
+      end
+    end
   end
 end
