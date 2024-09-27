@@ -20,19 +20,6 @@ describe Programme do
   describe "validations" do
     it { should validate_presence_of(:type) }
     it { should validate_inclusion_of(:type).in_array(%w[flu hpv]) }
-
-    context "when vaccines don't match type" do
-      subject(:programme) do
-        build(:programme, type: "flu", vaccines: [build(:vaccine, type: "hpv")])
-      end
-
-      it "is invalid" do
-        expect(programme).to be_invalid
-        expect(programme.errors[:vaccines]).to include(
-          /must be suitable for the programme type/
-        )
-      end
-    end
   end
 
   describe "#name" do

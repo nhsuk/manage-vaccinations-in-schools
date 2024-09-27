@@ -14,9 +14,8 @@ describe "Manage vaccines" do
   end
 
   def given_my_team_is_running_an_hpv_vaccination_programme
-    @programme = create(:programme, :hpv_no_batches)
-    @team = create(:team, :with_one_nurse, programmes: [@programme])
-    @vaccine = @programme.vaccines.first
+    programme = create(:programme, :hpv_no_batches)
+    @team = create(:team, :with_one_nurse, programmes: [programme])
   end
 
   def when_i_manage_vaccines

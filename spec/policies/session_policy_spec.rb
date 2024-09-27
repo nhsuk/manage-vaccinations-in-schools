@@ -9,7 +9,7 @@ describe SessionPolicy do
     let(:user) { create(:user, teams: [team]) }
 
     let(:users_teams_session) { create(:session, team:, programme:) }
-    let(:another_teams_session) { create(:session) }
+    let(:another_teams_session) { create(:session, programme:) }
 
     it { should include(users_teams_session) }
     it { should_not include(another_teams_session) }

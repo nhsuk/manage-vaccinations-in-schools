@@ -17,20 +17,28 @@
 #  type                :string           not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
+#  programme_id        :bigint           not null
 #
 # Indexes
 #
 #  index_vaccines_on_gtin                    (gtin) UNIQUE
 #  index_vaccines_on_manufacturer_and_brand  (manufacturer,brand) UNIQUE
 #  index_vaccines_on_nivs_name               (nivs_name) UNIQUE
+#  index_vaccines_on_programme_id            (programme_id)
 #  index_vaccines_on_snomed_product_code     (snomed_product_code) UNIQUE
 #  index_vaccines_on_snomed_product_term     (snomed_product_term) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (programme_id => programmes.id)
 #
 FactoryBot.define do
   factory :vaccine do
     transient { batch_count { 1 } }
 
     type { %w[flu hpv].sample }
+    programme { Programme.find_or_create_by!(type:) }
+
     brand { Faker::Commerce.product_name }
     manufacturer { Faker::Company.name }
     sequence(:nivs_name) { |n| "#{brand.parameterize}-#{n}" }

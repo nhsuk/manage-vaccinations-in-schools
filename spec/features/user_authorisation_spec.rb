@@ -18,8 +18,7 @@ describe "User authorisation" do
   end
 
   def given_an_hpv_programme_is_underway_with_two_teams
-    vaccine = create(:vaccine, :hpv)
-    programme = create(:programme, :hpv, vaccines: [vaccine])
+    programme = create(:programme, :hpv)
 
     @team = create(:team, :with_one_nurse, programmes: [programme])
     @other_team = create(:team, :with_one_nurse, programmes: [programme])

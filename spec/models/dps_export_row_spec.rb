@@ -3,11 +3,9 @@
 describe DPSExportRow do
   subject(:row) { described_class.new(vaccination_record) }
 
-  let(:programme) do
-    create(:programme, type: vaccine.type, vaccines: [vaccine])
-  end
+  let(:programme) { create(:programme, type: "hpv") }
   let(:team) { create(:team, programmes: [programme]) }
-  let(:vaccine) { create(:vaccine, :gardasil_9, dose: 0.5) }
+  let(:vaccine) { create(:vaccine, :gardasil_9, programme:, dose: 0.5) }
   let(:location) { create(:location, :school) }
   let(:school) { create(:location, :school) }
   let(:patient) do
@@ -188,11 +186,12 @@ describe DPSExportRow do
     end
 
     context "when the vaccine is a nasal spray" do
-      let(:vaccine) { create :vaccine, :fluenz_tetra }
+      let(:vaccine) { create(:vaccine, :fluenz_tetra, programme:) }
 
       let(:vaccination_record) do
         create(
           :vaccination_record,
+          programme:,
           vaccine:,
           batch: create(:batch, vaccine:),
           delivery_site: :nose,
@@ -210,7 +209,7 @@ describe DPSExportRow do
     end
 
     context "when the vaccine is an intramuscular injection" do
-      let(:vaccine) { create :vaccine, :quadrivalent_influenza }
+      let(:vaccine) { create(:vaccine, :quadrivalent_influenza, programme:) }
 
       it "has route_of_vaccination_code" do
         expect(array[26]).to eq "78421000"
