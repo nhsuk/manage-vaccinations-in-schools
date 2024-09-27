@@ -31,11 +31,12 @@
 describe CohortImport do
   subject(:cohort_import) { create(:cohort_import, csv:, programme:, team:) }
 
-  let(:team) { create(:team) }
-  let(:programme) { create(:programme, team:) }
+  let(:programme) { create(:programme) }
+  let(:team) { create(:team, programmes: [programme]) }
 
   let(:file) { "valid_cohort.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_import/#{file}") }
+
   # Ensure location URN matches the URN in our fixture files
   let!(:location) do
     Location.find_by(urn: "123456") || create(:location, :school, urn: "123456")

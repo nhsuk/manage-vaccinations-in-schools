@@ -57,10 +57,11 @@ describe Session do
   end
 
   it "sets default programmes when creating a new session" do
-    team = create(:team)
+    hpv_programme = create(:programme, :hpv)
+    flu_programme = create(:programme, :flu)
+
+    team = create(:team, programmes: [hpv_programme, flu_programme])
     location = create(:location, :primary)
-    hpv_programme = create(:programme, :hpv, team:)
-    flu_programme = create(:programme, :flu, team:)
 
     session = described_class.new(team:, location:)
 

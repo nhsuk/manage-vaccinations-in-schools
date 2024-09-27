@@ -5,8 +5,8 @@ describe ImmunisationImportRow, type: :model do
     described_class.new(data:, programme:, user: uploaded_by)
   end
 
-  let(:team) { create(:team, ods_code: "abc") }
-  let(:programme) { create(:programme, :flu, team:) }
+  let(:programme) { create(:programme, :flu) }
+  let(:team) { create(:team, ods_code: "abc", programmes: [programme]) }
   let(:uploaded_by) { create(:user, teams: [team]) }
 
   let(:nhs_number) { "1234567890" }
@@ -191,7 +191,7 @@ describe ImmunisationImportRow, type: :model do
     end
 
     context "with an invalid dose sequence" do
-      let(:programme) { create(:programme, :hpv, team:) }
+      let(:programme) { create(:programme, :hpv) }
 
       let(:data) { { "VACCINE_GIVEN" => "Gardasil9", "DOSE_SEQUENCE" => "4" } }
 
@@ -204,7 +204,7 @@ describe ImmunisationImportRow, type: :model do
     end
 
     context "with valid fields for Flu" do
-      let(:programme) { create(:programme, :flu, team:) }
+      let(:programme) { create(:programme, :flu) }
 
       let(:data) do
         {
@@ -231,7 +231,7 @@ describe ImmunisationImportRow, type: :model do
     end
 
     context "with valid fields for HPV" do
-      let(:programme) { create(:programme, :hpv, team:) }
+      let(:programme) { create(:programme, :hpv) }
 
       let(:data) do
         {
@@ -734,7 +734,7 @@ describe ImmunisationImportRow, type: :model do
   describe "#dose_sequence" do
     subject(:dose_sequence) { immunisation_import_row.dose_sequence }
 
-    let(:programme) { create(:programme, :hpv, team:) }
+    let(:programme) { create(:programme, :hpv) }
 
     context "without a value" do
       let(:data) { { "VACCINE_GIVEN" => "Gardasil9" } }

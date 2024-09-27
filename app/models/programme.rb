@@ -34,6 +34,7 @@ class Programme < ApplicationRecord
   has_many :immunisation_imports
   has_many :triages
   has_many :vaccination_records
+  has_many :teams
 
   has_many :batches, through: :vaccines
   has_many :patient_sessions, through: :sessions
