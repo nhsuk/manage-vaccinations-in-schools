@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_27_124718) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_27_134753) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -599,9 +599,11 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_27_124718) do
     t.string "snomed_product_term", null: false
     t.text "nivs_name", null: false
     t.boolean "discontinued", default: false, null: false
+    t.bigint "programme_id", null: false
     t.index ["gtin"], name: "index_vaccines_on_gtin", unique: true
     t.index ["manufacturer", "brand"], name: "index_vaccines_on_manufacturer_and_brand", unique: true
     t.index ["nivs_name"], name: "index_vaccines_on_nivs_name", unique: true
+    t.index ["programme_id"], name: "index_vaccines_on_programme_id"
     t.index ["snomed_product_code"], name: "index_vaccines_on_snomed_product_code", unique: true
     t.index ["snomed_product_term"], name: "index_vaccines_on_snomed_product_term", unique: true
   end
@@ -668,4 +670,5 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_27_124718) do
   add_foreign_key "vaccination_records", "programmes"
   add_foreign_key "vaccination_records", "users", column: "performed_by_user_id"
   add_foreign_key "vaccination_records", "vaccines"
+  add_foreign_key "vaccines", "programmes"
 end

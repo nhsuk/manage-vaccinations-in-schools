@@ -28,8 +28,6 @@ class Batch < ApplicationRecord
 
   has_and_belongs_to_many :immunisation_imports
 
-  has_many :programmes, through: :vaccine
-
   validates :name, presence: true
   validates :expiry, presence: true
 end

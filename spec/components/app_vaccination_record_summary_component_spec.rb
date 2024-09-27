@@ -7,10 +7,10 @@ describe AppVaccinationRecordSummaryComponent do
 
   let(:administered_at) { Time.zone.local(2024, 9, 6, 12) }
   let(:location) { create(:location, :school, name: "Hogwarts") }
-  let(:programme) { create(:programme, type: vaccine&.type || :hpv) }
+  let(:programme) { create(:programme, :hpv) }
   let(:session) { create(:session, programme:, location:) }
   let(:patient_session) { create(:patient_session, session:) }
-  let(:vaccine) { create(:vaccine, :gardasil_9) }
+  let(:vaccine) { programme.vaccines.first }
   let(:batch) do
     create(:batch, name: "ABC", expiry: Date.new(2020, 1, 1), vaccine:)
   end

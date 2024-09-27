@@ -8,7 +8,11 @@ class BatchPolicy
     end
 
     def resolve
-      @scope.joins(:programmes).where(programmes: @user.programmes)
+      @scope.joins(vaccine: :programme).where(
+        vaccine: {
+          programme: @user.programmes
+        }
+      )
     end
   end
 end
