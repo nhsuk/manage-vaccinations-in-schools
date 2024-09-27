@@ -486,6 +486,14 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_27_085819) do
     t.index ["team_id"], name: "index_sessions_on_team_id"
   end
 
+  create_table "team_programmes", force: :cascade do |t|
+    t.bigint "team_id", null: false
+    t.bigint "programme_id", null: false
+    t.index ["programme_id"], name: "index_team_programmes_on_programme_id"
+    t.index ["team_id", "programme_id"], name: "index_team_programmes_on_team_id_and_programme_id", unique: true
+    t.index ["team_id"], name: "index_team_programmes_on_team_id"
+  end
+
   create_table "teams", force: :cascade do |t|
     t.text "name", null: false
     t.datetime "created_at", null: false
@@ -649,6 +657,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_27_085819) do
   add_foreign_key "programmes_sessions", "sessions"
   add_foreign_key "session_dates", "sessions"
   add_foreign_key "sessions", "teams"
+  add_foreign_key "team_programmes", "programmes"
+  add_foreign_key "team_programmes", "teams"
   add_foreign_key "triage", "patient_sessions"
   add_foreign_key "triage", "programmes"
   add_foreign_key "triage", "users", column: "performed_by_user_id"
