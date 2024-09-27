@@ -38,7 +38,6 @@ class Vaccine < ApplicationRecord
 
   belongs_to :programme
 
-  has_and_belongs_to_many :programmes
   has_many :health_questions, dependent: :destroy
   has_many :batches, -> { order(:name) }
 
