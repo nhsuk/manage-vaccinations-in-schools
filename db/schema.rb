@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_27_144903) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_27_145227) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -402,13 +402,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_27_144903) do
     t.boolean "phone_receive_updates", default: false, null: false
   end
 
-  create_table "parents_patients", id: false, force: :cascade do |t|
-    t.bigint "parent_id", null: false
-    t.bigint "patient_id", null: false
-    t.index ["parent_id", "patient_id"], name: "index_parents_patients_on_parent_id_and_patient_id"
-    t.index ["patient_id", "parent_id"], name: "index_parents_patients_on_patient_id_and_parent_id"
-  end
-
   create_table "patient_sessions", force: :cascade do |t|
     t.bigint "session_id", null: false
     t.bigint "patient_id", null: false
@@ -643,8 +636,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_27_144903) do
   add_foreign_key "locations", "teams"
   add_foreign_key "parent_relationships", "parents"
   add_foreign_key "parent_relationships", "patients"
-  add_foreign_key "parents_patients", "parents"
-  add_foreign_key "parents_patients", "patients"
   add_foreign_key "patient_sessions", "users", column: "created_by_user_id"
   add_foreign_key "patients", "cohorts"
   add_foreign_key "patients", "locations", column: "school_id"
