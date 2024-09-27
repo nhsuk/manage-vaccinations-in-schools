@@ -24,12 +24,11 @@ namespace :vaccines do
       vaccine.method = data["method"]
       vaccine.nivs_name = data["nivs_name"]
       vaccine.snomed_product_term = data["snomed_product_term"]
-      vaccine.type = data["type"]
       vaccine.programme = programme
 
       vaccine.save!
 
-      next if vaccine.flu? || vaccine.health_questions.exists?
+      next if programme.flu? || vaccine.health_questions.exists?
 
       vaccine.health_questions.create!(
         title: "Does your child have any severe allergies?",

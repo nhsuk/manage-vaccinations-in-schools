@@ -14,7 +14,6 @@
 #  nivs_name           :text             not null
 #  snomed_product_code :string           not null
 #  snomed_product_term :string           not null
-#  type                :string           not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  programme_id        :bigint           not null
@@ -36,7 +35,6 @@
 describe Vaccine, type: :model do
   describe "validation" do
     it { should validate_inclusion_of(:method).in_array(%w[injection nasal]) }
-    it { should validate_inclusion_of(:type).in_array(%w[flu hpv]) }
   end
 
   describe "#contains_gelatine?" do

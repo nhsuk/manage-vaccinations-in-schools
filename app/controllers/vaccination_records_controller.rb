@@ -41,9 +41,9 @@ class VaccinationRecordsController < ApplicationController
           :immunisation_imports,
           :performed_by_user,
           :programme,
-          :vaccine,
           patient: [:cohort, :school, { parent_relationships: :parent }],
-          session: %i[dates location]
+          session: %i[dates location],
+          vaccine: :programme
         )
         .where(programme:)
         .order(:recorded_at)

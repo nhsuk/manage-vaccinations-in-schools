@@ -37,11 +37,11 @@ class ImportIssuesController < ApplicationController
         .with_pending_changes
         .distinct
         .includes(
-          :vaccine,
           :batch,
           :patient_session,
           session: :location,
-          patient: %i[cohort school]
+          patient: %i[cohort school],
+          vaccine: :programme
         )
         .strict_loading
   end

@@ -18,9 +18,7 @@ FactoryBot.define do
     transient { batch_count { 1 } }
 
     type { %w[flu hpv].sample }
-    vaccines do
-      [association(:vaccine, type:, batch_count:, programme: instance)]
-    end
+    vaccines { [association(:vaccine, batch_count:, programme: instance)] }
 
     trait :hpv do
       type { "hpv" }

@@ -61,7 +61,7 @@ task :add_health_questions,
     next
   end
 
-  puts "\nThese will be the health questions for #{programme.name}'s #{vaccine.type} vaccine #{vaccine.brand}:"
+  puts "\nThese will be the health questions for #{programme.name}'s vaccine #{vaccine.brand}:"
   unless replace
     existing_health_questions.each do |health_question|
       puts Rainbow("  [old] #{health_question.title}").black

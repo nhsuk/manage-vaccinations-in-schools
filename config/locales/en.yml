@@ -652,8 +652,6 @@ en:
       given: Vaccination recorded for
       not_given: Record updated for
   vaccines:
-    flu: Flu
-    hpv: HPV
     index:
       title: Vaccines
   wicked:

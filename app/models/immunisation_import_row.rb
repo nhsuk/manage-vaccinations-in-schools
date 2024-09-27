@@ -358,11 +358,11 @@ class ImmunisationImportRow
   end
 
   def requires_care_setting?
-    vaccine&.hpv?
+    @programme.hpv?
   end
 
   def requires_performed_by?
-    vaccine&.flu?
+    administered && @programme.flu?
   end
 
   def parse_date(key)

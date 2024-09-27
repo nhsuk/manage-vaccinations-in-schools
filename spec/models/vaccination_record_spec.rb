@@ -60,7 +60,7 @@ describe VaccinationRecord do
 
       let(:patient_session) { create(:patient_session, programme:) }
       let(:vaccine) { programme.vaccines.first }
-      let(:different_vaccine) { create(:vaccine) }
+      let(:different_vaccine) { create(:vaccine, programme:) }
       let(:batch) { create(:batch, vaccine: different_vaccine) }
 
       it "has an error" do
