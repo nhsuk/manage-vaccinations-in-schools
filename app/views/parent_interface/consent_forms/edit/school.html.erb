@@ -16,22 +16,16 @@
     If you&apos;ve moved recently, it&apos;s important to mention this.
   </p>
 
-  <%= render DfE::Autocomplete::View.new(
-        f,
-        attribute_name: :location_id,
-        form_field: f.govuk_select(
-          :location_id,
-          options_for_select(
-            dfe_autocomplete_options(
-              @consent_form.eligible_schools.map {
-                OpenStruct.new(name: _1.name, value: _1.id)
-              }
-            ),
-            f.object.id,
-          ),
-          label: { text: "Select a school" },
-        ),
-      ) %>
+  <%= f.govuk_select :location_id,
+                     label: { text: "Select a school" },
+                     data: { module: "autocomplete" } do %>
+        <%= tag.option "", value: "" %>
+        <% @consent_form.eligible_schools.each do |school| %>
+          <%= tag.option(school.name,
+                         value: school.id,
+                         data: { hint: school.address_parts.join(", ") }) %>
+        <% end %>
+  <% end %>
 
   <%= f.govuk_submit "Continue" %>
 <% end %>
