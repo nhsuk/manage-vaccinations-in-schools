@@ -10,6 +10,8 @@ module CSVImportable
 
     encrypts :csv_data
 
+    belongs_to :team
+
     belongs_to :uploaded_by,
                class_name: "User",
                foreign_key: :uploaded_by_user_id
