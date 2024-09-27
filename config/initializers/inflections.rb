@@ -22,7 +22,6 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "NHS"
   inflect.acronym "ODS"
   inflect.acronym "PDS"
-  inflect.acronym "DfE"
 
   inflect.irregular "batch", "batches"
   inflect.irregular "child", "children"

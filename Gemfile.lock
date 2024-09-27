@@ -1,15 +1,4 @@
 GIT
-  remote: https://github.com/DFE-Digital/dfe-autocomplete.git
-  revision: 8e7389ff62a38bc8880323f6c58eed9c8d10f080
-  specs:
-    dfe-autocomplete (0.1.0)
-      actionview (>= 7.0.2.3)
-      activemodel (>= 7.0.2.3)
-      govuk-components
-      rails (>= 7.0.2.3)
-      view_component
-
-GIT
   remote: https://github.com/citizensadvice/capybara_accessible_selectors
   revision: 347bbe06cb420416855e80bb4e3a3016b2d5872c
   branch: main
@@ -672,7 +661,6 @@ DEPENDENCIES
   debug
   devise
   devise-pwned_password
-  dfe-autocomplete!
   dockerfile-rails (>= 1.0.0)
   factory_bot_rails
   faker
