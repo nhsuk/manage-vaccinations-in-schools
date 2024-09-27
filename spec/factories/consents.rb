@@ -42,7 +42,9 @@ FactoryBot.define do
     end
 
     programme
-    team { programme.team }
+    team do
+      programme.teams.first || association(:team, programmes: [programme])
+    end
 
     patient
     parent { patient.parents.first }

@@ -8,7 +8,7 @@ class ProgrammePolicy
     end
 
     def resolve
-      @scope.where(team: @user.teams)
+      @scope.where(id: @user.programmes.ids)
     end
   end
 end

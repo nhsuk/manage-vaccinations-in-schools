@@ -56,7 +56,8 @@ describe "Import child records" do
   end
 
   def and_an_hpv_programme_is_underway
-    create(:programme, :hpv, team: @team)
+    programme = create(:programme, :hpv)
+    create(:team_programme, team: @team, programme:)
   end
 
   def when_i_visit_the_cohort_page_for_the_hpv_programme

@@ -15,7 +15,9 @@ class RemoveTeamFromProgrammes < ActiveRecord::Migration[7.2]
     add_reference :programmes, :team, foreign_key: true
 
     Programme.all.find_each do |programme|
-      programme.update!(team_id: TeamProgramme.find_by(programme:)&.team_id || Team.first.id)
+      programme.update!(
+        team_id: TeamProgramme.find_by(programme:)&.team_id || Team.first.id
+      )
     end
 
     change_column_null :programmes, :team_id, false

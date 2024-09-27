@@ -18,15 +18,20 @@ describe "Batches" do
   end
 
   def given_my_team_is_running_an_hpv_vaccination_programme
-    @team = create(:team, :with_one_nurse)
-    @programme = create(:programme, :hpv_no_batches, team: @team)
+    @programme = create(:programme, :hpv_no_batches)
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
   end
 
   def and_there_is_a_vaccination_session_today_with_one_patient_ready_to_vaccinate
     location = create(:location, :school)
     session = create(:session, :today, programme: @programme, location:)
 
-    create(:patient_session, :consent_given_triage_not_needed, session:)
+    create(
+      :patient_session,
+      :consent_given_triage_not_needed,
+      programme: @programme,
+      session:
+    )
 
     @patient = session.reload.patients.first
   end

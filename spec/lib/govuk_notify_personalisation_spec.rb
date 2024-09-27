@@ -65,7 +65,7 @@ describe GovukNotifyPersonalisation do
 
   context "with a consent" do
     let(:consent) do
-      create(:consent, :refused, recorded_at: Date.new(2024, 1, 1))
+      create(:consent, :refused, programme:, recorded_at: Date.new(2024, 1, 1))
     end
 
     it do
@@ -80,7 +80,12 @@ describe GovukNotifyPersonalisation do
 
   context "with a consent form" do
     let(:consent_form) do
-      create(:consent_form, :refused, recorded_at: Date.new(2024, 1, 1))
+      create(
+        :consent_form,
+        :refused,
+        programme:,
+        recorded_at: Date.new(2024, 1, 1)
+      )
     end
 
     it do
@@ -104,6 +109,7 @@ describe GovukNotifyPersonalisation do
       create(
         :vaccination_record,
         :not_administered,
+        programme:,
         recorded_at: Date.new(2024, 1, 1)
       )
     end

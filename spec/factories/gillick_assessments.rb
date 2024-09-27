@@ -25,8 +25,8 @@
 #
 FactoryBot.define do
   factory :gillick_assessment do
-    assessor { create :user }
-    patient_session { create :patient_session }
+    assessor
+    patient_session
     competent
 
     trait :not_competent do

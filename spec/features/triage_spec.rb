@@ -27,8 +27,8 @@ describe "Triage" do
   end
 
   def given_a_programme_with_a_running_session
-    @team = create(:team, :with_one_nurse)
-    @programme = create(:programme, :hpv, team: @team)
+    @programme = create(:programme, :hpv)
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
     @batch = @programme.batches.first
     location = create(:location, :school)
     @session = create(:session, team: @team, programme: @programme, location:)
@@ -36,6 +36,7 @@ describe "Triage" do
       create(
         :patient_session,
         :consent_given_triage_needed,
+        programme: @programme,
         session: @session
       ).patient
     create(

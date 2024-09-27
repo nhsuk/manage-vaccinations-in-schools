@@ -54,8 +54,8 @@ describe "Manage sessions" do
   end
 
   def given_my_team_is_running_an_hpv_vaccination_programme
-    @team = create(:team, :with_one_nurse)
-    create(:programme, :hpv, team: @team)
+    programme = create(:programme, :hpv)
+    @team = create(:team, :with_one_nurse, programmes: [programme])
     @location = create(:location, :secondary, team: @team)
     @patient = create(:patient, school: @location)
   end

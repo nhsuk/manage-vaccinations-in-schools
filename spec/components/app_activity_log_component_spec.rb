@@ -15,7 +15,8 @@ end
 describe AppActivityLogComponent do
   subject { page }
 
-  let(:team) { create(:team) }
+  let(:programme) { create(:programme, :hpv) }
+  let(:team) { create(:team, programmes: [programme]) }
   let(:patient_session) do
     create(
       :patient_session,
@@ -29,7 +30,6 @@ describe AppActivityLogComponent do
   let(:user) do
     create(:user, teams: [team], family_name: "Joy", given_name: "Nurse")
   end
-  let(:programme) { create(:programme, :hpv, team:) }
   let(:location) { create(:location, :school, name: "Hogwarts") }
   let(:session) { create(:session, programme:, location:) }
   let(:patient) { create(:patient, school: location) }

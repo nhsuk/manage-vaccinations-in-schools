@@ -50,8 +50,8 @@ class ApplicationMailer < Mail::Notify::Mailer
 
   def reply_to_id
     team =
-      programme&.team || session&.team || patient_session&.team ||
-        consent_form&.team || vaccination_record&.team
+      session&.team || patient_session&.team || consent_form&.team ||
+        consent&.team || vaccination_record&.team
 
     team.reply_to_id
   end

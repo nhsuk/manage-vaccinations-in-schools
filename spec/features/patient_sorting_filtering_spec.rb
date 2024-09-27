@@ -55,10 +55,10 @@ describe "Patient sorting and filtering" do
   end
 
   def given_that_i_am_signed_in
-    @team = create(:team, :with_one_nurse)
+    @programme = create(:programme, :hpv)
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
     location = create(:location, :school)
     @user = @team.users.first
-    @programme = create(:programme, :hpv, team: @team)
     @session = create(:session, team: @team, programme: @programme, location:)
     create_list(:patient, 4, session: @session)
       .zip(

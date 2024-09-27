@@ -225,7 +225,11 @@ FactoryBot.define do
     end
 
     trait :unable_to_vaccinate_not_gillick_competent do
-      gillick_assessment { association :gillick_assessment, :not_competent }
+      gillick_assessment do
+        association :gillick_assessment,
+                    :not_competent,
+                    patient_session: instance
+      end
 
       patient do
         association :patient,

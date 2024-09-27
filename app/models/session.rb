@@ -140,7 +140,9 @@ class Session < ApplicationRecord
   def programmes_part_of_team
     return if programmes.empty?
 
-    errors.add(:programmes, :inclusion) if programmes.map(&:team).uniq != [team]
+    unless programmes.all? { team.programmes.include?(_1) }
+      errors.add(:programmes, :inclusion)
+    end
   end
 
   def set_programmes

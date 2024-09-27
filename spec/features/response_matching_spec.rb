@@ -22,9 +22,9 @@ describe "Response matching" do
   end
 
   def given_the_app_is_setup
-    @team = create(:team, :with_one_nurse)
+    @programme = create(:programme, :hpv)
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
     @user = @team.users.first
-    @programme = create(:programme, :hpv, team: @team)
     @school = create(:location, :school, name: "Pilot School")
     @session =
       create(:session, location: @school, team: @team, programme: @programme)
