@@ -126,4 +126,17 @@ describe Session do
       it { should be(false) }
     end
   end
+
+  describe "#year_groups" do
+    subject(:year_groups) { session.year_groups }
+
+    let(:flu_programme) { create(:programme, :flu) }
+    let(:hpv_programme) { create(:programme, :hpv) }
+
+    let(:session) do
+      create(:session, programmes: [flu_programme, hpv_programme])
+    end
+
+    it { should contain_exactly(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11) }
+  end
 end
