@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_27_142305) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_27_144903) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -458,13 +458,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_27_142305) do
     t.bigint "session_id", null: false
     t.bigint "programme_id", null: false
     t.index ["session_id", "programme_id"], name: "index_programmes_sessions_on_session_id_and_programme_id", unique: true
-  end
-
-  create_table "programmes_vaccines", id: false, force: :cascade do |t|
-    t.bigint "programme_id", null: false
-    t.bigint "vaccine_id", null: false
-    t.index ["programme_id", "vaccine_id"], name: "index_programmes_vaccines_on_programme_id_and_vaccine_id"
-    t.index ["vaccine_id", "programme_id"], name: "index_programmes_vaccines_on_vaccine_id_and_programme_id"
   end
 
   create_table "session_dates", force: :cascade do |t|
