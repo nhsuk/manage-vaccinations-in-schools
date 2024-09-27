@@ -139,4 +139,125 @@ describe Session do
 
     it { should contain_exactly(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11) }
   end
+
+  describe "#create_patient_sessions!" do
+    subject(:create_patient_sessions!) { session.create_patient_sessions! }
+
+    let(:flu_programme) { create(:programme, :flu) }
+    let(:hpv_programme) { create(:programme, :hpv) }
+
+    let(:school) { create(:location, :primary) }
+
+    let!(:unvaccinated_child) do
+      create(:patient, date_of_birth: 9.years.ago.to_date, team:, school:)
+    end
+    let!(:unvaccinated_teen) do
+      create(:patient, date_of_birth: 14.years.ago.to_date, team:, school:)
+    end
+
+    let!(:flu_vaccinated_child) do
+      create(
+        :patient,
+        :vaccinated,
+        date_of_birth: 9.years.ago.to_date,
+        team:,
+        school:,
+        programme: flu_programme
+      )
+    end
+    let!(:flu_vaccinated_teen) do
+      create(
+        :patient,
+        :vaccinated,
+        date_of_birth: 14.years.ago.to_date,
+        team:,
+        school:,
+        programme: flu_programme
+      )
+    end
+    let!(:hpv_vaccinated_teen) do
+      create(
+        :patient,
+        :vaccinated,
+        date_of_birth: 14.years.ago.to_date,
+        team:,
+        school:,
+        programme: hpv_programme
+      )
+    end
+
+    let!(:both_vaccinated_teen) do
+      create(:patient, date_of_birth: 14.years.ago.to_date, team:, school:)
+    end
+
+    before do
+      create(
+        :vaccination_record,
+        programme: flu_programme,
+        patient: both_vaccinated_teen
+      )
+      create(
+        :vaccination_record,
+        programme: hpv_programme,
+        patient: both_vaccinated_teen
+      )
+    end
+
+    context "with a Flu session" do
+      let(:team) { create(:team, programmes: [flu_programme]) }
+      let(:session) do
+        create(:session, team:, location: school, programmes: [flu_programme])
+      end
+
+      it "adds the unvaccinated patients" do
+        create_patient_sessions!
+
+        expect(session.patients).to contain_exactly(
+          unvaccinated_child,
+          unvaccinated_teen,
+          hpv_vaccinated_teen
+        )
+      end
+    end
+
+    context "with an HPV session" do
+      let(:team) { create(:team, programmes: [hpv_programme]) }
+      let(:session) do
+        create(:session, team:, location: school, programmes: [hpv_programme])
+      end
+
+      it "adds the unvaccinated patients" do
+        create_patient_sessions!
+
+        expect(session.patients).to contain_exactly(
+          unvaccinated_teen,
+          flu_vaccinated_teen
+        )
+      end
+    end
+
+    context "with a Flu and HPV session" do
+      let(:team) { create(:team, programmes: [flu_programme, hpv_programme]) }
+      let(:session) do
+        create(
+          :session,
+          team:,
+          location: school,
+          programmes: [flu_programme, hpv_programme]
+        )
+      end
+
+      it "adds the unvaccinated patients" do
+        create_patient_sessions!
+
+        expect(session.patients).to contain_exactly(
+          unvaccinated_child,
+          unvaccinated_teen,
+          flu_vaccinated_child,
+          hpv_vaccinated_teen,
+          flu_vaccinated_teen
+        )
+      end
+    end
+  end
 end

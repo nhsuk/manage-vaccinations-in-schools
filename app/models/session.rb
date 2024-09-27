@@ -105,6 +105,41 @@ class Session < ApplicationRecord
     programmes.flat_map(&:year_groups).uniq.sort
   end
 
+  def create_patient_sessions!
+    return if location.nil?
+
+    cohorts = team.cohorts.for_year_groups(year_groups)
+
+    patients_in_cohorts =
+      Patient.where(cohort: cohorts, school: location).includes(
+        vaccination_records: :programme
+      )
+
+    required_programmes = Set.new(programmes)
+
+    unvaccinated_patients =
+      patients_in_cohorts.reject do |patient|
+        # TODO: This logic doesn't work for vaccinations that require multiple doses.
+
+        vaccinated_programmes =
+          Set.new(
+            patient
+              .vaccination_records
+              .select { _1.recorded? && _1.administered? }
+              .map(&:programme)
+          )
+
+        required_programmes.subset?(vaccinated_programmes)
+      end
+
+    patient_sessions =
+      unvaccinated_patients.map do
+        PatientSession.new(patient: _1, session: self, active: true)
+      end
+
+    PatientSession.import!(patient_sessions, on_duplicate_key_update: [:active])
+  end
+
   def set_consent_dates
     if dates.empty?
       self.send_consent_requests_at = nil
