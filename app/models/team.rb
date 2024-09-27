@@ -29,11 +29,12 @@ class Team < ApplicationRecord
   has_many :cohorts
   has_many :consents
   has_many :locations
-  has_many :programmes
+  has_many :team_programmes
   has_many :schools, -> { school }, class_name: "Location"
   has_many :sessions
 
   has_many :patient_sessions, through: :sessions
+  has_many :programmes, through: :team_programmes
   has_many :vaccination_records, through: :patient_sessions
 
   has_and_belongs_to_many :users

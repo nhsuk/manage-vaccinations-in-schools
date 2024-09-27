@@ -8,21 +8,14 @@
 #  type       :string           not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  team_id    :integer          not null
 #
 # Indexes
 #
-#  index_programmes_on_team_id_and_type  (team_id,type) UNIQUE
-#
-# Foreign Keys
-#
-#  fk_rails_...  (team_id => teams.id)
+#  index_programmes_on_type  (type) UNIQUE
 #
 FactoryBot.define do
   factory :programme do
     transient { batch_count { 1 } }
-
-    team
 
     type { %w[flu hpv].sample }
     vaccines { [association(:vaccine, type:, batch_count:)] }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_27_111052) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_27_124718) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -450,9 +450,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_27_111052) do
   create_table "programmes", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "team_id", null: false
     t.string "type", null: false
-    t.index ["team_id", "type"], name: "index_programmes_on_team_id_and_type", unique: true
+    t.index ["type"], name: "index_programmes_on_type", unique: true
   end
 
   create_table "programmes_sessions", id: false, force: :cascade do |t|
@@ -655,7 +654,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_27_111052) do
   add_foreign_key "patient_sessions", "users", column: "created_by_user_id"
   add_foreign_key "patients", "cohorts"
   add_foreign_key "patients", "locations", column: "school_id"
-  add_foreign_key "programmes", "teams"
   add_foreign_key "programmes_sessions", "programmes"
   add_foreign_key "programmes_sessions", "sessions"
   add_foreign_key "session_dates", "sessions"

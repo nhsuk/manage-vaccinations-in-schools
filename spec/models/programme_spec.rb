@@ -8,15 +8,10 @@
 #  type       :string           not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  team_id    :integer          not null
 #
 # Indexes
 #
-#  index_programmes_on_team_id_and_type  (team_id,type) UNIQUE
-#
-# Foreign Keys
-#
-#  fk_rails_...  (team_id => teams.id)
+#  index_programmes_on_type  (type) UNIQUE
 #
 
 describe Programme do
