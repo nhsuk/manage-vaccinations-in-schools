@@ -8,7 +8,7 @@ class PatientSessionPolicy
     end
 
     def resolve
-      @scope.joins(:session).where(session: { team_id: @user.teams.ids })
+      @scope.joins(:session).where(session: { team: @user.teams })
     end
   end
 end
