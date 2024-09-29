@@ -14,6 +14,7 @@
 
 ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "API"
+  inflect.acronym "CIS2"
   inflect.acronym "CSRF"
   inflect.acronym "CSV"
   inflect.acronym "DPS"
