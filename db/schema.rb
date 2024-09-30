@@ -134,6 +134,16 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_01_085855) do
     t.index ["session_id"], name: "index_consent_forms_on_session_id"
   end
 
+  create_table "consent_notifications", force: :cascade do |t|
+    t.bigint "patient_id", null: false
+    t.bigint "programme_id", null: false
+    t.boolean "reminder", null: false
+    t.datetime "sent_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.index ["patient_id", "programme_id"], name: "index_consent_notifications_on_patient_id_and_programme_id"
+    t.index ["patient_id"], name: "index_consent_notifications_on_patient_id"
+    t.index ["programme_id"], name: "index_consent_notifications_on_programme_id"
+  end
+
   create_table "consents", force: :cascade do |t|
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
@@ -618,6 +628,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_01_085855) do
   add_foreign_key "consent_forms", "locations"
   add_foreign_key "consent_forms", "programmes"
   add_foreign_key "consent_forms", "sessions"
+  add_foreign_key "consent_notifications", "patients"
+  add_foreign_key "consent_notifications", "programmes"
   add_foreign_key "consents", "parents"
   add_foreign_key "consents", "patients"
   add_foreign_key "consents", "programmes"

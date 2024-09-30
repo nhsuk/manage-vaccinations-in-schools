@@ -21,6 +21,7 @@ class Programme < ApplicationRecord
   has_and_belongs_to_many :sessions
 
   has_many :consent_forms
+  has_many :consent_notifications
   has_many :consents
   has_many :dps_exports
   has_many :immunisation_imports

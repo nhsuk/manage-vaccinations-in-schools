@@ -47,6 +47,7 @@ class Patient < ApplicationRecord
   belongs_to :cohort
   belongs_to :school, class_name: "Location", optional: true
 
+  has_many :consent_notifications
   has_many :consents
   has_many :parent_relationships
   has_many :patient_sessions
