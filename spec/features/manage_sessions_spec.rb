@@ -95,7 +95,8 @@ describe "Manage sessions" do
   end
 
   def when_i_click_on_schedule_sessions
-    click_link "Schedule sessions"
+    click_on "Schedule sessions"
+    click_on "Add session dates"
   end
 
   def then_i_see_the_date_step

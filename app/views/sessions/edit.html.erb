@@ -21,11 +21,15 @@
       
         summary_list.with_row do |row|
           row.with_key { "Session dates" }
-          row.with_value do
-            if (dates = @session.dates).present?
+      
+          if (dates = @session.dates).present?
+            row.with_value do
               safe_join(dates.map { _1.value.to_fs(:long_day_of_week) }, tag.br)
-            else
-              "Not provided"
+            end
+            row.with_action(text: "Change", href: session_edit_path(@session, :when), visually_hidden_text: "session dates")
+          else
+            row.with_value do
+              govuk_link_to "Add session dates", session_edit_path(@session, :when)
             end
           end
         end

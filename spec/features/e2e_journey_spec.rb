@@ -101,7 +101,9 @@ describe "End-to-end journey" do
     click_on "Pilot School"
     click_on "Schedule sessions"
 
+    click_on "Add session dates"
     expect(page).to have_content("When is the session?")
+
     fill_in "Day", with: "1"
     fill_in "Month", with: "3"
     fill_in "Year", with: "2024"

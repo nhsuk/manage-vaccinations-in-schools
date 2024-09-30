@@ -18,7 +18,7 @@
     <ul class="nhsuk-grid-row nhsuk-card-group">
       <% if @session.unscheduled? %>
         <li class="nhsuk-grid-column-full nhsuk-card-group__item">
-          <%= render AppCardComponent.new(link_to: session_edit_path(@session, Wicked::FIRST_STEP)) do |c| %>
+          <%= render AppCardComponent.new(link_to: edit_session_path) do |c| %>
             <% c.with_heading { "Schedule sessions" } %>
             <% c.with_description { "Add dates for this school." } %>
           <% end %>
