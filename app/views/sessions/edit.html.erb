@@ -10,6 +10,40 @@
   Edit session
 <% end %>
 
-<%= render AppSessionSummaryCardComponent.new(@session) %>
+<%= render AppCardComponent.new do |card| %>
+  <% card.with_heading { "Session details" } %>
+
+  <%= govuk_summary_list(classes: "app-summary-list--no-bottom-border") do |summary_list|
+        summary_list.with_row do |row|
+          row.with_key { "Programmes" }
+          row.with_value { safe_join(@session.programmes.map(&:name), tag.br) }
+        end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Session dates" }
+          row.with_value do
+            if (dates = @session.dates).present?
+              safe_join(dates.map { _1.value.to_fs(:long_day_of_week) }, tag.br)
+            else
+              "Not provided"
+            end
+          end
+        end
+      
+        if (send_consent_requests_at = @session.send_consent_requests_at).present?
+          summary_list.with_row do |row|
+            row.with_key { "Consent requests" }
+            row.with_value { "Send on #{send_consent_requests_at.to_fs(:long_day_of_week)}" }
+          end
+        end
+      
+        if (send_consent_reminders_at = @session.send_consent_reminders_at).present?
+          summary_list.with_row do |row|
+            row.with_key { "Reminders" }
+            row.with_value { "Send on #{send_consent_reminders_at.to_fs(:long_day_of_week)}" }
+          end
+        end
+      end %>
+<% end %>
 
 <%= govuk_button_link_to "Continue", session_path(@session) %>
