@@ -91,6 +91,28 @@ FactoryBot.define do
 
     trait :consent_request_sent do
       consent_request_sent_at { 1.week.ago }
+
+      after(:create) do |patient, context|
+        create(
+          :consent_notification,
+          :request,
+          patient:,
+          programme: context.programme
+        )
+      end
+    end
+
+    trait :consent_reminder_sent do
+      consent_reminder_sent_at { 1.week.ago }
+
+      after(:create) do |patient, context|
+        create(
+          :consent_notification,
+          :reminder,
+          patient:,
+          programme: context.programme
+        )
+      end
     end
 
     trait :consent_given_triage_not_needed do
