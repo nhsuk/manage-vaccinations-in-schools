@@ -18,7 +18,7 @@ class ProgrammesController < ApplicationController
     @scheduled_sessions = @programme.sessions.scheduled
 
     @unscheduled_sessions =
-      @programme.sessions.unscheduled +
+      @programme.sessions.unscheduled.where(academic_year:) +
         policy_scope(Location)
           .school
           .for_year_groups(@programme.year_groups)
@@ -27,7 +27,7 @@ class ProgrammesController < ApplicationController
             Session.new(team: current_user.team, location:, academic_year:)
           end
 
-    @completed_sessions = @programme.sessions.completed
+    @completed_sessions = @programme.sessions.completed.where(academic_year:)
   end
 
   private
