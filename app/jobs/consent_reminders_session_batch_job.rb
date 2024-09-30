@@ -26,6 +26,10 @@ class ConsentRemindersSessionBatchJob < ApplicationJob
       end
 
       patient.update!(consent_reminder_sent_at: Time.zone.now)
+
+      session.programmes.each do |programme|
+        ConsentNotification.create!(programme:, patient:, reminder: true)
+      end
     end
   end
 end

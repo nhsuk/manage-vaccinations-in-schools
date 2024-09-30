@@ -71,6 +71,9 @@ class Patient < ApplicationRecord
 
   scope :without_consent,
         -> { includes(:consents).where(consents: { id: nil }) }
+
+  scope :needing_consent_request,
+        -> { without_consent.consent_request_not_sent }
   scope :needing_consent_reminder,
         -> { consent_request_sent.without_consent.consent_reminder_not_sent }
 
