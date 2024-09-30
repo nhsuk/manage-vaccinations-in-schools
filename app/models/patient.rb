@@ -11,7 +11,6 @@
 #  address_town             :string
 #  common_name              :string
 #  consent_reminder_sent_at :datetime
-#  consent_request_sent_at  :datetime
 #  date_of_birth            :date             not null
 #  first_name               :string           not null
 #  gender_code              :integer          default("not_known"), not null
