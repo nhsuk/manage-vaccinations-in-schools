@@ -11,3 +11,5 @@
 <% end %>
 
 <%= render AppSessionSummaryCardComponent.new(@session) %>
+
+<%= govuk_button_link_to "Continue", session_path(@session) %>

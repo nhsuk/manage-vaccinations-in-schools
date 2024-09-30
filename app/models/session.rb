@@ -159,7 +159,7 @@ class Session < ApplicationRecord
   end
 
   def wizard_steps
-    %i[when confirm]
+    %i[when]
   end
 
   def unmatched_consent_forms

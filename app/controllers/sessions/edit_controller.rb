@@ -13,24 +13,14 @@ class Sessions::EditController < ApplicationController
   end
 
   def update
-    case current_step
-    when :confirm
-      @session.patient_sessions.update_all(active: true)
-    else
-      @session.assign_attributes update_params
-    end
-
+    @session.assign_attributes update_params
     render_wizard @session
   end
 
   private
 
-  def current_step
-    wizard_value(step)&.to_sym
-  end
-
   def finish_wizard_path
-    session_path(@session)
+    edit_session_path(@session)
   end
 
   def set_session
@@ -38,14 +28,10 @@ class Sessions::EditController < ApplicationController
   end
 
   def update_params
-    permitted_attributes = { when: %i[date(3i) date(2i) date(1i)] }.fetch(
-      current_step
-    )
-
     params
       .fetch(:session, {})
-      .permit(permitted_attributes)
-      .merge(wizard_step: current_step)
+      .permit(%i[date(3i) date(2i) date(1i)])
+      .merge(wizard_step: wizard_value(step)&.to_sym)
   end
 
   def set_steps
@@ -54,19 +40,16 @@ class Sessions::EditController < ApplicationController
   end
 
   def validate_params
-    case current_step
-    when :when
-      validator =
-        DateParamsValidator.new(
-          field_name: :date,
-          object: @session,
-          params: update_params
-        )
+    validator =
+      DateParamsValidator.new(
+        field_name: :date,
+        object: @session,
+        params: update_params
+      )
 
-      unless validator.date_params_valid?
-        @session.date = validator.date_params_as_struct
-        render_wizard nil, status: :unprocessable_entity
-      end
+    unless validator.date_params_valid?
+      @session.date = validator.date_params_as_struct
+      render_wizard nil, status: :unprocessable_entity
     end
   end
 end

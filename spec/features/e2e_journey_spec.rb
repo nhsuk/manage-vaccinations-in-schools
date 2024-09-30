@@ -109,7 +109,7 @@ describe "End-to-end journey" do
   end
 
   def and_confirm_the_session_details
-    expect(page).to have_content("Check and confirm details")
+    expect(page).to have_content("Edit session")
 
     expect(page).to have_content("ProgrammesHPV")
     expect(page).to have_content("Session datesFriday 1 March 2024")
@@ -118,7 +118,7 @@ describe "End-to-end journey" do
     )
     expect(page).to have_content("RemindersSend on Friday 16 February 2024")
 
-    click_on "Confirm"
+    click_on "Continue"
   end
 
   def then_i_see_the_session_page
