@@ -437,7 +437,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_01_085855) do
     t.string "address_line_2"
     t.string "address_town"
     t.string "address_postcode", null: false
-    t.datetime "consent_request_sent_at"
     t.datetime "consent_reminder_sent_at"
     t.integer "gender_code", default: 0, null: false
     t.boolean "home_educated"
