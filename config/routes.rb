@@ -53,6 +53,10 @@ Rails.application.routes.draw do
     get "/random_consent_form", to: "dev#random_consent_form"
   end
 
+  constraints -> { Flipper.enabled?(:dev_tools) } do
+    get "/reset/:team_ods_code", to: "dev#reset_team", as: :reset_team
+  end
+
   get "/csrf", to: "csrf#new"
 
   resources :programmes, only: %i[index show] do
