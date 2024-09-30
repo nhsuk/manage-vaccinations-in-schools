@@ -1,16 +1,22 @@
 # frozen_string_literal: true
 
-# This job triggers a job to send a batch of consent requests for each sessions
-# that needs them sent today.
-
 class ConsentRequestsJob < ApplicationJob
   queue_as :default
 
-  def perform(*_args)
+  def perform
     return unless Flipper.enabled?(:scheduled_emails)
 
     Session.send_consent_requests_today.each do |session|
-      ConsentRequestsSessionBatchJob.perform_later(session)
+      session.patients.needing_consent_request.each do |patient|
+        session.programmes.each do |programme|
+          ConsentNotification.create_and_send!(
+            patient:,
+            programme:,
+            session:,
+            reminder: false
+          )
+        end
+      end
     end
   end
 end

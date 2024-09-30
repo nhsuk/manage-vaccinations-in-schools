@@ -1,39 +1,70 @@
 # frozen_string_literal: true
 
-describe ConsentRequestsJob, type: :job do
-  before do
-    Flipper.enable(:scheduled_emails)
-    ActiveJob::Base.queue_adapter.enqueued_jobs.clear
-  end
+describe ConsentRequestsJob do
+  subject(:perform_now) { described_class.perform_now }
+
+  before { Flipper.enable(:scheduled_emails) }
+  after { Flipper.disable(:scheduled_emails) }
 
   let(:programme) { create(:programme) }
 
-  context "with draft and active sessions" do
-    it "enqueues ConsentRequestsSessionBatchJob for each active sessions" do
-      active_session =
-        create(:session, send_consent_requests_at: Time.zone.today, programme:)
-      _unscheduled_session = create(:session, :unscheduled, programme:)
+  let(:parents) { create_list(:parent, 2) }
 
-      described_class.perform_now
-      expect(ConsentRequestsSessionBatchJob).to have_been_enqueued.once
-      expect(ConsentRequestsSessionBatchJob).to have_been_enqueued.with(
-        active_session
-      )
+  let(:patient_with_request_sent) do
+    create(:patient, :consent_request_sent, :consent_request_sent, programme:)
+  end
+  let(:patient_not_sent_request) { create(:patient, parents:, programme:) }
+  let(:patient_with_consent) do
+    create(:patient, :consent_given_triage_not_needed, programme:)
+  end
+
+  let!(:patients) do
+    [patient_with_request_sent, patient_not_sent_request, patient_with_consent]
+  end
+
+  context "when session is unscheduled" do
+    let(:session) { create(:session, :unscheduled, patients:, programme:) }
+
+    it "doesn't send any notifications" do
+      expect(ConsentNotification).not_to receive(:create_and_send!)
+      perform_now
     end
   end
 
-  context "with sessions set to send consent today and in the future" do
-    it "enqueues ConsentRequestsSessionBatchJob for the session set to send consent today" do
-      active_session =
-        create(:session, send_consent_requests_at: Time.zone.today, programme:)
-      _later_session =
-        create(:session, send_consent_requests_at: 2.days.from_now, programme:)
-
-      described_class.perform_now
-      expect(ConsentRequestsSessionBatchJob).to have_been_enqueued.once
-      expect(ConsentRequestsSessionBatchJob).to have_been_enqueued.with(
-        active_session
+  context "when session is in the future" do
+    let(:session) do
+      create(
+        :session,
+        patients:,
+        programme:,
+        send_consent_requests_at: 2.days.from_now
       )
+    end
+
+    it "doesn't send any notifications" do
+      expect(ConsentNotification).not_to receive(:create_and_send!)
+      perform_now
+    end
+  end
+
+  context "when the session is today" do
+    let(:session) do
+      create(
+        :session,
+        patients:,
+        programme:,
+        send_consent_requests_at: Date.current
+      )
+    end
+
+    it "sends notifications to one patient" do
+      expect(ConsentNotification).to receive(:create_and_send!).once.with(
+        patient: patient_not_sent_request,
+        programme:,
+        session:,
+        reminder: false
+      )
+      perform_now
     end
   end
 end
