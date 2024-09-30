@@ -33,7 +33,7 @@ class SessionsController < ApplicationController
 
   def unscheduled
     @sessions =
-      policy_scope(Session).unscheduled +
+      policy_scope(Session).unscheduled.where(academic_year:) +
         team
           .schools
           .has_no_session(academic_year)
@@ -43,7 +43,7 @@ class SessionsController < ApplicationController
   end
 
   def completed
-    @sessions = policy_scope(Session).completed
+    @sessions = policy_scope(Session).completed.where(academic_year:)
 
     render layout: "full"
   end
