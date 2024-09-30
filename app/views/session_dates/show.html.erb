@@ -1,0 +1,38 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: edit_session_path(@session),
+        name: "edit session",
+      ) %>
+<% end %>
+
+<%= h1 "When will sessions be held?" %>
+
+<%= form_with model: @session, url: session_dates_path(@session), method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
+  <div class="app-add-another">
+    <ol class="nhsuk-list app-add-another__list">
+      <%= f.fields_for :dates do |date_f| %>
+        <li class="app-add-another__list-item">
+          <%= date_f.govuk_date_field :value,
+                                      legend: { size: "m", text: "Session date" },
+                                      hint: { text: "For example, 27 3 2024" } %>
+
+          <% if @session.dates.length != 1 %>
+            <% button_class = "nhsuk-button app-add-another__delete app-button--secondary-warning app-button--small" %>
+
+            <% if date_f.object.new_record? %>
+              <%= link_to "Delete", session_dates_path(@session), class: button_class %>
+            <% else %>
+              <%= f.govuk_submit "Delete", name: "session[dates_attributes][#{date_f.index}][_destroy]", value: "true", class: button_class %>
+            <% end %>
+          <% end %>
+        </li>
+      <% end %>
+    </ol>
+
+    <%= f.govuk_submit "Add another date", name: "add_another", class: "nhsuk-button app-add-another__add app-button--secondary" %>
+  </div>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

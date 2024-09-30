@@ -111,7 +111,7 @@ Rails.application.routes.draw do
       get "unscheduled"
     end
 
-    resources :edit, controller: "sessions/edit", only: %i[show update]
+    resource :dates, controller: "session_dates", only: %i[show update]
 
     constraints -> { Flipper.enabled?(:dev_tools) } do
       put "make-in-progress", to: "sessions#make_in_progress", on: :member

@@ -16,9 +16,9 @@ describe "Manage sessions" do
     then_i_see_the_school_session
 
     when_i_click_on_schedule_sessions
-    then_i_see_the_date_step
+    then_i_see_the_dates_page
 
-    when_i_choose_the_date
+    when_i_choose_the_dates
     then_i_see_the_confirmation_page
 
     when_i_confirm
@@ -99,15 +99,40 @@ describe "Manage sessions" do
     click_on "Add session dates"
   end
 
-  def then_i_see_the_date_step
-    expect(page).to have_content("When is the session?")
+  def then_i_see_the_dates_page
+    expect(page).to have_content("When will sessions be held?")
   end
 
-  def when_i_choose_the_date
+  def when_i_choose_the_dates
     fill_in "Day", with: "10"
     fill_in "Month", with: "03"
     fill_in "Year", with: "2024"
-    click_button "Continue"
+    click_on "Add another date"
+
+    within all(".app-add-another__list-item")[1] do
+      fill_in "Day", with: "11"
+      fill_in "Month", with: "03"
+      fill_in "Year", with: "2024"
+    end
+    click_on "Add another date"
+
+    within all(".app-add-another__list-item")[2] do
+      fill_in "Day", with: "12"
+      fill_in "Month", with: "03"
+      fill_in "Year", with: "2024"
+    end
+
+    click_on "Add another date"
+
+    within all(".app-add-another__list-item")[3] do
+      click_on "Delete"
+    end
+
+    within all(".app-add-another__list-item")[2] do
+      click_on "Delete"
+    end
+
+    click_on "Continue"
   end
 
   def then_i_see_the_confirmation_page
@@ -120,6 +145,8 @@ describe "Manage sessions" do
 
   def then_i_should_see_the_session_details
     expect(page).to have_content(@location.name.to_s)
+    expect(page).to have_content("10 March 2024")
+    expect(page).to have_content("11 March 2024")
   end
 
   def when_the_parent_visits_the_consent_form
