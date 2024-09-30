@@ -1,0 +1,35 @@
+$counter-size: 2rem;
+
+.app-add-another {
+  display: block;
+}
+
+.app-add-another__list {
+  counter-reset: items;
+}
+
+.app-add-another__list-item {
+  --label-font: var(--font-fieldset-label);
+  padding-bottom: nhsuk-spacing(3);
+  padding-left: calc($counter-size + nhsuk-spacing(3));
+  position: relative;
+
+  &::before {
+    align-items: center;
+    background-color: $color_nhsuk-blue;
+    color: $color_nhsuk-white;
+    content: counter(items);
+    counter-increment: items;
+    display: flex;
+    font-weight: bold;
+    height: $counter-size;
+    inset: 0;
+    justify-content: center;
+    position: absolute;
+    width: $counter-size;
+  }
+
+  .app-button--small.app-button--secondary-warning:active {
+    margin-bottom: nhsuk-spacing(6) - 4px;
+  }
+}
