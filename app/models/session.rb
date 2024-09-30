@@ -70,9 +70,9 @@ class Session < ApplicationRecord
         end
 
   scope :send_consent_requests_today,
-        -> { where(send_consent_requests_at: Time.zone.today) }
+        -> { scheduled.where("send_consent_requests_at <= ?", Date.current) }
   scope :send_consent_reminders_today,
-        -> { where(send_consent_reminders_at: Time.zone.today) }
+        -> { scheduled.where("send_consent_reminders_at <= ?", Date.current) }
 
   after_initialize :set_programmes
 
