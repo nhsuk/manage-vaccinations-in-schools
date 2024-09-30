@@ -27,8 +27,8 @@ class Cohort < ApplicationRecord
   validates :birth_academic_year, comparison: { greater_than_or_equal_to: 1990 }
 
   scope :for_year_groups,
-        ->(year_groups) do
-          academic_year = Time.zone.today.academic_year
+        ->(year_groups, academic_year: nil) do
+          academic_year ||= Date.current.academic_year
 
           birth_academic_years =
             year_groups.map { |year_group| academic_year - year_group - 5 }

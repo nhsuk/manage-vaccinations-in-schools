@@ -113,5 +113,12 @@ class CohortImport < ApplicationRecord
       patients.draft.update_all(recorded_at:)
       parents.draft.update_all(recorded_at:)
     end
+
+    sessions =
+      team.sessions.scheduled.or(
+        Session.unscheduled.where(academic_year: Date.current.academic_year)
+      )
+
+    sessions.each(&:create_patient_sessions!)
   end
 end
