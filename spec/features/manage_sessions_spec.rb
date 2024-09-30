@@ -110,11 +110,11 @@ describe "Manage sessions" do
   end
 
   def then_i_see_the_confirmation_page
-    expect(page).to have_content("Check and confirm details")
+    expect(page).to have_content("Edit session")
   end
 
   def when_i_confirm
-    click_button "Confirm"
+    click_on "Continue"
   end
 
   def then_i_should_see_the_session_details
