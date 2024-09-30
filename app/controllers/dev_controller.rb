@@ -16,6 +16,63 @@ class DevController < ApplicationController
     redirect_to root_path
   end
 
+  def reset_team
+    team = Team.find_by(ods_code: params[:team_ods_code])
+
+    cohort_imports = CohortImport.where(team:)
+    cohort_imports.find_each do |cohort_import|
+      cohort_import.parent_relationships.clear
+      cohort_import.patients.clear
+      cohort_import.parents.clear
+
+      cohort_import.destroy!
+    end
+
+    immunisation_imports = ImmunisationImport.where(team:)
+    immunisation_imports.find_each do |immunisation_import|
+      immunisation_import.batches.clear
+      immunisation_import.locations.clear
+      immunisation_import.patient_sessions.clear
+      immunisation_import.patients.clear
+      immunisation_import.sessions.clear
+      immunisation_import.vaccination_records.clear
+
+      immunisation_import.destroy!
+    end
+
+    team_sessions = Session.where(team:)
+
+    patient_sessions = PatientSession.where(session: team_sessions)
+    patient_sessions.each do |patient_session|
+      patient_session.vaccination_records.destroy_all
+      patient_session.triage.destroy_all
+      patient_session.destroy!
+    end
+
+    team_sessions.each do |team_session|
+      team_session.consent_forms.destroy_all
+      team_session.dates.destroy_all
+      team_session.destroy!
+    end
+
+    Patient
+      .joins(:cohort)
+      .where(cohorts: { team: })
+      .distinct
+      .find_each do |patient|
+        parent_ids = patient.parent_ids
+        patient.parents.clear
+        parent_ids.each { |parent_id| Parent.find(parent_id).destroy }
+
+        patient.save!
+        patient.destroy!
+      end
+
+    Cohort.where(team:).delete_all
+
+    head :ok
+  end
+
   def random_consent_form
     Faker::Config.locale = "en-GB"
     @session = Session.find(params.fetch(:session_id))
