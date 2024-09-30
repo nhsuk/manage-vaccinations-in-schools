@@ -258,5 +258,33 @@ describe CohortImport do
     it "records the parents" do
       expect { record! }.to change(Parent.recorded, :count).from(0).to(3)
     end
+
+    context "with an unscheduled session" do
+      let(:session) do
+        create(:session, :unscheduled, team:, programme:, location:)
+      end
+
+      it "adds the patients to the session" do
+        expect { record! }.to change(session.patients, :count).from(0).to(3)
+      end
+    end
+
+    context "with a scheduled session" do
+      let(:session) do
+        create(:session, :scheduled, team:, programme:, location:)
+      end
+
+      it "adds the patients to the session" do
+        expect { record! }.to change(session.patients, :count).from(0).to(3)
+      end
+    end
+
+    context "with a completed session" do
+      before { create(:session, :completed, team:, programme:, location:) }
+
+      it "doesn't add the patients to the session" do
+        expect { record! }.not_to change(PatientSession, :count)
+      end
+    end
   end
 end

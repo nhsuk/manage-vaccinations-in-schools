@@ -104,7 +104,7 @@ class Session < ApplicationRecord
   def create_patient_sessions!
     return if location.nil?
 
-    cohorts = team.cohorts.for_year_groups(year_groups)
+    cohorts = team.cohorts.for_year_groups(year_groups, academic_year:)
 
     patients_in_cohorts =
       Patient.where(cohort: cohorts, school: location).includes(
