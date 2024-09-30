@@ -134,6 +134,7 @@ en:
               invalid: Enter a valid phone number, like 07700 900 000
               too_long: Enter a phone number that is less than 300 characters long
             relationship_type:
+              blank: Choose a relationship
               inclusion: Choose a relationship
             relationship_other_name:
               blank: Enter a relationship
@@ -310,6 +311,7 @@ en:
               invalid: Enter a valid phone number, like 07700 900 000
               too_long: Enter a phone number that is less than 300 characters long
             parent_relationship_type:
+              blank: Choose a relationship
               inclusion: Choose a relationship
             parent_relationship_other_name:
               blank: Enter your relationship
