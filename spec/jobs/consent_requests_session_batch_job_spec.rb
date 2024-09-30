@@ -31,11 +31,40 @@ describe ConsentRequestsSessionBatchJob do
   end
 
   it "only sends emails to patient's parents to whom they have not been sent yet" do
-    expect { perform_now }.to send_email(
-      to: parents.first.email
-    ).and send_email(to: parents.second.email)
+    expect { perform_now }.to have_enqueued_mail(
+      ConsentMailer,
+      :request
+    ).twice.and have_enqueued_mail(ConsentMailer, :request).with(
+                  params: {
+                    parent: parents.first,
+                    patient: patient_not_sent_consent,
+                    programme:,
+                    session:
+                  },
+                  args: []
+                ).and have_enqueued_mail(ConsentMailer, :request).with(
+                        params: {
+                          parent: parents.second,
+                          patient: patient_not_sent_consent,
+                          programme:,
+                          session:
+                        },
+                        args: []
+                      )
+  end
 
-    expect(ActionMailer::Base.deliveries.count).to eq(2)
+  it "only sends texts to patients parents to whom they have not been sent yet" do
+    expect { perform_now }.to have_enqueued_text(:consent_request).with(
+      parent: parents.first,
+      patient: patient_not_sent_consent,
+      programme:,
+      session:
+    ).and have_enqueued_text(:consent_request).with(
+            parent: parents.second,
+            patient: patient_not_sent_consent,
+            programme:,
+            session:
+          )
   end
 
   it "updates the consent_request_sent_at attribute for patients" do

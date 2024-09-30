@@ -29,6 +29,7 @@ describe TextDeliveryJob do
         parent:,
         patient:,
         patient_session:,
+        programme:,
         vaccination_record:
       )
     end
@@ -53,6 +54,7 @@ describe TextDeliveryJob do
         parent:,
         patient:,
         patient_session:,
+        programme:,
         vaccination_record:
       )
     end
