@@ -369,32 +369,10 @@ en:
             vaccines:
               blank: Choose the vaccines this programme administers
               match_type: Vaccines must be suitable for the programme type
-        session:
+        session_date:
           attributes:
-            close_consent_at:
-              blank: Choose a date for the deadline
-            close_consent_on:
-              inclusion: Choose a deadline for responses
-            date:
+            value:
               blank: Enter a date
-              missing_day: Enter a day
-              missing_month: Enter a month
-              missing_year: Enter a year
-            location_id:
-              blank: Choose a school
-              inclusion: Choose a school
-            patients:
-              blank: You must choose a cohort to continue
-            reminder_days_after:
-              inclusion: Choose when to send reminders
-            reminder_days_after_custom:
-              blank: Choose the number of days after the session to send reminders
-              greater_than_or_equal_to: Choose a number between 2 and 7
-              less_than_or_equal_to: Choose a number between 2 and 7
-            send_consent_requests_at:
-              blank: Choose a date to send consent requests
-              greater_than_or_equal_to: Enter a date that is not in the past
-              less_than_or_equal_to: Enter a date before the session
               missing_day: Enter a day
               missing_month: Enter a month
               missing_year: Enter a year

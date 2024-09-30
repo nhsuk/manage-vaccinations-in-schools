@@ -26,10 +26,10 @@
             row.with_value do
               safe_join(dates.map { _1.value.to_fs(:long_day_of_week) }, tag.br)
             end
-            row.with_action(text: "Change", href: session_edit_path(@session, :when), visually_hidden_text: "session dates")
+            row.with_action(text: "Change", href: session_dates_path(@session), visually_hidden_text: "session dates")
           else
             row.with_value do
-              govuk_link_to "Add session dates", session_edit_path(@session, :when)
+              govuk_link_to "Add session dates", session_dates_path(@session)
             end
           end
         end

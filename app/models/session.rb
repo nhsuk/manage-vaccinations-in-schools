@@ -24,17 +24,13 @@
 #  fk_rails_...  (team_id => teams.id)
 #
 class Session < ApplicationRecord
-  include WizardStepConcern
-
   audited
-
-  attr_accessor :date
 
   belongs_to :team
   belongs_to :location, optional: true
 
   has_many :consent_forms
-  has_many :dates, class_name: "SessionDate"
+  has_many :dates, -> { order(:value) }, class_name: "SessionDate"
   has_many :patient_sessions
 
   has_and_belongs_to_many :immunisation_imports
@@ -43,6 +39,8 @@ class Session < ApplicationRecord
   has_many :patients, through: :patient_sessions
   has_many :vaccines, through: :programmes
   has_many :batches, through: :vaccines
+
+  accepts_nested_attributes_for :dates, allow_destroy: true
 
   scope :has_date,
         ->(value) { where(SessionDate.for_session.where(value:).arel.exists) }
@@ -76,13 +74,7 @@ class Session < ApplicationRecord
 
   after_initialize :set_programmes
 
-  after_save :ensure_session_date_exists
-
   validate :programmes_part_of_team
-
-  on_wizard_step :when, exact: true do
-    validates :date, presence: true
-  end
 
   def today?
     dates.map(&:value).include?(Date.current)
@@ -158,10 +150,6 @@ class Session < ApplicationRecord
     end
   end
 
-  def wizard_steps
-    %i[when]
-  end
-
   def unmatched_consent_forms
     consent_forms.unmatched.recorded.order(:recorded_at)
   end
@@ -186,24 +174,5 @@ class Session < ApplicationRecord
 
     self.programmes =
       team.programmes.select { _1.year_groups.intersect?(location.year_groups) }
-  end
-
-  def ensure_session_date_exists
-    return if date.nil?
-
-    # TODO: Replace with UI to add/remove dates.
-    ActiveRecord::Base.transaction do
-      dates.destroy_all
-      dates.create!(value: date)
-
-      set_consent_dates
-
-      # Temporary: to avoid callbacks calling this method again.
-      update_columns(
-        send_consent_requests_at:,
-        send_consent_reminders_at:,
-        close_consent_at:
-      )
-    end
   end
 end
