@@ -33,11 +33,40 @@ describe ConsentRemindersSessionBatchJob do
   end
 
   it "only sends emails to patients parents to whom they have not been sent yet" do
-    expect { perform_now }.to send_email(
-      to: parents.first.email
-    ).and send_email(to: parents.second.email)
+    expect { perform_now }.to have_enqueued_mail(
+      ConsentMailer,
+      :reminder
+    ).twice.and have_enqueued_mail(ConsentMailer, :reminder).with(
+                  params: {
+                    parent: parents.first,
+                    patient: patient_not_sent_reminder,
+                    programme:,
+                    session:
+                  },
+                  args: []
+                ).and have_enqueued_mail(ConsentMailer, :reminder).with(
+                        params: {
+                          parent: parents.second,
+                          patient: patient_not_sent_reminder,
+                          programme:,
+                          session:
+                        },
+                        args: []
+                      )
+  end
 
-    expect(ActionMailer::Base.deliveries.count).to eq(2)
+  it "only sends texts to patients parents to whom they have not been sent yet" do
+    expect { perform_now }.to have_enqueued_text(:consent_reminder).with(
+      parent: parents.first,
+      patient: patient_not_sent_reminder,
+      programme:,
+      session:
+    ).and have_enqueued_text(:consent_reminder).with(
+            parent: parents.second,
+            patient: patient_not_sent_reminder,
+            programme:,
+            session:
+          )
   end
 
   it "updates the consent_reminder_sent_at attribute for patients" do

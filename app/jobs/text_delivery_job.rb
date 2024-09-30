@@ -10,6 +10,7 @@ class TextDeliveryJob < ApplicationJob
     parent: nil,
     patient: nil,
     patient_session: nil,
+    programme: nil,
     session: nil,
     vaccination_record: nil
   )
@@ -33,6 +34,7 @@ class TextDeliveryJob < ApplicationJob
         parent:,
         patient:,
         patient_session:,
+        programme:,
         vaccination_record:
       )
 
