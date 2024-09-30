@@ -1,26 +1,43 @@
 # frozen_string_literal: true
 
 describe ConsentRemindersSessionBatchJob do
-  it "only sends emails to patients parents to whom they have not been sent yet" do
-    programme = create(:programme)
-    parents = create_list(:parent, 2)
-    patient_with_reminder_sent =
-      create(:patient, consent_reminder_sent_at: Time.zone.today)
-    patient_not_sent_reminder = create(:patient, parents:)
-    patient_with_consent =
-      create(:patient, :consent_given_triage_not_needed, programme:)
-    session =
-      create(
-        :session,
-        programme:,
-        patients: [
-          patient_with_reminder_sent,
-          patient_not_sent_reminder,
-          patient_with_consent
-        ]
-      )
+  subject(:perform_now) do
+    travel_to(today) { described_class.perform_now(session) }
+  end
 
-    expect { described_class.perform_now(session) }.to send_email(
+  let(:today) { Date.new(2024, 1, 1) }
+
+  let(:programme) { create(:programme) }
+  let(:parents) { create_list(:parent, 2) }
+
+  let(:patient_with_reminder_sent) do
+    create(
+      :patient,
+      :consent_request_sent,
+      consent_reminder_sent_at: Date.current
+    )
+  end
+  let(:patient_not_sent_reminder) do
+    create(:patient, :consent_request_sent, parents:)
+  end
+  let(:patient_with_consent) do
+    create(:patient, :consent_given_triage_not_needed, programme:)
+  end
+
+  let(:session) do
+    create(
+      :session,
+      programme:,
+      patients: [
+        patient_with_reminder_sent,
+        patient_not_sent_reminder,
+        patient_with_consent
+      ]
+    )
+  end
+
+  it "only sends emails to patients parents to whom they have not been sent yet" do
+    expect { perform_now }.to send_email(
       to: parents.first.email
     ).and send_email(to: parents.second.email)
 
@@ -28,10 +45,8 @@ describe ConsentRemindersSessionBatchJob do
   end
 
   it "updates the consent_reminder_sent_at attribute for patients" do
-    patient = create(:patient)
-    session = create(:session, patients: [patient])
-
-    described_class.perform_now(session)
-    expect(patient.reload.consent_reminder_sent_at).to be_today
+    expect { perform_now }.to change {
+      patient_not_sent_reminder.reload.consent_reminder_sent_at
+    }.to(today)
   end
 end
