@@ -434,7 +434,10 @@ class ConsentForm < ApplicationRecord
 
   def seed_health_questions
     return unless health_answers.empty?
-    vaccine = programme.vaccines.first
+
+    # TODO: handle multiple active vaccines
+    vaccine = programme.vaccines.active.first
+
     self.health_answers = vaccine.health_questions.to_health_answers
   end
 
