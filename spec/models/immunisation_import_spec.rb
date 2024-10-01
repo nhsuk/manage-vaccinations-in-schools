@@ -177,7 +177,7 @@ describe ImmunisationImport do
           .and change(immunisation_import.vaccination_records, :count).by(7)
           .and change(immunisation_import.locations, :count).by(1)
           .and change(immunisation_import.patients, :count).by(7)
-          .and change(immunisation_import.sessions, :count).by(1)
+          .and change(immunisation_import.sessions, :count).by(2)
           .and change(immunisation_import.patient_sessions, :count).by(7)
           .and change(immunisation_import.batches, :count).by(5)
 
@@ -214,7 +214,7 @@ describe ImmunisationImport do
       it "creates a new session for each date" do
         process!
 
-        expect(immunisation_import.sessions.count).to eq(1)
+        expect(immunisation_import.sessions.count).to eq(2)
 
         session = immunisation_import.sessions.first
         expect(session.dates.map(&:value)).to contain_exactly(
