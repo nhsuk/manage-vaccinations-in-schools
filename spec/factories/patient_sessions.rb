@@ -110,6 +110,7 @@ FactoryBot.define do
           association(
             :triage,
             :ready_to_vaccinate,
+            patient_session: instance,
             programme:,
             notes: "Okay to vaccinate",
             performed_by: created_by
@@ -132,6 +133,7 @@ FactoryBot.define do
           association(
             :triage,
             :do_not_vaccinate,
+            patient_session: instance,
             programme:,
             performed_by: created_by
           )
@@ -153,6 +155,7 @@ FactoryBot.define do
           association(
             :triage,
             :needs_follow_up,
+            patient_session: instance,
             programme:,
             performed_by: created_by
           )
@@ -174,6 +177,7 @@ FactoryBot.define do
           association(
             :triage,
             :delay_vaccination,
+            patient_session: instance,
             programme:,
             performed_by: created_by
           )
@@ -185,8 +189,8 @@ FactoryBot.define do
           association(
             :vaccination_record,
             :not_administered,
-            programme:,
             patient_session: instance,
+            programme:,
             performed_by: created_by,
             reason: :absent_from_school
           )
@@ -218,6 +222,7 @@ FactoryBot.define do
           association(
             :triage,
             :ready_to_vaccinate,
+            patient_session: instance,
             programme:,
             performed_by: created_by
           )
@@ -229,8 +234,8 @@ FactoryBot.define do
           association(
             :vaccination_record,
             :not_administered,
-            programme:,
             patient_session: instance,
+            programme:,
             performed_by: created_by,
             reason: :already_had
           )
@@ -258,6 +263,7 @@ FactoryBot.define do
           association(
             :triage,
             :ready_to_vaccinate,
+            patient_session: instance,
             programme:,
             performed_by: created_by
           )
@@ -269,8 +275,8 @@ FactoryBot.define do
           association(
             :vaccination_record,
             :not_administered,
-            programme:,
             patient_session: instance,
+            programme:,
             performed_by: created_by,
             reason: :already_had
           )
@@ -292,6 +298,7 @@ FactoryBot.define do
           association(
             :triage,
             :ready_to_vaccinate,
+            patient_session: instance,
             programme:,
             performed_by: created_by
           )
@@ -302,8 +309,8 @@ FactoryBot.define do
         [
           association(
             :vaccination_record,
-            programme:,
             patient_session: instance,
+            programme:,
             performed_by: created_by
           )
         ]
@@ -315,7 +322,11 @@ FactoryBot.define do
     end
 
     trait :not_gillick_competent do
-      gillick_assessment { association :gillick_assessment, :not_competent }
+      gillick_assessment do
+        association :gillick_assessment,
+                    :not_competent,
+                    patient_session: instance
+      end
     end
   end
 end
