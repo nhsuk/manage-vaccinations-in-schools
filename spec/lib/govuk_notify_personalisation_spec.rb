@@ -32,8 +32,8 @@ describe GovukNotifyPersonalisation do
       location:,
       team:,
       programme:,
-      close_consent_at: Date.new(2024, 1, 1),
-      date: Date.new(2024, 1, 1)
+      close_consent_at: Date.new(2026, 1, 1),
+      date: Date.new(2026, 1, 1)
     )
   end
   let(:consent) { nil }
@@ -44,15 +44,16 @@ describe GovukNotifyPersonalisation do
   it do
     expect(personalisation).to eq(
       {
-        close_consent_date: "Monday 1 January",
+        close_consent_date: "Thursday 1 January",
         close_consent_short_date: "1 January",
         consent_link:
           "http://localhost:4000/sessions/#{session.id}/consents/start",
         full_and_preferred_patient_name: "John Smith",
         location_name: "Hogwarts",
+        next_session_date: "Thursday 1 January",
+        next_session_dates: "Thursday 1 January",
+        next_session_dates_or: "Thursday 1 January",
         programme_name: "Flu",
-        session_date: "Monday 1 January",
-        session_short_date: "1 January",
         short_patient_name: "John",
         short_patient_name_apos: "John’s",
         team_email: "team@example.com",
@@ -61,6 +62,22 @@ describe GovukNotifyPersonalisation do
         vaccination: "Flu vaccination"
       }
     )
+  end
+
+  context "with multiple dates" do
+    before { create(:session_date, session:, value: Date.new(2026, 1, 2)) }
+
+    it do
+      expect(personalisation).to match(
+        hash_including(
+          next_session_date: "Thursday 1 January",
+          next_session_dates: "Thursday 1 January and Friday 2 January",
+          next_session_dates_or: "Thursday 1 January or Friday 2 January",
+          subsequent_session_dates_offered_message:
+            "If they’re not seen, they’ll be offered the vaccination on Friday 2 January."
+        )
+      )
+    end
   end
 
   context "with a consent" do

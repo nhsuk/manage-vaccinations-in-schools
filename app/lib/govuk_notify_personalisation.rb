@@ -38,15 +38,17 @@ class GovukNotifyPersonalisation
       day_month_year_of_vaccination:,
       full_and_preferred_patient_name:,
       location_name:,
+      next_session_date:,
+      next_session_dates:,
+      next_session_dates_or:,
       parent_name:,
       programme_name:,
       reason_did_not_vaccinate:,
       reason_for_refusal:,
-      session_date:,
-      session_short_date:,
       short_patient_name:,
       short_patient_name_apos:,
       show_additional_instructions:,
+      subsequent_session_dates_offered_message:,
       survey_deadline_date:,
       team_email:,
       team_name:,
@@ -115,6 +117,24 @@ class GovukNotifyPersonalisation
     session.location&.name
   end
 
+  def next_session_date
+    session.today_or_future_dates.first&.to_fs(:short_day_of_week)
+  end
+
+  def next_session_dates
+    session
+      .today_or_future_dates
+      .map { _1.to_fs(:short_day_of_week) }
+      .to_sentence
+  end
+
+  def next_session_dates_or
+    session
+      .today_or_future_dates
+      .map { _1.to_fs(:short_day_of_week) }
+      .to_sentence(last_word_connector: ", or ", two_words_connector: " or ")
+  end
+
   def parent_name
     consent_form&.parent_name || parent&.name
   end
@@ -140,16 +160,6 @@ class GovukNotifyPersonalisation
     I18n.t("mailers.consent_form_mailer.reasons_for_refusal.#{reason}")
   end
 
-  def session_date
-    # TODO: Handle multiple dates.
-    session.dates.map(&:value).min.to_fs(:short_day_of_week)
-  end
-
-  def session_short_date
-    # TODO: Handle multiple dates.
-    session.dates.map(&:value).min.to_fs(:short)
-  end
-
   def short_patient_name
     [
       consent_form&.common_name,
@@ -169,6 +179,15 @@ class GovukNotifyPersonalisation
     return if vaccination_record.nil?
 
     vaccination_record.already_had? ? "no" : "yes"
+  end
+
+  def subsequent_session_dates_offered_message
+    dates = session.today_or_future_dates.drop(1)
+    return if dates.empty?
+
+    "If they’re not seen, they’ll be offered the vaccination on #{
+      dates.map { _1.to_fs(:short_day_of_week) }.to_sentence
+    }."
   end
 
   def survey_deadline_date
