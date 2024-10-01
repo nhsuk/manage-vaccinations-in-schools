@@ -19,7 +19,7 @@ module CSVImportable
     scope :csv_not_removed, -> { where(csv_removed_at: nil) }
 
     enum :status,
-         %i[pending_import csv_is_malformed rows_are_invalid processed],
+         %i[pending_import rows_are_invalid processed],
          default: :pending_import,
          validate: true
 
@@ -67,10 +67,12 @@ module CSVImportable
     return if invalid?
 
     self.rows = data.map { |row_data| parse_row(row_data) }
-  end
 
-  def processed?
-    processed_at != nil
+    if invalid?
+      self.serialized_errors = errors.to_hash
+      self.status = :rows_are_invalid
+      save!(validate: false)
+    end
   end
 
   def process!
@@ -89,7 +91,7 @@ module CSVImportable
         counts[count_column_to_increment] += 1
       end
 
-      update!(processed_at: Time.zone.now, **counts)
+      update!(processed_at: Time.zone.now, status: :processed, **counts)
     end
   end
 
