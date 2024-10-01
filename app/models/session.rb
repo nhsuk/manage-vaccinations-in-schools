@@ -31,6 +31,7 @@ class Session < ApplicationRecord
 
   has_many :consent_forms
   has_many :dates, -> { order(:value) }, class_name: "SessionDate"
+  has_many :notifications, class_name: "SessionNotification"
   has_many :patient_sessions
 
   has_and_belongs_to_many :immunisation_imports
