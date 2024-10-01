@@ -25,6 +25,9 @@ class ConsentNotification < ApplicationRecord
   belongs_to :patient
   belongs_to :programme
 
+  scope :for_patient, -> { where("patient_id = patients.id") }
+  scope :request, -> { where(reminder: false) }
+
   def self.create_and_send!(patient:, programme:, session:, reminder:)
     # We create a record in the database first to avoid sending duplicate emails/texts.
     # If a problem occurs while the emails/texts are sent, they will be in the job
@@ -47,10 +50,6 @@ class ConsentNotification < ApplicationRecord
       )
     end
 
-    if reminder
-      patient.update!(consent_reminder_sent_at: Time.zone.now)
-    else
-      patient.update!(consent_request_sent_at: Time.zone.now)
-    end
+    patient.update!(consent_reminder_sent_at: Time.zone.now) if reminder
   end
 end
