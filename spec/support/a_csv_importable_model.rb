@@ -16,9 +16,9 @@ shared_examples_for "a CSVImportable model" do
     end
 
     it "raises if processed without updating the statistics" do
-      expect { subject.update!(processed_at: Time.zone.now) }.to raise_error(
-        /Count statistics must be set/
-      )
+      expect {
+        subject.update!(processed_at: Time.zone.now, status: :processed)
+      }.to raise_error(/Count statistics must be set/)
     end
   end
 
