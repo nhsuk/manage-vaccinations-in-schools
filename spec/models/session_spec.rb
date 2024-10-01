@@ -140,6 +140,44 @@ describe Session do
     it { should contain_exactly(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11) }
   end
 
+  describe "#today_or_future_dates" do
+    subject(:today_or_future_dates) do
+      travel_to(today) { session.today_or_future_dates }
+    end
+
+    let(:dates) do
+      [Date.new(2024, 1, 1), Date.new(2024, 1, 2), Date.new(2024, 1, 3)]
+    end
+
+    let(:session) { create(:session, academic_year: 2023, date: nil) }
+
+    before { dates.each { |value| create(:session_date, session:, value:) } }
+
+    context "on the first day" do
+      let(:today) { dates.first }
+
+      it { should match_array(dates) }
+    end
+
+    context "on the second day" do
+      let(:today) { dates.second }
+
+      it { should match_array(dates.drop(1)) }
+    end
+
+    context "on the third day" do
+      let(:today) { dates.third }
+
+      it { should match_array(dates.drop(2)) }
+    end
+
+    context "after the session" do
+      let(:today) { dates.third + 1.day }
+
+      it { should be_empty }
+    end
+  end
+
   describe "#create_patient_sessions!" do
     subject(:create_patient_sessions!) { session.create_patient_sessions! }
 
