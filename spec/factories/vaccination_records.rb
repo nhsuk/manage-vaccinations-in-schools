@@ -55,7 +55,7 @@ FactoryBot.define do
     recorded_at { "2023-06-09" }
     delivery_site { "left_arm_upper_position" }
     delivery_method { "intramuscular" }
-    vaccine { programme.vaccines.first }
+    vaccine { programme.vaccines.active.first }
     batch { vaccine.batches.first }
 
     performed_by
