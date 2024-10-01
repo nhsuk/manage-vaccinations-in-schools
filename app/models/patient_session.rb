@@ -59,7 +59,21 @@ class PatientSession < ApplicationRecord
 
   has_and_belongs_to_many :immunisation_imports
 
-  scope :reminder_not_sent, -> { where(reminder_sent_at: nil) }
+  scope :reminder_not_sent,
+        ->(session_date) do
+          where.not(
+            SessionNotification
+              .where(
+                "session_notifications.session_id = patient_sessions.session_id"
+              )
+              .where(
+                "session_notifications.patient_id = patient_sessions.patient_id"
+              )
+              .where(session_date:)
+              .arel
+              .exists
+          )
+        end
 
   def vaccination_record
     # HACK: in future, it will be possible to have multiple vaccination records for a patient session

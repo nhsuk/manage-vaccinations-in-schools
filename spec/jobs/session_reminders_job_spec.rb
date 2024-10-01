@@ -41,12 +41,6 @@ describe SessionRemindersJob do
       )
     end
 
-    it "updates the reminder_sent_at attribute for patient sessions" do
-      expect { perform_now }.to(
-        change { patient_session.reload.reminder_sent_at }
-      )
-    end
-
     it "records a notification" do
       expect { perform_now }.to change(
         SessionNotification.where(patient:, session:),
@@ -55,7 +49,7 @@ describe SessionRemindersJob do
     end
 
     context "when already sent" do
-      before { patient_session.update!(reminder_sent_at: Time.zone.now) }
+      before { create(:session_notification, session:, patient:) }
 
       it "doesn't send a reminder email" do
         expect { perform_now }.not_to have_enqueued_mail(
@@ -66,12 +60,6 @@ describe SessionRemindersJob do
 
       it "doesn't sent a reminder text" do
         expect { perform_now }.not_to have_enqueued_text(:session_reminder)
-      end
-
-      it "doesn't change reminder_sent_at" do
-        expect { perform_now }.not_to(
-          change { patient_session.reload.reminder_sent_at }
-        )
       end
 
       it "doesn't record a notification" do
