@@ -29,7 +29,8 @@ FactoryBot.define do
   factory :triage do
     transient do
       session { association :session, programme: }
-      patient { association :patient }
+      team { session.team }
+      patient { association :patient, team: }
     end
 
     programme

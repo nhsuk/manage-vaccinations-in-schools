@@ -25,10 +25,13 @@
 #
 FactoryBot.define do
   factory :patient_session do
-    transient { programme { association :programme } }
+    transient do
+      programme { association :programme }
+      team { session.team }
+    end
 
     session { association :session, programme: }
-    patient { association :patient, school: session.location }
+    patient { association :patient, team:, school: session.location }
     created_by
 
     active { session.dates.exists? }
@@ -48,6 +51,7 @@ FactoryBot.define do
         association :patient,
                     :consent_given_triage_not_needed,
                     programme:,
+                    team:,
                     school: session.location
       end
     end
@@ -57,6 +61,7 @@ FactoryBot.define do
         association :patient,
                     :consent_given_triage_needed,
                     programme:,
+                    team:,
                     school: session.location
       end
     end
@@ -66,6 +71,7 @@ FactoryBot.define do
         association :patient,
                     :consent_refused,
                     programme:,
+                    team:,
                     school: session.location
       end
     end
@@ -75,6 +81,7 @@ FactoryBot.define do
         association :patient,
                     :consent_refused_with_notes,
                     programme:,
+                    team:,
                     school: session.location
       end
     end
@@ -84,6 +91,7 @@ FactoryBot.define do
         association :patient,
                     :consent_conflicting,
                     programme:,
+                    team:,
                     school: session.location
       end
     end
@@ -93,6 +101,7 @@ FactoryBot.define do
         association :patient,
                     :consent_given_triage_needed,
                     programme:,
+                    team:,
                     school: session.location
       end
 
@@ -114,6 +123,7 @@ FactoryBot.define do
         association :patient,
                     :consent_given_triage_needed,
                     programme:,
+                    team:,
                     school: session.location
       end
 
@@ -134,6 +144,7 @@ FactoryBot.define do
         association :patient,
                     :consent_given_triage_needed,
                     programme:,
+                    team:,
                     school: session.location
       end
 
@@ -154,6 +165,7 @@ FactoryBot.define do
         association :patient,
                     :consent_given_triage_needed,
                     programme:,
+                    team:,
                     school: session.location
       end
 
@@ -187,6 +199,7 @@ FactoryBot.define do
         association :patient,
                     :consent_given_triage_not_needed,
                     programme:,
+                    team:,
                     school: session.location
       end
     end
@@ -196,6 +209,7 @@ FactoryBot.define do
         association :patient,
                     :consent_given_triage_needed,
                     programme:,
+                    team:,
                     school: session.location
       end
 
@@ -235,6 +249,7 @@ FactoryBot.define do
         association :patient,
                     :consent_given_triage_needed,
                     programme:,
+                    team:,
                     school: session.location
       end
 
@@ -268,6 +283,7 @@ FactoryBot.define do
         association :patient,
                     :consent_given_triage_needed,
                     programme:,
+                    team:,
                     school: session.location
       end
 
