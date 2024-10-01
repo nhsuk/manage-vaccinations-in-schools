@@ -18,6 +18,11 @@ module CSVImportable
 
     scope :csv_not_removed, -> { where(csv_removed_at: nil) }
 
+    enum :status,
+         %i[pending_import csv_is_malformed rows_are_invalid processed],
+         default: :pending_import,
+         validate: true
+
     validates :csv,
               absence: {
                 if: :csv_removed?

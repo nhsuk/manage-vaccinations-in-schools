@@ -14,6 +14,7 @@
 #  not_administered_record_count :integer
 #  processed_at                  :datetime
 #  recorded_at                   :datetime
+#  status                        :integer          default("pending_import"), not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  programme_id                  :bigint           not null
