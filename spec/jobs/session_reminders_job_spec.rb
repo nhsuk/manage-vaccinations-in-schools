@@ -66,6 +66,25 @@ describe SessionRemindersJob do
         expect { perform_now }.not_to change(SessionNotification, :count)
       end
     end
+
+    context "when already vaccinated" do
+      before { create(:vaccination_record, patient_session:, programme:) }
+
+      it "doesn't send a reminder email" do
+        expect { perform_now }.not_to have_enqueued_mail(
+          SessionMailer,
+          :reminder
+        )
+      end
+
+      it "doesn't sent a reminder text" do
+        expect { perform_now }.not_to have_enqueued_text(:session_reminder)
+      end
+
+      it "doesn't record a notification" do
+        expect { perform_now }.not_to change(SessionNotification, :count)
+      end
+    end
   end
 
   context "for a session today" do
