@@ -23,11 +23,6 @@ class CohortImportsController < ApplicationController
       render :new, status: :unprocessable_entity and return
     end
 
-    @cohort_import.parse_rows!
-    if @cohort_import.invalid?
-      render :errors, status: :unprocessable_entity and return
-    end
-
     @cohort_import.save!
 
     ProcessCohortImportJob.perform_later(@programme, @cohort_import)
@@ -40,6 +35,11 @@ class CohortImportsController < ApplicationController
   end
 
   def edit
+    if @cohort_import.rows_are_invalid?
+      @cohort_import.load_serialized_errors!
+      render :errors and return
+    end
+
     render layout: "full"
   end
 
