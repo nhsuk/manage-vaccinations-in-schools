@@ -10,12 +10,14 @@ class SessionRemindersJob < ApplicationJob
 
     patient_sessions =
       PatientSession
-        .includes(:consents, :patient)
+        .includes(:consents, :patient, :vaccination_records)
         .joins(:session)
         .merge(Session.has_date(date))
         .reminder_not_sent(date)
 
     patient_sessions.each do |patient_session|
+      next if patient_session.vaccination_administered?
+
       # We create a record in the database first to avoid sending duplicate emails/texts.
       # If a problem occurs while the emails/texts are sent, they will be in the job
       # queue and restarted at a later date.
