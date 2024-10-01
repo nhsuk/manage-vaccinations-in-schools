@@ -45,6 +45,7 @@ FactoryBot.define do
 
     trait :processed do
       processed_at { Time.zone.now }
+      status { :processed }
 
       changed_record_count { 0 }
       exact_duplicate_record_count { 0 }

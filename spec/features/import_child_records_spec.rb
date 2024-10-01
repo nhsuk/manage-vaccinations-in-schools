@@ -21,6 +21,10 @@ describe "Import child records" do
     then_i_should_the_errors_page_with_invalid_headers
 
     when_i_upload_a_file_with_invalid_fields
+    then_i_should_see_the_holding_page
+
+    when_i_wait_for_the_background_job_to_complete
+    and_i_refresh_the_page
     then_i_should_the_errors_page_with_invalid_fields
     and_i_go_back_to_the_upload_page
 

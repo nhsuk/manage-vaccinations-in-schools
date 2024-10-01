@@ -14,7 +14,6 @@
 #  not_administered_record_count :integer
 #  processed_at                  :datetime
 #  recorded_at                   :datetime
-#  serialized_errors             :jsonb
 #  status                        :integer          default("pending_import"), not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
@@ -50,6 +49,7 @@ FactoryBot.define do
 
     trait :processed do
       processed_at { Time.zone.now }
+      status { :processed }
 
       changed_record_count { 0 }
       exact_duplicate_record_count { 0 }
