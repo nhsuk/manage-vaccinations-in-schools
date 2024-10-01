@@ -114,11 +114,13 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def link_records(*records)
-    records.each do |record|
-      unless record.immunisation_imports.exists?(id)
-        record.immunisation_imports << self
+    records
+      .reject(&:nil?)
+      .each do |record|
+        unless record.immunisation_imports.exists?(id)
+          record.immunisation_imports << self
+        end
       end
-    end
   end
 
   def record_rows
