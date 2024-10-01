@@ -40,8 +40,7 @@ describe ConsentMailer do
         mail.message.header["personalisation"].unparsed_value
       end
 
-      it { should include(session_date: date.strftime("%A %-d %B")) }
-      it { should include(session_short_date: date.strftime("%-d %B")) }
+      it { should include(next_session_date: date.strftime("%A %-d %B")) }
 
       it do
         expect(personalisation).to include(
@@ -79,7 +78,7 @@ describe ConsentMailer do
         mail.message.header["personalisation"].unparsed_value
       end
 
-      it { should include(session_date: date.strftime("%A %-d %B")) }
+      it { should include(next_session_date: date.strftime("%A %-d %B")) }
 
       it do
         expect(personalisation).to include(

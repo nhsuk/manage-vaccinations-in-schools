@@ -22,8 +22,10 @@ describe SessionMailer do
         expect(personalisation.keys).to include(
           :full_and_preferred_patient_name,
           :location_name,
+          :next_session_date,
+          :next_session_dates,
+          :next_session_dates_or,
           :parent_name,
-          :session_date,
           :short_patient_name,
           :short_patient_name_apos,
           :team_email,
