@@ -104,6 +104,8 @@ class Patient < ApplicationRecord
 
   before_save :remove_spaces_from_nhs_number
 
+  before_destroy :destroy_childless_parents
+
   delegate :year_group, to: :cohort
 
   def self.find_existing(
@@ -147,6 +149,17 @@ class Patient < ApplicationRecord
     location = school
     if location && !location.school?
       errors.add(:school, "must be a school location type")
+    end
+  end
+
+  def destroy_childless_parents
+    parents_to_check = parents.to_a # Store parents before destroying relationships
+
+    # Manually destroy the parent_relationships associated with this Child
+    parent_relationships.each(&:destroy)
+
+    parents_to_check.each do |parent|
+      parent.destroy! if parent.parent_relationships.count.zero?
     end
   end
 end
