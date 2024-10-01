@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_01_085855) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_01_162101) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -64,6 +64,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_01_085855) do
     t.datetime "updated_at", null: false
     t.integer "changed_record_count"
     t.bigint "team_id", null: false
+    t.integer "status", default: 0, null: false
+    t.jsonb "serialized_errors"
     t.index ["team_id"], name: "index_cohort_imports_on_team_id"
     t.index ["uploaded_by_user_id"], name: "index_cohort_imports_on_uploaded_by_user_id"
   end
@@ -328,6 +330,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_01_085855) do
     t.datetime "csv_removed_at"
     t.integer "changed_record_count"
     t.bigint "team_id", null: false
+    t.integer "status", default: 0, null: false
+    t.jsonb "serialized_errors"
     t.index ["programme_id"], name: "index_immunisation_imports_on_programme_id"
     t.index ["team_id"], name: "index_immunisation_imports_on_team_id"
     t.index ["uploaded_by_user_id"], name: "index_immunisation_imports_on_uploaded_by_user_id"
