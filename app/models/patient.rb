@@ -50,6 +50,7 @@ class Patient < ApplicationRecord
   has_many :consents
   has_many :parent_relationships
   has_many :patient_sessions
+  has_many :session_notifications
 
   has_many :sessions, through: :patient_sessions
   has_many :triage, through: :patient_sessions

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_27_145227) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_01_082539) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -460,6 +460,16 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_27_145227) do
     t.index ["session_id"], name: "index_session_dates_on_session_id"
   end
 
+  create_table "session_notifications", force: :cascade do |t|
+    t.bigint "patient_id", null: false
+    t.bigint "session_id", null: false
+    t.date "session_date", null: false
+    t.datetime "sent_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.index ["patient_id", "session_id", "session_date"], name: "idx_on_patient_id_session_id_session_date_f7f30a3aa3"
+    t.index ["patient_id"], name: "index_session_notifications_on_patient_id"
+    t.index ["session_id"], name: "index_session_notifications_on_session_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.bigint "location_id"
     t.datetime "created_at", null: false
@@ -642,6 +652,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_27_145227) do
   add_foreign_key "programmes_sessions", "programmes"
   add_foreign_key "programmes_sessions", "sessions"
   add_foreign_key "session_dates", "sessions"
+  add_foreign_key "session_notifications", "patients"
+  add_foreign_key "session_notifications", "sessions"
   add_foreign_key "sessions", "teams"
   add_foreign_key "team_programmes", "programmes"
   add_foreign_key "team_programmes", "teams"
