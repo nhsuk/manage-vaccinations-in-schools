@@ -20,17 +20,18 @@ describe "HPV Vaccination" do
   end
 
   def given_i_am_signed_in
-    programme = create(:example_programme, :in_progress)
-    team = programme.teams.first
+    programme = create(:programme, :hpv, batch_count: 4)
+    team = create(:team, :with_one_nurse, programmes: [programme])
+
     @batch = programme.batches.first
     @batch2 = programme.batches.second
-    @session = programme.sessions.first
-    @patient, @patient2 =
-      @session
-        .patient_sessions
-        .select { _1.state == "consent_given_triage_not_needed" }
-        .slice(0, 2)
-        .map(&:patient)
+
+    @session = create(:session, team:, programme:)
+
+    @patient =
+      create(:patient, :consent_given_triage_not_needed, session: @session)
+    @patient2 =
+      create(:patient, :consent_given_triage_not_needed, session: @session)
 
     sign_in team.users.first
   end
