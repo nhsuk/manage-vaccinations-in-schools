@@ -55,18 +55,7 @@ class DevController < ApplicationController
       team_session.destroy!
     end
 
-    Patient
-      .joins(:cohort)
-      .where(cohorts: { team: })
-      .distinct
-      .find_each do |patient|
-        parent_ids = patient.parent_ids
-        patient.parents.clear
-        parent_ids.each { |parent_id| Parent.find(parent_id).destroy }
-
-        patient.save!
-        patient.destroy!
-      end
+    Patient.joins(:cohort).where(cohorts: { team: }).distinct.destroy_all
 
     Cohort.where(team:).delete_all
 
