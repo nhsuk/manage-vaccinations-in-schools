@@ -179,6 +179,9 @@ GEM
       tzinfo
     factory_bot (6.4.5)
       activesupport (>= 5.0.0)
+    factory_bot_instruments (1.2.0)
+      activerecord (>= 4.0)
+      factory_bot (>= 4)
     factory_bot_rails (6.4.3)
       factory_bot (~> 6.4)
       railties (>= 5.0.0)
@@ -662,6 +665,7 @@ DEPENDENCIES
   devise
   devise-pwned_password
   dockerfile-rails (>= 1.0.0)
+  factory_bot_instruments
   factory_bot_rails
   faker
   faraday
