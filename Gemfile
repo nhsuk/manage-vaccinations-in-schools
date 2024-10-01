@@ -54,6 +54,7 @@ gem "wicked"
 group :development, :test do
   gem "brakeman"
   gem "debug", platforms: %i[mri mingw x64_mingw]
+  gem "factory_bot_instruments"
   gem "pry-rails"
   gem "rspec-rails"
 end
