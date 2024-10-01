@@ -64,17 +64,57 @@ class Patient < ApplicationRecord
   # https://www.datadictionary.nhs.uk/attributes/person_gender_code.html
   enum :gender_code, { not_known: 0, male: 1, female: 2, not_specified: 9 }
 
-  scope :consent_request_sent, -> { where.not(consent_request_sent_at: nil) }
-  scope :consent_request_not_sent, -> { where(consent_request_sent_at: nil) }
+  scope :without_consents,
+        ->(programmes) do
+          where(
+            "(?) < ?",
+            Consent
+              .select("COUNT(DISTINCT programme_id)")
+              .for_patient
+              .where(programme: programmes),
+            programmes.count
+          )
+        end
+
+  scope :consent_requests_sent,
+        ->(programmes) do
+          where(
+            "(?) = ?",
+            ConsentNotification
+              .select("COUNT(DISTINCT programme_id)")
+              .for_patient
+              .request
+              .where(programme: programmes),
+            programmes.count
+          )
+        end
+
+  scope :consent_requests_not_sent,
+        ->(programmes) do
+          where(
+            "(?) < ?",
+            ConsentNotification
+              .select("COUNT(DISTINCT programme_id)")
+              .for_patient
+              .request
+              .where(programme: programmes),
+            programmes.count
+          )
+        end
+
+  scope :needing_consent_requests,
+        ->(programmes) do
+          without_consents(programmes).consent_requests_not_sent(programmes)
+        end
+
   scope :consent_reminder_not_sent, -> { where(consent_reminder_sent_at: nil) }
 
-  scope :without_consent,
-        -> { includes(:consents).where(consents: { id: nil }) }
-
-  scope :needing_consent_request,
-        -> { without_consent.consent_request_not_sent }
   scope :needing_consent_reminder,
-        -> { consent_request_sent.without_consent.consent_reminder_not_sent }
+        ->(programmes) do
+          consent_requests_sent(programmes).without_consents(
+            programmes
+          ).consent_reminder_not_sent
+        end
 
   scope :matching_three_of,
         ->(first_name:, last_name:, date_of_birth:, address_postcode:) do

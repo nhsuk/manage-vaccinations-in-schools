@@ -63,6 +63,8 @@ class Consent < ApplicationRecord
              optional: true,
              foreign_key: :recorded_by_user_id
 
+  scope :for_patient, -> { where("patient_id = patients.id") }
+
   enum :response, %w[given refused not_provided], prefix: true
   enum :reason_for_refusal,
        %w[

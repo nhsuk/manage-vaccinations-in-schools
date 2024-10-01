@@ -89,8 +89,6 @@ FactoryBot.define do
     end
 
     trait :consent_request_sent do
-      consent_request_sent_at { 1.week.ago }
-
       after(:create) do |patient, context|
         create(
           :consent_notification,
