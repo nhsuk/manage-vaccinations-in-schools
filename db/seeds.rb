@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-FEATURE_FLAGS = %i[dev_tools mesh_jobs cis2].freeze
-
-FEATURE_FLAGS.each { |flag| Flipper.add(flag) unless Flipper.exist?(flag) }
-
 if Settings.disallow_database_seeding
   Rails.logger.info "Database seeding is disabled"
   exit
@@ -11,31 +7,120 @@ end
 
 Faker::Config.locale = "en-GB"
 
-user =
-  User.find_by(email: "nurse.joy@example.com") ||
+def set_feature_flags
+  %i[dev_tools mesh_jobs cis2].each do |feature_flag|
+    Flipper.add(feature_flag) unless Flipper.exist?(feature_flag)
+  end
+end
+
+def seed_vaccines
+  Rake::Task["vaccines:seed"].execute
+end
+
+def import_schools
+  if Rails.env.test?
+    FactoryBot.create_list(:location, 30, :school)
+  else
+    Rake::Task["schools:import"].execute
+  end
+end
+
+def create_user_and_team
+  user =
+    User.find_by(email: "nurse.joy@example.com") ||
+      FactoryBot.create(
+        :user,
+        family_name: "Joy",
+        given_name: "Nurse",
+        email: "nurse.joy@example.com",
+        password: "nurse.joy@example.com"
+      )
+
+  team = user.teams.first
+
+  Programme.all.find_each do |programme|
+    FactoryBot.create(:team_programme, team:, programme:)
+  end
+
+  [user, team]
+end
+
+def attach_locations_to(team)
+  Location.order("RANDOM()").limit(50).update_all(team_id: team.id)
+end
+
+def create_session(user, team)
+  programme = Programme.find_by(type: "hpv")
+
+  FactoryBot.create_list(:batch, 4, vaccine: programme.vaccines.active.first)
+
+  session =
     FactoryBot.create(
-      :user,
-      family_name: "Joy",
-      given_name: "Nurse",
-      email: "nurse.joy@example.com",
-      password: "nurse.joy@example.com"
+      :session,
+      team:,
+      programme:,
+      location: team.locations.for_year_groups(programme.year_groups).sample
     )
-Audited
-  .audit_class
-  .as_user(user) do
+
+  session.dates.create!(value: Date.yesterday)
+  session.dates.create!(value: Date.tomorrow)
+
+  patients_without_consent =
+    FactoryBot.create_list(
+      :patient_session,
+      4,
+      programme:,
+      session:,
+      created_by: user
+    )
+  unmatched_patients = patients_without_consent.sample(2).map(&:patient)
+  unmatched_patients.each do |patient|
     FactoryBot.create(
-      :example_programme,
-      :in_progress,
-      :in_past,
-      :in_future,
-      :hpv,
-      user:
+      :consent_form,
+      :recorded,
+      programme:,
+      first_name: patient.first_name,
+      last_name: patient.last_name,
+      session:
     )
   end
 
-Team.find_by(ods_code: "Y51") ||
-  FactoryBot.create(:team, name: "NMEPFIT SAIS Team", ods_code: "Y51")
+  %i[
+    consent_given_triage_not_needed
+    consent_given_triage_needed
+    triaged_ready_to_vaccinate
+    consent_refused
+    consent_conflicting
+    vaccinated
+    delay_vaccination
+    unable_to_vaccinate
+  ].each do |trait|
+    FactoryBot.create_list(
+      :patient_session,
+      3,
+      trait,
+      programme:,
+      session:,
+      created_by: user
+    )
+  end
+end
 
-Rake::Task["vaccines:seed"].execute
+def create_patients(team)
+  team.schools.each do |school|
+    FactoryBot.create_list(:patient, 5, team:, school:)
+  end
+end
 
-Rake::Task["schools:import"].execute unless Rails.env.test?
+set_feature_flags
+
+seed_vaccines
+import_schools
+
+user, team = create_user_and_team
+
+attach_locations_to(team)
+
+Audited.audit_class.as_user(user) { create_session(user, team) }
+
+create_patients(team)
