@@ -94,6 +94,10 @@ class Session < ApplicationRecord
     programmes.flat_map(&:year_groups).uniq.sort
   end
 
+  def today_or_future_dates
+    dates.select(&:today_or_future?).map(&:value)
+  end
+
   def create_patient_sessions!
     return if location.nil?
 
