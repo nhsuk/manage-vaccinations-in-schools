@@ -4,6 +4,7 @@ describe SessionRemindersJob do
   subject(:perform_now) { described_class.perform_now }
 
   before { Flipper.enable(:scheduled_emails) }
+  after { Flipper.disable(:scheduled_emails) }
 
   let(:programme) { create(:programme) }
   let(:parents) { create_list(:parent, 2, :recorded) }
@@ -40,6 +41,19 @@ describe SessionRemindersJob do
       )
     end
 
+    it "updates the reminder_sent_at attribute for patient sessions" do
+      expect { perform_now }.to(
+        change { patient_session.reload.reminder_sent_at }
+      )
+    end
+
+    it "records a notification" do
+      expect { perform_now }.to change(
+        SessionNotification.where(patient:, session:),
+        :count
+      ).by(1)
+    end
+
     context "when already sent" do
       before { patient_session.update!(reminder_sent_at: Time.zone.now) }
 
@@ -53,12 +67,16 @@ describe SessionRemindersJob do
       it "doesn't sent a reminder text" do
         expect { perform_now }.not_to have_enqueued_text(:session_reminder)
       end
-    end
 
-    it "updates the reminder_sent_at attribute for patient sessions" do
-      expect { perform_now }.to(
-        change { patient_session.reload.reminder_sent_at }
-      )
+      it "doesn't change reminder_sent_at" do
+        expect { perform_now }.not_to(
+          change { patient_session.reload.reminder_sent_at }
+        )
+      end
+
+      it "doesn't record a notification" do
+        expect { perform_now }.not_to change(SessionNotification, :count)
+      end
     end
   end
 
