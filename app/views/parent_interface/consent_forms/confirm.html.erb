@@ -1,14 +1,13 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: session_parent_interface_consent_form_edit_path(@session, @consent_form, :consent),
+        href: parent_interface_consent_form_edit_path(@consent_form, :consent),
         name: "edit consent page",
       ) %>
 <% end %>
 
 <% change_link = Proc.new do |attr, params = {}|
      options = attr.in?(%i[consent reason]) ? {} : { skip_to_confirm: true }
-     session_parent_interface_consent_form_edit_path(
-       @session,
+     parent_interface_consent_form_edit_path(
        @consent_form,
        attr.to_s.dasherize,
        options.merge(params)

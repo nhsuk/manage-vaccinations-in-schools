@@ -50,8 +50,8 @@ describe "Manage sessions" do
   end
 
   def given_my_team_is_running_an_hpv_vaccination_programme
-    programme = create(:programme, :hpv)
-    @team = create(:team, :with_one_nurse, programmes: [programme])
+    @programme = create(:programme, :hpv)
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
     @location = create(:location, :secondary, team: @team)
     @patient =
       create(
@@ -150,7 +150,7 @@ describe "Manage sessions" do
   end
 
   def when_the_parent_visits_the_consent_form
-    visit start_session_parent_interface_consent_forms_path(Session.last)
+    visit start_parent_interface_consent_forms_path(Session.last, @programme)
   end
 
   def then_they_can_give_consent
@@ -164,7 +164,7 @@ describe "Manage sessions" do
   end
 
   def then_they_can_no_longer_give_consent
-    visit start_session_parent_interface_consent_forms_path(Session.last)
+    visit start_parent_interface_consent_forms_path(Session.last, @programme)
     expect(page).to have_content("The deadline for responding has passed")
   end
 

@@ -5,29 +5,31 @@ module ParentInterface
     skip_before_action :authenticate_user!
     skip_after_action :verify_policy_scoped
 
-    before_action :set_session
-    before_action :set_consent_form
+    prepend_before_action :set_consent_form
     before_action :authenticate_consent_form_user!
     before_action :set_privacy_policy_url
 
     private
 
-    def set_session
-      @session = Session.find(params.fetch(:session_id))
-    end
-
     def set_consent_form
-      @consent_form = ConsentForm.find(params.fetch(:consent_form_id))
+      @consent_form = ConsentForm.find(params[:consent_form_id])
+      @session = @consent_form.session
+      @programme = @consent_form.programme
+      @team = @consent_form.team
     end
 
     def authenticate_consent_form_user!
       unless session[:consent_form_id] == @consent_form.id
-        redirect_to start_session_parent_interface_consent_forms_path(@session)
+        redirect_to start_parent_interface_consent_forms_path(
+                      @session,
+                      @programme
+                    )
       end
     end
 
     def set_header_path
-      @header_path = start_session_parent_interface_consent_forms_path
+      @header_path =
+        start_parent_interface_consent_forms_path(@session, @programme)
     end
 
     def set_service_name
@@ -39,7 +41,7 @@ module ParentInterface
     end
 
     def set_privacy_policy_url
-      @privacy_policy_url = @session.team.privacy_policy_url
+      @privacy_policy_url = @team.privacy_policy_url
     end
   end
 end

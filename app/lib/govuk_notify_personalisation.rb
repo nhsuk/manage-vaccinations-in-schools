@@ -88,7 +88,8 @@ class GovukNotifyPersonalisation
   end
 
   def consent_link
-    host + start_session_parent_interface_consent_forms_path(session)
+    return nil if session.nil? || programme.nil?
+    host + start_parent_interface_consent_forms_path(session, programme)
   end
 
   def day_month_year_of_vaccination

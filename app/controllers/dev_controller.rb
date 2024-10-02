@@ -64,7 +64,7 @@ class DevController < ApplicationController
 
   def random_consent_form
     Faker::Config.locale = "en-GB"
-    @session = Session.find(params.fetch(:session_id))
+    @session = Session.find(params[:session_id])
     programme = @session.programmes.first
     @vaccine = programme.vaccines.first
     @consent_form =
@@ -76,10 +76,7 @@ class DevController < ApplicationController
     end
     @consent_form.save!
     session[:consent_form_id] = @consent_form.id
-    redirect_to session_parent_interface_consent_form_confirm_path(
-                  @session,
-                  @consent_form
-                )
+    redirect_to parent_interface_consent_form_confirm_path(@consent_form)
   end
 
   private

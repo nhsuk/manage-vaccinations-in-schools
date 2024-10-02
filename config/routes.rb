@@ -59,6 +59,24 @@ Rails.application.routes.draw do
 
   get "/csrf", to: "csrf#new"
 
+  namespace :parent_interface, path: "/" do
+    resources :consent_forms, path: "/consents", only: %i[create] do
+      collection do
+        get ":session_id/:programme_id/start", action: "start", as: :start
+        get ":session_id/:programme_id/deadline-passed",
+            action: "deadline_passed",
+            as: :deadline_passed
+      end
+
+      get "cannot-consent-responsibility"
+      get "cannot-consent-school"
+      get "confirm"
+      put "record"
+
+      resources :edit, only: %i[show update], controller: "consent_forms/edit"
+    end
+  end
+
   resources :programmes, only: %i[index show] do
     get "sessions", on: :member
 
@@ -96,19 +114,6 @@ Rails.application.routes.draw do
   end
 
   resources :sessions, only: %i[new edit index show] do
-    namespace :parent_interface, path: "/" do
-      resources :consent_forms, path: :consents, only: [:create] do
-        get "start", on: :collection
-        get "cannot-consent-school"
-        get "cannot-consent-responsibility"
-        get "deadline-passed", on: :collection
-        get "confirm"
-        put "record"
-
-        resources :edit, only: %i[show update], controller: "consent_forms/edit"
-      end
-    end
-
     collection do
       get "completed"
       get "scheduled"
