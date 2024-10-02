@@ -19,7 +19,6 @@ module ParentInterface
     def create
       consent_form =
         ConsentForm.create!(
-          session: @session,
           programme: @programme,
           team: @session.team,
           location: @session.location

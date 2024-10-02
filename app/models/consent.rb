@@ -165,15 +165,13 @@ class Consent < ApplicationRecord
     reasons
   end
 
-  def self.from_consent_form!(consent_form, patient_session)
-    patient = patient_session.patient
-
+  def self.from_consent_form!(consent_form, patient:)
     ActiveRecord::Base.transaction do
       parent = consent_form.find_or_create_parent_with_relationship_to(patient:)
 
       create!(
         consent_form:,
-        team: consent_form.session.team,
+        team: consent_form.team,
         programme: consent_form.programme,
         patient:,
         parent:,

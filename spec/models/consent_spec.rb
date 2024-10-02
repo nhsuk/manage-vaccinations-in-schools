@@ -71,21 +71,17 @@ describe Consent do
   describe "#from_consent_form!" do
     describe "the created consent object" do
       subject(:consent) do
-        described_class.from_consent_form!(consent_form, patient_session)
+        described_class.from_consent_form!(consent_form, patient:)
       end
 
-      let(:programme) { create(:programme) }
-      let(:session) { create(:session, programme:) }
-      let(:consent_form) do
-        create(:consent_form, :recorded, programme:, session:)
-      end
-      let(:patient_session) { create(:patient_session, session:) }
+      let(:consent_form) { create(:consent_form, :recorded) }
+      let(:patient) { create(:patient) }
 
       it "copies over attributes from consent_form" do
         expect(consent).to(
           have_attributes(
-            programme:,
-            patient: patient_session.patient,
+            programme: consent_form.programme,
+            patient:,
             consent_form:,
             reason_for_refusal: consent_form.reason,
             reason_for_refusal_notes: consent_form.reason_notes,
@@ -107,15 +103,6 @@ describe Consent do
       it "copies health answers from consent_form" do
         expect(consent.health_answers.to_json).to eq(
           consent_form.health_answers.to_json
-        )
-      end
-
-      it "runs the do_consent state transition" do
-        expect {
-          consent
-          patient_session
-        }.to change(patient_session, :state).from("added_to_session").to(
-          "consent_given_triage_not_needed"
         )
       end
     end

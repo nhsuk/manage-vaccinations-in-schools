@@ -14,7 +14,7 @@ class ConsentFormsController < ApplicationController
   def show
     @patient_sessions =
       @consent_form
-        .session
+        .scheduled_session
         .patient_sessions
         .includes(:patient)
         .order("patients.last_name")
@@ -29,9 +29,9 @@ class ConsentFormsController < ApplicationController
     @patient_session =
       policy_scope(PatientSession).find(params[:patient_session_id])
 
-    Consent.from_consent_form!(@consent_form, @patient_session)
+    Consent.from_consent_form!(@consent_form, patient: @patient_session.patient)
 
-    session = @consent_form.session
+    session = @consent_form.scheduled_session
 
     flash[:success] = {
       heading: "Consent matched for",
@@ -46,9 +46,7 @@ class ConsentFormsController < ApplicationController
     }
 
     if session.unmatched_consent_forms.any?
-      redirect_to session_consents_unmatched_responses_path(
-                    @consent_form.session.id
-                  )
+      redirect_to session_consents_unmatched_responses_path(session)
     else
       redirect_to session_consents_path(session)
     end

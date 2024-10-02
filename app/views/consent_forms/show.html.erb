@@ -1,6 +1,6 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: session_consents_unmatched_responses_path(@consent_form.session.id),
+        href: session_consents_unmatched_responses_path(@consent_form.scheduled_session.id),
         name: "school page",
       ) %>
 <% end %>
