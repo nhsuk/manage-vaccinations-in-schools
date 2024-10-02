@@ -9,9 +9,6 @@ describe "Parental consent" do
     when_i_go_to_the_consent_form
     when_i_fill_in_my_childs_name_and_birthday
 
-    when_i_do_not_confirm_they_attend_the_pilot_school
-    then_i_see_a_page_telling_me_i_cannot_continue
-
     when_i_give_consent
     and_i_answer_no_to_all_the_medical_questions
     then_i_can_check_my_answers
@@ -107,17 +104,6 @@ describe "Parental consent" do
     fill_in "Month", with: @child.date_of_birth.month
     fill_in "Year", with: @child.date_of_birth.year
     click_on "Continue"
-  end
-
-  def when_i_do_not_confirm_they_attend_the_pilot_school
-    choose "No, they go to a different school"
-    click_on "Continue"
-  end
-
-  def then_i_see_a_page_telling_me_i_cannot_continue
-    expect(page).to have_content("You cannot give or refuse consent")
-
-    click_link "Back"
   end
 
   def and_i_answer_no_to_all_the_medical_questions

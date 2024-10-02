@@ -28,14 +28,6 @@ module ParentInterface
         model.assign_attributes(update_params)
       end
 
-      if current_step == :confirm_school && !@consent_form.school_confirmed &&
-           !Flipper.enabled?(:consent_form_choose_school)
-        redirect_to session_parent_interface_consent_form_cannot_consent_school_path(
-                      @session,
-                      @consent_form
-                    ) and return
-      end
-
       if current_step == :parent &&
            @consent_form.parental_responsibility == "no"
         redirect_to session_parent_interface_consent_form_cannot_consent_responsibility_path(

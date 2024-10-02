@@ -36,9 +36,6 @@ module ParentInterface
                   )
     end
 
-    def cannot_consent_school
-    end
-
     def cannot_consent_responsibility
     end
 

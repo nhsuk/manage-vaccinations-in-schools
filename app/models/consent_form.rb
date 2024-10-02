@@ -449,6 +449,6 @@ class ConsentForm < ApplicationRecord
   end
 
   def choose_school?
-    !school_confirmed && Flipper.enabled?(:consent_form_choose_school)
+    !school_confirmed
   end
 end
