@@ -25,7 +25,7 @@ class CohortImportsController < ApplicationController
 
     @cohort_import.save!
 
-    ProcessCohortImportJob.perform_later(@programme, @cohort_import)
+    ProcessImportJob.perform_later(@programme, @cohort_import)
 
     redirect_to edit_programme_cohort_import_path(@programme, @cohort_import)
   end
