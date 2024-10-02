@@ -50,10 +50,11 @@ class DevController < ApplicationController
     end
 
     team_sessions.each do |team_session|
-      team_session.consent_forms.destroy_all
       team_session.dates.destroy_all
       team_session.destroy!
     end
+
+    ConsentForm.where(team:).delete_all
 
     Patient.joins(:cohort).where(cohorts: { team: }).distinct.destroy_all
 

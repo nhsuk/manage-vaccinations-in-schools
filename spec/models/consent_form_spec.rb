@@ -710,7 +710,7 @@ describe ConsentForm do
     consent_form =
       create(
         :consent_form,
-        programme: create(:programme, :hpv),
+        session: create(:session, programme: create(:programme, :hpv)),
         response: "refused"
       )
 
@@ -732,7 +732,7 @@ describe ConsentForm do
       create(
         :consent_form,
         :with_health_answers_no_branching,
-        programme: create(:programme, :flu),
+        session: create(:session, programme: create(:programme, :flu)),
         response: nil
       )
 
@@ -751,7 +751,7 @@ describe ConsentForm do
       create(
         :consent_form,
         :with_health_answers_no_branching,
-        programme: create(:programme, :hpv),
+        session: create(:session, programme: create(:programme, :hpv)),
         response: nil
       )
 

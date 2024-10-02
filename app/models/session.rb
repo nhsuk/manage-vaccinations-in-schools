@@ -172,7 +172,7 @@ class Session < ApplicationRecord
   end
 
   def unmatched_consent_forms
-    consent_forms.unmatched.recorded.order(:recorded_at)
+    team.consent_forms.where(location:).unmatched.recorded.order(:recorded_at)
   end
 
   def open_for_consent?

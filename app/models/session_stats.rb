@@ -28,7 +28,7 @@ class SessionStats
       vaccinated: 0,
       could_not_vaccinate: 0,
       with_conflicting_consent: 0,
-      unmatched_responses: @session.consent_forms.unmatched.recorded.count
+      unmatched_responses: @session.unmatched_consent_forms.count
     }
 
     @patient_sessions.each do |s|

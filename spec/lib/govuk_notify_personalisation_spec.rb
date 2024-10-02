@@ -100,7 +100,7 @@ describe GovukNotifyPersonalisation do
       create(
         :consent_form,
         :refused,
-        programme:,
+        session: create(:session, programme:),
         recorded_at: Date.new(2024, 1, 1)
       )
     end

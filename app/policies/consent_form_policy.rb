@@ -8,7 +8,7 @@ class ConsentFormPolicy
     end
 
     def resolve
-      @scope.joins(:session).where(session: { team: @user.teams })
+      @scope.where(team: @user.teams)
     end
   end
 end

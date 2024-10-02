@@ -8,8 +8,6 @@ class ConsentFormMatchingJob < ApplicationJob
 
     return unless patient
 
-    patient_session = consent_form.session.patient_sessions.find_by!(patient:)
-
-    Consent.from_consent_form!(consent_form, patient_session)
+    Consent.from_consent_form!(consent_form, patient:)
   end
 end

@@ -311,9 +311,18 @@ class ConsentForm < ApplicationRecord
       refused_because_medical_reasons? || refused_because_already_vaccinated?
   end
 
+  def scheduled_session
+    Session
+      .where(team:, location:)
+      .joins(:programmes)
+      .where(programmes: programme)
+      .scheduled
+      .first
+  end
+
   def find_matching_patient
     patients =
-      session.patients.matching_three_of(
+      scheduled_session.patients.matching_three_of(
         first_name:,
         last_name:,
         date_of_birth:,
@@ -361,6 +370,10 @@ class ConsentForm < ApplicationRecord
       type: parent_relationship_type,
       other_name: parent_relationship_other_name
     ).label
+  end
+
+  def choose_school?
+    !school_confirmed
   end
 
   private
@@ -442,9 +455,5 @@ class ConsentForm < ApplicationRecord
     vaccine = programme.vaccines.active.first
 
     self.health_answers = vaccine.health_questions.to_health_answers
-  end
-
-  def choose_school?
-    !school_confirmed
   end
 end

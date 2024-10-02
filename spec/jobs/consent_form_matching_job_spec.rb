@@ -3,7 +3,8 @@
 describe ConsentFormMatchingJob do
   subject(:perform) { described_class.new.perform(consent_form) }
 
-  let(:consent_form) { create(:consent_form) }
+  let(:session) { create(:session) }
+  let(:consent_form) { create(:consent_form, session:) }
 
   it "doesn't create a consent" do
     expect { perform }.not_to change(Consent, :count)
@@ -16,7 +17,7 @@ describe ConsentFormMatchingJob do
         first_name: consent_form.first_name,
         last_name: consent_form.last_name,
         date_of_birth: consent_form.date_of_birth,
-        session: consent_form.session,
+        session:,
         parents: []
       )
     end
