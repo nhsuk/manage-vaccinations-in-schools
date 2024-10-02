@@ -107,14 +107,11 @@ class ManageConsentsController < ApplicationController
       end
 
       if @triage.persisted?
-        @patient_session.do_consent!
-        @patient_session.do_triage!
         send_triage_confirmation(@patient_session, @consent)
       else
         # We need to discard the draft triage record so that the patient
         # session can be saved.
         @triage.destroy!
-        @patient_session.do_consent!
       end
 
       if @consent.draft_parent.present?
