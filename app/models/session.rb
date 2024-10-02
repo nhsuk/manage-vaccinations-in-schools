@@ -31,7 +31,6 @@ class Session < ApplicationRecord
   belongs_to :team
   belongs_to :location, optional: true
 
-  has_many :consent_forms
   has_many :dates, -> { order(:value) }, class_name: "SessionDate"
   has_many :notifications, class_name: "SessionNotification"
   has_many :patient_sessions

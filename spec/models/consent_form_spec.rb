@@ -37,7 +37,6 @@
 #  location_id                         :bigint           not null
 #  programme_id                        :bigint           not null
 #  school_id                           :bigint
-#  session_id                          :bigint           not null
 #  team_id                             :bigint           not null
 #
 # Indexes
@@ -46,7 +45,6 @@
 #  index_consent_forms_on_location_id   (location_id)
 #  index_consent_forms_on_programme_id  (programme_id)
 #  index_consent_forms_on_school_id     (school_id)
-#  index_consent_forms_on_session_id    (session_id)
 #  index_consent_forms_on_team_id       (team_id)
 #
 # Foreign Keys
@@ -55,7 +53,6 @@
 #  fk_rails_...  (location_id => locations.id)
 #  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (school_id => locations.id)
-#  fk_rails_...  (session_id => sessions.id)
 #  fk_rails_...  (team_id => teams.id)
 #
 

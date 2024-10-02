@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_02_130716) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_02_135243) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -98,7 +98,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_02_130716) do
   end
 
   create_table "consent_forms", force: :cascade do |t|
-    t.bigint "session_id", null: false
     t.datetime "recorded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -136,7 +135,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_02_130716) do
     t.index ["location_id"], name: "index_consent_forms_on_location_id"
     t.index ["programme_id"], name: "index_consent_forms_on_programme_id"
     t.index ["school_id"], name: "index_consent_forms_on_school_id"
-    t.index ["session_id"], name: "index_consent_forms_on_session_id"
     t.index ["team_id"], name: "index_consent_forms_on_team_id"
   end
 
@@ -636,7 +634,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_02_130716) do
   add_foreign_key "consent_forms", "locations"
   add_foreign_key "consent_forms", "locations", column: "school_id"
   add_foreign_key "consent_forms", "programmes"
-  add_foreign_key "consent_forms", "sessions"
   add_foreign_key "consent_forms", "teams"
   add_foreign_key "consent_notifications", "patients"
   add_foreign_key "consent_notifications", "programmes"
