@@ -149,13 +149,6 @@ describe ConsentNotification do
                 session:
               )
       end
-
-      it "sets consent_reminder_sent_at on the patient" do
-        expect { create_and_send! }.to change(
-          patient,
-          :consent_reminder_sent_at
-        ).to(today)
-      end
     end
   end
 end

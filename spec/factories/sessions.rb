@@ -37,9 +37,19 @@ FactoryBot.define do
     team { association(:team, programmes:) }
     location { association :location, :school, team: }
 
-    send_consent_requests_at { date - 14.days if date }
-    days_before_first_consent_reminder { 7 }
-    close_consent_at { date }
+    close_consent_at { (date - 1.day) if date }
+    days_before_first_consent_reminder do
+      team.days_before_first_consent_reminder if date
+    end
+    days_between_consent_reminders do
+      team.days_between_consent_reminders if date
+    end
+    maximum_number_of_consent_reminders do
+      team.maximum_number_of_consent_reminders if date
+    end
+    send_consent_requests_at do
+      (date - team.days_between_first_session_and_consent_requests.days) if date
+    end
 
     after(:create) do |session, evaluator|
       next if (date = evaluator.date).nil?
@@ -60,12 +70,6 @@ FactoryBot.define do
 
     trait :completed do
       date { Date.current - 1.week }
-    end
-
-    trait :minimal do
-      send_consent_requests_at { nil }
-      days_before_first_consent_reminder { nil }
-      close_consent_at { nil }
     end
   end
 end

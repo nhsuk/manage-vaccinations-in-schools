@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Parental consent for a backfilled session" do
+describe "Parental consent closed" do
   scenario "Consent form is shown as closed" do
     given_an_hpv_programme_is_underway_with_a_backfilled_session
     when_i_go_to_the_consent_form
@@ -11,7 +11,14 @@ describe "Parental consent for a backfilled session" do
     programme = create(:programme, :hpv)
     @team = create(:team, :with_one_nurse, programmes: [programme])
     location = create(:location, :school, name: "Pilot School")
-    @session = create(:session, :completed, :minimal, programme:, location:)
+    @session =
+      create(
+        :session,
+        :completed,
+        programme:,
+        location:,
+        close_consent_at: 7.days.ago
+      )
   end
 
   def when_i_go_to_the_consent_form

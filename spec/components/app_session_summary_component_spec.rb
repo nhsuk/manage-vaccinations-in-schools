@@ -15,7 +15,7 @@ describe AppSessionSummaryComponent do
   it { should have_content("1 January 2024") }
 
   it { should have_content("Consent period") }
-  it { should have_content("Closed 1 January") }
+  it { should have_content("Closed 31 December") }
 
   it { should have_content("Children") }
   it { should have_content("No children") }

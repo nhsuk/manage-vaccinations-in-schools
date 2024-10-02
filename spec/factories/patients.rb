@@ -93,14 +93,13 @@ FactoryBot.define do
           :consent_notification,
           :request,
           patient:,
-          programme: context.programme
+          programme: context.programme,
+          sent_at: 1.week.ago
         )
       end
     end
 
     trait :consent_reminder_sent do
-      consent_reminder_sent_at { 1.week.ago }
-
       after(:create) do |patient, context|
         create(
           :consent_notification,

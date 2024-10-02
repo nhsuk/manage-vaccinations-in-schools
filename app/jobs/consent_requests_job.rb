@@ -6,28 +6,33 @@ class ConsentRequestsJob < ApplicationJob
   def perform
     return unless Flipper.enabled?(:scheduled_emails)
 
-    Session.send_consent_requests.each do |session|
-      session
-        .patients
-        .needing_consent_requests(session.programmes)
-        .each do |patient|
-          already_sent_programme_ids =
-            patient.consent_notifications.request.pluck(:programme_id)
+    sessions =
+      Session
+        .send_consent_requests
+        .includes(:programmes, patients: %i[consents consent_notifications])
+        .strict_loading
 
-          missing_programmes =
-            session.programmes.reject do
-              already_sent_programme_ids.include?(_1.id)
-            end
+    sessions.each do |session|
+      session.programmes.each do |programme|
+        session.patients.each do |patient|
+          next unless should_send_notification?(patient:, programme:)
 
-          missing_programmes.each do |programme|
-            ConsentNotification.create_and_send!(
-              patient:,
-              programme:,
-              session:,
-              reminder: false
-            )
-          end
+          ConsentNotification.create_and_send!(
+            patient:,
+            programme:,
+            session:,
+            reminder: false
+          )
         end
+      end
+    end
+  end
+
+  def should_send_notification?(patient:, programme:)
+    return false if patient.has_consent?(programme)
+
+    patient.consent_notifications.none? do
+      _1.request? && _1.programme_id == programme.id
     end
   end
 end
