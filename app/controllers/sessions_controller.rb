@@ -7,7 +7,8 @@ class SessionsController < ApplicationController
   skip_after_action :verify_policy_scoped, only: :new
 
   def new
-    location = team.schools.find(params[:location_id])
+    location =
+      team.schools.for_year_groups(team.year_groups).find(params[:location_id])
 
     session =
       ActiveRecord::Base.transaction do
@@ -37,6 +38,7 @@ class SessionsController < ApplicationController
         team
           .schools
           .has_no_session(academic_year)
+          .for_year_groups(team.year_groups)
           .map { |location| Session.new(team:, location:, academic_year:) }
 
     render layout: "full"

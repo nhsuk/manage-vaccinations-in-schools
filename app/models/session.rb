@@ -182,19 +182,19 @@ class Session < ApplicationRecord
 
   private
 
+  def set_programmes
+    return unless new_record?
+    return if location.nil?
+
+    self.programmes =
+      team.programmes.select { _1.year_groups.intersect?(location.year_groups) }
+  end
+
   def programmes_part_of_team
     return if programmes.empty?
 
     unless programmes.all? { team.programmes.include?(_1) }
       errors.add(:programmes, :inclusion)
     end
-  end
-
-  def set_programmes
-    return unless new_record?
-    return if location.nil? || team.nil?
-
-    self.programmes =
-      team.programmes.select { _1.year_groups.intersect?(location.year_groups) }
   end
 end
