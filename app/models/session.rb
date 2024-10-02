@@ -70,10 +70,10 @@ class Session < ApplicationRecord
           )
         end
 
-  scope :send_consent_requests_today,
-        -> { scheduled.where("send_consent_requests_at <= ?", Date.current) }
-  scope :send_consent_reminders_today,
-        -> { scheduled.where("send_consent_reminders_at <= ?", Date.current) }
+  scope :send_consent_requests,
+        -> { scheduled.where("? >= send_consent_requests_at", Date.current) }
+  scope :send_consent_reminders,
+        -> { scheduled.where("? >= send_consent_reminders_at", Date.current) }
 
   after_initialize :set_programmes
 
@@ -137,9 +137,11 @@ class Session < ApplicationRecord
 
   def set_consent_dates
     if dates.empty?
-      self.send_consent_requests_at = nil
-      self.send_consent_reminders_at = nil
       self.close_consent_at = nil
+      self.days_between_consent_reminders = nil
+      self.maximum_number_of_consent_reminders = nil
+      self.send_consent_reminders_at = nil
+      self.send_consent_requests_at = nil
     else
       earliest_date = dates.map(&:value).min
 
@@ -150,6 +152,11 @@ class Session < ApplicationRecord
       self.send_consent_reminders_at =
         send_consent_requests_at +
           team.days_between_consent_requests_and_first_reminders.days
+
+      self.days_between_consent_reminders = team.days_between_consent_reminders
+
+      self.maximum_number_of_consent_reminders =
+        maximum_number_of_consent_reminders
 
       latest_date = dates.map(&:value).max
 

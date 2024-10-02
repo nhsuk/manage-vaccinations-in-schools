@@ -35,7 +35,7 @@
       
         summary_list.with_row do |row|
           row.with_key { "Days between each reminder" }
-          row.with_value { pluralize(@team.days_between_subsequent_consent_reminders, "day") }
+          row.with_value { pluralize(@team.days_between_consent_reminders, "day") }
         end
       
         summary_list.with_row do |row|
