@@ -6,7 +6,7 @@ class ConsentRequestsJob < ApplicationJob
   def perform
     return unless Flipper.enabled?(:scheduled_emails)
 
-    Session.send_consent_requests_today.each do |session|
+    Session.send_consent_requests.each do |session|
       session
         .patients
         .needing_consent_requests(session.programmes)
