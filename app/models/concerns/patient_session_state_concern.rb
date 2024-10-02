@@ -47,42 +47,6 @@ module PatientSessionStateConcern
       vaccinated
     ].each { |state| define_method("#{state}?") { self.state == state } }
 
-    def do_consent
-      nil
-    end
-
-    def do_consent!
-      nil
-    end
-
-    def do_triage
-      nil
-    end
-
-    def do_triage!
-      nil
-    end
-
-    def do_vaccination
-      nil
-    end
-
-    def do_vaccination!
-      nil
-    end
-
-    def may_do_consent?
-      true
-    end
-
-    def may_do_triage?
-      true
-    end
-
-    def may_do_vaccination?
-      true
-    end
-
     def consent_given?
       return false if no_consent?
 

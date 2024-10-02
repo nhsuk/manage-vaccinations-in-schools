@@ -171,24 +171,19 @@ class Consent < ApplicationRecord
     ActiveRecord::Base.transaction do
       parent = consent_form.find_or_create_parent_with_relationship_to(patient:)
 
-      consent =
-        create!(
-          consent_form:,
-          team: consent_form.session.team,
-          programme: consent_form.programme,
-          patient:,
-          parent:,
-          reason_for_refusal: consent_form.reason,
-          reason_for_refusal_notes: consent_form.reason_notes,
-          recorded_at: Time.zone.now,
-          response: consent_form.response,
-          route: "website",
-          health_answers: consent_form.health_answers
-        )
-
-      patient_session.do_consent! if patient_session.may_do_consent?
-
-      consent
+      create!(
+        consent_form:,
+        team: consent_form.session.team,
+        programme: consent_form.programme,
+        patient:,
+        parent:,
+        reason_for_refusal: consent_form.reason,
+        reason_for_refusal_notes: consent_form.reason_notes,
+        recorded_at: Time.zone.now,
+        response: consent_form.response,
+        route: "website",
+        health_answers: consent_form.health_answers
+      )
     end
   end
 
