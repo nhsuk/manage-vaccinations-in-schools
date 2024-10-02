@@ -4,10 +4,18 @@ class ConsentFormMatchingJob < ApplicationJob
   queue_as :default
 
   def perform(consent_form)
-    patient = consent_form.find_matching_patient
+    session = consent_form.scheduled_session
 
-    return unless patient
+    patients =
+      session.patients.matching_three_of(
+        first_name: consent_form.first_name,
+        last_name: consent_form.last_name,
+        date_of_birth: consent_form.date_of_birth,
+        address_postcode: consent_form.address_postcode
+      )
 
-    Consent.from_consent_form!(consent_form, patient:)
+    return if patients.count != 1
+
+    patients.first.match_consent_form!(consent_form)
   end
 end

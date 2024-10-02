@@ -190,6 +190,67 @@ describe Patient do
     end
   end
 
+  describe "#match_consent_form!" do
+    subject(:match_consent_form!) { patient.match_consent_form!(consent_form) }
+
+    let(:patient) { create(:patient) }
+
+    context "when consent form confirms the school" do
+      let(:consent_form) { create(:consent_form, school_confirmed: true) }
+
+      it "creates a consent" do
+        expect { match_consent_form! }.to change(Consent, :count).by(1)
+      end
+
+      it "doesn't change the patient's school" do
+        expect { match_consent_form! }.not_to change(patient, :school)
+      end
+    end
+
+    context "when consent form doesn't confirm the school" do
+      let(:consent_form) do
+        create(:consent_form, school_confirmed: false, school:)
+      end
+      let(:school) { create(:location, :school) }
+
+      it "creates a consent" do
+        expect { match_consent_form! }.to change(Consent, :count).by(1)
+      end
+
+      it "changes the patient's school" do
+        expect { match_consent_form! }.to change(patient, :school).to(school)
+      end
+
+      context "when the patient is already in a session" do
+        let(:session) { create(:session, patients: [patient]) }
+        let(:consent_form) do
+          create(:consent_form, school_confirmed: false, school:, session:)
+        end
+
+        it "removes the patient from the session" do
+          match_consent_form!
+          expect(session.reload.patients).not_to include(patient)
+        end
+
+        context "when a session exists for the new school" do
+          let!(:new_session) do
+            create(
+              :session,
+              location: school,
+              team: consent_form.team,
+              programme: consent_form.programme
+            )
+          end
+
+          it "adds the patient to the session" do
+            match_consent_form!
+            expect(new_session.reload.patients).to include(patient)
+          end
+        end
+      end
+    end
+  end
+
   describe "#destroy_childless_parents" do
     let(:patient) { create(:patient, parents: []) }
     let(:parent) { create(:parent) }

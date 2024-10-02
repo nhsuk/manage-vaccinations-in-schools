@@ -133,7 +133,53 @@ class Patient < ApplicationRecord
     super.merge("full_name" => full_name, "age" => age)
   end
 
+  def match_consent_form!(consent_form)
+    ActiveRecord::Base.transaction do
+      new_school = consent_form.school
+
+      session_in_new_school =
+        (
+          if new_school && new_school != school
+            move_school(
+              new_school,
+              existing_session: consent_form.scheduled_session,
+              programme: consent_form.programme
+            )
+          end
+        )
+
+      Consent.from_consent_form!(consent_form, patient: self)
+
+      session_in_new_school
+    end
+  end
+
   private
+
+  def move_school(new_school, existing_session:, programme:)
+    update!(school: new_school)
+
+    existing_patient_session =
+      existing_session.patient_sessions.find_by(patient: self)
+
+    if existing_patient_session&.added_to_session?
+      existing_patient_session.destroy!
+    end
+
+    new_session =
+      Session
+        .where(location: new_school, team: existing_session.team)
+        .has_programme(programme)
+        .scheduled
+        .or(
+          Session.unscheduled.where(academic_year: Date.current.academic_year)
+        )
+        .first
+
+    new_session&.patient_sessions&.create!(patient: self)
+
+    new_session
+  end
 
   def remove_spaces_from_nhs_number
     nhs_number&.gsub!(/\s/, "")

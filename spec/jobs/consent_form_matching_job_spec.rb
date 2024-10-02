@@ -6,11 +6,13 @@ describe ConsentFormMatchingJob do
   let(:session) { create(:session) }
   let(:consent_form) { create(:consent_form, session:) }
 
-  it "doesn't create a consent" do
-    expect { perform }.not_to change(Consent, :count)
+  context "with no matching patients" do
+    it "doesn't create a consent" do
+      expect { perform }.not_to change(Consent, :count)
+    end
   end
 
-  context "with a matching patient" do
+  context "with one matching patient" do
     let!(:patient) do
       create(
         :patient,
@@ -37,6 +39,23 @@ describe ConsentFormMatchingJob do
         patient:,
         parent: Parent.first
       )
+    end
+  end
+
+  context "with multiple matching patients" do
+    before do
+      create_list(
+        :patient,
+        2,
+        first_name: consent_form.first_name,
+        last_name: consent_form.last_name,
+        date_of_birth: consent_form.date_of_birth,
+        session:
+      )
+    end
+
+    it "doesn't create a consent" do
+      expect { perform }.not_to change(Consent, :count)
     end
   end
 end

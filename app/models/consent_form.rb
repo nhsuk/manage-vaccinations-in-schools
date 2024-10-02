@@ -312,26 +312,7 @@ class ConsentForm < ApplicationRecord
   end
 
   def scheduled_session
-    Session
-      .where(team:, location:)
-      .joins(:programmes)
-      .where(programmes: programme)
-      .scheduled
-      .first
-  end
-
-  def find_matching_patient
-    patients =
-      scheduled_session.patients.matching_three_of(
-        first_name:,
-        last_name:,
-        date_of_birth:,
-        address_postcode:
-      )
-
-    return nil if patients.count > 1
-
-    patients.first
+    Session.where(team:, location:).has_programme(programme).scheduled.first
   end
 
   def find_or_create_parent_with_relationship_to(patient:)
