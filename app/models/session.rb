@@ -47,6 +47,9 @@ class Session < ApplicationRecord
   scope :has_date,
         ->(value) { where(SessionDate.for_session.where(value:).arel.exists) }
 
+  scope :has_programme,
+        ->(programme) { joins(:programmes).where(programmes: programme) }
+
   scope :today, -> { has_date(Date.current) }
 
   scope :unscheduled, -> { where.not(SessionDate.for_session.arel.exists) }
