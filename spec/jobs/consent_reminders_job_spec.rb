@@ -16,6 +16,7 @@ describe ConsentRemindersJob do
   let(:patient_not_sent_reminder) do
     create(:patient, :consent_request_sent, parents:, programme:)
   end
+  let(:patient_not_sent_request) { create(:patient, parents:, programme:) }
   let(:patient_with_consent) do
     create(:patient, :consent_given_triage_not_needed, programme:)
   end
@@ -24,6 +25,7 @@ describe ConsentRemindersJob do
     [
       patient_with_reminder_sent,
       patient_not_sent_reminder,
+      patient_not_sent_request,
       patient_with_consent
     ]
   end
@@ -73,6 +75,45 @@ describe ConsentRemindersJob do
         reminder: true
       )
       perform_now
+    end
+
+    context "with a reminder sent a week ago" do
+      before do
+        create(
+          :consent_notification,
+          :reminder,
+          programme:,
+          patient: patient_with_consent,
+          sent_at: 7.days.ago
+        )
+      end
+
+      it "sends another notification to the patient" do
+        expect(ConsentNotification).to receive(:create_and_send!).once.with(
+          patient: patient_not_sent_reminder,
+          programme:,
+          session:,
+          reminder: true
+        )
+        perform_now
+      end
+    end
+
+    context "when maximum reminders already sent" do
+      before do
+        create_list(
+          :consent_notification,
+          4,
+          :reminder,
+          programme:,
+          patient: patient_not_sent_reminder
+        )
+      end
+
+      it "doesn't send any notifications" do
+        expect(ConsentNotification).not_to receive(:create_and_send!)
+        perform_now
+      end
     end
   end
 end
