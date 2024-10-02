@@ -44,6 +44,10 @@ class Team < ApplicationRecord
   validates :ods_code, presence: true, uniqueness: true
   validates :phone, presence: true, phone: true
 
+  def year_groups
+    programmes.flat_map(&:year_groups).uniq.sort
+  end
+
   def weeks_between_first_session_and_consent_requests
     (days_between_first_session_and_consent_requests / 7).to_i
   end
