@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe "Parental consent school" do
-  before { Flipper.enable(:consent_form_choose_school) }
-
   scenario "Child attends a different school" do
     given_an_hpv_programme_is_underway
     when_i_go_to_the_consent_form
