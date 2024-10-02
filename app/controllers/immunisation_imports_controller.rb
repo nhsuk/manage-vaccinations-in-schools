@@ -31,10 +31,6 @@ class ImmunisationImportsController < ApplicationController
 
     @immunisation_import.process!
 
-    if @immunisation_import.processed_only_exact_duplicates?
-      render :duplicates and return
-    end
-
     redirect_to edit_programme_immunisation_import_path(
                   @programme,
                   @immunisation_import
