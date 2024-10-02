@@ -289,8 +289,6 @@ en:
               too_long: Enter a GP name that is less than 300 characters long
             gp_response:
               blank: Choose if your child is registered with a GP
-            location_confirmed:
-              inclusion: Tell us if this is their school
             last_name:
               blank: Enter a last name
               too_long: Enter a last name that is less than 300 characters long
@@ -327,11 +325,13 @@ en:
                 long
             response:
               blank: Choose if you consent
-            use_common_name:
-              inclusion: Tell us whether they use a different name
-            location_id:
+            school_confirmed:
+              inclusion: Tell us if this is their school
+            school_id:
               blank: Choose a school
               inclusion: Choose a school from the list
+            use_common_name:
+              inclusion: Tell us whether they use a different name
         gillick_assessment:
           attributes:
             gillick_competent:

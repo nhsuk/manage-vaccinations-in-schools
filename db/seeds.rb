@@ -54,13 +54,16 @@ def create_session(user, team)
 
   FactoryBot.create_list(:batch, 4, vaccine: programme.vaccines.active.first)
 
-  session =
-    FactoryBot.create(
-      :session,
-      team:,
-      programme:,
-      location: team.locations.for_year_groups(programme.year_groups).sample
-    )
+  location =
+    team.locations.for_year_groups(programme.year_groups).sample ||
+      FactoryBot.create(
+        :location,
+        :school,
+        team:,
+        year_groups: programme.year_groups
+      )
+
+  session = FactoryBot.create(:session, team:, programme:, location:)
 
   session.dates.create!(value: Date.yesterday)
   session.dates.create!(value: Date.tomorrow)
