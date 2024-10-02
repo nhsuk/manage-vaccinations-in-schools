@@ -1,16 +1,25 @@
-<%= content_for :page_title, "#{@programme.name} – #{t("imports.index.title")}" %>
+<%= content_for :page_title,
+               "#{@programme.name} – #{t("imports.index.title")}" %>
 
 <% content_for :before_main do %>
-  <%= render AppBreadcrumbComponent.new(items: [
-                                          { text: t("programmes.index.title"), href: programmes_path },
-                                          { text: @programme.name, href: programme_path(@programme) },
-                                        ]) %>
+  <%= render AppBreadcrumbComponent.new(
+        items: [
+          { text: t("programmes.index.title"), href: programmes_path },
+          { text: @programme.name, href: programme_path(@programme) },
+        ],
+      ) %>
 <% end %>
 
 <h1 class="nhsuk-heading-l"><%= @programme.name %></h1>
 
-<%= render AppProgrammeNavigationComponent.new(@programme, team: current_user.team, active: :imports) %>
+<%= render AppProgrammeNavigationComponent.new(
+      @programme,
+      team: current_user.team,
+      active: :imports,
+    ) %>
 
-<%= govuk_button_link_to "Import records", new_programme_import_path, class: "app-button--secondary" %>
+<%= govuk_button_link_to "Import records",
+                         new_programme_import_path,
+                         class: "app-button--secondary" %>
 
 <%= render AppImportsTableComponent.new(team: @team, programme: @programme) %>
