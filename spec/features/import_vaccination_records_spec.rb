@@ -18,10 +18,18 @@ describe "Immunisation imports" do
     then_i_should_see_an_error
 
     when_i_upload_an_invalid_file
+    then_i_should_see_the_holding_page
+
+    when_i_wait_for_the_import_to_process
+    and_i_refresh
     then_i_should_see_the_errors_page
     and_i_go_back_to_the_upload_page
 
     when_i_upload_a_valid_file
+    then_i_should_see_the_holding_page
+
+    when_i_wait_for_the_import_to_process
+    and_i_refresh
     then_i_should_see_the_success_heading
     and_i_should_see_the_vaccination_records
 
@@ -205,9 +213,15 @@ describe "Immunisation imports" do
 
   alias_method :and_i_click_on_the_upload_link, :when_i_click_on_the_upload_link
 
-  def then_i_should_see_the_duplicates_page
-    expect(page).to have_content(
-      "All records in this CSV file have been uploaded."
-    )
+  def then_i_should_see_the_holding_page
+    expect(page).to have_content("This import is still processing")
+  end
+
+  def when_i_wait_for_the_import_to_process
+    perform_enqueued_jobs
+  end
+
+  def and_i_refresh
+    visit current_path
   end
 end

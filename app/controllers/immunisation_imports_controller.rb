@@ -24,12 +24,9 @@ class ImmunisationImportsController < ApplicationController
       render :new, status: :unprocessable_entity and return
     end
 
-    @immunisation_import.parse_rows!
-    if @immunisation_import.invalid?
-      render :errors, status: :unprocessable_entity and return
-    end
+    @immunisation_import.save!
 
-    @immunisation_import.process!
+    ProcessImportJob.perform_later(@programme, @immunisation_import)
 
     redirect_to edit_programme_immunisation_import_path(
                   @programme,
@@ -42,6 +39,11 @@ class ImmunisationImportsController < ApplicationController
   end
 
   def edit
+    if @immunisation_import.rows_are_invalid?
+      @immunisation_import.load_serialized_errors!
+      render :errors and return
+    end
+
     render layout: "full"
   end
 

@@ -58,6 +58,9 @@ describe "Dev endpoint to reset a team" do
     )
     click_on "Continue"
 
+    perform_enqueued_jobs
+    visit current_path
+
     click_on "Upload records"
     expect(VaccinationRecord.count).to eq(7)
   end
