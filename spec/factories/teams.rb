@@ -5,9 +5,9 @@
 # Table name: teams
 #
 #  id                                                :bigint           not null, primary key
+#  days_between_consent_reminders                    :integer          default(7), not null
 #  days_between_consent_requests_and_first_reminders :integer          default(7), not null
 #  days_between_first_session_and_consent_requests   :integer          default(21), not null
-#  days_between_subsequent_consent_reminders         :integer          default(7), not null
 #  email                                             :string
 #  maximum_number_of_consent_reminders               :integer          default(4), not null
 #  name                                              :text             not null

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_01_162101) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_02_075047) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -491,6 +491,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_01_162101) do
     t.date "close_consent_at"
     t.bigint "team_id", null: false
     t.integer "academic_year", null: false
+    t.integer "days_between_consent_reminders"
+    t.integer "maximum_number_of_consent_reminders"
     t.index ["team_id", "location_id", "academic_year"], name: "index_sessions_on_team_id_and_location_id_and_academic_year", unique: true
     t.index ["team_id"], name: "index_sessions_on_team_id"
   end
@@ -514,7 +516,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_01_162101) do
     t.string "phone"
     t.integer "days_between_first_session_and_consent_requests", default: 21, null: false
     t.integer "days_between_consent_requests_and_first_reminders", default: 7, null: false
-    t.integer "days_between_subsequent_consent_reminders", default: 7, null: false
+    t.integer "days_between_consent_reminders", default: 7, null: false
     t.integer "maximum_number_of_consent_reminders", default: 4, null: false
     t.boolean "send_updates_by_text", default: false, null: false
     t.index ["name"], name: "index_teams_on_name", unique: true
