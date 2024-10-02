@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppImportsTableComponent do
+describe AppImportTablesComponent do
   subject(:rendered) { render_inline(component) }
 
   let(:component) { described_class.new(team:, programme:) }

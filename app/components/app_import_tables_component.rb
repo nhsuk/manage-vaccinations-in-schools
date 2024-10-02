@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AppImportsTableComponent < ViewComponent::Base
+class AppImportTablesComponent < ViewComponent::Base
   def initialize(team:, programme:)
     super
 
