@@ -1,6 +1,6 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: start_session_parent_interface_consent_forms_path(@session),
+        href: start_parent_interface_consent_forms_path(@session, @programme),
         name: "start consent page",
       ) %>
 <% end %>

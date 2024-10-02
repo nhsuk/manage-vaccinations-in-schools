@@ -6,4 +6,8 @@
   </p>
 <% end %>
 
-<%= govuk_button_to "Start now", url_for(action: :create) %>
+<%= form_with url: url_for(action: :create) do |f| %>
+  <%= hidden_field_tag :session_id, @session.id %>
+  <%= hidden_field_tag :programme_id, @programme.id %>
+  <%= f.govuk_submit "Start now" %>
+<% end %>

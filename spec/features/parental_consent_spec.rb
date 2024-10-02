@@ -26,10 +26,17 @@ describe "Parental consent" do
   end
 
   def given_an_hpv_programme_is_underway
-    programme = create(:programme, :hpv)
-    @team = create(:team, :with_one_nurse, programmes: [programme])
+    @programme = create(:programme, :hpv)
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
     location = create(:location, :school, name: "Pilot School")
-    @session = create(:session, :scheduled, team: @team, programme:, location:)
+    @session =
+      create(
+        :session,
+        :scheduled,
+        team: @team,
+        programme: @programme,
+        location:
+      )
     @child = create(:patient, session: @session)
   end
 
@@ -54,7 +61,7 @@ describe "Parental consent" do
   end
 
   def when_i_go_to_the_consent_form
-    visit start_session_parent_interface_consent_forms_path(@session)
+    visit start_parent_interface_consent_forms_path(@session, @programme)
   end
 
   def when_i_give_consent

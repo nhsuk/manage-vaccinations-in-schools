@@ -47,7 +47,7 @@ describe GovukNotifyPersonalisation do
         close_consent_date: "Thursday 1 January",
         close_consent_short_date: "1 January",
         consent_link:
-          "http://localhost:4000/sessions/#{session.id}/consents/start",
+          "http://localhost:4000/consents/#{session.id}/#{programme.id}/start",
         full_and_preferred_patient_name: "John Smith",
         location_name: "Hogwarts",
         next_session_date: "Thursday 1 January",

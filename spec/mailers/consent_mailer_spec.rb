@@ -26,12 +26,15 @@ describe ConsentMailer do
   end
 
   describe "#request" do
-    subject(:mail) { described_class.with(session:, patient:, parent:).request }
+    subject(:mail) do
+      described_class.with(session:, patient:, parent:, programme:).request
+    end
 
     let(:patient) { create(:patient) }
     let(:parent) { patient.parents.first }
+    let(:programme) { create(:programme) }
     let(:date) { Date.current }
-    let(:session) { create(:session, date:, patients: [patient]) }
+    let(:session) { create(:session, date:, patients: [patient], programme:) }
 
     it { should have_attributes(to: [parent.email]) }
 
@@ -53,9 +56,9 @@ describe ConsentMailer do
       it { should include(team_phone: session.team.phone) }
 
       it "uses the consent url for the session" do
-        expect(subject).to include(
+        expect(personalisation).to include(
           consent_link:
-            start_session_parent_interface_consent_forms_url(session)
+            start_parent_interface_consent_forms_url(session, programme)
         )
       end
     end
@@ -63,13 +66,14 @@ describe ConsentMailer do
 
   describe "#reminder" do
     subject(:mail) do
-      described_class.with(session:, patient:, parent:).reminder
+      described_class.with(session:, patient:, parent:, programme:).reminder
     end
 
     let(:patient) { create(:patient) }
     let(:parent) { patient.parents.first }
+    let(:programme) { create(:programme) }
     let(:date) { Date.current }
-    let(:session) { create(:session, patients: [patient]) }
+    let(:session) { create(:session, date:, patients: [patient], programme:) }
 
     it { should have_attributes(to: [parent.email]) }
 
@@ -99,7 +103,7 @@ describe ConsentMailer do
       it "uses the consent url for the session" do
         expect(personalisation).to include(
           consent_link:
-            start_session_parent_interface_consent_forms_url(session)
+            start_parent_interface_consent_forms_url(session, programme)
         )
       end
     end
