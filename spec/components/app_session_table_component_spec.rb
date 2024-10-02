@@ -19,7 +19,12 @@ describe AppSessionTableComponent do
     ] + create_list(:session, 8, programme:)
   end
 
-  before { create_list(:patient, 5, session: sessions.first) }
+  before do
+    travel_to Time.zone.local(2024, 9, 1)
+    create_list(:patient, 5, session: sessions.first)
+  end
+
+  after { travel_back }
 
   it { should have_css(".nhsuk-table__heading-tab", text: "10 sessions") }
 
