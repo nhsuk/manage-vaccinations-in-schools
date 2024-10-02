@@ -30,7 +30,7 @@
       
         summary_list.with_row do |row|
           row.with_key { "Days before first reminder" }
-          row.with_value { "#{pluralize(@team.days_between_consent_requests_and_first_reminders, "day")} after first consent request" }
+          row.with_value { "#{pluralize(@team.days_before_first_consent_reminder, "day")} after first consent request" }
         end
       
         summary_list.with_row do |row|

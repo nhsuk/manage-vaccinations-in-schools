@@ -7,9 +7,9 @@
 #  id                                  :bigint           not null, primary key
 #  academic_year                       :integer          not null
 #  close_consent_at                    :date
+#  days_before_first_consent_reminder  :integer
 #  days_between_consent_reminders      :integer
 #  maximum_number_of_consent_reminders :integer
-#  send_consent_reminders_at           :date
 #  send_consent_requests_at            :date
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
@@ -38,9 +38,7 @@ FactoryBot.define do
     location { association :location, :school, team: }
 
     send_consent_requests_at { date - 14.days if date }
-    send_consent_reminders_at do
-      send_consent_requests_at + 7.days if send_consent_requests_at
-    end
+    days_before_first_consent_reminder { 7 }
     close_consent_at { date }
 
     after(:create) do |session, evaluator|
@@ -66,7 +64,7 @@ FactoryBot.define do
 
     trait :minimal do
       send_consent_requests_at { nil }
-      send_consent_reminders_at { nil }
+      days_before_first_consent_reminder { nil }
       close_consent_at { nil }
     end
   end
