@@ -43,7 +43,8 @@ describe ConsentRemindersJob do
         :session,
         patients:,
         programme:,
-        send_consent_reminders_at: 2.days.from_now
+        send_consent_requests_at: 2.days.from_now,
+        days_before_first_consent_reminder: 7
       )
     end
 
@@ -59,7 +60,8 @@ describe ConsentRemindersJob do
         :session,
         patients:,
         programme:,
-        send_consent_reminders_at: Date.current
+        send_consent_requests_at: 7.days.ago,
+        days_before_first_consent_reminder: 7
       )
     end
 

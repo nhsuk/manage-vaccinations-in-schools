@@ -7,9 +7,9 @@
 #  id                                  :bigint           not null, primary key
 #  academic_year                       :integer          not null
 #  close_consent_at                    :date
+#  days_before_first_consent_reminder  :integer
 #  days_between_consent_reminders      :integer
 #  maximum_number_of_consent_reminders :integer
-#  send_consent_reminders_at           :date
 #  send_consent_requests_at            :date
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
@@ -73,7 +73,12 @@ class Session < ApplicationRecord
   scope :send_consent_requests,
         -> { scheduled.where("? >= send_consent_requests_at", Date.current) }
   scope :send_consent_reminders,
-        -> { scheduled.where("? >= send_consent_reminders_at", Date.current) }
+        -> do
+          scheduled.where(
+            "? >= send_consent_requests_at + days_before_first_consent_reminder",
+            Date.current
+          )
+        end
 
   after_initialize :set_programmes
 
@@ -138,30 +143,33 @@ class Session < ApplicationRecord
   def set_consent_dates
     if dates.empty?
       self.close_consent_at = nil
+      self.days_before_first_consent_reminder = nil
       self.days_between_consent_reminders = nil
       self.maximum_number_of_consent_reminders = nil
-      self.send_consent_reminders_at = nil
       self.send_consent_requests_at = nil
     else
-      earliest_date = dates.map(&:value).min
-
       self.send_consent_requests_at =
-        earliest_date -
+        dates.map(&:value).min -
           team.days_between_first_session_and_consent_requests.days
 
-      self.send_consent_reminders_at =
-        send_consent_requests_at +
-          team.days_between_consent_requests_and_first_reminders.days
+      self.days_before_first_consent_reminder =
+        team.days_before_first_consent_reminder
 
       self.days_between_consent_reminders = team.days_between_consent_reminders
 
       self.maximum_number_of_consent_reminders =
         maximum_number_of_consent_reminders
 
-      latest_date = dates.map(&:value).max
-
-      self.close_consent_at = latest_date - 1.day
+      self.close_consent_at = dates.map(&:value).max - 1.day
     end
+  end
+
+  def send_consent_reminders_at
+    if send_consent_requests_at.nil? || days_before_first_consent_reminder.nil?
+      return nil
+    end
+
+    send_consent_requests_at + days_before_first_consent_reminder
   end
 
   def unmatched_consent_forms
