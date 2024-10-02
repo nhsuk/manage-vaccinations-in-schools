@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_02_090340) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_02_125816) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -130,10 +130,12 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_02_090340) do
     t.bigint "programme_id", null: false
     t.boolean "location_confirmed"
     t.bigint "location_id"
+    t.bigint "team_id", null: false
     t.index ["consent_id"], name: "index_consent_forms_on_consent_id"
     t.index ["location_id"], name: "index_consent_forms_on_location_id"
     t.index ["programme_id"], name: "index_consent_forms_on_programme_id"
     t.index ["session_id"], name: "index_consent_forms_on_session_id"
+    t.index ["team_id"], name: "index_consent_forms_on_team_id"
   end
 
   create_table "consent_notifications", force: :cascade do |t|
@@ -632,6 +634,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_02_090340) do
   add_foreign_key "consent_forms", "locations"
   add_foreign_key "consent_forms", "programmes"
   add_foreign_key "consent_forms", "sessions"
+  add_foreign_key "consent_forms", "teams"
   add_foreign_key "consent_notifications", "patients"
   add_foreign_key "consent_notifications", "programmes"
   add_foreign_key "consents", "parents"

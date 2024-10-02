@@ -20,7 +20,8 @@ module ParentInterface
       # TODO: handle multiple programmes
       programme = @session.programmes.first
 
-      consent_form = @session.consent_forms.create!(programme:)
+      consent_form =
+        @session.consent_forms.create!(programme:, team: @session.team)
 
       session[:consent_form_id] = consent_form.id
 
