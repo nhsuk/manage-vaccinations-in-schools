@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_02_090020) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_02_090340) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -441,7 +441,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_02_090020) do
     t.string "address_line_2"
     t.string "address_town"
     t.string "address_postcode", null: false
-    t.datetime "consent_reminder_sent_at"
     t.integer "gender_code", default: 0, null: false
     t.boolean "home_educated"
     t.jsonb "pending_changes", default: {}, null: false
