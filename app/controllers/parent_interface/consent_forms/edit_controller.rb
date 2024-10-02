@@ -28,7 +28,7 @@ module ParentInterface
         model.assign_attributes(update_params)
       end
 
-      if current_step == :confirm_school && !@consent_form.location_confirmed &&
+      if current_step == :confirm_school && !@consent_form.school_confirmed &&
            !Flipper.enabled?(:consent_form_choose_school)
         redirect_to session_parent_interface_consent_form_cannot_consent_school_path(
                       @session,
@@ -73,8 +73,8 @@ module ParentInterface
           date_of_birth(2i)
           date_of_birth(1i)
         ],
-        confirm_school: %i[location_confirmed],
-        school: %i[location_id],
+        confirm_school: %i[school_confirmed],
+        school: %i[school_id],
         parent: %i[
           parent_email
           parent_name

@@ -21,7 +21,11 @@ module ParentInterface
       programme = @session.programmes.first
 
       consent_form =
-        @session.consent_forms.create!(programme:, team: @session.team)
+        @session.consent_forms.create!(
+          programme:,
+          team: @session.team,
+          location: @session.location
+        )
 
       session[:consent_form_id] = consent_form.id
 
@@ -45,9 +49,7 @@ module ParentInterface
     end
 
     def record
-      ActiveRecord::Base.transaction do
-        @consent_form.update!(recorded_at: Time.zone.now)
-      end
+      @consent_form.update!(recorded_at: Time.zone.now)
 
       session.delete(:consent_form_id)
 

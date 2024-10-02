@@ -19,12 +19,12 @@
 <%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <%= f.govuk_radio_buttons_fieldset(:location_confirmed,
+  <%= f.govuk_radio_buttons_fieldset(:school_confirmed,
                                      legend: { size: "s", text: "Is this their school?" }) do %>
-    <%= f.govuk_radio_button :location_confirmed, true,
+    <%= f.govuk_radio_button :school_confirmed, true,
                              link_errors: true,
                              label: { text: "Yes, they go to this school" } %>
-    <%= f.govuk_radio_button :location_confirmed, false,
+    <%= f.govuk_radio_button :school_confirmed, false,
                              label: { text: "No, they go to a different school" } %>
   <% end %>
 

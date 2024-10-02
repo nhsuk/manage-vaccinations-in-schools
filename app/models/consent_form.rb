@@ -17,7 +17,6 @@
 #  gp_response                         :integer
 #  health_answers                      :jsonb            not null
 #  last_name                           :text
-#  location_confirmed                  :boolean
 #  parent_contact_method_other_details :string
 #  parent_contact_method_type          :string
 #  parent_email                        :string
@@ -30,12 +29,14 @@
 #  reason_notes                        :text
 #  recorded_at                         :datetime
 #  response                            :integer
+#  school_confirmed                    :boolean
 #  use_common_name                     :boolean
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
 #  consent_id                          :bigint
-#  location_id                         :bigint
+#  location_id                         :bigint           not null
 #  programme_id                        :bigint           not null
+#  school_id                           :bigint
 #  session_id                          :bigint           not null
 #  team_id                             :bigint           not null
 #
@@ -44,6 +45,7 @@
 #  index_consent_forms_on_consent_id    (consent_id)
 #  index_consent_forms_on_location_id   (location_id)
 #  index_consent_forms_on_programme_id  (programme_id)
+#  index_consent_forms_on_school_id     (school_id)
 #  index_consent_forms_on_session_id    (session_id)
 #  index_consent_forms_on_team_id       (team_id)
 #
@@ -52,6 +54,7 @@
 #  fk_rails_...  (consent_id => consents.id)
 #  fk_rails_...  (location_id => locations.id)
 #  fk_rails_...  (programme_id => programmes.id)
+#  fk_rails_...  (school_id => locations.id)
 #  fk_rails_...  (session_id => sessions.id)
 #  fk_rails_...  (team_id => teams.id)
 #
@@ -71,7 +74,9 @@ class ConsentForm < ApplicationRecord
   audited
 
   belongs_to :consent, optional: true
+  belongs_to :location
   belongs_to :programme
+  belongs_to :school, class_name: "Location", optional: true
   belongs_to :session
   belongs_to :team
 
@@ -178,12 +183,11 @@ class ConsentForm < ApplicationRecord
   end
 
   on_wizard_step :confirm_school do
-    validates :location_confirmed, inclusion: { in: [true, false] }
+    validates :school_confirmed, inclusion: { in: [true, false] }
   end
 
   on_wizard_step :school do
-    validates :location_id,
-              presence: true,
+    validates :school_id,
               inclusion: {
                 in: -> { _1.eligible_schools.pluck(:id) }
               }
@@ -445,6 +449,6 @@ class ConsentForm < ApplicationRecord
   end
 
   def choose_school?
-    !location_confirmed && Flipper.enabled?(:consent_form_choose_school)
+    !school_confirmed && Flipper.enabled?(:consent_form_choose_school)
   end
 end
