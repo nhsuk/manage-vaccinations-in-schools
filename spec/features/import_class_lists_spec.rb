@@ -103,11 +103,11 @@ describe "Import class lists" do
   end
 
   def then_i_should_see_the_children_added_to_the_session
-    expect(page).to have_content("3 children in this session")
+    expect(page).to have_content("4 children in this session")
   end
 
   def then_i_should_see_the_children
-    expect(page).to have_content("3 children")
+    expect(page).to have_content("4 children")
     expect(page).to have_content("Full nameNHS numberDate of birthPostcode")
     expect(page).to have_content("Full name Jimmy Smith")
     expect(page).to have_content(/NHS number.*123.*456.*7890/)
