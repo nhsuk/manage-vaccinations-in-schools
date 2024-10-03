@@ -15,11 +15,12 @@ describe AppImportTablesComponent do
           :cohort_import,
           :recorded,
           team:,
+          programme:,
           created_at: Date.new(2020, 1, 1),
           uploaded_by:
             create(:user, given_name: "Jennifer", family_name: "Smith")
         )
-      ] + create_list(:cohort_import, 4, :recorded, team:)
+      ] + create_list(:cohort_import, 4, :recorded, team:, programme:)
 
     cohort_imports.each do |cohort_import|
       create(:patient, cohort_imports: [cohort_import])

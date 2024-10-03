@@ -17,23 +17,26 @@
 #  status                       :integer          default("pending_import"), not null
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
+#  programme_id                 :bigint           not null
 #  team_id                      :bigint           not null
 #  uploaded_by_user_id          :bigint           not null
 #
 # Indexes
 #
+#  index_cohort_imports_on_programme_id         (programme_id)
 #  index_cohort_imports_on_team_id              (team_id)
 #  index_cohort_imports_on_uploaded_by_user_id  (uploaded_by_user_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (team_id => teams.id)
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 class CohortImport < PatientImport
   include CSVImportable
 
-  attr_accessor :programme
+  belongs_to :programme
 
   has_and_belongs_to_many :parent_relationships
   has_and_belongs_to_many :parents
@@ -59,9 +62,13 @@ class CohortImport < PatientImport
     super
 
     sessions =
-      team.sessions.scheduled.or(
-        Session.unscheduled.where(academic_year: Date.current.academic_year)
-      )
+      team
+        .sessions
+        .has_programme(programme)
+        .scheduled
+        .or(
+          Session.unscheduled.where(academic_year: Date.current.academic_year)
+        )
 
     sessions.each(&:create_patient_sessions!)
   end
