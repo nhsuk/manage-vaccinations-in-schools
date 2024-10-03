@@ -14,8 +14,8 @@ describe "Dev endpoint to reset a team" do
   end
 
   def given_an_example_programme_exists
-    programme = create(:programme, :hpv_all_vaccines, batch_count: 4)
-    @team = create(:team, :with_one_nurse, programmes: [programme])
+    @programme = create(:programme, :hpv_all_vaccines, batch_count: 4)
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
     @team.update!(ods_code: "R1L") # to match valid_hpv.csv
     @team.schools << create(:location, :school, urn: "123456") # to match valid_cohort.csv
     @team.schools << create(:location, :school, urn: "110158") # to match valid_hpv.csv
@@ -36,7 +36,7 @@ describe "Dev endpoint to reset a team" do
     click_on "Continue"
 
     perform_enqueued_jobs
-    visit current_path
+    visit edit_programme_cohort_import_path(@programme, CohortImport.last)
 
     expect(page).to have_content("Full nameNHS numberDate of birthPostcode")
 
@@ -59,7 +59,10 @@ describe "Dev endpoint to reset a team" do
     click_on "Continue"
 
     perform_enqueued_jobs
-    visit current_path
+    visit edit_programme_immunisation_import_path(
+            @programme,
+            ImmunisationImport.last
+          )
 
     click_on "Upload records"
     expect(VaccinationRecord.count).to eq(7)

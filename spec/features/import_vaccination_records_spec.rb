@@ -18,18 +18,18 @@ describe "Immunisation imports" do
     then_i_should_see_an_error
 
     when_i_upload_an_invalid_file
-    then_i_should_see_the_holding_page
+    then_i_should_see_the_imports_page
 
     when_i_wait_for_the_import_to_process
-    and_i_refresh
+    and_i_go_to_the_import_edit_page
     then_i_should_see_the_errors_page
     and_i_go_back_to_the_upload_page
 
     when_i_upload_a_valid_file
-    then_i_should_see_the_holding_page
+    then_i_should_see_the_imports_page
 
     when_i_wait_for_the_import_to_process
-    and_i_refresh
+    and_i_go_to_the_import_edit_page
     then_i_should_see_the_success_heading
     and_i_should_see_the_vaccination_records
 
@@ -125,6 +125,9 @@ describe "Immunisation imports" do
 
   def and_i_go_back_to_the_upload_page
     click_on "Back"
+    click_on "Import records"
+    choose "Vaccination records"
+    click_on "Continue"
   end
 
   def when_i_upload_a_valid_file
@@ -213,15 +216,15 @@ describe "Immunisation imports" do
 
   alias_method :and_i_click_on_the_upload_link, :when_i_click_on_the_upload_link
 
-  def then_i_should_see_the_holding_page
-    expect(page).to have_content("This import is still processing")
+  def then_i_should_see_the_imports_page
+    expect(page).to have_content("Import processing started")
   end
 
   def when_i_wait_for_the_import_to_process
     perform_enqueued_jobs
   end
 
-  def and_i_refresh
-    visit current_path
+  def and_i_go_to_the_import_edit_page
+    click_link ImmunisationImport.last.created_at.to_fs(:long), match: :first
   end
 end

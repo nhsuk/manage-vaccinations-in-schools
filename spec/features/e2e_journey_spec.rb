@@ -87,7 +87,7 @@ describe "End-to-end journey" do
     attach_file "cohort_import[csv]", csv_file.path
     click_on "Continue"
     perform_enqueued_jobs
-    visit current_path
+    visit edit_programme_cohort_import_path(@programme, CohortImport.last)
     click_on "Upload records"
   end
 
