@@ -87,10 +87,7 @@ describe "Import child records" do
   end
 
   def when_i_upload_a_valid_file
-    attach_file(
-      "cohort_import[csv]",
-      "spec/fixtures/cohort_import/valid_cohort.csv"
-    )
+    attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/valid.csv")
     click_on "Continue"
   end
 

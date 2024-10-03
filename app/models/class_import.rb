@@ -33,7 +33,7 @@
 #  fk_rails_...  (team_id => teams.id)
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
-class ClassImport < ApplicationRecord
+class ClassImport < PatientImport
   include CSVImportable
 
   belongs_to :session
@@ -41,4 +41,22 @@ class ClassImport < ApplicationRecord
   has_and_belongs_to_many :parent_relationships
   has_and_belongs_to_many :parents
   has_and_belongs_to_many :patients
+
+  private
+
+  def parse_row(data)
+    ClassImportRow.new(data:, session:)
+  end
+
+  def link_records(*records)
+    records.each do |record|
+      record.class_imports << self unless record.class_imports.exists?(id)
+    end
+  end
+
+  def record_rows
+    super
+
+    session.create_patient_sessions! unless session.completed?
+  end
 end

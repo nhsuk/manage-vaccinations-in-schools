@@ -36,7 +36,7 @@ describe CohortImport do
   let(:programme) { create(:programme) }
   let(:team) { create(:team, programmes: [programme]) }
 
-  let(:file) { "valid_cohort.csv" }
+  let(:file) { "valid.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_import/#{file}") }
 
   # Ensure location URN matches the URN in our fixture files
@@ -85,7 +85,7 @@ describe CohortImport do
     end
 
     describe "with unrecognised fields" do
-      let(:file) { "valid_cohort_extra_fields.csv" }
+      let(:file) { "valid_extra_fields.csv" }
 
       it "populates rows" do
         expect(cohort_import).to be_valid
@@ -93,7 +93,7 @@ describe CohortImport do
     end
 
     describe "with valid fields" do
-      let(:file) { "valid_cohort.csv" }
+      let(:file) { "valid.csv" }
 
       it "is valid" do
         expect(cohort_import).to be_valid
@@ -125,7 +125,7 @@ describe CohortImport do
   describe "#process!" do
     subject(:process!) { cohort_import.process! }
 
-    let(:file) { "valid_cohort.csv" }
+    let(:file) { "valid.csv" }
 
     it "creates patients and parents" do
       # stree-ignore
@@ -251,7 +251,7 @@ describe CohortImport do
   describe "#record!" do
     subject(:record!) { cohort_import.record! }
 
-    let(:file) { "valid_cohort.csv" }
+    let(:file) { "valid.csv" }
 
     it "records the patients" do
       expect { record! }.to change(Patient.recorded, :count).from(0).to(3)

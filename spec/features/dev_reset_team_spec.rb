@@ -17,7 +17,7 @@ describe "Dev endpoint to reset a team" do
     @programme = create(:programme, :hpv_all_vaccines, batch_count: 4)
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     @team.update!(ods_code: "R1L") # to match valid_hpv.csv
-    @team.schools << create(:location, :school, urn: "123456") # to match valid_cohort.csv
+    @team.schools << create(:location, :school, urn: "123456") # to match cohort_import/valid.csv
     @team.schools << create(:location, :school, urn: "110158") # to match valid_hpv.csv
     @user = @team.users.first
   end
@@ -29,10 +29,7 @@ describe "Dev endpoint to reset a team" do
     click_on "HPV"
     click_on "Cohort"
     click_on "Import child records"
-    attach_file(
-      "cohort_import[csv]",
-      "spec/fixtures/cohort_import/valid_cohort.csv"
-    )
+    attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/valid.csv")
     click_on "Continue"
 
     perform_enqueued_jobs
