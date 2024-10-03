@@ -131,7 +131,7 @@ describe ClassImport do
       # stree-ignore
       expect { process! }
         .to change(class_import, :processed_at).from(nil)
-        .and change(class_import.patients, :count).by(3)
+        .and change(class_import.patients, :count).by(4)
         .and change(class_import.parents, :count).by(3)
         .and change(team.cohorts, :count).by(1)
 
@@ -205,6 +205,19 @@ describe ClassImport do
       expect(Patient.third.parent_relationships.first).to be_mother
       expect(Patient.third.parent_relationships.second).to be_father
 
+      expect(Patient.fourth).to have_attributes(
+        nhs_number: nil,
+        date_of_birth: Date.new(2010, 1, 4),
+        full_name: "Amy Nichols",
+        school: location,
+        address_line_1: nil,
+        address_town: nil,
+        address_postcode: "SW1A 1AB",
+        recorded_at: nil
+      )
+
+      expect(Patient.fourth.parents).to be_empty
+
       # Second import should not duplicate the patients if they're identical.
 
       # stree-ignore
@@ -219,7 +232,7 @@ describe ClassImport do
       # stree-ignore
       expect { process! }
         .to change(class_import, :exact_duplicate_record_count).to(0)
-        .and change(class_import, :new_record_count).to(3)
+        .and change(class_import, :new_record_count).to(4)
         .and change(class_import, :changed_record_count).to(0)
     end
 
@@ -228,7 +241,7 @@ describe ClassImport do
       csv.rewind
 
       process!
-      expect(class_import.exact_duplicate_record_count).to eq(3)
+      expect(class_import.exact_duplicate_record_count).to eq(4)
     end
 
     context "with an existing patient matching the name" do
@@ -243,7 +256,7 @@ describe ClassImport do
       end
 
       it "doesn't create an additional patient" do
-        expect { process! }.to change(Patient, :count).by(2)
+        expect { process! }.to change(Patient, :count).by(3)
       end
     end
   end
@@ -254,7 +267,7 @@ describe ClassImport do
     let(:file) { "valid.csv" }
 
     it "records the patients" do
-      expect { record! }.to change(Patient.recorded, :count).from(0).to(3)
+      expect { record! }.to change(Patient.recorded, :count).from(0).to(4)
     end
 
     it "records the parents" do
@@ -267,7 +280,7 @@ describe ClassImport do
       end
 
       it "adds the patients to the session" do
-        expect { record! }.to change(session.patients, :count).from(0).to(3)
+        expect { record! }.to change(session.patients, :count).from(0).to(4)
       end
     end
 
@@ -277,7 +290,7 @@ describe ClassImport do
       end
 
       it "adds the patients to the session" do
-        expect { record! }.to change(session.patients, :count).from(0).to(3)
+        expect { record! }.to change(session.patients, :count).from(0).to(4)
       end
     end
 
