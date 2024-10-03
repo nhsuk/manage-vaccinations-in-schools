@@ -4,7 +4,7 @@ describe RemoveImportCSVJob, type: :job do
   describe "#perform" do
     subject(:perform) { described_class.new.perform }
 
-    %w[cohort_import immunisation_import].each do |factory_name|
+    %w[class_import cohort_import immunisation_import].each do |factory_name|
       context "for #{factory_name.camelize}" do
         let(:to_remove) do
           create(factory_name, created_at: Time.zone.now - 90.days)
