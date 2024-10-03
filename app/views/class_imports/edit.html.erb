@@ -1,0 +1,44 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: new_session_class_import_path(@session),
+        name: session_location(@session),
+      ) %>
+<% end %>
+
+<% title = "Check and confirm" %>
+
+<span class="nhsuk-caption-l"><%= session_location(@session) %></span>
+<%= h1 title, page_title: "#{session_location(@session)} – #{title}" %>
+
+<% unless @class_import.processed? %>
+  <p>
+    This import is still processing. Please check back later.
+  </p>
+<% else %>
+  <% if @class_import.exact_duplicate_record_count > 1 ||
+        @class_import.changed_record_count > 1 %>
+    <%= render AppWarningCalloutComponent.new(heading: "Uploaded records will differ from file") do %>
+      <ul class="nhsuk-list nhsuk-list--bullet">
+        <% if @class_import.exact_duplicate_record_count > 1 %>
+          <li>
+            <%= @class_import.exact_duplicate_record_count %> previously
+            uploaded records were omitted
+          </li>
+        <% end %>
+
+        <% if @class_import.changed_record_count > 1 %>
+          <li>
+            <%= @class_import.changed_record_count %> previously uploaded records were updated
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  <% end %>
+
+  <%= govuk_button_to "Upload records", session_class_import_path(
+        @session,
+        @class_import
+      ), method: :put %>
+
+  <%= render AppPatientTableComponent.new(@patients) %>
+<% end %>

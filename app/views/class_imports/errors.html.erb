@@ -1,0 +1,17 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: new_session_class_import_path(@session),
+        name: session_location(@session),
+      ) %>
+<% end %>
+
+<% title = "Class list cannot be uploaded" %>
+
+<%= h1 title, page_title: "#{session_location(@session)} – #{title}" %>
+
+<p class="nhsuk-body">
+  The records cannot be uploaded due to errors in the CSV file.
+  When fixing these errors, note that the header does not count as a row.
+</p>
+
+<%= render AppImportErrorsComponent.new(@class_import.errors) %>
