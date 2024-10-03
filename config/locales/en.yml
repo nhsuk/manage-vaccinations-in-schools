@@ -22,6 +22,44 @@ en:
         school_urn: <code>CHILD_SCHOOL_URN</code>
     errors:
       models:
+        class_import_row:
+          attributes:
+            address_postcode:
+              blank: is required but missing
+              invalid_postcode: ‘%{value}’ should be a postcode, like SW1A 1AA
+            date_of_birth:
+              blank: is required but missing
+            existing_patients:
+              too_long: Two or more possible patients match the patient first name, last name, date of birth or postcode.
+            first_name:
+              blank: is required but missing
+            last_name:
+              blank: is required but missing
+            nhs_number:
+              blank: is required but missing
+              invalid: ‘%{value}’ should be a valid NHS number, like 999 888 7777
+            parent_1_name:
+              blank: is required but missing
+            parent_1_relationship:
+              blank: is required but missing
+            parent_1_email:
+              blank: is required but missing
+              invalid: ‘%{value}’ should be a valid email address, like j.doe@example.com
+            parent_1_phone:
+              blank: is required but missing
+              invalid: ‘%{value}’ should be a valid phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192
+            parent_2_name:
+              blank: is required but missing
+            parent_2_relationship:
+              blank: is required but missing
+            parent_2_email:
+              blank: is required but missing
+              invalid: ‘%{value}’ should be a valid email address, like j.doe@example.com
+            parent_2_phone:
+              blank: is required but missing
+              invalid: ‘%{value}’ should be a valid phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192
+            year_group:
+              inclusion: is not part of this programme
         cohort_import_row:
           attributes:
             address_postcode:
