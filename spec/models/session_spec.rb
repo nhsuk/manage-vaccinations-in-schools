@@ -274,6 +274,10 @@ describe Session do
           hpv_vaccinated_teen
         )
       end
+
+      it "is idempotent" do
+        expect { 2.times { create_patient_sessions! } }.not_to raise_error
+      end
     end
 
     context "with an HPV session" do
@@ -289,6 +293,10 @@ describe Session do
           unvaccinated_teen,
           flu_vaccinated_teen
         )
+      end
+
+      it "is idempotent" do
+        expect { 2.times { create_patient_sessions! } }.not_to raise_error
       end
     end
 
@@ -313,6 +321,10 @@ describe Session do
           hpv_vaccinated_teen,
           flu_vaccinated_teen
         )
+      end
+
+      it "is idempotent" do
+        expect { 2.times { create_patient_sessions! } }.not_to raise_error
       end
     end
   end
