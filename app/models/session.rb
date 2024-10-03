@@ -139,7 +139,13 @@ class Session < ApplicationRecord
         PatientSession.new(patient: _1, session: self, active: true)
       end
 
-    PatientSession.import!(patient_sessions, on_duplicate_key_update: [:active])
+    PatientSession.import!(
+      patient_sessions,
+      on_duplicate_key_update: {
+        conflict_target: %i[patient_id session_id],
+        columns: [:active]
+      }
+    )
   end
 
   def set_consent_dates
