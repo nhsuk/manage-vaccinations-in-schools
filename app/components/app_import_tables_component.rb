@@ -18,9 +18,10 @@ class AppImportTablesComponent < ViewComponent::Base
 
   def imports
     @imports ||=
-      (cohort_import_records + immunisation_import_records).sort_by(
-        &:created_at
-      ).reverse
+      (
+        class_import_records + cohort_import_records +
+          immunisation_import_records
+      ).sort_by(&:created_at).reverse
   end
 
   def completed_imports
@@ -29,6 +30,16 @@ class AppImportTablesComponent < ViewComponent::Base
 
   def incomplete_imports
     @incomplete_imports ||= imports.reject(&:recorded?)
+  end
+
+  def class_import_records
+    ClassImport
+      .select("class_imports.*", "COUNT(patients.id) AS record_count")
+      .where(team:, session: programme.sessions)
+      .left_outer_joins(:patients)
+      .includes(:uploaded_by)
+      .group("class_imports.id")
+      .strict_loading
   end
 
   def cohort_import_records
@@ -56,11 +67,15 @@ class AppImportTablesComponent < ViewComponent::Base
 
   def path(programme, import)
     if import.recorded?
-      if import.is_a?(CohortImport)
+      if import.is_a?(ClassImport)
+        nil
+      elsif import.is_a?(CohortImport)
         programme_cohort_import_path(programme, import)
       else
         programme_immunisation_import_path(programme, import)
       end
+    elsif import.is_a?(ClassImport)
+      nil
     elsif import.is_a?(CohortImport)
       edit_programme_cohort_import_path(programme, import)
     else
@@ -69,7 +84,13 @@ class AppImportTablesComponent < ViewComponent::Base
   end
 
   def record_type(import)
-    import.is_a?(CohortImport) ? "Child records" : "Vaccination records"
+    if import.is_a?(ClassImport)
+      "Class records"
+    elsif import.is_a?(CohortImport)
+      "Child records"
+    else
+      "Vaccination records"
+    end
   end
 
   def status_text(import)
