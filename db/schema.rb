@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_02_135243) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_03_091411) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -49,6 +49,45 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_02_135243) do
     t.bigint "immunisation_import_id", null: false
     t.bigint "batch_id", null: false
     t.index ["immunisation_import_id", "batch_id"], name: "idx_on_immunisation_import_id_batch_id_d039b76103", unique: true
+  end
+
+  create_table "class_imports", force: :cascade do |t|
+    t.integer "changed_record_count"
+    t.text "csv_data"
+    t.text "csv_filename"
+    t.datetime "csv_removed_at"
+    t.integer "exact_duplicate_record_count"
+    t.integer "new_record_count"
+    t.datetime "processed_at"
+    t.datetime "recorded_at"
+    t.json "serialized_errors"
+    t.integer "status", default: 0, null: false
+    t.bigint "team_id", null: false
+    t.bigint "session_id", null: false
+    t.bigint "uploaded_by_user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["session_id"], name: "index_class_imports_on_session_id"
+    t.index ["team_id"], name: "index_class_imports_on_team_id"
+    t.index ["uploaded_by_user_id"], name: "index_class_imports_on_uploaded_by_user_id"
+  end
+
+  create_table "class_imports_parent_relationships", id: false, force: :cascade do |t|
+    t.bigint "class_import_id", null: false
+    t.bigint "parent_relationship_id", null: false
+    t.index ["class_import_id", "parent_relationship_id"], name: "idx_on_class_import_id_parent_relationship_id_8225058195", unique: true
+  end
+
+  create_table "class_imports_parents", id: false, force: :cascade do |t|
+    t.bigint "class_import_id", null: false
+    t.bigint "parent_id", null: false
+    t.index ["class_import_id", "parent_id"], name: "index_class_imports_parents_on_class_import_id_and_parent_id", unique: true
+  end
+
+  create_table "class_imports_patients", id: false, force: :cascade do |t|
+    t.bigint "class_import_id", null: false
+    t.bigint "patient_id", null: false
+    t.index ["class_import_id", "patient_id"], name: "index_class_imports_patients_on_class_import_id_and_patient_id", unique: true
   end
 
   create_table "cohort_imports", force: :cascade do |t|
@@ -621,6 +660,15 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_02_135243) do
   add_foreign_key "batches", "vaccines"
   add_foreign_key "batches_immunisation_imports", "batches"
   add_foreign_key "batches_immunisation_imports", "immunisation_imports"
+  add_foreign_key "class_imports", "sessions"
+  add_foreign_key "class_imports", "teams"
+  add_foreign_key "class_imports", "users", column: "uploaded_by_user_id"
+  add_foreign_key "class_imports_parent_relationships", "class_imports"
+  add_foreign_key "class_imports_parent_relationships", "parent_relationships"
+  add_foreign_key "class_imports_parents", "class_imports"
+  add_foreign_key "class_imports_parents", "parents"
+  add_foreign_key "class_imports_patients", "class_imports"
+  add_foreign_key "class_imports_patients", "patients"
   add_foreign_key "cohort_imports", "teams"
   add_foreign_key "cohort_imports", "users", column: "uploaded_by_user_id"
   add_foreign_key "cohort_imports_parent_relationships", "cohort_imports"

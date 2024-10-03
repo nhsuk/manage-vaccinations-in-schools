@@ -38,9 +38,9 @@ class Location < ApplicationRecord
 
   belongs_to :team, optional: true
 
-  has_many :sessions
+  has_many :consent_forms
   has_many :patients, foreign_key: :school_id
-  has_many :consent_forms, through: :sessions
+  has_many :sessions
 
   has_and_belongs_to_many :immunisation_imports
 
