@@ -53,7 +53,7 @@ describe CohortImportRow do
 
       it "is invalid" do
         expect(cohort_import_row).to be_invalid
-        expect(cohort_import_row.errors[:date_of_birth]).to contain_exactly(
+        expect(cohort_import_row.errors[:year_group]).to contain_exactly(
           "is not part of this programme"
         )
       end

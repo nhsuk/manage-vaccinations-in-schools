@@ -24,17 +24,14 @@ en:
       models:
         cohort_import_row:
           attributes:
-            address_line_1:
-              blank: is required but missing
             address_postcode:
               blank: is required but missing
               invalid_postcode: ‘%{value}’ should be a postcode, like SW1A 1AA
-            address_town:
-              blank: is required but missing
             date_of_birth:
               blank: is required but missing
               invalid: ‘%{value}’ should be formatted as YYYY-MM-DD
-              inclusion: is not part of this programme
+            existing_patients:
+              too_long: Two or more possible patients match the patient first name, last name, date of birth or postcode.
             first_name:
               blank: is required but missing
             last_name:
@@ -42,25 +39,31 @@ en:
             nhs_number:
               blank: is required but missing
               invalid: ‘%{value}’ should be a valid NHS number, like 999 888 7777
-            parent_email:
+            parent_1_email:
               blank: is required but missing
-              invalid: >-
-                ‘%{value}’ should be a valid email address, like
-                j.doe@example.com
-            parent_name:
+              invalid: ‘%{value}’ should be a valid email address, like j.doe@example.com
+            parent_1_name:
               blank: is required but missing
-            parent_phone:
+            parent_1_phone:
               blank: is required but missing
-              invalid: >-
-                ‘%{value}’ should be a valid phone number, like 01632 960 001,
-                07700 900 982 or +44 808 157 0192
-            parent_relationship:
+              invalid: ‘%{value}’ should be a valid phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192
+            parent_1_relationship:
               blank: is required but missing
-            patient:
-              multiple_duplicate_match: Two or more possible patients match the patient first name, last name, date of birth or postcode.
+            parent_2_email:
+              blank: is required but missing
+              invalid: ‘%{value}’ should be a valid email address, like j.doe@example.com
+            parent_2_name:
+              blank: is required but missing
+            parent_2_phone:
+              blank: is required but missing
+              invalid: ‘%{value}’ should be a valid phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192
+            parent_2_relationship:
+              blank: is required but missing
             school_urn:
               blank: is required but missing
               invalid: ‘%{value}’ is not a known school URN
+            year_group:
+              inclusion: is not part of this programme
         health_answer:
           attributes:
             notes:
