@@ -19,7 +19,7 @@ module CSVImportable
     scope :csv_not_removed, -> { where(csv_removed_at: nil) }
 
     enum :status,
-         %i[pending_import rows_are_invalid processed],
+         %i[pending_import rows_are_invalid processed recorded],
          default: :pending_import,
          validate: true
 
@@ -103,7 +103,7 @@ module CSVImportable
 
     ActiveRecord::Base.transaction do
       record_rows
-      update!(recorded_at: Time.zone.now)
+      update!(recorded_at: Time.zone.now, status: :recorded)
     end
   end
 
@@ -150,6 +150,8 @@ module CSVImportable
   end
 
   def ensure_processed_with_count_statistics
+    return if recorded?
+
     if processed? && count_columns.any? { |column| send(column).nil? }
       raise "Count statistics must be set for a processed import."
     elsif !processed? && count_columns.any? { |column| !send(column).nil? }
