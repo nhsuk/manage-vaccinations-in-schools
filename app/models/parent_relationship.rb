@@ -31,6 +31,7 @@ class ParentRelationship < ApplicationRecord
   belongs_to :parent
   belongs_to :patient
 
+  has_and_belongs_to_many :class_imports
   has_and_belongs_to_many :cohort_imports
 
   enum :type,

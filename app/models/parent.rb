@@ -25,6 +25,7 @@ class Parent < ApplicationRecord
   has_many :parent_relationships
   has_many :patients, through: :parent_relationships
 
+  has_and_belongs_to_many :class_imports
   has_and_belongs_to_many :cohort_imports
 
   enum :contact_method_type,
