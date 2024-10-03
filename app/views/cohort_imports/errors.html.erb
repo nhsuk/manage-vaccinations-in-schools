@@ -1,6 +1,6 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: new_programme_cohort_import_path(@programme),
+        href: programme_imports_path(@programme),
         name: @programme.name,
       ) %>
 <% end %>
