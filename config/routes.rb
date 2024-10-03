@@ -120,6 +120,8 @@ Rails.application.routes.draw do
       get "unscheduled"
     end
 
+    resources :class_imports, path: "class-imports", except: %i[index destroy]
+
     resource :dates, controller: "session_dates", only: %i[show update]
 
     constraints -> { Flipper.enabled?(:dev_tools) } do
