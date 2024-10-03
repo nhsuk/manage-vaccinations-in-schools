@@ -25,7 +25,7 @@ class CohortImportsController < ApplicationController
 
     @cohort_import.save!
 
-    ProcessImportJob.perform_later(@programme, @cohort_import)
+    ProcessImportJob.perform_later(@cohort_import)
 
     redirect_to programme_imports_path(@programme),
                 flash: {

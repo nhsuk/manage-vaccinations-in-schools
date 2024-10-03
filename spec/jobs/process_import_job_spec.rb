@@ -1,31 +1,36 @@
 # frozen_string_literal: true
 
 describe ProcessImportJob do
-  let(:programme) { create(:programme) }
-  let(:cohort_import) { create(:cohort_import, programme:) }
-  let(:immunisation_import) { create(:immunisation_import, programme:) }
-
   describe "#perform" do
-    it "assigns the programme to the cohort import and processes it" do
-      allow(cohort_import).to receive(:parse_rows!)
-      allow(cohort_import).to receive(:process!)
+    subject(:perform) { described_class.new.perform(import) }
 
-      expect(cohort_import).to receive(:programme=).with(programme)
-      expect(cohort_import).to receive(:parse_rows!)
-      expect(cohort_import).to receive(:process!)
+    after { perform }
 
-      described_class.new.perform(programme, cohort_import)
+    context "with a class import" do
+      let(:import) { create(:class_import) }
+
+      it "parses and processes the rows" do
+        expect(import).to receive(:parse_rows!)
+        expect(import).to receive(:process!)
+      end
     end
 
-    it "assigns the programme to the immunisation import and processes it" do
-      allow(immunisation_import).to receive(:parse_rows!)
-      allow(immunisation_import).to receive(:process!)
+    context "with a cohort import" do
+      let(:import) { create(:cohort_import) }
 
-      expect(immunisation_import).to receive(:programme=).with(programme)
-      expect(immunisation_import).to receive(:parse_rows!)
-      expect(immunisation_import).to receive(:process!)
+      it "parses and processes the rows" do
+        expect(import).to receive(:parse_rows!)
+        expect(import).to receive(:process!)
+      end
+    end
 
-      described_class.new.perform(programme, immunisation_import)
+    context "with an immunisation import" do
+      let(:import) { create(:immunisation_import) }
+
+      it "parses and processes the rows" do
+        expect(import).to receive(:parse_rows!)
+        expect(import).to receive(:process!)
+      end
     end
   end
 end

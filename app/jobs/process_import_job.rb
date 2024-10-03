@@ -3,10 +3,9 @@
 class ProcessImportJob < ApplicationJob
   queue_as :default
 
-  def perform(programme, import)
-    import.programme = programme
-
+  def perform(import)
     import.parse_rows!
+
     return if import.rows_are_invalid?
 
     import.process!
