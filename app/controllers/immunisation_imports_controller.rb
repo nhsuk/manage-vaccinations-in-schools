@@ -28,10 +28,10 @@ class ImmunisationImportsController < ApplicationController
 
     ProcessImportJob.perform_later(@programme, @immunisation_import)
 
-    redirect_to edit_programme_immunisation_import_path(
-                  @programme,
-                  @immunisation_import
-                )
+    redirect_to programme_imports_path(@programme),
+                flash: {
+                  success: "Import processing started"
+                }
   end
 
   def show
