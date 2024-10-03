@@ -26,7 +26,7 @@ class ImmunisationImportsController < ApplicationController
 
     @immunisation_import.save!
 
-    ProcessImportJob.perform_later(@programme, @immunisation_import)
+    ProcessImportJob.perform_later(@immunisation_import)
 
     redirect_to programme_imports_path(@programme),
                 flash: {
