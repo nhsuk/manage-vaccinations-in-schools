@@ -61,15 +61,11 @@ class CohortImport < PatientImport
   def record_rows
     super
 
-    sessions =
-      team
-        .sessions
-        .has_programme(programme)
-        .scheduled
-        .or(
-          Session.unscheduled.where(academic_year: Date.current.academic_year)
-        )
-
-    sessions.each(&:create_patient_sessions!)
+    team
+      .sessions
+      .has_programme(programme)
+      .scheduled
+      .or(Session.unscheduled)
+      .find_each(&:create_patient_sessions!)
   end
 end
