@@ -27,7 +27,10 @@ class CohortImportsController < ApplicationController
 
     ProcessImportJob.perform_later(@programme, @cohort_import)
 
-    redirect_to edit_programme_cohort_import_path(@programme, @cohort_import)
+    redirect_to programme_imports_path(@programme),
+                flash: {
+                  success: "Import processing started"
+                }
   end
 
   def show
