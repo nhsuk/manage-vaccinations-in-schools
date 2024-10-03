@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 describe ClassImportRow do
-  subject(:class_import_row) do
-    described_class.new(data:, session:)
-  end
+  subject(:class_import_row) { described_class.new(data:, session:) }
 
   let(:programme) { create(:programme) }
   let(:team) { create(:team, programmes: [programme]) }
