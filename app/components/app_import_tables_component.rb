@@ -18,9 +18,17 @@ class AppImportTablesComponent < ViewComponent::Base
 
   def imports
     @imports ||=
-      (cohort_import_records + immunisation_import_records).sort_by do
-        _1[:created_at]
-      end
+      (cohort_import_records + immunisation_import_records).sort_by(
+        &:created_at
+      ).reverse
+  end
+
+  def completed_imports
+    @completed_imports ||= imports.select(&:recorded?)
+  end
+
+  def incomplete_imports
+    @incomplete_imports ||= imports.reject(&:recorded?)
   end
 
   def cohort_import_records
@@ -29,18 +37,8 @@ class AppImportTablesComponent < ViewComponent::Base
       .where(team:)
       .left_outer_joins(:patients)
       .includes(:uploaded_by)
-      .merge(Patient.recorded)
       .group("cohort_imports.id")
       .strict_loading
-      .map do
-        {
-          created_at: _1.created_at,
-          path: programme_cohort_import_path(@programme, _1),
-          record_count: _1.record_count,
-          record_type: "Child records",
-          uploaded_by: _1.uploaded_by
-        }
-      end
   end
 
   def immunisation_import_records
@@ -52,17 +50,45 @@ class AppImportTablesComponent < ViewComponent::Base
       .where(team:, programme:)
       .left_outer_joins(:vaccination_records)
       .includes(:uploaded_by)
-      .merge(VaccinationRecord.recorded)
       .group("immunisation_imports.id")
       .strict_loading
-      .map do
-        {
-          created_at: _1.created_at,
-          path: programme_immunisation_import_path(@programme, _1),
-          record_count: _1.record_count,
-          record_type: "Vaccination records",
-          uploaded_by: _1.uploaded_by
-        }
+  end
+
+  def path(programme, import)
+    if import.recorded?
+      if import.is_a?(CohortImport)
+        programme_cohort_import_path(programme, import)
+      else
+        programme_immunisation_import_path(programme, import)
       end
+    elsif import.is_a?(CohortImport)
+      edit_programme_cohort_import_path(programme, import)
+    else
+      edit_programme_immunisation_import_path(programme, import)
+    end
+  end
+
+  def record_type(import)
+    import.is_a?(CohortImport) ? "Child records" : "Vaccination records"
+  end
+
+  def status_text(import)
+    {
+      "pending_import" => "Processing",
+      "processed" => "Ready",
+      "rows_are_invalid" => "Failed"
+    }[
+      import.status
+    ]
+  end
+
+  def status_color(import)
+    {
+      "pending_import" => "grey",
+      "processed" => "green",
+      "rows_are_invalid" => "red"
+    }[
+      import.status
+    ]
   end
 end

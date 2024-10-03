@@ -149,7 +149,7 @@ describe "Immunisation imports duplicates" do
     )
     click_on "Continue"
     perform_enqueued_jobs
-    visit current_path
+    click_link ImmunisationImport.last.created_at.to_fs(:long), match: :first
   end
 
   def then_i_should_see_the_edit_page_with_duplicate_records
