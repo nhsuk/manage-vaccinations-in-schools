@@ -195,10 +195,10 @@ describe ClassImport do
         recorded_at: nil
       )
 
-      expect(Patient.third.parents.first).to have_attributes(
-        name: "Jane Doe",
-        phone: "07412345679",
-        email: "jane@example.com",
+      expect(Patient.third.parents.second).to have_attributes(
+        name: "Richard Doe",
+        phone: nil,
+        email: "richard@example.com",
         recorded_at: nil
       )
 
