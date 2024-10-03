@@ -11,12 +11,13 @@
   <li class="app-action-list__item">
     <%= session_status_tag(@session) %>
   </li>
+  <li class="app-action-list__item">
+    <%= govuk_link_to "Import class list", new_session_class_import_path(@session) %>
+  </li>
 </ul>
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-two-thirds">
-    <%= govuk_button_link_to "Import class list", new_session_class_import_path(@session), class: "app-button--secondary" %>
-
     <ul class="nhsuk-grid-row nhsuk-card-group">
       <% if @session.unscheduled? %>
         <li class="nhsuk-grid-column-full nhsuk-card-group__item">
