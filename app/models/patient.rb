@@ -172,9 +172,7 @@ class Patient < ApplicationRecord
         .where(location: new_school, team: existing_session.team)
         .has_programme(programme)
         .scheduled
-        .or(
-          Session.unscheduled.where(academic_year: Date.current.academic_year)
-        )
+        .or(Session.unscheduled)
         .first
 
     new_session&.patient_sessions&.create!(patient: self)

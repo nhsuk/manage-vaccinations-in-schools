@@ -30,10 +30,10 @@ describe Session do
   describe "scopes" do
     let(:programme) { create(:programme) }
 
-    let!(:today_session) { create(:session, :today, programme:) }
-    let!(:unscheduled_session) { create(:session, :unscheduled, programme:) }
-    let!(:completed_session) { create(:session, :completed, programme:) }
-    let!(:scheduled_session) { create(:session, :scheduled, programme:) }
+    let(:today_session) { create(:session, :today, programme:) }
+    let(:unscheduled_session) { create(:session, :unscheduled, programme:) }
+    let(:completed_session) { create(:session, :completed, programme:) }
+    let(:scheduled_session) { create(:session, :scheduled, programme:) }
 
     describe "#today" do
       subject(:scope) { described_class.today }
@@ -45,6 +45,14 @@ describe Session do
       subject(:scope) { described_class.unscheduled }
 
       it { should contain_exactly(unscheduled_session) }
+
+      context "for a different academic year" do
+        let(:unscheduled_session) do
+          create(:session, :unscheduled, programme:, academic_year: 2023)
+        end
+
+        it { should_not include(unscheduled_session) }
+      end
     end
 
     describe "#scheduled" do
@@ -57,6 +65,14 @@ describe Session do
       subject(:scope) { described_class.completed }
 
       it { should contain_exactly(completed_session) }
+
+      context "for a different academic year" do
+        let(:completed_session) do
+          create(:session, :completed, programme:, date: Date.new(2023, 9, 1))
+        end
+
+        it { should_not include(completed_session) }
+      end
     end
   end
 

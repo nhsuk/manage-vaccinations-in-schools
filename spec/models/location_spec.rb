@@ -45,9 +45,7 @@ describe Location do
     end
 
     describe "#has_no_session" do
-      subject(:scope) { described_class.has_no_session(academic_year) }
-
-      let(:academic_year) { 2024 }
+      subject(:scope) { described_class.has_no_session }
 
       let(:location_with_session) { create(:session).location }
       let(:location_without_session) { create(:location, :school) }

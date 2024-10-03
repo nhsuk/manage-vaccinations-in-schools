@@ -12,7 +12,7 @@ class SessionsController < ApplicationController
 
     session =
       ActiveRecord::Base.transaction do
-        Session.find_or_create_by!(team:, academic_year:, location:).tap(
+        Session.find_or_create_by!(team:, location:, academic_year:).tap(
           &:create_patient_sessions!
         )
       end
@@ -34,18 +34,18 @@ class SessionsController < ApplicationController
 
   def unscheduled
     @sessions =
-      policy_scope(Session).unscheduled.where(academic_year:) +
+      policy_scope(Session).unscheduled +
         team
           .schools
-          .has_no_session(academic_year)
           .for_year_groups(team.year_groups)
+          .has_no_session
           .map { |location| Session.new(team:, location:, academic_year:) }
 
     render layout: "full"
   end
 
   def completed
-    @sessions = policy_scope(Session).completed.where(academic_year:)
+    @sessions = policy_scope(Session).completed
 
     render layout: "full"
   end
