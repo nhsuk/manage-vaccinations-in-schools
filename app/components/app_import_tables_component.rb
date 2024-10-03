@@ -45,7 +45,7 @@ class AppImportTablesComponent < ViewComponent::Base
   def cohort_import_records
     CohortImport
       .select("cohort_imports.*", "COUNT(patients.id) AS record_count")
-      .where(team:)
+      .where(team:, programme:)
       .left_outer_joins(:patients)
       .includes(:uploaded_by)
       .group("cohort_imports.id")
@@ -68,14 +68,14 @@ class AppImportTablesComponent < ViewComponent::Base
   def path(programme, import)
     if import.recorded?
       if import.is_a?(ClassImport)
-        nil
+        session_class_import_path(import.session, import)
       elsif import.is_a?(CohortImport)
         programme_cohort_import_path(programme, import)
       else
         programme_immunisation_import_path(programme, import)
       end
     elsif import.is_a?(ClassImport)
-      nil
+      edit_session_class_import_path(import.session, import)
     elsif import.is_a?(CohortImport)
       edit_programme_cohort_import_path(programme, import)
     else
