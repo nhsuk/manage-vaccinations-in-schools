@@ -89,6 +89,8 @@ class Patient < ApplicationRecord
   validates :school, absence: true, if: :home_educated
   validate :school_is_correct_type
 
+  validates :address_postcode, postcode: { allow_nil: true }
+
   encrypts :first_name,
            :last_name,
            :common_name,

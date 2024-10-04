@@ -12,7 +12,7 @@ describe AppCompareConsentFormAndPatientComponent, type: :component do
       address_line_1: "1 Main Street",
       address_line_2: "Area",
       address_town: "Some Town",
-      address_postcode: "AB1 2CD"
+      address_postcode: "SW11 1AA"
     )
   end
   let(:patient) { create(:patient) }
@@ -45,11 +45,11 @@ describe AppCompareConsentFormAndPatientComponent, type: :component do
           "1 Main Street",
           "Area",
           "Some Town",
-          "AB1 2CD",
+          "SW11 1AA",
           "1 Main Street",
           "Area",
           "Some Town",
-          "AB1 2CD"
+          "SW11 1AA"
         ].join
       )
     end
@@ -80,11 +80,11 @@ describe AppCompareConsentFormAndPatientComponent, type: :component do
           "1 Main Street",
           "Area",
           "Some Town",
-          "AB1 2CD",
+          "SW11 1AA",
           "2 Main Street",
           "Area",
           "Some Town",
-          "AB1 2CD"
+          "SW11 1AA"
         ].join
       )
     end

@@ -35,7 +35,7 @@ FactoryBot.define do
 
     address_line_1 { Faker::Address.street_address }
     address_town { Faker::Address.city }
-    address_postcode { Faker::Address.postcode }
+    address_postcode { "SW11 1AA" }
 
     url { Faker::Internet.url }
 
