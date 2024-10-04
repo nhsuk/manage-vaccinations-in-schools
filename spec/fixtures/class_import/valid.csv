@@ -2,4 +2,4 @@ PARENT_1_NAME,PARENT_1_RELATIONSHIP,PARENT_1_EMAIL,PARENT_1_PHONE,PARENT_2_NAME,
 ,,,,,,,,Jennifer,Clarke,Jenny,2010-01-01,10 Downing Street,,London,SW1A 1AA,1234567890
 John Smith,Father,john@example.com,07412345678,,,,,Jimmy,Smith,Jim,02/01/2010,10 Downing Street,,London,SW1A 1AA,123 456 7891
 Jane Doe,Mother,jane@example.com,07412345679,Richard Doe,Father,richard@example.com,,Mark,Doe,,2010-01-03,11 Downing Street,,London,SW1A 1AA,1234567892
-,,,,,,,,Amy,Nichols,,2010-01-04,,,,SW1A 1AB,
+,,,,,,,,Amy,Nichols,,2010-01-04,,,,,
