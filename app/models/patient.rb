@@ -57,6 +57,11 @@ class Patient < ApplicationRecord
   has_many :parents, through: :parent_relationships
   has_many :programmes, through: :sessions
 
+  has_many :upcoming_sessions,
+           -> { scheduled.or(unscheduled) },
+           through: :patient_sessions,
+           source: :session
+
   has_and_belongs_to_many :class_imports
   has_and_belongs_to_many :cohort_imports
   has_and_belongs_to_many :immunisation_imports
@@ -138,20 +143,15 @@ class Patient < ApplicationRecord
     ActiveRecord::Base.transaction do
       new_school = consent_form.school
 
-      session_in_new_school =
-        (
-          if new_school && new_school != school
-            move_school(
-              new_school,
-              existing_session: consent_form.scheduled_session,
-              programme: consent_form.programme
-            )
-          end
+      if new_school && new_school != school
+        move_school(
+          new_school,
+          existing_session: consent_form.scheduled_session,
+          programme: consent_form.programme
         )
+      end
 
       Consent.from_consent_form!(consent_form, patient: self)
-
-      session_in_new_school
     end
   end
 
@@ -176,8 +176,6 @@ class Patient < ApplicationRecord
         .first
 
     new_session&.patient_sessions&.create!(patient: self)
-
-    new_session
   end
 
   def remove_spaces_from_nhs_number
