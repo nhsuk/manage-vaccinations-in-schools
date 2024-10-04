@@ -76,7 +76,7 @@ describe "Immunisation imports duplicates" do
         nhs_number: "7420180008", # First row of valid_hpv.csv
         date_of_birth: Date.new(2014, 3, 29),
         gender_code: :female,
-        address_postcode: "QG53 3OA",
+        address_postcode: "SW11 1AA",
         school: @location
       )
     @already_vaccinated_patient =
@@ -177,7 +177,7 @@ describe "Immunisation imports duplicates" do
   def then_i_should_see_the_first_duplicate_record
     expect(page).to have_content("This record needs reviewing")
     expect(page).to have_content("PostcodeLE3 2DA")
-    expect(page).to have_content("PostcodeQG53 3OA")
+    expect(page).to have_content("PostcodeSW11 1AA")
   end
 
   def then_i_should_see_the_second_duplicate_record

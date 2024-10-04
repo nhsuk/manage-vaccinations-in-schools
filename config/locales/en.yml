@@ -144,7 +144,7 @@ en:
               blank: Enter an NHS number with 10 characters.
               wrong_length: Enter an NHS number with 10 characters.
             patient_postcode:
-              blank: Enter a postcode in the correct format, like SW17 7AE.
+              blank: Enter a valid postcode, such as SW1A 1AA
             school_name:
               blank: Enter a school name.
             school_urn:

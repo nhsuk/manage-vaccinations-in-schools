@@ -231,7 +231,7 @@ class ConsentForm < ApplicationRecord
   on_wizard_step :address do
     validates :address_line_1, presence: true
     validates :address_town, presence: true
-    validates :address_postcode, presence: true, postcode: true
+    validates :address_postcode, postcode: true
   end
 
   on_wizard_step :health_question do
