@@ -1,5 +1,6 @@
 allow_dev_phone_numbers: true
 web_concurrency: 0
+fast_reset: true
 
 # NHS Care Identity Service OIDC integration configuration, used by Omniauth via Devise.
 cis2:
