@@ -143,13 +143,7 @@ class Patient < ApplicationRecord
     ActiveRecord::Base.transaction do
       new_school = consent_form.school
 
-      if new_school && new_school != school
-        move_school(
-          new_school,
-          existing_session: consent_form.scheduled_session,
-          programme: consent_form.programme
-        )
-      end
+      move_school!(new_school) if new_school && new_school != school
 
       Consent.from_consent_form!(consent_form, patient: self)
     end
@@ -157,25 +151,19 @@ class Patient < ApplicationRecord
 
   private
 
-  def move_school(new_school, existing_session:, programme:)
+  def move_school!(new_school)
+    existing_patient_sessions =
+      patient_sessions.where(session: upcoming_sessions.where(location: school))
+
+    existing_patient_sessions.select(&:added_to_session?).each(&:destroy!)
+
     update!(school: new_school)
 
-    existing_patient_session =
-      existing_session.patient_sessions.find_by(patient: self)
+    new_sessions = new_school.sessions.scheduled.or(Session.unscheduled)
 
-    if existing_patient_session&.added_to_session?
-      existing_patient_session.destroy!
+    new_sessions.find_each do |session|
+      patient_sessions.find_or_create_by!(session:)
     end
-
-    new_session =
-      Session
-        .where(location: new_school, team: existing_session.team)
-        .has_programme(programme)
-        .scheduled
-        .or(Session.unscheduled)
-        .first
-
-    new_session&.patient_sessions&.create!(patient: self)
   end
 
   def remove_spaces_from_nhs_number
