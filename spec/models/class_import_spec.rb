@@ -213,7 +213,7 @@ describe ClassImport do
         school: location,
         address_line_1: nil,
         address_town: nil,
-        address_postcode: "SW1A 1AB",
+        address_postcode: nil,
         recorded_at: nil
       )
 

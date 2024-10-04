@@ -3,7 +3,6 @@
 class PatientImportRow
   include ActiveModel::Model
 
-  validates :address_postcode, postcode: true
   validates :date_of_birth, presence: true
   validates :existing_patients, length: { maximum: 1 }
   validates :first_name, presence: true
@@ -140,7 +139,7 @@ class PatientImportRow
   end
 
   def address_postcode
-    @data["CHILD_ADDRESS_POSTCODE"]&.strip
+    @data["CHILD_ADDRESS_POSTCODE"]&.strip&.presence
   end
 
   def parent_1_name
@@ -215,10 +214,7 @@ class PatientImportRow
   end
 
   def existing_patients
-    if first_name.blank? || last_name.blank? || date_of_birth.nil? ||
-         address_postcode.blank?
-      return
-    end
+    return if first_name.blank? || last_name.blank? || date_of_birth.nil?
 
     @existing_patients ||=
       Patient.find_existing(
