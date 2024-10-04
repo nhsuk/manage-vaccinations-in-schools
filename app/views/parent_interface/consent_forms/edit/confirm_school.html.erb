@@ -9,7 +9,7 @@
 
 <%= govuk_inset_text do %>
   <p>
-    <span class="nhsuk-heading-m nhsuk-u-margin-bottom-0">
+    <span class="nhsuk-heading-m nhsuk-u-margin-bottom-0" data-qa="school-name">
       <%= session_location(@session) %>
     </span>
     <%= format_address_single_line(@session.location) %>
