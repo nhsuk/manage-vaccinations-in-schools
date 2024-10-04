@@ -54,6 +54,10 @@ module CSVImportable
     csv_removed_at != nil
   end
 
+  def slow?
+    rows_count > 10
+  end
+
   def load_data!
     return if invalid?
 
