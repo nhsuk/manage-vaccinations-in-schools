@@ -260,6 +260,22 @@ describe ClassImport do
         expect { process! }.to change(Patient, :count).by(3)
       end
     end
+
+    context "with an existing patient in a different session" do
+      let(:different_session) { create(:session, programme:) }
+
+      let(:patient) do
+        create(:patient, nhs_number: "1234567890", session: different_session)
+      end
+
+      it "removes the child from the original session and adds them to the new one" do
+        expect(patient.upcoming_sessions).to contain_exactly(different_session)
+        expect { process! }.to change { patient.reload.school }.to(
+          session.location
+        )
+        expect(patient.upcoming_sessions).to contain_exactly(session)
+      end
+    end
   end
 
   describe "#record!" do
