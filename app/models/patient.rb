@@ -98,6 +98,7 @@ class Patient < ApplicationRecord
 
   encrypts :address_line_1, :address_line_2, :address_town
 
+  before_save :handle_school_changed, if: :school_changed?
   before_save :remove_spaces_from_nhs_number
 
   before_destroy :destroy_childless_parents
@@ -141,9 +142,9 @@ class Patient < ApplicationRecord
 
   def match_consent_form!(consent_form)
     ActiveRecord::Base.transaction do
-      new_school = consent_form.school
-
-      move_school!(new_school) if new_school && new_school != school
+      if (school = consent_form.school).present?
+        update!(school:)
+      end
 
       Consent.from_consent_form!(consent_form, patient: self)
     end
@@ -151,18 +152,30 @@ class Patient < ApplicationRecord
 
   private
 
-  def move_school!(new_school)
-    existing_patient_sessions =
-      patient_sessions.where(session: upcoming_sessions.where(location: school))
+  def handle_school_changed
+    return if new_record?
 
-    existing_patient_sessions.select(&:added_to_session?).each(&:destroy!)
+    ActiveRecord::Base.transaction do
+      unless school_id_was.nil?
+        existing_patient_sessions =
+          patient_sessions.where(
+            session: upcoming_sessions.where(location_id: school_id_was)
+          )
 
-    update!(school: new_school)
+        existing_patient_sessions.select(&:added_to_session?).each(&:destroy!)
+      end
 
-    new_sessions = new_school.sessions.scheduled.or(Session.unscheduled)
+      unless school_id.nil?
+        new_sessions =
+          Session
+            .where(location_id: school_id)
+            .scheduled
+            .or(Session.unscheduled)
 
-    new_sessions.find_each do |session|
-      patient_sessions.find_or_create_by!(session:)
+        new_sessions.find_each do |session|
+          patient_sessions.find_or_create_by!(session:)
+        end
+      end
     end
   end
 
