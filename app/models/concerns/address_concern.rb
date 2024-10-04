@@ -3,6 +3,13 @@
 module AddressConcern
   extend ActiveSupport::Concern
 
+  included do
+    normalizes :address_postcode,
+               with: ->(value) do
+                 value.nil? ? nil : UKPostcode.parse(value.to_s).to_s
+               end
+  end
+
   def address_parts
     [
       address_line_1,

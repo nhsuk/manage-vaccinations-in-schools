@@ -300,6 +300,8 @@ describe ConsentForm do
     end
   end
 
+  it { should normalize(:address_postcode).from(" SW111AA ").to("SW11 1AA") }
+
   describe "#full_name" do
     it "returns the full name as a string" do
       consent_form = build(:consent_form, first_name: "John", last_name: "Doe")

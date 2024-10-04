@@ -86,4 +86,6 @@ describe Location do
       it { should validate_uniqueness_of(:urn) }
     end
   end
+
+  it { should normalize(:address_postcode).from(" SW111AA ").to("SW11 1AA") }
 end
