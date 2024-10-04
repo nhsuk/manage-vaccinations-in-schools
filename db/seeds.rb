@@ -115,6 +115,21 @@ def create_patients(team)
   end
 end
 
+def create_imports(team)
+  programme = team.programmes.find_by(type: "hpv")
+
+  %i[pending invalid processed recorded].each do |status|
+    FactoryBot.create(:cohort_import, status, team:, programme:)
+    FactoryBot.create(:immunisation_import, status, team:, programme:)
+    FactoryBot.create(
+      :class_import,
+      status,
+      team:,
+      session: programme.sessions.first
+    )
+  end
+end
+
 set_feature_flags
 
 seed_vaccines
@@ -127,3 +142,5 @@ attach_locations_to(team)
 Audited.audit_class.as_user(user) { create_session(user, team) }
 
 create_patients(team)
+
+create_imports(team)
