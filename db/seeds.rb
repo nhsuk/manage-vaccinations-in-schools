@@ -18,7 +18,7 @@ def seed_vaccines
 end
 
 def import_schools
-  if Rails.env.test?
+  if Settings.fast_reset
     FactoryBot.create_list(:location, 30, :school)
   else
     Rake::Task["schools:import"].execute
