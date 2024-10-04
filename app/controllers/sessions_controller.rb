@@ -88,6 +88,12 @@ class SessionsController < ApplicationController
   end
 
   def set_session
-    @session = policy_scope(Session).find(params[:id])
+    @session =
+      policy_scope(Session).includes(
+        :team,
+        :location,
+        :dates,
+        :programmes
+      ).find(params[:id])
   end
 end
