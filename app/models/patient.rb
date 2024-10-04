@@ -7,7 +7,7 @@
 #  id               :bigint           not null, primary key
 #  address_line_1   :string
 #  address_line_2   :string
-#  address_postcode :string           not null
+#  address_postcode :string
 #  address_town     :string
 #  common_name      :string
 #  date_of_birth    :date             not null
