@@ -6,6 +6,7 @@ require 'csv'
 
 Faker::Config.locale = "en-GB"
 
+# e.g. date_of_birth_for_year("2024", 8) => Mon, 09 Jan 2012
 def date_of_birth_for_year(academic_year, year_group)
   academic_year = academic_year.to_s
   year_group = year_group.to_s
@@ -19,40 +20,42 @@ def date_of_birth_for_year(academic_year, year_group)
   end
 end
 
-# 1. SAIS team's admins will upload their entire year 8, 9, 10 and 11 nominal
-# rolls into Mavis as one or more cohort uploads. Based on the date of birth
-# of the child, Mavis will automatically sort the children into the correct
-# HPV cohort. If they don't fit into any of the cohorts, then Mavis will
-# raise an error and won't import them.
+def wrap_in_rollbackable_transaction
+  ActiveRecord::Base.transaction do
+    yield
+    raise ActiveRecord::Rollback
+  end
+end
 
-team = User.find_by(email: 'nurse.joy@example.com').team
+def create_students_for_school(school, estimated_students_per_year_group, team)
+  students = []
 
-# read a CSV file with three columns: `urn`, `number_of_pupils` and `year_estimate`
-school_data = CSV.read('scratchpad/school-class-sizes.csv', headers: true)
-
-CSV.open('scratchpad/nominal_roll.csv', 'w') do |csv|
-  csv << CohortImport.new.send(:required_headers)
-
-  school_data.each do |row|
-    print "."
-    urn = row['urn']
-    year_estimate = row['year_estimate'].to_i
-
-    school = Location.find_by(urn:)
-
-    students = []
-    # Here we create the nominal rolls for year 8, 9, 10 and 11
-    (8..11).each do |year_group|
-      year_estimate.times do
-        student = FactoryBot.build(:patient, school:, date_of_birth: date_of_birth_for_year(2024, year_group), team:)
-        until student.valid?
-          # fix the nhs number
-          student.nhs_number = Faker::NationalHealthService.british_number.gsub(/\s+/, "")
+  (8..11).each do |year_group|
+    estimated_students_per_year_group.times do
+      student = FactoryBot.build(:patient, school:, date_of_birth: date_of_birth_for_year(2024, year_group), team:)
+        .tap do |student|
+          until student.valid?
+            # fix the nhs number
+            student.nhs_number = Faker::NationalHealthService.british_number.gsub(/\s+/, "")
+          end
         end
-        student.save!
-        students << student
+        .tap(&:save!)
+
+      parents = FactoryBot.create_list(:parent, rand(1..2))
+      parents.each do |parent|
+        FactoryBot.create(:parent_relationship, parent:, patient: student)
       end
+
+      students << student
     end
+  end
+
+  students
+end
+
+def generate_nominal_roll(students)
+  CSV.open('scratchpad/nominal_roll.csv', 'w') do |csv|
+    csv << CohortImport.new.send(:required_headers)
 
     students.each do |student|
       csv << [
@@ -65,18 +68,40 @@ CSV.open('scratchpad/nominal_roll.csv', 'w') do |csv|
         student.first_name,
         student.last_name,
         student.nhs_number,
-        student.school.urn,
         student.parents.first&.email,
         student.parents.first&.name,
         student.parents.first&.phone,
-        student.parents.first&.relationship,
+        student.parent_relationships.first&.type,
         student.parents.second&.email,
         student.parents.second&.name,
         student.parents.second&.phone,
-        student.parents.second&.relationship
+        student.parent_relationships.second&.type,
+        student.school.urn,
       ]
     end
   end
+end
+
+# 1. SAIS team's admins will upload their entire year 8, 9, 10 and 11 nominal
+# rolls into Mavis as one or more cohort uploads. Based on the date of birth
+# of the child, Mavis will automatically sort the children into the correct
+# HPV cohort. If they don't fit into any of the cohorts, then Mavis will
+# raise an error and won't import them.
+
+team = User.find_by(email: 'nurse.joy@example.com').team
+
+school_data = CSV.read('scratchpad/school-class-sizes.csv', headers: true)
+
+wrap_in_rollbackable_transaction do
+  students = school_data.take(1).flat_map do |row|
+    print "."
+    create_students_for_school(
+      Location.find_by(urn: row['urn']),
+      row['year_estimate'].to_i,
+      team
+  )
+  end
+  generate_nominal_roll(students)
 end
 
 #
