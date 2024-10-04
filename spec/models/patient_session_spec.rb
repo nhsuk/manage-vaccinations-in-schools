@@ -47,7 +47,7 @@ describe PatientSession do
         create(:vaccination_record, programme:, patient_session:)
       draft_vaccination_record.update!(recorded_at: nil)
 
-      expect(patient_session.vaccination_record).to eq vaccination_record
+      expect(patient_session.latest_vaccination_record).to eq vaccination_record
     end
   end
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AppOutcomeBannerComponent < ViewComponent::Base
-  delegate :vaccination_record, :state, to: :@patient_session
+  delegate :state, to: :@patient_session
 
   def initialize(patient_session:, current_user: nil)
     super
@@ -50,9 +50,13 @@ class AppOutcomeBannerComponent < ViewComponent::Base
     end
   end
 
+  def vaccination_record
+    @vaccination_record ||= @patient_session.latest_vaccination_record
+  end
+
   def show_location?
     # location only makes sense if an attempt to vaccinate on site was made
-    @patient_session.vaccination_records.any?(&:recorded?)
+    vaccination_record.present?
   end
 
   def vaccine_summary
