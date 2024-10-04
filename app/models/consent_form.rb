@@ -240,10 +240,6 @@ class ConsentForm < ApplicationRecord
 
   delegate :vaccines, to: :programme
 
-  def address_postcode=(str)
-    super str.nil? ? nil : UKPostcode.parse(str.to_s).to_s
-  end
-
   def full_name
     [first_name, last_name].join(" ")
   end

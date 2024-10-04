@@ -57,6 +57,8 @@ describe Patient do
     end
   end
 
+  it { should normalize(:address_postcode).from(" SW111AA ").to("SW11 1AA") }
+
   describe "#find_existing" do
     subject(:find_existing) do
       described_class.find_existing(
