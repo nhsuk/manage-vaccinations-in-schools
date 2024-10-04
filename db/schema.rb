@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_03_124220) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_04_120319) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -67,6 +67,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_03_124220) do
     t.bigint "uploaded_by_user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "rows_count"
     t.index ["session_id"], name: "index_class_imports_on_session_id"
     t.index ["team_id"], name: "index_class_imports_on_team_id"
     t.index ["uploaded_by_user_id"], name: "index_class_imports_on_uploaded_by_user_id"
@@ -106,6 +107,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_03_124220) do
     t.integer "status", default: 0, null: false
     t.jsonb "serialized_errors"
     t.bigint "programme_id", null: false
+    t.integer "rows_count"
     t.index ["programme_id"], name: "index_cohort_imports_on_programme_id"
     t.index ["team_id"], name: "index_cohort_imports_on_team_id"
     t.index ["uploaded_by_user_id"], name: "index_cohort_imports_on_uploaded_by_user_id"
@@ -375,6 +377,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_03_124220) do
     t.bigint "team_id", null: false
     t.integer "status", default: 0, null: false
     t.jsonb "serialized_errors"
+    t.integer "rows_count"
     t.index ["programme_id"], name: "index_immunisation_imports_on_programme_id"
     t.index ["team_id"], name: "index_immunisation_imports_on_team_id"
     t.index ["uploaded_by_user_id"], name: "index_immunisation_imports_on_uploaded_by_user_id"

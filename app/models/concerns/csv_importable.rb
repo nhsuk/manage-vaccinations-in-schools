@@ -58,6 +58,7 @@ module CSVImportable
     return if invalid?
 
     self.data ||= CSV.parse(csv_data, headers: true, skip_blanks: true)
+    self.rows_count = data.count
   rescue CSV::MalformedCSVError
     self.csv_is_malformed = true
   end
