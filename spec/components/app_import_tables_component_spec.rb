@@ -50,7 +50,7 @@ describe AppImportTablesComponent do
   it "renders a heading tab" do
     expect(rendered).to have_css(
       ".nhsuk-table__heading-tab",
-      text: "10 incomplete imports"
+      text: "10 completed imports"
     )
   end
 

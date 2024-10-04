@@ -49,6 +49,15 @@ FactoryBot.define do
       csv_removed_at { Time.zone.now }
     end
 
+    trait :pending do
+      status { :pending_import }
+    end
+
+    trait :invalid do
+      serialized_errors { { "errors" => ["Error 1", "Error 2"] } }
+      status { :rows_are_invalid }
+    end
+
     trait :processed do
       processed_at { Time.zone.now }
       status { :processed }
@@ -61,6 +70,7 @@ FactoryBot.define do
     trait :recorded do
       processed
       recorded_at { Time.zone.now }
+      status { :recorded }
     end
   end
 end
