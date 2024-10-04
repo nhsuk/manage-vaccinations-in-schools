@@ -30,17 +30,16 @@ class ConsentFormsController < ApplicationController
       policy_scope(PatientSession).find(params[:patient_session_id])
 
     patient = @patient_session.patient
+    session = @patient_session.session
 
-    session =
-      patient.match_consent_form!(@consent_form) ||
-        @consent_form.scheduled_session
+    patient.match_consent_form!(@consent_form)
 
     flash[:success] = {
       heading: "Consent matched for",
       heading_link_text: patient.full_name,
       heading_link_href:
         session_patient_path(
-          session,
+          patient.upcoming_sessions.first || @consent_form.scheduled_session,
           id: patient.id,
           section: "triage",
           tab: "given"
