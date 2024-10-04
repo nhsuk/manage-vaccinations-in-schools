@@ -26,12 +26,15 @@ class ImmunisationImportsController < ApplicationController
 
     @immunisation_import.save!
 
-    ProcessImportJob.perform_later(@immunisation_import)
+    if @immunisation_import.slow?
+      ProcessImportJob.perform_later(@immunisation_import)
+      flash = { success: "Import processing started" }
+    else
+      ProcessImportJob.perform_now(@immunisation_import)
+      flash = { success: "Import completed" }
+    end
 
-    redirect_to programme_imports_path(@programme),
-                flash: {
-                  success: "Import processing started"
-                }
+    redirect_to programme_imports_path(@programme), flash:
   end
 
   def show

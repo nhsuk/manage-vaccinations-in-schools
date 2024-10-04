@@ -20,16 +20,14 @@ describe "Immunisation imports" do
     when_i_upload_an_invalid_file
     then_i_should_see_the_imports_page
 
-    when_i_wait_for_the_import_to_process
-    and_i_go_to_the_import_edit_page
+    when_i_go_to_the_import_edit_page
     then_i_should_see_the_errors_page
-    and_i_go_back_to_the_upload_page
 
-    when_i_upload_a_valid_file
+    when_i_go_back_to_the_upload_page
+    and_i_upload_a_valid_file
     then_i_should_see_the_imports_page
 
-    when_i_wait_for_the_import_to_process
-    and_i_go_to_the_import_edit_page
+    when_i_go_to_the_import_edit_page
     then_i_should_see_the_success_heading
     and_i_should_see_the_vaccination_records
 
@@ -122,14 +120,14 @@ describe "Immunisation imports" do
     expect(page).to have_content("Row 1")
   end
 
-  def and_i_go_back_to_the_upload_page
+  def when_i_go_back_to_the_upload_page
     click_on "Back"
     click_on "Import records"
     choose "Vaccination records"
     click_on "Continue"
   end
 
-  def when_i_upload_a_valid_file
+  def and_i_upload_a_valid_file
     attach_file(
       "immunisation_import[csv]",
       "spec/fixtures/immunisation_import/valid_hpv.csv"
@@ -216,14 +214,10 @@ describe "Immunisation imports" do
   alias_method :and_i_click_on_the_upload_link, :when_i_click_on_the_upload_link
 
   def then_i_should_see_the_imports_page
-    expect(page).to have_content("Import processing started")
+    expect(page).to have_content("Import completed")
   end
 
-  def when_i_wait_for_the_import_to_process
-    perform_enqueued_jobs
-  end
-
-  def and_i_go_to_the_import_edit_page
+  def when_i_go_to_the_import_edit_page
     click_link ImmunisationImport.last.created_at.to_fs(:long), match: :first
   end
 end

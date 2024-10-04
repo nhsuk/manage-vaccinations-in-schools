@@ -20,18 +20,20 @@ describe "Import class lists" do
     then_i_should_the_errors_page_with_invalid_headers
 
     when_i_upload_a_file_with_invalid_fields
-    then_i_should_see_the_imports_page
+    then_i_should_see_the_imports_page_with_the_processing_flash
+
+    when_i_go_to_the_import_edit_page
+    then_i_should_see_the_holding_page
 
     when_i_wait_for_the_background_job_to_complete
-    and_i_go_to_the_import_edit_page
+    and_i_refresh_the_page
     then_i_should_the_errors_page_with_invalid_fields
-    and_i_go_back_to_the_upload_page
 
-    when_i_upload_a_valid_file
-    then_i_should_see_the_imports_page
+    when_i_go_back_to_the_upload_page
+    and_i_upload_a_valid_file
+    then_i_should_see_the_imports_page_with_the_completed_flash
 
-    when_i_wait_for_the_background_job_to_complete
-    and_i_go_to_the_import_edit_page
+    when_i_go_to_the_import_edit_page
     then_i_should_see_the_patients
 
     when_i_click_on_upload_records
@@ -68,7 +70,7 @@ describe "Import class lists" do
     expect(page).to have_content("Import class list")
   end
 
-  def when_i_upload_a_valid_file
+  def and_i_upload_a_valid_file
     attach_file("class_import[csv]", "spec/fixtures/class_import/valid.csv")
     click_on "Continue"
   end
@@ -153,19 +155,31 @@ describe "Import class lists" do
     expect(page).to have_content("Row 2")
   end
 
-  def and_i_go_back_to_the_upload_page
+  def when_i_go_back_to_the_upload_page
     click_on "Back"
   end
 
-  def then_i_should_see_the_imports_page
+  def then_i_should_see_the_imports_page_with_the_processing_flash
     expect(page).to have_content("Import processing started")
+  end
+
+  def then_i_should_see_the_imports_page_with_the_completed_flash
+    expect(page).to have_content("Import completed")
   end
 
   def when_i_wait_for_the_background_job_to_complete
     perform_enqueued_jobs
   end
 
-  def and_i_go_to_the_import_edit_page
+  def then_i_should_see_the_holding_page
+    expect(page).to have_content("This import is still processing")
+  end
+
+  def and_i_refresh_the_page
+    visit current_path
+  end
+
+  def when_i_go_to_the_import_edit_page
     click_link ClassImport.last.created_at.to_fs(:long), match: :first
   end
 end
