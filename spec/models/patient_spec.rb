@@ -193,7 +193,8 @@ describe Patient do
   describe "#match_consent_form!" do
     subject(:match_consent_form!) { patient.match_consent_form!(consent_form) }
 
-    let(:patient) { create(:patient) }
+    let(:old_school) { create(:location, :school) }
+    let(:patient) { create(:patient, school: old_school) }
 
     context "when consent form confirms the school" do
       let(:consent_form) { create(:consent_form, school_confirmed: true) }
@@ -222,12 +223,15 @@ describe Patient do
       end
 
       context "when the patient is already in a session" do
-        let(:session) { create(:session, patients: [patient]) }
+        let(:session) do
+          create(:session, location: old_school, patients: [patient])
+        end
         let(:consent_form) do
           create(:consent_form, school_confirmed: false, school:, session:)
         end
 
         it "removes the patient from the session" do
+          expect(patient.upcoming_sessions).to include(session)
           match_consent_form!
           expect(session.reload.patients).not_to include(patient)
         end
