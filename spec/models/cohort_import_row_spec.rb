@@ -203,5 +203,32 @@ describe CohortImportRow do
         expect(parent_relationships.second).to be_mother
       end
     end
+
+    context "with a guardian" do
+      let(:data) do
+        valid_data.merge(parent_1_data).merge(
+          "PARENT_1_RELATIONSHIP" => "Guardian"
+        )
+      end
+
+      it "returns a guardian" do
+        expect(parent_relationships.count).to eq(1)
+        expect(parent_relationships.first).to be_guardian
+      end
+    end
+
+    context "with an other relationship" do
+      let(:data) do
+        valid_data.merge(parent_1_data).merge(
+          "PARENT_1_RELATIONSHIP" => "Stepdad"
+        )
+      end
+
+      it "returns an other relationship" do
+        expect(parent_relationships.count).to eq(1)
+        expect(parent_relationships.first).to be_other
+        expect(parent_relationships.first.other_name).to eq("Stepdad")
+      end
+    end
   end
 end

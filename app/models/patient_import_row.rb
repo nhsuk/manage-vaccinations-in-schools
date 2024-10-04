@@ -210,7 +210,7 @@ class PatientImportRow
     when "Guardian"
       { type: "guardian" }
     else
-      { type: "other", other: relationship }
+      { type: "other", other_name: relationship }
     end
   end
 
