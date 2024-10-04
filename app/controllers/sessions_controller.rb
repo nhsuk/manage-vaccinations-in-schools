@@ -57,7 +57,8 @@ class SessionsController < ApplicationController
         :gillick_assessment,
         { consents: :parent },
         :triage,
-        :vaccination_records
+        :vaccination_records,
+        :latest_vaccination_record
       )
 
     @counts =

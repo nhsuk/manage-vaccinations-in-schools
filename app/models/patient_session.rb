@@ -48,6 +48,9 @@ class PatientSession < ApplicationRecord
 
   has_many :triage, -> { order(:updated_at) }
   has_many :vaccination_records
+  has_one :latest_vaccination_record,
+          -> { recorded.order(:created_at) },
+          class_name: "VaccinationRecord"
   has_many :consents,
            ->(patient_session) do
              recorded.where(programme: patient_session.programmes).includes(
@@ -74,11 +77,6 @@ class PatientSession < ApplicationRecord
               .exists
           )
         end
-
-  def vaccination_record
-    # HACK: in future, it will be possible to have multiple vaccination records for a patient session
-    vaccination_records.recorded.last
-  end
 
   def draft_vaccination_record
     # HACK: this code will need to be revisited in future as it only really works for HPV, where we only have one

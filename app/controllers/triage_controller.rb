@@ -24,7 +24,8 @@ class TriageController < ApplicationController
           :gillick_assessment,
           :patient,
           :triage,
-          :vaccination_records
+          :vaccination_records,
+          :latest_vaccination_record
         )
         .preload(:consents)
         .order("patients.first_name", "patients.last_name")

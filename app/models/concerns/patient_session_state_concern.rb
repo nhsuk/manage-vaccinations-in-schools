@@ -95,11 +95,12 @@ module PatientSessionStateConcern
     end
 
     def vaccination_administered?
-      vaccination_record&.administered?
+      # HACK: in future, it will be possible to have multiple vaccination records for a patient session
+      latest_vaccination_record&.administered?
     end
 
     def vaccination_not_administered?
-      vaccination_record&.not_administered?
+      latest_vaccination_record&.not_administered?
     end
 
     def not_gillick_competent?
@@ -110,10 +111,10 @@ module PatientSessionStateConcern
     def vaccination_can_be_delayed?
       vaccination_not_administered? &&
         (
-          vaccination_record.not_well? ||
-            vaccination_record.contraindications? ||
-            vaccination_record.absent_from_session? ||
-            vaccination_record.absent_from_school?
+          latest_vaccination_record.not_well? ||
+            latest_vaccination_record.contraindications? ||
+            latest_vaccination_record.absent_from_session? ||
+            latest_vaccination_record.absent_from_school?
         )
     end
 
