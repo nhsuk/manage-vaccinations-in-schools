@@ -2,9 +2,11 @@
 
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   include AuthenticationConcern
+  include CIS2LogoutConcern
 
   skip_before_action :authenticate_user!
   skip_after_action :verify_policy_scoped
+  skip_before_action :verify_authenticity_token, only: [:cis2_logout]
 
   before_action :verify_cis2_response, only: %i[cis2]
 
@@ -18,6 +20,17 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     else
       @user = User.find_or_create_user_from_cis2_oidc(user_cis2_info)
       sign_in_and_redirect @user, event: :authentication
+    end
+  end
+
+  def cis2_logout
+    logout_token = params[:logout_token]
+
+    if validate_logout_token(logout_token)
+      sign_out(@user) if @user
+      render json: {}, status: :ok
+    else
+      render json: { error: "Invalid logout token" }, status: :bad_request
     end
   end
 
