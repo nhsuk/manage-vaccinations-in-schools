@@ -43,4 +43,9 @@ FactoryBot.define do
     password { "power overwhelming!" } # avoid a password that was found in a data breach
     registration { "SW608658 (HCPC)" }
   end
+
+  trait :signed_in do
+    current_sign_in_at { Time.current }
+    current_sign_in_ip { "127.0.0.1" }
+  end
 end
