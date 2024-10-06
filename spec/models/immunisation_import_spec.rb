@@ -177,7 +177,7 @@ describe ImmunisationImport do
         # stree-ignore
         expect { process! }
           .to change(immunisation_import, :processed_at).from(nil)
-          .and change(immunisation_import.vaccination_records, :count).by(7)
+          .and change(immunisation_import.vaccination_records, :count).by(8)
           .and change(immunisation_import.locations, :count).by(1)
           .and change(immunisation_import.patients, :count).by(7)
           .and change(immunisation_import.sessions, :count).by(2)
@@ -313,7 +313,7 @@ describe ImmunisationImport do
       it "records the vaccination records" do
         expect { record! }.to change(VaccinationRecord.recorded, :count).from(
           0
-        ).to(7)
+        ).to(8)
       end
 
       it "activates the patient sessions" do
