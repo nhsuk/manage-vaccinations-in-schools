@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
 # load rails
-require_relative '../config/environment'
-require 'csv'
+require_relative "../config/environment"
+require "csv"
 
 Faker::Config.locale = "en-GB"
 
@@ -28,11 +28,18 @@ def wrap_in_rollbackable_transaction
 end
 
 def create_student(school, year_group, team)
-  FactoryBot.build(:patient, school:, date_of_birth: date_of_birth_for_year(2024, year_group), team:)
+  FactoryBot
+    .build(
+      :patient,
+      school:,
+      date_of_birth: date_of_birth_for_year(2024, year_group),
+      team:
+    )
     .tap do |student|
       until student.valid?
         # fix the nhs number
-        student.nhs_number = Faker::NationalHealthService.british_number.gsub(/\s+/, "")
+        student.nhs_number =
+          Faker::NationalHealthService.british_number.gsub(/\s+/, "")
       end
     end
     .tap(&:save!)
@@ -44,21 +51,31 @@ def create_student(school, year_group, team)
     end
 end
 
-def create_vaccination_record(student, vaccine:, session:, batch:, programme:, vaccinator:, dose_sequence:)
+def create_vaccination_record(
+  student,
+  vaccine:,
+  session:,
+  batch:,
+  programme:,
+  vaccinator:,
+  dose_sequence:
+)
   print "+"
-  FactoryBot.create(:vaccination_record,
-                    patient: student,
-                    session:,
-                    programme:,
-                    vaccine:,
-                    performed_by: vaccinator,
-                    administered_at: session.dates.first.value + rand(8..16).hours,
-                    batch:,
-                    dose_sequence:)
+  FactoryBot.create(
+    :vaccination_record,
+    patient: student,
+    session:,
+    programme:,
+    vaccine:,
+    performed_by: vaccinator,
+    administered_at: session.dates.first.value + rand(8..16).hours,
+    batch:,
+    dose_sequence:
+  )
 end
 
 def write_nominal_roll_to_file(students)
-  CSV.open('scratchpad/nominal_roll.csv', 'w') do |csv|
+  CSV.open("scratchpad/nominal_roll.csv", "w") do |csv|
     csv << CohortImport.new.send(:required_headers)
 
     students.each do |student|
@@ -80,15 +97,18 @@ def write_nominal_roll_to_file(students)
         student.parents.second&.name,
         student.parents.second&.phone,
         student.parent_relationships.second&.type,
-        student.school.urn,
+        student.school.urn
       ]
     end
   end
 end
 
 def write_vaccination_records_to_file(vaccination_records)
-  CSV.open('scratchpad/vaccination_records.csv', 'w') do |csv|
-    csv << ImmunisationImport.new.send(:required_headers).append('DOSE_SEQUENCE', 'PERSON_GENDER_CODE', 'CARE_SETTING')
+  CSV.open("scratchpad/vaccination_records.csv", "w") do |csv|
+    csv << ImmunisationImport
+      .new
+      .send(:required_headers)
+      .append("DOSE_SEQUENCE", "PERSON_GENDER_CODE", "CARE_SETTING")
 
     vaccination_records.each do |vaccination_record|
       csv << [
@@ -104,26 +124,27 @@ def write_vaccination_records_to_file(vaccination_records)
         vaccination_record.vaccine.brand.gsub(" ", ""),
         vaccination_record.batch.name,
         vaccination_record.batch.expiry.to_fs(:dps),
-        ImmunisationImportRow::DELIVERY_SITES.key(vaccination_record.delivery_site),
+        ImmunisationImportRow::DELIVERY_SITES.key(
+          vaccination_record.delivery_site
+        ),
         vaccination_record.dose_sequence,
         vaccination_record.patient.gender_code.humanize,
-        1, # CARE_SETTING
+        1 # CARE_SETTING
       ]
     end
   end
 end
 
 def create_students_and_vaccinations_for(school:, team:, year_size_estimate:)
-  programme = Programme.find_by(type: 'hpv')
-  gardasil = Vaccine.find_by(brand: 'Gardasil')
-  gardasil9 = Vaccine.find_by(brand: 'Gardasil 9')
+  programme = Programme.find_by(type: "hpv")
+  gardasil = Vaccine.find_by(brand: "Gardasil")
+  gardasil9 = Vaccine.find_by(brand: "Gardasil 9")
 
   # define the cohort
-  year_8s, year_9s, year_10s, year_11s = (8..11).map do |year_group|
-    year_size_estimate.times.map do
-      create_student(school, year_group, team)
+  year_8s, year_9s, year_10s, year_11s =
+    (8..11).map do |year_group|
+      year_size_estimate.times.map { create_student(school, year_group, team) }
     end
-  end
 
   # define the vaccination history year by year
   # it's currently the 24/25 academic year
@@ -132,25 +153,58 @@ def create_students_and_vaccinations_for(school:, team:, year_size_estimate:)
   # in 21/22 the year 11s got dose 1 of Gardasil (the year 12s aged out of the cohort)
 
   who_got_what_when = [
-    { session_date: Date.new(2024, 1, 1) + rand(1..90).days, vaccine: gardasil9, dose_1_cohort: year_9s },
-    { session_date: Date.new(2023, 1, 1) + rand(1..90).days, vaccine: gardasil, dose_1_cohort: year_10s, dose_2_cohort: year_11s },
-    { session_date: Date.new(2022, 1, 1) + rand(1..90).days, vaccine: gardasil, dose_1_cohort: year_11s },
+    {
+      session_date: Date.new(2024, 1, 1) + rand(1..90).days,
+      vaccine: gardasil9,
+      dose_1_cohort: year_9s
+    },
+    {
+      session_date: Date.new(2023, 1, 1) + rand(1..90).days,
+      vaccine: gardasil,
+      dose_1_cohort: year_10s,
+      dose_2_cohort: year_11s
+    },
+    {
+      session_date: Date.new(2022, 1, 1) + rand(1..90).days,
+      vaccine: gardasil,
+      dose_1_cohort: year_11s
+    }
   ]
 
-  vaccination_records = who_got_what_when.flat_map do |row|
-    session_date, vaccine, dose_1_cohort, dose_2_cohort = row.values_at(:session_date, :vaccine, :dose_1_cohort, :dose_2_cohort)
-    vaccinator = FactoryBot.create(:user)
-    team.users << vaccinator
+  vaccination_records =
+    who_got_what_when.flat_map do |row|
+      session_date, vaccine, dose_1_cohort, dose_2_cohort =
+        row.values_at(:session_date, :vaccine, :dose_1_cohort, :dose_2_cohort)
+      vaccinator = FactoryBot.create(:user)
+      team.users << vaccinator
 
-    session = FactoryBot.create(:session, programme:, date: session_date, team:, location: school)
-    batch = FactoryBot.create(:batch, vaccine:)
+      session =
+        FactoryBot.create(
+          :session,
+          programme:,
+          date: session_date,
+          team:,
+          location: school
+        )
+      batch = FactoryBot.create(:batch, vaccine:)
 
-    [dose_1_cohort, dose_2_cohort].flatten.compact.map do |student|
-      next if rand < 0.1 # assume 90% uptake
-      dose_sequence = dose_1_cohort.include?(student) ? 1 : 2
-      create_vaccination_record(student, vaccine:, session:, batch:, dose_sequence:, programme:, vaccinator:)
-    end.compact
-  end
+      [dose_1_cohort, dose_2_cohort].flatten
+        .compact
+        .map do |student|
+          next if rand < 0.1 # assume 90% uptake
+          dose_sequence = dose_1_cohort.include?(student) ? 1 : 2
+          create_vaccination_record(
+            student,
+            vaccine:,
+            session:,
+            batch:,
+            dose_sequence:,
+            programme:,
+            vaccinator:
+          )
+        end
+        .compact
+    end
 
   [year_8s + year_9s + year_10s + year_11s, vaccination_records]
 end
@@ -161,20 +215,25 @@ end
 # HPV cohort. If they don't fit into any of the cohorts, then Mavis will
 # raise an error and won't import them.
 
-team = User.find_by(email: 'nurse.ryg@example.com').team
+team = User.find_by(email: "nurse.ryg@example.com").team
 
-school_data = CSV.read('scratchpad/school-class-sizes.csv', headers: true)
+school_data = CSV.read("scratchpad/school-class-sizes.csv", headers: true)
 
 wrap_in_rollbackable_transaction do
   students = []
   vaccination_records = []
 
-  school_data.flat_map do |row|
-    school = Location.find_by(urn: row['urn'])
+  school_data.each do |row|
+    school = Location.find_by(urn: row["urn"])
+    new_students, new_records =
+      create_students_and_vaccinations_for(
+        school:,
+        team:,
+        year_size_estimate: row["year_estimate"].to_i
+      )
 
-    s, v = create_students_and_vaccinations_for(school:, team:, year_size_estimate: row['year_estimate'].to_i)
-    students += s
-    vaccination_records += v
+    students.concat(new_students)
+    vaccination_records.concat(new_records)
   end
 
   write_nominal_roll_to_file(students)

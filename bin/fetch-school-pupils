@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
-require 'net/http'
-require 'uri'
-require 'csv'
+require "net/http"
+require "uri"
+require "csv"
 
 # Get the URNs from command line arguments
 urns = ARGV
@@ -21,9 +21,7 @@ def year_estimate(age_range_string, number_of_pupils)
   # split the age range string into start and end ages
   start_age, end_age = age_range_string.split(" to ").map(&:to_i)
 
-  if end_age.nil?
-    raise "No end age found"
-  end
+  raise "No end age found" if end_age.nil?
 
   # calculate the number of years in the age range
   number_of_years = end_age - start_age
@@ -36,7 +34,8 @@ urns.each do |urn|
   puts "Fetching #{urn}"
 
   # Build the URL
-  url = "https://get-information-schools.service.gov.uk/Establishments/Establishment/Details/#{urn}"
+  url =
+    "https://get-information-schools.service.gov.uk/Establishments/Establishment/Details/#{urn}"
 
   # Fetch the webpage content
   uri = URI(url)
@@ -44,7 +43,7 @@ urns.each do |urn|
 
   # Parse the response to find the school capacity and age range
   # Find all the summary list rows
-  rows = response.scan(/<div class="govuk-summary-list__row">(.*?)<\/div>/m)
+  rows = response.scan(%r{<div class="govuk-summary-list__row">(.*?)</div>}m)
 
   found_pupils = false
   found_age_range = false
@@ -53,8 +52,12 @@ urns.each do |urn|
 
   rows.each do |row|
     # Extract dt and dd elements
-    dt_match = row[0].match(/<dt class="govuk-summary-list__key">\s*(.*?)\s*(<a .*?<\/a>)?\s*<\/dt>/m)
-    dd_match = row[0].match(/<dd class="govuk-summary-list__value">\s*(.*?)\s*<\/dd>/m)
+    dt_match =
+      row[0].match(
+        %r{<dt class="govuk-summary-list__key">\s*(.*?)\s*(<a .*?</a>)?\s*</dt>}m
+      )
+    dd_match =
+      row[0].match(%r{<dd class="govuk-summary-list__value">\s*(.*?)\s*</dd>}m)
 
     if dt_match && dd_match
       dt_text = dt_match[1].strip
@@ -79,7 +82,7 @@ end
 
 # Output CSV
 CSV($stdout) do |csv|
-  csv << ["urn", "number_of_pupils", "year_estimate"]
+  csv << %w[urn number_of_pupils year_estimate]
   results.each do |result|
     urn, number_of_pupils, age_range = result
     begin
