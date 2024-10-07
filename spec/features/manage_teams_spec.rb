@@ -16,7 +16,7 @@ describe "Manage teams" do
     sign_in @team.users.first
 
     visit "/dashboard"
-    click_on "Team settings"
+    click_on "Your organisation"
   end
 
   def then_i_see_the_team_settings
