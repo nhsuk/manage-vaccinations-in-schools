@@ -106,7 +106,7 @@
                 row.with_cell do
                   tag.code("#{prefix}_RELATIONSHIP")
                 end
-                row.with_cell(text: "Optional, must be one of: Mother, Father, Guardian")
+                row.with_cell(text: "Optional, must be one of: " + tag.code("Mum") + ", " + tag.code("Dad") + " or " + tag.code("Guardian"))
               end
         
               body.with_row do |row|

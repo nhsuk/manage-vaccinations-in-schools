@@ -96,7 +96,7 @@ describe "Immunisation imports" do
   end
 
   def then_i_should_see_the_upload_page
-    expect(page).to have_content("Upload vaccination records")
+    expect(page).to have_content("Import vaccination records")
   end
 
   def when_i_continue_without_uploading_a_file
