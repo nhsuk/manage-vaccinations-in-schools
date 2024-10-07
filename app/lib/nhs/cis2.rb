@@ -25,13 +25,16 @@ module NHS
       end
 
       def openid_configuration
-        @openid_configuration ||=
-          JSON.parse(
-            Faraday
-              .new(url: Settings.cis2.issuer)
-              .get(".well-known/openid-configuration")
-              .body
-          )
+        Rails
+          .cache
+          .fetch("cis2:openid_configuration", expires_in: 1.day) do
+            JSON.parse(
+              Faraday
+                .new(url: Settings.cis2.issuer)
+                .get(".well-known/openid-configuration")
+                .body
+            )
+          end
       end
 
       def jwks_uri
