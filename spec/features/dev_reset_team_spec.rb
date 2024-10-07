@@ -62,7 +62,7 @@ describe "Dev endpoint to reset a team" do
           )
 
     click_on "Upload records"
-    expect(VaccinationRecord.count).to eq(7)
+    expect(VaccinationRecord.count).to eq(8)
   end
 
   def then_all_associated_data_is_deleted_when_i_reset_the_team
@@ -71,7 +71,7 @@ describe "Dev endpoint to reset a team" do
         .by(-10)
         .and(change(Cohort, :count).by(-2))
         .and(change(Parent, :count).by(-3))
-        .and(change(VaccinationRecord, :count).by(-7))
+        .and(change(VaccinationRecord, :count).by(-8))
         .and(change(ImmunisationImport, :count).by(-1))
         .and(change(CohortImport, :count).by(-1))
     )
