@@ -4,7 +4,7 @@ describe AppSimpleStatusBannerComponent, type: :component do
   subject(:rendered) { render_inline(component) }
 
   before do
-    allow(component).to receive(:new_session_patient_triage_path).and_return(
+    allow(component).to receive(:new_session_patient_triages_path).and_return(
       "/session/patient/triage/new"
     )
   end

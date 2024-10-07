@@ -169,7 +169,7 @@ Rails.application.routes.draw do
               )
 
         get ":tab",
-            controller: "triage",
+            controller: "triages",
             action: :index,
             as: :triage_tab,
             tab: TAB_PATHS[:triage].keys.join("|")
@@ -213,7 +213,7 @@ Rails.application.routes.draw do
                  path: "gillick-assessment/:id",
                  only: %i[show update]
 
-        resource :triage, only: %i[new create]
+        resource :triages, only: %i[new create]
 
         resource :vaccinations, only: %i[create] do
           resource "edit",

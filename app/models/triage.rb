@@ -26,6 +26,8 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 class Triage < ApplicationRecord
+  self.table_name = "triage"
+
   audited associated_with: :patient_session
 
   belongs_to :patient_session

@@ -6,7 +6,7 @@
                      triaged_ready_to_vaccinate
                      triaged_do_not_vaccinate] %>
     <p>
-      <%= link_to "Update triage outcome", new_session_patient_triage_path(
+      <%= link_to "Update triage outcome", new_session_patient_triages_path(
             session_id: @patient_session.session.id,
             patient_id: @patient_session.patient.id,
           ) %>

@@ -75,7 +75,7 @@
   <%= render AppCardComponent.new do %>
     <%= render AppTriageFormComponent.new(
           patient_session:,
-          url: session_patient_triage_path(
+          url: session_patient_triages_path(
             session,
             patient,
             @triage,
