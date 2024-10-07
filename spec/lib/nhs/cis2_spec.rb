@@ -57,7 +57,23 @@ describe NHS::CIS2 do
       described_class.instance_variable_set(:@openid_configuration, nil)
     end
 
-    it { should have_requested(:get, config_uri) }
+    after { Rails.cache.delete("cis2:openid_configuration") }
+
     it { should eq JSON.parse(config_response) }
+
+    it "caches the response" do
+      allow(Rails.cache).to receive(:fetch).with(
+        "cis2:openid_configuration",
+        expires_in: 1.day
+      ).and_call_original
+
+      subject
+
+      expect(Rails.cache).to have_received(:fetch)
+    end
+
+    context "when openid_configurations is not cached" do
+      it { should have_requested(:get, config_uri) }
+    end
   end
 end
