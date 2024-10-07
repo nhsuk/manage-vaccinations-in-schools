@@ -187,8 +187,9 @@ GEM
       railties (>= 5.0.0)
     faker (3.4.2)
       i18n (>= 1.8.11, < 2)
-    faraday (2.11.0)
+    faraday (2.12.0)
       faraday-net_http (>= 2.0, < 3.4)
+      json
       logger
     faraday-follow_redirects (0.3.0)
       faraday (>= 1, < 3)
@@ -602,7 +603,7 @@ GEM
       concurrent-ruby (~> 1.0)
     uk_postcode (2.1.8)
     unicode-display_width (2.5.0)
-    uri (0.13.0)
+    uri (0.13.1)
     useragent (0.16.10)
     validate_url (1.0.15)
       activemodel (>= 3.0.0)
