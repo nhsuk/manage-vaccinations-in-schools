@@ -72,7 +72,7 @@ RSpec.describe SessionsHelper do
 
       it do
         expect(session_status_tag).to eq(
-          "<strong class=\"nhsuk-tag\">Session in progress</strong>"
+          "<strong class=\"nhsuk-tag\">Sessions scheduled</strong>"
         )
       end
     end
