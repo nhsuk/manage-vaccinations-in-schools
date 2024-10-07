@@ -201,12 +201,12 @@ class PatientImportRow
   end
 
   def parent_relationship_attributes(relationship)
-    case relationship
-    when "Mother"
+    case relationship.downcase
+    when "mother", "mum"
       { type: "mother" }
-    when "Father"
+    when "father", "dad"
       { type: "father" }
-    when "Guardian"
+    when "guardian"
       { type: "guardian" }
     else
       { type: "other", other_name: relationship }
