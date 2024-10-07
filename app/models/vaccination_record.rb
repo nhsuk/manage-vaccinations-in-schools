@@ -187,6 +187,11 @@ class VaccinationRecord < ApplicationRecord
       ActiveModel::Type::Boolean.new.cast(value) ? Time.zone.now : nil
   end
 
+  def retryable_reason?
+    not_well? || contraindications? || absent_from_session? ||
+      absent_from_school?
+  end
+
   def wizard_steps
     [
       ("delivery-site" if administered? && delivery_site_other),

@@ -37,18 +37,27 @@ describe PatientSession do
     end
   end
 
-  describe "#vaccine_record" do
-    it "returns the last non-draft vaccination record" do
-      patient_session = create(:patient_session, programme:)
-      vaccination_record =
-        create(:vaccination_record, programme:, patient_session:)
-      vaccination_record.update!(recorded_at: 1.day.ago)
-      draft_vaccination_record =
-        create(:vaccination_record, programme:, patient_session:)
-      draft_vaccination_record.update!(recorded_at: nil)
-
-      expect(patient_session.latest_vaccination_record).to eq vaccination_record
+  describe "#latest_vaccination_record" do
+    subject(:latest_vaccination_record) do
+      patient_session.latest_vaccination_record
     end
+
+    let(:patient_session) { create(:patient_session, programme:) }
+    let(:later_vaccination_record) do
+      create(:vaccination_record, programme:, patient_session:)
+    end
+
+    before do
+      create(
+        :vaccination_record,
+        programme:,
+        patient_session:,
+        recorded_at: 1.day.ago
+      )
+      create(:vaccination_record, :not_recorded, programme:, patient_session:)
+    end
+
+    it { should eq(later_vaccination_record) }
   end
 
   describe "#latest_consents" do
