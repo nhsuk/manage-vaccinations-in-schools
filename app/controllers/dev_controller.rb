@@ -45,7 +45,7 @@ class DevController < ApplicationController
     patient_sessions = PatientSession.where(session: team_sessions)
     patient_sessions.each do |patient_session|
       patient_session.vaccination_records.destroy_all
-      patient_session.triage.destroy_all
+      patient_session.triages.destroy_all
       patient_session.destroy!
     end
 

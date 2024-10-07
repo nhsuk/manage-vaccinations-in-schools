@@ -17,7 +17,7 @@ class ConsentsController < ApplicationController
           :gillick_assessment,
           { consents: :parent },
           :patient,
-          :triage,
+          :triages,
           :vaccination_records
         )
         .sort_by { |ps| ps.patient.full_name }

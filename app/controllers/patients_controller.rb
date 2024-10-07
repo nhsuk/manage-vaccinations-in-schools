@@ -21,7 +21,7 @@ class PatientsController < ApplicationController
   def set_patient_session
     @patient_session =
       policy_scope(PatientSession)
-        .includes(:patient, :session, :triage, :vaccination_records)
+        .includes(:patient, :session, :triages, :vaccination_records)
         .preload(:consents)
         .find_by!(
           session_id: params.fetch(:session_id),

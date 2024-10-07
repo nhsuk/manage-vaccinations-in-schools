@@ -104,7 +104,7 @@ FactoryBot.define do
                     school: session.location
       end
 
-      triage do
+      triages do
         [
           association(
             :triage,
@@ -127,7 +127,7 @@ FactoryBot.define do
                     school: session.location
       end
 
-      triage do
+      triages do
         [
           association(
             :triage,
@@ -149,7 +149,7 @@ FactoryBot.define do
                     school: session.location
       end
 
-      triage do
+      triages do
         [
           association(
             :triage,
@@ -171,7 +171,7 @@ FactoryBot.define do
                     school: session.location
       end
 
-      triage do
+      triages do
         [
           association(
             :triage,
@@ -216,7 +216,7 @@ FactoryBot.define do
                     school: session.location
       end
 
-      triage do
+      triages do
         [
           association(
             :triage,
@@ -257,7 +257,7 @@ FactoryBot.define do
                     school: session.location
       end
 
-      triage do
+      triages do
         [
           association(
             :triage,
@@ -292,7 +292,7 @@ FactoryBot.define do
                     school: session.location
       end
 
-      triage do
+      triages do
         [
           association(
             :triage,

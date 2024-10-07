@@ -23,7 +23,8 @@ class TriageController < ApplicationController
           :programmes,
           :gillick_assessment,
           :patient,
-          :triage,
+          :triages,
+          :latest_triage,
           :vaccination_records,
           :latest_vaccination_record
         )

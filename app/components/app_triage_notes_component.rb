@@ -14,6 +14,6 @@ class AppTriageNotesComponent < ViewComponent::Base
   private
 
   def entries
-    @entries ||= @patient_session.triage.order(created_at: :desc)
+    @entries ||= @patient_session.triages.order(created_at: :desc)
   end
 end

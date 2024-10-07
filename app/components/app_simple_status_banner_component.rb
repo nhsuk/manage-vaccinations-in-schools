@@ -12,7 +12,7 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
   private
 
   def most_recent_triage
-    @most_recent_triage ||= @patient_session.triage.order(:created_at).last
+    @most_recent_triage ||= @patient_session.latest_triage
   end
 
   def most_recent_vaccination

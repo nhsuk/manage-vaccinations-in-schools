@@ -37,7 +37,7 @@ describe AppTriageNotesComponent, type: :component do
     end
 
     it { should have_css("h3", text: "Triaged decision: Safe to vaccinate") }
-    it { should have_css("p", text: patient_session.triage.first.notes) }
+    it { should have_css("p", text: patient_session.triages.first.notes) }
     it { should have_css("p", text: "4 December 2023 at 10:04am") }
     it { should have_css("p", text: "Joe Gear") }
     it { should_not have_css("hr") }

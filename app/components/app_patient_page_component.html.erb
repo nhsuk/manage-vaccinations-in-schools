@@ -64,7 +64,7 @@
   <% end %>
 <% end %>
 
-<% if @patient_session.triage.any? %>
+<% if @patient_session.triages.any? %>
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "Triage notes" } %>
     <%= render AppTriageNotesComponent.new(patient_session:) %>
