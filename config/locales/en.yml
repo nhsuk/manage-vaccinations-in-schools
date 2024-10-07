@@ -662,8 +662,8 @@ en:
     no_filtered_results: We couldn’t find any children that matched your filters.
     no_results: No results
   teams:
-    settings:
-      title: Team settings
+    show:
+      title: Your organisation
   vaccination_records:
     index:
       title: Vaccinations

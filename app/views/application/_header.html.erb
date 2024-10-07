@@ -58,9 +58,9 @@
                         "true" : nil } %>
         </li>
         <li class="nhsuk-header__navigation-item app-header__navigation-item--divider">
-          <%= link_to t("teams.settings.title"), team_settings_path,
+          <%= link_to t("teams.show.title"), team_path,
                       class: "nhsuk-header__navigation-link",
-                      aria: { current: request.path.start_with?(team_settings_path) ?
+                      aria: { current: request.path.start_with?(team_path) ?
                         "true" : nil } %>
         </li>
         <li class="nhsuk-mobile-menu-container">
