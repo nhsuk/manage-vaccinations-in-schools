@@ -320,5 +320,15 @@ describe ClassImport do
         expect { record! }.not_to change(PatientSession, :count)
       end
     end
+
+    context "with an existing patient not in the class list" do
+      let(:existing_patient) { create(:patient, session:) }
+
+      it "moves the existing patient to an unknown school" do
+        expect(session.patients).to include(existing_patient)
+        expect { record! }.to change { existing_patient.reload.school }.to(nil)
+        expect(session.reload.patients).not_to include(existing_patient)
+      end
+    end
   end
 end
