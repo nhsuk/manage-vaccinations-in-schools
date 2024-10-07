@@ -230,5 +230,23 @@ describe CohortImportRow do
         expect(parent_relationships.first.other_name).to eq("Stepdad")
       end
     end
+
+    context "when using shorted versions" do
+      let(:data) do
+        valid_data
+          .merge(parent_1_data)
+          .merge(parent_2_data)
+          .merge(
+            "PARENT_1_RELATIONSHIP" => "Dad",
+            "PARENT_2_RELATIONSHIP" => "Mum"
+          )
+      end
+
+      it "returns two parent relationships" do
+        expect(parent_relationships.count).to eq(2)
+        expect(parent_relationships.first).to be_father
+        expect(parent_relationships.second).to be_mother
+      end
+    end
   end
 end
