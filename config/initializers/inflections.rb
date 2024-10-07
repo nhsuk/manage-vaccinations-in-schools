@@ -26,6 +26,4 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
 
   inflect.irregular "batch", "batches"
   inflect.irregular "child", "children"
-
-  inflect.uncountable "triage"
 end

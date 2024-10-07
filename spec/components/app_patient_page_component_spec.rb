@@ -6,7 +6,7 @@ describe AppPatientPageComponent, type: :component do
   before do
     # rubocop:disable RSpec/AnyInstance
     allow_any_instance_of(AppSimpleStatusBannerComponent).to receive(
-      :new_session_patient_triage_path
+      :new_session_patient_triages_path
     ).and_return("/session/patient/triage/new")
     # rubocop:enable RSpec/AnyInstance
   end
