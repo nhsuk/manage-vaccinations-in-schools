@@ -40,6 +40,8 @@ class DevController < ApplicationController
       immunisation_import.destroy!
     end
 
+    Consent.where(team:).delete_all
+
     team_sessions = Session.where(team:)
 
     patient_sessions = PatientSession.where(session: team_sessions)
