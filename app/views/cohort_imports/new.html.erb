@@ -60,6 +60,15 @@
         
             body.with_row do |row|
               row.with_cell do
+                tag.code("CHILD_SCHOOL_URN")
+              end
+              row.with_cell do
+                tag.strong("Required") + ", must be 6 digits and numeric. Use " + tag.code("888888") + " for school unknown and " + tag.code("999999") + " for homeschooled."
+              end
+            end
+        
+            body.with_row do |row|
+              row.with_cell do
                 tag.code("CHILD_NHS_NUMBER")
               end
               row.with_cell(text: "Optional, must be 10 digits and numeric")
@@ -95,15 +104,6 @@
               end
             end
         
-            body.with_row do |row|
-              row.with_cell do
-                tag.code("CHILD_SCHOOL_URN")
-              end
-              row.with_cell do
-                tag.strong("Required") + ", must be 6 digits and numeric. Use " + tag.code("888888") + " for school unknown and " + tag.code("999999") + " for homeschooled."
-              end
-            end
-        
             %w(PARENT_1 PARENT_2).each do |prefix|
               body.with_row do |row|
                 row.with_cell do
@@ -116,7 +116,7 @@
                 row.with_cell do
                   tag.code("#{prefix}_RELATIONSHIP")
                 end
-                row.with_cell(text: "Optional, must be one of: Mother, Father, Guardian")
+                row.with_cell(text: "Optional, must be one of: " + tag.code("Mum") + ", " + tag.code("Dad") + " or " + tag.code("Guardian"))
               end
         
               body.with_row do |row|

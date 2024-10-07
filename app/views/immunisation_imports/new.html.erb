@@ -5,7 +5,7 @@
       ) %>
 <% end %>
 
-<% title = "Upload vaccination records" %>
+<% title = "Import vaccination records" %>
 <% hint = if @programme.hpv?
        "These will go to NHS England. Make sure the CSV you upload has the same format as your usual reporting template."
      elsif @programme.flu?
@@ -23,6 +23,194 @@
                          caption: { text: @programme.name, size: "l" },
                          label: { text: title, tag: "h1", size: "l" },
                          hint: { text: hint } %>
+
+  <%= govuk_details(summary_text: "How to format your CSV for vaccination records") do %>
+    <p class="nhsuk-body">Make sure the CSV you upload uses the following columns:</p>
+
+    <%= govuk_table(classes: "app-table--small") do |table|
+          table.with_head do |head|
+            head.with_row do |row|
+              row.with_cell(text: "Column name")
+              row.with_cell(text: "Notes")
+            end
+          end
+        
+          table.with_body do |body|
+            body.with_row do |row|
+              row.with_cell do
+                tag.code("ORGANISATION_CODE")
+              end
+              row.with_cell do
+                tag.strong("Required") + ", must be a valid " + govuk_link_to("ODS code", "https://odsportal.digital.nhs.uk/")
+              end
+            end
+        
+            body.with_row do |row|
+              row.with_cell do
+                tag.code("SCHOOL_URN")
+              end
+              row.with_cell do
+                tag.strong("Required") + ", must be 6 digits and numeric. Use " + tag.code("888888") + " for school unknown and " + tag.code("999999") + " for homeschooled."
+              end
+            end
+        
+            body.with_row do |row|
+              row.with_cell do
+                tag.code("SCHOOL_NAME")
+              end
+              row.with_cell do
+                ("Required if " + tag.code("SCHOOL_URN") + " is " + tag.code("888888")).html_safe
+              end
+            end
+        
+            body.with_row do |row|
+              row.with_cell do
+                tag.code("NHS_NUMBER")
+              end
+              row.with_cell(text: "Optional, must be 10 digits and numeric")
+            end
+        
+            body.with_row do |row|
+              row.with_cell do
+                tag.code("PERSON_FORENAME")
+              end
+              row.with_cell do
+                tag.strong("Required")
+              end
+            end
+        
+            body.with_row do |row|
+              row.with_cell do
+                tag.code("PERSON_SURNAME")
+              end
+              row.with_cell do
+                tag.strong("Required")
+              end
+            end
+        
+            body.with_row do |row|
+              row.with_cell do
+                tag.code("PERSON_DOB")
+              end
+              row.with_cell do
+                tag.strong("Required")
+              end
+            end
+        
+            body.with_row do |row|
+              row.with_cell do
+                tag.code("PERSON_GENDER_CODE")
+              end
+              row.with_cell do
+                tag.strong("Required") + ", must be " + tag.code("Not known") + ", " + tag.code("Male") + ", " + tag.code("Female") + ", " + tag.code("Not specified")
+              end
+            end
+        
+            body.with_row do |row|
+              row.with_cell do
+                tag.code("PERSON_POSTCODE")
+              end
+              row.with_cell do
+                tag.strong("Required") + ", must be formatted as a valid postcode"
+              end
+            end
+        
+            body.with_row do |row|
+              row.with_cell do
+                tag.code("DATE_OF_VACCINATION")
+              end
+              row.with_cell do
+                tag.strong("Required") + ", must use " + tag.code("YYYYMMDD") + " format"
+              end
+            end
+        
+            body.with_row do |row|
+              row.with_cell do
+                tag.code("VACCINE_GIVEN")
+              end
+              row.with_cell do
+                tag.strong("Required") + ", must be " + @programme.vaccines.pluck(:nivs_name).map { tag.code(_1) }.to_sentence(last_word_connector: ", or ", two_words_connector: " or ").html_safe
+              end
+            end
+        
+            body.with_row do |row|
+              row.with_cell do
+                tag.code("BATCH_NUMBER")
+              end
+              row.with_cell do
+                tag.strong("Required")
+              end
+            end
+        
+            body.with_row do |row|
+              row.with_cell do
+                tag.code("BATCH_EXPIRY_DATE")
+              end
+              row.with_cell do
+                tag.strong("Required") + ", must use " + tag.code("YYYYMMDD") + " format"
+              end
+            end
+        
+            body.with_row do |row|
+              row.with_cell do
+                tag.code("ANATOMICAL_SITE")
+              end
+              row.with_cell do
+                tag.strong("Required") + ", must be " + tag.code("Left Buttock") + ", " + tag.code("Right Buttock") + ", " + tag.code("Left Thigh") + ", " + tag.code("Right Thigh") + ", " + tag.code("Left Upper Arm") + ", " + tag.code("Right Upper Arm") + " or " + tag.code("Nasal")
+              end
+            end
+        
+            if @programme.hpv?
+              body.with_row do |row|
+                row.with_cell do
+                  tag.code("DOSE_SEQUENCE")
+                end
+                row.with_cell do
+                  tag.strong("Required") + ", must be " + tag.code("1") + ", " + tag.code("2") + " or " + tag.code("3")
+                end
+              end
+            end
+        
+            body.with_row do |row|
+              row.with_cell do
+                tag.code("VACCINATED")
+              end
+              row.with_cell do
+                ("Optional, must be " + tag.code("Y") + " or " + tag.code("N") + ". If omitted, " + tag.code("Y") + " is assumed.").html_safe
+              end
+            end
+        
+            if @programme.hpv?
+              body.with_row do |row|
+                row.with_cell do
+                  tag.code("CARE_SETTING")
+                end
+                row.with_cell do
+                  ("Required if " + tag.code("VACCINATED") + " is " + tag.code("Y") + ". Must be " + tag.code("1") + " (school) or " + tag.code("2") + " (care setting)").html_safe
+                end
+              end
+            end
+        
+            body.with_row do |row|
+              row.with_cell do
+                tag.code("PERFORMING_PROFESSIONAL_FORENAME")
+              end
+              row.with_cell do
+                ("Required if " + tag.code("VACCINATED") + " is " + tag.code("Y")).html_safe
+              end
+            end
+        
+            body.with_row do |row|
+              row.with_cell do
+                tag.code("PERFORMING_PROFESSIONAL_SURNAME")
+              end
+              row.with_cell do
+                ("Required if " + tag.code("VACCINATED") + " is " + tag.code("Y")).html_safe
+              end
+            end
+          end
+        end %>
+  <% end %>
 
   <%= f.govuk_submit %>
 <% end %>
