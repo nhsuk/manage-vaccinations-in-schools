@@ -38,21 +38,27 @@ class PatientSession < ApplicationRecord
              optional: true,
              foreign_key: :created_by_user_id
 
+  has_one :team, through: :session
+  has_many :programmes, through: :session
+
   has_one :gillick_assessment, -> { recorded }
   has_one :draft_gillick_assessment,
           -> { draft },
           class_name: "GillickAssessment"
 
-  has_one :team, through: :session
-  has_many :programmes, through: :session
-
   has_many :triages, -> { order(:updated_at) }
   has_one :latest_triage, -> { order(created_at: :desc) }, class_name: "Triage"
 
-  has_many :vaccination_records
+  has_many :vaccination_records,
+           -> { recorded },
+           class_name: "VaccinationRecord"
+  has_many :draft_vaccination_records,
+           -> { draft },
+           class_name: "VaccinationRecord"
   has_one :latest_vaccination_record,
-          -> { recorded.order(:created_at) },
+          -> { recorded.order(created_at: :desc) },
           class_name: "VaccinationRecord"
+
   has_many :consents,
            ->(patient_session) do
              recorded.where(programme: patient_session.programmes).includes(
@@ -87,10 +93,10 @@ class PatientSession < ApplicationRecord
 
     programme = programmes.first
 
-    vaccination_records
-      .draft
-      .create_with(programme:, vaccine: programme.vaccines.first)
-      .find_or_initialize_by(recorded_at: nil)
+    draft_vaccination_records.create_with(
+      programme:,
+      vaccine: programme.vaccines.first
+    ).find_or_initialize_by(recorded_at: nil)
   end
 
   def gillick_competent?
