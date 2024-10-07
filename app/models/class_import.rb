@@ -59,5 +59,9 @@ class ClassImport < PatientImport
     super
 
     session.create_patient_sessions! unless session.completed?
+
+    (session.patients - patients).each do |unknown_patient|
+      unknown_patient.update!(school: nil)
+    end
   end
 end
