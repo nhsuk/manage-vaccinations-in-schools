@@ -6,7 +6,9 @@ describe AppOutcomeBannerComponent, type: :component do
   let(:user) { create :user }
   let(:patient_session) { create :patient_session, created_by: user }
   let(:component) { described_class.new(patient_session:, current_user: user) }
-  let(:triage_nurse_name) { patient_session.triage.last.performed_by.full_name }
+  let(:triage_nurse_name) do
+    patient_session.latest_triage.performed_by.full_name
+  end
   let(:patient_name) { patient_session.patient.full_name }
 
   prepend_before do
@@ -65,7 +67,7 @@ describe AppOutcomeBannerComponent, type: :component do
     end
     let(:vaccination_record) { patient_session.vaccination_records.first }
     let(:location) { patient_session.session.location }
-    let(:triage) { patient_session.triage.first }
+    let(:triage) { patient_session.triages.first }
     let(:date) { triage.created_at.to_date.to_fs(:long) }
 
     it { should have_css(".app-card--red") }
@@ -84,7 +86,7 @@ describe AppOutcomeBannerComponent, type: :component do
       let(:date) { Time.zone.now - 2.days }
       let(:patient_session) do
         create(:patient_session, :triaged_do_not_vaccinate).tap do |ps|
-          ps.triage.first.update!(created_at: date)
+          ps.triages.first.update!(created_at: date)
         end
       end
 

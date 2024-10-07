@@ -46,7 +46,9 @@ class PatientSession < ApplicationRecord
   has_one :team, through: :session
   has_many :programmes, through: :session
 
-  has_many :triage, -> { order(:updated_at) }
+  has_many :triages, -> { order(:updated_at) }
+  has_one :latest_triage, -> { order(created_at: :desc) }, class_name: "Triage"
+
   has_many :vaccination_records
   has_one :latest_vaccination_record,
           -> { recorded.order(:created_at) },
@@ -107,9 +109,5 @@ class PatientSession < ApplicationRecord
 
   def consents_to_send_communication
     latest_consents.select(&:response_given?).reject(&:via_self_consent?)
-  end
-
-  def latest_triage
-    triage.max_by(&:created_at)
   end
 end

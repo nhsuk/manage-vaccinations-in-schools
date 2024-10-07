@@ -12,7 +12,9 @@ describe AppSimpleStatusBannerComponent, type: :component do
   let(:user) { create :user }
   let(:patient_session) { create :patient_session, user: }
   let(:component) { described_class.new(patient_session:) }
-  let(:triage_nurse_name) { patient_session.triage.last.performed_by.full_name }
+  let(:triage_nurse_name) do
+    patient_session.latest_triage.performed_by.full_name
+  end
   let(:vaccination_nurse_name) do
     patient_session.vaccination_records.last.performed_by.full_name
   end

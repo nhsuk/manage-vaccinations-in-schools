@@ -27,7 +27,7 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def triage_events
-    @patient_session.triage.map do
+    @patient_session.triages.map do
       {
         title: "Triaged decision: #{_1.human_enum_name(:status)}",
         time: _1.created_at,

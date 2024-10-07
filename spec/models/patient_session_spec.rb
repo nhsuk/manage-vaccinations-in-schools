@@ -26,14 +26,14 @@
 describe PatientSession do
   let(:programme) { create(:programme) }
 
-  describe "#triage" do
+  describe "#triages" do
     it "returns the triage records in ascending order" do
       patient_session = create(:patient_session, programme:)
       later_triage = create(:triage, programme:, patient_session:)
       earlier_triage =
         create(:triage, programme:, patient_session:, updated_at: 1.day.ago)
 
-      expect(patient_session.triage).to eq [earlier_triage, later_triage]
+      expect(patient_session.triages).to eq [earlier_triage, later_triage]
     end
   end
 
@@ -118,8 +118,14 @@ describe PatientSession do
   end
 
   describe "#latest_triage" do
-    it "returns the latest triage record" do
-      patient_session = create(:patient_session, programme:)
+    subject(:latest_triage) { patient_session.latest_triage }
+
+    let(:patient_session) { create(:patient_session, programme:) }
+    let(:later_triage) do
+      create(:triage, programme:, status: :ready_to_vaccinate, patient_session:)
+    end
+
+    before do
       create(
         :triage,
         programme:,
@@ -127,15 +133,8 @@ describe PatientSession do
         created_at: 1.day.ago,
         patient_session:
       )
-      later_triage =
-        create(
-          :triage,
-          programme:,
-          status: :ready_to_vaccinate,
-          patient_session:
-        )
-
-      expect(patient_session.latest_triage).to eq later_triage
     end
+
+    it { should eq(later_triage) }
   end
 end

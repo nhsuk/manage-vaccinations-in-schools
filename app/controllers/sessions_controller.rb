@@ -56,7 +56,7 @@ class SessionsController < ApplicationController
         :programmes,
         :gillick_assessment,
         { consents: :parent },
-        :triage,
+        :latest_triage,
         :vaccination_records,
         :latest_vaccination_record
       )

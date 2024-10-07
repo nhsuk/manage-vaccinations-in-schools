@@ -14,8 +14,8 @@ class AppTriageFormComponent < ViewComponent::Base
     @triage =
       triage ||
         Triage.new.tap do |t|
-          if patient_session.triage.any?
-            t.status = patient_session.triage.order(:created_at).last.status
+          if (latest_triage = patient_session.latest_triage)
+            t.status = latest_triage.status
           end
         end
     @url = url
