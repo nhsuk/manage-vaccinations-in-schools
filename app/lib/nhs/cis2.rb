@@ -18,8 +18,7 @@ module NHS
               @cache_last_update = Time.zone.now.to_i
               jwks_hash = JSON.parse(Faraday.get(jwks_uri).body)
               jwks = JWT::JWK::Set.new(jwks_hash)
-              jwks.select! { |key| key[:use] == "sig" }
-              jwks
+              jwks.select { |key| key[:use] == "sig" }
             end
         end
       end
