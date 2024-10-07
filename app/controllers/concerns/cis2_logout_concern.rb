@@ -15,7 +15,7 @@ module CIS2LogoutConcern
           token,
           nil,
           true,
-          { algorithms: ["RS256"], jwks: cis2_jwks_fetcher }
+          { algorithms: ["RS256"], jwks: NHS::CIS2.jwks_fetcher }
         )
       claims = jwt.first
 
@@ -35,40 +35,6 @@ module CIS2LogoutConcern
       true
     rescue JWT::DecodeError
       false
-    end
-
-    def cis2_jwks_fetcher
-      ->(options) do
-        if options[:kid_not_found] &&
-             @cache_last_update < Time.zone.now.to_i - 300
-          logger.info(
-            "Invalidating JWK cache. #{options[:kid]} not found from previous cache"
-          )
-          Rails.cache.delete("cis2:jwks")
-        end
-        Rails
-          .cache
-          .fetch("cis2:jwks") do
-            @cache_last_update = Time.zone.now.to_i
-            jwks_hash = JSON.parse(Faraday.get(jwks_uri).body)
-            jwks = JWT::JWK::Set.new(jwks_hash)
-            jwks.select { |key| key[:use] == "sig" }
-          end
-      end
-    end
-
-    def cis2_openid_configuration
-      @cis2_openid_configuration ||=
-        JSON.parse(
-          Faraday
-            .new(url: Settings.cis2.issuer)
-            .get(".well-known/openid-configuration")
-            .body
-        )
-    end
-
-    def jwks_uri
-      cis2_openid_configuration["jwks_uri"]
     end
   end
 end
