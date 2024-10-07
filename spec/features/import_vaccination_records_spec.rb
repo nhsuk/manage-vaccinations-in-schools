@@ -136,7 +136,7 @@ describe "Immunisation imports" do
   end
 
   def then_i_should_see_the_success_heading
-    expect(page).to have_content("7 new vaccination records")
+    expect(page).to have_content("8 new vaccination records")
   end
 
   def then_i_should_see_the_vaccination_records
