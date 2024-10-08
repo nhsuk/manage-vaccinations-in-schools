@@ -63,6 +63,8 @@ module ManageVaccinations
 
     config.exceptions_app = routes
 
+    config.active_model.i18n_customize_full_message = true
+
     config.active_job.queue_adapter = :good_job
     config.good_job.execution_mode = :async
 
