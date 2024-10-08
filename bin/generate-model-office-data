@@ -63,11 +63,12 @@ def create_vaccination_record(
   print "+"
   FactoryBot.create(
     :vaccination_record,
+    :performed_by_not_user,
     patient: student,
     session:,
+    patient_session: PatientSession.find_by(patient: student, session:),
     programme:,
     vaccine:,
-    performed_by: vaccinator,
     administered_at: session.dates.first.value + rand(8..16).hours,
     batch:,
     dose_sequence:
@@ -188,8 +189,10 @@ def create_students_and_vaccinations_for(school:, team:, year_size_estimate:)
         )
       batch = FactoryBot.create(:batch, vaccine:)
 
-      [dose_1_cohort, dose_2_cohort].flatten
-        .compact
+      session_participants = [dose_1_cohort, dose_2_cohort].flatten.compact
+      session.patients << session_participants
+
+      session_participants
         .map do |student|
           next if rand < 0.1 # assume 90% uptake
           dose_sequence = dose_1_cohort.include?(student) ? 1 : 2
