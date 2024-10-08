@@ -24,14 +24,6 @@ class AppImportTablesComponent < ViewComponent::Base
       ).sort_by(&:created_at).reverse
   end
 
-  def completed_imports
-    @completed_imports ||= imports.select(&:recorded?)
-  end
-
-  def incomplete_imports
-    @incomplete_imports ||= imports.reject(&:recorded?)
-  end
-
   def class_import_records
     ClassImport
       .select("class_imports.*", "COUNT(patients.id) AS record_count")
@@ -96,8 +88,9 @@ class AppImportTablesComponent < ViewComponent::Base
   def status_text(import)
     {
       "pending_import" => "Processing",
-      "processed" => "Ready",
-      "rows_are_invalid" => "Failed"
+      "processed" => "Processing",
+      "rows_are_invalid" => "Invalid",
+      "recorded" => "Completed"
     }[
       import.status
     ]
@@ -105,9 +98,10 @@ class AppImportTablesComponent < ViewComponent::Base
 
   def status_color(import)
     {
-      "pending_import" => "grey",
-      "processed" => "green",
-      "rows_are_invalid" => "red"
+      "pending_import" => "blue",
+      "processed" => "blue",
+      "rows_are_invalid" => "red",
+      "recorded" => "green"
     }[
       import.status
     ]
