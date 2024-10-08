@@ -22,7 +22,11 @@ class SessionsController < ApplicationController
   end
 
   def unscheduled
-    @sessions = policy_scope(Session).unscheduled
+    @sessions =
+      policy_scope(Session)
+        .includes(:dates, :location, :programmes)
+        .unscheduled
+        .order_by_location_name
 
     render layout: "full"
   end
