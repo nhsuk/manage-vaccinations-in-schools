@@ -66,6 +66,8 @@ module ManageVaccinations
     config.active_job.queue_adapter = :good_job
     config.good_job.execution_mode = :async
 
+    config.action_mailer.deliver_later_queue_name = :mailer
+
     config.view_component.default_preview_layout = "component_preview"
     config.view_component.preview_controller = "ComponentPreviewsController"
     config.view_component.preview_paths << Rails.root.join(
