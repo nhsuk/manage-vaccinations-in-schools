@@ -15,23 +15,33 @@ describe "User authorisation" do
 
     when_i_go_to_the_patient_page_of_another_team
     then_i_should_see_page_not_found
+
+    when_i_go_to_the_sessions_page_filtered_by_programme
+    then_i_should_only_see_my_sessions
   end
 
   def given_an_hpv_programme_is_underway_with_two_teams
-    programme = create(:programme, :hpv)
+    @programme = create(:programme, :hpv)
 
-    @team = create(:team, :with_one_nurse, programmes: [programme])
-    @other_team = create(:team, :with_one_nurse, programmes: [programme])
+    @team = create(:team, :with_one_nurse, programmes: [@programme])
+    @other_team = create(:team, :with_one_nurse, programmes: [@programme])
 
     location = create(:location, :school, name: "Pilot School")
     other_location = create(:location, :school, name: "Other School")
-    @session = create(:session, :scheduled, team: @team, programme:, location:)
+    @session =
+      create(
+        :session,
+        :scheduled,
+        team: @team,
+        programme: @programme,
+        location:
+      )
     @other_session =
       create(
         :session,
         :scheduled,
         team: @other_team,
-        programme:,
+        programme: @programme,
         location: other_location
       )
     @child = create(:patient, session: @session)
@@ -76,5 +86,14 @@ describe "User authorisation" do
 
   def when_i_go_to_the_patient_page_of_another_team
     visit "/patients/#{@other_session.id}/consent/given/patients/#{@other_child.id}"
+  end
+
+  def when_i_go_to_the_sessions_page_filtered_by_programme
+    visit "/programmes/#{@programme.id}/sessions"
+  end
+
+  def then_i_should_only_see_my_sessions
+    expect(page).to have_content(@session.location.name)
+    expect(page).not_to have_content(@other_session.location.name)
   end
 end
