@@ -107,6 +107,8 @@ def create_session(user, team)
       created_by: user
     )
   end
+
+  UnscheduledSessionsFactory.new.call
 end
 
 def create_patients(team)
