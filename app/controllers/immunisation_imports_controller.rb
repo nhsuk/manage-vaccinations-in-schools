@@ -2,9 +2,9 @@
 
 class ImmunisationImportsController < ApplicationController
   before_action :set_programme
-  before_action :set_immunisation_import, only: %i[show edit update]
-  before_action :set_vaccination_records, only: %i[show edit]
-  before_action :set_vaccination_records_with_pending_changes, only: %i[edit]
+  before_action :set_immunisation_import, only: %i[show update]
+  before_action :set_vaccination_records, only: %i[show]
+  before_action :set_vaccination_records_with_pending_changes, only: %i[show]
 
   def new
     @immunisation_import = ImmunisationImport.new
@@ -38,10 +38,6 @@ class ImmunisationImportsController < ApplicationController
   end
 
   def show
-    render layout: "full"
-  end
-
-  def edit
     if @immunisation_import.rows_are_invalid?
       @immunisation_import.load_serialized_errors!
       render :errors and return

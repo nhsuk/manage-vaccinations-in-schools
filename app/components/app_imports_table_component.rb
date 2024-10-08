@@ -58,20 +58,12 @@ class AppImportsTableComponent < ViewComponent::Base
   end
 
   def path(programme, import)
-    if import.recorded?
-      if import.is_a?(ClassImport)
-        session_class_import_path(import.session_id, import)
-      elsif import.is_a?(CohortImport)
-        programme_cohort_import_path(programme, import)
-      else
-        programme_immunisation_import_path(programme, import)
-      end
-    elsif import.is_a?(ClassImport)
-      edit_session_class_import_path(import.session_id, import)
+    if import.is_a?(ClassImport)
+      session_class_import_path(import.session_id, import)
     elsif import.is_a?(CohortImport)
-      edit_programme_cohort_import_path(programme, import)
+      programme_cohort_import_path(programme, import)
     else
-      edit_programme_immunisation_import_path(programme, import)
+      programme_immunisation_import_path(programme, import)
     end
   end
 

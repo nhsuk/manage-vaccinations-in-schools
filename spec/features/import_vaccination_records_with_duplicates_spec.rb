@@ -9,7 +9,7 @@ describe "Immunisation imports duplicates" do
     when_i_go_to_the_vaccinations_page
     and_i_click_on_the_upload_link
     and_i_upload_a_file_with_duplicate_records
-    then_i_should_see_the_edit_page_with_duplicate_records
+    then_i_should_see_the_import_page_with_duplicate_records
 
     when_i_review_the_first_duplicate_record
     then_i_should_see_the_first_duplicate_record
@@ -29,9 +29,6 @@ describe "Immunisation imports duplicates" do
     and_i_confirm_my_selection
     then_i_should_see_a_success_message
     and_the_second_record_should_be_updated
-
-    when_i_upload_the_records
-    then_i_should_see_the_vaccination_upload_report
 
     when_i_go_to_the_programme
     then_i_should_see_import_issues_with_the_count
@@ -152,7 +149,7 @@ describe "Immunisation imports duplicates" do
     click_link ImmunisationImport.last.created_at.to_fs(:long), match: :first
   end
 
-  def then_i_should_see_the_edit_page_with_duplicate_records
+  def then_i_should_see_the_import_page_with_duplicate_records
     expect(page).to have_content("3 duplicate records need review")
   end
 
