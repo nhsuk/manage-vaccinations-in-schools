@@ -52,6 +52,9 @@ class Session < ApplicationRecord
 
   scope :today, -> { has_date(Date.current) }
 
+  scope :order_by_location_name,
+        -> { left_joins(:location).order("locations.name ASC NULLS LAST") }
+
   scope :unscheduled,
         -> do
           where(academic_year: Date.current.academic_year).where.not(

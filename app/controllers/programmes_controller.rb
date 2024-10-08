@@ -24,7 +24,8 @@ class ProgrammesController < ApplicationController
         [session.dates.first.value, session.location&.name]
       end
 
-    @unscheduled_sessions = sessions_for_programme.unscheduled
+    @unscheduled_sessions =
+      sessions_for_programme.unscheduled.order_by_location_name
     @completed_sessions = sessions_for_programme.completed
   end
 
