@@ -1,5 +1,21 @@
 # Rake Tasks
 
+## Clinics
+
+### `clinics:create[name,address,town,county,postcode,ods_code,team_id]`
+
+- `name` - The name of the clinic.
+- `address` - The first line of the address.
+- `town` - The town of the clinic.
+- `country` - The county of the clinic.
+- `postcode` - The postcode of the clinic.
+- `ods_code` - The ODS code of the clinic.
+- `team_id` - The ID of the team.
+
+If none of the arguments are provided (`rake clinics:create`), the user will be prompted for responses.
+
+This creates a new clinic location and attaches it to a team.
+
 ## Schools
 
 ### `schools:add_to_team[team_id,urn]`
