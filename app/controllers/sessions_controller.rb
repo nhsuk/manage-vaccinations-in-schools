@@ -10,7 +10,13 @@ class SessionsController < ApplicationController
   end
 
   def scheduled
-    @sessions = policy_scope(Session).scheduled
+    @sessions =
+      policy_scope(Session)
+        .includes(:dates, :location, :programmes)
+        .scheduled
+        .sort_by do |session|
+          [session.dates.first.value, session.location&.name]
+        end
 
     render layout: "full"
   end
