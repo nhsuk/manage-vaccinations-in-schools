@@ -60,6 +60,13 @@ describe "Manage sessions" do
         school: @location,
         team: @team
       )
+    create(
+      :session,
+      :unscheduled,
+      location: @location,
+      team: @team,
+      programme: @programme
+    )
   end
 
   def when_i_go_to_todays_sessions_as_a_nurse

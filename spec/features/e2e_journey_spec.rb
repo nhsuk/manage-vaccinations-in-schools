@@ -43,6 +43,13 @@ describe "End-to-end journey" do
     @programme = create(:programme, :hpv)
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     @school = create(:location, :secondary, team: @team, name: "Pilot School")
+    create(
+      :session,
+      :unscheduled,
+      location: @school,
+      team: @team,
+      programme: @programme
+    )
   end
 
   def and_i_am_a_nurse_signed_into_the_service
