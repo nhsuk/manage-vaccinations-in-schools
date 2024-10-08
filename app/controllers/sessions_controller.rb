@@ -71,7 +71,8 @@ class SessionsController < ApplicationController
   end
 
   def make_in_progress
-    @session.update!(date: Time.zone.today)
+    @session.dates.find_or_create_by!(value: Date.current)
+
     redirect_to session_path,
                 flash: {
                   success: {
