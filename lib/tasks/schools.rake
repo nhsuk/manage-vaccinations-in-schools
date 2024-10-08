@@ -166,5 +166,7 @@ namespace :schools do
     end
 
     location.update!(team:)
+
+    UnscheduledSessionsFactory.new.call
   end
 end
