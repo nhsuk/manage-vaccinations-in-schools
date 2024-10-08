@@ -6,7 +6,19 @@ describe AppSessionSummaryComponent do
   let(:component) { described_class.new(session) }
 
   let(:programme) { create(:programme, :hpv) }
-  let(:session) { create(:session, date: Date.new(2024, 1, 1), programme:) }
+  let(:location) { create(:location, :school) }
+  let(:session) do
+    create(:session, location:, date: Date.new(2024, 1, 1), programme:)
+  end
+
+  it { should have_content("Type") }
+  it { should have_content("School session") }
+
+  context "with a clinic" do
+    let(:location) { create(:location, :clinic) }
+
+    it { should have_content("Community clinic") }
+  end
 
   it { should have_content("Programmes") }
   it { should have_content("HPV") }
