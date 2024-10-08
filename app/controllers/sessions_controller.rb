@@ -4,7 +4,8 @@ class SessionsController < ApplicationController
   before_action :set_session, only: %i[show edit make_in_progress]
 
   def index
-    @sessions = policy_scope(Session).today
+    @sessions =
+      policy_scope(Session).includes(:dates, :location, :programmes).today
 
     render layout: "full"
   end

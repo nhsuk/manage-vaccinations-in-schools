@@ -50,7 +50,7 @@ class Session < ApplicationRecord
   scope :has_programme,
         ->(programme) { joins(:programmes).where(programmes: programme) }
 
-  scope :today, -> { has_date(Date.current) }
+  scope :today, -> { has_date(Date.current).order_by_location_name }
 
   scope :order_by_location_name,
         -> { left_joins(:location).order("locations.name ASC NULLS LAST") }
