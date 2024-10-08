@@ -26,7 +26,10 @@ class CohortsController < ApplicationController
 
   def show
     @cohort = policy_scope(Cohort).find(params[:id])
-    @patients = @cohort.patients.recorded
+    @patients =
+      @cohort.patients.recorded.sort_by do |patient|
+        [patient.first_name, patient.last_name]
+      end
   end
 
   private
