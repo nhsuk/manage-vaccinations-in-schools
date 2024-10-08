@@ -119,6 +119,7 @@ class ImmunisationImportRow
 
     @session ||=
       Session
+        .create_with(programmes: [@programme])
         .find_or_create_by!(
           team:,
           location:,
