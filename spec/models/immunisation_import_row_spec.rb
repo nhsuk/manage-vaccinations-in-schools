@@ -411,7 +411,7 @@ describe ImmunisationImportRow, type: :model do
       end
 
       it "sets the location to a generic clinic" do
-        expect(session.location).to be_generic_clinic
+        expect(session.location).to be_clinic
         expect(session.location).to have_attributes(
           team:,
           ods_code: team.ods_code,
@@ -424,7 +424,7 @@ describe ImmunisationImportRow, type: :model do
       let(:data) { valid_data.merge("SCHOOL_URN" => "999999") }
 
       it "sets the location to a generic clinic" do
-        expect(session.location).to be_generic_clinic
+        expect(session.location).to be_clinic
         expect(session.location).to have_attributes(
           team:,
           ods_code: team.ods_code,
@@ -456,8 +456,8 @@ describe ImmunisationImportRow, type: :model do
         )
       end
 
-      it "sets the location to a generic clinic" do
-        expect(session.location).to be_generic_clinic
+      it "sets the location to a clinic" do
+        expect(session.location).to be_clinic
         expect(session.location).to have_attributes(
           team:,
           ods_code: team.ods_code

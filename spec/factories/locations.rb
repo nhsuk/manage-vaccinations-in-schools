@@ -39,8 +39,8 @@ FactoryBot.define do
 
     url { Faker::Internet.url }
 
-    trait :generic_clinic do
-      type { :generic_clinic }
+    trait :clinic do
+      type { :clinic }
       sequence(:ods_code, 10_000, &:to_s)
       urn { nil }
     end

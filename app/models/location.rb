@@ -44,7 +44,7 @@ class Location < ApplicationRecord
 
   has_and_belongs_to_many :immunisation_imports
 
-  enum :type, %w[school generic_clinic]
+  enum :type, %w[school clinic]
 
   scope :for_year_groups,
         ->(year_groups) do
@@ -66,7 +66,7 @@ class Location < ApplicationRecord
   validates :name, presence: true
   validates :url, url: true, allow_nil: true
 
-  validates :ods_code, presence: true, if: :generic_clinic?
+  validates :ods_code, presence: true, if: :clinic?
   validates :ods_code, uniqueness: true, allow_nil: true
 
   validates :urn, presence: true, if: :school?
