@@ -8,6 +8,6 @@ class ProcessImportJob < ApplicationJob
 
     return if import.rows_are_invalid?
 
-    import.process!
+    import.record!
   end
 end
