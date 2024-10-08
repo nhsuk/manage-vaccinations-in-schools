@@ -1,6 +1,24 @@
 en:
   activemodel:
     attributes:
+      class_import_row:
+        address_line_1: <code>CHILD_ADDRESS_LINE_1</code>
+        address_line_2: <code>CHILD_ADDRESS_LINE_2</code>
+        address_postcode: <code>CHILD_ADDRESS_POSTCODE</code>
+        address_town: <code>CHILD_ADDRESS_TOWN</code>
+        common_name: <code>CHILD_COMMON_NAME</code>
+        date_of_birth: <code>CHILD_DATE_OF_BIRTH</code>
+        first_name: <code>CHILD_FIRST_NAME</code>
+        last_name: <code>CHILD_LAST_NAME</code>
+        nhs_number: <code>CHILD_NHS_NUMBER</code>
+        parent_1_email: <code>PARENT_1_EMAIL</code>
+        parent_1_name: <code>PARENT_1_NAME</code>
+        parent_1_phone: <code>PARENT_1_PHONE</code>
+        parent_1_relationship: <code>PARENT_1_RELATIONSHIP</code>
+        parent_2_email: <code>PARENT_2_EMAIL</code>
+        parent_2_name: <code>PARENT_2_NAME</code>
+        parent_2_phone: <code>PARENT_2_PHONE</code>
+        parent_2_relationship: <code>PARENT_2_RELATIONSHIP</code>
       cohort_import_row:
         address_line_1: <code>CHILD_ADDRESS_LINE_1</code>
         address_line_2: <code>CHILD_ADDRESS_LINE_2</code>
@@ -20,9 +38,30 @@ en:
         parent_2_phone: <code>PARENT_2_PHONE</code>
         parent_2_relationship: <code>PARENT_2_RELATIONSHIP</code>
         school_urn: <code>CHILD_SCHOOL_URN</code>
+      immunisation_import_row:
+        administered: <code>VACCINATED</code>
+        batch_expiry_date: <code>BATCH_EXPIRY_DATA</code>
+        batch_number: <code>BATCH_NUMBER</code>
+        care_setting: <code>CARE_SETTING</code>
+        delivery_site: <code>ANATOMICAL_SITE</code>
+        dose_sequence: <code>DOSE_SEQUENCE</code>
+        organisation_code: <code>ORGANISATION_CODE</code>
+        patient_date_of_birth: <code>PERSON_DOB</code>
+        patient_first_name: <code>PERSON_FORENAME</code>
+        patient_gender_code: <code>PERSON_GENDER_CODE</code>/<code>PERSON_GENDER</code>
+        patient_last_name: <code>PERSON_SURNAME</code>
+        patient_nhs_number: <code>NHS_NUMBER</code>
+        patient_postcode: <code>PERSON_POSTCODE</code>
+        performed_by_family_name: <code>PERFORMING_PROFESSIONAL_SURNAME</code>
+        performed_by_given_name: <code>PERFORMING_PROFESSIONAL_FORENAME</code>
+        school_name: <code>SCHOOL_NAME</code>
+        school_urn: <code>SCHOOL_URN</code>
+        session_date: <code>DATE_OF_VACCINATION</code>
+        vaccine_given: <code>VACCINE_GIVEN</code>
     errors:
       models:
         class_import_row:
+          format: "%{attribute}: %{message}"
           attributes:
             address_postcode:
               blank: is required but missing
@@ -61,6 +100,7 @@ en:
             year_group:
               inclusion: is not part of this programme
         cohort_import_row:
+          format: "%{attribute}: %{message}"
           attributes:
             address_postcode:
               blank: is required but missing
@@ -110,7 +150,7 @@ en:
             response:
               inclusion: Choose an answer
         immunisation_import_row:
-          format: "`%{attribute}`: %{message}"
+          format: "%{attribute}: %{message}"
           attributes:
             administered:
               inclusion: You need to record whether the child was vaccinated or not. Enter ‘Y’ or ‘N’ in the ‘vaccinated’ column.
