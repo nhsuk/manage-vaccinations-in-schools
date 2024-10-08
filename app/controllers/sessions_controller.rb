@@ -33,7 +33,13 @@ class SessionsController < ApplicationController
   end
 
   def completed
-    @sessions = policy_scope(Session).completed
+    @sessions =
+      policy_scope(Session)
+        .includes(:dates, :location, :programmes)
+        .completed
+        .sort_by do |session|
+          [session.dates.first.value, session.location&.name]
+        end
 
     render layout: "full"
   end
