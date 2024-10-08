@@ -19,9 +19,9 @@ describe TextDeliveryJob do
 
   let(:notifications_client) { instance_double(Notifications::Client) }
 
-  describe "#perform" do
-    subject(:perform) do
-      described_class.new.perform(
+  describe "#perform_now" do
+    subject(:perform_now) do
+      described_class.perform_now(
         template_name,
         session:,
         consent:,
@@ -44,7 +44,7 @@ describe TextDeliveryJob do
     let(:patient_session) { nil }
     let(:vaccination_record) { nil }
 
-    after { perform }
+    after { perform_now }
 
     it "generates personalisation" do
       expect(GovukNotifyPersonalisation).to receive(:call).with(
@@ -122,6 +122,18 @@ describe TextDeliveryJob do
           expect(notifications_client).not_to receive(:send_sms)
         end
       end
+    end
+  end
+
+  describe "#perform_later" do
+    subject(:perform_later) do
+      described_class.perform_later(GOVUK_NOTIFY_TEXT_TEMPLATES.keys.first)
+    end
+
+    it "uses the mailer queue" do
+      expect { perform_later }.to have_enqueued_job(described_class).on_queue(
+        :mailer
+      )
     end
   end
 end
