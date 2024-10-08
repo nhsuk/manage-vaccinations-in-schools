@@ -37,7 +37,7 @@ describe "Self-consent" do
     click_on "Programmes", match: :first
     click_on "HPV"
     within ".app-secondary-navigation" do
-      click_on "School sessions"
+      click_on "Sessions"
     end
     click_on "Pilot School"
     click_on "Check consent responses"

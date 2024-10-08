@@ -638,7 +638,7 @@ en:
     email: england.mavis@nhs.net
   sessions:
     index:
-      title: School sessions
+      title: Sessions
       table_heading:
         zero: There are no sessions scheduled for today.
         one: 1 session today
