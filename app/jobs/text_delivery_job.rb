@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TextDeliveryJob < ApplicationJob
-  queue_as -> { Rails.configuration.action_mailer.deliver_later_queue_name }
+  queue_as { Rails.configuration.action_mailer.deliver_later_queue_name }
 
   def perform(
     template_name,
