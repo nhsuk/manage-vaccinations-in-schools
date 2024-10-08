@@ -13,7 +13,7 @@ class ImmunisationImports::DuplicatesController < ApplicationController
 
   def update
     if @form.save
-      redirect_to edit_programme_immunisation_import_path(
+      redirect_to programme_immunisation_import_path(
                     @programme,
                     @immunisation_import
                   ),

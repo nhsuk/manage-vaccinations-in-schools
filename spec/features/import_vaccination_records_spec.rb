@@ -20,22 +20,14 @@ describe "Immunisation imports" do
     when_i_upload_an_invalid_file
     then_i_should_see_the_imports_page
 
-    when_i_go_to_the_import_edit_page
+    when_i_go_to_the_import_page
     then_i_should_see_the_errors_page
 
     when_i_go_back_to_the_upload_page
     and_i_upload_a_valid_file
     then_i_should_see_the_imports_page
 
-    when_i_go_to_the_import_edit_page
-    then_i_should_see_the_success_heading
-    and_i_should_see_the_vaccination_records
-
-    when_i_click_on_a_vaccination_record
-    then_i_should_see_the_vaccination_record
-
-    when_i_go_back
-    and_i_click_on_upload_records
+    when_i_go_to_the_import_page
     then_i_should_see_the_upload
     and_i_should_see_the_vaccination_records
 
@@ -217,7 +209,7 @@ describe "Immunisation imports" do
     expect(page).to have_content("Import completed")
   end
 
-  def when_i_go_to_the_import_edit_page
+  def when_i_go_to_the_import_page
     click_link ImmunisationImport.last.created_at.to_fs(:long), match: :first
   end
 end

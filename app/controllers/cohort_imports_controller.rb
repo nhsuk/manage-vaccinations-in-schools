@@ -2,8 +2,8 @@
 
 class CohortImportsController < ApplicationController
   before_action :set_programme
-  before_action :set_cohort_import, only: %i[show edit update]
-  before_action :set_patients, only: %i[show edit]
+  before_action :set_cohort_import, only: %i[show update]
+  before_action :set_patients, only: %i[show]
 
   def new
     @cohort_import = CohortImport.new
@@ -37,10 +37,6 @@ class CohortImportsController < ApplicationController
   end
 
   def show
-    render layout: "full"
-  end
-
-  def edit
     if @cohort_import.rows_are_invalid?
       @cohort_import.load_serialized_errors!
       render :errors and return

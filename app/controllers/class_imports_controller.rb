@@ -2,8 +2,8 @@
 
 class ClassImportsController < ApplicationController
   before_action :set_session
-  before_action :set_class_import, only: %i[show edit update]
-  before_action :set_patients, only: %i[show edit]
+  before_action :set_class_import, only: %i[show update]
+  before_action :set_patients, only: %i[show]
 
   def new
     @class_import = ClassImport.new
@@ -37,10 +37,6 @@ class ClassImportsController < ApplicationController
   end
 
   def show
-    render layout: "full"
-  end
-
-  def edit
     if @class_import.rows_are_invalid?
       @class_import.load_serialized_errors!
       render :errors and return

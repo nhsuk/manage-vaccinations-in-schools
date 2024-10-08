@@ -22,7 +22,7 @@ describe "Import class lists" do
     when_i_upload_a_file_with_invalid_fields
     then_i_should_see_the_imports_page_with_the_processing_flash
 
-    when_i_go_to_the_import_edit_page
+    when_i_go_to_the_import_page
     then_i_should_see_the_holding_page
 
     when_i_wait_for_the_background_job_to_complete
@@ -33,15 +33,9 @@ describe "Import class lists" do
     and_i_upload_a_valid_file
     then_i_should_see_the_imports_page_with_the_completed_flash
 
-    when_i_go_to_the_import_edit_page
-    then_i_should_see_the_patients
-
-    when_i_click_on_upload_records
+    when_i_go_to_the_import_page
     then_i_should_see_the_upload
     and_i_should_see_the_patients
-
-    when_i_click_on_the_imports_tab
-    then_i_should_see_the_import
 
     when_i_visit_a_session_page_for_the_hpv_programme
     then_i_should_see_the_children_added_to_the_session
@@ -179,7 +173,7 @@ describe "Import class lists" do
     visit current_path
   end
 
-  def when_i_go_to_the_import_edit_page
+  def when_i_go_to_the_import_page
     click_link ClassImport.last.created_at.to_fs(:long), match: :first
   end
 end

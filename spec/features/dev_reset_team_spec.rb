@@ -33,12 +33,6 @@ describe "Dev endpoint to reset a team" do
     click_on "Continue"
 
     perform_enqueued_jobs
-    visit edit_programme_cohort_import_path(@programme, CohortImport.last)
-
-    expect(page).to have_content("Full nameNHS numberDate of birthPostcode")
-
-    click_on "Upload records"
-
     expect(@team.cohorts.flat_map(&:patients).size).to eq(3)
     expect(@team.cohorts.flat_map(&:patients).flat_map(&:parents).size).to eq(3)
   end
@@ -56,12 +50,6 @@ describe "Dev endpoint to reset a team" do
     click_on "Continue"
 
     perform_enqueued_jobs
-    visit edit_programme_immunisation_import_path(
-            @programme,
-            ImmunisationImport.last
-          )
-
-    click_on "Upload records"
     expect(VaccinationRecord.count).to eq(8)
   end
 

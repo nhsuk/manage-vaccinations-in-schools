@@ -8,30 +8,91 @@
 
 <%= h1 "Vaccination report (uploaded #{@immunisation_import.created_at.to_fs(:long)})" %>
 
-<%= render AppCardComponent.new do |card| %>
-  <% card.with_heading { "Vaccination report" } %>
+<% unless @immunisation_import.recorded? %>
+  <p>
+    This import is still processing. Please check back later.
+  </p>
+<% else %>
+  <%= render AppCardComponent.new do |card| %>
+    <% card.with_heading { "Vaccination report" } %>
 
-  <%= govuk_summary_list(
-        classes: %w[app-summary-list--no-bottom-border
-                    nhsuk-u-margin-bottom-0],
-      ) do |summary_list| %>
-    <%= summary_list.with_row do |row| %>
-      <%= row.with_key { "Uploaded on" } %>
-      <%= row.with_value { @immunisation_import.created_at.to_fs(:long) } %>
-    <% end %>
+    <%= govuk_summary_list(
+          classes: %w[app-summary-list--no-bottom-border
+                      nhsuk-u-margin-bottom-0],
+        ) do |summary_list| %>
+      <%= summary_list.with_row do |row| %>
+        <%= row.with_key { "Uploaded on" } %>
+        <%= row.with_value { @immunisation_import.created_at.to_fs(:long) } %>
+      <% end %>
 
-    <%= summary_list.with_row do |row| %>
-      <%= row.with_key { "Uploaded by" } %>
-      <%= row.with_value { @immunisation_import.uploaded_by.full_name } %>
-    <% end %>
+      <%= summary_list.with_row do |row| %>
+        <%= row.with_key { "Uploaded by" } %>
+        <%= row.with_value { @immunisation_import.uploaded_by.full_name } %>
+      <% end %>
 
-    <%= summary_list.with_row do |row| %>
-      <%= row.with_key { "Programme" } %>
-      <%= row.with_value { @programme.name } %>
+      <%= summary_list.with_row do |row| %>
+        <%= row.with_key { "Programme" } %>
+        <%= row.with_value { @programme.name } %>
+      <% end %>
     <% end %>
   <% end %>
-<% end %>
 
-<%= render AppVaccinationRecordTableComponent.new(
-      @immunisation_import.recorded? ? @vaccination_records.recorded : @vaccination_records.draft
-    ) %>
+  <% if @vaccination_records_with_pending_changes.present? %>
+    <div class="nhsuk-table__panel-with-heading-tab">
+      <h3 class="nhsuk-table__heading-tab">
+        <%= pluralize(@vaccination_records_with_pending_changes.count,
+                      "duplicate record") %>
+        <%= @vaccination_records_with_pending_changes.count == 1 ?
+              "needs" : "need" %> review
+      </h3>
+      <%= govuk_table(html_attributes: {
+                        class: "nhsuk-table-responsive",
+                      }) do |table| %>
+        <% table.with_head do |head| %>
+          <% head.with_row do |row| %>
+            <% row.with_cell(text: "Child record") %>
+            <% row.with_cell(text: "Issue to review") %>
+            <% row.with_cell(text: "Actions") %>
+          <% end %>
+        <% end %>
+
+        <% table.with_body do |body| %>
+          <% @vaccination_records_with_pending_changes.each do |vaccination_record| %>
+            <% body.with_row do |row| %>
+              <% row.with_cell do %>
+                <span class="nhsuk-table-responsive__heading">Child record</span>
+                <%= vaccination_record.patient.full_name %>
+              <% end %>
+
+              <% row.with_cell do %>
+                <span class="nhsuk-table-responsive__heading">
+                  Issue to review
+                </span>
+                A field in a duplicate record does not match a previously uploaded
+                record
+              <% end %>
+
+              <% row.with_cell do %>
+                <span class="nhsuk-table-responsive__heading">Actions</span>
+                <%= govuk_link_to programme_immunisation_import_duplicate_path(
+                      @programme,
+                      @immunisation_import,
+                      vaccination_record
+                    ) do %>
+                  Review
+                  <span class="nhsuk-u-visually-hidden">
+                    <%= vaccination_record.patient.full_name %>
+                  </span>
+                <% end %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= render AppVaccinationRecordTableComponent.new(
+        @immunisation_import.recorded? ? @vaccination_records.recorded : @vaccination_records.draft
+      ) %>
+<% end %>
