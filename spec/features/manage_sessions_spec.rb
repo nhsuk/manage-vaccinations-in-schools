@@ -65,7 +65,7 @@ describe "Manage sessions" do
   def when_i_go_to_todays_sessions_as_a_nurse
     sign_in @team.users.first
     visit "/dashboard"
-    click_link "School sessions", match: :first
+    click_link "Sessions", match: :first
   end
 
   def when_i_go_to_unscheduled_sessions

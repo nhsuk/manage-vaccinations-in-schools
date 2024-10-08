@@ -57,7 +57,7 @@ describe "Import class lists" do
   def when_i_visit_a_session_page_for_the_hpv_programme
     sign_in @user
     visit "/dashboard"
-    click_on "School sessions", match: :first
+    click_on "Sessions", match: :first
     click_on "Unscheduled"
     click_on "Waterloo Road"
   end
