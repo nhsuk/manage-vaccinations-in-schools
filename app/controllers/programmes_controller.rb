@@ -14,11 +14,12 @@ class ProgrammesController < ApplicationController
 
   def sessions
     academic_year = Date.current.academic_year
+    sessions_for_programme = policy_scope(Session).has_programme(@programme)
 
-    @scheduled_sessions = @programme.sessions.scheduled
+    @scheduled_sessions = sessions_for_programme.scheduled
 
     @unscheduled_sessions =
-      @programme.sessions.unscheduled +
+      sessions_for_programme.unscheduled +
         policy_scope(Location)
           .school
           .for_year_groups(@programme.year_groups)
@@ -27,7 +28,7 @@ class ProgrammesController < ApplicationController
             Session.new(team: current_user.team, location:, academic_year:)
           end
 
-    @completed_sessions = @programme.sessions.completed
+    @completed_sessions = sessions_for_programme.completed
   end
 
   private
