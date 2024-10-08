@@ -198,6 +198,7 @@ class Session < ApplicationRecord
   def set_programmes
     return unless new_record?
     return if location.nil?
+    return unless programmes.empty?
 
     self.programmes =
       team.programmes.select { _1.year_groups.intersect?(location.year_groups) }
