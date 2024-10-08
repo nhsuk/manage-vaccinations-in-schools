@@ -12,6 +12,10 @@ class AppSessionSummaryComponent < ViewComponent::Base
       classes: %w[app-summary-list--full-width nhsuk-u-margin-bottom-4]
     ) do |summary_list|
       summary_list.with_row do |row|
+        row.with_key { "Type" }
+        row.with_value { type }
+      end
+      summary_list.with_row do |row|
         row.with_key { "Programmes" }
         row.with_value { programmes }
       end
@@ -31,6 +35,10 @@ class AppSessionSummaryComponent < ViewComponent::Base
   end
 
   private
+
+  def type
+    @session.location&.clinic? ? "Community clinic" : "School session"
+  end
 
   def programmes
     tag.ul(class: "nhsuk-list") do
