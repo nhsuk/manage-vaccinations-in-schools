@@ -118,7 +118,7 @@ end
 def create_imports(team)
   programme = team.programmes.find_by(type: "hpv")
 
-  %i[pending invalid processed recorded].each do |status|
+  %i[pending invalid recorded].each do |status|
     FactoryBot.create(:cohort_import, status, team:, programme:)
     FactoryBot.create(:immunisation_import, status, team:, programme:)
     FactoryBot.create(
