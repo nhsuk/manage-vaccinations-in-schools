@@ -251,6 +251,9 @@ describe Patient do
           it "adds the patient to the session" do
             match_consent_form!
             expect(new_session.reload.patients).to include(patient)
+            expect(
+              patient.patient_sessions.find_by(session: new_session)
+            ).to be_active
           end
         end
       end
