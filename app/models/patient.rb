@@ -175,7 +175,9 @@ class Patient < ApplicationRecord
             .or(Session.unscheduled)
 
         new_sessions.find_each do |session|
-          patient_sessions.find_or_create_by!(session:)
+          patient_sessions
+            .find_or_initialize_by(session:)
+            .tap { |patient_session| patient_session.update!(active: true) }
         end
       end
     end
