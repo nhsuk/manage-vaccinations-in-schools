@@ -66,8 +66,8 @@ describe Location do
   describe "validations" do
     it { should validate_presence_of(:name) }
 
-    context "with a generic clinic" do
-      subject(:location) { build(:location, :generic_clinic, ods_code: "abc") }
+    context "with a clinic" do
+      subject(:location) { build(:location, :clinic, ods_code: "abc") }
 
       it { should validate_presence_of(:ods_code) }
       it { should validate_uniqueness_of(:ods_code) }
