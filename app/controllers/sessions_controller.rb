@@ -1,24 +1,7 @@
 # frozen_string_literal: true
 
 class SessionsController < ApplicationController
-  before_action :set_session,
-                except: %i[new index scheduled unscheduled completed]
-
-  skip_after_action :verify_policy_scoped, only: :new
-
-  def new
-    location =
-      team.schools.for_year_groups(team.year_groups).find(params[:location_id])
-
-    session =
-      ActiveRecord::Base.transaction do
-        Session.find_or_create_by!(team:, location:, academic_year:).tap(
-          &:create_patient_sessions!
-        )
-      end
-
-    redirect_to session_path(session)
-  end
+  before_action :set_session, only: %i[show edit make_in_progress]
 
   def index
     @sessions = policy_scope(Session).today
@@ -33,13 +16,7 @@ class SessionsController < ApplicationController
   end
 
   def unscheduled
-    @sessions =
-      policy_scope(Session).unscheduled +
-        team
-          .schools
-          .for_year_groups(team.year_groups)
-          .has_no_session
-          .map { |location| Session.new(team:, location:, academic_year:) }
+    @sessions = policy_scope(Session).unscheduled
 
     render layout: "full"
   end

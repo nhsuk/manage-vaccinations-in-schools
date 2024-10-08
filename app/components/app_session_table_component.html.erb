@@ -19,11 +19,7 @@
             <span class="nhsuk-table-responsive__heading">Location</span>
 
             <span>
-              <% if session.new_record? %>
-                <%= govuk_link_to helpers.session_location(session), new_session_path(session, location_id: session.location.id) %>
-              <% else %>
-                <%= govuk_link_to helpers.session_location(session), session_path(session) %>
-              <% end %>
+              <%= govuk_link_to helpers.session_location(session), session_path(session) %>
 
               <% if (location = session.location)&.has_address? %>
                 <br />
