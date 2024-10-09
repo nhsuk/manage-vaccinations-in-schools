@@ -4,8 +4,8 @@ en:
       class_import_row:
         address_line_1: <code>CHILD_ADDRESS_LINE_1</code>
         address_line_2: <code>CHILD_ADDRESS_LINE_2</code>
-        address_postcode: <code>CHILD_ADDRESS_POSTCODE</code>
-        address_town: <code>CHILD_ADDRESS_TOWN</code>
+        address_postcode: <code>CHILD_POSTCODE</code>
+        address_town: <code>CHILD_TOWN</code>
         common_name: <code>CHILD_COMMON_NAME</code>
         date_of_birth: <code>CHILD_DATE_OF_BIRTH</code>
         first_name: <code>CHILD_FIRST_NAME</code>
@@ -22,8 +22,8 @@ en:
       cohort_import_row:
         address_line_1: <code>CHILD_ADDRESS_LINE_1</code>
         address_line_2: <code>CHILD_ADDRESS_LINE_2</code>
-        address_postcode: <code>CHILD_ADDRESS_POSTCODE</code>
-        address_town: <code>CHILD_ADDRESS_TOWN</code>
+        address_postcode: <code>CHILD_POSTCODE</code>
+        address_town: <code>CHILD_TOWN</code>
         common_name: <code>CHILD_COMMON_NAME</code>
         date_of_birth: <code>CHILD_DATE_OF_BIRTH</code>
         first_name: <code>CHILD_FIRST_NAME</code>

@@ -12,8 +12,8 @@ describe ClassImportRow do
     {
       "CHILD_ADDRESS_LINE_1" => "10 Downing Street",
       "CHILD_ADDRESS_LINE_2" => "",
-      "CHILD_ADDRESS_POSTCODE" => "SW1A 1AA",
-      "CHILD_ADDRESS_TOWN" => "London",
+      "CHILD_POSTCODE" => "SW1A 1AA",
+      "CHILD_TOWN" => "London",
       "CHILD_COMMON_NAME" => "Jim",
       "CHILD_DATE_OF_BIRTH" => "2010-01-01",
       "CHILD_FIRST_NAME" => "Jimmy",

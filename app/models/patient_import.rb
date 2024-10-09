@@ -9,8 +9,8 @@ class PatientImport < ApplicationRecord
     %w[
       CHILD_ADDRESS_LINE_1
       CHILD_ADDRESS_LINE_2
-      CHILD_ADDRESS_POSTCODE
-      CHILD_ADDRESS_TOWN
+      CHILD_POSTCODE
+      CHILD_TOWN
       CHILD_COMMON_NAME
       CHILD_DATE_OF_BIRTH
       CHILD_FIRST_NAME

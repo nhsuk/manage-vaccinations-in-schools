@@ -135,11 +135,11 @@ class PatientImportRow
   end
 
   def address_town
-    @data["CHILD_ADDRESS_TOWN"]&.strip
+    @data["CHILD_TOWN"]&.strip
   end
 
   def address_postcode
-    @data["CHILD_ADDRESS_POSTCODE"]&.strip&.presence
+    @data["CHILD_POSTCODE"]&.strip&.presence
   end
 
   def parent_1_name
