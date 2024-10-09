@@ -67,6 +67,7 @@ environments:
       RAILS_ENV: staging
       MAVIS__HOST: "accessibility.mavistesting.com"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "accessibility.mavistesting.com"
+      SETTINGS__ALLOW_DEV_PHONE_NUMBERS: true
   test:
     http:
       alias:
@@ -77,6 +78,7 @@ environments:
       RAILS_ENV: staging
       MAVIS__HOST: "test.mavistesting.com"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "test.mavistesting.com"
+      SETTINGS__ALLOW_DEV_PHONE_NUMBERS: true
   training:
     http:
       alias:
@@ -86,6 +88,7 @@ environments:
       RAILS_ENV: staging
       MAVIS__HOST: "training.manage-vaccinations-in-schools.nhs.uk"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "training.manage-vaccinations-in-schools.nhs.uk"
+      SETTINGS__ALLOW_DEV_PHONE_NUMBERS: true
   production:
     http:
       alias:
