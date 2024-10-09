@@ -11,7 +11,7 @@ describe ProcessImportJob do
 
       it "parses and processes the rows" do
         expect(import).to receive(:parse_rows!)
-        expect(import).to receive(:process!)
+        expect(import).to receive(:record!)
       end
     end
 
@@ -20,7 +20,7 @@ describe ProcessImportJob do
 
       it "parses and processes the rows" do
         expect(import).to receive(:parse_rows!)
-        expect(import).to receive(:process!)
+        expect(import).to receive(:record!)
       end
     end
 
@@ -29,7 +29,7 @@ describe ProcessImportJob do
 
       it "parses and processes the rows" do
         expect(import).to receive(:parse_rows!)
-        expect(import).to receive(:process!)
+        expect(import).to receive(:record!)
       end
     end
   end

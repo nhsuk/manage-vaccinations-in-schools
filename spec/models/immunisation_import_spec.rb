@@ -120,8 +120,8 @@ describe ImmunisationImport do
     end
   end
 
-  describe "#process!" do
-    subject(:process!) { immunisation_import.process! }
+  describe "#record!" do
+    subject(:record!) { immunisation_import.record! }
 
     context "with valid Flu rows" do
       let(:programme) { create(:programme, :flu_all_vaccines) }
@@ -129,8 +129,8 @@ describe ImmunisationImport do
 
       it "creates locations, patients, and vaccination records" do
         # stree-ignore
-        expect { process! }
-          .to change(immunisation_import, :processed_at).from(nil)
+        expect { record! }
+          .to change(immunisation_import, :recorded_at).from(nil)
           .and change(immunisation_import.vaccination_records, :count).by(7)
           .and change(immunisation_import.locations, :count).by(1)
           .and change(immunisation_import.patients, :count).by(7)
@@ -142,8 +142,8 @@ describe ImmunisationImport do
         # identical.
 
         # stree-ignore
-        expect { immunisation_import.process! }
-          .to not_change(immunisation_import, :processed_at)
+        expect { immunisation_import.record! }
+          .to not_change(immunisation_import, :recorded_at)
           .and not_change(VaccinationRecord, :count)
           .and not_change(Location, :count)
           .and not_change(Patient, :count)
@@ -154,7 +154,7 @@ describe ImmunisationImport do
 
       it "stores statistics on the import" do
         # stree-ignore
-        expect { process! }
+        expect { record! }
           .to change(immunisation_import, :exact_duplicate_record_count).to(0)
           .and change(immunisation_import, :new_record_count).to(7)
           .and change(immunisation_import, :not_administered_record_count).to(4)
@@ -164,126 +164,9 @@ describe ImmunisationImport do
         build(:immunisation_import, programme:, csv:, uploaded_by:).record!
         csv.rewind
 
-        process!
+        record!
         expect(immunisation_import.exact_duplicate_record_count).to eq(7)
       end
-    end
-
-    context "with valid HPV rows" do
-      let(:programme) { create(:programme, :hpv_all_vaccines) }
-      let(:file) { "valid_hpv.csv" }
-
-      it "creates locations, patients, and vaccination records" do
-        # stree-ignore
-        expect { process! }
-          .to change(immunisation_import, :processed_at).from(nil)
-          .and change(immunisation_import.vaccination_records, :count).by(8)
-          .and change(immunisation_import.locations, :count).by(1)
-          .and change(immunisation_import.patients, :count).by(7)
-          .and change(immunisation_import.sessions, :count).by(3)
-          .and change(immunisation_import.patient_sessions, :count).by(8)
-          .and change(immunisation_import.batches, :count).by(6)
-
-        # Second import should not duplicate the vaccination records if they're
-        # identical.
-
-        # stree-ignore
-        expect { immunisation_import.process! }
-          .to not_change(immunisation_import, :processed_at)
-          .and not_change(VaccinationRecord, :count)
-          .and not_change(Location, :count)
-          .and not_change(Patient, :count)
-          .and not_change(Session, :count)
-          .and not_change(PatientSession, :count)
-          .and not_change(Batch, :count)
-      end
-
-      it "stores statistics on the import" do
-        # stree-ignore
-        expect { process! }
-          .to change(immunisation_import, :exact_duplicate_record_count).to(0)
-          .and change(immunisation_import, :new_record_count).to(8)
-          .and change(immunisation_import, :not_administered_record_count).to(0)
-      end
-
-      it "ignores and counts duplicate records" do
-        build(:immunisation_import, programme:, csv:, uploaded_by:).record!
-        csv.rewind
-
-        process!
-        expect(immunisation_import.exact_duplicate_record_count).to eq(8)
-      end
-
-      it "creates a new session for each date" do
-        process!
-
-        expect(immunisation_import.sessions.count).to eq(3)
-
-        session = immunisation_import.sessions.first
-        expect(session.dates.map(&:value)).to contain_exactly(
-          Date.new(2024, 5, 14)
-        )
-      end
-    end
-
-    context "with an existing patient matching the name" do
-      let(:programme) { create(:programme, :flu_all_vaccines) }
-      let(:file) { "valid_flu.csv" }
-
-      let!(:patient) do
-        create(
-          :patient,
-          first_name: "Chyna",
-          last_name: "Pickle",
-          date_of_birth: Date.new(2012, 9, 12),
-          nhs_number: nil
-        )
-      end
-
-      it "doesn't create an additional patient" do
-        expect { process! }.to change(Patient, :count).by(6)
-      end
-
-      it "doesn't update the NHS number on the existing patient" do
-        expect { process! }.not_to change(patient, :nhs_number).from(nil)
-      end
-    end
-
-    context "with a patient record that has different attributes" do
-      let(:programme) { create(:programme, :hpv_all_vaccines) }
-      let(:file) { "valid_hpv_with_changes.csv" }
-      let!(:existing_patient) do
-        create(
-          :patient,
-          nhs_number: "7420180008",
-          first_name: "Chyna",
-          last_name: "Pickle",
-          date_of_birth: Date.new(2011, 9, 12),
-          gender_code: "not_specified",
-          address_postcode: "LE3 2DA"
-        )
-      end
-
-      it "identifies potential changes in the patient record" do
-        expect { process! }.not_to change(Patient, :count)
-
-        expect(existing_patient.reload.pending_changes).to eq(
-          "address_postcode" => "LE3 2DB",
-          "cohort_id" => team.cohorts.first.id,
-          "date_of_birth" => "2011-09-13",
-          "gender_code" => "female",
-          "school_id" => Location.find_by(urn: "110158").id
-        )
-      end
-    end
-  end
-
-  describe "#record!" do
-    subject(:record!) { immunisation_import.record! }
-
-    context "with valid Flu rows" do
-      let(:programme) { create(:programme, :flu_all_vaccines) }
-      let(:file) { "valid_flu.csv" }
 
       it "records the patients" do
         expect { record! }.to change(Patient.recorded, :count).from(0).to(7)
@@ -306,6 +189,58 @@ describe ImmunisationImport do
       let(:programme) { create(:programme, :hpv_all_vaccines) }
       let(:file) { "valid_hpv.csv" }
 
+      it "creates locations, patients, and vaccination records" do
+        # stree-ignore
+        expect { record! }
+          .to change(immunisation_import, :recorded_at).from(nil)
+          .and change(immunisation_import.vaccination_records, :count).by(8)
+          .and change(immunisation_import.locations, :count).by(1)
+          .and change(immunisation_import.patients, :count).by(7)
+          .and change(immunisation_import.sessions, :count).by(3)
+          .and change(immunisation_import.patient_sessions, :count).by(8)
+          .and change(immunisation_import.batches, :count).by(6)
+
+        # Second import should not duplicate the vaccination records if they're
+        # identical.
+
+        # stree-ignore
+        expect { immunisation_import.record! }
+          .to not_change(immunisation_import, :recorded_at)
+          .and not_change(VaccinationRecord, :count)
+          .and not_change(Location, :count)
+          .and not_change(Patient, :count)
+          .and not_change(Session, :count)
+          .and not_change(PatientSession, :count)
+          .and not_change(Batch, :count)
+      end
+
+      it "stores statistics on the import" do
+        # stree-ignore
+        expect { record! }
+          .to change(immunisation_import, :exact_duplicate_record_count).to(0)
+          .and change(immunisation_import, :new_record_count).to(8)
+          .and change(immunisation_import, :not_administered_record_count).to(0)
+      end
+
+      it "ignores and counts duplicate records" do
+        build(:immunisation_import, programme:, csv:, uploaded_by:).record!
+        csv.rewind
+
+        record!
+        expect(immunisation_import.exact_duplicate_record_count).to eq(8)
+      end
+
+      it "creates a new session for each date" do
+        record!
+
+        expect(immunisation_import.sessions.count).to eq(3)
+
+        session = immunisation_import.sessions.first
+        expect(session.dates.map(&:value)).to contain_exactly(
+          Date.new(2024, 5, 14)
+        )
+      end
+
       it "records the patients" do
         expect { record! }.to change(Patient.recorded, :count).from(0).to(7)
       end
@@ -319,6 +254,57 @@ describe ImmunisationImport do
       it "activates the patient sessions" do
         expect { record! }.to change(PatientSession.active, :count).from(0).to(
           8
+        )
+      end
+    end
+
+    context "with an existing patient matching the name" do
+      let(:programme) { create(:programme, :flu_all_vaccines) }
+      let(:file) { "valid_flu.csv" }
+
+      let!(:patient) do
+        create(
+          :patient,
+          first_name: "Chyna",
+          last_name: "Pickle",
+          date_of_birth: Date.new(2012, 9, 12),
+          nhs_number: nil
+        )
+      end
+
+      it "doesn't create an additional patient" do
+        expect { record! }.to change(Patient, :count).by(6)
+      end
+
+      it "doesn't update the NHS number on the existing patient" do
+        expect { record! }.not_to change(patient, :nhs_number).from(nil)
+      end
+    end
+
+    context "with a patient record that has different attributes" do
+      let(:programme) { create(:programme, :hpv_all_vaccines) }
+      let(:file) { "valid_hpv_with_changes.csv" }
+      let!(:existing_patient) do
+        create(
+          :patient,
+          nhs_number: "7420180008",
+          first_name: "Chyna",
+          last_name: "Pickle",
+          date_of_birth: Date.new(2011, 9, 12),
+          gender_code: "not_specified",
+          address_postcode: "LE3 2DA"
+        )
+      end
+
+      it "identifies potential changes in the patient record" do
+        expect { record! }.not_to change(Patient, :count)
+
+        expect(existing_patient.reload.pending_changes).to eq(
+          "address_postcode" => "LE3 2DB",
+          "cohort_id" => team.cohorts.first.id,
+          "date_of_birth" => "2011-09-13",
+          "gender_code" => "female",
+          "school_id" => Location.find_by(urn: "110158").id
         )
       end
     end

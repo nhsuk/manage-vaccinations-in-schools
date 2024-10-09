@@ -123,23 +123,22 @@ describe ClassImport do
     end
   end
 
-  describe "#process!" do
-    subject(:process!) { class_import.process! }
+  describe "#record!" do
+    subject(:record!) { class_import.record! }
 
     let(:file) { "valid.csv" }
 
     it "creates patients and parents" do
       # stree-ignore
-      expect { process! }
-        .to change(class_import, :processed_at).from(nil)
+      expect { record! }
+        .to change(class_import, :recorded_at).from(nil)
         .and change(class_import.patients, :count).by(4)
         .and change(class_import.parents, :count).by(3)
         .and change(team.cohorts, :count).by(1)
 
-      expect(Cohort.first).to have_attributes(
-        patients: Patient.all,
-        birth_academic_year: 2009
-      )
+      cohort = Cohort.first
+      expect(cohort.birth_academic_year).to eq(2009)
+      expect(cohort.patients.pluck(:id)).to match_array(Patient.pluck(:id))
 
       expect(Patient.first).to have_attributes(
         nhs_number: "1234567890",
@@ -148,8 +147,7 @@ describe ClassImport do
         school: location,
         address_line_1: "10 Downing Street",
         address_town: "London",
-        address_postcode: "SW1A 1AA",
-        recorded_at: nil
+        address_postcode: "SW1A 1AA"
       )
 
       expect(Patient.first.parents).to be_empty
@@ -161,8 +159,7 @@ describe ClassImport do
         school: location,
         address_line_1: "10 Downing Street",
         address_town: "London",
-        address_postcode: "SW1A 1AA",
-        recorded_at: nil
+        address_postcode: "SW1A 1AA"
       )
 
       expect(Patient.second.parents.count).to eq(1)
@@ -170,8 +167,7 @@ describe ClassImport do
       expect(Patient.second.parents.first).to have_attributes(
         name: "John Smith",
         phone: "07412345678",
-        email: "john@example.com",
-        recorded_at: nil
+        email: "john@example.com"
       )
 
       expect(Patient.second.parent_relationships.first).to be_father
@@ -183,8 +179,7 @@ describe ClassImport do
         school: location,
         address_line_1: "11 Downing Street",
         address_town: "London",
-        address_postcode: "SW1A 1AA",
-        recorded_at: nil
+        address_postcode: "SW1A 1AA"
       )
 
       expect(Patient.third.parents.count).to eq(2)
@@ -192,15 +187,13 @@ describe ClassImport do
       expect(Patient.third.parents.first).to have_attributes(
         name: "Jane Doe",
         phone: "07412345679",
-        email: "jane@example.com",
-        recorded_at: nil
+        email: "jane@example.com"
       )
 
       expect(Patient.third.parents.second).to have_attributes(
         name: "Richard Doe",
         phone: nil,
-        email: "richard@example.com",
-        recorded_at: nil
+        email: "richard@example.com"
       )
 
       expect(Patient.third.parent_relationships.first).to be_mother
@@ -213,8 +206,7 @@ describe ClassImport do
         school: location,
         address_line_1: nil,
         address_town: nil,
-        address_postcode: nil,
-        recorded_at: nil
+        address_postcode: nil
       )
 
       expect(Patient.fourth.parents).to be_empty
@@ -222,8 +214,8 @@ describe ClassImport do
       # Second import should not duplicate the patients if they're identical.
 
       # stree-ignore
-      expect { class_import.process! }
-        .to not_change(class_import, :processed_at)
+      expect { class_import.record! }
+        .to not_change(class_import, :recorded_at)
         .and not_change(Patient, :count)
         .and not_change(Parent, :count)
         .and not_change(Cohort, :count)
@@ -231,7 +223,7 @@ describe ClassImport do
 
     it "stores statistics on the import" do
       # stree-ignore
-      expect { process! }
+      expect { record! }
         .to change(class_import, :exact_duplicate_record_count).to(0)
         .and change(class_import, :new_record_count).to(4)
         .and change(class_import, :changed_record_count).to(0)
@@ -241,7 +233,7 @@ describe ClassImport do
       build(:class_import, csv:, team:, session:).record!
       csv.rewind
 
-      process!
+      record!
       expect(class_import.exact_duplicate_record_count).to eq(4)
     end
 
@@ -257,7 +249,7 @@ describe ClassImport do
       end
 
       it "doesn't create an additional patient" do
-        expect { process! }.to change(Patient, :count).by(3)
+        expect { record! }.to change(Patient, :count).by(3)
       end
     end
 
@@ -270,19 +262,13 @@ describe ClassImport do
 
       it "removes the child from the original session and adds them to the new one" do
         expect(patient.upcoming_sessions).to contain_exactly(different_session)
-        expect { process! }.to change { patient.reload.school }.to(
+        expect { record! }.to change { patient.reload.school }.to(
           session.location
         )
         expect(patient.upcoming_sessions).to contain_exactly(session)
         expect(patient.patient_sessions.find_by(session:)).to be_active
       end
     end
-  end
-
-  describe "#record!" do
-    subject(:record!) { class_import.record! }
-
-    let(:file) { "valid.csv" }
 
     it "records the patients" do
       expect { record! }.to change(Patient.recorded, :count).from(0).to(4)

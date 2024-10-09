@@ -19,7 +19,7 @@ module CSVImportable
     scope :csv_not_removed, -> { where(csv_removed_at: nil) }
 
     enum :status,
-         %i[pending_import rows_are_invalid processed recorded],
+         %i[pending_import rows_are_invalid recorded],
          default: :pending_import,
          validate: true
 
@@ -37,7 +37,7 @@ module CSVImportable
     validate :headers_are_valid
     validate :rows_are_valid
 
-    before_save :ensure_processed_with_count_statistics
+    before_save :ensure_recorded_with_count_statistics
   end
 
   def csv=(file)
@@ -80,8 +80,8 @@ module CSVImportable
     end
   end
 
-  def process!
-    return if processed?
+  def record!
+    return if recorded?
 
     parse_rows! if rows.nil?
     return if invalid?
@@ -96,20 +96,10 @@ module CSVImportable
         counts[count_column_to_increment] += 1
       end
 
-      update!(processed_at: Time.zone.now, status: :processed, **counts)
-    end
-  end
-
-  def record!
-    return if recorded?
-
-    process! unless processed?
-    return if invalid?
-
-    ActiveRecord::Base.transaction do
       record_rows
-      update!(recorded_at: Time.zone.now, status: :recorded)
     end
+
+    update!(recorded_at: Time.zone.now, status: :recorded, **counts)
   end
 
   def remove!
@@ -154,13 +144,11 @@ module CSVImportable
     end
   end
 
-  def ensure_processed_with_count_statistics
-    return if recorded?
-
-    if processed? && count_columns.any? { |column| send(column).nil? }
-      raise "Count statistics must be set for a processed import."
-    elsif !processed? && count_columns.any? { |column| !send(column).nil? }
-      raise "Count statistics must not be set for a non-processed import."
+  def ensure_recorded_with_count_statistics
+    if recorded? && count_columns.any? { |column| send(column).nil? }
+      raise "Count statistics must be set for a recorded import."
+    elsif !recorded? && count_columns.any? { |column| !send(column).nil? }
+      raise "Count statistics must not be set for a non-recorded import."
     end
   end
 end
