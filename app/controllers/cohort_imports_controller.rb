@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class CohortImportsController < ApplicationController
+  include Pagy::Backend
+
   before_action :set_programme
   before_action :set_cohort_import, only: %i[show update]
-  before_action :set_patients, only: %i[show]
 
   def new
     @cohort_import = CohortImport.new
@@ -42,6 +43,8 @@ class CohortImportsController < ApplicationController
       render :errors and return
     end
 
+    @pagy, @patients = pagy(@cohort_import.patients)
+
     render layout: "full"
   end
 
@@ -59,10 +62,6 @@ class CohortImportsController < ApplicationController
 
   def set_cohort_import
     @cohort_import = policy_scope(CohortImport).find(params[:id])
-  end
-
-  def set_patients
-    @patients = @cohort_import.patients
   end
 
   def cohort_import_params

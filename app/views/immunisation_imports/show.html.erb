@@ -92,7 +92,7 @@
     </div>
   <% end %>
 
-  <%= render AppVaccinationRecordTableComponent.new(
-        @vaccination_records.recorded, count: @vaccination_records.recorded.count,
-      ) %>
+  <%= render AppVaccinationRecordTableComponent.new(@vaccination_records, count: @pagy.count) %>
+
+  <%= govuk_pagination(pagy: @pagy) %>
 <% end %>

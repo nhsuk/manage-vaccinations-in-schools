@@ -36,5 +36,7 @@
     <% end %>
   <% end %>
 
-  <%= render AppPatientTableComponent.new(@patients, count: @patients.count) %>
+  <%= render AppPatientTableComponent.new(@patients, count: @pagy.count) %>
+
+  <%= govuk_pagination(pagy: @pagy) %>
 <% end %>

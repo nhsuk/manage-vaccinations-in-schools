@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class ImmunisationImportsController < ApplicationController
+  include Pagy::Backend
+
   before_action :set_programme
   before_action :set_immunisation_import, only: %i[show update]
-  before_action :set_vaccination_records, only: %i[show]
-  before_action :set_vaccination_records_with_pending_changes, only: %i[show]
 
   def new
     @immunisation_import = ImmunisationImport.new
@@ -43,6 +43,23 @@ class ImmunisationImportsController < ApplicationController
       render :errors and return
     end
 
+    vaccination_records =
+      @immunisation_import.vaccination_records.recorded.includes(
+        :location,
+        :patient,
+        :session
+      )
+
+    @pagy, @vaccination_records = pagy(vaccination_records)
+
+    @vaccination_records_with_pending_changes =
+      vaccination_records
+        .left_joins(:patient)
+        .where(
+          "patients.pending_changes != '{}' OR vaccination_records.pending_changes != '{}'"
+        )
+        .distinct
+
     render layout: "full"
   end
 
@@ -66,25 +83,6 @@ class ImmunisationImportsController < ApplicationController
       policy_scope(ImmunisationImport).where(programme: @programme).find(
         params[:id]
       )
-  end
-
-  def set_vaccination_records
-    @vaccination_records =
-      @immunisation_import.vaccination_records.includes(
-        :location,
-        :patient,
-        :session
-      )
-  end
-
-  def set_vaccination_records_with_pending_changes
-    @vaccination_records_with_pending_changes =
-      @vaccination_records
-        .left_joins(:patient)
-        .where(
-          "patients.pending_changes != '{}' OR vaccination_records.pending_changes != '{}'"
-        )
-        .distinct
   end
 
   def immunisation_import_params
