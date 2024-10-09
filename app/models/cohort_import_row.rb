@@ -6,13 +6,7 @@ class CohortImportRow < PatientImportRow
   SCHOOL_URN_HOME_EDUCATED = "999999"
   SCHOOL_URN_UNKNOWN = "888888"
 
-  validates :school_urn,
-            inclusion: {
-              in: -> do
-                Location.school.pluck(:urn) +
-                  [SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN]
-              end
-            }
+  validate :school_urn_inclusion
 
   def initialize(data:, team:, programme:)
     super(data:, team:, year_groups: programme.year_groups)
@@ -36,6 +30,13 @@ class CohortImportRow < PatientImportRow
       nil
     else
       school_urn == SCHOOL_URN_HOME_EDUCATED
+    end
+  end
+
+  def school_urn_inclusion
+    unless Location.school.exists?(urn: school_urn) ||
+             school_urn.in?([SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN])
+      errors.add(:school_urn, :inclusion)
     end
   end
 end
