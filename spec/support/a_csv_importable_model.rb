@@ -15,9 +15,9 @@ shared_examples_for "a CSVImportable model" do
       it { should be_invalid }
     end
 
-    it "raises if processed without updating the statistics" do
+    it "raises if recorded without updating the statistics" do
       expect {
-        subject.update!(processed_at: Time.zone.now, status: :processed)
+        subject.update!(recorded_at: Time.zone.now, status: :recorded)
       }.to raise_error(/Count statistics must be set/)
     end
   end
@@ -43,17 +43,6 @@ shared_examples_for "a CSVImportable model" do
       it "is true" do
         expect(subject.csv_removed?).to be true
       end
-    end
-  end
-
-  describe "#process!" do
-    let(:today) { Time.zone.local(2025, 1, 1) }
-
-    it "sets processed_at" do
-      expect { travel_to(today) { subject.process! } }.to change(
-        subject,
-        :processed_at
-      ).from(nil).to(today)
     end
   end
 
