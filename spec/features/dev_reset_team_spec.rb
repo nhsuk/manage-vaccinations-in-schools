@@ -54,7 +54,7 @@ describe "Dev endpoint to reset a team" do
   end
 
   def then_all_associated_data_is_deleted_when_i_reset_the_team
-    expect { visit "/reset/#{@team.ods_code}" }.to(
+    expect { visit "/reset/r1l" }.to(
       change(Patient, :count)
         .by(-10)
         .and(change(Cohort, :count).by(-2))
