@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class CohortsController < ApplicationController
+  include Pagy::Backend
+
   before_action :set_programme
 
   layout "full"
@@ -26,10 +28,8 @@ class CohortsController < ApplicationController
 
   def show
     @cohort = policy_scope(Cohort).find(params[:id])
-    @patients =
-      @cohort.patients.recorded.sort_by do |patient|
-        [patient.first_name, patient.last_name]
-      end
+    @pagy, @patients =
+      pagy(@cohort.patients.recorded.order(:first_name, :last_name))
   end
 
   private

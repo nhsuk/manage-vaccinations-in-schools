@@ -18,6 +18,11 @@ describe "Import child records" do
     when_i_go_to_the_import_page
     then_i_should_see_the_upload
     and_i_should_see_the_patients
+    and_i_should_see_the_pagination_buttons
+
+    when_i_click_on_next_page
+    then_i_should_see_the_upload
+    and_i_should_see_the_patients_for_page_two
   end
 
   def given_the_app_is_setup
@@ -56,8 +61,15 @@ describe "Import child records" do
   end
 
   def and_i_should_see_the_patients
+    expect(page).to have_content("1000 children")
     expect(page).to have_content("Full nameNHS numberDate of birthPostcode")
     expect(page).to have_content("Roxanna Mayer")
+  end
+
+  def and_i_should_see_the_patients_for_page_two
+    expect(page).to have_content("1000 children")
+    expect(page).to have_content("Full nameNHS numberDate of birthPostcode")
+    expect(page).to have_content("Elijah Christiansen")
   end
 
   def then_i_should_see_the_upload
@@ -76,5 +88,14 @@ describe "Import child records" do
 
   def when_i_go_to_the_import_page
     click_link CohortImport.last.created_at.to_fs(:long), match: :first
+  end
+
+  def and_i_should_see_the_pagination_buttons
+    expect(page).to have_content("12345⋯50")
+    expect(page).to have_content("Next page")
+  end
+
+  def when_i_click_on_next_page
+    click_on "Next page"
   end
 end

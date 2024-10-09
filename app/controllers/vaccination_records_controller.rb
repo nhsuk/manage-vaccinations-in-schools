@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 class VaccinationRecordsController < ApplicationController
+  include Pagy::Backend
+
   def index
-    @vaccination_records = vaccination_records.recorded
+    @pagy, @vaccination_records = pagy(vaccination_records.recorded)
 
     render layout: "full"
   end

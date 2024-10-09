@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class ClassImportsController < ApplicationController
+  include Pagy::Backend
+
   before_action :set_session
   before_action :set_class_import, only: %i[show update]
-  before_action :set_patients, only: %i[show]
 
   def new
     @class_import = ClassImport.new
@@ -42,6 +43,8 @@ class ClassImportsController < ApplicationController
       render :errors and return
     end
 
+    @pagy, @patients = pagy(@class_import.patients)
+
     render layout: "full"
   end
 
@@ -59,10 +62,6 @@ class ClassImportsController < ApplicationController
 
   def set_class_import
     @class_import = policy_scope(ClassImport).find(params[:id])
-  end
-
-  def set_patients
-    @patients = @class_import.patients
   end
 
   def class_import_params
