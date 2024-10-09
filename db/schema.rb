@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_09_100208) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_09_223026) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -457,6 +457,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_09_100208) do
     t.datetime "recorded_at"
     t.string "contact_method_type"
     t.boolean "phone_receive_updates", default: false, null: false
+    t.index ["email"], name: "index_parents_on_email"
   end
 
   create_table "patient_sessions", force: :cascade do |t|
