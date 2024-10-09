@@ -52,12 +52,6 @@ class CohortImport < PatientImport
     CohortImportRow.new(data:, team:, programme:)
   end
 
-  def link_records(*records)
-    records.each do |record|
-      record.cohort_imports << self unless record.cohort_imports.exists?(id)
-    end
-  end
-
   def record_rows
     super
 
