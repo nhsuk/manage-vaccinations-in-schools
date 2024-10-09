@@ -5,7 +5,7 @@ class DevController < ApplicationController
   skip_before_action :store_user_location!
   skip_after_action :verify_policy_scoped
 
-  before_action :ensure_dev_env
+  before_action :ensure_dev_env_or_dev_tools_enabled
 
   def reset
     session.delete :user_return_to
@@ -82,8 +82,9 @@ class DevController < ApplicationController
 
   private
 
-  def ensure_dev_env
-    unless Rails.env.development? || Rails.env.test?
+  def ensure_dev_env_or_dev_tools_enabled
+    unless Rails.env.development? || Rails.env.test? ||
+             Flipper.enabled?(:dev_tools)
       raise "Not in development environment"
     end
   end
