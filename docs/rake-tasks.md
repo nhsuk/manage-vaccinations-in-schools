@@ -2,7 +2,7 @@
 
 ## Clinics
 
-### `clinics:create[name,address,town,county,postcode,ods_code,team_id]`
+### `clinics:create[name,address,town,county,postcode,ods_code,team_ods_code]`
 
 - `name` - The name of the clinic.
 - `address` - The first line of the address.
@@ -10,7 +10,7 @@
 - `country` - The county of the clinic.
 - `postcode` - The postcode of the clinic.
 - `ods_code` - The ODS code of the clinic.
-- `team_id` - The ID of the team.
+- `team_ods_code` - The ODS code of the team.
 
 If none of the arguments are provided (`rake clinics:create`), the user will be prompted for responses.
 
@@ -18,9 +18,9 @@ This creates a new clinic location and attaches it to a team.
 
 ## Schools
 
-### `schools:add_to_team[team_id,urn,...]`
+### `schools:add_to_team[ods_code,urn,...]`
 
-- `team_id` - The ID of the team.
+- `ods_code` - The ODS code of the team.
 - `urn` - The URN of the school to add, can be added multiple times.
 
 This adds a school or schools to the list of schools that a particular team manages.
