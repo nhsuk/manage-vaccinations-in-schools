@@ -39,11 +39,18 @@ class PatientImport < ApplicationRecord
     count_column_to_increment =
       count_column(patient, parents, parent_relationships)
 
-    parents.each(&:save!)
-    patient.save!
-    parent_relationships.each(&:save!)
+    # Instead of saving individually, we'll collect the records
+    @parents ||= []
+    @patients ||= []
+    @relationships ||= []
 
-    link_records(*parents, *parent_relationships, patient)
+    @parents.concat(parents)
+    @patients << patient
+    @relationships.concat(parent_relationships)
+
+    # We'll handle linking records after bulk import
+    @records_to_link ||= []
+    @records_to_link.concat([*parents, *parent_relationships, patient])
 
     count_column_to_increment
   end
@@ -65,5 +72,25 @@ class PatientImport < ApplicationRecord
     else
       :exact_duplicate_record_count
     end
+  end
+
+  def bulk_import(rows: 100)
+    return if rows != :all && @patients.size < rows
+
+    Parent.import(@parents, on_duplicate_key_update: :all)
+
+    @patients.each { |patient| patient.run_callbacks(:save) { false } }
+    Patient.import(@patients, on_duplicate_key_update: :all)
+
+    ParentRelationship.import(@relationships, on_duplicate_key_update: :all)
+
+    # Link records after bulk import
+    @records_to_link.each_slice(4) { |records| link_records(*records) }
+
+    # Clear the arrays for the next batch
+    @parents.clear
+    @patients.clear
+    @relationships.clear
+    @records_to_link.clear
   end
 end
