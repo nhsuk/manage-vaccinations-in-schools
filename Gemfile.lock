@@ -686,6 +686,7 @@ DEPENDENCIES
   okcomputer
   omniauth-rails_csrf_protection
   omniauth_openid_connect
+  pagy
   pg (~> 1.5)
   phonelib
   prettier_print
