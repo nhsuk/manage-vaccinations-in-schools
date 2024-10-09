@@ -211,10 +211,10 @@ You can generate an example programme with a few sessions in development by visi
 
 #### Adding a test user
 
-You can add a new user to an environment using the `add_new_user` rake task:
+You can add a new user to an environment using the `users:create` rake task:
 
 ```
-rails add_new_user['user@example.com','password123','John Doe',1]
+rails users:create['user@example.com','password123','John Doe',1]
 ```
 
 ### Previewing view components
@@ -292,6 +292,8 @@ The `cis2` feature flag also needs to be enabled in Flipper for CIS2 logins to w
 - `clinics:create[name,address,town,county,postcode,ods_code,team_ods_code]`
 - `schools:add_to_team[ods_code,urn,...]`
 - `teams:create_hpv[email,name,phone,ods_code,privacy_policy_url,reply_to_id]`
+- `users:create[email,password,given_name,family_name,team_ods_code,registration]`
+- `users:create_securely[email,given_name,family_name,team_ods_code,registration]`
 - `vaccines:seed[type]`
 
 See the [Rake tasks documentation](docs/rake-tasks.md) for more information.
