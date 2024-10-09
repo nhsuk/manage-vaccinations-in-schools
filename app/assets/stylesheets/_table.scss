@@ -33,7 +33,7 @@
   }
 }
 
-.app-table--small {
+.app-table--csv {
   th,
   td {
     @include nhsuk-typography-responsive(16);
@@ -44,6 +44,14 @@
 
   caption {
     @include nhsuk-font($size: 19, $weight: bold);
+  }
+
+  i {
+    color: shade($color_nhsuk-red, 50%);
+    font-family: ui-monospace, monospace;
+    font-style: normal;
+    font-weight: 500;
+    padding: 2px;
   }
 }
 
