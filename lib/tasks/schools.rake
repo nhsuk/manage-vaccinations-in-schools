@@ -155,17 +155,25 @@ namespace :schools do
   end
 
   desc "Add a school to a team."
-  task :add_to_team, %i[team_id urn] => :environment do |_task, args|
+  task :add_to_team, %i[team_id] => :environment do |_task, args|
     team = Team.find_by(id: args[:team_id])
-    location = Location.school.find_by(urn: args[:urn])
 
-    raise "Could not find location or team." if location.nil? || team.nil?
+    raise "Could not find team." if team.nil?
 
-    unless location.team.nil?
-      raise "School already belongs to #{location.team.name}."
+    args.extras.each do |urn|
+      location = Location.school.find_by(urn:)
+
+      if location.nil?
+        puts "Could not find location: #{urn}"
+        next
+      end
+
+      if !location.team_id.nil? && location.team_id != team.id
+        puts "#{urn} previously belonged to #{location.team.name}"
+      end
+
+      location.update!(team:)
     end
-
-    location.update!(team:)
 
     UnscheduledSessionsFactory.new.call
   end
