@@ -26,13 +26,7 @@ class ImmunisationImportRow
   validates :school_name,
             presence: true,
             if: -> { school_urn == SCHOOL_URN_UNKNOWN }
-  validates :school_urn,
-            inclusion: {
-              in: -> do
-                Location.school.pluck(:urn) +
-                  [SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN]
-              end
-            }
+  validate :school_urn_inclusion
 
   validates :patient_nhs_number, length: { is: 10 }, allow_blank: true
   validates :patient_first_name, presence: true
@@ -415,5 +409,12 @@ class ImmunisationImportRow
       cohort_id: patient_attributes[:cohort]&.id,
       school_id: patient_attributes[:school]&.id
     )
+  end
+
+  def school_urn_inclusion
+    unless Location.school.exists?(urn: school_urn) ||
+             school_urn.in?([SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN])
+      errors.add(:school_urn, :inclusion)
+    end
   end
 end
