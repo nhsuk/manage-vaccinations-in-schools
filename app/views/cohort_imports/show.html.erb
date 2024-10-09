@@ -37,5 +37,5 @@
     <% end %>
   <% end %>
 
-  <%= render AppPatientTableComponent.new(@patients) %>
+  <%= render AppPatientTableComponent.new(@patients, count: @patients.count) %>
 <% end %>

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-describe AppVaccinationRecordTableComponent, type: :component do
+describe AppVaccinationRecordTableComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(vaccination_records) }
+  let(:component) { described_class.new(vaccination_records, count:) }
 
   let(:programme) { create(:programme) }
   let(:vaccination_records) do
@@ -27,6 +27,8 @@ describe AppVaccinationRecordTableComponent, type: :component do
       create_list(:vaccination_record, 5, :not_administered, programme:)
   end
 
+  let(:count) { 10 }
+
   it "renders a heading tab" do
     expect(rendered).to have_css(
       ".nhsuk-table__heading-tab",
@@ -36,7 +38,7 @@ describe AppVaccinationRecordTableComponent, type: :component do
 
   context "with new records" do
     let(:component) do
-      described_class.new(vaccination_records, new_records: true)
+      described_class.new(vaccination_records, count:, new_records: true)
     end
 
     it "renders a heading tab with the word new" do

@@ -13,7 +13,7 @@
 
 <%= govuk_button_link_to "Import vaccination records", new_programme_immunisation_import_path, class: "app-button--secondary" %>
 
-<%= render AppVaccinationRecordTableComponent.new(@vaccination_records) %>
+<%= render AppVaccinationRecordTableComponent.new(@vaccination_records, count: @vaccination_records.count) %>
 
 <% content_for :after_main do %>
   <%= render(AppDevToolsComponent.new) do %>

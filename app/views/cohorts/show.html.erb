@@ -8,4 +8,4 @@
 
 <%= h1 format_year_group(@cohort.year_group) %>
 
-<%= render AppPatientTableComponent.new(@patients) %>
+<%= render AppPatientTableComponent.new(@patients, count: @patients.count) %>
