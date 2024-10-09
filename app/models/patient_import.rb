@@ -84,8 +84,9 @@ class PatientImport < ApplicationRecord
 
     ParentRelationship.import(@relationships, on_duplicate_key_update: :all)
 
-    # Link records after bulk import
-    @records_to_link.each_slice(4) { |records| link_records(*records) }
+    link_records_by_type(:patients, @patients)
+    link_records_by_type(:parents, @parents)
+    link_records_by_type(:parent_relationships, @relationships)
 
     # Clear the arrays for the next batch
     @parents.clear
