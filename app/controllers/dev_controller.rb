@@ -17,7 +17,7 @@ class DevController < ApplicationController
   end
 
   def reset_team
-    team = Team.find_by!(ods_code: params[:team_ods_code])
+    team = Team.find_by!("LOWER(ods_code) = ?", params[:team_ods_code].downcase)
 
     cohort_imports = CohortImport.where(team:)
     cohort_imports.find_each do |cohort_import|
