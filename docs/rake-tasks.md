@@ -18,12 +18,12 @@ This creates a new clinic location and attaches it to a team.
 
 ## Schools
 
-### `schools:add_to_team[team_id,urn]`
+### `schools:add_to_team[team_id,urn,...]`
 
 - `team_id` - The ID of the team.
-- `urn` - The URN of the school to add.
+- `urn` - The URN of the school to add, can be added multiple times.
 
-This adds a school to the list of schools that a particular team manages.
+This adds a school or schools to the list of schools that a particular team manages.
 
 ## Teams
 
