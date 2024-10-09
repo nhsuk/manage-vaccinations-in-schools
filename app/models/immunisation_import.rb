@@ -84,16 +84,20 @@ class ImmunisationImport < ApplicationRecord
     count_column_to_increment = count_column(vaccination_record)
     return count_column_to_increment unless vaccination_record
 
-    vaccination_record.save!
+    # Instead of saving individually, we'll collect the records
+    @vaccination_records ||= []
+    @vaccination_records << vaccination_record
 
-    link_records(
+    # We'll handle linking records after bulk import
+    @records_to_link ||= []
+    @records_to_link << [
       vaccination_record,
       vaccination_record.batch,
       vaccination_record.location,
       vaccination_record.patient,
       vaccination_record.patient_session,
       vaccination_record.session
-    )
+    ]
 
     count_column_to_increment
   end
@@ -127,5 +131,21 @@ class ImmunisationImport < ApplicationRecord
     else
       :exact_duplicate_record_count
     end
+  end
+
+  def bulk_import(rows: 100)
+    return if rows != :all && @vaccination_records.size < rows
+
+    VaccinationRecord.import(
+      @vaccination_records,
+      on_duplicate_key_update: :all
+    )
+
+    # Link records after bulk import
+    @records_to_link.each { |records| link_records(*records) }
+
+    # Clear the arrays for the next batch
+    @vaccination_records.clear
+    @records_to_link.clear
   end
 end

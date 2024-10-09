@@ -89,17 +89,18 @@ module CSVImportable
     counts = count_columns.index_with(0)
 
     ActiveRecord::Base.transaction do
-      save!
-
       rows.each do |row|
         count_column_to_increment = process_row(row)
         counts[count_column_to_increment] += 1
+        bulk_import(rows: 100)
       end
 
-      record_rows
-    end
+      bulk_import(rows: :all)
 
-    update!(recorded_at: Time.zone.now, status: :recorded, **counts)
+      record_rows
+
+      update!(recorded_at: Time.zone.now, status: :recorded, **counts)
+    end
   end
 
   def remove!

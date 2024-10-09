@@ -88,6 +88,9 @@ class ImmunisationImportRow
         delivery_site:
       )
     else
+      # Postgres UUID generation is skipped in bulk import
+      vaccination_record.uuid = SecureRandom.uuid
+
       vaccination_record.batch = batch
       vaccination_record.delivery_method = delivery_method
       vaccination_record.delivery_site = delivery_site
