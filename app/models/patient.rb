@@ -52,7 +52,7 @@ class Patient < ApplicationRecord
   has_many :session_notifications
 
   has_many :sessions, through: :patient_sessions
-  has_many :triage, through: :patient_sessions
+  has_many :triages, through: :patient_sessions
   has_many :vaccination_records, through: :patient_sessions
   has_many :parents, through: :parent_relationships
   has_many :programmes, through: :sessions
