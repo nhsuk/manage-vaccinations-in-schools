@@ -22,9 +22,9 @@ image:
   port: 4000
 
 platform: linux/x86_64
-cpu: 256 # Number of CPU units for the task.
+cpu: 1024 # Number of CPU units for the task.
 memory: 2048 # Amount of memory in MiB used by the task.
-count: 1 # Number of tasks that should be running in your service.
+count: 2 # Number of tasks that should be running in your service.
 exec: true # Enable running commands in your container.
 network:
   connect: true # Enable Service Connect for intra-environment traffic between services.
@@ -68,7 +68,6 @@ environments:
       MAVIS__HOST: "accessibility.mavistesting.com"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "accessibility.mavistesting.com"
   test:
-    count: 2
     http:
       alias:
         - "test.mavistesting.com"
@@ -88,8 +87,6 @@ environments:
       MAVIS__HOST: "training.manage-vaccinations-in-schools.nhs.uk"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "training.manage-vaccinations-in-schools.nhs.uk"
   production:
-    cpu: 1024
-    count: 2
     http:
       alias:
         - "www.manage-vaccinations-in-schools.nhs.uk"
