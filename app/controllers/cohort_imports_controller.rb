@@ -43,7 +43,7 @@ class CohortImportsController < ApplicationController
       render :errors and return
     end
 
-    @pagy, @patients = pagy(@cohort_import.patients)
+    @pagy, @patients = pagy(@cohort_import.patients.includes(:school))
 
     render layout: "full"
   end

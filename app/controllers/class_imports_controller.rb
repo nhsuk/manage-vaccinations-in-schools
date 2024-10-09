@@ -43,7 +43,7 @@ class ClassImportsController < ApplicationController
       render :errors and return
     end
 
-    @pagy, @patients = pagy(@class_import.patients)
+    @pagy, @patients = pagy(@class_import.patients.includes(:school))
 
     render layout: "full"
   end
