@@ -93,6 +93,6 @@
   <% end %>
 
   <%= render AppVaccinationRecordTableComponent.new(
-        @immunisation_import.recorded? ? @vaccination_records.recorded : @vaccination_records.draft
+        @vaccination_records.recorded, count: @vaccination_records.recorded.count,
       ) %>
 <% end %>

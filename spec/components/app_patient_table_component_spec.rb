@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-describe AppPatientTableComponent, type: :component do
+describe AppPatientTableComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(patients) }
+  let(:component) { described_class.new(patients, count:) }
 
   let(:patients) do
     [
@@ -17,6 +17,8 @@ describe AppPatientTableComponent, type: :component do
       )
     ] + create_list(:patient, 9)
   end
+
+  let(:count) { 10 }
 
   it "renders a heading tab" do
     expect(rendered).to have_css(
