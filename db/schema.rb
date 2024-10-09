@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_04_181222) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_09_100208) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -58,7 +58,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_04_181222) do
     t.datetime "csv_removed_at"
     t.integer "exact_duplicate_record_count"
     t.integer "new_record_count"
-    t.datetime "processed_at"
     t.datetime "recorded_at"
     t.json "serialized_errors"
     t.integer "status", default: 0, null: false
@@ -93,7 +92,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_04_181222) do
 
   create_table "cohort_imports", force: :cascade do |t|
     t.datetime "csv_removed_at"
-    t.datetime "processed_at"
     t.datetime "recorded_at"
     t.text "csv_data"
     t.text "csv_filename"
@@ -367,7 +365,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_04_181222) do
     t.datetime "updated_at", null: false
     t.bigint "programme_id", null: false
     t.datetime "recorded_at"
-    t.datetime "processed_at"
     t.integer "new_record_count"
     t.integer "exact_duplicate_record_count"
     t.integer "not_administered_record_count"
