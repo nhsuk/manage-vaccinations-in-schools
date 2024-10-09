@@ -27,25 +27,7 @@
           <% end %>
         </li>
       <% else %>
-        <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
-          <%= render AppCardComponent.new(link_to: "#") do |c| %>
-            <% c.with_heading { "Register attendance" } %>
-            <% c.with_description do %>
-              <%= t("children", count: @patient_sessions.size) %> still to register
-            <% end %>
-          <% end %>
-        </li>
-        <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
-          <%= render AppCardComponent.new(link_to: session_vaccinations_path(@session)) do |c| %>
-            <% c.with_heading { "Record vaccinations" } %>
-            <% c.with_description do %>
-              <%= t("children", count: @counts[:vaccinate]) %> to vaccinate<br>
-              <%= t("children", count: @counts[:vaccinated]) %> vaccinated<br>
-              <%= t("children", count: @counts[:could_not_vaccinate]) %> could not be vaccinated
-            <% end %>
-          <% end %>
-        </li>
-        <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+        <li class="nhsuk-grid-column-two-thirds nhsuk-card-group__item">
           <%= render AppCardComponent.new(link_to: session_consents_path(@session)) do |c| %>
             <% c.with_heading { "Check consent responses" } %>
             <% c.with_description do %>
@@ -56,11 +38,21 @@
             <% end %>
           <% end %>
         </li>
-        <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+        <li class="nhsuk-grid-column-two-thirds nhsuk-card-group__item">
           <%= render AppCardComponent.new(link_to: session_triage_path(@session)) do |c| %>
             <% c.with_heading { "Triage health questions" } %>
             <% c.with_description do %>
               <%= t("children", count: @counts[:needing_triage]) %> needing triage
+            <% end %>
+          <% end %>
+        </li>
+        <li class="nhsuk-grid-column-two-thirds nhsuk-card-group__item">
+          <%= render AppCardComponent.new(link_to: session_vaccinations_path(@session)) do |c| %>
+            <% c.with_heading { "Record vaccinations" } %>
+            <% c.with_description do %>
+              <%= t("children", count: @counts[:vaccinate]) %> to vaccinate<br>
+              <%= t("children", count: @counts[:vaccinated]) %> vaccinated<br>
+              <%= t("children", count: @counts[:could_not_vaccinate]) %> could not be vaccinated
             <% end %>
           <% end %>
         </li>
