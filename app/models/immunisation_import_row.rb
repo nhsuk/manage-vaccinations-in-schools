@@ -204,7 +204,7 @@ class ImmunisationImportRow
   end
 
   def organisation_code
-    @data["ORGANISATION_CODE"]&.strip
+    @data["ORGANISATION_CODE"]&.strip&.upcase
   end
 
   def vaccine_given

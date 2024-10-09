@@ -52,7 +52,7 @@ describe Location do
       subject(:location) { build(:location, :clinic, ods_code: "abc") }
 
       it { should validate_presence_of(:ods_code) }
-      it { should validate_uniqueness_of(:ods_code) }
+      it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
 
       it { should_not validate_presence_of(:urn) }
       it { should validate_uniqueness_of(:urn) }
@@ -62,7 +62,7 @@ describe Location do
       subject(:location) { build(:location, :school, urn: "abc") }
 
       it { should_not validate_presence_of(:ods_code) }
-      it { should validate_uniqueness_of(:ods_code) }
+      it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
 
       it { should validate_presence_of(:urn) }
       it { should validate_uniqueness_of(:urn) }
@@ -70,4 +70,6 @@ describe Location do
   end
 
   it { should normalize(:address_postcode).from(" SW111AA ").to("SW11 1AA") }
+
+  it { should normalize(:ods_code).from(" r1a ").to("R1A") }
 end

@@ -31,6 +31,7 @@
 #
 class Location < ApplicationRecord
   include AddressConcern
+  include ODSCodeConcern
 
   self.inheritance_column = :nil
 
@@ -55,7 +56,6 @@ class Location < ApplicationRecord
   validates :url, url: true, allow_nil: true
 
   validates :ods_code, presence: true, if: :clinic?
-  validates :ods_code, uniqueness: true, allow_nil: true
 
   validates :urn, presence: true, if: :school?
   validates :urn, uniqueness: true, allow_nil: true
