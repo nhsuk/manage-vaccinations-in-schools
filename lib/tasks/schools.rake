@@ -155,8 +155,8 @@ namespace :schools do
   end
 
   desc "Add a school to a team."
-  task :add_to_team, %i[team_id] => :environment do |_task, args|
-    team = Team.find_by(id: args[:team_id])
+  task :add_to_team, %i[ods_code] => :environment do |_task, args|
+    team = Team.find_by(ods_code: args[:ods_code])
 
     raise "Could not find team." if team.nil?
 

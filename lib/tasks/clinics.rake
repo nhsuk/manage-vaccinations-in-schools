@@ -5,7 +5,7 @@ require_relative "../task_helpers"
 namespace :clinics do
   desc "Create a new clinic location and add it to a team."
   task :create,
-       %i[name address town county postcode ods_code team_id] =>
+       %i[name address town county postcode ods_code team_ods_code] =>
          :environment do |_task, args|
     include TaskHelpers
 
@@ -16,7 +16,7 @@ namespace :clinics do
       address_county = prompt_user_for "Enter county:"
       address_postcode = prompt_user_for "Enter postcode:", required: true
       ods_code = prompt_user_for "Enter ODS code:"
-      team_id = prompt_user_for "Enter team ID:", required: true
+      team_ods_code = prompt_user_for "Enter team ODS code:", required: true
     elsif args.to_a.size == 7
       name = args[:name]
       address_line_1 = args[:address]
@@ -24,12 +24,12 @@ namespace :clinics do
       address_county = args[:county]
       address_postcode = args[:postcode]
       ods_code = args[:urn]
-      team_id = args[:team_id]
+      team_ods_code = args[:team_ods_code]
     elsif args.to_a.size != 7
       raise "Expected 7 arguments got #{args.to_a.size}"
     end
 
-    team = Team.find(team_id)
+    team = Team.find_by!(ods_code: team_ods_code)
 
     location =
       Location.create!(
