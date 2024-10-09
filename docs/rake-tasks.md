@@ -40,6 +40,33 @@ If none of the arguments are provided (`rake teams:create_hpv`), the user will b
 
 This creates a new team with an HPV programme.
 
+## Users
+
+### `users:create[email,password,given_name,family_name,team_ods_code,registration]`
+
+- `email` - The email address of the new user.
+- `password` - The password of the new user.
+- `given_name` - The first name of the new user.
+- `family_name` - The last name of the new user.
+- `team_ods_code` - The ODS code for the team they belong to.
+- `registration` - The nurse registration number.
+
+If none of the arguments are provided (`rake users:create`), the user will be prompted for responses.
+
+This creates a new user and adds them to a team.
+
+### `users:create_securely[email,given_name,family_name,team_ods_code,registration]`
+
+- `email` - The email address of the new user.
+- `given_name` - The first name of the new user.
+- `family_name` - The last name of the new user.
+- `team_ods_code` - The ODS code for the team they belong to.
+- `registration` - The nurse registration number.
+
+If none of the arguments are provided (`rake users:create`), the user will be prompted for responses.
+
+This creates a new user and adds them to a team, and sends their password via email.
+
 ## Vaccines
 
 ### `vaccines:seed[type]`
