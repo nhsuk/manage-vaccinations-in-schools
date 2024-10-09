@@ -90,14 +90,14 @@
         
             body.with_row do |row|
               row.with_cell do
-                tag.code("CHILD_ADDRESS_TOWN")
+                tag.code("CHILD_TOWN")
               end
               row.with_cell(text: "Optional")
             end
         
             body.with_row do |row|
               row.with_cell do
-                tag.code("CHILD_ADDRESS_POSTCODE")
+                tag.code("CHILD_POSTCODE")
               end
               row.with_cell do
                 tag.strong("Required") + ", must be formatted as a valid postcode."

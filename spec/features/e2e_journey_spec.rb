@@ -61,8 +61,8 @@ describe "End-to-end journey" do
     cohort_data = {
       "CHILD_ADDRESS_LINE_1" => "1 Test Street",
       "CHILD_ADDRESS_LINE_2" => "2nd Floor",
-      "CHILD_ADDRESS_POSTCODE" => "TE1 1ST",
-      "CHILD_ADDRESS_TOWN" => "Testville",
+      "CHILD_POSTCODE" => "TE1 1ST",
+      "CHILD_TOWN" => "Testville",
       "CHILD_COMMON_NAME" => "Drop Table",
       "CHILD_DATE_OF_BIRTH" => "2011-01-01",
       "CHILD_FIRST_NAME" => "Bobby",
