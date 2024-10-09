@@ -229,7 +229,7 @@ describe ClassImport do
     end
 
     it "ignores and counts duplicate records" do
-      build(:class_import, csv:, team:, session:).record!
+      create(:class_import, csv:, team:, session:).record!
       csv.rewind
 
       record!

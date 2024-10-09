@@ -48,12 +48,6 @@ class ClassImport < PatientImport
     ClassImportRow.new(data:, session:)
   end
 
-  def link_records(*records)
-    records.each do |record|
-      record.class_imports << self unless record.class_imports.exists?(id)
-    end
-  end
-
   def record_rows
     super
 
