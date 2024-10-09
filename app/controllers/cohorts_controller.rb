@@ -29,7 +29,13 @@ class CohortsController < ApplicationController
   def show
     @cohort = policy_scope(Cohort).find(params[:id])
     @pagy, @patients =
-      pagy(@cohort.patients.recorded.order(:first_name, :last_name))
+      pagy(
+        @cohort
+          .patients
+          .recorded
+          .includes(:school)
+          .order(:first_name, :last_name)
+      )
   end
 
   private
