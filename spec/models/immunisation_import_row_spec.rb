@@ -769,7 +769,7 @@ describe ImmunisationImportRow, type: :model do
     context "with a value" do
       let(:data) { { "ORGANISATION_CODE" => "abc" } }
 
-      it { should eq("abc") }
+      it { should eq("ABC") }
     end
   end
 

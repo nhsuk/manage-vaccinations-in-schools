@@ -25,6 +25,8 @@
 #  index_teams_on_ods_code  (ods_code) UNIQUE
 #
 class Team < ApplicationRecord
+  include ODSCodeConcern
+
   has_many :cohort_imports
   has_many :cohorts
   has_many :consent_forms
@@ -42,7 +44,7 @@ class Team < ApplicationRecord
 
   validates :email, presence: true, notify_safe_email: true
   validates :name, presence: true, uniqueness: true
-  validates :ods_code, presence: true, uniqueness: true
+  validates :ods_code, presence: true
   validates :phone, presence: true, phone: true
 
   def year_groups

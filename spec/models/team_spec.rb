@@ -35,6 +35,8 @@ describe Team do
     it { should validate_presence_of(:phone) }
 
     it { should validate_uniqueness_of(:name) }
-    it { should validate_uniqueness_of(:ods_code) }
+    it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
   end
+
+  it { should normalize(:ods_code).from(" r1a ").to("R1A") }
 end
