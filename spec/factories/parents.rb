@@ -15,6 +15,10 @@
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #
+# Indexes
+#
+#  index_parents_on_email  (email)
+#
 FactoryBot.define do
   factory :parent do
     transient do
