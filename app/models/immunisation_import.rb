@@ -81,34 +81,22 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def process_row(row)
-    if (vaccination_record = row.to_vaccination_record)
-      count_column_to_increment =
-        (
-          if vaccination_record.new_record? || vaccination_record.draft?
-            :new_record_count
-          elsif vaccination_record.pending_changes.any? ||
-                vaccination_record.patient.pending_changes.any?
-            :changed_record_count
-          else
-            :exact_duplicate_record_count
-          end
-        )
+    vaccination_record = row.to_vaccination_record
+    count_column_to_increment = count_column(vaccination_record)
+    return count_column_to_increment unless vaccination_record
 
-      vaccination_record.save!
+    vaccination_record.save!
 
-      link_records(
-        vaccination_record,
-        vaccination_record.batch,
-        vaccination_record.location,
-        vaccination_record.patient,
-        vaccination_record.patient_session,
-        vaccination_record.session
-      )
+    link_records(
+      vaccination_record,
+      vaccination_record.batch,
+      vaccination_record.location,
+      vaccination_record.patient,
+      vaccination_record.patient_session,
+      vaccination_record.session
+    )
 
-      count_column_to_increment
-    else
-      :not_administered_record_count
-    end
+    count_column_to_increment
   end
 
   def link_records(*records)
@@ -126,6 +114,19 @@ class ImmunisationImport < ApplicationRecord
       patient_sessions.draft.update_all(active: true)
       patients.draft.update_all(recorded_at:)
       vaccination_records.draft.update_all(recorded_at:)
+    end
+  end
+
+  def count_column(vaccination_record)
+    if !vaccination_record
+      :not_administered_record_count
+    elsif vaccination_record.new_record? || vaccination_record.draft?
+      :new_record_count
+    elsif vaccination_record.pending_changes.any? ||
+          vaccination_record.patient.pending_changes.any?
+      :changed_record_count
+    else
+      :exact_duplicate_record_count
     end
   end
 end

@@ -37,17 +37,7 @@ class PatientImport < ApplicationRecord
     parent_relationships = row.to_parent_relationships(parents, patient)
 
     count_column_to_increment =
-      (
-        if parents.any?(&:new_record?) || patient.new_record? ||
-             parent_relationships.any?(&:new_record?)
-          :new_record_count
-        elsif parents.any?(&:changed?) || patient.changed? ||
-              parent_relationships.any?(&:changed?)
-          :changed_record_count
-        else
-          :exact_duplicate_record_count
-        end
-      )
+      count_column(patient, parents, parent_relationships)
 
     parents.each(&:save!)
     patient.save!
@@ -62,6 +52,18 @@ class PatientImport < ApplicationRecord
     Time.zone.now.tap do |recorded_at|
       patients.draft.update_all(recorded_at:)
       parents.draft.update_all(recorded_at:)
+    end
+  end
+
+  def count_column(patient, parents, parent_relationships)
+    if patient.new_record? || parents.any?(&:new_record?) ||
+         parent_relationships.any?(&:new_record?)
+      :new_record_count
+    elsif patient.changed? || parents.any?(&:changed?) ||
+          parent_relationships.any?(&:changed?)
+      :changed_record_count
+    else
+      :exact_duplicate_record_count
     end
   end
 end
