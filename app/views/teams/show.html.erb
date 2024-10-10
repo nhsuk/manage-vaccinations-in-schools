@@ -24,28 +24,13 @@
 
   <%= govuk_summary_list do |summary_list|
         summary_list.with_row do |row|
-          row.with_key { "Send consent requests" }
-          row.with_value { "#{pluralize(@team.weeks_between_first_session_and_consent_requests, "week")} before first session" }
+          row.with_key { "Consent requests" }
+          row.with_value { "Send #{pluralize(@team.weeks_before_consent_requests, "week")} before first session" }
         end
       
         summary_list.with_row do |row|
-          row.with_key { "Days before first reminder" }
-          row.with_value { "#{pluralize(@team.days_before_first_consent_reminder, "day")} after first consent request" }
-        end
-      
-        summary_list.with_row do |row|
-          row.with_key { "Days between each reminder" }
-          row.with_value { pluralize(@team.days_between_consent_reminders, "day") }
-        end
-      
-        summary_list.with_row do |row|
-          row.with_key { "Maximum number of reminders" }
-          row.with_value { @team.maximum_number_of_consent_reminders.to_s }
-        end
-      
-        summary_list.with_row do |row|
-          row.with_key { "Prefer text messages for reminders" }
-          row.with_value { @team.send_updates_by_text ? "Yes" : "No" }
+          row.with_key { "Consent reminders" }
+          row.with_value { "Send #{pluralize(@team.weeks_before_consent_reminders, "week")} before each session" }
         end
       end %>
 <% end %>
