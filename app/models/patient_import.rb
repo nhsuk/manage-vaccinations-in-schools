@@ -40,13 +40,13 @@ class PatientImport < ApplicationRecord
       count_column(patient, parents, parent_relationships)
 
     # Instead of saving individually, we'll collect the records
-    @parents ||= []
-    @patients ||= []
-    @relationships ||= []
+    @parents_batch ||= Set.new
+    @patients_batch ||= Set.new
+    @relationships_batch ||= Set.new
 
-    @parents.concat(parents)
-    @patients << patient
-    @relationships.concat(parent_relationships)
+    @parents_batch.merge(parents)
+    @patients_batch.add(patient)
+    @relationships_batch.merge(parent_relationships)
 
     count_column_to_increment
   end
@@ -64,22 +64,29 @@ class PatientImport < ApplicationRecord
   end
 
   def bulk_import(rows: 100)
-    return if rows != :all && @patients.size < rows
+    return if rows != :all && @patients_batch.size < rows
 
-    Parent.import(@parents, on_duplicate_key_update: :all)
+    # We need to convert the batches to arrays as `import` modifies the
+    # objects to add IDs to any new records.
 
-    @patients.each { |patient| patient.run_callbacks(:save) { false } }
-    Patient.import(@patients, on_duplicate_key_update: :all)
+    parents = @parents_batch.to_a
+    patients = @patients_batch.to_a
+    relationships = @relationships_batch.to_a
 
-    ParentRelationship.import(@relationships, on_duplicate_key_update: :all)
+    Parent.import(parents, on_duplicate_key_update: :all)
 
-    link_records_by_type(:patients, @patients)
-    link_records_by_type(:parents, @parents)
-    link_records_by_type(:parent_relationships, @relationships)
+    patients.each { |patient| patient.run_callbacks(:save) { false } }
+    Patient.import(patients, on_duplicate_key_update: :all)
 
-    # Clear the arrays for the next batch
-    @parents.clear
-    @patients.clear
-    @relationships.clear
+    ParentRelationship.import(relationships, on_duplicate_key_update: :all)
+
+    link_records_by_type(:patients, patients)
+    link_records_by_type(:parents, parents)
+    link_records_by_type(:parent_relationships, relationships)
+
+    # Clear the sets for the next batch
+    @parents_batch.clear
+    @patients_batch.clear
+    @relationships_batch.clear
   end
 end

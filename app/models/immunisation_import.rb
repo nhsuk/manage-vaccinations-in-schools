@@ -85,42 +85,47 @@ class ImmunisationImport < ApplicationRecord
     return count_column_to_increment unless vaccination_record
 
     # Instead of saving individually, we'll collect the records
-    @vaccination_records ||= []
-    @batches ||= []
-    @locations ||= []
-    @patients ||= []
-    @patient_sessions ||= []
-    @sessions ||= []
+    @vaccination_records_batch ||= Set.new
+    @batches_batch ||= Set.new
+    @locations_batch ||= Set.new
+    @patients_batch ||= Set.new
+    @patient_sessions_batch ||= Set.new
+    @sessions_batch ||= Set.new
 
-    @vaccination_records << vaccination_record
-    @batches << vaccination_record.batch
-    @locations << vaccination_record.location
-    @patients << vaccination_record.patient
-    @patient_sessions << vaccination_record.patient_session
-    @sessions << vaccination_record.session
+    @vaccination_records_batch.add(vaccination_record)
+    @batches_batch.add(vaccination_record.batch)
+    if vaccination_record.location
+      @locations_batch.add(vaccination_record.location)
+    end
+    @patients_batch.add(vaccination_record.patient)
+    @patient_sessions_batch.add(vaccination_record.patient_session)
+    @sessions_batch.add(vaccination_record.session)
 
     count_column_to_increment
   end
 
   def bulk_import(rows: 100)
-    return if rows != :all && @vaccination_records.size < rows
+    return if rows != :all && @vaccination_records_batch.size < rows
 
-    VaccinationRecord.import(
-      @vaccination_records,
-      on_duplicate_key_update: :all
-    )
+    # We need to convert the batch to an array as `import` modifies the
+    # objects to add IDs to any new records.
+    vaccination_records = @vaccination_records_batch.to_a
+
+    VaccinationRecord.import(vaccination_records, on_duplicate_key_update: :all)
 
     [
-      [:vaccination_records, @vaccination_records],
-      [:batches, @batches],
-      [:locations, @locations],
-      [:patients, @patients],
-      [:patient_sessions, @patient_sessions],
-      [:sessions, @sessions]
+      [:vaccination_records, vaccination_records],
+      [:batches, @batches_batch],
+      [:locations, @locations_batch],
+      [:patients, @patients_batch],
+      [:patient_sessions, @patient_sessions_batch],
+      [:sessions, @sessions_batch]
     ].each do |association, collection|
-      link_records_by_type(association, collection.compact)
+      link_records_by_type(association, collection)
       collection.clear
     end
+
+    @vaccination_records_batch.clear
   end
 
   def count_column(vaccination_record)
