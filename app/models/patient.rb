@@ -171,7 +171,7 @@ class Patient < ApplicationRecord
       unless school_id.nil? || draft?
         new_patient_sessions =
           Session
-            .where(location_id: school_id)
+            .where(location_id: school.id)
             .scheduled
             .or(Session.unscheduled)
             .map { PatientSession.new(patient: self, session: _1) }
@@ -180,6 +180,22 @@ class Patient < ApplicationRecord
           new_patient_sessions,
           on_duplicate_key_ignore: true
         )
+
+        team_id = school.team_id
+
+        if team_id.nil?
+          Sentry.capture_message(
+            "A patient has been moved to a school that doesn't belong to a team."
+          )
+        elsif team_id != cohort.team_id
+          update!(
+            cohort:
+              Cohort.find_or_create_by!(
+                birth_academic_year: cohort.birth_academic_year,
+                team_id:
+              )
+          )
+        end
       end
     end
   end
