@@ -713,6 +713,73 @@ describe ConsentForm do
     end
   end
 
+  describe "#match_with_patient_session!" do
+    subject(:match_with_patient_session!) do
+      consent_form.match_with_patient_session!(patient_session)
+    end
+
+    let(:programme) { create(:programme) }
+    let(:team) { create(:team, programmes: [programme]) }
+
+    let(:school) { create(:location, :school) }
+    let(:patient) { create(:patient, school:) }
+    let(:session) { create(:session, team:, programme:, location: school) }
+    let!(:patient_session) { create(:patient_session, patient:, session:) }
+
+    context "when consent form confirms the school" do
+      let(:consent_form) do
+        create(:consent_form, team:, session:, school_confirmed: true)
+      end
+
+      it "creates a consent" do
+        expect { match_with_patient_session! }.to change(Consent, :count).by(1)
+      end
+
+      it "doesn't change the patient's school" do
+        expect { match_with_patient_session! }.not_to change(patient, :school)
+      end
+    end
+
+    context "when consent form doesn't confirm the school" do
+      let(:consent_form) do
+        create(
+          :consent_form,
+          team:,
+          session:,
+          school_confirmed: false,
+          school: new_school
+        )
+      end
+
+      let(:new_school) { create(:location, :school) }
+      let(:new_session) do
+        create(:session, programme:, team:, location: new_school)
+      end
+
+      it "creates a consent" do
+        expect { match_with_patient_session! }.to change(Consent, :count).by(1)
+      end
+
+      it "changes the patient's school" do
+        expect { match_with_patient_session! }.to change(patient, :school).from(
+          school
+        ).to(new_school)
+      end
+
+      it "removes the patient from the old session" do
+        expect(patient.sessions).to contain_exactly(session)
+        match_with_patient_session!
+        expect(patient.reload.sessions).not_to include(session)
+      end
+
+      it "adds the patient to the new session" do
+        expect(patient.sessions).not_to include(new_session)
+        match_with_patient_session!
+        expect(patient.reload.sessions).to contain_exactly(new_session)
+      end
+    end
+  end
+
   it "resets unused fields" do
     programme = create(:programme)
 

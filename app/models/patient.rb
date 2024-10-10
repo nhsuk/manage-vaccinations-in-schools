@@ -143,16 +143,6 @@ class Patient < ApplicationRecord
     super.merge("full_name" => full_name, "age" => age)
   end
 
-  def match_consent_form!(consent_form)
-    ActiveRecord::Base.transaction do
-      if (school = consent_form.school).present?
-        update!(school:)
-      end
-
-      Consent.from_consent_form!(consent_form, patient: self)
-    end
-  end
-
   private
 
   def handle_school_changed
