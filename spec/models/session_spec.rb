@@ -65,11 +65,11 @@ describe Session do
       subject(:scope) { described_class.upcoming }
 
       it do
-        should contain_exactly(
-                 unscheduled_session,
-                 today_session,
-                 scheduled_session
-               )
+        expect(scope).to contain_exactly(
+          unscheduled_session,
+          today_session,
+          scheduled_session
+        )
       end
     end
 

@@ -266,6 +266,12 @@ describe ClassImport do
         )
         expect(patient.upcoming_sessions).to contain_exactly(session)
       end
+
+      it "changes the child's cohort" do
+        expect(patient.cohort.team).to eq(different_session.team)
+        expect { record! }.to(change { patient.reload.cohort })
+        expect(patient.cohort.team).to eq(session.team)
+      end
     end
 
     it "records the patients" do

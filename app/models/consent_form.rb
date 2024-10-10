@@ -360,6 +360,8 @@ class ConsentForm < ApplicationRecord
       if school && school != patient.school
         patient.update!(school:)
 
+        patient_session.destroy!
+
         session =
           Session
             .where(team:, location: school)
