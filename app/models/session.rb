@@ -120,9 +120,10 @@ class Session < ApplicationRecord
     cohorts = team.cohorts.for_year_groups(year_groups, academic_year:)
 
     patients_in_cohorts =
-      Patient.where(cohort: cohorts, school: location).includes(
-        vaccination_records: :programme
-      )
+      Patient
+        .recorded
+        .where(cohort: cohorts, school: location)
+        .includes(vaccination_records: :programme)
 
     required_programmes = Set.new(programmes)
 
@@ -143,16 +144,10 @@ class Session < ApplicationRecord
 
     patient_sessions =
       unvaccinated_patients.map do
-        PatientSession.new(patient: _1, session: self, active: true)
+        PatientSession.new(patient: _1, session: self)
       end
 
-    PatientSession.import!(
-      patient_sessions,
-      on_duplicate_key_update: {
-        conflict_target: %i[patient_id session_id],
-        columns: [:active]
-      }
-    )
+    PatientSession.import!(patient_sessions, on_duplicate_key_ignore: true)
   end
 
   def set_consent_dates

@@ -10,7 +10,6 @@ class ConsentsController < ApplicationController
     all_patient_sessions =
       @session
         .patient_sessions
-        .active
         .strict_loading
         .includes(
           :programmes,

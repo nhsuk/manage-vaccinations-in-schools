@@ -492,7 +492,6 @@ describe ImmunisationImportRow, type: :model do
       let(:data) { valid_data }
 
       it { should_not be_nil }
-      it { should be_active }
     end
   end
 

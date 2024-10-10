@@ -135,10 +135,10 @@ class ImmunisationImportRow
     return unless valid?
 
     @patient_session ||=
-      PatientSession.create_with(
-        created_by: @user,
-        active: true
-      ).find_or_create_by!(patient:, session:)
+      PatientSession.create_with(created_by: @user).find_or_create_by!(
+        patient:,
+        session:
+      )
   end
 
   def notes

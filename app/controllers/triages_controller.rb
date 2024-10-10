@@ -17,7 +17,6 @@ class TriagesController < ApplicationController
     all_patient_sessions =
       @session
         .patient_sessions
-        .active
         .strict_loading
         .includes(
           :programmes,
@@ -78,8 +77,7 @@ class TriagesController < ApplicationController
   end
 
   def set_patient_session
-    @patient_session =
-      @patient.patient_sessions.active.find_by(session: @session)
+    @patient_session = @patient.patient_sessions.find_by(session: @session)
   end
 
   def set_triage

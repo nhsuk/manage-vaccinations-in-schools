@@ -265,7 +265,6 @@ describe ClassImport do
           session.location
         )
         expect(patient.upcoming_sessions).to contain_exactly(session)
-        expect(patient.patient_sessions.find_by(session:)).to be_active
       end
     end
 
