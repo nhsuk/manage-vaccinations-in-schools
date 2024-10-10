@@ -158,7 +158,7 @@ module CSVImportable
       @import_type = import_type.to_s.pluralize
       @record_type = record_type.to_s.singularize
 
-      self.table_name = "#{@import_type}_#{@record_type.pluralize}"
+      self.table_name = [@import_type, @record_type.pluralize].sort.join("_")
 
       def self.model_name
         ActiveModel::Name.new(
