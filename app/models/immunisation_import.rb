@@ -76,7 +76,7 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def parse_row(data)
-    ImmunisationImportRow.new(data:, programme:, user: uploaded_by)
+    ImmunisationImportRow.new(data:, team:, programme:)
   end
 
   def process_row(row)

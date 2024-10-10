@@ -49,7 +49,7 @@ def attach_locations_to(team)
   Location.order("RANDOM()").limit(50).update_all(team_id: team.id)
 end
 
-def create_session(user, team)
+def create_session(_user, team)
   programme = Programme.find_by(type: "hpv")
 
   FactoryBot.create_list(:batch, 4, vaccine: programme.vaccines.active.first)
@@ -69,13 +69,7 @@ def create_session(user, team)
   session.dates.create!(value: Date.tomorrow)
 
   patients_without_consent =
-    FactoryBot.create_list(
-      :patient_session,
-      4,
-      programme:,
-      session:,
-      created_by: user
-    )
+    FactoryBot.create_list(:patient_session, 4, programme:, session:)
   unmatched_patients = patients_without_consent.sample(2).map(&:patient)
   unmatched_patients.each do |patient|
     FactoryBot.create(
@@ -98,14 +92,7 @@ def create_session(user, team)
     delay_vaccination
     unable_to_vaccinate
   ].each do |trait|
-    FactoryBot.create_list(
-      :patient_session,
-      3,
-      trait,
-      programme:,
-      session:,
-      created_by: user
-    )
+    FactoryBot.create_list(:patient_session, 3, trait, programme:, session:)
   end
 
   UnscheduledSessionsFactory.new.call

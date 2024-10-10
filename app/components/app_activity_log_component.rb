@@ -51,9 +51,8 @@ class AppActivityLogComponent < ViewComponent::Base
     [
       {
         title:
-          "Invited to session at #{helpers.session_location(@patient_session.session, part_of_sentence: true)}",
-        time: @patient_session.created_at,
-        by: @patient_session.created_by&.full_name
+          "Added to session at #{helpers.session_location(@patient_session.session, part_of_sentence: true)}",
+        time: @patient_session.created_at
       }
     ]
   end
