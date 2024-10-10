@@ -123,14 +123,6 @@ class ImmunisationImport < ApplicationRecord
     end
   end
 
-  def record_rows
-    Time.zone.now.tap do |recorded_at|
-      patient_sessions.draft.update_all(active: true)
-      patients.draft.update_all(recorded_at:)
-      vaccination_records.draft.update_all(recorded_at:)
-    end
-  end
-
   def count_column(vaccination_record)
     if !vaccination_record
       :not_administered_record_count

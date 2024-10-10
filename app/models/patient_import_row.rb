@@ -44,6 +44,7 @@ class PatientImportRow
 
     parents.map do |attributes|
       Parent
+        .create_with(recorded_at: Time.zone.now)
         .find_or_initialize_by(attributes.slice(:email, :name))
         .tap do |parent|
           parent.assign_attributes(
@@ -83,7 +84,7 @@ class PatientImportRow
       existing_patient.assign_attributes(attributes)
       existing_patient
     else
-      Patient.new(attributes)
+      Patient.new(recorded_at: Time.zone.now, **attributes)
     end
   end
 

@@ -97,10 +97,13 @@ module CSVImportable
 
       bulk_import(rows: :all)
 
-      record_rows
+      postprocess_rows!
 
       update_columns(recorded_at: Time.zone.now, status: :recorded, **counts)
     end
+  end
+
+  def postprocess_rows!
   end
 
   def remove!

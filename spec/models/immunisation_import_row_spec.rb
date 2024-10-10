@@ -492,7 +492,7 @@ describe ImmunisationImportRow, type: :model do
       let(:data) { valid_data }
 
       it { should_not be_nil }
-      it { should be_draft }
+      it { should be_active }
     end
   end
 
@@ -937,9 +937,7 @@ describe ImmunisationImportRow, type: :model do
 
     let(:data) { valid_data }
 
-    it "is not recorded" do
-      expect(vaccination_record).not_to be_recorded
-    end
+    it { should be_recorded }
 
     it "has a vaccinator" do
       expect(vaccination_record.performed_by).to have_attributes(
