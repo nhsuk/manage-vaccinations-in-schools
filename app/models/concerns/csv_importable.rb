@@ -99,7 +99,7 @@ module CSVImportable
 
       record_rows
 
-      update!(recorded_at: Time.zone.now, status: :recorded, **counts)
+      update_columns(recorded_at: Time.zone.now, status: :recorded, **counts)
     end
   end
 
