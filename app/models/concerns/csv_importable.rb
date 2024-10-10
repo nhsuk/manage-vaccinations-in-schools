@@ -55,7 +55,7 @@ module CSVImportable
   end
 
   def slow?
-    rows_count > 10
+    rows_count > 15
   end
 
   def load_data!

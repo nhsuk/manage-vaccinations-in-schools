@@ -192,12 +192,12 @@ describe ImmunisationImport do
         # stree-ignore
         expect { record! }
           .to change(immunisation_import, :recorded_at).from(nil)
-          .and change(immunisation_import.vaccination_records, :count).by(8)
+          .and change(immunisation_import.vaccination_records, :count).by(11)
           .and change(immunisation_import.locations, :count).by(1)
-          .and change(immunisation_import.patients, :count).by(7)
-          .and change(immunisation_import.sessions, :count).by(3)
-          .and change(immunisation_import.patient_sessions, :count).by(8)
-          .and change(immunisation_import.batches, :count).by(6)
+          .and change(immunisation_import.patients, :count).by(10)
+          .and change(immunisation_import.sessions, :count).by(5)
+          .and change(immunisation_import.patient_sessions, :count).by(11)
+          .and change(immunisation_import.batches, :count).by(9)
 
         # Second import should not duplicate the vaccination records if they're
         # identical.
@@ -217,7 +217,7 @@ describe ImmunisationImport do
         # stree-ignore
         expect { record! }
           .to change(immunisation_import, :exact_duplicate_record_count).to(0)
-          .and change(immunisation_import, :new_record_count).to(8)
+          .and change(immunisation_import, :new_record_count).to(11)
           .and change(immunisation_import, :not_administered_record_count).to(0)
       end
 
@@ -226,13 +226,13 @@ describe ImmunisationImport do
         csv.rewind
 
         record!
-        expect(immunisation_import.exact_duplicate_record_count).to eq(8)
+        expect(immunisation_import.exact_duplicate_record_count).to eq(11)
       end
 
       it "creates a new session for each date" do
         record!
 
-        expect(immunisation_import.sessions.count).to eq(3)
+        expect(immunisation_import.sessions.count).to eq(5)
 
         session = immunisation_import.sessions.first
         expect(session.dates.map(&:value)).to contain_exactly(
@@ -241,18 +241,18 @@ describe ImmunisationImport do
       end
 
       it "records the patients" do
-        expect { record! }.to change(Patient.recorded, :count).from(0).to(7)
+        expect { record! }.to change(Patient.recorded, :count).from(0).to(10)
       end
 
       it "records the vaccination records" do
         expect { record! }.to change(VaccinationRecord.recorded, :count).from(
           0
-        ).to(8)
+        ).to(11)
       end
 
       it "activates the patient sessions" do
         expect { record! }.to change(PatientSession.active, :count).from(0).to(
-          8
+          11
         )
       end
     end
