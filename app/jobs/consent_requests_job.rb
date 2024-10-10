@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ConsentRequestsJob < ApplicationJob
-  queue_as :default
+  queue_as :notifications
 
   def perform
     return unless Flipper.enabled?(:scheduled_emails)
