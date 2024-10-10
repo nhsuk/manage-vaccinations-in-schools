@@ -50,16 +50,16 @@ describe "Dev endpoint to reset a team" do
     click_on "Continue"
 
     perform_enqueued_jobs
-    expect(VaccinationRecord.count).to eq(8)
+    expect(VaccinationRecord.count).to eq(11)
   end
 
   def then_all_associated_data_is_deleted_when_i_reset_the_team
     expect { visit "/reset/r1l" }.to(
       change(Patient, :count)
-        .by(-10)
+        .by(-13)
         .and(change(Cohort, :count).by(-2))
         .and(change(Parent, :count).by(-3))
-        .and(change(VaccinationRecord, :count).by(-8))
+        .and(change(VaccinationRecord, :count).by(-11))
         .and(change(ImmunisationImport, :count).by(-1))
         .and(change(CohortImport, :count).by(-1))
     )
