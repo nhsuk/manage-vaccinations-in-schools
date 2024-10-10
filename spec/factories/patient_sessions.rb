@@ -5,7 +5,6 @@
 # Table name: patient_sessions
 #
 #  id                 :bigint           not null, primary key
-#  active             :boolean          default(FALSE), not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #  created_by_user_id :bigint
@@ -32,16 +31,6 @@ FactoryBot.define do
     session { association :session, programme: }
     patient { association :patient, team:, school: session.location }
     created_by
-
-    active { session.dates.exists? }
-
-    trait :active do
-      active { true }
-    end
-
-    trait :draft do
-      active { false }
-    end
 
     trait :added_to_session
 

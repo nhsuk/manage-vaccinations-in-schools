@@ -466,7 +466,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_09_223026) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "created_by_user_id"
-    t.boolean "active", default: false, null: false
     t.index ["created_by_user_id"], name: "index_patient_sessions_on_created_by_user_id"
     t.index ["patient_id", "session_id"], name: "index_patient_sessions_on_patient_id_and_session_id", unique: true
     t.index ["session_id", "patient_id"], name: "index_patient_sessions_on_session_id_and_patient_id", unique: true

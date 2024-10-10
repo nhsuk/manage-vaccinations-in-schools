@@ -168,18 +168,18 @@ class Patient < ApplicationRecord
         existing_patient_sessions.select(&:added_to_session?).each(&:destroy!)
       end
 
-      unless school_id.nil?
-        new_sessions =
+      unless school_id.nil? || draft?
+        new_patient_sessions =
           Session
             .where(location_id: school_id)
             .scheduled
             .or(Session.unscheduled)
+            .map { PatientSession.new(patient: self, session: _1) }
 
-        new_sessions.find_each do |session|
-          patient_sessions
-            .find_or_initialize_by(session:)
-            .tap { |patient_session| patient_session.update!(active: true) }
-        end
+        PatientSession.import!(
+          new_patient_sessions,
+          on_duplicate_key_ignore: true
+        )
       end
     end
   end
