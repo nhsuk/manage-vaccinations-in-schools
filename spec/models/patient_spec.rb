@@ -55,11 +55,12 @@ describe Patient do
     end
   end
 
+  it { should normalize(:nhs_number).from(" 0123456789 ").to("0123456789") }
   it { should normalize(:address_postcode).from(" SW111AA ").to("SW11 1AA") }
 
-  describe "#find_existing" do
-    subject(:find_existing) do
-      described_class.find_existing(
+  describe "#match_existing" do
+    subject(:match_existing) do
+      described_class.match_existing(
         nhs_number:,
         first_name:,
         last_name:,
@@ -87,7 +88,13 @@ describe Patient do
 
       context "when other patients match too" do
         let(:other_patient) do
-          create(:patient, first_name:, last_name:, date_of_birth:)
+          create(
+            :patient,
+            nhs_number: nil,
+            first_name:,
+            last_name:,
+            date_of_birth:
+          )
         end
 
         it { should_not include(other_patient) }
@@ -95,6 +102,7 @@ describe Patient do
     end
 
     context "with matching first name, last name and date of birth" do
+      let(:nhs_number) { nil }
       let(:patient) do
         create(:patient, first_name:, last_name:, date_of_birth:)
       end
@@ -103,6 +111,7 @@ describe Patient do
     end
 
     context "with matching first name, last name and postcode" do
+      let(:nhs_number) { nil }
       let(:patient) do
         create(:patient, first_name:, last_name:, address_postcode:)
       end
@@ -111,6 +120,7 @@ describe Patient do
     end
 
     context "with matching first name, date of birth and postcode" do
+      let(:nhs_number) { nil }
       let(:patient) do
         create(:patient, first_name:, date_of_birth:, address_postcode:)
       end
@@ -119,11 +129,27 @@ describe Patient do
     end
 
     context "with matching last name, date of birth and postcode" do
+      let(:nhs_number) { nil }
       let(:patient) do
         create(:patient, last_name:, date_of_birth:, address_postcode:)
       end
 
       it { should include(patient) }
+    end
+
+    context "when matching everything except the NHS number" do
+      let(:other_patient) do
+        create(
+          :patient,
+          nhs_number: "9876543210",
+          first_name:,
+          last_name:,
+          date_of_birth:,
+          address_postcode:
+        )
+      end
+
+      it { should_not include(other_patient) }
     end
   end
 

@@ -7,7 +7,8 @@ class ConsentFormMatchingJob < ApplicationJob
     session = consent_form.scheduled_session
 
     patients =
-      session.patients.matching_three_of(
+      session.patients.match_existing(
+        nhs_number: nil,
         first_name: consent_form.first_name,
         last_name: consent_form.last_name,
         date_of_birth: consent_form.date_of_birth,
