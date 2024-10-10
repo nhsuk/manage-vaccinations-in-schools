@@ -48,11 +48,19 @@ class Team < ApplicationRecord
     programmes.flat_map(&:year_groups).uniq.sort
   end
 
-  def weeks_between_first_session_and_consent_requests
-    (days_between_first_session_and_consent_requests / 7).to_i
+  def weeks_before_consent_reminders
+    (days_before_consent_reminders / 7).to_i
   end
 
-  def weeks_between_first_session_and_consent_requests=(value)
-    self.days_between_first_session_and_consent_requests = value * 7
+  def weeks_before_consent_reminders=(value)
+    self.days_before_consent_reminders = value * 7
+  end
+
+  def weeks_before_consent_requests
+    (days_before_consent_requests / 7).to_i
+  end
+
+  def weeks_before_consent_requests=(value)
+    self.days_before_consent_requests = value * 7
   end
 end
