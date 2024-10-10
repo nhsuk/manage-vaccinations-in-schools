@@ -57,7 +57,7 @@ class ClassImportsController < ApplicationController
   private
 
   def set_session
-    @session = policy_scope(Session).find(params[:session_id])
+    @session = policy_scope(Session).upcoming.find(params[:session_id])
   end
 
   def set_class_import

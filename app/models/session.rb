@@ -71,6 +71,8 @@ class Session < ApplicationRecord
           )
         end
 
+  scope :upcoming, -> { scheduled.or(unscheduled) }
+
   scope :completed,
         -> do
           where(academic_year: Date.current.academic_year).where(

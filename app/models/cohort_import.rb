@@ -56,8 +56,7 @@ class CohortImport < PatientImport
     team
       .sessions
       .has_programme(programme)
-      .scheduled
-      .or(Session.unscheduled)
+      .upcoming
       .find_each(&:create_patient_sessions!)
   end
 end
