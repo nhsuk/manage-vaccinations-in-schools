@@ -4,17 +4,15 @@
 #
 # Table name: sessions
 #
-#  id                                  :bigint           not null, primary key
-#  academic_year                       :integer          not null
-#  close_consent_at                    :date
-#  days_before_first_consent_reminder  :integer
-#  days_between_consent_reminders      :integer
-#  maximum_number_of_consent_reminders :integer
-#  send_consent_requests_at            :date
-#  created_at                          :datetime         not null
-#  updated_at                          :datetime         not null
-#  location_id                         :bigint
-#  team_id                             :bigint           not null
+#  id                            :bigint           not null, primary key
+#  academic_year                 :integer          not null
+#  close_consent_at              :date
+#  days_before_consent_reminders :integer
+#  send_consent_requests_at      :date
+#  created_at                    :datetime         not null
+#  updated_at                    :datetime         not null
+#  location_id                   :bigint
+#  team_id                       :bigint           not null
 #
 # Indexes
 #
