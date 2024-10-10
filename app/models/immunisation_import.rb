@@ -86,30 +86,41 @@ class ImmunisationImport < ApplicationRecord
 
     # Instead of saving individually, we'll collect the records
     @vaccination_records ||= []
-    @vaccination_records << vaccination_record
+    @batches ||= []
+    @locations ||= []
+    @patients ||= []
+    @patient_sessions ||= []
+    @sessions ||= []
 
-    # We'll handle linking records after bulk import
-    @records_to_link ||= []
-    @records_to_link << [
-      vaccination_record,
-      vaccination_record.batch,
-      vaccination_record.location,
-      vaccination_record.patient,
-      vaccination_record.patient_session,
-      vaccination_record.session
-    ]
+    @vaccination_records << vaccination_record
+    @batches << vaccination_record.batch
+    @locations << vaccination_record.location
+    @patients << vaccination_record.patient
+    @patient_sessions << vaccination_record.patient_session
+    @sessions << vaccination_record.session
 
     count_column_to_increment
   end
 
-  def link_records(*records)
-    records
-      .reject(&:nil?)
-      .each do |record|
-        unless record.immunisation_imports.exists?(id)
-          record.immunisation_imports << self
-        end
-      end
+  def bulk_import(rows: 100)
+    return if rows != :all && @vaccination_records.size < rows
+
+    VaccinationRecord.import(
+      @vaccination_records,
+      on_duplicate_key_update: :all
+    )
+
+    [
+      [:vaccination_records, @vaccination_records],
+      [:batches, @batches],
+      [:locations, @locations],
+      [:patients, @patients],
+      [:patient_sessions, @patient_sessions],
+      [:sessions, @sessions]
+    ].each do |association, collection|
+      link_records_by_type(association, collection.compact)
+      collection.clear
+    end
   end
 
   def record_rows
@@ -131,21 +142,5 @@ class ImmunisationImport < ApplicationRecord
     else
       :exact_duplicate_record_count
     end
-  end
-
-  def bulk_import(rows: 100)
-    return if rows != :all && @vaccination_records.size < rows
-
-    VaccinationRecord.import(
-      @vaccination_records,
-      on_duplicate_key_update: :all
-    )
-
-    # Link records after bulk import
-    @records_to_link.each { |records| link_records(*records) }
-
-    # Clear the arrays for the next batch
-    @vaccination_records.clear
-    @records_to_link.clear
   end
 end

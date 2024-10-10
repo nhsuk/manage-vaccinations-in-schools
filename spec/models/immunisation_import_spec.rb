@@ -160,7 +160,7 @@ describe ImmunisationImport do
       end
 
       it "ignores and counts duplicate records" do
-        build(:immunisation_import, programme:, csv:, uploaded_by:).record!
+        create(:immunisation_import, programme:, csv:, uploaded_by:).record!
         csv.rewind
 
         record!
@@ -222,7 +222,7 @@ describe ImmunisationImport do
       end
 
       it "ignores and counts duplicate records" do
-        build(:immunisation_import, programme:, csv:, uploaded_by:).record!
+        create(:immunisation_import, programme:, csv:, uploaded_by:).record!
         csv.rewind
 
         record!
