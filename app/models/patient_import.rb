@@ -73,16 +73,19 @@ class PatientImport < ApplicationRecord
   def bulk_import(rows: 100)
     return if rows != :all && @patients.size < rows
 
-    Parent.import(@parents, on_duplicate_key_update: :all)
+    Parent.import(@parents.uniq, on_duplicate_key_update: :all)
 
     @patients.each { |patient| patient.run_callbacks(:save) { false } }
-    Patient.import(@patients, on_duplicate_key_update: :all)
+    Patient.import(@patients.uniq, on_duplicate_key_update: :all)
 
-    ParentRelationship.import(@relationships, on_duplicate_key_update: :all)
+    ParentRelationship.import(
+      @relationships.uniq,
+      on_duplicate_key_update: :all
+    )
 
-    link_records_by_type(:patients, @patients)
-    link_records_by_type(:parents, @parents)
-    link_records_by_type(:parent_relationships, @relationships)
+    link_records_by_type(:patients, @patients.uniq)
+    link_records_by_type(:parents, @parents.uniq)
+    link_records_by_type(:parent_relationships, @relationships.uniq)
 
     # Clear the arrays for the next batch
     @parents.clear
