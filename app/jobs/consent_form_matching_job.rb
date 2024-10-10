@@ -17,6 +17,8 @@ class ConsentFormMatchingJob < ApplicationJob
 
     return if patients.count != 1
 
-    patients.first.match_consent_form!(consent_form)
+    consent_form.match_with_patient_session!(
+      PatientSession.find_by!(patient: patients.first, session:)
+    )
   end
 end

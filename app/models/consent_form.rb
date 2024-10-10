@@ -353,6 +353,16 @@ class ConsentForm < ApplicationRecord
     !school_confirmed
   end
 
+  def match_with_patient_session!(patient_session)
+    patient = patient_session.patient
+
+    ActiveRecord::Base.transaction do
+      patient.update!(school:) if school && school != patient.school
+
+      Consent.from_consent_form!(self, patient:)
+    end
+  end
+
   private
 
   def refused_and_not_had_it_already?
