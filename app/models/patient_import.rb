@@ -48,10 +48,6 @@ class PatientImport < ApplicationRecord
     @patients << patient
     @relationships.concat(parent_relationships)
 
-    # We'll handle linking records after bulk import
-    @records_to_link ||= []
-    @records_to_link.concat([*parents, *parent_relationships, patient])
-
     count_column_to_increment
   end
 
@@ -92,6 +88,5 @@ class PatientImport < ApplicationRecord
     @parents.clear
     @patients.clear
     @relationships.clear
-    @records_to_link.clear
   end
 end
