@@ -69,14 +69,6 @@ class Patient < ApplicationRecord
   # https://www.datadictionary.nhs.uk/attributes/person_gender_code.html
   enum :gender_code, { not_known: 0, male: 1, female: 2, not_specified: 9 }
 
-  scope :matching_three_of,
-        ->(first_name:, last_name:, date_of_birth:, address_postcode:) do
-          where(first_name:, last_name:, date_of_birth:)
-            .or(Patient.where(first_name:, last_name:, address_postcode:))
-            .or(Patient.where(first_name:, date_of_birth:, address_postcode:))
-            .or(Patient.where(last_name:, date_of_birth:, address_postcode:))
-        end
-
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :date_of_birth, presence: true
@@ -100,14 +92,15 @@ class Patient < ApplicationRecord
 
   encrypts :address_line_1, :address_line_2, :address_town
 
+  normalizes :nhs_number, with: -> { _1.blank? ? nil : _1.gsub(/\s/, "") }
+
   before_save :handle_school_changed, if: :school_changed?
-  before_save :remove_spaces_from_nhs_number
 
   before_destroy :destroy_childless_parents
 
   delegate :year_group, to: :cohort
 
-  def self.find_existing(
+  def self.match_existing(
     nhs_number:,
     first_name:,
     last_name:,
@@ -118,12 +111,20 @@ class Patient < ApplicationRecord
       return [patient]
     end
 
-    Patient.matching_three_of(
-      first_name:,
-      last_name:,
-      date_of_birth:,
-      address_postcode:
-    ).to_a
+    scope =
+      Patient
+        .where(first_name:, last_name:, date_of_birth:)
+        .or(Patient.where(first_name:, last_name:, address_postcode:))
+        .or(Patient.where(first_name:, date_of_birth:, address_postcode:))
+        .or(Patient.where(last_name:, date_of_birth:, address_postcode:))
+
+    if nhs_number.blank?
+      scope.to_a
+    else
+      # This prevents us from finding a patient that happens to have at least three of the other
+      # fields the same, but with a different NHS number, and therefore cannot be a match.
+      Patient.where(nhs_number: nil).merge(scope).to_a
+    end
   end
 
   def relationship_to(parent:)
@@ -181,10 +182,6 @@ class Patient < ApplicationRecord
         end
       end
     end
-  end
-
-  def remove_spaces_from_nhs_number
-    nhs_number&.gsub!(/\s/, "")
   end
 
   def school_is_correct_type

@@ -217,7 +217,7 @@ class PatientImportRow
     return if first_name.blank? || last_name.blank? || date_of_birth.nil?
 
     @existing_patients ||=
-      Patient.find_existing(
+      Patient.match_existing(
         nhs_number:,
         first_name:,
         last_name:,

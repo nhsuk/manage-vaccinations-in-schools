@@ -378,7 +378,7 @@ class ImmunisationImportRow
   end
 
   def find_existing_patients
-    Patient.find_existing(
+    Patient.match_existing(
       nhs_number: patient_nhs_number,
       first_name: patient_first_name,
       last_name: patient_last_name,
