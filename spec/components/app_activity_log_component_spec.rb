@@ -22,8 +22,7 @@ describe AppActivityLogComponent do
       :patient_session,
       patient:,
       session:,
-      created_at: Time.zone.parse("2024-05-29 12:00"),
-      created_by: user
+      created_at: Time.zone.parse("2024-05-29 12:00")
     )
   end
   let(:component) { described_class.new(patient_session) }
@@ -118,7 +117,6 @@ describe AppActivityLogComponent do
                    date: "30 May 2024 at 12:00pm"
 
   include_examples "card",
-                   title: "Invited to session at Hogwarts",
-                   date: "29 May 2024 at 12:00pm",
-                   by: "Nurse Joy"
+                   title: "Added to session at Hogwarts",
+                   date: "29 May 2024 at 12:00pm"
 end

@@ -56,10 +56,10 @@ class ImmunisationImportRow
             presence: true,
             if: :requires_performed_by?
 
-  def initialize(data:, programme:, user:)
+  def initialize(data:, team:, programme:)
     @data = data
+    @team = team
     @programme = programme
-    @user = user
   end
 
   def to_vaccination_record
@@ -134,11 +134,7 @@ class ImmunisationImportRow
   def patient_session
     return unless valid?
 
-    @patient_session ||=
-      PatientSession.create_with(created_by: @user).find_or_create_by!(
-        patient:,
-        session:
-      )
+    @patient_session ||= PatientSession.find_or_create_by!(patient:, session:)
   end
 
   def notes
@@ -274,15 +270,13 @@ class ImmunisationImportRow
 
   private
 
+  attr_reader :team
+
+  delegate :ods_code, to: :team
+
   def administered_at
     administered ? (session_date.in_time_zone + 12.hours) : nil
   end
-
-  def team
-    @user.team
-  end
-
-  delegate :ods_code, to: :team
 
   def cohort
     return unless valid?

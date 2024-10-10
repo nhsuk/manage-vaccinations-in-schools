@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
-describe ImmunisationImportRow, type: :model do
+describe ImmunisationImportRow do
   subject(:immunisation_import_row) do
-    described_class.new(data:, programme:, user: uploaded_by)
+    described_class.new(data:, team:, programme:)
   end
 
   let(:programme) { create(:programme, :flu) }
   let(:team) { create(:team, ods_code: "abc", programmes: [programme]) }
-  let(:uploaded_by) { create(:user, teams: [team]) }
 
   let(:nhs_number) { "1234567890" }
   let(:first_name) { "Harry" }

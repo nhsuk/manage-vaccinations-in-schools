@@ -4,33 +4,27 @@
 #
 # Table name: patient_sessions
 #
-#  id                 :bigint           not null, primary key
-#  created_at         :datetime         not null
-#  updated_at         :datetime         not null
-#  created_by_user_id :bigint
-#  patient_id         :bigint           not null
-#  session_id         :bigint           not null
+#  id         :bigint           not null, primary key
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  patient_id :bigint           not null
+#  session_id :bigint           not null
 #
 # Indexes
 #
-#  index_patient_sessions_on_created_by_user_id         (created_by_user_id)
 #  index_patient_sessions_on_patient_id_and_session_id  (patient_id,session_id) UNIQUE
 #  index_patient_sessions_on_session_id_and_patient_id  (session_id,patient_id) UNIQUE
-#
-# Foreign Keys
-#
-#  fk_rails_...  (created_by_user_id => users.id)
 #
 FactoryBot.define do
   factory :patient_session do
     transient do
       programme { association :programme }
       team { session.team }
+      user { association :user, teams: [team] }
     end
 
     session { association :session, programme: }
     patient { association :patient, team:, school: session.location }
-    created_by
 
     trait :added_to_session
 
@@ -101,7 +95,7 @@ FactoryBot.define do
             patient_session: instance,
             programme:,
             notes: "Okay to vaccinate",
-            performed_by: created_by
+            performed_by: user
           )
         ]
       end
@@ -123,7 +117,7 @@ FactoryBot.define do
             :do_not_vaccinate,
             patient_session: instance,
             programme:,
-            performed_by: created_by
+            performed_by: user
           )
         ]
       end
@@ -145,7 +139,7 @@ FactoryBot.define do
             :needs_follow_up,
             patient_session: instance,
             programme:,
-            performed_by: created_by
+            performed_by: user
           )
         ]
       end
@@ -167,7 +161,7 @@ FactoryBot.define do
             :delay_vaccination,
             patient_session: instance,
             programme:,
-            performed_by: created_by
+            performed_by: user
           )
         ]
       end
@@ -179,7 +173,7 @@ FactoryBot.define do
             :not_administered,
             patient_session: instance,
             programme:,
-            performed_by: created_by,
+            performed_by: user,
             reason: :absent_from_school
           )
         ]
@@ -212,7 +206,7 @@ FactoryBot.define do
             :ready_to_vaccinate,
             patient_session: instance,
             programme:,
-            performed_by: created_by
+            performed_by: user
           )
         ]
       end
@@ -224,7 +218,7 @@ FactoryBot.define do
             :not_administered,
             patient_session: instance,
             programme:,
-            performed_by: created_by,
+            performed_by: user,
             reason: :already_had
           )
         ]
@@ -253,7 +247,7 @@ FactoryBot.define do
             :ready_to_vaccinate,
             patient_session: instance,
             programme:,
-            performed_by: created_by
+            performed_by: user
           )
         ]
       end
@@ -265,7 +259,7 @@ FactoryBot.define do
             :not_administered,
             patient_session: instance,
             programme:,
-            performed_by: created_by,
+            performed_by: user,
             reason: :already_had
           )
         ]
@@ -288,7 +282,7 @@ FactoryBot.define do
             :ready_to_vaccinate,
             patient_session: instance,
             programme:,
-            performed_by: created_by
+            performed_by: user
           )
         ]
       end
@@ -299,7 +293,7 @@ FactoryBot.define do
             :vaccination_record,
             patient_session: instance,
             programme:,
-            performed_by: created_by
+            performed_by: user
           )
         ]
       end
