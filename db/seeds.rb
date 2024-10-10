@@ -26,6 +26,8 @@ def import_schools
 end
 
 def create_user_and_team
+  team =
+    Team.find_by(ods_code: "R1L") || FactoryBot.create(:team, ods_code: "R1L")
   user =
     User.find_by(email: "nurse.joy@example.com") ||
       FactoryBot.create(
@@ -33,10 +35,9 @@ def create_user_and_team
         family_name: "Joy",
         given_name: "Nurse",
         email: "nurse.joy@example.com",
-        password: "nurse.joy@example.com"
+        password: "nurse.joy@example.com",
+        teams: [team]
       )
-
-  team = user.teams.first
 
   Programme.all.find_each do |programme|
     FactoryBot.create(:team_programme, team:, programme:)
