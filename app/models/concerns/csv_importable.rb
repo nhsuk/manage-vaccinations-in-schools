@@ -156,7 +156,7 @@ module CSVImportable
   def join_table_class(import_type, record_type)
     Class.new(ApplicationRecord) do
       @import_type = import_type.to_s.pluralize
-      @record_type = record_type.to_s.singularize
+      @record_type = record_type.to_s
 
       self.table_name = [@import_type, @record_type.pluralize].sort.join("_")
 
@@ -164,7 +164,7 @@ module CSVImportable
         ActiveModel::Name.new(
           self,
           nil,
-          "#{@import_type.camelize}#{@record_type.camelize}"
+          [@import_type.camelize, @record_type.singularize.camelize].sort.join
         )
       end
     end
