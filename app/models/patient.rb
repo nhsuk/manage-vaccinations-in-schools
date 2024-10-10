@@ -58,7 +58,7 @@ class Patient < ApplicationRecord
   has_many :programmes, through: :sessions
 
   has_many :upcoming_sessions,
-           -> { scheduled.or(unscheduled) },
+           -> { upcoming },
            through: :patient_sessions,
            source: :session
 

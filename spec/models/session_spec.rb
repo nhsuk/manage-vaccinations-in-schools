@@ -61,6 +61,18 @@ describe Session do
       it { should contain_exactly(today_session, scheduled_session) }
     end
 
+    describe "#upcoming" do
+      subject(:scope) { described_class.upcoming }
+
+      it do
+        should contain_exactly(
+                 unscheduled_session,
+                 today_session,
+                 scheduled_session
+               )
+      end
+    end
+
     describe "#completed" do
       subject(:scope) { described_class.completed }
 
