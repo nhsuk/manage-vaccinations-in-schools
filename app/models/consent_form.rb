@@ -357,7 +357,19 @@ class ConsentForm < ApplicationRecord
     patient = patient_session.patient
 
     ActiveRecord::Base.transaction do
-      patient.update!(school:) if school && school != patient.school
+      if school && school != patient.school
+        patient.update!(school:)
+
+        session =
+          Session
+            .where(team:, location: school)
+            .has_programme(programme)
+            .scheduled
+            .or(Session.unscheduled)
+            .first
+
+        PatientSession.find_or_create_by!(patient:, session:) if session
+      end
 
       Consent.from_consent_form!(self, patient:)
     end
