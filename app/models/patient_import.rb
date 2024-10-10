@@ -74,10 +74,7 @@ class PatientImport < ApplicationRecord
     relationships = @relationships_batch.to_a
 
     Parent.import(parents, on_duplicate_key_update: :all)
-
-    patients.each { |patient| patient.run_callbacks(:save) { false } }
     Patient.import(patients, on_duplicate_key_update: :all)
-
     ParentRelationship.import(relationships, on_duplicate_key_update: :all)
 
     link_records_by_type(:patients, patients)

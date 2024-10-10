@@ -94,8 +94,6 @@ class Patient < ApplicationRecord
 
   normalizes :nhs_number, with: -> { _1.blank? ? nil : _1.gsub(/\s/, "") }
 
-  before_save :handle_school_changed, if: :school_changed?
-
   before_destroy :destroy_childless_parents
 
   delegate :year_group, to: :cohort
@@ -144,21 +142,6 @@ class Patient < ApplicationRecord
   end
 
   private
-
-  def handle_school_changed
-    return if new_record?
-
-    ActiveRecord::Base.transaction do
-      unless school_id_was.nil?
-        existing_patient_sessions =
-          patient_sessions.where(
-            session: upcoming_sessions.where(location_id: school_id_was)
-          )
-
-        existing_patient_sessions.select(&:added_to_session?).each(&:destroy!)
-      end
-    end
-  end
 
   def school_is_correct_type
     location = school

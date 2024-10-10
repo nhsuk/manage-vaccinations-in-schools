@@ -125,7 +125,7 @@ class Session < ApplicationRecord
       Patient
         .recorded
         .where(cohort: cohorts, school: location)
-        .includes(vaccination_records: :programme)
+        .includes(:upcoming_sessions, vaccination_records: :programme)
 
     required_programmes = Set.new(programmes)
 
@@ -144,12 +144,22 @@ class Session < ApplicationRecord
         required_programmes.subset?(vaccinated_programmes)
       end
 
-    patient_sessions =
-      unvaccinated_patients.map do
-        PatientSession.new(patient: _1, session: self)
-      end
+    unvaccinated_patients.each do |patient|
+      sessions_other_than_self = patient.upcoming_sessions.reject { _1 == self }
+      next if sessions_other_than_self.empty?
 
-    PatientSession.import!(patient_sessions, on_duplicate_key_ignore: true)
+      patient
+        .patient_sessions
+        .where(session: sessions_other_than_self)
+        .select(&:added_to_session?)
+        .each(&:destroy!)
+    end
+
+    PatientSession.import!(
+      %i[patient_id session_id],
+      unvaccinated_patients.map { [_1.id, id] },
+      on_duplicate_key_ignore: true
+    )
   end
 
   def set_consent_dates

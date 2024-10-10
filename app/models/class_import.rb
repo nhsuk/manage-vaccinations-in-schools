@@ -49,10 +49,16 @@ class ClassImport < PatientImport
   end
 
   def postprocess_rows!
-    session.create_patient_sessions! unless session.completed?
+    return if session.completed?
 
-    (session.patients - patients).each do |unknown_patient|
+    session.create_patient_sessions!
+
+    unknown_patients = session.patients - patients
+
+    unknown_patients.each do |unknown_patient|
       unknown_patient.update!(school: nil)
     end
+
+    session.patients.delete(unknown_patients)
   end
 end
