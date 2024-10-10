@@ -45,7 +45,11 @@
           <% end %>
           <% row.with_cell(numeric: true) do %>
             <span class="nhsuk-table-responsive__heading">Records</span>
-            <%= import.record_count %>
+            <% if import.pending_import? %>
+              …
+            <% else %>
+              <%= import.record_count %>
+            <% end %>
           <% end %>
         <% end %>
       <% end %>
