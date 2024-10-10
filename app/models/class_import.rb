@@ -48,9 +48,7 @@ class ClassImport < PatientImport
     ClassImportRow.new(data:, session:)
   end
 
-  def record_rows
-    super
-
+  def postprocess_rows!
     session.create_patient_sessions! unless session.completed?
 
     (session.patients - patients).each do |unknown_patient|

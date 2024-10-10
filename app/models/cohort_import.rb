@@ -52,9 +52,7 @@ class CohortImport < PatientImport
     CohortImportRow.new(data:, team:, programme:)
   end
 
-  def record_rows
-    super
-
+  def postprocess_rows!
     team
       .sessions
       .has_programme(programme)

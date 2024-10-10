@@ -70,7 +70,7 @@ class ImmunisationImportRow
     vaccination_record =
       VaccinationRecord.create_with(
         notes:,
-        recorded_at: nil
+        recorded_at: Time.zone.now
       ).find_or_initialize_by(
         programme: @programme,
         administered_at:,
@@ -88,7 +88,7 @@ class ImmunisationImportRow
         delivery_site:
       )
     else
-      # Postgres UUID generation is skipped in bulk import
+      # Postgres UUID generation is skipped in bulk import
       vaccination_record.uuid = SecureRandom.uuid
 
       vaccination_record.batch = batch
@@ -107,7 +107,7 @@ class ImmunisationImportRow
         existing_patient.stage_changes(staged_patient_attributes)
         existing_patient
       else
-        Patient.create!(patient_attributes)
+        Patient.create!(recorded_at: Time.zone.now, **patient_attributes)
       end
   end
 
@@ -135,10 +135,10 @@ class ImmunisationImportRow
     return unless valid?
 
     @patient_session ||=
-      PatientSession.create_with(created_by: @user).find_or_create_by!(
-        patient:,
-        session:
-      )
+      PatientSession.create_with(
+        created_by: @user,
+        active: true
+      ).find_or_create_by!(patient:, session:)
   end
 
   def notes

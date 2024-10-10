@@ -51,13 +51,6 @@ class PatientImport < ApplicationRecord
     count_column_to_increment
   end
 
-  def record_rows
-    Time.zone.now.tap do |recorded_at|
-      patients.draft.update_all(recorded_at:)
-      parents.draft.update_all(recorded_at:)
-    end
-  end
-
   def count_column(patient, parents, parent_relationships)
     if patient.new_record? || parents.any?(&:new_record?) ||
          parent_relationships.any?(&:new_record?)
