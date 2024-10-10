@@ -36,17 +36,9 @@ FactoryBot.define do
     location { association :location, :school, team: }
 
     close_consent_at { (date - 1.day) if date }
-    days_before_first_consent_reminder do
-      team.days_before_first_consent_reminder if date
-    end
-    days_between_consent_reminders do
-      team.days_between_consent_reminders if date
-    end
-    maximum_number_of_consent_reminders do
-      team.maximum_number_of_consent_reminders if date
-    end
+    days_before_consent_reminders { team.days_before_consent_reminders if date }
     send_consent_requests_at do
-      (date - team.days_between_first_session_and_consent_requests.days) if date
+      (date - team.days_before_consent_requests.days) if date
     end
 
     after(:create) do |session, evaluator|

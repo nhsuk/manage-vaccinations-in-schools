@@ -163,33 +163,30 @@ class Session < ApplicationRecord
   def set_consent_dates
     if dates.empty?
       self.close_consent_at = nil
-      self.days_before_first_consent_reminder = nil
-      self.days_between_consent_reminders = nil
-      self.maximum_number_of_consent_reminders = nil
+      self.days_before_consent_reminders = nil
       self.send_consent_requests_at = nil
     else
       self.send_consent_requests_at =
-        dates.map(&:value).min -
-          team.days_between_first_session_and_consent_requests.days
+        dates.map(&:value).min - team.days_before_consent_requests.days
 
-      self.days_before_first_consent_reminder =
-        team.days_before_first_consent_reminder
-
-      self.days_between_consent_reminders = team.days_between_consent_reminders
-
-      self.maximum_number_of_consent_reminders =
-        maximum_number_of_consent_reminders
+      self.days_before_consent_reminders = team.days_before_consent_reminders
 
       self.close_consent_at = dates.map(&:value).max - 1.day
     end
   end
 
   def send_consent_reminders_at
-    if send_consent_requests_at.nil? || days_before_first_consent_reminder.nil?
-      return nil
-    end
+    return nil if dates.empty? || days_before_consent_reminders.nil?
 
-    send_consent_requests_at + days_before_first_consent_reminder
+    dates.map(&:value).min - team.days_before_consent_reminders.days
+  end
+
+  def weeks_before_consent_reminders
+    (days_before_consent_reminders / 7).to_i
+  end
+
+  def weeks_before_consent_reminders=(value)
+    self.days_before_consent_reminders = value * 7
   end
 
   def unmatched_consent_forms
