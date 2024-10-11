@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_10_183631) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_11_103137) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -182,8 +182,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_10_183631) do
   create_table "consent_notifications", force: :cascade do |t|
     t.bigint "patient_id", null: false
     t.bigint "programme_id", null: false
-    t.boolean "reminder", null: false
     t.datetime "sent_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.integer "type", null: false
     t.index ["patient_id", "programme_id"], name: "index_consent_notifications_on_patient_id_and_programme_id"
     t.index ["patient_id"], name: "index_consent_notifications_on_patient_id"
     t.index ["programme_id"], name: "index_consent_notifications_on_programme_id"
