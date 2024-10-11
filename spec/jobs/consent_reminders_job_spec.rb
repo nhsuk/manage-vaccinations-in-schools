@@ -10,7 +10,7 @@ describe ConsentRemindersJob do
 
   let(:parents) { create_list(:parent, 2) }
 
-  let(:patient_with_reminder_sent) do
+  let(:patient_with_one_reminder_sent) do
     create(:patient, :consent_request_sent, :consent_reminder_sent, programme:)
   end
   let(:patient_not_sent_reminder) do
@@ -23,15 +23,30 @@ describe ConsentRemindersJob do
 
   let!(:patients) do
     [
-      patient_with_reminder_sent,
+      patient_with_one_reminder_sent,
       patient_not_sent_reminder,
       patient_not_sent_request,
       patient_with_consent
     ]
   end
 
-  context "when session is unscheduled" do
-    let(:session) { create(:session, :unscheduled, patients:, programme:) }
+  let(:dates) { [Date.new(2024, 1, 12), Date.new(2024, 1, 15)] }
+
+  let!(:session) do
+    create(
+      :session,
+      date: nil,
+      dates: dates.map { build(:session_date, value: _1) },
+      patients:,
+      programme:,
+      days_before_consent_reminders: 7
+    )
+  end
+
+  around { |example| travel_to(today) { example.run } }
+
+  context "two weeks before the first session" do
+    let(:today) { dates.first - 2.weeks }
 
     it "doesn't send any notifications" do
       expect(ConsentNotification).not_to receive(:create_and_send!)
@@ -39,33 +54,8 @@ describe ConsentRemindersJob do
     end
   end
 
-  context "when session is in the future" do
-    let(:session) do
-      create(
-        :session,
-        patients:,
-        programme:,
-        send_consent_requests_at: 2.days.from_now,
-        days_before_first_consent_reminder: 7
-      )
-    end
-
-    it "doesn't send any notifications" do
-      expect(ConsentNotification).not_to receive(:create_and_send!)
-      perform_now
-    end
-  end
-
-  context "when the session is today" do
-    let(:session) do
-      create(
-        :session,
-        patients:,
-        programme:,
-        send_consent_requests_at: 7.days.ago,
-        days_before_first_consent_reminder: 7
-      )
-    end
+  context "one week before the first session" do
+    let(:today) { dates.first - 1.week }
 
     it "sends notifications to one patient" do
       expect(ConsentNotification).to receive(:create_and_send!).once.with(
@@ -77,43 +67,52 @@ describe ConsentRemindersJob do
       perform_now
     end
 
-    context "with a reminder sent a week ago" do
-      before do
-        create(
-          :consent_notification,
-          :reminder,
-          programme:,
-          patient: patient_with_consent,
-          sent_at: 7.days.ago
-        )
-      end
+    it "records a notification" do
+      expect { perform_now }.to change(ConsentNotification, :count).by(1)
+    end
+  end
 
-      it "sends another notification to the patient" do
-        expect(ConsentNotification).to receive(:create_and_send!).once.with(
-          patient: patient_not_sent_reminder,
-          programme:,
-          session:,
-          reminder: true
-        )
-        perform_now
-      end
+  context "six days before the first session with reminders already sent" do
+    let(:today) { dates.first - 6.days }
+
+    before do
+      create(
+        :consent_notification,
+        :reminder,
+        patient: patient_not_sent_reminder,
+        programme:
+      )
     end
 
-    context "when maximum reminders already sent" do
-      before do
-        create_list(
-          :consent_notification,
-          4,
-          :reminder,
-          programme:,
-          patient: patient_not_sent_reminder
-        )
-      end
+    it "doesn't send any notifications" do
+      expect(ConsentNotification).not_to receive(:create_and_send!)
+      perform_now
+    end
+  end
 
-      it "doesn't send any notifications" do
-        expect(ConsentNotification).not_to receive(:create_and_send!)
-        perform_now
-      end
+  context "one week before the second session" do
+    let(:today) { dates.last - 1.week }
+
+    it "sends notifications to two patients" do
+      expect(ConsentNotification).to receive(:create_and_send!).once.with(
+        patient: patient_not_sent_reminder,
+        programme:,
+        session:,
+        reminder: true
+      )
+
+      expect(ConsentNotification).to receive(:create_and_send!).once.with(
+        patient: patient_with_one_reminder_sent,
+        programme:,
+        session:,
+        reminder: true
+      )
+
+      perform_now
+    end
+
+    it "records the notifications" do
+      expect { perform_now }.to change(ConsentNotification, :count).by(2)
     end
   end
 end

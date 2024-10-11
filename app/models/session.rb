@@ -85,8 +85,9 @@ class Session < ApplicationRecord
   scope :send_consent_reminders,
         -> do
           scheduled.where(
-            "? >= send_consent_requests_at + days_before_first_consent_reminder",
-            Date.current
+            "? >= (?) - days_before_consent_reminders",
+            Date.current,
+            SessionDate.for_session.select("MIN(value)")
           )
         end
 

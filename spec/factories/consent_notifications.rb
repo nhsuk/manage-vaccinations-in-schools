@@ -33,7 +33,7 @@ FactoryBot.define do
     end
 
     trait :reminder do
-      reminder { false }
+      reminder { true }
     end
   end
 end

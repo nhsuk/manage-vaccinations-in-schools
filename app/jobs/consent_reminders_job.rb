@@ -9,7 +9,11 @@ class ConsentRemindersJob < ApplicationJob
     sessions =
       Session
         .send_consent_reminders
-        .includes(:programmes, patients: %i[consents consent_notifications])
+        .includes(
+          :dates,
+          :programmes,
+          patients: %i[consents consent_notifications parents]
+        )
         .strict_loading
 
     sessions.each do |session|
@@ -31,22 +35,18 @@ class ConsentRemindersJob < ApplicationJob
   def should_send_notification?(patient:, programme:, session:)
     return false if patient.has_consent?(programme)
 
-    if patient.consent_notifications.select(&:reminder).length >=
-         session.maximum_number_of_consent_reminders
-      return false
-    end
+    return false if patient.consent_notifications.none?(&:request?)
 
-    previous_notification = patient.consent_notifications.max_by(&:sent_at)
-    return false if previous_notification.nil?
+    date_index_to_send_reminder_for =
+      patient.consent_notifications.select(&:reminder?).length
 
-    next_date =
-      previous_notification.sent_at.to_date +
-        if previous_notification.request?
-          session.days_before_first_consent_reminder
-        else
-          session.days_between_consent_reminders
-        end
+    return if date_index_to_send_reminder_for >= session.dates.length
 
-    Date.current >= next_date
+    date_to_send_reminder_for =
+      session.dates[date_index_to_send_reminder_for].value
+    earliest_date_to_send_reminder =
+      date_to_send_reminder_for - session.days_before_consent_reminders.days
+
+    Date.current >= earliest_date_to_send_reminder
   end
 end
