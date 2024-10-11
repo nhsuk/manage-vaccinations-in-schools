@@ -153,6 +153,27 @@ describe Patient do
     end
   end
 
+  describe "#year_group" do
+    subject(:year_group) { travel_to(today) { patient.year_group } }
+
+    let(:patient) do
+      create(:patient, date_of_birth: Date.new(2011, 10, 1), cohort:)
+    end
+    let(:cohort) { nil }
+
+    let(:today) { Date.new(2024, 10, 1) }
+
+    context "without a cohort" do
+      it { should eq(8) }
+    end
+
+    context "with a cohort" do
+      let(:cohort) { create(:cohort, birth_academic_year: 2010) }
+
+      it { should eq(9) }
+    end
+  end
+
   describe "#stage_changes" do
     let(:patient) { create(:patient, first_name: "John", last_name: "Doe") }
 

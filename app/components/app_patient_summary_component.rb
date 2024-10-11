@@ -84,7 +84,7 @@ class AppPatientSummaryComponent < ViewComponent::Base
 
   def format_date_of_birth
     highlight_if(
-      "#{@patient.date_of_birth.to_fs(:long)} (#{helpers.format_year_group(@patient.cohort.year_group)})",
+      "#{@patient.date_of_birth.to_fs(:long)} (#{helpers.format_year_group(@patient.year_group)})",
       @patient.date_of_birth_changed? || @patient.cohort_id_changed?
     )
   end
