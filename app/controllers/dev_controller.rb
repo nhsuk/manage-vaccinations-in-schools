@@ -58,6 +58,8 @@ class DevController < ApplicationController
 
     ConsentForm.where(team:).delete_all
 
+    Consent.where(team:).delete_all
+
     Patient.joins(:cohort).where(cohorts: { team: }).distinct.destroy_all
 
     Cohort.where(team:).delete_all
