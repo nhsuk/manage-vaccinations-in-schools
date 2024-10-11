@@ -20,7 +20,7 @@
 #  recorded_at      :datetime
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
-#  cohort_id        :bigint           not null
+#  cohort_id        :bigint
 #  school_id        :bigint
 #
 # Indexes
@@ -42,7 +42,7 @@ class Patient < ApplicationRecord
 
   audited
 
-  belongs_to :cohort
+  belongs_to :cohort, optional: true
   belongs_to :school, class_name: "Location", optional: true
 
   has_many :consent_notifications
