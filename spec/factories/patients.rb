@@ -99,11 +99,11 @@ FactoryBot.define do
       end
     end
 
-    trait :consent_reminder_sent do
+    trait :initial_consent_reminder_sent do
       after(:create) do |patient, context|
         create(
           :consent_notification,
-          :reminder,
+          :initial_reminder,
           patient:,
           programme: context.programme
         )

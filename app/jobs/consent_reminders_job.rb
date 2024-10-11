@@ -21,11 +21,15 @@ class ConsentRemindersJob < ApplicationJob
         session.patients.each do |patient|
           next unless should_send_notification?(patient:, programme:, session:)
 
+          sent_initial_reminder =
+            patient.consent_notifications.any?(&:initial_reminder?)
+
           ConsentNotification.create_and_send!(
             patient:,
             programme:,
             session:,
-            type: :reminder
+            type:
+              sent_initial_reminder ? :subsequent_reminder : :initial_reminder
           )
         end
       end

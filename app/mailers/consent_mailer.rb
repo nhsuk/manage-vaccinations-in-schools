@@ -21,7 +21,11 @@ class ConsentMailer < ApplicationMailer
     app_template_mail(:hpv_session_consent_request)
   end
 
-  def reminder
+  def initial_reminder
     app_template_mail(:hpv_session_consent_reminder)
+  end
+
+  def subsequent_reminder
+    app_template_mail(:hpv_session_consent_reminder_subsequent)
   end
 end

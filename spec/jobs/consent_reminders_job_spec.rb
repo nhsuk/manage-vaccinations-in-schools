@@ -10,8 +10,13 @@ describe ConsentRemindersJob do
 
   let(:parents) { create_list(:parent, 2) }
 
-  let(:patient_with_one_reminder_sent) do
-    create(:patient, :consent_request_sent, :consent_reminder_sent, programme:)
+  let(:patient_with_initial_reminder_sent) do
+    create(
+      :patient,
+      :consent_request_sent,
+      :initial_consent_reminder_sent,
+      programme:
+    )
   end
   let(:patient_not_sent_reminder) do
     create(:patient, :consent_request_sent, parents:, programme:)
@@ -23,7 +28,7 @@ describe ConsentRemindersJob do
 
   let!(:patients) do
     [
-      patient_with_one_reminder_sent,
+      patient_with_initial_reminder_sent,
       patient_not_sent_reminder,
       patient_not_sent_request,
       patient_with_consent
@@ -62,7 +67,7 @@ describe ConsentRemindersJob do
         patient: patient_not_sent_reminder,
         programme:,
         session:,
-        type: :reminder
+        type: :initial_reminder
       )
       perform_now
     end
@@ -78,7 +83,7 @@ describe ConsentRemindersJob do
     before do
       create(
         :consent_notification,
-        :reminder,
+        :initial_reminder,
         patient: patient_not_sent_reminder,
         programme:
       )
@@ -98,14 +103,14 @@ describe ConsentRemindersJob do
         patient: patient_not_sent_reminder,
         programme:,
         session:,
-        type: :reminder
+        type: :initial_reminder
       )
 
       expect(ConsentNotification).to receive(:create_and_send!).once.with(
-        patient: patient_with_one_reminder_sent,
+        patient: patient_with_initial_reminder_sent,
         programme:,
         session:,
-        type: :reminder
+        type: :subsequent_reminder
       )
 
       perform_now
