@@ -6,7 +6,6 @@
 #
 #  id                            :bigint           not null, primary key
 #  academic_year                 :integer          not null
-#  close_consent_at              :date
 #  days_before_consent_reminders :integer
 #  send_consent_requests_at      :date
 #  created_at                    :datetime         not null
@@ -35,7 +34,6 @@ FactoryBot.define do
     team { association(:team, programmes:) }
     location { association :location, :school, team: }
 
-    close_consent_at { (date - 1.day) if date }
     days_before_consent_reminders { team.days_before_consent_reminders if date }
     send_consent_requests_at do
       (date - team.days_before_consent_requests.days) if date

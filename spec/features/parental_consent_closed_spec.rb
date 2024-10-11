@@ -17,7 +17,7 @@ describe "Parental consent closed" do
         :completed,
         programme: @programme,
         location:,
-        close_consent_at: 7.days.ago
+        date: Date.yesterday
       )
   end
 

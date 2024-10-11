@@ -6,7 +6,6 @@
 #
 #  id                            :bigint           not null, primary key
 #  academic_year                 :integer          not null
-#  close_consent_at              :date
 #  days_before_consent_reminders :integer
 #  send_consent_requests_at      :date
 #  created_at                    :datetime         not null
@@ -163,7 +162,6 @@ class Session < ApplicationRecord
 
   def set_consent_dates
     if dates.empty?
-      self.close_consent_at = nil
       self.days_before_consent_reminders = nil
       self.send_consent_requests_at = nil
     else
@@ -171,8 +169,6 @@ class Session < ApplicationRecord
         dates.map(&:value).min - team.days_before_consent_requests.days
 
       self.days_before_consent_reminders = team.days_before_consent_reminders
-
-      self.close_consent_at = dates.map(&:value).max - 1.day
     end
   end
 
@@ -180,6 +176,11 @@ class Session < ApplicationRecord
     return nil if dates.empty? || days_before_consent_reminders.nil?
 
     dates.map(&:value).min - team.days_before_consent_reminders.days
+  end
+
+  def close_consent_at
+    return nil if dates.empty?
+    dates.map(&:value).max - 1.day
   end
 
   def weeks_before_consent_reminders

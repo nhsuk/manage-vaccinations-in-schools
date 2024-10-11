@@ -27,14 +27,7 @@ describe GovukNotifyPersonalisation do
   let(:patient) { create(:patient, first_name: "John", last_name: "Smith") }
   let(:location) { create(:location, :school, name: "Hogwarts") }
   let(:session) do
-    create(
-      :session,
-      location:,
-      team:,
-      programme:,
-      close_consent_at: Date.new(2026, 1, 1),
-      date: Date.new(2026, 1, 1)
-    )
+    create(:session, location:, team:, programme:, date: Date.new(2026, 1, 1))
   end
   let(:consent) { nil }
   let(:consent_form) { nil }
@@ -44,8 +37,8 @@ describe GovukNotifyPersonalisation do
   it do
     expect(personalisation).to eq(
       {
-        close_consent_date: "Thursday 1 January",
-        close_consent_short_date: "1 January",
+        close_consent_date: "Wednesday 31 December",
+        close_consent_short_date: "31 December",
         consent_link:
           "http://localhost:4000/consents/#{session.id}/#{programme.id}/start",
         full_and_preferred_patient_name: "John Smith",
