@@ -20,7 +20,7 @@
 #  recorded_at      :datetime
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
-#  cohort_id        :bigint           not null
+#  cohort_id        :bigint
 #  school_id        :bigint
 #
 # Indexes
