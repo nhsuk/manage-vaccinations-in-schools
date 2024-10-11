@@ -55,6 +55,9 @@
 #  fk_rails_...  (school_id => locations.id)
 #  fk_rails_...  (team_id => teams.id)
 #
+
+require_relative "../../lib/faker/address"
+
 FactoryBot.define do
   factory :consent_form do
     transient { session { association :session } }
@@ -69,7 +72,7 @@ FactoryBot.define do
     gp_name { Faker::Name.name }
     address_line_1 { Faker::Address.street_address }
     address_town { Faker::Address.city }
-    address_postcode { "SW11 1AA" }
+    address_postcode { Faker::Address.uk_postcode }
 
     parent_email { Faker::Internet.email }
     parent_name { "#{Faker::Name.first_name}} #{last_name}" }

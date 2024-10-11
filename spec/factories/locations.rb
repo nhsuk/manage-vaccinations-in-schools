@@ -29,13 +29,16 @@
 #
 #  fk_rails_...  (team_id => teams.id)
 #
+
+require_relative "../../lib/faker/address"
+
 FactoryBot.define do
   factory :location do
     name { Faker::Educator.primary_school }
 
     address_line_1 { Faker::Address.street_address }
     address_town { Faker::Address.city }
-    address_postcode { "SW11 1AA" }
+    address_postcode { Faker::Address.uk_postcode }
 
     url { Faker::Internet.url }
 

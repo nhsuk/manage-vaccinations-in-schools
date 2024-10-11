@@ -35,6 +35,8 @@
 #  fk_rails_...  (school_id => locations.id)
 #
 
+require_relative "../../lib/faker/address"
+
 FactoryBot.define do
   sequence :nhs_number_counter, 1
 
@@ -78,7 +80,7 @@ FactoryBot.define do
     address_line_1 { Faker::Address.street_address }
     address_line_2 { Faker::Address.secondary_address }
     address_town { Faker::Address.city }
-    address_postcode { "SW11 1AA" }
+    address_postcode { Faker::Address.uk_postcode }
 
     after(:create) do |patient, evaluator|
       if evaluator.session
