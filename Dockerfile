@@ -29,7 +29,7 @@ RUN apt-get update -qq && \
 ARG NODE_VERSION=22.5.1
 ARG YARN_VERSION=1.22.19
 ENV PATH=/usr/local/node/bin:$PATH
-RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
+RUN curl -sL --ssl https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
     /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node && \
     npm install --ignore-scripts -g yarn@"$YARN_VERSION" && \
     rm -rf /tmp/node-build-master
