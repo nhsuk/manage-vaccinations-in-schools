@@ -37,8 +37,7 @@ describe GovukNotifyPersonalisation do
   it do
     expect(personalisation).to eq(
       {
-        close_consent_date: "Wednesday 31 December",
-        close_consent_short_date: "31 December",
+        consent_deadline: "Wednesday 31 December",
         consent_link:
           "http://localhost:4000/consents/#{session.id}/#{programme.id}/start",
         full_and_preferred_patient_name: "John Smith",
