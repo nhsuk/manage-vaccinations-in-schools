@@ -27,7 +27,11 @@ class ConsentNotification < ApplicationRecord
   belongs_to :patient
   belongs_to :programme
 
-  enum :type, %w[request reminder], validate: true
+  enum :type, %w[request initial_reminder subsequent_reminder], validate: true
+
+  def reminder?
+    initial_reminder? || subsequent_reminder?
+  end
 
   def self.create_and_send!(patient:, programme:, session:, type:)
     # We create a record in the database first to avoid sending duplicate emails/texts.
@@ -43,7 +47,7 @@ class ConsentNotification < ApplicationRecord
         .deliver_later
 
       TextDeliveryJob.perform_later(
-        type == :reminder ? :consent_reminder : :consent_request,
+        type == :request ? :consent_request : :consent_reminder,
         parent:,
         patient:,
         programme:,

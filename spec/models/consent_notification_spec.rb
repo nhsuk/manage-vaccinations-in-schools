@@ -89,8 +89,8 @@ describe ConsentNotification do
       end
     end
 
-    context "with a reminder" do
-      let(:type) { :reminder }
+    context "with an initial reminder" do
+      let(:type) { :initial_reminder }
 
       it "creates a record" do
         expect { create_and_send! }.to change(described_class, :count).by(1)
@@ -105,7 +105,7 @@ describe ConsentNotification do
       it "enqueues an email per parent" do
         expect { create_and_send! }.to have_enqueued_mail(
           ConsentMailer,
-          :reminder
+          :initial_reminder
         ).with(
           params: {
             parent: parents.first,
@@ -114,7 +114,60 @@ describe ConsentNotification do
             session:
           },
           args: []
-        ).and have_enqueued_mail(ConsentMailer, :reminder).with(
+        ).and have_enqueued_mail(ConsentMailer, :initial_reminder).with(
+                params: {
+                  parent: parents.second,
+                  patient:,
+                  programme:,
+                  session:
+                },
+                args: []
+              )
+      end
+
+      it "enqueues a text per parent" do
+        expect { create_and_send! }.to have_enqueued_text(
+          :consent_reminder
+        ).with(
+          parent: parents.first,
+          patient:,
+          programme:,
+          session:
+        ).and have_enqueued_text(:consent_reminder).with(
+                parent: parents.second,
+                patient:,
+                programme:,
+                session:
+              )
+      end
+    end
+
+    context "with a subsequent reminder" do
+      let(:type) { :subsequent_reminder }
+
+      it "creates a record" do
+        expect { create_and_send! }.to change(described_class, :count).by(1)
+
+        consent_notification = described_class.last
+        expect(consent_notification).to be_reminder
+        expect(consent_notification.programme).to eq(programme)
+        expect(consent_notification.patient).to eq(patient)
+        expect(consent_notification.sent_at).to be_today
+      end
+
+      it "enqueues an email per parent" do
+        expect { create_and_send! }.to have_enqueued_mail(
+          ConsentMailer,
+          :subsequent_reminder
+        ).with(
+          params: {
+            parent: parents.first,
+            patient:,
+            programme:,
+            session:
+          },
+          args: []
+        ).and have_enqueued_mail(ConsentMailer, :subsequent_reminder).with(
                 params: {
                   parent: parents.second,
                   patient:,
