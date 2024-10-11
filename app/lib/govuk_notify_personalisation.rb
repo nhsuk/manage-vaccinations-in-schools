@@ -33,8 +33,7 @@ class GovukNotifyPersonalisation
   def call
     {
       batch_name:,
-      close_consent_date:,
-      close_consent_short_date:,
+      consent_deadline:,
       consent_link:,
       day_month_year_of_vaccination:,
       full_and_preferred_patient_name:,
@@ -80,12 +79,11 @@ class GovukNotifyPersonalisation
     vaccination_record&.batch&.name
   end
 
-  def close_consent_date
-    session.close_consent_at.to_fs(:short_day_of_week)
-  end
+  def consent_deadline
+    next_date = session.today_or_future_dates.first
+    return nil if next_date.nil?
 
-  def close_consent_short_date
-    session.close_consent_at.to_fs(:short)
+    (next_date - 1.day).to_fs(:short_day_of_week)
   end
 
   def consent_link

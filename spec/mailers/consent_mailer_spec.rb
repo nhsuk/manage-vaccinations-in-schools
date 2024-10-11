@@ -45,18 +45,13 @@ describe ConsentMailer do
 
       it { should include(next_session_date: date.strftime("%A %-d %B")) }
 
-      it do
-        expect(personalisation).to include(
-          close_consent_date: session.close_consent_at.strftime("%A %-d %B")
-        )
-      end
-
       it { should include(location_name: session.location.name) }
       it { should include(team_email: session.team.email) }
       it { should include(team_phone: session.team.phone) }
 
-      it "uses the consent url for the session" do
+      it "includes consent details" do
         expect(personalisation).to include(
+          consent_deadline: (date - 1.day).strftime("%A %-d %B"),
           consent_link:
             start_parent_interface_consent_forms_url(session, programme)
         )
@@ -83,25 +78,13 @@ describe ConsentMailer do
       end
 
       it { should include(next_session_date: date.strftime("%A %-d %B")) }
-
-      it do
-        expect(personalisation).to include(
-          close_consent_date: session.close_consent_at.strftime("%A %-d %B")
-        )
-      end
-
-      it do
-        expect(personalisation).to include(
-          close_consent_short_date: session.close_consent_at.strftime("%-d %B")
-        )
-      end
-
       it { should include(location_name: session.location.name) }
       it { should include(team_email: session.team.email) }
       it { should include(team_phone: session.team.phone) }
 
-      it "uses the consent url for the session" do
+      it "includes consent details" do
         expect(personalisation).to include(
+          consent_deadline: (date - 1.day).strftime("%A %-d %B"),
           consent_link:
             start_parent_interface_consent_forms_url(session, programme)
         )
