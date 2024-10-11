@@ -36,6 +36,8 @@
 #
 
 FactoryBot.define do
+  sequence :nhs_number_counter, 1
+
   factory :patient do
     transient do
       session { nil }
@@ -56,7 +58,17 @@ FactoryBot.define do
 
     recorded_at { Time.zone.now }
 
-    nhs_number { Faker::NationalHealthService.british_number.gsub(/\s+/, "") }
+    nhs_number do
+      # Prevents duplicate NHS numbers by sequencing and appending a check
+      # digit. See Faker's implementation for details:
+      # https://github.com/faker-ruby/faker/blob/6ba06393f47d4018b5fdbdaaa04eb9891ae5fb55/lib/faker/default/national_health_service.rb
+      base = 999_000_000 + generate(:nhs_number_counter)
+      sum = base.to_s.chars.map.with_index { |d, i| d.to_i * (10 - i) }.sum
+      check_digit = (11 - (sum % 11)) % 11
+      redo if check_digit == 10 # Retry if check digit is 10, which is invalid
+
+      "#{base}#{check_digit}"
+    end
 
     first_name { Faker::Name.first_name }
     last_name { Faker::Name.last_name }
