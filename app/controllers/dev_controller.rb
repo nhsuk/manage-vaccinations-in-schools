@@ -42,6 +42,8 @@ class DevController < ApplicationController
 
     team_sessions = Session.where(team:)
 
+    ClassImport.where(session: team_sessions).destroy_all
+
     patient_sessions = PatientSession.where(session: team_sessions)
     patient_sessions.each do |patient_session|
       patient_session.vaccination_records.destroy_all
