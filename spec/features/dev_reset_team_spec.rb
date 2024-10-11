@@ -56,8 +56,8 @@ describe "Dev endpoint to reset a team" do
   def then_all_associated_data_is_deleted_when_i_reset_the_team
     expect { visit "/reset/r1l" }.to(
       change(Patient, :count)
-        .by(-13)
-        .and(change(Cohort, :count).by(-2))
+        .by(-3)
+        .and(change(Cohort, :count).by(-1))
         .and(change(Parent, :count).by(-3))
         .and(change(VaccinationRecord, :count).by(-11))
         .and(change(ImmunisationImport, :count).by(-1))

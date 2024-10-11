@@ -35,10 +35,7 @@ describe "Immunisation imports" do
     then_i_should_see_the_vaccination_record
 
     when_i_click_on_cohorts
-    then_i_should_see_the_cohorts
-
-    when_i_click_on_the_cohort
-    then_i_should_see_the_children
+    then_i_should_see_no_children_in_the_cohorts
 
     when_i_click_on_vaccination_records
     then_i_should_see_the_vaccination_records
@@ -167,23 +164,11 @@ describe "Immunisation imports" do
     click_on "Cohorts"
   end
 
-  def then_i_should_see_the_cohorts
-    expect(page).to have_content("Year 8\n10 children")
+  def then_i_should_see_no_children_in_the_cohorts
+    expect(page).to have_content("Year 8\nNo children")
     expect(page).to have_content("Year 9\nNo children")
     expect(page).to have_content("Year 10\nNo children")
     expect(page).to have_content("Year 11\nNo children")
-  end
-
-  def when_i_click_on_the_cohort
-    click_on "Year 8"
-  end
-
-  def then_i_should_see_the_children
-    expect(page).to have_content("Full nameNHS numberDate of birthPostcode")
-    expect(page).to have_content("Full name Chyna Pickle")
-    expect(page).to have_content(/NHS number.*742.*018.*0008/)
-    expect(page).to have_content("Date of birth 12 September 2010")
-    expect(page).to have_content("Postcode LE3 2DA")
   end
 
   def when_i_click_on_vaccination_records

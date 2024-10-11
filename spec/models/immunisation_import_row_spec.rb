@@ -334,49 +334,17 @@ describe ImmunisationImportRow do
       it { should eq(patient) }
     end
 
-    context "with a school" do
-      let(:data) { valid_data }
-
-      it "creates a patient with a school" do
-        expect(patient.home_educated).to be(false)
-        expect(patient.school).not_to be_nil
-      end
-    end
-
-    context "when home educated" do
-      let(:data) { valid_data.merge("SCHOOL_URN" => "999999") }
-
-      it "creates a home educated patient" do
-        expect(patient.home_educated).to be(true)
-        expect(patient.school).to be_nil
-      end
-    end
-
-    context "with an unknown school" do
-      let(:data) { valid_data.merge("SCHOOL_URN" => "888888") }
-
-      it "creates a patient with an unknown school" do
-        expect(patient.home_educated).to be_nil
-        expect(patient.school).to be_nil
-      end
-    end
-
     describe "#cohort" do
-      subject(:cohort) { travel_to(today) { patient.cohort } }
+      subject(:cohort) { patient.cohort }
 
       let(:data) { valid_data }
-      let(:today) { Date.new(2024, 9, 1) }
 
-      context "with a date of birth before September" do
-        let(:date_of_birth) { "20130831" }
+      it { should be_nil }
 
-        it { should have_attributes(team:, birth_academic_year: 2012) }
-      end
+      context "with an existing patient in a cohort" do
+        let(:patient) { create(:patient, nhs_number:, cohort: create(:cohort)) }
 
-      context "with a date of birth after September" do
-        let(:date_of_birth) { "20130901" }
-
-        it { should have_attributes(team:, birth_academic_year: 2013) }
+        it { should eq(patient.cohort) }
       end
     end
   end

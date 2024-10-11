@@ -300,10 +300,8 @@ describe ImmunisationImport do
 
         expect(existing_patient.reload.pending_changes).to eq(
           "address_postcode" => "LE3 2DB",
-          "cohort_id" => team.cohorts.first.id,
           "date_of_birth" => "2011-09-13",
-          "gender_code" => "female",
-          "school_id" => Location.find_by(urn: "110158").id
+          "gender_code" => "female"
         )
       end
     end
