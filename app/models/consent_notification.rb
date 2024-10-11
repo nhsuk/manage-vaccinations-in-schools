@@ -5,8 +5,8 @@
 # Table name: consent_notifications
 #
 #  id           :bigint           not null, primary key
-#  reminder     :boolean          not null
 #  sent_at      :datetime         not null
+#  type         :integer          not null
 #  patient_id   :bigint           not null
 #  programme_id :bigint           not null
 #
@@ -22,30 +22,28 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 class ConsentNotification < ApplicationRecord
+  self.inheritance_column = :nil
+
   belongs_to :patient
   belongs_to :programme
 
-  scope :request, -> { where(reminder: false) }
+  enum :type, %w[request reminder], validate: true
 
-  def request?
-    reminder == false
-  end
-
-  def self.create_and_send!(patient:, programme:, session:, reminder:)
+  def self.create_and_send!(patient:, programme:, session:, type:)
     # We create a record in the database first to avoid sending duplicate emails/texts.
     # If a problem occurs while the emails/texts are sent, they will be in the job
     # queue and restarted at a later date.
 
-    ConsentNotification.create!(programme:, patient:, reminder:)
+    ConsentNotification.create!(programme:, patient:, type:)
 
     patient.parents.each do |parent|
       ConsentMailer
         .with(parent:, patient:, programme:, session:)
-        .send(reminder ? :reminder : :request)
+        .send(type)
         .deliver_later
 
       TextDeliveryJob.perform_later(
-        reminder ? :consent_reminder : :consent_request,
+        type == :reminder ? :consent_reminder : :consent_request,
         parent:,
         patient:,
         programme:,

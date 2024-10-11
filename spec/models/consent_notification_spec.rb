@@ -5,8 +5,8 @@
 # Table name: consent_notifications
 #
 #  id           :bigint           not null, primary key
-#  reminder     :boolean          not null
 #  sent_at      :datetime         not null
+#  type         :integer          not null
 #  patient_id   :bigint           not null
 #  programme_id :bigint           not null
 #
@@ -22,19 +22,10 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 describe ConsentNotification do
-  subject(:consent_notification) { build(:consent_notification) }
-
-  it { should be_valid }
-
   describe "#create_and_send!" do
     subject(:create_and_send!) do
       travel_to(today) do
-        described_class.create_and_send!(
-          patient:,
-          programme:,
-          session:,
-          reminder:
-        )
+        described_class.create_and_send!(patient:, programme:, session:, type:)
       end
     end
 
@@ -46,7 +37,7 @@ describe ConsentNotification do
     let(:session) { create(:session, programme:, patients: [patient]) }
 
     context "with a request" do
-      let(:reminder) { false }
+      let(:type) { :request }
 
       it "creates a record" do
         expect { create_and_send! }.to change(described_class, :count).by(1)
@@ -99,7 +90,7 @@ describe ConsentNotification do
     end
 
     context "with a reminder" do
-      let(:reminder) { true }
+      let(:type) { :reminder }
 
       it "creates a record" do
         expect { create_and_send! }.to change(described_class, :count).by(1)

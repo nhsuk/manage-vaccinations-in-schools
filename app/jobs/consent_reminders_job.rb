@@ -25,7 +25,7 @@ class ConsentRemindersJob < ApplicationJob
             patient:,
             programme:,
             session:,
-            reminder: true
+            type: :reminder
           )
         end
       end

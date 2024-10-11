@@ -62,7 +62,7 @@ describe ConsentRequestsJob do
         patient: patient_not_sent_request,
         programme:,
         session:,
-        reminder: false
+        type: :request
       )
       perform_now
     end

@@ -62,7 +62,7 @@ describe ConsentRemindersJob do
         patient: patient_not_sent_reminder,
         programme:,
         session:,
-        reminder: true
+        type: :reminder
       )
       perform_now
     end
@@ -98,14 +98,14 @@ describe ConsentRemindersJob do
         patient: patient_not_sent_reminder,
         programme:,
         session:,
-        reminder: true
+        type: :reminder
       )
 
       expect(ConsentNotification).to receive(:create_and_send!).once.with(
         patient: patient_with_one_reminder_sent,
         programme:,
         session:,
-        reminder: true
+        type: :reminder
       )
 
       perform_now

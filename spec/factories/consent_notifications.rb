@@ -5,8 +5,8 @@
 # Table name: consent_notifications
 #
 #  id           :bigint           not null, primary key
-#  reminder     :boolean          not null
 #  sent_at      :datetime         not null
+#  type         :integer          not null
 #  patient_id   :bigint           not null
 #  programme_id :bigint           not null
 #
@@ -26,14 +26,6 @@ FactoryBot.define do
     patient
     programme
 
-    reminder { [true, false].sample }
-
-    trait :request do
-      reminder { false }
-    end
-
-    trait :reminder do
-      reminder { true }
-    end
+    traits_for_enum :type
   end
 end
