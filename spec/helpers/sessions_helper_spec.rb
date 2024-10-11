@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-RSpec.describe SessionsHelper do
-  let(:programme) { build(:programme, :flu) }
-  let(:location) { build(:location, name: "Waterloo Road") }
-  let(:close_consent_at) { nil }
-  let(:session) { build(:session, programme:, close_consent_at:, location:) }
+describe SessionsHelper do
+  let(:programme) { create(:programme, :flu) }
+  let(:location) { create(:location, :school, name: "Waterloo Road") }
+  let(:date) { nil }
+  let(:session) { create(:session, programme:, date:, location:) }
 
   describe "#session_consent_period" do
     subject(:session_consent_period) { helper.session_consent_period(session) }
@@ -12,13 +12,13 @@ RSpec.describe SessionsHelper do
     it { should eq("Not provided") }
 
     context "when in the past" do
-      let(:close_consent_at) { Date.yesterday }
+      let(:date) { Date.yesterday }
 
       it { should start_with("Closed ") }
     end
 
     context "when in the future" do
-      let(:close_consent_at) { Date.tomorrow }
+      let(:date) { Date.tomorrow }
 
       it { should start_with("Open until ") }
     end

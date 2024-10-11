@@ -6,7 +6,6 @@
 #
 #  id                            :bigint           not null, primary key
 #  academic_year                 :integer          not null
-#  close_consent_at              :date
 #  days_before_consent_reminders :integer
 #  send_consent_requests_at      :date
 #  created_at                    :datetime         not null
@@ -190,6 +189,30 @@ describe Session do
       let(:today) { dates.third + 1.day }
 
       it { should be_empty }
+    end
+  end
+
+  describe "#close_consent_at" do
+    subject(:close_consent_at) { session.close_consent_at }
+
+    let(:date) { nil }
+
+    let(:session) { create(:session, date:) }
+
+    it { should be_nil }
+
+    context "with a date" do
+      let(:date) { Date.new(2020, 1, 2) }
+
+      it { should eq(Date.new(2020, 1, 1)) }
+    end
+
+    context "with two dates" do
+      let(:date) { Date.new(2020, 1, 2) }
+
+      before { create(:session_date, session:, value: date + 1.day) }
+
+      it { should eq(Date.new(2020, 1, 2)) }
     end
   end
 

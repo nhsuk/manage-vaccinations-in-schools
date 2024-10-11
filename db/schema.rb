@@ -527,7 +527,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_11_103137) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.date "send_consent_requests_at"
-    t.date "close_consent_at"
     t.bigint "team_id", null: false
     t.integer "academic_year", null: false
     t.integer "days_before_consent_reminders"
