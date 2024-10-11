@@ -133,6 +133,10 @@ class Patient < ApplicationRecord
     "#{first_name} #{last_name}"
   end
 
+  def year_group
+    cohort&.year_group || date_of_birth.year_group
+  end
+
   def has_consent?(programme)
     consents.any? { _1.programme_id == programme.id }
   end
