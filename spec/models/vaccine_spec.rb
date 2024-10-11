@@ -54,6 +54,24 @@ describe Vaccine, type: :model do
     end
   end
 
+  describe "#common_delivery_sites" do
+    subject(:common_delivery_sites) { vaccine.common_delivery_sites }
+
+    context "with a Flu vaccine" do
+      let(:vaccine) { build(:vaccine, :flu) }
+
+      it "raises an error" do
+        expect { common_delivery_sites }.to raise_error(NotImplementedError)
+      end
+    end
+
+    context "with an HPV vaccine" do
+      let(:vaccine) { build(:vaccine, :hpv) }
+
+      it { should eq(%w[left_arm_upper_position right_arm_upper_position]) }
+    end
+  end
+
   describe "#maximum_dose_sequence" do
     subject(:maximum_dose_sequence) { vaccine.maximum_dose_sequence }
 

@@ -63,7 +63,7 @@ class Vaccine < ApplicationRecord
       %w[left_arm_upper_position right_arm_upper_position]
     else
       raise NotImplementedError,
-            "Common delivery sites not implemented for #{type} vaccines."
+            "Common delivery sites not implemented for #{programme.type} vaccines."
     end
   end
 
