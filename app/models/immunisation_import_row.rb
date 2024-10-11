@@ -104,7 +104,7 @@ class ImmunisationImportRow
 
     @patient ||=
       if (existing_patient = find_existing_patients.first)
-        existing_patient.stage_changes(staged_patient_attributes)
+        existing_patient.stage_changes(patient_attributes)
         existing_patient
       else
         Patient.create!(recorded_at: Time.zone.now, **patient_attributes)
@@ -242,14 +242,6 @@ class ImmunisationImportRow
     @data["SCHOOL_URN"]&.strip
   end
 
-  def home_educated
-    if school_urn == SCHOOL_URN_UNKNOWN
-      nil
-    else
-      school_urn == SCHOOL_URN_HOME_EDUCATED
-    end
-  end
-
   def session_date
     parse_date("DATE_OF_VACCINATION")
   end
@@ -278,24 +270,14 @@ class ImmunisationImportRow
     administered ? (session_date.in_time_zone + 12.hours) : nil
   end
 
-  def cohort
-    return unless valid?
-
-    @cohort ||=
-      Cohort.find_or_create_by!(
-        birth_academic_year: patient_date_of_birth.academic_year,
-        team:
-      )
-  end
-
   def location
     return unless valid?
 
     @location ||=
-      if school.present? &&
-           (care_setting.nil? || care_setting == CARE_SETTING_SCHOOL)
+      if school && (care_setting.nil? || care_setting == CARE_SETTING_SCHOOL)
         school
-      elsif home_educated || care_setting == CARE_SETTING_COMMUNITY
+      elsif school_urn == SCHOOL_URN_HOME_EDUCATED ||
+            care_setting == CARE_SETTING_COMMUNITY
         clinic
       end
   end
@@ -390,22 +372,12 @@ class ImmunisationImportRow
   def patient_attributes
     {
       address_postcode: patient_postcode,
-      cohort:,
       date_of_birth: patient_date_of_birth,
       first_name: patient_first_name,
       gender_code: patient_gender_code,
-      home_educated:,
       last_name: patient_last_name,
-      nhs_number: patient_nhs_number,
-      school:
+      nhs_number: patient_nhs_number
     }
-  end
-
-  def staged_patient_attributes
-    patient_attributes.except(:cohort, :school).merge(
-      cohort_id: patient_attributes[:cohort]&.id,
-      school_id: patient_attributes[:school]&.id
-    )
   end
 
   def school_urn_inclusion
