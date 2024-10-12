@@ -45,7 +45,10 @@
           summary_list.with_row do |row|
             row.with_key { "Consent reminders" }
             row.with_value do
-              "Send #{pluralize(@session.weeks_before_consent_reminders, "week")} before each session" + tag.br + tag.span("First: #{send_consent_reminders_at.to_fs(:long_day_of_week)}", class: "nhsuk-u-secondary-text-color")
+              safe_join([
+                "Send #{pluralize(@session.weeks_before_consent_reminders, "week")} before each session",
+                tag.span("First: #{send_consent_reminders_at.to_fs(:long_day_of_week)}", class: "nhsuk-u-secondary-text-color"),
+              ], tag.br)
             end
           end
         end
