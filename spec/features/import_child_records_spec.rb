@@ -30,7 +30,8 @@ describe "Import child records" do
     and_i_refresh_the_page
     then_i_should_the_errors_page_with_invalid_fields
 
-    when_i_go_back_to_the_upload_page
+    when_it_is_a_litte_bit_later
+    and_i_go_back_to_the_upload_page
     and_i_upload_a_valid_file
     then_i_should_see_the_imports_page_with_the_completed_flash
 
@@ -176,7 +177,11 @@ describe "Import child records" do
     expect(page).to have_content("Row 2")
   end
 
-  def when_i_go_back_to_the_upload_page
+  def when_it_is_a_litte_bit_later
+    travel_to(1.minute.from_now) # so the imports are in a deterministic order
+  end
+
+  def and_i_go_back_to_the_upload_page
     click_on "Back"
     click_on "Import records"
     choose "Child records"
