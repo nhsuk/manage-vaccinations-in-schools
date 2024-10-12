@@ -120,6 +120,21 @@ describe ClassImport do
         )
       end
     end
+
+    describe "with minimal fields" do
+      let(:file) { "valid_minimal.csv" }
+
+      it "is valid" do
+        expect(class_import).to be_valid
+        expect(class_import.rows.count).to eq(1)
+        expect(class_import.rows.first.to_patient).to have_attributes(
+          first_name: "Jennifer",
+          last_name: "Clarke",
+          date_of_birth: Date.new(2010, 1, 1),
+          school: location
+        )
+      end
+    end
   end
 
   describe "#record!" do
