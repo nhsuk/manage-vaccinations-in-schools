@@ -6,25 +6,7 @@ class PatientImport < ApplicationRecord
   private
 
   def required_headers
-    %w[
-      CHILD_ADDRESS_LINE_1
-      CHILD_ADDRESS_LINE_2
-      CHILD_POSTCODE
-      CHILD_TOWN
-      CHILD_COMMON_NAME
-      CHILD_DATE_OF_BIRTH
-      CHILD_FIRST_NAME
-      CHILD_LAST_NAME
-      CHILD_NHS_NUMBER
-      PARENT_1_EMAIL
-      PARENT_1_NAME
-      PARENT_1_PHONE
-      PARENT_1_RELATIONSHIP
-      PARENT_2_EMAIL
-      PARENT_2_NAME
-      PARENT_2_PHONE
-      PARENT_2_RELATIONSHIP
-    ]
+    %w[CHILD_POSTCODE CHILD_DATE_OF_BIRTH CHILD_FIRST_NAME CHILD_LAST_NAME]
   end
 
   def count_columns
