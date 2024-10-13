@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:1.4
 
-# Make sure RUBY_VERSION matches the Ruby version in .ruby-version and Gemfile
+# Make sure RUBY_VERSION matches the Ruby version in .ruby-version
 ARG RUBY_VERSION=3.3.4
 FROM ruby:$RUBY_VERSION-slim AS base
 
