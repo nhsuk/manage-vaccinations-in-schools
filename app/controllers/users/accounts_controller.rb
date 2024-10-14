@@ -50,12 +50,7 @@ module Users
     end
 
     def user_params
-      params.require(:user).permit(
-        :email,
-        :family_name,
-        :given_name,
-        :registration
-      )
+      params.require(:user).permit(:email, :family_name, :given_name)
     end
   end
 end

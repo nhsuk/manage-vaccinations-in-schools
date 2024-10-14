@@ -16,7 +16,6 @@
 #  last_sign_in_ip        :string
 #  locked_at              :datetime
 #  provider               :string
-#  registration           :string
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
@@ -54,7 +53,6 @@ class User < ApplicationRecord
 
   validates :family_name, :given_name, presence: true, length: { maximum: 255 }
 
-  validates :registration, length: { maximum: 255 }
   validates :email,
             presence: true,
             length: {
