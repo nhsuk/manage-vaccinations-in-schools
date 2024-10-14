@@ -48,6 +48,7 @@ class DevController < ApplicationController
     patient_sessions.each do |patient_session|
       patient_session.vaccination_records.destroy_all
       patient_session.triages.destroy_all
+      GillickAssessment.where(patient_session:).destroy_all
       patient_session.destroy!
     end
 
@@ -57,11 +58,9 @@ class DevController < ApplicationController
     end
 
     ConsentForm.where(team:).delete_all
-
     Consent.where(team:).delete_all
 
     Patient.joins(:cohort).where(cohorts: { team: }).distinct.destroy_all
-
     Cohort.where(team:).delete_all
 
     head :ok
