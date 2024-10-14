@@ -1,0 +1,140 @@
+<% content_for :before_main do %>
+  <% if @programme %>
+    <%= render AppBreadcrumbComponent.new(items: [
+                                            { text: t("programmes.index.title"), href: programmes_path },
+                                            { text: @programme.name, href: programme_path(@programme) },
+                                            { text: t("imports.index.title"), href: programme_imports_path(@programme) },
+                                          ]) %>
+  <% else %>
+    <%= render AppBreadcrumbComponent.new(items: [
+                                            { text: t("sessions.index.title"), href: sessions_path },
+                                            { text: session_location(@session), href: session_path(@session) },
+                                          ]) %>
+  <% end %>
+<% end %>
+
+<%= h1 "Import (#{import.created_at.to_fs(:long)})" %>
+
+<%= render AppCardComponent.new do |card| %>
+  <% card.with_heading { "Details" } %>
+
+  <%= govuk_summary_list(
+        classes: %w[app-summary-list--no-bottom-border
+                    nhsuk-u-margin-bottom-0],
+      ) do |summary_list| %>
+    <%= summary_list.with_row do |row| %>
+      <%= row.with_key { "Imported on" } %>
+      <%= row.with_value { import.created_at.to_fs(:long) } %>
+    <% end %>
+
+    <%= summary_list.with_row do |row| %>
+      <%= row.with_key { "Imported by" } %>
+      <%= row.with_value { import.uploaded_by.full_name } %>
+    <% end %>
+
+    <% if @programme %>
+      <%= summary_list.with_row do |row| %>
+        <%= row.with_key { "Programme" } %>
+        <%= row.with_value { @programme.name } %>
+      <% end %>
+    <% end %>
+
+    <%= summary_list.with_row do |row| %>
+      <%= row.with_key { "Type" } %>
+      <%= row.with_value {
+            { "ClassImport" => "Class list",
+              "CohortImport" => "Cohort list",
+              "ImmunisationImport" => "Immunisation list" }[import.class.name]
+          } %>
+    <% end %>
+
+    <%= summary_list.with_row do |row| %>
+      <%= row.with_key { "Omitted records" } %>
+      <%= row.with_value {
+            import.exact_duplicate_record_count == 1 ?
+              "1 previously imported record was omitted" :
+              "#{import.exact_duplicate_record_count} previously imported records were omitted"
+          } %>
+    <% end %>
+
+    <% if @vaccination_records_with_pending_changes.present? %>
+      <%= summary_list.with_row do |row| %>
+        <%= row.with_key { "Duplicate records" } %>
+        <%= row.with_value {
+              @vaccination_records_with_pending_changes.count == 1 ?
+                "1 duplicate record needs review" :
+                "#{@vaccination_records_with_pending_changes.count} duplicate records need review"
+            } %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% if import.recorded? %>
+  <% if @vaccination_records_with_pending_changes.present? %>
+    <div class="nhsuk-table__panel-with-heading-tab">
+      <h3 class="nhsuk-table__heading-tab">
+        <%= pluralize(@vaccination_records_with_pending_changes.count,
+                      "duplicate record") %>
+        <%= @vaccination_records_with_pending_changes.count == 1 ?
+              "needs" : "need" %> review
+      </h3>
+      <%= govuk_table(html_attributes: {
+                        class: "nhsuk-table-responsive",
+                      }) do |table| %>
+        <% table.with_head do |head| %>
+          <% head.with_row do |row| %>
+            <% row.with_cell(text: "Child record") %>
+            <% row.with_cell(text: "Issue to review") %>
+            <% row.with_cell(text: "Actions") %>
+          <% end %>
+        <% end %>
+
+        <% table.with_body do |body| %>
+          <% @vaccination_records_with_pending_changes.each do |vaccination_record| %>
+            <% body.with_row do |row| %>
+              <% row.with_cell do %>
+                <span class="nhsuk-table-responsive__heading">Child record</span>
+                <%= vaccination_record.patient.full_name %>
+              <% end %>
+
+              <% row.with_cell do %>
+                <span class="nhsuk-table-responsive__heading">
+                  Issue to review
+                </span>
+                A field in a duplicate record does not match a previously uploaded
+                record
+              <% end %>
+
+              <% row.with_cell do %>
+                <span class="nhsuk-table-responsive__heading">Actions</span>
+                <%= govuk_link_to programme_immunisation_import_duplicate_path(
+                      @programme,
+                      @immunisation_import,
+                      vaccination_record
+                    ) do %>
+                  Review
+                  <span class="nhsuk-u-visually-hidden">
+                    <%= vaccination_record.patient.full_name %>
+                  </span>
+                <% end %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if @patients.present? %>
+    <%= render AppPatientTableComponent.new(@patients,
+                                            count: @pagy.count) %>
+  <% end %>
+
+  <% if @vaccination_records.present? %>
+    <%= render AppVaccinationRecordTableComponent.new(@vaccination_records,
+                                                      count: @pagy.count) %>
+  <% end %>
+
+  <%= govuk_pagination(pagy: @pagy) %>
+<% end %>

@@ -45,7 +45,11 @@ class ClassImportsController < ApplicationController
 
     @pagy, @patients = pagy(@class_import.patients.includes(:school))
 
-    render layout: "full"
+    render template: "imports/show",
+           layout: "full",
+           locals: {
+             import: @class_import
+           }
   end
 
   def update

@@ -60,7 +60,11 @@ class ImmunisationImportsController < ApplicationController
         )
         .distinct
 
-    render layout: "full"
+    render template: "imports/show",
+           layout: "full",
+           locals: {
+             import: @immunisation_import
+           }
   end
 
   def update
