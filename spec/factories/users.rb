@@ -39,11 +39,17 @@ FactoryBot.define do
 
     sequence(:email) { |n| "test-#{n}@example.com" }
     sequence(:teams) { [Team.first || create(:team)] }
-    password { "power overwhelming!" } # avoid a password that was found in a data breach
-  end
+    password { "power overwhelming!" }
 
-  trait :signed_in do
-    current_sign_in_at { Time.current }
-    current_sign_in_ip { "127.0.0.1" }
+    trait :cis2 do
+      provider { "cis2" }
+      sequence(:uid, &:to_s)
+      password { nil }
+    end
+
+    trait :signed_in do
+      current_sign_in_at { Time.current }
+      current_sign_in_ip { "127.0.0.1" }
+    end
   end
 end

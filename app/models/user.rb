@@ -38,7 +38,6 @@ class User < ApplicationRecord
          :trackable,
          :timeoutable,
          :recoverable,
-         :validatable,
          :omniauthable,
          omniauth_providers: %i[cis2]
 
@@ -59,6 +58,14 @@ class User < ApplicationRecord
             uniqueness: true,
             notify_safe_email: true
 
+  validates :password,
+            presence: true,
+            confirmation: true,
+            length: {
+              within: 6..128
+            },
+            if: :requires_password?
+
   scope :recently_active,
         -> { where(last_sign_in_at: 1.week.ago..Time.current) }
 
@@ -71,7 +78,11 @@ class User < ApplicationRecord
     teams.first
   end
 
-  def self.find_or_create_user_from_cis2_oidc(userinfo)
+  def requires_password?
+    provider.blank? || uid.blank?
+  end
+
+  def self.find_or_create_from_cis2_oidc(userinfo)
     user =
       User.find_or_initialize_by(
         provider: userinfo[:provider],
@@ -81,7 +92,6 @@ class User < ApplicationRecord
     user.family_name = userinfo[:extra][:raw_info][:family_name]
     user.given_name = userinfo[:extra][:raw_info][:given_name]
     user.email = userinfo[:info][:email]
-    user.password = Devise.friendly_token if user.new_record?
 
     user.tap(&:save!)
   end
