@@ -76,26 +76,4 @@ class AppImportsTableComponent < ViewComponent::Base
       "Vaccination records"
     end
   end
-
-  def status_text(import)
-    {
-      "pending_import" => "Processing",
-      "processed" => "Processing",
-      "rows_are_invalid" => "Invalid",
-      "recorded" => "Completed"
-    }[
-      import.status
-    ]
-  end
-
-  def status_color(import)
-    {
-      "pending_import" => "blue",
-      "processed" => "blue",
-      "rows_are_invalid" => "red",
-      "recorded" => "green"
-    }[
-      import.status
-    ]
-  end
 end

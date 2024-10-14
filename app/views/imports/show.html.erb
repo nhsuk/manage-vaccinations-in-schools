@@ -15,6 +15,10 @@
 
 <%= h1 "Import (#{import.created_at.to_fs(:long)})" %>
 
+<p>
+  <%= render AppImportStatusComponent.new(import: import) %>
+</p>
+
 <%= render AppCardComponent.new do |card| %>
   <% card.with_heading { "Details" } %>
 
