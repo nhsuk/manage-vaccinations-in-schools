@@ -7,6 +7,12 @@
 
 <%= h1 session_location(@session) %>
 
+<% if (school = @session.location)&.school? %>
+  <p class="nhsuk-caption-l nhsuk-u-margin-bottom-4">
+    URN: <span class="app-u-monospace"><%= school.urn %></span>
+  </p>
+<% end %>
+
 <ul class="app-action-list">
   <li class="app-action-list__item">
     <%= session_status_tag(@session) %>
