@@ -9,17 +9,14 @@
 #  current_sign_in_ip  :string
 #  email               :string           default(""), not null
 #  encrypted_password  :string           default(""), not null
-#  failed_attempts     :integer          default(0), not null
 #  family_name         :string           not null
 #  given_name          :string           not null
 #  last_sign_in_at     :datetime
 #  last_sign_in_ip     :string
-#  locked_at           :datetime
 #  provider            :string
 #  remember_created_at :datetime
 #  sign_in_count       :integer          default(0), not null
 #  uid                 :string
-#  unlock_token        :string
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #
@@ -27,7 +24,6 @@
 #
 #  index_users_on_email             (email) UNIQUE
 #  index_users_on_provider_and_uid  (provider,uid) UNIQUE
-#  index_users_on_unlock_token      (unlock_token) UNIQUE
 #
 FactoryBot.define do
   factory :user, aliases: %i[assessor created_by performed_by uploaded_by] do
