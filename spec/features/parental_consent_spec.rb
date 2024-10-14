@@ -192,6 +192,6 @@ describe "Parental consent" do
   def then_the_patient_should_be_ready_to_vaccinate
     expect(page).to have_content(@child.full_name)
     click_on @child.full_name
-    expect(page).to have_content("#{@child.full_name} is safe to vaccinate")
+    expect(page).to have_content("#{@child.full_name} is ready for the nurse")
   end
 end

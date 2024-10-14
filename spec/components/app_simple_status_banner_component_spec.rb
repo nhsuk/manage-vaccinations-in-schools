@@ -36,8 +36,8 @@ describe AppSimpleStatusBannerComponent, type: :component do
     end
 
     it { should have_css(".app-card--aqua-green") }
-    it { should have_css(".nhsuk-card__heading", text: "Safe to vaccinate") }
-    it { should have_text("#{patient_name} is safe to vaccinate") }
+    it { should have_css(".nhsuk-card__heading", text: "Ready for nurse") }
+    it { should have_text("#{patient_name} is ready for the nurse") }
   end
 
   context "state is consent_given_triage_needed" do
