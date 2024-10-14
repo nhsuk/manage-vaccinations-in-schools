@@ -683,19 +683,19 @@ en:
         other: "%{count} sessions today"
     completed:
       table_heading:
-        zero: There are no schools with all sessions completed.
-        one: 1 school with all sessions completed
-        other: "%{count} schools with all sessions completed"
+        zero: There are no locations with all sessions completed.
+        one: 1 location with all sessions completed
+        other: "%{count} locations with all sessions completed"
     scheduled:
       table_heading:
-        zero: There are no schools with sessions scheduled.
-        one: 1 school with sessions scheduled
-        other: "%{count} schools with sessions scheduled"
+        zero: There are no locations with sessions scheduled.
+        one: 1 location with sessions scheduled
+        other: "%{count} location with sessions scheduled"
     unscheduled:
       table_heading:
-        zero: There are no schools with no sessions scheduled.
-        one: 1 school with no sessions scheduled
-        other: "%{count} schools with no sessions scheduled"
+        zero: There are no locations with no sessions scheduled.
+        one: 1 location with no sessions scheduled
+        other: "%{count} locations with no sessions scheduled"
   table:
     no_filtered_results: We couldn’t find any children that matched your filters.
     no_results: No results

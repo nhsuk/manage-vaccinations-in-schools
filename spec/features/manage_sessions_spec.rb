@@ -88,7 +88,7 @@ describe "Manage sessions" do
   end
 
   def then_i_see_no_sessions
-    expect(page).to have_content(/There are no (sessions|schools)/)
+    expect(page).to have_content(/There are no (sessions|locations)/)
   end
 
   def when_i_click_on_the_school
