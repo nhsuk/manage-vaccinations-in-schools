@@ -7,11 +7,15 @@
 
 <%= h1 "Check and confirm" %>
 
-<div class="nhsuk-card">
-  <div class="nhsuk-card__content">
+<% if @draft_vaccination_record.administered? %>
+  <%= render AppCardComponent.new do %>
     <%= render AppVaccinationCheckAndConfirmComponent.new(@draft_vaccination_record) %>
-  </div>
-</div>
+  <% end %>
+<% else %>
+  <%= render AppWarningCalloutComponent.new(heading: "Vaccination was not given") do %>
+    <%= render AppVaccinationCheckAndConfirmComponent.new(@draft_vaccination_record) %>
+  <% end %>
+<% end %>
 
 <%= form_with model: @draft_vaccination_record,
               url: wizard_path,
