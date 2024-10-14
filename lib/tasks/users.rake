@@ -32,37 +32,4 @@ namespace :users do
 
     puts "User #{given_name} #{family_name} (#{email}) added to team #{team.name}."
   end
-
-  desc "Create a new user and add them to a team, sending their password via email."
-  task :create_securely,
-       %i[email given_name family_name team_ods_code registration] =>
-         :environment do |_task, args|
-    include TaskHelpers
-
-    password = SecureRandom.uuid
-
-    if args.to_a.empty? && $stdin.isatty && $stdout.isatty
-      email = prompt_user_for "Enter user email:", required: true
-      given_name = prompt_user_for "Enter given name:", required: true
-      family_name = prompt_user_for "Enter family name:", required: true
-      team_ods_code = prompt_user_for "Enter team ODS code:", required: true
-    elsif args.to_a.size == 4
-      email = args[:email]
-      given_name = args[:given_name]
-      family_name = args[:family_name]
-      team_ods_code = args[:team_ods_code]
-    elsif args.to_a.size != 4
-      raise "Expected 4 arguments got #{args.to_a.size}"
-    end
-
-    team = Team.find_by!(ods_code: team_ods_code)
-
-    user = User.create!(email:, password:, family_name:, given_name:)
-    user.teams << team
-
-    puts "User #{full_name} (#{email}) added to team #{team.name}."
-
-    user.send_reset_password_instructions
-    puts "Password reset instructions sent."
-  end
 end
