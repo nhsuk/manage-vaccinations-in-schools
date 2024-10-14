@@ -34,14 +34,8 @@
           <% end %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Status</span>
-            <%= govuk_tag(text: status_text(import),
-                          colour: status_color(import)) %>
-            <% if import.pending_import? %>
-              <br />
-              <span class="nhsuk-u-secondary-text-color nhsuk-u-font-size-16">
-                <%= import.remaining_time %>
-              </span>
-            <% end %>
+            <%= render AppImportStatusComponent.new(import: import,
+                                                    break_tag: true) %>
           <% end %>
           <% row.with_cell(numeric: true) do %>
             <span class="nhsuk-table-responsive__heading">Records</span>
