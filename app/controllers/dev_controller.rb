@@ -63,6 +63,8 @@ class DevController < ApplicationController
     Patient.joins(:cohort).where(cohorts: { team: }).distinct.destroy_all
     Cohort.where(team:).delete_all
 
+    UnscheduledSessionsFactory.new.call
+
     head :ok
   end
 
