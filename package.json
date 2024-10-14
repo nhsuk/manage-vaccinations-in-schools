@@ -6,7 +6,7 @@
     "@hotwired/turbo-rails": "^8.0.10",
     "accessible-autocomplete": "^3.0.1",
     "esbuild": "^0.24.0",
-    "govuk-frontend": "^5.6.0",
+    "govuk-frontend": "^5.7.1",
     "idb": "^8.0.0",
     "nhsuk-frontend": "^9.0.0",
     "sass": "^1.79.4",
