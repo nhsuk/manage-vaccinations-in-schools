@@ -252,10 +252,8 @@ Rails.application.routes.draw do
   end
 
   namespace :users do
-    resources :accounts, only: %i[show update]
-
-    get "team-not-found", controller: :accounts
-    get "role-not-found", controller: :accounts
+    get "team-not-found", controller: :errors
+    get "role-not-found", controller: :errors
   end
 
   scope via: :all do
