@@ -15,6 +15,19 @@
   display: table-cell;
 }
 
+// Ensure border colour inside warning callout can be seen and matches
+.nhsuk-warning-callout {
+  .nhsuk-summary-list__key,
+  .nhsuk-summary-list__value,
+  .nhsuk-summary-list__actions,
+  .nhsuk-summary-list__row::after {
+    border-color: color.scale(
+      color.mix($nhsuk-border-color, $color_nhsuk-yellow, 50%),
+      $lightness: -10%
+    );
+  }
+}
+
 // Remove bottom border on last row of last child
 .nhsuk-summary-list:last-child {
   .nhsuk-summary-list__row:last-of-type > *,
