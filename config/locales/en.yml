@@ -493,8 +493,6 @@ en:
               too_short: Enter a password that is at least 10 characters long
             password_confirmation:
               confirmation: The password and confirmation do not match
-            registration:
-              too_long: Enter a registration number with fewer than 255 characters
             unlock_token:
               invalid: The unlock token is invalid
         vaccination_record:

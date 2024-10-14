@@ -16,7 +16,6 @@
 #  last_sign_in_ip        :string
 #  locked_at              :datetime
 #  provider               :string
-#  registration           :string
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
@@ -41,7 +40,6 @@ FactoryBot.define do
     sequence(:email) { |n| "test-#{n}@example.com" }
     sequence(:teams) { [Team.first || create(:team)] }
     password { "power overwhelming!" } # avoid a password that was found in a data breach
-    registration { "SW608658 (HCPC)" }
   end
 
   trait :signed_in do
