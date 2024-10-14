@@ -48,6 +48,7 @@ describe "HPV Vaccination" do
 
   def then_i_see_the_confirmation_page
     expect(page).to have_content("Check and confirm")
+    expect(page).to have_content("Vaccination was not given")
     expect(page).to have_content("Child#{@patient.full_name}")
     expect(page).to have_content("OutcomeRefused vaccine")
   end
