@@ -162,9 +162,6 @@ GEM
       railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
-    devise-pwned_password (0.1.12)
-      devise (~> 4)
-      pwned (~> 2.4)
     diff-lcs (1.5.1)
     docile (1.4.0)
     dockerfile-rails (1.6.22)
@@ -400,7 +397,6 @@ GEM
       nio4r (~> 2.0)
     pundit (2.4.0)
       activesupport (>= 3.0.0)
-    pwned (2.4.1)
     raabro (1.4.0)
     racc (1.8.1)
     rack (3.1.7)
@@ -662,7 +658,6 @@ DEPENDENCIES
   cuprite
   debug
   devise
-  devise-pwned_password
   dockerfile-rails (>= 1.0.0)
   factory_bot_instruments
   factory_bot_rails
