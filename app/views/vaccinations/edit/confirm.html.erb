@@ -1,5 +1,4 @@
 <% content_for :before_main do %>
-
   <%= render AppBacklinkComponent.new(
         href: vaccinations_back_link_path,
         name: "vaccination page",
@@ -10,78 +9,7 @@
 
 <div class="nhsuk-card">
   <div class="nhsuk-card__content">
-    <%= govuk_summary_list(
-          actions: false,
-          classes: "app-summary-list--no-bottom-border",
-        ) do |summary_list|
-          summary_list.with_row do |row|
-            row.with_key { "Child" }
-            row.with_value { @patient.full_name }
-          end
-        
-          if @draft_vaccination_record.administered?
-            summary_list.with_row do |row|
-              row.with_key { "Vaccine" }
-              row.with_value { @draft_vaccination_record.programme.name }
-            end
-        
-            summary_list.with_row do |row|
-              row.with_key { "Brand" }
-              row.with_value do
-                vaccine = @draft_vaccination_record.vaccine
-                "#{vaccine.brand} (#{vaccine.method})"
-              end
-            end
-        
-            summary_list.with_row do |row|
-              row.with_key { "Batch" }
-              row.with_value do
-                batch = @draft_vaccination_record.batch
-                "#{batch.name} (expires #{batch.expiry.to_fs(:long)})"
-              end
-            end
-        
-            summary_list.with_row do |row|
-              row.with_key { "Method" }
-              row.with_value { @draft_vaccination_record.human_enum_name(:delivery_method) }
-            end
-        
-            summary_list.with_row do |row|
-              row.with_key { "Site" }
-              row.with_value { @draft_vaccination_record.human_enum_name(:delivery_site) }
-            end
-        
-            summary_list.with_row do |row|
-              row.with_key { "Outcome" }
-              row.with_value { "Vaccinated" }
-            end
-          else
-            summary_list.with_row do |row|
-              row.with_key { "Outcome" }
-              row.with_value { @draft_vaccination_record.human_enum_name(:reason) }
-            end
-          end
-        
-          summary_list.with_row do |row|
-            row.with_key { "Date" }
-            row.with_value { "Today (#{Time.zone.today.to_fs(:long)})" }
-          end
-        
-          summary_list.with_row do |row|
-            row.with_key { "Time" }
-            row.with_value { Time.zone.now.to_fs(:time) }
-          end
-        
-          summary_list.with_row do |row|
-            row.with_key { "Location" }
-            row.with_value { session_location(@session) }
-          end
-        
-          summary_list.with_row do |row|
-            row.with_key { "Vaccinator" }
-            row.with_value { "You (#{@draft_vaccination_record.performed_by.full_name})" }
-          end
-        end %>
+    <%= render AppVaccinationCheckAndConfirmComponent.new(@draft_vaccination_record) %>
   </div>
 </div>
 
