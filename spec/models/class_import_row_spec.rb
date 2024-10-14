@@ -55,6 +55,18 @@ describe ClassImportRow do
         )
       end
     end
+
+    context "when date of birth is not a date" do
+      let(:data) { valid_data.merge("CHILD_DATE_OF_BIRTH" => "DDDDDDD") }
+
+      it "is invalid" do
+        expect(class_import_row).to be_invalid
+        expect(class_import_row.errors.size).to eq(1)
+        expect(class_import_row.errors[:date_of_birth]).to contain_exactly(
+          "is required but missing"
+        )
+      end
+    end
   end
 
   describe "#to_parents" do

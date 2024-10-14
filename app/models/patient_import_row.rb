@@ -8,7 +8,11 @@ class PatientImportRow
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :nhs_number, length: { is: 10 }, allow_blank: true
-  validates :year_group, inclusion: { in: :year_groups }
+  validates :year_group,
+            inclusion: {
+              in: :year_groups
+            },
+            if: -> { date_of_birth.present? }
 
   with_options if: :parent_1_exists? do
     validates :parent_1_name, presence: true
