@@ -20,7 +20,6 @@ Rails.application.routes.draw do
              controllers: {
                omniauth_callbacks: "users/omniauth_callbacks"
              }
-  get "sign-in", to: redirect("/users/sign_in")
   devise_scope :user do
     post "auth/cis2_logout", to: "users/omniauth_callbacks#cis2_logout"
   end
