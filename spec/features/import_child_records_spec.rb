@@ -102,8 +102,8 @@ describe "Import child records" do
   end
 
   def then_i_should_see_the_upload
-    expect(page).to have_content("Uploaded on")
-    expect(page).to have_content("Uploaded byTest User")
+    expect(page).to have_content("Imported on")
+    expect(page).to have_content("Imported byTest User")
     expect(page).to have_content("ProgrammeHPV")
   end
 
@@ -201,7 +201,7 @@ describe "Import child records" do
   end
 
   def then_i_should_see_the_holding_page
-    expect(page).to have_content("This import is still processing")
+    expect(page).to have_css(".nhsuk-tag", text: "Processing")
   end
 
   def and_i_refresh_the_page
