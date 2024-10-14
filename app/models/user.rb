@@ -42,8 +42,6 @@ class User < ApplicationRecord
          :omniauthable,
          omniauth_providers: %i[cis2]
 
-  devise :pwned_password unless Rails.env.test?
-
   has_and_belongs_to_many :teams
 
   has_many :programmes, through: :teams
