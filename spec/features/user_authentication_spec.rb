@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-describe "User authentication" do
+describe "User password authentication" do
+  before { given_the_cis2_feature_flag_is_disabled }
+
   scenario "going through the start page then signing out" do
     given_that_i_have_an_account
     when_i_go_to_the_start_page
@@ -27,6 +29,10 @@ describe "User authentication" do
 
     when_i_sign_in
     then_i_see_the_sessions_page
+  end
+
+  def given_the_cis2_feature_flag_is_disabled
+    Flipper.disable(:cis2)
   end
 
   def given_that_i_have_an_account
