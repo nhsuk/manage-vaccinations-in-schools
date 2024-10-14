@@ -45,7 +45,11 @@ class CohortImportsController < ApplicationController
 
     @pagy, @patients = pagy(@cohort_import.patients.includes(:school))
 
-    render layout: "full"
+    render template: "imports/show",
+           layout: "full",
+           locals: {
+             import: @cohort_import
+           }
   end
 
   def update
