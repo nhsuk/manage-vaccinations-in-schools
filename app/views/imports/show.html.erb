@@ -76,6 +76,10 @@
   <% end %>
 <% end %>
 
+<% if import.rows_are_invalid? %>
+  <%= render AppImportErrorsComponent.new(import.errors) %>
+<% end %>
+
 <% if import.recorded? %>
   <% if @vaccination_records_with_pending_changes.present? %>
     <div class="nhsuk-table__panel-with-heading-tab">

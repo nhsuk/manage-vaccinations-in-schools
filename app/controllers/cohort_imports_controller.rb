@@ -38,10 +38,7 @@ class CohortImportsController < ApplicationController
   end
 
   def show
-    if @cohort_import.rows_are_invalid?
-      @cohort_import.load_serialized_errors!
-      render :errors and return
-    end
+    @cohort_import.load_serialized_errors! if @cohort_import.rows_are_invalid?
 
     @pagy, @patients = pagy(@cohort_import.patients.includes(:school))
 

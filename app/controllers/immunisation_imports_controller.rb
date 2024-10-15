@@ -40,7 +40,6 @@ class ImmunisationImportsController < ApplicationController
   def show
     if @immunisation_import.rows_are_invalid?
       @immunisation_import.load_serialized_errors!
-      render :errors and return
     end
 
     vaccination_records =
