@@ -55,7 +55,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: "CHILD_POSTCODE",
         notes:
-          "#{tag.strong("Required")}, must be formatted as a valid postcode.".html_safe
+          "#{tag.strong("Required")}, must be formatted as a valid postcode."
       }
     ] + parent_columns
   end
@@ -80,7 +80,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
         name: "CHILD_GENDER",
         notes:
           "Optional, must be one of: #{tag.i("Male")}, #{tag.i("Female")}, " \
-            "#{tag.i("Not known")} or #{tag.i("Not specified")}".html_safe
+            "#{tag.i("Not known")} or #{tag.i("Not specified")}"
       },
       { name: "CHILD_ADDRESS_LINE_1", notes: "Optional" },
       { name: "CHILD_ADDRESS_LINE_2", notes: "Optional" },
@@ -99,19 +99,18 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
         name: "ORGANISATION_CODE",
         notes:
           "#{tag.strong("Required")}, must be a valid " \
-            "#{govuk_link_to("ODS code", "https://odsportal.digital.nhs.uk/")}".html_safe
+            "#{govuk_link_to("ODS code", "https://odsportal.digital.nhs.uk/")}"
       },
       {
         name: "SCHOOL_URN",
         notes:
           "#{tag.strong("Required")}, must be 6 digits and numeric. " \
             "Use #{tag.i("888888")} for school unknown and #{tag.i("999999")} " \
-            "for homeschooled.".html_safe
+            "for homeschooled."
       },
       {
         name: "SCHOOL_NAME",
-        notes:
-          "Required if #{tag.i("SCHOOL_URN")} is #{tag.i("888888")}".html_safe
+        notes: "Required if #{tag.i("SCHOOL_URN")} is #{tag.i("888888")}"
       },
       { name: "NHS_NUMBER", notes: "Optional, must be 10 digits and numeric" },
       { name: "PERSON_FORENAME", notes: tag.strong("Required") },
@@ -121,22 +120,21 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
         name: "PERSON_GENDER_CODE",
         notes:
           "#{tag.strong("Required")}, must be #{tag.i("Not known")}, " \
-            "#{tag.i("Male")}, #{tag.i("Female")}, #{tag.i("Not specified")}".html_safe
+            "#{tag.i("Male")}, #{tag.i("Female")}, #{tag.i("Not specified")}"
       },
       {
         name: "PERSON_POSTCODE",
         notes:
-          "#{tag.strong("Required")}, must be formatted as a valid postcode".html_safe
+          "#{tag.strong("Required")}, must be formatted as a valid postcode"
       },
       {
         name: "DATE_OF_VACCINATION",
-        notes:
-          "#{tag.strong("Required")}, must use #{tag.i("YYYYMMDD")} format".html_safe
+        notes: "#{tag.strong("Required")}, must use #{tag.i("YYYYMMDD")} format"
       },
       {
         name: "VACCINE_GIVEN",
         notes:
-          "#{tag.strong("Required")}, must be ".html_safe +
+          "#{tag.strong("Required")}, must be " +
             @programme
               .vaccines
               .pluck(:nivs_name)
@@ -145,13 +143,11 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
                 last_word_connector: ", or ",
                 two_words_connector: " or "
               )
-              .html_safe
       },
       { name: "BATCH_NUMBER", notes: tag.strong("Required") },
       {
         name: "BATCH_EXPIRY_DATE",
-        notes:
-          "#{tag.strong("Required")}, must use #{tag.i("YYYYMMDD")} format".html_safe
+        notes: "#{tag.strong("Required")}, must use #{tag.i("YYYYMMDD")} format"
       },
       {
         name: "ANATOMICAL_SITE",
@@ -159,7 +155,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
           "#{tag.strong("Required")}, must be #{tag.i("Left Buttock")}, " \
             "#{tag.i("Right Buttock")}, #{tag.i("Left Thigh")}, " \
             "#{tag.i("Right Thigh")}, #{tag.i("Left Upper Arm")}, " \
-            "#{tag.i("Right Upper Arm")} or #{tag.i("Nasal")}".html_safe
+            "#{tag.i("Right Upper Arm")} or #{tag.i("Nasal")}"
       }
     ] + dose_sequence + vaccinated + care_setting + performing_professional
   end
@@ -172,7 +168,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
           name: "#{prefix}_RELATIONSHIP",
           notes:
             "Optional, must be one of: #{tag.i("Mum")}, #{tag.i("Dad")} or " \
-              "#{tag.i("Guardian")}".html_safe
+              "#{tag.i("Guardian")}"
         },
         {
           name: "#{prefix}_EMAIL",
@@ -194,7 +190,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
         name: "DOSE_SEQUENCE",
         notes:
           "#{tag.strong("Required")}, must be #{tag.i("1")}, #{tag.i("2")} or " \
-            "#{tag.i("3")}".html_safe
+            "#{tag.i("3")}"
       }
     ]
   end
@@ -206,7 +202,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
         name: "CARE_SETTING",
         notes:
           "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}. Must be " \
-            "#{tag.i("1")} (school) or #{tag.i("2")} (care setting)".html_safe
+            "#{tag.i("1")} (school) or #{tag.i("2")} (care setting)"
       }
     ]
   end
@@ -217,7 +213,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
         name: "VACCINATED",
         notes:
           "Optional, must be #{tag.i("Y")} or #{tag.i("N")}. If omitted, " \
-            "#{tag.i("Y")} is assumed.".html_safe
+            "#{tag.i("Y")} is assumed."
       }
     ]
   end
@@ -226,13 +222,11 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     [
       {
         name: "PERFORMING_PROFESSIONAL_FORENAME",
-        notes:
-          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}".html_safe
+        notes: "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}"
       },
       {
         name: "PERFORMING_PROFESSIONAL_SURNAME",
-        notes:
-          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}".html_safe
+        notes: "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}"
       }
     ]
   end
