@@ -9,6 +9,7 @@ en:
         common_name: <code>CHILD_COMMON_NAME</code>
         date_of_birth: <code>CHILD_DATE_OF_BIRTH</code>
         first_name: <code>CHILD_FIRST_NAME</code>
+        gender_code: <code>CHILD_GENDER</code>
         last_name: <code>CHILD_LAST_NAME</code>
         nhs_number: <code>CHILD_NHS_NUMBER</code>
         parent_1_email: <code>PARENT_1_EMAIL</code>
@@ -27,6 +28,7 @@ en:
         common_name: <code>CHILD_COMMON_NAME</code>
         date_of_birth: <code>CHILD_DATE_OF_BIRTH</code>
         first_name: <code>CHILD_FIRST_NAME</code>
+        gender_code: <code>CHILD_GENDER</code>
         last_name: <code>CHILD_LAST_NAME</code>
         nhs_number: <code>CHILD_NHS_NUMBER</code>
         parent_1_email: <code>PARENT_1_EMAIL</code>

@@ -19,7 +19,8 @@ describe CohortImportRow do
       "CHILD_FIRST_NAME" => "Jimmy",
       "CHILD_LAST_NAME" => "Smith",
       "CHILD_NHS_NUMBER" => "1234567890",
-      "CHILD_SCHOOL_URN" => school_urn
+      "CHILD_SCHOOL_URN" => school_urn,
+      "CHILD_GENDER" => "Male"
     }
   end
 
@@ -141,6 +142,16 @@ describe CohortImportRow do
       let(:school_urn) { "999999" }
 
       it { should have_attributes(home_educated: true) }
+    end
+
+    it { should have_attributes(gender_code: "male") }
+
+    context "when gender is not provided" do
+      let(:data) { valid_data.except("CHILD_GENDER") }
+
+      it { should_not be_nil }
+
+      it { should have_attributes(gender_code: "not_known") }
     end
 
     describe "#cohort" do
