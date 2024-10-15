@@ -151,6 +151,7 @@ describe "Import class lists" do
 
   def when_i_go_back_to_the_upload_page
     click_on "Back"
+    click_on "Import class list"
   end
 
   def then_i_should_see_the_imports_page_with_the_processing_flash

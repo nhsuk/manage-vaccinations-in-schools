@@ -38,10 +38,7 @@ class ClassImportsController < ApplicationController
   end
 
   def show
-    if @class_import.rows_are_invalid?
-      @class_import.load_serialized_errors!
-      render :errors and return
-    end
+    @class_import.load_serialized_errors! if @class_import.rows_are_invalid?
 
     @pagy, @patients = pagy(@class_import.patients.includes(:school))
 
