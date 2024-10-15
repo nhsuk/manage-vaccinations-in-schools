@@ -66,7 +66,7 @@ describe "Patient sorting and filtering" do
         %w[2000-01-01 2001-01-01 2002-01-01 2002-01-02]
       )
       .each do |(patient, name, dob)|
-        patient.update!(first_name: name, date_of_birth: dob)
+        patient.update!(given_name: name, date_of_birth: dob)
       end
     sign_in @user
   end

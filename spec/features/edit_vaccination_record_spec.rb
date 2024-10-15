@@ -35,7 +35,7 @@ describe "Edit vaccination record" do
   end
 
   def and_a_vaccination_record_exists
-    patient = create(:patient, first_name: "John", last_name: "Smith")
+    patient = create(:patient, given_name: "John", family_name: "Smith")
 
     create(
       :vaccination_record,

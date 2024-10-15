@@ -131,8 +131,8 @@ describe CohortImport do
         expect(cohort_import).to be_valid
         expect(cohort_import.rows.count).to eq(1)
         expect(cohort_import.rows.first.to_patient).to have_attributes(
-          first_name: "Jennifer",
-          last_name: "Clarke",
+          given_name: "Jennifer",
+          family_name: "Clarke",
           date_of_birth: Date.new(2010, 1, 1),
           school: location
         )
@@ -246,8 +246,8 @@ describe CohortImport do
       before do
         create(
           :patient,
-          first_name: "Jimmy",
-          last_name: "Smith",
+          given_name: "Jimmy",
+          family_name: "Smith",
           date_of_birth: Date.new(2010, 1, 2),
           nhs_number: nil
         )

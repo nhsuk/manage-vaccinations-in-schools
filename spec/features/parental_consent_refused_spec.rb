@@ -67,8 +67,8 @@ describe "Parental consent" do
     click_on "Start now"
 
     expect(page).to have_content("What is your child’s name?")
-    fill_in "First name", with: @child.first_name
-    fill_in "Last name", with: @child.last_name
+    fill_in "First name", with: @child.given_name
+    fill_in "Last name", with: @child.family_name
     choose "No" # Do they use a different name in school?
     click_on "Continue"
 
@@ -83,7 +83,7 @@ describe "Parental consent" do
     click_on "Continue"
 
     expect(page).to have_content("About you")
-    fill_in "Your name", with: "Jane #{@child.last_name}"
+    fill_in "Your name", with: "Jane #{@child.family_name}"
     choose "Mum" # Your relationship to the child
     fill_in "Email address", with: "jane@example.com"
     fill_in "Phone number", with: "07123456789"

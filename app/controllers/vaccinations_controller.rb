@@ -30,7 +30,7 @@ class VaccinationsController < ApplicationController
           :latest_vaccination_record
         )
         .preload(:consents)
-        .order("patients.first_name", "patients.last_name")
+        .order("patients.given_name", "patients.family_name")
 
     grouped_patient_sessions =
       group_patient_sessions_by_state(

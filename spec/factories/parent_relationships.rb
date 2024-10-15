@@ -26,7 +26,7 @@
 FactoryBot.define do
   factory :parent_relationship do
     patient
-    parent { association :parent, :recorded, last_name: patient.last_name }
+    parent { association :parent, :recorded, family_name: patient.family_name }
 
     type { %w[father guardian mother other].sample }
     other_name { type == "other" ? "Other" : nil }

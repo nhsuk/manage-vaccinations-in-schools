@@ -6,8 +6,8 @@ describe AppCompareConsentFormAndPatientComponent, type: :component do
   let(:consent_form) do
     create(
       :consent_form,
-      first_name: "John",
-      last_name: "Doe",
+      given_name: "John",
+      family_name: "Doe",
       date_of_birth: "2000-01-01",
       address_line_1: "1 Main Street",
       address_line_2: "Area",
@@ -24,8 +24,8 @@ describe AppCompareConsentFormAndPatientComponent, type: :component do
     let(:patient) do
       create(
         :patient,
-        first_name: consent_form.first_name,
-        last_name: consent_form.last_name,
+        given_name: consent_form.given_name,
+        family_name: consent_form.family_name,
         date_of_birth: consent_form.date_of_birth,
         address_line_1: consent_form.address_line_1,
         address_line_2: consent_form.address_line_2,
@@ -59,8 +59,8 @@ describe AppCompareConsentFormAndPatientComponent, type: :component do
     let(:patient) do
       create(
         :patient,
-        first_name: "Jane", # different
-        last_name: consent_form.last_name,
+        given_name: "Jane", # different
+        family_name: consent_form.family_name,
         date_of_birth: Date.new(2000, 1, 2), # different
         address_line_1: "2 Main Street", # different
         address_line_2: consent_form.address_line_2,

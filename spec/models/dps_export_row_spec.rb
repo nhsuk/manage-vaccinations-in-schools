@@ -43,11 +43,11 @@ describe DPSExportRow do
     end
 
     it "has person_firstname" do
-      expect(array[1]).to eq vaccination_record.patient.first_name
+      expect(array[1]).to eq vaccination_record.patient.given_name
     end
 
     it "has person_surname" do
-      expect(array[2]).to eq vaccination_record.patient.last_name
+      expect(array[2]).to eq vaccination_record.patient.family_name
     end
 
     it "has person_dob" do

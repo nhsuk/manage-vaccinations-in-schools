@@ -22,11 +22,11 @@
 FactoryBot.define do
   factory :parent do
     transient do
-      first_name { Faker::Name.first_name }
-      last_name { Faker::Name.last_name }
+      given_name { Faker::Name.first_name }
+      family_name { Faker::Name.last_name }
     end
 
-    name { "#{first_name} #{last_name}" }
+    name { "#{given_name} #{family_name}" }
     email { Faker::Internet.email }
     phone { "07700 900#{rand(0..999).to_s.rjust(3, "0")}" }
     phone_receive_updates { phone.present? }

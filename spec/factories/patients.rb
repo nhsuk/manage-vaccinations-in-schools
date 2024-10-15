@@ -11,10 +11,10 @@
 #  address_town     :string
 #  common_name      :string
 #  date_of_birth    :date             not null
-#  first_name       :string           not null
+#  family_name      :string           not null
 #  gender_code      :integer          default("not_known"), not null
+#  given_name       :string           not null
 #  home_educated    :boolean
-#  last_name        :string           not null
 #  nhs_number       :string
 #  pending_changes  :jsonb            not null
 #  recorded_at      :datetime
@@ -48,7 +48,7 @@ FactoryBot.define do
         session&.team || association(:team, programmes: [programme].compact)
       end
 
-      parents { [create(:parent, :recorded, last_name:)] }
+      parents { [create(:parent, :recorded, family_name:)] }
     end
 
     cohort do
@@ -72,8 +72,8 @@ FactoryBot.define do
       "#{base}#{check_digit}"
     end
 
-    first_name { Faker::Name.first_name }
-    last_name { Faker::Name.last_name }
+    given_name { Faker::Name.first_name }
+    family_name { Faker::Name.last_name }
     date_of_birth { Faker::Date.birthday(min_age: 7, max_age: 16) }
     school { session&.location }
 

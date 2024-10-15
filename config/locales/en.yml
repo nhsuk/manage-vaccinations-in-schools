@@ -371,7 +371,10 @@ en:
               missing_day: Enter a day
               missing_month: Enter a month
               missing_year: Enter a year
-            first_name:
+            family_name:
+              blank: Enter a last name
+              too_long: Enter a last name that is less than 300 characters long
+            given_name:
               blank: Enter a first name
               too_long: Enter a first name that is less than 300 characters long
             gp_name:
@@ -379,9 +382,6 @@ en:
               too_long: Enter a GP name that is less than 300 characters long
             gp_response:
               blank: Choose if your child is registered with a GP
-            last_name:
-              blank: Enter a last name
-              too_long: Enter a last name that is less than 300 characters long
             parent_contact_method_type:
               inclusion: Choose a contact method
             parent_contact_method_other_details:

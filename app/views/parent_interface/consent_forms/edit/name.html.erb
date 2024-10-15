@@ -15,8 +15,9 @@
 <%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <%= f.govuk_text_field :first_name, label: { text: "First name" } %>
-  <%= f.govuk_text_field :last_name, label: { text: "Last name" } %>
+  <%= f.govuk_text_field :given_name, label: { text: "First name" } %>
+  <%= f.govuk_text_field :family_name, label: { text: "Last name" } %>
+
   <%= f.govuk_radio_buttons_fieldset(:use_common_name,
                                      bold_labels: false,
                                      legend: { size: "s",

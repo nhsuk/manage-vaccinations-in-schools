@@ -9,8 +9,8 @@ describe ImmunisationImportRow do
   let(:team) { create(:team, ods_code: "abc", programmes: [programme]) }
 
   let(:nhs_number) { "1234567890" }
-  let(:first_name) { "Harry" }
-  let(:last_name) { "Potter" }
+  let(:given_name) { "Harry" }
+  let(:family_name) { "Potter" }
   let(:date_of_birth) { "20120101" }
   let(:address_postcode) { "SW1A 1AA" }
   let(:valid_data) do
@@ -22,8 +22,8 @@ describe ImmunisationImportRow do
       "BATCH_NUMBER" => "123",
       "SCHOOL_NAME" => "Hogwarts",
       "SCHOOL_URN" => "123456",
-      "PERSON_FORENAME" => first_name,
-      "PERSON_SURNAME" => last_name,
+      "PERSON_FORENAME" => given_name,
+      "PERSON_SURNAME" => family_name,
       "PERSON_DOB" => date_of_birth,
       "PERSON_POSTCODE" => address_postcode,
       "PERSON_GENDER_CODE" => "Male",
@@ -173,8 +173,8 @@ describe ImmunisationImportRow do
         create_list(
           :patient,
           2,
-          first_name: "John",
-          last_name: "Smith",
+          given_name: "John",
+          family_name: "Smith",
           date_of_birth: Date.new(1990, 9, 1)
         )
       end
@@ -285,8 +285,8 @@ describe ImmunisationImportRow do
       let(:patient) do
         create(
           :patient,
-          first_name:,
-          last_name:,
+          given_name:,
+          family_name:,
           date_of_birth: Date.parse(date_of_birth)
         )
       end
@@ -298,7 +298,7 @@ describe ImmunisationImportRow do
       let(:data) { valid_data }
 
       let(:patient) do
-        create(:patient, first_name:, last_name:, address_postcode:)
+        create(:patient, given_name:, family_name:, address_postcode:)
       end
 
       it { should eq(patient) }
@@ -310,7 +310,7 @@ describe ImmunisationImportRow do
       let(:patient) do
         create(
           :patient,
-          first_name:,
+          given_name:,
           date_of_birth: Date.parse(date_of_birth),
           address_postcode:
         )
@@ -325,7 +325,7 @@ describe ImmunisationImportRow do
       let(:patient) do
         create(
           :patient,
-          last_name:,
+          family_name:,
           date_of_birth: Date.parse(date_of_birth),
           address_postcode:
         )

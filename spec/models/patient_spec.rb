@@ -11,10 +11,10 @@
 #  address_town     :string
 #  common_name      :string
 #  date_of_birth    :date             not null
-#  first_name       :string           not null
+#  family_name      :string           not null
 #  gender_code      :integer          default("not_known"), not null
+#  given_name       :string           not null
 #  home_educated    :boolean
-#  last_name        :string           not null
 #  nhs_number       :string
 #  pending_changes  :jsonb            not null
 #  recorded_at      :datetime
@@ -62,16 +62,16 @@ describe Patient do
     subject(:match_existing) do
       described_class.match_existing(
         nhs_number:,
-        first_name:,
-        last_name:,
+        given_name:,
+        family_name:,
         date_of_birth:,
         address_postcode:
       )
     end
 
     let(:nhs_number) { "0123456789" }
-    let(:first_name) { "John" }
-    let(:last_name) { "Smith" }
+    let(:given_name) { "John" }
+    let(:family_name) { "Smith" }
     let(:date_of_birth) { Date.new(1999, 1, 1) }
     let(:address_postcode) { "SW1A 1AA" }
 
@@ -91,8 +91,8 @@ describe Patient do
           create(
             :patient,
             nhs_number: nil,
-            first_name:,
-            last_name:,
+            given_name:,
+            family_name:,
             date_of_birth:
           )
         end
@@ -104,7 +104,7 @@ describe Patient do
     context "with matching first name, last name and date of birth" do
       let(:nhs_number) { nil }
       let(:patient) do
-        create(:patient, first_name:, last_name:, date_of_birth:)
+        create(:patient, given_name:, family_name:, date_of_birth:)
       end
 
       it { should include(patient) }
@@ -113,7 +113,7 @@ describe Patient do
     context "with matching first name, last name and postcode" do
       let(:nhs_number) { nil }
       let(:patient) do
-        create(:patient, first_name:, last_name:, address_postcode:)
+        create(:patient, given_name:, family_name:, address_postcode:)
       end
 
       it { should include(patient) }
@@ -122,7 +122,7 @@ describe Patient do
     context "with matching first name, date of birth and postcode" do
       let(:nhs_number) { nil }
       let(:patient) do
-        create(:patient, first_name:, date_of_birth:, address_postcode:)
+        create(:patient, given_name:, date_of_birth:, address_postcode:)
       end
 
       it { should include(patient) }
@@ -131,7 +131,7 @@ describe Patient do
     context "with matching last name, date of birth and postcode" do
       let(:nhs_number) { nil }
       let(:patient) do
-        create(:patient, last_name:, date_of_birth:, address_postcode:)
+        create(:patient, family_name:, date_of_birth:, address_postcode:)
       end
 
       it { should include(patient) }
@@ -142,8 +142,8 @@ describe Patient do
         create(
           :patient,
           nhs_number: "9876543210",
-          first_name:,
-          last_name:,
+          given_name:,
+          family_name:,
           date_of_birth:,
           address_postcode:
         )
@@ -175,26 +175,26 @@ describe Patient do
   end
 
   describe "#stage_changes" do
-    let(:patient) { create(:patient, first_name: "John", last_name: "Doe") }
+    let(:patient) { create(:patient, given_name: "John", family_name: "Doe") }
 
     it "stages new changes in pending_changes" do
-      patient.stage_changes(first_name: "Jane", address_line_1: "123 New St")
+      patient.stage_changes(given_name: "Jane", address_line_1: "123 New St")
 
       expect(patient.pending_changes).to eq(
-        { "first_name" => "Jane", "address_line_1" => "123 New St" }
+        { "given_name" => "Jane", "address_line_1" => "123 New St" }
       )
     end
 
     it "does not stage unchanged attributes" do
-      patient.stage_changes(first_name: "John", last_name: "Smith")
+      patient.stage_changes(given_name: "John", family_name: "Smith")
 
-      expect(patient.pending_changes).to eq({ "last_name" => "Smith" })
+      expect(patient.pending_changes).to eq({ "family_name" => "Smith" })
     end
 
     it "does not stage blank values" do
       patient.stage_changes(
-        first_name: "",
-        last_name: nil,
+        given_name: "",
+        family_name: nil,
         address_line_1: "123 New St"
       )
 
@@ -204,20 +204,20 @@ describe Patient do
     end
 
     it "updates the pending_changes attribute" do
-      expect { patient.stage_changes(first_name: "Jane") }.to change {
+      expect { patient.stage_changes(given_name: "Jane") }.to change {
         patient.reload.pending_changes
-      }.from({}).to({ "first_name" => "Jane" })
+      }.from({}).to({ "given_name" => "Jane" })
     end
 
     it "does not update other attributes directly" do
-      patient.stage_changes(first_name: "Jane", last_name: "Smith")
+      patient.stage_changes(given_name: "Jane", family_name: "Smith")
 
-      expect(patient.first_name).to eq("John")
-      expect(patient.last_name).to eq("Doe")
+      expect(patient.given_name).to eq("John")
+      expect(patient.family_name).to eq("Doe")
     end
 
     it "does not save any changes if no valid changes are provided" do
-      expect { patient.stage_changes(first_name: "John") }.not_to(
+      expect { patient.stage_changes(given_name: "John") }.not_to(
         change { patient.reload.pending_changes }
       )
     end
@@ -227,13 +227,13 @@ describe Patient do
     let(:patient) { create(:patient) }
 
     it "returns the patient with pending changes applied" do
-      patient.stage_changes(first_name: "Jane")
-      expect(patient.first_name_changed?).to be(false)
+      patient.stage_changes(given_name: "Jane")
+      expect(patient.given_name_changed?).to be(false)
 
       changed_patient = patient.with_pending_changes
-      expect(changed_patient.first_name_changed?).to be(true)
-      expect(changed_patient.last_name_changed?).to be(false)
-      expect(changed_patient.first_name).to eq("Jane")
+      expect(changed_patient.given_name_changed?).to be(true)
+      expect(changed_patient.family_name_changed?).to be(false)
+      expect(changed_patient.given_name).to eq("Jane")
     end
   end
 

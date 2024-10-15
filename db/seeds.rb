@@ -77,8 +77,8 @@ def create_session(_user, team)
       :consent_form,
       :recorded,
       programme:,
-      first_name: patient.first_name,
-      last_name: patient.last_name,
+      given_name: patient.given_name,
+      family_name: patient.family_name,
       session:
     )
   end

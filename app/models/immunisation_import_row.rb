@@ -357,8 +357,8 @@ class ImmunisationImportRow
   def find_existing_patients
     Patient.match_existing(
       nhs_number: patient_nhs_number,
-      first_name: patient_first_name,
-      last_name: patient_last_name,
+      given_name: patient_first_name,
+      family_name: patient_last_name,
       date_of_birth: patient_date_of_birth,
       address_postcode: patient_postcode
     )
@@ -374,9 +374,9 @@ class ImmunisationImportRow
     {
       address_postcode: patient_postcode,
       date_of_birth: patient_date_of_birth,
-      first_name: patient_first_name,
+      family_name: patient_last_name,
+      given_name: patient_first_name,
       gender_code: patient_gender_code,
-      last_name: patient_last_name,
       nhs_number: patient_nhs_number
     }
   end

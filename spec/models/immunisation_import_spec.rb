@@ -264,8 +264,8 @@ describe ImmunisationImport do
       let!(:patient) do
         create(
           :patient,
-          first_name: "Chyna",
-          last_name: "Pickle",
+          given_name: "Chyna",
+          family_name: "Pickle",
           date_of_birth: Date.new(2012, 9, 12),
           nhs_number: nil
         )
@@ -287,8 +287,8 @@ describe ImmunisationImport do
         create(
           :patient,
           nhs_number: "7420180008",
-          first_name: "Chyna",
-          last_name: "Pickle",
+          given_name: "Chyna",
+          family_name: "Pickle",
           date_of_birth: Date.new(2011, 9, 12),
           gender_code: "not_specified",
           address_postcode: "LE3 2DA"

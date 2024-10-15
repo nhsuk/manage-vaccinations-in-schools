@@ -68,8 +68,8 @@ describe "Immunisation imports duplicates" do
     @existing_patient =
       create(
         :patient,
-        first_name: "Esmae",
-        last_name: "O'Connell",
+        given_name: "Esmae",
+        family_name: "O'Connell",
         nhs_number: "7420180008", # First row of valid_hpv.csv
         date_of_birth: Date.new(2014, 3, 29),
         gender_code: :female,
@@ -79,8 +79,8 @@ describe "Immunisation imports duplicates" do
     @already_vaccinated_patient =
       create(
         :patient,
-        first_name: "Caden",
-        last_name: "Attwater",
+        given_name: "Caden",
+        family_name: "Attwater",
         nhs_number: "4146825652", # Third row of valid_hpv.csv
         date_of_birth: Date.new(2012, 9, 14),
         gender_code: :male,
@@ -90,8 +90,8 @@ describe "Immunisation imports duplicates" do
     @third_patient =
       create(
         :patient,
-        first_name: "Joanna",
-        last_name: "Hamilton",
+        given_name: "Joanna",
+        family_name: "Hamilton",
         nhs_number: "2675725722", # Fourth row of valid_hpv.csv
         date_of_birth: Date.new(2012, 9, 14),
         gender_code: :female,
@@ -185,8 +185,8 @@ describe "Immunisation imports duplicates" do
 
   def and_the_first_record_should_be_updated
     @existing_patient.reload
-    expect(@existing_patient.first_name).to eq("Chyna")
-    expect(@existing_patient.last_name).to eq("Pickle")
+    expect(@existing_patient.given_name).to eq("Chyna")
+    expect(@existing_patient.family_name).to eq("Pickle")
     expect(@existing_patient.pending_changes).to eq({})
   end
 
@@ -242,8 +242,8 @@ describe "Immunisation imports duplicates" do
 
   def and_the_third_record_should_be_updated
     @third_patient.reload
-    expect(@third_patient.first_name).to eq("Berry")
-    expect(@third_patient.last_name).to eq("Hamilton")
+    expect(@third_patient.given_name).to eq("Berry")
+    expect(@third_patient.family_name).to eq("Hamilton")
     expect(@third_patient.pending_changes).to eq({})
   end
 end

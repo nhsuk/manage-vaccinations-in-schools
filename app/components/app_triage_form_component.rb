@@ -26,7 +26,7 @@ class AppTriageFormComponent < ViewComponent::Base
   private
 
   def fieldset_options
-    text = "Is it safe to vaccinate #{@patient_session.patient.first_name}?"
+    text = "Is it safe to vaccinate #{@patient_session.patient.given_name}?"
 
     case @legend
     when :bold
