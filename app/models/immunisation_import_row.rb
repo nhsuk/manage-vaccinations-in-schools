@@ -5,6 +5,12 @@ class ImmunisationImportRow
 
   validates :administered, inclusion: [true, false]
   validates :batch_expiry_date, presence: true, if: :administered
+  validates :batch_expiry_date,
+            comparison: {
+              greater_than: -> { Date.new(Date.current.year - 15, 1, 1) },
+              less_than: -> { Date.new(Date.current.year + 15, 1, 1) }
+            },
+            if: -> { administered && batch_expiry_date.present? }
   validates :batch_number, presence: true, if: :administered
   validates :delivery_site, presence: true, if: :administered
   validates :dose_sequence,
