@@ -190,7 +190,7 @@ describe CohortImport do
       expect(Patient.second.parent_relationships.first).to be_father
 
       expect(Patient.third).to have_attributes(
-        nhs_number: "1234567892",
+        nhs_number: nil,
         date_of_birth: Date.new(2010, 1, 3),
         full_name: "Mark Doe",
         school: location,
@@ -240,6 +240,10 @@ describe CohortImport do
 
       record!
       expect(cohort_import.exact_duplicate_record_count).to eq(3)
+    end
+
+    it "enqueues jobs to look up missing NHS numbers" do
+      expect { record! }.to have_enqueued_job(PDSLookupJob).once.on_queue(:pds)
     end
 
     context "with an existing patient matching the name" do

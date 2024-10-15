@@ -182,6 +182,12 @@ describe ImmunisationImport do
           0
         ).to(7)
       end
+
+      it "enqueues jobs to look up missing NHS numbers" do
+        expect { record! }.to have_enqueued_job(PDSLookupJob).once.on_queue(
+          :pds
+        )
+      end
     end
 
     context "with valid HPV rows" do
@@ -254,6 +260,12 @@ describe ImmunisationImport do
         expect { record! }.to change(VaccinationRecord.recorded, :count).from(
           0
         ).to(11)
+      end
+
+      it "enqueues jobs to look up missing NHS numbers" do
+        expect { record! }.to have_enqueued_job(PDSLookupJob).once.on_queue(
+          :pds
+        )
       end
     end
 

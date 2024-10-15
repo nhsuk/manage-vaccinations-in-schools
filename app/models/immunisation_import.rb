@@ -42,7 +42,6 @@ class ImmunisationImport < ApplicationRecord
   has_and_belongs_to_many :batches
   has_and_belongs_to_many :locations
   has_and_belongs_to_many :patient_sessions
-  has_and_belongs_to_many :patients
   has_and_belongs_to_many :sessions
   has_and_belongs_to_many :vaccination_records
 

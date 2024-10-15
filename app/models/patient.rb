@@ -70,6 +70,8 @@ class Patient < ApplicationRecord
   # https://www.datadictionary.nhs.uk/attributes/person_gender_code.html
   enum :gender_code, { not_known: 0, male: 1, female: 2, not_specified: 9 }
 
+  scope :without_nhs_number, -> { where(nhs_number: [nil, ""]) }
+
   validates :given_name, :family_name, :date_of_birth, presence: true
 
   validates :nhs_number,

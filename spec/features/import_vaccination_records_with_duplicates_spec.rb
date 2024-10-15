@@ -3,6 +3,7 @@
 describe "Immunisation imports duplicates" do
   scenario "User reviews and selects between duplicate records" do
     given_i_am_signed_in
+    and_requests_can_be_made_to_dps
     and_an_hpv_programme_is_underway
     and_an_existing_patient_record_exists
 
@@ -48,6 +49,13 @@ describe "Immunisation imports duplicates" do
   def given_i_am_signed_in
     @team = create(:team, :with_one_nurse, ods_code: "R1L")
     sign_in @team.users.first
+  end
+
+  def and_requests_can_be_made_to_dps
+    stub_request(
+      :get,
+      "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient"
+    ).with(query: hash_including({})).to_return_json(body: { total: 0 })
   end
 
   def and_an_hpv_programme_is_underway

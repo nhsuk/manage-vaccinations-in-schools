@@ -16,6 +16,8 @@ module CSVImportable
                class_name: "User",
                foreign_key: :uploaded_by_user_id
 
+    has_and_belongs_to_many :patients
+
     scope :csv_not_removed, -> { where(csv_removed_at: nil) }
 
     enum :status,
@@ -101,9 +103,17 @@ module CSVImportable
 
       update_columns(recorded_at: Time.zone.now, status: :recorded, **counts)
     end
+
+    look_up_missing_nhs_numbers
   end
 
   def postprocess_rows!
+  end
+
+  def look_up_missing_nhs_numbers
+    patients.without_nhs_number.find_each do |patient|
+      PDSLookupJob.perform_later(patient)
+    end
   end
 
   def remove!

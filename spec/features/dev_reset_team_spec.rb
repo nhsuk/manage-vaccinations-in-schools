@@ -7,6 +7,7 @@ describe "Dev endpoint to reset a team" do
 
   scenario "Resetting a team deletes all associated data" do
     given_an_example_programme_exists
+    and_requests_can_be_made_to_dps
     and_patients_have_been_imported
     and_vaccination_records_have_been_imported
 
@@ -25,6 +26,13 @@ describe "Dev endpoint to reset a team" do
     @team.schools << create(:location, :school, urn: "123456") # to match cohort_import/valid.csv
     @team.schools << create(:location, :school, urn: "110158") # to match valid_hpv.csv
     @user = @team.users.first
+  end
+
+  def and_requests_can_be_made_to_dps
+    stub_request(
+      :get,
+      "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient"
+    ).with(query: hash_including({})).to_return_json(body: { total: 0 })
   end
 
   def and_patients_have_been_imported
