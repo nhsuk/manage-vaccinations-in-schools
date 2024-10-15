@@ -151,6 +151,6 @@ class ImmunisationImport < ApplicationRecord
     PatientSession.where(
       session: team.sessions.upcoming,
       patient: already_vaccinated_patients
-    ).delete_all
+    ).find_each(&:destroy_if_safe!)
   end
 end

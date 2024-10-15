@@ -356,7 +356,10 @@ class ConsentForm < ApplicationRecord
       if school && school != patient.school
         patient.update!(school:)
 
-        patient.patient_sessions.find_by(session: scheduled_session)&.destroy!
+        patient
+          .patient_sessions
+          .where(session: scheduled_session)
+          .find_each(&:destroy_if_safe!)
 
         upcoming_session =
           Session

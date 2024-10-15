@@ -131,6 +131,7 @@ class Session < ApplicationRecord
         required_programmes.all? { |programme| patient.vaccinated?(programme) }
       end
 
+    # First we remove patients from any other upcoming sessions.
     unvaccinated_patients.each do |patient|
       sessions_other_than_self = patient.upcoming_sessions.reject { _1 == self }
       next if sessions_other_than_self.empty?
@@ -138,10 +139,10 @@ class Session < ApplicationRecord
       patient
         .patient_sessions
         .where(session: sessions_other_than_self)
-        .select(&:added_to_session?)
-        .each(&:destroy!)
+        .find_each(&:destroy_if_safe!)
     end
 
+    # Next we can add the unvaccinated patients to this session.
     PatientSession.import!(
       %i[patient_id session_id],
       unvaccinated_patients.map { [_1.id, id] },
