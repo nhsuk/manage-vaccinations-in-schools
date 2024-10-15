@@ -42,7 +42,7 @@ en:
         school_urn: <code>CHILD_SCHOOL_URN</code>
       immunisation_import_row:
         administered: <code>VACCINATED</code>
-        batch_expiry_date: <code>BATCH_EXPIRY_DATA</code>
+        batch_expiry_date: <code>BATCH_EXPIRY_DATE</code>
         batch_number: <code>BATCH_NUMBER</code>
         care_setting: <code>CARE_SETTING</code>
         delivery_site: <code>ANATOMICAL_SITE</code>
