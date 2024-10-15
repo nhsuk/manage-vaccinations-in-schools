@@ -16,7 +16,7 @@
                 tag.code(column[:name])
               end
               row.with_cell do
-                column[:notes]
+                column[:notes].html_safe
               end
             end
           end
