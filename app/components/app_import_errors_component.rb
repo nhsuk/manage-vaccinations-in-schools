@@ -8,10 +8,7 @@ class AppImportErrorsComponent < ViewComponent::Base
           Records could not be imported
         </h2>
 
-        <p class="nhsuk-u-reading-width">
-          The records cannot be uploaded due to errors in the CSV file.
-          When fixing these errors, note that the header does not count as a row.
-        </p>
+        <%= content %>
 
         <div data-qa="import-errors">
           <% @errors.each do |error| %>

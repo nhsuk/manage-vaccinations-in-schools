@@ -1,0 +1,25 @@
+<%= govuk_details(summary_text:) do %>
+  <p class="nhsuk-body">Make sure the CSV you upload uses the following columns:</p>
+
+  <%= govuk_table(classes: "app-table--csv") do |table|
+        table.with_head do |head|
+          head.with_row do |row|
+            row.with_cell(text: "Column name")
+            row.with_cell(text: "Notes")
+          end
+        end
+      
+        table.with_body do |body|
+          columns.each do |column|
+            body.with_row do |row|
+              row.with_cell do
+                tag.code(column[:name])
+              end
+              row.with_cell do
+                column[:notes]
+              end
+            end
+          end
+        end
+      end %>
+<% end %>
