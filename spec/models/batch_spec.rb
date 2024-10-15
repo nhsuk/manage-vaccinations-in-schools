@@ -23,23 +23,25 @@
 #  fk_rails_...  (team_id => teams.id)
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
-class Batch < ApplicationRecord
-  audited
+describe Batch do
+  subject(:batch) { build(:batch) }
 
-  belongs_to :team
-  belongs_to :vaccine
+  describe "validations" do
+    it { should be_valid }
 
-  scope :order_by_name_and_expiration, -> { order(expiry: :asc, name: :asc) }
+    it { should validate_presence_of(:name) }
+    it { should validate_presence_of(:expiry) }
 
-  has_many :vaccination_records
+    it do
+      expect(batch).to validate_comparison_of(
+        :expiry
+      ).is_greater_than_or_equal_to(Date.new(2000, 1, 1))
+    end
 
-  has_and_belongs_to_many :immunisation_imports
+    context "with invalid characters" do
+      subject(:batch) { build(:batch, name: "ABC*123") }
 
-  validates :name, presence: true, format: { with: /\A[A-Za-z0-9]+\z/ }
-
-  validates :expiry,
-            presence: true,
-            comparison: {
-              greater_than_or_equal_to: Date.new(2000, 1, 1)
-            }
+      it { should be_invalid }
+    end
+  end
 end
