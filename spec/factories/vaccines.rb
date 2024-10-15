@@ -31,10 +31,7 @@
 #
 FactoryBot.define do
   factory :vaccine do
-    transient do
-      batch_count { 1 }
-      type { %w[flu hpv].sample }
-    end
+    transient { type { %w[flu hpv].sample } }
 
     programme { association :programme, type: }
 
@@ -47,10 +44,6 @@ FactoryBot.define do
     add_attribute(:method) { %i[nasal injection].sample }
 
     traits_for_enum :method
-
-    after(:create) do |vaccine, evaluator|
-      create_list(:batch, evaluator.batch_count, vaccine:)
-    end
 
     trait :discontinued do
       discontinued { true }

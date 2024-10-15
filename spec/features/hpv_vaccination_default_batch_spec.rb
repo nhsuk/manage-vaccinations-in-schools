@@ -23,8 +23,13 @@ describe "HPV Vaccination" do
     programme = create(:programme, :hpv, batch_count: 4)
     team = create(:team, :with_one_nurse, programmes: [programme])
 
-    @batch = programme.batches.first
-    @batch2 = programme.batches.second
+    batches =
+      programme.vaccines.flat_map do |vaccine|
+        create_list(:batch, 4, team:, vaccine:)
+      end
+
+    @batch = batches.first
+    @batch2 = batches.second
 
     @session = create(:session, team:, programme:)
 

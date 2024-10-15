@@ -43,6 +43,7 @@ describe "End-to-end journey" do
     @programme = create(:programme, :hpv)
     @team = create(:team, :with_one_nurse, programmes: [@programme])
     @school = create(:location, :secondary, team: @team, name: "Pilot School")
+    @batch = create(:batch, team: @team, vaccine: @programme.vaccines.first)
     create(
       :session,
       :unscheduled,
@@ -204,7 +205,7 @@ describe "End-to-end journey" do
     choose "Left arm (upper position)"
     click_button "Continue"
 
-    choose @programme.vaccines.first.batches.first.name
+    choose @batch.name
     click_button "Continue"
 
     click_button "Confirm"
