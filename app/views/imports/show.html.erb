@@ -52,13 +52,15 @@
           } %>
     <% end %>
 
-    <%= summary_list.with_row do |row| %>
-      <%= row.with_key { "Omitted records" } %>
-      <%= row.with_value {
-            import.exact_duplicate_record_count == 1 ?
-              "1 previously imported record was omitted" :
-              "#{import.exact_duplicate_record_count} previously imported records were omitted"
-          } %>
+    <% if import.exact_duplicate_record_count.present? %>
+      <%= summary_list.with_row do |row| %>
+        <%= row.with_key { "Omitted records" } %>
+        <%= row.with_value {
+              import.exact_duplicate_record_count == 1 ?
+                "1 previously imported record was omitted" :
+                "#{import.exact_duplicate_record_count} previously imported records were omitted"
+            } %>
+      <% end %>
     <% end %>
 
     <% if @vaccination_records_with_pending_changes.present? %>
