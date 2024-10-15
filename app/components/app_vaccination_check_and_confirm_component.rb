@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AppVaccinationCheckAndConfirmComponent < ViewComponent::Base
-  def initialize(vaccination_record)
+  def initialize(vaccination_record, current_user:)
     super
 
     @vaccination_record = vaccination_record
@@ -9,6 +9,8 @@ class AppVaccinationCheckAndConfirmComponent < ViewComponent::Base
     @patient = vaccination_record.patient
     @session = vaccination_record.session
     @vaccine = vaccination_record.vaccine
+
+    @current_user = current_user
   end
 
   def call
@@ -77,10 +79,23 @@ class AppVaccinationCheckAndConfirmComponent < ViewComponent::Base
         row.with_value { helpers.session_location(@session) }
       end
 
-      summary_list.with_row do |row|
-        row.with_key { "Vaccinator" }
-        row.with_value { "You (#{@vaccination_record.performed_by.full_name})" }
+      if vaccinator
+        summary_list.with_row do |row|
+          row.with_key { "Vaccinator" }
+          row.with_value { vaccinator }
+        end
       end
     end
+  end
+
+  private
+
+  def vaccinator
+    @vaccinator ||=
+      if @vaccination_record.performed_by == @current_user
+        "You (#{@current_user.full_name})"
+      else
+        @vaccination_record.performed_by&.full_name
+      end
   end
 end
