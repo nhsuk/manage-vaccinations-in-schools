@@ -18,7 +18,25 @@ class PDSLookupJob < ApplicationJob
            attempts: :unlimited,
            wait: ->(_) { rand(0.5..5) }
 
-  def perform(**args)
-    NHS::PDS::Patient.find_by(**args)
+  def perform(patient)
+    return if patient.nhs_number.present?
+
+    params = {
+      "family" => patient.family_name,
+      "given" => patient.given_name,
+      "birthdate" => "eq#{patient.date_of_birth}",
+      "address-postalcode" => patient.address_postcode,
+      "_history" => true # look up previous names and addresses,
+    }.compact_blank
+
+    response = NHS::PDS::Patient.find_by(**params)
+    results = response.body
+
+    return if results["total"].zero?
+
+    entry = results["entry"].first
+    nhs_number = entry["resource"]["id"]
+
+    patient.update!(nhs_number:)
   end
 end
