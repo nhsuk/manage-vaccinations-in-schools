@@ -14,8 +14,13 @@ describe "Dev endpoint to reset a team" do
   end
 
   def given_an_example_programme_exists
-    @programme = create(:programme, :hpv_all_vaccines, batch_count: 4)
+    @programme = create(:programme, :hpv_all_vaccines)
     @team = create(:team, :with_one_nurse, programmes: [@programme])
+
+    @programme.vaccines.each do |vaccine|
+      create_list(:batch, 4, team: @team, vaccine:)
+    end
+
     @team.update!(ods_code: "R1L") # to match valid_hpv.csv
     @team.schools << create(:location, :school, urn: "123456") # to match cohort_import/valid.csv
     @team.schools << create(:location, :school, urn: "110158") # to match valid_hpv.csv

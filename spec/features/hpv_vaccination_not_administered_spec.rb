@@ -22,7 +22,7 @@ describe "HPV Vaccination" do
     programme = create(:programme, :hpv)
     team = create(:team, :with_one_nurse, programmes: [programme])
     location = create(:location, :school)
-    @batch = programme.batches.first
+    @batch = create(:batch, team:, vaccine: programme.vaccines.first)
     @session = create(:session, team:, programme:, location:)
     @patient =
       create(:patient, :consent_given_triage_not_needed, session: @session)

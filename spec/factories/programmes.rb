@@ -18,22 +18,20 @@ FactoryBot.define do
     transient { batch_count { 1 } }
 
     type { %w[flu hpv].sample }
-    vaccines { [association(:vaccine, batch_count:, programme: instance)] }
+    vaccines { [association(:vaccine, programme: instance)] }
 
     trait :hpv do
       type { "hpv" }
-      vaccines do
-        [association(:vaccine, :gardasil_9, batch_count:, programme: instance)]
-      end
+      vaccines { [association(:vaccine, :gardasil_9, programme: instance)] }
     end
 
     trait :hpv_all_vaccines do
       hpv
       vaccines do
         [
-          association(:vaccine, :cervarix, batch_count:, programme: instance),
-          association(:vaccine, :gardasil, batch_count:, programme: instance),
-          association(:vaccine, :gardasil_9, batch_count:, programme: instance)
+          association(:vaccine, :cervarix, programme: instance),
+          association(:vaccine, :gardasil, programme: instance),
+          association(:vaccine, :gardasil_9, programme: instance)
         ]
       end
     end
@@ -47,37 +45,16 @@ FactoryBot.define do
       type { "flu" }
       vaccines do
         [
-          association(
-            :vaccine,
-            :adjuvanted_quadrivalent,
-            batch_count:,
-            programme: instance
-          ),
-          association(
-            :vaccine,
-            :cell_quadrivalent,
-            batch_count:,
-            programme: instance
-          ),
-          association(
-            :vaccine,
-            :fluenz_tetra,
-            batch_count:,
-            programme: instance
-          ),
-          association(
-            :vaccine,
-            :quadrivalent_influenza,
-            batch_count:,
-            programme: instance
-          ),
+          association(:vaccine, :adjuvanted_quadrivalent, programme: instance),
+          association(:vaccine, :cell_quadrivalent, programme: instance),
+          association(:vaccine, :fluenz_tetra, programme: instance),
+          association(:vaccine, :quadrivalent_influenza, programme: instance),
           association(
             :vaccine,
             :quadrivalent_influvac_tetra,
-            batch_count:,
             programme: instance
           ),
-          association(:vaccine, :supemtek, batch_count:, programme: instance)
+          association(:vaccine, :supemtek, programme: instance)
         ]
       end
     end
@@ -86,65 +63,25 @@ FactoryBot.define do
       flu
       vaccines do
         [
-          association(
-            :vaccine,
-            :adjuvanted_quadrivalent,
-            batch_count:,
-            programme: instance
-          ),
-          association(
-            :vaccine,
-            :cell_quadrivalent,
-            batch_count:,
-            programme: instance
-          ),
-          association(
-            :vaccine,
-            :fluad_tetra,
-            batch_count:,
-            programme: instance
-          ),
-          association(
-            :vaccine,
-            :flucelvax_tetra,
-            batch_count:,
-            programme: instance
-          ),
-          association(
-            :vaccine,
-            :fluenz_tetra,
-            batch_count:,
-            programme: instance
-          ),
-          association(
-            :vaccine,
-            :quadrivalent_influenza,
-            batch_count:,
-            programme: instance
-          ),
+          association(:vaccine, :adjuvanted_quadrivalent, programme: instance),
+          association(:vaccine, :cell_quadrivalent, programme: instance),
+          association(:vaccine, :fluad_tetra, programme: instance),
+          association(:vaccine, :flucelvax_tetra, programme: instance),
+          association(:vaccine, :fluenz_tetra, programme: instance),
+          association(:vaccine, :quadrivalent_influenza, programme: instance),
           association(
             :vaccine,
             :quadrivalent_influvac_tetra,
-            batch_count:,
             programme: instance
           ),
-          association(:vaccine, :supemtek, batch_count:, programme: instance)
+          association(:vaccine, :supemtek, programme: instance)
         ]
       end
     end
 
     trait :flu_nasal_only do
       flu
-      vaccines do
-        [
-          association(
-            :vaccine,
-            :fluenz_tetra,
-            batch_count:,
-            programme: instance
-          )
-        ]
-      end
+      vaccines { [association(:vaccine, :fluenz_tetra, programme: instance)] }
     end
   end
 end

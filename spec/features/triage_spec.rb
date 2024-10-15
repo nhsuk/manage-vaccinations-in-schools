@@ -29,7 +29,7 @@ describe "Triage" do
   def given_a_programme_with_a_running_session
     @programme = create(:programme, :hpv)
     @team = create(:team, :with_one_nurse, programmes: [@programme])
-    @batch = @programme.batches.first
+    @batch = create(:batch, team: @team, vaccine: @programme.vaccines.first)
     location = create(:location, :school)
     @session = create(:session, team: @team, programme: @programme, location:)
     @patient =
