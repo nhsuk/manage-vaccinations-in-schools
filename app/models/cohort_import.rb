@@ -52,6 +52,8 @@ class CohortImport < PatientImport
   end
 
   def postprocess_rows!
+    # Add imported patients to upcoming sessions.
+
     team
       .sessions
       .has_programme(programme)
