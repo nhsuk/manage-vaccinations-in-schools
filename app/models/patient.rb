@@ -167,7 +167,12 @@ class Patient < ApplicationRecord
       end
 
     if date_of_death_changed?
-      upcoming_sessions.clear unless date_of_death.nil?
+      unless date_of_death.nil?
+        patient_sessions
+          .where(session: upcoming_sessions)
+          .select(&:added_to_session?)
+          .each(&:destroy!)
+      end
 
       save!
     end
