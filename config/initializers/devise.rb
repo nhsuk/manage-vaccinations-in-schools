@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "../../lib/omniauth/strategies/nhsuk_cis2"
+
 # Assuming you have not yet modified this file, each configuration option below
 # is set to its default value. Note that some are commented out while others
 # are not: uncommented lines are intended to protect your configuration from
@@ -296,32 +298,72 @@ Devise.setup do |config|
         end
       end
 
+    class RequestLogger < Faraday::Logging::Formatter
+      def request(env)
+        Rails.logger.debug "================================================================"
+        Rails.logger.debug "Request:"
+        Rails.logger.debug "#{env.method.upcase} #{env.url}"
+        env.request_headers.each { puts "#{_1}: #{_2}" }
+        Rails.logger.debug ["", env.body] if env.body
+        Rails.logger.debug "----------------------------------------------------------------"
+      end
+
+      def response(env)
+        Rails.logger.debug "Response:"
+        Rails.logger.debug env.status.to_s
+        Rails.logger.debug ""
+        env.response_headers.each { puts "#{_1}: #{_2}" }
+        Rails.logger.debug ["", env.body] if env.body
+        Rails.logger.debug "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+        puts caller.join("\n\t")
+        Rails.logger.debug "================================================================"
+      end
+    end
+
+    Rack::OAuth2.debug!
+    Rack::OAuth2.logger = Rails.logger
+
     OpenIDConnect.http_config do |http_client|
       http_client.ssl.min_version = :TLS1_2
+      # http_client.response :logger,
+      #                      ::Logger.new($stdout),
+      #                      formatter: RequestLogger
     end
 
     config.omniauth(
-      :openid_connect,
+      # :openid_connect,
+      # {
+      #   setup:,
+      #   name: :cis2,
+      #   scope: %i[openid profile email nationalrbacaccess associatedorgs],
+      #   extra_authorize_params: {
+      #     max_age: 300
+      #   },
+      #   response_type: :code,
+      #   issuer: Settings.cis2.issuer,
+      #   discovery: true,
+      #   client_auth_method: :jwks,
+      #   client_options: {
+      #     port: 443,
+      #     scheme: "https",
+      #     host: Settings.cis2.host,
+      #     identifier: Settings.cis2.client_id,
+      #     secret: Settings.cis2.secret,
+      #     redirect_uri:
+      #   }
+      # }
+      :nhsuk_cis2,
       {
         setup:,
         name: :cis2,
         scope: %i[openid profile email nationalrbacaccess associatedorgs],
-        extra_authorize_params: {
-          max_age: 300
-        },
-        response_type: :code,
-        # uid_field: "preferred_username",
-        issuer: Settings.cis2.issuer,
-        discovery: true,
-        client_auth_method: :jwks,
         client_options: {
-          port: 443,
-          scheme: "https",
-          host: Settings.cis2.host,
-          identifier: Settings.cis2.client_id,
-          secret: Settings.cis2.secret,
-          redirect_uri:
-        }
+          # Additional client options if needed
+        },
+        authorize_options: {
+          # Additional authorize options if needed
+        },
+        strategy_class: OmniAuth::Strategies::NhsukCis2
       }
     )
   end
