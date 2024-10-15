@@ -110,7 +110,7 @@ describe "Immunisation imports duplicates" do
         :batch,
         vaccine: @vaccine,
         expiry: Date.new(2024, 7, 30),
-        name: "Something else"
+        name: "SomethingElse"
       )
     @previous_vaccination_record =
       create(
