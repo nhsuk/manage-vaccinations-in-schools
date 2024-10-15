@@ -105,7 +105,9 @@ describe "Immunisation imports" do
   end
 
   def then_i_should_see_the_errors_page
-    expect(page).to have_content("Vaccination records cannot be uploaded")
+    expect(page).to have_content(
+      "How to format your CSV for vaccination records"
+    )
     expect(page).to have_content("Row 1")
   end
 

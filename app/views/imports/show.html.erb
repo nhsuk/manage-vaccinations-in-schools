@@ -77,7 +77,15 @@
 <% end %>
 
 <% if import.rows_are_invalid? %>
-  <%= render AppImportErrorsComponent.new(import.errors) %>
+  <%= render AppImportErrorsComponent.new(import.errors) do %>
+    <p class="nhsuk-u-reading-width">
+      The records cannot be uploaded due to errors in the CSV file.
+      When fixing these errors, note that the header does not count as a row.
+    </p>
+
+    <%= render AppImportFormatDetailsComponent.new(import:,
+                                                   programme: @programme) %>
+  <% end %>
 <% end %>
 
 <% if import.recorded? %>
