@@ -33,9 +33,14 @@ describe Batch do
     it { should validate_presence_of(:expiry) }
 
     it do
-      expect(batch).to validate_comparison_of(
-        :expiry
-      ).is_greater_than_or_equal_to(Date.new(2000, 1, 1))
+      travel_to(Date.new(2024, 9, 1)) do
+        expect(batch).to validate_comparison_of(:expiry).is_greater_than(
+          Date.new(2009, 1, 1)
+        )
+        expect(batch).to validate_comparison_of(:expiry).is_less_than(
+          Date.new(2039, 1, 1)
+        )
+      end
     end
 
     context "with invalid characters" do

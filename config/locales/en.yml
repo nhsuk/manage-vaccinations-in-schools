@@ -311,6 +311,8 @@ en:
               missing_day: Enter a day
               missing_month: Enter a month
               missing_year: Enter a year
+              greater_than: Enter an expiry date after %{count}
+              less_than: Enter an expiry date before %{count}
             name:
               blank: Enter a batch
         class_import:
