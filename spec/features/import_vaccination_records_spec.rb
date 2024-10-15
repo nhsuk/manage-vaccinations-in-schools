@@ -23,6 +23,8 @@ describe "Immunisation imports" do
     when_i_go_to_the_import_page
     then_i_should_see_the_errors_page
 
+    travel_to 1.minute.from_now # to ensure the created_at is different for the import jobs
+
     when_i_go_back_to_the_upload_page
     and_i_upload_a_valid_file
     then_i_should_see_the_imports_page
@@ -109,6 +111,16 @@ describe "Immunisation imports" do
       "How to format your CSV for vaccination records"
     )
     expect(page).to have_content("Row 1")
+
+    expect(page).to have_content("VACCINATED:")
+    expect(page).to have_content("ORGANISATION_CODE:")
+    expect(page).to have_content("PERSON_DOB:")
+    expect(page).to have_content("CARE_SETTING:")
+
+    expect(page).to have_content("Row 2")
+    expect(page).to have_content("BATCH_EXPIRY_DATE:")
+    expect(page).to have_content("ANATOMICAL_SITE:")
+    expect(page).to have_content("VACCINE_GIVEN:")
   end
 
   def when_i_go_back_to_the_upload_page
