@@ -360,6 +360,20 @@ describe ClassImport do
         expect { record! }.to change { existing_patient.reload.school }.to(nil)
         expect(session.reload.patients).not_to include(existing_patient)
       end
+
+      context "when the patient has been seen" do
+        let(:existing_patient) do
+          create(:patient, :consent_given_triage_not_needed, session:)
+        end
+
+        it "doesn't remove the patient from the session" do
+          expect(session.patients).to include(existing_patient)
+          expect { record! }.to change { existing_patient.reload.school }.to(
+            nil
+          )
+          expect(session.reload.patients).to include(existing_patient)
+        end
+      end
     end
   end
 end

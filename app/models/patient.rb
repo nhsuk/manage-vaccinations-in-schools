@@ -186,7 +186,7 @@ class Patient < ApplicationRecord
       self.date_of_death = pds_patient.date_of_death
 
       if date_of_death_changed?
-        upcoming_sessions.clear unless date_of_death.nil?
+        clear_upcoming_sessions unless date_of_death.nil?
         self.date_of_death_recorded_at = Time.current
       end
 
@@ -208,7 +208,7 @@ class Patient < ApplicationRecord
     return if invalidated?
 
     ActiveRecord::Base.transaction do
-      upcoming_sessions.clear
+      clear_upcoming_sessions
       update!(invalidated_at: Time.current)
     end
   end
@@ -234,5 +234,12 @@ class Patient < ApplicationRecord
     parents_to_check.each do |parent|
       parent.destroy! if parent.parent_relationships.count.zero?
     end
+  end
+
+  def clear_upcoming_sessions
+    patient_sessions
+      .where(session: upcoming_sessions)
+      .select(&:added_to_session?)
+      .each(&:destroy!)
   end
 end

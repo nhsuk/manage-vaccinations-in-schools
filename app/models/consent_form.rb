@@ -356,7 +356,11 @@ class ConsentForm < ApplicationRecord
       if school && school != patient.school
         patient.update!(school:)
 
-        patient.patient_sessions.find_by(session: scheduled_session)&.destroy!
+        existing_patient_session =
+          patient.patient_sessions.find_by(session: scheduled_session)
+        if existing_patient_session&.added_to_session?
+          existing_patient_session.destroy!
+        end
 
         upcoming_session =
           Session
