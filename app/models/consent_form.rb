@@ -59,6 +59,7 @@
 class ConsentForm < ApplicationRecord
   include AddressConcern
   include AgeConcern
+  include FullNameConcern
   include WizardStepConcern
 
   before_save :reset_unused_fields
@@ -239,10 +240,6 @@ class ConsentForm < ApplicationRecord
   end
 
   delegate :vaccines, to: :programme
-
-  def full_name
-    [given_name, family_name].join(" ")
-  end
 
   def wizard_steps
     [
