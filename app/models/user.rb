@@ -26,6 +26,8 @@
 #  index_users_on_provider_and_uid  (provider,uid) UNIQUE
 #
 class User < ApplicationRecord
+  include FullNameConcern
+
   devise :database_authenticatable,
          :trackable,
          :timeoutable,
@@ -59,10 +61,6 @@ class User < ApplicationRecord
 
   scope :recently_active,
         -> { where(last_sign_in_at: 1.week.ago..Time.current) }
-
-  def full_name
-    [given_name, family_name].join(" ")
-  end
 
   def team
     # TODO: Update the app to properly support multiple teams per user

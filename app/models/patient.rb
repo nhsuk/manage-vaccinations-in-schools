@@ -37,6 +37,7 @@
 class Patient < ApplicationRecord
   include AddressConcern
   include AgeConcern
+  include FullNameConcern
   include PendingChangesConcern
   include Recordable
 
@@ -126,10 +127,6 @@ class Patient < ApplicationRecord
 
   def relationship_to(parent:)
     parent_relationships.find { _1.parent == parent }
-  end
-
-  def full_name
-    "#{given_name} #{family_name}"
   end
 
   def year_group
