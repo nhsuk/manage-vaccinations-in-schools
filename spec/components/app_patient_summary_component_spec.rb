@@ -48,7 +48,7 @@ describe AppPatientSummaryComponent do
   it { should have_content("1 January 2000") }
   it { should have_content(/Year [0-9]+/) }
 
-  it { should have_content("Sex") }
+  it { should have_content("Gender") }
   it { should have_content("Male") }
 
   it { should have_content("Postcode") }
