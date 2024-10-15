@@ -11,7 +11,8 @@ class DevController < ApplicationController
     session.delete :user_return_to
     Rake::Task.clear
     Rails.application.load_tasks
-    Rake::Task["db:seed:replant"].invoke
+
+    Team.with_advisory_lock("reset") { Rake::Task["db:seed:replant"].invoke }
 
     redirect_to root_path
   end
@@ -19,51 +20,53 @@ class DevController < ApplicationController
   def reset_team
     team = Team.find_by!(ods_code: params[:team_ods_code])
 
-    cohort_imports = CohortImport.where(team:)
-    cohort_imports.find_each do |cohort_import|
-      cohort_import.parent_relationships.clear
-      cohort_import.patients.clear
-      cohort_import.parents.clear
+    Team.with_advisory_lock("reset-team-#{team.id}") do
+      cohort_imports = CohortImport.where(team:)
+      cohort_imports.find_each do |cohort_import|
+        cohort_import.parent_relationships.clear
+        cohort_import.patients.clear
+        cohort_import.parents.clear
 
-      cohort_import.destroy!
+        cohort_import.destroy!
+      end
+
+      immunisation_imports = ImmunisationImport.where(team:)
+      immunisation_imports.find_each do |immunisation_import|
+        immunisation_import.batches.clear
+        immunisation_import.locations.clear
+        immunisation_import.patient_sessions.clear
+        immunisation_import.patients.clear
+        immunisation_import.sessions.clear
+        immunisation_import.vaccination_records.clear
+
+        immunisation_import.destroy!
+      end
+
+      team_sessions = Session.where(team:)
+
+      ClassImport.where(session: team_sessions).destroy_all
+
+      patient_sessions = PatientSession.where(session: team_sessions)
+      patient_sessions.each do |patient_session|
+        patient_session.vaccination_records.destroy_all
+        patient_session.triages.destroy_all
+        GillickAssessment.where(patient_session:).destroy_all
+        patient_session.destroy!
+      end
+
+      team_sessions.each do |team_session|
+        team_session.dates.destroy_all
+        team_session.destroy!
+      end
+
+      ConsentForm.where(team:).delete_all
+      Consent.where(team:).delete_all
+
+      Patient.joins(:cohort).where(cohorts: { team: }).distinct.destroy_all
+      Cohort.where(team:).delete_all
+
+      UnscheduledSessionsFactory.new.call
     end
-
-    immunisation_imports = ImmunisationImport.where(team:)
-    immunisation_imports.find_each do |immunisation_import|
-      immunisation_import.batches.clear
-      immunisation_import.locations.clear
-      immunisation_import.patient_sessions.clear
-      immunisation_import.patients.clear
-      immunisation_import.sessions.clear
-      immunisation_import.vaccination_records.clear
-
-      immunisation_import.destroy!
-    end
-
-    team_sessions = Session.where(team:)
-
-    ClassImport.where(session: team_sessions).destroy_all
-
-    patient_sessions = PatientSession.where(session: team_sessions)
-    patient_sessions.each do |patient_session|
-      patient_session.vaccination_records.destroy_all
-      patient_session.triages.destroy_all
-      GillickAssessment.where(patient_session:).destroy_all
-      patient_session.destroy!
-    end
-
-    team_sessions.each do |team_session|
-      team_session.dates.destroy_all
-      team_session.destroy!
-    end
-
-    ConsentForm.where(team:).delete_all
-    Consent.where(team:).delete_all
-
-    Patient.joins(:cohort).where(cohorts: { team: }).distinct.destroy_all
-    Cohort.where(team:).delete_all
-
-    UnscheduledSessionsFactory.new.call
 
     head :ok
   end
