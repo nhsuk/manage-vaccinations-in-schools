@@ -11,10 +11,10 @@
 #  address_town     :string
 #  common_name      :string
 #  date_of_birth    :date             not null
-#  first_name       :string           not null
+#  family_name      :string           not null
 #  gender_code      :integer          default("not_known"), not null
+#  given_name       :string           not null
 #  home_educated    :boolean
-#  last_name        :string           not null
 #  nhs_number       :string
 #  pending_changes  :jsonb            not null
 #  recorded_at      :datetime
@@ -69,9 +69,8 @@ class Patient < ApplicationRecord
   # https://www.datadictionary.nhs.uk/attributes/person_gender_code.html
   enum :gender_code, { not_known: 0, male: 1, female: 2, not_specified: 9 }
 
-  validates :first_name, presence: true
-  validates :last_name, presence: true
-  validates :date_of_birth, presence: true
+  validates :given_name, :family_name, :date_of_birth, presence: true
+
   validates :nhs_number,
             uniqueness: true,
             format: {
@@ -83,8 +82,8 @@ class Patient < ApplicationRecord
 
   validates :address_postcode, postcode: { allow_nil: true }
 
-  encrypts :first_name,
-           :last_name,
+  encrypts :family_name,
+           :given_name,
            :common_name,
            :address_postcode,
            :nhs_number,
@@ -100,8 +99,8 @@ class Patient < ApplicationRecord
 
   def self.match_existing(
     nhs_number:,
-    first_name:,
-    last_name:,
+    given_name:,
+    family_name:,
     date_of_birth:,
     address_postcode:
   )
@@ -111,10 +110,10 @@ class Patient < ApplicationRecord
 
     scope =
       Patient
-        .where(first_name:, last_name:, date_of_birth:)
-        .or(Patient.where(first_name:, last_name:, address_postcode:))
-        .or(Patient.where(first_name:, date_of_birth:, address_postcode:))
-        .or(Patient.where(last_name:, date_of_birth:, address_postcode:))
+        .where(given_name:, family_name:, date_of_birth:)
+        .or(Patient.where(given_name:, family_name:, address_postcode:))
+        .or(Patient.where(given_name:, date_of_birth:, address_postcode:))
+        .or(Patient.where(family_name:, date_of_birth:, address_postcode:))
 
     if nhs_number.blank?
       scope.to_a
@@ -130,7 +129,7 @@ class Patient < ApplicationRecord
   end
 
   def full_name
-    "#{first_name} #{last_name}"
+    "#{given_name} #{family_name}"
   end
 
   def year_group

@@ -78,7 +78,7 @@ class AppPatientSummaryComponent < ViewComponent::Base
   def format_full_name
     highlight_if(
       @patient.full_name,
-      @patient.first_name_changed? || @patient.last_name_changed?
+      @patient.given_name_changed? || @patient.family_name_changed?
     )
   end
 

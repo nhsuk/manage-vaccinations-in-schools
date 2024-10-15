@@ -78,10 +78,10 @@ class PatientImportRow
       cohort:,
       common_name:,
       date_of_birth:,
-      first_name:,
+      family_name: last_name,
       gender_code:,
+      given_name: first_name,
       home_educated:,
-      last_name:,
       nhs_number:,
       school:
     }
@@ -230,8 +230,8 @@ class PatientImportRow
     @existing_patients ||=
       Patient.match_existing(
         nhs_number:,
-        first_name:,
-        last_name:,
+        given_name: first_name,
+        family_name: last_name,
         date_of_birth:,
         address_postcode:
       )

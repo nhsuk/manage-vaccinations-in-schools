@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_15_090951) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_15_102323) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -145,8 +145,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_15_090951) do
     t.datetime "recorded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "first_name"
-    t.text "last_name"
+    t.text "given_name"
+    t.text "family_name"
     t.boolean "use_common_name"
     t.text "common_name"
     t.date "date_of_birth"
@@ -477,8 +477,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_15_090951) do
     t.string "nhs_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "first_name", null: false
-    t.string "last_name", null: false
+    t.string "given_name", null: false
+    t.string "family_name", null: false
     t.string "common_name"
     t.bigint "school_id"
     t.string "address_line_1"

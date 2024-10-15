@@ -16,8 +16,8 @@ describe ConsentFormMatchingJob do
     let!(:patient) do
       create(
         :patient,
-        first_name: consent_form.first_name,
-        last_name: consent_form.last_name,
+        given_name: consent_form.given_name,
+        family_name: consent_form.family_name,
         date_of_birth: consent_form.date_of_birth,
         session:,
         parents: []
@@ -47,8 +47,8 @@ describe ConsentFormMatchingJob do
       create_list(
         :patient,
         2,
-        first_name: consent_form.first_name,
-        last_name: consent_form.last_name,
+        given_name: consent_form.given_name,
+        family_name: consent_form.family_name,
         date_of_birth: consent_form.date_of_birth,
         session:
       )

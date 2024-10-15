@@ -39,8 +39,8 @@ describe "Parental consent" do
     click_button "Start now"
 
     # What is your child's name?
-    fill_in "First name", with: @child.first_name
-    fill_in "Last name", with: @child.last_name
+    fill_in "First name", with: @child.given_name
+    fill_in "Last name", with: @child.family_name
     choose "No"
     click_button "Continue"
 
@@ -55,7 +55,7 @@ describe "Parental consent" do
     click_button "Continue"
 
     # About you
-    fill_in "Your name", with: "Jane #{@child.last_name}"
+    fill_in "Your name", with: "Jane #{@child.family_name}"
     choose "Mum"
     fill_in "Email address", with: "jane@example.com"
     click_button "Continue"

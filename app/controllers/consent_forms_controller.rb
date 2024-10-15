@@ -17,7 +17,7 @@ class ConsentFormsController < ApplicationController
         .scheduled_session
         .patient_sessions
         .includes(:patient)
-        .order("patients.last_name")
+        .order("patients.family_name")
   end
 
   def review_match

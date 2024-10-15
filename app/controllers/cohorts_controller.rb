@@ -34,7 +34,7 @@ class CohortsController < ApplicationController
           .patients
           .recorded
           .includes(:school)
-          .order(:first_name, :last_name)
+          .order(:given_name, :family_name)
       )
   end
 

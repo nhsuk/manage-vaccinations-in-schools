@@ -64,11 +64,11 @@ class DPSExportRow
   end
 
   def person_forename
-    patient.first_name
+    patient.given_name
   end
 
   def person_surname
-    patient.last_name
+    patient.family_name
   end
 
   def person_dob

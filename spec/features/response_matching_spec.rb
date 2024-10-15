@@ -86,6 +86,6 @@ describe "Response matching" do
   end
 
   def then_the_matched_cohort_appears_in_the_consent_given_list
-    expect(page).to have_content @patient.first_name
+    expect(page).to have_content @patient.given_name
   end
 end

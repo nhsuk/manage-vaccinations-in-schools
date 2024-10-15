@@ -163,9 +163,9 @@ class GovukNotifyPersonalisation
   def short_patient_name
     [
       consent_form&.common_name,
-      consent_form&.first_name,
+      consent_form&.given_name,
       patient&.common_name,
-      patient&.first_name
+      patient&.given_name
     ].compact_blank.first
   end
 

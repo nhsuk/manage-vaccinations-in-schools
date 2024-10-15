@@ -9,8 +9,8 @@ describe AppPatientTableComponent do
     [
       create(
         :patient,
-        first_name: "John",
-        last_name: "Smith",
+        given_name: "John",
+        family_name: "Smith",
         nhs_number: "9999999999",
         date_of_birth: Date.new(2000, 5, 28),
         address_postcode: "SW1A 1AA"

@@ -41,8 +41,8 @@ describe "Parental consent" do
     click_on "Start now"
 
     expect(page).to have_content("What is your child’s name?")
-    fill_in "First name", with: @child.first_name
-    fill_in "Last name", with: @child.last_name
+    fill_in "First name", with: @child.given_name
+    fill_in "Last name", with: @child.family_name
     choose "No" # Do they use a different name in school?
     click_on "Continue"
 

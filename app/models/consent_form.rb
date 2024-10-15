@@ -12,11 +12,11 @@
 #  common_name                         :text
 #  contact_injection                   :boolean
 #  date_of_birth                       :date
-#  first_name                          :text
+#  family_name                         :text
+#  given_name                          :text
 #  gp_name                             :string
 #  gp_response                         :integer
 #  health_answers                      :jsonb            not null
-#  last_name                           :text
 #  parent_contact_method_other_details :string
 #  parent_contact_method_type          :string
 #  parent_email                        :string
@@ -111,10 +111,10 @@ class ConsentForm < ApplicationRecord
            :address_postcode,
            :address_town,
            :common_name,
-           :first_name,
+           :family_name,
+           :given_name,
            :gp_name,
            :health_answers,
-           :last_name,
            :parent_contact_method_other_details,
            :parent_email,
            :parent_name,
@@ -133,9 +133,9 @@ class ConsentForm < ApplicationRecord
             :address_line_2,
             :address_town,
             :common_name,
-            :first_name,
+            :family_name,
+            :given_name,
             :gp_name,
-            :last_name,
             :parent_contact_method_other_details,
             :parent_name,
             :parent_relationship_other_name,
@@ -162,8 +162,8 @@ class ConsentForm < ApplicationRecord
   validates :reason_notes, length: { maximum: 1000 }
 
   on_wizard_step :name do
-    validates :first_name, presence: true
-    validates :last_name, presence: true
+    validates :given_name, presence: true
+    validates :family_name, presence: true
     validates :use_common_name, inclusion: { in: [true, false] }
     validates :common_name, presence: true, if: :use_common_name?
   end
@@ -241,7 +241,7 @@ class ConsentForm < ApplicationRecord
   delegate :vaccines, to: :programme
 
   def full_name
-    [first_name, last_name].join(" ")
+    [given_name, family_name].join(" ")
   end
 
   def wizard_steps

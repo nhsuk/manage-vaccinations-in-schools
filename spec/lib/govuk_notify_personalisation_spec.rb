@@ -24,7 +24,7 @@ describe GovukNotifyPersonalisation do
     )
   end
 
-  let(:patient) { create(:patient, first_name: "John", last_name: "Smith") }
+  let(:patient) { create(:patient, given_name: "John", family_name: "Smith") }
   let(:location) { create(:location, :school, name: "Hogwarts") }
   let(:session) do
     create(:session, location:, team:, programme:, date: Date.new(2026, 1, 1))

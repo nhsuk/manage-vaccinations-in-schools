@@ -28,7 +28,7 @@ class TriagesController < ApplicationController
           :latest_vaccination_record
         )
         .preload(:consents)
-        .order("patients.first_name", "patients.last_name")
+        .order("patients.given_name", "patients.family_name")
 
     @current_tab = TAB_PATHS[:triage][params[:tab]]
     tab_patient_sessions =

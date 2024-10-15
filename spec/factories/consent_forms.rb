@@ -12,11 +12,11 @@
 #  common_name                         :text
 #  contact_injection                   :boolean
 #  date_of_birth                       :date
-#  first_name                          :text
+#  family_name                         :text
+#  given_name                          :text
 #  gp_name                             :string
 #  gp_response                         :integer
 #  health_answers                      :jsonb            not null
-#  last_name                           :text
 #  parent_contact_method_other_details :string
 #  parent_contact_method_type          :string
 #  parent_email                        :string
@@ -62,8 +62,8 @@ FactoryBot.define do
   factory :consent_form do
     transient { session { association :session } }
 
-    first_name { Faker::Name.first_name }
-    last_name { Faker::Name.last_name }
+    given_name { Faker::Name.first_name }
+    family_name { Faker::Name.last_name }
     use_common_name { false }
     date_of_birth { Faker::Date.birthday(min_age: 3, max_age: 9) }
     response { "given" }
@@ -75,7 +75,7 @@ FactoryBot.define do
     address_postcode { Faker::Address.uk_postcode }
 
     parent_email { Faker::Internet.email }
-    parent_name { "#{Faker::Name.first_name}} #{last_name}" }
+    parent_name { "#{Faker::Name.first_name}} #{family_name}" }
     parent_phone { "07700 900#{rand(0..999).to_s.rjust(3, "0")}" }
     parent_phone_receive_updates { parent_phone.present? }
     parent_relationship_other_name do

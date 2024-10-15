@@ -12,11 +12,11 @@
 #  common_name                         :text
 #  contact_injection                   :boolean
 #  date_of_birth                       :date
-#  first_name                          :text
+#  family_name                         :text
+#  given_name                          :text
 #  gp_name                             :string
 #  gp_response                         :integer
 #  health_answers                      :jsonb            not null
-#  last_name                           :text
 #  parent_contact_method_other_details :string
 #  parent_contact_method_type          :string
 #  parent_email                        :string
@@ -83,8 +83,8 @@ describe ConsentForm do
     let(:use_common_name) { false }
     let(:wizard_step) { nil }
 
-    it { should validate_presence_of(:first_name).on(:update) }
-    it { should validate_presence_of(:last_name).on(:update) }
+    it { should validate_presence_of(:given_name).on(:update) }
+    it { should validate_presence_of(:family_name).on(:update) }
     it { should validate_presence_of(:date_of_birth).on(:update) }
     it { should_not validate_presence_of(:school_confirmed).on(:update) }
     it { should validate_presence_of(:response).on(:update) }
@@ -100,8 +100,8 @@ describe ConsentForm do
     context "when wizard_step is :name" do
       let(:wizard_step) { :name }
 
-      it { should validate_presence_of(:first_name).on(:update) }
-      it { should validate_presence_of(:last_name).on(:update) }
+      it { should validate_presence_of(:given_name).on(:update) }
+      it { should validate_presence_of(:family_name).on(:update) }
 
       context "when use_common_name is true" do
         let(:use_common_name) { true }
@@ -114,7 +114,7 @@ describe ConsentForm do
       let(:wizard_step) { :date_of_birth }
 
       context "runs validations from previous steps" do
-        it { should validate_presence_of(:first_name).on(:update) }
+        it { should validate_presence_of(:given_name).on(:update) }
       end
 
       it { should validate_presence_of(:date_of_birth).on(:update) }
@@ -129,7 +129,7 @@ describe ConsentForm do
       let(:wizard_step) { :parent }
 
       context "runs validations from previous steps" do
-        it { should validate_presence_of(:first_name).on(:update) }
+        it { should validate_presence_of(:given_name).on(:update) }
         it { should validate_presence_of(:date_of_birth).on(:update) }
       end
     end
@@ -138,7 +138,7 @@ describe ConsentForm do
       let(:wizard_step) { :consent }
 
       context "runs validations from previous steps" do
-        it { should validate_presence_of(:first_name).on(:update) }
+        it { should validate_presence_of(:given_name).on(:update) }
         it { should validate_presence_of(:date_of_birth).on(:update) }
       end
 
@@ -150,7 +150,7 @@ describe ConsentForm do
       let(:wizard_step) { :reason }
 
       context "runs validations from previous steps" do
-        it { should validate_presence_of(:first_name).on(:update) }
+        it { should validate_presence_of(:given_name).on(:update) }
         it { should validate_presence_of(:date_of_birth).on(:update) }
       end
 
@@ -163,7 +163,7 @@ describe ConsentForm do
       let(:wizard_step) { :reason_notes }
 
       context "runs validations from previous steps" do
-        it { should validate_presence_of(:first_name).on(:update) }
+        it { should validate_presence_of(:given_name).on(:update) }
         it { should validate_presence_of(:date_of_birth).on(:update) }
       end
 
@@ -179,7 +179,7 @@ describe ConsentForm do
       let(:wizard_step) { :injection }
 
       context "runs validations from previous steps" do
-        it { should validate_presence_of(:first_name).on(:update) }
+        it { should validate_presence_of(:given_name).on(:update) }
         it { should validate_presence_of(:date_of_birth).on(:update) }
         it { should validate_presence_of(:reason).on(:update) }
       end
@@ -198,7 +198,7 @@ describe ConsentForm do
       let(:wizard_step) { :gp }
 
       context "runs validations from previous steps" do
-        it { should validate_presence_of(:first_name).on(:update) }
+        it { should validate_presence_of(:given_name).on(:update) }
         it { should validate_presence_of(:date_of_birth).on(:update) }
       end
 
@@ -216,7 +216,7 @@ describe ConsentForm do
       let(:wizard_step) { :address }
 
       context "runs validations from previous steps" do
-        it { should validate_presence_of(:first_name).on(:update) }
+        it { should validate_presence_of(:given_name).on(:update) }
         it { should validate_presence_of(:date_of_birth).on(:update) }
         it { should validate_presence_of(:gp_response).on(:update) }
       end
@@ -258,7 +258,7 @@ describe ConsentForm do
       end
 
       describe "validations from previous steps" do
-        it { should validate_presence_of(:first_name).on(:update) }
+        it { should validate_presence_of(:given_name).on(:update) }
         it { should validate_presence_of(:date_of_birth).on(:update) }
         it { should validate_presence_of(:gp_response).on(:update) }
         it { should validate_presence_of(:address_line_1).on(:update) }
@@ -304,7 +304,8 @@ describe ConsentForm do
 
   describe "#full_name" do
     it "returns the full name as a string" do
-      consent_form = build(:consent_form, first_name: "John", last_name: "Doe")
+      consent_form =
+        build(:consent_form, given_name: "John", family_name: "Doe")
       expect(consent_form.full_name).to eq("John Doe")
     end
   end

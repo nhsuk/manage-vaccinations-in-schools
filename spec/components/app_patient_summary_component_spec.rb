@@ -11,15 +11,15 @@ describe AppPatientSummaryComponent do
     create(
       :patient,
       nhs_number: "1234567890",
-      first_name: "John",
-      last_name: "Doe",
+      given_name: "John",
+      family_name: "Doe",
       date_of_birth: Date.new(2000, 1, 1),
       gender_code: "male",
       address_line_1: "10 Downing Street",
       address_postcode: "SW1A 1AA",
       school:,
       pending_changes: {
-        first_name: "Jane",
+        given_name: "Jane",
         date_of_birth: Date.new(2001, 1, 1),
         address_postcode: "SW1A 2AA",
         school_id: other_school.id

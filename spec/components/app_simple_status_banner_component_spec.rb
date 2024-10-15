@@ -21,7 +21,7 @@ describe AppSimpleStatusBannerComponent, type: :component do
   let(:patient_name) { patient_session.patient.full_name }
 
   prepend_before do
-    patient_session.patient.update!(first_name: "Alya", last_name: "Merton")
+    patient_session.patient.update!(given_name: "Alya", family_name: "Merton")
   end
 
   context "state is added_to_session" do

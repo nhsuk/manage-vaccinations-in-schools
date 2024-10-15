@@ -15,13 +15,13 @@ describe PatientSortingConcern do
   end
 
   let(:alex) do
-    create(:patient, first_name: "Alex", date_of_birth: Date.new(2010, 1, 1))
+    create(:patient, given_name: "Alex", date_of_birth: Date.new(2010, 1, 1))
   end
   let(:blair) do
-    create(:patient, first_name: "Blair", date_of_birth: Date.new(2010, 1, 2))
+    create(:patient, given_name: "Blair", date_of_birth: Date.new(2010, 1, 2))
   end
   let(:casey) do
-    create(:patient, first_name: "Casey", date_of_birth: Date.new(2010, 1, 3))
+    create(:patient, given_name: "Casey", date_of_birth: Date.new(2010, 1, 3))
   end
 
   let(:programme) { create(:programme) }
@@ -59,7 +59,7 @@ describe PatientSortingConcern do
 
       it "sorts patient sessions by name in ascending order" do
         subject.sort_patients!(patient_sessions)
-        expect(patient_sessions.map(&:patient).map(&:first_name)).to eq(
+        expect(patient_sessions.map(&:patient).map(&:given_name)).to eq(
           %w[Alex Blair Casey]
         )
       end
@@ -70,7 +70,7 @@ describe PatientSortingConcern do
 
       it "sorts patient sessions by date of birth in descending order" do
         subject.sort_patients!(patient_sessions)
-        expect(patient_sessions.map(&:patient).map(&:first_name)).to eq(
+        expect(patient_sessions.map(&:patient).map(&:given_name)).to eq(
           %w[Casey Blair Alex]
         )
       end
@@ -92,7 +92,7 @@ describe PatientSortingConcern do
 
       it "does not change the order of patient sessions" do
         subject.sort_patients!(patient_sessions)
-        expect(patient_sessions.map(&:patient).map(&:first_name)).to eq(
+        expect(patient_sessions.map(&:patient).map(&:given_name)).to eq(
           %w[Alex Blair Casey]
         )
       end
@@ -106,7 +106,7 @@ describe PatientSortingConcern do
       it "filters patient sessions by patient name" do
         subject.filter_patients!(patient_sessions)
         expect(patient_sessions.size).to eq(1)
-        expect(patient_sessions.first.patient.first_name).to eq("Alex")
+        expect(patient_sessions.first.patient.given_name).to eq("Alex")
       end
     end
 
@@ -116,7 +116,7 @@ describe PatientSortingConcern do
       it "filters patient sessions by date of birth" do
         subject.filter_patients!(patient_sessions)
         expect(patient_sessions.size).to eq(1)
-        expect(patient_sessions.first.patient.first_name).to eq("Blair")
+        expect(patient_sessions.first.patient.given_name).to eq("Blair")
       end
     end
 
@@ -126,7 +126,7 @@ describe PatientSortingConcern do
       it "filters patient sessions by both name and date of birth" do
         subject.filter_patients!(patient_sessions)
         expect(patient_sessions.size).to eq(1)
-        expect(patient_sessions.first.patient.first_name).to eq("Alex")
+        expect(patient_sessions.first.patient.given_name).to eq("Alex")
       end
     end
 

@@ -14,30 +14,30 @@ describe PendingChangesConcern do
       address_postcode: "",
       cohort_id: create(:cohort).id,
       date_of_birth: Time.zone.now,
-      first_name: "John",
-      last_name: "Doe"
+      given_name: "John",
+      family_name: "Doe"
     )
   end
 
   describe "#stage_changes" do
     it "stages new changes in pending_changes" do
-      model.stage_changes(first_name: "Jane", address_line_1: "123 New St")
+      model.stage_changes(given_name: "Jane", address_line_1: "123 New St")
 
       expect(model.pending_changes).to eq(
-        { "first_name" => "Jane", "address_line_1" => "123 New St" }
+        { "given_name" => "Jane", "address_line_1" => "123 New St" }
       )
     end
 
     it "does not stage unchanged attributes" do
-      model.stage_changes(first_name: "John", last_name: "Smith")
+      model.stage_changes(given_name: "John", family_name: "Smith")
 
-      expect(model.pending_changes).to eq({ "last_name" => "Smith" })
+      expect(model.pending_changes).to eq({ "family_name" => "Smith" })
     end
 
     it "does not stage blank values" do
       model.stage_changes(
-        first_name: "",
-        last_name: nil,
+        given_name: "",
+        family_name: nil,
         address_line_1: "123 New St"
       )
 
@@ -45,20 +45,20 @@ describe PendingChangesConcern do
     end
 
     it "updates the pending_changes attribute" do
-      expect { model.stage_changes(first_name: "Jane") }.to change {
+      expect { model.stage_changes(given_name: "Jane") }.to change {
         model.reload.pending_changes
-      }.from({}).to({ "first_name" => "Jane" })
+      }.from({}).to({ "given_name" => "Jane" })
     end
 
     it "does not update other attributes directly" do
-      model.stage_changes(first_name: "Jane", last_name: "Smith")
+      model.stage_changes(given_name: "Jane", family_name: "Smith")
 
-      expect(model.first_name).to eq("John")
-      expect(model.last_name).to eq("Doe")
+      expect(model.given_name).to eq("John")
+      expect(model.family_name).to eq("Doe")
     end
 
     it "does not save any changes if no valid changes are provided" do
-      expect { model.stage_changes(first_name: "John") }.not_to(
+      expect { model.stage_changes(given_name: "John") }.not_to(
         change { model.reload.pending_changes }
       )
     end
@@ -66,14 +66,14 @@ describe PendingChangesConcern do
 
   describe "#with_pending_changes" do
     it "returns model with pending changes applied, does not modify original" do
-      model.stage_changes(first_name: "Jane")
-      expect(model.first_name).to eq("John")
+      model.stage_changes(given_name: "Jane")
+      expect(model.given_name).to eq("John")
 
       changed_model = model.with_pending_changes
-      expect(changed_model.first_name).to eq("Jane")
-      expect(changed_model.last_name).to eq("Doe")
+      expect(changed_model.given_name).to eq("Jane")
+      expect(changed_model.family_name).to eq("Doe")
 
-      expect(model.first_name).to eq("John")
+      expect(model.given_name).to eq("John")
     end
   end
 end
