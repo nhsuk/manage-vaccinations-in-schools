@@ -56,10 +56,11 @@ class ClassImport < PatientImport
 
     unknown_patients = session.patients - patients
 
-    unknown_patients.each do |unknown_patient|
-      unknown_patient.update!(school: nil)
-    end
+    Patient.where(id: unknown_patients.map(&:id)).update_all(school_id: nil)
 
-    session.patients.delete(unknown_patients)
+    session
+      .patient_sessions
+      .where(patient: unknown_patients)
+      .find_each(&:destroy_if_safe!)
   end
 end

@@ -95,6 +95,14 @@ class PatientSession < ApplicationRecord
     !unable_to_vaccinate? && !unable_to_vaccinate_not_gillick_competent?
   end
 
+  def safe_to_destroy?
+    vaccination_records.empty? && gillick_assessments.empty?
+  end
+
+  def destroy_if_safe!
+    destroy! if safe_to_destroy?
+  end
+
   def latest_consents
     consents
       .group_by(&:name)
