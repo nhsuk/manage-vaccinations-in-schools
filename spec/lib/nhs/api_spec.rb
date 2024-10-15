@@ -6,7 +6,7 @@ describe NHS::API do
     allow(OpenSSL::PKey::RSA).to receive(:new).and_return("key")
   end
 
-  describe ".connection_sans_auth" do
+  describe "#connection_sans_auth" do
     it "sets the url" do
       expect(
         described_class.connection_sans_auth.url_prefix.to_s
@@ -25,24 +25,34 @@ describe NHS::API do
     end
   end
 
-  describe ".connection" do
-    it "sets the authorization header" do
-      allow(described_class).to receive(:access_token).and_return("ONEAUTHAPI")
-      expect(described_class.connection.headers).to include(
-        authorization: "Bearer ONEAUTHAPI"
-      )
+  describe "#connection" do
+    after { Settings.reload! }
+
+    context "when authentication is disabled" do
+      before { Settings.nhs_api.disable_authentication = true }
+
+      it "doesn't set the auth header when disabled" do
+        expect(described_class.connection.headers).not_to have_key(
+          :authorization
+        )
+      end
     end
 
-    it "doesn't set the auth header when disabled" do
-      Settings.nhs_api.disable_authentication = true
+    context "when authentication is enabled" do
+      before { Settings.nhs_api.disable_authentication = false }
 
-      expect(described_class.connection.headers).not_to have_key(:authorization)
-    ensure
-      Settings.reload!
+      it "sets the authorization header" do
+        allow(described_class).to receive(:access_token).and_return(
+          "ONEAUTHAPI"
+        )
+        expect(described_class.connection.headers).to include(
+          authorization: "Bearer ONEAUTHAPI"
+        )
+      end
     end
   end
 
-  describe ".access_token" do
+  describe "#access_token" do
     before do
       stub_request(
         :post,
@@ -78,7 +88,7 @@ describe NHS::API do
     end
   end
 
-  describe ".access_token_valid?" do
+  describe "#access_token_valid?" do
     it "returns false when we have no auth_info" do
       described_class.instance_variable_set(:@auth_info, nil)
 
