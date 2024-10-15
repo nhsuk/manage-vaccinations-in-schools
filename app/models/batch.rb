@@ -29,6 +29,8 @@ class Batch < ApplicationRecord
   belongs_to :team
   belongs_to :vaccine
 
+  scope :order_by_name_and_expiration, -> { order(expiry: :asc, name: :asc) }
+
   has_many :vaccination_records
 
   has_and_belongs_to_many :immunisation_imports

@@ -317,9 +317,10 @@ class ImmunisationImportRow
 
     @batch ||=
       Batch.find_or_create_by!(
-        vaccine:,
         expiry: batch_expiry_date,
-        name: batch_number
+        name: batch_number,
+        team:,
+        vaccine:
       )
   end
 
