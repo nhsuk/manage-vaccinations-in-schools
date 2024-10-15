@@ -13,9 +13,10 @@ module NHS::PDS::Patient
     death-date
     email
     phone
-    address-postcode
+    address-postalcode
     general-practitioner
   ].freeze
+
   class << self
     def find(nhs_number)
       NHS::PDS.connection.get("Patient/#{nhs_number}")
