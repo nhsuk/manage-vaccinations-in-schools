@@ -40,6 +40,7 @@ class Batch < ApplicationRecord
   validates :expiry,
             presence: true,
             comparison: {
-              greater_than_or_equal_to: Date.new(2000, 1, 1)
+              greater_than: -> { Date.new(Date.current.year - 15, 1, 1) },
+              less_than: -> { Date.new(Date.current.year + 15, 1, 1) }
             }
 end
