@@ -128,17 +128,7 @@ class Session < ApplicationRecord
 
     unvaccinated_patients =
       patients_in_cohorts.reject do |patient|
-        # TODO: This logic doesn't work for vaccinations that require multiple doses.
-
-        vaccinated_programmes =
-          Set.new(
-            patient
-              .vaccination_records
-              .select { _1.recorded? && _1.administered? }
-              .map(&:programme)
-          )
-
-        required_programmes.subset?(vaccinated_programmes)
+        required_programmes.all? { |programme| patient.vaccinated?(programme) }
       end
 
     unvaccinated_patients.each do |patient|

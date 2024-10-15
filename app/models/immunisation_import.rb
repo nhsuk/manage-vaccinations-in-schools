@@ -139,4 +139,18 @@ class ImmunisationImport < ApplicationRecord
       :exact_duplicate_record_count
     end
   end
+
+  def postprocess_rows!
+    # Remove patients from upcoming sessions who have already been vaccinated.
+
+    already_vaccinated_patients =
+      patients
+        .includes(:vaccination_records)
+        .select { _1.vaccinated?(programme) }
+
+    PatientSession.where(
+      session: team.sessions.upcoming,
+      patient: already_vaccinated_patients
+    ).delete_all
+  end
 end

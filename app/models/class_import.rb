@@ -48,6 +48,8 @@ class ClassImport < PatientImport
   end
 
   def postprocess_rows!
+    # Remove patients already in the session but not in the class list.
+
     return if session.completed?
 
     session.create_patient_sessions!

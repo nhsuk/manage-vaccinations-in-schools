@@ -143,6 +143,14 @@ class Patient < ApplicationRecord
     super.merge("full_name" => full_name, "age" => age)
   end
 
+  def vaccinated?(programme)
+    # TODO: This logic doesn't work for vaccinations that require multiple doses.
+
+    vaccination_records.any? do
+      _1.recorded? && _1.administered? && _1.programme_id == programme.id
+    end
+  end
+
   private
 
   def school_is_correct_type
