@@ -9,19 +9,24 @@
 #  name       :string           not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  team_id    :bigint           not null
 #  vaccine_id :bigint           not null
 #
 # Indexes
 #
-#  index_batches_on_vaccine_id  (vaccine_id)
+#  index_batches_on_team_id                                     (team_id)
+#  index_batches_on_team_id_and_name_and_expiry_and_vaccine_id  (team_id,name,expiry,vaccine_id) UNIQUE
+#  index_batches_on_vaccine_id                                  (vaccine_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (team_id => teams.id)
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 class Batch < ApplicationRecord
   audited
 
+  belongs_to :team
   belongs_to :vaccine
 
   has_many :vaccination_records

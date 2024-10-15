@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_14_085754) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_15_090951) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -42,6 +42,9 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_14_085754) do
     t.bigint "vaccine_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "team_id", null: false
+    t.index ["team_id", "name", "expiry", "vaccine_id"], name: "index_batches_on_team_id_and_name_and_expiry_and_vaccine_id", unique: true
+    t.index ["team_id"], name: "index_batches_on_team_id"
     t.index ["vaccine_id"], name: "index_batches_on_vaccine_id"
   end
 
@@ -641,6 +644,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_14_085754) do
     t.index ["snomed_product_term"], name: "index_vaccines_on_snomed_product_term", unique: true
   end
 
+  add_foreign_key "batches", "teams"
   add_foreign_key "batches", "vaccines"
   add_foreign_key "batches_immunisation_imports", "batches"
   add_foreign_key "batches_immunisation_imports", "immunisation_imports"

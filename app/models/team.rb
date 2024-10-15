@@ -24,6 +24,7 @@
 class Team < ApplicationRecord
   include ODSCodeConcern
 
+  has_many :batches
   has_many :cohort_imports
   has_many :cohorts
   has_many :consent_forms
