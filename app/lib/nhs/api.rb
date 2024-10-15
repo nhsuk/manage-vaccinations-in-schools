@@ -10,7 +10,10 @@ module NHS::API
           accept: "application/fhir+json",
           "x-request-id" => SecureRandom.uuid
         }
-      )
+      ) do |f|
+        f.response :json,
+                   content_type: %w[application/json application/fhir+json]
+      end
     end
 
     def connection
@@ -46,7 +49,7 @@ module NHS::API
       return false if @auth_info.blank?
 
       epoch_msec = Time.zone.now.strftime("%Q").to_i
-      safety_msec = 1000 # satety to accomodate connection time
+      safety_msec = 1000 # safety to accommodate connection time
       epoch_msec - safety_msec < @auth_info[:expires_at]
     end
 
@@ -80,5 +83,4 @@ module NHS::API
       Settings.nhs_api.apikey
     end
   end
-  # end
 end
