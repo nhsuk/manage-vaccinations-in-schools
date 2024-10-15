@@ -117,7 +117,7 @@ class AppPatientSummaryComponent < ViewComponent::Base
         @patient.parent_relationships.map do |parent_relationship|
           tag.li do
             [
-              "#{parent_relationship.parent.name} (#{parent_relationship.label})",
+              "#{parent_relationship.parent.full_name} (#{parent_relationship.label})",
               if (phone = parent_relationship.parent.phone).present?
                 tag.span(phone, class: "nhsuk-u-secondary-text-color")
               end

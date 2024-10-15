@@ -94,7 +94,7 @@
         ) do |summary_list|
           summary_list.with_row do |row|
             row.with_key { "Name" }
-            row.with_value { @parent.name }
+            row.with_value { @parent.full_name }
             row.with_action(text: "Change", href: wizard_path(:who), visually_hidden_text: "parent name")
           end
         

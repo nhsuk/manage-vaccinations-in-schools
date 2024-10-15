@@ -7,7 +7,7 @@ class ParentDetailsForm
   attr_accessor :parent, :patient
 
   attribute :email, :string
-  attribute :name, :string
+  attribute :full_name, :string
   attribute :phone, :string
   attribute :phone_receive_updates, :boolean
   attribute :parental_responsibility, :boolean
@@ -24,7 +24,7 @@ class ParentDetailsForm
             }
 
   with_options if: :can_change_name_or_relationship? do
-    validates :name, presence: true
+    validates :full_name, presence: true
     validates :relationship_type,
               inclusion: {
                 in: ParentRelationship.types.keys
@@ -41,7 +41,7 @@ class ParentDetailsForm
 
     ActiveRecord::Base.transaction do
       parent.email = email
-      parent.name = name if can_change_name_or_relationship?
+      parent.full_name = full_name if can_change_name_or_relationship?
       parent.phone = phone
       parent.phone_receive_updates = phone_receive_updates || false
       parent.save!

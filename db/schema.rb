@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_15_102323) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_15_104614) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -165,7 +165,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_15_102323) do
     t.string "parent_contact_method_other_details"
     t.string "parent_contact_method_type"
     t.string "parent_email"
-    t.string "parent_name"
+    t.string "parent_full_name"
     t.string "parent_phone"
     t.string "parent_relationship_other_name"
     t.string "parent_relationship_type"
@@ -451,7 +451,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_15_102323) do
   end
 
   create_table "parents", force: :cascade do |t|
-    t.string "name"
+    t.string "full_name"
     t.string "email"
     t.string "phone"
     t.text "contact_method_other_details"

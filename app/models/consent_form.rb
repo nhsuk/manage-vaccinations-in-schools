@@ -20,7 +20,7 @@
 #  parent_contact_method_other_details :string
 #  parent_contact_method_type          :string
 #  parent_email                        :string
-#  parent_name                         :string
+#  parent_full_name                    :string
 #  parent_phone                        :string
 #  parent_phone_receive_updates        :boolean          default(FALSE), not null
 #  parent_relationship_other_name      :string
@@ -117,7 +117,7 @@ class ConsentForm < ApplicationRecord
            :health_answers,
            :parent_contact_method_other_details,
            :parent_email,
-           :parent_name,
+           :parent_full_name,
            :parent_phone,
            :parent_relationship_other_name,
            :reason_notes
@@ -137,7 +137,7 @@ class ConsentForm < ApplicationRecord
             :given_name,
             :gp_name,
             :parent_contact_method_other_details,
-            :parent_name,
+            :parent_full_name,
             :parent_relationship_other_name,
             length: {
               maximum: 300
@@ -190,7 +190,7 @@ class ConsentForm < ApplicationRecord
   end
 
   on_wizard_step :parent do
-    validates :parent_name, presence: true
+    validates :parent_full_name, presence: true
     validates :parent_email, notify_safe_email: true
     validates :parent_relationship_type, presence: true
   end
@@ -314,7 +314,7 @@ class ConsentForm < ApplicationRecord
   def find_or_create_parent_with_relationship_to(patient:)
     Parent
       .create_with(recorded_at: Time.zone.now)
-      .find_or_initialize_by(name: parent_name, email: parent_email)
+      .find_or_initialize_by(full_name: parent_full_name, email: parent_email)
       .tap do |parent|
         parent.update!(
           phone: parent_phone,

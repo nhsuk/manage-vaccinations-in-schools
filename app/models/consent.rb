@@ -138,7 +138,7 @@ class Consent < ApplicationRecord
   end
 
   def name
-    via_self_consent? ? patient.full_name : parent.name
+    via_self_consent? ? patient.full_name : parent.full_name
   end
 
   def triage_needed?

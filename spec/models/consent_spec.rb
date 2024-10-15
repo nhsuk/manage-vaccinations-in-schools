@@ -93,7 +93,7 @@ describe Consent do
 
       it "creates a parent" do
         expect(consent.parent).to have_attributes(
-          name: consent_form.parent_name,
+          full_name: consent_form.parent_full_name,
           email: consent_form.parent_email,
           phone: consent_form.parent_phone,
           phone_receive_updates: consent_form.parent_phone_receive_updates

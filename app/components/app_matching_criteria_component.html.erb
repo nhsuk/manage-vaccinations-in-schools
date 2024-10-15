@@ -13,7 +13,7 @@
    
      summary_list.with_row do |row|
        row.with_key { parent_guardian_or_other.capitalize }
-       row.with_value { parent_name }
+       row.with_value { parent_full_name }
      end
    
      if date_of_birth.present?

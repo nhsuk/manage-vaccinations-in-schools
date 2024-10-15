@@ -6,7 +6,7 @@
 <% end %>
 
 <% page_title = if @parent.recorded?
-       "Details for #{@parent.name} (#{@parent.relationship_to(patient: @patient).label})"
+       "Details for #{@parent.full_name} (#{@parent.relationship_to(patient: @patient).label})"
      else
        "Details for parent or guardian"
      end %>
@@ -22,7 +22,7 @@
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <% if @parent_details_form.can_change_name_or_relationship? %>
-    <%= f.govuk_text_field :name, label: { text: "Full name" } %>
+    <%= f.govuk_text_field :full_name, label: { text: "Full name" } %>
 
     <%= f.govuk_radio_buttons_fieldset(:relationship_type,
                                        legend: { size: "s",

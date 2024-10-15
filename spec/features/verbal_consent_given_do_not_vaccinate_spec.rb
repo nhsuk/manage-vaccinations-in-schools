@@ -25,7 +25,7 @@ describe "Verbal consent" do
     click_button "Get consent"
 
     # Who are you trying to get consent from?
-    choose @patient.parents.first.name
+    choose @patient.parents.first.full_name
     click_button "Continue"
 
     # Details for parent or guardian: leave prepopulated details

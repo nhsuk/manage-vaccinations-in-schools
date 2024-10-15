@@ -83,7 +83,7 @@ describe ClassImportRow do
       it "returns a parent" do
         expect(parents.count).to eq(1)
         expect(parents.first).to have_attributes(
-          name: "John Smith",
+          full_name: "John Smith",
           email: "john@example.com",
           phone: "07412345678",
           phone_receive_updates: false
@@ -97,12 +97,12 @@ describe ClassImportRow do
       it "returns two parents" do
         expect(parents.count).to eq(2)
         expect(parents.first).to have_attributes(
-          name: "John Smith",
+          full_name: "John Smith",
           email: "john@example.com",
           phone: "07412345678"
         )
         expect(parents.second).to have_attributes(
-          name: "Jenny Smith",
+          full_name: "Jenny Smith",
           email: "jenny@example.com",
           phone: "07412345678"
         )
@@ -113,7 +113,7 @@ describe ClassImportRow do
       let(:data) { valid_data.merge(parent_2_data) }
 
       let!(:existing_parent) do
-        create(:parent, name: "Jenny Smith", email: "jenny@example.com")
+        create(:parent, full_name: "Jenny Smith", email: "jenny@example.com")
       end
 
       it { should eq([existing_parent]) }

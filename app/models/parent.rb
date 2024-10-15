@@ -8,7 +8,7 @@
 #  contact_method_other_details :text
 #  contact_method_type          :string
 #  email                        :string
-#  name                         :string
+#  full_name                    :string
 #  phone                        :string
 #  phone_receive_updates        :boolean          default(FALSE), not null
 #  recorded_at                  :datetime
@@ -39,13 +39,13 @@ class Parent < ApplicationRecord
          allow_nil: true
        }
 
-  encrypts :email, :name, :phone, :relationship_other, deterministic: true
+  encrypts :email, :full_name, :phone, :relationship_other, deterministic: true
   encrypts :contact_method_other_details
 
   normalizes :phone, with: -> { _1.blank? ? nil : _1.to_s.gsub(/\s/, "") }
   normalizes :email, with: -> { _1.blank? ? nil : _1.to_s.downcase.strip }
 
-  validates :name, presence: true
+  validates :full_name, presence: true
   validates :phone,
             presence: {
               if: :phone_receive_updates
@@ -56,7 +56,7 @@ class Parent < ApplicationRecord
   validates :email, presence: true, notify_safe_email: true
   validates :contact_method_other_details,
             :email,
-            :name,
+            :full_name,
             :phone,
             length: {
               maximum: 300

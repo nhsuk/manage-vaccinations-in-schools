@@ -20,7 +20,7 @@
       <% consents.each do |consent| %>
         <%= body.with_row do |row| %>
           <%= row.with_cell do %>
-            <%= govuk_link_to consent&.parent&.name || consent.patient.full_name, details_session_patient_manage_consents_path(consent, session_id: session.id, patient_id: patient.id, section:, tab:) %>
+            <%= govuk_link_to consent&.parent&.full_name || consent.patient.full_name, details_session_patient_manage_consents_path(consent, session_id: session.id, patient_id: patient.id, section:, tab:) %>
             <br>
             <span class="nhsuk-u-font-size-16"><%= consent.who_responded %></span>
           <% end %>

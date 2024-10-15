@@ -18,7 +18,7 @@ describe TriageMailer do
     describe "personalisation" do
       subject { mail.message.header["personalisation"].unparsed_value }
 
-      it { should include(parent_name: consent.parent.name) }
+      it { should include(parent_full_name: consent.parent.full_name) }
     end
   end
 
@@ -35,7 +35,7 @@ describe TriageMailer do
     describe "personalisation" do
       subject { mail.message.header["personalisation"].unparsed_value }
 
-      it { should include(parent_name: consent.parent.name) }
+      it { should include(parent_full_name: consent.parent.full_name) }
     end
   end
 end
