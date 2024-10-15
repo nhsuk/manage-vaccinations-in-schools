@@ -1,14 +1,8 @@
 # frozen_string_literal: true
 
 describe PDS::Patient do
-  describe ".find" do
-    let(:json_response) do
-      File.read("spec/support/pds-get-patient-response.json")
-    end
-    let(:request_id) { "123e4567-e89b-12d3-a456-426614174000" }
-    let(:patient_json) do
-      File.read(Rails.root.join("spec/fixtures/patient_record.json"))
-    end
+  describe "#find" do
+    let(:json_response) { file_fixture("pds/get-patient-response.json").read }
 
     before do
       allow(NHS::PDS::Patient).to receive(:find).and_return(
