@@ -8,6 +8,7 @@ class PatientImportRow
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :nhs_number, length: { is: 10 }, allow_blank: true
+  validates :gender_code, inclusion: { in: Patient.gender_codes.keys }
   validates :year_group,
             inclusion: {
               in: :year_groups
@@ -78,6 +79,7 @@ class PatientImportRow
       common_name:,
       date_of_birth:,
       first_name:,
+      gender_code:,
       home_educated:,
       last_name:,
       nhs_number:,
@@ -129,6 +131,10 @@ class PatientImportRow
     Date.parse(@data["CHILD_DATE_OF_BIRTH"])
   rescue ArgumentError, TypeError
     nil
+  end
+
+  def gender_code
+    @data["CHILD_GENDER"]&.strip&.downcase&.gsub(" ", "_") || "not_known"
   end
 
   def address_line_1

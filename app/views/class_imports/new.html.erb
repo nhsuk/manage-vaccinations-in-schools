@@ -66,6 +66,13 @@
         
             body.with_row do |row|
               row.with_cell do
+                tag.code("CHILD_GENDER")
+              end
+              row.with_cell(text: ("Optional, must be one of: " + tag.i("Male") + ", " + tag.i("Female") + ", " + tag.i("Not known") + " or " + tag.i("Not specified")).html_safe)
+            end
+        
+            body.with_row do |row|
+              row.with_cell do
                 tag.code("CHILD_ADDRESS_LINE_1")
               end
               row.with_cell(text: "Optional")
