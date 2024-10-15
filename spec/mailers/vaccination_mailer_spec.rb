@@ -43,7 +43,7 @@ describe VaccinationMailer do
           :day_month_year_of_vaccination,
           :full_and_preferred_patient_name,
           :location_name,
-          :parent_name,
+          :parent_full_name,
           :team_email,
           :team_name,
           :team_phone,
@@ -130,7 +130,7 @@ describe VaccinationMailer do
       it "sets the personalisation" do
         expect(personalisation.keys).to include(
           :full_and_preferred_patient_name,
-          :parent_name,
+          :parent_full_name,
           :reason_did_not_vaccinate,
           :short_patient_name,
           :show_additional_instructions,

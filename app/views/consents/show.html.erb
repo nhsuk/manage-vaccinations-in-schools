@@ -93,7 +93,7 @@
         ) do |summary_list|
           summary_list.with_row do |row|
             row.with_key { "Name" }
-            row.with_value { @consent.parent.name }
+            row.with_value { @consent.parent.full_name }
           end
         
           summary_list.with_row do |row|

@@ -33,8 +33,8 @@ describe AppActivityLogComponent do
   let(:session) { create(:session, programme:, location:) }
   let(:patient) { create(:patient, school: location) }
 
-  let(:mum) { create(:parent, :recorded, name: "Jane Doe") }
-  let(:dad) { create(:parent, :recorded, name: "John Doe") }
+  let(:mum) { create(:parent, :recorded, full_name: "Jane Doe") }
+  let(:dad) { create(:parent, :recorded, full_name: "John Doe") }
 
   before do
     create(:parent_relationship, :mother, parent: mum, patient:)

@@ -37,7 +37,7 @@ class AppConsentComponentPreview < ViewComponent::Preview
       :refused,
       patient_session:,
       parent_relationship: patient_session.consents.first.parent_relationship,
-      parent_name: patient_session.consents.first.parent_name
+      parent_full_name: patient_session.consents.first.parent_full_name
     )
 
     render AppConsentComponent.new(patient_session:, route: "triage")

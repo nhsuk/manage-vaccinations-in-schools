@@ -8,7 +8,7 @@
 #  contact_method_other_details :text
 #  contact_method_type          :string
 #  email                        :string
-#  name                         :string
+#  full_name                    :string
 #  phone                        :string
 #  phone_receive_updates        :boolean          default(FALSE), not null
 #  recorded_at                  :datetime

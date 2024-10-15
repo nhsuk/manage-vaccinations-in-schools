@@ -27,7 +27,7 @@ describe "Verbal consent" do
     click_button "Get consent"
 
     # Who are you trying to get consent from?
-    choose @patient.parents.first.name
+    choose @patient.parents.first.full_name
     click_button "Continue"
 
     # Details for parent or guardian: leave prepopulated details
@@ -51,7 +51,9 @@ describe "Verbal consent" do
 
     # Confirm
     expect(page).to have_content(["Decision", "Consent refused"].join)
-    expect(page).to have_content(["Name", @patient.parents.first.name].join)
+    expect(page).to have_content(
+      ["Name", @patient.parents.first.full_name].join
+    )
     click_button "Confirm"
 
     expect(page).to have_content("Check consent responses")
@@ -65,7 +67,7 @@ describe "Verbal consent" do
 
   def and_i_can_see_the_consent_response_details
     parent = @patient.parents.first
-    click_link parent.name
+    click_link parent.full_name
 
     expect(page).to have_content(
       ["Response date", Time.zone.today.to_fs(:long)].join
@@ -83,7 +85,7 @@ describe "Verbal consent" do
     )
     expect(page).to have_content(["School", @patient.school.name].join)
 
-    expect(page).to have_content(["Name", parent.name].join)
+    expect(page).to have_content(["Name", parent.full_name].join)
     expect(page).to have_content(
       ["Relationship", parent.relationship_to(patient: @patient).label].join
     )

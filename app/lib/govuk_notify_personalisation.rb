@@ -41,7 +41,7 @@ class GovukNotifyPersonalisation
       next_session_date:,
       next_session_dates:,
       next_session_dates_or:,
-      parent_name:,
+      parent_full_name:,
       programme_name:,
       reason_did_not_vaccinate:,
       reason_for_refusal:,
@@ -135,8 +135,8 @@ class GovukNotifyPersonalisation
       .to_sentence(last_word_connector: ", or ", two_words_connector: " or ")
   end
 
-  def parent_name
-    consent_form&.parent_name || parent&.name
+  def parent_full_name
+    consent_form&.parent_full_name || parent&.full_name
   end
 
   def programme_name

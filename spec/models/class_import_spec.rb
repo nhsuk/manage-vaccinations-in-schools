@@ -179,7 +179,7 @@ describe ClassImport do
       expect(Patient.second.parents.count).to eq(1)
 
       expect(Patient.second.parents.first).to have_attributes(
-        name: "John Smith",
+        full_name: "John Smith",
         phone: "07412345678",
         email: "john@example.com"
       )
@@ -199,13 +199,13 @@ describe ClassImport do
       expect(Patient.third.parents.count).to eq(2)
 
       expect(Patient.third.parents.first).to have_attributes(
-        name: "Jane Doe",
+        full_name: "Jane Doe",
         phone: "07412345679",
         email: "jane@example.com"
       )
 
       expect(Patient.third.parents.second).to have_attributes(
-        name: "Richard Doe",
+        full_name: "Richard Doe",
         phone: nil,
         email: "richard@example.com"
       )

@@ -6,7 +6,7 @@ describe AppPatientSummaryComponent do
   let(:component) { described_class.new(patient) }
   let(:school) { create(:location, :school, name: "Test School") }
   let(:other_school) { create(:location, :school, name: "Other School") }
-  let(:parent) { create(:parent, name: "Mark Doe") }
+  let(:parent) { create(:parent, full_name: "Mark Doe") }
   let(:patient) do
     create(
       :patient,

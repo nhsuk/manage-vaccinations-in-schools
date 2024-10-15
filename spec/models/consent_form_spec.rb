@@ -20,7 +20,7 @@
 #  parent_contact_method_other_details :string
 #  parent_contact_method_type          :string
 #  parent_email                        :string
-#  parent_name                         :string
+#  parent_full_name                    :string
 #  parent_phone                        :string
 #  parent_phone_receive_updates        :boolean          default(FALSE), not null
 #  parent_relationship_other_name      :string

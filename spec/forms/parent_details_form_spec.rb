@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-describe ParentDetailsForm, type: :model do
+describe ParentDetailsForm do
   subject(:form) do
     described_class.new(
       parent:,
       patient:,
       email:,
-      name:,
+      full_name:,
       phone:,
       parental_responsibility:,
       relationship_type:,
@@ -18,7 +18,7 @@ describe ParentDetailsForm, type: :model do
   let(:patient) { create(:patient) }
 
   let(:email) { "" }
-  let(:name) { "" }
+  let(:full_name) { "" }
   let(:phone) { "" }
   let(:parental_responsibility) { "" }
   let(:relationship_type) { "" }
@@ -26,7 +26,7 @@ describe ParentDetailsForm, type: :model do
 
   describe "validations" do
     it { should validate_presence_of(:email) }
-    it { should validate_presence_of(:name) }
+    it { should validate_presence_of(:full_name) }
 
     it do
       expect(form).to validate_inclusion_of(:relationship_type).in_array(
@@ -45,14 +45,14 @@ describe ParentDetailsForm, type: :model do
     subject(:save) { form.save }
 
     let(:email) { "john.smith@example.com" }
-    let(:name) { "John Smith" }
+    let(:full_name) { "John Smith" }
     let(:parental_responsibility) { "yes" }
     let(:relationship_type) { "father" }
 
     it "updates the parent" do
       expect(save).to be(true)
 
-      expect(parent).to have_attributes(email:, name:)
+      expect(parent).to have_attributes(email:, full_name:)
     end
 
     it "creates a parent relationship" do

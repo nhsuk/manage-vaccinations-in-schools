@@ -183,7 +183,7 @@ class ManageConsentsController < ApplicationController
       (
         @patient.parents +
           @patient_session.consents.recorded.includes(:parent).map(&:parent)
-      ).compact.uniq.sort_by(&:name)
+      ).compact.uniq.sort_by(&:full_name)
   end
 
   def set_parent
@@ -206,7 +206,7 @@ class ManageConsentsController < ApplicationController
         parent: @parent,
         patient: @patient,
         email: @parent.email,
-        name: @parent.name,
+        full_name: @parent.full_name,
         phone: @parent.phone,
         phone_receive_updates: @parent.phone_receive_updates,
         relationship_type: @parent_relationship&.type,
@@ -265,7 +265,7 @@ class ManageConsentsController < ApplicationController
 
   def parent_details_params
     params.require(:parent_details_form).permit(
-      :name,
+      :full_name,
       :email,
       :parental_responsibility,
       :phone,

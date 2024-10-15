@@ -3,7 +3,9 @@
 describe AppDevToolsComponent, type: :component do
   subject(:rendered) { render_inline(component) { body } }
 
-  let(:consent) { create(:consent, :refused, :from_dad, parent_name: "Harry") }
+  let(:consent) do
+    create(:consent, :refused, :from_dad, parent_full_name: "Harry")
+  end
   let(:consents) { [consent] }
   let(:component) { described_class.new }
   let(:body) { "Hello dev tools!" }

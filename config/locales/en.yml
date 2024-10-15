@@ -391,7 +391,7 @@ en:
               blank: Enter your email address
               invalid: Enter a valid email address, such as j.doe@gmail.com
               too_long: Enter an email address that is less than 300 characters long
-            parent_name:
+            parent_full_name:
               blank: Enter your name
               too_long: Enter a name that is less than 300 characters long
             parent_phone:

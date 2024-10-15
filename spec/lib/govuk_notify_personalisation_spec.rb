@@ -108,9 +108,11 @@ describe GovukNotifyPersonalisation do
   end
 
   context "with a parent" do
-    let(:parent) { create(:parent, name: "John Smith") }
+    let(:parent) { create(:parent, full_name: "John Smith") }
 
-    it { expect(subject).to match(hash_including(parent_name: "John Smith")) }
+    it do
+      expect(subject).to match(hash_including(parent_full_name: "John Smith"))
+    end
   end
 
   context "with a vaccination record" do

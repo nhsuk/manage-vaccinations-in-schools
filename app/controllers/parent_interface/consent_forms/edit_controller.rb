@@ -65,7 +65,7 @@ module ParentInterface
         school: %i[school_id],
         parent: %i[
           parent_email
-          parent_name
+          parent_full_name
           parent_phone
           parent_phone_receive_updates
           parent_relationship_other_name

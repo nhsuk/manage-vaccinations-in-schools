@@ -56,7 +56,7 @@ feature "Verbal consent" do
     click_on "Get consent"
 
     # contacting the same parent who refused
-    choose @refusing_parent.name
+    choose @refusing_parent.full_name
     click_button "Continue"
 
     # Details for parent or guardian

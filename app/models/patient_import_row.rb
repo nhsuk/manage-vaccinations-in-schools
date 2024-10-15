@@ -40,17 +40,25 @@ class PatientImportRow
 
     parents = [
       if parent_1_exists?
-        { email: parent_1_email, name: parent_1_name, phone: parent_1_phone }
+        {
+          email: parent_1_email,
+          full_name: parent_1_name,
+          phone: parent_1_phone
+        }
       end,
       if parent_2_exists?
-        { email: parent_2_email, name: parent_2_name, phone: parent_2_phone }
+        {
+          email: parent_2_email,
+          full_name: parent_2_name,
+          phone: parent_2_phone
+        }
       end
     ].compact
 
     parents.map do |attributes|
       Parent
         .create_with(recorded_at: Time.zone.now)
-        .find_or_initialize_by(attributes.slice(:email, :name))
+        .find_or_initialize_by(attributes.slice(:email, :full_name))
         .tap do |parent|
           parent.assign_attributes(
             phone: attributes[:phone],

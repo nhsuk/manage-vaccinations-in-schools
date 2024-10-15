@@ -20,7 +20,7 @@
 #  parent_contact_method_other_details :string
 #  parent_contact_method_type          :string
 #  parent_email                        :string
-#  parent_name                         :string
+#  parent_full_name                    :string
 #  parent_phone                        :string
 #  parent_phone_receive_updates        :boolean          default(FALSE), not null
 #  parent_relationship_other_name      :string
@@ -75,7 +75,7 @@ FactoryBot.define do
     address_postcode { Faker::Address.uk_postcode }
 
     parent_email { Faker::Internet.email }
-    parent_name { "#{Faker::Name.first_name}} #{family_name}" }
+    parent_full_name { "#{Faker::Name.first_name}} #{family_name}" }
     parent_phone { "07700 900#{rand(0..999).to_s.rjust(3, "0")}" }
     parent_phone_receive_updates { parent_phone.present? }
     parent_relationship_other_name do

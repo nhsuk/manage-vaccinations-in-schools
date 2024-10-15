@@ -189,6 +189,10 @@ RSpec.configure do |config|
     file_path: Regexp.new("/spec/components/")
   ) { |metadata| metadata[:type] = :component }
 
+  config.define_derived_metadata(
+    file_path: Regexp.new("/spec/forms/")
+  ) { |metadata| metadata[:type] = :model }
+
   config.infer_spec_type_from_file_location!
 
   # Filter lines from Rails gems in backtraces.
