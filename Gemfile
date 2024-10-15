@@ -50,6 +50,7 @@ gem "turbo-rails"
 gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
 gem "uk_postcode"
 gem "wicked"
+gem "with_advisory_lock"
 
 group :development, :test do
   gem "brakeman"
