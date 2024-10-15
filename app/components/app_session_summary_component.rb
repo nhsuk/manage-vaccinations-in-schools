@@ -27,6 +27,18 @@ class AppSessionSummaryComponent < ViewComponent::Base
         row.with_key { "Consent period" }
         row.with_value { consent_period }
       end
+      if consent_link
+        summary_list.with_row do |row|
+          row.with_key { "Consent link" }
+          row.with_value do
+            govuk_link_to(
+              "View parental consent form (opens in a new tab)",
+              consent_link,
+              new_tab: true
+            )
+          end
+        end
+      end
       summary_list.with_row do |row|
         row.with_key { "Children" }
         row.with_value { children }
@@ -58,6 +70,16 @@ class AppSessionSummaryComponent < ViewComponent::Base
 
   def consent_period
     helpers.session_consent_period(@session)
+  end
+
+  def consent_link
+    if @session.open_for_consent?
+      # TODO: handle multiple programmes
+      start_parent_interface_consent_forms_path(
+        @session,
+        @session.programmes.first
+      )
+    end
   end
 
   def children

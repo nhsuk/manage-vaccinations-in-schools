@@ -29,6 +29,17 @@ describe AppSessionSummaryComponent do
   it { should have_content("Consent period") }
   it { should have_content("Closed 31 December") }
 
+  it { should_not have_content("Consent link") }
+
   it { should have_content("Children") }
   it { should have_content("No children") }
+
+  context "when consent is open" do
+    let(:session) do
+      create(:session, location:, date: 1.week.from_now.to_date, programme:)
+    end
+
+    it { should have_content("Consent link") }
+    it { should have_link("View parental consent form (opens in a new tab)") }
+  end
 end
