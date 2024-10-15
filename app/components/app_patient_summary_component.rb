@@ -37,7 +37,7 @@ class AppPatientSummaryComponent < ViewComponent::Base
         row.with_value { format_date_of_birth }
       end
       summary_list.with_row do |row|
-        row.with_key { "Sex" }
+        row.with_key { "Gender" }
         row.with_value { format_gender_code }
       end
       if @show_address
