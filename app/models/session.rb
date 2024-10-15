@@ -37,7 +37,6 @@ class Session < ApplicationRecord
 
   has_many :patients, through: :patient_sessions
   has_many :vaccines, through: :programmes
-  has_many :batches, through: :vaccines
 
   accepts_nested_attributes_for :dates, allow_destroy: true
 

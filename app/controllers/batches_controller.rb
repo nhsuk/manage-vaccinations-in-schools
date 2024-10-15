@@ -7,11 +7,11 @@ class BatchesController < ApplicationController
   before_action :set_batch, only: %i[edit update]
 
   def new
-    @batch = Batch.new(vaccine:)
+    @batch = Batch.new(team: current_user.team, vaccine:)
   end
 
   def create
-    @batch = Batch.new(batch_params.merge(vaccine:))
+    @batch = Batch.new(batch_params.merge(team: current_user.team, vaccine:))
 
     if !expiry_validator.date_params_valid?
       @batch.expiry = expiry_validator.date_params_as_struct

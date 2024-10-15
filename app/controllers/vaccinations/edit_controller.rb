@@ -97,7 +97,9 @@ class Vaccinations::EditController < ApplicationController
 
   def set_batches
     @batches =
-      @draft_vaccination_record.vaccine.batches.order(expiry: :asc, name: :asc)
+      policy_scope(Batch).where(
+        vaccine: @draft_vaccination_record.vaccine
+      ).order_by_name_and_expiration
   end
 
   def set_patient_session

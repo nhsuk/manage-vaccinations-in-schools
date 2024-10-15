@@ -161,7 +161,10 @@ class VaccinationsController < ApplicationController
   end
 
   def set_batches
-    @batches = @session.batches.order(expiry: :asc, name: :asc)
+    @batches =
+      policy_scope(Batch).where(
+        vaccine: @session.vaccines
+      ).order_by_name_and_expiration
   end
 
   def set_section_and_tab

@@ -11,7 +11,7 @@
       <%= link_to "Add a batch", new_vaccine_batch_path(vaccine) %>
     </p>
 
-    <% if (batches = vaccine.batches).present? %>
+    <% if (batches = @batches_by_vaccine_id[vaccine.id]).present? %>
       <%= govuk_table do |table| %>
         <%= table.with_head do |head| %>
           <%= head.with_row do |row| %>

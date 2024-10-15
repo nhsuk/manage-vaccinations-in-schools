@@ -37,7 +37,7 @@ class Vaccine < ApplicationRecord
   belongs_to :programme
 
   has_many :health_questions, dependent: :destroy
-  has_many :batches, -> { order(:name) }
+  has_many :batches
 
   validates :brand, presence: true, uniqueness: { scope: :manufacturer }
   validates :dose, presence: true
