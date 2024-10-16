@@ -235,7 +235,12 @@ Rails.application.routes.draw do
 
   resources :vaccines, only: %i[index show] do
     resources :batches, only: %i[create edit new update] do
-      post "make-default", on: :member, as: :make_default
+      member do
+        get "archive", action: "edit_archive"
+        post "archive", action: "update_archive"
+
+        post "make-default", as: :make_default
+      end
     end
   end
 
