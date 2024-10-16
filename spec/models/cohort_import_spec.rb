@@ -243,7 +243,9 @@ describe CohortImport do
     end
 
     it "enqueues jobs to look up missing NHS numbers" do
-      expect { record! }.to have_enqueued_job(PDSLookupJob).once.on_queue(:pds)
+      expect { record! }.to have_enqueued_job(
+        PatientNHSNumberLookupJob
+      ).once.on_queue(:imports)
     end
 
     context "with an existing patient matching the name" do

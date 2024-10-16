@@ -184,9 +184,9 @@ describe ImmunisationImport do
       end
 
       it "enqueues jobs to look up missing NHS numbers" do
-        expect { record! }.to have_enqueued_job(PDSLookupJob).once.on_queue(
-          :pds
-        )
+        expect { record! }.to have_enqueued_job(
+          PatientNHSNumberLookupJob
+        ).once.on_queue(:imports)
       end
     end
 
@@ -263,9 +263,9 @@ describe ImmunisationImport do
       end
 
       it "enqueues jobs to look up missing NHS numbers" do
-        expect { record! }.to have_enqueued_job(PDSLookupJob).once.on_queue(
-          :pds
-        )
+        expect { record! }.to have_enqueued_job(
+          PatientNHSNumberLookupJob
+        ).once.on_queue(:imports)
       end
     end
 
