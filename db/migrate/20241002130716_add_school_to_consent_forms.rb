@@ -4,7 +4,7 @@ class AddSchoolToConsentForms < ActiveRecord::Migration[7.2]
   def up
     add_reference :consent_forms, :school, foreign_key: { to_table: :locations }
 
-    ConsentForm.all.find_each do |consent_form|
+    ConsentForm.find_each do |consent_form|
       consent_form.update!(location_id: consent_form.session.team_id)
     end
 
