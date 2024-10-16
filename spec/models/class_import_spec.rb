@@ -216,7 +216,7 @@ describe ClassImport do
       expect(Patient.fourth).to have_attributes(
         nhs_number: nil,
         date_of_birth: Date.new(2010, 4, 9),
-        full_name: "Thorne-Smith Gae",
+        full_name: "Gae Thorne-Smith",
         school: location,
         address_line_1: nil,
         address_town: nil,
