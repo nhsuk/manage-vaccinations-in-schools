@@ -4,7 +4,15 @@ describe ConsentFormMatchingJob do
   subject(:perform) { described_class.new.perform(consent_form) }
 
   let(:session) { create(:session) }
-  let(:consent_form) { create(:consent_form, session:) }
+  let(:consent_form) do
+    create(
+      :consent_form,
+      session:,
+      given_name: "John",
+      family_name: "Smith",
+      date_of_birth: Date.new(2010, 1, 1)
+    )
+  end
 
   context "with no matching patients" do
     it "doesn't create a consent" do
@@ -16,9 +24,9 @@ describe ConsentFormMatchingJob do
     let!(:patient) do
       create(
         :patient,
-        given_name: consent_form.given_name,
-        family_name: consent_form.family_name,
-        date_of_birth: consent_form.date_of_birth,
+        given_name: "John",
+        family_name: "Smith",
+        date_of_birth: Date.new(2010, 1, 1),
         session:,
         parents: []
       )
@@ -39,6 +47,22 @@ describe ConsentFormMatchingJob do
         patient:,
         parent: Parent.first
       )
+    end
+
+    context "when the case isn't the same" do
+      let(:consent_form) do
+        create(
+          :consent_form,
+          session:,
+          given_name: "john",
+          family_name: "SMITH",
+          date_of_birth: Date.new(2010, 1, 1)
+        )
+      end
+
+      it "still matches successfully" do
+        expect { perform }.to change(Consent, :count).by(1)
+      end
     end
   end
 
