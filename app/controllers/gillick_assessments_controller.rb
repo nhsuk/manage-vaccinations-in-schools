@@ -14,7 +14,7 @@ class GillickAssessmentsController < ApplicationController
   end
 
   def create
-    @patient_session.create_gillick_assessment!(assessor: current_user)
+    @patient_session.gillick_assessments.create!(assessor: current_user)
 
     redirect_to wizard_path(steps.first)
   end
@@ -53,7 +53,7 @@ class GillickAssessmentsController < ApplicationController
   end
 
   def set_assessment
-    @assessment = @patient_session.draft_gillick_assessment
+    @assessment = @patient_session.draft_gillick_assessments.first
   end
 
   def set_steps

@@ -22,12 +22,12 @@ class VaccinationsController < ApplicationController
         .strict_loading
         .includes(
           :programmes,
-          :gillick_assessment,
           :patient,
           :triages,
+          :latest_gillick_assessment,
           :latest_triage,
-          :vaccination_records,
-          :latest_vaccination_record
+          :latest_vaccination_record,
+          :vaccination_records
         )
         .preload(:consents)
         .order("patients.given_name", "patients.family_name")
