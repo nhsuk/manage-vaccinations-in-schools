@@ -323,47 +323,46 @@ Devise.setup do |config|
     Rack::OAuth2.debug!
     Rack::OAuth2.logger = Rails.logger
 
-    OpenIDConnect.http_config do |http_client|
-      http_client.ssl.min_version = :TLS1_2
-      # http_client.response :logger,
-      #                      ::Logger.new($stdout),
-      #                      formatter: RequestLogger
-    end
+    # TODO: Remove. Our new omniauth strategy takes care of this for us now.
+    # OpenIDConnect.http_config do |http_client|
+    #   http_client.ssl.min_version = :TLS1_2
+    #   # http_client.response :logger,
+    #   #                      ::Logger.new($stdout),
+    #   #                      formatter: RequestLogger
+    # end
+
+    # config.omniauth(
+    #   :openid_connect,
+    #   {
+    #     setup:,
+    #     name: :cis2,
+    #     scope: %i[openid profile email nationalrbacaccess associatedorgs],
+    #     extra_authorize_params: {
+    #       max_age: 300
+    #     },
+    #     response_type: :code,
+    #     issuer: Settings.cis2.issuer,
+    #     discovery: true,
+    #     client_auth_method: :jwks,
+    #     client_options: {
+    #       port: 443,
+    #       scheme: "https",
+    #       host: Settings.cis2.host,
+    #       identifier: Settings.cis2.client_id,
+    #       secret: Settings.cis2.secret,
+    #       redirect_uri:
+    #     }
+    #   }
+    # )
 
     config.omniauth(
-      # :openid_connect,
-      # {
-      #   setup:,
-      #   name: :cis2,
-      #   scope: %i[openid profile email nationalrbacaccess associatedorgs],
-      #   extra_authorize_params: {
-      #     max_age: 300
-      #   },
-      #   response_type: :code,
-      #   issuer: Settings.cis2.issuer,
-      #   discovery: true,
-      #   client_auth_method: :jwks,
-      #   client_options: {
-      #     port: 443,
-      #     scheme: "https",
-      #     host: Settings.cis2.host,
-      #     identifier: Settings.cis2.client_id,
-      #     secret: Settings.cis2.secret,
-      #     redirect_uri:
-      #   }
-      # }
       :nhsuk_cis2,
       {
         setup:,
         name: :cis2,
         scope: %i[openid profile email nationalrbacaccess associatedorgs],
-        client_options: {
-          # Additional client options if needed
-        },
-        authorize_options: {
-          # Additional authorize options if needed
-        },
-        strategy_class: OmniAuth::Strategies::NhsukCis2
+        nhs_environment: :integration,
+        client_id: Settings.cis2.client_id
       }
     )
   end
