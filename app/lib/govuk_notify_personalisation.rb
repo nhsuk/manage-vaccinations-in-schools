@@ -33,6 +33,7 @@ class GovukNotifyPersonalisation
   def call
     {
       batch_name:,
+      catch_up:,
       consent_deadline:,
       consent_link:,
       day_month_year_of_vaccination:,
@@ -41,6 +42,7 @@ class GovukNotifyPersonalisation
       next_session_date:,
       next_session_dates:,
       next_session_dates_or:,
+      not_catch_up:,
       parent_full_name:,
       programme_name:,
       reason_did_not_vaccinate:,
@@ -77,6 +79,16 @@ class GovukNotifyPersonalisation
 
   def batch_name
     vaccination_record&.batch&.name
+  end
+
+  def catch_up
+    return nil if patient.nil? || programme.nil?
+    patient.year_group == programme.year_groups.first ? "no" : "yes"
+  end
+
+  def not_catch_up
+    return nil if patient.nil? || programme.nil?
+    patient.year_group == programme.year_groups.first ? "yes" : "no"
   end
 
   def consent_deadline

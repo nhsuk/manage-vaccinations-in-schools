@@ -13,7 +13,7 @@ describe GovukNotifyPersonalisation do
     )
   end
 
-  let(:programme) { create(:programme, :flu) }
+  let(:programme) { create(:programme, :hpv) }
   let(:team) do
     create(
       :team,
@@ -24,7 +24,14 @@ describe GovukNotifyPersonalisation do
     )
   end
 
-  let(:patient) { create(:patient, given_name: "John", family_name: "Smith") }
+  let(:patient) do
+    create(
+      :patient,
+      given_name: "John",
+      family_name: "Smith",
+      date_of_birth: Date.current - 13.years
+    )
+  end
   let(:location) { create(:location, :school, name: "Hogwarts") }
   let(:session) do
     create(:session, location:, team:, programme:, date: Date.new(2026, 1, 1))
@@ -37,6 +44,7 @@ describe GovukNotifyPersonalisation do
   it do
     expect(personalisation).to eq(
       {
+        catch_up: "no",
         consent_deadline: "Wednesday 31 December",
         consent_link:
           "http://localhost:4000/consents/#{session.id}/#{programme.id}/start",
@@ -45,15 +53,29 @@ describe GovukNotifyPersonalisation do
         next_session_date: "Thursday 1 January",
         next_session_dates: "Thursday 1 January",
         next_session_dates_or: "Thursday 1 January",
-        programme_name: "Flu",
+        not_catch_up: "yes",
+        programme_name: "HPV",
         short_patient_name: "John",
         short_patient_name_apos: "John’s",
         team_email: "team@example.com",
         team_name: "Team",
         team_phone: "01234 567890",
-        vaccination: "Flu vaccination"
+        vaccination: "HPV vaccination"
       }
     )
+  end
+
+  context "when patient is in Year 9" do
+    let(:patient) do
+      create(
+        :patient,
+        given_name: "John",
+        family_name: "Smith",
+        date_of_birth: Date.current - 14.years
+      )
+    end
+
+    it { should include(catch_up: "yes", not_catch_up: "no") }
   end
 
   context "with multiple dates" do
