@@ -21,7 +21,7 @@ class PDSLookupJob < ApplicationJob
   def perform(patient)
     return if patient.nhs_number.present?
 
-    params = {
+    query = {
       "family" => patient.family_name,
       "given" => patient.given_name,
       "birthdate" => "eq#{patient.date_of_birth}",
@@ -29,7 +29,7 @@ class PDSLookupJob < ApplicationJob
       "_history" => true # look up previous names and addresses,
     }.compact_blank
 
-    response = NHS::PDS::Patient.find_by(**params)
+    response = NHS::PDS.search_patients(query)
     results = response.body
 
     return if results["total"].zero?

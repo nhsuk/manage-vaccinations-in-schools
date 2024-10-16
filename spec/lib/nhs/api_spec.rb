@@ -6,48 +6,57 @@ describe NHS::API do
     allow(OpenSSL::PKey::RSA).to receive(:new).and_return("key")
   end
 
-  describe "#connection_sans_auth" do
-    it "sets the url" do
-      expect(
-        described_class.connection_sans_auth.url_prefix.to_s
-      ).to eq "https://sandbox.api.service.nhs.uk/"
-    end
-
-    describe "headers" do
-      subject { described_class.connection_sans_auth.headers }
-
-      before do
-        allow(SecureRandom).to receive(:uuid).and_return("UUIDMCUUIDFACE")
-      end
-
-      it { should include(accept: "application/fhir+json") }
-      it { should include(x_request_id: "UUIDMCUUIDFACE") }
-    end
-  end
-
   describe "#connection" do
+    subject(:connection) { described_class.connection }
+
+    before do
+      allow(SecureRandom).to receive(:uuid).and_return("UUIDMCUUIDFACE")
+      Settings.nhs_api.apikey = "key"
+    end
+
     after { Settings.reload! }
 
     context "when authentication is disabled" do
       before { Settings.nhs_api.disable_authentication = true }
 
-      it "doesn't set the auth header when disabled" do
-        expect(described_class.connection.headers).not_to have_key(
-          :authorization
-        )
+      describe "url_prefix" do
+        subject(:url) { connection.url_prefix.to_s }
+
+        it { should eq("https://sandbox.api.service.nhs.uk/") }
+      end
+
+      describe "headers" do
+        subject(:headers) { connection.headers }
+
+        it { should include(accept: "application/fhir+json") }
+        it { should include(apikey: "key") }
+        it { should_not have_key(:authorization) }
+        it { should include(x_request_id: "UUIDMCUUIDFACE") }
       end
     end
 
     context "when authentication is enabled" do
-      before { Settings.nhs_api.disable_authentication = false }
+      before do
+        Settings.nhs_api.disable_authentication = false
 
-      it "sets the authorization header" do
         allow(described_class).to receive(:access_token).and_return(
           "ONEAUTHAPI"
         )
-        expect(described_class.connection.headers).to include(
-          authorization: "Bearer ONEAUTHAPI"
-        )
+      end
+
+      describe "url_prefix" do
+        subject(:url) { connection.url_prefix.to_s }
+
+        it { should eq("https://sandbox.api.service.nhs.uk/") }
+      end
+
+      describe "headers" do
+        subject(:headers) { connection.headers }
+
+        it { should include(accept: "application/fhir+json") }
+        it { should include(apikey: "key") }
+        it { should include(authorization: "Bearer ONEAUTHAPI") }
+        it { should include(x_request_id: "UUIDMCUUIDFACE") }
       end
     end
   end
@@ -57,13 +66,12 @@ describe NHS::API do
       stub_request(
         :post,
         "https://sandbox.api.service.nhs.uk/oauth2/token"
-      ).to_return(
-        status: 200,
+      ).to_return_json(
         body: {
           issued_at: Time.zone.now.strftime("%Q"),
           expires_in: 599,
           access_token: "new_token"
-        }.to_json
+        }
       )
     end
 

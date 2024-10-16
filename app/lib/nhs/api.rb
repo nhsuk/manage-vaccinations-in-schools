@@ -2,46 +2,17 @@
 
 module NHS::API
   class << self
-    def connection_sans_auth
-      Faraday.new(
-        base_url,
-        headers: {
-          apikey:,
-          accept: "application/fhir+json",
-          "x-request-id" => SecureRandom.uuid
-        }
-      ) do |f|
-        f.response :json,
-                   content_type: %w[application/json application/fhir+json]
-      end
-    end
-
     def connection
-      return connection_sans_auth if Settings.nhs_api.disable_authentication
+      return fhir_connection if Settings.nhs_api.disable_authentication
 
-      connection_sans_auth.tap do |conn|
+      fhir_connection.tap do |conn|
         conn.headers["Authorization"] = "Bearer #{access_token}"
       end
     end
 
     def access_token
-      unless access_token_valid?
-        response =
-          connection_sans_auth.post(
-            token_endpoint,
-            {
-              grant_type: "client_credentials",
-              client_assertion_type:
-                "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-              client_assertion: jwt
-            }
-          )
-        @auth_info = JSON.parse(response.body, symbolize_names: true)
+      fetch_access_token unless access_token_valid?
 
-        issued_at = @auth_info[:issued_at].to_i
-        expires_in = @auth_info[:expires_in].to_i * 1000
-        @auth_info[:expires_at] = issued_at + expires_in
-      end
       @auth_info[:access_token]
     end
 
@@ -55,6 +26,25 @@ module NHS::API
 
     private
 
+    def fetch_access_token
+      response =
+        oauth_connection.post(
+          token_endpoint,
+          {
+            grant_type: "client_credentials",
+            client_assertion_type:
+              "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+            client_assertion: jwt
+          }
+        )
+
+      @auth_info = response.body.symbolize_keys
+
+      issued_at = @auth_info[:issued_at].to_i
+      expires_in = @auth_info[:expires_in].to_i * 1000
+      @auth_info[:expires_at] = issued_at + expires_in
+    end
+
     def jwt
       header = { kid: "mavis-int-1", typ: "JWT", alg: "RS512" }
       payload = {
@@ -67,6 +57,26 @@ module NHS::API
       JWT.encode payload, private_key, "RS512", header
     end
 
+    def oauth_connection
+      Faraday.new(headers:) do |f|
+        f.request :url_encoded
+        f.response :json
+        f.response :raise_error
+      end
+    end
+
+    def fhir_connection
+      Faraday.new(
+        base_url,
+        headers: headers.merge(accept: "application/fhir+json")
+      ) do |f|
+        f.request :url_encoded
+        f.response :json,
+                   content_type: %w[application/json application/fhir+json]
+        f.response :raise_error
+      end
+    end
+
     def token_endpoint
       "#{Settings.nhs_api.base_url}/oauth2/token"
     end
@@ -77,6 +87,10 @@ module NHS::API
 
     def private_key
       OpenSSL::PKey::RSA.new(Settings.nhs_api.jwt_private_key)
+    end
+
+    def headers
+      { apikey:, x_request_id: SecureRandom.uuid }
     end
 
     def apikey

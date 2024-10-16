@@ -5,15 +5,19 @@ describe PDS::Patient do
     let(:json_response) { file_fixture("pds/get-patient-response.json").read }
 
     before do
-      allow(NHS::PDS::Patient).to receive(:find).and_return(
-        instance_double(Faraday::Response, status: 200, body: json_response)
+      allow(NHS::PDS).to receive(:get_patient).and_return(
+        instance_double(
+          Faraday::Response,
+          status: 200,
+          body: JSON.parse(json_response)
+        )
       )
     end
 
-    it "calls find_patient on PDS library" do
+    it "calls get_patient on PDS library" do
       described_class.find("9449306168")
 
-      expect(NHS::PDS::Patient).to have_received(:find).with("9449306168")
+      expect(NHS::PDS).to have_received(:get_patient).with("9449306168")
     end
   end
 end

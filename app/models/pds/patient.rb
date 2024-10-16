@@ -7,8 +7,8 @@ class PDS::Patient
 
   class << self
     def find(nhs_number)
-      response = NHS::PDS::Patient.find(nhs_number)
-      from_pds_fhir_response(JSON.parse(response.body))
+      response = NHS::PDS.get_patient(nhs_number)
+      from_pds_fhir_response(response.body)
     end
 
     private

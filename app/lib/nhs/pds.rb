@@ -1,15 +1,38 @@
 # frozen_string_literal: true
 
 module NHS::PDS
+  SEARCH_FIELDS = %w[
+    _fuzzy-match
+    _exact-match
+    _history
+    _max-results
+    family
+    given
+    gender
+    birthdate
+    death-date
+    email
+    phone
+    address-postalcode
+    general-practitioner
+  ].freeze
+
   class << self
-    def connection
-      NHS::API.connection.tap { |conn| conn.url_prefix = base_url }
+    def get_patient(nhs_number)
+      NHS::API.connection.get(
+        "personal-demographics/FHIR/R4/Patient/#{nhs_number}"
+      )
     end
 
-    private
+    def search_patients(attributes)
+      if (missing_attrs = (attributes.keys.map(&:to_s) - SEARCH_FIELDS)).any?
+        raise "Unrecognised attributes: #{missing_attrs.join(", ")}"
+      end
 
-    def base_url
-      "#{Settings.nhs_api.base_url}/personal-demographics/FHIR/R4"
+      NHS::API.connection.get(
+        "personal-demographics/FHIR/R4/Patient",
+        attributes
+      )
     end
   end
 end
