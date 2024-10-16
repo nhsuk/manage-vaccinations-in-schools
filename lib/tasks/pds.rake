@@ -5,7 +5,7 @@ namespace :pds do
     desc "Retrieve patient using NHS number"
     task :find, [:nhs_number] => :environment do |_, args|
       nhs_number = args[:nhs_number]
-      response = NHS::PDS::Patient.find(nhs_number)
+      response = NHS::PDS.get_patient(nhs_number)
 
       $stdout.puts response.status unless response.status == 200
       if $stdout.tty?
@@ -36,7 +36,8 @@ namespace :pds do
         "address-postcode" => ENV["address_postcode"],
         "general-practitioner" => ENV["general_practitioner"]
       }.compact
-      response = NHS::PDS::Patient.find_by(**query)
+
+      response = NHS::PDS.search_patients(query)
 
       $stdout.puts response.status unless response.status == 200
       if $stdout.tty?
