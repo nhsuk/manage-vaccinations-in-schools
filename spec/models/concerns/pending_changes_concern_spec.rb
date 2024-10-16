@@ -6,11 +6,13 @@ describe PendingChangesConcern do
       include PendingChangesConcern
 
       self.table_name = "patients"
+
+      encrypts :given_name, :family_name, deterministic: true, ignore_case: true
     end
   end
 
   let(:model) do
-    model_class.create(
+    model_class.create!(
       address_postcode: "",
       cohort_id: create(:cohort).id,
       date_of_birth: Time.zone.now,
