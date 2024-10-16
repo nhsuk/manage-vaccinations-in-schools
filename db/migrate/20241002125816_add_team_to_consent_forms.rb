@@ -4,7 +4,7 @@ class AddTeamToConsentForms < ActiveRecord::Migration[7.2]
   def up
     add_reference :consent_forms, :team, foreign_key: true
 
-    ConsentForm.all.find_each do |consent_form|
+    ConsentForm.find_each do |consent_form|
       consent_form.update!(team_id: consent_form.session.team_id)
     end
 
