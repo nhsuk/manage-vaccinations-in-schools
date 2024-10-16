@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe PDSLookupJob do
+describe PatientNHSNumberLookupJob do
   subject(:perform_now) { described_class.perform_now(patient) }
 
   context "with an NHS number already" do

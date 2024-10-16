@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-class PDSLookupJob < ApplicationJob
+class PatientNHSNumberLookupJob < ApplicationJob
   include NHSAPIConcurrencyConcern
 
-  queue_as :pds
+  queue_as :imports
 
   def perform(patient)
     return if patient.nhs_number.present?

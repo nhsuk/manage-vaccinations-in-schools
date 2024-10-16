@@ -109,7 +109,7 @@ module CSVImportable
 
   def look_up_missing_nhs_numbers
     patients.without_nhs_number.find_each do |patient|
-      PDSLookupJob.perform_later(patient)
+      PatientNHSNumberLookupJob.perform_later(patient)
     end
   end
 
