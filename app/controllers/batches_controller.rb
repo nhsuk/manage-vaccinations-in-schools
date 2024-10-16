@@ -11,7 +11,13 @@ class BatchesController < ApplicationController
   end
 
   def create
-    @batch = Batch.new(batch_params.merge(team: current_user.team, vaccine:))
+    begin
+      @batch = Batch.new(batch_params.merge(team: current_user.team, vaccine:))
+    rescue ActiveRecord::MultiparameterAssignmentErrors
+      @batch =
+        Batch.new(name: batch_params[:name], team: current_user.team, vaccine:)
+      @batch.expiry = expiry_validator.date_params_as_struct
+    end
 
     if !expiry_validator.date_params_valid?
       @batch.expiry = expiry_validator.date_params_as_struct

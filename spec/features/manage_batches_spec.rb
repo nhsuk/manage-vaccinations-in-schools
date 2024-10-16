@@ -10,7 +10,10 @@ describe "Manage batches" do
     when_i_manage_vaccines
     then_i_see_only_active_hpv_vaccines_with_no_batches_set_up
 
-    when_i_add_a_new_batch
+    when_i_try_to_add_a_batch_with_an_invalid_expiry_date
+    then_i_see_the_error_message
+
+    when_i_add_a_valid_new_batch
     then_i_see_the_batch_i_just_added_on_the_vaccines_page
 
     when_i_edit_the_expiry_date_of_the_batch
@@ -53,11 +56,25 @@ describe "Manage batches" do
     expect(page).not_to have_css("table")
   end
 
-  def when_i_add_a_new_batch
+  def when_i_try_to_add_a_batch_with_an_invalid_expiry_date
     click_on "Add a batch", match: :first
 
     fill_in "Batch", with: "AB1234"
 
+    # expiry date
+    fill_in "Day", with: "0"
+    fill_in "Month", with: "0"
+    fill_in "Year", with: "0"
+
+    click_on "Add batch"
+  end
+
+  def then_i_see_the_error_message
+    expect(page).to have_content("There is a problem")
+    expect(page).to have_content("Enter a year")
+  end
+
+  def when_i_add_a_valid_new_batch
     # expiry date
     fill_in "Day", with: "30"
     fill_in "Month", with: "3"
