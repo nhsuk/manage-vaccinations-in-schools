@@ -271,6 +271,22 @@ describe ClassImport do
       end
     end
 
+    context "with an existing patient matching the name but a different case" do
+      before do
+        create(
+          :patient,
+          given_name: "jimmy",
+          family_name: "SMITH",
+          date_of_birth: Date.new(2010, 1, 2),
+          nhs_number: nil
+        )
+      end
+
+      it "doesn't create an additional patient" do
+        expect { record! }.to change(Patient, :count).by(3)
+      end
+    end
+
     context "with an existing patient in a different session" do
       let(:different_session) { create(:session, programme:) }
 

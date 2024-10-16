@@ -95,7 +95,22 @@ class PatientImportRow
     }
 
     if (existing_patient = existing_patients.first)
-      existing_patient.assign_attributes(attributes)
+      # We need to handle given_name and family_name differently because we store it encrypted and lowercased.
+      # Without this, assign_attributes compares the lowercased version with the new version, and thinks
+      # the model changed when it hasn't really.
+
+      if existing_patient.given_name != attributes[:given_name]
+        existing_patient.given_name = attributes[:given_name]
+      end
+
+      if existing_patient.family_name != attributes[:family_name]
+        existing_patient.family_name = attributes[:family_name]
+      end
+
+      existing_patient.assign_attributes(
+        attributes.except(:family_name, :given_name)
+      )
+
       existing_patient
     else
       Patient.new(recorded_at: Time.zone.now, **attributes)

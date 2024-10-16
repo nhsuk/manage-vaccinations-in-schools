@@ -292,6 +292,25 @@ describe ImmunisationImport do
       end
     end
 
+    context "with an existing patient matching the name but with a different case" do
+      let(:programme) { create(:programme, :flu_all_vaccines) }
+      let(:file) { "valid_flu.csv" }
+
+      before do
+        create(
+          :patient,
+          given_name: "chyna",
+          family_name: "PICKLE",
+          date_of_birth: Date.new(2012, 9, 12),
+          nhs_number: nil
+        )
+      end
+
+      it "doesn't create an additional patient" do
+        expect { record! }.to change(Patient, :count).by(6)
+      end
+    end
+
     context "with a patient record that has different attributes" do
       let(:programme) { create(:programme, :hpv_all_vaccines) }
       let(:file) { "valid_hpv_with_changes.csv" }
