@@ -4,24 +4,26 @@
 #
 # Table name: patients
 #
-#  id               :bigint           not null, primary key
-#  address_line_1   :string
-#  address_line_2   :string
-#  address_postcode :string
-#  address_town     :string
-#  common_name      :string
-#  date_of_birth    :date             not null
-#  family_name      :string           not null
-#  gender_code      :integer          default("not_known"), not null
-#  given_name       :string           not null
-#  home_educated    :boolean
-#  nhs_number       :string
-#  pending_changes  :jsonb            not null
-#  recorded_at      :datetime
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  cohort_id        :bigint
-#  school_id        :bigint
+#  id                   :bigint           not null, primary key
+#  address_line_1       :string
+#  address_line_2       :string
+#  address_postcode     :string
+#  address_town         :string
+#  common_name          :string
+#  date_of_birth        :date             not null
+#  family_name          :string           not null
+#  gender_code          :integer          default("not_known"), not null
+#  given_name           :string           not null
+#  home_educated        :boolean
+#  nhs_number           :string
+#  original_family_name :string           not null
+#  original_given_name  :string           not null
+#  pending_changes      :jsonb            not null
+#  recorded_at          :datetime
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  cohort_id            :bigint
+#  school_id            :bigint
 #
 # Indexes
 #
@@ -85,12 +87,8 @@ class Patient < ApplicationRecord
 
   validates :address_postcode, postcode: { allow_nil: true }
 
-  encrypts :family_name,
-           :given_name,
-           :common_name,
-           :address_postcode,
-           :nhs_number,
-           deterministic: true
+  encrypts :family_name, :given_name, deterministic: true, ignore_case: true
+  encrypts :common_name, :address_postcode, :nhs_number, deterministic: true
 
   encrypts :address_line_1, :address_line_2, :address_town
 
