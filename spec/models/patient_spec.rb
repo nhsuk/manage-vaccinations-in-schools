@@ -174,6 +174,14 @@ describe Patient do
     end
   end
 
+  describe "#initials" do
+    subject(:initials) { patient.initials }
+
+    let(:patient) { create(:patient, given_name: "John", family_name: "Doe") }
+
+    it { should eq("JD") }
+  end
+
   describe "#stage_changes" do
     let(:patient) { create(:patient, given_name: "John", family_name: "Doe") }
 

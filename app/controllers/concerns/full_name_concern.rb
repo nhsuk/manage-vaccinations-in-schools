@@ -8,4 +8,8 @@ module FullNameConcern
   def full_name
     "#{given_name} #{family_name}"
   end
+
+  def initials
+    [given_name[0], family_name[0]].join
+  end
 end
