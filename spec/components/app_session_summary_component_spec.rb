@@ -40,6 +40,6 @@ describe AppSessionSummaryComponent do
     end
 
     it { should have_content("Consent link") }
-    it { should have_link("View parental consent form (opens in a new tab)") }
+    it { should have_link("View parental consent form (opens in new tab)") }
   end
 end
