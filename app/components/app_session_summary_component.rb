@@ -32,7 +32,7 @@ class AppSessionSummaryComponent < ViewComponent::Base
           row.with_key { "Consent link" }
           row.with_value do
             govuk_link_to(
-              "View parental consent form (opens in a new tab)",
+              "View parental consent form",
               consent_link,
               new_tab: true
             )
