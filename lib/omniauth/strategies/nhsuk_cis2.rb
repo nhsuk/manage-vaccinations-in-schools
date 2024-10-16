@@ -14,6 +14,7 @@ module OmniAuth
       option :scope
       option :private_key
       option :secret
+      option :max_age, 300
       option :client_options,
              authorization_endpoint: nil,
              token_endpoint: nil,
@@ -47,6 +48,7 @@ module OmniAuth
       end
 
       def request_phase
+        # TODO: See if OpenIDConnect can do this for us
         code_verifier = SecureRandom.hex(16)
         nonce = SecureRandom.hex(16)
         state = SecureRandom.hex(16)
@@ -62,7 +64,8 @@ module OmniAuth
               Base64.urlsafe_encode64(
                 OpenSSL::Digest::SHA256.digest(code_verifier)
               ),
-            code_challenge_method: :S256
+            code_challenge_method: :S256,
+            max_age: options[:max_age]
           )
 
         redirect authorization_uri.to_s
@@ -89,7 +92,8 @@ module OmniAuth
             client_option_or_provider_config(:authorization_endpoint),
           token_endpoint: client_option_or_provider_config(:token_endpoint),
           userinfo_endpoint:
-            client_option_or_provider_config(:userinfo_endpoint)
+            client_option_or_provider_config(:userinfo_endpoint),
+          redirect_uri: options.fetch(:redirect_uri)
         }
 
         case options.client_auth_method
