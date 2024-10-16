@@ -1,28 +1,15 @@
 # frozen_string_literal: true
 
 class PatientNHSNumberLookupJob < ApplicationJob
-  include NHSAPIConcurrencyConcern
+  include NHSNumberLookupConcern
 
   queue_as :imports
 
   def perform(patient)
     return if patient.nhs_number.present?
 
-    query = {
-      "family" => patient.family_name,
-      "given" => patient.given_name,
-      "birthdate" => "eq#{patient.date_of_birth}",
-      "address-postalcode" => patient.address_postcode,
-      "_history" => true # look up previous names and addresses,
-    }.compact_blank
-
-    response = NHS::PDS.search_patients(query)
-    results = response.body
-
-    return if results["total"].zero?
-
-    entry = results["entry"].first
-    nhs_number = entry["resource"]["id"]
+    nhs_number = find_nhs_number(patient)
+    return if nhs_number.nil?
 
     if (
          existing_patient =
