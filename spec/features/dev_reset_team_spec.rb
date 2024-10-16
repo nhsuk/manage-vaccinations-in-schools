@@ -7,7 +7,7 @@ describe "Dev endpoint to reset a team" do
 
   scenario "Resetting a team deletes all associated data" do
     given_an_example_programme_exists
-    and_requests_can_be_made_to_dps
+    and_requests_can_be_made_to_pds
     and_patients_have_been_imported
     and_vaccination_records_have_been_imported
 
@@ -28,7 +28,7 @@ describe "Dev endpoint to reset a team" do
     @user = @team.users.first
   end
 
-  def and_requests_can_be_made_to_dps
+  def and_requests_can_be_made_to_pds
     stub_request(
       :get,
       "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient"

@@ -3,6 +3,7 @@
 describe "Parental consent" do
   scenario "Consent form exactly matches the cohort" do
     given_an_hpv_programme_is_underway
+    and_requests_can_be_made_to_pds
     when_a_nurse_checks_consent_responses
     then_there_should_be_no_consent_for_my_child
 
@@ -38,6 +39,13 @@ describe "Parental consent" do
         location:
       )
     @child = create(:patient, session: @session)
+  end
+
+  def and_requests_can_be_made_to_pds
+    stub_request(
+      :get,
+      "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient"
+    ).with(query: hash_including({})).to_return_json(body: { total: 0 })
   end
 
   def when_a_nurse_checks_consent_responses
