@@ -28,9 +28,12 @@ class PatientSession < ApplicationRecord
   has_one :team, through: :session
   has_many :programmes, through: :session
 
-  has_one :gillick_assessment, -> { recorded }
-  has_one :draft_gillick_assessment,
-          -> { draft },
+  has_many :gillick_assessments, -> { recorded }
+  has_many :draft_gillick_assessments,
+           -> { draft },
+           class_name: "GillickAssessment"
+  has_one :latest_gillick_assessment,
+          -> { recorded.order(created_at: :desc) },
           class_name: "GillickAssessment"
 
   has_many :triages, -> { order(:updated_at) }
@@ -87,7 +90,7 @@ class PatientSession < ApplicationRecord
   end
 
   def gillick_competent?
-    gillick_assessment&.gillick_competent?
+    latest_gillick_assessment&.gillick_competent?
   end
 
   def able_to_vaccinate?

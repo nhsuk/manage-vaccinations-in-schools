@@ -12,10 +12,10 @@ class ConsentsController < ApplicationController
         .patient_sessions
         .strict_loading
         .includes(
-          :programmes,
-          :gillick_assessment,
           { consents: :parent },
+          :latest_gillick_assessment,
           :patient,
+          :programmes,
           :triages,
           :vaccination_records
         )

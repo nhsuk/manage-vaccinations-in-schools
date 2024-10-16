@@ -35,6 +35,6 @@ class AppPatientPageComponent < ViewComponent::Base
   end
 
   def gillick_assessment_recorded?
-    patient_session.gillick_assessment.present?
+    patient_session.gillick_assessments.present?
   end
 end

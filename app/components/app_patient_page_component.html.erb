@@ -26,14 +26,14 @@
         <%= summary_list.with_row do |row| %>
           <%= row.with_key { "Are they Gillick competent?" } %>
           <%= row.with_value {
-                patient_session.gillick_assessment.gillick_competent ?
+                patient_session.latest_gillick_assessment.gillick_competent ?
                   "Yes, they are Gillick competent" :
                   "No"
               } %>
         <% end %>
         <%= summary_list.with_row do |row| %>
           <%= row.with_key { "Details of your assessment" } %>
-          <%= row.with_value { patient_session.gillick_assessment.notes } %>
+          <%= row.with_value { patient_session.latest_gillick_assessment.notes } %>
         <% end %>
       <% end %>
     <% else %>

@@ -103,7 +103,7 @@ module PatientSessionStateConcern
     end
 
     def not_gillick_competent?
-      gillick_assessment&.gillick_competent == false
+      latest_gillick_assessment&.gillick_competent == false
     end
 
     def vaccination_can_be_delayed?
