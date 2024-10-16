@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Batches" do
+describe "Manage batches" do
   around { |example| travel_to(Time.zone.local(2024, 2, 29)) { example.run } }
 
   scenario "Adding and editing batches" do
@@ -15,6 +15,10 @@ describe "Batches" do
 
     when_i_edit_the_expiry_date_of_the_batch
     then_i_see_the_updated_expiry_date_on_the_vaccines_page
+
+    when_i_archive_the_batch
+    then_i_see_the_success_banner
+    and_i_see_an_hpv_vaccine_with_no_batches_set_up
   end
 
   def given_my_team_is_running_an_hpv_vaccination_programme
@@ -82,4 +86,16 @@ describe "Batches" do
     expect(page).to have_css("table")
     expect(page).to have_content("AB1234 29 February 202431 March 2024")
   end
+
+  def when_i_archive_the_batch
+    click_on "Archive"
+    click_on "Yes, archive this batch"
+  end
+
+  def then_i_see_the_success_banner
+    expect(page).to have_content("Batch archived")
+  end
+
+  alias_method :and_i_see_an_hpv_vaccine_with_no_batches_set_up,
+               :then_i_see_an_hpv_vaccine_with_no_batches_set_up
 end

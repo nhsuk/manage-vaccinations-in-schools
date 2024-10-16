@@ -1,0 +1,24 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: vaccines_path,
+        name: "vaccines",
+      ) %>
+<% end %>
+
+<% page_title = "Are you sure you want to archive this batch?" %>
+
+<%= h1 page_title do %>
+  <span class="nhsuk-caption-l">
+    <%= @vaccine.brand %>, <%= @batch.name %>
+  </span>
+  <%= page_title %>
+<% end %>
+
+<p class="nhsuk-body">This operation cannot be undone.</p>
+
+<%= form_with url: archive_vaccine_batch_path(@vaccine, @batch) do |f| %>
+  <div class="app-button-group">
+    <%= f.govuk_submit "Yes, archive this batch", warning: true %>
+    <%= govuk_link_to "No, return to vaccines", vaccines_path %>
+  </div>
+<% end %>

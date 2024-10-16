@@ -4,7 +4,7 @@ class BatchesController < ApplicationController
   include TodaysBatchConcern
 
   before_action :set_vaccine
-  before_action :set_batch, only: %i[edit update]
+  before_action :set_batch, except: %i[new create make_default]
 
   def new
     @batch = Batch.new(team: current_user.team, vaccine:)
@@ -42,6 +42,16 @@ class BatchesController < ApplicationController
       flash[:success] = "Batch #{@batch.name} updated"
       redirect_to vaccines_path
     end
+  end
+
+  def edit_archive
+    render :archive
+  end
+
+  def update_archive
+    @batch.archive!
+
+    redirect_to vaccines_path, flash: { success: "Batch archived." }
   end
 
   private

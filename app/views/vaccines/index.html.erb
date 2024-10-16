@@ -37,7 +37,14 @@
               <% row.with_cell(text: batch.created_at.to_date.to_fs(:long)) %>
               <% row.with_cell(text: batch.expiry.to_fs(:long)) %>
               <% row.with_cell do %>
-                <%= link_to "Change", edit_vaccine_batch_path(vaccine, batch) %>
+                <ul class="app-action-list">
+                  <li class="app-action-list__item">
+                    <%= link_to "Change", edit_vaccine_batch_path(vaccine, batch) %>
+                  </li>
+                  <li class="app-action-list__item">
+                    <%= link_to "Archive", archive_vaccine_batch_path(vaccine, batch) %>
+                  </li>
+                </ul>
               <% end %>
             <% end %>
           <% end %>
