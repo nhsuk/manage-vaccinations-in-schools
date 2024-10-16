@@ -12,7 +12,7 @@ describe PDSLookupJob do
   end
 
   context "without an NHS number" do
-    let(:patient) do
+    let!(:patient) do
       create(
         :patient,
         nhs_number: nil,
@@ -58,6 +58,42 @@ describe PDSLookupJob do
 
       it "doesn't change the NHS number" do
         expect { perform_now }.not_to change(patient, :nhs_number)
+      end
+    end
+
+    context "with a match and the patient already exists" do
+      let(:response_file) { "pds/search-patients-response.json" }
+
+      let!(:existing_patient) { create(:patient, nhs_number: "9449306168") }
+
+      let(:programme) { create(:programme) }
+      let(:patient_session) { create(:patient_session, patient:, programme:) }
+      let(:gillick_assessment) { create(:gillick_assessment, patient_session:) }
+      let(:triage) { create(:triage, patient_session:, programme:) }
+      let(:vaccination_record) do
+        create(:vaccination_record, patient_session:, programme:)
+      end
+
+      it "deletes the patient without an NHS number" do
+        expect { perform_now }.to change(Patient, :count).by(-1)
+      end
+
+      it "moves the gillick assessments" do
+        expect { perform_now }.to change {
+          gillick_assessment.reload.patient
+        }.from(patient).to(existing_patient)
+      end
+
+      it "moves the triages" do
+        expect { perform_now }.to change { triage.reload.patient }.from(
+          patient
+        ).to(existing_patient)
+      end
+
+      it "moves the vaccination records" do
+        expect { perform_now }.to change {
+          vaccination_record.reload.patient
+        }.from(patient).to(existing_patient)
       end
     end
   end

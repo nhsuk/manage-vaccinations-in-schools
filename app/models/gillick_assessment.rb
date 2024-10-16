@@ -32,6 +32,8 @@ class GillickAssessment < ApplicationRecord
   belongs_to :patient_session
   belongs_to :assessor, class_name: "User", foreign_key: :assessor_user_id
 
+  has_one :patient, through: :patient_session
+
   encrypts :notes
 
   on_wizard_step :gillick do
