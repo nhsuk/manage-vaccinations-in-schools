@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ConsentFormMatchingJob < ApplicationJob
-  queue_as :default
+  include NHSAPIConcurrencyConcern
 
   def perform(consent_form)
     session = consent_form.scheduled_session
