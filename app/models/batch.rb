@@ -32,6 +32,9 @@ class Batch < ApplicationRecord
 
   scope :order_by_name_and_expiration, -> { order(expiry: :asc, name: :asc) }
 
+  scope :archived, -> { where.not(archived_at: nil) }
+  scope :unarchived, -> { where(archived_at: nil) }
+
   has_many :vaccination_records
 
   has_and_belongs_to_many :immunisation_imports
@@ -44,4 +47,16 @@ class Batch < ApplicationRecord
               greater_than: -> { Date.new(Date.current.year - 15, 1, 1) },
               less_than: -> { Date.new(Date.current.year + 15, 1, 1) }
             }
+
+  def archived?
+    archived_at != nil
+  end
+
+  def unarchived?
+    archived_at.nil?
+  end
+
+  def archive!
+    update!(archived_at: Time.current) unless archived?
+  end
 end
