@@ -21,7 +21,7 @@ module NHS::API
 
       epoch_msec = Time.zone.now.strftime("%Q").to_i
       safety_msec = 1000 # safety to accommodate connection time
-      epoch_msec - safety_msec < @auth_info[:expires_at]
+      epoch_msec + safety_msec < @auth_info[:expires_at]
     end
 
     private
