@@ -8,37 +8,30 @@ module OmniAuth
     class NhsukCis2 < OmniAuth::Strategies::OAuth2
       option :name, "nhsuk_cis2"
 
+      option :http_ssl_min_version, :TLS1_2
+      option :nhs_environment, :integration
+      option :client_id
+      option :scope
+      option :private_key
+      option :secret
       option :client_options,
-             {
-               identifier: Settings.cis2.client_id,
-               private_key: OpenSSL::PKey::RSA.generate(2048),
-               # secret: ENV.fetch("NHSUK_CIS2_PRIVATE_KEY"),
-               # TODO: Replace these with discovery.
-               host: Settings.cis2.host,
-               authorization_endpoint:
-                 "/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare/authorize",
-               token_endpoint:
-                 "/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare/access_token",
-               userinfo_endpoint:
-                 "/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare/userinfo"
-             }
+             authorization_endpoint: nil,
+             token_endpoint: nil,
+             userinfo_endpoint: nil,
+             redirect_uri: nil
 
-      option :authorize_options,
-             %i[
-               scope
-               display
-               prompt
-               max_age
-               ui_locales
-               id_token_hint
-               login_hint
-               acr_values
-               claims
-             ]
+      # TODO: I think these should be plain old options, not "authorize_options"
+      # option :authorize_options,
+      #        scope: nil,
+      #        display: nil,
+      #        prompt: nil,
+      #        max_age: nil,
+      #        ui_locales: nil,
+      #        id_token_hint: nil,
+      #        login_hint: nil,
+      #        acr_values: nil,
+      #        claims: nil
 
-      # TODO: Provide an http_client method to allow Mavis to configure TLS
-      #       timeout (or maybe we configure it here as that's an NHS CIS2
-      #       policy?)
       uid { raw_info["sub"] }
 
       info do
@@ -53,21 +46,16 @@ module OmniAuth
         @raw_info ||= access_token.userinfo!.raw_attributes
       end
 
-      def callback_phase
-        # Handle the callback phase of the authentication flow
-        # ...
-      end
-
       def request_phase
         code_verifier = SecureRandom.hex(16)
         nonce = SecureRandom.hex(16)
         state = SecureRandom.hex(16)
 
-        client = ::OpenIDConnect::Client.new(options.client_options)
+        client = client_init
 
         authorization_uri =
           client.authorization_uri(
-            scope: options.authorize_options[:scope],
+            scope: options.scope,
             nonce: nonce,
             state: state,
             code_challenge:
@@ -80,7 +68,61 @@ module OmniAuth
         redirect authorization_uri.to_s
       end
 
-      # Add any other necessary methods or configurations
+      def callback_phase
+        # Handle the callback phase of the authentication flow
+        # ...
+      end
+
+      private
+
+      def client_options
+        options.client_options
+      end
+
+      def client_init
+        options.compact!
+        client_options.compact!
+
+        init_params = {
+          identifier: options.fetch(:client_id),
+          authorization_endpoint:
+            client_option_or_provider_config(:authorization_endpoint),
+          token_endpoint: client_option_or_provider_config(:token_endpoint),
+          userinfo_endpoint:
+            client_option_or_provider_config(:userinfo_endpoint)
+        }
+
+        case options.client_auth_method
+        when :private_key_jwt
+          init_params[:private_key] = options.fetch(:private_key)
+        when :client_secret
+          init_params[:secret] = options.fetch(:secret)
+        end
+
+        ::OpenIDConnect.http_config do |http_client|
+          http_client.ssl.min_version = options.http_ssl_min_version
+        end
+
+        ::OpenIDConnect::Client.new(init_params)
+      end
+
+      def issuer_for_environment(environment)
+        {
+          integration:
+            "https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare"
+        }.fetch(environment)
+      end
+
+      def provider_config
+        @provider_config ||=
+          ::OpenIDConnect::Discovery::Provider::Config.discover!(
+            issuer_for_environment(options.nhs_environment)
+          )
+      end
+
+      def client_option_or_provider_config(option)
+        client_options.fetch(option, provider_config.as_json[option])
+      end
     end
   end
 end
