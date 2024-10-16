@@ -8,7 +8,7 @@ class BatchPolicy
     end
 
     def resolve
-      @scope.where(team: @user.teams)
+      @scope.unarchived.where(team: @user.teams)
     end
   end
 end
