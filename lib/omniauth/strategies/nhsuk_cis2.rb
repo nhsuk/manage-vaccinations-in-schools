@@ -13,13 +13,14 @@ module OmniAuth
                identifier: Settings.cis2.client_id,
                private_key: OpenSSL::PKey::RSA.generate(2048),
                # secret: ENV.fetch("NHSUK_CIS2_PRIVATE_KEY"),
+               # TODO: Replace these with discovery.
                host: Settings.cis2.host,
                authorization_endpoint:
-                 "/openam/oauth2/realms/root/realms/oidc/authorize",
+                 "/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare/authorize",
                token_endpoint:
-                 "/openam/oauth2/realms/root/realms/oidc/access_token",
+                 "/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare/access_token",
                userinfo_endpoint:
-                 "/openam/oauth2/realms/root/realms/oidc/userinfo"
+                 "/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare/userinfo"
              }
 
       option :authorize_options,
@@ -35,6 +36,9 @@ module OmniAuth
                claims
              ]
 
+      # TODO: Provide an http_client method to allow Mavis to configure TLS
+      #       timeout (or maybe we configure it here as that's an NHS CIS2
+      #       policy?)
       uid { raw_info["sub"] }
 
       info do
