@@ -261,4 +261,6 @@ Rails.application.routes.draw do
     get "/429", to: "errors#too_many_requests"
     get "/500", to: "errors#internal_server_error"
   end
+
+  get "/oidc/jwks", to: "pages#jwks"
 end
