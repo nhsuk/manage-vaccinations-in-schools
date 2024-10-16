@@ -56,7 +56,7 @@ FactoryBot.define do
     delivery_site { "left_arm_upper_position" }
     delivery_method { "intramuscular" }
     vaccine { programme.vaccines.active.first }
-    batch { association :batch, team: session.team, vaccine: }
+    batch { association :batch, team: patient_session.team, vaccine: }
 
     performed_by
 
