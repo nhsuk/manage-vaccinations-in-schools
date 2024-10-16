@@ -39,9 +39,8 @@ def create_user_and_team
         teams: [team]
       )
 
-  Programme.all.find_each do |programme|
-    FactoryBot.create(:team_programme, team:, programme:)
-  end
+  programme = Programme.find_by(type: "hpv")
+  FactoryBot.create(:team_programme, team:, programme:)
 
   [user, team]
 end
