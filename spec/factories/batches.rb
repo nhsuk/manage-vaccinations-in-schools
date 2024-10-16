@@ -4,13 +4,14 @@
 #
 # Table name: batches
 #
-#  id         :bigint           not null, primary key
-#  expiry     :date             not null
-#  name       :string           not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  team_id    :bigint           not null
-#  vaccine_id :bigint           not null
+#  id          :bigint           not null, primary key
+#  archived_at :datetime
+#  expiry      :date             not null
+#  name        :string           not null
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  team_id     :bigint           not null
+#  vaccine_id  :bigint           not null
 #
 # Indexes
 #
@@ -33,5 +34,9 @@ FactoryBot.define do
 
     name { "#{prefix}#{Faker::Number.number(digits: 4)}" }
     expiry { Faker::Time.forward(days: 50) }
+
+    trait :archived do
+      archived_at { Time.current }
+    end
   end
 end
