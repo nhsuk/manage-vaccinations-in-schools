@@ -34,4 +34,10 @@ describe AppCardComponent, type: :component do
     it { should have_css(".nhsuk-card--feature") }
     it { should have_css(".app-card--red") }
   end
+
+  context "when secondary" do
+    before { render_inline(described_class.new(secondary: true)) }
+
+    it { should have_css(".nhsuk-card--secondary") }
+  end
 end

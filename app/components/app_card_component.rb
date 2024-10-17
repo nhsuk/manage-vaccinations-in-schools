@@ -28,11 +28,12 @@ class AppCardComponent < ViewComponent::Base
   renders_one :heading
   renders_one :description
 
-  def initialize(colour: nil, link_to: nil)
+  def initialize(colour: nil, link_to: nil, secondary: false)
     super
 
     @link_to = link_to
     @colour = colour
+    @secondary = secondary
   end
 
   private
@@ -43,7 +44,8 @@ class AppCardComponent < ViewComponent::Base
       "app-card",
       ("nhsuk-card--feature" if @colour.present?),
       ("app-card--#{@colour}" if @colour.present?),
-      ("nhsuk-card--clickable" if @link_to.present?)
+      ("nhsuk-card--clickable" if @link_to.present?),
+      ("nhsuk-card--secondary" if @secondary)
     ].compact.join(" ")
   end
 
