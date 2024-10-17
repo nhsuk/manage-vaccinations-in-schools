@@ -20,7 +20,7 @@ describe "HPV Vaccination" do
   end
 
   def given_i_am_signed_in
-    programme = create(:programme, :hpv, batch_count: 4)
+    programme = create(:programme, :hpv)
     team = create(:team, :with_one_nurse, programmes: [programme])
 
     batches =
