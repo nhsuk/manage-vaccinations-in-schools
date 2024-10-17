@@ -79,7 +79,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :patients, only: :index
+  resources :patients, only: %i[index show]
 
   resources :programmes, only: %i[index show] do
     get "sessions", on: :member
