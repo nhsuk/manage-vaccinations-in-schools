@@ -8,7 +8,10 @@ class PatientPolicy
     end
 
     def resolve
-      @scope.includes(:school)
+      @scope
+        .left_outer_joins(:cohort, :school)
+        .where(cohort: { team: @user.teams })
+        .or(Patient.where(school: { team: @user.teams }))
     end
   end
 end
