@@ -14,9 +14,12 @@ describe "Manage children" do
 
   scenario "Viewing important notices" do
     given_my_team_exists
-    and_a_deceased_patient_exists
 
     when_i_click_on_notices
+    then_i_see_no_notices
+
+    when_a_deceased_patient_exists
+    and_i_click_on_notices
     then_i_see_the_notice_of_date_of_death
   end
 
@@ -29,7 +32,7 @@ describe "Manage children" do
     create_list(:patient, 9, team: @team)
   end
 
-  def and_a_deceased_patient_exists
+  def when_a_deceased_patient_exists
     @deceased_patient = create(:patient, :deceased, team: @team)
   end
 
@@ -58,6 +61,12 @@ describe "Manage children" do
 
     visit "/dashboard"
     click_on "Notices"
+  end
+
+  alias_method :and_i_click_on_notices, :when_i_click_on_notices
+
+  def then_i_see_no_notices
+    expect(page).to have_content("There are currently no important notices.")
   end
 
   def then_i_see_the_notice_of_date_of_death
