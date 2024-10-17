@@ -19,7 +19,6 @@
 #  original_family_name :string           not null
 #  original_given_name  :string           not null
 #  pending_changes      :jsonb            not null
-#  recorded_at          :datetime
 #  registration         :string
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
@@ -42,7 +41,6 @@ class Patient < ApplicationRecord
   include AgeConcern
   include FullNameConcern
   include PendingChangesConcern
-  include Recordable
 
   audited
 

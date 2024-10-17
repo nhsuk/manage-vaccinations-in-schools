@@ -113,7 +113,7 @@ class ImmunisationImportRow
         existing_patient.stage_changes(patient_attributes)
         existing_patient
       else
-        Patient.create!(recorded_at: Time.zone.now, **patient_attributes)
+        Patient.create!(patient_attributes)
       end
   end
 

@@ -280,10 +280,6 @@ describe CohortImport do
       end
     end
 
-    it "records the patients" do
-      expect { record! }.to change(Patient.recorded, :count).from(0).to(3)
-    end
-
     it "records the parents" do
       expect { record! }.to change(Parent.recorded, :count).from(0).to(3)
     end

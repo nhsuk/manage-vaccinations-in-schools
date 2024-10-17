@@ -19,7 +19,6 @@
 #  original_family_name :string           not null
 #  original_given_name  :string           not null
 #  pending_changes      :jsonb            not null
-#  recorded_at          :datetime
 #  registration         :string
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
@@ -61,8 +60,6 @@ FactoryBot.define do
       )
     end
 
-    recorded_at { Time.zone.now }
-
     nhs_number do
       # Prevents duplicate NHS numbers by sequencing and appending a check
       # digit. See Faker's implementation for details:
@@ -102,10 +99,6 @@ FactoryBot.define do
       evaluator.parents.each do |parent|
         create(:parent_relationship, parent:, patient:)
       end
-    end
-
-    trait :draft do
-      recorded_at { nil }
     end
 
     trait :home_educated do

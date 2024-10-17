@@ -114,7 +114,7 @@ class PatientImportRow
 
       existing_patient
     else
-      Patient.new(recorded_at: Time.zone.now, **attributes)
+      Patient.new(attributes)
     end
   end
 
