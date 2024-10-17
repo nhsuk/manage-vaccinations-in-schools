@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../../lib/omniauth/strategies/nhsuk_cis2"
+require_relative Rails.root.join("lib/omniauth/strategies/nhsuk_cis2")
 
 # Assuming you have not yet modified this file, each configuration option below
 # is set to its default value. Note that some are commented out while others
@@ -315,7 +315,7 @@ Devise.setup do |config|
         env.response_headers.each { puts "#{_1}: #{_2}" }
         Rails.logger.debug ["", env.body] if env.body
         Rails.logger.debug "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-        puts caller.join("\n\t")
+        Rails.logger.debug caller.join("\n\t")
         Rails.logger.debug "================================================================"
       end
     end

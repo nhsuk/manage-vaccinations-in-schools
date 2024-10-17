@@ -2,7 +2,8 @@ allow_dev_phone_numbers: true
 fast_reset: true
 
 cis2:
-  issuer: "http://localhost:4000/test/oidc"
+  issuer: "https://localhost:4000/oidc/realms/test"
+  # issuer: "https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare"
   client_id: "31337.apps.national"
 
 mesh:
