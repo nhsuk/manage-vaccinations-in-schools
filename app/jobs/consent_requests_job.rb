@@ -29,6 +29,8 @@ class ConsentRequestsJob < ApplicationJob
   end
 
   def should_send_notification?(patient:, programme:)
+    return false if patient.deceased?
+
     return false if patient.has_consent?(programme)
 
     patient.consent_notifications.none? do

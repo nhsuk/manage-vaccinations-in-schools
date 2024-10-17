@@ -5,6 +5,9 @@ module VaccinationMailerConcern
 
   def send_vaccination_confirmation(vaccination_record)
     patient_session = vaccination_record.patient_session
+    patient = vaccination_record.patient
+
+    return if patient.deceased?
 
     mailer_action =
       if vaccination_record.administered?

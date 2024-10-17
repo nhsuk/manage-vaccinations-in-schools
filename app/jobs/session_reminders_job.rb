@@ -16,7 +16,7 @@ class SessionRemindersJob < ApplicationJob
         .reminder_not_sent(date)
 
     patient_sessions.each do |patient_session|
-      next if patient_session.vaccination_administered?
+      next unless should_send_notification?(patient_session)
 
       # We create a record in the database first to avoid sending duplicate emails/texts.
       # If a problem occurs while the emails/texts are sent, they will be in the job
@@ -38,5 +38,10 @@ class SessionRemindersJob < ApplicationJob
         )
       end
     end
+  end
+
+  def should_send_notification?(patient_session)
+    !patient_session.patient.deceased? &&
+      !patient_session.vaccination_administered?
   end
 end

@@ -25,13 +25,15 @@ describe ConsentRemindersJob do
   let(:patient_with_consent) do
     create(:patient, :consent_given_triage_not_needed, programme:)
   end
+  let(:deceased_patient) { create(:patient, :deceased) }
 
   let!(:patients) do
     [
       patient_with_initial_reminder_sent,
       patient_not_sent_reminder,
       patient_not_sent_request,
-      patient_with_consent
+      patient_with_consent,
+      deceased_patient
     ]
   end
 

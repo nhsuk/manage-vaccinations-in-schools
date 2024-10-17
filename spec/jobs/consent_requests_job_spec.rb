@@ -17,9 +17,15 @@ describe ConsentRequestsJob do
   let(:patient_with_consent) do
     create(:patient, :consent_given_triage_not_needed, programme:)
   end
+  let(:deceased_patient) { create(:patient, :deceased) }
 
   let!(:patients) do
-    [patient_with_request_sent, patient_not_sent_request, patient_with_consent]
+    [
+      patient_with_request_sent,
+      patient_not_sent_request,
+      patient_with_consent,
+      deceased_patient
+    ]
   end
 
   context "when session is unscheduled" do
