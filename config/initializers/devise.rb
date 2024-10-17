@@ -351,7 +351,8 @@ Devise.setup do |config|
     #       identifier: Settings.cis2.client_id,
     #       secret: Settings.cis2.secret,
     #       redirect_uri:
-    #     }
+    #     },
+    #     strategy_class: OmniAuth::Strategies::OpenIDConnect
     #   }
     # )
 
@@ -363,7 +364,8 @@ Devise.setup do |config|
         scope: %i[openid profile email nationalrbacaccess associatedorgs],
         nhs_environment: :integration,
         client_id: Settings.cis2.client_id,
-        redirect_uri:
+        redirect_uri:,
+        strategy_class: OmniAuth::Strategies::NhsukCis2
       }
     )
   end
