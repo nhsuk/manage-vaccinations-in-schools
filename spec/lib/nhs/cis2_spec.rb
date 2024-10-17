@@ -44,7 +44,7 @@ describe NHS::CIS2 do
     subject { described_class.send(:openid_configuration) }
 
     let(:config_uri) do
-      "http://localhost:4000/test/oidc/.well-known/openid-configuration"
+      "https://localhost:4000/oidc/realms/test/.well-known/openid-configuration"
     end
     let(:config_response) { { jwks_uri: "https://example.com/jwks" }.to_json }
 

@@ -11,7 +11,7 @@ module OmniAuth
       option :http_ssl_min_version, :TLS1_2
       option :nhs_environment, :integration
       option :client_id
-      option :scope
+      option :scope, [:openid]
       option :private_key
       option :secret
       option :max_age, 300
@@ -48,8 +48,7 @@ module OmniAuth
       end
 
       def request_phase
-        # TODO: See if OpenIDConnect can do this for us
-        code_verifier = SecureRandom.hex(16)
+        # TODO: nonce needs to be saved to validate the ID token
         nonce = SecureRandom.hex(16)
         state = SecureRandom.hex(16)
 
@@ -57,14 +56,9 @@ module OmniAuth
 
         authorization_uri =
           client.authorization_uri(
-            scope: options.scope,
-            nonce: nonce,
-            state: state,
-            code_challenge:
-              Base64.urlsafe_encode64(
-                OpenSSL::Digest::SHA256.digest(code_verifier)
-              ),
-            code_challenge_method: :S256,
+            scope: options.scope.join(" "),
+            nonce:,
+            state:,
             max_age: options[:max_age]
           )
 
