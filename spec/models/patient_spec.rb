@@ -185,6 +185,49 @@ describe Patient do
     it { should eq("JD") }
   end
 
+  describe "#update_from_pds!" do
+    subject(:update_from_pds!) { patient.update_from_pds!(pds_patient) }
+
+    let(:patient) { create(:patient, nhs_number: "0123456789") }
+    let(:pds_patient) { { "id" => "0123456789" } }
+
+    it "doesn't set a date of death" do
+      expect { update_from_pds! }.not_to change(patient, :date_of_death)
+    end
+
+    context "when the NHS number doesn't match" do
+      let(:pds_patient) { { "id" => "abc" } }
+
+      it "raises an error" do
+        expect { update_from_pds! }.to raise_error(Patient::NHSNumberMismatch)
+      end
+    end
+
+    context "with notification of death" do
+      let(:pds_patient) do
+        { "id" => "0123456789", "deceasedDateTime" => "2024-01-01T00:00:00" }
+      end
+
+      it "sets the date of death" do
+        expect { update_from_pds! }.to change(patient, :date_of_death).to(
+          Date.new(2024, 1, 1)
+        )
+      end
+
+      context "when in an upcoming session" do
+        let(:session) { create(:session, :scheduled) }
+
+        before { create(:patient_session, patient:, session:) }
+
+        it "removes the patient from the session" do
+          expect(session.patients).to include(patient)
+          update_from_pds!
+          expect(session.patients).not_to include(patient)
+        end
+      end
+    end
+  end
+
   describe "#stage_changes" do
     let(:patient) { create(:patient, given_name: "John", family_name: "Doe") }
 
