@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-# Replace each space in NHS number with a non-breaking space and
-# zero-width word joiner to prevent telephone format detection
 module PatientsHelper
+  # Replace each space in NHS number with a non-breaking space and
+  # zero-width word joiner to prevent telephone format detection
   def format_nhs_number(nhs_number)
     if nhs_number.present?
       tag.span(class: "app-u-monospace") do
@@ -16,6 +16,10 @@ module PatientsHelper
     end
   end
 
+  def patient_date_of_birth(patient)
+    "#{patient.date_of_birth.to_fs(:long)} (aged #{patient.age})"
+  end
+
   def patient_school(patient)
     if (school = patient.school).present?
       school.name
@@ -23,6 +27,14 @@ module PatientsHelper
       "Home educated"
     else
       "Unknown school"
+    end
+  end
+
+  def patient_year_group(patient)
+    if (registration = patient.registration).present?
+      "#{format_year_group(patient.year_group)} (#{registration})"
+    else
+      format_year_group(patient.year_group)
     end
   end
 end

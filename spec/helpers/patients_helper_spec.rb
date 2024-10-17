@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe PatientsHelper, type: :helper do
+RSpec.describe PatientsHelper do
   describe "#format_nhs_number" do
     subject(:formatted_nhs_number) { helper.format_nhs_number(nhs_number) }
 
@@ -24,6 +24,17 @@ RSpec.describe PatientsHelper, type: :helper do
     end
   end
 
+  describe "#patient_date_of_birth" do
+    subject(:patient_date_of_birth) do
+      travel_to(today) { helper.patient_date_of_birth(patient) }
+    end
+
+    let(:patient) { create(:patient, date_of_birth: Date.new(2000, 1, 1)) }
+    let(:today) { Date.new(2024, 1, 1) }
+
+    it { should eq("1 January 2000 (aged 24)") }
+  end
+
   describe "#patient_school" do
     subject(:patient_school) { helper.patient_school(patient) }
 
@@ -44,6 +55,25 @@ RSpec.describe PatientsHelper, type: :helper do
       let(:patient) { create(:patient, :home_educated) }
 
       it { should eq("Home educated") }
+    end
+  end
+
+  describe "#patient_year_group" do
+    subject(:patient_year_group) do
+      travel_to(today) { helper.patient_year_group(patient) }
+    end
+
+    let(:patient) do
+      create(:patient, date_of_birth: Date.new(2010, 1, 1), registration: nil)
+    end
+    let(:today) { Date.new(2024, 1, 1) }
+
+    it { should eq("Year 9") }
+
+    context "with a registration" do
+      before { patient.registration = "9AB" }
+
+      it { should eq("Year 9 (9AB)") }
     end
   end
 end

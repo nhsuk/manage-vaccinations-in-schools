@@ -79,6 +79,9 @@ FactoryBot.define do
     family_name { Faker::Name.last_name }
     date_of_birth { Faker::Date.birthday(min_age: 7, max_age: 16) }
     school { session&.location }
+    registration do
+      "#{date_of_birth.year_group}#{Faker::Alphanumeric.alpha(number: 2)}"
+    end
 
     address_line_1 { Faker::Address.street_address }
     address_line_2 { Faker::Address.secondary_address }
