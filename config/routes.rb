@@ -79,6 +79,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :notices, only: :index
+
   resources :patients, only: %i[index show]
 
   resources :programmes, only: %i[index show] do

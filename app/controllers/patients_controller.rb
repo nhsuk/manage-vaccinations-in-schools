@@ -4,7 +4,7 @@ class PatientsController < ApplicationController
   include Pagy::Backend
 
   def index
-    @pagy, @patients = pagy(policy_scope(Patient).order_by_name)
+    @pagy, @patients = pagy(policy_scope(Patient).not_deceased.order_by_name)
 
     render layout: "full"
   end

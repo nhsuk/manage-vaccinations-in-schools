@@ -36,6 +36,12 @@ class AppPatientSummaryComponent < ViewComponent::Base
         row.with_key { "Date of birth" }
         row.with_value { format_date_of_birth }
       end
+      if @patient.deceased?
+        summary_list.with_row do |row|
+          row.with_key { "Date of death" }
+          row.with_value { format_date_of_death }
+        end
+      end
       summary_list.with_row do |row|
         row.with_key { "Gender" }
         row.with_value { format_gender_code }
@@ -90,6 +96,13 @@ class AppPatientSummaryComponent < ViewComponent::Base
     highlight_if(
       helpers.patient_date_of_birth(@patient),
       @patient.date_of_birth_changed?
+    )
+  end
+
+  def format_date_of_death
+    highlight_if(
+      @patient.date_of_death.to_fs(:long),
+      @patient.date_of_death_changed?
     )
   end
 

@@ -64,6 +64,12 @@
                         "true" : nil } %>
         </li>
         <li class="nhsuk-header__navigation-item app-header__navigation-item--divider">
+          <%= link_to "Notices", notices_path,
+                      class: "nhsuk-header__navigation-link",
+                      aria: { current: request.path.start_with?(notices_path) ?
+                        "true" : nil } %>
+        </li>
+        <li class="nhsuk-header__navigation-item app-header__navigation-item--divider">
           <%= link_to t("teams.show.title"), team_path,
                       class: "nhsuk-header__navigation-link",
                       aria: { current: request.path.start_with?(team_path) ?
