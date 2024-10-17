@@ -6,18 +6,12 @@ class ConsentFormMatchingJob < ApplicationJob
   queue_as :consents
 
   def perform(consent_form)
-    patient = find_patient(consent_form)
-    return unless patient
-
-    consent_form.match_with_patient!(patient)
-  end
-
-  def find_patient(consent_form)
     nhs_number = find_nhs_number(consent_form)
 
     # Search globally if we have an NHS number
     if nhs_number && (patient = Patient.find_by(nhs_number:))
-      return patient
+      consent_form.match_with_patient!(patient)
+      return
     end
 
     # Search in the scheduled session if not
@@ -32,6 +26,23 @@ class ConsentFormMatchingJob < ApplicationJob
         address_postcode: consent_form.address_postcode
       )
 
-    patients.first if patients.count == 1
+    return if patients.count != 1
+
+    patient = patients.first
+
+    unless nhs_number.nil?
+      if patient.nhs_number.nil?
+        # TODO: Can we take this opportunity to set the NHS number on the patient?
+      elsif patient.nhs_number != nhs_number
+        # We found a patient in PDS and we found one in Mavis using the same search
+        # query, but the NHS numbers don't match.
+        raise PatientNHSNumberMismatch
+      end
+    end
+
+    consent_form.match_with_patient!(patient)
+  end
+
+  class PatientNHSNumberMismatch < StandardError
   end
 end
