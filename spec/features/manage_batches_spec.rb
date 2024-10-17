@@ -22,6 +22,9 @@ describe "Manage batches" do
     when_i_archive_the_batch
     then_i_see_the_success_banner
     and_i_see_only_active_hpv_vaccines_with_no_batches_set_up
+
+    when_i_add_the_archived_batch_again
+    then_i_see_the_updated_expiry_date_on_the_vaccines_page
   end
 
   def given_my_team_is_running_an_hpv_vaccination_programme
@@ -112,6 +115,20 @@ describe "Manage batches" do
 
   def then_i_see_the_success_banner
     expect(page).to have_content("Batch archived")
+  end
+
+  def when_i_add_the_archived_batch_again
+    click_on "Add a batch", match: :first
+
+    fill_in "Batch", with: "AB1234"
+
+    fill_in "Day", with: "31"
+    fill_in "Month", with: "3"
+    fill_in "Year", with: "2024"
+
+    click_on "Add batch"
+
+    expect(page).to have_content("Batch AB1234 added")
   end
 
   alias_method :and_i_see_only_active_hpv_vaccines_with_no_batches_set_up,
