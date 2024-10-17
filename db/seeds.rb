@@ -25,22 +25,41 @@ def import_schools
   end
 end
 
-def create_user_and_team
-  team =
-    Team.find_by(ods_code: "R1L") || FactoryBot.create(:team, ods_code: "R1L")
-  user =
-    User.find_by(email: "nurse.joy@example.com") ||
-      FactoryBot.create(
-        :user,
-        family_name: "Joy",
-        given_name: "Nurse",
-        email: "nurse.joy@example.com",
-        password: "nurse.joy@example.com",
-        teams: [team]
-      )
+def create_team(ods_code:)
+  team = Team.find_by(ods_code:) || FactoryBot.create(:team, ods_code:)
 
   programme = Programme.find_by(type: "hpv")
   FactoryBot.create(:team_programme, team:, programme:)
+
+  team
+end
+
+def create_user_and_team(ods_code:, uid: nil)
+  team = create_team(ods_code:)
+  user =
+    if uid
+      User.find_by(uid:) ||
+        FactoryBot.create(
+          :user,
+          uid:,
+          family_name: "Flo",
+          given_name: "Nurse",
+          email: "nurse.flo@example.nhs.uk",
+          provider: "cis2",
+          teams: [team]
+          # password: Do not set this as they should not log in via password
+        )
+    else
+      User.find_by(email: "nurse.joy@example.com") ||
+        FactoryBot.create(
+          :user,
+          family_name: "Joy",
+          given_name: "Nurse",
+          email: "nurse.joy@example.com",
+          password: "nurse.joy@example.com",
+          teams: [team]
+        )
+    end
 
   [user, team]
 end
@@ -124,12 +143,18 @@ set_feature_flags
 seed_vaccines
 import_schools
 
-user, team = create_user_and_team
+# Nurse Joy's team
+user, team = create_user_and_team(ods_code: "R1L")
 
 attach_locations_to(team)
-
 Audited.audit_class.as_user(user) { create_session(user, team) }
-
 create_patients(team)
+create_imports(team)
 
+# CIS2 team - the ODS code and user UID need to match the values in the CIS2 env
+user, team = create_user_and_team(ods_code: "Y51", uid: "555057896106")
+
+attach_locations_to(team)
+Audited.audit_class.as_user(user) { create_session(user, team) }
+create_patients(team)
 create_imports(team)
