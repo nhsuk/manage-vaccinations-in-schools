@@ -36,13 +36,10 @@ class ConsentFormMatchingJob < ApplicationJob
       elsif patient.nhs_number != nhs_number
         # We found a patient in PDS and we found one in Mavis using the same search
         # query, but the NHS numbers don't match.
-        raise PatientNHSNumberMismatch
+        raise Patient::NHSNumberMismatch
       end
     end
 
     consent_form.match_with_patient!(patient)
-  end
-
-  class PatientNHSNumberMismatch < StandardError
   end
 end

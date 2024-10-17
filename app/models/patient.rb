@@ -149,6 +149,26 @@ class Patient < ApplicationRecord
     end
   end
 
+  def update_from_pds!(pds_patient)
+    if nhs_number.nil? || nhs_number != pds_patient["id"]
+      raise NHSNumberMismatch
+    end
+
+    self.date_of_death =
+      if (deceased_date_time = pds_patient["deceasedDateTime"]).present?
+        Time.zone.parse(deceased_date_time).to_date
+      end
+
+    if date_of_death_changed?
+      upcoming_sessions.clear unless date_of_death.nil?
+
+      save!
+    end
+  end
+
+  class NHSNumberMismatch < StandardError
+  end
+
   private
 
   def school_is_correct_type
