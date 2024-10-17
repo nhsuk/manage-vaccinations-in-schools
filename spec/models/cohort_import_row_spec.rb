@@ -12,15 +12,16 @@ describe CohortImportRow do
     {
       "CHILD_ADDRESS_LINE_1" => "10 Downing Street",
       "CHILD_ADDRESS_LINE_2" => "",
-      "CHILD_POSTCODE" => "SW1A 1AA",
-      "CHILD_TOWN" => "London",
       "CHILD_COMMON_NAME" => "Jim",
       "CHILD_DATE_OF_BIRTH" => "2010-01-01",
       "CHILD_FIRST_NAME" => "Jimmy",
+      "CHILD_GENDER" => "Male",
       "CHILD_LAST_NAME" => "Smith",
       "CHILD_NHS_NUMBER" => "1234567890",
+      "CHILD_POSTCODE" => "SW1A 1AA",
+      "CHILD_REGISTRATION" => "8AB",
       "CHILD_SCHOOL_URN" => school_urn,
-      "CHILD_GENDER" => "Male"
+      "CHILD_TOWN" => "London"
     }
   end
 
@@ -135,6 +136,8 @@ describe CohortImportRow do
     let(:data) { valid_data }
 
     it { should_not be_nil }
+
+    it { should have_attributes(registration: "8AB") }
 
     it { should have_attributes(home_educated: false) }
 

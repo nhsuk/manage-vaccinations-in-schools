@@ -56,41 +56,25 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
         name: "CHILD_POSTCODE",
         notes:
           "#{tag.strong("Required")}, must be formatted as a valid postcode."
+      },
+      {
+        name: "CHILD_REGISTRATION",
+        notes: "Optional, the child’s year group, for example #{tag.i("8T5")}"
       }
     ] + parent_columns
   end
 
   def cohort_import_columns
-    [
-      { name: "CHILD_FIRST_NAME", notes: tag.strong("Required") },
-      { name: "CHILD_LAST_NAME", notes: tag.strong("Required") },
-      { name: "CHILD_DATE_OF_BIRTH", notes: tag.strong("Required") },
+    class_import_columns.dup.insert(
+      2,
       {
         name: "CHILD_SCHOOL_URN",
         notes:
           "#{tag.strong("Required")}, must be 6 digits and numeric. " \
             "Use #{tag.i("888888")} for school unknown and #{tag.i("999999")} " \
             "for homeschooled."
-      },
-      {
-        name: "CHILD_NHS_NUMBER",
-        notes: "Optional, must be 10 digits and numeric"
-      },
-      {
-        name: "CHILD_GENDER",
-        notes:
-          "Optional, must be one of: #{tag.i("Male")}, #{tag.i("Female")}, " \
-            "#{tag.i("Not known")} or #{tag.i("Not specified")}"
-      },
-      { name: "CHILD_ADDRESS_LINE_1", notes: "Optional" },
-      { name: "CHILD_ADDRESS_LINE_2", notes: "Optional" },
-      { name: "CHILD_TOWN", notes: "Optional" },
-      {
-        name: "CHILD_POSTCODE",
-        notes:
-          "#{tag.strong("Required")}, must be formatted as a valid postcode."
       }
-    ] + parent_columns
+    )
   end
 
   def immunisation_import_columns

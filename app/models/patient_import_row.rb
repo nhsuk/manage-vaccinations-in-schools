@@ -91,6 +91,7 @@ class PatientImportRow
       given_name: first_name,
       home_educated:,
       nhs_number:,
+      registration:,
       school:
     }
 
@@ -154,6 +155,10 @@ class PatientImportRow
     Date.parse(@data["CHILD_DATE_OF_BIRTH"])
   rescue ArgumentError, TypeError
     nil
+  end
+
+  def registration
+    @data["CHILD_REGISTRATION"]&.strip.presence
   end
 
   def gender_code
