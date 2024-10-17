@@ -1,0 +1,30 @@
+# frozen_string_literal: true
+
+describe "Manage children" do
+  scenario "Viewing children" do
+    given_my_team_exists
+    and_patients_exist
+
+    when_i_click_on_children
+    then_i_see_the_children
+  end
+
+  def given_my_team_exists
+    @team = create(:team, :with_one_nurse)
+  end
+
+  def and_patients_exist
+    create_list(:patient, 10, team: @team)
+  end
+
+  def when_i_click_on_children
+    sign_in @team.users.first
+
+    visit "/dashboard"
+    click_on "Children"
+  end
+
+  def then_i_see_the_children
+    expect(page).to have_content("10 children")
+  end
+end
