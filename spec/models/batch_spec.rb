@@ -63,6 +63,14 @@ describe Batch do
       end
     end
 
+    it do
+      expect(subject).to validate_uniqueness_of(:expiry).scoped_to(
+        :team_id,
+        :name,
+        :vaccine_id
+      )
+    end
+
     context "with invalid characters" do
       subject(:batch) { build(:batch, name: "ABC*123") }
 
