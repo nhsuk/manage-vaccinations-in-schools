@@ -315,6 +315,7 @@ en:
               less_than: Enter an expiry date before %{count}
             name:
               blank: Enter a batch
+              invalid: Enter a batch with only letters and numbers
         class_import:
           attributes:
             csv:
