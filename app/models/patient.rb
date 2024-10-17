@@ -149,6 +149,10 @@ class Patient < ApplicationRecord
     end
   end
 
+  def deceased?
+    date_of_death != nil
+  end
+
   def update_from_pds!(pds_patient)
     if nhs_number.nil? || nhs_number != pds_patient["id"]
       raise NHSNumberMismatch
