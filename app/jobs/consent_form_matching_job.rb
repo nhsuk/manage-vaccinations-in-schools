@@ -10,6 +10,7 @@ class ConsentFormMatchingJob < ApplicationJob
 
     # Search globally if we have an NHS number
     if pds_patient && (patient = Patient.find_by(nhs_number: pds_patient["id"]))
+      patient.update_from_pds!(pds_patient)
       consent_form.match_with_patient!(patient)
       return
     end
