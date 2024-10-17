@@ -37,7 +37,7 @@ describe "Manage children" do
     sign_in @team.users.first
 
     visit "/dashboard"
-    click_on "Children"
+    click_on "Children", match: :first
   end
 
   def then_i_see_the_children

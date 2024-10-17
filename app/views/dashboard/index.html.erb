@@ -2,20 +2,20 @@
 
 <ul class="nhsuk-grid-row nhsuk-card-group">
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(link_to: programmes_path) do |c| %>
-      <% c.with_heading { t("programmes.index.title") } %>
+    <%= render AppCardComponent.new(link_to: programmes_path) do |card| %>
+      <% card.with_heading { t("programmes.index.title") } %>
       <p class="nhsuk-body">Use this area to:</p>
       <ul class="nhsuk-list nhsuk-list--bullet">
         <li>import child records</li>
-        <li>organise school sessions</li>
+        <li>organise vaccination sessions</li>
         <li>report vaccinations</li>
       </ul>
     <% end %>
   </li>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(link_to: sessions_path) do |c| %>
-      <% c.with_heading { t("sessions.index.title") } %>
+    <%= render AppCardComponent.new(link_to: sessions_path) do |card| %>
+      <% card.with_heading { t("sessions.index.title") } %>
       <p class="nhsuk-body">Use this area to:</p>
       <ul class="nhsuk-list nhsuk-list--bullet">
         <li>review consent responses</li>
@@ -27,13 +27,36 @@
   </li>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(link_to: vaccines_path) do |c| %>
-      <% c.with_heading { t("vaccines.index.title") } %>
+    <%= render AppCardComponent.new(link_to: vaccines_path) do |card| %>
+      <% card.with_heading { t("patients.index.title") } %>
       <p class="nhsuk-body">Use this area to:</p>
       <ul class="nhsuk-list nhsuk-list--bullet">
-        <li>add new vaccine batches</li>
-        <li>edit details for existing batches</li>
+        <li>find child records</li>
+        <li>view child vaccinations</li>
       </ul>
+    <% end %>
+  </li>
+</ul>
+
+<ul class="nhsuk-grid-row nhsuk-card-group">
+  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(link_to: vaccines_path, secondary: true) do |card| %>
+      <% card.with_heading { t("vaccines.index.title") } %>
+      <% card.with_description { "Add and edit vaccine batches" } %>
+    <% end %>
+  </li>
+
+  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(link_to: notices_path, secondary: true) do |card| %>
+      <% card.with_heading { t("notices.index.title") } %>
+      <% card.with_description { "View notices about important updates to patient records" } %>
+    <% end %>
+  </li>
+
+  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(link_to: team_path, secondary: true) do |card| %>
+      <% card.with_heading { t("teams.show.title") } %>
+      <% card.with_description { "Manage your organisation’s settings" } %>
     <% end %>
   </li>
 </ul>
