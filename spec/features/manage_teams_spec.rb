@@ -16,7 +16,7 @@ describe "Manage teams" do
     sign_in @team.users.first
 
     visit "/dashboard"
-    click_on "Your organisation"
+    click_on "Your organisation", match: :first
   end
 
   def then_i_see_the_team_settings
