@@ -1,14 +1,17 @@
 # frozen_string_literal: true
 
 class PatientNHSNumberLookupJob < ApplicationJob
-  include NHSNumberLookupConcern
+  include PDSPatientLookupConcern
 
   queue_as :imports
 
   def perform(patient)
     return if patient.nhs_number.present?
 
-    nhs_number = find_nhs_number(patient)
+    pds_patient = find_pds_patient(patient)
+    return if pds_patient.nil?
+
+    nhs_number = pds_patient["id"]
     return if nhs_number.nil?
 
     if (
