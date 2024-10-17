@@ -8,7 +8,7 @@ describe "Manage batches" do
     and_there_is_a_vaccination_session_today_with_one_patient_ready_to_vaccinate
 
     when_i_manage_vaccines
-    then_i_see_an_hpv_vaccine_with_no_batches_set_up
+    then_i_see_only_active_hpv_vaccines_with_no_batches_set_up
 
     when_i_add_a_new_batch
     then_i_see_the_batch_i_just_added_on_the_vaccines_page
@@ -18,11 +18,11 @@ describe "Manage batches" do
 
     when_i_archive_the_batch
     then_i_see_the_success_banner
-    and_i_see_an_hpv_vaccine_with_no_batches_set_up
+    and_i_see_only_active_hpv_vaccines_with_no_batches_set_up
   end
 
   def given_my_team_is_running_an_hpv_vaccination_programme
-    @programme = create(:programme, :hpv_no_batches)
+    @programme = create(:programme, :hpv_all_vaccines, batch_count: 0)
     @team = create(:team, :with_one_nurse, programmes: [@programme])
   end
 
@@ -47,8 +47,9 @@ describe "Manage batches" do
     click_on "Vaccines", match: :first
   end
 
-  def then_i_see_an_hpv_vaccine_with_no_batches_set_up
+  def then_i_see_only_active_hpv_vaccines_with_no_batches_set_up
     expect(page).to have_content("Gardasil 9 (HPV)")
+    expect(page).not_to have_content("Cervarix (HPV)")
     expect(page).not_to have_css("table")
   end
 
@@ -96,6 +97,6 @@ describe "Manage batches" do
     expect(page).to have_content("Batch archived")
   end
 
-  alias_method :and_i_see_an_hpv_vaccine_with_no_batches_set_up,
-               :then_i_see_an_hpv_vaccine_with_no_batches_set_up
+  alias_method :and_i_see_only_active_hpv_vaccines_with_no_batches_set_up,
+               :then_i_see_only_active_hpv_vaccines_with_no_batches_set_up
 end

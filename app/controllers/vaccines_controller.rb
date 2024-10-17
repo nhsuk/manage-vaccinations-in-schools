@@ -4,7 +4,7 @@ class VaccinesController < ApplicationController
   include TodaysBatchConcern
 
   def index
-    @vaccines = policy_scope(Vaccine).order(:brand)
+    @vaccines = policy_scope(Vaccine).active.order(:brand)
     @batches_by_vaccine_id =
       policy_scope(Batch)
         .where(vaccine: @vaccines)
@@ -14,7 +14,7 @@ class VaccinesController < ApplicationController
   end
 
   def show
-    @vaccine = policy_scope(Vaccine).find(params[:id])
+    @vaccine = policy_scope(Vaccine).active.find(params[:id])
     @batches = policy_scope(Batch).where(vaccine: @vaccine)
   end
 end
