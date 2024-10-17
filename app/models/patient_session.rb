@@ -82,10 +82,11 @@ class PatientSession < ApplicationRecord
     # the flu programme for the SAIS teams that offer both nasal and injectable vaccines.
 
     programme = programmes.first
+    vaccine = programme.vaccines.active.first
 
     draft_vaccination_records.create_with(
       programme:,
-      vaccine: programme.vaccines.first
+      vaccine:
     ).find_or_initialize_by(recorded_at: nil)
   end
 
