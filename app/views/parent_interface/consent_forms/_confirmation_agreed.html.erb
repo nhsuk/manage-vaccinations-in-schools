@@ -1,8 +1,5 @@
 <% title = t("consent_forms.confirmation_agreed.title.#{@consent_form.programme.type}",
-            full_name: @consent_form.full_name,
-            date: @session.dates.map(&:value).min.to_fs(:long)) %>
-
-<% # TODO: Handle multiple dates. %>
+            full_name: @consent_form.full_name) %>
 
 <% content_for :page_title, title %>
 

@@ -535,8 +535,8 @@ en:
         hpv: Yes, I agree
     confirmation_agreed:
       title:
-        flu: " %{full_name} will get their nasal flu vaccination at school on %{date}"
-        hpv: " %{full_name} will get their HPV vaccination at school on %{date}"
+        flu: " %{full_name} will get their nasal flu vaccination at school"
+        hpv: " %{full_name} will get their HPV vaccination at school"
     confirmation_injection:
       title:
         flu: Your child will not get a nasal flu vaccination at school
