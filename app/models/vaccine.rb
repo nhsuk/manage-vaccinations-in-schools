@@ -48,6 +48,7 @@ class Vaccine < ApplicationRecord
   enum :method, %i[injection nasal], validate: true
 
   scope :active, -> { where(discontinued: false) }
+  scope :discontinued, -> { where(discontinued: true) }
 
   delegate :first_health_question, to: :health_questions
 

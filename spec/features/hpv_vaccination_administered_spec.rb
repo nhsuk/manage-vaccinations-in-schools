@@ -21,10 +21,17 @@ describe "HPV Vaccination" do
   end
 
   def given_i_am_signed_in
-    programme = create(:programme, :hpv)
+    programme = create(:programme, :hpv_all_vaccines)
     team = create(:team, :with_one_nurse, programmes: [programme])
     location = create(:location, :school)
-    @batch = create(:batch, team:, vaccine: programme.vaccines.first)
+
+    programme.vaccines.discontinued.each do |vaccine|
+      create(:batch, team:, vaccine:)
+    end
+
+    active_vaccine = programme.vaccines.active.first
+    @active_batch = create(:batch, team:, vaccine: active_vaccine)
+
     @session = create(:session, team:, programme:, location:)
     @patient =
       create(:patient, :consent_given_triage_not_needed, session: @session)
@@ -45,14 +52,14 @@ describe "HPV Vaccination" do
   end
 
   def and_i_select_the_batch
-    choose @batch.name
+    choose @active_batch.name
     click_button "Continue"
   end
 
   def then_i_see_the_confirmation_page
     expect(page).to have_content("Check and confirm")
     expect(page).to have_content("Child#{@patient.full_name}")
-    expect(page).to have_content("Batch#{@batch.name}")
+    expect(page).to have_content("Batch#{@active_batch.name}")
     expect(page).to have_content("MethodIntramuscular")
     expect(page).to have_content("SiteLeft arm")
     expect(page).to have_content("OutcomeVaccinated")
