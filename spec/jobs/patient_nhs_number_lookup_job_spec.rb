@@ -46,10 +46,15 @@ describe PatientNHSNumberLookupJob do
     context "with a match" do
       let(:response_file) { "pds/search-patients-response.json" }
 
-      it "changes the NHS number of the patient" do
+      it "sets the NHS number of the patient" do
         expect { perform_now }.to change(patient, :nhs_number).from(nil).to(
           "9449306168"
         )
+      end
+
+      it "updates the patient details from PDS" do
+        expect(patient).to receive(:update_from_pds!)
+        perform_now
       end
     end
 
