@@ -68,6 +68,17 @@ environments:
       MAVIS__HOST: "accessibility.mavistesting.com"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "accessibility.mavistesting.com"
       MAVIS__ALLOW_DEV_PHONE_NUMBERS: true
+  pentest:
+    http:
+      alias:
+        - "pentest.mavistesting.com"
+    deployments:
+      rolling: recreate # Disables blue-green deployment for speed
+    variables:
+      RAILS_ENV: staging
+      MAVIS__HOST: "pentest.mavistesting.com"
+      MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "pentest.mavistesting.com"
+      MAVIS__ALLOW_DEV_PHONE_NUMBERS: true
   test:
     http:
       alias:

@@ -13,6 +13,7 @@ on:
         type: choice
         options:
           - accessibility
+          - pentest
           - test
           - training
 
