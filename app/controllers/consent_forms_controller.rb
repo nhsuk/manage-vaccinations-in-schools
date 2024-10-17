@@ -29,10 +29,10 @@ class ConsentFormsController < ApplicationController
     @patient_session =
       policy_scope(PatientSession).find(params[:patient_session_id])
 
-    @consent_form.match_with_patient_session!(@patient_session)
-
     patient = @patient_session.patient
     session = @patient_session.session
+
+    @consent_form.match_with_patient!(patient)
 
     flash[:success] = {
       heading: "Consent matched for",
