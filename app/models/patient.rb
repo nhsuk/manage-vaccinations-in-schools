@@ -74,6 +74,9 @@ class Patient < ApplicationRecord
 
   scope :without_nhs_number, -> { where(nhs_number: [nil, ""]) }
 
+  scope :not_deceased, -> { where(date_of_death: nil) }
+  scope :deceased, -> { where.not(date_of_death: nil) }
+
   validates :given_name, :family_name, :date_of_birth, presence: true
 
   validates :nhs_number,

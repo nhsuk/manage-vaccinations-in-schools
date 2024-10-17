@@ -119,11 +119,10 @@ class Session < ApplicationRecord
     cohorts = team.cohorts.for_year_groups(year_groups, academic_year:)
 
     patients_in_cohorts =
-      Patient.where(
-        cohort: cohorts,
-        school: location,
-        date_of_death: nil
-      ).includes(:upcoming_sessions, vaccination_records: :programme)
+      Patient
+        .where(cohort: cohorts, school: location)
+        .not_deceased
+        .includes(:upcoming_sessions, vaccination_records: :programme)
 
     required_programmes = Set.new(programmes)
 

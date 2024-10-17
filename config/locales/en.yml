@@ -602,6 +602,9 @@ en:
   import_issues:
     index:
       title: Import issues
+  notices:
+    index:
+      title: Important notices
   mailers:
     consent_form_mailer:
       reasons_for_refusal:
