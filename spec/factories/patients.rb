@@ -11,6 +11,7 @@
 #  address_town         :string
 #  common_name          :string
 #  date_of_birth        :date             not null
+#  date_of_death        :date
 #  family_name          :string           not null
 #  gender_code          :integer          default("not_known"), not null
 #  given_name           :string           not null
