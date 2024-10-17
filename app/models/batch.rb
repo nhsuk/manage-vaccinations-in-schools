@@ -46,6 +46,9 @@ class Batch < ApplicationRecord
             comparison: {
               greater_than: -> { Date.new(Date.current.year - 15, 1, 1) },
               less_than: -> { Date.new(Date.current.year + 15, 1, 1) }
+            },
+            uniqueness: {
+              scope: %i[team_id name vaccine_id]
             }
 
   def archived?
