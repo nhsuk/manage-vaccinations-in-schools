@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-module NHSNumberLookupConcern
+module PDSPatientLookupConcern
   extend ActiveSupport::Concern
 
   include NHSAPIConcurrencyConcern
 
-  def find_nhs_number(object)
+  def find_pds_patient(object)
     query = {
       "family" => object.family_name,
       "given" => object.given_name,
@@ -19,6 +19,6 @@ module NHSNumberLookupConcern
 
     return if results["total"].zero?
 
-    results["entry"].first["resource"]["id"]
+    results["entry"].first["resource"]
   end
 end

@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 class ConsentFormMatchingJob < ApplicationJob
-  include NHSNumberLookupConcern
+  include PDSPatientLookupConcern
 
   queue_as :consents
 
   def perform(consent_form)
-    nhs_number = find_nhs_number(consent_form)
+    pds_patient = find_pds_patient(consent_form)
 
     # Search globally if we have an NHS number
-    if nhs_number && (patient = Patient.find_by(nhs_number:))
+    if pds_patient && (patient = Patient.find_by(nhs_number: pds_patient["id"]))
       consent_form.match_with_patient!(patient)
       return
     end
@@ -30,7 +30,7 @@ class ConsentFormMatchingJob < ApplicationJob
 
     patient = patients.first
 
-    unless nhs_number.nil?
+    if pds_patient
       if patient.nhs_number.nil?
         # TODO: Can we take this opportunity to set the NHS number on the patient?
       elsif patient.nhs_number != nhs_number
