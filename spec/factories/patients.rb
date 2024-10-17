@@ -107,6 +107,10 @@ FactoryBot.define do
       home_educated { true }
     end
 
+    trait :deceased do
+      date_of_death { Date.current }
+    end
+
     trait :consent_request_sent do
       after(:create) do |patient, context|
         create(

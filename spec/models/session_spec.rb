@@ -277,6 +277,14 @@ describe Session do
         programme: hpv_programme,
         patient: both_vaccinated_teen
       )
+
+      create(
+        :patient,
+        :deceased,
+        date_of_birth: 9.years.ago.to_date,
+        team:,
+        school:
+      )
     end
 
     context "with a Flu session" do
