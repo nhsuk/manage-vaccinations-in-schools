@@ -11,23 +11,37 @@ class BatchesController < ApplicationController
   end
 
   def create
-    begin
-      @batch = Batch.new(batch_params.merge(team: current_user.team, vaccine:))
-    rescue ActiveRecord::MultiparameterAssignmentErrors
-      @batch =
-        Batch.new(name: batch_params[:name], team: current_user.team, vaccine:)
+    expiry =
+      begin
+        Date.new(
+          batch_params["expiry(1i)"].to_i,
+          batch_params["expiry(2i)"].to_i,
+          batch_params["expiry(3i)"].to_i
+        )
+      rescue StandardError
+        nil
+      end
+
+    @batch =
+      Batch.archived.find_or_initialize_by(
+        name: batch_params[:name],
+        team: current_user.team,
+        expiry:,
+        vaccine:
+      )
+
+    if @batch.persisted?
+      @batch.unarchive!
+    elsif !expiry_validator.date_params_valid? || !@batch.valid?
       @batch.expiry = expiry_validator.date_params_as_struct
+      render :new, status: :unprocessable_entity
+      return
+    else
+      @batch.save!
     end
 
-    if !expiry_validator.date_params_valid?
-      @batch.expiry = expiry_validator.date_params_as_struct
-      render :new, status: :unprocessable_entity
-    elsif !@batch.save
-      render :new, status: :unprocessable_entity
-    else
-      flash[:success] = "Batch #{@batch.name} added"
-      redirect_to vaccines_path
-    end
+    flash[:success] = "Batch #{@batch.name} added"
+    redirect_to vaccines_path
   end
 
   def edit
