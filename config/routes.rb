@@ -79,6 +79,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :patients, only: :index
+
   resources :programmes, only: %i[index show] do
     get "sessions", on: :member
 
