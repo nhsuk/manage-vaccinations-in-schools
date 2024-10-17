@@ -21,8 +21,9 @@
       c.with_heading { "Children in this cohort" }
       if @patient_sessions.count > 0
         render AppSessionPatientTableComponent.new(
+          session: @session,
           patient_sessions: @patient_sessions,
-          columns: %i[name postcode dob select_for_matching],
+          columns: %i[name postcode year_group select_for_matching],
           section: :matching,
           consent_form: @consent_form,
         )

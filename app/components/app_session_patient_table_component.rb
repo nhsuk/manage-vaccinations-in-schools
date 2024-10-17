@@ -4,15 +4,17 @@ class AppSessionPatientTableComponent < ViewComponent::Base
   attr_reader :params
 
   def initialize(
+    session:,
     patient_sessions:,
     section:,
     caption: nil,
-    columns: %i[name dob],
+    columns: %i[name year_group],
     consent_form: nil,
     params: {}
   )
     super
 
+    @session = session
     @patient_sessions = patient_sessions
     @columns = columns
     @section = section
@@ -27,7 +29,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     {
       action: "Action needed",
       name: "Full name",
-      dob: "Date of birth",
+      year_group: "Year group",
       reason: "Reason for refusal",
       outcome: "Outcome",
       postcode: "Postcode",
@@ -43,8 +45,8 @@ class AppSessionPatientTableComponent < ViewComponent::Base
       t("patient_session_statuses.#{patient_session.state}.text")
     when :name
       name_cell(patient_session)
-    when :dob
-      patient_session.patient.date_of_birth.to_fs(:long)
+    when :year_group
+      helpers.patient_year_group(patient_session.patient)
     when :reason
       patient_session
         .consents
@@ -123,7 +125,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
                 sort: column,
                 direction:,
                 name: params[:name],
-                dob: params[:dob]
+                year_groups: params[:year_groups]
               ),
               data:
     end
@@ -146,4 +148,6 @@ class AppSessionPatientTableComponent < ViewComponent::Base
       end
     { html_attributes: { aria: { sort: } } }
   end
+
+  delegate :year_groups, to: :@session
 end

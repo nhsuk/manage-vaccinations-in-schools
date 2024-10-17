@@ -15,27 +15,23 @@ describe "Patient sorting and filtering" do
     when_i_click_on_the_name_header
     then_i_see_patients_ordered_by_name_asc
 
-    when_i_click_on_the_dob_header
-    then_i_see_patients_ordered_by_dob_asc
+    when_i_click_on_the_year_group_header
+    then_i_see_patients_ordered_by_year_group_asc
 
-    when_i_click_on_the_dob_header
-    then_i_see_patients_ordered_by_dob_desc
+    when_i_click_on_the_year_group_header
+    then_i_see_patients_ordered_by_year_group_desc
 
     when_i_filter_by_names_starting_with_cas
     and_i_click_filter
-    then_i_see_patients_with_names_starting_with_cas_by_dob_desc
+    then_i_see_patients_with_names_starting_with_cas_by_year_group_desc
     and_by_name_contains_cas
 
     when_i_click_on_the_name_header
     then_i_see_patients_with_names_starting_with_cas_by_name_asc
 
-    when_i_filter_by_dob_01_2002
+    when_i_filter_by_year_group_10
     and_i_click_filter
-    then_i_see_patients_with_dob_01_2002
-
-    when_i_filter_by_dob_01_01_2002
-    and_i_click_filter
-    then_i_see_patients_with_dob_01_01_2002
+    then_i_see_patients_with_year_group_10
   end
 
   scenario "Users can sort and filter patients with JS", type: :system do
@@ -60,14 +56,19 @@ describe "Patient sorting and filtering" do
     location = create(:location, :school)
     @user = @team.users.first
     @session = create(:session, team: @team, programme: @programme, location:)
-    create_list(:patient, 4, session: @session)
-      .zip(
-        %w[Alex Blair Casey Cassidy],
-        %w[2000-01-01 2001-01-01 2002-01-01 2002-01-02]
-      )
-      .each do |(patient, name, dob)|
-        patient.update!(given_name: name, date_of_birth: dob)
+
+    %w[Alex Blair Casey Cassidy]
+      .zip([8, 9, 10, 10], %w[A B C D])
+      .each do |(given_name, year_group, registration)|
+        create(
+          :patient,
+          session: @session,
+          given_name:,
+          year_group:,
+          registration:
+        )
       end
+
     sign_in @user
   end
 
@@ -80,8 +81,8 @@ describe "Patient sorting and filtering" do
     sleep 0.1
   end
 
-  def when_i_click_on_the_dob_header
-    click_link "Date of birth"
+  def when_i_click_on_the_year_group_header
+    click_link "Year group"
   end
 
   def then_i_see_patients_ordered_by_name_asc
@@ -90,7 +91,7 @@ describe "Patient sorting and filtering" do
     expect(page).to have_selector("tr:nth-child(3)", text: "Casey")
     expect(page).to have_selector("tr:nth-child(4)", text: "Cassidy")
   end
-  alias_method :then_i_see_patients_ordered_by_dob_asc,
+  alias_method :then_i_see_patients_ordered_by_year_group_asc,
                :then_i_see_patients_ordered_by_name_asc
 
   def then_i_see_patients_ordered_by_name_desc
@@ -99,7 +100,7 @@ describe "Patient sorting and filtering" do
     expect(page).to have_selector("tr:nth-child(3)", text: "Blair")
     expect(page).to have_selector("tr:nth-child(4)", text: "Alex")
   end
-  alias_method :then_i_see_patients_ordered_by_dob_desc,
+  alias_method :then_i_see_patients_ordered_by_year_group_desc,
                :then_i_see_patients_ordered_by_name_desc
 
   def when_i_filter_by_names_starting_with_cas
@@ -119,7 +120,7 @@ describe "Patient sorting and filtering" do
     expect(page).to have_selector("tr:nth-child(1)", text: "Cassidy")
     expect(page).to have_selector("tr:nth-child(2)", text: "Casey")
   end
-  alias_method :then_i_see_patients_with_names_starting_with_cas_by_dob_desc,
+  alias_method :then_i_see_patients_with_names_starting_with_cas_by_year_group_desc,
                :then_i_see_patients_with_names_starting_with_cas_by_name_desc
 
   def then_i_see_patients_with_names_starting_with_cas_by_name_asc
@@ -127,30 +128,21 @@ describe "Patient sorting and filtering" do
     expect(page).to have_selector("tr:nth-child(1)", text: "Casey")
     expect(page).to have_selector("tr:nth-child(2)", text: "Cassidy")
   end
-  alias_method :then_i_see_patients_with_names_starting_with_cas_by_dob_asc,
+  alias_method :then_i_see_patients_with_names_starting_with_cas_by_year_group_asc,
                :then_i_see_patients_with_names_starting_with_cas_by_name_asc
 
   def and_by_name_contains_cas
     expect(page).to have_field("By name", with: "cas")
   end
 
-  def when_i_filter_by_dob_01_2002
-    fill_in "By date of birth", with: "01/2002"
+  def when_i_filter_by_year_group_10
+    check "Year 10"
   end
 
-  def then_i_see_patients_with_dob_01_2002
+  def then_i_see_patients_with_year_group_10
     expect(page).not_to have_selector("tr:nth-child(3)")
     expect(page).to have_selector("tr:nth-child(1)", text: "Casey")
     expect(page).to have_selector("tr:nth-child(2)", text: "Cassidy")
-  end
-
-  def when_i_filter_by_dob_01_01_2002
-    fill_in "By date of birth", with: "01/01/2002"
-  end
-
-  def then_i_see_patients_with_dob_01_01_2002
-    expect(page).not_to have_selector("tr:nth-child(2)")
-    expect(page).to have_selector("tr:nth-child(1)", text: "Casey")
   end
 
   def when_i_reset_filters
