@@ -59,7 +59,7 @@ class TriagesController < ApplicationController
       }
       redirect_to redirect_path
     else
-      render "patients/show", status: :unprocessable_entity
+      render "patient_sessions/show", status: :unprocessable_entity
     end
   end
 

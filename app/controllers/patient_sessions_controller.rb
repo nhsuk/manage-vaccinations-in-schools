@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PatientsController < ApplicationController
+class PatientSessionsController < ApplicationController
   before_action :set_patient_session
   before_action :set_session
   before_action :set_patient

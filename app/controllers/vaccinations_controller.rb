@@ -66,7 +66,7 @@ class VaccinationsController < ApplicationController
                     id: @draft_vaccination_record.wizard_steps.first
                   )
     else
-      render "patients/show", status: :unprocessable_entity
+      render "patient_sessions/show", status: :unprocessable_entity
     end
   end
 

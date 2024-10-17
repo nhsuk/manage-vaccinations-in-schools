@@ -196,7 +196,10 @@ Rails.application.routes.draw do
     end
 
     scope ":tab" do
-      resources :patients, only: %i[show] do
+      resources :patient_sessions,
+                path: "patients",
+                as: :patient,
+                only: %i[show] do
         get "log"
 
         post "consents", to: "manage_consents#create", as: :manage_consents
