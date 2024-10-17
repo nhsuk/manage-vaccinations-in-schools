@@ -308,11 +308,12 @@ en:
           attributes:
             expiry:
               blank: Enter an expiry date
+              greater_than: Enter an expiry date after %{count}
+              less_than: Enter an expiry date before %{count}
               missing_day: Enter a day
               missing_month: Enter a month
               missing_year: Enter a year
-              greater_than: Enter an expiry date after %{count}
-              less_than: Enter an expiry date before %{count}
+              taken: This batch already exists
             name:
               blank: Enter a batch
               invalid: Enter a batch with only letters and numbers
