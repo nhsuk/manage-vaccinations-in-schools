@@ -45,13 +45,13 @@ FactoryBot.define do
 
   factory :patient do
     transient do
-      session { nil }
+      parents { [create(:parent, :recorded, family_name:)] }
       programme { session&.programmes&.first }
+      session { nil }
       team do
         session&.team || association(:team, programmes: [programme].compact)
       end
-
-      parents { [create(:parent, :recorded, family_name:)] }
+      year_group { nil }
     end
 
     cohort do
@@ -77,7 +77,13 @@ FactoryBot.define do
 
     given_name { Faker::Name.first_name }
     family_name { Faker::Name.last_name }
-    date_of_birth { Faker::Date.birthday(min_age: 7, max_age: 16) }
+    date_of_birth do
+      if year_group
+        Faker::Date.birthday(min_age: year_group + 5, max_age: year_group + 5)
+      else
+        Faker::Date.birthday(min_age: 7, max_age: 16)
+      end
+    end
     school { session&.location }
     registration do
       "#{date_of_birth.year_group}#{Faker::Alphanumeric.alpha(number: 2)}"

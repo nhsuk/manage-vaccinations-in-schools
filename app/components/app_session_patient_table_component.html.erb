@@ -14,15 +14,19 @@
                                       "data-autosubmit-target": "field",
                                       "data-action": "autosubmit#submit",
                                       "data-turbo-permanent": "true" %>
-        <%= f.govuk_text_field :dob, label: { text: "By date of birth" },
-                                     hint: {
-                                       text: "e.g. 2005 or 01/03/2014",
-                                       class: "nhsuk-u-font-size-16",
-                                     },
-                                     value: params[:dob],
-                                     "data-autosubmit-target": "field",
-                                     "data-action": "autosubmit#submit",
-                                     "data-turbo-permanent": "true" %>
+
+        <%= f.govuk_check_boxes_fieldset :year_groups, legend: { text: "By year group", size: "s" } do %>
+          <% year_groups.each do |year_group| %>
+            <%= f.govuk_check_box :year_groups,
+                                  year_group,
+                                  label: { text: helpers.format_year_group(year_group) },
+                                  checked: year_group.to_s.in?(params[:year_groups] || []),
+                                  "data-autosubmit-target": "field",
+                                  "data-action": "autosubmit#submit",
+                                  "data-turbo-permanent": "true" %>
+          <% end %>
+        <% end %>
+
         <%= f.hidden_field :sort, value: params[:sort] %>
         <%= f.hidden_field :direction, value: params[:direction] %>
         <%= f.govuk_submit "Reset filters", type: "reset",

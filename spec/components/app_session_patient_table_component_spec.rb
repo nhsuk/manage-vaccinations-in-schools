@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppSessionPatientTableComponent, type: :component do
+describe AppSessionPatientTableComponent do
   subject(:rendered) { render_inline(component) }
 
   before do
@@ -11,14 +11,21 @@ describe AppSessionPatientTableComponent, type: :component do
 
   let(:section) { :consent }
   let(:programme) { create(:programme) }
-  let(:patient_sessions) { create_list(:patient_session, 2, programme:) }
-  let(:columns) { %i[name dob] }
+  let(:session) { create(:session, programme:) }
+  let(:patient_sessions) { create_list(:patient_session, 2, session:) }
+  let(:columns) { %i[name year_group] }
   let(:params) { { session_id: 1, section:, tab: :needed } }
-  let(:args) do
-    { patient_sessions:, caption: "Foo", section:, columns:, params: }
-  end
 
-  let(:component) { described_class.new(**args) }
+  let(:component) do
+    described_class.new(
+      session:,
+      patient_sessions:,
+      caption: "Foo",
+      section:,
+      columns:,
+      params:
+    )
+  end
 
   def have_column(text)
     have_css(".nhsuk-table__head th", text:)
@@ -27,7 +34,7 @@ describe AppSessionPatientTableComponent, type: :component do
   it { should have_css(".nhsuk-table") }
   it { should have_css(".nhsuk-table__head") }
   it { should have_column("Full name") }
-  it { should have_column("Date of birth") }
+  it { should have_column("Year group") }
   it { should have_css(".nhsuk-table__head .nhsuk-table__row", count: 1) }
 
   it "includes the patient's full name" do
@@ -57,6 +64,7 @@ describe AppSessionPatientTableComponent, type: :component do
   describe "when the section is :matching" do
     let(:component) do
       described_class.new(
+        session:,
         patient_sessions:,
         section: :matching,
         consent_form:
@@ -65,7 +73,7 @@ describe AppSessionPatientTableComponent, type: :component do
             programme:,
             session: patient_sessions.first.session
           ),
-        columns: %i[name postcode dob select_for_matching]
+        columns: %i[name postcode year_group select_for_matching]
       )
     end
 
@@ -88,20 +96,22 @@ describe AppSessionPatientTableComponent, type: :component do
 
   describe "columns parameter" do
     context "is not set" do
-      let(:component) { described_class.new(**args.except(:columns)) }
+      let(:component) do
+        described_class.new(session:, patient_sessions:, section:, params:)
+      end
 
       it { should have_column("Full name") }
-      it { should have_column("Date of birth") }
+      it { should have_column("Year group") }
     end
 
     context "includes action" do
-      let(:columns) { %i[name dob action] }
+      let(:columns) { %i[name year_group action] }
 
       it { should have_column("Action needed") }
     end
 
     context "includes outcome" do
-      let(:columns) { %i[name dob outcome] }
+      let(:columns) { %i[name year_group outcome] }
 
       it { should have_column("Outcome") }
     end

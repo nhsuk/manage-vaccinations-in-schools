@@ -12,12 +12,12 @@ class ConsentsController < ApplicationController
         .patient_sessions
         .strict_loading
         .includes(
-          { consents: :parent },
           :latest_gillick_assessment,
-          :patient,
           :programmes,
           :triages,
-          :vaccination_records
+          :vaccination_records,
+          consents: :parent,
+          patient: :cohort
         )
         .sort_by { |ps| ps.patient.full_name }
 

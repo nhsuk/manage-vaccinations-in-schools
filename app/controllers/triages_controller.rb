@@ -20,12 +20,12 @@ class TriagesController < ApplicationController
         .strict_loading
         .includes(
           :programmes,
-          :patient,
           :triages,
           :latest_gillick_assessment,
           :latest_triage,
           :latest_vaccination_record,
-          :vaccination_records
+          :vaccination_records,
+          patient: :cohort
         )
         .preload(:consents)
         .order("patients.given_name", "patients.family_name")

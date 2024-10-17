@@ -11,9 +11,10 @@ class AppSessionPatientTableComponentPreview < ViewComponent::Preview
     patient_sessions.first.patient.update!(common_name: "Bobby")
 
     render AppSessionPatientTableComponent.new(
+             session: patient_sessions.first.session,
              patient_sessions:,
              caption: I18n.t("states.consent_given.title"),
-             columns: %i[name dob],
+             columns: %i[name year_group],
              route: :consent
            )
   end
@@ -31,12 +32,14 @@ class AppSessionPatientTableComponentPreview < ViewComponent::Preview
       ps.patient.update!(address_postcode: Faker::Address.postcode)
     end
 
-    consent_form =
-      create(:consent_form, programme:, session: patient_sessions.first.session)
+    session = patient_sessions.first.session
+
+    consent_form = create(:consent_form, programme:, session:)
 
     render AppSessionPatientTableComponent.new(
+             session:,
              patient_sessions:,
-             columns: %i[name postcode dob select_for_matching],
+             columns: %i[name postcode year_group select_for_matching],
              route: :matching,
              consent_form:
            )

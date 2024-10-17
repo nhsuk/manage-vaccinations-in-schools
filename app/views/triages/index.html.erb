@@ -21,10 +21,11 @@
 <% end %>
 
 <%= render AppSessionPatientTableComponent.new(
+      session: @session,
       patient_sessions: @patient_sessions,
       caption: t("patients_table.#{@current_tab}.caption",
                  children: t("children", count: @patient_sessions.count)),
-      columns: %i[name dob],
+      columns: %i[name year_group],
       section: :triage,
       params:,
     ) %>

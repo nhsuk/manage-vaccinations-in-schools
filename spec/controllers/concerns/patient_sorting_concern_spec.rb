@@ -14,15 +14,9 @@ describe PatientSortingConcern do
     end
   end
 
-  let(:alex) do
-    create(:patient, given_name: "Alex", date_of_birth: Date.new(2010, 1, 1))
-  end
-  let(:blair) do
-    create(:patient, given_name: "Blair", date_of_birth: Date.new(2010, 1, 2))
-  end
-  let(:casey) do
-    create(:patient, given_name: "Casey", date_of_birth: Date.new(2010, 1, 3))
-  end
+  let(:alex) { create(:patient, given_name: "Alex", year_group: 8) }
+  let(:blair) { create(:patient, given_name: "Blair", year_group: 9) }
+  let(:casey) { create(:patient, given_name: "Casey", year_group: 10) }
 
   let(:programme) { create(:programme) }
   let(:session) { create(:session, programme:) }
@@ -110,8 +104,8 @@ describe PatientSortingConcern do
       end
     end
 
-    context "when filtering by date of birth" do
-      let(:params) { { dob: "02/01/2010" } }
+    context "when filtering by year group" do
+      let(:params) { { year_groups: %w[9] } }
 
       it "filters patient sessions by date of birth" do
         subject.filter_patients!(patient_sessions)
@@ -121,7 +115,7 @@ describe PatientSortingConcern do
     end
 
     context "when filtering by name and date of birth" do
-      let(:params) { { name: "Alex", dob: "01/01/2010" } }
+      let(:params) { { name: "Alex", year_groups: %w[8] } }
 
       it "filters patient sessions by both name and date of birth" do
         subject.filter_patients!(patient_sessions)

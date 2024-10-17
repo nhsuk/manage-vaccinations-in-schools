@@ -3,12 +3,6 @@
 module PatientSortingConcern
   extend ActiveSupport::Concern
 
-  SORT_MAPPING = {
-    "name" => "patient.full_name",
-    "dob" => "patient.date_of_birth",
-    "outcome" => "state"
-  }.freeze
-
   def sort_and_filter_patients!(patient_sessions)
     sort_patients!(patient_sessions)
     filter_patients!(patient_sessions)
@@ -17,8 +11,17 @@ module PatientSortingConcern
   def sort_patients!(patient_sessions)
     return if params[:sort].blank?
 
-    method_path = SORT_MAPPING[params[:sort]]
-    patient_sessions.sort_by! { deep_send(_1, method_path) }
+    case params[:sort]
+    when "name"
+      patient_sessions.sort_by! { _1.patient.full_name }
+    when "outcome"
+      patient_sessions.sort_by!(&:state)
+    when "year_group"
+      patient_sessions.sort_by! do
+        [_1.patient.year_group, _1.patient.registration]
+      end
+    end
+
     patient_sessions.reverse! if params[:direction] == "desc"
   end
 
@@ -29,9 +32,9 @@ module PatientSortingConcern
       end
     end
 
-    if params[:dob].present?
+    if params[:year_groups].present?
       patient_sessions.select! do
-        _1.patient.date_of_birth.to_fs(:uk_short).include?(params[:dob])
+        _1.patient.year_group.to_s.in?(params[:year_groups])
       end
     end
   end
