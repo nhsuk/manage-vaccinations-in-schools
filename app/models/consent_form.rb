@@ -305,7 +305,8 @@ class ConsentForm < ApplicationRecord
   end
 
   def scheduled_session
-    Session.where(team:, location:).has_programme(programme).scheduled.first
+    @scheduled_session ||=
+      Session.scheduled.has_programme(programme).find_by(team:, location:)
   end
 
   def find_or_create_parent_with_relationship_to(patient:)
@@ -350,24 +351,22 @@ class ConsentForm < ApplicationRecord
     !school_confirmed
   end
 
-  def match_with_patient_session!(patient_session)
-    patient = patient_session.patient
-
+  def match_with_patient!(patient)
     ActiveRecord::Base.transaction do
       if school && school != patient.school
         patient.update!(school:)
 
-        patient_session.destroy!
+        patient.patient_sessions.find_by(session: scheduled_session)&.destroy!
 
-        session =
+        upcoming_session =
           Session
-            .where(team:, location: school)
+            .upcoming
             .has_programme(programme)
-            .scheduled
-            .or(Session.unscheduled)
-            .first
+            .find_by(team:, location: school)
 
-        PatientSession.find_or_create_by!(patient:, session:) if session
+        if upcoming_session
+          patient.patient_sessions.find_or_create_by!(session: upcoming_session)
+        end
       end
 
       Consent.from_consent_form!(self, patient:)

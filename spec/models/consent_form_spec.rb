@@ -714,18 +714,15 @@ describe ConsentForm do
     end
   end
 
-  describe "#match_with_patient_session!" do
-    subject(:match_with_patient_session!) do
-      consent_form.match_with_patient_session!(patient_session)
-    end
+  describe "#match_with_patient!" do
+    subject(:match_with_patient!) { consent_form.match_with_patient!(patient) }
 
     let(:programme) { create(:programme) }
     let(:team) { create(:team, programmes: [programme]) }
 
     let(:school) { create(:location, :school) }
-    let(:patient) { create(:patient, school:) }
     let(:session) { create(:session, team:, programme:, location: school) }
-    let!(:patient_session) { create(:patient_session, patient:, session:) }
+    let(:patient) { create(:patient, school:, session:) }
 
     context "when consent form confirms the school" do
       let(:consent_form) do
@@ -733,11 +730,11 @@ describe ConsentForm do
       end
 
       it "creates a consent" do
-        expect { match_with_patient_session! }.to change(Consent, :count).by(1)
+        expect { match_with_patient! }.to change(Consent, :count).by(1)
       end
 
       it "doesn't change the patient's school" do
-        expect { match_with_patient_session! }.not_to change(patient, :school)
+        expect { match_with_patient! }.not_to change(patient, :school)
       end
     end
 
@@ -758,24 +755,24 @@ describe ConsentForm do
       end
 
       it "creates a consent" do
-        expect { match_with_patient_session! }.to change(Consent, :count).by(1)
+        expect { match_with_patient! }.to change(Consent, :count).by(1)
       end
 
       it "changes the patient's school" do
-        expect { match_with_patient_session! }.to change(patient, :school).from(
+        expect { match_with_patient! }.to change(patient, :school).from(
           school
         ).to(new_school)
       end
 
       it "removes the patient from the old session" do
         expect(patient.sessions).to contain_exactly(session)
-        match_with_patient_session!
+        match_with_patient!
         expect(patient.reload.sessions).not_to include(session)
       end
 
       it "adds the patient to the new session" do
         expect(patient.sessions).not_to include(new_session)
-        match_with_patient_session!
+        match_with_patient!
         expect(patient.reload.sessions).to contain_exactly(new_session)
       end
     end
