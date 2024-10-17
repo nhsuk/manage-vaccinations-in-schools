@@ -364,7 +364,7 @@ class ConsentForm < ApplicationRecord
             .has_programme(programme)
             .find_by(team:, location: school)
 
-        if upcoming_session
+        if upcoming_session && patient.date_of_death.nil?
           patient.patient_sessions.find_or_create_by!(session: upcoming_session)
         end
       end
