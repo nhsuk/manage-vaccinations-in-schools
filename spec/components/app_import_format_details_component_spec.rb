@@ -38,6 +38,7 @@ describe AppImportFormatDetailsComponent, type: :component do
     expect(page).to have_content("CHILD_LAST_NAME")
     expect(page).to have_content("CHILD_DATE_OF_BIRTH")
     expect(page).to have_content("CHILD_POSTCODE")
+    expect(page).to have_content("CHILD_REGISTRATION")
     expect(page).to have_content("PARENT_1_NAME")
     expect(page).to have_content("PARENT_2_NAME")
   end
@@ -50,6 +51,7 @@ describe AppImportFormatDetailsComponent, type: :component do
     expect(page).to have_content("CHILD_DATE_OF_BIRTH")
     expect(page).to have_content("CHILD_SCHOOL_URN")
     expect(page).to have_content("CHILD_POSTCODE")
+    expect(page).to have_content("CHILD_REGISTRATION")
     expect(page).to have_content("PARENT_1_NAME")
     expect(page).to have_content("PARENT_2_NAME")
   end
