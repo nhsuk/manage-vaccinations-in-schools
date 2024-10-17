@@ -46,7 +46,6 @@ describe AppPatientSummaryComponent do
 
   it { should have_content("Date of birth") }
   it { should have_content("1 January 2000") }
-  it { should have_content(/Year [0-9]+/) }
 
   it { should have_content("Gender") }
   it { should have_content("Male") }
@@ -64,6 +63,9 @@ describe AppPatientSummaryComponent do
 
   it { should have_content("School") }
   it { should have_content("Test School") }
+
+  it { should have_content("Year group") }
+  it { should have_content(/Year [0-9]+/) }
 
   context "when showing parents or guardians" do
     let(:component) do

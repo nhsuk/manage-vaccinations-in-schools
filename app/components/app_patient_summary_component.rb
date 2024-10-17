@@ -55,6 +55,10 @@ class AppPatientSummaryComponent < ViewComponent::Base
         row.with_key { "School" }
         row.with_value { format_school }
       end
+      summary_list.with_row do |row|
+        row.with_key { "Year group" }
+        row.with_value { format_year_group }
+      end
       if @show_parent_or_guardians && @patient.parent_relationships.present?
         summary_list.with_row do |row|
           row.with_key do
@@ -84,8 +88,8 @@ class AppPatientSummaryComponent < ViewComponent::Base
 
   def format_date_of_birth
     highlight_if(
-      "#{@patient.date_of_birth.to_fs(:long)} (#{helpers.format_year_group(@patient.year_group)})",
-      @patient.date_of_birth_changed? || @patient.cohort_id_changed?
+      helpers.patient_date_of_birth(@patient),
+      @patient.date_of_birth_changed?
     )
   end
 
@@ -109,6 +113,13 @@ class AppPatientSummaryComponent < ViewComponent::Base
 
   def format_school
     highlight_if(@patient.school&.name, @patient.school_id_changed?)
+  end
+
+  def format_year_group
+    highlight_if(
+      helpers.patient_year_group(@patient),
+      @patient.cohort_id_changed? || @patient.registration_changed?
+    )
   end
 
   def format_parent_or_guardians
