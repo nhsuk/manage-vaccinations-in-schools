@@ -173,10 +173,6 @@ describe ImmunisationImport do
         expect(immunisation_import.exact_duplicate_record_count).to eq(7)
       end
 
-      it "records the patients" do
-        expect { record! }.to change(Patient.recorded, :count).from(0).to(7)
-      end
-
       it "records the vaccination records" do
         expect { record! }.to change(VaccinationRecord.recorded, :count).from(
           0
@@ -250,10 +246,6 @@ describe ImmunisationImport do
         expect(session.dates.map(&:value)).to contain_exactly(
           Date.new(2024, 5, 14)
         )
-      end
-
-      it "records the patients" do
-        expect { record! }.to change(Patient.recorded, :count).from(0).to(10)
       end
 
       it "records the vaccination records" do

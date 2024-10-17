@@ -15,7 +15,6 @@ class CohortsController < ApplicationController
         .select("cohorts.*", "COUNT(patients.id) AS patient_count")
         .for_year_groups(year_groups)
         .left_outer_joins(:patients)
-        .merge(Patient.recorded)
         .group("cohorts.id")
         .index_by(&:year_group)
 
@@ -28,8 +27,7 @@ class CohortsController < ApplicationController
 
   def show
     @cohort = policy_scope(Cohort).find(params[:id])
-    @pagy, @patients =
-      pagy(@cohort.patients.recorded.includes(:school).order_by_name)
+    @pagy, @patients = pagy(@cohort.patients.includes(:school).order_by_name)
   end
 
   private
