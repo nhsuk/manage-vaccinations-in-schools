@@ -38,10 +38,4 @@ module PatientSortingConcern
       end
     end
   end
-
-  private
-
-  def deep_send(object, method_path)
-    method_path.split(".").reduce(object) { |o, m| o.send(m) }
-  end
 end
