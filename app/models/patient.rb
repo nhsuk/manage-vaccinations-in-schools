@@ -190,6 +190,10 @@ class Patient < ApplicationRecord
         self.date_of_death_recorded_at = Time.current
       end
 
+      # If we've got a response from DPS we know the patient is valid,
+      # otherwise PDS will return a 404 status.
+      self.invalidated_at = nil
+
       if pds_patient.restricted
         self.restricted_at = Time.current unless restricted?
       else
@@ -197,6 +201,15 @@ class Patient < ApplicationRecord
       end
 
       save! if changed?
+    end
+  end
+
+  def invalidate!
+    return if invalidated?
+
+    ActiveRecord::Base.transaction do
+      upcoming_sessions.clear
+      update!(invalidated_at: Time.current)
     end
   end
 

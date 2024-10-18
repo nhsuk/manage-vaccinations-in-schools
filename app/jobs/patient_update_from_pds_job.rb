@@ -30,6 +30,8 @@ class PatientUpdateFromPDSJob < ApplicationJob
     else
       patient.update_from_pds!(pds_patient)
     end
+  rescue NHS::PDS::InvalidatedResource
+    patient.invalidate!
   end
 
   class MissingNHSNumber < StandardError
