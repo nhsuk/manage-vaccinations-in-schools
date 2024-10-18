@@ -18,6 +18,7 @@ describe ConsentRequestsJob do
     create(:patient, :consent_given_triage_not_needed, programme:)
   end
   let(:deceased_patient) { create(:patient, :deceased) }
+  let(:invalid_patient) { create(:patient, :invalidated) }
   let(:restricted_patient) { create(:patient, :restricted) }
 
   let!(:patients) do
@@ -26,6 +27,7 @@ describe ConsentRequestsJob do
       patient_not_sent_request,
       patient_with_consent,
       deceased_patient,
+      invalid_patient,
       restricted_patient
     ]
   end
