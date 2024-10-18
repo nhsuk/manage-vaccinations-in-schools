@@ -29,6 +29,8 @@ class ApplicationController < ActionController::Base
 
   layout "two_thirds"
 
+  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+
   private
 
   def set_header_path
@@ -57,5 +59,10 @@ class ApplicationController < ActionController::Base
     return unless Flipper.enabled?(:sso_session) && current_user
 
     current_user.sso_session = session["cis2_info"]
+  end
+
+  def user_not_authorized
+    flash[:alert] = "You are not authorized to perform this action."
+    redirect_to(request.referer || root_path, status: :forbidden)
   end
 end
