@@ -21,7 +21,7 @@ class AppConsentPatientSummaryComponent < ViewComponent::Base
         row.with_value { patient.date_of_birth.to_fs(:long) }
       end
 
-      if (consent_form = consent.consent_form)
+      if !consent.restricted? && (consent_form = consent.consent_form)
         summary_list.with_row do |row|
           row.with_key { "Home address" }
           row.with_value { helpers.format_address_multi_line(consent_form) }

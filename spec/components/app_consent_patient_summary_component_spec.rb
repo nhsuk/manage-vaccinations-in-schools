@@ -19,6 +19,8 @@ describe AppConsentPatientSummaryComponent do
       session:
     )
   end
+
+  let(:restricted) { false }
   let(:patient) do
     create(
       :patient,
@@ -26,7 +28,8 @@ describe AppConsentPatientSummaryComponent do
       family_name: "Doe",
       date_of_birth: Date.new(2000, 1, 1),
       school:,
-      team:
+      team:,
+      restricted_at: restricted ? Time.current : nil
     )
   end
 
@@ -44,4 +47,14 @@ describe AppConsentPatientSummaryComponent do
 
   it { should have_content("School") }
   it { should have_content("Waterloo Road") }
+
+  context "with a restricted patient" do
+    let(:restricted) { true }
+
+    it { should_not have_content("GP surgery") }
+    it { should_not have_content("Waterloo GP") }
+
+    it { should_not have_content("Home address") }
+    it { should_not have_content("SW1A 1AA") }
+  end
 end
