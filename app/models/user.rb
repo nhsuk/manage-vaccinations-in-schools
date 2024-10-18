@@ -28,6 +28,8 @@
 class User < ApplicationRecord
   include FullNameConcern
 
+  attr_accessor :sso_session
+
   devise :database_authenticatable,
          :trackable,
          :timeoutable,
@@ -83,5 +85,20 @@ class User < ApplicationRecord
     user.email = userinfo[:info][:email]
 
     user.tap(&:save!)
+  end
+
+  def is_medical_secretary?
+    return false unless Flipper.enabled?(:cis2)
+
+    role_codes = sso_session.dig("selected_role", "code")
+    role_codes.include?("R8006")
+  end
+
+  def is_nurse?
+    # All users are nurses if cis2 is disabled
+    return true unless Flipper.enabled?(:cis2)
+
+    role_codes = sso_session.dig("selected_role", "code")
+    role_codes.include?("R8001")
   end
 end
