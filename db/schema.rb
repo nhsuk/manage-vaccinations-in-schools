@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_18_082944) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_18_123334) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -496,6 +496,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_18_082944) do
     t.date "date_of_death"
     t.datetime "date_of_death_recorded_at"
     t.datetime "restricted_at"
+    t.datetime "invalidated_at"
     t.index ["cohort_id"], name: "index_patients_on_cohort_id"
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
     t.index ["school_id"], name: "index_patients_on_school_id"
