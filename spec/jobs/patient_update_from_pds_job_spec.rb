@@ -13,6 +13,15 @@ describe PatientUpdateFromPDSJob do
     end
   end
 
+  context "invalidated patient" do
+    let!(:patient) { create(:patient, :invalidated) }
+
+    it "doesn't update the patient" do
+      expect(patient).not_to receive(:update_from_pds!)
+      perform_now
+    end
+  end
+
   context "with an NHS number" do
     context "when the patient is valid" do
       before do
