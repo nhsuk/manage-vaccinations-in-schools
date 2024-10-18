@@ -169,7 +169,7 @@ class Patient < ApplicationRecord
 
     if date_of_death_changed?
       upcoming_sessions.clear unless date_of_death.nil?
-
+      self.date_of_death_recorded_at = Time.current
       save!
     end
   end
