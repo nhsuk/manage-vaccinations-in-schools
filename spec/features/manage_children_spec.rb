@@ -19,9 +19,11 @@ describe "Manage children" do
     then_i_see_no_notices
 
     when_a_deceased_patient_exists
+    and_an_invalid_patient_exists
     and_a_restricted_patient_exists
     and_i_click_on_notices
     then_i_see_the_notice_of_date_of_death
+    and_i_see_the_notice_of_invalid
     and_i_see_the_notice_of_sensitive
   end
 
@@ -36,6 +38,10 @@ describe "Manage children" do
 
   def when_a_deceased_patient_exists
     @deceased_patient = create(:patient, :deceased, team: @team)
+  end
+
+  def and_an_invalid_patient_exists
+    @invalidated_patient = create(:patient, :invalidated, team: @team)
   end
 
   def and_a_restricted_patient_exists
@@ -78,6 +84,11 @@ describe "Manage children" do
   def then_i_see_the_notice_of_date_of_death
     expect(page).to have_content(@deceased_patient.full_name)
     expect(page).to have_content("Record updated with child’s date of death")
+  end
+
+  def and_i_see_the_notice_of_invalid
+    expect(page).to have_content(@invalidated_patient.full_name)
+    expect(page).to have_content("Record flagged as invalid")
   end
 
   def and_i_see_the_notice_of_sensitive
