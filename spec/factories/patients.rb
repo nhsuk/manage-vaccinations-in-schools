@@ -22,6 +22,7 @@
 #  original_given_name       :string           not null
 #  pending_changes           :jsonb            not null
 #  registration              :string
+#  restricted_at             :datetime
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  cohort_id                 :bigint
