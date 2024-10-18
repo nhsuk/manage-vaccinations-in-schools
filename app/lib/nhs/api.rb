@@ -20,7 +20,7 @@ module NHS::API
       return false if @auth_info.blank?
 
       epoch_msec = Time.zone.now.strftime("%Q").to_i
-      safety_msec = 1000 # safety to accommodate connection time
+      safety_msec = 1500 # safety to accommodate connection time
       epoch_msec + safety_msec < @auth_info[:expires_at]
     end
 
