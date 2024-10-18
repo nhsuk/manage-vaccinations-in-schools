@@ -261,6 +261,38 @@ describe Patient do
     end
   end
 
+  describe "#invalidate!" do
+    subject(:invalidate!) { patient.invalidate! }
+
+    let(:patient) { create(:patient) }
+
+    it "marks the patient as invalidated" do
+      expect { invalidate! }.to change(patient, :invalidated?).from(false).to(
+        true
+      )
+    end
+
+    it "sets the date/time of when the patient was invalidated" do
+      freeze_time do
+        expect { invalidate! }.to change(patient, :invalidated_at).from(nil).to(
+          Time.current
+        )
+      end
+    end
+
+    context "when in an upcoming session" do
+      let(:session) { create(:session, :scheduled) }
+
+      before { create(:patient_session, patient:, session:) }
+
+      it "removes the patient from the session" do
+        expect(session.patients).to include(patient)
+        invalidate!
+        expect(session.patients).not_to include(patient)
+      end
+    end
+  end
+
   describe "#stage_changes" do
     let(:patient) { create(:patient, given_name: "John", family_name: "Doe") }
 
