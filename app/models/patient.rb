@@ -79,6 +79,9 @@ class Patient < ApplicationRecord
   scope :not_deceased, -> { where(date_of_death: nil) }
   scope :deceased, -> { where.not(date_of_death: nil) }
 
+  scope :not_restricted, -> { where(restricted_at: nil) }
+  scope :restricted, -> { where.not(restricted_at: nil) }
+
   validates :given_name, :family_name, :date_of_birth, presence: true
 
   validates :nhs_number,
@@ -158,20 +161,33 @@ class Patient < ApplicationRecord
     date_of_death != nil
   end
 
+  def restricted?
+    restricted_at != nil
+  end
+
   def update_from_pds!(pds_patient)
     if nhs_number.nil? || nhs_number != pds_patient["id"]
       raise NHSNumberMismatch
     end
 
-    self.date_of_death =
-      if (deceased_date_time = pds_patient["deceasedDateTime"]).present?
-        Time.zone.parse(deceased_date_time).to_date
+    ActiveRecord::Base.transaction do
+      self.date_of_death =
+        if (deceased_date_time = pds_patient["deceasedDateTime"]).present?
+          Time.zone.parse(deceased_date_time).to_date
+        end
+
+      if date_of_death_changed?
+        upcoming_sessions.clear unless date_of_death.nil?
+        self.date_of_death_recorded_at = Time.current
       end
 
-    if date_of_death_changed?
-      upcoming_sessions.clear unless date_of_death.nil?
-      self.date_of_death_recorded_at = Time.current
-      save!
+      if pds_patient.dig("meta", "security")&.any? { _1["code"] == "R" }
+        self.restricted_at = Time.current unless restricted?
+      else
+        self.restricted_at = nil
+      end
+
+      save! if changed?
     end
   end
 

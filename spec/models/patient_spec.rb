@@ -197,6 +197,10 @@ describe Patient do
       expect { update_from_pds! }.not_to change(patient, :date_of_death)
     end
 
+    it "doesn't flag as restricted" do
+      expect { update_from_pds! }.not_to change(patient, :restricted_at)
+    end
+
     context "when the NHS number doesn't match" do
       let(:pds_patient) { { "id" => "abc" } }
 
@@ -234,6 +238,25 @@ describe Patient do
           expect(session.patients).to include(patient)
           update_from_pds!
           expect(session.patients).not_to include(patient)
+        end
+      end
+    end
+
+    context "with a restricted flag" do
+      let(:pds_patient) do
+        {
+          "id" => "0123456789",
+          "meta" => {
+            "security" => [{ "code" => "R" }]
+          }
+        }
+      end
+
+      it "sets restricted at" do
+        freeze_time do
+          expect { update_from_pds! }.to change(patient, :restricted_at).from(
+            nil
+          ).to(Time.current)
         end
       end
     end

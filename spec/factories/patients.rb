@@ -114,6 +114,10 @@ FactoryBot.define do
       date_of_death_recorded_at { Time.current }
     end
 
+    trait :restricted do
+      restricted_at { Time.current }
+    end
+
     trait :consent_request_sent do
       after(:create) do |patient, context|
         create(
