@@ -7,7 +7,7 @@ module TriageMailerConcern
     session = patient_session.session
     patient = patient_session.patient
 
-    return if patient.deceased?
+    return unless patient.send_notifications?
 
     if vaccination_will_happen?(patient_session, consent)
       TriageMailer

@@ -41,7 +41,7 @@ class SessionRemindersJob < ApplicationJob
   end
 
   def should_send_notification?(patient_session)
-    !patient_session.patient.deceased? &&
+    patient_session.patient.send_notifications? &&
       !patient_session.vaccination_administered?
   end
 end

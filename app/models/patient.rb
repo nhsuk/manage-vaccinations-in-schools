@@ -165,6 +165,10 @@ class Patient < ApplicationRecord
     restricted_at != nil
   end
 
+  def send_notifications?
+    !deceased? && !restricted?
+  end
+
   def update_from_pds!(pds_patient)
     if nhs_number.nil? || nhs_number != pds_patient["id"]
       raise NHSNumberMismatch
