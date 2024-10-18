@@ -15,6 +15,8 @@ class ApplicationController < ActionController::Base
 
   after_action :verify_policy_scoped,
                if: -> { Rails.env.development? || Rails.env.test? }
+  after_action :verify_authorized,
+               if: -> { Rails.env.development? || Rails.env.test? }
 
   class UnprocessableEntity < StandardError
   end
