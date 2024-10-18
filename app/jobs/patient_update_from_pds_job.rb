@@ -8,7 +8,7 @@ class PatientUpdateFromPDSJob < ApplicationJob
   def perform(patient)
     raise MissingNHSNumber if patient.nhs_number.nil?
 
-    pds_patient = NHS::PDS.get_patient(patient.nhs_number).body
+    pds_patient = PDS::Patient.find(patient.nhs_number)
     patient.update_from_pds!(pds_patient)
   end
 

@@ -1,15 +1,23 @@
 # frozen_string_literal: true
 
 class ConsentFormMatchingJob < ApplicationJob
-  include PDSPatientLookupConcern
+  include NHSAPIConcurrencyConcern
 
   queue_as :consents
 
   def perform(consent_form)
-    pds_patient = find_pds_patient(consent_form)
+    query = {
+      given_name: consent_form.given_name,
+      family_name: consent_form.family_name,
+      date_of_birth: consent_form.date_of_birth,
+      address_postcode: consent_form.address_postcode
+    }
+
+    pds_patient = PDS::Patient.search(**query)
 
     # Search globally if we have an NHS number
-    if pds_patient && (patient = Patient.find_by(nhs_number: pds_patient["id"]))
+    if pds_patient &&
+         (patient = Patient.find_by(nhs_number: pds_patient.nhs_number))
       patient.update_from_pds!(pds_patient)
       consent_form.match_with_patient!(patient)
       return
@@ -18,14 +26,7 @@ class ConsentFormMatchingJob < ApplicationJob
     # Search in the scheduled session if not
     session = consent_form.scheduled_session
 
-    patients =
-      session.patients.match_existing(
-        nhs_number: nil,
-        given_name: consent_form.given_name,
-        family_name: consent_form.family_name,
-        date_of_birth: consent_form.date_of_birth,
-        address_postcode: consent_form.address_postcode
-      )
+    patients = session.patients.match_existing(nhs_number: nil, **query)
 
     return if patients.count != 1
 
@@ -34,7 +35,7 @@ class ConsentFormMatchingJob < ApplicationJob
     if pds_patient
       if patient.nhs_number.nil?
         # TODO: Can we take this opportunity to set the NHS number on the patient?
-      elsif patient.nhs_number != nhs_number
+      elsif patient.nhs_number != pds_patient.nhs_number
         # We found a patient in PDS and we found one in Mavis using the same search
         # query, but the NHS numbers don't match.
         raise Patient::NHSNumberMismatch

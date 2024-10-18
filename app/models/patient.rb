@@ -170,22 +170,19 @@ class Patient < ApplicationRecord
   end
 
   def update_from_pds!(pds_patient)
-    if nhs_number.nil? || nhs_number != pds_patient["id"]
+    if nhs_number.nil? || nhs_number != pds_patient.nhs_number
       raise NHSNumberMismatch
     end
 
     ActiveRecord::Base.transaction do
-      self.date_of_death =
-        if (deceased_date_time = pds_patient["deceasedDateTime"]).present?
-          Time.zone.parse(deceased_date_time).to_date
-        end
+      self.date_of_death = pds_patient.date_of_death
 
       if date_of_death_changed?
         upcoming_sessions.clear unless date_of_death.nil?
         self.date_of_death_recorded_at = Time.current
       end
 
-      if pds_patient.dig("meta", "security")&.any? { _1["code"] == "R" }
+      if pds_patient.restricted
         self.restricted_at = Time.current unless restricted?
       else
         self.restricted_at = nil
