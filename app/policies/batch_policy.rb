@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class BatchPolicy
+class BatchPolicy < ApplicationPolicy
   class Scope
     def initialize(user, scope)
       @user = user

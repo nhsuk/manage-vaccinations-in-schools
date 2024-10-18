@@ -11,8 +11,6 @@ class TriagesController < ApplicationController
   before_action :set_triage, only: %i[create new]
   before_action :set_section_and_tab, only: %i[create new]
 
-  after_action :verify_policy_scoped, only: %i[index create new]
-
   def index
     all_patient_sessions =
       @session

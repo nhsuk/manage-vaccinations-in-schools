@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ConsentFormPolicy
+class ConsentFormPolicy < ApplicationPolicy
   class Scope
     def initialize(user, scope)
       @user = user

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ImmunisationImportPolicy
+class ImmunisationImportPolicy < ApplicationPolicy
   class Scope
     def initialize(user, scope)
       @user = user

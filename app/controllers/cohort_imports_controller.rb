@@ -7,17 +7,17 @@ class CohortImportsController < ApplicationController
   before_action :set_cohort_import, only: %i[show update]
 
   def new
-    @cohort_import = CohortImport.new
+    @cohort_import = authorize CohortImport.new
   end
 
   def create
     @cohort_import =
-      CohortImport.new(
-        programme: @programme,
-        team: current_user.team,
-        uploaded_by: current_user,
-        **cohort_import_params
-      )
+      authorize CohortImport.new(
+                  programme: @programme,
+                  team: current_user.team,
+                  uploaded_by: current_user,
+                  **cohort_import_params
+                )
 
     @cohort_import.load_data!
     if @cohort_import.invalid?
@@ -42,6 +42,8 @@ class CohortImportsController < ApplicationController
 
     @pagy, @patients = pagy(@cohort_import.patients.includes(:school))
 
+    authorize @cohort_import
+
     render template: "imports/show",
            layout: "full",
            locals: {
@@ -51,6 +53,8 @@ class CohortImportsController < ApplicationController
 
   def update
     @cohort_import.record!
+
+    authorize @cohort_import
 
     redirect_to programme_cohort_import_path(@programme, @cohort_import)
   end
