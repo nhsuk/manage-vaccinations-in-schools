@@ -57,6 +57,22 @@ describe AppSessionPatientTableComponent do
     end
   end
 
+  describe "when the patient is restricted" do
+    let(:patient_sessions) do
+      [
+        create(
+          :patient_session,
+          programme:,
+          patient: create(:patient, :restricted, address_postcode: "SW11 1AA")
+        )
+      ]
+    end
+
+    it "doesn't show the postcode" do
+      expect(rendered).not_to have_text("SW11 1AA")
+    end
+  end
+
   it { should have_css(".nhsuk-table__body") }
   it { should have_css(".nhsuk-table__body .nhsuk-table__row", count: 2) }
   it { should have_link(patient_sessions.first.patient.full_name) }

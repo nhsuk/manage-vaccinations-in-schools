@@ -46,15 +46,17 @@ class AppPatientSummaryComponent < ViewComponent::Base
         row.with_key { "Gender" }
         row.with_value { format_gender_code }
       end
-      if @show_address
-        summary_list.with_row do |row|
-          row.with_key { "Address" }
-          row.with_value { format_address }
-        end
-      else
-        summary_list.with_row do |row|
-          row.with_key { "Postcode" }
-          row.with_value { format_postcode }
+      unless @patient.restricted?
+        if @show_address
+          summary_list.with_row do |row|
+            row.with_key { "Address" }
+            row.with_value { format_address }
+          end
+        else
+          summary_list.with_row do |row|
+            row.with_key { "Postcode" }
+            row.with_value { format_postcode }
+          end
         end
       end
       summary_list.with_row do |row|
@@ -65,7 +67,8 @@ class AppPatientSummaryComponent < ViewComponent::Base
         row.with_key { "Year group" }
         row.with_value { format_year_group }
       end
-      if @show_parent_or_guardians && @patient.parent_relationships.present?
+      if @show_parent_or_guardians && !@patient.restricted? &&
+           @patient.parent_relationships.present?
         summary_list.with_row do |row|
           row.with_key do
             "Parent or guardian".pluralize(@patient.parent_relationships.count)
@@ -142,6 +145,9 @@ class AppPatientSummaryComponent < ViewComponent::Base
           tag.li do
             [
               "#{parent_relationship.parent.full_name} (#{parent_relationship.label})",
+              if (email = parent_relationship.parent.email).present?
+                tag.span(email, class: "nhsuk-u-secondary-text-color")
+              end,
               if (phone = parent_relationship.parent.phone).present?
                 tag.span(phone, class: "nhsuk-u-secondary-text-color")
               end

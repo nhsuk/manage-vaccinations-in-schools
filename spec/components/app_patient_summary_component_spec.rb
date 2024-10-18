@@ -7,6 +7,7 @@ describe AppPatientSummaryComponent do
   let(:school) { create(:location, :school, name: "Test School") }
   let(:other_school) { create(:location, :school, name: "Other School") }
   let(:parent) { create(:parent, full_name: "Mark Doe") }
+  let(:restricted) { false }
   let(:patient) do
     create(
       :patient,
@@ -18,6 +19,7 @@ describe AppPatientSummaryComponent do
       address_line_1: "10 Downing Street",
       address_postcode: "SW1A 1AA",
       school:,
+      restricted_at: restricted ? Time.current : nil,
       pending_changes: {
         given_name: "Jane",
         date_of_birth: Date.new(2001, 1, 1),
@@ -53,12 +55,26 @@ describe AppPatientSummaryComponent do
   it { should have_content("Postcode") }
   it { should have_content("SW1A 1AA") }
 
+  context "when the patient is restricted" do
+    let(:restricted) { true }
+
+    it { should_not have_content("Postcode") }
+    it { should_not have_content("SW1A 1AA") }
+  end
+
   context "when showing the address" do
     let(:component) { described_class.new(patient, show_address: true) }
 
     it { should_not have_content("Postcode") }
     it { should have_content("Address") }
     it { should have_content("10 Downing Street") }
+
+    context "when the patient is restricted" do
+      let(:restricted) { true }
+
+      it { should_not have_content("Address") }
+      it { should_not have_content("10 Downing Street") }
+    end
   end
 
   it { should have_content("School") }
@@ -74,6 +90,13 @@ describe AppPatientSummaryComponent do
 
     it { should have_content("Parent or guardian") }
     it { should have_content("Mark Doe (Dad)") }
+
+    context "when the patient is restricted" do
+      let(:restricted) { true }
+
+      it { should_not have_content("Parent or guardian") }
+      it { should_not have_content("Mark Doe (Dad)") }
+    end
   end
 
   it { should_not have_css(".app-highlight") }
@@ -86,5 +109,11 @@ describe AppPatientSummaryComponent do
     it { should have_css(".app-highlight", text: "SW1A 2AA") }
     it { should_not have_css(".app-highlight", text: "Male") }
     it { should have_css(".app-highlight", text: "Other School") }
+
+    context "when the patient is restricted" do
+      let(:restricted) { true }
+
+      it { should_not have_content("SW1A 2AA") }
+    end
   end
 end

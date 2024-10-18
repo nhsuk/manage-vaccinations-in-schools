@@ -14,8 +14,17 @@ describe AppPatientTableComponent do
         nhs_number: "9999999999",
         date_of_birth: Date.new(2000, 5, 28),
         address_postcode: "SW1A 1AA"
+      ),
+      create(
+        :patient,
+        :restricted,
+        given_name: "Jenny",
+        family_name: "Smith",
+        nhs_number: "9999999998",
+        date_of_birth: Date.new(2000, 5, 28),
+        address_postcode: "SW1B 1AA"
       )
-    ] + create_list(:patient, 9)
+    ] + create_list(:patient, 8)
   end
 
   let(:count) { 10 }
@@ -46,5 +55,9 @@ describe AppPatientTableComponent do
     )
     expect(rendered).to have_css(".nhsuk-table__cell", text: "28 May 2000")
     expect(rendered).to have_css(".nhsuk-table__cell", text: "SW1A 1AA")
+  end
+
+  it "doesn't show postcode of restricted patients" do
+    expect(rendered).not_to have_text("SW1B 1AA")
   end
 end
