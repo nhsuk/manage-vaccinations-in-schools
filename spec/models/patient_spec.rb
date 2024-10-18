@@ -215,6 +215,15 @@ describe Patient do
         )
       end
 
+      it "sets the date of death recorded at" do
+        freeze_time do
+          expect { update_from_pds! }.to change(
+            patient,
+            :date_of_death_recorded_at
+          ).from(nil).to(Time.current)
+        end
+      end
+
       context "when in an upcoming session" do
         let(:session) { create(:session, :scheduled) }
 
