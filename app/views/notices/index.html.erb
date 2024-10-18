@@ -1,7 +1,7 @@
 <%= h1 t("notices.index.title"), size: "xl" %>
 
 <% if @deceased_patients.any? %>
-  <%= render AppNoticesTableComponent.new(deceased_patients: @deceased_patients) %>
+  <%= render AppNoticesTableComponent.new(deceased_patients: @deceased_patients, restricted_patients: @restricted_patients) %>
 <% else %>
   <p class="nhsuk-body"><%= t("notices.index.no_results") %></p>
 <% end %>
