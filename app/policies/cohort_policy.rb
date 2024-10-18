@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CohortPolicy
+class CohortPolicy < ApplicationPolicy
   class Scope
     def initialize(user, scope)
       @user = user
