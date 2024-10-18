@@ -1,15 +1,30 @@
 # frozen_string_literal: true
 
 describe "Manage children" do
+  before { given_my_team_exists }
+
   scenario "Viewing children" do
-    given_my_team_exists
-    and_patients_exist
+    given_patients_exist
 
     when_i_click_on_children
     then_i_see_the_children
 
     when_i_click_on_a_child
     then_i_see_the_child
+  end
+
+  scenario "Removing a child from a cohort" do
+    given_patients_exist
+
+    when_i_click_on_children
+    and_i_click_on_a_child
+    then_i_see_the_child
+    and_i_see_the_cohort
+
+    when_i_click_on_remove_from_cohort
+    then_i_see_the_child
+    and_i_see_a_removed_from_cohort_message
+    and_no_longer_see_the_cohort
   end
 
   scenario "Viewing important notices" do
@@ -29,9 +44,16 @@ describe "Manage children" do
     @team = create(:team, :with_one_nurse)
   end
 
-  def and_patients_exist
-    create(:patient, team: @team, given_name: "John", family_name: "Smith")
-    create_list(:patient, 9, team: @team)
+  def given_patients_exist
+    school = create(:location, :school, team: @team)
+    create(
+      :patient,
+      team: @team,
+      given_name: "John",
+      family_name: "Smith",
+      school:
+    )
+    create_list(:patient, 9, team: @team, school:)
   end
 
   def when_a_deceased_patient_exists
@@ -57,9 +79,27 @@ describe "Manage children" do
     click_on "John Smith"
   end
 
+  alias_method :and_i_click_on_a_child, :when_i_click_on_a_child
+
   def then_i_see_the_child
     expect(page).to have_title("JS")
     expect(page).to have_content("John Smith")
+  end
+
+  def and_i_see_the_cohort
+    expect(page).not_to have_content("No cohorts")
+  end
+
+  def when_i_click_on_remove_from_cohort
+    click_on "Remove from cohort"
+  end
+
+  def and_i_see_a_removed_from_cohort_message
+    expect(page).to have_content(/removed from Year ([0-9]+) cohort/)
+  end
+
+  def and_no_longer_see_the_cohort
+    expect(page).to have_content("No cohorts")
   end
 
   def when_i_click_on_notices
