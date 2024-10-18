@@ -5,7 +5,11 @@ class SessionsController < ApplicationController
 
   def index
     @sessions =
-      policy_scope(Session).includes(:dates, :location, :programmes).today
+      authorize policy_scope(Session).includes(
+                  :dates,
+                  :location,
+                  :programmes
+                ).today
 
     render layout: "full"
   end
@@ -19,6 +23,8 @@ class SessionsController < ApplicationController
           [session.dates.first.value, session.location&.name]
         end
 
+    authorize @sessions, :index?
+
     render layout: "full"
   end
 
@@ -28,6 +34,8 @@ class SessionsController < ApplicationController
         .includes(:dates, :location, :programmes)
         .unscheduled
         .order_by_location_name
+
+    authorize @sessions, :index?
 
     render layout: "full"
   end
@@ -40,6 +48,8 @@ class SessionsController < ApplicationController
         .sort_by do |session|
           [session.dates.first.value, session.location&.name]
         end
+
+    authorize @sessions, :index?
 
     render layout: "full"
   end
@@ -58,14 +68,19 @@ class SessionsController < ApplicationController
     @counts =
       SessionStats.new(patient_sessions: @patient_sessions, session: @session)
 
+    authorize @session
+
     render layout: "full"
   end
 
   def edit
+    authorize @session
   end
 
   def make_in_progress
     @session.dates.find_or_create_by!(value: Date.current)
+
+    authorize @session, :update?
 
     redirect_to session_path,
                 flash: {

@@ -4,10 +4,13 @@ class ImportsController < ApplicationController
   before_action :set_team, :set_programme
 
   def index
+    authorize :import
+
     render layout: "full"
   end
 
   def new
+    authorize :import
   end
 
   def create
@@ -20,6 +23,8 @@ class ImportsController < ApplicationController
         new_programme_import_path(@programme)
       end
     )
+
+    authorize :import
   end
 
   private

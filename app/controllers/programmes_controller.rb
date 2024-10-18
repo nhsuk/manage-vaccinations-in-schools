@@ -6,10 +6,11 @@ class ProgrammesController < ApplicationController
   layout "full"
 
   def index
-    @programmes = policy_scope(Programme)
+    @programmes = authorize policy_scope(Programme)
   end
 
   def show
+    authorize @programme
   end
 
   def sessions
@@ -18,6 +19,7 @@ class ProgrammesController < ApplicationController
         :dates,
         :location
       )
+    authorize sessions_for_programme, :index?
 
     @scheduled_sessions =
       sessions_for_programme.scheduled.sort_by do |session|
