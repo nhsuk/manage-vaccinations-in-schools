@@ -174,7 +174,7 @@ class Patient < ApplicationRecord
   end
 
   def send_notifications?
-    !deceased? && !restricted?
+    !deceased? && !restricted? && !invalidated?
   end
 
   def update_from_pds!(pds_patient)
