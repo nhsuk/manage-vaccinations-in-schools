@@ -7,7 +7,6 @@ describe "Dev endpoint to reset a team" do
 
   scenario "Resetting a team deletes all associated data" do
     given_an_example_programme_exists
-    and_requests_can_be_made_to_pds
     and_patients_have_been_imported
     and_vaccination_records_have_been_imported
 
@@ -28,13 +27,6 @@ describe "Dev endpoint to reset a team" do
     @user = @team.users.first
   end
 
-  def and_requests_can_be_made_to_pds
-    stub_request(
-      :get,
-      "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient"
-    ).with(query: hash_including({})).to_return_json(body: { total: 0 })
-  end
-
   def and_patients_have_been_imported
     sign_in @user
     visit "/dashboard"
@@ -45,7 +37,6 @@ describe "Dev endpoint to reset a team" do
     attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/valid.csv")
     click_on "Continue"
 
-    perform_enqueued_jobs
     expect(@team.cohorts.flat_map(&:patients).size).to eq(3)
     expect(@team.cohorts.flat_map(&:patients).flat_map(&:parents).size).to eq(3)
   end
@@ -62,7 +53,6 @@ describe "Dev endpoint to reset a team" do
     )
     click_on "Continue"
 
-    perform_enqueued_jobs
     expect(VaccinationRecord.count).to eq(11)
   end
 
