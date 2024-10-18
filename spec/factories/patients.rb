@@ -17,6 +17,7 @@
 #  gender_code               :integer          default("not_known"), not null
 #  given_name                :string           not null
 #  home_educated             :boolean
+#  invalidated_at            :datetime
 #  nhs_number                :string
 #  original_family_name      :string           not null
 #  original_given_name       :string           not null
@@ -112,6 +113,10 @@ FactoryBot.define do
     trait :deceased do
       date_of_death { Date.current }
       date_of_death_recorded_at { Time.current }
+    end
+
+    trait :invalidated do
+      invalidated_at { Time.current }
     end
 
     trait :restricted do

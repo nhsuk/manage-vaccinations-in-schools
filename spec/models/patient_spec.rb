@@ -17,6 +17,7 @@
 #  gender_code               :integer          default("not_known"), not null
 #  given_name                :string           not null
 #  home_educated             :boolean
+#  invalidated_at            :datetime
 #  nhs_number                :string
 #  original_family_name      :string           not null
 #  original_given_name       :string           not null
