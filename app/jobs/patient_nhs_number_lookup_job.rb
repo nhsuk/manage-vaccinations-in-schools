@@ -31,7 +31,7 @@ class PatientNHSNumberLookupJob < ApplicationJob
       merge_patients!(existing_patient, patient)
       existing_patient.update_from_pds!(pds_patient)
     else
-      patient.update!(nhs_number: pds_patient.nhs_number)
+      patient.nhs_number = pds_patient.nhs_number
       patient.update_from_pds!(pds_patient)
     end
   end
