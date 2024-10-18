@@ -148,9 +148,12 @@ class ImmunisationImport < ApplicationRecord
         .includes(:vaccination_records)
         .select { _1.vaccinated?(programme) }
 
-    PatientSession.where(
-      session: team.sessions.upcoming,
-      patient: already_vaccinated_patients
-    ).delete_all
+    PatientSession
+      .where(
+        session: team.sessions.upcoming,
+        patient: already_vaccinated_patients
+      )
+      .select(&:added_to_session?)
+      .each(&:destroy!)
   end
 end

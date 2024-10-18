@@ -56,10 +56,12 @@ class ClassImport < PatientImport
 
     unknown_patients = session.patients - patients
 
-    unknown_patients.each do |unknown_patient|
-      unknown_patient.update!(school: nil)
-    end
-
-    session.patients.delete(unknown_patients)
+    session
+      .patient_sessions
+      .where(patient: unknown_patients)
+      .find_each do |patient_session|
+        patient_session.patient.update!(school: nil)
+        patient_session.destroy! if patient_session.added_to_session?
+      end
   end
 end
