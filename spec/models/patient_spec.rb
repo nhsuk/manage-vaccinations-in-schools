@@ -191,7 +191,7 @@ describe Patient do
     subject(:update_from_pds!) { patient.update_from_pds!(pds_patient) }
 
     let(:patient) { create(:patient, nhs_number: "0123456789") }
-    let(:pds_patient) { { "id" => "0123456789" } }
+    let(:pds_patient) { PDS::Patient.new(nhs_number: "0123456789") }
 
     it "doesn't set a date of death" do
       expect { update_from_pds! }.not_to change(patient, :date_of_death)
@@ -202,7 +202,7 @@ describe Patient do
     end
 
     context "when the NHS number doesn't match" do
-      let(:pds_patient) { { "id" => "abc" } }
+      let(:pds_patient) { PDS::Patient.new(nhs_number: "abc") }
 
       it "raises an error" do
         expect { update_from_pds! }.to raise_error(Patient::NHSNumberMismatch)
@@ -211,7 +211,10 @@ describe Patient do
 
     context "with notification of death" do
       let(:pds_patient) do
-        { "id" => "0123456789", "deceasedDateTime" => "2024-01-01T00:00:00" }
+        PDS::Patient.new(
+          nhs_number: "0123456789",
+          date_of_death: Date.new(2024, 1, 1)
+        )
       end
 
       it "sets the date of death" do
@@ -244,12 +247,7 @@ describe Patient do
 
     context "with a restricted flag" do
       let(:pds_patient) do
-        {
-          "id" => "0123456789",
-          "meta" => {
-            "security" => [{ "code" => "R" }]
-          }
-        }
+        PDS::Patient.new(nhs_number: "0123456789", restricted: true)
       end
 
       it "sets restricted at" do
