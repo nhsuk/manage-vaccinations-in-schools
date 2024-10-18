@@ -40,13 +40,15 @@ class AppSessionPatientTableComponent < ViewComponent::Base
   end
 
   def column_value(patient_session, column)
+    patient = patient_session.patient
+
     case column
     when :action, :outcome
       t("patient_session_statuses.#{patient_session.state}.text")
     when :name
       name_cell(patient_session)
     when :year_group
-      helpers.patient_year_group(patient_session.patient)
+      helpers.patient_year_group(patient)
     when :reason
       patient_session
         .consents
@@ -55,7 +57,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
         .join("<br />")
         .html_safe
     when :postcode
-      patient_session.patient.address_postcode
+      patient.restricted? ? "" : patient.address_postcode
     when :select_for_matching
       matching_link(patient_session)
     else

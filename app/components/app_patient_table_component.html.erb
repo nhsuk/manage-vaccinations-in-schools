@@ -33,7 +33,7 @@
 
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Postcode</span>
-            <%= patient.address_postcode %>
+            <%= patient.address_postcode unless patient.restricted? %>
           <% end %>
 
           <% row.with_cell do %>

@@ -6,7 +6,10 @@ describe AppParentSummaryComponent do
   let(:component) { described_class.new(parent, relationship, change_links:) }
 
   let(:parent) { create(:parent, full_name: "John Smith") }
-  let(:relationship) { create(:parent_relationship, :father, parent:) }
+  let(:patient) { create(:patient) }
+  let(:relationship) do
+    create(:parent_relationship, :father, parent:, patient:)
+  end
   let(:change_links) { {} }
 
   it { should have_content("Name") }
@@ -27,6 +30,13 @@ describe AppParentSummaryComponent do
 
     it { should have_content("Phone number") }
     it { should have_content("07987654321") }
+  end
+
+  context "when the patient is restricted" do
+    let(:patient) { create(:patient, :restricted) }
+
+    it { should_not have_content("Email address") }
+    it { should_not have_content("Phone number") }
   end
 
   it { should_not have_content("Change") }
