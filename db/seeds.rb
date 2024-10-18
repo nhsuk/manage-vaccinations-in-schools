@@ -68,6 +68,12 @@ def attach_locations_to(team)
   Location.order("RANDOM()").limit(50).update_all(team_id: team.id)
 end
 
+def attach_specific_school_to_team_if_present(team:, urn:)
+  if (school = Location.find_by(urn:))
+    school.update!(team_id: team.id)
+  end
+end
+
 def create_session(_user, team)
   programme = Programme.find_by(type: "hpv")
 
@@ -147,6 +153,8 @@ import_schools
 user, team = create_user_and_team(ods_code: "R1L")
 
 attach_locations_to(team)
+attach_specific_school_to_team_if_present(team:, urn: "136126") # potentially needed for automated testing
+
 Audited.audit_class.as_user(user) { create_session(user, team) }
 create_patients(team)
 create_imports(team)
@@ -155,6 +163,7 @@ create_imports(team)
 user, team = create_user_and_team(ods_code: "Y51", uid: "555057896106")
 
 attach_locations_to(team)
+attach_specific_school_to_team_if_present(team:, urn: "136126") # potentially needed for automated testing
 Audited.audit_class.as_user(user) { create_session(user, team) }
 create_patients(team)
 create_imports(team)
