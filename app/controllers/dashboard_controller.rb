@@ -6,5 +6,6 @@ class DashboardController < ApplicationController
   layout "full"
 
   def index
+    authorize :dashboard
   end
 end
