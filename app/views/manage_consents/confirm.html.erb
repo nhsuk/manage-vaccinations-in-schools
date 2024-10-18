@@ -89,46 +89,12 @@
 <% if @parent.present? %>
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "Parent or guardian" } %>
-    <%= govuk_summary_list(
-          classes: "app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0",
-        ) do |summary_list|
-          summary_list.with_row do |row|
-            row.with_key { "Name" }
-            row.with_value { @parent.full_name }
-            row.with_action(text: "Change", href: wizard_path(:who), visually_hidden_text: "parent name")
-          end
-        
-          summary_list.with_row do |row|
-            row.with_key { "Relationship" }
-            row.with_value { @parent_relationship.label }
-            row.with_action(text: "Change", href: wizard_path(:who), visually_hidden_text: "parent relationship")
-          end
-        
-          if @parent.email.present?
-            summary_list.with_row do |row|
-              row.with_key { "Email address" }
-              row.with_value { @parent.email }
-              row.with_action(text: "Change", href: wizard_path(:"parent-details"), visually_hidden_text: "parent email")
-            end
-          end
-        
-          summary_list.with_row do |row|
-            row.with_key { "Phone number" }
-            if @parent.phone.present?
-              row.with_value { @parent.phone }
-              row.with_action(text: "Change", href: wizard_path(:"parent-details"), visually_hidden_text: "parent phone number")
-            else
-              row.with_value { govuk_link_to("Add phone number", wizard_path(:"parent-details")) }
-            end
-          end
-        
-          if @parent.contact_method_type.present?
-            summary_list.with_row do |row|
-              row.with_key { "Phone contact method" }
-              row.with_value { @parent.contact_method_description }
-            end
-          end
-        end %>
+    <%= render AppParentSummaryComponent.new(@parent, @parent_relationship, change_links: {
+                                                                              name: wizard_path(:who),
+                                                                              relationship: wizard_path(:who),
+                                                                              email: wizard_path(:"parent-details"),
+                                                                              phone: wizard_path(:"parent-details"),
+                                                                            }) %>
   <% end %>
 <% end %>
 
