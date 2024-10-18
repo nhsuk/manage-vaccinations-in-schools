@@ -68,6 +68,11 @@ FactoryBot.define do
       recorded_by { create(:user) }
     end
 
+    trait :self_consent do
+      route { "self_consent" }
+      parent { nil }
+    end
+
     trait :refused do
       response { :refused }
       reason_for_refusal { :personal_choice }

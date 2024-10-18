@@ -31,92 +31,115 @@ describe AppActivityLogComponent do
   end
   let(:location) { create(:location, :school, name: "Hogwarts") }
   let(:session) { create(:session, programme:, location:) }
-  let(:patient) { create(:patient, school: location) }
-
-  let(:mum) { create(:parent, :recorded, full_name: "Jane Doe") }
-  let(:dad) { create(:parent, :recorded, full_name: "John Doe") }
-
-  before do
-    create(:parent_relationship, :mother, parent: mum, patient:)
-    create(:parent_relationship, :father, parent: dad, patient:)
-
-    create(
-      :consent,
-      :given,
-      programme:,
-      patient:,
-      parent: mum,
-      recorded_at: Time.zone.parse("2024-05-30 12:00")
-    )
-    create(
-      :consent,
-      :refused,
-      programme:,
-      patient:,
-      parent: dad,
-      recorded_at: Time.zone.parse("2024-05-30 13:00")
-    )
-    create(
-      :triage,
-      :needs_follow_up,
-      programme:,
-      patient_session:,
-      created_at: Time.zone.parse("2024-05-30 14:00"),
-      notes: "Some notes",
-      performed_by: user
-    )
-    create(
-      :triage,
-      :ready_to_vaccinate,
-      programme:,
-      patient_session:,
-      created_at: Time.zone.parse("2024-05-30 14:30"),
-      performed_by: user
-    )
-
-    create(
-      :vaccination_record,
-      programme:,
-      patient_session:,
-      created_at: Time.zone.parse("2024-05-31 12:00"),
-      performed_by: user,
-      notes: "Some notes"
-    )
-    render_inline(component)
+  let(:patient) do
+    create(:patient, school: location, given_name: "Sarah", family_name: "Doe")
   end
 
-  it "renders headings in correct order" do
-    expect(subject).to have_css("h2:nth-of-type(1)", text: "31 May 2024")
-    expect(subject).to have_css("h2:nth-of-type(2)", text: "30 May 2024")
-    expect(subject).to have_css("h2:nth-of-type(3)", text: "29 May 2024")
+  describe "consent given by parents" do
+    let(:mum) { create(:parent, :recorded, full_name: "Jane Doe") }
+    let(:dad) { create(:parent, :recorded, full_name: "John Doe") }
+
+    before do
+      create(:parent_relationship, :mother, parent: mum, patient:)
+      create(:parent_relationship, :father, parent: dad, patient:)
+
+      create(
+        :consent,
+        :given,
+        programme:,
+        patient:,
+        parent: mum,
+        recorded_at: Time.zone.parse("2024-05-30 12:00")
+      )
+      create(
+        :consent,
+        :refused,
+        programme:,
+        patient:,
+        parent: dad,
+        recorded_at: Time.zone.parse("2024-05-30 13:00")
+      )
+      create(
+        :triage,
+        :needs_follow_up,
+        programme:,
+        patient_session:,
+        created_at: Time.zone.parse("2024-05-30 14:00"),
+        notes: "Some notes",
+        performed_by: user
+      )
+      create(
+        :triage,
+        :ready_to_vaccinate,
+        programme:,
+        patient_session:,
+        created_at: Time.zone.parse("2024-05-30 14:30"),
+        performed_by: user
+      )
+
+      create(
+        :vaccination_record,
+        programme:,
+        patient_session:,
+        created_at: Time.zone.parse("2024-05-31 12:00"),
+        performed_by: user,
+        notes: "Some notes"
+      )
+      render_inline(component)
+    end
+
+    it "renders headings in correct order" do
+      expect(subject).to have_css("h2:nth-of-type(1)", text: "31 May 2024")
+      expect(subject).to have_css("h2:nth-of-type(2)", text: "30 May 2024")
+      expect(subject).to have_css("h2:nth-of-type(3)", text: "29 May 2024")
+    end
+
+    include_examples "card",
+                     title: "Vaccinated with Gardasil 9 (HPV)",
+                     date: "31 May 2024 at 12:00pm",
+                     notes: "Some notes",
+                     by: "Nurse Joy"
+
+    include_examples "card",
+                     title: "Triaged decision: Safe to vaccinate",
+                     date: "30 May 2024 at 2:30pm",
+                     by: "Nurse Joy"
+
+    include_examples "card",
+                     title: "Triaged decision: Keep in triage",
+                     date: "30 May 2024 at 2:00pm",
+                     notes: "Some notes",
+                     by: "Nurse Joy"
+
+    include_examples "card",
+                     title: "Consent refused by John Doe (Dad)",
+                     date: "30 May 2024 at 1:00pm"
+
+    include_examples "card",
+                     title: "Consent given by Jane Doe (Mum)",
+                     date: "30 May 2024 at 12:00pm"
+
+    include_examples "card",
+                     title: "Added to session at Hogwarts",
+                     date: "29 May 2024 at 12:00pm"
   end
 
-  include_examples "card",
-                   title: "Vaccinated with Gardasil 9 (HPV)",
-                   date: "31 May 2024 at 12:00pm",
-                   notes: "Some notes",
-                   by: "Nurse Joy"
+  describe "self-consent" do
+    before do
+      create(
+        :consent,
+        :given,
+        :self_consent,
+        programme:,
+        patient:,
+        recorded_at: Time.zone.parse("2024-05-30 12:00")
+      )
+      render_inline(component)
+    end
 
-  include_examples "card",
-                   title: "Triaged decision: Safe to vaccinate",
-                   date: "30 May 2024 at 2:30pm",
-                   by: "Nurse Joy"
-
-  include_examples "card",
-                   title: "Triaged decision: Keep in triage",
-                   date: "30 May 2024 at 2:00pm",
-                   notes: "Some notes",
-                   by: "Nurse Joy"
-
-  include_examples "card",
-                   title: "Consent refused by John Doe (Dad)",
-                   date: "30 May 2024 at 1:00pm"
-
-  include_examples "card",
-                   title: "Consent given by Jane Doe (Mum)",
-                   date: "30 May 2024 at 12:00pm"
-
-  include_examples "card",
-                   title: "Added to session at Hogwarts",
-                   date: "29 May 2024 at 12:00pm"
+    include_examples "card",
+                     title:
+                       "Consent given by Sarah Doe (Child (Gillick competent))",
+                     date: "30 May 2024 at 12:00pm"
+  end
 end
