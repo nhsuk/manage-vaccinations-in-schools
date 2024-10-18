@@ -40,8 +40,7 @@ class AppActivityLogComponent < ViewComponent::Base
   def consent_events
     @patient_session.patient.consents.recorded.map do
       {
-        title:
-          "Consent #{_1.response} by #{_1.parent.full_name} (#{_1.who_responded})",
+        title: "Consent #{_1.response} by #{_1.name} (#{_1.who_responded})",
         time: _1.recorded_at
       }
     end
