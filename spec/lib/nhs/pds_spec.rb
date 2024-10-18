@@ -2,21 +2,44 @@
 
 describe NHS::PDS do
   describe "#get_patient" do
-    before do
-      stub_request(
-        :get,
-        "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/9000000009"
-      ).to_return(
-        body: file_fixture("pds/get-patient-response.json"),
-        headers: {
-          "Content-Type" => "application/fhir+json"
-        }
-      )
+    subject(:get_patient) { described_class.get_patient("9000000009") }
+
+    context "with a successful response" do
+      before do
+        stub_request(
+          :get,
+          "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/9000000009"
+        ).to_return(
+          body: file_fixture("pds/get-patient-response.json"),
+          headers: {
+            "Content-Type" => "application/fhir+json"
+          }
+        )
+      end
+
+      it "sends a GET request to retrieve a patient by their NHS number" do
+        response = get_patient
+        expect(response.body).to include("id" => "9000000009")
+      end
     end
 
-    it "sends a GET request to retrieve a patient by their NHS number" do
-      response = described_class.get_patient("9000000009")
-      expect(response.body).to include("id" => "9000000009")
+    context "with an invalidated resource response" do
+      before do
+        stub_request(
+          :get,
+          "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/9000000009"
+        ).to_return(
+          body: file_fixture("pds/invalid-patient-response.json"),
+          status: 404,
+          headers: {
+            "Content-Type" => "application/fhir+json"
+          }
+        )
+      end
+
+      it "raises an error" do
+        expect { get_patient }.to raise_error(NHS::PDS::InvalidatedResource)
+      end
     end
   end
 

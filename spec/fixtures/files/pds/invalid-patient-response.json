@@ -1,0 +1,20 @@
+{
+  "resourceType": "OperationOutcome",
+  "issue": [
+    {
+      "severity": "error",
+      "code": "structure",
+      "details": {
+        "coding": [
+          {
+            "system": "https://fhir.nhs.uk/R4/CodeSystem/Spine-ErrorOrWarningCode",
+            "version": "1",
+            "code": "INVALIDATED_RESOURCE",
+            "display": "Resource is invalid"
+          }
+        ]
+      },
+      "diagnostics": "Resource is invalid"
+    }
+  ]
+}
