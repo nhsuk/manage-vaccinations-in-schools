@@ -137,6 +137,8 @@ class Consent < ApplicationRecord
     ].compact
   end
 
+  delegate :restricted?, to: :patient
+
   def name
     via_self_consent? ? patient.full_name : parent.full_name
   end
