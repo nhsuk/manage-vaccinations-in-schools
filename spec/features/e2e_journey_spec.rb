@@ -94,7 +94,6 @@ describe "End-to-end journey" do
     click_on "Import child records"
     attach_file "cohort_import[csv]", csv_file.path
     click_on "Continue"
-    perform_enqueued_jobs
     visit programme_cohort_import_path(@programme, CohortImport.last)
   end
 

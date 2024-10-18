@@ -184,6 +184,13 @@ describe ImmunisationImport do
           PatientNHSNumberLookupJob
         ).once.on_queue(:imports)
       end
+
+      it "enqueues jobs to update from PDS" do
+        expect { record! }.to have_enqueued_job(PatientUpdateFromPDSJob)
+          .exactly(6)
+          .times
+          .on_queue(:imports)
+      end
     end
 
     context "with valid HPV rows" do
@@ -258,6 +265,13 @@ describe ImmunisationImport do
         expect { record! }.to have_enqueued_job(
           PatientNHSNumberLookupJob
         ).once.on_queue(:imports)
+      end
+
+      it "enqueues jobs to update from PDS" do
+        expect { record! }.to have_enqueued_job(PatientUpdateFromPDSJob)
+          .exactly(9)
+          .times
+          .on_queue(:imports)
       end
     end
 

@@ -3,7 +3,7 @@
 class PatientUpdateFromPDSJob < ApplicationJob
   include NHSAPIConcurrencyConcern
 
-  queue_as :patients
+  queue_as :imports
 
   def perform(patient)
     raise MissingNHSNumber if patient.nhs_number.nil?

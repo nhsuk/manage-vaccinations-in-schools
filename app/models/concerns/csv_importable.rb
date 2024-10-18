@@ -104,12 +104,16 @@ module CSVImportable
       update_columns(recorded_at: Time.zone.now, status: :recorded, **counts)
     end
 
-    look_up_missing_nhs_numbers
+    update_from_pds
   end
 
-  def look_up_missing_nhs_numbers
-    patients.without_nhs_number.find_each do |patient|
-      PatientNHSNumberLookupJob.perform_later(patient)
+  def update_from_pds
+    patients.find_each do |patient|
+      if patient.nhs_number.nil?
+        PatientNHSNumberLookupJob.perform_later(patient)
+      else
+        PatientUpdateFromPDSJob.perform_later(patient)
+      end
     end
   end
 

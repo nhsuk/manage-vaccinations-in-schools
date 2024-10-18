@@ -257,6 +257,13 @@ describe ClassImport do
       ).once.on_queue(:imports)
     end
 
+    it "enqueues jobs to update from PDS" do
+      expect { record! }.to have_enqueued_job(PatientUpdateFromPDSJob)
+        .exactly(3)
+        .times
+        .on_queue(:imports)
+    end
+
     context "with an existing patient matching the name" do
       before do
         create(
