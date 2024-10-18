@@ -9,6 +9,8 @@ class PatientUpdateFromPDSJob < ApplicationJob
   def perform(patient)
     raise MissingNHSNumber if patient.nhs_number.nil?
 
+    return if patient.invalidated?
+
     pds_patient = PDS::Patient.find(patient.nhs_number)
 
     if pds_patient.nhs_number != patient.nhs_number
