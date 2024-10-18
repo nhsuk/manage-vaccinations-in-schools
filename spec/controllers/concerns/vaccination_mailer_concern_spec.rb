@@ -83,5 +83,17 @@ describe VaccinationMailerConcern do
         expect { send_vaccination_confirmation }.not_to have_enqueued_text
       end
     end
+
+    context "if the patient is restricted" do
+      let(:patient) { create(:patient, :restricted) }
+
+      it "doesn't send an email" do
+        expect { send_vaccination_confirmation }.not_to have_enqueued_email
+      end
+
+      it "doesn't send a text message" do
+        expect { send_vaccination_confirmation }.not_to have_enqueued_text
+      end
+    end
   end
 end

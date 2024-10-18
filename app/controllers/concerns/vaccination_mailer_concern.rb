@@ -7,7 +7,7 @@ module VaccinationMailerConcern
     patient_session = vaccination_record.patient_session
     patient = vaccination_record.patient
 
-    return if patient.deceased?
+    return unless patient.send_notifications?
 
     mailer_action =
       if vaccination_record.administered?
