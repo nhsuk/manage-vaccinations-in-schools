@@ -4,27 +4,28 @@
 #
 # Table name: patients
 #
-#  id                   :bigint           not null, primary key
-#  address_line_1       :string
-#  address_line_2       :string
-#  address_postcode     :string
-#  address_town         :string
-#  common_name          :string
-#  date_of_birth        :date             not null
-#  date_of_death        :date
-#  family_name          :string           not null
-#  gender_code          :integer          default("not_known"), not null
-#  given_name           :string           not null
-#  home_educated        :boolean
-#  nhs_number           :string
-#  original_family_name :string           not null
-#  original_given_name  :string           not null
-#  pending_changes      :jsonb            not null
-#  registration         :string
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  cohort_id            :bigint
-#  school_id            :bigint
+#  id                        :bigint           not null, primary key
+#  address_line_1            :string
+#  address_line_2            :string
+#  address_postcode          :string
+#  address_town              :string
+#  common_name               :string
+#  date_of_birth             :date             not null
+#  date_of_death             :date
+#  date_of_death_recorded_at :datetime
+#  family_name               :string           not null
+#  gender_code               :integer          default("not_known"), not null
+#  given_name                :string           not null
+#  home_educated             :boolean
+#  nhs_number                :string
+#  original_family_name      :string           not null
+#  original_given_name       :string           not null
+#  pending_changes           :jsonb            not null
+#  registration              :string
+#  created_at                :datetime         not null
+#  updated_at                :datetime         not null
+#  cohort_id                 :bigint
+#  school_id                 :bigint
 #
 # Indexes
 #
@@ -109,6 +110,7 @@ FactoryBot.define do
 
     trait :deceased do
       date_of_death { Date.current }
+      date_of_death_recorded_at { Time.current }
     end
 
     trait :consent_request_sent do
