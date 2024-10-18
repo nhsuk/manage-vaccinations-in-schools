@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class LocationPolicy
+class LocationPolicy < ApplicationPolicy
   class Scope
     def initialize(user, scope)
       @user = user

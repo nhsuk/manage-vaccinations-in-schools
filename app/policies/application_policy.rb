@@ -9,15 +9,15 @@ class ApplicationPolicy
   end
 
   def index?
-    false
+    @user.is_nurse? || @user.is_medical_secretary?
   end
 
   def show?
-    false
+    @user.is_nurse? || @user.is_medical_secretary?
   end
 
   def create?
-    false
+    @user.is_nurse? || @user.is_medical_secretary?
   end
 
   def new?
@@ -25,7 +25,7 @@ class ApplicationPolicy
   end
 
   def update?
-    false
+    @user.is_nurse? || @user.is_medical_secretary?
   end
 
   def edit?
@@ -33,7 +33,7 @@ class ApplicationPolicy
   end
 
   def destroy?
-    false
+    @user.is_nurse? || @user.is_medical_secretary?
   end
 
   class Scope
