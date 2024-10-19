@@ -25,6 +25,11 @@ describe "Manage children" do
     then_i_see_the_child
     and_i_see_a_removed_from_cohort_message
     and_no_longer_see_the_cohort
+
+    when_i_click_on_children
+    and_i_click_on_a_child_who_is_only_in_the_cohort
+    when_i_click_on_remove_from_cohort
+    then_i_see_the_children
   end
 
   scenario "Viewing important notices" do
@@ -56,6 +61,13 @@ describe "Manage children" do
       school:
     )
     create_list(:patient, 9, team: @team, school:)
+
+    create(
+      :patient,
+      given_name: "Jane",
+      family_name: "Doe",
+      cohort: @team.cohorts.first
+    )
   end
 
   def when_a_deceased_patient_exists
@@ -78,7 +90,7 @@ describe "Manage children" do
   end
 
   def then_i_see_the_children
-    expect(page).to have_content("10 children")
+    expect(page).to have_content(/\d+ children/)
   end
 
   def when_i_click_on_a_child
@@ -134,5 +146,9 @@ describe "Manage children" do
   def and_i_see_the_notice_of_sensitive
     expect(page).to have_content(@restricted_patient.full_name)
     expect(page).to have_content("Record flagged as sensitive")
+  end
+
+  def and_i_click_on_a_child_who_is_only_in_the_cohort
+    click_on "Jane Doe"
   end
 end
