@@ -3,12 +3,21 @@
 describe AppPatientPageComponent, type: :component do
   subject(:rendered) { render_inline(component) }
 
+  def stub_authorization(allowed:)
+    # rubocop:disable RSpec/AnyInstance
+    allow_any_instance_of(Pundit::Authorization).to receive(:policy).and_return(
+      instance_double(ApplicationPolicy, create?: allowed)
+    )
+    # rubocop:enable RSpec/AnyInstance
+  end
+
   before do
     # rubocop:disable RSpec/AnyInstance
     allow_any_instance_of(AppSimpleStatusBannerComponent).to receive(
       :new_session_patient_triages_path
     ).and_return("/session/patient/triage/new")
     # rubocop:enable RSpec/AnyInstance
+    stub_authorization(allowed: true)
   end
 
   let(:programme) { create(:programme, :hpv) }
@@ -53,6 +62,17 @@ describe AppPatientPageComponent, type: :component do
     end
 
     it { should have_css("a", text: "Give your assessment") }
+
+    context "user is not allowed to triage or vaccinate" do
+      before { stub_authorization(allowed: false) }
+
+      it "does not show the triage form" do
+        expect(subject).not_to have_css(
+          ".nhsuk-card__heading",
+          text: "Is it safe to vaccinate"
+        )
+      end
+    end
   end
 
   context "session in progress, patient ready to vaccinate" do
@@ -81,6 +101,17 @@ describe AppPatientPageComponent, type: :component do
         ".nhsuk-card__heading",
         text: "Did they get the HPV vaccine?"
       )
+    end
+
+    context "user is not allowed to triage or vaccinate" do
+      before { stub_authorization(allowed: false) }
+
+      it "does not show the vaccination form" do
+        expect(subject).not_to have_css(
+          ".nhsuk-card__heading",
+          text: "Did they get the HPV vaccine?"
+        )
+      end
     end
   end
 end
