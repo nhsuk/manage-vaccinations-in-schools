@@ -88,9 +88,11 @@
   <% end %>
 <% end %>
 
-<%= render AppVaccinateFormComponent.new(
-      patient_session:,
-      vaccination_record: @vaccination_record,
-      section: @section,
-      tab: @tab,
-    ) %>
+<% if helpers.policy(VaccinationRecord).create? %>
+  <%= render AppVaccinateFormComponent.new(
+        patient_session:,
+        vaccination_record: @vaccination_record,
+        section: @section,
+        tab: @tab,
+      ) %>
+<% end %>

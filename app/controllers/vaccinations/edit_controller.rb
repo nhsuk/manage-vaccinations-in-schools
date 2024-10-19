@@ -13,11 +13,16 @@ class Vaccinations::EditController < ApplicationController
   before_action :set_steps
   before_action :setup_wizard_translated
 
+  after_action :verify_authorized
+
   def show
+    authorize @draft_vaccination_record, :edit?
     render_wizard
   end
 
   def update
+    authorize @draft_vaccination_record
+
     if current_step == :confirm
       handle_confirm
     elsif current_step == :batch

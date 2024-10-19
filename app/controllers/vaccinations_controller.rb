@@ -15,6 +15,8 @@ class VaccinationsController < ApplicationController
   before_action :set_batches, only: %i[batch update_batch]
   before_action :set_section_and_tab, only: %i[create]
 
+  after_action :verify_authorized
+
   def index
     all_patient_sessions =
       @session
@@ -49,10 +51,14 @@ class VaccinationsController < ApplicationController
 
     sort_and_filter_patients!(@patient_sessions)
 
+    authorize VaccinationRecord
+
     session[:current_section] = "vaccinations"
   end
 
   def create
+    authorize @draft_vaccination_record
+
     if @draft_vaccination_record.update(
          create_params.merge(performed_by: current_user)
        )
@@ -71,11 +77,13 @@ class VaccinationsController < ApplicationController
   end
 
   def batch
+    authorize Batch, :index?
   end
 
   def update_batch
     @todays_batch =
       policy_scope(Batch).find_by(params.fetch(:batch).permit(:id))
+    authorize @todays_batch, :update?
 
     if @todays_batch
       self.todays_batch_id = @todays_batch.id
