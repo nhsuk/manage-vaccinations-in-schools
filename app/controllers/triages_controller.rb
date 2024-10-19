@@ -11,7 +11,7 @@ class TriagesController < ApplicationController
   before_action :set_triage, only: %i[create new]
   before_action :set_section_and_tab, only: %i[create new]
 
-  after_action :verify_policy_scoped, only: %i[index create new]
+  after_action :verify_authorized
 
   def index
     all_patient_sessions =
@@ -40,14 +40,18 @@ class TriagesController < ApplicationController
 
     session[:current_section] = "triage"
 
+    authorize Triage
+
     render layout: "full"
   end
 
   def new
+    authorize @triage
   end
 
   def create
     @triage.assign_attributes(triage_params.merge(performed_by: current_user))
+    authorize @triage
     if @triage.save(context: :consent)
       @patient.consents.recorded.each do
         send_triage_confirmation(@patient_session, _1)
