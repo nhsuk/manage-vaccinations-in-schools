@@ -19,7 +19,16 @@ class PatientsController < ApplicationController
 
     @patient.update!(patient_params)
 
-    redirect_to patient_path(@patient),
+    path =
+      (
+        if policy_scope(Patient).include?(@patient)
+          patient_path(@patient)
+        else
+          patients_path
+        end
+      )
+
+    redirect_to path,
                 flash: {
                   success:
                     "#{@patient.full_name} removed from #{helpers.format_year_group(cohort.year_group)} cohort"
