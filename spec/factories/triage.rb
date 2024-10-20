@@ -33,7 +33,8 @@ FactoryBot.define do
     patient
     performed_by
     programme
-    team
+
+    team { performed_by.teams.first }
 
     notes { "" }
     status { :ready_to_vaccinate }

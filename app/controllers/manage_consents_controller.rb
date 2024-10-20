@@ -227,8 +227,9 @@ class ManageConsentsController < ApplicationController
   def set_triage
     @triage =
       Triage.find_or_initialize_by(
+        patient: @patient,
         programme: @session.programmes.first, # TODO: handle multiple programmes
-        patient_session: @patient_session
+        team: @session.team
       )
   end
 

@@ -5,6 +5,9 @@ module MergePatientsConcern
 
   def merge_patients!(patient_to_keep, patient_to_remove)
     ActiveRecord::Base.transaction do
+      patient_to_remove.consents.update_all(patient_id: patient_to_keep.id)
+      patient_to_remove.triages.update_all(patient_id: patient_to_keep.id)
+
       patient_to_remove.patient_sessions.each do |patient_session|
         if (
              existing_patient_session =
@@ -13,9 +16,6 @@ module MergePatientsConcern
                )
            )
           patient_session.gillick_assessments.update_all(
-            patient_session: existing_patient_session
-          )
-          patient_session.triages.update_all(
             patient_session: existing_patient_session
           )
           patient_session.vaccination_records.update_all(

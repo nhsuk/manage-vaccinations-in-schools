@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
-describe AppTriageNotesComponent, type: :component do
+describe AppTriageNotesComponent do
   subject(:rendered) { render_inline(component) }
 
   let(:component) { described_class.new(patient_session:) }
 
   let(:programme) { create(:programme) }
   let(:patient_session) { create(:patient_session, programme:) }
+  let(:patient) { patient_session.patient }
 
   context "triage notes are not present" do
     it "does not render" do
@@ -27,7 +28,7 @@ describe AppTriageNotesComponent, type: :component do
         :ready_to_vaccinate,
         programme:,
         notes: "Some notes",
-        patient_session:,
+        patient:,
         performed_by:
       )
     end
@@ -44,7 +45,7 @@ describe AppTriageNotesComponent, type: :component do
   end
 
   context "multiple triage notes are present" do
-    before { create_list(:triage, 2, programme:, patient_session:) }
+    before { create_list(:triage, 2, programme:, patient:) }
 
     it "renders" do
       expect(component).to be_render

@@ -20,14 +20,12 @@ class TriagesController < ApplicationController
         .strict_loading
         .includes(
           :programmes,
-          :triages,
           :latest_gillick_assessment,
-          :latest_triage,
           :latest_vaccination_record,
           :vaccination_records,
           patient: :cohort
         )
-        .preload(:consents)
+        .preload(:consents, :triages)
         .order("patients.given_name", "patients.family_name")
 
     @current_tab = TAB_PATHS[:triage][params[:tab]]
@@ -87,8 +85,9 @@ class TriagesController < ApplicationController
   def set_triage
     @triage =
       Triage.new(
+        patient: @patient,
         programme: @session.programmes.first, # TODO: handle multiple programmes
-        patient_session: @patient_session
+        team: @session.team
       )
   end
 

@@ -54,6 +54,10 @@ class AppOutcomeBannerComponent < ViewComponent::Base
     @vaccination_record ||= @patient_session.latest_vaccination_record
   end
 
+  def triage
+    @triage ||= @patient_session.latest_triage
+  end
+
   def show_location?
     # location only makes sense if an attempt to vaccinate on site was made
     vaccination_record.present?
@@ -85,11 +89,11 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def clinician
-    @clinician ||= (vaccination_record || most_recent_triage).performed_by
+    @clinician ||= (vaccination_record || triage).performed_by
   end
 
   def notes
-    (vaccination_record&.notes || most_recent_triage&.notes).presence || "None"
+    (vaccination_record&.notes || triage&.notes).presence || "None"
   end
 
   def date_summary
@@ -103,12 +107,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def last_action_time
-    @last_action_time ||=
-      vaccination_record&.recorded_at || most_recent_triage&.created_at
-  end
-
-  def most_recent_triage
-    @most_recent_triage ||= @patient_session.latest_triage
+    @last_action_time ||= vaccination_record&.recorded_at || triage&.created_at
   end
 
   def heading

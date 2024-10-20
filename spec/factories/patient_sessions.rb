@@ -82,22 +82,11 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
+                    :triage_ready_to_vaccinate,
+                    performed_by: user,
                     programme:,
                     team:,
                     school: session.location
-      end
-
-      triages do
-        [
-          association(
-            :triage,
-            :ready_to_vaccinate,
-            patient_session: instance,
-            programme:,
-            notes: "Okay to vaccinate",
-            performed_by: user
-          )
-        ]
       end
     end
 
@@ -105,21 +94,11 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
+                    :triage_do_not_vaccinate,
+                    performed_by: user,
                     programme:,
                     team:,
                     school: session.location
-      end
-
-      triages do
-        [
-          association(
-            :triage,
-            :do_not_vaccinate,
-            patient_session: instance,
-            programme:,
-            performed_by: user
-          )
-        ]
       end
     end
 
@@ -127,21 +106,11 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
+                    :triage_needs_follow_up,
+                    performed_by: user,
                     programme:,
                     team:,
                     school: session.location
-      end
-
-      triages do
-        [
-          association(
-            :triage,
-            :needs_follow_up,
-            patient_session: instance,
-            programme:,
-            performed_by: user
-          )
-        ]
       end
     end
 
@@ -149,21 +118,11 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
+                    :triage_delay_vaccination,
+                    performed_by: user,
                     programme:,
                     team:,
                     school: session.location
-      end
-
-      triages do
-        [
-          association(
-            :triage,
-            :delay_vaccination,
-            patient_session: instance,
-            programme:,
-            performed_by: user
-          )
-        ]
       end
 
       vaccination_records do
@@ -194,21 +153,10 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
+                    :triage_ready_to_vaccinate,
                     programme:,
                     team:,
                     school: session.location
-      end
-
-      triages do
-        [
-          association(
-            :triage,
-            :ready_to_vaccinate,
-            patient_session: instance,
-            programme:,
-            performed_by: user
-          )
-        ]
       end
 
       vaccination_records do
@@ -239,21 +187,10 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
+                    :triage_ready_to_vaccinate,
                     programme:,
                     team:,
                     school: session.location
-      end
-
-      triages do
-        [
-          association(
-            :triage,
-            :ready_to_vaccinate,
-            patient_session: instance,
-            programme:,
-            performed_by: user
-          )
-        ]
       end
 
       vaccination_records do
@@ -274,21 +211,10 @@ FactoryBot.define do
       patient do
         association :patient,
                     :consent_given_triage_needed,
+                    :triage_ready_to_vaccinate,
                     programme:,
                     team:,
                     school: session.location
-      end
-
-      triages do
-        [
-          association(
-            :triage,
-            :ready_to_vaccinate,
-            patient_session: instance,
-            programme:,
-            performed_by: user
-          )
-        ]
       end
 
       vaccination_records do

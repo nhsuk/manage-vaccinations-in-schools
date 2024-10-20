@@ -63,7 +63,7 @@ describe AppActivityLogComponent do
         :triage,
         :needs_follow_up,
         programme:,
-        patient_session:,
+        patient:,
         created_at: Time.zone.parse("2024-05-30 14:00"),
         notes: "Some notes",
         performed_by: user
@@ -72,7 +72,7 @@ describe AppActivityLogComponent do
         :triage,
         :ready_to_vaccinate,
         programme:,
-        patient_session:,
+        patient:,
         created_at: Time.zone.parse("2024-05-30 14:30"),
         performed_by: user
       )
