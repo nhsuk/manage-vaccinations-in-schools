@@ -56,7 +56,7 @@ describe "CIS2 backchannel logout" do
   def and_the_jwks_endpoint_is_setup
     stub_request(
       :get,
-      "http://localhost:4000/test/oidc/.well-known/openid-configuration"
+      "https://localhost:4000/oidc/realms/test/.well-known/openid-configuration"
     ).to_return(
       status: 200,
       body: { jwks_uri: "https://localhost:4000/oidc/realms/test/jwks" }.to_json
