@@ -1,14 +1,9 @@
 # frozen_string_literal: true
 
 class ProgrammePolicy < ApplicationPolicy
-  class Scope
-    def initialize(user, scope)
-      @user = user
-      @scope = scope
-    end
-
+  class Scope < ApplicationPolicy::Scope
     def resolve
-      @scope.where(id: @user.programmes.ids)
+      scope.where(id: user.programmes.ids)
     end
   end
 end

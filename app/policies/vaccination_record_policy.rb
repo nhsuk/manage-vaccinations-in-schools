@@ -2,7 +2,7 @@
 
 class VaccinationRecordPolicy < ApplicationPolicy
   def create?
-    @user.is_nurse?
+    user.is_nurse?
   end
 
   def new?
@@ -10,21 +10,16 @@ class VaccinationRecordPolicy < ApplicationPolicy
   end
 
   def edit?
-    @user.is_nurse?
+    user.is_nurse?
   end
 
   def update?
     edit?
   end
 
-  class Scope
-    def initialize(user, scope)
-      @user = user
-      @scope = scope
-    end
-
+  class Scope < ApplicationPolicy::Scope
     def resolve
-      @scope.joins(:session).where(session: { team: @user.teams })
+      scope.joins(:session).where(session: { team: user.teams })
     end
   end
 end

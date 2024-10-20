@@ -1,23 +1,23 @@
 # frozen_string_literal: true
 
 class ApplicationPolicy
-  attr_reader :user, :record
-
   def initialize(user, record)
     @user = user
     @record = record
   end
 
+  attr_reader :user, :record
+
   def index?
-    @user.is_nurse? || @user.is_medical_secretary?
+    user.is_nurse? || user.is_medical_secretary?
   end
 
   def show?
-    @user.is_nurse? || @user.is_medical_secretary?
+    user.is_nurse? || user.is_medical_secretary?
   end
 
   def create?
-    @user.is_nurse? || @user.is_medical_secretary?
+    user.is_nurse? || user.is_medical_secretary?
   end
 
   def new?
@@ -25,7 +25,7 @@ class ApplicationPolicy
   end
 
   def update?
-    @user.is_nurse? || @user.is_medical_secretary?
+    user.is_nurse? || user.is_medical_secretary?
   end
 
   def edit?
@@ -33,7 +33,7 @@ class ApplicationPolicy
   end
 
   def destroy?
-    @user.is_nurse? || @user.is_medical_secretary?
+    user.is_nurse? || user.is_medical_secretary?
   end
 
   class Scope
@@ -45,8 +45,6 @@ class ApplicationPolicy
     def resolve
       raise NotImplementedError, "You must define #resolve in #{self.class}"
     end
-
-    private
 
     attr_reader :user, :scope
   end

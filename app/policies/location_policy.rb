@@ -1,14 +1,9 @@
 # frozen_string_literal: true
 
 class LocationPolicy < ApplicationPolicy
-  class Scope
-    def initialize(user, scope)
-      @user = user
-      @scope = scope
-    end
-
+  class Scope < ApplicationPolicy::Scope
     def resolve
-      @scope.where(team: @user.teams)
+      scope.where(team: user.teams)
     end
   end
 end
