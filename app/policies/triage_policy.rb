@@ -2,6 +2,12 @@
 
 class TriagePolicy < ApplicationPolicy
   def create?
-    @user.is_nurse?
+    user.is_nurse?
+  end
+
+  class Scope < ApplicationPolicy::Scope
+    def resolve
+      scope.where(team: user.teams)
+    end
   end
 end

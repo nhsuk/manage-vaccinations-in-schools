@@ -1,14 +1,9 @@
 # frozen_string_literal: true
 
 class BatchPolicy < ApplicationPolicy
-  class Scope
-    def initialize(user, scope)
-      @user = user
-      @scope = scope
-    end
-
+  class Scope < ApplicationPolicy::Scope
     def resolve
-      @scope.unarchived.where(team: @user.teams)
+      scope.unarchived.where(team: user.teams)
     end
   end
 end
