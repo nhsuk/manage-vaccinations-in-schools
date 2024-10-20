@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppOutcomeBannerComponent, type: :component do
+describe AppOutcomeBannerComponent do
   subject(:rendered) { render_inline(component) }
 
   let(:user) { create :user }

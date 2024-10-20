@@ -20,37 +20,38 @@ describe PatientSession do
   let(:programme) { create(:programme) }
 
   describe "#triages" do
-    it "returns the triage records in ascending order" do
-      patient_session = create(:patient_session, programme:)
-      later_triage = create(:triage, programme:, patient_session:)
-      earlier_triage =
-        create(:triage, programme:, patient_session:, updated_at: 1.day.ago)
-
-      expect(patient_session.triages).to eq [earlier_triage, later_triage]
-    end
-  end
-
-  describe "#latest_vaccination_record" do
-    subject(:latest_vaccination_record) do
-      patient_session.latest_vaccination_record
-    end
+    subject(:triages) { patient_session.triages }
 
     let(:patient_session) { create(:patient_session, programme:) }
-    let(:later_vaccination_record) do
-      create(:vaccination_record, programme:, patient_session:)
+    let(:patient) { patient_session.patient }
+    let(:later_triage) { create(:triage, programme:, patient:) }
+    let(:earlier_triage) do
+      create(:triage, programme:, patient:, updated_at: 1.day.ago)
+    end
+
+    it { should eq([earlier_triage, later_triage]) }
+  end
+
+  describe "#latest_triage" do
+    subject(:latest_triage) { patient_session.latest_triage }
+
+    let(:patient_session) { create(:patient_session, programme:) }
+    let(:patient) { patient_session.patient }
+    let(:later_triage) do
+      create(:triage, programme:, status: :ready_to_vaccinate, patient:)
     end
 
     before do
       create(
-        :vaccination_record,
+        :triage,
         programme:,
-        patient_session:,
-        recorded_at: 1.day.ago
+        status: :needs_follow_up,
+        created_at: 1.day.ago,
+        patient:
       )
-      create(:vaccination_record, :not_recorded, programme:, patient_session:)
     end
 
-    it { should eq(later_vaccination_record) }
+    it { should eq(later_triage) }
   end
 
   describe "#latest_consents" do
@@ -119,24 +120,26 @@ describe PatientSession do
     end
   end
 
-  describe "#latest_triage" do
-    subject(:latest_triage) { patient_session.latest_triage }
+  describe "#latest_vaccination_record" do
+    subject(:latest_vaccination_record) do
+      patient_session.latest_vaccination_record
+    end
 
     let(:patient_session) { create(:patient_session, programme:) }
-    let(:later_triage) do
-      create(:triage, programme:, status: :ready_to_vaccinate, patient_session:)
+    let(:later_vaccination_record) do
+      create(:vaccination_record, programme:, patient_session:)
     end
 
     before do
       create(
-        :triage,
+        :vaccination_record,
         programme:,
-        status: :needs_follow_up,
-        created_at: 1.day.ago,
-        patient_session:
+        patient_session:,
+        recorded_at: 1.day.ago
       )
+      create(:vaccination_record, :not_recorded, programme:, patient_session:)
     end
 
-    it { should eq(later_triage) }
+    it { should eq(later_vaccination_record) }
   end
 end

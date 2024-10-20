@@ -24,14 +24,12 @@ class VaccinationsController < ApplicationController
         .strict_loading
         .includes(
           :programmes,
-          :triages,
           :latest_gillick_assessment,
-          :latest_triage,
           :latest_vaccination_record,
           :vaccination_records,
           patient: :cohort
         )
-        .preload(:consents)
+        .preload(:consents, :triages)
         .order("patients.given_name", "patients.family_name")
 
     grouped_patient_sessions =

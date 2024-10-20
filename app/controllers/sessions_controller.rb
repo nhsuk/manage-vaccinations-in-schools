@@ -48,11 +48,11 @@ class SessionsController < ApplicationController
     @patient_sessions =
       @session.patient_sessions.strict_loading.includes(
         :programmes,
-        { consents: :parent },
-        :latest_triage,
+        :triages,
         :vaccination_records,
         :latest_gillick_assessment,
-        :latest_vaccination_record
+        :latest_vaccination_record,
+        consents: :parent
       )
 
     @counts =

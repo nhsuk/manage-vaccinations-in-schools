@@ -47,8 +47,9 @@ class Consent < ApplicationRecord
   attr_reader :new_or_existing_parent
   attr_accessor :triage
 
-  belongs_to :team
+  belongs_to :patient
   belongs_to :programme
+  belongs_to :team
 
   has_one :consent_form
   belongs_to :parent, -> { recorded }, optional: true
@@ -57,7 +58,6 @@ class Consent < ApplicationRecord
              class_name: "Parent",
              optional: true,
              foreign_key: :parent_id
-  belongs_to :patient
   belongs_to :recorded_by,
              class_name: "User",
              optional: true,

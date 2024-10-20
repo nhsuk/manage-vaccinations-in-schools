@@ -49,6 +49,7 @@ FactoryBot.define do
   factory :patient do
     transient do
       parents { [create(:parent, :recorded, family_name:)] }
+      performed_by { association(:user) }
       programme { session&.programmes&.first }
       session { nil }
       team do
@@ -172,8 +173,8 @@ FactoryBot.define do
             :from_mum,
             :health_question_notes,
             patient: instance,
-            team:,
-            programme:
+            programme:,
+            team:
           )
         ]
       end
@@ -233,6 +234,70 @@ FactoryBot.define do
             patient: instance,
             team:,
             programme:
+          )
+        ]
+      end
+    end
+
+    trait :triage_ready_to_vaccinate do
+      triages do
+        [
+          association(
+            :triage,
+            :ready_to_vaccinate,
+            patient: instance,
+            performed_by:,
+            programme:,
+            team:,
+            notes: "Okay to vaccinate"
+          )
+        ]
+      end
+    end
+
+    trait :triage_do_not_vaccinate do
+      triages do
+        [
+          association(
+            :triage,
+            :do_not_vaccinate,
+            patient: instance,
+            performed_by:,
+            programme:,
+            team:,
+            notes: "Do not vaccinate"
+          )
+        ]
+      end
+    end
+
+    trait :triage_needs_follow_up do
+      triages do
+        [
+          association(
+            :triage,
+            :needs_follow_up,
+            patient: instance,
+            performed_by:,
+            programme:,
+            team:,
+            notes: "Needs follow up"
+          )
+        ]
+      end
+    end
+
+    trait :triage_delay_vaccination do
+      triages do
+        [
+          association(
+            :triage,
+            :delay_vaccination,
+            patient: instance,
+            performed_by:,
+            programme:,
+            team:,
+            notes: "Delay vaccination"
           )
         ]
       end

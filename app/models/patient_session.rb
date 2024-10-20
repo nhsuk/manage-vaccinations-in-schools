@@ -35,9 +35,6 @@ class PatientSession < ApplicationRecord
           -> { recorded.order(created_at: :desc) },
           class_name: "GillickAssessment"
 
-  has_many :triages, -> { order(:updated_at) }
-  has_one :latest_triage, -> { order(created_at: :desc) }, class_name: "Triage"
-
   has_many :vaccination_records,
            -> { recorded },
            class_name: "VaccinationRecord"
@@ -49,13 +46,14 @@ class PatientSession < ApplicationRecord
           class_name: "VaccinationRecord"
 
   has_many :consents,
-           ->(patient_session) do
-             recorded.where(programme: patient_session.programmes).includes(
-               :parent
-             )
-           end,
+           -> { recorded.where(programme: _1.programmes).includes(:parent) },
            through: :patient,
            class_name: "Consent"
+
+  has_many :triages,
+           -> { where(programme: _1.programmes).order(:updated_at) },
+           through: :patient,
+           class_name: "Triage"
 
   has_and_belongs_to_many :immunisation_imports
 
@@ -101,6 +99,10 @@ class PatientSession < ApplicationRecord
     consents
       .group_by(&:name)
       .map { |_, consents| consents.max_by(&:recorded_at) }
+  end
+
+  def latest_triage
+    triages.max_by(&:updated_at)
   end
 
   def consents_to_send_communication
