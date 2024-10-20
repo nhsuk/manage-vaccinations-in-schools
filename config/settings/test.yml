@@ -5,6 +5,7 @@ cis2:
   issuer: "https://localhost:4000/oidc/realms/test"
   # issuer: "https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare"
   client_id: "31337.apps.national"
+  secret: "DEADBEEF"
 
 mesh:
   base_url: https://localhost:8700

@@ -20,18 +20,6 @@ module OmniAuth
              userinfo_endpoint: nil,
              redirect_uri: nil
 
-      # TODO: I think these should be plain old options, not "authorize_options"
-      # option :authorize_options,
-      #        scope: nil,
-      #        display: nil,
-      #        prompt: nil,
-      #        max_age: nil,
-      #        ui_locales: nil,
-      #        id_token_hint: nil,
-      #        login_hint: nil,
-      #        acr_values: nil,
-      #        claims: nil
-
       uid { user_data["sub"] }
 
       info do
@@ -59,14 +47,7 @@ module OmniAuth
       end
 
       def access_token
-        @access_token ||=
-          client.access_token!(
-            # NOTE: this triggers auto JWT assertion generation for client auth
-            #       using `Client#secret` or `Client#private_key` with auto signature
-            #       algorithm detection (ES256, RSA256 or HS256).
-            # :jwt_bearer
-            authentication_type
-          )
+        @access_token ||= client.access_token!(authentication_type)
       end
 
       def request_phase
@@ -102,7 +83,6 @@ module OmniAuth
 
       def callback_phase
         client.authorization_code = request.params["code"]
-        binding.irb
         env["omniauth.auth"] = AuthHash.new(
           provider: name,
           uid: user_data["sub"],
@@ -167,27 +147,24 @@ module OmniAuth
         client_options.compact!
 
         if options.secret.present? && options.private_key.present?
-          raise ArgumentError,
-                "only one of client_secret or private_key can be set"
+          raise ArgumentError, "only one of secret or private_key can be set"
         elsif options.secret.blank? && options.private_key.blank?
-          raise ArgumentError, "client_secret or private_key must be set"
+          raise ArgumentError, "secret or private_key must be set"
         end
       end
 
-      def issuer_for_environment(environment)
+      def issuer
         {
           development:
             "https://am.nhsdev.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/oidc",
           integration:
             "https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare"
-        }.fetch(environment)
+        }.with_indifferent_access.fetch(options.nhs_environment)
       end
 
       def provider_config
         @provider_config ||=
-          ::OpenIDConnect::Discovery::Provider::Config.discover!(
-            issuer_for_environment(options.nhs_environment)
-          )
+          ::OpenIDConnect::Discovery::Provider::Config.discover!(issuer)
       end
 
       def client_option_or_provider_config(option)

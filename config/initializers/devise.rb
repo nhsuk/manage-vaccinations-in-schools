@@ -362,7 +362,7 @@ Devise.setup do |config|
         setup:,
         name: :cis2,
         scope: %i[openid profile email nationalrbacaccess associatedorgs],
-        nhs_environment: :development,
+        nhs_environment: Settings.cis2.nhs_environment,
         client_id: Settings.cis2.client_id,
         redirect_uri:,
         secret: Settings.cis2.secret,
