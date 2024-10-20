@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_18_123334) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_20_091307) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -579,12 +579,14 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_18_123334) do
     t.text "notes", default: "", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "patient_session_id", null: false
     t.bigint "performed_by_user_id", null: false
     t.bigint "programme_id", null: false
-    t.index ["patient_session_id"], name: "index_triage_on_patient_session_id"
+    t.bigint "patient_id", null: false
+    t.bigint "team_id", null: false
+    t.index ["patient_id"], name: "index_triage_on_patient_id"
     t.index ["performed_by_user_id"], name: "index_triage_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_triage_on_programme_id"
+    t.index ["team_id"], name: "index_triage_on_team_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -718,8 +720,9 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_18_123334) do
   add_foreign_key "sessions", "teams"
   add_foreign_key "team_programmes", "programmes"
   add_foreign_key "team_programmes", "teams"
-  add_foreign_key "triage", "patient_sessions"
+  add_foreign_key "triage", "patients"
   add_foreign_key "triage", "programmes"
+  add_foreign_key "triage", "teams"
   add_foreign_key "triage", "users", column: "performed_by_user_id"
   add_foreign_key "vaccination_records", "batches"
   add_foreign_key "vaccination_records", "patient_sessions"

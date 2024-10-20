@@ -18,7 +18,6 @@
 
 class PatientSession < ApplicationRecord
   audited
-  has_associated_audits
 
   include PatientSessionStateConcern
 

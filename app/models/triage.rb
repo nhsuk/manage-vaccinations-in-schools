@@ -9,37 +9,37 @@
 #  status               :integer          not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  patient_session_id   :bigint           not null
+#  patient_id           :bigint           not null
 #  performed_by_user_id :bigint           not null
 #  programme_id         :bigint           not null
+#  team_id              :bigint           not null
 #
 # Indexes
 #
-#  index_triage_on_patient_session_id    (patient_session_id)
+#  index_triage_on_patient_id            (patient_id)
 #  index_triage_on_performed_by_user_id  (performed_by_user_id)
 #  index_triage_on_programme_id          (programme_id)
+#  index_triage_on_team_id               (team_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (patient_session_id => patient_sessions.id)
+#  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
 #  fk_rails_...  (programme_id => programmes.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 class Triage < ApplicationRecord
   self.table_name = "triage"
 
-  audited associated_with: :patient_session
+  audited
 
-  belongs_to :patient_session
+  belongs_to :patient
   belongs_to :programme
+  belongs_to :team
 
   belongs_to :performed_by,
              class_name: "User",
              foreign_key: :performed_by_user_id
-
-  has_one :patient, through: :patient_session
-  has_one :session, through: :patient_session
-  has_one :team, through: :session
 
   enum :status,
        %i[
@@ -51,8 +51,6 @@ class Triage < ApplicationRecord
        validate: true
 
   encrypts :notes
-
-  validates :programme, inclusion: { in: -> { _1.patient_session.programmes } }
 
   validates :notes, length: { maximum: 1000 }
 end
