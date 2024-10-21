@@ -39,8 +39,8 @@ describe AppImportFormatDetailsComponent, type: :component do
     expect(page).to have_content("CHILD_DATE_OF_BIRTH")
     expect(page).to have_content("CHILD_POSTCODE")
     expect(page).to have_content("CHILD_REGISTRATION")
-    expect(page).to have_content("PARENT_1_NAME")
-    expect(page).to have_content("PARENT_2_NAME")
+    expect(page).to have_content("PARENT_1_EMAIL")
+    expect(page).to have_content("PARENT_1_PHONE")
   end
 
   it "renders the correct columns for CohortImport" do
