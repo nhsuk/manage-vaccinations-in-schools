@@ -39,6 +39,59 @@ describe Parent do
   it { should normalize(:phone).from(" 01234 567890 ").to("01234567890") }
   it { should normalize(:phone).from("").to(nil) }
 
+  describe "#label" do
+    subject(:label) { parent.label }
+
+    context "with a full name" do
+      let(:parent) { create(:parent, full_name: "John Smith") }
+
+      it { should eq("John Smith") }
+    end
+
+    context "without a full name" do
+      let(:parent) do
+        create(
+          :parent,
+          full_name: nil,
+          email: "test@example.com",
+          phone: "07700900123"
+        )
+      end
+
+      it { should eq("test@example.com / 07700900123") }
+    end
+  end
+
+  describe "#contact_label" do
+    subject(:contact_label) { parent.contact_label }
+
+    context "without contact details" do
+      let(:parent) { create(:parent, email: nil, phone: nil) }
+
+      it { should be_blank }
+    end
+
+    context "with an email address" do
+      let(:parent) { create(:parent, email: "test@example.com", phone: nil) }
+
+      it { should eq("test@example.com") }
+    end
+
+    context "with a phone number" do
+      let(:parent) { create(:parent, email: nil, phone: "07700900123") }
+
+      it { should eq("07700900123") }
+    end
+
+    context "with both" do
+      let(:parent) do
+        create(:parent, email: "test@example.com", phone: "07700900123")
+      end
+
+      it { should eq("test@example.com / 07700900123") }
+    end
+  end
+
   describe "#contact_method_description" do
     subject(:contact_method_description) { parent.contact_method_description }
 

@@ -14,9 +14,16 @@ class AppParentSummaryComponent < ViewComponent::Base
     govuk_summary_list do |summary_list|
       summary_list.with_row do |row|
         row.with_key { "Name" }
-        row.with_value { @parent.full_name }
-        if (href = @change_links[:name])
-          row.with_action(text: "Change", href:, visually_hidden_text: "name")
+
+        if @parent.full_name.present?
+          row.with_value { @parent.full_name }
+          if (href = @change_links[:name])
+            row.with_action(text: "Change", href:, visually_hidden_text: "name")
+          end
+        elsif (href = @change_links[:name])
+          row.with_value { govuk_link_to("Add name", href) }
+        else
+          row.with_value { "Not provided" }
         end
       end
 

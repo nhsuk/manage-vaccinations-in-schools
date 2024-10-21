@@ -140,7 +140,7 @@ class Consent < ApplicationRecord
   delegate :restricted?, to: :patient
 
   def name
-    via_self_consent? ? patient.full_name : parent.full_name
+    via_self_consent? ? patient.full_name : parent.label
   end
 
   def triage_needed?
