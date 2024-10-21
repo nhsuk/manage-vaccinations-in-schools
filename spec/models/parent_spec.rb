@@ -22,6 +22,8 @@
 
 describe Parent do
   describe "validations" do
+    it { should_not validate_presence_of(:email) }
+    it { should_not validate_presence_of(:full_name) }
     it { should_not validate_presence_of(:phone) }
 
     context "when users wants to receive text updates" do
@@ -30,6 +32,12 @@ describe Parent do
       it { should validate_presence_of(:phone) }
     end
   end
+
+  it { should normalize(:email).from("  joHn@doe.com ").to("john@doe.com") }
+  it { should normalize(:email).from("").to(nil) }
+
+  it { should normalize(:phone).from(" 01234 567890 ").to("01234567890") }
+  it { should normalize(:phone).from("").to(nil) }
 
   describe "#contact_method_description" do
     subject(:contact_method_description) { parent.contact_method_description }
@@ -67,50 +75,6 @@ describe Parent do
           "Other – Please call 01234 567890 ext 8910 between 9am and 5pm."
         )
       end
-    end
-  end
-
-  describe "#phone=" do
-    subject(:normalised_phone) { build(:parent, phone:).phone }
-
-    context "with non-numeric characters" do
-      let(:phone) { "01234 567890" }
-
-      it { should eq("01234567890") }
-    end
-
-    context "when nil" do
-      let(:phone) { nil }
-
-      it { should be_nil }
-    end
-
-    context "when blank" do
-      let(:phone) { "" }
-
-      it { should be_nil }
-    end
-  end
-
-  describe "#email=" do
-    subject(:normalised_email) { build(:parent, email:).email }
-
-    context "with whitespace and capitalised letters" do
-      let(:email) { "  joHn@doe.com " }
-
-      it { should eq("john@doe.com") }
-    end
-
-    context "when nil" do
-      let(:email) { nil }
-
-      it { should be_nil }
-    end
-
-    context "when blank" do
-      let(:email) { "" }
-
-      it { should be_nil }
     end
   end
 
