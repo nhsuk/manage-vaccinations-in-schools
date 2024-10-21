@@ -78,5 +78,11 @@ describe ParentRelationship do
 
       it { should eq("Grandparent") }
     end
+
+    context "with an unknown" do
+      let(:parent_relationship) { build(:parent_relationship, :unknown) }
+
+      it { should eq("Unknown") }
+    end
   end
 end
