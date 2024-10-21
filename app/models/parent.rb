@@ -39,13 +39,12 @@ class Parent < ApplicationRecord
          allow_nil: true
        }
 
-  encrypts :email, :full_name, :phone, :relationship_other, deterministic: true
+  encrypts :email, :full_name, :phone, deterministic: true
   encrypts :contact_method_other_details
 
   normalizes :phone, with: -> { _1.blank? ? nil : _1.to_s.gsub(/\s/, "") }
   normalizes :email, with: -> { _1.blank? ? nil : _1.to_s.downcase.strip }
 
-  validates :full_name, presence: true
   validates :phone,
             presence: {
               if: :phone_receive_updates
@@ -53,7 +52,7 @@ class Parent < ApplicationRecord
             phone: {
               allow_blank: true
             }
-  validates :email, notify_safe_email: true
+  validates :email, notify_safe_email: { allow_blank: true }
   validates :contact_method_other_details,
             :email,
             :full_name,
