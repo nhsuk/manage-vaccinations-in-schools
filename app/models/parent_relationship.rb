@@ -39,7 +39,8 @@ class ParentRelationship < ApplicationRecord
          father: "father",
          guardian: "guardian",
          mother: "mother",
-         other: "other"
+         other: "other",
+         unknown: "unknown"
        },
        validate: true
 
