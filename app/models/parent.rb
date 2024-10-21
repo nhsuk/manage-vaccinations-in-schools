@@ -53,7 +53,7 @@ class Parent < ApplicationRecord
             phone: {
               allow_blank: true
             }
-  validates :email, presence: true, notify_safe_email: true
+  validates :email, notify_safe_email: true
   validates :contact_method_other_details,
             :email,
             :full_name,

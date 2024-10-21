@@ -40,7 +40,7 @@ class Team < ApplicationRecord
 
   has_and_belongs_to_many :users
 
-  validates :email, presence: true, notify_safe_email: true
+  validates :email, notify_safe_email: true
   validates :name, presence: true, uniqueness: true
   validates :ods_code, presence: true
   validates :phone, presence: true, phone: true
