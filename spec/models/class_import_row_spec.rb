@@ -20,12 +20,7 @@ describe ClassImportRow do
       "CHILD_NHS_NUMBER" => "1234567890",
       "CHILD_POSTCODE" => "SW1A 1AA",
       "CHILD_REGISTRATION" => "8AB",
-      "CHILD_TOWN" => "London"
-    }
-  end
-
-  let(:parent_1_data) do
-    {
+      "CHILD_TOWN" => "London",
       "PARENT_1_EMAIL" => "john@example.com",
       "PARENT_1_NAME" => "John Smith",
       "PARENT_1_PHONE" => "07412345678",
@@ -76,24 +71,18 @@ describe ClassImportRow do
 
     let(:data) { valid_data }
 
-    it { should be_empty }
-
-    context "with one parent" do
-      let(:data) { valid_data.merge(parent_1_data) }
-
-      it "returns a parent" do
-        expect(parents.count).to eq(1)
-        expect(parents.first).to have_attributes(
-          full_name: "John Smith",
-          email: "john@example.com",
-          phone: "07412345678",
-          phone_receive_updates: false
-        )
-      end
+    it "returns a parent" do
+      expect(parents.count).to eq(1)
+      expect(parents.first).to have_attributes(
+        full_name: "John Smith",
+        email: "john@example.com",
+        phone: "07412345678",
+        phone_receive_updates: false
+      )
     end
 
     context "with two parents" do
-      let(:data) { valid_data.merge(parent_1_data).merge(parent_2_data) }
+      let(:data) { valid_data.merge(parent_2_data) }
 
       it "returns two parents" do
         expect(parents.count).to eq(2)
@@ -111,13 +100,11 @@ describe ClassImportRow do
     end
 
     context "with an existing parent" do
-      let(:data) { valid_data.merge(parent_2_data) }
-
       let!(:existing_parent) do
-        create(:parent, full_name: "Jenny Smith", email: "jenny@example.com")
+        create(:parent, full_name: "Johm Smith", email: "john@example.com")
       end
 
-      it { should eq([existing_parent]) }
+      it { should contain_exactly(existing_parent) }
 
       it "doesn't change phone_receive_updates" do
         expect(parents.first.phone_receive_updates).to eq(
@@ -182,19 +169,13 @@ describe ClassImportRow do
 
     let(:data) { valid_data }
 
-    it { should be_empty }
-
-    context "with one parent" do
-      let(:data) { valid_data.merge(parent_1_data) }
-
-      it "returns a parent relationship" do
-        expect(parent_relationships.count).to eq(1)
-        expect(parent_relationships.first).to be_father
-      end
+    it "returns a parent relationship" do
+      expect(parent_relationships.count).to eq(1)
+      expect(parent_relationships.first).to be_father
     end
 
     context "with two parents" do
-      let(:data) { valid_data.merge(parent_1_data).merge(parent_2_data) }
+      let(:data) { valid_data.merge(parent_2_data) }
 
       it "returns two parent relationships" do
         expect(parent_relationships.count).to eq(2)
