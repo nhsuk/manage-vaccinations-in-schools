@@ -60,6 +60,8 @@ module OmniAuth
           nonce:,
           max_age: options[:max_age],
           state: session["nhsuk_cis2.state"],
+          # Enables support for MS Authenticator
+          acr_values: "AAL2_OR_AAL3_ANY"
         }
         authorization_uri = client.authorization_uri(**params)
 

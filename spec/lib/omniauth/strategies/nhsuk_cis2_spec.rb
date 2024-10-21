@@ -223,6 +223,7 @@ describe ::OmniAuth::Strategies::NhsukCis2 do # rubocop:disable RSpec/SpecFilePa
       its(:query) { should match(/nonce=[a-f0-9]{32}/) }
       its(:query) { should match(/response_type=code/) }
       its(:query) { should match(/state=[a-f0-9]{32}/) }
+      its(:query) { should match(/acr_values=AAL2_OR_AAL3_ANY/) }
 
       its(:query) do
         should match(
