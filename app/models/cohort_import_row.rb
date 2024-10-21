@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class CohortImportRow < PatientImportRow
-  validates :address_postcode, postcode: true
-
   SCHOOL_URN_HOME_EDUCATED = "999999"
   SCHOOL_URN_UNKNOWN = "888888"
 

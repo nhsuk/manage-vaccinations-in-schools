@@ -14,6 +14,7 @@ class PatientImportRow
               in: :year_groups
             },
             if: -> { date_of_birth.present? }
+  validates :address_postcode, postcode: true
 
   validates :parent_1_email, notify_safe_email: { allow_blank: true }
   validates :parent_1_phone, phone: { allow_blank: true }
