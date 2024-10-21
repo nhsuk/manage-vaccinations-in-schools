@@ -91,6 +91,7 @@ group :test do
   gem "cuprite"
   gem "rspec"
   gem "rspec-html-matchers"
+  gem "rspec-its"
   gem "shoulda-matchers"
   gem "simplecov", require: false
   gem "webmock"

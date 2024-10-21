@@ -298,37 +298,38 @@ Devise.setup do |config|
         end
       end
 
-    class RequestLogger < Faraday::Logging::Formatter
-      def request(env)
-        Rails.logger.debug "================================================================"
-        Rails.logger.debug "Request:"
-        Rails.logger.debug "#{env.method.upcase} #{env.url}"
-        env.request_headers.each { puts "#{_1}: #{_2}" }
-        Rails.logger.debug ["", env.body] if env.body
-        Rails.logger.debug "----------------------------------------------------------------"
-      end
+    # Enable basic debug output from Rack
+    # Rack::OAuth2.debug!
+    # Rack::OAuth2.logger = Rails.logger
 
-      def response(env)
-        Rails.logger.debug "Response:"
-        Rails.logger.debug env.status.to_s
-        Rails.logger.debug ""
-        env.response_headers.each { puts "#{_1}: #{_2}" }
-        Rails.logger.debug ["", env.body] if env.body
-        Rails.logger.debug "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-        Rails.logger.debug caller.join("\n\t")
-        Rails.logger.debug "================================================================"
-      end
-    end
-
-    Rack::OAuth2.debug!
-    Rack::OAuth2.logger = Rails.logger
-
-    # TODO: Remove. Our new omniauth strategy takes care of this for us now.
+    # OTT debug output using our own logger
+    # class RequestLogger < Faraday::Logging::Formatter
+    #   def request(env)
+    #     Rails.logger.debug "================================================================"
+    #     Rails.logger.debug "Request:"
+    #     Rails.logger.debug "#{env.method.upcase} #{env.url}"
+    #     env.request_headers.each { puts "#{_1}: #{_2}" }
+    #     Rails.logger.debug ["", env.body] if env.body
+    #     Rails.logger.debug "----------------------------------------------------------------"
+    #   end
+    #
+    #   def response(env)
+    #     Rails.logger.debug "Response:"
+    #     Rails.logger.debug env.status.to_s
+    #     Rails.logger.debug ""
+    #     env.response_headers.each { puts "#{_1}: #{_2}" }
+    #     Rails.logger.debug ["", env.body] if env.body
+    #     Rails.logger.debug "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+    #     Rails.logger.debug caller.join("\n\t")
+    #     Rails.logger.debug "================================================================"
+    #   end
+    # end
+    #
     # OpenIDConnect.http_config do |http_client|
-    #   http_client.ssl.min_version = :TLS1_2
-    #   # http_client.response :logger,
-    #   #                      ::Logger.new($stdout),
-    #   #                      formatter: RequestLogger
+    #   # http_client.ssl.min_version = :TLS1_2
+    #   http_client.response :logger,
+    #                        ::Logger.new($stdout),
+    #                        formatter: RequestLogger
     # end
 
     # config.omniauth(
@@ -366,8 +367,8 @@ Devise.setup do |config|
         client_id: Settings.cis2.client_id,
         redirect_uri:,
         secret: Settings.cis2.secret,
-        strategy_class: OmniAuth::Strategies::NhsukCis2
-      }
+        strategy_class: OmniAuth::Strategies::NhsukCis2,
+      },
     )
   end
 
