@@ -34,8 +34,6 @@ require_relative "../../lib/faker/address"
 
 FactoryBot.define do
   factory :location do
-    name { Faker::Educator.primary_school }
-
     address_line_1 { Faker::Address.street_address }
     address_town { Faker::Address.city }
     address_postcode { Faker::Address.uk_postcode }
@@ -44,14 +42,16 @@ FactoryBot.define do
 
     trait :clinic do
       type { :clinic }
+      name { "#{Faker::University.name} Clinic" }
       sequence(:ods_code, 10_000, &:to_s)
       urn { nil }
     end
 
     trait :school do
       type { :school }
-      ods_code { nil }
+      name { Faker::Educator.primary_school }
       sequence(:urn, 100_000, &:to_s)
+      ods_code { nil }
     end
 
     trait :primary do
