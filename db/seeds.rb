@@ -65,7 +65,11 @@ def create_user_and_team(ods_code:, uid: nil)
   [user, team]
 end
 
-def attach_locations_to(team)
+def create_clinics_and_attach_to(team)
+  FactoryBot.create_list(:location, 10, :clinic, team:)
+end
+
+def attach_sample_of_random_locations_to(team)
   Location.order("RANDOM()").limit(50).update_all(team_id: team.id)
 end
 
@@ -132,8 +136,6 @@ def create_session(user, team)
       user:
     )
   end
-
-  UnscheduledSessionsFactory.new.call
 end
 
 def create_patients(team)
@@ -178,7 +180,8 @@ import_schools
 # Nurse Joy's team
 user, team = create_user_and_team(ods_code: "R1L")
 
-attach_locations_to(team)
+create_clinics_and_attach_to(team)
+attach_sample_of_random_locations_to(team)
 attach_specific_school_to_team_if_present(team:, urn: "136126") # potentially needed for automated testing
 
 Audited.audit_class.as_user(user) { create_session(user, team) }
@@ -188,8 +191,12 @@ create_imports(user, team)
 # CIS2 team - the ODS code and user UID need to match the values in the CIS2 env
 user, team = create_user_and_team(ods_code: "Y51", uid: "555057896106")
 
-attach_locations_to(team)
+create_clinics_and_attach_to(team)
+attach_sample_of_random_locations_to(team)
 attach_specific_school_to_team_if_present(team:, urn: "136126") # potentially needed for automated testing
+
 Audited.audit_class.as_user(user) { create_session(user, team) }
 create_patients(team)
 create_imports(user, team)
+
+UnscheduledSessionsFactory.new.call
