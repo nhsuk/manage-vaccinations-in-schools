@@ -15,8 +15,12 @@ class UnscheduledSessionsFactory
           next if sessions.any? { _1.location_id == location.id }
 
           programmes =
-            team.programmes.select do
-              _1.year_groups.intersect?(location.year_groups)
+            if location.school?
+              team.programmes.select do
+                _1.year_groups.intersect?(location.year_groups)
+              end
+            else
+              team.programmes
             end
 
           next if programmes.empty?
