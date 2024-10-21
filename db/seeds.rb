@@ -19,7 +19,8 @@ end
 
 def import_schools
   if Settings.fast_reset
-    FactoryBot.create_list(:location, 30, :school)
+    FactoryBot.create_list(:location, 30, :primary)
+    FactoryBot.create_list(:location, 30, :secondary)
   else
     Rake::Task["schools:import"].execute
   end
