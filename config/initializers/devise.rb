@@ -300,6 +300,14 @@ Devise.setup do |config|
       http_client.ssl.min_version = :TLS1_2
     end
 
+    acr_values =
+      if Settings.cis2.allow_aal2_auth
+        # Enables support for MS Authenticator
+        "AAL2_OR_AAL3_ANY"
+      else
+        "AAL3"
+      end
+
     config.omniauth(
       :openid_connect,
       {
@@ -307,7 +315,8 @@ Devise.setup do |config|
         name: :cis2,
         scope: %i[openid profile email nationalrbacaccess associatedorgs],
         extra_authorize_params: {
-          max_age: 300
+          max_age: 300,
+          acr_values:
         },
         response_type: :code,
         # uid_field: "preferred_username",
