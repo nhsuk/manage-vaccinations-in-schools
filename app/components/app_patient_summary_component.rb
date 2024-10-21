@@ -68,10 +68,10 @@ class AppPatientSummaryComponent < ViewComponent::Base
         row.with_value { format_year_group }
       end
       if @show_parent_or_guardians && !@patient.restricted? &&
-           @patient.parent_relationships.present?
+           @patient.parents.present?
         summary_list.with_row do |row|
           row.with_key do
-            "Parent or guardian".pluralize(@patient.parent_relationships.count)
+            "Parent or guardian".pluralize(@patient.parents.count)
           end
           row.with_value { format_parent_or_guardians }
         end
@@ -141,14 +141,14 @@ class AppPatientSummaryComponent < ViewComponent::Base
   def format_parent_or_guardians
     tag.ul(class: "nhsuk-list") do
       safe_join(
-        @patient.parent_relationships.map do |parent_relationship|
+        @patient.parents.map do |parent|
           tag.li do
             [
-              "#{parent_relationship.parent.full_name} (#{parent_relationship.label})",
-              if (email = parent_relationship.parent.email).present?
+              parent.label_to(patient: @patient),
+              if parent.full_name.present? && (email = parent.email).present?
                 tag.span(email, class: "nhsuk-u-secondary-text-color")
               end,
-              if (phone = parent_relationship.parent.phone).present?
+              if parent.full_name.present? && (phone = parent.phone).present?
                 tag.span(phone, class: "nhsuk-u-secondary-text-color")
               end
             ].compact.join(tag.br).html_safe

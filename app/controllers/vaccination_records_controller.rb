@@ -43,7 +43,7 @@ class VaccinationRecordsController < ApplicationController
           :immunisation_imports,
           :performed_by_user,
           :programme,
-          patient: [:cohort, :school, { parent_relationships: :parent }],
+          patient: [:cohort, :school, { parents: :parent_relationships }],
           session: %i[dates location],
           vaccine: :programme
         )

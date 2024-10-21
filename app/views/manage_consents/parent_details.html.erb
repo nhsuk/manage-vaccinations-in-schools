@@ -6,14 +6,14 @@
 <% end %>
 
 <% page_title = if @parent.recorded?
-       "Details for #{@parent.full_name} (#{@parent.relationship_to(patient: @patient).label})"
+       "Details for #{@parent.label_to(patient: @patient)}"
      else
        "Details for parent or guardian"
      end %>
 
 <%= h1 page_title: do %>
   <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
-    <%= @patient.full_name %>
+    <%= @parent.label %>
   </span>
   <%= page_title %>
 <% end %>
