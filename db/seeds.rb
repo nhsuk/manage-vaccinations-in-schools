@@ -74,10 +74,15 @@ def attach_specific_school_to_team_if_present(team:, urn:)
   end
 end
 
-def create_session(_user, team)
+def create_session(user, team)
   programme = Programme.find_by(type: "hpv")
 
-  FactoryBot.create_list(:batch, 4, vaccine: programme.vaccines.active.first)
+  FactoryBot.create_list(
+    :batch,
+    4,
+    team:,
+    vaccine: programme.vaccines.active.first
+  )
 
   location =
     team.locations.for_year_groups(programme.year_groups).sample ||
@@ -94,7 +99,7 @@ def create_session(_user, team)
   session.dates.create!(value: Date.tomorrow)
 
   patients_without_consent =
-    FactoryBot.create_list(:patient_session, 4, programme:, session:)
+    FactoryBot.create_list(:patient_session, 4, programme:, session:, user:)
   unmatched_patients = patients_without_consent.sample(2).map(&:patient)
   unmatched_patients.each do |patient|
     FactoryBot.create(
@@ -117,7 +122,14 @@ def create_session(_user, team)
     delay_vaccination
     unable_to_vaccinate
   ].each do |trait|
-    FactoryBot.create_list(:patient_session, 3, trait, programme:, session:)
+    FactoryBot.create_list(
+      :patient_session,
+      3,
+      trait,
+      programme:,
+      session:,
+      user:
+    )
   end
 
   UnscheduledSessionsFactory.new.call
@@ -129,17 +141,30 @@ def create_patients(team)
   end
 end
 
-def create_imports(team)
+def create_imports(user, team)
   programme = team.programmes.find_by(type: "hpv")
 
   %i[pending invalid recorded].each do |status|
-    FactoryBot.create(:cohort_import, status, team:, programme:)
-    FactoryBot.create(:immunisation_import, status, team:, programme:)
+    FactoryBot.create(
+      :cohort_import,
+      status,
+      team:,
+      programme:,
+      uploaded_by: user
+    )
+    FactoryBot.create(
+      :immunisation_import,
+      status,
+      team:,
+      programme:,
+      uploaded_by: user
+    )
     FactoryBot.create(
       :class_import,
       status,
       team:,
-      session: programme.sessions.first
+      session: programme.sessions.first,
+      uploaded_by: user
     )
   end
 end
@@ -157,7 +182,7 @@ attach_specific_school_to_team_if_present(team:, urn: "136126") # potentially ne
 
 Audited.audit_class.as_user(user) { create_session(user, team) }
 create_patients(team)
-create_imports(team)
+create_imports(user, team)
 
 # CIS2 team - the ODS code and user UID need to match the values in the CIS2 env
 user, team = create_user_and_team(ods_code: "Y51", uid: "555057896106")
@@ -166,4 +191,4 @@ attach_locations_to(team)
 attach_specific_school_to_team_if_present(team:, urn: "136126") # potentially needed for automated testing
 Audited.audit_class.as_user(user) { create_session(user, team) }
 create_patients(team)
-create_imports(team)
+create_imports(user, team)
