@@ -5,7 +5,7 @@ require_relative "../task_helpers"
 namespace :users do
   desc "Create a new user and add them to a team."
   task :create,
-       %i[email password given_name family_name team_ods_code registration] =>
+       %i[email password given_name family_name team_ods_code] =>
          :environment do |_task, args|
     include TaskHelpers
 
