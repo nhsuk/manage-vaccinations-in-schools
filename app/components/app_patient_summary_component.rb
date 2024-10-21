@@ -145,10 +145,10 @@ class AppPatientSummaryComponent < ViewComponent::Base
           tag.li do
             [
               parent.label_to(patient: @patient),
-              if parent.full_name.present? && (email = parent.email).present?
+              if (email = parent.email).present?
                 tag.span(email, class: "nhsuk-u-secondary-text-color")
               end,
-              if parent.full_name.present? && (phone = parent.phone).present?
+              if (phone = parent.phone).present?
                 tag.span(phone, class: "nhsuk-u-secondary-text-color")
               end
             ].compact.join(tag.br).html_safe

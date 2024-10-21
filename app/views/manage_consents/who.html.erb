@@ -21,7 +21,7 @@
     <% @parent_options.each.with_index do |parent, i| %>
       <%= f.govuk_radio_button :new_or_existing_parent, parent.id,
                                label: { text: parent.label_to(patient: @patient) },
-                               hint: { text: parent.full_name.present? ? parent.contact_label : nil },
+                               hint: { text: parent.contact_label },
                                link_errors: i == 0 %>
     <% end %>
     <%= f.govuk_radio_divider %>

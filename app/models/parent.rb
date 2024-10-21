@@ -65,7 +65,7 @@ class Parent < ApplicationRecord
             if: :contact_method_other?
 
   def label
-    full_name.presence || contact_label
+    full_name.presence || "Parent or guardian (name unknown)"
   end
 
   def contact_label

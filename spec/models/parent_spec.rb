@@ -49,16 +49,9 @@ describe Parent do
     end
 
     context "without a full name" do
-      let(:parent) do
-        create(
-          :parent,
-          full_name: nil,
-          email: "test@example.com",
-          phone: "07700900123"
-        )
-      end
+      let(:parent) { create(:parent, full_name: nil) }
 
-      it { should eq("test@example.com / 07700900123") }
+      it { should eq("Parent or guardian (name unknown)") }
     end
   end
 
