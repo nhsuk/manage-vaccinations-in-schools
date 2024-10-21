@@ -147,7 +147,7 @@ describe ClassImport do
       expect { record! }
         .to change(class_import, :recorded_at).from(nil)
         .and change(class_import.patients, :count).by(4)
-        .and change(class_import.parents, :count).by(3)
+        .and change(class_import.parents, :count).by(5)
         .and change(team.cohorts, :count).by(1)
 
       cohort = Cohort.first
@@ -164,7 +164,13 @@ describe ClassImport do
         address_postcode: "SW1A 1AA"
       )
 
-      expect(Patient.first.parents).to be_empty
+      expect(Patient.first.parents.count).to eq(1)
+
+      expect(Patient.first.parents.first).to have_attributes(
+        full_name: nil,
+        phone: "07412345678",
+        email: "susan@example.com"
+      )
 
       expect(Patient.second).to have_attributes(
         nhs_number: "1234567891",
@@ -223,7 +229,7 @@ describe ClassImport do
         address_postcode: nil
       )
 
-      expect(Patient.fourth.parents).to be_empty
+      expect(Patient.fourth.parents).not_to be_empty
 
       # Second import should not duplicate the patients if they're identical.
 
@@ -319,7 +325,7 @@ describe ClassImport do
     end
 
     it "records the parents" do
-      expect { record! }.to change(Parent.recorded, :count).from(0).to(3)
+      expect { record! }.to change(Parent.recorded, :count).from(0).to(5)
     end
 
     context "with an unscheduled session" do

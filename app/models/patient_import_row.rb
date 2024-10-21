@@ -15,64 +15,18 @@ class PatientImportRow
             },
             if: -> { date_of_birth.present? }
 
-  with_options if: :parent_1_exists? do
-    validates :parent_1_name, presence: true
-    validates :parent_1_relationship, presence: true
-    validates :parent_1_email, notify_safe_email: true
-    validates :parent_1_phone, phone: { allow_blank: true }
-  end
+  validates :parent_1_email, notify_safe_email: { allow_blank: true }
+  validates :parent_1_phone, phone: { allow_blank: true }
+  validates :parent_1_relationship, absence: true, unless: :parent_1_exists?
 
-  with_options if: :parent_2_exists? do
-    validates :parent_2_name, presence: true
-    validates :parent_2_relationship, presence: true
-    validates :parent_2_email, notify_safe_email: true
-    validates :parent_2_phone, phone: { allow_blank: true }
-  end
+  validates :parent_2_email, notify_safe_email: { allow_blank: true }
+  validates :parent_2_phone, phone: { allow_blank: true }
+  validates :parent_2_relationship, absence: true, unless: :parent_2_exists?
 
   def initialize(data:, team:, year_groups:)
     @data = data
     @team = team
     @year_groups = year_groups
-  end
-
-  def to_parents
-    return unless valid?
-
-    parents = [
-      if parent_1_exists?
-        {
-          email: parent_1_email,
-          full_name: parent_1_name,
-          phone: parent_1_phone
-        }
-      end,
-      if parent_2_exists?
-        {
-          email: parent_2_email,
-          full_name: parent_2_name,
-          phone: parent_2_phone
-        }
-      end
-    ].compact
-
-    parents.map do |attributes|
-      Parent
-        .create_with(recorded_at: Time.zone.now)
-        .find_or_initialize_by(attributes.slice(:email, :full_name))
-        .tap do |parent|
-          parent.assign_attributes(
-            phone: attributes[:phone],
-            phone_receive_updates:
-              (
-                if attributes[:phone].present?
-                  parent.phone_receive_updates
-                else
-                  false
-                end
-              )
-          )
-        end
-    end
   end
 
   def to_patient
@@ -118,13 +72,67 @@ class PatientImportRow
     end
   end
 
+  def to_parents
+    return unless valid?
+
+    parents = [
+      if parent_1_exists?
+        {
+          email: parent_1_email,
+          full_name: parent_1_name,
+          phone: parent_1_phone
+        }
+      end,
+      if parent_2_exists?
+        {
+          email: parent_2_email,
+          full_name: parent_2_name,
+          phone: parent_2_phone
+        }
+      end
+    ].compact
+
+    parents.map do |attributes|
+      email = attributes[:email]
+      phone = attributes[:phone]
+      full_name = attributes[:full_name]
+
+      parent =
+        if email.present?
+          Parent.find_by(email:)
+        elsif (existing_patient = existing_patients.first)
+          # We don't match on phone numbers or names globally as they can be re-used.
+          if phone.present?
+            existing_patient.parents.find_by(phone:)
+          elsif full_name.present?
+            existing_patient.parents.find_by(full_name:)
+          end
+        end
+
+      parent ||= Parent.new
+
+      parent.email = attributes[:email]
+      parent.full_name = attributes[:full_name]
+      parent.phone = attributes[:phone]
+      parent.phone_receive_updates = false if parent.phone.blank?
+
+      parent.recorded_at = Time.current unless parent.recorded?
+
+      parent
+    end
+  end
+
   def to_parent_relationships(parents, patient)
     return unless valid?
 
-    parent_relationships =
-      [parent_1_relationship, parent_2_relationship].compact_blank.map do
-        parent_relationship_attributes(_1)
+    parent_relationships = [
+      if parent_1_exists?
+        parent_relationship_attributes(parent_1_relationship)
+      end,
+      if parent_2_exists?
+        parent_relationship_attributes(parent_2_relationship)
       end
+    ].compact
 
     parents
       .zip(parent_relationships)
@@ -162,7 +170,8 @@ class PatientImportRow
   end
 
   def gender_code
-    @data["CHILD_GENDER"]&.strip&.downcase&.gsub(" ", "_") || "not_known"
+    @data["CHILD_GENDER"]&.strip&.downcase&.gsub(" ", "_").presence ||
+      "not_known"
   end
 
   def address_line_1
@@ -178,39 +187,39 @@ class PatientImportRow
   end
 
   def address_postcode
-    @data["CHILD_POSTCODE"]&.strip&.presence
+    @data["CHILD_POSTCODE"]&.strip.presence
   end
 
   def parent_1_name
-    @data["PARENT_1_NAME"]&.strip
+    @data["PARENT_1_NAME"]&.strip.presence
   end
 
   def parent_1_relationship
-    @data["PARENT_1_RELATIONSHIP"]&.strip
+    @data["PARENT_1_RELATIONSHIP"]&.strip.presence
   end
 
   def parent_1_email
-    @data["PARENT_1_EMAIL"]&.downcase&.strip
+    @data["PARENT_1_EMAIL"]&.downcase&.strip.presence
   end
 
   def parent_1_phone
-    @data["PARENT_1_PHONE"]&.gsub(/\s/, "")
+    @data["PARENT_1_PHONE"]&.gsub(/\s/, "").presence
   end
 
   def parent_2_name
-    @data["PARENT_2_NAME"]&.strip
+    @data["PARENT_2_NAME"]&.strip.presence
   end
 
   def parent_2_relationship
-    @data["PARENT_2_RELATIONSHIP"]&.strip
+    @data["PARENT_2_RELATIONSHIP"]&.strip.presence
   end
 
   def parent_2_email
-    @data["PARENT_2_EMAIL"]&.downcase&.strip
+    @data["PARENT_2_EMAIL"]&.downcase&.strip.presence
   end
 
   def parent_2_phone
-    @data["PARENT_2_PHONE"]&.gsub(/\s/, "")
+    @data["PARENT_2_PHONE"]&.gsub(/\s/, "").presence
   end
 
   attr_reader :team, :year_groups
@@ -228,19 +237,17 @@ class PatientImportRow
   end
 
   def parent_1_exists?
-    [parent_1_name, parent_1_relationship, parent_1_email, parent_1_phone].any?(
-      &:present?
-    )
+    [parent_1_name, parent_1_email, parent_1_phone].any?(&:present?)
   end
 
   def parent_2_exists?
-    [parent_2_name, parent_2_relationship, parent_2_email, parent_2_phone].any?(
-      &:present?
-    )
+    [parent_2_name, parent_2_email, parent_2_phone].any?(&:present?)
   end
 
   def parent_relationship_attributes(relationship)
-    case relationship.downcase
+    case relationship&.downcase
+    when nil, "unknown"
+      { type: "unknown" }
     when "mother", "mum"
       { type: "mother" }
     when "father", "dad"
