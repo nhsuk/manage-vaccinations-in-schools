@@ -6,3 +6,4 @@ fast_reset: false
 
 cis2:
   authentication_assurance_level: 3
+  allow_aal2_auth: true
