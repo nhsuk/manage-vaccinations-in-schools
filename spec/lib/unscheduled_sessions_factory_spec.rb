@@ -19,6 +19,18 @@ describe UnscheduledSessionsFactory do
       end
     end
 
+    context "with a generic clinic" do
+      let!(:location) { create(:location, :generic_clinic, team:) }
+
+      it "creates missing unscheduled sessions" do
+        expect { call }.to change(team.sessions, :count).by(1)
+
+        session = team.sessions.first
+        expect(session.location).to eq(location)
+        expect(session.programmes).to eq([programme])
+      end
+    end
+
     context "with a school that's not eligible for the programme" do
       before { create(:location, :primary, team:) }
 
