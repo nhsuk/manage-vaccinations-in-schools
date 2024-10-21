@@ -18,14 +18,14 @@ class PatientImportRow
   with_options if: :parent_1_exists? do
     validates :parent_1_name, presence: true
     validates :parent_1_relationship, presence: true
-    validates :parent_1_email, presence: true, notify_safe_email: true
+    validates :parent_1_email, notify_safe_email: true
     validates :parent_1_phone, phone: { allow_blank: true }
   end
 
   with_options if: :parent_2_exists? do
     validates :parent_2_name, presence: true
     validates :parent_2_relationship, presence: true
-    validates :parent_2_email, presence: true, notify_safe_email: true
+    validates :parent_2_email, notify_safe_email: true
     validates :parent_2_phone, phone: { allow_blank: true }
   end
 

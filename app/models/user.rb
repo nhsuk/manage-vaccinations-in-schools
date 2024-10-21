@@ -45,13 +45,7 @@ class User < ApplicationRecord
 
   validates :family_name, :given_name, presence: true, length: { maximum: 255 }
 
-  validates :email,
-            presence: true,
-            length: {
-              maximum: 255
-            },
-            uniqueness: true,
-            notify_safe_email: true
+  validates :email, uniqueness: true, notify_safe_email: true
 
   validates :password,
             presence: true,

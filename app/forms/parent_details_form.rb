@@ -14,7 +14,7 @@ class ParentDetailsForm
   attribute :relationship_other_name, :string
   attribute :relationship_type, :string
 
-  validates :email, presence: true, notify_safe_email: true
+  validates :email, notify_safe_email: true
   validates :phone,
             presence: {
               if: :phone_receive_updates
