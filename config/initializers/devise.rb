@@ -298,33 +298,33 @@ Devise.setup do |config|
         end
       end
 
-    # Enable basic debug output from Rack
+    ## Enable basic debug output from Rack
     # Rack::OAuth2.debug!
     # Rack::OAuth2.logger = Rails.logger
 
-    # OTT debug output using our own logger
+    ## OTT debug output using our own logger
     # class RequestLogger < Faraday::Logging::Formatter
     #   def request(env)
     #     Rails.logger.debug "================================================================"
     #     Rails.logger.debug "Request:"
     #     Rails.logger.debug "#{env.method.upcase} #{env.url}"
-    #     env.request_headers.each { puts "#{_1}: #{_2}" }
+    #     env.request_headers.each { Rails.logger.debug "#{_1}: #{_2}" }
     #     Rails.logger.debug ["", env.body] if env.body
     #     Rails.logger.debug "----------------------------------------------------------------"
     #   end
-    #
+
     #   def response(env)
     #     Rails.logger.debug "Response:"
     #     Rails.logger.debug env.status.to_s
     #     Rails.logger.debug ""
-    #     env.response_headers.each { puts "#{_1}: #{_2}" }
+    #     env.response_headers.each { Rails.logger.debug "#{_1}: #{_2}" }
     #     Rails.logger.debug ["", env.body] if env.body
-    #     Rails.logger.debug "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-    #     Rails.logger.debug caller.join("\n\t")
+    #     # Rails.logger.debug "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+    #     # Rails.logger.debug caller.join("\n\t")
     #     Rails.logger.debug "================================================================"
     #   end
     # end
-    #
+
     # OpenIDConnect.http_config do |http_client|
     #   # http_client.ssl.min_version = :TLS1_2
     #   http_client.response :logger,
@@ -367,8 +367,8 @@ Devise.setup do |config|
         client_id: Settings.cis2.client_id,
         redirect_uri:,
         secret: Settings.cis2.secret,
-        strategy_class: OmniAuth::Strategies::NhsukCis2,
-      },
+        strategy_class: OmniAuth::Strategies::NhsukCis2
+      }
     )
   end
 

@@ -272,12 +272,26 @@ describe ::OmniAuth::Strategies::NhsukCis2 do # rubocop:disable RSpec/SpecFilePa
 
     before { nhsuk_cis2.request_phase }
 
-    describe 'env["omniauth.auth"]' do
-      subject { env["omniauth.auth"] }
+    it "sets the uid in the env" do
+      nhsuk_cis2.callback_phase
 
-      before { nhsuk_cis2.callback_phase }
+      expect(env.dig("omniauth.auth", "uid")).to eq "555057896106"
+    end
 
-      its("uid") { should eq "555057896106" }
+    it "returns the callback return value" do
+      allow(app).to receive(:call).and_return({ redirect: "somewhere" })
+
+      expect(nhsuk_cis2.callback_phase).to eq({ redirect: "somewhere" })
+    end
+
+    it "includes grant_type=authorization_code when requesting access_token" do
+      nhsuk_cis2.callback_phase
+
+      expect(
+        a_request(:post, token_endpoint).with do |request|
+          request.body =~ /grant_type=authorization_code/
+        end
+      ).to have_been_made
     end
 
     context "state is not valid" do

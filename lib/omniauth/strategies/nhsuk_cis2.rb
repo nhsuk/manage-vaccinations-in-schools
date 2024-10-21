@@ -25,7 +25,7 @@ module OmniAuth
       info do
         {
           name: user_data["name"],
-          email: user_data["email"],
+          email: user_data["email"]
           # Add additional user information as needed
         }
       end
@@ -73,7 +73,7 @@ module OmniAuth
               id_token_attrs =
                 ::OpenIDConnect::ResponseObject::IdToken.decode(
                   access_token.id_token,
-                  provider_config,
+                  provider_config
                 ).raw_attributes
 
               attrs.merge!(id_token_attrs)
@@ -83,7 +83,7 @@ module OmniAuth
 
       def callback_phase
         # TODO: turns out super does the below assignments for us, so we can remove this?
-        # client.authorization_code = request.params["code"]
+        client.authorization_code = request.params["code"]
         # env["omniauth.auth"] = AuthHash.new(
         #   provider: name,
         #   uid: user_data["sub"],
@@ -98,13 +98,11 @@ module OmniAuth
         # userinfo = access_token.userinfo!
 
         # TODO: All the verifications
-        #       - state
         #       - nonce?
         #       - all the stuff in verify_cis2_response
+        verify_state
 
         super
-
-        verify_state
       end
 
       private
@@ -121,7 +119,7 @@ module OmniAuth
           token_endpoint: client_option_or_provider_config(:token_endpoint),
           userinfo_endpoint:
             client_option_or_provider_config(:userinfo_endpoint),
-          redirect_uri: options.fetch(:redirect_uri),
+          redirect_uri: options.fetch(:redirect_uri)
         }
 
         if options.secret.present?
@@ -161,7 +159,7 @@ module OmniAuth
           development:
             "https://am.nhsdev.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/oidc",
           integration:
-            "https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare",
+            "https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare"
         }.with_indifferent_access.fetch(options.nhs_environment)
       end
 
