@@ -27,7 +27,7 @@ describe CIS2LogoutConcern do
 
     let(:current_sign_in_at) { Time.zone.now }
     let(:header) { { "alg" => "RS256" } }
-    let(:iss) { "http://localhost:4000/test/oidc" }
+    let(:iss) { "https://localhost:4000/oidc/realms/test" }
     let(:aud) { "31337.apps.national" }
     let(:iat) { Time.zone.now.to_i }
     let(:sub) { "user123" }

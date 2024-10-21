@@ -38,7 +38,7 @@ describe "CIS2 backchannel logout" do
     @public_key = @private_key.public_key
     payload = {
       # needs to match issuer in settings
-      iss: "http://localhost:4000/test/oidc",
+      iss: "https://localhost:4000/oidc/realms/test",
       sub: "31337",
       # needs to match cliend_id in settings
       aud: "31337.apps.national",
@@ -56,13 +56,16 @@ describe "CIS2 backchannel logout" do
   def and_the_jwks_endpoint_is_setup
     stub_request(
       :get,
-      "http://localhost:4000/test/oidc/.well-known/openid-configuration"
+      "https://localhost:4000/oidc/realms/test/.well-known/openid-configuration"
     ).to_return(
       status: 200,
-      body: { jwks_uri: "http://localhost:4000/test/oidc/jwks" }.to_json
+      body: { jwks_uri: "https://localhost:4000/oidc/realms/test/jwks" }.to_json
     )
 
-    stub_request(:get, "http://localhost:4000/test/oidc/jwks").to_return(
+    stub_request(
+      :get,
+      "https://localhost:4000/oidc/realms/test/jwks"
+    ).to_return(
       status: 200,
       body: {
         keys: [
