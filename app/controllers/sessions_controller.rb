@@ -4,42 +4,25 @@ class SessionsController < ApplicationController
   before_action :set_session, only: %i[show edit make_in_progress]
 
   def index
-    @sessions =
-      policy_scope(Session).includes(:dates, :location, :programmes).today
+    @sessions = sessions_scope.today.sort
 
     render layout: "full"
   end
 
   def scheduled
-    @sessions =
-      policy_scope(Session)
-        .includes(:dates, :location, :programmes)
-        .scheduled
-        .sort_by do |session|
-          [session.dates.first.value, session.location&.name]
-        end
+    @sessions = sessions_scope.scheduled.sort
 
     render layout: "full"
   end
 
   def unscheduled
-    @sessions =
-      policy_scope(Session)
-        .includes(:dates, :location, :programmes)
-        .unscheduled
-        .order_by_location_name
+    @sessions = sessions_scope.unscheduled.sort
 
     render layout: "full"
   end
 
   def completed
-    @sessions =
-      policy_scope(Session)
-        .includes(:dates, :location, :programmes)
-        .completed
-        .sort_by do |session|
-          [session.dates.first.value, session.location&.name]
-        end
+    @sessions = sessions_scope.completed.sort
 
     render layout: "full"
   end
@@ -91,5 +74,13 @@ class SessionsController < ApplicationController
         :dates,
         :programmes
       ).find(params[:id])
+  end
+
+  def sessions_scope
+    policy_scope(Session).includes(
+      :dates,
+      :location,
+      :programmes
+    ).strict_loading
   end
 end
