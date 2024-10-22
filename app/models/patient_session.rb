@@ -81,6 +81,8 @@ class PatientSession < ApplicationRecord
           )
         end
 
+  scope :pending_transfer, -> { where.not(proposed_session_id: nil) }
+
   def draft_vaccination_record
     # HACK: this code will need to be revisited in future as it only really
     # works for HPV, where we only have one vaccine. It is likely to fail for
@@ -125,5 +127,19 @@ class PatientSession < ApplicationRecord
 
   def consents_to_send_communication
     latest_consents.select(&:response_given?).reject(&:via_self_consent?)
+  end
+
+  def pending_transfer?
+    proposed_session_id.present?
+  end
+
+  def confirm_transfer!
+    return unless pending_transfer?
+
+    update!(session: proposed_session, proposed_session: nil)
+  end
+
+  def ignore_transfer!
+    update!(proposed_session: nil)
   end
 end
