@@ -27,7 +27,9 @@ def import_schools
 end
 
 def create_team(ods_code:)
-  team = Team.find_by(ods_code:) || FactoryBot.create(:team, ods_code:)
+  team =
+    Team.find_by(ods_code:) ||
+      FactoryBot.create(:team, :with_generic_clinic, ods_code:)
 
   programme = Programme.find_by(type: "hpv")
   FactoryBot.create(:team_programme, team:, programme:)
@@ -65,14 +67,12 @@ def create_user_and_team(ods_code:, uid: nil)
   [user, team]
 end
 
-def attach_locations_to(team)
-  Location.order("RANDOM()").limit(50).update_all(team_id: team.id)
+def attach_sample_of_schools_to(team)
+  Location.school.order("RANDOM()").limit(50).update_all(team_id: team.id)
 end
 
 def attach_specific_school_to_team_if_present(team:, urn:)
-  if (school = Location.find_by(urn:))
-    school.update!(team_id: team.id)
-  end
+  Location.where(urn:).update_all(team_id: team.id)
 end
 
 def create_session(user, team)
@@ -178,7 +178,7 @@ import_schools
 # Nurse Joy's team
 user, team = create_user_and_team(ods_code: "R1L")
 
-attach_locations_to(team)
+attach_sample_of_schools_to(team)
 attach_specific_school_to_team_if_present(team:, urn: "136126") # potentially needed for automated testing
 
 Audited.audit_class.as_user(user) { create_session(user, team) }
@@ -188,8 +188,9 @@ create_imports(user, team)
 # CIS2 team - the ODS code and user UID need to match the values in the CIS2 env
 user, team = create_user_and_team(ods_code: "Y51", uid: "555057896106")
 
-attach_locations_to(team)
+attach_sample_of_schools_to(team)
 attach_specific_school_to_team_if_present(team:, urn: "136126") # potentially needed for automated testing
+
 Audited.audit_class.as_user(user) { create_session(user, team) }
 create_patients(team)
 create_imports(user, team)
