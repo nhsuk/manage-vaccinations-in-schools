@@ -99,25 +99,19 @@ class PatientImportRow
       full_name = attributes[:full_name]
 
       parent =
-        if email.present?
-          Parent.find_by(email:)
-        elsif (existing_patient = existing_patients.first)
-          # We don't match on phone numbers or names globally as they can be re-used.
-          if phone.present?
-            existing_patient.parents.find_by(phone:)
-          elsif full_name.present?
-            existing_patient.parents.find_by(full_name:)
-          end
-        end
+        Parent.match_existing(
+          patient: existing_patients.first,
+          email:,
+          phone:,
+          full_name:
+        ) || Parent.new
 
-      parent ||= Parent.new
+      parent.recorded_at = Time.current unless parent.recorded?
 
       parent.email = attributes[:email]
       parent.full_name = attributes[:full_name]
       parent.phone = attributes[:phone]
       parent.phone_receive_updates = false if parent.phone.blank?
-
-      parent.recorded_at = Time.current unless parent.recorded?
 
       parent
     end

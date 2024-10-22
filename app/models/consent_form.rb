@@ -309,24 +309,33 @@ class ConsentForm < ApplicationRecord
       Session.scheduled.has_programme(programme).find_by(team:, location:)
   end
 
-  def find_or_create_parent_with_relationship_to(patient:)
-    Parent
-      .create_with(recorded_at: Time.zone.now)
-      .find_or_initialize_by(full_name: parent_full_name, email: parent_email)
-      .tap do |parent|
-        parent.update!(
-          phone: parent_phone,
-          phone_receive_updates: parent_phone_receive_updates
-        )
+  def find_or_create_parent_with_relationship_to!(patient:)
+    parent =
+      Parent.match_existing(
+        patient:,
+        email: parent_email,
+        phone: parent_phone,
+        full_name: parent_full_name
+      ) || Parent.new
 
-        parent
-          .parent_relationships
-          .find_or_initialize_by(patient:)
-          .update!(
-            type: parent_relationship_type,
-            other_name: parent_relationship_other_name
-          )
-      end
+    parent.recorded_at = Time.current unless parent.recorded?
+
+    parent.update!(
+      email: parent_email,
+      full_name: parent_full_name,
+      phone: parent_phone,
+      phone_receive_updates: parent_phone_receive_updates
+    )
+
+    patient
+      .parent_relationships
+      .find_or_initialize_by(parent:)
+      .update!(
+        type: parent_relationship_type,
+        other_name: parent_relationship_other_name
+      )
+
+    parent
   end
 
   def summary_with_route

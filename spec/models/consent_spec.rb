@@ -92,6 +92,7 @@ describe Consent do
       end
 
       it "creates a parent" do
+        expect(consent.parent).to be_recorded
         expect(consent.parent).to have_attributes(
           full_name: consent_form.parent_full_name,
           email: consent_form.parent_email,
@@ -104,6 +105,25 @@ describe Consent do
         expect(consent.health_answers.to_json).to eq(
           consent_form.health_answers.to_json
         )
+      end
+
+      context "with an existing parent" do
+        let(:parent) do
+          create(:parent, full_name: consent_form.parent_full_name)
+        end
+
+        before { create(:parent_relationship, patient:, parent:) }
+
+        it "re-uses the same parent" do
+          expect(consent.parent).to eq(parent)
+          expect(consent.parent).to be_recorded
+          expect(consent.parent).to have_attributes(
+            full_name: consent_form.parent_full_name,
+            email: consent_form.parent_email,
+            phone: consent_form.parent_phone,
+            phone_receive_updates: consent_form.parent_phone_receive_updates
+          )
+        end
       end
     end
   end
