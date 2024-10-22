@@ -38,6 +38,7 @@ class ImportIssuesController < ApplicationController
         .distinct
         .includes(
           :batch,
+          :location,
           :patient_session,
           session: :location,
           patient: %i[cohort school],

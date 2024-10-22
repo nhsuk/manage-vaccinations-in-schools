@@ -18,6 +18,7 @@ describe AppVaccinationRecordSummaryComponent do
     create(:batch, name: "DEF", expiry: Date.new(2021, 1, 1), vaccine:)
   end
   let(:notes) { "Some notes." }
+  let(:location_name) { nil }
 
   let(:vaccination_record) do
     create(
@@ -30,6 +31,7 @@ describe AppVaccinationRecordSummaryComponent do
       delivery_method: :intramuscular,
       delivery_site: :left_arm_upper_position,
       notes:,
+      location_name:,
       pending_changes: {
         batch_id: other_batch&.id,
         delivery_method: :nasal_spray,
@@ -221,8 +223,14 @@ describe AppVaccinationRecordSummaryComponent do
 
     context "when the location is not present" do
       let(:location) { nil }
+      let(:location_name) { "Hogwarts" }
 
-      it { should_not have_css(".nhsuk-summary-list__row", text: "Location") }
+      it do
+        expect(rendered).to have_css(
+          ".nhsuk-summary-list__row",
+          text: "Location\nHogwarts"
+        )
+      end
     end
   end
 

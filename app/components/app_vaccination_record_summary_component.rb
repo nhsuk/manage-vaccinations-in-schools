@@ -66,11 +66,9 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
-      if @vaccination_record.session.location.present?
-        summary_list.with_row do |row|
-          row.with_key { "Location" }
-          row.with_value { location_value }
-        end
+      summary_list.with_row do |row|
+        row.with_key { "Location" }
+        row.with_value { location_value }
       end
 
       if @vaccination_record.administered_at.present?
@@ -153,7 +151,11 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def location_value
-    helpers.session_location(@vaccination_record.session)
+    if (location = @vaccination_record.location) && !location.generic_clinic?
+      location.name
+    else
+      @vaccination_record.location_name
+    end
   end
 
   def vaccination_date_value

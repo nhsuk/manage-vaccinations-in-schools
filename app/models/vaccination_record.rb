@@ -42,9 +42,10 @@
 #  fk_rails_...  (vaccine_id => vaccines.id)
 #
 class VaccinationRecord < ApplicationRecord
+  include LocationNameConcern
+  include PendingChangesConcern
   include Recordable
   include WizardStepConcern
-  include PendingChangesConcern
 
   audited associated_with: :patient_session
 

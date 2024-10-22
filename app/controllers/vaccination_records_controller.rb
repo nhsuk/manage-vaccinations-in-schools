@@ -41,10 +41,11 @@ class VaccinationRecordsController < ApplicationController
         .includes(
           :batch,
           :immunisation_imports,
+          :location,
           :performed_by_user,
           :programme,
           patient: [:cohort, :school, { parents: :parent_relationships }],
-          session: %i[dates location],
+          session: %i[dates],
           vaccine: :programme
         )
         .where(programme:)
