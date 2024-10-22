@@ -165,6 +165,27 @@ class Session < ApplicationRecord
     )
   end
 
+  def close!
+    return if closed?
+
+    ActiveRecord::Base.transaction do
+      unvaccinated_patients =
+        patients.reject do |patient|
+          programmes.all? { |programme| patient.vaccinated?(programme) }
+        end
+
+      generic_clinic_session_id = team.generic_clinic_session.id
+
+      PatientSession.import!(
+        %i[patient_id session_id],
+        unvaccinated_patients.map { [_1.id, generic_clinic_session_id] },
+        on_duplicate_key_ignore: true
+      )
+
+      update!(closed_at: Time.current)
+    end
+  end
+
   def set_consent_dates
     if dates.empty?
       self.days_before_consent_reminders = nil
