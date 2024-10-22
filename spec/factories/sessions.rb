@@ -60,5 +60,9 @@ FactoryBot.define do
     trait :completed do
       date { Date.current - 1.week }
     end
+
+    trait :closed do
+      closed_at { Time.current }
+    end
   end
 end
