@@ -126,7 +126,7 @@ class GovukNotifyPersonalisation
   end
 
   def location_name
-    session.location&.name
+    session.location.name
   end
 
   def next_session_date
