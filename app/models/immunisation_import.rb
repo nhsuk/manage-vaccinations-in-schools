@@ -40,7 +40,6 @@ class ImmunisationImport < ApplicationRecord
   belongs_to :programme
 
   has_and_belongs_to_many :batches
-  has_and_belongs_to_many :locations
   has_and_belongs_to_many :patient_sessions
   has_and_belongs_to_many :sessions
   has_and_belongs_to_many :vaccination_records
@@ -86,16 +85,12 @@ class ImmunisationImport < ApplicationRecord
     # Instead of saving individually, we'll collect the records
     @vaccination_records_batch ||= Set.new
     @batches_batch ||= Set.new
-    @locations_batch ||= Set.new
     @patients_batch ||= Set.new
     @patient_sessions_batch ||= Set.new
     @sessions_batch ||= Set.new
 
     @vaccination_records_batch.add(vaccination_record)
     @batches_batch.add(vaccination_record.batch)
-    if vaccination_record.location
-      @locations_batch.add(vaccination_record.location)
-    end
     @patients_batch.add(vaccination_record.patient)
     @patient_sessions_batch.add(vaccination_record.patient_session)
     @sessions_batch.add(vaccination_record.session)
@@ -115,7 +110,6 @@ class ImmunisationImport < ApplicationRecord
     [
       [:vaccination_records, vaccination_records],
       [:batches, @batches_batch],
-      [:locations, @locations_batch],
       [:patients, @patients_batch],
       [:patient_sessions, @patient_sessions_batch],
       [:sessions, @sessions_batch]

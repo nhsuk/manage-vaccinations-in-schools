@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_22_102445) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_22_110121) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -385,12 +385,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_22_102445) do
     t.index ["uploaded_by_user_id"], name: "index_immunisation_imports_on_uploaded_by_user_id"
   end
 
-  create_table "immunisation_imports_locations", id: false, force: :cascade do |t|
-    t.bigint "immunisation_import_id", null: false
-    t.bigint "location_id", null: false
-    t.index ["immunisation_import_id", "location_id"], name: "idx_on_immunisation_import_id_location_id_2643f47d5c", unique: true
-  end
-
   create_table "immunisation_imports_patient_sessions", id: false, force: :cascade do |t|
     t.bigint "immunisation_import_id", null: false
     t.bigint "patient_session_id", null: false
@@ -699,8 +693,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_22_102445) do
   add_foreign_key "immunisation_imports", "programmes"
   add_foreign_key "immunisation_imports", "teams"
   add_foreign_key "immunisation_imports", "users", column: "uploaded_by_user_id"
-  add_foreign_key "immunisation_imports_locations", "immunisation_imports"
-  add_foreign_key "immunisation_imports_locations", "locations"
   add_foreign_key "immunisation_imports_patient_sessions", "immunisation_imports"
   add_foreign_key "immunisation_imports_patient_sessions", "patient_sessions"
   add_foreign_key "immunisation_imports_patients", "immunisation_imports"
