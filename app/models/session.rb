@@ -52,32 +52,14 @@ class Session < ApplicationRecord
 
   scope :today, -> { has_date(Date.current) }
 
+  scope :for_current_academic_year,
+        -> { where(academic_year: Date.current.academic_year) }
+
+  scope :upcoming, -> { open.for_current_academic_year }
   scope :unscheduled,
-        -> do
-          where(academic_year: Date.current.academic_year).where.not(
-            SessionDate.for_session.arel.exists
-          )
-        end
-
-  scope :scheduled,
-        -> do
-          where(
-            "? <= (?)",
-            Date.current,
-            SessionDate.for_session.select("MAX(value)")
-          )
-        end
-
-  scope :upcoming, -> { scheduled.or(unscheduled) }
-
-  scope :completed,
-        -> do
-          where(academic_year: Date.current.academic_year).where(
-            "? > (?)",
-            Date.current,
-            SessionDate.for_session.select("MAX(value)")
-          )
-        end
+        -> { upcoming.where.not(SessionDate.for_session.arel.exists) }
+  scope :scheduled, -> { upcoming.where(SessionDate.for_session.arel.exists) }
+  scope :completed, -> { closed.for_current_academic_year }
 
   scope :send_consent_requests,
         -> { scheduled.where("? >= send_consent_requests_at", Date.current) }
@@ -107,11 +89,6 @@ class Session < ApplicationRecord
 
   def unscheduled?
     dates.empty?
-  end
-
-  def completed?
-    return false if unscheduled?
-    Date.current > dates.map(&:value).max
   end
 
   def year_groups

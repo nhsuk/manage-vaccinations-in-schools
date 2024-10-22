@@ -50,7 +50,7 @@ class ClassImport < PatientImport
   def postprocess_rows!
     # Remove patients already in the session but not in the class list.
 
-    return if session.completed?
+    return if session.closed?
 
     session.create_patient_sessions!
 
