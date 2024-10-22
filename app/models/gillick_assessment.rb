@@ -34,6 +34,8 @@ class GillickAssessment < ApplicationRecord
   belongs_to :assessor, class_name: "User", foreign_key: :assessor_user_id
 
   has_one :patient, through: :patient_session
+  has_one :session, through: :patient_session
+  has_one :location, through: :session
 
   encrypts :notes
 
