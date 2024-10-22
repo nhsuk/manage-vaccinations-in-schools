@@ -82,7 +82,7 @@ class User < ApplicationRecord
   end
 
   def is_medical_secretary?
-    return false unless Flipper.enabled?(:cis2)
+    return email.include?("admin") unless Flipper.enabled?(:cis2)
 
     role_codes = sso_session.dig("selected_role", "code")
     role_codes.include?("R8006")
@@ -90,7 +90,7 @@ class User < ApplicationRecord
 
   def is_nurse?
     # All users are nurses if cis2 is disabled
-    return true unless Flipper.enabled?(:cis2)
+    return email.include?("nurse") unless Flipper.enabled?(:cis2)
 
     role_codes = sso_session.dig("selected_role", "code")
     role_codes.include?("R8001")
