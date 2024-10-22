@@ -4,16 +4,22 @@
 #
 # Table name: patient_sessions
 #
-#  id         :bigint           not null, primary key
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  patient_id :bigint           not null
-#  session_id :bigint           not null
+#  id                  :bigint           not null, primary key
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  patient_id          :bigint           not null
+#  proposed_session_id :bigint
+#  session_id          :bigint           not null
 #
 # Indexes
 #
 #  index_patient_sessions_on_patient_id_and_session_id  (patient_id,session_id) UNIQUE
+#  index_patient_sessions_on_proposed_session_id        (proposed_session_id)
 #  index_patient_sessions_on_session_id_and_patient_id  (session_id,patient_id) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (proposed_session_id => sessions.id)
 #
 
 class PatientSession < ApplicationRecord
