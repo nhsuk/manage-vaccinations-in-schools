@@ -30,8 +30,28 @@ describe Session do
 
     let(:today_session) { create(:session, :today, programme:) }
     let(:unscheduled_session) { create(:session, :unscheduled, programme:) }
-    let(:completed_session) { create(:session, :completed, programme:) }
+    let(:completed_session) do
+      create(:session, :completed, :closed, programme:)
+    end
     let(:scheduled_session) { create(:session, :scheduled, programme:) }
+
+    describe "#open" do
+      subject(:scope) { described_class.open }
+
+      it do
+        expect(scope).to contain_exactly(
+          today_session,
+          unscheduled_session,
+          scheduled_session
+        )
+      end
+    end
+
+    describe "#closed" do
+      subject(:scope) { described_class.closed }
+
+      it { should contain_exactly(completed_session) }
+    end
 
     describe "#today" do
       subject(:scope) { described_class.today }
