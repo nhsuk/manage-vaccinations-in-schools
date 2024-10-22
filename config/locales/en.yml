@@ -694,6 +694,11 @@ en:
         zero: There are no sessions scheduled for today.
         one: 1 session today
         other: "%{count} sessions today"
+    closed:
+      table_heading:
+        zero: There are no locations with closed sessions.
+        one: 1 location with sessions closed
+        other: "%{count} locations with sessions closed"
     completed:
       table_heading:
         zero: There are no locations with all sessions completed.

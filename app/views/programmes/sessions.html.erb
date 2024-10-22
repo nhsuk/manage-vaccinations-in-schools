@@ -13,7 +13,8 @@
 
 <% [[@scheduled_sessions, "Sessions scheduled"],
     [@completed_sessions, "All sessions completed"],
-    [@unscheduled_sessions, "No sessions scheduled"]]
+    [@unscheduled_sessions, "No sessions scheduled"],
+    [@closed_sessions, "Sessions closed"]]
      .select { |sessions, _| sessions.any? }.each do |sessions, heading| %>
 
   <%= render AppSessionTableComponent.new(sessions, heading:, show_dates: true, show_consent_period: true) %>

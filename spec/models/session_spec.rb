@@ -28,33 +28,28 @@ describe Session do
   describe "scopes" do
     let(:programme) { create(:programme) }
 
-    let(:today_session) { create(:session, :today, programme:) }
-    let(:unscheduled_session) { create(:session, :unscheduled, programme:) }
+    let(:closed_session) { create(:session, :closed, programme:) }
     let(:completed_session) { create(:session, :completed, programme:) }
     let(:scheduled_session) { create(:session, :scheduled, programme:) }
-
-    describe "#open" do
-      subject(:scope) { described_class.open }
-
-      it do
-        expect(scope).to contain_exactly(
-          today_session,
-          unscheduled_session,
-          scheduled_session
-        )
-      end
-    end
-
-    describe "#closed" do
-      subject(:scope) { described_class.closed }
-
-      it { should contain_exactly(completed_session) }
-    end
+    let(:today_session) { create(:session, :today, programme:) }
+    let(:unscheduled_session) { create(:session, :unscheduled, programme:) }
 
     describe "#today" do
       subject(:scope) { described_class.today }
 
       it { should contain_exactly(today_session) }
+    end
+
+    describe "#upcoming" do
+      subject(:scope) { described_class.upcoming }
+
+      it do
+        expect(scope).to contain_exactly(
+          unscheduled_session,
+          today_session,
+          scheduled_session
+        )
+      end
     end
 
     describe "#unscheduled" do
@@ -77,18 +72,6 @@ describe Session do
       it { should contain_exactly(today_session, scheduled_session) }
     end
 
-    describe "#upcoming" do
-      subject(:scope) { described_class.upcoming }
-
-      it do
-        expect(scope).to contain_exactly(
-          unscheduled_session,
-          today_session,
-          scheduled_session
-        )
-      end
-    end
-
     describe "#completed" do
       subject(:scope) { described_class.completed }
 
@@ -101,6 +84,12 @@ describe Session do
 
         it { should_not include(completed_session) }
       end
+    end
+
+    describe "#closed" do
+      subject(:scope) { described_class.closed }
+
+      it { should contain_exactly(closed_session) }
     end
   end
 

@@ -19,9 +19,10 @@ class ProgrammesController < ApplicationController
         .includes(:dates, :location)
         .strict_loading
 
+    @closed_sessions = sessions_for_programme.closed.sort
+    @completed_sessions = sessions_for_programme.completed.sort
     @scheduled_sessions = sessions_for_programme.scheduled.sort
     @unscheduled_sessions = sessions_for_programme.unscheduled.sort
-    @completed_sessions = sessions_for_programme.completed.sort
   end
 
   private

@@ -27,6 +27,12 @@ class SessionsController < ApplicationController
     render layout: "full"
   end
 
+  def closed
+    @sessions = sessions_scope.closed.sort
+
+    render layout: "full"
+  end
+
   def show
     @patient_sessions =
       @session.patient_sessions.strict_loading.includes(

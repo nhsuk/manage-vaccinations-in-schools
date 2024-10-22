@@ -1,17 +1,17 @@
-<% content_for :page_title, "#{t("sessions.index.title")} – Unscheduled" %>
+<% content_for :page_title, "#{t("sessions.index.title")} – Closed" %>
 
 <%= h1 t("sessions.index.title"), size: "xl" %>
 
 <%= render AppSecondaryNavigationComponent.new do |nav|
       nav.with_item(href: sessions_path, text: "Today")
-      nav.with_item(href: unscheduled_sessions_path, text: "Unscheduled", selected: true)
+      nav.with_item(href: unscheduled_sessions_path, text: "Unscheduled")
       nav.with_item(href: scheduled_sessions_path, text: "Scheduled")
       nav.with_item(href: completed_sessions_path, text: "Completed")
-      nav.with_item(href: closed_sessions_path, text: "Closed")
+      nav.with_item(href: closed_sessions_path, text: "Closed", selected: true)
     end %>
 
 <% if @sessions.empty? %>
   <p class="nhsuk-body"><%= t(".table_heading.zero") %></p>
 <% else %>
-  <%= render AppSessionTableComponent.new(@sessions, heading: t(".table_heading", count: @sessions.count), show_programmes: true) %>
+  <%= render AppSessionTableComponent.new(@sessions, heading: t(".table_heading", count: @sessions.count), show_dates: true, show_programmes: true) %>
 <% end %>
