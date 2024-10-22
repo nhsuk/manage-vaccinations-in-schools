@@ -30,7 +30,7 @@ FactoryBot.define do
     sequence(:family_name) { |n| "User #{n}" }
     given_name { "Test" }
 
-    sequence(:email) { |n| "test-#{n}@example.com" }
+    nurse
     sequence(:teams) { [Team.first || create(:team)] }
     password { "power overwhelming!" }
 
@@ -43,6 +43,14 @@ FactoryBot.define do
     trait :signed_in do
       current_sign_in_at { Time.current }
       current_sign_in_ip { "127.0.0.1" }
+    end
+
+    trait :nurse do
+      sequence(:email) { |n| "nurse-#{n}@example.com" }
+    end
+
+    trait :admin do
+      sequence(:email) { |n| "admin-#{n}@example.com" }
     end
   end
 end
