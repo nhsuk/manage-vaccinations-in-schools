@@ -75,9 +75,11 @@ class PatientSession < ApplicationRecord
         end
 
   def draft_vaccination_record
-    # HACK: this code will need to be revisited in future as it only really works for HPV, where we only have one
-    # vaccine. It is likely to fail for the Doubles programme as that has 2 vaccines. It is also likely to fail for
-    # the flu programme for the SAIS teams that offer both nasal and injectable vaccines.
+    # HACK: this code will need to be revisited in future as it only really
+    # works for HPV, where we only have one vaccine. It is likely to fail for
+    # the Doubles programme as that has 2 vaccines. It is also likely to fail
+    # for the flu programme for the SAIS teams that offer both nasal and
+    # injectable vaccines.
 
     programme = programmes.first
     vaccine = programme.vaccines.active.first
