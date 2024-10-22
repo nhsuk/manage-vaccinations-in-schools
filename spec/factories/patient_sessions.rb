@@ -130,17 +130,15 @@ FactoryBot.define do
                     school: session.location
       end
 
-      vaccination_records do
-        [
-          association(
-            :vaccination_record,
-            :not_administered,
-            patient_session: instance,
-            programme:,
-            performed_by: user,
-            reason: :absent_from_school
-          )
-        ]
+      after(:create) do |patient_session, evaluator|
+        create(
+          :vaccination_record,
+          :not_administered,
+          patient_session:,
+          programme: evaluator.programme,
+          performed_by: evaluator.user,
+          reason: :absent_from_school
+        )
       end
     end
 
@@ -166,31 +164,19 @@ FactoryBot.define do
                     school: session.location
       end
 
-      vaccination_records do
-        [
-          association(
-            :vaccination_record,
-            :not_administered,
-            patient_session: instance,
-            programme:,
-            performed_by: user,
-            reason: :already_had
-          )
-        ]
+      after(:create) do |patient_session, evaluator|
+        create(
+          :vaccination_record,
+          :not_administered,
+          patient_session:,
+          programme: evaluator.programme,
+          performed_by: evaluator.user,
+          reason: :already_had
+        )
       end
     end
 
     trait :unable_to_vaccinate_not_gillick_competent do
-      gillick_assessments do
-        [
-          association(
-            :gillick_assessment,
-            :not_competent,
-            patient_session: instance
-          )
-        ]
-      end
-
       patient do
         association :patient,
                     :consent_given_triage_needed,
@@ -201,17 +187,17 @@ FactoryBot.define do
                     school: session.location
       end
 
-      vaccination_records do
-        [
-          association(
-            :vaccination_record,
-            :not_administered,
-            patient_session: instance,
-            programme:,
-            performed_by: user,
-            reason: :already_had
-          )
-        ]
+      after(:create) do |patient_session, evaluator|
+        create(:gillick_assessment, :not_competent, patient_session:)
+
+        create(
+          :vaccination_record,
+          :not_administered,
+          patient_session:,
+          programme: evaluator.programme,
+          performed_by: evaluator.user,
+          reason: :already_had
+        )
       end
     end
 
@@ -226,15 +212,13 @@ FactoryBot.define do
                     school: session.location
       end
 
-      vaccination_records do
-        [
-          association(
-            :vaccination_record,
-            patient_session: instance,
-            programme:,
-            performed_by: user
-          )
-        ]
+      after(:create) do |patient_session, evaluator|
+        create(
+          :vaccination_record,
+          patient_session:,
+          programme: evaluator.programme,
+          performed_by: evaluator.user
+        )
       end
     end
 
@@ -243,14 +227,8 @@ FactoryBot.define do
     end
 
     trait :not_gillick_competent do
-      gillick_assessments do
-        [
-          association(
-            :gillick_assessment,
-            :not_competent,
-            patient_session: instance
-          )
-        ]
+      after(:create) do |patient_session, _evaluator|
+        create(:gillick_assessment, :not_competent, patient_session:)
       end
     end
   end
