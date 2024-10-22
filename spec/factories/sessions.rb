@@ -6,6 +6,7 @@
 #
 #  id                            :bigint           not null, primary key
 #  academic_year                 :integer          not null
+#  closed_at                     :datetime
 #  days_before_consent_reminders :integer
 #  send_consent_requests_at      :date
 #  created_at                    :datetime         not null
