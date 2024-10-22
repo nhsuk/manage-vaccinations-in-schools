@@ -14,6 +14,6 @@ module LocationNameConcern
   end
 
   def requires_location_name?
-    location.nil? || location.generic_clinic?
+    location.generic_clinic?
   end
 end

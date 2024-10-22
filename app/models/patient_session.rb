@@ -24,6 +24,7 @@ class PatientSession < ApplicationRecord
   belongs_to :patient
   belongs_to :session
 
+  has_one :location, through: :session
   has_one :team, through: :session
   has_many :programmes, through: :session
 

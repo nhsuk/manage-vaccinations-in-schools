@@ -151,10 +151,10 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def location_value
-    if (location = @vaccination_record.location) && !location.generic_clinic?
-      location.name
-    else
+    if @vaccination_record.location.generic_clinic?
       @vaccination_record.location_name
+    else
+      @vaccination_record.location.name
     end
   end
 

@@ -1,12 +1,12 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
         href: session_path(@session),
-        name: session_location(@session),
+        name: @session.location.name,
       ) %>
 <% end %>
 
 <%= h1 "Edit session" do %>
-  <span class="nhsuk-caption-l"><%= session_location(@session) %></span>
+  <span class="nhsuk-caption-l"><%= @session.location.name %></span>
   Edit session
 <% end %>
 

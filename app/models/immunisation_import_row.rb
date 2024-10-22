@@ -144,10 +144,13 @@ class ImmunisationImportRow
   end
 
   def location_name
-    if location&.generic_clinic?
-      "Unknown"
-    elsif location.nil? && school_name.present?
+    return unless location&.generic_clinic?
+
+    if school_urn == SCHOOL_URN_UNKNOWN &&
+         (care_setting.nil? || care_setting == CARE_SETTING_SCHOOL)
       school_name
+    else
+      "Unknown"
     end
   end
 
@@ -286,8 +289,7 @@ class ImmunisationImportRow
     @location ||=
       if school && (care_setting.nil? || care_setting == CARE_SETTING_SCHOOL)
         school
-      elsif school_urn == SCHOOL_URN_HOME_EDUCATED ||
-            care_setting == CARE_SETTING_COMMUNITY
+      else
         clinic
       end
   end

@@ -374,28 +374,32 @@ describe ImmunisationImportRow do
 
     context "when home educated and community care setting" do
       let(:data) do
-        valid_data.merge("SCHOOL_URN" => "999999", "CARE_SETTING" => "2")
+        valid_data.merge(
+          "SCHOOL_URN" => "999999",
+          "SCHOOL_NAME" => "",
+          "CARE_SETTING" => "2"
+        )
       end
 
-      it "sets the location to a generic clinic" do
-        expect(session.location).to be_clinic
+      it "sets the location to the generic clinic" do
+        expect(session.location).to be_generic_clinic
         expect(session.location).to have_attributes(
           team:,
-          ods_code: team.ods_code,
-          year_groups: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+          ods_code: team.ods_code
         )
       end
     end
 
     context "when home educated and unknown care setting" do
-      let(:data) { valid_data.merge("SCHOOL_URN" => "999999") }
+      let(:data) do
+        valid_data.merge("SCHOOL_URN" => "999999", "SCHOOL_NAME" => "")
+      end
 
-      it "sets the location to a generic clinic" do
-        expect(session.location).to be_clinic
+      it "sets the location to the generic clinic" do
+        expect(session.location).to be_generic_clinic
         expect(session.location).to have_attributes(
           team:,
-          ods_code: team.ods_code,
-          year_groups: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+          ods_code: team.ods_code
         )
       end
     end
@@ -409,8 +413,12 @@ describe ImmunisationImportRow do
         )
       end
 
-      it "doesn't set a location" do
-        expect(session.location).to be_nil
+      it "sets the location to the generic clinic" do
+        expect(session.location).to be_generic_clinic
+        expect(session.location).to have_attributes(
+          team:,
+          ods_code: team.ods_code
+        )
       end
     end
 
@@ -423,8 +431,8 @@ describe ImmunisationImportRow do
         )
       end
 
-      it "sets the location to a clinic" do
-        expect(session.location).to be_clinic
+      it "sets the location to the generic clinic" do
+        expect(session.location).to be_generic_clinic
         expect(session.location).to have_attributes(
           team:,
           ods_code: team.ods_code
@@ -440,8 +448,12 @@ describe ImmunisationImportRow do
         )
       end
 
-      it "doesn't set a location" do
-        expect(session.location).to be_nil
+      it "sets the location to the generic clinic" do
+        expect(session.location).to be_generic_clinic
+        expect(session.location).to have_attributes(
+          team:,
+          ods_code: team.ods_code
+        )
       end
     end
   end

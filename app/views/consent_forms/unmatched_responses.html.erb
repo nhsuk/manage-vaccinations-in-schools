@@ -3,7 +3,7 @@
 
 <% content_for :before_main do %>
   <%= render AppBreadcrumbComponent.new(items: [
-                                          { text: session_location(@session), href: session_path(@session) },
+                                          { text: @session.location.name, href: session_path(@session) },
                                           { text: "Check consent responses", href: session_consents_path(@session) },
                                           { text: page_title },
                                         ]) %>

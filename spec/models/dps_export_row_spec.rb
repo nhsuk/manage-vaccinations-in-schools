@@ -257,10 +257,10 @@ describe DPSExportRow do
         it { should eq("12345") }
       end
 
-      context "when the session doesn't have a location" do
-        let(:location) { nil }
-        let(:location_name) { "Unknown" }
+      context "when the session is attached to the generic clinic" do
         let(:team) { create(:team, ods_code: "ABC", programmes: [programme]) }
+        let(:location) { create(:location, :generic_clinic, team:) }
+        let(:location_name) { "Unknown" }
 
         it { should eq("ABC") }
       end
@@ -283,8 +283,9 @@ describe DPSExportRow do
         it { should eq("https://fhir.nhs.uk/Id/ods-organization-code") }
       end
 
-      context "when the session doesn't have a location" do
-        let(:location) { nil }
+      context "when the session is attached to the generic clinic" do
+        let(:team) { create(:team, ods_code: "ABC", programmes: [programme]) }
+        let(:location) { create(:location, :generic_clinic, team:) }
         let(:location_name) { "Unknown" }
 
         it { should eq("https://fhir.nhs.uk/Id/ods-organization-code") }

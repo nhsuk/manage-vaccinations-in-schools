@@ -15,7 +15,7 @@ describe AppSessionTableComponent do
         location: create(:location, :school, name: "Waterloo Road"),
         programme:
       ),
-      create(:session, programme:, location: nil)
+      create(:session, programme:)
     ] + create_list(:session, 8, programme:)
   end
 

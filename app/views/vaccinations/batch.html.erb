@@ -13,7 +13,7 @@
 
   <%= f.govuk_radio_buttons_fieldset(
         :batch_id,
-        caption: { text: session_location(@session), size: "l" },
+        caption: { text: @session.location.name, size: "l" },
         legend: { size: "l", tag: "h1", text: page_title },
       ) do %>
     <% @batches.each_with_index do |batch, idx| %>
