@@ -57,7 +57,14 @@ class PatientImport < ApplicationRecord
 
     Parent.import(parents, on_duplicate_key_update: :all)
     Patient.import(patients, on_duplicate_key_update: :all)
-    ParentRelationship.import(relationships, on_duplicate_key_update: :all)
+
+    ParentRelationship.import(
+      relationships,
+      on_duplicate_key_update: {
+        conflict_target: %i[parent_id patient_id],
+        columns: %i[type other_name]
+      }
+    )
 
     link_records_by_type(:patients, patients)
     link_records_by_type(:parents, parents)

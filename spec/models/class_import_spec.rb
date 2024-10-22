@@ -271,7 +271,7 @@ describe ClassImport do
     end
 
     context "with an existing patient matching the name" do
-      before do
+      let!(:patient) do
         create(
           :patient,
           given_name: "Jimmy",
@@ -283,6 +283,22 @@ describe ClassImport do
 
       it "doesn't create an additional patient" do
         expect { record! }.to change(Patient, :count).by(3)
+      end
+
+      context "with an existing parent" do
+        let!(:parent) do
+          create(
+            :parent,
+            full_name: "John Smith",
+            email: "john@example.com",
+            phone: "07412345678"
+          )
+        end
+
+        it "doesn't create an additional patient" do
+          expect { record! }.to change(Parent, :count).by(4)
+          expect(parent.relationship_to(patient:)).to be_father
+        end
       end
     end
 
