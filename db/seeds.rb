@@ -186,7 +186,7 @@ create_patients(team)
 create_imports(user, team)
 
 # CIS2 team - the ODS code and user UID need to match the values in the CIS2 env
-user, team = create_user_and_team(ods_code: "Y51", uid: "555057896106")
+user, team = create_user_and_team(ods_code: "A9A5A", uid: "555057896106")
 
 attach_sample_of_schools_to(team)
 attach_specific_school_to_team_if_present(team:, urn: "136126") # potentially needed for automated testing
