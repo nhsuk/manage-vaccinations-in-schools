@@ -9,6 +9,7 @@
 #  delivery_method          :integer
 #  delivery_site            :integer
 #  dose_sequence            :integer          not null
+#  location_name            :string
 #  notes                    :text
 #  pending_changes          :jsonb            not null
 #  performed_by_family_name :string
