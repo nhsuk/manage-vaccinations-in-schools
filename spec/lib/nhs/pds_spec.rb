@@ -23,6 +23,25 @@ describe NHS::PDS do
       end
     end
 
+    context "with an invalid NHS number" do
+      before do
+        stub_request(
+          :get,
+          "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/9000000009"
+        ).to_return(
+          body: file_fixture("pds/invalid-nhs-number-response.json"),
+          status: 400,
+          headers: {
+            "Content-Type" => "application/fhir+json"
+          }
+        )
+      end
+
+      it "raises an error" do
+        expect { get_patient }.to raise_error(NHS::PDS::InvalidNHSNumber)
+      end
+    end
+
     context "with an invalidated resource response" do
       before do
         stub_request(
