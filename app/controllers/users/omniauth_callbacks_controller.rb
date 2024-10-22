@@ -43,7 +43,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       raise "cis2 authentication: id_assurance_level too low" \
               " (#{raw_cis2_info[:id_assurance_level]} != 3)"
     elsif Integer(raw_cis2_info[:authentication_assurance_level]) <
-          Settings.cis2.authentication_assurance_level
+          Settings.cis2.min_authentication_assurance_level
       raise "cis2 authentication: authentication_assurance_level too low" \
               " (#{raw_cis2_info[:authentication_assurance_level]} < " \
               " #{Settings.cis2.authentication_assurance_level})"

@@ -5,5 +5,5 @@ web_concurrency: 2
 fast_reset: false
 
 cis2:
-  authentication_assurance_level: 3
-  allow_aal2_auth: true
+  min_authentication_assurance_level: 2
+  acr_value: AAL2_OR_AAL3_ANY
