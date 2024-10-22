@@ -23,10 +23,7 @@
 #
 FactoryBot.define do
   factory :team do
-    transient do
-      random { Random.new }
-      sequence(:identifier) { _1 }
-    end
+    transient { sequence(:identifier) { _1 } }
 
     name { "SAIS Team #{identifier}" }
     email { "sais-team-#{identifier}@example.com" }
@@ -50,6 +47,12 @@ FactoryBot.define do
             password: nurse_password
           }.compact
         )
+      end
+    end
+
+    trait :with_generic_clinic do
+      after(:create) do |team, _evaluator|
+        create(:location, :generic_clinic, team:)
       end
     end
   end
