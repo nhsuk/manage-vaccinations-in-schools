@@ -37,34 +37,32 @@ def create_team(ods_code:)
   team
 end
 
-def create_user_and_team(ods_code:, uid: nil)
-  team = create_team(ods_code:)
-  user =
-    if uid
-      User.find_by(uid:) ||
-        FactoryBot.create(
-          :user,
-          uid:,
-          family_name: "Flo",
-          given_name: "Nurse",
-          email: "nurse.flo@example.nhs.uk",
-          provider: "cis2",
-          teams: [team]
-          # password: Do not set this as they should not log in via password
-        )
-    else
-      User.find_by(email: "nurse.joy@example.com") ||
-        FactoryBot.create(
-          :user,
-          family_name: "Joy",
-          given_name: "Nurse",
-          email: "nurse.joy@example.com",
-          password: "nurse.joy@example.com",
-          teams: [team]
-        )
-    end
-
-  [user, team]
+def create_user(team:, email: nil, uid: nil)
+  if uid
+    User.find_by(uid:) ||
+      FactoryBot.create(
+        :user,
+        uid:,
+        family_name: "Flo",
+        given_name: "Nurse",
+        email: "nurse.flo@example.nhs.uk",
+        provider: "cis2",
+        teams: [team]
+        # password: Do not set this as they should not log in via password
+      )
+  elsif email
+    User.find_by(email:) ||
+      FactoryBot.create(
+        :user,
+        family_name: email.split("@").first.split(".").last.capitalize,
+        given_name: email.split("@").first.split(".").first.capitalize,
+        email:,
+        password: email,
+        teams: [team]
+      )
+  else
+    raise "No email or UID provided"
+  end
 end
 
 def attach_sample_of_schools_to(team)
@@ -176,7 +174,9 @@ seed_vaccines
 import_schools
 
 # Nurse Joy's team
-user, team = create_user_and_team(ods_code: "R1L")
+team = create_team(ods_code: "R1L")
+user = create_user(team:, email: "nurse.joy@example.com")
+create_user(team:, email: "admin.hope@example.com")
 
 attach_sample_of_schools_to(team)
 attach_specific_school_to_team_if_present(team:, urn: "136126") # potentially needed for automated testing
@@ -186,7 +186,8 @@ create_patients(team)
 create_imports(user, team)
 
 # CIS2 team - the ODS code and user UID need to match the values in the CIS2 env
-user, team = create_user_and_team(ods_code: "A9A5A", uid: "555057896106")
+team = create_team(ods_code: "A9A5A")
+user = create_user(team:, uid: "555057896106")
 
 attach_sample_of_schools_to(team)
 attach_specific_school_to_team_if_present(team:, urn: "136126") # potentially needed for automated testing
