@@ -464,7 +464,9 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_22_110535) do
     t.bigint "patient_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "proposed_session_id"
     t.index ["patient_id", "session_id"], name: "index_patient_sessions_on_patient_id_and_session_id", unique: true
+    t.index ["proposed_session_id"], name: "index_patient_sessions_on_proposed_session_id"
     t.index ["session_id", "patient_id"], name: "index_patient_sessions_on_session_id_and_patient_id", unique: true
   end
 
@@ -705,6 +707,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_22_110535) do
   add_foreign_key "locations", "teams"
   add_foreign_key "parent_relationships", "parents"
   add_foreign_key "parent_relationships", "patients"
+  add_foreign_key "patient_sessions", "sessions", column: "proposed_session_id"
   add_foreign_key "patients", "cohorts"
   add_foreign_key "patients", "locations", column: "school_id"
   add_foreign_key "programmes_sessions", "programmes"
