@@ -29,6 +29,7 @@ FactoryBot.define do
     assessor
     patient_session
     competent
+    recorded_at { Time.current }
 
     trait :not_competent do
       gillick_competent { false }
