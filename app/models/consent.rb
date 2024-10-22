@@ -169,7 +169,8 @@ class Consent < ApplicationRecord
 
   def self.from_consent_form!(consent_form, patient:)
     ActiveRecord::Base.transaction do
-      parent = consent_form.find_or_create_parent_with_relationship_to(patient:)
+      parent =
+        consent_form.find_or_create_parent_with_relationship_to!(patient:)
 
       create!(
         consent_form:,

@@ -64,6 +64,24 @@ class Parent < ApplicationRecord
             presence: true,
             if: :contact_method_other?
 
+  def self.match_existing(patient:, email:, phone:, full_name:)
+    if email.present? && (parent = Parent.find_by(email:))
+      return parent
+    end
+
+    return unless patient
+
+    # We don't match on phone numbers or names globally as they can be re-used.
+
+    if phone.present? && (parent = patient.parents.find_by(phone:))
+      return parent
+    end
+
+    if full_name.present? && (parent = patient.parents.find_by(full_name:))
+      parent
+    end
+  end
+
   def label
     full_name.presence || "Parent or guardian (name unknown)"
   end
