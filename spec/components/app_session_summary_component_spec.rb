@@ -7,15 +7,22 @@ describe AppSessionSummaryComponent do
 
   let(:programme) { create(:programme, :hpv) }
   let(:location) { create(:location, :school) }
+  let(:team) { create(:team, programmes: [programme]) }
   let(:session) do
-    create(:session, location:, date: Date.new(2024, 1, 1), programme:)
+    create(:session, location:, date: Date.new(2024, 1, 1), programme:, team:)
   end
 
   it { should have_content("Type") }
   it { should have_content("School session") }
 
-  context "with a clinic" do
-    let(:location) { create(:location, :clinic) }
+  context "with a community clinic" do
+    let(:location) { create(:location, :community_clinic) }
+
+    it { should have_content("Community clinic") }
+  end
+
+  context "with a generic clinic" do
+    let(:location) { create(:location, :generic_clinic, team:) }
 
     it { should have_content("Community clinic") }
   end
