@@ -6,6 +6,7 @@
 #
 #  id                 :bigint           not null, primary key
 #  gillick_competent  :boolean
+#  location_name      :string
 #  notes              :text
 #  recorded_at        :datetime
 #  created_at         :datetime         not null
