@@ -3,7 +3,8 @@
 class PagesController < ApplicationController
   skip_before_action :authenticate_user!
   skip_after_action :verify_policy_scoped, only: %i[start jwks]
-  skip_before_action :store_user_location!, only: :start
+  skip_before_action :store_user_location!, only: %i[start jwks]
+  skip_before_action :authenticate_basic, only: :jwks
 
   def start
   end
