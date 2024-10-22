@@ -49,7 +49,7 @@ class AppSessionSummaryComponent < ViewComponent::Base
   private
 
   def type
-    @session.location&.clinic? ? "Community clinic" : "School session"
+    @session.location.clinic? ? "Community clinic" : "School session"
   end
 
   def programmes
