@@ -290,7 +290,7 @@ class ImmunisationImportRow
       if school && (care_setting.nil? || care_setting == CARE_SETTING_SCHOOL)
         school
       else
-        clinic
+        generic_clinic
       end
   end
 
@@ -304,18 +304,15 @@ class ImmunisationImportRow
       end
   end
 
-  def clinic
+  def generic_clinic
     return unless valid?
 
-    @clinic ||=
-      Location
-        .create_with(name: "#{team.name} Clinic")
-        .find_or_create_by!(type: :generic_clinic, ods_code:, team:)
-        .tap do
-          _1.update!(
-            year_groups: (_1.year_groups + @programme.year_groups).sort.uniq
-          )
-        end
+    @generic_clinic ||=
+      team.generic_clinic.tap do
+        _1.update!(
+          year_groups: (_1.year_groups + @programme.year_groups).sort.uniq
+        )
+      end
   end
 
   def vaccine

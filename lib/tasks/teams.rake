@@ -50,12 +50,7 @@ namespace :teams do
 
       TeamProgramme.create!(team:, programme:)
 
-      Location.create!(
-        name: "#{name} Clinic",
-        ods_code:,
-        type: :generic_clinic,
-        team:
-      )
+      team.generic_clinic # ensure it exists
 
       puts "New #{team.name} team with ID #{team.id} created."
     end

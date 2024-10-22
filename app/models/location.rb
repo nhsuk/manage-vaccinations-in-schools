@@ -45,6 +45,8 @@ class Location < ApplicationRecord
 
   enum :type, %w[school generic_clinic community_clinic]
 
+  scope :clinic, -> { generic_clinic.or(community_clinic) }
+
   scope :for_year_groups,
         ->(year_groups) do
           where("year_groups && ARRAY[?]::integer[]", year_groups)
