@@ -303,8 +303,8 @@ class ImmunisationImportRow
 
     @clinic ||=
       Location
-        .create_with(name: "Generic #{team.name} clinic", team:)
-        .find_or_create_by!(type: :clinic, ods_code:)
+        .create_with(name: "#{team.name} Clinic")
+        .find_or_create_by!(type: :generic_clinic, ods_code:, team:)
         .tap do
           _1.update!(
             year_groups: (_1.year_groups + @programme.year_groups).sort.uniq

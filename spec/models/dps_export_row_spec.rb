@@ -248,7 +248,9 @@ describe DPSExportRow do
       end
 
       context "when the session has a location with an ODS code" do
-        let(:location) { create(:location, :clinic, ods_code: "12345") }
+        let(:location) do
+          create(:location, :community_clinic, ods_code: "12345")
+        end
 
         it { should eq("12345") }
       end
@@ -273,7 +275,7 @@ describe DPSExportRow do
       end
 
       context "when the session has a location without a URN" do
-        let(:location) { create(:location, :clinic) }
+        let(:location) { create(:location, :community_clinic) }
 
         it { should eq("https://fhir.nhs.uk/Id/ods-organization-code") }
       end

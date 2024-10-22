@@ -48,11 +48,26 @@ describe Location do
   describe "validations" do
     it { should validate_presence_of(:name) }
 
-    context "with a clinic" do
-      subject(:location) { build(:location, :clinic, ods_code: "abc") }
+    context "with a community clinic" do
+      subject(:location) do
+        build(:location, :community_clinic, ods_code: "abc")
+      end
 
       it { should validate_presence_of(:ods_code) }
       it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
+
+      it { should_not validate_presence_of(:urn) }
+      it { should validate_uniqueness_of(:urn) }
+    end
+
+    context "with a generic clinic" do
+      subject(:location) { build(:location, :generic_clinic, team:) }
+
+      let(:team) { create(:team) }
+
+      it { should validate_presence_of(:ods_code) }
+      it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
+      it { should validate_comparison_of(:ods_code).is_equal_to(team.ods_code) }
 
       it { should_not validate_presence_of(:urn) }
       it { should validate_uniqueness_of(:urn) }
@@ -70,6 +85,28 @@ describe Location do
   end
 
   it { should normalize(:address_postcode).from(" SW111AA ").to("SW11 1AA") }
-
   it { should normalize(:ods_code).from(" r1a ").to("R1A") }
+  it { should normalize(:urn).from(" 123 ").to("123") }
+
+  describe "#clinic?" do
+    subject(:clinic?) { location.clinic? }
+
+    context "with a community clinic" do
+      let(:location) { build(:location, :community_clinic) }
+
+      it { should be(true) }
+    end
+
+    context "with a generic clinic" do
+      let(:location) { build(:location, :generic_clinic, team: create(:team)) }
+
+      it { should be(true) }
+    end
+
+    context "with a school" do
+      let(:location) { build(:location, :school) }
+
+      it { should be(false) }
+    end
+  end
 end

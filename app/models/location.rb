@@ -45,7 +45,7 @@ class Location < ApplicationRecord
 
   has_and_belongs_to_many :immunisation_imports
 
-  enum :type, %w[school clinic]
+  enum :type, %w[school generic_clinic community_clinic]
 
   scope :for_year_groups,
         ->(year_groups) do
@@ -57,6 +57,23 @@ class Location < ApplicationRecord
 
   validates :ods_code, presence: true, if: :clinic?
 
+  with_options if: :generic_clinic? do
+    validates :team, presence: true
+    validates :ods_code, comparison: { equal_to: :team_ods_code }
+  end
+
   validates :urn, presence: true, if: :school?
   validates :urn, uniqueness: true, allow_nil: true
+
+  normalizes :urn, with: -> { _1.blank? ? nil : _1.strip }
+
+  def clinic?
+    generic_clinic? || community_clinic?
+  end
+
+  private
+
+  def team_ods_code
+    team&.ods_code
+  end
 end
