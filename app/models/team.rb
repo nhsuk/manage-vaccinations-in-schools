@@ -57,6 +57,16 @@ class Team < ApplicationRecord
     )
   end
 
+  def generic_clinic_session
+    academic_year = Date.current.academic_year
+    location = generic_clinic
+
+    sessions.create_with(programmes:).find_or_create_by!(
+      academic_year:,
+      location:
+    )
+  end
+
   def weeks_before_consent_reminders
     (days_before_consent_reminders / 7).to_i
   end
