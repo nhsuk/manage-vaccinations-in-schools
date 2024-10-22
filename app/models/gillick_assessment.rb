@@ -25,6 +25,7 @@
 #  fk_rails_...  (patient_session_id => patient_sessions.id)
 #
 class GillickAssessment < ApplicationRecord
+  include LocationNameConcern
   include Recordable
   include WizardStepConcern
 
