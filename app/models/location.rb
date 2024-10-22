@@ -43,8 +43,6 @@ class Location < ApplicationRecord
   has_many :patients, foreign_key: :school_id
   has_many :sessions
 
-  has_and_belongs_to_many :immunisation_imports
-
   enum :type, %w[school generic_clinic community_clinic]
 
   scope :for_year_groups,

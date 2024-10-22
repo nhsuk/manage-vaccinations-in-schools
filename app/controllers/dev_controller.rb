@@ -33,7 +33,6 @@ class DevController < ApplicationController
       immunisation_imports = ImmunisationImport.where(team:)
       immunisation_imports.find_each do |immunisation_import|
         immunisation_import.batches.clear
-        immunisation_import.locations.clear
         immunisation_import.patient_sessions.clear
         immunisation_import.patients.clear
         immunisation_import.sessions.clear

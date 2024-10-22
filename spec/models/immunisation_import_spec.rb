@@ -47,7 +47,14 @@ describe ImmunisationImport do
   end
 
   let(:programme) { create(:programme, :flu_all_vaccines) }
-  let(:team) { create(:team, ods_code: "R1L", programmes: [programme]) }
+  let(:team) do
+    create(
+      :team,
+      :with_generic_clinic,
+      ods_code: "R1L",
+      programmes: [programme]
+    )
+  end
 
   let(:file) { "valid_flu.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/immunisation_import/#{file}") }
@@ -131,7 +138,6 @@ describe ImmunisationImport do
         expect { record! }
           .to change(immunisation_import, :recorded_at).from(nil)
           .and change(immunisation_import.vaccination_records, :count).by(7)
-          .and change(immunisation_import.locations, :count).by(1)
           .and change(immunisation_import.patients, :count).by(7)
           .and change(immunisation_import.sessions, :count).by(1)
           .and change(immunisation_import.patient_sessions, :count).by(7)
@@ -144,7 +150,6 @@ describe ImmunisationImport do
         expect { immunisation_import.record! }
           .to not_change(immunisation_import, :recorded_at)
           .and not_change(VaccinationRecord, :count)
-          .and not_change(Location, :count)
           .and not_change(Patient, :count)
           .and not_change(Session, :count)
           .and not_change(PatientSession, :count)
@@ -202,7 +207,6 @@ describe ImmunisationImport do
         expect { record! }
           .to change(immunisation_import, :recorded_at).from(nil)
           .and change(immunisation_import.vaccination_records, :count).by(11)
-          .and change(immunisation_import.locations, :count).by(2)
           .and change(immunisation_import.patients, :count).by(10)
           .and change(immunisation_import.sessions, :count).by(5)
           .and change(immunisation_import.patient_sessions, :count).by(11)
@@ -215,7 +219,6 @@ describe ImmunisationImport do
         expect { immunisation_import.record! }
           .to not_change(immunisation_import, :recorded_at)
           .and not_change(VaccinationRecord, :count)
-          .and not_change(Location, :count)
           .and not_change(Patient, :count)
           .and not_change(Session, :count)
           .and not_change(PatientSession, :count)
