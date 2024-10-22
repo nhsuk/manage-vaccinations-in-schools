@@ -462,8 +462,8 @@ describe ImmunisationImportRow do
     end
   end
 
-  describe "#notes" do
-    subject(:notes) { immunisation_import_row.notes }
+  describe "#location_name" do
+    subject(:location_name) { immunisation_import_row.location_name }
 
     context "without data" do
       let(:data) { {} }
@@ -479,16 +479,22 @@ describe ImmunisationImportRow do
 
     context "when home educated and community care setting" do
       let(:data) do
-        valid_data.merge("SCHOOL_URN" => "999999", "CARE_SETTING" => "2")
+        valid_data.merge(
+          "SCHOOL_URN" => "999999",
+          "SCHOOL_NAME" => "",
+          "CARE_SETTING" => "2"
+        )
       end
 
-      it { should be_nil }
+      it { should eq("Unknown") }
     end
 
     context "when home educated and unknown care setting" do
-      let(:data) { valid_data.merge("SCHOOL_URN" => "999999") }
+      let(:data) do
+        valid_data.merge("SCHOOL_URN" => "999999", "SCHOOL_NAME" => "")
+      end
 
-      it { should be_nil }
+      it { should eq("Unknown") }
     end
 
     context "with an unknown school and school care setting" do
@@ -500,7 +506,7 @@ describe ImmunisationImportRow do
         )
       end
 
-      it { should eq("Vaccinated at Waterloo Road") }
+      it { should eq("Waterloo Road") }
     end
 
     context "with an unknown school and community care setting" do
@@ -512,7 +518,7 @@ describe ImmunisationImportRow do
         )
       end
 
-      it { should be_nil }
+      it { should eq("Unknown") }
     end
 
     context "with an unknown school and unknown case setting" do
@@ -523,7 +529,7 @@ describe ImmunisationImportRow do
         )
       end
 
-      it { should eq("Vaccinated at Waterloo Road") }
+      it { should eq("Waterloo Road") }
     end
   end
 

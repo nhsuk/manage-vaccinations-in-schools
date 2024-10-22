@@ -16,6 +16,7 @@ describe DPSExportRow do
   let(:performed_by) { create(:user, family_name: "Doe", given_name: "Jane") }
   let(:performed_by_given_name) { nil }
   let(:performed_by_family_name) { nil }
+  let(:location_name) { nil }
   let(:vaccination_record) do
     create(
       :vaccination_record,
@@ -25,6 +26,7 @@ describe DPSExportRow do
       delivery_method: :intramuscular,
       delivery_site: :left_arm_upper_position,
       dose_sequence: 1,
+      location_name:,
       patient_session:,
       performed_by:,
       performed_by_given_name:,
@@ -257,6 +259,7 @@ describe DPSExportRow do
 
       context "when the session doesn't have a location" do
         let(:location) { nil }
+        let(:location_name) { "Unknown" }
         let(:team) { create(:team, ods_code: "ABC", programmes: [programme]) }
 
         it { should eq("ABC") }
@@ -282,6 +285,7 @@ describe DPSExportRow do
 
       context "when the session doesn't have a location" do
         let(:location) { nil }
+        let(:location_name) { "Unknown" }
 
         it { should eq("https://fhir.nhs.uk/Id/ods-organization-code") }
       end

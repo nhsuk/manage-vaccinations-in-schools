@@ -75,15 +75,15 @@ class ImmunisationImportRow
 
     vaccination_record =
       VaccinationRecord.create_with(
-        notes:,
         recorded_at: Time.zone.now
       ).find_or_initialize_by(
-        programme: @programme,
         administered_at:,
         dose_sequence:,
+        location_name:,
         patient_session:,
         performed_by_family_name:,
         performed_by_given_name:,
+        programme: @programme,
         vaccine:
       )
 
@@ -143,8 +143,12 @@ class ImmunisationImportRow
     @patient_session ||= PatientSession.find_or_create_by!(patient:, session:)
   end
 
-  def notes
-    "Vaccinated at #{school_name}" if school_name.present? && location.nil?
+  def location_name
+    if location&.generic_clinic?
+      "Unknown"
+    elsif location.nil? && school_name.present?
+      school_name
+    end
   end
 
   def administered
