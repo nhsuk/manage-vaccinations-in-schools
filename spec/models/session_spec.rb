@@ -315,14 +315,19 @@ describe Session do
       context "in school" do
         let(:location) { school }
 
-        it "adds the unvaccinated patients" do
+        it "adds unvaccinated patients, proposes moving if in other sessions" do
           create_patient_sessions!
 
           expect(session.patients).to contain_exactly(
             unvaccinated_child,
-            unvaccinated_teen,
-            hpv_vaccinated_teen
+            unvaccinated_teen
           )
+
+          # BUG: This patient has an upcoming HPV session, we should not be
+          # proposing the move to this Flu session.
+          expect(
+            PatientSession.where(proposed_session: session).map(&:patient)
+          ).to contain_exactly(hpv_vaccinated_teen)
         end
 
         it "is idempotent" do
@@ -356,13 +361,16 @@ describe Session do
       context "in school" do
         let(:location) { school }
 
-        it "adds the unvaccinated patients" do
+        it "adds unvaccinated patients, proposes moving if in other sessions" do
           create_patient_sessions!
 
-          expect(session.patients).to contain_exactly(
-            unvaccinated_teen,
-            flu_vaccinated_teen
-          )
+          expect(session.patients).to contain_exactly(unvaccinated_teen)
+
+          # BUG: This patient has an upcoming Flu session, we should not be
+          # proposing the move to this HPV session.
+          expect(
+            PatientSession.where(proposed_session: session).map(&:patient)
+          ).to contain_exactly(flu_vaccinated_teen)
         end
 
         it "is idempotent" do
@@ -394,12 +402,17 @@ describe Session do
       context "in school" do
         let(:location) { school }
 
-        it "adds the unvaccinated patients" do
+        it "adds unvaccinated patients, proposes moving if in other sessions" do
           create_patient_sessions!
 
           expect(session.patients).to contain_exactly(
             unvaccinated_child,
-            unvaccinated_teen,
+            unvaccinated_teen
+          )
+
+          expect(
+            PatientSession.where(proposed_session: session).map(&:patient)
+          ).to contain_exactly(
             flu_vaccinated_child,
             hpv_vaccinated_teen,
             flu_vaccinated_teen

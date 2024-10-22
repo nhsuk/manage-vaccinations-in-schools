@@ -29,6 +29,7 @@ class PatientSession < ApplicationRecord
 
   belongs_to :patient
   belongs_to :session
+  belongs_to :proposed_session, class_name: "Session", optional: true
 
   has_one :location, through: :session
   has_one :team, through: :session
