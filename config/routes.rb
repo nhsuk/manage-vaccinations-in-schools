@@ -21,7 +21,8 @@ Rails.application.routes.draw do
                omniauth_callbacks: "users/omniauth_callbacks"
              }
   devise_scope :user do
-    post "auth/cis2_logout", to: "users/omniauth_callbacks#cis2_logout"
+    post "/users/auth/cis2/backchannel_logout",
+         to: "users/omniauth_callbacks#cis2_logout"
   end
 
   root to: redirect("/start")
