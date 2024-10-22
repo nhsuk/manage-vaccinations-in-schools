@@ -14,22 +14,14 @@ class ProgrammesController < ApplicationController
 
   def sessions
     sessions_for_programme =
-      policy_scope(Session).has_programme(@programme).includes(
-        :dates,
-        :location
-      )
+      policy_scope(Session)
+        .has_programme(@programme)
+        .includes(:dates, :location)
+        .strict_loading
 
-    @scheduled_sessions =
-      sessions_for_programme.scheduled.sort_by do |session|
-        [session.dates.first.value, session.location&.name]
-      end
-
-    @unscheduled_sessions =
-      sessions_for_programme.unscheduled.order_by_location_name
-    @completed_sessions =
-      sessions_for_programme.completed.sort_by do |session|
-        [session.dates.first.value, session.location&.name]
-      end
+    @scheduled_sessions = sessions_for_programme.scheduled.sort
+    @unscheduled_sessions = sessions_for_programme.unscheduled.sort
+    @completed_sessions = sessions_for_programme.completed.sort
   end
 
   private

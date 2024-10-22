@@ -47,13 +47,10 @@ class Session < ApplicationRecord
   scope :has_programme,
         ->(programme) { joins(:programmes).where(programmes: programme) }
 
-  scope :order_by_location_name,
-        -> { left_joins(:location).order("locations.name ASC") }
-
   scope :open, -> { where(closed_at: nil) }
   scope :closed, -> { where.not(closed_at: nil) }
 
-  scope :today, -> { has_date(Date.current).order_by_location_name }
+  scope :today, -> { has_date(Date.current) }
 
   scope :unscheduled,
         -> do
@@ -123,6 +120,11 @@ class Session < ApplicationRecord
 
   def today_or_future_dates
     dates.select(&:today_or_future?).map(&:value)
+  end
+
+  def <=>(other)
+    [dates.first&.value, location.type, location.name] <=>
+      [other.dates.first&.value, other.location.type, other.location.name]
   end
 
   def create_patient_sessions!
