@@ -300,14 +300,6 @@ Devise.setup do |config|
       http_client.ssl.min_version = :TLS1_2
     end
 
-    acr_values =
-      if Settings.cis2.allow_aal2_auth
-        # Enables support for MS Authenticator
-        "AAL2_OR_AAL3_ANY"
-      else
-        "AAL3"
-      end
-
     config.omniauth(
       :openid_connect,
       {
@@ -316,8 +308,11 @@ Devise.setup do |config|
         scope: %i[openid profile email nationalrbacaccess associatedorgs],
         extra_authorize_params: {
           max_age: 300,
-          acr_values:
-        },
+          # https://digital.nhs.uk/services/care-identity-service/applications-and-services/cis2-authentication/guidance-for-developers/detailed-guidance/acr-values
+          # The AAL will be verified in the callback, so there needs to be some
+          # alignment here.
+          acr_values: Settings.cis2.acr_value
+        }.compact,
         response_type: :code,
         # uid_field: "preferred_username",
         issuer: Settings.cis2.issuer,
