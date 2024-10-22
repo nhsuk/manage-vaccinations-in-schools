@@ -230,6 +230,19 @@ class Session < ApplicationRecord
     close_consent_at&.future?
   end
 
+  def patient_sessions_moving_from_this_session
+    patient_sessions.pending_transfer
+  end
+
+  def patient_sessions_moving_to_this_session
+    team.patient_sessions.where(proposed_session: self)
+  end
+
+  def has_movers?
+    patient_sessions_moving_from_this_session.any? ||
+      patient_sessions_moving_to_this_session.any?
+  end
+
   private
 
   def programmes_part_of_team
