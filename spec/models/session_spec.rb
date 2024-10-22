@@ -30,9 +30,7 @@ describe Session do
 
     let(:today_session) { create(:session, :today, programme:) }
     let(:unscheduled_session) { create(:session, :unscheduled, programme:) }
-    let(:completed_session) do
-      create(:session, :completed, :closed, programme:)
-    end
+    let(:completed_session) { create(:session, :completed, programme:) }
     let(:scheduled_session) { create(:session, :scheduled, programme:) }
 
     describe "#open" do
@@ -140,19 +138,19 @@ describe Session do
     context "when the session is scheduled for today" do
       let(:session) { create(:session, :today) }
 
-      it { should be_truthy }
+      it { should be(true) }
     end
 
     context "when the session is scheduled in the past" do
       let(:session) { create(:session, :completed) }
 
-      it { should be_falsey }
+      it { should be(false) }
     end
 
     context "when the session is scheduled in the future" do
       let(:session) { create(:session, :scheduled) }
 
-      it { should be_falsey }
+      it { should be(false) }
     end
   end
 
@@ -165,26 +163,6 @@ describe Session do
 
     context "with a date" do
       before { create(:session_date, session:) }
-
-      it { should be(false) }
-    end
-  end
-
-  describe "#completed?" do
-    subject(:scheduled?) { session.completed? }
-
-    let(:session) { create(:session, date: nil) }
-
-    it { should be(false) }
-
-    context "with a date before today" do
-      before { create(:session_date, session:, value: Date.yesterday) }
-
-      it { should be(true) }
-    end
-
-    context "with a date after today" do
-      before { create(:session_date, session:, value: Date.tomorrow) }
 
       it { should be(false) }
     end

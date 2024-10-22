@@ -18,7 +18,7 @@
     <%= session_status_tag(@session) %>
   </li>
 
-  <% unless @session.completed? %>
+  <% unless @session.closed? %>
     <li class="app-action-list__item">
       <%= govuk_link_to "Import class list", new_session_class_import_path(@session) %>
     </li>

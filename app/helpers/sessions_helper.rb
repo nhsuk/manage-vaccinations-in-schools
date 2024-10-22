@@ -14,7 +14,7 @@ module SessionsHelper
   def session_status_tag(session)
     if session.unscheduled?
       govuk_tag(text: "No sessions scheduled", colour: "purple")
-    elsif session.completed?
+    elsif session.closed?
       govuk_tag(text: "All sessions completed", colour: "green")
     else
       govuk_tag(text: "Sessions scheduled")
