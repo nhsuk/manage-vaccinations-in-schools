@@ -86,6 +86,34 @@ describe Session do
     end
   end
 
+  describe "#open?" do
+    subject(:open?) { session.open? }
+
+    let(:session) { build(:session) }
+
+    it { should be(true) }
+
+    context "with a closed session" do
+      let(:session) { build(:session, :closed) }
+
+      it { should be(false) }
+    end
+  end
+
+  describe "#closed?" do
+    subject(:closed?) { session.closed? }
+
+    let(:session) { build(:session) }
+
+    it { should be(false) }
+
+    context "with a closed session" do
+      let(:session) { build(:session, :closed) }
+
+      it { should be(true) }
+    end
+  end
+
   describe "#today?" do
     subject(:today?) { session.today? }
 

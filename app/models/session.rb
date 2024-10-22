@@ -93,6 +93,14 @@ class Session < ApplicationRecord
   validates :programmes, presence: true
   validate :programmes_part_of_team
 
+  def open?
+    closed_at.nil?
+  end
+
+  def closed?
+    closed_at != nil
+  end
+
   def today?
     dates.map(&:value).include?(Date.current)
   end
