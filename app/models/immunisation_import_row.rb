@@ -290,7 +290,7 @@ class ImmunisationImportRow
       if school && (care_setting.nil? || care_setting == CARE_SETTING_SCHOOL)
         school
       else
-        generic_clinic
+        team.generic_clinic
       end
   end
 
@@ -301,17 +301,6 @@ class ImmunisationImportRow
       if school_urn != SCHOOL_URN_HOME_EDUCATED &&
            school_urn != SCHOOL_URN_UNKNOWN
         Location.find_by!(urn: school_urn)
-      end
-  end
-
-  def generic_clinic
-    return unless valid?
-
-    @generic_clinic ||=
-      team.generic_clinic.tap do
-        _1.update!(
-          year_groups: (_1.year_groups + @programme.year_groups).sort.uniq
-        )
       end
   end
 
