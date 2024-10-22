@@ -67,6 +67,7 @@ environments:
       rolling: recreate # Disables blue-green deployment for speed
     variables:
       RAILS_ENV: staging
+      SENTRY_ENVIRONMENT: accessibility
       MAVIS__HOST: "accessibility.mavistesting.com"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "accessibility.mavistesting.com"
       MAVIS__ALLOW_DEV_PHONE_NUMBERS: true
@@ -78,6 +79,7 @@ environments:
       rolling: recreate # Disables blue-green deployment for speed
     variables:
       RAILS_ENV: staging
+      SENTRY_ENVIRONMENT: pentest
       MAVIS__HOST: "pentest.mavistesting.com"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "pentest.mavistesting.com"
       MAVIS__ALLOW_DEV_PHONE_NUMBERS: true
@@ -89,6 +91,7 @@ environments:
       rolling: recreate # Disables blue-green deployment for speed
     variables:
       RAILS_ENV: staging
+      SENTRY_ENVIRONMENT: test
       MAVIS__HOST: "test.mavistesting.com"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "test.mavistesting.com"
       MAVIS__ALLOW_DEV_PHONE_NUMBERS: true
@@ -99,6 +102,7 @@ environments:
         - "training.give-or-refuse-consent-for-vaccinations.nhs.uk"
     variables:
       RAILS_ENV: staging
+      SENTRY_ENVIRONMENT: training
       MAVIS__HOST: "training.manage-vaccinations-in-schools.nhs.uk"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "training.manage-vaccinations-in-schools.nhs.uk"
       MAVIS__ALLOW_DEV_PHONE_NUMBERS: true
@@ -111,5 +115,6 @@ environments:
         - "give-or-refuse-consent-for-vaccinations.nhs.uk"
     variables:
       RAILS_ENV: production
+      SENTRY_ENVIRONMENT: production
       MAVIS__HOST: "manage-vaccinations-in-schools.nhs.uk"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "give-or-refuse-consent-for-vaccinations.nhs.uk"
