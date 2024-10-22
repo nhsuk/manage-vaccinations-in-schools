@@ -49,8 +49,7 @@ class AppActivityLogComponent < ViewComponent::Base
   def session_events
     [
       {
-        title:
-          "Added to session at #{helpers.session_location(@patient_session.session, part_of_sentence: true)}",
+        title: "Added to session at #{@patient_session.location.name}",
         time: @patient_session.created_at
       }
     ]

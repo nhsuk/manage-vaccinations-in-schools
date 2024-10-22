@@ -10,7 +10,7 @@
 #  send_consent_requests_at      :date
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
-#  location_id                   :bigint
+#  location_id                   :bigint           not null
 #  team_id                       :bigint           not null
 #
 # Indexes
@@ -26,7 +26,7 @@ class Session < ApplicationRecord
   audited
 
   belongs_to :team
-  belongs_to :location, optional: true
+  belongs_to :location
 
   has_many :dates, -> { order(:value) }, class_name: "SessionDate"
   has_many :notifications, class_name: "SessionNotification"

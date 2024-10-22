@@ -202,7 +202,7 @@ describe ImmunisationImport do
         expect { record! }
           .to change(immunisation_import, :recorded_at).from(nil)
           .and change(immunisation_import.vaccination_records, :count).by(11)
-          .and change(immunisation_import.locations, :count).by(1)
+          .and change(immunisation_import.locations, :count).by(2)
           .and change(immunisation_import.patients, :count).by(10)
           .and change(immunisation_import.sessions, :count).by(5)
           .and change(immunisation_import.patient_sessions, :count).by(11)

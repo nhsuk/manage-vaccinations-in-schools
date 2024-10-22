@@ -76,7 +76,7 @@ class AppVaccinationCheckAndConfirmComponent < ViewComponent::Base
 
       summary_list.with_row do |row|
         row.with_key { "Location" }
-        row.with_value { helpers.session_location(@session) }
+        row.with_value { @session.location.name }
       end
 
       if vaccinator

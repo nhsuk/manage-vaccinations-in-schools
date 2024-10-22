@@ -5,7 +5,7 @@
                                         ]) %>
 <% end %>
 
-<%= h1 session_location(@session) %>
+<%= h1 @session.location.name %>
 
 <% if (school = @session.location)&.school? %>
   <p class="nhsuk-caption-l nhsuk-u-margin-bottom-4">

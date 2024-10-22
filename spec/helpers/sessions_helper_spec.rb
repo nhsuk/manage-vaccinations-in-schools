@@ -24,26 +24,6 @@ describe SessionsHelper do
     end
   end
 
-  describe "#session_location" do
-    subject(:session_location) { helper.session_location(session) }
-
-    it { should eq("Waterloo Road") }
-
-    context "when location is nil" do
-      let(:location) { nil }
-
-      it { should eq("Unknown location") }
-
-      context "when part of a sentence" do
-        subject(:session_location) do
-          helper.session_location(session, part_of_sentence: true)
-        end
-
-        it { should eq("unknown location") }
-      end
-    end
-  end
-
   describe "#session_status_tag" do
     subject(:session_status_tag) { helper.session_status_tag(session) }
 

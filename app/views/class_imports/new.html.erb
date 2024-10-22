@@ -1,7 +1,7 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
         href: session_path(@session),
-        name: session_location(@session),
+        name: @session.location.name,
       ) %>
 <% end %>
 
@@ -14,7 +14,7 @@
   <%= f.govuk_error_summary %>
 
   <%= f.govuk_file_field :csv,
-                         caption: { text: session_location(@session), size: "l" },
+                         caption: { text: @session.location.name, size: "l" },
                          label: { text: title, tag: "h1", size: "l" },
                          hint: { text: hint } %>
 

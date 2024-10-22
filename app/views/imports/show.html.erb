@@ -8,7 +8,7 @@
   <% else %>
     <%= render AppBreadcrumbComponent.new(items: [
                                             { text: t("sessions.index.title"), href: sessions_path },
-                                            { text: session_location(@session), href: session_path(@session) },
+                                            { text: @session.location.name, href: session_path(@session) },
                                           ]) %>
   <% end %>
 <% end %>

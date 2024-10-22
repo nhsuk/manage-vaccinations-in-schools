@@ -8,8 +8,10 @@ describe AppVaccinationRecordSummaryComponent do
   let(:administered_at) { Time.zone.local(2024, 9, 6, 12) }
   let(:location) { create(:location, :school, name: "Hogwarts") }
   let(:programme) { create(:programme, :hpv) }
-  let(:session) { create(:session, programme:, location:) }
-  let(:patient_session) { create(:patient_session, session:) }
+  let(:team) { create(:team, programmes: [programme]) }
+  let(:session) { create(:session, programme:, location:, team:) }
+  let(:patient) { create(:patient) }
+  let(:patient_session) { create(:patient_session, session:, patient:) }
   let(:vaccine) { programme.vaccines.first }
   let(:batch) do
     create(:batch, name: "ABC", expiry: Date.new(2020, 1, 1), vaccine:)
@@ -221,8 +223,8 @@ describe AppVaccinationRecordSummaryComponent do
       )
     end
 
-    context "when the location is not present" do
-      let(:location) { nil }
+    context "when the location is a generic clinic" do
+      let(:location) { create(:location, :generic_clinic, team:) }
       let(:location_name) { "Hogwarts" }
 
       it do
