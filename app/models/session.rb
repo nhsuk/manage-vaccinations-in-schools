@@ -122,21 +122,28 @@ class Session < ApplicationRecord
   end
 
   def create_patient_sessions!
-    return if location.nil?
-
     cohorts = team.cohorts.for_year_groups(year_groups, academic_year:)
 
-    patients_in_cohorts =
+    patients_scope =
       Patient
-        .where(cohort: cohorts, school: location)
-        .not_deceased
         .includes(:upcoming_sessions, vaccination_records: :programme)
+        .where(cohort: cohorts)
+        .not_deceased
 
-    required_programmes = Set.new(programmes)
+    patients_in_cohorts =
+      if location.school?
+        patients_scope.where(school: location)
+      elsif location.generic_clinic?
+        patients_scope.where(home_educated: true).or(
+          patients_scope.where(school: nil)
+        )
+      elsif location.community_clinic?
+        patients_scope.none # TODO: handle community clinics
+      end
 
     unvaccinated_patients =
       patients_in_cohorts.reject do |patient|
-        required_programmes.all? { |programme| patient.vaccinated?(programme) }
+        programmes.all? { |programme| patient.vaccinated?(programme) }
       end
 
     # First we remove patients from any other upcoming sessions.

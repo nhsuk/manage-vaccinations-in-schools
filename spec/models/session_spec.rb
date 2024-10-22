@@ -237,21 +237,33 @@ describe Session do
 
     let(:flu_programme) { create(:programme, :flu) }
     let(:hpv_programme) { create(:programme, :hpv) }
+    let(:team) { create(:team, programmes:) }
+    let(:session) { create(:session, team:, location:, programmes:) }
 
     let(:school) { create(:location, :primary) }
 
     let!(:unvaccinated_child) do
-      create(:patient, date_of_birth: 9.years.ago.to_date, team:, school:)
+      create(:patient, year_group: 6, team:, school:)
     end
-    let!(:unvaccinated_teen) do
-      create(:patient, date_of_birth: 14.years.ago.to_date, team:, school:)
+    let!(:unvaccinated_teen) { create(:patient, year_group: 8, team:, school:) }
+    let!(:unvaccinated_home_educated_child) do
+      create(:patient, :home_educated, year_group: 6, team:)
+    end
+    let!(:unvaccinated_home_educated_teen) do
+      create(:patient, :home_educated, year_group: 8, team:)
+    end
+    let!(:unvaccinated_unknown_school_child) do
+      create(:patient, year_group: 6, team:, school: nil)
+    end
+    let!(:unvaccinated_unknown_school_teen) do
+      create(:patient, year_group: 8, team:, school: nil)
     end
 
     let!(:flu_vaccinated_child) do
       create(
         :patient,
         :vaccinated,
-        date_of_birth: 9.years.ago.to_date,
+        year_group: 6,
         team:,
         school:,
         programme: flu_programme
@@ -261,7 +273,7 @@ describe Session do
       create(
         :patient,
         :vaccinated,
-        date_of_birth: 14.years.ago.to_date,
+        year_group: 8,
         team:,
         school:,
         programme: flu_programme
@@ -271,7 +283,7 @@ describe Session do
       create(
         :patient,
         :vaccinated,
-        date_of_birth: 14.years.ago.to_date,
+        year_group: 8,
         team:,
         school:,
         programme: hpv_programme
@@ -279,7 +291,7 @@ describe Session do
     end
 
     let!(:both_vaccinated_teen) do
-      create(:patient, date_of_birth: 14.years.ago.to_date, team:, school:)
+      create(:patient, year_group: 8, team:, school:)
     end
 
     before do
@@ -294,81 +306,128 @@ describe Session do
         patient: both_vaccinated_teen
       )
 
-      create(
-        :patient,
-        :deceased,
-        date_of_birth: 9.years.ago.to_date,
-        team:,
-        school:
-      )
+      create(:patient, :deceased, year_group: 8, team:, school:)
     end
 
     context "with a Flu session" do
-      let(:team) { create(:team, programmes: [flu_programme]) }
-      let(:session) do
-        create(:session, team:, location: school, programmes: [flu_programme])
+      let(:programmes) { [flu_programme] }
+
+      context "in school" do
+        let(:location) { school }
+
+        it "adds the unvaccinated patients" do
+          create_patient_sessions!
+
+          expect(session.patients).to contain_exactly(
+            unvaccinated_child,
+            unvaccinated_teen,
+            hpv_vaccinated_teen
+          )
+        end
+
+        it "is idempotent" do
+          expect { 2.times { create_patient_sessions! } }.not_to raise_error
+        end
       end
 
-      it "adds the unvaccinated patients" do
-        create_patient_sessions!
+      context "in a generic clinic" do
+        let(:location) { create(:location, :generic_clinic, team:) }
 
-        expect(session.patients).to contain_exactly(
-          unvaccinated_child,
-          unvaccinated_teen,
-          hpv_vaccinated_teen
-        )
-      end
+        it "adds the unvaccinated patients" do
+          create_patient_sessions!
 
-      it "is idempotent" do
-        expect { 2.times { create_patient_sessions! } }.not_to raise_error
+          expect(session.patients).to contain_exactly(
+            unvaccinated_home_educated_child,
+            unvaccinated_home_educated_teen,
+            unvaccinated_unknown_school_child,
+            unvaccinated_unknown_school_teen
+          )
+        end
+
+        it "is idempotent" do
+          expect { 2.times { create_patient_sessions! } }.not_to raise_error
+        end
       end
     end
 
     context "with an HPV session" do
-      let(:team) { create(:team, programmes: [hpv_programme]) }
-      let(:session) do
-        create(:session, team:, location: school, programmes: [hpv_programme])
+      let(:programmes) { [hpv_programme] }
+
+      context "in school" do
+        let(:location) { school }
+
+        it "adds the unvaccinated patients" do
+          create_patient_sessions!
+
+          expect(session.patients).to contain_exactly(
+            unvaccinated_teen,
+            flu_vaccinated_teen
+          )
+        end
+
+        it "is idempotent" do
+          expect { 2.times { create_patient_sessions! } }.not_to raise_error
+        end
       end
 
-      it "adds the unvaccinated patients" do
-        create_patient_sessions!
+      context "in a generic clinic" do
+        let(:location) { create(:location, :generic_clinic, team:) }
 
-        expect(session.patients).to contain_exactly(
-          unvaccinated_teen,
-          flu_vaccinated_teen
-        )
-      end
+        it "adds the unvaccinated patients" do
+          create_patient_sessions!
 
-      it "is idempotent" do
-        expect { 2.times { create_patient_sessions! } }.not_to raise_error
+          expect(session.patients).to contain_exactly(
+            unvaccinated_home_educated_teen,
+            unvaccinated_unknown_school_teen
+          )
+        end
+
+        it "is idempotent" do
+          expect { 2.times { create_patient_sessions! } }.not_to raise_error
+        end
       end
     end
 
     context "with a Flu and HPV session" do
-      let(:team) { create(:team, programmes: [flu_programme, hpv_programme]) }
-      let(:session) do
-        create(
-          :session,
-          team:,
-          location: school,
-          programmes: [flu_programme, hpv_programme]
-        )
+      let(:programmes) { [flu_programme, hpv_programme] }
+
+      context "in school" do
+        let(:location) { school }
+
+        it "adds the unvaccinated patients" do
+          create_patient_sessions!
+
+          expect(session.patients).to contain_exactly(
+            unvaccinated_child,
+            unvaccinated_teen,
+            flu_vaccinated_child,
+            hpv_vaccinated_teen,
+            flu_vaccinated_teen
+          )
+        end
+
+        it "is idempotent" do
+          expect { 2.times { create_patient_sessions! } }.not_to raise_error
+        end
       end
 
-      it "adds the unvaccinated patients" do
-        create_patient_sessions!
+      context "in a generic clinic" do
+        let(:location) { create(:location, :generic_clinic, team:) }
 
-        expect(session.patients).to contain_exactly(
-          unvaccinated_child,
-          unvaccinated_teen,
-          flu_vaccinated_child,
-          hpv_vaccinated_teen,
-          flu_vaccinated_teen
-        )
-      end
+        it "adds the unvaccinated patients" do
+          create_patient_sessions!
 
-      it "is idempotent" do
-        expect { 2.times { create_patient_sessions! } }.not_to raise_error
+          expect(session.patients).to contain_exactly(
+            unvaccinated_home_educated_child,
+            unvaccinated_home_educated_teen,
+            unvaccinated_unknown_school_child,
+            unvaccinated_unknown_school_teen
+          )
+        end
+
+        it "is idempotent" do
+          expect { 2.times { create_patient_sessions! } }.not_to raise_error
+        end
       end
     end
   end
