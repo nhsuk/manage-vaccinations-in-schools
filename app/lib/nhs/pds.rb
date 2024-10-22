@@ -20,23 +20,23 @@ module NHS::PDS
   class InvalidatedResource < StandardError
   end
 
+  class InvalidNHSNumber < StandardError
+  end
+
   class << self
     def get_patient(nhs_number)
       NHS::API.connection.get(
         "personal-demographics/FHIR/R4/Patient/#{nhs_number}"
       )
+    rescue Faraday::BadRequestError => e
+      if is_error?(e, "INVALID_RESOURCE_ID")
+        raise InvalidNHSNumber, nhs_number
+      else
+        raise
+      end
     rescue Faraday::ResourceNotFound => e
-      response = JSON.parse(e.response_body)
-
-      invalidated_response =
-        response["issue"].any? do |issue|
-          issue["details"]["coding"].any? do |coding|
-            coding["code"] == "INVALIDATED_RESOURCE"
-          end
-        end
-
-      if invalidated_response
-        raise InvalidatedResource
+      if is_error?(e, "INVALIDATED_RESOURCE")
+        raise InvalidatedResource, nhs_number
       else
         raise
       end
@@ -51,6 +51,16 @@ module NHS::PDS
         "personal-demographics/FHIR/R4/Patient",
         attributes
       )
+    end
+
+    private
+
+    def is_error?(error, code)
+      response = JSON.parse(error.response_body)
+
+      response["issue"].any? do |issue|
+        issue["details"]["coding"].any? { |coding| coding["code"] == code }
+      end
     end
   end
 end
