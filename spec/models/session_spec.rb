@@ -431,4 +431,41 @@ describe Session do
       end
     end
   end
+
+  describe "#close!" do
+    subject(:close!) { session.close! }
+
+    let(:programme) { create(:programme) }
+    let(:team) { create(:team, programmes: [programme]) }
+    let(:session) { create(:session, programme:, team:) }
+
+    it "sets the closed at time" do
+      freeze_time do
+        expect { close! }.to change(session, :closed_at).from(nil).to(
+          Time.current
+        )
+      end
+    end
+
+    context "with vaccinated and unvaccinated patients" do
+      let!(:vaccinated_patient) do
+        create(:patient, :vaccinated, session:, programme:)
+      end
+      let!(:unvaccinated_patient) { create(:patient, session:, programme:) }
+
+      it "adds the unvaccinated patients to the generic clinic session" do
+        location = create(:location, :generic_clinic, team:)
+        generic_clinic_session = create(:session, location:, team:, programme:)
+
+        expect(generic_clinic_session.patients).to be_empty
+
+        close!
+
+        expect(generic_clinic_session.patients).to include(unvaccinated_patient)
+        expect(generic_clinic_session.patients).not_to include(
+          vaccinated_patient
+        )
+      end
+    end
+  end
 end
