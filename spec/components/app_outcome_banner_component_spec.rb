@@ -3,8 +3,8 @@
 describe AppOutcomeBannerComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:user) { create :user }
-  let(:patient_session) { create :patient_session }
+  let(:user) { create(:user) }
+  let(:patient_session) { create(:patient_session) }
   let(:component) { described_class.new(patient_session:, current_user: user) }
   let(:triage_nurse_name) do
     patient_session.latest_triage.performed_by.full_name
@@ -16,7 +16,7 @@ describe AppOutcomeBannerComponent do
   end
 
   context "state is unable_to_vaccinate" do
-    let(:patient_session) { create :patient_session, :unable_to_vaccinate }
+    let(:patient_session) { create(:patient_session, :unable_to_vaccinate) }
 
     it { should have_css(".app-card--red") }
     it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
