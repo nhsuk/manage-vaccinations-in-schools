@@ -19,7 +19,13 @@ describe "Self-consent" do
 
   def given_an_hpv_programme_is_underway
     programme = create(:programme, :hpv)
-    @team = create(:team, :with_one_nurse, programmes: [programme])
+    @team =
+      create(
+        :team,
+        :with_one_nurse,
+        programmes: [programme],
+        nurse_email: "nurse.joy@example.com"
+      )
     location = create(:location, :school, name: "Pilot School")
     @session = create(:session, :scheduled, team: @team, programme:, location:)
     @child = create(:patient, session: @session)

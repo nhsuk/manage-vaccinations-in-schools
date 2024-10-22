@@ -6,7 +6,7 @@ describe AppPatientPageComponent, type: :component do
   def stub_authorization(allowed:)
     # rubocop:disable RSpec/AnyInstance
     allow_any_instance_of(Pundit::Authorization).to receive(:policy).and_return(
-      instance_double(ApplicationPolicy, create?: allowed)
+      instance_double(ApplicationPolicy, create?: allowed, new?: allowed)
     )
     # rubocop:enable RSpec/AnyInstance
   end
@@ -112,6 +112,54 @@ describe AppPatientPageComponent, type: :component do
           text: "Did they get the HPV vaccine?"
         )
       end
+    end
+  end
+
+  context "session in progress, patient without consent, no Gillick assessment" do
+    let(:patient_session) do
+      create(:patient_session, :session_in_progress, programme:)
+    end
+
+    context "nurse user" do
+      before { stub_authorization(allowed: true) }
+
+      it { should have_css("a", text: "Give your assessment") }
+    end
+
+    context "admin user" do
+      before { stub_authorization(allowed: false) }
+
+      it { should_not have_css("a", text: "Give your assessment") }
+    end
+  end
+
+  context "session in progress, patient without consent, Gillick assessment" do
+    let(:patient_session) do
+      create(
+        :patient_session,
+        :session_in_progress,
+        :gillick_competent,
+        programme:
+      )
+    end
+
+    context "nurse user" do
+      before { stub_authorization(allowed: true) }
+
+      it { should_not have_css("a", text: "Give your assessment") }
+
+      it "shows the Gillick assessment" do
+        expect(subject).to have_css(
+          ".nhsuk-card__heading",
+          text: "Gillick assessment"
+        )
+      end
+    end
+
+    context "admin user" do
+      before { stub_authorization(allowed: false) }
+
+      it { should_not have_css("a", text: "Give your assessment") }
     end
   end
 end

@@ -231,5 +231,11 @@ FactoryBot.define do
         create(:gillick_assessment, :not_competent, patient_session:)
       end
     end
+
+    trait :gillick_competent do
+      after(:create) do |patient_session, _evaluator|
+        create(:gillick_assessment, :competent, patient_session:)
+      end
+    end
   end
 end

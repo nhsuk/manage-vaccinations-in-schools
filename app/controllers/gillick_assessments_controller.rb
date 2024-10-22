@@ -11,10 +11,14 @@ class GillickAssessmentsController < ApplicationController
   before_action :setup_wizard
 
   def new
+    authorize GillickAssessment
   end
 
   def create
-    @patient_session.gillick_assessments.create!(assessor: current_user)
+    @assessment =
+      @patient_session.gillick_assessments.build(assessor: current_user)
+    authorize @assessment
+    @assessment.save!
 
     redirect_to wizard_path(steps.first)
   end
@@ -24,6 +28,8 @@ class GillickAssessmentsController < ApplicationController
   end
 
   def update
+    authorize @assessment
+
     case step
     when :gillick, :notes
       @assessment.assign_attributes(gillick_params.merge(wizard_step: step))
