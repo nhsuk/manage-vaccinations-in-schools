@@ -37,6 +37,16 @@ describe SessionsHelper do
       end
     end
 
+    context "when scheduled" do
+      let(:session) { create(:session, :scheduled) }
+
+      it do
+        expect(session_status_tag).to eq(
+          "<strong class=\"nhsuk-tag\">Sessions scheduled</strong>"
+        )
+      end
+    end
+
     context "when completed" do
       let(:session) { create(:session, :completed) }
 
@@ -47,12 +57,12 @@ describe SessionsHelper do
       end
     end
 
-    context "when scheduled" do
-      let(:session) { create(:session, :scheduled) }
+    context "when closed" do
+      let(:session) { create(:session, :closed) }
 
       it do
         expect(session_status_tag).to eq(
-          "<strong class=\"nhsuk-tag\">Sessions scheduled</strong>"
+          "<strong class=\"nhsuk-tag nhsuk-tag--red\">Closed</strong>"
         )
       end
     end

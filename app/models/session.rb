@@ -47,19 +47,31 @@ class Session < ApplicationRecord
   scope :has_programme,
         ->(programme) { joins(:programmes).where(programmes: programme) }
 
-  scope :open, -> { where(closed_at: nil) }
-  scope :closed, -> { where.not(closed_at: nil) }
-
   scope :today, -> { has_date(Date.current) }
 
   scope :for_current_academic_year,
         -> { where(academic_year: Date.current.academic_year) }
 
-  scope :upcoming, -> { open.for_current_academic_year }
+  scope :upcoming, -> { for_current_academic_year.where(closed_at: nil) }
   scope :unscheduled,
         -> { upcoming.where.not(SessionDate.for_session.arel.exists) }
-  scope :scheduled, -> { upcoming.where(SessionDate.for_session.arel.exists) }
-  scope :completed, -> { closed.for_current_academic_year }
+  scope :scheduled,
+        -> do
+          upcoming.where(
+            "? <= (?)",
+            Date.current,
+            SessionDate.for_session.select("MAX(value)")
+          )
+        end
+  scope :completed,
+        -> do
+          upcoming.where(
+            "? > (?)",
+            Date.current,
+            SessionDate.for_session.select("MAX(value)")
+          )
+        end
+  scope :closed, -> { for_current_academic_year.where.not(closed_at: nil) }
 
   scope :send_consent_requests,
         -> { scheduled.where("? >= send_consent_requests_at", Date.current) }
@@ -79,16 +91,21 @@ class Session < ApplicationRecord
     closed_at.nil?
   end
 
-  def closed?
-    closed_at != nil
-  end
-
   def today?
     dates.map(&:value).include?(Date.current)
   end
 
   def unscheduled?
     dates.empty?
+  end
+
+  def completed?
+    return false if dates.empty?
+    Date.current > dates.map(&:value).max
+  end
+
+  def closed?
+    closed_at != nil
   end
 
   def year_groups

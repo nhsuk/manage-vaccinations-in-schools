@@ -121,6 +121,7 @@ Rails.application.routes.draw do
 
   resources :sessions, only: %i[edit index show] do
     collection do
+      get "closed"
       get "completed"
       get "scheduled"
       get "unscheduled"

@@ -310,8 +310,8 @@ describe CohortImport do
       end
     end
 
-    context "with a completed session" do
-      before { create(:session, :completed, team:, programme:, location:) }
+    context "with a closed session" do
+      before { create(:session, :closed, team:, programme:, location:) }
 
       it "doesn't add the patients to the session" do
         expect { record! }.not_to change(PatientSession, :count)
