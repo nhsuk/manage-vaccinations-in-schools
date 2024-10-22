@@ -325,12 +325,17 @@ describe ClassImport do
         create(:patient, nhs_number: "1234567890", session: different_session)
       end
 
-      it "removes the child from the original session and adds them to the new one" do
+      it "proposes moving the child from the original session to the new one" do
         expect(patient.upcoming_sessions).to contain_exactly(different_session)
-        expect { record! }.to change { patient.reload.school }.to(
-          session.location
-        )
-        expect(patient.upcoming_sessions).to contain_exactly(session)
+
+        # stree-ignore
+        expect { record! }
+          .to change { patient.reload.school }.to(session.location)
+          .and change { patient.patient_sessions
+            .find_by(session: different_session)
+            .proposed_session }.from(nil).to(session)
+
+        expect(patient.upcoming_sessions).to contain_exactly(different_session)
       end
 
       it "changes the child's cohort" do
