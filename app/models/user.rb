@@ -92,7 +92,6 @@ class User < ApplicationRecord
   end
 
   def is_nurse?
-    # All users are nurses if cis2 is disabled
     return email.include?("nurse") unless Settings.cis2.enabled
 
     role_codes = sso_session.dig("selected_role", "code")
