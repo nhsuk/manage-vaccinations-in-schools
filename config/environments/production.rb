@@ -134,8 +134,8 @@ Rails.application.configure do
     },
     session_reminder: {
       cron: "every day at 9am",
-      class: "SessionRemindersJob",
-      description: "Send session reminder emails to parents"
+      class: "SchoolSessionRemindersJob",
+      description: "Send school session reminder emails to parents"
     },
     remove_import_csv: {
       cron: "every day at 1am",
