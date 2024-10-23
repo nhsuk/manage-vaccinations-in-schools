@@ -430,6 +430,8 @@ en:
           attributes:
             gillick_competent:
               inclusion: Choose if they are Gillick competent
+            location_name:
+              blank: Enter where the vaccination was given
             notes:
               blank: Enter details of your assessment
               too_long: Enter details that are less than 1000 characters long
@@ -514,6 +516,8 @@ en:
               inclusion: Choose a method of delivery
             delivery_site:
               inclusion: Choose a delivery site
+            location_name:
+              blank: Enter where the vaccination was given
             notes:
               too_long: Enter notes that are less than 1000 characters long
             reason:

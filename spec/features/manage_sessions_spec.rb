@@ -69,8 +69,7 @@ describe "Manage sessions" do
         :team,
         :with_one_nurse,
         :with_generic_clinic,
-        programmes: [@programme],
-        name: "Coventry"
+        programmes: [@programme]
       )
     @location = create(:location, :secondary, team: @team)
     session =
@@ -221,13 +220,13 @@ describe "Manage sessions" do
   end
 
   def then_i_see_the_team_clinic
-    expect(page).to have_content("Coventry Clinic")
+    expect(page).to have_content("Community clinics")
   end
 
   alias_method :and_i_see_the_team_clinic, :then_i_see_the_team_clinic
 
   def when_i_click_on_the_team_clinic
-    click_on "Coventry Clinic"
+    click_on "Community clinics"
   end
 
   def then_i_see_no_children_in_the_cohort

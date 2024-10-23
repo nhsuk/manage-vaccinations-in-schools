@@ -12,11 +12,13 @@ class Vaccinations::EditController < ApplicationController
   before_action :set_batches
   before_action :set_steps
   before_action :setup_wizard_translated
+  before_action :set_locations, only: %i[show update]
 
   after_action :verify_authorized
 
   def show
     authorize @draft_vaccination_record, :edit?
+
     render_wizard
   end
 
@@ -69,8 +71,9 @@ class Vaccinations::EditController < ApplicationController
   def update_params
     permitted_attributes = {
       "delivery-site": %i[delivery_site delivery_method],
-      confirm: %i[notes],
       batch: %i[batch_id],
+      confirm: %i[notes],
+      location: %i[location_name],
       reason: %i[reason]
     }.fetch(current_step)
 
@@ -105,6 +108,10 @@ class Vaccinations::EditController < ApplicationController
       policy_scope(Batch).where(
         vaccine: @draft_vaccination_record.vaccine
       ).order_by_name_and_expiration
+  end
+
+  def set_locations
+    @locations = policy_scope(Location).community_clinic if step == "location"
   end
 
   def set_patient_session

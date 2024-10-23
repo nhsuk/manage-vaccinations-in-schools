@@ -1,0 +1,28 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: previous_wizard_path,
+        name: "previous page",
+      ) %>
+<% end %>
+
+<% title = "Where was the vaccination given?" %>
+<% content_for :page_title, title %>
+
+<%= form_with model: @assessment,
+              url: wizard_path,
+              method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= f.govuk_radio_buttons_fieldset :location_name,
+                                     caption: { text: @patient.full_name, size: "l" },
+                                     legend: { size: "l", tag: "h1",
+                                               text: title } do %>
+    <% @locations.each do |location| %>
+      <%= f.govuk_radio_button :location_name, "#{location.name}, #{format_address_single_line(location)}",
+                               label: { text: location.name },
+                               hint: { text: format_address_single_line(location) } %>
+    <% end %>
+  <% end %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

@@ -44,15 +44,15 @@ class GillickAssessment < ApplicationRecord
     validates :gillick_competent, inclusion: { in: [true, false] }
   end
 
+  on_wizard_step :location, exact: true do
+    validates :location_name, presence: true
+  end
+
   on_wizard_step :notes do
     validates :notes, length: { maximum: 1000 }, presence: true
   end
 
-  def self.wizard_steps
-    %i[gillick notes confirm]
-  end
-
   def wizard_steps
-    self.class.wizard_steps
+    [:gillick, (:location if requires_location_name?), :notes, :confirm].compact
   end
 end
