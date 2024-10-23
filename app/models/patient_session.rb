@@ -136,11 +136,10 @@ class PatientSession < ApplicationRecord
   def confirm_transfer!
     return unless pending_transfer?
 
-    if safe_to_destroy?
-      update!(session: proposed_session, proposed_session: nil)
-    else
+    PatientSession.transaction do
       PatientSession.create!(patient:, session: proposed_session)
-      update!(proposed_session: nil)
+
+      safe_to_destroy? ? destroy! : update!(proposed_session: nil)
     end
   end
 
