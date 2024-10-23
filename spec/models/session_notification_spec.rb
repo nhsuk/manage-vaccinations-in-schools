@@ -7,6 +7,7 @@
 #  id           :bigint           not null, primary key
 #  sent_at      :datetime         not null
 #  session_date :date             not null
+#  type         :integer          not null
 #  patient_id   :bigint           not null
 #  session_id   :bigint           not null
 #
@@ -22,7 +23,9 @@
 #  fk_rails_...  (session_id => sessions.id)
 #
 describe SessionNotification do
-  subject(:session_notification) { build(:session_notification) }
+  subject(:session_notification) do
+    build(:session_notification, :school_reminder)
+  end
 
   it { should be_valid }
 end

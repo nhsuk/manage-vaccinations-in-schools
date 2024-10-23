@@ -46,10 +46,13 @@ describe SessionRemindersJob do
         SessionNotification.where(patient:, session:),
         :count
       ).by(1)
+      expect(SessionNotification.last).to be_school_reminder
     end
 
     context "when already sent" do
-      before { create(:session_notification, session:, patient:) }
+      before do
+        create(:session_notification, :school_reminder, session:, patient:)
+      end
 
       it "doesn't send a reminder email" do
         expect { perform_now }.not_to have_enqueued_mail(
