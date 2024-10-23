@@ -8,7 +8,11 @@ class PatientImportRow
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :nhs_number, length: { is: 10 }, allow_blank: true
-  validates :gender_code, inclusion: { in: Patient.gender_codes.keys }
+  validates :gender_code,
+            inclusion: {
+              in: Patient.gender_codes.keys,
+              allow_nil: true
+            }
   validates :year_group,
             inclusion: {
               in: :year_groups
@@ -166,8 +170,7 @@ class PatientImportRow
   end
 
   def gender_code
-    @data["CHILD_GENDER"]&.strip&.downcase&.gsub(" ", "_").presence ||
-      "not_known"
+    @data["CHILD_GENDER"]&.strip&.downcase&.gsub(" ", "_").presence
   end
 
   def address_line_1
