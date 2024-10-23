@@ -40,10 +40,17 @@ class ConsentNotification < ApplicationRecord
 
     ConsentNotification.create!(programme:, patient:, type:)
 
+    mailer_action =
+      if type == :request
+        session.location.clinic? ? :request_for_clinic : :request_for_school
+      else
+        type
+      end
+
     patient.parents.each do |parent|
       ConsentMailer
         .with(parent:, patient:, programme:, session:)
-        .send(type)
+        .send(mailer_action)
         .deliver_later
 
       TextDeliveryJob.perform_later(

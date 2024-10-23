@@ -8,7 +8,10 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
   hpv_session_consent_reminder: "ceefd526-d44c-4561-b0d2-c9ef4ccaba4f",
   hpv_session_consent_reminder_subsequent:
     "6410145f-dac1-46ba-82f3-a49cad0f66a6",
-  hpv_session_consent_request: "6aa04f0d-94c2-4a6b-af97-a7369a12f681",
+  hpv_session_consent_request_for_school:
+    "6aa04f0d-94c2-4a6b-af97-a7369a12f681",
+  hpv_session_consent_request_for_clinic:
+    "14e88a09-4281-4257-9574-6afeaeb42715",
   hpv_session_session_reminder: "79e131b2-7816-46d0-9c74-ae14956dd77d",
   parental_consent_confirmation: "7cda7ae5-99a2-4c40-9a3e-1863e23f7a73",
   parental_consent_confirmation_injection:

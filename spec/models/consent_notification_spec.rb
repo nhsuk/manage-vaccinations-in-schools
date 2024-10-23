@@ -34,9 +34,13 @@ describe ConsentNotification do
     let(:parents) { create_list(:parent, 2) }
     let(:patient) { create(:patient, parents:) }
     let(:programme) { create(:programme) }
-    let(:session) { create(:session, programme:, patients: [patient]) }
+    let(:team) { create(:team, programmes: [programme]) }
+    let(:location) { create(:location, :school, team:) }
+    let(:session) do
+      create(:session, location:, programme:, patients: [patient], team:)
+    end
 
-    context "with a request" do
+    context "with a request and a school location" do
       let(:type) { :request }
 
       it "creates a record" do
@@ -52,7 +56,7 @@ describe ConsentNotification do
       it "enqueues an email per parent" do
         expect { create_and_send! }.to have_enqueued_mail(
           ConsentMailer,
-          :request
+          :request_for_school
         ).with(
           params: {
             parent: parents.first,
@@ -61,7 +65,61 @@ describe ConsentNotification do
             session:
           },
           args: []
-        ).and have_enqueued_mail(ConsentMailer, :request).with(
+        ).and have_enqueued_mail(ConsentMailer, :request_for_school).with(
+                params: {
+                  parent: parents.second,
+                  patient:,
+                  programme:,
+                  session:
+                },
+                args: []
+              )
+      end
+
+      it "enqueues a text per parent" do
+        expect { create_and_send! }.to have_enqueued_text(
+          :consent_request
+        ).with(
+          parent: parents.first,
+          patient:,
+          programme:,
+          session:
+        ).and have_enqueued_text(:consent_request).with(
+                parent: parents.second,
+                patient:,
+                programme:,
+                session:
+              )
+      end
+    end
+
+    context "with a request and a clinic location" do
+      let(:type) { :request }
+      let(:location) { create(:location, :generic_clinic, team:) }
+
+      it "creates a record" do
+        expect { create_and_send! }.to change(described_class, :count).by(1)
+
+        consent_notification = described_class.last
+        expect(consent_notification).not_to be_reminder
+        expect(consent_notification.programme).to eq(programme)
+        expect(consent_notification.patient).to eq(patient)
+        expect(consent_notification.sent_at).to be_today
+      end
+
+      it "enqueues an email per parent" do
+        expect { create_and_send! }.to have_enqueued_mail(
+          ConsentMailer,
+          :request_for_clinic
+        ).with(
+          params: {
+            parent: parents.first,
+            patient:,
+            programme:,
+            session:
+          },
+          args: []
+        ).and have_enqueued_mail(ConsentMailer, :request_for_clinic).with(
                 params: {
                   parent: parents.second,
                   patient:,
