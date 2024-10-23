@@ -2,12 +2,11 @@
 
 ## Clinics
 
-### `clinics:create[name,address,town,county,postcode,ods_code,team_ods_code]`
+### `clinics:create[name,address,town,postcode,ods_code,team_ods_code]`
 
 - `name` - The name of the clinic.
 - `address` - The first line of the address.
 - `town` - The town of the clinic.
-- `country` - The county of the clinic.
 - `postcode` - The postcode of the clinic.
 - `ods_code` - The ODS code of the clinic.
 - `team_ods_code` - The ODS code of the team.
