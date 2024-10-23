@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ConsentRequestsJob < ApplicationJob
+class SchoolConsentRequestsJob < ApplicationJob
   queue_as :notifications
 
   def perform
@@ -9,16 +9,12 @@ class ConsentRequestsJob < ApplicationJob
     sessions =
       Session
         .send_consent_requests
-        .includes(
-          :location,
-          :programmes,
-          patients: %i[consents consent_notifications]
-        )
+        .includes(:programmes, patients: %i[consents consent_notifications])
+        .joins(:location)
+        .merge(Location.school)
         .strict_loading
 
     sessions.each do |session|
-      next if session.location.generic_clinic?
-
       session.programmes.each do |programme|
         session.patients.each do |patient|
           next unless should_send_notification?(patient:, programme:)
