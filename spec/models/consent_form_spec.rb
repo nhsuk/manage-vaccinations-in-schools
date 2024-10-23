@@ -721,7 +721,8 @@ describe ConsentForm do
     let(:team) { create(:team, programmes: [programme]) }
 
     let(:school) { create(:location, :school) }
-    let(:session) { create(:session, team:, programme:, location: school) }
+    let(:location) { school }
+    let(:session) { create(:session, team:, programme:, location:) }
     let(:patient) { create(:patient, school:, session:) }
 
     context "when consent form confirms the school" do
@@ -750,7 +751,7 @@ describe ConsentForm do
       end
 
       let(:new_school) { create(:location, :school) }
-      let(:new_session) do
+      let!(:new_session) do
         create(:session, programme:, team:, location: new_school)
       end
 
@@ -774,6 +775,22 @@ describe ConsentForm do
         expect(patient.sessions).not_to include(new_session)
         match_with_patient!
         expect(patient.reload.sessions).to contain_exactly(new_session)
+      end
+
+      context "if the session is a clinic" do
+        let(:location) { create(:location, :generic_clinic, team:) }
+
+        it "changes the patient's school" do
+          expect { match_with_patient! }.to change(patient, :school).from(
+            school
+          ).to(new_school)
+        end
+
+        it "doesn't move the patient to a school session" do
+          expect(patient.sessions).to contain_exactly(session)
+          match_with_patient!
+          expect(patient.reload.sessions).to contain_exactly(session)
+        end
       end
     end
   end
