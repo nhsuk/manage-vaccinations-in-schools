@@ -53,7 +53,8 @@ class PatientImport < ApplicationRecord
 
     parents = @parents_batch.to_a
     patients = @patients_batch.to_a
-    relationships = @relationships_batch.to_a
+
+    relationships = @relationships_batch.to_a.uniq { [_1.parent, _1.patient] }
 
     Parent.import(parents, on_duplicate_key_update: :all)
     Patient.import(patients, on_duplicate_key_update: :all)
