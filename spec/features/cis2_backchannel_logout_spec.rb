@@ -84,7 +84,7 @@ describe "CIS2 backchannel logout" do
   end
 
   def when_a_backchannel_signout_request_is_received
-    page.driver.post "/users/auth/cis2/backchannel_logout", logout_token: @token
+    page.driver.post "/users/auth/cis2/backchannel-logout", logout_token: @token
   end
   alias_method :and_the_backchannel_signout_request_is_replayed,
                :when_a_backchannel_signout_request_is_received
