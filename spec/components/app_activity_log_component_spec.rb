@@ -85,6 +85,22 @@ describe AppActivityLogComponent do
         performed_by: user,
         notes: "Some notes"
       )
+
+      create(
+        :consent_notification,
+        :request,
+        programme:,
+        patient:,
+        sent_at: Date.new(2024, 5, 10)
+      )
+
+      create(
+        :session_notification,
+        session:,
+        patient:,
+        sent_at: Date.new(2024, 5, 30)
+      )
+
       render_inline(component)
     end
 
@@ -99,6 +115,10 @@ describe AppActivityLogComponent do
                      date: "31 May 2024 at 12:00pm",
                      notes: "Some notes",
                      by: "Nurse Joy"
+
+    include_examples "card",
+                     title: "Session reminder sent",
+                     date: "30 May 2024 at 12:00am"
 
     include_examples "card",
                      title: "Triaged decision: Safe to vaccinate",
@@ -122,6 +142,10 @@ describe AppActivityLogComponent do
     include_examples "card",
                      title: "Added to session at Hogwarts",
                      date: "29 May 2024 at 12:00pm"
+
+    include_examples "card",
+                     title: "Consent request sent for HPV",
+                     date: "10 May 2024 at 12:00am"
   end
 
   describe "self-consent" do

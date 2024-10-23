@@ -12,17 +12,51 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def all_events
-    [vaccination_events, triage_events, consent_events, session_events].flatten
+    [
+      consent_events,
+      consent_notification_events,
+      session_events,
+      session_notification_events,
+      triage_events,
+      vaccination_events
+    ].flatten
   end
 
-  def vaccination_events
-    @patient_session.vaccination_records.recorded.map do
+  def consent_events
+    @patient_session.patient.consents.recorded.map do
       {
-        title: "Vaccinated with #{helpers.vaccine_heading(_1.vaccine)}",
-        time: _1.created_at,
-        notes: _1.notes,
-        by: _1.performed_by.full_name
+        title: "Consent #{_1.response} by #{_1.name} (#{_1.who_responded})",
+        time: _1.recorded_at
       }
+    end
+  end
+
+  def consent_notification_events
+    @patient_session.patient.consent_notifications.map do
+      {
+        title:
+          if _1.request?
+            "Consent request sent for #{_1.programme.name}"
+          else
+            "Consent reminder sent for #{_1.programme.name}"
+          end,
+        time: _1.sent_at
+      }
+    end
+  end
+
+  def session_events
+    [
+      {
+        title: "Added to session at #{@patient_session.location.name}",
+        time: @patient_session.created_at
+      }
+    ]
+  end
+
+  def session_notification_events
+    @patient_session.patient.session_notifications.map do
+      { title: "Session reminder sent", time: _1.sent_at }
     end
   end
 
@@ -37,21 +71,14 @@ class AppActivityLogComponent < ViewComponent::Base
     end
   end
 
-  def consent_events
-    @patient_session.patient.consents.recorded.map do
+  def vaccination_events
+    @patient_session.vaccination_records.recorded.map do
       {
-        title: "Consent #{_1.response} by #{_1.name} (#{_1.who_responded})",
-        time: _1.recorded_at
+        title: "Vaccinated with #{helpers.vaccine_heading(_1.vaccine)}",
+        time: _1.created_at,
+        notes: _1.notes,
+        by: _1.performed_by.full_name
       }
     end
-  end
-
-  def session_events
-    [
-      {
-        title: "Added to session at #{@patient_session.location.name}",
-        time: @patient_session.created_at
-      }
-    ]
   end
 end
