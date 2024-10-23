@@ -113,6 +113,37 @@ def write_nominal_roll_to_file(students)
   end
 end
 
+def write_class_lists_to_files(students)
+  students
+    .group_by(&:school)
+    .each do |school, school_students|
+      CSV.open(
+        "scratchpad/class_list_#{school.name.parameterize(separator: "_")}.csv",
+        "w"
+      ) do |csv|
+        csv << %w[
+          CHILD_POSTCODE
+          CHILD_DATE_OF_BIRTH
+          CHILD_FIRST_NAME
+          CHILD_LAST_NAME
+          PARENT_1_EMAIL
+          PARENT_1_PHONE
+        ]
+
+        school_students.each do |student|
+          csv << [
+            student.address_postcode,
+            student.date_of_birth,
+            student.given_name,
+            student.family_name,
+            student.parents.first&.email,
+            student.parents.first&.phone
+          ]
+        end
+      end
+    end
+end
+
 def write_vaccination_records_to_file(vaccination_records)
   CSV.open("scratchpad/vaccination_records.csv", "w") do |csv|
     csv << ImmunisationImport
@@ -260,6 +291,7 @@ wrap_in_rollbackable_transaction do
   puts "Writing files"
 
   write_nominal_roll_to_file(students)
+  write_class_lists_to_files(students)
   write_vaccination_records_to_file(vaccination_records)
 end
 
