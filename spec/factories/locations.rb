@@ -47,7 +47,7 @@ FactoryBot.define do
     trait :generic_clinic do
       clinic
       type { :generic_clinic }
-      name { "#{team.name} Clinic" }
+      name { "Community clinics" }
       ods_code { team.ods_code }
     end
 

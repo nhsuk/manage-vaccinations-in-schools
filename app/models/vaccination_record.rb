@@ -176,6 +176,10 @@ class VaccinationRecord < ApplicationRecord
     validates :batch_id, presence: true
   end
 
+  on_wizard_step :location, exact: true do
+    validates :location_name, presence: true
+  end
+
   def administered?
     administered_at != nil
   end
@@ -196,8 +200,9 @@ class VaccinationRecord < ApplicationRecord
 
   def wizard_steps
     [
-      ("delivery-site" if administered? && delivery_site_other),
+      (:"delivery-site" if administered? && delivery_site_other),
       (:batch if administered? && todays_batch.nil?),
+      (:location if requires_location_name?),
       (:reason if not_administered?),
       :confirm
     ].compact

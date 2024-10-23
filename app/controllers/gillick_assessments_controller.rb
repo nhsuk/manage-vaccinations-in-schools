@@ -6,18 +6,16 @@ class GillickAssessmentsController < ApplicationController
   before_action :set_patient
   before_action :set_session
   before_action :set_patient_session
-  before_action :set_assessment, only: %i[show update]
+  before_action :set_assessment
   before_action :set_steps
   before_action :setup_wizard
+  before_action :set_locations, only: %i[show update]
 
   def new
-    authorize GillickAssessment
   end
 
   def create
-    @assessment =
-      @patient_session.gillick_assessments.build(assessor: current_user)
-    authorize @assessment
+    @assessment.assessor = current_user
     @assessment.save!
 
     redirect_to wizard_path(steps.first)
@@ -28,10 +26,8 @@ class GillickAssessmentsController < ApplicationController
   end
 
   def update
-    authorize @assessment
-
     case step
-    when :gillick, :notes
+    when :gillick, :location, :notes
       @assessment.assign_attributes(gillick_params.merge(wizard_step: step))
     when :confirm
       @assessment.assign_attributes(recorded_at: Time.zone.now)
@@ -59,11 +55,15 @@ class GillickAssessmentsController < ApplicationController
   end
 
   def set_assessment
-    @assessment = @patient_session.draft_gillick_assessments.first
+    @assessment = authorize @patient_session.draft_gillick_assessment
+  end
+
+  def set_locations
+    @locations = policy_scope(Location).community_clinic if step == :location
   end
 
   def set_steps
-    self.steps = GillickAssessment.wizard_steps
+    self.steps = @assessment.wizard_steps
   end
 
   def finish_wizard_path
@@ -71,6 +71,10 @@ class GillickAssessmentsController < ApplicationController
   end
 
   def gillick_params
-    params.fetch(:gillick_assessment, {}).permit(:gillick_competent, :notes)
+    params.fetch(:gillick_assessment, {}).permit(
+      :gillick_competent,
+      :location_name,
+      :notes
+    )
   end
 end
