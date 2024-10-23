@@ -163,11 +163,12 @@ describe PatientSession do
       )
     end
 
-    it "updates the session and clears the proposed session" do
+    it "destroys the patient session, creates one with the proposed session" do
       # stree-ignore
       expect { confirm_transfer! }
-        .to change(patient_session, :session).to(proposed_session)
-        .and change(patient_session, :proposed_session).to(nil)
+        .to change { described_class.exists?(patient_session.id) }
+        .from(true).to(false)
+        .and not_change(patient_session.patient.patient_sessions, :count)
     end
 
     context "when there is no proposed session" do
