@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class SessionsController < ApplicationController
-  before_action :set_session, only: %i[show edit make_in_progress]
+  before_action :set_session,
+                except: %i[index scheduled unscheduled completed closed]
 
   def index
     @sessions = sessions_scope.today.sort
@@ -56,34 +57,20 @@ class SessionsController < ApplicationController
   def make_in_progress
     @session.dates.find_or_create_by!(value: Date.current)
 
-    redirect_to session_path,
-                flash: {
-                  success: {
-                    heading: "Session is now in progress"
-                  }
-                }
+    redirect_to session_path, flash: { success: "Session is now in progress" }
   end
 
   private
 
   delegate :team, to: :current_user
 
-  def academic_year
-    Date.current.academic_year
-  end
-
   def set_session
-    @session =
-      policy_scope(Session).includes(
-        :team,
-        :location,
-        :dates,
-        :programmes
-      ).find(params[:id])
+    @session = sessions_scope.find(params[:id])
   end
 
   def sessions_scope
     policy_scope(Session).includes(
+      :team,
       :dates,
       :location,
       :programmes
