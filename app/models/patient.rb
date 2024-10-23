@@ -88,6 +88,13 @@ class Patient < ApplicationRecord
   scope :not_restricted, -> { where(restricted_at: nil) }
   scope :restricted, -> { where.not(restricted_at: nil) }
 
+  scope :unvaccinated_for,
+        ->(programmes:) do
+          reject do |patient|
+            programmes.all? { |programme| patient.vaccinated?(programme) }
+          end
+        end
+
   validates :given_name, :family_name, :date_of_birth, presence: true
 
   validates :nhs_number,

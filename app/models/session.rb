@@ -141,13 +141,11 @@ class Session < ApplicationRecord
         patients_scope.none # TODO: handle community clinics
       end
 
-    unvaccinated_patients =
-      patients_in_cohorts.reject do |patient|
-        programmes.all? { |programme| patient.vaccinated?(programme) }
-      end
+    unvaccinated_patients_in_cohorts =
+      patients_in_cohorts.unvaccinated_for(programmes:)
 
     # Mark existing patient sessions for transfer
-    unvaccinated_patients.each do |patient|
+    unvaccinated_patients_in_cohorts.each do |patient|
       other_sessions = patient.upcoming_sessions.reject { _1 == self }
       next if other_sessions.empty?
 
@@ -158,14 +156,18 @@ class Session < ApplicationRecord
     end
 
     # Remove patients that have other upcoming sessions
-    unvaccinated_patients.reject! { _1.upcoming_sessions.any? }
+    unvaccinated_patients_in_cohorts.reject! { _1.upcoming_sessions.any? }
 
     # Add unvaccinated patients to this session
     PatientSession.import!(
       %i[patient_id session_id],
-      unvaccinated_patients.map { [_1.id, id] },
+      unvaccinated_patients_in_cohorts.map { [_1.id, id] },
       on_duplicate_key_ignore: true
     )
+  end
+
+  def unvaccinated_patients
+    patients.unvaccinated_for(programmes:)
   end
 
   def close!
@@ -173,11 +175,6 @@ class Session < ApplicationRecord
     return unless completed?
 
     ActiveRecord::Base.transaction do
-      unvaccinated_patients =
-        patients.reject do |patient|
-          programmes.all? { |programme| patient.vaccinated?(programme) }
-        end
-
       generic_clinic_session_id = team.generic_clinic_session.id
 
       PatientSession.import!(
