@@ -28,7 +28,13 @@ class SessionNotification < ApplicationRecord
   belongs_to :patient
   belongs_to :session
 
-  enum :type, %w[school_reminder], validate: true
+  enum :type,
+       %w[
+         school_reminder
+         clinic_initial_invitation
+         clinic_subsequent_invitation
+       ],
+       validate: true
 
   def self.create_and_send!(patient_session:, session_date:, type:)
     # We create a record in the database first to avoid sending duplicate emails/texts.
@@ -40,17 +46,23 @@ class SessionNotification < ApplicationRecord
 
     SessionNotification.create!(patient:, session:, session_date:, type:)
 
-    patient_session.consents_to_send_communication.each do |consent|
-      SessionMailer
-        .with(consent:, patient_session:)
-        .school_reminder
-        .deliver_later
+    if type == :school_reminder
+      patient_session.consents_to_send_communication.each do |consent|
+        SessionMailer
+          .with(consent:, patient_session:)
+          .school_reminder
+          .deliver_later
 
-      TextDeliveryJob.perform_later(
-        :session_reminder,
-        consent:,
-        patient_session:
-      )
+        TextDeliveryJob.perform_later(
+          :session_reminder,
+          consent:,
+          patient_session:
+        )
+      end
+    else
+      patient_session.patient.parents.each do |parent|
+        SessionMailer.with(parent:, patient_session:).send(type).deliver_later
+      end
     end
   end
 end

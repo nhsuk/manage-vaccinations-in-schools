@@ -68,5 +68,85 @@ describe SessionNotification do
         ).with(consent:, patient_session:)
       end
     end
+
+    context "with an initial clinic invitation" do
+      let(:type) { :clinic_initial_invitation }
+
+      it "creates a record" do
+        expect { create_and_send! }.to change(described_class, :count).by(1)
+
+        session_notification = described_class.last
+        expect(session_notification).to be_clinic_initial_invitation
+        expect(session_notification.session).to eq(session)
+        expect(session_notification.patient).to eq(patient)
+        expect(session_notification.sent_at).to be_today
+      end
+
+      it "enqueues an email per parent" do
+        expect { create_and_send! }.to have_enqueued_mail(
+          SessionMailer,
+          :clinic_initial_invitation
+        ).with(
+          params: {
+            parent: parents.first,
+            patient_session:
+          },
+          args: []
+        ).and have_enqueued_mail(
+                SessionMailer,
+                :clinic_initial_invitation
+              ).with(
+                params: {
+                  parent: parents.second,
+                  patient_session:
+                },
+                args: []
+              )
+      end
+
+      it "doesn't enqueue a text" do
+        expect { create_and_send! }.not_to have_enqueued_text
+      end
+    end
+
+    context "with a subsequent clinic invitation" do
+      let(:type) { :clinic_subsequent_invitation }
+
+      it "creates a record" do
+        expect { create_and_send! }.to change(described_class, :count).by(1)
+
+        session_notification = described_class.last
+        expect(session_notification).to be_clinic_subsequent_invitation
+        expect(session_notification.session).to eq(session)
+        expect(session_notification.patient).to eq(patient)
+        expect(session_notification.sent_at).to be_today
+      end
+
+      it "enqueues an email per parent" do
+        expect { create_and_send! }.to have_enqueued_mail(
+          SessionMailer,
+          :clinic_subsequent_invitation
+        ).with(
+          params: {
+            parent: parents.first,
+            patient_session:
+          },
+          args: []
+        ).and have_enqueued_mail(
+                SessionMailer,
+                :clinic_subsequent_invitation
+              ).with(
+                params: {
+                  parent: parents.second,
+                  patient_session:
+                },
+                args: []
+              )
+      end
+
+      it "doesn't enqueue a text" do
+        expect { create_and_send! }.not_to have_enqueued_text
+      end
+    end
   end
 end
