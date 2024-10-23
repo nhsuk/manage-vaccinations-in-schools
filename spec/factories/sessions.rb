@@ -35,9 +35,13 @@ FactoryBot.define do
     team { association(:team, programmes:) }
     location { association :location, :school, team: }
 
-    days_before_consent_reminders { team.days_before_consent_reminders if date }
+    days_before_consent_reminders do
+      team.days_before_consent_reminders if date && !location.generic_clinic?
+    end
     send_consent_requests_at do
-      (date - team.days_before_consent_requests.days) if date
+      if date && !location.generic_clinic?
+        (date - team.days_before_consent_requests.days)
+      end
     end
 
     after(:create) do |session, evaluator|
