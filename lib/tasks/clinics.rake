@@ -33,7 +33,7 @@ namespace :clinics do
 
     location =
       Location.create!(
-        type: :clinic,
+        type: :community_clinic,
         name:,
         address_line_1:,
         address_town:,
