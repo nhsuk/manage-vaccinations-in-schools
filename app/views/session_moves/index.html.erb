@@ -10,19 +10,27 @@
 
 <%= h1 "Review children who have changed schools" %>
 
-<%= render AppSecondaryNavigationComponent.new do |nav|
-      nav.with_item(
-        href: session_moves_path(@session) + "?in",
-        text: "Moved in",
-        selected: @tab == :in,
-      )
-    
-      nav.with_item(
-        href: session_moves_path(@session) + "?out",
-        text: "Moved out",
-        selected: @tab == :out,
-      )
-    end %>
+<%= render AppSecondaryNavigationComponent.new do |nav| %>
+  <% nav.with_item(
+       href: session_moves_path(@session) + "?in",
+       selected: @tab == :in,
+     ) do %>
+    Moved in
+    <%= render AppCountComponent.new(
+          count: @session.patient_sessions_moving_to_this_session.count,
+        ) %>
+  <% end %>
+
+  <% nav.with_item(
+       href: session_moves_path(@session) + "?out",
+       selected: @tab == :out,
+     ) do %>
+    Moved out
+    <%= render AppCountComponent.new(
+          count: @session.patient_sessions_moving_from_this_session.count,
+        ) %>
+  <% end %>
+<% end %>
 
 <div class="app-patients">
   <%= govuk_table(html_attributes: {
