@@ -11,18 +11,27 @@ Rails.application.routes.draw do
           }
   end
 
-  devise_for :users,
-             module: :users,
-             path_names: {
-               sign_in: "sign-in",
-               sign_out: "sign-out"
-             },
-             controllers: {
-               omniauth_callbacks: "users/omniauth_callbacks"
-             }
-  devise_scope :user do
-    post "/users/auth/cis2/backchannel-logout",
-         to: "users/omniauth_callbacks#cis2_logout"
+  if Settings.cis2.enabled
+    devise_for :users,
+               module: :users,
+               controllers: {
+                 omniauth_callbacks: "users/omniauth_callbacks"
+               }
+    devise_scope :user do
+      post "/users/auth/cis2/backchannel-logout",
+           to: "users/omniauth_callbacks#cis2_logout"
+      delete "/logout", to: "users/omniauth_callbacks#logout"
+    end
+  else
+    devise_for :users,
+               module: :users,
+               path_names: {
+                 sign_in: "sign-in",
+                 sign_out: "sign-out"
+               }
+    devise_scope :user do
+      delete "/logout", to: "users/sessions#destroy"
+    end
   end
 
   root to: redirect("/start")

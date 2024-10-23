@@ -22,13 +22,13 @@
             </svg>
             <%= current_user.full_name %>
           </span>
-          <% if Flipper.enabled? :cis2 %>
+          <% if Settings.cis2.enabled %>
             <span class="app-header__account-item">
               <%= button_to "Change role", user_cis2_omniauth_authorize_path, class: "app-header__account-button", params: { change_role: true } %>
             </span>
           <% end %>
           <span class="app-header__account-item">
-            <%= button_to "Log out", destroy_user_session_path,
+            <%= button_to "Log out", logout_path,
                           class: "app-header__account-button", method: :delete %>
           </span>
         </div>

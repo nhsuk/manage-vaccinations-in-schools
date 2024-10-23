@@ -12,7 +12,7 @@ module AuthenticationConcern
           store_location_for(:user, request.fullpath)
         end
 
-        unless request.path == new_user_session_path
+        if Settings.cis2.enabled || request.path != new_user_session_path
           flash[:info] = "You must be logged in to access this page."
           redirect_to start_path
         end
@@ -71,6 +71,10 @@ module AuthenticationConcern
 
     def after_sign_in_path_for(scope)
       stored_location_for(scope) || dashboard_path
+    end
+
+    def user_signed_in?
+      super && (Settings.cis2.enabled ? cis2_session? : true)
     end
   end
 end
