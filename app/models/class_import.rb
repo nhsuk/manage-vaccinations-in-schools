@@ -58,20 +58,9 @@ class ClassImport < PatientImport
     # Remove unknown patients from the session and school
     unknown_patients = session.patients - patients
 
-    Patient.where(id: unknown_patients.map(&:id)).update_all(school_id: nil)
-
     session
       .patient_sessions
       .where(patient: unknown_patients)
-      .find_each(&:destroy_if_safe!)
-
-    # Add the unknown patients to the generic clinic
-    generic_clinic_session_id = team.generic_clinic_session.id
-
-    PatientSession.import!(
-      %i[patient_id session_id],
-      unknown_patients.map { [_1.id, generic_clinic_session_id] },
-      on_duplicate_key_ignore: true
-    )
+      .update_all(proposed_session_id: team.generic_clinic_session.id)
   end
 end

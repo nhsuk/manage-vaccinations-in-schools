@@ -143,6 +143,10 @@ class PatientSession < ApplicationRecord
     PatientSession.transaction do
       PatientSession.create!(patient:, session: proposed_session)
 
+      school = proposed_session.location
+      school = nil if school.generic_clinic?
+      patient.update!(school:)
+
       safe_to_destroy? ? destroy! : update!(proposed_session: nil)
     end
   end
