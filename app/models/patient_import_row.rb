@@ -48,7 +48,7 @@ class PatientImportRow
       nhs_number:,
       registration:,
       school:
-    }
+    }.compact
 
     if (existing_patient = existing_patients.first)
       # We need to handle given_name and family_name differently because we
@@ -109,9 +109,9 @@ class PatientImportRow
 
       parent.recorded_at = Time.current unless parent.recorded?
 
-      parent.email = attributes[:email]
-      parent.full_name = attributes[:full_name]
-      parent.phone = attributes[:phone]
+      parent.email = attributes[:email] if attributes[:email]
+      parent.full_name = attributes[:full_name] if attributes[:full_name]
+      parent.phone = attributes[:phone] if attributes[:phone]
       parent.phone_receive_updates = false if parent.phone.blank?
 
       parent
@@ -171,15 +171,15 @@ class PatientImportRow
   end
 
   def address_line_1
-    @data["CHILD_ADDRESS_LINE_1"]&.strip
+    @data["CHILD_ADDRESS_LINE_1"]&.strip.presence
   end
 
   def address_line_2
-    @data["CHILD_ADDRESS_LINE_2"]&.strip
+    @data["CHILD_ADDRESS_LINE_2"]&.strip.presence
   end
 
   def address_town
-    @data["CHILD_TOWN"]&.strip
+    @data["CHILD_TOWN"]&.strip.presence
   end
 
   def address_postcode
