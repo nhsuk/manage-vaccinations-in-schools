@@ -450,7 +450,7 @@ describe Session do
 
     let(:programme) { create(:programme) }
     let(:team) { create(:team, programmes: [programme]) }
-    let(:session) { create(:session, programme:, team:) }
+    let(:session) { create(:session, :completed, programme:, team:) }
 
     it "sets the closed at time" do
       freeze_time do
