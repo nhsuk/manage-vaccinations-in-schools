@@ -1,0 +1,82 @@
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(
+        items: [
+          { text: "Home", href: dashboard_path },
+          { text: t("sessions.index.title"), href: sessions_path },
+          { text: @session.location.name, href: session_path(@session) },
+        ],
+      ) %>
+<% end %>
+
+<%= h1 "Review children who have changed schools" %>
+
+<%= render AppSecondaryNavigationComponent.new do |nav|
+      nav.with_item(
+        href: session_moves_path(@session) + "?in",
+        text: "Moved in",
+        selected: @tab == :in,
+      )
+    
+      nav.with_item(
+        href: session_moves_path(@session) + "?out",
+        text: "Moved out",
+        selected: @tab == :out,
+      )
+    end %>
+
+<div class="app-patients">
+  <%= govuk_table(html_attributes: {
+                    class: "nhsuk-table-responsive app-patients__table",
+                  }) do |table| %>
+    <%= table.with_caption(
+          text: "#{t("children", count: @patient_sessions.count)} #{@tab == :in ? "joined" : "left"} this school",
+          html_attributes: {
+            class: %w[nhsuk-u-secondary-text-color
+                      nhsuk-u-font-weight-normal
+                      nhsuk-u-font-size-19],
+          },
+        ) %>
+
+    <% if @patient_sessions.any? %>
+      <% table.with_head do |head| %>
+        <% head.with_row do |row| %>
+          <% row.with_cell(text: "Full name") %>
+          <% row.with_cell(text: "School joined from") %>
+          <% row.with_cell(text: "Actions") %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <% table.with_body do |body| %>
+      <% @patient_sessions.each do |patient_session| %>
+        <% body.with_row do |row| %>
+          <% row.with_cell do %>
+            <span class="nhsuk-table-responsive__heading">Full name</span>
+            <%= link_to patient_session.patient.full_name,
+                        patient_path(patient_session.patient) %>
+          <% end %>
+
+          <% row.with_cell do %>
+            <span class="nhsuk-table-responsive__heading">School joined from</span>
+            <%= patient_session.session.location.name %>
+          <% end %>
+
+          <% row.with_cell do %>
+            <span class="nhsuk-table-responsive__heading">Actions</span>
+            <%= form_with url: session_move_path(@session, patient_session) + "?#{@tab}",
+                          method: :patch do |f| %>
+              <%= f.submit "Confirm move",
+                           class: "nhsuk-button app-button--secondary app-button--small",
+                           name: "confirm",
+                           value: "Confirm move" %>
+              <%= f.submit "Ignore move",
+                           class: "nhsuk-button app-button--secondary-warning app-button--small",
+                           name: "ignore",
+                           value: "Ignore move" %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
