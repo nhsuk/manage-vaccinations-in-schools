@@ -1,0 +1,25 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: session_path(@session),
+        name: @session.location.name,
+      ) %>
+<% end %>
+
+<%= h1 "Close session" do %>
+  <span class="nhsuk-caption-l"><%= @session.location.name %></span>
+  Close session
+<% end %>
+
+<p class="nhsuk-body">All sessions for this school have been completed.</p>
+
+<% if @unvaccinated_patients_count > 0 %>
+  <p class="nhsuk-body">When you close this session, the following children will be invited to community clinics:</p>
+
+  <ul class="nhsuk-list nhsuk-list--bullet">
+    <li>
+      <%= t("children", count: @unvaccinated_patients_count) %> who could not be vaccinated
+    </li>
+  </ul>
+<% end %>
+
+<%= govuk_button_to "Close session", close_session_path(@session) %>

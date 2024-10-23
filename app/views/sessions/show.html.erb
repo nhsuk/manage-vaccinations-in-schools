@@ -75,6 +75,10 @@
     <% unless @session.unscheduled? %>
       <%= govuk_button_link_to "Edit session", edit_session_path(@session), class: "app-button--secondary" %>
     <% end %>
+
+    <% if @session.closable? %>
+      <%= govuk_button_link_to "Close session", close_session_path(@session), class: "app-button--secondary" %>
+    <% end %>
   </div>
 </div>
 

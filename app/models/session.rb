@@ -108,6 +108,10 @@ class Session < ApplicationRecord
     closed_at != nil
   end
 
+  def closable?
+    open? && completed?
+  end
+
   def year_groups
     programmes.flat_map(&:year_groups).uniq.sort
   end
