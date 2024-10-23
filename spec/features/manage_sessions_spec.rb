@@ -3,7 +3,7 @@
 describe "Manage sessions" do
   around { |example| travel_to(Time.zone.local(2024, 2, 18)) { example.run } }
 
-  scenario "Adding a new session, closing consent" do
+  scenario "Adding a new session, closing consent, and closing the session" do
     given_my_team_is_running_an_hpv_vaccination_programme
 
     when_i_go_to_todays_sessions_as_a_nurse
@@ -14,6 +14,7 @@ describe "Manage sessions" do
 
     when_i_click_on_the_school
     then_i_see_the_school_session
+    and_i_see_a_child_in_the_cohort
 
     when_i_click_on_schedule_sessions
     then_i_see_the_dates_page
@@ -27,18 +28,6 @@ describe "Manage sessions" do
     when_i_go_to_todays_sessions_as_a_nurse
     then_i_see_no_sessions
 
-    when_i_go_to_scheduled_sessions
-    then_i_see_the_school
-
-    when_the_parent_visits_the_consent_form
-    then_they_can_give_consent
-
-    when_the_deadline_has_passed
-    then_they_can_no_longer_give_consent
-
-    when_i_go_to_todays_sessions_as_a_nurse
-    then_i_see_the_school
-
     when_i_go_to_unscheduled_sessions
     then_i_see_no_sessions
 
@@ -47,26 +36,52 @@ describe "Manage sessions" do
 
     when_i_go_to_completed_sessions
     then_i_see_no_sessions
+
+    when_the_parent_visits_the_consent_form
+    then_they_can_give_consent
+
+    when_the_deadline_has_passed
+    then_they_can_no_longer_give_consent
+
+    when_i_go_to_todays_sessions_as_a_nurse
+    and_i_go_to_completed_sessions
+    then_i_see_the_school
+    and_i_click_on_the_school
+
+    when_i_click_on_close_session
+    then_i_see_the_close_session_page
+
+    when_i_close_the_session
+    then_i_see_the_close_confirmation
+    and_i_go_back_to_sessions
+
+    when_i_go_to_unscheduled_sessions
+    then_i_see_the_team_clinic
+
+    when_i_click_on_the_team_clinic
+    then_i_see_a_child_in_the_cohort
   end
 
   def given_my_team_is_running_an_hpv_vaccination_programme
     @programme = create(:programme, :hpv)
-    @team = create(:team, :with_one_nurse, programmes: [@programme])
-    @location = create(:location, :secondary, team: @team)
-    @patient =
+    @team =
       create(
-        :patient,
-        date_of_birth: 13.years.ago.to_date,
-        school: @location,
-        team: @team
+        :team,
+        :with_one_nurse,
+        :with_generic_clinic,
+        programmes: [@programme],
+        name: "Coventry"
       )
-    create(
-      :session,
-      :unscheduled,
-      location: @location,
-      team: @team,
-      programme: @programme
-    )
+    @location = create(:location, :secondary, team: @team)
+    session =
+      create(
+        :session,
+        :unscheduled,
+        location: @location,
+        team: @team,
+        programme: @programme
+      )
+    @patient = create(:patient, year_group: 8, session:)
   end
 
   def when_i_go_to_todays_sessions_as_a_nurse
@@ -86,6 +101,8 @@ describe "Manage sessions" do
   def when_i_go_to_completed_sessions
     click_link "Completed"
   end
+
+  alias_method :and_i_go_to_completed_sessions, :when_i_go_to_completed_sessions
 
   def then_i_see_no_sessions
     expect(page).to have_content(/There are no (sessions|locations)/)
@@ -168,7 +185,7 @@ describe "Manage sessions" do
   end
 
   def when_the_deadline_has_passed
-    travel_to(Time.zone.local(2024, 3, 10))
+    travel_to(Time.zone.local(2024, 3, 12))
   end
 
   def then_they_can_no_longer_give_consent
@@ -179,4 +196,48 @@ describe "Manage sessions" do
   def then_i_see_the_school
     expect(page).to have_content(@location.name)
   end
+
+  def and_i_click_on_the_school
+    click_on @location.name
+  end
+
+  def when_i_click_on_close_session
+    click_on "Close session"
+  end
+
+  def then_i_see_the_close_session_page
+    expect(page).to have_content("Close session")
+    expect(page).to have_content("1 child who could not be vaccinated")
+  end
+
+  alias_method :when_i_close_the_session, :when_i_click_on_close_session
+
+  def then_i_see_the_close_confirmation
+    expect(page).to have_content("Session closed.")
+  end
+
+  def and_i_go_back_to_sessions
+    click_on "Sessions", match: :first
+  end
+
+  def then_i_see_the_team_clinic
+    expect(page).to have_content("Coventry Clinic")
+  end
+
+  alias_method :and_i_see_the_team_clinic, :then_i_see_the_team_clinic
+
+  def when_i_click_on_the_team_clinic
+    click_on "Coventry Clinic"
+  end
+
+  def then_i_see_no_children_in_the_cohort
+    expect(page).to have_content("Children\n0")
+  end
+
+  def then_i_see_a_child_in_the_cohort
+    expect(page).to have_content("1 child in this session")
+  end
+
+  alias_method :and_i_see_a_child_in_the_cohort,
+               :then_i_see_a_child_in_the_cohort
 end

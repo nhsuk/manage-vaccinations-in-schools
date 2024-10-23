@@ -129,6 +129,9 @@ Rails.application.routes.draw do
     end
 
     member do
+      get "close", action: "edit_close"
+      post "close", action: "update_close"
+
       constraints -> { Flipper.enabled?(:dev_tools) } do
         put "make-in-progress", to: "sessions#make_in_progress"
       end

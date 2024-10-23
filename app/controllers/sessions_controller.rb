@@ -54,6 +54,18 @@ class SessionsController < ApplicationController
   def edit
   end
 
+  def edit_close
+    @unvaccinated_patients_count = @session.unvaccinated_patients.length
+
+    render :close
+  end
+
+  def update_close
+    @session.close!
+
+    redirect_to session_path(@session), flash: { success: "Session closed." }
+  end
+
   def make_in_progress
     @session.dates.find_or_create_by!(value: Date.current)
 
@@ -70,10 +82,10 @@ class SessionsController < ApplicationController
 
   def sessions_scope
     policy_scope(Session).includes(
-      :team,
       :dates,
       :location,
-      :programmes
+      :programmes,
+      team: :programmes
     ).strict_loading
   end
 end
