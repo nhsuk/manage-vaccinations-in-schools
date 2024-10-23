@@ -5,7 +5,7 @@
       ) %>
 <% end %>
 
-<%= h1 page_title: @patient.full_name do %>
+<%= h1 page_title: @patient.initials do %>
   <span class="nhsuk-caption-l"><%= patient_school(@patient) %></span>
   <%= @patient.full_name %>
 <% end %>
