@@ -25,9 +25,14 @@ describe ConsentMailer do
     end
   end
 
-  describe "#request" do
+  describe "#request_for_school" do
     subject(:mail) do
-      described_class.with(session:, patient:, parent:, programme:).request
+      described_class.with(
+        session:,
+        patient:,
+        parent:,
+        programme:
+      ).request_for_school
     end
 
     let(:patient) { create(:patient) }
@@ -43,19 +48,52 @@ describe ConsentMailer do
         mail.message.header["personalisation"].unparsed_value
       end
 
-      it { should include(next_session_date: date.strftime("%A %-d %B")) }
+      let(:consent_deadline) { (date - 1.day).strftime("%A %-d %B") }
+      let(:consent_link) do
+        start_parent_interface_consent_forms_url(session, programme)
+      end
 
+      it { should include(consent_deadline:) }
+      it { should include(consent_link:) }
+      it { should include(full_and_preferred_patient_name: patient.full_name) }
       it { should include(location_name: session.location.name) }
+      it { should include(next_session_date: date.strftime("%A %-d %B")) }
       it { should include(team_email: session.team.email) }
       it { should include(team_phone: session.team.phone) }
+    end
+  end
 
-      it "includes consent details" do
-        expect(personalisation).to include(
-          consent_deadline: (date - 1.day).strftime("%A %-d %B"),
-          consent_link:
-            start_parent_interface_consent_forms_url(session, programme)
-        )
+  describe "#request_for_clinic" do
+    subject(:mail) do
+      described_class.with(
+        session:,
+        patient:,
+        parent:,
+        programme:
+      ).request_for_clinic
+    end
+
+    let(:patient) { create(:patient) }
+    let(:parent) { patient.parents.first }
+    let(:programme) { create(:programme) }
+    let(:date) { Date.current }
+    let(:session) { create(:session, date:, patients: [patient], programme:) }
+
+    it { should have_attributes(to: [parent.email]) }
+
+    describe "personalisation" do
+      subject(:personalisation) do
+        mail.message.header["personalisation"].unparsed_value
       end
+
+      let(:consent_link) do
+        start_parent_interface_consent_forms_url(session, programme)
+      end
+
+      it { should include(consent_link:) }
+      it { should include(full_and_preferred_patient_name: patient.full_name) }
+      it { should include(team_email: session.team.email) }
+      it { should include(team_phone: session.team.phone) }
     end
   end
 

@@ -17,8 +17,12 @@ class ConsentMailer < ApplicationMailer
     app_template_mail(:parental_consent_confirmation_refused)
   end
 
-  def request
-    app_template_mail(:hpv_session_consent_request)
+  def request_for_school
+    app_template_mail(:hpv_session_consent_request_for_school)
+  end
+
+  def request_for_clinic
+    app_template_mail(:hpv_session_consent_request_for_clinic)
   end
 
   def initial_reminder

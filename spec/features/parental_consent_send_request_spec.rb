@@ -19,7 +19,9 @@ describe "Parental consent" do
     programme = create(:programme, :hpv)
     @team = create(:team, :with_one_nurse, programmes: [programme])
 
-    @session = create(:session, team: @team, programme:)
+    location = create(:location, :generic_clinic, team: @team)
+
+    @session = create(:session, team: @team, programme:, location:)
     @patient = create(:patient, session: @session)
     @parent = @patient.parents.first
   end
@@ -53,7 +55,7 @@ describe "Parental consent" do
   end
 
   def and_an_email_is_sent_to_the_parent
-    expect_email_to(@parent.email, :hpv_session_consent_request)
+    expect_email_to(@parent.email, :hpv_session_consent_request_for_clinic)
   end
 
   def and_a_text_is_sent_to_the_parent
