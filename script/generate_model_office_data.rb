@@ -32,7 +32,8 @@ def create_student(school, year_group, team)
       :patient,
       school:,
       date_of_birth: date_of_birth_for_year(2024, year_group),
-      team:
+      team:,
+      home_educated: school.nil? ? [true, false].sample : false
     )
     .tap do |student|
       parents = FactoryBot.create_list(:parent, rand(1..2))
@@ -51,6 +52,11 @@ def create_vaccination_record(
 )
   session = patient_session.session
 
+  location_name =
+    if session.location.generic_clinic?
+      session.team.locations.community_clinic.all.sample.name
+    end
+
   FactoryBot.create(
     :vaccination_record,
     :performed_by_not_user,
@@ -61,8 +67,19 @@ def create_vaccination_record(
     vaccine:,
     administered_at: session.dates.first.value + rand(8..16).hours,
     batch:,
-    dose_sequence:
+    dose_sequence:,
+    location_name:
   )
+end
+
+def school_urn(patient)
+  if patient.home_educated
+    "999999"
+  elsif patient.school.nil?
+    "888888"
+  else
+    patient.school.urn
+  end
 end
 
 def write_nominal_roll_to_file(students)
@@ -107,7 +124,7 @@ def write_nominal_roll_to_file(students)
         student.parents.second&.full_name,
         student.parents.second&.phone,
         student.parent_relationships.second&.type,
-        student.school.urn
+        school_urn(student)
       ]
     end
   end
@@ -117,6 +134,8 @@ def write_class_lists_to_files(students)
   students
     .group_by(&:school)
     .each do |school, school_students|
+      next if school.nil?
+
       CSV.open(
         "scratchpad/class_list_#{school.name.parameterize(separator: "_")}.csv",
         "w"
@@ -130,7 +149,13 @@ def write_class_lists_to_files(students)
           PARENT_1_PHONE
         ]
 
-        school_students.each do |student|
+        # remove up to 10 students who have moved out of the area
+        # add up to 10 students who have moved from a different school
+        students_to_write =
+          school_students.shuffle.drop(rand(10)) +
+            students.reject { _1.school_id == school.id }.sample(rand(10))
+
+        students_to_write.each do |student|
           csv << [
             student.address_postcode,
             student.date_of_birth,
@@ -152,10 +177,17 @@ def write_vaccination_records_to_file(vaccination_records)
       .append("DOSE_SEQUENCE", "PERSON_GENDER_CODE", "CARE_SETTING")
 
     vaccination_records.each do |vaccination_record|
+      school_name =
+        if (school = vaccination_record.patient.school)
+          school.name
+        elsif !vaccination_record.patient.home_educated
+          vaccination_record.team.schools.all.sample.name
+        end
+
       csv << [
         vaccination_record.team.ods_code,
-        vaccination_record.patient.school.urn,
-        nil, # school name
+        school_urn(vaccination_record.patient),
+        school_name,
         vaccination_record.patient.nhs_number,
         vaccination_record.patient.given_name,
         vaccination_record.patient.family_name,
@@ -223,7 +255,7 @@ def create_students_and_vaccinations_for(school:, team:, year_size_estimate:)
           programme:,
           date: session_date,
           team:,
-          location: school
+          location: school || team.generic_clinic
         )
       batch = FactoryBot.create(:batch, team:, vaccine:)
 
@@ -266,7 +298,7 @@ wrap_in_rollbackable_transaction do
   # rubocop:disable Rails/SaveBang
   progress_bar =
     ProgressBar.create(
-      total: school_data.count,
+      total: school_data.count + 1,
       format: "%a %b\u{15E7}%i %p%% %t",
       progress_mark: " ",
       remainder_mark: "\u{FF65}"
@@ -274,7 +306,7 @@ wrap_in_rollbackable_transaction do
   # rubocop:enable Rails/SaveBang
 
   school_data.each do |row|
-    school = Location.find_by(urn: row["urn"])
+    school = Location.find_by!(urn: row["urn"])
 
     s, v =
       create_students_and_vaccinations_for(
@@ -287,6 +319,18 @@ wrap_in_rollbackable_transaction do
 
     progress_bar.increment
   end
+
+  # home schooled
+  s, v =
+    create_students_and_vaccinations_for(
+      school: nil,
+      team:,
+      year_size_estimate: 10
+    )
+  students += s
+  vaccination_records += v
+
+  progress_bar.increment
 
   puts "Writing files"
 
