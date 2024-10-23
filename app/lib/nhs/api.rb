@@ -19,9 +19,9 @@ module NHS::API
     def access_token_valid?
       return false if @auth_info.blank?
 
-      epoch_msec = Time.zone.now.strftime("%Q").to_i
-      safety_msec = 1500 # safety to accommodate connection time
-      epoch_msec + safety_msec < @auth_info[:expires_at]
+      now_msec = Time.current.strftime("%Q").to_i
+      safety_msec = 5000 # safety to accommodate connection time
+      now_msec + safety_msec < @auth_info[:expires_at]
     end
 
     private
@@ -34,18 +34,18 @@ module NHS::API
             grant_type: "client_credentials",
             client_assertion_type:
               "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-            client_assertion: jwt
+            client_assertion:
           }
         )
 
       @auth_info = response.body.symbolize_keys
 
-      issued_at = @auth_info[:issued_at].to_i
+      issued_at = @auth_info[:issued_at].to_i # milliseconds
       expires_in = @auth_info[:expires_in].to_i * 1000
       @auth_info[:expires_at] = issued_at + expires_in
     end
 
-    def jwt
+    def client_assertion
       header = { kid: "mavis-int-1", typ: "JWT", alg: "RS512" }
       payload = {
         iss: apikey,
@@ -54,7 +54,8 @@ module NHS::API
         jti: SecureRandom.uuid,
         exp: 1.minute.from_now.to_i
       }
-      JWT.encode payload, private_key, "RS512", header
+
+      JWT.encode(payload, private_key, "RS512", header)
     end
 
     def oauth_connection
