@@ -10,30 +10,20 @@ describe ClassImportRow do
 
   let(:valid_data) do
     {
-      "CHILD_ADDRESS_LINE_1" => "10 Downing Street",
-      "CHILD_ADDRESS_LINE_2" => "",
-      "CHILD_COMMON_NAME" => "Jim",
       "CHILD_DATE_OF_BIRTH" => "2010-01-01",
       "CHILD_FIRST_NAME" => "Jimmy",
-      "CHILD_GENDER" => "Male",
       "CHILD_LAST_NAME" => "Smith",
-      "CHILD_NHS_NUMBER" => "1234567890",
       "CHILD_POSTCODE" => "SW1A 1AA",
       "CHILD_REGISTRATION" => "8AB",
-      "CHILD_TOWN" => "London",
       "PARENT_1_EMAIL" => "john@example.com",
-      "PARENT_1_NAME" => "John Smith",
-      "PARENT_1_PHONE" => "07412345678",
-      "PARENT_1_RELATIONSHIP" => "Father"
+      "PARENT_1_PHONE" => "07412345678"
     }
   end
 
   let(:parent_2_data) do
     {
       "PARENT_2_EMAIL" => "jenny@example.com",
-      "PARENT_2_NAME" => "Jenny Smith",
-      "PARENT_2_PHONE" => "07412345678",
-      "PARENT_2_RELATIONSHIP" => "Mother"
+      "PARENT_2_PHONE" => "07412345678"
     }
   end
 
@@ -74,7 +64,6 @@ describe ClassImportRow do
     it "returns a parent" do
       expect(parents.count).to eq(1)
       expect(parents.first).to have_attributes(
-        full_name: "John Smith",
         email: "john@example.com",
         phone: "07412345678",
         phone_receive_updates: false
@@ -87,12 +76,10 @@ describe ClassImportRow do
       it "returns two parents" do
         expect(parents.count).to eq(2)
         expect(parents.first).to have_attributes(
-          full_name: "John Smith",
           email: "john@example.com",
           phone: "07412345678"
         )
         expect(parents.second).to have_attributes(
-          full_name: "Jenny Smith",
           email: "jenny@example.com",
           phone: "07412345678"
         )
@@ -101,7 +88,7 @@ describe ClassImportRow do
 
     context "with an existing parent" do
       let!(:existing_parent) do
-        create(:parent, full_name: "Johm Smith", email: "john@example.com")
+        create(:parent, full_name: "John Smith", email: "john@example.com")
       end
 
       it { should contain_exactly(existing_parent) }
@@ -110,6 +97,10 @@ describe ClassImportRow do
         expect(parents.first.phone_receive_updates).to eq(
           existing_parent.phone_receive_updates
         )
+      end
+
+      it "doesn't change full_name" do
+        expect(parents.first.full_name).to eq("John Smith")
       end
     end
   end
@@ -121,16 +112,28 @@ describe ClassImportRow do
 
     it { should_not be_nil }
 
-    it { should have_attributes(home_educated: false) }
-    it { should have_attributes(gender_code: "male") }
-    it { should have_attributes(registration: "8AB") }
+    it do
+      expect(patient).to have_attributes(
+        home_educated: false,
+        gender_code: "not_known",
+        registration: "8AB"
+      )
+    end
 
-    context "when gender is not provided" do
-      let(:data) { valid_data.except("CHILD_GENDER") }
+    context "with an existing patient" do
+      let!(:existing_patient) do
+        create(
+          :patient,
+          nhs_number: "0123456789",
+          given_name: "Jimmy",
+          family_name: "Smith",
+          address_postcode: "SW1A 1AA"
+        )
+      end
 
-      it { should_not be_nil }
+      it { should eq(existing_patient) }
 
-      it { should have_attributes(gender_code: "not_known") }
+      it { should have_attributes(nhs_number: "0123456789") }
     end
 
     describe "#cohort" do
@@ -171,7 +174,7 @@ describe ClassImportRow do
 
     it "returns a parent relationship" do
       expect(parent_relationships.count).to eq(1)
-      expect(parent_relationships.first).to be_father
+      expect(parent_relationships.first).to be_unknown
     end
 
     context "with two parents" do
@@ -179,8 +182,8 @@ describe ClassImportRow do
 
       it "returns two parent relationships" do
         expect(parent_relationships.count).to eq(2)
-        expect(parent_relationships.first).to be_father
-        expect(parent_relationships.second).to be_mother
+        expect(parent_relationships.first).to be_unknown
+        expect(parent_relationships.second).to be_unknown
       end
     end
   end
