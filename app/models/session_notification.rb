@@ -30,7 +30,7 @@ class SessionNotification < ApplicationRecord
 
   enum :type, %w[school_reminder], validate: true
 
-  def self.create_and_send!(patient_session:, session_date:)
+  def self.create_and_send!(patient_session:, session_date:, type:)
     # We create a record in the database first to avoid sending duplicate emails/texts.
     # If a problem occurs while the emails/texts are sent, they will be in the job
     # queue and restarted at a later date.
@@ -38,15 +38,13 @@ class SessionNotification < ApplicationRecord
     patient = patient_session.patient
     session = patient_session.session
 
-    SessionNotification.create!(
-      patient:,
-      session:,
-      session_date:,
-      type: :school_reminder
-    )
+    SessionNotification.create!(patient:, session:, session_date:, type:)
 
     patient_session.consents_to_send_communication.each do |consent|
-      SessionMailer.with(consent:, patient_session:).reminder.deliver_later
+      SessionMailer
+        .with(consent:, patient_session:)
+        .school_reminder
+        .deliver_later
 
       TextDeliveryJob.perform_later(
         :session_reminder,

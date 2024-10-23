@@ -26,7 +26,7 @@ describe SessionNotification do
   describe "#create_and_send!" do
     subject(:create_and_send!) do
       travel_to(today) do
-        described_class.create_and_send!(patient_session:, session_date:)
+        described_class.create_and_send!(patient_session:, session_date:, type:)
       end
     end
 
@@ -42,28 +42,31 @@ describe SessionNotification do
     let(:patient_session) { create(:patient_session, patient:, session:) }
     let(:consent) { create(:consent, :given, :recorded, patient:, programme:) }
 
-    it "creates a record" do
-      expect { create_and_send! }.to change(described_class, :count).by(1)
+    context "with a school reminder" do
+      let(:type) { :school_reminder }
 
-      session_notification = described_class.last
-      expect(session_notification).to be_school_reminder
-      expect(session_notification.session).to eq(session)
-      expect(session_notification.patient).to eq(patient)
-      expect(session_notification.sent_at).to be_today
-    end
+      it "creates a record" do
+        expect { create_and_send! }.to change(described_class, :count).by(1)
 
-    it "enqueues an email per parent who gave consent" do
-      expect { create_and_send! }.to have_enqueued_mail(
-        SessionMailer,
-        :reminder
-      ).with(params: { consent:, patient_session: }, args: [])
-    end
+        session_notification = described_class.last
+        expect(session_notification).to be_school_reminder
+        expect(session_notification.session).to eq(session)
+        expect(session_notification.patient).to eq(patient)
+        expect(session_notification.sent_at).to be_today
+      end
 
-    it "enqueues a text per parent" do
-      expect { create_and_send! }.to have_enqueued_text(:session_reminder).with(
-        consent:,
-        patient_session:
-      )
+      it "enqueues an email per parent who gave consent" do
+        expect { create_and_send! }.to have_enqueued_mail(
+          SessionMailer,
+          :school_reminder
+        ).with(params: { consent:, patient_session: }, args: [])
+      end
+
+      it "enqueues a text per parent" do
+        expect { create_and_send! }.to have_enqueued_text(
+          :session_reminder
+        ).with(consent:, patient_session:)
+      end
     end
   end
 end

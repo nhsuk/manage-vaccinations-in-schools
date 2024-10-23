@@ -5,6 +5,7 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
     "130fe52a-014a-45dd-9f53-8e65c1b8bb79",
   confirmation_the_hpv_vaccination_has_taken_place:
     "8a65d7b5-045c-4f26-8f76-6e593c14cb6d",
+  hpv_school_session_reminder: "79e131b2-7816-46d0-9c74-ae14956dd77d",
   hpv_session_consent_reminder: "ceefd526-d44c-4561-b0d2-c9ef4ccaba4f",
   hpv_session_consent_reminder_subsequent:
     "6410145f-dac1-46ba-82f3-a49cad0f66a6",
@@ -12,7 +13,6 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
     "6aa04f0d-94c2-4a6b-af97-a7369a12f681",
   hpv_session_consent_request_for_clinic:
     "14e88a09-4281-4257-9574-6afeaeb42715",
-  hpv_session_session_reminder: "79e131b2-7816-46d0-9c74-ae14956dd77d",
   parental_consent_confirmation: "7cda7ae5-99a2-4c40-9a3e-1863e23f7a73",
   parental_consent_confirmation_injection:
     "4d09483a-8181-4acb-8ba3-7abd6c8644cd",

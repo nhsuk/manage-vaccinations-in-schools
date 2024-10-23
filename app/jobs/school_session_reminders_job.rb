@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SessionRemindersJob < ApplicationJob
+class SchoolSessionRemindersJob < ApplicationJob
   queue_as :notifications
 
   def perform
@@ -10,17 +10,20 @@ class SessionRemindersJob < ApplicationJob
 
     patient_sessions =
       PatientSession
-        .includes(:consents, :location, :patient, :vaccination_records)
-        .joins(:session)
+        .includes(:consents, :patient, :vaccination_records)
+        .joins(:location, :session)
+        .merge(Location.school)
         .merge(Session.has_date(date))
-        .reminder_not_sent(date)
+        .notification_not_sent(date)
 
     patient_sessions.each do |patient_session|
-      next if patient_session.location.generic_clinic?
-
       next unless should_send_notification?(patient_session)
 
-      SessionNotification.create_and_send!(patient_session:, session_date: date)
+      SessionNotification.create_and_send!(
+        patient_session:,
+        session_date: date,
+        type: :school_reminder
+      )
     end
   end
 

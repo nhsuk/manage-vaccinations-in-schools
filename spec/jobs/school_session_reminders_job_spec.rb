@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe SessionRemindersJob do
+describe SchoolSessionRemindersJob do
   subject(:perform_now) { described_class.perform_now }
 
   before { Flipper.enable(:scheduled_emails) }
@@ -17,7 +17,8 @@ describe SessionRemindersJob do
     it "sends a notification" do
       expect(SessionNotification).to receive(:create_and_send!).once.with(
         patient_session:,
-        session_date: Date.tomorrow
+        session_date: Date.tomorrow,
+        type: :school_reminder
       )
       perform_now
     end
