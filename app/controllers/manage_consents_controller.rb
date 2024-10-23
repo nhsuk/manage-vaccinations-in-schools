@@ -102,13 +102,8 @@ class ManageConsentsController < ApplicationController
 
   def handle_confirm
     ActiveRecord::Base.transaction do
-      if @consent.response_refused?
-        @triage.update!(status: "do_not_vaccinate", performed_by: current_user)
-      end
-
-      if @triage.persisted?
-        send_triage_confirmation(@patient_session, @consent)
-      else
+      send_triage_confirmation(@patient_session, @consent)
+      unless @triage.persisted?
         # We need to discard the draft triage record so that the patient
         # session can be saved.
         @triage.destroy!

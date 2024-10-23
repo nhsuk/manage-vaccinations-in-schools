@@ -8,7 +8,7 @@ describe "Verbal consent" do
 
     then_an_email_is_sent_to_the_parent_confirming_the_refusal
     and_a_text_is_sent_to_the_parent_confirming_the_refusal
-    and_the_patients_status_is_do_not_vaccinate
+    and_the_patients_status_is_consent_refused
     and_i_can_see_the_consent_response_details
   end
 
@@ -60,9 +60,12 @@ describe "Verbal consent" do
     expect(page).to have_content("Consent recorded for #{@patient.full_name}")
   end
 
-  def and_the_patients_status_is_do_not_vaccinate
+  def and_the_patients_status_is_consent_refused
     click_link @patient.full_name
-    expect(page).to have_content("Could not vaccinate")
+
+    relation = @patient.parents.first.relationship_to(patient: @patient).label
+    expect(page).to have_content("Consent refused")
+    expect(page).to have_content("#{relation} refused to give consent.")
   end
 
   def and_i_can_see_the_consent_response_details
