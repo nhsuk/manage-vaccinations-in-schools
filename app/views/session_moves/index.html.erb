@@ -49,7 +49,9 @@
       <% table.with_head do |head| %>
         <% head.with_row do |row| %>
           <% row.with_cell(text: "Full name") %>
-          <% row.with_cell(text: "School joined from") %>
+          <% row.with_cell(text: @tab == :in ?
+                             "School joined from" :
+                             "School moved to") %>
           <% row.with_cell(text: "Actions") %>
         <% end %>
       <% end %>
@@ -65,8 +67,12 @@
           <% end %>
 
           <% row.with_cell do %>
-            <span class="nhsuk-table-responsive__heading">School joined from</span>
-            <%= patient_session.session.location.name %>
+            <span class="nhsuk-table-responsive__heading">
+              <%= @tab == :in ? "School joined from" : "School moved to" %>
+            </span>
+            <%= @tab == :in ?
+                  patient_session.session.location.name :
+                  patient_session.proposed_session.location.name %>
           <% end %>
 
           <% row.with_cell do %>
