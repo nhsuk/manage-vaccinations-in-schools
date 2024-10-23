@@ -10,43 +10,16 @@ describe SessionRemindersJob do
   let(:parents) { create_list(:parent, 2, :recorded) }
   let(:patient) { create(:patient, parents:) }
 
-  let!(:consent) do
-    create(
-      :consent,
-      :given,
-      :recorded,
-      patient:,
-      parent: parents.first,
-      programme:
-    )
-  end
-
   context "for an active session tomorrow" do
-    let!(:session) do
-      create(:session, programme:, date: Date.tomorrow, patients: [patient])
-    end
-    let(:patient_session) { PatientSession.find_by!(patient:, session:) }
+    let!(:session) { create(:session, programme:, date: Date.tomorrow) }
+    let(:patient_session) { create(:patient_session, patient:, session:) }
 
-    it "sends an email to the parent who consented" do
-      expect { perform_now }.to have_enqueued_mail(
-        SessionMailer,
-        :reminder
-      ).with(params: { consent:, patient_session: }, args: [])
-    end
-
-    it "sends a text to the parent who consented" do
-      expect { perform_now }.to have_enqueued_text(:session_reminder).with(
-        consent:,
-        patient_session:
+    it "sends a notification" do
+      expect(SessionNotification).to receive(:create_and_send!).once.with(
+        patient_session:,
+        session_date: Date.tomorrow
       )
-    end
-
-    it "records a notification" do
-      expect { perform_now }.to change(
-        SessionNotification.where(patient:, session:),
-        :count
-      ).by(1)
-      expect(SessionNotification.last).to be_school_reminder
+      perform_now
     end
 
     context "when already sent" do
@@ -54,95 +27,45 @@ describe SessionRemindersJob do
         create(:session_notification, :school_reminder, session:, patient:)
       end
 
-      it "doesn't send a reminder email" do
-        expect { perform_now }.not_to have_enqueued_mail(
-          SessionMailer,
-          :reminder
-        )
-      end
-
-      it "doesn't sent a reminder text" do
-        expect { perform_now }.not_to have_enqueued_text(:session_reminder)
-      end
-
-      it "doesn't record a notification" do
-        expect { perform_now }.not_to change(SessionNotification, :count)
+      it "doesn't send any notifications" do
+        expect(SessionNotification).not_to receive(:create_and_send!)
+        perform_now
       end
     end
 
     context "when already vaccinated" do
       before { create(:vaccination_record, patient_session:, programme:) }
 
-      it "doesn't send a reminder email" do
-        expect { perform_now }.not_to have_enqueued_mail(
-          SessionMailer,
-          :reminder
-        )
-      end
-
-      it "doesn't sent a reminder text" do
-        expect { perform_now }.not_to have_enqueued_text(:session_reminder)
-      end
-
-      it "doesn't record a notification" do
-        expect { perform_now }.not_to change(SessionNotification, :count)
+      it "doesn't send any notifications" do
+        expect(SessionNotification).not_to receive(:create_and_send!)
+        perform_now
       end
     end
 
     context "if the patient is deceased" do
       let(:patient) { create(:patient, :deceased, parents:) }
 
-      it "doesn't send a reminder email" do
-        expect { perform_now }.not_to have_enqueued_mail(
-          SessionMailer,
-          :reminder
-        )
-      end
-
-      it "doesn't sent a reminder text" do
-        expect { perform_now }.not_to have_enqueued_text(:session_reminder)
-      end
-
-      it "doesn't record a notification" do
-        expect { perform_now }.not_to change(SessionNotification, :count)
+      it "doesn't send any notifications" do
+        expect(SessionNotification).not_to receive(:create_and_send!)
+        perform_now
       end
     end
 
     context "if the patient is invalid" do
       let(:patient) { create(:patient, :invalidated, parents:) }
 
-      it "doesn't send a reminder email" do
-        expect { perform_now }.not_to have_enqueued_mail(
-          SessionMailer,
-          :reminder
-        )
-      end
-
-      it "doesn't sent a reminder text" do
-        expect { perform_now }.not_to have_enqueued_text(:session_reminder)
-      end
-
-      it "doesn't record a notification" do
-        expect { perform_now }.not_to change(SessionNotification, :count)
+      it "doesn't send any notifications" do
+        expect(SessionNotification).not_to receive(:create_and_send!)
+        perform_now
       end
     end
 
     context "if the patient is restricted" do
       let(:patient) { create(:patient, :restricted, parents:) }
 
-      it "doesn't send a reminder email" do
-        expect { perform_now }.not_to have_enqueued_mail(
-          SessionMailer,
-          :reminder
-        )
-      end
-
-      it "doesn't sent a reminder text" do
-        expect { perform_now }.not_to have_enqueued_text(:session_reminder)
-      end
-
-      it "doesn't record a notification" do
-        expect { perform_now }.not_to change(SessionNotification, :count)
+      it "doesn't send any notifications" do
+        expect(SessionNotification).not_to receive(:create_and_send!)
+        perform_now
       end
     end
   end
@@ -162,16 +85,9 @@ describe SessionRemindersJob do
       )
     end
 
-    it "doesn't send a reminder email" do
-      expect { perform_now }.not_to have_enqueued_mail(SessionMailer, :reminder)
-    end
-
-    it "doesn't sent a reminder text" do
-      expect { perform_now }.not_to have_enqueued_text(:session_reminder)
-    end
-
-    it "doesn't record a notification" do
-      expect { perform_now }.not_to change(SessionNotification, :count)
+    it "doesn't send any notifications" do
+      expect(SessionNotification).not_to receive(:create_and_send!)
+      perform_now
     end
   end
 
@@ -180,8 +96,9 @@ describe SessionRemindersJob do
       create(:session, programme:, date: Time.zone.today, patients: [patient])
     end
 
-    it "doesn't send an email" do
-      expect { perform_now }.not_to have_enqueued_mail(SessionMailer, :reminder)
+    it "doesn't send any notifications" do
+      expect(SessionNotification).not_to receive(:create_and_send!)
+      perform_now
     end
   end
 
@@ -190,8 +107,9 @@ describe SessionRemindersJob do
       create(:session, programme:, date: Date.yesterday, patients: [patient])
     end
 
-    it "doesn't send an email" do
-      expect { perform_now }.not_to have_enqueued_mail(SessionMailer, :reminder)
+    it "doesn't send any notifications" do
+      expect(SessionNotification).not_to receive(:create_and_send!)
+      perform_now
     end
   end
 end

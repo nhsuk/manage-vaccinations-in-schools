@@ -23,9 +23,47 @@
 #  fk_rails_...  (session_id => sessions.id)
 #
 describe SessionNotification do
-  subject(:session_notification) do
-    build(:session_notification, :school_reminder)
-  end
+  describe "#create_and_send!" do
+    subject(:create_and_send!) do
+      travel_to(today) do
+        described_class.create_and_send!(patient_session:, session_date:)
+      end
+    end
 
-  it { should be_valid }
+    let(:today) { Date.new(2024, 1, 1) }
+
+    let(:parents) { create_list(:parent, 2, :recorded) }
+    let(:patient) { create(:patient, parents:) }
+    let(:programme) { create(:programme) }
+    let(:team) { create(:team, programmes: [programme]) }
+    let(:location) { create(:location, :school, team:) }
+    let(:session) { create(:session, location:, programme:, team:) }
+    let(:session_date) { session.dates.first.value }
+    let(:patient_session) { create(:patient_session, patient:, session:) }
+    let(:consent) { create(:consent, :given, :recorded, patient:, programme:) }
+
+    it "creates a record" do
+      expect { create_and_send! }.to change(described_class, :count).by(1)
+
+      session_notification = described_class.last
+      expect(session_notification).to be_school_reminder
+      expect(session_notification.session).to eq(session)
+      expect(session_notification.patient).to eq(patient)
+      expect(session_notification.sent_at).to be_today
+    end
+
+    it "enqueues an email per parent who gave consent" do
+      expect { create_and_send! }.to have_enqueued_mail(
+        SessionMailer,
+        :reminder
+      ).with(params: { consent:, patient_session: }, args: [])
+    end
+
+    it "enqueues a text per parent" do
+      expect { create_and_send! }.to have_enqueued_text(:session_reminder).with(
+        consent:,
+        patient_session:
+      )
+    end
+  end
 end

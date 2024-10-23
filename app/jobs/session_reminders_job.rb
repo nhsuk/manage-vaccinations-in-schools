@@ -20,26 +20,7 @@ class SessionRemindersJob < ApplicationJob
 
       next unless should_send_notification?(patient_session)
 
-      # We create a record in the database first to avoid sending duplicate emails/texts.
-      # If a problem occurs while the emails/texts are sent, they will be in the job
-      # queue and restarted at a later date.
-
-      SessionNotification.create!(
-        patient: patient_session.patient,
-        session: patient_session.session,
-        session_date: date,
-        type: :school_reminder
-      )
-
-      patient_session.consents_to_send_communication.each do |consent|
-        SessionMailer.with(consent:, patient_session:).reminder.deliver_later
-
-        TextDeliveryJob.perform_later(
-          :session_reminder,
-          consent:,
-          patient_session:
-        )
-      end
+      SessionNotification.create_and_send!(patient_session:, session_date: date)
     end
   end
 
