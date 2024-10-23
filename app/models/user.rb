@@ -30,11 +30,11 @@ class User < ApplicationRecord
 
   attr_accessor :sso_session
 
-  devise :database_authenticatable,
-         :trackable,
-         :timeoutable,
-         :omniauthable,
-         omniauth_providers: %i[cis2]
+  if Settings.cis2.enabled
+    devise :omniauthable, :trackable, :timeoutable, omniauth_providers: %i[cis2]
+  else
+    devise :database_authenticatable, :trackable, :timeoutable
+  end
 
   has_and_belongs_to_many :teams
 
@@ -82,7 +82,7 @@ class User < ApplicationRecord
   end
 
   def is_medical_secretary?
-    return email.include?("admin") unless Flipper.enabled?(:cis2)
+    return email.include?("admin") unless Settings.cis2.enabled
 
     role_codes = sso_session.dig("selected_role", "code")
     role_codes.include?("R8006")
@@ -90,7 +90,7 @@ class User < ApplicationRecord
 
   def is_nurse?
     # All users are nurses if cis2 is disabled
-    return email.include?("nurse") unless Flipper.enabled?(:cis2)
+    return email.include?("nurse") unless Settings.cis2.enabled
 
     role_codes = sso_session.dig("selected_role", "code")
     role_codes.include?("R8001")

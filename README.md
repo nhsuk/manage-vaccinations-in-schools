@@ -276,16 +276,16 @@ $ curl -s https://am.nhsdev.auth-ptl.cis2.spineservices.nhs.uk/openam/oauth2/rea
 New client ids and secrets can be obtained from the NHS CIS2 Authentication team
 (<nhscareidentityauthentication@nhs.net>).
 
-Put the `issuer`, `client_id` and `secret` into the Settings for your env:
+Put the `issuer`, `client_id` and `secret` into the Settings for your env, and
+ensure cis2 is enabled:
 
 ```yml
 cis2:
+  enabled: true
   issuer: "https://am.nhsdev.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/oidc"
   client_id: CLIENT_ID
   secret: SECRET
 ```
-
-The `cis2` feature flag also needs to be enabled in Flipper for CIS2 logins to work.
 
 ## Rake tasks
 
