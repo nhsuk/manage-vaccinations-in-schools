@@ -148,4 +148,46 @@ describe PatientSession do
 
     it { should eq(later_vaccination_record) }
   end
+
+  describe "#confirm_transfer!" do
+    subject(:confirm_transfer!) { patient_session.confirm_transfer! }
+
+    let(:original_session) { create(:session, programme:) }
+    let(:proposed_session) { create(:session, programme:) }
+    let(:patient_session) do
+      create(
+        :patient_session,
+        programme:,
+        session: original_session,
+        proposed_session:
+      )
+    end
+
+    it "updates the session and clears the proposed session" do
+      # stree-ignore
+      expect { confirm_transfer! }
+        .to change(patient_session, :session).to(proposed_session)
+        .and change(patient_session, :proposed_session).to(nil)
+    end
+
+    context "when there is no proposed session" do
+      let(:patient_session) { create(:patient_session, programme:) }
+
+      it "does not change the session" do
+        expect { confirm_transfer! }.not_to change(patient_session, :session)
+      end
+    end
+
+    context "when the patient session has vaccination records" do
+      before { create(:vaccination_record, programme:, patient_session:) }
+
+      it "does not change the sesion, creates a new patient session" do
+        # stree-ignore
+        expect { confirm_transfer! }
+          .to change(patient_session, :proposed_session).to(nil)
+          .and not_change(patient_session, :session)
+          .and change(patient_session.patient.patient_sessions, :count).by(1)
+      end
+    end
+  end
 end
