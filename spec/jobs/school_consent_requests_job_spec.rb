@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe ConsentRequestsJob do
+describe SchoolConsentRequestsJob do
   subject(:perform_now) { described_class.perform_now }
 
   before { Flipper.enable(:scheduled_emails) }
