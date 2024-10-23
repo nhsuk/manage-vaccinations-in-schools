@@ -43,20 +43,20 @@ def create_student(school, year_group, team)
 end
 
 def create_vaccination_record(
-  student,
+  patient_session,
   vaccine:,
-  session:,
   batch:,
   programme:,
   dose_sequence:
 )
-  print "+"
+  session = patient_session.session
+
   FactoryBot.create(
     :vaccination_record,
     :performed_by_not_user,
-    patient: student,
+    patient: patient_session.patient,
     session:,
-    patient_session: PatientSession.find_by(patient: student, session:),
+    patient_session:,
     programme:,
     vaccine:,
     administered_at: session.dates.first.value + rand(8..16).hours,
@@ -197,15 +197,17 @@ def create_students_and_vaccinations_for(school:, team:, year_size_estimate:)
       batch = FactoryBot.create(:batch, team:, vaccine:)
 
       session_participants = [dose_1_cohort, dose_2_cohort].flatten.compact
-      session.patients << session_participants
 
       session_participants.filter_map do |student|
+        patient_session = PatientSession.create!(patient: student, session:)
+
         next if rand < 0.1 # assume 90% uptake
+
         dose_sequence = dose_1_cohort.include?(student) ? 1 : 2
+
         create_vaccination_record(
-          student,
+          patient_session,
           vaccine:,
-          session:,
           batch:,
           dose_sequence:,
           programme:
@@ -230,7 +232,17 @@ wrap_in_rollbackable_transaction do
   students = []
   vaccination_records = []
 
-  school_data.flat_map do |row|
+  # rubocop:disable Rails/SaveBang
+  progress_bar =
+    ProgressBar.create(
+      total: school_data.count,
+      format: "%a %b\u{15E7}%i %p%% %t",
+      progress_mark: " ",
+      remainder_mark: "\u{FF65}"
+    )
+  # rubocop:enable Rails/SaveBang
+
+  school_data.each do |row|
     school = Location.find_by(urn: row["urn"])
 
     s, v =
@@ -241,11 +253,14 @@ wrap_in_rollbackable_transaction do
       )
     students += s
     vaccination_records += v
+
+    progress_bar.increment
   end
+
+  puts "Writing files"
 
   write_nominal_roll_to_file(students)
   write_vaccination_records_to_file(vaccination_records)
-  print "."
 end
 
 #
