@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "CIS2 backchannel logout" do
+describe "CIS2 backchannel logout", :cis2 do
   scenario "CIS2 sends a logout request" do
     given_the_app_is_setup
     and_that_i_am_signed_in

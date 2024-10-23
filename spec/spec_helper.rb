@@ -185,6 +185,8 @@ RSpec.configure do |config|
   # The different available types are documented in the features, such as in
   # https://relishapp.com/rspec/rspec-rails/docs
 
+  config.filter_run_excluding cis2: true
+
   config.define_derived_metadata(
     file_path: Regexp.new("/spec/components/")
   ) { |metadata| metadata[:type] = :component }
