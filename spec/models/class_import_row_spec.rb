@@ -124,15 +124,16 @@ describe ClassImportRow do
       let!(:existing_patient) do
         create(
           :patient,
-          nhs_number: "0123456789",
-          given_name: "Jimmy",
+          address_postcode: "SW1A 1AA",
           family_name: "Smith",
-          address_postcode: "SW1A 1AA"
+          gender_code: "male",
+          given_name: "Jimmy",
+          nhs_number: "0123456789"
         )
       end
 
       it { should eq(existing_patient) }
-
+      it { should be_male }
       it { should have_attributes(nhs_number: "0123456789") }
     end
 
