@@ -170,6 +170,7 @@ class Session < ApplicationRecord
 
   def close!
     return if closed?
+    return unless completed?
 
     ActiveRecord::Base.transaction do
       unvaccinated_patients =
