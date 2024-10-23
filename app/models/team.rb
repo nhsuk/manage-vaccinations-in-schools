@@ -51,7 +51,7 @@ class Team < ApplicationRecord
   end
 
   def generic_clinic
-    locations.create_with(name: "#{name} Clinic").find_or_create_by!(
+    locations.create_with(name: "Community clinics").find_or_create_by!(
       ods_code:,
       type: :generic_clinic
     )
