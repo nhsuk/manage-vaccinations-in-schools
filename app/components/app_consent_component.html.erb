@@ -1,9 +1,19 @@
 <%= render AppConsentStatusComponent.new(patient_session:) %>
 
 <% if patient_session.no_consent? %>
-  <p class="app-status">
-    No response yet
-  </p>
+  <% if latest_consent_request %>
+    <p class="nhsuk-body">
+      No-one responded to our requests for consent.
+    </p>
+
+    <p class="nhsuk-body">
+      A request was sent on <%= latest_consent_request.sent_at.to_fs(:long) %>.
+    </p>
+  <% else %>
+    <p class="nhsuk-body">
+      No requests have been sent.
+    </p>
+  <% end %>
 <% end %>
 
 <% if consents.present? %>
@@ -32,9 +42,8 @@
   <% end %>
 <% end %>
 
-<p>
-  <%= form_with url: session_patient_manage_consents_path(session, patient_id: patient.id, section: @section, tab: @tab),
-                builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
-    <%= f.govuk_submit "Get consent" %>
-  <% end %>
-</p>
+<% if patient_session.no_consent? %>
+  <%= govuk_button_to "Send consent request", session_patient_request_consent_path(session, patient_id: patient.id, section: @section, tab: @tab), class: "app-button--secondary" %>
+<% end %>
+
+<%= govuk_button_to "Get consent response", session_patient_manage_consents_path(session, patient_id: patient.id, section: @section, tab: @tab), class: "app-button--secondary" %>
