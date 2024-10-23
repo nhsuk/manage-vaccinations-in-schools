@@ -144,6 +144,34 @@ describe SessionRemindersJob do
     end
   end
 
+  context "for a generic clinic session tomorrow" do
+    let(:team) { create(:team, programmes: [programme]) }
+    let(:location) { create(:location, :generic_clinic, team:) }
+
+    before do
+      create(
+        :session,
+        programme:,
+        date: Date.tomorrow,
+        patients: [patient],
+        team:,
+        location:
+      )
+    end
+
+    it "doesn't send a reminder email" do
+      expect { perform_now }.not_to have_enqueued_mail(SessionMailer, :reminder)
+    end
+
+    it "doesn't sent a reminder text" do
+      expect { perform_now }.not_to have_enqueued_text(:session_reminder)
+    end
+
+    it "doesn't record a notification" do
+      expect { perform_now }.not_to change(SessionNotification, :count)
+    end
+  end
+
   context "for a session today" do
     before do
       create(:session, programme:, date: Time.zone.today, patients: [patient])

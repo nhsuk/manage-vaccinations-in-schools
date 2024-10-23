@@ -76,5 +76,24 @@ describe ConsentRequestsJob do
       )
       perform_now
     end
+
+    context "when location is a generic clinic" do
+      let(:team) { create(:team, programmes: [programme]) }
+      let(:location) { create(:location, :generic_clinic, team:) }
+      let(:session) do
+        create(
+          :session,
+          patients:,
+          programme:,
+          send_consent_requests_at: Date.current,
+          team:
+        )
+      end
+
+      it "doesn't send any notifications" do
+        expect(ConsentNotification).not_to receive(:create_and_send!)
+        perform_now
+      end
+    end
   end
 end

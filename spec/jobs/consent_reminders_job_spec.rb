@@ -43,14 +43,19 @@ describe ConsentRemindersJob do
 
   let(:dates) { [Date.new(2024, 1, 12), Date.new(2024, 1, 15)] }
 
+  let(:team) { create(:team, programmes: [programme]) }
+  let(:location) { create(:location, :school, team:) }
+
   let!(:session) do
     create(
       :session,
       date: nil,
       dates: dates.map { build(:session_date, value: _1) },
+      days_before_consent_reminders: 7,
+      location:,
       patients:,
       programme:,
-      days_before_consent_reminders: 7
+      team:
     )
   end
 
@@ -80,6 +85,15 @@ describe ConsentRemindersJob do
 
     it "records a notification" do
       expect { perform_now }.to change(ConsentNotification, :count).by(1)
+    end
+
+    context "when location is a generic clinic" do
+      let(:location) { create(:location, :generic_clinic, team:) }
+
+      it "doesn't send any notifications" do
+        expect(ConsentNotification).not_to receive(:create_and_send!)
+        perform_now
+      end
     end
   end
 

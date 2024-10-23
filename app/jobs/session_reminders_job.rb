@@ -10,12 +10,14 @@ class SessionRemindersJob < ApplicationJob
 
     patient_sessions =
       PatientSession
-        .includes(:consents, :patient, :vaccination_records)
+        .includes(:consents, :location, :patient, :vaccination_records)
         .joins(:session)
         .merge(Session.has_date(date))
         .reminder_not_sent(date)
 
     patient_sessions.each do |patient_session|
+      next if patient_session.location.generic_clinic?
+
       next unless should_send_notification?(patient_session)
 
       # We create a record in the database first to avoid sending duplicate emails/texts.

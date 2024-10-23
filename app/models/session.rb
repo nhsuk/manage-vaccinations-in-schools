@@ -192,7 +192,7 @@ class Session < ApplicationRecord
   end
 
   def set_consent_dates
-    if dates.empty?
+    if dates.empty? || location.generic_clinic?
       self.days_before_consent_reminders = nil
       self.send_consent_requests_at = nil
     else
