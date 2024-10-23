@@ -8,7 +8,9 @@ describe SchoolSessionRemindersJob do
 
   let(:programme) { create(:programme) }
   let(:parents) { create_list(:parent, 2, :recorded) }
-  let(:patient) { create(:patient, parents:) }
+  let(:patient) do
+    create(:patient, :consent_given_triage_not_needed, parents:, programme:)
+  end
 
   context "for an active session tomorrow" do
     let!(:session) { create(:session, programme:, date: Date.tomorrow) }
@@ -21,6 +23,30 @@ describe SchoolSessionRemindersJob do
         type: :school_reminder
       )
       perform_now
+    end
+
+    context "when triaged for vaccination" do
+      let(:patient) do
+        create(:patient, :triage_ready_to_vaccinate, parents:, programme:)
+      end
+
+      it "sends a notification" do
+        expect(SessionNotification).to receive(:create_and_send!).once.with(
+          patient_session:,
+          session_date: Date.tomorrow,
+          type: :school_reminder
+        )
+        perform_now
+      end
+    end
+
+    context "without consent or triage" do
+      let(:patient) { create(:patient, parents:) }
+
+      it "doesn't send any notifications" do
+        expect(SessionNotification).not_to receive(:create_and_send!)
+        perform_now
+      end
     end
 
     context "when already sent" do
