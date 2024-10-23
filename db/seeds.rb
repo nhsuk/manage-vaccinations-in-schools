@@ -73,7 +73,22 @@ def attach_specific_school_to_team_if_present(team:, urn:)
   Location.where(urn:).update_all(team_id: team.id)
 end
 
-def create_session(user, team)
+def get_location_for_session(team, programme)
+  loop do
+    location =
+      team.locations.for_year_groups(programme.year_groups).sample ||
+        FactoryBot.create(
+          :location,
+          :school,
+          team:,
+          year_groups: programme.year_groups
+        )
+
+    return location unless team.sessions.exists?(location:)
+  end
+end
+
+def create_session(user, team, completed:)
   programme = Programme.find_by(type: "hpv")
 
   FactoryBot.create_list(
@@ -83,19 +98,14 @@ def create_session(user, team)
     vaccine: programme.vaccines.active.first
   )
 
-  location =
-    team.locations.for_year_groups(programme.year_groups).sample ||
-      FactoryBot.create(
-        :location,
-        :school,
-        team:,
-        year_groups: programme.year_groups
-      )
+  location = get_location_for_session(team, programme)
 
-  session = FactoryBot.create(:session, team:, programme:, location:)
+  date = completed ? 1.week.ago.to_date : Date.current
 
-  session.dates.create!(value: Date.yesterday)
-  session.dates.create!(value: Date.tomorrow)
+  session = FactoryBot.create(:session, date:, team:, programme:, location:)
+
+  session.dates.create!(value: date - 1.day)
+  session.dates.create!(value: date + 1.day)
 
   patients_without_consent =
     FactoryBot.create_list(:patient_session, 4, programme:, session:, user:)
@@ -130,8 +140,6 @@ def create_session(user, team)
       user:
     )
   end
-
-  UnscheduledSessionsFactory.new.call
 end
 
 def create_patients(team)
@@ -181,7 +189,12 @@ create_user(team:, email: "admin.hope@example.com")
 attach_sample_of_schools_to(team)
 attach_specific_school_to_team_if_present(team:, urn: "136126") # potentially needed for automated testing
 
-Audited.audit_class.as_user(user) { create_session(user, team) }
+Audited
+  .audit_class
+  .as_user(user) do
+    create_session(user, team, completed: false)
+    create_session(user, team, completed: true)
+  end
 create_patients(team)
 create_imports(user, team)
 
@@ -192,6 +205,13 @@ user = create_user(team:, uid: "555057896106")
 attach_sample_of_schools_to(team)
 attach_specific_school_to_team_if_present(team:, urn: "136126") # potentially needed for automated testing
 
-Audited.audit_class.as_user(user) { create_session(user, team) }
+Audited
+  .audit_class
+  .as_user(user) do
+    create_session(user, team, completed: false)
+    create_session(user, team, completed: true)
+  end
 create_patients(team)
 create_imports(user, team)
+
+UnscheduledSessionsFactory.new.call
