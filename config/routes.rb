@@ -294,4 +294,5 @@ Rails.application.routes.draw do
   end
 
   get "/oidc/jwks", to: "pages#jwks"
+  get "/oidc/jwks_uri", to: "pages#jwks"
 end
