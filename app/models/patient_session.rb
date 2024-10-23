@@ -69,6 +69,7 @@ class PatientSession < ApplicationRecord
         ->(session_date) do
           where.not(
             SessionNotification
+              .school_reminder
               .where(
                 "session_notifications.session_id = patient_sessions.session_id"
               )

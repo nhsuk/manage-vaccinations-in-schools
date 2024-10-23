@@ -96,6 +96,7 @@ describe AppActivityLogComponent do
 
       create(
         :session_notification,
+        :school_reminder,
         session:,
         patient:,
         sent_at: Date.new(2024, 5, 30)

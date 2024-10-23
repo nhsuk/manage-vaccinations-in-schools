@@ -7,6 +7,7 @@
 #  id           :bigint           not null, primary key
 #  sent_at      :datetime         not null
 #  session_date :date             not null
+#  type         :integer          not null
 #  patient_id   :bigint           not null
 #  session_id   :bigint           not null
 #
@@ -27,5 +28,7 @@ FactoryBot.define do
     session
 
     session_date { session.dates.map(&:value).min || Date.current }
+
+    traits_for_enum :type
   end
 end

@@ -7,6 +7,7 @@
 #  id           :bigint           not null, primary key
 #  sent_at      :datetime         not null
 #  session_date :date             not null
+#  type         :integer          not null
 #  patient_id   :bigint           not null
 #  session_id   :bigint           not null
 #
@@ -22,6 +23,10 @@
 #  fk_rails_...  (session_id => sessions.id)
 #
 class SessionNotification < ApplicationRecord
+  self.inheritance_column = :nil
+
   belongs_to :patient
   belongs_to :session
+
+  enum :type, %w[school_reminder], validate: true
 end

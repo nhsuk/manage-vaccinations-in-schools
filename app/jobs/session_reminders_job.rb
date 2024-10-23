@@ -27,7 +27,8 @@ class SessionRemindersJob < ApplicationJob
       SessionNotification.create!(
         patient: patient_session.patient,
         session: patient_session.session,
-        session_date: date
+        session_date: date,
+        type: :school_reminder
       )
 
       patient_session.consents_to_send_communication.each do |consent|

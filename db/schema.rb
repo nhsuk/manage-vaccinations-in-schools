@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_23_163027) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_23_204019) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -524,6 +524,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_23_163027) do
     t.bigint "session_id", null: false
     t.date "session_date", null: false
     t.datetime "sent_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.integer "type", null: false
     t.index ["patient_id", "session_id", "session_date"], name: "idx_on_patient_id_session_id_session_date_f7f30a3aa3"
     t.index ["patient_id"], name: "index_session_notifications_on_patient_id"
     t.index ["session_id"], name: "index_session_notifications_on_session_id"
