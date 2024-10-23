@@ -7,7 +7,7 @@
 #  id                  :bigint           not null, primary key
 #  current_sign_in_at  :datetime
 #  current_sign_in_ip  :string
-#  email               :string           default(""), not null
+#  email               :string           default("")
 #  encrypted_password  :string           default(""), not null
 #  family_name         :string           not null
 #  given_name          :string           not null
