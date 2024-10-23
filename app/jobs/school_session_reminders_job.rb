@@ -10,14 +10,22 @@ class SchoolSessionRemindersJob < ApplicationJob
 
     patient_sessions =
       PatientSession
-        .includes(:consents, :patient, :vaccination_records)
+        .includes(
+          :consents,
+          :latest_gillick_assessment,
+          :latest_vaccination_record,
+          :patient,
+          :triages,
+          :vaccination_records
+        )
         .joins(:location, :session)
         .merge(Location.school)
         .merge(Session.has_date(date))
         .notification_not_sent(date)
+        .strict_loading
 
     patient_sessions.each do |patient_session|
-      next unless should_send_notification?(patient_session)
+      next unless should_send_notification?(patient_session:)
 
       SessionNotification.create_and_send!(
         patient_session:,
@@ -27,8 +35,14 @@ class SchoolSessionRemindersJob < ApplicationJob
     end
   end
 
-  def should_send_notification?(patient_session)
-    patient_session.patient.send_notifications? &&
-      !patient_session.vaccination_administered?
+  def should_send_notification?(patient_session:)
+    patient = patient_session.patient
+
+    return false unless patient.send_notifications?
+
+    return false if patient_session.vaccination_administered?
+
+    patient_session.consent_given_triage_not_needed? ||
+      patient_session.triaged_ready_to_vaccinate?
   end
 end
