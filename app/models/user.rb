@@ -45,7 +45,10 @@ class User < ApplicationRecord
 
   validates :family_name, :given_name, presence: true, length: { maximum: 255 }
 
-  validates :email, uniqueness: true, notify_safe_email: true
+  validates :email,
+            uniqueness: true,
+            notify_safe_email: true,
+            if: :requires_email_and_password?
 
   validates :password,
             presence: true,
@@ -53,7 +56,7 @@ class User < ApplicationRecord
             length: {
               within: 6..128
             },
-            if: :requires_password?
+            if: :requires_email_and_password?
 
   scope :recently_active,
         -> { where(last_sign_in_at: 1.week.ago..Time.current) }
@@ -63,7 +66,7 @@ class User < ApplicationRecord
     teams.first
   end
 
-  def requires_password?
+  def requires_email_and_password?
     provider.blank? || uid.blank?
   end
 
