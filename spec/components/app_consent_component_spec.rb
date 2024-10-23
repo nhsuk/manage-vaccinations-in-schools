@@ -16,7 +16,7 @@ describe AppConsentComponent, type: :component do
     it { should_not have_css("p.app-status", text: "Consent (given|refused)") }
     it { should_not have_css("details", text: /Consent (given|refused) by/) }
     it { should_not have_css("details", text: "Responses to health questions") }
-    it { should have_css("p", text: "No response yet") }
+    it { should have_css("p", text: "No requests have been sent.") }
     it { should have_css("button", text: "Get consent") }
   end
 

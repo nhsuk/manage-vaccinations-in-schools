@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppPatientPageComponent, type: :component do
+describe AppPatientPageComponent do
   subject(:rendered) { render_inline(component) }
 
   def stub_authorization(allowed:)

@@ -223,6 +223,7 @@ Rails.application.routes.draw do
                 as: :patient,
                 only: %i[show] do
         get "log"
+        post "request-consent", action: :request_consent
 
         post "consents", to: "manage_consents#create", as: :manage_consents
         resources :manage_consents,

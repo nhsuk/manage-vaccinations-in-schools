@@ -16,6 +16,29 @@ class PatientSessionsController < ApplicationController
   def log
   end
 
+  def request_consent
+    return unless @patient_session.no_consent?
+
+    @session.programmes.each do |programme|
+      ConsentNotification.create_and_send!(
+        patient: @patient,
+        programme:,
+        session: @session,
+        type: :request
+      )
+    end
+
+    redirect_to session_patient_path(
+                  @session,
+                  @patient,
+                  section: @section,
+                  tab: @tab
+                ),
+                flash: {
+                  success: "Consent request sent."
+                }
+  end
+
   private
 
   def set_patient_session

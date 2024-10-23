@@ -15,6 +15,16 @@ class AppConsentComponent < ViewComponent::Base
   delegate :session, to: :patient_session
 
   def consents
-    patient_session.consents.recorded.order(recorded_at: :desc)
+    @consents ||= patient_session.consents.recorded.order(recorded_at: :desc)
+  end
+
+  def latest_consent_request
+    @latest_consent_request ||=
+      patient
+        .consent_notifications
+        .request
+        .where(programme: session.programmes)
+        .order(sent_at: :desc)
+        .first
   end
 end
