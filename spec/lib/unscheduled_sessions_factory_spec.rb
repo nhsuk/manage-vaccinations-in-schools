@@ -31,6 +31,14 @@ describe UnscheduledSessionsFactory do
       end
     end
 
+    context "with a community clinic" do
+      before { create(:location, :community_clinic, team:) }
+
+      it "doesn't create any unscheduled sessions" do
+        expect { call }.not_to change(team.sessions, :count)
+      end
+    end
+
     context "with a school that's not eligible for the programme" do
       before { create(:location, :primary, team:) }
 

@@ -15,12 +15,14 @@ class UnscheduledSessionsFactory
           next if sessions.any? { _1.location_id == location.id }
 
           programmes =
-            if location.school?
+            if location.generic_clinic?
+              team.programmes
+            elsif location.school?
               team.programmes.select do
                 _1.year_groups.intersect?(location.year_groups)
               end
             else
-              team.programmes
+              [] # don't create sessions for unhandled location types
             end
 
           next if programmes.empty?
