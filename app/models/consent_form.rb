@@ -365,19 +365,25 @@ class ConsentForm < ApplicationRecord
       if school && school != patient.school
         patient.update!(school:)
 
-        patient
-          .patient_sessions
-          .where(session: scheduled_session)
-          .find_each(&:destroy_if_safe!)
+        # If they've been booked in to a clinic we don't move them to a school
+        # session as it's likely they're in a clinic for a reason.
+        unless location.clinic?
+          patient
+            .patient_sessions
+            .where(session: scheduled_session)
+            .find_each(&:destroy_if_safe!)
 
-        upcoming_session =
-          Session
-            .upcoming
-            .has_programme(programme)
-            .find_by(team:, location: school)
+          upcoming_session =
+            Session
+              .upcoming
+              .has_programme(programme)
+              .find_by(team:, location: school)
 
-        if upcoming_session && patient.date_of_death.nil?
-          patient.patient_sessions.find_or_create_by!(session: upcoming_session)
+          if upcoming_session && patient.date_of_death.nil?
+            patient.patient_sessions.find_or_create_by!(
+              session: upcoming_session
+            )
+          end
         end
       end
 
