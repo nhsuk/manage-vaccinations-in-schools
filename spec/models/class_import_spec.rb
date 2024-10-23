@@ -380,38 +380,25 @@ describe ClassImport do
     context "with an existing patient not in the class list" do
       let!(:existing_patient) { create(:patient, session:) }
 
-      it "moves the existing patient to an unknown school" do
-        expect(session.patients).to include(existing_patient)
-        expect { record! }.to change { existing_patient.reload.school }.to(nil)
-        expect(session.reload.patients).not_to include(existing_patient)
-      end
-
-      it "moves the existing patient to the generic clinic" do
+      it "proposes moving the existing patient to the generic clinic" do
         location = create(:location, :generic_clinic, team:)
         generic_clinic_session = create(:session, location:, team:, programme:)
 
+        expect(session.patients).to include(existing_patient)
         expect(generic_clinic_session.patients).to be_empty
+
         record!
-        expect(generic_clinic_session.patients).to include(existing_patient)
-      end
 
-      context "when the existing patient has been vaccinated" do
-        before do
-          create(
-            :vaccination_record,
-            patient_session:
-              session.patient_sessions.find_by(patient: existing_patient),
-            programme:
+        expect(session.reload.patients).to include(existing_patient)
+        expect(generic_clinic_session.patients).to be_empty
+        expect(
+          session.patient_sessions_moving_from_this_session.map(&:patient)
+        ).to include(existing_patient)
+        expect(
+          generic_clinic_session.patient_sessions_moving_to_this_session.map(
+            &:patient
           )
-        end
-
-        it "doesn't remove the patient from the session" do
-          expect(session.patients).to include(existing_patient)
-          expect { record! }.to change { existing_patient.reload.school }.to(
-            nil
-          )
-          expect(session.reload.patients).to include(existing_patient)
-        end
+        ).to include(existing_patient)
       end
     end
   end

@@ -166,8 +166,10 @@ describe PatientSession do
     it "destroys the patient session, creates one with the proposed session" do
       # stree-ignore
       expect { confirm_transfer! }
-        .to change { described_class.exists?(patient_session.id) }
-        .from(true).to(false)
+        .to change { patient_session.patient.reload.school }
+          .from(original_session.location).to(proposed_session.location)
+        .and change { described_class.exists?(patient_session.id) }
+          .from(true).to(false)
         .and not_change(patient_session.patient.patient_sessions, :count)
     end
 
@@ -188,6 +190,21 @@ describe PatientSession do
           .to change(patient_session, :proposed_session).to(nil)
           .and not_change(patient_session, :session)
           .and change(patient_session.patient.patient_sessions, :count).by(1)
+          .and change { patient_session.patient.reload.school }
+            .from(original_session.location).to(proposed_session.location)
+      end
+    end
+
+    context "when the patient session is for the generic clinic" do
+      let(:team) { original_session.team }
+      let(:location) { create(:location, :generic_clinic, team:) }
+      let(:proposed_session) { create(:session, location:, team:, programme:) }
+
+      it "updates the patient's school to nil" do
+        expect { confirm_transfer! }.to change(
+          patient_session.patient,
+          :school
+        ).to(nil)
       end
     end
   end
