@@ -6,7 +6,7 @@ class ProgrammesController < ApplicationController
   layout "full"
 
   def index
-    @programmes = policy_scope(Programme)
+    @programmes = policy_scope(Programme).includes(:active_vaccines)
   end
 
   def show

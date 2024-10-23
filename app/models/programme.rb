@@ -35,6 +35,8 @@ class Programme < ApplicationRecord
   has_many :patients, through: :patient_sessions
   has_many :teams, through: :team_programmes
 
+  has_many :active_vaccines, -> { active }, class_name: "Vaccine"
+
   enum :type, { flu: "flu", hpv: "hpv" }, validate: true
 
   def name

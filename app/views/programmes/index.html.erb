@@ -19,7 +19,7 @@
           <% end %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Vaccines</span>
-            <%= programme.vaccines.map(&:brand).join("<br>").html_safe %>
+            <%= programme.active_vaccines.map(&:brand).join("<br>").html_safe %>
           <% end %>
         <% end %>
       <% end %>
