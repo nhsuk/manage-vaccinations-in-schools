@@ -145,6 +145,8 @@ Rails.application.routes.draw do
     resources :class_imports, path: "class-imports", except: %i[index destroy]
 
     resource :dates, controller: "session_dates", only: %i[show update]
+
+    resources :moves, controller: "session_moves", only: %i[index update]
   end
 
   scope "/sessions/:session_id/:section", as: "session" do
