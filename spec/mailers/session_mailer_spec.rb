@@ -41,4 +41,99 @@ describe SessionMailer do
       end
     end
   end
+
+  describe "#clinic_initial_invitation" do
+    subject(:mail) do
+      described_class.with(patient_session:, parent:).clinic_initial_invitation
+    end
+
+    let(:programme) { create(:programme) }
+    let(:team) do
+      create(
+        :team,
+        name: "SAIS team",
+        email: "sais@example.com",
+        phone: "07987654321",
+        programmes: [programme]
+      )
+    end
+    let(:patient) do
+      create(
+        :patient,
+        given_name: "John",
+        family_name: "Smith",
+        common_name: "Joey"
+      )
+    end
+    let(:session) { create(:session, team:, programme:) }
+    let(:parent) { patient.parents.first }
+    let(:patient_session) { create(:patient_session, patient:, session:) }
+
+    it { should have_attributes(to: [parent.email]) }
+
+    describe "personalisation" do
+      subject(:personalisation) do
+        mail.message.header["personalisation"].unparsed_value
+      end
+
+      it do
+        expect(personalisation).to include(
+          full_and_preferred_patient_name: "John Smith (known as Joey)"
+        )
+      end
+
+      it { should include(team_name: "SAIS team") }
+      it { should include(team_email: "sais@example.com") }
+      it { should include(team_phone: "07987654321") }
+    end
+  end
+
+  describe "#clinic_subsequent_invitation" do
+    subject(:mail) do
+      described_class.with(
+        patient_session:,
+        parent:
+      ).clinic_subsequent_invitation
+    end
+
+    let(:programme) { create(:programme) }
+    let(:team) do
+      create(
+        :team,
+        name: "SAIS team",
+        email: "sais@example.com",
+        phone: "07987654321",
+        programmes: [programme]
+      )
+    end
+    let(:patient) do
+      create(
+        :patient,
+        given_name: "John",
+        family_name: "Smith",
+        common_name: "Joey"
+      )
+    end
+    let(:session) { create(:session, team:, programme:) }
+    let(:parent) { patient.parents.first }
+    let(:patient_session) { create(:patient_session, patient:, session:) }
+
+    it { should have_attributes(to: [parent.email]) }
+
+    describe "personalisation" do
+      subject(:personalisation) do
+        mail.message.header["personalisation"].unparsed_value
+      end
+
+      it do
+        expect(personalisation).to include(
+          full_and_preferred_patient_name: "John Smith (known as Joey)"
+        )
+      end
+
+      it { should include(team_name: "SAIS team") }
+      it { should include(team_email: "sais@example.com") }
+      it { should include(team_phone: "07987654321") }
+    end
+  end
 end
