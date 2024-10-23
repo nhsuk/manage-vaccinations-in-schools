@@ -67,7 +67,26 @@ end
 
 def write_nominal_roll_to_file(students)
   CSV.open("scratchpad/nominal_roll.csv", "w") do |csv|
-    csv << CohortImport.new.send(:required_headers)
+    csv << %w[
+      CHILD_ADDRESS_LINE_1
+      CHILD_ADDRESS_LINE_2
+      CHILD_ADDRESS_POSTCODE
+      CHILD_ADDRESS_TOWN
+      CHILD_COMMON_NAME
+      CHILD_DATE_OF_BIRTH
+      CHILD_FIRST_NAME
+      CHILD_LAST_NAME
+      CHILD_NHS_NUMBER
+      PARENT_1_EMAIL
+      PARENT_1_NAME
+      PARENT_1_PHONE
+      PARENT_1_RELATIONSHIP
+      PARENT_2_EMAIL
+      PARENT_2_NAME
+      PARENT_2_PHONE
+      PARENT_2_RELATIONSHIP
+      CHILD_SCHOOL_URN
+    ]
 
     students.each do |student|
       csv << [
@@ -77,15 +96,15 @@ def write_nominal_roll_to_file(students)
         student.address_town,
         student.common_name,
         student.date_of_birth,
-        student.first_name,
-        student.last_name,
+        student.given_name,
+        student.family_name,
         student.nhs_number,
         student.parents.first&.email,
-        student.parents.first&.name,
+        student.parents.first&.full_name,
         student.parents.first&.phone,
         student.parent_relationships.first&.type,
         student.parents.second&.email,
-        student.parents.second&.name,
+        student.parents.second&.full_name,
         student.parents.second&.phone,
         student.parent_relationships.second&.type,
         student.school.urn
@@ -107,8 +126,8 @@ def write_vaccination_records_to_file(vaccination_records)
         vaccination_record.patient.school.urn,
         nil, # school name
         vaccination_record.patient.nhs_number,
-        vaccination_record.patient.first_name,
-        vaccination_record.patient.last_name,
+        vaccination_record.patient.given_name,
+        vaccination_record.patient.family_name,
         vaccination_record.patient.date_of_birth.to_fs(:dps),
         vaccination_record.patient.address_postcode,
         vaccination_record.administered_at.to_date.to_fs(:dps),
@@ -175,7 +194,7 @@ def create_students_and_vaccinations_for(school:, team:, year_size_estimate:)
           team:,
           location: school
         )
-      batch = FactoryBot.create(:batch, vaccine:)
+      batch = FactoryBot.create(:batch, team:, vaccine:)
 
       session_participants = [dose_1_cohort, dose_2_cohort].flatten.compact
       session.patients << session_participants
