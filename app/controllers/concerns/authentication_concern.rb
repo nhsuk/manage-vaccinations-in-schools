@@ -34,7 +34,7 @@ module AuthenticationConcern
     end
 
     def valid_cis2_roles
-      ["S8000:G8000:R8001"]
+      %w[S8000:G8000:R8001 S8000:G8001:R8006]
     end
 
     def selected_cis2_role_is_valid?
