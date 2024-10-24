@@ -3,14 +3,6 @@
 describe AppPatientPageComponent do
   subject(:rendered) { render_inline(component) }
 
-  def stub_authorization(allowed:)
-    # rubocop:disable RSpec/AnyInstance
-    allow_any_instance_of(Pundit::Authorization).to receive(:policy).and_return(
-      instance_double(ApplicationPolicy, create?: allowed, new?: allowed)
-    )
-    # rubocop:enable RSpec/AnyInstance
-  end
-
   before do
     # rubocop:disable RSpec/AnyInstance
     allow_any_instance_of(AppSimpleStatusBannerComponent).to receive(

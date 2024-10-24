@@ -223,4 +223,5 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include TextExpectations, type: :feature
   config.include ViewComponent::TestHelpers, type: :component
+  config.include AuthorisationHelper
 end
