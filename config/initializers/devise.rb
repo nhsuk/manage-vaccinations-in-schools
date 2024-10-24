@@ -319,9 +319,6 @@ Devise.setup do |config|
         discovery: true,
         client_auth_method: :jwks,
         client_options: {
-          port: 443,
-          scheme: "https",
-          host: Settings.cis2.host,
           identifier: Settings.cis2.client_id,
           secret: Settings.cis2.secret,
           redirect_uri:
@@ -329,6 +326,9 @@ Devise.setup do |config|
       }
     )
   end
+
+  require_relative("../../lib/rack_oauth2_client_patch")
+  Rack::OAuth2::Client.prepend(RackOAuth2ClientPatch)
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
