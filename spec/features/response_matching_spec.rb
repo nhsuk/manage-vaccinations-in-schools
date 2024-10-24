@@ -82,7 +82,7 @@ describe "Response matching" do
   end
 
   def and_i_go_to_the_consent_given_page
-    click_on "Given"
+    click_on "Consent given"
   end
 
   def then_the_matched_cohort_appears_in_the_consent_given_list

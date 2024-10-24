@@ -141,7 +141,7 @@ describe "End-to-end journey" do
   end
 
   def then_i_see_the_children_from_the_cohort
-    click_link "No consent"
+    click_link "No response"
     expect(page).to have_content("Bobby Tables")
   end
 

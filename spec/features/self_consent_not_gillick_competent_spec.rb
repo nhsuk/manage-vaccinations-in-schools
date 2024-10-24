@@ -43,7 +43,7 @@ describe "Not Gillick competent" do
     click_on "Pilot School"
     click_on "Check consent responses"
 
-    expect(page).to have_content("No consent ( 1 )")
+    expect(page).to have_content("No response ( 1 )")
     expect(page).to have_content(@child.full_name)
   end
 
