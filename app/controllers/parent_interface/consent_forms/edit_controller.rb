@@ -10,6 +10,8 @@ module ParentInterface
     before_action :set_health_answer, if: :is_health_question_step?
     before_action :set_follow_up_changes_start_page, only: %i[show]
 
+    HOME_EDUCATED_SCHOOL_ID = "home-educated"
+
     def show
       render_wizard
     end
@@ -24,8 +26,15 @@ module ParentInterface
           wizard_step: current_step,
           health_question_number: @question_number
         )
+      elsif step == "school" &&
+            update_params[:school_id] == HOME_EDUCATED_SCHOOL_ID
+        model.assign_attributes(
+          school: nil,
+          home_educated: true,
+          wizard_step: current_step
+        )
       else
-        model.assign_attributes(update_params)
+        model.assign_attributes(wizard_step: current_step, **update_params)
       end
 
       if current_step == :parent &&
@@ -84,10 +93,7 @@ module ParentInterface
         address: %i[address_line_1 address_line_2 address_town address_postcode]
       }.fetch(current_step)
 
-      params
-        .fetch(:consent_form, {})
-        .permit(permitted_attributes)
-        .merge(wizard_step: current_step)
+      params.fetch(:consent_form, {}).permit(permitted_attributes)
     end
 
     def health_answer_params
