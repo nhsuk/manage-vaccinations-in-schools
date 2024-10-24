@@ -57,6 +57,12 @@ describe AppOutcomeBannerComponent do
 
       it { should have_text("Date\nToday (#{date})") }
     end
+
+    context "when it's unknown who performed the vaccination" do
+      before { vaccination_record.update!(performed_by_user: nil) }
+
+      it { should have_text("Vaccinator\nUnknown") }
+    end
   end
 
   context "state is triaged_do_not_vaccinate" do
