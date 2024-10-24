@@ -7,6 +7,7 @@ describe AppSimpleStatusBannerComponent, type: :component do
     allow(component).to receive(:new_session_patient_triages_path).and_return(
       "/session/patient/triage/new"
     )
+    stub_authorization(allowed: true)
   end
 
   let(:user) { create :user }
