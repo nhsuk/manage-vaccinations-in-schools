@@ -323,6 +323,8 @@ class ConsentForm < ApplicationRecord
           session_scope.find_by(location:)
         elsif school
           session_scope.find_by(location: school)
+        elsif home_educated
+          session_scope.find_by(location: team.generic_clinic)
         else
           session_scope.find_by(location:)
         end
@@ -379,7 +381,15 @@ class ConsentForm < ApplicationRecord
   def match_with_patient!(patient)
     ActiveRecord::Base.transaction do
       if school && school != patient.school
-        patient.update!(school:)
+        patient.school = school
+        patient.home_educated = false
+      elsif home_educated && !patient.home_educated
+        patient.school = nil
+        patient.home_educated = true
+      end
+
+      if patient.changed?
+        patient.save!
 
         if actual_upcoming_session.nil?
           # There are no upcoming sessions available for their chosen location,
@@ -491,7 +501,10 @@ class ConsentForm < ApplicationRecord
 
     self.gp_name = nil unless gp_response_yes?
 
-    self.school = nil if school_confirmed
+    if school_confirmed
+      self.school = nil
+      self.home_educated = false
+    end
   end
 
   def seed_health_questions
