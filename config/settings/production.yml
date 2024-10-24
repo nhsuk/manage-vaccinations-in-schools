@@ -1,1 +1,4 @@
 disallow_database_seeding: true
+
+pds:
+  perform_jobs: true
