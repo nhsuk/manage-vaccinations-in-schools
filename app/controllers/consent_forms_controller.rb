@@ -14,7 +14,7 @@ class ConsentFormsController < ApplicationController
   def show
     @patient_sessions =
       @consent_form
-        .scheduled_session
+        .original_session
         .patient_sessions
         .includes(:patient)
         .order("patients.family_name")
@@ -39,7 +39,7 @@ class ConsentFormsController < ApplicationController
       heading_link_text: patient.full_name,
       heading_link_href:
         session_patient_path(
-          patient.upcoming_sessions.first || @consent_form.scheduled_session,
+          patient.upcoming_sessions.first || @consent_form.original_session,
           id: patient.id,
           section: "triage",
           tab: "given"

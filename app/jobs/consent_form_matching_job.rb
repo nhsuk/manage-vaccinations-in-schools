@@ -23,8 +23,8 @@ class ConsentFormMatchingJob < ApplicationJob
       return
     end
 
-    # Search in the scheduled session if not
-    session = consent_form.scheduled_session
+    # Search in the original scheduled session if not
+    session = consent_form.original_session
 
     patients = session.patients.match_existing(nhs_number: nil, **query)
 

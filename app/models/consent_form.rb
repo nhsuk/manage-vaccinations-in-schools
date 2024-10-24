@@ -305,9 +305,9 @@ class ConsentForm < ApplicationRecord
       refused_because_medical_reasons? || refused_because_already_vaccinated?
   end
 
-  def scheduled_session
-    @scheduled_session ||=
-      Session.scheduled.has_programme(programme).find_by(team:, location:)
+  def original_session
+    @original_session ||=
+      Session.has_programme(programme).find_by(academic_year:, location:, team:)
   end
 
   def find_or_create_parent_with_relationship_to!(patient:)
@@ -367,7 +367,7 @@ class ConsentForm < ApplicationRecord
         unless location.clinic?
           patient
             .patient_sessions
-            .where(session: scheduled_session)
+            .where(session: original_session)
             .find_each(&:destroy_if_safe!)
 
           upcoming_session =
@@ -389,6 +389,10 @@ class ConsentForm < ApplicationRecord
   end
 
   private
+
+  def academic_year
+    created_at.to_date.academic_year
+  end
 
   def refused_and_not_had_it_already?
     consent_refused? && !refused_because_will_be_vaccinated_elsewhere? &&
