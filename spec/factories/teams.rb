@@ -50,6 +50,12 @@ FactoryBot.define do
       end
     end
 
+    trait :with_one_admin do
+      transient { admin_email { "admin.hope@example.com" } }
+
+      users { create_list(:user, 1, teams: [instance], email: admin_email) }
+    end
+
     trait :with_generic_clinic do
       after(:create) do |team, _evaluator|
         create(:location, :generic_clinic, team:)
