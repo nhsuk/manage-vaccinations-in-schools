@@ -96,4 +96,8 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       "has_other_roles" => raw_cis2_info["nhsid_nrbac_roles"].length > 1
     }
   end
+
+  def after_omniauth_failure_path_for(_scope)
+    root_path
+  end
 end
