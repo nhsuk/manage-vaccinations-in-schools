@@ -70,9 +70,12 @@
             <span class="nhsuk-table-responsive__heading">
               <%= @tab == :in ? "School joined from" : "School moved to" %>
             </span>
-            <%= @tab == :in ?
-                  patient_session.session.location.name :
-                  patient_session.proposed_session.location.name %>
+            <% school = @tab == :in ?
+                 patient_session.session :
+                 patient_session.proposed_session %>
+            <%= school.location.generic_clinic? ?
+                  "Unknown school" :
+                  school.location.name %>
           <% end %>
 
           <% row.with_cell do %>
