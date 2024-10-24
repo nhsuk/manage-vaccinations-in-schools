@@ -30,6 +30,7 @@ module ParentInterface
     end
 
     def cannot_consent_responsibility
+      @team = @consent_form.team
     end
 
     def deadline_passed

@@ -8,12 +8,11 @@
 <%= h1 "You cannot give or refuse consent through this service" %>
 
 <p>
-  To give or refuse consent for a child’s vaccination, you need to have parental responsibility.
+  To give or refuse consent for a child’s vaccination, you need to have
+  parental responsibility.
 </p>
 
 <p>
   If you have any questions, please contact the local health team by calling
-  <%= @session.team.phone %>, or email
-  <a class="nhsuk-link" href="mailto:<%= @session.team.email %>">
-    <%= @session.team.email %></a>.
+  <%= @team.phone %>, or email <%= mail_to @team.email %>.
 </p>
