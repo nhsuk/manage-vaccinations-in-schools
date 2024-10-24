@@ -740,7 +740,7 @@ describe ConsentForm do
       end
     end
 
-    context "when consent form doesn't confirm the school" do
+    context "when the patient goes to a different school" do
       let(:consent_form) do
         create(
           :consent_form,
@@ -764,6 +764,12 @@ describe ConsentForm do
         expect { match_with_patient! }.to change(patient, :school).from(
           school
         ).to(new_school)
+      end
+
+      it "changes the patient's home educated status" do
+        expect { match_with_patient! }.to change(patient, :home_educated).to(
+          false
+        )
       end
 
       it "removes the patient from the old session" do
@@ -792,6 +798,51 @@ describe ConsentForm do
           match_with_patient!
           expect(patient.reload.sessions).to contain_exactly(session)
         end
+      end
+    end
+
+    context "when the patient is home educated" do
+      let(:consent_form) do
+        create(
+          :consent_form,
+          team:,
+          session:,
+          school_confirmed: false,
+          home_educated: true
+        )
+      end
+
+      let(:new_location) { create(:location, :generic_clinic, team:) }
+      let!(:new_session) do
+        create(:session, programme:, team:, location: new_location)
+      end
+
+      it "creates a consent" do
+        expect { match_with_patient! }.to change(Consent, :count).by(1)
+      end
+
+      it "changes the patient's school" do
+        expect { match_with_patient! }.to change(patient, :school).from(
+          school
+        ).to(nil)
+      end
+
+      it "changes the patient's home educated status" do
+        expect { match_with_patient! }.to change(patient, :home_educated).to(
+          true
+        )
+      end
+
+      it "removes the patient from the old session" do
+        expect(patient.sessions).to contain_exactly(session)
+        match_with_patient!
+        expect(patient.reload.sessions).not_to include(session)
+      end
+
+      it "adds the patient to the generic clinic" do
+        expect(patient.sessions).not_to include(new_session)
+        match_with_patient!
+        expect(patient.reload.sessions).to contain_exactly(new_session)
       end
     end
   end
