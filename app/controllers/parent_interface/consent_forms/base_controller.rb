@@ -13,7 +13,7 @@ module ParentInterface
 
     def set_consent_form
       @consent_form = ConsentForm.find(params[:consent_form_id] || params[:id])
-      @session = @consent_form.scheduled_session
+      @session = @consent_form.original_session
       @programme = @consent_form.programme
       @team = @consent_form.team
     end

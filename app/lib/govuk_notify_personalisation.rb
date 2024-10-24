@@ -23,7 +23,7 @@ class GovukNotifyPersonalisation
       programme || vaccination_record&.programme || consent_form&.programme ||
         consent&.programme
     @session =
-      session || consent_form&.scheduled_session || patient_session&.session
+      session || consent_form&.original_session || patient_session&.session
     @team =
       session&.team || patient_session&.team || consent_form&.team ||
         consent&.team || vaccination_record&.team
