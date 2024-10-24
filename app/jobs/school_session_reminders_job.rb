@@ -36,9 +36,7 @@ class SchoolSessionRemindersJob < ApplicationJob
   end
 
   def should_send_notification?(patient_session:)
-    patient = patient_session.patient
-
-    return false unless patient.send_notifications?
+    return false unless patient_session.send_notifications?
 
     return false if patient_session.vaccination_administered?
 

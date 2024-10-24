@@ -6,49 +6,56 @@ class ClinicSessionInvitationsJob < ApplicationJob
   def perform
     return unless Flipper.enabled?(:scheduled_emails)
 
-    # TODO: when do we want to send these?
-    date = 3.weeks.from_now.to_date
-
-    patient_sessions =
-      PatientSession
+    sessions =
+      Session
+        .send_invitations
         .includes(
-          :consents,
-          patient: %i[session_notifications vaccination_records],
-          session: :programmes
+          :dates,
+          :programmes,
+          patient_sessions: %i[
+            consents
+            patient
+            session_notifications
+            vaccination_records
+          ]
         )
-        .joins(:location, :session)
+        .joins(:location)
         .merge(Location.clinic)
-        .merge(Session.has_date(date))
-        .notification_not_sent(date)
         .strict_loading
 
-    patient_sessions.each do |patient_session|
-      next unless should_send_notification?(patient_session:)
+    sessions.each do |session|
+      session_date = session.today_or_future_dates.first
 
-      patient = patient_session.patient
+      session.patient_sessions.each do |patient_session|
+        next unless should_send_notification?(patient_session:, session_date:)
 
-      type =
-        if patient.session_notifications.any? { _1.session_id == session.id }
-          :clinic_subsequent_invitation
-        else
-          :clinic_initial_invitation
-        end
+        type =
+          if patient_session.session_notifications.any?
+            :clinic_subsequent_invitation
+          else
+            :clinic_initial_invitation
+          end
 
-      SessionNotification.create_and_send!(
-        patient_session:,
-        session_date: date,
-        type:
-      )
+        SessionNotification.create_and_send!(
+          patient_session:,
+          session_date:,
+          type:
+        )
+      end
     end
   end
 
-  def should_send_notification?(patient_session:)
-    patient = patient_session.patient
-    programmes = patient_session.session.programmes
+  def should_send_notification?(patient_session:, session_date:)
+    return false unless patient_session.send_notifications?
 
-    return false unless patient.send_notifications?
+    return false if patient_session.vaccination_administered?
 
-    return false if programmes.all? { patient.vaccinated?(_1) }
+    already_sent_notification =
+      patient_session.session_notifications.any? do
+        _1.session_date == session_date
+      end
+
+    return false if already_sent_notification
 
     return false if patient_session.consent_refused?
 

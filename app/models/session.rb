@@ -83,6 +83,14 @@ class Session < ApplicationRecord
             SessionDate.for_session.select("MIN(value)")
           )
         end
+  scope :send_invitations,
+        -> do
+          scheduled.where(
+            "? >= (?)",
+            3.weeks.from_now,
+            SessionDate.for_session.select("MIN(value)")
+          )
+        end
 
   validates :programmes, presence: true
   validate :programmes_part_of_team
