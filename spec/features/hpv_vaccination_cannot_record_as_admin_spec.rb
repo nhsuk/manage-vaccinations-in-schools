@@ -11,13 +11,7 @@ describe "HPV vaccination" do
 
   def given_i_am_signed_in_as_an_admin
     programme = create(:programme, :hpv_all_vaccines)
-    team =
-      create(
-        :team,
-        :with_one_nurse,
-        programmes: [programme],
-        nurse_email: "admin.hope@example.com"
-      )
+    team = create(:team, :with_one_admin, programmes: [programme])
     location = create(:location, :school)
     @session = create(:session, team:, programme:, location:)
     @patient =
