@@ -105,7 +105,7 @@
       
         summary_list.with_row do |row|
           row.with_key { "School" }
-          row.with_value { (@consent_form.choose_school? ? @consent_form.school : @consent_form.location).name }
+          row.with_value { (@consent_form.school || @consent_form.location).name }
           row.with_action(
             text: "Change",
             href: change_link[:school],
