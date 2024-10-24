@@ -656,10 +656,10 @@ en:
       label: Conflicts
     consent_given:
       caption: "%{children} with consent given"
-      label: Given
+      label: Consent given
     consent_refused:
       caption: "%{children} with consent refused"
-      label: Refused
+      label: Consent refused
     could_not_vaccinate:
       caption: "%{children} could not vaccinated"
       label: Could not vaccinate
@@ -668,7 +668,7 @@ en:
       label: Triage needed
     no_consent:
       caption: "%{children} without a response"
-      label: No consent
+      label: No response
     no_triage_needed:
       caption: "%{children} with no triage needed"
       label: No triage needed

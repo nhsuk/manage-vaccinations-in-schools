@@ -143,8 +143,8 @@ describe "Parental consent" do
   end
 
   def then_they_see_that_the_child_has_consent_refused
-    expect(page).to have_content("Refused")
-    click_on "Refused"
+    expect(page).to have_content("Consent refused")
+    click_on "Consent refused"
     expect(page).to have_content(@child.full_name)
   end
 

@@ -49,7 +49,7 @@ describe "Self-consent" do
     click_on "Community clinics"
     click_on "Check consent responses"
 
-    expect(page).to have_content("No consent ( 1 )")
+    expect(page).to have_content("No response ( 1 )")
     expect(page).to have_content(@child.full_name)
   end
 
@@ -130,7 +130,7 @@ describe "Self-consent" do
     click_on "Confirm"
 
     expect(page).to have_content("Check consent responses")
-    expect(page).to have_content("Given ( 1 )")
+    expect(page).to have_content("Consent given ( 1 )")
   end
 
   def when_the_nurse_views_the_childs_record

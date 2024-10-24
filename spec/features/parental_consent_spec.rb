@@ -62,9 +62,9 @@ describe "Parental consent" do
   end
 
   def then_there_should_be_no_consent_for_my_child
-    expect(page).to have_content("No consent")
+    expect(page).to have_content("No response")
 
-    click_on "No consent"
+    click_on "No response"
     expect(page).to have_content(@child.full_name)
   end
 
@@ -163,8 +163,8 @@ describe "Parental consent" do
   end
 
   def then_they_see_that_the_child_has_consent
-    expect(page).to have_content("Given")
-    click_on "Given"
+    expect(page).to have_content("Consent given")
+    click_on "Consent given"
     expect(page).to have_content(@child.full_name)
   end
 
