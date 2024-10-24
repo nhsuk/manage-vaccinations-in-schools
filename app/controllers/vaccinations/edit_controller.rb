@@ -94,12 +94,13 @@ class Vaccinations::EditController < ApplicationController
 
   def set_draft_vaccination_record
     @draft_vaccination_record = @patient_session.draft_vaccination_record
+
     if (session[:delivery_site_other] = "true")
       @draft_vaccination_record.delivery_site_other = true
     end
-    if todays_batch_id.present?
-      @draft_vaccination_record.todays_batch =
-        policy_scope(Batch).find(todays_batch_id)
+
+    if (id = todays_batch_id).present?
+      @draft_vaccination_record.todays_batch = policy_scope(Batch).find_by(id:)
     end
   end
 
