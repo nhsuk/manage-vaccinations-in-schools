@@ -19,22 +19,22 @@ module ParentInterface
     def update
       model = @consent_form
 
+      model.wizard_step = current_step
+
       if is_health_question_step?
         @health_answer.assign_attributes(health_answer_params)
-
-        model.assign_attributes(
-          wizard_step: current_step,
-          health_question_number: @question_number
-        )
-      elsif step == "school" &&
-            update_params[:school_id] == HOME_EDUCATED_SCHOOL_ID
-        model.assign_attributes(
-          school: nil,
-          home_educated: true,
-          wizard_step: current_step
-        )
+        model.health_question_number = @question_number
+      elsif step == "school"
+        school_id = update_params[:school_id]
+        if school_id == HOME_EDUCATED_SCHOOL_ID
+          model.home_educated = true
+          model.school = nil
+        else
+          model.school_id = school_id
+          model.home_educated = false
+        end
       else
-        model.assign_attributes(wizard_step: current_step, **update_params)
+        model.assign_attributes(update_params)
       end
 
       if current_step == :parent &&
@@ -71,6 +71,7 @@ module ParentInterface
           date_of_birth(1i)
         ],
         confirm_school: %i[school_confirmed],
+        home_educated: %i[home_educated],
         school: %i[school_id],
         parent: %i[
           parent_email
