@@ -265,27 +265,40 @@ This service uses [NHS's CIS2 Care Identity Authentication
 service](https://digital.nhs.uk/developer/api-catalogue/nhs-cis2-care-identity-authentication)
 to perform OIDC authentication for users.
 
-You can retrieve the issuer URL from the appropriate endpoint listed on [CIS2 Guidance Discovery
-page](https://digital.nhs.uk/services/care-identity-service/applications-and-services/cis2-authentication/guidance-for-developers/detailed-guidance/discovery):
+You can retrieve the issuer URL from the appropriate endpoint listed on [CIS2
+Guidance Discovery page]
+(https://digital.nhs.uk/services/care-identity-service/applications-and-services/cis2-authentication/guidance-for-developers/detailed-guidance/discovery)
+(note: the dev env is being deprecated and will be removed):
 
 ```sh
-$ curl -s https://am.nhsdev.auth-ptl.cis2.spineservices.nhs.uk/openam/oauth2/realms/root/realms/oidc/.well-known/openid-configuration | jq ".issuer"
-"https://am.nhsdev.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/oidc"
+$ curl -s https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare/.well-known/openid-configuration | jq .issuer
+"https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare"
 ```
 
-New client ids and secrets can be obtained from the NHS CIS2 Authentication team
-(<nhscareidentityauthentication@nhs.net>).
+Clients can be configured via CIS2 Connection Manager, please contact other team
+members to get the details for that. Mavis can use either a client secret or a
+private key JWT when authenticating requests to CIS2, these are configured with
+the Connection Manager too.
 
-Put the `issuer`, `client_id` and `secret` into the Settings for your env, and
-ensure cis2 is enabled:
+Once you've created a client config, put the `client_id` and
+`secret`/`private_key` into your local settings and ensure cis2 is enabled. For
+deployed environments these parameters need to be places into our AWS parameter
+store and are environment-specific. Here's an example of a full settings section
+using a `client_secret`:
 
 ```yml
 cis2:
   enabled: true
-  issuer: "https://am.nhsdev.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/oidc"
-  client_id: CLIENT_ID
-  secret: SECRET
+  issuer: https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcareopenam/oauth2/realms/root/realms/oidc"
+  client_id: # Only include for local settings, otherwise populate in AWS parameter store
+  secret: # Only include for local settings, otherwise populate in AWS parameter store
 ```
+
+When configuring a new `private_key` for production, for example (which must
+have it's own key), you'll need to add the public key PEM to `PagesController#jwks`
+so that it can be served out from the `/oidc/jwks` endpoint. CIS2 will use this
+to decrypt JWKs when using the `private_key_jwk` authentication method. These
+keys should be rotated on a regular basis.
 
 ## Rake tasks
 
