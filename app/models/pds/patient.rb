@@ -4,7 +4,6 @@ class PDS::Patient
   include ActiveModel::Model
 
   attr_accessor :nhs_number,
-                :given_name,
                 :family_name,
                 :date_of_birth,
                 :date_of_death,
@@ -37,7 +36,6 @@ class PDS::Patient
     def from_pds_fhir_response(response)
       new(
         nhs_number: response["id"],
-        given_name: response["name"][0]["given"][0],
         family_name: response["name"][0]["family"],
         date_of_birth: Date.parse(response["birthDate"]),
         date_of_death:

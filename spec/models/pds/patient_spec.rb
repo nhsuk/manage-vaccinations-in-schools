@@ -24,7 +24,6 @@ describe PDS::Patient do
     it "parses the patient information" do
       expect(find).to have_attributes(
         nhs_number: "9000000009",
-        given_name: "Jane",
         family_name: "Smith",
         date_of_birth: Date.new(2010, 10, 22),
         date_of_death: Date.new(2010, 10, 22),
@@ -73,7 +72,6 @@ describe PDS::Patient do
     it "parses the patient information" do
       expect(search).to have_attributes(
         nhs_number: "9449306168",
-        given_name: "ELDREDA",
         family_name: "LAWMAN",
         date_of_birth: Date.new(1939, 1, 9),
         date_of_death: nil,
