@@ -103,7 +103,7 @@ class ManageConsentsController < ApplicationController
   def handle_confirm
     ActiveRecord::Base.transaction do
       send_triage_confirmation(@patient_session, @consent)
-      unless @triage.persisted?
+      if @triage&.new_record?
         # We need to discard the draft triage record so that the patient
         # session can be saved.
         @triage.destroy!
@@ -221,11 +221,13 @@ class ManageConsentsController < ApplicationController
 
   def set_triage
     @triage =
-      Triage.find_or_initialize_by(
-        patient: @patient,
-        programme: @session.programmes.first, # TODO: handle multiple programmes
-        team: @session.team
-      )
+      if policy(Triage).new?
+        Triage.find_or_initialize_by(
+          patient: @patient,
+          programme: @session.programmes.first, # TODO: handle multiple programmes
+          team: @session.team
+        )
+      end
   end
 
   def create_params
@@ -289,6 +291,8 @@ class ManageConsentsController < ApplicationController
     # To allow us to run this method multiple times during a single action
     # lifecycle, we need to clear the cache.
     @wizard_translations = nil
+
+    @consent.assign_attributes(triage_allowed: policy(Triage).new?)
 
     self.steps = @consent.wizard_steps
   end

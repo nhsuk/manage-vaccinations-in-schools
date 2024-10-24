@@ -45,7 +45,7 @@ class Consent < ApplicationRecord
   before_save :reset_unused_fields
 
   attr_reader :new_or_existing_parent
-  attr_accessor :triage
+  attr_accessor :triage, :triage_allowed
 
   belongs_to :patient
   belongs_to :programme
@@ -130,7 +130,7 @@ class Consent < ApplicationRecord
       (:route unless via_self_consent?),
       :agree,
       (:questions if response_given?),
-      (:triage if response_given?),
+      (:triage if triage_allowed && response_given?),
       (:reason if response_refused?),
       (:reason_notes if response_refused? && reason_notes_required?),
       :confirm
