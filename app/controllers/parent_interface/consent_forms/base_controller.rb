@@ -20,10 +20,7 @@ module ParentInterface
 
     def authenticate_consent_form_user!
       unless session[:consent_form_id] == @consent_form.id
-        redirect_to start_parent_interface_consent_forms_path(
-                      @session,
-                      @programme
-                    )
+        redirect_to @header_path
       end
     end
 
