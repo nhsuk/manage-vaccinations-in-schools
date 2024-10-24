@@ -188,7 +188,8 @@ class ConsentForm < ApplicationRecord
     validates :school_id,
               inclusion: {
                 in: -> { _1.eligible_schools.pluck(:id) }
-              }
+              },
+              unless: :home_educated
   end
 
   on_wizard_step :parent do
@@ -505,6 +506,8 @@ class ConsentForm < ApplicationRecord
       self.school = nil
       self.home_educated = false
     end
+
+    self.home_educated = false if school
   end
 
   def seed_health_questions
