@@ -5,6 +5,10 @@ class TriagePolicy < ApplicationPolicy
     user.is_nurse?
   end
 
+  def update?
+    user.is_nurse?
+  end
+
   class Scope < ApplicationPolicy::Scope
     def resolve
       scope.where(team: user.teams)

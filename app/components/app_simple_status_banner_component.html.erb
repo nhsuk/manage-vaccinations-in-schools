@@ -2,9 +2,9 @@
   <% c.with_heading { heading } %>
   <p><%= I18n.t("patient_session_statuses.#{state}.banner_explanation",
                 default: "", full_name:, nurse:, who_refused:) %></p>
-  <% if state.in? %w[delay_vaccination
+  <% if state.in?(%w[delay_vaccination
                      triaged_ready_to_vaccinate
-                     triaged_do_not_vaccinate] %>
+                     triaged_do_not_vaccinate]) && helpers.policy(Triage).edit? %>
     <p>
       <%= link_to "Update triage outcome", new_session_patient_triages_path(
             session_id: @patient_session.session.id,
