@@ -10,9 +10,9 @@
 <%= govuk_inset_text do %>
   <p>
     <span class="nhsuk-heading-m nhsuk-u-margin-bottom-0" data-qa="school-name">
-      <%= @session.location.name %>
+      <%= @consent_form.location.name %>
     </span>
-    <%= format_address_single_line(@session.location) %>
+    <%= format_address_single_line(@consent_form.location) %>
   </p>
 <% end %>
 
