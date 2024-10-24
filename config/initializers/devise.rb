@@ -289,6 +289,8 @@ Devise.setup do |config|
     setup =
       lambda do |env|
         if env.dig("rack.request.form_hash", "change_role")
+          # When changing a role the user must reauthenticate. For more info:
+          # https://digital.nhs.uk/services/care-identity-service/applications-and-services/cis2-authentication/guidance-for-developers/detailed-guidance/role-selection#changing-role
           env["omniauth.strategy"].options["scope"] << :changedrole
           env["omniauth.strategy"].options["prompt"] = :login
         else
