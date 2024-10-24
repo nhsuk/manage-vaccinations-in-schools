@@ -245,7 +245,7 @@ class ConsentForm < ApplicationRecord
     [
       :name,
       :date_of_birth,
-      :confirm_school,
+      (:confirm_school if location_is_school?),
       (:school if choose_school?),
       :parent,
       (:contact_method if parent_phone.present?),
@@ -356,10 +356,6 @@ class ConsentForm < ApplicationRecord
     ).label
   end
 
-  def choose_school?
-    !school_confirmed
-  end
-
   def match_with_patient!(patient)
     ActiveRecord::Base.transaction do
       if school && school != patient.school
@@ -428,6 +424,14 @@ class ConsentForm < ApplicationRecord
     true
   end
 
+  def location_is_school?
+    location.school?
+  end
+
+  def choose_school?
+    location.clinic? || !school_confirmed
+  end
+
   # Because there are branching paths in the consent form journey, fields
   # sometimes get set with values that then have to be deleted if the user
   # changes their mind and goes down a different path.
@@ -461,6 +465,8 @@ class ConsentForm < ApplicationRecord
     end
 
     self.gp_name = nil unless gp_response_yes?
+
+    self.school = nil if school_confirmed
   end
 
   def seed_health_questions
