@@ -152,8 +152,7 @@ class VaccinationRecord < ApplicationRecord
             :performed_by_given_name,
             absence: {
               if: :performed_by_user
-            },
-            if: :recorded?
+            }
 
   validate :batch_vaccine_matches_vaccine, if: -> { recorded? && administered? }
 
