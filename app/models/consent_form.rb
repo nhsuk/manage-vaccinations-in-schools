@@ -310,6 +310,25 @@ class ConsentForm < ApplicationRecord
       Session.has_programme(programme).find_by(academic_year:, location:, team:)
   end
 
+  # This can be different to the original session if the parent tells us their
+  # child goes to a different school.
+  def actual_upcoming_session
+    @actual_upcoming_session ||=
+      begin
+        session_scope = Session.upcoming.has_programme(programme).where(team:)
+
+        if location.clinic?
+          # If they've been booked in to a clinic we don't move them to a school
+          # session as it's likely they're in a clinic for a reason.
+          session_scope.find_by(location:)
+        elsif school
+          session_scope.find_by(location: school)
+        else
+          session_scope.find_by(location:)
+        end
+      end
+  end
+
   def find_or_create_parent_with_relationship_to!(patient:)
     parent =
       Parent.match_existing(
@@ -362,23 +381,24 @@ class ConsentForm < ApplicationRecord
       if school && school != patient.school
         patient.update!(school:)
 
-        # If they've been booked in to a clinic we don't move them to a school
-        # session as it's likely they're in a clinic for a reason.
-        unless location.clinic?
+        if actual_upcoming_session.nil?
+          # There are no upcoming sessions available for their chosen location,
+          # either the original session or a different school or a clinic if
+          # home educated. This can happen if the parent fills out the form
+          # late.
+          #
+          # The patient will be left in their original session.
+          #
+          # TODO: Do we want to record this somewhere?
+        elsif original_session != actual_upcoming_session
           patient
             .patient_sessions
             .where(session: original_session)
             .find_each(&:destroy_if_safe!)
 
-          upcoming_session =
-            Session
-              .upcoming
-              .has_programme(programme)
-              .find_by(team:, location: school)
-
-          if upcoming_session && patient.date_of_death.nil?
-            patient.patient_sessions.find_or_create_by!(
-              session: upcoming_session
+          unless patient.deceased? || patient.invalidated?
+            actual_upcoming_session.patient_sessions.find_or_create_by!(
+              patient:
             )
           end
         end
