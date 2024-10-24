@@ -79,26 +79,60 @@ describe PatientNHSNumberLookupJob do
         create(:vaccination_record, patient_session:, programme:)
       end
 
-      it "deletes the patient without an NHS number" do
-        expect { perform_now }.to change(Patient, :count).by(-1)
+      context "when the existing patient is not already in the session" do
+        it "deletes the patient without an NHS number" do
+          expect { perform_now }.to change(Patient, :count).by(-1)
+        end
+
+        it "moves the gillick assessments" do
+          expect { perform_now }.to change {
+            gillick_assessment.reload.patient
+          }.from(patient).to(existing_patient)
+        end
+
+        it "moves the triages" do
+          expect { perform_now }.to change { triage.reload.patient }.from(
+            patient
+          ).to(existing_patient)
+        end
+
+        it "moves the vaccination records" do
+          expect { perform_now }.to change {
+            vaccination_record.reload.patient
+          }.from(patient).to(existing_patient)
+        end
       end
 
-      it "moves the gillick assessments" do
-        expect { perform_now }.to change {
-          gillick_assessment.reload.patient
-        }.from(patient).to(existing_patient)
-      end
+      context "when the existing patient is already in the session" do
+        before do
+          create(
+            :patient_session,
+            patient: existing_patient,
+            session: patient_session.session
+          )
+        end
 
-      it "moves the triages" do
-        expect { perform_now }.to change { triage.reload.patient }.from(
-          patient
-        ).to(existing_patient)
-      end
+        it "deletes the patient without an NHS number" do
+          expect { perform_now }.to change(Patient, :count).by(-1)
+        end
 
-      it "moves the vaccination records" do
-        expect { perform_now }.to change {
-          vaccination_record.reload.patient
-        }.from(patient).to(existing_patient)
+        it "moves the gillick assessments" do
+          expect { perform_now }.to change {
+            gillick_assessment.reload.patient
+          }.from(patient).to(existing_patient)
+        end
+
+        it "moves the triages" do
+          expect { perform_now }.to change { triage.reload.patient }.from(
+            patient
+          ).to(existing_patient)
+        end
+
+        it "moves the vaccination records" do
+          expect { perform_now }.to change {
+            vaccination_record.reload.patient
+          }.from(patient).to(existing_patient)
+        end
       end
     end
   end
