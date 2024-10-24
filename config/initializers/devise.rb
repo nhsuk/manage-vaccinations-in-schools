@@ -300,6 +300,16 @@ Devise.setup do |config|
       http_client.ssl.min_version = :TLS1_2
     end
 
+    client_auth_method =
+      if Settings.cis2.secret.present? && Settings.cis2.private_key.present?
+        raise "Only one of Settings.cis2.secret or Settings.cis2.private_key can be set"
+      elsif Settings.cis2.secret.present?
+        :client_secret_post
+      elsif Settings.cis2.private_key.present?
+        :jwt_bearer
+      else
+        raise "At least one of Settings.cis2.secret or Settings.cis2.private_key must be set"
+      end
     config.omniauth(
       :openid_connect,
       {
@@ -314,15 +324,15 @@ Devise.setup do |config|
           acr_values: Settings.cis2.acr_value
         }.compact,
         response_type: :code,
-        # uid_field: "preferred_username",
         issuer: Settings.cis2.issuer,
         discovery: true,
-        client_auth_method: :jwks,
+        client_auth_method:,
         client_options: {
           identifier: Settings.cis2.client_id,
           secret: Settings.cis2.secret,
+          private_key: OpenSSL::PKey::RSA.new(Settings.cis2.private_key),
           redirect_uri:
-        }
+        }.compact
       }
     )
   end
