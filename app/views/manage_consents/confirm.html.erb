@@ -73,7 +73,7 @@
   <% end %>
 <% end %>
 
-<% if @consent.response_given? && @triage.status.present? %>
+<% if @consent.response_given? && @triage&.status.present? %>
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "Triage" } %>
     <%= govuk_summary_list classes: "app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0" do |summary_list|
