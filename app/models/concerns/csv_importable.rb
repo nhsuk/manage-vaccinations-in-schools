@@ -108,6 +108,8 @@ module CSVImportable
   end
 
   def update_from_pds
+    return unless Settings.pds.perform_jobs
+
     patients.find_each do |patient|
       if patient.nhs_number.nil?
         PatientNHSNumberLookupJob.perform_later(patient)
