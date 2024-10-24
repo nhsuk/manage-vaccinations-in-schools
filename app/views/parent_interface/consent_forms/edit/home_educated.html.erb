@@ -1,0 +1,26 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: backlink_path,
+        name: "previous page",
+      ) %>
+<% end %>
+
+<% title = "Is your child home-schooled?" %>
+<% content_for :page_title, title %>
+
+<%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= f.govuk_radio_buttons_fieldset(:home_educated,
+                                     legend: { size: "l", tag: "h1", text: title }) do %>
+    <%= f.govuk_radio_button :home_educated, true,
+                             link_errors: true,
+                             label: { text: "Yes" } %>
+    <%= f.govuk_radio_button :home_educated, false,
+                             label: { text: "No, they go to a school" } %>
+  <% end %>
+
+  <div class="nhsuk-u-margin-top-6">
+    <%= f.govuk_submit "Continue" %>
+  </div>
+<% end %>
