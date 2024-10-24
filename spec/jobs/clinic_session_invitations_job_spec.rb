@@ -12,9 +12,9 @@ describe ClinicSessionInvitationsJob do
   let(:patient) { create(:patient, parents:) }
   let(:location) { create(:location, :generic_clinic, team:) }
 
-  context "for an active clinic session in 3 weeks" do
+  context "for a scheduled clinic session in 3 weeks" do
     let(:date) { 3.weeks.from_now.to_date }
-    let!(:session) { create(:session, programme:, date:, location:, team:) }
+    let(:session) { create(:session, programme:, date:, location:, team:) }
     let(:patient_session) { create(:patient_session, patient:, session:) }
 
     it "sends a notification" do
@@ -39,6 +39,21 @@ describe ClinicSessionInvitationsJob do
       it "doesn't send any notifications" do
         expect(SessionNotification).not_to receive(:create_and_send!)
         perform_now
+      end
+
+      context "with a second date a week later" do
+        before { create(:session_date, session:, value: date + 1.week) }
+
+        let(:today) { date + 1.day }
+
+        it "sends a second notification" do
+          expect(SessionNotification).to receive(:create_and_send!).once.with(
+            patient_session:,
+            session_date: date + 1.week,
+            type: :clinic_subsequent_invitation
+          )
+          travel_to(today) { perform_now }
+        end
       end
     end
 
@@ -104,6 +119,32 @@ describe ClinicSessionInvitationsJob do
     end
   end
 
+  context "for a scheduled clinic session in 2 weeks" do
+    let(:date) { 2.weeks.from_now.to_date }
+    let(:session) { create(:session, programme:, date:, location:, team:) }
+    let(:patient_session) { create(:patient_session, patient:, session:) }
+
+    it "sends a notification" do
+      expect(SessionNotification).to receive(:create_and_send!).once.with(
+        patient_session:,
+        session_date: date,
+        type: :clinic_initial_invitation
+      )
+      perform_now
+    end
+  end
+
+  context "for a scheduled clinic session in 4 weeks" do
+    let(:date) { 4.weeks.from_now.to_date }
+    let(:session) { create(:session, programme:, date:, location:, team:) }
+    let(:patient_session) { create(:patient_session, patient:, session:) }
+
+    it "doesn't send any notifications" do
+      expect(SessionNotification).not_to receive(:create_and_send!)
+      perform_now
+    end
+  end
+
   context "for a school session in 3 weeks time" do
     let(:location) { create(:location, :school, team:) }
 
@@ -115,24 +156,6 @@ describe ClinicSessionInvitationsJob do
         patients: [patient],
         team:,
         location:
-      )
-    end
-
-    it "doesn't send any notifications" do
-      expect(SessionNotification).not_to receive(:create_and_send!)
-      perform_now
-    end
-  end
-
-  context "for a clinic session today" do
-    before do
-      create(
-        :session,
-        programme:,
-        date: Date.current,
-        patients: [patient],
-        location:,
-        team:
       )
     end
 

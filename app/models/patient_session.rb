@@ -63,6 +63,11 @@ class PatientSession < ApplicationRecord
            through: :patient,
            class_name: "Triage"
 
+  has_many :session_notifications,
+           -> { where(session_id: _1.session_id) },
+           through: :patient,
+           class_name: "SessionNotification"
+
   has_and_belongs_to_many :immunisation_imports
 
   scope :notification_not_sent,
@@ -82,6 +87,8 @@ class PatientSession < ApplicationRecord
         end
 
   scope :pending_transfer, -> { where.not(proposed_session_id: nil) }
+
+  delegate :send_notifications?, to: :patient
 
   def draft_vaccination_record
     # HACK: this code will need to be revisited in future as it only really
