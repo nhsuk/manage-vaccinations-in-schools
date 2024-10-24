@@ -97,6 +97,7 @@ environments:
       MAVIS__HOST: "test.mavistesting.com"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "test.mavistesting.com"
       MAVIS__ALLOW_DEV_PHONE_NUMBERS: true
+      MAVIS__CIS2__ENABLED: true
   training:
     http:
       alias:
