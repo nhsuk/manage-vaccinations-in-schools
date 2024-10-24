@@ -1,17 +1,34 @@
 # frozen_string_literal: true
 
 describe "Parental consent school" do
-  scenario "Child attending a clinic" do
+  scenario "Child attending a clinic goes to a school" do
     given_an_hpv_programme_is_underway
 
     when_i_go_to_the_consent_form
     and_i_fill_in_my_childs_name_and_birthday
+    then_i_see_a_page_asking_if_my_child_is_home_educated
+
+    when_i_choose_no_they_go_to_a_school
     then_i_see_a_page_asking_for_the_childs_school
 
     when_i_click_continue
     then_i_see_an_error
 
     when_i_choose_a_school
+    then_i_see_the_parent_step
+  end
+
+  scenario "Child attending a clinic is home-schooled" do
+    given_an_hpv_programme_is_underway
+
+    when_i_go_to_the_consent_form
+    and_i_fill_in_my_childs_name_and_birthday
+    then_i_see_a_page_asking_if_my_child_is_home_educated
+
+    when_i_click_continue
+    then_i_see_an_error
+
+    when_i_choose_yes
     then_i_see_the_parent_step
   end
 
@@ -52,6 +69,20 @@ describe "Parental consent school" do
     fill_in "Day", with: @child.date_of_birth.day
     fill_in "Month", with: @child.date_of_birth.month
     fill_in "Year", with: @child.date_of_birth.year
+    click_on "Continue"
+  end
+
+  def then_i_see_a_page_asking_if_my_child_is_home_educated
+    expect(page).to have_heading("Is your child home-schooled?")
+  end
+
+  def when_i_choose_no_they_go_to_a_school
+    choose "No, they go to a school"
+    click_on "Continue"
+  end
+
+  def when_i_choose_yes
+    choose "Yes"
     click_on "Continue"
   end
 

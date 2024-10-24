@@ -184,6 +184,10 @@ class ConsentForm < ApplicationRecord
     validates :school_confirmed, inclusion: { in: [true, false] }
   end
 
+  on_wizard_step :home_educated do
+    validates :home_educated, inclusion: { in: [true, false] }
+  end
+
   on_wizard_step :school do
     validates :school_id,
               inclusion: {
@@ -248,6 +252,7 @@ class ConsentForm < ApplicationRecord
       :name,
       :date_of_birth,
       (:confirm_school if location_is_school?),
+      (:home_educated if location_is_clinic?),
       (:school if choose_school?),
       :parent,
       (:contact_method if parent_phone.present?),
@@ -464,8 +469,12 @@ class ConsentForm < ApplicationRecord
     location.school?
   end
 
+  def location_is_clinic?
+    location.clinic?
+  end
+
   def choose_school?
-    location.clinic? || !school_confirmed
+    location_is_clinic? ? !home_educated : !school_confirmed
   end
 
   # Because there are branching paths in the consent form journey, fields
@@ -507,7 +516,7 @@ class ConsentForm < ApplicationRecord
       self.home_educated = false
     end
 
-    self.home_educated = false if school
+    self.school = nil if home_educated
   end
 
   def seed_health_questions
