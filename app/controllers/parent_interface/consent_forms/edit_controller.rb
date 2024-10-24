@@ -30,7 +30,7 @@ module ParentInterface
 
       if current_step == :parent &&
            @consent_form.parental_responsibility == "no"
-        redirect_to parent_interface_consent_form_cannot_consent_responsibility_path(
+        redirect_to cannot_consent_responsibility_parent_interface_consent_form_path(
                       @consent_form
                     ) and return
       end
@@ -50,7 +50,7 @@ module ParentInterface
     end
 
     def finish_wizard_path
-      parent_interface_consent_form_confirm_path(@consent_form)
+      confirm_parent_interface_consent_form_path(@consent_form)
     end
 
     def update_params

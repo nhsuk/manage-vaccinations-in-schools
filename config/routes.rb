@@ -80,10 +80,11 @@ Rails.application.routes.draw do
             as: :deadline_passed
       end
 
-      get "cannot-consent-responsibility"
-      get "cannot-consent-school"
-      get "confirm"
-      put "record"
+      member do
+        get "cannot-consent-responsibility"
+        get "confirm"
+        put "record"
+      end
 
       resources :edit, only: %i[show update], controller: "consent_forms/edit"
     end
