@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ApplicationMailer < Mail::Notify::Mailer
+  before_action :attach_data_for_notify_log_entry
+
   private
 
   def app_template_mail(template_name)
@@ -67,5 +69,18 @@ class ApplicationMailer < Mail::Notify::Mailer
       session:,
       vaccination_record:
     )
+  end
+
+  def attach_data_for_notify_log_entry
+    # https://stackoverflow.com/a/28004917
+
+    patient_id = (patient || consent&.patient || patient_session&.patient)&.id
+    consent_form_id = consent_form&.id
+
+    message.instance_variable_set(:@patient_id, patient_id)
+    message.instance_variable_set(:@consent_form_id, consent_form_id)
+
+    message.class.send(:attr_reader, :patient_id)
+    message.class.send(:attr_reader, :consent_form_id)
   end
 end
