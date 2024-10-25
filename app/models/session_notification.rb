@@ -36,6 +36,10 @@ class SessionNotification < ApplicationRecord
        ],
        validate: true
 
+  def clinic_invitation?
+    clinic_initial_invitation? || clinic_subsequent_invitation?
+  end
+
   def self.create_and_send!(patient_session:, session_date:, type:)
     # We create a record in the database first to avoid sending duplicate emails/texts.
     # If a problem occurs while the emails/texts are sent, they will be in the job

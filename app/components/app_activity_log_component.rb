@@ -55,8 +55,14 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def session_notification_events
-    @patient_session.patient.session_notifications.map do
-      { title: "Session reminder sent", time: _1.sent_at }
+    @patient_session.patient.session_notifications.map do |notification|
+      title =
+        if notification.school_reminder?
+          "School session reminder sent"
+        elsif notification.clinic_invitation?
+          "Clinic invitation sent"
+        end
+      { title:, time: notification.sent_at }
     end
   end
 
