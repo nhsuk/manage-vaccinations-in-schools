@@ -15,15 +15,17 @@
                                       "data-action": "autosubmit#submit",
                                       "data-turbo-permanent": "true" %>
 
-        <%= f.govuk_check_boxes_fieldset :year_groups, legend: { text: "By year group", size: "s" } do %>
-          <% year_groups.each do |year_group| %>
-            <%= f.govuk_check_box :year_groups,
-                                  year_group,
-                                  label: { text: helpers.format_year_group(year_group) },
-                                  checked: year_group.to_s.in?(params[:year_groups] || []),
-                                  "data-autosubmit-target": "field",
-                                  "data-action": "autosubmit#submit",
-                                  "data-turbo-permanent": "true" %>
+        <% if year_groups.present? %>
+          <%= f.govuk_check_boxes_fieldset :year_groups, legend: { text: "By year group", size: "s" } do %>
+            <% year_groups.each do |year_group| %>
+              <%= f.govuk_check_box :year_groups,
+                                    year_group,
+                                    label: { text: helpers.format_year_group(year_group) },
+                                    checked: year_group.to_s.in?(params[:year_groups] || []),
+                                    "data-autosubmit-target": "field",
+                                    "data-action": "autosubmit#submit",
+                                    "data-turbo-permanent": "true" %>
+            <% end %>
           <% end %>
         <% end %>
 

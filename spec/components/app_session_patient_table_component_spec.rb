@@ -18,12 +18,12 @@ describe AppSessionPatientTableComponent do
 
   let(:component) do
     described_class.new(
-      session:,
-      patient_sessions:,
       caption: "Foo",
-      section:,
       columns:,
-      params:
+      params:,
+      patient_sessions:,
+      section:,
+      year_groups: session.year_groups
     )
   end
 
@@ -80,7 +80,6 @@ describe AppSessionPatientTableComponent do
   describe "when the section is :matching" do
     let(:component) do
       described_class.new(
-        session:,
         patient_sessions:,
         section: :matching,
         consent_form:
@@ -113,7 +112,7 @@ describe AppSessionPatientTableComponent do
   describe "columns parameter" do
     context "is not set" do
       let(:component) do
-        described_class.new(session:, patient_sessions:, section:, params:)
+        described_class.new(patient_sessions:, section:, params:)
       end
 
       it { should have_column("Full name") }
