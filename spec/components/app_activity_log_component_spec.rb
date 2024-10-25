@@ -102,6 +102,14 @@ describe AppActivityLogComponent do
         sent_at: Date.new(2024, 5, 30)
       )
 
+      create(
+        :session_notification,
+        :clinic_initial_invitation,
+        session:,
+        patient:,
+        sent_at: Date.new(2024, 5, 30)
+      )
+
       render_inline(component)
     end
 
@@ -118,7 +126,11 @@ describe AppActivityLogComponent do
                      by: "Nurse Joy"
 
     include_examples "card",
-                     title: "Session reminder sent",
+                     title: "School session reminder sent",
+                     date: "30 May 2024 at 12:00am"
+
+    include_examples "card",
+                     title: "Clinic invitation sent",
                      date: "30 May 2024 at 12:00am"
 
     include_examples "card",
