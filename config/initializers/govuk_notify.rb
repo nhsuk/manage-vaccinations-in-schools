@@ -21,6 +21,7 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
   parental_consent_confirmation_needs_triage:
     "604ee667-c996-471e-b986-79ab98d0767c",
   parental_consent_confirmation_refused: "5a676dac-3385-49e4-98c2-fc6b45b5a851",
+  triage_vaccination_at_clinic: "9faef718-bd76-4c30-93ea-fbe8584388a6",
   triage_vaccination_will_happen: "fa3c8dd5-4688-4b93-960a-1d422c4e5597",
   triage_vaccination_wont_happen: "d1faf47e-ccc3-4481-975b-1ec34211a21f"
 }.freeze
