@@ -47,6 +47,17 @@ class ConsentNotification < ApplicationRecord
         type
       end
 
+    text_template =
+      if type == :request
+        if session.location.clinic?
+          :consent_request_for_clinic
+        else
+          :consent_request_for_school
+        end
+      else
+        :consent_reminder
+      end
+
     patient.parents.each do |parent|
       ConsentMailer
         .with(parent:, patient:, programme:, session:)
@@ -54,7 +65,7 @@ class ConsentNotification < ApplicationRecord
         .deliver_later
 
       TextDeliveryJob.perform_later(
-        type == :request ? :consent_request : :consent_reminder,
+        text_template,
         parent:,
         patient:,
         programme:,

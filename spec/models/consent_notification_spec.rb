@@ -78,13 +78,13 @@ describe ConsentNotification do
 
       it "enqueues a text per parent" do
         expect { create_and_send! }.to have_enqueued_text(
-          :consent_request
+          :consent_request_for_school
         ).with(
           parent: parents.first,
           patient:,
           programme:,
           session:
-        ).and have_enqueued_text(:consent_request).with(
+        ).and have_enqueued_text(:consent_request_for_school).with(
                 parent: parents.second,
                 patient:,
                 programme:,
@@ -132,13 +132,13 @@ describe ConsentNotification do
 
       it "enqueues a text per parent" do
         expect { create_and_send! }.to have_enqueued_text(
-          :consent_request
+          :consent_request_for_clinic
         ).with(
           parent: parents.first,
           patient:,
           programme:,
           session:
-        ).and have_enqueued_text(:consent_request).with(
+        ).and have_enqueued_text(:consent_request_for_clinic).with(
                 parent: parents.second,
                 patient:,
                 programme:,
