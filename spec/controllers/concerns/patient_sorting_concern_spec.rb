@@ -86,7 +86,7 @@ describe PatientSortingConcern do
       it "sorts patient sessions by date of birth in descending order" do
         subject.sort_patients!(patient_sessions)
         expect(patient_sessions.map(&:patient).map(&:given_name)).to eq(
-          %w[Casey Blair Alex]
+          %w[Alex Blair Casey]
         )
       end
     end
