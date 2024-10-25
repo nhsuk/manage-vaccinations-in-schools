@@ -18,15 +18,20 @@
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_radio_buttons_fieldset(:new_or_existing_parent, legend: nil) do %>
-    <% @parent_options.each.with_index do |parent, i| %>
-      <%= f.govuk_radio_button :new_or_existing_parent, parent.id,
-                               label: { text: parent.label_to(patient: @patient) },
-                               hint: { text: parent.contact_label },
-                               link_errors: i == 0 %>
+    <% if @parent_options.present? %>
+      <% @parent_options.each.with_index do |parent, i| %>
+        <%= f.govuk_radio_button :new_or_existing_parent, parent.id,
+                                 label: { text: parent.label_to(patient: @patient) },
+                                 hint: { text: parent.contact_label },
+                                 link_errors: i == 0 %>
+      <% end %>
+
+      <%= f.govuk_radio_divider %>
     <% end %>
-    <%= f.govuk_radio_divider %>
+
     <%= f.govuk_radio_button :new_or_existing_parent, "new",
-                             label: { text: "Add a new parental contact" } %>
+                             label: { text: "Add a new parental contact" },
+                             link_errors: @parent_options.empty? %>
   <% end %>
 
   <div class="nhsuk-u-margin-top-6">
