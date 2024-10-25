@@ -10,7 +10,7 @@ class SchoolConsentRequestsJob < ApplicationJob
       Session
         .send_consent_requests
         .includes(:programmes, patients: %i[consents consent_notifications])
-        .joins(:location)
+        .eager_load(:location)
         .merge(Location.school)
         .strict_loading
 

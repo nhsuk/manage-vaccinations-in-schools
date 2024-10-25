@@ -89,11 +89,11 @@ feature "Verbal consent" do
   end
 
   def then_an_email_is_sent_to_the_parent_confirming_their_consent
-    expect_email_to(@refusing_parent.email, :parental_consent_confirmation)
+    expect_email_to(@refusing_parent.email, :consent_confirmation_given)
   end
 
   def and_a_text_is_sent_to_the_parent_confirming_their_consent
-    expect_text_to(@refusing_parent.phone, :consent_given)
+    expect_text_to(@refusing_parent.phone, :consent_confirmation_given)
   end
 
   def and_the_child_is_shown_as_having_consent_given

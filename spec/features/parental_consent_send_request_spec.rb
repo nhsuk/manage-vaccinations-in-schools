@@ -55,10 +55,10 @@ describe "Parental consent" do
   end
 
   def and_an_email_is_sent_to_the_parent
-    expect_email_to(@parent.email, :hpv_session_consent_request_for_clinic)
+    expect_email_to(@parent.email, :consent_clinic_request)
   end
 
   def and_a_text_is_sent_to_the_parent
-    expect_text_to(@parent.phone, :consent_request_for_clinic)
+    expect_text_to(@parent.phone, :consent_clinic_request)
   end
 end

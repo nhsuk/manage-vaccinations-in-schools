@@ -99,10 +99,10 @@ describe "Triage" do
 
   def and_needs_triage_emails_are_sent_to_both_parents
     expect_email_to @patient.consents.first.parent.email,
-                    :parental_consent_confirmation_needs_triage,
+                    :consent_confirmation_triage,
                     :any
     expect_email_to @patient.consents.second.parent.email,
-                    :parental_consent_confirmation_needs_triage,
+                    :consent_confirmation_triage,
                     :any
   end
 

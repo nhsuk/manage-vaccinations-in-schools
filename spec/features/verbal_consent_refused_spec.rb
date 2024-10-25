@@ -99,11 +99,10 @@ describe "Verbal consent" do
   end
 
   def then_an_email_is_sent_to_the_parent_confirming_the_refusal
-    expect_email_to @patient.parents.first.email,
-                    :parental_consent_confirmation_refused
+    expect_email_to @patient.parents.first.email, :consent_confirmation_refused
   end
 
   def and_a_text_is_sent_to_the_parent_confirming_the_refusal
-    expect_text_to @patient.parents.first.phone, :consent_refused
+    expect_text_to @patient.parents.first.phone, :consent_confirmation_refused
   end
 end

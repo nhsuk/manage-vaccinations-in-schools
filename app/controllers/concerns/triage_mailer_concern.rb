@@ -22,16 +22,21 @@ module TriageMailerConcern
     elsif vaccination_at_clinic?(patient_session, consent)
       TriageMailer.with(consent:, session:).vaccination_at_clinic.deliver_later
     elsif consent.triage_needed?
-      ConsentMailer
-        .with(consent:, session:)
-        .confirmation_needs_triage
-        .deliver_later
+      ConsentMailer.with(consent:, session:).confirmation_triage.deliver_later
     elsif consent.response_refused?
       ConsentMailer.with(consent:, session:).confirmation_refused.deliver_later
-      TextDeliveryJob.perform_later(:consent_refused, consent:, session:)
+      TextDeliveryJob.perform_later(
+        :consent_confirmation_refused,
+        consent:,
+        session:
+      )
     else
-      ConsentMailer.with(consent:, session:).confirmation.deliver_later
-      TextDeliveryJob.perform_later(:consent_given, consent:, session:)
+      ConsentMailer.with(consent:, session:).confirmation_given.deliver_later
+      TextDeliveryJob.perform_later(
+        :consent_confirmation_given,
+        consent:,
+        session:
+      )
     end
   end
 

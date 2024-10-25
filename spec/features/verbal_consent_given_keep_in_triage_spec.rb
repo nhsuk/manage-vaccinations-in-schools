@@ -63,9 +63,6 @@ describe "Verbal consent" do
   end
 
   def then_an_email_is_sent_to_the_parent_about_triage
-    expect_email_to(
-      @patient.parents.first.email,
-      :parental_consent_confirmation_needs_triage
-    )
+    expect_email_to(@patient.parents.first.email, :consent_confirmation_triage)
   end
 end

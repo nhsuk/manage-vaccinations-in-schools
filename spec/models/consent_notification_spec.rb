@@ -56,7 +56,7 @@ describe ConsentNotification do
       it "enqueues an email per parent" do
         expect { create_and_send! }.to have_enqueued_mail(
           ConsentMailer,
-          :request_for_school
+          :school_request
         ).with(
           params: {
             parent: parents.first,
@@ -65,7 +65,7 @@ describe ConsentNotification do
             session:
           },
           args: []
-        ).and have_enqueued_mail(ConsentMailer, :request_for_school).with(
+        ).and have_enqueued_mail(ConsentMailer, :school_request).with(
                 params: {
                   parent: parents.second,
                   patient:,
@@ -78,13 +78,13 @@ describe ConsentNotification do
 
       it "enqueues a text per parent" do
         expect { create_and_send! }.to have_enqueued_text(
-          :consent_request_for_school
+          :consent_school_request
         ).with(
           parent: parents.first,
           patient:,
           programme:,
           session:
-        ).and have_enqueued_text(:consent_request_for_school).with(
+        ).and have_enqueued_text(:consent_school_request).with(
                 parent: parents.second,
                 patient:,
                 programme:,
@@ -110,7 +110,7 @@ describe ConsentNotification do
       it "enqueues an email per parent" do
         expect { create_and_send! }.to have_enqueued_mail(
           ConsentMailer,
-          :request_for_clinic
+          :clinic_request
         ).with(
           params: {
             parent: parents.first,
@@ -119,7 +119,7 @@ describe ConsentNotification do
             session:
           },
           args: []
-        ).and have_enqueued_mail(ConsentMailer, :request_for_clinic).with(
+        ).and have_enqueued_mail(ConsentMailer, :clinic_request).with(
                 params: {
                   parent: parents.second,
                   patient:,
@@ -132,13 +132,13 @@ describe ConsentNotification do
 
       it "enqueues a text per parent" do
         expect { create_and_send! }.to have_enqueued_text(
-          :consent_request_for_clinic
+          :consent_clinic_request
         ).with(
           parent: parents.first,
           patient:,
           programme:,
           session:
-        ).and have_enqueued_text(:consent_request_for_clinic).with(
+        ).and have_enqueued_text(:consent_clinic_request).with(
                 parent: parents.second,
                 patient:,
                 programme:,
@@ -163,7 +163,7 @@ describe ConsentNotification do
       it "enqueues an email per parent" do
         expect { create_and_send! }.to have_enqueued_mail(
           ConsentMailer,
-          :initial_reminder
+          :school_initial_reminder
         ).with(
           params: {
             parent: parents.first,
@@ -172,7 +172,7 @@ describe ConsentNotification do
             session:
           },
           args: []
-        ).and have_enqueued_mail(ConsentMailer, :initial_reminder).with(
+        ).and have_enqueued_mail(ConsentMailer, :school_initial_reminder).with(
                 params: {
                   parent: parents.second,
                   patient:,
@@ -185,13 +185,13 @@ describe ConsentNotification do
 
       it "enqueues a text per parent" do
         expect { create_and_send! }.to have_enqueued_text(
-          :consent_reminder
+          :consent_school_reminder
         ).with(
           parent: parents.first,
           patient:,
           programme:,
           session:
-        ).and have_enqueued_text(:consent_reminder).with(
+        ).and have_enqueued_text(:consent_school_reminder).with(
                 parent: parents.second,
                 patient:,
                 programme:,
@@ -216,7 +216,7 @@ describe ConsentNotification do
       it "enqueues an email per parent" do
         expect { create_and_send! }.to have_enqueued_mail(
           ConsentMailer,
-          :subsequent_reminder
+          :school_subsequent_reminder
         ).with(
           params: {
             parent: parents.first,
@@ -225,7 +225,10 @@ describe ConsentNotification do
             session:
           },
           args: []
-        ).and have_enqueued_mail(ConsentMailer, :subsequent_reminder).with(
+        ).and have_enqueued_mail(
+                ConsentMailer,
+                :school_subsequent_reminder
+              ).with(
                 params: {
                   parent: parents.second,
                   patient:,
@@ -238,13 +241,13 @@ describe ConsentNotification do
 
       it "enqueues a text per parent" do
         expect { create_and_send! }.to have_enqueued_text(
-          :consent_reminder
+          :consent_school_reminder
         ).with(
           parent: parents.first,
           patient:,
           programme:,
           session:
-        ).and have_enqueued_text(:consent_reminder).with(
+        ).and have_enqueued_text(:consent_school_reminder).with(
                 parent: parents.second,
                 patient:,
                 programme:,
