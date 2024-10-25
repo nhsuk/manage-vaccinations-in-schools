@@ -102,7 +102,10 @@ class ManageConsentsController < ApplicationController
 
   def handle_confirm
     ActiveRecord::Base.transaction do
+      @triage.process! if @triage&.persisted?
+
       send_triage_confirmation(@patient_session, @consent)
+
       if @triage&.new_record?
         # We need to discard the draft triage record so that the patient
         # session can be saved.
@@ -117,6 +120,7 @@ class ManageConsentsController < ApplicationController
       @consent.recorded_at = Time.zone.now
       @consent.save!
     end
+
     session.delete(:manage_consents_new_or_existing_parent_id)
   end
 

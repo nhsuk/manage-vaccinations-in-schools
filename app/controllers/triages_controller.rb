@@ -49,16 +49,22 @@ class TriagesController < ApplicationController
 
   def create
     @triage.assign_attributes(triage_params.merge(performed_by: current_user))
+
     authorize @triage
+
     if @triage.save(context: :consent)
+      @triage.process!
+
       @patient.consents.recorded.each do
         send_triage_confirmation(@patient_session, _1)
       end
+
       flash[:success] = {
         heading: "Triage outcome updated for",
         heading_link_text: @patient.full_name,
         heading_link_href: session_patient_path(@session, id: @patient.id)
       }
+
       redirect_to redirect_path
     else
       render "patient_sessions/show", status: :unprocessable_entity
