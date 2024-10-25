@@ -34,4 +34,19 @@ class NotifyLogEntry < ApplicationRecord
   validates :recipient, presence: true
 
   encrypts :recipient
+
+  def title
+    template_name&.to_s&.humanize.presence ||
+      "Unknown #{human_enum_name(:type)}"
+  end
+
+  private
+
+  def template_name
+    if email?
+      GOVUK_NOTIFY_EMAIL_TEMPLATES.key(template_id)
+    elsif sms?
+      GOVUK_NOTIFY_TEXT_TEMPLATES.key(template_id)
+    end
+  end
 end
