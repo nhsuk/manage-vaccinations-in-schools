@@ -18,6 +18,8 @@ class VaccinationsController < ApplicationController
   after_action :verify_authorized
 
   def index
+    authorize VaccinationRecord
+
     all_patient_sessions =
       @session
         .patient_sessions
@@ -42,16 +44,14 @@ class VaccinationsController < ApplicationController
     @tab_counts = count_patient_sessions(grouped_patient_sessions)
     @patient_sessions = grouped_patient_sessions.fetch(@current_tab, [])
 
+    sort_and_filter_patients!(@patient_sessions)
+
+    session[:current_section] = "vaccinations"
+
     respond_to do |format|
       format.html { render layout: "full" }
       format.json { render json: @patient_outcomes.map(&:first).index_by(&:id) }
     end
-
-    sort_and_filter_patients!(@patient_sessions)
-
-    authorize VaccinationRecord
-
-    session[:current_section] = "vaccinations"
   end
 
   def create
