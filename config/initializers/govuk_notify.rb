@@ -26,11 +26,14 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
 }.freeze
 
 GOVUK_NOTIFY_TEXT_TEMPLATES = {
+  clinic_initial_invitation: "8ef5712f-bb7f-4911-8f3b-19df6f8a7179",
+  clinic_subsequent_invitation: "018f146d-e7b7-4b63-ae26-bb07ca6fe2f9",
   consent_given: "25473aa7-2d7c-4d1d-b0c6-2ac492f737c3",
   consent_refused: "eb34f3ab-0c58-4e56-b6b1-2c179270dfc3",
   consent_reminder: "ee3d36b1-4682-4eb0-a74a-7e0f6c9d0598",
-  consent_request: "03a0d572-ca5b-417e-87c3-838872a9eabc",
-  session_reminder: "6e4c514d-fcc9-4bc8-b7eb-e222a1445681",
+  consent_request_for_clinic: "c7bd8150-d09e-4607-817d-db75c9a6a966",
+  consent_request_for_school: "03a0d572-ca5b-417e-87c3-838872a9eabc",
+  school_session_reminder: "6e4c514d-fcc9-4bc8-b7eb-e222a1445681",
   vaccination_didnt_happen: "aae061e0-b847-4d4c-a87a-12508f95a302",
   vaccination_has_taken_place: "69612d3a-d6eb-4f04-8b99-ed14212e7245"
 }.freeze

@@ -66,6 +66,7 @@ class SessionNotification < ApplicationRecord
     else
       patient_session.patient.parents.each do |parent|
         SessionMailer.with(parent:, patient_session:).send(type).deliver_later
+        TextDeliveryJob.perform_later(type, parent:, patient_session:)
       end
     end
   end

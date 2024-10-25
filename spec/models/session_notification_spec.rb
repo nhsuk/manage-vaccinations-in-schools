@@ -104,8 +104,12 @@ describe SessionNotification do
               )
       end
 
-      it "doesn't enqueue a text" do
-        expect { create_and_send! }.not_to have_enqueued_text
+      it "enqueues a text per parent" do
+        expect { create_and_send! }.to have_enqueued_text(
+          :clinic_initial_invitation
+        ).with(parent: parents.first, patient_session:).and have_enqueued_text(
+                :clinic_initial_invitation
+              ).with(parent: parents.second, patient_session:)
       end
     end
 
@@ -144,8 +148,12 @@ describe SessionNotification do
               )
       end
 
-      it "doesn't enqueue a text" do
-        expect { create_and_send! }.not_to have_enqueued_text
+      it "enqueues a text per parent" do
+        expect { create_and_send! }.to have_enqueued_text(
+          :clinic_subsequent_invitation
+        ).with(parent: parents.first, patient_session:).and have_enqueued_text(
+                :clinic_subsequent_invitation
+              ).with(parent: parents.second, patient_session:)
       end
     end
   end

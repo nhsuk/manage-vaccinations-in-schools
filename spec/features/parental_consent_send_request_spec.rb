@@ -59,6 +59,6 @@ describe "Parental consent" do
   end
 
   def and_a_text_is_sent_to_the_parent
-    expect_text_to(@parent.phone, :consent_request)
+    expect_text_to(@parent.phone, :consent_request_for_clinic)
   end
 end
