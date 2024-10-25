@@ -53,6 +53,7 @@ class Patient < ApplicationRecord
 
   has_many :consent_notifications
   has_many :consents
+  has_many :notify_log_entries
   has_many :parent_relationships
   has_many :patient_sessions
   has_many :session_notifications

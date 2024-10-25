@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_24_084850) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_25_162723) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -429,6 +429,17 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_24_084850) do
     t.index ["urn"], name: "index_locations_on_urn", unique: true
   end
 
+  create_table "notify_log_entries", force: :cascade do |t|
+    t.integer "type", null: false
+    t.string "template_id", null: false
+    t.string "recipient", null: false
+    t.datetime "created_at", null: false
+    t.bigint "consent_form_id"
+    t.bigint "patient_id"
+    t.index ["consent_form_id"], name: "index_notify_log_entries_on_consent_form_id"
+    t.index ["patient_id"], name: "index_notify_log_entries_on_patient_id"
+  end
+
   create_table "offline_passwords", force: :cascade do |t|
     t.string "password", null: false
     t.datetime "created_at", null: false
@@ -707,6 +718,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_24_084850) do
   add_foreign_key "immunisation_imports_vaccination_records", "immunisation_imports"
   add_foreign_key "immunisation_imports_vaccination_records", "vaccination_records"
   add_foreign_key "locations", "teams"
+  add_foreign_key "notify_log_entries", "consent_forms"
+  add_foreign_key "notify_log_entries", "patients"
   add_foreign_key "parent_relationships", "parents"
   add_foreign_key "parent_relationships", "patients"
   add_foreign_key "patient_sessions", "sessions", column: "proposed_session_id"

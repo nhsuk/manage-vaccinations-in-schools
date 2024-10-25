@@ -78,6 +78,8 @@ class ConsentForm < ApplicationRecord
   belongs_to :school, class_name: "Location", optional: true
   belongs_to :team
 
+  has_many :notify_log_entries
+
   has_many :eligible_schools, through: :team, source: :schools
 
   enum :response, %w[given refused not_provided], prefix: "consent"
