@@ -27,4 +27,9 @@ class AppConsentComponent < ViewComponent::Base
         .order(sent_at: :desc)
         .first
   end
+
+  def can_send_consent_request?
+    patient_session.no_consent? && patient.send_notifications? &&
+      patient.parents.any?
+  end
 end
