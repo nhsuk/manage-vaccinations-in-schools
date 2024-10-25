@@ -108,14 +108,9 @@ class AppSessionPatientTableComponent < ViewComponent::Base
   end
 
   def matching_link(patient)
-    patient_session = @patient_sessions[patient]
-
     govuk_button_link_to(
       "Select",
-      review_match_consent_form_path(
-        @consent_form.id,
-        patient_session_id: patient_session.id
-      ),
+      match_consent_form_path(@consent_form, patient),
       secondary: true,
       class: "app-button--small"
     )

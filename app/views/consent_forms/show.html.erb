@@ -1,7 +1,7 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: session_consents_unmatched_responses_path(@consent_form.original_session),
-        name: "school page",
+        href: consent_forms_path,
+        name: "unmatched consent responses",
       ) %>
 <% end %>
 
@@ -22,8 +22,11 @@
       render AppSessionPatientTableComponent.new(
         columns: %i[name postcode dob select_for_matching],
         consent_form: @consent_form,
-        patient_sessions: @patient_sessions,
+        params:,
+        patients: @patients,
         section: :matching,
         year_groups: @consent_form.original_session.year_groups,
       )
     end %>
+
+<%= govuk_pagination(pagy: @pagy) %>
