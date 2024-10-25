@@ -8,15 +8,26 @@
                           turbo_action: "replace" },
                   builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
       <%= f.govuk_fieldset legend: { text: "Filter results", size: "s" } do %>
-        <%= f.govuk_text_field :name, label: { text: "By name" },
-                                      value: params[:name],
-                                      autocomplete: "off",
-                                      "data-autosubmit-target": "field",
-                                      "data-action": "autosubmit#submit",
-                                      "data-turbo-permanent": "true" %>
+        <% if @columns.include?(:name) %>
+          <%= f.govuk_text_field :name, label: { text: "Name" },
+                                        value: params[:name],
+                                        autocomplete: "off",
+                                        "data-autosubmit-target": "field",
+                                        "data-action": "autosubmit#submit",
+                                        "data-turbo-permanent": "true" %>
+        <% end %>
 
-        <% if year_groups.present? %>
-          <%= f.govuk_check_boxes_fieldset :year_groups, legend: { text: "By year group", size: "s" } do %>
+        <% if @columns.include?(:postcode) %>
+          <%= f.govuk_text_field :postcode, label: { text: "Postcode" },
+                                            value: params[:postcode],
+                                            autocomplete: "off",
+                                            "data-autosubmit-target": "field",
+                                            "data-action": "autosubmit#submit",
+                                            "data-turbo-permanent": "true" %>
+        <% end %>
+
+        <% if @columns.include?(:year_group) %>
+          <%= f.govuk_check_boxes_fieldset :year_groups, legend: { text: "Year group", size: "s" } do %>
             <% year_groups.each do |year_group| %>
               <%= f.govuk_check_box :year_groups,
                                     year_group,

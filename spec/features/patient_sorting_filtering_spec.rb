@@ -104,7 +104,7 @@ describe "Patient sorting and filtering" do
                :then_i_see_patients_ordered_by_name_desc
 
   def when_i_filter_by_names_starting_with_cas
-    fill_in "By name", with: "cas"
+    fill_in "Name", with: "cas"
   end
 
   def and_i_click_filter
@@ -132,7 +132,7 @@ describe "Patient sorting and filtering" do
                :then_i_see_patients_with_names_starting_with_cas_by_name_asc
 
   def and_by_name_contains_cas
-    expect(page).to have_field("By name", with: "cas")
+    expect(page).to have_field("Name", with: "cas")
   end
 
   def when_i_filter_by_year_group_10

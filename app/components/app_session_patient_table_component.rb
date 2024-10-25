@@ -39,11 +39,11 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     {
       action: "Action needed",
       name: "Full name",
-      year_group: "Year group",
-      reason: "Reason for refusal",
       outcome: "Outcome",
       postcode: "Postcode",
-      select_for_matching: "Action"
+      reason: "Reason for refusal",
+      select_for_matching: "Action",
+      year_group: "Year group"
     }[
       column
     ]
@@ -136,6 +136,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
               session_section_tab_path(
                 direction:,
                 name: params[:name],
+                postcode: params[:postcode],
                 section: params[:section],
                 session_id: params[:session_id],
                 sort: column,

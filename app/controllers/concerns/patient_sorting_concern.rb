@@ -16,6 +16,8 @@ module PatientSortingConcern
       patient_sessions.sort_by! { _1.patient.full_name }
     when "outcome"
       patient_sessions.sort_by!(&:state)
+    when "postcode"
+      patient_sessions.sort_by! { _1.patient.address_postcode }
     when "year_group"
       patient_sessions.sort_by! do
         [_1.patient.year_group, _1.patient.registration]
@@ -26,16 +28,20 @@ module PatientSortingConcern
   end
 
   def filter_patients!(patient_sessions)
-    if params[:name].present?
+    if (name = params[:name]).present?
       patient_sessions.select! do
-        _1.patient.full_name.downcase.include?(params[:name].downcase)
+        _1.patient.full_name.downcase.include?(name.downcase)
       end
     end
 
-    if params[:year_groups].present?
+    if (postcode = params[:postcode]).present?
       patient_sessions.select! do
-        _1.patient.year_group.to_s.in?(params[:year_groups])
+        _1.patient.address_postcode&.downcase&.include?(postcode.downcase)
       end
+    end
+
+    if (year_groups = params[:year_groups]).present?
+      patient_sessions.select! { _1.patient.year_group.to_s.in?(year_groups) }
     end
   end
 end
