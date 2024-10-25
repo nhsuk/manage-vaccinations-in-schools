@@ -1,0 +1,29 @@
+<%= h1 "Unmatched consent responses" %>
+
+<%= render AppCardComponent.new do |card|
+      card.with_heading { pluralize(@consent_forms.count, "consent responses") }
+    
+      govuk_table(classes: "nhsuk-u-margin-0") do |table|
+        table.with_head do |head|
+          head.with_row do |row|
+            row.with_cell(text: "Response date", html_attributes: { "data-col": "date" })
+            row.with_cell(text: "Child", html_attributes: { "data-col": "child" })
+            row.with_cell(text: "Parent or guardian", html_attributes: { "data-col": "parent" })
+            row.with_cell(text: "Action", html_attributes: { "no-sort": true })
+          end
+        end
+    
+        table.with_body do |body|
+          @consent_forms.each do |consent_form|
+            body.with_row do |row|
+              row.with_cell(text: consent_form.recorded_at.to_date.to_fs(:long))
+              row.with_cell(text: consent_form.full_name)
+              row.with_cell(text: consent_form.parent_full_name)
+              row.with_cell(text: govuk_link_to("Find match", consent_form))
+            end
+          end
+        end
+      end
+    end %>
+
+<%= govuk_pagination(pagy: @pagy) %>

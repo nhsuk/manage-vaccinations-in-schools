@@ -17,8 +17,8 @@ describe "Response matching" do
     then_i_can_review_the_match
 
     when_i_link_the_response_with_the_record
-    and_i_go_to_the_consent_given_page
-    then_the_matched_cohort_appears_in_the_consent_given_list
+    and_i_click_on_the_patient
+    then_the_parent_consent_is_shown
   end
 
   def given_the_app_is_setup
@@ -81,11 +81,11 @@ describe "Response matching" do
     click_on "Link response with record"
   end
 
-  def and_i_go_to_the_consent_given_page
-    click_on "Consent given"
+  def and_i_click_on_the_patient
+    click_on @patient.full_name
   end
 
-  def then_the_matched_cohort_appears_in_the_consent_given_list
-    expect(page).to have_content @patient.given_name
+  def then_the_parent_consent_is_shown
+    expect(page).to have_content(@consent_form.parent_full_name)
   end
 end

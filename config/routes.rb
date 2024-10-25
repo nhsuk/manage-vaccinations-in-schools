@@ -90,6 +90,13 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :consent_forms, path: "consent-forms", only: %i[index show] do
+    member do
+      get "match/:patient_id", action: :edit_match, as: :match
+      post "match/:patient_id", action: :update_match
+    end
+  end
+
   resources :notices, only: :index
 
   resources :patients, only: %i[index show update]
@@ -168,10 +175,6 @@ Rails.application.routes.draw do
               redirect(
                 "/sessions/%{session_id}/consents/#{TAB_PATHS[:consents].keys.first}"
               )
-
-        get "unmatched-responses",
-            to: "consent_forms#unmatched_responses",
-            as: :consents_unmatched_responses
 
         get ":tab",
             controller: "consents",
@@ -269,17 +272,6 @@ Rails.application.routes.draw do
         post "make-default", as: :make_default
       end
     end
-  end
-
-  resources :consent_forms, path: "consent-forms", only: [:show] do
-    get "match/:patient_session_id",
-        on: :member,
-        to: "consent_forms#review_match",
-        as: :review_match
-    post "match/:patient_session_id",
-         on: :member,
-         to: "consent_forms#match",
-         as: :match
   end
 
   namespace :users do
