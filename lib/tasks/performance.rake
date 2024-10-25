@@ -50,8 +50,6 @@ task :performance, [] => :environment do |_task, _args|
       puts "            - #{pluralize(@counts[:ready_to_vaccinate], "child")} ready to vaccinate :syringe:"
       puts "        - #{pluralize(@counts[:with_consent_refused], "child")} with consent refused :x:"
       puts "        - #{pluralize(@counts[:without_a_response], "child")} without a response :crying_cat_face:"
-      unmatched_responses = pluralize(@counts[:unmatched_responses], "response")
-      puts "    - #{unmatched_responses} need matching with records in the cohort :shrug:"
     end
   end
 end

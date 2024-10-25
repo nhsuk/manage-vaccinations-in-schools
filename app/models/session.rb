@@ -230,10 +230,6 @@ class Session < ApplicationRecord
     self.days_before_consent_reminders = value * 7
   end
 
-  def unmatched_consent_forms
-    team.consent_forms.where(location:).unmatched.recorded.order(:recorded_at)
-  end
-
   def open_for_consent?
     close_consent_at&.future?
   end

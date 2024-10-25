@@ -13,7 +13,6 @@ describe SessionStats do
       expect(subject.to_h).to eq(
         could_not_vaccinate: 0,
         needing_triage: 0,
-        unmatched_responses: 0,
         vaccinate: 0,
         vaccinated: 0,
         with_conflicting_consent: 0,
@@ -55,7 +54,6 @@ describe SessionStats do
         expect(subject.to_h).to eq(
           could_not_vaccinate: 1,
           needing_triage: 2,
-          unmatched_responses: 1,
           vaccinate: 2,
           vaccinated: 0,
           with_conflicting_consent: 0,

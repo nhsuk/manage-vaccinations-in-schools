@@ -532,6 +532,9 @@ en:
     index:
       title: Cohorts
   consent_forms:
+    index:
+      title: Unmatched consent responses
+      title_short: Responses
     confirm:
       consent_card_title:
         flu: Consent for the flu vaccination
