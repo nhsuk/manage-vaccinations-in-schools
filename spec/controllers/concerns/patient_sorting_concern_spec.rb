@@ -14,9 +14,30 @@ describe PatientSortingConcern do
     end
   end
 
-  let(:alex) { create(:patient, given_name: "Alex", year_group: 8) }
-  let(:blair) { create(:patient, given_name: "Blair", year_group: 9) }
-  let(:casey) { create(:patient, given_name: "Casey", year_group: 10) }
+  let(:alex) do
+    create(
+      :patient,
+      given_name: "Alex",
+      year_group: 8,
+      address_postcode: "SW1A 1AA"
+    )
+  end
+  let(:blair) do
+    create(
+      :patient,
+      given_name: "Blair",
+      year_group: 9,
+      address_postcode: "SW2A 1AA"
+    )
+  end
+  let(:casey) do
+    create(
+      :patient,
+      given_name: "Casey",
+      year_group: 10,
+      address_postcode: "SW3A 1AA"
+    )
+  end
 
   let(:programme) { create(:programme) }
   let(:session) { create(:session, programme:) }
@@ -81,6 +102,17 @@ describe PatientSortingConcern do
       end
     end
 
+    context "when sort parameter is 'postcode'" do
+      let(:params) { { sort: "postcode", direction: "desc" } }
+
+      it "sorts patient sessions by name in ascending order" do
+        subject.sort_patients!(patient_sessions)
+        expect(patient_sessions.map(&:patient).map(&:given_name)).to eq(
+          %w[Casey Blair Alex]
+        )
+      end
+    end
+
     context "when sort parameter is missing" do
       let(:params) { {} }
 
@@ -101,6 +133,16 @@ describe PatientSortingConcern do
         subject.filter_patients!(patient_sessions)
         expect(patient_sessions.size).to eq(1)
         expect(patient_sessions.first.patient.given_name).to eq("Alex")
+      end
+    end
+
+    context "when filtering by postcode" do
+      let(:params) { { postcode: "SW2A" } }
+
+      it "filters patient sessions by date of birth" do
+        subject.filter_patients!(patient_sessions)
+        expect(patient_sessions.size).to eq(1)
+        expect(patient_sessions.first.patient.given_name).to eq("Blair")
       end
     end
 
