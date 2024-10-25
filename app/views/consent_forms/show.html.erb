@@ -19,15 +19,11 @@
 
 <%= render AppCardComponent.new do |c|
       c.with_heading { "Children in this cohort" }
-      if @patient_sessions.count > 0
-        render AppSessionPatientTableComponent.new(
-          columns: %i[name postcode year_group select_for_matching],
-          consent_form: @consent_form,
-          patient_sessions: @patient_sessions,
-          section: :matching,
-          year_groups: @consent_form.original_session.year_groups,
-        )
-      else
-        render AppEmptyListComponent.new
-      end
+      render AppSessionPatientTableComponent.new(
+        columns: %i[name postcode year_group select_for_matching],
+        consent_form: @consent_form,
+        patient_sessions: @patient_sessions,
+        section: :matching,
+        year_groups: @consent_form.original_session.year_groups,
+      )
     end %>
