@@ -17,10 +17,10 @@
   <%= render AppMatchingCriteriaComponent.new(consent_form: @consent_form) %>
 <% end %>
 
-<%= render AppCardComponent.new do |c|
-      c.with_heading { "Children in this cohort" }
+<%= render AppCardComponent.new do |card|
+      card.with_heading { "Children in this cohort" }
       render AppSessionPatientTableComponent.new(
-        columns: %i[name postcode year_group select_for_matching],
+        columns: %i[name postcode dob select_for_matching],
         consent_form: @consent_form,
         patient_sessions: @patient_sessions,
         section: :matching,
