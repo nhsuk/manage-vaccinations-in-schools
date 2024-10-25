@@ -87,6 +87,16 @@ describe AppActivityLogComponent do
       )
 
       create(
+        :vaccination_record,
+        programme:,
+        patient_session:,
+        created_at: Time.zone.parse("2024-05-31 13:00"),
+        performed_by: nil,
+        notes: "Some notes",
+        vaccine: create(:vaccine, :gardasil, programme:)
+      )
+
+      create(
         :consent_notification,
         :request,
         programme:,
@@ -124,6 +134,11 @@ describe AppActivityLogComponent do
                      date: "31 May 2024 at 12:00pm",
                      notes: "Some notes",
                      by: "Nurse Joy"
+
+    include_examples "card",
+                     title: "Vaccinated with Gardasil (HPV)",
+                     date: "31 May 2024 at 1:00pm",
+                     notes: "Some notes"
 
     include_examples "card",
                      title: "School session reminder sent",
