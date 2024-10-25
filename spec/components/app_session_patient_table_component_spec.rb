@@ -41,7 +41,7 @@ describe AppSessionPatientTableComponent do
     expect(rendered).to have_text(patient_sessions.first.patient.full_name)
   end
 
-  describe "when the patient has a common name" do
+  context "when the patient has a common name" do
     let(:patient_sessions) do
       [
         create(
@@ -57,7 +57,7 @@ describe AppSessionPatientTableComponent do
     end
   end
 
-  describe "when the patient is restricted" do
+  context "when the patient is restricted" do
     let(:patient_sessions) do
       [
         create(
@@ -77,7 +77,7 @@ describe AppSessionPatientTableComponent do
   it { should have_css(".nhsuk-table__body .nhsuk-table__row", count: 2) }
   it { should have_link(patient_sessions.first.patient.full_name) }
 
-  describe "when the section is :matching" do
+  context "when the section is :matching" do
     let(:component) do
       described_class.new(
         patient_sessions:,
@@ -97,7 +97,23 @@ describe AppSessionPatientTableComponent do
     it { should_not have_link(patient_sessions.first.patient.full_name) }
   end
 
-  context "vaccinations section" do
+  context "when passing in patients" do
+    let(:patients) { patient_sessions.map(&:patient) }
+
+    let(:component) { described_class.new(params:, patients:, section:) }
+
+    it { should have_css(".nhsuk-table") }
+    it { should have_css(".nhsuk-table__head") }
+    it { should have_column("Full name") }
+    it { should have_column("Year group") }
+    it { should have_css(".nhsuk-table__head .nhsuk-table__row", count: 1) }
+
+    it "includes the patient's full name" do
+      expect(rendered).to have_text(patients.first.full_name)
+    end
+  end
+
+  describe "vaccinations section" do
     let(:section) { :vaccination }
     let(:tab) { :actions }
 

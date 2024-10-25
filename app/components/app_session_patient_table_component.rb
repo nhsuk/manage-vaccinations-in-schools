@@ -2,8 +2,9 @@
 
 class AppSessionPatientTableComponent < ViewComponent::Base
   def initialize(
-    patient_sessions:,
     section:,
+    patients: nil,
+    patient_sessions: nil,
     caption: nil,
     columns: %i[name year_group],
     consent_form: nil,
@@ -12,11 +13,20 @@ class AppSessionPatientTableComponent < ViewComponent::Base
   )
     super
 
+    if patient_sessions && !patients
+      @patients = patient_sessions.map(&:patient)
+      @patient_sessions = patient_sessions.map { [_1.patient, _1] }.to_h
+    elsif patients && !patient_sessions
+      @patients = patients
+      @patient_sessions = {}
+    else
+      raise "Provide only patients or patient sessions."
+    end
+
     @caption = caption
     @columns = columns
     @consent_form = consent_form
     @params = params
-    @patient_sessions = patient_sessions
     @section = section
     @year_groups = year_groups
   end
@@ -39,14 +49,14 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     ]
   end
 
-  def column_value(patient_session, column)
-    patient = patient_session.patient
+  def column_value(patient, column)
+    patient_session = @patient_sessions[patient]
 
     case column
     when :action, :outcome
       t("patient_session_statuses.#{patient_session.state}.text")
     when :name
-      name_cell(patient_session)
+      name_cell(patient)
     when :year_group
       helpers.patient_year_group(patient)
     when :reason
@@ -59,20 +69,20 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     when :postcode
       patient.restricted? ? "" : patient.address_postcode
     when :select_for_matching
-      matching_link(patient_session)
+      matching_link(patient)
     else
       raise ArgumentError, "Unknown column: #{column}"
     end
   end
 
-  def name_cell(patient_session)
+  def name_cell(patient)
     safe_join(
       [
-        patient_link(patient_session),
+        patient_link(patient),
         (
-          if patient_session.patient.common_name.present?
+          if patient.common_name.present?
             "<span class=\"nhsuk-u-font-size-16\">Known as: ".html_safe +
-              patient_session.patient.common_name + "</span>".html_safe
+              patient.common_name + "</span>".html_safe
           end
         )
       ].compact,
@@ -80,22 +90,25 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     )
   end
 
-  def patient_link(patient_session)
-    case @section
-    when :matching
-      patient_session.patient.full_name
+  def patient_link(patient)
+    session = @patient_sessions[patient]&.session
+
+    if @section == :matching || session.nil?
+      patient.full_name
     else
-      govuk_link_to patient_session.patient.full_name,
+      govuk_link_to patient.full_name,
                     session_patient_path(
-                      patient_session.session,
-                      patient_session.patient,
+                      session,
+                      patient,
                       section: params[:section],
                       tab: params[:tab]
                     )
     end
   end
 
-  def matching_link(patient_session)
+  def matching_link(patient)
+    patient_session = @patient_sessions[patient]
+
     govuk_button_link_to(
       "Select",
       review_match_consent_form_path(
@@ -121,12 +134,12 @@ class AppSessionPatientTableComponent < ViewComponent::Base
       data = { turbo: "true", turbo_action: "replace" }
       link_to column_name(column),
               session_section_tab_path(
-                session_id: params[:session_id],
-                section: params[:section],
-                tab: params[:tab],
-                sort: column,
                 direction:,
                 name: params[:name],
+                section: params[:section],
+                session_id: params[:session_id],
+                sort: column,
+                tab: params[:tab],
                 year_groups: params[:year_groups]
               ),
               data:
