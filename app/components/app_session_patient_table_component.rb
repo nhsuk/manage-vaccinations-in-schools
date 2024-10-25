@@ -38,6 +38,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
   def column_name(column)
     {
       action: "Action needed",
+      dob: "Date of birth",
       name: "Full name",
       outcome: "Outcome",
       postcode: "Postcode",
@@ -55,6 +56,8 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     case column
     when :action, :outcome
       t("patient_session_statuses.#{patient_session.state}.text")
+    when :dob
+      patient.date_of_birth.to_fs(:long)
     when :name
       name_cell(patient)
     when :year_group

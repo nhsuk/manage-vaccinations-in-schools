@@ -12,6 +12,8 @@ module PatientSortingConcern
     return if params[:sort].blank?
 
     case params[:sort]
+    when "dob"
+      patient_sessions.sort_by! { _1.patient.date_of_birth }
     when "name"
       patient_sessions.sort_by! { _1.patient.full_name }
     when "outcome"
