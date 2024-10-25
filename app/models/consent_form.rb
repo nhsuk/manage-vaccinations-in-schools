@@ -388,6 +388,8 @@ class ConsentForm < ApplicationRecord
 
   def match_with_patient!(patient)
     ActiveRecord::Base.transaction do
+      notify_log_entries.update_all(patient_id: patient.id)
+
       if school && school != patient.school
         patient.school = school
         patient.home_educated = false

@@ -726,6 +726,10 @@ describe ConsentForm do
     let(:session) { create(:session, team:, programme:, location:) }
     let(:patient) { create(:patient, school:, session:) }
 
+    let(:notify_log_entry) do
+      create(:notify_log_entry, :email, consent_form:, patient: nil)
+    end
+
     context "when consent form confirms the school" do
       let(:consent_form) do
         create(:consent_form, team:, session:, school_confirmed: true)
@@ -737,6 +741,12 @@ describe ConsentForm do
 
       it "doesn't change the patient's school" do
         expect { match_with_patient! }.not_to change(patient, :school)
+      end
+
+      it "assigns any notify log entries" do
+        expect { match_with_patient! }.to change {
+          notify_log_entry.reload.patient
+        }.from(nil).to(patient)
       end
     end
 
