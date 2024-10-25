@@ -18,7 +18,7 @@
                                       legend: { size: "m", text: "Session date" },
                                       hint: { text: "For example, 27 3 2024" } %>
 
-          <% if @session.dates.length != 1 %>
+          <% if date_f.object.persisted? || @session.dates.length > 1 %>
             <% button_class = "nhsuk-button app-add-another__delete app-button--secondary-warning app-button--small" %>
 
             <% if date_f.object.new_record? %>
