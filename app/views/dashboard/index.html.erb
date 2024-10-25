@@ -27,7 +27,7 @@
   </li>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(link_to: vaccines_path) do |card| %>
+    <%= render AppCardComponent.new(link_to: patients_path) do |card| %>
       <% card.with_heading { t("patients.index.title") } %>
       <p class="nhsuk-body">Use this area to:</p>
       <ul class="nhsuk-list nhsuk-list--bullet">
