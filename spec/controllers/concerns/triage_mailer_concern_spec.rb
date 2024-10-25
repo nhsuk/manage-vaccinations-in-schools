@@ -45,6 +45,21 @@ describe TriageMailerConcern do
       end
     end
 
+    context "when the parents agree, triage is required and vaccination should be delayed" do
+      let(:patient_session) { create(:patient_session, :delay_vaccination) }
+
+      it "sends an email saying triage was needed but vaccination won't happen" do
+        expect { send_triage_confirmation }.to have_enqueued_mail(
+          TriageMailer,
+          :vaccination_at_clinic
+        ).with(params: { consent:, session: }, args: [])
+      end
+
+      it "doesn't send a text message" do
+        expect { send_triage_confirmation }.not_to have_enqueued_text
+      end
+    end
+
     context "when the parents agree and triage is not required" do
       let(:patient_session) do
         create(:patient_session, :consent_given_triage_not_needed)

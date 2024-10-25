@@ -19,14 +19,16 @@ module TriageMailerConcern
         .with(consent:, session:)
         .vaccination_wont_happen
         .deliver_later
-    elsif consent.response_refused?
-      ConsentMailer.with(consent:, session:).confirmation_refused.deliver_later
-      TextDeliveryJob.perform_later(:consent_refused, consent:, session:)
+    elsif vaccination_at_clinic?(patient_session, consent)
+      TriageMailer.with(consent:, session:).vaccination_at_clinic.deliver_later
     elsif consent.triage_needed?
       ConsentMailer
         .with(consent:, session:)
         .confirmation_needs_triage
         .deliver_later
+    elsif consent.response_refused?
+      ConsentMailer.with(consent:, session:).confirmation_refused.deliver_later
+      TextDeliveryJob.perform_later(:consent_refused, consent:, session:)
     else
       ConsentMailer.with(consent:, session:).confirmation.deliver_later
       TextDeliveryJob.perform_later(:consent_given, consent:, session:)
@@ -40,10 +42,10 @@ module TriageMailerConcern
   end
 
   def vaccination_wont_happen?(patient_session, consent)
-    consent.triage_needed? &&
-      (
-        patient_session.triaged_do_not_vaccinate? ||
-          patient_session.delay_vaccination?
-      )
+    consent.triage_needed? && patient_session.triaged_do_not_vaccinate?
+  end
+
+  def vaccination_at_clinic?(patient_session, consent)
+    consent.triage_needed? && patient_session.delay_vaccination?
   end
 end
