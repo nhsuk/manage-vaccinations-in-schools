@@ -42,7 +42,7 @@
   <% end %>
 <% end %>
 
-<% if patient_session.no_consent? %>
+<% if can_send_consent_request? %>
   <%= govuk_button_to "Send consent request", session_patient_request_consent_path(session, patient_id: patient.id, section: @section, tab: @tab), class: "app-button--secondary" %>
 <% end %>
 
