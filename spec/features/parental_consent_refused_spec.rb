@@ -122,11 +122,11 @@ describe "Parental consent" do
   end
 
   def and_i_receive_an_email_confirming_that_my_child_wont_be_vaccinated
-    expect_email_to "jane@example.com", :parental_consent_confirmation_refused
+    expect_email_to "jane@example.com", :consent_confirmation_refused
   end
 
   def and_i_receive_a_text_confirming_that_my_child_wont_be_vaccinated
-    expect_text_to "07123456789", :consent_refused
+    expect_text_to "07123456789", :consent_confirmation_refused
   end
 
   def when_the_nurse_checks_the_consent_responses

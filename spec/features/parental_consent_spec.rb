@@ -142,11 +142,11 @@ describe "Parental consent" do
       "#{@child.full_name} will get their HPV vaccination at school"
     )
 
-    expect_email_to("jane@example.com", :parental_consent_confirmation)
+    expect_email_to("jane@example.com", :consent_confirmation_given)
   end
 
   def and_i_get_a_confirmation_text
-    expect_text_to("07123456789", :consent_given)
+    expect_text_to("07123456789", :consent_confirmation_given)
   end
 
   def when_the_nurse_checks_the_consent_responses

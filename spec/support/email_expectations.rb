@@ -2,7 +2,7 @@
 
 module EmailExpectations
   def expect_email_to(to, template_name, nth = :first)
-    template_id = GOVUK_NOTIFY_EMAIL_TEMPLATES[template_name]
+    template_id = GOVUK_NOTIFY_EMAIL_TEMPLATES.fetch(template_name)
 
     email =
       if nth == :any

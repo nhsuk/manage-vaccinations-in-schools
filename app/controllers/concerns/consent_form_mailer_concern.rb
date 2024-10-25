@@ -10,12 +10,15 @@ module ConsentFormMailerConcern
       mailer.confirmation_injection.deliver_later
     elsif consent_form.consent_refused?
       mailer.confirmation_refused.deliver_later
-      TextDeliveryJob.perform_later(:consent_refused, consent_form:)
+      TextDeliveryJob.perform_later(
+        :consent_confirmation_refused,
+        consent_form:
+      )
     elsif consent_form.needs_triage?
-      mailer.confirmation_needs_triage.deliver_later
+      mailer.confirmation_triage.deliver_later
     else
-      mailer.confirmation.deliver_later
-      TextDeliveryJob.perform_later(:consent_given, consent_form:)
+      mailer.confirmation_given.deliver_later
+      TextDeliveryJob.perform_later(:consent_confirmation_given, consent_form:)
     end
   end
 end

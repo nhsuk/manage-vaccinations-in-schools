@@ -11,17 +11,12 @@ module VaccinationMailerConcern
 
     mailer_action =
       if vaccination_record.administered?
-        :hpv_vaccination_has_taken_place
+        :confirmation_administered
       else
-        :hpv_vaccination_has_not_taken_place
+        :confirmation_not_administered
       end
 
-    text_template_name =
-      if vaccination_record.administered?
-        :vaccination_has_taken_place
-      else
-        :vaccination_didnt_happen
-      end
+    text_template_name = :"vaccination_#{mailer_action}"
 
     patient_session.consents_to_send_communication.each do |consent|
       params = { consent:, vaccination_record: }

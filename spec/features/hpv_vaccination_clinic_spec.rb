@@ -98,14 +98,14 @@ describe "HPV Vaccination" do
   def and_an_email_is_sent_to_the_parent_confirming_the_vaccination
     expect_email_to(
       @patient.consents.last.parent.email,
-      :confirmation_the_hpv_vaccination_has_taken_place
+      :vaccination_confirmation_administered
     )
   end
 
   def and_a_text_is_sent_to_the_parent_confirming_the_vaccination
     expect_text_to(
       @patient.consents.last.parent.phone,
-      :vaccination_has_taken_place
+      :vaccination_confirmation_administered
     )
   end
 end

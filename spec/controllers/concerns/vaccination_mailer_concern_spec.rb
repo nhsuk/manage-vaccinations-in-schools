@@ -22,13 +22,13 @@ describe VaccinationMailerConcern do
       it "sends an email" do
         expect { send_vaccination_confirmation }.to have_enqueued_mail(
           VaccinationMailer,
-          :hpv_vaccination_has_taken_place
+          :confirmation_administered
         ).with(params: { consent:, vaccination_record: }, args: [])
       end
 
       it "sends a text message" do
         expect { send_vaccination_confirmation }.to have_enqueued_text(
-          :vaccination_has_taken_place
+          :vaccination_confirmation_administered
         ).with(consent:, vaccination_record:)
       end
     end
@@ -46,13 +46,13 @@ describe VaccinationMailerConcern do
       it "sends an email" do
         expect { send_vaccination_confirmation }.to have_enqueued_mail(
           VaccinationMailer,
-          :hpv_vaccination_has_not_taken_place
+          :confirmation_not_administered
         ).with(params: { consent:, vaccination_record: }, args: [])
       end
 
       it "sends a text message" do
         expect { send_vaccination_confirmation }.to have_enqueued_text(
-          :vaccination_didnt_happen
+          :vaccination_confirmation_not_administered
         ).with(consent:, vaccination_record:)
       end
     end

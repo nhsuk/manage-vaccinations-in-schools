@@ -6,12 +6,12 @@ describe VaccinationMailer do
   let(:consent) { patient.consents.last }
   let(:parent) { consent.parent }
 
-  describe "#hpv_vaccination_has_taken_place" do
+  describe "#confirmation_administered" do
     subject(:mail) do
       described_class.with(
         consent:,
         vaccination_record:
-      ).hpv_vaccination_has_taken_place
+      ).confirmation_administered
     end
 
     let(:patient) do
@@ -26,9 +26,9 @@ describe VaccinationMailer do
       expect(mail).to have_attributes(
         to: [parent.email],
         template_id:
-          GOVUK_NOTIFY_EMAIL_TEMPLATES[
-            :confirmation_the_hpv_vaccination_has_taken_place
-          ]
+          GOVUK_NOTIFY_EMAIL_TEMPLATES.fetch(
+            :vaccination_confirmation_administered
+          )
       )
     end
 
@@ -91,12 +91,12 @@ describe VaccinationMailer do
     end
   end
 
-  describe "#hpv_vaccination_has_not_place" do
+  describe "#confirmation_not_administered" do
     subject(:mail) do
       described_class.with(
         consent:,
         vaccination_record:
-      ).hpv_vaccination_has_not_taken_place
+      ).confirmation_not_administered
     end
 
     let(:patient) do
@@ -116,9 +116,9 @@ describe VaccinationMailer do
       expect(mail).to have_attributes(
         to: [parent.email],
         template_id:
-          GOVUK_NOTIFY_EMAIL_TEMPLATES[
-            :confirmation_the_hpv_vaccination_didnt_happen
-          ]
+          GOVUK_NOTIFY_EMAIL_TEMPLATES.fetch(
+            :vaccination_confirmation_not_administered
+          )
       )
     end
 

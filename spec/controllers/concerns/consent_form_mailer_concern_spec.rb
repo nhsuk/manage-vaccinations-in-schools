@@ -13,13 +13,13 @@ describe ConsentFormMailerConcern do
     it "sends a confirmation email" do
       expect { send_consent_form_confirmation }.to have_enqueued_mail(
         ConsentMailer,
-        :confirmation
+        :confirmation_given
       ).with(params: { consent_form: }, args: [])
     end
 
     it "sends a consent given text" do
       expect { send_consent_form_confirmation }.to have_enqueued_text(
-        :consent_given
+        :consent_confirmation_given
       ).with(consent_form:)
     end
 
@@ -50,7 +50,7 @@ describe ConsentFormMailerConcern do
 
       it "sends a consent refused text" do
         expect { send_consent_form_confirmation }.to have_enqueued_text(
-          :consent_refused
+          :consent_confirmation_refused
         ).with(consent_form:)
       end
     end
@@ -61,7 +61,7 @@ describe ConsentFormMailerConcern do
       it "sends an confirmation needs triage email" do
         expect { send_consent_form_confirmation }.to have_enqueued_mail(
           ConsentMailer,
-          :confirmation_needs_triage
+          :confirmation_triage
         ).with(params: { consent_form: }, args: [])
       end
 

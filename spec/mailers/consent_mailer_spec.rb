@@ -25,14 +25,14 @@ describe ConsentMailer do
     end
   end
 
-  describe "#request_for_school" do
+  describe "#school_request" do
     subject(:mail) do
       described_class.with(
         session:,
         patient:,
         parent:,
         programme:
-      ).request_for_school
+      ).school_request
     end
 
     let(:patient) { create(:patient) }
@@ -63,14 +63,14 @@ describe ConsentMailer do
     end
   end
 
-  describe "#request_for_clinic" do
+  describe "#clinic_request" do
     subject(:mail) do
       described_class.with(
         session:,
         patient:,
         parent:,
         programme:
-      ).request_for_clinic
+      ).clinic_request
     end
 
     let(:patient) { create(:patient) }
@@ -97,14 +97,14 @@ describe ConsentMailer do
     end
   end
 
-  describe "#initial_reminder" do
+  describe "#school_initial_reminder" do
     subject(:mail) do
       described_class.with(
         session:,
         patient:,
         parent:,
         programme:
-      ).initial_reminder
+      ).school_initial_reminder
     end
 
     let(:patient) { create(:patient) }
@@ -135,14 +135,14 @@ describe ConsentMailer do
     end
   end
 
-  describe "#subsequent_reminder" do
+  describe "#school_subsequent_reminder" do
     subject(:mail) do
       described_class.with(
         session:,
         patient:,
         parent:,
         programme:
-      ).subsequent_reminder
+      ).school_subsequent_reminder
     end
 
     let(:patient) { create(:patient) }
