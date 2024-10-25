@@ -44,8 +44,6 @@ describe TextDeliveryJob do
     let(:patient_session) { nil }
     let(:vaccination_record) { nil }
 
-    after { perform_now }
-
     it "generates personalisation" do
       expect(GovukNotifyPersonalisation).to receive(:call).with(
         session:,
@@ -57,6 +55,7 @@ describe TextDeliveryJob do
         programme:,
         vaccination_record:
       )
+      perform_now
     end
 
     it "sends a text using GOV.UK Notify" do
@@ -65,6 +64,19 @@ describe TextDeliveryJob do
         template_id: GOVUK_NOTIFY_TEXT_TEMPLATES[template_name],
         personalisation: an_instance_of(Hash)
       )
+      perform_now
+    end
+
+    it "creates a log entry" do
+      expect { perform_now }.to change(NotifyLogEntry, :count).by(1)
+
+      notify_log_entry = NotifyLogEntry.last
+      expect(notify_log_entry).to be_sms
+      expect(notify_log_entry.recipient).to eq("01234567890")
+      expect(notify_log_entry.template_id).to eq(
+        GOVUK_NOTIFY_TEXT_TEMPLATES[template_name]
+      )
+      expect(notify_log_entry.patient).to eq(patient)
     end
 
     context "when the parent doesn't want to receive updates" do
@@ -72,6 +84,7 @@ describe TextDeliveryJob do
 
       it "doesn't send a text" do
         expect(notifications_client).not_to receive(:send_sms)
+        perform_now
       end
     end
 
@@ -80,6 +93,7 @@ describe TextDeliveryJob do
 
       it "doesn't send a text" do
         expect(notifications_client).not_to receive(:send_sms)
+        perform_now
       end
     end
 
@@ -96,6 +110,19 @@ describe TextDeliveryJob do
           template_id: GOVUK_NOTIFY_TEXT_TEMPLATES[template_name],
           personalisation: an_instance_of(Hash)
         )
+        perform_now
+      end
+
+      it "creates a log entry" do
+        expect { perform_now }.to change(NotifyLogEntry, :count).by(1)
+
+        notify_log_entry = NotifyLogEntry.last
+        expect(notify_log_entry).to be_sms
+        expect(notify_log_entry.recipient).to eq("01234567890")
+        expect(notify_log_entry.template_id).to eq(
+          GOVUK_NOTIFY_TEXT_TEMPLATES[template_name]
+        )
+        expect(notify_log_entry.consent_form).to eq(consent_form)
       end
 
       context "when the parent doesn't want to receive updates" do
@@ -110,6 +137,7 @@ describe TextDeliveryJob do
 
         it "doesn't send a text" do
           expect(notifications_client).not_to receive(:send_sms)
+          perform_now
         end
       end
 
@@ -120,6 +148,7 @@ describe TextDeliveryJob do
 
         it "doesn't send a text" do
           expect(notifications_client).not_to receive(:send_sms)
+          perform_now
         end
       end
     end
