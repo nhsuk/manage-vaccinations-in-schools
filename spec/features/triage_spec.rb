@@ -14,7 +14,7 @@ describe "Triage" do
     and_needs_triage_emails_are_sent_to_both_parents
 
     when_i_go_to_the_patient
-    and_i_delay_the_vaccination
+    and_i_do_not_vaccinate
     then_i_see_the_triage_page
     and_vaccination_wont_happen_emails_are_sent_to_both_parents
 
@@ -72,8 +72,8 @@ describe "Triage" do
     click_button "Save triage"
   end
 
-  def and_i_delay_the_vaccination
-    choose "No, delay vaccination to a later date"
+  def and_i_do_not_vaccinate
+    choose "No, do not vaccinate"
     click_button "Save triage"
   end
 

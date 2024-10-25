@@ -9,6 +9,7 @@ describe "Triage" do
     when_i_click_on_a_patient
     and_i_enter_a_note_and_delay_vaccination
     then_i_see_an_alert_saying_the_record_was_saved
+    and_a_vaccination_at_clinic_email_is_sent_to_the_parent
 
     when_i_go_to_the_triage_completed_tab
     then_i_see_the_patient
@@ -70,6 +71,11 @@ describe "Triage" do
     )
   end
 
+  def and_a_vaccination_at_clinic_email_is_sent_to_the_parent
+    expect_email_to @patient.consents.first.parent.email,
+                    :triage_vaccination_at_clinic
+  end
+
   def when_i_go_to_the_triage_completed_tab
     click_link "Triage completed"
   end
@@ -82,10 +88,6 @@ describe "Triage" do
     click_on @school.name, match: :first
     click_on "Record vaccinations"
     click_on "Could not vaccinate"
-  end
-
-  def then_i_see_the_patient
-    expect(page).to have_content(@patient.full_name)
   end
 
   def when_i_view_the_child_record
