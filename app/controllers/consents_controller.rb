@@ -21,8 +21,6 @@ class ConsentsController < ApplicationController
         )
         .sort_by { |ps| ps.patient.full_name }
 
-    @unmatched_record_counts = @session.unmatched_consent_forms.count
-
     tab_patient_sessions =
       group_patient_sessions_by_conditions(
         all_patient_sessions,

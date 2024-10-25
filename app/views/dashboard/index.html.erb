@@ -47,6 +47,13 @@
   </li>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(link_to: consent_forms_path, secondary: true) do |card| %>
+      <% card.with_heading { t("consent_forms.index.title") } %>
+      <% card.with_description { "Review incoming consent responses that can’t be automatically matched" } %>
+    <% end %>
+  </li>
+
+  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
     <%= render AppCardComponent.new(link_to: notices_path, secondary: true) do |card| %>
       <% card.with_heading { t("notices.index.title") } %>
       <% card.with_description { "View notices about important updates to patient records" } %>

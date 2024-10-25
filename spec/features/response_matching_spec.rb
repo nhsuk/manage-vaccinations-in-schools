@@ -3,11 +3,9 @@
 describe "Response matching" do
   scenario "Users can match responses to patient records" do
     given_the_app_is_setup
-    when_i_go_to_the_programmes_page
-    and_i_click_on_the_check_consent_responses_link
-    then_i_see_the_unmatched_responses_link
 
-    when_i_click_on_the_unmatched_responses_link
+    when_i_go_to_the_dashboard
+    and_i_click_on_unmatched_consent_responses
     then_i_am_on_the_unmatched_responses_page
 
     when_i_choose_a_consent_response
@@ -33,32 +31,18 @@ describe "Response matching" do
     @patient = create(:patient, session: @session)
   end
 
-  def when_i_go_to_the_programmes_page
+  def when_i_go_to_the_dashboard
     sign_in @user
-    visit programmes_path
+    visit dashboard_path
   end
 
-  def and_i_click_on_the_check_consent_responses_link
-    click_on @programme.name
-    within ".app-secondary-navigation" do
-      click_on "Sessions"
-    end
-    click_on @school.name
-    click_on "Check consent responses"
-  end
-
-  def then_i_see_the_unmatched_responses_link
-    expect(page).to have_link(
-      "1 response needs matching with records in the cohort"
-    )
-  end
-
-  def when_i_click_on_the_unmatched_responses_link
-    click_on "1 response needs matching with records in the cohort"
+  def and_i_click_on_unmatched_consent_responses
+    click_on "Unmatched consent responses"
   end
 
   def then_i_am_on_the_unmatched_responses_page
     expect(page).to have_content("Unmatched consent responses")
+    expect(page).to have_content("1 consent response")
   end
 
   def when_i_choose_a_consent_response

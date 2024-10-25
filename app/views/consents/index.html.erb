@@ -10,19 +10,6 @@
 
 <%= h1 page_title, page_title: %>
 
-<% if @unmatched_record_counts > 0 %>
-  <%= govuk_inset_text html_attributes: { class: "nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-4" } do %>
-    <span class="nhsuk-visually-hidden">Information: </span>
-
-    <p><%= responses = pluralize(@unmatched_record_counts, "response")
-           need = @unmatched_record_counts == 1 ? "needs" : "need"
-           link_to(
-             "#{responses} #{need} matching with records in the cohort",
-             consent_forms_path
-           ) %></p>
-  <% end %>
-<% end %>
-
 <%= render AppSecondaryNavigationComponent.new do |nav| %>
   <% TAB_PATHS[:consents].each do |tab, state| %>
     <% nav.with_item(selected: @current_tab == state,
