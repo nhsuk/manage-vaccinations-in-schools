@@ -3,12 +3,12 @@
 class AppSessionPatientTableComponent < ViewComponent::Base
   def initialize(
     section:,
-    patients: nil,
-    patient_sessions: nil,
     caption: nil,
     columns: %i[name year_group],
     consent_form: nil,
     params: {},
+    patient_sessions: nil,
+    patients: nil,
     year_groups: []
   )
     super
@@ -45,9 +45,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
       reason: "Reason for refusal",
       select_for_matching: "Action",
       year_group: "Year group"
-    }[
-      column
-    ]
+    }.fetch(column)
   end
 
   def column_value(patient, column)
@@ -124,38 +122,50 @@ class AppSessionPatientTableComponent < ViewComponent::Base
   end
 
   def header_link(column)
-    case @section
-    when :matching
-      column_name(column)
-    else
-      direction =
-        if params[:sort] == column.to_s && params[:direction] == "asc"
-          "desc"
-        else
-          "asc"
-        end
-      data = { turbo: "true", turbo_action: "replace" }
-      link_to column_name(column),
-              session_section_tab_path(
-                direction:,
-                name: params[:name],
-                postcode: params[:postcode],
-                section: params[:section],
-                session_id: params[:session_id],
-                sort: column,
-                tab: params[:tab],
-                year_groups: params[:year_groups]
-              ),
-              data:
-    end
+    return column_name(column) if column == :select_for_matching
+
+    direction =
+      if params[:sort] == column.to_s && params[:direction] == "asc"
+        "desc"
+      else
+        "asc"
+      end
+
+    data = { turbo: "true", turbo_action: "replace" }
+
+    filter_params = {
+      direction:,
+      name: params[:name],
+      postcode: params[:postcode],
+      sort: column,
+      year_groups: params[:year_groups]
+    }
+
+    path =
+      if @section == :matching
+        consent_form_path(@consent_form, **filter_params)
+      else
+        session_section_tab_path(
+          section: params[:section],
+          session_id: params[:session_id],
+          tab: params[:tab],
+          **filter_params
+        )
+      end
+
+    link_to column_name(column), path, data:
   end
 
   def form_url
-    session_section_tab_path(
-      session_id: params[:session_id],
-      section: params[:section],
-      tab: params[:tab]
-    )
+    if @section == :matching
+      consent_form_path(@consent_form)
+    else
+      session_section_tab_path(
+        session_id: params[:session_id],
+        section: params[:section],
+        tab: params[:tab]
+      )
+    end
   end
 
   def header_attributes(column)

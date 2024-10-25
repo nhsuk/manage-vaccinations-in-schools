@@ -1,57 +1,55 @@
 <div class="app-patients">
-  <% if @section != :matching %>
-    <%= form_with url: form_url,
-                  method: :get,
-                  class: "app-patients__filters",
-                  data: { module: "autosubmit",
-                          turbo: "true",
-                          turbo_action: "replace" },
-                  builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
-      <%= f.govuk_fieldset legend: { text: "Filter results", size: "s" } do %>
-        <% if @columns.include?(:name) %>
-          <%= f.govuk_text_field :name, label: { text: "Name" },
-                                        value: params[:name],
-                                        autocomplete: "off",
-                                        "data-autosubmit-target": "field",
-                                        "data-action": "autosubmit#submit",
-                                        "data-turbo-permanent": "true" %>
-        <% end %>
+  <%= form_with url: form_url,
+                method: :get,
+                class: "app-patients__filters",
+                data: { module: "autosubmit",
+                        turbo: "true",
+                        turbo_action: "replace" },
+                builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
+    <%= f.govuk_fieldset legend: { text: "Filter results", size: "s" } do %>
+      <% if @columns.include?(:name) %>
+        <%= f.govuk_text_field :name, label: { text: "Name" },
+                                      value: params[:name],
+                                      autocomplete: "off",
+                                      "data-autosubmit-target": "field",
+                                      "data-action": "autosubmit#submit",
+                                      "data-turbo-permanent": "true" %>
+      <% end %>
 
-        <% if @columns.include?(:postcode) %>
-          <%= f.govuk_text_field :postcode, label: { text: "Postcode" },
-                                            value: params[:postcode],
-                                            autocomplete: "off",
-                                            "data-autosubmit-target": "field",
-                                            "data-action": "autosubmit#submit",
-                                            "data-turbo-permanent": "true" %>
-        <% end %>
+      <% if @columns.include?(:postcode) %>
+        <%= f.govuk_text_field :postcode, label: { text: "Postcode" },
+                                          value: params[:postcode],
+                                          autocomplete: "off",
+                                          "data-autosubmit-target": "field",
+                                          "data-action": "autosubmit#submit",
+                                          "data-turbo-permanent": "true" %>
+      <% end %>
 
-        <% if @columns.include?(:year_group) %>
-          <%= f.govuk_check_boxes_fieldset :year_groups, legend: { text: "Year group", size: "s" } do %>
-            <% year_groups.each do |year_group| %>
-              <%= f.govuk_check_box :year_groups,
-                                    year_group,
-                                    label: { text: helpers.format_year_group(year_group) },
-                                    checked: year_group.to_s.in?(params[:year_groups] || []),
-                                    "data-autosubmit-target": "field",
-                                    "data-action": "autosubmit#submit",
-                                    "data-turbo-permanent": "true" %>
-            <% end %>
+      <% if @columns.include?(:year_group) %>
+        <%= f.govuk_check_boxes_fieldset :year_groups, legend: { text: "Year group", size: "s" } do %>
+          <% year_groups.each do |year_group| %>
+            <%= f.govuk_check_box :year_groups,
+                                  year_group,
+                                  label: { text: helpers.format_year_group(year_group) },
+                                  checked: year_group.to_s.in?(params[:year_groups] || []),
+                                  "data-autosubmit-target": "field",
+                                  "data-action": "autosubmit#submit",
+                                  "data-turbo-permanent": "true" %>
           <% end %>
         <% end %>
-
-        <%= f.hidden_field :sort, value: params[:sort] %>
-        <%= f.hidden_field :direction, value: params[:direction] %>
-        <%= f.govuk_submit "Reset filters", type: "reset",
-                                            secondary: true,
-                                            "data-autosubmit-target": "reset",
-                                            "data-action": "autosubmit#submit",
-                                            "data-turbo-permanent": "true",
-                                            class: %w[nhsuk-u-display-block
-                                                      app-button--small] %>
-        <%= f.govuk_submit "Filter", "data-autosubmit-target": "filter",
-                                     "data-turbo-permanent": "true" %>
       <% end %>
+
+      <%= f.hidden_field :sort, value: params[:sort] %>
+      <%= f.hidden_field :direction, value: params[:direction] %>
+      <%= f.govuk_submit "Reset filters", type: "reset",
+                                          secondary: true,
+                                          "data-autosubmit-target": "reset",
+                                          "data-action": "autosubmit#submit",
+                                          "data-turbo-permanent": "true",
+                                          class: %w[nhsuk-u-display-block
+                                                    app-button--small] %>
+      <%= f.govuk_submit "Filter", "data-autosubmit-target": "filter",
+                                   "data-turbo-permanent": "true" %>
     <% end %>
   <% end %>
 
