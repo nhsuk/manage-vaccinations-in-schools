@@ -45,6 +45,16 @@ class TextDeliveryJob < ApplicationJob
     else
       Rails.logger.info "Sending text message to #{phone_number} with template #{template_id}"
     end
+
+    patient ||= consent&.patient || patient_session&.patient
+
+    NotifyLogEntry.create!(
+      type: :sms,
+      patient:,
+      consent_form:,
+      template_id:,
+      recipient: phone_number
+    )
   end
 
   def self.client
