@@ -60,7 +60,7 @@ describe "Triage" do
 
   def and_i_enter_a_note_and_delay_vaccination
     fill_in "Triage notes (optional)", with: "Delaying vaccination for 2 weeks"
-    choose "No, delay vaccination to a later date"
+    choose "No, delay vaccination (and invite to clinic)"
     click_button "Save triage"
   end
 
