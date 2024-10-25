@@ -97,19 +97,13 @@ describe AppActivityLogComponent do
       )
 
       create(
-        :consent_notification,
-        :request,
-        programme:,
+        :notify_log_entry,
+        :email,
+        template_id: GOVUK_NOTIFY_EMAIL_TEMPLATES[:consent_school_request],
         patient:,
-        sent_at: Date.new(2024, 5, 10)
-      )
-
-      create(
-        :session_notification,
-        :school_reminder,
-        session:,
-        patient:,
-        sent_at: Date.new(2024, 5, 30)
+        consent_form: nil,
+        recipient: "test@example.com",
+        created_at: Date.new(2024, 5, 10)
       )
 
       create(
@@ -141,14 +135,6 @@ describe AppActivityLogComponent do
                      notes: "Some notes"
 
     include_examples "card",
-                     title: "School session reminder sent",
-                     date: "30 May 2024 at 12:00am"
-
-    include_examples "card",
-                     title: "Clinic invitation sent",
-                     date: "30 May 2024 at 12:00am"
-
-    include_examples "card",
                      title: "Triaged decision: Safe to vaccinate",
                      date: "30 May 2024 at 2:30pm",
                      by: "Nurse Joy"
@@ -172,8 +158,9 @@ describe AppActivityLogComponent do
                      date: "29 May 2024 at 12:00pm"
 
     include_examples "card",
-                     title: "Consent request sent for HPV",
-                     date: "10 May 2024 at 12:00am"
+                     title: "Consent school request sent",
+                     date: "10 May 2024 at 12:00am",
+                     notes: "test@example.com"
   end
 
   describe "self-consent" do

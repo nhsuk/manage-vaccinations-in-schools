@@ -257,6 +257,10 @@ en:
           given: Consent given
           not_provided: Not provided
           refused: Consent refused
+      notify_log_entry:
+        types:
+          email: Email
+          sms: SMS
       parent:
         contact_method_types:
           any: No specific needs

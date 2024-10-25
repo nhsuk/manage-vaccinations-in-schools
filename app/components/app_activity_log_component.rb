@@ -14,9 +14,8 @@ class AppActivityLogComponent < ViewComponent::Base
   def all_events
     [
       consent_events,
-      consent_notification_events,
+      notify_events,
       session_events,
-      session_notification_events,
       triage_events,
       vaccination_events
     ].flatten
@@ -31,16 +30,12 @@ class AppActivityLogComponent < ViewComponent::Base
     end
   end
 
-  def consent_notification_events
-    @patient_session.patient.consent_notifications.map do
+  def notify_events
+    @patient_session.patient.notify_log_entries.map do
       {
-        title:
-          if _1.request?
-            "Consent request sent for #{_1.programme.name}"
-          else
-            "Consent reminder sent for #{_1.programme.name}"
-          end,
-        time: _1.sent_at
+        title: "#{_1.title} sent",
+        time: _1.created_at,
+        notes: @patient_session.patient.restricted? ? "" : _1.recipient
       }
     end
   end
@@ -52,18 +47,6 @@ class AppActivityLogComponent < ViewComponent::Base
         time: @patient_session.created_at
       }
     ]
-  end
-
-  def session_notification_events
-    @patient_session.patient.session_notifications.map do |notification|
-      title =
-        if notification.school_reminder?
-          "School session reminder sent"
-        elsif notification.clinic_invitation?
-          "Clinic invitation sent"
-        end
-      { title:, time: notification.sent_at }
-    end
   end
 
   def triage_events

@@ -36,4 +36,29 @@ describe NotifyLogEntry do
 
     it { should be_valid }
   end
+
+  describe "#title" do
+    subject(:title) { notify_log_entry.title }
+
+    context "with a known template" do
+      let(:notify_log_entry) do
+        build(
+          :notify_log_entry,
+          :email,
+          template_id:
+            GOVUK_NOTIFY_EMAIL_TEMPLATES.fetch(:consent_clinic_request)
+        )
+      end
+
+      it { should eq("Consent clinic request") }
+    end
+
+    context "with an unknown template" do
+      let(:notify_log_entry) do
+        build(:notify_log_entry, :sms, template_id: SecureRandom.uuid)
+      end
+
+      it { should eq("Unknown SMS") }
+    end
+  end
 end
