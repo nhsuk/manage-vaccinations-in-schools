@@ -34,11 +34,10 @@
 <% end %>
 
 <%= render AppSessionPatientTableComponent.new(
-      session: @session,
-      patient_sessions: @patient_sessions,
-      caption: t("patients_table.#{@current_tab}.caption",
-                 children: t("children", count: @patient_sessions.count)),
+      caption: t("patients_table.#{@current_tab}.caption", children: t("children", count: @patient_sessions.count)),
       columns: @current_tab == :consent_refused ? %i[name year_group reason] : %i[name year_group],
-      section: :consents,
       params:,
+      patient_sessions: @patient_sessions,
+      section: :consents,
+      year_groups: @session.year_groups,
     ) %>

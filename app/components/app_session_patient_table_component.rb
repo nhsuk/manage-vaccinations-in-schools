@@ -1,29 +1,29 @@
 # frozen_string_literal: true
 
 class AppSessionPatientTableComponent < ViewComponent::Base
-  attr_reader :params
-
   def initialize(
-    session:,
     patient_sessions:,
     section:,
     caption: nil,
     columns: %i[name year_group],
     consent_form: nil,
-    params: {}
+    params: {},
+    year_groups: []
   )
     super
 
-    @session = session
-    @patient_sessions = patient_sessions
-    @columns = columns
-    @section = section
     @caption = caption
+    @columns = columns
     @consent_form = consent_form
     @params = params
+    @patient_sessions = patient_sessions
+    @section = section
+    @year_groups = year_groups
   end
 
   private
+
+  attr_reader :params, :year_groups
 
   def column_name(column)
     {
@@ -150,6 +150,4 @@ class AppSessionPatientTableComponent < ViewComponent::Base
       end
     { html_attributes: { aria: { sort: } } }
   end
-
-  delegate :year_groups, to: :@session
 end
