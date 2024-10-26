@@ -13,6 +13,8 @@ describe "Parental consent" do
     and_i_see_a_consent_request_has_been_sent
     and_an_email_is_sent_to_the_parent
     and_a_text_is_sent_to_the_parent
+    and_an_activity_log_entry_is_visible_for_the_email
+    and_an_activity_log_entry_is_visible_for_the_text
   end
 
   def given_a_patient_without_consent_exists
@@ -60,5 +62,19 @@ describe "Parental consent" do
 
   def and_a_text_is_sent_to_the_parent
     expect_text_to(@parent.phone, :consent_clinic_request)
+  end
+
+  def and_an_activity_log_entry_is_visible_for_the_email
+    click_on "Activity log"
+    expect(page).to have_content(
+      "Consent clinic request sent\n#{@parent.email}"
+    )
+  end
+
+  def and_an_activity_log_entry_is_visible_for_the_text
+    click_on "Activity log"
+    expect(page).to have_content(
+      "Consent clinic request sent\n#{@parent.phone}"
+    )
   end
 end
