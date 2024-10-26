@@ -76,5 +76,11 @@ module AuthenticationConcern
     def user_signed_in?
       super && (Settings.cis2.enabled ? cis2_session? : true)
     end
+
+    def set_user_cis2_info
+      return unless Settings.cis2.enabled && current_user
+
+      current_user.cis2_info = session["cis2_info"]
+    end
   end
 end

@@ -35,4 +35,68 @@ describe User do
     it { should validate_length_of(:given_name).is_at_most(255) }
     it { should validate_length_of(:family_name).is_at_most(255) }
   end
+
+  describe "#is_medical_secretary?" do
+    subject { user.is_medical_secretary? }
+
+    context "cis2 is enabled", cis2: :enabled do
+      context "when the user is an admin" do
+        let(:user) { build(:admin_staff) }
+
+        it { should be true }
+      end
+
+      context "when the user is a nurse" do
+        let(:user) { build(:nurse) }
+
+        it { should be false }
+      end
+    end
+
+    context "cis2 is disabled", cis2: :disabled do
+      context "when the user is an admin" do
+        let(:user) { build(:admin_staff) }
+
+        it { should be true }
+      end
+
+      context "when the user is a nurse" do
+        let(:user) { build(:nurse) }
+
+        it { should be false }
+      end
+    end
+  end
+
+  describe "#is_nurse?" do
+    subject { user.is_nurse? }
+
+    context "cis2 is enabled", cis2: :enabled do
+      context "when the user is a nurse" do
+        let(:user) { build(:nurse) }
+
+        it { should be true }
+      end
+
+      context "when the user is admin staff" do
+        let(:user) { build(:admin_staff) }
+
+        it { should be false }
+      end
+    end
+
+    context "cis2 is disabled", cis2: :disabled do
+      context "when the user is a nurse" do
+        let(:user) { build(:nurse) }
+
+        it { should be true }
+      end
+
+      context "when the user is admin staff" do
+        let(:user) { build(:admin_staff) }
+
+        it { should be false }
+      end
+    end
+  end
 end
