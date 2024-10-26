@@ -2,6 +2,7 @@
 
 class ApplicationMailer < Mail::Notify::Mailer
   before_action :attach_data_for_notify_log_entry
+  after_deliver :log_delivery
 
   private
 
@@ -82,5 +83,17 @@ class ApplicationMailer < Mail::Notify::Mailer
 
     message.class.send(:attr_reader, :patient_id)
     message.class.send(:attr_reader, :consent_form_id)
+  end
+
+  def log_delivery
+    mail.to.map do |recipient|
+      NotifyLogEntry.create!(
+        type: :email,
+        template_id: mail.template_id,
+        recipient:,
+        patient_id: mail.patient_id,
+        consent_form_id: mail.consent_form_id
+      )
+    end
   end
 end
