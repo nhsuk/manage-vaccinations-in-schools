@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
 
   before_action :store_user_location!
   before_action :authenticate_user!
-  before_action :set_user_sso_session
+  before_action :set_user_cis2_info
   before_action :set_disable_cache_headers
   before_action :set_header_path
   before_action :set_service_name
@@ -53,12 +53,6 @@ class ApplicationController < ActionController::Base
 
   def handle_unprocessable_entity
     render "errors/unprocessable_entity", status: :unprocessable_entity
-  end
-
-  def set_user_sso_session
-    return unless Flipper.enabled?(:sso_session) && current_user
-
-    current_user.sso_session = session["cis2_info"]
   end
 
   def user_not_authorized

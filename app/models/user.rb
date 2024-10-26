@@ -28,7 +28,7 @@
 class User < ApplicationRecord
   include FullNameConcern
 
-  attr_accessor :sso_session
+  attr_accessor :cis2_info
 
   if Settings.cis2.enabled
     devise :omniauthable, :trackable, :timeoutable, omniauth_providers: %i[cis2]
@@ -87,14 +87,14 @@ class User < ApplicationRecord
   def is_medical_secretary?
     return email.include?("admin") unless Settings.cis2.enabled
 
-    role_codes = sso_session.dig("selected_role", "code")
-    role_codes.include?("R8006")
+    selected_role = cis2_info.dig("selected_role", "code")
+    selected_role.ends_with? "R8006"
   end
 
   def is_nurse?
     return email.include?("nurse") unless Settings.cis2.enabled
 
-    role_codes = sso_session.dig("selected_role", "code")
-    role_codes.include?("R8001")
+    selected_role = cis2_info.dig("selected_role", "code")
+    selected_role.ends_with? "R8001"
   end
 end
