@@ -76,7 +76,7 @@ FactoryBot.define do
     address_postcode { Faker::Address.uk_postcode }
 
     parent_email { Faker::Internet.email }
-    parent_full_name { "#{Faker::Name.first_name}} #{family_name}" }
+    parent_full_name { "#{Faker::Name.first_name} #{family_name}" }
     parent_phone { "07700 900#{rand(0..999).to_s.rjust(3, "0")}" }
     parent_phone_receive_updates { parent_phone.present? }
     parent_relationship_other_name do
