@@ -43,8 +43,16 @@ module CSVImportable
   end
 
   def csv=(file)
-    self.csv_data = file&.read
+    self.csv_data = remove_bom_if_present(file&.read)
     self.csv_filename = file&.original_filename
+  end
+
+  # CSV files exported from Excel may have a BOM.
+  # https://en.wikipedia.org/wiki/Byte_order_mark
+  # e.g. if you create a new class import from scratch in Excel on Mac v16,
+  # save the file as CSV, and upload it.
+  def remove_bom_if_present(data)
+    StringIO.new(data).tap(&:set_encoding_by_bom).read
   end
 
   # Needed so that validations match the form field name.

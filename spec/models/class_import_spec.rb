@@ -75,6 +75,15 @@ describe ClassImport do
       end
     end
 
+    describe "with a BOM" do
+      let(:file) { "valid_with_bom.csv" }
+
+      it "removes the BOM" do
+        expect(class_import).to be_valid
+        expect(class_import.rows.first.to_patient[:given_name]).to eq("Lena")
+      end
+    end
+
     describe "with invalid fields" do
       let(:file) { "invalid_fields.csv" }
 
