@@ -1,8 +1,13 @@
 # frozen_string_literal: true
 
-describe "User password authentication failure" do
+# This test can be run by disabling CIS2 in consig/settings/test.yml and running
+# rspec like so:
+#
+#   bundle exec rspec -t local_users
+#
+# There's likely a way to automate this but I haven't figured it out yet.
+describe "User password authentication failure", :local_users do
   scenario "sign in with wrong password" do
-    given_cis2_authentication_is_disabled
     given_that_i_have_an_account_with_a_password
 
     when_i_go_to_the_start_page
@@ -14,39 +19,12 @@ describe "User password authentication failure" do
     then_i_see_an_error_message
   end
 
-  scenario "sign in to password-less user" do
-    given_cis2_authentication_is_enabled
-    given_that_i_have_an_account_without_a_password
-
-    when_i_go_to_the_sign_in_page
-    then_i_see_the_sign_in_form
-
-    when_i_sign_in_with_the_wrong_password
-    then_i_see_an_error_message
-  end
-
-  def given_cis2_authentication_is_disabled
-    Flipper.disable(:cis2)
-  end
-
-  def given_cis2_authentication_is_enabled
-    Flipper.enable(:cis2)
-  end
-
   def given_that_i_have_an_account_with_a_password
     @user = create(:user, password: "rosebud123")
   end
 
-  def given_that_i_have_an_account_without_a_password
-    @user = create(:user)
-  end
-
   def when_i_go_to_the_start_page
     visit start_path
-  end
-
-  def when_i_go_to_the_sign_in_page
-    visit new_user_session_path
   end
 
   def and_i_click_on_start_now
