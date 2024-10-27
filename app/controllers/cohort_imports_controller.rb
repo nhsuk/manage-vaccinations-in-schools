@@ -14,7 +14,7 @@ class CohortImportsController < ApplicationController
     @cohort_import =
       CohortImport.new(
         programme: @programme,
-        team: current_user.team,
+        team: current_user.selected_team,
         uploaded_by: current_user,
         **cohort_import_params
       )
