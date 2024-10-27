@@ -219,6 +219,7 @@ RSpec.configure do |config|
   config.include Capybara::RSpecMatchers, type: :component
   config.include Devise::Test::IntegrationHelpers, type: :feature
   config.include Devise::Test::IntegrationHelpers, type: :system
+  config.include CIS2AuthHelper, type: :feature
   config.include EmailExpectations, type: :feature
   config.include FactoryBot::Syntax::Methods
   config.include TextExpectations, type: :feature

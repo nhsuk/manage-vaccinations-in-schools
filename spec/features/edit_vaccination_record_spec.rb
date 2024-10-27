@@ -66,7 +66,7 @@ describe "Edit vaccination record" do
   end
 
   def when_i_click_on_the_change_link
-    click_on "Change"
+    click_on "Change vaccination date"
   end
 
   def then_i_should_see_the_date_time_form

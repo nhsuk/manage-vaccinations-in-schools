@@ -17,7 +17,7 @@ describe "HPV vaccination" do
     @patient =
       create(:patient, :consent_given_triage_not_needed, session: @session)
 
-    sign_in team.users.first
+    sign_in team.users.first, role: :admin_staff
   end
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
