@@ -64,7 +64,7 @@ FactoryBot.define do
       cis2_info { cis2_info_hash }
     end
 
-    factory :admin_staff do
+    factory :admin do
       transient do
         selected_role_code { "S8000:G8001:R8006" }
         selected_role_name { "Medical Secretary Access Role" }

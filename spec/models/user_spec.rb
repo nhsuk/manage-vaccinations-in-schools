@@ -36,12 +36,12 @@ describe User do
     it { should validate_length_of(:family_name).is_at_most(255) }
   end
 
-  describe "#is_medical_secretary?" do
-    subject { user.is_medical_secretary? }
+  describe "#is_admin?" do
+    subject { user.is_admin? }
 
     context "cis2 is enabled", cis2: :enabled do
       context "when the user is an admin" do
-        let(:user) { build(:admin_staff) }
+        let(:user) { build(:admin) }
 
         it { should be true }
       end
@@ -55,7 +55,7 @@ describe User do
 
     context "cis2 is disabled", cis2: :disabled do
       context "when the user is an admin" do
-        let(:user) { build(:admin_staff) }
+        let(:user) { build(:admin) }
 
         it { should be true }
       end
@@ -79,7 +79,7 @@ describe User do
       end
 
       context "when the user is admin staff" do
-        let(:user) { build(:admin_staff) }
+        let(:user) { build(:admin) }
 
         it { should be false }
       end
@@ -93,7 +93,7 @@ describe User do
       end
 
       context "when the user is admin staff" do
-        let(:user) { build(:admin_staff) }
+        let(:user) { build(:admin) }
 
         it { should be false }
       end
