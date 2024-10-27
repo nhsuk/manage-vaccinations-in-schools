@@ -3,7 +3,7 @@
 class BatchPolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
-      scope.unarchived.where(team: user.teams)
+      scope.unarchived.where(team: user.selected_team)
     end
   end
 end

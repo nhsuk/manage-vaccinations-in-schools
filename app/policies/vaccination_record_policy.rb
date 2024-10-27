@@ -19,7 +19,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      scope.joins(:session).where(session: { team: user.teams })
+      scope.joins(:session).where(session: { team: user.selected_team })
     end
   end
 end

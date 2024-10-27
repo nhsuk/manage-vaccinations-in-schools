@@ -14,7 +14,7 @@
 
 <%= render AppProgrammeNavigationComponent.new(
       @programme,
-      team: current_user.team,
+      team: current_user.selected_team,
       active: :imports,
     ) %>
 

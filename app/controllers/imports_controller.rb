@@ -25,7 +25,7 @@ class ImportsController < ApplicationController
   private
 
   def set_team
-    @team = current_user.team
+    @team = current_user.selected_team
   end
 
   def set_programme

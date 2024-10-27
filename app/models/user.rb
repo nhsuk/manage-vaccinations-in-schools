@@ -61,11 +61,6 @@ class User < ApplicationRecord
   scope :recently_active,
         -> { where(last_sign_in_at: 1.week.ago..Time.current) }
 
-  def team
-    # TODO: Update the app to properly support multiple teams per user
-    teams.first
-  end
-
   def selected_team
     if Settings.cis2.enabled
       Team.find_by(ods_code: cis2_info.dig("selected_org", "code"))
