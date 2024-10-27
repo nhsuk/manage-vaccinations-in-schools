@@ -45,7 +45,12 @@ class SessionNotification < ApplicationRecord
     clinic_initial_invitation? || clinic_subsequent_invitation?
   end
 
-  def self.create_and_send!(patient_session:, session_date:, type:)
+  def self.create_and_send!(
+    patient_session:,
+    session_date:,
+    type:,
+    current_user: nil
+  )
     # We create a record in the database first to avoid sending duplicate emails/texts.
     # If a problem occurs while the emails/texts are sent, they will be in the job
     # queue and restarted at a later date.
@@ -53,28 +58,40 @@ class SessionNotification < ApplicationRecord
     patient = patient_session.patient
     session = patient_session.session
 
-    SessionNotification.create!(patient:, session:, session_date:, type:)
+    SessionNotification.create!(
+      patient:,
+      session:,
+      session_date:,
+      type:,
+      sent_by: current_user
+    )
 
     if type == :school_reminder
       patient_session.consents_to_send_communication.each do |consent|
         SessionMailer
-          .with(consent:, patient_session:)
+          .with(consent:, patient_session:, sent_by: current_user)
           .school_reminder
           .deliver_later
 
         TextDeliveryJob.perform_later(
           :session_school_reminder,
           consent:,
-          patient_session:
+          patient_session:,
+          sent_by: current_user
         )
       end
     else
       patient_session.patient.parents.each do |parent|
-        SessionMailer.with(parent:, patient_session:).send(type).deliver_later
+        SessionMailer
+          .with(parent:, patient_session:, sent_by: current_user)
+          .send(type)
+          .deliver_later
+
         TextDeliveryJob.perform_later(
           :"session_#{type}",
           parent:,
-          patient_session:
+          patient_session:,
+          sent_by: current_user
         )
       end
     end

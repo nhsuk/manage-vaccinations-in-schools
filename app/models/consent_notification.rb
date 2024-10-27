@@ -38,12 +38,23 @@ class ConsentNotification < ApplicationRecord
     initial_reminder? || subsequent_reminder?
   end
 
-  def self.create_and_send!(patient:, programme:, session:, type:)
+  def self.create_and_send!(
+    patient:,
+    programme:,
+    session:,
+    type:,
+    current_user: nil
+  )
     # We create a record in the database first to avoid sending duplicate emails/texts.
     # If a problem occurs while the emails/texts are sent, they will be in the job
     # queue and restarted at a later date.
 
-    ConsentNotification.create!(programme:, patient:, type:)
+    ConsentNotification.create!(
+      programme:,
+      patient:,
+      type:,
+      sent_by: current_user
+    )
 
     is_school = session.location.school?
 
@@ -58,7 +69,7 @@ class ConsentNotification < ApplicationRecord
 
     patient.parents.each do |parent|
       ConsentMailer
-        .with(parent:, patient:, programme:, session:)
+        .with(parent:, patient:, programme:, session:, sent_by: current_user)
         .send(mailer_action)
         .deliver_later
 
@@ -69,7 +80,8 @@ class ConsentNotification < ApplicationRecord
         parent:,
         patient:,
         programme:,
-        session:
+        session:,
+        sent_by: current_user
       )
     end
   end

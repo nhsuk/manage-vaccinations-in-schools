@@ -28,7 +28,13 @@ describe ConsentNotification do
   describe "#create_and_send!" do
     subject(:create_and_send!) do
       travel_to(today) do
-        described_class.create_and_send!(patient:, programme:, session:, type:)
+        described_class.create_and_send!(
+          patient:,
+          programme:,
+          session:,
+          type:,
+          current_user:
+        )
       end
     end
 
@@ -42,6 +48,7 @@ describe ConsentNotification do
     let(:session) do
       create(:session, location:, programme:, patients: [patient], team:)
     end
+    let(:current_user) { nil }
 
     context "with a request and a school location" do
       let(:type) { :request }
@@ -65,7 +72,8 @@ describe ConsentNotification do
             parent: parents.first,
             patient:,
             programme:,
-            session:
+            session:,
+            sent_by: current_user
           },
           args: []
         ).and have_enqueued_mail(ConsentMailer, :school_request).with(
@@ -73,7 +81,8 @@ describe ConsentNotification do
                   parent: parents.second,
                   patient:,
                   programme:,
-                  session:
+                  session:,
+                  sent_by: current_user
                 },
                 args: []
               )
@@ -86,12 +95,14 @@ describe ConsentNotification do
           parent: parents.first,
           patient:,
           programme:,
-          session:
+          session:,
+          sent_by: current_user
         ).and have_enqueued_text(:consent_school_request).with(
                 parent: parents.second,
                 patient:,
                 programme:,
-                session:
+                session:,
+                sent_by: current_user
               )
       end
     end
@@ -119,7 +130,8 @@ describe ConsentNotification do
             parent: parents.first,
             patient:,
             programme:,
-            session:
+            session:,
+            sent_by: current_user
           },
           args: []
         ).and have_enqueued_mail(ConsentMailer, :clinic_request).with(
@@ -127,7 +139,8 @@ describe ConsentNotification do
                   parent: parents.second,
                   patient:,
                   programme:,
-                  session:
+                  session:,
+                  sent_by: current_user
                 },
                 args: []
               )
@@ -140,12 +153,14 @@ describe ConsentNotification do
           parent: parents.first,
           patient:,
           programme:,
-          session:
+          session:,
+          sent_by: current_user
         ).and have_enqueued_text(:consent_clinic_request).with(
                 parent: parents.second,
                 patient:,
                 programme:,
-                session:
+                session:,
+                sent_by: current_user
               )
       end
     end
@@ -172,7 +187,8 @@ describe ConsentNotification do
             parent: parents.first,
             patient:,
             programme:,
-            session:
+            session:,
+            sent_by: current_user
           },
           args: []
         ).and have_enqueued_mail(ConsentMailer, :school_initial_reminder).with(
@@ -180,7 +196,8 @@ describe ConsentNotification do
                   parent: parents.second,
                   patient:,
                   programme:,
-                  session:
+                  session:,
+                  sent_by: current_user
                 },
                 args: []
               )
@@ -193,12 +210,14 @@ describe ConsentNotification do
           parent: parents.first,
           patient:,
           programme:,
-          session:
+          session:,
+          sent_by: current_user
         ).and have_enqueued_text(:consent_school_reminder).with(
                 parent: parents.second,
                 patient:,
                 programme:,
-                session:
+                session:,
+                sent_by: current_user
               )
       end
     end
@@ -225,7 +244,8 @@ describe ConsentNotification do
             parent: parents.first,
             patient:,
             programme:,
-            session:
+            session:,
+            sent_by: current_user
           },
           args: []
         ).and have_enqueued_mail(
@@ -236,7 +256,8 @@ describe ConsentNotification do
                   parent: parents.second,
                   patient:,
                   programme:,
-                  session:
+                  session:,
+                  sent_by: current_user
                 },
                 args: []
               )
@@ -249,12 +270,14 @@ describe ConsentNotification do
           parent: parents.first,
           patient:,
           programme:,
-          session:
+          session:,
+          sent_by: current_user
         ).and have_enqueued_text(:consent_school_reminder).with(
                 parent: parents.second,
                 patient:,
                 programme:,
-                session:
+                session:,
+                sent_by: current_user
               )
       end
     end
