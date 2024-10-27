@@ -29,7 +29,12 @@ describe SessionNotification do
   describe "#create_and_send!" do
     subject(:create_and_send!) do
       travel_to(today) do
-        described_class.create_and_send!(patient_session:, session_date:, type:)
+        described_class.create_and_send!(
+          patient_session:,
+          session_date:,
+          type:,
+          current_user:
+        )
       end
     end
 
@@ -44,6 +49,7 @@ describe SessionNotification do
     let(:session_date) { session.dates.first.value }
     let(:patient_session) { create(:patient_session, patient:, session:) }
     let(:consent) { create(:consent, :given, :recorded, patient:, programme:) }
+    let(:current_user) { create(:user) }
 
     context "with a school reminder" do
       let(:type) { :school_reminder }
@@ -62,13 +68,20 @@ describe SessionNotification do
         expect { create_and_send! }.to have_enqueued_mail(
           SessionMailer,
           :school_reminder
-        ).with(params: { consent:, patient_session: }, args: [])
+        ).with(
+          params: {
+            consent:,
+            patient_session:,
+            sent_by: current_user
+          },
+          args: []
+        )
       end
 
       it "enqueues a text per parent" do
         expect { create_and_send! }.to have_enqueued_text(
           :session_school_reminder
-        ).with(consent:, patient_session:)
+        ).with(consent:, patient_session:, sent_by: current_user)
       end
     end
 
@@ -92,7 +105,8 @@ describe SessionNotification do
         ).with(
           params: {
             parent: parents.first,
-            patient_session:
+            patient_session:,
+            sent_by: current_user
           },
           args: []
         ).and have_enqueued_mail(
@@ -101,7 +115,8 @@ describe SessionNotification do
               ).with(
                 params: {
                   parent: parents.second,
-                  patient_session:
+                  patient_session:,
+                  sent_by: current_user
                 },
                 args: []
               )
@@ -110,9 +125,15 @@ describe SessionNotification do
       it "enqueues a text per parent" do
         expect { create_and_send! }.to have_enqueued_text(
           :session_clinic_initial_invitation
-        ).with(parent: parents.first, patient_session:).and have_enqueued_text(
-                :session_clinic_initial_invitation
-              ).with(parent: parents.second, patient_session:)
+        ).with(
+          parent: parents.first,
+          patient_session:,
+          sent_by: current_user
+        ).and have_enqueued_text(:session_clinic_initial_invitation).with(
+                parent: parents.second,
+                patient_session:,
+                sent_by: current_user
+              )
       end
     end
 
@@ -136,7 +157,8 @@ describe SessionNotification do
         ).with(
           params: {
             parent: parents.first,
-            patient_session:
+            patient_session:,
+            sent_by: current_user
           },
           args: []
         ).and have_enqueued_mail(
@@ -145,7 +167,8 @@ describe SessionNotification do
               ).with(
                 params: {
                   parent: parents.second,
-                  patient_session:
+                  patient_session:,
+                  sent_by: current_user
                 },
                 args: []
               )
@@ -154,9 +177,15 @@ describe SessionNotification do
       it "enqueues a text per parent" do
         expect { create_and_send! }.to have_enqueued_text(
           :session_clinic_subsequent_invitation
-        ).with(parent: parents.first, patient_session:).and have_enqueued_text(
-                :session_clinic_subsequent_invitation
-              ).with(parent: parents.second, patient_session:)
+        ).with(
+          parent: parents.first,
+          patient_session:,
+          sent_by: current_user
+        ).and have_enqueued_text(:session_clinic_subsequent_invitation).with(
+                parent: parents.second,
+                patient_session:,
+                sent_by: current_user
+              )
       end
     end
   end
