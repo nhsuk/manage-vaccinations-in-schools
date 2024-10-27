@@ -9,6 +9,8 @@ module VaccinationMailerConcern
 
     return unless patient.send_notifications?
 
+    sent_by = current_user
+
     mailer_action =
       if vaccination_record.administered?
         :confirmation_administered
@@ -19,7 +21,7 @@ module VaccinationMailerConcern
     text_template_name = :"vaccination_#{mailer_action}"
 
     patient_session.consents_to_send_communication.each do |consent|
-      params = { consent:, vaccination_record: }
+      params = { consent:, vaccination_record:, sent_by: }
 
       VaccinationMailer.with(params).public_send(mailer_action).deliver_later
 
