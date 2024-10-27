@@ -126,8 +126,10 @@ describe ConsentForm do
         it "has the correct error message" do
           subject.date_of_birth = 2.years.ago.to_date
           subject.valid?(:update)
+          # the date formatting below relies on the
+          # custom interpolation from I18n::CustomInterpolation
           expect(subject.errors[:date_of_birth]).to contain_exactly(
-            "The child cannot be younger than 3. Enter a date before 2019-01-01."
+            "The child cannot be younger than 3. Enter a date before 1 January 2019."
           )
         end
       end
@@ -138,8 +140,10 @@ describe ConsentForm do
         it "has the correct error message" do
           subject.date_of_birth = 23.years.ago.to_date
           subject.valid?(:update)
+          # the date formatting below relies on the
+          # custom interpolation from I18n::CustomInterpolation
           expect(subject.errors[:date_of_birth]).to contain_exactly(
-            "The child cannot be older than 22. Enter a date after 2000-01-01."
+            "The child cannot be older than 22. Enter a date after 1 January 2000."
           )
         end
       end
