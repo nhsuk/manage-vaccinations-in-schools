@@ -1,47 +1,22 @@
 # frozen_string_literal: true
 
-describe "User CIS2 authentication", :cis2 do
-  let(:test_team_ods_code) { "AB12" }
-
-  let(:cis2_auth_mock) do
-    CIS2_AUTH_INFO.deep_dup.tap do |info|
-      info["extra"]["raw_info"]["nhsid_nrbac_roles"][0][
-        "org_code"
-      ] = test_team_ods_code
-      info["extra"]["raw_info"]["nhsid_user_orgs"][0][
-        "org_code"
-      ] = test_team_ods_code
-    end
-  end
-
+describe "User CIS2 authentication" do
   scenario "user has wrong team selected" do
-    setup_cis2_auth_mock
-
-    given_the_cis2_feature_flag_is_enabled
+    given_i_am_setup_in_cis2_but_not_mavis
     when_i_go_to_the_sessions_page
     then_i_am_on_the_start_page
 
     when_i_click_the_cis2_login_button
     then_i_see_the_team_not_found_error
 
-    given_my_team_is_setup_in_mavis
+    given_my_team_has_been_setup_in_mavis
     when_i_click_the_change_role_button
     then_i_see_the_sessions_page
   end
 
   context "user has no other orgs to select" do
-    let(:cis2_auth_mock) do
-      super().tap do |mock|
-        mock["extra"]["raw_info"]["nhsid_nrbac_roles"].select! do
-          _1["org_code"] == test_team_ods_code
-        end
-      end
-    end
-
     scenario "user has wrong team selected" do
-      setup_cis2_auth_mock
-
-      given_the_cis2_feature_flag_is_enabled
+      given_i_am_setup_in_cis2_with_only_one_org
       when_i_go_to_the_start_page
       then_i_should_see_the_cis2_login_button
 
@@ -55,12 +30,18 @@ describe "User CIS2 authentication", :cis2 do
     OmniAuth.config.add_mock(:cis2, cis2_auth_mock)
   end
 
-  def given_the_cis2_feature_flag_is_enabled
-    Flipper.enable(:cis2)
+  def given_i_am_setup_in_cis2_but_not_mavis
+    mock_cis2_auth(
+      uid: "123",
+      given_name: "Nurse",
+      family_name: "Test",
+      org_code: "A9A5A",
+      org_name: "SAIS Team"
+    )
   end
 
-  def given_my_team_is_setup_in_mavis
-    @team = create :team, ods_code: test_team_ods_code
+  def given_my_team_has_been_setup_in_mavis
+    @team = create :team, ods_code: "A9A5A"
   end
 
   def when_i_go_to_the_start_page
@@ -85,6 +66,17 @@ describe "User CIS2 authentication", :cis2 do
 
   def then_i_see_the_sessions_page
     expect(page).to have_current_path sessions_path
+  end
+
+  def given_i_am_setup_in_cis2_with_only_one_org
+    mock_cis2_auth(
+      uid: "123",
+      given_name: "Nurse",
+      family_name: "Test",
+      org_code: "A9A5A",
+      org_name: "SAIS Team",
+      user_only_has_one_org: true
+    )
   end
 
   def then_i_see_the_team_not_found_error

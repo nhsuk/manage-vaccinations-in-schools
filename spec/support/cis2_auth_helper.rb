@@ -76,7 +76,14 @@ module CIS2AuthHelper
   end
 
   def cis2_sign_in(user, role: :nurse, org_code: nil)
-    mock_cis2_auth(user, role:, org_code:)
+    mock_cis2_auth(
+      uid: user.uid,
+      given_name: user.given_name,
+      family_name: user.family_name,
+      email: user.email,
+      role:,
+      org_code:
+    )
 
     if page.driver.respond_to? :get
       page.driver.get "/users/auth/cis2/callback"
@@ -91,21 +98,34 @@ module CIS2AuthHelper
     cis2_sign_in(user, role:, org_code:)
   end
 
-  private
-
-  def mock_cis2_auth(user, role: :nurse, org_code: nil)
+  def mock_cis2_auth(
+    uid:,
+    given_name:,
+    family_name:,
+    email: nil,
+    role: :nurse,
+    role_code: nil,
+    org_code: nil,
+    org_name: "Test SAIS Org",
+    user_only_has_one_org: false
+  )
     mock_auth = cis2_auth_info
 
     if org_code.present?
-      mock_auth["extra"]["raw_info"]["nhsid_nrbac_roles"][0][
-        "org_code"
-      ] = org_code
-      mock_auth["extra"]["raw_info"]["nhsid_user_orgs"][0][
-        "org_code"
-      ] = org_code
+      mock_auth["extra"]["raw_info"]["nhsid_nrbac_roles"][0].merge!(org_code:)
+      mock_auth["extra"]["raw_info"]["nhsid_user_orgs"][0].merge!(
+        org_code:,
+        org_name:
+      )
     end
 
-    role_code = {
+    if user_only_has_one_org
+      mock_auth["extra"]["raw_info"]["nhsid_nrbac_roles"].select! do
+        _1["org_code"] == org_code
+      end
+    end
+
+    role_code ||= {
       nurse: "S8000:G8000:R8001",
       admin_staff: "S8000:G8001:R8006"
     }.fetch(role)
@@ -114,18 +134,16 @@ module CIS2AuthHelper
       "role_code"
     ] = role_code
 
-    mock_auth["uid"] = user.uid
-    mock_auth["extra"]["raw_info"]["uid"] = user.uid
-    mock_auth["extra"]["raw_info"]["sub"] = user.uid
-    mock_auth["info"]["given_name"] = user.given_name
-    mock_auth["info"]["family_name"] = user.family_name
-    mock_auth["info"]["email"] = user.email
-    mock_auth["extra"]["raw_info"]["given_name"] = user.given_name
-    mock_auth["extra"]["raw_info"]["family_name"] = user.family_name
-    mock_auth["extra"]["raw_info"][
-      "name"
-    ] = "#{user.given_name} #{user.family_name}"
-    mock_auth["extra"]["raw_info"]["email"] = user.email
+    mock_auth["uid"] = uid
+    mock_auth["extra"]["raw_info"]["uid"] = uid
+    mock_auth["extra"]["raw_info"]["sub"] = uid
+    mock_auth["info"]["given_name"] = given_name
+    mock_auth["info"]["family_name"] = family_name
+    mock_auth["info"]["email"] = email
+    mock_auth["extra"]["raw_info"]["given_name"] = given_name
+    mock_auth["extra"]["raw_info"]["family_name"] = family_name
+    mock_auth["extra"]["raw_info"]["name"] = "#{given_name} #{family_name}"
+    mock_auth["extra"]["raw_info"]["email"] = email
 
     OmniAuth.config.add_mock(:cis2, mock_auth)
   end

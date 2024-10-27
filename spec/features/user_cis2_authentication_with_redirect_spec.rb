@@ -1,24 +1,8 @@
 # frozen_string_literal: true
 
-describe "User CIS2 authentication", :cis2 do
-  let(:test_team_ods_code) { "AB12" }
-
-  let(:cis2_auth_mock) do
-    CIS2_AUTH_INFO.tap do |info|
-      info["extra"]["raw_info"]["nhsid_nrbac_roles"][0][
-        "org_code"
-      ] = test_team_ods_code
-      info["extra"]["raw_info"]["nhsid_user_orgs"][0][
-        "org_code"
-      ] = test_team_ods_code
-    end
-  end
-
+describe "User CIS2 authentication" do
   scenario "with redirect" do
-    setup_cis2_auth_mock
-
-    given_the_cis2_feature_flag_is_enabled
-    and_the_test_team_is_setup_in_mavis
+    given_a_test_team_is_setup_in_mavis_and_cis2
     when_i_go_to_the_sessions_page
     then_i_am_on_the_start_page
 
@@ -27,16 +11,16 @@ describe "User CIS2 authentication", :cis2 do
     and_i_am_logged_in
   end
 
-  def setup_cis2_auth_mock
-    OmniAuth.config.add_mock(:cis2, cis2_auth_mock)
-  end
+  def given_a_test_team_is_setup_in_mavis_and_cis2
+    @team = create :team
 
-  def given_the_cis2_feature_flag_is_enabled
-    Flipper.enable(:cis2)
-  end
-
-  def and_the_test_team_is_setup_in_mavis
-    @team = create :team, ods_code: test_team_ods_code
+    mock_cis2_auth(
+      uid: "123",
+      given_name: "Nurse",
+      family_name: "Test",
+      org_code: @team.ods_code,
+      org_name: @team.name
+    )
   end
 
   def when_i_go_to_the_sessions_page
