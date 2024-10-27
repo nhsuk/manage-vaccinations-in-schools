@@ -33,8 +33,10 @@ class SessionDate < ApplicationRecord
               less_than_or_equal_to: :latest_possible_value
             }
 
+  delegate :today?, :future?, to: :value
+
   def today_or_future?
-    value.today? || value.future?
+    today? || future?
   end
 
   private

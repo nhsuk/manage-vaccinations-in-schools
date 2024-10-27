@@ -128,6 +128,10 @@ class Session < ApplicationRecord
     dates.select(&:today_or_future?).map(&:value)
   end
 
+  def future_dates
+    dates.select(&:future?).map(&:value)
+  end
+
   def <=>(other)
     [dates.first&.value, location.type, location.name] <=>
       [other.dates.first&.value, other.location.type, other.location.name]

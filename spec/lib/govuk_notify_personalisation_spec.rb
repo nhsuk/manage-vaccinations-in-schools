@@ -84,6 +84,7 @@ describe GovukNotifyPersonalisation do
     it do
       expect(personalisation).to match(
         hash_including(
+          consent_deadline: "Wednesday 31 December",
           next_session_date: "Thursday 1 January",
           next_session_dates: "Thursday 1 January and Friday 2 January",
           next_session_dates_or: "Thursday 1 January or Friday 2 January",
@@ -91,6 +92,16 @@ describe GovukNotifyPersonalisation do
             "If they’re not seen, they’ll be offered the vaccination on Friday 2 January."
         )
       )
+    end
+
+    context "when today is the first date" do
+      around { |example| travel_to(Date.new(2026, 1, 1)) { example.run } }
+
+      it do
+        expect(personalisation).to match(
+          hash_including(consent_deadline: "Thursday 1 January")
+        )
+      end
     end
   end
 
