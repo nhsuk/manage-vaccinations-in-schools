@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "User password authentication" do
+describe "User password authentication", :local_users do
   before { given_the_cis2_feature_flag_is_disabled }
 
   scenario "going through the start page then signing out" do
