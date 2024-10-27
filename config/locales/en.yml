@@ -476,6 +476,8 @@ en:
               missing_day: Enter a day
               missing_month: Enter a month
               missing_year: Enter a year
+              greater_than_or_equal_to: Enter a date on or after the start of the school year (%{count})
+              less_than_or_equal_to: Enter a date on or before the end of the current school year (%{count})
         triage:
           attributes:
             notes:
