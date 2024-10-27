@@ -1,7 +1,20 @@
 # frozen_string_literal: true
 
 describe VaccinationMailerConcern do
-  let(:sample) { Class.new { include VaccinationMailerConcern }.new }
+  before do
+    stub_const("SampleClass", Class.new).class_eval do
+      include VaccinationMailerConcern # rubocop:disable RSpec/DescribedClass
+
+      attr_reader :current_user
+
+      def initialize(current_user:)
+        @current_user = current_user
+      end
+    end
+  end
+
+  let(:sample) { SampleClass.new(current_user:) }
+  let(:current_user) { create(:user) }
 
   describe "#send_vaccination_confirmation" do
     subject(:send_vaccination_confirmation) do
@@ -23,13 +36,20 @@ describe VaccinationMailerConcern do
         expect { send_vaccination_confirmation }.to have_enqueued_mail(
           VaccinationMailer,
           :confirmation_administered
-        ).with(params: { consent:, vaccination_record: }, args: [])
+        ).with(
+          params: {
+            consent:,
+            vaccination_record:,
+            sent_by: current_user
+          },
+          args: []
+        )
       end
 
       it "sends a text message" do
         expect { send_vaccination_confirmation }.to have_enqueued_text(
           :vaccination_confirmation_administered
-        ).with(consent:, vaccination_record:)
+        ).with(consent:, vaccination_record:, sent_by: current_user)
       end
     end
 
@@ -47,13 +67,20 @@ describe VaccinationMailerConcern do
         expect { send_vaccination_confirmation }.to have_enqueued_mail(
           VaccinationMailer,
           :confirmation_not_administered
-        ).with(params: { consent:, vaccination_record: }, args: [])
+        ).with(
+          params: {
+            consent:,
+            vaccination_record:,
+            sent_by: current_user
+          },
+          args: []
+        )
       end
 
       it "sends a text message" do
         expect { send_vaccination_confirmation }.to have_enqueued_text(
           :vaccination_confirmation_not_administered
-        ).with(consent:, vaccination_record:)
+        ).with(consent:, vaccination_record:, sent_by: current_user)
       end
     end
 

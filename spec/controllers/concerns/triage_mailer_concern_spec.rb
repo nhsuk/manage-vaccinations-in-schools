@@ -1,11 +1,24 @@
 # frozen_string_literal: true
 
 describe TriageMailerConcern do
-  let(:sample_class) { Class.new { include TriageMailerConcern }.new }
+  before do
+    stub_const("SampleClass", Class.new).class_eval do
+      include TriageMailerConcern # rubocop:disable RSpec/DescribedClass
+
+      attr_reader :current_user
+
+      def initialize(current_user:)
+        @current_user = current_user
+      end
+    end
+  end
+
+  let(:sample) { SampleClass.new(current_user:) }
+  let(:current_user) { create(:user) }
 
   describe "#send_triage_confirmation" do
     subject(:send_triage_confirmation) do
-      sample_class.send_triage_confirmation(patient_session, consent)
+      sample.send_triage_confirmation(patient_session, consent)
     end
 
     let(:session) { patient_session.session }
@@ -20,7 +33,7 @@ describe TriageMailerConcern do
         expect { send_triage_confirmation }.to have_enqueued_mail(
           TriageMailer,
           :vaccination_will_happen
-        ).with(params: { consent:, session: }, args: [])
+        ).with(params: { consent:, session:, sent_by: current_user }, args: [])
       end
 
       it "doesn't send a text message" do
@@ -37,7 +50,7 @@ describe TriageMailerConcern do
         expect { send_triage_confirmation }.to have_enqueued_mail(
           TriageMailer,
           :vaccination_wont_happen
-        ).with(params: { consent:, session: }, args: [])
+        ).with(params: { consent:, session:, sent_by: current_user }, args: [])
       end
 
       it "doesn't send a text message" do
@@ -52,7 +65,7 @@ describe TriageMailerConcern do
         expect { send_triage_confirmation }.to have_enqueued_mail(
           TriageMailer,
           :vaccination_at_clinic
-        ).with(params: { consent:, session: }, args: [])
+        ).with(params: { consent:, session:, sent_by: current_user }, args: [])
       end
 
       it "doesn't send a text message" do
@@ -69,13 +82,13 @@ describe TriageMailerConcern do
         expect { send_triage_confirmation }.to have_enqueued_mail(
           ConsentMailer,
           :confirmation_given
-        ).with(params: { consent:, session: }, args: [])
+        ).with(params: { consent:, session:, sent_by: current_user }, args: [])
       end
 
       it "sends a text message" do
         expect { send_triage_confirmation }.to have_enqueued_text(
           :consent_confirmation_given
-        ).with(consent:, session:)
+        ).with(consent:, session:, sent_by: current_user)
       end
     end
 
@@ -88,7 +101,7 @@ describe TriageMailerConcern do
         expect { send_triage_confirmation }.to have_enqueued_mail(
           ConsentMailer,
           :confirmation_triage
-        ).with(params: { consent:, session: }, args: [])
+        ).with(params: { consent:, session:, sent_by: current_user }, args: [])
       end
 
       it "doesn't send a text message" do
@@ -103,13 +116,13 @@ describe TriageMailerConcern do
         expect { send_triage_confirmation }.to have_enqueued_mail(
           ConsentMailer,
           :confirmation_refused
-        ).with(params: { consent:, session: }, args: [])
+        ).with(params: { consent:, session:, sent_by: current_user }, args: [])
       end
 
       it "sends a text message" do
         expect { send_triage_confirmation }.to have_enqueued_text(
           :consent_confirmation_refused
-        ).with(consent:, session:)
+        ).with(consent:, session:, sent_by: current_user)
       end
     end
 
