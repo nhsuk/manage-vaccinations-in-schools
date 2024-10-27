@@ -84,7 +84,7 @@ class User < ApplicationRecord
     user.tap(&:save!)
   end
 
-  def is_medical_secretary?
+  def is_admin?
     return email.include?("admin") unless Settings.cis2.enabled
 
     selected_role = cis2_info.dig("selected_role", "code")
