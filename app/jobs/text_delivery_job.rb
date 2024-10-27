@@ -11,6 +11,7 @@ class TextDeliveryJob < ApplicationJob
     patient: nil,
     patient_session: nil,
     programme: nil,
+    sent_by: nil,
     session: nil,
     vaccination_record: nil
   )
@@ -49,11 +50,12 @@ class TextDeliveryJob < ApplicationJob
     patient ||= consent&.patient || patient_session&.patient
 
     NotifyLogEntry.create!(
-      type: :sms,
-      patient:,
       consent_form:,
+      patient:,
+      recipient: phone_number,
+      sent_by:,
       template_id:,
-      recipient: phone_number
+      type: :sms
     )
   end
 

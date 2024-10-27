@@ -30,6 +30,7 @@ describe TextDeliveryJob do
         patient:,
         patient_session:,
         programme:,
+        sent_by:,
         vaccination_record:
       )
     end
@@ -42,6 +43,7 @@ describe TextDeliveryJob do
     let(:consent_form) { nil }
     let(:patient) { create(:patient) }
     let(:patient_session) { nil }
+    let(:sent_by) { create(:user) }
     let(:vaccination_record) { nil }
 
     it "generates personalisation" do
@@ -77,6 +79,7 @@ describe TextDeliveryJob do
         GOVUK_NOTIFY_TEXT_TEMPLATES[template_name]
       )
       expect(notify_log_entry.patient).to eq(patient)
+      expect(notify_log_entry.sent_by).to eq(sent_by)
     end
 
     context "when the parent doesn't want to receive updates" do
