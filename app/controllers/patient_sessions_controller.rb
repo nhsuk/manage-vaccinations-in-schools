@@ -24,7 +24,8 @@ class PatientSessionsController < ApplicationController
         patient: @patient,
         programme:,
         session: @session,
-        type: :request
+        type: :request,
+        current_user:
       )
     end
 
