@@ -41,11 +41,7 @@ FactoryBot.define do
         create_list(
           :user,
           1,
-          **{
-            teams: [instance],
-            email: nurse_email,
-            password: nurse_password
-          }.compact
+          **{ teams: [instance], email: nurse_email }.compact
         )
       end
     end
