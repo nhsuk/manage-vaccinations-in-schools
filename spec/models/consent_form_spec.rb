@@ -119,11 +119,30 @@ describe ConsentForm do
       end
 
       it { should validate_presence_of(:date_of_birth).on(:update) }
-      # it { should validate_comparison_of(:date_of_birth)
-      #       .is_less_than(Time.zone.today)
-      #       .is_greater_than_or_equal_to(22.years.ago.to_date)
-      #       .is_less_than_or_equal_to(3.years.ago.to_date)
-      #       .on(:update) }
+
+      context "with a date of birth that's too young" do
+        before { travel_to(Date.new(2022, 1, 1)) }
+
+        it "has the correct error message" do
+          subject.date_of_birth = 2.years.ago.to_date
+          subject.valid?(:update)
+          expect(subject.errors[:date_of_birth]).to contain_exactly(
+            "The child cannot be younger than 3. Enter a date after 2019-01-01."
+          )
+        end
+      end
+
+      context "with a date of birth that's too old" do
+        before { travel_to(Date.new(2022, 1, 1)) }
+
+        it "has the correct error message" do
+          subject.date_of_birth = 23.years.ago.to_date
+          subject.valid?(:update)
+          expect(subject.errors[:date_of_birth]).to contain_exactly(
+            "The child cannot be older than 22. Enter a date after 2000-01-01."
+          )
+        end
+      end
     end
 
     context "when wizard_step is :parent" do
