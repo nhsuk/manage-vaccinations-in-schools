@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "fixtures/cis2_auth_info"
-
 describe "User CIS2 authentication", :cis2 do
   let(:test_team_ods_code) { "AB12" }
 

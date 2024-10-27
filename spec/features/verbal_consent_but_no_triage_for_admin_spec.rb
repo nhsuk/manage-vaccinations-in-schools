@@ -16,7 +16,7 @@ describe "Verbal consent recorded by admin" do
     @session = create(:session, team:, programme:)
     @patient = create(:patient, session: @session)
 
-    sign_in team.users.first
+    sign_in team.users.first, role: :admin_staff
   end
 
   def when_i_record_that_consent_was_given_but_keep_in_triage
