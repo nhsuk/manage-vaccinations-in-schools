@@ -23,7 +23,14 @@ describe "Parental consent" do
 
     location = create(:location, :generic_clinic, team: @team)
 
-    @session = create(:session, team: @team, programme:, location:)
+    @session =
+      create(
+        :session,
+        team: @team,
+        programme:,
+        location:,
+        date: Date.current + 2.days
+      )
     @patient = create(:patient, session: @session)
     @parent = @patient.parents.first
   end
