@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Parental consent" do
+  around { |example| travel_to(Date.new(2024, 1, 1)) { example.run } }
+
   scenario "Send request" do
     given_a_patient_without_consent_exists
     and_i_am_signed_in
@@ -19,7 +21,9 @@ describe "Parental consent" do
 
   def given_a_patient_without_consent_exists
     programme = create(:programme, :hpv)
-    @team = create(:team, :with_one_nurse, programmes: [programme])
+
+    @user = create(:user, given_name: "Test", family_name: "User")
+    @team = create(:team, programmes: [programme], users: [@user])
 
     location = create(:location, :generic_clinic, team: @team)
 
@@ -36,7 +40,7 @@ describe "Parental consent" do
   end
 
   def and_i_am_signed_in
-    sign_in @team.users.first
+    sign_in @user
   end
 
   def when_i_go_to_a_patient_without_consent
@@ -74,14 +78,16 @@ describe "Parental consent" do
   def and_an_activity_log_entry_is_visible_for_the_email
     click_on "Activity log"
     expect(page).to have_content(
-      "Consent clinic request sent\n#{@parent.email}"
+      "Consent clinic request sent\n#{@parent.email}\n" \
+        "1 January 2024 at 12:00am · Test User"
     )
   end
 
   def and_an_activity_log_entry_is_visible_for_the_text
     click_on "Activity log"
     expect(page).to have_content(
-      "Consent clinic request sent\n#{@parent.phone}"
+      "Consent clinic request sent\n#{@parent.phone}\n" \
+        "1 January 2024 at 12:00am · Test User"
     )
   end
 end
