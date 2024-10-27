@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_25_162723) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_27_191532) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -189,9 +189,11 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_25_162723) do
     t.bigint "programme_id", null: false
     t.datetime "sent_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.integer "type", null: false
+    t.bigint "sent_by_user_id"
     t.index ["patient_id", "programme_id"], name: "index_consent_notifications_on_patient_id_and_programme_id"
     t.index ["patient_id"], name: "index_consent_notifications_on_patient_id"
     t.index ["programme_id"], name: "index_consent_notifications_on_programme_id"
+    t.index ["sent_by_user_id"], name: "index_consent_notifications_on_sent_by_user_id"
   end
 
   create_table "consents", force: :cascade do |t|
@@ -436,8 +438,10 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_25_162723) do
     t.datetime "created_at", null: false
     t.bigint "consent_form_id"
     t.bigint "patient_id"
+    t.bigint "sent_by_user_id"
     t.index ["consent_form_id"], name: "index_notify_log_entries_on_consent_form_id"
     t.index ["patient_id"], name: "index_notify_log_entries_on_patient_id"
+    t.index ["sent_by_user_id"], name: "index_notify_log_entries_on_sent_by_user_id"
   end
 
   create_table "offline_passwords", force: :cascade do |t|
@@ -537,8 +541,10 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_25_162723) do
     t.date "session_date", null: false
     t.datetime "sent_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.integer "type", null: false
+    t.bigint "sent_by_user_id"
     t.index ["patient_id", "session_id", "session_date"], name: "idx_on_patient_id_session_id_session_date_f7f30a3aa3"
     t.index ["patient_id"], name: "index_session_notifications_on_patient_id"
+    t.index ["sent_by_user_id"], name: "index_session_notifications_on_sent_by_user_id"
     t.index ["session_id"], name: "index_session_notifications_on_session_id"
   end
 
@@ -695,6 +701,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_25_162723) do
   add_foreign_key "consent_forms", "teams"
   add_foreign_key "consent_notifications", "patients"
   add_foreign_key "consent_notifications", "programmes"
+  add_foreign_key "consent_notifications", "users", column: "sent_by_user_id"
   add_foreign_key "consents", "parents"
   add_foreign_key "consents", "patients"
   add_foreign_key "consents", "programmes"
@@ -720,6 +727,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_25_162723) do
   add_foreign_key "locations", "teams"
   add_foreign_key "notify_log_entries", "consent_forms"
   add_foreign_key "notify_log_entries", "patients"
+  add_foreign_key "notify_log_entries", "users", column: "sent_by_user_id"
   add_foreign_key "parent_relationships", "parents"
   add_foreign_key "parent_relationships", "patients"
   add_foreign_key "patient_sessions", "sessions", column: "proposed_session_id"
@@ -730,6 +738,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_25_162723) do
   add_foreign_key "session_dates", "sessions"
   add_foreign_key "session_notifications", "patients"
   add_foreign_key "session_notifications", "sessions"
+  add_foreign_key "session_notifications", "users", column: "sent_by_user_id"
   add_foreign_key "sessions", "teams"
   add_foreign_key "team_programmes", "programmes"
   add_foreign_key "team_programmes", "teams"
