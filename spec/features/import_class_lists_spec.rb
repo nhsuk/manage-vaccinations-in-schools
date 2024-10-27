@@ -146,7 +146,7 @@ describe "Import class lists" do
 
   def then_i_should_the_errors_page_with_invalid_fields
     expect(page).to have_content("How to format your CSV for class lists")
-    expect(page).to have_content("Row 2")
+    expect(page).to have_content("Row 1")
   end
 
   def when_i_go_back_to_the_upload_page

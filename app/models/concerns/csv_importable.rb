@@ -81,13 +81,35 @@ module CSVImportable
     load_data! if data.nil?
     return if invalid?
 
-    self.rows = data.map { |row_data| parse_row(row_data) }
+    self.rows =
+      remove_trailing_blank_rows(data).map { |row_data| parse_row(row_data) }
 
     if invalid?
       self.serialized_errors = errors.to_hash
       self.status = :rows_are_invalid
       save!(validate: false)
     end
+  end
+
+  def remove_trailing_blank_rows(table)
+    found_values = false
+
+    # map(&:itself) because CSV::Table doesn't have a reverse method
+    rows_in_reverse_order = table.map(&:itself).reverse
+
+    filtered_rows =
+      rows_in_reverse_order.select do |row|
+        if found_values
+          true
+        elsif row.fields.all?(&:blank?)
+          false
+        else
+          found_values = true
+          true
+        end
+      end
+
+    filtered_rows.reverse
   end
 
   def record!
