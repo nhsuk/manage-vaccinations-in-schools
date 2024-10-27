@@ -103,7 +103,8 @@ describe AppActivityLogComponent do
         patient:,
         consent_form: nil,
         recipient: "test@example.com",
-        created_at: Date.new(2024, 5, 10)
+        created_at: Date.new(2024, 5, 10),
+        sent_by: user
       )
 
       create(
@@ -160,7 +161,8 @@ describe AppActivityLogComponent do
     include_examples "card",
                      title: "Consent school request sent",
                      date: "10 May 2024 at 12:00am",
-                     notes: "test@example.com"
+                     notes: "test@example.com",
+                     by: "Nurse Joy"
   end
 
   describe "self-consent" do

@@ -35,7 +35,8 @@ class AppActivityLogComponent < ViewComponent::Base
       {
         title: "#{_1.title} sent",
         time: _1.created_at,
-        notes: @patient_session.patient.restricted? ? "" : _1.recipient
+        notes: @patient_session.patient.restricted? ? "" : _1.recipient,
+        by: _1.sent_by&.full_name
       }
     end
   end
