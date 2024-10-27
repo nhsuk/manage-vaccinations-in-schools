@@ -30,6 +30,6 @@ class AppConsentComponent < ViewComponent::Base
 
   def can_send_consent_request?
     patient_session.no_consent? && patient.send_notifications? &&
-      patient.parents.any?
+      session.open_for_consent? && patient.parents.any?
   end
 end
