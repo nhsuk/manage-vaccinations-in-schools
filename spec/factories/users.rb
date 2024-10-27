@@ -52,7 +52,15 @@ FactoryBot.define do
 
     sequence(:email) { |n| "nurse-#{n}@example.com" }
     sequence(:teams) { [Team.first || create(:team)] }
-    password { "power overwhelming!" }
+    # It would normally be reasonable to expect to set a password here. However,
+    # when cis2 is enabled Devise does not create a 'password=' method for us,
+    # so we can't include the following setter. If you have a need to test users
+    # with passwords you'll have to do something tricky like either load the
+    # User model with cis2 disabled to trigger the Devise code that adds that
+    # method, or stub out the methods yourself. Good luck, meta force be with
+    # you.
+    #
+    # password { "power overwhelming!" }
 
     provider { Settings.cis2.enabled ? "cis2" : nil }
     sequence(:uid) { Settings.cis2.enabled ? _1.to_s : nil }
