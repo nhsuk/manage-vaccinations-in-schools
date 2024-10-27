@@ -47,6 +47,10 @@ class ApplicationMailer < Mail::Notify::Mailer
     @session ||= params[:session]
   end
 
+  def sent_by
+    @sent_by ||= params[:sent_by]
+  end
+
   def to
     consent_form&.parent_email || consent&.parent&.email || parent.email
   end
@@ -78,21 +82,24 @@ class ApplicationMailer < Mail::Notify::Mailer
     patient_id = (patient || consent&.patient || patient_session&.patient)&.id
     consent_form_id = consent_form&.id
 
-    message.instance_variable_set(:@patient_id, patient_id)
     message.instance_variable_set(:@consent_form_id, consent_form_id)
+    message.instance_variable_set(:@patient_id, patient_id)
+    message.instance_variable_set(:@sent_by_user_id, sent_by&.id)
 
-    message.class.send(:attr_reader, :patient_id)
     message.class.send(:attr_reader, :consent_form_id)
+    message.class.send(:attr_reader, :patient_id)
+    message.class.send(:attr_reader, :sent_by_user_id)
   end
 
   def log_delivery
     mail.to.map do |recipient|
       NotifyLogEntry.create!(
-        type: :email,
-        template_id: mail.template_id,
-        recipient:,
+        consent_form_id: mail.consent_form_id,
         patient_id: mail.patient_id,
-        consent_form_id: mail.consent_form_id
+        recipient:,
+        sent_by_user_id: mail.sent_by_user_id,
+        template_id: mail.template_id,
+        type: :email
       )
     end
   end
