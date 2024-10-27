@@ -4,6 +4,8 @@ fast_reset: true
 cis2:
   issuer: "http://localhost:4000/test/oidc"
   client_id: "31337.apps.national"
+  enabled: true
+  secret: VEWWYSEKRHET
 
 mesh:
   base_url: https://localhost:8700
