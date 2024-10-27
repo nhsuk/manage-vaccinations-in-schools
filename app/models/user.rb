@@ -66,6 +66,14 @@ class User < ApplicationRecord
     teams.first
   end
 
+  def selected_team
+    if Settings.cis2.enabled
+      Team.find_by(ods_code: cis2_info.dig("selected_org", "code"))
+    else
+      teams.first
+    end
+  end
+
   def requires_email_and_password?
     provider.blank? || uid.blank?
   end

@@ -36,6 +36,24 @@ describe User do
     it { should validate_length_of(:family_name).is_at_most(255) }
   end
 
+  describe "#selected_team" do
+    subject { user.selected_team }
+
+    context "cis2 is disabled", cis2: :disabled do
+      let(:team) { build(:team) }
+      let(:user) { build(:user, teams: [team]) }
+
+      it { should eq user.teams.first }
+    end
+
+    context "cis2 is enabled", cis2: :enabled do
+      let(:team) { create(:team) }
+      let(:user) { create(:user, selected_team: team) }
+
+      it { should eq team }
+    end
+  end
+
   describe "#is_admin?" do
     subject { user.is_admin? }
 
