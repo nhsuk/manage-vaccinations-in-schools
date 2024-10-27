@@ -127,7 +127,7 @@ describe ConsentForm do
           subject.date_of_birth = 2.years.ago.to_date
           subject.valid?(:update)
           expect(subject.errors[:date_of_birth]).to contain_exactly(
-            "The child cannot be younger than 3. Enter a date after 2019-01-01."
+            "The child cannot be younger than 3. Enter a date before 2019-01-01."
           )
         end
       end

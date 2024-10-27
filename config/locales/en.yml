@@ -375,7 +375,7 @@ en:
               blank: Enter their date of birth
               greater_than_or_equal_to: The child cannot be older than 22. Enter a date after %{count}.
               less_than: The date is in the future. Enter a date in the past.
-              less_than_or_equal_to: The child cannot be younger than 3. Enter a date after %{count}.
+              less_than_or_equal_to: The child cannot be younger than 3. Enter a date before %{count}.
               missing_day: Enter a day
               missing_month: Enter a month
               missing_year: Enter a year
