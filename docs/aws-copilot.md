@@ -383,3 +383,14 @@ hours before we start seeing some logs.
 
 NOTE: When you enable server access logging, the S3 console automatically
 updates your bucket policy to include access to the S3 log delivery group.
+
+## Troubleshooting
+
+### Deployment error: `denied: Your authorization token has expired. Reauthenticate and try again.``
+
+This can occur if your docker client has some old state left in it. Logging out
+seems to fix it:
+
+```
+docker logout https://393416225559.dkr.ecr.eu-west-2.amazonaws.com
+```
