@@ -92,7 +92,7 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: {
     command:
-      "RAILS_ENV=test PIDFILE=tmp/pids/server-test.pid bundle exec rails server -p 4001",
+      "RAILS_ENV=test MAVIS__CIS2__ENABLED=false PIDFILE=tmp/pids/server-test.pid bundle exec rails server -p 4001",
     port: 4001,
     reuseExistingServer: !process.env.CI,
   },
