@@ -125,18 +125,37 @@ describe GovukNotifyPersonalisation do
       create(
         :consent_form,
         :refused,
-        session: create(:session, programme:),
+        session:,
         recorded_at: Date.new(2024, 1, 1)
       )
     end
 
     it do
-      expect(personalisation).to match(
-        hash_including(
-          reason_for_refusal: "of personal choice",
-          survey_deadline_date: "8 January 2024"
-        )
+      expect(personalisation).to include(
+        reason_for_refusal: "of personal choice",
+        survey_deadline_date: "8 January 2024",
+        location_name: "Hogwarts"
       )
+    end
+
+    context "where the school is different" do
+      let(:session) { nil }
+      let(:school) { create(:location, :school, name: "Waterloo Road") }
+
+      let(:consent_form) do
+        create(
+          :consent_form,
+          :given,
+          :recorded,
+          session: create(:session, location:, programme:, team:),
+          school_confirmed: false,
+          school:
+        )
+      end
+
+      before { create(:session, location: school, programme:, team:) }
+
+      it { should include(location_name: "Waterloo Road") }
     end
   end
 
