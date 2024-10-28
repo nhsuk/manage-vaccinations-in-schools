@@ -476,12 +476,17 @@ en:
               match_type: Vaccines must be suitable for the programme type
         session:
           attributes:
+            send_consent_reminders_at:
+              greater_than: Enter fewer weeks than when consent requests are sent
             send_consent_requests_at:
               blank: Enter a date
               missing_day: Enter a day
               missing_month: Enter a month
               missing_year: Enter a year
               less_than: Enter a date before the first session date (%{count})
+            weeks_before_consent_reminders:
+              blank: Enter weeks before a session takes place
+              greater_than_or_equal_to: Enter 1 or more weeks before a session
         session_date:
           attributes:
             value:

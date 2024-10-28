@@ -19,6 +19,18 @@ class Sessions::EditController < ApplicationController
     end
   end
 
+  def edit_weeks_before_consent_reminders
+    render :weeks_before_consent_reminders
+  end
+
+  def update_weeks_before_consent_reminders
+    if @session.update(weeks_before_consent_reminders_params)
+      redirect_to edit_session_path(@session)
+    else
+      render :weeks_before_consent_reminders, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_session
@@ -36,5 +48,9 @@ class Sessions::EditController < ApplicationController
 
   def send_consent_requests_at_params
     params.require(:session).permit(:send_consent_requests_at)
+  end
+
+  def weeks_before_consent_reminders_params
+    params.require(:session).permit(:weeks_before_consent_reminders)
   end
 end

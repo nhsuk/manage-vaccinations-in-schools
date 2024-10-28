@@ -93,13 +93,25 @@ class Session < ApplicationRecord
           )
         end
 
-  validates :send_consent_requests_at,
-            presence: true,
-            comparison: {
-              less_than: :earliest_date
-            },
-            if: :requires_send_consent_requests_at?,
-            on: :update
+  with_options if: :requires_consent_notification_dates?, on: :update do
+    validates :send_consent_requests_at,
+              presence: true,
+              comparison: {
+                less_than: :earliest_date
+              }
+
+    validates :weeks_before_consent_reminders,
+              presence: true,
+              comparison: {
+                greater_than_or_equal_to: 1
+              }
+
+    validates :send_consent_reminders_at,
+              comparison: {
+                greater_than: :send_consent_requests_at,
+                allow_nil: true
+              }
+  end
 
   validates :programmes, presence: true
   validate :programmes_part_of_team
@@ -223,7 +235,7 @@ class Session < ApplicationRecord
   end
 
   def set_consent_dates
-    if requires_send_consent_requests_at?
+    if requires_consent_notification_dates?
       self.send_consent_requests_at =
         earliest_date - team.days_before_consent_requests.days
 
@@ -246,11 +258,12 @@ class Session < ApplicationRecord
   end
 
   def weeks_before_consent_reminders
+    return nil if days_before_consent_reminders.nil?
     (days_before_consent_reminders / 7).to_i
   end
 
   def weeks_before_consent_reminders=(value)
-    self.days_before_consent_reminders = value * 7
+    self.days_before_consent_reminders = (value.blank? ? nil : value.to_i * 7)
   end
 
   def open_for_consent?
@@ -284,7 +297,7 @@ class Session < ApplicationRecord
     end
   end
 
-  def requires_send_consent_requests_at?
+  def requires_consent_notification_dates?
     dates.present? && !location.generic_clinic?
   end
 
