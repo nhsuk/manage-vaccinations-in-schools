@@ -93,6 +93,14 @@ class Session < ApplicationRecord
           )
         end
 
+  validates :send_consent_requests_at,
+            presence: true,
+            comparison: {
+              less_than: :earliest_date
+            },
+            if: :requires_send_consent_requests_at?,
+            on: :update
+
   validates :programmes, presence: true
   validate :programmes_part_of_team
 
@@ -137,6 +145,10 @@ class Session < ApplicationRecord
 
   def future_dates
     dates.select(&:future?).map(&:value)
+  end
+
+  def can_change_consent_notification_dates?
+    notifications.empty?
   end
 
   def <=>(other)
@@ -211,21 +223,21 @@ class Session < ApplicationRecord
   end
 
   def set_consent_dates
-    if dates.empty? || location.generic_clinic?
-      self.days_before_consent_reminders = nil
-      self.send_consent_requests_at = nil
-    else
+    if requires_send_consent_requests_at?
       self.send_consent_requests_at =
-        dates.map(&:value).min - team.days_before_consent_requests.days
+        earliest_date - team.days_before_consent_requests.days
 
       self.days_before_consent_reminders = team.days_before_consent_reminders
+    else
+      self.days_before_consent_reminders = nil
+      self.send_consent_requests_at = nil
     end
   end
 
   def send_consent_reminders_at
     return nil if dates.empty? || days_before_consent_reminders.nil?
 
-    dates.map(&:value).min - days_before_consent_reminders.days
+    earliest_date - days_before_consent_reminders.days
   end
 
   def close_consent_at
@@ -270,5 +282,13 @@ class Session < ApplicationRecord
     unless programmes.all? { team.programmes.include?(_1) }
       errors.add(:programmes, :inclusion)
     end
+  end
+
+  def requires_send_consent_requests_at?
+    dates.present? && !location.generic_clinic?
+  end
+
+  def earliest_date
+    dates.map(&:value).min
   end
 end

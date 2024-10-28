@@ -9,10 +9,10 @@ class SessionDatesController < ApplicationController
 
   def update
     @session.assign_attributes(remove_invalid_dates(session_params))
+    @session.set_consent_dates
 
     render :show, status: :unprocessable_entity and return if @session.invalid?
 
-    @session.set_consent_dates
     @session.save!
 
     if params.include?(:add_another)

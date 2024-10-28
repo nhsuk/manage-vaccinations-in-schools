@@ -38,6 +38,9 @@
           summary_list.with_row do |row|
             row.with_key { "Consent requests" }
             row.with_value { "Send on #{send_consent_requests_at.to_fs(:long_day_of_week)}" }
+            if @session.can_change_consent_notification_dates?
+              row.with_action(text: "Change", href: edit_send_consent_requests_at_session_path(@session), visually_hidden_text: "consent requests")
+            end
           end
         end
       

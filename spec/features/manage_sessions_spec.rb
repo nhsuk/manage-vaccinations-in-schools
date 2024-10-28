@@ -22,6 +22,11 @@ describe "Manage sessions" do
     when_i_choose_the_dates
     then_i_see_the_confirmation_page
 
+    when_i_click_on_change_consent_requests
+    then_i_see_the_change_consent_requests_page
+    and_i_change_consent_requests_date
+    and_i_confirm
+
     when_i_confirm
     then_i_should_see_the_session_details
 
@@ -163,9 +168,27 @@ describe "Manage sessions" do
     expect(page).to have_content("Edit session")
   end
 
+  def when_i_click_on_change_consent_requests
+    click_on "Change consent requests"
+  end
+
+  def then_i_see_the_change_consent_requests_page
+    expect(page).to have_content(
+      "When should parents get a request to give consent?"
+    )
+  end
+
+  def and_i_change_consent_requests_date
+    fill_in "Day", with: "1"
+    fill_in "Month", with: "3"
+    fill_in "Year", with: "2024"
+  end
+
   def when_i_confirm
     click_on "Continue"
   end
+
+  alias_method :and_i_confirm, :when_i_confirm
 
   def then_i_should_see_the_session_details
     expect(page).to have_content(@location.name.to_s)
