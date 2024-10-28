@@ -6,6 +6,9 @@ class PatientUpdateFromPDSJob < ApplicationJob
 
   queue_as :imports
 
+  discard_on Faraday::ResourceNotFound
+  discard_on NHS::PDS::InvalidNHSNumber
+
   def perform(patient)
     raise MissingNHSNumber if patient.nhs_number.nil?
 
