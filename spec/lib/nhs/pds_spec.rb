@@ -60,6 +60,25 @@ describe NHS::PDS do
         expect { get_patient }.to raise_error(NHS::PDS::InvalidatedResource)
       end
     end
+
+    context "with a resource not found response" do
+      before do
+        stub_request(
+          :get,
+          "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/9000000009"
+        ).to_return(
+          body: file_fixture("pds/not-found-patient-response.json"),
+          status: 404,
+          headers: {
+            "Content-Type" => "application/fhir+json"
+          }
+        )
+      end
+
+      it "raises an error" do
+        expect { get_patient }.to raise_error(NHS::PDS::PatientNotFound)
+      end
+    end
   end
 
   describe "#search_patients" do
