@@ -14,6 +14,7 @@ class SchoolConsentRemindersJob < ApplicationJob
           :programmes,
           patients: %i[consents consent_notifications parents]
         )
+        .order("session_dates.value")
         .eager_load(:location)
         .merge(Location.school)
         .strict_loading
