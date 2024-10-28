@@ -158,6 +158,13 @@ Rails.application.routes.draw do
           controller: "sessions/edit",
           action: "update_send_consent_requests_at"
 
+      get "edit/weeks-before-consent-reminders",
+          controller: "sessions/edit",
+          action: "edit_weeks_before_consent_reminders"
+      put "edit/weeks-before-consent-reminders",
+          controller: "sessions/edit",
+          action: "update_weeks_before_consent_reminders"
+
       constraints -> { Flipper.enabled?(:dev_tools) } do
         put "make-in-progress", to: "sessions#make_in_progress"
       end

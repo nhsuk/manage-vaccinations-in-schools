@@ -5,20 +5,23 @@
       ) %>
 <% end %>
 
-<% legend = "When should parents get a request to give consent?" %>
+<% legend = "When should parents get a reminder to give consent?" %>
 <% content_for :page_title, legend %>
 
-<%= form_with model: @session, url: edit_send_consent_requests_at_session_path(@session), method: :put do |f| %>
+<%= form_with model: @session, url: edit_weeks_before_consent_reminders_session_path(@session), method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <%= f.govuk_date_field :send_consent_requests_at,
+  <%= f.govuk_text_field :weeks_before_consent_reminders,
+                         inputmode: "numeric",
+                         suffix_text: "weeks",
+                         width: 2,
                          caption: { text: @session.location.name, size: "l" },
-                         legend: {
+                         label: {
                            tag: "h1",
                            text: legend,
                            size: "l",
                          },
-                         hint: { text: "For example, 27 3 2017" } %>
+                         hint: { text: "Enter the number of weeks before a session takes place" } %>
 
   <%= f.govuk_submit "Continue" %>
 <% end %>

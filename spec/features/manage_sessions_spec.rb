@@ -27,6 +27,11 @@ describe "Manage sessions" do
     and_i_change_consent_requests_date
     and_i_confirm
 
+    when_i_click_on_change_consent_reminders
+    then_i_see_the_change_consent_reminders_page
+    and_i_change_consent_reminders_weeks
+    and_i_confirm
+
     when_i_confirm
     then_i_should_see_the_session_details
 
@@ -182,6 +187,20 @@ describe "Manage sessions" do
     fill_in "Day", with: "1"
     fill_in "Month", with: "3"
     fill_in "Year", with: "2024"
+  end
+
+  def when_i_click_on_change_consent_reminders
+    click_on "Change consent reminders"
+  end
+
+  def then_i_see_the_change_consent_reminders_page
+    expect(page).to have_content(
+      "When should parents get a reminder to give consent?"
+    )
+  end
+
+  def and_i_change_consent_reminders_weeks
+    fill_in "When should parents get a reminder to give consent?", with: "1"
   end
 
   def when_i_confirm
