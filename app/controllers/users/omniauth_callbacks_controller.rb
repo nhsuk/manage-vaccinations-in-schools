@@ -22,6 +22,23 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       @user = User.find_or_create_from_cis2_oidc(user_cis2_info)
       sign_in_and_redirect @user, event: :authentication
     end
+  rescue StandardError => e
+    unless Rails.env.production?
+      user_info = request.env["omniauth.auth"].to_h
+      Rails.logger.error(
+        "ID token: #{user_info.dig("credentials", "id_token")}"
+      )
+      Rails.logger.error(
+        user_info.dig("extra", "raw_info").slice("nhsid_nrbac_roles").to_h
+      )
+      Rails.logger.error(
+        user_info.dig("extra", "raw_info").slice("nhsid_user_orgs").to_h
+      )
+      Rails.logger.error(
+        user_info.dig("extra", "raw_info").slice("selected_roleid").to_h
+      )
+    end
+    raise e
   end
 
   def cis2_logout
