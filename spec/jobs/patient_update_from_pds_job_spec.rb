@@ -96,5 +96,27 @@ describe PatientUpdateFromPDSJob do
         perform_now
       end
     end
+
+    context "when the NHS number is invalid" do
+      before do
+        stub_request(
+          :get,
+          "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/9000000009"
+        ).to_return(
+          body: file_fixture("pds/invalid-nhs-number-response.json"),
+          status: 400,
+          headers: {
+            "Content-Type" => "application/fhir+json"
+          }
+        )
+      end
+
+      let(:patient) { create(:patient, nhs_number: "9000000009") }
+
+      it "marks the patient as invalid" do
+        expect(patient).to receive(:invalidate!)
+        perform_now
+      end
+    end
   end
 end
