@@ -9,6 +9,7 @@
 #  closed_at                     :datetime
 #  days_before_consent_reminders :integer
 #  send_consent_requests_at      :date
+#  slug                          :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  location_id                   :bigint           not null
@@ -94,6 +95,8 @@ class Session < ApplicationRecord
 
   validates :programmes, presence: true
   validate :programmes_part_of_team
+
+  before_create :set_slug
 
   def open?
     closed_at.nil?
@@ -252,6 +255,10 @@ class Session < ApplicationRecord
   end
 
   private
+
+  def set_slug
+    self.slug = SecureRandom.alphanumeric(10) if slug.nil?
+  end
 
   def programmes_part_of_team
     return if programmes.empty?

@@ -9,6 +9,7 @@
 #  closed_at                     :datetime
 #  days_before_consent_reminders :integer
 #  send_consent_requests_at      :date
+#  slug                          :string           not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  location_id                   :bigint           not null
@@ -29,6 +30,8 @@ FactoryBot.define do
       date { Date.current }
       programme { association :programme }
     end
+
+    sequence(:slug, &:to_s)
 
     academic_year { (date || Date.current).academic_year }
     programmes { [programme] }
