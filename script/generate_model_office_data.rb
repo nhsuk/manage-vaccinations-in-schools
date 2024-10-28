@@ -89,7 +89,7 @@ def write_nominal_roll_to_file(students)
       CHILD_ADDRESS_LINE_2
       CHILD_POSTCODE
       CHILD_TOWN
-      CHILD_COMMON_NAME
+      CHILD_PREFERRED_GIVEN_NAME
       CHILD_DATE_OF_BIRTH
       CHILD_FIRST_NAME
       CHILD_LAST_NAME
@@ -111,7 +111,7 @@ def write_nominal_roll_to_file(students)
         student.address_line_2,
         student.address_postcode,
         student.address_town,
-        student.common_name,
+        student.preferred_given_name,
         student.date_of_birth,
         student.given_name,
         student.family_name,

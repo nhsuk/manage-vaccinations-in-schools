@@ -125,6 +125,8 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     [
       { name: "CHILD_FIRST_NAME", notes: tag.strong("Required") },
       { name: "CHILD_LAST_NAME", notes: tag.strong("Required") },
+      { name: "CHILD_PREFERRED_FIRST_NAME", notes: "Optional" },
+      { name: "CHILD_PREFERRED_LAST_NAME", notes: "Optional" },
       {
         name: "CHILD_DATE_OF_BIRTH",
         notes:

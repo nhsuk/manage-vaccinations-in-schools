@@ -64,7 +64,7 @@ describe "End-to-end journey" do
       "CHILD_ADDRESS_LINE_2" => "2nd Floor",
       "CHILD_POSTCODE" => "TE1 1ST",
       "CHILD_TOWN" => "Testville",
-      "CHILD_COMMON_NAME" => "Drop Table",
+      "CHILD_PREFERRED_GIVEN_NAME" => "Drop Table",
       "CHILD_DATE_OF_BIRTH" => "2011-01-01",
       "CHILD_FIRST_NAME" => "Bobby",
       "CHILD_LAST_NAME" => "Tables",

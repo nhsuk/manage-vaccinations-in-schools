@@ -6,7 +6,6 @@ en:
         address_line_2: <code>CHILD_ADDRESS_LINE_2</code>
         address_postcode: <code>CHILD_POSTCODE</code>
         address_town: <code>CHILD_TOWN</code>
-        common_name: <code>CHILD_COMMON_NAME</code>
         date_of_birth: <code>CHILD_DATE_OF_BIRTH</code>
         first_name: <code>CHILD_FIRST_NAME</code>
         gender_code: <code>CHILD_GENDER</code>
@@ -20,12 +19,13 @@ en:
         parent_2_name: <code>PARENT_2_NAME</code>
         parent_2_phone: <code>PARENT_2_PHONE</code>
         parent_2_relationship: <code>PARENT_2_RELATIONSHIP</code>
+        preferred_family_name: <code>CHILD_PREFERRED_LAST_NAME</code>
+        preferred_given_name: <code>CHILD_PREFERRED_FIRST_NAME</code>
       cohort_import_row:
         address_line_1: <code>CHILD_ADDRESS_LINE_1</code>
         address_line_2: <code>CHILD_ADDRESS_LINE_2</code>
         address_postcode: <code>CHILD_POSTCODE</code>
         address_town: <code>CHILD_TOWN</code>
-        common_name: <code>CHILD_COMMON_NAME</code>
         date_of_birth: <code>CHILD_DATE_OF_BIRTH</code>
         first_name: <code>CHILD_FIRST_NAME</code>
         gender_code: <code>CHILD_GENDER</code>
@@ -39,6 +39,8 @@ en:
         parent_2_name: <code>PARENT_2_NAME</code>
         parent_2_phone: <code>PARENT_2_PHONE</code>
         parent_2_relationship: <code>PARENT_2_RELATIONSHIP</code>
+        preferred_family_name: <code>CHILD_PREFERRED_LAST_NAME</code>
+        preferred_given_name: <code>CHILD_PREFERRED_FIRST_NAME</code>
         school_urn: <code>CHILD_SCHOOL_URN</code>
       immunisation_import_row:
         administered: <code>VACCINATED</code>
