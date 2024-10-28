@@ -225,7 +225,7 @@ class Session < ApplicationRecord
   def send_consent_reminders_at
     return nil if dates.empty? || days_before_consent_reminders.nil?
 
-    dates.map(&:value).min - team.days_before_consent_reminders.days
+    dates.map(&:value).min - days_before_consent_reminders.days
   end
 
   def close_consent_at
