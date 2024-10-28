@@ -4,10 +4,10 @@
        row.with_value { child_full_name }
      end
    
-     if common_name.present?
+     if has_preferred_name?
        summary_list.with_row do |row|
          row.with_key { "Known as" }
-         row.with_value { common_name }
+         row.with_value { preferred_full_name }
        end
      end
    

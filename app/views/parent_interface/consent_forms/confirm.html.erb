@@ -71,10 +71,10 @@
                           visually_hidden_text: "child’s name")
         end
       
-        if @consent_form.use_common_name
+        if @consent_form.use_preferred_name
           summary_list.with_row do |row|
             row.with_key { "Also known as" }
-            row.with_value { @consent_form.common_name }
+            row.with_value { @consent_form.preferred_full_name }
             row.with_action(text: "Change",
                             href: change_link[:name],
                             visually_hidden_text: "common name")

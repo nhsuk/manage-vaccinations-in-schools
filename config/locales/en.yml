@@ -366,9 +366,6 @@ en:
             address_town:
               blank: Enter a town or city
               too_long: Enter a town or city that is less than 300 characters long
-            common_name:
-              blank: Enter a name
-              too_long: Enter a name that is less than 300 characters long
             contact_injection:
               inclusion: Choose if you want to be contacted
             date_of_birth:
@@ -414,6 +411,12 @@ en:
               too_long: Enter a relationship that are less than 300 characters long
             parental_responsibility:
               inclusion: You need parental responsibility to give consent
+            preferred_family_name:
+              blank: Enter a preferred last name
+              too_long: Enter a name that is less than 300 characters long
+            preferred_given_name:
+              blank: Enter a preferred first name
+              too_long: Enter a name that is less than 300 characters long
             reason:
               blank: Choose a reason
             reason_notes:
@@ -428,7 +431,7 @@ en:
             school_id:
               blank: Choose a school
               inclusion: Choose a school from the list
-            use_common_name:
+            use_preferred_name:
               inclusion: Tell us whether they use a different name
         gillick_assessment:
           attributes:
