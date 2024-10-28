@@ -3,7 +3,7 @@
 class AppPatientSummaryComponent < ViewComponent::Base
   def initialize(
     patient,
-    show_common_name: false,
+    show_preferred_name: false,
     show_address: false,
     show_parent_or_guardians: false
   )
@@ -11,7 +11,7 @@ class AppPatientSummaryComponent < ViewComponent::Base
 
     @patient = patient
 
-    @show_common_name = show_common_name
+    @show_preferred_name = show_preferred_name
     @show_address = show_address
     @show_parent_or_guardians = show_parent_or_guardians
   end
@@ -26,10 +26,14 @@ class AppPatientSummaryComponent < ViewComponent::Base
         row.with_key { "Full name" }
         row.with_value { format_full_name }
       end
-      if @show_common_name && (common_name = @patient.common_name).present?
+      if @show_preferred_name &&
+           (
+             @patient.has_preferred_name? ||
+               @patient.preferred_full_name_changed?
+           )
         summary_list.with_row do |row|
           row.with_key { "Known as" }
-          row.with_value { common_name }
+          row.with_value { format_preferred_full_name }
         end
       end
       summary_list.with_row do |row|
@@ -92,6 +96,13 @@ class AppPatientSummaryComponent < ViewComponent::Base
     highlight_if(
       @patient.full_name,
       @patient.given_name_changed? || @patient.family_name_changed?
+    )
+  end
+
+  def format_preferred_full_name
+    highlight_if(
+      @patient.preferred_full_name,
+      @patient.preferred_full_name_changed?
     )
   end
 

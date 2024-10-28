@@ -37,13 +37,13 @@ describe AppPatientSummaryComponent do
   it { should have_content("Full name") }
   it { should have_content("John Doe") }
 
-  context "when showing the common name" do
-    let(:component) { described_class.new(patient, show_common_name: true) }
+  context "when showing the preferred name" do
+    let(:component) { described_class.new(patient, show_preferred_name: true) }
 
-    before { patient.update!(common_name: "Johnny") }
+    before { patient.update!(preferred_given_name: "Johnny") }
 
     it { should have_content("Known as") }
-    it { should have_content("Johnny") }
+    it { should have_content("Johnny Doe") }
   end
 
   it { should have_content("Date of birth") }

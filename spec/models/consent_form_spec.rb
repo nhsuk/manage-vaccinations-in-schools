@@ -70,7 +70,7 @@ describe ConsentForm do
         response:,
         session:,
         programme:,
-        use_common_name:,
+        use_preferred_name:,
         wizard_step:
       )
     end
@@ -82,7 +82,7 @@ describe ConsentForm do
     let(:response) { nil }
     let(:programme) { build(:programme) }
     let(:session) { build(:session, programme:) }
-    let(:use_common_name) { false }
+    let(:use_preferred_name) { false }
     let(:wizard_step) { nil }
 
     it { should validate_presence_of(:given_name).on(:update) }
@@ -105,10 +105,11 @@ describe ConsentForm do
       it { should validate_presence_of(:given_name).on(:update) }
       it { should validate_presence_of(:family_name).on(:update) }
 
-      context "when use_common_name is true" do
-        let(:use_common_name) { true }
+      context "when use_preferred_name is true" do
+        let(:use_preferred_name) { true }
 
-        it { should validate_presence_of(:common_name).on(:update) }
+        it { should validate_presence_of(:preferred_given_name).on(:update) }
+        it { should validate_presence_of(:preferred_family_name).on(:update) }
       end
     end
 
@@ -890,12 +891,12 @@ describe ConsentForm do
       build(
         :consent_form,
         programme:,
-        common_name: "John",
-        use_common_name: true,
+        preferred_given_name: "John",
+        use_preferred_name: true,
         session:
       )
-    consent_form.update!(use_common_name: false)
-    expect(consent_form.common_name).to be_nil
+    consent_form.update!(use_preferred_name: false)
+    expect(consent_form.preferred_given_name).to be_nil
 
     consent_form =
       build(

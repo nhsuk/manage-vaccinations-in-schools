@@ -64,7 +64,13 @@ module ParentInterface
 
     def update_params
       permitted_attributes = {
-        name: %i[given_name family_name use_common_name common_name],
+        name: %i[
+          given_name
+          family_name
+          use_preferred_name
+          preferred_given_name
+          preferred_family_name
+        ],
         date_of_birth: %i[
           date_of_birth(3i)
           date_of_birth(2i)

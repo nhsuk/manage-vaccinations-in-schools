@@ -8,7 +8,7 @@ class AppSessionPatientTableComponentPreview < ViewComponent::Preview
       create_list(:patient_session, 2, :triaged_ready_to_vaccinate)
 
     # add a common name to one of the patients
-    patient_sessions.first.patient.update!(common_name: "Bobby")
+    patient_sessions.first.patient.update!(preferred_given_name: "Bobby")
 
     render AppSessionPatientTableComponent.new(
              session: patient_sessions.first.session,
@@ -25,7 +25,7 @@ class AppSessionPatientTableComponentPreview < ViewComponent::Preview
       create_list(:patient_session, 2, :added_to_session, programme:)
 
     # add a common name to one of the patients above
-    patient_sessions.first.patient.update!(common_name: "Bobby")
+    patient_sessions.first.patient.update!(preferred_given_name: "Bobby")
 
     # set postcode for both patients
     patient_sessions.each do |ps|

@@ -113,8 +113,9 @@ class GovukNotifyPersonalisation
   def full_and_preferred_patient_name
     patient_or_consent_form = consent_form || patient
 
-    if (common_name = patient_or_consent_form.common_name).present?
-      patient_or_consent_form.full_name + " (known as #{common_name})"
+    if patient_or_consent_form.has_preferred_name?
+      patient_or_consent_form.full_name +
+        " (known as #{patient_or_consent_form.preferred_full_name})"
     else
       patient_or_consent_form.full_name
     end
@@ -177,9 +178,9 @@ class GovukNotifyPersonalisation
 
   def short_patient_name
     [
-      consent_form&.common_name,
+      consent_form&.preferred_given_name,
       consent_form&.given_name,
-      patient&.common_name,
+      patient&.preferred_given_name,
       patient&.given_name
     ].compact_blank.first
   end

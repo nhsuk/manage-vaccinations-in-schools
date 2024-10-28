@@ -18,17 +18,18 @@
   <%= f.govuk_text_field :given_name, label: { text: "First name" } %>
   <%= f.govuk_text_field :family_name, label: { text: "Last name" } %>
 
-  <%= f.govuk_radio_buttons_fieldset(:use_common_name,
+  <%= f.govuk_radio_buttons_fieldset :use_preferred_name,
                                      bold_labels: false,
                                      legend: { size: "s",
-                                               text: "Do they use a different name in school?" }) do %>
-    <%= f.govuk_radio_button :use_common_name,
+                                               text: "Do they use a different name in school?" } do %>
+    <%= f.govuk_radio_button :use_preferred_name,
                              true,
                              label: { text: "Yes" },
                              link_errors: true do %>
-      <%= f.govuk_text_field :common_name, label: { text: "Known as" } %>
+      <%= f.govuk_text_field :preferred_given_name, label: { text: "Preferred first name (optional)" } %>
+      <%= f.govuk_text_field :preferred_family_name, label: { text: "Preferred last name (optional)" } %>
     <% end %>
-    <%= f.govuk_radio_button :use_common_name, false, label: { text: "No" } %>
+    <%= f.govuk_radio_button :use_preferred_name, false, label: { text: "No" } %>
   <% end %>
 
   <div class="nhsuk-u-margin-top-6">

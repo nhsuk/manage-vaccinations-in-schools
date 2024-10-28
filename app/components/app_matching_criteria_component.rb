@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
 class AppMatchingCriteriaComponent < ViewComponent::Base
-  delegate :common_name, :date_of_birth, :age, to: :@consent_form
+  delegate :preferred_full_name,
+           :has_preferred_name?,
+           :date_of_birth,
+           :age,
+           to: :@consent_form
 
   def initialize(consent_form:)
     super

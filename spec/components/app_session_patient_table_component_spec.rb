@@ -47,7 +47,7 @@ describe AppSessionPatientTableComponent do
         create(
           :patient_session,
           programme:,
-          patient: create(:patient, common_name: "Bobby")
+          patient: create(:patient, preferred_given_name: "Bobby")
         )
       ]
     end

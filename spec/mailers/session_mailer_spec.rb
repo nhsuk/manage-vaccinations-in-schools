@@ -12,7 +12,7 @@ describe SessionMailer do
     end
 
     let(:programme) { create(:programme) }
-    let(:patient) { create(:patient, common_name: "Joey") }
+    let(:patient) { create(:patient, preferred_given_name: "Joey") }
     let(:session) { create(:session, programme:, patients: [patient]) }
     let(:parent) { patient.parents.first }
 
@@ -62,7 +62,7 @@ describe SessionMailer do
         :patient,
         given_name: "John",
         family_name: "Smith",
-        common_name: "Joey"
+        preferred_given_name: "Joey"
       )
     end
     let(:session) { create(:session, team:, programme:) }
@@ -78,7 +78,7 @@ describe SessionMailer do
 
       it do
         expect(personalisation).to include(
-          full_and_preferred_patient_name: "John Smith (known as Joey)"
+          full_and_preferred_patient_name: "John Smith (known as Joey Smith)"
         )
       end
 
@@ -111,7 +111,7 @@ describe SessionMailer do
         :patient,
         given_name: "John",
         family_name: "Smith",
-        common_name: "Joey"
+        preferred_given_name: "Joey"
       )
     end
     let(:session) { create(:session, team:, programme:) }
@@ -127,7 +127,7 @@ describe SessionMailer do
 
       it do
         expect(personalisation).to include(
-          full_and_preferred_patient_name: "John Smith (known as Joey)"
+          full_and_preferred_patient_name: "John Smith (known as Joey Smith)"
         )
       end
 

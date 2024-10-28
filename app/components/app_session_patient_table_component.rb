@@ -81,9 +81,9 @@ class AppSessionPatientTableComponent < ViewComponent::Base
       [
         patient_link(patient),
         (
-          if patient.common_name.present?
+          if patient.has_preferred_name?
             "<span class=\"nhsuk-u-font-size-16\">Known as: ".html_safe +
-              patient.common_name + "</span>".html_safe
+              patient.preferred_full_name + "</span>".html_safe
           end
         )
       ].compact,
