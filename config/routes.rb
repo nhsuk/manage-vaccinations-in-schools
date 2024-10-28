@@ -74,8 +74,8 @@ Rails.application.routes.draw do
   namespace :parent_interface, path: "/" do
     resources :consent_forms, path: "/consents", only: %i[create] do
       collection do
-        get ":session_id/:programme_type/start", action: "start", as: :start
-        get ":session_id/:programme_type/deadline-passed",
+        get ":session_slug/:programme_type/start", action: "start", as: :start
+        get ":session_slug/:programme_type/deadline-passed",
             action: "deadline_passed",
             as: :deadline_passed
       end
@@ -137,7 +137,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :sessions, only: %i[edit index show] do
+  resources :sessions, only: %i[edit index show], param: :slug do
     collection do
       get "closed"
       get "completed"
@@ -168,14 +168,14 @@ Rails.application.routes.draw do
     resources :moves, controller: "session_moves", only: %i[index update]
   end
 
-  scope "/sessions/:session_id/:section", as: "session" do
+  scope "/sessions/:session_slug/:section", as: "session" do
     constraints section: "consents" do
       defaults section: "consents" do
         get "/",
             as: "consents",
             to:
               redirect(
-                "/sessions/%{session_id}/consents/#{TAB_PATHS[:consents].keys.first}"
+                "/sessions/%{session_slug}/consents/#{TAB_PATHS[:consents].keys.first}"
               )
 
         get ":tab",
@@ -192,7 +192,7 @@ Rails.application.routes.draw do
             as: "triage",
             to:
               redirect(
-                "/sessions/%{session_id}/triage/#{TAB_PATHS[:triage].keys.first}"
+                "/sessions/%{session_slug}/triage/#{TAB_PATHS[:triage].keys.first}"
               )
 
         get ":tab",
@@ -209,7 +209,7 @@ Rails.application.routes.draw do
             as: "vaccinations",
             to:
               redirect(
-                "/sessions/%{session_id}/vaccinations/#{TAB_PATHS[:vaccinations].keys.first}"
+                "/sessions/%{session_slug}/vaccinations/#{TAB_PATHS[:vaccinations].keys.first}"
               )
 
         get "batch", to: "vaccinations#batch"

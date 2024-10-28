@@ -1,7 +1,7 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
         href: new_session_patient_gillick_assessment_path(
-          session_id: @session.id,
+          session_slug: @session.slug,
           patient_id: @patient.id,
           section: params[:section],
           tab: params[:tab],

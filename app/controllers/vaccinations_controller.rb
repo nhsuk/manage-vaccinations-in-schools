@@ -142,8 +142,8 @@ class VaccinationsController < ApplicationController
 
   def set_session
     @session =
-      policy_scope(Session).includes(:location).find(
-        params.fetch(:session_id) { params.fetch(:id) }
+      policy_scope(Session).includes(:location).find_by!(
+        slug: params[:session_slug] || params[:slug]
       )
   end
 

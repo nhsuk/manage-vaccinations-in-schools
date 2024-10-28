@@ -73,7 +73,7 @@ describe "Patient sorting and filtering" do
   end
 
   def when_i_visit_the_consents_page
-    visit session_consents_path(session_id: @session)
+    visit session_consents_path(@session)
   end
 
   def when_i_click_on_the_name_header

@@ -121,8 +121,8 @@ class Vaccinations::EditController < ApplicationController
 
   def set_session
     @session =
-      policy_scope(Session).find(
-        params.fetch(:session_id) { params.fetch(:id) }
+      policy_scope(Session).find_by!(
+        slug: params[:session_slug] || params[:slug]
       )
   end
 

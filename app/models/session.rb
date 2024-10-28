@@ -98,6 +98,10 @@ class Session < ApplicationRecord
 
   before_create :set_slug
 
+  def to_param
+    slug
+  end
+
   def open?
     closed_at.nil?
   end

@@ -3,20 +3,20 @@
     {
       "warning_type": "File Access",
       "warning_code": 16,
-      "fingerprint": "25619a87718cc1eff74221288fbf4d6826ba182664ada813ecd280bd3d32549f",
+      "fingerprint": "d2aea4e63ad176c5c13a741d740fb246456dac7830c6747b59c4b57a616ae174",
       "check_name": "SendFile",
       "message": "Parameter value used in file name",
       "file": "app/controllers/sessions_controller.rb",
       "line": 73,
       "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
-      "code": "send_file(\"public/consent_forms/#{sessions_scope.find(params[:id]).programmes.first.type}.pdf\", :filename => (\"#{sessions_scope.find(params[:id]).programmes.first.name} Consent Form.pdf\"), :disposition => \"attachment\")",
+      "code": "send_file(\"public/consent_forms/#{sessions_scope.find_by!(:slug => params[:slug]).programmes.first.type}.pdf\", :filename => (\"#{sessions_scope.find_by!(:slug => params[:slug]).programmes.first.name} Consent Form.pdf\"), :disposition => \"attachment\")",
       "render_path": null,
       "location": {
         "type": "method",
         "class": "SessionsController",
         "method": "consent_form"
       },
-      "user_input": "params[:id]",
+      "user_input": "params[:slug]",
       "confidence": "Weak",
       "cwe_id": [
         22
@@ -24,6 +24,6 @@
       "note": "Programme names/types come from a limited set of enums."
     }
   ],
-  "updated": "2024-10-28 08:48:24 +0000",
+  "updated": "2024-10-28 17:13:18 +0000",
   "brakeman_version": "6.2.1"
 }

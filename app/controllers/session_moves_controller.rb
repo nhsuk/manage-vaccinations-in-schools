@@ -42,7 +42,7 @@ class SessionMovesController < ApplicationController
   private
 
   def set_session
-    @session = policy_scope(Session).find(params[:session_id])
+    @session = policy_scope(Session).find_by!(slug: params[:session_slug])
   end
 
   def set_tab

@@ -46,7 +46,8 @@ describe GovukNotifyPersonalisation do
       {
         catch_up: "no",
         consent_deadline: "Wednesday 31 December",
-        consent_link: "http://localhost:4000/consents/#{session.id}/hpv/start",
+        consent_link:
+          "http://localhost:4000/consents/#{session.slug}/hpv/start",
         full_and_preferred_patient_name: "John Smith",
         location_name: "Hogwarts",
         next_session_date: "Thursday 1 January",

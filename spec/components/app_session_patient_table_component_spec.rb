@@ -14,7 +14,7 @@ describe AppSessionPatientTableComponent do
   let(:session) { create(:session, programme:) }
   let(:patient_sessions) { create_list(:patient_session, 2, session:) }
   let(:columns) { %i[name year_group] }
-  let(:params) { { session_id: 1, section:, tab: :needed } }
+  let(:params) { { session_slug: session.slug, section:, tab: :needed } }
 
   let(:component) do
     described_class.new(
