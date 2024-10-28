@@ -4,7 +4,7 @@ class PatientUpdateFromPDSJob < ApplicationJob
   include NHSAPIConcurrencyConcern
   include MergePatientsConcern
 
-  queue_as :imports
+  queue_as :pds
 
   discard_on NHS::PDS::InvalidNHSNumber
   discard_on NHS::PDS::PatientNotFound
