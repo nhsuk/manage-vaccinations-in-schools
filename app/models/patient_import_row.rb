@@ -42,7 +42,7 @@ class PatientImportRow
       address_line_2:,
       address_postcode:,
       address_town:,
-      cohort:,
+      cohort_id: cohort&.id,
       date_of_birth:,
       family_name: last_name,
       gender_code:,
@@ -52,7 +52,7 @@ class PatientImportRow
       preferred_family_name: preferred_last_name,
       preferred_given_name: preferred_first_name,
       registration:,
-      school:
+      school_id: school&.id
     }.compact
 
     if (existing_patient = existing_patients.first)
