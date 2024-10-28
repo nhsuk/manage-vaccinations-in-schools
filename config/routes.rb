@@ -149,7 +149,14 @@ Rails.application.routes.draw do
       get "close", action: "edit_close"
       post "close", action: "update_close"
 
-      get "consent-form"
+      get "consent-form", action: "consent_form"
+
+      get "edit/send-consent-requests-at",
+          controller: "sessions/edit",
+          action: "edit_send_consent_requests_at"
+      put "edit/send-consent-requests-at",
+          controller: "sessions/edit",
+          action: "update_send_consent_requests_at"
 
       constraints -> { Flipper.enabled?(:dev_tools) } do
         put "make-in-progress", to: "sessions#make_in_progress"

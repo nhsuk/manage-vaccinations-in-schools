@@ -474,6 +474,14 @@ en:
             vaccines:
               blank: Choose the vaccines this programme administers
               match_type: Vaccines must be suitable for the programme type
+        session:
+          attributes:
+            send_consent_requests_at:
+              blank: Enter a date
+              missing_day: Enter a day
+              missing_month: Enter a month
+              missing_year: Enter a year
+              less_than: Enter a date before the first session date (%{count})
         session_date:
           attributes:
             value:
