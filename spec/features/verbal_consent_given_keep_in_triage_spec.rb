@@ -45,6 +45,7 @@ describe "Verbal consent" do
               with: "moar allergies"
     find_all(".nhsuk-fieldset")[1].choose "No"
     find_all(".nhsuk-fieldset")[2].choose "No"
+    find_all(".nhsuk-fieldset")[3].choose "No"
     click_button "Continue"
 
     choose "No, keep in triage"

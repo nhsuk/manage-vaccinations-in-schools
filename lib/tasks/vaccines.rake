@@ -39,7 +39,13 @@ namespace :vaccines do
             next_question:
               vaccine.health_questions.create!(
                 title:
-                  "Has your child ever had a severe reaction to any medicines, including vaccines?"
+                  "Has your child ever had a severe reaction to any medicines, including vaccines?",
+                next_question:
+                  vaccine.health_questions.create!(
+                    title:
+                      "Does your child need extra support during vaccination sessions?",
+                    hint: "For example, they’re autistic, or extremely anxious"
+                  )
               )
           )
       )

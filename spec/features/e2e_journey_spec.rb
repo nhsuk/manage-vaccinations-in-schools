@@ -176,6 +176,7 @@ describe "End-to-end journey" do
     find_all(".nhsuk-fieldset")[0].choose "No"
     find_all(".nhsuk-fieldset")[1].choose "No"
     find_all(".nhsuk-fieldset")[2].choose "No"
+    find_all(".nhsuk-fieldset")[3].choose "No"
     click_button "Continue"
 
     choose "Yes, it’s safe to vaccinate"

@@ -45,6 +45,7 @@ describe "Verbal consent recorded by admin" do
               with: "moar allergies"
     find_all(".nhsuk-fieldset")[1].choose "No"
     find_all(".nhsuk-fieldset")[2].choose "No"
+    find_all(".nhsuk-fieldset")[3].choose "No"
     click_button "Continue"
 
     expect(page).not_to have_content("Is it safe to vaccinate?")

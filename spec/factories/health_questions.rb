@@ -59,6 +59,14 @@ FactoryBot.define do
       end
     end
 
+    trait :extra_support do
+      for_hpv_vaccine
+      title do
+        "Does your child need extra support during vaccination sessions?"
+      end
+      hint { "For example, they’re autistic, or extremely anxious" }
+    end
+
     # Flu vaccine questions
     trait :asthma do
       for_flu_vaccine
