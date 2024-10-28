@@ -339,18 +339,19 @@ describe ClassImport do
 
         # stree-ignore
         expect { record! }
-          .to change { patient.reload.school }.to(session.location)
-          .and change { patient.patient_sessions
+          .to change { patient.patient_sessions
             .find_by(session: different_session)
             .proposed_session }.from(nil).to(session)
 
         expect(patient.upcoming_sessions).to contain_exactly(different_session)
       end
 
-      it "changes the child's cohort" do
+      it "stages changes to the child's cohort" do
         expect(patient.cohort.team).to eq(different_session.team)
-        expect { record! }.to(change { patient.reload.cohort })
-        expect(patient.cohort.team).to eq(session.team)
+        expect { record! }.to(
+          change { patient.reload.with_pending_changes.cohort }
+        )
+        expect(patient.with_pending_changes.cohort.team).to eq(session.team)
       end
     end
 

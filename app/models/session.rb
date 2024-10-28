@@ -175,11 +175,14 @@ class Session < ApplicationRecord
       Patient
         .includes(:upcoming_sessions, vaccination_records: :programme)
         .where(cohort: cohorts)
+        .or(Patient.in_pending_cohorts(cohorts))
         .not_deceased
 
     patients_in_cohorts =
       if location.school?
-        patients_scope.where(school: location)
+        patients_scope.where(school: location).or(
+          patients_scope.in_pending_school(location)
+        )
       elsif location.generic_clinic?
         patients_scope.where(home_educated: true).or(
           patients_scope.where(school: nil)
