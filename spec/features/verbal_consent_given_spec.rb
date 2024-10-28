@@ -55,6 +55,7 @@ describe "Verbal consent" do
     find_all(".nhsuk-fieldset")[0].choose "No"
     find_all(".nhsuk-fieldset")[1].choose "No"
     find_all(".nhsuk-fieldset")[2].choose "No"
+    find_all(".nhsuk-fieldset")[3].choose "No"
     click_button "Continue"
 
     choose "Yes, it’s safe to vaccinate"
@@ -102,7 +103,7 @@ describe "Verbal consent" do
     expect(page).to have_content("Answers to health questions")
     expect(page).to have_content(
       "#{parent.relationship_to(patient: @patient).label} responded: No",
-      count: 3
+      count: 4
     )
   end
 

@@ -87,9 +87,11 @@ FactoryBot.define do
         medical_conditions =
           create(:health_question, :medical_conditions, vaccine:)
         severe_reaction = create(:health_question, :severe_reaction, vaccine:)
+        extra_support = create(:health_question, :extra_support, vaccine:)
 
-        severe_allergies.update! next_question: medical_conditions
-        medical_conditions.update! next_question: severe_reaction
+        severe_allergies.update!(next_question: medical_conditions)
+        medical_conditions.update!(next_question: severe_reaction)
+        severe_reaction.update!(next_question: extra_support)
       end
     end
 

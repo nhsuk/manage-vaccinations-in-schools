@@ -45,6 +45,7 @@ describe "Verbal consent" do
     find_all(".nhsuk-fieldset")[2].choose "Yes"
     find_all(".nhsuk-fieldset")[2].fill_in "Give details",
               with: "moar reactions"
+    find_all(".nhsuk-fieldset")[3].choose "No"
     click_button "Continue"
 
     choose "No, do not vaccinate"
