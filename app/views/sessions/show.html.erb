@@ -57,7 +57,7 @@
             <% c.with_description { "Add dates for this school." } %>
           <% end %>
         </li>
-      <% else %>
+      <% elsif Flipper.enabled?(:release_1b) %>
         <li class="nhsuk-grid-column-full nhsuk-card-group__item">
           <%= render AppCardComponent.new(link_to: session_consents_path(@session)) do |c| %>
             <% c.with_heading { "Check consent responses" } %>
