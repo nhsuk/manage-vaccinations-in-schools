@@ -52,7 +52,7 @@ module ParentInterface
 
     def set_session_and_programme
       @session = Session.find(params[:session_id])
-      @programme = @session.programmes.find(params[:programme_id])
+      @programme = @session.programmes.find_by!(type: params[:programme_type])
       @team = @session.team
     end
 

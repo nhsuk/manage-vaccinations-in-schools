@@ -29,8 +29,8 @@ class ImmunisationImports::DuplicatesController < ApplicationController
 
   def set_programme
     @programme =
-      policy_scope(Programme).includes(:immunisation_imports).find(
-        params[:programme_id]
+      policy_scope(Programme).includes(:immunisation_imports).find_by!(
+        type: params[:programme_type]
       )
   end
 

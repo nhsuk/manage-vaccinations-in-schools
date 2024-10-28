@@ -74,8 +74,8 @@ Rails.application.routes.draw do
   namespace :parent_interface, path: "/" do
     resources :consent_forms, path: "/consents", only: %i[create] do
       collection do
-        get ":session_id/:programme_id/start", action: "start", as: :start
-        get ":session_id/:programme_id/deadline-passed",
+        get ":session_id/:programme_type/start", action: "start", as: :start
+        get ":session_id/:programme_type/deadline-passed",
             action: "deadline_passed",
             as: :deadline_passed
       end
@@ -101,7 +101,7 @@ Rails.application.routes.draw do
 
   resources :patients, only: %i[index show update]
 
-  resources :programmes, only: %i[index show] do
+  resources :programmes, only: %i[index show], param: :type do
     get "sessions", on: :member
 
     resources :cohort_imports, path: "cohort-imports", except: %i[index destroy]

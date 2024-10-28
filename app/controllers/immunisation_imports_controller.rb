@@ -78,7 +78,7 @@ class ImmunisationImportsController < ApplicationController
   private
 
   def set_programme
-    @programme = policy_scope(Programme).find(params[:programme_id])
+    @programme = policy_scope(Programme).find_by!(type: params[:programme_type])
   end
 
   def set_immunisation_import

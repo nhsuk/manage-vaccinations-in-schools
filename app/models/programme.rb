@@ -48,4 +48,8 @@ class Programme < ApplicationRecord
   def year_groups
     YEAR_GROUPS_BY_TYPE.fetch(type)
   end
+
+  def to_param
+    type
+  end
 end

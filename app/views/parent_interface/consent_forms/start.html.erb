@@ -8,6 +8,6 @@
 
 <%= form_with url: url_for(action: :create) do |f| %>
   <%= hidden_field_tag :session_id, @session.id %>
-  <%= hidden_field_tag :programme_id, @programme.id %>
+  <%= hidden_field_tag :programme_type, @programme.type %>
   <%= f.govuk_submit "Start now" %>
 <% end %>

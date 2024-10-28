@@ -28,6 +28,6 @@ class ProgrammesController < ApplicationController
   private
 
   def set_programme
-    @programme = policy_scope(Programme).find(params[:id])
+    @programme = policy_scope(Programme).find_by!(type: params[:type])
   end
 end
