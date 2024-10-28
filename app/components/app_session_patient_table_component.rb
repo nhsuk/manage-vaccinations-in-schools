@@ -141,8 +141,8 @@ class AppSessionPatientTableComponent < ViewComponent::Base
         consent_form_path(@consent_form, **filter_params)
       else
         session_section_tab_path(
+          session_slug: params[:session_slug],
           section: params[:section],
-          session_id: params[:session_id],
           tab: params[:tab],
           **filter_params
         )
@@ -156,7 +156,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
       consent_form_path(@consent_form)
     else
       session_section_tab_path(
-        session_id: params[:session_id],
+        session_slug: params[:session_slug],
         section: params[:section],
         tab: params[:tab]
       )

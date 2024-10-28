@@ -29,7 +29,7 @@ class AppImportsTableComponent < ViewComponent::Base
       .select("class_imports.*", "COUNT(patients.id) AS record_count")
       .where(team:, session: programme.sessions)
       .left_outer_joins(:patients)
-      .includes(:uploaded_by)
+      .includes(:session, :uploaded_by)
       .group("class_imports.id")
       .strict_loading
   end
@@ -59,7 +59,7 @@ class AppImportsTableComponent < ViewComponent::Base
 
   def path(programme, import)
     if import.is_a?(ClassImport)
-      session_class_import_path(import.session_id, import)
+      session_class_import_path(import.session, import)
     elsif import.is_a?(CohortImport)
       programme_cohort_import_path(programme, import)
     else

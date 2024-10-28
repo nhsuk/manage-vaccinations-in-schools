@@ -13,7 +13,7 @@ class AppVaccinateFormComponent < ViewComponent::Base
   def url
     @url ||=
       session_patient_vaccinations_path(
-        session_id: session.id,
+        session_slug: session.slug,
         patient_id: patient.id,
         section: @section,
         tab: @tab

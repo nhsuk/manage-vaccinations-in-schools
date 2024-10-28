@@ -43,13 +43,13 @@ class GillickAssessmentsController < ApplicationController
   end
 
   def set_session
-    @session = policy_scope(Session).find(params[:session_id])
+    @session = policy_scope(Session).find_by!(slug: params[:session_slug])
   end
 
   def set_patient_session
     @patient_session =
-      policy_scope(PatientSession).find_by(
-        session_id: params[:session_id],
+      policy_scope(PatientSession).eager_load(:session).find_by(
+        session: @session,
         patient_id: params[:patient_id]
       )
   end

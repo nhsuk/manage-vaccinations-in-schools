@@ -87,7 +87,7 @@ class SessionsController < ApplicationController
   delegate :team, to: :current_user
 
   def set_session
-    @session = sessions_scope.find(params[:id])
+    @session = sessions_scope.find_by!(slug: params[:slug])
   end
 
   def sessions_scope
