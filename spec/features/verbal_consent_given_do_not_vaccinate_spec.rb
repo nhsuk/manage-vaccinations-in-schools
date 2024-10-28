@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 describe "Verbal consent" do
+  before { Flipper.enable(:release_1b) }
+  after { Flipper.disable(:release_1b) }
+
   scenario "Given, do not vaccinate" do
     given_i_am_signed_in
 

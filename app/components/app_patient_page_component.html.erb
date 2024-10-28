@@ -64,35 +64,37 @@
   <% end %>
 <% end %>
 
-<% if @patient_session.triages.any? %>
-  <%= render AppCardComponent.new do |c| %>
-    <% c.with_heading { "Triage notes" } %>
-    <%= render AppTriageNotesComponent.new(patient_session:) %>
+<% if Flipper.enabled?(:release_1b) %>
+  <% if @patient_session.triages.any? %>
+    <%= render AppCardComponent.new do |c| %>
+      <% c.with_heading { "Triage notes" } %>
+      <%= render AppTriageNotesComponent.new(patient_session:) %>
+    <% end %>
   <% end %>
-<% end %>
 
-<% if helpers.policy(Triage).create? && @patient_session.next_step == :triage %>
-  <%= render AppCardComponent.new do %>
-    <%= render AppTriageFormComponent.new(
-          patient_session: @patient_session,
-          url: session_patient_triages_path(
-            session,
-            patient,
-            @triage,
-            section: @section,
-            tab: @tab,
-          ),
-          triage: @triage,
-          legend: :bold,
+  <% if helpers.policy(Triage).create? && @patient_session.next_step == :triage %>
+    <%= render AppCardComponent.new do %>
+      <%= render AppTriageFormComponent.new(
+            patient_session: @patient_session,
+            url: session_patient_triages_path(
+              session,
+              patient,
+              @triage,
+              section: @section,
+              tab: @tab,
+            ),
+            triage: @triage,
+            legend: :bold,
+          ) %>
+    <% end %>
+  <% end %>
+
+  <% if helpers.policy(VaccinationRecord).create? %>
+    <%= render AppVaccinateFormComponent.new(
+          patient_session:,
+          vaccination_record: @vaccination_record,
+          section: @section,
+          tab: @tab,
         ) %>
   <% end %>
-<% end %>
-
-<% if helpers.policy(VaccinationRecord).create? %>
-  <%= render AppVaccinateFormComponent.new(
-        patient_session:,
-        vaccination_record: @vaccination_record,
-        section: @section,
-        tab: @tab,
-      ) %>
 <% end %>

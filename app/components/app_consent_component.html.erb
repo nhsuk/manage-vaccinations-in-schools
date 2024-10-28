@@ -46,4 +46,6 @@
   <%= govuk_button_to "Send consent request", session_patient_request_consent_path(session, patient_id: patient.id, section: @section, tab: @tab), class: "app-button--secondary" %>
 <% end %>
 
-<%= govuk_button_to "Get consent response", session_patient_manage_consents_path(session, patient_id: patient.id, section: @section, tab: @tab), class: "app-button--secondary" %>
+<% if Flipper.enabled?(:release_1b) %>
+  <%= govuk_button_to "Get consent response", session_patient_manage_consents_path(session, patient_id: patient.id, section: @section, tab: @tab), class: "app-button--secondary" %>
+<% end %>

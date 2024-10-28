@@ -26,6 +26,6 @@
 <%= render AppCardComponent.new do |c| %>
   <% c.with_heading { "Vaccination details" } %>
   <%= render AppVaccinationRecordSummaryComponent.new(
-        @vaccination_record, change_links: true,
+        @vaccination_record, change_links: Flipper.enabled?(:release_1b),
       ) %>
 <% end %>

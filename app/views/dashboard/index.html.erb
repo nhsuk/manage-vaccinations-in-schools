@@ -39,12 +39,14 @@
 </ul>
 
 <ul class="nhsuk-grid-row nhsuk-card-group">
-  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(link_to: vaccines_path, secondary: true) do |card| %>
-      <% card.with_heading { t("vaccines.index.title") } %>
-      <% card.with_description { "Add and edit vaccine batches" } %>
-    <% end %>
-  </li>
+  <% if Flipper.enabled?(:release_1b) %>
+    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+      <%= render AppCardComponent.new(link_to: vaccines_path, secondary: true) do |card| %>
+        <% card.with_heading { t("vaccines.index.title") } %>
+        <% card.with_description { "Add and edit vaccine batches" } %>
+      <% end %>
+    </li>
+  <% end %>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
     <%= render AppCardComponent.new(link_to: consent_forms_path, secondary: true) do |card| %>

@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 describe "Manage batches" do
+  before { Flipper.enable(:release_1b) }
+  after { Flipper.disable(:release_1b) }
+
   around { |example| travel_to(Time.zone.local(2024, 2, 29)) { example.run } }
 
   scenario "Adding and editing batches" do

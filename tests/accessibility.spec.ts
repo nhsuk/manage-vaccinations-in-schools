@@ -28,13 +28,15 @@ test("Accessibility", async ({ page }) => {
   await expect(page.locator("h1")).toContainText("Mavis");
   await checkAccessibility(page);
 
+  // RE-ENABLE FOR RELEASE 1B
+
   // Vaccines page
-  await page.getByRole("heading", { name: "Vaccines" }).click();
-  await expect(page.locator("h1")).toContainText("Vaccines");
-  await checkAccessibility(page);
+  // await page.getByRole("heading", { name: "Vaccines" }).click();
+  // await expect(page.locator("h1")).toContainText("Vaccines");
+  // await checkAccessibility(page);
 
   // Vaccine page
-  await page.getByRole("link", { name: "Gardasil 9" }).click();
-  await expect(page.locator("h1")).toContainText("Gardasil 9");
-  await checkAccessibility(page);
+  // await page.getByRole("link", { name: "Gardasil 9" }).click();
+  // await expect(page.locator("h1")).toContainText("Gardasil 9");
+  // await checkAccessibility(page);
 });

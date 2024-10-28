@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
 describe "Not Gillick competent" do
-  after { travel_back }
+  before { Flipper.enable(:release_1b) }
+
+  after do
+    Flipper.disable(:release_1b)
+    travel_back
+  end
 
   scenario "No consent from parent, the child is not Gillick competent" do
     given_an_hpv_programme_is_underway

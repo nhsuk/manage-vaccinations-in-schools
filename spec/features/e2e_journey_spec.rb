@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 describe "End-to-end journey" do
+  before { Flipper.enable(:release_1b) }
+  after { Flipper.disable(:release_1b) }
+
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
   scenario "Cohorting, session creation, verbal consent, vaccination" do
