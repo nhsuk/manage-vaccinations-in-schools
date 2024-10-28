@@ -8,7 +8,7 @@ class SessionDatesController < ApplicationController
   end
 
   def update
-    @session.assign_attributes(session_params)
+    @session.assign_attributes(remove_invalid_dates(session_params))
 
     render :show, status: :unprocessable_entity and return if @session.invalid?
 
@@ -41,5 +41,29 @@ class SessionDatesController < ApplicationController
 
   def any_destroyed?
     session_params[:dates_attributes].values.any? { _1[:_destroy].present? }
+  end
+
+  def remove_invalid_dates(obj, key: "dates_attributes")
+    return obj if obj[key].blank?
+
+    obj[key] = obj[key].transform_values do |value|
+      if value.key?("value(1i)") && value.key?("value(2i)") &&
+           value.key?("value(3i)")
+        begin
+          Date.new(
+            value["value(1i)"].to_i,
+            value["value(2i)"].to_i,
+            value["value(3i)"].to_i
+          )
+          value
+        rescue StandardError
+          {}
+        end
+      else
+        value
+      end
+    end
+
+    obj
   end
 end
