@@ -73,7 +73,10 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       { name: "NHS_NUMBER", notes: "Optional, must be 10 digits and numeric" },
       { name: "PERSON_FORENAME", notes: tag.strong("Required") },
       { name: "PERSON_SURNAME", notes: tag.strong("Required") },
-      { name: "PERSON_DOB", notes: tag.strong("Required") },
+      {
+        name: "PERSON_DOB",
+        notes: "#{tag.strong("Required")}, must use #{tag.i("YYYYMMDD")} format"
+      },
       {
         name: "PERSON_GENDER_CODE",
         notes:
@@ -122,7 +125,11 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
     [
       { name: "CHILD_FIRST_NAME", notes: tag.strong("Required") },
       { name: "CHILD_LAST_NAME", notes: tag.strong("Required") },
-      { name: "CHILD_DATE_OF_BIRTH", notes: tag.strong("Required") },
+      {
+        name: "CHILD_DATE_OF_BIRTH",
+        notes:
+          "#{tag.strong("Required")}, must use #{tag.i("DD/MM/YYYY")} or #{tag.i("YYYY-MM-DD")} format"
+      },
       {
         name: "CHILD_NHS_NUMBER",
         notes: "Optional, must be 10 digits and numeric"
