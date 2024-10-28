@@ -102,6 +102,14 @@ class Patient < ApplicationRecord
           end
         end
 
+  scope :in_pending_cohorts,
+        ->(cohorts) do
+          where("pending_changes->>'cohort_id' IN (?)", cohorts.pluck(:id))
+        end
+
+  scope :in_pending_school,
+        ->(school) { where("pending_changes->>'school_id' = ?", school.id) }
+
   validates :given_name, :family_name, :date_of_birth, presence: true
 
   validates :nhs_number,
