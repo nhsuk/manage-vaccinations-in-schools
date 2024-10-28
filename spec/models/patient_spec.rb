@@ -25,6 +25,7 @@
 #  preferred_given_name      :string
 #  registration              :string
 #  restricted_at             :datetime
+#  updated_from_pds_at       :datetime
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  cohort_id                 :bigint
@@ -203,6 +204,15 @@ describe Patient do
 
     it "doesn't flag as restricted" do
       expect { update_from_pds! }.not_to change(patient, :restricted_at)
+    end
+
+    it "sets the updated from PDS date and time" do
+      freeze_time do
+        expect { update_from_pds! }.to change(
+          patient,
+          :updated_from_pds_at
+        ).from(nil).to(Time.current)
+      end
     end
 
     context "when the NHS number doesn't match" do
