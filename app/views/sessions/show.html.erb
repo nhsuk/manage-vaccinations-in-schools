@@ -18,6 +18,12 @@
     <%= session_status_tag(@session) %>
   </li>
 
+  <% if @session.open? %>
+    <li class="app-action-list__item">
+      <%= govuk_link_to "Download consent form (PDF)", consent_form_session_path(@session) %>
+    </li>
+  <% end %>
+
   <% if @session.open? && @session.location.school? %>
     <li class="app-action-list__item">
       <%= govuk_link_to "Import class list", new_session_class_import_path(@session) %>
