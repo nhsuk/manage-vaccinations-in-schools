@@ -23,6 +23,9 @@ module NHS::PDS
   class InvalidNHSNumber < StandardError
   end
 
+  class PatientNotFound < StandardError
+  end
+
   class << self
     def get_patient(nhs_number)
       NHS::API.connection.get(
@@ -37,6 +40,8 @@ module NHS::PDS
     rescue Faraday::ResourceNotFound => e
       if is_error?(e, "INVALIDATED_RESOURCE")
         raise InvalidatedResource, nhs_number
+      elsif is_error?(e, "RESOURCE_NOT_FOUND")
+        raise PatientNotFound, nhs_number
       else
         raise
       end
