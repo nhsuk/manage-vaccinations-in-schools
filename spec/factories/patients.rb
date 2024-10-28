@@ -9,7 +9,6 @@
 #  address_line_2            :string
 #  address_postcode          :string
 #  address_town              :string
-#  common_name               :string
 #  date_of_birth             :date             not null
 #  date_of_death             :date
 #  date_of_death_recorded_at :datetime
@@ -22,6 +21,8 @@
 #  original_family_name      :string           not null
 #  original_given_name       :string           not null
 #  pending_changes           :jsonb            not null
+#  preferred_family_name     :string
+#  preferred_given_name      :string
 #  registration              :string
 #  restricted_at             :datetime
 #  created_at                :datetime         not null

@@ -9,7 +9,6 @@
 #  address_line_2                      :string
 #  address_postcode                    :string
 #  address_town                        :string
-#  common_name                         :text
 #  contact_injection                   :boolean
 #  date_of_birth                       :date
 #  family_name                         :text
@@ -26,12 +25,14 @@
 #  parent_phone_receive_updates        :boolean          default(FALSE), not null
 #  parent_relationship_other_name      :string
 #  parent_relationship_type            :string
+#  preferred_family_name               :string
+#  preferred_given_name                :string
 #  reason                              :integer
 #  reason_notes                        :text
 #  recorded_at                         :datetime
 #  response                            :integer
 #  school_confirmed                    :boolean
-#  use_common_name                     :boolean
+#  use_preferred_name                  :boolean
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
 #  consent_id                          :bigint
