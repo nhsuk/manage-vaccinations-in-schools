@@ -9,7 +9,6 @@
 #  address_line_2                      :string
 #  address_postcode                    :string
 #  address_town                        :string
-#  common_name                         :text
 #  contact_injection                   :boolean
 #  date_of_birth                       :date
 #  family_name                         :text
@@ -26,12 +25,14 @@
 #  parent_phone_receive_updates        :boolean          default(FALSE), not null
 #  parent_relationship_other_name      :string
 #  parent_relationship_type            :string
+#  preferred_family_name               :string
+#  preferred_given_name                :string
 #  reason                              :integer
 #  reason_notes                        :text
 #  recorded_at                         :datetime
 #  response                            :integer
 #  school_confirmed                    :boolean
-#  use_common_name                     :boolean
+#  use_preferred_name                  :boolean
 #  created_at                          :datetime         not null
 #  updated_at                          :datetime         not null
 #  consent_id                          :bigint
@@ -114,7 +115,6 @@ class ConsentForm < ApplicationRecord
            :address_line_2,
            :address_postcode,
            :address_town,
-           :common_name,
            :family_name,
            :given_name,
            :gp_name,
@@ -124,6 +124,8 @@ class ConsentForm < ApplicationRecord
            :parent_full_name,
            :parent_phone,
            :parent_relationship_other_name,
+           :preferred_family_name,
+           :preferred_given_name,
            :reason_notes
 
   normalizes :parent_phone,
@@ -136,13 +138,14 @@ class ConsentForm < ApplicationRecord
   validates :address_line_1,
             :address_line_2,
             :address_town,
-            :common_name,
             :family_name,
             :given_name,
             :gp_name,
             :parent_contact_method_other_details,
             :parent_full_name,
             :parent_relationship_other_name,
+            :preferred_family_name,
+            :preferred_given_name,
             length: {
               maximum: 300
             }
@@ -168,8 +171,13 @@ class ConsentForm < ApplicationRecord
   on_wizard_step :name do
     validates :given_name, presence: true
     validates :family_name, presence: true
-    validates :use_common_name, inclusion: { in: [true, false] }
-    validates :common_name, presence: true, if: :use_common_name?
+    validates :use_preferred_name, inclusion: { in: [true, false] }
+    validates :preferred_given_name,
+              presence: true,
+              if: -> { use_preferred_name && preferred_family_name.blank? }
+    validates :preferred_family_name,
+              presence: true,
+              if: -> { use_preferred_name && preferred_given_name.blank? }
   end
 
   on_wizard_step :date_of_birth do
@@ -485,7 +493,10 @@ class ConsentForm < ApplicationRecord
   # sometimes get set with values that then have to be deleted if the user
   # changes their mind and goes down a different path.
   def reset_unused_fields
-    self.common_name = nil unless use_common_name?
+    unless use_preferred_name
+      self.preferred_given_name = nil
+      self.preferred_family_name = nil
+    end
 
     if consent_refused?
       self.gp_response = nil

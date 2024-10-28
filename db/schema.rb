@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_27_191532) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_28_105008) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -148,8 +148,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_27_191532) do
     t.datetime "updated_at", null: false
     t.text "given_name"
     t.text "family_name"
-    t.boolean "use_common_name"
-    t.text "common_name"
+    t.boolean "use_preferred_name"
     t.date "date_of_birth"
     t.integer "response"
     t.integer "reason"
@@ -177,6 +176,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_27_191532) do
     t.bigint "team_id", null: false
     t.bigint "school_id"
     t.boolean "home_educated"
+    t.string "preferred_given_name"
+    t.string "preferred_family_name"
     t.index ["consent_id"], name: "index_consent_forms_on_consent_id"
     t.index ["location_id"], name: "index_consent_forms_on_location_id"
     t.index ["programme_id"], name: "index_consent_forms_on_programme_id"
@@ -493,7 +494,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_27_191532) do
     t.datetime "updated_at", null: false
     t.string "given_name", null: false
     t.string "family_name", null: false
-    t.string "common_name"
     t.bigint "school_id"
     t.string "address_line_1"
     t.string "address_line_2"
@@ -510,6 +510,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_27_191532) do
     t.datetime "date_of_death_recorded_at"
     t.datetime "restricted_at"
     t.datetime "invalidated_at"
+    t.string "preferred_given_name"
+    t.string "preferred_family_name"
     t.index ["cohort_id"], name: "index_patients_on_cohort_id"
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
     t.index ["school_id"], name: "index_patients_on_school_id"
