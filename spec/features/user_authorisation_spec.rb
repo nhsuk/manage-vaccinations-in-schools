@@ -89,7 +89,7 @@ describe "User authorisation" do
   end
 
   def when_i_go_to_the_sessions_page_filtered_by_programme
-    visit "/programmes/#{@programme.id}/sessions"
+    visit "/programmes/#{@programme.type}/sessions"
   end
 
   def then_i_should_only_see_my_sessions

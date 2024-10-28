@@ -29,8 +29,8 @@ class VaccinationRecords::EditController < ApplicationController
   def set_vaccination_record
     @vaccination_record =
       policy_scope(VaccinationRecord)
-        .where(programme: params[:programme_id])
-        .includes(:programme)
+        .eager_load(:programme)
+        .where(programme: { type: params[:programme_type] })
         .find(params[:vaccination_record_id])
   end
 

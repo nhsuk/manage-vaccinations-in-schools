@@ -29,6 +29,6 @@ class ImportsController < ApplicationController
   end
 
   def set_programme
-    @programme = policy_scope(Programme).find(params[:programme_id])
+    @programme = policy_scope(Programme).find_by!(type: params[:programme_type])
   end
 end
