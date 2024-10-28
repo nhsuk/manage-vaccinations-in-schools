@@ -12,7 +12,7 @@ describe CohortImportRow do
     {
       "CHILD_ADDRESS_LINE_1" => "10 Downing Street",
       "CHILD_ADDRESS_LINE_2" => "",
-      "CHILD_COMMON_NAME" => "Jim",
+      "CHILD_PREFERRED_GIVEN_NAME" => "Jim",
       "CHILD_DATE_OF_BIRTH" => "2010-01-01",
       "CHILD_FIRST_NAME" => "Jimmy",
       "CHILD_GENDER" => "Male",

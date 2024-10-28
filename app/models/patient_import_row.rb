@@ -43,13 +43,14 @@ class PatientImportRow
       address_postcode:,
       address_town:,
       cohort:,
-      common_name:,
       date_of_birth:,
       family_name: last_name,
       gender_code:,
       given_name: first_name,
       home_educated:,
       nhs_number:,
+      preferred_family_name: preferred_last_name,
+      preferred_given_name: preferred_first_name,
       registration:,
       school:
     }.compact
@@ -155,8 +156,12 @@ class PatientImportRow
     @data["CHILD_LAST_NAME"]&.strip
   end
 
-  def common_name
-    @data["CHILD_COMMON_NAME"]&.strip.presence
+  def preferred_first_name
+    @data["CHILD_PREFERRED_FIRST_NAME"]&.strip.presence
+  end
+
+  def preferred_last_name
+    @data["CHILD_PREFERRED_LAST_NAME"]&.strip.presence
   end
 
   def date_of_birth
