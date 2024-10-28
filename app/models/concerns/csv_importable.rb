@@ -144,7 +144,7 @@ module CSVImportable
       if patient.nhs_number.nil?
         PatientNHSNumberLookupJob.perform_later(patient)
       else
-        PatientUpdateFromPDSJob.perform_later(patient)
+        PatientUpdateFromPDSJob.set(queue: :imports).perform_later(patient)
       end
     end
   end

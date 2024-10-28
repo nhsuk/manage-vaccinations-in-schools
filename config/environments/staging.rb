@@ -5,6 +5,11 @@ require Rails.root.join("config/environments/production")
 Rails.application.configure do
   config.good_job.enable_cron = true
   config.good_job.cron = {
+    bulk_update_patients_from_pds: {
+      cron: "every day at 00:00 and 6:00 and 12:00 and 18:00",
+      class: "BulkUpdatePatientsFromPDSJob",
+      description: "Keep patient details up to date with PDS."
+    },
     mesh_validate_mailbox: {
       cron: "every day at 1am",
       class: "MESHValidateMailboxJob",
