@@ -21,9 +21,8 @@ describe "Parental consent" do
 
   def given_a_patient_without_consent_exists
     programme = create(:programme, :hpv)
-
-    @user = create(:user, given_name: "Test", family_name: "User")
-    @team = create(:team, programmes: [programme], users: [@user])
+    @team = create(:team, :with_one_nurse, programmes: [programme])
+    @user = @team.users.first
 
     location = create(:location, :generic_clinic, team: @team)
 
