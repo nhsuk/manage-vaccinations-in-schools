@@ -66,6 +66,16 @@ class SessionsController < ApplicationController
     redirect_to session_path(@session), flash: { success: "Session closed." }
   end
 
+  def consent_form
+    programme = @session.programmes.first # TODO: handle multiple programmes
+
+    send_file(
+      "public/consent_forms/#{programme.type}.pdf",
+      filename: "#{programme.name} Consent Form.pdf",
+      disposition: "attachment"
+    )
+  end
+
   def make_in_progress
     @session.dates.find_or_create_by!(value: Date.current)
 
