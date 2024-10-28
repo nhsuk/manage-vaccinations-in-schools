@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 describe "Triage" do
+  before { Flipper.enable(:release_1b) }
+  after { Flipper.disable(:release_1b) }
+
   scenario "delay vaccination" do
     given_a_programme_with_a_running_session
     and_i_am_signed_in

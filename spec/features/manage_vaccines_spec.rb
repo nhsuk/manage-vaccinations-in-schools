@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 describe "Manage vaccines" do
+  before { Flipper.enable(:release_1b) }
+  after { Flipper.disable(:release_1b) }
+
   scenario "Viewing a vaccine" do
     given_my_team_is_running_an_hpv_vaccination_programme
 

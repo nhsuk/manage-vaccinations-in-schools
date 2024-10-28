@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe "Parental consent" do
+  after { Flipper.disable(:release_1b) }
+
   scenario "Consent form exactly matches the cohort" do
     given_an_hpv_programme_is_underway
     and_requests_can_be_made_to_pds
@@ -22,6 +24,7 @@ describe "Parental consent" do
     then_they_see_that_the_child_has_consent
     and_they_see_the_full_consent_form
 
+    given_release_1b_is_enabled
     when_they_check_triage
     then_the_patient_should_be_ready_to_vaccinate
   end
@@ -39,6 +42,10 @@ describe "Parental consent" do
         location:
       )
     @child = create(:patient, session: @session)
+  end
+
+  def given_release_1b_is_enabled
+    Flipper.enable(:release_1b)
   end
 
   def and_requests_can_be_made_to_pds

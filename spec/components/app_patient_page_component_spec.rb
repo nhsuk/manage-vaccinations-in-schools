@@ -26,6 +26,9 @@ describe AppPatientPageComponent do
   end
 
   context "session in progress, patient in triage" do
+    before { Flipper.enable(:release_1b) }
+    after { Flipper.disable(:release_1b) }
+
     let(:patient_session) do
       create(
         :patient_session,
@@ -68,6 +71,9 @@ describe AppPatientPageComponent do
   end
 
   context "session in progress, patient ready to vaccinate" do
+    before { Flipper.enable(:release_1b) }
+    after { Flipper.disable(:release_1b) }
+
     let(:patient_session) do
       create(
         :patient_session,
@@ -108,6 +114,9 @@ describe AppPatientPageComponent do
   end
 
   context "session in progress, patient without consent, no Gillick assessment" do
+    before { Flipper.enable(:release_1b) }
+    after { Flipper.disable(:release_1b) }
+
     let(:patient_session) do
       create(:patient_session, :session_in_progress, programme:)
     end

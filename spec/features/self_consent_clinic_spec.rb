@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
 describe "Self-consent" do
-  after { travel_back }
+  before { Flipper.enable(:release_1b) }
+
+  after do
+    Flipper.disable(:release_1b)
+    travel_back
+  end
 
   scenario "Performed at a clinic" do
     given_an_hpv_programme_is_underway

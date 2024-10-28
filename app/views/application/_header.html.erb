@@ -57,12 +57,14 @@
                       aria: { current: request.path.start_with?(patients_path) ?
                         "true" : nil } %>
         </li>
-        <li class="nhsuk-header__navigation-item app-header__navigation-item--divider">
-          <%= link_to t("vaccines.index.title"), vaccines_path,
-                      class: "nhsuk-header__navigation-link",
-                      aria: { current: request.path.start_with?(vaccines_path) ?
-                        "true" : nil } %>
-        </li>
+        <% if Flipper.enabled?(:release_1b) %>
+          <li class="nhsuk-header__navigation-item app-header__navigation-item--divider">
+            <%= link_to t("vaccines.index.title"), vaccines_path,
+                        class: "nhsuk-header__navigation-link",
+                        aria: { current: request.path.start_with?(vaccines_path) ?
+                          "true" : nil } %>
+          </li>
+        <% end %>
         <li class="nhsuk-header__navigation-item app-header__navigation-item--divider">
           <%= link_to t("consent_forms.index.title_short"), consent_forms_path,
                       class: "nhsuk-header__navigation-link",
