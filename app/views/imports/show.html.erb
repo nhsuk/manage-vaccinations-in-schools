@@ -67,13 +67,13 @@
       <% end %>
     <% end %>
 
-    <% if @vaccination_records_with_pending_changes.present? %>
+    <% if @duplicates.present? %>
       <%= summary_list.with_row do |row| %>
         <%= row.with_key { "Duplicate records" } %>
         <%= row.with_value {
-              @vaccination_records_with_pending_changes.count == 1 ?
+              @duplicates.count == 1 ?
                 "1 duplicate record needs review" :
-                "#{@vaccination_records_with_pending_changes.count} duplicate records need review"
+                "#{@duplicates.count} duplicate records need review"
             } %>
       <% end %>
     <% end %>
@@ -93,12 +93,12 @@
 <% end %>
 
 <% if import.recorded? %>
-  <% if @vaccination_records_with_pending_changes.present? %>
+  <% if @duplicates.present? %>
     <div class="nhsuk-table__panel-with-heading-tab">
       <h3 class="nhsuk-table__heading-tab">
-        <%= pluralize(@vaccination_records_with_pending_changes.count,
+        <%= pluralize(@duplicates.count,
                       "duplicate record") %>
-        <%= @vaccination_records_with_pending_changes.count == 1 ?
+        <%= @duplicates.count == 1 ?
               "needs" : "need" %> review
       </h3>
       <%= govuk_table(html_attributes: {
@@ -113,11 +113,13 @@
         <% end %>
 
         <% table.with_body do |body| %>
-          <% @vaccination_records_with_pending_changes.each do |vaccination_record| %>
+          <% @duplicates.each do |record| %>
             <% body.with_row do |row| %>
               <% row.with_cell do %>
                 <span class="nhsuk-table-responsive__heading">Child record</span>
-                <%= vaccination_record.patient.full_name %>
+                <%= record.respond_to?(:patient) ?
+                      record.patient.full_name :
+                      record.full_name %>
               <% end %>
 
               <% row.with_cell do %>
@@ -131,13 +133,19 @@
               <% row.with_cell do %>
                 <span class="nhsuk-table-responsive__heading">Actions</span>
                 <%= link_to programme_import_issue_path(
-                      @programme,
-                      vaccination_record,
-                      type: "vaccination-record",
+                      # TODO: ClassImports don't have a programme, and
+                      # the import issues controller needs a programme.
+                      @programme || @session.programmes.first,
+                      record,
+                      type: record.is_a?(VaccinationRecord) ?
+                        "vaccination-record" :
+                        "patient",
                     ) do %>
                   Review
                   <span class="nhsuk-u-visually-hidden">
-                    <%= vaccination_record.patient.full_name %>
+                    <%= record.respond_to?(:patient) ?
+                          record.patient.full_name :
+                          record.full_name %>
                   </span>
                 <% end %>
               <% end %>

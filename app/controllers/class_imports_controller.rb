@@ -42,6 +42,8 @@ class ClassImportsController < ApplicationController
 
     @pagy, @patients = pagy(@class_import.patients.includes(:school))
 
+    @duplicates = @class_import.patients.with_pending_changes.distinct
+
     render template: "imports/show",
            layout: "full",
            locals: {
