@@ -52,7 +52,7 @@ describe "Edit vaccination record" do
 
     click_on "Programmes", match: :first
     click_on "HPV"
-    click_on "Vaccinations"
+    click_on "Vaccinations", match: :first
   end
 
   def then_i_should_see_the_vaccination_records

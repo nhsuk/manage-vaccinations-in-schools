@@ -132,7 +132,7 @@ describe "Immunisation imports duplicates" do
     visit "/dashboard"
     click_on "Programmes", match: :first
     click_on "HPV"
-    click_on "Vaccinations"
+    click_on "Vaccinations", match: :first
   end
 
   def and_i_click_on_the_upload_link
