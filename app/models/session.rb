@@ -301,7 +301,7 @@ class Session < ApplicationRecord
   end
 
   def requires_consent_notification_dates?
-    dates.present? && !location.generic_clinic?
+    dates.present? && dates.all?(&:valid?) && !location.generic_clinic?
   end
 
   def earliest_date
