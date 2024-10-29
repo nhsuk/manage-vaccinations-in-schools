@@ -11,17 +11,16 @@ module NHS::API
     end
 
     def access_token
-      fetch_access_token unless access_token_valid?
+      fetch_access_token if access_token_expired?
 
       @auth_info[:access_token]
     end
 
-    def access_token_valid?
-      return false if @auth_info.blank?
+    def access_token_expired?
+      return true if @auth_info.blank?
 
-      now_msec = Time.current.strftime("%Q").to_i
-      safety_msec = 5000 # safety to accommodate connection time
-      now_msec + safety_msec < @auth_info[:expires_at]
+      # 5 seconds to accommodate connection time
+      Time.current > @auth_info[:expires_at] - 5.seconds
     end
 
     private
@@ -40,9 +39,8 @@ module NHS::API
 
       @auth_info = response.body.symbolize_keys
 
-      issued_at = @auth_info[:issued_at].to_i # milliseconds
-      expires_in = @auth_info[:expires_in].to_i * 1000
-      @auth_info[:expires_at] = issued_at + expires_in
+      expires_in = @auth_info[:expires_in].to_i.seconds
+      @auth_info[:expires_at] = Time.current + expires_in
     end
 
     def client_assertion
