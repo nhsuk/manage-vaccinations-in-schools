@@ -42,6 +42,8 @@ class CohortImportsController < ApplicationController
 
     @pagy, @patients = pagy(@cohort_import.patients.includes(:school))
 
+    @duplicates = @cohort_import.patients.with_pending_changes.distinct
+
     render template: "imports/show",
            layout: "full",
            locals: {
