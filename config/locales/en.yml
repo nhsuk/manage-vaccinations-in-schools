@@ -378,6 +378,9 @@ en:
               missing_day: Enter a day
               missing_month: Enter a month
               missing_year: Enter a year
+            education_setting:
+              blank: Choose if your child is home-schooled
+              inclusion: Choose if your child is home-schooled
             family_name:
               blank: Enter a last name
               too_long: Enter a last name that is less than 300 characters long
@@ -780,9 +783,9 @@ en:
     contact_method: contact-method
     date_of_birth: date-of-birth
     delivery-site: delivery-site
+    education_setting: education-setting
     gp: gp
     health_question: health-question
-    home_educated: home-educated
     injection: injection
     location: location
     name: name

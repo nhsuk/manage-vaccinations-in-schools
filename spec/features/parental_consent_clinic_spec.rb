@@ -32,6 +32,20 @@ describe "Parental consent school" do
     then_i_see_the_parent_step
   end
 
+  scenario "Child attending a clinic is not in education" do
+    given_an_hpv_programme_is_underway
+
+    when_i_go_to_the_consent_form
+    and_i_fill_in_my_childs_name_and_birthday
+    then_i_see_a_page_asking_if_my_child_is_home_educated
+
+    when_i_click_continue
+    then_i_see_an_error
+
+    when_i_choose_no_they_are_not_in_education
+    then_i_see_the_parent_step
+  end
+
   def given_an_hpv_programme_is_underway
     @programme = create(:programme, :hpv)
     @team = create(:team, :with_one_nurse, programmes: [@programme])
@@ -78,6 +92,11 @@ describe "Parental consent school" do
 
   def when_i_choose_no_they_go_to_a_school
     choose "No, they go to a school"
+    click_on "Continue"
+  end
+
+  def when_i_choose_no_they_are_not_in_education
+    choose "No, they are not in education"
     click_on "Continue"
   end
 
