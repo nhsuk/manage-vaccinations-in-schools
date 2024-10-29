@@ -10,13 +10,17 @@ class ProgrammesController < ApplicationController
   end
 
   def show
-    @patients_count =
+    patients =
       policy_scope(Patient).where(
         cohort: policy_scope(Cohort).for_year_groups(@programme.year_groups)
-      ).count
+      )
+
+    @patients_count = patients.count
     @sessions_count = policy_scope(Session).has_programme(@programme).count
     @vaccination_records_count =
       policy_scope(VaccinationRecord).where(programme: @programme).count
+
+    @consents = Consent.where(patient: patients)
   end
 
   def sessions
