@@ -409,25 +409,31 @@ class ConsentForm < ApplicationRecord
       if patient.changed?
         patient.save!
 
-        if actual_upcoming_session.nil?
-          # There are no upcoming sessions available for their chosen location,
-          # either the original session or a different school or a clinic if
-          # home educated. This can happen if the parent fills out the form
-          # late.
-          #
-          # The patient will be left in their original session.
-          #
-          # TODO: Do we want to record this somewhere?
-        elsif original_session != actual_upcoming_session
-          patient
-            .patient_sessions
-            .where(session: original_session)
-            .find_each(&:destroy_if_safe!)
+        unless patient.deceased? || patient.invalidated?
+          move_patient_to_session =
+            if actual_upcoming_session.nil?
+              # There are no upcoming sessions available for their chosen location,
+              # either the original session or a different school or a clinic if
+              # home educated. This can happen if the parent fills out the form
+              # late.
+              team.generic_clinic_session
+            elsif original_session != actual_upcoming_session
+              actual_upcoming_session
+            end
 
-          unless patient.deceased? || patient.invalidated?
-            actual_upcoming_session.patient_sessions.find_or_create_by!(
-              patient:
-            )
+          if move_patient_to_session
+            existing_patient_sessions =
+              patient.patient_sessions.where(session: original_session)
+
+            if existing_patient_sessions.exists?
+              existing_patient_sessions.update_all(
+                proposed_session_id: move_patient_to_session.id
+              )
+            else
+              patient.patient_sessions.find_or_create_by!(
+                session: move_patient_to_session
+              )
+            end
           end
         end
       end
