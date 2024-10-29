@@ -35,7 +35,9 @@
           <% body.with_row do |row| %>
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Child record</span>
-              <%= import_issue.patient.full_name %>
+              <%= import_issue.respond_to?(:patient) ?
+                    import_issue.patient.full_name :
+                    import_issue.full_name %>
             <% end %>
 
             <% row.with_cell do %>
@@ -48,13 +50,18 @@
 
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Actions</span>
-              <%= govuk_link_to programme_import_issue_path(
+              <%= link_to programme_import_issue_path(
                     @programme,
-                    import_issue
+                    import_issue,
+                    type: import_issue.is_a?(VaccinationRecord) ?
+                      "vaccination-record" :
+                      "patient",
                   ) do %>
                 Review
                 <span class="nhsuk-u-visually-hidden">
-                  <%= import_issue.patient.full_name %>
+                  <%= import_issue.respond_to?(:patient) ?
+                        import_issue.patient.full_name :
+                        import_issue.full_name %>
                 </span>
               <% end %>
             <% end %>
