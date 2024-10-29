@@ -10,11 +10,10 @@ class SchoolConsentRemindersJob < ApplicationJob
       Session
         .send_consent_reminders
         .includes(
-          :dates,
           :programmes,
           patients: %i[consents consent_notifications parents]
         )
-        .order("session_dates.value")
+        .preload(:dates)
         .eager_load(:location)
         .merge(Location.school)
         .strict_loading
