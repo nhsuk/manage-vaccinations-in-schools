@@ -195,6 +195,20 @@ describe PatientSession do
       end
     end
 
+    context "when the patient session has draft gillick assessment" do
+      before { create(:gillick_assessment, :draft, patient_session:) }
+
+      it "does not change the sesion, creates a new patient session" do
+        # stree-ignore
+        expect { confirm_transfer! }
+          .to change(patient_session, :proposed_session).to(nil)
+          .and not_change(patient_session, :session)
+          .and change(patient_session.patient.patient_sessions, :count).by(1)
+          .and change { patient_session.patient.reload.school }
+            .from(original_session.location).to(proposed_session.location)
+      end
+    end
+
     context "when the patient session is for the generic clinic" do
       let(:team) { original_session.team }
       let(:location) { create(:location, :generic_clinic, team:) }

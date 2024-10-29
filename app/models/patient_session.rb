@@ -119,7 +119,8 @@ class PatientSession < ApplicationRecord
   end
 
   def safe_to_destroy?
-    vaccination_records.empty? && gillick_assessments.empty?
+    VaccinationRecord.where(patient_session: self).empty? &&
+      GillickAssessment.where(patient_session: self).empty?
   end
 
   def destroy_if_safe!
