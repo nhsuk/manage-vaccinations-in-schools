@@ -31,6 +31,20 @@
       <% card.with_description { @vaccination_records_count.to_s } %>
     <% end %>
   </div>
+
+  <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(data: true) do |card| %>
+      <% card.with_heading { "Consent requests and reminders sent" } %>
+      <% card.with_description { @consent_notifications_count.to_s } %>
+    <% end %>
+  </div>
+
+  <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(data: true) do |card| %>
+      <% card.with_heading { "Consent given (versus refused or no response)" } %>
+      <% card.with_description { number_to_percentage(@consent_given_percentage, precision: 0) } %>
+    <% end %>
+  </div>
 </div>
 
 <%= render AppConsentRefusedTableComponent.new(@consents) %>

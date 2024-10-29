@@ -20,7 +20,18 @@ class ProgrammesController < ApplicationController
     @vaccination_records_count =
       policy_scope(VaccinationRecord).where(programme: @programme).count
 
-    @consents = Consent.where(patient: patients)
+    @consent_notifications_count =
+      @programme.consent_notifications.where(patient: patients).count
+
+    @consents =
+      policy_scope(Consent).where(patient: patients, programme: @programme)
+
+    @consent_given_percentage =
+      if (count = @consents.count).positive?
+        (@consents.response_given.count / count.to_f * 100.0).to_i
+      else
+        0
+      end
   end
 
   def sessions
