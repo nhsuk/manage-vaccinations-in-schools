@@ -154,6 +154,9 @@ class PatientSession < ApplicationRecord
       school = nil if school.generic_clinic?
       patient.update!(school:)
 
+      draft_vaccination_records.destroy_all
+      draft_gillick_assessments.destroy_all
+
       safe_to_destroy? ? destroy! : update!(proposed_session: nil)
     end
   end

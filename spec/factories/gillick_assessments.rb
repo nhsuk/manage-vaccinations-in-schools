@@ -40,5 +40,9 @@ FactoryBot.define do
       gillick_competent { true }
       notes { "Assessed as Gillick competent" }
     end
+
+    trait :draft do
+      recorded_at { nil }
+    end
   end
 end
