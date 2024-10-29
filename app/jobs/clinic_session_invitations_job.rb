@@ -10,7 +10,6 @@ class ClinicSessionInvitationsJob < ApplicationJob
       Session
         .send_invitations
         .includes(
-          :dates,
           :programmes,
           patient_sessions: %i[
             consents
@@ -19,6 +18,7 @@ class ClinicSessionInvitationsJob < ApplicationJob
             vaccination_records
           ]
         )
+        .preload(:dates)
         .joins(:location)
         .merge(Location.clinic)
         .strict_loading
