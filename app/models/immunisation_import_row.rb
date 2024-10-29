@@ -373,7 +373,9 @@ class ImmunisationImportRow
       address_postcode: patient_postcode,
       date_of_birth: patient_date_of_birth,
       family_name: patient_last_name,
+      decrypted_family_name: patient_last_name,
       given_name: patient_first_name,
+      decrypted_given_name: patient_first_name,
       gender_code: patient_gender_code,
       nhs_number: patient_nhs_number
     }

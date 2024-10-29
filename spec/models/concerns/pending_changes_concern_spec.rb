@@ -17,7 +17,9 @@ describe PendingChangesConcern do
       cohort_id: create(:cohort).id,
       date_of_birth: Time.zone.now,
       given_name: "John",
-      family_name: "Doe"
+      decrypted_given_name: "John",
+      family_name: "Doe",
+      decrypted_family_name: "Doe"
     )
   end
 
