@@ -11,12 +11,12 @@
 #  address_town                        :string
 #  contact_injection                   :boolean
 #  date_of_birth                       :date
+#  education_setting                   :integer
 #  family_name                         :text
 #  given_name                          :text
 #  gp_name                             :string
 #  gp_response                         :integer
 #  health_answers                      :jsonb            not null
-#  home_educated                       :boolean
 #  parent_contact_method_other_details :string
 #  parent_contact_method_type          :string
 #  parent_email                        :string
@@ -108,6 +108,8 @@ class ConsentForm < ApplicationRecord
        validate: {
          allow_nil: true
        }
+
+  enum :education_setting, %w[school home none], prefix: true
 
   serialize :health_answers, coder: HealthAnswer::ArraySerializer
 
@@ -339,7 +341,7 @@ class ConsentForm < ApplicationRecord
           session_scope.find_by(location:)
         elsif school
           session_scope.find_by(location: school)
-        elsif home_educated
+        elsif education_setting_home?
           session_scope.find_by(location: team.generic_clinic)
         else
           session_scope.find_by(location:)
@@ -401,7 +403,7 @@ class ConsentForm < ApplicationRecord
       if school && school != patient.school
         patient.school = school
         patient.home_educated = false
-      elsif home_educated && !patient.home_educated
+      elsif education_setting_home? && !patient.home_educated
         patient.school = nil
         patient.home_educated = true
       end
@@ -440,6 +442,22 @@ class ConsentForm < ApplicationRecord
 
       Consent.from_consent_form!(self, patient:)
     end
+  end
+
+  def home_educated
+    return nil if education_setting.nil?
+    education_setting_home?
+  end
+
+  def home_educated=(value)
+    self.education_setting =
+      if value.blank?
+        nil
+      elsif ActiveModel::Type::Boolean.new.cast(value)
+        "home"
+      else
+        "school"
+      end
   end
 
   private
@@ -492,7 +510,7 @@ class ConsentForm < ApplicationRecord
   end
 
   def choose_school?
-    location_is_clinic? ? !home_educated : !school_confirmed
+    location_is_clinic? ? education_setting_school? : !school_confirmed
   end
 
   # Because there are branching paths in the consent form journey, fields
@@ -534,10 +552,10 @@ class ConsentForm < ApplicationRecord
 
     if school_confirmed
       self.school = nil
-      self.home_educated = false
+      self.education_setting = "school"
     end
 
-    self.school = nil if home_educated
+    self.school = nil if education_setting_home?
   end
 
   def seed_health_questions

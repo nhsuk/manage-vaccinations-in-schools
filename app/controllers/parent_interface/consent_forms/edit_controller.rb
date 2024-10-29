@@ -27,11 +27,11 @@ module ParentInterface
       elsif step == "school"
         school_id = update_params[:school_id]
         if school_id == HOME_EDUCATED_SCHOOL_ID
-          model.home_educated = true
           model.school = nil
+          model.education_setting = "home"
         else
           model.school_id = school_id
-          model.home_educated = false
+          model.education_setting = "school"
         end
       else
         model.assign_attributes(update_params)
