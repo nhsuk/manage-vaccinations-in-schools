@@ -59,6 +59,7 @@ describe "End-to-end journey" do
   def and_i_am_a_nurse_signed_into_the_service
     sign_in @team.users.first
     visit "/dashboard"
+    expect(page).to have_content("#{@team.users.first.full_name} (Nurse)")
   end
 
   def when_i_upload_the_cohort_import_containing_one_child
