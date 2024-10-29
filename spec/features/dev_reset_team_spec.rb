@@ -45,7 +45,7 @@ describe "Dev endpoint to reset a team" do
     visit "/dashboard"
     click_on "Programmes", match: :first
     click_on "HPV"
-    click_on "Vaccinations"
+    click_on "Vaccinations", match: :first
     click_on "Import vaccination records"
     attach_file(
       "immunisation_import[csv]",

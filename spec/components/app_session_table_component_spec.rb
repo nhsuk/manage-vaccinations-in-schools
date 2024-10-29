@@ -38,7 +38,7 @@ describe AppSessionTableComponent do
 
   it "renders the headers" do
     expect(rendered).to have_css(".nhsuk-table__header", text: "Location")
-    expect(rendered).to have_css(".nhsuk-table__header", text: "Children")
+    expect(rendered).to have_css(".nhsuk-table__header", text: "Cohort")
   end
 
   it "renders the rows" do

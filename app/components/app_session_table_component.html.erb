@@ -8,7 +8,7 @@
         <% row.with_cell(text: "Dates") if show_dates %>
         <% row.with_cell(text: "Programmes") if show_programmes %>
         <% row.with_cell(text: "Consent period") if show_consent_period %>
-        <% row.with_cell(text: "Children", numeric: true) %>
+        <% row.with_cell(text: "Cohort", numeric: true) %>
       <% end %>
     <% end %>
 
@@ -66,7 +66,7 @@
           <% end %>
 
           <% row.with_cell(numeric: true) do %>
-            <span class="nhsuk-table-responsive__heading">Children</span>
+            <span class="nhsuk-table-responsive__heading">Cohort</span>
             <%= (count = session.patients.count).zero? ? "None" : count %>
           <% end %>
         <% end %>

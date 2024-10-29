@@ -9,3 +9,26 @@
 <h1 class="nhsuk-heading-l"><%= @programme.name %></h1>
 
 <%= render AppProgrammeNavigationComponent.new(@programme, team: current_user.selected_team, active: :overview) %>
+
+<div class="nhsuk-grid-row nhsuk-card-group">
+  <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(link_to: programme_cohorts_path(@programme), colour: "reversed", data: true) do |card| %>
+      <% card.with_heading { "Children" } %>
+      <% card.with_description { @patients_count.to_s } %>
+    <% end %>
+  </div>
+
+  <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(link_to: sessions_programme_path(@programme), colour: "reversed", data: true) do |card| %>
+      <% card.with_heading { "Sessions" } %>
+      <% card.with_description { @sessions_count.to_s } %>
+    <% end %>
+  </div>
+
+  <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(link_to: programme_vaccination_records_path(@programme), colour: "reversed", data: true) do |card| %>
+      <% card.with_heading { "Vaccinations" } %>
+      <% card.with_description { @vaccination_records_count.to_s } %>
+    <% end %>
+  </div>
+</div>

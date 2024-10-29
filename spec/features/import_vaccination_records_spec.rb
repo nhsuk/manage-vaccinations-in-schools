@@ -65,7 +65,7 @@ describe "Immunisation imports" do
 
     click_on "Programmes", match: :first
     click_on "HPV"
-    click_on "Vaccinations"
+    click_on "Vaccinations", match: :first
   end
 
   def then_i_should_see_the_upload_link
@@ -187,7 +187,7 @@ describe "Immunisation imports" do
 
   def when_i_click_on_vaccination_records
     click_on "HPV"
-    click_on "Vaccinations"
+    click_on "Vaccinations", match: :first
   end
 
   def then_i_should_see_the_vaccination_record
@@ -199,7 +199,7 @@ describe "Immunisation imports" do
   end
 
   def when_i_click_on_the_vaccinations_tab
-    click_on "Vaccinations"
+    click_on "Vaccinations", match: :first
   end
 
   alias_method :and_i_click_on_the_upload_link, :when_i_click_on_the_upload_link
