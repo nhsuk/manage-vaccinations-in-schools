@@ -4,8 +4,6 @@ class SchoolSessionRemindersJob < ApplicationJob
   queue_as :notifications
 
   def perform
-    return unless Flipper.enabled?(:scheduled_emails)
-
     date = Date.tomorrow
 
     patient_sessions =

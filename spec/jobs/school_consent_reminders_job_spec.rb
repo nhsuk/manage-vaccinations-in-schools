@@ -3,9 +3,6 @@
 describe SchoolConsentRemindersJob do
   subject(:perform_now) { described_class.perform_now }
 
-  before { Flipper.enable(:scheduled_emails) }
-  after { Flipper.disable(:scheduled_emails) }
-
   let(:programme) { create(:programme) }
 
   let(:parents) { create_list(:parent, 2) }

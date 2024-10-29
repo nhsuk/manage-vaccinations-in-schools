@@ -4,8 +4,6 @@ class SchoolConsentRequestsJob < ApplicationJob
   queue_as :notifications
 
   def perform
-    return unless Flipper.enabled?(:scheduled_emails)
-
     sessions =
       Session
         .send_consent_requests
