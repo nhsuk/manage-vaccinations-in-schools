@@ -1,10 +1,12 @@
 <% content_for :page_title, "#{@programme.name} – Import issues" %>
 
 <% content_for :before_main do %>
-  <%= render AppBreadcrumbComponent.new(items: [
-                                          { text: t("programmes.index.title"), href: programmes_path },
-                                          { text: @programme.name, href: programme_path(@programme) },
-                                        ]) %>
+  <%= render AppBreadcrumbComponent.new(
+        items: [
+          { text: t("programmes.index.title"), href: programmes_path },
+          { text: @programme.name, href: programme_path(@programme) },
+        ],
+      ) %>
 <% end %>
 
 <h1 class="nhsuk-heading-l"><%= @programme.name %></h1>
