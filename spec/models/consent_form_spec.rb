@@ -840,8 +840,8 @@ describe ConsentForm do
           :consent_form,
           team:,
           session:,
-          school_confirmed: false,
-          home_educated: true
+          school_confirmed: nil,
+          education_setting: "home"
         )
       end
 

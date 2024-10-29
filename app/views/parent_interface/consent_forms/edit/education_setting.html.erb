@@ -11,13 +11,15 @@
 <%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
-  <%= f.govuk_radio_buttons_fieldset(:home_educated,
-                                     legend: { size: "l", tag: "h1", text: title }) do %>
-    <%= f.govuk_radio_button :home_educated, true,
+  <%= f.govuk_radio_buttons_fieldset :education_setting,
+                                     legend: { size: "l", tag: "h1", text: title } do %>
+    <%= f.govuk_radio_button :education_setting, "home",
                              link_errors: true,
                              label: { text: "Yes" } %>
-    <%= f.govuk_radio_button :home_educated, false,
+    <%= f.govuk_radio_button :education_setting, "school",
                              label: { text: "No, they go to a school" } %>
+    <%= f.govuk_radio_button :education_setting, "none",
+                             label: { text: "No, they are not in education" } %>
   <% end %>
 
   <div class="nhsuk-u-margin-top-6">

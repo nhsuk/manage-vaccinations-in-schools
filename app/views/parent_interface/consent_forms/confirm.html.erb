@@ -103,9 +103,17 @@
           end
         end
       
+        school = if @consent_form.education_setting_school?
+            (@consent_form.school || @consent_form.location).name
+          elsif @consent_form.education_setting_home?
+            "Home-schooled"
+          else
+            "Not in education"
+          end
+      
         summary_list.with_row do |row|
           row.with_key { "School" }
-          row.with_value { @consent_form.home_educated ? "Home-schooled" : (@consent_form.school || @consent_form.location).name }
+          row.with_value { school }
           row.with_action(
             text: "Change",
             href: change_link[:school],

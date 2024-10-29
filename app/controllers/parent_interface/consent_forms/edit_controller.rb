@@ -77,7 +77,7 @@ module ParentInterface
           date_of_birth(1i)
         ],
         confirm_school: %i[school_confirmed],
-        home_educated: %i[home_educated],
+        education_setting: %i[education_setting],
         school: %i[school_id],
         parent: %i[
           parent_email

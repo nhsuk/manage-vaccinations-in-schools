@@ -196,8 +196,8 @@ class ConsentForm < ApplicationRecord
     validates :school_confirmed, inclusion: { in: [true, false] }
   end
 
-  on_wizard_step :home_educated do
-    validates :home_educated, inclusion: { in: [true, false] }
+  on_wizard_step :education_setting do
+    validates :education_setting, inclusion: { in: %w[school home none] }
   end
 
   on_wizard_step :school do
@@ -205,7 +205,7 @@ class ConsentForm < ApplicationRecord
               inclusion: {
                 in: -> { _1.eligible_schools.pluck(:id) }
               },
-              unless: :home_educated
+              unless: -> { education_setting_home? || education_setting_none? }
   end
 
   on_wizard_step :parent do
@@ -264,7 +264,7 @@ class ConsentForm < ApplicationRecord
       :name,
       :date_of_birth,
       (:confirm_school if location_is_school?),
-      (:home_educated if location_is_clinic?),
+      (:education_setting if location_is_clinic?),
       (:school if choose_school?),
       :parent,
       (:contact_method if parent_phone.present?),
@@ -400,12 +400,15 @@ class ConsentForm < ApplicationRecord
     ActiveRecord::Base.transaction do
       notify_log_entries.update_all(patient_id: patient.id)
 
-      if school && school != patient.school
-        patient.school = school
+      if education_setting_school?
+        patient.school = school_confirmed ? location : school
         patient.home_educated = false
-      elsif education_setting_home? && !patient.home_educated
+      elsif education_setting_home?
         patient.school = nil
         patient.home_educated = true
+      elsif education_setting_none?
+        patient.school = nil
+        patient.home_educated = false
       end
 
       if patient.changed?
@@ -442,22 +445,6 @@ class ConsentForm < ApplicationRecord
 
       Consent.from_consent_form!(self, patient:)
     end
-  end
-
-  def home_educated
-    return nil if education_setting.nil?
-    education_setting_home?
-  end
-
-  def home_educated=(value)
-    self.education_setting =
-      if value.blank?
-        nil
-      elsif ActiveModel::Type::Boolean.new.cast(value)
-        "home"
-      else
-        "school"
-      end
   end
 
   private
@@ -550,12 +537,9 @@ class ConsentForm < ApplicationRecord
 
     self.gp_name = nil unless gp_response_yes?
 
-    if school_confirmed
-      self.school = nil
-      self.education_setting = "school"
-    end
-
-    self.school = nil if education_setting_home?
+    self.education_setting = "school" if !school.nil? || school_confirmed
+    self.school = nil if school_confirmed || education_setting_home? ||
+      education_setting_none?
   end
 
   def seed_health_questions
