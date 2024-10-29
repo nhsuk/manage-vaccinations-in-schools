@@ -7,8 +7,8 @@ en:
     hint:
       import_duplicate_form:
         apply_changes_options:
-          apply: The duplicate record will replace the previously uploaded record.
-          discard: The previously uploaded record will be kept and the duplicate record will be discarded.
+          apply: The duplicate record will replace the existing record.
+          discard: The existing record will be kept and the duplicate record will be discarded.
 
     label:
       import_duplicate_form:
