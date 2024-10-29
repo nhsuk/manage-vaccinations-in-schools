@@ -130,9 +130,8 @@
 
               <% row.with_cell do %>
                 <span class="nhsuk-table-responsive__heading">Actions</span>
-                <%= govuk_link_to programme_immunisation_import_duplicate_path(
+                <%= link_to programme_import_issue_path(
                       @programme,
-                      @immunisation_import,
                       vaccination_record
                     ) do %>
                   Review

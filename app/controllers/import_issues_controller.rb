@@ -40,6 +40,7 @@ class ImportIssuesController < ApplicationController
           :batch,
           :location,
           :patient_session,
+          :performed_by_user,
           session: :location,
           patient: %i[cohort school],
           vaccine: :programme
