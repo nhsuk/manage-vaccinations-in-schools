@@ -6,8 +6,6 @@ describe PendingChangesConcern do
       include PendingChangesConcern
 
       self.table_name = "patients"
-
-      encrypts :given_name, :family_name, deterministic: true, ignore_case: true
     end
   end
 
@@ -17,9 +15,7 @@ describe PendingChangesConcern do
       cohort_id: create(:cohort).id,
       date_of_birth: Time.zone.now,
       given_name: "John",
-      decrypted_given_name: "John",
-      family_name: "Doe",
-      decrypted_family_name: "Doe"
+      family_name: "Doe"
     )
   end
 
