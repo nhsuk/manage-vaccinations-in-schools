@@ -52,7 +52,7 @@ module NHS::API
         sub: apikey,
         aud: token_endpoint,
         jti: SecureRandom.uuid,
-        exp: 1.minute.from_now.to_i
+        exp: 3.minutes.from_now.to_i
       }
 
       JWT.encode(payload, private_key, "RS512", header)
