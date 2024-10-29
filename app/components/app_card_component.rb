@@ -28,12 +28,14 @@ class AppCardComponent < ViewComponent::Base
   renders_one :heading
   renders_one :description
 
-  def initialize(colour: nil, link_to: nil, secondary: false)
+  def initialize(colour: nil, link_to: nil, secondary: false, data: false)
     super
 
     @link_to = link_to
     @colour = colour
     @secondary = secondary
+    @data = data
+    @feature = colour.present? && !data
   end
 
   private
@@ -42,26 +44,27 @@ class AppCardComponent < ViewComponent::Base
     [
       "nhsuk-card",
       "app-card",
-      ("nhsuk-card--feature" if @colour.present?),
+      ("nhsuk-card--feature" if @feature),
       ("app-card--#{@colour}" if @colour.present?),
       ("nhsuk-card--clickable" if @link_to.present?),
-      ("nhsuk-card--secondary" if @secondary)
+      ("nhsuk-card--secondary" if @secondary),
+      ("app-card--data" if @data)
     ].compact.join(" ")
   end
 
   def content_classes
     [
       "nhsuk-card__content",
-      "app-card__content",
-      ("nhsuk-card__content--feature" if @colour.present?)
+      ("app-card__content" unless @data),
+      ("nhsuk-card__content--feature" if @feature)
     ].compact.join(" ")
   end
 
   def heading_classes
     [
       "nhsuk-card__heading",
-      "nhsuk-heading-m",
-      ("nhsuk-card__heading--feature" if @colour.present?)
+      (@data ? "nhsuk-heading-xs" : "nhsuk-heading-m"),
+      ("nhsuk-card__heading--feature" if @feature)
     ].compact.join(" ")
   end
 end

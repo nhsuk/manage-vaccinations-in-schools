@@ -34,6 +34,9 @@ $color_app-dark-orange: darken(
   10%
 );
 
+// Helpers
+@import "helpers/link";
+
 // Application components
 @import "action_list";
 @import "add_another";

@@ -5,15 +5,21 @@
     }
   }
 
+  &--dark-orange {
+    .nhsuk-card__heading--feature {
+      background-color: $color_app-dark-orange;
+    }
+  }
+
   &--green {
     .nhsuk-card__heading--feature {
       background-color: $color_nhsuk-green;
     }
   }
 
-  &--dark-orange {
+  &--grey {
     .nhsuk-card__heading--feature {
-      background-color: $color_app-dark-orange;
+      background-color: $color_nhsuk-grey-1;
     }
   }
 
@@ -27,5 +33,64 @@
     .nhsuk-card__heading--feature {
       background-color: $color_nhsuk-red;
     }
+  }
+
+  &--reversed {
+    background-color: $color_nhsuk-blue;
+    border-color: shade($nhsuk-link-color, 25%);
+    color: $color_nhsuk-white;
+
+    &:active {
+      border-color: shade($nhsuk-link-color, 50%);
+    }
+
+    .nhsuk-card__link {
+      @include app-link-style-inverse;
+    }
+  }
+
+  &--data {
+    display: flex;
+
+    .nhsuk-card__content {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .nhsuk-card__heading {
+      @include nhsuk-typography-weight-normal;
+    }
+
+    .nhsuk-card__description {
+      @include nhsuk-typography-responsive(48);
+      @include nhsuk-typography-weight-bold;
+      margin-top: auto;
+    }
+  }
+}
+
+// Card title and actions (borrowed from GOV.UK Summary Card component)
+.app-card__title-wrapper {
+  @include nhsuk-responsive-padding(5);
+
+  @include mq($from: desktop) {
+    align-items: baseline;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    padding-bottom: 0;
+  }
+
+  .app-card__title {
+    margin-right: nhsuk-spacing(4);
+  }
+
+  .app-action-list {
+    margin-bottom: 0;
+  }
+
+  + .nhsuk-card__content {
+    padding-top: nhsuk-spacing(0);
   }
 }
