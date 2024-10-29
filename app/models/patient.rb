@@ -12,16 +12,12 @@
 #  date_of_birth             :date             not null
 #  date_of_death             :date
 #  date_of_death_recorded_at :datetime
-#  decrypted_family_name     :string           not null
-#  decrypted_given_name      :string           not null
 #  family_name               :string           not null
 #  gender_code               :integer          default("not_known"), not null
 #  given_name                :string           not null
 #  home_educated             :boolean
 #  invalidated_at            :datetime
 #  nhs_number                :string
-#  original_family_name      :string           not null
-#  original_given_name       :string           not null
 #  pending_changes           :jsonb            not null
 #  preferred_family_name     :string
 #  preferred_given_name      :string
@@ -35,11 +31,13 @@
 #
 # Indexes
 #
-#  index_patients_on_cohort_id              (cohort_id)
-#  index_patients_on_decrypted_family_name  (decrypted_family_name)
-#  index_patients_on_decrypted_given_name   (decrypted_given_name)
-#  index_patients_on_nhs_number             (nhs_number) UNIQUE
-#  index_patients_on_school_id              (school_id)
+#  index_patients_on_cohort_id            (cohort_id)
+#  index_patients_on_family_name_trigram  (family_name) USING gin
+#  index_patients_on_given_name_trigram   (given_name) USING gin
+#  index_patients_on_names_family_first   (family_name,given_name)
+#  index_patients_on_names_given_first    (given_name,family_name)
+#  index_patients_on_nhs_number           (nhs_number) UNIQUE
+#  index_patients_on_school_id            (school_id)
 #
 # Foreign Keys
 #
@@ -129,7 +127,6 @@ class Patient < ApplicationRecord
 
   validates :address_postcode, postcode: { allow_nil: true }
 
-  encrypts :family_name, :given_name, deterministic: true, ignore_case: true
   encrypts :preferred_family_name,
            :preferred_given_name,
            :address_postcode,
@@ -140,7 +137,6 @@ class Patient < ApplicationRecord
 
   normalizes :nhs_number, with: -> { _1.blank? ? nil : _1.gsub(/\s/, "") }
 
-  before_save :sync_decrypted_names
   before_destroy :destroy_childless_parents
 
   delegate :year_group, to: :cohort
@@ -156,18 +152,23 @@ class Patient < ApplicationRecord
       return [patient]
     end
 
-    scope =
-      Patient
-        .where(given_name:, family_name:, date_of_birth:)
-        .or(Patient.where(given_name:, family_name:, address_postcode:))
-        .or(Patient.where(given_name:, date_of_birth:, address_postcode:))
-        .or(Patient.where(family_name:, date_of_birth:, address_postcode:))
+    # stree-ignore
+    scope = Patient.where(
+      "given_name ILIKE ? AND family_name ILIKE ? AND date_of_birth = ?",
+       given_name, family_name, date_of_birth)
+      .or(Patient.where("given_name ILIKE ? AND family_name ILIKE ?",
+                         given_name, family_name).where(address_postcode:))
+      .or(Patient.where("given_name ILIKE ? AND date_of_birth = ?",
+                         given_name, date_of_birth).where(address_postcode:))
+      .or(Patient.where("family_name ILIKE ? AND date_of_birth = ?",
+                         family_name, date_of_birth).where(address_postcode:))
 
     if nhs_number.blank?
       scope.to_a
     else
-      # This prevents us from finding a patient that happens to have at least three of the other
-      # fields the same, but with a different NHS number, and therefore cannot be a match.
+      # This prevents us from finding a patient that happens to have at least
+      # three of the other fields the same, but with a different NHS number,
+      # and therefore cannot be a match.
       Patient.where(nhs_number: nil).merge(scope).to_a
     end
   end
@@ -277,10 +278,5 @@ class Patient < ApplicationRecord
     patient_sessions.where(session: upcoming_sessions).find_each(
       &:destroy_if_safe!
     )
-  end
-
-  def sync_decrypted_names
-    self.decrypted_family_name = family_name if family_name_changed?
-    self.decrypted_given_name = given_name if given_name_changed?
   end
 end

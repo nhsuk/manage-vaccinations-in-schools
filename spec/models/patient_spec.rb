@@ -12,16 +12,12 @@
 #  date_of_birth             :date             not null
 #  date_of_death             :date
 #  date_of_death_recorded_at :datetime
-#  decrypted_family_name     :string           not null
-#  decrypted_given_name      :string           not null
 #  family_name               :string           not null
 #  gender_code               :integer          default("not_known"), not null
 #  given_name                :string           not null
 #  home_educated             :boolean
 #  invalidated_at            :datetime
 #  nhs_number                :string
-#  original_family_name      :string           not null
-#  original_given_name       :string           not null
 #  pending_changes           :jsonb            not null
 #  preferred_family_name     :string
 #  preferred_given_name      :string
@@ -35,11 +31,13 @@
 #
 # Indexes
 #
-#  index_patients_on_cohort_id              (cohort_id)
-#  index_patients_on_decrypted_family_name  (decrypted_family_name)
-#  index_patients_on_decrypted_given_name   (decrypted_given_name)
-#  index_patients_on_nhs_number             (nhs_number) UNIQUE
-#  index_patients_on_school_id              (school_id)
+#  index_patients_on_cohort_id            (cohort_id)
+#  index_patients_on_family_name_trigram  (family_name) USING gin
+#  index_patients_on_given_name_trigram   (given_name) USING gin
+#  index_patients_on_names_family_first   (family_name,given_name)
+#  index_patients_on_names_given_first    (given_name,family_name)
+#  index_patients_on_nhs_number           (nhs_number) UNIQUE
+#  index_patients_on_school_id            (school_id)
 #
 # Foreign Keys
 #

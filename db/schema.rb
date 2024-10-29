@@ -10,8 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_29_185610) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_29_205832) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_trgm"
   enable_extension "plpgsql"
 
   create_table "audits", force: :cascade do |t|
@@ -503,8 +504,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_29_185610) do
     t.boolean "home_educated"
     t.jsonb "pending_changes", default: {}, null: false
     t.bigint "cohort_id"
-    t.string "original_family_name", null: false
-    t.string "original_given_name", null: false
     t.string "registration"
     t.date "date_of_death"
     t.datetime "date_of_death_recorded_at"
@@ -513,11 +512,11 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_29_185610) do
     t.string "preferred_given_name"
     t.string "preferred_family_name"
     t.datetime "updated_from_pds_at"
-    t.string "decrypted_family_name", null: false
-    t.string "decrypted_given_name", null: false
     t.index ["cohort_id"], name: "index_patients_on_cohort_id"
-    t.index ["decrypted_family_name"], name: "index_patients_on_decrypted_family_name"
-    t.index ["decrypted_given_name"], name: "index_patients_on_decrypted_given_name"
+    t.index ["family_name", "given_name"], name: "index_patients_on_names_family_first"
+    t.index ["family_name"], name: "index_patients_on_family_name_trigram", opclass: :gin_trgm_ops, using: :gin
+    t.index ["given_name", "family_name"], name: "index_patients_on_names_given_first"
+    t.index ["given_name"], name: "index_patients_on_given_name_trigram", opclass: :gin_trgm_ops, using: :gin
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
     t.index ["school_id"], name: "index_patients_on_school_id"
   end
