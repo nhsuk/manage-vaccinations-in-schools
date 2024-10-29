@@ -51,7 +51,11 @@ class ImportIssuesController < ApplicationController
         .strict_loading
 
     @patients =
-      policy_scope(Patient).with_pending_changes.distinct.strict_loading
+      policy_scope(Patient)
+        .with_pending_changes
+        .distinct
+        .includes(:cohort, :school)
+        .strict_loading
 
     @import_issues =
       (@vaccination_records + @patients).uniq do |record|

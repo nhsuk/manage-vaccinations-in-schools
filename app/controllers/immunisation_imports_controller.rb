@@ -51,13 +51,7 @@ class ImmunisationImportsController < ApplicationController
 
     @pagy, @vaccination_records = pagy(vaccination_records)
 
-    @vaccination_records_with_pending_changes =
-      vaccination_records
-        .left_joins(:patient)
-        .where(
-          "patients.pending_changes != '{}' OR vaccination_records.pending_changes != '{}'"
-        )
-        .distinct
+    @duplicates = vaccination_records.with_pending_changes.distinct
 
     render template: "imports/show",
            layout: "full",
