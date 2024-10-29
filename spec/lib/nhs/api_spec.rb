@@ -76,15 +76,15 @@ describe NHS::API do
     end
 
     it "fetches a new auth token when we don't have one" do
-      allow(described_class).to receive(:access_token_valid?).and_return(false)
+      allow(described_class).to receive(:access_token_expired?).and_return(true)
 
       expect(described_class.access_token).to eq("new_token")
     end
 
     it "does not fetch a new token when we already have one" do
-      allow(described_class).to receive(:access_token_valid?).and_return(
-        false,
-        true
+      allow(described_class).to receive(:access_token_expired?).and_return(
+        true,
+        false
       )
 
       described_class.access_token
@@ -96,28 +96,27 @@ describe NHS::API do
     end
   end
 
-  describe "#access_token_valid?" do
-    it "returns false when we have no auth_info" do
-      described_class.instance_variable_set(:@auth_info, nil)
+  describe "#access_token_expired?" do
+    subject(:access_token_expired?) { described_class.access_token_expired? }
 
-      expect(described_class.access_token_valid?).to be false
+    before { described_class.instance_variable_set(:@auth_info, auth_info) }
+
+    context "with no auth_info" do
+      let(:auth_info) { nil }
+
+      it { should be(true) }
     end
 
-    it "returns true if our auth_info is still valid" do
-      described_class.instance_variable_set(
-        :@auth_info,
-        { expires_at: (Time.zone.now.strftime("%Q").to_i + 600_000) }
-      )
+    context "when auth_info is still valid" do
+      let(:auth_info) { { expires_at: 1.minute.from_now } }
 
-      expect(described_class.access_token_valid?).to be true
+      it { should be(false) }
     end
 
-    it "returns false if the auth_info has expired" do
-      described_class.instance_variable_set(
-        :@auth_info,
-        { expires_at: (Time.zone.now.strftime("%Q").to_i - 600_000) }
-      )
-      expect(described_class.access_token_valid?).to be false
+    context "when auth_info has expired" do
+      let(:auth_info) { { expires_at: 1.minute.ago } }
+
+      it { should be(true) }
     end
   end
 end
