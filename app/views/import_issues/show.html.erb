@@ -1,43 +1,60 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(
-        href: programme_import_issues_path(@programme),
-        name: @programme.name,
+  <%= render AppBreadcrumbComponent.new(
+        items: [
+          { text: t("programmes.index.title"), href: programmes_path },
+          { text: @programme.name, href: programme_path(@programme) },
+          { text: "Import issues", href: programme_import_issues_path(@programme) },
+        ],
       ) %>
 <% end %>
 
-<% title = "Review duplicate vaccination record" %>
+<% if @vaccination_record %>
+  <% title = "Review duplicate vaccination record" %>
+<% else %>
+  <% title = "Review duplicate child record" %>
+<% end %>
 
-<span class="nhsuk-caption-l"><%= @vaccination_record.patient.full_name %></span>
-<%= h1 title, page_title: "#{@vaccination_record.patient.full_name} – #{title}" %>
+<span class="nhsuk-caption-l"><%= @patient.full_name %></span>
+<%= h1 title, page_title: "#{@patient.full_name} – #{title}" %>
 
-<%= render AppWarningCalloutComponent.new(heading: "This record needs reviewing", description: "A field in a duplicate record does not match that in a previously uploaded record.") %>
+<%= render AppWarningCalloutComponent.new(
+      heading: "This record needs reviewing",
+      description: "A field in a duplicate record does not match that in a previously uploaded record.",
+    ) %>
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-one-half">
     <%= render AppCardComponent.new(colour: "blue") do |c| %>
       <% c.with_heading { "Duplicate record" } %>
       <h3 class="nhsuk-heading-s">Duplicate child record</h3>
-      <%= render AppPatientSummaryComponent.new(@vaccination_record.patient.with_pending_changes) %>
-      <h3 class="nhsuk-heading-s">Duplicate vaccination record</h3>
-      <%= render AppVaccinationRecordSummaryComponent.new(@vaccination_record.with_pending_changes) %>
+      <%= render AppPatientSummaryComponent.new(@patient.with_pending_changes) %>
+      <% if @vaccination_record %>
+        <h3 class="nhsuk-heading-s">Duplicate vaccination record</h3>
+        <%= render AppVaccinationRecordSummaryComponent.new(
+              @vaccination_record.with_pending_changes
+            ) %>
+      <% end %>
     <% end %>
   </div>
 
   <div class="nhsuk-grid-column-one-half">
     <%= render AppCardComponent.new(colour: "blue") do |c| %>
-      <% c.with_heading { "Previously uploaded record" } %>
-      <h3 class="nhsuk-heading-s">Previously uploaded child record</h3>
-      <%= render AppPatientSummaryComponent.new(@vaccination_record.patient) %>
-      <h3 class="nhsuk-heading-s">Previously uploaded vaccination record</h3>
-      <%= render AppVaccinationRecordSummaryComponent.new(@vaccination_record) %>
+      <% c.with_heading { "Existing record" } %>
+      <h3 class="nhsuk-heading-s">Existing child record</h3>
+      <%= render AppPatientSummaryComponent.new(@patient) %>
+      <% if @vaccination_record %>
+        <h3 class="nhsuk-heading-s">Existing vaccination record</h3>
+        <%= render AppVaccinationRecordSummaryComponent.new(
+              @vaccination_record
+            ) %>
+      <% end %>
     <% end %>
   </div>
 </div>
 
 <%= form_with(
       model: @form,
-      url: programme_import_issue_path(@programme,
-                                       @vaccination_record),
+      url: programme_import_issue_path(@programme, @record),
       method: :put,
       class: "nhsuk-u-width-one-half",
     ) do |f| %>

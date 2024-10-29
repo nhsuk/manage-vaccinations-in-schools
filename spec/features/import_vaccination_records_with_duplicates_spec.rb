@@ -163,7 +163,7 @@ describe "Immunisation imports duplicates" do
                :when_i_submit_the_form_without_choosing_anything
 
   def then_i_should_see_a_success_message
-    expect(page).to have_content("Vaccination record updated")
+    expect(page).to have_content("Record updated")
   end
 
   def when_i_review_the_first_duplicate_record
