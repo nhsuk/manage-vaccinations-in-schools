@@ -148,7 +148,7 @@ class PatientSession < ApplicationRecord
     return unless pending_transfer?
 
     PatientSession.transaction do
-      PatientSession.create!(patient:, session: proposed_session)
+      PatientSession.find_or_create_by!(patient:, session: proposed_session)
 
       school = proposed_session.location
       school = nil if school.generic_clinic?
