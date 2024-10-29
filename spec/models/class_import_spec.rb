@@ -409,6 +409,18 @@ describe ClassImport do
           )
         ).to include(existing_patient)
       end
+
+      it "doesn't propose a move if patient already has a proposed move" do
+        existing_session = create(:session, team:, programme:)
+
+        existing_patient_session =
+          PatientSession.find_by!(patient: existing_patient, session:)
+        existing_patient_session.update!(proposed_session: existing_session)
+
+        expect { record! }.not_to(
+          change { existing_patient_session.reload.proposed_session }
+        )
+      end
     end
   end
 end
