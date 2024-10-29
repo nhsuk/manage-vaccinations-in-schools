@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_28_145336) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_29_113801) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -175,9 +175,9 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_28_145336) do
     t.bigint "location_id", null: false
     t.bigint "team_id", null: false
     t.bigint "school_id"
-    t.boolean "home_educated"
     t.string "preferred_given_name"
     t.string "preferred_family_name"
+    t.integer "education_setting"
     t.index ["consent_id"], name: "index_consent_forms_on_consent_id"
     t.index ["location_id"], name: "index_consent_forms_on_location_id"
     t.index ["programme_id"], name: "index_consent_forms_on_programme_id"

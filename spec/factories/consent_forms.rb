@@ -11,12 +11,12 @@
 #  address_town                        :string
 #  contact_injection                   :boolean
 #  date_of_birth                       :date
+#  education_setting                   :integer
 #  family_name                         :text
 #  given_name                          :text
 #  gp_name                             :string
 #  gp_response                         :integer
 #  health_answers                      :jsonb            not null
-#  home_educated                       :boolean
 #  parent_contact_method_other_details :string
 #  parent_contact_method_type          :string
 #  parent_email                        :string
