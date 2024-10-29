@@ -1,15 +1,19 @@
 <% content_for :before_main do %>
   <% if @programme %>
-    <%= render AppBreadcrumbComponent.new(items: [
-                                            { text: t("programmes.index.title"), href: programmes_path },
-                                            { text: @programme.name, href: programme_path(@programme) },
-                                            { text: t("imports.index.title"), href: programme_imports_path(@programme) },
-                                          ]) %>
+    <%= render AppBreadcrumbComponent.new(
+          items: [
+            { text: t("programmes.index.title"), href: programmes_path },
+            { text: @programme.name, href: programme_path(@programme) },
+            { text: t("imports.index.title"), href: programme_imports_path(@programme) },
+          ],
+        ) %>
   <% else %>
-    <%= render AppBreadcrumbComponent.new(items: [
-                                            { text: t("sessions.index.title"), href: sessions_path },
-                                            { text: @session.location.name, href: session_path(@session) },
-                                          ]) %>
+    <%= render AppBreadcrumbComponent.new(
+          items: [
+            { text: t("sessions.index.title"), href: sessions_path },
+            { text: @session.location.name, href: session_path(@session) },
+          ],
+        ) %>
   <% end %>
 <% end %>
 
