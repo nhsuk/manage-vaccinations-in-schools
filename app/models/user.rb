@@ -94,6 +94,14 @@ class User < ApplicationRecord
     selected_role.ends_with? "R8006"
   end
 
+  def role_description
+    if is_admin?
+      "Administrator"
+    elsif is_nurse?
+      "Nurse"
+    end
+  end
+
   def is_nurse?
     return email.include?("nurse") unless Settings.cis2.enabled
 
