@@ -34,7 +34,7 @@ class ImportIssuesController < ApplicationController
   end
 
   def set_import_issues
-    @import_issues =
+    @vaccination_records =
       policy_scope(VaccinationRecord)
         .where(programme: @programme)
         .with_pending_changes
@@ -49,10 +49,25 @@ class ImportIssuesController < ApplicationController
           vaccine: :programme
         )
         .strict_loading
+
+    @patients =
+      policy_scope(Patient).with_pending_changes.distinct.strict_loading
+
+    @import_issues =
+      (@vaccination_records + @patients).uniq do |record|
+        record.is_a?(VaccinationRecord) ? record.patient : record
+      end
   end
 
   def set_record
-    @record = @import_issues.find(params[:id])
+    @record =
+      (
+        if params[:type] == "vaccination-record"
+          @vaccination_records.find(params[:id])
+        else
+          @patients.find(params[:id])
+        end
+      )
   end
 
   def set_vaccination_record
