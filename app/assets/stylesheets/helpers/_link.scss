@@ -1,0 +1,17 @@
+@mixin app-link-style-inverse {
+  &:link,
+  &:visited {
+    color: $color_nhsuk-white;
+  }
+
+  // Force a colour change on hover to work around a bug in Safari
+  // https://webkit.org/b/224483
+  &:hover,
+  &:active {
+    color: rgba($color_nhsuk-white, 0.99);
+  }
+
+  &:focus {
+    color: $govuk-focus-text-colour;
+  }
+}
