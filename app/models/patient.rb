@@ -12,6 +12,8 @@
 #  date_of_birth             :date             not null
 #  date_of_death             :date
 #  date_of_death_recorded_at :datetime
+#  decrypted_family_name     :string           not null
+#  decrypted_given_name      :string           not null
 #  family_name               :string           not null
 #  gender_code               :integer          default("not_known"), not null
 #  given_name                :string           not null
@@ -33,9 +35,11 @@
 #
 # Indexes
 #
-#  index_patients_on_cohort_id   (cohort_id)
-#  index_patients_on_nhs_number  (nhs_number) UNIQUE
-#  index_patients_on_school_id   (school_id)
+#  index_patients_on_cohort_id              (cohort_id)
+#  index_patients_on_decrypted_family_name  (decrypted_family_name)
+#  index_patients_on_decrypted_given_name   (decrypted_given_name)
+#  index_patients_on_nhs_number             (nhs_number) UNIQUE
+#  index_patients_on_school_id              (school_id)
 #
 # Foreign Keys
 #
@@ -136,6 +140,7 @@ class Patient < ApplicationRecord
 
   normalizes :nhs_number, with: -> { _1.blank? ? nil : _1.gsub(/\s/, "") }
 
+  before_save :sync_decrypted_names
   before_destroy :destroy_childless_parents
 
   delegate :year_group, to: :cohort
@@ -272,5 +277,10 @@ class Patient < ApplicationRecord
     patient_sessions.where(session: upcoming_sessions).find_each(
       &:destroy_if_safe!
     )
+  end
+
+  def sync_decrypted_names
+    self.decrypted_family_name = family_name if family_name_changed?
+    self.decrypted_given_name = given_name if given_name_changed?
   end
 end
