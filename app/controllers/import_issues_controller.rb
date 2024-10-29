@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 class ImportIssuesController < ApplicationController
-  before_action :set_programme, :set_import_issues
+  before_action :set_programme
+  before_action :set_import_issues
+  before_action :set_record, only: %i[show update]
   before_action :set_vaccination_record, only: %i[show update]
+  before_action :set_patient, only: %i[show update]
   before_action :set_form, only: %i[show update]
 
   layout "full"
@@ -17,7 +20,7 @@ class ImportIssuesController < ApplicationController
     if @form.save
       redirect_to programme_import_issues_path(@programme),
                   flash: {
-                    success: "Vaccination record updated"
+                    success: "Record updated"
                   }
     else
       render :show, status: :unprocessable_entity and return
@@ -48,13 +51,21 @@ class ImportIssuesController < ApplicationController
         .strict_loading
   end
 
+  def set_record
+    @record = @import_issues.find(params[:id])
+  end
+
   def set_vaccination_record
-    @vaccination_record = @import_issues.find(params[:id])
+    @vaccination_record = @record if @record.is_a?(VaccinationRecord)
+  end
+
+  def set_patient
+    @patient = @record.is_a?(VaccinationRecord) ? @record.patient : @record
   end
 
   def set_form
     apply_changes = params.dig(:import_duplicate_form, :apply_changes)
 
-    @form = ImportDuplicateForm.new(object: @vaccination_record, apply_changes:)
+    @form = ImportDuplicateForm.new(object: @record, apply_changes:)
   end
 end
