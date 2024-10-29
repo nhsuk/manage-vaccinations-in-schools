@@ -1,0 +1,26 @@
+<div class="nhsuk-table__panel-with-heading-tab">
+  <h3 class="nhsuk-table__heading-tab">Reasons for refusal</h3>
+
+  <%= govuk_table do |table| %>
+    <% table.with_head do |head| %>
+      <% head.with_row do |row| %>
+        <% row.with_cell(text: "Reason for refusal") %>
+        <% row.with_cell(text: "Frequency") %>
+      <% end %>
+    <% end %>
+
+    <% table.with_body do |body| %>
+      <% Consent.reason_for_refusals.keys.each do |reason_for_refusal| %>
+        <% body.with_row do |row| %>
+          <% row.with_cell do %>
+            <%= VaccinationRecord.human_enum_name(:reason_for_refusal, reason_for_refusal) %>
+          <% end %>
+
+          <% row.with_cell do %>
+            <%= number_to_percentage(percentage_for(reason_for_refusal), precision: 1) %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
