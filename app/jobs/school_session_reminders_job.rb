@@ -12,9 +12,9 @@ class SchoolSessionRemindersJob < ApplicationJob
           :consents,
           :latest_gillick_assessment,
           :latest_vaccination_record,
-          :patient,
           :triages,
-          :vaccination_records
+          :vaccination_records,
+          patient: :parents
         )
         .joins(:location, :session)
         .merge(Location.school)
