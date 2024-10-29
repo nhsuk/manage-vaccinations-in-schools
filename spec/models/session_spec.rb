@@ -482,4 +482,32 @@ describe Session do
       end
     end
   end
+
+  describe "#open_for_consent?" do
+    subject(:open_for_consent?) { session.open_for_consent? }
+
+    context "without a close consent period" do
+      let(:session) { create(:session, date: nil) }
+
+      it { should be(false) }
+    end
+
+    context "when the consent period closes today" do
+      let(:session) { create(:session, date: Date.tomorrow) }
+
+      it { should be(true) }
+    end
+
+    context "when the consent period closes tomorrow" do
+      let(:session) { create(:session, date: Date.tomorrow + 1.day) }
+
+      it { should be(true) }
+    end
+
+    context "when the consent period closed yesterday" do
+      let(:session) { create(:session, date: Date.current) }
+
+      it { should be(false) }
+    end
+  end
 end
