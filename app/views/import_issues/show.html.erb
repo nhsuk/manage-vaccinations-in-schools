@@ -54,8 +54,8 @@
 
 <%= form_with(
       model: @form,
-      url: programme_import_issue_path(@programme, @record),
-      method: :put,
+      url: programme_import_issue_path(@programme, @record, type: params[:type]),
+      method: :patch,
       class: "nhsuk-u-width-one-half",
     ) do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>

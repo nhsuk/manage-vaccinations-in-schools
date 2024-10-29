@@ -112,7 +112,10 @@ Rails.application.routes.draw do
               path: "immunisation-imports",
               except: %i[index destroy]
 
-    resources :import_issues, path: "import-issues", only: %i[index show update]
+    resources :import_issues, path: "import-issues", only: %i[index] do
+      get ":type", action: :show, on: :member, as: ""
+      patch ":type", action: :update, on: :member
+    end
 
     resources :imports, only: %i[index new create]
 

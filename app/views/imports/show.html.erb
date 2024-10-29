@@ -132,7 +132,8 @@
                 <span class="nhsuk-table-responsive__heading">Actions</span>
                 <%= link_to programme_import_issue_path(
                       @programme,
-                      vaccination_record
+                      vaccination_record,
+                      type: "vaccination-record",
                     ) do %>
                   Review
                   <span class="nhsuk-u-visually-hidden">
