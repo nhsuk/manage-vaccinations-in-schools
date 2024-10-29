@@ -110,11 +110,7 @@ Rails.application.routes.draw do
 
     resources :immunisation_imports,
               path: "immunisation-imports",
-              except: %i[index destroy] do
-      resources :duplicates,
-                only: %i[show update],
-                controller: "immunisation_imports/duplicates"
-    end
+              except: %i[index destroy]
 
     resources :import_issues, path: "import-issues", only: %i[index show update]
 
