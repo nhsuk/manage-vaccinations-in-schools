@@ -807,16 +807,14 @@ describe ConsentForm do
         )
       end
 
-      it "removes the patient from the old session" do
+      it "marks the patient with a proposed move" do
         expect(patient.sessions).to contain_exactly(session)
-        match_with_patient!
-        expect(patient.reload.sessions).not_to include(session)
-      end
+        expect(patient.proposed_sessions).to be_empty
 
-      it "adds the patient to the new session" do
-        expect(patient.sessions).not_to include(new_session)
         match_with_patient!
-        expect(patient.reload.sessions).to contain_exactly(new_session)
+
+        expect(patient.reload.sessions).to include(session)
+        expect(patient.proposed_sessions).to contain_exactly(new_session)
       end
 
       context "if the session is a clinic" do
@@ -868,16 +866,14 @@ describe ConsentForm do
         )
       end
 
-      it "removes the patient from the old session" do
+      it "marks the patient with a proposed move" do
         expect(patient.sessions).to contain_exactly(session)
-        match_with_patient!
-        expect(patient.reload.sessions).not_to include(session)
-      end
+        expect(patient.proposed_sessions).to be_empty
 
-      it "adds the patient to the generic clinic" do
-        expect(patient.sessions).not_to include(new_session)
         match_with_patient!
-        expect(patient.reload.sessions).to contain_exactly(new_session)
+
+        expect(patient.reload.sessions).to include(session)
+        expect(patient.proposed_sessions).to contain_exactly(new_session)
       end
     end
   end
