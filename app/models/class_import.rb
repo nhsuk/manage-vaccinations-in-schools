@@ -60,7 +60,7 @@ class ClassImport < PatientImport
 
     session
       .patient_sessions
-      .where(patient: unknown_patients)
+      .where(patient: unknown_patients, proposed_session_id: nil)
       .update_all(proposed_session_id: team.generic_clinic_session.id)
   end
 end
