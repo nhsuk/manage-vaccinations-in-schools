@@ -15,4 +15,4 @@
       nav.with_item(href: session_patient_log_path, text: "Activity log", selected: true)
     end %>
 
-<%= render AppActivityLogComponent.new(@patient_session) %>
+<%= render AppActivityLogComponent.new(patient_session: @patient_session) %>

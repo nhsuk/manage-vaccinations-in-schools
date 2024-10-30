@@ -6,7 +6,7 @@ class AppActivityLogComponentPreview < ViewComponent::Preview
   def default
     setup
 
-    render AppActivityLogComponent.new(patient_session)
+    render AppActivityLogComponent.new(patient_session:)
   end
 
   private
