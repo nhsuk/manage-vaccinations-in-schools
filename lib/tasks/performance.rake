@@ -43,13 +43,12 @@ task :performance, [] => :environment do |_task, _args|
       puts ""
       puts ":school: *#{session.location.name}*"
 
-      @counts =
-        SessionStats.new(patient_sessions: session.patient_sessions, session:)
+      stats = PatientSessionStats.new(session.patient_sessions)
       puts "    - #{pluralize(session.location.patients.count, "child")} in cohort :racing_car:"
-      puts "        - #{pluralize(@counts[:with_consent_given], "child")} with consent given :white_check_mark:"
-      puts "            - #{pluralize(@counts[:ready_to_vaccinate], "child")} ready to vaccinate :syringe:"
-      puts "        - #{pluralize(@counts[:with_consent_refused], "child")} with consent refused :x:"
-      puts "        - #{pluralize(@counts[:without_a_response], "child")} without a response :crying_cat_face:"
+      puts "        - #{pluralize(stats[:with_consent_given], "child")} with consent given :white_check_mark:"
+      puts "            - #{pluralize(stats[:ready_to_vaccinate], "child")} ready to vaccinate :syringe:"
+      puts "        - #{pluralize(stats[:with_consent_refused], "child")} with consent refused :x:"
+      puts "        - #{pluralize(stats[:without_a_response], "child")} without a response :crying_cat_face:"
     end
   end
 end

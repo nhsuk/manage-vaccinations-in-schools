@@ -1,16 +1,14 @@
 # frozen_string_literal: true
 
-describe SessionStats do
-  describe "#call" do
-    subject do
-      described_class.new(patient_sessions: session.patient_sessions, session:)
-    end
+describe PatientSessionStats do
+  describe "#to_h" do
+    subject(:to_h) { described_class.new(session.patient_sessions).to_h }
 
     let(:programme) { create(:programme) }
     let(:session) { create(:session, programme:) }
 
     it "returns a hash of session stats" do
-      expect(subject.to_h).to eq(
+      expect(to_h).to eq(
         could_not_vaccinate: 0,
         needing_triage: 0,
         vaccinate: 0,
@@ -51,7 +49,7 @@ describe SessionStats do
       end
 
       it "returns a hash of session stats" do
-        expect(subject.to_h).to eq(
+        expect(to_h).to eq(
           could_not_vaccinate: 1,
           needing_triage: 2,
           vaccinate: 2,

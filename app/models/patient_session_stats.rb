@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-class SessionStats
-  def initialize(patient_sessions:, session:)
+class PatientSessionStats
+  def initialize(patient_sessions)
     @patient_sessions = patient_sessions
-    @session = session
-
     @stats = calculate_stats
   end
 
