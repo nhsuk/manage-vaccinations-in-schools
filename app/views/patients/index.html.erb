@@ -1,7 +1,6 @@
 <%= h1 t(".title"), size: "xl" %>
 
 <%= form_with url: patients_path,
-              method: :get,
               class: "app-search",
               data: { module: "autosubmit", turbo: "true" },
               role: "search" do |f| %>

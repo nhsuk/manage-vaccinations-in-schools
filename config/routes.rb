@@ -99,7 +99,9 @@ Rails.application.routes.draw do
 
   resources :notices, only: :index
 
-  resources :patients, only: %i[index show update]
+  resources :patients, only: %i[index show update] do
+    post "", action: :index, on: :collection
+  end
 
   resources :programmes, only: %i[index show], param: :type do
     get "sessions", on: :member

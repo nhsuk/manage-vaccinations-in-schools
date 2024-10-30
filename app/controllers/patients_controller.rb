@@ -15,7 +15,7 @@ class PatientsController < ApplicationController
 
     @pagy, @patients = pagy(scope.order_by_name)
 
-    render layout: "full"
+    render layout: "full", status: request.post? ? :created : :ok
   end
 
   def show
