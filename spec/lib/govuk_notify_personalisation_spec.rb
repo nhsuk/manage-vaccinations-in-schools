@@ -63,9 +63,9 @@ describe GovukNotifyPersonalisation do
         programme_name: "HPV",
         short_patient_name: "John",
         short_patient_name_apos: "John’s",
-        organisation_email: "organisation@example.com",
-        organisation_name: "Organisation",
-        organisation_phone: "01234 567890",
+        team_email: "organisation@example.com",
+        team_name: "Organisation",
+        team_phone: "01234 567890",
         vaccination: "HPV vaccination"
       }
     )

@@ -86,6 +86,7 @@ class VaccinationRecord < ApplicationRecord
   has_one :session, through: :patient_session
   has_one :location, through: :session
   has_one :organisation, through: :session
+  has_one :team, through: :session
 
   scope :administered, -> { where.not(administered_at: nil) }
   scope :unexported, -> { where.missing(:dps_exports) }

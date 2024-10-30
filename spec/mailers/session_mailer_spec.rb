@@ -33,9 +33,9 @@ describe SessionMailer do
           :parent_full_name,
           :short_patient_name,
           :short_patient_name_apos,
-          :organisation_email,
-          :organisation_name,
-          :organisation_phone,
+          :team_email,
+          :team_name,
+          :team_phone,
           :vaccination
         )
       end
@@ -48,13 +48,14 @@ describe SessionMailer do
     end
 
     let(:programme) { create(:programme) }
-    let(:organisation) do
+    let(:organisation) { create(:organisation, programmes: [programme]) }
+    let(:team) do
       create(
-        :organisation,
+        :team,
         name: "SAIS organisation",
         email: "sais@example.com",
         phone: "07987654321",
-        programmes: [programme]
+        organisation:
       )
     end
     let(:patient) do
@@ -65,7 +66,7 @@ describe SessionMailer do
         preferred_given_name: "Joey"
       )
     end
-    let(:session) { create(:session, organisation:, programme:) }
+    let(:session) { create(:session, organisation:, programme:, team:) }
     let(:parent) { patient.parents.first }
     let(:patient_session) { create(:patient_session, patient:, session:) }
 
@@ -82,9 +83,9 @@ describe SessionMailer do
         )
       end
 
-      it { should include(organisation_name: "SAIS organisation") }
-      it { should include(organisation_email: "sais@example.com") }
-      it { should include(organisation_phone: "07987654321") }
+      it { should include(team_name: "SAIS organisation") }
+      it { should include(team_email: "sais@example.com") }
+      it { should include(team_phone: "07987654321") }
     end
   end
 
@@ -97,13 +98,14 @@ describe SessionMailer do
     end
 
     let(:programme) { create(:programme) }
-    let(:organisation) do
+    let(:organisation) { create(:organisation, programmes: [programme]) }
+    let(:team) do
       create(
-        :organisation,
+        :team,
         name: "SAIS organisation",
         email: "sais@example.com",
         phone: "07987654321",
-        programmes: [programme]
+        organisation:
       )
     end
     let(:patient) do
@@ -114,7 +116,7 @@ describe SessionMailer do
         preferred_given_name: "Joey"
       )
     end
-    let(:session) { create(:session, organisation:, programme:) }
+    let(:session) { create(:session, organisation:, programme:, team:) }
     let(:parent) { patient.parents.first }
     let(:patient_session) { create(:patient_session, patient:, session:) }
 
@@ -131,9 +133,9 @@ describe SessionMailer do
         )
       end
 
-      it { should include(organisation_name: "SAIS organisation") }
-      it { should include(organisation_email: "sais@example.com") }
-      it { should include(organisation_phone: "07987654321") }
+      it { should include(team_name: "SAIS organisation") }
+      it { should include(team_email: "sais@example.com") }
+      it { should include(team_phone: "07987654321") }
     end
   end
 end
