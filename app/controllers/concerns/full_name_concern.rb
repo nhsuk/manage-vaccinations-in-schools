@@ -3,7 +3,10 @@
 module FullNameConcern
   extend ActiveSupport::Concern
 
-  included { scope :order_by_name, -> { order(:given_name, :family_name) } }
+  included do
+    scope :order_by_name,
+          -> { order("LOWER(given_name)", "LOWER(family_name)") }
+  end
 
   def full_name
     [given_name, family_name].join(" ")

@@ -46,6 +46,22 @@
 #
 
 describe Patient do
+  describe "scopes" do
+    describe "#order_by_name" do
+      subject(:scope) { described_class.order_by_name }
+
+      let(:patient_a) { create(:patient, given_name: "Adam") }
+      let(:patient_b) do
+        create(:patient, given_name: "claire", family_name: "Jones")
+      end
+      let(:patient_c) do
+        create(:patient, given_name: "claire", family_name: "smith")
+      end
+
+      it { should eq([patient_a, patient_b, patient_c]) }
+    end
+  end
+
   describe "validations" do
     context "when home educated" do
       subject(:patient) { build(:patient, :home_educated) }
