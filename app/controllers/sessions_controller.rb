@@ -76,7 +76,7 @@ class SessionsController < ApplicationController
 
   private
 
-  delegate :team, to: :current_user
+  delegate :organisation, to: :current_user
 
   def set_session
     @session = sessions_scope.find_by!(slug: params[:slug])
@@ -87,7 +87,7 @@ class SessionsController < ApplicationController
       :location,
       :programmes,
       :session_dates,
-      team: :programmes
+      organisation: :programmes
     ).strict_loading
   end
 end

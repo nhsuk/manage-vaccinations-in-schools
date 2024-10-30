@@ -28,7 +28,7 @@
 class Session < ApplicationRecord
   audited
 
-  belongs_to :team
+  belongs_to :organisation
   belongs_to :location
 
   has_many :consent_notifications
@@ -115,7 +115,7 @@ class Session < ApplicationRecord
             end
 
   validates :programmes, presence: true
-  validate :programmes_part_of_team
+  validate :programmes_part_of_organisation
 
   before_create :set_slug
 
@@ -179,7 +179,7 @@ class Session < ApplicationRecord
   end
 
   def create_patient_sessions!
-    cohorts = team.cohorts.for_year_groups(year_groups, academic_year:)
+    cohorts = organisation.cohorts.for_year_groups(year_groups, academic_year:)
 
     patients_scope =
       Patient
@@ -235,7 +235,7 @@ class Session < ApplicationRecord
     return unless completed?
 
     ActiveRecord::Base.transaction do
-      generic_clinic_session_id = team.generic_clinic_session.id
+      generic_clinic_session_id = organisation.generic_clinic_session.id
 
       PatientSession.import!(
         %i[patient_id session_id],
@@ -253,11 +253,12 @@ class Session < ApplicationRecord
         self.days_before_consent_reminders = nil
         self.send_consent_requests_at = nil
         self.send_invitations_at =
-          earliest_date - team.days_before_invitations.days
+          earliest_date - organisation.days_before_invitations.days
       else
-        self.days_before_consent_reminders = team.days_before_consent_reminders
+        self.days_before_consent_reminders =
+          organisation.days_before_consent_reminders
         self.send_consent_requests_at =
-          earliest_date - team.days_before_consent_requests.days
+          earliest_date - organisation.days_before_consent_requests.days
         self.send_invitations_at = nil
       end
     else
@@ -297,7 +298,7 @@ class Session < ApplicationRecord
   end
 
   def patient_sessions_moving_to_this_session
-    team.patient_sessions.where(proposed_session: self)
+    organisation.patient_sessions.where(proposed_session: self)
   end
 
   def has_movers?
@@ -311,10 +312,10 @@ class Session < ApplicationRecord
     self.slug = SecureRandom.alphanumeric(10) if slug.nil?
   end
 
-  def programmes_part_of_team
+  def programmes_part_of_organisation
     return if programmes.empty?
 
-    unless programmes.all? { team.programmes.include?(_1) }
+    unless programmes.all? { organisation.programmes.include?(_1) }
       errors.add(:programmes, :inclusion)
     end
   end

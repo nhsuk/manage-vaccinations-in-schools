@@ -2,7 +2,7 @@
 
 # == Schema Information
 #
-# Table name: teams
+# Table name: organisations
 #
 #  id                            :bigint           not null, primary key
 #  days_before_consent_reminders :integer          default(7), not null
@@ -19,15 +19,15 @@
 #
 # Indexes
 #
-#  index_teams_on_name      (name) UNIQUE
-#  index_teams_on_ods_code  (ods_code) UNIQUE
+#  index_organisations_on_name      (name) UNIQUE
+#  index_organisations_on_ods_code  (ods_code) UNIQUE
 #
 FactoryBot.define do
-  factory :team do
+  factory :organisation do
     transient { sequence(:identifier) { _1 } }
 
-    name { "SAIS Team #{identifier}" }
-    email { "sais-team-#{identifier}@example.com" }
+    name { "SAIS Organisation #{identifier}" }
+    email { "sais-organisation-#{identifier}@example.com" }
     phone { "01234 567890" }
     ods_code { "U#{identifier}" }
     privacy_policy_url { "https://example.com/privacy" }
@@ -42,7 +42,7 @@ FactoryBot.define do
         create_list(
           :user,
           1,
-          **{ teams: [instance], email: nurse_email }.compact
+          **{ organisations: [instance], email: nurse_email }.compact
         )
       end
     end
@@ -50,12 +50,14 @@ FactoryBot.define do
     trait :with_one_admin do
       transient { admin_email { "admin.hope@example.com" } }
 
-      users { create_list(:user, 1, teams: [instance], email: admin_email) }
+      users do
+        create_list(:user, 1, organisations: [instance], email: admin_email)
+      end
     end
 
     trait :with_generic_clinic do
-      after(:create) do |team, _evaluator|
-        create(:location, :generic_clinic, team:)
+      after(:create) do |organisation, _evaluator|
+        create(:location, :generic_clinic, organisation:)
       end
     end
   end

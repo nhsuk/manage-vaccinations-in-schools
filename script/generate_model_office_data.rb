@@ -26,13 +26,13 @@ def wrap_in_rollbackable_transaction
   end
 end
 
-def create_student(school, year_group, team)
+def create_student(school, year_group, organisation)
   FactoryBot
     .create(
       :patient,
       school:,
       date_of_birth: date_of_birth_for_year(2024, year_group),
-      team:,
+      organisation:,
       home_educated: school.nil? ? [true, false].sample : false
     )
     .tap do |student|
@@ -54,7 +54,7 @@ def create_vaccination_record(
 
   location_name =
     if session.location.generic_clinic?
-      session.team.locations.community_clinic.all.sample.name
+      session.organisation.locations.community_clinic.all.sample.name
     end
 
   FactoryBot.create(
@@ -181,11 +181,11 @@ def write_vaccination_records_to_file(vaccination_records)
         if (school = vaccination_record.patient.school)
           school.name
         elsif !vaccination_record.patient.home_educated
-          vaccination_record.team.schools.all.sample.name
+          vaccination_record.organisation.schools.all.sample.name
         end
 
       csv << [
-        vaccination_record.team.ods_code,
+        vaccination_record.organisation.ods_code,
         school_urn(vaccination_record.patient),
         school_name,
         vaccination_record.patient.nhs_number,
@@ -208,7 +208,11 @@ def write_vaccination_records_to_file(vaccination_records)
   end
 end
 
-def create_students_and_vaccinations_for(school:, team:, year_size_estimate:)
+def create_students_and_vaccinations_for(
+  school:,
+  organisation:,
+  year_size_estimate:
+)
   programme = Programme.find_by(type: "hpv")
   gardasil = Vaccine.find_by(brand: "Gardasil")
   gardasil9 = Vaccine.find_by(brand: "Gardasil 9")
@@ -216,7 +220,9 @@ def create_students_and_vaccinations_for(school:, team:, year_size_estimate:)
   # define the cohort
   year_8s, year_9s, year_10s, year_11s =
     (8..11).map do |year_group|
-      year_size_estimate.times.map { create_student(school, year_group, team) }
+      year_size_estimate.times.map do
+        create_student(school, year_group, organisation)
+      end
     end
 
   # define the vaccination history year by year
@@ -254,10 +260,10 @@ def create_students_and_vaccinations_for(school:, team:, year_size_estimate:)
           :session,
           programme:,
           date: session_date,
-          team:,
-          location: school || team.generic_clinic
+          organisation:,
+          location: school || organisation.generic_clinic
         )
-      batch = FactoryBot.create(:batch, team:, vaccine:)
+      batch = FactoryBot.create(:batch, organisation:, vaccine:)
 
       session_participants = [dose_1_cohort, dose_2_cohort].flatten.compact
 
@@ -281,13 +287,13 @@ def create_students_and_vaccinations_for(school:, team:, year_size_estimate:)
   [year_8s + year_9s + year_10s + year_11s, vaccination_records]
 end
 
-# 1. SAIS team's admins will upload their entire year 8, 9, 10 and 11 nominal
+# 1. SAIS organisation's admins will upload their entire year 8, 9, 10 and 11 nominal
 # rolls into Mavis as one or more cohort uploads. Based on the date of birth
 # of the child, Mavis will automatically sort the children into the correct
 # HPV cohort. If they don't fit into any of the cohorts, then Mavis will
 # raise an error and won't import them.
 
-team = User.find_by(email: "nurse.ryg@example.com").team
+organisation = User.find_by(email: "nurse.ryg@example.com").organisation
 
 school_data = CSV.read("scratchpad/school-class-sizes.csv", headers: true)
 
@@ -311,7 +317,7 @@ wrap_in_rollbackable_transaction do
     s, v =
       create_students_and_vaccinations_for(
         school:,
-        team:,
+        organisation:,
         year_size_estimate: row["year_estimate"].to_i
       )
     students += s
@@ -324,7 +330,7 @@ wrap_in_rollbackable_transaction do
   s, v =
     create_students_and_vaccinations_for(
       school: nil,
-      team:,
+      organisation:,
       year_size_estimate: 10
     )
   students += s
@@ -340,7 +346,7 @@ wrap_in_rollbackable_transaction do
 end
 
 #
-# 2. The admin team will bulk-upload vaccination records of those children in
+# 2. The admin organisation will bulk-upload vaccination records of those children in
 # year 9, 10 and 11 who have already been vaccinated in the previous years'
 # programmes.
 #

@@ -15,7 +15,7 @@ module ParentInterface
       @consent_form = ConsentForm.find(params[:consent_form_id] || params[:id])
       @session = @consent_form.original_session
       @programme = @consent_form.programme
-      @team = @consent_form.team
+      @organisation = @consent_form.organisation
     end
 
     def authenticate_consent_form_user!
@@ -38,7 +38,7 @@ module ParentInterface
     end
 
     def set_privacy_policy_url
-      @privacy_policy_url = @team.privacy_policy_url
+      @privacy_policy_url = @organisation.privacy_policy_url
     end
   end
 end

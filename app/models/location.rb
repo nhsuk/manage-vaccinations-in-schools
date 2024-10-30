@@ -37,7 +37,7 @@ class Location < ApplicationRecord
 
   audited
 
-  belongs_to :team, optional: true
+  belongs_to :organisation, optional: true
 
   has_many :consent_forms
   has_many :patients, foreign_key: :school_id
@@ -58,8 +58,8 @@ class Location < ApplicationRecord
   validates :ods_code, presence: true, if: :clinic?
 
   with_options if: :generic_clinic? do
-    validates :team, presence: true
-    validates :ods_code, comparison: { equal_to: :team_ods_code }
+    validates :organisation, presence: true
+    validates :ods_code, comparison: { equal_to: :organisation_ods_code }
   end
 
   validates :urn, presence: true, if: :school?
@@ -73,7 +73,7 @@ class Location < ApplicationRecord
 
   private
 
-  def team_ods_code
-    team&.ods_code
+  def organisation_ods_code
+    organisation&.ods_code
   end
 end

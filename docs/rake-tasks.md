@@ -2,56 +2,56 @@
 
 ## Clinics
 
-### `clinics:create[name,address,town,postcode,ods_code,team_ods_code]`
+### `clinics:create[name,address,town,postcode,ods_code,organisation_ods_code]`
 
 - `name` - The name of the clinic.
 - `address` - The first line of the address.
 - `town` - The town of the clinic.
 - `postcode` - The postcode of the clinic.
 - `ods_code` - The ODS code of the clinic.
-- `team_ods_code` - The ODS code of the team.
+- `organisation_ods_code` - The ODS code of the organisation.
 
 If none of the arguments are provided (`rake clinics:create`), the user will be prompted for responses.
 
-This creates a new clinic location and attaches it to a team.
+This creates a new clinic location and attaches it to a organisation.
 
 ## Schools
 
-### `schools:add_to_team[ods_code,urn,...]`
+### `schools:add_to_organisation[ods_code,urn,...]`
 
-- `ods_code` - The ODS code of the team.
+- `ods_code` - The ODS code of the organisation.
 - `urn` - The URN of the school to add, can be added multiple times.
 
-This adds a school or schools to the list of schools that a particular team manages.
+This adds a school or schools to the list of schools that a particular organisation manages.
 
-## Teams
+## Organisations
 
-### `teams:create_hpv[email,name,phone,ods_code,privacy_policy_url,reply_to_id]`
+### `organisations:create_hpv[email,name,phone,ods_code,privacy_policy_url,reply_to_id]`
 
-- `email` - The email address of the team.
-- `name` - The unique name of the team.
-- `phone` - The phone number of the team.
-- `ods_code` - The unique ODS code for the team.
-- `privacy_policy_url` - The URL of the team’s privacy policy (optional).
-- `reply_to_id` - The team’s GOV.UK Notify reply to UUID (optional).
+- `email` - The email address of the organisation.
+- `name` - The unique name of the organisation.
+- `phone` - The phone number of the organisation.
+- `ods_code` - The unique ODS code for the organisation.
+- `privacy_policy_url` - The URL of the organisation’s privacy policy (optional).
+- `reply_to_id` - The organisation’s GOV.UK Notify reply to UUID (optional).
 
-If none of the arguments are provided (`rake teams:create_hpv`), the user will be prompted for responses.
+If none of the arguments are provided (`rake organisations:create_hpv`), the user will be prompted for responses.
 
-This creates a new team with an HPV programme.
+This creates a new organisation with an HPV programme.
 
 ## Users
 
-### `users:create[email,password,given_name,family_name,team_ods_code]`
+### `users:create[email,password,given_name,family_name,organisation_ods_code]`
 
 - `email` - The email address of the new user.
 - `password` - The password of the new user.
 - `given_name` - The first name of the new user.
 - `family_name` - The last name of the new user.
-- `team_ods_code` - The ODS code for the team they belong to.
+- `organisation_ods_code` - The ODS code for the organisation they belong to.
 
 If none of the arguments are provided (`rake users:create`), the user will be prompted for responses.
 
-This creates a new user and adds them to a team.
+This creates a new user and adds them to a organisation.
 
 ## Vaccines
 

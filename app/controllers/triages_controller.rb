@@ -92,7 +92,7 @@ class TriagesController < ApplicationController
       Triage.new(
         patient: @patient,
         programme: @session.programmes.first, # TODO: handle multiple programmes
-        team: @session.team
+        organisation: @session.organisation
       )
   end
 

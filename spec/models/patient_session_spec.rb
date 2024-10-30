@@ -222,9 +222,11 @@ describe PatientSession do
     end
 
     context "when the patient session is for the generic clinic" do
-      let(:team) { original_session.team }
-      let(:location) { create(:location, :generic_clinic, team:) }
-      let(:proposed_session) { create(:session, location:, team:, programme:) }
+      let(:organisation) { original_session.organisation }
+      let(:location) { create(:location, :generic_clinic, organisation:) }
+      let(:proposed_session) do
+        create(:session, location:, organisation:, programme:)
+      end
 
       it "updates the patient's school to nil" do
         expect { confirm_transfer! }.to change(

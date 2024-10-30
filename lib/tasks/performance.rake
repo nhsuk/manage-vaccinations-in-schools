@@ -9,37 +9,40 @@ task :performance, [] => :environment do |_task, _args|
   puts ":chart_with_upwards_trend: *PILOT PERFORMANCE* _#{Time.zone.today.to_fs(:long_day_of_week)}_"
   puts ""
 
-  teams = Team.all - Team.where(name: "Team MAVIS")
+  organisations =
+    Organisation.all - Organisation.where(name: "Organisation MAVIS")
 
-  patients_total = Patient.where(location: teams.map(&:locations).flatten).count
+  patients_total =
+    Patient.where(location: organisations.map(&:locations).flatten).count
   puts "#{patients_total} *Patients in cohort (total)*"
 
   consent_forms_total =
     ConsentForm
-      .joins(:team)
-      .where(session: { programmes: { team: teams } })
+      .joins(:organisation)
+      .where(session: { programmes: { organisation: organisations } })
       .and(ConsentForm.where.not(recorded_at: nil))
       .count
   puts "#{consent_forms_total} *Consents returned (total)*"
 
   vaccination_records_total =
     VaccinationRecord
-      .joins(:team)
-      .where(session: { programmes: { team: teams } })
+      .joins(:organisation)
+      .where(session: { programmes: { organisation: organisations } })
       .and(VaccinationRecord.recorded)
       .count
   puts "#{vaccination_records_total} *Vaccination records (total)*"
 
-  teams.each do |team|
+  organisations.each do |organisation|
     puts ""
     puts ":wavy_dash::wavy_dash::wavy_dash::wavy_dash::wavy_dash::wavy_dash:" \
            ":wavy_dash::wavy_dash::wavy_dash::wavy_dash:"
-    puts "*:hospital: #{team.name}*"
+    puts "*:hospital: #{organisation.name}*"
 
-    users = "#{team.users.recently_active.count}/#{team.users.count}"
+    users =
+      "#{organisation.users.recently_active.count}/#{organisation.users.count}"
     puts ":busts_in_silhouette: Active users: #{users} users signed in in the last week"
 
-    team.programme.sessions.active.each do |session|
+    organisation.programme.sessions.active.each do |session|
       puts ""
       puts ":school: *#{session.location.name}*"
 

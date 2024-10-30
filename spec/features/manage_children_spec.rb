@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe "Manage children" do
-  before { given_my_team_exists }
+  before { given_my_organisation_exists }
 
   scenario "Viewing children" do
     given_patients_exist
@@ -33,7 +33,7 @@ describe "Manage children" do
   end
 
   scenario "Viewing important notices" do
-    given_my_team_exists
+    given_my_organisation_exists
 
     when_i_click_on_notices
     then_i_see_no_notices
@@ -47,43 +47,45 @@ describe "Manage children" do
     and_i_see_the_notice_of_sensitive
   end
 
-  def given_my_team_exists
-    @team = create(:team, :with_one_nurse)
+  def given_my_organisation_exists
+    @organisation = create(:organisation, :with_one_nurse)
   end
 
   def given_patients_exist
-    school = create(:location, :school, team: @team)
+    school = create(:location, :school, organisation: @organisation)
     create(
       :patient,
-      team: @team,
+      organisation: @organisation,
       given_name: "John",
       family_name: "Smith",
       school:
     )
-    create_list(:patient, 9, team: @team, school:)
+    create_list(:patient, 9, organisation: @organisation, school:)
 
     create(
       :patient,
       given_name: "Jane",
       family_name: "Doe",
-      cohort: @team.cohorts.first
+      cohort: @organisation.cohorts.first
     )
   end
 
   def when_a_deceased_patient_exists
-    @deceased_patient = create(:patient, :deceased, team: @team)
+    @deceased_patient = create(:patient, :deceased, organisation: @organisation)
   end
 
   def and_an_invalid_patient_exists
-    @invalidated_patient = create(:patient, :invalidated, team: @team)
+    @invalidated_patient =
+      create(:patient, :invalidated, organisation: @organisation)
   end
 
   def and_a_restricted_patient_exists
-    @restricted_patient = create(:patient, :restricted, team: @team)
+    @restricted_patient =
+      create(:patient, :restricted, organisation: @organisation)
   end
 
   def when_i_click_on_children
-    sign_in @team.users.first
+    sign_in @organisation.users.first
 
     visit "/dashboard"
     click_on "Children", match: :first
@@ -121,7 +123,7 @@ describe "Manage children" do
   end
 
   def when_i_click_on_notices
-    sign_in @team.users.first
+    sign_in @organisation.users.first
 
     visit "/dashboard"
     click_on "Notices"

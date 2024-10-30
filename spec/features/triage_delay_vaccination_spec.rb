@@ -30,12 +30,13 @@ describe "Triage" do
 
   def given_a_programme_with_a_running_session
     programme = create(:programme, :hpv)
-    @team = create(:team, :with_one_nurse, programmes: [programme])
+    @organisation =
+      create(:organisation, :with_one_nurse, programmes: [programme])
     @school = create(:location, :school)
     session =
       create(
         :session,
-        team: @team,
+        organisation: @organisation,
         programme:,
         location: @school,
         date: Time.zone.today
@@ -50,7 +51,7 @@ describe "Triage" do
   end
 
   def and_i_am_signed_in
-    sign_in @team.users.first
+    sign_in @organisation.users.first
   end
 
   def when_i_go_to_the_triage_page

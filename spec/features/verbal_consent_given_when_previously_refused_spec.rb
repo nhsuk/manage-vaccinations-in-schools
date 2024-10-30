@@ -17,13 +17,14 @@ feature "Verbal consent" do
 
   def given_an_hpv_programme_is_underway
     @programme = create(:programme, :hpv)
-    @team = create(:team, :with_one_nurse, programmes: [@programme])
+    @organisation =
+      create(:organisation, :with_one_nurse, programmes: [@programme])
     location = create(:location, :school, name: "Pilot School")
     @session =
       create(
         :session,
         :scheduled,
-        team: @team,
+        organisation: @organisation,
         programme: @programme,
         location:
       )
@@ -40,7 +41,7 @@ feature "Verbal consent" do
   end
 
   def and_i_am_logged_in_as_a_nurse
-    sign_in @team.users.first
+    sign_in @organisation.users.first
   end
 
   def when_i_record_the_consent_given_for_that_child_from_the_same_parent

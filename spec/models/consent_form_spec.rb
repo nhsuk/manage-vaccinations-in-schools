@@ -744,11 +744,11 @@ describe ConsentForm do
     subject(:match_with_patient!) { consent_form.match_with_patient!(patient) }
 
     let(:programme) { create(:programme) }
-    let(:team) { create(:team, programmes: [programme]) }
+    let(:organisation) { create(:organisation, programmes: [programme]) }
 
     let(:school) { create(:location, :school) }
     let(:location) { school }
-    let(:session) { create(:session, team:, programme:, location:) }
+    let(:session) { create(:session, organisation:, programme:, location:) }
     let(:patient) { create(:patient, school:, session:) }
 
     let(:notify_log_entry) do
@@ -757,7 +757,7 @@ describe ConsentForm do
 
     context "when consent form confirms the school" do
       let(:consent_form) do
-        create(:consent_form, team:, session:, school_confirmed: true)
+        create(:consent_form, organisation:, session:, school_confirmed: true)
       end
 
       it "creates a consent" do
@@ -779,7 +779,7 @@ describe ConsentForm do
       let(:consent_form) do
         create(
           :consent_form,
-          team:,
+          organisation:,
           session:,
           school_confirmed: false,
           school: new_school
@@ -788,7 +788,7 @@ describe ConsentForm do
 
       let(:new_school) { create(:location, :school) }
       let!(:new_session) do
-        create(:session, programme:, team:, location: new_school)
+        create(:session, programme:, organisation:, location: new_school)
       end
 
       it "creates a consent" do
@@ -818,7 +818,7 @@ describe ConsentForm do
       end
 
       context "if the session is a clinic" do
-        let(:location) { create(:location, :generic_clinic, team:) }
+        let(:location) { create(:location, :generic_clinic, organisation:) }
 
         it "changes the patient's school" do
           expect { match_with_patient! }.to change(patient, :school).from(
@@ -838,16 +838,16 @@ describe ConsentForm do
       let(:consent_form) do
         create(
           :consent_form,
-          team:,
+          organisation:,
           session:,
           school_confirmed: nil,
           education_setting: "home"
         )
       end
 
-      let(:new_location) { create(:location, :generic_clinic, team:) }
+      let(:new_location) { create(:location, :generic_clinic, organisation:) }
       let!(:new_session) do
-        create(:session, programme:, team:, location: new_location)
+        create(:session, programme:, organisation:, location: new_location)
       end
 
       it "creates a consent" do

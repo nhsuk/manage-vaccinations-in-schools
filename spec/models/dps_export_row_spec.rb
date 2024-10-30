@@ -4,14 +4,14 @@ describe DPSExportRow do
   subject(:row) { described_class.new(vaccination_record) }
 
   let(:programme) { create(:programme, type: "hpv") }
-  let(:team) { create(:team, programmes: [programme]) }
+  let(:organisation) { create(:organisation, programmes: [programme]) }
   let(:vaccine) { create(:vaccine, :gardasil_9, programme:, dose: 0.5) }
   let(:location) { create(:location, :school) }
   let(:school) { create(:location, :school) }
   let(:patient) do
     create(:patient, date_of_birth: Date.new(2012, 12, 29), school:)
   end
-  let(:session) { create(:session, team:, programme:, location:) }
+  let(:session) { create(:session, organisation:, programme:, location:) }
   let(:patient_session) { create(:patient_session, patient:, session:) }
   let(:performed_by) { create(:user, family_name: "Doe", given_name: "Jane") }
   let(:performed_by_given_name) { nil }
@@ -71,7 +71,7 @@ describe DPSExportRow do
     end
 
     it "has site_code" do
-      expect(array[7]).to eq vaccination_record.team.ods_code
+      expect(array[7]).to eq vaccination_record.organisation.ods_code
     end
 
     it "has site_code_type_uri" do
@@ -258,8 +258,10 @@ describe DPSExportRow do
       end
 
       context "when the session is attached to the generic clinic" do
-        let(:team) { create(:team, ods_code: "ABC", programmes: [programme]) }
-        let(:location) { create(:location, :generic_clinic, team:) }
+        let(:organisation) do
+          create(:organisation, ods_code: "ABC", programmes: [programme])
+        end
+        let(:location) { create(:location, :generic_clinic, organisation:) }
         let(:location_name) { "Unknown" }
 
         it { should eq("ABC") }
@@ -284,8 +286,10 @@ describe DPSExportRow do
       end
 
       context "when the session is attached to the generic clinic" do
-        let(:team) { create(:team, ods_code: "ABC", programmes: [programme]) }
-        let(:location) { create(:location, :generic_clinic, team:) }
+        let(:organisation) do
+          create(:organisation, ods_code: "ABC", programmes: [programme])
+        end
+        let(:location) { create(:location, :generic_clinic, organisation:) }
         let(:location_name) { "Unknown" }
 
         it { should eq("https://fhir.nhs.uk/Id/ods-organization-code") }

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ImportsController < ApplicationController
-  before_action :set_team, :set_programme
+  before_action :set_organisation, :set_programme
 
   def index
     render layout: "full"
@@ -24,8 +24,8 @@ class ImportsController < ApplicationController
 
   private
 
-  def set_team
-    @team = current_user.selected_team
+  def set_organisation
+    @organisation = current_user.selected_organisation
   end
 
   def set_programme

@@ -54,7 +54,7 @@ class DPSExportRow
            :delivery_site,
            :location,
            :patient,
-           :team,
+           :organisation,
            :user,
            :vaccine,
            to: :vaccination_record
@@ -88,7 +88,7 @@ class DPSExportRow
   end
 
   def site_code
-    team.ods_code
+    organisation.ods_code
   end
 
   def site_code_type_uri

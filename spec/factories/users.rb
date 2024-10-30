@@ -29,15 +29,15 @@ FactoryBot.define do
   factory :user,
           aliases: %i[nurse assessor created_by performed_by uploaded_by] do
     transient do
-      selected_team { teams.first }
+      selected_organisation { organisations.first }
       selected_role_code { "S8000:G8000:R8001" }
       selected_role_name { "Nurse Access Role" }
 
       cis2_info_hash do
         {
           "selected_org" => {
-            "name" => selected_team.name,
-            "code" => selected_team.ods_code
+            "name" => selected_organisation.name,
+            "code" => selected_organisation.ods_code
           },
           "selected_role" => {
             "name" => selected_role_name,
@@ -51,7 +51,7 @@ FactoryBot.define do
     given_name { "Test" }
 
     sequence(:email) { |n| "nurse-#{n}@example.com" }
-    sequence(:teams) { [Team.first || create(:team)] }
+    sequence(:organisations) { [Organisation.first || create(:organisation)] }
     # It would normally be reasonable to expect to set a password here. However,
     # when cis2 is enabled Devise does not create a 'password=' method for us,
     # so we can't include the following setter. If you have a need to test users

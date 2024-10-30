@@ -237,26 +237,28 @@ describe Session do
 
     let(:flu_programme) { create(:programme, :flu) }
     let(:hpv_programme) { create(:programme, :hpv) }
-    let(:team) { create(:team, programmes:) }
-    let(:session) { create(:session, team:, location:, programmes:) }
+    let(:organisation) { create(:organisation, programmes:) }
+    let(:session) { create(:session, organisation:, location:, programmes:) }
 
     let(:school) { create(:location, :primary) }
 
     let!(:unvaccinated_child) do
-      create(:patient, year_group: 6, team:, school:)
+      create(:patient, year_group: 6, organisation:, school:)
     end
-    let!(:unvaccinated_teen) { create(:patient, year_group: 8, team:, school:) }
+    let!(:unvaccinated_teen) do
+      create(:patient, year_group: 8, organisation:, school:)
+    end
     let!(:unvaccinated_home_educated_child) do
-      create(:patient, :home_educated, year_group: 6, team:)
+      create(:patient, :home_educated, year_group: 6, organisation:)
     end
     let!(:unvaccinated_home_educated_teen) do
-      create(:patient, :home_educated, year_group: 8, team:)
+      create(:patient, :home_educated, year_group: 8, organisation:)
     end
     let!(:unvaccinated_unknown_school_child) do
-      create(:patient, year_group: 6, team:, school: nil)
+      create(:patient, year_group: 6, organisation:, school: nil)
     end
     let!(:unvaccinated_unknown_school_teen) do
-      create(:patient, year_group: 8, team:, school: nil)
+      create(:patient, year_group: 8, organisation:, school: nil)
     end
 
     let!(:flu_vaccinated_child) do
@@ -264,7 +266,7 @@ describe Session do
         :patient,
         :vaccinated,
         year_group: 6,
-        team:,
+        organisation:,
         school:,
         programme: flu_programme
       )
@@ -274,7 +276,7 @@ describe Session do
         :patient,
         :vaccinated,
         year_group: 8,
-        team:,
+        organisation:,
         school:,
         programme: flu_programme
       )
@@ -284,14 +286,14 @@ describe Session do
         :patient,
         :vaccinated,
         year_group: 8,
-        team:,
+        organisation:,
         school:,
         programme: hpv_programme
       )
     end
 
     let!(:both_vaccinated_teen) do
-      create(:patient, year_group: 8, team:, school:)
+      create(:patient, year_group: 8, organisation:, school:)
     end
 
     before do
@@ -306,7 +308,7 @@ describe Session do
         patient: both_vaccinated_teen
       )
 
-      create(:patient, :deceased, year_group: 8, team:, school:)
+      create(:patient, :deceased, year_group: 8, organisation:, school:)
     end
 
     context "with a Flu session" do
@@ -336,7 +338,7 @@ describe Session do
       end
 
       context "in a generic clinic" do
-        let(:location) { create(:location, :generic_clinic, team:) }
+        let(:location) { create(:location, :generic_clinic, organisation:) }
 
         it "adds the unvaccinated patients" do
           create_patient_sessions!
@@ -379,7 +381,7 @@ describe Session do
       end
 
       context "in a generic clinic" do
-        let(:location) { create(:location, :generic_clinic, team:) }
+        let(:location) { create(:location, :generic_clinic, organisation:) }
 
         it "adds the unvaccinated patients" do
           create_patient_sessions!
@@ -425,7 +427,7 @@ describe Session do
       end
 
       context "in a generic clinic" do
-        let(:location) { create(:location, :generic_clinic, team:) }
+        let(:location) { create(:location, :generic_clinic, organisation:) }
 
         it "adds the unvaccinated patients" do
           create_patient_sessions!
@@ -449,8 +451,8 @@ describe Session do
     subject(:close!) { session.close! }
 
     let(:programme) { create(:programme) }
-    let(:team) { create(:team, programmes: [programme]) }
-    let(:session) { create(:session, :completed, programme:, team:) }
+    let(:organisation) { create(:organisation, programmes: [programme]) }
+    let(:session) { create(:session, :completed, programme:, organisation:) }
 
     it "sets the closed at time" do
       freeze_time do
@@ -467,8 +469,9 @@ describe Session do
       let!(:unvaccinated_patient) { create(:patient, session:, programme:) }
 
       it "adds the unvaccinated patients to the generic clinic session" do
-        location = create(:location, :generic_clinic, team:)
-        generic_clinic_session = create(:session, location:, team:, programme:)
+        location = create(:location, :generic_clinic, organisation:)
+        generic_clinic_session =
+          create(:session, location:, organisation:, programme:)
 
         expect(generic_clinic_session.patients).to be_empty
 

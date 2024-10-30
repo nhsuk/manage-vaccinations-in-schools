@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 class AppProgrammeNavigationComponent < ViewComponent::Base
-  attr_reader :programme, :team, :active
+  attr_reader :programme, :organisation, :active
 
-  def initialize(programme, team:, active:)
+  def initialize(programme, organisation:, active:)
     super
 
     @programme = programme
-    @team = team
+    @organisation = organisation
     @active = active
   end
 
@@ -61,7 +61,7 @@ class AppProgrammeNavigationComponent < ViewComponent::Base
 
   def import_issues_text
     count =
-      team
+      organisation
         .vaccination_records
         .where(programme:)
         .with_pending_changes

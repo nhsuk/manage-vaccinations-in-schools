@@ -6,19 +6,20 @@ class UnscheduledSessionsFactory
   end
 
   def call
-    Team
+    Organisation
       .includes(:locations, :programmes, :sessions)
-      .find_each do |team|
-        sessions = team.sessions.select { _1.academic_year == academic_year }
+      .find_each do |organisation|
+        sessions =
+          organisation.sessions.select { _1.academic_year == academic_year }
 
-        team.locations.find_each do |location|
+        organisation.locations.find_each do |location|
           next if sessions.any? { _1.location_id == location.id }
 
           programmes =
             if location.generic_clinic?
-              team.programmes
+              organisation.programmes
             elsif location.school?
-              team.programmes.select do
+              organisation.programmes.select do
                 _1.year_groups.intersect?(location.year_groups)
               end
             else
@@ -27,12 +28,15 @@ class UnscheduledSessionsFactory
 
           next if programmes.empty?
 
-          Session.create!(academic_year:, location:, programmes:, team:).tap(
-            &:create_patient_sessions!
-          )
+          Session.create!(
+            academic_year:,
+            location:,
+            programmes:,
+            organisation:
+          ).tap(&:create_patient_sessions!)
         end
 
-        location_ids = team.locations.map(&:id)
+        location_ids = organisation.locations.map(&:id)
 
         sessions
           .select(&:unscheduled?)

@@ -2,7 +2,7 @@
 
 # == Schema Information
 #
-# Table name: teams
+# Table name: organisations
 #
 #  id                            :bigint           not null, primary key
 #  days_before_consent_reminders :integer          default(7), not null
@@ -19,10 +19,10 @@
 #
 # Indexes
 #
-#  index_teams_on_name      (name) UNIQUE
-#  index_teams_on_ods_code  (ods_code) UNIQUE
+#  index_organisations_on_name      (name) UNIQUE
+#  index_organisations_on_ods_code  (ods_code) UNIQUE
 #
-class Team < ApplicationRecord
+class Organisation < ApplicationRecord
   include ODSCodeConcern
 
   has_many :batches
@@ -34,10 +34,10 @@ class Team < ApplicationRecord
   has_many :locations
   has_many :schools, -> { school }, class_name: "Location"
   has_many :sessions
-  has_many :team_programmes
+  has_many :organisation_programmes
 
   has_many :patient_sessions, through: :sessions
-  has_many :programmes, through: :team_programmes
+  has_many :programmes, through: :organisation_programmes
   has_many :vaccination_records, through: :patient_sessions
 
   has_and_belongs_to_many :users

@@ -44,14 +44,16 @@ describe "Immunisation imports" do
   end
 
   def given_i_am_signed_in
-    @team = create(:team, :with_one_nurse, ods_code: "R1L")
-    sign_in @team.users.first
+    @organisation = create(:organisation, :with_one_nurse, ods_code: "R1L")
+    sign_in @organisation.users.first
   end
 
   def and_an_hpv_programme_is_underway
-    programme = create(:programme, :hpv_all_vaccines, teams: [@team])
+    programme =
+      create(:programme, :hpv_all_vaccines, organisations: [@organisation])
     location = create(:location, :school)
-    @session = create(:session, programme:, location:, team: @team)
+    @session =
+      create(:session, programme:, location:, organisation: @organisation)
   end
 
   def and_school_locations_exist

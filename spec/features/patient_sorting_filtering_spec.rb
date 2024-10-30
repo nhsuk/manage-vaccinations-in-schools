@@ -52,10 +52,17 @@ describe "Patient sorting and filtering" do
 
   def given_that_i_am_signed_in
     @programme = create(:programme, :hpv)
-    @team = create(:team, :with_one_nurse, programmes: [@programme])
+    @organisation =
+      create(:organisation, :with_one_nurse, programmes: [@programme])
     location = create(:location, :school)
-    @user = @team.users.first
-    @session = create(:session, team: @team, programme: @programme, location:)
+    @user = @organisation.users.first
+    @session =
+      create(
+        :session,
+        organisation: @organisation,
+        programme: @programme,
+        location:
+      )
 
     %w[Alex Blair Casey Cassidy]
       .zip([8, 9, 10, 10], %w[A B C D])

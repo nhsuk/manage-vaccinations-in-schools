@@ -257,7 +257,7 @@ because it's easier to work offline without it.
 
 GOV.UK Notify can store reply-to email addresses and use them when sending mail.
 Once you've added the reply-to email in GOV.UK Notify, get the UUID and add it to
-the team.
+the organisation.
 
 ### Care Identity Service (CIS2)
 
@@ -275,7 +275,7 @@ $ curl -s https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk/openam/oauth2/rea
 "https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare"
 ```
 
-Clients can be configured via CIS2 Connection Manager, please contact other team
+Clients can be configured via CIS2 Connection Manager, please contact other organisation
 members to get the details for that. Mavis can use either a client secret or a
 private key JWT when authenticating requests to CIS2, these are configured with
 the Connection Manager too.
@@ -302,10 +302,10 @@ keys should be rotated on a regular basis.
 
 ## Rake tasks
 
-- `clinics:create[name,address,town,postcode,ods_code,team_ods_code]`
-- `schools:add_to_team[ods_code,urn,...]`
-- `teams:create_hpv[email,name,phone,ods_code,privacy_policy_url,reply_to_id]`
-- `users:create[email,password,given_name,family_name,team_ods_code]`
+- `clinics:create[name,address,town,postcode,ods_code,organisation_ods_code]`
+- `schools:add_to_organisation[ods_code,urn,...]`
+- `organisations:create_hpv[email,name,phone,ods_code,privacy_policy_url,reply_to_id]`
+- `users:create[email,password,given_name,family_name,organisation_ods_code]`
 - `vaccines:seed[type]`
 
 See the [Rake tasks documentation](docs/rake-tasks.md) for more information.

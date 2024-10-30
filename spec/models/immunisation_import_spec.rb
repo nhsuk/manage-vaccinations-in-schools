@@ -37,7 +37,7 @@
 
 describe ImmunisationImport do
   subject(:immunisation_import) do
-    create(:immunisation_import, team:, programme:, csv:, uploaded_by:)
+    create(:immunisation_import, organisation:, programme:, csv:, uploaded_by:)
   end
 
   before do
@@ -47,9 +47,9 @@ describe ImmunisationImport do
   end
 
   let(:programme) { create(:programme, :flu_all_vaccines) }
-  let(:team) do
+  let(:organisation) do
     create(
-      :team,
+      :organisation,
       :with_generic_clinic,
       ods_code: "R1L",
       programmes: [programme]
@@ -58,7 +58,7 @@ describe ImmunisationImport do
 
   let(:file) { "valid_flu.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/immunisation_import/#{file}") }
-  let(:uploaded_by) { create(:user, teams: [team]) }
+  let(:uploaded_by) { create(:user, organisations: [organisation]) }
 
   it_behaves_like "a CSVImportable model"
 
@@ -169,7 +169,7 @@ describe ImmunisationImport do
           :immunisation_import,
           programme:,
           csv:,
-          team:,
+          organisation:,
           uploaded_by:
         ).record!
         csv.rewind
@@ -238,7 +238,7 @@ describe ImmunisationImport do
           :immunisation_import,
           programme:,
           csv:,
-          team:,
+          organisation:,
           uploaded_by:
         ).record!
         csv.rewind
@@ -348,7 +348,7 @@ describe ImmunisationImport do
       let(:programme) { create(:programme, :flu_all_vaccines) }
       let(:file) { "valid_flu.csv" }
 
-      let(:session) { create(:session, :scheduled, team:, programme:) }
+      let(:session) { create(:session, :scheduled, organisation:, programme:) }
       let(:patient) { create(:patient, nhs_number: "7420180008", session:) }
 
       it "removes the patient from the upcoming session" do

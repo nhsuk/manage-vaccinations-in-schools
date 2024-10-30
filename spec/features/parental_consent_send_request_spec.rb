@@ -21,15 +21,16 @@ describe "Parental consent" do
 
   def given_a_patient_without_consent_exists
     programme = create(:programme, :hpv)
-    @team = create(:team, :with_one_nurse, programmes: [programme])
-    @user = @team.users.first
+    @organisation =
+      create(:organisation, :with_one_nurse, programmes: [programme])
+    @user = @organisation.users.first
 
-    location = create(:location, :generic_clinic, team: @team)
+    location = create(:location, :generic_clinic, organisation: @organisation)
 
     @session =
       create(
         :session,
-        team: @team,
+        organisation: @organisation,
         programme:,
         location:,
         date: Date.current + 2.days

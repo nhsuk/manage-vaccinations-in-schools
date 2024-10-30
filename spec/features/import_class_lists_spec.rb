@@ -42,11 +42,23 @@ describe "Import class lists" do
   end
 
   def given_an_hpv_programme_is_underway
-    @team = create(:team, :with_one_nurse)
-    location = create(:location, :secondary, name: "Waterloo Road", team: @team)
-    @user = @team.users.first
-    programme = create(:programme, :hpv, teams: [@team])
-    create(:session, :unscheduled, team: @team, location:, programme:)
+    @organisation = create(:organisation, :with_one_nurse)
+    location =
+      create(
+        :location,
+        :secondary,
+        name: "Waterloo Road",
+        organisation: @organisation
+      )
+    @user = @organisation.users.first
+    programme = create(:programme, :hpv, organisations: [@organisation])
+    create(
+      :session,
+      :unscheduled,
+      organisation: @organisation,
+      location:,
+      programme:
+    )
   end
 
   def when_i_visit_a_session_page_for_the_hpv_programme

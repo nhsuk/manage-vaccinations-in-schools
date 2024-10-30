@@ -14,16 +14,17 @@ describe "HPV vaccination" do
 
   def given_i_am_signed_in_as_an_admin
     programme = create(:programme, :hpv_all_vaccines)
-    team = create(:team, :with_one_admin, programmes: [programme])
+    organisation =
+      create(:organisation, :with_one_admin, programmes: [programme])
     location = create(:location, :school)
-    @session = create(:session, team:, programme:, location:)
+    @session = create(:session, organisation:, programme:, location:)
     @patient =
       create(:patient, :consent_given_triage_not_needed, session: @session)
 
-    sign_in team.users.first, role: :admin_staff
+    sign_in organisation.users.first, role: :admin_staff
     visit "/"
     expect(page).to have_content(
-      "#{team.users.first.full_name} (Administrator)"
+      "#{organisation.users.first.full_name} (Administrator)"
     )
   end
 

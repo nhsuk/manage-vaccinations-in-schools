@@ -8,7 +8,7 @@
 
 <h1 class="nhsuk-heading-l"><%= @programme.name %></h1>
 
-<%= render AppProgrammeNavigationComponent.new(@programme, team: current_user.selected_team, active: :overview) %>
+<%= render AppProgrammeNavigationComponent.new(@programme, organisation: current_user.selected_organisation, active: :overview) %>
 
 <div class="nhsuk-grid-row nhsuk-card-group">
   <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">

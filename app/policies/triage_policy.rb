@@ -11,7 +11,7 @@ class TriagePolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      scope.where(team: user.selected_team)
+      scope.where(organisation: user.selected_organisation)
     end
   end
 end

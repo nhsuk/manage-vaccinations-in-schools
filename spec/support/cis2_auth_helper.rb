@@ -94,7 +94,7 @@ module CIS2AuthHelper
 
   # Define a sign_in that is compatible with Devise's sign_in.
   def sign_in(user, role: :nurse, org_code: nil)
-    org_code ||= user.teams.first.ods_code
+    org_code ||= user.organisations.first.ods_code
     cis2_sign_in(user, role:, org_code:)
   end
 

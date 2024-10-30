@@ -25,12 +25,12 @@ FactoryBot.define do
   factory :patient_session do
     transient do
       programme { association :programme }
-      team { session.team }
-      user { association :user, teams: [team] }
+      organisation { session.organisation }
+      user { association :user, organisations: [organisation] }
     end
 
     session { association :session, programme: }
-    patient { association :patient, team:, school: session.location }
+    patient { association :patient, organisation:, school: session.location }
 
     trait :added_to_session
 
@@ -40,7 +40,7 @@ FactoryBot.define do
                     :consent_given_triage_not_needed,
                     performed_by: user,
                     programme:,
-                    team:,
+                    organisation:,
                     school: session.location
       end
     end
@@ -51,7 +51,7 @@ FactoryBot.define do
                     :consent_given_triage_needed,
                     performed_by: user,
                     programme:,
-                    team:,
+                    organisation:,
                     school: session.location
       end
     end
@@ -62,7 +62,7 @@ FactoryBot.define do
                     :consent_refused,
                     performed_by: user,
                     programme:,
-                    team:,
+                    organisation:,
                     school: session.location
       end
     end
@@ -73,7 +73,7 @@ FactoryBot.define do
                     :consent_refused_with_notes,
                     performed_by: user,
                     programme:,
-                    team:,
+                    organisation:,
                     school: session.location
       end
     end
@@ -84,7 +84,7 @@ FactoryBot.define do
                     :consent_conflicting,
                     performed_by: user,
                     programme:,
-                    team:,
+                    organisation:,
                     school: session.location
       end
     end
@@ -96,7 +96,7 @@ FactoryBot.define do
                     :triage_ready_to_vaccinate,
                     performed_by: user,
                     programme:,
-                    team:,
+                    organisation:,
                     school: session.location
       end
     end
@@ -108,7 +108,7 @@ FactoryBot.define do
                     :triage_do_not_vaccinate,
                     performed_by: user,
                     programme:,
-                    team:,
+                    organisation:,
                     school: session.location
       end
     end
@@ -120,7 +120,7 @@ FactoryBot.define do
                     :triage_needs_follow_up,
                     performed_by: user,
                     programme:,
-                    team:,
+                    organisation:,
                     school: session.location
       end
     end
@@ -132,7 +132,7 @@ FactoryBot.define do
                     :triage_delay_vaccination,
                     performed_by: user,
                     programme:,
-                    team:,
+                    organisation:,
                     school: session.location
       end
 
@@ -154,7 +154,7 @@ FactoryBot.define do
                     :consent_given_triage_not_needed,
                     performed_by: user,
                     programme:,
-                    team:,
+                    organisation:,
                     school: session.location
       end
     end
@@ -166,7 +166,7 @@ FactoryBot.define do
                     :triage_ready_to_vaccinate,
                     performed_by: user,
                     programme:,
-                    team:,
+                    organisation:,
                     school: session.location
       end
 
@@ -189,7 +189,7 @@ FactoryBot.define do
                     :triage_ready_to_vaccinate,
                     performed_by: user,
                     programme:,
-                    team:,
+                    organisation:,
                     school: session.location
       end
 
@@ -214,7 +214,7 @@ FactoryBot.define do
                     :triage_ready_to_vaccinate,
                     performed_by: user,
                     programme:,
-                    team:,
+                    organisation:,
                     school: session.location
       end
 

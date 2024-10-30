@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 describe CohortImportRow do
-  subject(:cohort_import_row) { described_class.new(data:, team:, programme:) }
+  subject(:cohort_import_row) do
+    described_class.new(data:, organisation:, programme:)
+  end
 
   let(:programme) { create(:programme) }
-  let(:team) { create(:team, programmes: [programme]) }
+  let(:organisation) { create(:organisation, programmes: [programme]) }
 
   let(:school_urn) { "123456" }
 
@@ -166,13 +168,13 @@ describe CohortImportRow do
       context "with a date of birth before September" do
         let(:date_of_birth) { "2000-08-31" }
 
-        it { should have_attributes(team:, birth_academic_year: 1999) }
+        it { should have_attributes(organisation:, birth_academic_year: 1999) }
       end
 
       context "with a date of birth after September" do
         let(:date_of_birth) { "2000-09-01" }
 
-        it { should have_attributes(team:, birth_academic_year: 2000) }
+        it { should have_attributes(organisation:, birth_academic_year: 2000) }
       end
     end
 

@@ -76,15 +76,15 @@ describe SchoolConsentRequestsJob do
     end
 
     context "when location is a generic clinic" do
-      let(:team) { create(:team, programmes: [programme]) }
-      let(:location) { create(:location, :generic_clinic, team:) }
+      let(:organisation) { create(:organisation, programmes: [programme]) }
+      let(:location) { create(:location, :generic_clinic, organisation:) }
       let(:session) do
         create(
           :session,
           patients:,
           programme:,
           send_consent_requests_at: Date.current,
-          team:
+          organisation:
         )
       end
 

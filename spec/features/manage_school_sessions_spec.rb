@@ -4,7 +4,7 @@ describe "Manage school sessions" do
   around { |example| travel_to(Time.zone.local(2024, 2, 18)) { example.run } }
 
   scenario "Adding a new session, closing consent, and closing the session" do
-    given_my_team_is_running_an_hpv_vaccination_programme
+    given_my_organisation_is_running_an_hpv_vaccination_programme
 
     when_i_go_to_todays_sessions_as_a_nurse
     then_i_see_no_sessions
@@ -69,35 +69,35 @@ describe "Manage school sessions" do
     and_i_go_back_to_sessions
 
     when_i_go_to_unscheduled_sessions
-    then_i_see_the_team_clinic
+    then_i_see_the_organisation_clinic
 
-    when_i_click_on_the_team_clinic
+    when_i_click_on_the_organisation_clinic
     then_i_see_a_child_in_the_cohort
   end
 
-  def given_my_team_is_running_an_hpv_vaccination_programme
+  def given_my_organisation_is_running_an_hpv_vaccination_programme
     @programme = create(:programme, :hpv)
-    @team =
+    @organisation =
       create(
-        :team,
+        :organisation,
         :with_one_nurse,
         :with_generic_clinic,
         programmes: [@programme]
       )
-    @location = create(:location, :secondary, team: @team)
+    @location = create(:location, :secondary, organisation: @organisation)
     session =
       create(
         :session,
         :unscheduled,
         location: @location,
-        team: @team,
+        organisation: @organisation,
         programme: @programme
       )
     @patient = create(:patient, year_group: 8, session:)
   end
 
   def when_i_go_to_todays_sessions_as_a_nurse
-    sign_in @team.users.first
+    sign_in @organisation.users.first
     visit "/dashboard"
     click_link "Sessions", match: :first
   end
@@ -272,13 +272,14 @@ describe "Manage school sessions" do
     click_on "Sessions", match: :first
   end
 
-  def then_i_see_the_team_clinic
+  def then_i_see_the_organisation_clinic
     expect(page).to have_content("Community clinics")
   end
 
-  alias_method :and_i_see_the_team_clinic, :then_i_see_the_team_clinic
+  alias_method :and_i_see_the_organisation_clinic,
+               :then_i_see_the_organisation_clinic
 
-  def when_i_click_on_the_team_clinic
+  def when_i_click_on_the_organisation_clinic
     click_on "Community clinics"
   end
 

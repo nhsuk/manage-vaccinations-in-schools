@@ -34,12 +34,14 @@
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 describe ClassImport do
-  subject(:class_import) { create(:class_import, csv:, session:, team:) }
+  subject(:class_import) do
+    create(:class_import, csv:, session:, organisation:)
+  end
 
   let(:programme) { create(:programme) }
-  let(:team) { create(:team, programmes: [programme]) }
-  let(:location) { create(:location, :school, team:) }
-  let(:session) { create(:session, location:, programme:, team:) }
+  let(:organisation) { create(:organisation, programmes: [programme]) }
+  let(:location) { create(:location, :school, organisation:) }
+  let(:session) { create(:session, location:, programme:, organisation:) }
 
   let(:file) { "valid.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/class_import/#{file}") }
@@ -157,7 +159,7 @@ describe ClassImport do
         .to change(class_import, :recorded_at).from(nil)
         .and change(class_import.patients, :count).by(4)
         .and change(class_import.parents, :count).by(5)
-        .and change(team.cohorts, :count).by(1)
+        .and change(organisation.cohorts, :count).by(1)
 
       cohort = Cohort.first
       expect(cohort.birth_academic_year).to eq(2009)
@@ -259,7 +261,7 @@ describe ClassImport do
     end
 
     it "ignores and counts duplicate records" do
-      create(:class_import, csv:, team:, session:).record!
+      create(:class_import, csv:, organisation:, session:).record!
       csv.rewind
 
       record!
@@ -347,11 +349,15 @@ describe ClassImport do
       end
 
       it "stages changes to the child's cohort" do
-        expect(patient.cohort.team).to eq(different_session.team)
+        expect(patient.cohort.organisation).to eq(
+          different_session.organisation
+        )
         expect { record! }.to(
           change { patient.reload.with_pending_changes.cohort }
         )
-        expect(patient.with_pending_changes.cohort.team).to eq(session.team)
+        expect(patient.with_pending_changes.cohort.organisation).to eq(
+          session.organisation
+        )
       end
     end
 
@@ -361,7 +367,7 @@ describe ClassImport do
 
     context "with an unscheduled session" do
       let(:session) do
-        create(:session, :unscheduled, team:, programme:, location:)
+        create(:session, :unscheduled, organisation:, programme:, location:)
       end
 
       it "adds the patients to the session" do
@@ -371,7 +377,7 @@ describe ClassImport do
 
     context "with a scheduled session" do
       let(:session) do
-        create(:session, :scheduled, team:, programme:, location:)
+        create(:session, :scheduled, organisation:, programme:, location:)
       end
 
       it "adds the patients to the session" do
@@ -380,7 +386,9 @@ describe ClassImport do
     end
 
     context "with a closed session" do
-      let(:session) { create(:session, :closed, team:, programme:, location:) }
+      let(:session) do
+        create(:session, :closed, organisation:, programme:, location:)
+      end
 
       it "doesn't add the patients to the session" do
         expect { record! }.not_to change(PatientSession, :count)
@@ -391,8 +399,9 @@ describe ClassImport do
       let!(:existing_patient) { create(:patient, session:) }
 
       it "proposes moving the existing patient to the generic clinic" do
-        location = create(:location, :generic_clinic, team:)
-        generic_clinic_session = create(:session, location:, team:, programme:)
+        location = create(:location, :generic_clinic, organisation:)
+        generic_clinic_session =
+          create(:session, location:, organisation:, programme:)
 
         expect(session.patients).to include(existing_patient)
         expect(generic_clinic_session.patients).to be_empty
@@ -412,7 +421,7 @@ describe ClassImport do
       end
 
       it "doesn't propose a move if patient already has a proposed move" do
-        existing_session = create(:session, team:, programme:)
+        existing_session = create(:session, organisation:, programme:)
 
         existing_patient_session =
           PatientSession.find_by!(patient: existing_patient, session:)

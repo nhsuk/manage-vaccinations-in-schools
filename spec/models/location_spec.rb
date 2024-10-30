@@ -61,13 +61,18 @@ describe Location do
     end
 
     context "with a generic clinic" do
-      subject(:location) { build(:location, :generic_clinic, team:) }
+      subject(:location) { build(:location, :generic_clinic, organisation:) }
 
-      let(:team) { create(:team) }
+      let(:organisation) { create(:organisation) }
 
       it { should validate_presence_of(:ods_code) }
       it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
-      it { should validate_comparison_of(:ods_code).is_equal_to(team.ods_code) }
+
+      it do
+        expect(location).to validate_comparison_of(:ods_code).is_equal_to(
+          organisation.ods_code
+        )
+      end
 
       it { should_not validate_presence_of(:urn) }
       it { should validate_uniqueness_of(:urn) }
@@ -98,7 +103,9 @@ describe Location do
     end
 
     context "with a generic clinic" do
-      let(:location) { build(:location, :generic_clinic, team: create(:team)) }
+      let(:location) do
+        build(:location, :generic_clinic, organisation: create(:organisation))
+      end
 
       it { should be(true) }
     end

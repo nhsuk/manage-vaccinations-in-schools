@@ -36,7 +36,7 @@
 #
 FactoryBot.define do
   factory :immunisation_import do
-    team
+    organisation
     programme
     uploaded_by
 

@@ -35,7 +35,7 @@ class Triage < ApplicationRecord
 
   belongs_to :patient
   belongs_to :programme
-  belongs_to :team
+  belongs_to :organisation
 
   belongs_to :performed_by,
              class_name: "User",
@@ -58,7 +58,7 @@ class Triage < ApplicationRecord
     return unless delay_vaccination?
 
     patient.patient_sessions.find_or_create_by!(
-      session: team.generic_clinic_session
+      session: organisation.generic_clinic_session
     )
   end
 end

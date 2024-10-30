@@ -14,9 +14,9 @@ class AppActivityLogComponentPreview < ViewComponent::Preview
   attr_reader :patient_session, :programme, :session, :patient, :consents
 
   def setup
-    @team = Team.first
-    @programme = @team.programmes.first
-    @user = @team.users.first
+    @organisation = Organisation.first
+    @programme = @organisation.programmes.first
+    @user = @organisation.users.first
     @session = @programme.sessions.first
     @location = @session.location
     @patient = create(:patient, location: @location)

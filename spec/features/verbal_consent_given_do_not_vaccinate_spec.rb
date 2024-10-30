@@ -15,11 +15,12 @@ describe "Verbal consent" do
 
   def given_i_am_signed_in
     programme = create(:programme, :hpv)
-    team = create(:team, :with_one_nurse, programmes: [programme])
-    @session = create(:session, team:, programme:)
+    organisation =
+      create(:organisation, :with_one_nurse, programmes: [programme])
+    @session = create(:session, organisation:, programme:)
     @patient = create(:patient, session: @session)
 
-    sign_in team.users.first
+    sign_in organisation.users.first
   end
 
   def when_i_record_that_verbal_consent_was_given_but_that_its_not_safe_to_vaccinate

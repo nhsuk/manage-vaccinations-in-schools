@@ -36,7 +36,7 @@
 FactoryBot.define do
   factory :class_import do
     session
-    team { session.team }
+    organisation { session.organisation }
     uploaded_by
 
     csv_data { "my,csv\n" }

@@ -32,7 +32,7 @@ endif::[]
 
 This is the prototype a service to manage vaccinations in schools and during
 catch-up clinics. This service will provide e-consent, programme management and
-point-of-care services for SAIS teams and parents. The goal is for this service
+point-of-care services for SAIS organisations and parents. The goal is for this service
 to integrate with the national vaccination record to record vaccinations.
 However, integration with the national vaccination record will not be part of
 this phase.
@@ -76,9 +76,9 @@ non-functional requirements which have been, where possible, de-emphasised.
 
 .User authentication
 * Users are authenticated with the NHS Care Identity Service (CIS2)
-* Users are part of a SAIS team and have restricted access to only those
-  programme and session data owned by their team
-* User SAIS team information is retrieved from NHS CIS2
+* Users are part of a SAIS organisation and have restricted access to only those
+  programme and session data owned by their organisation
+* User SAIS organisation information is retrieved from NHS CIS2
 * Access to functionality will be tied to user's roles as defined in the
     national RBAC, fox example only nurses are authorised to record a
     vaccination
@@ -117,8 +117,8 @@ include::diagrams/context-view.puml[]
 ----
 endif::[]
 
-SAIS Team::
-Team responsible for performing vaccinations on school-aged children.
+SAIS Organisation::
+Organisation responsible for performing vaccinations on school-aged children.
 
 Parents::
 Parents are notified of the planned vaccination programme and invited to give

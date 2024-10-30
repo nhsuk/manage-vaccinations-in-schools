@@ -21,7 +21,7 @@
 #
 FactoryBot.define do
   factory :cohort do
-    team
+    organisation
     birth_academic_year { Time.zone.today.year - 10 }
   end
 end

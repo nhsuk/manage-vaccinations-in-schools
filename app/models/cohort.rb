@@ -20,7 +20,7 @@
 #  fk_rails_...  (organisation_id => organisations.id)
 #
 class Cohort < ApplicationRecord
-  belongs_to :team
+  belongs_to :organisation
 
   has_many :patients
 

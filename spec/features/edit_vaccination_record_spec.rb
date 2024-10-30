@@ -26,15 +26,25 @@ describe "Edit vaccination record" do
   end
 
   def given_i_am_signed_in
-    @team = create(:team, :with_one_nurse, ods_code: "R1L")
-    sign_in @team.users.first
+    @organisation = create(:organisation, :with_one_nurse, ods_code: "R1L")
+    sign_in @organisation.users.first
   end
 
   def and_an_hpv_programme_is_underway
     @programme = create(:programme, :hpv)
-    create(:team_programme, team: @team, programme: @programme)
+    create(
+      :organisation_programme,
+      organisation: @organisation,
+      programme: @programme
+    )
     location = create(:location, :school)
-    @session = create(:session, team: @team, programme: @programme, location:)
+    @session =
+      create(
+        :session,
+        organisation: @organisation,
+        programme: @programme,
+        location:
+      )
   end
 
   def and_a_vaccination_record_exists

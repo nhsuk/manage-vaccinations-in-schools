@@ -91,7 +91,7 @@ FactoryBot.define do
     parental_responsibility { "yes" }
 
     programme { session.programmes.first }
-    team { session.team }
+    organisation { session.organisation }
     location { session.location }
 
     health_answers do

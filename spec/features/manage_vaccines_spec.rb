@@ -5,7 +5,7 @@ describe "Manage vaccines" do
   after { Flipper.disable(:release_1b) }
 
   scenario "Viewing a vaccine" do
-    given_my_team_is_running_an_hpv_vaccination_programme
+    given_my_organisation_is_running_an_hpv_vaccination_programme
 
     when_i_manage_vaccines
     then_i_see_an_hpv_vaccine_listed
@@ -16,13 +16,14 @@ describe "Manage vaccines" do
     then_i_see_the_vaccine_list
   end
 
-  def given_my_team_is_running_an_hpv_vaccination_programme
+  def given_my_organisation_is_running_an_hpv_vaccination_programme
     programme = create(:programme, :hpv)
-    @team = create(:team, :with_one_nurse, programmes: [programme])
+    @organisation =
+      create(:organisation, :with_one_nurse, programmes: [programme])
   end
 
   def when_i_manage_vaccines
-    sign_in @team.users.first
+    sign_in @organisation.users.first
 
     visit "/dashboard"
     click_on "Vaccines", match: :first

@@ -21,7 +21,8 @@ describe "Parental consent" do
 
   def given_an_hpv_programme_is_underway
     @programme = create(:programme, :hpv)
-    @team = create(:team, :with_one_nurse, programmes: [@programme])
+    @organisation =
+      create(:organisation, :with_one_nurse, programmes: [@programme])
     location = create(:location, :school, name: "Pilot School")
     @session = create(:session, :scheduled, programme: @programme, location:)
     @child = create(:patient, session: @session)

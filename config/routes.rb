@@ -66,7 +66,9 @@ Rails.application.routes.draw do
   end
 
   constraints -> { Flipper.enabled?(:dev_tools) } do
-    get "/reset/:team_ods_code", to: "dev#reset_team", as: :reset_team
+    get "/reset/:organisation_ods_code",
+        to: "dev#reset_organisation",
+        as: :reset_organisation
   end
 
   get "/csrf", to: "csrf#new"
@@ -287,7 +289,7 @@ Rails.application.routes.draw do
     get "/:tab", to: "errors#not_found", as: "section_tab"
   end
 
-  resource :team, only: %i[show]
+  resource :organisation, only: %i[show]
 
   resources :vaccines, only: %i[index show] do
     resources :batches, only: %i[create edit new update] do
@@ -301,7 +303,7 @@ Rails.application.routes.draw do
   end
 
   namespace :users do
-    get "team-not-found", controller: :errors
+    get "organisation-not-found", controller: :errors
     get "role-not-found", controller: :errors
   end
 

@@ -25,9 +25,10 @@ class GovukNotifyPersonalisation
     @session =
       session || consent_form&.actual_upcoming_session ||
         consent_form&.original_session || patient_session&.session
-    @team =
-      session&.team || patient_session&.team || consent_form&.team ||
-        consent&.team || vaccination_record&.team
+    @organisation =
+      session&.organisation || patient_session&.organisation ||
+        consent_form&.organisation || consent&.organisation ||
+        vaccination_record&.organisation
     @vaccination_record = vaccination_record
   end
 
@@ -53,9 +54,9 @@ class GovukNotifyPersonalisation
       show_additional_instructions:,
       subsequent_session_dates_offered_message:,
       survey_deadline_date:,
-      team_email:,
-      team_name:,
-      team_phone:,
+      organisation_email:,
+      organisation_name:,
+      organisation_phone:,
       today_or_date_of_vaccination:,
       vaccination:
     }.compact
@@ -75,7 +76,7 @@ class GovukNotifyPersonalisation
               :patient,
               :programme,
               :session,
-              :team,
+              :organisation,
               :vaccination_record
 
   def batch_name
@@ -213,16 +214,16 @@ class GovukNotifyPersonalisation
     (recorded_at + 7.days).to_date.to_fs(:long)
   end
 
-  def team_email
-    team.email
+  def organisation_email
+    organisation.email
   end
 
-  def team_name
-    team.name
+  def organisation_name
+    organisation.name
   end
 
-  def team_phone
-    team.phone
+  def organisation_phone
+    organisation.phone
   end
 
   def today_or_date_of_vaccination
