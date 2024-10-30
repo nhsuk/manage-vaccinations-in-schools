@@ -1,5 +1,33 @@
 <%= h1 t(".title"), size: "xl" %>
 
-<%= render AppPatientTableComponent.new(@patients, count: @pagy.count) %>
+<%= form_with url: patients_path,
+              method: :get,
+              class: "app-search",
+              role: "search" do |f| %>
+  <div class="nhsuk-form-group app-search__form-group">
+    <%= f.label :q, "Search children by name", class: "nhsuk-label" %>
+    <%= f.search_field :q, value: @q, class: "nhsuk-input app-search__input" %>
+  </div>
+
+  <%= f.submit "Search", class: "nhsuk-button app-search__button" %>
+
+<% if @q.present? %>
+    <%= govuk_button_link_to "Clear search", patients_path,
+                             class: "app-search__button nhsuk-button--secondary" %>
+  <% end %>
+<% end %>
+
+<% if @patients.count.zero? %>
+  <div class="app-patients">
+    <p class="app-patients__no-results nhsuk-caption-m">No children</p>
+  </div>
+<% else %>
+  <% heading = @q.present? ?
+       "#{I18n.t("children", count: @pagy.count)} matching \"#{@q}\"" :
+       nil %>
+  <%= render AppPatientTableComponent.new(@patients,
+                                          count: @pagy.count,
+                                          heading:) %>
+<% end %>
 
 <%= govuk_pagination(pagy: @pagy) %>

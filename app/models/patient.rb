@@ -114,6 +114,25 @@ class Patient < ApplicationRecord
 
   scope :with_pending_changes, -> { where.not(pending_changes: {}) }
 
+  scope :search_by_name,
+        ->(query) do
+          # Trigram matching requires at least 3 characters
+          if query.length < 3
+            where(
+              "given_name ILIKE :like_query OR family_name ILIKE :like_query",
+              like_query: "#{query}%"
+            )
+          else
+            where(
+              "given_name % :query OR " \
+                "family_name % :query OR " \
+                "similarity(given_name, :query) > 0.3 OR " \
+                "similarity(family_name, :query) > 0.3",
+              query:
+            )
+          end
+        end
+
   validates :given_name, :family_name, :date_of_birth, presence: true
 
   validates :nhs_number,

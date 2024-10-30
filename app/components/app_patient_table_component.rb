@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 class AppPatientTableComponent < ViewComponent::Base
-  def initialize(patients, count:)
+  def initialize(patients, count:, heading: nil)
     super
 
     @patients = patients
     @count = count
+    @heading = heading
   end
 
   private
@@ -13,6 +14,6 @@ class AppPatientTableComponent < ViewComponent::Base
   attr_reader :patients
 
   def heading
-    I18n.t("children", count: @count)
+    @heading.presence || I18n.t("children", count: @count)
   end
 end
