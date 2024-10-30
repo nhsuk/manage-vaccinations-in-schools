@@ -10,8 +10,7 @@ class SchoolSessionRemindersJob < ApplicationJob
       PatientSession
         .includes(
           :consents,
-          :latest_gillick_assessment,
-          :latest_vaccination_record,
+          :gillick_assessments,
           :triages,
           :vaccination_records,
           patient: :parents

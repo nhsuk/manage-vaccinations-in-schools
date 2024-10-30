@@ -39,9 +39,6 @@ class PatientSession < ApplicationRecord
   has_many :draft_gillick_assessments,
            -> { draft },
            class_name: "GillickAssessment"
-  has_one :latest_gillick_assessment,
-          -> { recorded.order(created_at: :desc) },
-          class_name: "GillickAssessment"
 
   has_many :vaccination_records,
            -> { recorded },
@@ -49,9 +46,6 @@ class PatientSession < ApplicationRecord
   has_many :draft_vaccination_records,
            -> { draft },
            class_name: "VaccinationRecord"
-  has_one :latest_vaccination_record,
-          -> { recorded.order(created_at: :desc) },
-          class_name: "VaccinationRecord"
 
   has_many :consents,
            -> { recorded.where(programme: _1.programmes).includes(:parent) },
@@ -92,10 +86,9 @@ class PatientSession < ApplicationRecord
         -> do
           preload(
             :consents,
+            :gillick_assessments,
             :triages,
-            :vaccination_records,
-            :latest_gillick_assessment,
-            :latest_vaccination_record
+            :vaccination_records
           )
         end
 
@@ -143,8 +136,16 @@ class PatientSession < ApplicationRecord
       .map { |_, consents| consents.max_by(&:recorded_at) }
   end
 
+  def latest_gillick_assessment
+    gillick_assessments.max_by(&:created_at)
+  end
+
   def latest_triage
     triages.max_by(&:updated_at)
+  end
+
+  def latest_vaccination_record
+    vaccination_records.max_by(&:created_at)
   end
 
   def consents_to_send_communication
