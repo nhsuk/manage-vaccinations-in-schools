@@ -1,0 +1,17 @@
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: "Home", href: programmes_path },
+                                          { text: t("patients.index.title"), href: patients_path },
+                                        ]) %>
+<% end %>
+
+<%= h1 page_title: @patient.initials do %>
+  <%= @patient.full_name %>
+<% end %>
+
+<%= render AppSecondaryNavigationComponent.new do |nav|
+      nav.with_item(href: patient_path(@patient), text: "Child record")
+      nav.with_item(href: log_patient_path(@patient), text: "Activity log", selected: true)
+    end %>
+
+<%= render AppActivityLogComponent.new(patient: @patient) %>

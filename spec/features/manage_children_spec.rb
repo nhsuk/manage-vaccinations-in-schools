@@ -11,6 +11,9 @@ describe "Manage children" do
 
     when_i_click_on_a_child
     then_i_see_the_child
+
+    when_i_click_on_activity_log
+    then_i_see_the_activity_log
   end
 
   scenario "Removing a child from a cohort" do
@@ -53,13 +56,15 @@ describe "Manage children" do
 
   def given_patients_exist
     school = create(:location, :school, organisation: @organisation)
-    create(
-      :patient,
-      organisation: @organisation,
-      given_name: "John",
-      family_name: "Smith",
-      school:
-    )
+    patient =
+      create(
+        :patient,
+        organisation: @organisation,
+        given_name: "John",
+        family_name: "Smith",
+        school:
+      )
+    create(:vaccination_record, patient:)
     create_list(:patient, 9, organisation: @organisation, school:)
 
     create(
@@ -104,6 +109,15 @@ describe "Manage children" do
   def then_i_see_the_child
     expect(page).to have_title("JS")
     expect(page).to have_content("John Smith")
+  end
+
+  def when_i_click_on_activity_log
+    click_on "Activity log"
+  end
+
+  def then_i_see_the_activity_log
+    expect(page).to have_content("Added to session")
+    expect(page).to have_content("Vaccinated")
   end
 
   def and_i_see_the_cohort
