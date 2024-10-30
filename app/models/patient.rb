@@ -65,10 +65,10 @@ class Patient < ApplicationRecord
 
   has_one :latest_triage, -> { order(created_at: :desc) }, class_name: "Triage"
 
-  has_many :sessions, through: :patient_sessions
-  has_many :vaccination_records, through: :patient_sessions
   has_many :parents, through: :parent_relationships
   has_many :programmes, through: :sessions
+  has_many :sessions, through: :patient_sessions
+  has_many :vaccination_records, through: :patient_sessions
 
   has_many :upcoming_sessions,
            -> { upcoming },

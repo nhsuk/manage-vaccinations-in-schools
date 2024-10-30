@@ -25,7 +25,7 @@ describe AppActivityLogComponent do
       created_at: Time.zone.parse("2024-05-29 12:00")
     )
   end
-  let(:component) { described_class.new(patient_session) }
+  let(:component) { described_class.new(patient_session:) }
   let(:user) do
     create(
       :user,
