@@ -1,0 +1,24 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: edit_session_path(@session),
+        name: "edit session",
+      ) %>
+<% end %>
+
+<% legend = "When should parents get an invitation?" %>
+<% content_for :page_title, legend %>
+
+<%= form_with model: @session, url: edit_send_invitations_at_session_path(@session), method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
+  <%= f.govuk_date_field :send_invitations_at,
+                         caption: { text: @session.location.name, size: "l" },
+                         legend: {
+                           tag: "h1",
+                           text: legend,
+                           size: "l",
+                         },
+                         hint: { text: "For example, 27 3 2017" } %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

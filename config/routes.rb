@@ -161,6 +161,13 @@ Rails.application.routes.draw do
           controller: "sessions/edit",
           action: "update_send_consent_requests_at"
 
+      get "edit/send-invitations-at",
+          controller: "sessions/edit",
+          action: "edit_send_invitations_at"
+      put "edit/send-invitations-at",
+          controller: "sessions/edit",
+          action: "update_send_invitations_at"
+
       get "edit/weeks-before-consent-reminders",
           controller: "sessions/edit",
           action: "edit_weeks_before_consent_reminders"

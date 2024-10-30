@@ -38,7 +38,7 @@
           summary_list.with_row do |row|
             row.with_key { "Consent requests" }
             row.with_value { "Send on #{send_consent_requests_at.to_fs(:long_day_of_week)}" }
-            if @session.can_change_consent_notification_dates?
+            if @session.can_change_notification_dates?
               row.with_action(text: "Change", href: edit_send_consent_requests_at_session_path(@session), visually_hidden_text: "consent requests")
             end
           end
@@ -53,7 +53,7 @@
                 tag.span("Next: #{send_consent_reminders_at.to_fs(:long_day_of_week)}", class: "nhsuk-u-secondary-text-color"),
               ], tag.br)
             end
-            if @session.can_change_consent_notification_dates?
+            if @session.can_change_notification_dates?
               row.with_action(text: "Change", href: edit_weeks_before_consent_reminders_session_path(@session), visually_hidden_text: "consent reminders")
             end
           end
@@ -63,6 +63,9 @@
           summary_list.with_row do |row|
             row.with_key { "Invitations" }
             row.with_value { "Send on #{send_invitations_at.to_fs(:long_day_of_week)}" }
+            if @session.can_change_notification_dates?
+              row.with_action(text: "Change", href: edit_send_invitations_at_session_path(@session), visually_hidden_text: "invitations")
+            end
           end
         end
       end %>
