@@ -83,4 +83,12 @@ class Team < ApplicationRecord
   def weeks_before_consent_requests=(value)
     self.days_before_consent_requests = value * 7
   end
+
+  def weeks_before_invitations
+    (days_before_invitations / 7).to_i
+  end
+
+  def weeks_before_invitations=(value)
+    self.days_before_invitations = value * 7
+  end
 end

@@ -32,5 +32,10 @@
           row.with_key { "Consent reminders" }
           row.with_value { "Send #{pluralize(@team.weeks_before_consent_reminders, "week")} before each session" }
         end
+      
+        summary_list.with_row do |row|
+          row.with_key { "Invitations" }
+          row.with_value { "Send #{pluralize(@team.weeks_before_invitations, "week")} before first session" }
+        end
       end %>
 <% end %>
