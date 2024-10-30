@@ -181,9 +181,7 @@ describe Session do
       [Date.new(2024, 1, 1), Date.new(2024, 1, 2), Date.new(2024, 1, 3)]
     end
 
-    let(:session) { create(:session, academic_year: 2023, date: nil) }
-
-    before { dates.each { |value| session.dates.create!(value:) } }
+    let(:session) { create(:session, academic_year: 2023, dates:) }
 
     context "on the first day" do
       let(:today) { dates.first }
@@ -228,7 +226,7 @@ describe Session do
     context "with two dates" do
       let(:date) { Date.new(2020, 1, 2) }
 
-      before { session.dates.create!(value: date + 1.day) }
+      before { session.session_dates.create!(value: date + 1.day) }
 
       it { should eq(Date.new(2020, 1, 2)) }
     end

@@ -46,8 +46,7 @@ describe SchoolConsentRemindersJob do
   let!(:session) do
     create(
       :session,
-      date: nil,
-      dates: dates.map { build(:session_date, value: _1) },
+      dates:,
       send_consent_requests_at: dates.first - 1.week,
       days_before_consent_reminders: 7,
       location:,

@@ -78,7 +78,7 @@ class SessionsController < ApplicationController
   end
 
   def make_in_progress
-    @session.dates.find_or_create_by!(value: Date.current)
+    @session.session_dates.find_or_create_by!(value: Date.current)
 
     redirect_to session_path, flash: { success: "Session is now in progress" }
   end
@@ -93,9 +93,9 @@ class SessionsController < ApplicationController
 
   def sessions_scope
     policy_scope(Session).includes(
-      :dates,
       :location,
       :programmes,
+      :session_dates,
       team: :programmes
     ).strict_loading
   end

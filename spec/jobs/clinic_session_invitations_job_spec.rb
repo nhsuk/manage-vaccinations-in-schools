@@ -39,7 +39,7 @@ describe ClinicSessionInvitationsJob do
       end
 
       context "with a second date a week later" do
-        before { session.dates.create!(value: date + 1.week) }
+        before { session.session_dates.create!(value: date + 1.week) }
 
         let(:today) { date + 1.day }
 

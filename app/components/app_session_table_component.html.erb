@@ -37,7 +37,7 @@
               <% if (dates = session.dates).present? %>
                 <ul class="nhsuk-list">
                   <% dates.each do |date| %>
-                    <li><%= date.value.to_fs(:long) %></li>
+                    <li><%= date.to_fs(:long) %></li>
                   <% end %>
                 </ul>
               <% else %>

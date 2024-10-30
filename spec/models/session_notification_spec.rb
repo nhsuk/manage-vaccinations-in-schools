@@ -46,7 +46,7 @@ describe SessionNotification do
     let(:team) { create(:team, programmes: [programme]) }
     let(:location) { create(:location, :school, team:) }
     let(:session) { create(:session, location:, programme:, team:) }
-    let(:session_date) { session.dates.first.value }
+    let(:session_date) { session.dates.min }
     let(:patient_session) { create(:patient_session, patient:, session:) }
     let(:consent) { create(:consent, :given, :recorded, patient:, programme:) }
     let(:current_user) { create(:user) }

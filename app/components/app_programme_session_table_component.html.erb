@@ -34,7 +34,7 @@
                 <% if session.unscheduled? %>
                   No sessions scheduled
                 <% elsif session.completed? || session.closed? %>
-                  Last session completed <%= session.dates.last&.value&.to_fs(:long) %>
+                  Last session completed <%= session.dates.max&.to_fs(:long) %>
                 <% else %>
                   <% if session.started? %>
                     Next session starts <%= session.today_or_future_dates.first.to_fs(:long) %>

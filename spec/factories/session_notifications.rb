@@ -30,7 +30,7 @@ FactoryBot.define do
     patient
     session
 
-    session_date { session.dates.map(&:value).min || Date.current }
+    session_date { session.dates.min || Date.current }
 
     traits_for_enum :type
   end

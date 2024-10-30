@@ -46,7 +46,7 @@ class VaccinationRecordsController < ApplicationController
           :performed_by_user,
           :programme,
           patient: [:cohort, :school, { parents: :parent_relationships }],
-          session: %i[dates],
+          session: %i[session_dates],
           vaccine: :programme
         )
         .where(programme:)

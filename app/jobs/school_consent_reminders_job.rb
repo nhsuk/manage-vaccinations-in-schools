@@ -11,7 +11,7 @@ class SchoolConsentRemindersJob < ApplicationJob
           :programmes,
           patients: %i[consents consent_notifications parents]
         )
-        .preload(:dates)
+        .preload(:session_dates)
         .eager_load(:location)
         .merge(Location.school)
         .strict_loading
@@ -48,8 +48,7 @@ class SchoolConsentRemindersJob < ApplicationJob
 
     return if date_index_to_send_reminder_for >= session.dates.length
 
-    date_to_send_reminder_for =
-      session.dates[date_index_to_send_reminder_for].value
+    date_to_send_reminder_for = session.dates[date_index_to_send_reminder_for]
     earliest_date_to_send_reminder =
       date_to_send_reminder_for - session.days_before_consent_reminders.days
 

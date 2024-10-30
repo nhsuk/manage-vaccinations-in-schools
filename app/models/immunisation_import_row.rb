@@ -133,7 +133,7 @@ class ImmunisationImportRow
             session.programmes << @programme
           end
 
-          session.dates.find_or_create_by!(value: session_date)
+          session.session_dates.find_or_create_by!(value: session_date)
         end
   end
 

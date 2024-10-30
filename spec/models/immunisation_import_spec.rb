@@ -253,9 +253,7 @@ describe ImmunisationImport do
         expect(immunisation_import.sessions.count).to eq(5)
 
         session = immunisation_import.sessions.first
-        expect(session.dates.map(&:value)).to contain_exactly(
-          Date.new(2024, 5, 14)
-        )
+        expect(session.dates).to contain_exactly(Date.new(2024, 5, 14))
       end
 
       it "records the vaccination records" do

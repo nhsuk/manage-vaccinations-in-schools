@@ -31,9 +31,9 @@ class Session < ApplicationRecord
   belongs_to :team
   belongs_to :location
 
-  has_many :dates, -> { order(:value) }, class_name: "SessionDate"
   has_many :notifications, class_name: "SessionNotification"
   has_many :patient_sessions
+  has_many :session_dates, -> { order(:value) }
 
   has_and_belongs_to_many :immunisation_imports
   has_and_belongs_to_many :programmes
@@ -41,7 +41,7 @@ class Session < ApplicationRecord
   has_many :patients, through: :patient_sessions
   has_many :vaccines, through: :programmes
 
-  accepts_nested_attributes_for :dates, allow_destroy: true
+  accepts_nested_attributes_for :session_dates, allow_destroy: true
 
   scope :has_date,
         ->(value) { where(SessionDate.for_session.where(value:).arel.exists) }
@@ -120,7 +120,7 @@ class Session < ApplicationRecord
   end
 
   def today?
-    dates.map(&:value).include?(Date.current)
+    dates.any?(&:today?)
   end
 
   def unscheduled?
@@ -129,12 +129,12 @@ class Session < ApplicationRecord
 
   def completed?
     return false if dates.empty?
-    Date.current > dates.map(&:value).max
+    Date.current > dates.max
   end
 
   def started?
     return false if dates.empty?
-    Date.current > dates.map(&:value).min
+    Date.current > dates.min
   end
 
   def closed?
@@ -149,12 +149,16 @@ class Session < ApplicationRecord
     programmes.flat_map(&:year_groups).uniq.sort
   end
 
+  def dates
+    session_dates.map(&:value).compact
+  end
+
   def today_or_future_dates
-    dates.select(&:today_or_future?).map(&:value)
+    dates.select { _1.today? || _1.future? }
   end
 
   def future_dates
-    dates.select(&:future?).map(&:value)
+    dates.select(&:future?)
   end
 
   def can_change_consent_notification_dates?
@@ -162,8 +166,8 @@ class Session < ApplicationRecord
   end
 
   def <=>(other)
-    [dates.first&.value, location.type, location.name] <=>
-      [other.dates.first&.value, other.location.type, other.location.name]
+    [dates.first, location.type, location.name] <=>
+      [other.dates.first, other.location.type, other.location.name]
   end
 
   def create_patient_sessions!
@@ -258,13 +262,13 @@ class Session < ApplicationRecord
   def send_consent_reminders_at
     return nil if dates.empty? || days_before_consent_reminders.nil?
 
-    reminder_dates = dates.map { _1.value - days_before_consent_reminders.days }
+    reminder_dates = dates.map { _1 - days_before_consent_reminders.days }
     reminder_dates.find(&:future?) || reminder_dates.last
   end
 
   def close_consent_at
     return nil if dates.empty?
-    dates.map(&:value).max - 1.day
+    dates.max - 1.day
   end
 
   def weeks_before_consent_reminders
@@ -308,7 +312,7 @@ class Session < ApplicationRecord
   end
 
   def earliest_date
-    dates.map(&:value).compact.min
+    dates.min
   end
 
   def maximum_weeks_before_consent_reminders

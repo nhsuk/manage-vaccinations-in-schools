@@ -4,7 +4,7 @@ class SessionDatesController < ApplicationController
   before_action :set_session
 
   def show
-    @session.dates.build if @session.dates.empty?
+    @session.session_dates.build if @session.session_dates.empty?
   end
 
   def update
@@ -19,13 +19,13 @@ class SessionDatesController < ApplicationController
     # the model has been saved due to how `accepts_nested_attributes_for`
     # works.
     if any_destroyed?
-      @session.dates.reload
+      @session.session_dates.reload
       @session.set_notification_dates
       @session.save!
     end
 
     if params.include?(:add_another)
-      @session.dates.build
+      @session.session_dates.build
       render :show
     else
       redirect_to(
@@ -45,14 +45,18 @@ class SessionDatesController < ApplicationController
   end
 
   def session_params
-    params.require(:session).permit(dates_attributes: %i[id value _destroy])
+    params.require(:session).permit(
+      session_dates_attributes: %i[id value _destroy]
+    )
   end
 
   def any_destroyed?
-    session_params[:dates_attributes].values.any? { _1[:_destroy].present? }
+    session_params[:session_dates_attributes].values.any? do
+      _1[:_destroy].present?
+    end
   end
 
-  def remove_invalid_dates(obj, key: "dates_attributes")
+  def remove_invalid_dates(obj, key: "session_dates_attributes")
     return obj if obj[key].blank?
 
     obj[key] = obj[key].transform_values do |value|
