@@ -17,9 +17,10 @@ This creates a new clinic location and attaches it to a organisation.
 
 ## Schools
 
-### `schools:add_to_organisation[ods_code,urn,...]`
+### `schools:add_to_organisation[ods_code,team_name,urn,...]`
 
 - `ods_code` - The ODS code of the organisation.
+- `team_name` - The name of the team in the organisation.
 - `urn` - The URN of the school to add, can be added multiple times.
 
 This adds a school or schools to the list of schools that a particular organisation manages.
