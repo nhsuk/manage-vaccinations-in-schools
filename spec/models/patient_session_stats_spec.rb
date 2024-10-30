@@ -22,7 +22,15 @@ describe PatientSessionStats do
 
     context "with patient sessions" do
       before do
-        create(:patient_session, :consent_refused, programme:, session:) # consent refused
+        patient =
+          create(
+            :patient_session,
+            :consent_refused,
+            programme:,
+            session:
+          ).patient # consent refused
+        create(:patient_session, :consent_refused, programme:, patient:) # duplicate is ignored
+
         create(:patient_session, :added_to_session, programme:, session:) # without a response
         create(
           :patient_session,
