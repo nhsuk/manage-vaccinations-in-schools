@@ -145,7 +145,7 @@ describe Session do
   end
 
   describe "#unscheduled?" do
-    subject(:unscheduled?) { session.unscheduled? }
+    subject(:unscheduled?) { session.reload.unscheduled? }
 
     let(:session) { create(:session, date: nil) }
 
@@ -182,7 +182,7 @@ describe Session do
 
     let(:session) { create(:session, academic_year: 2023, date: nil) }
 
-    before { dates.each { |value| create(:session_date, session:, value:) } }
+    before { dates.each { |value| session.dates.create!(value:) } }
 
     context "on the first day" do
       let(:today) { dates.first }
@@ -227,7 +227,7 @@ describe Session do
     context "with two dates" do
       let(:date) { Date.new(2020, 1, 2) }
 
-      before { create(:session_date, session:, value: date + 1.day) }
+      before { session.dates.create!(value: date + 1.day) }
 
       it { should eq(Date.new(2020, 1, 2)) }
     end

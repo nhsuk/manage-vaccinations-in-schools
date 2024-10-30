@@ -49,7 +49,7 @@ FactoryBot.define do
 
     after(:create) do |session, evaluator|
       next if (date = evaluator.date).nil?
-      create(:session_date, session:, value: date)
+      session.dates.create!(value: date)
     end
 
     trait :today do
