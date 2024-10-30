@@ -6,6 +6,10 @@
   display: flex;
   flex-wrap: wrap;
 
+  & &__no-results {
+    @include nhsuk-responsive-margin(5);
+  }
+
   & &__filters {
     @include nhsuk-responsive-padding(4);
 
