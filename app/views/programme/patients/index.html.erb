@@ -1,0 +1,24 @@
+<%= content_for :page_title, "#{@programme.name} – #{t("patients.index.title")}" %>
+
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(
+        items: [
+          { text: t("programmes.index.title"), href: programmes_path },
+          { text: @programme.name, href: programme_path(@programme) },
+        ],
+      ) %>
+<% end %>
+
+<h1 class="nhsuk-heading-l"><%= @programme.name %></h1>
+
+<%= render AppProgrammeNavigationComponent.new(@programme,
+                                               team: current_user.selected_team,
+                                               active: :patients) %>
+
+<%= govuk_button_link_to "Import child records",
+                         new_programme_cohort_import_path(@programme),
+                         class: "app-button--secondary" %>
+
+<%= render AppPatientTableComponent.new(@patients, count: @pagy.count) %>
+
+<%= govuk_pagination(pagy: @pagy) %>

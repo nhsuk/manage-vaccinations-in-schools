@@ -110,6 +110,8 @@ Rails.application.routes.draw do
 
     resources :cohorts, only: %i[index show]
 
+    resources :patients, only: %i[index], module: "programme"
+
     resources :immunisation_imports,
               path: "immunisation-imports",
               except: %i[index destroy]
