@@ -43,8 +43,8 @@ class ProgrammesController < ApplicationController
       percentage_of(stats[:with_consent_given], @consents.count)
     @responses_received_and_triaged_percentage =
       percentage_of(
-        patients.count - (stats[:without_a_response] + stats[:needing_triage]),
-        patients.count
+        @patients_count - (stats[:without_a_response] + stats[:needing_triage]),
+        @patients_count
       )
   end
 
