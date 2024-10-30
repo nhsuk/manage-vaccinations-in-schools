@@ -96,6 +96,13 @@ class Session < ApplicationRecord
             },
             unless: -> { earliest_date.nil? || location.generic_clinic? }
 
+  validates :send_invitations_at,
+            presence: true,
+            comparison: {
+              less_than: :earliest_date
+            },
+            if: -> { earliest_date.present? && location.generic_clinic? }
+
   validates :weeks_before_consent_reminders,
             presence: true,
             comparison: {
@@ -162,7 +169,7 @@ class Session < ApplicationRecord
     dates.select(&:future?)
   end
 
-  def can_change_consent_notification_dates?
+  def can_change_notification_dates?
     consent_notifications.empty? && session_notifications.empty?
   end
 
