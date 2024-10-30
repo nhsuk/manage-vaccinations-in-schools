@@ -24,6 +24,19 @@ This creates a new clinic location and attaches it to a organisation.
 
 This adds a school or schools to the list of schools that a particular organisation manages.
 
+## Teams
+
+### `teams:create[ods_code,name,email,phone]`
+
+- `ods_code` - The ODS code of the organisation.
+  `name` - The unique name of the team.
+- `email` - The email address of the team.
+- `phone` - The phone number of the team.
+
+If none of the arguments are provided (`rake teams:create`), the user will be prompted for responses.
+
+This creates a new team within an organisation.
+
 ## Organisations
 
 ### `organisations:create_hpv[email,name,phone,ods_code,privacy_policy_url,reply_to_id]`
