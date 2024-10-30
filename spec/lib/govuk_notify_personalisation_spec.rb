@@ -79,7 +79,7 @@ describe GovukNotifyPersonalisation do
   end
 
   context "with multiple dates" do
-    before { create(:session_date, session:, value: Date.new(2026, 1, 2)) }
+    before { session.dates.create!(value: Date.new(2026, 1, 2)) }
 
     it do
       expect(personalisation).to match(

@@ -93,25 +93,23 @@ class Session < ApplicationRecord
           )
         end
 
-  with_options if: :requires_consent_notification_dates?, on: :update do
-    validates :send_consent_requests_at,
-              presence: true,
-              comparison: {
-                less_than: :earliest_date
-              }
+  validates :send_consent_requests_at,
+            presence: true,
+            comparison: {
+              less_than: :earliest_date
+            },
+            unless: -> { earliest_date.nil? || location.generic_clinic? }
 
-    validates :weeks_before_consent_reminders,
-              presence: true,
-              comparison: {
-                greater_than_or_equal_to: 1
-              }
-
-    validates :send_consent_reminders_at,
-              comparison: {
-                greater_than: :send_consent_requests_at,
-                allow_nil: true
-              }
-  end
+  validates :weeks_before_consent_reminders,
+            presence: true,
+            comparison: {
+              greater_than_or_equal_to: 1,
+              less_than_or_equal_to: :maximum_weeks_before_consent_reminders
+            },
+            unless: -> do
+              maximum_weeks_before_consent_reminders.nil? ||
+                location.generic_clinic?
+            end
 
   validates :programmes, presence: true
   validate :programmes_part_of_team
@@ -238,14 +236,14 @@ class Session < ApplicationRecord
   end
 
   def set_consent_dates
-    if requires_consent_notification_dates?
+    if earliest_date && !location.generic_clinic?
       self.send_consent_requests_at =
         earliest_date - team.days_before_consent_requests.days
 
       self.days_before_consent_reminders = team.days_before_consent_reminders
     else
-      self.days_before_consent_reminders = nil
       self.send_consent_requests_at = nil
+      self.days_before_consent_reminders = nil
     end
   end
 
@@ -300,11 +298,13 @@ class Session < ApplicationRecord
     end
   end
 
-  def requires_consent_notification_dates?
-    dates.present? && dates.all?(&:valid?) && !location.generic_clinic?
+  def earliest_date
+    dates.map(&:value).compact.min
   end
 
-  def earliest_date
-    dates.map(&:value).min
+  def maximum_weeks_before_consent_reminders
+    return nil if earliest_date.nil? || send_consent_requests_at.nil?
+
+    (earliest_date - send_consent_requests_at).to_i / 7
   end
 end
