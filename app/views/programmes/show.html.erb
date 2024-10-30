@@ -28,7 +28,7 @@
   <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
     <%= render AppCardComponent.new(link_to: programme_vaccination_records_path(@programme), colour: "reversed", data: true) do |card| %>
       <% card.with_heading { "Vaccinations" } %>
-      <% card.with_description { @vaccination_records_count.to_s } %>
+      <% card.with_description { @vaccinations_count.to_s } %>
     <% end %>
   </div>
 
@@ -43,6 +43,13 @@
     <%= render AppCardComponent.new(data: true) do |card| %>
       <% card.with_heading { "Consent given (versus refused or no response)" } %>
       <% card.with_description { number_to_percentage(@consent_given_percentage, precision: 0) } %>
+    <% end %>
+  </div>
+
+  <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(data: true) do |card| %>
+      <% card.with_heading { "Responses received and triaged" } %>
+      <% card.with_description { number_to_percentage(@responses_received_and_triaged_percentage, precision: 0) } %>
     <% end %>
   </div>
 </div>
