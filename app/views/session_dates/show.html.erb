@@ -34,5 +34,8 @@
     <%= f.govuk_submit "Add another date", name: "add_another", class: "nhsuk-button app-add-another__add app-button--secondary" %>
   </div>
 
-  <%= f.govuk_submit "Continue" %>
+  <div class="app-button-group">
+    <%= f.govuk_submit "Continue" %>
+    <%= govuk_link_to "Cancel", edit_session_path(@session) %>
+  </div>
 <% end %>
