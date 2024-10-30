@@ -137,6 +137,11 @@ class Session < ApplicationRecord
     Date.current > dates.map(&:value).max
   end
 
+  def started?
+    return false if dates.empty?
+    Date.current > dates.map(&:value).min
+  end
+
   def closed?
     closed_at != nil
   end
