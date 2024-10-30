@@ -13,9 +13,10 @@ module ParentInterface
 
     def set_consent_form
       @consent_form = ConsentForm.find(params[:consent_form_id] || params[:id])
-      @session = @consent_form.original_session
-      @programme = @consent_form.programme
       @organisation = @consent_form.organisation
+      @programme = @consent_form.programme
+      @session = @consent_form.original_session
+      @team = @consent_form.team
     end
 
     def authenticate_consent_form_user!

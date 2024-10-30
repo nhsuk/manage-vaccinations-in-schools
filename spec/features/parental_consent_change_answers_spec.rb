@@ -75,7 +75,13 @@ RSpec.feature "Parental consent change answers" do
     programme = create(:programme, :flu)
     @organisation =
       create(:organisation, :with_one_nurse, programmes: [programme])
-    location = create(:location, :school, name: "Pilot School")
+    location =
+      create(
+        :location,
+        :school,
+        name: "Pilot School",
+        organisation: @organisation
+      )
     @session =
       create(
         :session,

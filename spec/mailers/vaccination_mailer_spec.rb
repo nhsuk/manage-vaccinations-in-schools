@@ -44,9 +44,9 @@ describe VaccinationMailer do
           :full_and_preferred_patient_name,
           :location_name,
           :parent_full_name,
-          :organisation_email,
-          :organisation_name,
-          :organisation_phone,
+          :team_email,
+          :team_name,
+          :team_phone,
           :today_or_date_of_vaccination
         )
       end
@@ -134,9 +134,9 @@ describe VaccinationMailer do
           :reason_did_not_vaccinate,
           :short_patient_name,
           :show_additional_instructions,
-          :organisation_email,
-          :organisation_name,
-          :organisation_phone
+          :team_email,
+          :team_name,
+          :team_phone
         )
       end
     end

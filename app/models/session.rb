@@ -39,6 +39,7 @@ class Session < ApplicationRecord
   has_and_belongs_to_many :immunisation_imports
   has_and_belongs_to_many :programmes
 
+  has_one :team, through: :location
   has_many :patients, through: :patient_sessions
   has_many :vaccines, through: :programmes
 
