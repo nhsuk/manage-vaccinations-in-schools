@@ -32,9 +32,10 @@ class Organisation < ApplicationRecord
   has_many :consent_forms
   has_many :consents
   has_many :locations
+  has_many :organisation_programmes
   has_many :schools, -> { school }, class_name: "Location"
   has_many :sessions
-  has_many :organisation_programmes
+  has_many :teams
 
   has_many :patient_sessions, through: :sessions
   has_many :programmes, through: :organisation_programmes

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_30_155215) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_30_165433) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -602,6 +602,17 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_30_155215) do
     t.index ["organisation_id"], name: "index_sessions_on_organisation_id"
   end
 
+  create_table "teams", force: :cascade do |t|
+    t.bigint "organisation_id", null: false
+    t.string "name", null: false
+    t.string "email", null: false
+    t.string "phone", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organisation_id", "name"], name: "index_teams_on_organisation_id_and_name", unique: true
+    t.index ["organisation_id"], name: "index_teams_on_organisation_id"
+  end
+
   create_table "triage", force: :cascade do |t|
     t.integer "status", null: false
     t.text "notes", default: "", null: false
@@ -754,6 +765,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_30_155215) do
   add_foreign_key "session_notifications", "sessions"
   add_foreign_key "session_notifications", "users", column: "sent_by_user_id"
   add_foreign_key "sessions", "organisations"
+  add_foreign_key "teams", "organisations"
   add_foreign_key "triage", "organisations"
   add_foreign_key "triage", "patients"
   add_foreign_key "triage", "programmes"
