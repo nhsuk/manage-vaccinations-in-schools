@@ -38,7 +38,7 @@ describe SchoolConsentRequestsJob do
     end
   end
 
-  context "when session is in the future" do
+  context "when requests should be sent in the future" do
     let(:session) do
       create(
         :session,
@@ -54,12 +54,13 @@ describe SchoolConsentRequestsJob do
     end
   end
 
-  context "when the session is today" do
+  context "when requests should be sent today" do
     let(:session) do
       create(
         :session,
         patients:,
         programme:,
+        date: 3.weeks.from_now.to_date,
         send_consent_requests_at: Date.current
       )
     end

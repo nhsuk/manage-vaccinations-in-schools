@@ -61,7 +61,7 @@ class AppSessionSummaryComponent < ViewComponent::Base
   def dates
     if (dates = @session.dates).present?
       tag.ul(class: "nhsuk-list") do
-        safe_join(dates.map { tag.li(_1.value.to_fs(:long)) })
+        safe_join(dates.map { tag.li(_1.to_fs(:long)) })
       end
     else
       "Not provided"

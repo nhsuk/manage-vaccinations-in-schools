@@ -16,7 +16,7 @@ class ClinicSessionInvitationsJob < ApplicationJob
             { patient: :parents }
           ]
         )
-        .preload(:dates)
+        .preload(:session_dates)
         .joins(:location)
         .merge(Location.clinic)
         .strict_loading

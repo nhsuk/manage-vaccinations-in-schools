@@ -12,19 +12,19 @@
 
   <div class="app-add-another">
     <ol class="nhsuk-list app-add-another__list">
-      <%= f.fields_for :dates do |date_f| %>
+      <%= f.fields_for :session_dates do |date_f| %>
         <li class="app-add-another__list-item">
           <%= date_f.govuk_date_field :value,
                                       legend: { size: "m", text: "Session date" },
                                       hint: { text: "For example, 27 3 2024" } %>
 
-          <% if date_f.object.persisted? || @session.dates.length > 1 %>
+          <% if date_f.object.persisted? || @session.session_dates.length > 1 %>
             <% button_class = "nhsuk-button app-add-another__delete app-button--secondary-warning app-button--small" %>
 
             <% if date_f.object.new_record? %>
               <%= link_to "Delete", session_dates_path(@session), class: button_class %>
             <% else %>
-              <%= f.govuk_submit "Delete", name: "session[dates_attributes][#{date_f.index}][_destroy]", value: "true", class: button_class %>
+              <%= f.govuk_submit "Delete", name: "session[session_dates_attributes][#{date_f.index}][_destroy]", value: "true", class: button_class %>
             <% end %>
           <% end %>
         </li>

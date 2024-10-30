@@ -51,7 +51,7 @@ class ProgrammesController < ApplicationController
         .has_programme(@programme)
         .eager_load(:location)
         .preload(
-          :dates,
+          :session_dates,
           patient_sessions: %i[
             consents
             latest_gillick_assessment

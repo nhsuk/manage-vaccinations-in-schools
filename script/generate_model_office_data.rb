@@ -65,7 +65,7 @@ def create_vaccination_record(
     patient_session:,
     programme:,
     vaccine:,
-    administered_at: session.dates.first.value + rand(8..16).hours,
+    administered_at: session.dates.min + rand(8..16).hours,
     batch:,
     dose_sequence:,
     location_name:

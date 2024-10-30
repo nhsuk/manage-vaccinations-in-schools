@@ -104,8 +104,8 @@ def create_session(user, team, completed:)
 
   session = FactoryBot.create(:session, date:, team:, programme:, location:)
 
-  session.dates.create!(value: date - 1.day)
-  session.dates.create!(value: date + 1.day)
+  session.session_dates.create!(value: date - 1.day)
+  session.session_dates.create!(value: date + 1.day)
 
   patients_without_consent =
     FactoryBot.create_list(:patient_session, 4, programme:, session:, user:)

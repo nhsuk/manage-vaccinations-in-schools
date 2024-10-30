@@ -29,6 +29,7 @@ FactoryBot.define do
   factory :session do
     transient do
       date { Date.current }
+      dates { [] }
       programme { association :programme }
     end
 
@@ -53,9 +54,14 @@ FactoryBot.define do
       end
     end
 
-    after(:create) do |session, evaluator|
-      next if (date = evaluator.date).nil?
-      session.dates.create!(value: date)
+    session_dates do
+      if dates.present?
+        dates.map { build(:session_date, session: instance, value: _1) }
+      elsif date.present?
+        [build(:session_date, session: instance, value: date)]
+      else
+        []
+      end
     end
 
     trait :today do

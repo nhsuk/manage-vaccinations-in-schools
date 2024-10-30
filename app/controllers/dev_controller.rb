@@ -54,7 +54,7 @@ class DevController < ApplicationController
       end
 
       team_sessions.each do |team_session|
-        team_session.dates.destroy_all
+        team_session.session_dates.destroy_all
         team_session.destroy!
       end
 
