@@ -187,7 +187,8 @@ user = create_user(team:, email: "nurse.joy@example.com")
 create_user(team:, email: "admin.hope@example.com")
 
 attach_sample_of_schools_to(team)
-attach_specific_school_to_team_if_present(team:, urn: "136126") # potentially needed for automated testing
+attach_specific_school_to_team_if_present(team:, urn: "136126") # needed for automated testing
+attach_specific_school_to_team_if_present(team:, urn: "134522") # needed for automated testing
 
 Audited
   .audit_class
@@ -203,7 +204,8 @@ team = create_team(ods_code: "A9A5A")
 user = create_user(team:, uid: "555057896106")
 
 attach_sample_of_schools_to(team)
-attach_specific_school_to_team_if_present(team:, urn: "136126") # potentially needed for automated testing
+attach_specific_school_to_team_if_present(team:, urn: "136126") # needed for automated testing
+attach_specific_school_to_team_if_present(team:, urn: "134522") # needed for automated testing
 
 Audited
   .audit_class
