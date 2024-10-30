@@ -15,6 +15,15 @@ class SessionDatesController < ApplicationController
 
     @session.save!
 
+    # If deleting dates, they don't disappear from `session.dates` until
+    # the model has been saved due to how `accepts_nested_attributes_for`
+    # works.
+    if any_destroyed?
+      @session.dates.reload
+      @session.set_consent_dates
+      @session.save!
+    end
+
     if params.include?(:add_another)
       @session.dates.build
       render :show
