@@ -35,16 +35,22 @@ class ProgrammesController < ApplicationController
   end
 
   def sessions
-    sessions_for_programme =
+    @sessions =
       policy_scope(Session)
         .has_programme(@programme)
-        .includes(:dates, :location)
+        .eager_load(:location)
+        .preload(
+          :dates,
+          patient_sessions: %i[
+            consents
+            latest_gillick_assessment
+            latest_vaccination_record
+            triages
+            vaccination_records
+          ]
+        )
+        .order("locations.name")
         .strict_loading
-
-    @closed_sessions = sessions_for_programme.closed.sort
-    @completed_sessions = sessions_for_programme.completed.sort
-    @scheduled_sessions = sessions_for_programme.scheduled.sort
-    @unscheduled_sessions = sessions_for_programme.unscheduled.sort
   end
 
   private
