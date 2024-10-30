@@ -155,10 +155,15 @@ namespace :schools do
   end
 
   desc "Add a school to a organisation."
-  task :add_to_organisation, %i[ods_code] => :environment do |_task, args|
+  task :add_to_organisation,
+       %i[ods_code team_name] => :environment do |_task, args|
     organisation = Organisation.find_by(ods_code: args[:ods_code])
 
     raise "Could not find organisation." if organisation.nil?
+
+    team = organisation.teams.find_by(name: team_name)
+
+    raise "Could not find team." if team.nil?
 
     args.extras.each do |urn|
       location = Location.school.find_by(urn:)
@@ -168,12 +173,11 @@ namespace :schools do
         next
       end
 
-      if !location.organisation_id.nil? &&
-           location.organisation_id != organisation.id
-        puts "#{urn} previously belonged to #{location.organisation.name}"
+      if !location.team_id.nil? && location.team_id != team.id
+        puts "#{urn} previously belonged to #{location.team.name}"
       end
 
-      location.update!(organisation:)
+      location.update!(team:)
     end
 
     UnscheduledSessionsFactory.new.call
