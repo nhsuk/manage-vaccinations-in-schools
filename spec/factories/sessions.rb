@@ -47,6 +47,11 @@ FactoryBot.define do
         (date - team.days_before_consent_requests.days)
       end
     end
+    send_invitations_at do
+      if date && location.generic_clinic?
+        (date - team.days_before_invitations.days)
+      end
+    end
 
     after(:create) do |session, evaluator|
       next if (date = evaluator.date).nil?

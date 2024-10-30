@@ -9,7 +9,7 @@ class SessionDatesController < ApplicationController
 
   def update
     @session.assign_attributes(remove_invalid_dates(session_params))
-    @session.set_consent_dates
+    @session.set_notification_dates
 
     render :show, status: :unprocessable_entity and return if @session.invalid?
 
@@ -20,7 +20,7 @@ class SessionDatesController < ApplicationController
     # works.
     if any_destroyed?
       @session.dates.reload
-      @session.set_consent_dates
+      @session.set_notification_dates
       @session.save!
     end
 

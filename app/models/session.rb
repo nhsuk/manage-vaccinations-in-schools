@@ -86,13 +86,7 @@ class Session < ApplicationRecord
           )
         end
   scope :send_invitations,
-        -> do
-          scheduled.where(
-            "? >= (?)",
-            3.weeks.from_now,
-            SessionDate.for_session.select("MIN(value)")
-          )
-        end
+        -> { scheduled.where("? >= send_invitations_at", Date.current) }
 
   validates :send_consent_requests_at,
             presence: true,
@@ -241,15 +235,23 @@ class Session < ApplicationRecord
     end
   end
 
-  def set_consent_dates
-    if earliest_date && !location.generic_clinic?
-      self.send_consent_requests_at =
-        earliest_date - team.days_before_consent_requests.days
-
-      self.days_before_consent_reminders = team.days_before_consent_reminders
+  def set_notification_dates
+    if earliest_date
+      if location.generic_clinic?
+        self.days_before_consent_reminders = nil
+        self.send_consent_requests_at = nil
+        self.send_invitations_at =
+          earliest_date - team.days_before_invitations.days
+      else
+        self.days_before_consent_reminders = team.days_before_consent_reminders
+        self.send_consent_requests_at =
+          earliest_date - team.days_before_consent_requests.days
+        self.send_invitations_at = nil
+      end
     else
-      self.send_consent_requests_at = nil
       self.days_before_consent_reminders = nil
+      self.send_consent_requests_at = nil
+      self.send_invitations_at = nil
     end
   end
 
