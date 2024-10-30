@@ -33,7 +33,10 @@ class ProgrammesController < ApplicationController
 
     stats =
       PatientSessionStats.new(
-        PatientSession.where(patient: patients, session: sessions)
+        PatientSession
+          .where(patient: patients, session: sessions)
+          .preload_for_state
+          .strict_loading
       )
 
     @consent_given_percentage =
@@ -67,7 +70,8 @@ class ProgrammesController < ApplicationController
   private
 
   def set_programme
-    @programme = policy_scope(Programme).find_by!(type: params[:type])
+    @programme =
+      policy_scope(Programme).strict_loading.find_by!(type: params[:type])
   end
 
   def percentage_of(numerator, denominator)

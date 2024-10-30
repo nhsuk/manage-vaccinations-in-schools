@@ -36,16 +36,7 @@ class SessionsController < ApplicationController
 
   def show
     patient_sessions =
-      @session
-        .patient_sessions
-        .includes(
-          :consents,
-          :triages,
-          :vaccination_records,
-          :latest_gillick_assessment,
-          :latest_vaccination_record
-        )
-        .strict_loading
+      @session.patient_sessions.preload_for_state.strict_loading
 
     @stats = PatientSessionStats.new(patient_sessions)
 

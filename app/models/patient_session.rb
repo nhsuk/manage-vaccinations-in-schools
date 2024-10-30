@@ -88,6 +88,17 @@ class PatientSession < ApplicationRecord
 
   scope :pending_transfer, -> { where.not(proposed_session_id: nil) }
 
+  scope :preload_for_state,
+        -> do
+          preload(
+            :consents,
+            :triages,
+            :vaccination_records,
+            :latest_gillick_assessment,
+            :latest_vaccination_record
+          )
+        end
+
   delegate :send_notifications?, to: :patient
 
   def draft_vaccination_record
