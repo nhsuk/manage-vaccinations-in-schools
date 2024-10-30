@@ -131,7 +131,7 @@ describe "End-to-end journey" do
     expect(page).to have_content(
       "Consent remindersSend 1 week before each session"
     )
-    expect(page).to have_content("First: Friday 23 February 2024")
+    expect(page).to have_content("Next: Friday 23 February 2024")
 
     click_on "Continue"
   end

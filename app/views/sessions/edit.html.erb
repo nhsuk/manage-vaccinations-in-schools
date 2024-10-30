@@ -50,7 +50,7 @@
             row.with_value do
               safe_join([
                 "Send #{pluralize(@session.weeks_before_consent_reminders, "week")} before each session",
-                tag.span("First: #{send_consent_reminders_at.to_fs(:long_day_of_week)}", class: "nhsuk-u-secondary-text-color"),
+                tag.span("Next: #{send_consent_reminders_at.to_fs(:long_day_of_week)}", class: "nhsuk-u-secondary-text-color"),
               ], tag.br)
             end
             if @session.can_change_consent_notification_dates?
