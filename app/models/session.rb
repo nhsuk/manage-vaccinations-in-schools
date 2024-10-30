@@ -31,9 +31,10 @@ class Session < ApplicationRecord
   belongs_to :team
   belongs_to :location
 
-  has_many :notifications, class_name: "SessionNotification"
+  has_many :consent_notifications
   has_many :patient_sessions
   has_many :session_dates, -> { order(:value) }
+  has_many :session_notifications
 
   has_and_belongs_to_many :immunisation_imports
   has_and_belongs_to_many :programmes
@@ -162,7 +163,7 @@ class Session < ApplicationRecord
   end
 
   def can_change_consent_notification_dates?
-    notifications.empty?
+    consent_notifications.empty? && session_notifications.empty?
   end
 
   def <=>(other)
