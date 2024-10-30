@@ -305,6 +305,7 @@ keys should be rotated on a regular basis.
 - `clinics:create[name,address,town,postcode,ods_code,organisation_ods_code]`
 - `schools:add_to_organisation[ods_code,urn,...]`
 - `organisations:create_hpv[email,name,phone,ods_code,privacy_policy_url,reply_to_id]`
+- `teams:create[ods_code,name,email,phone]`
 - `users:create[email,password,given_name,family_name,organisation_ods_code]`
 - `vaccines:seed[type]`
 
