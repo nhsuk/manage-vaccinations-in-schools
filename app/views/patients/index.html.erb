@@ -3,18 +3,22 @@
 <%= form_with url: patients_path,
               method: :get,
               class: "app-search",
-              data: { turbo: "true" },
+              data: { module: "autosubmit", turbo: "true" },
               role: "search" do |f| %>
   <div class="nhsuk-form-group app-search__form-group">
     <%= f.label :q, "Search children by name", class: "nhsuk-label" %>
-    <%= f.search_field :q, value: @q, class: "nhsuk-input app-search__input" %>
+    <%= f.search_field :q, value: @q, class: "nhsuk-input app-search__input",
+                           "data-action": "autosubmit#submit",
+                           "data-turbo-permanent": "true" %>
   </div>
 
-  <%= f.submit "Search", class: "nhsuk-button app-search__button" %>
+  <%= f.govuk_submit "Search", class: "app-search__button",
+                               "data-autosubmit-target": "filter" %>
 
 <% if @q.present? %>
     <%= govuk_button_link_to "Clear search", patients_path,
-                             class: "app-search__button nhsuk-button--secondary" %>
+                             class: "app-search__button nhsuk-button--secondary",
+                             data: { turbo: "false" } %>
   <% end %>
 <% end %>
 
