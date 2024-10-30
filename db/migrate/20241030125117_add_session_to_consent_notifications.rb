@@ -7,7 +7,11 @@ class AddSessionToConsentNotifications < ActiveRecord::Migration[7.2]
     reversible do |dir|
       # We can't get an specific session for historical records, but new
       # notifications going forward will be correct.
-      dir.up { ConsentNotification.update_all(session_id: Session.first.id) }
+      dir.up do
+        if Session.any?
+          ConsentNotification.update_all(session_id: Session.first.id)
+        end
+      end
     end
 
     change_column_null :consent_notifications, :session_id, false
