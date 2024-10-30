@@ -58,6 +58,13 @@
             end
           end
         end
+      
+        if (send_invitations_at = @session.send_invitations_at).present?
+          summary_list.with_row do |row|
+            row.with_key { "Invitations" }
+            row.with_value { "Send on #{send_invitations_at.to_fs(:long_day_of_week)}" }
+          end
+        end
       end %>
 <% end %>
 
