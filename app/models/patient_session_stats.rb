@@ -2,7 +2,8 @@
 
 class PatientSessionStats
   def initialize(patient_sessions)
-    @patient_sessions = patient_sessions
+    @patient_sessions =
+      patient_sessions.sort_by(&:created_at).reverse.uniq(&:patient_id)
     @stats = calculate_stats
   end
 
