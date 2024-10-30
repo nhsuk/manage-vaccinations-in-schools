@@ -18,6 +18,8 @@ export default class extends Controller {
   }
 
   setResetButtonState() {
+    if (!this.hasResetTarget) return;
+
     if (this.fieldTargets.every((f) => f.value === "")) {
       this.resetTarget.disabled = true;
     } else {
