@@ -26,8 +26,7 @@ class VaccinationsController < ApplicationController
         .strict_loading
         .includes(
           :programmes,
-          :latest_gillick_assessment,
-          :latest_vaccination_record,
+          :gillick_assessments,
           :vaccination_records,
           patient: :cohort
         )
