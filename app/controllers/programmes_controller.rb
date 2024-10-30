@@ -15,10 +15,15 @@ class ProgrammesController < ApplicationController
         cohort: policy_scope(Cohort).for_year_groups(@programme.year_groups)
       )
 
+    sessions = policy_scope(Session).has_programme(@programme)
+
     @patients_count = patients.count
-    @sessions_count = policy_scope(Session).has_programme(@programme).count
-    @vaccination_records_count =
-      policy_scope(VaccinationRecord).where(programme: @programme).count
+    @sessions_count = sessions.count
+    @vaccinations_count =
+      policy_scope(VaccinationRecord)
+        .administered
+        .where(programme: @programme)
+        .count
 
     @consent_notifications_count =
       @programme.consent_notifications.where(patient: patients).count
@@ -26,12 +31,18 @@ class ProgrammesController < ApplicationController
     @consents =
       policy_scope(Consent).where(patient: patients, programme: @programme)
 
+    stats =
+      PatientSessionStats.new(
+        PatientSession.where(patient: patients, session: sessions)
+      )
+
     @consent_given_percentage =
-      if (count = @consents.count).positive?
-        (@consents.response_given.count / count.to_f * 100.0).to_i
-      else
-        0
-      end
+      percentage_of(stats[:with_consent_given], @consents.count)
+    @responses_received_and_triaged_percentage =
+      percentage_of(
+        patients.count - (stats[:without_a_response] + stats[:needing_triage]),
+        patients.count
+      )
   end
 
   def sessions
@@ -51,5 +62,9 @@ class ProgrammesController < ApplicationController
 
   def set_programme
     @programme = policy_scope(Programme).find_by!(type: params[:type])
+  end
+
+  def percentage_of(numerator, denominator)
+    denominator.positive? ? (numerator / denominator.to_f * 100.0).to_i : 0
   end
 end
