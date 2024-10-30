@@ -9,6 +9,11 @@
   <%= @patient.full_name %>
 <% end %>
 
+<%= render AppSecondaryNavigationComponent.new do |nav|
+      nav.with_item(href: patient_path(@patient), text: "Child record", selected: true)
+      nav.with_item(href: log_patient_path(@patient), text: "Activity log")
+    end %>
+
 <%= render AppCardComponent.new do |c| %>
   <% c.with_heading { "Child record" } %>
   <%= render AppPatientSummaryComponent.new(@patient, show_preferred_name: true, show_address: true, show_parent_or_guardians: true) %>

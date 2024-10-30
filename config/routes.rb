@@ -103,6 +103,7 @@ Rails.application.routes.draw do
 
   resources :patients, only: %i[index show update] do
     post "", action: :index, on: :collection
+    get "log", on: :member
   end
 
   resources :programmes, only: %i[index show], param: :type do
