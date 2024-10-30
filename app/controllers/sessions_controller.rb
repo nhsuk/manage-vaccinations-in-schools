@@ -35,18 +35,19 @@ class SessionsController < ApplicationController
   end
 
   def show
-    @patient_sessions =
-      @session.patient_sessions.strict_loading.includes(
-        :programmes,
-        :triages,
-        :vaccination_records,
-        :latest_gillick_assessment,
-        :latest_vaccination_record,
-        consents: :parent
-      )
+    patient_sessions =
+      @session
+        .patient_sessions
+        .includes(
+          :consents,
+          :triages,
+          :vaccination_records,
+          :latest_gillick_assessment,
+          :latest_vaccination_record
+        )
+        .strict_loading
 
-    @counts =
-      SessionStats.new(patient_sessions: @patient_sessions, session: @session)
+    @stats = PatientSessionStats.new(patient_sessions)
 
     render layout: "full"
   end

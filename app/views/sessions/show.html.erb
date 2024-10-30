@@ -62,10 +62,10 @@
           <%= render AppCardComponent.new(link_to: session_consents_path(@session)) do |c| %>
             <% c.with_heading { "Check consent responses" } %>
             <% c.with_description do %>
-              <%= t("children", count: @counts[:without_a_response]) %> without a response<br>
-              <%= t("children", count: @counts[:with_consent_given]) %> with consent given<br>
-              <%= t("children", count: @counts[:with_consent_refused]) %> with consent refused<br>
-              <%= t("children", count: @counts[:with_conflicting_consent]) %> with conflicting consent
+              <%= t("children", count: @stats[:without_a_response]) %> without a response<br>
+              <%= t("children", count: @stats[:with_consent_given]) %> with consent given<br>
+              <%= t("children", count: @stats[:with_consent_refused]) %> with consent refused<br>
+              <%= t("children", count: @stats[:with_conflicting_consent]) %> with conflicting consent
             <% end %>
           <% end %>
         </li>
@@ -75,7 +75,7 @@
             <%= render AppCardComponent.new(link_to: session_triage_path(@session)) do |c| %>
               <% c.with_heading { "Triage health questions" } %>
               <% c.with_description do %>
-                <%= t("children", count: @counts[:needing_triage]) %> needing triage
+                <%= t("children", count: @stats[:needing_triage]) %> needing triage
               <% end %>
             <% end %>
           </li>
@@ -84,9 +84,9 @@
             <%= render AppCardComponent.new(link_to: session_vaccinations_path(@session)) do |c| %>
               <% c.with_heading { "Record vaccinations" } %>
               <% c.with_description do %>
-                <%= t("children", count: @counts[:vaccinate]) %> to vaccinate<br>
-                <%= t("children", count: @counts[:vaccinated]) %> vaccinated<br>
-                <%= t("children", count: @counts[:could_not_vaccinate]) %> could not be vaccinated
+                <%= t("children", count: @stats[:vaccinate]) %> to vaccinate<br>
+                <%= t("children", count: @stats[:vaccinated]) %> vaccinated<br>
+                <%= t("children", count: @stats[:could_not_vaccinate]) %> could not be vaccinated
               <% end %>
             <% end %>
           </li>
