@@ -3,6 +3,7 @@
 <%= form_with url: patients_path,
               method: :get,
               class: "app-search",
+              data: { turbo: "true" },
               role: "search" do |f| %>
   <div class="nhsuk-form-group app-search__form-group">
     <%= f.label :q, "Search children by name", class: "nhsuk-label" %>
