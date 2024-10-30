@@ -289,10 +289,10 @@ Devise.setup do |config|
     setup =
       lambda do |env|
         if env.dig("rack.request.form_hash", "change_role")
-          # When changing a role the user must reauthenticate. For more info:
-          # https://digital.nhs.uk/services/care-identity-service/applications-and-services/cis2-authentication/guidance-for-developers/detailed-guidance/role-selection#changing-role
+          # When changing a role the user must reauthenticate, we need to use a
+          # different scope for users with the HSCN Identity Manager.
+          # https://digital.nhs.uk/services/care-identity-service/applications-and-services/cis2-authentication/guidance-for-developers/detailed-guidance/role-selection#changin
           env["omniauth.strategy"].options["scope"] << :changedrole
-          env["omniauth.strategy"].options["prompt"] = :login
         else
           env["omniauth.strategy"].options["scope"] << :selectedrole
         end
@@ -322,8 +322,8 @@ Devise.setup do |config|
         setup:,
         name: :cis2,
         scope: %i[openid profile email nationalrbacaccess associatedorgs],
+        prompt: :login,
         extra_authorize_params: {
-          max_age: 300,
           # https://digital.nhs.uk/services/care-identity-service/applications-and-services/cis2-authentication/guidance-for-developers/detailed-guidance/acr-values
           # The AAL will be verified in the callback, so there needs to be some
           # alignment here.
