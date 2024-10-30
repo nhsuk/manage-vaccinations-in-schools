@@ -17,7 +17,7 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
   attr_reader :sessions
 
   def cohort_count(session:)
-    (count = session.patient_sessions.count).zero? ? "None" : count
+    (count = session.patient_sessions.length).zero? ? "None" : count
   end
 
   def number_stat(session:, key:)
@@ -25,7 +25,7 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
   end
 
   def percentage_stat(session:, key:)
-    count = session.patient_sessions.count
+    count = session.patient_sessions.length
     return nil if count.zero?
 
     value = @stats.dig(session, key) / count.to_f * 100.0
