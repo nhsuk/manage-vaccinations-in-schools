@@ -17,17 +17,17 @@
 #  year_groups      :integer          default([]), not null, is an Array
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
-#  organisation_id  :bigint
+#  team_id          :bigint
 #
 # Indexes
 #
-#  index_locations_on_ods_code         (ods_code) UNIQUE
-#  index_locations_on_organisation_id  (organisation_id)
-#  index_locations_on_urn              (urn) UNIQUE
+#  index_locations_on_ods_code  (ods_code) UNIQUE
+#  index_locations_on_team_id   (team_id)
+#  index_locations_on_urn       (urn) UNIQUE
 #
 # Foreign Keys
 #
-#  fk_rails_...  (organisation_id => organisations.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 class Location < ApplicationRecord
   include AddressConcern
@@ -37,11 +37,13 @@ class Location < ApplicationRecord
 
   audited
 
-  belongs_to :organisation, optional: true
+  belongs_to :team, optional: true
 
   has_many :consent_forms
   has_many :patients, foreign_key: :school_id
   has_many :sessions
+
+  has_one :organisation, through: :team
 
   enum :type, %w[school generic_clinic community_clinic]
 
@@ -58,7 +60,7 @@ class Location < ApplicationRecord
   validates :ods_code, presence: true, if: :clinic?
 
   with_options if: :generic_clinic? do
-    validates :organisation, presence: true
+    validates :team, presence: true
     validates :ods_code, comparison: { equal_to: :organisation_ods_code }
   end
 
@@ -74,6 +76,6 @@ class Location < ApplicationRecord
   private
 
   def organisation_ods_code
-    organisation&.ods_code
+    team&.organisation&.ods_code
   end
 end

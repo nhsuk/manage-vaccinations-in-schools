@@ -22,8 +22,8 @@ describe "Dev endpoint to reset a organisation" do
     end
 
     @organisation.update!(ods_code: "R1L") # to match valid_hpv.csv
-    @organisation.schools << create(:location, :school, urn: "123456") # to match cohort_import/valid.csv
-    @organisation.schools << create(:location, :school, urn: "110158") # to match valid_hpv.csv
+    create(:location, :school, urn: "123456", organisation: @organisation) # to match cohort_import/valid.csv
+    create(:location, :school, urn: "110158", organisation: @organisation) # to match valid_hpv.csv
     @user = @organisation.users.first
   end
 

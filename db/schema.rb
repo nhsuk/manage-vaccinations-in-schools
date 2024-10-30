@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_30_165433) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_30_170618) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -428,10 +428,10 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_30_165433) do
     t.string "urn"
     t.integer "type", null: false
     t.string "ods_code"
-    t.bigint "organisation_id"
     t.integer "year_groups", default: [], null: false, array: true
+    t.bigint "team_id"
     t.index ["ods_code"], name: "index_locations_on_ods_code", unique: true
-    t.index ["organisation_id"], name: "index_locations_on_organisation_id"
+    t.index ["team_id"], name: "index_locations_on_team_id"
     t.index ["urn"], name: "index_locations_on_urn", unique: true
   end
 
@@ -747,7 +747,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_30_165433) do
   add_foreign_key "immunisation_imports_sessions", "sessions"
   add_foreign_key "immunisation_imports_vaccination_records", "immunisation_imports"
   add_foreign_key "immunisation_imports_vaccination_records", "vaccination_records"
-  add_foreign_key "locations", "organisations"
+  add_foreign_key "locations", "teams"
   add_foreign_key "notify_log_entries", "consent_forms"
   add_foreign_key "notify_log_entries", "patients"
   add_foreign_key "notify_log_entries", "users", column: "sent_by_user_id"

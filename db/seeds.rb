@@ -70,11 +70,11 @@ def attach_sample_of_schools_to(organisation)
     .school
     .order("RANDOM()")
     .limit(50)
-    .update_all(organisation_id: organisation.id)
+    .update_all(team_id: organisation.generic_team.id)
 end
 
 def attach_specific_school_to_organisation_if_present(organisation:, urn:)
-  Location.where(urn:).update_all(organisation_id: organisation.id)
+  Location.where(urn:).update_all(team_id: organisation.generic_team.id)
 end
 
 def get_location_for_session(organisation, programme)

@@ -3,7 +3,11 @@
 class LocationPolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
-      scope.where(organisation: user.selected_organisation)
+      scope.joins(:team).where(
+        team: {
+          organisation: user.selected_organisation
+        }
+      )
     end
   end
 end

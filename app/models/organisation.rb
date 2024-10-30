@@ -26,19 +26,20 @@ class Organisation < ApplicationRecord
   include ODSCodeConcern
 
   has_many :batches
-  has_many :clinics, -> { clinic }, class_name: "Location"
   has_many :cohort_imports
   has_many :cohorts
   has_many :consent_forms
   has_many :consents
   has_many :locations
   has_many :organisation_programmes
-  has_many :schools, -> { school }, class_name: "Location"
   has_many :sessions
   has_many :teams
 
+  has_many :clinics, through: :teams
+  has_many :locations, through: :teams
   has_many :patient_sessions, through: :sessions
   has_many :programmes, through: :organisation_programmes
+  has_many :schools, through: :teams
   has_many :vaccination_records, through: :patient_sessions
 
   has_and_belongs_to_many :users
@@ -52,11 +53,18 @@ class Organisation < ApplicationRecord
     programmes.flat_map(&:year_groups).uniq.sort
   end
 
+  def generic_team
+    teams.create_with(email:, phone:).find_or_create_by!(name:)
+  end
+
   def generic_clinic
-    locations.create_with(name: "Community clinics").find_or_create_by!(
-      ods_code:,
-      type: :generic_clinic
-    )
+    locations.find_by(ods_code:, type: :generic_clinic) ||
+      Location.create!(
+        name: "Community clinics",
+        team: generic_team,
+        ods_code:,
+        type: :generic_clinic
+      )
   end
 
   def generic_clinic_session
