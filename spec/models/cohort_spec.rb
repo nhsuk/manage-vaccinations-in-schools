@@ -8,16 +8,16 @@
 #  birth_academic_year :integer          not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
-#  team_id             :bigint           not null
+#  organisation_id     :bigint           not null
 #
 # Indexes
 #
-#  index_cohorts_on_team_id                          (team_id)
-#  index_cohorts_on_team_id_and_birth_academic_year  (team_id,birth_academic_year) UNIQUE
+#  index_cohorts_on_organisation_id                          (organisation_id)
+#  index_cohorts_on_organisation_id_and_birth_academic_year  (organisation_id,birth_academic_year) UNIQUE
 #
 # Foreign Keys
 #
-#  fk_rails_...  (team_id => teams.id)
+#  fk_rails_...  (organisation_id => organisations.id)
 #
 describe Cohort do
   subject(:cohort) { build(:cohort) }

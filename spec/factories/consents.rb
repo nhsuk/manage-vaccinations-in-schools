@@ -13,27 +13,27 @@
 #  route                    :integer
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
+#  organisation_id          :bigint           not null
 #  parent_id                :bigint
 #  patient_id               :bigint           not null
 #  programme_id             :bigint           not null
 #  recorded_by_user_id      :bigint
-#  team_id                  :bigint           not null
 #
 # Indexes
 #
+#  index_consents_on_organisation_id      (organisation_id)
 #  index_consents_on_parent_id            (parent_id)
 #  index_consents_on_patient_id           (patient_id)
 #  index_consents_on_programme_id         (programme_id)
 #  index_consents_on_recorded_by_user_id  (recorded_by_user_id)
-#  index_consents_on_team_id              (team_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (organisation_id => organisations.id)
 #  fk_rails_...  (parent_id => parents.id)
 #  fk_rails_...  (patient_id => patients.id)
 #  fk_rails_...  (programme_id => programmes.id)
 #  fk_rails_...  (recorded_by_user_id => users.id)
-#  fk_rails_...  (team_id => teams.id)
 #
 FactoryBot.define do
   factory :consent do

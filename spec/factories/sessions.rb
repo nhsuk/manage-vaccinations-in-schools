@@ -14,16 +14,16 @@
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  location_id                   :bigint           not null
-#  team_id                       :bigint           not null
+#  organisation_id               :bigint           not null
 #
 # Indexes
 #
-#  index_sessions_on_team_id                                    (team_id)
-#  index_sessions_on_team_id_and_location_id_and_academic_year  (team_id,location_id,academic_year) UNIQUE
+#  idx_on_organisation_id_location_id_academic_year_3496b72d0c  (organisation_id,location_id,academic_year) UNIQUE
+#  index_sessions_on_organisation_id                            (organisation_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (team_id => teams.id)
+#  fk_rails_...  (organisation_id => organisations.id)
 #
 FactoryBot.define do
   factory :session do
