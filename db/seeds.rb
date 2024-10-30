@@ -186,23 +186,32 @@ set_feature_flags
 seed_vaccines
 import_schools
 
-# Nurse Joy's organisation
-organisation = create_organisation(ods_code: "R1L")
-user = create_user(organisation:, email: "nurse.joy@example.com")
-create_user(organisation:, email: "admin.hope@example.com")
+unless Settings.cis2.enabled
+  # Don't create Nurse Joy's team on a CIS2 env, because password authentication
+  # is not available and password= fails to run.
+  organisation = create_organisation(ods_code: "R1L")
+  user = create_user(organisation:, email: "nurse.joy@example.com")
+  create_user(organisation:, email: "admin.hope@example.com")
 
-attach_sample_of_schools_to(organisation)
-attach_specific_school_to_organisation_if_present(organisation:, urn: "136126") # needed for automated testing
-attach_specific_school_to_organisation_if_present(organisation:, urn: "134522") # needed for automated testing
+  attach_sample_of_schools_to(organisation)
+  attach_specific_school_to_organisation_if_present(
+    organisation:,
+    urn: "136126"
+  ) # needed for automated testing
+  attach_specific_school_to_organisation_if_present(
+    organisation:,
+    urn: "134522"
+  ) # needed for automated testing
 
-Audited
-  .audit_class
-  .as_user(user) do
-    create_session(user, organisation, completed: false)
-    create_session(user, organisation, completed: true)
-  end
-create_patients(organisation)
-create_imports(user, organisation)
+  Audited
+    .audit_class
+    .as_user(user) do
+      create_session(user, organisation, completed: false)
+      create_session(user, organisation, completed: true)
+    end
+  create_patients(organisation)
+  create_imports(user, organisation)
+end
 
 # CIS2 organisation - the ODS code and user UID need to match the values in the CIS2 env
 organisation = create_organisation(ods_code: "A9A5A")
