@@ -252,7 +252,8 @@ class Session < ApplicationRecord
   def send_consent_reminders_at
     return nil if dates.empty? || days_before_consent_reminders.nil?
 
-    earliest_date - days_before_consent_reminders.days
+    reminder_dates = dates.map { _1.value - days_before_consent_reminders.days }
+    reminder_dates.find(&:future?) || reminder_dates.last
   end
 
   def close_consent_at
