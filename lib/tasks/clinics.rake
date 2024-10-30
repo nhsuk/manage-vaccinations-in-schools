@@ -3,9 +3,9 @@
 require_relative "../task_helpers"
 
 namespace :clinics do
-  desc "Create a new clinic location and add it to a team."
+  desc "Create a new clinic location and add it to a organisation."
   task :create,
-       %i[name address town postcode ods_code team_ods_code] =>
+       %i[name address town postcode ods_code organisation_ods_code] =>
          :environment do |_task, args|
     include TaskHelpers
 
@@ -15,19 +15,20 @@ namespace :clinics do
       address_town = prompt_user_for "Enter town:"
       address_postcode = prompt_user_for "Enter postcode:", required: true
       ods_code = prompt_user_for "Enter ODS code:"
-      team_ods_code = prompt_user_for "Enter team ODS code:", required: true
+      organisation_ods_code =
+        prompt_user_for "Enter organisation ODS code:", required: true
     elsif args.to_a.size == 6
       name = args[:name]
       address_line_1 = args[:address]
       address_town = args[:town]
       address_postcode = args[:postcode]
       ods_code = args[:ods_code]
-      team_ods_code = args[:team_ods_code]
+      organisation_ods_code = args[:organisation_ods_code]
     elsif args.to_a.size != 6
       raise "Expected 6 arguments got #{args.to_a.size}"
     end
 
-    team = Team.find_by!(ods_code: team_ods_code)
+    organisation = Organisation.find_by!(ods_code: organisation_ods_code)
 
     location =
       Location.create!(
@@ -37,9 +38,9 @@ namespace :clinics do
         address_town:,
         address_postcode:,
         ods_code:,
-        team:
+        organisation:
       )
 
-    puts "Location #{name} (id: #{location.id}) added to team #{team.name}."
+    puts "Location #{name} (id: #{location.id}) added to organisation #{organisation.name}."
   end
 end

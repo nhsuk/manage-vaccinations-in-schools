@@ -2,7 +2,11 @@
 
 class ClassImportRow < PatientImportRow
   def initialize(data:, session:)
-    super(data:, team: session.team, year_groups: session.year_groups)
+    super(
+      data:,
+      organisation: session.organisation,
+      year_groups: session.year_groups
+    )
     @school = session.location
   end
 

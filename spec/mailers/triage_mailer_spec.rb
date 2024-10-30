@@ -22,9 +22,9 @@ describe TriageMailer do
         expect(personalisation).to include(
           :full_and_preferred_patient_name,
           :short_patient_name,
-          :team_name,
-          :team_email,
-          :team_phone
+          :organisation_name,
+          :organisation_email,
+          :organisation_phone
         )
       end
     end

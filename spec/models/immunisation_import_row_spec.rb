@@ -2,11 +2,13 @@
 
 describe ImmunisationImportRow do
   subject(:immunisation_import_row) do
-    described_class.new(data:, team:, programme:)
+    described_class.new(data:, organisation:, programme:)
   end
 
   let(:programme) { create(:programme, :flu) }
-  let(:team) { create(:team, ods_code: "abc", programmes: [programme]) }
+  let(:organisation) do
+    create(:organisation, ods_code: "abc", programmes: [programme])
+  end
 
   let(:nhs_number) { "1234567890" }
   let(:given_name) { "Harry" }
@@ -47,7 +49,7 @@ describe ImmunisationImportRow do
           /You need to record whether the child was vaccinated or not/
         )
         expect(immunisation_import_row.errors[:organisation_code]).to include(
-          "Enter an organisation code that matches the current team."
+          "Enter an organisation code that matches the current organisation."
         )
       end
     end
@@ -67,7 +69,7 @@ describe ImmunisationImportRow do
           ["Enter an anatomical site."]
         )
         expect(immunisation_import_row.errors[:organisation_code]).to eq(
-          ["Enter an organisation code that matches the current team."]
+          ["Enter an organisation code that matches the current organisation."]
         )
         expect(immunisation_import_row.errors[:patient_gender_code]).to eq(
           ["Enter a gender or gender code."]
@@ -84,7 +86,7 @@ describe ImmunisationImportRow do
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:organisation_code]).to eq(
-          ["Enter an organisation code that matches the current team."]
+          ["Enter an organisation code that matches the current organisation."]
         )
       end
     end
@@ -384,8 +386,8 @@ describe ImmunisationImportRow do
       it "sets the location to the generic clinic" do
         expect(session.location).to be_generic_clinic
         expect(session.location).to have_attributes(
-          team:,
-          ods_code: team.ods_code
+          organisation:,
+          ods_code: organisation.ods_code
         )
       end
     end
@@ -398,8 +400,8 @@ describe ImmunisationImportRow do
       it "sets the location to the generic clinic" do
         expect(session.location).to be_generic_clinic
         expect(session.location).to have_attributes(
-          team:,
-          ods_code: team.ods_code
+          organisation:,
+          ods_code: organisation.ods_code
         )
       end
     end
@@ -416,8 +418,8 @@ describe ImmunisationImportRow do
       it "sets the location to the generic clinic" do
         expect(session.location).to be_generic_clinic
         expect(session.location).to have_attributes(
-          team:,
-          ods_code: team.ods_code
+          organisation:,
+          ods_code: organisation.ods_code
         )
       end
     end
@@ -434,8 +436,8 @@ describe ImmunisationImportRow do
       it "sets the location to the generic clinic" do
         expect(session.location).to be_generic_clinic
         expect(session.location).to have_attributes(
-          team:,
-          ods_code: team.ods_code
+          organisation:,
+          ods_code: organisation.ods_code
         )
       end
     end
@@ -451,8 +453,8 @@ describe ImmunisationImportRow do
       it "sets the location to the generic clinic" do
         expect(session.location).to be_generic_clinic
         expect(session.location).to have_attributes(
-          team:,
-          ods_code: team.ods_code
+          organisation:,
+          ods_code: organisation.ods_code
         )
       end
     end

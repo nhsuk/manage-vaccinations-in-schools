@@ -21,11 +21,17 @@ describe "Response matching" do
 
   def given_the_app_is_setup
     @programme = create(:programme, :hpv)
-    @team = create(:team, :with_one_nurse, programmes: [@programme])
-    @user = @team.users.first
+    @organisation =
+      create(:organisation, :with_one_nurse, programmes: [@programme])
+    @user = @organisation.users.first
     @school = create(:location, :school, name: "Pilot School")
     @session =
-      create(:session, location: @school, team: @team, programme: @programme)
+      create(
+        :session,
+        location: @school,
+        organisation: @organisation,
+        programme: @programme
+      )
     @consent_form =
       create(:consent_form, :recorded, programme: @programme, session: @session)
     @patient = create(:patient, session: @session)

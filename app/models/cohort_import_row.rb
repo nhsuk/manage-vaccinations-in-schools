@@ -6,8 +6,8 @@ class CohortImportRow < PatientImportRow
 
   validate :school_urn_inclusion
 
-  def initialize(data:, team:, programme:)
-    super(data:, team:, year_groups: programme.year_groups)
+  def initialize(data:, organisation:, programme:)
+    super(data:, organisation:, year_groups: programme.year_groups)
   end
 
   def school_urn

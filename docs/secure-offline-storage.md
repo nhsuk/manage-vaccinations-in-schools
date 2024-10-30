@@ -102,7 +102,7 @@ accessible from client-side JavaScript.
 
 Applications such as password manager extensions (1Password, LastPass), or
 crypto wallets (MetaMask) have similar encryption requirements, and the
-1Password team has submitted a [W3C WebExtension proposal for
+1Password organisation has submitted a [W3C WebExtension proposal for
 `browser.secureStorage`](https://github.com/w3c/webextensions/blob/main/proposals/secure-storage.md).
 
 This is an API that allows access to the platform-specific sensitive data

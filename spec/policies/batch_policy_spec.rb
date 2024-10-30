@@ -4,15 +4,15 @@ describe BatchPolicy do
   describe "Scope#resolve" do
     subject { BatchPolicy::Scope.new(user, Batch).resolve }
 
-    let(:team) { create(:team) }
-    let(:user) { create(:user, teams: [team]) }
+    let(:organisation) { create(:organisation) }
+    let(:user) { create(:user, organisations: [organisation]) }
 
-    let(:archived_batch) { create(:batch, :archived, team:) }
-    let(:unarchived_batch) { create(:batch, team:) }
-    let(:non_team_batch) { create(:batch) }
+    let(:archived_batch) { create(:batch, :archived, organisation:) }
+    let(:unarchived_batch) { create(:batch, organisation:) }
+    let(:non_organisation_batch) { create(:batch) }
 
     it { should include(unarchived_batch) }
     it { should_not include(archived_batch) }
-    it { should_not include(non_team_batch) }
+    it { should_not include(non_organisation_batch) }
   end
 end

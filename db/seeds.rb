@@ -26,18 +26,18 @@ def import_schools
   end
 end
 
-def create_team(ods_code:)
-  team =
-    Team.find_by(ods_code:) ||
-      FactoryBot.create(:team, :with_generic_clinic, ods_code:)
+def create_organisation(ods_code:)
+  organisation =
+    Organisation.find_by(ods_code:) ||
+      FactoryBot.create(:organisation, :with_generic_clinic, ods_code:)
 
   programme = Programme.find_by(type: "hpv")
-  FactoryBot.create(:team_programme, team:, programme:)
+  FactoryBot.create(:organisation_programme, organisation:, programme:)
 
-  team
+  organisation
 end
 
-def create_user(team:, email: nil, uid: nil)
+def create_user(organisation:, email: nil, uid: nil)
   if uid
     User.find_by(uid:) ||
       FactoryBot.create(
@@ -47,7 +47,7 @@ def create_user(team:, email: nil, uid: nil)
         given_name: "Nurse",
         email: "nurse.flo@example.nhs.uk",
         provider: "cis2",
-        teams: [team]
+        organisations: [organisation]
         # password: Do not set this as they should not log in via password
       )
   elsif email
@@ -58,51 +58,56 @@ def create_user(team:, email: nil, uid: nil)
         given_name: email.split("@").first.split(".").first.capitalize,
         email:,
         password: email,
-        teams: [team]
+        organisations: [organisation]
       )
   else
     raise "No email or UID provided"
   end
 end
 
-def attach_sample_of_schools_to(team)
-  Location.school.order("RANDOM()").limit(50).update_all(team_id: team.id)
+def attach_sample_of_schools_to(organisation)
+  Location
+    .school
+    .order("RANDOM()")
+    .limit(50)
+    .update_all(organisation_id: organisation.id)
 end
 
-def attach_specific_school_to_team_if_present(team:, urn:)
-  Location.where(urn:).update_all(team_id: team.id)
+def attach_specific_school_to_organisation_if_present(organisation:, urn:)
+  Location.where(urn:).update_all(organisation_id: organisation.id)
 end
 
-def get_location_for_session(team, programme)
+def get_location_for_session(organisation, programme)
   loop do
     location =
-      team.locations.for_year_groups(programme.year_groups).sample ||
+      organisation.locations.for_year_groups(programme.year_groups).sample ||
         FactoryBot.create(
           :location,
           :school,
-          team:,
+          organisation:,
           year_groups: programme.year_groups
         )
 
-    return location unless team.sessions.exists?(location:)
+    return location unless organisation.sessions.exists?(location:)
   end
 end
 
-def create_session(user, team, completed:)
+def create_session(user, organisation, completed:)
   programme = Programme.find_by(type: "hpv")
 
   FactoryBot.create_list(
     :batch,
     4,
-    team:,
+    organisation:,
     vaccine: programme.vaccines.active.first
   )
 
-  location = get_location_for_session(team, programme)
+  location = get_location_for_session(organisation, programme)
 
   date = completed ? 1.week.ago.to_date : Date.current
 
-  session = FactoryBot.create(:session, date:, team:, programme:, location:)
+  session =
+    FactoryBot.create(:session, date:, organisation:, programme:, location:)
 
   session.session_dates.create!(value: date - 1.day)
   session.session_dates.create!(value: date + 1.day)
@@ -142,34 +147,34 @@ def create_session(user, team, completed:)
   end
 end
 
-def create_patients(team)
-  team.schools.each do |school|
-    FactoryBot.create_list(:patient, 5, team:, school:)
+def create_patients(organisation)
+  organisation.schools.each do |school|
+    FactoryBot.create_list(:patient, 5, organisation:, school:)
   end
 end
 
-def create_imports(user, team)
-  programme = team.programmes.find_by(type: "hpv")
+def create_imports(user, organisation)
+  programme = organisation.programmes.find_by(type: "hpv")
 
   %i[pending invalid recorded].each do |status|
     FactoryBot.create(
       :cohort_import,
       status,
-      team:,
+      organisation:,
       programme:,
       uploaded_by: user
     )
     FactoryBot.create(
       :immunisation_import,
       status,
-      team:,
+      organisation:,
       programme:,
       uploaded_by: user
     )
     FactoryBot.create(
       :class_import,
       status,
-      team:,
+      organisation:,
       session: programme.sessions.first,
       uploaded_by: user
     )
@@ -181,39 +186,39 @@ set_feature_flags
 seed_vaccines
 import_schools
 
-# Nurse Joy's team
-team = create_team(ods_code: "R1L")
-user = create_user(team:, email: "nurse.joy@example.com")
-create_user(team:, email: "admin.hope@example.com")
+# Nurse Joy's organisation
+organisation = create_organisation(ods_code: "R1L")
+user = create_user(organisation:, email: "nurse.joy@example.com")
+create_user(organisation:, email: "admin.hope@example.com")
 
-attach_sample_of_schools_to(team)
-attach_specific_school_to_team_if_present(team:, urn: "136126") # needed for automated testing
-attach_specific_school_to_team_if_present(team:, urn: "134522") # needed for automated testing
-
-Audited
-  .audit_class
-  .as_user(user) do
-    create_session(user, team, completed: false)
-    create_session(user, team, completed: true)
-  end
-create_patients(team)
-create_imports(user, team)
-
-# CIS2 team - the ODS code and user UID need to match the values in the CIS2 env
-team = create_team(ods_code: "A9A5A")
-user = create_user(team:, uid: "555057896106")
-
-attach_sample_of_schools_to(team)
-attach_specific_school_to_team_if_present(team:, urn: "136126") # needed for automated testing
-attach_specific_school_to_team_if_present(team:, urn: "134522") # needed for automated testing
+attach_sample_of_schools_to(organisation)
+attach_specific_school_to_organisation_if_present(organisation:, urn: "136126") # needed for automated testing
+attach_specific_school_to_organisation_if_present(organisation:, urn: "134522") # needed for automated testing
 
 Audited
   .audit_class
   .as_user(user) do
-    create_session(user, team, completed: false)
-    create_session(user, team, completed: true)
+    create_session(user, organisation, completed: false)
+    create_session(user, organisation, completed: true)
   end
-create_patients(team)
-create_imports(user, team)
+create_patients(organisation)
+create_imports(user, organisation)
+
+# CIS2 organisation - the ODS code and user UID need to match the values in the CIS2 env
+organisation = create_organisation(ods_code: "A9A5A")
+user = create_user(organisation:, uid: "555057896106")
+
+attach_sample_of_schools_to(organisation)
+attach_specific_school_to_organisation_if_present(organisation:, urn: "136126") # needed for automated testing
+attach_specific_school_to_organisation_if_present(organisation:, urn: "134522") # needed for automated testing
+
+Audited
+  .audit_class
+  .as_user(user) do
+    create_session(user, organisation, completed: false)
+    create_session(user, organisation, completed: true)
+  end
+create_patients(organisation)
+create_imports(user, organisation)
 
 UnscheduledSessionsFactory.new.call

@@ -22,14 +22,14 @@ describe "CIS2 backchannel logout", :cis2 do
   end
 
   def given_the_app_is_setup
-    @team = create(:team, :with_one_nurse)
+    @organisation = create(:organisation, :with_one_nurse)
     create(:location, :school, urn: "123456")
-    @user = @team.users.first
+    @user = @organisation.users.first
   end
 
   def and_that_i_am_signed_in
-    sign_in @team.users.first
-    @team.users.first.update! uid: "31337"
+    sign_in @organisation.users.first
+    @organisation.users.first.update! uid: "31337"
   end
   alias_method :when_i_sign_in_again, :and_that_i_am_signed_in
 

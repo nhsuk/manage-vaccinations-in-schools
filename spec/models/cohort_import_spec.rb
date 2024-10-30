@@ -34,10 +34,12 @@
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 describe CohortImport do
-  subject(:cohort_import) { create(:cohort_import, csv:, programme:, team:) }
+  subject(:cohort_import) do
+    create(:cohort_import, csv:, programme:, organisation:)
+  end
 
   let(:programme) { create(:programme) }
-  let(:team) { create(:team, programmes: [programme]) }
+  let(:organisation) { create(:organisation, programmes: [programme]) }
 
   let(:file) { "valid.csv" }
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_import/#{file}") }
@@ -151,7 +153,7 @@ describe CohortImport do
         .to change(cohort_import, :recorded_at).from(nil)
         .and change(cohort_import.patients, :count).by(3)
         .and change(cohort_import.parents, :count).by(3)
-        .and change(team.cohorts, :count).by(1)
+        .and change(organisation.cohorts, :count).by(1)
 
       cohort = Cohort.first
       expect(cohort.birth_academic_year).to eq(2009)
@@ -235,7 +237,7 @@ describe CohortImport do
     end
 
     it "ignores and counts duplicate records" do
-      create(:cohort_import, csv:, team:, programme:).record!
+      create(:cohort_import, csv:, organisation:, programme:).record!
       csv.rewind
 
       record!
@@ -292,7 +294,7 @@ describe CohortImport do
 
     context "with an unscheduled session" do
       let(:session) do
-        create(:session, :unscheduled, team:, programme:, location:)
+        create(:session, :unscheduled, organisation:, programme:, location:)
       end
 
       it "adds the patients to the session" do
@@ -302,7 +304,7 @@ describe CohortImport do
 
     context "with a scheduled session" do
       let(:session) do
-        create(:session, :scheduled, team:, programme:, location:)
+        create(:session, :scheduled, organisation:, programme:, location:)
       end
 
       it "adds the patients to the session" do
@@ -311,7 +313,7 @@ describe CohortImport do
     end
 
     context "with a closed session" do
-      before { create(:session, :closed, team:, programme:, location:) }
+      before { create(:session, :closed, organisation:, programme:, location:) }
 
       it "doesn't add the patients to the session" do
         expect { record! }.not_to change(PatientSession, :count)

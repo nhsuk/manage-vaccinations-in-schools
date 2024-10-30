@@ -14,11 +14,11 @@ describe GovukNotifyPersonalisation do
   end
 
   let(:programme) { create(:programme, :hpv) }
-  let(:team) do
+  let(:organisation) do
     create(
-      :team,
-      name: "Team",
-      email: "team@example.com",
+      :organisation,
+      name: "Organisation",
+      email: "organisation@example.com",
       phone: "01234 567890",
       programmes: [programme]
     )
@@ -34,7 +34,13 @@ describe GovukNotifyPersonalisation do
   end
   let(:location) { create(:location, :school, name: "Hogwarts") }
   let(:session) do
-    create(:session, location:, team:, programme:, date: Date.new(2026, 1, 1))
+    create(
+      :session,
+      location:,
+      organisation:,
+      programme:,
+      date: Date.new(2026, 1, 1)
+    )
   end
   let(:consent) { nil }
   let(:consent_form) { nil }
@@ -57,9 +63,9 @@ describe GovukNotifyPersonalisation do
         programme_name: "HPV",
         short_patient_name: "John",
         short_patient_name_apos: "John’s",
-        team_email: "team@example.com",
-        team_name: "Team",
-        team_phone: "01234 567890",
+        organisation_email: "organisation@example.com",
+        organisation_name: "Organisation",
+        organisation_phone: "01234 567890",
         vaccination: "HPV vaccination"
       }
     )
@@ -147,13 +153,13 @@ describe GovukNotifyPersonalisation do
           :consent_form,
           :given,
           :recorded,
-          session: create(:session, location:, programme:, team:),
+          session: create(:session, location:, programme:, organisation:),
           school_confirmed: false,
           school:
         )
       end
 
-      before { create(:session, location: school, programme:, team:) }
+      before { create(:session, location: school, programme:, organisation:) }
 
       it { should include(location_name: "Waterloo Road") }
     end

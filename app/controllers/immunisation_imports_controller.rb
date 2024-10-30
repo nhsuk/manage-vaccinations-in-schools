@@ -14,7 +14,7 @@ class ImmunisationImportsController < ApplicationController
     @immunisation_import =
       ImmunisationImport.new(
         programme: @programme,
-        team: current_user.selected_team,
+        organisation: current_user.selected_organisation,
         uploaded_by: current_user,
         **immunisation_import_params
       )

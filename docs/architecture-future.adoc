@@ -31,7 +31,7 @@ endif::[]
 
 This is the pilot a service to manage vaccinations in schools and during
 catch-up clinics. This service will provide e-consent, programme management and
-point-of-care services for SAIS teams and parents. The goal is for this service
+point-of-care services for SAIS organisations and parents. The goal is for this service
 to integrate with the national vaccination record to record vaccinations.
 
 This service is in Alpha and this pilot is being used in to explore designs and
@@ -43,7 +43,7 @@ non-functional requirements which have been, where possible, de-emphasised.
 
 .Functional Requirements
 
-* Allow SAIS teams to deliver vaccination programmes.
+* Allow SAIS organisations to deliver vaccination programmes.
 ** Manage vaccination programmes including location and cohort information.
 ** Create consent invites.
 ** Record vaccinations administered.
@@ -53,10 +53,10 @@ non-functional requirements which have been, where possible, de-emphasised.
 .Non-Functional Requirements
 
 * Security
-** Simple authentication and authorisation model; the alpha team will issue
+** Simple authentication and authorisation model; the alpha organisation will issue
    individual logins, tied to email addresses, to each SAIS user.
 ** Security model appropriate for scale of experiment
-*** Each SAIS team will only be able to view and record vaccinations/patients
+*** Each SAIS organisation will only be able to view and record vaccinations/patients
     for the school sessions that they manage
 *** The service will be available on the public internet with no IP address
     range restrictions
@@ -125,15 +125,15 @@ include::diagrams/context-view-future.puml[]
 ----
 endif::[]
 
-SAIS Team::
-Team responsible for performing vaccinations on school-aged children.
+SAIS Organisation::
+Organisation responsible for performing vaccinations on school-aged children.
 
 Parents::
 Parents are notified of the planned vaccination programme and invited to give
 consent for their children to be vaccinated.
 
 Manage vaccinations in schools service::
-The service will be used by the SAIS team to record vaccinations.
+The service will be used by the SAIS organisation to record vaccinations.
 
 Vaccination Record::
 

@@ -36,8 +36,9 @@
 FactoryBot.define do
   factory :cohort_import do
     programme
-    team do
-      programme.teams.first || association(:team, programmes: [programme])
+    organisation do
+      programme.organisations.first ||
+        association(:organisation, programmes: [programme])
     end
     uploaded_by
 

@@ -44,22 +44,36 @@ describe "End-to-end journey" do
 
   def given_an_hpv_programme_is_underway
     @programme = create(:programme, :hpv)
-    @team = create(:team, :with_one_nurse, programmes: [@programme])
-    @school = create(:location, :secondary, team: @team, name: "Pilot School")
-    @batch = create(:batch, team: @team, vaccine: @programme.vaccines.first)
+    @organisation =
+      create(:organisation, :with_one_nurse, programmes: [@programme])
+    @school =
+      create(
+        :location,
+        :secondary,
+        organisation: @organisation,
+        name: "Pilot School"
+      )
+    @batch =
+      create(
+        :batch,
+        organisation: @organisation,
+        vaccine: @programme.vaccines.first
+      )
     create(
       :session,
       :unscheduled,
       location: @school,
-      team: @team,
+      organisation: @organisation,
       programme: @programme
     )
   end
 
   def and_i_am_a_nurse_signed_into_the_service
-    sign_in @team.users.first
+    sign_in @organisation.users.first
     visit "/dashboard"
-    expect(page).to have_content("#{@team.users.first.full_name} (Nurse)")
+    expect(page).to have_content(
+      "#{@organisation.users.first.full_name} (Nurse)"
+    )
   end
 
   def when_i_upload_the_cohort_import_containing_one_child
@@ -159,7 +173,7 @@ describe "End-to-end journey" do
 
   def given_the_day_of_the_session_comes
     travel_to(Time.zone.local(2024, 3, 1))
-    sign_in @team.users.first
+    sign_in @organisation.users.first
   end
 
   def when_i_register_verbal_consent_and_triage

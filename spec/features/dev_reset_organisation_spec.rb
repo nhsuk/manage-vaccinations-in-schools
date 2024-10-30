@@ -1,30 +1,30 @@
 # frozen_string_literal: true
 
-describe "Dev endpoint to reset a team" do
+describe "Dev endpoint to reset a organisation" do
   before { Flipper.enable(:dev_tools) }
-
   after { Flipper.disable(:dev_tools) }
 
-  scenario "Resetting a team deletes all associated data" do
+  scenario "Resetting a organisation deletes all associated data" do
     given_an_example_programme_exists
     and_patients_have_been_imported
     and_vaccination_records_have_been_imported
 
-    then_all_associated_data_is_deleted_when_i_reset_the_team
+    then_all_associated_data_is_deleted_when_i_reset_the_organisation
   end
 
   def given_an_example_programme_exists
     @programme = create(:programme, :hpv_all_vaccines)
-    @team = create(:team, :with_one_nurse, programmes: [@programme])
+    @organisation =
+      create(:organisation, :with_one_nurse, programmes: [@programme])
 
     @programme.vaccines.each do |vaccine|
-      create_list(:batch, 4, team: @team, vaccine:)
+      create_list(:batch, 4, organisation: @organisation, vaccine:)
     end
 
-    @team.update!(ods_code: "R1L") # to match valid_hpv.csv
-    @team.schools << create(:location, :school, urn: "123456") # to match cohort_import/valid.csv
-    @team.schools << create(:location, :school, urn: "110158") # to match valid_hpv.csv
-    @user = @team.users.first
+    @organisation.update!(ods_code: "R1L") # to match valid_hpv.csv
+    @organisation.schools << create(:location, :school, urn: "123456") # to match cohort_import/valid.csv
+    @organisation.schools << create(:location, :school, urn: "110158") # to match valid_hpv.csv
+    @user = @organisation.users.first
   end
 
   def and_patients_have_been_imported
@@ -37,8 +37,10 @@ describe "Dev endpoint to reset a team" do
     attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/valid.csv")
     click_on "Continue"
 
-    expect(@team.cohorts.flat_map(&:patients).size).to eq(3)
-    expect(@team.cohorts.flat_map(&:patients).flat_map(&:parents).size).to eq(3)
+    expect(@organisation.cohorts.flat_map(&:patients).size).to eq(3)
+    expect(
+      @organisation.cohorts.flat_map(&:patients).flat_map(&:parents).size
+    ).to eq(3)
   end
 
   def and_vaccination_records_have_been_imported
@@ -56,7 +58,7 @@ describe "Dev endpoint to reset a team" do
     expect(VaccinationRecord.count).to eq(11)
   end
 
-  def then_all_associated_data_is_deleted_when_i_reset_the_team
+  def then_all_associated_data_is_deleted_when_i_reset_the_organisation
     expect { visit "/reset/r1l" }.to(
       change(Patient, :count)
         .by(-3)

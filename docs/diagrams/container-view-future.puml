@@ -8,7 +8,7 @@ title "Manage vaccinations in schools container view"
 
 AddElementTag("outside_context", $bgColor="#CCC", $fontColor="#FFF")
 
-Person_Ext(sais, "SAIS Team", $tags="outside_context")
+Person_Ext(sais, "SAIS Organisation", $tags="outside_context")
 Person_Ext(parents, "Parents", $tags="outside_context")
 
 Boundary(aws, "AWS") {

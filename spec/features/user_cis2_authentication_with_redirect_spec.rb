@@ -2,7 +2,7 @@
 
 describe "User CIS2 authentication" do
   scenario "with redirect" do
-    given_a_test_team_is_setup_in_mavis_and_cis2
+    given_a_test_organisation_is_setup_in_mavis_and_cis2
     when_i_go_to_the_sessions_page
     then_i_am_on_the_start_page
 
@@ -11,15 +11,15 @@ describe "User CIS2 authentication" do
     and_i_am_logged_in
   end
 
-  def given_a_test_team_is_setup_in_mavis_and_cis2
-    @team = create :team
+  def given_a_test_organisation_is_setup_in_mavis_and_cis2
+    @organisation = create :organisation
 
     mock_cis2_auth(
       uid: "123",
       given_name: "Nurse",
       family_name: "Test",
-      org_code: @team.ods_code,
-      org_name: @team.name
+      org_code: @organisation.ods_code,
+      org_name: @organisation.name
     )
   end
 
@@ -44,7 +44,7 @@ describe "User CIS2 authentication" do
     expect(page).to have_button "Log out"
   end
 
-  def then_i_see_the_team_not_found_error
+  def then_i_see_the_organisation_not_found_error
     expect(
       page
     ).to have_heading "Your organisation is not using this service yet"
@@ -54,7 +54,7 @@ describe "User CIS2 authentication" do
     click_button "Change role"
   end
 
-  def then_i_see_the_team_not_found_error
+  def then_i_see_the_organisation_not_found_error
     expect(
       page
     ).to have_heading "Your organisation is not using this service yet"

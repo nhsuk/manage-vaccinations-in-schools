@@ -96,7 +96,7 @@ copilot env delete --name test              # Destroy the environment disable
 
 Before you start, if you want HTTPS, you need to set up certificates in ACM.
 
-The certificate needs to be verified by the DNS team by sending them the
+The certificate needs to be verified by the DNS organisation by sending them the
 verification `cname`. On their end, they will verify the ownership, which in
 turn will update the status of the certificate to 'verified' in the ACM List of
 Certificates.

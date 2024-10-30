@@ -3,7 +3,7 @@
 class ProgrammePolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
-      scope.where(id: user.selected_team.programmes.ids)
+      scope.where(id: user.selected_organisation.programmes.ids)
     end
   end
 end

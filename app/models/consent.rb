@@ -49,7 +49,7 @@ class Consent < ApplicationRecord
 
   belongs_to :patient
   belongs_to :programme
-  belongs_to :team
+  belongs_to :organisation
 
   has_one :consent_form
   belongs_to :parent, -> { recorded }, optional: true
@@ -174,7 +174,7 @@ class Consent < ApplicationRecord
 
       create!(
         consent_form:,
-        team: consent_form.team,
+        organisation: consent_form.organisation,
         programme: consent_form.programme,
         patient:,
         parent:,

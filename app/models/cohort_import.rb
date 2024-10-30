@@ -48,13 +48,13 @@ class CohortImport < PatientImport
   end
 
   def parse_row(data)
-    CohortImportRow.new(data:, team:, programme:)
+    CohortImportRow.new(data:, organisation:, programme:)
   end
 
   def postprocess_rows!
     # Add imported patients to upcoming sessions.
 
-    team
+    organisation
       .sessions
       .has_programme(programme)
       .upcoming

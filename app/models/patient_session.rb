@@ -32,7 +32,7 @@ class PatientSession < ApplicationRecord
   belongs_to :proposed_session, class_name: "Session", optional: true
 
   has_one :location, through: :session
-  has_one :team, through: :session
+  has_one :organisation, through: :session
   has_many :programmes, through: :session
 
   has_many :gillick_assessments, -> { recorded }
@@ -98,7 +98,7 @@ class PatientSession < ApplicationRecord
     # HACK: this code will need to be revisited in future as it only really
     # works for HPV, where we only have one vaccine. It is likely to fail for
     # the Doubles programme as that has 2 vaccines. It is also likely to fail
-    # for the flu programme for the SAIS teams that offer both nasal and
+    # for the flu programme for the SAIS organisations that offer both nasal and
     # injectable vaccines.
 
     programme = programmes.first

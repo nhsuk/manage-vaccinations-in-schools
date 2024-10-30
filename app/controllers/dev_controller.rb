@@ -12,16 +12,19 @@ class DevController < ApplicationController
     Rake::Task.clear
     Rails.application.load_tasks
 
-    Team.with_advisory_lock("reset") { Rake::Task["db:seed:replant"].invoke }
+    Organisation.with_advisory_lock("reset") do
+      Rake::Task["db:seed:replant"].invoke
+    end
 
     redirect_to root_path
   end
 
-  def reset_team
-    team = Team.find_by!(ods_code: params[:team_ods_code])
+  def reset_organisation
+    organisation =
+      Organisation.find_by!(ods_code: params[:organisation_ods_code])
 
-    Team.with_advisory_lock("reset-team-#{team.id}") do
-      cohort_imports = CohortImport.where(team:)
+    Organisation.with_advisory_lock("reset-organisation-#{organisation.id}") do
+      cohort_imports = CohortImport.where(organisation:)
       cohort_imports.find_each do |cohort_import|
         cohort_import.parent_relationships.clear
         cohort_import.patients.clear
@@ -30,7 +33,7 @@ class DevController < ApplicationController
         cohort_import.destroy!
       end
 
-      immunisation_imports = ImmunisationImport.where(team:)
+      immunisation_imports = ImmunisationImport.where(organisation:)
       immunisation_imports.find_each do |immunisation_import|
         immunisation_import.batches.clear
         immunisation_import.patient_sessions.clear
@@ -41,11 +44,11 @@ class DevController < ApplicationController
         immunisation_import.destroy!
       end
 
-      team_sessions = Session.where(team:)
+      organisation_sessions = Session.where(organisation:)
 
-      ClassImport.where(session: team_sessions).destroy_all
+      ClassImport.where(session: organisation_sessions).destroy_all
 
-      patient_sessions = PatientSession.where(session: team_sessions)
+      patient_sessions = PatientSession.where(session: organisation_sessions)
       patient_sessions.each do |patient_session|
         patient_session.vaccination_records.destroy_all
         patient_session.triages.destroy_all
@@ -53,16 +56,20 @@ class DevController < ApplicationController
         patient_session.destroy!
       end
 
-      team_sessions.each do |team_session|
-        team_session.session_dates.destroy_all
-        team_session.destroy!
+      organisation_sessions.each do |organisation_session|
+        organisation_session.session_dates.destroy_all
+        organisation_session.destroy!
       end
 
-      ConsentForm.where(team:).delete_all
-      Consent.where(team:).delete_all
+      ConsentForm.where(organisation:).delete_all
+      Consent.where(organisation:).delete_all
 
-      Patient.joins(:cohort).where(cohorts: { team: }).distinct.destroy_all
-      Cohort.where(team:).delete_all
+      Patient
+        .joins(:cohort)
+        .where(cohorts: { organisation: })
+        .distinct
+        .destroy_all
+      Cohort.where(organisation:).delete_all
 
       UnscheduledSessionsFactory.new.call
     end

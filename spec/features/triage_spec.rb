@@ -31,10 +31,22 @@ describe "Triage" do
 
   def given_a_programme_with_a_running_session
     @programme = create(:programme, :hpv)
-    @team = create(:team, :with_one_nurse, programmes: [@programme])
-    @batch = create(:batch, team: @team, vaccine: @programme.vaccines.first)
+    @organisation =
+      create(:organisation, :with_one_nurse, programmes: [@programme])
+    @batch =
+      create(
+        :batch,
+        organisation: @organisation,
+        vaccine: @programme.vaccines.first
+      )
     location = create(:location, :school)
-    @session = create(:session, team: @team, programme: @programme, location:)
+    @session =
+      create(
+        :session,
+        organisation: @organisation,
+        programme: @programme,
+        location:
+      )
     @patient =
       create(
         :patient_session,
@@ -55,7 +67,7 @@ describe "Triage" do
   end
 
   def when_i_go_to_the_patient_that_needs_triage
-    sign_in @team.users.first
+    sign_in @organisation.users.first
     visit session_triage_tab_path(@session, tab: "needed")
     click_link @patient.full_name
   end

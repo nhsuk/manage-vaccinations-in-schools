@@ -36,9 +36,9 @@ class User < ApplicationRecord
     devise :database_authenticatable, :trackable, :timeoutable
   end
 
-  has_and_belongs_to_many :teams
+  has_and_belongs_to_many :organisations
 
-  has_many :programmes, through: :teams
+  has_many :programmes, through: :organisations
 
   encrypts :email, deterministic: true
   encrypts :family_name, :given_name
@@ -61,12 +61,12 @@ class User < ApplicationRecord
   scope :recently_active,
         -> { where(last_sign_in_at: 1.week.ago..Time.current) }
 
-  def selected_team
-    @selected_team ||=
+  def selected_organisation
+    @selected_organisation ||=
       if Settings.cis2.enabled
-        Team.find_by(ods_code: cis2_info.dig("selected_org", "code"))
+        Organisation.find_by(ods_code: cis2_info.dig("selected_org", "code"))
       else
-        teams.first
+        organisations.first
       end
   end
 

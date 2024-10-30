@@ -5,42 +5,42 @@ describe UnscheduledSessionsFactory do
     subject(:call) { described_class.new.call }
 
     let(:programme) { create(:programme, :hpv) }
-    let(:team) { create(:team, programmes: [programme]) }
+    let(:organisation) { create(:organisation, programmes: [programme]) }
 
     context "with a school that's eligible for the programme" do
-      let!(:location) { create(:location, :secondary, team:) }
+      let!(:location) { create(:location, :secondary, organisation:) }
 
       it "creates missing unscheduled sessions" do
-        expect { call }.to change(team.sessions, :count).by(1)
+        expect { call }.to change(organisation.sessions, :count).by(1)
 
-        session = team.sessions.first
+        session = organisation.sessions.first
         expect(session.location).to eq(location)
         expect(session.programmes).to eq([programme])
       end
     end
 
     context "with a generic clinic" do
-      let!(:location) { create(:location, :generic_clinic, team:) }
+      let!(:location) { create(:location, :generic_clinic, organisation:) }
 
       it "creates missing unscheduled sessions" do
-        expect { call }.to change(team.sessions, :count).by(1)
+        expect { call }.to change(organisation.sessions, :count).by(1)
 
-        session = team.sessions.first
+        session = organisation.sessions.first
         expect(session.location).to eq(location)
         expect(session.programmes).to eq([programme])
       end
     end
 
     context "with a community clinic" do
-      before { create(:location, :community_clinic, team:) }
+      before { create(:location, :community_clinic, organisation:) }
 
       it "doesn't create any unscheduled sessions" do
-        expect { call }.not_to change(team.sessions, :count)
+        expect { call }.not_to change(organisation.sessions, :count)
       end
     end
 
     context "with a school that's not eligible for the programme" do
-      before { create(:location, :primary, team:) }
+      before { create(:location, :primary, organisation:) }
 
       it "doesn't create any sessions" do
         expect { call }.not_to change(Session, :count)
@@ -49,8 +49,8 @@ describe UnscheduledSessionsFactory do
 
     context "when a session already exists" do
       before do
-        location = create(:location, :secondary, team:)
-        create(:session, team:, location:, programme:)
+        location = create(:location, :secondary, organisation:)
+        create(:session, organisation:, location:, programme:)
       end
 
       it "doesn't create any sessions" do
@@ -60,10 +60,10 @@ describe UnscheduledSessionsFactory do
 
     context "when a session exists for a different academic year" do
       before do
-        location = create(:location, :secondary, team:)
+        location = create(:location, :secondary, organisation:)
         create(
           :session,
-          team:,
+          organisation:,
           location:,
           programme:,
           date: Date.new(2013, 1, 1)
@@ -71,14 +71,14 @@ describe UnscheduledSessionsFactory do
       end
 
       it "creates the missing unscheduled session" do
-        expect { call }.to change(team.sessions, :count).by(1)
+        expect { call }.to change(organisation.sessions, :count).by(1)
       end
     end
 
-    context "with an unscheduled session for a location no longer managed by the team" do
+    context "with an unscheduled session for a location no longer managed by the organisation" do
       let(:location) { create(:location, :secondary) }
       let!(:session) do
-        create(:session, :unscheduled, team:, location:, programme:)
+        create(:session, :unscheduled, organisation:, location:, programme:)
       end
 
       it "destroys the session" do
@@ -87,10 +87,12 @@ describe UnscheduledSessionsFactory do
       end
     end
 
-    context "with a scheduled session for a location no longer managed by the team" do
+    context "with a scheduled session for a location no longer managed by the organisation" do
       let(:location) { create(:location, :secondary) }
 
-      before { create(:session, :scheduled, team:, location:, programme:) }
+      before do
+        create(:session, :scheduled, organisation:, location:, programme:)
+      end
 
       it "doesn't destroy the session" do
         expect { call }.not_to change(Session, :count)

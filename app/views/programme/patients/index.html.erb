@@ -12,7 +12,7 @@
 <h1 class="nhsuk-heading-l"><%= @programme.name %></h1>
 
 <%= render AppProgrammeNavigationComponent.new(@programme,
-                                               team: current_user.selected_team,
+                                               organisation: current_user.selected_organisation,
                                                active: :patients) %>
 
 <%= govuk_button_link_to "Import child records",

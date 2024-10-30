@@ -41,8 +41,8 @@ describe Triage do
     subject(:process!) { triage.process! }
 
     let(:programme) { create(:programme) }
-    let(:team) { create(:team, programmes: [programme]) }
-    let(:triage) { create(:triage, status, team:, programme:) }
+    let(:organisation) { create(:organisation, programmes: [programme]) }
+    let(:triage) { create(:triage, status, organisation:, programme:) }
 
     context "when ready to vaccinate" do
       let(:status) { :ready_to_vaccinate }

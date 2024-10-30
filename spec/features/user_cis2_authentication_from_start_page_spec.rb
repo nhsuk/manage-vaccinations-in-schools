@@ -2,7 +2,7 @@
 
 describe "User CIS2 authentication", :cis2 do
   scenario "from start page" do
-    given_a_test_team_is_setup_in_mavis_and_cis2
+    given_a_test_organisation_is_setup_in_mavis_and_cis2
     when_i_go_to_the_start_page
     then_i_should_see_the_cis2_login_button
 
@@ -19,7 +19,7 @@ describe "User CIS2 authentication", :cis2 do
   end
 
   scenario "going straight to the sessions page" do
-    given_a_test_team_is_setup_in_mavis_and_cis2
+    given_a_test_organisation_is_setup_in_mavis_and_cis2
     when_i_go_to_the_sessions_page
     then_i_am_on_the_start_page
 
@@ -28,15 +28,15 @@ describe "User CIS2 authentication", :cis2 do
     and_i_am_logged_in
   end
 
-  def given_a_test_team_is_setup_in_mavis_and_cis2
-    @team = create :team
+  def given_a_test_organisation_is_setup_in_mavis_and_cis2
+    @organisation = create :organisation
 
     mock_cis2_auth(
       uid: "123",
       given_name: "Nurse",
       family_name: "Test",
-      org_code: @team.ods_code,
-      org_name: @team.name
+      org_code: @organisation.ods_code,
+      org_name: @organisation.name
     )
   end
 

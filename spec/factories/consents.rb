@@ -42,8 +42,9 @@ FactoryBot.define do
     end
 
     programme
-    team do
-      programme.teams.first || association(:team, programmes: [programme])
+    organisation do
+      programme.organisations.first ||
+        association(:organisation, programmes: [programme])
     end
 
     patient

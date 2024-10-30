@@ -29,7 +29,7 @@ FactoryBot.define do
   factory :batch do
     transient { prefix { Faker::Alphanumeric.alpha(number: 2).upcase } }
 
-    team
+    organisation
     vaccine
 
     name { "#{prefix}#{Faker::Number.number(digits: 4)}" }

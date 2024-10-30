@@ -170,8 +170,8 @@ en:
             dose_sequence:
               blank: The dose sequence number cannot be greater than 3. Enter a dose sequence number, for example, 1, 2 or 3.
             organisation_code:
-              blank: Enter an organisation code that matches the current team.
-              equal_to: Enter an organisation code that matches the current team.
+              blank: Enter an organisation code that matches the current organisation.
+              equal_to: Enter an organisation code that matches the current organisation.
             patient:
               multiple_duplicate_match: Two or more possible patients match the patient first name, last name, date of birth or postcode.
             patient_date_of_birth:
@@ -192,7 +192,7 @@ en:
             school_name:
               blank: Enter a school name.
             school_urn:
-              inclusion: The school URN is not recognised. If you’ve checked the URN, and you believe it’s valid, contact our support team.
+              inclusion: The school URN is not recognised. If you’ve checked the URN, and you believe it’s valid, contact our support organisation.
             session_date:
               blank: Enter a date in the correct format.
               greater_than_or_equal_to: The vaccination date is outside the programme. Enter a date after the programme started.
@@ -757,7 +757,7 @@ en:
   table:
     no_filtered_results: We couldn’t find any children that matched your filters.
     no_results: No results
-  teams:
+  organisations:
     show:
       title: Your organisation
   vaccination_records:

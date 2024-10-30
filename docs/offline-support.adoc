@@ -25,7 +25,7 @@ A key feature required for the Record children's vaccines service is to allow
 clinical users to use parts of the system while not connected to the Internet.
 There are certain clinical settings where Internet access isn't available, for
 example in schools where there may be no mobile signal or WiFi that the SAIS
-team can use.
+organisation can use.
 
 To accomplish this the standard patterns provided by server-rendered apps are
 insufficient. Aggressive caching can help accommodate viewing data, but updating
@@ -33,7 +33,7 @@ records requires a more advanced approach.
 
 == Feature overview
 
-The service's current design is for SAIS team members to be able to select
+The service's current design is for SAIS organisation members to be able to select
 specific programmes to be saved (after being encrypted) for offline use. The user
 is then be able to retrieve and view saved patient information, including
 consent status and other info (e.g. past vaccination history), before performing

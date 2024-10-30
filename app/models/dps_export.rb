@@ -40,7 +40,7 @@ class DPSExport < ApplicationRecord
             :patient,
             :performed_by_user,
             :session,
-            :team,
+            :organisation,
             vaccine: :programme
           )
           .order(:recorded_at)

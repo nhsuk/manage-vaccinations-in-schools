@@ -14,7 +14,7 @@ class ClassImportsController < ApplicationController
     @class_import =
       ClassImport.new(
         session: @session,
-        team: current_user.selected_team,
+        organisation: current_user.selected_organisation,
         uploaded_by: current_user,
         **class_import_params
       )

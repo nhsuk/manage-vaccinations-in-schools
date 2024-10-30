@@ -58,8 +58,8 @@ describe ConsentMailer do
       it { should include(full_and_preferred_patient_name: patient.full_name) }
       it { should include(location_name: session.location.name) }
       it { should include(next_session_date: date.strftime("%A %-d %B")) }
-      it { should include(team_email: session.team.email) }
-      it { should include(team_phone: session.team.phone) }
+      it { should include(organisation_email: session.organisation.email) }
+      it { should include(organisation_phone: session.organisation.phone) }
     end
   end
 
@@ -92,8 +92,8 @@ describe ConsentMailer do
 
       it { should include(consent_link:) }
       it { should include(full_and_preferred_patient_name: patient.full_name) }
-      it { should include(team_email: session.team.email) }
-      it { should include(team_phone: session.team.phone) }
+      it { should include(organisation_email: session.organisation.email) }
+      it { should include(organisation_phone: session.organisation.phone) }
     end
   end
 
@@ -122,8 +122,8 @@ describe ConsentMailer do
 
       it { should include(next_session_date: date.strftime("%A %-d %B")) }
       it { should include(location_name: session.location.name) }
-      it { should include(team_email: session.team.email) }
-      it { should include(team_phone: session.team.phone) }
+      it { should include(organisation_email: session.organisation.email) }
+      it { should include(organisation_phone: session.organisation.phone) }
 
       it "includes consent details" do
         expect(personalisation).to include(
@@ -160,8 +160,8 @@ describe ConsentMailer do
 
       it { should include(next_session_date: date.strftime("%A %-d %B")) }
       it { should include(location_name: session.location.name) }
-      it { should include(team_email: session.team.email) }
-      it { should include(team_phone: session.team.phone) }
+      it { should include(organisation_email: session.organisation.email) }
+      it { should include(organisation_phone: session.organisation.phone) }
 
       it "includes consent details" do
         expect(personalisation).to include(

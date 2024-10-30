@@ -22,14 +22,21 @@ describe "HPV Vaccination" do
 
   def given_i_am_signed_in
     programme = create(:programme, :hpv)
-    @team = create(:team, :with_one_nurse, programmes: [programme])
+    @organisation =
+      create(:organisation, :with_one_nurse, programmes: [programme])
     location = create(:location, :school)
-    @batch = create(:batch, team: @team, vaccine: programme.vaccines.first)
-    @session = create(:session, team: @team, programme:, location:)
+    @batch =
+      create(
+        :batch,
+        organisation: @organisation,
+        vaccine: programme.vaccines.first
+      )
+    @session =
+      create(:session, organisation: @organisation, programme:, location:)
     @patient =
       create(:patient, :consent_given_triage_not_needed, session: @session)
 
-    sign_in @team.users.first
+    sign_in @organisation.users.first
   end
 
   def when_i_go_to_a_patient_that_is_ready_to_vaccinate
@@ -70,7 +77,9 @@ describe "HPV Vaccination" do
 
   def then_i_see_that_the_status_is_delayed
     expect(page).to have_content("Could not vaccinate")
-    expect(page).to have_content("#{@team.users.first.full_name} decided that")
+    expect(page).to have_content(
+      "#{@organisation.users.first.full_name} decided that"
+    )
   end
 
   def and_an_email_is_sent_to_the_parent_confirming_the_delay

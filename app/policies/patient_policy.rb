@@ -5,8 +5,8 @@ class PatientPolicy < ApplicationPolicy
     def resolve
       scope
         .left_outer_joins(:cohort, :school)
-        .where(cohort: { team: user.selected_team })
-        .or(Patient.where(school: { team: user.selected_team }))
+        .where(cohort: { organisation: user.selected_organisation })
+        .or(Patient.where(school: { organisation: user.selected_organisation }))
     end
   end
 end

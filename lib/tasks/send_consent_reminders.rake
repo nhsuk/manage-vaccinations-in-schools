@@ -7,7 +7,7 @@ task :send_consent_reminders, %i[session_id] => :environment do |_task, args|
   session = Session.find(args[:session_id])
   patients = session.patients.without_consent
 
-  puts "Team: #{session.team.name}"
+  puts "Organisation: #{session.organisation.name}"
   puts "Location: #{session.location.name}"
   puts "Session consent close date: #{session.close_consent_at}"
   response =

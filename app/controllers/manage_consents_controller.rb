@@ -229,7 +229,7 @@ class ManageConsentsController < ApplicationController
         Triage.find_or_initialize_by(
           patient: @patient,
           programme: @session.programmes.first, # TODO: handle multiple programmes
-          team: @session.team
+          organisation: @session.organisation
         )
       end
   end
@@ -238,7 +238,7 @@ class ManageConsentsController < ApplicationController
     {
       patient: @patient,
       programme: @session.programmes.first, # TODO: handle multiple programmes
-      team: @session.team,
+      organisation: @session.organisation,
       recorded_by: current_user
     }.tap do |attrs|
       attrs[:route] = :self_consent if @patient_session.gillick_competent?

@@ -24,24 +24,25 @@ describe "HPV Vaccination" do
 
   def given_i_am_signed_in
     programme = create(:programme, :hpv)
-    team = create(:team, :with_one_nurse, programmes: [programme])
+    organisation =
+      create(:organisation, :with_one_nurse, programmes: [programme])
 
     batches =
       programme.vaccines.flat_map do |vaccine|
-        create_list(:batch, 4, team:, vaccine:)
+        create_list(:batch, 4, organisation:, vaccine:)
       end
 
     @batch = batches.first
     @batch2 = batches.second
 
-    @session = create(:session, team:, programme:)
+    @session = create(:session, organisation:, programme:)
 
     @patient =
       create(:patient, :consent_given_triage_not_needed, session: @session)
     @patient2 =
       create(:patient, :consent_given_triage_not_needed, session: @session)
 
-    sign_in team.users.first
+    sign_in organisation.users.first
   end
 
   def when_i_vaccinate_a_patient

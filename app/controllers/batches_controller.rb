@@ -7,7 +7,8 @@ class BatchesController < ApplicationController
   before_action :set_batch, except: %i[new create make_default]
 
   def new
-    @batch = Batch.new(team: current_user.selected_team, vaccine:)
+    @batch =
+      Batch.new(organisation: current_user.selected_organisation, vaccine:)
   end
 
   def create
@@ -25,7 +26,7 @@ class BatchesController < ApplicationController
     @batch =
       Batch.archived.find_or_initialize_by(
         name: batch_params[:name],
-        team: current_user.selected_team,
+        organisation: current_user.selected_organisation,
         expiry:,
         vaccine:
       )

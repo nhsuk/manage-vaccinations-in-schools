@@ -69,7 +69,7 @@ endif::[]
 ** Automated deployment to testing (AKA review) and staging environments to test
    functionality and deployability.
 * The repo is scanned weekly by GitHub's Dependabot for old libraries; a pull
-  request is created for any updates required, the team is responsible for
+  request is created for any updates required, the organisation is responsible for
   merging these once ready.
 * Once merged into the main code branch automated tests are run again on the
   merged code and then deployed to the production environment.

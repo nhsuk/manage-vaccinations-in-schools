@@ -21,9 +21,9 @@ describe "Patient search" do
   end
 
   def given_that_i_am_signed_in
-    @team = create(:team, :with_one_nurse)
-    @user = @team.users.first
-    @cohort = create(:cohort, team: @team)
+    @organisation = create(:organisation, :with_one_nurse)
+    @user = @organisation.users.first
+    @cohort = create(:cohort, organisation: @organisation)
 
     # Create test patients with various names
     [

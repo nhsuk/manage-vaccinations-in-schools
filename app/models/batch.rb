@@ -27,7 +27,7 @@
 class Batch < ApplicationRecord
   audited
 
-  belongs_to :team
+  belongs_to :organisation
   belongs_to :vaccine
 
   scope :order_by_name_and_expiration, -> { order(expiry: :asc, name: :asc) }
@@ -48,7 +48,7 @@ class Batch < ApplicationRecord
               less_than: -> { Date.new(Date.current.year + 15, 1, 1) }
             },
             uniqueness: {
-              scope: %i[team_id name vaccine_id]
+              scope: %i[organisation_id name vaccine_id]
             }
 
   def archived?

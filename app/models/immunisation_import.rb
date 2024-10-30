@@ -74,7 +74,7 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def parse_row(data)
-    ImmunisationImportRow.new(data:, team:, programme:)
+    ImmunisationImportRow.new(data:, organisation:, programme:)
   end
 
   def process_row(row)
@@ -143,7 +143,7 @@ class ImmunisationImport < ApplicationRecord
         .select { _1.vaccinated?(programme) }
 
     PatientSession.where(
-      session: team.sessions.upcoming,
+      session: organisation.sessions.upcoming,
       patient: already_vaccinated_patients
     ).find_each(&:destroy_if_safe!)
   end

@@ -77,11 +77,11 @@ class ConsentForm < ApplicationRecord
   belongs_to :location
   belongs_to :programme
   belongs_to :school, class_name: "Location", optional: true
-  belongs_to :team
+  belongs_to :organisation
 
   has_many :notify_log_entries
 
-  has_many :eligible_schools, through: :team, source: :schools
+  has_many :eligible_schools, through: :organisation, source: :schools
 
   enum :response, %w[given refused not_provided], prefix: "consent"
   enum :reason,
@@ -135,7 +135,7 @@ class ConsentForm < ApplicationRecord
   normalizes :parent_email,
              with: -> { _1.blank? ? nil : _1.to_s.downcase.strip }
 
-  validates :programme, inclusion: { in: -> { _1.team.programmes } }
+  validates :programme, inclusion: { in: -> { _1.organisation.programmes } }
 
   validates :address_line_1,
             :address_line_2,
@@ -325,7 +325,11 @@ class ConsentForm < ApplicationRecord
 
   def original_session
     @original_session ||=
-      Session.has_programme(programme).find_by(academic_year:, location:, team:)
+      Session.has_programme(programme).find_by(
+        academic_year:,
+        location:,
+        organisation:
+      )
   end
 
   # This can be different to the original session if the parent tells us their
@@ -333,7 +337,8 @@ class ConsentForm < ApplicationRecord
   def actual_upcoming_session
     @actual_upcoming_session ||=
       begin
-        session_scope = Session.upcoming.has_programme(programme).where(team:)
+        session_scope =
+          Session.upcoming.has_programme(programme).where(organisation:)
 
         if location.clinic?
           # If they've been booked in to a clinic we don't move them to a school
@@ -342,7 +347,7 @@ class ConsentForm < ApplicationRecord
         elsif school
           session_scope.find_by(location: school)
         elsif education_setting_home?
-          session_scope.find_by(location: team.generic_clinic)
+          session_scope.find_by(location: organisation.generic_clinic)
         else
           session_scope.find_by(location:)
         end
@@ -421,7 +426,7 @@ class ConsentForm < ApplicationRecord
               # either the original session or a different school or a clinic if
               # home educated. This can happen if the parent fills out the form
               # late.
-              team.generic_clinic_session
+              organisation.generic_clinic_session
             elsif original_session != actual_upcoming_session
               actual_upcoming_session
             end
@@ -462,7 +467,7 @@ class ConsentForm < ApplicationRecord
     refused_and_not_had_it_already? && programme.flu?
     # checking for flu here is a simplification
     # the actual logic is: if the parent has refused a nasal vaccine AND the session is for a nasal vaccine
-    # AND the SAIS team offers an alternative injection vaccine, then show the injection step
+    # AND the SAIS organisation offers an alternative injection vaccine, then show the injection step
     #
     # we currently don't track what type of vaccine was refused.
     # currently HPV is only offered as an injection, so we don't need to check for it

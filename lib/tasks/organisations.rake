@@ -2,25 +2,27 @@
 
 require_relative "../task_helpers"
 
-namespace :teams do
+namespace :organisations do
   desc <<-DESC
-    Create a new HPV team consisting of a team, programme, vaccine, and health questions.
+    Create a new HPV organisation consisting of a organisation, programme, vaccine, and health questions.
   
     Usage:
-      rake teams:create_hpv # Complete the prompts
-      rake teams:create_hpv[email,name,phone,ods_code,privacy_policy_url,reply_to_id]
+      rake organisations:create_hpv # Complete the prompts
+      rake organisations:create_hpv[email,name,phone,ods_code,privacy_policy_url,reply_to_id]
   DESC
   task :create_hpv,
        %i[email name phone ods_code privacy_policy_url reply_to_id] =>
          :environment do |_task, args|
     include TaskHelpers
 
-    raise "Ensure vaccines exist before creating a team." unless Vaccine.exists?
+    unless Vaccine.exists?
+      raise "Ensure vaccines exist before creating a organisation."
+    end
 
     if args.to_a.empty? && $stdin.isatty && $stdout.isatty
-      email = prompt_user_for "Enter team email:", required: true
-      name = prompt_user_for "Enter team name:", required: true
-      phone = prompt_user_for "Enter team phone:", required: true
+      email = prompt_user_for "Enter organisation email:", required: true
+      name = prompt_user_for "Enter organisation name:", required: true
+      phone = prompt_user_for "Enter organisation phone:", required: true
       ods_code = prompt_user_for "Enter ODS code:", required: true
       privacy_policy_url = prompt_user_for "Enter privacy policy URL:"
       reply_to_id = prompt_user_for "Reply-to ID (from GOVUK Notify):"
@@ -38,8 +40,8 @@ namespace :teams do
     ActiveRecord::Base.transaction do
       programme = Programme.find_or_create_by!(type: "hpv")
 
-      team =
-        Team.create!(
+      organisation =
+        Organisation.create!(
           email:,
           name:,
           phone:,
@@ -48,11 +50,11 @@ namespace :teams do
           reply_to_id:
         )
 
-      TeamProgramme.create!(team:, programme:)
+      OrganisationProgramme.create!(organisation:, programme:)
 
-      team.generic_clinic # ensure it exists
+      organisation.generic_clinic # ensure it exists
 
-      puts "New #{team.name} team with ID #{team.id} created."
+      puts "New #{organisation.name} organisation with ID #{organisation.id} created."
     end
   end
 end

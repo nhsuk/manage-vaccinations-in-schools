@@ -34,7 +34,7 @@ FactoryBot.define do
     performed_by
     programme
 
-    team { performed_by.teams.first }
+    organisation { performed_by.organisations.first }
 
     notes { "" }
     status { :ready_to_vaccinate }

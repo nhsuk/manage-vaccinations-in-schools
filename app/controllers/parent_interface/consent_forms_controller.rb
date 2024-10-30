@@ -20,7 +20,7 @@ module ParentInterface
       consent_form =
         ConsentForm.create!(
           programme: @programme,
-          team: @session.team,
+          organisation: @session.organisation,
           location: @session.location
         )
 
@@ -53,7 +53,7 @@ module ParentInterface
     def set_session_and_programme
       @session = Session.find_by!(slug: params[:session_slug])
       @programme = @session.programmes.find_by!(type: params[:programme_type])
-      @team = @session.team
+      @organisation = @session.organisation
     end
 
     def clear_session_edit_variables

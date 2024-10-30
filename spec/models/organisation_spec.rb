@@ -2,7 +2,7 @@
 
 # == Schema Information
 #
-# Table name: teams
+# Table name: organisations
 #
 #  id                            :bigint           not null, primary key
 #  days_before_consent_reminders :integer          default(7), not null
@@ -19,12 +19,12 @@
 #
 # Indexes
 #
-#  index_teams_on_name      (name) UNIQUE
-#  index_teams_on_ods_code  (ods_code) UNIQUE
+#  index_organisations_on_name      (name) UNIQUE
+#  index_organisations_on_ods_code  (ods_code) UNIQUE
 #
 
-describe Team do
-  subject(:team) { build(:team) }
+describe Organisation do
+  subject(:organisation) { build(:organisation) }
 
   describe "validations" do
     it { should validate_presence_of(:email) }

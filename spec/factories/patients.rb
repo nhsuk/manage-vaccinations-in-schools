@@ -56,8 +56,9 @@ FactoryBot.define do
       performed_by { association(:user) }
       programme { session&.programmes&.first }
       session { nil }
-      team do
-        session&.team || association(:team, programmes: [programme].compact)
+      organisation do
+        session&.organisation ||
+          association(:organisation, programmes: [programme].compact)
       end
       year_group { nil }
     end
@@ -65,7 +66,7 @@ FactoryBot.define do
     cohort do
       Cohort.find_or_create_by!(
         birth_academic_year: date_of_birth.academic_year,
-        team:
+        organisation:
       )
     end
 
@@ -160,7 +161,7 @@ FactoryBot.define do
             :given,
             :from_mum,
             patient: instance,
-            team:,
+            organisation:,
             programme:
           )
         ]
@@ -178,7 +179,7 @@ FactoryBot.define do
             :health_question_notes,
             patient: instance,
             programme:,
-            team:
+            organisation:
           )
         ]
       end
@@ -193,7 +194,7 @@ FactoryBot.define do
             :refused,
             :from_mum,
             patient: instance,
-            team:,
+            organisation:,
             programme:
           )
         ]
@@ -209,7 +210,7 @@ FactoryBot.define do
             :refused,
             :from_mum,
             patient: instance,
-            team:,
+            organisation:,
             programme:,
             reason_for_refusal: "already_vaccinated",
             reason_for_refusal_notes: "Already had the vaccine at the GP"
@@ -227,7 +228,7 @@ FactoryBot.define do
             :refused,
             :from_mum,
             patient: instance,
-            team:,
+            organisation:,
             programme:
           ),
           association(
@@ -236,7 +237,7 @@ FactoryBot.define do
             :given,
             :from_dad,
             patient: instance,
-            team:,
+            organisation:,
             programme:
           )
         ]
@@ -252,7 +253,7 @@ FactoryBot.define do
             patient: instance,
             performed_by:,
             programme:,
-            team:,
+            organisation:,
             notes: "Okay to vaccinate"
           )
         ]
@@ -268,7 +269,7 @@ FactoryBot.define do
             patient: instance,
             performed_by:,
             programme:,
-            team:,
+            organisation:,
             notes: "Do not vaccinate"
           )
         ]
@@ -284,7 +285,7 @@ FactoryBot.define do
             patient: instance,
             performed_by:,
             programme:,
-            team:,
+            organisation:,
             notes: "Needs follow up"
           )
         ]
@@ -300,7 +301,7 @@ FactoryBot.define do
             patient: instance,
             performed_by:,
             programme:,
-            team:,
+            organisation:,
             notes: "Delay vaccination"
           )
         ]

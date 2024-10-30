@@ -9,7 +9,7 @@ title "Manage vaccinations in schools context diagram"
 Person_Ext(parents, "Parents")
 
 System_Ext(poc, "Point of care systems")
-Person(sais, "SAIS Team")
+Person(sais, "SAIS Organisation")
 
 Enterprise_Boundary(nhs, "NHS England Digital") {
   System(mavis, "Manage vaccinations in schools")

@@ -24,15 +24,22 @@ describe "Self-consent" do
 
   def given_an_hpv_programme_is_underway
     programme = create(:programme, :hpv)
-    @team =
+    @organisation =
       create(
-        :team,
+        :organisation,
         :with_one_nurse,
         programmes: [programme],
         nurse_email: "nurse.joy@example.com"
       )
     location = create(:location, :school, name: "Pilot School")
-    @session = create(:session, :scheduled, team: @team, programme:, location:)
+    @session =
+      create(
+        :session,
+        :scheduled,
+        organisation: @organisation,
+        programme:,
+        location:
+      )
     @child = create(:patient, session: @session)
   end
 
@@ -41,7 +48,7 @@ describe "Self-consent" do
   end
 
   def and_there_is_a_child_without_parental_consent
-    sign_in @team.users.first
+    sign_in @organisation.users.first
 
     visit "/dashboard"
 

@@ -50,7 +50,7 @@ class ConsentsController < ApplicationController
 
   def set_session
     @session =
-      policy_scope(Session).includes(:location, :team).find_by!(
+      policy_scope(Session).includes(:location, :organisation).find_by!(
         slug: params[:session_slug] || params[:slug]
       )
   end

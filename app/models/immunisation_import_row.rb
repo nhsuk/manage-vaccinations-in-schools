@@ -62,9 +62,9 @@ class ImmunisationImportRow
             presence: true,
             if: :requires_performed_by?
 
-  def initialize(data:, team:, programme:)
+  def initialize(data:, organisation:, programme:)
     @data = data
-    @team = team
+    @organisation = organisation
     @programme = programme
   end
 
@@ -124,7 +124,7 @@ class ImmunisationImportRow
       Session
         .create_with(programmes: [@programme])
         .find_or_create_by!(
-          team:,
+          organisation:,
           location:,
           academic_year: session_date.academic_year
         )
@@ -275,9 +275,9 @@ class ImmunisationImportRow
 
   private
 
-  attr_reader :team
+  attr_reader :organisation
 
-  delegate :ods_code, to: :team
+  delegate :ods_code, to: :organisation
 
   def administered_at
     administered ? (session_date.in_time_zone + 12.hours) : nil
@@ -290,7 +290,7 @@ class ImmunisationImportRow
       if school && (care_setting.nil? || care_setting == CARE_SETTING_SCHOOL)
         school
       else
-        team.generic_clinic
+        organisation.generic_clinic
       end
   end
 
@@ -317,7 +317,7 @@ class ImmunisationImportRow
       Batch.find_or_create_by!(
         expiry: batch_expiry_date,
         name: batch_number,
-        team:,
+        organisation:,
         vaccine:
       )
   end

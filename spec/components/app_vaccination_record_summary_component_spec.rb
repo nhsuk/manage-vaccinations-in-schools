@@ -8,8 +8,8 @@ describe AppVaccinationRecordSummaryComponent do
   let(:administered_at) { Time.zone.local(2024, 9, 6, 12) }
   let(:location) { create(:location, :school, name: "Hogwarts") }
   let(:programme) { create(:programme, :hpv) }
-  let(:team) { create(:team, programmes: [programme]) }
-  let(:session) { create(:session, programme:, location:, team:) }
+  let(:organisation) { create(:organisation, programmes: [programme]) }
+  let(:session) { create(:session, programme:, location:, organisation:) }
   let(:patient) { create(:patient) }
   let(:patient_session) { create(:patient_session, session:, patient:) }
   let(:vaccine) { programme.vaccines.first }
@@ -224,7 +224,7 @@ describe AppVaccinationRecordSummaryComponent do
     end
 
     context "when the location is a generic clinic" do
-      let(:location) { create(:location, :generic_clinic, team:) }
+      let(:location) { create(:location, :generic_clinic, organisation:) }
       let(:location_name) { "Hogwarts" }
 
       it do

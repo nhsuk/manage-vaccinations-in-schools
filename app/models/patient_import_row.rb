@@ -28,9 +28,9 @@ class PatientImportRow
   validates :parent_2_phone, phone: { allow_blank: true }
   validates :parent_2_relationship, absence: true, unless: :parent_2_exists?
 
-  def initialize(data:, team:, year_groups:)
+  def initialize(data:, organisation:, year_groups:)
     @data = data
-    @team = team
+    @organisation = organisation
     @year_groups = year_groups
   end
 
@@ -210,7 +210,7 @@ class PatientImportRow
     @data["PARENT_2_PHONE"]&.gsub(/\s/, "").presence
   end
 
-  attr_reader :team, :year_groups
+  attr_reader :organisation, :year_groups
 
   private
 
@@ -220,7 +220,7 @@ class PatientImportRow
     @cohort ||=
       Cohort.find_or_create_by!(
         birth_academic_year: date_of_birth.academic_year,
-        team:
+        organisation:
       )
   end
 
