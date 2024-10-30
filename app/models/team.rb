@@ -24,6 +24,11 @@
 class Team < ApplicationRecord
   belongs_to :organisation
 
+  has_many :locations
+
+  has_many :clinics, -> { clinic }, class_name: "Location"
+  has_many :schools, -> { school }, class_name: "Location"
+
   validates :name, presence: true, uniqueness: { scope: :organisation }
   validates :email, notify_safe_email: true
   validates :phone, presence: true, phone: true

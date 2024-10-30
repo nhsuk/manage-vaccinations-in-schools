@@ -17,17 +17,17 @@
 #  year_groups      :integer          default([]), not null, is an Array
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
-#  organisation_id  :bigint
+#  team_id          :bigint
 #
 # Indexes
 #
-#  index_locations_on_ods_code         (ods_code) UNIQUE
-#  index_locations_on_organisation_id  (organisation_id)
-#  index_locations_on_urn              (urn) UNIQUE
+#  index_locations_on_ods_code  (ods_code) UNIQUE
+#  index_locations_on_team_id   (team_id)
+#  index_locations_on_urn       (urn) UNIQUE
 #
 # Foreign Keys
 #
-#  fk_rails_...  (organisation_id => organisations.id)
+#  fk_rails_...  (team_id => teams.id)
 #
 
 describe Location do
