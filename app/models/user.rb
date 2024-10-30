@@ -62,11 +62,12 @@ class User < ApplicationRecord
         -> { where(last_sign_in_at: 1.week.ago..Time.current) }
 
   def selected_team
-    if Settings.cis2.enabled
-      Team.find_by(ods_code: cis2_info.dig("selected_org", "code"))
-    else
-      teams.first
-    end
+    @selected_team ||=
+      if Settings.cis2.enabled
+        Team.find_by(ods_code: cis2_info.dig("selected_org", "code"))
+      else
+        teams.first
+      end
   end
 
   def requires_email_and_password?
