@@ -17,20 +17,20 @@
 #  status                       :integer          default("pending_import"), not null
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
+#  organisation_id              :bigint           not null
 #  session_id                   :bigint           not null
-#  team_id                      :bigint           not null
 #  uploaded_by_user_id          :bigint           not null
 #
 # Indexes
 #
+#  index_class_imports_on_organisation_id      (organisation_id)
 #  index_class_imports_on_session_id           (session_id)
-#  index_class_imports_on_team_id              (team_id)
 #  index_class_imports_on_uploaded_by_user_id  (uploaded_by_user_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (organisation_id => organisations.id)
 #  fk_rails_...  (session_id => sessions.id)
-#  fk_rails_...  (team_id => teams.id)
 #  fk_rails_...  (uploaded_by_user_id => users.id)
 #
 FactoryBot.define do
