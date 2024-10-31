@@ -64,6 +64,10 @@ describe AppActivityLogComponent do
         parent: dad,
         recorded_at: Time.zone.parse("2024-05-30 13:00")
       )
+
+      # draft consent should not show
+      create(:consent, :given, programme:, patient:, parent: nil)
+
       create(
         :triage,
         :needs_follow_up,
@@ -124,9 +128,13 @@ describe AppActivityLogComponent do
     end
 
     it "renders headings in correct order" do
-      expect(subject).to have_css("h2:nth-of-type(1)", text: "31 May 2024")
-      expect(subject).to have_css("h2:nth-of-type(2)", text: "30 May 2024")
-      expect(subject).to have_css("h2:nth-of-type(3)", text: "29 May 2024")
+      expect(page).to have_css("h2:nth-of-type(1)", text: "31 May 2024")
+      expect(page).to have_css("h2:nth-of-type(2)", text: "30 May 2024")
+      expect(page).to have_css("h2:nth-of-type(3)", text: "29 May 2024")
+    end
+
+    it "has cards" do
+      expect(page).to have_css(".nhsuk-card", count: 8)
     end
 
     include_examples "card",

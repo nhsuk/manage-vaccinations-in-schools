@@ -39,7 +39,7 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def consent_events
-    consents.map do
+    consents.recorded.map do
       {
         title: "Consent #{_1.response} by #{_1.name} (#{_1.who_responded})",
         time: _1.recorded_at
@@ -81,7 +81,7 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def vaccination_events
-    vaccination_records.map do
+    vaccination_records.recorded.map do
       {
         title: "Vaccinated with #{helpers.vaccine_heading(_1.vaccine)}",
         time: _1.created_at,
