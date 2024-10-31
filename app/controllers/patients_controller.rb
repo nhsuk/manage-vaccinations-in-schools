@@ -10,7 +10,7 @@ class PatientsController < ApplicationController
 
     if (@q = params[:q]).present?
       @q.strip!
-      scope = scope.search_by_full_name(@q)
+      scope = scope.search_by_name(@q)
     end
 
     @pagy, @patients = pagy(scope.order_by_name)
