@@ -14,6 +14,15 @@ class Users::ErrorsController < ::ApplicationController
     end
   end
 
+  def workgroup_not_found
+    if session.key? :cis2_info
+      @cis2_info = session[:cis2_info].with_indifferent_access
+      render status: :not_found
+    else
+      redirect_to root_path
+    end
+  end
+
   def role_not_found
     if session.key? :cis2_info
       @cis2_info = session[:cis2_info].with_indifferent_access
