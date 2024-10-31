@@ -469,6 +469,11 @@ en:
             contact_method_other_details:
               blank: Enter details about how to contact you
               too_long: Enter details that are less than 300 characters long
+        patient:
+          attributes:
+            nhs_number:
+              invalid: Enter a valid NHS number
+              taken: NHS number is already assigned to a different patient
         programme:
           attributes:
             type:

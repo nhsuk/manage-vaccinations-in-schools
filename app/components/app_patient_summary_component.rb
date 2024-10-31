@@ -5,7 +5,8 @@ class AppPatientSummaryComponent < ViewComponent::Base
     patient,
     show_preferred_name: false,
     show_address: false,
-    show_parent_or_guardians: false
+    show_parent_or_guardians: false,
+    change_links: {}
   )
     super
 
@@ -14,6 +15,7 @@ class AppPatientSummaryComponent < ViewComponent::Base
     @show_preferred_name = show_preferred_name
     @show_address = show_address
     @show_parent_or_guardians = show_parent_or_guardians
+    @change_links = change_links
   end
 
   def call
@@ -21,6 +23,13 @@ class AppPatientSummaryComponent < ViewComponent::Base
       summary_list.with_row do |row|
         row.with_key { "NHS number" }
         row.with_value { format_nhs_number }
+        if (href = @change_links[:nhs_number])
+          row.with_action(
+            text: "Change",
+            href:,
+            visually_hidden_text: "NHS number"
+          )
+        end
       end
       summary_list.with_row do |row|
         row.with_key { "Full name" }

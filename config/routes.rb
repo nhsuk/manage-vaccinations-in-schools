@@ -103,7 +103,17 @@ Rails.application.routes.draw do
 
   resources :patients, only: %i[index show edit update] do
     post "", action: :index, on: :collection
-    get "log", on: :member
+
+    member do
+      get "log"
+
+      get "edit/nhs-number",
+          controller: "patients/edit",
+          action: "edit_nhs_number"
+      put "edit/nhs-number",
+          controller: "patients/edit",
+          action: "update_nhs_number"
+    end
   end
 
   resources :programmes, only: %i[index show], param: :type do
