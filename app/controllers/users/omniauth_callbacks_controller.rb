@@ -86,20 +86,6 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     user_cis2_info["extra"]["raw_info"]
   end
 
-  def selected_cis2_nrbac_role
-    @selected_cis2_nrbac_role ||=
-      raw_cis2_info["nhsid_nrbac_roles"].find do
-        _1["person_roleid"] == raw_cis2_info["selected_roleid"]
-      end
-  end
-
-  def selected_cis2_org
-    @selected_cis2_org ||=
-      raw_cis2_info["nhsid_user_orgs"].find do
-        _1["org_code"] == selected_cis2_nrbac_role["org_code"]
-      end
-  end
-
   def set_cis2_session_info
     session["cis2_info"] = {
       "selected_org" => {
