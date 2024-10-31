@@ -9,8 +9,7 @@ module PendingChangesConcern
     new_pending_changes =
       attributes.each_with_object({}) do |(attr, new_value), staged_changes|
         current_value = public_send(attr)
-        staged_changes[attr.to_s] = new_value if new_value.present? &&
-          new_value != current_value
+        staged_changes[attr.to_s] = new_value if new_value != current_value
       end
 
     if new_pending_changes.any?

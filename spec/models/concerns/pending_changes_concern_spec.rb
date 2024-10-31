@@ -34,16 +34,6 @@ describe PendingChangesConcern do
       expect(model.pending_changes).to eq({ "family_name" => "Smith" })
     end
 
-    it "does not stage blank values" do
-      model.stage_changes(
-        given_name: "",
-        family_name: nil,
-        address_line_1: "123 New St"
-      )
-
-      expect(model.pending_changes).to eq({ "address_line_1" => "123 New St" })
-    end
-
     it "updates the pending_changes attribute" do
       expect { model.stage_changes(given_name: "Jane") }.to change {
         model.reload.pending_changes

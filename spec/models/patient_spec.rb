@@ -341,18 +341,6 @@ describe Patient do
       expect(patient.pending_changes).to eq({ "family_name" => "Smith" })
     end
 
-    it "does not stage blank values" do
-      patient.stage_changes(
-        given_name: "",
-        family_name: nil,
-        address_line_1: "123 New St"
-      )
-
-      expect(patient.pending_changes).to eq(
-        { "address_line_1" => "123 New St" }
-      )
-    end
-
     it "updates the pending_changes attribute" do
       expect { patient.stage_changes(given_name: "Jane") }.to change {
         patient.reload.pending_changes

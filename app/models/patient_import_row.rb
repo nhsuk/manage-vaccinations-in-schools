@@ -42,7 +42,6 @@ class PatientImportRow
       address_line_2:,
       address_postcode:,
       address_town:,
-      cohort_id: cohort&.id,
       date_of_birth:,
       family_name: last_name,
       gender_code:,
@@ -51,9 +50,8 @@ class PatientImportRow
       nhs_number:,
       preferred_family_name: preferred_last_name,
       preferred_given_name: preferred_first_name,
-      registration:,
-      school_id: school&.id
-    }.compact
+      registration:
+    }.compact.merge(cohort_id: cohort&.id, school_id: school&.id)
 
     if (existing_patient = existing_patients.first)
       existing_patient.stage_changes(attributes)
