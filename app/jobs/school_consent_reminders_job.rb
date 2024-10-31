@@ -17,6 +17,8 @@ class SchoolConsentRemindersJob < ApplicationJob
         .strict_loading
 
     sessions.each do |session|
+      next unless session.open_for_consent?
+
       session.programmes.each do |programme|
         session.patients.each do |patient|
           next unless should_send_notification?(patient:, programme:, session:)

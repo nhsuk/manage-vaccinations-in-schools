@@ -11,11 +11,14 @@ class SchoolConsentRequestsJob < ApplicationJob
           :programmes,
           patients: %i[consents consent_notifications parents]
         )
+        .preload(:session_dates)
         .eager_load(:location)
         .merge(Location.school)
         .strict_loading
 
     sessions.each do |session|
+      next unless session.open_for_consent?
+
       session.programmes.each do |programme|
         session.patients.each do |patient|
           next unless should_send_notification?(patient:, programme:)
