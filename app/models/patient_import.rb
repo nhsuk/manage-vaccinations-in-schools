@@ -53,10 +53,32 @@ class PatientImport < ApplicationRecord
 
     parents = @parents_batch.to_a
     patients = @patients_batch.to_a
-
     relationships = @relationships_batch.to_a.uniq { [_1.parent, _1.patient] }
 
     Parent.import(parents, on_duplicate_key_update: :all)
+
+    # To handle if the same NHS number appears in the batch we need to
+    # remove duplicates, and then re-assign any relationships.
+
+    patients_by_nhs_number = {}
+
+    patients.reject! do |patient|
+      next false if patient.nhs_number.blank?
+
+      if patient.persisted?
+        patients_by_nhs_number[patient.nhs_number] = patient
+        next false
+      elsif (existing_patient = patients_by_nhs_number[patient.nhs_number])
+        relationships
+          .select { _1.patient == patient }
+          .each { _1.patient = existing_patient }
+        next true
+      else
+        patients_by_nhs_number[patient.nhs_number] = patient
+        next false
+      end
+    end
+
     Patient.import(patients, on_duplicate_key_update: :all)
 
     ParentRelationship.import(

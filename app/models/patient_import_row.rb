@@ -248,13 +248,12 @@ class PatientImportRow
   def existing_patients
     return if first_name.blank? || last_name.blank? || date_of_birth.nil?
 
-    @existing_patients ||=
-      Patient.match_existing(
-        nhs_number:,
-        given_name: first_name,
-        family_name: last_name,
-        date_of_birth:,
-        address_postcode:
-      )
+    Patient.match_existing(
+      nhs_number:,
+      given_name: first_name,
+      family_name: last_name,
+      date_of_birth:,
+      address_postcode:
+    )
   end
 end

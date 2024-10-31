@@ -256,6 +256,14 @@ describe CohortImport do
       ).twice.on_queue(:imports)
     end
 
+    context "when same NHS number appears multiple times in the file" do
+      let(:file) { "duplicates.csv" }
+
+      it "onlies create one patient" do
+        expect { record! }.to change(Patient, :count).by(1)
+      end
+    end
+
     context "with an existing patient matching the name" do
       before do
         create(
