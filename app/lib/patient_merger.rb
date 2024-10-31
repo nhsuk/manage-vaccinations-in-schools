@@ -1,14 +1,20 @@
 # frozen_string_literal: true
 
-module MergePatientsConcern
-  extend ActiveSupport::Concern
+class PatientMerger
+  def initialize(to_keep:, to_destroy:)
+    @patient_to_keep = to_keep
+    @patient_to_destroy = to_destroy
+  end
 
-  def merge_patients!(patient_to_keep, patient_to_remove)
+  def call
     ActiveRecord::Base.transaction do
-      patient_to_remove.consents.update_all(patient_id: patient_to_keep.id)
-      patient_to_remove.triages.update_all(patient_id: patient_to_keep.id)
+      patient_to_destroy.consents.update_all(patient_id: patient_to_keep.id)
+      patient_to_destroy.parent_relationships.update_all(
+        patient_id: patient_to_keep.id
+      )
+      patient_to_destroy.triages.update_all(patient_id: patient_to_keep.id)
 
-      patient_to_remove.patient_sessions.each do |patient_session|
+      patient_to_destroy.patient_sessions.each do |patient_session|
         if (
              existing_patient_session =
                patient_to_keep.patient_sessions.find_by(
@@ -26,31 +32,41 @@ module MergePatientsConcern
         end
       end
 
-      PatientSession.where(patient: patient_to_remove).destroy_all
+      PatientSession.where(patient: patient_to_destroy).destroy_all
 
-      patient_to_remove.class_imports.each do |import|
+      patient_to_destroy.class_imports.each do |import|
         unless patient_to_keep.class_imports.include?(import)
           patient_to_keep.class_imports << import
         end
       end
 
-      patient_to_remove.cohort_imports.each do |import|
+      patient_to_destroy.cohort_imports.each do |import|
         unless patient_to_keep.cohort_imports.include?(import)
           patient_to_keep.cohort_imports << import
         end
       end
 
-      patient_to_remove.immunisation_imports.each do |import|
+      patient_to_destroy.immunisation_imports.each do |import|
         unless patient_to_keep.immunisation_imports.include?(import)
           patient_to_keep.immunisation_imports << import
         end
       end
 
-      patient_to_remove.class_imports.clear
-      patient_to_remove.cohort_imports.clear
-      patient_to_remove.immunisation_imports.clear
+      patient_to_destroy.class_imports.clear
+      patient_to_destroy.cohort_imports.clear
+      patient_to_destroy.immunisation_imports.clear
 
-      patient_to_remove.destroy!
+      patient_to_destroy.destroy!
     end
   end
+
+  def self.call(*args, **kwargs)
+    new(*args, **kwargs).call
+  end
+
+  private_class_method :new
+
+  private
+
+  attr_reader :patient_to_keep, :patient_to_destroy
 end
