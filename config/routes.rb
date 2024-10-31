@@ -113,6 +113,9 @@ Rails.application.routes.draw do
       put "edit/nhs-number",
           controller: "patients/edit",
           action: "update_nhs_number"
+      put "edit/nhs-number-merge",
+          controller: "patients/edit",
+          action: "update_nhs_number_merge"
     end
   end
 

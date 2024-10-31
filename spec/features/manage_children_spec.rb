@@ -32,6 +32,13 @@ describe "Manage children" do
     when_i_enter_an_nhs_number
     then_i_see_the_edit_child_record_page
     and_i_see_the_nhs_number
+
+    when_i_click_on_change_nhs_number
+    and_i_enter_an_existing_nhs_number
+    then_i_see_the_merge_record_page
+
+    when_i_click_on_merge_records
+    then_i_see_the_merged_edit_child_record_page
   end
 
   scenario "Removing a child from a cohort" do
@@ -85,12 +92,13 @@ describe "Manage children" do
     create(:vaccination_record, patient:)
     create_list(:patient, 9, organisation: @organisation, school:)
 
-    create(
-      :patient,
-      given_name: "Jane",
-      family_name: "Doe",
-      cohort: @organisation.cohorts.first
-    )
+    @existing_patient =
+      create(
+        :patient,
+        given_name: "Jane",
+        family_name: "Doe",
+        cohort: @organisation.cohorts.first
+      )
   end
 
   def when_a_deceased_patient_exists
@@ -161,8 +169,29 @@ describe "Manage children" do
     fill_in "What is the child’s NHS number?", with: "123 456 7890"
     click_on "Continue"
   end
+
+  def and_i_enter_an_existing_nhs_number
+    fill_in "What is the child’s NHS number?",
+            with: @existing_patient.nhs_number
+    click_on "Continue"
+  end
+
   def and_i_see_the_nhs_number
     expect(page).to have_content("123 ‍456 ‍7890")
+  end
+
+  def then_i_see_the_merge_record_page
+    expect(page).to have_content("Do you want to merge this record?")
+    expect(page).to have_content("Jane Doe")
+  end
+
+  def when_i_click_on_merge_records
+    click_on "Merge records"
+  end
+
+  def then_i_see_the_merged_edit_child_record_page
+    expect(page).to have_title("Edit child record")
+    expect(page).to have_content("Jane Doe")
   end
 
   def and_i_see_the_cohort
