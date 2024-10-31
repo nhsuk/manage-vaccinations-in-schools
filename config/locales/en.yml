@@ -469,6 +469,11 @@ en:
             contact_method_other_details:
               blank: Enter details about how to contact you
               too_long: Enter details that are less than 300 characters long
+        patient:
+          attributes:
+            nhs_number:
+              invalid: Enter a valid NHS number
+              taken: NHS number is already assigned to a different patient
         programme:
           attributes:
             type:
@@ -484,12 +489,14 @@ en:
               missing_day: Enter a day
               missing_month: Enter a month
               missing_year: Enter a year
+              greater_than_or_equal_to: Enter a date at most 3 months before the first session date (%{count})
               less_than: Enter a date before the first session date (%{count})
             send_invitations_at:
               blank: Enter a date
               missing_day: Enter a day
               missing_month: Enter a month
               missing_year: Enter a year
+              greater_than_or_equal_to: Enter a date at most 3 months before the first session date (%{count})
               less_than: Enter a date before the first session date (%{count})
             weeks_before_consent_reminders:
               blank: Enter weeks before a session takes place

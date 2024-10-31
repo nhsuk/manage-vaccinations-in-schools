@@ -17,6 +17,7 @@
 <%= render AppCardComponent.new do |c| %>
   <% c.with_heading { "Child record" } %>
   <%= render AppPatientSummaryComponent.new(@patient, show_preferred_name: true, show_address: true, show_parent_or_guardians: true) %>
+  <%= govuk_button_link_to "Edit child record", edit_patient_path(@patient), class: "app-button--secondary" %>
 <% end %>
 
 <%= render AppCardComponent.new do |c| %>

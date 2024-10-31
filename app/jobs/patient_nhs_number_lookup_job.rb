@@ -2,7 +2,6 @@
 
 class PatientNHSNumberLookupJob < ApplicationJob
   include NHSAPIConcurrencyConcern
-  include MergePatientsConcern
 
   queue_as :imports
 
@@ -28,7 +27,7 @@ class PatientNHSNumberLookupJob < ApplicationJob
              :patient_sessions
            ).find_by(nhs_number: pds_patient.nhs_number)
        )
-      merge_patients!(existing_patient, patient)
+      PatientMerger.call(to_keep: existing_patient, to_destroy: patient)
       existing_patient.update_from_pds!(pds_patient)
     else
       patient.nhs_number = pds_patient.nhs_number

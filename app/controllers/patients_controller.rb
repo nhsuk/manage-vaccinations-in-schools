@@ -22,6 +22,9 @@ class PatientsController < ApplicationController
     @sessions = policy_scope(Session).joins(:patients).where(patients: @patient)
   end
 
+  def edit
+  end
+
   def update
     cohort = @patient.cohort
 
