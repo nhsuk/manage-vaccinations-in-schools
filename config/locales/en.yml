@@ -169,11 +169,11 @@ en:
               blank: Enter an anatomical site.
             dose_sequence:
               blank: The dose sequence number cannot be greater than 3. Enter a dose sequence number, for example, 1, 2 or 3.
+            existing_patients:
+              too_long: Two or more possible patients match the patient first name, last name, date of birth or postcode.
             organisation_code:
               blank: Enter an organisation code that matches the current organisation.
               equal_to: Enter an organisation code that matches the current organisation.
-            patient:
-              multiple_duplicate_match: Two or more possible patients match the patient first name, last name, date of birth or postcode.
             patient_date_of_birth:
               blank: Enter a date of birth in the correct format.
               inclusion: is not part of this programme

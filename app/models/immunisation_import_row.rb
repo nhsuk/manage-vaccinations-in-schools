@@ -34,6 +34,7 @@ class ImmunisationImportRow
             if: -> { school_urn == SCHOOL_URN_UNKNOWN }
   validate :school_urn_inclusion
 
+  validates :existing_patients, length: { maximum: 1 }
   validates :patient_nhs_number, length: { is: 10 }, allow_blank: true
   validates :patient_first_name, presence: true
   validates :patient_last_name, presence: true
@@ -41,7 +42,6 @@ class ImmunisationImportRow
   validates :patient_gender_code, inclusion: { in: Patient.gender_codes.keys }
   validates :patient_postcode, postcode: true
   validate :date_of_birth_in_a_valid_year_group
-  validate :zero_or_one_existing_patient
 
   validates :session_date,
             comparison: {
@@ -109,7 +109,7 @@ class ImmunisationImportRow
     return unless valid?
 
     @patient ||=
-      if (existing_patient = find_existing_patients.first)
+      if (existing_patient = existing_patients.first)
         existing_patient.stage_changes(patient_attributes)
         existing_patient
       else
@@ -352,7 +352,12 @@ class ImmunisationImportRow
     end
   end
 
-  def find_existing_patients
+  def existing_patients
+    if patient_first_name.blank? || patient_last_name.blank? ||
+         patient_date_of_birth.nil? || patient_postcode.blank?
+      return
+    end
+
     Patient.match_existing(
       nhs_number: patient_nhs_number,
       given_name: patient_first_name,
@@ -360,12 +365,6 @@ class ImmunisationImportRow
       date_of_birth: patient_date_of_birth,
       address_postcode: patient_postcode
     )
-  end
-
-  def zero_or_one_existing_patient
-    if find_existing_patients.count >= 2
-      errors.add(:patient, :multiple_duplicate_match)
-    end
   end
 
   def patient_attributes

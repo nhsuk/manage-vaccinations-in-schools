@@ -167,7 +167,8 @@ describe ImmunisationImportRow do
         {
           "PERSON_FORENAME" => "John",
           "PERSON_SURNAME" => "Smith",
-          "PERSON_DOB" => "19900901"
+          "PERSON_DOB" => "19900901",
+          "PERSON_POSTCODE" => "ABC DEF"
         }
       end
 
@@ -183,7 +184,7 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:patient]).to eq(
+        expect(immunisation_import_row.errors[:existing_patients]).to eq(
           [
             "Two or more possible patients match the patient first name, last name, date of birth or postcode."
           ]
