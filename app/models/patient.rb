@@ -114,22 +114,32 @@ class Patient < ApplicationRecord
 
   scope :with_pending_changes, -> { where.not(pending_changes: {}) }
 
-  scope :search_by_name,
+  # Trigram matching requires at least 3 characters
+  scope :search_by_full_name,
         ->(query) do
-          # Trigram matching requires at least 3 characters
           if query.length < 3
             where(
               "given_name ILIKE :like_query OR family_name ILIKE :like_query",
               like_query: "#{query}%"
             )
           else
-            where(
-              "given_name % :query OR " \
-                "family_name % :query OR " \
-                "similarity(given_name, :query) > 0.3 OR " \
-                "similarity(family_name, :query) > 0.3",
-              query:
-            )
+            where("given_name % :query OR family_name % :query", query:)
+          end
+        end
+  scope :search_by_given_name,
+        ->(query) do
+          if query.length < 3
+            where("given_name ILIKE :query", query:)
+          else
+            where("given_name % :query", query:)
+          end
+        end
+  scope :search_by_family_name,
+        ->(query) do
+          if query.length < 3
+            where("family_name ILIKE :query", query:)
+          else
+            where("family_name % :query", query:)
           end
         end
 
@@ -171,16 +181,11 @@ class Patient < ApplicationRecord
       return [patient]
     end
 
-    # stree-ignore
-    scope = Patient.where(
-      "given_name ILIKE ? AND family_name ILIKE ? AND date_of_birth = ?",
-       given_name, family_name, date_of_birth)
-      .or(Patient.where("given_name ILIKE ? AND family_name ILIKE ?",
-                         given_name, family_name).where(address_postcode:))
-      .or(Patient.where("given_name ILIKE ? AND date_of_birth = ?",
-                         given_name, date_of_birth).where(address_postcode:))
-      .or(Patient.where("family_name ILIKE ? AND date_of_birth = ?",
-                         family_name, date_of_birth).where(address_postcode:))
+    scope =
+      Patient.search_by_given_name(given_name).search_by_family_name(
+        family_name
+      )
+    scope = scope.where(address_postcode:).or(scope.where(date_of_birth:))
 
     if nhs_number.blank?
       scope.to_a
