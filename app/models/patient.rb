@@ -323,4 +323,8 @@ class Patient < ApplicationRecord
       &:destroy_if_safe!
     )
   end
+
+  def dup_for_pending_changes
+    dup.tap { |record| record.nhs_number = nil }
+  end
 end

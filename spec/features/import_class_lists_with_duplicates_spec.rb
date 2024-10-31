@@ -31,6 +31,15 @@ describe "Class list imports duplicates" do
     and_i_confirm_my_selection
     then_i_should_see_a_success_message
     and_the_second_record_should_not_be_updated
+
+    when_i_review_the_third_duplicate_record
+    then_i_should_see_the_third_duplicate_record
+
+    when_i_choose_to_keep_both_records
+    and_i_confirm_my_selection
+    then_i_should_see_a_success_message
+    and_the_third_record_should_not_be_updated
+    and_a_fourth_record_should_exist
   end
 
   def given_i_am_signed_in
@@ -86,6 +95,15 @@ describe "Class list imports duplicates" do
         address_postcode: "SW1A 2BB",
         school: @location
       )
+
+    @third_patient =
+      create(
+        :patient,
+        given_name: "Jenny",
+        family_name: "Block",
+        nhs_number: "9990000032",
+        school: @location
+      )
   end
 
   def when_i_visit_a_session_page_for_the_hpv_programme
@@ -109,7 +127,7 @@ describe "Class list imports duplicates" do
   end
 
   def then_i_should_see_the_import_page_with_duplicate_records
-    expect(page).to have_content("2 duplicate records need review")
+    expect(page).to have_content("3 duplicate records need review")
   end
 
   def when_i_review_the_first_duplicate_record
@@ -140,6 +158,10 @@ describe "Class list imports duplicates" do
     choose "Keep previously uploaded record"
   end
 
+  def when_i_choose_to_keep_both_records
+    choose "Keep both records"
+  end
+
   def then_i_should_see_a_success_message
     expect(page).to have_content("Record updated")
   end
@@ -164,5 +186,28 @@ describe "Class list imports duplicates" do
     @second_patient.reload
     expect(@second_patient.given_name).to eq("Sarah")
     expect(@second_patient.pending_changes).to eq({})
+  end
+
+  def when_i_review_the_third_duplicate_record
+    click_on "Review Jenny Block"
+  end
+
+  def then_i_should_see_the_third_duplicate_record
+    expect(page).to have_content("This record needs reviewing")
+    expect(page).to have_content("Full nameJenny Block")
+  end
+
+  def and_the_third_record_should_not_be_updated
+    @third_patient.reload
+    expect(@third_patient.given_name).to eq("Jenny")
+    expect(@third_patient.nhs_number).to eq("9990000032")
+    expect(@third_patient.pending_changes).to eq({})
+  end
+
+  def and_a_fourth_record_should_exist
+    expect(Patient.count).to eq(4)
+
+    fourth_patient = Patient.find_by(nhs_number: nil)
+    expect(fourth_patient.given_name).to eq("Rebecca")
   end
 end

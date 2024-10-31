@@ -9,9 +9,11 @@ en:
         apply_changes_options:
           apply: The duplicate record will replace the existing record.
           discard: The existing record will be kept and the duplicate record will be discarded.
+          keep_both: The new and existing records will both be kept.
 
     label:
       import_duplicate_form:
         apply_changes_options:
           apply: Use duplicate record
           discard: Keep previously uploaded record
+          keep_both: Keep both records
