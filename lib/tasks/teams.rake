@@ -18,7 +18,7 @@ namespace :teams do
       name = prompt_user_for "Enter team name:", required: true
       email = prompt_user_for "Enter team email:", required: true
       phone = prompt_user_for "Enter team phone:", required: true
-    elsif args.to_a.size == 6
+    elsif args.to_a.size == 4
       ods_code = args[:ods_code]
       name = args[:name]
       email = args[:email]

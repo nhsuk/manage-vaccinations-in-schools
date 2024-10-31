@@ -161,7 +161,7 @@ namespace :schools do
 
     raise "Could not find organisation." if organisation.nil?
 
-    team = organisation.teams.find_by(name: team_name)
+    team = organisation.teams.find_by(name: args[:team_name])
 
     raise "Could not find team." if team.nil?
 
