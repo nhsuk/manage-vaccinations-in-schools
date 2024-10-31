@@ -1,0 +1,31 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: edit_nhs_number_patient_path(@patient),
+        name: "edit NHS number",
+      ) %>
+<% end %>
+
+<% page_title = "Do you want to merge this record?" %>
+
+<%= h1 page_title: do %>
+  <span class="nhsuk-caption-l"><%= @patient.full_name %></span>
+  <%= page_title %>
+<% end %>
+
+<p class="nhsuk-body">
+  Updating the NHS number for <%= @patient.full_name %> will merge their record with an existing record:
+</p>
+
+<%= render AppCardComponent.new do |card| %>
+  <% card.with_heading { "Child record" } %>
+  <%= render AppPatientSummaryComponent.new(@existing_patient) %>
+<% end %>
+
+<%= form_with model: @patient, url: edit_nhs_number_merge_patient_path(@patient), method: :put do |f| %>
+  <%= f.hidden_field :nhs_number, value: @existing_patient.nhs_number %>
+
+  <div class="app-button-group">
+    <%= f.govuk_submit "Merge records" %>
+    <%= govuk_link_to "Edit NHS number", edit_nhs_number_patient_path(@patient) %>
+  </div>
+<% end %>
