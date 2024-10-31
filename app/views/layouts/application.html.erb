@@ -58,6 +58,9 @@
                   <%= link_to "Privacy policy", :privacy_policy, classes: "nhsuk-footer__list-item-link" %>
                 <% end %>
               </li>
+              <li class="nhsuk-footer__list-item nhsuk-footer-default__list-item">
+                <%= link_to "#{t("guide.show.title")} (opens in a new tab)", t("service.guide"), classes: "nhsuk-footer__list-item-link", target: "_blank" %>
+              </li>
             </ul>
             <p class="nhsuk-footer__copyright">&copy; NHS England</p>
           </div>

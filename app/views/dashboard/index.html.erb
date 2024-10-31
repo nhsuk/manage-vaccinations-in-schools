@@ -68,4 +68,11 @@
       <% card.with_description { "Manage your organisation’s settings" } %>
     <% end %>
   </li>
+
+  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(link_to: t("service.guide"), secondary: true) do |card| %>
+      <% card.with_heading { t("guide.show.title") } %>
+      <% card.with_description { "How to use this service" } %>
+    <% end %>
+  </li>
 </ul>
