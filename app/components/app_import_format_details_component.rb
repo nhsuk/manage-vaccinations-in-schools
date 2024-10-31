@@ -35,12 +35,23 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   end
 
   def class_import_columns
-    child_columns + parent_columns
+    child_columns +
+      [
+        {
+          name: "CHILD_POSTCODE",
+          notes: "Optional, must be formatted as a valid postcode."
+        }
+      ] + parent_columns
   end
 
   def cohort_import_columns
     child_columns +
       [
+        {
+          name: "CHILD_POSTCODE",
+          notes:
+            "#{tag.strong("Required")}, must be formatted as a valid postcode."
+        },
         {
           name: "CHILD_SCHOOL_URN",
           notes:
@@ -145,11 +156,6 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       { name: "CHILD_ADDRESS_LINE_1", notes: "Optional" },
       { name: "CHILD_ADDRESS_LINE_2", notes: "Optional" },
       { name: "CHILD_TOWN", notes: "Optional" },
-      {
-        name: "CHILD_POSTCODE",
-        notes:
-          "#{tag.strong("Required")}, must be formatted as a valid postcode."
-      },
       {
         name: "CHILD_REGISTRATION",
         notes: "Optional, the child’s year group, for example #{tag.i("8T5")}"
