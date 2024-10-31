@@ -23,3 +23,8 @@
   <% c.with_heading { "Cohorts" } %>
   <%= render AppPatientCohortTableComponent.new(@patient) %>
 <% end %>
+
+<%= render AppCardComponent.new do |c| %>
+  <% c.with_heading { "Sessions" } %>
+  <%= render AppPatientSessionTableComponent.new(@patient, sessions: @sessions) %>
+<% end %>
