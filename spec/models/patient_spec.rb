@@ -160,7 +160,9 @@ describe Patient do
     context "with matching first name, last name and postcode not provided" do
       let(:nhs_number) { nil }
       let(:address_postcode) { nil }
-      let(:patient) { create(:patient, given_name:, family_name:) }
+      let(:patient) do
+        create(:patient, given_name:, family_name:, address_postcode: nil)
+      end
 
       it { should_not include(patient) }
     end
