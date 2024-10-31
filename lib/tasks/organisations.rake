@@ -52,7 +52,7 @@ namespace :organisations do
 
       OrganisationProgramme.create!(organisation:, programme:)
 
-      organisation.generic_clinic # ensure it exists
+      organisation.generic_clinic # ensure it exists, this also creates a generic team
 
       puts "New #{organisation.name} organisation with ID #{organisation.id} created."
     end

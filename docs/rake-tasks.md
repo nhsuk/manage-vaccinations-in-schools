@@ -51,7 +51,7 @@ This creates a new team within an organisation.
 
 If none of the arguments are provided (`rake organisations:create_hpv`), the user will be prompted for responses.
 
-This creates a new organisation with an HPV programme.
+This creates a new organisation with an HPV programme. It also creates a single "generic" team with the same contact details for use in the community clinics.
 
 ## Users
 
