@@ -376,7 +376,7 @@ class ImmunisationImportRow
       given_name: patient_first_name,
       gender_code: patient_gender_code,
       nhs_number: patient_nhs_number
-    }
+    }.compact
   end
 
   def school_urn_inclusion
