@@ -12,9 +12,15 @@
   <%= page_title %>
 <% end %>
 
-<%= render AppCardComponent.new do |c| %>
-  <% c.with_heading { "Record details" } %>
-  <%= render AppPatientSummaryComponent.new(@patient, show_preferred_name: true, show_address: true, show_parent_or_guardians: true) %>
+<%= render AppCardComponent.new do |card| %>
+  <% card.with_heading { "Record details" } %>
+  <%= render AppPatientSummaryComponent.new(
+        @patient,
+        show_preferred_name: true,
+        show_address: true,
+        show_parent_or_guardians: true,
+        change_links: { nhs_number: edit_nhs_number_patient_path(@patient) },
+      ) %>
 <% end %>
 
 <%= govuk_button_link_to "Continue", patient_path(@patient) %>
