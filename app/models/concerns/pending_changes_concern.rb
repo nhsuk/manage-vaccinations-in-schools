@@ -38,4 +38,12 @@ module PendingChangesConcern
     self.pending_changes = {}
     save!
   end
+
+  def apply_pending_changes_to_new_record!
+    ActiveRecord::Base.transaction do
+      new_record = dup_for_pending_changes.tap(&:apply_pending_changes!)
+      discard_pending_changes!
+      new_record
+    end
+  end
 end

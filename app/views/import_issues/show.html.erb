@@ -60,7 +60,7 @@
     ) do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <%= f.govuk_collection_radio_buttons :apply_changes, %i[apply discard], :itself, nil %>
+  <%= f.govuk_collection_radio_buttons :apply_changes, @form.apply_changes_options, :itself, nil %>
 
   <%= f.govuk_submit "Resolve duplicate" %>
 <% end %>
