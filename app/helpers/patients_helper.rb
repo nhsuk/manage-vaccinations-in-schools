@@ -24,9 +24,9 @@ module PatientsHelper
     if (school = patient.school).present?
       school.name
     elsif patient.home_educated
-      "Home educated"
+      "Home-schooled"
     else
-      "Unknown school"
+      tag.i("Unknown")
     end
   end
 

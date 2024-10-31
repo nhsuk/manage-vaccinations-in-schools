@@ -41,7 +41,7 @@ RSpec.describe PatientsHelper do
     context "without a school" do
       let(:patient) { create(:patient) }
 
-      it { should eq("Unknown school") }
+      it { should eq("<i>Unknown</i>") }
     end
 
     context "with a school" do
@@ -54,7 +54,7 @@ RSpec.describe PatientsHelper do
     context "when home educated" do
       let(:patient) { create(:patient, :home_educated) }
 
-      it { should eq("Home educated") }
+      it { should eq("Home-schooled") }
     end
   end
 
