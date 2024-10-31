@@ -19,6 +19,7 @@ class PatientsController < ApplicationController
   end
 
   def show
+    @sessions = policy_scope(Session).joins(:patients).where(patients: @patient)
   end
 
   def update

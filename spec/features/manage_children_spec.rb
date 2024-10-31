@@ -109,6 +109,8 @@ describe "Manage children" do
   def then_i_see_the_child
     expect(page).to have_title("JS")
     expect(page).to have_content("John Smith")
+    expect(page).to have_content("Cohorts")
+    expect(page).to have_content("Sessions")
   end
 
   def when_i_click_on_activity_log
