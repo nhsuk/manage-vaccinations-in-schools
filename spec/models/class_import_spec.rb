@@ -237,7 +237,7 @@ describe ClassImport do
         school: location,
         address_line_1: nil,
         address_town: nil,
-        address_postcode: "SW1A 1AA"
+        address_postcode: nil
       )
 
       expect(Patient.fourth.parents).not_to be_empty

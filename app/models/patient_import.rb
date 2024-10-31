@@ -6,7 +6,7 @@ class PatientImport < ApplicationRecord
   private
 
   def required_headers
-    %w[CHILD_POSTCODE CHILD_DATE_OF_BIRTH CHILD_FIRST_NAME CHILD_LAST_NAME]
+    %w[CHILD_DATE_OF_BIRTH CHILD_FIRST_NAME CHILD_LAST_NAME]
   end
 
   def count_columns
