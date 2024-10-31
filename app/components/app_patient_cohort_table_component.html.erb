@@ -1,0 +1,30 @@
+<% if cohort %>
+  <%= govuk_table(html_attributes: {
+                    class: "nhsuk-table-responsive",
+                  }) do |table| %>
+    <% table.with_head do |head| %>
+      <% head.with_row do |row| %>
+        <% row.with_cell(text: "Name") %>
+        <% row.with_cell(text: "Actions") %>
+      <% end %>
+    <% end %>
+
+    <% table.with_body do |body| %>
+      <% body.with_row do |row| %>
+        <% row.with_cell do %>
+          <span class="nhsuk-table-responsive__heading">Name</span>
+          <%= helpers.format_year_group(cohort.year_group) %>
+        <% end %>
+        <% row.with_cell do %>
+          <span class="nhsuk-table-responsive__heading">Actions</span>
+          <%= form_with model: @patient, builder: GOVUKDesignSystemFormBuilder::FormBuilder do |f| %>
+            <%= f.hidden_field :cohort_id, value: "" %>
+            <%= f.govuk_submit "Remove from cohort", class: "app-button--secondary-warning app-button--small" %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% else %>
+  <p class="nhsuk-body">No cohorts</p>
+<% end %>
