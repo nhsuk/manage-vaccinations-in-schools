@@ -11,6 +11,7 @@ class ApplicationController < ActionController::Base
   before_action :set_header_path
   before_action :set_service_name
   before_action :set_secondary_navigation
+  before_action :set_privacy_policy_url
   before_action :authenticate_basic
 
   after_action :verify_policy_scoped,
@@ -58,5 +59,10 @@ class ApplicationController < ActionController::Base
   def user_not_authorized
     flash[:alert] = "You are not authorized to perform this action."
     redirect_to(request.referer || root_path, status: :forbidden)
+  end
+
+  def set_privacy_policy_url
+    @privacy_policy_url =
+      current_user&.selected_organisation&.privacy_policy_url
   end
 end
