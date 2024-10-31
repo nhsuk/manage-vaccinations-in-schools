@@ -48,6 +48,12 @@ describe "Import child records" do
     when_i_click_on_the_imports_tab
     and_i_choose_to_import_child_records
     then_i_should_see_the_import_page
+
+    travel_to 1.minute.from_now # to ensure the created_at is different for the import jobs
+
+    when_i_upload_a_valid_file_with_changes
+    then_i_should_see_the_imports_page_with_the_completed_flash
+    and_i_should_see_import_issues_with_the_count
   end
 
   def given_the_app_is_setup
@@ -210,5 +216,18 @@ describe "Import child records" do
 
   def when_i_go_to_the_import_page
     click_link CohortImport.last.created_at.to_fs(:long), match: :first
+  end
+
+  def when_i_upload_a_valid_file_with_changes
+    attach_file(
+      "cohort_import[csv]",
+      "spec/fixtures/cohort_import/valid_with_changes.csv"
+    )
+    click_on "Continue"
+  end
+
+  def and_i_should_see_import_issues_with_the_count
+    expect(page).to have_link("Import issues")
+    expect(page).to have_selector(".app-count", text: "( 1 )")
   end
 end
