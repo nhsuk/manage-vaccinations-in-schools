@@ -101,7 +101,7 @@ Rails.application.routes.draw do
 
   resources :notices, only: :index
 
-  resources :patients, only: %i[index show update] do
+  resources :patients, only: %i[index show edit update] do
     post "", action: :index, on: :collection
     get "log", on: :member
   end

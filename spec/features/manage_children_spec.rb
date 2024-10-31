@@ -16,6 +16,17 @@ describe "Manage children" do
     then_i_see_the_activity_log
   end
 
+  scenario "Adding an NHS number" do
+    given_patients_exist
+
+    when_i_click_on_children
+    and_i_click_on_a_child
+    then_i_see_the_child
+
+    when_i_click_on_edit_child_record
+    then_i_see_the_edit_child_record_page
+  end
+
   scenario "Removing a child from a cohort" do
     given_patients_exist
 
@@ -120,6 +131,16 @@ describe "Manage children" do
   def then_i_see_the_activity_log
     expect(page).to have_content("Added to session")
     expect(page).to have_content("Vaccinated")
+  end
+
+  def when_i_click_on_edit_child_record
+    click_on "Edit child record"
+  end
+
+  def then_i_see_the_edit_child_record_page
+    expect(page).to have_title("Edit child record")
+    expect(page).to have_content("John Smith")
+    expect(page).to have_content("Record details")
   end
 
   def and_i_see_the_cohort
