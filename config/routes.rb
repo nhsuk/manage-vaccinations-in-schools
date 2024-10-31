@@ -41,7 +41,6 @@ Rails.application.routes.draw do
   get "/start", to: "pages#start"
   get "/dashboard", to: "dashboard#index"
   get "/accessibility-statement", to: "content#accessibility_statement"
-  get "/privacy-policy", to: "content#privacy_policy"
 
   get "/ping" => proc { [200, {}, ["PONG"]] }
 
