@@ -39,7 +39,9 @@ module CIS2AuthHelper
                 "Receive Legal Override and Emergency View Alerts",
                 "Receive Sealing Alerts"
               ],
-              "activity_codes" => %w[B0016 B0015 B0018]
+              "activity_codes" => %w[B0016 B0015 B0018],
+              "workgroups" => ["schoolagedimmunisations"],
+              "workgroups_codes" => ["15025792819"]
             },
             {
               "person_orgid" => "1234123412341234",
@@ -107,22 +109,20 @@ module CIS2AuthHelper
     role_code: nil,
     org_code: nil,
     org_name: "Test SAIS Org",
-    user_only_has_one_org: false
+    user_only_has_one_org: false,
+    workgroup: nil,
+    no_workgroup: false
   )
     mock_auth = cis2_auth_info
+    raw_info = mock_auth["extra"]["raw_info"]
 
     if org_code.present?
-      mock_auth["extra"]["raw_info"]["nhsid_nrbac_roles"][0].merge!(org_code:)
-      mock_auth["extra"]["raw_info"]["nhsid_user_orgs"][0].merge!(
-        org_code:,
-        org_name:
-      )
+      raw_info["nhsid_nrbac_roles"][0].merge!(org_code:)
+      raw_info["nhsid_user_orgs"][0].merge!(org_code:, org_name:)
     end
 
     if user_only_has_one_org
-      mock_auth["extra"]["raw_info"]["nhsid_nrbac_roles"].select! do
-        _1["org_code"] == org_code
-      end
+      raw_info["nhsid_nrbac_roles"].select! { _1["org_code"] == org_code }
     end
 
     role_code ||= {
@@ -130,20 +130,25 @@ module CIS2AuthHelper
       admin_staff: "S8000:G8001:R8006"
     }.fetch(role)
 
-    mock_auth["extra"]["raw_info"]["nhsid_nrbac_roles"][0][
-      "role_code"
-    ] = role_code
+    nhsid_nrbac_role = raw_info["nhsid_nrbac_roles"][0]
+    nhsid_nrbac_role["role_code"] = role_code
+    if no_workgroup
+      nhsid_nrbac_role.delete("workgroups")
+      nhsid_nrbac_role.delete("workgroups_codes")
+    elsif workgroup
+      nhsid_nrbac_role["workgroups"][0] = workgroup
+    end
 
     mock_auth["uid"] = uid
-    mock_auth["extra"]["raw_info"]["uid"] = uid
-    mock_auth["extra"]["raw_info"]["sub"] = uid
+    raw_info["uid"] = uid
+    raw_info["sub"] = uid
     mock_auth["info"]["given_name"] = given_name
     mock_auth["info"]["family_name"] = family_name
     mock_auth["info"]["email"] = email
-    mock_auth["extra"]["raw_info"]["given_name"] = given_name
-    mock_auth["extra"]["raw_info"]["family_name"] = family_name
-    mock_auth["extra"]["raw_info"]["name"] = "#{given_name} #{family_name}"
-    mock_auth["extra"]["raw_info"]["email"] = email
+    raw_info["given_name"] = given_name
+    raw_info["family_name"] = family_name
+    raw_info["name"] = "#{given_name} #{family_name}"
+    raw_info["email"] = email
 
     OmniAuth.config.add_mock(:cis2, mock_auth)
   end
