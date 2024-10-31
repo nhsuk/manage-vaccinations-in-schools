@@ -433,18 +433,10 @@ class ConsentForm < ApplicationRecord
             end
 
           if move_patient_to_session
-            existing_patient_sessions =
-              patient.patient_sessions.where(session: original_session)
-
-            if existing_patient_sessions.exists?
-              existing_patient_sessions.update_all(
-                proposed_session_id: move_patient_to_session.id
-              )
-            else
-              patient.patient_sessions.find_or_create_by!(
-                session: move_patient_to_session
-              )
-            end
+            patient.move_to_session!(
+              move_patient_to_session,
+              from: original_session
+            )
           end
         end
       end

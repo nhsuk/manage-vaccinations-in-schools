@@ -270,6 +270,20 @@ class Patient < ApplicationRecord
     end
   end
 
+  def move_to_session!(new_session, from:)
+    return if deceased? || invalidated?
+
+    old_session = from
+
+    existing_patient_sessions = patient_sessions.where(session: old_session)
+
+    if existing_patient_sessions.exists?
+      existing_patient_sessions.update_all(proposed_session_id: new_session.id)
+    else
+      patient_sessions.find_or_create_by!(session_id: new_session.id)
+    end
+  end
+
   class NHSNumberMismatch < StandardError
   end
 
