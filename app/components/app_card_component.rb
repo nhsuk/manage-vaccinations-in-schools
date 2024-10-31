@@ -56,14 +56,25 @@ class AppCardComponent < ViewComponent::Base
     [
       "nhsuk-card__content",
       ("app-card__content" unless @data),
-      ("nhsuk-card__content--feature" if @feature)
+      ("nhsuk-card__content--feature" if @feature),
+      ("nhsuk-card__content--secondary" if @secondary)
     ].compact.join(" ")
+  end
+
+  def heading_size
+    if @data
+      "xs"
+    elsif @secondary
+      "s"
+    else
+      "m"
+    end
   end
 
   def heading_classes
     [
       "nhsuk-card__heading",
-      (@data ? "nhsuk-heading-xs" : "nhsuk-heading-m"),
+      "nhsuk-heading-#{heading_size}",
       ("nhsuk-card__heading--feature" if @feature)
     ].compact.join(" ")
   end
