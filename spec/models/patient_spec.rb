@@ -138,6 +138,16 @@ describe Patient do
       it { should include(patient) }
     end
 
+    context "with matching first name, last name and date of birth and postcode not provided" do
+      let(:nhs_number) { nil }
+      let(:address_postcode) { nil }
+      let(:patient) do
+        create(:patient, given_name:, family_name:, date_of_birth:)
+      end
+
+      it { should include(patient) }
+    end
+
     context "with matching first name, last name and postcode" do
       let(:nhs_number) { nil }
       let(:patient) do
@@ -145,6 +155,14 @@ describe Patient do
       end
 
       it { should include(patient) }
+    end
+
+    context "with matching first name, last name and postcode not provided" do
+      let(:nhs_number) { nil }
+      let(:address_postcode) { nil }
+      let(:patient) { create(:patient, given_name:, family_name:) }
+
+      it { should_not include(patient) }
     end
 
     context "with first name and last name are similar and matching date of birth" do

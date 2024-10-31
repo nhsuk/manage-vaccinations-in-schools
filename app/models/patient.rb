@@ -185,7 +185,13 @@ class Patient < ApplicationRecord
       Patient.search_by_given_name(given_name).search_by_family_name(
         family_name
       )
-    scope = scope.where(address_postcode:).or(scope.where(date_of_birth:))
+
+    scope =
+      if address_postcode.present?
+        scope.where(address_postcode:).or(scope.where(date_of_birth:))
+      else
+        scope.where(date_of_birth:)
+      end
 
     if nhs_number.blank?
       scope.to_a
