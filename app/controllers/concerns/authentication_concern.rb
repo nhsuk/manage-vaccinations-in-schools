@@ -3,6 +3,8 @@
 module AuthenticationConcern
   extend ActiveSupport::Concern
 
+  CIS2_WORKGROUP = "schoolagedimmunisations"
+
   included do
     private
 
@@ -33,6 +35,11 @@ module AuthenticationConcern
       Organisation.exists?(
         ods_code: session["cis2_info"]["selected_org"]["code"]
       )
+    end
+
+    def selected_cis2_workgroup_is_valid?
+      selected_cis2_nrbac_role.key?("workgroups") &&
+        CIS2_WORKGROUP.in?(selected_cis2_nrbac_role["workgroups"])
     end
 
     def valid_cis2_roles
