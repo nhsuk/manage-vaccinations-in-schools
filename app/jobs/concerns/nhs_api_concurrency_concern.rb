@@ -22,5 +22,7 @@ module NHSAPIConcurrencyConcern
     retry_on Faraday::TooManyRequestsError,
              attempts: :unlimited,
              wait: ->(_) { rand(0.5..5) }
+
+    retry_on Faraday::ServerError, wait: :polynomially_longer
   end
 end
