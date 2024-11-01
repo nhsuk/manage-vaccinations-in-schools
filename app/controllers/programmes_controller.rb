@@ -36,7 +36,8 @@ class ProgrammesController < ApplicationController
         PatientSession
           .where(patient: patients, session: sessions)
           .preload_for_state
-          .strict_loading
+          .strict_loading,
+        keys: %i[with_consent_given without_a_response needing_triage]
       )
 
     @consent_given_percentage =
