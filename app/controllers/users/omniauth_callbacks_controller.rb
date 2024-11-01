@@ -50,7 +50,10 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     logout_token = params[:logout_token]
 
     if validate_logout_token(logout_token)
-      sign_out(@user) if @user
+      if @sid.blank? || @user.session_token == @sid
+        @user.update!(session_token: nil)
+      end
+
       render json: {}, status: :ok
     else
       render json: { error: "Invalid logout token" }, status: :bad_request

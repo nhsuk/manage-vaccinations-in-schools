@@ -15,6 +15,7 @@ describe CIS2LogoutConcern do
       end
     end
   end
+
   let(:params) { { logout_token: "1234567890" } }
 
   describe "validate_logout_token" do
