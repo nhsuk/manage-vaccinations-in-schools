@@ -383,4 +383,24 @@ Devise.setup do |config|
   # When set to false, does not sign a user in automatically after their password is
   # changed. Defaults to true, so a user is signed in automatically after changing a password.
   # config.sign_in_after_change_password = true
+
+  # ==> Session tokens to allow for remotely logging out users.
+  if Settings.cis2.enabled
+    Warden::Manager.after_set_user(except: :fetch) do |user, warden, _opts|
+      raise "Missing session token." if user.session_token.nil?
+
+      warden.raw_session["token"] = user.session_token
+    end
+
+    Warden::Manager.after_fetch do |user, warden, _opts|
+      if user.session_token.nil? ||
+           user.session_token != warden.raw_session["token"]
+        warden.logout
+      end
+    end
+
+    Warden::Manager.before_logout do |user, _warden, _opts|
+      user&.update!(session_token: nil)
+    end
+  end
 end

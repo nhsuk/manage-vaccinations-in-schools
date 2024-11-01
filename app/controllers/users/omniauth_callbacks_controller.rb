@@ -22,7 +22,10 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       redirect_to users_role_not_found_path
     else
       @user = User.find_or_create_from_cis2_oidc(user_cis2_info)
-      sign_in_and_redirect @user, event: :authentication
+
+      # Force is set to true because the `session_token` might have changed
+      # even if the same user is logging in.
+      sign_in_and_redirect @user, event: :authentication, force: true
     end
   rescue StandardError => e
     unless Rails.env.production?
