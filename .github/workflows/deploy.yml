@@ -2,8 +2,8 @@ name: Deploy
 run-name: ${{ github.event_name == 'workflow_dispatch' && format('Deploy to {0}', inputs.environment) || null }}
 
 on:
-  push:
-    branches: [main]
+  # push:
+  #   branches: [main]
 
   workflow_dispatch:
     inputs:
