@@ -67,7 +67,7 @@ describe ClassImportRow do
       expect(parents.count).to eq(1)
       expect(parents.first).to have_attributes(
         email: "john@example.com",
-        phone: "07412345678",
+        phone: "07412 345678",
         phone_receive_updates: false
       )
     end
@@ -79,11 +79,11 @@ describe ClassImportRow do
         expect(parents.count).to eq(2)
         expect(parents.first).to have_attributes(
           email: "john@example.com",
-          phone: "07412345678"
+          phone: "07412 345678"
         )
         expect(parents.second).to have_attributes(
           email: "jenny@example.com",
-          phone: "07412345678"
+          phone: "07412 345678"
         )
       end
     end

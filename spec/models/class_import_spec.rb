@@ -179,7 +179,7 @@ describe ClassImport do
 
       expect(Patient.first.parents.first).to have_attributes(
         full_name: nil,
-        phone: "07412345678",
+        phone: "07412 345678",
         email: "susan@example.com"
       )
 
@@ -197,7 +197,7 @@ describe ClassImport do
 
       expect(Patient.second.parents.first).to have_attributes(
         full_name: "John Smith",
-        phone: "07412345678",
+        phone: "07412 345678",
         email: "john@example.com"
       )
 
@@ -217,7 +217,7 @@ describe ClassImport do
 
       expect(Patient.third.parents.first).to have_attributes(
         full_name: "Jane Doe",
-        phone: "07412345679",
+        phone: "07412 345679",
         email: "jane@example.com"
       )
 

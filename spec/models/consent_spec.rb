@@ -120,7 +120,7 @@ describe Consent do
         expect(consent.parent).to have_attributes(
           full_name: consent_form.parent_full_name,
           email: consent_form.parent_email,
-          phone: consent_form.parent_phone,
+          phone: Phonelib.parse(consent_form.parent_phone).national,
           phone_receive_updates: consent_form.parent_phone_receive_updates
         )
       end
@@ -144,7 +144,7 @@ describe Consent do
           expect(consent.parent).to have_attributes(
             full_name: consent_form.parent_full_name,
             email: consent_form.parent_email,
-            phone: consent_form.parent_phone,
+            phone: Phonelib.parse(consent_form.parent_phone).national,
             phone_receive_updates: consent_form.parent_phone_receive_updates
           )
         end
