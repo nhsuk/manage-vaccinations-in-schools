@@ -132,21 +132,22 @@ class PatientSession < ApplicationRecord
   end
 
   def latest_consents
-    consents
-      .group_by(&:name)
-      .map { |_, consents| consents.max_by(&:recorded_at) }
+    @latest_consents ||=
+      consents
+        .group_by(&:name)
+        .map { |_, consents| consents.max_by(&:recorded_at) }
   end
 
   def latest_gillick_assessment
-    gillick_assessments.max_by(&:created_at)
+    @latest_gillick_assessment ||= gillick_assessments.max_by(&:created_at)
   end
 
   def latest_triage
-    triages.max_by(&:updated_at)
+    @latest_triage ||= triages.max_by(&:updated_at)
   end
 
   def latest_vaccination_record
-    vaccination_records.max_by(&:created_at)
+    @latest_vaccination_record ||= vaccination_records.max_by(&:created_at)
   end
 
   def consents_to_send_communication

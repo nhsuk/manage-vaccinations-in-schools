@@ -5,31 +5,32 @@ module PatientSessionStateConcern
 
   included do
     def state
-      if vaccination_administered?
-        "vaccinated"
-      elsif triage_delay_vaccination? || vaccination_can_be_delayed?
-        "delay_vaccination"
-      elsif not_gillick_competent?
-        "unable_to_vaccinate_not_gillick_competent"
-      elsif vaccination_not_administered?
-        "unable_to_vaccinate"
-      elsif triage_keep_in_triage?
-        "triaged_kept_in_triage"
-      elsif triage_ready_to_vaccinate?
-        "triaged_ready_to_vaccinate"
-      elsif triage_do_not_vaccinate?
-        "triaged_do_not_vaccinate"
-      elsif consent_given? && triage_needed?
-        "consent_given_triage_needed"
-      elsif consent_given? && triage_not_needed?
-        "consent_given_triage_not_needed"
-      elsif consent_refused?
-        "consent_refused"
-      elsif consent_conflicts?
-        "consent_conflicts"
-      else
-        "added_to_session"
-      end
+      @state ||=
+        if vaccination_administered?
+          "vaccinated"
+        elsif triage_delay_vaccination? || vaccination_can_be_delayed?
+          "delay_vaccination"
+        elsif not_gillick_competent?
+          "unable_to_vaccinate_not_gillick_competent"
+        elsif vaccination_not_administered?
+          "unable_to_vaccinate"
+        elsif triage_keep_in_triage?
+          "triaged_kept_in_triage"
+        elsif triage_ready_to_vaccinate?
+          "triaged_ready_to_vaccinate"
+        elsif triage_do_not_vaccinate?
+          "triaged_do_not_vaccinate"
+        elsif consent_given? && triage_needed?
+          "consent_given_triage_needed"
+        elsif consent_given? && triage_not_needed?
+          "consent_given_triage_not_needed"
+        elsif consent_refused?
+          "consent_refused"
+        elsif consent_conflicts?
+          "consent_conflicts"
+        else
+          "added_to_session"
+        end
     end
 
     %w[
