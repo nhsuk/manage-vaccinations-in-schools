@@ -1,53 +1,62 @@
 # frozen_string_literal: true
 
 class PatientSessionStats
-  def initialize(patient_sessions)
+  def initialize(patient_sessions, keys: nil)
     @patient_sessions =
       patient_sessions.sort_by(&:created_at).reverse.uniq(&:patient_id)
-    @stats = calculate_stats
+    @keys =
+      keys ||
+        %i[
+          with_consent_given
+          with_consent_refused
+          without_a_response
+          needing_triage
+          vaccinate
+          vaccinated
+          could_not_vaccinate
+          with_conflicting_consent
+        ]
   end
 
-  def [](key)
-    @stats[key]
-  end
+  delegate :[], to: :statistics
 
   def to_h
-    @stats
+    statistics
   end
 
   private
 
-  def calculate_stats
-    counts = {
-      with_consent_given: 0,
-      with_consent_refused: 0,
-      without_a_response: 0,
-      needing_triage: 0,
-      vaccinate: 0,
-      vaccinated: 0,
-      could_not_vaccinate: 0,
-      with_conflicting_consent: 0
-    }
-
-    @patient_sessions.each do |s|
-      counts[:with_consent_given] += 1 if s.consent_given?
-      counts[:with_consent_refused] += 1 if s.consent_refused?
-      counts[:with_conflicting_consent] += 1 if s.consent_conflicts?
-      counts[:without_a_response] += 1 if s.no_consent?
-
-      if s.consent_given_triage_needed? || s.triaged_kept_in_triage?
-        counts[:needing_triage] += 1
+  def statistics
+    @statistics ||=
+      @keys.index_with do |key|
+        @patient_sessions.count { include_in_statistics?(_1, key) }
       end
+  end
 
-      counts[:vaccinate] += 1 if s.triaged_ready_to_vaccinate? ||
-        s.consent_given_triage_not_needed?
-      counts[:vaccinated] += 1 if s.vaccinated?
-      counts[:could_not_vaccinate] += 1 if s.delay_vaccination? ||
-        s.consent_refused? || s.consent_conflicts? ||
-        s.triaged_do_not_vaccinate? || s.unable_to_vaccinate? ||
-        s.unable_to_vaccinate_not_gillick_competent?
+  def include_in_statistics?(patient_session, key)
+    case key
+    when :with_consent_given
+      patient_session.consent_given?
+    when :with_consent_refused
+      patient_session.consent_refused?
+    when :with_conflicting_consent
+      patient_session.consent_conflicts?
+    when :without_a_response
+      patient_session.no_consent?
+    when :needing_triage
+      patient_session.consent_given_triage_needed? ||
+        patient_session.triaged_kept_in_triage?
+    when :vaccinate
+      patient_session.triaged_ready_to_vaccinate? ||
+        patient_session.consent_given_triage_not_needed?
+    when :vaccinated
+      patient_session.vaccinated?
+    when :could_not_vaccinate
+      patient_session.delay_vaccination? || patient_session.consent_refused? ||
+        patient_session.consent_conflicts? ||
+        patient_session.triaged_do_not_vaccinate? ||
+        patient_session.unable_to_vaccinate? ||
+        patient_session.unable_to_vaccinate_not_gillick_competent?
     end
-
-    counts
   end
 end
