@@ -65,10 +65,6 @@ describe "User CIS2 authentication", :cis2 do
     click_button "Change role"
   end
 
-  def then_i_see_the_sessions_page
-    expect(page).to have_current_path sessions_path
-  end
-
   def when_i_log_out
     click_button "Log out"
   end
