@@ -8,7 +8,7 @@ describe "CIS2 backchannel logout", :cis2 do
     and_the_jwks_endpoint_is_setup
 
     when_a_backchannel_signout_request_is_received
-    then_returns_a_204
+    then_returns_a_200
     and_i_try_to_access_the_dashboard
     then_i_am_signed_out
 
@@ -84,22 +84,27 @@ describe "CIS2 backchannel logout", :cis2 do
   end
 
   def when_a_backchannel_signout_request_is_received
-    page.driver.post "/users/auth/cis2/backchannel-logout", logout_token: @token
+    using_session(:cis2) do
+      page.driver.post "/users/auth/cis2/backchannel-logout",
+                       logout_token: @token
+    end
   end
+
   alias_method :and_the_backchannel_signout_request_is_replayed,
                :when_a_backchannel_signout_request_is_received
 
-  def then_returns_a_204
-    expect(page.status_code).to eq 200
+  def then_returns_a_200
+    using_session(:cis2) { expect(page.status_code).to eq(200) }
   end
 
   def then_an_error_is_returned
-    expect(page.status_code).to eq 400
+    using_session(:cis2) { expect(page.status_code).to eq(400) }
   end
 
   def when_i_try_to_access_the_dashboard
     visit "/dashboard"
   end
+
   alias_method :and_i_try_to_access_the_dashboard,
                :when_i_try_to_access_the_dashboard
 
