@@ -80,7 +80,7 @@ describe "Verbal consent" do
     expect(page).to have_content(["Name", "Jane Smith"].join)
     expect(page).to have_content(%w[Relationship Mum].join)
     expect(page).to have_content(["Email address", "jsmith@example.com"].join)
-    expect(page).to have_content(["Phone number", "07987654321"].join)
+    expect(page).to have_content(["Phone number", "07987 654321"].join)
   end
 
   def then_an_email_is_sent_to_the_parent_confirming_their_consent

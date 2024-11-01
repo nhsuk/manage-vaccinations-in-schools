@@ -29,7 +29,7 @@ describe AppParentSummaryComponent do
     let(:parent) { create(:parent, phone: "07987654321") }
 
     it { should have_content("Phone number") }
-    it { should have_content("07987654321") }
+    it { should have_content("07987 654321") }
   end
 
   context "when the patient is restricted" do

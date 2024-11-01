@@ -91,7 +91,7 @@ describe CohortImportRow do
         expect(parents.first).to have_attributes(
           full_name: "John Smith",
           email: "john@example.com",
-          phone: "07412345678",
+          phone: "07412 345678",
           phone_receive_updates: false
         )
       end
@@ -105,12 +105,12 @@ describe CohortImportRow do
         expect(parents.first).to have_attributes(
           full_name: "John Smith",
           email: "john@example.com",
-          phone: "07412345678"
+          phone: "07412 345678"
         )
         expect(parents.second).to have_attributes(
           full_name: "Jenny Smith",
           email: "jenny@example.com",
-          phone: "07412345678"
+          phone: "07412 345678"
         )
       end
     end

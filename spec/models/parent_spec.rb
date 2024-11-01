@@ -36,7 +36,9 @@ describe Parent do
   it { should normalize(:email).from("  joHn@doe.com ").to("john@doe.com") }
   it { should normalize(:email).from("").to(nil) }
 
-  it { should normalize(:phone).from(" 01234 567890 ").to("01234567890") }
+  it { should normalize(:phone).from(" 01234 567890 ").to("01234 567890") }
+  it { should normalize(:phone).from("1234567890").to("01234 567890") } # leading zero lost by Excel, say
+  it { should normalize(:phone).from("+35361234567").to("+353 61 234 567") }
   it { should normalize(:phone).from("").to(nil) }
 
   describe "#contactable?" do
@@ -101,7 +103,7 @@ describe Parent do
     context "with a phone number" do
       let(:parent) { create(:parent, email: nil, phone: "07700900123") }
 
-      it { should eq("07700900123") }
+      it { should eq("07700 900123") }
     end
 
     context "with both" do
@@ -109,7 +111,7 @@ describe Parent do
         create(:parent, email: "test@example.com", phone: "07700900123")
       end
 
-      it { should eq("test@example.com / 07700900123") }
+      it { should eq("test@example.com / 07700 900123") }
     end
   end
 
