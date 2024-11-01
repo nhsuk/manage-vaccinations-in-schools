@@ -28,9 +28,10 @@ describe "CIS2 backchannel logout", :cis2 do
   end
 
   def and_that_i_am_signed_in
-    sign_in @organisation.users.first
-    @organisation.users.first.update! uid: "31337"
+    @user.update!(uid: "31337", session_token: SecureRandom.uuid)
+    sign_in @user
   end
+
   alias_method :when_i_sign_in_again, :and_that_i_am_signed_in
 
   def and_we_have_a_logout_token
@@ -39,12 +40,12 @@ describe "CIS2 backchannel logout", :cis2 do
     payload = {
       # needs to match issuer in settings
       iss: "http://localhost:4000/test/oidc",
-      sub: "31337",
+      sub: @user.uid,
       # needs to match cliend_id in settings
       aud: "31337.apps.national",
       iat: Time.zone.now.to_i,
       jti: "bWJq",
-      sid: "08a5019c-17e1-4977-8f42-65a12843ea02",
+      sid: @user.session_token,
       events: {
         "http://schemas.openid.net/event/backchannel-logout": {
         }

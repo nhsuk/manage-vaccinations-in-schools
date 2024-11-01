@@ -84,7 +84,8 @@ module CIS2AuthHelper
       family_name: user.family_name,
       email: user.email,
       role:,
-      org_code:
+      org_code:,
+      sid: user.session_token
     )
 
     if page.driver.respond_to? :get
@@ -111,7 +112,8 @@ module CIS2AuthHelper
     org_name: "Test SAIS Org",
     user_only_has_one_org: false,
     workgroup: nil,
-    no_workgroup: false
+    no_workgroup: false,
+    sid: nil
   )
     mock_auth = cis2_auth_info
     raw_info = mock_auth["extra"]["raw_info"]
@@ -142,6 +144,7 @@ module CIS2AuthHelper
     mock_auth["uid"] = uid
     raw_info["uid"] = uid
     raw_info["sub"] = uid
+    raw_info["sid"] = sid
     mock_auth["info"]["given_name"] = given_name
     mock_auth["info"]["family_name"] = family_name
     mock_auth["info"]["email"] = email
