@@ -28,9 +28,12 @@ module CIS2LogoutConcern
       return false if claims["exp"] && claims["exp"] < Time.zone.now.to_i
 
       @user = User.find_by(uid: claims["sub"])
-      return false if @user.blank?
+
+      return false if @user.nil?
       return false if @user.current_sign_in_at.blank?
       return false if claims["iat"] < @user.current_sign_in_at.to_i
+
+      @sid = claims["sid"]
 
       true
     rescue JWT::DecodeError
