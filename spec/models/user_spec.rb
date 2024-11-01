@@ -15,6 +15,7 @@
 #  last_sign_in_ip     :string
 #  provider            :string
 #  remember_created_at :datetime
+#  session_token       :string
 #  sign_in_count       :integer          default(0), not null
 #  uid                 :string
 #  created_at          :datetime         not null
