@@ -39,6 +39,34 @@ describe Parent do
   it { should normalize(:phone).from(" 01234 567890 ").to("01234567890") }
   it { should normalize(:phone).from("").to(nil) }
 
+  describe "#contactable?" do
+    subject(:contactable?) { parent.contactable? }
+
+    context "without a phone number or email address" do
+      let(:parent) { build(:parent, phone: nil, email: nil) }
+
+      it { should be(false) }
+    end
+
+    context "with a phone number" do
+      let(:parent) { build(:parent, email: nil) }
+
+      it { should be(true) }
+    end
+
+    context "with an email address" do
+      let(:parent) { build(:parent, phone: nil) }
+
+      it { should be(true) }
+    end
+
+    context "with a phone number and an email address" do
+      let(:parent) { build(:parent) }
+
+      it { should be(true) }
+    end
+  end
+
   describe "#label" do
     subject(:label) { parent.label }
 
