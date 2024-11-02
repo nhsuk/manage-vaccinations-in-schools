@@ -77,10 +77,12 @@ class SessionNotification < ApplicationRecord
 
     if type == :school_reminder
       contacts.each do |consent|
-        SessionMailer
-          .with(consent:, patient_session:, sent_by: current_user)
-          .school_reminder
-          .deliver_later
+        if consent.parent.email.present?
+          SessionMailer
+            .with(consent:, patient_session:, sent_by: current_user)
+            .school_reminder
+            .deliver_later
+        end
 
         TextDeliveryJob.perform_later(
           :session_school_reminder,
@@ -91,10 +93,12 @@ class SessionNotification < ApplicationRecord
       end
     else
       contacts.each do |parent|
-        SessionMailer
-          .with(parent:, patient_session:, sent_by: current_user)
-          .send(type)
-          .deliver_later
+        if parent.email.present?
+          SessionMailer
+            .with(parent:, patient_session:, sent_by: current_user)
+            .send(type)
+            .deliver_later
+        end
 
         TextDeliveryJob.perform_later(
           :"session_#{type}",

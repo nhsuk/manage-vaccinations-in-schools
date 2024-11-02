@@ -77,10 +77,12 @@ class ConsentNotification < ApplicationRecord
       end
 
     parents.each do |parent|
-      ConsentMailer
-        .with(parent:, patient:, programme:, session:, sent_by: current_user)
-        .send(mailer_action)
-        .deliver_later
+      unless parent.email.nil?
+        ConsentMailer
+          .with(parent:, patient:, programme:, session:, sent_by: current_user)
+          .send(mailer_action)
+          .deliver_later
+      end
 
       TextDeliveryJob.perform_later(
         text_template,
