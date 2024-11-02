@@ -68,6 +68,30 @@ describe Consent do
     end
   end
 
+  describe "#contactable?" do
+    subject(:contactable?) { consent.contactable? }
+
+    context "without a parent" do
+      let(:consent) { build(:consent) }
+
+      it { should be(false) }
+    end
+
+    context "with a non-contactable parent" do
+      let(:consent) do
+        build(:consent, parent: build(:parent, :non_contactable))
+      end
+
+      it { should be(false) }
+    end
+
+    context "with a contactable parent" do
+      let(:consent) { build(:consent, parent: build(:parent)) }
+
+      it { should be(true) }
+    end
+  end
+
   describe "#from_consent_form!" do
     describe "the created consent object" do
       subject(:consent) do
