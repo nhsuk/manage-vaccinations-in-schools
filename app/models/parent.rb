@@ -82,6 +82,10 @@ class Parent < ApplicationRecord
     end
   end
 
+  def contactable?
+    email.present? || phone.present?
+  end
+
   def label
     full_name.presence || "Parent or guardian (name unknown)"
   end
