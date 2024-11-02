@@ -55,6 +55,8 @@ describe SessionNotification do
       let(:type) { :school_reminder }
 
       it "creates a record" do
+        consent # ensure it exists
+
         expect { create_and_send! }.to change(described_class, :count).by(1)
 
         session_notification = described_class.last
