@@ -51,12 +51,21 @@ class SessionNotification < ApplicationRecord
     type:,
     current_user: nil
   )
+    patient = patient_session.patient
+    session = patient_session.session
+
+    contacts =
+      if type == :school_reminder
+        patient_session.consents_to_send_communication.select(&:contactable?)
+      else
+        patient.parents.select(&:contactable?)
+      end
+
+    return if contacts.empty?
+
     # We create a record in the database first to avoid sending duplicate emails/texts.
     # If a problem occurs while the emails/texts are sent, they will be in the job
     # queue and restarted at a later date.
-
-    patient = patient_session.patient
-    session = patient_session.session
 
     SessionNotification.create!(
       patient:,
@@ -67,7 +76,7 @@ class SessionNotification < ApplicationRecord
     )
 
     if type == :school_reminder
-      patient_session.consents_to_send_communication.each do |consent|
+      contacts.each do |consent|
         SessionMailer
           .with(consent:, patient_session:, sent_by: current_user)
           .school_reminder
@@ -81,7 +90,7 @@ class SessionNotification < ApplicationRecord
         )
       end
     else
-      patient_session.patient.parents.each do |parent|
+      contacts.each do |parent|
         SessionMailer
           .with(parent:, patient_session:, sent_by: current_user)
           .send(type)

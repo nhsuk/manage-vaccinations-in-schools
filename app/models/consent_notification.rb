@@ -49,6 +49,10 @@ class ConsentNotification < ApplicationRecord
     type:,
     current_user: nil
   )
+    parents = patient.parents.select(&:contactable?)
+
+    return if parents.empty?
+
     # We create a record in the database first to avoid sending duplicate emails/texts.
     # If a problem occurs while the emails/texts are sent, they will be in the job
     # queue and restarted at a later date.
@@ -72,13 +76,11 @@ class ConsentNotification < ApplicationRecord
         :consent_school_reminder
       end
 
-    patient.parents.each do |parent|
+    parents.each do |parent|
       ConsentMailer
         .with(parent:, patient:, programme:, session:, sent_by: current_user)
         .send(mailer_action)
         .deliver_later
-
-      next if text_template.nil?
 
       TextDeliveryJob.perform_later(
         text_template,
