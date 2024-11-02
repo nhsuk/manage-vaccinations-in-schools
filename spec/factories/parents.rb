@@ -31,6 +31,11 @@ FactoryBot.define do
     phone { "07700 900#{rand(0..999).to_s.rjust(3, "0")}" }
     phone_receive_updates { phone.present? }
 
+    trait :non_contactable do
+      phone { nil }
+      email { nil }
+    end
+
     trait :contact_method_any do
       contact_method_type { "any" }
     end

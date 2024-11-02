@@ -147,6 +147,10 @@ class Consent < ApplicationRecord
     response_given? && health_answers_require_follow_up?
   end
 
+  def contactable?
+    parent&.contactable? || false
+  end
+
   def parent_relationship
     (draft_parent || parent)&.relationship_to(patient:)
   end
