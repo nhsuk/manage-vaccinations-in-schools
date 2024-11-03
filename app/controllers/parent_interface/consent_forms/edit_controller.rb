@@ -149,7 +149,7 @@ module ParentInterface
     end
 
     def skip_to_confirm?
-      request.referer.include?("skip_to_confirm") ||
+      request.referer&.include?("skip_to_confirm") ||
         params.key?(:skip_to_confirm) ||
         session.key?(:follow_up_changes_start_page)
     end
