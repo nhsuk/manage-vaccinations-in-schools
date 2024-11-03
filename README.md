@@ -205,6 +205,16 @@ To [generate tests interactively by clicking in a live browser](https://playwrig
 yarn playwright codegen http://localhost:4000
 ```
 
+To run the k6 load test:
+
+First install the [k6 CLI](https://k6.io/).
+
+Then run the test (below is an example against localhost):
+
+```bash
+BASE_URL="http://localhost:4000" SESSION_SLUG=XXX AUTH_USERNAME=YYY AUTH_PASSWORD=ZZZ k6 run tests/parent-form-load-test.js
+```
+
 ### Example programmes
 
 You can generate an example programme with a few sessions in development by visiting `/reset`.
