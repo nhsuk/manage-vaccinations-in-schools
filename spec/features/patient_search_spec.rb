@@ -52,8 +52,9 @@ describe "Patient search" do
   end
 
   def when_i_search_for_cas
-    fill_in "Search children by name", with: "cas"
-    click_button "Search"
+    find(".nhsuk-details__summary").click
+    fill_in "Name", with: "cas"
+    click_button "Update children"
   end
 
   def then_i_see_patients_matching_cas
@@ -69,12 +70,13 @@ describe "Patient search" do
   end
 
   def when_i_clear_the_search
-    click_link "Clear search"
+    click_link "Clear filters"
   end
 
   def when_i_search_for_a
-    fill_in "Search children by name", with: "a"
-    click_button "Search"
+    find(".nhsuk-details__summary").click
+    fill_in "Name", with: "a"
+    click_button "Update children"
   end
 
   def then_i_see_patients_starting_with_a
@@ -86,8 +88,8 @@ describe "Patient search" do
   end
 
   def when_i_search_for_aa
-    fill_in "Search children by name", with: "aa"
-    click_button "Search"
+    fill_in "Name", with: "aa"
+    click_button "Update children"
   end
 
   def then_i_see_patients_starting_with_aa

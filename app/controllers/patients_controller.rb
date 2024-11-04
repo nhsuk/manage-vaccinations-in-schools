@@ -8,9 +8,9 @@ class PatientsController < ApplicationController
   def index
     scope = policy_scope(Patient).not_deceased
 
-    if (@q = params[:q]).present?
-      @q.strip!
-      scope = scope.search_by_name(@q)
+    if (@filter_name = params[:name]).present?
+      @filter_name.strip!
+      scope = scope.search_by_name(@filter_name)
     end
 
     @pagy, @patients = pagy(scope.order_by_name)
