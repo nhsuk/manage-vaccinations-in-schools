@@ -3,14 +3,22 @@
 class PatientPolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
+      cohort_ids = user.selected_organisation.cohorts.ids
+      school_ids = user.selected_organisation.schools.ids
+
       scope
-        .left_outer_joins(:cohort, school: :team)
-        .where(cohort: { organisation_id: user.selected_organisation.id })
+        .where(cohort_id: cohort_ids)
+        .or(Patient.where(school_id: school_ids))
         .or(
           Patient.where(
-            team: {
-              organisation_id: user.selected_organisation.id
-            }
+            "pending_changes ->> 'cohort_id' != NULL AND pending_changes ->> 'cohort_id' IN (?)",
+            cohort_ids
+          )
+        )
+        .or(
+          Patient.where(
+            "pending_changes ->> 'school_id' != NULL AND pending_changes ->> 'school_id' IN (?)",
+            school_ids
           )
         )
     end
