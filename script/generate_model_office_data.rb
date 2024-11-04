@@ -293,7 +293,7 @@ end
 # HPV cohort. If they don't fit into any of the cohorts, then Mavis will
 # raise an error and won't import them.
 
-organisation = User.find_by(email: "nurse.ryg@example.com").organisation
+organisation = User.find_by(email: "nurse.ryg@example.com").organisations.first
 
 school_data = CSV.read("scratchpad/school-class-sizes.csv", headers: true)
 
