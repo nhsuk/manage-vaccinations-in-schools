@@ -29,16 +29,16 @@ namespace :clinics do
     end
 
     organisation = Organisation.find_by!(ods_code: organisation_ods_code)
+    team = organisation.generic_team
 
     location =
-      Location.create!(
+      team.locations.create!(
         type: :community_clinic,
         name:,
         address_line_1:,
         address_town:,
         address_postcode:,
-        ods_code:,
-        organisation:
+        ods_code:
       )
 
     puts "Location #{name} (id: #{location.id}) added to organisation #{organisation.name}."
