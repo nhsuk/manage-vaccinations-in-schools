@@ -117,7 +117,7 @@ Resources:
         ]
       DatabaseName: !Ref dbDBName
       Engine: "aurora-postgresql"
-      EngineVersion: "14.4"
+      EngineVersion: "14.9"
       DBClusterParameterGroupName: !Ref dbDBClusterParameterGroup
       DBSubnetGroupName: !Ref dbDBSubnetGroup
       Port: 5432
