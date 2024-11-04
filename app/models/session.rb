@@ -94,9 +94,12 @@ class Session < ApplicationRecord
             presence: true,
             comparison: {
               greater_than_or_equal_to: :earliest_send_notifications_at,
-              less_than: :earliest_date
+              less_than_or_equal_to: :latest_send_consent_requests_at
             },
-            unless: -> { earliest_date.nil? || location.generic_clinic? }
+            unless: -> do
+              earliest_send_notifications_at.nil? ||
+                latest_send_consent_requests_at.nil? || location.generic_clinic?
+            end
 
   validates :send_invitations_at,
             presence: true,
@@ -330,6 +333,11 @@ class Session < ApplicationRecord
   def earliest_send_notifications_at
     return nil if earliest_date.nil?
     earliest_date - 3.months
+  end
+
+  def latest_send_consent_requests_at
+    return nil if earliest_date.nil? || days_before_consent_reminders.nil?
+    earliest_date - days_before_consent_reminders.days - 1
   end
 
   def maximum_weeks_before_consent_reminders
