@@ -4,7 +4,7 @@ source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby file: ".ruby-version"
-gem "rails", "~> 7.2.1"
+gem "rails", "~> 7.2.2"
 
 gem "activerecord-import"
 gem "audited", git: "https://github.com/tvararu/audited", branch: "encryption"
