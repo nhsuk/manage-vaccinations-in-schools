@@ -1,23 +1,26 @@
 <%= h1 t(".title"), size: "xl" %>
 
-<%= form_with url: patients_path,
-              class: "app-search",
-              data: { module: "autosubmit", turbo: "true" },
-              role: "search" do |f| %>
-  <div class="nhsuk-form-group app-search__form-group">
-    <%= f.label :q, "Search children by name", class: "nhsuk-label" %>
-    <%= f.search_field :q, value: @q, class: "nhsuk-input app-search__input",
-                           "data-action": "autosubmit#submit",
-                           "data-turbo-permanent": "true" %>
-  </div>
+<%= render AppDetailsComponent.new(summary: "Filter children", expander: true, open: @filter_name.present?) do %>
+  <%= form_with url: patients_path,
+                data: { module: "autosubmit", turbo: "true" },
+                role: "search" do |f| %>
+    <div class="nhsuk-form-group">
+      <%= f.label :name, "Name", class: "nhsuk-label" %>
+      <%= f.search_field :name, value: @filter_name, class: "nhsuk-input",
+                                "data-autosubmit-target": "field",
+                                "data-action": "autosubmit#submit",
+                                "data-turbo-permanent": "true" %>
+    </div>
 
-  <%= f.govuk_submit "Search", class: "app-search__button",
-                               "data-autosubmit-target": "filter" %>
+    <div class="app-button-group nhsuk-u-margin-bottom-0">
+      <%= f.govuk_submit "Update children",
+                         "data-autosubmit-target": "filter",
+                         "data-turbo-permanent": "true" %>
 
-<% if @q.present? %>
-    <%= govuk_button_link_to "Clear search", patients_path,
-                             class: "app-search__button nhsuk-button--secondary",
-                             data: { turbo: "false" } %>
+      <% if @filter_name.present? %>
+        <%= govuk_button_link_to "Clear filters", patients_path, secondary: true, data: { turbo: "false" } %>
+      <% end %>
+    </div>
   <% end %>
 <% end %>
 
@@ -26,8 +29,8 @@
     <p class="app-patients__no-results nhsuk-caption-m">No children</p>
   </div>
 <% else %>
-  <% heading = @q.present? ?
-       "#{I18n.t("children", count: @pagy.count)} matching \"#{@q}\"" :
+  <% heading = @filter_name.present? ?
+       "#{I18n.t("children", count: @pagy.count)} matching \"#{@filter_name}\"" :
        nil %>
   <%= render AppPatientTableComponent.new(@patients,
                                           count: @pagy.count,
