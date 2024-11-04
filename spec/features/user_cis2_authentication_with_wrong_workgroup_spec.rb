@@ -42,7 +42,7 @@ describe "User CIS2 authentication", :cis2 do
   def then_i_see_the_wrong_workgroup_error
     expect(
       page
-    ).to have_heading "You are not a part of the correct workgroup to use this service"
+    ).to have_heading "You’re not in the right workgroup to use this service"
   end
 
   def when_i_click_the_change_role_button_and_select_the_right_role
