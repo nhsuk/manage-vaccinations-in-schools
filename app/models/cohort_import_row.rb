@@ -18,6 +18,10 @@ class CohortImportRow < PatientImportRow
 
   private
 
+  def stage_registration?
+    true
+  end
+
   def school
     @school ||=
       unless [SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN].include?(school_urn)

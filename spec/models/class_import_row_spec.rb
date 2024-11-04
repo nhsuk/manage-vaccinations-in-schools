@@ -137,6 +137,11 @@ describe ClassImportRow do
       it { should eq(existing_patient) }
       it { should be_male }
       it { should have_attributes(nhs_number: "0123456789") }
+
+      it "overwrites registration" do
+        expect(patient.registration).to eq("8AB")
+        expect(patient.pending_changes).not_to have_key("registration")
+      end
     end
 
     describe "#cohort" do

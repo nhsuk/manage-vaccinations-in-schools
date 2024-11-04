@@ -159,6 +159,28 @@ describe CohortImportRow do
       it { should have_attributes(gender_code: "not_known") }
     end
 
+    context "with an existing patient" do
+      let!(:existing_patient) do
+        create(
+          :patient,
+          address_postcode: "SW1A 1AA",
+          family_name: "Smith",
+          gender_code: "male",
+          given_name: "Jimmy",
+          nhs_number: "1234567890"
+        )
+      end
+
+      it { should eq(existing_patient) }
+      it { should be_male }
+      it { should have_attributes(nhs_number: "1234567890") }
+
+      it "stages the registration" do
+        expect(patient.registration).not_to eq("8AB")
+        expect(patient.pending_changes).to include("registration" => "8AB")
+      end
+    end
+
     describe "#cohort" do
       subject(:cohort) { travel_to(today) { patient.cohort } }
 
