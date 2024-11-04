@@ -1,6 +1,6 @@
 <%= h1 t(".title"), size: "xl" %>
 
-<%= render AppDetailsComponent.new(summary: "Filter children", expander: true, open: @filter_name.present?) do %>
+<%= render AppDetailsComponent.new(summary: "Filter children", expander: true, open: @filtered) do %>
   <%= form_with url: patients_path,
                 data: { module: "autosubmit", turbo: "true" },
                 role: "search" do |f| %>
@@ -12,29 +12,31 @@
                                 "data-turbo-permanent": "true" %>
     </div>
 
+    <%= f.govuk_check_boxes_fieldset :missing_nhs_number, multiple: false, legend: nil do %>
+      <%= f.govuk_check_box :missing_nhs_number, 1, 0, multiple: false, link_errors: true, label: { text: "Missing NHS number" },
+                                                       "data-autosubmit-target": "field",
+                                                       "data-action": "autosubmit#submit",
+                                                       "data-turbo-permanent": "true" %>
+    <% end %>
+
     <div class="app-button-group nhsuk-u-margin-bottom-0">
       <%= f.govuk_submit "Update children",
                          "data-autosubmit-target": "filter",
                          "data-turbo-permanent": "true" %>
 
-      <% if @filter_name.present? %>
+      <% if @filtered.present? %>
         <%= govuk_button_link_to "Clear filters", patients_path, secondary: true, data: { turbo: "false" } %>
       <% end %>
     </div>
   <% end %>
 <% end %>
 
-<% if @patients.count.zero? %>
+<% if @pagy.count.zero? %>
   <div class="app-patients">
     <p class="app-patients__no-results nhsuk-caption-m">No children</p>
   </div>
 <% else %>
-  <% heading = @filter_name.present? ?
-       "#{I18n.t("children", count: @pagy.count)} matching \"#{@filter_name}\"" :
-       nil %>
-  <%= render AppPatientTableComponent.new(@patients,
-                                          count: @pagy.count,
-                                          heading:) %>
+  <%= render AppPatientTableComponent.new(@patients, heading: @heading) %>
 <% end %>
 
 <%= govuk_pagination(pagy: @pagy) %>

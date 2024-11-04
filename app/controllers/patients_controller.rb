@@ -13,7 +13,22 @@ class PatientsController < ApplicationController
       scope = scope.search_by_name(@filter_name)
     end
 
+    if (
+         @filter_missing_nhs_number =
+           ActiveModel::Type::Boolean.new.cast(params[:missing_nhs_number])
+       )
+      scope = scope.without_nhs_number
+    end
+
+    @filtered = @filter_name.present? || @filter_missing_nhs_number
+
     @pagy, @patients = pagy(scope.order_by_name)
+
+    @heading = [
+      I18n.t("children", count: @pagy.count),
+      @filter_name.present? ? "matching “#{@filter_name}”" : nil,
+      @filter_missing_nhs_number ? "without an NHS number" : nil
+    ].compact.join(" ")
 
     render layout: "full", status: request.post? ? :created : :ok
   end
