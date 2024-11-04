@@ -16,6 +16,10 @@ class ClassImportRow < PatientImportRow
 
   attr_reader :school
 
+  def stage_registration?
+    false
+  end
+
   def home_educated
     false
   end

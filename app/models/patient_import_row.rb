@@ -53,6 +53,10 @@ class PatientImportRow
     }.compact.merge(cohort_id: cohort&.id, school_id: school&.id)
 
     if (existing_patient = existing_patients.first)
+      unless stage_registration?
+        existing_patient.registration = attributes.delete(:registration)
+      end
+
       existing_patient.stage_changes(attributes)
       existing_patient
     else
