@@ -1,5 +1,51 @@
 # Disaster recovery ops manual
 
+## Restoring a production database using a snapshot
+
+Spin up a new environment with an empty database. Follow the instructions in
+[AWS Copilot: Setting up a new
+environment](aws-copilot.md#setting-up-a-new-environment).
+
+Go to the RDS > Snapshots page in the AWS console. From the System tab, find a
+snapshot you want to restore and copy it to a Manual snapshot.
+
+Or, via the CLI:
+
+```sh
+# Get the snapshot ARN
+aws rds describe-db-cluster-snapshots \
+  --query 'reverse(sort_by(DBClusterSnapshots,&SnapshotCreateTime))[*].[DBClusterSnapshotArn]' \
+  --output table
+
+# Copy the snapshot to a manual snapshot
+aws rds copy-db-cluster-snapshot \
+  --source-db-cluster-snapshot-identifier NAME_OF_SNAPSHOT \
+  --target-db-cluster-snapshot-identifier NAME_OF_MANUAL_SNAPSHOT
+```
+
+Uncomment the `SnapshotIdentifier` in `copilot/environments/addons/db.yml`.
+Populate it with the ARN of the manual snapshot.
+
+Disable deletion protection for the old cluster:
+
+```sh
+# Get the cluster name
+aws rds describe-db-clusters \
+  --query 'DBClusters[*].[DBClusterIdentifier]' \
+  --output table
+
+# Disable deletion protection
+aws rds modify-db-cluster \
+  --db-cluster-identifier NAME_OF_OLD_CLUSTER \
+  --no-deletion-protection
+```
+
+Deploy to your restored environment:
+
+```sh
+copilot deploy env -n test
+```
+
 ## Getting a local dump of an Aurora DB
 
 You need Postgres 16+ to connect to the Aurora DB.

@@ -133,6 +133,13 @@ Resources:
       DeletionProtection: true # Keep this to protect the cluster from deletion. This also applies to the databases that are a part of this cluster.
       BackupRetentionPeriod: 7 # Store the snapshots for 7 days.
 
+      # DISASTER RECOVERY: Uncomment the SnapshotIdentifier line to restore from
+      # a manual snapshot. Enabling this and deploying the copilot environment
+      # will most likely destroy any existing databases in that environment, so
+      # make sure they are fresh or don't contain important data.
+
+      # SnapshotIdentifier: ARN_OF_MANUAL_SNAPSHOT
+
   dbDBWriterInstance:
     Metadata:
       "aws:copilot:description": "The db Aurora Serverless v2 writer instance"
