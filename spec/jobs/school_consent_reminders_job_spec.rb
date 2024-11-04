@@ -47,7 +47,7 @@ describe SchoolConsentRemindersJob do
     create(
       :session,
       dates:,
-      send_consent_requests_at: dates.first - 1.week,
+      send_consent_requests_at: dates.first - 3.weeks,
       days_before_consent_reminders: 7,
       location:,
       patients:,
