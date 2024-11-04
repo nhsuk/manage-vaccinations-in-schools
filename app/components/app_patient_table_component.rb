@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AppPatientTableComponent < ViewComponent::Base
-  def initialize(patients, count:, heading: nil)
+  def initialize(patients, count: nil, heading: nil)
     super
 
     @patients = patients

@@ -18,12 +18,18 @@ describe "Patient search" do
 
     when_i_search_for_aa
     then_i_see_patients_starting_with_aa
+
+    when_i_clear_the_search
+    then_i_see_all_patients
+
+    when_i_search_for_patients_without_nhs_numbers
+    then_i_see_patients_without_nhs_numbers
   end
 
   def given_that_i_am_signed_in
     @organisation = create(:organisation, :with_one_nurse)
     @user = @organisation.users.first
-    @cohort = create(:cohort, organisation: @organisation)
+    cohort = create(:cohort, organisation: @organisation)
 
     # Create test patients with various names
     [
@@ -33,8 +39,16 @@ describe "Patient search" do
       %w[Cassidy Wilson],
       %w[Bob Taylor]
     ].each do |(given_name, family_name)|
-      create(:patient, given_name:, family_name:, cohort: @cohort)
+      create(:patient, given_name:, family_name:, cohort:)
     end
+
+    create(
+      :patient,
+      given_name: "Salvor",
+      family_name: "Hardin",
+      cohort:,
+      nhs_number: nil
+    )
 
     sign_in @user
   end
@@ -49,6 +63,7 @@ describe "Patient search" do
     expect(page).to have_content "Casey Brown"
     expect(page).to have_content "Cassidy Wilson"
     expect(page).to have_content "Bob Taylor"
+    expect(page).to have_content "Salvor Hardin"
   end
 
   def when_i_search_for_cas
@@ -63,10 +78,11 @@ describe "Patient search" do
     expect(page).not_to have_content "Aaron Smith"
     expect(page).not_to have_content "Aardvark Jones"
     expect(page).not_to have_content "Bob Taylor"
+    expect(page).not_to have_content "Salvor Hardin"
   end
 
   def and_i_see_the_search_count
-    expect(page).to have_content "2 children matching \"cas\""
+    expect(page).to have_content "2 children matching “cas”"
   end
 
   def when_i_clear_the_search
@@ -85,6 +101,7 @@ describe "Patient search" do
     expect(page).not_to have_content "Bob Taylor"
     expect(page).not_to have_content "Casey Brown"
     expect(page).not_to have_content "Cassidy Wilson"
+    expect(page).not_to have_content "Salvor Hardin"
   end
 
   def when_i_search_for_aa
@@ -98,5 +115,21 @@ describe "Patient search" do
     expect(page).not_to have_content "Bob Taylor"
     expect(page).not_to have_content "Casey Brown"
     expect(page).not_to have_content "Cassidy Wilson"
+    expect(page).not_to have_content "Salvor Hardin"
+  end
+
+  def when_i_search_for_patients_without_nhs_numbers
+    find(".nhsuk-details__summary").click
+    check "Missing NHS number"
+    click_button "Update children"
+  end
+
+  def then_i_see_patients_without_nhs_numbers
+    expect(page).not_to have_content "Aaron Smith"
+    expect(page).not_to have_content "Aardvark Jones"
+    expect(page).not_to have_content "Bob Taylor"
+    expect(page).not_to have_content "Casey Brown"
+    expect(page).not_to have_content "Cassidy Wilson"
+    expect(page).to have_content "Salvor Hardin"
   end
 end
