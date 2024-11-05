@@ -1,4 +1,2 @@
-disallow_database_seeding: true
-
-pds:
-  perform_jobs: true
+# Non-sensitive production settings should first go into config/settings.yml.
+# The goal is for this file to be empty.

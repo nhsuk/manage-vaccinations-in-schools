@@ -1,8 +1,56 @@
+# Default settings that are prodlike. Overrides should go in to the
+# environment specific settings files.
+
 allow_dev_phone_numbers: false
 web_concurrency: 2
 fast_reset: false
+disallow_database_seeding: true
 
+# NHS Care Identity Service OIDC integration configuration, used by Omniauth via
+# Devise.
 cis2:
-  enabled: false
-  min_authentication_assurance_level: 2
   acr_value: AAL2_OR_AAL3_ANY
+  enabled: true
+  issuer: "https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare"
+  min_authentication_assurance_level: 2
+
+mesh:
+  base_url: "https://msg.intspineservices.nhs.uk"
+  mailbox: N1G3BOT001
+  dps_mailbox: N1G3BOT002
+  certificate: |
+    -----BEGIN CERTIFICATE-----
+    MIIE5TCCA82gAwIBAgIRAJUHcqfZdUo7qTGXmf7K53YwDQYJKoZIhvcNAQELBQAw
+    TDELMAkGA1UEBhMCR0IxDDAKBgNVBAoTA25oczELMAkGA1UECxMCQ0ExIjAgBgNV
+    BAMTGU5IUyBJTlQgQXV0aGVudGljYXRpb24gRzIwHhcNMjQwODA5MTI0NDA4WhcN
+    MjcwODA5MTMxNDA4WjBSMQwwCgYDVQQKEwNuaHMxEDAOBgNVBAsTB0RldmljZXMx
+    MDAuBgNVBAMTJ24xZzNib3QwMDEubjFnM2IuYXBpLm1lc2gtY2xpZW50Lm5ocy51
+    azCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALPymKMSb03iUBGxgWyY
+    i4RyUurZ9e5RnTap3ZilMNizUgPfdc9o+77yqDQtTrZXIENxdjTz+Y2fwNLzGhzX
+    dF8/UapNMOHsRc8qR+db/By1DCp9qSLDXZGPDhMefAgJht2S1srF7iEOh3Nu6dWE
+    xmT/3uQKlhEmhhXM2cVGQCJbOUo9AFl2cevFGB/cFVvxhTog1w3JbZjdo6jLa4r3
+    a4pyWGP1agwq4wmZ7aV9oWzt30MkUZVhLYRiYE5dw0Qi2tDORCzj+YV4530E0Wmg
+    80oFN4rlfaygK7tnMagYh3yw3QMmyK2igBroHBVdUCRTmYkuuRcMYtGQkf96FZwF
+    XYkCAwEAAaOCAbowggG2MAsGA1UdDwQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcD
+    AQYIKwYBBQUHAwIwbwYIKwYBBQUHAQEEYzBhMCMGCCsGAQUFBzABhhdodHRwOi8v
+    b2NzcC5uaHMudWsvb2NzcDA6BggrBgEFBQcwAoYuaHR0cDovL3BraS5uaHMudWsv
+    aW50L0cyL2F1dGgvTkhTSU5UQXV0aEcyLmNydDA+BgNVHSAENzA1MDMGCyqGOgCJ
+    e2UAAwIAMCQwIgYIKwYBBQUHAgEWFmh0dHBzOi8vcGtpLm5ocy51ay9DUFMwQwYD
+    VR0fBDwwOjA4oDagNIYyaHR0cDovL2NybC5uaHMudWsvaW50L2cyL2F1dGgvTkhT
+    SU5UYXV0aEcyX2MxOS5jcmwwKwYDVR0QBCQwIoAPMjAyNDA4MDkxMjQ0MDhagQ8y
+    MDI2MDkxNTAxMTQwOFowHwYDVR0jBBgwFoAUFsdHBKhgyeRdq5nylPfD3jOY1CIw
+    HQYDVR0OBBYEFGQ/VXrTijJNJhrd39mYUXEoz0C0MAkGA1UdEwQCMAAwGgYJKoZI
+    hvZ9B0EABA0wCxsFVjEwLjADAgSwMA0GCSqGSIb3DQEBCwUAA4IBAQCUqove3+Qv
+    gtgueArZwyRkBbOyf6Q3bLAoa45Xl+W5QC3n9s+WGSZ7D4duFBErRaL44nD66nsp
+    +5u/MbFOsfOlnywN7pxpS23lgVG5z+iOajvuPAgrIF165vCGvsB+Ro8CwS4QCjxE
+    SdsIvyfiUsQihkwzpDNGUsD/I7rzwwjFzcon5WWmKCbfBKDrGDEJMqBwYbazSPt9
+    VIrG4n5XuTon7yHTsXNC18p92ifauCuRgq1cKUdJhp8uocoyL8BmtkpbpwBLseSd
+    rkApI3ca+7DwjX1Jrtp8+CEo4O/+Pp1NtnnEoamrvG5sSKC8wzrgQ66Y4vQz4EAU
+    K26SJt+XLua6
+    -----END CERTIFICATE-----
+
+nhs_api:
+  base_url: "https://int.api.service.nhs.uk"
+
+pds:
+  perform_jobs: true

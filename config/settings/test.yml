@@ -1,10 +1,10 @@
 allow_dev_phone_numbers: true
 fast_reset: true
+disallow_database_seeding: false
 
 cis2:
   issuer: "http://localhost:4000/test/oidc"
   client_id: "31337.apps.national"
-  enabled: true
   secret: VEWWYSEKRHET
 
 mesh:
@@ -18,6 +18,3 @@ mesh:
 nhs_api:
   base_url: "https://sandbox.api.service.nhs.uk"
   disable_authentication: true
-
-pds:
-  perform_jobs: true
