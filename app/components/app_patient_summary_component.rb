@@ -19,7 +19,7 @@ class AppPatientSummaryComponent < ViewComponent::Base
   end
 
   def call
-    govuk_summary_list do |summary_list|
+    govuk_summary_list(actions: @change_links.present?) do |summary_list|
       summary_list.with_row do |row|
         row.with_key { "NHS number" }
         row.with_value { format_nhs_number }

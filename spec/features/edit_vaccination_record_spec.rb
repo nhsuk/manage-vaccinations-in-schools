@@ -15,6 +15,9 @@ describe "Edit vaccination record" do
     when_i_click_on_the_vaccination_record
     then_i_should_see_the_vaccination_record
 
+    when_i_click_on_edit_vaccination_record
+    then_i_see_the_edit_vaccination_record_page
+
     when_i_click_on_the_change_link
     then_i_should_see_the_date_time_form
 
@@ -76,6 +79,14 @@ describe "Edit vaccination record" do
 
   def then_i_should_see_the_vaccination_record
     expect(page).to have_content("Full nameJohn Smith")
+  end
+
+  def when_i_click_on_edit_vaccination_record
+    click_on "Edit vaccination record"
+  end
+
+  def then_i_see_the_edit_vaccination_record_page
+    expect(page).to have_content("Edit vaccination record")
   end
 
   def when_i_click_on_the_change_link

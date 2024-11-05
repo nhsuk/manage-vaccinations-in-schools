@@ -1,0 +1,23 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: programme_vaccination_record_path(@programme, @vaccination_record),
+        name: @patient.full_name,
+      ) %>
+<% end %>
+
+<% page_title = "Edit vaccination record" %>
+<%= h1 page_title do %>
+  <span class="nhsuk-caption-l">
+    <%= @patient.full_name %>
+  </span>
+  <%= page_title %>
+<% end %>
+
+<%= render AppCardComponent.new do |c| %>
+  <% c.with_heading { "Vaccination details" } %>
+  <%= render AppVaccinationRecordSummaryComponent.new(
+        @vaccination_record, change_links: true,
+      ) %>
+<% end %>
+
+<%= govuk_button_link_to "Continue", programme_vaccination_record_path(@programme, @vaccination_record) %>

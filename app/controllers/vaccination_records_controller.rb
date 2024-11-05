@@ -3,6 +3,8 @@
 class VaccinationRecordsController < ApplicationController
   include Pagy::Backend
 
+  before_action :set_vaccination_record, except: :index
+
   def index
     @pagy, @vaccination_records = pagy(vaccination_records.recorded)
 
@@ -10,9 +12,9 @@ class VaccinationRecordsController < ApplicationController
   end
 
   def show
-    @vaccination_record = vaccination_records.find(params[:id])
-    @patient = @vaccination_record.patient
-    @session = @vaccination_record.session
+  end
+
+  def edit
   end
 
   def export_dps
@@ -56,5 +58,11 @@ class VaccinationRecordsController < ApplicationController
 
   def dps_export
     @dps_export ||= DPSExport.create!(programme:)
+  end
+
+  def set_vaccination_record
+    @vaccination_record = vaccination_records.find(params[:id])
+    @patient = @vaccination_record.patient
+    @session = @vaccination_record.session
   end
 end

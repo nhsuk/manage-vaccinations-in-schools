@@ -12,6 +12,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
 
   def call
     govuk_summary_list(
+      actions: @change_links,
       classes: "app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0"
     ) do |summary_list|
       summary_list.with_row do |row|
