@@ -14,6 +14,13 @@ cis2:
   issuer: "https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare"
   min_authentication_assurance_level: 2
 
+govuk_notify:
+  enabled: true
+  mode: live
+  test_key: <%= Rails.application.credentials.govuk_notify.test_key %>
+  team_key: <%= Rails.application.credentials.govuk_notify.team_key %>
+  live_key: <%= Rails.application.credentials.govuk_notify.live_key %>
+
 mesh:
   base_url: "https://msg.intspineservices.nhs.uk"
   certificate: |

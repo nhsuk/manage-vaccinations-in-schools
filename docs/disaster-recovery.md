@@ -181,13 +181,13 @@ config.force_ssl = false
 Precompile assets:
 
 ```sh
-MAVIS__GOVUK_NOTIFY__API_KEY=1 RAILS_ENV=staging rails assets:precompile
+RAILS_ENV=staging rails assets:precompile
 ```
 
 Start the web server:
 
 ```sh
-MAVIS__GOVUK_NOTIFY__API_KEY=1 RAILS_ENV=staging rails s
+RAILS_ENV=staging rails s
 ```
 
 ## Exporting an organisation
@@ -195,7 +195,7 @@ MAVIS__GOVUK_NOTIFY__API_KEY=1 RAILS_ENV=staging rails s
 Generate an export and encrypt it:
 
 ```sh
-MAVIS__GOVUK_NOTIFY__API_KEY=1 RAILS_ENV=staging bin/bundle exec \
+RAILS_ENV=staging bin/bundle exec \
   ruby script/organisation_export.rb <organisation_id>
 EXPORT_PASSWORD=secure \
   node ./script/encrypt_xlsx.mjs <filename>

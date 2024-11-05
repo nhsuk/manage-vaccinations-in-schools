@@ -83,7 +83,7 @@ Rails.application.configure do
   if Settings.govuk_notify&.enabled
     config.action_mailer.delivery_method = :notify
     config.action_mailer.notify_settings = {
-      api_key: Settings.govuk_notify.api_key
+      api_key: Settings.govuk_notify["#{Settings.govuk_notify.mode}_key"]
     }
   else
     config.action_mailer.default_options = { from: "no-reply@nhs.net" }
