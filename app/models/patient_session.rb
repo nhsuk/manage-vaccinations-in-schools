@@ -46,13 +46,11 @@ class PatientSession < ApplicationRecord
            -> { draft },
            class_name: "VaccinationRecord"
 
-  has_many :consents,
-           -> { recorded.where(programme: _1.programmes).includes(:parent) },
-           through: :patient
+  # TODO: Only fetch consents and triages for the relevant programme.
 
-  has_many :triages,
-           -> { where(programme: _1.programmes).order(:updated_at) },
-           through: :patient
+  has_many :consents, -> { recorded.includes(:parent) }, through: :patient
+
+  has_many :triages, through: :patient
 
   has_many :session_notifications,
            -> { where(session_id: _1.session_id) },
