@@ -58,6 +58,7 @@ mesh:
   password: <%= Rails.application.credentials.mesh&.password %>
   private_key: |
 <%= Rails.application.credentials.mesh&.private_key&.gsub(/^/, "    ") %>
+  private_key_passphrase: <%= Rails.application.credentials.mesh&.private_key_passphrase %>
   shared_key: <%= Rails.application.credentials.mesh&.shared_key %>
 
 nhs_api:
