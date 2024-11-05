@@ -3,9 +3,11 @@
 describe AppVaccinationRecordSummaryComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(vaccination_record) }
+  let(:component) { described_class.new(vaccination_record, current_user:) }
 
+  let(:current_user) { create(:user) }
   let(:administered_at) { Time.zone.local(2024, 9, 6, 12) }
+  let(:reason) { nil }
   let(:location) { create(:location, :school, name: "Hogwarts") }
   let(:programme) { create(:programme, :hpv) }
   let(:organisation) { create(:organisation, programmes: [programme]) }
@@ -27,6 +29,7 @@ describe AppVaccinationRecordSummaryComponent do
       :vaccination_record,
       programme:,
       administered_at:,
+      reason:,
       batch:,
       vaccine:,
       patient_session:,
@@ -52,11 +55,12 @@ describe AppVaccinationRecordSummaryComponent do
 
     context "when not administered" do
       let(:administered_at) { nil }
+      let(:reason) { :not_well }
 
       it do
         expect(rendered).to have_css(
           ".nhsuk-summary-list__row",
-          text: "Outcome\nNot vaccinated"
+          text: "Outcome\nUnwell"
         )
       end
     end
@@ -181,17 +185,26 @@ describe AppVaccinationRecordSummaryComponent do
     it do
       expect(rendered).to have_css(
         ".nhsuk-summary-list__row",
-        text: "Vaccination date\n6 September 2024 at 12:00pm"
+        text: "Date\n6 September 2024"
       )
     end
   end
 
-  describe "nurse row" do
+  describe "time row" do
+    it do
+      expect(rendered).to have_css(
+        ".nhsuk-summary-list__row",
+        text: "Time\n12:00pm"
+      )
+    end
+  end
+
+  describe "vaccinator row" do
     context "when the user is present" do
       it do
         expect(rendered).to have_css(
           ".nhsuk-summary-list__row",
-          text: "Nurse\nTest User"
+          text: "Vaccinator\nTest User"
         )
       end
     end
@@ -209,7 +222,7 @@ describe AppVaccinationRecordSummaryComponent do
       it do
         expect(rendered).to have_css(
           ".nhsuk-summary-list__row",
-          text: "Nurse\nTest User"
+          text: "Vaccinator\nTest User"
         )
       end
     end
@@ -253,7 +266,10 @@ describe AppVaccinationRecordSummaryComponent do
 
   describe "with pending changes" do
     let(:component) do
-      described_class.new(vaccination_record.with_pending_changes)
+      described_class.new(
+        vaccination_record.with_pending_changes,
+        current_user:
+      )
     end
 
     it "highlights changed fields" do

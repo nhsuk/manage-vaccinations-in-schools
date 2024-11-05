@@ -1,13 +1,22 @@
 # frozen_string_literal: true
 
 class AppVaccinationRecordSummaryComponent < ViewComponent::Base
-  def initialize(vaccination_record, change_links: {})
+  def initialize(
+    vaccination_record,
+    current_user:,
+    change_links: {},
+    show_notes: true
+  )
     super
 
     @vaccination_record = vaccination_record
+    @current_user = current_user
+    @change_links = change_links
+    @show_notes = show_notes
+
+    @patient = vaccination_record.patient
     @vaccine = vaccination_record.vaccine
     @batch = vaccination_record.batch
-    @change_links = change_links
   end
 
   def call
@@ -16,8 +25,21 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
       classes: "app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0"
     ) do |summary_list|
       summary_list.with_row do |row|
+        row.with_key { "Child" }
+        row.with_value { @patient.full_name }
+      end
+
+      summary_list.with_row do |row|
         row.with_key { "Outcome" }
         row.with_value { outcome_value }
+
+        if (href = @change_links[:outcome])
+          row.with_action(
+            text: "Change",
+            href:,
+            visually_hidden_text: "outcome"
+          )
+        end
       end
 
       if @vaccine.present?
@@ -27,10 +49,38 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
+      if @batch.present?
+        summary_list.with_row do |row|
+          row.with_key { "Batch ID" }
+          row.with_value(classes: ["app-u-monospace"]) { batch_id_value }
+
+          if (href = @change_links[:batch])
+            row.with_action(
+              text: "Change",
+              href:,
+              visually_hidden_text: "batch"
+            )
+          end
+        end
+
+        summary_list.with_row do |row|
+          row.with_key { "Batch expiry date" }
+          row.with_value { batch_expiry_value }
+        end
+      end
+
       if @vaccination_record.delivery_method.present?
         summary_list.with_row do |row|
           row.with_key { "Method" }
           row.with_value { delivery_method_value }
+
+          if (href = @change_links[:delivery_method])
+            row.with_action(
+              text: "Change",
+              href:,
+              visually_hidden_text: "method"
+            )
+          end
         end
       end
 
@@ -38,6 +88,14 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         summary_list.with_row do |row|
           row.with_key { "Site" }
           row.with_value { delivery_site_value }
+
+          if (href = @change_links[:delivery_site])
+            row.with_action(
+              text: "Change",
+              href:,
+              visually_hidden_text: "method"
+            )
+          end
         end
       end
 
@@ -55,27 +113,34 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
-      if @batch.present?
-        summary_list.with_row do |row|
-          row.with_key { "Batch ID" }
-          row.with_value(classes: ["app-u-monospace"]) { batch_id_value }
-        end
-
-        summary_list.with_row do |row|
-          row.with_key { "Batch expiry date" }
-          row.with_value { batch_expiry_value }
-        end
-      end
-
       summary_list.with_row do |row|
         row.with_key { "Location" }
         row.with_value { location_value }
+        if (href = @change_links[:location])
+          row.with_action(
+            text: "Change",
+            href:,
+            visually_hidden_text: "location"
+          )
+        end
       end
 
-      if @vaccination_record.administered_at.present?
+      if @vaccination_record.administered?
         summary_list.with_row do |row|
-          row.with_key { "Vaccination date" }
-          row.with_value { vaccination_date_value }
+          row.with_key { "Date" }
+          row.with_value { date_value }
+          if (href = @change_links[:administered_at])
+            row.with_action(
+              text: "Change",
+              visually_hidden_text: "vaccination date",
+              href:
+            )
+          end
+        end
+
+        summary_list.with_row do |row|
+          row.with_key { "Time" }
+          row.with_value { time_value }
           if (href = @change_links[:administered_at])
             row.with_action(
               text: "Change",
@@ -88,12 +153,12 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
 
       if @vaccination_record.performed_by.present?
         summary_list.with_row do |row|
-          row.with_key { "Nurse" }
-          row.with_value { nurse_value }
+          row.with_key { "Vaccinator" }
+          row.with_value { vaccinator_value }
         end
       end
 
-      if @vaccination_record.notes.present?
+      if @show_notes && @vaccination_record.notes.present?
         summary_list.with_row do |row|
           row.with_key { "Notes" }
           row.with_value { notes_value }
@@ -106,7 +171,13 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
 
   def outcome_value
     highlight_if(
-      @vaccination_record.administered? ? "Vaccinated" : "Not vaccinated",
+      (
+        if @vaccination_record.administered?
+          "Vaccinated"
+        else
+          @vaccination_record.human_enum_name(:reason)
+        end
+      ),
       @vaccination_record.administered_at_changed?
     )
   end
@@ -155,17 +226,35 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
     end
   end
 
-  def vaccination_date_value
+  def date_value
+    date = @vaccination_record.administered_at.to_date
+
     highlight_if(
-      @vaccination_record.administered_at.to_fs(:long),
+      date.today? ? "Today (#{date.to_fs(:long)})" : date.to_fs(:long),
       @vaccination_record.administered_at_changed?
     )
   end
 
-  def nurse_value
+  def time_value
     highlight_if(
-      @vaccination_record.performed_by.full_name,
-      @vaccination_record.performed_by_user_id_changed?
+      @vaccination_record.administered_at.to_fs(:time),
+      @vaccination_record.administered_at_changed?
+    )
+  end
+
+  def vaccinator_value
+    value =
+      if @vaccination_record.performed_by == @current_user
+        "You (#{@current_user.full_name})"
+      else
+        @vaccination_record.performed_by&.full_name
+      end
+
+    highlight_if(
+      value,
+      @vaccination_record.performed_by_family_name_changed? ||
+        @vaccination_record.performed_by_given_name_changed? ||
+        @vaccination_record.performed_by_user_id_changed?
     )
   end
 

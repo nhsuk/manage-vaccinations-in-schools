@@ -31,7 +31,7 @@
       <% if @vaccination_record %>
         <h3 class="nhsuk-heading-s">Duplicate vaccination record</h3>
         <%= render AppVaccinationRecordSummaryComponent.new(
-              @vaccination_record.with_pending_changes
+              @vaccination_record.with_pending_changes, current_user:,
             ) %>
       <% end %>
     <% end %>
@@ -45,7 +45,7 @@
       <% if @vaccination_record %>
         <h3 class="nhsuk-heading-s">Existing vaccination record</h3>
         <%= render AppVaccinationRecordSummaryComponent.new(
-              @vaccination_record
+              @vaccination_record, current_user:,
             ) %>
       <% end %>
     <% end %>
