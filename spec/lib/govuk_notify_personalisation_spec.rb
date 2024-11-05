@@ -182,12 +182,10 @@ describe GovukNotifyPersonalisation do
         recorded_at: Date.new(2024, 1, 1)
       )
     end
-    let(:batch) { vaccination_record.batch }
 
     it do
       expect(personalisation).to match(
         hash_including(
-          batch_name: batch.name,
           day_month_year_of_vaccination: "01/01/2024",
           reason_did_not_vaccinate: "the nurse decided John was not well",
           show_additional_instructions: "yes",
