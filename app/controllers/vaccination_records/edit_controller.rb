@@ -36,7 +36,9 @@ class VaccinationRecords::EditController < ApplicationController
       update_default_batch_for_today
     end
 
-    jump_to(Wicked::FINISH_STEP) if @vaccination_record.recorded?
+    if @vaccination_record.recorded? && current_step != :confirm
+      jump_to("confirm")
+    end
 
     render_wizard @vaccination_record
   end
@@ -94,7 +96,7 @@ class VaccinationRecords::EditController < ApplicationController
       session.delete(:return_to)
       session_vaccinations_path(@session)
     else
-      edit_programme_vaccination_record_path(@programme, @vaccination_record)
+      programme_vaccination_record_path(@programme, @vaccination_record)
     end
   end
 

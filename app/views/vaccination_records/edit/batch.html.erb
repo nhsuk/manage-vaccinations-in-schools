@@ -21,13 +21,16 @@
         (expires <%= batch.expiry.to_fs(:long) %>)
       <% end %>
       <%= f.govuk_radio_button(:batch_id, batch.id, label:) do %>
-        <%= f.govuk_check_box(
-              :todays_batch,
-              batch.id,
-              label: { text: "Default to this batch for this session" },
-            ) %>
+        <% if @vaccination_record.draft? %>
+          <%= f.govuk_check_box(
+                :todays_batch,
+                batch.id,
+                label: { text: "Default to this batch for this session" },
+              ) %>
+        <% end %>
       <% end %>
     <% end %>
   <% end %>
+
   <%= f.govuk_submit "Continue" %>
 <% end %>

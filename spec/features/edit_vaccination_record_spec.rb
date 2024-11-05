@@ -4,7 +4,7 @@ describe "Edit vaccination record" do
   before { Flipper.enable(:release_1b) }
   after { Flipper.disable(:release_1b) }
 
-  scenario "User edits the date/time" do
+  scenario "User edits the vaccination record" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
     and_a_vaccination_record_exists
@@ -18,7 +18,7 @@ describe "Edit vaccination record" do
     when_i_click_on_edit_vaccination_record
     then_i_see_the_edit_vaccination_record_page
 
-    when_i_click_on_the_change_link
+    when_i_click_on_change_date
     then_i_should_see_the_date_time_form
 
     when_i_fill_in_the_date
@@ -26,6 +26,12 @@ describe "Edit vaccination record" do
     and_i_click_continue
     then_i_see_the_edit_vaccination_record_page
     and_i_should_see_the_updated_date_time
+
+    when_i_click_on_change_batch
+    and_i_choose_a_batch
+    and_i_click_continue
+    then_i_see_the_edit_vaccination_record_page
+    and_i_should_see_the_updated_batch
   end
 
   def given_i_am_signed_in
@@ -53,10 +59,15 @@ describe "Edit vaccination record" do
   def and_a_vaccination_record_exists
     patient = create(:patient, given_name: "John", family_name: "Smith")
 
+    vaccine = @programme.vaccines.first
+    @original_batch = create(:batch, organisation: @organisation, vaccine:)
+    @replacement_batch = create(:batch, organisation: @organisation, vaccine:)
+
     create(
       :vaccination_record,
       programme: @programme,
-      patient_session: create(:patient_session, patient:, session: @session)
+      patient_session: create(:patient_session, patient:, session: @session),
+      batch: @original_batch
     )
   end
 
@@ -89,8 +100,8 @@ describe "Edit vaccination record" do
     expect(page).to have_content("Edit vaccination record")
   end
 
-  def when_i_click_on_the_change_link
-    click_on "Change vaccination date"
+  def when_i_click_on_change_date
+    click_on "Change date"
   end
 
   def then_i_should_see_the_date_time_form
@@ -114,6 +125,19 @@ describe "Edit vaccination record" do
   end
 
   def and_i_should_see_the_updated_date_time
-    expect(page).to have_content("Vaccination date1 September 2023 at 12:00pm")
+    expect(page).to have_content("Date1 September 2023")
+    expect(page).to have_content("Time12:00pm")
+  end
+
+  def when_i_click_on_change_batch
+    click_on "Change batch"
+  end
+
+  def and_i_choose_a_batch
+    choose @replacement_batch.name
+  end
+
+  def and_i_should_see_the_updated_batch
+    expect(page).to have_content("Batch ID#{@replacement_batch.name}")
   end
 end
