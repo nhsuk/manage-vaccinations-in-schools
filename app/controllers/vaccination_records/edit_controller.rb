@@ -52,7 +52,6 @@ class VaccinationRecords::EditController < ApplicationController
         )
 
       unless validator.date_params_valid?
-        @vaccination_record.administered_at = validator.date_params_as_struct
         render_wizard nil, status: :unprocessable_entity
       end
     end
