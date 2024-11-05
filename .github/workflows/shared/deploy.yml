@@ -1,21 +1,11 @@
-name: Deploy
-run-name: ${{ github.event_name == 'workflow_dispatch' && format('Deploy to {0}', inputs.environment) || null }}
+name: Reusable Deploy Workflow
 
 on:
-  push:
-    branches: [main]
-
-  workflow_dispatch:
+  workflow_call:
     inputs:
       environment:
-        description: "Deployment environment"
         required: true
-        type: choice
-        options:
-          - accessibility
-          - pentest
-          - test
-          - training
+        type: string
 
 jobs:
   copilot:
@@ -26,11 +16,11 @@ jobs:
       contents: read
 
     environment:
-      name: ${{ github.event.inputs.environment || 'test' }}
+      name: ${{ inputs.environment }}
       url: https://${{ steps.host-name.outputs.value }}
 
     concurrency:
-      group: ${{ github.ref }}-${{ github.event.inputs.environment || 'test' }}
+      group: ${{ inputs.environment }}
       cancel-in-progress: true
 
     runs-on: ubuntu-latest
@@ -53,9 +43,13 @@ jobs:
 
       - name: Deploy the application using AWS Copilot
         run: |
-          copilot svc deploy --name webapp --env ${{ github.event.inputs.environment || 'test' }}
+          copilot svc deploy --name webapp --env ${{ inputs.environment }}
 
       - name: Get host name
         id: host-name
         run: |
-          echo "value=$(copilot svc show --name webapp --json | jq -r '.variables[] | select(.name == "MAVIS__HOST") | select(.environment == "${{ github.event.inputs.environment || 'test' }}") | .value')" >> $GITHUB_OUTPUT
+          if [ "${{ inputs.environment }}" = "pentest" ]; then
+            echo "value=pentest" >> $GITHUB_OUTPUT
+          else
+            echo "value=$(copilot svc show --name webapp --json | jq -r '.variables[] | select(.name == "MAVIS__HOST") | select(.environment == "${{ inputs.environment }}") | .value')" >> $GITHUB_OUTPUT
+          fi
