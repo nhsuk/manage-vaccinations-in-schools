@@ -100,7 +100,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
   def patient_link(patient)
     session = @patient_sessions[patient]&.session
 
-    if @section == :matching || session.nil?
+    if @section == :matching || @section == :patients || session.nil?
       patient.full_name
     else
       govuk_link_to patient.full_name,
