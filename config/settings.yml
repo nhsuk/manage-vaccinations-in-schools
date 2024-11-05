@@ -62,7 +62,10 @@ mesh:
   shared_key: <%= Rails.application.credentials.mesh&.shared_key %>
 
 nhs_api:
+  api_key: <%= Rails.application.credentials.nhs_api&.api_key %>
   base_url: "https://int.api.service.nhs.uk"
+  jwt_private_key: |
+<%= Rails.application.credentials.nhs_api&.jwt_private_key&.gsub(/^/, "    ") %>
 
 pds:
   perform_jobs: true
