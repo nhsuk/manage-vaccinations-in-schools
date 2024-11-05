@@ -140,7 +140,7 @@ Rails.application.routes.draw do
 
     resources :vaccination_records,
               path: "vaccination-records",
-              only: %i[index show] do
+              only: %i[index show edit] do
       post "export-dps", on: :collection
       constraints -> { Flipper.enabled?(:dev_tools) } do
         post "reset-dps-export", on: :collection
