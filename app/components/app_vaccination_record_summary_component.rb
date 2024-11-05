@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AppVaccinationRecordSummaryComponent < ViewComponent::Base
-  def initialize(vaccination_record, change_links: false)
+  def initialize(vaccination_record, change_links: {})
     super
 
     @vaccination_record = vaccination_record
@@ -12,7 +12,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
 
   def call
     govuk_summary_list(
-      actions: @change_links,
+      actions: @change_links.present?,
       classes: "app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0"
     ) do |summary_list|
       summary_list.with_row do |row|
@@ -76,15 +76,11 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         summary_list.with_row do |row|
           row.with_key { "Vaccination date" }
           row.with_value { vaccination_date_value }
-          if @change_links
+          if (href = @change_links[:administered_at])
             row.with_action(
               text: "Change",
               visually_hidden_text: "vaccination date",
               href:
-                programme_vaccination_record_edit_date_and_time_path(
-                  @vaccination_record.programme,
-                  @vaccination_record
-                )
             )
           end
         end

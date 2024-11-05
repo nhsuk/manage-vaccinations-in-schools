@@ -146,12 +146,10 @@ Rails.application.routes.draw do
         post "reset-dps-export", on: :collection
       end
 
-      get "edit/date-and-time",
-          controller: "vaccination_records/edit",
-          action: "edit_date_and_time"
-      put "edit/date-and-time",
-          controller: "vaccination_records/edit",
-          action: "update_date_and_time"
+      resource :edit,
+               only: %i[show update],
+               controller: "vaccination_records/edit",
+               path: "edit/:id"
     end
   end
 
@@ -285,12 +283,7 @@ Rails.application.routes.draw do
 
         resource :triages, only: %i[new create]
 
-        resource :vaccinations, only: %i[create] do
-          resource "edit",
-                   only: %i[show update],
-                   controller: "vaccinations/edit",
-                   path: "edit/:id"
-        end
+        resource :vaccinations, only: %i[create]
       end
     end
 

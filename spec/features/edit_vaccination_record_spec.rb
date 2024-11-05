@@ -24,7 +24,7 @@ describe "Edit vaccination record" do
     when_i_fill_in_the_date
     and_i_fill_in_the_time
     and_i_click_continue
-    then_i_should_see_the_vaccination_record
+    then_i_see_the_edit_vaccination_record_page
     and_i_should_see_the_updated_date_time
   end
 

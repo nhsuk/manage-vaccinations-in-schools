@@ -5,10 +5,10 @@
       ) %>
 <% end %>
 
-<% title = t("vaccinations.reason.title.#{@draft_vaccination_record.programme.type}") %>
+<% title = t("vaccinations.reason.title.#{@vaccination_record.programme.type}") %>
 <% content_for :page_title, title %>
 
-<%= form_with model: @draft_vaccination_record,
+<%= form_with model: @vaccination_record,
               url: wizard_path,
               method: :put do |f| %>
     <%= f.govuk_error_summary %>

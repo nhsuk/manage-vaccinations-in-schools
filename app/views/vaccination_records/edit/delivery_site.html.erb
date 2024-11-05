@@ -14,14 +14,14 @@
   <%= page_title %>
 <% end %>
 
-<%= form_with model: @draft_vaccination_record,
+<%= form_with model: @vaccination_record,
               url: wizard_path,
               method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_collection_radio_buttons(
         :delivery_method,
-        vaccination_delivery_methods_for(@draft_vaccination_record.vaccine),
+        vaccination_delivery_methods_for(@vaccination_record.vaccine),
         :first,
         :second,
         legend: {
@@ -29,9 +29,10 @@
         },
         bold_labels: false,
       ) %>
+
   <%= f.govuk_collection_radio_buttons(
         :delivery_site,
-        vaccination_delivery_sites_for(@draft_vaccination_record.vaccine),
+        vaccination_delivery_sites_for(@vaccination_record.vaccine),
         :first,
         :second,
         legend: {

@@ -56,15 +56,15 @@ class VaccinationsController < ApplicationController
        )
       session[:delivery_site_other] = "true" if delivery_site_param_other?
 
-      @draft_vaccination_record.todays_batch = @todays_batch
-
       steps = @draft_vaccination_record.wizard_steps
       steps.delete(:delivery_site) unless delivery_site_param_other?
       steps.delete(:batch) if @todays_batch.present?
 
-      redirect_to session_patient_vaccinations_edit_path(
-                    @session,
-                    patient_id: @patient.id,
+      session[:return_to] = "session"
+
+      redirect_to programme_vaccination_record_edit_path(
+                    @draft_vaccination_record.programme,
+                    @draft_vaccination_record,
                     id: I18n.t(steps.first, scope: :wicked)
                   )
     else
