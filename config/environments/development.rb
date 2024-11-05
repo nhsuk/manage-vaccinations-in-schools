@@ -89,9 +89,4 @@ Rails.application.configure do
     config.action_mailer.default_options = { from: "no-reply@nhs.net" }
     config.action_mailer.delivery_method = :file
   end
-
-  # Set up Active Record Encryption in development mode
-  config.active_record.encryption.primary_key = "test"
-  config.active_record.encryption.deterministic_key = "test"
-  config.active_record.encryption.key_derivation_salt = "test"
 end
