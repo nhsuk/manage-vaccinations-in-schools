@@ -41,27 +41,22 @@ class PatientSession < ApplicationRecord
            -> { draft },
            class_name: "GillickAssessment"
 
-  has_many :vaccination_records,
-           -> { recorded },
-           class_name: "VaccinationRecord"
+  has_many :vaccination_records, -> { recorded }
   has_many :draft_vaccination_records,
            -> { draft },
            class_name: "VaccinationRecord"
 
   has_many :consents,
            -> { recorded.where(programme: _1.programmes).includes(:parent) },
-           through: :patient,
-           class_name: "Consent"
+           through: :patient
 
   has_many :triages,
            -> { where(programme: _1.programmes).order(:updated_at) },
-           through: :patient,
-           class_name: "Triage"
+           through: :patient
 
   has_many :session_notifications,
            -> { where(session_id: _1.session_id) },
-           through: :patient,
-           class_name: "SessionNotification"
+           through: :patient
 
   has_and_belongs_to_many :immunisation_imports
 
