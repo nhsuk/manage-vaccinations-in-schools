@@ -66,8 +66,8 @@ module AuthenticationConcern
       if Flipper.enabled? :basic_auth
         authenticated =
           authenticate_with_http_basic do |username, password|
-            username == Settings.support_username &&
-              password == Settings.support_password
+            username == Rails.application.credentials.support_username &&
+              password == Rails.application.credentials.support_password
           end
 
         unless authenticated
