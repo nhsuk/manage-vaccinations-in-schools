@@ -798,7 +798,7 @@ en:
     consent: consent
     contact_method: contact-method
     date_of_birth: date-of-birth
-    delivery-site: delivery-site
+    delivery_site: delivery-site
     education_setting: education-setting
     gp: gp
     health_question: health-question

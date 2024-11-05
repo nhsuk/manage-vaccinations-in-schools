@@ -159,7 +159,7 @@ class VaccinationRecord < ApplicationRecord
 
   validate :batch_vaccine_matches_vaccine, if: -> { recorded? && administered? }
 
-  on_wizard_step :"delivery-site", exact: true do
+  on_wizard_step :delivery_site, exact: true do
     validates :delivery_site,
               inclusion: {
                 in: VaccinationRecord.delivery_sites.keys
@@ -202,7 +202,7 @@ class VaccinationRecord < ApplicationRecord
 
   def wizard_steps
     [
-      (:"delivery-site" if administered? && delivery_site_other),
+      (:delivery_site if administered? && delivery_site_other),
       (:batch if administered? && todays_batch.nil?),
       (:location if requires_location_name?),
       (:reason if not_administered?),
