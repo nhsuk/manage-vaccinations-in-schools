@@ -58,10 +58,14 @@ class VaccinationsController < ApplicationController
 
       @draft_vaccination_record.todays_batch = @todays_batch
 
+      steps = @draft_vaccination_record.wizard_steps
+      steps.delete(:delivery_site) unless delivery_site_param_other?
+      steps.delete(:batch) if @todays_batch.present?
+
       redirect_to session_patient_vaccinations_edit_path(
                     @session,
                     patient_id: @patient.id,
-                    id: @draft_vaccination_record.wizard_steps.first
+                    id: I18n.t(steps.first, scope: :wicked)
                   )
     else
       render "patient_sessions/show", status: :unprocessable_entity

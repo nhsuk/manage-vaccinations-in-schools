@@ -202,8 +202,8 @@ class VaccinationRecord < ApplicationRecord
 
   def wizard_steps
     [
-      (:delivery_site if administered? && delivery_site_other),
-      (:batch if administered? && todays_batch.nil?),
+      (:delivery_site if administered?),
+      (:batch if administered?),
       (:location if requires_location_name?),
       (:reason if not_administered?),
       :confirm
