@@ -15,14 +15,19 @@ class ProgrammesController < ApplicationController
         cohort: policy_scope(Cohort).for_year_groups(@programme.year_groups)
       )
 
-    sessions = policy_scope(Session).has_programme(@programme)
+    sessions =
+      policy_scope(Session).has_programme(@programme).for_current_academic_year
+
+    patient_sessions =
+      PatientSession.where(patient: patients, session: sessions)
 
     @patients_count = patients.count
     @sessions_count = sessions.count
+
     @vaccinations_count =
       policy_scope(VaccinationRecord)
         .administered
-        .where(programme: @programme)
+        .where(programme: @programme, patient_session: patient_sessions)
         .count
 
     @consent_notifications_count =
@@ -33,10 +38,7 @@ class ProgrammesController < ApplicationController
 
     stats =
       PatientSessionStats.new(
-        PatientSession
-          .where(patient: patients, session: sessions)
-          .preload_for_state
-          .strict_loading,
+        patient_sessions.preload_for_state.strict_loading,
         keys: %i[with_consent_given without_a_response needing_triage]
       )
 
@@ -53,6 +55,7 @@ class ProgrammesController < ApplicationController
     @sessions =
       policy_scope(Session)
         .has_programme(@programme)
+        .for_current_academic_year
         .eager_load(:location)
         .preload(
           :session_dates,
