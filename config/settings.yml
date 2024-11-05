@@ -49,6 +49,7 @@ mesh:
   dps_mailbox: N1G3BOT002
   mailbox: N1G3BOT001
   password: <%= Rails.application.credentials.mesh.password %>
+  shared_key: <%= Rails.application.credentials.mesh.shared_key %>
 
 nhs_api:
   base_url: "https://int.api.service.nhs.uk"
