@@ -70,9 +70,9 @@ class Vaccinations::EditController < ApplicationController
 
   def update_params
     permitted_attributes = {
-      "delivery-site": %i[delivery_site delivery_method],
       batch: %i[batch_id],
       confirm: %i[notes],
+      delivery_site: %i[delivery_site delivery_method],
       location: %i[location_name],
       reason: %i[reason]
     }.fetch(current_step)
