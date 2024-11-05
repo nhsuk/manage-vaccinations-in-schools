@@ -66,5 +66,22 @@ describe PatientMerger do
         patient_to_keep
       )
     end
+
+    context "when parent is already associated with patient to keep" do
+      before do
+        create(
+          :parent_relationship,
+          parent: parent_relationship.parent,
+          patient: patient_to_keep
+        )
+      end
+
+      it "destroys the relationship with the patient to destroy" do
+        expect { call }.to change(ParentRelationship, :count).by(-1)
+        expect { parent_relationship.reload }.to raise_error(
+          ActiveRecord::RecordNotFound
+        )
+      end
+    end
   end
 end
