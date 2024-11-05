@@ -4,11 +4,11 @@ GoodJob::Engine
   .middleware
   .use(Rack::Auth::Basic) do |username, password|
     ActiveSupport::SecurityUtils.secure_compare(
-      Settings.support_username,
+      Rails.application.credentials.support_username,
       username
     ) &&
       ActiveSupport::SecurityUtils.secure_compare(
-        Settings.support_password,
+        Rails.application.credentials.support_password,
         password
       )
   end
