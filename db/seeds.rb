@@ -194,13 +194,17 @@ unless Settings.cis2.enabled
   create_user(organisation:, email: "admin.hope@example.com")
 
   attach_sample_of_schools_to(organisation)
+
+  # Sidney Stringer Academy - used by automated tests
   attach_specific_school_to_organisation_if_present(
     organisation:,
     urn: "136126"
-  ) # needed for automated testing
+  )
+
+  # Grange School - used by automated tests
   attach_specific_school_to_organisation_if_present(
     organisation:,
-    urn: "134522"
+    urn: "145377"
   ) # needed for automated testing
 
   Audited
@@ -218,8 +222,12 @@ organisation = create_organisation(ods_code: "A9A5A")
 user = create_user(organisation:, uid: "555057896106")
 
 attach_sample_of_schools_to(organisation)
-attach_specific_school_to_organisation_if_present(organisation:, urn: "136126") # needed for automated testing
-attach_specific_school_to_organisation_if_present(organisation:, urn: "134522") # needed for automated testing
+
+# Sidney Stringer Academy - used by automated tests
+attach_specific_school_to_organisation_if_present(organisation:, urn: "136126")
+
+# Grange School - used by automated tests
+attach_specific_school_to_organisation_if_present(organisation:, urn: "145377")
 
 Audited
   .audit_class
