@@ -9,6 +9,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     params: {},
     patient_sessions: nil,
     patients: nil,
+    programme: nil,
     year_groups: []
   )
     super
@@ -31,6 +32,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     @columns = columns
     @consent_form = consent_form
     @params = params
+    @programme = programme
     @section = section
     @year_groups = year_groups
   end
@@ -143,6 +145,8 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     path =
       if @section == :matching
         consent_form_path(@consent_form, **filter_params)
+      elsif @section == :patients
+        programme_patients_path(@programme, **filter_params)
       else
         session_section_tab_path(
           session_slug: params[:session_slug],
@@ -158,6 +162,8 @@ class AppSessionPatientTableComponent < ViewComponent::Base
   def form_url
     if @section == :matching
       consent_form_path(@consent_form)
+    elsif @section == :patients
+      programme_patients_path(@programme)
     else
       session_section_tab_path(
         session_slug: params[:session_slug],
