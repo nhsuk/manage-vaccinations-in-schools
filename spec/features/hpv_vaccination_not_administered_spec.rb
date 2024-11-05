@@ -12,6 +12,11 @@ describe "HPV Vaccination" do
     and_i_select_the_reason_why
     then_i_see_the_confirmation_page
 
+    when_i_click_change_outcome
+    and_i_record_that_the_patient_wasnt_vaccinated
+    and_i_select_the_reason_why
+    then_i_see_the_confirmation_page
+
     when_i_confirm_the_details
     then_i_see_the_record_vaccinations_page
     and_a_success_message
@@ -56,6 +61,10 @@ describe "HPV Vaccination" do
     expect(page).to have_content("Vaccination was not given")
     expect(page).to have_content("Child#{@patient.full_name}")
     expect(page).to have_content("OutcomeRefused vaccine")
+  end
+
+  def when_i_click_change_outcome
+    click_on "Change outcome"
   end
 
   def when_i_confirm_the_details
