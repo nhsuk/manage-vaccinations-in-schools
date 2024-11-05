@@ -1,5 +1,4 @@
 allow_dev_phone_numbers: true
-fast_reset: true
 disallow_database_seeding: false
 
 cis2:

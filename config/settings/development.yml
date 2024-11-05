@@ -1,7 +1,7 @@
 allow_dev_phone_numbers: true
-web_concurrency: 0
-fast_reset: true
 disallow_database_seeding: false
+fast_reset: true
+web_concurrency: 0
 
 cis2:
   enabled: false

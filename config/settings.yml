@@ -2,9 +2,9 @@
 # environment specific settings files.
 
 allow_dev_phone_numbers: false
-web_concurrency: 2
-fast_reset: false
 disallow_database_seeding: true
+fast_reset: false
+web_concurrency: 2
 
 # NHS Care Identity Service OIDC integration configuration, used by Omniauth via
 # Devise.
