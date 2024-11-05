@@ -23,6 +23,7 @@ LICENCE
 Procfile
 Procfile.*
 app/assets/builds
+config/settings.yml
 bin/dev
 data
 db/*.sqlite3
