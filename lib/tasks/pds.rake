@@ -13,7 +13,7 @@ namespace :pds do
         puts ""
         puts response.headers.map { "#{_1}: #{_2}" }
         puts ""
-        puts JSON.pretty_generate(JSON.parse(response.body))
+        puts JSON.pretty_generate(response.body)
       else
         puts response.body
       end
@@ -29,11 +29,11 @@ namespace :pds do
         "given" => ENV["given"],
         "family" => ENV["family"],
         "gender" => ENV["gender"],
-        "birthdate" => ENV["birthdate"],
+        "birthdate" => ENV["birthdate"], # e.g. eq2014-02-18
         "death-date" => ENV["death_date"],
         "email" => ENV["email"],
         "phone" => ENV["phone"],
-        "address-postcode" => ENV["address_postcode"],
+        "address-postalcode" => ENV["address_postalcode"],
         "general-practitioner" => ENV["general_practitioner"]
       }.compact
 
@@ -45,7 +45,7 @@ namespace :pds do
         puts ""
         puts response.headers.map { "#{_1}: #{_2}" }
         puts ""
-        puts JSON.pretty_generate(JSON.parse(response.body))
+        puts JSON.pretty_generate(response.body)
       else
         puts response.body
       end
