@@ -29,7 +29,7 @@
 
   <% if Flipper.enabled?(:release_1b) %>
     <%= govuk_button_link_to "Edit vaccination record",
-                             edit_programme_vaccination_record_path(@programme, @vaccination_record),
+                             programme_vaccination_record_edit_path(@programme, @vaccination_record, id: "confirm"),
                              class: "app-button--secondary" %>
   <% end %>
 <% end %>

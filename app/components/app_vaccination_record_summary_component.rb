@@ -130,11 +130,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
           row.with_key { "Date" }
           row.with_value { date_value }
           if (href = @change_links[:administered_at])
-            row.with_action(
-              text: "Change",
-              visually_hidden_text: "vaccination date",
-              href:
-            )
+            row.with_action(text: "Change", visually_hidden_text: "date", href:)
           end
         end
 
@@ -142,11 +138,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
           row.with_key { "Time" }
           row.with_value { time_value }
           if (href = @change_links[:administered_at])
-            row.with_action(
-              text: "Change",
-              visually_hidden_text: "vaccination date",
-              href:
-            )
+            row.with_action(text: "Change", visually_hidden_text: "time", href:)
           end
         end
       end

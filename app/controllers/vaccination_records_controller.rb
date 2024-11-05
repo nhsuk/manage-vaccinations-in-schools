@@ -14,9 +14,6 @@ class VaccinationRecordsController < ApplicationController
   def show
   end
 
-  def edit
-  end
-
   def export_dps
     send_data(dps_export.csv, filename: dps_export.filename)
   end
