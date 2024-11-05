@@ -10,9 +10,13 @@ web_concurrency: 2
 # Devise.
 cis2:
   acr_value: AAL2_OR_AAL3_ANY
+  client_id: <%= Rails.application.credentials.cis2&.client_id %>
   enabled: true
   issuer: "https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare"
   min_authentication_assurance_level: 2
+  private_key: |
+<%= Rails.application.credentials.cis2&.private_key&.gsub(/^/, "    ") %>
+  secret: <%= Rails.application.credentials.cis2&.secret %>
 
 govuk_notify:
   enabled: true
