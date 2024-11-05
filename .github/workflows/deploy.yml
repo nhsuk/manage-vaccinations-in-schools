@@ -19,7 +19,7 @@ on:
 
 jobs:
   copilot:
-    name: AWS Copilot deploy
+    name: AWS Copilot
 
     permissions:
       id-token: write
