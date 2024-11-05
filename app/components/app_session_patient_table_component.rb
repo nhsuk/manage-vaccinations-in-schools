@@ -15,7 +15,11 @@ class AppSessionPatientTableComponent < ViewComponent::Base
 
     if patient_sessions && !patients
       @patients = patient_sessions.map(&:patient)
-      @patient_sessions = patient_sessions.map { [_1.patient, _1] }.to_h
+      @patient_sessions =
+        patient_sessions
+          .group_by(&:patient)
+          .map { [_1, _2.max_by(&:created_at)] }
+          .to_h
     elsif patients && !patient_sessions
       @patients = patients
       @patient_sessions = {}
