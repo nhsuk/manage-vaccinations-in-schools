@@ -1,0 +1,23 @@
+name: Deploy (test)
+run-name: ${{ github.event_name == 'workflow_dispatch' && format('Deploy ({0})', inputs.environment) || null }}
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Deployment environment"
+        required: true
+        type: choice
+        options:
+          - accessibility
+          - pentest
+          - test
+          - training
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/shared/deploy.yml
+    with:
+      environment: ${{ github.event.inputs.environment || 'test' }}
