@@ -8,6 +8,10 @@ cis2:
   authentication_assurance_level: 1
   issuer: "https://am.nhsdev.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/oidc"
 
+govuk_notify:
+  enabled: false
+  mode: test
+
 mesh:
   base_url: https://localhost:8700
   disable_ssl_verification: true

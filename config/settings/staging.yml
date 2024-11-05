@@ -1,2 +1,5 @@
 allow_dev_phone_numbers: true
 disallow_database_seeding: false
+
+govuk_notify:
+  mode: team

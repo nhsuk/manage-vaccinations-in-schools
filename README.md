@@ -247,7 +247,7 @@ up a `config/settings/development.local.yml` file:
 ```yml
 govuk_notify:
   enabled: true
-  api_key: YOUR_KEY_HERE
+  test_key: YOUR_KEY_HERE
 ```
 
 You should set it to `enabled: false` when you're done testing Notify locally,
