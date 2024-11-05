@@ -8,9 +8,14 @@ describe "HPV Vaccination" do
 
   scenario "Administered at a clinic" do
     given_i_am_signed_in
+
     when_i_go_to_a_patient_that_is_ready_to_vaccinate
     and_i_record_that_the_patient_has_been_vaccinated
     and_i_select_the_batch
+    and_i_select_a_location
+    then_i_see_the_confirmation_page
+
+    when_i_click_change_location
     and_i_select_a_location
     then_i_see_the_confirmation_page
 
@@ -75,6 +80,10 @@ describe "HPV Vaccination" do
     expect(page).to have_content("MethodIntramuscular")
     expect(page).to have_content("SiteLeft arm")
     expect(page).to have_content("OutcomeVaccinated")
+  end
+
+  def when_i_click_change_location
+    click_on "Change location"
   end
 
   def when_i_confirm_the_details
