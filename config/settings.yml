@@ -56,6 +56,8 @@ mesh:
   dps_mailbox: N1G3BOT002
   mailbox: N1G3BOT001
   password: <%= Rails.application.credentials.mesh&.password %>
+  private_key: |
+<%= Rails.application.credentials.mesh&.private_key&.gsub(/^/, "    ") %>
   shared_key: <%= Rails.application.credentials.mesh&.shared_key %>
 
 nhs_api:
