@@ -68,6 +68,7 @@ mesh:
 nhs_api:
   api_key: <%= Rails.application.credentials.nhs_api&.api_key %>
   base_url: "https://int.api.service.nhs.uk"
+  disable_authentication: false
   jwt_private_key: |
 <%= Rails.application.credentials.nhs_api&.jwt_private_key&.gsub(/^/, "    ") %>
 
