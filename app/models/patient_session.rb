@@ -86,6 +86,11 @@ class PatientSession < ApplicationRecord
           )
         end
 
+  scope :order_by_name,
+        -> do
+          order("LOWER(patients.given_name)", "LOWER(patients.family_name)")
+        end
+
   delegate :send_notifications?, to: :patient
 
   def draft_vaccination_record
