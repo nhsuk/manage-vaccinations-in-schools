@@ -12,19 +12,16 @@ class VaccinationRecords::EditController < ApplicationController
   before_action :set_batches
   before_action :set_steps
   before_action :setup_wizard_translated
+  before_action :validate_params, only: %i[update]
   before_action :set_locations
 
   after_action :verify_authorized
 
   def show
-    authorize @vaccination_record, :edit?
-
     render_wizard
   end
 
   def update
-    authorize @vaccination_record
-
     @vaccination_record.assign_attributes(update_params)
 
     case current_step
@@ -44,6 +41,22 @@ class VaccinationRecords::EditController < ApplicationController
   end
 
   private
+
+  def validate_params
+    if current_step == :date_and_time
+      validator =
+        DateParamsValidator.new(
+          field_name: :administered_at,
+          object: @vaccination_record,
+          params: update_params
+        )
+
+      unless validator.date_params_valid?
+        @vaccination_record.administered_at = validator.date_params_as_struct
+        render_wizard nil, status: :unprocessable_entity
+      end
+    end
+  end
 
   def handle_date_and_time
     if @vaccination_record.administered_at.nil?
@@ -122,6 +135,8 @@ class VaccinationRecords::EditController < ApplicationController
         .eager_load(:patient, :programme)
         .where(programme: { type: params[:programme_type] })
         .find(params[:vaccination_record_id])
+
+    authorize @vaccination_record, :edit?
 
     if session[:delivery_site_other] == "true"
       @vaccination_record.delivery_site_other = true
