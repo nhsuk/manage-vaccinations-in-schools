@@ -9,10 +9,17 @@ class PatientMerger
   def call
     ActiveRecord::Base.transaction do
       patient_to_destroy.consents.update_all(patient_id: patient_to_keep.id)
-      patient_to_destroy.parent_relationships.update_all(
-        patient_id: patient_to_keep.id
-      )
       patient_to_destroy.triages.update_all(patient_id: patient_to_keep.id)
+
+      patient_to_destroy.parent_relationships.find_each do |relationship|
+        if patient_to_keep.parent_relationships.exists?(
+             parent_id: relationship.parent_id
+           )
+          relationship.destroy!
+        else
+          relationship.update!(patient_id: patient_to_keep.id)
+        end
+      end
 
       patient_to_destroy.patient_sessions.each do |patient_session|
         if (
