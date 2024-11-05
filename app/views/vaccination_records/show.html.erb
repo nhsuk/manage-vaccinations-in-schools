@@ -25,7 +25,7 @@
 
 <%= render AppCardComponent.new do |c| %>
   <% c.with_heading { "Vaccination details" } %>
-  <%= render AppVaccinationRecordSummaryComponent.new(@vaccination_record) %>
+  <%= render AppVaccinationRecordSummaryComponent.new(@vaccination_record, current_user:) %>
 
   <% if Flipper.enabled?(:release_1b) %>
     <%= govuk_button_link_to "Edit vaccination record",

@@ -9,7 +9,7 @@
 
 <% if @vaccination_record.administered? %>
   <%= render AppCardComponent.new do %>
-    <%= render AppVaccinationCheckAndConfirmComponent.new(
+    <%= render AppVaccinationRecordSummaryComponent.new(
           @vaccination_record,
           current_user:,
           change_links: {
@@ -17,28 +17,30 @@
             delivery_site: wizard_path(:"delivery-site"),
             delivery_method: wizard_path(:delivery_method),
             location: @vaccination_record.wizard_steps.include?(:location) ? wizard_path(:location) : nil,
-            outcome: @session ? session_patient_path(
+            outcome: session_patient_path(
               @session,
               @patient,
               section: "vaccinations",
               tab: "vaccinate",
-            ) : nil,
+            ),
           },
+          show_notes: false,
         ) %>
   <% end %>
 <% else %>
   <%= render AppWarningCalloutComponent.new(heading: "Vaccination was not given") do %>
-    <%= render AppVaccinationCheckAndConfirmComponent.new(
+    <%= render AppVaccinationRecordSummaryComponent.new(
           @vaccination_record,
           current_user:,
           change_links: {
-            outcome: @session ? session_patient_path(
+            outcome: session_patient_path(
               @session,
               @patient,
               section: "vaccinations",
               tab: "vaccinate",
-            ) : nil,
+            ),
           },
+          show_notes: false,
         ) %>
   <% end %>
 <% end %>

@@ -15,9 +15,11 @@
 
 <%= render AppCardComponent.new do |c| %>
   <% c.with_heading { "Vaccination details" } %>
-  <%= render AppVaccinationRecordSummaryComponent.new(@vaccination_record, change_links: {
-                                                                             administered_at: programme_vaccination_record_edit_path(@programme, @vaccination_record, id: "date-and-time"),
-                                                                           }) %>
+  <%= render AppVaccinationRecordSummaryComponent.new(
+        @vaccination_record, current_user:, change_links: {
+                               administered_at: programme_vaccination_record_edit_path(@programme, @vaccination_record, id: "date-and-time"),
+                             },
+      ) %>
 <% end %>
 
 <%= govuk_button_link_to "Continue", programme_vaccination_record_path(@programme, @vaccination_record) %>
