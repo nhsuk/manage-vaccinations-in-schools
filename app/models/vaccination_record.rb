@@ -202,6 +202,7 @@ class VaccinationRecord < ApplicationRecord
 
   def wizard_steps
     [
+      (:date_and_time if recorded?),
       (:delivery_site if administered?),
       (:batch if administered?),
       (:location if requires_location_name?),

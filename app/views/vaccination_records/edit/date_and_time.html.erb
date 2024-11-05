@@ -1,16 +1,16 @@
-<% patient = @vaccination_record.patient %>
-
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: programme_vaccination_record_path(@programme, @vaccination_record),
-        name: patient.full_name,
+        href: vaccinations_back_link_path,
+        name: "vaccination page",
       ) %>
 <% end %>
 
-<%= form_with model: @vaccination_record, url: programme_vaccination_record_edit_date_and_time_path(@programme, @vaccination_record), method: :put do |f| %>
+<%= form_with model: @vaccination_record,
+              url: wizard_path,
+              method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
-  <span class="nhsuk-caption-l"><%= patient.full_name %></span>
+  <span class="nhsuk-caption-l"><%= @patient.full_name %></span>
   <%= h1 "When was the vaccination given?" %>
 
   <%= f.govuk_date_field :administered_at,
