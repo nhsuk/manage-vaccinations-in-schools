@@ -93,7 +93,7 @@ module NHS::API
     end
 
     def apikey
-      Settings.nhs_api.apikey
+      Settings.nhs_api.api_key
     end
   end
 end

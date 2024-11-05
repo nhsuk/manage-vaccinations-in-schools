@@ -29,7 +29,7 @@ describe NHS::API do
         subject(:headers) { connection.headers }
 
         it { should include(accept: "application/fhir+json") }
-        it { should include(apikey: "key") }
+        it { should include(apikey: "test_key") }
         it { should_not have_key(:authorization) }
         it { should include(x_request_id: "UUIDMCUUIDFACE") }
       end
@@ -54,7 +54,7 @@ describe NHS::API do
         subject(:headers) { connection.headers }
 
         it { should include(accept: "application/fhir+json") }
-        it { should include(apikey: "key") }
+        it { should include(apikey: "test_key") }
         it { should include(authorization: "Bearer ONEAUTHAPI") }
         it { should include(x_request_id: "UUIDMCUUIDFACE") }
       end
