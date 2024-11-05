@@ -19,6 +19,16 @@
                          new_programme_cohort_import_path(@programme),
                          class: "app-button--secondary" %>
 
-<%= render AppPatientTableComponent.new(@patients, count: @pagy.count) %>
+<%= render AppSessionPatientTableComponent.new(
+      caption: t("children", count: @pagy.count),
+      columns: %i[name dob year_group outcome],
+      params:,
+      patient_sessions: @patient_sessions,
+      programme: @programme,
+      section: :patients,
+      year_groups: @programme.year_groups,
+    ) %>
 
-<%= govuk_pagination(pagy: @pagy) %>
+<div class="nhsuk-u-margin-top-6">
+  <%= govuk_pagination(pagy: @pagy) %>
+</div>
