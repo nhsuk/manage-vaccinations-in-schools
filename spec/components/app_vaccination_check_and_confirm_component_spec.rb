@@ -3,12 +3,15 @@
 describe AppVaccinationCheckAndConfirmComponent do
   subject(:rendered) { render_inline(component) }
 
-  let(:component) { described_class.new(vaccination_record, current_user:) }
+  let(:component) do
+    described_class.new(vaccination_record, current_user:, change_links:)
+  end
 
   let(:current_user) { create(:user) }
+  let(:change_links) { {} }
 
   context "when administered" do
-    let(:vaccination_record) { create(:vaccination_record) }
+    let(:vaccination_record) { build(:vaccination_record) }
 
     it { should have_content("Child") }
     it { should have_content("Vaccine") }
@@ -30,7 +33,7 @@ describe AppVaccinationCheckAndConfirmComponent do
   end
 
   context "when not administered" do
-    let(:vaccination_record) { create(:vaccination_record, :not_administered) }
+    let(:vaccination_record) { build(:vaccination_record, :not_administered) }
 
     it { should have_content("Child") }
     it { should have_content("Outcome") }
@@ -38,5 +41,25 @@ describe AppVaccinationCheckAndConfirmComponent do
     it { should have_content("Time") }
     it { should have_content("Location") }
     it { should have_content("Vaccinator") }
+  end
+
+  context "with change links" do
+    let(:vaccination_record) { build(:vaccination_record) }
+
+    let(:change_links) do
+      {
+        batch: "/batch",
+        delivery_method: "/delivery-method",
+        delivery_site: "/delivery-site",
+        location: "/location",
+        outcome: "/outcome"
+      }
+    end
+
+    it { should have_link("Change batch", href: "/batch") }
+    it { should have_link("Change method", href: "/delivery-method") }
+    it { should have_link("Change site", href: "/delivery-site") }
+    it { should have_link("Change location", href: "/location") }
+    it { should have_link("Change outcome", href: "/outcome") }
   end
 end
