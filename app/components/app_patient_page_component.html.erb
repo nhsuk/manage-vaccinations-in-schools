@@ -89,6 +89,13 @@
     <% end %>
   <% end %>
 
+  <% @patient_session.vaccination_records.each do |vaccination_record| %>
+    <%= render AppCardComponent.new do |c| %>
+      <% c.with_heading { "Vaccination details" } %>
+      <%= render AppVaccinationRecordSummaryComponent.new(vaccination_record) %>
+    <% end %>
+  <% end %>
+
   <% if helpers.policy(VaccinationRecord).create? %>
     <%= render AppVaccinateFormComponent.new(
           patient_session:,

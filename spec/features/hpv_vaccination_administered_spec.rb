@@ -19,6 +19,7 @@ describe "HPV Vaccination" do
 
     when_i_go_to_the_patient
     then_i_see_that_the_status_is_vaccinated
+    and_i_see_the_vaccination_details
     and_an_email_is_sent_to_the_parent_confirming_the_vaccination
     and_a_text_is_sent_to_the_parent_confirming_the_vaccination
   end
@@ -89,6 +90,10 @@ describe "HPV Vaccination" do
 
   def then_i_see_that_the_status_is_vaccinated
     expect(page).to have_content("Vaccinated")
+  end
+
+  def and_i_see_the_vaccination_details
+    expect(page).to have_content("Vaccination details")
   end
 
   def and_an_email_is_sent_to_the_parent_confirming_the_vaccination
