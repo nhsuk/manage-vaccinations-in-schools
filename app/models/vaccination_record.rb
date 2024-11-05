@@ -49,6 +49,8 @@ class VaccinationRecord < ApplicationRecord
 
   audited associated_with: :patient_session
 
+  before_save :reset_unused_fields
+
   attr_accessor :delivery_site_other, :todays_batch
 
   DELIVERY_SITE_SNOMED_CODES_AND_TERMS = {
@@ -243,5 +245,15 @@ class VaccinationRecord < ApplicationRecord
     return if batch&.vaccine_id == vaccine_id
 
     errors.add(:batch_id, :incorrect_vaccine, vaccine_brand: vaccine&.brand)
+  end
+
+  def reset_unused_fields
+    if administered?
+      self.reason = nil
+    else
+      self.delivery_method = nil
+      self.delivery_site = nil
+      self.batch_id = nil
+    end
   end
 end

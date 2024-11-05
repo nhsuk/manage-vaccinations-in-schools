@@ -50,7 +50,11 @@ FactoryBot.define do
 
     programme
     patient_session do
-      association :patient_session, programme:, patient:, session:
+      association :patient_session,
+                  programme:,
+                  patient:,
+                  session:,
+                  strategy: :create
     end
 
     recorded_at { "2023-06-09" }
@@ -58,7 +62,10 @@ FactoryBot.define do
     delivery_method { "intramuscular" }
     vaccine { programme.vaccines.active.first }
     batch do
-      association :batch, organisation: patient_session.organisation, vaccine:
+      association :batch,
+                  organisation: patient_session.organisation,
+                  vaccine:,
+                  strategy: :create
     end
 
     performed_by

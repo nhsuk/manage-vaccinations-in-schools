@@ -114,4 +114,32 @@ describe VaccinationRecord do
       it { should be_nil }
     end
   end
+
+  describe "#reset_unused_fields" do
+    subject(:save!) { vaccination_record.save! }
+
+    context "when administered" do
+      let(:vaccination_record) { build(:vaccination_record, reason: :not_well) }
+
+      it "clears the reason" do
+        expect { save! }.to change(vaccination_record, :reason).to(nil)
+      end
+    end
+
+    context "when not administered" do
+      let(:vaccination_record) { build(:vaccination_record, :not_administered) }
+
+      it "clears the deliver method" do
+        expect { save! }.to change(vaccination_record, :delivery_method).to(nil)
+      end
+
+      it "clears the deliver site" do
+        expect { save! }.to change(vaccination_record, :delivery_site).to(nil)
+      end
+
+      it "clears the batch" do
+        expect { save! }.to change(vaccination_record, :batch_id).to(nil)
+      end
+    end
+  end
 end
