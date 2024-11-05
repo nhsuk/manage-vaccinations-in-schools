@@ -10,7 +10,6 @@ mesh:
   base_url: https://localhost:8700
   disable_ssl_verification: true
   mailbox: X26ABC1
-  password: password
   dps_mailbox: X26ABC3
   shared_key: TestKey
 
