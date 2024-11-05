@@ -23,15 +23,10 @@ class VaccinationsController < ApplicationController
     all_patient_sessions =
       @session
         .patient_sessions
+        .preload_for_state
+        .eager_load(patient: :cohort)
+        .order_by_name
         .strict_loading
-        .includes(
-          :programmes,
-          :gillick_assessments,
-          :vaccination_records,
-          patient: :cohort
-        )
-        .preload(:consents, :triages)
-        .order("patients.given_name", "patients.family_name")
 
     grouped_patient_sessions =
       group_patient_sessions_by_state(

@@ -10,16 +10,11 @@ class ConsentsController < ApplicationController
     all_patient_sessions =
       @session
         .patient_sessions
+        .preload_for_state
+        .preload(consents: :parent)
+        .eager_load(patient: :cohort)
+        .order_by_name
         .strict_loading
-        .includes(
-          :gillick_assessments,
-          :programmes,
-          :triages,
-          :vaccination_records,
-          consents: :parent,
-          patient: :cohort
-        )
-        .sort_by { |ps| ps.patient.full_name }
 
     tab_patient_sessions =
       group_patient_sessions_by_conditions(
