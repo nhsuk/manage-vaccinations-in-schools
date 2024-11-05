@@ -47,6 +47,7 @@ docs/diagrams/images
 
 /config/credentials/*.key
 !/config/credentials/development.key
+!/config/credentials/test.key
 
 # used by RSpec
 spec/examples.txt

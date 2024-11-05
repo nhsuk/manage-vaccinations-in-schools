@@ -68,11 +68,6 @@ Rails.application.configure do
   config.action_mailer.default_options = { from: "no-reply@nhs.net" }
   config.action_mailer.delivery_method = :test
 
-  # Set up Active Record Encryption in test mode
-  config.active_record.encryption.primary_key = "test"
-  config.active_record.encryption.deterministic_key = "test"
-  config.active_record.encryption.key_derivation_salt = "test"
-
   # Set up GoodJob for inline execution in test mode
   config.good_job.execution_mode = :inline
 end
