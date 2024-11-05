@@ -31,8 +31,8 @@ module PatientSortingConcern
       obj.try(:address_postcode) || obj.patient.address_postcode
     when "year_group"
       [
-        obj.try(:year_group) || obj.patient.year_group,
-        obj.try(:registration) || obj.patient.registration
+        obj.try(:year_group) || obj.patient.year_group || "",
+        obj.try(:registration) || obj.patient.registration || ""
       ]
     end
   end
