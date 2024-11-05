@@ -549,6 +549,9 @@ en:
               inclusion: Choose if they got the vaccine
             administered_at:
               blank: Enter a date and time
+              missing_day: Enter a day
+              missing_month: Enter a month
+              missing_year: Enter a year
             batch_id:
               blank: Choose a batch
               incorrect_vaccine: Choose a batch of the %{vaccine_brand} vaccine
