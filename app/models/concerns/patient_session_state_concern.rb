@@ -10,8 +10,6 @@ module PatientSessionStateConcern
           "vaccinated"
         elsif triage_delay_vaccination? || vaccination_can_be_delayed?
           "delay_vaccination"
-        elsif not_gillick_competent?
-          "unable_to_vaccinate_not_gillick_competent"
         elsif vaccination_not_administered?
           "unable_to_vaccinate"
         elsif triage_keep_in_triage?
@@ -43,7 +41,6 @@ module PatientSessionStateConcern
       triaged_do_not_vaccinate
       triaged_kept_in_triage
       unable_to_vaccinate
-      unable_to_vaccinate_not_gillick_competent
       delay_vaccination
       vaccinated
     ].each { |state| define_method("#{state}?") { self.state == state } }
@@ -101,10 +98,6 @@ module PatientSessionStateConcern
 
     def vaccination_not_administered?
       vaccination_records.any?(&:not_administered?)
-    end
-
-    def not_gillick_competent?
-      latest_gillick_assessment&.gillick_competent == false
     end
 
     def vaccination_can_be_delayed?

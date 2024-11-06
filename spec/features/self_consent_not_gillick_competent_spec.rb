@@ -15,6 +15,7 @@ describe "Not Gillick competent" do
 
     when_the_nurse_assesses_the_child_as_not_being_gillick_competent
     then_the_child_cannot_give_their_own_consent
+    and_the_childs_status_reflects_that_there_is_no_consent
   end
 
   def given_an_hpv_programme_is_underway
@@ -89,5 +90,10 @@ describe "Not Gillick competent" do
     expect(page).not_to have_content(
       "Do they agree to them having the HPV vaccination?"
     )
+    click_on "Back"
+  end
+
+  def and_the_childs_status_reflects_that_there_is_no_consent
+    expect(page).to have_content("No response")
   end
 end
