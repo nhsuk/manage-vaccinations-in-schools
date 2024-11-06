@@ -65,7 +65,7 @@ class Consent < ApplicationRecord
 
   scope :for_patient, -> { where("patient_id = patients.id") }
 
-  enum :response, %w[given refused not_provided], prefix: true
+  enum :response, %w[given refused], prefix: true
   enum :reason_for_refusal,
        %w[
          contains_gelatine
