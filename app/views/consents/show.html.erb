@@ -7,6 +7,14 @@
 
 <%= h1 "Consent response from #{@consent.name}" %>
 
+<ul class="app-action-list">
+  <% if @consent.can_withdraw? %>
+    <li class="app-action-list__item">
+      <%= link_to "Withdraw consent", withdraw_session_patient_consent_path %>
+    </li>
+  <% end %>
+</ul>
+
 <%= render AppCardComponent.new do |card| %>
   <% card.with_heading { "Consent" } %>
   <%= render AppConsentSummaryComponent.new(@consent) %>

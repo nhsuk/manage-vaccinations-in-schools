@@ -22,6 +22,12 @@ describe AppConsentSummaryComponent do
     it { should have_content("Reason for refusal") }
   end
 
+  context "when withdrawn" do
+    let(:consent) { create(:consent, :withdrawn) }
+
+    it { should have_content("Consent givenWithdrawn") }
+  end
+
   context "with notes" do
     let(:consent) { create(:consent, :refused, notes: "Some notes.") }
 

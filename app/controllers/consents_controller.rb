@@ -7,6 +7,8 @@ class ConsentsController < ApplicationController
   before_action :set_session
   before_action :set_patient, only: %i[create send_request]
   before_action :set_patient_session, only: %i[create send_request]
+  before_action :set_consent, except: %i[index create send_request]
+  before_action :ensure_can_withdraw, only: %i[edit_withdraw update_withdraw]
 
   def index
     all_patient_sessions =
@@ -73,8 +75,20 @@ class ConsentsController < ApplicationController
   end
 
   def show
-    @consent =
-      Consent.where(programme: @session.programmes).recorded.find(params[:id])
+  end
+
+  def edit_withdraw
+    render :withdraw
+  end
+
+  def update_withdraw
+    @consent.assign_attributes(withdraw_params)
+
+    if @consent.save
+      redirect_to session_patient_consent_path
+    else
+      render :withdraw, status: :unprocessable_entity
+    end
   end
 
   private
@@ -94,6 +108,15 @@ class ConsentsController < ApplicationController
     @patient_session = @patient.patient_sessions.find_by!(session: @session)
   end
 
+  def set_consent
+    @consent =
+      Consent.where(programme: @session.programmes).recorded.find(params[:id])
+  end
+
+  def ensure_can_withdraw
+    redirect_to action: :show unless @consent.can_withdraw?
+  end
+
   def create_params
     {
       patient: @patient,
@@ -102,5 +125,12 @@ class ConsentsController < ApplicationController
       recorded_by: current_user,
       route: @patient_session.gillick_competent? ? :self_consent : nil
     }
+  end
+
+  def withdraw_params
+    params
+      .require(:consent)
+      .permit(:reason_for_refusal, :notes)
+      .merge(response: "refused", withdrawn_at: Time.current)
   end
 end
