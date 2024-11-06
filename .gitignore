@@ -54,3 +54,6 @@ spec/examples.txt
 
 # Local scratch workspace
 scratchpad
+
+# Artillery temporarily bundles TypeScript files in this directory
+tests/dist

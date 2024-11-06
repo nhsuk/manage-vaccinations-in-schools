@@ -205,6 +205,14 @@ To [generate tests interactively by clicking in a live browser](https://playwrig
 yarn playwright codegen http://localhost:4000
 ```
 
+#### Load testing
+
+To run the load tests:
+
+```bash
+USERNAME=username PASSWORD=password SESSION=slug yarn test:load --target=http://test.mavistesting.com
+```
+
 ### Example programmes
 
 You can generate an example programme with a few sessions in development by visiting `/reset`.
