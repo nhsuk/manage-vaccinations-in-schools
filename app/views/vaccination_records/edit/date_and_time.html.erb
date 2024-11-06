@@ -5,9 +5,7 @@
       ) %>
 <% end %>
 
-<%= form_with model: @vaccination_record,
-              url: wizard_path,
-              method: :put do |f| %>
+<%= form_with model: @vaccination_record, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
   <span class="nhsuk-caption-l"><%= @patient.full_name %></span>

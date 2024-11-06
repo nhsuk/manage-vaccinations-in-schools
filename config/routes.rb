@@ -266,13 +266,14 @@ Rails.application.routes.draw do
                 as: :patient,
                 only: %i[show] do
         get "log"
-        post "request-consent", action: :request_consent
 
-        post "consents", to: "manage_consents#create", as: :manage_consents
-        resources :manage_consents,
-                  only: %i[show update],
-                  path: "consents/:consent_id/" do
-          get "details", on: :collection, to: "consents#show"
+        resources :consents, only: %i[index create show] do
+          post "send-request", on: :collection, action: :send_request
+
+          resource :edit,
+                   only: %i[show update],
+                   controller: "consents/edit",
+                   path: "edit/:id"
         end
 
         resource :gillick_assessment, only: %i[new create]

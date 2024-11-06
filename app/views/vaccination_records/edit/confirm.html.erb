@@ -62,9 +62,7 @@
 <% if @vaccination_record.recorded? %>
   <%= govuk_button_to "Continue", wizard_path, method: :put, prevent_double_click: true %>
 <% else %>
-  <%= form_with model: @vaccination_record,
-                url: wizard_path,
-                method: :put do |f| %>
+  <%= form_with model: @vaccination_record, url: wizard_path, method: :put do |f| %>
     <% content_for(:before_content) { f.govuk_error_summary } %>
 
     <div class="nhsuk-card">

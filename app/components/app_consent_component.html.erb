@@ -30,7 +30,7 @@
       <% consents.each do |consent| %>
         <%= body.with_row do |row| %>
           <%= row.with_cell do %>
-            <%= govuk_link_to consent&.parent&.full_name || consent.patient.full_name, details_session_patient_manage_consents_path(consent, session_slug: session.slug, patient_id: patient.id, section:, tab:) %>
+            <%= govuk_link_to consent&.parent&.full_name || consent.patient.full_name, session_patient_consent_path(session, patient, consent, section:, tab:) %>
             <br>
             <span class="nhsuk-u-font-size-16"><%= consent.who_responded %></span>
           <% end %>
@@ -43,9 +43,9 @@
 <% end %>
 
 <% if can_send_consent_request? %>
-  <%= govuk_button_to "Send consent request", session_patient_request_consent_path(session, patient_id: patient.id, section: @section, tab: @tab), class: "app-button--secondary" %>
+  <%= govuk_button_to "Send consent request", send_request_session_patient_consents_path(session, patient, section: @section, tab: @tab), class: "app-button--secondary" %>
 <% end %>
 
 <% if Flipper.enabled?(:release_1b) %>
-  <%= govuk_button_to "Get consent response", session_patient_manage_consents_path(session, patient_id: patient.id, section: @section, tab: @tab), class: "app-button--secondary" %>
+  <%= govuk_button_to "Get consent response", session_patient_consents_path(session, patient, section: @section, tab: @tab), class: "app-button--secondary" %>
 <% end %>
