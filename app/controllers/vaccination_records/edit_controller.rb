@@ -51,7 +51,12 @@ class VaccinationRecords::EditController < ApplicationController
           params: update_params
         )
 
-      unless validator.date_params_valid?
+      hour = Integer(update_params["administered_at(4i)"], exception: false)
+      minute = Integer(update_params["administered_at(5i)"], exception: false)
+      time_valid = hour&.between?(0, 23) && minute&.between?(0, 59)
+
+      unless validator.date_params_valid? && time_valid
+        @vaccination_record.errors.add(:administered_at, :invalid)
         render_wizard nil, status: :unprocessable_entity
       end
     end
