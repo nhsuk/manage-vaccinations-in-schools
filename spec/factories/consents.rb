@@ -6,6 +6,7 @@
 #
 #  id                       :bigint           not null, primary key
 #  health_answers           :jsonb
+#  invalidated_at           :datetime
 #  reason_for_refusal       :integer
 #  reason_for_refusal_notes :text
 #  recorded_at              :datetime
@@ -137,6 +138,10 @@ FactoryBot.define do
 
     trait :withdrawn do
       withdrawn_at { Time.current }
+    end
+
+    trait :invalidated do
+      invalidated_at { Time.current }
     end
   end
 end

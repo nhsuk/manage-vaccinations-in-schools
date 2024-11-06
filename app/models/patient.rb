@@ -47,6 +47,7 @@
 class Patient < ApplicationRecord
   include AddressConcern
   include AgeConcern
+  include Invalidatable
   include FullNameConcern
   include PendingChangesConcern
 
@@ -89,9 +90,6 @@ class Patient < ApplicationRecord
 
   scope :not_deceased, -> { where(date_of_death: nil) }
   scope :deceased, -> { where.not(date_of_death: nil) }
-
-  scope :not_invalidated, -> { where(invalidated_at: nil) }
-  scope :invalidated, -> { where.not(invalidated_at: nil) }
 
   scope :not_restricted, -> { where(restricted_at: nil) }
   scope :restricted, -> { where.not(restricted_at: nil) }
@@ -254,10 +252,6 @@ class Patient < ApplicationRecord
 
   def deceased?
     date_of_death != nil
-  end
-
-  def invalidated?
-    invalidated_at != nil
   end
 
   def restricted?
