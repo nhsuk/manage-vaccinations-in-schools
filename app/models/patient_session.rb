@@ -132,6 +132,7 @@ class PatientSession < ApplicationRecord
   def latest_consents
     @latest_consents ||=
       consents
+        .select(&:not_invalidated?)
         .group_by(&:name)
         .map { |_, consents| consents.max_by(&:recorded_at) }
   end

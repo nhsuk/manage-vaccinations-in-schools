@@ -9,6 +9,8 @@ class ConsentsController < ApplicationController
   before_action :set_patient_session, only: %i[create send_request]
   before_action :set_consent, except: %i[index create send_request]
   before_action :ensure_can_withdraw, only: %i[edit_withdraw update_withdraw]
+  before_action :ensure_can_invalidate,
+                only: %i[edit_invalidate update_invalidate]
 
   def index
     all_patient_sessions =
@@ -91,6 +93,20 @@ class ConsentsController < ApplicationController
     end
   end
 
+  def edit_invalidate
+    render :invalidate
+  end
+
+  def update_invalidate
+    @consent.assign_attributes(invalidate_params)
+
+    if @consent.save
+      redirect_to session_patient_consent_path
+    else
+      render :invalidate, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_session
@@ -117,6 +133,10 @@ class ConsentsController < ApplicationController
     redirect_to action: :show unless @consent.can_withdraw?
   end
 
+  def ensure_can_invalidate
+    redirect_to action: :show unless @consent.can_invalidate?
+  end
+
   def create_params
     {
       patient: @patient,
@@ -132,5 +152,9 @@ class ConsentsController < ApplicationController
       .require(:consent)
       .permit(:reason_for_refusal, :notes)
       .merge(response: "refused", withdrawn_at: Time.current)
+  end
+
+  def invalidate_params
+    params.require(:consent).permit(:notes).merge(invalidated_at: Time.current)
   end
 end

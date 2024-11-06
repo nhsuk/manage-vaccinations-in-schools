@@ -1,0 +1,26 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: session_patient_consent_path,
+        name: "consent page",
+      ) %>
+<% end %>
+
+<%= form_with model: @consent, url: invalidate_session_patient_consent_path, method: :post do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <% page_title = "Mark response as invalid" %>
+  <%= h1 page_title: do %>
+    <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
+    Consent response from <%= @consent.name %>
+  </span>
+    <%= page_title %>
+  <% end %>
+
+  <p class="nhsuk-body">This operation cannot be undone.</p>
+
+  <%= f.govuk_text_area :notes, label: { text: "Notes", size: "m" } %>
+
+  <div class="nhsuk-u-margin-top-6">
+    <%= f.govuk_submit "Mark as invalid" %>
+  </div>
+<% end %>
