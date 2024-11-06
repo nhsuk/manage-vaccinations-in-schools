@@ -11,8 +11,8 @@ class VaccinationsController < ApplicationController
   before_action :set_patient_session, only: %i[create]
   before_action :set_draft_vaccination_record, only: %i[create]
 
-  before_action :set_todays_batch, only: %i[index batch create]
-  before_action :set_batches, only: %i[batch update_batch]
+  before_action :set_batches, only: %i[index create batch update_batch]
+  before_action :set_todays_batch, only: %i[index create batch]
   before_action :set_section_and_tab, only: %i[create]
 
   after_action :verify_authorized
@@ -77,8 +77,8 @@ class VaccinationsController < ApplicationController
   end
 
   def update_batch
-    @todays_batch =
-      policy_scope(Batch).find_by(params.fetch(:batch).permit(:id))
+    @todays_batch = @batches.find_by(params.fetch(:batch).permit(:id))
+
     authorize @todays_batch, :update?
 
     if @todays_batch
@@ -160,15 +160,16 @@ class VaccinationsController < ApplicationController
     @patient_session = @patient.patient_sessions.find_by(session: @session)
   end
 
-  def set_todays_batch
-    @todays_batch = policy_scope(Batch).find_by(id: todays_batch_id)
-  end
-
   def set_batches
     @batches =
-      policy_scope(Batch).where(
-        vaccine: @session.vaccines
-      ).order_by_name_and_expiration
+      policy_scope(Batch)
+        .where(vaccine: @session.vaccines)
+        .not_expired
+        .order_by_name_and_expiration
+  end
+
+  def set_todays_batch
+    @todays_batch = @batches.find_by(id: todays_batch_id)
   end
 
   def set_section_and_tab

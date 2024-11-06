@@ -11,6 +11,7 @@ describe "HPV Vaccination" do
 
     when_i_go_to_a_patient_that_is_ready_to_vaccinate
     and_i_record_that_the_patient_has_been_vaccinated
+    and_i_see_only_not_expired_batches
     and_i_select_the_batch
     then_i_see_the_confirmation_page
 
@@ -46,6 +47,8 @@ describe "HPV Vaccination" do
 
     active_vaccine = programme.vaccines.active.first
     @active_batch = create(:batch, organisation:, vaccine: active_vaccine)
+    @expired_batch =
+      create(:batch, :expired, organisation:, vaccine: active_vaccine)
 
     @session = create(:session, organisation:, programme:, location:)
     @patient =
@@ -64,6 +67,11 @@ describe "HPV Vaccination" do
     choose "Yes, they got the HPV vaccine"
     choose "Left arm"
     click_button "Continue"
+  end
+
+  def and_i_see_only_not_expired_batches
+    expect(page).not_to have_content(@expired_batch.name)
+    expect(page).to have_content(@active_batch.name)
   end
 
   def and_i_select_the_batch
