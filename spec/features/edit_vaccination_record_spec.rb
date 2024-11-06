@@ -34,6 +34,10 @@ describe "Edit vaccination record" do
     then_i_see_the_edit_vaccination_record_page
     and_i_should_see_the_updated_date_time
 
+    when_i_click_change_vaccine
+    and_i_select_the_vaccine
+    then_i_see_the_edit_vaccination_record_page
+
     when_i_click_on_change_batch
     and_i_choose_a_batch
     and_i_click_continue
@@ -154,6 +158,15 @@ describe "Edit vaccination record" do
   def and_i_should_see_the_updated_date_time
     expect(page).to have_content("Date1 September 2023")
     expect(page).to have_content("Time12:00pm")
+  end
+
+  def when_i_click_change_vaccine
+    click_on "Change vaccine"
+  end
+
+  def and_i_select_the_vaccine
+    choose "Gardasil 9 (HPV)"
+    click_on "Continue"
   end
 
   def when_i_click_on_change_batch

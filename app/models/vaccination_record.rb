@@ -204,6 +204,7 @@ class VaccinationRecord < ApplicationRecord
     [
       (:date_and_time if recorded?),
       (:delivery_site if administered?),
+      (:vaccine if recorded? && administered?),
       (:batch if administered?),
       (:location if requires_location_name?),
       (:reason if not_administered?),
