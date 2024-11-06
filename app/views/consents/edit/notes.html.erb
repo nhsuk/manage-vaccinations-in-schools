@@ -11,7 +11,7 @@
   <%= h1 t(@consent.reason_for_refusal, scope: %i[consents notes title]) %>
 
   <%= f.govuk_text_area :notes,
-                        label: { text: "Give details" + (@consent.reason_notes_required? ?
+                        label: { text: "Give details" + (@consent.notes_required? ?
                           "" :
                           " (optional)") } %>
 
