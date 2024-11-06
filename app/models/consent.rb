@@ -82,14 +82,25 @@ class Consent < ApplicationRecord
          personal_choice
          other
        ],
-       prefix: true
+       prefix: true,
+       validate: {
+         if: :withdrawn?
+       }
+
   enum :route, %i[website phone paper in_person self_consent], prefix: "via"
 
   serialize :health_answers, coder: HealthAnswer::ArraySerializer
 
   encrypts :health_answers, :notes
 
-  validates :notes, length: { maximum: 1000 }
+  validates :notes,
+            presence: {
+              if: -> { required_for_step?(:notes) && notes_required? },
+              on: :update
+            },
+            length: {
+              maximum: 1000
+            }
 
   validates :route, presence: true, if: :recorded?
 
@@ -116,10 +127,6 @@ class Consent < ApplicationRecord
               inclusion: {
                 in: Consent.reason_for_refusals.keys
               }
-  end
-
-  on_wizard_step :notes do
-    validates :notes, presence: true
   end
 
   on_wizard_step :questions do
@@ -156,6 +163,15 @@ class Consent < ApplicationRecord
 
   def not_withdrawn?
     withdrawn_at.nil?
+  end
+
+  def can_withdraw?
+    Flipper.enabled?(:release_1b) && not_withdrawn? && recorded? &&
+      response_given?
+  end
+
+  def responded_at
+    withdrawn? ? withdrawn_at : recorded_at
   end
 
   def triage_needed?

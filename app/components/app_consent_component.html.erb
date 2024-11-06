@@ -34,8 +34,8 @@
             <br>
             <span class="nhsuk-u-font-size-16"><%= consent.who_responded %></span>
           <% end %>
-          <%= row.with_cell(text: consent.recorded_at.to_fs(:long)) %>
-          <%= row.with_cell(text: consent.human_enum_name(:response).humanize) %>
+          <%= row.with_cell(text: consent.responded_at.to_fs(:long)) %>
+          <%= row.with_cell(text: helpers.consent_decision(consent)) %>
         <% end %>
       <% end %>
     <% end %>

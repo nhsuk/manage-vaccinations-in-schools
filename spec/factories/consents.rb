@@ -137,6 +137,7 @@ FactoryBot.define do
     end
 
     trait :withdrawn do
+      refused
       withdrawn_at { Time.current }
     end
 

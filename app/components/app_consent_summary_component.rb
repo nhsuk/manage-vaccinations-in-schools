@@ -16,13 +16,13 @@ class AppConsentSummaryComponent < ViewComponent::Base
       if @consent.recorded?
         summary_list.with_row do |row|
           row.with_key { "Response date" }
-          row.with_value { @consent.recorded_at.to_fs(:long) }
+          row.with_value { @consent.responded_at.to_fs(:long) }
         end
       end
 
       summary_list.with_row do |row|
         row.with_key { "Decision" }
-        row.with_value { @consent.human_enum_name(:response).humanize }
+        row.with_value { helpers.consent_decision(@consent) }
         if (href = @change_links[:response])
           row.with_action(
             text: "Change",

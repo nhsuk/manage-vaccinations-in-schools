@@ -270,6 +270,11 @@ Rails.application.routes.draw do
         resources :consents, only: %i[index create show] do
           post "send-request", on: :collection, action: :send_request
 
+          member do
+            get "withdraw", action: :edit_withdraw
+            post "withdraw", action: :update_withdraw
+          end
+
           resource :edit,
                    only: %i[show update],
                    controller: "consents/edit",
