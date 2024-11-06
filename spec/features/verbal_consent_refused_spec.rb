@@ -83,7 +83,7 @@ describe "Verbal consent" do
     expect(page).to have_content(["Response method", "By phone"].join)
     expect(page).to have_content(["Reason for refusal", "Medical reasons"].join)
     expect(page).to have_content(
-      ["Refusal details", "They have a medical condition"].join
+      ["Notes", "They have a medical condition"].join
     )
 
     expect(page).to have_content(["Full name", @patient.full_name].join)

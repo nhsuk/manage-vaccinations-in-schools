@@ -7,57 +7,26 @@
 
 <%= h1 "Consent response from #{@consent.name}" %>
 
-<%= render AppCardComponent.new do |c| %>
-  <% c.with_heading { "Consent" } %>
-  <%= govuk_summary_list(
-        classes: "app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0",
-      ) do |summary_list|
-        summary_list.with_row do |row|
-          row.with_key { "Response date" }
-          row.with_value { @consent.recorded_at.to_fs(:long) }
-        end
-      
-        summary_list.with_row do |row|
-          row.with_key { "Decision" }
-          row.with_value { @consent.human_enum_name(:response).humanize }
-        end
-      
-        summary_list.with_row do |row|
-          row.with_key { "Response method" }
-          row.with_value { @consent.human_enum_name(:route).humanize }
-        end
-      
-        if @consent.reason_for_refusal.present?
-          summary_list.with_row do |row|
-            row.with_key { "Reason for refusal" }
-            row.with_value { @consent.human_enum_name(:reason_for_refusal) }
-          end
-        end
-      
-        if @consent.notes.present?
-          summary_list.with_row do |row|
-            row.with_key { "Refusal details" }
-            row.with_value { @consent.notes }
-          end
-        end
-      end %>
+<%= render AppCardComponent.new do |card| %>
+  <% card.with_heading { "Consent" } %>
+  <%= render AppConsentSummaryComponent.new(@consent) %>
 <% end %>
 
-<%= render AppCardComponent.new do |c| %>
-  <% c.with_heading { "Child" } %>
+<%= render AppCardComponent.new do |card| %>
+  <% card.with_heading { "Child" } %>
   <%= render AppConsentPatientSummaryComponent.new(@consent) %>
 <% end %>
 
 <% if @consent.parent.present? %>
-  <%= render AppCardComponent.new do |c| %>
-    <% c.with_heading { "Parent or guardian" } %>
+  <%= render AppCardComponent.new do |card| %>
+    <% card.with_heading { "Parent or guardian" } %>
     <%= render AppParentSummaryComponent.new(@consent.parent, @consent.parent_relationship) %>
   <% end %>
 <% end %>
 
 <% if @consent.response_given? %>
-  <%= render AppCardComponent.new do |c| %>
-    <% c.with_heading { "Answers to health questions" } %>
+  <%= render AppCardComponent.new do |card| %>
+    <% card.with_heading { "Answers to health questions" } %>
     <%= render AppHealthQuestionsComponent.new(consents: [@consent]) %>
   <% end %>
 <% end %>
