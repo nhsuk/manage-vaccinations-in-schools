@@ -33,7 +33,7 @@
 
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Vaccinations</span>
-            <%= policy_scope(VaccinationRecord).where(programme:).count %>
+            <%= policy_scope(VaccinationRecord).recorded.where(programme:).count %>
           <% end %>
         <% end %>
       <% end %>
