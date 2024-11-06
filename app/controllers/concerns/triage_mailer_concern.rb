@@ -22,7 +22,7 @@ module TriageMailerConcern
     elsif consent.response_refused?
       ConsentMailer.with(params).confirmation_refused.deliver_later
       TextDeliveryJob.perform_later(:consent_confirmation_refused, **params)
-    else
+    elsif consent.response_given?
       ConsentMailer.with(params).confirmation_given.deliver_later
       TextDeliveryJob.perform_later(:consent_confirmation_given, **params)
     end
