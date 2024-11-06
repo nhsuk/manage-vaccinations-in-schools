@@ -1,7 +1,7 @@
 <%= h1 t(".title"), size: "xl" %>
 
 <%= render AppCardComponent.new do |card|
-      card.with_heading { pluralize(@consent_forms.count, "consent response") }
+      card.with_heading { pluralize(@pagy.count, "consent response") }
     
       govuk_table(classes: "nhsuk-u-margin-0") do |table|
         table.with_head do |head|
