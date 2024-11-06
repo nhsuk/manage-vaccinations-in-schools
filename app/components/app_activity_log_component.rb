@@ -39,11 +39,40 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def consent_events
-    consents.recorded.map do
-      {
-        title: "Consent #{_1.response} by #{_1.name} (#{_1.who_responded})",
-        time: _1.recorded_at
-      }
+    consents.recorded.flat_map do |consent|
+      if consent.invalidated?
+        [
+          {
+            title:
+              "Consent #{consent.response} by #{consent.name} (#{consent.who_responded})",
+            time: consent.recorded_at
+          },
+          {
+            title: "Consent from #{consent.name} invalidated",
+            time: consent.invalidated_at
+          }
+        ]
+      elsif consent.withdrawn?
+        [
+          {
+            title:
+              "Consent given by #{consent.name} (#{consent.who_responded})",
+            time: consent.recorded_at
+          },
+          {
+            title: "Consent from #{consent.name} withdrawn",
+            time: consent.withdrawn_at
+          }
+        ]
+      else
+        [
+          {
+            title:
+              "Consent #{consent.response} by #{consent.name} (#{consent.who_responded})",
+            time: consent.recorded_at
+          }
+        ]
+      end
     end
   end
 
