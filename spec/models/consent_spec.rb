@@ -11,6 +11,7 @@
 #  recorded_at              :datetime
 #  response                 :integer
 #  route                    :integer
+#  withdrawn_at             :datetime
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
 #  organisation_id          :bigint           not null

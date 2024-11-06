@@ -11,6 +11,7 @@
 #  recorded_at              :datetime
 #  response                 :integer
 #  route                    :integer
+#  withdrawn_at             :datetime
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
 #  organisation_id          :bigint           not null
@@ -65,7 +66,11 @@ class Consent < ApplicationRecord
 
   scope :for_patient, -> { where("patient_id = patients.id") }
 
+  scope :withdrawn, -> { where.not(withdrawn_at: nil) }
+  scope :not_withdrawn, -> { where(withdrawn_at: nil) }
+
   enum :response, %w[given refused], prefix: true
+
   enum :reason_for_refusal,
        %w[
          contains_gelatine
@@ -141,6 +146,14 @@ class Consent < ApplicationRecord
 
   def name
     via_self_consent? ? patient.full_name : parent.label
+  end
+
+  def withdrawn?
+    withdrawn_at != nil
+  end
+
+  def not_withdrawn?
+    withdrawn_at.nil?
   end
 
   def triage_needed?
