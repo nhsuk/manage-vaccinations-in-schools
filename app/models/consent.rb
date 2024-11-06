@@ -118,7 +118,7 @@ class Consent < ApplicationRecord
               }
   end
 
-  on_wizard_step :reason_notes do
+  on_wizard_step :notes do
     validates :notes, presence: true
   end
 
@@ -139,7 +139,7 @@ class Consent < ApplicationRecord
       (:questions if response_given?),
       (:triage if triage_allowed && response_given?),
       (:reason if response_refused?),
-      (:reason_notes if response_refused? && reason_notes_required?),
+      (:notes if notes_required?),
       :confirm
     ].compact
   end
@@ -207,11 +207,14 @@ class Consent < ApplicationRecord
     end
   end
 
-  def reason_notes_required?
-    reason_for_refusal_contains_gelatine? ||
-      reason_for_refusal_already_vaccinated? ||
-      reason_for_refusal_will_be_vaccinated_elsewhere? ||
-      reason_for_refusal_medical_reasons? || reason_for_refusal_other?
+  def notes_required?
+    withdrawn? || invalidated? ||
+      (
+        response_refused? && reason_for_refusal_contains_gelatine? ||
+          reason_for_refusal_already_vaccinated? ||
+          reason_for_refusal_will_be_vaccinated_elsewhere? ||
+          reason_for_refusal_medical_reasons? || reason_for_refusal_other?
+      )
   end
 
   def new_or_existing_parent=(value)

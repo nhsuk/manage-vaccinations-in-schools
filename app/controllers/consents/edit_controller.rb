@@ -218,11 +218,11 @@ class Consents::EditController < ApplicationController
 
   def update_params
     permitted_attributes = {
-      route: %i[route],
       agree: %i[response],
-      reason: %i[reason_for_refusal],
-      reason_notes: %i[notes],
+      notes: %i[notes],
       questions: questions_params,
+      reason: %i[reason_for_refusal],
+      route: %i[route],
       who: %i[new_or_existing_parent]
     }.fetch(current_step)
 

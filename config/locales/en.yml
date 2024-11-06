@@ -806,6 +806,7 @@ en:
     injection: injection
     location: location
     name: name
+    notes: notes
     parent: parent
     parent_details: parent-details
     questions: questions
