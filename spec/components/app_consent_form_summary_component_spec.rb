@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AppConsentSummaryComponent, type: :component do
+describe AppConsentFormSummaryComponent do
   subject { page }
 
   let(:component) do

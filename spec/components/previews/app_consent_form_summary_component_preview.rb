@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-class AppConsentSummaryComponentPreview < ViewComponent::Preview
+class AppConsentFormSummaryComponentPreview < ViewComponent::Preview
   def self_consent
-    render AppConsentSummaryComponent.new(
+    render AppConsentFormSummaryComponent.new(
              name: "Mary Smith",
              response: {
                text: "Consent given (self-consent)",
@@ -12,7 +12,7 @@ class AppConsentSummaryComponentPreview < ViewComponent::Preview
   end
 
   def mum_refuses_consent_for_personal_reasons
-    render AppConsentSummaryComponent.new(
+    render AppConsentFormSummaryComponent.new(
              name: "Jane Smith",
              relationship: "mum",
              contact: {
@@ -30,7 +30,7 @@ class AppConsentSummaryComponentPreview < ViewComponent::Preview
   end
 
   def consent_refused_with_notes
-    render AppConsentSummaryComponent.new(
+    render AppConsentFormSummaryComponent.new(
              name: "Jane Smith",
              response: {
                text: "Consent refused (online)",
@@ -44,7 +44,7 @@ class AppConsentSummaryComponentPreview < ViewComponent::Preview
   end
 
   def multiple_responses
-    render AppConsentSummaryComponent.new(
+    render AppConsentFormSummaryComponent.new(
              name: "Jane Smith",
              relationship: "mum",
              contact: {

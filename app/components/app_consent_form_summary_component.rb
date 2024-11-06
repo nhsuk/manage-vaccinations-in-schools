@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AppConsentSummaryComponent < ViewComponent::Base
+class AppConsentFormSummaryComponent < ViewComponent::Base
   attr_reader :name, :relationship, :contact, :refusal_reason, :response
 
   def initialize(
