@@ -273,6 +273,9 @@ Rails.application.routes.draw do
           member do
             get "withdraw", action: :edit_withdraw
             post "withdraw", action: :update_withdraw
+
+            get "invalidate", action: :edit_invalidate
+            post "invalidate", action: :update_invalidate
           end
 
           resource :edit,

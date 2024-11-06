@@ -124,6 +124,20 @@ describe PatientSession do
         expect(latest_consents).to eq [refused_recorded_consent]
       end
     end
+
+    context "with an invalidated consent" do
+      let(:parent) { create(:parent, :recorded) }
+      let(:invalidated_consent) do
+        build(:consent, :recorded, :given, :invalidated, programme:, parent:)
+      end
+      let(:patient) do
+        create(:patient, parents: [parent], consents: [invalidated_consent])
+      end
+
+      it "does not return the consent record" do
+        expect(latest_consents).not_to include(invalidated_consent)
+      end
+    end
   end
 
   describe "#latest_vaccination_record" do

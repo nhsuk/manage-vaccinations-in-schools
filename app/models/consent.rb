@@ -166,12 +166,16 @@ class Consent < ApplicationRecord
   end
 
   def can_withdraw?
-    Flipper.enabled?(:release_1b) && not_withdrawn? && recorded? &&
-      response_given?
+    Flipper.enabled?(:release_1b) && not_withdrawn? && not_invalidated? &&
+      recorded? && response_given?
+  end
+
+  def can_invalidate?
+    Flipper.enabled?(:release_1b) && not_invalidated? && recorded?
   end
 
   def responded_at
-    withdrawn? ? withdrawn_at : recorded_at
+    invalidated_at || withdrawn_at || recorded_at
   end
 
   def triage_needed?
@@ -271,7 +275,7 @@ class Consent < ApplicationRecord
   def reset_unused_fields
     if response_given?
       self.reason_for_refusal = nil
-      self.notes = ""
+      self.notes = "" unless invalidated?
 
       seed_health_questions
     elsif response_refused?

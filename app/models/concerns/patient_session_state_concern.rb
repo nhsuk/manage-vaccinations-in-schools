@@ -68,7 +68,7 @@ module PatientSessionStateConcern
     end
 
     def no_consent?
-      consents.empty?
+      consents.empty? || consents.all?(&:invalidated?)
     end
 
     def triage_needed?

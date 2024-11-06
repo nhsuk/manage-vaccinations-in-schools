@@ -13,6 +13,12 @@
       <%= link_to "Withdraw consent", withdraw_session_patient_consent_path %>
     </li>
   <% end %>
+
+  <% if @consent.can_invalidate? %>
+    <li class="app-action-list__item">
+      <%= link_to "Mark as invalid", invalidate_session_patient_consent_path %>
+    </li>
+  <% end %>
 </ul>
 
 <%= render AppCardComponent.new do |card| %>
