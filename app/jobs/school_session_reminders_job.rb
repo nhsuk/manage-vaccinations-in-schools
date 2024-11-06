@@ -9,13 +9,14 @@ class SchoolSessionRemindersJob < ApplicationJob
     patient_sessions =
       PatientSession
         .includes(
-          :consents,
           :gillick_assessments,
           :triages,
           :vaccination_records,
+          consents: :parent,
           patient: :parents
         )
-        .joins(:location, :session)
+        .eager_load(:session)
+        .joins(:location)
         .merge(Location.school)
         .merge(Session.has_date(date))
         .notification_not_sent(date)
