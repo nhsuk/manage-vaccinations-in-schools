@@ -4,22 +4,22 @@
 #
 # Table name: consents
 #
-#  id                       :bigint           not null, primary key
-#  health_answers           :jsonb
-#  invalidated_at           :datetime
-#  reason_for_refusal       :integer
-#  reason_for_refusal_notes :text
-#  recorded_at              :datetime
-#  response                 :integer
-#  route                    :integer
-#  withdrawn_at             :datetime
-#  created_at               :datetime         not null
-#  updated_at               :datetime         not null
-#  organisation_id          :bigint           not null
-#  parent_id                :bigint
-#  patient_id               :bigint           not null
-#  programme_id             :bigint           not null
-#  recorded_by_user_id      :bigint
+#  id                  :bigint           not null, primary key
+#  health_answers      :jsonb
+#  invalidated_at      :datetime
+#  notes               :text             default(""), not null
+#  reason_for_refusal  :integer
+#  recorded_at         :datetime
+#  response            :integer
+#  route               :integer
+#  withdrawn_at        :datetime
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  organisation_id     :bigint           not null
+#  parent_id           :bigint
+#  patient_id          :bigint           not null
+#  programme_id        :bigint           not null
+#  recorded_by_user_id :bigint
 #
 # Indexes
 #
@@ -110,7 +110,7 @@ describe Consent do
             patient:,
             consent_form:,
             reason_for_refusal: consent_form.reason,
-            reason_for_refusal_notes: consent_form.reason_notes,
+            notes: "",
             response: consent_form.response,
             route: "website"
           )
@@ -191,14 +191,14 @@ describe Consent do
         health_answers: [],
         response: "refused",
         reason_for_refusal: "contains_gelatine",
-        reason_for_refusal_notes: "I'm vegan"
+        notes: "I'm vegan"
       )
     expect(consent.health_answers).to be_empty
 
     consent.update!(response: "given")
 
     expect(consent.reason_for_refusal).to be_nil
-    expect(consent.reason_for_refusal_notes).to be_nil
+    expect(consent.notes).to be_blank
 
     expect(consent.health_answers).not_to be_empty
     expect(consent.health_answers.count).to eq(
