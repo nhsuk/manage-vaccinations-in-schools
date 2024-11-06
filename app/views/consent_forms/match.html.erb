@@ -23,7 +23,7 @@
 
     <%= render AppCardComponent.new do |c|
           c.with_heading { "Consent response" }
-          render AppConsentSummaryComponent.new(
+          render AppConsentFormSummaryComponent.new(
             name: @consent_form.parent_full_name,
             relationship: @consent_form.parent_relationship_label,
             contact: {
