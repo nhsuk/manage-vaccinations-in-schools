@@ -56,6 +56,7 @@ describe "End-to-end journey" do
     @batch =
       create(
         :batch,
+        expiry: Date.new(2024, 4, 1),
         organisation: @organisation,
         vaccine: @programme.vaccines.first
       )

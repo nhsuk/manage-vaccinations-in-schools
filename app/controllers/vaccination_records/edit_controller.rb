@@ -147,7 +147,11 @@ class VaccinationRecords::EditController < ApplicationController
     end
 
     if (id = todays_batch_id).present?
-      @vaccination_record.todays_batch = policy_scope(Batch).find_by(id:)
+      @vaccination_record.todays_batch =
+        policy_scope(Batch)
+          .where(vaccine: @vaccination_record.vaccine)
+          .not_expired
+          .find_by(id:)
     end
   end
 
@@ -178,9 +182,10 @@ class VaccinationRecords::EditController < ApplicationController
 
   def set_batches
     @batches =
-      policy_scope(Batch).where(
-        vaccine: @vaccination_record.vaccine
-      ).order_by_name_and_expiration
+      policy_scope(Batch)
+        .where(vaccine: @vaccination_record.vaccine)
+        .not_expired
+        .order_by_name_and_expiration
   end
 
   def set_locations

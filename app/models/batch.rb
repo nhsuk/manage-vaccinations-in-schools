@@ -35,6 +35,9 @@ class Batch < ApplicationRecord
   scope :archived, -> { where.not(archived_at: nil) }
   scope :unarchived, -> { where(archived_at: nil) }
 
+  scope :expired, -> { where("expiry <= ?", Time.current) }
+  scope :not_expired, -> { where("expiry > ?", Time.current) }
+
   has_many :vaccination_records
 
   has_and_belongs_to_many :immunisation_imports

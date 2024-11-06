@@ -35,6 +35,10 @@ FactoryBot.define do
     name { "#{prefix}#{Faker::Number.number(digits: 4)}" }
     expiry { Faker::Time.forward(days: 50) }
 
+    trait :expired do
+      expiry { Date.yesterday }
+    end
+
     trait :archived do
       archived_at { Time.current }
     end
