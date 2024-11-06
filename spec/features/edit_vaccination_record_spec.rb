@@ -21,8 +21,15 @@ describe "Edit vaccination record" do
     when_i_click_on_change_date
     then_i_should_see_the_date_time_form
 
-    when_i_fill_in_the_date
-    and_i_fill_in_the_time
+    when_i_fill_in_an_invalid_date
+    and_i_click_continue
+    then_i_see_the_date_time_form_with_errors
+
+    when_i_fill_in_an_invalid_time
+    and_i_click_continue
+    then_i_see_the_date_time_form_with_errors
+
+    when_i_fill_in_a_valid_date_and_time
     and_i_click_continue
     then_i_see_the_edit_vaccination_record_page
     and_i_should_see_the_updated_date_time
@@ -109,15 +116,35 @@ describe "Edit vaccination record" do
     expect(page).to have_content("Time")
   end
 
-  def when_i_fill_in_the_date
+  def when_i_fill_in_a_valid_date_and_time
     fill_in "Year", with: "2023"
     fill_in "Month", with: "9"
     fill_in "Day", with: "1"
-  end
 
-  def and_i_fill_in_the_time
     fill_in "Hour", with: "12"
     fill_in "Minute", with: "00"
+  end
+
+  def when_i_fill_in_an_invalid_date
+    fill_in "Year", with: "3023"
+    fill_in "Month", with: "19"
+    fill_in "Day", with: "33"
+
+    fill_in "Hour", with: "23"
+    fill_in "Minute", with: "15"
+  end
+
+  def when_i_fill_in_an_invalid_time
+    fill_in "Year", with: "2025"
+    fill_in "Month", with: "5"
+    fill_in "Day", with: "1"
+
+    fill_in "Hour", with: "25"
+    fill_in "Minute", with: "61"
+  end
+
+  def then_i_see_the_date_time_form_with_errors
+    expect(page).to have_content("There is a problem")
   end
 
   def and_i_click_continue
