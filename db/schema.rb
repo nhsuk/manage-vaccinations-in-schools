@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_11_06_145726) do
+ActiveRecord::Schema[7.2].define(version: 2024_11_06_154602) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -214,6 +214,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_06_145726) do
     t.bigint "recorded_by_user_id"
     t.bigint "parent_id"
     t.bigint "organisation_id", null: false
+    t.datetime "withdrawn_at"
     t.index ["organisation_id"], name: "index_consents_on_organisation_id"
     t.index ["parent_id"], name: "index_consents_on_parent_id"
     t.index ["patient_id"], name: "index_consents_on_patient_id"

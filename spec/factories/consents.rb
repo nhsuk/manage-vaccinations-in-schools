@@ -11,6 +11,7 @@
 #  recorded_at              :datetime
 #  response                 :integer
 #  route                    :integer
+#  withdrawn_at             :datetime
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
 #  organisation_id          :bigint           not null
@@ -132,6 +133,10 @@ FactoryBot.define do
 
     trait :draft do
       recorded_at { nil }
+    end
+
+    trait :withdrawn do
+      withdrawn_at { Time.current }
     end
   end
 end
