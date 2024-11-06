@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_11_06_125232) do
+ActiveRecord::Schema[7.2].define(version: 2024_11_06_145726) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -545,7 +545,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_06_125232) do
     t.string "preferred_given_name"
     t.string "preferred_family_name"
     t.datetime "updated_from_pds_at"
-    t.string "unused_column"
     t.index ["cohort_id"], name: "index_patients_on_cohort_id"
     t.index ["family_name", "given_name"], name: "index_patients_on_names_family_first"
     t.index ["family_name"], name: "index_patients_on_family_name_trigram", opclass: :gin_trgm_ops, using: :gin
