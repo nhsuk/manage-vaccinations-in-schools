@@ -16,10 +16,10 @@ describe AppVaccinationRecordSummaryComponent do
   let(:patient_session) { create(:patient_session, session:, patient:) }
   let(:vaccine) { programme.vaccines.first }
   let(:batch) do
-    create(:batch, name: "ABC", expiry: Date.new(2020, 1, 1), vaccine:)
+    create(:batch, name: "ABC", expiry: Date.new(2026, 1, 1), vaccine:)
   end
   let(:other_batch) do
-    create(:batch, name: "DEF", expiry: Date.new(2021, 1, 1), vaccine:)
+    create(:batch, name: "DEF", expiry: Date.new(2027, 1, 1), vaccine:)
   end
   let(:notes) { "Some notes." }
   let(:location_name) { nil }
@@ -163,7 +163,7 @@ describe AppVaccinationRecordSummaryComponent do
     it do
       expect(rendered).to have_css(
         ".nhsuk-summary-list__row",
-        text: "Batch expiry date\n1 January 2020"
+        text: "Batch expiry date\n1 January 2026"
       )
     end
 
@@ -276,7 +276,7 @@ describe AppVaccinationRecordSummaryComponent do
       expect(rendered).to have_css(".app-highlight", text: "Nasal spray")
       expect(rendered).to have_css(".app-highlight", text: "Nose")
       expect(rendered).to have_css(".app-highlight", text: "DEF")
-      expect(rendered).to have_css(".app-highlight", text: "1 January 2021")
+      expect(rendered).to have_css(".app-highlight", text: "1 January 2027")
     end
   end
 end

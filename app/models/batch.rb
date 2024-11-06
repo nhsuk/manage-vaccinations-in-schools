@@ -46,13 +46,16 @@ class Batch < ApplicationRecord
 
   validates :expiry,
             presence: true,
-            comparison: {
-              greater_than: -> { Date.new(Date.current.year - 15, 1, 1) },
-              less_than: -> { Date.new(Date.current.year + 15, 1, 1) }
-            },
             uniqueness: {
               scope: %i[organisation_id name vaccine_id]
             }
+
+  validates :expiry,
+            comparison: {
+              greater_than: -> { Date.current },
+              less_than: -> { Date.current + 15.years }
+            },
+            unless: :archived?
 
   def archived?
     archived_at != nil
