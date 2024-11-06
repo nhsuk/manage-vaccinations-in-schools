@@ -34,10 +34,10 @@
           end
         end
       
-        if @consent.reason_for_refusal_notes.present?
+        if @consent.notes.present?
           summary_list.with_row do |row|
             row.with_key { "Refusal details" }
-            row.with_value { @consent.reason_for_refusal_notes }
+            row.with_value { @consent.notes }
           end
         end
       end %>

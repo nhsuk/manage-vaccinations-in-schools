@@ -8,9 +8,9 @@
 <%= form_with model: @consent, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
-  <%= h1 t(@consent.reason_for_refusal, scope: %i[consents reason_for_refusal_notes title]) %>
+  <%= h1 t(@consent.reason_for_refusal, scope: %i[consents notes title]) %>
 
-  <%= f.govuk_text_area :reason_for_refusal_notes,
+  <%= f.govuk_text_area :notes,
                         label: { text: "Give details" + (@consent.reason_notes_required? ?
                           "" :
                           " (optional)") } %>

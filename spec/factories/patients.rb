@@ -213,7 +213,7 @@ FactoryBot.define do
             organisation:,
             programme:,
             reason_for_refusal: "already_vaccinated",
-            reason_for_refusal_notes: "Already had the vaccine at the GP"
+            notes: "Already had the vaccine at the GP"
           )
         ]
       end

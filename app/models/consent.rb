@@ -4,22 +4,22 @@
 #
 # Table name: consents
 #
-#  id                       :bigint           not null, primary key
-#  health_answers           :jsonb
-#  invalidated_at           :datetime
-#  reason_for_refusal       :integer
-#  reason_for_refusal_notes :text
-#  recorded_at              :datetime
-#  response                 :integer
-#  route                    :integer
-#  withdrawn_at             :datetime
-#  created_at               :datetime         not null
-#  updated_at               :datetime         not null
-#  organisation_id          :bigint           not null
-#  parent_id                :bigint
-#  patient_id               :bigint           not null
-#  programme_id             :bigint           not null
-#  recorded_by_user_id      :bigint
+#  id                  :bigint           not null, primary key
+#  health_answers      :jsonb
+#  invalidated_at      :datetime
+#  notes               :text             default(""), not null
+#  reason_for_refusal  :integer
+#  recorded_at         :datetime
+#  response            :integer
+#  route               :integer
+#  withdrawn_at        :datetime
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  organisation_id     :bigint           not null
+#  parent_id           :bigint
+#  patient_id          :bigint           not null
+#  programme_id        :bigint           not null
+#  recorded_by_user_id :bigint
 #
 # Indexes
 #
@@ -87,9 +87,9 @@ class Consent < ApplicationRecord
 
   serialize :health_answers, coder: HealthAnswer::ArraySerializer
 
-  encrypts :health_answers, :reason_for_refusal_notes
+  encrypts :health_answers, :notes
 
-  validates :reason_for_refusal_notes, length: { maximum: 1000 }
+  validates :notes, length: { maximum: 1000 }
 
   validates :route, presence: true, if: :recorded?
 
@@ -119,7 +119,7 @@ class Consent < ApplicationRecord
   end
 
   on_wizard_step :reason_notes do
-    validates :reason_for_refusal_notes, presence: true
+    validates :notes, presence: true
   end
 
   on_wizard_step :questions do
@@ -198,7 +198,7 @@ class Consent < ApplicationRecord
         patient:,
         parent:,
         reason_for_refusal: consent_form.reason,
-        reason_for_refusal_notes: consent_form.reason_notes,
+        notes: consent_form.reason_notes,
         recorded_at: Time.zone.now,
         response: consent_form.response,
         route: "website",
@@ -252,7 +252,7 @@ class Consent < ApplicationRecord
   def reset_unused_fields
     if response_given?
       self.reason_for_refusal = nil
-      self.reason_for_refusal_notes = nil
+      self.notes = ""
 
       seed_health_questions
     elsif response_refused?

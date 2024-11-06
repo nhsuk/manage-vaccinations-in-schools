@@ -341,11 +341,9 @@ en:
               blank: Choose who you are trying to get consent from
             reason_for_refusal:
               inclusion: Choose a reason
-            reason_for_refusal_notes:
-              blank: Enter details for refusing
-              too_long: >-
-                Enter details for refusing that are less than 1000 characters
-                long
+            notes:
+              blank: Enter notes
+              too_long: Enter notes that are less than %{count} characters long
             response:
               inclusion: Choose if they consent
             route:
@@ -639,7 +637,7 @@ en:
       title:
         flu: Do they agree to them having the flu vaccination?
         hpv: Do they agree to them having the HPV vaccination?
-    reason_for_refusal_notes:
+    notes:
       title:
         already_vaccinated: Where did their child get their vaccination?
         contains_gelatine: Why are they refusing to give consent?
