@@ -23,6 +23,7 @@
 #  preferred_given_name      :string
 #  registration              :string
 #  restricted_at             :datetime
+#  unused_column             :string
 #  updated_from_pds_at       :datetime
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
