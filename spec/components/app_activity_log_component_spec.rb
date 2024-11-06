@@ -1,19 +1,9 @@
 # frozen_string_literal: true
 
-shared_examples "card" do |params|
-  title, date, notes, by = params.values_at(:title, :date, :notes, :by)
-  it "renders card '#{title}'" do
-    expect(subject).to have_css(".nhsuk-card h3", text: title)
-
-    card = subject.find(".nhsuk-card h3", text: title).ancestor(".nhsuk-card")
-    expect(card).to have_css("p", text: date)
-    expect(card).to have_css("blockquote", text: notes) if notes
-    expect(card).to have_css("p", text: by) if by
-  end
-end
-
 describe AppActivityLogComponent do
-  subject { page }
+  subject(:rendered) { render_inline(component) }
+
+  let(:component) { described_class.new(patient_session:) }
 
   let(:programme) { create(:programme, :hpv) }
   let(:organisation) { create(:organisation, programmes: [programme]) }
@@ -25,7 +15,6 @@ describe AppActivityLogComponent do
       created_at: Time.zone.parse("2024-05-29 12:00")
     )
   end
-  let(:component) { described_class.new(patient_session:) }
   let(:user) do
     create(
       :user,
@@ -40,14 +29,28 @@ describe AppActivityLogComponent do
     create(:patient, school: location, given_name: "Sarah", family_name: "Doe")
   end
 
+  let(:mum) { create(:parent, :recorded, full_name: "Jane Doe") }
+  let(:dad) { create(:parent, :recorded, full_name: "John Doe") }
+
+  before do
+    create(:parent_relationship, :mother, parent: mum, patient:)
+    create(:parent_relationship, :father, parent: dad, patient:)
+  end
+
+  shared_examples "card" do |title:, date:, notes: nil, by: nil|
+    it "renders card '#{title}'" do
+      expect(rendered).to have_css(".nhsuk-card h3", text: title)
+
+      card = page.find(".nhsuk-card h3", text: title).ancestor(".nhsuk-card")
+
+      expect(card).to have_css("p", text: date)
+      expect(card).to have_css("blockquote", text: notes) if notes
+      expect(card).to have_css("p", text: by) if by
+    end
+  end
+
   describe "consent given by parents" do
-    let(:mum) { create(:parent, :recorded, full_name: "Jane Doe") }
-    let(:dad) { create(:parent, :recorded, full_name: "John Doe") }
-
     before do
-      create(:parent_relationship, :mother, parent: mum, patient:)
-      create(:parent_relationship, :father, parent: dad, patient:)
-
       create(
         :consent,
         :given,
@@ -123,18 +126,16 @@ describe AppActivityLogComponent do
         patient:,
         sent_at: Date.new(2024, 5, 30)
       )
-
-      render_inline(component)
     end
 
     it "renders headings in correct order" do
-      expect(page).to have_css("h2:nth-of-type(1)", text: "31 May 2024")
-      expect(page).to have_css("h2:nth-of-type(2)", text: "30 May 2024")
-      expect(page).to have_css("h2:nth-of-type(3)", text: "29 May 2024")
+      expect(rendered).to have_css("h2:nth-of-type(1)", text: "31 May 2024")
+      expect(rendered).to have_css("h2:nth-of-type(2)", text: "30 May 2024")
+      expect(rendered).to have_css("h2:nth-of-type(3)", text: "29 May 2024")
     end
 
     it "has cards" do
-      expect(page).to have_css(".nhsuk-card", count: 8)
+      expect(rendered).to have_css(".nhsuk-card", count: 8)
     end
 
     include_examples "card",
@@ -188,12 +189,57 @@ describe AppActivityLogComponent do
         patient:,
         recorded_at: Time.zone.parse("2024-05-30 12:00")
       )
-      render_inline(component)
     end
 
     include_examples "card",
                      title:
                        "Consent given by Sarah Doe (Child (Gillick competent))",
+                     date: "30 May 2024 at 12:00pm"
+  end
+
+  describe "withdrawn consent" do
+    before do
+      create(
+        :consent,
+        :given,
+        :withdrawn,
+        programme:,
+        patient:,
+        parent: mum,
+        recorded_at: Time.zone.local(2024, 5, 30, 12),
+        withdrawn_at: Time.zone.local(2024, 6, 30, 12)
+      )
+    end
+
+    include_examples "card",
+                     title: "Consent from Jane Doe withdrawn",
+                     date: "30 June 2024 at 12:00pm"
+
+    include_examples "card",
+                     title: "Consent given by Jane Doe (Mum)",
+                     date: "30 May 2024 at 12:00pm"
+  end
+
+  describe "invalidated consent" do
+    before do
+      create(
+        :consent,
+        :given,
+        :invalidated,
+        programme:,
+        patient:,
+        parent: mum,
+        recorded_at: Time.zone.local(2024, 5, 30, 12),
+        invalidated_at: Time.zone.local(2024, 6, 30, 12)
+      )
+    end
+
+    include_examples "card",
+                     title: "Consent from Jane Doe invalidated",
+                     date: "30 June 2024 at 12:00pm"
+
+    include_examples "card",
+                     title: "Consent given by Jane Doe (Mum)",
                      date: "30 May 2024 at 12:00pm"
   end
 end
