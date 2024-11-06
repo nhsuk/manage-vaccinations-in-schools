@@ -1,6 +1,6 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: back_link_path,
+        href: consents_back_link_path,
         name: "contact details page",
       ) %>
 <% end %>
@@ -8,12 +8,8 @@
 <% title = t("consents.edit_consent.title.#{@consent.programme.type}") %>
 <% content_for :page_title, title %>
 
-<%= form_with model: @consent, url: form_path_for(@consent), method: form_method_for(@consent) do |f| %>
+<%= form_with model: @consent, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
-  <% if include_clone_fields_for(@consent) %>
-    <%= hidden_field_tag :clone_consent_id, @consent.id %>
-    <%= hidden_field_tag :step, "agree" %>
-  <% end %>
   <%= f.govuk_radio_buttons_fieldset(:response,
                                      caption: { size: "l",
                                                 text: @patient.full_name },

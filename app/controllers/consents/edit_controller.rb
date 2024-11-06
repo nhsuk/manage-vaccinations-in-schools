@@ -1,43 +1,25 @@
 # frozen_string_literal: true
 
-class ManageConsentsController < ApplicationController
+class Consents::EditController < ApplicationController
   include Wicked::Wizard::Translated # For custom URLs, see en.yml wicked
   include TriageMailerConcern
 
-  before_action :set_route
   before_action :set_session
   before_action :set_patient
-  before_action :set_consent, except: :create
-  before_action :set_steps, except: :create
-  before_action :setup_wizard_translated, except: :create
+  before_action :set_consent
+  before_action :set_steps
+  before_action :setup_wizard_translated
   before_action :set_parent,
-                except: :create,
                 if: -> { %w[parent-details confirm].include?(step) }
   before_action :set_parent_relationship,
-                except: :create,
                 if: -> { %w[parent-details confirm].include?(step) }
-  before_action :set_parent_details_form,
-                except: :create,
-                if: -> { step == "parent-details" }
+  before_action :set_parent_details_form, if: -> { step == "parent-details" }
   before_action :set_patient_session
-  before_action :set_parent_options,
-                only: %i[show update],
-                if: -> { step == "who" }
-  before_action :set_triage,
-                except: %i[create],
-                if: -> { step.in?(%w[triage confirm]) }
+  before_action :set_parent_options, if: -> { step == "who" }
+  before_action :set_triage, if: -> { step.in?(%w[triage confirm]) }
   before_action :set_back_link,
-                only: %i[show],
+                only: :show,
                 if: -> { wizard_value(step).present? }
-
-  def create
-    @consent = Consent.create!(create_params)
-
-    set_steps # The wizard_steps can change after certain attrs change
-    setup_wizard_translated # Next/previous steps can change after steps change
-
-    redirect_to action: :show, id: steps.first, consent_id: @consent.id
-  end
 
   def show
     render_wizard
@@ -97,7 +79,7 @@ class ManageConsentsController < ApplicationController
       heading_link_href: session_patient_path(@session, id: @patient.id)
     }
 
-    session_section_path(@session, section: @section)
+    session_section_path(@session, section: params[:section], tab: params[:tab])
   end
 
   def handle_confirm
@@ -165,10 +147,6 @@ class ManageConsentsController < ApplicationController
     end
   end
 
-  def set_route
-    @section = params[:section]
-  end
-
   def set_session
     @session = policy_scope(Session).find_by!(slug: params[:session_slug])
   end
@@ -232,17 +210,6 @@ class ManageConsentsController < ApplicationController
           organisation: @session.organisation
         )
       end
-  end
-
-  def create_params
-    {
-      patient: @patient,
-      programme: @session.programmes.first, # TODO: handle multiple programmes
-      organisation: @session.organisation,
-      recorded_by: current_user
-    }.tap do |attrs|
-      attrs[:route] = :self_consent if @patient_session.gillick_competent?
-    end
   end
 
   def triage_params
