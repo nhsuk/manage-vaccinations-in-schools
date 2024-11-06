@@ -6,7 +6,7 @@ class AppConsentRefusedTableComponent < ViewComponent::Base
 
     @grouped_by_reason_for_refusal =
       consents.response_refused.group(:reason_for_refusal).count
-    @total_count = consents.count
+    @total_count = @grouped_by_reason_for_refusal.values.sum
   end
 
   def percentage_for(reason_for_refusal)
