@@ -25,7 +25,6 @@ describe PatientSessionStateConcern do
         consent_refused?: false,
         consent_conflicts?: false,
         no_consent?: false,
-        not_gillick_competent?: false,
         triage_needed?: false,
         triage_not_needed?: false,
         triage_ready_to_vaccinate?: false,
@@ -65,10 +64,6 @@ describe PatientSessionStateConcern do
     it_behaves_like "it supports the state",
                     state: :consent_conflicts,
                     conditions: [:consent_conflicts]
-
-    it_behaves_like "it supports the state",
-                    state: :unable_to_vaccinate_not_gillick_competent,
-                    conditions: [:not_gillick_competent]
 
     it_behaves_like "it supports the state",
                     state: :triaged_ready_to_vaccinate,

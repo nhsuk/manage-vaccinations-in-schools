@@ -41,14 +41,6 @@ describe PatientTabsConcern do
   let(:unable_to_vaccinate) do
     create(:patient_session, :unable_to_vaccinate, programme:, session:)
   end
-  let(:unable_to_vaccinate_not_gillick_competent) do
-    create(
-      :patient_session,
-      :unable_to_vaccinate_not_gillick_competent,
-      programme:,
-      session:
-    )
-  end
   let(:vaccinated) do
     create(:patient_session, :vaccinated, programme:, session:)
   end
@@ -65,7 +57,6 @@ describe PatientTabsConcern do
       triaged_kept_in_triage,
       triaged_ready_to_vaccinate,
       unable_to_vaccinate,
-      unable_to_vaccinate_not_gillick_competent,
       vaccinated
     ]
   end
@@ -88,7 +79,6 @@ describe PatientTabsConcern do
             triaged_kept_in_triage,
             triaged_ready_to_vaccinate,
             unable_to_vaccinate,
-            unable_to_vaccinate_not_gillick_competent,
             vaccinated
           ],
           consent_refused: [consent_refused],
@@ -139,7 +129,6 @@ describe PatientTabsConcern do
               consent_given_triage_not_needed,
               consent_refused,
               unable_to_vaccinate,
-              unable_to_vaccinate_not_gillick_competent,
               vaccinated
             ]
           }.with_indifferent_access
@@ -167,8 +156,7 @@ describe PatientTabsConcern do
               consent_refused,
               delay_vaccination,
               triaged_do_not_vaccinate,
-              unable_to_vaccinate,
-              unable_to_vaccinate_not_gillick_competent
+              unable_to_vaccinate
             ]
           }.with_indifferent_access
         )

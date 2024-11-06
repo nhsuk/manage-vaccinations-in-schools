@@ -55,8 +55,7 @@ class PatientSessionStats
       patient_session.delay_vaccination? || patient_session.consent_refused? ||
         patient_session.consent_conflicts? ||
         patient_session.triaged_do_not_vaccinate? ||
-        patient_session.unable_to_vaccinate? ||
-        patient_session.unable_to_vaccinate_not_gillick_competent?
+        patient_session.unable_to_vaccinate?
     end
   end
 end
