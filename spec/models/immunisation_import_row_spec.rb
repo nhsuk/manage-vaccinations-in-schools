@@ -948,4 +948,12 @@ describe ImmunisationImportRow do
       end
     end
   end
+
+  describe "#batch" do
+    subject(:batch) { immunisation_import_row.to_vaccination_record.batch }
+
+    let(:data) { valid_data }
+
+    it { should be_archived }
+  end
 end

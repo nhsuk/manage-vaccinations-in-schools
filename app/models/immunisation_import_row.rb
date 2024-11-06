@@ -314,7 +314,7 @@ class ImmunisationImportRow
     return unless valid? && administered
 
     @batch ||=
-      Batch.find_or_create_by!(
+      Batch.create_with(archived_at: Time.current).find_or_create_by!(
         expiry: batch_expiry_date,
         name: batch_number,
         organisation:,
