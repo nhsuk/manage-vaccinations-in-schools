@@ -109,13 +109,7 @@ describe "Immunisation imports duplicates" do
         session: @session
       )
     @vaccine = @programme.vaccines.find_by(nivs_name: "Gardasil9")
-    @batch =
-      create(
-        :batch,
-        vaccine: @vaccine,
-        expiry: Date.new(2024, 7, 30),
-        name: "SomethingElse"
-      )
+    @batch = create(:batch, vaccine: @vaccine, name: "SomethingElse")
     @previous_vaccination_record =
       create(
         :vaccination_record,

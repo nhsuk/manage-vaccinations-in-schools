@@ -47,8 +47,13 @@ describe "HPV Vaccination" do
 
     active_vaccine = programme.vaccines.active.first
     @active_batch = create(:batch, organisation:, vaccine: active_vaccine)
+    @archived_batch =
+      create(:batch, :archived, organisation:, vaccine: active_vaccine)
+
+    # To get around expiration date validation on the model.
     @expired_batch =
-      create(:batch, :expired, organisation:, vaccine: active_vaccine)
+      build(:batch, :expired, organisation:, vaccine: active_vaccine)
+    @expired_batch.save!(validate: false)
 
     @session = create(:session, organisation:, programme:, location:)
     @patient =
@@ -71,6 +76,7 @@ describe "HPV Vaccination" do
 
   def and_i_see_only_not_expired_batches
     expect(page).not_to have_content(@expired_batch.name)
+    expect(page).not_to have_content(@archived_batch.name)
     expect(page).to have_content(@active_batch.name)
   end
 
