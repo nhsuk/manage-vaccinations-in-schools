@@ -1,0 +1,23 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: vaccinations_back_link_path,
+        name: "vaccination page",
+      ) %>
+<% end %>
+
+<% page_title = "Vaccine" %>
+<% content_for :page_title, page_title %>
+
+<%= form_with model: @vaccination_record, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= f.govuk_radio_buttons_fieldset(:vaccine_id,
+                                     caption: { text: @patient.full_name, size: "l" },
+                                     legend: { size: "l", tag: "h1", text: page_title }) do %>
+    <% vaccine = @vaccination_record.vaccine %>
+
+    <%= f.govuk_radio_button(:vaccine_id, vaccine.id, label: { text: vaccine_heading(vaccine) }) %>
+  <% end %>
+
+  <%= f.govuk_submit "Continue" %>
+<% end %>

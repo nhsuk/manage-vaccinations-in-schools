@@ -124,7 +124,8 @@ class VaccinationRecords::EditController < ApplicationController
       date_and_time: %i[administered_at],
       delivery_site: %i[delivery_site delivery_method],
       location: %i[location_name],
-      reason: %i[reason]
+      reason: %i[reason],
+      vaccine: %i[vaccine_id]
     }.fetch(current_step)
 
     params
