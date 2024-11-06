@@ -762,7 +762,7 @@ en:
       table_heading:
         zero: There are no locations with sessions scheduled.
         one: 1 location with sessions scheduled
-        other: "%{count} location with sessions scheduled"
+        other: "%{count} locations with sessions scheduled"
     unscheduled:
       table_heading:
         zero: There are no locations with no sessions scheduled.
