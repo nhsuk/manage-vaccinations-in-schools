@@ -114,7 +114,7 @@ describe User do
       context "when the user is admin staff" do
         let(:user) { build(:admin) }
 
-        it { should be false }
+        it { should be true }
       end
     end
   end

@@ -107,7 +107,7 @@ class User < ApplicationRecord
   end
 
   def is_nurse?
-    return email.include?("nurse") unless Settings.cis2.enabled
+    return true unless Settings.cis2.enabled
 
     selected_role = cis2_info.dig("selected_role", "code")
     selected_role.ends_with? "R8001"
