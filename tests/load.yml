@@ -1,0 +1,31 @@
+config:
+  phases:
+    - name: "Ramp up"
+      duration: 60
+      arrivalCount: 90
+      maxVusers: 90
+    - name: "Sustained load"
+      duration: 180
+      arrivalCount: 200
+      maxVusers: 90
+    - name: "Ramp down"
+      duration: 60
+      arrivalRate: 1
+      maxVusers: 0
+  engines:
+    playwright:
+      aggregateByName: true
+      showAllPageMetrics: true
+      launchOptions:
+        headless: true # Set to false to see the browser
+        slowMo: 1666 # 1.66s delay between each action -> ~60s journey
+  processor: "./load.ts"
+  variables:
+    username: "{{ $processEnvironment.USERNAME }}"
+    password: "{{ $processEnvironment.PASSWORD }}"
+    session: "{{ $processEnvironment.SESSION }}"
+
+scenarios:
+  - name: "parent_journey"
+    engine: playwright
+    testFunction: "parentJourney"

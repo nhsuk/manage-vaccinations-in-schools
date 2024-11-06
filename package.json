@@ -18,6 +18,7 @@
     "build": "esbuild app/javascript/*.[jt]s app/javascript/controllers/*.[jt]s --bundle --sourcemap --outdir=app/assets/builds --public-path=assets --minify",
     "build:serviceworker": "esbuild app/javascript/serviceworker/main.js --bundle --sourcemap --outfile=public/sw.js --minify",
     "test:e2e": "PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1 playwright test",
+    "test:load": "artillery run tests/load.yml",
     "test": "jest"
   },
   "devDependencies": {
@@ -25,6 +26,7 @@
     "@playwright/test": "^1.48.2",
     "@prettier/plugin-ruby": "^4.0.4",
     "@types/jest": "^29.5.14",
+    "artillery": "^2.0.21",
     "esbuild-jest": "^0.5.0",
     "fake-indexeddb": "^4.0.2",
     "jest": "^29.7.0",
