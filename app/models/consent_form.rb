@@ -84,7 +84,7 @@ class ConsentForm < ApplicationRecord
   has_one :team, through: :location
   has_many :eligible_schools, through: :organisation, source: :schools
 
-  enum :response, %w[given refused not_provided], prefix: "consent"
+  enum :response, %w[given refused], prefix: "consent"
   enum :reason,
        %w[
          contains_gelatine

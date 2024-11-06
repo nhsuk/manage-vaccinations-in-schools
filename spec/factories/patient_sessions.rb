@@ -78,17 +78,6 @@ FactoryBot.define do
       end
     end
 
-    trait :consent_not_provided do
-      patient do
-        association :patient,
-                    :consent_not_provided,
-                    performed_by: user,
-                    programme:,
-                    organisation:,
-                    school: session.location
-      end
-    end
-
     trait :consent_conflicting do
       patient do
         association :patient,

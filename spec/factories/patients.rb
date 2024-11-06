@@ -244,22 +244,6 @@ FactoryBot.define do
       end
     end
 
-    trait :consent_not_provided do
-      consents do
-        [
-          association(
-            :consent,
-            :recorded,
-            :not_provided,
-            :from_mum,
-            patient: instance,
-            organisation:,
-            programme:
-          )
-        ]
-      end
-    end
-
     trait :triage_ready_to_vaccinate do
       triages do
         [
