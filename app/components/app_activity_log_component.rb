@@ -115,7 +115,7 @@ class AppActivityLogComponent < ViewComponent::Base
         if vaccination_record.administered?
           "Vaccinated with #{helpers.vaccine_heading(vaccination_record.vaccine)}"
         else
-          "Unable to vaccinate: #{vaccination_record.human_enum_name(:reason)}"
+          "#{vaccination_record.programme.name} vaccination not given: #{vaccination_record.human_enum_name(:reason)}"
         end
 
       {

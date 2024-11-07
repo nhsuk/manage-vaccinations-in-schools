@@ -194,7 +194,7 @@ describe AppActivityLogComponent do
     end
 
     include_examples "card",
-                     title: "Unable to vaccinate: Unwell",
+                     title: "HPV vaccination not given: Unwell",
                      date: "31 May 2024 at 1:00pm",
                      notes: "Some notes.",
                      by: "Nurse Joy"
