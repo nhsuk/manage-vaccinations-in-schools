@@ -199,7 +199,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         if @vaccination_record.administered?
           "Vaccinated"
         else
-          @vaccination_record.human_enum_name(:reason)
+          VaccinationRecord.human_enum_name(:reason, @vaccination_record.reason)
         end
       ),
       @vaccination_record.administered_at_changed?
@@ -215,14 +215,20 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
 
   def delivery_method_value
     highlight_if(
-      @vaccination_record.human_enum_name(:delivery_method),
+      VaccinationRecord.human_enum_name(
+        :delivery_method,
+        @vaccination_record.delivery_method
+      ),
       @vaccination_record.delivery_method_changed?
     )
   end
 
   def delivery_site_value
     highlight_if(
-      @vaccination_record.human_enum_name(:delivery_site),
+      VaccinationRecord.human_enum_name(
+        :delivery_site,
+        @vaccination_record.delivery_site
+      ),
       @vaccination_record.delivery_site_changed?
     )
   end
