@@ -75,6 +75,7 @@ describe AppVaccinationRecordSummaryComponent do
     end
 
     context "without a vaccine" do
+      let(:administered_at) { nil }
       let(:vaccine) { nil }
       let(:batch) { nil }
       let(:other_batch) { nil }
@@ -110,6 +111,7 @@ describe AppVaccinationRecordSummaryComponent do
     end
 
     context "without a vaccine" do
+      let(:administered_at) { nil }
       let(:vaccine) { nil }
       let(:batch) { nil }
       let(:other_batch) { nil }
@@ -151,6 +153,7 @@ describe AppVaccinationRecordSummaryComponent do
     it { should have_css(".nhsuk-summary-list__row", text: "Batch ID\nABC") }
 
     context "without a vaccine" do
+      let(:administered_at) { nil }
       let(:vaccine) { nil }
       let(:batch) { nil }
       let(:other_batch) { nil }
@@ -168,6 +171,7 @@ describe AppVaccinationRecordSummaryComponent do
     end
 
     context "without a vaccine" do
+      let(:administered_at) { nil }
       let(:vaccine) { nil }
       let(:batch) { nil }
       let(:other_batch) { nil }
