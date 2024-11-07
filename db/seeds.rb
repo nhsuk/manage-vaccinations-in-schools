@@ -37,7 +37,7 @@ def create_organisation(ods_code:)
   organisation
 end
 
-def create_user(organisation:, email: nil, uid: nil)
+def create_user(organisation:, email: nil, uid: nil, fallback_role: :nurse)
   if uid
     User.find_by(uid:) ||
       FactoryBot.create(
@@ -47,7 +47,8 @@ def create_user(organisation:, email: nil, uid: nil)
         given_name: "Nurse",
         email: "nurse.flo@example.nhs.uk",
         provider: "cis2",
-        organisations: [organisation]
+        organisations: [organisation],
+        fallback_role:
         # password: Do not set this as they should not log in via password
       )
   elsif email
@@ -58,7 +59,8 @@ def create_user(organisation:, email: nil, uid: nil)
         given_name: email.split("@").first.split(".").first.capitalize,
         email:,
         password: email,
-        organisations: [organisation]
+        organisations: [organisation],
+        fallback_role:
       )
   else
     raise "No email or UID provided"
@@ -191,7 +193,11 @@ unless Settings.cis2.enabled
   # is not available and password= fails to run.
   organisation = create_organisation(ods_code: "R1L")
   user = create_user(organisation:, email: "nurse.joy@example.com")
-  create_user(organisation:, email: "admin.hope@example.com")
+  create_user(
+    organisation:,
+    email: "admin.hope@example.com",
+    fallback_role: "admin"
+  )
 
   attach_sample_of_schools_to(organisation)
 

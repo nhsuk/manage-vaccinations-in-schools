@@ -9,6 +9,7 @@
 #  current_sign_in_ip  :string
 #  email               :string
 #  encrypted_password  :string           default(""), not null
+#  fallback_role       :integer          default("nurse"), not null
 #  family_name         :string           not null
 #  given_name          :string           not null
 #  last_sign_in_at     :datetime
@@ -62,6 +63,8 @@ class User < ApplicationRecord
   scope :recently_active,
         -> { where(last_sign_in_at: 1.week.ago..Time.current) }
 
+  enum :fallback_role, { nurse: 0, admin: 1 }, prefix: true
+
   def selected_organisation
     @selected_organisation ||=
       if Settings.cis2.enabled
@@ -92,7 +95,7 @@ class User < ApplicationRecord
   end
 
   def is_admin?
-    return email.include?("admin") unless Settings.cis2.enabled
+    return fallback_role_admin? unless Settings.cis2.enabled
 
     selected_role = cis2_info.dig("selected_role", "code")
     selected_role.ends_with? "R8006"
@@ -107,7 +110,7 @@ class User < ApplicationRecord
   end
 
   def is_nurse?
-    return true unless Settings.cis2.enabled
+    return fallback_role_nurse? unless Settings.cis2.enabled
 
     selected_role = cis2_info.dig("selected_role", "code")
     selected_role.ends_with? "R8001"
