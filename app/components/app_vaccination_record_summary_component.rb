@@ -42,82 +42,106 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
-      if @vaccine.present?
+      if @vaccination_record.administered?
         summary_list.with_row do |row|
           row.with_key { "Vaccine" }
-          row.with_value { vaccine_value }
 
-          if (href = @change_links[:vaccine])
-            row.with_action(
-              text: "Change",
-              visually_hidden_text: "vaccine",
-              href:
-            )
+          if @vaccine
+            row.with_value { vaccine_value }
+
+            if (href = @change_links[:vaccine])
+              row.with_action(
+                text: "Change",
+                visually_hidden_text: "vaccine",
+                href:
+              )
+            end
+          elsif (href = @change_links[:vaccine])
+            row.with_value { link_to "Add vaccine", href }
+          else
+            row.with_value { "Not provided" }
           end
         end
-      end
 
-      if @batch.present?
         summary_list.with_row do |row|
           row.with_key { "Batch ID" }
-          row.with_value(classes: ["app-u-monospace"]) { batch_id_value }
 
-          if (href = @change_links[:batch])
-            row.with_action(
-              text: "Change",
-              href:,
-              visually_hidden_text: "batch"
-            )
+          if @batch
+            row.with_value(classes: ["app-u-monospace"]) { batch_id_value }
+
+            if (href = @change_links[:batch])
+              row.with_action(
+                text: "Change",
+                href:,
+                visually_hidden_text: "batch"
+              )
+            end
+          elsif (href = @change_links[:batch])
+            row.with_value { link_to "Add batch", href }
+          else
+            row.with_value { "Not provided" }
           end
         end
 
-        summary_list.with_row do |row|
-          row.with_key { "Batch expiry date" }
-          row.with_value { batch_expiry_value }
+        if @batch
+          summary_list.with_row do |row|
+            row.with_key { "Batch expiry date" }
+            row.with_value { batch_expiry_value }
+          end
         end
-      end
 
-      if @vaccination_record.delivery_method.present?
         summary_list.with_row do |row|
           row.with_key { "Method" }
-          row.with_value { delivery_method_value }
 
-          if (href = @change_links[:delivery_method])
-            row.with_action(
-              text: "Change",
-              href:,
-              visually_hidden_text: "method"
-            )
+          if @vaccination_record.delivery_method.present?
+            row.with_value { delivery_method_value }
+
+            if (href = @change_links[:delivery_method])
+              row.with_action(
+                text: "Change",
+                href:,
+                visually_hidden_text: "method"
+              )
+            end
+          elsif (href = @change_links[:delivery_method])
+            row.with_value { link_to "Add method", href }
+          else
+            row.with_value { "Not provided" }
           end
         end
-      end
 
-      if @vaccination_record.delivery_site.present?
         summary_list.with_row do |row|
           row.with_key { "Site" }
-          row.with_value { delivery_site_value }
 
-          if (href = @change_links[:delivery_site])
-            row.with_action(
-              text: "Change",
-              href:,
-              visually_hidden_text: "method"
-            )
+          if @vaccination_record.delivery_site.present?
+            row.with_value { delivery_site_value }
+
+            if (href = @change_links[:delivery_site])
+              row.with_action(
+                text: "Change",
+                href:,
+                visually_hidden_text: "method"
+              )
+            end
+          elsif (href = @change_links[:delivery_site])
+            row.with_value { link_to "Add site", href }
+          else
+            row.with_value { "Not provided" }
           end
         end
       end
 
-      if @vaccine.present?
+      if @vaccination_record.administered?
         summary_list.with_row do |row|
           row.with_key { "Dose volume" }
           row.with_value { dose_volume_value }
         end
-      end
 
-      if dose_number.present?
-        summary_list.with_row do |row|
-          row.with_key { "Dose number" }
-          row.with_value { dose_number_value }
+        if dose_number.present?
+          summary_list.with_row do |row|
+            row.with_key { "Dose number" }
+            row.with_value { dose_number_value }
+          end
         end
       end
 
