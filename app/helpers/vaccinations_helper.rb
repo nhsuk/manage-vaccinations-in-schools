@@ -55,6 +55,8 @@ module VaccinationsHelper
         section: "vaccinations",
         tab:
       )
+    elsif @vaccination_record.recorded?
+      wizard_path("confirm")
     else
       previous_wizard_path
     end
