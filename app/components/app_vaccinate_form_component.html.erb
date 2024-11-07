@@ -9,19 +9,18 @@
 
   <div class="nhsuk-card__content">
     <h2 class="nhsuk-card__heading nhsuk-heading-m">
-      Did they get the <%= programme_name %> vaccine?
+      Did they get the <%= programme.name %> vaccine?
     </h2>
 
     <%= f.govuk_radio_buttons_fieldset(:administered, legend: nil) do %>
       <%= f.govuk_radio_button(
             :administered, true,
-            label: { text: t("vaccinations.form.label.#{@vaccination_record.programme.type}") },
+            label: { text: t(programme.type, scope: "vaccinations.form.label") },
             link_errors: true,
-            checked: @vaccination_record.persisted? && @vaccination_record.administered?,
           ) do %>
         <%= f.govuk_collection_radio_buttons(
               :delivery_site,
-              vaccination_common_delivery_sites,
+              common_delivery_sites_options,
               :value,
               :label,
               legend: {
@@ -35,11 +34,13 @@
             :administered,
             false,
             label: { text: "No, they did not get it" },
-            checked: @vaccination_record.persisted? && @vaccination_record.not_administered?,
           ) %>
     <% end %>
 
-    <%= f.hidden_field :delivery_method, value: :intramuscular %>
+    <%= f.hidden_field :delivery_method, value: delivery_method %>
+    <%= f.hidden_field :dose_sequence, value: dose_sequence %>
+    <%= f.hidden_field :programme_id, value: programme.id %>
+    <%= f.hidden_field :vaccine_id, value: vaccine.id %>
 
     <%= f.govuk_submit "Continue" %>
   </div>

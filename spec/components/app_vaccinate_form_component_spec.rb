@@ -16,15 +16,10 @@ describe AppVaccinateFormComponent do
       session:
     )
   end
-  let(:vaccination_record) { build(:vaccination_record, programme:, vaccine:) }
+  let(:vaccination_record) { VaccinationRecord.new(patient_session:) }
 
   let(:component) do
-    described_class.new(
-      patient_session:,
-      vaccination_record:,
-      section: "vaccinate",
-      tab: "needed"
-    )
+    described_class.new(vaccination_record, section: "vaccinate", tab: "needed")
   end
 
   it { should have_css(".nhsuk-card") }
@@ -39,25 +34,8 @@ describe AppVaccinateFormComponent do
   it { should have_field("Yes, they got the HPV vaccine") }
   it { should have_field("No, they did not get it") }
 
-  context "patient has unrecorded vaccination record" do
-    let(:patient_session) do
-      create(
-        :patient_session,
-        :consent_given_triage_not_needed,
-        programme:,
-        session:
-      )
-    end
-    let(:vaccination_record) do
-      create(:vaccination_record, :not_recorded, programme:, patient_session:)
-    end
-
-    it { should have_field("Yes, they got the HPV vaccine", checked: true) }
-    it { should have_field("Left arm", checked: true, exact: false) }
-  end
-
-  describe "render?" do
-    subject { component.render? }
+  describe "#render?" do
+    subject(:render) { component.render? }
 
     context "patient is not ready for vaccination" do
       before do

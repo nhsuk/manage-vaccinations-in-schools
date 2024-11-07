@@ -61,6 +61,8 @@ class TriagesController < ApplicationController
 
       redirect_to redirect_path
     else
+      @draft_vaccination_record =
+        VaccinationRecord.new(patient_session: @patient_session)
       render "patient_sessions/show", status: :unprocessable_entity
     end
   end

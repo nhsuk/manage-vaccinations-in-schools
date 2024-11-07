@@ -190,11 +190,6 @@ class VaccinationRecord < ApplicationRecord
     administered_at.nil?
   end
 
-  def administered=(value)
-    self.administered_at =
-      ActiveModel::Type::Boolean.new.cast(value) ? Time.zone.now : nil
-  end
-
   def retryable_reason?
     not_well? || contraindications? || absent_from_session? ||
       absent_from_school?
@@ -204,7 +199,7 @@ class VaccinationRecord < ApplicationRecord
     [
       (:date_and_time if recorded?),
       (:delivery_site if administered?),
-      (:vaccine if recorded? && administered?),
+      (:vaccine if administered?),
       (:batch if administered?),
       (:location if requires_location_name?),
       (:reason if not_administered?),

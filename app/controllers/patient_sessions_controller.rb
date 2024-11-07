@@ -4,13 +4,14 @@ class PatientSessionsController < ApplicationController
   before_action :set_patient_session
   before_action :set_session
   before_action :set_patient
-  before_action :set_draft_vaccination_record
   before_action :set_section_and_tab
   before_action :set_back_link
 
   layout "three_quarters"
 
   def show
+    @draft_vaccination_record =
+      VaccinationRecord.new(patient_session: @patient_session)
   end
 
   def log
@@ -38,10 +39,6 @@ class PatientSessionsController < ApplicationController
 
   def set_patient
     @patient = @patient_session.patient
-  end
-
-  def set_draft_vaccination_record
-    @draft_vaccination_record = @patient_session.draft_vaccination_record
   end
 
   def set_section_and_tab
