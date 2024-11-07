@@ -9,6 +9,7 @@
 #  current_sign_in_ip  :string
 #  email               :string
 #  encrypted_password  :string           default(""), not null
+#  fallback_role       :integer          default("nurse"), not null
 #  family_name         :string           not null
 #  given_name          :string           not null
 #  last_sign_in_at     :datetime
@@ -50,16 +51,12 @@ FactoryBot.define do
 
     sequence(:family_name) { |n| "User #{n}" }
     given_name { "Test" }
+    fallback_role { :nurse }
 
     sequence(:email) { |n| "nurse-#{n}@example.com" }
     sequence(:organisations) { [Organisation.first || create(:organisation)] }
-    # It would normally be reasonable to expect to set a password here. However,
-    # when cis2 is enabled Devise does not create a 'password=' method for us,
-    # so we can't include the following setter. If you have a need to test users
-    # with passwords you'll have to do something tricky like either load the
-    # User model with cis2 disabled to trigger the Devise code that adds that
-    # method, or stub out the methods yourself. Good luck, meta force be with
-    # you.
+
+    # Don't set a password as this interferes with CIS2.
     #
     # password { "power overwhelming!" }
 
@@ -79,6 +76,7 @@ FactoryBot.define do
         selected_role_name { "Medical Secretary Access Role" }
       end
       sequence(:email) { |n| "admin-#{n}@example.com" }
+      fallback_role { :admin }
     end
 
     trait :signed_in do
