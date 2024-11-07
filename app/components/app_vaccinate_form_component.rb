@@ -1,59 +1,66 @@
 # frozen_string_literal: true
 
 class AppVaccinateFormComponent < ViewComponent::Base
-  def initialize(patient_session:, section:, tab:, vaccination_record:)
+  def initialize(vaccination_record, section:, tab:)
     super
 
-    @patient_session = patient_session
+    @vaccination_record = vaccination_record
+    @patient_session = vaccination_record.patient_session
     @section = section
     @tab = tab
-    @vaccination_record = vaccination_record
   end
 
   def url
     @url ||=
       session_patient_vaccinations_path(
-        session_slug: session.slug,
-        patient_id: patient.id,
+        @patient_session.session,
+        @patient_session.patient,
         section: @section,
         tab: @tab
       )
   end
 
   def render?
-    @patient_session.next_step == :vaccinate && session.today?
+    @patient_session.next_step == :vaccinate && @patient_session.session.today?
   end
 
   private
 
-  def patient
-    @patient_session.patient
-  end
+  # TODO: this code will need to be revisited in future as it only really
+  # works for HPV, where we only have one vaccine. It is likely to fail for
+  # the Doubles programme as that has 2 vaccines. It is also likely to fail
+  # for the flu programme for the SAIS organisations that offer both nasal and
+  # injectable vaccines.
 
-  def session
-    @patient_session.session
-  end
-
-  def programme_name
-    @vaccination_record.programme.name
+  def programme
+    @patient_session.programmes.first
   end
 
   def vaccine
-    @vaccination_record.vaccine
+    programme.vaccines.active.first
   end
 
-  def vaccination_common_delivery_sites
-    site_options =
+  def delivery_method
+    :intramuscular
+  end
+
+  def dose_sequence
+    1
+  end
+
+  def common_delivery_sites_options
+    options =
       vaccine.common_delivery_sites.map do |site|
         OpenStruct.new(
           value: site,
           label:
             t(
-              "activerecord.attributes.vaccination_record.delivery_sites.#{site}"
+              site,
+              scope: "activerecord.attributes.vaccination_record.delivery_sites"
             )
         )
       end
 
-    site_options + [OpenStruct.new(value: "other", label: "Other")]
+    options + [OpenStruct.new(value: "other", label: "Other")]
   end
 end

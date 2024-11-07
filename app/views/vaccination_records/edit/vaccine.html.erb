@@ -14,9 +14,9 @@
   <%= f.govuk_radio_buttons_fieldset(:vaccine_id,
                                      caption: { text: @patient.full_name, size: "l" },
                                      legend: { size: "l", tag: "h1", text: page_title }) do %>
-    <% vaccine = @vaccination_record.vaccine %>
-
-    <%= f.govuk_radio_button(:vaccine_id, vaccine.id, label: { text: vaccine_heading(vaccine) }) %>
+    <% @programme.vaccines.active.each do |vaccine| %>
+      <%= f.govuk_radio_button(:vaccine_id, vaccine.id, label: { text: vaccine_heading(vaccine) }) %>
+    <% end %>
   <% end %>
 
   <%= f.govuk_submit "Continue" %>

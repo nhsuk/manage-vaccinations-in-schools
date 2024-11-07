@@ -25,7 +25,7 @@
           current_user:,
           change_links: {
             administered_at: wizard_path("date-and-time"),
-            batch: wizard_path(:batch),
+            batch: wizard_path("batch"),
             delivery_method: wizard_path("delivery-site"),
             delivery_site: wizard_path("delivery-site"),
             location: @vaccination_record.wizard_steps.include?(:location) ? wizard_path(:location) : nil,
@@ -35,7 +35,7 @@
               section: "vaccinations",
               tab: "vaccinate",
             ),
-            vaccine: wizard_path(:vaccine),
+            vaccine: wizard_path("vaccine"),
           },
           show_notes: false,
         ) %>

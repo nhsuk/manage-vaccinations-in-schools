@@ -9,7 +9,6 @@ class VaccinationsController < ApplicationController
   before_action :set_session
   before_action :set_patient, except: %i[index batch update_batch]
   before_action :set_patient_session, only: %i[create]
-  before_action :set_draft_vaccination_record, only: %i[create]
 
   before_action :set_batches, only: %i[index create batch update_batch]
   before_action :set_todays_batch, only: %i[index create batch]
@@ -49,7 +48,12 @@ class VaccinationsController < ApplicationController
   end
 
   def create
-    authorize @draft_vaccination_record
+    authorize VaccinationRecord
+
+    @draft_vaccination_record =
+      @patient_session.draft_vaccination_records.find_or_initialize_by(
+        recorded_at: nil
+      )
 
     if @draft_vaccination_record.update(
          create_params.merge(performed_by: current_user)
@@ -58,6 +62,7 @@ class VaccinationsController < ApplicationController
 
       steps = @draft_vaccination_record.wizard_steps
       steps.delete(:delivery_site) unless delivery_site_param_other?
+      steps.delete(:vaccine)
       steps.delete(:batch) if @todays_batch.present?
 
       session[:return_to] = "session"
@@ -98,16 +103,14 @@ class VaccinationsController < ApplicationController
   private
 
   def vaccination_record_params
-    params
-      .fetch(:vaccination_record, {})
-      .permit(
-        :administered,
-        :delivery_site,
-        :delivery_method,
-        :reason,
-        :batch_id
-      )
-      .merge(dose_sequence: 1)
+    params.require(:vaccination_record).permit(
+      :administered,
+      :delivery_method,
+      :delivery_site,
+      :dose_sequence,
+      :programme_id,
+      :vaccine_id
+    )
   end
 
   def create_params
@@ -118,9 +121,14 @@ class VaccinationsController < ApplicationController
         else
           vaccination_record_params
         end
-      create_params.merge(batch_id: @todays_batch&.id)
+      create_params.except(:administered).merge(
+        batch_id: @todays_batch&.id,
+        administered_at: Time.current
+      )
     else
-      vaccination_record_params
+      vaccination_record_params.except(:administered).merge(
+        administered_at: nil
+      )
     end
   end
 
@@ -150,10 +158,6 @@ class VaccinationsController < ApplicationController
       policy_scope(Patient).find(
         params.fetch(:patient_id) { params.fetch(:id) }
       )
-  end
-
-  def set_draft_vaccination_record
-    @draft_vaccination_record = @patient_session.draft_vaccination_record
   end
 
   def set_patient_session

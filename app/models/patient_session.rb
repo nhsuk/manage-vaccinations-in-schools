@@ -93,22 +93,6 @@ class PatientSession < ApplicationRecord
 
   delegate :send_notifications?, to: :patient
 
-  def draft_vaccination_record
-    # HACK: this code will need to be revisited in future as it only really
-    # works for HPV, where we only have one vaccine. It is likely to fail for
-    # the Doubles programme as that has 2 vaccines. It is also likely to fail
-    # for the flu programme for the SAIS organisations that offer both nasal and
-    # injectable vaccines.
-
-    programme = programmes.first
-    vaccine = programme.vaccines.active.first
-
-    draft_vaccination_records.create_with(
-      programme:,
-      vaccine:
-    ).find_or_initialize_by(recorded_at: nil)
-  end
-
   def draft_gillick_assessment
     draft_gillick_assessments.find_or_initialize_by(recorded_at: nil)
   end
