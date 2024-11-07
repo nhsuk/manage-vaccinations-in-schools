@@ -235,6 +235,7 @@ en:
           will_be_vaccinated_elsewhere: Vaccine will be given elsewhere
         responses:
           given: consent given
+          not_provided: not provided
           refused: consent refused
         routes:
           in_person: In person
