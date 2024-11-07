@@ -277,64 +277,73 @@ describe ImmunisationImportRow do
     context "with an existing patient matching NHS number" do
       let(:data) { valid_data }
 
-      let(:patient) { create(:patient, nhs_number:) }
+      let(:other_patient) { create(:patient, nhs_number:) }
 
-      it { should eq(patient) }
+      it { should eq(other_patient) }
     end
 
-    context "with an existing patient matching first name, last name and date of birth" do
-      let(:data) { valid_data }
+    context "without an NHS number and an existing patient matching first name, last name and date of birth" do
+      let(:data) { valid_data.except("NHS_NUMBER") }
 
-      let(:patient) do
+      let(:other_patient) do
         create(
           :patient,
           given_name:,
           family_name:,
+          nhs_number:,
           date_of_birth: Date.parse(date_of_birth)
         )
       end
 
-      it { should eq(patient) }
+      it { should eq(other_patient) }
     end
 
-    context "with an existing patient matching first name, last name and postcode" do
-      let(:data) { valid_data }
+    context "without an NHS number and an existing patient matching first name, last name and postcode" do
+      let(:data) { valid_data.except("NHS_NUMBER") }
 
-      let(:patient) do
-        create(:patient, given_name:, family_name:, address_postcode:)
+      let(:other_patient) do
+        create(
+          :patient,
+          given_name:,
+          family_name:,
+          address_postcode:,
+          nhs_number:
+        )
       end
 
-      it { should eq(patient) }
+      it { should eq(other_patient) }
     end
 
-    context "with an existing patient matching first name, date of birth and postcode" do
-      let(:data) { valid_data }
+    context "without an NHS number and an existing patient matching first name, date of birth and postcode" do
+      let(:data) { valid_data.except("NHS_NUMBER") }
 
-      let(:patient) do
+      let(:other_patient) do
         create(
           :patient,
           given_name:,
           date_of_birth: Date.parse(date_of_birth),
-          address_postcode:
+          address_postcode:,
+          nhs_number:
         )
       end
 
-      it { should eq(patient) }
+      it { should eq(other_patient) }
     end
 
-    context "with an existing patient matching last name, date of birth and postcode" do
-      let(:data) { valid_data }
+    context "without an NHS number and an existing patient matching last name, date of birth and postcode" do
+      let(:data) { valid_data.except("NHS_NUMBER") }
 
-      let(:patient) do
+      let(:other_patient) do
         create(
           :patient,
           family_name:,
           date_of_birth: Date.parse(date_of_birth),
-          address_postcode:
+          address_postcode:,
+          nhs_number:
         )
       end
 
-      it { should eq(patient) }
+      it { should eq(other_patient) }
     end
 
     describe "#cohort" do
