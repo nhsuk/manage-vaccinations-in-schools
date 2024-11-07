@@ -179,6 +179,27 @@ describe AppActivityLogComponent do
                      by: "Nurse Joy"
   end
 
+  describe "vaccination not administered" do
+    before do
+      create(
+        :vaccination_record,
+        :not_administered,
+        programme:,
+        patient_session:,
+        created_at: Time.zone.local(2024, 5, 31, 13),
+        performed_by: user,
+        notes: "Some notes.",
+        vaccine: create(:vaccine, :gardasil, programme:)
+      )
+    end
+
+    include_examples "card",
+                     title: "Unable to vaccinate: Unwell",
+                     date: "31 May 2024 at 1:00pm",
+                     notes: "Some notes.",
+                     by: "Nurse Joy"
+  end
+
   describe "self-consent" do
     before do
       create(
