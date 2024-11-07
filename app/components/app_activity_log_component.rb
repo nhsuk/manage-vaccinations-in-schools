@@ -110,12 +110,19 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def vaccination_events
-    vaccination_records.recorded.map do
+    vaccination_records.recorded.map do |vaccination_record|
+      title =
+        if vaccination_record.administered?
+          "Vaccinated with #{helpers.vaccine_heading(vaccination_record.vaccine)}"
+        else
+          "Unable to vaccinate: #{vaccination_record.human_enum_name(:reason)}"
+        end
+
       {
-        title: "Vaccinated with #{helpers.vaccine_heading(_1.vaccine)}",
-        time: _1.created_at,
-        notes: _1.notes,
-        by: _1.performed_by&.full_name
+        title:,
+        time: vaccination_record.created_at,
+        notes: vaccination_record.notes,
+        by: vaccination_record.performed_by&.full_name
       }
     end
   end
