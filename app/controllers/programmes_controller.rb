@@ -57,7 +57,7 @@ class ProgrammesController < ApplicationController
           :session_dates,
           patient_sessions: %i[
             consents
-            gillick_assessments
+            gillick_assessment
             triages
             vaccination_records
           ]

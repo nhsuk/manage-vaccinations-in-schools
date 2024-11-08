@@ -208,27 +208,6 @@ describe PatientSession do
       end
     end
 
-    context "with draft gillick assessments" do
-      before { create(:gillick_assessment, :draft, patient_session:) }
-
-      it "moves the patient to the new session" do
-        # stree-ignore
-        expect { confirm_transfer! }
-        .to change { patient_session.patient.reload.school }
-          .from(original_session.location).to(proposed_session.location)
-        .and change { described_class.exists?(patient_session.id) }
-          .from(true).to(false)
-        .and not_change(patient_session.patient.patient_sessions, :count)
-      end
-
-      it "removes draft gillick assessments and vaccionation records" do
-        # stree-ignore
-        expect { confirm_transfer! }
-        .to change { patient_session.draft_gillick_assessments.count }
-          .by(-1)
-      end
-    end
-
     context "when the patient session is for the generic clinic" do
       let(:organisation) { original_session.organisation }
       let(:location) { create(:location, :generic_clinic, organisation:) }

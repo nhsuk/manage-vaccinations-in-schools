@@ -81,7 +81,7 @@ class OrganisationExport
         :consents,
         :triages,
         :cohort,
-        patient_sessions: %i[gillick_assessments vaccination_records],
+        patient_sessions: %i[gillick_assessment vaccination_records],
         school: :team
       )
   end
@@ -92,9 +92,7 @@ class OrganisationExport
       *consent_data(consent),
       *health_answers_data(consent),
       *triage_data(patient.triages.last),
-      *gillick_data(
-        patient.patient_sessions.flat_map(&:gillick_assessments).last
-      ),
+      *gillick_data(patient.patient_sessions.gillick_assessment),
       *vaccination_data(
         patient.patient_sessions.flat_map(&:vaccination_records).last
       )
