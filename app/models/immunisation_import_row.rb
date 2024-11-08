@@ -108,13 +108,7 @@ class ImmunisationImportRow
   def patient
     return unless valid?
 
-    @patient ||=
-      if (existing_patient = existing_patients.first)
-        existing_patient.stage_changes(patient_attributes)
-        existing_patient
-      else
-        Patient.create!(patient_attributes)
-      end
+    @patient ||= existing_patients.first || Patient.create!(patient_attributes)
   end
 
   def session

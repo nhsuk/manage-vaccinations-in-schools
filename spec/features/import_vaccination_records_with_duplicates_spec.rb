@@ -10,6 +10,7 @@ describe "Immunisation imports duplicates" do
     and_i_click_on_the_upload_link
     and_i_upload_a_file_with_duplicate_records
     then_i_should_see_the_import_page_with_duplicate_records
+    and_the_first_patient_should_not_be_updated_but_have_a_vaccination_record
 
     when_i_review_the_first_duplicate_record
     then_i_should_see_the_first_duplicate_record
@@ -20,7 +21,7 @@ describe "Immunisation imports duplicates" do
     when_i_choose_to_keep_the_duplicate_record
     and_i_confirm_my_selection
     then_i_should_see_a_success_message
-    and_the_first_patient_should_be_updated_and_have_a_vaccination_record
+    and_the_duplicate_record_should_be_persisted
 
     when_i_review_the_second_duplicate_record
     then_i_should_see_the_second_duplicate_record
@@ -31,18 +32,7 @@ describe "Immunisation imports duplicates" do
     and_the_second_record_should_not_be_updated
 
     when_i_go_to_the_programme
-    then_i_should_see_import_issues_with_the_count
-
-    when_i_go_to_import_issues
-    then_i_should_see_that_a_record_needs_review
-
-    when_i_review_the_third_duplicate_record
-    then_i_should_see_the_third_duplicate_record
-
-    when_i_choose_to_keep_the_duplicate_record
-    and_i_confirm_my_selection
-    then_i_should_see_a_success_message
-    and_the_third_record_should_be_updated
+    then_i_should_see_no_import_issues_with_the_count
   end
 
   def given_i_am_signed_in
@@ -108,8 +98,13 @@ describe "Immunisation imports duplicates" do
         patient: @already_vaccinated_patient,
         session: @session
       )
+    @third_patient_session =
+      create(:patient_session, patient: @third_patient, session: @session)
     @vaccine = @programme.vaccines.find_by(nivs_name: "Gardasil9")
+    @other_vaccine = @programme.vaccines.find_by(nivs_name: "Cervarix")
     @batch = create(:batch, vaccine: @vaccine, name: "SomethingElse")
+    @other_batch =
+      create(:batch, vaccine: @other_vaccine, name: "CervarixBatch")
     @previous_vaccination_record =
       create(
         :vaccination_record,
@@ -123,6 +118,20 @@ describe "Immunisation imports duplicates" do
         dose_sequence: 1,
         patient_session: @patient_session,
         vaccine: @vaccine
+      )
+    @another_previous_vaccination_record =
+      create(
+        :vaccination_record,
+        programme: @programme,
+        administered_at: @session.dates.min.in_time_zone + 12.hours,
+        notes: "Bar",
+        recorded_at: Time.zone.yesterday,
+        batch: @other_batch,
+        delivery_method: :nasal_spray,
+        delivery_site: :left_arm_upper_position,
+        dose_sequence: 1,
+        patient_session: @third_patient_session,
+        vaccine: @other_vaccine
       )
   end
 
@@ -147,7 +156,7 @@ describe "Immunisation imports duplicates" do
   end
 
   def then_i_should_see_the_import_page_with_duplicate_records
-    expect(page).to have_content("3 duplicate records need review")
+    expect(page).to have_content("2 duplicate records need review")
   end
 
   def when_i_choose_to_keep_the_duplicate_record
@@ -169,25 +178,32 @@ describe "Immunisation imports duplicates" do
   end
 
   def when_i_review_the_first_duplicate_record
-    click_on "Review Esmae O'Connell"
+    click_on "Review Caden Attwater"
   end
 
   def then_i_should_see_the_first_duplicate_record
     expect(page).to have_content("This record needs reviewing")
-    expect(page).to have_content("PostcodeLE3 2DA")
-    expect(page).to have_content("PostcodeSW11 1AA")
+    expect(page).to have_content("Batch ID123013325")
+    expect(page).to have_content("Batch IDSomethingElse")
+    expect(page).to have_content("MethodIntramuscular")
+    expect(page).to have_content("MethodNasal spray")
+    expect(page).to have_content("SiteLeft thigh")
+    expect(page).to have_content("SiteNose")
   end
 
   def then_i_should_see_the_second_duplicate_record
     expect(page).to have_content("This record needs reviewing")
-    expect(page).to have_content("MethodIntramuscular")
+    expect(page).to have_content("Batch ID123013325")
+    expect(page).to have_content("Batch IDCervarixBatch")
     expect(page).to have_content("MethodNasal spray")
+    expect(page).to have_content("SiteLeft arm (upper position)")
+    expect(page).to have_content("SiteNose")
   end
 
-  def and_the_first_patient_should_be_updated_and_have_a_vaccination_record
+  def and_the_first_patient_should_not_be_updated_but_have_a_vaccination_record
     @existing_patient.reload
-    expect(@existing_patient.given_name).to eq("Chyna")
-    expect(@existing_patient.family_name).to eq("Pickle")
+    expect(@existing_patient.given_name).to eq("Esmae")
+    expect(@existing_patient.family_name).to eq("O'Connell")
     expect(@existing_patient.pending_changes).to eq({})
     expect(@existing_patient.vaccination_records.count).to eq(1)
     vaccs_record = @existing_patient.vaccination_records.first
@@ -203,14 +219,25 @@ describe "Immunisation imports duplicates" do
   end
 
   def when_i_review_the_second_duplicate_record
-    click_on "Review Caden Attwater"
+    click_on "Review Joanna Hamilton"
+  end
+
+  def and_the_duplicate_record_should_be_persisted
+    @previous_vaccination_record.reload
+    expect(@previous_vaccination_record.delivery_method).to eq("intramuscular")
+    expect(@previous_vaccination_record.delivery_site).to eq("left_thigh")
+    expect(@previous_vaccination_record.pending_changes).to eq({})
   end
 
   def and_the_second_record_should_not_be_updated
-    @previous_vaccination_record.reload
-    expect(@previous_vaccination_record.delivery_method).to eq("nasal_spray")
-    expect(@previous_vaccination_record.delivery_site).to eq("nose")
-    expect(@previous_vaccination_record.pending_changes).to eq({})
+    @another_previous_vaccination_record.reload
+    expect(@another_previous_vaccination_record.delivery_method).to eq(
+      "nasal_spray"
+    )
+    expect(@another_previous_vaccination_record.delivery_site).to eq(
+      "left_arm_upper_position"
+    )
+    expect(@another_previous_vaccination_record.pending_changes).to eq({})
   end
 
   def when_i_upload_the_records
@@ -230,28 +257,16 @@ describe "Immunisation imports duplicates" do
     expect(page).to have_selector(".app-count", text: "( 1 )")
   end
 
+  def then_i_should_see_no_import_issues_with_the_count
+    expect(page).to have_link("Import issues")
+    expect(page).to have_selector(".app-count", text: "( 0 )")
+  end
+
   def when_i_go_to_import_issues
     click_link "Import issues"
   end
 
   def then_i_should_see_that_a_record_needs_review
     expect(page).to have_content("1 imported record needs review")
-  end
-
-  def when_i_review_the_third_duplicate_record
-    click_on "Review Joanna Hamilton"
-  end
-
-  def then_i_should_see_the_third_duplicate_record
-    expect(page).to have_content("This record needs reviewing")
-    expect(page).to have_content("Full nameBerry Hamilton")
-    expect(page).to have_content("Full nameJoanna Hamilton")
-  end
-
-  def and_the_third_record_should_be_updated
-    @third_patient.reload
-    expect(@third_patient.given_name).to eq("Berry")
-    expect(@third_patient.family_name).to eq("Hamilton")
-    expect(@third_patient.pending_changes).to eq({})
   end
 end
