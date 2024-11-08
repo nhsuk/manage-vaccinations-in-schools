@@ -100,7 +100,7 @@ describe Consent do
         described_class.from_consent_form!(consent_form, patient:)
       end
 
-      let(:consent_form) { create(:consent_form, :recorded) }
+      let(:consent_form) { create(:consent_form, :recorded, reason_notes: nil) }
       let(:patient) { create(:patient) }
 
       it "copies over attributes from consent_form" do

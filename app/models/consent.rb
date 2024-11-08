@@ -217,7 +217,7 @@ class Consent < ApplicationRecord
         patient:,
         parent:,
         reason_for_refusal: consent_form.reason,
-        notes: consent_form.reason_notes,
+        notes: consent_form.reason_notes.presence || "",
         recorded_at: Time.zone.now,
         response: consent_form.response,
         route: "website",
