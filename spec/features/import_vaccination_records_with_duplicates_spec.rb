@@ -20,15 +20,15 @@ describe "Immunisation imports duplicates" do
     when_i_choose_to_keep_the_duplicate_record
     and_i_confirm_my_selection
     then_i_should_see_a_success_message
-    and_the_first_record_should_be_updated
+    and_the_first_patient_should_be_updated_and_have_a_vaccination_record
 
     when_i_review_the_second_duplicate_record
     then_i_should_see_the_second_duplicate_record
 
-    when_i_choose_to_keep_the_duplicate_record
+    when_i_choose_to_keep_the_previously_uploaded_record
     and_i_confirm_my_selection
     then_i_should_see_a_success_message
-    and_the_second_record_should_be_updated
+    and_the_second_record_should_not_be_updated
 
     when_i_go_to_the_programme
     then_i_should_see_import_issues_with_the_count
@@ -154,6 +154,10 @@ describe "Immunisation imports duplicates" do
     choose "Use duplicate record"
   end
 
+  def when_i_choose_to_keep_the_previously_uploaded_record
+    choose "Keep previously uploaded record"
+  end
+
   def when_i_submit_the_form_without_choosing_anything
     click_on "Resolve duplicate"
   end
@@ -180,11 +184,18 @@ describe "Immunisation imports duplicates" do
     expect(page).to have_content("MethodNasal spray")
   end
 
-  def and_the_first_record_should_be_updated
+  def and_the_first_patient_should_be_updated_and_have_a_vaccination_record
     @existing_patient.reload
     expect(@existing_patient.given_name).to eq("Chyna")
     expect(@existing_patient.family_name).to eq("Pickle")
     expect(@existing_patient.pending_changes).to eq({})
+    expect(@existing_patient.vaccination_records.count).to eq(1)
+    vaccs_record = @existing_patient.vaccination_records.first
+    expect(vaccs_record.administered_at).to eq(
+      Time.new(2024, 5, 14, 12, 0, 0, "+01:00")
+    )
+    expect(vaccs_record.delivery_method).to eq("intramuscular")
+    expect(vaccs_record.delivery_site).to eq("left_buttock")
   end
 
   def then_i_should_see_a_validation_error
@@ -195,10 +206,10 @@ describe "Immunisation imports duplicates" do
     click_on "Review Caden Attwater"
   end
 
-  def and_the_second_record_should_be_updated
+  def and_the_second_record_should_not_be_updated
     @previous_vaccination_record.reload
-    expect(@previous_vaccination_record.delivery_method).to eq("intramuscular")
-    expect(@previous_vaccination_record.delivery_site).to eq("left_thigh")
+    expect(@previous_vaccination_record.delivery_method).to eq("nasal_spray")
+    expect(@previous_vaccination_record.delivery_site).to eq("nose")
     expect(@previous_vaccination_record.pending_changes).to eq({})
   end
 
