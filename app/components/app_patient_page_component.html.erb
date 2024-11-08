@@ -40,8 +40,8 @@
       <p class="nhsuk-body">
         <%= govuk_link_to("Give your assessment",
                           new_session_patient_gillick_assessment_path(
-              session_slug: session.slug,
-              patient_id: patient.id,
+              session,
+              patient,
               section: @section,
               tab: @tab,
             )) %>

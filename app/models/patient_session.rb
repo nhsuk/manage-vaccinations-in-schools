@@ -90,10 +90,6 @@ class PatientSession < ApplicationRecord
 
   delegate :send_notifications?, to: :patient
 
-  def draft_gillick_assessment
-    draft_gillick_assessments.find_or_initialize_by(recorded_at: nil)
-  end
-
   def gillick_competent?
     latest_gillick_assessment&.gillick_competent?
   end

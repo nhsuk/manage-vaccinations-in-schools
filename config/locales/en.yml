@@ -146,6 +146,15 @@ en:
               invalid: ‘%{value}’ is not a known school URN
             year_group:
               inclusion: is not part of this programme
+        draft_gillick_assessment:
+          attributes:
+            gillick_competent:
+              inclusion: Choose if they are Gillick competent
+            location_name:
+              blank: Enter where the vaccination was given
+            notes:
+              blank: Enter details of your assessment
+              too_long: Enter details that are less than 1000 characters long
         draft_vaccination_record:
           attributes:
             administered:
@@ -462,15 +471,6 @@ en:
               inclusion: Choose a school from the list
             use_preferred_name:
               inclusion: Tell us whether they use a different name
-        gillick_assessment:
-          attributes:
-            gillick_competent:
-              inclusion: Choose if they are Gillick competent
-            location_name:
-              blank: Enter where the vaccination was given
-            notes:
-              blank: Enter details of your assessment
-              too_long: Enter details that are less than 1000 characters long
         immunisation_import:
           attributes:
             csv:
@@ -804,6 +804,7 @@ en:
     date_of_birth: date-of-birth
     delivery: delivery
     education_setting: education-setting
+    gillick: gillick
     gp: gp
     health_question: health-question
     injection: injection

@@ -98,6 +98,10 @@ Rails.application.routes.draw do
     end
   end
 
+  resource :draft_gillick_assessment,
+           only: %i[show update],
+           path: "draft-gillick-assessment/:id"
+
   resource :draft_vaccination_record,
            only: %i[show update],
            path: "draft-vaccination-record/:id"
@@ -284,13 +288,7 @@ Rails.application.routes.draw do
         end
 
         resource :gillick_assessment, only: %i[new create]
-
-        resource :gillick_assessment,
-                 path: "gillick-assessment/:id",
-                 only: %i[show update]
-
         resource :triages, only: %i[new create]
-
         resource :vaccinations, only: %i[create]
       end
     end

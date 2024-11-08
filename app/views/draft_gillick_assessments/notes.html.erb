@@ -1,14 +1,15 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: previous_wizard_path,
+        href: draft_gillick_assessment_back_link_path,
         name: "previous page",
       ) %>
 <% end %>
 
 <% content_for :page_title, "Details of your assessment" %>
 
-<%= form_with model: @assessment, url: wizard_path, method: :put do |f| %>
+<%= form_with model: @draft_gillick_assessment, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
+
   <%= f.govuk_text_area :notes, caption: { size: "l",
                                            text: @patient.full_name },
                                 label: { size: "l",

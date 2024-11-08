@@ -55,9 +55,7 @@ class VaccinationsController < ApplicationController
         &:reset!
       )
 
-    @draft_vaccination_record.assign_attributes(create_params)
-
-    if @draft_vaccination_record.save
+    if @draft_vaccination_record.update(create_params)
       steps = @draft_vaccination_record.wizard_steps
 
       steps.delete(:outcome) if @draft_vaccination_record.administered?

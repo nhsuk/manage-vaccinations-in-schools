@@ -40,19 +40,6 @@ class GillickAssessment < ApplicationRecord
 
   encrypts :notes
 
-  on_wizard_step :gillick do
-    validates :gillick_competent, inclusion: { in: [true, false] }
-  end
-
-  on_wizard_step :location, exact: true do
-    validates :location_name, presence: true
-  end
-
-  on_wizard_step :notes do
-    validates :notes, length: { maximum: 1000 }, presence: true
-  end
-
-  def wizard_steps
-    [:gillick, (:location if requires_location_name?), :notes, :confirm].compact
-  end
+  validates :gillick_competent, inclusion: { in: [true, false] }
+  validates :notes, length: { maximum: 1000 }, presence: true
 end
