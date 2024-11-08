@@ -45,13 +45,8 @@ class VaccinationRecord < ApplicationRecord
   include LocationNameConcern
   include PendingChangesConcern
   include Recordable
-  include WizardStepConcern
 
   audited associated_with: :patient_session
-
-  before_save :reset_unused_fields
-
-  attr_accessor :delivery_site_other, :todays_batch
 
   DELIVERY_SITE_SNOMED_CODES_AND_TERMS = {
     left_thigh: ["61396006", "Structure of left thigh (body structure)"],
@@ -102,7 +97,10 @@ class VaccinationRecord < ApplicationRecord
 
   enum :delivery_method,
        %w[intramuscular subcutaneous nasal_spray],
-       prefix: true
+       prefix: true,
+       validate: {
+         if: :administered?
+       }
   enum :delivery_site,
        %w[
          left_arm
@@ -117,7 +115,10 @@ class VaccinationRecord < ApplicationRecord
          right_buttock
          nose
        ],
-       prefix: true
+       prefix: true,
+       validate: {
+         if: :administered?
+       }
   enum :reason,
        %i[
          refused
@@ -126,7 +127,10 @@ class VaccinationRecord < ApplicationRecord
          already_had
          absent_from_school
          absent_from_session
-       ]
+       ],
+       validate: {
+         if: :not_administered?
+       }
 
   encrypts :notes
 
@@ -134,16 +138,6 @@ class VaccinationRecord < ApplicationRecord
 
   validates :notes, length: { maximum: 1000 }
 
-  validates :delivery_site,
-            inclusion: {
-              in: delivery_sites.keys
-            },
-            if: -> { administered? && !delivery_site_other }
-  validates :delivery_method,
-            inclusion: {
-              in: delivery_methods.keys
-            },
-            if: -> { administered? && delivery_site.present? }
   validates :dose_sequence,
             presence: true,
             comparison: {
@@ -157,31 +151,6 @@ class VaccinationRecord < ApplicationRecord
               if: :performed_by_user
             }
 
-  validate :batch_vaccine_matches_vaccine, if: -> { recorded? && administered? }
-
-  on_wizard_step :delivery_site, exact: true do
-    validates :delivery_site,
-              inclusion: {
-                in: VaccinationRecord.delivery_sites.keys
-              }
-    validates :delivery_method,
-              inclusion: {
-                in: VaccinationRecord.delivery_methods.keys
-              }
-  end
-
-  on_wizard_step :reason, exact: true do
-    validates :reason, inclusion: { in: VaccinationRecord.reasons.keys }
-  end
-
-  on_wizard_step :batch, exact: true do
-    validates :batch_id, presence: true
-  end
-
-  on_wizard_step :location, exact: true do
-    validates :location_name, presence: true
-  end
-
   def administered?
     administered_at != nil
   end
@@ -193,18 +162,6 @@ class VaccinationRecord < ApplicationRecord
   def retryable_reason?
     not_well? || contraindications? || absent_from_session? ||
       absent_from_school?
-  end
-
-  def wizard_steps
-    [
-      (:date_and_time if recorded?),
-      (:delivery_site if administered?),
-      (:vaccine if administered?),
-      (:batch if administered?),
-      (:location if requires_location_name?),
-      (:reason if not_administered?),
-      :confirm
-    ].compact
   end
 
   def dose
@@ -236,21 +193,5 @@ class VaccinationRecord < ApplicationRecord
 
   def maximum_dose_sequence
     vaccine&.maximum_dose_sequence || 1
-  end
-
-  def batch_vaccine_matches_vaccine
-    return if batch&.vaccine_id == vaccine_id
-
-    errors.add(:batch_id, :incorrect_vaccine, vaccine_brand: vaccine&.brand)
-  end
-
-  def reset_unused_fields
-    if administered?
-      self.reason = nil
-    else
-      self.delivery_method = nil
-      self.delivery_site = nil
-      self.batch_id = nil
-    end
   end
 end

@@ -76,6 +76,7 @@ describe AppVaccinationRecordSummaryComponent do
 
     context "without a vaccine" do
       let(:administered_at) { nil }
+      let(:reason) { :not_well }
       let(:vaccine) { nil }
       let(:batch) { nil }
       let(:other_batch) { nil }
@@ -112,6 +113,7 @@ describe AppVaccinationRecordSummaryComponent do
 
     context "without a vaccine" do
       let(:administered_at) { nil }
+      let(:reason) { :not_well }
       let(:vaccine) { nil }
       let(:batch) { nil }
       let(:other_batch) { nil }
@@ -154,6 +156,7 @@ describe AppVaccinationRecordSummaryComponent do
 
     context "without a vaccine" do
       let(:administered_at) { nil }
+      let(:reason) { :not_well }
       let(:vaccine) { nil }
       let(:batch) { nil }
       let(:other_batch) { nil }
@@ -172,6 +175,7 @@ describe AppVaccinationRecordSummaryComponent do
 
     context "without a vaccine" do
       let(:administered_at) { nil }
+      let(:reason) { :not_well }
       let(:vaccine) { nil }
       let(:batch) { nil }
       let(:other_batch) { nil }

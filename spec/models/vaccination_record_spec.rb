@@ -47,32 +47,6 @@ describe VaccinationRecord do
 
   let(:programme) { create(:programme) }
 
-  describe "validations" do
-    context "vaccine and batch doesn't match" do
-      subject(:vaccination_record) do
-        build(
-          :vaccination_record,
-          programme:,
-          vaccine:,
-          batch:,
-          patient_session:
-        )
-      end
-
-      let(:patient_session) { create(:patient_session, programme:) }
-      let(:vaccine) { programme.vaccines.first }
-      let(:different_vaccine) { create(:vaccine, programme:) }
-      let(:batch) { create(:batch, vaccine: different_vaccine) }
-
-      it "has an error" do
-        expect(vaccination_record).to be_invalid
-        expect(vaccination_record.errors[:batch_id]).to include(
-          "Choose a batch of the #{vaccine.brand} vaccine"
-        )
-      end
-    end
-  end
-
   describe "#performed_by" do
     subject(:performed_by) { vaccination_record.performed_by }
 
@@ -112,34 +86,6 @@ describe VaccinationRecord do
       end
 
       it { should be_nil }
-    end
-  end
-
-  describe "#reset_unused_fields" do
-    subject(:save!) { vaccination_record.save! }
-
-    context "when administered" do
-      let(:vaccination_record) { build(:vaccination_record, reason: :not_well) }
-
-      it "clears the reason" do
-        expect { save! }.to change(vaccination_record, :reason).to(nil)
-      end
-    end
-
-    context "when not administered" do
-      let(:vaccination_record) { build(:vaccination_record, :not_administered) }
-
-      it "clears the deliver method" do
-        expect { save! }.to change(vaccination_record, :delivery_method).to(nil)
-      end
-
-      it "clears the deliver site" do
-        expect { save! }.to change(vaccination_record, :delivery_site).to(nil)
-      end
-
-      it "clears the batch" do
-        expect { save! }.to change(vaccination_record, :batch_id).to(nil)
-      end
     end
   end
 end

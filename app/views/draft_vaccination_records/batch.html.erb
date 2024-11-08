@@ -1,13 +1,13 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: vaccinations_back_link_path,
+        href: draft_vaccinations_back_link_path,
         name: "vaccination page",
       ) %>
 <% end %>
 
 <% content_for :page_title, "Which batch did you use?" %>
 
-<%= form_with model: @vaccination_record, url: wizard_path, method: :put do |f| %>
+<%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
   <%= f.govuk_radio_buttons_fieldset(:batch_id,
@@ -19,7 +19,7 @@
         (expires <%= batch.expiry.to_fs(:long) %>)
       <% end %>
       <%= f.govuk_radio_button(:batch_id, batch.id, label:) do %>
-        <% if @vaccination_record.draft? %>
+        <% unless @draft_vaccination_record.editing? %>
           <%= f.govuk_check_box(
                 :todays_batch,
                 batch.id,

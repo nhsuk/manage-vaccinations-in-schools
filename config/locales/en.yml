@@ -146,6 +146,31 @@ en:
               invalid: ‘%{value}’ is not a known school URN
             year_group:
               inclusion: is not part of this programme
+        draft_vaccination_record:
+          attributes:
+            administered:
+              inclusion: Choose if they got the vaccine
+            administered_at:
+              blank: Enter a date and time
+              missing_day: Enter a day
+              missing_month: Enter a month
+              missing_year: Enter a year
+              invalid: Enter a valid date and time
+            batch_id:
+              blank: Choose a batch
+              incorrect_vaccine: Choose a batch of the %{vaccine_brand} vaccine
+            delivery_method:
+              inclusion: Choose a method of delivery
+            delivery_site:
+              inclusion: Choose a delivery site
+            location_name:
+              blank: Enter where the vaccination was given
+            notes:
+              too_long: Enter notes that are less than 1000 characters long
+            reason:
+              inclusion: Choose a reason
+            site:
+              blank: Choose a site
         health_answer:
           attributes:
             notes:
@@ -540,31 +565,6 @@ en:
               confirmation: The password and confirmation do not match
             unlock_token:
               invalid: The unlock token is invalid
-        vaccination_record:
-          attributes:
-            administered:
-              inclusion: Choose if they got the vaccine
-            administered_at:
-              blank: Enter a date and time
-              missing_day: Enter a day
-              missing_month: Enter a month
-              missing_year: Enter a year
-              invalid: Enter a valid date and time
-            batch_id:
-              blank: Choose a batch
-              incorrect_vaccine: Choose a batch of the %{vaccine_brand} vaccine
-            delivery_method:
-              inclusion: Choose a method of delivery
-            delivery_site:
-              inclusion: Choose a delivery site
-            location_name:
-              blank: Enter where the vaccination was given
-            notes:
-              too_long: Enter notes that are less than 1000 characters long
-            reason:
-              inclusion: Choose a reason
-            site:
-              blank: Choose a site
   children:
     zero: No children
     one: 1 child
@@ -800,7 +800,7 @@ en:
     contact_method: contact-method
     date_and_time: date-and-time
     date_of_birth: date-of-birth
-    delivery_site: delivery-site
+    delivery: delivery
     education_setting: education-setting
     gp: gp
     health_question: health-question
