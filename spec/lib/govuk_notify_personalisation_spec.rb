@@ -179,7 +179,7 @@ describe GovukNotifyPersonalisation do
         :vaccination_record,
         :not_administered,
         programme:,
-        recorded_at: Date.new(2024, 1, 1)
+        created_at: Date.new(2024, 1, 1)
       )
     end
 

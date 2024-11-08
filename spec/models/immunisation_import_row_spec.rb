@@ -942,8 +942,6 @@ describe ImmunisationImportRow do
 
     let(:data) { valid_data }
 
-    it { should be_recorded }
-
     it "has a vaccinator" do
       expect(vaccination_record.performed_by).to have_attributes(
         full_name: "John Smith"

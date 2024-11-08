@@ -6,7 +6,7 @@ class VaccinationRecordsController < ApplicationController
   before_action :set_vaccination_record, except: :index
 
   def index
-    @pagy, @vaccination_records = pagy(vaccination_records.recorded)
+    @pagy, @vaccination_records = pagy(vaccination_records)
 
     render layout: "full"
   end
@@ -58,7 +58,7 @@ class VaccinationRecordsController < ApplicationController
           vaccine: :programme
         )
         .where(programme:)
-        .order(:recorded_at)
+        .order(:created_at)
         .strict_loading
   end
 

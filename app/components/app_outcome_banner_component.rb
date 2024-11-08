@@ -108,7 +108,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def last_action_time
-    @last_action_time ||= vaccination_record&.recorded_at || triage&.created_at
+    @last_action_time ||= vaccination_record&.created_at || triage&.created_at
   end
 
   def heading

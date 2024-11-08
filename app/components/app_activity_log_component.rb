@@ -110,7 +110,7 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def vaccination_events
-    vaccination_records.recorded.map do |vaccination_record|
+    vaccination_records.map do |vaccination_record|
       title =
         if vaccination_record.administered?
           "Vaccinated with #{helpers.vaccine_heading(vaccination_record.vaccine)}"

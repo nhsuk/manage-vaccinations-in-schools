@@ -74,9 +74,7 @@ class ImmunisationImportRow
     return unless administered
 
     vaccination_record =
-      VaccinationRecord.create_with(
-        recorded_at: Time.zone.now
-      ).find_or_initialize_by(
+      VaccinationRecord.find_or_initialize_by(
         administered_at:,
         dose_sequence:,
         location_name:,

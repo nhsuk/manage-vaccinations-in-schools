@@ -84,7 +84,7 @@ class DPSExportRow
   end
 
   def date_and_time
-    vaccination_record.recorded_at.strftime("%Y%m%dT%H%M%S00")
+    vaccination_record.administered_at.strftime("%Y%m%dT%H%M%S00")
   end
 
   def site_code

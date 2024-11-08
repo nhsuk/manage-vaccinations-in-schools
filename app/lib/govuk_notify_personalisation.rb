@@ -112,7 +112,7 @@ class GovukNotifyPersonalisation
   end
 
   def day_month_year_of_vaccination
-    vaccination_record&.recorded_at&.to_date&.to_fs(:uk_short)
+    vaccination_record&.created_at&.to_date&.to_fs(:uk_short)
   end
 
   def full_and_preferred_patient_name
@@ -233,10 +233,10 @@ class GovukNotifyPersonalisation
   def today_or_date_of_vaccination
     return if vaccination_record.nil?
 
-    if vaccination_record.recorded_at.today?
+    if vaccination_record.created_at.today?
       "today"
     else
-      vaccination_record.recorded_at.to_date.to_fs(:long)
+      vaccination_record.created_at.to_date.to_fs(:long)
     end
   end
 

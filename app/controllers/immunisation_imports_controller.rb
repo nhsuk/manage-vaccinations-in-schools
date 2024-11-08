@@ -43,7 +43,7 @@ class ImmunisationImportsController < ApplicationController
     end
 
     vaccination_records =
-      @immunisation_import.vaccination_records.recorded.includes(
+      @immunisation_import.vaccination_records.includes(
         :location,
         :patient,
         :session

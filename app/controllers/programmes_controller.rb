@@ -24,7 +24,7 @@ class ProgrammesController < ApplicationController
     @patients_count = patients.count
     @sessions_count = sessions.count
 
-    @vaccinations_count = policy_scope(VaccinationRecord).recorded.count
+    @vaccinations_count = policy_scope(VaccinationRecord).count
 
     @consent_notifications_count =
       @programme.consent_notifications.where(patient: patients).count
