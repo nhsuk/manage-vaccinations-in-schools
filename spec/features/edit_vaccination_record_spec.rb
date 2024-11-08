@@ -7,7 +7,7 @@ describe "Edit vaccination record" do
   scenario "User edits the vaccination record" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
-    and_a_vaccination_record_exists
+    and_an_administered_vaccination_record_exists
 
     when_i_go_to_the_vaccination_records_page
     then_i_should_see_the_vaccination_records
@@ -22,27 +22,82 @@ describe "Edit vaccination record" do
     then_i_should_see_the_date_time_form
 
     when_i_fill_in_an_invalid_date
-    and_i_click_continue
     then_i_see_the_date_time_form_with_errors
 
     when_i_fill_in_an_invalid_time
-    and_i_click_continue
     then_i_see_the_date_time_form_with_errors
 
     when_i_fill_in_a_valid_date_and_time
-    and_i_click_continue
     then_i_see_the_edit_vaccination_record_page
     and_i_should_see_the_updated_date_time
 
     when_i_click_change_vaccine
-    and_i_select_the_vaccine
+    and_i_choose_a_vaccine
     then_i_see_the_edit_vaccination_record_page
 
     when_i_click_on_change_batch
     and_i_choose_a_batch
-    and_i_click_continue
     then_i_see_the_edit_vaccination_record_page
     and_i_should_see_the_updated_batch
+  end
+
+  scenario "Edit outcome to vaccinated" do
+    given_i_am_signed_in
+    and_an_hpv_programme_is_underway
+    and_a_not_administered_vaccination_record_exists
+
+    when_i_go_to_the_vaccination_records_page
+    then_i_should_see_the_vaccination_records
+
+    when_i_click_on_the_vaccination_record
+    then_i_should_see_the_vaccination_record
+
+    when_i_click_on_edit_vaccination_record
+    then_i_see_the_edit_vaccination_record_page
+
+    when_i_click_on_change_outcome
+    then_i_should_see_the_change_outcome_form
+    and_i_choose_vaccinated
+    then_i_see_the_edit_vaccination_record_page
+
+    when_i_click_on_add_vaccine
+    and_i_choose_a_vaccine
+    then_i_see_the_edit_vaccination_record_page
+
+    when_i_click_on_add_batch
+    and_i_choose_a_batch
+    then_i_see_the_edit_vaccination_record_page
+    and_i_should_see_the_updated_batch
+
+    when_i_click_on_add_delivery_method
+    and_i_choose_a_delivery_method_and_site
+    then_i_see_the_edit_vaccination_record_page
+
+    when_i_click_on_save_changes
+    then_i_should_see_the_vaccination_record
+  end
+
+  scenario "Edit outcome to not vaccinated" do
+    given_i_am_signed_in
+    and_an_hpv_programme_is_underway
+    and_an_administered_vaccination_record_exists
+
+    when_i_go_to_the_vaccination_records_page
+    then_i_should_see_the_vaccination_records
+
+    when_i_click_on_the_vaccination_record
+    then_i_should_see_the_vaccination_record
+
+    when_i_click_on_edit_vaccination_record
+    then_i_see_the_edit_vaccination_record_page
+
+    when_i_click_on_change_outcome
+    then_i_should_see_the_change_outcome_form
+    and_i_choose_unwell
+    then_i_see_the_edit_vaccination_record_page
+
+    when_i_click_on_save_changes
+    then_i_should_see_the_vaccination_record
   end
 
   def given_i_am_signed_in
@@ -57,7 +112,16 @@ describe "Edit vaccination record" do
       organisation: @organisation,
       programme: @programme
     )
+
+    @vaccine = @programme.vaccines.first
+
+    @original_batch =
+      create(:batch, organisation: @organisation, vaccine: @vaccine)
+    @replacement_batch =
+      create(:batch, organisation: @organisation, vaccine: @vaccine)
+
     location = create(:location, :school)
+
     @session =
       create(
         :session,
@@ -65,20 +129,28 @@ describe "Edit vaccination record" do
         programme: @programme,
         location:
       )
+
+    @patient = create(:patient, given_name: "John", family_name: "Smith")
+
+    @patient_session =
+      create(:patient_session, patient: @patient, session: @session)
   end
 
-  def and_a_vaccination_record_exists
-    patient = create(:patient, given_name: "John", family_name: "Smith")
-
-    vaccine = @programme.vaccines.first
-    @original_batch = create(:batch, organisation: @organisation, vaccine:)
-    @replacement_batch = create(:batch, organisation: @organisation, vaccine:)
-
+  def and_an_administered_vaccination_record_exists
     create(
       :vaccination_record,
       programme: @programme,
-      patient_session: create(:patient_session, patient:, session: @session),
+      patient_session: @patient_session,
       batch: @original_batch
+    )
+  end
+
+  def and_a_not_administered_vaccination_record_exists
+    create(
+      :vaccination_record,
+      :not_administered,
+      programme: @programme,
+      patient_session: @patient_session
     )
   end
 
@@ -127,6 +199,8 @@ describe "Edit vaccination record" do
 
     fill_in "Hour", with: "12"
     fill_in "Minute", with: "00"
+
+    click_on "Continue"
   end
 
   def when_i_fill_in_an_invalid_date
@@ -136,6 +210,8 @@ describe "Edit vaccination record" do
 
     fill_in "Hour", with: "23"
     fill_in "Minute", with: "15"
+
+    click_on "Continue"
   end
 
   def when_i_fill_in_an_invalid_time
@@ -145,14 +221,12 @@ describe "Edit vaccination record" do
 
     fill_in "Hour", with: "25"
     fill_in "Minute", with: "61"
+
+    click_on "Continue"
   end
 
   def then_i_see_the_date_time_form_with_errors
     expect(page).to have_content("There is a problem")
-  end
-
-  def and_i_click_continue
-    click_on "Continue"
   end
 
   def and_i_should_see_the_updated_date_time
@@ -164,7 +238,7 @@ describe "Edit vaccination record" do
     click_on "Change vaccine"
   end
 
-  def and_i_select_the_vaccine
+  def and_i_choose_a_vaccine
     choose "Gardasil 9 (HPV)"
     click_on "Continue"
   end
@@ -175,9 +249,50 @@ describe "Edit vaccination record" do
 
   def and_i_choose_a_batch
     choose @replacement_batch.name
+    click_on "Continue"
   end
 
   def and_i_should_see_the_updated_batch
     expect(page).to have_content("Batch ID#{@replacement_batch.name}")
+  end
+
+  def when_i_click_on_change_outcome
+    click_on "Change outcome"
+  end
+
+  def then_i_should_see_the_change_outcome_form
+    expect(page).to have_content("Vaccination outcome")
+  end
+
+  def and_i_choose_vaccinated
+    choose "Vaccinated"
+    click_on "Continue"
+  end
+
+  def and_i_choose_unwell
+    choose "They were not well enough"
+    click_on "Continue"
+  end
+
+  def when_i_click_on_add_vaccine
+    click_on "Add vaccine"
+  end
+
+  def when_i_click_on_add_batch
+    click_on "Add batch"
+  end
+
+  def when_i_click_on_add_delivery_method
+    click_on "Add method"
+  end
+
+  def and_i_choose_a_delivery_method_and_site
+    choose "Intramuscular"
+    choose "Left arm"
+    click_on "Continue"
+  end
+
+  def when_i_click_on_save_changes
+    click_on "Save changes"
   end
 end

@@ -16,7 +16,10 @@ describe "HPV Vaccination" do
     then_i_see_the_confirmation_page
 
     when_i_click_change_outcome
-    and_i_record_that_the_patient_has_been_vaccinated
+    and_i_choose_vaccinated
+    and_i_select_the_date
+    and_i_select_the_delivery
+    and_i_select_the_vaccine
     and_i_select_the_batch
     then_i_see_the_confirmation_page
 
@@ -119,6 +122,11 @@ describe "HPV Vaccination" do
 
   def when_i_click_change_outcome
     click_on "Change outcome"
+  end
+
+  def and_i_choose_vaccinated
+    choose "Vaccinated"
+    click_on "Continue"
   end
 
   def when_i_click_change_batch

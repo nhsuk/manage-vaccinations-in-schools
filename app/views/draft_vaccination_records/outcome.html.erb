@@ -5,27 +5,35 @@
       ) %>
 <% end %>
 
-<% title = t(@programme.type, scope: "vaccinations.reason.title") %>
+<% editing = @draft_vaccination_record.editing? || @draft_vaccination_record.outcome.present? %>
+
+<% title = editing ? "Vaccination outcome" : t(@programme.type, scope: "vaccinations.reason.title") %>
 <% content_for :page_title, title %>
 
 <%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
-  <%= f.govuk_radio_buttons_fieldset(:reason,
+  <%= f.govuk_radio_buttons_fieldset(:outcome,
                                      caption: { text: @patient.full_name, size: "l" },
                                      legend: { size: "l", tag: "h1",
                                                text: title }) do %>
-    <%= f.govuk_radio_button :reason, "refused",
+
+    <% if editing %>
+      <%= f.govuk_radio_button :outcome, "vaccinated",
+                               label: { text: "Vaccinated" } %>
+    <% end %>
+
+    <%= f.govuk_radio_button :outcome, "refused",
                              label: { text: "They refused it" } %>
-    <%= f.govuk_radio_button :reason, "not_well",
+    <%= f.govuk_radio_button :outcome, "not_well",
                              label: { text: "They were not well enough" } %>
-    <%= f.govuk_radio_button :reason, "contraindications",
+    <%= f.govuk_radio_button :outcome, "contraindications",
                              label: { text: "They had contraindications" } %>
-    <%= f.govuk_radio_button :reason, "already_had",
+    <%= f.govuk_radio_button :outcome, "already_had",
                              label: { text: "They have already had the vaccine" } %>
-    <%= f.govuk_radio_button :reason, "absent_from_school",
+    <%= f.govuk_radio_button :outcome, "absent_from_school",
                              label: { text: "They were absent from school" } %>
-    <%= f.govuk_radio_button :reason, "absent_from_session",
+    <%= f.govuk_radio_button :outcome, "absent_from_session",
                              label: { text: "They were absent from the session" } %>
   <% end %>
 
