@@ -36,11 +36,7 @@ class PatientSession < ApplicationRecord
   has_one :organisation, through: :session
   has_many :programmes, through: :session
 
-  has_many :gillick_assessments, -> { recorded }
-  has_many :draft_gillick_assessments,
-           -> { draft },
-           class_name: "GillickAssessment"
-
+  has_one :gillick_assessment
   has_many :vaccination_records
 
   # TODO: Only fetch consents and triages for the relevant programme.
@@ -77,7 +73,7 @@ class PatientSession < ApplicationRecord
         -> do
           preload(
             :consents,
-            :gillick_assessments,
+            :gillick_assessment,
             :triages,
             :vaccination_records
           )
@@ -89,21 +85,14 @@ class PatientSession < ApplicationRecord
         end
 
   delegate :send_notifications?, to: :patient
-
-  def draft_gillick_assessment
-    draft_gillick_assessments.find_or_initialize_by(recorded_at: nil)
-  end
-
-  def gillick_competent?
-    latest_gillick_assessment&.gillick_competent?
-  end
+  delegate :gillick_competent?, to: :gillick_assessment, allow_nil: true
 
   def able_to_vaccinate?
     !unable_to_vaccinate?
   end
 
   def safe_to_destroy?
-    vaccination_records.empty? && gillick_assessments.empty?
+    vaccination_records.empty? && gillick_assessment.nil?
   end
 
   def destroy_if_safe!
@@ -117,10 +106,6 @@ class PatientSession < ApplicationRecord
         .select { _1.response_given? || _1.response_refused? }
         .group_by(&:name)
         .map { |_, consents| consents.max_by(&:recorded_at) }
-  end
-
-  def latest_gillick_assessment
-    @latest_gillick_assessment ||= gillick_assessments.max_by(&:created_at)
   end
 
   def latest_triage
@@ -148,8 +133,6 @@ class PatientSession < ApplicationRecord
       school = proposed_session.location
       school = nil if school.generic_clinic?
       patient.update!(school:)
-
-      draft_gillick_assessments.destroy_all
 
       safe_to_destroy? ? destroy! : update!(proposed_session: nil)
     end

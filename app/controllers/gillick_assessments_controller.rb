@@ -55,7 +55,9 @@ class GillickAssessmentsController < ApplicationController
   end
 
   def set_assessment
-    @assessment = authorize @patient_session.draft_gillick_assessment
+    @assessment =
+      authorize @patient_session.gillick_assessment ||
+                  @patient_session.build_gillick_assessment
   end
 
   def set_locations

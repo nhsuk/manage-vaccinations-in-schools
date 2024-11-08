@@ -9,7 +9,7 @@ class SchoolSessionRemindersJob < ApplicationJob
     patient_sessions =
       PatientSession
         .includes(
-          :gillick_assessments,
+          :gillick_assessment,
           :triages,
           :vaccination_records,
           consents: :parent,
