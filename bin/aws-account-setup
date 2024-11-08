@@ -58,6 +58,20 @@ _op_make_image_tags_immutable() {
     done
 }
 
+_op_enable_scan_on_push() {
+    test_jq_exists
+
+    repositories=$(aws ecr describe-repositories --output json | jq '.repositories[] | select(.imageScanningConfiguration.scanOnPush==false) | .repositoryName' | tr -d '"')
+    for repository in $repositories; do
+        echo "... enabling scan-on-push for repository $repository"
+        aws ecr put-image-scanning-configuration \
+            --repository-name $repository \
+            --image-scanning-configuration scanOnPush=true \
+            --region eu-west-2 \
+            --no-cli-pager
+    done
+}
+
 test_jq_exists() {
     if ! command -v jq &>/dev/null; then
         echo "jq is not installed. Please install jq to continue." >&2
