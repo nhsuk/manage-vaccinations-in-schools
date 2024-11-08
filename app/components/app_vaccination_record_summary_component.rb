@@ -120,7 +120,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
               row.with_action(
                 text: "Change",
                 href:,
-                visually_hidden_text: "method"
+                visually_hidden_text: "site"
               )
             end
           elsif (href = @change_links[:delivery_site])
