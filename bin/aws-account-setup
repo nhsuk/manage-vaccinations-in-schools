@@ -72,6 +72,68 @@ _op_enable_scan_on_push() {
     done
 }
 
+_op_check_s3_secure_transport_policy() {
+    test_jq_exists
+
+    # Get all the S3 buckets
+    buckets=$(aws s3api list-buckets --output json | jq '.Buckets[].Name' | tr -d '"')
+
+    failed_buckets=()
+    # Loop through each bucket and check the policy
+    for bucket in $buckets; do
+        echo -n "... checking bucket $bucket ... "
+        policy=$(aws s3api get-bucket-policy --bucket "$bucket" --output text --query Policy | jq '.Statement[] | select(.Effect=="Deny") | select(.Condition.Bool."aws:SecureTransport"=="false")')
+        if [[ -z "$policy" ]] ; then
+            echo "NOT found"
+            failed_buckets+=("$bucket")
+        else
+            echo "found"
+        fi
+    done
+
+    if [[ ${#failed_buckets[@]} -gt 0 ]]; then
+        echo ""
+        echo "The following buckets do not have a secure transport policy:"
+        for bucket in "${failed_buckets[@]}"; do
+            echo "  - $bucket"
+        done
+
+        cat <<EOF
+
+To add a secure transport policy to a bucket, do the following for each
+bucket (replacing BUCKET-NAME with the name of the bucket):
+
+  aws s3api get-bucket-policy --bucket BUCKET-NAME --query Policy --output text | jq . > BUCKET-NAME-policy.json
+
+Edit the policy.json file and add the following to the Statemnt attribute:
+
+    {
+      "Sid": "ForceHTTPS",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": "s3:*",
+      "Resource": [
+        "arn:aws:s3:::BUCKET-NAME",
+        "arn:aws:s3:::BUCKET-NAME/*"
+      ],
+      "Condition": {
+        "Bool": {
+          "aws:SecureTransport": "false"
+        }
+      }
+    }
+
+Make sure to replace BUCKET NAME with the name of the bucket.
+
+Then run the following command to apply the policy:
+
+  aws s3api put-bucket-policy --bucket BUCKET-NAME --policy file://BUCKET-NAME-policy.json
+
+EOF
+
+    fi
+}
+
 test_jq_exists() {
     if ! command -v jq &>/dev/null; then
         echo "jq is not installed. Please install jq to continue." >&2
