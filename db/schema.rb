@@ -258,16 +258,18 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_09_145134) do
   end
 
   create_table "gillick_assessments", force: :cascade do |t|
-    t.boolean "gillick_competent"
-    t.text "notes"
-    t.datetime "recorded_at"
-    t.bigint "assessor_user_id", null: false
+    t.text "notes", default: "", null: false
+    t.bigint "performed_by_user_id", null: false
     t.bigint "patient_session_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "location_name"
-    t.index ["assessor_user_id"], name: "index_gillick_assessments_on_assessor_user_id"
-    t.index ["patient_session_id"], name: "index_gillick_assessments_on_patient_session_id"
+    t.boolean "knows_vaccination", null: false
+    t.boolean "knows_disease", null: false
+    t.boolean "knows_consequences", null: false
+    t.boolean "knows_delivery", null: false
+    t.boolean "knows_side_effects", null: false
+    t.index ["patient_session_id"], name: "index_gillick_assessments_on_patient_session_id", unique: true
+    t.index ["performed_by_user_id"], name: "index_gillick_assessments_on_performed_by_user_id"
   end
 
   create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -735,7 +737,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_09_145134) do
   add_foreign_key "consents", "users", column: "recorded_by_user_id"
   add_foreign_key "dps_exports", "programmes"
   add_foreign_key "gillick_assessments", "patient_sessions"
-  add_foreign_key "gillick_assessments", "users", column: "assessor_user_id"
+  add_foreign_key "gillick_assessments", "users", column: "performed_by_user_id"
   add_foreign_key "health_questions", "health_questions", column: "follow_up_question_id"
   add_foreign_key "health_questions", "health_questions", column: "next_question_id"
   add_foreign_key "health_questions", "vaccines"
