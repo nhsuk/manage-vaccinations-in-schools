@@ -17,26 +17,23 @@
   <%= h1 "Check and confirm" %>
 <% end %>
 
+<% change_links = {
+     administered_at: wizard_path("date-and-time"),
+     batch: wizard_path("batch"),
+     delivery_method: wizard_path("delivery"),
+     delivery_site: wizard_path("delivery"),
+     location: @draft_vaccination_record.wizard_steps.include?(:location) ? wizard_path("location") : nil,
+     outcome: wizard_path("outcome"),
+     vaccine: wizard_path("vaccine"),
+   } %>
+
 <% if @draft_vaccination_record.administered? %>
   <%= render AppCardComponent.new do |card| %>
     <% card.with_heading { "Vaccination details" } %>
     <%= render AppVaccinationRecordSummaryComponent.new(
           @draft_vaccination_record,
           current_user:,
-          change_links: {
-            administered_at: wizard_path("date-and-time"),
-            batch: wizard_path("batch"),
-            delivery_method: wizard_path("delivery"),
-            delivery_site: wizard_path("delivery"),
-            location: @draft_vaccination_record.wizard_steps.include?(:location) ? wizard_path(:location) : nil,
-            outcome: @draft_vaccination_record.editing? ? nil : session_patient_path(
-              @session,
-              @patient,
-              section: "vaccinations",
-              tab: "vaccinate",
-            ),
-            vaccine: wizard_path("vaccine"),
-          },
+          change_links:,
           show_notes: false,
         ) %>
   <% end %>
@@ -45,26 +42,18 @@
     <%= render AppVaccinationRecordSummaryComponent.new(
           @draft_vaccination_record,
           current_user:,
-          change_links: {
-            administered_at: wizard_path("date-and-time"),
-            outcome: @draft_vaccination_record.editing? ? nil : session_patient_path(
-              @session,
-              @patient,
-              section: "vaccinations",
-              tab: "vaccinate",
-            ),
-          },
+          change_links:,
           show_notes: false,
         ) %>
   <% end %>
 <% end %>
 
-<% if @draft_vaccination_record.editing? %>
-  <%= govuk_button_to "Continue", wizard_path, method: :put, prevent_double_click: true %>
-<% else %>
-  <%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
-    <% content_for(:before_content) { f.govuk_error_summary } %>
+<%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
 
+  <% if @draft_vaccination_record.editing? %>
+    <%= f.govuk_submit "Save changes" %>
+  <% else %>
     <div class="nhsuk-card">
       <div class="nhsuk-card__content">
         <%= f.govuk_text_area :notes,

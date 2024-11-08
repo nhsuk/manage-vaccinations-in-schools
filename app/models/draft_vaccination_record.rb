@@ -24,12 +24,12 @@ class DraftVaccinationRecord
 
   def wizard_steps
     [
+      :outcome,
       (:date_and_time if administered?),
       (:delivery if administered?),
       (:vaccine if administered?),
       (:batch if administered?),
       (:location if location&.generic_clinic?),
-      (:reason unless administered?),
       :confirm
     ].compact
   end
@@ -58,8 +58,11 @@ class DraftVaccinationRecord
     validates :location_name, presence: true
   end
 
-  on_wizard_step :reason, exact: true do
-    validates :reason, inclusion: { in: VaccinationRecord.reasons.keys }
+  on_wizard_step :outcome, exact: true do
+    validates :outcome,
+              inclusion: {
+                in: VaccinationRecord.reasons.keys + ["vaccinated"]
+              }
   end
 
   with_options on: :update do
@@ -93,6 +96,18 @@ class DraftVaccinationRecord
   end
 
   delegate :dose, to: :vaccination_record, allow_nil: true
+
+  def outcome
+    administered? ? "vaccinated" : reason
+  end
+
+  def outcome=(value)
+    if value == "vaccinated"
+      self.administered_at ||= Time.current
+    else
+      self.reason = value
+    end
+  end
 
   def patient_session
     PatientSessionPolicy::Scope
