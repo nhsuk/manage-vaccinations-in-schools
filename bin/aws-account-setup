@@ -44,6 +44,27 @@ _op_enable_db_delete_protection() {
     done
 }
 
+_op_make_image_tags_immutable() {
+    test_jq_exists
+
+    repositories=$(aws ecr describe-repositories --output json | jq '.repositories[] | select(.imageTagMutability=="MUTABLE") | .repositoryName' | tr -d '"')
+    for repository in $repositories; do
+        echo "... making repository $repository image tags immutable"
+        aws ecr put-image-tag-mutability \
+            --repository-name $repository \
+            --image-tag-mutability IMMUTABLE \
+            --region eu-west-2 \
+            --no-cli-pager
+    done
+}
+
+test_jq_exists() {
+    if ! command -v jq &>/dev/null; then
+        echo "jq is not installed. Please install jq to continue." >&2
+        exit 1
+    fi
+}
+
 print_operations() {
     echo "Available operations:"
     declare -F | awk '/_op_/ {sub(/.*_op_/, "  "); print}'
