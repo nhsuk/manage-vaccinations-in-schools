@@ -29,5 +29,27 @@
 describe GillickAssessment do
   subject(:gillick_assessment) { build(:gillick_assessment) }
 
-  it { should be_valid }
+  describe "validations" do
+    it { should allow_values(true, false).for(:knows_consequences) }
+    it { should allow_values(true, false).for(:knows_delivery) }
+    it { should allow_values(true, false).for(:knows_disease) }
+    it { should allow_values(true, false).for(:knows_side_effects) }
+    it { should allow_values(true, false).for(:knows_vaccination) }
+  end
+
+  describe "#gillick_competent?" do
+    subject(:gillick_competent?) { gillick_assessment.gillick_competent? }
+
+    context "when competent" do
+      let(:gillick_assessment) { build(:gillick_assessment, :competent) }
+
+      it { should be(true) }
+    end
+
+    context "when not competent" do
+      let(:gillick_assessment) { build(:gillick_assessment, :not_competent) }
+
+      it { should be(false) }
+    end
+  end
 end

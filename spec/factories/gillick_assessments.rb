@@ -28,23 +28,25 @@
 #
 FactoryBot.define do
   factory :gillick_assessment do
-    assessor
     patient_session
-    competent
-    recorded_at { Time.current }
+    performed_by
 
     trait :not_competent do
-      gillick_competent { false }
+      knows_consequences { false }
+      knows_delivery { false }
+      knows_disease { false }
+      knows_side_effects { false }
+      knows_vaccination { false }
       notes { "Assessed as not Gillick competent" }
     end
 
     trait :competent do
-      gillick_competent { true }
+      knows_consequences { true }
+      knows_delivery { true }
+      knows_disease { true }
+      knows_side_effects { true }
+      knows_vaccination { true }
       notes { "Assessed as Gillick competent" }
-    end
-
-    trait :draft do
-      recorded_at { nil }
     end
   end
 end
