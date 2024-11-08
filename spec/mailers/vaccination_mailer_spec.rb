@@ -60,7 +60,7 @@ describe VaccinationMailer do
       it "sets the day month and year of vaccination" do
         expect(personalisation).to include(
           day_month_year_of_vaccination:
-            vaccination_record.recorded_at.strftime("%d/%m/%Y")
+            vaccination_record.administered_at.strftime("%d/%m/%Y")
         )
       end
 
@@ -68,22 +68,17 @@ describe VaccinationMailer do
         subject { personalisation[:today_or_date_of_vaccination] }
 
         let(:vaccination_record) do
-          create(
-            :vaccination_record,
-            programme:,
-            patient_session:,
-            recorded_at:
-          )
+          create(:vaccination_record, programme:, patient_session:, created_at:)
         end
 
-        context "when the vaccination was recorded today" do
-          let(:recorded_at) { Time.zone.today }
+        context "when the vaccination was created today" do
+          let(:created_at) { Time.zone.today }
 
           it { should eq("today") }
         end
 
-        context "when the vaccination was recorded 2 days ago" do
-          let(:recorded_at) { Date.new(2023, 3, 1) }
+        context "when the vaccination was create 2 days ago" do
+          let(:created_at) { Date.new(2023, 3, 1) }
 
           it { should eq("1 March 2023") }
         end

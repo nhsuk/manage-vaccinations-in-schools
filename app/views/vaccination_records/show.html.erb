@@ -1,19 +1,9 @@
 <% content_for :before_main do %>
-  <% if @vaccination_record.recorded? %>
-    <%= render AppBreadcrumbComponent.new(items: [
-                                            { text: t("programmes.index.title"), href: programmes_path },
-                                            { text: @programme.name, href: programme_vaccination_records_path(@programme) },
-                                            { text: t("vaccination_records.index.title"), href: programme_vaccination_records_path(@programme) },
-                                          ]) %>
-  <% elsif (immunisation_import = @vaccination_record.immunisation_imports.sort_by(&:created_at).last) %>
-    <%= render AppBacklinkComponent.new(
-          href: edit_programme_immunisation_import_path(
-            @programme,
-            immunisation_import
-          ),
-          name: "check and confirm upload",
-        ) %>
-  <% end %>
+  <%= render AppBreadcrumbComponent.new(items: [
+                                          { text: t("programmes.index.title"), href: programmes_path },
+                                          { text: @programme.name, href: programme_vaccination_records_path(@programme) },
+                                          { text: t("vaccination_records.index.title"), href: programme_vaccination_records_path(@programme) },
+                                        ]) %>
 <% end %>
 
 <%= h1 @patient.full_name %>

@@ -155,9 +155,8 @@ describe PatientSession do
         :vaccination_record,
         programme:,
         patient_session:,
-        recorded_at: 1.day.ago
+        created_at: 1.day.ago
       )
-      create(:vaccination_record, :not_recorded, programme:, patient_session:)
     end
 
     it { should eq(later_vaccination_record) }
@@ -209,11 +208,8 @@ describe PatientSession do
       end
     end
 
-    context "with draft gillick assessment and vaccination records" do
-      before do
-        create(:gillick_assessment, :draft, patient_session:)
-        create(:vaccination_record, :not_recorded, programme:, patient_session:)
-      end
+    context "with draft gillick assessments" do
+      before { create(:gillick_assessment, :draft, patient_session:) }
 
       it "moves the patient to the new session" do
         # stree-ignore
@@ -229,8 +225,6 @@ describe PatientSession do
         # stree-ignore
         expect { confirm_transfer! }
         .to change { patient_session.draft_gillick_assessments.count }
-          .by(-1)
-        .and change { patient_session.draft_vaccination_records.count }
           .by(-1)
       end
     end

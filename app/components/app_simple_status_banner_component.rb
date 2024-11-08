@@ -17,7 +17,7 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
 
   def most_recent_vaccination
     @most_recent_vaccination ||=
-      @patient_session.vaccination_records.recorded.order(:created_at).last
+      @patient_session.vaccination_records.order(:created_at).last
   end
 
   def who_refused

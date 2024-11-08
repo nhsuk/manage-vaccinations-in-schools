@@ -59,6 +59,6 @@ class DPSExport < ApplicationRecord
 
   def set_vaccination_records
     self.vaccination_records =
-      programme.vaccination_records.recorded.administered.unexported
+      programme.vaccination_records.administered.unexported
   end
 end

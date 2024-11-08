@@ -31,7 +31,7 @@ describe DPSExportRow do
       performed_by:,
       performed_by_given_name:,
       performed_by_family_name:,
-      recorded_at: Time.zone.local(2024, 7, 23, 19, 31, 47),
+      administered_at: Time.zone.local(2024, 7, 23, 19, 31, 47),
       uuid: "ea4860a5-6d97-4f31-b640-f5c50f43bfd2",
       vaccine:
     )

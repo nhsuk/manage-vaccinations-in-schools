@@ -41,10 +41,7 @@ class PatientSession < ApplicationRecord
            -> { draft },
            class_name: "GillickAssessment"
 
-  has_many :vaccination_records, -> { recorded }
-  has_many :draft_vaccination_records,
-           -> { draft },
-           class_name: "VaccinationRecord"
+  has_many :vaccination_records
 
   # TODO: Only fetch consents and triages for the relevant programme.
 
@@ -152,7 +149,6 @@ class PatientSession < ApplicationRecord
       school = nil if school.generic_clinic?
       patient.update!(school:)
 
-      draft_vaccination_records.destroy_all
       draft_gillick_assessments.destroy_all
 
       safe_to_destroy? ? destroy! : update!(proposed_session: nil)
