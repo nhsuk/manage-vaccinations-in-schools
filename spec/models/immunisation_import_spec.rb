@@ -333,14 +333,9 @@ describe ImmunisationImport do
         )
       end
 
-      it "identifies potential changes in the patient record" do
+      it "ignores changes in the patient record" do
         expect { record! }.not_to change(Patient, :count)
-
-        expect(existing_patient.reload.pending_changes).to eq(
-          "address_postcode" => "LE3 2DB",
-          "date_of_birth" => "2011-09-13",
-          "gender_code" => "female"
-        )
+        expect(existing_patient.reload.pending_changes).to be_empty
       end
     end
 

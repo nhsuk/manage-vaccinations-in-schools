@@ -346,6 +346,15 @@ describe ImmunisationImportRow do
       it { should eq(other_patient) }
     end
 
+    context "with an existing matching patient but different patient data" do
+      let(:data) { valid_data }
+
+      it "does not stage any changes as vaccs history data is potentially out of date" do
+        create(:patient, nhs_number:, address_postcode: "CB1 1AA")
+        expect(subject.pending_changes).to be_empty
+      end
+    end
+
     describe "#cohort" do
       subject(:cohort) { patient.cohort }
 
