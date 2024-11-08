@@ -24,6 +24,24 @@ describe "HPV Vaccination" do
     and_i_select_the_batch
     then_i_see_the_confirmation_page
 
+    when_i_click_change_vaccine
+    and_i_select_the_vaccine
+    and_i_select_the_batch
+    then_i_see_the_confirmation_page
+
+    when_i_click_change_delivery_site
+    and_i_select_the_delivery
+    and_i_select_the_vaccine
+    and_i_select_the_batch
+    then_i_see_the_confirmation_page
+
+    when_i_click_change_date
+    and_i_select_the_date
+    and_i_select_the_delivery
+    and_i_select_the_vaccine
+    and_i_select_the_batch
+    then_i_see_the_confirmation_page
+
     when_i_confirm_the_details
     then_i_see_the_record_vaccinations_page
     and_a_success_message
@@ -45,14 +63,14 @@ describe "HPV Vaccination" do
       create(:batch, organisation:, vaccine:)
     end
 
-    active_vaccine = programme.vaccines.active.first
-    @active_batch = create(:batch, organisation:, vaccine: active_vaccine)
+    @active_vaccine = programme.vaccines.active.first
+    @active_batch = create(:batch, organisation:, vaccine: @active_vaccine)
     @archived_batch =
-      create(:batch, :archived, organisation:, vaccine: active_vaccine)
+      create(:batch, :archived, organisation:, vaccine: @active_vaccine)
 
     # To get around expiration date validation on the model.
     @expired_batch =
-      build(:batch, :expired, organisation:, vaccine: active_vaccine)
+      build(:batch, :expired, organisation:, vaccine: @active_vaccine)
     @expired_batch.save!(validate: false)
 
     @session = create(:session, organisation:, programme:, location:)
@@ -85,6 +103,11 @@ describe "HPV Vaccination" do
     click_button "Continue"
   end
 
+  def and_i_select_the_vaccine
+    choose @active_vaccine.brand
+    click_button "Continue"
+  end
+
   def then_i_see_the_confirmation_page
     expect(page).to have_content("Check and confirm")
     expect(page).to have_content("Child#{@patient.full_name}")
@@ -100,6 +123,28 @@ describe "HPV Vaccination" do
 
   def when_i_click_change_batch
     click_on "Change batch"
+  end
+
+  def when_i_click_change_vaccine
+    click_on "Change vaccine"
+  end
+
+  def when_i_click_change_delivery_site
+    click_on "Change site"
+  end
+
+  def and_i_select_the_delivery
+    choose "Intramuscular"
+    choose "Left arm"
+    click_on "Continue"
+  end
+
+  def when_i_click_change_date
+    click_on "Change date"
+  end
+
+  def and_i_select_the_date
+    click_on "Continue"
   end
 
   def when_i_confirm_the_details
