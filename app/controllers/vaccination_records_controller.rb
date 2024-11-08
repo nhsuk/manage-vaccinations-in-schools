@@ -14,6 +14,15 @@ class VaccinationRecordsController < ApplicationController
   def show
   end
 
+  def update
+    DraftVaccinationRecord.new(
+      request_session: session,
+      current_user:
+    ).read_from!(@vaccination_record)
+
+    redirect_to draft_vaccination_record_path("confirm")
+  end
+
   def export_dps
     send_data(dps_export.csv, filename: dps_export.filename)
   end

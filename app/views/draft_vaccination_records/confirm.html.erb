@@ -1,11 +1,11 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: @vaccination_record.recorded? ? programme_vaccination_record_path(@vaccination_record) : vaccinations_back_link_path,
+        href: @draft_vaccination_record.editing? ? programme_vaccination_record_path(@vaccination_record) : draft_vaccinations_back_link_path,
         name: "vaccination page",
       ) %>
 <% end %>
 
-<% if @vaccination_record.recorded? %>
+<% if @draft_vaccination_record.editing? %>
   <% page_title = "Edit vaccination record" %>
   <%= h1 page_title do %>
     <span class="nhsuk-caption-l">
@@ -17,19 +17,19 @@
   <%= h1 "Check and confirm" %>
 <% end %>
 
-<% if @vaccination_record.administered? %>
+<% if @draft_vaccination_record.administered? %>
   <%= render AppCardComponent.new do |card| %>
     <% card.with_heading { "Vaccination details" } %>
     <%= render AppVaccinationRecordSummaryComponent.new(
-          @vaccination_record,
+          @draft_vaccination_record,
           current_user:,
           change_links: {
             administered_at: wizard_path("date-and-time"),
             batch: wizard_path("batch"),
-            delivery_method: wizard_path("delivery-site"),
-            delivery_site: wizard_path("delivery-site"),
-            location: @vaccination_record.wizard_steps.include?(:location) ? wizard_path(:location) : nil,
-            outcome: @vaccination_record.recorded? ? nil : session_patient_path(
+            delivery_method: wizard_path("delivery"),
+            delivery_site: wizard_path("delivery"),
+            location: @draft_vaccination_record.wizard_steps.include?(:location) ? wizard_path(:location) : nil,
+            outcome: @draft_vaccination_record.editing? ? nil : session_patient_path(
               @session,
               @patient,
               section: "vaccinations",
@@ -43,11 +43,11 @@
 <% else %>
   <%= render AppWarningCalloutComponent.new(heading: "Vaccination was not given") do %>
     <%= render AppVaccinationRecordSummaryComponent.new(
-          @vaccination_record,
+          @draft_vaccination_record,
           current_user:,
           change_links: {
             administered_at: wizard_path("date-and-time"),
-            outcome: @vaccination_record.recorded? ? nil : session_patient_path(
+            outcome: @draft_vaccination_record.editing? ? nil : session_patient_path(
               @session,
               @patient,
               section: "vaccinations",
@@ -59,10 +59,10 @@
   <% end %>
 <% end %>
 
-<% if @vaccination_record.recorded? %>
+<% if @draft_vaccination_record.editing? %>
   <%= govuk_button_to "Continue", wizard_path, method: :put, prevent_double_click: true %>
 <% else %>
-  <%= form_with model: @vaccination_record, url: wizard_path, method: :put do |f| %>
+  <%= form_with model: @draft_vaccination_record, url: wizard_path, method: :put do |f| %>
     <% content_for(:before_content) { f.govuk_error_summary } %>
 
     <div class="nhsuk-card">

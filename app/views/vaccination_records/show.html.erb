@@ -28,8 +28,8 @@
   <%= render AppVaccinationRecordSummaryComponent.new(@vaccination_record, current_user:) %>
 
   <% if Flipper.enabled?(:release_1b) %>
-    <%= govuk_button_link_to "Edit vaccination record",
-                             programme_vaccination_record_edit_path(@programme, @vaccination_record, id: "confirm"),
-                             class: "app-button--secondary" %>
+    <%= govuk_button_to "Edit vaccination record",
+                        programme_vaccination_record_path(@programme, @vaccination_record),
+                        method: :put, class: "app-button--secondary" %>
   <% end %>
 <% end %>
