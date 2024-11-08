@@ -60,6 +60,7 @@ class VaccinationsController < ApplicationController
     if @draft_vaccination_record.save
       steps = @draft_vaccination_record.wizard_steps
 
+      steps.delete(:outcome) if @draft_vaccination_record.administered?
       steps.delete(:date_and_time)
       if @draft_vaccination_record.delivery_method.present? &&
            @draft_vaccination_record.delivery_site.present?

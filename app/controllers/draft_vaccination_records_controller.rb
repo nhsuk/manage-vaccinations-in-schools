@@ -121,7 +121,7 @@ class DraftVaccinationRecordsController < ApplicationController
       date_and_time: %i[administered_at],
       delivery: %i[delivery_site delivery_method],
       location: %i[location_name],
-      reason: %i[reason],
+      outcome: %i[outcome],
       vaccine: %i[vaccine_id]
     }.fetch(current_step)
 

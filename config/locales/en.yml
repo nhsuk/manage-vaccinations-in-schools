@@ -160,17 +160,19 @@ en:
               blank: Choose a batch
               incorrect_vaccine: Choose a batch of the %{vaccine_brand} vaccine
             delivery_method:
+              blank: Choose a method of delivery
               inclusion: Choose a method of delivery
             delivery_site:
+              blank: Choose a delivery site
               inclusion: Choose a delivery site
             location_name:
               blank: Enter where the vaccination was given
             notes:
               too_long: Enter notes that are less than 1000 characters long
-            reason:
-              inclusion: Choose a reason
-            site:
-              blank: Choose a site
+            outcome:
+              inclusion: Choose an outcome
+            vaccine_id:
+              blank: Choose a vaccine
         health_answer:
           attributes:
             notes:
@@ -808,6 +810,7 @@ en:
     location: location
     name: name
     notes: notes
+    outcome: outcome
     parent: parent
     parent_details: parent-details
     questions: questions

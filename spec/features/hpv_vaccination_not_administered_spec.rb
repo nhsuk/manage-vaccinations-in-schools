@@ -13,7 +13,6 @@ describe "HPV Vaccination" do
     then_i_see_the_confirmation_page
 
     when_i_click_change_outcome
-    and_i_record_that_the_patient_wasnt_vaccinated
     and_i_select_the_reason_why
     then_i_see_the_confirmation_page
 
