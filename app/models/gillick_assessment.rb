@@ -27,14 +27,12 @@
 #  fk_rails_...  (performed_by_user_id => users.id)
 #
 class GillickAssessment < ApplicationRecord
-  include LocationNameConcern
-  include Recordable
-  include WizardStepConcern
-
   audited
 
   belongs_to :patient_session
-  belongs_to :assessor, class_name: "User", foreign_key: :assessor_user_id
+  belongs_to :performed_by,
+             class_name: "User",
+             foreign_key: :performed_by_user_id
 
   has_one :patient, through: :patient_session
   has_one :session, through: :patient_session
@@ -42,19 +40,17 @@ class GillickAssessment < ApplicationRecord
 
   encrypts :notes
 
-  on_wizard_step :gillick do
-    validates :gillick_competent, inclusion: { in: [true, false] }
-  end
+  validates :knows_consequences,
+            :knows_delivery,
+            :knows_disease,
+            :knows_side_effects,
+            :knows_vaccination,
+            inclusion: {
+              in: [true, false]
+            }
 
-  on_wizard_step :location, exact: true do
-    validates :location_name, presence: true
-  end
-
-  on_wizard_step :notes do
-    validates :notes, length: { maximum: 1000 }, presence: true
-  end
-
-  def wizard_steps
-    [:gillick, (:location if requires_location_name?), :notes, :confirm].compact
+  def gillick_competent?
+    knows_consequences && knows_delivery && knows_disease &&
+      knows_side_effects && knows_vaccination
   end
 end
