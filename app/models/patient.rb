@@ -246,7 +246,7 @@ class Patient < ApplicationRecord
     # TODO: This logic doesn't work for vaccinations that require multiple doses.
 
     vaccination_records.any? do
-      _1.recorded? && _1.administered? && _1.programme_id == programme.id
+      _1.administered? && _1.programme_id == programme.id
     end
   end
 

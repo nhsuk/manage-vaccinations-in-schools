@@ -178,12 +178,6 @@ describe ImmunisationImport do
         expect(immunisation_import.exact_duplicate_record_count).to eq(7)
       end
 
-      it "records the vaccination records" do
-        expect { record! }.to change(VaccinationRecord.recorded, :count).from(
-          0
-        ).to(7)
-      end
-
       it "enqueues jobs to look up missing NHS numbers" do
         expect { record! }.to have_enqueued_job(
           PatientNHSNumberLookupJob
@@ -254,12 +248,6 @@ describe ImmunisationImport do
 
         session = immunisation_import.sessions.first
         expect(session.dates).to contain_exactly(Date.new(2024, 5, 14))
-      end
-
-      it "records the vaccination records" do
-        expect { record! }.to change(VaccinationRecord.recorded, :count).from(
-          0
-        ).to(11)
       end
 
       it "enqueues jobs to look up missing NHS numbers" do

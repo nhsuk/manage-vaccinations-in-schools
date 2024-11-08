@@ -15,7 +15,6 @@
 #  performed_by_family_name :string
 #  performed_by_given_name  :string
 #  reason                   :integer
-#  recorded_at              :datetime
 #  uuid                     :uuid             not null
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
@@ -57,7 +56,6 @@ FactoryBot.define do
                   strategy: :create
     end
 
-    recorded_at { "2023-06-09" }
     delivery_site { "left_arm_upper_position" }
     delivery_method { "intramuscular" }
     vaccine { programme.vaccines.active.first }
@@ -78,11 +76,6 @@ FactoryBot.define do
     trait :not_administered do
       administered_at { nil }
       reason { "not_well" }
-    end
-
-    trait :not_recorded do
-      recorded_at { nil }
-      performed_by { nil }
     end
 
     trait :performed_by_not_user do

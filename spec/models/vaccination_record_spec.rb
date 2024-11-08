@@ -15,7 +15,6 @@
 #  performed_by_family_name :string
 #  performed_by_given_name  :string
 #  reason                   :integer
-#  recorded_at              :datetime
 #  uuid                     :uuid             not null
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null

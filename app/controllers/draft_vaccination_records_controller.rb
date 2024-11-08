@@ -154,8 +154,7 @@ class DraftVaccinationRecordsController < ApplicationController
 
   def set_vaccination_record
     @vaccination_record =
-      @draft_vaccination_record.vaccination_record ||
-        VaccinationRecord.new(recorded_at: Time.current)
+      @draft_vaccination_record.vaccination_record || VaccinationRecord.new
   end
 
   def set_steps

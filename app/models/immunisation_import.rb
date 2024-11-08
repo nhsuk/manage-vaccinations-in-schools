@@ -124,7 +124,7 @@ class ImmunisationImport < ApplicationRecord
   def count_column(vaccination_record)
     if !vaccination_record
       :not_administered_record_count
-    elsif vaccination_record.new_record? || vaccination_record.draft?
+    elsif vaccination_record.new_record?
       :new_record_count
     elsif vaccination_record.pending_changes.any? ||
           vaccination_record.patient.pending_changes.any?
