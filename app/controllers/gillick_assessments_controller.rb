@@ -1,39 +1,34 @@
 # frozen_string_literal: true
 
 class GillickAssessmentsController < ApplicationController
-  include Wicked::Wizard
-
   before_action :set_patient
   before_action :set_session
   before_action :set_patient_session
-  before_action :set_assessment
-  before_action :set_steps
-  before_action :setup_wizard
-  before_action :set_locations, only: %i[show update]
+  before_action :set_gillick_assessment
 
   def new
   end
 
   def create
-    @assessment.assessor = current_user
-    @assessment.save!
-
-    redirect_to wizard_path(steps.first)
+    if @gillick_assessment.update(
+         performed_by: current_user,
+         **gillick_assessment_params
+       )
+      redirect_to session_patient_path(id: @patient.id)
+    else
+      render :new, status: :unprocessable_entity
+    end
   end
 
-  def show
-    render_wizard
+  def edit
   end
 
   def update
-    case step
-    when :gillick, :location, :notes
-      @assessment.assign_attributes(gillick_params.merge(wizard_step: step))
-    when :confirm
-      @assessment.assign_attributes(recorded_at: Time.zone.now)
+    if @gillick_assessment.update(gillick_assessment_params)
+      redirect_to session_patient_path(id: @patient.id)
+    else
+      render :edit, status: :unprocessable_entity
     end
-
-    render_wizard @assessment
   end
 
   private
@@ -48,34 +43,22 @@ class GillickAssessmentsController < ApplicationController
 
   def set_patient_session
     @patient_session =
-      policy_scope(PatientSession).eager_load(:session).find_by(
-        session: @session,
-        patient_id: params[:patient_id]
-      )
+      policy_scope(PatientSession).find_by(session: @session, patient: @patient)
   end
 
-  def set_assessment
-    @assessment =
+  def set_gillick_assessment
+    @gillick_assessment =
       authorize @patient_session.gillick_assessment ||
                   @patient_session.build_gillick_assessment
   end
 
-  def set_locations
-    @locations = policy_scope(Location).community_clinic if step == :location
-  end
-
-  def set_steps
-    self.steps = @assessment.wizard_steps
-  end
-
-  def finish_wizard_path
-    session_patient_path(id: @patient.id)
-  end
-
-  def gillick_params
-    params.fetch(:gillick_assessment, {}).permit(
-      :gillick_competent,
-      :location_name,
+  def gillick_assessment_params
+    params.require(:gillick_assessment).permit(
+      :knows_consequences,
+      :knows_delivery,
+      :knows_disease,
+      :knows_side_effects,
+      :knows_vaccination,
       :notes
     )
   end

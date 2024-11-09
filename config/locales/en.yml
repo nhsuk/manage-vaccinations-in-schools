@@ -464,13 +464,16 @@ en:
               inclusion: Tell us whether they use a different name
         gillick_assessment:
           attributes:
-            gillick_competent:
-              inclusion: Choose if they are Gillick competent
-            location_name:
-              blank: Enter where the vaccination was given
-            notes:
-              blank: Enter details of your assessment
-              too_long: Enter details that are less than 1000 characters long
+            knows_vaccination:
+              inclusion: Choose whether the child knows which vaccination they will have
+            knows_disease:
+              inclusion: Choose whether the child knows which disease the vaccination protects against
+            knows_consequences:
+              inclusion: Choose whether the child knows what could happen if they got the disease
+            knows_delivery:
+              inclusion: Choose whether the child knows how the injection will be given
+            knows_side_effects:
+              inclusion: Choose whether the child knows which side effects they might experience
         immunisation_import:
           attributes:
             csv:

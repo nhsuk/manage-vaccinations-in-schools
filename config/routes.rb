@@ -283,14 +283,10 @@ Rails.application.routes.draw do
                    path: "edit/:id"
         end
 
-        resource :gillick_assessment, only: %i[new create]
-
         resource :gillick_assessment,
-                 path: "gillick-assessment/:id",
-                 only: %i[show update]
-
+                 path: "gillick",
+                 only: %i[new create edit update]
         resource :triages, only: %i[new create]
-
         resource :vaccinations, only: %i[create]
       end
     end
