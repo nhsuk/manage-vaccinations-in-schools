@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe "Response matching" do
-  scenario "Users can match responses to patient records" do
+describe "Parental consent manual matching" do
+  scenario "Consent isn't matched automatically so SAIS team matches it manually" do
     given_the_app_is_setup
 
     when_i_go_to_the_dashboard
