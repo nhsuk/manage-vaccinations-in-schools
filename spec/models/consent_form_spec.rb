@@ -326,6 +326,8 @@ describe ConsentForm do
     end
   end
 
+  it { should normalize(:given_name).from(" Joanna ").to("Joanna") }
+  it { should normalize(:family_name).from(" Smith ").to("Smith") }
   it { should normalize(:address_postcode).from(" SW111AA ").to("SW11 1AA") }
 
   describe "#full_name" do

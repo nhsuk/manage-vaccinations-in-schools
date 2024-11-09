@@ -131,6 +131,8 @@ class ConsentForm < ApplicationRecord
            :preferred_given_name,
            :reason_notes
 
+  normalizes :given_name, with: -> { _1.strip }
+  normalizes :family_name, with: -> { _1.strip }
   normalizes :parent_phone,
              with: -> { _1.blank? ? nil : _1.to_s.gsub(/\s/, "") }
   normalizes :parent_email,
