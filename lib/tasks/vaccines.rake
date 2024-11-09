@@ -19,7 +19,7 @@ namespace :vaccines do
 
       vaccine.brand = data["brand"]
       vaccine.discontinued = data.fetch("discontinued", false)
-      vaccine.dose = data["dose"]
+      vaccine.dose = data["dose_volume_ml"]
       vaccine.manufacturer = data["manufacturer"]
       vaccine.method = data["method"]
       vaccine.nivs_name = data["nivs_name"]
