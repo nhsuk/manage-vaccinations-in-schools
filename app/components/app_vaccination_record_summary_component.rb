@@ -132,9 +132,11 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
       end
 
       if @vaccination_record.administered?
-        summary_list.with_row do |row|
-          row.with_key { "Dose volume" }
-          row.with_value { dose_volume_value }
+        if @vaccination_record.vaccine.present?
+          summary_list.with_row do |row|
+            row.with_key { "Dose volume" }
+            row.with_value { dose_volume_value }
+          end
         end
 
         if dose_number.present?
