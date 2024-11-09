@@ -11,7 +11,7 @@ class PatientPolicy < ApplicationPolicy
         .or(Patient.where(school_id: school_ids))
         .or(
           Patient.where(
-            "pending_changes ->> 'cohort_id' != NULL AND pending_changes ->> 'cohort_id' IN (?)",
+            "pending_changes ->> 'cohort_id' IS NOT NULL AND pending_changes ->> 'cohort_id' IN (?)",
             cohort_ids
           )
         )
