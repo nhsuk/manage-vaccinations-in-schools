@@ -1,0 +1,38 @@
+<% options = [OpenStruct.new(value: true, label: "Yes"), OpenStruct.new(value: false, label: "No")] %>
+
+<%= f.govuk_collection_radio_buttons :knows_vaccination,
+                                     options,
+                                     :value,
+                                     :label,
+                                     inline: true,
+                                     legend: { text: "The child knows which vaccination they will have", size: "s" } %>
+
+<%= f.govuk_collection_radio_buttons :knows_disease,
+                                     options,
+                                     :value,
+                                     :label,
+                                     inline: true,
+                                     legend: { text: "The child knows which disease the vaccination protects against", size: "s" } %>
+
+<%= f.govuk_collection_radio_buttons :knows_consequences,
+                                     options,
+                                     :value,
+                                     :label,
+                                     inline: true,
+                                     legend: { text: "The child knows what could happen if they got the disease", size: "s" } %>
+
+<%= f.govuk_collection_radio_buttons :knows_delivery,
+                                     options,
+                                     :value,
+                                     :label,
+                                     inline: true,
+                                     legend: { text: "The child knows how the injection will be given", size: "s" } %>
+
+<%= f.govuk_collection_radio_buttons :knows_side_effects,
+                                     options,
+                                     :value,
+                                     :label,
+                                     inline: true,
+                                     legend: { text: "The child knows which side effects they might experience", size: "s" } %>
+
+<%= f.govuk_text_area :notes, label: { text: "Assessment notes (optional)" } %>

@@ -8,12 +8,16 @@
     margin-left: nhsuk-spacing(1) * -1;
   }
 
-  &--blue {
-    color: $color_nhsuk-blue;
+  &--aqua-green {
+    color: $color_nhsuk-aqua-green;
   }
 
   &--dark-orange {
     color: $color_app-dark-orange;
+  }
+
+  &--green {
+    color: $color_nhsuk-green;
   }
 
   &--red {

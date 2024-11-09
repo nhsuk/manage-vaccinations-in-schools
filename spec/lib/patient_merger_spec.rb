@@ -16,7 +16,9 @@ describe PatientMerger do
     let!(:patient_to_destroy) { create(:patient) }
 
     let(:consent) { create(:consent, patient: patient_to_destroy, programme:) }
-    let(:gillick_assessment) { create(:gillick_assessment, patient_session:) }
+    let(:gillick_assessment) do
+      create(:gillick_assessment, :competent, patient_session:)
+    end
     let(:parent_relationship) do
       create(:parent_relationship, patient: patient_to_destroy)
     end

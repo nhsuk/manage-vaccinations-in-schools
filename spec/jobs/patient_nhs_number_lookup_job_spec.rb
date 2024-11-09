@@ -73,7 +73,9 @@ describe PatientNHSNumberLookupJob do
 
       let(:programme) { create(:programme) }
       let(:patient_session) { create(:patient_session, patient:, programme:) }
-      let(:gillick_assessment) { create(:gillick_assessment, patient_session:) }
+      let(:gillick_assessment) do
+        create(:gillick_assessment, :competent, patient_session:)
+      end
       let(:triage) { create(:triage, patient:, programme:) }
       let(:vaccination_record) do
         create(:vaccination_record, patient_session:, programme:)
