@@ -185,6 +185,20 @@ describe Patient do
       it { should include(patient) }
     end
 
+    context "with matching first name, last name and date of birth but names are uppercase" do
+      let(:nhs_number) { nil }
+      let(:patient) do
+        create(
+          :patient,
+          given_name: given_name.upcase,
+          family_name: family_name.upcase,
+          date_of_birth:
+        )
+      end
+
+      it { should include(patient) }
+    end
+
     context "when matching everything except the NHS number" do
       let(:other_patient) do
         create(
