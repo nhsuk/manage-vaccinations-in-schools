@@ -193,6 +193,28 @@ FactoryBot.define do
       end
     end
 
+    trait :unable_to_vaccinate_and_had_no_triage do
+      patient do
+        association :patient,
+                    :consent_given_triage_not_needed,
+                    performed_by: user,
+                    programme:,
+                    organisation:,
+                    school: session.location
+      end
+
+      after(:create) do |patient_session, evaluator|
+        create(
+          :vaccination_record,
+          :not_administered,
+          patient_session:,
+          programme: evaluator.programme,
+          performed_by: evaluator.user,
+          reason: :already_had
+        )
+      end
+    end
+
     trait :vaccinated do
       patient do
         association :patient,

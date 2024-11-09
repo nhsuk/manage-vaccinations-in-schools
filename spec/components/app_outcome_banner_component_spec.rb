@@ -29,6 +29,24 @@ describe AppOutcomeBannerComponent do
     end
   end
 
+  context "triaged, not possible to vaccinate" do
+    let(:patient_session) { create(:patient_session, :unable_to_vaccinate) }
+
+    it { should have_css(".app-card--red") }
+    it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
+    it { should have_text("Reason\nAlya Merton has already had the vaccine") }
+  end
+
+  context "not triaged, not possible to vaccinate" do
+    let(:patient_session) do
+      create(:patient_session, :unable_to_vaccinate_and_had_no_triage)
+    end
+
+    it { should have_css(".app-card--red") }
+    it { should have_css(".nhsuk-card__heading", text: "Could not vaccinate") }
+    it { should have_text("Reason\nAlya Merton has already had the vaccine") }
+  end
+
   context "state is vaccinated" do
     let(:programme) { create(:programme, :hpv) }
     let(:patient_session) { create(:patient_session, :vaccinated, programme:) }
@@ -36,8 +54,8 @@ describe AppOutcomeBannerComponent do
     let(:vaccine) { programme.vaccines.first }
     let(:location) { patient_session.session.location }
     let(:batch) { vaccine.batches.first }
-    let(:date) { vaccination_record.created_at.to_date.to_fs(:long) }
-    let(:time) { vaccination_record.created_at.to_fs(:time) }
+    let(:date) { vaccination_record.administered_at.to_date.to_fs(:long) }
+    let(:time) { vaccination_record.administered_at.to_fs(:time) }
 
     it { should have_css(".app-card--green") }
     it { should have_css(".nhsuk-card__heading", text: "Vaccinated") }
@@ -47,11 +65,11 @@ describe AppOutcomeBannerComponent do
     it { should have_text("Time\n#{time}") }
     it { should have_text("Location\n#{location.name}") }
 
-    context "created_at is not today" do
+    context "vaccination was not administered today" do
       let(:date) { Time.zone.now - 2.days }
       let(:patient_session) do
         create(:patient_session, :vaccinated).tap do |ps|
-          ps.vaccination_records.first.update(created_at: date)
+          ps.vaccination_records.first.update(administered_at: date)
         end
       end
 
@@ -86,7 +104,7 @@ describe AppOutcomeBannerComponent do
       )
     end
 
-    context "created_at is not today" do
+    context "triage decision was not recorded today" do
       let(:date) { Time.zone.now - 2.days }
       let(:patient_session) do
         create(:patient_session, :triaged_do_not_vaccinate).tap do |ps|
