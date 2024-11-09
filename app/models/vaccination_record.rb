@@ -162,10 +162,10 @@ class VaccinationRecord < ApplicationRecord
       absent_from_school?
   end
 
-  def dose
+  def dose_volume_ml
     # TODO: this will need to be revisited once it's possible to record half-doses
     # e.g. for the flu programme where a child refuses the second half of the dose
-    vaccine.dose * 1
+    vaccine.dose_volume_ml * 1
   end
 
   def performed_by

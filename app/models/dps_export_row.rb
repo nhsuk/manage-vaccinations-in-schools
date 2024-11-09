@@ -169,7 +169,7 @@ class DPSExportRow
   end
 
   def dose_amount
-    vaccination_record.dose
+    vaccination_record.dose_volume_ml
   end
 
   def dose_unit_code

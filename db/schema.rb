@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_11_08_125548) do
+ActiveRecord::Schema[7.2].define(version: 2024_11_09_145134) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -683,7 +683,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_08_125548) do
     t.text "brand", null: false
     t.integer "method", null: false
     t.text "manufacturer", null: false
-    t.decimal "dose", null: false
+    t.decimal "dose_volume_ml", null: false
     t.string "snomed_product_code", null: false
     t.string "snomed_product_term", null: false
     t.text "nivs_name", null: false

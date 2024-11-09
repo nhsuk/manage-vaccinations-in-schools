@@ -234,7 +234,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def dose_volume_value
-    "#{@vaccination_record.dose} ml"
+    "#{@vaccination_record.dose_volume_ml} ml"
   end
 
   def batch_id_value

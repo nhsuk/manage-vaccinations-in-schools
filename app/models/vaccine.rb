@@ -7,7 +7,7 @@
 #  id                  :bigint           not null, primary key
 #  brand               :text             not null
 #  discontinued        :boolean          default(FALSE), not null
-#  dose                :decimal(, )      not null
+#  dose_volume_ml      :decimal(, )      not null
 #  manufacturer        :text             not null
 #  method              :integer          not null
 #  nivs_name           :text             not null
@@ -40,7 +40,7 @@ class Vaccine < ApplicationRecord
   has_many :batches
 
   validates :brand, presence: true, uniqueness: { scope: :manufacturer }
-  validates :dose, presence: true
+  validates :dose_volume_ml, presence: true
   validates :manufacturer, presence: true
   validates :snomed_product_code, presence: true, uniqueness: true
   validates :snomed_product_term, presence: true, uniqueness: true

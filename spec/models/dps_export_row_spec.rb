@@ -5,7 +5,9 @@ describe DPSExportRow do
 
   let(:programme) { create(:programme, type: "hpv") }
   let(:organisation) { create(:organisation, programmes: [programme]) }
-  let(:vaccine) { create(:vaccine, :gardasil_9, programme:, dose: 0.5) }
+  let(:vaccine) do
+    create(:vaccine, :gardasil_9, programme:, dose_volume_ml: 0.5)
+  end
   let(:location) { create(:location, :school) }
   let(:school) { create(:location, :school) }
   let(:patient) do

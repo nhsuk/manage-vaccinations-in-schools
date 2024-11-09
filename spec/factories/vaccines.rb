@@ -7,7 +7,7 @@
 #  id                  :bigint           not null, primary key
 #  brand               :text             not null
 #  discontinued        :boolean          default(FALSE), not null
-#  dose                :decimal(, )      not null
+#  dose_volume_ml      :decimal(, )      not null
 #  manufacturer        :text             not null
 #  method              :integer          not null
 #  nivs_name           :text             not null
@@ -38,7 +38,7 @@ FactoryBot.define do
     brand { Faker::Commerce.product_name }
     manufacturer { Faker::Company.name }
     sequence(:nivs_name) { |n| "#{brand.parameterize}-#{n}" }
-    dose { Faker::Number.decimal(l_digits: 0) }
+    dose_volume_ml { Faker::Number.decimal(l_digits: 0) }
     snomed_product_code { Faker::Number.decimal_part(digits: 17) }
     snomed_product_term { Faker::Lorem.sentence }
     add_attribute(:method) { %i[nasal injection].sample }
@@ -102,7 +102,7 @@ FactoryBot.define do
         send(data["type"])
         brand { data["brand"] }
         discontinued { data.fetch("discontinued", false) }
-        dose { data["dose_volume_ml"] }
+        dose_volume_ml { data["dose_volume_ml"] }
         manufacturer { data["manufacturer"] }
         add_attribute(:method) { data["method"] }
         nivs_name { data["nivs_name"] }
