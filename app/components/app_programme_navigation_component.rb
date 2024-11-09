@@ -60,19 +60,22 @@ class AppProgrammeNavigationComponent < ViewComponent::Base
   private
 
   def import_issues_text
-    vaccination_record_issues_count =
-      organisation
-        .vaccination_records
+    vaccination_records_with_issues =
+      helpers
+        .policy_scope(VaccinationRecord)
         .where(programme:)
         .with_pending_changes
         .distinct
-        .count
 
-    patient_issues_count =
-      helpers.policy_scope(Patient).with_pending_changes.count
+    patients_with_issues = helpers.policy_scope(Patient).with_pending_changes
+
+    unique_import_issues =
+      (vaccination_records_with_issues + patients_with_issues).uniq do |record|
+        record.is_a?(VaccinationRecord) ? record.patient : record
+      end
 
     base_text = I18n.t("import_issues.index.title")
-    count = vaccination_record_issues_count + patient_issues_count
+    count = unique_import_issues.count
 
     safe_join([base_text, " ", render(AppCountComponent.new(count:))])
   end
