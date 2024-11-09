@@ -7,7 +7,7 @@
 #  id                  :bigint           not null, primary key
 #  brand               :text             not null
 #  discontinued        :boolean          default(FALSE), not null
-#  dose                :decimal(, )      not null
+#  dose_volume_ml      :decimal(, )      not null
 #  manufacturer        :text             not null
 #  method              :integer          not null
 #  nivs_name           :text             not null

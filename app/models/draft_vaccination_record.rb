@@ -95,7 +95,7 @@ class DraftVaccinationRecord
     self.batch_id = value.id
   end
 
-  delegate :dose, to: :vaccination_record, allow_nil: true
+  delegate :dose_volume_ml, to: :vaccination_record, allow_nil: true
 
   def outcome
     administered? ? "vaccinated" : reason
