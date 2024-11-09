@@ -5,11 +5,15 @@ describe DraftVaccinationRecord do
     described_class.new(request_session:, current_user:, **attributes)
   end
 
-  let(:request_session) { {} }
-  let(:current_user) { create(:user) }
+  let(:organisation) do
+    create(:organisation, :with_one_nurse, programmes: [programme])
+  end
 
-  let(:patient_session) { create(:patient_session) }
-  let(:programme) { patient_session.programmes.first }
+  let(:request_session) { {} }
+  let(:current_user) { organisation.users.first }
+
+  let(:patient_session) { create(:patient_session, programme:) }
+  let(:programme) { create(:programme, :hpv) }
   let(:vaccine) { programme.vaccines.first }
   let(:batch) { create(:batch, vaccine:) }
 
@@ -100,6 +104,16 @@ describe DraftVaccinationRecord do
           nil
         )
       end
+    end
+  end
+
+  describe "#dose_volume_ml" do
+    let(:attributes) { valid_administered_attributes }
+
+    it "determines the dose volume in ml from the vaccine" do
+      expect(draft_vaccination_record.dose_volume_ml).to eq(
+        vaccine.dose_volume_ml
+      )
     end
   end
 end

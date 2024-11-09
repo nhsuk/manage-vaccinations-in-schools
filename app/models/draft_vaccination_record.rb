@@ -95,7 +95,11 @@ class DraftVaccinationRecord
     self.batch_id = value.id
   end
 
-  delegate :dose_volume_ml, to: :vaccination_record, allow_nil: true
+  def dose_volume_ml
+    # TODO: this will need to be revisited once it's possible to record half-doses
+    # e.g. for the flu programme where a child refuses the second half of the dose
+    vaccine.dose_volume_ml * 1 if vaccine.present?
+  end
 
   def outcome
     administered? ? "vaccinated" : reason
