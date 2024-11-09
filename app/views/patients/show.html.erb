@@ -29,3 +29,8 @@
   <% c.with_heading { "Sessions" } %>
   <%= render AppPatientSessionTableComponent.new(@patient, sessions: @sessions) %>
 <% end %>
+
+<%= render AppCardComponent.new do |c| %>
+  <% c.with_heading { "Vaccinations" } %>
+  <%= render AppPatientVaccinationTableComponent.new(@patient) %>
+<% end %>

@@ -1,0 +1,36 @@
+<% if vaccination_records.present? %>
+  <%= govuk_table(html_attributes: {
+                    class: "nhsuk-table-responsive",
+                  }) do |table| %>
+    <% table.with_head do |head| %>
+      <% head.with_row do |row| %>
+        <% row.with_cell(text: "Vaccine") %>
+        <% row.with_cell(text: "Vaccination date") %>
+        <% row.with_cell(text: "Location") %>
+      <% end %>
+    <% end %>
+
+    <% table.with_body do |body| %>
+      <% vaccination_records.each do |vaccination_record| %>
+        <% body.with_row do |row| %>
+          <% row.with_cell do %>
+            <span class="nhsuk-table-responsive__heading">Vaccine</span>
+            <% label = "#{vaccination_record.vaccine.brand} (#{vaccination_record.programme.name})" %>
+            <%= link_to label, programme_vaccination_record_path(vaccination_record.programme, vaccination_record) %>
+          <% end %>
+          <% row.with_cell do %>
+            <span class="nhsuk-table-responsive__heading">Vaccination date</span>
+            <%= vaccination_record.administered_at.to_date.to_fs(:long) %>
+          <% end %>
+          <% row.with_cell do %>
+            <span class="nhsuk-table-responsive__heading">Location</span>
+            <% location = vaccination_record.session.location %>
+            <%= ([location.name] + location.address_parts).join(", ") %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% else %>
+  <p class="nhsuk-body">No vaccinations</p>
+<% end %>
