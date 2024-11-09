@@ -17,7 +17,7 @@ class PatientPolicy < ApplicationPolicy
         )
         .or(
           Patient.where(
-            "pending_changes ->> 'school_id' != NULL AND pending_changes ->> 'school_id' IN (?)",
+            "pending_changes ->> 'school_id' IS NOT NULL AND pending_changes ->> 'school_id' IN (?)",
             school_ids
           )
         )
