@@ -2,10 +2,8 @@
 
 module ParentInterface
   class ConsentForms::EditController < ConsentForms::BaseController
-    include Wicked::Wizard::Translated # For custom URLs, see en.yml wicked
+    include WizardControllerConcern
 
-    before_action :set_steps
-    before_action :setup_wizard_translated
     before_action :validate_params, only: %i[update]
     before_action :set_health_answer, if: :is_health_question_step?
     before_action :set_follow_up_changes_start_page, only: %i[show]
@@ -53,10 +51,6 @@ module ParentInterface
     end
 
     private
-
-    def current_step
-      wizard_value(step).to_sym
-    end
 
     def finish_wizard_path
       confirm_parent_interface_consent_form_path(@consent_form)

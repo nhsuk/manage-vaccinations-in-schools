@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 class Consents::EditController < ApplicationController
-  include Wicked::Wizard::Translated # For custom URLs, see en.yml wicked
   include TriageMailerConcern
 
   before_action :set_session
   before_action :set_patient
   before_action :set_consent
-  before_action :set_steps
-  before_action :setup_wizard_translated
+
+  include WizardControllerConcern
+
   before_action :set_parent,
                 if: -> { %w[parent-details confirm].include?(step) }
   before_action :set_parent_relationship,
@@ -66,10 +66,6 @@ class Consents::EditController < ApplicationController
 
   def set_back_link
     current_step # Set the current_step for the back link
-  end
-
-  def current_step
-    @current_step ||= wizard_value(step).to_sym
   end
 
   def finish_wizard_path

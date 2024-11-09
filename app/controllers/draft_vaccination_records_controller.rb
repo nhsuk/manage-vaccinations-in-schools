@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class DraftVaccinationRecordsController < ApplicationController
-  include Wicked::Wizard::Translated
   include TodaysBatchConcern
   include VaccinationMailerConcern
 
@@ -12,8 +11,9 @@ class DraftVaccinationRecordsController < ApplicationController
   before_action :set_programme
   before_action :set_vaccination_record
   before_action :set_batches
-  before_action :set_steps
-  before_action :setup_wizard_translated
+
+  include WizardControllerConcern
+
   before_action :validate_params, only: %i[update]
   before_action :set_locations
 
@@ -186,9 +186,5 @@ class DraftVaccinationRecordsController < ApplicationController
          )
       self.todays_batch_id = update_params[:batch_id]
     end
-  end
-
-  def current_step
-    @current_step ||= wizard_value(step)&.to_sym
   end
 end
