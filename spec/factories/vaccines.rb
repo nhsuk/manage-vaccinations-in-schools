@@ -102,7 +102,7 @@ FactoryBot.define do
         send(data["type"])
         brand { data["brand"] }
         discontinued { data.fetch("discontinued", false) }
-        dose { data["dose"] }
+        dose { data["dose_volume_ml"] }
         manufacturer { data["manufacturer"] }
         add_attribute(:method) { data["method"] }
         nivs_name { data["nivs_name"] }

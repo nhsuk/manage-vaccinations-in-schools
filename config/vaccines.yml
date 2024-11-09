@@ -4,7 +4,7 @@ fluenz_tetra:
   method: nasal
   manufacturer: AstraZeneca
   nivs_name: AstraZeneca Fluenz Tetra LAIV
-  dose: 0.2
+  dose_volume_ml: 0.2
   snomed_product_code: 27114211000001105
   snomed_product_term: Fluenz Tetra vaccine nasal suspension 0.2ml unit dose
     (AstraZeneca UK Ltd) (product)
@@ -16,7 +16,7 @@ cervarix:
   method: injection
   manufacturer: GlaxoSmithKline
   nivs_name: Cervarix
-  dose: 0.5
+  dose_volume_ml: 0.5
   snomed_product_code: 12238911000001100
   snomed_product_term:
     Cervarix vaccine suspension for injection 0.5ml pre-filled
@@ -28,7 +28,7 @@ gardasil_9:
   method: injection
   manufacturer: Merck Sharp & Dohme
   nivs_name: Gardasil9
-  dose: 0.5
+  dose_volume_ml: 0.5
   snomed_product_code: 33493111000001108
   snomed_product_term:
     Gardasil 9 vaccine suspension for injection 0.5ml pre-filled
@@ -41,7 +41,7 @@ gardasil:
   method: injection
   manufacturer: Merck Sharp & Dohme
   nivs_name: Gardasil
-  dose: 0.5
+  dose_volume_ml: 0.5
   snomed_product_code: 10880211000001104
   snomed_product_term:
     Gardasil vaccine suspension for injection 0.5ml pre-filled
@@ -53,7 +53,7 @@ quadrivalent_influvac_tetra:
   method: injection
   manufacturer: Mylan
   nivs_name: Mylan Influvac QIVe
-  dose: 0.5
+  dose_volume_ml: 0.5
   snomed_product_code: 35727111000001109
   snomed_product_term:
     Influvac sub-unit Tetra vaccine suspension for injection 0.5ml
@@ -65,7 +65,7 @@ supemtek:
   method: injection
   manufacturer: Sanofi
   nivs_name: Sanofi Pasteur Supemtek QIVr
-  dose: 0.5
+  dose_volume_ml: 0.5
   snomed_product_code: 39566211000001103
   snomed_product_term: Supemtek Quadrivalent vaccine (recombinant) solution for
     injection 0.5ml pre-filled syringes (Sanofi) (product)
@@ -76,7 +76,7 @@ quadrivalent_influenza:
   method: injection
   manufacturer: Sanofi
   nivs_name: Sanofi Pasteur QIVe
-  dose: 0.5
+  dose_volume_ml: 0.5
   snomed_product_code: 34680411000001107
   snomed_product_term:
     Quadrivalent influenza vaccine (split virion, inactivated)
@@ -89,7 +89,7 @@ fluad_tetra:
   method: injection
   manufacturer: Seqirus
   nivs_name: Seqirus Fluad Tetra AQIV
-  dose: 0.5
+  dose_volume_ml: 0.5
   snomed_product_code: 38973211000001108
   snomed_product_term:
     Fluad Tetra vaccine suspension for injection 0.5ml pre-filled
@@ -102,7 +102,7 @@ flucelvax_tetra:
   method: injection
   manufacturer: Seqirus
   nivs_name: Seqirus Flucelvax Tetra QIVC
-  dose: 0.5
+  dose_volume_ml: 0.5
   snomed_product_code: 36509011000001106
   snomed_product_term: Flucelvax Tetra vaccine suspension for injection 0.5ml
     pre-filled syringes (Seqirus UK Ltd) (product)
@@ -113,7 +113,7 @@ cell_quadrivalent:
   method: injection
   manufacturer: Seqirus
   nivs_name: Seqirus Cell based Quadrivalent QIVc
-  dose: 0.5
+  dose_volume_ml: 0.5
   snomed_product_code: 40085011000001101
   snomed_product_term:
     Cell-based quadrivalent influenza vaccine (surface antigen,
@@ -126,7 +126,7 @@ adjuvanted_quadrivalent:
   method: injection
   manufacturer: Seqirus
   nivs_name: Seqirus Adjuvanted Quadrivalent aQIV
-  dose: 0.5
+  dose_volume_ml: 0.5
   snomed_product_code: 40085311000001103
   snomed_product_term:
     Adjuvanted quadrivalent influenza vaccine (surface antigen,
