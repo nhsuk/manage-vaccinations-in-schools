@@ -53,8 +53,18 @@ class PatientImportRow
     }.compact.merge(cohort_id: cohort&.id, school_id: school&.id)
 
     if (existing_patient = existing_patients.first)
+      # We want to automatically accept changes to
+      # - registration
+      # - when an unknown school is updated to a known school
+      # without staging, so admins don't have to review those changes
+
       unless stage_registration?
         existing_patient.registration = attributes.delete(:registration)
+      end
+
+      if existing_patient.school_id.blank?
+        existing_patient.school_id = attributes.delete(:school_id)
+        existing_patient.home_educated = attributes.delete(:home_educated)
       end
 
       existing_patient.stage_changes(attributes)

@@ -179,6 +179,17 @@ describe CohortImportRow do
         expect(patient.registration).not_to eq("8AB")
         expect(patient.pending_changes).to include("registration" => "8AB")
       end
+
+      context "when the patient has no school" do
+        before { existing_patient.update(school_id: nil) }
+
+        it "sets the school/home-educated status and doesn't stage it so admins don't have to review that change" do
+          expect(patient.school).to eq(Location.find_by(urn: school_urn))
+          expect(patient.home_educated).to be_falsey
+          expect(patient.pending_changes).not_to include("school_id")
+          expect(patient.pending_changes).not_to include("home_educated")
+        end
+      end
     end
 
     describe "#cohort" do
