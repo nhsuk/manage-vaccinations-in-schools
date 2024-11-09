@@ -34,7 +34,12 @@ class PatientsController < ApplicationController
   end
 
   def show
-    @sessions = policy_scope(Session).joins(:patients).where(patients: @patient)
+    @sessions =
+      policy_scope(Session)
+        .joins(:patients)
+        .where(patients: @patient)
+        .includes(:location)
+        .strict_loading
   end
 
   def edit
@@ -64,7 +69,19 @@ class PatientsController < ApplicationController
   private
 
   def set_patient
-    @patient = policy_scope(Patient).find(params[:id])
+    @patient =
+      policy_scope(Patient)
+        .includes(
+          :school,
+          :cohort,
+          :notify_log_entries,
+          :triages,
+          vaccination_records: [:performed_by_user, { vaccine: :programme }],
+          parents: :parent_relationships,
+          patient_sessions: [:location]
+        )
+        .strict_loading
+        .find(params[:id])
   end
 
   def patient_params
