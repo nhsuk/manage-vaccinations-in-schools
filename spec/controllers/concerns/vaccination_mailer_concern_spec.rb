@@ -22,9 +22,13 @@ describe VaccinationMailerConcern do
     end
 
     let(:route) { "website" }
+    let(:notify_parents) { false }
+
     let(:programme) { create(:programme) }
     let(:session) { create(:session, programme:) }
-    let(:consent) { create(:consent, :given, :recorded, programme:, route:) }
+    let(:consent) do
+      create(:consent, :given, :recorded, programme:, route:, notify_parents:)
+    end
     let(:patient) { create(:patient, consents: [consent]) }
     let(:patient_session) { create(:patient_session, session:, patient:) }
     let(:vaccination_record) do
@@ -86,6 +90,7 @@ describe VaccinationMailerConcern do
 
     context "when the consent was done through gillick assessment" do
       let(:route) { "self_consent" }
+
       let(:vaccination_record) do
         create(:vaccination_record, programme:, patient_session:)
       end

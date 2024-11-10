@@ -813,6 +813,7 @@ en:
     location: location
     name: name
     notes: notes
+    notify_parents: notify-parents
     outcome: outcome
     parent: parent
     parent_details: parent-details
