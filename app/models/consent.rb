@@ -122,6 +122,10 @@ class Consent < ApplicationRecord
     validates :response, inclusion: { in: Consent.responses.keys }
   end
 
+  on_wizard_step :notify_parents do
+    validates :notify_parents, inclusion: { in: [true, false] }
+  end
+
   on_wizard_step :reason do
     validates :reason_for_refusal,
               inclusion: {
@@ -143,6 +147,7 @@ class Consent < ApplicationRecord
       (:parent_details unless via_self_consent?),
       (:route unless via_self_consent?),
       :agree,
+      (:notify_parents if response_given? && via_self_consent?),
       (:questions if response_given?),
       (:triage if triage_allowed && response_given?),
       (:reason if response_refused?),

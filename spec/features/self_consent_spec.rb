@@ -162,6 +162,10 @@ describe "Self-consent" do
     choose "Yes, they agree"
     click_on "Continue"
 
+    # notify parents
+    choose "Yes"
+    click_on "Continue"
+
     # answer the health questions
     all("label", text: "No").each(&:click)
     click_on "Continue"

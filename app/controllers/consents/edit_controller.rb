@@ -219,6 +219,7 @@ class Consents::EditController < ApplicationController
     permitted_attributes = {
       agree: %i[response],
       notes: %i[notes],
+      notify_parents: %i[notify_parents],
       questions: questions_params,
       reason: %i[reason_for_refusal],
       route: %i[route],
