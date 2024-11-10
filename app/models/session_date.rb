@@ -22,6 +22,8 @@ class SessionDate < ApplicationRecord
 
   belongs_to :session
 
+  has_many :session_attendances
+
   scope :for_session, -> { where("session_id = sessions.id") }
 
   validates :value,

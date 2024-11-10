@@ -571,6 +571,16 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_11_112052) do
     t.index ["session_id", "programme_id"], name: "index_programmes_sessions_on_session_id_and_programme_id", unique: true
   end
 
+  create_table "session_attendances", force: :cascade do |t|
+    t.bigint "patient_session_id", null: false
+    t.bigint "session_date_id", null: false
+    t.boolean "attending", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["patient_session_id"], name: "index_session_attendances_on_patient_session_id"
+    t.index ["session_date_id"], name: "index_session_attendances_on_session_date_id"
+  end
+
   create_table "session_dates", force: :cascade do |t|
     t.bigint "session_id", null: false
     t.date "value", null: false
@@ -765,6 +775,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_11_112052) do
   add_foreign_key "patients", "locations", column: "school_id"
   add_foreign_key "programmes_sessions", "programmes"
   add_foreign_key "programmes_sessions", "sessions"
+  add_foreign_key "session_attendances", "patient_sessions"
+  add_foreign_key "session_attendances", "session_dates"
   add_foreign_key "session_dates", "sessions"
   add_foreign_key "session_notifications", "patients"
   add_foreign_key "session_notifications", "sessions"
