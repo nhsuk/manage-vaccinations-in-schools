@@ -56,7 +56,9 @@ class SessionNotification < ApplicationRecord
 
     contacts =
       if type == :school_reminder
-        patient_session.consents_to_send_communication.select(&:contactable?)
+        patient_session.latest_consents.select do
+          _1.response_given? && _1.parent&.contactable?
+        end
       else
         patient.parents.select(&:contactable?)
       end

@@ -20,10 +20,19 @@ module VaccinationMailerConcern
 
     text_template_name = :"vaccination_#{mailer_action}"
 
-    patient_session.consents_to_send_communication.each do |consent|
-      params = { consent:, vaccination_record:, sent_by: }
+    parents =
+      patient_session
+        .latest_consents
+        .select(&:response_given?)
+        .filter_map(&:parent)
+        .select(&:contactable?)
 
-      VaccinationMailer.with(params).public_send(mailer_action).deliver_later
+    parents.each do |parent|
+      params = { parent:, patient:, vaccination_record:, sent_by: }
+
+      if parent.email.present?
+        VaccinationMailer.with(params).public_send(mailer_action).deliver_later
+      end
 
       TextDeliveryJob.perform_later(text_template_name, **params)
     end

@@ -116,10 +116,6 @@ class PatientSession < ApplicationRecord
     @latest_vaccination_record ||= vaccination_records.max_by(&:created_at)
   end
 
-  def consents_to_send_communication
-    latest_consents.select(&:response_given?).reject(&:via_self_consent?)
-  end
-
   def pending_transfer?
     proposed_session_id.present?
   end
