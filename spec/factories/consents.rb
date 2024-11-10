@@ -8,6 +8,7 @@
 #  health_answers      :jsonb
 #  invalidated_at      :datetime
 #  notes               :text             default(""), not null
+#  notify_parents      :boolean
 #  reason_for_refusal  :integer
 #  recorded_at         :datetime
 #  response            :integer
@@ -74,6 +75,11 @@ FactoryBot.define do
     trait :self_consent do
       route { "self_consent" }
       parent { nil }
+      notify_parents { false }
+    end
+
+    trait :notify_parents do
+      notify_parents { true }
     end
 
     trait :refused do
