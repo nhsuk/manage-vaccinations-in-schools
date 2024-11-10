@@ -21,14 +21,10 @@ describe VaccinationMailerConcern do
       sample.send_vaccination_confirmation(vaccination_record)
     end
 
-    let(:route) { "website" }
-    let(:notify_parents) { false }
-
     let(:programme) { create(:programme) }
     let(:session) { create(:session, programme:) }
-    let(:consent) do
-      create(:consent, :given, :recorded, programme:, route:, notify_parents:)
-    end
+    let(:consent) { create(:consent, :given, :recorded, programme:) }
+    let(:parent) { consent.parent }
     let(:patient) { create(:patient, consents: [consent]) }
     let(:patient_session) { create(:patient_session, session:, patient:) }
     let(:vaccination_record) do
@@ -42,7 +38,8 @@ describe VaccinationMailerConcern do
           :confirmation_administered
         ).with(
           params: {
-            consent:,
+            parent:,
+            patient:,
             vaccination_record:,
             sent_by: current_user
           },
@@ -53,7 +50,7 @@ describe VaccinationMailerConcern do
       it "sends a text message" do
         expect { send_vaccination_confirmation }.to have_enqueued_text(
           :vaccination_confirmation_administered
-        ).with(consent:, vaccination_record:, sent_by: current_user)
+        ).with(parent:, patient:, vaccination_record:, sent_by: current_user)
       end
     end
 
@@ -73,7 +70,8 @@ describe VaccinationMailerConcern do
           :confirmation_not_administered
         ).with(
           params: {
-            consent:,
+            parent:,
+            patient:,
             vaccination_record:,
             sent_by: current_user
           },
@@ -84,12 +82,14 @@ describe VaccinationMailerConcern do
       it "sends a text message" do
         expect { send_vaccination_confirmation }.to have_enqueued_text(
           :vaccination_confirmation_not_administered
-        ).with(consent:, vaccination_record:, sent_by: current_user)
+        ).with(parent:, patient:, vaccination_record:, sent_by: current_user)
       end
     end
 
     context "when the consent was done through gillick assessment" do
-      let(:route) { "self_consent" }
+      let(:consent) do
+        create(:consent, :given, :recorded, :self_consent, programme:)
+      end
 
       let(:vaccination_record) do
         create(:vaccination_record, programme:, patient_session:)
