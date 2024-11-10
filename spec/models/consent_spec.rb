@@ -8,6 +8,7 @@
 #  health_answers      :jsonb
 #  invalidated_at      :datetime
 #  notes               :text             default(""), not null
+#  notify_parents      :boolean
 #  reason_for_refusal  :integer
 #  recorded_at         :datetime
 #  response            :integer
