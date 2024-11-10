@@ -17,10 +17,10 @@
 <%= form_with model: @consent, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <%= f.govuk_radio_buttons_fieldset(:new_or_existing_parent, legend: nil) do %>
+  <%= f.govuk_radio_buttons_fieldset(:new_or_existing_contact, legend: nil) do %>
     <% if @parent_options.present? %>
       <% @parent_options.each.with_index do |parent, i| %>
-        <%= f.govuk_radio_button :new_or_existing_parent, parent.id,
+        <%= f.govuk_radio_button :new_or_existing_contact, parent.id,
                                  label: { text: parent.label_to(patient: @patient) },
                                  hint: { text: parent.contact_label },
                                  link_errors: i == 0 %>
@@ -29,7 +29,7 @@
       <%= f.govuk_radio_divider %>
     <% end %>
 
-    <%= f.govuk_radio_button :new_or_existing_parent, "new",
+    <%= f.govuk_radio_button :new_or_existing_contact, "new",
                              label: { text: "Add a new parental contact" },
                              link_errors: @parent_options.empty? %>
   <% end %>

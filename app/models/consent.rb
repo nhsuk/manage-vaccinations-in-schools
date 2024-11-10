@@ -47,7 +47,7 @@ class Consent < ApplicationRecord
 
   before_save :reset_unused_fields
 
-  attr_reader :new_or_existing_parent
+  attr_reader :new_or_existing_contact
   attr_accessor :triage, :triage_allowed
 
   belongs_to :patient
@@ -110,7 +110,7 @@ class Consent < ApplicationRecord
   end
 
   on_wizard_step :who, exact: true do
-    validates :new_or_existing_parent, presence: true
+    validates :new_or_existing_contact, presence: true
   end
 
   on_wizard_step :parent_details do
@@ -236,8 +236,8 @@ class Consent < ApplicationRecord
       )
   end
 
-  def new_or_existing_parent=(value)
-    @new_or_existing_parent = value
+  def new_or_existing_contact=(value)
+    @new_or_existing_contact = value
     self.parent_id = value if value.to_i.in?(
       patient.consents.pluck(:parent_id) + patient.parents.pluck(:id)
     )
