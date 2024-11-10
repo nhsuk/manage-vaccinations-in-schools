@@ -35,6 +35,7 @@ class PatientSession < ApplicationRecord
   has_one :team, through: :session
   has_one :organisation, through: :session
   has_many :programmes, through: :session
+  has_many :session_attendances
 
   has_one :gillick_assessment
   has_many :vaccination_records
