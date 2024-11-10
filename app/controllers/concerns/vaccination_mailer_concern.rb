@@ -5,9 +5,27 @@ module VaccinationMailerConcern
 
   def send_vaccination_confirmation(vaccination_record)
     patient_session = vaccination_record.patient_session
-    patient = vaccination_record.patient
+    patient = patient_session.patient
 
     return unless patient.send_notifications?
+
+    consents = patient_session.latest_consents
+
+    parents =
+      if consents.any?(&:via_self_consent?)
+        if consents.any?(&:notify_parents)
+          patient.parents.select(&:contactable?)
+        else
+          []
+        end
+      else
+        consents
+          .select(&:response_given?)
+          .filter_map(&:parent)
+          .select(&:contactable?)
+      end
+
+    return if parents.empty?
 
     sent_by = current_user
 
@@ -19,13 +37,6 @@ module VaccinationMailerConcern
       end
 
     text_template_name = :"vaccination_#{mailer_action}"
-
-    parents =
-      patient_session
-        .latest_consents
-        .select(&:response_given?)
-        .filter_map(&:parent)
-        .select(&:contactable?)
 
     parents.each do |parent|
       params = { parent:, patient:, vaccination_record:, sent_by: }
