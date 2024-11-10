@@ -24,8 +24,8 @@ describe VaccinationMailerConcern do
     let(:programme) { create(:programme) }
     let(:session) { create(:session, programme:) }
     let(:consent) { create(:consent, :given, :recorded, programme:) }
-    let(:parent) { consent.parent }
     let(:patient) { create(:patient, consents: [consent]) }
+    let(:parent) { consent.parent || patient.parents.first }
     let(:patient_session) { create(:patient_session, session:, patient:) }
     let(:vaccination_record) do
       create(:vaccination_record, programme:, patient_session:)
@@ -87,20 +87,56 @@ describe VaccinationMailerConcern do
     end
 
     context "when the consent was done through gillick assessment" do
-      let(:consent) do
-        create(:consent, :given, :recorded, :self_consent, programme:)
-      end
-
       let(:vaccination_record) do
         create(:vaccination_record, programme:, patient_session:)
       end
 
-      it "doesn't send an email" do
-        expect { send_vaccination_confirmation }.not_to have_enqueued_mail
+      context "when child wants parents to be notified" do
+        let(:consent) do
+          create(
+            :consent,
+            :given,
+            :recorded,
+            :self_consent,
+            :notify_parents,
+            programme:
+          )
+        end
+
+        it "sends an email" do
+          expect { send_vaccination_confirmation }.to have_enqueued_mail(
+            VaccinationMailer,
+            :confirmation_administered
+          ).with(
+            params: {
+              parent:,
+              patient:,
+              vaccination_record:,
+              sent_by: current_user
+            },
+            args: []
+          )
+        end
+
+        it "sends a text message" do
+          expect { send_vaccination_confirmation }.to have_enqueued_text(
+            :vaccination_confirmation_administered
+          ).with(parent:, patient:, vaccination_record:, sent_by: current_user)
+        end
       end
 
-      it "doesn't send a text message" do
-        expect { send_vaccination_confirmation }.not_to have_enqueued_text
+      context "when child doesn't want a parent to be notified" do
+        let(:consent) do
+          create(:consent, :given, :recorded, :self_consent, programme:)
+        end
+
+        it "doesn't send an email" do
+          expect { send_vaccination_confirmation }.not_to have_enqueued_mail
+        end
+
+        it "doesn't send a text message" do
+          expect { send_vaccination_confirmation }.not_to have_enqueued_text
+        end
       end
     end
 
