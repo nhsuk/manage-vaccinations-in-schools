@@ -78,7 +78,7 @@ class PatientsController < ApplicationController
           :triages,
           vaccination_records: [:performed_by_user, { vaccine: :programme }],
           parents: :parent_relationships,
-          patient_sessions: [:location]
+          patient_sessions: %i[location session_attendances]
         )
         .strict_loading
         .find(params[:id])

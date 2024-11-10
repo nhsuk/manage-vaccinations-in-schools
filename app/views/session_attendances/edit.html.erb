@@ -1,0 +1,38 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: @back_link,
+        name: "#{@section.pluralize} page",
+      ) %>
+<% end %>
+
+<% title = "Is #{@patient.full_name} attending today’s session?" %>
+<% content_for :page_title, title %>
+
+<%= form_with model: @session_attendance,
+              url: session_patient_attendance_path(patient_id: @patient.id),
+              method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+  <%= f.govuk_radio_buttons_fieldset(:attending,
+                                     caption: { size: "l",
+                                                text: @session.location.name },
+                                     legend: { size: "l",
+                                               tag: "h1",
+                                               text: title }) do %>
+    <%= f.govuk_radio_button(
+          :attending, true,
+          label: { text: "Yes, they are attending today’s session" },
+          link_errors: true,
+        ) %>
+    <%= f.govuk_radio_button(
+          :attending, false,
+          label: { text: "No, they are absent from today’s session" },
+        ) %>
+    <%= f.govuk_radio_divider %>
+    <%= f.govuk_radio_button(
+          :attending, "not_registered",
+          label: { text: "They have not been registered yet" },
+        ) %>
+  <% end %>
+
+  <%= f.govuk_submit "Save changes" %>
+<% end %>

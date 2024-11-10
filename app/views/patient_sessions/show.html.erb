@@ -10,6 +10,28 @@
   <%= @patient.full_name %>
 <% end %>
 
+<% if Flipper.enabled?(:record_attendance) %>
+  <ul class="app-action-list">
+    <li class="app-action-list__item">
+      <% if @patient_session.current_attendance %>
+        <% if @patient_session.current_attendance.attending? %>
+          <%= govuk_tag(text: "Attending today’s session") %>
+        <% else %>
+          <%= govuk_tag(text: "Absent from today’s session", colour: "red") %>
+        <% end %>
+      <% else %>
+        <%= govuk_tag(text: "Not registered yet", colour: "blue") %>
+      <% end %>
+    </li>
+    <li class="app-action-list__item">
+      <%= link_to(
+            "Update attendance",
+            edit_session_patient_attendance_path(patient_id: @patient.id)
+          ) %>
+    </li>
+  </ul>
+<% end %>
+
 <%= render AppSecondaryNavigationComponent.new do |nav|
       nav.with_item(
         href: session_patient_path(id: @patient.id),
