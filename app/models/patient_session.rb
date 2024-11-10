@@ -35,7 +35,7 @@ class PatientSession < ApplicationRecord
   has_one :team, through: :session
   has_one :organisation, through: :session
   has_many :programmes, through: :session
-  has_many :session_attendances
+  has_many :session_attendances, dependent: :destroy
 
   has_one :gillick_assessment
   has_many :vaccination_records
@@ -137,5 +137,17 @@ class PatientSession < ApplicationRecord
 
   def ignore_transfer!
     update!(proposed_session: nil)
+  end
+
+  def current_attendance
+    session_attendances.joins(:session_date).find_by(
+      session_date: {
+        value: Date.current
+      }
+    )
+  end
+
+  def attending_today?
+    current_attendance&.attending?
   end
 end

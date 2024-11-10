@@ -288,6 +288,10 @@ Rails.application.routes.draw do
                  only: %i[new create edit update]
         resource :triages, only: %i[new create]
         resource :vaccinations, only: %i[create]
+
+        resource :attendance,
+                 controller: "session_attendances",
+                 only: %i[edit update]
       end
     end
 

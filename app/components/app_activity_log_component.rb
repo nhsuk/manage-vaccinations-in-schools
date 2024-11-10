@@ -34,7 +34,8 @@ class AppActivityLogComponent < ViewComponent::Base
       notify_events,
       session_events,
       triage_events,
-      vaccination_events
+      vaccination_events,
+      attendance_events
     ].flatten
   end
 
@@ -126,5 +127,16 @@ class AppActivityLogComponent < ViewComponent::Base
         by: vaccination_record.performed_by&.full_name
       }
     end
+  end
+
+  def attendance_events
+    patient_sessions
+      .flat_map(&:session_attendances)
+      .map do
+        title = (_1.attending? ? "Attended session" : "Absent from session")
+        title += " at #{_1.patient_session.session.location.name}"
+
+        { title:, time: _1.created_at }
+      end
   end
 end
