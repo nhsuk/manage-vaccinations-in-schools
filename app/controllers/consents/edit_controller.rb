@@ -99,7 +99,7 @@ class Consents::EditController < ApplicationController
       @consent.save!
     end
 
-    session.delete(:manage_consents_new_or_existing_parent_id)
+    session.delete(:consents_new_or_existing_contact)
   end
 
   def handle_questions
@@ -112,8 +112,8 @@ class Consents::EditController < ApplicationController
   end
 
   def handle_who
-    session[:manage_consents_new_or_existing_parent_id] = update_params[
-      :new_or_existing_parent
+    session[:consents_new_or_existing_contact] = update_params[
+      :new_or_existing_contact
     ]
     @consent.assign_attributes(update_params)
   end
@@ -160,11 +160,11 @@ class Consents::EditController < ApplicationController
   end
 
   def set_parent
-    new_or_existing_parent = session[:manage_consents_new_or_existing_parent_id]
+    new_or_existing_contact = session[:consents_new_or_existing_contact]
     @parent =
-      if new_or_existing_parent == "new"
+      if new_or_existing_contact == "new"
         @consent.draft_parent || Parent.new
-      elsif new_or_existing_parent.present?
+      elsif new_or_existing_contact.present?
         @consent.parent
       end
   end
@@ -189,8 +189,8 @@ class Consents::EditController < ApplicationController
 
   def set_consent
     @consent = policy_scope(Consent).find(params[:consent_id])
-    @consent.new_or_existing_parent =
-      session[:manage_consents_new_or_existing_parent_id]
+    @consent.new_or_existing_contact =
+      session[:consents_new_or_existing_contact]
   end
 
   def set_patient_session
@@ -219,7 +219,7 @@ class Consents::EditController < ApplicationController
       questions: questions_params,
       reason: %i[reason_for_refusal],
       route: %i[route],
-      who: %i[new_or_existing_parent]
+      who: %i[new_or_existing_contact]
     }.fetch(current_step)
 
     params

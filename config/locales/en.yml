@@ -365,7 +365,7 @@ en:
               missing_headers: "The file is missing the following headers: %{missing_headers}"
         consent:
           attributes:
-            new_or_existing_parent:
+            new_or_existing_contact:
               blank: Choose who you are trying to get consent from
             reason_for_refusal:
               inclusion: Choose a reason
