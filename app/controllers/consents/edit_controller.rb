@@ -5,6 +5,7 @@ class Consents::EditController < ApplicationController
 
   before_action :set_session
   before_action :set_patient
+  before_action :set_patient_session
   before_action :set_consent
 
   include WizardControllerConcern
@@ -14,7 +15,6 @@ class Consents::EditController < ApplicationController
   before_action :set_parent_relationship,
                 if: -> { %w[parent-details confirm].include?(step) }
   before_action :set_parent_details_form, if: -> { step == "parent-details" }
-  before_action :set_patient_session
   before_action :set_parent_options, if: -> { step == "who" }
   before_action :set_triage, if: -> { step.in?(%w[triage confirm]) }
   before_action :set_back_link,
@@ -151,6 +151,16 @@ class Consents::EditController < ApplicationController
     @patient = @session.patients.find(params.fetch(:patient_id))
   end
 
+  def set_patient_session
+    @patient_session = @patient.patient_sessions.find_by(session: @session)
+  end
+
+  def set_consent
+    @consent = policy_scope(Consent).find(params[:consent_id])
+    @consent.new_or_existing_contact =
+      session[:consents_new_or_existing_contact]
+  end
+
   def set_parent_options
     @parent_options =
       (
@@ -161,9 +171,12 @@ class Consents::EditController < ApplicationController
 
   def set_parent
     new_or_existing_contact = session[:consents_new_or_existing_contact]
+
     @parent =
       if new_or_existing_contact == "new"
         @consent.draft_parent || Parent.new
+      elsif new_or_existing_contact == "patient"
+        nil
       elsif new_or_existing_contact.present?
         @consent.parent
       end
@@ -185,16 +198,6 @@ class Consents::EditController < ApplicationController
         relationship_type: @parent_relationship&.type,
         relationship_other_name: @parent_relationship&.other_name
       )
-  end
-
-  def set_consent
-    @consent = policy_scope(Consent).find(params[:consent_id])
-    @consent.new_or_existing_contact =
-      session[:consents_new_or_existing_contact]
-  end
-
-  def set_patient_session
-    @patient_session = @patient.patient_sessions.find_by(session: @session)
   end
 
   def set_triage

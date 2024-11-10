@@ -154,6 +154,10 @@ describe "Self-consent" do
   def then_the_child_can_give_their_own_consent_that_the_nurse_records
     click_on "Get consent"
 
+    # who
+    choose "Child (Gillick competent)"
+    click_on "Continue"
+
     # record consent
     choose "Yes, they agree"
     click_on "Continue"
@@ -203,10 +207,9 @@ describe "Self-consent" do
 
   def then_the_child_cannot_give_their_own_consent
     click_on "Get consent"
-    expect(page).to have_content("Who are you trying to get consent from?")
-    expect(page).not_to have_content(
-      "Do they agree to them having the HPV vaccination?"
-    )
+
+    expect(page).not_to have_content("Child (Gillick competent)")
+
     click_on "Back"
   end
 

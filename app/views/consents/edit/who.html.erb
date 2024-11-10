@@ -18,12 +18,18 @@
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
   <%= f.govuk_radio_buttons_fieldset(:new_or_existing_contact, legend: nil) do %>
+    <% if @patient_session.gillick_competent? %>
+      <%= f.govuk_radio_button :new_or_existing_contact, "patient",
+                               label: { text: "Child (Gillick competent)" },
+                               link_errors: true %>
+    <% end %>
+
     <% if @parent_options.present? %>
       <% @parent_options.each.with_index do |parent, i| %>
         <%= f.govuk_radio_button :new_or_existing_contact, parent.id,
                                  label: { text: parent.label_to(patient: @patient) },
                                  hint: { text: parent.contact_label },
-                                 link_errors: i == 0 %>
+                                 link_errors: !@patient_session.gillick_competent? && i == 0 %>
       <% end %>
 
       <%= f.govuk_radio_divider %>
@@ -31,7 +37,7 @@
 
     <%= f.govuk_radio_button :new_or_existing_contact, "new",
                              label: { text: "Add a new parental contact" },
-                             link_errors: @parent_options.empty? %>
+                             link_errors: !@patient_session.gillick_competent? && @parent_options.empty? %>
   <% end %>
 
   <div class="nhsuk-u-margin-top-6">
