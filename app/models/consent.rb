@@ -138,7 +138,7 @@ class Consent < ApplicationRecord
 
   def wizard_steps
     [
-      (:who unless via_self_consent?),
+      :who,
       (:parent_details unless via_self_consent?),
       (:route unless via_self_consent?),
       :agree,
@@ -238,9 +238,16 @@ class Consent < ApplicationRecord
 
   def new_or_existing_contact=(value)
     @new_or_existing_contact = value
-    self.parent_id = value if value.to_i.in?(
-      patient.consents.pluck(:parent_id) + patient.parents.pluck(:id)
-    )
+
+    return if value == "new"
+
+    if value == "patient"
+      self.route = "self_consent"
+    elsif value.to_i.in?(
+          patient.consents.pluck(:parent_id) + patient.parents.pluck(:id)
+        )
+      self.parent_id = value
+    end
   end
 
   private

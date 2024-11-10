@@ -142,8 +142,7 @@ class ConsentsController < ApplicationController
       patient: @patient,
       programme: @session.programmes.first, # TODO: handle multiple programmes
       organisation: @session.organisation,
-      recorded_by: current_user,
-      route: @patient_session.gillick_competent? ? :self_consent : nil
+      recorded_by: current_user
     }
   end
 
