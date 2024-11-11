@@ -137,10 +137,10 @@ describe ImmunisationImport do
         # stree-ignore
         expect { record! }
           .to change(immunisation_import, :recorded_at).from(nil)
-          .and change(immunisation_import.vaccination_records, :count).by(7)
-          .and change(immunisation_import.patients, :count).by(7)
-          .and change(immunisation_import.sessions, :count).by(1)
-          .and change(immunisation_import.patient_sessions, :count).by(7)
+          .and change(immunisation_import.vaccination_records, :count).by(11)
+          .and change(immunisation_import.patients, :count).by(11)
+          .and change(immunisation_import.sessions, :count).by(3)
+          .and change(immunisation_import.patient_sessions, :count).by(11)
           .and change(immunisation_import.batches, :count).by(4)
 
         # Second import should not duplicate the vaccination records if they're
@@ -160,8 +160,8 @@ describe ImmunisationImport do
         # stree-ignore
         expect { record! }
           .to change(immunisation_import, :exact_duplicate_record_count).to(0)
-          .and change(immunisation_import, :new_record_count).to(7)
-          .and change(immunisation_import, :not_administered_record_count).to(4)
+          .and change(immunisation_import, :new_record_count).to(11)
+          .and change(immunisation_import, :not_administered_record_count).to(0)
       end
 
       it "ignores and counts duplicate records" do
@@ -175,7 +175,7 @@ describe ImmunisationImport do
         csv.rewind
 
         record!
-        expect(immunisation_import.exact_duplicate_record_count).to eq(7)
+        expect(immunisation_import.exact_duplicate_record_count).to eq(11)
       end
 
       it "enqueues jobs to look up missing NHS numbers" do
@@ -186,7 +186,7 @@ describe ImmunisationImport do
 
       it "enqueues jobs to update from PDS" do
         expect { record! }.to have_enqueued_job(PatientUpdateFromPDSJob)
-          .exactly(6)
+          .exactly(10)
           .times
           .on_queue(:imports)
       end
@@ -279,7 +279,7 @@ describe ImmunisationImport do
       end
 
       it "doesn't create an additional patient" do
-        expect { record! }.to change(Patient, :count).by(6)
+        expect { record! }.to change(Patient, :count).by(10)
       end
 
       it "doesn't update the NHS number on the existing patient" do
@@ -302,7 +302,7 @@ describe ImmunisationImport do
       end
 
       it "doesn't create an additional patient" do
-        expect { record! }.to change(Patient, :count).by(6)
+        expect { record! }.to change(Patient, :count).by(10)
       end
     end
 

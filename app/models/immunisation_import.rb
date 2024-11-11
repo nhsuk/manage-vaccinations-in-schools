@@ -90,7 +90,9 @@ class ImmunisationImport < ApplicationRecord
     @sessions_batch ||= Set.new
 
     @vaccination_records_batch.add(vaccination_record)
-    @batches_batch.add(vaccination_record.batch)
+    if vaccination_record.administered?
+      @batches_batch.add(vaccination_record.batch)
+    end
     @patients_batch.add(vaccination_record.patient)
     @patient_sessions_batch.add(vaccination_record.patient_session)
     @sessions_batch.add(vaccination_record.session)
@@ -122,9 +124,7 @@ class ImmunisationImport < ApplicationRecord
   end
 
   def count_column(vaccination_record)
-    if !vaccination_record
-      :not_administered_record_count
-    elsif vaccination_record.new_record?
+    if vaccination_record.new_record?
       :new_record_count
     elsif vaccination_record.pending_changes.any? ||
           vaccination_record.patient.pending_changes.any?
