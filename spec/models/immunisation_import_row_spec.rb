@@ -132,6 +132,26 @@ describe ImmunisationImportRow do
       end
     end
 
+    context "when date doesn't match an existing session" do
+      subject(:errors) { immunisation_import_row.errors[:date_of_vaccination] }
+
+      before { immunisation_import_row.valid? }
+
+      context "when importing for the current academic year" do
+        let(:data) do
+          { "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901" }
+        end
+
+        it { should include(/current session/) }
+      end
+
+      context "when importing for a different academic year" do
+        let(:data) { { "DATE_OF_VACCINATION" => "20220101" } }
+
+        it { should be_empty }
+      end
+    end
+
     context "with an invalid time of vaccination" do
       let(:data) { { "TIME_OF_VACCINATION" => "abc" } }
 
@@ -528,7 +548,7 @@ describe ImmunisationImportRow do
     context "without data" do
       let(:data) { {} }
 
-      it { should be_nil }
+      it { should eq("Unknown") }
     end
 
     context "with a school" do

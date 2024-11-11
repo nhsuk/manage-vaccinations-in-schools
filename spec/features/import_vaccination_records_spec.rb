@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe "Immunisation imports" do
-  around { |example| travel_to(Date.new(2024, 5, 20)) { example.run } }
+  around { |example| travel_to(Date.new(2025, 5, 20)) { example.run } }
 
   scenario "User uploads a file, views cohort and vaccination records" do
     given_i_am_signed_in

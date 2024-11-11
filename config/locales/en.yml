@@ -235,6 +235,7 @@ en:
               blank: Enter a date in the correct format.
               greater_than_or_equal_to: The vaccination date is outside the programme. Enter a date after the programme started.
               less_than_or_equal_to: The vaccination date is outside the programme. Enter a date before today.
+              inclusion: Enter a date for a current session
             time_of_vaccination:
               blank: Enter a time in the correct format.
             vaccine_given:

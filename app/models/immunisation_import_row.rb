@@ -52,6 +52,7 @@ class ImmunisationImportRow
   validates :time_of_vaccination,
             presence: true,
             if: -> { @data["TIME_OF_VACCINATION"]&.strip.present? }
+  validate :session_date_exists
 
   CARE_SETTING_SCHOOL = 1
   CARE_SETTING_COMMUNITY = 2
@@ -323,8 +324,6 @@ class ImmunisationImportRow
   end
 
   def location
-    return unless valid?
-
     @location ||=
       if school && (care_setting.nil? || care_setting == CARE_SETTING_SCHOOL)
         school
@@ -334,12 +333,10 @@ class ImmunisationImportRow
   end
 
   def school
-    return unless valid?
-
     @school ||=
       if school_urn != SCHOOL_URN_HOME_EDUCATED &&
            school_urn != SCHOOL_URN_UNKNOWN
-        Location.find_by!(urn: school_urn)
+        Location.find_by(urn: school_urn)
       end
   end
 
@@ -404,6 +401,19 @@ class ImmunisationImportRow
 
     unless @programme.year_groups.include?(patient_date_of_birth.year_group)
       errors.add(:patient_date_of_birth, :inclusion)
+    end
+  end
+
+  def session_date_exists
+    return if date_of_vaccination.nil? || location.nil?
+    return if academic_year != Date.current.academic_year
+
+    unless Session.has_date(date_of_vaccination).exists?(
+             organisation:,
+             location:,
+             academic_year:
+           )
+      errors.add(:date_of_vaccination, :inclusion)
     end
   end
 
