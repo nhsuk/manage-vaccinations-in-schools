@@ -101,7 +101,8 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       },
       {
         name: "DATE_OF_VACCINATION",
-        notes: "#{tag.strong("Required")}, must use #{tag.i("YYYYMMDD")} format"
+        notes:
+          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}, must use #{tag.i("YYYYMMDD")} format"
       },
       {
         name: "TIME_OF_VACCINATION",
@@ -110,7 +111,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: "VACCINE_GIVEN",
         notes:
-          "#{tag.strong("Required")}, must be " +
+          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}, must be " +
             @programme
               .vaccines
               .pluck(:nivs_name)
@@ -120,20 +121,36 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
                 two_words_connector: " or "
               )
       },
-      { name: "BATCH_NUMBER", notes: tag.strong("Required") },
+      {
+        name: "BATCH_NUMBER",
+        notes: "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}"
+      },
       {
         name: "BATCH_EXPIRY_DATE",
-        notes: "#{tag.strong("Required")}, must use #{tag.i("YYYYMMDD")} format"
+        notes:
+          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}, must use #{tag.i("YYYYMMDD")} format"
       },
       {
         name: "ANATOMICAL_SITE",
         notes:
-          "#{tag.strong("Required")}, must be #{tag.i("Left Buttock")}, " \
+          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}, must be #{tag.i("Left Buttock")}, " \
             "#{tag.i("Right Buttock")}, #{tag.i("Left Thigh")}, " \
             "#{tag.i("Right Thigh")}, #{tag.i("Left Upper Arm")}, " \
             "#{tag.i("Right Upper Arm")} or #{tag.i("Nasal")}"
+      },
+      {
+        name: "VACCINATED",
+        notes:
+          "Optional, must be #{tag.i("Y")} or #{tag.i("N")}. If omitted, " \
+            "#{tag.i("Y")} is assumed."
+      },
+      {
+        name: "REASON",
+        notes:
+          "Required if #{tag.code("VACCINATED")} is #{tag.i("N")}, must be #{tag.i("did not attend")}, " \
+            "#{tag.i("vaccination contraindicated")} or #{tag.i("unwell")}"
       }
-    ] + dose_sequence + vaccinated + care_setting + performing_professional
+    ] + dose_sequence + care_setting + performing_professional
   end
 
   def child_columns
@@ -196,8 +213,8 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: "DOSE_SEQUENCE",
         notes:
-          "#{tag.strong("Required")}, must be #{tag.i("1")}, #{tag.i("2")} or " \
-            "#{tag.i("3")}"
+          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}, " \
+            "must be #{tag.i("1")}, #{tag.i("2")} or #{tag.i("3")}"
       }
     ]
   end
@@ -208,19 +225,8 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: "CARE_SETTING",
         notes:
-          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}. Must be " \
+          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}, must be " \
             "#{tag.i("1")} (school) or #{tag.i("2")} (care setting)"
-      }
-    ]
-  end
-
-  def vaccinated
-    [
-      {
-        name: "VACCINATED",
-        notes:
-          "Optional, must be #{tag.i("Y")} or #{tag.i("N")}. If omitted, " \
-            "#{tag.i("Y")} is assumed."
       }
     ]
   end
