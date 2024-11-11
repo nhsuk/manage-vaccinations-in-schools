@@ -87,4 +87,31 @@ describe VaccinationRecord do
       it { should be_nil }
     end
   end
+
+  describe "validations" do
+    context "when administered_at is not set" do
+      let(:vaccination_record) do
+        build(:vaccination_record, administered_at: nil)
+      end
+
+      it { should be_valid }
+    end
+
+    context "when administered_at is in the future" do
+      before { travel_to Time.zone.local(2024, 11, 1, 12, 0, 1) }
+
+      after { travel_back }
+
+      let(:vaccination_record) do
+        build(:vaccination_record, administered_at: 1.second.from_now)
+      end
+
+      it "has an error" do
+        expect(vaccination_record).to be_invalid
+        expect(vaccination_record.errors[:administered_at]).to include(
+          "Enter a time in the past"
+        )
+      end
+    end
+  end
 end
