@@ -275,7 +275,8 @@ describe "Edit vaccination record" do
   end
 
   def when_i_click_on_add_vaccine
-    click_on "Add vaccine"
+    # vaccine is already populated for us as there is only one
+    click_on "Change vaccine"
   end
 
   def when_i_click_on_add_batch
