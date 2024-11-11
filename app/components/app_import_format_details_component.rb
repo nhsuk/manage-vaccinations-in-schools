@@ -234,12 +234,23 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   def performing_professional
     [
       {
+        name: "PERFORMING_PROFESSIONAL_EMAIL",
+        notes:
+          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")} unless " \
+            "#{tag.code("PERFORMING_PROFESSIONAL_FORENAME")} and " \
+            "#{tag.code("PERFORMING_PROFESSIONAL_SURNAME")} is provided"
+      },
+      {
         name: "PERFORMING_PROFESSIONAL_FORENAME",
-        notes: "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}"
+        notes:
+          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")} unless " \
+            "#{tag.code("PERFORMING_PROFESSIONAL_EMAIL")} is provided"
       },
       {
         name: "PERFORMING_PROFESSIONAL_SURNAME",
-        notes: "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}"
+        notes:
+          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")} unless " \
+            "#{tag.code("PERFORMING_PROFESSIONAL_EMAIL")} is provided"
       }
     ]
   end

@@ -241,6 +241,22 @@ describe ImmunisationImportRow do
       end
 
       it { should be_valid }
+
+      context "with a performing profession email provided as well" do
+        before { data["PERFORMING_PROFESSIONAL_EMAIL"] = create(:user).email }
+
+        it { should be_invalid }
+
+        it "has errors" do
+          expect(immunisation_import_row).to be_invalid
+          expect(
+            immunisation_import_row.errors[:performed_by_given_name]
+          ).to include(/blank/)
+          expect(
+            immunisation_import_row.errors[:performed_by_family_name]
+          ).to include(/blank/)
+        end
+      end
     end
 
     context "with valid fields for HPV" do
@@ -1004,6 +1020,30 @@ describe ImmunisationImportRow do
       let(:data) { { "CARE_SETTING" => "School" } }
 
       it { should be_nil }
+    end
+  end
+
+  describe "#performed_by_user" do
+    subject(:performed_by_user) { immunisation_import_row.performed_by_user }
+
+    context "without a value" do
+      let(:data) { {} }
+
+      it { should be_nil }
+    end
+
+    context "with a value" do
+      let(:data) { { "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com" } }
+
+      context "and a user that doesn't exist" do
+        it { should be_nil }
+      end
+
+      context "and a user that does exist" do
+        let!(:user) { create(:user, email: "nurse@example.com") }
+
+        it { should eq(user) }
+      end
     end
   end
 

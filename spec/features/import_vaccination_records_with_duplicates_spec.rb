@@ -117,7 +117,8 @@ describe "Immunisation imports duplicates" do
         delivery_site: :nose,
         dose_sequence: 1,
         patient_session: @patient_session,
-        vaccine: @vaccine
+        vaccine: @vaccine,
+        performed_by_user: nil
       )
     @another_previous_vaccination_record =
       create(
@@ -131,7 +132,8 @@ describe "Immunisation imports duplicates" do
         delivery_site: :left_arm_upper_position,
         dose_sequence: 1,
         patient_session: @third_patient_session,
-        vaccine: @other_vaccine
+        vaccine: @other_vaccine,
+        performed_by_user: nil
       )
   end
 

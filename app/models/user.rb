@@ -65,19 +65,6 @@ class User < ApplicationRecord
 
   enum :fallback_role, { nurse: 0, admin: 1 }, prefix: true
 
-  def selected_organisation
-    @selected_organisation ||=
-      if Settings.cis2.enabled
-        Organisation.find_by(ods_code: cis2_info.dig("selected_org", "code"))
-      else
-        organisations.first
-      end
-  end
-
-  def requires_email_and_password?
-    provider.blank? || uid.blank?
-  end
-
   def self.find_or_create_from_cis2_oidc(userinfo)
     user =
       User.find_or_initialize_by(
@@ -92,6 +79,19 @@ class User < ApplicationRecord
       userinfo[:extra][:raw_info][:sid].presence || Devise.friendly_token
 
     user.tap(&:save!)
+  end
+
+  def selected_organisation
+    @selected_organisation ||=
+      if Settings.cis2.enabled
+        Organisation.find_by(ods_code: cis2_info.dig("selected_org", "code"))
+      else
+        organisations.first
+      end
+  end
+
+  def requires_email_and_password?
+    provider.blank? || uid.blank?
   end
 
   def is_admin?

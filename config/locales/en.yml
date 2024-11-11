@@ -56,6 +56,7 @@ en:
         patient_last_name: <code>PERSON_SURNAME</code>
         patient_nhs_number: <code>NHS_NUMBER</code>
         patient_postcode: <code>PERSON_POSTCODE</code>
+        performed_by_user: <code>PERFORMING_PROFESSIONAL_EMAIL</code>
         performed_by_family_name: <code>PERFORMING_PROFESSIONAL_SURNAME</code>
         performed_by_given_name: <code>PERFORMING_PROFESSIONAL_FORENAME</code>
         reason: <code>REASON</code>
@@ -218,6 +219,12 @@ en:
               wrong_length: Enter an NHS number with 10 characters.
             patient_postcode:
               blank: Enter a valid postcode, such as SW1A 1AA
+            performed_by_user:
+              blank: Enter a valid email address
+            performed_by_given_name:
+              blank: Enter a first name
+            performed_by_family_name:
+              blank: Enter a last name
             reason:
               blank: Enter a reason
             school_name:
