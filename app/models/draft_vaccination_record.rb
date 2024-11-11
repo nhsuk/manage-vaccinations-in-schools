@@ -58,6 +58,13 @@ class DraftVaccinationRecord
     validates :location_name, presence: true
   end
 
+  on_wizard_step :date_and_time, exact: true do
+    validates :administered_at,
+              comparison: {
+                less_than_or_equal_to: -> { Time.zone.now }
+              }
+  end
+
   on_wizard_step :outcome, exact: true do
     validates :outcome,
               inclusion: {

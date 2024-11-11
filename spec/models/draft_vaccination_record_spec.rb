@@ -60,6 +60,26 @@ describe DraftVaccinationRecord do
         )
       end
     end
+
+    context "when administered_at is in the future" do
+      let(:attributes) do
+        valid_administered_attributes.merge(administered_at: 1.second.from_now)
+      end
+
+      before do
+        draft_vaccination_record.wizard_step = :date_and_time
+        travel_to Time.zone.local(2024, 11, 1, 12, 0, 1)
+      end
+
+      after { travel_back }
+
+      it "has an error" do
+        expect(draft_vaccination_record.save(context: :update)).to be(false)
+        expect(draft_vaccination_record.errors[:administered_at]).to include(
+          "Enter a time in the past"
+        )
+      end
+    end
   end
 
   describe "#outcome=" do

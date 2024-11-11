@@ -159,6 +159,7 @@ en:
               missing_month: Enter a month
               missing_year: Enter a year
               invalid: Enter a valid date and time
+              less_than_or_equal_to: Enter a time in the past
             batch_id:
               blank: Choose a batch
               incorrect_vaccine: Choose a batch of the %{vaccine_brand} vaccine
