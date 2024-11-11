@@ -1,6 +1,40 @@
 # frozen_string_literal: true
 
 describe ConsentMailer do
+  describe "#confirmation_clinic" do
+    subject(:mail) { described_class.with(consent_form:).confirmation_clinic }
+
+    let(:programme) { create(:programme, :flu) }
+    let(:consent_form) do
+      create(
+        :consent_form,
+        :recorded,
+        :given,
+        programme:,
+        session: create(:session, programme:)
+      )
+    end
+
+    it { should have_attributes(to: [consent_form.parent_email]) }
+
+    describe "personalisation" do
+      subject(:personalisation) do
+        mail.message.header["personalisation"].unparsed_value
+      end
+
+      it "sets the personalisation" do
+        expect(personalisation.keys).to include(
+          :full_and_preferred_patient_name,
+          :short_patient_name_apos,
+          :team_email,
+          :team_name,
+          :team_phone,
+          :vaccination
+        )
+      end
+    end
+  end
+
   describe "#confirmation_injection" do
     subject(:mail) do
       described_class.with(consent_form:).confirmation_injection
