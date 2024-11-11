@@ -93,7 +93,8 @@ class PatientSession < ApplicationRecord
   end
 
   def safe_to_destroy?
-    vaccination_records.empty? && gillick_assessment.nil?
+    vaccination_records.empty? && gillick_assessment.nil? &&
+      session_attendances.none?(&:attending?)
   end
 
   def destroy_if_safe!
