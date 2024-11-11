@@ -585,6 +585,10 @@ en:
               confirmation: The password and confirmation do not match
             unlock_token:
               invalid: The unlock token is invalid
+        vaccination_record:
+          attributes:
+            administered_at:
+              less_than_or_equal_to: Enter a time in the past
   children:
     zero: No children
     one: 1 child
