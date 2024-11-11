@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class ConsentMailer < ApplicationMailer
+  def confirmation_clinic
+    app_template_mail(:consent_confirmation_clinic)
+  end
+
   def confirmation_given
     app_template_mail(:consent_confirmation_given)
   end
