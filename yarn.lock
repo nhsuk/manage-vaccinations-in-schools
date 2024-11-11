@@ -612,12 +612,12 @@
     "@smithy/types" "^3.5.0"
     tslib "^2.6.2"
 
-"@axe-core/playwright@^4.10.0":
-  version "4.10.0"
-  resolved "https://registry.yarnpkg.com/@axe-core/playwright/-/playwright-4.10.0.tgz#c9e8d0d694e8c0bd18c4636516dc22496fc03bfe"
-  integrity sha512-kEr3JPEVUSnKIYp/egV2jvFj+chIjCjPp3K3zlpJMza/CB3TFw8UZNbI9agEC2uMz4YbgAOyzlbUy0QS+OofFA==
+"@axe-core/playwright@^4.10.1":
+  version "4.10.1"
+  resolved "https://registry.yarnpkg.com/@axe-core/playwright/-/playwright-4.10.1.tgz#c811ba8bfa244833cce422c4131e0043828c42cc"
+  integrity sha512-EV5t39VV68kuAfMKqb/RL+YjYKhfuGim9rgIaQ6Vntb2HgaCaau0h98Y3WEUqW1+PbdzxDtDNjFAipbtZuBmEA==
   dependencies:
-    axe-core "~4.10.0"
+    axe-core "~4.10.2"
 
 "@azure/abort-controller@^1.0.0":
   version "1.1.0"
@@ -4908,10 +4908,10 @@ aws-sdk@^2.1271.0, aws-sdk@^2.1338.0:
     uuid "8.0.0"
     xml2js "0.6.2"
 
-axe-core@~4.10.0:
-  version "4.10.0"
-  resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-4.10.0.tgz#d9e56ab0147278272739a000880196cdfe113b59"
-  integrity sha512-Mr2ZakwQ7XUAjp7pAwQWRhhK8mQQ6JAaNWSjmjxil0R8BPioMtQsTLOolGYkji1rcL++3dCqZA3zWqpT+9Ew6g==
+axe-core@~4.10.2:
+  version "4.10.2"
+  resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-4.10.2.tgz#85228e3e1d8b8532a27659b332e39b7fa0e022df"
+  integrity sha512-RE3mdQ7P3FRSe7eqCWoeQ/Z9QXrtniSjp1wUjt5nRC3WIpz5rSCve6o3fsZ2aCpJtrZjSZgjwXAoTO5k4tEI0w==
 
 axios@^0.27.0:
   version "0.27.2"
