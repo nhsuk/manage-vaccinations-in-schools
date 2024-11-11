@@ -223,4 +223,42 @@ describe PatientSession do
       end
     end
   end
+
+  describe "#safe_to_destroy?" do
+    subject(:safe_to_destroy?) { patient_session.safe_to_destroy? }
+
+    let(:patient_session) { create(:patient_session, programme:) }
+
+    context "when safe to destroy" do
+      it { should be true }
+
+      it "is safe with only absent attendances" do
+        create(:session_attendance, :absent, patient_session:)
+        expect(safe_to_destroy?).to be true
+      end
+    end
+
+    context "when unsafe to destroy" do
+      it "is unsafe with vaccination records" do
+        create(:vaccination_record, programme:, patient_session:)
+        expect(safe_to_destroy?).to be false
+      end
+
+      it "is unsafe with gillick assessment" do
+        create(:gillick_assessment, :competent, patient_session:)
+        expect(safe_to_destroy?).to be false
+      end
+
+      it "is unsafe with present attendances" do
+        create(:session_attendance, :present, patient_session:)
+        expect(safe_to_destroy?).to be false
+      end
+
+      it "is unsafe with mixed conditions" do
+        create(:session_attendance, :absent, patient_session:)
+        create(:vaccination_record, programme:, patient_session:)
+        expect(safe_to_destroy?).to be false
+      end
+    end
+  end
 end
