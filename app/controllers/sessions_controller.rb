@@ -40,7 +40,24 @@ class SessionsController < ApplicationController
 
     @stats = PatientSessionStats.new(patient_sessions)
 
-    render layout: "full"
+    respond_to do |format|
+      format.html { render layout: "full" }
+      format.csv do
+        filename =
+          if @session.location.urn.present?
+            "#{@session.location.name} (#{@session.location.urn})"
+          else
+            @session.location.name
+          end
+
+        send_data(
+          SessionCSVExporter.call(@session),
+          filename:
+            "#{filename} - exported on #{Date.current.to_fs(:long)}.csv",
+          disposition: "attachment"
+        )
+      end
+    end
   end
 
   def edit
