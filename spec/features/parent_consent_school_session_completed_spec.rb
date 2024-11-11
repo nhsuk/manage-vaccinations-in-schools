@@ -1,0 +1,162 @@
+# frozen_string_literal: true
+
+describe "Parental consent" do
+  before { Flipper.enable(:release_1b) }
+  after { Flipper.disable(:release_1b) }
+
+  scenario "Move to a completed session" do
+    given_an_hpv_programme_is_underway
+    and_requests_can_be_made_to_pds
+
+    when_i_go_to_the_consent_form
+    when_i_fill_in_my_childs_name_and_birthday
+
+    when_i_give_consent
+    and_i_answer_no_to_all_the_medical_questions
+    then_i_can_check_my_answers
+
+    when_i_submit_the_consent_form
+    then_i_get_a_confirmation_email
+  end
+
+  def given_an_hpv_programme_is_underway
+    @programme = create(:programme, :hpv)
+    @organisation =
+      create(:organisation, :with_one_nurse, programmes: [@programme])
+
+    team = create(:team, organisation: @organisation)
+
+    @scheduled_school = create(:location, :secondary, team:)
+    @completed_school = create(:location, :secondary, team:)
+
+    @scheduled_session =
+      create(
+        :session,
+        :scheduled,
+        organisation: @organisation,
+        programme: @programme,
+        location: @scheduled_school
+      )
+
+    @completed_session =
+      create(
+        :session,
+        :completed,
+        organisation: @organisation,
+        programme: @programme,
+        location: @completed_school
+      )
+
+    @child = create(:patient, session: @scheduled_session)
+  end
+
+  def and_requests_can_be_made_to_pds
+    stub_request(
+      :get,
+      "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient"
+    ).with(query: hash_including({})).to_return_json(body: { total: 0 })
+  end
+
+  def when_a_nurse_checks_consent_responses
+    sign_in @organisation.users.first
+    visit "/dashboard"
+
+    click_on "Programmes", match: :first
+    click_on "HPV"
+    within ".app-secondary-navigation" do
+      click_on "Sessions"
+    end
+    click_on "Pilot School"
+    click_on "Check consent responses"
+  end
+
+  def then_there_should_be_no_consent_for_my_child
+    expect(page).to have_content("No response")
+
+    click_on "No response"
+    expect(page).to have_content(@child.full_name)
+  end
+
+  def when_i_go_to_the_consent_form
+    visit start_parent_interface_consent_forms_path(
+            @scheduled_session,
+            @programme
+          )
+  end
+
+  def when_i_give_consent
+    choose "No, they go to a different school"
+    click_on "Continue"
+
+    select @completed_school.name
+    click_on "Continue"
+
+    expect(page).to have_content("About you")
+    fill_in "Your name", with: "Jane #{@child.family_name}"
+    choose "Mum" # Your relationship to the child
+    fill_in "Email address", with: "jane@example.com"
+    fill_in "Phone number", with: "07123456789"
+    check "Tick this box if you’d like to get updates by text message"
+    click_on "Continue"
+
+    expect(page).to have_content("Phone contact method")
+    choose "I do not have specific needs"
+    click_on "Continue"
+
+    expect(page).to have_content("Do you agree")
+    choose "Yes, I agree"
+    click_on "Continue"
+
+    expect(page).to have_content("Is your child registered with a GP?")
+    choose "Yes, they are registered with a GP"
+    fill_in "Name of GP surgery", with: "GP Surgery"
+    click_on "Continue"
+
+    expect(page).to have_content("Home address")
+    fill_in "Address line 1", with: "1 Test Street"
+    fill_in "Address line 2 (optional)", with: "2nd Floor"
+    fill_in "Town or city", with: "Testville"
+    fill_in "Postcode", with: "TE1 1ST"
+    click_on "Continue"
+  end
+
+  def when_i_fill_in_my_childs_name_and_birthday
+    click_on "Start now"
+
+    expect(page).to have_content("What is your child’s name?")
+    fill_in "First name", with: @child.given_name
+    fill_in "Last name", with: @child.family_name
+    choose "No" # Do they use a different name in school?
+    click_on "Continue"
+
+    expect(page).to have_content("What is your child’s date of birth?")
+    fill_in "Day", with: @child.date_of_birth.day
+    fill_in "Month", with: @child.date_of_birth.month
+    fill_in "Year", with: @child.date_of_birth.year
+    click_on "Continue"
+  end
+
+  def and_i_answer_no_to_all_the_medical_questions
+    until page.has_content?("Check your answers and confirm")
+      choose "No"
+      click_on "Continue"
+    end
+  end
+
+  def then_i_can_check_my_answers
+    expect(page).to have_content("Check your answers and confirm")
+    expect(page).to have_content("Child’s name#{@child.full_name}")
+  end
+
+  def when_i_submit_the_consent_form
+    click_on "Confirm"
+  end
+
+  def then_i_get_a_confirmation_email
+    expect(page).to have_content(
+      "#{@child.full_name} will get their HPV vaccination at school"
+    )
+
+    expect_email_to("jane@example.com", :consent_confirmation_clinic)
+  end
+end

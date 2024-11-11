@@ -16,6 +16,10 @@ module ConsentFormMailerConcern
       )
     elsif consent_form.needs_triage?
       mailer.confirmation_triage.deliver_later
+    elsif consent_form.actual_upcoming_session.nil? ||
+          consent_form.actual_upcoming_session.completed? ||
+          consent_form.actual_upcoming_session.closed?
+      mailer.confirmation_clinic.deliver_later
     else
       mailer.confirmation_given.deliver_later
       TextDeliveryJob.perform_later(:consent_confirmation_given, consent_form:)

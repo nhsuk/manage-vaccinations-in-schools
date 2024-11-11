@@ -69,5 +69,26 @@ describe ConsentFormMailerConcern do
         expect { send_consent_form_confirmation }.not_to have_enqueued_text
       end
     end
+
+    context "when there are no upcoming sessions" do
+      let(:consent_form) do
+        create(
+          :consent_form,
+          school_confirmed: false,
+          school: create(:location, :school)
+        )
+      end
+
+      it "sends an confirmation needs triage email" do
+        expect { send_consent_form_confirmation }.to have_enqueued_mail(
+          ConsentMailer,
+          :confirmation_clinic
+        ).with(params: { consent_form: }, args: [])
+      end
+
+      it "doesn't send a text" do
+        expect { send_consent_form_confirmation }.not_to have_enqueued_text
+      end
+    end
   end
 end
