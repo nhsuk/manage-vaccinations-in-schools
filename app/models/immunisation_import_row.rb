@@ -61,10 +61,23 @@ class ImmunisationImportRow
             allow_nil: true
   validates :care_setting, presence: true, if: :requires_care_setting?
 
+  validates :performed_by_user,
+            presence: true,
+            if: -> do
+              @data["PERFORMING_PROFESSIONAL_EMAIL"]&.strip.present? ||
+                (
+                  requires_performed_by? && performed_by_given_name.blank? &&
+                    performed_by_family_name.blank?
+                )
+            end
   validates :performed_by_given_name,
             :performed_by_family_name,
-            presence: true,
-            if: :requires_performed_by?
+            absence: {
+              if: :performed_by_user
+            },
+            presence: {
+              if: -> { requires_performed_by? && performed_by_user.nil? }
+            }
 
   def initialize(data:, organisation:, programme:)
     @data = data
@@ -81,6 +94,7 @@ class ImmunisationImportRow
         dose_sequence:,
         location_name:,
         patient_session:,
+        performed_by_user:,
         performed_by_family_name:,
         performed_by_given_name:,
         programme: @programme,
@@ -272,12 +286,21 @@ class ImmunisationImportRow
     nil
   end
 
+  def performed_by_user
+    @performed_by_user ||=
+      if (email = @data["PERFORMING_PROFESSIONAL_EMAIL"]&.strip)
+        User.find_by(email:)
+      end
+  end
+
   def performed_by_given_name
-    @data["PERFORMING_PROFESSIONAL_FORENAME"]&.strip&.presence
+    @performed_by_given_name ||=
+      @data["PERFORMING_PROFESSIONAL_FORENAME"]&.strip&.presence
   end
 
   def performed_by_family_name
-    @data["PERFORMING_PROFESSIONAL_SURNAME"]&.strip&.presence
+    @performed_by_family_name ||=
+      @data["PERFORMING_PROFESSIONAL_SURNAME"]&.strip&.presence
   end
 
   private
