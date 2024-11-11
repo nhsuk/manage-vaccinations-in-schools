@@ -112,13 +112,19 @@ module CSVImportable
     filtered_rows.reverse
   end
 
+  COUNT_COLUMNS = %i[
+    new_record_count
+    changed_record_count
+    exact_duplicate_record_count
+  ].freeze
+
   def record!
     return if recorded?
 
     parse_rows! if rows.nil?
     return if invalid?
 
-    counts = count_columns.index_with(0)
+    counts = COUNT_COLUMNS.index_with(0)
 
     ActiveRecord::Base.transaction do
       rows.each do |row|
@@ -192,9 +198,9 @@ module CSVImportable
   end
 
   def ensure_recorded_with_count_statistics
-    if recorded? && count_columns.any? { |column| send(column).nil? }
+    if recorded? && COUNT_COLUMNS.any? { |column| send(column).nil? }
       raise "Count statistics must be set for a recorded import."
-    elsif !recorded? && count_columns.any? { |column| !send(column).nil? }
+    elsif !recorded? && COUNT_COLUMNS.any? { |column| !send(column).nil? }
       raise "Count statistics must not be set for a non-recorded import."
     end
   end

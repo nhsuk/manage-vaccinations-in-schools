@@ -9,10 +9,6 @@ class PatientImport < ApplicationRecord
     %w[CHILD_DATE_OF_BIRTH CHILD_FIRST_NAME CHILD_LAST_NAME]
   end
 
-  def count_columns
-    %i[new_record_count changed_record_count exact_duplicate_record_count]
-  end
-
   def process_row(row)
     parents = row.to_parents
     patient = row.to_patient

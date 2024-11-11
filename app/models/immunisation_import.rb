@@ -4,23 +4,22 @@
 #
 # Table name: immunisation_imports
 #
-#  id                            :bigint           not null, primary key
-#  changed_record_count          :integer
-#  csv_data                      :text
-#  csv_filename                  :text             not null
-#  csv_removed_at                :datetime
-#  exact_duplicate_record_count  :integer
-#  new_record_count              :integer
-#  not_administered_record_count :integer
-#  recorded_at                   :datetime
-#  rows_count                    :integer
-#  serialized_errors             :jsonb
-#  status                        :integer          default("pending_import"), not null
-#  created_at                    :datetime         not null
-#  updated_at                    :datetime         not null
-#  organisation_id               :bigint           not null
-#  programme_id                  :bigint           not null
-#  uploaded_by_user_id           :bigint           not null
+#  id                           :bigint           not null, primary key
+#  changed_record_count         :integer
+#  csv_data                     :text
+#  csv_filename                 :text             not null
+#  csv_removed_at               :datetime
+#  exact_duplicate_record_count :integer
+#  new_record_count             :integer
+#  recorded_at                  :datetime
+#  rows_count                   :integer
+#  serialized_errors            :jsonb
+#  status                       :integer          default("pending_import"), not null
+#  created_at                   :datetime         not null
+#  updated_at                   :datetime         not null
+#  organisation_id              :bigint           not null
+#  programme_id                 :bigint           not null
+#  uploaded_by_user_id          :bigint           not null
 #
 # Indexes
 #
@@ -61,15 +60,6 @@ class ImmunisationImport < ApplicationRecord
       BATCH_NUMBER
       BATCH_EXPIRY_DATE
       ANATOMICAL_SITE
-    ]
-  end
-
-  def count_columns
-    %i[
-      exact_duplicate_record_count
-      new_record_count
-      changed_record_count
-      not_administered_record_count
     ]
   end
 

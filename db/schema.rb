@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_11_10_155005) do
+ActiveRecord::Schema[7.2].define(version: 2024_11_11_112052) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -384,7 +384,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_10_155005) do
     t.datetime "recorded_at"
     t.integer "new_record_count"
     t.integer "exact_duplicate_record_count"
-    t.integer "not_administered_record_count"
     t.text "csv_filename", null: false
     t.datetime "csv_removed_at"
     t.integer "changed_record_count"
