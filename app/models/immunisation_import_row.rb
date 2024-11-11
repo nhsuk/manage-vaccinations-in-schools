@@ -43,11 +43,14 @@ class ImmunisationImportRow
   validates :patient_postcode, postcode: true
   validate :date_of_birth_in_a_valid_year_group
 
-  validates :session_date,
+  validates :date_of_vaccination,
             comparison: {
               greater_than_or_equal_to: Date.new(2021, 9, 1),
               less_than_or_equal_to: -> { Date.current }
             }
+  validates :time_of_vaccination,
+            presence: true,
+            if: -> { @data["TIME_OF_VACCINATION"]&.strip.present? }
 
   CARE_SETTING_SCHOOL = 1
   CARE_SETTING_COMMUNITY = 2
@@ -115,17 +118,13 @@ class ImmunisationImportRow
     @session ||=
       Session
         .create_with(programmes: [@programme])
-        .find_or_create_by!(
-          organisation:,
-          location:,
-          academic_year: session_date.academic_year
-        )
+        .find_or_create_by!(organisation:, location:, academic_year:)
         .tap do |session|
           unless session.programmes.include?(@programme)
             session.programmes << @programme
           end
 
-          session.session_dates.find_or_create_by!(value: session_date)
+          session.session_dates.find_or_create_by!(value: date_of_vaccination)
         end
   end
 
@@ -247,9 +246,15 @@ class ImmunisationImportRow
     @data["SCHOOL_URN"]&.strip
   end
 
-  def session_date
-    parse_date("DATE_OF_VACCINATION")
+  def date_of_vaccination
+    @date_of_vaccination ||= parse_date("DATE_OF_VACCINATION")
   end
+
+  def time_of_vaccination
+    @time_of_vaccination ||= parse_time("TIME_OF_VACCINATION")
+  end
+
+  delegate :academic_year, to: :date_of_vaccination
 
   def care_setting
     Integer(@data["CARE_SETTING"])
@@ -272,7 +277,16 @@ class ImmunisationImportRow
   delegate :ods_code, to: :organisation
 
   def administered_at
-    administered ? (session_date.in_time_zone + 12.hours) : nil
+    return nil unless administered
+
+    Time.zone.local(
+      date_of_vaccination.year,
+      date_of_vaccination.month,
+      date_of_vaccination.day,
+      time_of_vaccination&.hour || 12,
+      time_of_vaccination&.min || 0,
+      time_of_vaccination&.sec || 0
+    )
   end
 
   def location
@@ -334,6 +348,22 @@ class ImmunisationImportRow
     Date.strptime(@data[key]&.strip, "%Y%m%d")
   rescue ArgumentError, TypeError
     nil
+  end
+
+  TIME_FORMATS = %w[%H:%M:%S %H:%M %H%M%S %H%M %H].freeze
+
+  def parse_time(key)
+    value = @data[key]&.strip
+    return nil if value.nil?
+
+    parsed_times =
+      TIME_FORMATS.lazy.filter_map do |format|
+        Time.strptime(value, format)
+      rescue ArgumentError, TypeError
+        nil
+      end
+
+    parsed_times.first
   end
 
   def date_of_birth_in_a_valid_year_group

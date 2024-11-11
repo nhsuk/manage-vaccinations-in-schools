@@ -124,11 +124,22 @@ describe ImmunisationImportRow do
       end
     end
 
-    context "with an invalid session date" do
+    context "with an invalid date of vaccination" do
       let(:data) { { "DATE_OF_VACCINATION" => "21000101" } }
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
+      end
+    end
+
+    context "with an invalid time of vaccination" do
+      let(:data) { { "TIME_OF_VACCINATION" => "abc" } }
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:time_of_vaccination]).to eq(
+          ["Enter a time in the correct format."]
+        )
       end
     end
 
@@ -877,6 +888,58 @@ describe ImmunisationImportRow do
     end
   end
 
+  describe "#time_of_vaccination" do
+    subject(:time_of_vaccination) do
+      immunisation_import_row.time_of_vaccination
+    end
+
+    let(:year) { Time.current.year }
+    let(:month) { Time.current.month }
+    let(:day) { Time.current.day }
+
+    context "without a value" do
+      let(:data) { {} }
+
+      it { should be_nil }
+    end
+
+    context "with an invalid value" do
+      let(:data) { { "TIME_OF_VACCINATION" => "abc" } }
+
+      it { should be_nil }
+    end
+
+    context "with a HH:MM:SS value" do
+      let(:data) { { "TIME_OF_VACCINATION" => "10:15:30" } }
+
+      it { should eq(Time.zone.local(year, month, day, 10, 15, 30)) }
+    end
+
+    context "with a HHMMSS value" do
+      let(:data) { { "TIME_OF_VACCINATION" => "101530" } }
+
+      it { should eq(Time.zone.local(year, month, day, 10, 15, 30)) }
+    end
+
+    context "with a HH:MM value" do
+      let(:data) { { "TIME_OF_VACCINATION" => "10:15" } }
+
+      it { should eq(Time.zone.local(year, month, day, 10, 15, 0)) }
+    end
+
+    context "with a HHMM value" do
+      let(:data) { { "TIME_OF_VACCINATION" => "1015" } }
+
+      it { should eq(Time.zone.local(year, month, day, 10, 15, 0)) }
+    end
+
+    context "with a HH value" do
+      let(:data) { { "TIME_OF_VACCINATION" => "10" } }
+
+      it { should eq(Time.zone.local(year, month, day, 10, 0, 0)) }
+    end
+  end
+
   describe "#care_setting" do
     subject(:care_setting) { immunisation_import_row.care_setting }
 
@@ -960,6 +1023,26 @@ describe ImmunisationImportRow do
       it "sets the administered at time" do
         expect(vaccination_record.administered_at).to eq(
           Time.new(2023, 9, 1, 12, 0, 0, "+01:00")
+        )
+      end
+    end
+
+    context "with a time of vaccination" do
+      let(:data) { valid_data.merge("TIME_OF_VACCINATION" => "10:30:25") }
+
+      it "sets the administered at time" do
+        expect(vaccination_record.administered_at).to eq(
+          Time.new(2024, 1, 1, 10, 30, 25, "+00:00")
+        )
+      end
+    end
+
+    context "with a time of vaccination without seconds" do
+      let(:data) { valid_data.merge("TIME_OF_VACCINATION" => "1030") }
+
+      it "sets the administered at time" do
+        expect(vaccination_record.administered_at).to eq(
+          Time.new(2024, 1, 1, 10, 30, 0, "+00:00")
         )
       end
     end

@@ -60,7 +60,8 @@ en:
         performed_by_given_name: <code>PERFORMING_PROFESSIONAL_FORENAME</code>
         school_name: <code>SCHOOL_NAME</code>
         school_urn: <code>SCHOOL_URN</code>
-        session_date: <code>DATE_OF_VACCINATION</code>
+        date_of_vaccination: <code>DATE_OF_VACCINATION</code>
+        time_of_vaccination: <code>TIME_OF_VACCINATION</code>
         vaccine_given: <code>VACCINE_GIVEN</code>
     errors:
       models:
@@ -220,10 +221,12 @@ en:
               blank: Enter a school name.
             school_urn:
               inclusion: The school URN is not recognised. If you’ve checked the URN, and you believe it’s valid, contact our support organisation.
-            session_date:
+            date_of_vaccination:
               blank: Enter a date in the correct format.
               greater_than_or_equal_to: The vaccination date is outside the programme. Enter a date after the programme started.
               less_than_or_equal_to: The vaccination date is outside the programme. Enter a date before today.
+            time_of_vaccination:
+              blank: Enter a time in the correct format.
             vaccine_given:
               inclusion: Enter a valid vaccine, eg Gardasil 9.
         import_duplicate_form:
