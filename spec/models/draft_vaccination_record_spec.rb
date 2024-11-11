@@ -62,6 +62,28 @@ describe DraftVaccinationRecord do
     end
   end
 
+  describe "#outcome=" do
+    let(:attributes) { valid_not_administered_attributes }
+
+    let(:vaccine) { programme.vaccines.active.first }
+
+    context "not vaccinated to vaccinated" do
+      it "marks as administered" do
+        expect { draft_vaccination_record.outcome = "vaccinated" }.to change(
+          draft_vaccination_record,
+          :administered?
+        ).from(false).to(true)
+      end
+
+      it "sets the vaccine" do
+        expect { draft_vaccination_record.outcome = "vaccinated" }.to change(
+          draft_vaccination_record,
+          :vaccine
+        ).from(nil).to(vaccine)
+      end
+    end
+  end
+
   describe "#reset_unused_fields" do
     subject(:save!) { draft_vaccination_record.save! }
 

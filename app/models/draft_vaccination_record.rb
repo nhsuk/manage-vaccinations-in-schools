@@ -108,8 +108,14 @@ class DraftVaccinationRecord
   def outcome=(value)
     if value == "vaccinated"
       self.administered_at ||= Time.current
+      self.reason = nil
+
+      if programme && (vaccines = programme.vaccines.active).count == 1
+        self.vaccine_id = vaccines.first.id
+      end
     else
       self.reason = value
+      self.administered_at = nil
     end
   end
 
