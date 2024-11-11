@@ -153,10 +153,13 @@ class ImmunisationImportRow
     return unless location&.generic_clinic?
 
     if school_urn == SCHOOL_URN_UNKNOWN &&
-         (care_setting.nil? || care_setting == CARE_SETTING_SCHOOL)
+         (
+           (care_setting.nil? && clinic_name.blank?) ||
+             care_setting == CARE_SETTING_SCHOOL
+         )
       school_name
     else
-      "Unknown"
+      clinic_name.presence || "Unknown"
     end
   end
 
@@ -267,6 +270,10 @@ class ImmunisationImportRow
     @data["SCHOOL_NAME"]&.strip
   end
 
+  def clinic_name
+    @data["CLINIC_NAME"]&.strip
+  end
+
   def school_urn
     @data["SCHOOL_URN"]&.strip
   end
@@ -325,7 +332,11 @@ class ImmunisationImportRow
 
   def location
     @location ||=
-      if school && (care_setting.nil? || care_setting == CARE_SETTING_SCHOOL)
+      if school &&
+           (
+             (care_setting.nil? && clinic_name.blank?) ||
+               care_setting == CARE_SETTING_SCHOOL
+           )
         school
       else
         organisation.generic_clinic
