@@ -12,6 +12,7 @@ class ImmunisationImportRow
             },
             if: -> { administered && batch_expiry_date.present? }
   validates :batch_number, presence: true, if: :administered
+  validates :reason, presence: true, if: -> { administered == false }
   validates :delivery_site, presence: true, if: :administered
   validates :dose_sequence,
             comparison: {
@@ -85,6 +86,7 @@ class ImmunisationImportRow
         performed_by_family_name:,
         performed_by_given_name:,
         programme: @programme,
+        reason:,
         vaccine:
       )
 
@@ -163,6 +165,16 @@ class ImmunisationImportRow
 
   def batch_number
     @data["BATCH_NUMBER"]&.strip
+  end
+
+  REASONS = {
+    "did not attend" => :absent_from_session,
+    "vaccination contraindicated" => :contraindications,
+    "unwell" => :not_well
+  }.freeze
+
+  def reason
+    REASONS[@data["REASON_NOT_VACCINATED"]&.strip&.downcase]
   end
 
   DELIVERY_SITES = {

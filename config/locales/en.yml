@@ -58,6 +58,7 @@ en:
         patient_postcode: <code>PERSON_POSTCODE</code>
         performed_by_family_name: <code>PERFORMING_PROFESSIONAL_SURNAME</code>
         performed_by_given_name: <code>PERFORMING_PROFESSIONAL_FORENAME</code>
+        reason: <code>REASON</code>
         school_name: <code>SCHOOL_NAME</code>
         school_urn: <code>SCHOOL_URN</code>
         date_of_vaccination: <code>DATE_OF_VACCINATION</code>
@@ -217,6 +218,8 @@ en:
               wrong_length: Enter an NHS number with 10 characters.
             patient_postcode:
               blank: Enter a valid postcode, such as SW1A 1AA
+            reason:
+              blank: Enter a reason
             school_name:
               blank: Enter a school name.
             school_urn:
