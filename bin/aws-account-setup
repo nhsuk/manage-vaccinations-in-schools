@@ -120,6 +120,58 @@ EOF
     fi
 }
 
+_op_check_github_copilot_policy() {
+    echo -n "... checking GitHubActionsRole for wildcard actions ... "
+    result=$(
+        aws iam get-role-policy --role-name GitHubActionsRole --policy-name custom_copilot_policy | \
+        jq '[.PolicyDocument.Statement[]
+              | select(.Effect == "Allow")
+              | .Action[]
+              | contains("*")]
+              | any'
+          )
+    if [[ "$result" -eq "true" ]]; then
+        echo "wildcard actions found"
+        echo ""
+        echo "Review the policy with:"
+        echo ""
+        echo "  aws iam get-role-policy --role-name GitHubActionsRole --policy-name custom_copilot_policy"
+        echo ""
+        echo "It should contain the following:"
+        echo ""
+        cat <<EOF
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ecr:GetAuthorizationToken",
+        "ecr:PutImage",
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:CompleteLayerUpload",
+        "ecr:UploadLayerPart",
+        "ecr:InitiateLayerUpload",
+        "cloudformation:GetTemplateSummary",
+        "cloudformation:ListStackInstances",
+        "cloudformation:DescribeStacks",
+        "ssm:GetParameter",
+        "ssm:GetParametersByPath",
+        "sts:AssumeRole",
+        "sts:GetCallerIdentity"
+      ],
+      "Resource": "*"
+    }
+  ]
+EOF
+        echo ""
+        echo "The above list of actions has been derived from the"
+        echo "'Last Accessed' tab of an existing role that's been in use for"
+        echo "some time."
+        echo ""
+    else
+        echo "none found"
+    fi
+}
+
 test_jq_exists() {
     if ! command -v jq &>/dev/null; then
         echo "jq is not installed. Please install jq to continue." >&2
