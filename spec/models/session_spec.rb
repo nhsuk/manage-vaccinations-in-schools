@@ -466,21 +466,47 @@ describe Session do
       let!(:vaccinated_patient) do
         create(:patient, :vaccinated, session:, programme:)
       end
-      let!(:unvaccinated_patient) { create(:patient, session:, programme:) }
 
-      it "adds the unvaccinated patients to the generic clinic session" do
-        location = create(:location, :generic_clinic, organisation:)
-        generic_clinic_session =
-          create(:session, location:, organisation:, programme:)
+      let(:generic_clinic) { create(:location, :generic_clinic, organisation:) }
+      let(:generic_clinic_session) do
+        create(:session, location: generic_clinic, organisation:, programme:)
+      end
 
-        expect(generic_clinic_session.patients).to be_empty
+      context "with an unvaccinated patient" do
+        let!(:unvaccinated_patient) { create(:patient, session:, programme:) }
 
-        close!
+        it "adds the unvaccinated patient to the generic clinic session" do
+          expect(generic_clinic_session.patients).to be_empty
 
-        expect(generic_clinic_session.patients).to include(unvaccinated_patient)
-        expect(generic_clinic_session.patients).not_to include(
-          vaccinated_patient
-        )
+          close!
+
+          expect(generic_clinic_session.patients).to include(
+            unvaccinated_patient
+          )
+          expect(generic_clinic_session.patients).not_to include(
+            vaccinated_patient
+          )
+        end
+      end
+
+      context "when a patient has already had the vaccine" do
+        let!(:already_had_patient) { create(:patient, session:, programme:) }
+
+        before do
+          create(
+            :vaccination_record,
+            :not_administered,
+            :already_had,
+            patient: already_had_patient,
+            programme:
+          )
+        end
+
+        it "doesn't add the patient to the generic clinic session" do
+          expect(generic_clinic_session.patients).to be_empty
+          close!
+          expect(generic_clinic_session.patients).to be_empty
+        end
       end
     end
   end
