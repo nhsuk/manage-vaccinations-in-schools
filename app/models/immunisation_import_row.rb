@@ -75,8 +75,6 @@ class ImmunisationImportRow
   def to_vaccination_record
     return unless valid?
 
-    return unless administered
-
     vaccination_record =
       VaccinationRecord.find_or_initialize_by(
         administered_at:,
@@ -92,7 +90,7 @@ class ImmunisationImportRow
 
     if vaccination_record.persisted?
       vaccination_record.stage_changes(
-        batch_id: batch.id,
+        batch_id: batch&.id,
         delivery_method:,
         delivery_site:
       )
