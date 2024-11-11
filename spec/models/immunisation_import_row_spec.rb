@@ -661,6 +661,51 @@ describe ImmunisationImportRow do
     end
   end
 
+  describe "#reason" do
+    subject(:reason) { immunisation_import_row.reason }
+
+    context "without a reason" do
+      let(:data) { { "VACCINATED" => "N" } }
+
+      it { expect(immunisation_import_row).to be_invalid }
+    end
+
+    context "with an unknown reason" do
+      let(:data) do
+        { "VACCINATED" => "N", "REASON_NOT_VACCINATED" => "Unknown" }
+      end
+
+      it { expect(immunisation_import_row).to be_invalid }
+    end
+
+    context "with a did not attend reason" do
+      let(:data) do
+        { "VACCINATED" => "N", "REASON_NOT_VACCINATED" => "Did Not Attend" }
+      end
+
+      it { should eq(:absent_from_session) }
+    end
+
+    context "with a vaccination contraindicated reason" do
+      let(:data) do
+        {
+          "VACCINATED" => "N",
+          "REASON_NOT_VACCINATED" => "Vaccination contraindicated"
+        }
+      end
+
+      it { should eq(:contraindications) }
+    end
+
+    context "with an unwell reason" do
+      let(:data) do
+        { "VACCINATED" => "N", "REASON_NOT_VACCINATED" => "unwell" }
+      end
+
+      it { should eq(:not_well) }
+    end
+  end
+
   describe "#delivery_method" do
     subject(:delivery_method) { immunisation_import_row.delivery_method }
 
