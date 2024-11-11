@@ -22,6 +22,10 @@
     <li class="app-action-list__item">
       <%= govuk_link_to "Download consent form (PDF)", consent_form_session_path(@session) %>
     </li>
+
+    <li class="app-action-list__item">
+      <%= govuk_link_to "Record offline (CSV)", session_path(@session, format: :csv) %>
+    </li>
   <% end %>
 
   <% if @session.open? && @session.location.school? %>
