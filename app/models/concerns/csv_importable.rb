@@ -80,7 +80,13 @@ module CSVImportable
   def load_data!
     return if invalid?
 
-    self.data ||= CSV.parse(csv_data, headers: true, skip_blanks: true)
+    self.data ||=
+      CSV.parse(
+        csv_data,
+        headers: true,
+        skip_blanks: true,
+        encoding: detect_encoding
+      )
     self.rows_count = data.count
   rescue CSV::MalformedCSVError
     self.csv_is_malformed = true
