@@ -134,7 +134,7 @@ class AppActivityLogComponent < ViewComponent::Base
       .flat_map(&:session_attendances)
       .map do
         title = (_1.attending? ? "Attended session" : "Absent from session")
-        title += " at #{_1.patient_session.session.location.name}"
+        title += " at #{_1.patient_session.location.name}"
 
         { title:, time: _1.created_at }
       end

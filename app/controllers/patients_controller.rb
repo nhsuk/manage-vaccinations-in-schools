@@ -77,10 +77,11 @@ class PatientsController < ApplicationController
         .includes(
           :school,
           :cohort,
-          :triages,
+          consents: :parent,
           notify_log_entries: :sent_by,
           parents: :parent_relationships,
           patient_sessions: %i[location session_attendances],
+          triages: :performed_by_user,
           vaccination_records: [:performed_by_user, { vaccine: :programme }]
         )
         .strict_loading
