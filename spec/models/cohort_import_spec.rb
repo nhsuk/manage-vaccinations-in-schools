@@ -140,6 +140,24 @@ describe CohortImport do
         )
       end
     end
+
+    describe "with a file using ISO-8859-1 encoding" do
+      let(:file) { "valid_iso_8859_1_encoding.csv" }
+
+      let(:location) do
+        Location.find_by(urn: "120026") ||
+          create(:location, :school, urn: "120026")
+      end
+
+      it "is valid" do
+        expect(cohort_import).to be_valid
+        expect(cohort_import.rows.count).to eq(16)
+      end
+
+      it "detected the encoding" do
+        expect(cohort_import.detect_encoding).to eq("ISO-8859-1")
+      end
+    end
   end
 
   describe "#record!" do
