@@ -43,6 +43,7 @@
 class VaccinationRecord < ApplicationRecord
   include LocationNameConcern
   include PendingChangesConcern
+  include VaccinationRecordPerformedByConcern
 
   audited associated_with: :patient_session
 
@@ -143,12 +144,6 @@ class VaccinationRecord < ApplicationRecord
               less_than_or_equal_to: :maximum_dose_sequence
             }
 
-  validates :performed_by_family_name,
-            :performed_by_given_name,
-            absence: {
-              if: :performed_by_user
-            }
-
   validates :administered_at,
             comparison: {
               less_than_or_equal_to: -> { Time.current },
@@ -172,25 +167,6 @@ class VaccinationRecord < ApplicationRecord
     # TODO: this will need to be revisited once it's possible to record half-doses
     # e.g. for the flu programme where a child refuses the second half of the dose
     vaccine.dose_volume_ml * 1 if vaccine.present?
-  end
-
-  def performed_by
-    return performed_by_user if performed_by_user
-
-    if performed_by_given_name.present? || performed_by_family_name.present?
-      OpenStruct.new(
-        given_name: performed_by_given_name,
-        family_name: performed_by_family_name,
-        full_name: [
-          performed_by_given_name,
-          performed_by_family_name
-        ].compact_blank.join(" ")
-      )
-    end
-  end
-
-  def performed_by=(user)
-    self.performed_by_user = user
   end
 
   private

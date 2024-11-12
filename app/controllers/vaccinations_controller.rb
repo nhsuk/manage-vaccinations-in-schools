@@ -113,7 +113,11 @@ class VaccinationsController < ApplicationController
         :programme_id,
         :vaccine_id
       )
-      .merge(patient_session: @patient_session, wizard_step: :date_and_time)
+      .merge(
+        patient_session: @patient_session,
+        performed_by_user: current_user,
+        wizard_step: :date_and_time
+      )
   end
 
   def create_params

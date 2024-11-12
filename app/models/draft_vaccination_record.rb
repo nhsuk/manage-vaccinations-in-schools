@@ -3,6 +3,7 @@
 class DraftVaccinationRecord
   include RequestSessionPersistable
   include EditableWrapper
+  include VaccinationRecordPerformedByConcern
   include WizardStepConcern
 
   def self.request_session_key
@@ -17,10 +18,18 @@ class DraftVaccinationRecord
   attribute :location_name, :string
   attribute :notes, :string
   attribute :patient_session_id, :integer
-  attribute :performed_by
+  attribute :performed_by_family_name, :string
+  attribute :performed_by_given_name, :string
+  attribute :performed_by_user_id, :integer
   attribute :programme_id, :integer
   attribute :reason, :string
   attribute :vaccine_id, :integer
+
+  validates :performed_by_family_name,
+            :performed_by_given_name,
+            absence: {
+              if: :performed_by_user
+            }
 
   def wizard_steps
     [
@@ -140,17 +149,13 @@ class DraftVaccinationRecord
 
   delegate :location, :patient, :session, to: :patient_session, allow_nil: true
 
-  def performed_by
-    @current_user
+  def performed_by_user
+    User.find_by(id: performed_by_user_id)
   end
 
-  def performed_by_changed?
-    false
+  def performed_by_user=(value)
+    self.performed_by_user_id = value.id
   end
-
-  alias_method :performed_by_family_name_changed?, :performed_by_changed?
-  alias_method :performed_by_given_name_changed?, :performed_by_changed?
-  alias_method :performed_by_user_id_changed?, :performed_by_changed?
 
   def programme
     ProgrammePolicy::Scope
