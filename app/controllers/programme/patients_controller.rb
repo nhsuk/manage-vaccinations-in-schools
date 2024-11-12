@@ -10,23 +10,26 @@ class Programme::PatientsController < ApplicationController
 
   def index
     patients =
-      policy_scope(Patient).where(
-        cohort: policy_scope(Cohort).for_year_groups(@programme.year_groups)
-      ).not_deceased
-
-    sessions = policy_scope(Session).has_programme(@programme)
-
-    patient_sessions =
-      PatientSession
-        .where(patient: patients, session: sessions)
-        .preload_for_state
-        .eager_load(:session, patient: :cohort)
+      policy_scope(Patient)
+        .where(
+          cohort: policy_scope(Cohort).for_year_groups(@programme.year_groups)
+        )
         .order_by_name
-        .strict_loading
+        .not_deceased
         .to_a
 
-    sort_and_filter_patients!(patient_sessions)
-    @pagy, @patient_sessions = pagy_array(patient_sessions)
+    sort_and_filter_patients!(patients)
+    @pagy, @patients = pagy_array(patients)
+
+    @patient_sessions =
+      PatientSession
+        .where(
+          patient: @patients,
+          session: policy_scope(Session).has_programme(@programme)
+        )
+        .preload_for_state
+        .eager_load(:session, patient: :cohort)
+        .strict_loading
 
     render layout: "full"
   end

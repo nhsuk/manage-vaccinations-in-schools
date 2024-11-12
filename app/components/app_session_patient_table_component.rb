@@ -14,19 +14,21 @@ class AppSessionPatientTableComponent < ViewComponent::Base
   )
     super
 
-    if patient_sessions && !patients
-      @patients = patient_sessions.map(&:patient)
-      @patient_sessions =
+    if patient_sessions.nil? && patients.nil?
+      raise "Provide patients and/or patient sessions."
+    end
+
+    @patient_sessions =
+      if patient_sessions
         patient_sessions
           .group_by(&:patient)
           .map { [_1, _2.max_by(&:created_at)] }
           .to_h
-    elsif patients && !patient_sessions
-      @patients = patients
-      @patient_sessions = {}
-    else
-      raise "Provide only patients or patient sessions."
-    end
+      else
+        {}
+      end
+
+    @patients = patients || @patient_sessions.keys
 
     @caption = caption
     @columns = columns
@@ -59,7 +61,8 @@ class AppSessionPatientTableComponent < ViewComponent::Base
 
     case column
     when :action, :outcome
-      t("patient_session_statuses.#{patient_session.state}.text")
+      state = patient_session&.state || "not_in_session"
+      t("patient_session_statuses.#{state}.text")
     when :dob
       patient.date_of_birth.to_fs(:long)
     when :name
