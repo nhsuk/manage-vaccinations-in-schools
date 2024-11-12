@@ -113,6 +113,16 @@ describe AppSessionPatientTableComponent do
     end
   end
 
+  context "when passing in patients and patient sessions" do
+    let(:patients) { patient_sessions.map(&:patient) + [create(:patient)] }
+
+    let(:component) do
+      described_class.new(params:, patients:, patient_sessions:, section:)
+    end
+
+    it { should have_css(".nhsuk-table__body .nhsuk-table__row", count: 3) }
+  end
+
   describe "vaccinations section" do
     let(:section) { :vaccination }
     let(:tab) { :actions }
