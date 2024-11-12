@@ -47,6 +47,8 @@ class DevController < ApplicationController
       organisation_sessions = Session.where(organisation:)
 
       ClassImport.where(session: organisation_sessions).destroy_all
+      ConsentNotification.where(session: organisation_sessions).destroy_all
+      SessionNotification.where(session: organisation_sessions).destroy_all
 
       patient_sessions = PatientSession.where(session: organisation_sessions)
       patient_sessions.each do |patient_session|
