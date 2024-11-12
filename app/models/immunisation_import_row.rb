@@ -55,7 +55,10 @@ class ImmunisationImportRow
             },
             comparison: {
               less_than_or_equal_to: -> { Time.current },
-              if: -> { date_of_vaccination == Date.current }
+              if: -> do
+                @data["TIME_OF_VACCINATION"]&.strip.present? &&
+                  date_of_vaccination == Date.current
+              end
             }
   validate :session_date_exists
 

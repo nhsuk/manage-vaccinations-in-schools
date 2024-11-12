@@ -150,6 +150,23 @@ describe ImmunisationImportRow do
       end
     end
 
+    context "for a vaccination administered today, with no time provided" do
+      around { |example| freeze_time { example.run } }
+
+      before { immunisation_import_row.valid? }
+
+      let(:data) do
+        {
+          "DATE_OF_VACCINATION" => Date.current.strftime("%Y%m%d"),
+          "TIME_OF_VACCINATION" => nil
+        }
+      end
+
+      it "has a valid time of vaccination" do
+        expect(immunisation_import_row.errors[:time_of_vaccination]).to be_empty
+      end
+    end
+
     context "when date doesn't match an existing session" do
       subject(:errors) { immunisation_import_row.errors[:date_of_vaccination] }
 
