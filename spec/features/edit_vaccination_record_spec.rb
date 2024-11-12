@@ -4,7 +4,7 @@ describe "Edit vaccination record" do
   before { Flipper.enable(:release_1b) }
   after { Flipper.disable(:release_1b) }
 
-  scenario "User edits the vaccination record" do
+  scenario "User edits a current vaccination record" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
@@ -31,6 +31,37 @@ describe "Edit vaccination record" do
 
     when_i_fill_in_an_invalid_time
     then_i_see_the_date_time_form_with_errors
+
+    when_i_fill_in_a_valid_date_and_time
+    then_i_see_the_edit_vaccination_record_page
+    and_i_should_see_the_updated_date_time
+
+    when_i_click_change_vaccine
+    and_i_choose_a_vaccine
+    then_i_see_the_edit_vaccination_record_page
+
+    when_i_click_on_change_batch
+    and_i_choose_a_batch
+    then_i_see_the_edit_vaccination_record_page
+    and_i_should_see_the_updated_batch
+  end
+
+  scenario "User edits an historical vaccination record" do
+    given_i_am_signed_in
+    and_an_hpv_programme_is_underway
+    and_an_historical_administered_vaccination_record_exists
+
+    when_i_go_to_the_vaccination_records_page
+    then_i_should_see_the_vaccination_records
+
+    when_i_click_on_the_vaccination_record
+    then_i_should_see_the_vaccination_record
+
+    when_i_click_on_edit_vaccination_record
+    then_i_see_the_edit_vaccination_record_page
+
+    when_i_click_on_change_date
+    then_i_should_see_the_date_time_form
 
     when_i_fill_in_a_valid_date_and_time
     then_i_see_the_edit_vaccination_record_page
@@ -147,6 +178,18 @@ describe "Edit vaccination record" do
       programme: @programme,
       patient_session: @patient_session,
       batch: @original_batch
+    )
+  end
+
+  def and_an_historical_administered_vaccination_record_exists
+    create(
+      :vaccination_record,
+      programme: @programme,
+      patient_session: @patient_session,
+      batch: @original_batch,
+      performed_by_user: nil,
+      performed_by_given_name: "Nurse",
+      performed_by_family_name: "Joy"
     )
   end
 
