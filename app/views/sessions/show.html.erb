@@ -74,27 +74,25 @@
           <% end %>
         </li>
 
-        <% if Flipper.enabled?(:release_1b) %>
-          <li class="nhsuk-grid-column-full nhsuk-card-group__item">
-            <%= render AppCardComponent.new(link_to: session_triage_path(@session)) do |c| %>
-              <% c.with_heading { "Triage health questions" } %>
-              <% c.with_description do %>
-                <%= t("children", count: @stats[:needing_triage]) %> needing triage
-              <% end %>
+        <li class="nhsuk-grid-column-full nhsuk-card-group__item">
+          <%= render AppCardComponent.new(link_to: session_triage_path(@session)) do |c| %>
+            <% c.with_heading { "Triage health questions" } %>
+            <% c.with_description do %>
+              <%= t("children", count: @stats[:needing_triage]) %> needing triage
             <% end %>
-          </li>
+          <% end %>
+        </li>
 
-          <li class="nhsuk-grid-column-full nhsuk-card-group__item">
-            <%= render AppCardComponent.new(link_to: session_vaccinations_path(@session)) do |c| %>
-              <% c.with_heading { "Record vaccinations" } %>
-              <% c.with_description do %>
-                <%= t("children", count: @stats[:vaccinate]) %> to vaccinate<br>
-                <%= t("children", count: @stats[:vaccinated]) %> vaccinated<br>
-                <%= t("children", count: @stats[:could_not_vaccinate]) %> could not be vaccinated
-              <% end %>
+        <li class="nhsuk-grid-column-full nhsuk-card-group__item">
+          <%= render AppCardComponent.new(link_to: session_vaccinations_path(@session)) do |c| %>
+            <% c.with_heading { "Record vaccinations" } %>
+            <% c.with_description do %>
+              <%= t("children", count: @stats[:vaccinate]) %> to vaccinate<br>
+              <%= t("children", count: @stats[:vaccinated]) %> vaccinated<br>
+              <%= t("children", count: @stats[:could_not_vaccinate]) %> could not be vaccinated
             <% end %>
-          </li>
-        <% end %>
+          <% end %>
+        </li>
       <% end %>
     </ul>
   </div>
