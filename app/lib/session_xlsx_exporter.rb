@@ -1,16 +1,15 @@
 # frozen_string_literal: true
 
-class SessionCSVExporter
+class SessionXlsxExporter
   def initialize(session)
     @session = session
   end
 
   def call
-    CSV.generate(headers:, write_headers: true) do |csv|
-      patient_sessions.each do |patient_session|
-        rows(patient_session:).each { |row| csv << row }
-      end
-    end
+    Axlsx::Package
+      .new { |package| add_vaccinations_sheet(package) }
+      .to_stream
+      .read
   end
 
   def self.call(*args, **kwargs)
@@ -24,6 +23,20 @@ class SessionCSVExporter
   attr_reader :session
 
   delegate :location, :organisation, to: :session
+
+  def add_vaccinations_sheet(package)
+    package
+      .workbook
+      .add_worksheet(name: "Vaccinations") do |sheet|
+        sheet.add_row(headers)
+
+        patient_sessions.each do |patient_session|
+          rows(patient_session:).each do |row|
+            sheet.add_row(row, types: row_types)
+          end
+        end
+      end
+  end
 
   def headers
     %w[
@@ -47,6 +60,32 @@ class SessionCSVExporter
       DOSE_SEQUENCE
       PERFORMING_PROFESSIONAL_EMAIL
     ].tap { |values| values << "CLINIC_NAME" if location.generic_clinic? }
+  end
+
+  def row_types
+    types = [
+      nil, # ORGANISATION_CODE
+      nil, # SCHOOL_URN
+      nil, # SCHOOL_NAME
+      nil, # CARE_SETTING
+      nil, # NHS_NUMBER
+      nil, # PERSON_FORENAME
+      nil, # PERSON_SURNAME
+      nil, # PERSON_GENDER_CODE
+      :date, # PERSON_DOB
+      nil, # PERSON_POSTCODE
+      :date, # DATE_OF_VACCINATION
+      nil, # TIME_OF_VACCINATION
+      nil, # VACCINATED
+      nil, # VACCINE_GIVEN
+      nil, # BATCH_NUMBER
+      :date, # BATCH_EXPIRY_DATE
+      nil, # ANATOMICAL_SITE
+      nil, # DOSE_SEQUENCE
+      nil # PERFORMING_PROFESSIONAL_EMAIL
+    ]
+    types << nil if location.generic_clinic? # CLINIC_NAME
+    types
   end
 
   def patient_sessions
@@ -97,7 +136,7 @@ class SessionCSVExporter
       patient.given_name,
       patient.family_name,
       patient.gender_code.humanize,
-      patient.date_of_birth.strftime("%Y%m%d"),
+      patient.date_of_birth,
       patient.address_postcode,
       "", # DATE_OF_VACCINATION left blank for recording
       "", # TIME_OF_VACCINATION left blank for recording
@@ -132,9 +171,9 @@ class SessionCSVExporter
       patient.given_name,
       patient.family_name,
       patient.gender_code.humanize,
-      patient.date_of_birth.strftime("%Y%m%d"),
+      patient.date_of_birth,
       patient.address_postcode,
-      vaccination_record.administered_at&.strftime("%Y%m%d"),
+      vaccination_record.administered_at&.to_date,
       vaccination_record.administered_at&.strftime("%H:%M:%S"),
       vaccination_record.administered? ? "Y" : "N",
       (
@@ -147,7 +186,7 @@ class SessionCSVExporter
       vaccination_record.administered? ? vaccination_record.batch&.name : "",
       (
         if vaccination_record.administered?
-          vaccination_record.batch&.expiry&.strftime("%Y%m%d")
+          vaccination_record.batch&.expiry
         else
           ""
         end

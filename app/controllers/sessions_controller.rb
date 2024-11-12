@@ -42,7 +42,7 @@ class SessionsController < ApplicationController
 
     respond_to do |format|
       format.html { render layout: "full" }
-      format.csv do
+      format.xlsx do
         filename =
           if @session.location.urn.present?
             "#{@session.location.name} (#{@session.location.urn})"
@@ -51,9 +51,9 @@ class SessionsController < ApplicationController
           end
 
         send_data(
-          SessionCSVExporter.call(@session),
+          SessionXlsxExporter.call(@session),
           filename:
-            "#{filename} - exported on #{Date.current.to_fs(:long)}.csv",
+            "#{filename} - exported on #{Date.current.to_fs(:long)}.xlsx",
           disposition: "attachment"
         )
       end
