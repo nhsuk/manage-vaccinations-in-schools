@@ -132,6 +132,24 @@ describe ImmunisationImportRow do
       end
     end
 
+    context "with a date and time of vaccination in the future" do
+      around { |example| freeze_time { example.run } }
+
+      let(:data) do
+        {
+          "DATE_OF_VACCINATION" => Date.current.strftime("%Y%m%d"),
+          "TIME_OF_VACCINATION" => 1.second.from_now.strftime("%H:%M:%S")
+        }
+      end
+
+      it "has an error" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:time_of_vaccination]).to include(
+          "Enter a time in the past"
+        )
+      end
+    end
+
     context "when date doesn't match an existing session" do
       subject(:errors) { immunisation_import_row.errors[:date_of_vaccination] }
 
@@ -158,7 +176,7 @@ describe ImmunisationImportRow do
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:time_of_vaccination]).to eq(
-          ["Enter a time in the correct format."]
+          ["Enter a time in the correct format"]
         )
       end
     end

@@ -50,8 +50,13 @@ class ImmunisationImportRow
               less_than_or_equal_to: -> { Date.current }
             }
   validates :time_of_vaccination,
-            presence: true,
-            if: -> { @data["TIME_OF_VACCINATION"]&.strip.present? }
+            presence: {
+              if: -> { @data["TIME_OF_VACCINATION"]&.strip.present? }
+            },
+            comparison: {
+              less_than_or_equal_to: -> { Time.current },
+              if: -> { date_of_vaccination == Date.current }
+            }
   validate :session_date_exists
 
   CARE_SETTING_SCHOOL = 1

@@ -60,8 +60,9 @@ class DraftVaccinationRecord
 
   on_wizard_step :date_and_time, exact: true do
     validates :administered_at,
+              presence: true,
               comparison: {
-                less_than_or_equal_to: -> { Time.zone.now }
+                less_than_or_equal_to: -> { Time.current }
               }
   end
 
