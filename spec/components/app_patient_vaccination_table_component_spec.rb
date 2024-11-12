@@ -13,6 +13,12 @@ describe AppPatientVaccinationTableComponent do
     it { should have_content("No vaccinations") }
   end
 
+  context "with a not administered vaccination record" do
+    before { create(:vaccination_record, :not_administered, patient:) }
+
+    it { should have_content("No vaccinations") }
+  end
+
   context "with a vaccination record" do
     let(:programme) { create(:programme, :hpv) }
     let(:vaccine) { programme.vaccines.active.first }
