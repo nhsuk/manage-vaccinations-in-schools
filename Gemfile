@@ -11,6 +11,7 @@ gem "audited", git: "https://github.com/tvararu/audited", branch: "encryption"
 gem "awesome_print"
 gem "bootsnap", require: false
 gem "caxlsx"
+gem "charlock_holmes"
 gem "config"
 gem "cssbundling-rails"
 gem "csv"
