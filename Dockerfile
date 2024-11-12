@@ -22,7 +22,7 @@ FROM base AS build
 
 # Install packages needed to build gems and node modules
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential curl git libpq-dev node-gyp pkg-config python-is-python3 && \
+    apt-get install --no-install-recommends -y build-essential curl git libicu-dev libpq-dev node-gyp pkg-config python-is-python3 && \
     apt-get clean
 
 # Install JavaScript dependencies
