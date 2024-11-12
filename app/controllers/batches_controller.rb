@@ -31,18 +31,19 @@ class BatchesController < ApplicationController
         vaccine:
       )
 
-    if @batch.persisted?
-      @batch.unarchive!
-    elsif !expiry_validator.date_params_valid? || !@batch.valid?
+    @batch.archived_at = nil if @batch.archived?
+
+    if !expiry_validator.date_params_valid? || @batch.invalid?
       @batch.expiry = expiry_validator.date_params_as_struct
       render :new, status: :unprocessable_entity
-      return
     else
       @batch.save!
-    end
 
-    flash[:success] = "Batch #{@batch.name} added"
-    redirect_to vaccines_path
+      redirect_to vaccines_path,
+                  flash: {
+                    success: "Batch #{@batch.name} added"
+                  }
+    end
   end
 
   def edit

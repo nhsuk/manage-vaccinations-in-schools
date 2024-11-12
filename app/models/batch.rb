@@ -68,8 +68,4 @@ class Batch < ApplicationRecord
   def archive!
     update!(archived_at: Time.current) unless archived?
   end
-
-  def unarchive!
-    update!(archived_at: nil) if archived?
-  end
 end
