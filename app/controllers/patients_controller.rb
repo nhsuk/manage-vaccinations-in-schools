@@ -42,6 +42,9 @@ class PatientsController < ApplicationController
         .strict_loading
   end
 
+  def log
+  end
+
   def edit
   end
 
@@ -74,11 +77,11 @@ class PatientsController < ApplicationController
         .includes(
           :school,
           :cohort,
-          :notify_log_entries,
           :triages,
-          vaccination_records: [:performed_by_user, { vaccine: :programme }],
+          notify_log_entries: :sent_by,
           parents: :parent_relationships,
-          patient_sessions: %i[location session_attendances]
+          patient_sessions: %i[location session_attendances],
+          vaccination_records: [:performed_by_user, { vaccine: :programme }]
         )
         .strict_loading
         .find(params[:id])
