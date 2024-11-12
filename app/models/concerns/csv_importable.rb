@@ -68,6 +68,15 @@ module CSVImportable
     rows_count > 15
   end
 
+  def detect_encoding
+    return nil if csv_data.blank?
+
+    encoding = CharlockHolmes::EncodingDetector.detect(csv_data)
+    return nil if encoding.nil?
+
+    encoding[:ruby_encoding]
+  end
+
   def load_data!
     return if invalid?
 
