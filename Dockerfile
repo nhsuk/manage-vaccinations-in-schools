@@ -60,7 +60,7 @@ FROM base
 
 # Install packages needed for deployment
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl postgresql-client && \
+    apt-get install --no-install-recommends -y curl libicu-dev postgresql-client && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
