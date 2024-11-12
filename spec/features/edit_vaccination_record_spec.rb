@@ -18,6 +18,11 @@ describe "Edit vaccination record" do
     when_i_click_on_edit_vaccination_record
     then_i_see_the_edit_vaccination_record_page
 
+    when_i_click_back
+    then_i_should_see_the_vaccination_record
+    and_i_click_on_edit_vaccination_record
+    then_i_see_the_edit_vaccination_record_page
+
     when_i_click_on_change_date
     then_i_should_see_the_date_time_form
 
@@ -179,8 +184,15 @@ describe "Edit vaccination record" do
     click_on "Edit vaccination record"
   end
 
+  alias_method :and_i_click_on_edit_vaccination_record,
+               :when_i_click_on_edit_vaccination_record
+
   def then_i_see_the_edit_vaccination_record_page
     expect(page).to have_content("Edit vaccination record")
+  end
+
+  def when_i_click_back
+    click_on "Back"
   end
 
   def when_i_click_on_change_date

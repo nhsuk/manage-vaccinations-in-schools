@@ -1,6 +1,6 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: @draft_vaccination_record.editing? ? programme_vaccination_record_path(@vaccination_record) : draft_vaccinations_back_link_path,
+        href: @draft_vaccination_record.editing? ? programme_vaccination_record_path(@programme, @vaccination_record) : draft_vaccinations_back_link_path,
         name: "vaccination page",
       ) %>
 <% end %>
