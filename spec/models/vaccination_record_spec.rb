@@ -98,9 +98,7 @@ describe VaccinationRecord do
     end
 
     context "when administered_at is in the future" do
-      before { travel_to Time.zone.local(2024, 11, 1, 12, 0, 1) }
-
-      after { travel_back }
+      around { |example| freeze_time { example.run } }
 
       let(:vaccination_record) do
         build(:vaccination_record, administered_at: 1.second.from_now)

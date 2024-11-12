@@ -47,6 +47,7 @@ en:
         batch_expiry_date: <code>BATCH_EXPIRY_DATE</code>
         batch_number: <code>BATCH_NUMBER</code>
         care_setting: <code>CARE_SETTING</code>
+        date_of_vaccination: <code>DATE_OF_VACCINATION</code>
         delivery_site: <code>ANATOMICAL_SITE</code>
         dose_sequence: <code>DOSE_SEQUENCE</code>
         organisation_code: <code>ORGANISATION_CODE</code>
@@ -56,13 +57,12 @@ en:
         patient_last_name: <code>PERSON_SURNAME</code>
         patient_nhs_number: <code>NHS_NUMBER</code>
         patient_postcode: <code>PERSON_POSTCODE</code>
-        performed_by_user: <code>PERFORMING_PROFESSIONAL_EMAIL</code>
         performed_by_family_name: <code>PERFORMING_PROFESSIONAL_SURNAME</code>
         performed_by_given_name: <code>PERFORMING_PROFESSIONAL_FORENAME</code>
+        performed_by_user: <code>PERFORMING_PROFESSIONAL_EMAIL</code>
         reason: <code>REASON</code>
         school_name: <code>SCHOOL_NAME</code>
         school_urn: <code>SCHOOL_URN</code>
-        date_of_vaccination: <code>DATE_OF_VACCINATION</code>
         time_of_vaccination: <code>TIME_OF_VACCINATION</code>
         vaccine_given: <code>VACCINE_GIVEN</code>
     errors:
@@ -196,6 +196,11 @@ en:
             care_setting:
               blank: Enter a care setting.
               inclusion: Enter a valid care setting.
+            date_of_vaccination:
+              blank: Enter a date in the correct format
+              greater_than_or_equal_to: The vaccination date is outside the programme. Enter a date after the programme started.
+              less_than_or_equal_to: The vaccination date is outside the programme. Enter a date before today.
+              inclusion: Enter a date for a current session
             delivery_site:
               blank: Enter an anatomical site.
             dose_sequence:
@@ -232,13 +237,9 @@ en:
               blank: Enter a school name.
             school_urn:
               inclusion: The school URN is not recognised. If you’ve checked the URN, and you believe it’s valid, contact our support organisation.
-            date_of_vaccination:
-              blank: Enter a date in the correct format.
-              greater_than_or_equal_to: The vaccination date is outside the programme. Enter a date after the programme started.
-              less_than_or_equal_to: The vaccination date is outside the programme. Enter a date before today.
-              inclusion: Enter a date for a current session
             time_of_vaccination:
-              blank: Enter a time in the correct format.
+              blank: Enter a time in the correct format
+              less_than_or_equal_to: Enter a time in the past
             vaccine_given:
               inclusion: Enter a valid vaccine, eg Gardasil 9.
         import_duplicate_form:

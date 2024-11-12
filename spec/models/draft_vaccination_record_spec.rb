@@ -66,12 +66,9 @@ describe DraftVaccinationRecord do
         valid_administered_attributes.merge(administered_at: 1.second.from_now)
       end
 
-      before do
-        draft_vaccination_record.wizard_step = :date_and_time
-        travel_to Time.zone.local(2024, 11, 1, 12, 0, 1)
-      end
+      around { |example| freeze_time { example.run } }
 
-      after { travel_back }
+      before { draft_vaccination_record.wizard_step = :date_and_time }
 
       it "has an error" do
         expect(draft_vaccination_record.save(context: :update)).to be(false)

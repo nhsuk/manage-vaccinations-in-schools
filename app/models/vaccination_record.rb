@@ -151,9 +151,9 @@ class VaccinationRecord < ApplicationRecord
 
   validates :administered_at,
             comparison: {
-              less_than_or_equal_to: -> { Time.zone.now }
-            },
-            allow_blank: true
+              less_than_or_equal_to: -> { Time.current },
+              allow_nil: true
+            }
 
   def administered?
     administered_at != nil
