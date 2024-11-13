@@ -28,7 +28,7 @@ class Programme < ApplicationRecord
   has_many :immunisation_imports
   has_many :organisation_programmes
   has_many :triages
-  has_many :vaccination_records
+  has_many :vaccination_records, -> { kept }
   has_many :vaccines
 
   has_many :patient_sessions, through: :sessions
