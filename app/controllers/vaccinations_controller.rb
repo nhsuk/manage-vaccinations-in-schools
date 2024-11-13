@@ -7,8 +7,9 @@ class VaccinationsController < ApplicationController
   include PatientSortingConcern
 
   before_action :set_session
-  before_action :set_patient, except: %i[index batch update_batch]
-  before_action :set_patient_session, only: %i[create]
+  before_action :set_patient, only: %i[create confirm_destroy destroy]
+  before_action :set_patient_session, only: %i[create confirm_destroy destroy]
+  before_action :set_vaccination_record, only: %i[confirm_destroy destroy]
 
   before_action :set_batches, only: %i[index create batch update_batch]
   before_action :set_todays_batch, only: %i[index create batch]
@@ -100,6 +101,23 @@ class VaccinationsController < ApplicationController
     end
   end
 
+  def confirm_destroy
+    authorize @vaccination_record, :destroy?
+    render :destroy
+  end
+
+  def destroy
+    authorize @vaccination_record
+
+    # TODO: soft delete if session was on a different day
+    @vaccination_record.destroy!
+
+    redirect_to session_patient_path(id: @patient.id),
+                flash: {
+                  success: "Vaccination record deleted"
+                }
+  end
+
   private
 
   def vaccination_record_params
@@ -160,6 +178,11 @@ class VaccinationsController < ApplicationController
 
   def set_patient_session
     @patient_session = @patient.patient_sessions.find_by(session: @session)
+  end
+
+  def set_vaccination_record
+    @vaccination_record =
+      @patient_session.vaccination_records.find(params[:vaccination_record_id])
   end
 
   def set_batches

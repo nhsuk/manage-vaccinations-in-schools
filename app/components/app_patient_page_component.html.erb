@@ -109,9 +109,15 @@
       <%= render AppVaccinationRecordSummaryComponent.new(vaccination_record, current_user:) %>
 
       <% if Flipper.enabled?(:release_1b) %>
-        <%= govuk_button_to "Edit vaccination record",
-                            programme_vaccination_record_path(vaccination_record.programme, vaccination_record),
-                            method: :put, class: "app-button--secondary" %>
+        <div class="app-button-group">
+          <%= govuk_button_to "Edit vaccination record",
+                              programme_vaccination_record_path(vaccination_record.programme, vaccination_record),
+                              method: :put, class: "app-button--secondary" %>
+
+          <% if helpers.policy(vaccination_record).destroy? %>
+            <%= govuk_link_to "Delete vaccination record", destroy_vaccination_record_session_patient_vaccinations_path(patient_id: patient.id, vaccination_record_id: vaccination_record.id) %>
+          <% end %>
+        </div>
       <% end %>
     <% end %>
   <% end %>
