@@ -8,6 +8,7 @@
 #  administered_at          :datetime
 #  delivery_method          :integer
 #  delivery_site            :integer
+#  discarded_at             :datetime
 #  dose_sequence            :integer          not null
 #  location_name            :string
 #  notes                    :text
@@ -27,6 +28,7 @@
 # Indexes
 #
 #  index_vaccination_records_on_batch_id              (batch_id)
+#  index_vaccination_records_on_discarded_at          (discarded_at)
 #  index_vaccination_records_on_patient_session_id    (patient_session_id)
 #  index_vaccination_records_on_performed_by_user_id  (performed_by_user_id)
 #  index_vaccination_records_on_programme_id          (programme_id)
@@ -83,6 +85,10 @@ FactoryBot.define do
       performed_by { nil }
       performed_by_given_name { Faker::Name.first_name }
       performed_by_family_name { Faker::Name.last_name }
+    end
+
+    trait :discarded do
+      discarded_at { Time.current }
     end
   end
 end
