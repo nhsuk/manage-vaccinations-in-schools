@@ -93,7 +93,10 @@ class Reports::OfflineSessionExporter
   def patient_sessions
     session
       .patient_sessions
-      .includes(:vaccination_records, patient: :school)
+      .includes(
+        patient: :school,
+        vaccination_records: %i[batch performed_by_user vaccine]
+      )
       .strict_loading
   end
 
