@@ -76,7 +76,8 @@ class PatientSession < ApplicationRecord
             :consents,
             :gillick_assessment,
             :triages,
-            :vaccination_records
+            :vaccination_records,
+            :session_attendances
           )
         end
 
