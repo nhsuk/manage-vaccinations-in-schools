@@ -122,6 +122,8 @@ describe "Download vaccination reports" do
   def then_i_download_a_mavis_file
     expect(page.status_code).to eq(200)
 
-    # TODO: check contents looks right
+    expect(page).to have_content(
+      "ORGANISATION_CODE,SCHOOL_URN,SCHOOL_NAME,CLINIC_NAME,CARE_SETTING,NHS_NUMBER"
+    )
   end
 end

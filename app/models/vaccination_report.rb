@@ -43,7 +43,12 @@ class VaccinationReport
         end_date: date_to
       )
     when "mavis"
-      ""
+      Reports::ProgrammeVaccinationsExporter.call(
+        organisation: @current_user.selected_organisation,
+        programme:,
+        start_date: date_from,
+        end_date: date_to
+      )
     end
   end
 
