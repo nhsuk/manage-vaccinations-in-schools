@@ -35,6 +35,11 @@ module RequestSessionPersistable
     save(context: :update) # rubocop:disable Rails/SaveBang
   end
 
+  def update!(...)
+    assign_attributes(...)
+    save!(context: :update)
+  end
+
   def [](attr)
     public_send(attr)
   end

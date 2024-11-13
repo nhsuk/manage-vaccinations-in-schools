@@ -17,3 +17,7 @@ en:
           apply: Use duplicate record
           discard: Keep previously uploaded record
           keep_both: Keep both records
+      vaccination_report:
+        file_format_options:
+          careplus: CarePlus
+          mavis: CSV

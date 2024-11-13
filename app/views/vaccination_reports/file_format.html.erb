@@ -1,0 +1,17 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: previous_wizard_path,
+        name: "previous step",
+      ) %>
+<% end %>
+
+<% title = "Select file format" %>
+<% content_for :page_title, title %>
+
+<%= form_with model: @vaccination_report, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <%= f.govuk_collection_radio_buttons :file_format, VaccinationReport::FILE_FORMATS, :itself, legend: { text: title, size: "l", tag: "h1" }, caption: { text: @programme.name } %>
+
+  <%= f.govuk_submit %>
+<% end %>

@@ -6,8 +6,10 @@ module WizardControllerConcern
   include Wicked::Wizard::Translated
 
   included do
-    before_action :set_steps
-    before_action :setup_wizard_translated
+    with_options only: %i[show update] do
+      before_action :set_steps
+      before_action :setup_wizard_translated
+    end
   end
 
   def current_step
