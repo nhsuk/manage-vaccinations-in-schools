@@ -15,14 +15,40 @@ describe "HPV Vaccination" do
 
     when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv
     and_i_upload_the_modified_csv_file
+    and_i_navigate_to_the_session_page
     then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
   end
 
-  def given_an_hpv_programme_is_underway
+  scenario "Download spreadsheet, record offline at a clinic, upload vaccination outcomes back into Mavis" do
+    given_an_hpv_programme_is_underway(clinic: true)
+    when_i_choose_to_record_offline_from_a_clinic_page
+    then_i_see_an_excel_spreadsheet_for_recording_offline
+
+    when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv(
+      clinic_name: "Westfield Shopping Centre"
+    )
+    and_i_upload_the_modified_csv_file
+    and_i_navigate_to_the_clinic_page
+    then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
+    and_the_clinic_location_is_displayed
+  end
+
+  def given_an_hpv_programme_is_underway(clinic: false)
     programme = create(:programme, :hpv)
     @organisation =
-      create(:organisation, :with_one_nurse, programmes: [programme])
+      create(
+        :organisation,
+        :with_one_nurse,
+        :with_generic_clinic,
+        programmes: [programme]
+      )
     location = create(:location, :school)
+
+    if clinic
+      @organisation.generic_clinic_session.session_dates.create!(
+        value: Date.current
+      )
+    end
 
     vaccine = programme.vaccines.active.first
     @batch = create(:batch, organisation: @organisation, vaccine:)
@@ -40,7 +66,8 @@ describe "HPV Vaccination" do
         :patient,
         2,
         :consent_given_triage_not_needed,
-        session: @session,
+        session: clinic ? @organisation.generic_clinic_session : @session,
+        school: location,
         year_group: 8
       )
   end
@@ -48,6 +75,15 @@ describe "HPV Vaccination" do
   def when_i_choose_to_record_offline_from_a_school_session_page
     sign_in @organisation.users.first
     visit session_path(@session)
+    click_link "Record offline (Excel)"
+  end
+
+  def when_i_choose_to_record_offline_from_a_clinic_page
+    sign_in @organisation.users.first
+    visit "/dashboard"
+    click_link "Sessions", match: :first
+    click_link "Scheduled"
+    click_on "Community clinics"
     click_link "Record offline (Excel)"
   end
 
@@ -72,7 +108,9 @@ describe "HPV Vaccination" do
     end
   end
 
-  def when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv
+  def when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv(
+    clinic_name: nil
+  )
     # the steps below roughly approximate SAIS users:
     #
     # * opening the spreadsheet in Excel
@@ -109,6 +147,7 @@ describe "HPV Vaccination" do
       .users
       .first
       .email
+    row_for_vaccinated_patient["CLINIC_NAME"] = clinic_name if clinic_name
 
     row_for_unvaccinated_patient =
       csv_table.find do |row|
@@ -121,7 +160,7 @@ describe "HPV Vaccination" do
     row_for_unvaccinated_patient["TIME_OF_VACCINATION"] = "10:01"
     row_for_unvaccinated_patient["VACCINATED"] = "N"
     row_for_unvaccinated_patient["REASON_NOT_VACCINATED"] = "did not attend"
-
+    row_for_unvaccinated_patient["CLINIC_NAME"] = clinic_name if clinic_name
     File.write("tmp/modified.csv", csv_table.to_csv)
   end
 
@@ -141,9 +180,18 @@ describe "HPV Vaccination" do
     expect(page).not_to have_content("Invalid")
   end
 
-  def then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
+  def and_i_navigate_to_the_session_page
     visit session_path(@session)
+  end
 
+  def and_i_navigate_to_the_clinic_page
+    visit "/dashboard"
+    click_on "Sessions", match: :first
+    click_on "Scheduled"
+    click_on "Community clinics"
+  end
+
+  def then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
     click_on "Record vaccinations"
     click_on "Vaccinated"
 
@@ -166,5 +214,9 @@ describe "HPV Vaccination" do
     expect(page).to have_content(@unvaccinated_patient.full_name)
     expect(page).to have_content("Could not vaccinate")
     expect(page).to have_content("OutcomeAbsent from session")
+  end
+
+  def and_the_clinic_location_is_displayed
+    expect(page).to have_content("Westfield Shopping Centre")
   end
 end
