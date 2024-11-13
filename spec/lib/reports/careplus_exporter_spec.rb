@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe CareplusExporter do
+describe Reports::CareplusExporter do
   subject(:csv) do
     described_class.call(
       programme:,
