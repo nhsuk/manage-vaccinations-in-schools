@@ -109,8 +109,11 @@ class VaccinationsController < ApplicationController
   def destroy
     authorize @vaccination_record
 
-    # TODO: soft delete if session was on a different day
-    @vaccination_record.destroy!
+    if @vaccination_record.session.today?
+      @vaccination_record.destroy!
+    else
+      @vaccination_record.discard!
+    end
 
     redirect_to session_patient_path(id: @patient.id),
                 flash: {
