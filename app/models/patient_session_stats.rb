@@ -15,6 +15,7 @@ class PatientSessionStats
           vaccinated
           could_not_vaccinate
           with_conflicting_consent
+          not_registered
         ]
   end
 
@@ -56,6 +57,8 @@ class PatientSessionStats
         patient_session.consent_conflicts? ||
         patient_session.triaged_do_not_vaccinate? ||
         patient_session.unable_to_vaccinate?
+    when :not_registered
+      patient_session.current_attendance.nil?
     end
   end
 end
