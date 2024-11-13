@@ -35,13 +35,16 @@ class SessionsController < ApplicationController
   end
 
   def show
-    patient_sessions =
-      @session.patient_sessions.preload_for_state.strict_loading
-
-    @stats = PatientSessionStats.new(patient_sessions)
-
     respond_to do |format|
-      format.html { render layout: "full" }
+      format.html do
+        patient_sessions =
+          @session.patient_sessions.preload_for_state.strict_loading
+
+        @stats = PatientSessionStats.new(patient_sessions)
+
+        render layout: "full"
+      end
+
       format.xlsx do
         filename =
           if @session.location.urn.present?

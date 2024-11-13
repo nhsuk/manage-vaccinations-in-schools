@@ -91,7 +91,7 @@ class SessionXlsxExporter
   def patient_sessions
     session
       .patient_sessions
-      .includes(:patient, :vaccination_records)
+      .includes(:vaccination_records, patient: :school)
       .strict_loading
   end
 
@@ -114,15 +114,17 @@ class SessionXlsxExporter
   end
 
   def rows(patient_session:)
+    patient = patient_session.patient
+
     vaccination_records =
       patient_session.vaccination_records.order(:administered_at)
 
     if vaccination_records.any?
       vaccination_records.map do |vaccination_record|
-        existing_row(vaccination_record:)
+        existing_row(patient:, vaccination_record:)
       end
     else
-      [new_row(patient: patient_session.patient)]
+      [new_row(patient:)]
     end
   end
 
@@ -152,9 +154,7 @@ class SessionXlsxExporter
     end
   end
 
-  def existing_row(vaccination_record:)
-    patient = vaccination_record.patient
-
+  def existing_row(patient:, vaccination_record:)
     delivery_site =
       if vaccination_record.delivery_site
         ImmunisationImportRow::DELIVERY_SITES.key(
