@@ -195,6 +195,29 @@ describe AppActivityLogComponent do
                      by: "Nurse Joy"
   end
 
+  describe "discarded vaccination" do
+    before do
+      create(
+        :vaccination_record,
+        :discarded,
+        programme:,
+        patient_session:,
+        administered_at: Time.zone.local(2024, 5, 31, 13),
+        discarded_at: Time.zone.local(2024, 5, 31, 14),
+        performed_by: user
+      )
+    end
+
+    include_examples "card",
+                     title: "Vaccinated with Gardasil 9 (HPV)",
+                     date: "31 May 2024 at 1:00pm",
+                     by: "Nurse Joy"
+
+    include_examples "card",
+                     title: "HPV vaccination record deleted",
+                     date: "31 May 2024 at 2:00pm"
+  end
+
   describe "self-consent" do
     before do
       create(

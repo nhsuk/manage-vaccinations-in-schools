@@ -15,7 +15,8 @@ class AppActivityLogComponent < ViewComponent::Base
       patient_session ? [patient_session] : patient.patient_sessions
     @consents = (patient || patient_session).consents
     @triages = (patient || patient_session).triages
-    @vaccination_records = (patient || patient_session).vaccination_records
+    @vaccination_records =
+      (patient || patient_session).vaccination_records.with_discarded
   end
 
   attr_reader :patient,
@@ -111,7 +112,7 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def vaccination_events
-    vaccination_records.map do |vaccination_record|
+    vaccination_records.flat_map do |vaccination_record|
       title =
         if vaccination_record.administered?
           "Vaccinated with #{helpers.vaccine_heading(vaccination_record.vaccine)}"
@@ -119,13 +120,24 @@ class AppActivityLogComponent < ViewComponent::Base
           "#{vaccination_record.programme.name} vaccination not given: #{vaccination_record.human_enum_name(:reason)}"
         end
 
-      {
+      kept = {
         title:,
         time:
           vaccination_record.administered_at || vaccination_record.created_at,
         notes: vaccination_record.notes,
         by: vaccination_record.performed_by&.full_name
       }
+
+      discarded =
+        if vaccination_record.discarded?
+          {
+            title:
+              "#{vaccination_record.programme.name} vaccination record deleted",
+            time: vaccination_record.discarded_at
+          }
+        end
+
+      [kept, discarded].compact
     end
   end
 
