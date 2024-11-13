@@ -51,6 +51,7 @@ describe SessionXlsxExporter do
             TIME_OF_VACCINATION
             VACCINATED
             VACCINE_GIVEN
+            REASON_NOT_VACCINATED
             BATCH_NUMBER
             BATCH_EXPIRY_DATE
             ANATOMICAL_SITE
@@ -67,9 +68,14 @@ describe SessionXlsxExporter do
         worksheet_to_hashes(workbook.worksheets[0])
       end
 
+      let(:administered_at) { Time.zone.local(2024, 1, 1, 12, 0o5, 20) }
+      let(:batch) { create(:batch, vaccine: programme.vaccines.active.first) }
+      let(:patient_session) { create(:patient_session, patient:, session:) }
+      let(:patient) { create(:patient) }
+
       it { should be_empty }
 
-      context "with a patient" do
+      context "with a patient without an outcome" do
         let!(:patient) { create(:patient, session:) }
 
         it "adds a row to fill in" do
@@ -93,7 +99,8 @@ describe SessionXlsxExporter do
               "SCHOOL_URN" => location.urn.to_i,
               "TIME_OF_VACCINATION" => "",
               "VACCINATED" => "",
-              "VACCINE_GIVEN" => ""
+              "VACCINE_GIVEN" => "",
+              "REASON_NOT_VACCINATED" => ""
             }
           )
           expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
@@ -101,11 +108,6 @@ describe SessionXlsxExporter do
       end
 
       context "with a vaccinated patient" do
-        let(:patient) { create(:patient) }
-        let(:patient_session) { create(:patient_session, patient:, session:) }
-        let(:batch) { create(:batch, vaccine: programme.vaccines.active.first) }
-        let(:administered_at) { Time.zone.local(2024, 1, 1, 12, 0o5, 20) }
-
         before do
           create(
             :vaccination_record,
@@ -117,7 +119,7 @@ describe SessionXlsxExporter do
           )
         end
 
-        it "adds a row to fill in" do
+        it "adds a row with the vaccination details" do
           expect(rows.count).to eq(1)
           expect(rows.first.except("PERSON_DOB", "DATE_OF_VACCINATION")).to eq(
             {
@@ -137,13 +139,54 @@ describe SessionXlsxExporter do
               "SCHOOL_URN" => location.urn.to_i,
               "TIME_OF_VACCINATION" => "12:05:20",
               "VACCINATED" => "Y",
-              "VACCINE_GIVEN" => "Gardasil9"
+              "VACCINE_GIVEN" => "Gardasil9",
+              "REASON_NOT_VACCINATED" => ""
             }
           )
           expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
           expect(rows.first["DATE_OF_VACCINATION"].to_date).to eq(
             administered_at.to_date
           )
+        end
+      end
+
+      context "with a patient who couldn't be vaccinated" do
+        before do
+          create(
+            :vaccination_record,
+            :not_administered,
+            patient_session:,
+            programme:,
+            performed_by: user
+          )
+        end
+
+        it "adds a row to fill in" do
+          expect(rows.count).to eq(1)
+          expect(rows.first.except("PERSON_DOB")).to eq(
+            {
+              "ANATOMICAL_SITE" => nil,
+              "BATCH_EXPIRY_DATE" => nil,
+              "BATCH_NUMBER" => "",
+              "CARE_SETTING" => 1,
+              "DOSE_SEQUENCE" => "",
+              "NHS_NUMBER" => patient.nhs_number.to_i,
+              "ORGANISATION_CODE" => organisation.ods_code,
+              "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
+              "PERSON_FORENAME" => patient.given_name,
+              "PERSON_GENDER_CODE" => "Not known",
+              "PERSON_POSTCODE" => patient.address_postcode,
+              "PERSON_SURNAME" => patient.family_name,
+              "SCHOOL_NAME" => location.name,
+              "SCHOOL_URN" => location.urn.to_i,
+              "DATE_OF_VACCINATION" => nil,
+              "TIME_OF_VACCINATION" => nil,
+              "VACCINATED" => "N",
+              "VACCINE_GIVEN" => "",
+              "REASON_NOT_VACCINATED" => "unwell"
+            }
+          )
+          expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
         end
       end
     end
@@ -178,6 +221,7 @@ describe SessionXlsxExporter do
             TIME_OF_VACCINATION
             VACCINATED
             VACCINE_GIVEN
+            REASON_NOT_VACCINATED
             BATCH_NUMBER
             BATCH_EXPIRY_DATE
             ANATOMICAL_SITE
@@ -197,7 +241,7 @@ describe SessionXlsxExporter do
 
       it { should be_empty }
 
-      context "with a patient" do
+      context "with a patient without an outcome" do
         let!(:patient) { create(:patient, session:) }
 
         it "adds a row to fill in" do
@@ -222,7 +266,8 @@ describe SessionXlsxExporter do
               "SCHOOL_URN" => 888_888,
               "TIME_OF_VACCINATION" => "",
               "VACCINATED" => "",
-              "VACCINE_GIVEN" => ""
+              "VACCINE_GIVEN" => "",
+              "REASON_NOT_VACCINATED" => ""
             }
           )
           expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
@@ -274,7 +319,8 @@ describe SessionXlsxExporter do
               "SCHOOL_URN" => 123_456,
               "TIME_OF_VACCINATION" => "12:05:20",
               "VACCINATED" => "Y",
-              "VACCINE_GIVEN" => "Gardasil9"
+              "VACCINE_GIVEN" => "Gardasil9",
+              "REASON_NOT_VACCINATED" => ""
             }
           )
           expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)

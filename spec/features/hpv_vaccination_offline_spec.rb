@@ -8,7 +8,7 @@ describe "HPV Vaccination" do
     travel_to(Time.zone.local(2024, 2, 1, 12, 0, 0)) { example.run }
   end
 
-  scenario "Download spreadsheet" do
+  scenario "Download spreadsheet, record offline and upload vaccination outcomes back into Mavis" do
     given_an_hpv_programme_is_underway
     and_i_am_signed_in
 
@@ -38,9 +38,10 @@ describe "HPV Vaccination" do
         programme:,
         location:
       )
-    @patient =
-      create(
+    @vaccinated_patient, @unvaccinated_patient =
+      create_list(
         :patient,
+        2,
         :consent_given_triage_not_needed,
         session: @session,
         year_group: 8
@@ -97,15 +98,38 @@ describe "HPV Vaccination" do
         end
       )
 
-    row = csv_table.first
-    row["DATE_OF_VACCINATION"] = Date.current.strftime("%d/%m/%Y")
-    row["TIME_OF_VACCINATION"] = "10:00:00"
-    row["VACCINATED"] = "Y"
-    row["VACCINE_GIVEN"] = "Gardasil9"
-    row["BATCH_NUMBER"] = @batch.name
-    row["BATCH_EXPIRY_DATE"] = @batch.expiry.strftime("%d/%m/%Y")
-    row["ANATOMICAL_SITE"] = "Left Upper Arm"
-    row["PERFORMING_PROFESSIONAL_EMAIL"] = @organisation.users.first.email
+    row_for_vaccinated_patient =
+      csv_table.find do |row|
+        row["PERSON_FORENAME"] == @vaccinated_patient.given_name &&
+          row["PERSON_SURNAME"] == @vaccinated_patient.family_name
+      end
+    row_for_vaccinated_patient["DATE_OF_VACCINATION"] = Date.current.strftime(
+      "%d/%m/%Y"
+    )
+    row_for_vaccinated_patient["TIME_OF_VACCINATION"] = "10:00:00"
+    row_for_vaccinated_patient["VACCINATED"] = "Y"
+    row_for_vaccinated_patient["VACCINE_GIVEN"] = "Gardasil9"
+    row_for_vaccinated_patient["BATCH_NUMBER"] = @batch.name
+    row_for_vaccinated_patient["BATCH_EXPIRY_DATE"] = @batch.expiry.strftime(
+      "%d/%m/%Y"
+    )
+    row_for_vaccinated_patient["ANATOMICAL_SITE"] = "Left Upper Arm"
+    row_for_vaccinated_patient["PERFORMING_PROFESSIONAL_EMAIL"] = @organisation
+      .users
+      .first
+      .email
+
+    row_for_unvaccinated_patient =
+      csv_table.find do |row|
+        row["PERSON_FORENAME"] == @unvaccinated_patient.given_name &&
+          row["PERSON_SURNAME"] == @unvaccinated_patient.family_name
+      end
+    row_for_unvaccinated_patient["DATE_OF_VACCINATION"] = Date.current.strftime(
+      "%d/%m/%Y"
+    )
+    row_for_unvaccinated_patient["TIME_OF_VACCINATION"] = "10:01"
+    row_for_unvaccinated_patient["VACCINATED"] = "N"
+    row_for_unvaccinated_patient["REASON_NOT_VACCINATED"] = "did not attend"
 
     File.write("tmp/modified.csv", csv_table.to_csv)
   end
@@ -132,7 +156,7 @@ describe "HPV Vaccination" do
     click_on "Record vaccinations"
     click_on "Vaccinated"
 
-    click_on @patient.full_name
+    click_on @vaccinated_patient.full_name
 
     expect(page).to have_content("Vaccinated")
     expect(page).to have_content("HPV (Gardasil 9, #{@batch.name})")
@@ -142,5 +166,14 @@ describe "HPV Vaccination" do
       "VaccinatorYou (#{@organisation.users.first.full_name})"
     )
     expect(page).to have_content("SiteLeft arm (upper position)")
+
+    click_on "Back"
+
+    click_on "Could not vaccinate"
+
+    click_on @unvaccinated_patient.full_name
+    expect(page).to have_content(@unvaccinated_patient.full_name)
+    expect(page).to have_content("Could not vaccinate")
+    expect(page).to have_content("OutcomeAbsent from session")
   end
 end
