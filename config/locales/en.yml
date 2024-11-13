@@ -60,7 +60,7 @@ en:
         performed_by_family_name: <code>PERFORMING_PROFESSIONAL_SURNAME</code>
         performed_by_given_name: <code>PERFORMING_PROFESSIONAL_FORENAME</code>
         performed_by_user: <code>PERFORMING_PROFESSIONAL_EMAIL</code>
-        reason: <code>REASON</code>
+        reason: <code>REASON_NOT_VACCINATED</code>
         school_name: <code>SCHOOL_NAME</code>
         school_urn: <code>SCHOOL_URN</code>
         time_of_vaccination: <code>TIME_OF_VACCINATION</code>
