@@ -54,6 +54,7 @@ class SessionXlsxExporter
       TIME_OF_VACCINATION
       VACCINATED
       VACCINE_GIVEN
+      REASON_NOT_VACCINATED
       BATCH_NUMBER
       BATCH_EXPIRY_DATE
       ANATOMICAL_SITE
@@ -78,6 +79,7 @@ class SessionXlsxExporter
       nil, # TIME_OF_VACCINATION
       nil, # VACCINATED
       nil, # VACCINE_GIVEN
+      nil, # REASON_NOT_VACCINATED
       nil, # BATCH_NUMBER
       :date, # BATCH_EXPIRY_DATE
       nil, # ANATOMICAL_SITE
@@ -144,6 +146,7 @@ class SessionXlsxExporter
       "", # TIME_OF_VACCINATION left blank for recording
       "", # VACCINATED left blank for recording
       "", # VACCINE_GIVEN left blank for recording
+      "", # REASON_NOT_VACCINATED left blank for recording
       "", # BATCH_NUMBER left blank for recording
       "", # BATCH_EXPIRY_DATE left blank for recording
       "", # ANATOMICAL_SITE left blank for recording
@@ -183,7 +186,20 @@ class SessionXlsxExporter
           ""
         end
       ),
-      vaccination_record.administered? ? vaccination_record.batch&.name : "",
+      (
+        if vaccination_record.reason.present?
+          ImmunisationImportRow::REASONS.key(vaccination_record.reason.to_sym)
+        else
+          ""
+        end
+      ),
+      (
+        if vaccination_record.administered?
+          vaccination_record.batch&.name
+        else
+          ""
+        end
+      ),
       (
         if vaccination_record.administered?
           vaccination_record.batch&.expiry
@@ -194,7 +210,7 @@ class SessionXlsxExporter
       delivery_site,
       vaccination_record.administered? ? vaccination_record.dose_sequence : "",
       (
-        if vaccination_record.administered?
+        if vaccination_record.performed_by_user.present?
           vaccination_record.performed_by_user&.email
         else
           ""

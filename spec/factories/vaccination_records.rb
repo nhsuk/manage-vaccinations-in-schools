@@ -75,6 +75,7 @@ FactoryBot.define do
 
     trait :not_administered do
       administered_at { nil }
+      delivery_site { nil }
       reason { "not_well" }
     end
 
