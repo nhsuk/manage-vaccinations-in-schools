@@ -11,6 +11,7 @@ describe PatientSessionStats do
       expect(to_h).to eq(
         could_not_vaccinate: 0,
         needing_triage: 0,
+        not_registered: 0,
         vaccinate: 0,
         vaccinated: 0,
         with_conflicting_consent: 0,
@@ -60,6 +61,7 @@ describe PatientSessionStats do
         expect(to_h).to eq(
           could_not_vaccinate: 1,
           needing_triage: 2,
+          not_registered: 6,
           vaccinate: 2,
           vaccinated: 0,
           with_conflicting_consent: 0,
