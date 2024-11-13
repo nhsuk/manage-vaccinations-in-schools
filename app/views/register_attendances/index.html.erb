@@ -1,0 +1,20 @@
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(
+        items: [
+          { text: "Home", href: dashboard_path },
+          { text: t("sessions.index.title"), href: sessions_path },
+          { text: @session.location.name, href: session_path(@session) },
+        ],
+      ) %>
+<% end %>
+
+<%= h1 "Register attendance" %>
+
+<%= render AppSessionPatientTableComponent.new(
+      caption: t("patients_table.register_attendance.caption", children: t("children", count: @patient_sessions.count)),
+      columns: %i[name year_group outcome attendance],
+      params:,
+      patient_sessions: @patient_sessions,
+      section: :attendance,
+      year_groups: @session.year_groups,
+    ) %>

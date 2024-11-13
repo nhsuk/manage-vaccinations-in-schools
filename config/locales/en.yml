@@ -743,6 +743,9 @@ en:
     no_triage_needed:
       caption: "%{children} with no triage needed"
       label: No triage needed
+    register_attendance:
+      caption: "%{children} still to register"
+      label: Register attendance
     triage_complete:
       caption: "%{children} with triage completed"
       label: Triage completed
