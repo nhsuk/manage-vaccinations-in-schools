@@ -267,6 +267,10 @@ en:
             relationship_other_name:
               blank: Enter a relationship
               too_long: Enter a relationship that is less than 300 characters long
+        vaccination_report:
+          attributes:
+            file_format:
+              inclusion: Choose a file format
   activerecord:
     attributes:
       consent:
@@ -828,8 +832,10 @@ en:
     contact_method: contact-method
     date_and_time: date-and-time
     date_of_birth: date-of-birth
+    dates: dates
     delivery: delivery
     education_setting: education-setting
+    file_format: file-format
     gp: gp
     health_question: health-question
     injection: injection

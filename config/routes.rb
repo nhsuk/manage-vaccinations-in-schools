@@ -101,6 +101,11 @@ Rails.application.routes.draw do
   resource :draft_vaccination_record,
            only: %i[show update],
            path: "draft-vaccination-record/:id"
+  resource :vaccination_report,
+           only: %i[show update],
+           path: "draft-vaccination-report/:id" do
+    get "download", on: :member
+  end
 
   resources :notices, only: :index
 
@@ -150,6 +155,10 @@ Rails.application.routes.draw do
         post "reset-dps-export", on: :collection
       end
     end
+
+    resources :vaccination_reports,
+              path: "vaccination-reports",
+              only: %i[create]
   end
 
   resources :sessions, only: %i[edit index show], param: :slug do

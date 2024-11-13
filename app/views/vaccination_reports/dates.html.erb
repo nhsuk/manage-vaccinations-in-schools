@@ -1,0 +1,23 @@
+<% content_for :before_main do %>
+  <%= render AppBacklinkComponent.new(
+        href: programme_path(@programme),
+        name: "programme page",
+      ) %>
+<% end %>
+
+<%= form_with model: @vaccination_report, url: wizard_path, method: :put do |f| %>
+  <%= f.govuk_error_summary %>
+
+  <span class="nhsuk-caption-l"><%= @programme.name %></span>
+  <%= h1 "Select a vaccination date range" %>
+
+  <%= f.govuk_date_field :date_from,
+                         legend: { text: "From" },
+                         hint: { text: "For example, 27 3 2017" } %>
+
+  <%= f.govuk_date_field :date_to,
+                         legend: { text: "Until" },
+                         hint: { text: "For example, 27 3 2017" } %>
+
+  <%= f.govuk_submit %>
+<% end %>
