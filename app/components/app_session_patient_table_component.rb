@@ -52,7 +52,8 @@ class AppSessionPatientTableComponent < ViewComponent::Base
       postcode: "Postcode",
       reason: "Reason for refusal",
       select_for_matching: "Action",
-      year_group: "Year group"
+      year_group: "Year group",
+      attendance: "Today’s attendance"
     }.fetch(column)
   end
 
@@ -80,6 +81,8 @@ class AppSessionPatientTableComponent < ViewComponent::Base
       patient.restricted? ? "" : patient.address_postcode
     when :select_for_matching
       matching_link(patient)
+    when :attendance
+      attendance_cell(patient)
     else
       raise ArgumentError, "Unknown column: #{column}"
     end
@@ -125,8 +128,41 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     )
   end
 
+  def attendance_cell(patient)
+    tag.div(
+      safe_join([attending_button(patient), absent_button(patient)]),
+      class: "app-button-group app-button-group--table"
+    )
+  end
+
+  def attending_button(patient)
+    govuk_button_to(
+      "Attending",
+      session_register_attendance_path(
+        session_slug: params[:session_slug],
+        tab: :unregistered,
+        patient_id: patient.id,
+        state: :attending
+      ),
+      class: "app-button--secondary app-button--small"
+    )
+  end
+
+  def absent_button(patient)
+    govuk_button_to(
+      "Absent",
+      session_register_attendance_path(
+        session_slug: params[:session_slug],
+        tab: :unregistered,
+        patient_id: patient.id,
+        state: :absent
+      ),
+      class: "app-button--secondary-warning app-button--small"
+    )
+  end
+
   def header_link(column)
-    return column_name(column) if column == :select_for_matching
+    return column_name(column) if column.in? %i[attendance select_for_matching]
 
     direction =
       if params[:sort] == column.to_s && params[:direction] == "asc"
