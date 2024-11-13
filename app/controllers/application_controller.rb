@@ -24,8 +24,6 @@ class ApplicationController < ActionController::Base
     rescue_from UnprocessableEntity, with: :handle_unprocessable_entity
   end
 
-  FLIPPER_INITIALIZERS[:basic_auth].call unless Flipper.exist? :basic_auth
-
   default_form_builder(GOVUKDesignSystemFormBuilder::FormBuilder)
 
   layout "two_thirds"
