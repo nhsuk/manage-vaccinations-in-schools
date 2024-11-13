@@ -37,7 +37,7 @@ class VaccinationReport
   def csv_data
     case file_format
     when "careplus"
-      CareplusExporter.call(
+      Reports::CareplusExporter.call(
         programme:,
         start_date: date_from,
         end_date: date_to

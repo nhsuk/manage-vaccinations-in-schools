@@ -54,7 +54,7 @@ class SessionsController < ApplicationController
           end
 
         send_data(
-          SessionXlsxExporter.call(@session),
+          Reports::OfflineSessionExporter.call(@session),
           filename:
             "#{filename} - exported on #{Date.current.to_fs(:long)}.xlsx",
           disposition: "attachment"

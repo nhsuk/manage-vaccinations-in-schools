@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SessionXlsxExporter
+class Reports::OfflineSessionExporter
   def initialize(session)
     @session = session
   end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe SessionXlsxExporter do
+describe Reports::OfflineSessionExporter do
   def worksheet_to_hashes(worksheet)
     headers = worksheet[0].cells.map(&:value)
     rows =

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CareplusExporter
+class Reports::CareplusExporter
   def initialize(programme:, start_date:, end_date:)
     @programme = programme
     @start_date = start_date
