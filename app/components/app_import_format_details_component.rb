@@ -145,7 +145,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
             "#{tag.i("Y")} is assumed."
       },
       {
-        name: "REASON",
+        name: "REASON_NOT_VACCINATED",
         notes:
           "Required if #{tag.code("VACCINATED")} is #{tag.i("N")}, must be #{tag.i("did not attend")}, " \
             "#{tag.i("vaccination contraindicated")} or #{tag.i("unwell")}"
