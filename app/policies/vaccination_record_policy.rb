@@ -17,6 +17,10 @@ class VaccinationRecordPolicy < ApplicationPolicy
     edit?
   end
 
+  def destroy?
+    user.is_nurse? && record.session.open?
+  end
+
   class Scope < ApplicationPolicy::Scope
     def resolve
       scope.joins(:session).where(
