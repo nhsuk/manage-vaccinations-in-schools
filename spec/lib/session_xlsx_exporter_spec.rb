@@ -16,9 +16,7 @@ describe SessionXlsxExporter do
 
   let(:programme) { create(:programme, :hpv) }
   let(:organisation) { create(:organisation, programmes: [programme]) }
-  let(:user) do
-    create(:user, email: "nurse@example.com", organisations: [organisation])
-  end
+  let(:user) { create(:user, email: "nurse@example.com", organisation:) }
   let(:team) { create(:team, organisation:) }
   let(:session) { create(:session, location:, organisation:, programme:) }
 

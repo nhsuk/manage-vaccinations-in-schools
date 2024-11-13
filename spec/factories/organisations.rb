@@ -33,26 +33,11 @@ FactoryBot.define do
     privacy_policy_url { "https://example.com/privacy" }
 
     trait :with_one_nurse do
-      transient do
-        nurse_email { nil }
-        nurse_password { nil }
-      end
-
-      users do
-        create_list(
-          :user,
-          1,
-          **{ organisations: [instance], email: nurse_email }.compact
-        )
-      end
+      users { [create(:user, :nurse, organisation: instance)] }
     end
 
     trait :with_one_admin do
-      transient { admin_email { "admin.hope@example.com" } }
-
-      users do
-        create_list(:user, 1, organisations: [instance], email: admin_email)
-      end
+      users { [create(:user, :admin, organisation: instance)] }
     end
 
     trait :with_generic_clinic do

@@ -5,7 +5,7 @@ describe BatchPolicy do
     subject { BatchPolicy::Scope.new(user, Batch).resolve }
 
     let(:organisation) { create(:organisation) }
-    let(:user) { create(:user, organisations: [organisation]) }
+    let(:user) { create(:user, organisation:) }
 
     let(:archived_batch) { create(:batch, :archived, organisation:) }
     let(:unarchived_batch) { create(:batch, organisation:) }

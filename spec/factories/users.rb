@@ -31,15 +31,16 @@ FactoryBot.define do
   factory :user,
           aliases: %i[nurse assessor created_by performed_by uploaded_by] do
     transient do
-      selected_organisation { organisations.first }
+      organisation { Organisation.first || create(:organisation) }
+
       selected_role_code { "S8000:G8000:R8001" }
       selected_role_name { "Nurse Access Role" }
 
       cis2_info_hash do
         {
           "selected_org" => {
-            "name" => selected_organisation.name,
-            "code" => selected_organisation.ods_code
+            "name" => organisation.name,
+            "code" => organisation.ods_code
           },
           "selected_role" => {
             "name" => selected_role_name,
@@ -49,32 +50,23 @@ FactoryBot.define do
       end
     end
 
-    sequence(:family_name) { |n| "User #{n}" }
-    given_name { "Test" }
+    sequence(:email) { |n| "nurse-#{n}@example.com" }
     fallback_role { :nurse }
 
-    sequence(:email) { |n| "nurse-#{n}@example.com" }
-    sequence(:organisations) { [Organisation.first || create(:organisation)] }
+    sequence(:family_name) { |n| "User #{n}" }
+    given_name { "Test" }
+    organisations { [organisation] }
 
     # Don't set a password as this interferes with CIS2.
-    #
     # password { "power overwhelming!" }
 
     provider { Settings.cis2.enabled ? "cis2" : nil }
     sequence(:uid) { Settings.cis2.enabled ? _1.to_s : nil }
     cis2_info { Settings.cis2.enabled ? cis2_info_hash : nil }
 
-    trait :cis2 do
-      provider { "cis2" }
-      sequence(:uid, &:to_s)
-      cis2_info { cis2_info_hash }
-    end
-
-    factory :admin do
-      transient do
-        selected_role_code { "S8000:G8001:R8006" }
-        selected_role_name { "Medical Secretary Access Role" }
-      end
+    trait :admin do
+      selected_role_code { "S8000:G8001:R8006" }
+      selected_role_name { "Medical Secretary Access Role" }
       sequence(:email) { |n| "admin-#{n}@example.com" }
       fallback_role { :admin }
     end
@@ -84,4 +76,6 @@ FactoryBot.define do
       current_sign_in_ip { "127.0.0.1" }
     end
   end
+
+  factory :admin, parent: :user, traits: %i[admin]
 end

@@ -47,7 +47,7 @@ def create_user(organisation:, email: nil, uid: nil, fallback_role: :nurse)
         given_name: "Nurse",
         email: "nurse.flo@example.nhs.uk",
         provider: "cis2",
-        organisations: [organisation],
+        organisation:,
         fallback_role:
         # password: Do not set this as they should not log in via password
       )
@@ -59,7 +59,7 @@ def create_user(organisation:, email: nil, uid: nil, fallback_role: :nurse)
         given_name: email.split("@").first.split(".").first.capitalize,
         email:,
         password: email,
-        organisations: [organisation],
+        organisation:,
         fallback_role:
       )
   else

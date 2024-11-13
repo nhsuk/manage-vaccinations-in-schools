@@ -6,7 +6,7 @@ describe SessionPolicy do
 
     let(:programme) { create(:programme) }
     let(:organisation) { create(:organisation, programmes: [programme]) }
-    let(:user) { create(:user, organisations: [organisation]) }
+    let(:user) { create(:user, organisation:) }
 
     let(:users_organisations_session) do
       create(:session, organisation:, programme:)
