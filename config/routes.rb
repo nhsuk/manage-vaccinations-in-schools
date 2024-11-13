@@ -308,7 +308,16 @@ Rails.application.routes.draw do
                  path: "gillick",
                  only: %i[new create edit update]
         resource :triages, only: %i[new create]
-        resource :vaccinations, only: %i[create]
+        resource :vaccinations, only: %i[create] do
+          member do
+            delete ":vaccination_record_id",
+                   action: :destroy,
+                   as: :vaccination_record
+            get ":vaccination_record_id/destroy",
+                action: :confirm_destroy,
+                as: :destroy_vaccination_record
+          end
+        end
 
         resource :attendance,
                  controller: "session_attendances",
