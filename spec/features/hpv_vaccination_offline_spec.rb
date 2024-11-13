@@ -8,17 +8,14 @@ describe "HPV Vaccination" do
     travel_to(Time.zone.local(2024, 2, 1, 12, 0, 0)) { example.run }
   end
 
-  scenario "Download spreadsheet, record offline and upload vaccination outcomes back into Mavis" do
+  scenario "Download spreadsheet, record offline at a school session, upload vaccination outcomes back into Mavis" do
     given_an_hpv_programme_is_underway
-    and_i_am_signed_in
+    when_i_choose_to_record_offline_from_a_school_session_page
+    then_i_see_an_excel_spreadsheet_for_recording_offline
 
-    when_i_go_to_a_session
-    and_i_click_record_offline
-    then_i_see_an_excel_file
-
-    when_i_modify_the_excel_file_file_to_add_a_vaccination_and_export_it_to_csv
+    when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv
     and_i_upload_the_modified_csv_file
-    then_i_see_the_vaccination_in_the_session
+    then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
   end
 
   def given_an_hpv_programme_is_underway
@@ -48,19 +45,13 @@ describe "HPV Vaccination" do
       )
   end
 
-  def and_i_am_signed_in
+  def when_i_choose_to_record_offline_from_a_school_session_page
     sign_in @organisation.users.first
-  end
-
-  def when_i_go_to_a_session
     visit session_path(@session)
-  end
-
-  def and_i_click_record_offline
     click_link "Record offline (Excel)"
   end
 
-  def then_i_see_an_excel_file
+  def then_i_see_an_excel_spreadsheet_for_recording_offline
     expect(page.status_code).to eq(200)
 
     @workbook = RubyXL::Parser.parse_buffer(page.body)
@@ -81,7 +72,7 @@ describe "HPV Vaccination" do
     end
   end
 
-  def when_i_modify_the_excel_file_file_to_add_a_vaccination_and_export_it_to_csv
+  def when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv
     # the steps below roughly approximate SAIS users:
     #
     # * opening the spreadsheet in Excel
@@ -150,7 +141,7 @@ describe "HPV Vaccination" do
     expect(page).not_to have_content("Invalid")
   end
 
-  def then_i_see_the_vaccination_in_the_session
+  def then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
     visit session_path(@session)
 
     click_on "Record vaccinations"
