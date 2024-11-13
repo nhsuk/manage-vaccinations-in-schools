@@ -230,7 +230,13 @@ describe SessionXlsxExporter do
       end
 
       context "with a vaccinated patient" do
-        let(:patient) { create(:patient) }
+        let(:patient) do
+          create(
+            :patient,
+            school:
+              create(:location, :school, urn: "123456", name: "Waterloo Road")
+          )
+        end
         let(:patient_session) { create(:patient_session, patient:, session:) }
         let(:batch) { create(:batch, vaccine: programme.vaccines.active.first) }
         let(:administered_at) { Time.zone.local(2024, 1, 1, 12, 0o5, 20) }
@@ -264,8 +270,8 @@ describe SessionXlsxExporter do
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
               "PERSON_SURNAME" => patient.family_name,
-              "SCHOOL_NAME" => "",
-              "SCHOOL_URN" => 888_888,
+              "SCHOOL_NAME" => "Waterloo Road",
+              "SCHOOL_URN" => 123_456,
               "TIME_OF_VACCINATION" => "12:05:20",
               "VACCINATED" => "Y",
               "VACCINE_GIVEN" => "Gardasil9"
