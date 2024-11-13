@@ -16,7 +16,7 @@ describe "Download vaccination reports" do
     then_i_see_the_file_format_page
 
     when_i_choose_careplus
-    then_i_download_a_csv_file
+    then_i_download_a_careplus_file
   end
 
   scenario "Download in Mavis format" do
@@ -31,7 +31,7 @@ describe "Download vaccination reports" do
     then_i_see_the_file_format_page
 
     when_i_choose_mavis
-    then_i_download_a_csv_file
+    then_i_download_a_mavis_file
   end
 
   def given_an_hpv_programme_is_underway
@@ -111,7 +111,15 @@ describe "Download vaccination reports" do
     click_on "Continue"
   end
 
-  def then_i_download_a_csv_file
+  def then_i_download_a_careplus_file
+    expect(page.status_code).to eq(200)
+
+    expect(page).to have_content(
+      "NHS Number,Surname,Forename,Date of Birth,Address Line 1"
+    )
+  end
+
+  def then_i_download_a_mavis_file
     expect(page.status_code).to eq(200)
 
     # TODO: check contents looks right
