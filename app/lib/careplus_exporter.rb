@@ -3,8 +3,8 @@
 class CareplusExporter
   def initialize(programme:, start_date:, end_date:)
     @programme = programme
-    @start_date = start_date.beginning_of_day
-    @end_date = end_date.end_of_day
+    @start_date = start_date
+    @end_date = end_date
   end
 
   def call
@@ -66,12 +66,30 @@ class CareplusExporter
   end
 
   def patient_sessions_for_session(session)
-    session
-      .patient_sessions
-      .includes(:vaccination_records, consents: :parent, patient: :school)
-      .where.not(vaccination_records: { id: nil })
-      .where(vaccination_records: { administered_at: start_date..end_date })
-      .strict_loading
+    scope =
+      session
+        .patient_sessions
+        .includes(:vaccination_records, consents: :parent, patient: :school)
+        .where.not(vaccination_records: { id: nil })
+        .merge(VaccinationRecord.administered)
+
+    if start_date.present?
+      scope =
+        scope.where(
+          "vaccination_records.administered_at >= ?",
+          start_date.beginning_of_day
+        )
+    end
+
+    if end_date.present?
+      scope =
+        scope.where(
+          "vaccination_records.administered_at <= ?",
+          end_date.end_of_day
+        )
+    end
+
+    scope.strict_loading
   end
 
   def rows(patient_session:)
@@ -93,7 +111,7 @@ class CareplusExporter
       patient.given_name,
       patient.date_of_birth.strftime("%d/%m/%Y"),
       patient.address_line_1,
-      patient_session.latest_consents.first.name,
+      patient_session.latest_consents.first&.name || "",
       99, # Ethnicity, 99 is "Not known"
       first_vaccination.administered_at.strftime("%d/%m/%Y"),
       first_vaccination.administered_at.strftime("%H:%M"),

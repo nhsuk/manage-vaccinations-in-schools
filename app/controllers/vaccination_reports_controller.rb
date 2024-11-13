@@ -18,8 +18,14 @@ class VaccinationReportsController < ApplicationController
   end
 
   def download
-    # TODO: download the real data
-    send_data("", filename: @vaccination_report.filename)
+    if @vaccination_report.valid?
+      send_data(
+        @vaccination_report.csv_data,
+        filename: @vaccination_report.csv_filename
+      )
+    else
+      redirect_to vaccination_report_path(Wicked::FIRST_STEP)
+    end
   end
 
   def show

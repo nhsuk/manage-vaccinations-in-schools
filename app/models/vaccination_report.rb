@@ -34,7 +34,20 @@ class VaccinationReport
     self.programme_id = value.id
   end
 
-  def filename
+  def csv_data
+    case file_format
+    when "careplus"
+      CareplusExporter.call(
+        programme:,
+        start_date: date_from,
+        end_date: date_to
+      )
+    when "mavis"
+      ""
+    end
+  end
+
+  def csv_filename
     return nil if invalid?
 
     from_str = date_from&.to_fs(:long) || "earliest"
