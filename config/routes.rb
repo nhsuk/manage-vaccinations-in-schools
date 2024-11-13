@@ -259,6 +259,27 @@ Rails.application.routes.draw do
       end
     end
 
+    constraints section: "attendances" do
+      defaults section: "attendances" do
+        get "/",
+            as: "attendances",
+            to: redirect("/sessions/%{session_slug}/attendances/unregistered")
+
+        get ":tab",
+            controller: "register_attendances",
+            action: :index,
+            as: :attendances_tab,
+            tab: :unregistered
+
+        post ":tab/patients/:patient_id/register/:state",
+             controller: "register_attendances",
+             action: :create,
+             as: :register_attendance,
+             tab: :unregistered,
+             state: %i[attending absent]
+      end
+    end
+
     scope ":tab" do
       resources :patient_sessions,
                 path: "patients",
