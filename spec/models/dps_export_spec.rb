@@ -29,7 +29,10 @@ describe DPSExport do
 
   let(:programme) { create(:programme) }
 
-  before { create_list(:vaccination_record, 2, programme:) }
+  before do
+    create_list(:vaccination_record, 2, programme:)
+    create(:vaccination_record, :discarded, programme:)
+  end
 
   describe "#csv" do
     subject(:csv) { dps_export.csv }
@@ -81,7 +84,7 @@ describe DPSExport do
       subject(:rows) { csv.split("\n").drop(1) }
 
       it "contains the existing vaccination records" do
-        expect(rows.count).to eq(2)
+        expect(rows.count).to eq(2) # 3 in total, 1 discarded
       end
     end
   end

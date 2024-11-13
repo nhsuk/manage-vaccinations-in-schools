@@ -24,11 +24,25 @@
 
 describe PatientSession do
   let(:programme) { create(:programme) }
+  let(:patient_session) { create(:patient_session, programme:) }
+
+  describe "#vaccination_records" do
+    subject(:vaccination_records) { patient_session.vaccination_records }
+
+    let(:kept_vaccination_record) do
+      create(:vaccination_record, patient_session:, programme:)
+    end
+    let(:discarded_vaccination_record) do
+      create(:vaccination_record, :discarded, patient_session:, programme:)
+    end
+
+    it { should include(kept_vaccination_record) }
+    it { should_not include(discarded_vaccination_record) }
+  end
 
   describe "#triages" do
     subject(:triages) { patient_session.triages }
 
-    let(:patient_session) { create(:patient_session, programme:) }
     let(:patient) { patient_session.patient }
     let(:later_triage) { create(:triage, programme:, patient:) }
     let(:earlier_triage) do
@@ -41,7 +55,6 @@ describe PatientSession do
   describe "#latest_triage" do
     subject(:latest_triage) { patient_session.latest_triage }
 
-    let(:patient_session) { create(:patient_session, programme:) }
     let(:patient) { patient_session.patient }
     let(:later_triage) do
       create(:triage, programme:, status: :ready_to_vaccinate, patient:)

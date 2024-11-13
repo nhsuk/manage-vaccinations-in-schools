@@ -83,6 +83,22 @@ describe Patient do
     end
   end
 
+  describe "#vaccination_records" do
+    subject(:vaccination_records) { patient.vaccination_records }
+
+    let(:patient) { create(:patient) }
+    let(:programme) { create(:programme) }
+    let(:kept_vaccination_record) do
+      create(:vaccination_record, patient:, programme:)
+    end
+    let(:discarded_vaccination_record) do
+      create(:vaccination_record, :discarded, patient:, programme:)
+    end
+
+    it { should include(kept_vaccination_record) }
+    it { should_not include(discarded_vaccination_record) }
+  end
+
   it { should normalize(:nhs_number).from(" 0123456789 ").to("0123456789") }
   it { should normalize(:address_postcode).from(" SW111AA ").to("SW11 1AA") }
 

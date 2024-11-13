@@ -38,7 +38,7 @@ class Batch < ApplicationRecord
   scope :expired, -> { where("expiry <= ?", Time.current) }
   scope :not_expired, -> { where("expiry > ?", Time.current) }
 
-  has_many :vaccination_records
+  has_many :vaccination_records, -> { kept }
 
   has_and_belongs_to_many :immunisation_imports
 
