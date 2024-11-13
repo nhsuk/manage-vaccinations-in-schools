@@ -170,6 +170,8 @@ GEM
       responders
       warden (~> 1.2.3)
     diff-lcs (1.5.1)
+    discard (1.4.0)
+      activerecord (>= 4.2, < 9.0)
     docile (1.4.0)
     dockerfile-rails (1.6.24)
       rails (>= 3.0.0)
@@ -675,6 +677,7 @@ DEPENDENCIES
   cuprite
   debug
   devise
+  discard
   dockerfile-rails (>= 1.0.0)
   factory_bot_instruments
   factory_bot_rails
