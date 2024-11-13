@@ -125,7 +125,7 @@ class Reports::CareplusExporter
       "School Nurse", # Staff Code
       "Y", # Attended; Did not attends do not get recorded on GP systems
       "", # Reason Not Attended; Always blank
-      "", # Suspension End Date; Not sure what this is, leaving blank
+      "", # Suspension End Date; Doesn't need to be used
       *vaccine_fields(vaccination_records, 0),
       *vaccine_fields(vaccination_records, 1),
       *vaccine_fields(vaccination_records, 2),
@@ -144,11 +144,31 @@ class Reports::CareplusExporter
 
     [
       record.vaccine.snomed_product_code, # Vaccine X
-      "", # Dose X field; Not sure, documentation says this is derived later?
+      "#{record.dose_sequence}P", # Dose X field
       VaccinationRecord.human_enum_name(:reason, record.reason), # Reason Not Given X
-      record.delivery_site, # Site X; Coded value, but we don't know the codes yet
+      coded_site(record.delivery_site), # Site X; Coded value
       record.vaccine.manufacturer, # Manufacturer X
       record.batch.name # Batch No X
+    ]
+  end
+
+  def coded_site(site)
+    {
+      # These are confirmed
+      left_arm: "LA",
+      right_arm: "RA",
+      # These are made up/guessed
+      left_arm_upper_position: "LUP",
+      left_arm_lower_position: "LLP",
+      right_arm_upper_position: "RUP",
+      right_arm_lower_position: "RLP",
+      left_thigh: "LT",
+      right_thigh: "RT",
+      left_buttock: "LB",
+      right_buttock: "RB",
+      nose: "N"
+    }[
+      site
     ]
   end
 end
