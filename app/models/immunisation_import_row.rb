@@ -394,9 +394,16 @@ class ImmunisationImportRow
   end
 
   def parse_date(key)
-    Date.strptime(@data[key]&.strip, "%Y%m%d")
+    value = @data[key]&.strip
+    return nil if value.nil?
+
+    Date.strptime(value, "%Y%m%d")
   rescue ArgumentError, TypeError
-    nil
+    begin
+      Date.strptime(value, "%d/%m/%Y")
+    rescue ArgumentError, TypeError
+      nil
+    end
   end
 
   TIME_FORMATS = %w[%H:%M:%S %H:%M %H%M%S %H%M %H].freeze

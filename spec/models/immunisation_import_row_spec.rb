@@ -777,6 +777,12 @@ describe ImmunisationImportRow do
 
       it { should eq(Date.new(2010, 1, 1)) }
     end
+
+    context "with an Excel-exported-to-CSV date format" do
+      let(:data) { { "BATCH_EXPIRY_DATE" => "01/09/2027" } }
+
+      it { should eq(Date.new(2027, 9, 1)) }
+    end
   end
 
   describe "#batch_number" do
@@ -989,6 +995,12 @@ describe ImmunisationImportRow do
       let(:data) { { "PERSON_DOB" => "19900101" } }
 
       it { should eq(Date.new(1990, 1, 1)) }
+    end
+
+    context "with an Excel-exported-to-CSV date format" do
+      let(:data) { { "PERSON_DOB" => "01/09/2023" } }
+
+      it { should eq(Date.new(2023, 9, 1)) }
     end
   end
 
@@ -1224,6 +1236,16 @@ describe ImmunisationImportRow do
       let(:data) { valid_data.merge("DATE_OF_VACCINATION" => "20230901") }
 
       it "sets the administered at time" do
+        expect(vaccination_record.administered_at).to eq(
+          Time.new(2023, 9, 1, 12, 0, 0, "+01:00")
+        )
+      end
+    end
+
+    context "with an Excel-exported-to-CSV date format" do
+      let(:data) { valid_data.merge("DATE_OF_VACCINATION" => "01/09/2023") }
+
+      it "parses the date and sets the administered at time" do
         expect(vaccination_record.administered_at).to eq(
           Time.new(2023, 9, 1, 12, 0, 0, "+01:00")
         )
