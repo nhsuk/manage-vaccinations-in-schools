@@ -17,7 +17,19 @@ describe "Manage attendance" do
     given_my_organisation_is_running_an_hpv_vaccination_programme
     and_there_is_a_vaccination_session_today_with_a_patient_ready_to_vaccinate
 
-    when_i_go_to_the_patient
+    when_i_go_to_the_session
+    then_i_see_the_register_attendance_card
+
+    when_i_click_on_the_register_attendance_card
+    then_i_see_the_register_attendance_page
+
+    when_i_register_a_patient_as_attending
+    then_i_see_the_attending_flash
+
+    when_i_register_a_patient_as_absent
+    then_i_see_the_absent_flash
+
+    when_i_go_to_a_patient
     then_the_patient_is_not_registered_yet
     and_i_am_not_able_to_vaccinate
 
@@ -55,23 +67,44 @@ describe "Manage attendance" do
         location:
       )
 
-    create(
+    create_list(
       :patient_session,
+      3,
       :consent_given_triage_not_needed,
       programme: @programme,
       session: @session
     )
-
-    @patient = @session.reload.patients.first
   end
 
-  def when_i_go_to_the_patient
+  def when_i_go_to_the_session
     sign_in @organisation.users.first
     visit dashboard_path
     click_link "Sessions", match: :first
     click_link @session.location.name
-    click_link "Record vaccinations"
-    click_link @patient.full_name
+  end
+
+  def then_i_see_the_register_attendance_card
+    expect(page).to have_link("Register attendance")
+  end
+
+  def when_i_click_on_the_register_attendance_card
+    click_link "Register attendance"
+  end
+
+  def then_i_see_the_register_attendance_page
+    expect(page).to have_heading("Register attendance")
+  end
+
+  def when_i_register_a_patient_as_attending
+    click_button "Attending", match: :first
+  end
+
+  def when_i_register_a_patient_as_absent
+    click_button "Absent", match: :first
+  end
+
+  def when_i_go_to_a_patient
+    click_link @session.reload.patients.last.full_name
   end
 
   def then_the_patient_is_not_registered_yet
@@ -89,7 +122,7 @@ describe "Manage attendance" do
   end
 
   def and_i_see_the_not_registered_flash
-    expect(page).to have_content("#{@patient.full_name} is not registered yet")
+    expect(page).to have_content("is not registered yet")
   end
 
   def when_i_choose_the_patient_is_absent
@@ -103,8 +136,9 @@ describe "Manage attendance" do
   end
 
   def and_i_see_the_absent_flash
-    expect(page).to have_content("#{@patient.full_name} is absent from today")
+    expect(page).to have_content("is absent from today")
   end
+  alias_method :then_i_see_the_absent_flash, :and_i_see_the_absent_flash
 
   def when_i_choose_the_patient_is_attending
     click_link "Update attendance"
@@ -117,8 +151,9 @@ describe "Manage attendance" do
   end
 
   def and_i_see_the_attending_flash
-    expect(page).to have_content("#{@patient.full_name} is attending today")
+    expect(page).to have_content("is attending today")
   end
+  alias_method :then_i_see_the_attending_flash, :and_i_see_the_attending_flash
 
   def and_i_can_vaccinate
     expect(page).to have_content("Did they get the HPV vaccine?")

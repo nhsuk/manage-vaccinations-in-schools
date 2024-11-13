@@ -83,6 +83,17 @@
           <% end %>
         </li>
 
+        <% if Flipper.enabled?(:record_attendance) && @session.today? %>
+          <li class="nhsuk-grid-column-full nhsuk-card-group__item">
+            <%= render AppCardComponent.new(link_to: session_attendances_path(@session)) do |c| %>
+              <% c.with_heading { "Register attendance" } %>
+              <% c.with_description do %>
+                <%= t("children", count: @stats[:not_registered]) %> still to register
+              <% end %>
+            <% end %>
+          </li>
+        <% end %>
+
         <li class="nhsuk-grid-column-full nhsuk-card-group__item">
           <%= render AppCardComponent.new(link_to: session_vaccinations_path(@session)) do |c| %>
             <% c.with_heading { "Record vaccinations" } %>
