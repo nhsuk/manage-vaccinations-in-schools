@@ -26,7 +26,7 @@ FactoryBot.define do
     transient do
       programme { association :programme }
       organisation { session.organisation }
-      user { association :user, organisations: [organisation] }
+      user { association :user, organisation: }
     end
 
     session { association :session, programme: }

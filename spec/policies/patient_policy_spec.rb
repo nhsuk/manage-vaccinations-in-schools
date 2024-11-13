@@ -11,7 +11,7 @@ describe PatientPolicy do
       create(:cohort, organisation: another_organisation)
     end
     let(:school) { create(:location, :school, organisation:) }
-    let(:user) { create(:user, organisations: [organisation]) }
+    let(:user) { create(:user, organisation:) }
 
     let(:patient_in_school) { create(:patient, school:) }
     let(:patient_in_cohort) { create(:patient, cohort:) }

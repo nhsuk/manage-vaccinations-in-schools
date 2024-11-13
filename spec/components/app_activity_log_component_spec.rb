@@ -16,12 +16,7 @@ describe AppActivityLogComponent do
     )
   end
   let(:user) do
-    create(
-      :user,
-      organisations: [organisation],
-      family_name: "Joy",
-      given_name: "Nurse"
-    )
+    create(:user, organisation:, family_name: "Joy", given_name: "Nurse")
   end
   let(:location) { create(:location, :school, name: "Hogwarts") }
   let(:session) { create(:session, programme:, location:) }

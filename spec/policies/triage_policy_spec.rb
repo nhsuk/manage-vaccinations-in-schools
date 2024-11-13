@@ -5,7 +5,7 @@ describe TriagePolicy do
     subject { TriagePolicy::Scope.new(user, Triage).resolve }
 
     let(:organisation) { create(:organisation) }
-    let(:user) { create(:user, organisations: [organisation]) }
+    let(:user) { create(:user, organisation:) }
 
     let(:organisation_batch) { create(:triage, organisation:) }
     let(:non_organisation_batch) { create(:triage) }

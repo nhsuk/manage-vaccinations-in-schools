@@ -4,7 +4,7 @@ describe PatientSessionPolicy do
   let(:programme) { create(:programme) }
 
   let(:organisation) { create(:organisation, programmes: [programme]) }
-  let(:user) { create(:user, organisations: [organisation]) }
+  let(:user) { create(:user, organisation:) }
 
   let(:patient_session) do
     create(
