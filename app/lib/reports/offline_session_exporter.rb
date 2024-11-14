@@ -77,7 +77,8 @@ class Reports::OfflineSessionExporter
       "BATCH_EXPIRY_DATE" => :date,
       "ANATOMICAL_SITE" => :string,
       "DOSE_SEQUENCE" => nil, # should be integer, but that converts nil to 0
-      "REASON_NOT_VACCINATED" => :string
+      "REASON_NOT_VACCINATED" => :string,
+      "UUID" => :string
     }.tap { |hash| hash.delete("CLINIC_NAME") unless location.generic_clinic? }
   end
 
@@ -131,7 +132,8 @@ class Reports::OfflineSessionExporter
           "", # BATCH_EXPIRY_DATE left blank for recording
           "", # ANATOMICAL_SITE left blank for recording
           1, # DOSE_SEQUENCE is 1 by default TODO: revisit this for other programmes
-          "" # REASON_NOT_VACCINATED left blank for recording
+          "", # REASON_NOT_VACCINATED left blank for recording
+          "" # UUID left blank as new record
         ]
     ).tap do |values|
       values.insert(4, "") if location.generic_clinic? # CLINIC_NAME left blank for recording
@@ -157,7 +159,8 @@ class Reports::OfflineSessionExporter
           vaccination_record.batch&.expiry,
           anatomical_site(vaccination_record:),
           dose_sequence(vaccination_record:),
-          reason_not_vaccinated(vaccination_record:)
+          reason_not_vaccinated(vaccination_record:),
+          vaccination_record.uuid
         ]
     ).tap do |values|
       if location.generic_clinic?
