@@ -83,7 +83,7 @@ describe Reports::ProgrammeVaccinationsExporter do
         let(:patient) { create(:patient, year_group: 8) }
         let(:patient_session) { create(:patient_session, patient:, session:) }
         let(:batch) { create(:batch, vaccine: programme.vaccines.active.first) }
-        let(:administered_at) { Time.zone.local(2024, 1, 1, 12, 0o5, 20) }
+        let(:administered_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
 
         before do
           create(
@@ -151,7 +151,7 @@ describe Reports::ProgrammeVaccinationsExporter do
         let(:patient) { create(:patient, year_group: 8) }
         let(:patient_session) { create(:patient_session, patient:, session:) }
         let(:batch) { create(:batch, vaccine: programme.vaccines.active.first) }
-        let(:administered_at) { Time.zone.local(2024, 1, 1, 12, 0o5, 20) }
+        let(:administered_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
 
         before do
           create(
@@ -208,6 +208,81 @@ describe Reports::ProgrammeVaccinationsExporter do
             }
           )
         end
+      end
+    end
+
+    context "with consent" do
+      let(:session) { create(:session, programme:, organisation:) }
+      let(:patient) { create(:patient, :vaccinated, session:, programme:) }
+
+      before do
+        parent = create(:parent, :recorded, full_name: "John Smith")
+        recorded_at = Time.zone.local(2024, 1, 1, 12, 5, 20)
+        create(:consent, :given, patient:, parent:, programme:, recorded_at:)
+      end
+
+      it "includes the information" do
+        expect(rows.first.to_hash).to include(
+          "CONSENT_DETAILS" =>
+            "Given by John Smith at 2024-01-01 12:05:20 +0000",
+          "CONSENT_STATUS" => "Given",
+          "HEALTH_QUESTION_ANSWERS" =>
+            "Is there anything else we should know? - no"
+        )
+      end
+    end
+
+    context "with a gillick assessment" do
+      let(:session) { create(:session, programme:, organisation:) }
+      let(:patient_session) do
+        create(:patient_session, :vaccinated, programme:, session:)
+      end
+
+      before do
+        performed_by = create(:user, given_name: "Test", family_name: "Nurse")
+        updated_at = Date.new(2024, 1, 1)
+        create(
+          :gillick_assessment,
+          :competent,
+          patient_session:,
+          performed_by:,
+          updated_at:
+        )
+      end
+
+      it "includes the information" do
+        expect(rows.first.to_hash).to include(
+          "GILLICK_ASSESSED_BY" => "Test Nurse",
+          "GILLICK_ASSESSMENT_DATE" => "20240101",
+          "GILLICK_ASSESSMENT_NOTES" => "Assessed as Gillick competent",
+          "GILLICK_STATUS" => "Gillick competent"
+        )
+      end
+    end
+
+    context "with a triage assessment" do
+      let(:session) { create(:session, programme:, organisation:) }
+      let(:performed_by) do
+        create(:user, given_name: "Test", family_name: "Nurse")
+      end
+
+      before do
+        create(
+          :patient_session,
+          :vaccinated,
+          programme:,
+          session:,
+          user: performed_by
+        )
+      end
+
+      it "includes the information" do
+        expect(rows.first.to_hash).to include(
+          "TRIAGED_BY" => "Test Nurse",
+          "TRIAGE_DATE" => Date.current.strftime("%Y%m%d"),
+          "TRIAGE_NOTES" => "Okay to vaccinate",
+          "TRIAGE_STATUS" => "Ready to vaccinate"
+        )
       end
     end
   end
