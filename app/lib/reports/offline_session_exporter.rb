@@ -27,17 +27,20 @@ class Reports::OfflineSessionExporter
   delegate :location, :organisation, to: :session
 
   def add_vaccinations_sheet(package)
-    package
-      .workbook
-      .add_worksheet(name: "Vaccinations") do |sheet|
-        sheet.add_row(headers_and_types.keys)
+    workbook = package.workbook
 
-        patient_sessions.each do |patient_session|
-          rows(patient_session:).each do |row|
-            sheet.add_row(row, types: headers_and_types.values)
-          end
-        end
+    date_style = workbook.styles.add_style(format_code: "dd/mm/yyyy")
+
+    types = headers_and_types.values
+    style = types.map { _1 == :date ? date_style : nil }
+
+    workbook.add_worksheet(name: "Vaccinations") do |sheet|
+      sheet.add_row(headers_and_types.keys)
+
+      patient_sessions.each do |patient_session|
+        rows(patient_session:).each { |row| sheet.add_row(row, types:, style:) }
       end
+    end
   end
 
   def headers_and_types
