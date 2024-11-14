@@ -39,22 +39,34 @@ describe Reports::OfflineSessionExporter do
             SCHOOL_URN
             SCHOOL_NAME
             CARE_SETTING
-            NHS_NUMBER
             PERSON_FORENAME
             PERSON_SURNAME
-            PERSON_GENDER_CODE
             PERSON_DOB
+            YEAR_GROUP
+            PERSON_GENDER_CODE
             PERSON_POSTCODE
+            NHS_NUMBER
+            CONSENT_STATUS
+            CONSENT_DETAILS
+            HEALTH_QUESTION_ANSWERS
+            TRIAGE_STATUS
+            TRIAGED_BY
+            TRIAGE_DATE
+            TRIAGE_NOTES
+            GILLICK_STATUS
+            GILLICK_ASSESSMENT_DATE
+            GILLICK_ASSESSED_BY
+            GILLICK_ASSESSMENT_NOTES
+            VACCINATED
             DATE_OF_VACCINATION
             TIME_OF_VACCINATION
-            VACCINATED
             VACCINE_GIVEN
-            REASON_NOT_VACCINATED
+            PERFORMING_PROFESSIONAL_EMAIL
             BATCH_NUMBER
             BATCH_EXPIRY_DATE
             ANATOMICAL_SITE
             DOSE_SEQUENCE
-            PERFORMING_PROFESSIONAL_EMAIL
+            REASON_NOT_VACCINATED
           ]
         )
       end
@@ -84,8 +96,15 @@ describe Reports::OfflineSessionExporter do
               "BATCH_EXPIRY_DATE" => nil,
               "BATCH_NUMBER" => "",
               "CARE_SETTING" => 1,
+              "CONSENT_DETAILS" => "",
+              "CONSENT_STATUS" => nil,
               "DATE_OF_VACCINATION" => nil,
               "DOSE_SEQUENCE" => 1,
+              "GILLICK_ASSESSED_BY" => nil,
+              "GILLICK_ASSESSMENT_DATE" => nil,
+              "GILLICK_ASSESSMENT_NOTES" => nil,
+              "GILLICK_STATUS" => "",
+              "HEALTH_QUESTION_ANSWERS" => "",
               "NHS_NUMBER" => patient.nhs_number.to_i,
               "ORGANISATION_CODE" => organisation.ods_code,
               "PERFORMING_PROFESSIONAL_EMAIL" => "",
@@ -93,12 +112,17 @@ describe Reports::OfflineSessionExporter do
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
               "PERSON_SURNAME" => patient.family_name,
+              "REASON_NOT_VACCINATED" => "",
               "SCHOOL_NAME" => location.name,
               "SCHOOL_URN" => location.urn.to_i,
               "TIME_OF_VACCINATION" => "",
+              "TRIAGED_BY" => nil,
+              "TRIAGE_DATE" => nil,
+              "TRIAGE_NOTES" => nil,
+              "TRIAGE_STATUS" => nil,
               "VACCINATED" => "",
               "VACCINE_GIVEN" => "",
-              "REASON_NOT_VACCINATED" => ""
+              "YEAR_GROUP" => patient.year_group
             }
           )
           expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
@@ -119,13 +143,25 @@ describe Reports::OfflineSessionExporter do
 
         it "adds a row with the vaccination details" do
           expect(rows.count).to eq(1)
-          expect(rows.first.except("PERSON_DOB", "DATE_OF_VACCINATION")).to eq(
+          expect(
+            rows.first.except(
+              "BATCH_EXPIRY_DATE",
+              "PERSON_DOB",
+              "DATE_OF_VACCINATION"
+            )
+          ).to eq(
             {
               "ANATOMICAL_SITE" => "left upper arm",
-              "BATCH_EXPIRY_DATE" => batch.expiry,
               "BATCH_NUMBER" => batch.name,
               "CARE_SETTING" => 1,
+              "CONSENT_DETAILS" => "",
+              "CONSENT_STATUS" => nil,
               "DOSE_SEQUENCE" => 1,
+              "GILLICK_ASSESSED_BY" => nil,
+              "GILLICK_ASSESSMENT_DATE" => nil,
+              "GILLICK_ASSESSMENT_NOTES" => nil,
+              "GILLICK_STATUS" => "",
+              "HEALTH_QUESTION_ANSWERS" => "",
               "NHS_NUMBER" => patient.nhs_number.to_i,
               "ORGANISATION_CODE" => organisation.ods_code,
               "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
@@ -136,11 +172,17 @@ describe Reports::OfflineSessionExporter do
               "SCHOOL_NAME" => location.name,
               "SCHOOL_URN" => location.urn.to_i,
               "TIME_OF_VACCINATION" => "12:05:20",
+              "TRIAGED_BY" => nil,
+              "TRIAGE_DATE" => nil,
+              "TRIAGE_NOTES" => nil,
+              "TRIAGE_STATUS" => nil,
               "VACCINATED" => "Y",
               "VACCINE_GIVEN" => "Gardasil9",
-              "REASON_NOT_VACCINATED" => ""
+              "REASON_NOT_VACCINATED" => "",
+              "YEAR_GROUP" => patient.year_group
             }
           )
+          expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
           expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
           expect(rows.first["DATE_OF_VACCINATION"].to_date).to eq(
             administered_at.to_date
@@ -167,7 +209,14 @@ describe Reports::OfflineSessionExporter do
               "BATCH_EXPIRY_DATE" => nil,
               "BATCH_NUMBER" => nil,
               "CARE_SETTING" => 1,
+              "CONSENT_DETAILS" => "",
+              "CONSENT_STATUS" => nil,
               "DOSE_SEQUENCE" => "",
+              "GILLICK_ASSESSED_BY" => nil,
+              "GILLICK_ASSESSMENT_DATE" => nil,
+              "GILLICK_ASSESSMENT_NOTES" => nil,
+              "GILLICK_STATUS" => "",
+              "HEALTH_QUESTION_ANSWERS" => "",
               "NHS_NUMBER" => patient.nhs_number.to_i,
               "ORGANISATION_CODE" => organisation.ods_code,
               "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
@@ -175,13 +224,18 @@ describe Reports::OfflineSessionExporter do
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
               "PERSON_SURNAME" => patient.family_name,
+              "REASON_NOT_VACCINATED" => "unwell",
               "SCHOOL_NAME" => location.name,
               "SCHOOL_URN" => location.urn.to_i,
               "DATE_OF_VACCINATION" => nil,
               "TIME_OF_VACCINATION" => nil,
+              "TRIAGED_BY" => nil,
+              "TRIAGE_DATE" => nil,
+              "TRIAGE_NOTES" => nil,
+              "TRIAGE_STATUS" => nil,
               "VACCINATED" => "N",
               "VACCINE_GIVEN" => nil,
-              "REASON_NOT_VACCINATED" => "unwell"
+              "YEAR_GROUP" => patient.year_group
             }
           )
           expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
@@ -209,23 +263,35 @@ describe Reports::OfflineSessionExporter do
             SCHOOL_URN
             SCHOOL_NAME
             CARE_SETTING
-            NHS_NUMBER
+            CLINIC_NAME
             PERSON_FORENAME
             PERSON_SURNAME
-            PERSON_GENDER_CODE
             PERSON_DOB
+            YEAR_GROUP
+            PERSON_GENDER_CODE
             PERSON_POSTCODE
+            NHS_NUMBER
+            CONSENT_STATUS
+            CONSENT_DETAILS
+            HEALTH_QUESTION_ANSWERS
+            TRIAGE_STATUS
+            TRIAGED_BY
+            TRIAGE_DATE
+            TRIAGE_NOTES
+            GILLICK_STATUS
+            GILLICK_ASSESSMENT_DATE
+            GILLICK_ASSESSED_BY
+            GILLICK_ASSESSMENT_NOTES
+            VACCINATED
             DATE_OF_VACCINATION
             TIME_OF_VACCINATION
-            VACCINATED
             VACCINE_GIVEN
-            REASON_NOT_VACCINATED
+            PERFORMING_PROFESSIONAL_EMAIL
             BATCH_NUMBER
             BATCH_EXPIRY_DATE
             ANATOMICAL_SITE
             DOSE_SEQUENCE
-            PERFORMING_PROFESSIONAL_EMAIL
-            CLINIC_NAME
+            REASON_NOT_VACCINATED
           ]
         )
       end
@@ -250,9 +316,16 @@ describe Reports::OfflineSessionExporter do
               "BATCH_EXPIRY_DATE" => nil,
               "BATCH_NUMBER" => "",
               "CARE_SETTING" => 2,
+              "CONSENT_DETAILS" => "",
+              "CONSENT_STATUS" => nil,
               "CLINIC_NAME" => "",
               "DATE_OF_VACCINATION" => nil,
               "DOSE_SEQUENCE" => 1,
+              "GILLICK_ASSESSED_BY" => nil,
+              "GILLICK_ASSESSMENT_DATE" => nil,
+              "GILLICK_ASSESSMENT_NOTES" => nil,
+              "GILLICK_STATUS" => "",
+              "HEALTH_QUESTION_ANSWERS" => "",
               "NHS_NUMBER" => patient.nhs_number.to_i,
               "ORGANISATION_CODE" => organisation.ods_code,
               "PERFORMING_PROFESSIONAL_EMAIL" => "",
@@ -260,12 +333,17 @@ describe Reports::OfflineSessionExporter do
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
               "PERSON_SURNAME" => patient.family_name,
+              "REASON_NOT_VACCINATED" => "",
               "SCHOOL_NAME" => "",
               "SCHOOL_URN" => 888_888,
               "TIME_OF_VACCINATION" => "",
+              "TRIAGED_BY" => nil,
+              "TRIAGE_DATE" => nil,
+              "TRIAGE_NOTES" => nil,
+              "TRIAGE_STATUS" => nil,
               "VACCINATED" => "",
               "VACCINE_GIVEN" => "",
-              "REASON_NOT_VACCINATED" => ""
+              "YEAR_GROUP" => patient.year_group
             }
           )
           expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
@@ -298,14 +376,26 @@ describe Reports::OfflineSessionExporter do
 
         it "adds a row to fill in" do
           expect(rows.count).to eq(1)
-          expect(rows.first.except("PERSON_DOB", "DATE_OF_VACCINATION")).to eq(
+          expect(
+            rows.first.except(
+              "BATCH_EXPIRY_DATE",
+              "PERSON_DOB",
+              "DATE_OF_VACCINATION"
+            )
+          ).to eq(
             {
               "ANATOMICAL_SITE" => "left upper arm",
-              "BATCH_EXPIRY_DATE" => batch.expiry,
               "BATCH_NUMBER" => batch.name,
               "CARE_SETTING" => 2,
+              "CONSENT_DETAILS" => "",
+              "CONSENT_STATUS" => nil,
               "CLINIC_NAME" => "A Clinic",
               "DOSE_SEQUENCE" => 1,
+              "GILLICK_ASSESSED_BY" => nil,
+              "GILLICK_ASSESSMENT_DATE" => nil,
+              "GILLICK_ASSESSMENT_NOTES" => nil,
+              "GILLICK_STATUS" => "",
+              "HEALTH_QUESTION_ANSWERS" => "",
               "NHS_NUMBER" => patient.nhs_number.to_i,
               "ORGANISATION_CODE" => organisation.ods_code,
               "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
@@ -313,14 +403,20 @@ describe Reports::OfflineSessionExporter do
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
               "PERSON_SURNAME" => patient.family_name,
+              "REASON_NOT_VACCINATED" => "",
               "SCHOOL_NAME" => "Waterloo Road",
               "SCHOOL_URN" => 123_456,
               "TIME_OF_VACCINATION" => "12:05:20",
+              "TRIAGED_BY" => nil,
+              "TRIAGE_DATE" => nil,
+              "TRIAGE_NOTES" => nil,
+              "TRIAGE_STATUS" => nil,
               "VACCINATED" => "Y",
               "VACCINE_GIVEN" => "Gardasil9",
-              "REASON_NOT_VACCINATED" => ""
+              "YEAR_GROUP" => patient.year_group
             }
           )
+          expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
           expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
           expect(rows.first["DATE_OF_VACCINATION"].to_date).to eq(
             administered_at.to_date
