@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_11_13_121111) do
+ActiveRecord::Schema[7.2].define(version: 2024_11_14_212305) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -688,6 +688,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_13_121111) do
     t.index ["patient_session_id"], name: "index_vaccination_records_on_patient_session_id"
     t.index ["performed_by_user_id"], name: "index_vaccination_records_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_vaccination_records_on_programme_id"
+    t.index ["uuid"], name: "index_vaccination_records_on_uuid", unique: true
     t.index ["vaccine_id"], name: "index_vaccination_records_on_vaccine_id"
   end
 

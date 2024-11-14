@@ -32,6 +32,7 @@
 #  index_vaccination_records_on_patient_session_id    (patient_session_id)
 #  index_vaccination_records_on_performed_by_user_id  (performed_by_user_id)
 #  index_vaccination_records_on_programme_id          (programme_id)
+#  index_vaccination_records_on_uuid                  (uuid) UNIQUE
 #  index_vaccination_records_on_vaccine_id            (vaccine_id)
 #
 # Foreign Keys
