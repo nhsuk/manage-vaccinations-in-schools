@@ -17,7 +17,7 @@ class ConsentsController < ApplicationController
       @session
         .patient_sessions
         .preload_for_state
-        .preload(consents: :parent)
+        .preload(consents: %i[parent patient])
         .eager_load(patient: :cohort)
         .order_by_name
         .strict_loading
