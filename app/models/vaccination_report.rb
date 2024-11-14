@@ -4,7 +4,7 @@ class VaccinationReport
   include RequestSessionPersistable
   include WizardStepConcern
 
-  FILE_FORMATS = %w[careplus mavis].freeze
+  FILE_FORMATS = Settings.export.formats.freeze
 
   def self.request_session_key
     "vaccination_report"

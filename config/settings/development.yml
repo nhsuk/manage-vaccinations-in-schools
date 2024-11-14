@@ -3,6 +3,11 @@ disallow_database_seeding: false
 fast_reset: true
 web_concurrency: 0
 
+export:
+  formats:
+    - careplus
+    - mavis
+
 cis2:
   enabled: false
   authentication_assurance_level: 1
