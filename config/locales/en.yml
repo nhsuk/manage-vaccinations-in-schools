@@ -64,6 +64,7 @@ en:
         school_name: <code>SCHOOL_NAME</code>
         school_urn: <code>SCHOOL_URN</code>
         time_of_vaccination: <code>TIME_OF_VACCINATION</code>
+        uuid: <code>UUID</code>
         vaccine_given: <code>VACCINE_GIVEN</code>
     errors:
       models:
@@ -240,6 +241,8 @@ en:
             time_of_vaccination:
               blank: Enter a time in the correct format
               less_than_or_equal_to: Enter a time in the past
+            uuid:
+              inclusion: Enter an existing record
             vaccine_given:
               inclusion: Enter a valid vaccine, eg Gardasil 9.
         import_duplicate_form:
