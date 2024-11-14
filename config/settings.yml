@@ -6,6 +6,11 @@ disallow_database_seeding: true
 fast_reset: false
 web_concurrency: 2
 
+export:
+  formats:
+    # - careplus
+    - mavis
+
 # NHS Care Identity Service OIDC integration configuration, used by Omniauth via
 # Devise.
 cis2:
