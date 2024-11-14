@@ -116,40 +116,21 @@ class Reports::OfflineSessionExporter
   end
 
   def new_row(patient:, consents:, gillick_assessment:, triage:)
-    [
-      organisation.ods_code,
-      school_urn(location:, patient:),
-      school_name(location:, patient:),
-      care_setting(location:),
-      patient.given_name,
-      patient.family_name,
-      patient.date_of_birth,
-      patient.year_group,
-      patient.gender_code.humanize,
-      patient.address_postcode,
-      patient.nhs_number,
-      consents.first&.response&.humanize,
-      consent_details(consents:),
-      health_question_answers(consents:),
-      triage&.status&.humanize,
-      triage&.performed_by&.full_name,
-      triage&.created_at,
-      triage&.notes,
-      gillick_status(gillick_assessment:),
-      gillick_assessment&.updated_at,
-      gillick_assessment&.performed_by&.full_name,
-      gillick_assessment&.notes,
-      "", # VACCINATED left blank for recording
-      "", # DATE_OF_VACCINATION left blank for recording
-      "", # TIME_OF_VACCINATION left blank for recording
-      "", # VACCINE_GIVEN left blank for recording
-      "", # PERFORMING_PROFESSIONAL_EMAIL left blank for recording
-      "", # BATCH_NUMBER left blank for recording
-      "", # BATCH_EXPIRY_DATE left blank for recording
-      "", # ANATOMICAL_SITE left blank for recording
-      1, # DOSE_SEQUENCE is 1 by default TODO: revisit this for other programmes
-      "" # REASON_NOT_VACCINATED left blank for recording
-    ].tap do |values|
+    (
+      patient_values(patient:, consents:, gillick_assessment:, triage:) +
+        [
+          "", # VACCINATED left blank for recording
+          "", # DATE_OF_VACCINATION left blank for recording
+          "", # TIME_OF_VACCINATION left blank for recording
+          "", # VACCINE_GIVEN left blank for recording
+          "", # PERFORMING_PROFESSIONAL_EMAIL left blank for recording
+          "", # BATCH_NUMBER left blank for recording
+          "", # BATCH_EXPIRY_DATE left blank for recording
+          "", # ANATOMICAL_SITE left blank for recording
+          1, # DOSE_SEQUENCE is 1 by default TODO: revisit this for other programmes
+          "" # REASON_NOT_VACCINATED left blank for recording
+        ]
+    ).tap do |values|
       values.insert(4, "") if location.generic_clinic? # CLINIC_NAME left blank for recording
     end
   end
@@ -161,6 +142,28 @@ class Reports::OfflineSessionExporter
     triage:,
     vaccination_record:
   )
+    (
+      patient_values(patient:, consents:, gillick_assessment:, triage:) +
+        [
+          vaccinated(vaccination_record:),
+          vaccination_record.administered_at&.to_date,
+          vaccination_record.administered_at&.strftime("%H:%M:%S"),
+          vaccination_record.vaccine&.nivs_name,
+          vaccination_record.performed_by_user&.email,
+          vaccination_record.batch&.name,
+          vaccination_record.batch&.expiry,
+          anatomical_site(vaccination_record:),
+          dose_sequence(vaccination_record:),
+          reason_not_vaccinated(vaccination_record:)
+        ]
+    ).tap do |values|
+      if location.generic_clinic?
+        values.insert(4, vaccination_record.location_name)
+      end
+    end
+  end
+
+  def patient_values(patient:, consents:, gillick_assessment:, triage:)
     [
       organisation.ods_code,
       school_urn(location:, patient:),
@@ -183,21 +186,7 @@ class Reports::OfflineSessionExporter
       gillick_status(gillick_assessment:),
       gillick_assessment&.updated_at,
       gillick_assessment&.performed_by&.full_name,
-      gillick_assessment&.notes,
-      vaccinated(vaccination_record:),
-      vaccination_record.administered_at&.to_date,
-      vaccination_record.administered_at&.strftime("%H:%M:%S"),
-      vaccination_record.vaccine&.nivs_name,
-      vaccination_record.performed_by_user&.email,
-      vaccination_record.batch&.name,
-      vaccination_record.batch&.expiry,
-      anatomical_site(vaccination_record:),
-      dose_sequence(vaccination_record:),
-      reason_not_vaccinated(vaccination_record:)
-    ].tap do |values|
-      if location.generic_clinic?
-        values.insert(4, vaccination_record.location_name)
-      end
-    end
+      gillick_assessment&.notes
+    ]
   end
 end
