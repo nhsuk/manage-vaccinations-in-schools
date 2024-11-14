@@ -35,14 +35,21 @@ module Reports::ExportFormatters
   end
 
   def health_question_answers(consents:)
+    health_answers = ConsolidatedHealthAnswers.new(consents:).to_h
+
     values =
-      consents.flat_map do |consent|
-        consent.health_answers.map do |health_answer|
-          "#{health_answer.question} - #{health_answer.response}"
-        end
+      health_answers.map do |question, responses|
+        formatted_responses =
+          responses.map do
+            str = "#{_1[:answer]} from #{_1[:responder]}"
+            str += " (#{_1[:notes]})" if _1[:notes].present?
+            str
+          end
+
+        "#{question} #{formatted_responses.join(", ")}"
       end
 
-    values.join(", ")
+    values.join("\n")
   end
 
   def gillick_status(gillick_assessment:)

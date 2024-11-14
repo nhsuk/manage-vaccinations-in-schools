@@ -188,7 +188,7 @@ class Consent < ApplicationRecord
   end
 
   def parent_relationship
-    (draft_parent || parent)&.relationship_to(patient:)
+    (parent || draft_parent)&.relationship_to(patient:)
   end
 
   def who_responded

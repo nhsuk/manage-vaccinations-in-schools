@@ -30,19 +30,6 @@ class AppHealthQuestionsComponent < ViewComponent::Base
   end
 
   def health_answers
-    consolidated_answers = ConsolidatedHealthAnswers.new
-
-    @consents.each do |consent|
-      consent.health_answers.each do |health_question|
-        consolidated_answers.add_answer(
-          responder: consent.who_responded,
-          question: health_question.question,
-          answer: health_question.response.humanize.presence,
-          notes: health_question.notes.presence
-        )
-      end
-    end
-
-    consolidated_answers.to_h
+    ConsolidatedHealthAnswers.new(consents: @consents).to_h
   end
 end
