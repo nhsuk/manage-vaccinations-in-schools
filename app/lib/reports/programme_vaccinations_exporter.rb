@@ -31,26 +31,39 @@ class Reports::ProgrammeVaccinationsExporter
       ORGANISATION_CODE
       SCHOOL_URN
       SCHOOL_NAME
-      CLINIC_NAME
       CARE_SETTING
-      NHS_NUMBER
+      CLINIC_NAME
       PERSON_FORENAME
       PERSON_SURNAME
-      PERSON_GENDER_CODE
       PERSON_DOB
+      YEAR_GROUP
+      PERSON_GENDER_CODE
       PERSON_POSTCODE
+      NHS_NUMBER
+      CONSENT_STATUS
+      CONSENT_DETAILS
+      HEALTH_QUESTION_ANSWERS
+      TRIAGE_STATUS
+      TRIAGED_BY
+      TRIAGE_DATE
+      TRIAGE_NOTES
+      GILLICK_STATUS
+      GILLICK_ASSESSMENT_DATE
+      GILLICK_ASSESSED_BY
+      GILLICK_ASSESSMENT_NOTES
+      VACCINATED
       DATE_OF_VACCINATION
       TIME_OF_VACCINATION
-      VACCINATED
       VACCINE_GIVEN
-      REASON_NOT_VACCINATED
-      BATCH_NUMBER
-      BATCH_EXPIRY_DATE
-      ANATOMICAL_SITE
-      DOSE_SEQUENCE
       PERFORMING_PROFESSIONAL_EMAIL
       PERFORMING_PROFESSIONAL_FORENAME
       PERFORMING_PROFESSIONAL_SURNAME
+      BATCH_NUMBER
+      BATCH_EXPIRY_DATE
+      ANATOMICAL_SITE
+      ROUTE_OF_VACCINATION
+      DOSE_SEQUENCE
+      REASON_NOT_GIVEN
     ]
   end
 
@@ -65,7 +78,12 @@ class Reports::ProgrammeVaccinationsExporter
           :location,
           :performed_by_user,
           :vaccine,
-          patient: :school
+          patient_session: {
+            patient: %i[cohort school],
+            consents: %i[parent patient],
+            gillick_assessment: :performed_by,
+            triages: :performed_by
+          }
         )
 
     if start_date.present?
@@ -80,65 +98,62 @@ class Reports::ProgrammeVaccinationsExporter
   end
 
   def row(vaccination_record:)
-    patient = vaccination_record.patient
+    patient_session = vaccination_record.patient_session
+    consents = patient_session.latest_consents
+    gillick_assessment = patient_session.gillick_assessment
+    patient = patient_session.patient
+    triage = patient_session.latest_triage
     location = vaccination_record.location
 
     [
       organisation.ods_code,
       school_urn(location, patient),
       school_name(location, patient, vaccination_record),
-      clinic_name(location, vaccination_record),
       location.school? ? "1" : "2",
-      patient.nhs_number,
+      clinic_name(location, vaccination_record),
       patient.given_name,
       patient.family_name,
-      patient.gender_code.humanize,
       patient.date_of_birth.strftime("%Y%m%d"),
+      patient.year_group || "",
+      patient.gender_code.humanize,
       patient.address_postcode,
+      patient.nhs_number,
+      consents.first&.response&.humanize || "",
+      consent_details(consents),
+      health_question_answers(consents),
+      triage&.status&.humanize || "",
+      triage&.performed_by&.full_name || "",
+      triage&.created_at&.strftime("%Y%m%d") || "",
+      triage&.notes || "",
+      if gillick_assessment&.gillick_competent?
+        "Gillick competent"
+      elsif gillick_assessment&.gillick_competent? == false
+        "Not Gillick competent"
+      else
+        ""
+      end,
+      gillick_assessment&.updated_at&.strftime("%Y%m%d") || "",
+      gillick_assessment&.performed_by&.full_name || "",
+      gillick_assessment&.notes || "",
+      vaccination_record.administered? ? "Y" : "N",
       vaccination_record.administered_at&.strftime("%Y%m%d"),
       vaccination_record.administered_at&.strftime("%H:%M:%S"),
-      vaccination_record.administered? ? "Y" : "N",
-      (
-        if vaccination_record.administered?
-          vaccination_record.vaccine.nivs_name
-        else
-          ""
-        end
-      ),
+      vaccination_record.vaccine&.nivs_name || "",
+      vaccination_record.performed_by_user&.email || "",
+      vaccination_record.performed_by&.given_name || "",
+      vaccination_record.performed_by&.family_name || "",
+      vaccination_record.batch&.name || "",
+      vaccination_record.batch&.expiry&.strftime("%Y%m%d") || "",
+      vaccination_record.delivery_site&.humanize || "",
+      vaccination_record.delivery_method&.humanize || "",
+      vaccination_record.dose_sequence,
       (
         if vaccination_record.reason.present?
           ImmunisationImportRow::REASONS.key(vaccination_record.reason.to_sym)
         else
           ""
         end
-      ),
-      (
-        if vaccination_record.administered?
-          vaccination_record.batch&.name
-        else
-          ""
-        end
-      ),
-      (
-        if vaccination_record.administered?
-          vaccination_record.batch&.expiry&.strftime("%Y%m%d")
-        else
-          ""
-        end
-      ),
-      (
-        if vaccination_record.delivery_site
-          ImmunisationImportRow::DELIVERY_SITES.key(
-            vaccination_record.delivery_site
-          )
-        else
-          ""
-        end
-      ),
-      vaccination_record.administered? ? vaccination_record.dose_sequence : "",
-      vaccination_record.performed_by_user&.email || "",
-      vaccination_record.performed_by&.given_name || "",
-      vaccination_record.performed_by&.family_name || ""
+      )
     ]
   end
 
@@ -158,5 +173,25 @@ class Reports::ProgrammeVaccinationsExporter
 
   def clinic_name(location, vaccination_record)
     location.school? ? "" : vaccination_record.location_name
+  end
+
+  def consent_details(consents)
+    values =
+      consents.map do |consent|
+        "#{consent.response.humanize} by #{consent.name}  at #{consent.recorded_at}"
+      end
+
+    values.join(", ")
+  end
+
+  def health_question_answers(consents)
+    values =
+      consents.flat_map do |consent|
+        consent.health_answers.map do |health_answer|
+          "#{health_answer.question} - #{health_answer.response}"
+        end
+      end
+
+    values.join(", ")
   end
 end
