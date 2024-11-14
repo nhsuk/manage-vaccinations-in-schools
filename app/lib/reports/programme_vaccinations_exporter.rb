@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Reports::ProgrammeVaccinationsExporter
+  include Reports::ExportFormatters
+
   def initialize(organisation:, programme:, start_date:, end_date:)
     @organisation = organisation
     @programme = programme
@@ -63,7 +65,7 @@ class Reports::ProgrammeVaccinationsExporter
       ANATOMICAL_SITE
       ROUTE_OF_VACCINATION
       DOSE_SEQUENCE
-      REASON_NOT_GIVEN
+      REASON_NOT_VACCINATED
     ]
   end
 
@@ -107,10 +109,10 @@ class Reports::ProgrammeVaccinationsExporter
 
     [
       organisation.ods_code,
-      school_urn(location, patient),
-      school_name(location, patient, vaccination_record),
-      location.school? ? "1" : "2",
-      clinic_name(location, vaccination_record),
+      school_urn(location:, patient:),
+      school_name(location:, patient:),
+      care_setting(location:),
+      clinic_name(location:, vaccination_record:),
       patient.given_name,
       patient.family_name,
       patient.date_of_birth.strftime("%Y%m%d"),
@@ -119,23 +121,17 @@ class Reports::ProgrammeVaccinationsExporter
       patient.address_postcode,
       patient.nhs_number,
       consents.first&.response&.humanize || "",
-      consent_details(consents),
-      health_question_answers(consents),
+      consent_details(consents:),
+      health_question_answers(consents:),
       triage&.status&.humanize || "",
       triage&.performed_by&.full_name || "",
       triage&.updated_at&.strftime("%Y%m%d") || "",
       triage&.notes || "",
-      if gillick_assessment&.gillick_competent?
-        "Gillick competent"
-      elsif gillick_assessment&.gillick_competent? == false
-        "Not Gillick competent"
-      else
-        ""
-      end,
+      gillick_status(gillick_assessment:),
       gillick_assessment&.updated_at&.strftime("%Y%m%d") || "",
       gillick_assessment&.performed_by&.full_name || "",
       gillick_assessment&.notes || "",
-      vaccination_record.administered? ? "Y" : "N",
+      vaccinated(vaccination_record:),
       vaccination_record.administered_at&.strftime("%Y%m%d"),
       vaccination_record.administered_at&.strftime("%H:%M:%S"),
       vaccination_record.vaccine&.nivs_name || "",
@@ -144,54 +140,10 @@ class Reports::ProgrammeVaccinationsExporter
       vaccination_record.performed_by&.family_name || "",
       vaccination_record.batch&.name || "",
       vaccination_record.batch&.expiry&.strftime("%Y%m%d") || "",
-      vaccination_record.delivery_site&.humanize || "",
-      vaccination_record.delivery_method&.humanize || "",
-      vaccination_record.dose_sequence,
-      (
-        if vaccination_record.reason.present?
-          ImmunisationImportRow::REASONS.key(vaccination_record.reason.to_sym)
-        else
-          ""
-        end
-      )
+      anatomical_site(vaccination_record:),
+      route_of_vaccination(vaccination_record:),
+      dose_sequence(vaccination_record:),
+      reason_not_vaccinated(vaccination_record:)
     ]
-  end
-
-  def school_urn(location, patient)
-    if location.school?
-      location.urn
-    elsif patient.home_educated?
-      "999999"
-    else
-      patient.school&.urn || "888888"
-    end
-  end
-
-  def school_name(location, patient, _vaccination_record)
-    location.school? ? location.name : patient.school&.name || ""
-  end
-
-  def clinic_name(location, vaccination_record)
-    location.school? ? "" : vaccination_record.location_name
-  end
-
-  def consent_details(consents)
-    values =
-      consents.map do |consent|
-        "#{consent.response.humanize} by #{consent.name} at #{consent.recorded_at}"
-      end
-
-    values.join(", ")
-  end
-
-  def health_question_answers(consents)
-    values =
-      consents.flat_map do |consent|
-        consent.health_answers.map do |health_answer|
-          "#{health_answer.question} - #{health_answer.response}"
-        end
-      end
-
-    values.join(", ")
   end
 end
