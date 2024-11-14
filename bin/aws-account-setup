@@ -202,7 +202,12 @@ while getopts ":h" opt; do
 done
 
 while [[ -n "$1" ]]; do
-    if declare -f "_op_$1" > /dev/null; then
+    if [[ "$1" == "all" ]]; then
+        declare -F | awk '/_op_/ {sub(/.*_op_/, "  "); print}' | while read -r operation; do
+            "_op_$operation"
+        done
+        exit 0
+    elif declare -f "_op_$1" > /dev/null; then
         echo "Running operation $1"
         "_op_$1"
     else
