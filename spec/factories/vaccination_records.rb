@@ -62,10 +62,12 @@ FactoryBot.define do
     delivery_method { "intramuscular" }
     vaccine { programme.vaccines.active.first }
     batch do
-      association :batch,
-                  organisation: patient_session.organisation,
-                  vaccine:,
-                  strategy: :create
+      if vaccine
+        association :batch,
+                    organisation: patient_session.organisation,
+                    vaccine:,
+                    strategy: :create
+      end
     end
 
     performed_by
@@ -79,6 +81,7 @@ FactoryBot.define do
       administered_at { nil }
       delivery_site { nil }
       reason { "not_well" }
+      vaccine { nil }
     end
 
     trait :performed_by_not_user do

@@ -163,9 +163,9 @@ describe Reports::OfflineSessionExporter do
           expect(rows.count).to eq(1)
           expect(rows.first.except("PERSON_DOB")).to eq(
             {
-              "ANATOMICAL_SITE" => nil,
+              "ANATOMICAL_SITE" => "",
               "BATCH_EXPIRY_DATE" => nil,
-              "BATCH_NUMBER" => "",
+              "BATCH_NUMBER" => nil,
               "CARE_SETTING" => 1,
               "DOSE_SEQUENCE" => "",
               "NHS_NUMBER" => patient.nhs_number.to_i,
@@ -180,7 +180,7 @@ describe Reports::OfflineSessionExporter do
               "DATE_OF_VACCINATION" => nil,
               "TIME_OF_VACCINATION" => nil,
               "VACCINATED" => "N",
-              "VACCINE_GIVEN" => "",
+              "VACCINE_GIVEN" => nil,
               "REASON_NOT_VACCINATED" => "unwell"
             }
           )
