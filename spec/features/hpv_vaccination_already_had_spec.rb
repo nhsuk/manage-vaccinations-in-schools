@@ -51,7 +51,7 @@ describe "HPV Vaccination" do
   end
 
   def and_i_select_the_reason_why
-    choose "They refused it"
+    choose "They have already had the vaccine"
     click_button "Continue"
   end
 
@@ -59,7 +59,7 @@ describe "HPV Vaccination" do
     expect(page).to have_content("Check and confirm")
     expect(page).to have_content("Vaccination was not given")
     expect(page).to have_content("Child#{@patient.full_name}")
-    expect(page).to have_content("OutcomeRefused vaccine")
+    expect(page).to have_content("OutcomeAlready had")
   end
 
   def when_i_click_change_outcome
@@ -84,7 +84,9 @@ describe "HPV Vaccination" do
 
   def then_i_see_that_the_status_is_could_not_vaccinate
     expect(page).to have_content("Could not vaccinate")
-    expect(page).to have_content("Reason#{@patient.full_name} refused it")
+    expect(page).to have_content(
+      "Reason#{@patient.full_name} has already had the vaccine"
+    )
   end
 
   def and_an_email_is_sent_saying_the_vaccination_didnt_happen
