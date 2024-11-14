@@ -1281,6 +1281,23 @@ describe ImmunisationImportRow do
         )
       end
     end
+
+    context "with an existing vaccination record" do
+      let!(:existing_vaccination_record) do
+        create(
+          :vaccination_record,
+          programme:,
+          session: create(:session, organisation:, programme:)
+        )
+      end
+
+      let(:data) do
+        valid_data.merge("UUID" => existing_vaccination_record.uuid)
+      end
+
+      it { should_not be_nil }
+      it { should eq(existing_vaccination_record) }
+    end
   end
 
   describe "#batch" do

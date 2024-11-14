@@ -61,6 +61,7 @@ class ImmunisationImportRow
               end
             }
   validate :session_date_exists
+  validate :uuid_exists
 
   CARE_SETTING_SCHOOL = 1
   CARE_SETTING_COMMUNITY = 2
@@ -97,19 +98,28 @@ class ImmunisationImportRow
   def to_vaccination_record
     return unless valid?
 
+    attributes = {
+      administered_at:,
+      dose_sequence:,
+      location_name:,
+      patient_session:,
+      performed_by_user:,
+      performed_by_family_name:,
+      performed_by_given_name:,
+      programme: @programme,
+      reason:,
+      vaccine:
+    }
+
     vaccination_record =
-      VaccinationRecord.find_or_initialize_by(
-        administered_at:,
-        dose_sequence:,
-        location_name:,
-        patient_session:,
-        performed_by_user:,
-        performed_by_family_name:,
-        performed_by_given_name:,
-        programme: @programme,
-        reason:,
-        vaccine:
-      )
+      if uuid.present?
+        VaccinationRecord
+          .joins(:organisation)
+          .find_by!(organisations: { id: organisation.id }, uuid:)
+          .tap { _1.assign_attributes(attributes) }
+      else
+        VaccinationRecord.find_or_initialize_by(attributes)
+      end
 
     if vaccination_record.persisted?
       vaccination_record.stage_changes(
@@ -319,6 +329,10 @@ class ImmunisationImportRow
       @data["PERFORMING_PROFESSIONAL_SURNAME"]&.strip&.presence
   end
 
+  def uuid
+    @data["UUID"]&.strip&.presence
+  end
+
   private
 
   attr_reader :organisation
@@ -443,6 +457,18 @@ class ImmunisationImportRow
              academic_year:
            )
       errors.add(:date_of_vaccination, :inclusion)
+    end
+  end
+
+  def uuid_exists
+    if uuid.present? &&
+         !VaccinationRecord.joins(:organisation).exists?(
+           organisations: {
+             id: organisation.id
+           },
+           uuid:
+         )
+      errors.add(:uuid, :inclusion)
     end
   end
 
