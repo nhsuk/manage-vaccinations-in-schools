@@ -44,7 +44,7 @@ module NHS::API
     end
 
     def client_assertion
-      header = { kid: "mavis-int-1", typ: "JWT", alg: "RS512" }
+      header = { kid: jwk.kid, typ: "JWT", alg: jwk[:alg] }
       payload = {
         iss: apikey,
         sub: apikey,
@@ -53,7 +53,7 @@ module NHS::API
         exp: 3.minutes.from_now.to_i
       }
 
-      JWT.encode(payload, private_key, "RS512", header)
+      JWT.encode(payload, jwk.signing_key, jwk[:alg], header)
     end
 
     def oauth_connection
@@ -85,7 +85,14 @@ module NHS::API
     end
 
     def private_key
-      OpenSSL::PKey::RSA.new(Settings.nhs_api.jwt_private_key)
+      @private_key = OpenSSL::PKey::RSA.new(Settings.nhs_api.jwt_private_key)
+    end
+
+    def jwk
+      @jwk =
+        JWT::JWK.new private_key,
+                     { alg: "RS512" },
+                     kid_generator: ::JWT::JWK::Thumbprint
     end
 
     def headers
