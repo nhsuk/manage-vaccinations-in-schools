@@ -67,6 +67,7 @@ describe Reports::OfflineSessionExporter do
             ANATOMICAL_SITE
             DOSE_SEQUENCE
             REASON_NOT_VACCINATED
+            UUID
           ]
         )
       end
@@ -122,6 +123,7 @@ describe Reports::OfflineSessionExporter do
               "TRIAGE_STATUS" => nil,
               "VACCINATED" => "",
               "VACCINE_GIVEN" => "",
+              "UUID" => "",
               "YEAR_GROUP" => patient.year_group
             }
           )
@@ -130,7 +132,7 @@ describe Reports::OfflineSessionExporter do
       end
 
       context "with a vaccinated patient" do
-        before do
+        let!(:vaccination_record) do
           create(
             :vaccination_record,
             administered_at:,
@@ -169,6 +171,7 @@ describe Reports::OfflineSessionExporter do
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
               "PERSON_SURNAME" => patient.family_name,
+              "REASON_NOT_VACCINATED" => "",
               "SCHOOL_NAME" => location.name,
               "SCHOOL_URN" => location.urn,
               "TIME_OF_VACCINATION" => "12:05:20",
@@ -178,7 +181,7 @@ describe Reports::OfflineSessionExporter do
               "TRIAGE_STATUS" => nil,
               "VACCINATED" => "Y",
               "VACCINE_GIVEN" => "Gardasil9",
-              "REASON_NOT_VACCINATED" => "",
+              "UUID" => vaccination_record.uuid,
               "YEAR_GROUP" => patient.year_group
             }
           )
@@ -191,7 +194,7 @@ describe Reports::OfflineSessionExporter do
       end
 
       context "with a patient who couldn't be vaccinated" do
-        before do
+        let!(:vaccination_record) do
           create(
             :vaccination_record,
             :not_administered,
@@ -235,6 +238,7 @@ describe Reports::OfflineSessionExporter do
               "TRIAGE_STATUS" => nil,
               "VACCINATED" => "N",
               "VACCINE_GIVEN" => nil,
+              "UUID" => vaccination_record.uuid,
               "YEAR_GROUP" => patient.year_group
             }
           )
@@ -292,6 +296,7 @@ describe Reports::OfflineSessionExporter do
             ANATOMICAL_SITE
             DOSE_SEQUENCE
             REASON_NOT_VACCINATED
+            UUID
           ]
         )
       end
@@ -343,6 +348,7 @@ describe Reports::OfflineSessionExporter do
               "TRIAGE_STATUS" => nil,
               "VACCINATED" => "",
               "VACCINE_GIVEN" => "",
+              "UUID" => "",
               "YEAR_GROUP" => patient.year_group
             }
           )
@@ -362,7 +368,7 @@ describe Reports::OfflineSessionExporter do
         let(:batch) { create(:batch, vaccine: programme.vaccines.active.first) }
         let(:administered_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
 
-        before do
+        let!(:vaccination_record) do
           create(
             :vaccination_record,
             administered_at:,
@@ -413,6 +419,7 @@ describe Reports::OfflineSessionExporter do
               "TRIAGE_STATUS" => nil,
               "VACCINATED" => "Y",
               "VACCINE_GIVEN" => "Gardasil9",
+              "UUID" => vaccination_record.uuid,
               "YEAR_GROUP" => patient.year_group
             }
           )
