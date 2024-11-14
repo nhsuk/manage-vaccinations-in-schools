@@ -12,7 +12,7 @@ class SchoolSessionRemindersJob < ApplicationJob
           :gillick_assessment,
           :triages,
           :vaccination_records,
-          consents: :parent,
+          consents: %i[parent patient],
           patient: :parents
         )
         .eager_load(:session)
