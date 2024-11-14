@@ -43,11 +43,12 @@ describe "HPV Vaccination" do
         programmes: [programme]
       )
     location = create(:location, :school)
+    previous_date = 1.month.ago
 
     if clinic
-      @organisation.generic_clinic_session.session_dates.create!(
-        value: Date.current
-      )
+      [previous_date, Date.current].each do |date|
+        @organisation.generic_clinic_session.session_dates.create!(value: date)
+      end
     end
 
     vaccine = programme.vaccines.active.first
@@ -61,6 +62,9 @@ describe "HPV Vaccination" do
         programme:,
         location:
       )
+
+    @session.session_dates.create!(value: previous_date)
+
     @vaccinated_patient, @unvaccinated_patient =
       create_list(
         :patient,
@@ -70,6 +74,19 @@ describe "HPV Vaccination" do
         school: location,
         year_group: 8
       )
+    @previously_vaccinated_patient =
+      create(
+        :patient,
+        :vaccinated,
+        session: clinic ? @organisation.generic_clinic_session : @session,
+        school: location,
+        location_name: clinic ? "Local hospital" : nil,
+        year_group: 8
+      )
+    VaccinationRecord.last.update!(
+      administered_at: previous_date,
+      performed_by: @organisation.users.first
+    )
   end
 
   def when_i_choose_to_record_offline_from_a_school_session_page
@@ -178,6 +195,7 @@ describe "HPV Vaccination" do
 
     expect(page).to have_content("Completed")
     expect(page).not_to have_content("Invalid")
+    expect(page).to have_content("1 previously imported record was omitted")
   end
 
   def and_i_navigate_to_the_session_page

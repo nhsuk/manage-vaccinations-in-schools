@@ -61,6 +61,7 @@ FactoryBot.define do
           association(:organisation, programmes: [programme].compact)
       end
       year_group { nil }
+      location_name { nil }
     end
 
     cohort do
@@ -102,7 +103,8 @@ FactoryBot.define do
     address_postcode { Faker::Address.uk_postcode }
 
     after(:create) do |patient, evaluator|
-      if evaluator.session
+      if evaluator.session &&
+           !PatientSession.exists?(patient:, session: evaluator.session)
         create(:patient_session, patient:, session: evaluator.session)
       end
 
@@ -325,8 +327,20 @@ FactoryBot.define do
     end
 
     trait :vaccinated do
-      after(:create) do |patient, evaluator|
-        create(:vaccination_record, patient:, programme: evaluator.programme)
+      vaccination_records do
+        [
+          if session
+            association(
+              :vaccination_record,
+              patient: instance,
+              programme:,
+              session:,
+              location_name:
+            )
+          else
+            association(:vaccination_record, patient: instance, programme:)
+          end
+        ]
       end
     end
   end
