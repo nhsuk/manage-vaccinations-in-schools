@@ -164,7 +164,7 @@ class VaccinationRecord < ApplicationRecord
 
   def retryable_reason?
     not_well? || contraindications? || absent_from_session? ||
-      absent_from_school?
+      absent_from_school? || refused?
   end
 
   def dose_volume_ml

@@ -6,6 +6,7 @@ describe "HPV Vaccination" do
 
   scenario "Delayed" do
     given_i_am_signed_in
+
     when_i_go_to_a_patient_that_is_ready_to_vaccinate
     and_i_record_that_the_patient_was_absent
     then_i_see_the_confirmation_page
