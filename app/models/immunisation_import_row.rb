@@ -393,17 +393,20 @@ class ImmunisationImportRow
     administered && @programme.flu?
   end
 
+  DATE_FORMATS = %w[%Y%m%d %Y-%m-%d %d/%m/%Y].freeze
+
   def parse_date(key)
     value = @data[key]&.strip
     return nil if value.nil?
 
-    Date.strptime(value, "%Y%m%d")
-  rescue ArgumentError, TypeError
-    begin
-      Date.strptime(value, "%d/%m/%Y")
-    rescue ArgumentError, TypeError
-      nil
-    end
+    parsed_dates =
+      DATE_FORMATS.lazy.filter_map do |format|
+        Date.strptime(value, format)
+      rescue ArgumentError, TypeError
+        nil
+      end
+
+    parsed_dates.first
   end
 
   TIME_FORMATS = %w[%H:%M:%S %H:%M %H%M%S %H%M %H].freeze
