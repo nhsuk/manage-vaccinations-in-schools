@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
 describe NHS::API do
-  before do
-    allow(JWT).to receive(:encode).and_return("jwt")
-    allow(OpenSSL::PKey::RSA).to receive(:new).and_return("key")
-  end
+  before { described_class.instance_variable_set(:@auth_info, nil) }
 
   describe "#connection" do
     subject(:connection) { described_class.connection }
@@ -93,6 +90,49 @@ describe NHS::API do
       expect(
         a_request(:post, "https://sandbox.api.service.nhs.uk/oauth2/token")
       ).to have_been_made.once
+    end
+
+    describe "JWT headers in the request" do
+      before { described_class.access_token }
+
+      ## How to generate the kid from our test private key:
+      # private_key = OpenSSL::PKey::RSA.new(Settings.nhs_api.jwt_private_key)
+      # jwk = JWT::JWK.new(private_key, kid_generator: ::JWT::JWK::Thumbprint))
+      # jwk.kid
+      let(:kid) { "8nMGS9Os9P6iDOURi3kHqkhAO7d1rwgoFyMnROITzCM" }
+
+      def jwt_headers(req)
+        params = Rack::Utils.parse_nested_query(req.body)
+        client_assertion = params["client_assertion"]
+        JSON.parse(Base64.decode64(client_assertion.split(".").first))
+      end
+
+      it "has alg set" do
+        expect(
+          a_request(
+            :post,
+            "https://sandbox.api.service.nhs.uk/oauth2/token"
+          ).with { |req| jwt_headers(req)["alg"] == "RS512" }
+        ).to have_been_made
+      end
+
+      it "has typ set" do
+        expect(
+          a_request(
+            :post,
+            "https://sandbox.api.service.nhs.uk/oauth2/token"
+          ).with { |req| jwt_headers(req)["typ"] == "JWT" }
+        ).to have_been_made
+      end
+
+      it "has kid set" do
+        expect(
+          a_request(
+            :post,
+            "https://sandbox.api.service.nhs.uk/oauth2/token"
+          ).with { |req| jwt_headers(req)["kid"] == kid }
+        ).to have_been_made
+      end
     end
   end
 
