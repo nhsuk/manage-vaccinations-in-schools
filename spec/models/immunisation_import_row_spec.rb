@@ -1252,6 +1252,16 @@ describe ImmunisationImportRow do
       end
     end
 
+    context "with an ISO 8601 date format" do
+      let(:data) { valid_data.merge("DATE_OF_VACCINATION" => "2023-09-01") }
+
+      it "parses the date and sets the administered at time" do
+        expect(vaccination_record.administered_at).to eq(
+          Time.new(2023, 9, 1, 12, 0, 0, "+01:00")
+        )
+      end
+    end
+
     context "with a time of vaccination" do
       let(:data) { valid_data.merge("TIME_OF_VACCINATION" => "10:30:25") }
 
