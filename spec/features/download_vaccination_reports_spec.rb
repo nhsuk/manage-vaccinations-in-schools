@@ -123,7 +123,7 @@ describe "Download vaccination reports" do
     expect(page.status_code).to eq(200)
 
     expect(page).to have_content(
-      "ORGANISATION_CODE,SCHOOL_URN,SCHOOL_NAME,CLINIC_NAME,CARE_SETTING,NHS_NUMBER"
+      "ORGANISATION_CODE,SCHOOL_URN,SCHOOL_NAME,CARE_SETTING,CLINIC_NAME,PERSON_FORENAME,PERSON_SURNAME"
     )
   end
 end
