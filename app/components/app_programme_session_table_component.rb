@@ -20,7 +20,7 @@ class AppProgrammeSessionTableComponent < ViewComponent::Base
   attr_reader :sessions
 
   def cohort_count(session:)
-    (count = session.patient_sessions.length).zero? ? "None" : count
+    session.patient_sessions.length.to_s
   end
 
   def number_stat(session:, key:)
