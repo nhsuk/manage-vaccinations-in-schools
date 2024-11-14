@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Reports::OfflineSessionExporter
+  include Reports::ExportFormatters
+
   def initialize(session)
     @session = session
   end
@@ -100,24 +102,6 @@ class Reports::OfflineSessionExporter
       .strict_loading
   end
 
-  def care_setting
-    location.school? ? "1" : "2"
-  end
-
-  def school_urn(patient:)
-    if location.school?
-      location.urn
-    elsif patient.home_educated?
-      "999999"
-    else
-      patient.school&.urn || "888888"
-    end
-  end
-
-  def school_name(patient:)
-    location.school? ? location.name : patient.school&.name || ""
-  end
-
   def rows(patient_session:)
     patient = patient_session.patient
 
@@ -136,9 +120,9 @@ class Reports::OfflineSessionExporter
   def new_row(patient:)
     [
       organisation.ods_code,
-      school_urn(patient:),
-      school_name(patient:),
-      care_setting,
+      school_urn(location:, patient:),
+      school_name(location:, patient:),
+      care_setting(location:),
       patient.nhs_number,
       patient.given_name,
       patient.family_name,
@@ -161,18 +145,11 @@ class Reports::OfflineSessionExporter
   end
 
   def existing_row(patient:, vaccination_record:)
-    delivery_site =
-      if vaccination_record.delivery_site
-        ImmunisationImportRow::DELIVERY_SITES.key(
-          vaccination_record.delivery_site
-        )
-      end
-
     [
       organisation.ods_code,
-      school_urn(patient:),
-      school_name(patient:),
-      care_setting,
+      school_urn(location:, patient:),
+      school_name(location:, patient:),
+      care_setting(location:),
       patient.nhs_number,
       patient.given_name,
       patient.family_name,
@@ -181,44 +158,14 @@ class Reports::OfflineSessionExporter
       patient.address_postcode,
       vaccination_record.administered_at&.to_date,
       vaccination_record.administered_at&.strftime("%H:%M:%S"),
-      vaccination_record.administered? ? "Y" : "N",
-      (
-        if vaccination_record.administered?
-          vaccination_record.vaccine.nivs_name
-        else
-          ""
-        end
-      ),
-      (
-        if vaccination_record.reason.present?
-          ImmunisationImportRow::REASONS.key(vaccination_record.reason.to_sym)
-        else
-          ""
-        end
-      ),
-      (
-        if vaccination_record.administered?
-          vaccination_record.batch&.name
-        else
-          ""
-        end
-      ),
-      (
-        if vaccination_record.administered?
-          vaccination_record.batch&.expiry
-        else
-          ""
-        end
-      ),
-      delivery_site,
-      vaccination_record.administered? ? vaccination_record.dose_sequence : "",
-      (
-        if vaccination_record.performed_by_user.present?
-          vaccination_record.performed_by_user&.email
-        else
-          ""
-        end
-      )
+      vaccinated(vaccination_record:),
+      vaccination_record.vaccine&.nivs_name,
+      reason_not_vaccinated(vaccination_record:),
+      vaccination_record.batch&.name,
+      vaccination_record.batch&.expiry,
+      anatomical_site(vaccination_record:),
+      dose_sequence(vaccination_record:),
+      vaccination_record.performed_by_user&.email
     ].tap do |values|
       values << vaccination_record.location_name if location.generic_clinic?
     end
