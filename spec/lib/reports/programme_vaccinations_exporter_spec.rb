@@ -65,7 +65,7 @@ describe Reports::ProgrammeVaccinationsExporter do
           ANATOMICAL_SITE
           ROUTE_OF_VACCINATION
           DOSE_SEQUENCE
-          REASON_NOT_GIVEN
+          REASON_NOT_VACCINATED
         ]
       )
     end
@@ -100,7 +100,7 @@ describe Reports::ProgrammeVaccinationsExporter do
           expect(rows.count).to eq(1)
           expect(rows.first.to_hash).to eq(
             {
-              "ANATOMICAL_SITE" => "Left arm upper position",
+              "ANATOMICAL_SITE" => "left upper arm",
               "BATCH_EXPIRY_DATE" => batch.expiry.strftime("%Y%m%d"),
               "BATCH_NUMBER" => batch.name,
               "CARE_SETTING" => "1",
@@ -124,8 +124,8 @@ describe Reports::ProgrammeVaccinationsExporter do
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
               "PERSON_SURNAME" => patient.family_name,
-              "REASON_NOT_GIVEN" => "",
-              "ROUTE_OF_VACCINATION" => "Intramuscular",
+              "REASON_NOT_VACCINATED" => "",
+              "ROUTE_OF_VACCINATION" => "intramuscular",
               "SCHOOL_NAME" => location.name,
               "SCHOOL_URN" => location.urn,
               "TIME_OF_VACCINATION" => "12:05:20",
@@ -169,7 +169,7 @@ describe Reports::ProgrammeVaccinationsExporter do
           expect(rows.count).to eq(1)
           expect(rows.first.to_hash).to eq(
             {
-              "ANATOMICAL_SITE" => "Left arm upper position",
+              "ANATOMICAL_SITE" => "left upper arm",
               "BATCH_EXPIRY_DATE" => batch.expiry.strftime("%Y%m%d"),
               "BATCH_NUMBER" => batch.name,
               "CARE_SETTING" => "2",
@@ -193,8 +193,8 @@ describe Reports::ProgrammeVaccinationsExporter do
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
               "PERSON_SURNAME" => patient.family_name,
-              "REASON_NOT_GIVEN" => "",
-              "ROUTE_OF_VACCINATION" => "Intramuscular",
+              "REASON_NOT_VACCINATED" => "",
+              "ROUTE_OF_VACCINATION" => "intramuscular",
               "SCHOOL_NAME" => "",
               "SCHOOL_URN" => "888888",
               "TIME_OF_VACCINATION" => "12:05:20",
