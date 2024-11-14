@@ -217,6 +217,7 @@ describe Reports::ProgrammeVaccinationsExporter do
 
       before do
         parent = create(:parent, :recorded, full_name: "John Smith")
+        create(:parent_relationship, :father, parent:, patient:)
         recorded_at = Time.zone.local(2024, 1, 1, 12, 5, 20)
         create(:consent, :given, patient:, parent:, programme:, recorded_at:)
       end
@@ -227,7 +228,7 @@ describe Reports::ProgrammeVaccinationsExporter do
             "Given by John Smith at 2024-01-01 12:05:20 +0000",
           "CONSENT_STATUS" => "Given",
           "HEALTH_QUESTION_ANSWERS" =>
-            "Is there anything else we should know? - no"
+            "Is there anything else we should know? No from Dad"
         )
       end
     end

@@ -83,7 +83,7 @@ class Reports::OfflineSessionExporter
       .patient_sessions
       .includes(
         patient: %i[cohort school],
-        consents: %i[parent patient],
+        consents: [:patient, { parent: :parent_relationships }],
         gillick_assessment: :performed_by,
         triages: :performed_by,
         vaccination_records: %i[batch performed_by_user vaccine]
