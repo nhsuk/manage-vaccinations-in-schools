@@ -66,7 +66,7 @@ describe Reports::OfflineSessionExporter do
         worksheet_to_hashes(workbook.worksheets[0])
       end
 
-      let(:administered_at) { Time.zone.local(2024, 1, 1, 12, 0o5, 20) }
+      let(:administered_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
       let(:batch) { create(:batch, vaccine: programme.vaccines.active.first) }
       let(:patient_session) { create(:patient_session, patient:, session:) }
       let(:patient) { create(:patient) }
@@ -282,7 +282,7 @@ describe Reports::OfflineSessionExporter do
         end
         let(:patient_session) { create(:patient_session, patient:, session:) }
         let(:batch) { create(:batch, vaccine: programme.vaccines.active.first) }
-        let(:administered_at) { Time.zone.local(2024, 1, 1, 12, 0o5, 20) }
+        let(:administered_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
 
         before do
           create(

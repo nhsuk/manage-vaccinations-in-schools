@@ -123,7 +123,7 @@ class Reports::ProgrammeVaccinationsExporter
       health_question_answers(consents),
       triage&.status&.humanize || "",
       triage&.performed_by&.full_name || "",
-      triage&.created_at&.strftime("%Y%m%d") || "",
+      triage&.updated_at&.strftime("%Y%m%d") || "",
       triage&.notes || "",
       if gillick_assessment&.gillick_competent?
         "Gillick competent"
@@ -178,7 +178,7 @@ class Reports::ProgrammeVaccinationsExporter
   def consent_details(consents)
     values =
       consents.map do |consent|
-        "#{consent.response.humanize} by #{consent.name}  at #{consent.recorded_at}"
+        "#{consent.response.humanize} by #{consent.name} at #{consent.recorded_at}"
       end
 
     values.join(", ")
