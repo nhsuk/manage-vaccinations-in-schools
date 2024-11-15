@@ -38,21 +38,6 @@ If none of the arguments are provided (`rake teams:create`), the user will be pr
 
 This creates a new team within an organisation.
 
-## Organisations
-
-### `organisations:create_hpv[email,name,phone,ods_code,privacy_policy_url,reply_to_id]`
-
-- `email` - The email address of the organisation.
-- `name` - The unique name of the organisation.
-- `phone` - The phone number of the organisation.
-- `ods_code` - The unique ODS code for the organisation.
-- `privacy_policy_url` - The URL of the organisation’s privacy policy (optional).
-- `reply_to_id` - The organisation’s GOV.UK Notify reply to UUID (optional).
-
-If none of the arguments are provided (`rake organisations:create_hpv`), the user will be prompted for responses.
-
-This creates a new organisation with an HPV programme. It also creates a single "generic" team with the same contact details for use in the community clinics.
-
 ## Users
 
 ### `users:create[email,password,given_name,family_name,organisation_ods_code]`
