@@ -1,0 +1,9 @@
+organisation:
+  email: example@trust.nhs.uk
+
+teams:
+  team_1:
+    phone: 07700 900816
+
+schools:
+  unknown_team: [123456, 234567]
