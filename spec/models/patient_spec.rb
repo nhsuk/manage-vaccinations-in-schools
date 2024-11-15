@@ -71,7 +71,15 @@ describe Patient do
 
     context "with an invalid school" do
       subject(:patient) do
-        build(:patient, school: create(:location, :community_clinic))
+        build(
+          :patient,
+          school:
+            create(
+              :location,
+              :community_clinic,
+              organisation: create(:organisation)
+            )
+        )
       end
 
       it "is invalid" do

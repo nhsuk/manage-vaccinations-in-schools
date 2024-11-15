@@ -46,7 +46,7 @@ class Organisation < ApplicationRecord
 
   validates :email, notify_safe_email: true
   validates :name, presence: true, uniqueness: true
-  validates :ods_code, presence: true
+  validates :ods_code, presence: true, uniqueness: true
   validates :phone, presence: true, phone: true
 
   def year_groups

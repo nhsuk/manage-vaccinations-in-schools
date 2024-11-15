@@ -22,7 +22,7 @@ describe AppSessionSummaryComponent do
   it { should have_content("School session") }
 
   context "with a community clinic" do
-    let(:location) { create(:location, :community_clinic) }
+    let(:location) { create(:location, :community_clinic, organisation:) }
 
     it { should have_content("Community clinic") }
   end
