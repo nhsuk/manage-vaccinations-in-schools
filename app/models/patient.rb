@@ -314,6 +314,22 @@ class Patient < ApplicationRecord
     end
   end
 
+  def self.from_consent_form(consent_form)
+    new(
+      address_line_1: consent_form.address_line_1,
+      address_line_2: consent_form.address_line_2,
+      address_postcode: consent_form.address_postcode,
+      address_town: consent_form.address_town,
+      date_of_birth: consent_form.date_of_birth,
+      family_name: consent_form.family_name,
+      given_name: consent_form.given_name,
+      nhs_number: consent_form.nhs_number,
+      preferred_family_name: consent_form.preferred_family_name,
+      preferred_given_name: consent_form.preferred_given_name,
+      school: consent_form.school
+    )
+  end
+
   class NHSNumberMismatch < StandardError
   end
 
