@@ -1,0 +1,31 @@
+organisation:
+  name: NHS Trust
+  email: example@trust.nhs.uk
+  phone: 07700 900815
+  ods_code: EXAMPLE
+
+programmes: [hpv]
+
+teams:
+  team_1:
+    name: Team 1
+    email: team-1@trust.nhs.uk
+    phone: 07700 900816
+  team_2:
+    name: Team 2
+    email: team-2@trust.nhs.uk
+    phone: 07700 900817
+
+schools:
+  team_1: [123456, 234567]
+  team_2: [345678, 456789]
+
+clinics:
+  team_1:
+    - name: 10 Downing Street
+      address_postcode: SW1A 1AA
+      ods_code: SW1A10
+  team_2:
+    - name: 11 Downing Street
+      address_postcode: SW1A 1AA
+      ods_code: SW1A11
