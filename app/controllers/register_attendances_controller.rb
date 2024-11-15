@@ -24,9 +24,9 @@ class RegisterAttendancesController < ApplicationController
 
     name = @patient.full_name
     flash[:info] = if session_attendance.attending?
-      "#{name} is attending today’s session. They are ready for the nurse."
+      t("attendance_flash.#{@patient_session.state}", name:)
     else
-      "#{name} is absent from today’s session."
+      t("attendance_flash.absent", name:)
     end
     redirect_to session_attendances_path(@session)
   end
