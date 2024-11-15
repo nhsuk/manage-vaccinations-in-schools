@@ -343,11 +343,9 @@ Devise.setup do |config|
     )
   end
 
-  require_relative("../../lib/patches/rack_oauth2_client_patch")
+  require_relative("../../lib/rack_oauth2_client_patch")
   Rack::OAuth2::Client.prepend(RackOAuth2ClientPatch)
-  require_relative(
-    "../../lib/patches/omni_auth_strategies_openid_connect_patch"
-  )
+  require_relative("../../lib/omni_auth_strategies_openid_connect_patch")
   OmniAuth::Strategies::OpenIDConnect.prepend(
     OmniAuthStrategiesOpenIDConnectPatch
   )
