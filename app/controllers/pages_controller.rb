@@ -22,7 +22,12 @@ class PagesController < ApplicationController
       -----END PUBLIC KEY-----
     PEM
     public_key = OpenSSL::PKey::RSA.new(public_pem)
-    jwk = JWT::JWK.new(public_key)
+    jwk =
+      JWT::JWK.new(
+        public_key,
+        { alg: "RS256" },
+        kid_generator: ::JWT::JWK::Thumbprint
+      )
     jwks = JWT::JWK::Set.new([jwk])
     render json: jwks.export
   end
