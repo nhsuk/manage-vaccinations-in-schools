@@ -345,6 +345,10 @@ Devise.setup do |config|
 
   require_relative("../../lib/patches/rack_oauth2_client_patch")
   Rack::OAuth2::Client.prepend(RackOAuth2ClientPatch)
+  require_relative("../../lib/patches/omniauth_strategies_openid_connect_patch")
+  OmniAuth::Strategies::OpenIDConnect.prepend(
+    OmniAuthStrategiesOpenIDConnectPatch
+  )
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
