@@ -19,7 +19,20 @@
               row.with_cell(text: consent_form.recorded_at.to_date.to_fs(:long))
               row.with_cell(text: consent_form.full_name)
               row.with_cell(text: consent_form.parent_full_name)
-              row.with_cell(text: govuk_link_to("Find match", consent_form))
+              row.with_cell do
+                tag.ul(class: "app-action-list") do
+                  match_link = link_to("Match with record", consent_form)
+                  create_link = link_to("Create record", patient_consent_form_path(consent_form))
+    
+                  links = [tag.li(class: "app-action-list__item") { match_link }]
+    
+                  if consent_form.nhs_number.present?
+                    links << tag.li(class: "app-action-list__item") { create_link }
+                  end
+    
+                  safe_join(links)
+                end
+              end
             end
           end
         end

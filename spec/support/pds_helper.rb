@@ -7,4 +7,16 @@ module PDSHelper
       "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient"
     ).with(query: hash_including({})).to_return_json(body: { total: 0 })
   end
+
+  def stub_pds_search_to_return_a_patient
+    stub_request(
+      :get,
+      "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient"
+    ).with(query: hash_including({})).to_return(
+      body: file_fixture("pds/search-patients-response.json"),
+      headers: {
+        "Content-Type" => "application/fhir+json"
+      }
+    )
+  end
 end
