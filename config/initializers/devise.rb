@@ -343,7 +343,7 @@ Devise.setup do |config|
     )
   end
 
-  require_relative("../../lib/rack_oauth2_client_patch")
+  require_relative("../../lib/patches/rack_oauth2_client_patch")
   Rack::OAuth2::Client.prepend(RackOAuth2ClientPatch)
 
   # ==> Warden configuration
