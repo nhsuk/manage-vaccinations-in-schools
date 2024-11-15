@@ -2,7 +2,7 @@
 
 namespace :mesh do
   desc "Export DPS data via MESH"
-  task "dps_export" => :environment do
+  task dps_export: :environment do
     Rails.logger = Logger.new($stdout)
     Rails.logger.level = Logger::DEBUG
     MESHDPSExportJob.perform_now
@@ -17,7 +17,7 @@ namespace :mesh do
   end
 
   desc "Track message sent via MESH"
-  task "track_message", [:message_id] => :environment do |_, args|
+  task :track_message, [:message_id] => :environment do |_, args|
     message_id = args[:message_id]
     response = MESH.track_message(message_id)
 
@@ -30,7 +30,7 @@ namespace :mesh do
   end
 
   desc "Check MESH inbox, listing any messages"
-  task "check_inbox" => :environment do
+  task check_inbox: :environment do
     response = MESH.connection.get("inbox")
 
     puts response.body
@@ -38,7 +38,7 @@ namespace :mesh do
   end
 
   desc "Get message from MESH"
-  task "get_message", [:message] => :environment do |_, args|
+  task :get_message, [:message] => :environment do |_, args|
     message = args[:message]
 
     response = MESH.connection.get("inbox/#{message}")
@@ -48,7 +48,7 @@ namespace :mesh do
   end
 
   desc "Acknowledge message MESH, removing it from inbox"
-  task "ack_message", [:message] => :environment do |_, args|
+  task :ack_message, [:message] => :environment do |_, args|
     message = args[:message]
 
     response = MESH.connection.put("inbox/#{message}/status/acknowledged")
@@ -62,7 +62,7 @@ namespace :mesh do
   end
 
   desc "Send a file to a mailbox via MESH"
-  task "send_file", %i[to file] => :environment do |_, args|
+  task :send_file, %i[to file] => :environment do |_, args|
     to = args[:to]
     file = args[:file]
 
