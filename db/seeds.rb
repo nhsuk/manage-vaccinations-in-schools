@@ -160,6 +160,49 @@ def create_session(user, organisation, completed:)
   end
 end
 
+def setup_clinic(user, organisation)
+  programme = Programme.find_by(type: "hpv")
+  clinic_session = organisation.generic_clinic_session
+
+  # set up clinic locations
+  FactoryBot.create_list(:location, 3, :community_clinic, organisation:)
+
+  # set up clinic dates
+  clinic_session.session_dates.create!(value: Date.current)
+  clinic_session.session_dates.create!(value: Date.current - 1.day)
+  clinic_session.session_dates.create!(value: Date.current + 1.day)
+
+  FactoryBot.create_list(
+    :patient_session,
+    4,
+    programme:,
+    session: clinic_session,
+    user:,
+    year_group: 8
+  )
+
+  %i[
+    consent_given_triage_not_needed
+    consent_given_triage_needed
+    triaged_ready_to_vaccinate
+    consent_refused
+    consent_conflicting
+    vaccinated
+    delay_vaccination
+    unable_to_vaccinate
+  ].each do |trait|
+    FactoryBot.create_list(
+      :patient_session,
+      3,
+      trait,
+      programme:,
+      session: clinic_session,
+      user:,
+      year_group: 8
+    )
+  end
+end
+
 def create_patients(organisation)
   organisation.schools.each do |school|
     FactoryBot.create_list(:patient, 5, organisation:, school:)
@@ -229,6 +272,7 @@ unless Settings.cis2.enabled
     .as_user(user) do
       create_session(user, organisation, completed: false)
       create_session(user, organisation, completed: true)
+      setup_clinic(user, organisation)
     end
   create_patients(organisation)
   create_imports(user, organisation)
