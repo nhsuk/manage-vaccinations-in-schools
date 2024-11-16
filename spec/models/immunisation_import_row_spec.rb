@@ -818,31 +818,21 @@ describe ImmunisationImportRow do
       it { expect(immunisation_import_row).to be_invalid }
     end
 
-    context "with a did not attend reason" do
-      let(:data) do
-        { "VACCINATED" => "N", "REASON_NOT_VACCINATED" => "Did Not Attend" }
+    {
+      "refused" => :refused,
+      "unwell" => :not_well,
+      "vaccination contraindicated" => :contraindications,
+      "already had elsewhere" => :already_had,
+      "did not attend" => :absent_from_session,
+      "absent from school" => :absent_from_school
+    }.each do |input_reason, expected_enum|
+      context "with reason '#{input_reason}'" do
+        let(:data) do
+          { "VACCINATED" => "N", "REASON_NOT_VACCINATED" => input_reason }
+        end
+
+        it { should eq(expected_enum) }
       end
-
-      it { should eq(:absent_from_session) }
-    end
-
-    context "with a vaccination contraindicated reason" do
-      let(:data) do
-        {
-          "VACCINATED" => "N",
-          "REASON_NOT_VACCINATED" => "Vaccination contraindicated"
-        }
-      end
-
-      it { should eq(:contraindications) }
-    end
-
-    context "with an unwell reason" do
-      let(:data) do
-        { "VACCINATED" => "N", "REASON_NOT_VACCINATED" => "unwell" }
-      end
-
-      it { should eq(:not_well) }
     end
   end
 
