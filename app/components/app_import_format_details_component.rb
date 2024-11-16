@@ -131,20 +131,12 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
           "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}, must use #{tag.i("YYYYMMDD")} format"
       },
       {
-        name: "ANATOMICAL_SITE",
-        notes:
-          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}, must be #{tag.i("Left Buttock")}, " \
-            "#{tag.i("Right Buttock")}, #{tag.i("Left Thigh")}, " \
-            "#{tag.i("Right Thigh")}, #{tag.i("Left Upper Arm")}, " \
-            "#{tag.i("Right Upper Arm")} or #{tag.i("Nasal")}"
-      },
-      {
         name: "VACCINATED",
         notes:
           "Optional, must be #{tag.i("Y")} or #{tag.i("N")}. If omitted, " \
             "#{tag.i("Y")} is assumed."
       }
-    ] + reason_not_vaccinated + dose_sequence + care_setting +
+    ] + anatomical_site + reason_not_vaccinated + dose_sequence + care_setting +
       performing_professional
   end
 
@@ -214,6 +206,24 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
         name: "REASON_NOT_VACCINATED",
         notes:
           "Required if #{tag.code("VACCINATED")} is #{tag.i("N")}, must be #{reasons_sentence}"
+      }
+    ]
+  end
+
+  def anatomical_site
+    sites = ImmunisationImportRow::DELIVERY_SITES.keys.sort.map { tag.i(_1) }
+
+    site_sentence =
+      sites.to_sentence(
+        last_word_connector: " or ",
+        two_words_connector: " or "
+      )
+
+    [
+      {
+        name: "ANATOMICAL_SITE",
+        notes:
+          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}, must be #{site_sentence}"
       }
     ]
   end

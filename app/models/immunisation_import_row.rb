@@ -218,7 +218,11 @@ class ImmunisationImportRow
     "left thigh" => "left_thigh",
     "right thigh" => "right_thigh",
     "left upper arm" => "left_arm_upper_position",
+    "left arm (upper position)" => "left_arm_upper_position",
+    "left arm (lower position)" => "left_arm_lower_position",
     "right upper arm" => "right_arm_upper_position",
+    "right arm (upper position)" => "right_arm_upper_position",
+    "right arm (lower position)" => "right_arm_lower_position",
     "left buttock" => "left_buttock",
     "right buttock" => "right_buttock",
     "nasal" => "nose"
