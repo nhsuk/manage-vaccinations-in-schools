@@ -14,6 +14,8 @@ class ImmunisationImportRow
   validates :batch_number, presence: true, if: :administered
   validates :reason, presence: true, if: -> { administered == false }
   validates :delivery_site, presence: true, if: :administered
+  validate :delivery_site_appropriate_for_vaccine,
+           if: -> { administered && delivery_site.present? && vaccine.present? }
   validates :dose_sequence,
             comparison: {
               greater_than_or_equal_to: 1,
@@ -451,6 +453,18 @@ class ImmunisationImportRow
 
     unless @programme.year_groups.include?(patient_date_of_birth.year_group)
       errors.add(:patient_date_of_birth, :inclusion)
+    end
+  end
+
+  def delivery_site_appropriate_for_vaccine
+    return if vaccine.nil? || delivery_site.nil?
+    if date_of_vaccination.present? &&
+         academic_year != Date.current.academic_year
+      return
+    end
+
+    unless vaccine.available_delivery_sites.include?(delivery_site)
+      errors.add(:delivery_site, :inclusion)
     end
   end
 

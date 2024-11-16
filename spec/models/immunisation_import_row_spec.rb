@@ -271,6 +271,63 @@ describe ImmunisationImportRow do
       end
     end
 
+    context "vaccination in this academic year, with a delivery site that is not appropriate for HPV" do
+      let(:programme) { create(:programme, :hpv) }
+
+      let(:data) do
+        {
+          "ANATOMICAL_SITE" => "nasal",
+          "VACCINATED" => "Y",
+          "VACCINE_GIVEN" => "Gardasil9",
+          "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901"
+        }
+      end
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:delivery_site]).to eq(
+          ["Enter a anatomical site that is appropriate for the vaccine."]
+        )
+      end
+    end
+
+    context "vaccination in a previous academic year, with a delivery site that's typically not appropriate for HPV" do
+      let(:programme) { create(:programme, :hpv) }
+
+      let(:data) do
+        {
+          "ANATOMICAL_SITE" => "left buttock",
+          "VACCINATED" => "Y",
+          "VACCINE_GIVEN" => "Gardasil9",
+          "DATE_OF_VACCINATION" => "20220101"
+        }
+      end
+
+      it "raises no errors on delivery site to be more permissive of legacy records" do
+        immunisation_import_row.valid?
+        expect(immunisation_import_row.errors[:delivery_site]).to be_empty
+      end
+    end
+
+    context "vaccination in this academic year, with a delivery site that is not appropriate for flu" do
+      let(:programme) { create(:programme, :flu) }
+
+      let(:data) do
+        {
+          "ANATOMICAL_SITE" => "left buttock",
+          "VACCINATED" => "Y",
+          "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV"
+        }
+      end
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:delivery_site]).to eq(
+          ["Enter a anatomical site that is appropriate for the vaccine."]
+        )
+      end
+    end
+
     context "with valid fields for Flu" do
       let(:programme) { create(:programme, :flu) }
 
