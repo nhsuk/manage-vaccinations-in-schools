@@ -27,10 +27,13 @@ FactoryBot.define do
       programme { association :programme }
       organisation { session.organisation }
       user { association :user, organisation: }
+      year_group { nil }
     end
 
     session { association :session, programme: }
-    patient { association :patient, organisation:, school: session.location }
+    patient do
+      association :patient, organisation:, school: session.location, year_group:
+    end
 
     trait :added_to_session
 
@@ -41,7 +44,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location
+                    school: session.location,
+                    year_group:
       end
     end
 
@@ -52,7 +56,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location
+                    school: session.location,
+                    year_group:
       end
     end
 
@@ -63,7 +68,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location
+                    school: session.location,
+                    year_group:
       end
     end
 
@@ -74,7 +80,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location
+                    school: session.location,
+                    year_group:
       end
     end
 
@@ -85,7 +92,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location
+                    school: session.location,
+                    year_group:
       end
     end
 
@@ -96,7 +104,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location
+                    school: session.location,
+                    year_group:
       end
     end
 
@@ -108,7 +117,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location
+                    school: session.location,
+                    year_group:
       end
     end
 
@@ -120,7 +130,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location
+                    school: session.location,
+                    year_group:
       end
     end
 
@@ -132,7 +143,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location
+                    school: session.location,
+                    year_group:
       end
     end
 
@@ -144,7 +156,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location
+                    school: session.location,
+                    year_group:
       end
 
       after(:create) do |patient_session, evaluator|
@@ -166,7 +179,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location
+                    school: session.location,
+                    year_group:
       end
     end
 
@@ -178,7 +192,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location
+                    school: session.location,
+                    year_group:
       end
 
       after(:create) do |patient_session, evaluator|
@@ -200,7 +215,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location
+                    school: session.location,
+                    year_group:
       end
 
       after(:create) do |patient_session, evaluator|
@@ -223,7 +239,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location
+                    school: session.location,
+                    year_group:
       end
 
       after(:create) do |patient_session, evaluator|
