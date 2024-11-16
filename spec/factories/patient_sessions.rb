@@ -28,11 +28,17 @@ FactoryBot.define do
       organisation { session.organisation }
       user { association :user, organisation: }
       year_group { nil }
+      in_school { session.location.school? }
+      home_educated { !in_school }
     end
 
     session { association :session, programme: }
     patient do
-      association :patient, organisation:, school: session.location, year_group:
+      association :patient,
+                  organisation:,
+                  school: in_school ? session.location : nil,
+                  home_educated:,
+                  year_group:
     end
 
     trait :added_to_session
@@ -44,7 +50,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location,
+                    school: in_school ? session.location : nil,
+                    home_educated:,
                     year_group:
       end
     end
@@ -56,7 +63,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location,
+                    school: in_school ? session.location : nil,
+                    home_educated:,
                     year_group:
       end
     end
@@ -68,7 +76,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location,
+                    school: in_school ? session.location : nil,
+                    home_educated:,
                     year_group:
       end
     end
@@ -80,7 +89,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location,
+                    school: in_school ? session.location : nil,
+                    home_educated:,
                     year_group:
       end
     end
@@ -92,7 +102,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location,
+                    school: in_school ? session.location : nil,
+                    home_educated:,
                     year_group:
       end
     end
@@ -104,7 +115,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location,
+                    school: in_school ? session.location : nil,
+                    home_educated:,
                     year_group:
       end
     end
@@ -117,7 +129,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location,
+                    school: in_school ? session.location : nil,
+                    home_educated:,
                     year_group:
       end
     end
@@ -130,7 +143,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location,
+                    school: in_school ? session.location : nil,
+                    home_educated:,
                     year_group:
       end
     end
@@ -143,7 +157,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location,
+                    school: in_school ? session.location : nil,
+                    home_educated:,
                     year_group:
       end
     end
@@ -156,7 +171,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location,
+                    school: in_school ? session.location : nil,
+                    home_educated:,
                     year_group:
       end
 
@@ -167,6 +183,12 @@ FactoryBot.define do
           patient_session:,
           programme: evaluator.programme,
           performed_by: evaluator.user,
+          location_name:
+            (
+              if evaluator.home_educated
+                evaluator.organisation.community_clinics.sample.name
+              end
+            ),
           reason: :absent_from_school
         )
       end
@@ -179,7 +201,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location,
+                    school: in_school ? session.location : nil,
+                    home_educated:,
                     year_group:
       end
     end
@@ -192,7 +215,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location,
+                    school: in_school ? session.location : nil,
+                    home_educated:,
                     year_group:
       end
 
@@ -203,6 +227,12 @@ FactoryBot.define do
           patient_session:,
           programme: evaluator.programme,
           performed_by: evaluator.user,
+          location_name:
+            (
+              if evaluator.home_educated
+                evaluator.organisation.community_clinics.sample.name
+              end
+            ),
           reason: :already_had
         )
       end
@@ -215,7 +245,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location,
+                    school: in_school ? session.location : nil,
+                    home_educated:,
                     year_group:
       end
 
@@ -239,7 +270,8 @@ FactoryBot.define do
                     performed_by: user,
                     programme:,
                     organisation:,
-                    school: session.location,
+                    school: in_school ? session.location : nil,
+                    home_educated:,
                     year_group:
       end
 
@@ -248,7 +280,13 @@ FactoryBot.define do
           :vaccination_record,
           patient_session:,
           programme: evaluator.programme,
-          performed_by: evaluator.user
+          performed_by: evaluator.user,
+          location_name:
+            (
+              if evaluator.home_educated
+                evaluator.organisation.community_clinics.sample.name
+              end
+            )
         )
       end
     end
