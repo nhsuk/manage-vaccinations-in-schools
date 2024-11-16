@@ -204,6 +204,7 @@ en:
               inclusion: Enter a date for a current session
             delivery_site:
               blank: Enter an anatomical site.
+              inclusion: Enter a anatomical site that is appropriate for the vaccine.
             dose_sequence:
               blank: The dose sequence number cannot be greater than 3. Enter a dose sequence number, for example, 1, 2 or 3.
             existing_patients:

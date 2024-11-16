@@ -223,7 +223,9 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       {
         name: "ANATOMICAL_SITE",
         notes:
-          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}, must be #{site_sentence}"
+          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}. It must be " \
+            "appropriate for the vaccine delivery method and be one of: " \
+            "#{site_sentence}"
       }
     ]
   end
