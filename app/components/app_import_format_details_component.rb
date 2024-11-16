@@ -143,14 +143,9 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
         notes:
           "Optional, must be #{tag.i("Y")} or #{tag.i("N")}. If omitted, " \
             "#{tag.i("Y")} is assumed."
-      },
-      {
-        name: "REASON_NOT_VACCINATED",
-        notes:
-          "Required if #{tag.code("VACCINATED")} is #{tag.i("N")}, must be #{tag.i("did not attend")}, " \
-            "#{tag.i("vaccination contraindicated")} or #{tag.i("unwell")}"
       }
-    ] + dose_sequence + care_setting + performing_professional
+    ] + reason_not_vaccinated + dose_sequence + care_setting +
+      performing_professional
   end
 
   def child_columns
@@ -204,6 +199,23 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
         }
       ]
     end
+  end
+
+  def reason_not_vaccinated
+    reasons = ImmunisationImportRow::REASONS.keys.sort.map { tag.i(_1) }
+    reasons_sentence =
+      reasons.to_sentence(
+        last_word_connector: " or ",
+        two_words_connector: " or "
+      )
+
+    [
+      {
+        name: "REASON_NOT_VACCINATED",
+        notes:
+          "Required if #{tag.code("VACCINATED")} is #{tag.i("N")}, must be #{reasons_sentence}"
+      }
+    ]
   end
 
   def dose_sequence
