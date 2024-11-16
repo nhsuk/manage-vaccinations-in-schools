@@ -37,4 +37,14 @@ describe Organisation do
   end
 
   it { should normalize(:ods_code).from(" r1a ").to("R1A") }
+
+  describe "#community_clinics" do
+    let(:clinic_locations) do
+      create_list(:location, 3, :community_clinic, organisation:)
+    end
+
+    it "returns the clinic locations" do
+      expect(organisation.community_clinics).to eq(clinic_locations)
+    end
+  end
 end

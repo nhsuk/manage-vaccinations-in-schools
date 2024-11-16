@@ -26,7 +26,7 @@ class Team < ApplicationRecord
 
   has_many :locations
 
-  has_many :clinics, -> { clinic }, class_name: "Location"
+  has_many :community_clinics, -> { community_clinic }, class_name: "Location"
   has_many :schools, -> { school }, class_name: "Location"
 
   validates :name, presence: true, uniqueness: { scope: :organisation }
