@@ -897,6 +897,30 @@ describe ImmunisationImportRow do
       it { should eq("right_arm_upper_position") }
     end
 
+    context "with a left arm (upper position) anatomical site" do
+      let(:data) { { "ANATOMICAL_SITE" => "left arm (upper position)" } }
+
+      it { should eq("left_arm_upper_position") }
+    end
+
+    context "with a right arm (upper position) anatomical site" do
+      let(:data) { { "ANATOMICAL_SITE" => "right arm (upper position)" } }
+
+      it { should eq("right_arm_upper_position") }
+    end
+
+    context "with a left arm (lower position) anatomical site" do
+      let(:data) { { "ANATOMICAL_SITE" => "left arm (lower position)" } }
+
+      it { should eq("left_arm_lower_position") }
+    end
+
+    context "with a right arm (lower position) anatomical site" do
+      let(:data) { { "ANATOMICAL_SITE" => "right arm (lower position)" } }
+
+      it { should eq("right_arm_lower_position") }
+    end
+
     context "with a left buttock anatomical site" do
       let(:data) { { "ANATOMICAL_SITE" => "left buttock" } }
 
