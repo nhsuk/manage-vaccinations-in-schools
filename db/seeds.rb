@@ -114,8 +114,17 @@ def create_session(user, organisation, completed:)
   session.session_dates.create!(value: date - 1.day)
   session.session_dates.create!(value: date + 1.day)
 
+  year_group = 8
+
   patients_without_consent =
-    FactoryBot.create_list(:patient_session, 4, programme:, session:, user:)
+    FactoryBot.create_list(
+      :patient_session,
+      4,
+      programme:,
+      session:,
+      user:,
+      year_group:
+    )
   unmatched_patients = patients_without_consent.sample(2).map(&:patient)
   unmatched_patients.each do |patient|
     FactoryBot.create(
@@ -144,7 +153,8 @@ def create_session(user, organisation, completed:)
       trait,
       programme:,
       session:,
-      user:
+      user:,
+      year_group:
     )
   end
 end
