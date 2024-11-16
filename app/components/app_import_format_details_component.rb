@@ -101,8 +101,7 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       },
       {
         name: "DATE_OF_VACCINATION",
-        notes:
-          "Required if #{tag.code("VACCINATED")} is #{tag.i("Y")}, must use #{tag.i("YYYYMMDD")} format"
+        notes: "#{tag.strong("Required")}, must use #{tag.i("YYYYMMDD")} format"
       },
       {
         name: "TIME_OF_VACCINATION",
