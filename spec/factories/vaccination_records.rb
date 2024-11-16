@@ -81,6 +81,7 @@ FactoryBot.define do
     trait :not_administered do
       administered_at { nil }
       delivery_site { nil }
+      delivery_method { nil }
       reason { "not_well" }
       vaccine { nil }
     end
