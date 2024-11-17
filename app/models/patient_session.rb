@@ -42,7 +42,7 @@ class PatientSession < ApplicationRecord
 
   # TODO: Only fetch consents and triages for the relevant programme.
   has_many :consents, -> { recorded.includes(:parent) }, through: :patient
-  has_many :triages, -> { not_invalidated }, through: :patient
+  has_many :triages, through: :patient
 
   has_many :session_notifications,
            -> { where(session_id: _1.session_id) },
@@ -110,7 +110,7 @@ class PatientSession < ApplicationRecord
   end
 
   def latest_triage
-    @latest_triage ||= triages.max_by(&:updated_at)
+    @latest_triage ||= triages.not_invalidated.max_by(&:updated_at)
   end
 
   def latest_vaccination_record
