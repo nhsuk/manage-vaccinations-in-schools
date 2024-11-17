@@ -65,13 +65,14 @@ describe AppImportFormatDetailsComponent, type: :component do
     expect(page).to have_content("PERSON_SURNAME")
     expect(page).to have_content("DATE_OF_VACCINATION")
     expect(page).to have_content("VACCINE_GIVEN")
+    expect(page).to have_content("CARE_SETTING")
+    expect(page).to have_content("CLINIC_NAME")
   end
 
   it "includes HPV-specific columns for HPV programmes" do
     import = ImmunisationImport.new(programme:)
     render_inline(described_class.new(import:, programme:))
     expect(page).to have_content("DOSE_SEQUENCE")
-    expect(page).to have_content("CARE_SETTING")
   end
 
   it "does not include HPV-specific columns for non-HPV programmes" do
@@ -79,6 +80,5 @@ describe AppImportFormatDetailsComponent, type: :component do
     import = ImmunisationImport.new(programme:)
     render_inline(described_class.new(import:, programme:))
     expect(page).not_to have_content("DOSE_SEQUENCE")
-    expect(page).not_to have_content("CARE_SETTING")
   end
 end
