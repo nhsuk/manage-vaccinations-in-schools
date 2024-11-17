@@ -138,6 +138,20 @@ def create_session(user, organisation, completed:)
     )
   end
 
+  # Add extra consent forms with a successful NHS number lookup
+  2.times do
+    temporary_patient = FactoryBot.build(:patient)
+    FactoryBot.create(
+      :consent_form,
+      :recorded,
+      programme:,
+      given_name: temporary_patient.given_name,
+      family_name: temporary_patient.family_name,
+      nhs_number: temporary_patient.nhs_number,
+      session:
+    )
+  end
+
   %i[
     consent_given_triage_not_needed
     consent_given_triage_needed
