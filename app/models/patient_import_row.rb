@@ -62,9 +62,13 @@ class PatientImportRow
         existing_patient.registration = attributes.delete(:registration)
       end
 
-      if existing_patient.school_id.blank?
+      if existing_patient.school_id.nil?
         existing_patient.school_id = attributes.delete(:school_id)
         existing_patient.home_educated = attributes.delete(:home_educated)
+      end
+
+      if existing_patient.cohort_id.nil?
+        existing_patient.cohort_id = attributes.delete(:cohort_id)
       end
 
       existing_patient.stage_changes(attributes)
