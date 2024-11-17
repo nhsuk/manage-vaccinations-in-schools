@@ -6,32 +6,53 @@ class ConsentFormMatchingJob < ApplicationJob
   queue_as :consents
 
   def perform(consent_form)
-    query = {
-      given_name: consent_form.given_name,
-      family_name: consent_form.family_name,
-      date_of_birth: consent_form.date_of_birth,
-      address_postcode: consent_form.address_postcode
-    }
+    @consent_form = consent_form
 
-    pds_patient = PDS::Patient.search(**query)
+    # Match if we find a patient with the PDS NHS number
+    return if match_with_exact_nhs_number
 
-    # Search globally if we have an NHS number
-    if pds_patient &&
-         (patient = Patient.find_by(nhs_number: pds_patient.nhs_number))
-      patient.update_from_pds!(pds_patient)
-      consent_form.match_with_patient!(patient)
-      return
+    # Otherwise look for a patient in the original session with no NHS number
+    if session_patients.count == 1
+      # If we found exactly one, match the consent form to this patient
+      match_patient(session_patients.first)
     end
+    # If we found 0 or >1 patients, do nothing; the nurse will match manually
+  end
 
-    # Search in the original scheduled session if not
-    session = consent_form.original_session
+  private
 
-    patients = session.patients.match_existing(nhs_number: nil, **query)
+  def query
+    {
+      given_name: @consent_form.given_name,
+      family_name: @consent_form.family_name,
+      date_of_birth: @consent_form.date_of_birth,
+      address_postcode: @consent_form.address_postcode
+    }
+  end
 
-    return if patients.count != 1
+  def pds_patient
+    @pds_patient ||= PDS::Patient.search(**query)
+  end
 
-    patient = patients.first
+  def match_with_exact_nhs_number
+    return false unless pds_patient
 
+    patient = Patient.find_by(nhs_number: pds_patient.nhs_number)
+    return false unless patient
+
+    patient.update_from_pds!(pds_patient)
+    @consent_form.match_with_patient!(patient)
+  end
+
+  def session_patients
+    @session_patients ||=
+      @consent_form.original_session.patients.match_existing(
+        nhs_number: nil,
+        **query
+      )
+  end
+
+  def match_patient(patient)
     if pds_patient
       if patient.nhs_number.nil?
         # TODO: Can we take this opportunity to set the NHS number on the patient?
@@ -42,6 +63,6 @@ class ConsentFormMatchingJob < ApplicationJob
       end
     end
 
-    consent_form.match_with_patient!(patient)
+    @consent_form.match_with_patient!(patient)
   end
 end
