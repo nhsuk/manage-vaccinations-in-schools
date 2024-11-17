@@ -487,6 +487,33 @@ describe Session do
             vaccinated_patient
           )
         end
+
+        context "with self-consent" do
+          let(:consent) do
+            create(
+              :consent,
+              :self_consent,
+              patient: unvaccinated_patient,
+              programme:
+            )
+          end
+
+          it "invalidates the consent" do
+            expect { close! }.to change { consent.reload.invalidated? }.from(
+              false
+            ).to(true)
+          end
+        end
+
+        context "with parental consent" do
+          let(:consent) do
+            create(:consent, patient: unvaccinated_patient, programme:)
+          end
+
+          it "doesn't invalidate the consent" do
+            expect { close! }.not_to(change { consent.reload.invalidated? })
+          end
+        end
       end
 
       context "when a patient has already had the vaccine" do
