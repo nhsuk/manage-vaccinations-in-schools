@@ -5,6 +5,7 @@
 # Table name: triage
 #
 #  id                   :bigint           not null, primary key
+#  invalidated_at       :datetime
 #  notes                :text             default(""), not null
 #  status               :integer          not null
 #  created_at           :datetime         not null
@@ -40,5 +41,9 @@ FactoryBot.define do
     status { :ready_to_vaccinate }
 
     traits_for_enum :status
+
+    trait :invalidated do
+      invalidated_at { Time.current }
+    end
   end
 end

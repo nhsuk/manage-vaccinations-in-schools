@@ -5,6 +5,7 @@
 # Table name: triage
 #
 #  id                   :bigint           not null, primary key
+#  invalidated_at       :datetime
 #  notes                :text             default(""), not null
 #  status               :integer          not null
 #  created_at           :datetime         not null
@@ -29,6 +30,8 @@
 #  fk_rails_...  (programme_id => programmes.id)
 #
 class Triage < ApplicationRecord
+  include Invalidatable
+
   self.table_name = "triage"
 
   audited
