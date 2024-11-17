@@ -6,7 +6,8 @@ class AppPatientSummaryComponent < ViewComponent::Base
     show_preferred_name: false,
     show_address: false,
     show_parent_or_guardians: false,
-    change_links: {}
+    change_links: {},
+    highlight: true
   )
     super
 
@@ -16,6 +17,7 @@ class AppPatientSummaryComponent < ViewComponent::Base
     @show_address = show_address
     @show_parent_or_guardians = show_parent_or_guardians
     @change_links = change_links
+    @highlight = highlight
   end
 
   def call
@@ -182,6 +184,8 @@ class AppPatientSummaryComponent < ViewComponent::Base
   end
 
   def highlight_if(value, condition)
-    condition ? tag.span(value, class: "app-highlight") : value
+    return value unless @highlight && condition
+
+    tag.span value, class: "app-highlight"
   end
 end
