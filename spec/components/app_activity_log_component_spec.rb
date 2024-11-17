@@ -88,7 +88,7 @@ describe AppActivityLogComponent do
         :vaccination_record,
         programme:,
         patient_session:,
-        administered_at: Time.zone.parse("2024-05-31 12:00"),
+        performed_at: Time.zone.parse("2024-05-31 12:00"),
         performed_by: user,
         notes: "Some notes"
       )
@@ -97,7 +97,7 @@ describe AppActivityLogComponent do
         :vaccination_record,
         programme:,
         patient_session:,
-        administered_at: Time.zone.parse("2024-05-31 13:00"),
+        performed_at: Time.zone.parse("2024-05-31 13:00"),
         performed_by: nil,
         notes: "Some notes",
         vaccine: create(:vaccine, :gardasil, programme:)
@@ -181,7 +181,7 @@ describe AppActivityLogComponent do
         :not_administered,
         programme:,
         patient_session:,
-        created_at: Time.zone.local(2024, 5, 31, 13),
+        performed_at: Time.zone.local(2024, 5, 31, 13),
         performed_by: user,
         notes: "Some notes.",
         vaccine: create(:vaccine, :gardasil, programme:)
@@ -202,7 +202,7 @@ describe AppActivityLogComponent do
         :discarded,
         programme:,
         patient_session:,
-        administered_at: Time.zone.local(2024, 5, 31, 13),
+        performed_at: Time.zone.local(2024, 5, 31, 13),
         discarded_at: Time.zone.local(2024, 5, 31, 14),
         performed_by: user
       )

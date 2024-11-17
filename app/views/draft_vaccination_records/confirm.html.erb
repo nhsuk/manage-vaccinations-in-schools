@@ -18,12 +18,12 @@
 <% end %>
 
 <% change_links = {
-     administered_at: wizard_path("date-and-time"),
      batch: wizard_path("batch"),
      delivery_method: wizard_path("delivery"),
      delivery_site: wizard_path("delivery"),
      location: @draft_vaccination_record.wizard_steps.include?(:location) ? wizard_path("location") : nil,
      outcome: wizard_path("outcome"),
+     performed_at: wizard_path("date-and-time"),
      vaccine: wizard_path("vaccine"),
    } %>
 

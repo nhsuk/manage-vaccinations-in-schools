@@ -12,6 +12,6 @@ class AppPatientVaccinationTableComponent < ViewComponent::Base
   attr_reader :patient
 
   def vaccination_records
-    patient.vaccination_records.administered.order(administered_at: :desc)
+    patient.vaccination_records.administered.order(performed_at: :desc)
   end
 end

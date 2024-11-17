@@ -24,16 +24,16 @@ describe DPSExportRow do
       :vaccination_record,
       programme:,
       batch: create(:batch, vaccine:, name: "AB1234", expiry: "2025-07-01"),
-      created_at: Time.zone.local(2024, 6, 12, 11, 28, 31),
+      created_at: Time.zone.local(2024, 7, 23, 19, 31, 47),
       delivery_method: :intramuscular,
       delivery_site: :left_arm_upper_position,
       dose_sequence: 1,
       location_name:,
       patient_session:,
+      performed_at: Time.zone.local(2024, 6, 12, 11, 28, 31),
       performed_by:,
       performed_by_given_name:,
       performed_by_family_name:,
-      administered_at: Time.zone.local(2024, 7, 23, 19, 31, 47),
       uuid: "ea4860a5-6d97-4f31-b640-f5c50f43bfd2",
       vaccine:
     )

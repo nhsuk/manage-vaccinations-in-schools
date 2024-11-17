@@ -5,7 +5,6 @@
 # Table name: vaccination_records
 #
 #  id                       :bigint           not null, primary key
-#  administered_at          :datetime
 #  delivery_method          :integer
 #  delivery_site            :integer
 #  discarded_at             :datetime
@@ -14,6 +13,7 @@
 #  notes                    :text
 #  outcome                  :integer          not null
 #  pending_changes          :jsonb            not null
+#  performed_at             :datetime         not null
 #  performed_by_family_name :string
 #  performed_by_given_name  :string
 #  uuid                     :uuid             not null
@@ -92,24 +92,22 @@ describe VaccinationRecord do
   end
 
   describe "validations" do
-    context "when administered_at is not set" do
-      let(:vaccination_record) do
-        build(:vaccination_record, administered_at: nil)
-      end
+    context "when performed_at is not set" do
+      let(:vaccination_record) { build(:vaccination_record, performed_at: nil) }
 
       it { should be_valid }
     end
 
-    context "when administered_at is in the future" do
+    context "when performed_at is in the future" do
       around { |example| freeze_time { example.run } }
 
       let(:vaccination_record) do
-        build(:vaccination_record, administered_at: 1.second.from_now)
+        build(:vaccination_record, performed_at: 1.second.from_now)
       end
 
       it "has an error" do
         expect(vaccination_record).to be_invalid
-        expect(vaccination_record.errors[:administered_at]).to include(
+        expect(vaccination_record.errors[:performed_at]).to include(
           "Enter a time in the past"
         )
       end

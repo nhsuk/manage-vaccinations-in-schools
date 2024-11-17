@@ -83,14 +83,14 @@ describe Reports::ProgrammeVaccinationsExporter do
         let(:patient) { create(:patient, year_group: 8) }
         let(:patient_session) { create(:patient_session, patient:, session:) }
         let(:batch) { create(:batch, vaccine: programme.vaccines.active.first) }
-        let(:administered_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
+        let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
 
         before do
           create(
             :vaccination_record,
-            administered_at:,
             batch:,
             patient_session:,
+            performed_at:,
             programme:,
             performed_by: user
           )
@@ -151,12 +151,12 @@ describe Reports::ProgrammeVaccinationsExporter do
         let(:patient) { create(:patient, year_group: 8) }
         let(:patient_session) { create(:patient_session, patient:, session:) }
         let(:batch) { create(:batch, vaccine: programme.vaccines.active.first) }
-        let(:administered_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
+        let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
 
         before do
           create(
             :vaccination_record,
-            administered_at:,
+            performed_at:,
             batch:,
             patient_session:,
             programme:,

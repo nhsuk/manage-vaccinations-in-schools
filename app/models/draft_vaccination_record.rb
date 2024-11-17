@@ -10,7 +10,6 @@ class DraftVaccinationRecord
     "vaccination_record"
   end
 
-  attribute :administered_at, :datetime
   attribute :batch_id, :integer
   attribute :delivery_method, :string
   attribute :delivery_site, :string
@@ -19,6 +18,7 @@ class DraftVaccinationRecord
   attribute :notes, :string
   attribute :outcome, :string
   attribute :patient_session_id, :integer
+  attribute :performed_at, :datetime
   attribute :performed_by_family_name, :string
   attribute :performed_by_given_name, :string
   attribute :performed_by_user_id, :integer
@@ -33,8 +33,8 @@ class DraftVaccinationRecord
 
   def wizard_steps
     [
+      :date_and_time,
       :outcome,
-      (:date_and_time if administered?),
       (:delivery if administered?),
       (:vaccine if administered?),
       (:batch if administered?),
@@ -43,16 +43,16 @@ class DraftVaccinationRecord
     ].compact
   end
 
-  on_wizard_step :outcome, exact: true do
-    validates :outcome, inclusion: { in: VaccinationRecord.outcomes.keys }
-  end
-
   on_wizard_step :date_and_time, exact: true do
-    validates :administered_at,
+    validates :performed_at,
               presence: true,
               comparison: {
                 less_than_or_equal_to: -> { Time.current }
               }
+  end
+
+  on_wizard_step :outcome, exact: true do
+    validates :outcome, inclusion: { in: VaccinationRecord.outcomes.keys }
   end
 
   on_wizard_step :delivery, exact: true do
@@ -87,10 +87,10 @@ class DraftVaccinationRecord
                if: -> do
                  required_for_step?(:confirm, exact: true) && administered?
                end do
-    validates :administered_at,
-              :batch_id,
+    validates :batch_id,
               :delivery_method,
               :delivery_site,
+              :performed_at,
               :vaccine_id,
               presence: true
   end
@@ -171,8 +171,6 @@ class DraftVaccinationRecord
 
   def reset_unused_fields
     if administered?
-      self.administered_at ||= Time.current
-
       if vaccine_id.nil? && programme &&
            (vaccines = programme.vaccines.active).count == 1
         self.vaccine_id = vaccines.first.id

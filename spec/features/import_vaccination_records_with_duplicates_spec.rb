@@ -109,7 +109,7 @@ describe "Immunisation imports duplicates" do
       create(
         :vaccination_record,
         programme: @programme,
-        administered_at: @session.dates.min.in_time_zone + 12.hours,
+        performed_at: @session.dates.min.in_time_zone + 12.hours,
         notes: "Foo",
         created_at: Time.zone.yesterday,
         batch: @batch,
@@ -124,7 +124,7 @@ describe "Immunisation imports duplicates" do
       create(
         :vaccination_record,
         programme: @programme,
-        administered_at: @session.dates.min.in_time_zone + 12.hours,
+        performed_at: @session.dates.min.in_time_zone + 12.hours,
         notes: "Bar",
         created_at: Time.zone.yesterday,
         batch: @other_batch,
@@ -209,7 +209,7 @@ describe "Immunisation imports duplicates" do
     expect(@existing_patient.pending_changes).to eq({})
     expect(@existing_patient.vaccination_records.count).to eq(1)
     vaccs_record = @existing_patient.vaccination_records.first
-    expect(vaccs_record.administered_at).to eq(
+    expect(vaccs_record.performed_at).to eq(
       Time.new(2024, 5, 14, 12, 0, 0, "+01:00")
     )
     expect(vaccs_record.delivery_method).to eq("intramuscular")

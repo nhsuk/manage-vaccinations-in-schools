@@ -54,8 +54,8 @@ describe AppOutcomeBannerComponent do
     let(:vaccine) { programme.vaccines.first }
     let(:location) { patient_session.session.location }
     let(:batch) { vaccine.batches.first }
-    let(:date) { vaccination_record.administered_at.to_date.to_fs(:long) }
-    let(:time) { vaccination_record.administered_at.to_fs(:time) }
+    let(:date) { vaccination_record.performed_at.to_date.to_fs(:long) }
+    let(:time) { vaccination_record.performed_at.to_fs(:time) }
 
     it { should have_css(".app-card--green") }
     it { should have_css(".nhsuk-card__heading", text: "Vaccinated") }
@@ -69,7 +69,7 @@ describe AppOutcomeBannerComponent do
       let(:date) { Time.zone.now - 2.days }
       let(:patient_session) do
         create(:patient_session, :vaccinated).tap do |ps|
-          ps.vaccination_records.first.update(administered_at: date)
+          ps.vaccination_records.first.update(performed_at: date)
         end
       end
 

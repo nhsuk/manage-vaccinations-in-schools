@@ -154,13 +154,6 @@ en:
           attributes:
             administered:
               inclusion: Choose if they got the vaccine
-            administered_at:
-              blank: Enter a date and time
-              missing_day: Enter a day
-              missing_month: Enter a month
-              missing_year: Enter a year
-              invalid: Enter a valid date and time
-              less_than_or_equal_to: Enter a time in the past
             batch_id:
               blank: Choose a batch
               incorrect_vaccine: Choose a batch of the %{vaccine_brand} vaccine
@@ -176,6 +169,13 @@ en:
               too_long: Enter notes that are less than 1000 characters long
             outcome:
               inclusion: Choose an outcome
+            performed_at:
+              blank: Enter a date and time
+              missing_day: Enter a day
+              missing_month: Enter a month
+              missing_year: Enter a year
+              invalid: Enter a valid date and time
+              less_than_or_equal_to: Enter a time in the past
             vaccine_id:
               blank: Choose a vaccine
         health_answer:
@@ -597,7 +597,7 @@ en:
               invalid: The unlock token is invalid
         vaccination_record:
           attributes:
-            administered_at:
+            performed_at:
               less_than_or_equal_to: Enter a time in the past
   children:
     zero: No children

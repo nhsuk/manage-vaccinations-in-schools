@@ -102,7 +102,7 @@ class Reports::OfflineSessionExporter
     triage = patient_session.latest_triage
 
     vaccination_records =
-      patient_session.vaccination_records.order(:administered_at)
+      patient_session.vaccination_records.order(:performed_at)
 
     if vaccination_records.any?
       vaccination_records.map do |vaccination_record|
@@ -151,8 +151,8 @@ class Reports::OfflineSessionExporter
       patient_values(patient:, consents:, gillick_assessment:, triage:) +
         [
           vaccinated(vaccination_record:),
-          vaccination_record.administered_at&.to_date,
-          vaccination_record.administered_at&.strftime("%H:%M:%S"),
+          vaccination_record.performed_at.to_date,
+          vaccination_record.performed_at.strftime("%H:%M:%S"),
           vaccination_record.vaccine&.nivs_name,
           vaccination_record.performed_by_user&.email,
           vaccination_record.batch&.name,

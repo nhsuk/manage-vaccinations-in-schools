@@ -79,7 +79,7 @@ describe Reports::OfflineSessionExporter do
         worksheet_to_hashes(workbook.worksheets[0])
       end
 
-      let(:administered_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
+      let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
       let(:batch) { create(:batch, vaccine: programme.vaccines.active.first) }
       let(:patient_session) { create(:patient_session, patient:, session:) }
       let(:patient) { create(:patient) }
@@ -135,7 +135,7 @@ describe Reports::OfflineSessionExporter do
         let!(:vaccination_record) do
           create(
             :vaccination_record,
-            administered_at:,
+            performed_at:,
             batch:,
             patient_session:,
             programme:,
@@ -188,7 +188,7 @@ describe Reports::OfflineSessionExporter do
           expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
           expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
           expect(rows.first["DATE_OF_VACCINATION"].to_date).to eq(
-            administered_at.to_date
+            performed_at.to_date
           )
         end
       end
@@ -200,13 +200,14 @@ describe Reports::OfflineSessionExporter do
             :not_administered,
             patient_session:,
             programme:,
+            performed_at:,
             performed_by: user
           )
         end
 
         it "adds a row to fill in" do
           expect(rows.count).to eq(1)
-          expect(rows.first.except("PERSON_DOB")).to eq(
+          expect(rows.first.except("DATE_OF_VACCINATION", "PERSON_DOB")).to eq(
             {
               "ANATOMICAL_SITE" => "",
               "BATCH_EXPIRY_DATE" => nil,
@@ -230,8 +231,7 @@ describe Reports::OfflineSessionExporter do
               "REASON_NOT_VACCINATED" => "unwell",
               "SCHOOL_NAME" => location.name,
               "SCHOOL_URN" => location.urn,
-              "DATE_OF_VACCINATION" => nil,
-              "TIME_OF_VACCINATION" => nil,
+              "TIME_OF_VACCINATION" => "12:05:20",
               "TRIAGED_BY" => nil,
               "TRIAGE_DATE" => nil,
               "TRIAGE_NOTES" => nil,
@@ -241,6 +241,9 @@ describe Reports::OfflineSessionExporter do
               "UUID" => vaccination_record.uuid,
               "YEAR_GROUP" => patient.year_group
             }
+          )
+          expect(rows.first["DATE_OF_VACCINATION"].to_date).to eq(
+            performed_at.to_date
           )
           expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
         end
@@ -366,12 +369,12 @@ describe Reports::OfflineSessionExporter do
         end
         let(:patient_session) { create(:patient_session, patient:, session:) }
         let(:batch) { create(:batch, vaccine: programme.vaccines.active.first) }
-        let(:administered_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
+        let(:performed_at) { Time.zone.local(2024, 1, 1, 12, 5, 20) }
 
         let!(:vaccination_record) do
           create(
             :vaccination_record,
-            administered_at:,
+            performed_at:,
             batch:,
             patient_session:,
             programme:,
@@ -426,7 +429,7 @@ describe Reports::OfflineSessionExporter do
           expect(rows.first["BATCH_EXPIRY_DATE"].to_date).to eq(batch.expiry)
           expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
           expect(rows.first["DATE_OF_VACCINATION"].to_date).to eq(
-            administered_at.to_date
+            performed_at.to_date
           )
         end
       end

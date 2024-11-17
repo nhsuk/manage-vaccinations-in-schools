@@ -80,7 +80,7 @@ class Reports::CareplusExporter
     if start_date.present?
       scope =
         scope.where(
-          "vaccination_records.administered_at >= ?",
+          "vaccination_records.performed_at >= ?",
           start_date.beginning_of_day
         )
     end
@@ -88,7 +88,7 @@ class Reports::CareplusExporter
     if end_date.present?
       scope =
         scope.where(
-          "vaccination_records.administered_at <= ?",
+          "vaccination_records.performed_at <= ?",
           end_date.end_of_day
         )
     end
@@ -99,7 +99,7 @@ class Reports::CareplusExporter
   def rows(patient_session:)
     patient = patient_session.patient
     vaccination_records =
-      patient_session.vaccination_records.order(:administered_at)
+      patient_session.vaccination_records.order(:performed_at)
 
     if vaccination_records.any?
       [existing_row(patient:, patient_session:, vaccination_records:)]
@@ -117,8 +117,8 @@ class Reports::CareplusExporter
       patient.address_line_1,
       patient_session.latest_consents.first&.name || "",
       99, # Ethnicity, 99 is "Not known"
-      first_vaccination.administered_at.strftime("%d/%m/%Y"),
-      first_vaccination.administered_at.strftime("%H:%M"),
+      first_vaccination.performed_at.strftime("%d/%m/%Y"),
+      first_vaccination.performed_at.strftime("%H:%M"),
       "SC", # Venue Type
       "School", # Venue Code
       "SN", # Staff Type

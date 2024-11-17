@@ -58,7 +58,7 @@ class VaccinationRecordsController < ApplicationController
           vaccine: :programme
         )
         .where(programme:)
-        .order(:created_at)
+        .order(:performed_at)
         .strict_loading
   end
 

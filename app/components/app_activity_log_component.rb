@@ -122,8 +122,7 @@ class AppActivityLogComponent < ViewComponent::Base
 
       kept = {
         title:,
-        time:
-          vaccination_record.administered_at || vaccination_record.created_at,
+        time: vaccination_record.performed_at,
         notes: vaccination_record.notes,
         by: vaccination_record.performed_by&.full_name
       }

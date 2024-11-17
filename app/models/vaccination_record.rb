@@ -5,7 +5,6 @@
 # Table name: vaccination_records
 #
 #  id                       :bigint           not null, primary key
-#  administered_at          :datetime
 #  delivery_method          :integer
 #  delivery_site            :integer
 #  discarded_at             :datetime
@@ -14,6 +13,7 @@
 #  notes                    :text
 #  outcome                  :integer          not null
 #  pending_changes          :jsonb            not null
+#  performed_at             :datetime         not null
 #  performed_by_family_name :string
 #  performed_by_given_name  :string
 #  uuid                     :uuid             not null
@@ -88,7 +88,6 @@ class VaccinationRecord < ApplicationRecord
   has_one :organisation, through: :session
   has_one :team, through: :session
 
-  scope :administered, -> { where.not(administered_at: nil) }
   scope :unexported, -> { where.missing(:dps_exports) }
 
   scope :with_pending_changes,
@@ -147,10 +146,9 @@ class VaccinationRecord < ApplicationRecord
               less_than_or_equal_to: :maximum_dose_sequence
             }
 
-  validates :administered_at,
+  validates :performed_at,
             comparison: {
-              less_than_or_equal_to: -> { Time.current },
-              allow_nil: true
+              less_than_or_equal_to: -> { Time.current }
             }
 
   def not_administered?

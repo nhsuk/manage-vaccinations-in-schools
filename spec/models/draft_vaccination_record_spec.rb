@@ -19,7 +19,7 @@ describe DraftVaccinationRecord do
 
   let(:valid_administered_attributes) do
     {
-      administered_at: Time.zone.local(2024, 11, 1, 12),
+      performed_at: Time.zone.local(2024, 11, 1, 12),
       batch_id: batch.id,
       delivery_method: "intramuscular",
       delivery_site: "left_arm",
@@ -62,9 +62,9 @@ describe DraftVaccinationRecord do
       end
     end
 
-    context "when administered_at is in the future" do
+    context "when performed_at is in the future" do
       let(:attributes) do
-        valid_administered_attributes.merge(administered_at: 1.second.from_now)
+        valid_administered_attributes.merge(performed_at: 1.second.from_now)
       end
 
       around { |example| freeze_time { example.run } }
@@ -73,7 +73,7 @@ describe DraftVaccinationRecord do
 
       it "has an error" do
         expect(draft_vaccination_record.save(context: :update)).to be(false)
-        expect(draft_vaccination_record.errors[:administered_at]).to include(
+        expect(draft_vaccination_record.errors[:performed_at]).to include(
           "Enter a time in the past"
         )
       end
@@ -96,7 +96,7 @@ describe DraftVaccinationRecord do
     context "when not administered" do
       let(:attributes) do
         valid_not_administered_attributes.merge(
-          valid_administered_attributes.except(:administered_at, :outcome)
+          valid_administered_attributes.except(:outcome)
         )
       end
 

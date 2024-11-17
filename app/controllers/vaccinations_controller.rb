@@ -61,8 +61,8 @@ class VaccinationsController < ApplicationController
     if @draft_vaccination_record.save
       steps = @draft_vaccination_record.wizard_steps
 
-      steps.delete(:outcome) if @draft_vaccination_record.administered?
       steps.delete(:date_and_time)
+      steps.delete(:outcome) if @draft_vaccination_record.administered?
       if @draft_vaccination_record.delivery_method.present? &&
            @draft_vaccination_record.delivery_site.present?
         steps.delete(:delivery)
@@ -134,7 +134,11 @@ class VaccinationsController < ApplicationController
         :programme_id,
         :vaccine_id
       )
-      .merge(patient_session: @patient_session, performed_by_user: current_user)
+      .merge(
+        patient_session: @patient_session,
+        performed_at: Time.current,
+        performed_by_user: current_user
+      )
   end
 
   def create_params
@@ -147,14 +151,11 @@ class VaccinationsController < ApplicationController
         end
 
       create_params.except(:administered).merge(
-        administered_at: Time.current,
         batch_id: @todays_batch&.id,
         outcome: "administered"
       )
     else
-      vaccination_record_params.except(:administered).merge(
-        administered_at: nil
-      )
+      vaccination_record_params.except(:administered)
     end
   end
 
