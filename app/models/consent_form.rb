@@ -17,6 +17,7 @@
 #  gp_name                             :string
 #  gp_response                         :integer
 #  health_answers                      :jsonb            not null
+#  nhs_number                          :string
 #  parent_contact_method_other_details :string
 #  parent_contact_method_type          :string
 #  parent_email                        :string
@@ -45,6 +46,7 @@
 #
 #  index_consent_forms_on_consent_id       (consent_id)
 #  index_consent_forms_on_location_id      (location_id)
+#  index_consent_forms_on_nhs_number       (nhs_number)
 #  index_consent_forms_on_organisation_id  (organisation_id)
 #  index_consent_forms_on_programme_id     (programme_id)
 #  index_consent_forms_on_school_id        (school_id)
@@ -172,6 +174,8 @@ class ConsentForm < ApplicationRecord
             if: :parent_relationship_other?
 
   validates :reason_notes, length: { maximum: 1000 }
+
+  normalizes :nhs_number, with: -> { _1.blank? ? nil : _1.gsub(/\s/, "") }
 
   on_wizard_step :name do
     validates :given_name, presence: true
