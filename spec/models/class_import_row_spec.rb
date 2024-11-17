@@ -153,6 +153,15 @@ describe ClassImportRow do
           expect(patient.pending_changes).not_to include("home_educated")
         end
       end
+
+      context "when the patient has no cohort" do
+        before { existing_patient.update(cohort_id: nil) }
+
+        it "sets the cohort and doesn't stage it so admins don't have to review that change" do
+          expect(patient.cohort).not_to be_nil
+          expect(patient.pending_changes).not_to include("cohort_id")
+        end
+      end
     end
 
     describe "#cohort" do
