@@ -12,10 +12,10 @@
 #  dose_sequence            :integer          not null
 #  location_name            :string
 #  notes                    :text
+#  outcome                  :integer          not null
 #  pending_changes          :jsonb            not null
 #  performed_by_family_name :string
 #  performed_by_given_name  :string
-#  reason                   :integer
 #  uuid                     :uuid             not null
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null

@@ -167,9 +167,9 @@ class GovukNotifyPersonalisation
   def reason_did_not_vaccinate
     return if vaccination_record.nil? || vaccination_record.administered?
 
-    reason = vaccination_record.reason
     I18n.t(
-      "mailers.vaccination_mailer.reasons_did_not_vaccinate.#{reason}",
+      vaccination_record.outcome,
+      scope: "mailers.vaccination_mailer.reasons_did_not_vaccinate",
       short_patient_name:
     )
   end

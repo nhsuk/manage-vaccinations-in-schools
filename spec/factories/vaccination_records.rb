@@ -12,10 +12,10 @@
 #  dose_sequence            :integer          not null
 #  location_name            :string
 #  notes                    :text
+#  outcome                  :integer          not null
 #  pending_changes          :jsonb            not null
 #  performed_by_family_name :string
 #  performed_by_given_name  :string
-#  reason                   :integer
 #  uuid                     :uuid             not null
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
@@ -73,6 +73,7 @@ FactoryBot.define do
 
     performed_by
 
+    outcome { "administered" }
     administered_at { Time.zone.now }
 
     dose_sequence { 1 }
@@ -82,7 +83,7 @@ FactoryBot.define do
       administered_at { nil }
       delivery_site { nil }
       delivery_method { nil }
-      reason { "not_well" }
+      outcome { "not_well" }
       vaccine { nil }
     end
 

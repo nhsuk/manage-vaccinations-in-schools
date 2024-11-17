@@ -68,8 +68,8 @@ class AppOutcomeBannerComponent < ViewComponent::Base
 
   def reason_do_not_vaccinate
     key =
-      if vaccination_record&.reason.present?
-        "patient_session_statuses.unable_to_vaccinate.banner_explanation.#{vaccination_record.reason}"
+      if vaccination_record&.not_administered?
+        "patient_session_statuses.unable_to_vaccinate.banner_explanation.#{vaccination_record.outcome}"
       else
         "patient_session_statuses.unable_to_vaccinate.banner_explanation.#{@patient_session.state}"
       end

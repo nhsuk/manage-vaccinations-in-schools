@@ -25,6 +25,7 @@ describe DraftVaccinationRecord do
       delivery_site: "left_arm",
       dose_sequence: 1,
       notes: "Some notes.",
+      outcome: "administered",
       patient_session_id: patient_session.id,
       programme_id: programme.id,
       vaccine_id: vaccine.id
@@ -36,7 +37,7 @@ describe DraftVaccinationRecord do
       notes: "Some notes.",
       patient_session_id: patient_session.id,
       programme_id: programme.id,
-      reason: "unwell"
+      outcome: "unwell"
     }
   end
 
@@ -79,45 +80,23 @@ describe DraftVaccinationRecord do
     end
   end
 
-  describe "#outcome=" do
-    let(:attributes) { valid_not_administered_attributes }
-
-    let(:vaccine) { programme.vaccines.active.first }
-
-    context "not vaccinated to vaccinated" do
-      it "marks as administered" do
-        expect { draft_vaccination_record.outcome = "vaccinated" }.to change(
-          draft_vaccination_record,
-          :administered?
-        ).from(false).to(true)
-      end
-
-      it "sets the vaccine" do
-        expect { draft_vaccination_record.outcome = "vaccinated" }.to change(
-          draft_vaccination_record,
-          :vaccine
-        ).from(nil).to(vaccine)
-      end
-    end
-  end
-
   describe "#reset_unused_fields" do
     subject(:save!) { draft_vaccination_record.save! }
 
     context "when administered" do
-      let(:attributes) do
-        valid_administered_attributes.merge(valid_not_administered_attributes)
-      end
+      let(:attributes) { valid_administered_attributes.merge(vaccine_id: nil) }
 
-      it "clears the reason" do
-        expect { save! }.to change(draft_vaccination_record, :reason).to(nil)
+      it "sets the vaccine" do
+        expect { save! }.to change(draft_vaccination_record, :vaccine_id).to(
+          vaccine.id
+        )
       end
     end
 
     context "when not administered" do
       let(:attributes) do
         valid_not_administered_attributes.merge(
-          valid_administered_attributes.except(:administered_at)
+          valid_administered_attributes.except(:administered_at, :outcome)
         )
       end
 

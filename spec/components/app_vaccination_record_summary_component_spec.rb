@@ -7,7 +7,7 @@ describe AppVaccinationRecordSummaryComponent do
 
   let(:current_user) { create(:user) }
   let(:administered_at) { Time.zone.local(2024, 9, 6, 12) }
-  let(:reason) { nil }
+  let(:outcome) { "administered" }
   let(:location) { create(:location, :school, name: "Hogwarts") }
   let(:programme) { create(:programme, :hpv) }
   let(:organisation) { create(:organisation, programmes: [programme]) }
@@ -29,7 +29,7 @@ describe AppVaccinationRecordSummaryComponent do
       :vaccination_record,
       programme:,
       administered_at:,
-      reason:,
+      outcome:,
       batch:,
       vaccine:,
       patient_session:,
@@ -55,7 +55,7 @@ describe AppVaccinationRecordSummaryComponent do
 
     context "when not administered" do
       let(:administered_at) { nil }
-      let(:reason) { :not_well }
+      let(:outcome) { :not_well }
 
       it do
         expect(rendered).to have_css(
@@ -76,7 +76,7 @@ describe AppVaccinationRecordSummaryComponent do
 
     context "without a vaccine" do
       let(:administered_at) { nil }
-      let(:reason) { :not_well }
+      let(:outcome) { :not_well }
       let(:vaccine) { nil }
       let(:batch) { nil }
       let(:other_batch) { nil }
@@ -113,7 +113,7 @@ describe AppVaccinationRecordSummaryComponent do
 
     context "without a vaccine" do
       let(:administered_at) { nil }
-      let(:reason) { :not_well }
+      let(:outcome) { :not_well }
       let(:vaccine) { nil }
       let(:batch) { nil }
       let(:other_batch) { nil }
@@ -156,7 +156,7 @@ describe AppVaccinationRecordSummaryComponent do
 
     context "without a vaccine" do
       let(:administered_at) { nil }
-      let(:reason) { :not_well }
+      let(:outcome) { :not_well }
       let(:vaccine) { nil }
       let(:batch) { nil }
       let(:other_batch) { nil }
@@ -175,7 +175,7 @@ describe AppVaccinationRecordSummaryComponent do
 
     context "without a vaccine" do
       let(:administered_at) { nil }
-      let(:reason) { :not_well }
+      let(:outcome) { :not_well }
       let(:vaccine) { nil }
       let(:batch) { nil }
       let(:other_batch) { nil }

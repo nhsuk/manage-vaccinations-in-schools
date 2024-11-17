@@ -189,7 +189,7 @@ FactoryBot.define do
                 evaluator.organisation.community_clinics.sample.name
               end
             ),
-          reason: :absent_from_school
+          outcome: :absent_from_school
         )
       end
     end
@@ -233,7 +233,7 @@ FactoryBot.define do
                 evaluator.organisation.community_clinics.sample.name
               end
             ),
-          reason: :already_had
+          outcome: :already_had
         )
       end
     end
@@ -257,7 +257,7 @@ FactoryBot.define do
           patient_session:,
           programme: evaluator.programme,
           performed_by: evaluator.user,
-          reason: :already_had
+          outcome: :already_had
         )
       end
     end

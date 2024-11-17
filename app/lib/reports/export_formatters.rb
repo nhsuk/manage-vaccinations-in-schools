@@ -91,10 +91,10 @@ module Reports::ExportFormatters
   end
 
   def reason_not_vaccinated(vaccination_record:)
-    if vaccination_record.reason.present?
-      ImmunisationImportRow::REASONS.key(vaccination_record.reason.to_sym)
-    else
+    if vaccination_record.administered?
       ""
+    else
+      ImmunisationImportRow::REASONS.key(vaccination_record.outcome.to_sym)
     end
   end
 end

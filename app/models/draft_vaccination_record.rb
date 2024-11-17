@@ -17,12 +17,12 @@ class DraftVaccinationRecord
   attribute :dose_sequence, :integer
   attribute :location_name, :string
   attribute :notes, :string
+  attribute :outcome, :string
   attribute :patient_session_id, :integer
   attribute :performed_by_family_name, :string
   attribute :performed_by_given_name, :string
   attribute :performed_by_user_id, :integer
   attribute :programme_id, :integer
-  attribute :reason, :string
   attribute :vaccine_id, :integer
 
   validates :performed_by_family_name,
@@ -41,6 +41,18 @@ class DraftVaccinationRecord
       (:location if location&.generic_clinic?),
       :confirm
     ].compact
+  end
+
+  on_wizard_step :outcome, exact: true do
+    validates :outcome, inclusion: { in: VaccinationRecord.outcomes.keys }
+  end
+
+  on_wizard_step :date_and_time, exact: true do
+    validates :administered_at,
+              presence: true,
+              comparison: {
+                less_than_or_equal_to: -> { Time.current }
+              }
   end
 
   on_wizard_step :delivery, exact: true do
@@ -67,41 +79,24 @@ class DraftVaccinationRecord
     validates :location_name, presence: true
   end
 
-  on_wizard_step :date_and_time, exact: true do
+  on_wizard_step :confirm, exact: true do
+    validates :outcome, presence: true
+  end
+
+  with_options on: :update,
+               if: -> do
+                 required_for_step?(:confirm, exact: true) && administered?
+               end do
     validates :administered_at,
-              presence: true,
-              comparison: {
-                less_than_or_equal_to: -> { Time.current }
-              }
-  end
-
-  on_wizard_step :outcome, exact: true do
-    validates :outcome,
-              inclusion: {
-                in: VaccinationRecord.reasons.keys + ["vaccinated"]
-              }
-  end
-
-  with_options on: :update do
-    with_options if: -> do
-                   required_for_step?(:confirm, exact: true) && administered?
-                 end do
-      validates :delivery_site,
-                :delivery_method,
-                :vaccine_id,
-                :batch_id,
-                presence: true
-    end
-
-    with_options if: -> do
-                   required_for_step?(:confirm, exact: true) && !administered?
-                 end do
-      validates :reason, presence: true
-    end
+              :batch_id,
+              :delivery_method,
+              :delivery_site,
+              :vaccine_id,
+              presence: true
   end
 
   def administered?
-    administered_at != nil
+    outcome == "administered"
   end
 
   def batch
@@ -116,24 +111,6 @@ class DraftVaccinationRecord
     # TODO: this will need to be revisited once it's possible to record half-doses
     # e.g. for the flu programme where a child refuses the second half of the dose
     vaccine.dose_volume_ml * 1 if vaccine.present?
-  end
-
-  def outcome
-    administered? ? "vaccinated" : reason
-  end
-
-  def outcome=(value)
-    if value == "vaccinated"
-      self.administered_at ||= Time.current
-      self.reason = nil
-
-      if programme && (vaccines = programme.vaccines.active).count == 1
-        self.vaccine_id = vaccines.first.id
-      end
-    else
-      self.reason = value
-      self.administered_at = nil
-    end
   end
 
   def patient_session
@@ -194,7 +171,12 @@ class DraftVaccinationRecord
 
   def reset_unused_fields
     if administered?
-      self.reason = nil
+      self.administered_at ||= Time.current
+
+      if vaccine_id.nil? && programme &&
+           (vaccines = programme.vaccines.active).count == 1
+        self.vaccine_id = vaccines.first.id
+      end
     else
       self.batch_id = nil
       self.delivery_method = nil

@@ -134,11 +134,7 @@ class VaccinationsController < ApplicationController
         :programme_id,
         :vaccine_id
       )
-      .merge(
-        patient_session: @patient_session,
-        performed_by_user: current_user,
-        wizard_step: :date_and_time
-      )
+      .merge(patient_session: @patient_session, performed_by_user: current_user)
   end
 
   def create_params
@@ -152,7 +148,8 @@ class VaccinationsController < ApplicationController
 
       create_params.except(:administered).merge(
         administered_at: Time.current,
-        batch_id: @todays_batch&.id
+        batch_id: @todays_batch&.id,
+        outcome: "administered"
       )
     else
       vaccination_record_params.except(:administered).merge(
