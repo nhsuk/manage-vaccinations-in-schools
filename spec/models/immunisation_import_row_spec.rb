@@ -15,11 +15,10 @@ describe ImmunisationImportRow do
   let(:family_name) { "Potter" }
   let(:date_of_birth) { "20120101" }
   let(:address_postcode) { "SW1A 1AA" }
-  let(:valid_data) do
+  let(:valid_common_data) do
     {
       "ORGANISATION_CODE" => "abc",
       "VACCINATED" => "Y",
-      "ANATOMICAL_SITE" => "nasal",
       "BATCH_EXPIRY_DATE" => "20210101",
       "BATCH_NUMBER" => "123",
       "SCHOOL_NAME" => "Hogwarts",
@@ -30,12 +29,26 @@ describe ImmunisationImportRow do
       "PERSON_POSTCODE" => address_postcode,
       "PERSON_GENDER_CODE" => "Male",
       "NHS_NUMBER" => nhs_number,
-      "DATE_OF_VACCINATION" => "20240101",
-      "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV",
-      "PERFORMING_PROFESSIONAL_FORENAME" => "John",
-      "PERFORMING_PROFESSIONAL_SURNAME" => "Smith"
+      "DATE_OF_VACCINATION" => "20240101"
     }
   end
+  let(:valid_flu_data) do
+    valid_common_data.deep_dup.merge(
+      "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV",
+      "ANATOMICAL_SITE" => "nasal",
+      "PERFORMING_PROFESSIONAL_FORENAME" => "John",
+      "PERFORMING_PROFESSIONAL_SURNAME" => "Smith"
+    )
+  end
+  let(:valid_hpv_data) do
+    valid_common_data.deep_dup.merge(
+      "VACCINE_GIVEN" => "Gardasil9",
+      "ANATOMICAL_SITE" => "Left Upper Arm",
+      "DOSE_SEQUENCE" => "1",
+      "CARE_SETTING" => "1"
+    )
+  end
+  let(:valid_data) { valid_flu_data }
 
   before { create(:location, :school, urn: "123456") }
 
@@ -275,12 +288,12 @@ describe ImmunisationImportRow do
       let(:programme) { create(:programme, :hpv) }
 
       let(:data) do
-        {
+        valid_hpv_data.merge(
           "ANATOMICAL_SITE" => "nasal",
           "VACCINATED" => "Y",
           "VACCINE_GIVEN" => "Gardasil9",
           "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901"
-        }
+        )
       end
 
       it "has errors" do
@@ -316,7 +329,8 @@ describe ImmunisationImportRow do
         {
           "ANATOMICAL_SITE" => "left buttock",
           "VACCINATED" => "Y",
-          "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV"
+          "VACCINE_GIVEN" => "AstraZeneca Fluenz Tetra LAIV",
+          "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901"
         }
       end
 
