@@ -22,7 +22,7 @@ class ConsentFormsController < ApplicationController
   end
 
   def edit_match
-    render :match
+    render :match, layout: "two_thirds"
   end
 
   def update_match
