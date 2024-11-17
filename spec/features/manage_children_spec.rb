@@ -43,6 +43,7 @@ describe "Manage children" do
 
   scenario "Removing a child from a cohort" do
     given_patients_exist
+    and_the_patient_belongs_to_a_session
 
     when_i_click_on_children
     and_i_click_on_a_child
@@ -61,8 +62,6 @@ describe "Manage children" do
   end
 
   scenario "Viewing important notices" do
-    given_my_organisation_exists
-
     when_i_click_on_notices
     then_i_see_no_notices
 
@@ -76,12 +75,14 @@ describe "Manage children" do
   end
 
   def given_my_organisation_exists
-    @organisation = create(:organisation, :with_one_nurse)
+    @programme = create(:programme, :hpv)
+    @organisation =
+      create(:organisation, :with_one_nurse, programmes: [@programme])
   end
 
   def given_patients_exist
     school = create(:location, :school, organisation: @organisation)
-    patient =
+    @patient =
       create(
         :patient,
         organisation: @organisation,
@@ -89,7 +90,7 @@ describe "Manage children" do
         family_name: "Smith",
         school:
       )
-    create(:vaccination_record, patient:)
+    create(:vaccination_record, patient: @patient, programme: @programme)
     create_list(:patient, 9, organisation: @organisation, school:)
 
     @existing_patient =
@@ -99,6 +100,12 @@ describe "Manage children" do
         family_name: "Doe",
         cohort: @organisation.cohorts.first
       )
+  end
+
+  def and_the_patient_belongs_to_a_session
+    session =
+      create(:session, organisation: @organisation, programme: @programme)
+    create(:patient_session, session:, patient: @patient)
   end
 
   def when_a_deceased_patient_exists
@@ -196,6 +203,7 @@ describe "Manage children" do
 
   def and_i_see_the_cohort
     expect(page).not_to have_content("No cohorts")
+    expect(page).not_to have_content("No sessions")
   end
 
   def when_i_click_on_remove_from_cohort
@@ -208,6 +216,7 @@ describe "Manage children" do
 
   def and_no_longer_see_the_cohort
     expect(page).to have_content("No cohorts")
+    expect(page).to have_content("No sessions")
   end
 
   def when_i_click_on_notices
