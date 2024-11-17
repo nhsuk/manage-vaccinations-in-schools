@@ -81,17 +81,6 @@ describe ConsentFormMatchingJob do
         expect { perform }.to change(Consent, :count).by(1)
       end
     end
-
-    context "with a successful NHS number lookup" do
-      let(:response_file) { "pds/search-patients-response.json" }
-
-      let!(:patient) { create(:patient, nhs_number: "9449306168", session:) }
-
-      it "creates a consent" do
-        expect { perform }.to change(Consent, :count).by(1)
-        expect(Consent.first.patient).to eq(patient)
-      end
-    end
   end
 
   context "with multiple matching patients" do
@@ -110,6 +99,20 @@ describe ConsentFormMatchingJob do
 
     it "doesn't create a consent" do
       expect { perform }.not_to change(Consent, :count)
+    end
+  end
+
+  context "with a successful NHS number lookup" do
+    let(:response_file) { "pds/search-patients-response.json" }
+    let(:nhs_number) { "9449306168" }
+
+    context "when the patient with the NHS number exists" do
+      let!(:patient) { create(:patient, nhs_number:, session:) }
+
+      it "creates a consent" do
+        expect { perform }.to change(Consent, :count).by(1)
+        expect(Consent.first.patient).to eq(patient)
+      end
     end
   end
 end
