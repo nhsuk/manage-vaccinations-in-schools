@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
-describe AppCompareConsentFormAndPatientComponent, type: :component do
-  subject { page }
+describe AppCompareConsentFormAndPatientComponent do
+  subject(:rendered) { render_inline(component) }
 
+  let(:component) { described_class.new(heading: "", consent_form:, patient:) }
+
+  let(:location) { create(:location, :school, name: "Waterloo Road") }
   let(:consent_form) do
     create(
       :consent_form,
@@ -12,13 +15,10 @@ describe AppCompareConsentFormAndPatientComponent, type: :component do
       address_line_1: "1 Main Street",
       address_line_2: "Area",
       address_town: "Some Town",
-      address_postcode: "SW11 1AA"
+      address_postcode: "SW11 1AA",
+      location:
     )
   end
-  let(:patient) { create(:patient) }
-  let(:component) { described_class.new(heading: "", consent_form:, patient:) }
-
-  before { render_inline(component) }
 
   describe "when the consent form matches the patient" do
     let(:patient) do
@@ -30,28 +30,24 @@ describe AppCompareConsentFormAndPatientComponent, type: :component do
         address_line_1: consent_form.address_line_1,
         address_line_2: consent_form.address_line_2,
         address_town: consent_form.address_town,
-        address_postcode: consent_form.address_postcode
+        address_postcode: consent_form.address_postcode,
+        school: consent_form.location
       )
     end
 
     it "displays the key consent form details without anything being highlighted as unmatched" do
-      expect(page).to have_text(["Child’s name", "John Doe", "John Doe"].join)
-      expect(page).to have_text(
-        ["Date of birth", "1 January 2000", "1 January 2000"].join
+      expect(rendered).to have_text("Full name\nJohn Doe\nJohn Doe")
+      expect(rendered).to have_text(
+        "Date of birth\n1 January 2000\n1 January 2000"
       )
-      expect(page).to have_text(
+      expect(rendered).to have_text(
         [
           "Address",
-          "1 Main Street",
-          "Area",
-          "Some Town",
-          "SW11 1AA",
-          "1 Main Street",
-          "Area",
-          "Some Town",
-          "SW11 1AA"
-        ].join
+          "1 Main StreetAreaSome TownSW11 1AA",
+          "1 Main StreetAreaSome TownSW11 1AA"
+        ].join("\n")
       )
+      expect(rendered).to have_text("School\nWaterloo Road\nWaterloo Road")
     end
   end
 
@@ -65,28 +61,24 @@ describe AppCompareConsentFormAndPatientComponent, type: :component do
         address_line_1: "2 Main Street", # different
         address_line_2: consent_form.address_line_2,
         address_town: consent_form.address_town,
-        address_postcode: consent_form.address_postcode
+        address_postcode: consent_form.address_postcode,
+        school: create(:location, :school, name: "Hogwarts")
       )
     end
 
     it "displays the key consent form details with the unmatched details highlighted" do
-      expect(page).to have_text(["Child’s name", "John Doe", "Jane Doe"].join)
-      expect(page).to have_text(
-        ["Date of birth", "1 January 2000", "2 January 2000"].join
+      expect(rendered).to have_text("Full name\nJohn Doe\nJane Doe")
+      expect(rendered).to have_text(
+        "Date of birth\n1 January 2000\n2 January 2000"
       )
-      expect(page).to have_text(
+      expect(rendered).to have_text(
         [
           "Address",
-          "1 Main Street",
-          "Area",
-          "Some Town",
-          "SW11 1AA",
-          "2 Main Street",
-          "Area",
-          "Some Town",
-          "SW11 1AA"
-        ].join
+          "1 Main StreetAreaSome TownSW11 1AA",
+          "2 Main StreetAreaSome TownSW11 1AA"
+        ].join("\n")
       )
+      expect(rendered).to have_text("School\nWaterloo Road\nHogwarts")
     end
   end
 end

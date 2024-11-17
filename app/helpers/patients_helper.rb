@@ -37,4 +37,14 @@ module PatientsHelper
       format_year_group(patient.year_group)
     end
   end
+
+  def patient_parents(patient)
+    tag.ul(class: "nhsuk-list") do
+      safe_join(
+        patient.parents.map do |parent|
+          tag.li { format_parent(parent, patient:) }
+        end
+      )
+    end
+  end
 end
