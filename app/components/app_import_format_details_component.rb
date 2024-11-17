@@ -243,8 +243,6 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
   end
 
   def care_setting
-    return [] unless @programme.hpv?
-
     [
       {
         name: "CARE_SETTING",
@@ -254,7 +252,9 @@ class AppImportFormatDetailsComponent < ViewComponent::Base
       },
       {
         name: "CLINIC_NAME",
-        notes: "Optional, if #{tag.code("CARE_SETTING")} is #{tag.i("2")}"
+        notes:
+          "Required if #{tag.code("CARE_SETTING")} is #{tag.i("2")}, must be " \
+            "the name of a community clinic location"
       }
     ]
   end
