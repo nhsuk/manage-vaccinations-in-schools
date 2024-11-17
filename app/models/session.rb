@@ -245,6 +245,15 @@ class Session < ApplicationRecord
         on_duplicate_key_ignore: true
       )
 
+      Consent
+        .via_self_consent
+        .where(
+          patient: unvaccinated_patients,
+          organisation:,
+          programme: programmes
+        )
+        .update_all(invalidated_at: Time.current)
+
       update!(closed_at: Time.current)
     end
   end
