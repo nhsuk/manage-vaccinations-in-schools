@@ -410,6 +410,14 @@ class ImmunisationImportRow
     vaccine.maximum_dose_sequence
   end
 
+  # TODO: we want tougher validation from the point of integration of Mavis
+  # but permit looser validation in historical data
+  # in the future, this check should change to apply from a specific point in time,
+  # not the current academic year
+  def outcome_in_this_academic_year?
+    date_of_vaccination.present? && academic_year == Date.current.academic_year
+  end
+
   def requires_care_setting?
     @programme.hpv?
   end
@@ -460,10 +468,7 @@ class ImmunisationImportRow
 
   def delivery_site_appropriate_for_vaccine
     return if vaccine.nil? || delivery_site.nil?
-    if date_of_vaccination.present? &&
-         academic_year != Date.current.academic_year
-      return
-    end
+    return unless outcome_in_this_academic_year?
 
     unless vaccine.available_delivery_sites.include?(delivery_site)
       errors.add(:delivery_site, :inclusion)
@@ -472,7 +477,7 @@ class ImmunisationImportRow
 
   def session_date_exists
     return if date_of_vaccination.nil? || location.nil?
-    return if academic_year != Date.current.academic_year
+    return unless outcome_in_this_academic_year?
 
     unless Session.has_date(date_of_vaccination).exists?(
              organisation:,
