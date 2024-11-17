@@ -99,7 +99,7 @@ class SessionsController < ApplicationController
   delegate :organisation, to: :current_user
 
   def set_session
-    @session = sessions_scope.find_by!(slug: params[:slug])
+    @session = authorize sessions_scope.find_by!(slug: params[:slug])
   end
 
   def sessions_scope

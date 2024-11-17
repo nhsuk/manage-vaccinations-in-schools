@@ -66,6 +66,7 @@ describe "Manage school sessions" do
 
     when_i_close_the_session
     then_i_see_the_close_confirmation
+    and_i_cant_edit_the_session
     and_i_go_back_to_sessions
 
     when_i_go_to_unscheduled_sessions
@@ -266,6 +267,10 @@ describe "Manage school sessions" do
 
   def then_i_see_the_close_confirmation
     expect(page).to have_content("Session closed.")
+  end
+
+  def and_i_cant_edit_the_session
+    expect(page).not_to have_content("Edit session")
   end
 
   def and_i_go_back_to_sessions
