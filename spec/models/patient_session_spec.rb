@@ -48,8 +48,12 @@ describe PatientSession do
     let(:earlier_triage) do
       create(:triage, programme:, patient:, updated_at: 1.day.ago)
     end
+    let(:invalidated_triage) do
+      create(:triage, :invalidated, programme:, patient:)
+    end
 
     it { should eq([earlier_triage, later_triage]) }
+    it { should_not include(invalidated_triage) }
   end
 
   describe "#latest_triage" do
