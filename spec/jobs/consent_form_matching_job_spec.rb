@@ -114,5 +114,37 @@ describe ConsentFormMatchingJob do
         expect(Consent.first.patient).to eq(patient)
       end
     end
+
+    context "when the patient with the NHS number doesn't exist" do
+      it "doesn't create a consent" do
+        expect { perform }.not_to change(Consent, :count)
+      end
+
+      it "updates the consent form with the NHS number" do
+        expect { perform }.to change { consent_form.reload.nhs_number }.to(
+          nhs_number
+        )
+      end
+    end
+
+    context "when a patient with no NHS number but matching details exists" do
+      before do
+        create(
+          :patient,
+          nhs_number: nil,
+          given_name: consent_form.given_name,
+          family_name: consent_form.family_name,
+          date_of_birth: consent_form.date_of_birth
+        )
+      end
+
+      it "doesn't create a consent" do
+        expect { perform }.not_to change(Consent, :count)
+      end
+
+      it "doesn't update the consent form with the NHS number" do
+        expect { perform }.not_to(change { consent_form.reload.nhs_number })
+      end
+    end
   end
 end

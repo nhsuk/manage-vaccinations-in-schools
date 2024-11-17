@@ -11,12 +11,24 @@ class ConsentFormMatchingJob < ApplicationJob
     # Match if we find a patient with the PDS NHS number
     return if match_with_exact_nhs_number
 
-    # Otherwise look for a patient in the original session with no NHS number
+    # Look for patients in the original session with no NHS number
     if session_patients.count == 1
       # If we found exactly one, match the consent form to this patient
       match_patient(session_patients.first)
     end
-    # If we found 0 or >1 patients, do nothing; the nurse will match manually
+
+    # Look for patients in any session with matching details
+    if pds_patient && matching_patients.empty?
+      # If no patients are found, store the PDS NHS number in the consent form.
+      # A nurse may then create a patient record and we can try this job again
+      update_consent_form_nhs_number
+    end
+
+    # If we found:
+    # - No patients with the NHS number from the PDS record
+    # - 2 or more patients in the original session, matching with no NHS number
+    # - 1 or more patients in any session, matching with no NHS number
+    # Then do nothing; the nurse needs to match manually or create a new patient
   end
 
   private
@@ -50,6 +62,14 @@ class ConsentFormMatchingJob < ApplicationJob
         nhs_number: nil,
         **query
       )
+  end
+
+  def matching_patients
+    @matching_patients ||= Patient.match_existing(nhs_number: nil, **query)
+  end
+
+  def update_consent_form_nhs_number
+    @consent_form.update!(nhs_number: pds_patient.nhs_number)
   end
 
   def match_patient(patient)
