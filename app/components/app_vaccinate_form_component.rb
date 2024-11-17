@@ -21,10 +21,14 @@ class AppVaccinateFormComponent < ViewComponent::Base
   end
 
   def render?
-    @patient_session.next_step == :vaccinate && @patient_session.session.today?
+    @patient_session.next_step == :vaccinate && session.open? && session.today?
   end
 
   private
+
+  def session
+    @patient_session.session
+  end
 
   # TODO: this code will need to be revisited in future as it only really
   # works for HPV, where we only have one vaccine. It is likely to fail for
