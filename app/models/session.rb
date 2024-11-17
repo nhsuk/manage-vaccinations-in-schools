@@ -252,7 +252,7 @@ class Session < ApplicationRecord
           organisation:,
           programme: programmes
         )
-        .update_all(invalidated_at: Time.current)
+        .invalidate_all
 
       update!(closed_at: Time.current)
     end

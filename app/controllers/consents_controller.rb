@@ -5,8 +5,8 @@ class ConsentsController < ApplicationController
   include PatientSortingConcern
 
   before_action :set_session
-  before_action :set_patient, only: %i[create send_request]
-  before_action :set_patient_session, only: %i[create send_request]
+  before_action :set_patient, except: :index
+  before_action :set_patient_session, except: :index
   before_action :set_consent, except: %i[index create send_request]
   before_action :ensure_can_withdraw, only: %i[edit_withdraw update_withdraw]
   before_action :ensure_can_invalidate,
@@ -86,7 +86,12 @@ class ConsentsController < ApplicationController
   def update_withdraw
     @consent.assign_attributes(withdraw_params)
 
-    if @consent.save
+    if @consent.valid?
+      ActiveRecord::Base.transaction do
+        @consent.save!
+        @patient_session.triages.invalidate_all
+      end
+
       redirect_to session_patient_consent_path
     else
       render :withdraw, status: :unprocessable_entity
@@ -100,7 +105,12 @@ class ConsentsController < ApplicationController
   def update_invalidate
     @consent.assign_attributes(invalidate_params)
 
-    if @consent.save
+    if @consent.valid?
+      ActiveRecord::Base.transaction do
+        @consent.save!
+        @patient_session.triages.invalidate_all
+      end
+
       redirect_to session_patient_consent_path
     else
       render :invalidate, status: :unprocessable_entity
