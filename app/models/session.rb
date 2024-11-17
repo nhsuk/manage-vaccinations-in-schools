@@ -245,14 +245,20 @@ class Session < ApplicationRecord
         on_duplicate_key_ignore: true
       )
 
-      Consent
-        .via_self_consent
-        .where(
+      self_consents =
+        Consent.via_self_consent.where(
           patient: unvaccinated_patients,
           organisation:,
           programme: programmes
         )
-        .invalidate_all
+
+      self_consents.invalidate_all
+
+      Triage.where(
+        patient: self_consents.map(&:patient),
+        organisation:,
+        programme: programmes
+      ).invalidate_all
 
       update!(closed_at: Time.current)
     end

@@ -498,8 +498,23 @@ describe Session do
             )
           end
 
+          let(:triage) do
+            create(
+              :triage,
+              patient: consent.patient,
+              programme: consent.programme,
+              organisation: consent.organisation
+            )
+          end
+
           it "invalidates the consent" do
             expect { close! }.to change { consent.reload.invalidated? }.from(
+              false
+            ).to(true)
+          end
+
+          it "invalidates the triage" do
+            expect { close! }.to change { triage.reload.invalidated? }.from(
               false
             ).to(true)
           end
@@ -510,8 +525,21 @@ describe Session do
             create(:consent, patient: unvaccinated_patient, programme:)
           end
 
+          let(:triage) do
+            create(
+              :triage,
+              patient: consent.patient,
+              programme: consent.programme,
+              organisation: consent.organisation
+            )
+          end
+
           it "doesn't invalidate the consent" do
             expect { close! }.not_to(change { consent.reload.invalidated? })
+          end
+
+          it "doesn't invalidate the triage" do
+            expect { close! }.not_to(change { triage.reload.invalidated? })
           end
         end
       end
