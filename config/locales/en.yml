@@ -47,6 +47,7 @@ en:
         batch_expiry_date: <code>BATCH_EXPIRY_DATE</code>
         batch_number: <code>BATCH_NUMBER</code>
         care_setting: <code>CARE_SETTING</code>
+        clinic_name: <code>CLINIC_NAME</code>
         date_of_vaccination: <code>DATE_OF_VACCINATION</code>
         delivery_site: <code>ANATOMICAL_SITE</code>
         dose_sequence: <code>DOSE_SEQUENCE</code>
@@ -197,6 +198,8 @@ en:
             care_setting:
               blank: Enter a care setting.
               inclusion: Enter a valid care setting.
+            clinic_name:
+              inclusion: Enter a clinic name
             date_of_vaccination:
               blank: Enter a date in the correct format
               greater_than_or_equal_to: The vaccination date is outside the programme. Enter a date after the programme started.

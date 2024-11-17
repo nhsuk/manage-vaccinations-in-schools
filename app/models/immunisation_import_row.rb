@@ -72,8 +72,18 @@ class ImmunisationImportRow
             inclusion: [CARE_SETTING_SCHOOL, CARE_SETTING_COMMUNITY],
             allow_nil: true
   validates :care_setting, presence: true, if: :requires_care_setting?
+  validates :clinic_name,
+            inclusion: {
+              if: -> do
+                outcome_in_this_academic_year? &&
+                  care_setting == CARE_SETTING_COMMUNITY
+              end,
+              in: -> { _1.organisation.community_clinics.map(&:name) }
+            }
 
   validate :performed_by_details_present_where_required
+
+  attr_reader :organisation
 
   def initialize(data:, organisation:, programme:)
     @data = data
@@ -333,8 +343,6 @@ class ImmunisationImportRow
   end
 
   private
-
-  attr_reader :organisation
 
   delegate :ods_code, to: :organisation
 
