@@ -11,25 +11,47 @@
 
     <%= table.with_body do |body| %>
       <%= body.with_row do |row| %>
-        <%= row.with_cell(text: "Child’s name", header: true) %>
-        <%= row.with_cell(text: mark(consent_form.full_name, unless: name_match?)) %>
+        <%= row.with_cell(text: "Full name", header: true) %>
+        <%= row.with_cell(text: mark(consent_form.full_name, unless: full_name_match?)) %>
         <%= row.with_cell(text: patient.full_name) %>
       <% end %>
-    <% end %>
 
-    <%= table.with_body do |body| %>
+      <% if consent_form.has_preferred_name? || patient.has_preferred_name? %>
+        <%= body.with_row do |row| %>
+          <%= row.with_cell(text: "Preferred name", header: true) %>
+          <%= row.with_cell(text: mark(consent_form.preferred_full_name, unless: preferred_full_name_match?)) %>
+          <%= row.with_cell(text: patient.preferred_full_name) %>
+        <% end %>
+      <% end %>
+
       <%= body.with_row do |row| %>
         <%= row.with_cell(text: "Date of birth", header: true) %>
         <%= row.with_cell(text: mark(consent_form.date_of_birth.to_fs(:long), unless: date_of_birth_match?)) %>
         <%= row.with_cell(text: patient.date_of_birth.to_fs(:long)) %>
       <% end %>
-    <% end %>
 
-    <%= table.with_body do |body| %>
       <%= body.with_row do |row| %>
         <%= row.with_cell(text: "Address", header: true) %>
         <%= row.with_cell(text: mark(helpers.format_address_multi_line(consent_form), unless: address_match?)) %>
         <%= row.with_cell(text: helpers.format_address_multi_line(patient)) %>
+      <% end %>
+
+      <%= body.with_row do |row| %>
+        <%= row.with_cell(text: "School", header: true) %>
+        <%= row.with_cell(text: mark(helpers.patient_school(consent_form_patient), unless: school_match?)) %>
+        <%= row.with_cell(text: helpers.patient_school(patient)) %>
+      <% end %>
+
+      <%= body.with_row do |row| %>
+        <%= row.with_cell(text: "GP surgery", header: true) %>
+        <%= row.with_cell(text: consent_form.gp_name) %>
+        <%= row.with_cell(text: "") %>
+      <% end %>
+
+      <%= body.with_row do |row| %>
+        <%= row.with_cell(text: "Parent", header: true) %>
+        <%= row.with_cell(text: helpers.format_parent(consent_form_parent, patient:)) %>
+        <%= row.with_cell(text: helpers.patient_parents(patient)) %>
       <% end %>
     <% end %>
   <% end %>
