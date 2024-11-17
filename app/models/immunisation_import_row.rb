@@ -73,23 +73,7 @@ class ImmunisationImportRow
             allow_nil: true
   validates :care_setting, presence: true, if: :requires_care_setting?
 
-  validates :performed_by_user,
-            presence: true,
-            if: -> do
-              @data["PERFORMING_PROFESSIONAL_EMAIL"]&.strip.present? ||
-                (
-                  requires_performed_by? && performed_by_given_name.blank? &&
-                    performed_by_family_name.blank?
-                )
-            end
-  validates :performed_by_given_name,
-            :performed_by_family_name,
-            absence: {
-              if: :performed_by_user
-            },
-            presence: {
-              if: -> { requires_performed_by? && performed_by_user.nil? }
-            }
+  validate :performed_by_details_present_where_required
 
   def initialize(data:, organisation:, programme:)
     @data = data
@@ -332,12 +316,16 @@ class ImmunisationImportRow
 
   def performed_by_given_name
     @performed_by_given_name ||=
-      @data["PERFORMING_PROFESSIONAL_FORENAME"]&.strip&.presence
+      if performed_by_user.nil?
+        @data["PERFORMING_PROFESSIONAL_FORENAME"]&.strip&.presence
+      end
   end
 
   def performed_by_family_name
     @performed_by_family_name ||=
-      @data["PERFORMING_PROFESSIONAL_SURNAME"]&.strip&.presence
+      if performed_by_user.nil?
+        @data["PERFORMING_PROFESSIONAL_SURNAME"]&.strip&.presence
+      end
   end
 
   def uuid
@@ -422,8 +410,27 @@ class ImmunisationImportRow
     @programme.hpv?
   end
 
-  def requires_performed_by?
-    administered && @programme.flu?
+  def performed_by_details_present_where_required
+    if outcome_in_this_academic_year?
+      errors.add(:performed_by_user, :blank) if performed_by_user.nil?
+    elsif @programme.hpv? # previous academic years from here on
+      nil
+      # no validation required
+    elsif @programme.flu?
+      email_field_populated =
+        @data["PERFORMING_PROFESSIONAL_EMAIL"]&.strip.present?
+      if !email_field_populated &&
+           (performed_by_given_name.blank? || performed_by_family_name.blank?)
+        if performed_by_given_name.blank?
+          errors.add(:performed_by_given_name, :blank)
+        end
+        if performed_by_family_name.blank?
+          errors.add(:performed_by_family_name, :blank)
+        end
+      end
+    else
+      raise "Unexpected programme"
+    end
   end
 
   DATE_FORMATS = %w[%Y%m%d %Y-%m-%d %d/%m/%Y].freeze

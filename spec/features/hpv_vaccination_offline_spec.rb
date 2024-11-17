@@ -177,6 +177,9 @@ describe "HPV Vaccination" do
     row_for_unvaccinated_patient["TIME_OF_VACCINATION"] = "10:01"
     row_for_unvaccinated_patient["VACCINATED"] = "N"
     row_for_unvaccinated_patient["REASON_NOT_VACCINATED"] = "did not attend"
+    row_for_unvaccinated_patient[
+      "PERFORMING_PROFESSIONAL_EMAIL"
+    ] = @organisation.users.first.email
     row_for_unvaccinated_patient["CLINIC_NAME"] = clinic_name if clinic_name
     File.write("tmp/modified.csv", csv_table.to_csv)
   end

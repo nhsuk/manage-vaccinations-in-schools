@@ -284,6 +284,76 @@ describe ImmunisationImportRow do
       end
     end
 
+    context "vaccination in this academic year, no vaccinator details provided" do
+      let(:data) do
+        valid_data.except(
+          "PERFORMING_PROFESSIONAL_EMAIL",
+          "PERFORMING_PROFESSIONAL_FORENAME",
+          "PERFORMING_PROFESSIONAL_SURNAME"
+        ).merge(
+          "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+          "VACCINATED" => "Y"
+        )
+      end
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:performed_by_user]).to include(
+          "Enter a valid email address"
+        )
+        expect(
+          immunisation_import_row.errors[:performed_by_given_name]
+        ).to be_empty
+        expect(
+          immunisation_import_row.errors[:performed_by_family_name]
+        ).to be_empty
+      end
+    end
+
+    context "vaccination in this academic year, vaccinator email not provided but forename and surname are" do
+      let(:data) do
+        valid_data.except("PERFORMING_PROFESSIONAL_EMAIL").merge(
+          "PERFORMING_PROFESSIONAL_FORENAME" => "John",
+          "PERFORMING_PROFESSIONAL_SURNAME" => "Smith",
+          "DATE_OF_VACCINATION" => "#{Date.current.academic_year}0901",
+          "VACCINATED" => "Y"
+        )
+      end
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:performed_by_user]).to include(
+          "Enter a valid email address"
+        )
+      end
+    end
+
+    context "HPV vaccination in previous academic year, no vaccinator details provided" do
+      let(:programme) { create(:programme, :hpv) }
+
+      let(:data) do
+        valid_hpv_data.except(
+          "PERFORMING_PROFESSIONAL_EMAIL",
+          "PERFORMING_PROFESSIONAL_FORENAME",
+          "PERFORMING_PROFESSIONAL_SURNAME"
+        ).merge("DATE_OF_VACCINATION" => "20220101")
+      end
+
+      it { should be_valid }
+    end
+
+    context "Flu vaccination in previous academic year, no vaccinator details provided" do
+      let(:data) do
+        valid_flu_data.except(
+          "PERFORMING_PROFESSIONAL_EMAIL",
+          "PERFORMING_PROFESSIONAL_FORENAME",
+          "PERFORMING_PROFESSIONAL_SURNAME"
+        ).merge("DATE_OF_VACCINATION" => "20220101")
+      end
+
+      it { should be_invalid }
+    end
+
     context "vaccination in this academic year, with a delivery site that is not appropriate for HPV" do
       let(:programme) { create(:programme, :hpv) }
 
@@ -371,16 +441,11 @@ describe ImmunisationImportRow do
       context "with a performing profession email provided as well" do
         before { data["PERFORMING_PROFESSIONAL_EMAIL"] = create(:user).email }
 
-        it { should be_invalid }
+        it { should be_valid }
 
-        it "has errors" do
-          expect(immunisation_import_row).to be_invalid
-          expect(
-            immunisation_import_row.errors[:performed_by_given_name]
-          ).to include(/blank/)
-          expect(
-            immunisation_import_row.errors[:performed_by_family_name]
-          ).to include(/blank/)
+        it "ignores the performing professional fields" do
+          expect(immunisation_import_row.performed_by_given_name).to be_nil
+          expect(immunisation_import_row.performed_by_family_name).to be_nil
         end
       end
     end
