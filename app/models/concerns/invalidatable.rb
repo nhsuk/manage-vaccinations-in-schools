@@ -6,6 +6,9 @@ module Invalidatable
   included do
     scope :not_invalidated, -> { where(invalidated_at: nil) }
     scope :invalidated, -> { where.not(invalidated_at: nil) }
+
+    scope :invalidate_all,
+          -> { not_invalidated.update_all(invalidated_at: Time.current) }
   end
 
   def invalidated?
