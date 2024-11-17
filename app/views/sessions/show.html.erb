@@ -111,11 +111,11 @@
   <div class="nhsuk-grid-column-one-third">
     <%= render AppSessionSummaryComponent.new(@session) %>
 
-    <% unless @session.unscheduled? %>
+    <% if policy(@session).edit? %>
       <%= govuk_button_link_to "Edit session", edit_session_path(@session), class: "app-button--secondary" %>
     <% end %>
 
-    <% if @session.closable? %>
+    <% if policy(@session).edit_close? %>
       <%= govuk_button_link_to "Close session", close_session_path(@session), class: "app-button--secondary" %>
     <% end %>
   </div>
