@@ -1,16 +1,22 @@
 <% entries.each_with_index do |triage, index| %>
   <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">
+    <% if triage.invalidated? %><s><% end %>
     Triaged decision: <%= triage.human_enum_name(:status) %>
+    <% if triage.invalidated? %></s><% end %>
   </h3>
 
   <% if (notes = triage.notes).present? %>
-    <blockquote><p><%= notes %></p></blockquote>
+    <blockquote><p>
+      <%= triage.invalidated? ? tag.s(notes) : notes %>
+    </p></blockquote>
   <% end %>
 
   <p class="nhsuk-u-secondary-text-color nhsuk-u-font-size-16">
-    <%= triage.created_at.to_fs(:long) %>
-    &middot;
-    <%= triage.performed_by.full_name %>
+    <% if triage.invalidated? %><s><% end %>
+      <%= triage.created_at.to_fs(:long) %>
+      &middot;
+      <%= triage.performed_by.full_name %>
+    <% if triage.invalidated? %></s><% end %>
   </p>
 
   <% if index < entries.size - 1 %>

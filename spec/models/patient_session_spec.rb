@@ -48,12 +48,8 @@ describe PatientSession do
     let(:earlier_triage) do
       create(:triage, programme:, patient:, updated_at: 1.day.ago)
     end
-    let(:invalidated_triage) do
-      create(:triage, :invalidated, programme:, patient:)
-    end
 
     it { should eq([earlier_triage, later_triage]) }
-    it { should_not include(invalidated_triage) }
   end
 
   describe "#latest_triage" do
@@ -61,7 +57,13 @@ describe PatientSession do
 
     let(:patient) { patient_session.patient }
     let(:later_triage) do
-      create(:triage, programme:, status: :ready_to_vaccinate, patient:)
+      create(
+        :triage,
+        created_at: 1.day.ago,
+        programme:,
+        status: :ready_to_vaccinate,
+        patient:
+      )
     end
 
     before do
@@ -69,7 +71,16 @@ describe PatientSession do
         :triage,
         programme:,
         status: :needs_follow_up,
-        created_at: 1.day.ago,
+        created_at: 2.days.ago,
+        patient:
+      )
+
+      # should not be returned as invalidated even if more recent
+      create(
+        :triage,
+        :invalidated,
+        programme:,
+        status: :ready_to_vaccinate,
         patient:
       )
     end

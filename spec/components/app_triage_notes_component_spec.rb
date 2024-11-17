@@ -38,10 +38,19 @@ describe AppTriageNotesComponent do
     end
 
     it { should have_css("h3", text: "Triaged decision: Safe to vaccinate") }
-    it { should have_css("p", text: patient_session.triages.first.notes) }
+    it { should have_css("p", text: "Some notes") }
     it { should have_css("p", text: "4 December 2023 at 10:04am") }
     it { should have_css("p", text: "Joe Gear") }
     it { should_not have_css("hr") }
+  end
+
+  context "with an invalidated triage" do
+    before do
+      create(:triage, :invalidated, programme:, notes: "Some notes", patient:)
+    end
+
+    it { should have_css("s", text: "Triaged decision: Safe to vaccinate") }
+    it { should have_css("s", text: "Some notes") }
   end
 
   context "multiple triage notes are present" do
