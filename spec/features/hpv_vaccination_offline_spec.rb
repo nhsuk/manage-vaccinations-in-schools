@@ -24,9 +24,7 @@ describe "HPV Vaccination" do
     when_i_choose_to_record_offline_from_a_clinic_page
     then_i_see_an_excel_spreadsheet_for_recording_offline
 
-    when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv(
-      clinic_name: "Westfield Shopping Centre"
-    )
+    when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv
     and_i_upload_the_modified_csv_file
     and_i_navigate_to_the_clinic_page
     then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
@@ -42,13 +40,21 @@ describe "HPV Vaccination" do
         :with_generic_clinic,
         programmes: [programme]
       )
-    location = create(:location, :school)
+    school = create(:location, :school)
     previous_date = 1.month.ago
 
     if clinic
       [previous_date, Date.current].each do |date|
         @organisation.generic_clinic_session.session_dates.create!(value: date)
       end
+
+      @physical_clinic_location =
+        create(
+          :location,
+          :community_clinic,
+          name: "Westfield Shopping Centre",
+          organisation: @organisation
+        )
     end
 
     vaccine = programme.vaccines.active.first
@@ -60,7 +66,7 @@ describe "HPV Vaccination" do
         :today,
         organisation: @organisation,
         programme:,
-        location:
+        location: school
       )
 
     @session.session_dates.create!(value: previous_date)
@@ -71,7 +77,7 @@ describe "HPV Vaccination" do
         2,
         :consent_given_triage_not_needed,
         session: clinic ? @organisation.generic_clinic_session : @session,
-        school: location,
+        school:,
         year_group: 8
       )
     @previously_vaccinated_patient =
@@ -79,8 +85,8 @@ describe "HPV Vaccination" do
         :patient,
         :vaccinated,
         session: clinic ? @organisation.generic_clinic_session : @session,
-        school: location,
-        location_name: clinic ? "Local hospital" : nil,
+        school:,
+        location_name: clinic ? @physical_clinic_location.name : nil,
         year_group: 8
       )
     VaccinationRecord.last.update!(
@@ -125,9 +131,7 @@ describe "HPV Vaccination" do
     end
   end
 
-  def when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv(
-    clinic_name: nil
-  )
+  def when_i_record_vaccination_outcomes_to_the_spreadsheet_and_export_it_to_csv
     # the steps below roughly approximate SAIS users:
     #
     # * opening the spreadsheet in Excel
@@ -164,7 +168,9 @@ describe "HPV Vaccination" do
       .users
       .first
       .email
-    row_for_vaccinated_patient["CLINIC_NAME"] = clinic_name if clinic_name
+    row_for_vaccinated_patient[
+      "CLINIC_NAME"
+    ] = @physical_clinic_location.name if @physical_clinic_location
 
     row_for_unvaccinated_patient =
       csv_table.find do |row|
@@ -180,7 +186,10 @@ describe "HPV Vaccination" do
     row_for_unvaccinated_patient[
       "PERFORMING_PROFESSIONAL_EMAIL"
     ] = @organisation.users.first.email
-    row_for_unvaccinated_patient["CLINIC_NAME"] = clinic_name if clinic_name
+    row_for_unvaccinated_patient[
+      "CLINIC_NAME"
+    ] = @physical_clinic_location.name if @physical_clinic_location
+
     File.write("tmp/modified.csv", csv_table.to_csv)
   end
 

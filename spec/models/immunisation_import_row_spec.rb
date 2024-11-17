@@ -15,6 +15,7 @@ describe ImmunisationImportRow do
   let(:family_name) { "Potter" }
   let(:date_of_birth) { "20120101" }
   let(:address_postcode) { "SW1A 1AA" }
+  let(:vaccinator) { create(:user, organisation:) }
   let(:valid_common_data) do
     {
       "ORGANISATION_CODE" => "abc",
@@ -611,12 +612,41 @@ describe ImmunisationImportRow do
       end
     end
 
-    context "when home educated and community care setting" do
+    context "current academic year, home educated and community care setting" do
+      let(:clinic) do
+        create(:location, :community_clinic, name: "A Clinic", organisation:)
+      end
+      let(:session_date) do
+        create(
+          :session_date,
+          value: "#{Date.current.academic_year}0901",
+          session: organisation.generic_clinic_session
+        )
+      end
+
       let(:data) do
         valid_data.merge(
           "SCHOOL_URN" => "999999",
           "SCHOOL_NAME" => "",
-          "CARE_SETTING" => "2"
+          "CARE_SETTING" => "2",
+          "CLINIC_NAME" => clinic.name,
+          "DATE_OF_VACCINATION" => session_date.value.strftime("%Y%m%d"),
+          "PERFORMING_PROFESSIONAL_EMAIL" => vaccinator.email
+        )
+      end
+
+      it "sets the location to the clinic" do
+        expect(session.location).to eq(organisation.generic_clinic)
+      end
+    end
+
+    context "previous academic year, home educated and community care setting" do
+      let(:data) do
+        valid_data.merge(
+          "SCHOOL_URN" => "999999",
+          "SCHOOL_NAME" => "",
+          "CARE_SETTING" => "2",
+          "DATE_OF_VACCINATION" => "20220101"
         )
       end
 
