@@ -39,7 +39,7 @@ describe AppPatientVaccinationTableComponent do
         patient:,
         programme:,
         session:,
-        administered_at: Time.zone.local(2024, 1, 1)
+        performed_at: Time.zone.local(2024, 1, 1)
       )
     end
 

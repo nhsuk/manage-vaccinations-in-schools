@@ -65,7 +65,7 @@ def create_vaccination_record(
     patient_session:,
     programme:,
     vaccine:,
-    administered_at: session.dates.min + rand(8..16).hours,
+    performed_at: session.dates.min + rand(8..16).hours,
     batch:,
     dose_sequence:,
     location_name:
@@ -193,7 +193,7 @@ def write_vaccination_records_to_file(vaccination_records)
         vaccination_record.patient.family_name,
         vaccination_record.patient.date_of_birth.to_fs(:dps),
         vaccination_record.patient.address_postcode,
-        vaccination_record.administered_at.to_date.to_fs(:dps),
+        vaccination_record.performed_at.to_date.to_fs(:dps),
         vaccination_record.vaccine.brand.gsub(" ", ""),
         vaccination_record.batch.name,
         vaccination_record.batch.expiry.to_fs(:dps),

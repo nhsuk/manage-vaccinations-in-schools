@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_11_17_125703) do
+ActiveRecord::Schema[7.2].define(version: 2024_11_17_153844) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -676,7 +676,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_17_125703) do
     t.bigint "vaccine_id"
     t.integer "dose_sequence", null: false
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
-    t.datetime "administered_at"
+    t.datetime "performed_at", null: false
     t.string "performed_by_given_name"
     t.string "performed_by_family_name"
     t.jsonb "pending_changes", default: {}, null: false

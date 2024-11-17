@@ -108,10 +108,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def last_action_time
-    # if vaccination record is not administered, use created_at
-    @last_action_time ||=
-      vaccination_record&.administered_at || vaccination_record&.created_at ||
-        triage&.created_at
+    @last_action_time ||= vaccination_record&.performed_at || triage&.created_at
   end
 
   def heading

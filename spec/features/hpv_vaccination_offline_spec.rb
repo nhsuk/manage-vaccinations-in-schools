@@ -84,7 +84,7 @@ describe "HPV Vaccination" do
         year_group: 8
       )
     VaccinationRecord.last.update!(
-      administered_at: previous_date,
+      performed_at: previous_date,
       performed_by: @organisation.users.first
     )
   end

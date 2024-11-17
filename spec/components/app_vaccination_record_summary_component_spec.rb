@@ -6,7 +6,7 @@ describe AppVaccinationRecordSummaryComponent do
   let(:component) { described_class.new(vaccination_record, current_user:) }
 
   let(:current_user) { create(:user) }
-  let(:administered_at) { Time.zone.local(2024, 9, 6, 12) }
+  let(:performed_at) { Time.zone.local(2024, 9, 6, 12) }
   let(:outcome) { "administered" }
   let(:location) { create(:location, :school, name: "Hogwarts") }
   let(:programme) { create(:programme, :hpv) }
@@ -28,7 +28,7 @@ describe AppVaccinationRecordSummaryComponent do
     create(
       :vaccination_record,
       programme:,
-      administered_at:,
+      performed_at:,
       outcome:,
       batch:,
       vaccine:,
@@ -54,7 +54,6 @@ describe AppVaccinationRecordSummaryComponent do
     end
 
     context "when not administered" do
-      let(:administered_at) { nil }
       let(:outcome) { :not_well }
 
       it do
@@ -75,7 +74,6 @@ describe AppVaccinationRecordSummaryComponent do
     end
 
     context "without a vaccine" do
-      let(:administered_at) { nil }
       let(:outcome) { :not_well }
       let(:vaccine) { nil }
       let(:batch) { nil }
@@ -112,7 +110,6 @@ describe AppVaccinationRecordSummaryComponent do
     end
 
     context "without a vaccine" do
-      let(:administered_at) { nil }
       let(:outcome) { :not_well }
       let(:vaccine) { nil }
       let(:batch) { nil }
@@ -155,7 +152,6 @@ describe AppVaccinationRecordSummaryComponent do
     it { should have_css(".nhsuk-summary-list__row", text: "Batch ID\nABC") }
 
     context "without a vaccine" do
-      let(:administered_at) { nil }
       let(:outcome) { :not_well }
       let(:vaccine) { nil }
       let(:batch) { nil }
@@ -174,7 +170,6 @@ describe AppVaccinationRecordSummaryComponent do
     end
 
     context "without a vaccine" do
-      let(:administered_at) { nil }
       let(:outcome) { :not_well }
       let(:vaccine) { nil }
       let(:batch) { nil }

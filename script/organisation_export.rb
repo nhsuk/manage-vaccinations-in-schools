@@ -169,7 +169,7 @@ class OrganisationExport
 
     [
       "Administered",
-      vaccination.administered_at&.to_fs(:govuk),
+      vaccination.performed_at&.to_fs(:govuk),
       vaccination.performed_by&.full_name,
       vaccination.batch&.name,
       vaccination.delivery_site,

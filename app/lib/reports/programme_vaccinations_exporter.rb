@@ -89,11 +89,11 @@ class Reports::ProgrammeVaccinationsExporter
         )
 
     if start_date.present?
-      scope = scope.where("administered_at >= ?", start_date.beginning_of_day)
+      scope = scope.where("performed_at >= ?", start_date.beginning_of_day)
     end
 
     if end_date.present?
-      scope = scope.where("administered_at <= ?", end_date.end_of_day)
+      scope = scope.where("performed_at <= ?", end_date.end_of_day)
     end
 
     scope.strict_loading
@@ -132,8 +132,8 @@ class Reports::ProgrammeVaccinationsExporter
       gillick_assessment&.performed_by&.full_name || "",
       gillick_assessment&.notes || "",
       vaccinated(vaccination_record:),
-      vaccination_record.administered_at&.strftime("%Y%m%d"),
-      vaccination_record.administered_at&.strftime("%H:%M:%S"),
+      vaccination_record.performed_at.strftime("%Y%m%d"),
+      vaccination_record.performed_at.strftime("%H:%M:%S"),
       vaccination_record.vaccine&.nivs_name || "",
       vaccination_record.performed_by_user&.email || "",
       vaccination_record.performed_by&.given_name || "",

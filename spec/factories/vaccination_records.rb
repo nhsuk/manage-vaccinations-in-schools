@@ -5,7 +5,6 @@
 # Table name: vaccination_records
 #
 #  id                       :bigint           not null, primary key
-#  administered_at          :datetime
 #  delivery_method          :integer
 #  delivery_site            :integer
 #  discarded_at             :datetime
@@ -14,6 +13,7 @@
 #  notes                    :text
 #  outcome                  :integer          not null
 #  pending_changes          :jsonb            not null
+#  performed_at             :datetime         not null
 #  performed_by_family_name :string
 #  performed_by_given_name  :string
 #  uuid                     :uuid             not null
@@ -74,13 +74,12 @@ FactoryBot.define do
     performed_by
 
     outcome { "administered" }
-    administered_at { Time.zone.now }
+    performed_at { Time.current }
 
     dose_sequence { 1 }
     uuid { SecureRandom.uuid }
 
     trait :not_administered do
-      administered_at { nil }
       delivery_site { nil }
       delivery_method { nil }
       outcome { "not_well" }

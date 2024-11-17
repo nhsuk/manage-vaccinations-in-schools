@@ -159,21 +159,19 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
         end
       end
 
-      if @vaccination_record.administered?
-        summary_list.with_row do |row|
-          row.with_key { "Date" }
-          row.with_value { date_value }
-          if (href = @change_links[:administered_at])
-            row.with_action(text: "Change", visually_hidden_text: "date", href:)
-          end
+      summary_list.with_row do |row|
+        row.with_key { "Date" }
+        row.with_value { date_value }
+        if (href = @change_links[:performed_at])
+          row.with_action(text: "Change", visually_hidden_text: "date", href:)
         end
+      end
 
-        summary_list.with_row do |row|
-          row.with_key { "Time" }
-          row.with_value { time_value }
-          if (href = @change_links[:administered_at])
-            row.with_action(text: "Change", visually_hidden_text: "time", href:)
-          end
+      summary_list.with_row do |row|
+        row.with_key { "Time" }
+        row.with_value { time_value }
+        if (href = @change_links[:performed_at])
+          row.with_action(text: "Change", visually_hidden_text: "time", href:)
         end
       end
 
@@ -253,18 +251,18 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def date_value
-    date = @vaccination_record.administered_at.to_date
+    date = @vaccination_record.performed_at.to_date
 
     highlight_if(
       date.today? ? "Today (#{date.to_fs(:long)})" : date.to_fs(:long),
-      @vaccination_record.administered_at_changed?
+      @vaccination_record.performed_at_changed?
     )
   end
 
   def time_value
     highlight_if(
-      @vaccination_record.administered_at.to_fs(:time),
-      @vaccination_record.administered_at_changed?
+      @vaccination_record.performed_at.to_fs(:time),
+      @vaccination_record.performed_at_changed?
     )
   end
 

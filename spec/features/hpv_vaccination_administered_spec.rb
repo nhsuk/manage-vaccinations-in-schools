@@ -17,7 +17,6 @@ describe "HPV Vaccination" do
 
     when_i_click_change_outcome
     and_i_choose_vaccinated
-    and_i_select_the_date
     and_i_select_the_delivery
     and_i_select_the_vaccine
     and_i_select_the_batch
@@ -40,6 +39,7 @@ describe "HPV Vaccination" do
 
     when_i_click_change_date
     and_i_select_the_date
+    and_i_choose_vaccinated
     and_i_select_the_delivery
     and_i_select_the_vaccine
     and_i_select_the_batch

@@ -1298,7 +1298,7 @@ describe ImmunisationImportRow do
     end
 
     it "sets the administered at time" do
-      expect(vaccination_record.administered_at).to eq(
+      expect(vaccination_record.performed_at).to eq(
         Time.new(2024, 1, 1, 12, 0, 0, "+00:00")
       )
     end
@@ -1307,7 +1307,7 @@ describe ImmunisationImportRow do
       let(:data) { valid_data.merge("DATE_OF_VACCINATION" => "20230901") }
 
       it "sets the administered at time" do
-        expect(vaccination_record.administered_at).to eq(
+        expect(vaccination_record.performed_at).to eq(
           Time.new(2023, 9, 1, 12, 0, 0, "+01:00")
         )
       end
@@ -1317,7 +1317,7 @@ describe ImmunisationImportRow do
       let(:data) { valid_data.merge("DATE_OF_VACCINATION" => "01/09/2023") }
 
       it "parses the date and sets the administered at time" do
-        expect(vaccination_record.administered_at).to eq(
+        expect(vaccination_record.performed_at).to eq(
           Time.new(2023, 9, 1, 12, 0, 0, "+01:00")
         )
       end
@@ -1327,7 +1327,7 @@ describe ImmunisationImportRow do
       let(:data) { valid_data.merge("DATE_OF_VACCINATION" => "2023-09-01") }
 
       it "parses the date and sets the administered at time" do
-        expect(vaccination_record.administered_at).to eq(
+        expect(vaccination_record.performed_at).to eq(
           Time.new(2023, 9, 1, 12, 0, 0, "+01:00")
         )
       end
@@ -1337,7 +1337,7 @@ describe ImmunisationImportRow do
       let(:data) { valid_data.merge("TIME_OF_VACCINATION" => "10:30:25") }
 
       it "sets the administered at time" do
-        expect(vaccination_record.administered_at).to eq(
+        expect(vaccination_record.performed_at).to eq(
           Time.new(2024, 1, 1, 10, 30, 25, "+00:00")
         )
       end
@@ -1347,7 +1347,7 @@ describe ImmunisationImportRow do
       let(:data) { valid_data.merge("TIME_OF_VACCINATION" => "1030") }
 
       it "sets the administered at time" do
-        expect(vaccination_record.administered_at).to eq(
+        expect(vaccination_record.performed_at).to eq(
           Time.new(2024, 1, 1, 10, 30, 0, "+00:00")
         )
       end

@@ -66,7 +66,7 @@ describe Reports::CareplusExporter do
         :vaccination_record,
         programme:,
         patient_session:,
-        administered_at: 2.weeks.ago
+        performed_at: 2.weeks.ago
       )
 
     attended_index = headers.index("Attended")
@@ -86,7 +86,7 @@ describe Reports::CareplusExporter do
       :vaccination_record,
       programme:,
       patient_session:,
-      administered_at: 2.months.ago
+      performed_at: 2.months.ago
     )
 
     expect(data_rows.first).to be_nil

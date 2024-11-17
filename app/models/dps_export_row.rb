@@ -84,7 +84,7 @@ class DPSExportRow
   end
 
   def date_and_time
-    vaccination_record.administered_at.strftime("%Y%m%dT%H%M%S00")
+    vaccination_record.created_at.strftime("%Y%m%dT%H%M%S00")
   end
 
   def site_code
@@ -116,7 +116,7 @@ class DPSExportRow
   end
 
   def recorded_date
-    vaccination_record.created_at.to_date.to_fs(:dps)
+    vaccination_record.performed_at.to_date.to_fs(:dps)
   end
 
   # needs to equal 'true' as the record is coming from the organisation that is administering the vaccine

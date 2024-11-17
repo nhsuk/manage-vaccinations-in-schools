@@ -103,11 +103,11 @@ class ImmunisationImportRow
     outcome = (administered ? "administered" : reason)
 
     attributes = {
-      administered_at:,
       dose_sequence:,
       location_name:,
       outcome:,
       patient_session:,
+      performed_at:,
       performed_by_user:,
       performed_by_family_name:,
       performed_by_given_name:,
@@ -350,8 +350,8 @@ class ImmunisationImportRow
 
   delegate :ods_code, to: :organisation
 
-  def administered_at
-    return nil unless administered
+  def performed_at
+    return nil if date_of_vaccination.nil?
 
     Time.zone.local(
       date_of_vaccination.year,
