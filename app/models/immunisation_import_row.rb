@@ -100,16 +100,18 @@ class ImmunisationImportRow
   def to_vaccination_record
     return unless valid?
 
+    outcome = (administered ? "administered" : reason)
+
     attributes = {
       administered_at:,
       dose_sequence:,
       location_name:,
+      outcome:,
       patient_session:,
       performed_by_user:,
       performed_by_family_name:,
       performed_by_given_name:,
       programme: @programme,
-      reason:,
       vaccine:
     }
 

@@ -145,7 +145,13 @@ class Reports::CareplusExporter
     [
       record.vaccine.snomed_product_code, # Vaccine X
       "#{record.dose_sequence}P", # Dose X field
-      VaccinationRecord.human_enum_name(:reason, record.reason), # Reason Not Given X
+      (
+        if record.administered?
+          ""
+        else
+          VaccinationRecord.human_enum_name(:outcome, record.outcome)
+        end
+      ), # Reason Not Given X
       coded_site(record.delivery_site), # Site X; Coded value
       record.vaccine.manufacturer, # Manufacturer X
       record.batch.name # Batch No X

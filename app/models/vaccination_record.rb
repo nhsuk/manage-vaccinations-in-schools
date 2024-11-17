@@ -12,10 +12,10 @@
 #  dose_sequence            :integer          not null
 #  location_name            :string
 #  notes                    :text
+#  outcome                  :integer          not null
 #  pending_changes          :jsonb            not null
 #  performed_by_family_name :string
 #  performed_by_given_name  :string
-#  reason                   :integer
 #  uuid                     :uuid             not null
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
@@ -122,8 +122,9 @@ class VaccinationRecord < ApplicationRecord
        validate: {
          if: :administered?
        }
-  enum :reason,
+  enum :outcome,
        %i[
+         administered
          refused
          not_well
          contraindications
@@ -131,9 +132,7 @@ class VaccinationRecord < ApplicationRecord
          absent_from_school
          absent_from_session
        ],
-       validate: {
-         if: :not_administered?
-       }
+       validate: true
 
   encrypts :notes
 
@@ -154,12 +153,8 @@ class VaccinationRecord < ApplicationRecord
               allow_nil: true
             }
 
-  def administered?
-    administered_at != nil
-  end
-
   def not_administered?
-    administered_at.nil?
+    !administered?
   end
 
   def retryable_reason?

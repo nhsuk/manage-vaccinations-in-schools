@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_11_14_212305) do
+ActiveRecord::Schema[7.2].define(version: 2024_11_17_125703) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -668,7 +668,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_14_212305) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "delivery_site"
-    t.integer "reason"
+    t.integer "outcome", null: false
     t.bigint "batch_id"
     t.integer "delivery_method"
     t.bigint "performed_by_user_id"
