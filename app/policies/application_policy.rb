@@ -12,24 +12,24 @@ class ApplicationPolicy
     user.is_nurse? || user.is_admin?
   end
 
-  def show?
-    user.is_nurse? || user.is_admin?
+  def new?
+    create?
   end
 
   def create?
     user.is_nurse? || user.is_admin?
   end
 
-  def new?
-    create?
-  end
-
-  def update?
+  def show?
     user.is_nurse? || user.is_admin?
   end
 
   def edit?
     update?
+  end
+
+  def update?
+    user.is_nurse? || user.is_admin?
   end
 
   def destroy?
