@@ -16,8 +16,6 @@
   <% card.with_heading { "Record details" } %>
   <%= render AppPatientSummaryComponent.new(
         @patient,
-        show_preferred_name: true,
-        show_address: true,
         show_parent_or_guardians: true,
         change_links: { nhs_number: edit_nhs_number_patient_path(@patient) },
       ) %>
