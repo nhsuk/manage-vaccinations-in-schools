@@ -42,14 +42,8 @@
 class Consent < ApplicationRecord
   include Invalidatable
   include Recordable
-  include WizardStepConcern
 
   audited
-
-  before_save :reset_unused_fields
-
-  attr_reader :new_or_existing_contact
-  attr_accessor :triage, :triage_allowed
 
   belongs_to :patient
   belongs_to :programme
@@ -95,8 +89,7 @@ class Consent < ApplicationRecord
 
   validates :notes,
             presence: {
-              if: -> { required_for_step?(:notes) && notes_required? },
-              on: :update
+              if: :notes_required?
             },
             length: {
               maximum: 1000
@@ -105,56 +98,6 @@ class Consent < ApplicationRecord
   validates :route, presence: true, if: :recorded?
 
   validates :parent, presence: true, if: -> { recorded? && !via_self_consent? }
-
-  on_wizard_step :route do
-    validates :route, inclusion: { in: Consent.routes.keys }
-  end
-
-  on_wizard_step :who, exact: true do
-    validates :new_or_existing_contact, presence: true
-  end
-
-  on_wizard_step :parent_details do
-    validate :parent_present_unless_self_consent
-  end
-
-  on_wizard_step :agree do
-    validates :response, inclusion: { in: Consent.responses.keys }
-  end
-
-  on_wizard_step :notify_parents do
-    validates :notify_parents, inclusion: { in: [true, false] }
-  end
-
-  on_wizard_step :reason do
-    validates :reason_for_refusal,
-              inclusion: {
-                in: Consent.reason_for_refusals.keys
-              }
-  end
-
-  on_wizard_step :questions do
-    validate :health_answers_valid?
-  end
-
-  on_wizard_step :triage, exact: true do
-    validate :triage_valid?
-  end
-
-  def wizard_steps
-    [
-      :who,
-      (:parent_details unless via_self_consent?),
-      (:route unless via_self_consent?),
-      :agree,
-      (:notify_parents if response_given? && via_self_consent?),
-      (:questions if response_given?),
-      (:triage if triage_allowed && response_given?),
-      (:reason if response_refused?),
-      (:notes if notes_required?),
-      :confirm
-    ].compact
-  end
 
   delegate :restricted?, to: :patient
 
@@ -230,26 +173,7 @@ class Consent < ApplicationRecord
 
   def notes_required?
     withdrawn? || invalidated? ||
-      (
-        response_refused? && reason_for_refusal_contains_gelatine? ||
-          reason_for_refusal_already_vaccinated? ||
-          reason_for_refusal_will_be_vaccinated_elsewhere? ||
-          reason_for_refusal_medical_reasons? || reason_for_refusal_other?
-      )
-  end
-
-  def new_or_existing_contact=(value)
-    @new_or_existing_contact = value
-
-    return if value == "new"
-
-    if value == "patient"
-      self.route = "self_consent"
-    elsif value.to_i.in?(
-          patient.consents.pluck(:parent_id) + patient.parents.pluck(:id)
-        )
-      self.parent_id = value
-    end
+      (response_refused? && !reason_for_refusal_personal_choice?)
   end
 
   private
@@ -258,42 +182,5 @@ class Consent < ApplicationRecord
     if draft? && !via_self_consent? && draft_parent.nil? && parent.nil?
       errors.add(:draft_parent, :blank)
     end
-  end
-
-  def health_answers_valid?
-    return if health_answers.map(&:valid?).all?
-
-    health_answers.each_with_index do |health_answer, index|
-      health_answer.errors.messages.each do |field, messages|
-        messages.each do |message|
-          errors.add("question-#{index}-#{field}", message)
-        end
-      end
-    end
-  end
-
-  def triage_valid?
-    return if triage.valid?(:consent)
-
-    triage.errors.each do |error|
-      errors.add(:"triage_#{error.attribute}", error.message)
-    end
-  end
-
-  def reset_unused_fields
-    if response_given?
-      self.reason_for_refusal = nil
-      self.notes = "" unless invalidated?
-
-      seed_health_questions
-    elsif response_refused?
-      self.health_answers = []
-    end
-  end
-
-  def seed_health_questions
-    return unless health_answers.empty?
-    vaccine = programme.vaccines.first # assumes all vaccines in the programme have the same questions
-    self.health_answers = vaccine.health_questions.to_health_answers
   end
 end

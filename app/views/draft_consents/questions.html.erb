@@ -14,10 +14,10 @@
   <%= page_title %>
 <% end %>
 
-<%= form_with model: @consent, url: wizard_path do |f| %>
+<%= form_with model: @draft_consent, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <% @consent.health_answers.each_with_index do |health_answer, index| %>
+  <% @draft_consent.health_answers.each_with_index do |health_answer, index| %>
     <%= f.fields_for "question_#{index}", health_answer do |ff| %>
       <%= ff.govuk_radio_buttons_fieldset(:question,
                                           legend: { size: "s", text: health_answer.question },

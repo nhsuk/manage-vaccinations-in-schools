@@ -18,43 +18,43 @@
   <%= page_title %>
 <% end %>
 
-<%= form_with model: @parent_details_form, url: wizard_path, method: :put do |f| %>
+<%= form_with model: @draft_consent, url: wizard_path, method: :put do |f| %>
   <% content_for(:before_content) { f.govuk_error_summary } %>
 
-  <% if @parent_details_form.can_change_name_or_relationship? %>
-    <%= f.govuk_text_field :full_name, label: { text: "Full name" } %>
+  <% if @parent.new_record? %>
+    <%= f.govuk_text_field :parent_full_name, label: { text: "Full name" } %>
 
-    <%= f.govuk_radio_buttons_fieldset(:relationship_type,
+    <%= f.govuk_radio_buttons_fieldset(:parent_relationship_type,
                                        legend: { size: "s",
                                                  text: "Relationship to the child" }) do %>
-      <%= f.govuk_radio_button :relationship_type, "mother",
+      <%= f.govuk_radio_button :parent_relationship_type, "mother",
                                label: { text: "Mum" }, link_errors: true %>
-      <%= f.govuk_radio_button :relationship_type, "father",
+      <%= f.govuk_radio_button :parent_relationship_type, "father",
                                label: { text: "Dad" } %>
-      <%= f.govuk_radio_button :relationship_type, "guardian",
+      <%= f.govuk_radio_button :parent_relationship_type, "guardian",
                                label: { text: "Guardian" } %>
-      <%= f.govuk_radio_button :relationship_type, "other",
+      <%= f.govuk_radio_button :parent_relationship_type, "other",
                                label: { text: "Other" } do %>
         <p>They need parental responsibility to give consent.</p>
-        <%= f.govuk_text_field :relationship_other_name,
+        <%= f.govuk_text_field :parent_relationship_other_name,
                                label: { text: "Relationship to the child" },
                                hint: { text: "For example, carer" } %>
-        <%= f.govuk_radio_buttons_fieldset(:parental_responsibility,
+        <%= f.govuk_radio_buttons_fieldset(:parent_responsibility,
                                            legend: { size: "s",
                                                      text: "Do they have parental responsibility?" },
                                            hint: { text: "They have the legal rights and duties relating to the child" }) do %>
-          <%= f.govuk_radio_button :parental_responsibility, "yes",
+          <%= f.govuk_radio_button :parent_responsibility, "yes",
                                    label: { text: "Yes" }, link_errors: true %>
-          <%= f.govuk_radio_button :parental_responsibility, "no",
+          <%= f.govuk_radio_button :parent_responsibility, "no",
                                    label: { text: "No" } %>
         <% end %>
       <% end %>
     <% end %>
   <% end %>
 
-  <%= f.govuk_email_field :email, label: { text: "Email address" } %>
+  <%= f.govuk_email_field :parent_email, label: { text: "Email address" } %>
 
-  <%= f.govuk_phone_field :phone, label: { text: "Phone number" } %>
+  <%= f.govuk_phone_field :parent_phone, label: { text: "Phone number" } %>
 
   <%= f.govuk_check_boxes_fieldset :parent_phone_receive_updates, multiple: false, legend: nil do %>
     <%= f.govuk_check_box :parent_phone_receive_updates, 1, 0, multiple: false, link_errors: true, label: { text: "Get updates by text message" } %>

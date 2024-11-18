@@ -26,6 +26,7 @@ class Parent < ApplicationRecord
 
   before_save :reset_unused_fields
 
+  has_many :consents
   has_many :parent_relationships
   has_many :patients, through: :parent_relationships
 

@@ -101,6 +101,7 @@ Rails.application.routes.draw do
     end
   end
 
+  resource :draft_consent, only: %i[show update], path: "draft-consent/:id"
   resource :draft_vaccination_record,
            only: %i[show update],
            path: "draft-vaccination-record/:id"
@@ -309,11 +310,6 @@ Rails.application.routes.draw do
             get "invalidate", action: :edit_invalidate
             post "invalidate", action: :update_invalidate
           end
-
-          resource :edit,
-                   only: %i[show update],
-                   controller: "consents/edit",
-                   path: "edit/:id"
         end
 
         resource :gillick_assessment,

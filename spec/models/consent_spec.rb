@@ -160,39 +160,6 @@ describe Consent do
     end
   end
 
-  it "resets unused fields after a consent refusal" do
-    consent =
-      build(
-        :consent,
-        programme: create(:programme, :hpv),
-        health_answers: [],
-        response: "refused",
-        reason_for_refusal: "contains_gelatine",
-        notes: "I'm vegan"
-      )
-    expect(consent.health_answers).to be_empty
-
-    consent.update!(response: "given")
-
-    expect(consent.reason_for_refusal).to be_nil
-    expect(consent.notes).to be_blank
-
-    expect(consent.health_answers).not_to be_empty
-    expect(consent.health_answers.count).to eq(
-      consent.programme.vaccines.first.health_questions.count
-    )
-    expect(consent.health_answers.map(&:response)).to all(be_nil)
-  end
-
-  it "resets unused fields after a consent being given" do
-    consent = build(:consent, :given)
-    expect(consent.health_answers).not_to be_empty
-
-    consent.update!(response: "refused")
-
-    expect(consent.health_answers).to be_empty
-  end
-
   it "resets health answer notes if a 'yes' changes to a 'no'" do
     consent = build(:consent, :given, :health_question_notes)
     expect(consent.health_answers.first.response).to eq("yes")

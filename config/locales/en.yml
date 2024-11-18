@@ -151,6 +151,44 @@ en:
               invalid: ‘%{value}’ is not a known school URN
             year_group:
               inclusion: is not part of this programme
+        draft_consent:
+          attributes:
+            new_or_existing_contact:
+              blank: Choose who you are trying to get consent from
+            reason_for_refusal:
+              inclusion: Choose a reason
+            notes:
+              blank: Enter notes
+              too_long: Enter notes that are less than %{count} characters long
+            parent_email:
+              blank: Enter an email address
+              invalid: Enter a valid email address, such as j.doe@gmail.com
+              too_long: Enter a email address that is less than 300 characters long
+            parent_full_name:
+              blank: Enter a name
+              too_long: Enter a name that is less than 300 characters long
+            parent_responsibility:
+              inclusion: Choose whether there is parental responsibility
+            parent_phone:
+              blank: Enter a phone number
+              invalid: Enter a valid phone number, like 07700 900 000
+              too_long: Enter a phone number that is less than 300 characters long
+            parent_relationship_type:
+              blank: Choose a relationship
+              inclusion: Choose a relationship
+            parent_relationship_other_name:
+              blank: Enter a relationship
+              too_long: Enter a relationship that is less than 300 characters long
+            response:
+              inclusion: Choose if they consent
+            route:
+              inclusion: Choose how the response was given
+            triage_notes:
+              blank: Enter triage notes
+              too_long: Enter triage notes that are less than 1000 characters long
+            triage_status:
+              blank: Choose a status
+              inclusion: Choose a status
         draft_vaccination_record:
           attributes:
             administered:
@@ -253,27 +291,6 @@ en:
           attributes:
             apply_changes:
               inclusion: Choose which record to keep
-        parent_details_form:
-          attributes:
-            email:
-              blank: Enter an email address
-              invalid: Enter a valid email address, such as j.doe@gmail.com
-              too_long: Enter a email address that is less than 300 characters long
-            name:
-              blank: Enter a name
-              too_long: Enter a name that is less than 300 characters long
-            parental_responsibility:
-              inclusion: Choose whether there is parental responsibility
-            phone:
-              blank: Enter a phone number
-              invalid: Enter a valid phone number, like 07700 900 000
-              too_long: Enter a phone number that is less than 300 characters long
-            relationship_type:
-              blank: Choose a relationship
-              inclusion: Choose a relationship
-            relationship_other_name:
-              blank: Enter a relationship
-              too_long: Enter a relationship that is less than 300 characters long
         vaccination_report:
           attributes:
             file_format:
@@ -391,19 +408,6 @@ en:
               empty: Choose a CSV file with at least one record
               invalid: Choose a CSV file in the correct format
               missing_headers: "The file is missing the following headers: %{missing_headers}"
-        consent:
-          attributes:
-            new_or_existing_contact:
-              blank: Choose who you are trying to get consent from
-            reason_for_refusal:
-              inclusion: Choose a reason
-            notes:
-              blank: Enter notes
-              too_long: Enter notes that are less than %{count} characters long
-            response:
-              inclusion: Choose if they consent
-            route:
-              inclusion: Choose how the response was given
         consent_form:
           attributes:
             address_line_1:
@@ -670,8 +674,8 @@ en:
       title:
         flu: Give or refuse consent for a flu vaccination
         hpv: Give or refuse consent for an HPV vaccination
-  consents:
-    edit_consent:
+  draft_consents:
+    agree:
       title:
         flu: Do they agree to them having the flu vaccination?
         hpv: Do they agree to them having the HPV vaccination?
