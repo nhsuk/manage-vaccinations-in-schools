@@ -79,5 +79,18 @@ describe DraftConsent do
         expect { save! }.to change(draft_consent, :health_answers).to([])
       end
     end
+
+    context "when notes not required" do
+      let(:attributes) do
+        valid_refused_attributes.merge(
+          reason_for_refusal: "personal_choice",
+          notes: "Some notes."
+        )
+      end
+
+      it "clears the notes" do
+        expect { save! }.to change(draft_consent, :notes).to("")
+      end
+    end
   end
 end
