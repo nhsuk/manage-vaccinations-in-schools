@@ -109,11 +109,7 @@ class VaccinationsController < ApplicationController
   def destroy
     authorize @vaccination_record
 
-    if @vaccination_record.session.today?
-      @vaccination_record.destroy!
-    else
-      @vaccination_record.discard!
-    end
+    @vaccination_record.discard!
 
     redirect_to session_patient_path(id: @patient.id),
                 flash: {
