@@ -343,6 +343,22 @@ describe ImmunisationImportRow do
       it { should be_valid }
     end
 
+    context "HPV vaccination in previous academic year, vaccinator email provided but doesn't exist" do
+      let(:data) do
+        valid_hpv_data.merge(
+          "PERFORMING_PROFESSIONAL_EMAIL" => "non-existent@example.com",
+          "DATE_OF_VACCINATION" => "20220101"
+        )
+      end
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:performed_by_user]).to include(
+          "Enter a valid email address"
+        )
+      end
+    end
+
     context "Flu vaccination in previous academic year, no vaccinator details provided" do
       let(:data) do
         valid_flu_data.except(
