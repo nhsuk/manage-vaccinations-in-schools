@@ -3,8 +3,6 @@
 class AppPatientSummaryComponent < ViewComponent::Base
   def initialize(
     patient,
-    show_preferred_name: false,
-    show_address: false,
     show_parent_or_guardians: false,
     change_links: {},
     highlight: true
@@ -13,8 +11,6 @@ class AppPatientSummaryComponent < ViewComponent::Base
 
     @patient = patient
 
-    @show_preferred_name = show_preferred_name
-    @show_address = show_address
     @show_parent_or_guardians = show_parent_or_guardians
     @change_links = change_links
     @highlight = highlight
@@ -37,11 +33,7 @@ class AppPatientSummaryComponent < ViewComponent::Base
         row.with_key { "Full name" }
         row.with_value { format_full_name }
       end
-      if @show_preferred_name &&
-           (
-             @patient.has_preferred_name? ||
-               @patient.preferred_full_name_changed?
-           )
+      if @patient.has_preferred_name? || @patient.preferred_full_name_changed?
         summary_list.with_row do |row|
           row.with_key { "Known as" }
           row.with_value { format_preferred_full_name }
@@ -62,16 +54,9 @@ class AppPatientSummaryComponent < ViewComponent::Base
         row.with_value { format_gender_code }
       end
       unless @patient.restricted?
-        if @show_address
-          summary_list.with_row do |row|
-            row.with_key { "Address" }
-            row.with_value { format_address }
-          end
-        else
-          summary_list.with_row do |row|
-            row.with_key { "Postcode" }
-            row.with_value { format_postcode }
-          end
+        summary_list.with_row do |row|
+          row.with_key { "Address" }
+          row.with_value { format_address }
         end
       end
       summary_list.with_row do |row|
@@ -143,10 +128,6 @@ class AppPatientSummaryComponent < ViewComponent::Base
       helpers.format_address_multi_line(@patient),
       @patient.address_changed?
     )
-  end
-
-  def format_postcode
-    highlight_if(@patient.address_postcode, @patient.address_postcode_changed?)
   end
 
   def format_school
