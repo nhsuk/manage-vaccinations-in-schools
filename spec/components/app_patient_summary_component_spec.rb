@@ -13,6 +13,7 @@ describe AppPatientSummaryComponent do
       :patient,
       nhs_number: "1234567890",
       given_name: "John",
+      preferred_given_name: "Johnny",
       family_name: "Doe",
       date_of_birth: Date.new(2000, 1, 1),
       gender_code: "male",
@@ -37,14 +38,8 @@ describe AppPatientSummaryComponent do
   it { should have_content("Full name") }
   it { should have_content("John Doe") }
 
-  context "when showing the preferred name" do
-    let(:component) { described_class.new(patient, show_preferred_name: true) }
-
-    before { patient.update!(preferred_given_name: "Johnny") }
-
-    it { should have_content("Known as") }
-    it { should have_content("Johnny Doe") }
-  end
+  it { should have_content("Known as") }
+  it { should have_content("Johnny Doe") }
 
   it { should have_content("Date of birth") }
   it { should have_content("1 January 2000") }
@@ -52,29 +47,14 @@ describe AppPatientSummaryComponent do
   it { should have_content("Gender") }
   it { should have_content("Male") }
 
-  it { should have_content("Postcode") }
-  it { should have_content("SW1A 1AA") }
+  it { should have_content("Address") }
+  it { should have_content("10 Downing Street") }
 
   context "when the patient is restricted" do
     let(:restricted) { true }
 
-    it { should_not have_content("Postcode") }
-    it { should_not have_content("SW1A 1AA") }
-  end
-
-  context "when showing the address" do
-    let(:component) { described_class.new(patient, show_address: true) }
-
-    it { should_not have_content("Postcode") }
-    it { should have_content("Address") }
-    it { should have_content("10 Downing Street") }
-
-    context "when the patient is restricted" do
-      let(:restricted) { true }
-
-      it { should_not have_content("Address") }
-      it { should_not have_content("10 Downing Street") }
-    end
+    it { should_not have_content("Address") }
+    it { should_not have_content("10 Downing Street") }
   end
 
   it { should have_content("School") }

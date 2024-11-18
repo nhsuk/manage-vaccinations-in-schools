@@ -67,6 +67,9 @@ describe "Child record imports duplicates" do
         nhs_number: "1234567890", # First row of valid.csv
         date_of_birth: Date.new(2010, 1, 1),
         gender_code: :female,
+        address_line_1: "10 Downing Street",
+        address_line_2: "",
+        address_town: "London",
         address_postcode: "SW11 1AA",
         school: nil, # Unknown school, should be silently updated
         organisation: @organisation
@@ -80,6 +83,9 @@ describe "Child record imports duplicates" do
         nhs_number: "1234567891", # Second row of valid.csv
         date_of_birth: Date.new(2010, 1, 2),
         gender_code: :male,
+        address_line_1: "10 Downing Street",
+        address_line_2: "",
+        address_town: "London",
         address_postcode: "SW11 1AA",
         school: @location,
         organisation: @organisation
@@ -92,6 +98,9 @@ describe "Child record imports duplicates" do
         nhs_number: nil,
         date_of_birth: Date.new(2013, 3, 3), # different date of birth
         gender_code: :male,
+        address_line_1: "10 Downing Street",
+        address_line_2: "",
+        address_town: "London",
         address_postcode: "SW1A 1AA",
         school: @location,
         organisation: @organisation
@@ -148,16 +157,16 @@ describe "Child record imports duplicates" do
   def then_i_should_see_the_first_duplicate_record
     expect(page).to have_content("This record needs reviewing")
     expect(page).to have_content("Date of birth1 January 2010 (aged 14)")
-    expect(page).to have_content("PostcodeSW11 1AA")
-    expect(page).to have_content("PostcodeSW1A 1AA")
+    expect(page).to have_content("Address10 Downing StreetLondonSW11 1AA")
+    expect(page).to have_content("Address10 Downing StreetLondonSW1A 1AA")
   end
 
   def then_i_should_see_the_second_duplicate_record
     expect(page).to have_content("This record needs reviewing")
     expect(page).to have_content("Full nameJames Smith")
     expect(page).to have_content("Full nameJimmy Smith")
-    expect(page).to have_content("PostcodeSW11 1AA")
-    expect(page).to have_content("PostcodeSW1A 1AA")
+    expect(page).to have_content("Address10 Downing StreetLondonSW11 1AA")
+    expect(page).to have_content("Address10 Downing StreetLondonSW1A 1AA")
   end
 
   def then_i_should_see_a_validation_error
