@@ -71,7 +71,6 @@ describe "Withdraw consent" do
     @consent =
       create(
         :consent,
-        :recorded,
         :given,
         patient: @patient,
         parent: @parent,

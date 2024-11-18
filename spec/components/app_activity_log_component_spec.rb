@@ -52,7 +52,7 @@ describe AppActivityLogComponent do
         programme:,
         patient:,
         parent: mum,
-        recorded_at: Time.zone.parse("2024-05-30 12:00"),
+        created_at: Time.zone.parse("2024-05-30 12:00"),
         recorded_by: user
       )
       create(
@@ -61,11 +61,8 @@ describe AppActivityLogComponent do
         programme:,
         patient:,
         parent: dad,
-        recorded_at: Time.zone.parse("2024-05-30 13:00")
+        created_at: Time.zone.parse("2024-05-30 13:00")
       )
-
-      # draft consent should not show
-      create(:consent, :given, programme:, patient:, parent: nil)
 
       create(
         :triage,
@@ -228,7 +225,7 @@ describe AppActivityLogComponent do
         :self_consent,
         programme:,
         patient:,
-        recorded_at: Time.zone.parse("2024-05-30 12:00")
+        created_at: Time.zone.parse("2024-05-30 12:00")
       )
     end
 
@@ -247,7 +244,7 @@ describe AppActivityLogComponent do
         programme:,
         patient:,
         parent: mum,
-        recorded_at: Time.zone.local(2024, 5, 30, 12),
+        created_at: Time.zone.local(2024, 5, 30, 12),
         withdrawn_at: Time.zone.local(2024, 6, 30, 12)
       )
     end
@@ -270,7 +267,7 @@ describe AppActivityLogComponent do
         programme:,
         patient:,
         parent: mum,
-        recorded_at: Time.zone.local(2024, 5, 30, 12),
+        created_at: Time.zone.local(2024, 5, 30, 12),
         invalidated_at: Time.zone.local(2024, 6, 30, 12)
       )
     end

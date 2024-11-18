@@ -49,9 +49,7 @@ class TriagesController < ApplicationController
     if @triage.save(context: :consent)
       @triage.process!
 
-      @patient.consents.recorded.each do
-        send_triage_confirmation(@patient_session, _1)
-      end
+      @patient.consents.each { send_triage_confirmation(@patient_session, _1) }
 
       flash[:success] = {
         heading: "Triage outcome updated for",

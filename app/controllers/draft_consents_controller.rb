@@ -157,10 +157,10 @@ class DraftConsentsController < ApplicationController
 
   def set_parent_options
     @parent_options =
-      (
-        @patient.parents +
-          @patient_session.consents.recorded.includes(:parent).map(&:parent)
-      ).compact.uniq.sort_by(&:full_name)
+      (@patient.parents + @patient_session.consents.map(&:parent))
+        .compact
+        .uniq
+        .sort_by(&:full_name)
   end
 
   # Returns:

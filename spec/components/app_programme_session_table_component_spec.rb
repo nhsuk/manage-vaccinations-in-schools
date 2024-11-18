@@ -18,13 +18,7 @@ describe AppProgrammeSessionTableComponent do
   before do
     create_list(:patient_session, 4, session:)
 
-    create(
-      :consent,
-      :given,
-      :recorded,
-      programme:,
-      patient: patient_session.patient
-    )
+    create(:consent, :given, programme:, patient: patient_session.patient)
     create(:vaccination_record, programme:, patient_session:)
   end
 

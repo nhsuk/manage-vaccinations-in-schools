@@ -10,7 +10,6 @@
 #  notes               :text             default(""), not null
 #  notify_parents      :boolean
 #  reason_for_refusal  :integer
-#  recorded_at         :datetime
 #  response            :integer
 #  route               :integer
 #  withdrawn_at        :datetime
@@ -140,14 +139,6 @@ FactoryBot.define do
 
     trait :needing_triage do
       health_question_notes
-    end
-
-    trait :recorded do
-      recorded_at { Time.zone.now }
-    end
-
-    trait :draft do
-      recorded_at { nil }
     end
 
     trait :withdrawn do

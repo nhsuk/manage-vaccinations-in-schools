@@ -224,7 +224,7 @@ class GovukNotifyPersonalisation
   end
 
   def survey_deadline_date
-    recorded_at = consent_form&.recorded_at || consent&.recorded_at
+    recorded_at = consent_form&.recorded_at || consent&.created_at
     return if recorded_at.nil?
 
     (recorded_at + 7.days).to_date.to_fs(:long)

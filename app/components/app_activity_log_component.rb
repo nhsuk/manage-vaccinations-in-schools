@@ -41,13 +41,13 @@ class AppActivityLogComponent < ViewComponent::Base
   end
 
   def consent_events
-    consents.recorded.flat_map do |consent|
+    consents.flat_map do |consent|
       if consent.invalidated?
         [
           {
             title:
               "Consent #{consent.response} by #{consent.name} (#{consent.who_responded})",
-            time: consent.recorded_at,
+            time: consent.created_at,
             by: consent.recorded_by&.full_name
           },
           {
@@ -60,7 +60,7 @@ class AppActivityLogComponent < ViewComponent::Base
           {
             title:
               "Consent given by #{consent.name} (#{consent.who_responded})",
-            time: consent.recorded_at,
+            time: consent.created_at,
             by: consent.recorded_by&.full_name
           },
           {
@@ -73,7 +73,7 @@ class AppActivityLogComponent < ViewComponent::Base
           {
             title:
               "Consent #{consent.response} by #{consent.name} (#{consent.who_responded})",
-            time: consent.recorded_at,
+            time: consent.created_at,
             by: consent.recorded_by&.full_name
           }
         ]

@@ -57,7 +57,6 @@ describe "Triage" do
     create(
       :consent,
       :given,
-      :recorded,
       :health_question_notes,
       :from_granddad,
       patient: @patient,

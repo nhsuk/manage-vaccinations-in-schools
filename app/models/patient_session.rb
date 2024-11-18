@@ -41,7 +41,7 @@ class PatientSession < ApplicationRecord
   has_many :vaccination_records, -> { kept }
 
   # TODO: Only fetch consents and triages for the relevant programme.
-  has_many :consents, -> { recorded.includes(:parent) }, through: :patient
+  has_many :consents, -> { eager_load(:parent) }, through: :patient
   has_many :triages, through: :patient
 
   has_many :session_notifications,
@@ -106,7 +106,7 @@ class PatientSession < ApplicationRecord
         .select(&:not_invalidated?)
         .select { _1.response_given? || _1.response_refused? }
         .group_by(&:name)
-        .map { |_, consents| consents.max_by(&:recorded_at) }
+        .map { |_, consents| consents.max_by(&:created_at) }
   end
 
   def latest_triage

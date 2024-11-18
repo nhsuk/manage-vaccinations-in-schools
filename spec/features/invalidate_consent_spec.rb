@@ -68,7 +68,6 @@ describe "Invalidate consent" do
     @consent =
       create(
         :consent,
-        :recorded,
         :given,
         patient: @patient,
         parent: @parent,

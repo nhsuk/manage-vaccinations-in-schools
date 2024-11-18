@@ -74,14 +74,7 @@ describe ClinicSessionInvitationsJob do
 
     context "when refused consent has been received" do
       before do
-        create(
-          :consent,
-          :refused,
-          :recorded,
-          patient:,
-          programme:,
-          parent: parents.first
-        )
+        create(:consent, :refused, patient:, programme:, parent: parents.first)
       end
 
       it "doesn't send any notifications" do

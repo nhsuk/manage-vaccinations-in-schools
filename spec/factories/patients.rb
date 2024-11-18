@@ -159,7 +159,6 @@ FactoryBot.define do
         [
           association(
             :consent,
-            :recorded,
             :given,
             :from_mum,
             patient: instance,
@@ -175,7 +174,6 @@ FactoryBot.define do
         [
           association(
             :consent,
-            :recorded,
             :given,
             :from_mum,
             :health_question_notes,
@@ -192,7 +190,6 @@ FactoryBot.define do
         [
           association(
             :consent,
-            :recorded,
             :refused,
             :from_mum,
             patient: instance,
@@ -208,7 +205,6 @@ FactoryBot.define do
         [
           association(
             :consent,
-            :recorded,
             :refused,
             :from_mum,
             patient: instance,
@@ -226,7 +222,6 @@ FactoryBot.define do
         [
           association(
             :consent,
-            :recorded,
             :refused,
             :from_mum,
             patient: instance,
@@ -235,7 +230,6 @@ FactoryBot.define do
           ),
           association(
             :consent,
-            :recorded,
             :given,
             :from_dad,
             patient: instance,
@@ -251,7 +245,6 @@ FactoryBot.define do
         [
           association(
             :consent,
-            :recorded,
             :not_provided,
             :from_mum,
             patient: instance,
