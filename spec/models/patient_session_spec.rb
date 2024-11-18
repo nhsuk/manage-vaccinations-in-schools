@@ -94,7 +94,7 @@ describe PatientSession do
     let(:patient_session) { create(:patient_session, programme:, patient:) }
 
     context "multiple consent given responses from different parents" do
-      let(:parents) { create_list(:parent, 2, :recorded) }
+      let(:parents) { create_list(:parent, 2) }
       let(:consents) do
         [
           build(:consent, :recorded, :given, parent: parents.first, programme:),
@@ -112,7 +112,7 @@ describe PatientSession do
     end
 
     context "multiple consent responses from same parents" do
-      let(:parent) { create(:parent, :recorded) }
+      let(:parent) { create(:parent) }
       let(:refused_consent) do
         build(:consent, :recorded, :refused, programme:, parent:)
       end
@@ -133,7 +133,7 @@ describe PatientSession do
     end
 
     context "multiple consent responses from same parent where one is draft" do
-      let(:parent) { create(:parent, :recorded) }
+      let(:parent) { create(:parent) }
       let(:refused_recorded_consent) do
         build(:consent, :recorded, :refused, programme:, parent:)
       end
@@ -154,7 +154,7 @@ describe PatientSession do
     end
 
     context "with an invalidated consent" do
-      let(:parent) { create(:parent, :recorded) }
+      let(:parent) { create(:parent) }
       let(:invalidated_consent) do
         build(:consent, :recorded, :given, :invalidated, programme:, parent:)
       end

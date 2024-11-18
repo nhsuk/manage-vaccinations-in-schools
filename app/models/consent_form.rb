@@ -370,8 +370,6 @@ class ConsentForm < ApplicationRecord
         full_name: parent_full_name
       ) || Parent.new
 
-    parent.recorded_at = Time.current unless parent.recorded?
-
     parent.update!(
       email: parent_email,
       full_name: parent_full_name,

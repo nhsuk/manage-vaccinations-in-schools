@@ -50,12 +50,7 @@ class Consent < ApplicationRecord
   belongs_to :organisation
 
   has_one :consent_form
-  belongs_to :parent, -> { recorded }, optional: true
-  belongs_to :draft_parent,
-             -> { draft },
-             class_name: "Parent",
-             optional: true,
-             foreign_key: :parent_id
+  belongs_to :parent, optional: true
   belongs_to :recorded_by,
              class_name: "User",
              optional: true,
@@ -133,7 +128,7 @@ class Consent < ApplicationRecord
   end
 
   def parent_relationship
-    (parent || draft_parent)&.relationship_to(patient:)
+    parent&.relationship_to(patient:)
   end
 
   def who_responded
@@ -181,8 +176,6 @@ class Consent < ApplicationRecord
   private
 
   def parent_present_unless_self_consent
-    if draft? && !via_self_consent? && draft_parent.nil? && parent.nil?
-      errors.add(:draft_parent, :blank)
-    end
+    errors.add(:parent, :blank) if parent.nil? && !via_self_consent?
   end
 end

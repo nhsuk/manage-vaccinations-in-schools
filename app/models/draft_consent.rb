@@ -159,7 +159,6 @@ class DraftConsent
     parent.full_name = parent_full_name
     parent.phone = parent_phone
     parent.phone_receive_updates = parent_phone_receive_updates
-    parent.recorded_at = Time.current
 
     parent
       .parent_relationships

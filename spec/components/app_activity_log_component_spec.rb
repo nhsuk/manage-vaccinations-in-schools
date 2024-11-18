@@ -24,8 +24,8 @@ describe AppActivityLogComponent do
     create(:patient, school: location, given_name: "Sarah", family_name: "Doe")
   end
 
-  let(:mum) { create(:parent, :recorded, full_name: "Jane Doe") }
-  let(:dad) { create(:parent, :recorded, full_name: "John Doe") }
+  let(:mum) { create(:parent, full_name: "Jane Doe") }
+  let(:dad) { create(:parent, full_name: "John Doe") }
 
   before do
     create(:parent_relationship, :mother, parent: mum, patient:)

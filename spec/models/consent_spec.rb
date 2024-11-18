@@ -95,7 +95,6 @@ describe Consent do
       end
 
       it "creates a parent" do
-        expect(consent.parent).to be_recorded
         expect(consent.parent).to have_attributes(
           full_name: consent_form.parent_full_name,
           email: consent_form.parent_email,
@@ -119,7 +118,6 @@ describe Consent do
 
         it "re-uses the same parent" do
           expect(consent.parent).to eq(parent)
-          expect(consent.parent).to be_recorded
           expect(consent.parent).to have_attributes(
             full_name: consent_form.parent_full_name,
             email: consent_form.parent_email,

@@ -111,8 +111,6 @@ class PatientImportRow
           full_name:
         ) || Parent.new
 
-      parent.recorded_at = Time.current unless parent.recorded?
-
       parent.email = attributes[:email] if attributes[:email]
       parent.full_name = attributes[:full_name] if attributes[:full_name]
       parent.phone = attributes[:phone] if attributes[:phone]

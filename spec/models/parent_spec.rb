@@ -11,7 +11,6 @@
 #  full_name                    :string
 #  phone                        :string
 #  phone_receive_updates        :boolean          default(FALSE), not null
-#  recorded_at                  :datetime
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #

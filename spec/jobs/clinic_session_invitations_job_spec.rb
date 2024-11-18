@@ -5,7 +5,7 @@ describe ClinicSessionInvitationsJob do
 
   let(:programme) { create(:programme) }
   let(:organisation) { create(:organisation, programmes: [programme]) }
-  let(:parents) { create_list(:parent, 2, :recorded) }
+  let(:parents) { create_list(:parent, 2) }
   let(:patient) { create(:patient, parents:) }
   let(:location) { create(:location, :generic_clinic, organisation:) }
 
