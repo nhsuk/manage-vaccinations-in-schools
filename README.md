@@ -61,6 +61,8 @@ asdf plugin add yarn
 asdf install
 ```
 
+Following installation of `asdf` with `homebrew`, it needs to be sourced in your shell to complete the installation. Refer to the `asdf` [getting started guide](https://asdf-vm.com/guide/getting-started.html#_3-install-asdf) for the correct command given your shell, OS and `asdf` installation method.
+
 When installing the `pg` gem, bundle changes directory outside of this
 project directory, causing it lose track of which version of postgres has
 been selected in the project's `.tool-versions` file. To ensure the `pg` gem
