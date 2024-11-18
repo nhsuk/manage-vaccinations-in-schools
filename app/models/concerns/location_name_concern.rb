@@ -5,14 +5,10 @@ module LocationNameConcern
 
   included do
     validates :location_name, absence: true, unless: :requires_location_name?
-    validates :location_name,
-              presence: true,
-              if: -> do
-                [true, nil].include?(try(:recorded?)) && requires_location_name?
-              end
+    validates :location_name, presence: true, if: :requires_location_name?
   end
 
   def requires_location_name?
-    location.generic_clinic?
+    location&.generic_clinic?
   end
 end

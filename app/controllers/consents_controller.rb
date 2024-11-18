@@ -137,8 +137,7 @@ class ConsentsController < ApplicationController
   end
 
   def set_consent
-    @consent =
-      Consent.where(programme: @session.programmes).recorded.find(params[:id])
+    @consent = Consent.where(programme: @session.programmes).find(params[:id])
   end
 
   def ensure_can_withdraw

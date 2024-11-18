@@ -10,7 +10,6 @@
 #  notes               :text             default(""), not null
 #  notify_parents      :boolean
 #  reason_for_refusal  :integer
-#  recorded_at         :datetime
 #  response            :integer
 #  route               :integer
 #  withdrawn_at        :datetime
@@ -129,37 +128,9 @@ describe Consent do
     end
   end
 
-  describe "#recorded scope" do
-    let(:patient) { create(:patient) }
-    let(:programme) { create(:programme) }
-
-    it "returns only consents that have been recorded" do
-      consent =
-        create(:consent, patient:, recorded_at: Time.zone.now, programme:)
-      create(:consent, :draft, patient:, programme:)
-
-      expect(patient.consents.unscope(where: :recorded).recorded).to eq(
-        [consent]
-      )
-    end
-  end
-
-  describe "#recorded?" do
-    it "returns true if recorded_at is set" do
-      consent = build(:consent, recorded_at: Time.zone.now)
-
-      expect(consent).to be_recorded
-    end
-
-    it "returns false if recorded_at is nil" do
-      consent = build(:consent, recorded_at: nil)
-
-      expect(consent).not_to be_recorded
-    end
-  end
-
   it "resets health answer notes if a 'yes' changes to a 'no'" do
-    consent = build(:consent, :given, :health_question_notes)
+    consent =
+      build(:consent, :given, :health_question_notes, parent: create(:parent))
     expect(consent.health_answers.first.response).to eq("yes")
     expect(consent.health_answers.first.notes).to be_present
 

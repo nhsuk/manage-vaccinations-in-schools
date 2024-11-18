@@ -10,7 +10,6 @@
 #  notes               :text             default(""), not null
 #  notify_parents      :boolean
 #  reason_for_refusal  :integer
-#  recorded_at         :datetime
 #  response            :integer
 #  route               :integer
 #  withdrawn_at        :datetime
@@ -41,7 +40,6 @@
 
 class Consent < ApplicationRecord
   include Invalidatable
-  include Recordable
 
   audited
 
@@ -61,7 +59,10 @@ class Consent < ApplicationRecord
   scope :withdrawn, -> { where.not(withdrawn_at: nil) }
   scope :not_withdrawn, -> { where(withdrawn_at: nil) }
 
-  enum :response, { given: 0, refused: 1, not_provided: 2 }, prefix: true
+  enum :response,
+       { given: 0, refused: 1, not_provided: 2 },
+       prefix: true,
+       validate: true
   enum :reason_for_refusal,
        {
          contains_gelatine: 0,
@@ -78,7 +79,8 @@ class Consent < ApplicationRecord
 
   enum :route,
        { website: 0, phone: 1, paper: 2, in_person: 3, self_consent: 4 },
-       prefix: "via"
+       prefix: "via",
+       validate: true
 
   serialize :health_answers, coder: HealthAnswer::ArraySerializer
 
@@ -92,9 +94,7 @@ class Consent < ApplicationRecord
               maximum: 1000
             }
 
-  validates :route, presence: true, if: :recorded?
-
-  validates :parent, presence: true, if: -> { recorded? && !via_self_consent? }
+  validates :parent, presence: true, unless: :via_self_consent?
 
   delegate :restricted?, to: :patient
 
@@ -112,15 +112,15 @@ class Consent < ApplicationRecord
 
   def can_withdraw?
     Flipper.enabled?(:release_1b) && not_withdrawn? && not_invalidated? &&
-      recorded? && response_given?
+      response_given?
   end
 
   def can_invalidate?
-    Flipper.enabled?(:release_1b) && not_invalidated? && recorded?
+    Flipper.enabled?(:release_1b) && not_invalidated?
   end
 
   def responded_at
-    invalidated_at || withdrawn_at || recorded_at
+    invalidated_at || withdrawn_at || created_at
   end
 
   def triage_needed?
@@ -160,7 +160,6 @@ class Consent < ApplicationRecord
         parent:,
         reason_for_refusal: consent_form.reason,
         notes: consent_form.reason_notes.presence || "",
-        recorded_at: Time.zone.now,
         response: consent_form.response,
         route: "website",
         health_answers: consent_form.health_answers
@@ -171,11 +170,5 @@ class Consent < ApplicationRecord
   def notes_required?
     withdrawn? || invalidated? ||
       (response_refused? && !reason_for_refusal_personal_choice?)
-  end
-
-  private
-
-  def parent_present_unless_self_consent
-    errors.add(:parent, :blank) if parent.nil? && !via_self_consent?
   end
 end

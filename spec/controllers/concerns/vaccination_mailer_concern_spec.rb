@@ -23,7 +23,7 @@ describe VaccinationMailerConcern do
 
     let(:programme) { create(:programme) }
     let(:session) { create(:session, programme:) }
-    let(:consent) { create(:consent, :given, :recorded, programme:) }
+    let(:consent) { create(:consent, :given, programme:) }
     let(:patient) { create(:patient, consents: [consent]) }
     let(:parent) { consent.parent || patient.parents.first }
     let(:patient_session) { create(:patient_session, session:, patient:) }
@@ -93,14 +93,7 @@ describe VaccinationMailerConcern do
 
       context "when child wants parents to be notified" do
         let(:consent) do
-          create(
-            :consent,
-            :given,
-            :recorded,
-            :self_consent,
-            :notify_parents,
-            programme:
-          )
+          create(:consent, :given, :self_consent, :notify_parents, programme:)
         end
 
         it "sends an email" do
@@ -126,9 +119,7 @@ describe VaccinationMailerConcern do
       end
 
       context "when child doesn't want a parent to be notified" do
-        let(:consent) do
-          create(:consent, :given, :recorded, :self_consent, programme:)
-        end
+        let(:consent) { create(:consent, :given, :self_consent, programme:) }
 
         it "doesn't send an email" do
           expect { send_vaccination_confirmation }.not_to have_enqueued_mail

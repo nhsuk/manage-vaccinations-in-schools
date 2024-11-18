@@ -206,7 +206,6 @@ describe Reports::OfflineSessionExporter do
             create(
               :consent,
               :from_dad,
-              :recorded,
               patient:,
               programme:,
               health_questions_list: ["First question?", "Second question?"]

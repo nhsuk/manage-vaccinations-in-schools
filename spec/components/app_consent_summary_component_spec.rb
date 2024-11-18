@@ -11,7 +11,7 @@ describe AppConsentSummaryComponent do
   it { should have_content("Response method") }
 
   context "when recorded" do
-    let(:consent) { create(:consent, :recorded) }
+    let(:consent) { create(:consent) }
 
     it { should have_content("Response date") }
   end

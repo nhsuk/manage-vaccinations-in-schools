@@ -48,7 +48,7 @@ describe SessionNotification do
     let(:session) { create(:session, location:, programme:, organisation:) }
     let(:session_date) { session.dates.min }
     let(:patient_session) { create(:patient_session, patient:, session:) }
-    let(:consent) { create(:consent, :given, :recorded, patient:, programme:) }
+    let(:consent) { create(:consent, :given, patient:, programme:) }
     let(:current_user) { create(:user) }
 
     context "with a school reminder" do

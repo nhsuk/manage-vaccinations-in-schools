@@ -97,8 +97,8 @@ describe PatientSession do
       let(:parents) { create_list(:parent, 2) }
       let(:consents) do
         [
-          build(:consent, :recorded, :given, parent: parents.first, programme:),
-          build(:consent, :recorded, :given, parent: parents.second, programme:)
+          build(:consent, :given, parent: parents.first, programme:),
+          build(:consent, :given, parent: parents.second, programme:)
         ]
       end
       let(:patient) { create(:patient, parents:, consents:) }
@@ -113,12 +113,8 @@ describe PatientSession do
 
     context "multiple consent responses from same parents" do
       let(:parent) { create(:parent) }
-      let(:refused_consent) do
-        build(:consent, :recorded, :refused, programme:, parent:)
-      end
-      let(:given_consent) do
-        build(:consent, :recorded, :given, programme:, parent:)
-      end
+      let(:refused_consent) { build(:consent, :refused, programme:, parent:) }
+      let(:given_consent) { build(:consent, :given, programme:, parent:) }
       let(:patient) do
         create(
           :patient,
@@ -132,31 +128,10 @@ describe PatientSession do
       end
     end
 
-    context "multiple consent responses from same parent where one is draft" do
-      let(:parent) { create(:parent) }
-      let(:refused_recorded_consent) do
-        build(:consent, :recorded, :refused, programme:, parent:)
-      end
-      let(:given_draft_consent) do
-        build(:consent, :draft, :given, programme:, parent:)
-      end
-      let(:patient) do
-        create(
-          :patient,
-          parents: [parent],
-          consents: [refused_recorded_consent, given_draft_consent]
-        )
-      end
-
-      it "does not return a draft consent record" do
-        expect(latest_consents).to eq [refused_recorded_consent]
-      end
-    end
-
     context "with an invalidated consent" do
       let(:parent) { create(:parent) }
       let(:invalidated_consent) do
-        build(:consent, :recorded, :given, :invalidated, programme:, parent:)
+        build(:consent, :given, :invalidated, programme:, parent:)
       end
       let(:patient) do
         create(:patient, parents: [parent], consents: [invalidated_consent])

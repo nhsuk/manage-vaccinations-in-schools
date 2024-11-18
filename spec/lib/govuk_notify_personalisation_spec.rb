@@ -113,7 +113,7 @@ describe GovukNotifyPersonalisation do
 
   context "with a consent" do
     let(:consent) do
-      create(:consent, :refused, programme:, recorded_at: Date.new(2024, 1, 1))
+      create(:consent, :refused, programme:, created_at: Date.new(2024, 1, 1))
     end
 
     it do

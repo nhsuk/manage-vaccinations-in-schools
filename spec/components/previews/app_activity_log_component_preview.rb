@@ -29,7 +29,7 @@ class AppActivityLogComponentPreview < ViewComponent::Preview
         programme: @programme,
         patient: @patient,
         parent: create(:parent, :mum, name: "Jane Doe"),
-        recorded_at: Time.zone.parse("2024-05-30 12:00")
+        created_at: Time.zone.parse("2024-05-30 12:00")
       ),
       create(
         :consent,
@@ -38,7 +38,7 @@ class AppActivityLogComponentPreview < ViewComponent::Preview
         programme: @programme,
         patient: @patient,
         parent: create(:parent, :dad, name: "John Doe"),
-        recorded_at: Time.zone.parse("2024-05-30 13:00")
+        created_at: Time.zone.parse("2024-05-30 13:00")
       )
     ]
 
