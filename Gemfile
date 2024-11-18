@@ -7,6 +7,7 @@ ruby file: ".ruby-version"
 gem "rails", "~> 7.2.2"
 
 gem "activerecord-import"
+gem "activerecord-session_store"
 gem "audited", git: "https://github.com/tvararu/audited", branch: "encryption"
 gem "awesome_print"
 gem "bootsnap", require: false

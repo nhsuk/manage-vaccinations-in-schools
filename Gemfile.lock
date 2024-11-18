@@ -73,6 +73,13 @@ GEM
       timeout (>= 0.4.0)
     activerecord-import (1.8.1)
       activerecord (>= 4.2)
+    activerecord-session_store (2.1.0)
+      actionpack (>= 6.1)
+      activerecord (>= 6.1)
+      cgi (>= 0.3.6)
+      multi_json (~> 1.11, >= 1.11.2)
+      rack (>= 2.0.8, < 4)
+      railties (>= 6.1)
     activestorage (7.2.2)
       actionpack (= 7.2.2)
       activejob (= 7.2.2)
@@ -139,6 +146,7 @@ GEM
       marcel (~> 1.0)
       nokogiri (~> 1.10, >= 1.10.4)
       rubyzip (>= 1.3.0, < 3)
+    cgi (0.4.1)
     charlock_holmes (0.7.9)
     childprocess (5.0.0)
     choice (0.2.0)
@@ -335,6 +343,7 @@ GEM
     mini_mime (1.1.5)
     minitest (5.25.1)
     msgpack (1.7.2)
+    multi_json (1.15.0)
     net-http (0.4.1)
       uri
     net-http-digest_auth (1.4.1)
@@ -659,6 +668,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord-import
+  activerecord-session_store
   annotate
   asciidoctor
   asciidoctor-diagram
