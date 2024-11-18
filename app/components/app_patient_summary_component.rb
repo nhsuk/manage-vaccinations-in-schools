@@ -98,7 +98,7 @@ class AppPatientSummaryComponent < ViewComponent::Base
 
   def format_nhs_number
     highlight_if(
-      helpers.format_nhs_number(@patient.nhs_number),
+      helpers.patient_nhs_number(@patient),
       @patient.nhs_number_changed?
     )
   end
