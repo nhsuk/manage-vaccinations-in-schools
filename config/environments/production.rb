@@ -153,6 +153,11 @@ Rails.application.configure do
       cron: "every day at 1am",
       class: "RemoveImportCSVJob",
       description: "Remove CSV data from old cohort and immunisation imports"
+    },
+    trim_active_record_sessions: {
+      cron: "every day at 2am",
+      class: "TrimActiveRecordSessionsJob",
+      description: "Remove ActiveRecord sessions older than 30 days"
     }
   }
 end
