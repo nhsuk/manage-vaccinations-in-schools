@@ -421,14 +421,13 @@ class ImmunisationImportRow
   def performed_by_details_present_where_required
     if outcome_in_this_academic_year?
       errors.add(:performed_by_user, :blank) if performed_by_user.nil?
-    elsif @programme.hpv? # previous academic years from here on
-      nil
-      # no validation required
-    elsif @programme.flu?
+    else # previous academic years from here on
       email_field_populated =
         @data["PERFORMING_PROFESSIONAL_EMAIL"]&.strip.present?
-      if !email_field_populated &&
-           (performed_by_given_name.blank? || performed_by_family_name.blank?)
+
+      if email_field_populated
+        errors.add(:performed_by_user, :blank) if performed_by_user.nil?
+      elsif @programme.flu? # no validation required for HPV
         if performed_by_given_name.blank?
           errors.add(:performed_by_given_name, :blank)
         end
@@ -436,8 +435,6 @@ class ImmunisationImportRow
           errors.add(:performed_by_family_name, :blank)
         end
       end
-    else
-      raise "Unexpected programme"
     end
   end
 
