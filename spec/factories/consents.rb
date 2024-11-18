@@ -86,6 +86,7 @@ FactoryBot.define do
       response { :refused }
       reason_for_refusal { :personal_choice }
       health_answers { [] }
+      notes { "Refused." }
     end
 
     trait :from_mum do
@@ -149,6 +150,7 @@ FactoryBot.define do
 
     trait :invalidated do
       invalidated_at { Time.current }
+      notes { "Some notes." }
     end
   end
 end

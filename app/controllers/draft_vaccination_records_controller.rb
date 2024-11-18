@@ -107,7 +107,10 @@ class DraftVaccinationRecordsController < ApplicationController
   end
 
   def finish_wizard_path
-    if @draft_vaccination_record.editing?
+    editing = @draft_vaccination_record.editing?
+    @draft_vaccination_record.reset!
+
+    if editing
       programme_vaccination_record_path(@programme, @vaccination_record)
     else
       session_vaccinations_path(@session)

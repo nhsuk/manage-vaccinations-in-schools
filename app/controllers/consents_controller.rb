@@ -40,16 +40,18 @@ class ConsentsController < ApplicationController
   end
 
   def create
-    @consent = Consent.create!(create_params)
+    authorize Consent
 
-    redirect_to session_patient_consent_edit_path(
-                  @session,
-                  @patient,
-                  @consent,
-                  id: Wicked::FIRST_STEP,
-                  section: params[:section],
-                  tab: params[:tab]
-                )
+    @draft_consent =
+      DraftConsent.new(request_session: session, current_user:).tap(&:reset!)
+
+    @draft_consent.assign_attributes(create_params)
+
+    if @draft_consent.save
+      redirect_to draft_consent_path(Wicked::FIRST_STEP)
+    else
+      render "patient_sessions/show", status: :unprocessable_entity
+    end
   end
 
   def send_request
@@ -149,9 +151,8 @@ class ConsentsController < ApplicationController
 
   def create_params
     {
-      patient: @patient,
+      patient_session: @patient_session,
       programme: @session.programmes.first, # TODO: handle multiple programmes
-      organisation: @session.organisation,
       recorded_by: current_user
     }
   end

@@ -58,11 +58,15 @@ class HealthAnswer
   class ArraySerializer
     def self.load(arr)
       return if arr.nil?
-      arr.map.with_index { |(item), idx| HealthAnswer.new(item.merge(id: idx)) }
+      arr.map.with_index do |(item), idx|
+        HealthAnswer.new(
+          item.merge("id" => idx).except("validation_context", "errors")
+        )
+      end
     end
 
-    def self.dump(value)
-      value.map(&:attributes)
+    def self.dump(values)
+      values.map { |value| value.is_a?(Hash) ? value : value.attributes }
     end
   end
 end

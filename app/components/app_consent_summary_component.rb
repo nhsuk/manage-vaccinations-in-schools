@@ -13,7 +13,7 @@ class AppConsentSummaryComponent < ViewComponent::Base
       actions: @change_links.present?,
       classes: "app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0"
     ) do |summary_list|
-      if @consent.recorded?
+      if @consent.responded_at.present?
         summary_list.with_row do |row|
           row.with_key { "Response date" }
           row.with_value { @consent.responded_at.to_fs(:long) }
@@ -34,7 +34,9 @@ class AppConsentSummaryComponent < ViewComponent::Base
 
       summary_list.with_row do |row|
         row.with_key { "Response method" }
-        row.with_value { @consent.human_enum_name(:route).humanize }
+        row.with_value do
+          Consent.human_enum_name(:route, @consent.route).humanize
+        end
         if (href = @change_links[:route])
           row.with_action(
             text: "Change",
@@ -47,7 +49,12 @@ class AppConsentSummaryComponent < ViewComponent::Base
       if @consent.reason_for_refusal.present?
         summary_list.with_row do |row|
           row.with_key { "Reason for refusal" }
-          row.with_value { @consent.human_enum_name(:reason_for_refusal) }
+          row.with_value do
+            Consent.human_enum_name(
+              :reason_for_refusal,
+              @consent.reason_for_refusal
+            )
+          end
         end
       end
 

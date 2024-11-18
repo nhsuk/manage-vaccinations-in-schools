@@ -5,13 +5,13 @@
       ) %>
 <% end %>
 
-<%= form_with model: @consent, url: wizard_path, method: :put do |f| %>
+<%= form_with model: @draft_consent, url: wizard_path, method: :put do |f| %>
   <%= f.govuk_error_summary %>
 
-  <%= h1 t(@consent.reason_for_refusal, scope: %i[consents notes title]) %>
+  <%= h1 t(@draft_consent.reason_for_refusal, scope: %i[draft_consents notes title]) %>
 
   <%= f.govuk_text_area :notes,
-                        label: { text: "Give details" + (@consent.notes_required? ?
+                        label: { text: "Give details" + (@draft_consent.notes_required? ?
                           "" :
                           " (optional)") } %>
 

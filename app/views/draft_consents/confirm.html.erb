@@ -16,37 +16,37 @@
 
 <%= render AppCardComponent.new do |card| %>
   <% card.with_heading { "Consent" } %>
-  <%= render AppConsentSummaryComponent.new(@consent, change_links: {
-                                                        response: wizard_path(:agree),
-                                                        route: wizard_path(:route),
-                                                      }) %>
+  <%= render AppConsentSummaryComponent.new(@draft_consent, change_links: {
+                                                              response: wizard_path(:agree),
+                                                              route: wizard_path(:route),
+                                                            }) %>
 <% end %>
 
 <%= render AppCardComponent.new do |card| %>
   <% card.with_heading { "Child" } %>
-  <%= render AppConsentPatientSummaryComponent.new(@consent) %>
+  <%= render AppConsentPatientSummaryComponent.new(@draft_consent) %>
 <% end %>
 
 <% if @parent.present? %>
   <%= render AppCardComponent.new do |card| %>
     <% card.with_heading { "Parent or guardian" } %>
-    <%= render AppParentSummaryComponent.new(@parent, @parent_relationship, change_links: {
-                                                                              name: wizard_path(:who),
-                                                                              relationship: wizard_path(:who),
-                                                                              email: wizard_path(:"parent-details"),
-                                                                              phone: wizard_path(:"parent-details"),
-                                                                            }) %>
+    <%= render AppParentSummaryComponent.new(@parent, @parent.relationship_to(patient: @patient), change_links: {
+                                                                                                    name: wizard_path("who"),
+                                                                                                    relationship: wizard_path("who"),
+                                                                                                    email: wizard_path("parent-details"),
+                                                                                                    phone: wizard_path("parent-details"),
+                                                                                                  }) %>
   <% end %>
 <% end %>
 
-<% if @consent.response_given? %>
+<% if @draft_consent.response_given? %>
   <%= render AppCardComponent.new do |card| %>
     <% card.with_heading { "Health questions" } %>
-    <%= render AppHealthQuestionsComponent.new(consents: [@consent]) %>
+    <%= render AppHealthQuestionsComponent.new(consents: [@draft_consent]) %>
   <% end %>
 <% end %>
 
-<% if @consent.response_given? && @triage&.status.present? %>
+<% if @draft_consent.response_given? && @triage&.status.present? %>
   <%= render AppCardComponent.new do |card| %>
     <% card.with_heading { "Triage" } %>
     <%= govuk_summary_list classes: "app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0" do |summary_list|
