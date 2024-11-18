@@ -215,6 +215,12 @@ class Session < ApplicationRecord
         .patient_sessions
         .where(session: other_sessions)
         .update_all(proposed_session_id: id)
+
+      # Since we've already proposed a transfer via the proposed_session
+      # mechanism, we can remove any `school_id` from the pending changes hash.
+      # If we don't, the user will see the school change as an import issue,
+      # as well as the proposed transfer in the session moves page.
+      patient.save! if patient.pending_changes.delete("school_id")
     end
 
     # Remove patients that have other upcoming sessions
