@@ -5,13 +5,13 @@
 # Table name: consents
 #
 #  id                  :bigint           not null, primary key
-#  health_answers      :jsonb
+#  health_answers      :jsonb            not null
 #  invalidated_at      :datetime
 #  notes               :text             default(""), not null
 #  notify_parents      :boolean
 #  reason_for_refusal  :integer
-#  response            :integer
-#  route               :integer
+#  response            :integer          not null
+#  route               :integer          not null
 #  withdrawn_at        :datetime
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
@@ -63,6 +63,11 @@ class Consent < ApplicationRecord
        { given: 0, refused: 1, not_provided: 2 },
        prefix: true,
        validate: true
+  enum :route,
+       { website: 0, phone: 1, paper: 2, in_person: 3, self_consent: 4 },
+       prefix: "via",
+       validate: true
+
   enum :reason_for_refusal,
        {
          contains_gelatine: 0,
@@ -74,13 +79,8 @@ class Consent < ApplicationRecord
        },
        prefix: true,
        validate: {
-         if: :withdrawn?
+         if: -> { response_refused? || withdrawn? }
        }
-
-  enum :route,
-       { website: 0, phone: 1, paper: 2, in_person: 3, self_consent: 4 },
-       prefix: "via",
-       validate: true
 
   serialize :health_answers, coder: HealthAnswer::ArraySerializer
 
@@ -95,6 +95,9 @@ class Consent < ApplicationRecord
             }
 
   validates :parent, presence: true, unless: :via_self_consent?
+  validates :recorded_by,
+            presence: true,
+            unless: -> { via_self_consent? || via_website? }
 
   delegate :restricted?, to: :patient
 
@@ -136,7 +139,7 @@ class Consent < ApplicationRecord
   end
 
   def health_answers_require_follow_up?
-    health_answers&.any? { |question| question.response&.downcase == "yes" }
+    health_answers.any? { |question| question.response&.downcase == "yes" }
   end
 
   def reasons_triage_needed

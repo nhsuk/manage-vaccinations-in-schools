@@ -29,7 +29,14 @@
 #
 FactoryBot.define do
   factory :user,
-          aliases: %i[nurse assessor created_by performed_by uploaded_by] do
+          aliases: %i[
+            nurse
+            assessor
+            created_by
+            recorded_by
+            performed_by
+            uploaded_by
+          ] do
     transient do
       organisation { Organisation.first || create(:organisation) }
 
