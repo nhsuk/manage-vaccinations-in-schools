@@ -116,6 +116,10 @@ class DraftConsent
     validates :triage_notes, length: { maximum: 1000 }
   end
 
+  on_wizard_step :notes, exact: true do
+    validates :notes, presence: true, length: { maximum: 1000 }
+  end
+
   on_wizard_step :confirm, exact: true do
     validates :outcome, presence: true
   end
@@ -257,10 +261,6 @@ class DraftConsent
     end
   end
 
-  def notes_required?
-    response_refused? && reason_for_refusal != "personal_choice"
-  end
-
   def via_self_consent?
     route == "self_consent"
   end
@@ -301,6 +301,10 @@ class DraftConsent
 
   private
 
+  def notes_required?
+    response_refused? && reason_for_refusal != "personal_choice"
+  end
+
   def triage_allowed?
     TriagePolicy.new(@current_user, Triage).new?
   end
@@ -319,10 +323,9 @@ class DraftConsent
 
   def reset_unused_fields
     self.reason_for_refusal = nil unless response_refused?
+    self.notes = "" unless notes_required?
 
     if response_given?
-      self.notes = ""
-
       if health_answers.empty?
         vaccine = programme.vaccines.first # assumes all vaccines in the programme have the same questions
         self.health_answers = vaccine.health_questions.to_health_answers
