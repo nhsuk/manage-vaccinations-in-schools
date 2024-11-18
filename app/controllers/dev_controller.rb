@@ -66,6 +66,8 @@ class DevController < ApplicationController
       ConsentForm.where(organisation:).delete_all
       Consent.where(organisation:).delete_all
 
+      Triage.where(organisation:).delete_all
+
       Patient
         .joins(:cohort)
         .where(cohorts: { organisation: })
