@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_11_18_094122) do
+ActiveRecord::Schema[7.2].define(version: 2024_11_18_111318) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -519,7 +519,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_18_094122) do
     t.text "contact_method_other_details"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "recorded_at"
     t.string "contact_method_type"
     t.boolean "phone_receive_updates", default: false, null: false
     t.index ["email"], name: "index_parents_on_email"

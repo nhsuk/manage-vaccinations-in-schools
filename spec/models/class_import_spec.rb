@@ -361,10 +361,6 @@ describe ClassImport do
       end
     end
 
-    it "records the parents" do
-      expect { record! }.to change(Parent.recorded, :count).from(0).to(5)
-    end
-
     context "with an unscheduled session" do
       let(:session) do
         create(:session, :unscheduled, organisation:, programme:, location:)

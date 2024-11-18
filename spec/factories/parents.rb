@@ -11,7 +11,6 @@
 #  full_name                    :string
 #  phone                        :string
 #  phone_receive_updates        :boolean          default(FALSE), not null
-#  recorded_at                  :datetime
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #
@@ -51,14 +50,6 @@ FactoryBot.define do
     trait :contact_method_other do
       contact_method_type { "other" }
       contact_method_other_details { "Other details." }
-    end
-
-    trait :recorded do
-      recorded_at { Time.zone.now }
-    end
-
-    trait :draft do
-      recorded_at { nil }
     end
   end
 end

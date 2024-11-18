@@ -5,7 +5,7 @@
       ) %>
 <% end %>
 
-<% page_title = if @parent.recorded?
+<% page_title = if @parent.persisted?
        "Details for #{@parent.label_to(patient: @patient)}"
      else
        "Details for parent or guardian"

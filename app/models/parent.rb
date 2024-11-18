@@ -11,7 +11,6 @@
 #  full_name                    :string
 #  phone                        :string
 #  phone_receive_updates        :boolean          default(FALSE), not null
-#  recorded_at                  :datetime
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #
@@ -20,8 +19,6 @@
 #  index_parents_on_email  (email)
 #
 class Parent < ApplicationRecord
-  include Recordable
-
   audited
 
   before_save :reset_unused_fields

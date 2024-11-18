@@ -4,7 +4,7 @@ describe SchoolSessionRemindersJob do
   subject(:perform_now) { described_class.perform_now }
 
   let(:programme) { create(:programme) }
-  let(:parents) { create_list(:parent, 2, :recorded) }
+  let(:parents) { create_list(:parent, 2) }
   let(:patient) do
     create(:patient, :consent_given_triage_not_needed, parents:, programme:)
   end

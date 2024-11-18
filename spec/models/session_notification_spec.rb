@@ -40,7 +40,7 @@ describe SessionNotification do
 
     let(:today) { Date.new(2024, 1, 1) }
 
-    let(:parents) { create_list(:parent, 2, :recorded) }
+    let(:parents) { create_list(:parent, 2) }
     let(:patient) { create(:patient, parents:) }
     let(:programme) { create(:programme) }
     let(:organisation) { create(:organisation, programmes: [programme]) }
