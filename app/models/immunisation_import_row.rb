@@ -4,16 +4,29 @@ class ImmunisationImportRow
   include ActiveModel::Model
 
   validates :administered, inclusion: [true, false]
-  validates :batch_expiry_date, presence: true, if: :administered
+
+  with_options if: :administered do
+    validates :batch_expiry_date, presence: true
+    validates :batch_number, presence: true
+    validates :delivery_site, presence: true
+    validates :reason, absence: true
+    validates :vaccine_given, inclusion: { in: :valid_given_vaccines }
+  end
+
+  with_options unless: :administered do
+    validates :batch_expiry_date, absence: true
+    validates :batch_number, absence: true
+    validates :delivery_site, absence: true
+    validates :reason, presence: true
+    validates :vaccine_given, absence: true
+  end
+
   validates :batch_expiry_date,
             comparison: {
               greater_than: -> { Date.new(Date.current.year - 15, 1, 1) },
               less_than: -> { Date.new(Date.current.year + 15, 1, 1) }
             },
-            if: -> { administered && batch_expiry_date.present? }
-  validates :batch_number, presence: true, if: :administered
-  validates :reason, presence: true, if: -> { administered == false }
-  validates :delivery_site, presence: true, if: :administered
+            if: :batch_expiry_date
   validate :delivery_site_appropriate_for_vaccine,
            if: -> { administered && delivery_site.present? && vaccine.present? }
   validates :dose_sequence,
@@ -21,13 +34,9 @@ class ImmunisationImportRow
               greater_than_or_equal_to: 1,
               less_than_or_equal_to: :maximum_dose_sequence
             },
-            if: -> { administered && vaccine.present? }
+            if: :vaccine
+
   validates :organisation_code, comparison: { equal_to: :ods_code }
-  validates :vaccine_given,
-            inclusion: {
-              in: :valid_given_vaccines
-            },
-            if: :administered
 
   SCHOOL_URN_HOME_EDUCATED = "999999"
   SCHOOL_URN_UNKNOWN = "888888"

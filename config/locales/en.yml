@@ -275,7 +275,7 @@ en:
             performed_by_family_name:
               blank: Enter a last name
             reason:
-              blank: Enter a reason
+              blank: Enter a valid reason
             school_name:
               blank: Enter a school name.
             school_urn:

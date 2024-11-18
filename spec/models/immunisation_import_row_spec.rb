@@ -164,6 +164,17 @@ describe ImmunisationImportRow do
       end
     end
 
+    context "when vaccinated and a reason not given" do
+      let(:data) do
+        { "VACCINATED" => "Y", "REASON_NOT_VACCINATED" => "unwell" }
+      end
+
+      it "has errors" do
+        expect(immunisation_import_row).to be_invalid
+        expect(immunisation_import_row.errors[:reason]).to eq(["must be blank"])
+      end
+    end
+
     context "for a vaccination administered today, with no time provided" do
       around { |example| freeze_time { example.run } }
 
