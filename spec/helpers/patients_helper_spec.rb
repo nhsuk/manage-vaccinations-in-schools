@@ -1,26 +1,48 @@
 # frozen_string_literal: true
 
-RSpec.describe PatientsHelper do
-  describe "#format_nhs_number" do
-    subject(:formatted_nhs_number) { helper.format_nhs_number(nhs_number) }
+describe PatientsHelper do
+  describe "#patient_nhs_number" do
+    subject(:patient_nhs_number) { helper.patient_nhs_number(patient) }
 
     context "when the NHS number is present" do
-      let(:nhs_number) { "0123456789" }
+      let(:patient) { build(:patient, nhs_number: "0123456789") }
 
       it { should be_html_safe }
 
       it do
-        expect(subject).to eq(
+        expect(patient_nhs_number).to eq(
           "<span class=\"app-u-monospace\">012&nbsp;&zwj;345&nbsp;&zwj;6789</span>"
         )
+      end
+
+      context "when the patient is invalidated" do
+        let(:patient) do
+          build(:patient, :invalidated, nhs_number: "0123456789")
+        end
+
+        it { should be_html_safe }
+
+        it do
+          expect(patient_nhs_number).to eq(
+            "<s><span class=\"app-u-monospace\">012&nbsp;&zwj;345&nbsp;&zwj;6789</span></s>"
+          )
+        end
       end
     end
 
     context "when the NHS number is not present" do
-      let(:nhs_number) { nil }
+      let(:patient) { build(:patient, nhs_number: nil) }
 
       it { should_not be_html_safe }
       it { should eq("Not provided") }
+
+      context "when the patient is invalidated" do
+        let(:patient) { build(:patient, :invalidated, nhs_number: nil) }
+
+        it { should be_html_safe }
+
+        it { expect(patient_nhs_number).to eq("<s>Not provided</s>") }
+      end
     end
   end
 
