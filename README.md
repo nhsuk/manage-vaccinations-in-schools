@@ -283,30 +283,40 @@ $ curl -s https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk/openam/oauth2/rea
 "https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk:443/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcare"
 ```
 
-Clients can be configured via CIS2 Connection Manager, please contact other organisation
-members to get the details for that. Mavis can use either a client secret or a
-private key JWT when authenticating requests to CIS2, these are configured with
-the Connection Manager too.
+Clients in the INT environment can be configured via CIS2 Connection Manager,
+please contact other organisation members to get the details for that. Mavis can
+use either a client secret or a private key JWT when authenticating requests to
+CIS2, these are configured via the Connection Manager.
 
-Once you've created a client config, put the `client_id` and
-`secret`/`private_key` into your local settings and ensure cis2 is enabled. For
-deployed environments these parameters need to be places into our AWS parameter
-store and are environment-specific. Here's an example of a full settings section
-using a `client_secret`:
+To configure Mavis, put non-secret configuration into Settings:
 
 ```yml
 cis2:
   enabled: true
   issuer: https://am.nhsint.auth-ptl.cis2.spineservices.nhs.uk/openam/oauth2/realms/root/realms/NHSIdentity/realms/Healthcareopenam/oauth2/realms/root/realms/oidc"
-  client_id: # Only include for local settings, otherwise populate in AWS parameter store
-  secret: # Only include for local settings, otherwise populate in AWS parameter store
 ```
 
-When configuring a new `private_key` for production, for example (which must
-have it's own key), you'll need to add the public key PEM to `PagesController#jwks`
-so that it can be served out from the `/oidc/jwks` endpoint. CIS2 will use this
-to decrypt JWKs when using the `private_key_jwk` authentication method. These
-keys should be rotated on a regular basis.
+And once you have your client secrets, either via the Connection Manager or from
+NHS support, put the `client_id` and `secret`/`private_key` into the Rails
+credentials file for the environment you are configuring.
+
+```yml
+cis2:
+  client_id: # Client ID, as provided by NHS
+  secret: # Client secret, as provided by NHS
+  private_key: # ... or RSA private key in PEM format
+```
+
+The `private_key` will automatically be used to generate a JWK on the
+`/oidc/jwks` endpoint, which is used by CIS2 to validate the JWT we use to
+request the access token from CIS2.
+
+#### Key Rotation
+
+Keys should be rotated regularly. When a new key is introduced it's JWK will
+automatically be added to the JWKS generated for `/oidc/jwks`, but the old
+public key can also be added to `JWKSController::EXTRA_JWK` to ensure a smooth
+roll-over.
 
 ## Rake tasks
 
