@@ -41,7 +41,14 @@
 FactoryBot.define do
   factory :consent do
     transient do
-      health_questions_list { ["Is there anything else we should know?"] }
+      health_questions_list do
+        questions = programme.vaccines.active.first&.health_questions
+        if questions&.any?
+          questions.in_order.pluck(:title)
+        else
+          ["Is there anything else we should know?"]
+        end
+      end
     end
 
     programme
@@ -110,7 +117,7 @@ FactoryBot.define do
     trait :health_question_notes do
       health_answers do
         health_questions_list.map do |question|
-          if question == "Is there anything else we should know?"
+          if question == health_questions_list.last
             HealthAnswer.new(
               question:,
               response: "yes",
