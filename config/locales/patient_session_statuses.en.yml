@@ -2,6 +2,7 @@ en:
   patient_session_statuses:
     not_in_session:
       text: Not in a session
+      banner_title: Not in session
     added_to_session:
       colour: blue
       text: Get consent
