@@ -26,6 +26,7 @@ describe "Delete vaccination record" do
 
     when_i_click_on_the_log
     then_i_see_the_delete_vaccination
+    and_the_parent_receives_an_email
   end
 
   scenario "User deletes a vaccination record on a closed session date" do
@@ -52,6 +53,7 @@ describe "Delete vaccination record" do
     @patient =
       create(
         :patient,
+        :consent_given_triage_needed,
         :triage_ready_to_vaccinate,
         given_name: "John",
         family_name: "Smith",
@@ -129,6 +131,10 @@ describe "Delete vaccination record" do
   def then_i_see_the_delete_vaccination
     expect(page).to have_content("Vaccinated with Gardasil 9")
     expect(page).to have_content("HPV vaccination record deleted")
+  end
+
+  def and_the_parent_receives_an_email
+    expect_email_to(@patient.parents.first.email, :vaccination_deleted)
   end
 
   def then_i_cant_click_on_delete_vaccination_record
