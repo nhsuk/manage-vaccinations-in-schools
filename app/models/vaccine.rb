@@ -45,7 +45,7 @@ class Vaccine < ApplicationRecord
   validates :snomed_product_code, presence: true, uniqueness: true
   validates :snomed_product_term, presence: true, uniqueness: true
 
-  enum :method, %i[injection nasal], validate: true
+  enum :method, { injection: 0, nasal: 1 }, validate: true
 
   scope :active, -> { where(discontinued: false) }
   scope :discontinued, -> { where(discontinued: true) }

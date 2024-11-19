@@ -45,12 +45,12 @@ class Triage < ApplicationRecord
              foreign_key: :performed_by_user_id
 
   enum :status,
-       %i[
-         ready_to_vaccinate
-         do_not_vaccinate
-         needs_follow_up
-         delay_vaccination
-       ],
+       {
+         ready_to_vaccinate: 0,
+         do_not_vaccinate: 1,
+         needs_follow_up: 2,
+         delay_vaccination: 3
+       },
        validate: true
 
   encrypts :notes

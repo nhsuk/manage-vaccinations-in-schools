@@ -103,7 +103,7 @@ module PatientSessionStateConcern
 
     def vaccination_can_be_delayed?
       latest_vaccination_record&.not_administered? &&
-        latest_vaccination_record&.retryable_reason?
+        latest_vaccination_record.retryable_reason?
     end
 
     def next_step

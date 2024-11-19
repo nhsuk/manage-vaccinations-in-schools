@@ -34,11 +34,11 @@ class SessionNotification < ApplicationRecord
   belongs_to :session
 
   enum :type,
-       %w[
-         school_reminder
-         clinic_initial_invitation
-         clinic_subsequent_invitation
-       ],
+       {
+         school_reminder: 0,
+         clinic_initial_invitation: 1,
+         clinic_subsequent_invitation: 2
+       },
        validate: true
 
   def clinic_invitation?

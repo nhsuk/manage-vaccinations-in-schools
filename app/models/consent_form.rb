@@ -86,18 +86,18 @@ class ConsentForm < ApplicationRecord
   has_one :team, through: :location
   has_many :eligible_schools, through: :organisation, source: :schools
 
-  enum :response, %w[given refused], prefix: "consent"
+  enum :response, { given: 0, refused: 1 }, prefix: "consent"
   enum :reason,
-       %w[
-         contains_gelatine
-         already_vaccinated
-         will_be_vaccinated_elsewhere
-         medical_reasons
-         personal_choice
-         other
-       ],
+       {
+         contains_gelatine: 0,
+         already_vaccinated: 1,
+         will_be_vaccinated_elsewhere: 2,
+         medical_reasons: 3,
+         personal_choice: 4,
+         other: 5
+       },
        prefix: "refused_because"
-  enum :gp_response, %w[yes no dont_know], prefix: true
+  enum :gp_response, { yes: 0, no: 1, dont_know: 2 }, prefix: true
 
   enum :parent_contact_method_type,
        Parent.contact_method_types,
@@ -112,7 +112,7 @@ class ConsentForm < ApplicationRecord
          allow_nil: true
        }
 
-  enum :education_setting, %w[school home none], prefix: true
+  enum :education_setting, { school: 0, home: 1, none: 2 }, prefix: true
 
   serialize :health_answers, coder: HealthAnswer::ArraySerializer
 
