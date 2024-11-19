@@ -114,7 +114,9 @@ class VaccinationsController < ApplicationController
 
     @vaccination_record.discard!
 
-    send_vaccination_deletion(@vaccination_record)
+    if @vaccination_record.confirmation_sent?
+      send_vaccination_deletion(@vaccination_record)
+    end
 
     redirect_to session_patient_path(id: @patient.id),
                 flash: {

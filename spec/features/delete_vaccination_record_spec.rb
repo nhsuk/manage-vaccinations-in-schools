@@ -2,10 +2,9 @@
 
 describe "Delete vaccination record" do
   before { Flipper.enable(:release_1b) }
-
   after { Flipper.disable(:release_1b) }
 
-  scenario "User deletes a vaccination record" do
+  scenario "User doesn't delete the record" do
     given_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
 
@@ -16,6 +15,49 @@ describe "Delete vaccination record" do
     when_i_dont_delete_the_vaccination_record
     then_i_see_the_patient
     and_they_are_already_vaccinated
+  end
+
+  scenario "User deletes a record and checks activity log" do
+    given_an_hpv_programme_is_underway
+    and_an_administered_vaccination_record_exists
+
+    when_i_go_to_a_patient_that_is_vaccinated
+    and_i_click_on_delete_vaccination_record
+    then_i_see_the_delete_vaccination_page
+
+    when_i_delete_the_vaccination_record
+    then_i_see_the_patient
+    and_i_see_a_successful_message
+    and_they_can_be_vaccinated
+
+    when_i_click_on_the_log
+    then_i_see_the_delete_vaccination
+  end
+
+  scenario "User deletes a record before confirmation is sent" do
+    given_an_hpv_programme_is_underway
+    and_an_administered_vaccination_record_exists
+
+    when_i_go_to_a_patient_that_is_vaccinated
+    and_i_click_on_delete_vaccination_record
+    then_i_see_the_delete_vaccination_page
+
+    when_i_delete_the_vaccination_record
+    then_i_see_the_patient
+    and_i_see_a_successful_message
+    and_they_can_be_vaccinated
+
+    when_i_click_on_the_log
+    then_i_see_the_delete_vaccination
+    and_the_parent_doesnt_receives_an_email
+  end
+
+  scenario "User deletes a record after confirmation is sent" do
+    given_an_hpv_programme_is_underway
+    and_an_administered_vaccination_record_exists
+    and_a_confirmation_email_has_been_sent
+
+    when_i_go_to_a_patient_that_is_vaccinated
     and_i_click_on_delete_vaccination_record
     then_i_see_the_delete_vaccination_page
 
@@ -29,7 +71,7 @@ describe "Delete vaccination record" do
     and_the_parent_receives_an_email
   end
 
-  scenario "User deletes a vaccination record on a closed session date" do
+  scenario "User tries to delete a record for a closed session date" do
     given_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
     and_the_session_has_closed
@@ -70,12 +112,17 @@ describe "Delete vaccination record" do
 
     batch = create(:batch, organisation: @organisation, vaccine:)
 
-    create(
-      :vaccination_record,
-      programme: @programme,
-      patient_session: @patient_session,
-      batch:
-    )
+    @vaccination_record =
+      create(
+        :vaccination_record,
+        programme: @programme,
+        patient_session: @patient_session,
+        batch:
+      )
+  end
+
+  def and_a_confirmation_email_has_been_sent
+    @vaccination_record.update(confirmation_sent_at: Time.current)
   end
 
   def and_the_session_has_closed
@@ -135,6 +182,10 @@ describe "Delete vaccination record" do
 
   def and_the_parent_receives_an_email
     expect_email_to(@patient.parents.first.email, :vaccination_deleted)
+  end
+
+  def and_the_parent_doesnt_receives_an_email
+    expect(sent_emails).to be_empty
   end
 
   def then_i_cant_click_on_delete_vaccination_record
