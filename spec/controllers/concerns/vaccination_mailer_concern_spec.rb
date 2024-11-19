@@ -39,7 +39,6 @@ describe VaccinationMailerConcern do
         ).with(
           params: {
             parent:,
-            patient:,
             vaccination_record:,
             sent_by: current_user
           },
@@ -50,7 +49,7 @@ describe VaccinationMailerConcern do
       it "sends a text message" do
         expect { send_vaccination_confirmation }.to have_enqueued_text(
           :vaccination_confirmation_administered
-        ).with(parent:, patient:, vaccination_record:, sent_by: current_user)
+        ).with(parent:, vaccination_record:, sent_by: current_user)
       end
     end
 
@@ -71,7 +70,6 @@ describe VaccinationMailerConcern do
         ).with(
           params: {
             parent:,
-            patient:,
             vaccination_record:,
             sent_by: current_user
           },
@@ -82,7 +80,7 @@ describe VaccinationMailerConcern do
       it "sends a text message" do
         expect { send_vaccination_confirmation }.to have_enqueued_text(
           :vaccination_confirmation_not_administered
-        ).with(parent:, patient:, vaccination_record:, sent_by: current_user)
+        ).with(parent:, vaccination_record:, sent_by: current_user)
       end
     end
 
@@ -103,7 +101,6 @@ describe VaccinationMailerConcern do
           ).with(
             params: {
               parent:,
-              patient:,
               vaccination_record:,
               sent_by: current_user
             },
@@ -114,7 +111,7 @@ describe VaccinationMailerConcern do
         it "sends a text message" do
           expect { send_vaccination_confirmation }.to have_enqueued_text(
             :vaccination_confirmation_administered
-          ).with(parent:, patient:, vaccination_record:, sent_by: current_user)
+          ).with(parent:, vaccination_record:, sent_by: current_user)
         end
       end
 
