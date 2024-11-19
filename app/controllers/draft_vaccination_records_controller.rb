@@ -77,10 +77,22 @@ class DraftVaccinationRecordsController < ApplicationController
   def handle_confirm
     return unless @draft_vaccination_record.save
 
+    performed_at_date_changed =
+      @vaccination_record.performed_at&.to_date !=
+        @draft_vaccination_record.performed_at.to_date
+
     @draft_vaccination_record.write_to!(@vaccination_record)
+
+    should_notify_parents =
+      @vaccination_record.confirmation_sent? &&
+        (
+          @vaccination_record.outcome_changed? ||
+            @vaccination_record.batch_id_changed? || performed_at_date_changed
+        )
+
     @vaccination_record.save!
 
-    send_vaccination_confirmation(@vaccination_record)
+    send_vaccination_confirmation(@vaccination_record) if should_notify_parents
 
     heading =
       if @vaccination_record.administered?
