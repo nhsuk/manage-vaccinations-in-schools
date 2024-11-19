@@ -1,7 +1,7 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5).to_i + ENV.fetch("GOOD_JOB_MAX_THREADS", 4).to_i %>
 
 development:
   <<: *default
@@ -12,10 +12,6 @@ test:
 staging:
   <<: *default
   database: manage_vaccinations_staging
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5).to_i + ENV.fetch("GOOD_JOB_MAX_THREADS", 4).to_i %>
 production:
   <<: *default
   database: manage_vaccinations_production
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5).to_i + ENV.fetch("GOOD_JOB_MAX_THREADS", 4).to_i %>
-  username: manage_vaccinations
-  password: <%= ENV["MANAGE_VACCINATIONS_DATABASE_PASSWORD"] %>
