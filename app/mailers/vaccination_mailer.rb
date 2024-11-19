@@ -8,4 +8,8 @@ class VaccinationMailer < ApplicationMailer
   def confirmation_not_administered
     app_template_mail(:vaccination_confirmation_not_administered)
   end
+
+  def deleted
+    app_template_mail(:vaccination_deleted)
+  end
 end

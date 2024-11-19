@@ -18,7 +18,8 @@ GOVUK_NOTIFY_EMAIL_TEMPLATES = {
   triage_vaccination_wont_happen: "d1faf47e-ccc3-4481-975b-1ec34211a21f",
   vaccination_confirmation_administered: "8a65d7b5-045c-4f26-8f76-6e593c14cb6d",
   vaccination_confirmation_not_administered:
-    "130fe52a-014a-45dd-9f53-8e65c1b8bb79"
+    "130fe52a-014a-45dd-9f53-8e65c1b8bb79",
+  vaccination_deleted: "1caf1459-abc9-4944-b8c0-deba906ea005"
 }.freeze
 
 GOVUK_NOTIFY_TEXT_TEMPLATES = {

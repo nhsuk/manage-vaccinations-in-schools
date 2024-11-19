@@ -141,4 +141,49 @@ describe VaccinationMailer do
       end
     end
   end
+
+  describe "#deleted" do
+    subject(:mail) do
+      described_class.with(consent:, vaccination_record:).deleted
+    end
+
+    let(:patient) do
+      create(:patient, :consent_given_triage_not_needed, programme:)
+    end
+    let(:patient_session) { create(:patient_session, session:, patient:) }
+    let(:vaccination_record) do
+      create(
+        :vaccination_record,
+        :not_administered,
+        :discarded,
+        programme:,
+        patient_session:
+      )
+    end
+
+    it do
+      expect(mail).to have_attributes(
+        to: [parent.email],
+        template_id: GOVUK_NOTIFY_EMAIL_TEMPLATES.fetch(:vaccination_deleted)
+      )
+    end
+
+    describe "personalisation" do
+      subject(:personalisation) do
+        mail.message.header["personalisation"].unparsed_value
+      end
+
+      it "sets the personalisation" do
+        expect(personalisation[:outcome_administered]).to eq("no")
+        expect(personalisation[:outcome_not_administered]).to eq("yes")
+        expect(personalisation.keys).to include(
+          :outcome_administered,
+          :outcome_not_administered,
+          :team_email,
+          :team_name,
+          :team_phone
+        )
+      end
+    end
+  end
 end
