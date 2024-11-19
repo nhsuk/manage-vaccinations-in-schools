@@ -367,5 +367,5 @@ Rails.application.routes.draw do
     get "/500", to: "errors#internal_server_error"
   end
 
-  get "/oidc/jwks", to: "pages#jwks"
+  get "/oidc/jwks", to: "jwks#jwks"
 end

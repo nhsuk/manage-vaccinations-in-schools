@@ -25,6 +25,7 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "PDS"
   inflect.acronym "OAuth2"
   inflect.acronym "OpenID"
+  inflect.acronym "JWKS"
 
   inflect.irregular "batch", "batches"
   inflect.irregular "child", "children"
