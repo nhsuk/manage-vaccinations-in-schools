@@ -48,7 +48,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
       action: "Action needed",
       dob: "Date of birth",
       name: "Full name",
-      outcome: "Outcome",
+      status: "Status",
       postcode: "Postcode",
       reason: "Reason for refusal",
       select_for_matching: "Action",
@@ -61,9 +61,12 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     patient_session = @patient_sessions[patient]
 
     case column
-    when :action, :outcome
+    when :action
       state = patient_session&.state || "not_in_session"
       t("patient_session_statuses.#{state}.text")
+    when :status
+      state = patient_session&.state || "not_in_session"
+      t("patient_session_statuses.#{state}.banner_title")
     when :dob
       patient.date_of_birth.to_fs(:long)
     when :name

@@ -151,10 +151,10 @@ describe AppSessionPatientTableComponent do
       it { should have_column("Action needed") }
     end
 
-    context "includes outcome" do
-      let(:columns) { %i[name year_group outcome] }
+    context "includes status" do
+      let(:columns) { %i[name year_group status] }
 
-      it { should have_column("Outcome") }
+      it { should have_column("Status") }
     end
   end
 end
