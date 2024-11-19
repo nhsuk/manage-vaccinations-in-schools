@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 describe "Parental consent create patient" do
+  before { Flipper.enable(:release_1b) }
+  after { Flipper.disable(:release_1b) }
+
   scenario "Nurse creates a patient from a consent response" do
     stub_pds_search_to_return_a_patient
 
@@ -24,6 +27,9 @@ describe "Parental consent create patient" do
     when_the_nurse_submits_the_new_patient
     then_the_patient_and_associated_records_are_created
     and_the_unmatched_consent_responses_page_is_empty
+
+    when_they_check_triage
+    then_the_patient_should_be_ready_to_vaccinate
   end
 
   def given_the_app_is_setup
@@ -150,5 +156,27 @@ describe "Parental consent create patient" do
 
   def and_the_unmatched_consent_responses_page_is_empty
     expect(page).to have_content("0 consent responses")
+  end
+
+  def when_they_check_triage
+    visit "/dashboard"
+
+    click_on "Programmes", match: :first
+    click_on "HPV"
+    within ".app-secondary-navigation" do
+      click_on "Sessions"
+    end
+    click_link "Pilot School"
+    click_on "Triage health questions"
+    click_on "No triage needed"
+  end
+
+  def then_the_patient_should_be_ready_to_vaccinate
+    expect(page).to have_content(@child.full_name)
+    click_on @child.full_name
+    expect(page).to have_content("#{@child.full_name} is ready for the nurse")
+    expect(Patient.last.cohort.birth_academic_year).to eq(
+      @child.date_of_birth.academic_year
+    )
   end
 end

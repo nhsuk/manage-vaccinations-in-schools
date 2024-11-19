@@ -315,6 +315,12 @@ class Patient < ApplicationRecord
   end
 
   def self.from_consent_form(consent_form)
+    cohort =
+      Cohort.find_or_create_by!(
+        birth_academic_year: consent_form.date_of_birth.academic_year,
+        organisation: consent_form.organisation
+      )
+
     new(
       address_line_1: consent_form.address_line_1,
       address_line_2: consent_form.address_line_2,
@@ -326,7 +332,8 @@ class Patient < ApplicationRecord
       nhs_number: consent_form.nhs_number,
       preferred_family_name: consent_form.preferred_family_name,
       preferred_given_name: consent_form.preferred_given_name,
-      school: consent_form.school
+      school: consent_form.school,
+      cohort:
     )
   end
 
