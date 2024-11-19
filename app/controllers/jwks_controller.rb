@@ -25,12 +25,12 @@ class JWKSController < ApplicationController
 
     if Settings.nhs_api&.jwt_private_key.present?
       nhs_api_key = OpenSSL::PKey::RSA.new(Settings.nhs_api.jwt_private_key)
-      jwk << key_to_jwk(key: nhs_api_key.public_key, alg: "RS256")
+      jwk << key_to_jwk(key: nhs_api_key.public_key, alg: "RS512")
     end
 
     if Settings.cis2&.private_key.present?
       cis2_key = OpenSSL::PKey::RSA.new(Settings.cis2.private_key)
-      jwk << key_to_jwk(key: cis2_key.public_key, alg: "RS512")
+      jwk << key_to_jwk(key: cis2_key.public_key, alg: "RS256")
     end
 
     jwk += EXTRA_JWK.map { key_to_jwk(**_1) }
