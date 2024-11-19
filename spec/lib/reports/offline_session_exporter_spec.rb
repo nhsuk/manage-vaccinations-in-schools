@@ -191,6 +191,25 @@ describe Reports::OfflineSessionExporter do
             performed_at.to_date
           )
         end
+
+        context "with lots of health answers" do
+          before do
+            create(
+              :consent,
+              :from_dad,
+              :recorded,
+              patient:,
+              programme:,
+              health_questions_list: ["First question?", "Second question?"]
+            )
+          end
+
+          it "separates the answers by new lines" do
+            expect(rows.first["HEALTH_QUESTION_ANSWERS"]).to eq(
+              "First question? No from Dad\nSecond question? No from Dad"
+            )
+          end
+        end
       end
 
       context "with a patient who couldn't be vaccinated" do

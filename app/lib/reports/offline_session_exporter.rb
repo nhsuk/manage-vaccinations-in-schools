@@ -27,12 +27,22 @@ class Reports::OfflineSessionExporter
   delegate :location, :organisation, to: :session
 
   def add_vaccinations_sheet(package)
+    package.use_shared_strings = true
+
     workbook = package.workbook
 
     date_style = workbook.styles.add_style(format_code: "dd/mm/yyyy")
+    wrap_style = workbook.styles.add_style(alignment: { wrap_text: true })
 
     types = headers_and_types.values
-    style = types.map { _1 == :date ? date_style : nil }
+    style =
+      headers_and_types.map do |header, type|
+        if type == :date
+          date_style
+        elsif header == "HEALTH_QUESTION_ANSWERS"
+          wrap_style
+        end
+      end
 
     workbook.add_worksheet(name: "Vaccinations") do |sheet|
       sheet.add_row(headers_and_types.keys)
