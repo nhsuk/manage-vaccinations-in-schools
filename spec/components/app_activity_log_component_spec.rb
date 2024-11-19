@@ -52,7 +52,8 @@ describe AppActivityLogComponent do
         programme:,
         patient:,
         parent: mum,
-        recorded_at: Time.zone.parse("2024-05-30 12:00")
+        recorded_at: Time.zone.parse("2024-05-30 12:00"),
+        recorded_by: user
       )
       create(
         :consent,
@@ -161,7 +162,8 @@ describe AppActivityLogComponent do
 
     include_examples "card",
                      title: "Consent given by Jane Doe (Mum)",
-                     date: "30 May 2024 at 12:00pm"
+                     date: "30 May 2024 at 12:00pm",
+                     by: "Nurse Joy"
 
     include_examples "card",
                      title: "Added to session at Hogwarts",
