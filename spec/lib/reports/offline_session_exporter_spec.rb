@@ -131,6 +131,15 @@ describe Reports::OfflineSessionExporter do
         end
       end
 
+      context "with a restricted patient" do
+        before { create(:patient, :restricted, session:) }
+
+        it "doesn't include the postcode" do
+          expect(rows.count).to eq(1)
+          expect(rows.first["PERSON_POSTCODE"]).to be_blank
+        end
+      end
+
       context "with a vaccinated patient" do
         let!(:vaccination_record) do
           create(

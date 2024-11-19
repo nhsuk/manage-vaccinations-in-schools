@@ -180,7 +180,7 @@ class Reports::OfflineSessionExporter
       patient.date_of_birth,
       patient.year_group,
       patient.gender_code.humanize,
-      patient.address_postcode,
+      patient.restricted? ? "" : patient.address_postcode,
       patient.nhs_number,
       consents.first&.response&.humanize,
       consent_details(consents:),

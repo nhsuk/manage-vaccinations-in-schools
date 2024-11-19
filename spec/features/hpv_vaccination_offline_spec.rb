@@ -93,6 +93,17 @@ describe "HPV Vaccination" do
       performed_at: previous_date,
       performed_by: @organisation.users.first
     )
+
+    @restricted_vaccinated_patient =
+      create(
+        :patient,
+        :vaccinated,
+        :restricted,
+        session: clinic ? @organisation.generic_clinic_session : @session,
+        school:,
+        location_name: clinic ? @physical_clinic_location.name : nil,
+        year_group: 8
+      )
   end
 
   def when_i_choose_to_record_offline_from_a_school_session_page
@@ -207,7 +218,7 @@ describe "HPV Vaccination" do
 
     expect(page).to have_content("Completed")
     expect(page).not_to have_content("Invalid")
-    expect(page).to have_content("1 previously imported record was omitted")
+    expect(page).to have_content("2 previously imported records were omitted")
   end
 
   def and_i_navigate_to_the_session_page
@@ -237,13 +248,20 @@ describe "HPV Vaccination" do
     expect(page).to have_content("SiteLeft arm (upper position)")
 
     click_on "Back"
-
     click_on "Could not vaccinate"
 
     click_on @unvaccinated_patient.full_name
     expect(page).to have_content(@unvaccinated_patient.full_name)
     expect(page).to have_content("Could not vaccinate")
     expect(page).to have_content("OutcomeAbsent from session")
+
+    click_on "Back"
+    click_on "Vaccinated"
+
+    click_on @restricted_vaccinated_patient.full_name
+    expect(page).to have_content(@restricted_vaccinated_patient.full_name)
+    expect(page).to have_content("Vaccinated")
+    expect(page).not_to have_content("Address")
   end
 
   def and_the_clinic_location_is_displayed
