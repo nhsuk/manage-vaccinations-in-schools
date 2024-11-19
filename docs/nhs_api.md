@@ -132,6 +132,13 @@ nhs_api:
 
 You should be able to find necessary keys in the app secrets.
 
+### Key Rotation
+
+Keys should be rotated regularly. When a new key is introduced it's JWK will
+automatically be added to the JWKS generated for `/oidc/jwks`, but the old
+public key can also be added to `JWKSController::EXTRA_JWK` to ensure a smooth
+roll-over.
+
 ## Rake tasks
 
 NHS API actions can be triggered through Rake tasks for testing.
