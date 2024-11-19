@@ -51,6 +51,20 @@
         <% end %>
       <% end %>
 
+      <% if @columns.include?(:status) %>
+        <%= f.govuk_check_boxes_fieldset :status, legend: { text: "Status", size: "s" } do %>
+          <% status_options.each do |state| %>
+            <%= f.govuk_check_box :status,
+                                  state,
+                                  label: { text: state },
+                                  checked: state.in?(params[:status] || []),
+                                  "data-autosubmit-target": "field",
+                                  "data-action": "autosubmit#submit",
+                                  "data-turbo-permanent": "true" %>
+          <% end %>
+        <% end %>
+      <% end %>
+
       <%= f.hidden_field :sort, value: params[:sort] %>
       <%= f.hidden_field :direction, value: params[:direction] %>
       <%= f.govuk_submit "Reset filters", type: "reset",
