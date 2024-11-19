@@ -227,8 +227,12 @@ describe Reports::ProgrammeVaccinationsExporter do
           "CONSENT_DETAILS" =>
             "Given by John Smith at 2024-01-01 12:05:20 +0000",
           "CONSENT_STATUS" => "Given",
-          "HEALTH_QUESTION_ANSWERS" =>
-            "Is there anything else we should know? No from Dad"
+          "HEALTH_QUESTION_ANSWERS" => [
+            "Does your child have any severe allergies? No from Dad",
+            "Does your child have any medical conditions for which they receive treatment? No from Dad",
+            "Has your child ever had a severe reaction to any medicines, including vaccines? No from Dad",
+            "Does your child need extra support during vaccination sessions? No from Dad"
+          ].join("\r\n")
         )
       end
     end
