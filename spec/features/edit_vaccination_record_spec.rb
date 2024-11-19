@@ -4,7 +4,7 @@ describe "Edit vaccination record" do
   before { Flipper.enable(:release_1b) }
   after { Flipper.disable(:release_1b) }
 
-  scenario "User edits a current vaccination record" do
+  scenario "User edits a new vaccination record" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
@@ -44,12 +44,16 @@ describe "Edit vaccination record" do
     and_i_choose_a_batch
     then_i_see_the_edit_vaccination_record_page
     and_i_should_see_the_updated_batch
+
+    when_i_click_on_save_changes
+    then_the_parent_doesnt_receive_an_email
   end
 
-  scenario "User edits an historical vaccination record" do
+  scenario "User edits a vaccination record that already received confirmation" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
-    and_an_historical_administered_vaccination_record_exists
+    and_an_administered_vaccination_record_exists
+    and_the_vaccination_confirmation_was_already_sent
 
     when_i_go_to_the_vaccination_records_page
     then_i_should_see_the_vaccination_records
@@ -75,12 +79,39 @@ describe "Edit vaccination record" do
     and_i_choose_a_batch
     then_i_see_the_edit_vaccination_record_page
     and_i_should_see_the_updated_batch
+
+    when_i_click_on_save_changes
+    then_the_parent_receives_an_administered_email
+  end
+
+  scenario "User edits a vaccination record, not enough to trigger an email" do
+    given_i_am_signed_in
+    and_an_hpv_programme_is_underway
+    and_an_administered_vaccination_record_exists
+    and_the_vaccination_confirmation_was_already_sent
+
+    when_i_go_to_the_vaccination_records_page
+    then_i_should_see_the_vaccination_records
+
+    when_i_click_on_the_vaccination_record
+    then_i_should_see_the_vaccination_record
+
+    when_i_click_on_edit_vaccination_record
+    then_i_see_the_edit_vaccination_record_page
+
+    when_i_click_on_change_delivery_method
+    and_i_choose_a_delivery_method_and_site
+    then_i_see_the_edit_vaccination_record_page
+
+    when_i_click_on_save_changes
+    then_the_parent_doesnt_receive_an_email
   end
 
   scenario "Edit outcome to vaccinated" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
     and_a_not_administered_vaccination_record_exists
+    and_the_vaccination_confirmation_was_already_sent
 
     when_i_go_to_the_vaccination_records_page
     then_i_should_see_the_vaccination_records
@@ -111,12 +142,14 @@ describe "Edit vaccination record" do
 
     when_i_click_on_save_changes
     then_i_should_see_the_vaccination_record
+    and_the_parent_receives_an_administered_email
   end
 
   scenario "Edit outcome to not vaccinated" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
+    and_the_vaccination_confirmation_was_already_sent
 
     when_i_go_to_the_vaccination_records_page
     then_i_should_see_the_vaccination_records
@@ -134,6 +167,7 @@ describe "Edit vaccination record" do
 
     when_i_click_on_save_changes
     then_i_should_see_the_vaccination_record
+    and_the_parent_receives_a_not_administered_email
   end
 
   def given_i_am_signed_in
@@ -142,12 +176,7 @@ describe "Edit vaccination record" do
   end
 
   def and_an_hpv_programme_is_underway
-    @programme = create(:programme, :hpv)
-    create(
-      :organisation_programme,
-      organisation: @organisation,
-      programme: @programme
-    )
+    @programme = create(:programme, :hpv, organisations: [@organisation])
 
     @vaccine = @programme.vaccines.first
 
@@ -166,40 +195,54 @@ describe "Edit vaccination record" do
         location:
       )
 
-    @patient = create(:patient, given_name: "John", family_name: "Smith")
+    @patient =
+      create(
+        :patient,
+        :consent_given_triage_not_needed,
+        given_name: "John",
+        family_name: "Smith",
+        programme: @programme
+      )
 
     @patient_session =
       create(:patient_session, patient: @patient, session: @session)
   end
 
   def and_an_administered_vaccination_record_exists
-    create(
-      :vaccination_record,
-      programme: @programme,
-      patient_session: @patient_session,
-      batch: @original_batch
-    )
+    @vaccination_record =
+      create(
+        :vaccination_record,
+        programme: @programme,
+        patient_session: @patient_session,
+        batch: @original_batch
+      )
   end
 
   def and_an_historical_administered_vaccination_record_exists
-    create(
-      :vaccination_record,
-      programme: @programme,
-      patient_session: @patient_session,
-      batch: @original_batch,
-      performed_by_user: nil,
-      performed_by_given_name: "Nurse",
-      performed_by_family_name: "Joy"
-    )
+    @vaccination_record =
+      create(
+        :vaccination_record,
+        programme: @programme,
+        patient_session: @patient_session,
+        batch: @original_batch,
+        performed_by_user: nil,
+        performed_by_given_name: "Nurse",
+        performed_by_family_name: "Joy"
+      )
   end
 
   def and_a_not_administered_vaccination_record_exists
-    create(
-      :vaccination_record,
-      :not_administered,
-      programme: @programme,
-      patient_session: @patient_session
-    )
+    @vaccination_record =
+      create(
+        :vaccination_record,
+        :not_administered,
+        programme: @programme,
+        patient_session: @patient_session
+      )
+  end
+
+  def and_the_vaccination_confirmation_was_already_sent
+    @vaccination_record.update!(confirmation_sent_at: Time.current)
   end
 
   def when_i_go_to_the_vaccination_records_page
@@ -342,6 +385,10 @@ describe "Edit vaccination record" do
     click_on "Add method"
   end
 
+  def when_i_click_on_change_delivery_method
+    click_on "Change method"
+  end
+
   def and_i_choose_a_delivery_method_and_site
     choose "Intramuscular"
     choose "Left arm"
@@ -351,4 +398,28 @@ describe "Edit vaccination record" do
   def when_i_click_on_save_changes
     click_on "Save changes"
   end
+
+  def then_the_parent_doesnt_receive_an_email
+    expect(sent_emails).to be_empty
+  end
+
+  alias_method :and_the_parent_doesnt_receive_an_email,
+               :then_the_parent_doesnt_receive_an_email
+
+  def and_the_parent_receives_a_not_administered_email
+    expect_email_to(
+      @patient.parents.first.email,
+      :vaccination_confirmation_not_administered
+    )
+  end
+
+  def then_the_parent_receives_an_administered_email
+    expect_email_to(
+      @patient.parents.first.email,
+      :vaccination_confirmation_administered
+    )
+  end
+
+  alias_method :and_the_parent_receives_an_administered_email,
+               :then_the_parent_receives_an_administered_email
 end

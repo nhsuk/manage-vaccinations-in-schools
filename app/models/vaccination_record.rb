@@ -163,6 +163,10 @@ class VaccinationRecord < ApplicationRecord
     !administered?
   end
 
+  def confirmation_sent?
+    confirmation_sent_at != nil
+  end
+
   def retryable_reason?
     not_well? || contraindications? || absent_from_session? ||
       absent_from_school? || refused?
