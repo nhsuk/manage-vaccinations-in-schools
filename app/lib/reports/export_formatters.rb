@@ -49,7 +49,7 @@ module Reports::ExportFormatters
         "#{question} #{formatted_responses.join(", ")}"
       end
 
-    values.join("\n")
+    values.join("\r\n")
   end
 
   def gillick_status(gillick_assessment:)
