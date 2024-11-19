@@ -96,8 +96,12 @@ class DraftVaccinationRecord
   end
 
   def administered?
+    return nil if outcome.nil?
     outcome == "administered"
   end
+
+  # So that a form error matches to a field in this model
+  alias_method :administered, :administered?
 
   def batch
     BatchPolicy::Scope.new(@current_user, Batch).resolve.find_by(id: batch_id)

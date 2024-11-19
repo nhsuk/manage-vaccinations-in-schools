@@ -56,9 +56,12 @@ class VaccinationsController < ApplicationController
         &:reset!
       )
 
-    @draft_vaccination_record.assign_attributes(create_params)
+    @draft_vaccination_record.patient_session = @patient_session
 
-    if @draft_vaccination_record.save
+    if create_params.nil?
+      @draft_vaccination_record.errors.add(:administered, :blank)
+      render "patient_sessions/show", status: :unprocessable_entity
+    elsif @draft_vaccination_record.update(create_params)
       steps = @draft_vaccination_record.wizard_steps
 
       steps.delete(:date_and_time)
@@ -130,17 +133,16 @@ class VaccinationsController < ApplicationController
         :programme_id,
         :vaccine_id
       )
-      .merge(
-        patient_session: @patient_session,
-        performed_at: Time.current,
-        performed_by_user: current_user
-      )
+      .merge(performed_at: Time.current, performed_by_user: current_user)
   end
 
   def create_params
-    if vaccination_record_params[:administered] == "true"
+    administered = vaccination_record_params[:administered]
+    return if administered.blank?
+
+    if administered == "true"
       create_params =
-        if delivery_site_param_other?
+        if vaccination_record_params[:delivery_site] == "other"
           vaccination_record_params.except(:delivery_site, :delivery_method)
         else
           vaccination_record_params
@@ -153,10 +155,6 @@ class VaccinationsController < ApplicationController
     else
       vaccination_record_params.except(:administered)
     end
-  end
-
-  def delivery_site_param_other?
-    vaccination_record_params[:delivery_site] == "other"
   end
 
   def set_session

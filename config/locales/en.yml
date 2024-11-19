@@ -192,7 +192,7 @@ en:
         draft_vaccination_record:
           attributes:
             administered:
-              inclusion: Choose if they got the vaccine
+              blank: Choose if they got the vaccine
             batch_id:
               blank: Choose a batch
               incorrect_vaccine: Choose a batch of the %{vaccine_brand} vaccine
