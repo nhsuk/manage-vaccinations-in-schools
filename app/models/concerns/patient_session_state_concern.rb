@@ -3,6 +3,22 @@
 module PatientSessionStateConcern
   extend ActiveSupport::Concern
 
+  def self.available_states
+    %w[
+      added_to_session
+      consent_given_triage_not_needed
+      consent_given_triage_needed
+      consent_refused
+      consent_conflicts
+      triaged_ready_to_vaccinate
+      triaged_do_not_vaccinate
+      triaged_kept_in_triage
+      unable_to_vaccinate
+      delay_vaccination
+      vaccinated
+    ].freeze
+  end
+
   included do
     def state
       @state ||=
@@ -31,19 +47,9 @@ module PatientSessionStateConcern
         end
     end
 
-    %w[
-      added_to_session
-      consent_given_triage_not_needed
-      consent_given_triage_needed
-      consent_refused
-      consent_conflicts
-      triaged_ready_to_vaccinate
-      triaged_do_not_vaccinate
-      triaged_kept_in_triage
-      unable_to_vaccinate
-      delay_vaccination
-      vaccinated
-    ].each { |state| define_method("#{state}?") { self.state == state } }
+    PatientSessionStateConcern.available_states.each do |state|
+      define_method("#{state}?") { self.state == state }
+    end
 
     def consent_given?
       return false if no_consent?
