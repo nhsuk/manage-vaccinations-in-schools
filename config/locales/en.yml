@@ -286,7 +286,7 @@ en:
             uuid:
               inclusion: Enter an existing record
             vaccine_given:
-              inclusion: Enter a valid vaccine, eg Gardasil 9.
+              inclusion: Enter a valid vaccine, eg Gardasil9.
         import_duplicate_form:
           attributes:
             apply_changes:

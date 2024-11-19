@@ -111,7 +111,7 @@ describe ImmunisationImportRow do
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
         expect(immunisation_import_row.errors[:vaccine_given]).to eq(
-          ["Enter a valid vaccine, eg Gardasil 9."]
+          ["Enter a valid vaccine, eg Gardasil9."]
         )
       end
     end
