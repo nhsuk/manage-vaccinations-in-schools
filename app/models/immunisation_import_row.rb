@@ -52,7 +52,16 @@ class ImmunisationImportRow
   validates :patient_last_name, presence: true
   validates :patient_date_of_birth, presence: true
   validates :patient_gender_code, inclusion: { in: Patient.gender_codes.keys }
-  validates :patient_postcode, postcode: true
+  validates :patient_postcode,
+            postcode: {
+              allow_nil: true
+            },
+            presence: {
+              if: -> do
+                @data["PERSON_POSTCODE"]&.strip.present? ||
+                  patient_nhs_number.blank?
+              end
+            }
   validate :date_of_birth_in_a_valid_year_group
 
   validates :date_of_vaccination,
@@ -523,7 +532,7 @@ class ImmunisationImportRow
 
   def existing_patients
     if patient_first_name.blank? || patient_last_name.blank? ||
-         patient_date_of_birth.nil? || patient_postcode.blank?
+         patient_date_of_birth.nil?
       return
     end
 

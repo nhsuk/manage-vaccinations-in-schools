@@ -92,6 +92,15 @@ describe ImmunisationImportRow do
           ["Enter a valid postcode, such as SW1A 1AA"]
         )
       end
+
+      context "with an NHS number and missing fields" do
+        let(:data) { { "VACCINATED" => "Y", "NHS_NUMBER" => nhs_number } }
+
+        it "doesn't require a postcode" do
+          expect(immunisation_import_row).to be_invalid
+          expect(immunisation_import_row.errors[:patient_postcode]).to be_empty
+        end
+      end
     end
 
     context "with an invalid organisation code" do
@@ -132,8 +141,8 @@ describe ImmunisationImportRow do
 
       it "has errors" do
         expect(immunisation_import_row).to be_invalid
-        expect(immunisation_import_row.errors[:patient_postcode]).to eq(
-          ["Enter a valid postcode, such as SW1A 1AA"]
+        expect(immunisation_import_row.errors[:patient_gender_code]).to eq(
+          ["Enter a gender or gender code."]
         )
       end
     end
