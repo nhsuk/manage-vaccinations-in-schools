@@ -25,8 +25,8 @@ module PatientSortingConcern
       obj.try(:date_of_birth) || obj.patient.date_of_birth
     when "name"
       obj.try(:full_name) || obj.patient.full_name
-    when "outcome"
-      obj.state
+    when "status"
+      obj.try(:state) || "not_in_session"
     when "postcode"
       obj.try(:address_postcode) || obj.patient.address_postcode
     when "year_group"
