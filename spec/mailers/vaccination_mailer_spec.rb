@@ -94,7 +94,7 @@ describe VaccinationMailer do
   describe "#confirmation_not_administered" do
     subject(:mail) do
       described_class.with(
-        consent:,
+        parent:,
         vaccination_record:
       ).confirmation_not_administered
     end
@@ -144,7 +144,7 @@ describe VaccinationMailer do
 
   describe "#deleted" do
     subject(:mail) do
-      described_class.with(consent:, vaccination_record:).deleted
+      described_class.with(parent:, vaccination_record:).deleted
     end
 
     let(:patient) do
