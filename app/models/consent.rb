@@ -66,22 +66,24 @@ class Consent < ApplicationRecord
   scope :withdrawn, -> { where.not(withdrawn_at: nil) }
   scope :not_withdrawn, -> { where(withdrawn_at: nil) }
 
-  enum :response, %w[given refused not_provided], prefix: true
+  enum :response, { given: 0, refused: 1, not_provided: 2 }, prefix: true
   enum :reason_for_refusal,
-       %w[
-         contains_gelatine
-         already_vaccinated
-         will_be_vaccinated_elsewhere
-         medical_reasons
-         personal_choice
-         other
-       ],
+       {
+         contains_gelatine: 0,
+         already_vaccinated: 1,
+         will_be_vaccinated_elsewhere: 2,
+         medical_reasons: 3,
+         personal_choice: 4,
+         other: 5
+       },
        prefix: true,
        validate: {
          if: :withdrawn?
        }
 
-  enum :route, %i[website phone paper in_person self_consent], prefix: "via"
+  enum :route,
+       { website: 0, phone: 1, paper: 2, in_person: 3, self_consent: 4 },
+       prefix: "via"
 
   serialize :health_answers, coder: HealthAnswer::ArraySerializer
 

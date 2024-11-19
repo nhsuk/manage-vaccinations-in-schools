@@ -36,7 +36,9 @@ class ConsentNotification < ApplicationRecord
   belongs_to :programme
   belongs_to :session
 
-  enum :type, %w[request initial_reminder subsequent_reminder], validate: true
+  enum :type,
+       { request: 0, initial_reminder: 1, subsequent_reminder: 2 },
+       validate: true
 
   def reminder?
     initial_reminder? || subsequent_reminder?

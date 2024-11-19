@@ -33,7 +33,7 @@ class NotifyLogEntry < ApplicationRecord
   belongs_to :consent_form, optional: true
   belongs_to :patient, optional: true
 
-  enum :type, %i[email sms], validate: true
+  enum :type, { email: 0, sms: 1 }, validate: true
 
   validates :template_id, presence: true
   validates :recipient, presence: true

@@ -98,39 +98,39 @@ class VaccinationRecord < ApplicationRecord
         end
 
   enum :delivery_method,
-       %w[intramuscular subcutaneous nasal_spray],
+       { intramuscular: 0, subcutaneous: 1, nasal_spray: 2 },
        prefix: true,
        validate: {
          if: :administered?
        }
   enum :delivery_site,
-       %w[
-         left_arm
-         right_arm
-         left_arm_upper_position
-         left_arm_lower_position
-         right_arm_upper_position
-         right_arm_lower_position
-         left_thigh
-         right_thigh
-         left_buttock
-         right_buttock
-         nose
-       ],
+       {
+         left_arm: 0,
+         right_arm: 1,
+         left_arm_upper_position: 2,
+         left_arm_lower_position: 3,
+         right_arm_upper_position: 4,
+         right_arm_lower_position: 5,
+         left_thigh: 6,
+         right_thigh: 7,
+         left_buttock: 8,
+         right_buttock: 9,
+         nose: 10
+       },
        prefix: true,
        validate: {
          if: :administered?
        }
   enum :outcome,
-       %i[
-         administered
-         refused
-         not_well
-         contraindications
-         already_had
-         absent_from_school
-         absent_from_session
-       ],
+       {
+         administered: 0,
+         refused: 1,
+         not_well: 2,
+         contraindications: 3,
+         already_had: 4,
+         absent_from_school: 5,
+         absent_from_session: 6
+       },
        validate: true
 
   encrypts :notes

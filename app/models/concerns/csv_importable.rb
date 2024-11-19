@@ -21,7 +21,7 @@ module CSVImportable
     scope :csv_not_removed, -> { where(csv_removed_at: nil) }
 
     enum :status,
-         %i[pending_import rows_are_invalid recorded],
+         { pending_import: 0, rows_are_invalid: 1, recorded: 2 },
          default: :pending_import,
          validate: true
 

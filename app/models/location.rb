@@ -45,7 +45,7 @@ class Location < ApplicationRecord
 
   has_one :organisation, through: :team
 
-  enum :type, %w[school generic_clinic community_clinic]
+  enum :type, { school: 0, generic_clinic: 1, community_clinic: 2 }
 
   scope :clinic, -> { generic_clinic.or(community_clinic) }
 
