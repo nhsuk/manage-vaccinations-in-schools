@@ -65,5 +65,12 @@ module PatientSortingConcern
         value.to_s.in?(year_groups)
       end
     end
+
+    if (statuses = params[:status]).present?
+      patients_or_patient_sessions.select! do
+        value = _1.try(:state) || "not_in_session"
+        t("patient_session_statuses.#{value}.banner_title").in?(statuses)
+      end
+    end
   end
 end
