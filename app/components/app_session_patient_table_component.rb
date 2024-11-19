@@ -224,4 +224,12 @@ class AppSessionPatientTableComponent < ViewComponent::Base
       end
     { html_attributes: { aria: { sort: } } }
   end
+
+  def status_options
+    PatientSessionStateConcern
+      .available_states
+      .map { |state| t("patient_session_statuses.#{state}.banner_title") }
+      .uniq
+      .sort
+  end
 end
