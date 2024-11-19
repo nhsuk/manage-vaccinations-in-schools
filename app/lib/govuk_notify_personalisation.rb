@@ -48,6 +48,8 @@ class GovukNotifyPersonalisation
       next_session_dates:,
       next_session_dates_or:,
       not_catch_up:,
+      outcome_administered:,
+      outcome_not_administered:,
       parent_full_name:,
       programme_name:,
       reason_did_not_vaccinate:,
@@ -154,6 +156,16 @@ class GovukNotifyPersonalisation
       .today_or_future_dates
       .map { _1.to_fs(:short_day_of_week) }
       .to_sentence(last_word_connector: ", or ", two_words_connector: " or ")
+  end
+
+  def outcome_administered
+    return if vaccination_record.nil?
+    vaccination_record.administered? ? "yes" : "no"
+  end
+
+  def outcome_not_administered
+    return if vaccination_record.nil?
+    vaccination_record.not_administered? ? "yes" : "no"
   end
 
   def parent_full_name

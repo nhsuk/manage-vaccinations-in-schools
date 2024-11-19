@@ -189,7 +189,9 @@ describe GovukNotifyPersonalisation do
           day_month_year_of_vaccination: "01/01/2024",
           reason_did_not_vaccinate: "the nurse decided John was not well",
           show_additional_instructions: "yes",
-          today_or_date_of_vaccination: "1 January 2024"
+          today_or_date_of_vaccination: "1 January 2024",
+          outcome_administered: "no",
+          outcome_not_administered: "yes"
         )
       )
     end
