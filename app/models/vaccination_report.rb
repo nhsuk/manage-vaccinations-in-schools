@@ -10,8 +10,8 @@ class VaccinationReport
     "vaccination_report"
   end
 
-  attribute :date_from, :datetime
-  attribute :date_to, :integer
+  attribute :date_from, :date
+  attribute :date_to, :date
   attribute :file_format, :string
   attribute :programme_id, :integer
 
