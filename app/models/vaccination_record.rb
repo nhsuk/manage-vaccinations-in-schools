@@ -178,6 +178,10 @@ class VaccinationRecord < ApplicationRecord
     vaccine.dose_volume_ml * 1 if vaccine.present?
   end
 
+  def academic_year
+    performed_at.to_date.academic_year
+  end
+
   private
 
   def requires_location_name?

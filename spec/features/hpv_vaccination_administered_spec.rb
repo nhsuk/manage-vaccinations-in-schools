@@ -52,7 +52,9 @@ describe "HPV Vaccination" do
     when_i_go_to_the_patient
     then_i_see_that_the_status_is_vaccinated
     and_i_see_the_vaccination_details
-    and_an_email_is_sent_to_the_parent_confirming_the_vaccination
+
+    when_vaccination_confirmations_are_sent
+    then_an_email_is_sent_to_the_parent_confirming_the_vaccination
     and_a_text_is_sent_to_the_parent_confirming_the_vaccination
   end
 
@@ -181,7 +183,11 @@ describe "HPV Vaccination" do
     expect(page).to have_content("Vaccination details")
   end
 
-  def and_an_email_is_sent_to_the_parent_confirming_the_vaccination
+  def when_vaccination_confirmations_are_sent
+    VaccinationConfirmationsJob.perform_now
+  end
+
+  def then_an_email_is_sent_to_the_parent_confirming_the_vaccination
     expect_email_to(
       @patient.consents.last.parent.email,
       :vaccination_confirmation_administered

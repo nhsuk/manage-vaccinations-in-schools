@@ -17,7 +17,7 @@ module VaccinationMailerConcern
     text_template_name = :"vaccination_#{mailer_action}"
 
     parents.each do |parent|
-      params = { parent:, vaccination_record:, sent_by: current_user }
+      params = { parent:, vaccination_record:, sent_by: try(:current_user) }
 
       if parent.email.present?
         VaccinationMailer.with(params).public_send(mailer_action).deliver_later
@@ -32,7 +32,7 @@ module VaccinationMailerConcern
     return if parents.empty?
 
     parents.each do |parent|
-      params = { parent:, vaccination_record:, sent_by: current_user }
+      params = { parent:, vaccination_record:, sent_by: try(:current_user) }
 
       if parent.email.present?
         VaccinationMailer.with(params).deleted.deliver_later

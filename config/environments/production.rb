@@ -158,6 +158,11 @@ Rails.application.configure do
       cron: "every day at 2am",
       class: "TrimActiveRecordSessionsJob",
       description: "Remove ActiveRecord sessions older than 30 days"
+    },
+    vaccination_confirmations: {
+      cron: "every day at 7pm",
+      class: "VaccinationConfirmationsJob",
+      description: "Send vaccination confirmation emails to parents"
     }
   }
 end
