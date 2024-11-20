@@ -45,7 +45,6 @@
 #
 class VaccinationRecord < ApplicationRecord
   include Discard::Model
-  include LocationNameConcern
   include PendingChangesConcern
   include VaccinationRecordPerformedByConcern
 
@@ -139,6 +138,14 @@ class VaccinationRecord < ApplicationRecord
 
   validates :notes, length: { maximum: 1000 }
 
+  validates :location_name,
+            absence: {
+              unless: :requires_location_name?
+            },
+            presence: {
+              if: :requires_location_name?
+            }
+
   validates :dose_sequence,
             presence: true,
             comparison: {
@@ -167,6 +174,10 @@ class VaccinationRecord < ApplicationRecord
   end
 
   private
+
+  def requires_location_name?
+    location&.generic_clinic?
+  end
 
   def maximum_dose_sequence
     vaccine&.maximum_dose_sequence || 1

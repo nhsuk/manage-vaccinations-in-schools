@@ -47,7 +47,10 @@ FactoryBot.define do
   factory :vaccination_record do
     transient do
       session { association :session, programme: }
-      patient { association :patient, school: session.location }
+      patient do
+        association :patient,
+                    school: session.location.school? ? session.location : nil
+      end
     end
 
     programme
