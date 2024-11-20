@@ -89,6 +89,7 @@ class PatientsController < ApplicationController
           :school,
           cohort: :organisation,
           consents: %i[parent patient recorded_by],
+          gillick_assessments: :performed_by,
           notify_log_entries: :sent_by,
           parents: :parent_relationships,
           patient_sessions: %i[location session_attendances],
