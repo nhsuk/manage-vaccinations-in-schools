@@ -22,7 +22,9 @@ describe "HPV Vaccination" do
 
     when_i_go_to_the_patient
     then_i_see_that_the_status_is_could_not_vaccinate
-    and_an_email_is_sent_saying_the_vaccination_didnt_happen
+
+    when_vaccination_confirmations_are_sent
+    then_an_email_is_sent_saying_the_vaccination_didnt_happen
     and_a_text_is_sent_saying_the_vaccination_didnt_happen
   end
 
@@ -89,7 +91,11 @@ describe "HPV Vaccination" do
     )
   end
 
-  def and_an_email_is_sent_saying_the_vaccination_didnt_happen
+  def when_vaccination_confirmations_are_sent
+    VaccinationConfirmationsJob.perform_now
+  end
+
+  def then_an_email_is_sent_saying_the_vaccination_didnt_happen
     expect_email_to(
       @patient.consents.last.parent.email,
       :vaccination_confirmation_not_administered

@@ -19,4 +19,18 @@ module PDSHelper
       }
     )
   end
+
+  def stub_pds_get_nhs_number_to_return_a_patient
+    stub_request(
+      :get,
+      Addressable::Template.new(
+        "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/{nhs_number}"
+      )
+    ).to_return(
+      body: file_fixture("pds/get-patient-response.json"),
+      headers: {
+        "Content-Type" => "application/fhir+json"
+      }
+    )
+  end
 end

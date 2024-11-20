@@ -9,6 +9,8 @@ describe "HPV Vaccination" do
   end
 
   scenario "Download spreadsheet, record offline at a school session, upload vaccination outcomes back into Mavis" do
+    stub_pds_get_nhs_number_to_return_a_patient
+
     given_an_hpv_programme_is_underway
     when_i_choose_to_record_offline_from_a_school_session_page
     then_i_see_an_excel_spreadsheet_for_recording_offline
@@ -17,9 +19,15 @@ describe "HPV Vaccination" do
     and_i_upload_the_modified_csv_file
     and_i_navigate_to_the_session_page
     then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
+
+    when_vaccination_confirmations_are_sent
+    then_an_email_is_sent_to_the_parent_confirming_the_vaccination
+    and_a_text_is_sent_to_the_parent_confirming_the_vaccination
   end
 
   scenario "Download spreadsheet, record offline at a clinic, upload vaccination outcomes back into Mavis" do
+    stub_pds_get_nhs_number_to_return_a_patient
+
     given_an_hpv_programme_is_underway(clinic: true)
     when_i_choose_to_record_offline_from_a_clinic_page
     then_i_see_an_excel_spreadsheet_for_recording_offline
@@ -29,6 +37,10 @@ describe "HPV Vaccination" do
     and_i_navigate_to_the_clinic_page
     then_i_see_the_uploaded_vaccination_outcomes_reflected_in_the_session
     and_the_clinic_location_is_displayed
+
+    when_vaccination_confirmations_are_sent
+    then_an_email_is_sent_to_the_parent_confirming_the_vaccination
+    and_a_text_is_sent_to_the_parent_confirming_the_vaccination
   end
 
   def given_an_hpv_programme_is_underway(clinic: false)
@@ -266,5 +278,37 @@ describe "HPV Vaccination" do
 
   def and_the_clinic_location_is_displayed
     expect(page).to have_content("Westfield Shopping Centre")
+  end
+
+  def when_vaccination_confirmations_are_sent
+    VaccinationConfirmationsJob.perform_now
+  end
+
+  def then_an_email_is_sent_to_the_parent_confirming_the_vaccination
+    expect_email_to(
+      @vaccinated_patient.consents.last.parent.email,
+      :vaccination_confirmation_administered,
+      :any
+    )
+
+    expect_email_to(
+      @unvaccinated_patient.consents.last.parent.email,
+      :vaccination_confirmation_not_administered,
+      :any
+    )
+  end
+
+  def and_a_text_is_sent_to_the_parent_confirming_the_vaccination
+    expect_text_to(
+      @vaccinated_patient.consents.last.parent.phone,
+      :vaccination_confirmation_administered,
+      :any
+    )
+
+    expect_text_to(
+      @unvaccinated_patient.consents.last.parent.phone,
+      :vaccination_confirmation_not_administered,
+      :any
+    )
   end
 end
