@@ -3,6 +3,8 @@
 class VaccinesController < ApplicationController
   include TodaysBatchConcern
 
+  layout "full"
+
   def index
     @vaccines = policy_scope(Vaccine).active.order(:brand)
     @batches_by_vaccine_id =
