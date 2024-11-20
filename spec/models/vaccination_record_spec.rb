@@ -48,6 +48,44 @@ describe VaccinationRecord do
   subject(:vaccination_record) { create(:vaccination_record, programme:) }
 
   let(:programme) { create(:programme) }
+  let(:organisation) { create(:organisation, programmes: [programme]) }
+
+  describe "validations" do
+    it { should validate_absence_of(:location_name) }
+
+    context "for a generic clinic" do
+      subject(:vaccination_record) do
+        build(
+          :vaccination_record,
+          programme:,
+          session: organisation.generic_clinic_session
+        )
+      end
+
+      it { should validate_presence_of(:location_name) }
+    end
+
+    context "when performed_at is not set" do
+      let(:vaccination_record) { build(:vaccination_record, performed_at: nil) }
+
+      it { should be_valid }
+    end
+
+    context "when performed_at is in the future" do
+      around { |example| freeze_time { example.run } }
+
+      let(:vaccination_record) do
+        build(:vaccination_record, performed_at: 1.second.from_now)
+      end
+
+      it "has an error" do
+        expect(vaccination_record).to be_invalid
+        expect(vaccination_record.errors[:performed_at]).to include(
+          "Enter a time in the past"
+        )
+      end
+    end
+  end
 
   describe "#performed_by" do
     subject(:performed_by) { vaccination_record.performed_by }
@@ -88,29 +126,6 @@ describe VaccinationRecord do
       end
 
       it { should be_nil }
-    end
-  end
-
-  describe "validations" do
-    context "when performed_at is not set" do
-      let(:vaccination_record) { build(:vaccination_record, performed_at: nil) }
-
-      it { should be_valid }
-    end
-
-    context "when performed_at is in the future" do
-      around { |example| freeze_time { example.run } }
-
-      let(:vaccination_record) do
-        build(:vaccination_record, performed_at: 1.second.from_now)
-      end
-
-      it "has an error" do
-        expect(vaccination_record).to be_invalid
-        expect(vaccination_record.errors[:performed_at]).to include(
-          "Enter a time in the past"
-        )
-      end
     end
   end
 end
