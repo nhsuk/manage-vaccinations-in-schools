@@ -53,7 +53,7 @@
     <% elsif gillick_assessment_can_be_recorded? %>
       <p class="nhsuk-body">
         <%= govuk_button_link_to "Assess Gillick competence",
-                                 new_session_patient_gillick_assessment_path(
+                                 edit_session_patient_gillick_assessment_path(
                                    session,
                                    patient,
                                    section: @section,

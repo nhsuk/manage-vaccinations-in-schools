@@ -312,9 +312,7 @@ Rails.application.routes.draw do
           end
         end
 
-        resource :gillick_assessment,
-                 path: "gillick",
-                 only: %i[new create edit update]
+        resource :gillick_assessment, path: "gillick", only: %i[edit update]
         resource :triages, only: %i[new create]
         resource :vaccinations, only: %i[create] do
           member do
