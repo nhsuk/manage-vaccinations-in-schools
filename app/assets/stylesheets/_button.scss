@@ -1,5 +1,5 @@
 $app-cis2-button-color: $color_nhsuk-blue;
-$app-cis2-button-hover-color: mix($app-cis2-button-color, #003087, 50%);
+$app-cis2-button-hover-color: color.mix($app-cis2-button-color, #003087, 50%);
 $app-cis2-button-active-color: #003087;
 $app-cis2-button-shadow-color: #003087;
 $button-shadow-size: 4px;
