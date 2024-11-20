@@ -48,8 +48,8 @@ class GillickAssessmentsController < ApplicationController
 
   def set_gillick_assessment
     @gillick_assessment =
-      authorize @patient_session.gillick_assessment ||
-                  @patient_session.build_gillick_assessment
+      authorize @patient_session.latest_gillick_assessment ||
+                  @patient_session.gillick_assessments.build
   end
 
   def gillick_assessment_params
