@@ -348,8 +348,8 @@ class ConsentForm < ApplicationRecord
           Session.upcoming.has_programme(programme).where(organisation:)
 
         if location.clinic?
-          # If they've been booked in to a clinic we don't move them to a school
-          # session as it's likely they're in a clinic for a reason.
+          # If they've been booked in to a clinic we don't move them to a
+          # school session as it's likely they're in a clinic for a reason.
           session_scope.find_by(location:)
         elsif school
           session_scope.find_by(location: school)
@@ -357,7 +357,13 @@ class ConsentForm < ApplicationRecord
           session_scope.find_by(location: organisation.generic_clinic)
         else
           session_scope.find_by(location:)
-        end
+        end => upcoming_session
+
+        # There are no upcoming sessions available for their chosen location,
+        # either the original session or a different school or a clinic if
+        # home educated. This can happen if the parent fills out the form
+        # late.
+        upcoming_session || organisation.generic_clinic_session
       end
   end
 
@@ -424,24 +430,14 @@ class ConsentForm < ApplicationRecord
       if patient.changed?
         patient.save!
 
-        unless patient.deceased? || patient.invalidated?
-          move_patient_to_session =
-            if actual_upcoming_session.nil?
-              # There are no upcoming sessions available for their chosen location,
-              # either the original session or a different school or a clinic if
-              # home educated. This can happen if the parent fills out the form
-              # late.
-              organisation.generic_clinic_session
-            elsif original_session != actual_upcoming_session
-              actual_upcoming_session
-            end
+        patient_can_move =
+          !patient.deceased? && !patient.invalidated? && actual_upcoming_session
 
-          if move_patient_to_session
-            patient.move_to_session!(
-              move_patient_to_session,
-              from: original_session
-            )
-          end
+        if patient_can_move
+          patient.move_to_session!(
+            actual_upcoming_session,
+            from: original_session
+          )
         end
       end
 
