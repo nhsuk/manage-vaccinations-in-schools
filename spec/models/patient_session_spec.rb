@@ -143,6 +143,27 @@ describe PatientSession do
     end
   end
 
+  describe "#latest_gillick_assessment" do
+    subject(:latest_gillick_assessment) do
+      patient_session.latest_gillick_assessment
+    end
+
+    let(:later_gillick_assessment) do
+      create(:gillick_assessment, :competent, patient_session:)
+    end
+
+    before do
+      create(
+        :gillick_assessment,
+        :not_competent,
+        patient_session:,
+        created_at: 1.day.ago
+      )
+    end
+
+    it { should eq(later_gillick_assessment) }
+  end
+
   describe "#latest_vaccination_record" do
     subject(:latest_vaccination_record) do
       patient_session.latest_vaccination_record
