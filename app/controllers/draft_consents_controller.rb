@@ -160,7 +160,7 @@ class DraftConsentsController < ApplicationController
       (@patient.parents + @patient_session.consents.filter_map(&:parent))
         .compact
         .uniq
-        .sort_by(&:full_name)
+        .sort_by(&:label)
   end
 
   # Returns:

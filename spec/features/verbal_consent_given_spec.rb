@@ -21,6 +21,12 @@ describe "Verbal consent" do
     @session = create(:session, organisation:, programme:)
     @patient = create(:patient, session: @session)
 
+    create(
+      :parent_relationship,
+      patient: @patient,
+      parent: build(:parent, full_name: nil)
+    )
+
     sign_in organisation.users.first
   end
 
