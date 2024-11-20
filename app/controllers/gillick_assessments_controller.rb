@@ -10,10 +10,7 @@ class GillickAssessmentsController < ApplicationController
   end
 
   def create
-    if @gillick_assessment.update(
-         performed_by: current_user,
-         **gillick_assessment_params
-       )
+    if @gillick_assessment.update(gillick_assessment_params)
       redirect_to session_patient_path(id: @patient.id)
     else
       render :new, status: :unprocessable_entity
@@ -24,7 +21,9 @@ class GillickAssessmentsController < ApplicationController
   end
 
   def update
-    if @gillick_assessment.update(gillick_assessment_params)
+    @gillick_assessment.assign_attributes(gillick_assessment_params)
+
+    if !@gillick_assessment.changed? || @gillick_assessment.save
       redirect_to session_patient_path(id: @patient.id)
     else
       render :edit, status: :unprocessable_entity
@@ -48,18 +47,21 @@ class GillickAssessmentsController < ApplicationController
 
   def set_gillick_assessment
     @gillick_assessment =
-      authorize @patient_session.latest_gillick_assessment ||
+      authorize @patient_session.latest_gillick_assessment&.dup ||
                   @patient_session.gillick_assessments.build
   end
 
   def gillick_assessment_params
-    params.require(:gillick_assessment).permit(
-      :knows_consequences,
-      :knows_delivery,
-      :knows_disease,
-      :knows_side_effects,
-      :knows_vaccination,
-      :notes
-    )
+    params
+      .require(:gillick_assessment)
+      .permit(
+        :knows_consequences,
+        :knows_delivery,
+        :knows_disease,
+        :knows_side_effects,
+        :knows_vaccination,
+        :notes
+      )
+      .merge(performed_by: current_user)
   end
 end
