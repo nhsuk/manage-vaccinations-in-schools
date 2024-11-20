@@ -7,9 +7,7 @@
       <%= vaccine.manufacturer %>
     </p>
 
-    <p>
-      <%= link_to "Add a batch", new_vaccine_batch_path(vaccine) %>
-    </p>
+    <%= govuk_button_link_to "Add a new batch", new_vaccine_batch_path(vaccine), class: "app-button--secondary" %>
 
     <% if (batches = @batches_by_vaccine_id[vaccine.id]).present? %>
       <%= govuk_table do |table| %>
