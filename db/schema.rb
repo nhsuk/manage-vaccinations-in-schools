@@ -279,7 +279,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_20_140814) do
     t.boolean "knows_consequences", null: false
     t.boolean "knows_delivery", null: false
     t.boolean "knows_side_effects", null: false
-    t.index ["patient_session_id"], name: "index_gillick_assessments_on_patient_session_id", unique: true
+    t.index ["patient_session_id"], name: "index_gillick_assessments_on_patient_session_id"
     t.index ["performed_by_user_id"], name: "index_gillick_assessments_on_performed_by_user_id"
   end
 
