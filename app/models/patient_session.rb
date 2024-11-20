@@ -37,7 +37,7 @@ class PatientSession < ApplicationRecord
   has_many :programmes, through: :session
   has_many :session_attendances, dependent: :destroy
 
-  has_one :gillick_assessment
+  has_many :gillick_assessments
   has_many :vaccination_records, -> { kept }
 
   # TODO: Only fetch consents and triages for the relevant programme.
@@ -72,7 +72,7 @@ class PatientSession < ApplicationRecord
         -> do
           preload(
             :consents,
-            :gillick_assessment,
+            :gillick_assessments,
             :triages,
             :vaccination_records,
             :session_attendances
@@ -85,14 +85,14 @@ class PatientSession < ApplicationRecord
         end
 
   delegate :send_notifications?, to: :patient
-  delegate :gillick_competent?, to: :gillick_assessment, allow_nil: true
+  delegate :gillick_competent?, to: :latest_gillick_assessment, allow_nil: true
 
   def able_to_vaccinate?
     !unable_to_vaccinate?
   end
 
   def safe_to_destroy?
-    vaccination_records.empty? && gillick_assessment.nil? &&
+    vaccination_records.empty? && gillick_assessments.empty? &&
       session_attendances.none?(&:attending?)
   end
 
@@ -107,6 +107,10 @@ class PatientSession < ApplicationRecord
         .select { _1.response_given? || _1.response_refused? }
         .group_by(&:name)
         .map { |_, consents| consents.max_by(&:created_at) }
+  end
+
+  def latest_gillick_assessment
+    @latest_gillick_assessment = gillick_assessments.max_by(&:updated_at)
   end
 
   def latest_triage
