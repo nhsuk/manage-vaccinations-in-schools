@@ -29,9 +29,9 @@ $mq-breakpoints: (
 
 // App options
 $app-page-width: 1100px;
-$color_app-dark-orange: darken(
-  mix($color_nhsuk-red, $color_nhsuk-warm-yellow, 55%),
-  10%
+$color_app-dark-orange: color.scale(
+  color.mix($color_nhsuk-red, $color_nhsuk-warm-yellow, 55%),
+  $lightness: -10%
 );
 
 // Helpers
