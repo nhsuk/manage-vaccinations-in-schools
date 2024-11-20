@@ -52,9 +52,9 @@ class DevController < ApplicationController
 
       patient_sessions = PatientSession.where(session: organisation_sessions)
       patient_sessions.each do |patient_session|
-        patient_session.vaccination_records.destroy_all
-        patient_session.patient.triages.destroy_all
         GillickAssessment.where(patient_session:).destroy_all
+        VaccinationRecord.where(patient_session:).destroy_all
+        patient_session.patient.triages.destroy_all
         patient_session.destroy!
       end
 
