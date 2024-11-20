@@ -18,7 +18,7 @@
 #
 # Indexes
 #
-#  index_gillick_assessments_on_patient_session_id    (patient_session_id) UNIQUE
+#  index_gillick_assessments_on_patient_session_id    (patient_session_id)
 #  index_gillick_assessments_on_performed_by_user_id  (performed_by_user_id)
 #
 # Foreign Keys
