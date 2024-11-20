@@ -4,18 +4,8 @@ class GillickAssessmentsController < ApplicationController
   before_action :set_patient
   before_action :set_session
   before_action :set_patient_session
+  before_action :set_is_first_assessment
   before_action :set_gillick_assessment
-
-  def new
-  end
-
-  def create
-    if @gillick_assessment.update(gillick_assessment_params)
-      redirect_to session_patient_path(id: @patient.id)
-    else
-      render :new, status: :unprocessable_entity
-    end
-  end
 
   def edit
   end
@@ -43,6 +33,10 @@ class GillickAssessmentsController < ApplicationController
   def set_patient_session
     @patient_session =
       policy_scope(PatientSession).find_by(session: @session, patient: @patient)
+  end
+
+  def set_is_first_assessment
+    @is_first_assessment = @patient_session.gillick_assessments.empty?
   end
 
   def set_gillick_assessment
