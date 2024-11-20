@@ -13,7 +13,9 @@ class AppActivityLogComponent < ViewComponent::Base
     @patient = patient || patient_session.patient
     @patient_sessions =
       patient_session ? [patient_session] : patient.patient_sessions
+
     @consents = (patient || patient_session).consents
+    @gillick_assessments = (patient || patient_session).gillick_assessments
     @triages = (patient || patient_session).triages
     @vaccination_records =
       (patient || patient_session).vaccination_records.with_discarded
@@ -22,6 +24,7 @@ class AppActivityLogComponent < ViewComponent::Base
   attr_reader :patient,
               :patient_sessions,
               :consents,
+              :gillick_assessments,
               :triages,
               :vaccination_records
 
@@ -32,6 +35,7 @@ class AppActivityLogComponent < ViewComponent::Base
   def all_events
     [
       consent_events,
+      gillick_assessment_events,
       notify_events,
       session_events,
       triage_events,
@@ -78,6 +82,27 @@ class AppActivityLogComponent < ViewComponent::Base
           }
         ]
       end
+    end
+  end
+
+  def gillick_assessment_events
+    gillick_assessments.each_with_index.map do |gillick_assessment, index|
+      action = index.zero? ? "Completed" : "Updated"
+      outcome =
+        (
+          if gillick_assessment.gillick_competent?
+            "Gillick competent"
+          else
+            "not Gillick competent"
+          end
+        )
+
+      {
+        title: "#{action} Gillick assessment as #{outcome}",
+        notes: gillick_assessment.notes,
+        time: gillick_assessment.created_at,
+        by: gillick_assessment.performed_by.full_name
+      }
     end
   end
 

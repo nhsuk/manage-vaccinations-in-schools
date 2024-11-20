@@ -280,4 +280,41 @@ describe AppActivityLogComponent do
                      title: "Consent given by Jane Doe (Mum)",
                      date: "30 May 2024 at 12:00pm"
   end
+
+  describe "Gillick assessments" do
+    let(:programme) { create(:programme) }
+    let(:patient_session) { create(:patient_session, patient:, programme:) }
+
+    before do
+      create(
+        :gillick_assessment,
+        :competent,
+        performed_by: user,
+        patient_session:,
+        notes: "First notes",
+        created_at: Time.zone.local(2024, 6, 1, 12)
+      )
+      create(
+        :gillick_assessment,
+        :not_competent,
+        performed_by: user,
+        patient_session:,
+        notes: "Second notes",
+        created_at: Time.zone.local(2024, 6, 1, 13)
+      )
+    end
+
+    include_examples "card",
+                     title: "Completed Gillick assessment as Gillick competent",
+                     notes: "First notes",
+                     date: "1 June 2024 at 12:00pm",
+                     by: "Nurse Joy"
+
+    include_examples "card",
+                     title:
+                       "Updated Gillick assessment as not Gillick competent",
+                     notes: "Second notes",
+                     date: "1 June 2024 at 1:00pm",
+                     by: "Nurse Joy"
+  end
 end
