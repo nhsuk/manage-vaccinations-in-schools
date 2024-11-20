@@ -67,6 +67,9 @@ class Patient < ApplicationRecord
   has_one :latest_triage, -> { order(created_at: :desc) }, class_name: "Triage"
 
   has_many :parents, through: :parent_relationships
+  has_many :gillick_assessments,
+           -> { order(:created_at) },
+           through: :patient_sessions
   has_many :sessions, through: :patient_sessions
   has_many :vaccination_records, through: :patient_sessions
 
