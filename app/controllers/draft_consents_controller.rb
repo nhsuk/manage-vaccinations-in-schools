@@ -157,7 +157,7 @@ class DraftConsentsController < ApplicationController
 
   def set_parent_options
     @parent_options =
-      (@patient.parents + @patient_session.consents.map(&:parent))
+      (@patient.parents + @patient_session.consents.filter_map(&:parent))
         .compact
         .uniq
         .sort_by(&:full_name)
