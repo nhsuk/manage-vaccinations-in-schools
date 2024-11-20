@@ -98,7 +98,7 @@ class Reports::OfflineSessionExporter
       .includes(
         patient: %i[cohort school],
         consents: [:patient, { parent: :parent_relationships }],
-        gillick_assessment: :performed_by,
+        gillick_assessments: :performed_by,
         triages: :performed_by,
         vaccination_records: %i[batch performed_by_user vaccine]
       )
@@ -107,7 +107,7 @@ class Reports::OfflineSessionExporter
 
   def rows(patient_session:)
     consents = patient_session.latest_consents
-    gillick_assessment = patient_session.gillick_assessment
+    gillick_assessment = patient_session.latest_gillick_assessment
     patient = patient_session.patient
     triage = patient_session.latest_triage
 
