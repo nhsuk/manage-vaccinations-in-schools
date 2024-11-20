@@ -83,7 +83,7 @@ class Reports::ProgrammeVaccinationsExporter
           patient_session: {
             patient: %i[cohort school],
             consents: [:patient, { parent: :parent_relationships }],
-            gillick_assessment: :performed_by,
+            gillick_assessments: :performed_by,
             triages: :performed_by
           }
         )
@@ -102,7 +102,7 @@ class Reports::ProgrammeVaccinationsExporter
   def row(vaccination_record:)
     patient_session = vaccination_record.patient_session
     consents = patient_session.latest_consents
-    gillick_assessment = patient_session.gillick_assessment
+    gillick_assessment = patient_session.latest_gillick_assessment
     patient = patient_session.patient
     triage = patient_session.latest_triage
     location = vaccination_record.location
