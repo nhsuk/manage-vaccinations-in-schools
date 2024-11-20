@@ -55,6 +55,7 @@ class DevController < ApplicationController
         GillickAssessment.where(patient_session:).destroy_all
         VaccinationRecord.where(patient_session:).destroy_all
         patient_session.patient.triages.destroy_all
+        patient_session.patient.notify_log_entries.destroy_all
         patient_session.destroy!
       end
 
