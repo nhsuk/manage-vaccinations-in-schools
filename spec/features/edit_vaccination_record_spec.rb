@@ -170,6 +170,44 @@ describe "Edit vaccination record" do
     and_the_parent_receives_a_not_administered_email
   end
 
+  scenario "With an archived batch" do
+    given_i_am_signed_in
+    and_an_hpv_programme_is_underway
+    and_an_administered_vaccination_record_exists
+    and_the_original_batch_has_been_archived
+
+    when_i_go_to_the_vaccination_records_page
+    and_i_click_on_the_vaccination_record
+    and_i_click_on_edit_vaccination_record
+    then_i_see_the_edit_vaccination_record_page
+
+    when_i_click_on_change_batch
+    and_i_choose_the_original_batch
+    then_i_see_the_edit_vaccination_record_page
+
+    when_i_click_on_save_changes
+    then_i_should_see_the_vaccination_record
+  end
+
+  scenario "With an expired batch" do
+    given_i_am_signed_in
+    and_an_hpv_programme_is_underway
+    and_an_administered_vaccination_record_exists
+    and_the_original_batch_has_expired
+
+    when_i_go_to_the_vaccination_records_page
+    and_i_click_on_the_vaccination_record
+    and_i_click_on_edit_vaccination_record
+    then_i_see_the_edit_vaccination_record_page
+
+    when_i_click_on_change_batch
+    and_i_choose_the_original_batch
+    then_i_see_the_edit_vaccination_record_page
+
+    when_i_click_on_save_changes
+    then_i_should_see_the_vaccination_record
+  end
+
   def given_i_am_signed_in
     @organisation = create(:organisation, :with_one_nurse, ods_code: "R1L")
     sign_in @organisation.users.first
@@ -212,9 +250,9 @@ describe "Edit vaccination record" do
     @vaccination_record =
       create(
         :vaccination_record,
-        programme: @programme,
+        batch: @original_batch,
         patient_session: @patient_session,
-        batch: @original_batch
+        programme: @programme
       )
   end
 
@@ -222,12 +260,12 @@ describe "Edit vaccination record" do
     @vaccination_record =
       create(
         :vaccination_record,
-        programme: @programme,
-        patient_session: @patient_session,
         batch: @original_batch,
-        performed_by_user: nil,
+        patient_session: @patient_session,
+        performed_by_family_name: "Joy",
         performed_by_given_name: "Nurse",
-        performed_by_family_name: "Joy"
+        performed_by_user: nil,
+        programme: @programme
       )
   end
 
@@ -236,13 +274,23 @@ describe "Edit vaccination record" do
       create(
         :vaccination_record,
         :not_administered,
-        programme: @programme,
-        patient_session: @patient_session
+        batch: @original_batch,
+        patient_session: @patient_session,
+        programme: @programme
       )
   end
 
   def and_the_vaccination_confirmation_was_already_sent
     @vaccination_record.update!(confirmation_sent_at: Time.current)
+  end
+
+  def and_the_original_batch_has_been_archived
+    @original_batch.update!(archived_at: Time.current)
+  end
+
+  def and_the_original_batch_has_expired
+    @original_batch.expiry = 1.day.ago
+    @original_batch.save!(validate: false)
   end
 
   def when_i_go_to_the_vaccination_records_page
@@ -261,6 +309,9 @@ describe "Edit vaccination record" do
   def when_i_click_on_the_vaccination_record
     click_on "John Smith"
   end
+
+  alias_method :and_i_click_on_the_vaccination_record,
+               :when_i_click_on_the_vaccination_record
 
   def then_i_should_see_the_vaccination_record
     expect(page).to have_content("Full nameJohn Smith")
@@ -343,6 +394,11 @@ describe "Edit vaccination record" do
 
   def when_i_click_on_change_batch
     click_on "Change batch"
+  end
+
+  def and_i_choose_the_original_batch
+    choose @original_batch.name
+    click_on "Continue"
   end
 
   def and_i_choose_a_batch
