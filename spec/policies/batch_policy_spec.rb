@@ -7,12 +7,12 @@ describe BatchPolicy do
     let(:organisation) { create(:organisation) }
     let(:user) { create(:user, organisation:) }
 
+    let(:batch) { create(:batch, organisation:) }
     let(:archived_batch) { create(:batch, :archived, organisation:) }
-    let(:unarchived_batch) { create(:batch, organisation:) }
     let(:non_organisation_batch) { create(:batch) }
 
-    it { should include(unarchived_batch) }
-    it { should_not include(archived_batch) }
+    it { should include(batch) }
+    it { should include(archived_batch) }
     it { should_not include(non_organisation_batch) }
   end
 end

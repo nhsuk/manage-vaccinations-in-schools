@@ -33,7 +33,7 @@ class Batch < ApplicationRecord
   scope :order_by_name_and_expiration, -> { order(expiry: :asc, name: :asc) }
 
   scope :archived, -> { where.not(archived_at: nil) }
-  scope :unarchived, -> { where(archived_at: nil) }
+  scope :not_archived, -> { where(archived_at: nil) }
 
   scope :expired, -> { where("expiry <= ?", Time.current) }
   scope :not_expired, -> { where("expiry > ?", Time.current) }
@@ -59,10 +59,6 @@ class Batch < ApplicationRecord
 
   def archived?
     archived_at != nil
-  end
-
-  def unarchived?
-    archived_at.nil?
   end
 
   def archive!

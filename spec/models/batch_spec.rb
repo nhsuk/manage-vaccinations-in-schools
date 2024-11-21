@@ -29,19 +29,19 @@ describe Batch do
 
   describe "scopes" do
     let(:archived_batch) { create(:batch, :archived) }
-    let(:unarchived_batch) { create(:batch) }
+    let(:not_archived_batch) { create(:batch) }
 
     describe "#archived" do
       subject(:scope) { described_class.archived }
 
       it { should include(archived_batch) }
-      it { should_not include(unarchived_batch) }
+      it { should_not include(not_archived_batch) }
     end
 
-    describe "#unarchived" do
-      subject(:scope) { described_class.unarchived }
+    describe "#not_archived" do
+      subject(:scope) { described_class.not_archived }
 
-      it { should include(unarchived_batch) }
+      it { should include(not_archived_batch) }
       it { should_not include(archived_batch) }
     end
   end
@@ -87,18 +87,6 @@ describe Batch do
       let(:batch) { build(:batch, archived_at: Date.new(2020, 1, 1)) }
 
       it { should be(true) }
-    end
-  end
-
-  describe "#unarchived?" do
-    subject(:unarchived?) { batch.unarchived? }
-
-    it { should be(true) }
-
-    context "when archived_at is set" do
-      let(:batch) { build(:batch, archived_at: Date.new(2020, 1, 1)) }
-
-      it { should be(false) }
     end
   end
 
