@@ -6,7 +6,7 @@ run-name: >-
 
 on:
   push:
-    branches: [main]
+    branches: [fast]
   workflow_dispatch:
     inputs:
       environment:
