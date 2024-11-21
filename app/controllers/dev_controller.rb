@@ -24,57 +24,34 @@ class DevController < ApplicationController
       Organisation.find_by!(ods_code: params[:organisation_ods_code])
 
     Organisation.with_advisory_lock("reset-organisation-#{organisation.id}") do
-      cohort_imports = CohortImport.where(organisation:)
-      cohort_imports.find_each do |cohort_import|
-        cohort_import.parent_relationships.clear
-        cohort_import.patients.clear
-        cohort_import.parents.clear
+      CohortImport.where(organisation:).destroy_all
+      ImmunisationImport.where(organisation:).destroy_all
 
-        cohort_import.destroy!
-      end
+      sessions = Session.where(organisation:)
 
-      immunisation_imports = ImmunisationImport.where(organisation:)
-      immunisation_imports.find_each do |immunisation_import|
-        immunisation_import.batches.clear
-        immunisation_import.patient_sessions.clear
-        immunisation_import.patients.clear
-        immunisation_import.sessions.clear
-        immunisation_import.vaccination_records.clear
+      ClassImport.where(session: sessions).destroy_all
+      SessionDate.where(session: sessions).destroy_all
+      ConsentNotification.where(session: sessions).destroy_all
+      SessionNotification.where(session: sessions).destroy_all
 
-        immunisation_import.destroy!
-      end
+      patient_sessions = PatientSession.where(session: sessions)
+      GillickAssessment.where(patient_session: patient_sessions).destroy_all
+      VaccinationRecord.where(patient_session: patient_sessions).destroy_all
+      patient_sessions.destroy_all
 
-      organisation_sessions = Session.where(organisation:)
+      sessions.destroy_all
 
-      ClassImport.where(session: organisation_sessions).destroy_all
-      ConsentNotification.where(session: organisation_sessions).destroy_all
-      SessionNotification.where(session: organisation_sessions).destroy_all
+      patients = Patient.joins(:cohort).where(cohorts: { organisation: })
 
-      patient_sessions = PatientSession.where(session: organisation_sessions)
-      patient_sessions.each do |patient_session|
-        GillickAssessment.where(patient_session:).destroy_all
-        VaccinationRecord.where(patient_session:).destroy_all
-        patient_session.patient.triages.destroy_all
-        patient_session.patient.notify_log_entries.destroy_all
-        patient_session.destroy!
-      end
+      NotifyLogEntry.where(patient: patients).destroy_all
 
-      organisation_sessions.each do |organisation_session|
-        organisation_session.session_dates.destroy_all
-        organisation_session.destroy!
-      end
+      Consent.where(organisation:).destroy_all
+      ConsentForm.where(organisation:).destroy_all
+      Triage.where(organisation:).destroy_all
 
-      ConsentForm.where(organisation:).delete_all
-      Consent.where(organisation:).delete_all
+      patients.destroy_all
 
-      Triage.where(organisation:).delete_all
-
-      Patient
-        .joins(:cohort)
-        .where(cohorts: { organisation: })
-        .distinct
-        .destroy_all
-      Cohort.where(organisation:).delete_all
+      Cohort.where(organisation:).destroy_all
 
       UnscheduledSessionsFactory.new.call
     end

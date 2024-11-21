@@ -8,6 +8,7 @@ describe "Dev endpoint to reset a organisation" do
     given_an_example_programme_exists
     and_patients_have_been_imported
     and_vaccination_records_have_been_imported
+    and_emails_have_been_sent
 
     then_all_associated_data_is_deleted_when_i_reset_the_organisation
   end
@@ -37,7 +38,9 @@ describe "Dev endpoint to reset a organisation" do
     attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/valid.csv")
     click_on "Continue"
 
-    expect(@organisation.cohorts.flat_map(&:patients).size).to eq(3)
+    @patients = @organisation.cohorts.flat_map(&:patients)
+
+    expect(@patients.size).to eq(3)
     expect(
       @organisation.cohorts.flat_map(&:patients).flat_map(&:parents).size
     ).to eq(3)
@@ -58,15 +61,24 @@ describe "Dev endpoint to reset a organisation" do
     expect(VaccinationRecord.count).to eq(11)
   end
 
+  def and_emails_have_been_sent
+    @patients.each do |patient|
+      create(:notify_log_entry, :email, patient:, consent_form: nil)
+    end
+  end
+
   def then_all_associated_data_is_deleted_when_i_reset_the_organisation
     expect { visit "/reset/r1l" }.to(
-      change(Patient, :count)
-        .by(-3)
-        .and(change(Cohort, :count).by(-1))
-        .and(change(Parent, :count).by(-3))
-        .and(change(VaccinationRecord, :count).by(-11))
-        .and(change(ImmunisationImport, :count).by(-1))
+      change(Cohort, :count)
+        .by(-1)
         .and(change(CohortImport, :count).by(-1))
+        .and(change(ImmunisationImport, :count).by(-1))
+        .and(change(NotifyLogEntry, :count).by(-3))
+        .and(change(Parent, :count).by(-3))
+        .and(change(Patient, :count).by(-3))
+        .and(change(PatientSession, :count).by(-11))
+        .and(change(Session, :count).by(-4))
+        .and(change(VaccinationRecord, :count).by(-11))
     )
   end
 end
