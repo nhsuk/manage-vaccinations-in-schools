@@ -45,8 +45,8 @@ class DevController < ApplicationController
 
       NotifyLogEntry.where(patient: patients).destroy_all
 
-      Consent.where(organisation:).destroy_all
       ConsentForm.where(organisation:).destroy_all
+      Consent.where(organisation:).destroy_all
       Triage.where(organisation:).destroy_all
 
       patients.destroy_all
