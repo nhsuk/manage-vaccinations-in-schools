@@ -6,7 +6,7 @@ class PatientNHSNumberLookupJob < ApplicationJob
   queue_as :imports
 
   def perform(patient)
-    return if patient.nhs_number.present?
+    return if patient.nhs_number.present? && !patient.invalidated?
 
     pds_patient =
       PDS::Patient.search(
@@ -18,7 +18,12 @@ class PatientNHSNumberLookupJob < ApplicationJob
 
     return if pds_patient.nil?
 
-    if (existing_patient = Patient.find_by(nhs_number: pds_patient.nhs_number))
+    if (
+         existing_patient =
+           Patient
+             .where.not(id: patient.id)
+             .find_by(nhs_number: pds_patient.nhs_number)
+       )
       PatientMerger.call(to_keep: existing_patient, to_destroy: patient)
       existing_patient.update_from_pds!(pds_patient)
     else
