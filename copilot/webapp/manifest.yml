@@ -89,6 +89,8 @@ environments:
       alias:
         - "training.manage-vaccinations-in-schools.nhs.uk"
         - "training.give-or-refuse-consent-for-vaccinations.nhs.uk"
+    deployments:
+      rolling: recreate # Disables blue-green deployment for speed
     variables:
       RAILS_ENV: staging
       SENTRY_ENVIRONMENT: training
