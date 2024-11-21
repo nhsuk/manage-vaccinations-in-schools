@@ -1,10 +1,12 @@
 name: Deploy
-run-name: ${{ github.event_name == 'workflow_dispatch' && format('Deploy ({0})', inputs.environment) || null }}
+run-name: >-
+  ${{ github.event_name == 'workflow_dispatch'
+      && format('Deploy ({0})', inputs.environment)
+      || 'Deploy (All staging environments)' }}
 
 on:
   push:
     branches: [main]
-
   workflow_dispatch:
     inputs:
       environment:
@@ -16,46 +18,20 @@ on:
           - pentest
           - test
           - training
+          - production
 
 jobs:
-  copilot:
-    name: AWS Copilot
-
-    permissions:
-      id-token: write
-      contents: read
-
-    environment:
-      name: ${{ github.event.inputs.environment || 'test' }}
-      url: https://${{ steps.host-name.outputs.value }}
-
-    concurrency:
-      group: ${{ github.ref }}-${{ github.event.inputs.environment || 'test' }}
-      cancel-in-progress: true
-
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::393416225559:role/GitHubActionsRole
-          aws-region: eu-west-2
-
-      - name: Install and Verify AWS Copilot
-        run: |
-          curl -Lo /tmp/copilot https://github.com/aws/copilot-cli/releases/latest/download/copilot-linux
-          chmod +x /tmp/copilot
-          mv /tmp/copilot /usr/local/bin/copilot
-          copilot --version
-
-      - name: Deploy the application using AWS Copilot
-        run: |
-          copilot svc deploy --name webapp --env ${{ github.event.inputs.environment || 'test' }}
-
-      - name: Get host name
-        id: host-name
-        run: |
-          echo "value=$(copilot svc show --name webapp --json | jq -r '.variables[] | select(.name == "MAVIS__HOST") | select(.environment == "${{ github.event.inputs.environment || 'test' }}") | .value')" >> $GITHUB_OUTPUT
+  Deploy:
+    strategy:
+      matrix:
+        environment: >-
+          ${{ fromJSON(github.event_name == 'workflow_dispatch'
+              && format('["{0}"]', inputs.environment)
+              || '["accessibility", "pentest", "test", "training"]') }}
+    uses: ./.github/workflows/_deploy-template.yml
+    with:
+      environment: ${{ matrix.environment }}
+      aws-account-id: >-
+        ${{ matrix.environment == 'production'
+          && 'arn:aws:iam::820242920762:role/GitHubActionsRole'
+          || 'arn:aws:iam::393416225559:role/GitHubActionsRole' }}
