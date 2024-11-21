@@ -63,6 +63,7 @@ class DraftConsent
               phone: {
                 allow_blank: true
               }
+    validates :parent_phone_receive_updates, inclusion: { in: [true, false] }
   end
 
   with_options if: -> do
