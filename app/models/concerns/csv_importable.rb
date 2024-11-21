@@ -199,7 +199,13 @@ module CSVImportable
     return unless data
 
     missing_headers = required_headers - data.headers
-    errors.add(:csv, :missing_headers, missing_headers:) if missing_headers.any?
+    if missing_headers.any?
+      errors.add(
+        :csv,
+        :missing_headers,
+        missing_headers: missing_headers.join(", ")
+      )
+    end
   end
 
   def rows_are_valid
