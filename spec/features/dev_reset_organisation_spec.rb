@@ -9,6 +9,7 @@ describe "Dev endpoint to reset a organisation" do
     and_patients_have_been_imported
     and_vaccination_records_have_been_imported
     and_emails_have_been_sent
+    and_consent_exists
 
     then_all_associated_data_is_deleted_when_i_reset_the_organisation
   end
@@ -67,6 +68,23 @@ describe "Dev endpoint to reset a organisation" do
     end
   end
 
+  def and_consent_exists
+    @patients.each do |patient|
+      consent_form =
+        create(:consent_form, programme: @programme, session: Session.first)
+      parent =
+        patient.parents.first || create(:parent_relationship, patient:).parent
+      create(
+        :consent,
+        :given,
+        patient:,
+        parent:,
+        consent_form:,
+        programme: @programme
+      )
+    end
+  end
+
   def then_all_associated_data_is_deleted_when_i_reset_the_organisation
     expect { visit "/reset/r1l" }.to(
       change(Cohort, :count)
@@ -74,7 +92,7 @@ describe "Dev endpoint to reset a organisation" do
         .and(change(CohortImport, :count).by(-1))
         .and(change(ImmunisationImport, :count).by(-1))
         .and(change(NotifyLogEntry, :count).by(-3))
-        .and(change(Parent, :count).by(-3))
+        .and(change(Parent, :count).by(-4))
         .and(change(Patient, :count).by(-3))
         .and(change(PatientSession, :count).by(-11))
         .and(change(Session, :count).by(-4))
