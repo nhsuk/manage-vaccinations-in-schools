@@ -688,9 +688,6 @@ en:
         other: Why are they refusing to give consent?
         personal_choice: Why are they refusing to give consent?
         will_be_vaccinated_elsewhere: Where will their child get their vaccination?
-  guide:
-    show:
-      title: Service guidance
   imports:
     index:
       title: Imports
@@ -782,7 +779,8 @@ en:
         unscheduled: No sessions scheduled
   service:
     email: england.mavis@nhs.net
-    guide: https://guide.manage-vaccinations-in-schools.nhs.uk
+    guide:
+      title: Service guidance
   sessions:
     index:
       title: Sessions

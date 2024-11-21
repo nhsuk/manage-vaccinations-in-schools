@@ -51,14 +51,16 @@
               <li class="nhsuk-footer__list-item nhsuk-footer-default__list-item">
                 <%= link_to "Accessibility statement", :accessibility_statement, classes: "nhsuk-footer__list-item-link" %>
               </li>
-              <li class="nhsuk-footer__list-item nhsuk-footer-default__list-item">
-                <% if @privacy_policy_url %>
+              <% if @privacy_policy_url %>
+                <li class="nhsuk-footer__list-item nhsuk-footer-default__list-item">
                   <%= link_to "Privacy policy", @privacy_policy_url, classes: "nhsuk-footer__list-item-link" %>
-                <% end %>
-              </li>
-              <li class="nhsuk-footer__list-item nhsuk-footer-default__list-item">
-                <%= link_to "#{t("guide.show.title")} (opens in a new tab)", t("service.guide"), classes: "nhsuk-footer__list-item-link", target: "_blank" %>
-              </li>
+                </li>
+              <% end %>
+              <% if @service_guide_url %>
+                <li class="nhsuk-footer__list-item nhsuk-footer-default__list-item">
+                  <%= link_to "#{t("service.guide.title")} (opens in a new tab)", @service_guide_url, classes: "nhsuk-footer__list-item-link", target: "_blank" %>
+                </li>
+              <% end %>
             </ul>
             <p class="nhsuk-footer__copyright">&copy; NHS England</p>
           </div>
