@@ -91,6 +91,22 @@ describe TextDeliveryJob do
       end
     end
 
+    context "when the consent's parent doesn't want to receive updates" do
+      let(:parent) { nil }
+      let(:consent) do
+        create(
+          :consent,
+          parent: create(:parent, phone_receive_updates: false),
+          programme:
+        )
+      end
+
+      it "doesn't send a text" do
+        expect(notifications_client).not_to receive(:send_sms)
+        perform_now
+      end
+    end
+
     context "when the parent doesn't have a phone number" do
       let(:parent) { create(:parent, phone: nil) }
 
