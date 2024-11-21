@@ -55,6 +55,7 @@ class DraftConsentsController < ApplicationController
 
     ActiveRecord::Base.transaction do
       @triage&.save! if @draft_consent.response_given?
+      @consent.parent&.save!
       @consent.save!
     end
 
@@ -92,13 +93,13 @@ class DraftConsentsController < ApplicationController
       notes: %i[notes],
       notify_parents: %i[notify_parents],
       parent_details: %i[
-        parent_full_name
         parent_email
-        parent_responsibility
+        parent_full_name
         parent_phone
         parent_phone_receive_updates
-        parent_relationship_type
         parent_relationship_other_name
+        parent_relationship_type
+        parent_responsibility
       ],
       questions: questions_params,
       reason: %i[reason_for_refusal],
