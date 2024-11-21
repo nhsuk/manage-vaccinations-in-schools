@@ -53,6 +53,7 @@ describe "Verbal consent" do
     click_button "Continue"
 
     choose "No, keep in triage"
+    fill_in "Triage notes (optional)", with: "Some notes."
     click_button "Continue"
 
     # Confirm
@@ -65,6 +66,7 @@ describe "Verbal consent" do
   def and_the_patient_status_is_needing_triage
     click_link @patient.full_name
     expect(page).to have_content("Needs triage")
+    expect(page).to have_content("Some notes.")
   end
 
   def then_an_email_is_sent_to_the_parent_about_triage
