@@ -18,11 +18,17 @@ class DraftConsentsController < ApplicationController
 
   before_action :set_parent_options, if: -> { current_step == :who }
 
+  after_action :verify_authorized
+
   def show
+    authorize Consent, :edit?
+
     render_wizard
   end
 
   def update
+    authorize Consent
+
     case current_step
     when :questions
       handle_questions
