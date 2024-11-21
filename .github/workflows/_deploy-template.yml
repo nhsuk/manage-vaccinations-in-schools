@@ -1,8 +1,14 @@
-name: Deploy (pentest)
+name: Deploy Template
 
 on:
-  push:
-    branches: [main]
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      aws-account-id:
+        required: true
+        type: string
 
 jobs:
   copilot:
@@ -13,11 +19,11 @@ jobs:
       contents: read
 
     environment:
-      name: pentest
+      name: ${{ inputs.environment }}
       url: https://${{ steps.host-name.outputs.value }}
 
     concurrency:
-      group: pentest
+      group: ${{ inputs.environment }}
       cancel-in-progress: true
 
     runs-on: ubuntu-latest
@@ -28,7 +34,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::393416225559:role/GitHubActionsRole
+          role-to-assume: ${{ inputs.aws-account-id }}
           aws-region: eu-west-2
 
       - name: Install and Verify AWS Copilot
@@ -40,9 +46,9 @@ jobs:
 
       - name: Deploy the application using AWS Copilot
         run: |
-          copilot svc deploy --name webapp --env pentest
+          copilot svc deploy --name webapp --env ${{ inputs.environment }}
 
       - name: Get host name
         id: host-name
         run: |
-          echo "value=pentest" >> $GITHUB_OUTPUT
+          echo "value=${{ inputs.environment }}" >> $GITHUB_OUTPUT
