@@ -38,6 +38,10 @@ module ParentInterface
       @show_secondary_navigation = false
     end
 
+    def set_service_guide_url
+      @service_guide_url = nil
+    end
+
     def set_privacy_policy_url
       @privacy_policy_url = @organisation.privacy_policy_url
     end
