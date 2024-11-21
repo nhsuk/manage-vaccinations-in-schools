@@ -1,25 +1,17 @@
-# The manifest for the "webapp" service.
-# Read the full specification for the "Load Balanced Web Service" type at:
-#  https://aws.github.io/copilot-cli/docs/manifest/lb-web-service/
-
-# Your service name will be used in naming your resources like log groups, ECS services, etc.
 name: webapp
 type: Load Balanced Web Service
 
-# Distribute traffic to your service.
 http:
-  # Requests to this path will be forwarded to your service.
-  # To match all requests you can use the "/" path.
   path: "/"
-  # You can specify a custom health check path. The default is "/".
-  healthcheck: "/ping"
+  healthcheck:
+    path: "/ping"
+    interval: 5s
 
-# Configuration for your containers and service.
 image:
-  # Docker build arguments. For additional overrides: https://aws.github.io/copilot-cli/docs/manifest/lb-web-service/#image-build
   build: Dockerfile
-  # Port exposed through your container to route traffic to it.
   port: 4000
+  healthcheck:
+    interval: 5s
 
 platform: linux/x86_64
 cpu: 1024 # Number of CPU units for the task.
@@ -32,14 +24,6 @@ network:
     security_groups:
       groups:
         - from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-dbSecurityGroup
-
-# storage:
-# readonly_fs: true       # Limit to read-only access to mounted root filesystems.
-
-# Optional fields for more advanced use-cases.
-#
-#variables:                    # Pass environment variables as key value pairs.
-#  LOG_LEVEL: info
 
 secrets:
   RAILS_MASTER_KEY: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/RAILS_MASTER_KEY
