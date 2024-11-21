@@ -208,9 +208,24 @@ describe "Edit vaccination record" do
     then_i_should_see_the_vaccination_record
   end
 
+  scenario "Cannot as an admin" do
+    given_i_am_signed_in_as_an_admin
+    and_an_hpv_programme_is_underway
+    and_an_administered_vaccination_record_exists
+
+    when_i_go_to_the_vaccination_records_page
+    and_i_click_on_the_vaccination_record
+    then_i_should_not_be_able_to_edit_the_vaccination_record
+  end
+
   def given_i_am_signed_in
     @organisation = create(:organisation, :with_one_nurse, ods_code: "R1L")
     sign_in @organisation.users.first
+  end
+
+  def given_i_am_signed_in_as_an_admin
+    @organisation = create(:organisation, :with_one_admin, ods_code: "R1L")
+    sign_in @organisation.users.first, role: :admin_staff
   end
 
   def and_an_hpv_programme_is_underway
@@ -478,4 +493,8 @@ describe "Edit vaccination record" do
 
   alias_method :and_the_parent_receives_an_administered_email,
                :then_the_parent_receives_an_administered_email
+
+  def then_i_should_not_be_able_to_edit_the_vaccination_record
+    expect(page).not_to have_content("Edit vaccination record")
+  end
 end
