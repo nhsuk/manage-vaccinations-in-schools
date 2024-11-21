@@ -188,6 +188,7 @@ class VaccinationsController < ApplicationController
     @batches =
       policy_scope(Batch)
         .where(vaccine: @session.vaccines)
+        .not_archived
         .not_expired
         .order_by_name_and_expiration
   end

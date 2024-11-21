@@ -4,18 +4,20 @@ class DraftVaccinationRecordsController < ApplicationController
   include TodaysBatchConcern
   include VaccinationMailerConcern
 
+  skip_after_action :verify_policy_scoped
+
   before_action :set_draft_vaccination_record
   before_action :set_patient_session
   before_action :set_patient
   before_action :set_session
   before_action :set_programme
   before_action :set_vaccination_record
-  before_action :set_batches
 
   include WizardControllerConcern
 
-  before_action :validate_params, only: %i[update]
-  before_action :set_locations
+  before_action :validate_params, only: :update
+  before_action :set_batches, if: -> { current_step == :batch }
+  before_action :set_locations, if: -> { current_step == :location }
 
   after_action :verify_authorized
 
@@ -182,16 +184,18 @@ class DraftVaccinationRecordsController < ApplicationController
   end
 
   def set_batches
+    scope =
+      policy_scope(Batch).where(vaccine: @draft_vaccination_record.vaccine)
+
     @batches =
-      policy_scope(Batch)
-        .where(vaccine: @draft_vaccination_record.vaccine)
-        .not_expired
+      scope
+        .where(id: @draft_vaccination_record.batch_id)
+        .or(scope.not_archived.not_expired)
         .order_by_name_and_expiration
   end
 
   def set_locations
-    @locations = policy_scope(Location).community_clinic if current_step ==
-      :location
+    @locations = policy_scope(Location).community_clinic
   end
 
   def update_default_batch_for_today
