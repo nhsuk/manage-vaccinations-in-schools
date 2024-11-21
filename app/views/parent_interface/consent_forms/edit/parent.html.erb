@@ -11,7 +11,9 @@
 
   <%= h1 "About you" %>
 
-  <%= f.govuk_text_field :parent_full_name, label: { text: "Your name" } %>
+  <%= f.govuk_text_field :parent_full_name,
+                         label: { text: "Your name" },
+                         autocomplete: "name" %>
 
   <%= f.govuk_radio_buttons_fieldset(:parent_relationship_type,
                                      legend: { size: "s",
@@ -39,11 +41,14 @@
     <% end %>
   <% end %>
 
-  <%= f.govuk_email_field :parent_email, label: { text: "Email address" } %>
+  <%= f.govuk_email_field :parent_email,
+                          label: { text: "Email address" },
+                          autocomplete: "email" %>
 
   <%= f.govuk_phone_field :parent_phone,
                           label: { text: "Phone number (optional)" },
-                          hint: { text: "Someone might call you about your child’s vaccination" } %>
+                          hint: { text: "Someone might call you about your child’s vaccination" },
+                          autocomplete: "tel" %>
 
   <%= f.govuk_check_boxes_fieldset :parent_phone_receive_updates, multiple: false, legend: nil do %>
     <%= f.govuk_check_box :parent_phone_receive_updates, 1, 0, multiple: false, link_errors: true, label: { text: "Tick this box if you’d like to get updates by text message" } %>
