@@ -53,6 +53,12 @@ describe PatientUpdateFromPDSJob do
         expect { perform_now }.not_to change(Patient, :count)
       end
 
+      it "doesn't queue a job to look up NHS number" do
+        expect { perform_now }.not_to have_enqueued_job(
+          PatientNHSNumberLookupJob
+        )
+      end
+
       context "when the NHS number for the patient has changed" do
         let!(:patient) { create(:patient, nhs_number: "0123456789") }
 
@@ -95,6 +101,12 @@ describe PatientUpdateFromPDSJob do
         expect(patient).to receive(:invalidate!)
         perform_now
       end
+
+      it "queues a job to look up NHS number" do
+        expect { perform_now }.to have_enqueued_job(
+          PatientNHSNumberLookupJob
+        ).with(patient)
+      end
     end
 
     context "when the NHS number is invalid" do
@@ -116,6 +128,12 @@ describe PatientUpdateFromPDSJob do
       it "marks the patient as invalid" do
         expect(patient).to receive(:invalidate!)
         perform_now
+      end
+
+      it "queues a job to look up NHS number" do
+        expect { perform_now }.to have_enqueued_job(
+          PatientNHSNumberLookupJob
+        ).with(patient)
       end
     end
   end
