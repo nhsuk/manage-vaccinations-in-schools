@@ -11,16 +11,20 @@
   <%= h1 "Home address" %>
 
   <%= f.govuk_text_field :address_line_1,
-                         label: { text: "Address line 1" } %>
+                         label: { text: "Address line 1" },
+                         autocomplete: "address-line1" %>
 
   <%= f.govuk_text_field :address_line_2,
-                         label: { text: "Address line 2 (optional)" } %>
+                         label: { text: "Address line 2 (optional)" },
+                         autocomplete: "address-line2" %>
 
   <%= f.govuk_text_field :address_town,
-                         label: { text: "Town or city" } %>
+                         label: { text: "Town or city" },
+                         autocomplete: "address-level2" %>
 
   <%= f.govuk_text_field :address_postcode,
                          label: { text: "Postcode" },
+                         autocomplete: "postal-code",
                          class: "nhsuk-input--width-10" %>
 
   <div class="nhsuk-u-margin-top-6">
