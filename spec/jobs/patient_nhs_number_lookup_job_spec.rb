@@ -11,18 +11,7 @@ describe PatientNHSNumberLookupJob do
     end
   end
 
-  context "without an NHS number" do
-    let!(:patient) do
-      create(
-        :patient,
-        nhs_number: nil,
-        given_name: "John",
-        family_name: "Smith",
-        date_of_birth: Date.new(2014, 2, 18),
-        address_postcode: "SW11 1AA"
-      )
-    end
-
+  shared_examples "an NHS number lookup" do
     before do
       stub_request(
         :get,
@@ -47,9 +36,12 @@ describe PatientNHSNumberLookupJob do
       let(:response_file) { "pds/search-patients-response.json" }
 
       it "sets the NHS number of the patient" do
-        expect { perform_now }.to change(patient, :nhs_number).from(nil).to(
-          "9449306168"
-        )
+        expect { perform_now }.to change(patient, :nhs_number).to("9449306168")
+      end
+
+      it "marks the patient as not invalidated" do
+        perform_now
+        expect(patient).not_to be_invalidated
       end
 
       it "updates the patient details from PDS" do
@@ -83,6 +75,7 @@ describe PatientNHSNumberLookupJob do
 
       context "when the existing patient is not already in the session" do
         it "deletes the patient without an NHS number" do
+          patient # ensure it exists
           expect { perform_now }.to change(Patient, :count).by(-1)
         end
 
@@ -137,5 +130,36 @@ describe PatientNHSNumberLookupJob do
         end
       end
     end
+  end
+
+  context "with an NHS number already but invalidated" do
+    let(:patient) do
+      create(
+        :patient,
+        nhs_number: "0123456789",
+        given_name: "John",
+        family_name: "Smith",
+        date_of_birth: Date.new(2014, 2, 18),
+        address_postcode: "SW11 1AA",
+        invalidated_at: Time.current
+      )
+    end
+
+    it_behaves_like "an NHS number lookup"
+  end
+
+  context "without an NHS number" do
+    let(:patient) do
+      create(
+        :patient,
+        nhs_number: nil,
+        given_name: "John",
+        family_name: "Smith",
+        date_of_birth: Date.new(2014, 2, 18),
+        address_postcode: "SW11 1AA"
+      )
+    end
+
+    it_behaves_like "an NHS number lookup"
   end
 end
