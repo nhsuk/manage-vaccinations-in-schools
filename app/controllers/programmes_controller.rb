@@ -15,36 +15,12 @@ class ProgrammesController < ApplicationController
         cohort: policy_scope(Cohort).for_year_groups(@programme.year_groups)
       )
 
-    sessions =
-      policy_scope(Session).has_programme(@programme).for_current_academic_year
-
-    patient_sessions =
-      PatientSession.where(patient: patients, session: sessions)
-
     @patients_count = patients.count
-    @sessions_count = sessions.count
-
     @vaccinations_count = policy_scope(VaccinationRecord).count
-
     @consent_notifications_count =
       @programme.consent_notifications.where(patient: patients).count
-
     @consents =
       policy_scope(Consent).where(patient: patients, programme: @programme)
-
-    stats =
-      PatientSessionStats.new(
-        patient_sessions.preload_for_state.strict_loading,
-        keys: %i[with_consent_given without_a_response needing_triage]
-      )
-
-    @consent_given_percentage =
-      percentage_of(stats[:with_consent_given], @consents.count)
-    @responses_received_and_triaged_percentage =
-      percentage_of(
-        @patients_count - (stats[:without_a_response] + stats[:needing_triage]),
-        @patients_count
-      )
   end
 
   def sessions
