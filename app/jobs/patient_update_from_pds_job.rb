@@ -30,6 +30,7 @@ class PatientUpdateFromPDSJob < ApplicationJob
     end
   rescue NHS::PDS::InvalidatedResource, NHS::PDS::InvalidNHSNumber
     patient.invalidate!
+    PatientNHSNumberLookupJob.perform_later(patient)
   end
 
   class MissingNHSNumber < StandardError
