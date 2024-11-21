@@ -10,6 +10,7 @@ class ApplicationController < ActionController::Base
   before_action :set_disable_cache_headers
   before_action :set_header_path
   before_action :set_service_name
+  before_action :set_service_guide_url
   before_action :set_secondary_navigation
   before_action :set_privacy_policy_url
   before_action :authenticate_basic
@@ -59,8 +60,11 @@ class ApplicationController < ActionController::Base
     redirect_to(request.referer || root_path, status: :forbidden)
   end
 
+  def set_service_guide_url
+    @service_guide_url = "https://guide.manage-vaccinations-in-schools.nhs.uk"
+  end
+
   def set_privacy_policy_url
-    @privacy_policy_url =
-      current_user&.selected_organisation&.privacy_policy_url
+    @privacy_policy_url = nil
   end
 end
