@@ -20,7 +20,6 @@ jobs:
 
     environment:
       name: ${{ inputs.environment }}
-      url: https://${{ steps.host-name.outputs.value }}
 
     concurrency:
       group: ${{ inputs.environment }}
