@@ -47,8 +47,3 @@ jobs:
       - name: Deploy the application using AWS Copilot
         run: |
           copilot svc deploy --name webapp --env ${{ inputs.environment }}
-
-      - name: Get host name
-        id: host-name
-        run: |
-          echo "value=${{ inputs.environment }}" >> $GITHUB_OUTPUT
