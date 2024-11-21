@@ -19,6 +19,7 @@ describe DraftConsent do
     {
       notes: "Some notes.",
       response: "given",
+      parent_email: "test@example.com",
       patient_session_id: patient_session.id,
       programme_id: programme.id
     }
@@ -28,6 +29,7 @@ describe DraftConsent do
     {
       response: "refused",
       notes: "Some notes.",
+      parent_email: "test@example.com",
       patient_session_id: patient_session.id,
       programme_id: programme.id
     }
