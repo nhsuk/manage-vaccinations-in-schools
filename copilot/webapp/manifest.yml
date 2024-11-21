@@ -6,12 +6,14 @@ http:
   healthcheck:
     path: "/ping"
     interval: 5s
+    timeout: 3s
 
 image:
   build: Dockerfile
   port: 4000
   healthcheck:
     interval: 5s
+    timeout: 3s
 
 platform: linux/x86_64
 cpu: 1024 # Number of CPU units for the task.
