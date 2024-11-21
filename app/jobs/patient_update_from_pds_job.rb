@@ -17,12 +17,7 @@ class PatientUpdateFromPDSJob < ApplicationJob
     if pds_patient.nhs_number != patient.nhs_number
       if (
            existing_patient =
-             Patient.includes(
-               :class_imports,
-               :cohort_imports,
-               :immunisation_imports,
-               :patient_sessions
-             ).find_by(nhs_number: pds_patient.nhs_number)
+             Patient.find_by(nhs_number: pds_patient.nhs_number)
          )
         PatientMerger.call(to_keep: existing_patient, to_destroy: patient)
         existing_patient.update_from_pds!(pds_patient)
