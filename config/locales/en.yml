@@ -149,6 +149,7 @@ en:
             school_urn:
               blank: is required but missing
               invalid: ‘%{value}’ is not a known school URN
+              inclusion: The school URN is not recognised. If you’ve checked the URN, and you believe it’s valid, contact our support organisation.
             year_group:
               inclusion: is not part of this programme
         draft_consent:
