@@ -55,16 +55,29 @@ class DraftConsent
   end
 
   on_wizard_step :parent_details, exact: true do
-    validates :parent_email, notify_safe_email: true
-    validates :parent_phone,
-              presence: {
-                if: :parent_phone_receive_updates
-              },
-              phone: {
-                allow_blank: true
-              }
     validates :parent_phone_receive_updates, inclusion: { in: [true, false] }
   end
+
+  validates :parent_email,
+            notify_safe_email: {
+              allow_blank: true
+            },
+            presence: {
+              if: -> do
+                required_for_step?(:parent_details, exact: true) &&
+                  parent_phone.blank?
+              end
+            }
+  validates :parent_phone,
+            phone: {
+              allow_blank: true
+            },
+            presence: {
+              if: -> do
+                required_for_step?(:parent_details, exact: true) &&
+                  (parent_email.blank? || parent_phone_receive_updates)
+              end
+            }
 
   with_options if: -> do
                  parent_id.nil? &&
