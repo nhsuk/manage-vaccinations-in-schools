@@ -28,13 +28,14 @@ class CohortImportsController < ApplicationController
 
     if @cohort_import.slow?
       ProcessImportJob.perform_later(@cohort_import)
-      flash = { success: "Import processing started" }
+      redirect_to programme_imports_path(@programme),
+                  flash: {
+                    success: "Import processing started"
+                  }
     else
       ProcessImportJob.perform_now(@cohort_import)
-      flash = { success: "Import completed" }
+      redirect_to programme_cohort_import_path(@programme, @cohort_import)
     end
-
-    redirect_to programme_imports_path(@programme), flash:
   end
 
   def show
