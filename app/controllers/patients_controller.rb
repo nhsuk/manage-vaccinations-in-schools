@@ -88,7 +88,7 @@ class PatientsController < ApplicationController
         .includes(
           :school,
           cohort: :organisation,
-          consents: %i[parent patient],
+          consents: %i[parent patient recorded_by],
           notify_log_entries: :sent_by,
           parents: :parent_relationships,
           patient_sessions: %i[location session_attendances],
