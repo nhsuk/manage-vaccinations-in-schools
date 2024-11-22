@@ -154,7 +154,6 @@ describe "Immunisation imports duplicates" do
       "spec/fixtures/immunisation_import/valid_hpv.csv"
     )
     click_on "Continue"
-    click_link ImmunisationImport.last.created_at.to_fs(:long), match: :first
   end
 
   def then_i_should_see_the_import_page_with_duplicate_records

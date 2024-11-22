@@ -11,12 +11,12 @@ describe "Import class lists - Moving patients" do
     then_i_should_see_the_import_page
 
     when_i_upload_a_valid_file
-    then_i_should_see_the_imports_page_with_the_completed_flash
+    then_i_should_see_the_import_complete_page
 
     when_i_visit_a_different_session_page_for_the_hpv_programme
     and_i_start_adding_children_to_the_session
     and_i_upload_a_valid_file
-    then_i_should_see_the_imports_page_with_the_completed_flash
+    then_i_should_see_the_import_complete_page
 
     when_i_visit_a_session_page_for_the_hpv_programme
     then_i_should_see_pending_moves_out
@@ -101,8 +101,10 @@ describe "Import class lists - Moving patients" do
     click_on "Import class list"
   end
 
-  def then_i_should_see_the_imports_page_with_the_completed_flash
-    expect(page).to have_content("Import completed")
+  def then_i_should_see_the_import_complete_page
+    expect(page).to have_content("Completed")
+    expect(page).to have_content("Imported on")
+    expect(page).to have_content("Imported by")
   end
 
   def then_i_should_see_pending_moves_out
