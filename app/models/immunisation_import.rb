@@ -63,6 +63,10 @@ class ImmunisationImport < ApplicationRecord
     ]
   end
 
+  def check_rows_are_unique
+    # there is no uniqueness check for immunisations
+  end
+
   def parse_row(data)
     ImmunisationImportRow.new(data:, organisation:, programme:)
   end
