@@ -226,10 +226,14 @@ module CSVImportable
   def rows_are_valid
     return unless rows
 
+    rows.each(&:validate)
+
+    check_rows_are_unique
+
     rows.each.with_index do |row, index|
-      if row.invalid?
-        errors.add("row_#{index + 1}".to_sym, row.errors.full_messages)
-      end
+      next if row.errors.empty?
+
+      errors.add("row_#{index + 1}".to_sym, row.errors.full_messages)
     end
   end
 
