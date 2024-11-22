@@ -9,6 +9,19 @@ class PatientImport < ApplicationRecord
     %w[CHILD_DATE_OF_BIRTH CHILD_FIRST_NAME CHILD_LAST_NAME]
   end
 
+  def check_rows_are_unique
+    rows
+      .map(&:nhs_number)
+      .tally
+      .each do |nhs_number, count|
+        next if nhs_number.nil? || count <= 1
+
+        rows
+          .select { _1.nhs_number == nhs_number }
+          .each { |row| row.errors.add(:nhs_number, :taken) }
+      end
+  end
+
   def process_row(row)
     parents = row.to_parents
     patient = row.to_patient
