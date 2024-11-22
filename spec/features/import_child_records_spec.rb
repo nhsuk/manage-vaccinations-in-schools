@@ -33,9 +33,6 @@ describe "Import child records" do
     when_it_is_a_litte_bit_later
     and_i_go_back_to_the_upload_page
     and_i_upload_a_valid_file
-    then_i_should_see_the_imports_page_with_the_completed_flash
-
-    when_i_go_to_the_import_page
     then_i_should_see_the_upload
     and_i_should_see_the_patients
 
@@ -52,8 +49,8 @@ describe "Import child records" do
     travel_to 1.minute.from_now # to ensure the created_at is different for the import jobs
 
     when_i_upload_a_valid_file_with_changes
-    then_i_should_see_the_imports_page_with_the_completed_flash
-    and_i_should_see_import_issues_with_the_count
+    and_i_go_to_the_imports_page
+    then_i_should_see_import_issues_with_the_count
   end
 
   def given_the_app_is_setup
@@ -198,10 +195,6 @@ describe "Import child records" do
     expect(page).to have_content("Import processing started")
   end
 
-  def then_i_should_see_the_imports_page_with_the_completed_flash
-    expect(page).to have_content("Import completed")
-  end
-
   def when_i_wait_for_the_background_job_to_complete
     perform_enqueued_jobs
   end
@@ -226,7 +219,11 @@ describe "Import child records" do
     click_on "Continue"
   end
 
-  def and_i_should_see_import_issues_with_the_count
+  def and_i_go_to_the_imports_page
+    click_on "Imports"
+  end
+
+  def then_i_should_see_import_issues_with_the_count
     expect(page).to have_link("Import issues")
     expect(page).to have_selector(".app-count", text: "( 1 )")
   end

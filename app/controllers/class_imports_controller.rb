@@ -28,13 +28,14 @@ class ClassImportsController < ApplicationController
 
     if @class_import.slow?
       ProcessImportJob.perform_later(@class_import)
-      flash = { success: "Import processing started" }
+      redirect_to programme_imports_path(@session.programmes.first),
+                  flash: {
+                    success: "Import processing started"
+                  }
     else
       ProcessImportJob.perform_now(@class_import)
-      flash = { success: "Import completed" }
+      redirect_to session_class_import_path(@session, @class_import)
     end
-
-    redirect_to programme_imports_path(@session.programmes.first), flash:
   end
 
   def show
