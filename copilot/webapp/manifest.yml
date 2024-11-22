@@ -5,11 +5,17 @@ http:
   path: "/"
   healthcheck:
     path: "/ping"
-    interval: 5s
+    healthy_threshold: 1 # Number of checks before target is healthy
+    unhealthy_threshold: 10 # Number of checks before giving up; max is 10
+    interval: 5s # Time between checks; minimum is 5s, default is 30s
+    grace_period: 0s # Start healthchecks immediately, default is 60s
 
 image:
   build: Dockerfile
   port: 4000
+  healthcheck:
+    interval: 5s # Default is 10s
+    timeout: 1s # Default is 5s
 
 platform: linux/x86_64
 cpu: 1024 # Number of CPU units for the task.
