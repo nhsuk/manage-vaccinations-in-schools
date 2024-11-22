@@ -83,7 +83,6 @@ class DraftConsentsController < ApplicationController
   end
 
   def finish_wizard_path
-    @draft_consent.reset!
     session_consents_path(@session)
   end
 
