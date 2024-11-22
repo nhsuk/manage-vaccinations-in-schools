@@ -218,6 +218,26 @@ describe "Edit vaccination record" do
     then_i_should_not_be_able_to_edit_the_vaccination_record
   end
 
+  scenario "Navigating back" do
+    given_i_am_signed_in
+    and_an_hpv_programme_is_underway
+    and_an_administered_vaccination_record_exists
+
+    when_i_go_to_the_vaccination_records_page
+    and_i_click_on_the_vaccination_record
+    and_i_click_on_edit_vaccination_record
+    then_i_see_the_edit_vaccination_record_page
+
+    when_i_click_on_save_changes
+    then_i_should_see_the_vaccination_record
+
+    when_i_go_back_to_the_confirm_page
+    then_i_see_the_edit_vaccination_record_page
+
+    when_i_click_on_save_changes
+    then_i_should_see_the_vaccination_record
+  end
+
   def given_i_am_signed_in
     @organisation = create(:organisation, :with_one_nurse, ods_code: "R1L")
     sign_in @organisation.users.first
@@ -496,5 +516,9 @@ describe "Edit vaccination record" do
 
   def then_i_should_not_be_able_to_edit_the_vaccination_record
     expect(page).not_to have_content("Edit vaccination record")
+  end
+
+  def when_i_go_back_to_the_confirm_page
+    visit draft_vaccination_record_path(id: "confirm")
   end
 end
