@@ -121,7 +121,6 @@ describe "Child record imports duplicates" do
   def and_i_upload_a_file_with_duplicate_records
     attach_file("cohort_import[csv]", "spec/fixtures/cohort_import/valid.csv")
     click_on "Continue"
-    click_link CohortImport.last.created_at.to_fs(:long), match: :first
   end
 
   def then_i_should_see_the_import_page_with_duplicate_records

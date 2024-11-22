@@ -226,8 +226,6 @@ describe "HPV Vaccination" do
     attach_file("immunisation_import[csv]", "tmp/modified.csv")
     click_on "Continue"
 
-    click_on "1 February 2024 at 12:00pm"
-
     expect(page).to have_content("Completed")
     expect(page).not_to have_content("Invalid")
     expect(page).to have_content("2 previously imported records were omitted")

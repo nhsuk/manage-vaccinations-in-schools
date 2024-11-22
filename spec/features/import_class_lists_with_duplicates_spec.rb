@@ -129,7 +129,6 @@ describe "Class list imports duplicates" do
       "spec/fixtures/class_import/duplicates.csv"
     )
     click_on "Continue"
-    click_link ClassImport.last.created_at.to_fs(:long), match: :first
   end
 
   def then_i_should_see_the_import_page_with_duplicate_records
