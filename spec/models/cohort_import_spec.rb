@@ -275,10 +275,24 @@ describe CohortImport do
     end
 
     context "when same NHS number appears multiple times in the file" do
-      let(:file) { "duplicates.csv" }
+      let(:file) { "duplicate_nhs_numbers.csv" }
 
-      it "only creates one patient" do
-        expect { record! }.to change(Patient, :count).by(1)
+      it "has a validation error" do
+        expect { record! }.not_to change(Patient, :count)
+        expect(cohort_import.errors[:row_1]).to eq(
+          [
+            [
+              "<code>CHILD_NHS_NUMBER</code>: The same NHS number appears multiple times in this file."
+            ]
+          ]
+        )
+        expect(cohort_import.errors[:row_2]).to eq(
+          [
+            [
+              "<code>CHILD_NHS_NUMBER</code>: The same NHS number appears multiple times in this file."
+            ]
+          ]
+        )
       end
     end
 

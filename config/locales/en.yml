@@ -86,6 +86,7 @@ en:
             nhs_number:
               blank: is required but missing
               invalid: ‘%{value}’ should be a valid NHS number, like 999 888 7777
+              taken: The same NHS number appears multiple times in this file.
             parent_1_name:
               blank: is required but missing
             parent_1_relationship:
@@ -126,6 +127,7 @@ en:
             nhs_number:
               blank: is required but missing
               invalid: ‘%{value}’ should be a valid NHS number, like 999 888 7777
+              taken: The same NHS number appears multiple times in this file.
             parent_1_email:
               blank: is required but missing
               invalid: ‘%{value}’ should be a valid email address, like j.doe@example.com
