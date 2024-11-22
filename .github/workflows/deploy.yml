@@ -23,6 +23,7 @@ on:
 jobs:
   Deploy:
     strategy:
+      fail-fast: false
       matrix:
         environment: >-
           ${{ fromJSON(github.event_name == 'workflow_dispatch'
