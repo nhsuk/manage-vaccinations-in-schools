@@ -13,10 +13,10 @@ http:
 image:
   build: Dockerfile
   port: 4000
-  healthcheck:
-    interval: 5s # Default is 10s
-    timeout: 4s # Default is 5s
-    retries: 4 # Default is 2
+  # healthcheck:
+  #   interval: 5s # Default is 10s
+  #   timeout: 4s # Default is 5s
+  #   retries: 4 # Default is 2
 
 platform: linux/x86_64
 cpu: 1024 # Number of CPU units for the task.
