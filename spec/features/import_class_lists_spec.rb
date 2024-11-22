@@ -31,9 +31,6 @@ describe "Import class lists" do
 
     when_i_go_back_to_the_upload_page
     and_i_upload_a_valid_file
-    then_i_should_see_the_imports_page_with_the_completed_flash
-
-    when_i_go_to_the_import_page
     then_i_should_see_the_upload
     and_i_should_see_the_patients
 
@@ -168,10 +165,6 @@ describe "Import class lists" do
 
   def then_i_should_see_the_imports_page_with_the_processing_flash
     expect(page).to have_content("Import processing started")
-  end
-
-  def then_i_should_see_the_imports_page_with_the_completed_flash
-    expect(page).to have_content("Import completed")
   end
 
   def when_i_wait_for_the_background_job_to_complete
