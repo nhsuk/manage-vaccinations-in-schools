@@ -40,3 +40,6 @@
   path: /Resources/EnvironmentHTTPSSecurityGroupIngressFromPublicALB
 - op: remove
   path: /Resources/EnvironmentSecurityGroupIngressFromSelf
+- op: add
+  path: /Resources/PublicLoadBalancer/Properties/Name
+  value: !Sub ${AppName}-${EnvironmentName}-pub-lb
