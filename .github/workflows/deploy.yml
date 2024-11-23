@@ -14,7 +14,6 @@ on:
         required: true
         type: choice
         options:
-          - accessibility
           - pentest
           - test
           - training
@@ -28,7 +27,7 @@ jobs:
         environment: >-
           ${{ fromJSON(github.event_name == 'workflow_dispatch'
               && format('["{0}"]', inputs.environment)
-              || '["accessibility", "pentest", "test", "training"]') }}
+              || '["pentest", "test", "training"]') }}
     uses: ./.github/workflows/_deploy-template.yml
     with:
       environment: ${{ matrix.environment }}
