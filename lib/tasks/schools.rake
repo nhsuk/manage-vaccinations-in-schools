@@ -182,4 +182,17 @@ namespace :schools do
 
     UnscheduledSessionsFactory.new.call
   end
+
+  desc "Create smoke test school"
+  task smoke_test: :environment do
+    Location.create(
+      name: "XXX Smoke Test School XXX",
+      urn: "XXXXXX",
+      type: :school,
+      address_line_1: "1 Test Street",
+      address_town: "Test Town",
+      address_postcode: "TE1 1ST",
+      year_groups: [8, 9, 10, 11]
+    )
+  end
 end

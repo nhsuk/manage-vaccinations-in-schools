@@ -314,3 +314,5 @@ create_patients(organisation)
 create_imports(user, organisation)
 
 UnscheduledSessionsFactory.new.call
+
+Rake::Task["schools:smoke_test"].execute
