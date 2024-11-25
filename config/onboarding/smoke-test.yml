@@ -1,7 +1,7 @@
 organisation:
   name: XXX SMOKE TEST XXX
   email: england.mavis@nhs.net
-  phone: 07700900999
+  phone: "03003112233"
   ods_code: Y90128
 
 programmes: [hpv]
@@ -10,7 +10,7 @@ teams:
   team1:
     name: XXX SMOKE TEST XXX
     email: xxx.smoke.test.xxx@example.nhs.net
-    phone: 07700900999
+    phone: "03003112233"
 
 schools:
   team1:
