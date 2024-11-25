@@ -243,21 +243,6 @@ class DraftConsent
     self.programme_id = value.id
   end
 
-  def editable_attribute_names
-    %w[
-      health_answers
-      notes
-      notify_parents
-      patient_id
-      programme_id
-      reason_for_refusal
-      recorded_by_user_id
-      response
-      route
-      organisation_id
-    ]
-  end
-
   def write_to!(consent, triage:)
     super(consent)
 
@@ -312,6 +297,25 @@ class DraftConsent
   end
 
   private
+
+  def readable_attribute_names
+    writable_attribute_names + %w[parent]
+  end
+
+  def writable_attribute_names
+    %w[
+      health_answers
+      notes
+      notify_parents
+      patient_id
+      programme_id
+      reason_for_refusal
+      recorded_by_user_id
+      response
+      route
+      organisation_id
+    ]
+  end
 
   def notes_required?
     response_refused? && reason_for_refusal != "personal_choice"

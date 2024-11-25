@@ -9,14 +9,18 @@ module EditableWrapper
     editing_id != nil
   end
 
-  def editable_attribute_names
+  def readable_attribute_names
+    attribute_names
+  end
+
+  def writable_attribute_names
     attribute_names
   end
 
   def read_from!(instance)
     self.editing_id = instance.id
 
-    editable_attribute_names
+    readable_attribute_names
       .excluding("editing_id")
       .each do |attribute|
         public_send("#{attribute}=", instance.public_send(attribute))
@@ -32,7 +36,7 @@ module EditableWrapper
       raise CannotWriteDifferentRecord
     end
 
-    editable_attribute_names
+    writable_attribute_names
       .excluding("editing_id")
       .each do |attribute|
         instance.public_send("#{attribute}=", public_send(attribute))
