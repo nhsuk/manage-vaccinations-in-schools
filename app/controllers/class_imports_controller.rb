@@ -53,7 +53,7 @@ class ClassImportsController < ApplicationController
   end
 
   def update
-    @class_import.record!
+    @class_import.process!
 
     redirect_to session_class_import_path(@session, @class_import)
   end

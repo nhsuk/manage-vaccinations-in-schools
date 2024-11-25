@@ -72,7 +72,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_29_161038) do
     t.datetime "csv_removed_at"
     t.integer "exact_duplicate_record_count"
     t.integer "new_record_count"
-    t.datetime "recorded_at"
+    t.datetime "processed_at"
     t.json "serialized_errors"
     t.integer "status", default: 0, null: false
     t.bigint "organisation_id", null: false
@@ -106,7 +106,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_29_161038) do
 
   create_table "cohort_imports", force: :cascade do |t|
     t.datetime "csv_removed_at"
-    t.datetime "recorded_at"
+    t.datetime "processed_at"
     t.text "csv_data"
     t.text "csv_filename"
     t.integer "new_record_count"
@@ -391,7 +391,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_29_161038) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "programme_id", null: false
-    t.datetime "recorded_at"
+    t.datetime "processed_at"
     t.integer "new_record_count"
     t.integer "exact_duplicate_record_count"
     t.text "csv_filename", null: false

@@ -53,7 +53,7 @@ class CohortImportsController < ApplicationController
   end
 
   def update
-    @cohort_import.record!
+    @cohort_import.process!
 
     redirect_to programme_cohort_import_path(@programme, @cohort_import)
   end

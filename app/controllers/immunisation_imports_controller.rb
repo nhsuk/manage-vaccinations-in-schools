@@ -65,7 +65,7 @@ class ImmunisationImportsController < ApplicationController
   end
 
   def update
-    @immunisation_import.record!
+    @immunisation_import.process!
 
     redirect_to programme_immunisation_import_path(
                   @programme,

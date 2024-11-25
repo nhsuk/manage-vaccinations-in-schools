@@ -42,8 +42,8 @@ describe AppImportStatusComponent, type: :component do
     it { should_not have_content("2 minutes") }
   end
 
-  context "when status is recorded" do
-    let(:status) { "recorded" }
+  context "when status is processed" do
+    let(:status) { "processed" }
 
     it { should have_css(".nhsuk-tag--green", text: "Completed") }
     it { should_not have_content("2 minutes") }

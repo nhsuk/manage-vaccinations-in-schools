@@ -11,7 +11,7 @@
 #  csv_removed_at               :datetime
 #  exact_duplicate_record_count :integer
 #  new_record_count             :integer
-#  recorded_at                  :datetime
+#  processed_at                 :datetime
 #  rows_count                   :integer
 #  serialized_errors            :json
 #  status                       :integer          default("pending_import"), not null

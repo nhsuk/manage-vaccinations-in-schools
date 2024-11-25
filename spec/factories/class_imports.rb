@@ -11,7 +11,7 @@
 #  csv_removed_at               :datetime
 #  exact_duplicate_record_count :integer
 #  new_record_count             :integer
-#  recorded_at                  :datetime
+#  processed_at                 :datetime
 #  rows_count                   :integer
 #  serialized_errors            :json
 #  status                       :integer          default("pending_import"), not null
@@ -57,9 +57,9 @@ FactoryBot.define do
       status { :rows_are_invalid }
     end
 
-    trait :recorded do
-      recorded_at { Time.zone.now }
-      status { :recorded }
+    trait :processed do
+      processed_at { Time.current }
+      status { :processed }
 
       changed_record_count { 0 }
       exact_duplicate_record_count { 0 }

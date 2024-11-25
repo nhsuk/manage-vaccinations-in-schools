@@ -11,7 +11,7 @@
 #  csv_removed_at               :datetime
 #  exact_duplicate_record_count :integer
 #  new_record_count             :integer
-#  recorded_at                  :datetime
+#  processed_at                 :datetime
 #  rows_count                   :integer
 #  serialized_errors            :jsonb
 #  status                       :integer          default("pending_import"), not null
@@ -125,8 +125,8 @@ describe ImmunisationImport do
     end
   end
 
-  describe "#record!" do
-    subject(:record!) { immunisation_import.record! }
+  describe "#process!" do
+    subject(:process!) { immunisation_import.process! }
 
     context "with valid Flu rows" do
       let(:programme) { create(:programme, :flu_all_vaccines) }
@@ -134,8 +134,8 @@ describe ImmunisationImport do
 
       it "creates locations, patients, and vaccination records" do
         # stree-ignore
-        expect { record! }
-          .to change(immunisation_import, :recorded_at).from(nil)
+        expect { process! }
+          .to change(immunisation_import, :processed_at).from(nil)
           .and change(immunisation_import.vaccination_records, :count).by(11)
           .and change(immunisation_import.patients, :count).by(11)
           .and change(immunisation_import.sessions, :count).by(3)
@@ -146,8 +146,8 @@ describe ImmunisationImport do
         # identical.
 
         # stree-ignore
-        expect { immunisation_import.record! }
-          .to not_change(immunisation_import, :recorded_at)
+        expect { immunisation_import.process! }
+          .to not_change(immunisation_import, :processed_at)
           .and not_change(VaccinationRecord, :count)
           .and not_change(Patient, :count)
           .and not_change(Session, :count)
@@ -157,7 +157,7 @@ describe ImmunisationImport do
 
       it "stores statistics on the import" do
         # stree-ignore
-        expect { record! }
+        expect { process! }
           .to change(immunisation_import, :exact_duplicate_record_count).to(0)
           .and change(immunisation_import, :new_record_count).to(11)
       end
@@ -169,21 +169,21 @@ describe ImmunisationImport do
           csv:,
           organisation:,
           uploaded_by:
-        ).record!
+        ).process!
         csv.rewind
 
-        record!
+        process!
         expect(immunisation_import.exact_duplicate_record_count).to eq(11)
       end
 
       it "enqueues jobs to look up missing NHS numbers" do
-        expect { record! }.to have_enqueued_job(
+        expect { process! }.to have_enqueued_job(
           PatientNHSNumberLookupJob
         ).once.on_queue(:imports)
       end
 
       it "enqueues jobs to update from PDS" do
-        expect { record! }.to have_enqueued_job(PatientUpdateFromPDSJob)
+        expect { process! }.to have_enqueued_job(PatientUpdateFromPDSJob)
           .exactly(10)
           .times
           .on_queue(:imports)
@@ -196,8 +196,8 @@ describe ImmunisationImport do
 
       it "creates locations, patients, and vaccination records" do
         # stree-ignore
-        expect { record! }
-          .to change(immunisation_import, :recorded_at).from(nil)
+        expect { process! }
+          .to change(immunisation_import, :processed_at).from(nil)
           .and change(immunisation_import.vaccination_records, :count).by(11)
           .and change(immunisation_import.patients, :count).by(10)
           .and change(immunisation_import.sessions, :count).by(5)
@@ -208,8 +208,8 @@ describe ImmunisationImport do
         # identical.
 
         # stree-ignore
-        expect { immunisation_import.record! }
-          .to not_change(immunisation_import, :recorded_at)
+        expect { immunisation_import.process! }
+          .to not_change(immunisation_import, :processed_at)
           .and not_change(VaccinationRecord, :count)
           .and not_change(Patient, :count)
           .and not_change(Session, :count)
@@ -219,7 +219,7 @@ describe ImmunisationImport do
 
       it "stores statistics on the import" do
         # stree-ignore
-        expect { record! }
+        expect { process! }
           .to change(immunisation_import, :exact_duplicate_record_count).to(0)
           .and change(immunisation_import, :new_record_count).to(11)
       end
@@ -231,15 +231,15 @@ describe ImmunisationImport do
           csv:,
           organisation:,
           uploaded_by:
-        ).record!
+        ).process!
         csv.rewind
 
-        record!
+        process!
         expect(immunisation_import.exact_duplicate_record_count).to eq(11)
       end
 
       it "creates a new session for each date" do
-        record!
+        process!
 
         expect(immunisation_import.sessions.count).to eq(5)
 
@@ -248,13 +248,13 @@ describe ImmunisationImport do
       end
 
       it "enqueues jobs to look up missing NHS numbers" do
-        expect { record! }.to have_enqueued_job(
+        expect { process! }.to have_enqueued_job(
           PatientNHSNumberLookupJob
         ).once.on_queue(:imports)
       end
 
       it "enqueues jobs to update from PDS" do
-        expect { record! }.to have_enqueued_job(PatientUpdateFromPDSJob)
+        expect { process! }.to have_enqueued_job(PatientUpdateFromPDSJob)
           .exactly(9)
           .times
           .on_queue(:imports)
@@ -276,11 +276,11 @@ describe ImmunisationImport do
       end
 
       it "doesn't create an additional patient" do
-        expect { record! }.to change(Patient, :count).by(10)
+        expect { process! }.to change(Patient, :count).by(10)
       end
 
       it "doesn't update the NHS number on the existing patient" do
-        expect { record! }.not_to change(patient, :nhs_number).from(nil)
+        expect { process! }.not_to change(patient, :nhs_number).from(nil)
       end
     end
 
@@ -299,7 +299,7 @@ describe ImmunisationImport do
       end
 
       it "doesn't create an additional patient" do
-        expect { record! }.to change(Patient, :count).by(10)
+        expect { process! }.to change(Patient, :count).by(10)
       end
     end
 
@@ -319,7 +319,7 @@ describe ImmunisationImport do
       end
 
       it "ignores changes in the patient record" do
-        expect { record! }.not_to change(Patient, :count)
+        expect { process! }.not_to change(Patient, :count)
         expect(existing_patient.reload.pending_changes).to be_empty
       end
     end
@@ -335,7 +335,7 @@ describe ImmunisationImport do
         expect(patient.vaccinated?(programme)).to be(false)
         expect(patient.upcoming_sessions).to contain_exactly(session)
 
-        record!
+        process!
 
         expect(patient.reload.upcoming_sessions).to be_empty
         expect(patient.vaccinated?(programme)).to be(true)

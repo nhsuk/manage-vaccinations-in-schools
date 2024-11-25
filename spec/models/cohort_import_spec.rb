@@ -11,7 +11,7 @@
 #  csv_removed_at               :datetime
 #  exact_duplicate_record_count :integer
 #  new_record_count             :integer
-#  recorded_at                  :datetime
+#  processed_at                 :datetime
 #  rows_count                   :integer
 #  serialized_errors            :jsonb
 #  status                       :integer          default("pending_import"), not null
@@ -162,15 +162,15 @@ describe CohortImport do
     end
   end
 
-  describe "#record!" do
-    subject(:record!) { cohort_import.record! }
+  describe "#process!" do
+    subject(:process!) { cohort_import.process! }
 
     let(:file) { "valid.csv" }
 
     it "creates patients and parents" do
       # stree-ignore
-      expect { record! }
-        .to change(cohort_import, :recorded_at).from(nil)
+      expect { process! }
+        .to change(cohort_import, :processed_at).from(nil)
         .and change(cohort_import.patients, :count).by(3)
         .and change(cohort_import.parents, :count).by(3)
         .and change(organisation.cohorts, :count).by(1)
@@ -241,8 +241,8 @@ describe CohortImport do
       # Second import should not duplicate the patients if they're identical.
 
       # stree-ignore
-      expect { cohort_import.record! }
-        .to not_change(cohort_import, :recorded_at)
+      expect { cohort_import.process! }
+        .to not_change(cohort_import, :processed_at)
         .and not_change(Patient, :count)
         .and not_change(Parent, :count)
         .and not_change(Cohort, :count)
@@ -250,28 +250,28 @@ describe CohortImport do
 
     it "stores statistics on the import" do
       # stree-ignore
-      expect { record! }
+      expect { process! }
         .to change(cohort_import, :exact_duplicate_record_count).to(0)
         .and change(cohort_import, :new_record_count).to(3)
         .and change(cohort_import, :changed_record_count).to(0)
     end
 
     it "ignores and counts duplicate records" do
-      create(:cohort_import, csv:, organisation:, programme:).record!
+      create(:cohort_import, csv:, organisation:, programme:).process!
       csv.rewind
 
-      record!
+      process!
       expect(cohort_import.exact_duplicate_record_count).to eq(3)
     end
 
     it "enqueues jobs to look up missing NHS numbers" do
-      expect { record! }.to have_enqueued_job(
+      expect { process! }.to have_enqueued_job(
         PatientNHSNumberLookupJob
       ).once.on_queue(:imports)
     end
 
     it "enqueues jobs to update from PDS" do
-      expect { record! }.to have_enqueued_job(
+      expect { process! }.to have_enqueued_job(
         PatientUpdateFromPDSJob
       ).twice.on_queue(:imports)
     end
@@ -280,7 +280,7 @@ describe CohortImport do
       let(:file) { "duplicate_nhs_numbers.csv" }
 
       it "has a validation error" do
-        expect { record! }.not_to change(Patient, :count)
+        expect { process! }.not_to change(Patient, :count)
         expect(cohort_import.errors[:row_1]).to eq(
           [
             [
@@ -311,7 +311,7 @@ describe CohortImport do
       end
 
       it "doesn't create an additional patient" do
-        expect { record! }.to change(Patient, :count).by(2)
+        expect { process! }.to change(Patient, :count).by(2)
       end
     end
 
@@ -328,7 +328,7 @@ describe CohortImport do
       end
 
       it "doesn't create an additional patient" do
-        expect { record! }.to change(Patient, :count).by(2)
+        expect { process! }.to change(Patient, :count).by(2)
       end
     end
 
@@ -338,7 +338,7 @@ describe CohortImport do
       end
 
       it "adds the patients to the session" do
-        expect { record! }.to change(session.patients, :count).from(0).to(3)
+        expect { process! }.to change(session.patients, :count).from(0).to(3)
       end
     end
 
@@ -348,7 +348,7 @@ describe CohortImport do
       end
 
       it "adds the patients to the session" do
-        expect { record! }.to change(session.patients, :count).from(0).to(3)
+        expect { process! }.to change(session.patients, :count).from(0).to(3)
       end
     end
   end
