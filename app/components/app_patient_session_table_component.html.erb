@@ -5,6 +5,7 @@
     <% table.with_head do |head| %>
       <% head.with_row do |row| %>
         <% row.with_cell(text: "Location") %>
+        <% row.with_cell(text: "Academic year") %>
       <% end %>
     <% end %>
 
@@ -14,6 +15,11 @@
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Location</span>
             <%= link_to session.location.name, session_path(session) %>
+          <% end %>
+
+          <% row.with_cell do %>
+            <span class="nhsuk-table-responsive__heading">Academic year</span>
+            <%= helpers.session_academic_year(session) %>
           <% end %>
         <% end %>
       <% end %>
