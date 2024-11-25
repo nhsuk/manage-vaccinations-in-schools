@@ -4,7 +4,15 @@ describe SessionsHelper do
   let(:programme) { create(:programme, :flu) }
   let(:location) { create(:school, name: "Waterloo Road") }
   let(:date) { nil }
-  let(:session) { create(:session, programme:, date:, location:) }
+  let(:session) do
+    create(:session, programme:, academic_year: 2024, date:, location:)
+  end
+
+  describe "#session_academic_year" do
+    subject(:session_academic_year) { helper.session_academic_year(session) }
+
+    it { should eq("2024/25") }
+  end
 
   describe "#session_consent_period" do
     subject(:session_consent_period) { helper.session_consent_period(session) }

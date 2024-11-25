@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
 module SessionsHelper
+  def session_academic_year(session)
+    academic_year = session.academic_year
+
+    year_1 = academic_year.to_s
+    year_2 = (academic_year + 1).to_s
+    "#{year_1}/#{year_2[2..3]}"
+  end
+
   def session_consent_period(session)
     if session.close_consent_at.nil?
       "Not provided"
