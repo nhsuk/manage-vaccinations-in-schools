@@ -173,6 +173,10 @@ class DraftVaccinationRecord
 
   private
 
+  def writable_attribute_names
+    super - %w[vaccine_id]
+  end
+
   def reset_unused_fields
     if administered?
       if vaccine_id.nil? && programme &&

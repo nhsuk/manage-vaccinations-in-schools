@@ -24,7 +24,6 @@
 #  patient_session_id       :bigint           not null
 #  performed_by_user_id     :bigint
 #  programme_id             :bigint           not null
-#  vaccine_id               :bigint
 #
 # Indexes
 #
@@ -34,7 +33,6 @@
 #  index_vaccination_records_on_performed_by_user_id  (performed_by_user_id)
 #  index_vaccination_records_on_programme_id          (programme_id)
 #  index_vaccination_records_on_uuid                  (uuid) UNIQUE
-#  index_vaccination_records_on_vaccine_id            (vaccine_id)
 #
 # Foreign Keys
 #
@@ -42,7 +40,6 @@
 #  fk_rails_...  (patient_session_id => patient_sessions.id)
 #  fk_rails_...  (performed_by_user_id => users.id)
 #  fk_rails_...  (programme_id => programmes.id)
-#  fk_rails_...  (vaccine_id => vaccines.id)
 #
 class VaccinationRecord < ApplicationRecord
   include Discard::Model
@@ -77,7 +74,6 @@ class VaccinationRecord < ApplicationRecord
   belongs_to :patient_session
   belongs_to :performed_by_user, class_name: "User", optional: true
   belongs_to :programme
-  belongs_to :vaccine, optional: true
 
   has_and_belongs_to_many :dps_exports
   has_and_belongs_to_many :immunisation_imports
@@ -87,6 +83,7 @@ class VaccinationRecord < ApplicationRecord
   has_one :location, through: :session
   has_one :organisation, through: :session
   has_one :team, through: :session
+  has_one :vaccine, through: :batch
 
   scope :unexported, -> { where.missing(:dps_exports) }
 
@@ -180,6 +177,19 @@ class VaccinationRecord < ApplicationRecord
 
   def academic_year
     performed_at.to_date.academic_year
+  end
+
+  def vaccine_id
+    vaccine&.id
+  end
+
+  def vaccine_id_changed?
+    vaccine_id_was != vaccine_id
+  end
+
+  def vaccine_id_was
+    return nil if batch_id_was.nil?
+    Batch.find(batch_id_was).vaccine_id
   end
 
   private
