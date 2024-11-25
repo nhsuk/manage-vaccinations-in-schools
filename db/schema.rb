@@ -683,7 +683,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_28_081013) do
     t.integer "delivery_method"
     t.bigint "performed_by_user_id"
     t.text "notes"
-    t.bigint "vaccine_id"
     t.integer "dose_sequence", null: false
     t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.datetime "performed_at", null: false
@@ -700,7 +699,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_28_081013) do
     t.index ["performed_by_user_id"], name: "index_vaccination_records_on_performed_by_user_id"
     t.index ["programme_id"], name: "index_vaccination_records_on_programme_id"
     t.index ["uuid"], name: "index_vaccination_records_on_uuid", unique: true
-    t.index ["vaccine_id"], name: "index_vaccination_records_on_vaccine_id"
   end
 
   create_table "vaccines", force: :cascade do |t|
@@ -805,6 +803,5 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_28_081013) do
   add_foreign_key "vaccination_records", "patient_sessions"
   add_foreign_key "vaccination_records", "programmes"
   add_foreign_key "vaccination_records", "users", column: "performed_by_user_id"
-  add_foreign_key "vaccination_records", "vaccines"
   add_foreign_key "vaccines", "programmes"
 end

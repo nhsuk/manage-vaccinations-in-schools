@@ -123,8 +123,7 @@ class ImmunisationImportRow
       performed_by_user:,
       performed_by_family_name:,
       performed_by_given_name:,
-      programme: @programme,
-      vaccine:
+      programme: @programme
     }
 
     vaccination_record =
