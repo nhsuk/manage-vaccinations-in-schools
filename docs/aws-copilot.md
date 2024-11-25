@@ -87,6 +87,8 @@ copilot svc init --name webapp --env test   # Only needed if service doesn't
                                             # exist in subscription
 copilot svc deploy --env test               # Deploy the web app
 
+                                            # Disable deletion protection on RDS
+
 copilot svc delete --name webapp --env test # Destroy the web app
 copilot env delete --name test              # Destroy the environment disable
                                             # deletion protection if necessary
