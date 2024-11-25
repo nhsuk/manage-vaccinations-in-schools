@@ -71,17 +71,6 @@ environments:
       SENTRY_ENVIRONMENT: test
       MAVIS__HOST: "test.mavistesting.com"
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "test.mavistesting.com"
-  lbtest:
-    http:
-      alias:
-        - "lbtest.mavistesting.com"
-    deployments:
-      rolling: recreate # Disables blue-green deployment for speed
-    variables:
-      RAILS_ENV: staging
-      SENTRY_ENVIRONMENT: lbtest
-      MAVIS__HOST: "lbtest.mavistesting.com"
-      MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "lbtest.mavistesting.com"
   training:
     http:
       alias:
