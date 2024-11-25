@@ -15,9 +15,20 @@ describe AppPatientSessionTableComponent do
 
   context "with a session" do
     let(:location) { create(:location, :school, name: "Waterloo Road") }
-    let(:sessions) { create_list(:session, 1, location:, patients: [patient]) }
+    let(:sessions) do
+      create_list(
+        :session,
+        1,
+        academic_year: 2024,
+        location:,
+        patients: [patient]
+      )
+    end
 
     it { should have_content("Location") }
+    it { should have_content("Academic year") }
+
     it { should have_link("Waterloo Road") }
+    it { should have_content("2024/25") }
   end
 end
