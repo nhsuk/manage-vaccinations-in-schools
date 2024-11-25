@@ -16,16 +16,16 @@ organisation:
 programmes: [] # A list of programmes, currently only hpv is valid
 
 teams:
-  team_name: # Name of the team referenced in schools and links
+  team1: # Identifier to link team with school and links below, not used in app
     name: # Name of the team
     email: # Contact email address
     phone: # Contact phone number
 
 schools:
-  team_name: [] # URNs managed by a particular team
+  team1: [] # URNs managed by a particular team
 
 clinics:
-  team_name:
+  team1:
     - name: # Name of the clinic
       address_line_1: # First line of the address
       address_town: # Town of the address
