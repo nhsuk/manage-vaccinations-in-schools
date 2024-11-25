@@ -8,10 +8,9 @@ class Reports::OfflineSessionExporter
   end
 
   def call
-    Axlsx::Package
-      .new { |package| add_vaccinations_sheet(package) }
-      .to_stream
-      .read
+    sheet.add_row(headers_and_types.keys)
+    patient_sessions.each { |patient_session| add_rows(patient_session:) }
+    package.to_stream.read
   end
 
   def self.call(*args, **kwargs)
@@ -26,16 +25,72 @@ class Reports::OfflineSessionExporter
 
   delegate :location, :organisation, to: :session
 
-  def add_vaccinations_sheet(package)
-    package.use_shared_strings = true
+  def package
+    @package ||= Axlsx::Package.new(use_shared_strings: true)
+  end
 
-    workbook = package.workbook
+  delegate :workbook, to: :package
 
-    date_style = workbook.styles.add_style(format_code: "dd/mm/yyyy")
-    wrap_style = workbook.styles.add_style(alignment: { wrap_text: true })
+  def sheet
+    @sheet ||= workbook.add_worksheet(name: "Vaccinations")
+  end
 
-    types = headers_and_types.values
-    style =
+  def date_style
+    @date_style ||= workbook.styles.add_style(format_code: "dd/mm/yyyy")
+  end
+
+  def wrap_style
+    @wrap_style ||= workbook.styles.add_style(alignment: { wrap_text: true })
+  end
+
+  def headers_and_types
+    @headers_and_types ||=
+      {
+        "ORGANISATION_CODE" => :string,
+        "SCHOOL_URN" => :string,
+        "SCHOOL_NAME" => :string,
+        "CARE_SETTING" => :integer,
+        "CLINIC_NAME" => :string,
+        "PERSON_FORENAME" => :string,
+        "PERSON_SURNAME" => :string,
+        "PERSON_DOB" => :date,
+        "YEAR_GROUP" => nil, # should be integer, but that converts nil to 0
+        "PERSON_GENDER_CODE" => :string,
+        "PERSON_POSTCODE" => :string,
+        "NHS_NUMBER" => :string,
+        "CONSENT_STATUS" => :string,
+        "CONSENT_DETAILS" => :string,
+        "HEALTH_QUESTION_ANSWERS" => :string,
+        "TRIAGE_STATUS" => :string,
+        "TRIAGED_BY" => :string,
+        "TRIAGE_DATE" => :date,
+        "TRIAGE_NOTES" => :string,
+        "GILLICK_STATUS" => :string,
+        "GILLICK_ASSESSMENT_DATE" => :date,
+        "GILLICK_ASSESSED_BY" => :string,
+        "GILLICK_ASSESSMENT_NOTES" => :string,
+        "VACCINATED" => :string,
+        "DATE_OF_VACCINATION" => :date,
+        "TIME_OF_VACCINATION" => :string,
+        "VACCINE_GIVEN" => :string,
+        "PERFORMING_PROFESSIONAL_EMAIL" => :string,
+        "BATCH_NUMBER" => :string,
+        "BATCH_EXPIRY_DATE" => :date,
+        "ANATOMICAL_SITE" => :string,
+        "DOSE_SEQUENCE" => nil, # should be integer, but that converts nil to 0
+        "REASON_NOT_VACCINATED" => :string,
+        "UUID" => :string
+      }.tap do |hash|
+        hash.delete("CLINIC_NAME") unless location.generic_clinic?
+      end
+  end
+
+  def row_types
+    @row_types ||= headers_and_types.values
+  end
+
+  def row_style
+    @row_style ||=
       headers_and_types.map do |header, type|
         if type == :date
           date_style
@@ -43,53 +98,6 @@ class Reports::OfflineSessionExporter
           wrap_style
         end
       end
-
-    workbook.add_worksheet(name: "Vaccinations") do |sheet|
-      sheet.add_row(headers_and_types.keys)
-
-      patient_sessions.each do |patient_session|
-        rows(patient_session:).each { |row| sheet.add_row(row, types:, style:) }
-      end
-    end
-  end
-
-  def headers_and_types
-    {
-      "ORGANISATION_CODE" => :string,
-      "SCHOOL_URN" => :string,
-      "SCHOOL_NAME" => :string,
-      "CARE_SETTING" => :integer,
-      "CLINIC_NAME" => :string,
-      "PERSON_FORENAME" => :string,
-      "PERSON_SURNAME" => :string,
-      "PERSON_DOB" => :date,
-      "YEAR_GROUP" => nil, # should be integer, but that converts nil to 0
-      "PERSON_GENDER_CODE" => :string,
-      "PERSON_POSTCODE" => :string,
-      "NHS_NUMBER" => :string,
-      "CONSENT_STATUS" => :string,
-      "CONSENT_DETAILS" => :string,
-      "HEALTH_QUESTION_ANSWERS" => :string,
-      "TRIAGE_STATUS" => :string,
-      "TRIAGED_BY" => :string,
-      "TRIAGE_DATE" => :date,
-      "TRIAGE_NOTES" => :string,
-      "GILLICK_STATUS" => :string,
-      "GILLICK_ASSESSMENT_DATE" => :date,
-      "GILLICK_ASSESSED_BY" => :string,
-      "GILLICK_ASSESSMENT_NOTES" => :string,
-      "VACCINATED" => :string,
-      "DATE_OF_VACCINATION" => :date,
-      "TIME_OF_VACCINATION" => :string,
-      "VACCINE_GIVEN" => :string,
-      "PERFORMING_PROFESSIONAL_EMAIL" => :string,
-      "BATCH_NUMBER" => :string,
-      "BATCH_EXPIRY_DATE" => :date,
-      "ANATOMICAL_SITE" => :string,
-      "DOSE_SEQUENCE" => nil, # should be integer, but that converts nil to 0
-      "REASON_NOT_VACCINATED" => :string,
-      "UUID" => :string
-    }.tap { |hash| hash.delete("CLINIC_NAME") unless location.generic_clinic? }
   end
 
   def patient_sessions
@@ -105,7 +113,7 @@ class Reports::OfflineSessionExporter
       .strict_loading
   end
 
-  def rows(patient_session:)
+  def add_rows(patient_session:)
     consents = patient_session.latest_consents
     gillick_assessment = patient_session.latest_gillick_assessment
     patient = patient_session.patient
@@ -115,17 +123,25 @@ class Reports::OfflineSessionExporter
       patient_session.vaccination_records.order(:performed_at)
 
     if vaccination_records.any?
-      vaccination_records.map do |vaccination_record|
-        existing_row(
-          patient:,
-          consents:,
-          gillick_assessment:,
-          triage:,
-          vaccination_record:
+      vaccination_records.each do |vaccination_record|
+        sheet.add_row(
+          existing_row(
+            patient:,
+            consents:,
+            gillick_assessment:,
+            triage:,
+            vaccination_record:
+          ),
+          types: row_types,
+          style: row_style
         )
       end
     else
-      [new_row(patient:, consents:, gillick_assessment:, triage:)]
+      sheet.add_row(
+        new_row(patient:, consents:, gillick_assessment:, triage:),
+        types: row_types,
+        style: row_style
+      )
     end
   end
 
