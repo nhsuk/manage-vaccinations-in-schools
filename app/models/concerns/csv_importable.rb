@@ -3,8 +3,6 @@
 module CSVImportable
   extend ActiveSupport::Concern
 
-  include Recordable
-
   included do
     attr_accessor :csv_is_malformed, :data, :rows
 
@@ -19,6 +17,7 @@ module CSVImportable
     has_and_belongs_to_many :patients
 
     scope :csv_not_removed, -> { where(csv_removed_at: nil) }
+    scope :recorded, -> { where.not(recorded_at: nil) }
 
     enum :status,
          { pending_import: 0, rows_are_invalid: 1, recorded: 2 },
@@ -40,6 +39,10 @@ module CSVImportable
     validate :rows_are_valid
 
     before_save :ensure_recorded_with_count_statistics
+  end
+
+  def recorded?
+    recorded_at != nil
   end
 
   def csv=(file)
