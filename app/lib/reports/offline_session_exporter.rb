@@ -43,6 +43,10 @@ class Reports::OfflineSessionExporter
     @wrap_style ||= workbook.styles.add_style(alignment: { wrap_text: true })
   end
 
+  def strike_style
+    @strike_style ||= workbook.styles.add_style(strike: true)
+  end
+
   def headers_and_types
     @headers_and_types ||=
       {
@@ -100,6 +104,13 @@ class Reports::OfflineSessionExporter
       end
   end
 
+  def row_style_with_nhs_number_strike
+    @row_style_with_nhs_number_strike ||=
+      row_style.dup.tap do |style|
+        style[headers_and_types.keys.index("NHS_NUMBER")] = strike_style
+      end
+  end
+
   def patient_sessions
     session
       .patient_sessions
@@ -122,6 +133,9 @@ class Reports::OfflineSessionExporter
     vaccination_records =
       patient_session.vaccination_records.order(:performed_at)
 
+    style =
+      (patient.invalidated? ? row_style_with_nhs_number_strike : row_style)
+
     if vaccination_records.any?
       vaccination_records.each do |vaccination_record|
         sheet.add_row(
@@ -133,14 +147,14 @@ class Reports::OfflineSessionExporter
             vaccination_record:
           ),
           types: row_types,
-          style: row_style
+          style:
         )
       end
     else
       sheet.add_row(
         new_row(patient:, consents:, gillick_assessment:, triage:),
         types: row_types,
-        style: row_style
+        style:
       )
     end
   end
