@@ -165,11 +165,21 @@ module CSVImportable
     return unless Settings.pds.perform_jobs
 
     GoodJob::Bulk.enqueue do
-      patients.find_each do |patient|
+      patients.each_with_index do |patient, index|
+        # Schedule with a delay to preemptively handle rate limit issues.
+        # This shouldn't be necessary, but we're finding that Good Job
+        # has occasional race condition issues, and spreading out the jobs
+        # should reduce the risk of this.
+
         if patient.nhs_number.nil?
-          PatientNHSNumberLookupJob.perform_later(patient)
+          PatientNHSNumberLookupJob.set(wait: 0.21 * index).perform_later(
+            patient
+          )
         else
-          PatientUpdateFromPDSJob.set(queue: :imports).perform_later(patient)
+          PatientUpdateFromPDSJob.set(
+            wait: 0.21 * index,
+            queue: :imports
+          ).perform_later(patient)
         end
       end
     end
