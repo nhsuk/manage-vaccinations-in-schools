@@ -7,8 +7,7 @@ module NHSAPIConcurrencyConcern
 
   included do
     # NHS API imposes a limit of 5 requests per second
-    good_job_control_concurrency_with perform_limit: 5,
-                                      perform_throttle: [5, 1.second],
+    good_job_control_concurrency_with perform_throttle: [5, 1.second],
                                       key: :nhs_api
 
     # Because the NHS API imposes a limit of 5 requests per second, we're almost
