@@ -164,11 +164,13 @@ module CSVImportable
   def update_from_pds
     return unless Settings.pds.perform_jobs
 
-    patients.find_each do |patient|
-      if patient.nhs_number.nil?
-        PatientNHSNumberLookupJob.perform_later(patient)
-      else
-        PatientUpdateFromPDSJob.set(queue: :imports).perform_later(patient)
+    GoodJob::Bulk.enqueue do
+      patients.find_each do |patient|
+        if patient.nhs_number.nil?
+          PatientNHSNumberLookupJob.perform_later(patient)
+        else
+          PatientUpdateFromPDSJob.set(queue: :imports).perform_later(patient)
+        end
       end
     end
   end
