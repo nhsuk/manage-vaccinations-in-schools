@@ -12,11 +12,15 @@ class BulkUpdatePatientsFromPDSJob < ApplicationJob
 
     patients
       .where(updated_from_pds_at: nil)
-      .find_each { |patient| PatientUpdateFromPDSJob.perform_later(patient) }
+      .find_each do |patient|
+        PatientUpdateFromPDSJob.set(priority: 50).perform_later(patient)
+      end
 
     patients
       .where("updated_from_pds_at < ?", 6.hours.ago)
       .order(:updated_from_pds_at)
-      .find_each { |patient| PatientUpdateFromPDSJob.perform_later(patient) }
+      .find_each do |patient|
+        PatientUpdateFromPDSJob.set(priority: 50).perform_later(patient)
+      end
   end
 end
