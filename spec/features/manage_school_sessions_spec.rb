@@ -85,7 +85,7 @@ describe "Manage school sessions" do
         :with_generic_clinic,
         programmes: [@programme]
       )
-    @location = create(:location, :secondary, organisation: @organisation)
+    @location = create(:school, :secondary, organisation: @organisation)
     session =
       create(
         :session,

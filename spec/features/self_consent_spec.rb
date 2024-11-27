@@ -34,7 +34,7 @@ describe "Self-consent" do
     @organisation =
       create(:organisation, :with_one_nurse, programmes: [programme])
 
-    @school = create(:location, :school)
+    @school = create(:school)
 
     @session =
       create(

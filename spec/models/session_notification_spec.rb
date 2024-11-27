@@ -44,7 +44,7 @@ describe SessionNotification do
     let(:patient) { create(:patient, parents:) }
     let(:programme) { create(:programme) }
     let(:organisation) { create(:organisation, programmes: [programme]) }
-    let(:location) { create(:location, :school, organisation:) }
+    let(:location) { create(:school, organisation:) }
     let(:session) { create(:session, location:, programme:, organisation:) }
     let(:session_date) { session.dates.min }
     let(:patient_session) { create(:patient_session, patient:, session:) }

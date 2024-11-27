@@ -5,7 +5,7 @@ describe AppCompareConsentFormAndPatientComponent do
 
   let(:component) { described_class.new(heading: "", consent_form:, patient:) }
 
-  let(:location) { create(:location, :school, name: "Waterloo Road") }
+  let(:location) { create(:school, name: "Waterloo Road") }
   let(:consent_form) do
     create(
       :consent_form,
@@ -62,7 +62,7 @@ describe AppCompareConsentFormAndPatientComponent do
         address_line_2: consent_form.address_line_2,
         address_town: consent_form.address_town,
         address_postcode: consent_form.address_postcode,
-        school: create(:location, :school, name: "Hogwarts")
+        school: create(:school, name: "Hogwarts")
       )
     end
 

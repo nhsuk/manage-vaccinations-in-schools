@@ -44,41 +44,39 @@ FactoryBot.define do
 
     team { organisation ? association(:team, organisation:) : nil }
 
-    trait :clinic do
+    factory :generic_clinic do
+      type { :generic_clinic }
+      name { "Community clinics" }
+
+      ods_code { team.organisation.ods_code }
       urn { nil }
     end
 
-    trait :generic_clinic do
-      clinic
-      type { :generic_clinic }
-      name { "Community clinics" }
-      ods_code { team.organisation.ods_code }
-    end
-
-    trait :community_clinic do
-      clinic
+    factory :community_clinic do
       type { :community_clinic }
       name { "#{Faker::University.name} Clinic" }
+
       sequence(:ods_code, 10_000, &:to_s)
+      urn { nil }
+
+      organisation
     end
 
-    trait :school do
+    factory :school do
       type { :school }
       name { Faker::Educator.primary_school }
+
       sequence(:urn, 100_000, &:to_s)
       ods_code { nil }
-    end
 
-    trait :primary do
-      school
-      name { Faker::Educator.primary_school }
-      year_groups { (0..6).to_a }
-    end
+      trait :primary do
+        year_groups { (0..6).to_a }
+      end
 
-    trait :secondary do
-      school
-      name { Faker::Educator.secondary_school }
-      year_groups { (7..11).to_a }
+      trait :secondary do
+        name { Faker::Educator.secondary_school }
+        year_groups { (7..11).to_a }
+      end
     end
   end
 end

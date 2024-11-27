@@ -2,7 +2,7 @@
 
 describe SessionsHelper do
   let(:programme) { create(:programme, :flu) }
-  let(:location) { create(:location, :school, name: "Waterloo Road") }
+  let(:location) { create(:school, name: "Waterloo Road") }
   let(:date) { nil }
   let(:session) { create(:session, programme:, date:, location:) }
 

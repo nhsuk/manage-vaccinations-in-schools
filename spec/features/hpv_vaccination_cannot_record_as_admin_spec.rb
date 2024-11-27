@@ -16,7 +16,7 @@ describe "HPV vaccination" do
     programme = create(:programme, :hpv_all_vaccines)
     organisation =
       create(:organisation, :with_one_admin, programmes: [programme])
-    location = create(:location, :school)
+    location = create(:school)
     @session = create(:session, organisation:, programme:, location:)
     @patient =
       create(:patient, :consent_given_triage_not_needed, session: @session)

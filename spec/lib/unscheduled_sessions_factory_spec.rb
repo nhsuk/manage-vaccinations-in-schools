@@ -8,7 +8,7 @@ describe UnscheduledSessionsFactory do
     let(:organisation) { create(:organisation, programmes: [programme]) }
 
     context "with a school that's eligible for the programme" do
-      let!(:location) { create(:location, :secondary, organisation:) }
+      let!(:location) { create(:school, :secondary, organisation:) }
 
       it "creates missing unscheduled sessions" do
         expect { call }.to change(organisation.sessions, :count).by(1)
@@ -20,7 +20,7 @@ describe UnscheduledSessionsFactory do
     end
 
     context "with a generic clinic" do
-      let!(:location) { create(:location, :generic_clinic, organisation:) }
+      let!(:location) { create(:generic_clinic, organisation:) }
 
       it "creates missing unscheduled sessions" do
         expect { call }.to change(organisation.sessions, :count).by(1)
@@ -32,7 +32,7 @@ describe UnscheduledSessionsFactory do
     end
 
     context "with a community clinic" do
-      before { create(:location, :community_clinic, organisation:) }
+      before { create(:community_clinic, organisation:) }
 
       it "doesn't create any unscheduled sessions" do
         expect { call }.not_to change(organisation.sessions, :count)
@@ -40,7 +40,7 @@ describe UnscheduledSessionsFactory do
     end
 
     context "with a school that's not eligible for the programme" do
-      before { create(:location, :primary, organisation:) }
+      before { create(:school, :primary, organisation:) }
 
       it "doesn't create any sessions" do
         expect { call }.not_to change(Session, :count)
@@ -49,7 +49,7 @@ describe UnscheduledSessionsFactory do
 
     context "when a session already exists" do
       before do
-        location = create(:location, :secondary, organisation:)
+        location = create(:school, :secondary, organisation:)
         create(:session, organisation:, location:, programme:)
       end
 
@@ -60,7 +60,7 @@ describe UnscheduledSessionsFactory do
 
     context "when a session exists for a different academic year" do
       before do
-        location = create(:location, :secondary, organisation:)
+        location = create(:school, :secondary, organisation:)
         create(
           :session,
           organisation:,
@@ -76,7 +76,7 @@ describe UnscheduledSessionsFactory do
     end
 
     context "with an unscheduled session for a location no longer managed by the organisation" do
-      let(:location) { create(:location, :secondary) }
+      let(:location) { create(:school, :secondary) }
       let!(:session) do
         create(:session, :unscheduled, organisation:, location:, programme:)
       end
@@ -88,7 +88,7 @@ describe UnscheduledSessionsFactory do
     end
 
     context "with a scheduled session for a location no longer managed by the organisation" do
-      let(:location) { create(:location, :secondary) }
+      let(:location) { create(:school, :secondary) }
 
       before do
         create(:session, :scheduled, organisation:, location:, programme:)

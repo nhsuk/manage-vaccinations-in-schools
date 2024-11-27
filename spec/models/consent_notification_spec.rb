@@ -47,7 +47,7 @@ describe ConsentNotification do
     let(:patient) { create(:patient, parents:) }
     let(:programme) { create(:programme) }
     let(:organisation) { create(:organisation, programmes: [programme]) }
-    let(:location) { create(:location, :school, organisation:) }
+    let(:location) { create(:school, organisation:) }
     let(:session) do
       create(
         :session,
@@ -118,7 +118,7 @@ describe ConsentNotification do
 
     context "with a request and a clinic location" do
       let(:type) { :request }
-      let(:location) { create(:location, :generic_clinic, organisation:) }
+      let(:location) { create(:generic_clinic, organisation:) }
 
       it "creates a record" do
         expect { create_and_send! }.to change(described_class, :count).by(1)

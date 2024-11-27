@@ -47,7 +47,7 @@ describe "Immunisation imports duplicates" do
       organisation: @organisation,
       programme: @programme
     )
-    @location = create(:location, :school, urn: "110158")
+    @location = create(:school, urn: "110158")
     @session =
       create(
         :session,

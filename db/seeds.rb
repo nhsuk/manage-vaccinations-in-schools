@@ -20,8 +20,8 @@ end
 
 def import_schools
   if Settings.fast_reset
-    FactoryBot.create_list(:location, 30, :primary)
-    FactoryBot.create_list(:location, 30, :secondary)
+    FactoryBot.create_list(:school, 30, :primary)
+    FactoryBot.create_list(:school, 30, :secondary)
   else
     Rake::Task["schools:import"].execute
   end
@@ -179,7 +179,7 @@ def setup_clinic(user, organisation)
   clinic_session = organisation.generic_clinic_session
 
   # set up clinic locations
-  FactoryBot.create_list(:location, 3, :community_clinic, organisation:)
+  FactoryBot.create_list(:community_clinic, 3, organisation:)
 
   # set up clinic dates
   clinic_session.session_dates.create!(value: Date.current)

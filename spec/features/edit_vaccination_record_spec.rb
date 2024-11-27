@@ -185,7 +185,7 @@ describe "Edit vaccination record" do
     @replacement_batch =
       create(:batch, organisation: @organisation, vaccine: @vaccine)
 
-    location = create(:location, :school)
+    location = create(:school)
 
     @session =
       create(

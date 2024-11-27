@@ -7,7 +7,7 @@ describe AppProgrammeSessionTableComponent do
 
   let(:programme) { create(:programme) }
 
-  let(:location) { create(:location, :school, name: "Waterloo Road") }
+  let(:location) { create(:school, name: "Waterloo Road") }
 
   let(:session) { create(:session, programme:, location:) }
 

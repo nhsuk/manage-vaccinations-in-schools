@@ -11,9 +11,7 @@ describe AppConsentPatientSummaryComponent do
   let(:consent) do
     create(:consent, patient:, consent_form:, programme:, organisation:)
   end
-  let(:school) do
-    create(:location, :school, name: "Waterloo Road", organisation:)
-  end
+  let(:school) { create(:school, name: "Waterloo Road", organisation:) }
   let(:session) do
     create(:session, programme:, organisation:, location: school)
   end

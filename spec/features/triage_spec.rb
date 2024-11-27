@@ -39,7 +39,7 @@ describe "Triage" do
         organisation: @organisation,
         vaccine: @programme.vaccines.first
       )
-    location = create(:location, :school)
+    location = create(:school)
     @session =
       create(
         :session,

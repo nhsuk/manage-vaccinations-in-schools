@@ -24,7 +24,6 @@ describe AppPatientVaccinationTableComponent do
     let(:vaccine) { programme.vaccines.active.first }
     let(:location) do
       create(
-        :location,
         :school,
         name: "Test School",
         address_line_1: "Waterloo Road",

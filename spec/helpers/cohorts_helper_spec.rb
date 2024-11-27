@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe CohortsHelper do
+describe CohortsHelper do
   describe "#format_year_group" do
     subject(:formatted_year_group) { helper.format_year_group(year_group) }
 

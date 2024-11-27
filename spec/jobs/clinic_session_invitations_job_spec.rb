@@ -7,7 +7,7 @@ describe ClinicSessionInvitationsJob do
   let(:organisation) { create(:organisation, programmes: [programme]) }
   let(:parents) { create_list(:parent, 2) }
   let(:patient) { create(:patient, parents:) }
-  let(:location) { create(:location, :generic_clinic, organisation:) }
+  let(:location) { create(:generic_clinic, organisation:) }
 
   context "for a scheduled clinic session in 3 weeks" do
     let(:date) { 3.weeks.from_now.to_date }
@@ -142,7 +142,7 @@ describe ClinicSessionInvitationsJob do
   end
 
   context "for a school session in 3 weeks time" do
-    let(:location) { create(:location, :school, organisation:) }
+    let(:location) { create(:school, organisation:) }
 
     before do
       create(

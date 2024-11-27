@@ -240,7 +240,7 @@ describe Session do
     let(:organisation) { create(:organisation, programmes:) }
     let(:session) { create(:session, organisation:, location:, programmes:) }
 
-    let(:school) { create(:location, :primary) }
+    let(:school) { create(:school, :primary) }
 
     let!(:unvaccinated_child) do
       create(:patient, year_group: 6, organisation:, school:)
@@ -338,7 +338,7 @@ describe Session do
       end
 
       context "in a generic clinic" do
-        let(:location) { create(:location, :generic_clinic, organisation:) }
+        let(:location) { create(:generic_clinic, organisation:) }
 
         it "adds the unvaccinated patients" do
           create_patient_sessions!
@@ -381,7 +381,7 @@ describe Session do
       end
 
       context "in a generic clinic" do
-        let(:location) { create(:location, :generic_clinic, organisation:) }
+        let(:location) { create(:generic_clinic, organisation:) }
 
         it "adds the unvaccinated patients" do
           create_patient_sessions!
@@ -427,7 +427,7 @@ describe Session do
       end
 
       context "in a generic clinic" do
-        let(:location) { create(:location, :generic_clinic, organisation:) }
+        let(:location) { create(:generic_clinic, organisation:) }
 
         it "adds the unvaccinated patients" do
           create_patient_sessions!
@@ -467,7 +467,7 @@ describe Session do
         create(:patient, :vaccinated, session:, programme:)
       end
 
-      let(:generic_clinic) { create(:location, :generic_clinic, organisation:) }
+      let(:generic_clinic) { create(:generic_clinic, organisation:) }
       let(:generic_clinic_session) do
         create(:session, location: generic_clinic, organisation:, programme:)
       end
