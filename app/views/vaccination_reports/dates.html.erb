@@ -12,11 +12,11 @@
   <%= h1 "Select a vaccination date range" %>
 
   <%= f.govuk_date_field :date_from,
-                         legend: { text: "From" },
+                         legend: { text: "From (optional)" },
                          hint: { text: "For example, 27 3 2017" } %>
 
   <%= f.govuk_date_field :date_to,
-                         legend: { text: "Until" },
+                         legend: { text: "Until (optional)" },
                          hint: { text: "For example, 27 3 2017" } %>
 
   <%= f.govuk_submit %>
