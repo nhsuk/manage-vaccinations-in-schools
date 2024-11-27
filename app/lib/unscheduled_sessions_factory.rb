@@ -28,12 +28,7 @@ class UnscheduledSessionsFactory
 
           next if programmes.empty?
 
-          Session.create!(
-            academic_year:,
-            location:,
-            programmes:,
-            organisation:
-          ).tap(&:create_patient_sessions!)
+          Session.create!(academic_year:, location:, programmes:, organisation:)
         end
 
         location_ids = organisation.locations.map(&:id)
