@@ -17,7 +17,7 @@
      ) do %>
     Moved in
     <%= render AppCountComponent.new(
-          count: @session.patient_sessions_moving_to_this_session.count,
+          count: @location.school_moves_to_this_location.count,
         ) %>
   <% end %>
 
@@ -27,7 +27,7 @@
      ) do %>
     Moved out
     <%= render AppCountComponent.new(
-          count: @session.patient_sessions_moving_from_this_session.count,
+          count: @location.school_moves_from_this_location.count,
         ) %>
   <% end %>
 <% end %>
@@ -37,7 +37,7 @@
                     class: "nhsuk-table-responsive app-patients__table",
                   }) do |table| %>
     <%= table.with_caption(
-          text: "#{t("children", count: @patient_sessions.count)} #{@tab == :in ? "joined" : "left"} this school",
+          text: "#{t("children", count: @school_moves.count)} #{@tab == :in ? "joined" : "left"} this school",
           html_attributes: {
             class: %w[nhsuk-u-secondary-text-color
                       nhsuk-u-font-weight-normal
@@ -45,7 +45,7 @@
           },
         ) %>
 
-    <% if @patient_sessions.any? %>
+    <% if @school_moves.any? %>
       <% table.with_head do |head| %>
         <% head.with_row do |row| %>
           <% row.with_cell(text: "Full name") %>
@@ -58,29 +58,29 @@
     <% end %>
 
     <% table.with_body do |body| %>
-      <% @patient_sessions.each do |patient_session| %>
+      <% @school_moves.each do |school_move| %>
         <% body.with_row do |row| %>
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Full name</span>
-            <%= link_to patient_session.patient.full_name,
-                        patient_path(patient_session.patient) %>
+            <%= link_to school_move.patient.full_name,
+                        patient_path(school_move.patient) %>
           <% end %>
 
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">
               <%= @tab == :in ? "School joined from" : "School moved to" %>
             </span>
-            <% school = @tab == :in ?
-                 patient_session.session :
-                 patient_session.proposed_session %>
-            <%= school.location.generic_clinic? ?
-                  "Unknown school" :
-                  school.location.name %>
+
+            <% if @tab == :in %>
+              <%= patient_school(school_move.patient) %>
+            <% else %>
+              <%= patient_school(school_move) %>
+            <% end %>
           <% end %>
 
           <% row.with_cell do %>
             <span class="nhsuk-table-responsive__heading">Actions</span>
-            <%= form_with url: session_move_path(@session, patient_session) + "?#{@tab}",
+            <%= form_with url: session_move_path(@session, school_move) + "?#{@tab}",
                           method: :patch do |f| %>
               <%= f.submit "Confirm move",
                            class: "nhsuk-button app-button--secondary app-button--small",

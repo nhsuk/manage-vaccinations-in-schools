@@ -104,9 +104,9 @@ class SessionsController < ApplicationController
 
   def sessions_scope
     policy_scope(Session).includes(
-      :location,
       :programmes,
       :session_dates,
+      location: :organisation,
       organisation: :programmes
     ).strict_loading
   end
