@@ -188,7 +188,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
       if @section == :matching
         consent_form_path(@consent_form, **filter_params)
       elsif @section == :patients
-        programme_patients_path(@programme, **filter_params)
+        patients_programme_path(@programme, **filter_params)
       else
         session_section_tab_path(
           session_slug: params[:session_slug],
@@ -205,7 +205,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     if @section == :matching
       consent_form_path(@consent_form)
     elsif @section == :patients
-      programme_patients_path(@programme)
+      patients_programme_path(@programme)
     else
       session_section_tab_path(
         session_slug: params[:session_slug],
