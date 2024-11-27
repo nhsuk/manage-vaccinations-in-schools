@@ -55,7 +55,7 @@ describe "Child record imports duplicates" do
       organisation: @organisation,
       programme: @programme
     )
-    @location = create(:school, urn: "123456")
+    @location = create(:school, urn: "123456", organisation: @organisation)
   end
 
   def and_an_existing_patient_record_exists

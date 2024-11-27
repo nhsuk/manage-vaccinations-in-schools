@@ -22,6 +22,10 @@ class CohortImportRow < PatientImportRow
     true
   end
 
+  def school_move_source
+    :cohort_import
+  end
+
   def school
     @school ||=
       unless [SCHOOL_URN_HOME_EDUCATED, SCHOOL_URN_UNKNOWN].include?(school_urn)

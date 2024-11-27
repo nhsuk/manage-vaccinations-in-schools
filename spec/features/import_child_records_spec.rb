@@ -55,7 +55,7 @@ describe "Import child records" do
 
   def given_the_app_is_setup
     @organisation = create(:organisation, :with_one_nurse)
-    create(:school, urn: "123456")
+    create(:school, urn: "123456", organisation: @organisation)
     @user = @organisation.users.first
   end
 

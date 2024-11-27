@@ -139,15 +139,15 @@ describe CohortImportRow do
 
     it { should_not be_nil }
 
-    it { should have_attributes(registration: "8AB", home_educated: nil) }
-
-    context "when home educated" do
-      let(:school_urn) { "999999" }
-
-      it { should have_attributes(home_educated: true) }
+    it do
+      expect(patient).to have_attributes(
+        cohort: nil,
+        gender_code: "male",
+        home_educated: false,
+        registration: "8AB",
+        school: nil
+      )
     end
-
-    it { should have_attributes(gender_code: "male") }
 
     context "when gender is not provided" do
       let(:data) { valid_data.except("CHILD_GENDER") }
@@ -177,49 +177,20 @@ describe CohortImportRow do
         expect(patient.registration).not_to eq("8AB")
         expect(patient.pending_changes).to include("registration" => "8AB")
       end
-
-      context "when the patient has no school" do
-        before { existing_patient.update(school_id: nil) }
-
-        it "sets the school/home-educated status and doesn't stage it so admins don't have to review that change" do
-          expect(patient.school).to eq(Location.find_by(urn: school_urn))
-          expect(patient.home_educated).to be_falsey
-          expect(patient.pending_changes).not_to include("school_id")
-          expect(patient.pending_changes).not_to include("home_educated")
-        end
-      end
-
-      context "when the patient has no cohort" do
-        before { existing_patient.update(cohort_id: nil) }
-
-        it "sets the cohort and doesn't stage it so admins don't have to review that change" do
-          expect(patient.cohort).not_to be_nil
-          expect(patient.pending_changes).not_to include("cohort_id")
-        end
-      end
     end
+  end
 
-    describe "#cohort" do
-      subject(:cohort) { travel_to(today) { patient.cohort } }
+  describe "#to_school_move" do
+    subject(:school_move) { cohort_import_row.to_school_move(patient) }
 
-      let(:today) { Date.new(2013, 9, 1) }
-      let(:data) { valid_data.merge("CHILD_DATE_OF_BIRTH" => date_of_birth) }
+    let(:data) { valid_data }
 
-      context "with a date of birth before September" do
-        let(:date_of_birth) { "2000-08-31" }
+    let(:patient) { create(:patient, school: create(:school)) }
 
-        it { should have_attributes(organisation:, birth_academic_year: 1999) }
-      end
-
-      context "with a date of birth after September" do
-        let(:date_of_birth) { "2000-09-01" }
-
-        it { should have_attributes(organisation:, birth_academic_year: 2000) }
-      end
-    end
+    it { should_not be_nil }
 
     describe "#school" do
-      subject(:school) { patient.school }
+      subject(:school) { school_move.school }
 
       context "with a school location" do
         let(:school_urn) { "123456" }
@@ -237,6 +208,28 @@ describe CohortImportRow do
         let(:school_urn) { "999999" }
 
         it { should be_nil }
+      end
+    end
+
+    describe "#home_educated" do
+      subject(:home_educated) { school_move.home_educated }
+
+      context "with a school location" do
+        let(:school_urn) { "123456" }
+
+        it { should be_nil }
+      end
+
+      context "with an unknown school" do
+        let(:school_urn) { "888888" }
+
+        it { should be(false) }
+      end
+
+      context "when home educated" do
+        let(:school_urn) { "999999" }
+
+        it { should be(true) }
       end
     end
   end

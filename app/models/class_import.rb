@@ -48,19 +48,22 @@ class ClassImport < PatientImport
   end
 
   def postprocess_rows!
-    # Remove patients already in the session but not in the class list.
-
     return if session.closed?
 
-    # Add newly imported patients to the session
-    session.create_patient_sessions!
+    # Remove patients already in the session but not in the class list.
 
-    # Remove unknown patients from the session and school
     unknown_patients = session.patients - patients
 
-    session
-      .patient_sessions
-      .where(patient: unknown_patients, proposed_session_id: nil)
-      .update_all(proposed_session_id: organisation.generic_clinic_session.id)
+    school_moves =
+      unknown_patients.map do |patient|
+        SchoolMove.new(
+          patient:,
+          source: :class_list_import,
+          home_educated: false,
+          organisation:
+        )
+      end
+
+    SchoolMove.import(school_moves, on_duplicate_key_ignore: true)
   end
 end
