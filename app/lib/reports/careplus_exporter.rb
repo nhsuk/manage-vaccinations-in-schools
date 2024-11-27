@@ -199,7 +199,7 @@ class Reports::CareplusExporter
       nose: "N"
       # We don't implement the other codes currently
     }[
-      site
+      site.to_sym
     ]
   end
 end
