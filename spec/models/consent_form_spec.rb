@@ -805,10 +805,8 @@ describe ConsentForm do
         ).to(new_school)
       end
 
-      it "changes the patient's home educated status" do
-        expect { match_with_patient! }.to change(patient, :home_educated).to(
-          false
-        )
+      it "doesn't change the patient's home educated status" do
+        expect { match_with_patient! }.not_to change(patient, :home_educated)
       end
 
       it "marks the patient with a proposed move" do

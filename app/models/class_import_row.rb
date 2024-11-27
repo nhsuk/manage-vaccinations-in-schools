@@ -21,6 +21,6 @@ class ClassImportRow < PatientImportRow
   end
 
   def home_educated
-    false
+    nil # false is used when school is unknown
   end
 end

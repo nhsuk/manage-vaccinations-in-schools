@@ -116,7 +116,7 @@ describe ClassImportRow do
 
     it do
       expect(patient).to have_attributes(
-        home_educated: false,
+        home_educated: nil,
         gender_code: "not_known",
         registration: "8AB"
       )
