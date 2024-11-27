@@ -132,13 +132,14 @@ Rails.application.routes.draw do
   end
 
   resources :programmes, only: %i[index show], param: :type do
-    get "sessions", on: :member
+    member do
+      get "sessions"
+      get "patients"
+    end
 
     resources :cohort_imports, path: "cohort-imports", except: %i[index destroy]
 
     resources :cohorts, only: %i[index show]
-
-    resources :patients, only: %i[index], module: "programme"
 
     resources :immunisation_imports,
               path: "immunisation-imports",
