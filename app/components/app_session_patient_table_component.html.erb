@@ -25,6 +25,18 @@
                                           "data-turbo-permanent": "true" %>
       <% end %>
 
+      <% if @columns.include?(:dob) %>
+        <%= f.govuk_text_field :dob, label: { text: "Date of birth" },
+                                     hint: {
+                                       text: "e.g. 2005 or 01/03/2014",
+                                       class: "nhsuk-u-font-size-16",
+                                     },
+                                     value: params[:dob],
+                                     "data-autosubmit-target": "field",
+                                     "data-action": "autosubmit#submit",
+                                     "data-turbo-permanent": "true" %>
+      <% end %>
+
       <% if @columns.include?(:year_group) %>
         <%= f.govuk_check_boxes_fieldset :year_groups, legend: { text: "Year group", size: "s" } do %>
           <% year_groups.each do |year_group| %>

@@ -52,6 +52,13 @@ module PatientSortingConcern
       end
     end
 
+    if (date_of_birth = params[:dob]).present?
+      patients_or_patient_sessions.select! do
+        value = _1.try(:date_of_birth) || _1.patient.date_of_birth
+        value.to_fs(:uk_short).include?(date_of_birth)
+      end
+    end
+
     if (year_groups = params[:year_groups]).present?
       patients_or_patient_sessions.select! do
         value = _1.try(:year_group) || _1.patient.year_group
