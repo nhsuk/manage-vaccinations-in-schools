@@ -417,7 +417,7 @@ class ConsentForm < ApplicationRecord
       notify_log_entries.update_all(patient_id: patient.id)
 
       if education_setting_school?
-        patient.school = school_confirmed ? location : school
+        patient.school = school
         patient.home_educated = false
       elsif education_setting_home?
         patient.school = nil
@@ -535,9 +535,15 @@ class ConsentForm < ApplicationRecord
 
     self.gp_name = nil unless gp_response_yes?
 
-    self.education_setting = "school" if !school.nil? || school_confirmed
-    self.school = nil if school_confirmed || education_setting_home? ||
-      education_setting_none?
+    if school_confirmed
+      self.education_setting = "school"
+      self.school = location
+    elsif education_setting_home? || education_setting_none?
+      self.school = nil
+      self.school_confirmed = false
+    elsif school
+      self.education_setting = "school"
+    end
   end
 
   def seed_health_questions
