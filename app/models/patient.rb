@@ -162,7 +162,16 @@ class Patient < ApplicationRecord
               with: /\A(?:\d\s*){10}\z/
             },
             allow_nil: true
-  validates :school, absence: true, if: :home_educated
+
+  validates :school,
+            presence: {
+              if: -> { home_educated.nil? }
+            },
+            absence: {
+              unless: -> { home_educated.nil? }
+            }
+
+  validates :home_educated, inclusion: { in: :valid_home_educated_values }
   validate :school_is_correct_type
 
   validates :address_postcode, postcode: { allow_nil: true }
@@ -367,6 +376,10 @@ class Patient < ApplicationRecord
   end
 
   private
+
+  def valid_home_educated_values
+    school.nil? ? [true, false] : [nil]
+  end
 
   def school_is_correct_type
     location = school
