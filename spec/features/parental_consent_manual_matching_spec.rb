@@ -24,7 +24,7 @@ describe "Parental consent manual matching" do
     @organisation =
       create(:organisation, :with_one_nurse, programmes: [@programme])
     @user = @organisation.users.first
-    @school = create(:location, :school, name: "Pilot School")
+    @school = create(:school, name: "Pilot School")
     @session =
       create(
         :session,

@@ -46,7 +46,7 @@ describe CohortImport do
 
   # Ensure location URN matches the URN in our fixture files
   let!(:location) do
-    Location.find_by(urn: "123456") || create(:location, :school, urn: "123456")
+    Location.find_by(urn: "123456") || create(:school, urn: "123456")
   end
 
   it_behaves_like "a CSVImportable model"
@@ -145,8 +145,7 @@ describe CohortImport do
       let(:file) { "valid_iso_8859_1_encoding.csv" }
 
       let(:location) do
-        Location.find_by(urn: "120026") ||
-          create(:location, :school, urn: "120026")
+        Location.find_by(urn: "120026") || create(:school, urn: "120026")
       end
 
       it "is valid" do

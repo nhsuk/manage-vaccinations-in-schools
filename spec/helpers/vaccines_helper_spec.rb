@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe VaccinesHelper, type: :helper do
+describe VaccinesHelper do
   let(:vaccine) { create(:vaccine, :fluenz_tetra) }
 
   describe "#vaccine_heading" do

@@ -52,7 +52,7 @@ describe "HPV Vaccination" do
         :with_generic_clinic,
         programmes: [programme]
       )
-    school = create(:location, :school)
+    school = create(:school)
     previous_date = 1.month.ago
 
     if clinic
@@ -62,7 +62,6 @@ describe "HPV Vaccination" do
 
       @physical_clinic_location =
         create(
-          :location,
           :community_clinic,
           name: "Westfield Shopping Centre",
           organisation: @organisation

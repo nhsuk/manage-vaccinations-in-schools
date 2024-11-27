@@ -750,7 +750,7 @@ describe ConsentForm do
     let(:programme) { create(:programme) }
     let(:organisation) { create(:organisation, programmes: [programme]) }
 
-    let(:school) { create(:location, :school) }
+    let(:school) { create(:school) }
     let(:location) { school }
     let(:session) { create(:session, organisation:, programme:, location:) }
     let(:patient) { create(:patient, school:, session:) }
@@ -790,7 +790,7 @@ describe ConsentForm do
         )
       end
 
-      let(:new_school) { create(:location, :school) }
+      let(:new_school) { create(:school) }
       let!(:new_session) do
         create(:session, programme:, organisation:, location: new_school)
       end
@@ -822,7 +822,7 @@ describe ConsentForm do
       end
 
       context "if the session is a clinic" do
-        let(:location) { create(:location, :generic_clinic, organisation:) }
+        let(:location) { create(:generic_clinic, organisation:) }
 
         it "changes the patient's school" do
           expect { match_with_patient! }.to change(patient, :school).from(
@@ -849,7 +849,7 @@ describe ConsentForm do
         )
       end
 
-      let(:new_location) { create(:location, :generic_clinic, organisation:) }
+      let(:new_location) { create(:generic_clinic, organisation:) }
       let!(:new_session) do
         create(:session, programme:, organisation:, location: new_location)
       end

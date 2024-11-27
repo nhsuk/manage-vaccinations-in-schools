@@ -10,7 +10,7 @@ describe PatientPolicy do
     let(:cohort_for_another_organisation) do
       create(:cohort, organisation: another_organisation)
     end
-    let(:school) { create(:location, :school, organisation:) }
+    let(:school) { create(:school, organisation:) }
     let(:user) { create(:user, organisation:) }
 
     let(:patient_in_school) { create(:patient, school:) }
@@ -46,7 +46,7 @@ describe PatientPolicy do
 
     context "when the patient not in the org but pending joining the school" do
       let(:school_for_another_organisation) do
-        create(:location, :school, organisation: another_organisation)
+        create(:school, organisation: another_organisation)
       end
 
       let(:patient_with_pending_changes_to_enrol_in_school) do

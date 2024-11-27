@@ -5,7 +5,7 @@ describe ClassImportRow do
 
   let(:programme) { create(:programme) }
   let(:organisation) { create(:organisation, programmes: [programme]) }
-  let(:school) { create(:location, :school, organisation:) }
+  let(:school) { create(:school, organisation:) }
   let(:session) do
     create(:session, organisation:, programme:, location: school)
   end

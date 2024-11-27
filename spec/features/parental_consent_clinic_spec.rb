@@ -51,7 +51,7 @@ describe "Parental consent school" do
     @organisation =
       create(:organisation, :with_one_nurse, programmes: [@programme])
 
-    location = create(:location, :generic_clinic, organisation: @organisation)
+    location = create(:generic_clinic, organisation: @organisation)
 
     @session =
       create(
@@ -64,12 +64,7 @@ describe "Parental consent school" do
 
     @child = create(:patient, session: @session)
 
-    create(
-      :location,
-      :school,
-      organisation: @organisation,
-      name: "Pilot School"
-    )
+    create(:school, organisation: @organisation, name: "Pilot School")
   end
 
   def when_i_go_to_the_consent_form

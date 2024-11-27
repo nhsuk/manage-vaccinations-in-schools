@@ -35,9 +35,9 @@ describe "HPV Vaccination" do
     programme = create(:programme, :hpv_all_vaccines)
     organisation =
       create(:organisation, :with_one_nurse, programmes: [programme])
-    location = create(:location, :generic_clinic, organisation:)
+    location = create(:generic_clinic, organisation:)
 
-    @community_clinic = create(:location, :community_clinic, organisation:)
+    @community_clinic = create(:community_clinic, organisation:)
 
     programme.vaccines.discontinued.each do |vaccine|
       create(:batch, organisation:, vaccine:)

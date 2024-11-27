@@ -19,7 +19,7 @@ describe "Parental consent given with an inexact automatic match" do
     @programme = create(:programme, :hpv)
     @organisation =
       create(:organisation, :with_one_nurse, programmes: [@programme])
-    location = create(:location, :school, name: "Pilot School")
+    location = create(:school, name: "Pilot School")
     @session =
       create(
         :session,

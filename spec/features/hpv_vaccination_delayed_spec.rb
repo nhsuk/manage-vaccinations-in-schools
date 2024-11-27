@@ -27,7 +27,7 @@ describe "HPV Vaccination" do
     programme = create(:programme, :hpv)
     @organisation =
       create(:organisation, :with_one_nurse, programmes: [programme])
-    location = create(:location, :school)
+    location = create(:school)
     @batch =
       create(
         :batch,

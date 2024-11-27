@@ -32,7 +32,7 @@ describe GovukNotifyPersonalisation do
       date_of_birth: Date.current - 13.years
     )
   end
-  let(:location) { create(:location, :school, name: "Hogwarts") }
+  let(:location) { create(:school, name: "Hogwarts") }
   let(:session) do
     create(
       :session,
@@ -146,7 +146,7 @@ describe GovukNotifyPersonalisation do
 
     context "where the school is different" do
       let(:session) { nil }
-      let(:school) { create(:location, :school, name: "Waterloo Road") }
+      let(:school) { create(:school, name: "Waterloo Road") }
 
       let(:consent_form) do
         create(

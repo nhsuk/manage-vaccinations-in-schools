@@ -48,7 +48,7 @@ describe "End-to-end journey" do
       create(:organisation, :with_one_nurse, programmes: [@programme])
     @school =
       create(
-        :location,
+        :school,
         :secondary,
         organisation: @organisation,
         name: "Pilot School"

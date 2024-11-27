@@ -37,8 +37,8 @@ describe Location do
 
       let(:year_groups) { [8, 9, 10, 11] }
 
-      let(:matching) { create(:location, :secondary) } # 7-11
-      let(:mismatch) { create(:location, :primary) } # 0-6
+      let(:matching) { create(:school, :secondary) } # 7-11
+      let(:mismatch) { create(:school, :primary) } # 0-6
 
       it { should include(matching) }
       it { should_not include(mismatch) }
@@ -49,9 +49,7 @@ describe Location do
     it { should validate_presence_of(:name) }
 
     context "with a community clinic" do
-      subject(:location) do
-        build(:location, :community_clinic, ods_code: "abc")
-      end
+      subject(:location) { build(:community_clinic, ods_code: "abc") }
 
       it { should validate_presence_of(:ods_code) }
       it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
@@ -61,7 +59,7 @@ describe Location do
     end
 
     context "with a generic clinic" do
-      subject(:location) { build(:location, :generic_clinic, organisation:) }
+      subject(:location) { build(:generic_clinic, organisation:) }
 
       let(:organisation) { create(:organisation) }
 
@@ -79,7 +77,7 @@ describe Location do
     end
 
     context "with a school" do
-      subject(:location) { build(:location, :school, urn: "abc") }
+      subject(:location) { build(:school, urn: "abc") }
 
       it { should_not validate_presence_of(:ods_code) }
       it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
@@ -97,21 +95,21 @@ describe Location do
     subject(:clinic?) { location.clinic? }
 
     context "with a community clinic" do
-      let(:location) { build(:location, :community_clinic) }
+      let(:location) { build(:community_clinic) }
 
       it { should be(true) }
     end
 
     context "with a generic clinic" do
       let(:location) do
-        build(:location, :generic_clinic, organisation: create(:organisation))
+        build(:generic_clinic, organisation: create(:organisation))
       end
 
       it { should be(true) }
     end
 
     context "with a school" do
-      let(:location) { build(:location, :school) }
+      let(:location) { build(:school) }
 
       it { should be(false) }
     end

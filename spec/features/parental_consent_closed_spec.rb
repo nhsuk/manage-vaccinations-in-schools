@@ -12,12 +12,7 @@ describe "Parental consent closed" do
     @organisation =
       create(:organisation, :with_one_nurse, programmes: [@programme])
     location =
-      create(
-        :location,
-        :school,
-        name: "Pilot School",
-        organisation: @organisation
-      )
+      create(:school, name: "Pilot School", organisation: @organisation)
     @session =
       create(
         :session,

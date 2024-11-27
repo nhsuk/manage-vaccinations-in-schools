@@ -51,7 +51,7 @@ describe ImmunisationImportRow do
   end
   let(:valid_data) { valid_flu_data }
 
-  before { create(:location, :school, urn: "123456") }
+  before { create(:school, urn: "123456") }
 
   describe "validations" do
     context "with an empty row" do
@@ -650,7 +650,7 @@ describe ImmunisationImportRow do
 
     context "current academic year, home educated and community care setting" do
       let(:clinic) do
-        create(:location, :community_clinic, name: "A Clinic", organisation:)
+        create(:community_clinic, name: "A Clinic", organisation:)
       end
       let(:session_date) do
         create(

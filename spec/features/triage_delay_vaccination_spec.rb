@@ -32,7 +32,7 @@ describe "Triage" do
     programme = create(:programme, :hpv)
     @organisation =
       create(:organisation, :with_one_nurse, programmes: [programme])
-    @school = create(:location, :school)
+    @school = create(:school)
     session =
       create(
         :session,

@@ -213,7 +213,7 @@ describe PatientSession do
 
     context "when the patient session is for the generic clinic" do
       let(:organisation) { original_session.organisation }
-      let(:location) { create(:location, :generic_clinic, organisation:) }
+      let(:location) { create(:generic_clinic, organisation:) }
       let(:proposed_session) do
         create(:session, location:, organisation:, programme:)
       end

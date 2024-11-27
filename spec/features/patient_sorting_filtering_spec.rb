@@ -54,7 +54,7 @@ describe "Patient sorting and filtering" do
     @programme = create(:programme, :hpv)
     @organisation =
       create(:organisation, :with_one_nurse, programmes: [@programme])
-    location = create(:location, :school)
+    location = create(:school)
     @user = @organisation.users.first
     @session =
       create(

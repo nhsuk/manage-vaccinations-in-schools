@@ -4,8 +4,8 @@ describe AppPatientSummaryComponent do
   subject(:rendered) { render_inline(component) }
 
   let(:component) { described_class.new(patient) }
-  let(:school) { create(:location, :school, name: "Test School") }
-  let(:other_school) { create(:location, :school, name: "Other School") }
+  let(:school) { create(:school, name: "Test School") }
+  let(:other_school) { create(:school, name: "Other School") }
   let(:parent) { create(:parent, full_name: "Mark Doe") }
   let(:restricted) { false }
   let(:patient) do

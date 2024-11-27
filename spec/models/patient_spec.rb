@@ -70,17 +70,7 @@ describe Patient do
     end
 
     context "with an invalid school" do
-      subject(:patient) do
-        build(
-          :patient,
-          school:
-            create(
-              :location,
-              :community_clinic,
-              organisation: create(:organisation)
-            )
-        )
-      end
+      subject(:patient) { build(:patient, school: create(:community_clinic)) }
 
       it "is invalid" do
         expect(patient.valid?).to be(false)

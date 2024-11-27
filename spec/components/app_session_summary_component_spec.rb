@@ -6,7 +6,7 @@ describe AppSessionSummaryComponent do
   let(:component) { described_class.new(session) }
 
   let(:programme) { create(:programme, :hpv) }
-  let(:location) { create(:location, :school) }
+  let(:location) { create(:school) }
   let(:organisation) { create(:organisation, programmes: [programme]) }
   let(:session) do
     create(
@@ -22,13 +22,13 @@ describe AppSessionSummaryComponent do
   it { should have_content("School session") }
 
   context "with a community clinic" do
-    let(:location) { create(:location, :community_clinic, organisation:) }
+    let(:location) { create(:community_clinic, organisation:) }
 
     it { should have_content("Community clinic") }
   end
 
   context "with a generic clinic" do
-    let(:location) { create(:location, :generic_clinic, organisation:) }
+    let(:location) { create(:generic_clinic, organisation:) }
 
     it { should have_content("Community clinic") }
   end

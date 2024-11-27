@@ -40,7 +40,7 @@ describe ClassImport do
 
   let(:programme) { create(:programme) }
   let(:organisation) { create(:organisation, programmes: [programme]) }
-  let(:location) { create(:location, :school, organisation:) }
+  let(:location) { create(:school, organisation:) }
   let(:session) { create(:session, location:, programme:, organisation:) }
 
   let(:file) { "valid.csv" }
@@ -395,7 +395,7 @@ describe ClassImport do
       let!(:existing_patient) { create(:patient, session:) }
 
       it "proposes moving the existing patient to the generic clinic" do
-        location = create(:location, :generic_clinic, organisation:)
+        location = create(:generic_clinic, organisation:)
         generic_clinic_session =
           create(:session, location:, organisation:, programme:)
 

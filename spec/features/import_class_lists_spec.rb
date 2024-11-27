@@ -45,7 +45,7 @@ describe "Import class lists" do
     @organisation = create(:organisation, :with_one_nurse)
     location =
       create(
-        :location,
+        :school,
         :secondary,
         name: "Waterloo Road",
         organisation: @organisation

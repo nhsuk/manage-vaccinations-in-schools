@@ -51,15 +51,15 @@ describe "Immunisation imports" do
   def and_an_hpv_programme_is_underway
     programme =
       create(:programme, :hpv_all_vaccines, organisations: [@organisation])
-    location = create(:location, :school)
+    location = create(:school)
     @session =
       create(:session, programme:, location:, organisation: @organisation)
   end
 
   def and_school_locations_exist
-    create(:location, :school, urn: "110158")
-    create(:location, :school, urn: "120026")
-    create(:location, :school, urn: "144012")
+    create(:school, urn: "110158")
+    create(:school, urn: "120026")
+    create(:school, urn: "144012")
   end
 
   def when_i_go_to_the_vaccinations_page

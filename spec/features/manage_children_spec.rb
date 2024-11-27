@@ -81,7 +81,7 @@ describe "Manage children" do
   end
 
   def given_patients_exist
-    school = create(:location, :school, organisation: @organisation)
+    school = create(:school, organisation: @organisation)
     @patient =
       create(
         :patient,

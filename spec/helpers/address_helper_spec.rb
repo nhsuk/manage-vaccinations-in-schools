@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-RSpec.describe AddressHelper do
+describe AddressHelper do
   let(:location) do
     create(
-      :location,
       :school,
       address_line_1: "10 Downing Street",
       address_town: "London",

@@ -26,8 +26,8 @@ describe "Parental consent" do
 
     team = create(:team, organisation: @organisation)
 
-    @scheduled_school = create(:location, :secondary, team:)
-    @completed_school = create(:location, :secondary, team:)
+    @scheduled_school = create(:school, :secondary, team:)
+    @completed_school = create(:school, :secondary, team:)
 
     @scheduled_session =
       create(

@@ -39,9 +39,7 @@ describe Organisation do
   it { should normalize(:ods_code).from(" r1a ").to("R1A") }
 
   describe "#community_clinics" do
-    let(:clinic_locations) do
-      create_list(:location, 3, :community_clinic, organisation:)
-    end
+    let(:clinic_locations) { create_list(:community_clinic, 3, organisation:) }
 
     it "returns the clinic locations" do
       expect(organisation.community_clinics).to eq(clinic_locations)

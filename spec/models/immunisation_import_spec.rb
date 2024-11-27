@@ -40,9 +40,9 @@ describe ImmunisationImport do
   end
 
   before do
-    create(:location, :school, urn: "110158")
-    create(:location, :school, urn: "120026")
-    create(:location, :school, urn: "144012")
+    create(:school, urn: "110158")
+    create(:school, urn: "120026")
+    create(:school, urn: "144012")
   end
 
   let(:programme) { create(:programme, :flu_all_vaccines) }

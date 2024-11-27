@@ -96,7 +96,7 @@ describe SchoolSessionRemindersJob do
 
   context "for a generic clinic session tomorrow" do
     let(:organisation) { create(:organisation, programmes: [programme]) }
-    let(:location) { create(:location, :generic_clinic, organisation:) }
+    let(:location) { create(:generic_clinic, organisation:) }
 
     before do
       create(

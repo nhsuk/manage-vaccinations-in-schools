@@ -7,10 +7,10 @@ describe Onboarding do
 
   let!(:programme) { create(:programme, :hpv) }
   # rubocop:disable RSpec/IndexedLet
-  let!(:school1) { create(:location, :secondary, urn: "123456") }
-  let!(:school2) { create(:location, :secondary, urn: "234567") }
-  let!(:school3) { create(:location, :secondary, urn: "345678") }
-  let!(:school4) { create(:location, :secondary, urn: "456789") }
+  let!(:school1) { create(:school, :secondary, urn: "123456") }
+  let!(:school2) { create(:school, :secondary, urn: "234567") }
+  let!(:school3) { create(:school, :secondary, urn: "345678") }
+  let!(:school4) { create(:school, :secondary, urn: "456789") }
   # rubocop:enable RSpec/IndexedLet
 
   context "with a valid configuration file" do

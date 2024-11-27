@@ -38,14 +38,14 @@ describe "Import class lists - Moving patients" do
     @organisation = create(:organisation, :with_one_nurse)
     location =
       create(
-        :location,
+        :school,
         :secondary,
         name: "Waterloo Road",
         organisation: @organisation
       )
     other_location =
       create(
-        :location,
+        :school,
         :secondary,
         name: "Different Road",
         organisation: @organisation

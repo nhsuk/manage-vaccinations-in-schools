@@ -8,8 +8,8 @@ describe DPSExportRow do
   let(:vaccine) do
     create(:vaccine, :gardasil_9, programme:, dose_volume_ml: 0.5)
   end
-  let(:location) { create(:location, :school) }
-  let(:school) { create(:location, :school) }
+  let(:location) { create(:school) }
+  let(:school) { create(:school) }
   let(:patient) do
     create(:patient, date_of_birth: Date.new(2012, 12, 29), school:)
   end
@@ -246,14 +246,14 @@ describe DPSExportRow do
       it { should_not be_nil }
 
       context "when the session has a location with a URN" do
-        let(:location) { create(:location, :school, urn: "12345") }
+        let(:location) { create(:school, urn: "12345") }
 
         it { should eq("12345") }
       end
 
       context "when the session has a location with an ODS code" do
         let(:location) do
-          create(:location, :community_clinic, ods_code: "12345", organisation:)
+          create(:community_clinic, ods_code: "12345", organisation:)
         end
 
         it { should eq("12345") }
@@ -263,7 +263,7 @@ describe DPSExportRow do
         let(:organisation) do
           create(:organisation, ods_code: "ABC", programmes: [programme])
         end
-        let(:location) { create(:location, :generic_clinic, organisation:) }
+        let(:location) { create(:generic_clinic, organisation:) }
         let(:location_name) { "Unknown" }
 
         it { should eq("ABC") }
@@ -276,13 +276,13 @@ describe DPSExportRow do
       it { should_not be_nil }
 
       context "when the session has a location with a URN" do
-        let(:location) { create(:location, :school) }
+        let(:location) { create(:school) }
 
         it { should eq("https://fhir.hl7.org.uk/Id/urn-school-number") }
       end
 
       context "when the session has a location without a URN" do
-        let(:location) { create(:location, :community_clinic, organisation:) }
+        let(:location) { create(:community_clinic, organisation:) }
 
         it { should eq("https://fhir.nhs.uk/Id/ods-organization-code") }
       end
@@ -291,7 +291,7 @@ describe DPSExportRow do
         let(:organisation) do
           create(:organisation, ods_code: "ABC", programmes: [programme])
         end
-        let(:location) { create(:location, :generic_clinic, organisation:) }
+        let(:location) { create(:generic_clinic, organisation:) }
         let(:location_name) { "Unknown" }
 
         it { should eq("https://fhir.nhs.uk/Id/ods-organization-code") }

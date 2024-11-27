@@ -21,7 +21,7 @@ describe Reports::OfflineSessionExporter do
   let(:session) { create(:session, location:, organisation:, programme:) }
 
   context "a school session" do
-    let(:location) { create(:location, :school, team:) }
+    let(:location) { create(:school, team:) }
 
     it { should_not be_blank }
 
@@ -279,7 +279,7 @@ describe Reports::OfflineSessionExporter do
   end
 
   context "a clinic session" do
-    let(:location) { create(:location, :generic_clinic, team:) }
+    let(:location) { create(:generic_clinic, team:) }
 
     it { should_not be_blank }
 
@@ -390,8 +390,7 @@ describe Reports::OfflineSessionExporter do
         let(:patient) do
           create(
             :patient,
-            school:
-              create(:location, :school, urn: "123456", name: "Waterloo Road")
+            school: create(:school, urn: "123456", name: "Waterloo Road")
           )
         end
         let(:patient_session) { create(:patient_session, patient:, session:) }

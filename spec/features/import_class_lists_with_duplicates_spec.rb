@@ -56,7 +56,7 @@ describe "Class list imports duplicates" do
     )
     @location =
       create(
-        :location,
+        :school,
         :secondary,
         name: "Waterloo Road",
         organisation: @organisation

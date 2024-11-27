@@ -12,7 +12,7 @@ describe AppSessionTableComponent do
         :session,
         academic_year: 2024,
         date: Date.new(2024, 10, 1),
-        location: create(:location, :school, name: "Waterloo Road"),
+        location: create(:school, name: "Waterloo Road"),
         programme:
       ),
       create(:session, programme:)

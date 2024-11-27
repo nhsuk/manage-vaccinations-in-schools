@@ -25,12 +25,7 @@ describe "Parental consent school" do
     @organisation =
       create(:organisation, :with_one_nurse, programmes: [@programme])
     location =
-      create(
-        :location,
-        :school,
-        organisation: @organisation,
-        name: "Pilot School"
-      )
+      create(:school, organisation: @organisation, name: "Pilot School")
     @session =
       create(
         :session,
