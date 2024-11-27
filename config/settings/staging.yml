@@ -4,6 +4,9 @@ disallow_database_seeding: false
 govuk_notify:
   mode: team
 
+nhs_api:
+  base_url: "https://int.api.service.nhs.uk"
+
 # NHS Care Identity Service OIDC integration configuration, used by Omniauth via
 # Devise.
 cis2:
