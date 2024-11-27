@@ -29,7 +29,6 @@ class PatientSession < ApplicationRecord
 
   belongs_to :patient
   belongs_to :session
-  belongs_to :proposed_session, class_name: "Session", optional: true
 
   has_one :location, through: :session
   has_one :team, through: :session
@@ -65,8 +64,6 @@ class PatientSession < ApplicationRecord
               .exists
           )
         end
-
-  scope :pending_transfer, -> { where.not(proposed_session_id: nil) }
 
   scope :preload_for_state,
         -> do
@@ -119,31 +116,6 @@ class PatientSession < ApplicationRecord
 
   def latest_vaccination_record
     @latest_vaccination_record ||= vaccination_records.max_by(&:created_at)
-  end
-
-  def pending_transfer?
-    proposed_session_id.present?
-  end
-
-  def confirm_transfer!
-    return unless pending_transfer?
-
-    PatientSession.transaction do
-      PatientSession.find_or_create_by!(patient:, session: proposed_session)
-
-      location = proposed_session.location
-      if location.school?
-        patient.update!(school: location, home_educated: nil)
-      else
-        patient.update!(school: nil, home_educated: false)
-      end
-
-      safe_to_destroy? ? destroy! : update!(proposed_session: nil)
-    end
-  end
-
-  def ignore_transfer!
-    update!(proposed_session: nil)
   end
 
   def current_attendance

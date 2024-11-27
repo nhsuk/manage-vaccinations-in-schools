@@ -78,9 +78,6 @@ class Patient < ApplicationRecord
            -> { upcoming },
            through: :patient_sessions,
            source: :session
-  has_many :proposed_sessions,
-           through: :patient_sessions,
-           source: :proposed_session
 
   has_and_belongs_to_many :class_imports
   has_and_belongs_to_many :cohort_imports
@@ -109,9 +106,6 @@ class Patient < ApplicationRecord
         ->(cohorts) do
           where("pending_changes->>'cohort_id' IN (?)", cohorts.pluck(:id))
         end
-
-  scope :in_pending_school,
-        ->(school) { where("pending_changes->>'school_id' = ?", school.id) }
 
   scope :with_pending_changes, -> { where.not(pending_changes: {}) }
 
