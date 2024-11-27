@@ -139,9 +139,7 @@ describe CohortImportRow do
 
     it { should_not be_nil }
 
-    it { should have_attributes(registration: "8AB") }
-
-    it { should have_attributes(home_educated: false) }
+    it { should have_attributes(registration: "8AB", home_educated: nil) }
 
     context "when home educated" do
       let(:school_urn) { "999999" }

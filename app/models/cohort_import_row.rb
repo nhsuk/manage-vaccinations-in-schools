@@ -30,10 +30,10 @@ class CohortImportRow < PatientImportRow
   end
 
   def home_educated
-    if school_urn == SCHOOL_URN_UNKNOWN
-      nil
-    else
-      school_urn == SCHOOL_URN_HOME_EDUCATED
+    if school_urn == SCHOOL_URN_HOME_EDUCATED
+      true
+    elsif school_urn == SCHOOL_URN_UNKNOWN
+      false
     end
   end
 
