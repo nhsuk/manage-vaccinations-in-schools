@@ -130,6 +130,27 @@ class Patient < ApplicationRecord
           end
         end
 
+  scope :in_organisation,
+        ->(organisation) do
+          cohort_ids = organisation.cohorts.ids
+          school_ids = organisation.schools.ids
+
+          where(cohort_id: cohort_ids)
+            .or(where(school_id: school_ids))
+            .or(
+              where(
+                "pending_changes ->> 'cohort_id' IS NOT NULL AND pending_changes ->> 'cohort_id' IN (?)",
+                cohort_ids
+              )
+            )
+            .or(
+              where(
+                "pending_changes ->> 'school_id' IS NOT NULL AND pending_changes ->> 'school_id' IN (?)",
+                school_ids
+              )
+            )
+        end
+
   validates :given_name, :family_name, :date_of_birth, presence: true
 
   validates :nhs_number,
