@@ -50,6 +50,22 @@ describe "Patient sorting and filtering" do
     then_i_see_patients_ordered_by_name_desc
   end
 
+  scenario "Users can sort and filter date of birth" do
+    given_that_i_am_signed_in
+    when_i_visit_the_programme_patients_page
+    then_i_see_patients_ordered_by_name_asc # Initial server load is name asc
+
+    when_i_click_on_the_dob_header
+    then_i_see_patients_ordered_by_dob_asc
+
+    when_i_click_on_the_dob_header
+    then_i_see_patients_ordered_by_dob_desc
+
+    when_i_filter_by_dob
+    and_i_click_filter
+    then_i_see_patients_with_dob
+  end
+
   def given_that_i_am_signed_in
     @programme = create(:programme, :hpv)
     @organisation =
@@ -81,6 +97,10 @@ describe "Patient sorting and filtering" do
 
   def when_i_visit_the_consents_page
     visit session_consents_path(@session)
+  end
+
+  def when_i_visit_the_programme_patients_page
+    visit patients_programme_path(@programme)
   end
 
   def when_i_click_on_the_name_header
@@ -155,5 +175,28 @@ describe "Patient sorting and filtering" do
   def when_i_reset_filters
     expect(page).to have_button "Reset filters", disabled: false
     click_button "Reset filters"
+  end
+
+  def when_i_click_on_the_dob_header
+    click_link "Date of birth"
+  end
+
+  def then_i_see_patients_ordered_by_dob_asc
+    expect(page).to have_selector("tr:nth-child(4)", text: "Alex")
+    expect(page).to have_selector("tr:nth-child(3)", text: "Blair")
+  end
+
+  def then_i_see_patients_ordered_by_dob_desc
+    expect(page).to have_selector("tr:nth-child(1)", text: "Alex")
+    expect(page).to have_selector("tr:nth-child(2)", text: "Blair")
+  end
+
+  def when_i_filter_by_dob
+    fill_in "Date of birth", with: "2011"
+  end
+
+  def then_i_see_patients_with_dob
+    expect(page).not_to have_selector("tr:nth-child(2)")
+    expect(page).to have_selector("tr:nth-child(1)", text: "Alex")
   end
 end
