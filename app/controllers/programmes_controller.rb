@@ -48,8 +48,4 @@ class ProgrammesController < ApplicationController
     @programme =
       policy_scope(Programme).strict_loading.find_by!(type: params[:type])
   end
-
-  def percentage_of(numerator, denominator)
-    denominator.positive? ? (numerator / denominator.to_f * 100.0).to_i : 0
-  end
 end
