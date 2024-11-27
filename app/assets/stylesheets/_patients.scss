@@ -21,6 +21,22 @@
     @include govuk-media-query($from: desktop) {
       order: 2;
     }
+
+    .nhsuk-checkboxes__label {
+      padding-left: 0;
+
+      &::before {
+        border-width: 3px;
+        padding: 0;
+        transform: scale(0.6667);
+        transform-origin: center left;
+      }
+
+      &::after {
+        left: 3px;
+        transform: rotate(-45deg) scale(0.6667);
+      }
+    }
   }
 
   & &__table {
