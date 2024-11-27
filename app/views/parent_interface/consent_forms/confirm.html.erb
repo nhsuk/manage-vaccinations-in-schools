@@ -104,7 +104,7 @@
         end
       
         school = if @consent_form.education_setting_school?
-            (@consent_form.school || @consent_form.location).name
+            @consent_form.school.name
           elsif @consent_form.education_setting_home?
             "Home-schooled"
           else
