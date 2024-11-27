@@ -10,7 +10,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     patient_sessions: nil,
     patients: nil,
     programme: nil,
-    year_groups: []
+    year_groups: nil
   )
     super
 
@@ -36,7 +36,7 @@ class AppSessionPatientTableComponent < ViewComponent::Base
     @params = params
     @programme = programme
     @section = section
-    @year_groups = year_groups
+    @year_groups = year_groups || programme&.year_groups || []
   end
 
   private
