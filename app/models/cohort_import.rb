@@ -52,12 +52,6 @@ class CohortImport < PatientImport
   end
 
   def postprocess_rows!
-    # Add imported patients to upcoming sessions.
-
-    organisation
-      .sessions
-      .has_programme(programme)
-      .upcoming
-      .find_each(&:create_patient_sessions!)
+    # Nothing to do.
   end
 end

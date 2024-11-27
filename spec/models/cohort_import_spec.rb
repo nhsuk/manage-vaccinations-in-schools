@@ -45,9 +45,7 @@ describe CohortImport do
   let(:csv) { fixture_file_upload("spec/fixtures/cohort_import/#{file}") }
 
   # Ensure location URN matches the URN in our fixture files
-  let!(:location) do
-    Location.find_by(urn: "123456") || create(:school, urn: "123456")
-  end
+  let!(:location) { create(:school, urn: "123456", organisation:) }
 
   it_behaves_like "a CSVImportable model"
 
@@ -132,12 +130,17 @@ describe CohortImport do
       it "is valid" do
         expect(cohort_import).to be_valid
         expect(cohort_import.rows.count).to eq(1)
-        expect(cohort_import.rows.first.to_patient).to have_attributes(
+
+        patient = cohort_import.rows.first.to_patient
+        expect(patient).to have_attributes(
           given_name: "Jennifer",
           family_name: "Clarke",
-          date_of_birth: Date.new(2010, 1, 1),
-          school: location
+          date_of_birth: Date.new(2010, 1, 1)
         )
+
+        expect(
+          cohort_import.rows.first.to_school_move(patient)
+        ).to have_attributes(school: location)
       end
     end
 
@@ -302,7 +305,8 @@ describe CohortImport do
           given_name: "Jimmy",
           family_name: "Smith",
           date_of_birth: Date.new(2010, 1, 2),
-          nhs_number: nil
+          nhs_number: nil,
+          organisation:
         )
       end
 
@@ -318,7 +322,8 @@ describe CohortImport do
           given_name: "JIMMY",
           family_name: "smith",
           date_of_birth: Date.new(2010, 1, 2),
-          nhs_number: nil
+          nhs_number: nil,
+          organisation:
         )
       end
 
@@ -344,14 +349,6 @@ describe CohortImport do
 
       it "adds the patients to the session" do
         expect { record! }.to change(session.patients, :count).from(0).to(3)
-      end
-    end
-
-    context "with a closed session" do
-      before { create(:session, :closed, organisation:, programme:, location:) }
-
-      it "doesn't add the patients to the session" do
-        expect { record! }.not_to change(PatientSession, :count)
       end
     end
   end

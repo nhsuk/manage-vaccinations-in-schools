@@ -138,12 +138,17 @@ describe ClassImport do
       it "is valid" do
         expect(class_import).to be_valid
         expect(class_import.rows.count).to eq(1)
-        expect(class_import.rows.first.to_patient).to have_attributes(
+
+        patient = class_import.rows.first.to_patient
+        expect(patient).to have_attributes(
           given_name: "Jennifer",
           family_name: "Clarke",
-          date_of_birth: Date.new(2010, 1, 1),
-          school: location
+          date_of_birth: Date.new(2010, 1, 1)
         )
+
+        expect(
+          class_import.rows.first.to_school_move(patient)
+        ).to have_attributes(school: location)
       end
     end
   end
@@ -329,34 +334,26 @@ describe ClassImport do
       end
     end
 
-    context "with an existing patient in a different session" do
-      let(:different_session) { create(:session, programme:) }
-
+    context "with an existing patient in a different school" do
       let(:patient) do
-        create(:patient, nhs_number: "1234567890", session: different_session)
+        create(:patient, nhs_number: "1234567890", school: create(:school))
       end
 
-      it "proposes moving the child from the original session to the new one" do
-        expect(patient.upcoming_sessions).to contain_exactly(different_session)
+      it "proposes a school move for the child" do
+        expect(patient.school_moves).to be_empty
 
-        # stree-ignore
-        expect { record! }
-          .to change { patient.patient_sessions
-            .find_by(session: different_session)
-            .proposed_session }.from(nil).to(session)
+        expect { record! }.to change { patient.reload.school_moves.count }.by(1)
 
-        expect(patient.upcoming_sessions).to contain_exactly(different_session)
+        school_move = patient.school_moves.first
+        expect(school_move.school).to eq(session.location)
       end
 
-      it "stages changes to the child's cohort" do
-        expect(patient.cohort.organisation).to eq(
-          different_session.organisation
-        )
-        expect { record! }.to(
-          change { patient.reload.with_pending_changes.cohort }
-        )
-        expect(patient.with_pending_changes.cohort.organisation).to eq(
-          session.organisation
+      it "doesn't stage school changes" do
+        expect { record! }.not_to change(patient, :pending_changes)
+        expect(patient.pending_changes.keys).not_to include(
+          :school_id,
+          :cohort_id,
+          :home_educated
         )
       end
     end
@@ -381,50 +378,31 @@ describe ClassImport do
       end
     end
 
-    context "with a closed session" do
-      let(:session) do
-        create(:session, :closed, organisation:, programme:, location:)
-      end
-
-      it "doesn't add the patients to the session" do
-        expect { record! }.not_to change(PatientSession, :count)
-      end
-    end
-
     context "with an existing patient not in the class list" do
       let!(:existing_patient) { create(:patient, session:) }
 
-      it "proposes moving the existing patient to the generic clinic" do
-        location = create(:generic_clinic, organisation:)
-        generic_clinic_session =
-          create(:session, location:, organisation:, programme:)
+      it "proposes a school move for the child" do
+        expect(existing_patient.school_moves).to be_empty
 
-        expect(session.patients).to include(existing_patient)
-        expect(generic_clinic_session.patients).to be_empty
+        expect { record! }.to change {
+          existing_patient.reload.school_moves.count
+        }.by(1)
 
-        record!
-
-        expect(session.reload.patients).to include(existing_patient)
-        expect(generic_clinic_session.patients).to be_empty
-        expect(
-          session.patient_sessions_moving_from_this_session.map(&:patient)
-        ).to include(existing_patient)
-        expect(
-          generic_clinic_session.patient_sessions_moving_to_this_session.map(
-            &:patient
-          )
-        ).to include(existing_patient)
+        school_move = existing_patient.school_moves.first
+        expect(school_move.school).to be_nil
+        expect(school_move.home_educated).to be(false)
       end
 
       it "doesn't propose a move if patient already has a proposed move" do
-        existing_session = create(:session, organisation:, programme:)
-
-        existing_patient_session =
-          PatientSession.find_by!(patient: existing_patient, session:)
-        existing_patient_session.update!(proposed_session: existing_session)
+        create(
+          :school_move,
+          :to_unknown_school,
+          patient: existing_patient,
+          organisation:
+        )
 
         expect { record! }.not_to(
-          change { existing_patient_session.reload.proposed_session }
+          change { existing_patient.reload.school_moves.count }
         )
       end
     end

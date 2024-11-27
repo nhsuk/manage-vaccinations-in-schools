@@ -27,6 +27,17 @@ class PatientImport < ApplicationRecord
     patient = row.to_patient
     parent_relationships = row.to_parent_relationships(parents, patient)
 
+    @school_moves_to_confirm ||= Set.new
+    @school_moves_to_save ||= Set.new
+
+    if (school_move = row.to_school_move(patient))
+      if patient.school.nil? && !patient.home_educated
+        @school_moves_to_confirm.add(school_move)
+      else
+        @school_moves_to_save.add(school_move)
+      end
+    end
+
     count_column_to_increment =
       count_column(patient, parents, parent_relationships)
 
@@ -106,5 +117,15 @@ class PatientImport < ApplicationRecord
     @parents_batch.clear
     @patients_batch.clear
     @relationships_batch.clear
+
+    @school_moves_to_confirm.each do |school_move|
+      # if the same patient appears multiple times in the file,
+      # the duplicates won't be persisted
+      school_move.confirm! if school_move.patient.persisted?
+    end
+    @school_moves_to_confirm.clear
+
+    SchoolMove.import(@school_moves_to_save.to_a, on_duplicate_key_ignore: :all)
+    @school_moves_to_save.clear
   end
 end

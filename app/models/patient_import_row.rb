@@ -45,36 +45,38 @@ class PatientImportRow
       family_name: last_name,
       gender_code:,
       given_name: first_name,
-      home_educated:,
       nhs_number:,
       preferred_family_name: preferred_last_name,
       preferred_given_name: preferred_first_name,
       registration:
-    }.compact.merge(cohort_id: cohort&.id, school_id: school&.id)
+    }.compact
 
     if (existing_patient = existing_patients.first)
-      # We want to automatically accept changes to
-      # - registration
-      # - when an unknown school is updated to a known school
-      # without staging, so admins don't have to review those changes
-
       unless stage_registration?
         existing_patient.registration = attributes.delete(:registration)
-      end
-
-      if existing_patient.school_id.nil?
-        existing_patient.school_id = attributes.delete(:school_id)
-        existing_patient.home_educated = attributes.delete(:home_educated)
-      end
-
-      if existing_patient.cohort_id.nil?
-        existing_patient.cohort_id = attributes.delete(:cohort_id)
       end
 
       existing_patient.stage_changes(attributes)
       existing_patient
     else
-      Patient.new(attributes)
+      Patient.new(attributes.merge(home_educated: false))
+    end
+  end
+
+  def to_school_move(patient)
+    if patient.school != school || patient.home_educated != home_educated
+      school_move =
+        if school
+          SchoolMove.find_or_initialize_by(patient:, school:)
+        else
+          SchoolMove.find_or_initialize_by(
+            patient:,
+            home_educated:,
+            organisation:
+          )
+        end
+
+      school_move.tap { _1.source = school_move_source }
     end
   end
 

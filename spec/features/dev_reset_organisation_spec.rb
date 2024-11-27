@@ -94,8 +94,8 @@ describe "Dev endpoint to reset a organisation" do
         .and(change(NotifyLogEntry, :count).by(-3))
         .and(change(Parent, :count).by(-4))
         .and(change(Patient, :count).by(-3))
-        .and(change(PatientSession, :count).by(-11))
-        .and(change(Session, :count).by(-4))
+        .and(change(PatientSession, :count).by(-14))
+        .and(change(Session, :count).by(-5))
         .and(change(VaccinationRecord, :count).by(-11))
     )
   end

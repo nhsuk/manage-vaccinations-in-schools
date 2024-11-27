@@ -140,7 +140,7 @@ class AppPatientSummaryComponent < ViewComponent::Base
   def format_year_group
     highlight_if(
       helpers.patient_year_group(@patient),
-      @patient.cohort_id_changed? || @patient.registration_changed?
+      @patient.date_of_birth_changed? || @patient.registration_changed?
     )
   end
 

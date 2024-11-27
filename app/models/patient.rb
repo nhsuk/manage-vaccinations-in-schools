@@ -253,9 +253,7 @@ class Patient < ApplicationRecord
     parent_relationships.find { _1.parent == parent }
   end
 
-  def year_group
-    cohort&.year_group || date_of_birth.year_group
-  end
+  delegate :year_group, to: :date_of_birth
 
   def has_consent?(programme)
     consents.any? { _1.programme_id == programme.id }

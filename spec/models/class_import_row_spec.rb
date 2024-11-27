@@ -116,9 +116,11 @@ describe ClassImportRow do
 
     it do
       expect(patient).to have_attributes(
-        home_educated: nil,
+        cohort: nil,
         gender_code: "not_known",
-        registration: "8AB"
+        home_educated: false,
+        registration: "8AB",
+        school: nil
       )
     end
 
@@ -142,51 +144,6 @@ describe ClassImportRow do
         expect(patient.registration).to eq("8AB")
         expect(patient.pending_changes).not_to have_key("registration")
       end
-
-      context "when the patient has no school" do
-        before { existing_patient.update(school_id: nil) }
-
-        it "sets the school/home-educated status and doesn't stage it so admins don't have to review that change" do
-          expect(patient.school).to eq(school)
-          expect(patient.home_educated).to be_falsey
-          expect(patient.pending_changes).not_to include("school_id")
-          expect(patient.pending_changes).not_to include("home_educated")
-        end
-      end
-
-      context "when the patient has no cohort" do
-        before { existing_patient.update(cohort_id: nil) }
-
-        it "sets the cohort and doesn't stage it so admins don't have to review that change" do
-          expect(patient.cohort).not_to be_nil
-          expect(patient.pending_changes).not_to include("cohort_id")
-        end
-      end
-    end
-
-    describe "#cohort" do
-      subject(:cohort) { travel_to(today) { patient.cohort } }
-
-      let(:today) { Date.new(2013, 9, 1) }
-      let(:data) { valid_data.merge("CHILD_DATE_OF_BIRTH" => date_of_birth) }
-
-      context "with a date of birth before September" do
-        let(:date_of_birth) { "2000-08-31" }
-
-        it { should have_attributes(organisation:, birth_academic_year: 1999) }
-      end
-
-      context "with a date of birth after September" do
-        let(:date_of_birth) { "2000-09-01" }
-
-        it { should have_attributes(organisation:, birth_academic_year: 2000) }
-      end
-    end
-
-    describe "#school" do
-      subject { patient.school }
-
-      it { should eq(school) }
     end
   end
 
