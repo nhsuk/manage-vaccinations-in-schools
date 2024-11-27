@@ -28,13 +28,8 @@ class AppCompareConsentFormAndPatientComponent < ViewComponent::Base
   end
 
   def school_match?
-    if consent_form.education_setting_school?
+    consent_form.home_educated == patient.home_educated &&
       consent_form.school == patient.school
-    elsif consent_form.education_setting_home?
-      patient.home_educated
-    else
-      patient.school.nil? && !patient.home_educated
-    end
   end
 
   def consent_form_patient

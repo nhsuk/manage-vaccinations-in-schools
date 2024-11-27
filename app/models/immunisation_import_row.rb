@@ -158,7 +158,8 @@ class ImmunisationImportRow
   def patient
     return unless valid?
 
-    @patient ||= existing_patients.first || Patient.create!(patient_attributes)
+    @patient ||=
+      existing_patients.first || Patient.create!(new_patient_attributes)
   end
 
   def session
@@ -545,14 +546,16 @@ class ImmunisationImportRow
     )
   end
 
-  def patient_attributes
+  def new_patient_attributes
     {
       address_postcode: patient_postcode,
       date_of_birth: patient_date_of_birth,
       family_name: patient_last_name,
       given_name: patient_first_name,
       gender_code: patient_gender_code,
-      nhs_number: patient_nhs_number
+      nhs_number: patient_nhs_number,
+      school: nil,
+      home_educated: false
     }.compact
   end
 

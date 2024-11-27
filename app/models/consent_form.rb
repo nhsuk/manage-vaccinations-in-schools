@@ -416,16 +416,8 @@ class ConsentForm < ApplicationRecord
     ActiveRecord::Base.transaction do
       notify_log_entries.update_all(patient_id: patient.id)
 
-      if education_setting_school?
-        patient.school = school
-        patient.home_educated = false
-      elsif education_setting_home?
-        patient.school = nil
-        patient.home_educated = true
-      elsif education_setting_none?
-        patient.school = nil
-        patient.home_educated = false
-      end
+      patient.school = school
+      patient.home_educated = home_educated
 
       if patient.changed?
         patient.save!
@@ -443,6 +435,12 @@ class ConsentForm < ApplicationRecord
 
       Consent.from_consent_form!(self, patient:)
     end
+  end
+
+  def home_educated
+    return nil if education_setting_school?
+
+    education_setting_home?
   end
 
   private

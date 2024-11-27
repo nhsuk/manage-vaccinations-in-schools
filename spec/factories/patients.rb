@@ -92,7 +92,10 @@ FactoryBot.define do
         Faker::Date.birthday(min_age: 7, max_age: 16)
       end
     end
+
     school { session.location if session&.location&.school? }
+    home_educated { school.present? ? nil : false }
+
     registration do
       "#{date_of_birth.year_group}#{Faker::Alphanumeric.alpha(number: 2)}"
     end
