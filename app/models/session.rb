@@ -270,10 +270,7 @@ class Session < ApplicationRecord
     organisation.patient_sessions.where(proposed_session: self)
   end
 
-  def has_movers?
-    patient_sessions_moving_from_this_session.any? ||
-      patient_sessions_moving_to_this_session.any?
-  end
+  delegate :has_movers?, to: :location
 
   private
 

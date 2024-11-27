@@ -1,34 +1,35 @@
 # frozen_string_literal: true
 
-class SessionMovesController < ApplicationController
+class SchoolMovesController < ApplicationController
   before_action :set_session
+  before_action :set_location
   before_action :set_tab
 
   layout "full"
 
   def index
-    @patient_sessions =
+    @school_moves =
       if @tab == :in
-        @session.patient_sessions_moving_to_this_session
+        @location.school_moves_to_this_location
       elsif @tab == :out
-        @session.patient_sessions_moving_from_this_session
+        @location.school_moves_from_this_location
       else
         render "errors/not_found", status: :not_found
       end
   end
 
   def update
-    @patient_session = policy_scope(PatientSession).find(params[:id])
+    @school_move = policy_scope(SchoolMove).find(params[:id])
 
     if params[:confirm]
-      @patient_session.confirm_transfer!
+      @school_move.confirm!
     elsif params[:ignore]
-      @patient_session.ignore_transfer!
+      @school_move.ignore!
     else
       render "errors/not_found", status: :not_found
     end
 
-    name = @patient_session.patient.full_name
+    name = @school_move.patient.full_name
     flash =
       if params[:confirm]
         { success: "#{name} moved #{@tab}" }
@@ -43,6 +44,10 @@ class SessionMovesController < ApplicationController
 
   def set_session
     @session = policy_scope(Session).find_by!(slug: params[:session_slug])
+  end
+
+  def set_location
+    @location = @session.location
   end
 
   def set_tab

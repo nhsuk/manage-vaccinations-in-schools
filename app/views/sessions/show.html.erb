@@ -45,9 +45,9 @@
               ) do |c| %>
             <% c.with_heading { "Review children who have changed schools" } %>
             <% c.with_description do %>
-              <%= t("children", count: @session.patient_sessions_moving_to_this_session.count) %>
+              <%= t("children", count: @session.location.school_moves_to_this_location.count) %>
               joined this school<br />
-              <%= t("children", count: @session.patient_sessions_moving_from_this_session.count) %>
+              <%= t("children", count: @session.location.school_moves_from_this_location.count) %>
               left this school
             <% end %>
           <% end %>

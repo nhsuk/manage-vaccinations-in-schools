@@ -215,7 +215,7 @@ Rails.application.routes.draw do
 
     resource :dates, controller: "session_dates", only: %i[show update]
 
-    resources :moves, controller: "session_moves", only: %i[index update]
+    resources :moves, controller: "school_moves", only: %i[index update]
   end
 
   scope "/sessions/:session_slug/:section", as: "session" do
