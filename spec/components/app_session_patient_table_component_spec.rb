@@ -156,5 +156,11 @@ describe AppSessionPatientTableComponent do
 
       it { should have_column("Status") }
     end
+
+    context "includes date of birth" do
+      let(:columns) { %i[name dob] }
+
+      it { should have_column("Date of birth") }
+    end
   end
 end
