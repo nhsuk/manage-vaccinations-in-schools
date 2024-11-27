@@ -158,21 +158,46 @@ class Reports::CareplusExporter
     ]
   end
 
+  # Official list of Careplus codes
+  # AB: Abdomen
+  # ALT: Anterolateral Thigh
+  # L: Left
+  # LA: Left Arm
+  # LALT: Left Upper Anterolateral Thigh
+  # LB: Left Buttock
+  # LL: Left Leg
+  # LLIF: Left Lower Inside Forearm
+  # LT: Left Thigh
+  # MOU: Mouth
+  # N: Nasal
+  # NA: Not Applicable
+  # NK: Not Known
+  # O: Other
+  # R: Right
+  # RA: Right Arm
+  # RALT: Right Upper Anterolateral Thigh
+  # RB: Right Buttock
+  # RL: Right Leg
+  # RLIF: Right Lower Inside Forearm
+  # RT: Right Thigh
+  # U: Unconfirmed
+  # UA: Upper Arm
+  # ULA: Upper Left Arm
+  # URA: Upper Right Arm
   def coded_site(site)
     {
-      # These are confirmed
       left_arm: "LA",
       right_arm: "RA",
-      # These are made up/guessed
-      left_arm_upper_position: "LUP",
-      left_arm_lower_position: "LLP",
-      right_arm_upper_position: "RUP",
-      right_arm_lower_position: "RLP",
+      left_arm_upper_position: "ULA",
+      left_arm_lower_position: "LLIF",
+      right_arm_upper_position: "URA",
+      right_arm_lower_position: "RLIF",
       left_thigh: "LT",
       right_thigh: "RT",
       left_buttock: "LB",
       right_buttock: "RB",
       nose: "N"
+      # We don't implement the other codes currently
     }[
       site
     ]
