@@ -32,7 +32,7 @@ class AppProgrammeNavigationComponent < ViewComponent::Base
       )
 
       nav.with_item(
-        href: programme_patients_path(programme),
+        href: patients_programme_path(programme),
         text: I18n.t("patients.index.title"),
         selected: active == :patients
       )

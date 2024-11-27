@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
+require "pagy/extras/array"
+
 class ProgrammesController < ApplicationController
+  include Pagy::Backend
+  include PatientSortingConcern
+
   before_action :set_programme, except: :index
 
   layout "full"
@@ -39,6 +44,29 @@ class ProgrammesController < ApplicationController
           ]
         )
         .order("locations.name")
+        .strict_loading
+  end
+
+  def patients
+    cohorts = policy_scope(Cohort).for_year_groups(@programme.year_groups)
+
+    patients =
+      policy_scope(Patient)
+        .where(cohort: cohorts)
+        .order_by_name
+        .not_deceased
+        .to_a
+
+    sort_and_filter_patients!(patients)
+    @pagy, @patients = pagy_array(patients)
+
+    sessions = policy_scope(Session).has_programme(@programme)
+
+    @patient_sessions =
+      PatientSession
+        .where(patient: @patients, session: sessions)
+        .eager_load(:session, patient: :cohort)
+        .preload_for_state
         .strict_loading
   end
 
