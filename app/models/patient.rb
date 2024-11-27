@@ -61,6 +61,7 @@ class Patient < ApplicationRecord
   has_many :notify_log_entries
   has_many :parent_relationships
   has_many :patient_sessions
+  has_many :school_moves
   has_many :session_notifications
   has_many :triages
 

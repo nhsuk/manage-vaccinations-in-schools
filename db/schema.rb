@@ -580,6 +580,21 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_28_081013) do
     t.index ["session_id", "programme_id"], name: "index_programmes_sessions_on_session_id_and_programme_id", unique: true
   end
 
+  create_table "school_moves", force: :cascade do |t|
+    t.bigint "patient_id", null: false
+    t.integer "source", null: false
+    t.bigint "school_id"
+    t.bigint "organisation_id"
+    t.boolean "home_educated"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organisation_id"], name: "index_school_moves_on_organisation_id"
+    t.index ["patient_id", "home_educated", "organisation_id"], name: "idx_on_patient_id_home_educated_organisation_id_7c1b5f5066", unique: true
+    t.index ["patient_id", "school_id"], name: "index_school_moves_on_patient_id_and_school_id", unique: true
+    t.index ["patient_id"], name: "index_school_moves_on_patient_id"
+    t.index ["school_id"], name: "index_school_moves_on_school_id"
+  end
+
   create_table "session_attendances", force: :cascade do |t|
     t.bigint "patient_session_id", null: false
     t.bigint "session_date_id", null: false
@@ -787,6 +802,9 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_28_081013) do
   add_foreign_key "patients", "locations", column: "school_id"
   add_foreign_key "programmes_sessions", "programmes"
   add_foreign_key "programmes_sessions", "sessions"
+  add_foreign_key "school_moves", "locations", column: "school_id"
+  add_foreign_key "school_moves", "organisations"
+  add_foreign_key "school_moves", "patients"
   add_foreign_key "session_attendances", "patient_sessions"
   add_foreign_key "session_attendances", "session_dates"
   add_foreign_key "session_dates", "sessions"
