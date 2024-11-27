@@ -180,60 +180,6 @@ class Session < ApplicationRecord
       [other.dates.first, other.location.type, other.location.name]
   end
 
-  def create_patient_sessions!
-    cohorts = organisation.cohorts.for_year_groups(year_groups, academic_year:)
-
-    patients_scope =
-      Patient
-        .includes(:upcoming_sessions, vaccination_records: :programme)
-        .where(cohort: cohorts)
-        .or(Patient.in_pending_cohorts(cohorts))
-        .not_deceased
-
-    patients_in_cohorts =
-      if location.school?
-        patients_scope.where(school: location).or(
-          patients_scope.in_pending_school(location)
-        )
-      elsif location.generic_clinic?
-        patients_scope.where(home_educated: true).or(
-          patients_scope.where(school: nil)
-        )
-      elsif location.community_clinic?
-        patients_scope.none # TODO: handle community clinics
-      end
-
-    unvaccinated_patients_in_cohorts =
-      patients_in_cohorts.unvaccinated_for(programmes:)
-
-    # Mark existing patient sessions for transfer
-    unvaccinated_patients_in_cohorts.each do |patient|
-      other_sessions = patient.upcoming_sessions.reject { _1 == self }
-      next if other_sessions.empty?
-
-      patient
-        .patient_sessions
-        .where(session: other_sessions)
-        .update_all(proposed_session_id: id)
-
-      # Since we've already proposed a transfer via the proposed_session
-      # mechanism, we can remove any `school_id` from the pending changes hash.
-      # If we don't, the user will see the school change as an import issue,
-      # as well as the proposed transfer in the session moves page.
-      patient.save! if patient.pending_changes.delete("school_id")
-    end
-
-    # Remove patients that have other upcoming sessions
-    unvaccinated_patients_in_cohorts.reject! { _1.upcoming_sessions.any? }
-
-    # Add unvaccinated patients to this session
-    PatientSession.import!(
-      %i[patient_id session_id],
-      unvaccinated_patients_in_cohorts.map { [_1.id, id] },
-      on_duplicate_key_ignore: true
-    )
-  end
-
   def unvaccinated_patients
     patients.unvaccinated_for(programmes:)
   end
