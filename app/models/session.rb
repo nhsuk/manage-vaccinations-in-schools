@@ -262,14 +262,6 @@ class Session < ApplicationRecord
     close_consent_at&.today? || close_consent_at&.future? || false
   end
 
-  def patient_sessions_moving_from_this_session
-    patient_sessions.pending_transfer
-  end
-
-  def patient_sessions_moving_to_this_session
-    organisation.patient_sessions.where(proposed_session: self)
-  end
-
   delegate :has_movers?, to: :location
 
   private
