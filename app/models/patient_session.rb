@@ -131,9 +131,12 @@ class PatientSession < ApplicationRecord
     PatientSession.transaction do
       PatientSession.find_or_create_by!(patient:, session: proposed_session)
 
-      school = proposed_session.location
-      school = nil if school.generic_clinic?
-      patient.update!(school:)
+      location = proposed_session.location
+      if location.school?
+        patient.update!(school: location, home_educated: nil)
+      else
+        patient.update!(school: nil, home_educated: false)
+      end
 
       safe_to_destroy? ? destroy! : update!(proposed_session: nil)
     end
