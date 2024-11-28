@@ -1,1 +1,1 @@
-release: bin/heroku-release
+release: bin/rails db:prepare:ignore_concurrent_migration_exceptions
