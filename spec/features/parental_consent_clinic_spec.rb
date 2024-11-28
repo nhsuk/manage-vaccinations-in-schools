@@ -26,9 +26,9 @@ describe "Parental consent school" do
     when_i_submit_the_consent_form
     then_i_see_a_confirmation_page
 
-    when_the_nurse_checks_the_community_clinic
-    then_the_nurse_should_see_one_mover
-    and_the_nurse_confirms_the_mover
+    when_the_nurse_checks_the_school_moves
+    then_the_nurse_should_see_one_move
+    and_the_nurse_confirms_the_move
 
     when_the_nurse_checks_the_patient
     then_the_nurse_should_see_the_school
@@ -56,9 +56,9 @@ describe "Parental consent school" do
     when_i_submit_the_consent_form
     then_i_see_a_confirmation_page
 
-    when_the_nurse_checks_the_community_clinic
-    then_the_nurse_should_see_one_mover
-    and_the_nurse_confirms_the_mover
+    when_the_nurse_checks_the_school_moves
+    then_the_nurse_should_see_one_move
+    and_the_nurse_confirms_the_move
 
     when_the_nurse_checks_the_patient
     then_the_nurse_should_see_home_schooled
@@ -86,8 +86,8 @@ describe "Parental consent school" do
     when_i_submit_the_consent_form
     then_i_see_a_confirmation_page
 
-    when_the_nurse_checks_the_community_clinic
-    then_the_nurse_should_see_no_movers
+    when_the_nurse_checks_the_school_moves
+    then_the_nurse_should_see_no_moves
 
     when_the_nurse_checks_the_patient
     then_the_nurse_should_see_unknown_school
@@ -227,35 +227,36 @@ describe "Parental consent school" do
     perform_enqueued_jobs # match consent form with patient
   end
 
-  def when_the_nurse_checks_the_community_clinic
+  def when_the_nurse_checks_the_school_moves
     sign_in @organisation.users.first
     visit "/dashboard"
 
+    within ".nhsuk-navigation" do
+      click_on "School moves"
+    end
+  end
+
+  def then_the_nurse_should_see_one_move
+    expect(page).to have_content("1 school move")
+  end
+
+  def and_the_nurse_confirms_the_move
+    expect(page).to have_content(@child.full_name)
+    click_on "Confirm"
+  end
+
+  def then_the_nurse_should_see_no_moves
+    expect(page).to have_content("There are currently no school moves.")
+  end
+
+  def when_the_nurse_checks_the_patient
     click_on "Programmes", match: :first
     click_on "HPV"
     within ".app-secondary-navigation" do
       click_on "Sessions"
     end
     click_on "Community clinics"
-  end
 
-  def then_the_nurse_should_see_one_mover
-    expect(page).to have_content("Review children who have changed schools")
-  end
-
-  def and_the_nurse_confirms_the_mover
-    click_on "Review children who have changed schools"
-    click_on "Moved out"
-    expect(page).to have_content(@child.full_name)
-    click_on "Confirm"
-    click_on "Back"
-  end
-
-  def then_the_nurse_should_see_no_movers
-    expect(page).not_to have_content("Review children who have changed schools")
-  end
-
-  def when_the_nurse_checks_the_patient
     click_on "Record vaccinations"
     click_on @child.full_name
   end

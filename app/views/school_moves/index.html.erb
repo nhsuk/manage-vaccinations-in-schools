@@ -1,99 +1,69 @@
-<% content_for :before_main do %>
-  <%= render AppBreadcrumbComponent.new(
-        items: [
-          { text: "Home", href: dashboard_path },
-          { text: t("sessions.index.title"), href: sessions_path },
-          { text: @session.location.name, href: session_path(@session) },
-        ],
-      ) %>
-<% end %>
+<%= h1 t(".title"), size: "xl" %>
 
-<%= h1 "Review children who have changed schools" %>
+<% if @school_moves.any? %>
+  <div class="nhsuk-table__panel-with-heading-tab">
+    <h3 class="nhsuk-table__heading-tab">
+      <%= pluralize(@school_moves.count, "school move") %>
+    </h3>
 
-<%= render AppSecondaryNavigationComponent.new do |nav| %>
-  <% nav.with_item(
-       href: session_moves_path(@session) + "?in",
-       selected: @tab == :in,
-     ) do %>
-    Moved in
-    <%= render AppCountComponent.new(
-          count: @location.school_moves_to_this_location.count,
-        ) %>
-  <% end %>
-
-  <% nav.with_item(
-       href: session_moves_path(@session) + "?out",
-       selected: @tab == :out,
-     ) do %>
-    Moved out
-    <%= render AppCountComponent.new(
-          count: @location.school_moves_from_this_location.count,
-        ) %>
-  <% end %>
-<% end %>
-
-<div class="app-patients">
-  <%= govuk_table(html_attributes: {
-                    class: "nhsuk-table-responsive app-patients__table",
-                  }) do |table| %>
-    <%= table.with_caption(
-          text: "#{t("children", count: @school_moves.count)} #{@tab == :in ? "joined" : "left"} this school",
-          html_attributes: {
-            class: %w[nhsuk-u-secondary-text-color
-                      nhsuk-u-font-weight-normal
-                      nhsuk-u-font-size-19],
-          },
-        ) %>
-
-    <% if @school_moves.any? %>
+    <%= govuk_table(html_attributes: { class: "nhsuk-table-responsive" }) do |table| %>
       <% table.with_head do |head| %>
         <% head.with_row do |row| %>
+          <% row.with_cell(text: "Updated") %>
           <% row.with_cell(text: "Full name") %>
-          <% row.with_cell(text: @tab == :in ?
-                             "School joined from" :
-                             "School moved to") %>
+          <% row.with_cell(text: "Move") %>
           <% row.with_cell(text: "Actions") %>
         <% end %>
       <% end %>
-    <% end %>
 
-    <% table.with_body do |body| %>
-      <% @school_moves.each do |school_move| %>
-        <% body.with_row do |row| %>
-          <% row.with_cell do %>
-            <span class="nhsuk-table-responsive__heading">Full name</span>
-            <%= link_to school_move.patient.full_name,
-                        patient_path(school_move.patient) %>
-          <% end %>
-
-          <% row.with_cell do %>
-            <span class="nhsuk-table-responsive__heading">
-              <%= @tab == :in ? "School joined from" : "School moved to" %>
-            </span>
-
-            <% if @tab == :in %>
-              <%= patient_school(school_move.patient) %>
-            <% else %>
-              <%= patient_school(school_move) %>
+      <% table.with_body do |body| %>
+        <% @school_moves.each do |school_move| %>
+          <% body.with_row do |row| %>
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Updated</span>
+              <%= school_move.updated_at.to_fs(:long) %>
             <% end %>
-          <% end %>
 
-          <% row.with_cell do %>
-            <span class="nhsuk-table-responsive__heading">Actions</span>
-            <%= form_with url: session_move_path(@session, school_move) + "?#{@tab}",
-                          method: :patch do |f| %>
-              <%= f.submit "Confirm move",
-                           class: "nhsuk-button app-button--secondary app-button--small",
-                           name: "confirm",
-                           value: "Confirm move" %>
-              <%= f.submit "Ignore move",
-                           class: "nhsuk-button app-button--secondary-warning app-button--small",
-                           name: "ignore",
-                           value: "Ignore move" %>
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Full name</span>
+              <%= school_move.patient.full_name %>
+            <% end %>
+
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Move</span>
+
+              <span>
+                <span class="nhsuk-u-secondary-text-color nhsuk-u-font-size-16">
+                  <%= school_move_source(school_move) %>
+                </span>
+                <br />
+                <%= patient_school(school_move.patient) %>
+                <br />
+                <span class="nhsuk-u-secondary-text-color nhsuk-u-font-size-16">to</span>
+                <%= patient_school(school_move) %>
+              </span>
+            <% end %>
+
+            <% row.with_cell do %>
+              <span class="nhsuk-table-responsive__heading">Actions</span>
+              <%= form_with url: school_move_path(school_move), method: :patch do |f| %>
+                <%= f.submit "Confirm move",
+                             class: "nhsuk-button app-button--secondary app-button--small",
+                             name: "confirm",
+                             value: "Confirm move" %>
+                <%= f.submit "Ignore move",
+                             class: "nhsuk-button app-button--secondary-warning app-button--small",
+                             name: "ignore",
+                             value: "Ignore move" %>
+              <% end %>
             <% end %>
           <% end %>
         <% end %>
       <% end %>
     <% end %>
-  <% end %>
-</div>
+  </div>
+
+  <%= govuk_pagination(pagy: @pagy) %>
+<% else %>
+  <p class="nhsuk-body">There are currently no school moves.</p>
+<% end %>

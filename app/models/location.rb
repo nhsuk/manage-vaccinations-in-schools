@@ -77,25 +77,6 @@ class Location < ApplicationRecord
     generic_clinic? || community_clinic?
   end
 
-  def school_moves_to_this_location
-    school? ? SchoolMove.where(school: self) : SchoolMove.where(organisation:)
-  end
-
-  def school_moves_from_this_location
-    patients =
-      if school?
-        Patient.where(school: self)
-      else
-        Patient.in_organisation(organisation)
-      end
-
-    SchoolMove.where(patient: patients)
-  end
-
-  def has_movers?
-    school_moves_to_this_location.any? || school_moves_from_this_location.any?
-  end
-
   private
 
   def organisation_ods_code
