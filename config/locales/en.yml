@@ -740,7 +740,7 @@ en:
   patients_table:
     conflicting_consent:
       caption: "%{children} with conflicting consent responses"
-      label: Conflicts
+      label: Conflicting consent
     consent_given:
       caption: "%{children} with consent given"
       label: Consent given

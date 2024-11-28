@@ -13,18 +13,23 @@ describe AppConsentStatusComponent, type: :component do
       create(:patient_session, :consent_given_triage_needed)
     end
 
-    it { should have_css("p.app-status", text: "Given") }
+    it { should have_css("p.app-status--aqua-green", text: "Consent given") }
   end
 
   context "when consent is refused" do
     let(:patient_session) { create(:patient_session, :consent_refused) }
 
-    it { should have_css("p.app-status", text: "Refused") }
+    it { should have_css("p.app-status--red", text: "Consent refused") }
   end
 
   context "when consent conflicts" do
     let(:patient_session) { create(:patient_session, :consent_conflicting) }
 
-    it { should have_css("p.app-status", text: "Conflicts") }
+    it do
+      expect(subject).to have_css(
+        "p.app-status--dark-orange",
+        text: "Conflicting consent"
+      )
+    end
   end
 end

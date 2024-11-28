@@ -3,11 +3,11 @@
 class AppConsentStatusComponent < ViewComponent::Base
   def call
     if @patient_session.consent_given?
-      icon_tick "Given", "blue"
+      icon_tick "Consent given", "aqua-green"
     elsif @patient_session.consent_refused?
-      icon_cross "Refused", "red"
+      icon_cross "Consent refused", "red"
     elsif @patient_session.consent_conflicts?
-      icon_cross "Conflicts", "dark-orange"
+      icon_cross "Conflicting consent", "dark-orange"
     end
   end
 

@@ -41,7 +41,7 @@ describe AppConsentComponent, type: :component do
       "Consent refused by #{consent.parent.full_name} (#{relation})"
     end
 
-    it { should have_css("p.app-status", text: "Refused") }
+    it { should have_css("p.app-status--red", text: "Consent refused") }
 
     it { should have_css("table tr", text: /#{consent.parent.full_name}/) }
     it { should have_css("table tr", text: /#{relation}/) }
@@ -62,7 +62,7 @@ describe AppConsentComponent, type: :component do
       "Consent given by #{consent.parent.full_name} (#{relation})"
     end
 
-    it { should have_css("p.app-status", text: "Given") }
+    it { should have_css("p.app-status--aqua-green", text: "Consent given") }
 
     it { should_not have_css("a", text: "Contact #{consent.parent.full_name}") }
   end
