@@ -39,6 +39,8 @@ class SchoolMove < ApplicationRecord
        prefix: true,
        validate: true
 
+  scope :for_patient, -> { where("patient_id = patients.id") }
+
   validates :organisation,
             presence: {
               if: -> { school.nil? }

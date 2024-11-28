@@ -139,20 +139,14 @@ class Patient < ApplicationRecord
           cohort_ids = organisation.cohorts.ids
           school_ids = organisation.schools.ids
 
-          where(cohort_id: cohort_ids)
-            .or(where(school_id: school_ids))
-            .or(
-              where(
-                "pending_changes ->> 'cohort_id' IS NOT NULL AND pending_changes ->> 'cohort_id' IN (?)",
-                cohort_ids
-              )
+          school_moves =
+            SchoolMove.where(school_id: school_ids).or(
+              SchoolMove.where(organisation:)
             )
-            .or(
-              where(
-                "pending_changes ->> 'school_id' IS NOT NULL AND pending_changes ->> 'school_id' IN (?)",
-                school_ids
-              )
-            )
+
+          where(cohort_id: cohort_ids).or(where(school_id: school_ids)).or(
+            where(school_moves.for_patient.arel.exists)
+          )
         end
 
   validates :given_name, :family_name, :date_of_birth, presence: true
