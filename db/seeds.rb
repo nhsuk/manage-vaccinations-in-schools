@@ -139,7 +139,7 @@ def create_session(user, organisation, completed:)
 
   # Add extra consent forms with a successful NHS number lookup
   2.times do
-    temporary_patient = FactoryBot.build(:patient)
+    temporary_patient = FactoryBot.build(:patient, organisation:)
     FactoryBot.create(
       :consent_form,
       :recorded,
@@ -250,6 +250,28 @@ def create_imports(user, organisation)
   end
 end
 
+def create_school_moves(organisation)
+  patients = Patient.in_organisation(organisation).sample(10)
+
+  patients.each do |patient|
+    if [true, false].sample
+      FactoryBot.create(
+        :school_move,
+        :to_home_educated,
+        patient:,
+        organisation:
+      )
+    else
+      FactoryBot.create(
+        :school_move,
+        :to_school,
+        patient:,
+        school: organisation.schools.sample
+      )
+    end
+  end
+end
+
 set_feature_flags
 
 seed_vaccines
@@ -289,6 +311,7 @@ unless Settings.cis2.enabled
     end
   create_patients(organisation)
   create_imports(user, organisation)
+  create_school_moves(organisation)
 end
 
 # CIS2 organisation - the ODS code and user UID need to match the values in the CIS2 env
@@ -311,6 +334,7 @@ Audited
   end
 create_patients(organisation)
 create_imports(user, organisation)
+create_school_moves(organisation)
 
 UnscheduledSessionsFactory.new.call
 
