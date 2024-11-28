@@ -2,7 +2,7 @@
 
 class AppHealthQuestionsComponent < ViewComponent::Base
   erb_template <<-ERB
-    <dl class="nhsuk-summary-list app-summary-list--full-width nhsuk-u-margin-bottom-0">
+    <dl class="nhsuk-summary-list app-summary-list--full-width">
       <% health_answers.each do |question, answers| %>
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
