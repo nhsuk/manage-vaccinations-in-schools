@@ -8,7 +8,6 @@
   gap: nhsuk-spacing(3) nhsuk-spacing(4);
 
   @include mq($from: tablet) {
-    align-items: baseline;
     flex-direction: row;
     flex-wrap: wrap;
   }
