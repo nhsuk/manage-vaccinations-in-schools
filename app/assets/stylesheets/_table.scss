@@ -22,6 +22,28 @@
   }
 }
 
+.app-table__cell-status {
+  &--aqua-green:first-of-type {
+    border-left: nhsuk-spacing(2) solid $color_nhsuk-aqua-green;
+    padding-left: nhsuk-spacing(3);
+  }
+
+  &--grey {
+    background-color: $color_nhsuk-grey-5;
+    color: $nhsuk-secondary-text-color;
+
+    &:first-of-type {
+      border-left: nhsuk-spacing(2) solid $color_nhsuk-grey-3;
+      padding-left: nhsuk-spacing(3);
+    }
+  }
+
+  &--red:first-of-type {
+    border-left: nhsuk-spacing(2) solid $color_nhsuk-red;
+    padding-left: nhsuk-spacing(3);
+  }
+}
+
 // Use same bottom margin for responsive table as non-responsive table
 .nhsuk-table-responsive {
   @include nhsuk-responsive-margin(7, "bottom");

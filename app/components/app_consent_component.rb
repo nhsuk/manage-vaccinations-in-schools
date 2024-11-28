@@ -32,4 +32,16 @@ class AppConsentComponent < ViewComponent::Base
     patient_session.no_consent? && patient.send_notifications? &&
       session.open_for_consent? && patient.parents.any?
   end
+
+  def status_colour(consent)
+    if consent.invalidated? || consent.withdrawn?
+      "grey"
+    elsif consent.response_given?
+      "aqua-green"
+    elsif consent.response_refused?
+      "red"
+    else
+      "grey"
+    end
+  end
 end
