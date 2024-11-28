@@ -47,4 +47,46 @@ describe SchoolMove do
       it { should be_valid }
     end
   end
+
+  describe "#ignore!" do
+    subject(:ignore!) { school_move.ignore! }
+
+    let(:patient) { create(:patient) }
+
+    shared_examples "an ignored school move" do
+      it "doesn't change the patient's school" do
+        expect { ignore! }.not_to change(patient, :school)
+      end
+
+      it "doesn't change the patient's home educated status" do
+        expect { ignore! }.not_to change(patient, :home_educated)
+      end
+
+      it "destroys the school move" do
+        expect(school_move).to be_persisted
+        expect { ignore! }.to change(described_class, :count).by(-1)
+        expect { school_move.reload }.to raise_error(
+          ActiveRecord::RecordNotFound
+        )
+      end
+    end
+
+    context "to a school" do
+      let(:school_move) { create(:school_move, :to_school, patient:) }
+
+      it_behaves_like "an ignored school move"
+    end
+
+    context "to home schooled" do
+      let(:school_move) { create(:school_move, :to_home_educated, patient:) }
+
+      it_behaves_like "an ignored school move"
+    end
+
+    context "to an unknown school" do
+      let(:school_move) { create(:school_move, :to_unknown_school, patient:) }
+
+      it_behaves_like "an ignored school move"
+    end
+  end
 end

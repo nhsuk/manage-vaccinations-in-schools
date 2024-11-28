@@ -46,4 +46,8 @@ class SchoolMove < ApplicationRecord
             absence: {
               unless: -> { school.nil? }
             }
+
+  def ignore!
+    destroy! if persisted?
+  end
 end
