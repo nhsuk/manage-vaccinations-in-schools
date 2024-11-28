@@ -258,7 +258,7 @@ Role ARN: arn:aws:iam::393416225559:role/GitHubActionsRole
     aws-region: eu-west-2
 ```
 
-## `bin/aws-account-setup` script
+## `script/aws-account-setup.sh` script
 
 ### Purpose
 
@@ -272,7 +272,7 @@ useful for ensuring compliance with security best practices in AWS environments.
 ### Usage
 
 ```
-bin/aws-account-setup
+bash script/aws-account-setup.sh
 ```
 
 ## Security Alerts using AWS CloudWatch
