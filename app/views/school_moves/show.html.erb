@@ -1,0 +1,45 @@
+<% content_for :before_main do %>
+  <%= render AppBreadcrumbComponent.new(
+        items: [
+          { text: "Home", href: dashboard_path },
+          { text: t("school_moves.index.title"), href: school_moves_path },
+        ],
+      ) %>
+<% end %>
+
+<% page_title = "Review school move" %>
+<%= h1 page_title: do %>
+  <span class="nhsuk-caption-l nhsuk-u-margin-top-2">
+    <%= @patient.full_name %>
+  </span>
+  <%= page_title %>
+<% end %>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-half">
+    <%= render AppCardComponent.new(colour: "blue") do |card| %>
+      <% card.with_heading { "#{@school_move.source.humanize} record" } %>
+      <%= render AppPatientSummaryComponent.new(@patient_with_changes) %>
+    <% end %>
+  </div>
+
+  <div class="nhsuk-grid-column-one-half">
+    <%= render AppCardComponent.new(colour: "blue") do |card| %>
+      <% card.with_heading { "Child record" } %>
+      <%= render AppPatientSummaryComponent.new(@patient) %>
+    <% end %>
+  </div>
+</div>
+
+<%= form_with(
+      model: @form,
+      url: school_move_path(@school_move),
+      method: :patch,
+      class: "nhsuk-u-width-two-thirds",
+    ) do |f| %>
+  <% content_for(:before_content) { f.govuk_error_summary } %>
+
+  <%= f.govuk_collection_radio_buttons :action, %w[confirm ignore], :itself, nil %>
+
+  <%= f.govuk_submit "Update child record" %>
+<% end %>

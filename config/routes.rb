@@ -166,7 +166,7 @@ Rails.application.routes.draw do
               only: %i[create]
   end
 
-  resources :school_moves, path: "school-moves", only: %i[index update]
+  resources :school_moves, path: "school-moves", only: %i[index show update]
 
   resources :sessions, only: %i[edit index show], param: :slug do
     collection do

@@ -242,7 +242,9 @@ describe "Parental consent school" do
 
   def and_the_nurse_confirms_the_move
     expect(page).to have_content(@child.full_name)
-    click_on "Confirm"
+    click_on "Review"
+    choose "Update record with new school"
+    click_on "Update child record"
   end
 
   def then_the_nurse_should_see_no_moves

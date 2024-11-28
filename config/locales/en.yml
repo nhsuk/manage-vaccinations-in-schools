@@ -294,6 +294,10 @@ en:
           attributes:
             apply_changes:
               inclusion: Choose which record to keep
+        school_move_form:
+          attributes:
+            action:
+              inclusion: Choose whether to update the child’s record with this new information
         vaccination_report:
           attributes:
             file_format:
