@@ -305,6 +305,8 @@ class Patient < ApplicationRecord
 
     old_session = from
 
+    return if new_session == old_session
+
     existing_patient_sessions = patient_sessions.where(session: old_session)
 
     if existing_patient_sessions.exists?
