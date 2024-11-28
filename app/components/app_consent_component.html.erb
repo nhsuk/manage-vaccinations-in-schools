@@ -29,13 +29,19 @@
     <%= table.with_body do |body| %>
       <% consents.each do |consent| %>
         <%= body.with_row do |row| %>
-          <%= row.with_cell do %>
+          <%= row.with_cell(classes: "app-table__cell-status--#{status_colour(consent)}") do %>
             <%= govuk_link_to consent&.parent&.full_name || consent.patient.full_name, session_patient_consent_path(session, patient, consent, section:, tab:) %>
             <br>
             <span class="nhsuk-u-font-size-16"><%= consent.who_responded %></span>
           <% end %>
-          <%= row.with_cell(text: consent.responded_at.to_fs(:long)) %>
-          <%= row.with_cell(text: helpers.consent_decision(consent)) %>
+          <%= row.with_cell(
+            classes: "app-table__cell-status--#{status_colour(consent)}",
+            text: consent.responded_at.to_fs(:long)
+          ) %>
+          <%= row.with_cell(
+            classes: "app-table__cell-status--#{status_colour(consent)}",
+            text: helpers.consent_decision(consent))
+          %>
         <% end %>
       <% end %>
     <% end %>
