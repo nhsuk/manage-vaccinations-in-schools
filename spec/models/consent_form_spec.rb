@@ -791,48 +791,27 @@ describe ConsentForm do
       end
 
       let(:new_school) { create(:school) }
-      let!(:new_session) do
-        create(:session, programme:, organisation:, location: new_school)
-      end
 
       it "creates a consent" do
         expect { match_with_patient! }.to change(Consent, :count).by(1)
       end
 
-      it "changes the patient's school" do
-        expect { match_with_patient! }.to change(patient, :school).from(
-          school
-        ).to(new_school)
+      it "doesn't change the patient's school" do
+        expect { match_with_patient! }.not_to change(patient, :school)
       end
 
       it "doesn't change the patient's home educated status" do
         expect { match_with_patient! }.not_to change(patient, :home_educated)
       end
 
-      it "marks the patient with a proposed move" do
-        expect(patient.sessions).to contain_exactly(session)
-        expect(patient.proposed_sessions).to be_empty
+      it "creates a school move" do
+        expect { match_with_patient! }.to change(
+          patient.school_moves,
+          :count
+        ).by(1)
 
-        match_with_patient!
-
-        expect(patient.reload.sessions).to include(session)
-        expect(patient.proposed_sessions).to contain_exactly(new_session)
-      end
-
-      context "if the session is a clinic" do
-        let(:location) { create(:generic_clinic, organisation:) }
-
-        it "changes the patient's school" do
-          expect { match_with_patient! }.to change(patient, :school).from(
-            school
-          ).to(new_school)
-        end
-
-        it "doesn't move the patient to a school session" do
-          expect(patient.sessions).to contain_exactly(session)
-          match_with_patient!
-          expect(patient.reload.sessions).to contain_exactly(session)
-        end
+        school_move = patient.school_moves.first
+        expect(school_move.school).to eq(new_school)
       end
     end
 
@@ -848,34 +827,28 @@ describe ConsentForm do
       end
 
       let(:new_location) { create(:generic_clinic, organisation:) }
-      let!(:new_session) do
-        create(:session, programme:, organisation:, location: new_location)
-      end
 
       it "creates a consent" do
         expect { match_with_patient! }.to change(Consent, :count).by(1)
       end
 
-      it "changes the patient's school" do
-        expect { match_with_patient! }.to change(patient, :school).from(
-          school
-        ).to(nil)
+      it "doesn't change the patient's school" do
+        expect { match_with_patient! }.not_to change(patient, :school)
       end
 
       it "changes the patient's home educated status" do
-        expect { match_with_patient! }.to change(patient, :home_educated).to(
-          true
-        )
+        expect { match_with_patient! }.not_to change(patient, :home_educated)
       end
 
-      it "marks the patient with a proposed move" do
-        expect(patient.sessions).to contain_exactly(session)
-        expect(patient.proposed_sessions).to be_empty
+      it "creates a school move" do
+        expect { match_with_patient! }.to change(
+          patient.school_moves,
+          :count
+        ).by(1)
 
-        match_with_patient!
-
-        expect(patient.reload.sessions).to include(session)
-        expect(patient.proposed_sessions).to contain_exactly(new_session)
+        school_move = patient.school_moves.first
+        expect(school_move.school).to be_nil
+        expect(school_move.home_educated).to be(true)
       end
     end
   end

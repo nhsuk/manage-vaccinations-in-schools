@@ -30,7 +30,8 @@ describe "Parental consent school" do
     then_i_see_a_confirmation_page
 
     when_the_nurse_checks_the_community_clinic
-    then_the_nurse_should_see_no_movers
+    then_the_nurse_should_see_one_mover
+    and_the_nurse_confirms_the_mover
 
     when_the_nurse_checks_the_patient
     then_the_nurse_should_see_the_school
@@ -59,7 +60,8 @@ describe "Parental consent school" do
     then_i_see_a_confirmation_page
 
     when_the_nurse_checks_the_community_clinic
-    then_the_nurse_should_see_no_movers
+    then_the_nurse_should_see_one_mover
+    and_the_nurse_confirms_the_mover
 
     when_the_nurse_checks_the_patient
     then_the_nurse_should_see_home_schooled
@@ -238,6 +240,18 @@ describe "Parental consent school" do
       click_on "Sessions"
     end
     click_on "Community clinics"
+  end
+
+  def then_the_nurse_should_see_one_mover
+    expect(page).to have_content("Review children who have changed schools")
+  end
+
+  def and_the_nurse_confirms_the_mover
+    click_on "Review children who have changed schools"
+    click_on "Moved out"
+    expect(page).to have_content(@child.full_name)
+    click_on "Confirm"
+    click_on "Back"
   end
 
   def then_the_nurse_should_see_no_movers

@@ -18,8 +18,7 @@ module ConsentFormMailerConcern
       mailer.confirmation_triage.deliver_later
     elsif consent_form.actual_upcoming_session ==
           consent_form.organisation.generic_clinic_session ||
-          consent_form.actual_upcoming_session.completed? ||
-          consent_form.actual_upcoming_session.closed?
+          consent_form.actual_upcoming_session&.completed?
       mailer.confirmation_clinic.deliver_later
     else
       mailer.confirmation_given.deliver_later

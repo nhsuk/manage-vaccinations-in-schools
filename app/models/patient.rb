@@ -321,22 +321,6 @@ class Patient < ApplicationRecord
     end
   end
 
-  def move_to_session!(new_session, from:)
-    return if deceased? || invalidated?
-
-    old_session = from
-
-    return if new_session == old_session
-
-    existing_patient_sessions = patient_sessions.where(session: old_session)
-
-    if existing_patient_sessions.exists?
-      existing_patient_sessions.update_all(proposed_session_id: new_session.id)
-    else
-      patient_sessions.find_or_create_by!(session_id: new_session.id)
-    end
-  end
-
   def self.from_consent_form(consent_form)
     cohort =
       Cohort.find_or_create_by!(
@@ -356,6 +340,7 @@ class Patient < ApplicationRecord
       preferred_family_name: consent_form.preferred_family_name,
       preferred_given_name: consent_form.preferred_given_name,
       school: consent_form.school,
+      home_educated: consent_form.home_educated,
       cohort:
     )
   end

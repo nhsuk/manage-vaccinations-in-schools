@@ -56,7 +56,14 @@ class ConsentFormsController < ApplicationController
 
     ActiveRecord::Base.transaction do
       @patient.save!
-      @patient.sessions << @consent_form.actual_upcoming_session
+
+      SchoolMove.new(
+        patient: @patient,
+        school: @patient.school,
+        home_educated: @patient.home_educated,
+        organisation:
+          @patient.school.present? ? nil : @consent_form.organisation
+      ).confirm!
 
       # This should now match because the patient with the same NHS number
       # exists. We need to perform_now to make sure the record is matched and
