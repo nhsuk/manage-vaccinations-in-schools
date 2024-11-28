@@ -5,6 +5,7 @@ $app-cis2-button-shadow-color: #003087;
 $button-shadow-size: 4px;
 
 .nhsuk-button {
+  .button_to &,
   .nhsuk-table & {
     margin-bottom: 0;
   }
