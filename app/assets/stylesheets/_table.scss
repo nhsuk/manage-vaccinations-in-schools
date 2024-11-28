@@ -22,15 +22,6 @@
   }
 }
 
-.app-table--patients {
-  margin: 0;
-
-  .nhsuk-table__cell {
-    padding-top: nhsuk-spacing(2);
-    padding-bottom: nhsuk-spacing(2);
-  }
-}
-
 // Use same bottom margin for responsive table as non-responsive table
 .nhsuk-table-responsive {
   @include nhsuk-responsive-margin(7, "bottom");
