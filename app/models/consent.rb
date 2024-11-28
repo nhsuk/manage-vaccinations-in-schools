@@ -54,8 +54,6 @@ class Consent < ApplicationRecord
              optional: true,
              foreign_key: :recorded_by_user_id
 
-  scope :for_patient, -> { where("patient_id = patients.id") }
-
   scope :withdrawn, -> { where.not(withdrawn_at: nil) }
   scope :not_withdrawn, -> { where(withdrawn_at: nil) }
 
