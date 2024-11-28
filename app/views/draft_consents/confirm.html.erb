@@ -49,7 +49,7 @@
 <% if @draft_consent.response_given? && @triage&.status.present? %>
   <%= render AppCardComponent.new do |card| %>
     <% card.with_heading { "Triage" } %>
-    <%= govuk_summary_list classes: "app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0" do |summary_list|
+    <%= govuk_summary_list do |summary_list|
           summary_list.with_row do |row|
             row.with_key { "Status" }
             row.with_value { @triage.status.humanize }

@@ -20,10 +20,7 @@ class AppVaccinationRecordSummaryComponent < ViewComponent::Base
   end
 
   def call
-    govuk_summary_list(
-      actions: @change_links.present?,
-      classes: "app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0"
-    ) do |summary_list|
+    govuk_summary_list(actions: @change_links.present?) do |summary_list|
       summary_list.with_row do |row|
         row.with_key { "Child" }
         row.with_value { @patient.full_name }
