@@ -49,7 +49,9 @@ describe SchoolMove do
   end
 
   describe "#confirm!" do
-    subject(:confirm!) { school_move.confirm! }
+    subject(:confirm!) { school_move.confirm!(move_to_school:) }
+
+    let(:move_to_school) { nil }
 
     let(:programme) { create(:programme) }
     let(:organisation) { create(:organisation, programmes: [programme]) }
@@ -122,7 +124,7 @@ describe SchoolMove do
     end
 
     shared_examples "keeps the patient in the community clinics" do
-      it "adds the patient to the community clinics" do
+      it "keeps the patient in the community clinics" do
         expect(patient.sessions).to contain_exactly(generic_clinic_session)
         confirm!
         expect(patient.reload.sessions).to contain_exactly(
@@ -355,7 +357,7 @@ describe SchoolMove do
         end
 
         let(:school) { create(:school, organisation:) }
-        let(:new_session) do
+        let!(:new_session) do # rubocop:disable RSpec/LetSetup
           create(
             :session,
             :scheduled,
@@ -367,9 +369,15 @@ describe SchoolMove do
 
         include_examples "sets the patient school"
         include_examples "keeps the patient cohort"
-        # TODO: ask the user if they should stay in the clinic or not
         include_examples "keeps the patient in the community clinics"
         include_examples "destroys the school move"
+
+        context "when the user asks to move the patient to the new school" do
+          let(:move_to_school) { true }
+
+          include_examples "removes the patient from the community clinics"
+          include_examples "adds the patient to the new school session"
+        end
       end
 
       context "to a school with a completed session" do
@@ -378,7 +386,7 @@ describe SchoolMove do
         end
 
         let(:school) { create(:school, organisation:) }
-        let(:new_session) do
+        let!(:new_session) do # rubocop:disable RSpec/LetSetup
           create(
             :session,
             :completed,
@@ -392,6 +400,13 @@ describe SchoolMove do
         include_examples "keeps the patient cohort"
         include_examples "keeps the patient in the community clinics"
         include_examples "destroys the school move"
+
+        context "when the user asks to move the patient to the new school" do
+          let(:move_to_school) { true }
+
+          include_examples "removes the patient from the community clinics"
+          include_examples "adds the patient to the new school session"
+        end
       end
 
       context "to a school with a closed session" do
@@ -400,7 +415,7 @@ describe SchoolMove do
         end
 
         let(:school) { create(:school, organisation:) }
-        let(:new_session) do
+        let!(:new_session) do # rubocop:disable RSpec/LetSetup
           create(:session, :closed, location: school, organisation:, programme:)
         end
 
@@ -408,6 +423,12 @@ describe SchoolMove do
         include_examples "keeps the patient cohort"
         include_examples "keeps the patient in the community clinics"
         include_examples "destroys the school move"
+
+        context "when the user asks to move the patient to the new school" do
+          let(:move_to_school) { true }
+
+          include_examples "keeps the patient in the community clinics"
+        end
       end
 
       context "to home-schooled" do
@@ -492,7 +513,7 @@ describe SchoolMove do
         end
 
         let(:school) { create(:school, organisation:) }
-        let(:new_session) do
+        let!(:new_session) do # rubocop:disable RSpec/LetSetup
           create(
             :session,
             :scheduled,
@@ -503,9 +524,15 @@ describe SchoolMove do
         end
 
         include_examples "sets the patient school"
-        # TODO: ask the user if they should stay in the clinic or not
         include_examples "keeps the patient in the community clinics"
         include_examples "destroys the school move"
+
+        context "when the user asks to move the patient to the new school" do
+          let(:move_to_school) { true }
+
+          include_examples "removes the patient from the community clinics"
+          include_examples "adds the patient to the new school session"
+        end
       end
 
       context "to a school with a completed session" do
@@ -514,7 +541,7 @@ describe SchoolMove do
         end
 
         let(:school) { create(:school, organisation:) }
-        let(:new_session) do
+        let!(:new_session) do # rubocop:disable RSpec/LetSetup
           create(
             :session,
             :completed,
@@ -527,6 +554,13 @@ describe SchoolMove do
         include_examples "sets the patient school"
         include_examples "keeps the patient in the community clinics"
         include_examples "destroys the school move"
+
+        context "when the user asks to move the patient to the new school" do
+          let(:move_to_school) { true }
+
+          include_examples "removes the patient from the community clinics"
+          include_examples "adds the patient to the new school session"
+        end
       end
 
       context "to a school with a closed session" do
@@ -542,6 +576,12 @@ describe SchoolMove do
         include_examples "sets the patient school"
         include_examples "keeps the patient in the community clinics"
         include_examples "destroys the school move"
+
+        context "when the user asks to move the patient to the new school" do
+          let(:move_to_school) { true }
+
+          include_examples "keeps the patient in the community clinics"
+        end
       end
 
       context "to home-schooled" do
