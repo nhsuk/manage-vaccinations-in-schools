@@ -5,8 +5,9 @@ describe "Parental consent school" do
   after { Flipper.disable(:release_1b) }
 
   scenario "Child attending a clinic goes to a school" do
+    stub_pds_search_to_return_no_patients
+
     given_an_hpv_programme_is_underway
-    and_requests_can_be_made_to_pds
 
     when_i_go_to_the_consent_form
     and_i_fill_in_my_childs_name_and_birthday
@@ -36,8 +37,9 @@ describe "Parental consent school" do
   end
 
   scenario "Child attending a clinic is home-schooled" do
+    stub_pds_search_to_return_no_patients
+
     given_an_hpv_programme_is_underway
-    and_requests_can_be_made_to_pds
 
     when_i_go_to_the_consent_form
     and_i_fill_in_my_childs_name_and_birthday
@@ -64,8 +66,9 @@ describe "Parental consent school" do
   end
 
   scenario "Child attending a clinic is not in education" do
+    stub_pds_search_to_return_no_patients
+
     given_an_hpv_programme_is_underway
-    and_requests_can_be_made_to_pds
 
     when_i_go_to_the_consent_form
     and_i_fill_in_my_childs_name_and_birthday
@@ -110,13 +113,6 @@ describe "Parental consent school" do
     @child = create(:patient, session: @session)
 
     create(:school, organisation: @organisation, name: "Pilot School")
-  end
-
-  def and_requests_can_be_made_to_pds
-    stub_request(
-      :get,
-      "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient"
-    ).with(query: hash_including({})).to_return_json(body: { total: 0 })
   end
 
   def when_i_go_to_the_consent_form
