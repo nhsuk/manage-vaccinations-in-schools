@@ -47,14 +47,14 @@
 class Patient < ApplicationRecord
   include AddressConcern
   include AgeConcern
-  include Invalidatable
   include FullNameConcern
+  include Invalidatable
   include PendingChangesConcern
+  include Schoolable
 
   audited
 
   belongs_to :cohort, optional: true
-  belongs_to :school, class_name: "Location", optional: true
 
   has_many :consent_notifications
   has_many :consents
@@ -162,17 +162,6 @@ class Patient < ApplicationRecord
               with: /\A(?:\d\s*){10}\z/
             },
             allow_nil: true
-
-  validates :school,
-            presence: {
-              if: -> { home_educated.nil? }
-            },
-            absence: {
-              unless: -> { home_educated.nil? }
-            }
-
-  validates :home_educated, inclusion: { in: :valid_home_educated_values }
-  validate :school_is_correct_type
 
   validates :address_postcode, postcode: { allow_nil: true }
 
@@ -376,17 +365,6 @@ class Patient < ApplicationRecord
   end
 
   private
-
-  def valid_home_educated_values
-    school.nil? ? [true, false] : [nil]
-  end
-
-  def school_is_correct_type
-    location = school
-    if location && !location.school?
-      errors.add(:school, "must be a school location type")
-    end
-  end
 
   def destroy_childless_parents
     parents_to_check = parents.to_a # Store parents before destroying relationships
