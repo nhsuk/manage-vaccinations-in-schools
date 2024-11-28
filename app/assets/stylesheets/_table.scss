@@ -1,3 +1,13 @@
+.app-table--csv {
+  i {
+    color: shade($color_nhsuk-red, 50%);
+    font-family: ui-monospace, monospace;
+    font-style: normal;
+    font-weight: 500;
+    padding: 2px;
+  }
+}
+
 .app-table--small {
   th,
   td {
@@ -18,28 +28,6 @@
   .nhsuk-table__cell {
     padding-top: nhsuk-spacing(2);
     padding-bottom: nhsuk-spacing(2);
-  }
-}
-
-.app-table--csv {
-  th,
-  td {
-    @include nhsuk-typography-responsive(16);
-    @include nhsuk-responsive-padding(2, "bottom");
-    @include nhsuk-responsive-padding(3, "right");
-    @include nhsuk-responsive-padding(2, "top");
-  }
-
-  caption {
-    @include nhsuk-font($size: 19, $weight: bold);
-  }
-
-  i {
-    color: shade($color_nhsuk-red, 50%);
-    font-family: ui-monospace, monospace;
-    font-style: normal;
-    font-weight: 500;
-    padding: 2px;
   }
 }
 
