@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 describe "Parental consent school" do
+  before { Flipper.enable(:release_1b) }
+  after { Flipper.disable(:release_1b) }
+
   scenario "Child attending a clinic goes to a school" do
     given_an_hpv_programme_is_underway
+    and_requests_can_be_made_to_pds
 
     when_i_go_to_the_consent_form
     and_i_fill_in_my_childs_name_and_birthday
@@ -16,10 +20,24 @@ describe "Parental consent school" do
 
     when_i_choose_a_school
     then_i_see_the_parent_step
+
+    when_i_give_consent
+    and_i_answer_no_to_all_the_medical_questions
+    then_i_can_check_my_answers
+
+    when_i_submit_the_consent_form
+    then_i_see_a_confirmation_page
+
+    when_the_nurse_checks_the_community_clinic
+    then_the_nurse_should_see_no_movers
+
+    when_the_nurse_checks_the_patient
+    then_the_nurse_should_see_the_school
   end
 
   scenario "Child attending a clinic is home-schooled" do
     given_an_hpv_programme_is_underway
+    and_requests_can_be_made_to_pds
 
     when_i_go_to_the_consent_form
     and_i_fill_in_my_childs_name_and_birthday
@@ -30,10 +48,24 @@ describe "Parental consent school" do
 
     when_i_choose_yes
     then_i_see_the_parent_step
+
+    when_i_give_consent
+    and_i_answer_no_to_all_the_medical_questions
+    then_i_can_check_my_answers
+
+    when_i_submit_the_consent_form
+    then_i_see_a_confirmation_page
+
+    when_the_nurse_checks_the_community_clinic
+    then_the_nurse_should_see_no_movers
+
+    when_the_nurse_checks_the_patient
+    then_the_nurse_should_see_home_schooled
   end
 
   scenario "Child attending a clinic is not in education" do
     given_an_hpv_programme_is_underway
+    and_requests_can_be_made_to_pds
 
     when_i_go_to_the_consent_form
     and_i_fill_in_my_childs_name_and_birthday
@@ -44,6 +76,19 @@ describe "Parental consent school" do
 
     when_i_choose_no_they_are_not_in_education
     then_i_see_the_parent_step
+
+    when_i_give_consent
+    and_i_answer_no_to_all_the_medical_questions
+    then_i_can_check_my_answers
+
+    when_i_submit_the_consent_form
+    then_i_see_a_confirmation_page
+
+    when_the_nurse_checks_the_community_clinic
+    then_the_nurse_should_see_no_movers
+
+    when_the_nurse_checks_the_patient
+    then_the_nurse_should_see_unknown_school
   end
 
   def given_an_hpv_programme_is_underway
@@ -65,6 +110,13 @@ describe "Parental consent school" do
     @child = create(:patient, session: @session)
 
     create(:school, organisation: @organisation, name: "Pilot School")
+  end
+
+  def and_requests_can_be_made_to_pds
+    stub_request(
+      :get,
+      "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient"
+    ).with(query: hash_including({})).to_return_json(body: { total: 0 })
   end
 
   def when_i_go_to_the_consent_form
@@ -125,5 +177,91 @@ describe "Parental consent school" do
 
   def then_i_see_the_parent_step
     expect(page).to have_heading "About you"
+  end
+
+  def when_i_give_consent
+    expect(page).to have_content("About you")
+    fill_in "Your name", with: "Jane #{@child.family_name}"
+    choose "Mum" # Your relationship to the child
+    fill_in "Email address", with: "jane@example.com"
+    fill_in "Phone number", with: "07123456789"
+    check "Tick this box if you’d like to get updates by text message"
+    click_on "Continue"
+
+    expect(page).to have_content("Phone contact method")
+    choose "I do not have specific needs"
+    click_on "Continue"
+
+    expect(page).to have_content("Do you agree")
+    choose "Yes, I agree"
+    click_on "Continue"
+
+    expect(page).to have_content("Is your child registered with a GP?")
+    choose "Yes, they are registered with a GP"
+    fill_in "Name of GP surgery", with: "GP Surgery"
+    click_on "Continue"
+
+    expect(page).to have_content("Home address")
+    fill_in "Address line 1", with: "1 Test Street"
+    fill_in "Address line 2 (optional)", with: "2nd Floor"
+    fill_in "Town or city", with: "Testville"
+    fill_in "Postcode", with: "TE1 1ST"
+    click_on "Continue"
+  end
+
+  def and_i_answer_no_to_all_the_medical_questions
+    until page.has_content?("Check your answers and confirm")
+      choose "No"
+      click_on "Continue"
+    end
+  end
+
+  def then_i_can_check_my_answers
+    expect(page).to have_content("Check your answers and confirm")
+    expect(page).to have_content("Child’s name#{@child.full_name}")
+  end
+
+  def when_i_submit_the_consent_form
+    click_on "Confirm"
+  end
+
+  def then_i_see_a_confirmation_page
+    # TODO: "will get their HPV vaccination at the clinic"
+    expect(page).to have_content("will get their HPV vaccination")
+
+    perform_enqueued_jobs # match consent form with patient
+  end
+
+  def when_the_nurse_checks_the_community_clinic
+    sign_in @organisation.users.first
+    visit "/dashboard"
+
+    click_on "Programmes", match: :first
+    click_on "HPV"
+    within ".app-secondary-navigation" do
+      click_on "Sessions"
+    end
+    click_on "Community clinics"
+  end
+
+  def then_the_nurse_should_see_no_movers
+    expect(page).not_to have_content("Review children who have changed schools")
+  end
+
+  def when_the_nurse_checks_the_patient
+    click_on "Record vaccinations"
+    click_on @child.full_name
+  end
+
+  def then_the_nurse_should_see_the_school
+    expect(page).to have_content("SchoolPilot School")
+  end
+
+  def then_the_nurse_should_see_home_schooled
+    expect(page).to have_content("SchoolHome-schooled")
+  end
+
+  def then_the_nurse_should_see_unknown_school
+    expect(page).to have_content("SchoolUnknown")
   end
 end
