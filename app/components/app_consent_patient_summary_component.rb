@@ -8,9 +8,7 @@ class AppConsentPatientSummaryComponent < ViewComponent::Base
   end
 
   def call
-    govuk_summary_list(
-      classes: "app-summary-list--no-bottom-border nhsuk-u-margin-bottom-0"
-    ) do |summary_list|
+    govuk_summary_list do |summary_list|
       summary_list.with_row do |row|
         row.with_key { "Full name" }
         row.with_value { patient.full_name }

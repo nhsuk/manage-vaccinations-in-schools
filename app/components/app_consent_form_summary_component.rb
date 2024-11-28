@@ -19,9 +19,7 @@ class AppConsentFormSummaryComponent < ViewComponent::Base
   end
 
   def call
-    govuk_summary_list(
-      classes: "app-summary-list--no-bottom-border"
-    ) do |summary_list|
+    govuk_summary_list do |summary_list|
       summary_list.with_row do |row|
         row.with_key { "Name" }
         row.with_value { name }
