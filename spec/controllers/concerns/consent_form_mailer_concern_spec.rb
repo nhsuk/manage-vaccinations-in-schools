@@ -71,8 +71,17 @@ describe ConsentFormMailerConcern do
     end
 
     context "when there are no upcoming sessions" do
+      let(:programme) { create(:programme) }
+      let(:organisation) { create(:organisation, programmes: [programme]) }
       let(:consent_form) do
-        create(:consent_form, school_confirmed: false, school: create(:school))
+        create(
+          :consent_form,
+          organisation:,
+          programme:,
+          school_confirmed: false,
+          school: create(:school, organisation:),
+          session: create(:session, organisation:, programme:)
+        )
       end
 
       it "sends an confirmation needs triage email" do

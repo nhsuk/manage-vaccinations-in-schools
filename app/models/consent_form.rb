@@ -339,34 +339,6 @@ class ConsentForm < ApplicationRecord
       )
   end
 
-  # This can be different to the original session if the parent tells us their
-  # child goes to a different school.
-  def actual_upcoming_session
-    @actual_upcoming_session ||=
-      begin
-        session_scope =
-          Session.upcoming.has_programme(programme).where(organisation:)
-
-        if location.clinic?
-          # If they've been booked in to a clinic we don't move them to a
-          # school session as it's likely they're in a clinic for a reason.
-          session_scope.find_by(location:)
-        elsif school
-          session_scope.find_by(location: school)
-        elsif education_setting_home?
-          session_scope.find_by(location: organisation.generic_clinic)
-        else
-          session_scope.find_by(location:)
-        end => upcoming_session
-
-        # There are no upcoming sessions available for their chosen location,
-        # either the original session or a different school or a clinic if
-        # home educated. This can happen if the parent fills out the form
-        # late.
-        upcoming_session || organisation.generic_clinic_session
-      end
-  end
-
   def find_or_create_parent_with_relationship_to!(patient:)
     parent =
       Parent.match_existing(
@@ -416,21 +388,22 @@ class ConsentForm < ApplicationRecord
     ActiveRecord::Base.transaction do
       notify_log_entries.update_all(patient_id: patient.id)
 
-      patient.school = school
-      patient.home_educated = home_educated
+      school_changed =
+        patient.school != school || patient.home_educated != home_educated
 
-      if patient.changed?
-        patient.save!
+      if school_changed && !patient.deceased? && !patient.invalidated?
+        school_move =
+          if school
+            SchoolMove.find_or_initialize_by(patient:, school:)
+          else
+            SchoolMove.find_or_initialize_by(
+              patient:,
+              home_educated:,
+              organisation:
+            )
+          end
 
-        patient_can_move =
-          !patient.deceased? && !patient.invalidated? && actual_upcoming_session
-
-        if patient_can_move
-          patient.move_to_session!(
-            actual_upcoming_session,
-            from: original_session
-          )
-        end
+        school_move.update!(source: :parental_consent_form)
       end
 
       Consent.from_consent_form!(self, patient:)
@@ -441,6 +414,24 @@ class ConsentForm < ApplicationRecord
     return nil if education_setting_school?
 
     education_setting_home?
+  end
+
+  def actual_upcoming_session
+    # HACK: Remove this method once we're only sending emails after the nurse
+    # has confirmed the school move, at the moment we're assuming the move
+    # will be confirmed.
+
+    patient = Patient.new
+
+    school_move =
+      if school
+        SchoolMove.new(patient:, school:)
+      else
+        SchoolMove.new(patient:, home_educated:, organisation:)
+      end
+
+    # Intentionally using a private method, as this method should be removed.
+    school_move.send(:new_session)
   end
 
   private

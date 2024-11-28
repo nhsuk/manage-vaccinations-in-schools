@@ -146,7 +146,7 @@ describe GovukNotifyPersonalisation do
 
     context "where the school is different" do
       let(:session) { nil }
-      let(:school) { create(:school, name: "Waterloo Road") }
+      let(:school) { create(:school, name: "Waterloo Road", organisation:) }
 
       let(:consent_form) do
         create(
