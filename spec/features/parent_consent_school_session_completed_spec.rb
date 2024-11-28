@@ -5,8 +5,9 @@ describe "Parental consent" do
   after { Flipper.disable(:release_1b) }
 
   scenario "Move to a completed session" do
+    stub_pds_search_to_return_no_patients
+
     given_an_hpv_programme_is_underway
-    and_requests_can_be_made_to_pds
 
     when_i_go_to_the_consent_form
     when_i_fill_in_my_childs_name_and_birthday
@@ -48,13 +49,6 @@ describe "Parental consent" do
       )
 
     @child = create(:patient, session: @scheduled_session)
-  end
-
-  def and_requests_can_be_made_to_pds
-    stub_request(
-      :get,
-      "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient"
-    ).with(query: hash_including({})).to_return_json(body: { total: 0 })
   end
 
   def when_a_nurse_checks_consent_responses
