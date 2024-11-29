@@ -7,6 +7,9 @@ class ConsolidatePatientSchoolHomeEducated < ActiveRecord::Migration[7.2]
     # school nil and home_educated false => unknown school
 
     Patient.where.not(school_id: nil).update_all(home_educated: nil)
+    Patient.where(school_id: nil, home_educated: nil).update_all(
+      home_educated: false
+    )
     Patient.where(home_educated: true).update_all(school_id: nil)
     Patient.where(home_educated: false).update_all(school_id: nil)
 
