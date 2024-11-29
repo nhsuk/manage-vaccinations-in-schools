@@ -120,9 +120,9 @@ class ImmunisationImportRow
       outcome:,
       patient_session:,
       performed_at:,
-      performed_by_user:,
       performed_by_family_name:,
       performed_by_given_name:,
+      performed_by_user:,
       programme: @programme
     }
 
@@ -140,7 +140,8 @@ class ImmunisationImportRow
       vaccination_record.stage_changes(
         batch_id: batch&.id,
         delivery_method:,
-        delivery_site:
+        delivery_site:,
+        notes:
       )
     else
       # Postgres UUID generation is skipped in bulk import
@@ -149,6 +150,7 @@ class ImmunisationImportRow
       vaccination_record.batch = batch
       vaccination_record.delivery_method = delivery_method
       vaccination_record.delivery_site = delivery_site
+      vaccination_record.notes = notes
     end
 
     vaccination_record
@@ -228,6 +230,10 @@ class ImmunisationImportRow
 
   def reason
     REASONS[@data["REASON_NOT_VACCINATED"]&.strip&.downcase]
+  end
+
+  def notes
+    @data["NOTES"]&.strip&.presence
   end
 
   DELIVERY_SITES = {
