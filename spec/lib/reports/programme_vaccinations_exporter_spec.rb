@@ -56,6 +56,7 @@ describe Reports::ProgrammeVaccinationsExporter do
           VACCINATED
           DATE_OF_VACCINATION
           TIME_OF_VACCINATION
+          PROGRAMME_NAME
           VACCINE_GIVEN
           PERFORMING_PROFESSIONAL_EMAIL
           PERFORMING_PROFESSIONAL_FORENAME
@@ -124,6 +125,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
               "PERSON_SURNAME" => patient.family_name,
+              "PROGRAMME_NAME" => "HPV",
               "REASON_NOT_VACCINATED" => "",
               "ROUTE_OF_VACCINATION" => "intramuscular",
               "SCHOOL_NAME" => location.name,
@@ -193,6 +195,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
               "PERSON_SURNAME" => patient.family_name,
+              "PROGRAMME_NAME" => "HPV",
               "REASON_NOT_VACCINATED" => "",
               "ROUTE_OF_VACCINATION" => "intramuscular",
               "SCHOOL_NAME" => "",
