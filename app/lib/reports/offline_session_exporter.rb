@@ -85,6 +85,7 @@ class Reports::OfflineSessionExporter
         "ANATOMICAL_SITE" => :string,
         "DOSE_SEQUENCE" => nil, # should be integer, but that converts nil to 0
         "REASON_NOT_VACCINATED" => :string,
+        "NOTES" => :string,
         "UUID" => :string
       }.tap do |hash|
         hash.delete("CLINIC_NAME") unless location.generic_clinic?
@@ -184,6 +185,7 @@ class Reports::OfflineSessionExporter
           "", # ANATOMICAL_SITE left blank for recording
           1, # DOSE_SEQUENCE is 1 by default TODO: revisit this for other programmes
           "", # REASON_NOT_VACCINATED left blank for recording
+          "", # NOTES left blank for recording
           "" # UUID left blank as new record
         ]
     ).tap do |values|
@@ -212,6 +214,7 @@ class Reports::OfflineSessionExporter
           anatomical_site(vaccination_record:),
           dose_sequence(vaccination_record:),
           reason_not_vaccinated(vaccination_record:),
+          vaccination_record.notes,
           vaccination_record.uuid
         ]
     ).tap do |values|
