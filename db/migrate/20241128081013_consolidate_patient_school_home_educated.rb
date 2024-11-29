@@ -10,8 +10,10 @@ class ConsolidatePatientSchoolHomeEducated < ActiveRecord::Migration[7.2]
     Patient.where(home_educated: true).update_all(school_id: nil)
     Patient.where(home_educated: false).update_all(school_id: nil)
 
-    if Patient.any?(&:invalid?)
-      raise "Patients are not all valid. Aborting to rollback transaction."
+    if (patients = Patient.all.select(&:invalid?)).present?
+      errors = patients.sample(5).flat_map { _1.errors.full_messages }
+      raise "Patients are not all valid. Aborting to rollback transaction. " \
+              "Sample of errors: #{errors.to_sentence}"
     end
   end
 end
