@@ -44,6 +44,7 @@ describe Reports::OfflineSessionExporter do
             PERSON_DOB
             YEAR_GROUP
             PERSON_GENDER_CODE
+            PERSON_ADDRESS_LINE_1
             PERSON_POSTCODE
             NHS_NUMBER
             CONSENT_STATUS
@@ -110,6 +111,7 @@ describe Reports::OfflineSessionExporter do
               "NHS_NUMBER" => patient.nhs_number,
               "ORGANISATION_CODE" => organisation.ods_code,
               "PERFORMING_PROFESSIONAL_EMAIL" => "",
+              "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
               "PERSON_FORENAME" => patient.given_name,
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
@@ -136,8 +138,9 @@ describe Reports::OfflineSessionExporter do
       context "with a restricted patient" do
         before { create(:patient, :restricted, session:) }
 
-        it "doesn't include the postcode" do
+        it "doesn't include the address or postcode" do
           expect(rows.count).to eq(1)
+          expect(rows.first["PERSON_ADDRESS_LINE_1"]).to be_blank
           expect(rows.first["PERSON_POSTCODE"]).to be_blank
         end
       end
@@ -178,6 +181,7 @@ describe Reports::OfflineSessionExporter do
               "NHS_NUMBER" => patient.nhs_number,
               "ORGANISATION_CODE" => organisation.ods_code,
               "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
+              "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
               "PERSON_FORENAME" => patient.given_name,
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
@@ -254,6 +258,7 @@ describe Reports::OfflineSessionExporter do
               "NHS_NUMBER" => patient.nhs_number,
               "ORGANISATION_CODE" => organisation.ods_code,
               "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
+              "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
               "PERSON_FORENAME" => patient.given_name,
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
@@ -307,6 +312,7 @@ describe Reports::OfflineSessionExporter do
             PERSON_DOB
             YEAR_GROUP
             PERSON_GENDER_CODE
+            PERSON_ADDRESS_LINE_1
             PERSON_POSTCODE
             NHS_NUMBER
             CONSENT_STATUS
@@ -369,6 +375,7 @@ describe Reports::OfflineSessionExporter do
               "NHS_NUMBER" => patient.nhs_number,
               "ORGANISATION_CODE" => organisation.ods_code,
               "PERFORMING_PROFESSIONAL_EMAIL" => "",
+              "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
               "PERSON_FORENAME" => patient.given_name,
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
@@ -440,6 +447,7 @@ describe Reports::OfflineSessionExporter do
               "NHS_NUMBER" => patient.nhs_number,
               "ORGANISATION_CODE" => organisation.ods_code,
               "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
+              "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
               "PERSON_FORENAME" => patient.given_name,
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
