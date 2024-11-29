@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 describe "Edit vaccination record" do
-  before { Flipper.enable(:release_1b) }
-  after { Flipper.disable(:release_1b) }
-
   scenario "User edits a new vaccination record" do
     given_i_am_signed_in
     and_an_hpv_programme_is_underway

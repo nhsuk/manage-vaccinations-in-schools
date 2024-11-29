@@ -35,8 +35,7 @@ class AppPatientPageComponent < ViewComponent::Base
   end
 
   def gillick_assessment_can_be_recorded?
-    Flipper.enabled?(:release_1b) && patient_session.session.today? &&
-      helpers.policy(GillickAssessment).new?
+    patient_session.session.today? && helpers.policy(GillickAssessment).new?
   end
 
   def gillick_assessment_recorded?

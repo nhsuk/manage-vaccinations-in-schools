@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 describe "Parental consent given with an inexact automatic match" do
-  before { Flipper.enable(:release_1b) }
-  after { Flipper.disable(:release_1b) }
-
   scenario "Consent form matches the cohort on three of four fields" do
     stub_pds_search_to_return_no_patients
 

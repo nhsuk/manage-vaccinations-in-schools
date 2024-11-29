@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 describe "Delete vaccination record" do
-  before { Flipper.enable(:release_1b) }
-  after { Flipper.disable(:release_1b) }
-
   scenario "User doesn't delete the record" do
     given_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists

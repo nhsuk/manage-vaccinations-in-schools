@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 describe "Self-consent" do
-  before { Flipper.enable(:release_1b) }
-  after { Flipper.disable(:release_1b) }
-
   scenario "From Gillick assessment" do
     given_an_hpv_programme_is_underway
     and_there_is_a_child_without_parental_consent
