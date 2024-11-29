@@ -56,6 +56,7 @@ class Reports::ProgrammeVaccinationsExporter
       VACCINATED
       DATE_OF_VACCINATION
       TIME_OF_VACCINATION
+      PROGRAMME_NAME
       VACCINE_GIVEN
       PERFORMING_PROFESSIONAL_EMAIL
       PERFORMING_PROFESSIONAL_FORENAME
@@ -79,6 +80,7 @@ class Reports::ProgrammeVaccinationsExporter
           :batch,
           :location,
           :performed_by_user,
+          :programme,
           :vaccine,
           patient_session: {
             patient: %i[cohort school],
@@ -106,6 +108,7 @@ class Reports::ProgrammeVaccinationsExporter
     patient = patient_session.patient
     triage = patient_session.latest_triage
     location = vaccination_record.location
+    programme = vaccination_record.programme
 
     [
       organisation.ods_code,
@@ -134,6 +137,7 @@ class Reports::ProgrammeVaccinationsExporter
       vaccinated(vaccination_record:),
       vaccination_record.performed_at.strftime("%Y%m%d"),
       vaccination_record.performed_at.strftime("%H:%M:%S"),
+      programme.name,
       vaccination_record.vaccine&.nivs_name || "",
       vaccination_record.performed_by_user&.email || "",
       vaccination_record.performed_by&.given_name || "",

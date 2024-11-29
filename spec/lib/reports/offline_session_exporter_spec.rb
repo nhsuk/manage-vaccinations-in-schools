@@ -60,6 +60,7 @@ describe Reports::OfflineSessionExporter do
             VACCINATED
             DATE_OF_VACCINATION
             TIME_OF_VACCINATION
+            PROGRAMME_NAME
             VACCINE_GIVEN
             PERFORMING_PROFESSIONAL_EMAIL
             BATCH_NUMBER
@@ -113,6 +114,7 @@ describe Reports::OfflineSessionExporter do
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
               "PERSON_SURNAME" => patient.family_name,
+              "PROGRAMME_NAME" => "HPV",
               "REASON_NOT_VACCINATED" => "",
               "SCHOOL_NAME" => location.name,
               "SCHOOL_URN" => location.urn,
@@ -180,6 +182,7 @@ describe Reports::OfflineSessionExporter do
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
               "PERSON_SURNAME" => patient.family_name,
+              "PROGRAMME_NAME" => "HPV",
               "REASON_NOT_VACCINATED" => "",
               "SCHOOL_NAME" => location.name,
               "SCHOOL_URN" => location.urn,
@@ -255,6 +258,7 @@ describe Reports::OfflineSessionExporter do
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
               "PERSON_SURNAME" => patient.family_name,
+              "PROGRAMME_NAME" => "HPV",
               "REASON_NOT_VACCINATED" => "unwell",
               "SCHOOL_NAME" => location.name,
               "SCHOOL_URN" => location.urn,
@@ -319,6 +323,7 @@ describe Reports::OfflineSessionExporter do
             VACCINATED
             DATE_OF_VACCINATION
             TIME_OF_VACCINATION
+            PROGRAMME_NAME
             VACCINE_GIVEN
             PERFORMING_PROFESSIONAL_EMAIL
             BATCH_NUMBER
@@ -368,6 +373,7 @@ describe Reports::OfflineSessionExporter do
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
               "PERSON_SURNAME" => patient.family_name,
+              "PROGRAMME_NAME" => "HPV",
               "REASON_NOT_VACCINATED" => "",
               "SCHOOL_NAME" => "",
               "SCHOOL_URN" => "888888",
@@ -438,6 +444,7 @@ describe Reports::OfflineSessionExporter do
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
               "PERSON_SURNAME" => patient.family_name,
+              "PROGRAMME_NAME" => "HPV",
               "REASON_NOT_VACCINATED" => "",
               "SCHOOL_NAME" => "Waterloo Road",
               "SCHOOL_URN" => "123456",

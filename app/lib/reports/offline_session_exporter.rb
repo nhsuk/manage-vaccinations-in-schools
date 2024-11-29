@@ -76,6 +76,7 @@ class Reports::OfflineSessionExporter
         "VACCINATED" => :string,
         "DATE_OF_VACCINATION" => :date,
         "TIME_OF_VACCINATION" => :string,
+        "PROGRAMME_NAME" => :string,
         "VACCINE_GIVEN" => :string,
         "PERFORMING_PROFESSIONAL_EMAIL" => :string,
         "BATCH_NUMBER" => :string,
@@ -151,21 +152,30 @@ class Reports::OfflineSessionExporter
         )
       end
     else
-      sheet.add_row(
-        new_row(patient:, consents:, gillick_assessment:, triage:),
-        types: row_types,
-        style:
-      )
+      session.programmes.each do |programme|
+        sheet.add_row(
+          new_row(
+            patient:,
+            consents:,
+            gillick_assessment:,
+            triage:,
+            programme:
+          ),
+          types: row_types,
+          style:
+        )
+      end
     end
   end
 
-  def new_row(patient:, consents:, gillick_assessment:, triage:)
+  def new_row(patient:, consents:, gillick_assessment:, triage:, programme:)
     (
       patient_values(patient:, consents:, gillick_assessment:, triage:) +
         [
           "", # VACCINATED left blank for recording
           "", # DATE_OF_VACCINATION left blank for recording
           "", # TIME_OF_VACCINATION left blank for recording
+          programme.name,
           "", # VACCINE_GIVEN left blank for recording
           "", # PERFORMING_PROFESSIONAL_EMAIL left blank for recording
           "", # BATCH_NUMBER left blank for recording
@@ -193,6 +203,7 @@ class Reports::OfflineSessionExporter
           vaccinated(vaccination_record:),
           vaccination_record.performed_at.to_date,
           vaccination_record.performed_at.strftime("%H:%M:%S"),
+          vaccination_record.programme.name,
           vaccination_record.vaccine&.nivs_name,
           vaccination_record.performed_by_user&.email,
           vaccination_record.batch&.name,
