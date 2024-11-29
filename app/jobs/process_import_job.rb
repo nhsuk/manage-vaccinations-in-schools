@@ -12,6 +12,6 @@ class ProcessImportJob < ApplicationJob
 
     return if import.rows_are_invalid?
 
-    import.record!
+    import.process!
   end
 end

@@ -13,19 +13,15 @@ class AppImportStatusComponent < ViewComponent::Base
     {
       "pending_import" => "Processing",
       "rows_are_invalid" => "Invalid",
-      "recorded" => "Completed"
-    }[
-      @import.status
-    ]
+      "processed" => "Completed"
+    }.fetch(@import.status)
   end
 
   def status_color
     {
       "pending_import" => "blue",
       "rows_are_invalid" => "red",
-      "recorded" => "green"
-    }[
-      @import.status
-    ]
+      "processed" => "green"
+    }.fetch(@import.status)
   end
 end

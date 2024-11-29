@@ -11,7 +11,7 @@
 #  csv_removed_at               :datetime
 #  exact_duplicate_record_count :integer
 #  new_record_count             :integer
-#  recorded_at                  :datetime
+#  processed_at                 :datetime
 #  rows_count                   :integer
 #  serialized_errors            :json
 #  status                       :integer          default("pending_import"), not null
@@ -153,15 +153,15 @@ describe ClassImport do
     end
   end
 
-  describe "#record!" do
-    subject(:record!) { class_import.record! }
+  describe "#process!" do
+    subject(:process!) { class_import.process! }
 
     let(:file) { "valid.csv" }
 
     it "creates patients and parents" do
       # stree-ignore
-      expect { record! }
-        .to change(class_import, :recorded_at).from(nil)
+      expect { process! }
+        .to change(class_import, :processed_at).from(nil)
         .and change(class_import.patients, :count).by(4)
         .and change(class_import.parents, :count).by(5)
         .and change(organisation.cohorts, :count).by(1)
@@ -250,8 +250,8 @@ describe ClassImport do
       # Second import should not duplicate the patients if they're identical.
 
       # stree-ignore
-      expect { class_import.record! }
-        .to not_change(class_import, :recorded_at)
+      expect { class_import.process! }
+        .to not_change(class_import, :processed_at)
         .and not_change(Patient, :count)
         .and not_change(Parent, :count)
         .and not_change(Cohort, :count)
@@ -259,28 +259,28 @@ describe ClassImport do
 
     it "stores statistics on the import" do
       # stree-ignore
-      expect { record! }
+      expect { process! }
         .to change(class_import, :exact_duplicate_record_count).to(0)
         .and change(class_import, :new_record_count).to(4)
         .and change(class_import, :changed_record_count).to(0)
     end
 
     it "ignores and counts duplicate records" do
-      create(:class_import, csv:, organisation:, session:).record!
+      create(:class_import, csv:, organisation:, session:).process!
       csv.rewind
 
-      record!
+      process!
       expect(class_import.exact_duplicate_record_count).to eq(4)
     end
 
     it "enqueues jobs to look up missing NHS numbers" do
-      expect { record! }.to have_enqueued_job(
+      expect { process! }.to have_enqueued_job(
         PatientNHSNumberLookupJob
       ).once.on_queue(:imports)
     end
 
     it "enqueues jobs to update from PDS" do
-      expect { record! }.to have_enqueued_job(PatientUpdateFromPDSJob)
+      expect { process! }.to have_enqueued_job(PatientUpdateFromPDSJob)
         .exactly(3)
         .times
         .on_queue(:imports)
@@ -298,7 +298,7 @@ describe ClassImport do
       end
 
       it "doesn't create an additional patient" do
-        expect { record! }.to change(Patient, :count).by(3)
+        expect { process! }.to change(Patient, :count).by(3)
       end
 
       context "with an existing parent" do
@@ -312,7 +312,7 @@ describe ClassImport do
         end
 
         it "doesn't create an additional patient" do
-          expect { record! }.to change(Parent, :count).by(4)
+          expect { process! }.to change(Parent, :count).by(4)
           expect(parent.relationship_to(patient:)).to be_father
         end
       end
@@ -330,7 +330,7 @@ describe ClassImport do
       end
 
       it "doesn't create an additional patient" do
-        expect { record! }.to change(Patient, :count).by(3)
+        expect { process! }.to change(Patient, :count).by(3)
       end
     end
 
@@ -342,14 +342,16 @@ describe ClassImport do
       it "proposes a school move for the child" do
         expect(patient.school_moves).to be_empty
 
-        expect { record! }.to change { patient.reload.school_moves.count }.by(1)
+        expect { process! }.to change { patient.reload.school_moves.count }.by(
+          1
+        )
 
         school_move = patient.school_moves.first
         expect(school_move.school).to eq(session.location)
       end
 
       it "doesn't stage school changes" do
-        expect { record! }.not_to change(patient, :pending_changes)
+        expect { process! }.not_to change(patient, :pending_changes)
         expect(patient.pending_changes.keys).not_to include(
           :school_id,
           :cohort_id,
@@ -364,7 +366,7 @@ describe ClassImport do
       end
 
       it "adds the patients to the session" do
-        expect { record! }.to change(session.patients, :count).from(0).to(4)
+        expect { process! }.to change(session.patients, :count).from(0).to(4)
       end
     end
 
@@ -374,7 +376,7 @@ describe ClassImport do
       end
 
       it "adds the patients to the session" do
-        expect { record! }.to change(session.patients, :count).from(0).to(4)
+        expect { process! }.to change(session.patients, :count).from(0).to(4)
       end
     end
 
@@ -384,7 +386,7 @@ describe ClassImport do
       it "proposes a school move for the child" do
         expect(existing_patient.school_moves).to be_empty
 
-        expect { record! }.to change {
+        expect { process! }.to change {
           existing_patient.reload.school_moves.count
         }.by(1)
 
@@ -401,7 +403,7 @@ describe ClassImport do
           organisation:
         )
 
-        expect { record! }.not_to(
+        expect { process! }.not_to(
           change { existing_patient.reload.school_moves.count }
         )
       end

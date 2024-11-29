@@ -13,14 +13,14 @@ describe AppImportsTableComponent do
       [
         create(
           :cohort_import,
-          :recorded,
+          :processed,
           organisation:,
           programme:,
           created_at: Date.new(2020, 1, 1),
           uploaded_by:
             create(:user, given_name: "Jennifer", family_name: "Smith")
         )
-      ] + create_list(:cohort_import, 4, :recorded, organisation:, programme:)
+      ] + create_list(:cohort_import, 4, :processed, organisation:, programme:)
 
     cohort_imports.each do |cohort_import|
       create(:patient, cohort_imports: [cohort_import])
@@ -30,7 +30,7 @@ describe AppImportsTableComponent do
       [
         create(
           :immunisation_import,
-          :recorded,
+          :processed,
           organisation:,
           programme:,
           created_at: Date.new(2020, 1, 1),
@@ -40,7 +40,7 @@ describe AppImportsTableComponent do
         create_list(
           :immunisation_import,
           4,
-          :recorded,
+          :processed,
           organisation:,
           programme:
         )

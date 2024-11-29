@@ -17,10 +17,10 @@ module CSVImportable
     has_and_belongs_to_many :patients
 
     scope :csv_not_removed, -> { where(csv_removed_at: nil) }
-    scope :recorded, -> { where.not(recorded_at: nil) }
+    scope :processed, -> { where.not(processed_at: nil) }
 
     enum :status,
-         { pending_import: 0, rows_are_invalid: 1, recorded: 2 },
+         { pending_import: 0, rows_are_invalid: 1, processed: 2 },
          default: :pending_import,
          validate: true
 
@@ -38,11 +38,7 @@ module CSVImportable
     validate :headers_are_valid
     validate :rows_are_valid
 
-    before_save :ensure_recorded_with_count_statistics
-  end
-
-  def recorded?
-    recorded_at != nil
+    before_save :ensure_processed_with_count_statistics
   end
 
   def csv=(file)
@@ -136,8 +132,12 @@ module CSVImportable
     exact_duplicate_record_count
   ].freeze
 
-  def record!
-    return if recorded?
+  def processed?
+    processed_at != nil
+  end
+
+  def process!
+    return if processed?
 
     parse_rows! if rows.nil?
     return if invalid?
@@ -155,7 +155,7 @@ module CSVImportable
 
       postprocess_rows!
 
-      update_columns(recorded_at: Time.zone.now, status: :recorded, **counts)
+      update_columns(processed_at: Time.zone.now, status: :processed, **counts)
     end
 
     update_from_pds
@@ -237,11 +237,11 @@ module CSVImportable
     end
   end
 
-  def ensure_recorded_with_count_statistics
-    if recorded? && COUNT_COLUMNS.any? { |column| send(column).nil? }
-      raise "Count statistics must be set for a recorded import."
-    elsif !recorded? && COUNT_COLUMNS.any? { |column| !send(column).nil? }
-      raise "Count statistics must not be set for a non-recorded import."
+  def ensure_processed_with_count_statistics
+    if processed? && COUNT_COLUMNS.any? { |column| send(column).nil? }
+      raise "Count statistics must be set for a processed import."
+    elsif !processed? && COUNT_COLUMNS.any? { |column| !send(column).nil? }
+      raise "Count statistics must not be set for a non-processed import."
     end
   end
 

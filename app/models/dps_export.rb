@@ -43,7 +43,7 @@ class DPSExport < ApplicationRecord
             :organisation,
             vaccine: :programme
           )
-          .order(:recorded_at)
+          .order(:performed_at)
           .strict_loading
           .find_each { csv << DPSExportRow.new(_1).to_a }
       end
