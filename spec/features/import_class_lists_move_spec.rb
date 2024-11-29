@@ -18,14 +18,8 @@ describe "Import class lists - Moving patients" do
     and_i_upload_a_valid_file
     then_i_should_see_the_import_complete_page
 
-    when_i_visit_a_session_page_for_the_hpv_programme
-    then_i_should_see_pending_moves_out
-
-    when_i_click_on_the_pending_moves_card
-    then_i_should_see_the_patients_moving_out_tab
-
-    when_i_click_on_the_moved_out_tab
-    then_i_should_see_the_patients_moving_out_table
+    when_i_visit_the_school_moves
+    then_i_should_see_the_school_moves
 
     when_i_confirm_a_move
     then_i_should_see_a_success_flash
@@ -107,24 +101,12 @@ describe "Import class lists - Moving patients" do
     expect(page).to have_content("Imported by")
   end
 
-  def then_i_should_see_pending_moves_out
-    expect(page).to have_content("4 children left this school")
+  def when_i_visit_the_school_moves
+    click_on "School moves"
   end
 
-  def when_i_click_on_the_pending_moves_card
-    click_link "Review children who have changed schools"
-  end
-
-  def then_i_should_see_the_patients_moving_out_tab
-    expect(page).to have_content("Moved out ( 4 )")
-  end
-
-  def when_i_click_on_the_moved_out_tab
-    click_link "Moved out"
-  end
-
-  def then_i_should_see_the_patients_moving_out_table
-    expect(page).to have_content("4 children left this school")
+  def then_i_should_see_the_school_moves
+    expect(page).to have_content("4 school moves")
   end
 
   def when_i_confirm_a_move

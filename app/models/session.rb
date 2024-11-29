@@ -262,8 +262,6 @@ class Session < ApplicationRecord
     close_consent_at&.today? || close_consent_at&.future? || false
   end
 
-  delegate :has_movers?, to: :location
-
   private
 
   def set_slug

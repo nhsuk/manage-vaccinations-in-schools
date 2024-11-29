@@ -1,21 +1,12 @@
 # frozen_string_literal: true
 
 class SchoolMovesController < ApplicationController
-  before_action :set_session
-  before_action :set_location
-  before_action :set_tab
+  include Pagy::Backend
 
   layout "full"
 
   def index
-    @school_moves =
-      if @tab == :in
-        @location.school_moves_to_this_location
-      elsif @tab == :out
-        @location.school_moves_from_this_location
-      else
-        render "errors/not_found", status: :not_found
-      end
+    @pagy, @school_moves = pagy(policy_scope(SchoolMove).order(:updated_at))
   end
 
   def update
@@ -32,25 +23,11 @@ class SchoolMovesController < ApplicationController
     name = @school_move.patient.full_name
     flash =
       if params[:confirm]
-        { success: "#{name} moved #{@tab}" }
+        { success: "#{name}’s record updated with new school" }
       else
-        { notice: "#{name} move ignored" }
+        { notice: "#{name}’s school move ignored" }
       end
 
-    redirect_to session_moves_path(@session) + "?#{@tab}", flash:
-  end
-
-  private
-
-  def set_session
-    @session = policy_scope(Session).find_by!(slug: params[:session_slug])
-  end
-
-  def set_location
-    @location = @session.location
-  end
-
-  def set_tab
-    @tab = params.key?(:in) ? :in : :out
+    redirect_to school_moves_path, flash:
   end
 end

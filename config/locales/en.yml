@@ -779,6 +779,9 @@ en:
         completed: All sessions completed
         scheduled: Sessions scheduled
         unscheduled: No sessions scheduled
+  school_moves:
+    index:
+      title: School moves
   service:
     email: england.mavis@nhs.net
     guide:

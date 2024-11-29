@@ -54,6 +54,13 @@
   </li>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+    <%= render AppCardComponent.new(link_to: school_moves_path, secondary: true) do |card| %>
+      <% card.with_heading { t("school_moves.index.title") } %>
+      <% card.with_description { "Review children who have moved schools" } %>
+    <% end %>
+  </li>
+
+  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
     <%= render AppCardComponent.new(link_to: notices_path, secondary: true) do |card| %>
       <% card.with_heading { t("notices.index.title") } %>
       <% card.with_description { "View notices about important updates to patient records" } %>
