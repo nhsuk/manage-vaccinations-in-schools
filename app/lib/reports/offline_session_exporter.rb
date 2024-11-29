@@ -60,6 +60,7 @@ class Reports::OfflineSessionExporter
         "PERSON_DOB" => :date,
         "YEAR_GROUP" => nil, # should be integer, but that converts nil to 0
         "PERSON_GENDER_CODE" => :string,
+        "PERSON_ADDRESS_LINE_1" => :string,
         "PERSON_POSTCODE" => :string,
         "NHS_NUMBER" => :string,
         "CONSENT_STATUS" => :string,
@@ -231,6 +232,7 @@ class Reports::OfflineSessionExporter
       patient.date_of_birth,
       patient.year_group,
       patient.gender_code.humanize,
+      patient.restricted? ? "" : patient.address_line_1,
       patient.restricted? ? "" : patient.address_postcode,
       patient.nhs_number,
       consents.first&.response&.humanize,

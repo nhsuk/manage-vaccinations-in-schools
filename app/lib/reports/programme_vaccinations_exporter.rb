@@ -40,6 +40,7 @@ class Reports::ProgrammeVaccinationsExporter
       PERSON_DOB
       YEAR_GROUP
       PERSON_GENDER_CODE
+      PERSON_ADDRESS_LINE_1
       PERSON_POSTCODE
       NHS_NUMBER
       CONSENT_STATUS
@@ -121,6 +122,7 @@ class Reports::ProgrammeVaccinationsExporter
       patient.date_of_birth.strftime("%Y%m%d"),
       patient.year_group || "",
       patient.gender_code.humanize,
+      patient.restricted? ? "" : patient.address_line_1,
       patient.restricted? ? "" : patient.address_postcode,
       patient.nhs_number,
       consents.first&.response&.humanize || "",

@@ -40,6 +40,7 @@ describe Reports::ProgrammeVaccinationsExporter do
           PERSON_DOB
           YEAR_GROUP
           PERSON_GENDER_CODE
+          PERSON_ADDRESS_LINE_1
           PERSON_POSTCODE
           NHS_NUMBER
           CONSENT_STATUS
@@ -120,6 +121,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
               "PERFORMING_PROFESSIONAL_FORENAME" => "Nurse",
               "PERFORMING_PROFESSIONAL_SURNAME" => "Test",
+              "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
               "PERSON_DOB" => patient.date_of_birth.strftime("%Y%m%d"),
               "PERSON_FORENAME" => patient.given_name,
               "PERSON_GENDER_CODE" => "Not known",
@@ -190,6 +192,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
               "PERFORMING_PROFESSIONAL_FORENAME" => "Nurse",
               "PERFORMING_PROFESSIONAL_SURNAME" => "Test",
+              "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
               "PERSON_DOB" => patient.date_of_birth.strftime("%Y%m%d"),
               "PERSON_FORENAME" => patient.given_name,
               "PERSON_GENDER_CODE" => "Not known",
