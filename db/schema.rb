@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_11_28_081013) do
+ActiveRecord::Schema[7.2].define(version: 2024_11_29_161038) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -528,9 +528,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_28_081013) do
     t.bigint "patient_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "proposed_session_id"
     t.index ["patient_id", "session_id"], name: "index_patient_sessions_on_patient_id_and_session_id", unique: true
-    t.index ["proposed_session_id"], name: "index_patient_sessions_on_proposed_session_id"
     t.index ["session_id", "patient_id"], name: "index_patient_sessions_on_session_id_and_patient_id", unique: true
   end
 
@@ -797,7 +795,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_28_081013) do
   add_foreign_key "organisation_programmes", "programmes"
   add_foreign_key "parent_relationships", "parents"
   add_foreign_key "parent_relationships", "patients"
-  add_foreign_key "patient_sessions", "sessions", column: "proposed_session_id"
   add_foreign_key "patients", "cohorts"
   add_foreign_key "patients", "locations", column: "school_id"
   add_foreign_key "programmes_sessions", "programmes"
