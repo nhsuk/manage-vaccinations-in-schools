@@ -40,6 +40,7 @@ describe Reports::ProgrammeVaccinationsExporter do
           PERSON_DOB
           YEAR_GROUP
           PERSON_GENDER_CODE
+          PERSON_ADDRESS_LINE_1
           PERSON_POSTCODE
           NHS_NUMBER
           CONSENT_STATUS
@@ -56,6 +57,7 @@ describe Reports::ProgrammeVaccinationsExporter do
           VACCINATED
           DATE_OF_VACCINATION
           TIME_OF_VACCINATION
+          PROGRAMME_NAME
           VACCINE_GIVEN
           PERFORMING_PROFESSIONAL_EMAIL
           PERFORMING_PROFESSIONAL_FORENAME
@@ -119,11 +121,13 @@ describe Reports::ProgrammeVaccinationsExporter do
               "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
               "PERFORMING_PROFESSIONAL_FORENAME" => "Nurse",
               "PERFORMING_PROFESSIONAL_SURNAME" => "Test",
+              "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
               "PERSON_DOB" => patient.date_of_birth.strftime("%Y%m%d"),
               "PERSON_FORENAME" => patient.given_name,
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
               "PERSON_SURNAME" => patient.family_name,
+              "PROGRAMME_NAME" => "HPV",
               "REASON_NOT_VACCINATED" => "",
               "ROUTE_OF_VACCINATION" => "intramuscular",
               "SCHOOL_NAME" => location.name,
@@ -188,11 +192,13 @@ describe Reports::ProgrammeVaccinationsExporter do
               "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
               "PERFORMING_PROFESSIONAL_FORENAME" => "Nurse",
               "PERFORMING_PROFESSIONAL_SURNAME" => "Test",
+              "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
               "PERSON_DOB" => patient.date_of_birth.strftime("%Y%m%d"),
               "PERSON_FORENAME" => patient.given_name,
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
               "PERSON_SURNAME" => patient.family_name,
+              "PROGRAMME_NAME" => "HPV",
               "REASON_NOT_VACCINATED" => "",
               "ROUTE_OF_VACCINATION" => "intramuscular",
               "SCHOOL_NAME" => "",
