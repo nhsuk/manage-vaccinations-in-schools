@@ -3,8 +3,6 @@ en:
     legend:
       import_duplicate_form:
         apply_changes: Which record do you want to keep?
-      school_move_form:
-        action: Update the child’s record with this new information?
 
     hint:
       import_duplicate_form:
@@ -20,9 +18,9 @@ en:
           discard: Keep previously uploaded record
           keep_both: Keep both records
       school_move_form:
-        action_options:
-          confirm: Update record with new school
-          ignore: Ignore new information
+        move_to_school_options:
+          false: No, keep them in the community clinic
+          true: Yes, move them to the upcoming school session
       vaccination_report:
         file_format_options:
           careplus: CarePlus

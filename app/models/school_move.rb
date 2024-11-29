@@ -66,9 +66,10 @@ class SchoolMove < ApplicationRecord
   end
 
   def school_session
-    return if school&.organisation.nil?
-
-    school.organisation.sessions.upcoming.find_by(location: school)
+    @school_session ||=
+      if (org = school&.organisation).present?
+        org.sessions.upcoming.find_by(location: school)
+      end
   end
 
   private
