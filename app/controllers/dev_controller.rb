@@ -43,6 +43,7 @@ class DevController < ApplicationController
 
       patients = Patient.joins(:cohort).where(cohorts: { organisation: })
 
+      SchoolMove.where(patient: patients).destroy_all
       NotifyLogEntry.where(patient: patients).destroy_all
 
       ConsentForm.where(organisation:).destroy_all

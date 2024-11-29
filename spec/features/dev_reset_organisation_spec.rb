@@ -10,6 +10,7 @@ describe "Dev endpoint to reset a organisation" do
     and_vaccination_records_have_been_imported
     and_emails_have_been_sent
     and_consent_exists
+    and_school_moves_exist
 
     then_all_associated_data_is_deleted_when_i_reset_the_organisation
   end
@@ -83,6 +84,10 @@ describe "Dev endpoint to reset a organisation" do
         programme: @programme
       )
     end
+  end
+
+  def and_school_moves_exist
+    create(:school_move, :to_school, patient: @patients.first)
   end
 
   def then_all_associated_data_is_deleted_when_i_reset_the_organisation
