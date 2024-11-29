@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe "Parental consent" do
-  after { Flipper.disable(:release_1b) }
-
   scenario "Refused" do
     stub_pds_search_to_return_no_patients
 
@@ -21,7 +19,6 @@ describe "Parental consent" do
     and_i_receive_an_email_confirming_that_my_child_wont_be_vaccinated
     and_i_receive_a_text_confirming_that_my_child_wont_be_vaccinated
 
-    given_release_1b_is_enabled
     when_the_nurse_checks_the_consent_responses
     then_they_see_that_the_child_has_consent_refused
     and_the_action_in_the_vaccination_session_is_to_check_refusal
@@ -41,10 +38,6 @@ describe "Parental consent" do
         location:
       )
     @child = create(:patient, session: @session)
-  end
-
-  def given_release_1b_is_enabled
-    Flipper.enable(:release_1b)
   end
 
   def when_i_go_to_the_consent_form

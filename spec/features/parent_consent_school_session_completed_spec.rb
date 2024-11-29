@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 describe "Parental consent" do
-  before { Flipper.enable(:release_1b) }
-  after { Flipper.disable(:release_1b) }
-
   scenario "Move to a completed session" do
     stub_pds_search_to_return_no_patients
 

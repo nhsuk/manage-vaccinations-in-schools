@@ -114,12 +114,11 @@ class Consent < ApplicationRecord
   end
 
   def can_withdraw?
-    Flipper.enabled?(:release_1b) && not_withdrawn? && not_invalidated? &&
-      response_given?
+    not_withdrawn? && not_invalidated? && response_given?
   end
 
   def can_invalidate?
-    Flipper.enabled?(:release_1b) && not_invalidated?
+    not_invalidated?
   end
 
   def responded_at

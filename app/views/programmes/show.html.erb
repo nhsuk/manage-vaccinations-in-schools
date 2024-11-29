@@ -10,9 +10,7 @@
 
 <%= render AppProgrammeNavigationComponent.new(@programme, organisation: current_user.selected_organisation, active: :overview) %>
 
-<% if Flipper.enabled?(:release_1b) %>
-  <%= govuk_button_to "Download vaccination report", programme_vaccination_reports_path(@programme), class: "app-button--secondary" %>
-<% end %>
+<%= govuk_button_to "Download vaccination report", programme_vaccination_reports_path(@programme), class: "app-button--secondary" %>
 
 <div class="nhsuk-grid-row nhsuk-card-group">
   <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">

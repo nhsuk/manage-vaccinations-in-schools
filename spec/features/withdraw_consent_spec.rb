@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 describe "Withdraw consent" do
-  before { Flipper.enable(:release_1b) }
-  after { Flipper.disable(:release_1b) }
-
   scenario "Already given" do
     given_i_am_signed_in
     and_consent_has_been_given

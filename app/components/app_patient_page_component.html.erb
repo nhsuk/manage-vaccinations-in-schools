@@ -78,56 +78,52 @@
   <% end %>
 <% end %>
 
-<% if Flipper.enabled?(:release_1b) %>
-  <% if @patient_session.triages.any? %>
-    <%= render AppCardComponent.new do |c| %>
-      <% c.with_heading { "Triage notes" } %>
-      <%= render AppTriageNotesComponent.new(patient_session:) %>
-    <% end %>
+<% if @patient_session.triages.any? %>
+  <%= render AppCardComponent.new do |c| %>
+    <% c.with_heading { "Triage notes" } %>
+    <%= render AppTriageNotesComponent.new(patient_session:) %>
   <% end %>
+<% end %>
 
-  <% if helpers.policy(Triage).create? && @patient_session.next_step == :triage && @patient_session.session.open? %>
-    <%= render AppCardComponent.new do %>
-      <%= render AppTriageFormComponent.new(
-            patient_session: @patient_session,
-            url: session_patient_triages_path(
-              session,
-              patient,
-              @triage,
-              section: @section,
-              tab: @tab,
-            ),
-            triage: @triage,
-            legend: :bold,
-          ) %>
-    <% end %>
+<% if helpers.policy(Triage).create? && @patient_session.next_step == :triage && @patient_session.session.open? %>
+  <%= render AppCardComponent.new do %>
+    <%= render AppTriageFormComponent.new(
+          patient_session: @patient_session,
+          url: session_patient_triages_path(
+            session,
+            patient,
+            @triage,
+            section: @section,
+            tab: @tab,
+          ),
+          triage: @triage,
+          legend: :bold,
+        ) %>
   <% end %>
+<% end %>
 
-  <% @patient_session.vaccination_records.each do |vaccination_record| %>
-    <%= render AppCardComponent.new do |c| %>
-      <% c.with_heading { "Vaccination details" } %>
-      <%= render AppVaccinationRecordSummaryComponent.new(vaccination_record, current_user:) %>
+<% @patient_session.vaccination_records.each do |vaccination_record| %>
+  <%= render AppCardComponent.new do |c| %>
+    <% c.with_heading { "Vaccination details" } %>
+    <%= render AppVaccinationRecordSummaryComponent.new(vaccination_record, current_user:) %>
 
-      <% if Flipper.enabled?(:release_1b) %>
-        <div class="app-button-group">
-          <% if helpers.policy(vaccination_record).edit? %>
-            <%= govuk_button_to "Edit vaccination record",
-                                programme_vaccination_record_path(vaccination_record.programme, vaccination_record),
-                                method: :put, class: "app-button--secondary" %>
-          <% end %>
-
-          <% if helpers.policy(vaccination_record).destroy? %>
-            <%= govuk_link_to "Delete vaccination record", destroy_vaccination_record_session_patient_vaccinations_path(patient_id: patient.id, vaccination_record_id: vaccination_record.id) %>
-          <% end %>
-        </div>
+    <div class="app-button-group">
+      <% if helpers.policy(vaccination_record).edit? %>
+        <%= govuk_button_to "Edit vaccination record",
+                            programme_vaccination_record_path(vaccination_record.programme, vaccination_record),
+                            method: :put, class: "app-button--secondary" %>
       <% end %>
-    <% end %>
-  <% end %>
 
-  <% show_vaccination_form = helpers.policy(VaccinationRecord).create? %>
-  <% show_vaccination_form &&= @patient_session.attending_today? if Flipper.enabled?(:record_attendance) %>
-
-  <% if show_vaccination_form %>
-    <%= render AppVaccinateFormComponent.new(@vaccination_record, section: @section, tab: @tab) %>
+      <% if helpers.policy(vaccination_record).destroy? %>
+        <%= govuk_link_to "Delete vaccination record", destroy_vaccination_record_session_patient_vaccinations_path(patient_id: patient.id, vaccination_record_id: vaccination_record.id) %>
+      <% end %>
+    </div>
   <% end %>
+<% end %>
+
+<% show_vaccination_form = helpers.policy(VaccinationRecord).create? %>
+<% show_vaccination_form &&= @patient_session.attending_today? if Flipper.enabled?(:record_attendance) %>
+
+<% if show_vaccination_form %>
+  <%= render AppVaccinateFormComponent.new(@vaccination_record, section: @section, tab: @tab) %>
 <% end %>

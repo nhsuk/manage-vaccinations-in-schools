@@ -17,7 +17,7 @@
   <% c.with_heading { "Vaccination details" } %>
   <%= render AppVaccinationRecordSummaryComponent.new(@vaccination_record, current_user:) %>
 
-  <% if Flipper.enabled?(:release_1b) && policy(@vaccination_record).edit? %>
+  <% if policy(@vaccination_record).edit? %>
     <%= govuk_button_to "Edit vaccination record",
                         programme_vaccination_record_path(@programme, @vaccination_record),
                         method: :put, class: "app-button--secondary" %>

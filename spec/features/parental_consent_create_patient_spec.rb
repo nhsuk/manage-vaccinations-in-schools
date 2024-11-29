@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 describe "Parental consent create patient" do
-  before { Flipper.enable(:release_1b) }
-  after { Flipper.disable(:release_1b) }
-
   scenario "Nurse creates a patient from a consent response" do
     stub_pds_search_to_return_a_patient
 
