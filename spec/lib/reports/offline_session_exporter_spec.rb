@@ -69,6 +69,7 @@ describe Reports::OfflineSessionExporter do
             ANATOMICAL_SITE
             DOSE_SEQUENCE
             REASON_NOT_VACCINATED
+            NOTES
             UUID
           ]
         )
@@ -109,6 +110,7 @@ describe Reports::OfflineSessionExporter do
               "GILLICK_STATUS" => "",
               "HEALTH_QUESTION_ANSWERS" => "",
               "NHS_NUMBER" => patient.nhs_number,
+              "NOTES" => "",
               "ORGANISATION_CODE" => organisation.ods_code,
               "PERFORMING_PROFESSIONAL_EMAIL" => "",
               "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
@@ -153,7 +155,8 @@ describe Reports::OfflineSessionExporter do
             batch:,
             patient_session:,
             programme:,
-            performed_by: user
+            performed_by: user,
+            notes: "Some notes."
           )
         end
 
@@ -179,6 +182,7 @@ describe Reports::OfflineSessionExporter do
               "GILLICK_STATUS" => "",
               "HEALTH_QUESTION_ANSWERS" => "",
               "NHS_NUMBER" => patient.nhs_number,
+              "NOTES" => "Some notes.",
               "ORGANISATION_CODE" => organisation.ods_code,
               "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
               "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
@@ -235,7 +239,8 @@ describe Reports::OfflineSessionExporter do
             patient_session:,
             programme:,
             performed_at:,
-            performed_by: user
+            performed_by: user,
+            notes: "Some notes."
           )
         end
 
@@ -256,6 +261,7 @@ describe Reports::OfflineSessionExporter do
               "GILLICK_STATUS" => "",
               "HEALTH_QUESTION_ANSWERS" => "",
               "NHS_NUMBER" => patient.nhs_number,
+              "NOTES" => "Some notes.",
               "ORGANISATION_CODE" => organisation.ods_code,
               "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
               "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
@@ -337,6 +343,7 @@ describe Reports::OfflineSessionExporter do
             ANATOMICAL_SITE
             DOSE_SEQUENCE
             REASON_NOT_VACCINATED
+            NOTES
             UUID
           ]
         )
@@ -373,6 +380,7 @@ describe Reports::OfflineSessionExporter do
               "GILLICK_STATUS" => "",
               "HEALTH_QUESTION_ANSWERS" => "",
               "NHS_NUMBER" => patient.nhs_number,
+              "NOTES" => "",
               "ORGANISATION_CODE" => organisation.ods_code,
               "PERFORMING_PROFESSIONAL_EMAIL" => "",
               "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
@@ -418,7 +426,8 @@ describe Reports::OfflineSessionExporter do
             patient_session:,
             programme:,
             location_name: "A Clinic",
-            performed_by: user
+            performed_by: user,
+            notes: "Some notes."
           )
         end
 
@@ -445,6 +454,7 @@ describe Reports::OfflineSessionExporter do
               "GILLICK_STATUS" => "",
               "HEALTH_QUESTION_ANSWERS" => "",
               "NHS_NUMBER" => patient.nhs_number,
+              "NOTES" => "Some notes.",
               "ORGANISATION_CODE" => organisation.ods_code,
               "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
               "PERSON_ADDRESS_LINE_1" => patient.address_line_1,

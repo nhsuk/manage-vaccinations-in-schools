@@ -202,6 +202,7 @@ describe "HPV Vaccination" do
     row_for_unvaccinated_patient["TIME_OF_VACCINATION"] = "10:01"
     row_for_unvaccinated_patient["VACCINATED"] = "N"
     row_for_unvaccinated_patient["REASON_NOT_VACCINATED"] = "did not attend"
+    row_for_unvaccinated_patient["NOTES"] = "Some notes."
     row_for_unvaccinated_patient[
       "PERFORMING_PROFESSIONAL_EMAIL"
     ] = @organisation.users.first.email
@@ -260,6 +261,7 @@ describe "HPV Vaccination" do
     expect(page).to have_content(@unvaccinated_patient.full_name)
     expect(page).to have_content("Could not vaccinate")
     expect(page).to have_content("OutcomeAbsent from session")
+    expect(page).to have_content("NotesSome notes.")
 
     click_on "Back"
     click_on "Vaccinated"

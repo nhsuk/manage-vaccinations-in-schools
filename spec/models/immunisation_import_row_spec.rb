@@ -1038,6 +1038,28 @@ describe ImmunisationImportRow do
     end
   end
 
+  describe "#notes" do
+    subject(:notes) { immunisation_import_row.notes }
+
+    context "without notes" do
+      let(:data) { {} }
+
+      it { expect(notes).to be_nil }
+    end
+
+    context "with blank notes" do
+      let(:data) { { "NOTES" => "" } }
+
+      it { expect(notes).to be_nil }
+    end
+
+    context "with notes" do
+      let(:data) { { "NOTES" => "Some notes." } }
+
+      it { expect(notes).to eq("Some notes.") }
+    end
+  end
+
   describe "#delivery_method" do
     subject(:delivery_method) { immunisation_import_row.delivery_method }
 
@@ -1513,6 +1535,14 @@ describe ImmunisationImportRow do
 
       it { should_not be_nil }
       it { should eq(existing_vaccination_record) }
+    end
+
+    context "with notes" do
+      let(:data) { valid_data.merge("NOTES" => "Some notes.") }
+
+      it "sets the notes" do
+        expect(vaccination_record.notes).to eq("Some notes.")
+      end
     end
   end
 
