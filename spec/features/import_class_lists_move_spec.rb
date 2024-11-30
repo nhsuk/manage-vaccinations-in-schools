@@ -110,7 +110,9 @@ describe "Import class lists - Moving patients" do
   end
 
   def when_i_confirm_a_move
-    click_button "Confirm move", match: :first
+    click_on "Review", match: :first
+    choose "Update record with new school"
+    click_on "Update child record"
   end
 
   def then_i_should_see_a_success_flash
@@ -118,7 +120,9 @@ describe "Import class lists - Moving patients" do
   end
 
   def when_i_ignore_a_move
-    click_button "Ignore move", match: :first
+    click_on "Review", match: :first
+    choose "Ignore new information"
+    click_on "Update child record"
   end
 
   def then_i_should_see_a_notice_flash

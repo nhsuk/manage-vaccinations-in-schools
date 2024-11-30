@@ -46,16 +46,7 @@
 
             <% row.with_cell do %>
               <span class="nhsuk-table-responsive__heading">Actions</span>
-              <%= form_with url: school_move_path(school_move), method: :patch do |f| %>
-                <%= f.submit "Confirm move",
-                             class: "nhsuk-button app-button--secondary app-button--small",
-                             name: "confirm",
-                             value: "Confirm move" %>
-                <%= f.submit "Ignore move",
-                             class: "nhsuk-button app-button--secondary-warning app-button--small",
-                             name: "ignore",
-                             value: "Ignore move" %>
-              <% end %>
+              <%= link_to "Review", school_move_path(school_move) %>
             <% end %>
           <% end %>
         <% end %>
