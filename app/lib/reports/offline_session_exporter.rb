@@ -153,7 +153,7 @@ class Reports::OfflineSessionExporter
           style:
         )
       end
-    else
+    elsif !patient_session.consent_refused?
       session.programmes.each do |programme|
         sheet.add_row(
           new_row(
