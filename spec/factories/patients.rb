@@ -62,6 +62,7 @@ FactoryBot.define do
       end
       year_group { nil }
       location_name { nil }
+      in_attendance { false }
     end
 
     cohort do
@@ -107,12 +108,23 @@ FactoryBot.define do
 
     after(:create) do |patient, evaluator|
       if evaluator.session
-        patient.patient_sessions.find_or_create_by!(session: evaluator.session)
+        patient_session =
+          patient.patient_sessions.find_or_create_by!(
+            session: evaluator.session
+          )
+
+        if evaluator.in_attendance
+          create(:session_attendance, :present, patient_session:)
+        end
       end
 
       evaluator.parents.each do |parent|
         create(:parent_relationship, parent:, patient:)
       end
+    end
+
+    trait :in_attendance do
+      in_attendance { true }
     end
 
     trait :home_educated do

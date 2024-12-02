@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 describe "Manage attendance" do
-  before { Flipper.enable(:record_attendance) }
-  after { Flipper.disable(:record_attendance) }
-
   around { |example| travel_to(Time.zone.local(2024, 2, 29)) { example.run } }
 
   scenario "Recording attendance for a patient" do

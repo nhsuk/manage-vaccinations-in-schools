@@ -26,6 +26,10 @@ describe "End-to-end journey" do
     when_i_register_verbal_consent_and_triage
     then_i_should_see_that_the_patient_is_ready_for_vaccination
 
+    # Attendance
+    when_i_click_on_the_register_attendance_section
+    and_i_record_the_patient_in_attendance
+
     # Vaccination
     when_i_click_on_the_vaccination_section
     and_i_record_the_successful_vaccination
@@ -207,9 +211,18 @@ describe "End-to-end journey" do
     expect(page).to have_content "Safe to vaccinate"
   end
 
-  def when_i_click_on_the_vaccination_section
+  def when_i_click_on_the_register_attendance_section
     click_link "Back to consents page"
     click_link "Pilot School"
+    click_link "Register attendance"
+  end
+
+  def and_i_record_the_patient_in_attendance
+    click_on "Attending"
+  end
+
+  def when_i_click_on_the_vaccination_section
+    click_link "Back"
     click_link "Record vaccinations"
     click_link "Vaccinate ( 1 )"
   end

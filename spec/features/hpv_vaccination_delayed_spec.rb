@@ -5,7 +5,7 @@ describe "HPV Vaccination" do
     given_i_am_signed_in
 
     when_i_go_to_a_patient_that_is_ready_to_vaccinate
-    and_i_record_that_the_patient_was_absent
+    and_i_record_that_the_patient_was_unwell
     then_i_see_the_confirmation_page
 
     when_i_confirm_the_details
@@ -34,7 +34,12 @@ describe "HPV Vaccination" do
     @session =
       create(:session, organisation: @organisation, programme:, location:)
     @patient =
-      create(:patient, :consent_given_triage_not_needed, session: @session)
+      create(
+        :patient,
+        :consent_given_triage_not_needed,
+        :in_attendance,
+        session: @session
+      )
 
     sign_in @organisation.users.first
   end
@@ -45,18 +50,18 @@ describe "HPV Vaccination" do
     click_link @patient.full_name
   end
 
-  def and_i_record_that_the_patient_was_absent
+  def and_i_record_that_the_patient_was_unwell
     choose "No, they did not get it"
     click_button "Continue"
 
-    choose "They were absent from school"
+    choose "They were not well enough"
     click_button "Continue"
   end
 
   def then_i_see_the_confirmation_page
     expect(page).to have_content("Check and confirm")
     expect(page).to have_content("Child#{@patient.full_name}")
-    expect(page).to have_content("OutcomeAbsent from school")
+    expect(page).to have_content("OutcomeUnwell")
   end
 
   def when_i_confirm_the_details

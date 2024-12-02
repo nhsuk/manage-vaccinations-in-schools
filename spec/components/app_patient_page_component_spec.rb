@@ -98,6 +98,7 @@ describe AppPatientPageComponent do
         :patient_session,
         :triaged_ready_to_vaccinate,
         :session_in_progress,
+        :in_attendance,
         programme:
       )
     end

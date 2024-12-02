@@ -849,6 +849,7 @@ en:
     index:
       title: Vaccines
   attendance_flash:
+    absent: "%{name} is absent from today’s session."
     added_to_session: "%{name} is attending today’s session. They still need consent to vaccinate."
     consent_conflicts: "%{name} is attending today’s session. They still need consent to vaccinate."
     consent_given_triage_needed: "%{name} is attending today’s session. A nurse needs to triage their record."
@@ -857,9 +858,9 @@ en:
     delay_vaccination: "%{name} needs to leave the session because their vaccination is delayed to a later date."
     triaged_do_not_vaccinate: "%{name} needs to leave the session because their parent or guardian refused to give consent."
     triaged_kept_in_triage: "%{name} is attending today’s session. A nurse needs to triage their record."
+    triaged_ready_to_vaccinate: "%{name} is attending today’s session. They are safe to vaccinate."
     unable_to_vaccinate: "%{name} needs to leave the session because they cannot be vaccinated."
     vaccinated: "%{name} needs to leave the session because they have already been vaccinated."
-    absent: "%{name} is absent from today’s session."
   wicked:
     address: address
     agree: agree
