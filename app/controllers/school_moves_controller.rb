@@ -20,7 +20,8 @@ class SchoolMovesController < ApplicationController
     @form =
       SchoolMoveForm.new(
         school_move: @school_move,
-        action: params.dig(:school_move_form, :action)
+        action: params.dig(:school_move_form, :action),
+        move_to_school: params.dig(:school_move_form, :move_to_school)
       )
 
     if @form.save

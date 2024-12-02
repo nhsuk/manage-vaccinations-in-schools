@@ -106,9 +106,8 @@ FactoryBot.define do
     address_postcode { Faker::Address.uk_postcode }
 
     after(:create) do |patient, evaluator|
-      if evaluator.session &&
-           !PatientSession.exists?(patient:, session: evaluator.session)
-        create(:patient_session, patient:, session: evaluator.session)
+      if evaluator.session
+        patient.patient_sessions.find_or_create_by!(session: evaluator.session)
       end
 
       evaluator.parents.each do |parent|

@@ -419,7 +419,7 @@ class ConsentForm < ApplicationRecord
   def actual_upcoming_session
     # HACK: Remove this method once we're only sending emails after the nurse
     # has confirmed the school move, at the moment we're assuming the move
-    # will be confirmed.
+    # will be confirmed and the patient will be left in the community clinic.
 
     patient = Patient.new
 
@@ -430,8 +430,8 @@ class ConsentForm < ApplicationRecord
         SchoolMove.new(patient:, home_educated:, organisation:)
       end
 
-    # Intentionally using a private method, as this method should be removed.
-    school_move.send(:new_session)
+    # Intentionally using a private method, as this is a hack.
+    school_move.send(:find_replacement_session, move_to_school: false)
   end
 
   private

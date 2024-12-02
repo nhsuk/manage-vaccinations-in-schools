@@ -5,6 +5,7 @@ describe "Parental consent school" do
     stub_pds_search_to_return_no_patients
 
     given_an_hpv_programme_is_underway
+    and_an_upcoming_school_session_exists
 
     when_i_go_to_the_consent_form
     and_i_fill_in_my_childs_name_and_birthday
@@ -28,9 +29,43 @@ describe "Parental consent school" do
 
     when_the_nurse_checks_the_school_moves
     then_the_nurse_should_see_one_move
-    and_the_nurse_confirms_the_move
+    and_the_nurse_confirms_the_move(and_moves_to_school: false)
 
     when_the_nurse_checks_the_patient
+    then_the_nurse_should_see_the_school
+  end
+
+  scenario "Child attending a clinic goes to a school and nurse moves the child to the school session" do
+    stub_pds_search_to_return_no_patients
+
+    given_an_hpv_programme_is_underway
+    and_an_upcoming_school_session_exists
+
+    when_i_go_to_the_consent_form
+    and_i_fill_in_my_childs_name_and_birthday
+    then_i_see_a_page_asking_if_my_child_is_home_educated
+
+    when_i_choose_no_they_go_to_a_school
+    then_i_see_a_page_asking_for_the_childs_school
+
+    when_i_click_continue
+    then_i_see_an_error
+
+    when_i_choose_a_school
+    then_i_see_the_parent_step
+
+    when_i_give_consent
+    and_i_answer_no_to_all_the_medical_questions
+    then_i_can_check_my_answers
+
+    when_i_submit_the_consent_form
+    then_i_see_a_confirmation_page
+
+    when_the_nurse_checks_the_school_moves
+    then_the_nurse_should_see_one_move
+    and_the_nurse_confirms_the_move(and_moves_to_school: true)
+
+    when_the_nurse_checks_the_patient(in_the_school: true)
     then_the_nurse_should_see_the_school
   end
 
@@ -111,7 +146,17 @@ describe "Parental consent school" do
 
     @child = create(:patient, session: @session)
 
-    create(:school, organisation: @organisation, name: "Pilot School")
+    @school = create(:school, organisation: @organisation)
+  end
+
+  def and_an_upcoming_school_session_exists
+    create(
+      :session,
+      :scheduled,
+      organisation: @organisation,
+      programme: @programme,
+      location: @school
+    )
   end
 
   def when_i_go_to_the_consent_form
@@ -166,7 +211,7 @@ describe "Parental consent school" do
   end
 
   def when_i_choose_a_school
-    select "Pilot School"
+    select @school.name
     click_on "Continue"
   end
 
@@ -240,31 +285,44 @@ describe "Parental consent school" do
     expect(page).to have_content("1 school move")
   end
 
-  def and_the_nurse_confirms_the_move
+  def and_the_nurse_confirms_the_move(and_moves_to_school: nil)
     expect(page).to have_content(@child.full_name)
     click_on "Review"
     choose "Update record with new school"
+
+    if and_moves_to_school
+      choose "Yes, move them to the upcoming school session"
+    elsif and_moves_to_school == false
+      choose "No, keep them in the community clinic"
+    end
+
     click_on "Update child record"
+    expect(page).to have_content("Success")
   end
 
   def then_the_nurse_should_see_no_moves
     expect(page).to have_content("There are currently no school moves.")
   end
 
-  def when_the_nurse_checks_the_patient
+  def when_the_nurse_checks_the_patient(in_the_school: false)
     click_on "Programmes", match: :first
     click_on "HPV"
     within ".app-secondary-navigation" do
       click_on "Sessions"
     end
-    click_on "Community clinics"
+
+    if in_the_school
+      click_on @school.name
+    else
+      click_on "Community clinics"
+    end
 
     click_on "Record vaccinations"
     click_on @child.full_name
   end
 
   def then_the_nurse_should_see_the_school
-    expect(page).to have_content("SchoolPilot School")
+    expect(page).to have_content("School#{@school.name}")
   end
 
   def then_the_nurse_should_see_home_schooled
