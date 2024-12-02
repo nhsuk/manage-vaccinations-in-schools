@@ -34,6 +34,12 @@ FactoryBot.define do
       association :patient, organisation:, school:, home_educated:, year_group:
     end
 
+    trait :in_attendance do
+      session_attendances do
+        [association(:session_attendance, :present, patient_session: instance)]
+      end
+    end
+
     trait :added_to_session
 
     trait :consent_given_triage_not_needed do

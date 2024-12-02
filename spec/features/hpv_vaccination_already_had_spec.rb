@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe "HPV Vaccination" do
-  scenario "Not administered" do
+  scenario "Already had" do
     given_i_am_signed_in
 
     when_i_go_to_a_patient_that_is_ready_to_vaccinate
@@ -33,7 +33,12 @@ describe "HPV Vaccination" do
     @batch = create(:batch, organisation:, vaccine: programme.vaccines.first)
     @session = create(:session, organisation:, programme:, location:)
     @patient =
-      create(:patient, :consent_given_triage_not_needed, session: @session)
+      create(
+        :patient,
+        :consent_given_triage_not_needed,
+        :in_attendance,
+        session: @session
+      )
 
     sign_in organisation.users.first
   end

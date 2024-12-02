@@ -94,12 +94,10 @@ describe "Invalidate consent" do
 
   def and_the_patient_is_ready_for_the_nurse
     expect(page).to have_content("Ready for nurse")
-    expect(page).to have_content("Did they get the HPV vaccine?")
   end
 
   def and_the_patient_is_safe_to_vaccinate
     expect(page).to have_content("Safe to vaccinate")
-    expect(page).to have_content("Did they get the HPV vaccine?")
   end
 
   def when_i_click_on_the_consent

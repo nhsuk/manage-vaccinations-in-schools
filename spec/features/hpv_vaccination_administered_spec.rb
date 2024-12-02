@@ -77,7 +77,12 @@ describe "HPV Vaccination" do
 
     @session = create(:session, organisation:, programme:, location:)
     @patient =
-      create(:patient, :consent_given_triage_not_needed, session: @session)
+      create(
+        :patient,
+        :consent_given_triage_not_needed,
+        :in_attendance,
+        session: @session
+      )
 
     sign_in organisation.users.first
   end
