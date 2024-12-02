@@ -28,7 +28,7 @@ class SchoolMovesController < ApplicationController
       name = @school_move.patient.full_name
       flash =
         if @form.action == "confirm"
-          { success: "#{name}’s record updated with new school" }
+          { success: "#{name}’s school record updated" }
         else
           { notice: "#{name}’s school move ignored" }
         end
