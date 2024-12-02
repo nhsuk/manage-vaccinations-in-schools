@@ -11,6 +11,7 @@ class GillickAssessmentsController < ApplicationController
   end
 
   def update
+    @gillick_assessment.clear_changes_information
     @gillick_assessment.assign_attributes(gillick_assessment_params)
 
     if !@gillick_assessment.changed? || @gillick_assessment.save
