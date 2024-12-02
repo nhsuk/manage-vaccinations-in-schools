@@ -72,19 +72,29 @@ $button-shadow-size: 4px;
     color: $nhsuk-focus-text-color;
   }
 
+  &:focus:visited:active {
+    // Override .nhsuk-button turning colour white
+    color: $button-color;
+  }
+
   &:active {
     background-color: rgba($button-color, 15%);
+    border-bottom: $nhsuk-border-width-form-element solid; // Reintroduce 2px bottom border
     border-color: $button-color;
-    border-bottom: 2px solid; // Reintroduce 2px bottom border
     color: $button-color;
     // Revert padding to account for reintroduction of 2px bottom border
     padding-bottom: 12px;
     padding-top: 12px;
   }
 
-  &:focus:visited:active {
-    // Override .nhsuk-button turning colour white
-    color: $button-color;
+  &::before {
+    bottom: #{$button-shadow-size * -1};
+    top: #{$nhsuk-border-width-form-element * -1};
+  }
+
+  &:active::before {
+    bottom: #{($nhsuk-border-width-form-element + $button-shadow-size) * -1};
+    top: #{($nhsuk-border-width-form-element + $button-shadow-size) * -1};
   }
 }
 
@@ -102,7 +112,15 @@ $button-shadow-size: 4px;
 
   &.app-button--secondary,
   &.app-button--secondary-warning {
+    // Adjust padding to account for removal of 2px bottom border
     padding-bottom: #{nhsuk-spacing(1) + 1px};
     padding-top: #{nhsuk-spacing(1) + 1px};
+
+    &:active {
+      margin-bottom: -1px;
+      // Revert padding to account for reintroduction of 2px bottom border
+      padding-bottom: nhsuk-spacing(1);
+      padding-top: nhsuk-spacing(1);
+    }
   }
 }

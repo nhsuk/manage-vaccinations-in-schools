@@ -10,7 +10,7 @@
 
 <%= render AppProgrammeNavigationComponent.new(@programme, organisation: current_user.selected_organisation, active: :overview) %>
 
-<%= govuk_button_to "Download vaccination report", programme_vaccination_reports_path(@programme), class: "app-button--secondary" %>
+<%= govuk_button_to "Download vaccination report", programme_vaccination_reports_path(@programme), class: "app-button--secondary nhsuk-u-margin-bottom-5" %>
 
 <div class="nhsuk-grid-row nhsuk-card-group">
   <div class="nhsuk-grid-column-one-third nhsuk-card-group__item">
