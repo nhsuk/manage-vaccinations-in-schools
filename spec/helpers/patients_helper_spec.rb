@@ -63,7 +63,7 @@ describe PatientsHelper do
     context "without a school" do
       let(:patient) { create(:patient) }
 
-      it { should eq("<i>Unknown</i>") }
+      it { should eq("Unknown school") }
     end
 
     context "with a school" do

@@ -30,7 +30,7 @@ module PatientsHelper
     elsif patient.home_educated
       "Home-schooled"
     else
-      tag.i("Unknown")
+      "Unknown school"
     end
   end
 
