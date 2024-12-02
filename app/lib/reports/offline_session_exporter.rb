@@ -5,6 +5,8 @@ class Reports::OfflineSessionExporter
 
   def initialize(session)
     @session = session
+    @vaccines = {}
+    @batches = {}
   end
 
   def call
@@ -148,12 +150,19 @@ class Reports::OfflineSessionExporter
     row[:organisation_code] = organisation.ods_code
     row[:school_urn] = school_urn(location:, patient:)
     row[:school_name] = school_name(location:, patient:)
-    row[:care_setting] = Cell.new(care_setting(location:), type: :integer)
+    row[:care_setting] = Cell.new(
+      care_setting(location:),
+      type: :integer,
+      allowed_values: [1, 2]
+    )
     row[:person_forename] = patient.given_name
     row[:person_surname] = patient.family_name
     row[:person_dob] = patient.date_of_birth
     row[:year_group] = patient.year_group
-    row[:person_gender_code] = patient.gender_code.humanize
+    row[:person_gender_code] = Cell.new(
+      patient.gender_code.humanize,
+      allowed_values: Patient.gender_codes.keys
+    )
     row[:person_address_line_1] = (
       patient.address_line_1 unless patient.restricted?
     )
@@ -182,34 +191,114 @@ class Reports::OfflineSessionExporter
   end
 
   def add_existing_row_cells(row, vaccination_record:)
-    row[:vaccinated] = vaccinated(vaccination_record:)
+    batch = vaccination_record.batch
+    programme = vaccination_record.programme
+    vaccine = vaccination_record.vaccine
+
+    row[:vaccinated] = Cell.new(
+      vaccinated(vaccination_record:),
+      allowed_values: %w[Y N]
+    )
     row[:date_of_vaccination] = vaccination_record.performed_at.to_date
     row[:time_of_vaccination] = vaccination_record.performed_at.strftime(
       "%H:%M:%S"
     )
-    row[:programme_name] = vaccination_record.programme.name
-    row[:vaccine_given] = vaccination_record.vaccine&.nivs_name
-    row[
-      :performing_professional_email
-    ] = vaccination_record.performed_by_user&.email
-    row[:batch_number] = vaccination_record.batch&.name
-    row[:batch_expiry_date] = vaccination_record.batch&.expiry
-    row[:anatomical_site] = anatomical_site(vaccination_record:)
+    row[:programme_name] = programme.name
+    row[:vaccine_given] = Cell.new(
+      vaccine&.nivs_name,
+      allowed_values: vaccine_values_for_programme(programme)
+    )
+    row[:performing_professional_email] = Cell.new(
+      vaccination_record.performed_by_user&.email,
+      allowed_values: performing_professional_email_values
+    )
+    row[:batch_number] = Cell.new(
+      batch&.name,
+      allowed_values:
+        batch_values_for_programme(programme, existing_batch: batch)
+    )
+    row[:batch_expiry_date] = batch&.expiry
+    row[:anatomical_site] = Cell.new(
+      anatomical_site(vaccination_record:),
+      allowed_values: ImmunisationImportRow::DELIVERY_SITES.keys
+    )
     row[:dose_sequence] = dose_sequence(vaccination_record:)
-    row[:reason_not_vaccinated] = reason_not_vaccinated(vaccination_record:)
+    row[:reason_not_vaccinated] = Cell.new(
+      reason_not_vaccinated(vaccination_record:),
+      allowed_values: ImmunisationImportRow::REASONS.keys
+    )
     row[:notes] = vaccination_record.notes
     row[:uuid] = vaccination_record.uuid
 
     if location.generic_clinic?
-      row[:clinic_name] = vaccination_record.location_name
+      row[:clinic_name] = Cell.new(
+        vaccination_record.location_name,
+        allowed_values: clinic_name_values
+      )
     end
   end
 
   def add_new_row_cells(row, programme:)
+    row[:vaccinated] = Cell.new(allowed_values: %w[Y N])
     row[:date_of_vaccination] = Cell.new(type: :date)
     row[:programme_name] = programme.name
+    row[:vaccine_given] = Cell.new(
+      allowed_values: vaccine_values_for_programme(programme)
+    )
+    row[:performing_professional_email] = Cell.new(
+      allowed_values: performing_professional_email_values
+    )
+    row[:batch_number] = Cell.new(
+      allowed_values: batch_values_for_programme(programme)
+    )
     row[:batch_expiry_date] = Cell.new(type: :date)
+    row[:anatomical_site] = Cell.new(
+      allowed_values: ImmunisationImportRow::DELIVERY_SITES.keys
+    )
     row[:dose_sequence] = 1 # TODO: revisit this for other programmes
+    row[:reason_not_vaccinated] = Cell.new(
+      allowed_values: ImmunisationImportRow::REASONS.keys
+    )
+
+    if location.generic_clinic?
+      row[:clinic_name] = Cell.new(allowed_values: clinic_name_values)
+    end
+  end
+
+  def vaccine_values_for_programme(programme)
+    @vaccines[programme] ||= Vaccine.active.where(programme:).pluck(:nivs_name)
+  end
+
+  def batch_values_for_programme(programme, existing_batch: nil)
+    batch_names =
+      (
+        @batches[programme] ||= organisation
+          .batches
+          .not_archived
+          .not_expired
+          .joins(:vaccine)
+          .where(vaccine: { programme: })
+          .pluck(:name)
+      )
+
+    (batch_names + [existing_batch&.name].compact).uniq
+  end
+
+  def performing_professional_email_values
+    @performing_professional_email_values ||=
+      User
+        .joins(:organisations)
+        .where(organisations: organisation)
+        .pluck(:email)
+  end
+
+  def clinic_name_values
+    @clinic_name_values =
+      Location
+        .community_clinic
+        .joins(:team)
+        .where(team: { organisation: })
+        .pluck(:name)
   end
 
   class CachedStyles
@@ -243,21 +332,51 @@ class Reports::OfflineSessionExporter
     end
 
     def add_to(sheet:, cached_styles:)
+      row_index = sheet.rows.count
+
       values = cells.map(&:value)
       types = cells.map(&:type)
       style =
         cells.map { cached_styles.find_or_create(row_style.merge(_1.style)) }
       sheet.add_row(values, types:, style:)
+
+      cells.each_with_index do |cell, column_index|
+        cell.add_data_validation_to(sheet:, row_index:, column_index:)
+      end
     end
   end
 
   class Cell
-    attr_reader :value, :type, :style
+    attr_reader :value, :type, :style, :allowed_values
 
-    def initialize(value = "", type: nil, style: {})
+    def initialize(value = "", type: nil, style: {}, allowed_values: [])
       @value = value
       @type = type || Cell.default_type_for(value)
       @style = Cell.default_style_for(@type).merge(style)
+      @allowed_values = allowed_values
+    end
+
+    ALPHABET = %w[A B C D E F G H I J K L M N O P Q R S T U V W X Y Z].freeze
+    CELL_COLUMNS = ALPHABET + ALPHABET.product(ALPHABET).map { _1 + _2 }
+
+    def add_data_validation_to(sheet:, column_index:, row_index:)
+      return if allowed_values.blank?
+
+      cell = "#{CELL_COLUMNS[column_index]}#{row_index + 1}"
+      formula1 = "\"#{allowed_values.join(", ")}\""
+
+      sheet.add_data_validation(
+        cell,
+        type: :list,
+        formula1:,
+        hideDropDown: false,
+        showErrorMessage: true,
+        errorTitle: "",
+        error: "Please use the dropdown selector to choose the value",
+        errorStyle: :stop,
+        showInputMessage: true,
+        prompt: "&amp; Choose the value from the dropdown"
+      )
     end
 
     def self.default_type_for(value)
