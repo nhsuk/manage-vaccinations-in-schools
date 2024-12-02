@@ -70,6 +70,7 @@ end
 def attach_sample_of_schools_to(organisation)
   Location
     .school
+    .where(team_id: nil)
     .order("RANDOM()")
     .limit(50)
     .update_all(team_id: organisation.generic_team.id)
