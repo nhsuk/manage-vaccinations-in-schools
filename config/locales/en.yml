@@ -362,6 +362,11 @@ en:
         types:
           flu: Flu
           hpv: HPV
+      school_move:
+        sources:
+          class_list_import: Class list
+          cohort_import: Cohort record
+          parental_consent_form: Consent response
       triage:
         statuses:
           delay_vaccination: Delay vaccination to a later date
