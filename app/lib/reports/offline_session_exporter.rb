@@ -39,18 +39,26 @@ class Reports::OfflineSessionExporter
       patient_sessions.each do |patient_session|
         rows(patient_session:).each { |row| row.add_to(sheet:, cached_styles:) }
       end
+
+      sheet.sheet_view.pane do |pane|
+        pane.top_left_cell = "C2"
+        pane.state = :frozen_split
+        pane.y_split = 1
+        pane.x_split = 2
+        pane.active_pane = :bottom_right
+      end
     end
   end
 
   def columns
     @columns ||=
       %i[
+        person_forename
+        person_surname
         organisation_code
         school_urn
         school_name
         care_setting
-        person_forename
-        person_surname
         person_dob
         year_group
         person_gender_code
@@ -82,7 +90,7 @@ class Reports::OfflineSessionExporter
         notes
         uuid
       ].tap do |values|
-        values.insert(4, :clinic_name) if location.generic_clinic?
+        values.insert(6, :clinic_name) if location.generic_clinic?
       end
   end
 
