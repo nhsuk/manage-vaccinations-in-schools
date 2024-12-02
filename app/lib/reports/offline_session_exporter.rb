@@ -103,7 +103,14 @@ class Reports::OfflineSessionExporter
     vaccination_records =
       patient_session.vaccination_records.order(:performed_at)
 
-    row_style = { strike: patient_session.patient.invalidated? }
+    row_style = {
+      strike: patient_session.patient.invalidated?,
+      bg_color: patient_session.consent_given? ? nil : "F7D4D1",
+      border: {
+        style: :thin,
+        color: "000000"
+      }
+    }
 
     if vaccination_records.any?
       vaccination_records.map do |vaccination_record|
