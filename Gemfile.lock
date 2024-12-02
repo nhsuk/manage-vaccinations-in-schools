@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/citizensadvice/capybara_accessible_selectors
-  revision: e5be03d6e37f83c1f0333b85c99941c2f0487d2d
+  revision: aed2860e5b5df7f39284fdc35a5bf57bda7e1ad9
   branch: main
   specs:
     capybara_accessible_selectors (0.11.0)
@@ -360,9 +360,9 @@ GEM
       net-protocol
     nio4r (2.7.4)
     nkf (0.2.0)
-    nokogiri (1.16.7-arm64-darwin)
+    nokogiri (1.16.8-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.16.7-x86_64-linux)
+    nokogiri (1.16.8-x86_64-linux)
       racc (~> 1.4)
     notifications-ruby-client (6.2.0)
       jwt (>= 1.5, < 3)
@@ -479,7 +479,7 @@ GEM
     rdoc (6.8.1)
       psych (>= 4.0.0)
     redcarpet (3.6.0)
-    regexp_parser (2.9.2)
+    regexp_parser (2.9.3)
     reline (0.5.11)
       io-console (~> 0.5)
     responders (3.1.1)
