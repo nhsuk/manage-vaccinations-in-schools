@@ -121,9 +121,6 @@
   <% end %>
 <% end %>
 
-<% show_vaccination_form = helpers.policy(VaccinationRecord).create? %>
-<% show_vaccination_form &&= @patient_session.attending_today? if Flipper.enabled?(:record_attendance) %>
-
-<% if show_vaccination_form %>
+<% if helpers.policy(VaccinationRecord).create? && @patient_session.attending_today? %>
   <%= render AppVaccinateFormComponent.new(@vaccination_record, section: @section, tab: @tab) %>
 <% end %>
