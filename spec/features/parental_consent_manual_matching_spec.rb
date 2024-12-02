@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe "Parental consent manual matching" do
-  scenario "Consent isn't matched automatically so SAIS team matches it manually" do
+  scenario "Consent isn't matched automatically so nurse matches it manually" do
     given_the_app_is_setup
 
     when_i_go_to_the_dashboard
