@@ -282,6 +282,24 @@ bash script/aws-account-setup.sh
 This can occur if your docker client has some old state left in it. Logging out
 seems to fix it:
 
-```
+```bash
 docker logout https://393416225559.dkr.ecr.eu-west-2.amazonaws.com
 ```
+
+### Deployment error: `stack is in UPDATE_ROLLBACK_FAILED state and can not be updated`
+
+This can happen after a failed deployment, where Cloudformation attempts to
+rollback the deploy but gets stuck in a failed state.
+
+You can manually continue the rollback, skipping failed resources:
+
+```bash
+aws cloudformation continue-update-rollback \
+  --stack-name mavis-production-webapp \
+  --resources-to-skip "Service" # Must be a resource in UPDATE_FAILED state
+```
+
+More information:
+
+- https://github.com/aws/copilot-cli/issues/4333
+- https://repost.aws/knowledge-center/cloudformation-update-rollback-failed
