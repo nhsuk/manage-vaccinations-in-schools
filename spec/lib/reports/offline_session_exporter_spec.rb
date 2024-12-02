@@ -35,12 +35,12 @@ describe Reports::OfflineSessionExporter do
       it do
         expect(headers).to eq(
           %w[
+            PERSON_FORENAME
+            PERSON_SURNAME
             ORGANISATION_CODE
             SCHOOL_URN
             SCHOOL_NAME
             CARE_SETTING
-            PERSON_FORENAME
-            PERSON_SURNAME
             PERSON_DOB
             YEAR_GROUP
             PERSON_GENDER_CODE
@@ -316,13 +316,13 @@ describe Reports::OfflineSessionExporter do
       it do
         expect(headers).to eq(
           %w[
+            PERSON_FORENAME
+            PERSON_SURNAME
             ORGANISATION_CODE
             SCHOOL_URN
             SCHOOL_NAME
             CARE_SETTING
             CLINIC_NAME
-            PERSON_FORENAME
-            PERSON_SURNAME
             PERSON_DOB
             YEAR_GROUP
             PERSON_GENDER_CODE
