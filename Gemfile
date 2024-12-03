@@ -48,7 +48,6 @@ gem "ruby-progressbar"
 gem "rubyzip"
 gem "sentry-rails"
 gem "sentry-ruby"
-gem "silencer", require: false
 gem "stimulus-rails"
 gem "turbo-rails"
 gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
