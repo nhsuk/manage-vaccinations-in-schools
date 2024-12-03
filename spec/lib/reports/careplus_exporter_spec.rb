@@ -3,6 +3,7 @@
 describe Reports::CareplusExporter do
   subject(:csv) do
     described_class.call(
+      organisation:,
       programme:,
       start_date: 1.month.ago.to_date,
       end_date: Date.current
@@ -10,6 +11,7 @@ describe Reports::CareplusExporter do
   end
 
   let(:programme) { create(:programme, :hpv) }
+  let(:organisation) { create(:organisation, programmes: [programme]) }
   let(:location) do
     create(
       :school,
@@ -17,7 +19,7 @@ describe Reports::CareplusExporter do
       gias_establishment_number: 456
     )
   end
-  let(:session) { create(:session, programme:, location:) }
+  let(:session) { create(:session, organisation:, programme:, location:) }
   let(:parsed_csv) { CSV.parse(csv) }
   let(:headers) { parsed_csv.first }
   let(:data_rows) { parsed_csv[1..] }
@@ -114,5 +116,16 @@ describe Reports::CareplusExporter do
     create(:vaccination_record, :not_administered, programme:, patient_session:)
 
     expect(data_rows.first).to be_nil
+  end
+
+  context "with a session in a different organisation" do
+    let(:session) { create(:session, programme:, location:) }
+
+    it "excludes the vaccination record" do
+      patient_session = create(:patient_session, session:)
+      create(:vaccination_record, programme:, patient_session:)
+
+      expect(data_rows.first).to be_nil
+    end
   end
 end

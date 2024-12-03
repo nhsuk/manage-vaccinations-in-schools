@@ -1,20 +1,23 @@
 # frozen_string_literal: true
 
 class Reports::CareplusExporter
-  def initialize(programme:, start_date:, end_date:)
+  def initialize(organisation:, programme:, start_date:, end_date:)
+    @organisation = organisation
     @programme = programme
     @start_date = start_date
     @end_date = end_date
   end
 
   def call
-    CSV.generate do |csv|
-      csv << headers
-      programme.sessions.each do |session|
-        patient_sessions_for_session(session).each do |patient_session|
-          rows(patient_session:).each { |row| csv << row }
+    CSV.generate(headers:, write_headers: true) do |csv|
+      programme
+        .sessions
+        .where(organisation:)
+        .find_each do |session|
+          patient_sessions_for_session(session).each do |patient_session|
+            rows(patient_session:).each { |row| csv << row }
+          end
         end
-      end
     end
   end
 
@@ -26,7 +29,7 @@ class Reports::CareplusExporter
 
   private
 
-  attr_reader :programme, :start_date, :end_date
+  attr_reader :organisation, :programme, :start_date, :end_date
 
   def headers
     [

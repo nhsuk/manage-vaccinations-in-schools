@@ -35,21 +35,12 @@ class VaccinationReport
   end
 
   def csv_data
-    case file_format
-    when "careplus"
-      Reports::CareplusExporter.call(
-        programme:,
-        start_date: date_from,
-        end_date: date_to
-      )
-    when "mavis"
-      Reports::ProgrammeVaccinationsExporter.call(
-        organisation: @current_user.selected_organisation,
-        programme:,
-        start_date: date_from,
-        end_date: date_to
-      )
-    end
+    exporter_class.call(
+      organisation: @current_user.selected_organisation,
+      programme:,
+      start_date: date_from,
+      end_date: date_to
+    )
   end
 
   def csv_filename
@@ -62,6 +53,13 @@ class VaccinationReport
   end
 
   private
+
+  def exporter_class
+    {
+      careplus: Reports::CareplusExporter,
+      mavis: Reports::ProgrammeVaccinationsExporter
+    }.fetch(file_format.to_sym)
+  end
 
   def reset_unused_fields
   end
