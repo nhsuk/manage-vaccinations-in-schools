@@ -101,6 +101,34 @@ describe Reports::CareplusExporter do
     expect(row[venue_code_index]).to eq("123/456")
   end
 
+  context "in a community clinic" do
+    let(:location) { create(:generic_clinic, organisation:) }
+
+    it "includes clinic location details" do
+      patient_session =
+        create(
+          :patient_session,
+          :consent_given_triage_not_needed,
+          programme:,
+          session:
+        )
+      create(
+        :vaccination_record,
+        programme:,
+        patient_session:,
+        location_name: "A clinic"
+      )
+
+      venue_type_index = headers.index("Venue Type")
+      venue_code_index = headers.index("Venue Code")
+
+      row = data_rows.first
+
+      expect(row[venue_type_index]).to eq("CL")
+      expect(row[venue_code_index]).to eq("Clinic") # TODO: replace with real value
+    end
+  end
+
   it "excludes vaccination records outside the date range" do
     patient_session = create(:patient_session, session:)
     create(
