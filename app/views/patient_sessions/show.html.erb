@@ -10,25 +10,27 @@
   <%= @patient.full_name %>
 <% end %>
 
-<ul class="app-action-list">
-  <li class="app-action-list__item">
-    <% if @patient_session.current_attendance %>
-      <% if @patient_session.current_attendance.attending? %>
+<% if (session_attendance = @patient_session.todays_attendance) %>
+  <ul class="app-action-list">
+    <li class="app-action-list__item">
+      <% if session_attendance.attending %>
         <%= govuk_tag(text: "Attending today’s session") %>
-      <% else %>
+      <% elsif session_attendance.attending == false %>
         <%= govuk_tag(text: "Absent from today’s session", colour: "red") %>
+      <% else %>
+        <%= govuk_tag(text: "Not registered yet", colour: "blue") %>
       <% end %>
-    <% else %>
-      <%= govuk_tag(text: "Not registered yet", colour: "blue") %>
-    <% end %>
-  </li>
-  <li class="app-action-list__item">
-    <%= link_to(
-          "Update attendance",
-          edit_session_patient_attendance_path(patient_id: @patient.id)
-        ) %>
-  </li>
-</ul>
+    </li>
+    <li class="app-action-list__item">
+      <% if policy(session_attendance).edit? %>
+        <%= link_to(
+              "Update attendance",
+              edit_session_patient_attendance_path(patient_id: @patient.id)
+            ) %>
+      <% end %>
+    </li>
+  </ul>
+<% end %>
 
 <%= render AppSecondaryNavigationComponent.new do |nav|
       nav.with_item(

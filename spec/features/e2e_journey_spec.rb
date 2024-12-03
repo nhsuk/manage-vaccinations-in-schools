@@ -34,6 +34,7 @@ describe "End-to-end journey" do
     when_i_click_on_the_vaccination_section
     and_i_record_the_successful_vaccination
     then_i_see_that_the_child_is_vaccinated
+    and_i_cant_edit_attendance
 
     # Activity log
     when_i_click_on_the_child_we_registered
@@ -230,6 +231,8 @@ describe "End-to-end journey" do
   def and_i_record_the_successful_vaccination
     click_link "Bobby Tables"
 
+    expect(page).to have_content("Update attendance")
+
     choose "Yes, they got the HPV vaccine"
     choose "Left arm (upper position)"
     click_button "Continue"
@@ -243,6 +246,10 @@ describe "End-to-end journey" do
   def then_i_see_that_the_child_is_vaccinated
     click_link "Vaccinated ( 1 )"
     expect(page).to have_content "1 child vaccinated"
+  end
+
+  def and_i_cant_edit_attendance
+    expect(page).not_to have_content("Update attendance")
   end
 
   def then_i_see_the_activity_log_link

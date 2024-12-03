@@ -112,15 +112,14 @@ class PatientSession < ApplicationRecord
     @latest_vaccination_record ||= vaccination_records.max_by(&:created_at)
   end
 
-  def current_attendance
-    session_attendances.joins(:session_date).find_by(
-      session_date: {
-        value: Date.current
-      }
-    )
+  def todays_attendance
+    @todays_attendance ||=
+      if (session_date = session.session_dates.find(&:today?))
+        session_attendances.find_or_initialize_by(session_date:)
+      end
   end
 
   def attending_today?
-    current_attendance&.attending?
+    todays_attendance&.attending?
   end
 end

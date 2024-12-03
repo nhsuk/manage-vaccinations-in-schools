@@ -58,7 +58,7 @@ class PatientSessionStats
         patient_session.triaged_do_not_vaccinate? ||
         patient_session.unable_to_vaccinate?
     when :not_registered
-      patient_session.current_attendance.nil?
+      patient_session.todays_attendance&.attending.nil?
     end
   end
 end
