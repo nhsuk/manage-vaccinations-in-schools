@@ -4,20 +4,22 @@
 #
 # Table name: locations
 #
-#  id               :bigint           not null, primary key
-#  address_line_1   :text
-#  address_line_2   :text
-#  address_postcode :text
-#  address_town     :text
-#  name             :text             not null
-#  ods_code         :string
-#  type             :integer          not null
-#  url              :text
-#  urn              :string
-#  year_groups      :integer          default([]), not null, is an Array
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  team_id          :bigint
+#  id                        :bigint           not null, primary key
+#  address_line_1            :text
+#  address_line_2            :text
+#  address_postcode          :text
+#  address_town              :text
+#  gias_establishment_number :integer
+#  gias_local_authority_code :integer
+#  name                      :text             not null
+#  ods_code                  :string
+#  type                      :integer          not null
+#  url                       :text
+#  urn                       :string
+#  year_groups               :integer          default([]), not null, is an Array
+#  created_at                :datetime         not null
+#  updated_at                :datetime         not null
+#  team_id                   :bigint
 #
 # Indexes
 #
@@ -63,18 +65,24 @@ class Location < ApplicationRecord
     validates :team, presence: true
   end
 
-  validates :ods_code,
-            comparison: {
-              equal_to: :organisation_ods_code
-            },
-            if: :generic_clinic?
+  with_options if: :generic_clinic? do
+    validates :ods_code, comparison: { equal_to: :organisation_ods_code }
+  end
 
-  validates :urn, presence: true, if: :school?
+  with_options if: :school? do
+    validates :gias_establishment_number, presence: true
+    validates :gias_local_authority_code, presence: true
+    validates :urn, presence: true
+  end
 
   normalizes :urn, with: -> { _1.blank? ? nil : _1.strip }
 
   def clinic?
     generic_clinic? || community_clinic?
+  end
+
+  def dfe_number
+    "#{gias_local_authority_code}/#{gias_establishment_number}" if school?
   end
 
   private

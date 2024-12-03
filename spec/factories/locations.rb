@@ -4,20 +4,22 @@
 #
 # Table name: locations
 #
-#  id               :bigint           not null, primary key
-#  address_line_1   :text
-#  address_line_2   :text
-#  address_postcode :text
-#  address_town     :text
-#  name             :text             not null
-#  ods_code         :string
-#  type             :integer          not null
-#  url              :text
-#  urn              :string
-#  year_groups      :integer          default([]), not null, is an Array
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  team_id          :bigint
+#  id                        :bigint           not null, primary key
+#  address_line_1            :text
+#  address_line_2            :text
+#  address_postcode          :text
+#  address_town              :text
+#  gias_establishment_number :integer
+#  gias_local_authority_code :integer
+#  name                      :text             not null
+#  ods_code                  :string
+#  type                      :integer          not null
+#  url                       :text
+#  urn                       :string
+#  year_groups               :integer          default([]), not null, is an Array
+#  created_at                :datetime         not null
+#  updated_at                :datetime         not null
+#  team_id                   :bigint
 #
 # Indexes
 #
@@ -48,8 +50,7 @@ FactoryBot.define do
       type { :generic_clinic }
       name { "Community clinics" }
 
-      ods_code { team.organisation.ods_code }
-      urn { nil }
+      ods_code { team&.organisation&.ods_code }
     end
 
     factory :community_clinic do
@@ -57,7 +58,6 @@ FactoryBot.define do
       name { "#{Faker::University.name} Clinic" }
 
       sequence(:ods_code, 10_000, &:to_s)
-      urn { nil }
 
       organisation
     end
@@ -66,8 +66,9 @@ FactoryBot.define do
       type { :school }
       name { Faker::Educator.primary_school }
 
+      sequence(:gias_establishment_number, 1)
+      sequence(:gias_local_authority_code, 1)
       sequence(:urn, 100_000, &:to_s)
-      ods_code { nil }
 
       trait :primary do
         year_groups { (0..6).to_a }

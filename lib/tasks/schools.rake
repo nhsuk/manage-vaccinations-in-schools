@@ -99,9 +99,14 @@ namespace :schools do
         headers: true,
         encoding: "ISO-8859-1:UTF-8"
       ) do |row|
+        gias_establishment_number = row["EstablishmentNumber"]
+        next if gias_establishment_number.blank? # closed school that never opened
+
         locations << Location.new(
           type: :school,
           urn: row["URN"],
+          gias_local_authority_code: row["LA (code)"],
+          gias_establishment_number:,
           name: row["EstablishmentName"],
           address_line_1: row["Street"],
           address_line_2: [row["Locality"], row["Address3"]].compact_blank.join(
@@ -118,11 +123,13 @@ namespace :schools do
                            on_duplicate_key_update: {
                              conflict_target: [:urn],
                              columns: %i[
-                               name
                                address_line_1
                                address_line_2
-                               address_town
                                address_postcode
+                               address_town
+                               gias_establishment_number
+                               gias_local_authority_code
+                               name
                                url
                                year_groups
                              ]
@@ -139,11 +146,13 @@ namespace :schools do
                          on_duplicate_key_update: {
                            conflict_target: [:urn],
                            columns: %i[
-                             name
                              address_line_1
                              address_line_2
-                             address_town
                              address_postcode
+                             address_town
+                             gias_establishment_number
+                             gias_local_authority_code
+                             name
                              url
                              year_groups
                            ]

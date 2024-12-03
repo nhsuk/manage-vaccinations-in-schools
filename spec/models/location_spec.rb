@@ -4,20 +4,22 @@
 #
 # Table name: locations
 #
-#  id               :bigint           not null, primary key
-#  address_line_1   :text
-#  address_line_2   :text
-#  address_postcode :text
-#  address_town     :text
-#  name             :text             not null
-#  ods_code         :string
-#  type             :integer          not null
-#  url              :text
-#  urn              :string
-#  year_groups      :integer          default([]), not null, is an Array
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  team_id          :bigint
+#  id                        :bigint           not null, primary key
+#  address_line_1            :text
+#  address_line_2            :text
+#  address_postcode          :text
+#  address_town              :text
+#  gias_establishment_number :integer
+#  gias_local_authority_code :integer
+#  name                      :text             not null
+#  ods_code                  :string
+#  type                      :integer          not null
+#  url                       :text
+#  urn                       :string
+#  year_groups               :integer          default([]), not null, is an Array
+#  created_at                :datetime         not null
+#  updated_at                :datetime         not null
+#  team_id                   :bigint
 #
 # Indexes
 #
@@ -51,6 +53,9 @@ describe Location do
     context "with a community clinic" do
       subject(:location) { build(:community_clinic, ods_code: "abc") }
 
+      it { should_not validate_presence_of(:gias_establishment_number) }
+      it { should_not validate_presence_of(:gias_local_authority_code) }
+
       it { should validate_presence_of(:ods_code) }
       it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
 
@@ -62,6 +67,9 @@ describe Location do
       subject(:location) { build(:generic_clinic, organisation:) }
 
       let(:organisation) { create(:organisation) }
+
+      it { should_not validate_presence_of(:gias_establishment_number) }
+      it { should_not validate_presence_of(:gias_local_authority_code) }
 
       it { should validate_presence_of(:ods_code) }
       it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
@@ -78,6 +86,9 @@ describe Location do
 
     context "with a school" do
       subject(:location) { build(:school, urn: "abc") }
+
+      it { should validate_presence_of(:gias_establishment_number) }
+      it { should validate_presence_of(:gias_local_authority_code) }
 
       it { should_not validate_presence_of(:ods_code) }
       it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
@@ -101,9 +112,7 @@ describe Location do
     end
 
     context "with a generic clinic" do
-      let(:location) do
-        build(:generic_clinic, organisation: create(:organisation))
-      end
+      let(:location) { build(:generic_clinic) }
 
       it { should be(true) }
     end
@@ -112,6 +121,34 @@ describe Location do
       let(:location) { build(:school) }
 
       it { should be(false) }
+    end
+  end
+
+  describe "#dfe_number" do
+    subject(:dfe_number) { location.dfe_number }
+
+    context "with a community clinic" do
+      let(:location) { build(:community_clinic) }
+
+      it { should be_nil }
+    end
+
+    context "with a generic clinic" do
+      let(:location) { build(:generic_clinic) }
+
+      it { should be_nil }
+    end
+
+    context "with a school" do
+      let(:location) do
+        build(
+          :school,
+          gias_local_authority_code: 123,
+          gias_establishment_number: 456
+        )
+      end
+
+      it { should eq("123/456") }
     end
   end
 end

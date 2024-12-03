@@ -9,8 +9,15 @@ describe Reports::CareplusExporter do
     )
   end
 
-  let(:programme) { create(:programme) }
-  let(:session) { create(:session, programme:) }
+  let(:programme) { create(:programme, :hpv) }
+  let(:location) do
+    create(
+      :school,
+      gias_local_authority_code: 123,
+      gias_establishment_number: 456
+    )
+  end
+  let(:session) { create(:session, programme:, location:) }
   let(:parsed_csv) { CSV.parse(csv) }
   let(:headers) { parsed_csv.first }
   let(:data_rows) { parsed_csv[1..] }
@@ -75,6 +82,8 @@ describe Reports::CareplusExporter do
     site_index = headers.index("Site 1")
     staff_type_index = headers.index("Staff Type")
     staff_code_index = headers.index("Staff Code")
+    venue_type_index = headers.index("Venue Type")
+    venue_code_index = headers.index("Venue Code")
 
     row = data_rows.first
 
@@ -84,6 +93,8 @@ describe Reports::CareplusExporter do
     expect(row[site_index]).to eq("ULA")
     expect(row[staff_type_index]).to eq("IN")
     expect(row[staff_code_index]).to eq("LW5PM")
+    expect(row[venue_type_index]).to eq("SC")
+    expect(row[venue_code_index]).to eq("123/456")
   end
 
   it "excludes vaccination records outside the date range" do

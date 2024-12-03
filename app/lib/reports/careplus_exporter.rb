@@ -70,12 +70,14 @@ class Reports::CareplusExporter
       session
         .patient_sessions
         .includes(
+          :location,
           :vaccination_records,
           consents: %i[parent patient],
           patient: :school
         )
         .where.not(vaccination_records: { id: nil })
         .merge(VaccinationRecord.administered)
+        .strict_loading
 
     if start_date.present?
       scope =
@@ -120,7 +122,7 @@ class Reports::CareplusExporter
       first_vaccination.performed_at.strftime("%d/%m/%Y"),
       first_vaccination.performed_at.strftime("%H:%M"),
       "SC", # Venue Type
-      "School", # Venue Code
+      patient_session.location.dfe_number, # Venue Code
       "IN", # Staff Type
       "LW5PM", # Staff Code
       "Y", # Attended; Did not attends do not get recorded on GP systems
