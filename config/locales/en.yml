@@ -856,6 +856,7 @@ en:
     consent_given_triage_not_needed: "%{name} is attending today’s session. They are ready for the nurse."
     consent_refused: "%{name} needs to leave the session because their parent or guardian refused to give consent."
     delay_vaccination: "%{name} needs to leave the session because their vaccination is delayed to a later date."
+    not_registered: "%{name} is not registered yet."
     triaged_do_not_vaccinate: "%{name} needs to leave the session because their parent or guardian refused to give consent."
     triaged_kept_in_triage: "%{name} is attending today’s session. A nurse needs to triage their record."
     triaged_ready_to_vaccinate: "%{name} is attending today’s session. They are safe to vaccinate."

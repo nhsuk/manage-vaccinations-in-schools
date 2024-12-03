@@ -25,14 +25,16 @@ class SessionAttendancesController < ApplicationController
 
     if success
       name = @patient.full_name
+
       flash[:info] = if @session_attendance.attending?
-        "#{name} is attending today’s session. They are ready for the nurse."
+        t("attendance_flash.#{@patient_session.status}", name:)
       elsif @session_attendance.attending.nil?
-        "#{name} is not registered yet."
+        t("attendance_flash.not_registered", name:)
       else
-        "#{name} is absent from today’s session."
+        t("attendance_flash.absent", name:)
       end
-      redirect_to(session_patient_path(id: @patient.id))
+
+      redirect_to session_patient_path(id: @patient.id)
     else
       render :edit, status: :unprocessable_entity
     end
