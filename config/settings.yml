@@ -77,4 +77,5 @@ pds:
 
 splunk:
   index: /splunk/apps/aws_hec_receiver/logs_mavis_prod
+  hec_endpoint: https://firehose.inputs.splunk.aws.digital.nhs.uk/services/collector/event
   hec_token: <%= Rails.application.credentials.splunk&.hec_token %>
