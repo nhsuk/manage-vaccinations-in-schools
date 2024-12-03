@@ -60,13 +60,6 @@ Rails.application.configure do
     }
   }
 
-  # Log to STDOUT by default
-  config.logger =
-    ActiveSupport::Logger
-      .new($stdout)
-      .tap { |logger| logger.formatter = ::Logger::Formatter.new }
-      .then { |logger| ActiveSupport::TaggedLogging.new(logger) }
-
   # Prepend all log lines with the following tags.
   config.log_tags = [:request_id]
 
@@ -74,6 +67,21 @@ Rails.application.configure do
   # information to avoid inadvertent exposure of personally identifiable information (PII). If you
   # want to log everything, set the level to "debug".
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
+
+  # Semantic logger Heroku configuration
+  if ENV["RAILS_LOG_TO_STDOUT"].present?
+    $stdout.sync = true
+    config.rails_semantic_logger.add_file_appender = false
+    config.semantic_logger.add_appender(
+      io: $stdout,
+      formatter: config.rails_semantic_logger.format
+    )
+  end
+
+  # Also for Semantic logger Heroku configuration
+  if ENV["LOG_LEVEL"].present?
+    config.log_level = ENV["LOG_LEVEL"].downcase.strip.to_sym
+  end
 
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
