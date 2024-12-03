@@ -56,7 +56,7 @@ Rails.application.configure do
   # Don't force SSL for healthcheck endpoint.
   config.ssl_options = {
     redirect: {
-      exclude: ->(request) { request.path =~ /ping/ }
+      exclude: ->(request) { request.path =~ /up/ }
     }
   }
 
