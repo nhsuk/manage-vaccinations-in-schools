@@ -43,6 +43,8 @@ describe Reports::ProgrammeVaccinationsExporter do
           PERSON_ADDRESS_LINE_1
           PERSON_POSTCODE
           NHS_NUMBER
+          GP_ORGANISATION_CODE
+          GP_NAME
           CONSENT_STATUS
           CONSENT_DETAILS
           HEALTH_QUESTION_ANSWERS
@@ -115,6 +117,8 @@ describe Reports::ProgrammeVaccinationsExporter do
               "GILLICK_ASSESSMENT_DATE" => "",
               "GILLICK_ASSESSMENT_NOTES" => "",
               "GILLICK_STATUS" => "",
+              "GP_NAME" => "",
+              "GP_ORGANISATION_CODE" => "",
               "HEALTH_QUESTION_ANSWERS" => "",
               "NHS_NUMBER" => patient.nhs_number,
               "ORGANISATION_CODE" => organisation.ods_code,
@@ -186,6 +190,8 @@ describe Reports::ProgrammeVaccinationsExporter do
               "GILLICK_ASSESSMENT_DATE" => "",
               "GILLICK_ASSESSMENT_NOTES" => "",
               "GILLICK_STATUS" => "",
+              "GP_NAME" => "",
+              "GP_ORGANISATION_CODE" => "",
               "HEALTH_QUESTION_ANSWERS" => "",
               "NHS_NUMBER" => patient.nhs_number,
               "ORGANISATION_CODE" => organisation.ods_code,
@@ -214,6 +220,24 @@ describe Reports::ProgrammeVaccinationsExporter do
             }
           )
         end
+      end
+    end
+
+    context "with a GP practice" do
+      let(:gp_practice) do
+        create(:gp_practice, name: "Practice", ods_code: "GP")
+      end
+      let(:session) { create(:session, programme:, organisation:) }
+
+      before do
+        create(:patient, :vaccinated, gp_practice:, session:, programme:)
+      end
+
+      it "includes the information" do
+        expect(rows.first.to_hash).to include(
+          "GP_NAME" => "Practice",
+          "GP_ORGANISATION_CODE" => "GP"
+        )
       end
     end
 
