@@ -53,6 +53,9 @@ describe Location do
     context "with a community clinic" do
       subject(:location) { build(:community_clinic, ods_code: "abc") }
 
+      it { should_not validate_presence_of(:gias_establishment_number) }
+      it { should_not validate_presence_of(:gias_local_authority_code) }
+
       it { should validate_presence_of(:ods_code) }
       it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
 
@@ -64,6 +67,9 @@ describe Location do
       subject(:location) { build(:generic_clinic, organisation:) }
 
       let(:organisation) { create(:organisation) }
+
+      it { should_not validate_presence_of(:gias_establishment_number) }
+      it { should_not validate_presence_of(:gias_local_authority_code) }
 
       it { should validate_presence_of(:ods_code) }
       it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }
@@ -80,6 +86,9 @@ describe Location do
 
     context "with a school" do
       subject(:location) { build(:school, urn: "abc") }
+
+      it { should validate_presence_of(:gias_establishment_number) }
+      it { should validate_presence_of(:gias_local_authority_code) }
 
       it { should_not validate_presence_of(:ods_code) }
       it { should validate_uniqueness_of(:ods_code).ignoring_case_sensitivity }

@@ -65,13 +65,15 @@ class Location < ApplicationRecord
     validates :team, presence: true
   end
 
-  validates :ods_code,
-            comparison: {
-              equal_to: :organisation_ods_code
-            },
-            if: :generic_clinic?
+  with_options if: :generic_clinic? do
+    validates :ods_code, comparison: { equal_to: :organisation_ods_code }
+  end
 
-  validates :urn, presence: true, if: :school?
+  with_options if: :school? do
+    validates :gias_establishment_number, presence: true
+    validates :gias_local_authority_code, presence: true
+    validates :urn, presence: true
+  end
 
   normalizes :urn, with: -> { _1.blank? ? nil : _1.strip }
 
