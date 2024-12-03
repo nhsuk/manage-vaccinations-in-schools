@@ -46,6 +46,15 @@ FactoryBot.define do
 
     team { organisation ? association(:team, organisation:) : nil }
 
+    factory :community_clinic do
+      type { :community_clinic }
+      name { "#{Faker::University.name} Clinic" }
+
+      sequence(:ods_code, 100) { "CL#{_1}" }
+
+      organisation
+    end
+
     factory :generic_clinic do
       type { :generic_clinic }
       name { "Community clinics" }
@@ -53,11 +62,11 @@ FactoryBot.define do
       ods_code { team&.organisation&.ods_code }
     end
 
-    factory :community_clinic do
-      type { :community_clinic }
-      name { "#{Faker::University.name} Clinic" }
+    factory :gp_practice do
+      type { :gp_practice }
+      name { "#{Faker::University.name} Practice" }
 
-      sequence(:ods_code, 10_000, &:to_s)
+      sequence(:ods_code, 100) { "GP#{_1}" }
 
       organisation
     end
