@@ -19,7 +19,7 @@
 class PatientSession < ApplicationRecord
   audited
 
-  include PatientSessionStateConcern
+  include PatientSessionStatusConcern
 
   belongs_to :patient
   belongs_to :session

@@ -63,7 +63,7 @@ module PatientTabsConcern
 
     all_patient_sessions
       .group_by do |patient_session| # rubocop:disable Style/BlockDelimiters
-        tab_states.find { |_, states| patient_session.state.in? states }&.first
+        tab_states.find { |_, states| patient_session.status.in? states }&.first
       end
       .tap { |groups| tab_states.each_key { groups[_1] ||= [] } }
       .except(nil)

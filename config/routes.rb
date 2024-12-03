@@ -290,7 +290,7 @@ Rails.application.routes.draw do
              action: :create,
              as: :register_attendance,
              tab: :unregistered,
-             state: %i[attending absent]
+             status: %i[attending absent]
       end
     end
 

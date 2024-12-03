@@ -26,7 +26,7 @@ module PatientSortingConcern
     when "name"
       obj.try(:full_name) || obj.patient.full_name
     when "status"
-      obj.try(:state) || "not_in_session"
+      obj.try(:status) || "not_in_session"
     when "postcode"
       obj.try(:address_postcode) || obj.patient.address_postcode
     when "year_group"
@@ -68,7 +68,7 @@ module PatientSortingConcern
 
     if (statuses = params[:status]).present?
       patients_or_patient_sessions.select! do
-        value = _1.try(:state) || "not_in_session"
+        value = _1.try(:status) || "not_in_session"
         t("patient_session_statuses.#{value}.banner_title").in?(statuses)
       end
     end

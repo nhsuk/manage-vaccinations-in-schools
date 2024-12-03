@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AppOutcomeBannerComponent < ViewComponent::Base
-  delegate :state, to: :@patient_session
+  delegate :status, to: :@patient_session
 
   def initialize(patient_session:, current_user: nil)
     super
@@ -71,7 +71,7 @@ class AppOutcomeBannerComponent < ViewComponent::Base
       if vaccination_record&.not_administered?
         "patient_session_statuses.unable_to_vaccinate.banner_explanation.#{vaccination_record.outcome}"
       else
-        "patient_session_statuses.unable_to_vaccinate.banner_explanation.#{@patient_session.state}"
+        "patient_session_statuses.unable_to_vaccinate.banner_explanation.#{@patient_session.status}"
       end
     I18n.t(key, full_name: @patient_session.patient.full_name)
   end
@@ -112,10 +112,10 @@ class AppOutcomeBannerComponent < ViewComponent::Base
   end
 
   def heading
-    I18n.t("patient_session_statuses.#{state}.banner_title")
+    I18n.t("patient_session_statuses.#{status}.banner_title")
   end
 
   def colour
-    I18n.t("patient_session_statuses.#{state}.colour")
+    I18n.t("patient_session_statuses.#{status}.colour")
   end
 end

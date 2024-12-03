@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-module PatientSessionStateConcern
+module PatientSessionStatusConcern
   extend ActiveSupport::Concern
 
-  def self.available_states
+  def self.available_statuses
     %w[
       added_to_session
       consent_given_triage_not_needed
@@ -20,8 +20,8 @@ module PatientSessionStateConcern
   end
 
   included do
-    def state
-      @state ||=
+    def status
+      @status ||=
         if vaccination_administered?
           "vaccinated"
         elsif triage_delay_vaccination? || vaccination_can_be_delayed?
@@ -47,8 +47,8 @@ module PatientSessionStateConcern
         end
     end
 
-    PatientSessionStateConcern.available_states.each do |state|
-      define_method("#{state}?") { self.state == state }
+    PatientSessionStatusConcern.available_statuses.each do |status|
+      define_method("#{status}?") { self.status == status }
     end
 
     def consent_given?
