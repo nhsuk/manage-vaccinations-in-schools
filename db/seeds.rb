@@ -17,6 +17,14 @@ def seed_vaccines
   Rake::Task["vaccines:seed"].execute
 end
 
+def import_gp_practices
+  if Settings.fast_reset
+    FactoryBot.create_list(:gp_practice, 30)
+  else
+    Rake::Task["gp_practices:import"].execute
+  end
+end
+
 def import_schools
   if Settings.fast_reset
     FactoryBot.create_list(:school, 30, :primary)
@@ -276,6 +284,7 @@ end
 set_feature_flags
 
 seed_vaccines
+import_gp_practices
 import_schools
 
 unless Settings.cis2.enabled

@@ -47,7 +47,8 @@ class Location < ApplicationRecord
 
   has_one :organisation, through: :team
 
-  enum :type, { school: 0, generic_clinic: 1, community_clinic: 2 }
+  enum :type,
+       { school: 0, generic_clinic: 1, community_clinic: 2, gp_practice: 3 }
 
   scope :clinic, -> { generic_clinic.or(community_clinic) }
 
@@ -67,6 +68,10 @@ class Location < ApplicationRecord
 
   with_options if: :generic_clinic? do
     validates :ods_code, comparison: { equal_to: :organisation_ods_code }
+  end
+
+  with_options if: :gp_practice? do
+    validates :ods_code, presence: true
   end
 
   with_options if: :school? do
