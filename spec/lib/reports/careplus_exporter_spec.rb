@@ -90,7 +90,9 @@ describe Reports::CareplusExporter do
     row = data_rows.first
 
     expect(row[attended_index]).to eq("Y")
-    expect(row[vaccine_index]).to eq("HPV")
+    expect(row[vaccine_index]).to eq(
+      vaccination_record.vaccine.snomed_product_code
+    )
     expect(row[batch_index]).to eq(vaccination_record.batch.name)
     expect(row[site_index]).to eq("ULA")
     expect(row[staff_type_index]).to eq("IN")
