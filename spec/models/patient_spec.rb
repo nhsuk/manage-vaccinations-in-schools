@@ -328,6 +328,10 @@ describe Patient do
       expect { update_from_pds! }.not_to change(patient, :restricted_at)
     end
 
+    it "doesn't change the GP practice" do
+      expect { update_from_pds! }.not_to change(patient, :gp_practice)
+    end
+
     it "sets the updated from PDS date and time" do
       freeze_time do
         expect { update_from_pds! }.to change(
@@ -392,6 +396,23 @@ describe Patient do
             nil
           ).to(Time.current)
         end
+      end
+    end
+
+    context "with a GP practice ODS code" do
+      let(:gp_practice) { create(:gp_practice) }
+
+      let(:pds_patient) do
+        PDS::Patient.new(
+          nhs_number: "0123456789",
+          gp_ods_code: gp_practice.ods_code
+        )
+      end
+
+      it "sets the GP practice" do
+        expect { update_from_pds! }.to change(patient, :gp_practice).from(
+          nil
+        ).to(gp_practice)
       end
     end
   end

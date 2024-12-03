@@ -3,6 +3,8 @@
 describe PatientNHSNumberLookupJob do
   subject(:perform_now) { described_class.perform_now(patient) }
 
+  before { create(:gp_practice, ods_code: "H81109") }
+
   context "with an NHS number already" do
     let(:patient) { create(:patient, nhs_number: "0123456789") }
 

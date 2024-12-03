@@ -300,6 +300,14 @@ class Patient < ApplicationRecord
         self.restricted_at = nil
       end
 
+      self.gp_practice =
+        if (ods_code = pds_patient.gp_ods_code)
+          # This intentionally raises an exception if the ODS code doesn't
+          # exist, so we become aware of it, add the missing GP practice,
+          # and re-run the job.
+          Location.gp_practice.find_by!(ods_code:)
+        end
+
       self.updated_from_pds_at = Time.current
 
       save!
