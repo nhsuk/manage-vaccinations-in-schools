@@ -99,7 +99,7 @@ class Reports::CareplusExporter
   def rows(patient_session:)
     patient = patient_session.patient
     vaccination_records =
-      patient_session.vaccination_records.order(:performed_at)
+      patient_session.vaccination_records.administered.order(:performed_at)
 
     if vaccination_records.any?
       [existing_row(patient:, patient_session:, vaccination_records:)]
@@ -145,13 +145,7 @@ class Reports::CareplusExporter
     [
       record.vaccine.snomed_product_code, # Vaccine X
       "#{record.dose_sequence}P", # Dose X field
-      (
-        if record.administered?
-          ""
-        else
-          VaccinationRecord.human_enum_name(:outcome, record.outcome)
-        end
-      ), # Reason Not Given X
+      "", # Reason Not Given X
       coded_site(record.delivery_site), # Site X; Coded value
       record.vaccine.manufacturer, # Manufacturer X
       record.batch.name # Batch No X
@@ -198,8 +192,6 @@ class Reports::CareplusExporter
       right_buttock: "RB",
       nose: "N"
       # We don't implement the other codes currently
-    }[
-      site.to_sym
-    ]
+    }.fetch(site.to_sym)
   end
 end

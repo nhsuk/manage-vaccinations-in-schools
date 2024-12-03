@@ -99,4 +99,11 @@ describe Reports::CareplusExporter do
 
     expect(data_rows.first).to be_nil
   end
+
+  it "excludes not administered vaccination records" do
+    patient_session = create(:patient_session, session:)
+    create(:vaccination_record, :not_administered, programme:, patient_session:)
+
+    expect(data_rows.first).to be_nil
+  end
 end
