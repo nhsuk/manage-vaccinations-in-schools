@@ -87,6 +87,7 @@ describe "Patient sorting and filtering" do
           :patient,
           session: @session,
           given_name:,
+          family_name: "XXX", # to avoid surname being caught in name filters
           year_group:,
           registration:
         )
