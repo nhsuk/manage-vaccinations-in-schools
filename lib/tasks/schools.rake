@@ -58,7 +58,7 @@ namespace :schools do
     require "ruby-progressbar"
 
     zip_file = Rails.root.join("db/data/edubasealldata.zip")
-    puts "Starting schools import. Total locations: #{Location.count}"
+    puts "Starting schools import. Total locations: #{Location.school.count}"
 
     Zip::File.open(zip_file) do |zip|
       csv_entry = zip.glob("*.csv").first
@@ -160,7 +160,7 @@ namespace :schools do
       end
     end
 
-    puts "\nSchools import completed. Total locations: #{Location.count}"
+    puts "\nSchools import completed. Total locations: #{Location.school.count}"
   end
 
   desc "Add a school to a organisation."
