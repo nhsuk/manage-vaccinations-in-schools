@@ -6,7 +6,7 @@ namespace :schools do
   # 2. Check "Establishment fields CSV"
   # 3. Submit
   # 4. Download the zip file
-  # 5. Place it in db/data/edubasealldata.zip
+  # 5. Place it in db/data/dfe-schools.zip
   #
   # Alternatively, you can run this task.
   desc "Download schools data"
@@ -45,8 +45,8 @@ namespace :schools do
       download_button = download_form.button_with(value: "Results.zip")
       puts "'Results.zip' link found, downloading the file..."
       download_file = agent.click(download_button)
-      download_file.save("db/data/edubasealldata.zip")
-      puts "File downloaded successfully to db/data/edubasealldata.zip"
+      download_file.save("db/data/dfe-schools.zip")
+      puts "File downloaded successfully to db/data/dfe-schools.zip"
     else
       puts "Download button never appeared, aborting"
     end
@@ -57,7 +57,7 @@ namespace :schools do
     require "zip"
     require "ruby-progressbar"
 
-    zip_file = Rails.root.join("db/data/edubasealldata.zip")
+    zip_file = Rails.root.join("db/data/dfe-schools.zip")
     puts "Starting schools import. Total locations: #{Location.school.count}"
 
     Zip::File.open(zip_file) do |zip|
