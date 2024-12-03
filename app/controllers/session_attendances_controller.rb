@@ -5,7 +5,6 @@ class SessionAttendancesController < ApplicationController
   before_action :set_session
   before_action :set_patient
   before_action :set_section_and_tab
-  before_action :set_back_link
   before_action :set_session_date
   before_action :set_session_attendance
 
@@ -67,10 +66,6 @@ class SessionAttendancesController < ApplicationController
   def set_section_and_tab
     @section = params[:section]
     @tab = params[:tab]
-  end
-
-  def set_back_link
-    @back_link = session_patient_path(id: @patient.id)
   end
 
   def set_session_date
