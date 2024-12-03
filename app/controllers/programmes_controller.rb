@@ -50,24 +50,21 @@ class ProgrammesController < ApplicationController
   def patients
     cohorts = policy_scope(Cohort).for_year_groups(@programme.year_groups)
 
-    patients =
-      policy_scope(Patient)
-        .where(cohort: cohorts)
-        .order_by_name
-        .not_deceased
-        .to_a
-
-    sort_and_filter_patients!(patients)
-    @pagy, @patients = pagy_array(patients)
+    patients = policy_scope(Patient).where(cohort: cohorts).not_deceased
 
     sessions = policy_scope(Session).has_programme(@programme)
 
-    @patient_sessions =
+    patient_sessions =
       PatientSession
-        .where(patient: @patients, session: sessions)
+        .where(patient: patients, session: sessions)
         .eager_load(:session, patient: :cohort)
         .preload_for_state
+        .order_by_name
         .strict_loading
+        .to_a
+
+    sort_and_filter_patients!(patient_sessions)
+    @pagy, @patient_sessions = pagy_array(patient_sessions)
   end
 
   private
