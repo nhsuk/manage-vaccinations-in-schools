@@ -112,9 +112,7 @@ describe Location do
     end
 
     context "with a generic clinic" do
-      let(:location) do
-        build(:generic_clinic, organisation: create(:organisation))
-      end
+      let(:location) { build(:generic_clinic) }
 
       it { should be(true) }
     end
@@ -123,6 +121,34 @@ describe Location do
       let(:location) { build(:school) }
 
       it { should be(false) }
+    end
+  end
+
+  describe "#dfe_number" do
+    subject(:dfe_number) { location.dfe_number }
+
+    context "with a community clinic" do
+      let(:location) { build(:community_clinic) }
+
+      it { should be_nil }
+    end
+
+    context "with a generic clinic" do
+      let(:location) { build(:generic_clinic) }
+
+      it { should be_nil }
+    end
+
+    context "with a school" do
+      let(:location) do
+        build(
+          :school,
+          gias_local_authority_code: 123,
+          gias_establishment_number: 456
+        )
+      end
+
+      it { should eq("123/456") }
     end
   end
 end

@@ -50,7 +50,7 @@ FactoryBot.define do
       type { :generic_clinic }
       name { "Community clinics" }
 
-      ods_code { team.organisation.ods_code }
+      ods_code { team&.organisation&.ods_code }
     end
 
     factory :community_clinic do
