@@ -121,8 +121,8 @@ class Reports::CareplusExporter
       first_vaccination.performed_at.strftime("%H:%M"),
       "SC", # Venue Type
       "School", # Venue Code
-      "SN", # Staff Type
-      "School Nurse", # Staff Code
+      "IN", # Staff Type
+      "LW5PM", # Staff Code
       "Y", # Attended; Did not attends do not get recorded on GP systems
       "", # Reason Not Attended; Always blank
       "", # Suspension End Date; Doesn't need to be used

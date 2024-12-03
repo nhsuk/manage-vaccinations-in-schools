@@ -73,13 +73,19 @@ describe Reports::CareplusExporter do
     vaccine_index = headers.index("Vaccine 1")
     batch_index = headers.index("Batch No 1")
     site_index = headers.index("Site 1")
+    staff_type_index = headers.index("Staff Type")
+    staff_code_index = headers.index("Staff Code")
 
-    expect(data_rows.first[attended_index]).to eq("Y")
-    expect(data_rows.first[vaccine_index]).to eq(
+    row = data_rows.first
+
+    expect(row[attended_index]).to eq("Y")
+    expect(row[vaccine_index]).to eq(
       vaccination_record.vaccine.snomed_product_code
     )
-    expect(data_rows.first[batch_index]).to eq(vaccination_record.batch.name)
-    expect(data_rows.first[site_index]).to eq("ULA")
+    expect(row[batch_index]).to eq(vaccination_record.batch.name)
+    expect(row[site_index]).to eq("ULA")
+    expect(row[staff_type_index]).to eq("IN")
+    expect(row[staff_code_index]).to eq("LW5PM")
   end
 
   it "excludes vaccination records outside the date range" do
