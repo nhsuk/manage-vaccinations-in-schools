@@ -125,7 +125,7 @@ class Reports::CareplusExporter
       first_vaccination.performed_at.strftime("%d/%m/%Y"),
       first_vaccination.performed_at.strftime("%H:%M"),
       patient_session.location.school? ? "SC" : "CL", # Venue Type
-      patient_session.location.dfe_number || "Clinic", # Venue Code
+      patient_session.location.dfe_number || organisation.careplus_venue_code, # Venue Code
       "IN", # Staff Type
       "LW5PM", # Staff Code
       "Y", # Attended; Did not attends do not get recorded on GP systems

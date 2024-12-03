@@ -11,7 +11,9 @@ describe Reports::CareplusExporter do
   end
 
   let(:programme) { create(:programme, :hpv) }
-  let(:organisation) { create(:organisation, programmes: [programme]) }
+  let(:organisation) do
+    create(:organisation, careplus_venue_code: "ABC", programmes: [programme])
+  end
   let(:location) do
     create(
       :school,
@@ -125,7 +127,7 @@ describe Reports::CareplusExporter do
       row = data_rows.first
 
       expect(row[venue_type_index]).to eq("CL")
-      expect(row[venue_code_index]).to eq("Clinic") # TODO: replace with real value
+      expect(row[venue_code_index]).to eq("ABC")
     end
   end
 
