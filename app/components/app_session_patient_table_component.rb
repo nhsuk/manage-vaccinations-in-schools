@@ -62,11 +62,11 @@ class AppSessionPatientTableComponent < ViewComponent::Base
 
     case column
     when :action
-      state = patient_session&.state || "not_in_session"
-      t("patient_session_statuses.#{state}.text")
+      status = patient_session&.status || "not_in_session"
+      t("patient_session_statuses.#{status}.text")
     when :status
-      state = patient_session&.state || "not_in_session"
-      t("patient_session_statuses.#{state}.banner_title")
+      status = patient_session&.status || "not_in_session"
+      t("patient_session_statuses.#{status}.banner_title")
     when :dob
       patient.date_of_birth.to_fs(:long)
     when :name
@@ -226,9 +226,9 @@ class AppSessionPatientTableComponent < ViewComponent::Base
   end
 
   def status_options
-    PatientSessionStateConcern
-      .available_states
-      .map { |state| t("patient_session_statuses.#{state}.banner_title") }
+    PatientSessionStatusConcern
+      .available_statuses
+      .map { t("patient_session_statuses.#{_1}.banner_title") }
       .uniq
       .sort
   end

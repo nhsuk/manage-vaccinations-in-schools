@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 class AppSimpleStatusBannerComponent < ViewComponent::Base
-  delegate :state, to: :@patient_session
-
   def initialize(patient_session:)
     super
 
     @patient_session = patient_session
   end
+
+  delegate :status, to: :@patient_session
 
   private
 
@@ -37,15 +37,11 @@ class AppSimpleStatusBannerComponent < ViewComponent::Base
     most_recent_event&.performed_by&.full_name
   end
 
-  def state
-    @patient_session.state
-  end
-
   def heading
-    I18n.t("patient_session_statuses.#{state}.banner_title")
+    I18n.t("patient_session_statuses.#{status}.banner_title")
   end
 
   def colour
-    I18n.t("patient_session_statuses.#{state}.colour")
+    I18n.t("patient_session_statuses.#{status}.colour")
   end
 end

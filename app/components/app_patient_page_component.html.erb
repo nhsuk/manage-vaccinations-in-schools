@@ -1,7 +1,7 @@
-<%= if patient_session.state.in? %w[
-                                  vaccinated
-                                  unable_to_vaccinate
-                                ]
+<%= if patient_session.status.in? %w[
+                                   vaccinated
+                                   unable_to_vaccinate
+                                 ]
      render AppOutcomeBannerComponent.new(
        patient_session:,
        current_user:,

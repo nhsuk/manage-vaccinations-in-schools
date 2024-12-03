@@ -22,26 +22,26 @@ module TriageHelper
   end
 
   def in_tab_needs_triage?(patient_session)
-    patient_session.state.in? %w[consent_given_triage_needed]
+    patient_session.status.in? %w[consent_given_triage_needed]
   end
 
   def in_tab_triage_complete?(patient_session)
-    patient_session.state.in? %w[
-                                triaged_ready_to_vaccinate
-                                triaged_do_not_vaccinate
-                              ]
+    patient_session.status.in? %w[
+                                 triaged_ready_to_vaccinate
+                                 triaged_do_not_vaccinate
+                               ]
   end
 
   def in_tab_get_consent?(patient_session)
-    patient_session.state.in? %w[added_to_session]
+    patient_session.status.in? %w[added_to_session]
   end
 
   def in_tab_no_triage_needed?(patient_session)
-    patient_session.state.in? %w[
-                                consent_refused
-                                consent_given_triage_not_needed
-                                vaccinated
-                                unable_to_vaccinate
-                              ]
+    patient_session.status.in? %w[
+                                 consent_refused
+                                 consent_given_triage_not_needed
+                                 vaccinated
+                                 unable_to_vaccinate
+                               ]
   end
 end
