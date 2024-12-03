@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_12_03_141042) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_03_160038) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -490,6 +490,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_03_141042) do
     t.integer "days_before_consent_requests", default: 21, null: false
     t.integer "days_before_consent_reminders", default: 7, null: false
     t.integer "days_before_invitations", default: 21, null: false
+    t.string "careplus_venue_code", null: false
     t.index ["name"], name: "index_organisations_on_name", unique: true
     t.index ["ods_code"], name: "index_organisations_on_ods_code", unique: true
   end

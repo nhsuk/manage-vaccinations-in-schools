@@ -5,6 +5,7 @@
 # Table name: organisations
 #
 #  id                            :bigint           not null, primary key
+#  careplus_venue_code           :string           not null
 #  days_before_consent_reminders :integer          default(7), not null
 #  days_before_consent_requests  :integer          default(21), not null
 #  days_before_invitations       :integer          default(21), not null
