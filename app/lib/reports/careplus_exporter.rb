@@ -148,7 +148,7 @@ class Reports::CareplusExporter
     return blank_vaccine_fields unless record
 
     [
-      record.programme.name, # Vaccine X
+      record.vaccine.snomed_product_code, # Vaccine X
       "#{record.dose_sequence}P", # Dose X field
       "", # Reason Not Given X
       coded_site(record.delivery_site), # Site X; Coded value
