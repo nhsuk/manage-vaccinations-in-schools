@@ -47,9 +47,6 @@ class PatientSessionsController < ApplicationController
   end
 
   def set_back_link
-    @back_link =
-      session_section_tab_path @session,
-                               section: params[:section],
-                               tab: params[:tab]
+    @back_link = session_section_tab_path(@session)
   end
 end

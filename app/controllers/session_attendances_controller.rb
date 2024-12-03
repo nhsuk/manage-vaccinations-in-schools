@@ -5,7 +5,6 @@ class SessionAttendancesController < ApplicationController
   before_action :set_session
   before_action :set_patient
   before_action :set_section_and_tab
-  before_action :set_back_link
   before_action :set_session_date
   before_action :set_session_attendance
 
@@ -25,14 +24,16 @@ class SessionAttendancesController < ApplicationController
 
     if success
       name = @patient.full_name
+
       flash[:info] = if @session_attendance.attending?
-        "#{name} is attending today’s session. They are ready for the nurse."
+        t("attendance_flash.#{@patient_session.status}", name:)
       elsif @session_attendance.attending.nil?
-        "#{name} is not registered yet."
+        t("attendance_flash.not_registered", name:)
       else
-        "#{name} is absent from today’s session."
+        t("attendance_flash.absent", name:)
       end
-      redirect_to(session_patient_path(id: @patient.id))
+
+      redirect_to session_patient_path(id: @patient.id)
     else
       render :edit, status: :unprocessable_entity
     end
@@ -67,19 +68,15 @@ class SessionAttendancesController < ApplicationController
     @tab = params[:tab]
   end
 
-  def set_back_link
-    @back_link = session_patient_path(id: @patient.id)
-  end
-
   def set_session_date
     @session_date = @session.session_dates.find_by!(value: Date.current)
   end
 
   def set_session_attendance
     @session_attendance =
-      @patient_session.session_attendances.find_or_initialize_by(
-        session_date: @session_date
-      )
+      authorize @patient_session.session_attendances.find_or_initialize_by(
+                  session_date: @session_date
+                )
   end
 
   def session_attendance_params
