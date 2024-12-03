@@ -21,6 +21,7 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "DfE"
   inflect.acronym "FHIR"
   inflect.acronym "GIAS"
+  inflect.acronym "GP"
   inflect.acronym "JWKS"
   inflect.acronym "MESH"
   inflect.acronym "NHS"

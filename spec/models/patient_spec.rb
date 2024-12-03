@@ -27,6 +27,7 @@
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  cohort_id                 :bigint
+#  gp_practice_id            :bigint
 #  school_id                 :bigint
 #
 # Indexes
@@ -34,6 +35,7 @@
 #  index_patients_on_cohort_id            (cohort_id)
 #  index_patients_on_family_name_trigram  (family_name) USING gin
 #  index_patients_on_given_name_trigram   (given_name) USING gin
+#  index_patients_on_gp_practice_id       (gp_practice_id)
 #  index_patients_on_names_family_first   (family_name,given_name)
 #  index_patients_on_names_given_first    (given_name,family_name)
 #  index_patients_on_nhs_number           (nhs_number) UNIQUE
@@ -42,6 +44,7 @@
 # Foreign Keys
 #
 #  fk_rails_...  (cohort_id => cohorts.id)
+#  fk_rails_...  (gp_practice_id => locations.id)
 #  fk_rails_...  (school_id => locations.id)
 #
 
@@ -130,6 +133,17 @@ describe Patient do
       subject(:patient) { build(:patient, :home_educated) }
 
       it { should validate_absence_of(:school) }
+    end
+
+    context "with an invalid GP practice" do
+      subject(:patient) { build(:patient, gp_practice: create(:school)) }
+
+      it "is invalid" do
+        expect(patient.valid?).to be(false)
+        expect(patient.errors[:gp_practice]).to include(
+          "must be a GP practice location type"
+        )
+      end
     end
 
     context "with an invalid school" do

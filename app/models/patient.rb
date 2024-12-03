@@ -27,6 +27,7 @@
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  cohort_id                 :bigint
+#  gp_practice_id            :bigint
 #  school_id                 :bigint
 #
 # Indexes
@@ -34,6 +35,7 @@
 #  index_patients_on_cohort_id            (cohort_id)
 #  index_patients_on_family_name_trigram  (family_name) USING gin
 #  index_patients_on_given_name_trigram   (given_name) USING gin
+#  index_patients_on_gp_practice_id       (gp_practice_id)
 #  index_patients_on_names_family_first   (family_name,given_name)
 #  index_patients_on_names_given_first    (given_name,family_name)
 #  index_patients_on_nhs_number           (nhs_number) UNIQUE
@@ -42,6 +44,7 @@
 # Foreign Keys
 #
 #  fk_rails_...  (cohort_id => cohorts.id)
+#  fk_rails_...  (gp_practice_id => locations.id)
 #  fk_rails_...  (school_id => locations.id)
 #
 class Patient < ApplicationRecord
@@ -55,6 +58,7 @@ class Patient < ApplicationRecord
   audited
 
   belongs_to :cohort, optional: true
+  belongs_to :gp_practice, class_name: "Location", optional: true
 
   has_many :consent_notifications
   has_many :consents
@@ -153,6 +157,8 @@ class Patient < ApplicationRecord
             allow_nil: true
 
   validates :address_postcode, postcode: { allow_nil: true }
+
+  validate :gp_practice_is_correct_type
 
   encrypts :preferred_family_name,
            :preferred_given_name,
@@ -337,6 +343,13 @@ class Patient < ApplicationRecord
   end
 
   private
+
+  def gp_practice_is_correct_type
+    location = gp_practice
+    if location && !location.gp_practice?
+      errors.add(:gp_practice, "must be a GP practice location type")
+    end
+  end
 
   def destroy_childless_parents
     parents_to_check = parents.to_a # Store parents before destroying relationships
