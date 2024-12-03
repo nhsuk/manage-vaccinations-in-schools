@@ -42,7 +42,7 @@ Rails.application.routes.draw do
   get "/dashboard", to: "dashboard#index"
   get "/accessibility-statement", to: "content#accessibility_statement"
 
-  get "/ping" => proc { [200, {}, ["PONG"]] }
+  get "/up", to: "rails/health#show", as: :rails_health_check
 
   flipper_app =
     Flipper::UI.app do |builder|
