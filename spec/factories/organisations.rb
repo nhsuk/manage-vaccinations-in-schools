@@ -25,12 +25,13 @@
 #
 FactoryBot.define do
   factory :organisation do
-    transient { sequence(:identifier) { _1 } }
+    transient { sequence(:identifier) }
 
     name { "SAIS Organisation #{identifier}" }
     email { "sais-organisation-#{identifier}@example.com" }
     phone { "01234 567890" }
     ods_code { "U#{identifier}" }
+    careplus_venue_code { identifier.to_s }
     privacy_policy_url { "https://example.com/privacy" }
 
     trait :with_one_nurse do

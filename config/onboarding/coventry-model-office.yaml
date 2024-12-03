@@ -3,6 +3,7 @@ organisation:
   email: example@covwarkpt.nhs.uk
   phone: 07700 900815
   ods_code: RYG
+  careplus_venue_code: CWPTSI
 
 programmes: [hpv]
 

@@ -3,6 +3,7 @@ organisation:
   email: england.mavis@nhs.net
   phone: "03003112233"
   ods_code: Y90128
+  careplus_venue_code: SMOKE
 
 programmes: [hpv]
 

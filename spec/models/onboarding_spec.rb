@@ -25,6 +25,7 @@ describe Onboarding do
       expect(organisation.name).to eq("NHS Trust")
       expect(organisation.email).to eq("example@trust.nhs.uk")
       expect(organisation.phone).to eq("07700 900815")
+      expect(organisation.careplus_venue_code).to eq("EXAMPLE")
       expect(organisation.programmes).to contain_exactly(programme)
 
       team1 = organisation.teams.find_by!(name: "Team 1")
@@ -60,6 +61,7 @@ describe Onboarding do
 
       expect(onboarding.errors.messages).to eq(
         {
+          "organisation.careplus_venue_code": ["can't be blank"],
           "organisation.name": ["can't be blank"],
           "organisation.ods_code": ["can't be blank"],
           "organisation.phone": ["can't be blank", "is invalid"],

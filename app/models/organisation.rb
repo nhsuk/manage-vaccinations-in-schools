@@ -45,6 +45,7 @@ class Organisation < ApplicationRecord
 
   has_and_belongs_to_many :users
 
+  validates :careplus_venue_code, presence: true
   validates :email, notify_safe_email: true
   validates :name, presence: true, uniqueness: true
   validates :ods_code, presence: true, uniqueness: true

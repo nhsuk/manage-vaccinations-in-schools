@@ -3,6 +3,7 @@ organisation:
   email: example@trust.nhs.uk
   phone: 07700 900815
   ods_code: EXAMPLE
+  careplus_venue_code: EXAMPLE
 
 programmes: [hpv]
 

@@ -23,7 +23,7 @@
 #
 FactoryBot.define do
   factory :team do
-    transient { sequence(:identifier) { _1 } }
+    transient { sequence(:identifier) }
 
     organisation
 

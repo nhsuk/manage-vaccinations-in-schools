@@ -10,6 +10,7 @@ organisation:
   email: # Contact email address
   phone: # Contact phone number
   ods_code: # Unique ODS code
+  careplus_venue_code: # Venue code used in CarePlus exports
   privacy_policy_url: # Optional privacy policy URL
   reply_to_id: # Optional GOV.UK Notify Reply-To UUID
 
