@@ -7,7 +7,8 @@ class PDS::Patient
                 :family_name,
                 :date_of_birth,
                 :date_of_death,
-                :restricted
+                :restricted,
+                :gp_ods_code
 
   class << self
     def find(nhs_number)
@@ -42,7 +43,10 @@ class PDS::Patient
           if (deceased_date_time = response["deceasedDateTime"]).present?
             Time.zone.parse(deceased_date_time).to_date
           end,
-        restricted: response.dig("meta", "security")&.any? { _1["code"] == "R" }
+        restricted:
+          response.dig("meta", "security")&.any? { _1["code"] == "R" },
+        gp_ods_code:
+          response.dig("generalPractitioner", 0, "identifier", "value")
       )
     end
   end

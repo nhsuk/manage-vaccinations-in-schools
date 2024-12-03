@@ -27,7 +27,8 @@ describe PDS::Patient do
         family_name: "Smith",
         date_of_birth: Date.new(2010, 10, 22),
         date_of_death: Date.new(2010, 10, 22),
-        restricted: true
+        restricted: true,
+        gp_ods_code: "Y12345"
       )
     end
   end
@@ -75,7 +76,8 @@ describe PDS::Patient do
         family_name: "LAWMAN",
         date_of_birth: Date.new(1939, 1, 9),
         date_of_death: nil,
-        restricted: false
+        restricted: false,
+        gp_ods_code: "H81109"
       )
     end
   end
