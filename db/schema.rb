@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_11_29_161038) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_03_115421) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -599,6 +599,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_29_161038) do
     t.boolean "attending", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["patient_session_id", "session_date_id"], name: "idx_on_patient_session_id_session_date_id_be8bd21ddf", unique: true
     t.index ["patient_session_id"], name: "index_session_attendances_on_patient_session_id"
     t.index ["session_date_id"], name: "index_session_attendances_on_session_date_id"
   end
