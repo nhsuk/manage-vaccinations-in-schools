@@ -75,5 +75,7 @@ module ManageVaccinations
     config.view_component.preview_paths << Rails.root.join(
       "spec/components/previews"
     )
+
+    config.silence_healthcheck_path = "/up"
   end
 end
