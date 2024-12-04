@@ -106,6 +106,8 @@ describe ConsentFormMatchingJob do
     let(:response_file) { "pds/search-patients-response.json" }
     let(:nhs_number) { "9449306168" }
 
+    before { create(:gp_practice, ods_code: "H81109") }
+
     context "when the patient with the NHS number exists" do
       let!(:patient) { create(:patient, nhs_number:, session:) }
 

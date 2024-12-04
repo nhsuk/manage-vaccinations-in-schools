@@ -23,6 +23,8 @@ describe PatientUpdateFromPDSJob do
   end
 
   context "with an NHS number" do
+    before { create(:gp_practice, ods_code: "Y12345") }
+
     context "when the patient is valid" do
       before do
         stub_request(

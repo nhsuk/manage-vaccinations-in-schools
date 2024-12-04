@@ -68,6 +68,8 @@ describe "HPV Vaccination" do
     vaccine = programme.vaccines.active.first
     @batch = create(:batch, organisation: @organisation, vaccine:)
 
+    create(:gp_practice, ods_code: "Y12345")
+
     @session =
       create(
         :session,

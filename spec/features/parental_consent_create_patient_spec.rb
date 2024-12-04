@@ -35,6 +35,7 @@ describe "Parental consent create patient" do
       create(:organisation, :with_one_nurse, programmes: [@programme])
     location =
       create(:school, name: "Pilot School", organisation: @organisation)
+    @gp_practice = create(:gp_practice, ods_code: "H81109")
     @session =
       create(
         :session,
@@ -150,6 +151,7 @@ describe "Parental consent create patient" do
     expect(Patient.count).to eq(1)
     expect(Patient.last.consents.count).to eq(1)
     expect(Patient.last.parents.count).to eq(1)
+    expect(Patient.last.gp_practice).to eq(@gp_practice)
   end
 
   def and_the_unmatched_consent_responses_page_is_empty
