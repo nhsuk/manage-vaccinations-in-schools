@@ -70,8 +70,6 @@ FactoryBot.define do
     date_of_birth { Faker::Date.birthday(min_age: 3, max_age: 9) }
     response { "given" }
     school_confirmed { true }
-    gp_response { "yes" }
-    gp_name { Faker::Name.name }
     address_line_1 { Faker::Address.street_address }
     address_town { Faker::Address.city }
     address_postcode { Faker::Address.uk_postcode }

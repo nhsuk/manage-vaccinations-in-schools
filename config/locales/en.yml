@@ -457,11 +457,6 @@ en:
             given_name:
               blank: Enter a first name
               too_long: Enter a first name that is less than 300 characters long
-            gp_name:
-              blank: Enter the GP surgery name
-              too_long: Enter a GP name that is less than 300 characters long
-            gp_response:
-              blank: Choose if your child is registered with a GP
             parent_contact_method_type:
               inclusion: Choose a contact method
             parent_contact_method_other_details:
