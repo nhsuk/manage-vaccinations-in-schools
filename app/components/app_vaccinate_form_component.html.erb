@@ -1,5 +1,5 @@
 <%= form_with(
-     model: @vaccination_record,
+     model: vaccinate_form,
      url:,
      method: :post,
      class: "nhsuk-card",
@@ -9,32 +9,21 @@
 
   <div class="nhsuk-card__content">
     <h2 class="nhsuk-card__heading nhsuk-heading-m">
-      Did they get the <%= programme.name %> vaccine?
+      Is <%= patient.given_name %> ready to vaccinate in this session?
     </h2>
 
-    <%= f.govuk_radio_buttons_fieldset(:administered, legend: nil) do %>
-      <%= f.govuk_radio_button(
-            :administered, true,
-            label: { text: t(programme.type, scope: "vaccinations.form.label") },
-            link_errors: true,
-          ) do %>
-        <%= f.govuk_collection_radio_buttons(
-              :delivery_site,
-              common_delivery_sites_options,
-              :value,
-              :label,
-              legend: {
-                text: "Where did they get it?",
-                hidden: true,
-              },
-              bold_labels: false,
-            ) %>
+    <%= f.govuk_radio_buttons_fieldset :administered, legend: nil do %>
+      <%= f.govuk_radio_button :administered, true, label: { text: "Yes" }, link_errors: true do %>
+        <%= f.govuk_collection_radio_buttons :delivery_site,
+                                             common_delivery_sites_options,
+                                             :value,
+                                             :label,
+                                             legend: {
+                                               text: "Where will the injection be given?",
+                                               size: "s",
+                                             } %>
       <% end %>
-      <%= f.govuk_radio_button(
-            :administered,
-            false,
-            label: { text: "No, they did not get it" },
-          ) %>
+      <%= f.govuk_radio_button :administered, false, label: { text: "No" } %>
     <% end %>
 
     <%= f.hidden_field :delivery_method, value: delivery_method %>

@@ -8,31 +8,38 @@ describe AppVaccinateFormComponent do
   let(:programme) { create(:programme, :hpv) }
   let(:session) { create(:session, :today, programme:) }
   let(:vaccine) { programme.vaccines.first }
-  let(:patient_session) do
+  let(:patient) do
     create(
-      :patient_session,
+      :patient,
       :consent_given_triage_not_needed,
       programme:,
-      session:
+      given_name: "Hari"
     )
   end
-  let(:vaccination_record) { VaccinationRecord.new(patient_session:) }
+  let(:patient_session) do
+    create(:patient_session, :in_attendance, programme:, patient:, session:)
+  end
 
   let(:component) do
-    described_class.new(vaccination_record, section: "vaccinate", tab: "needed")
+    described_class.new(
+      patient_session:,
+      vaccinate_form: VaccinateForm.new,
+      section: "vaccinate",
+      tab: "needed"
+    )
   end
 
   it { should have_css(".nhsuk-card") }
 
   it "has the correct heading" do
-    expect(subject).to have_css(
-      "h2.nhsuk-card__heading",
-      text: "Did they get the HPV vaccine?"
+    expect(rendered).to have_css(
+      ".nhsuk-card__heading",
+      text: "Is Hari ready to vaccinate in this session?"
     )
   end
 
-  it { should have_field("Yes, they got the HPV vaccine") }
-  it { should have_field("No, they did not get it") }
+  it { should have_field("Yes") }
+  it { should have_field("No") }
 
   describe "#render?" do
     subject(:render) { component.render? }
@@ -45,13 +52,13 @@ describe AppVaccinateFormComponent do
       context "session is in progress" do
         let(:session) { create(:session, :today, programme:) }
 
-        it { should be_falsey }
+        it { should be(false) }
       end
 
       context "session is in the future" do
         let(:session) { create(:session, :scheduled, programme:) }
 
-        it { should be_falsey }
+        it { should be(false) }
       end
     end
 
@@ -63,13 +70,13 @@ describe AppVaccinateFormComponent do
       context "session is progress" do
         let(:session) { create(:session, :today, programme:) }
 
-        it { should be_truthy }
+        it { should be(true) }
       end
 
       context "session is in the future" do
         let(:session) { create(:session, :scheduled, programme:) }
 
-        it { should be_falsey }
+        it { should be(false) }
       end
     end
   end

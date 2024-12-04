@@ -56,7 +56,7 @@ describe "HPV Vaccination" do
     visit session_vaccinations_path(@session)
     click_link @patient.full_name
 
-    choose "Yes, they got the HPV vaccine"
+    choose "Yes"
     choose "Left arm"
     click_button "Continue"
 
@@ -81,7 +81,7 @@ describe "HPV Vaccination" do
     visit session_vaccinations_path(@session)
     click_link @patient2.full_name
 
-    choose "Yes, they got the HPV vaccine"
+    choose "Yes"
     choose "Left arm"
     click_button "Continue"
   end

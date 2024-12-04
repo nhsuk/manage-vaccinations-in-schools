@@ -19,7 +19,6 @@
   <%= f.govuk_text_field :family_name, label: { text: "Last name" } %>
 
   <%= f.govuk_radio_buttons_fieldset :use_preferred_name,
-                                     bold_labels: false,
                                      legend: { size: "s",
                                                text: "Do they use a different name in school?" } do %>
     <%= f.govuk_radio_button :use_preferred_name,

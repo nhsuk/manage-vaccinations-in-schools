@@ -18,7 +18,6 @@ describe AppPatientPageComponent do
   let(:component) do
     described_class.new(
       patient_session:,
-      vaccination_record: VaccinationRecord.new(patient_session:),
       section: "triage",
       tab: "needed",
       triage: nil
@@ -39,31 +38,16 @@ describe AppPatientPageComponent do
     it { should have_css(".nhsuk-card__heading", text: "Consent") }
     it { should_not have_css(".nhsuk-card__heading", text: "Triage notes") }
 
-    it "shows the triage form" do
-      expect(rendered).to have_selector(
-        :heading,
-        text: "Is it safe to vaccinate"
-      )
-    end
+    it { should have_content("Is it safe to vaccinate") }
 
-    it "does not show the vaccination form" do
-      expect(rendered).not_to have_css(
-        ".nhsuk-card",
-        text: "Did they get the HPV vaccine?"
-      )
-    end
+    it { should_not have_content("ready to vaccinate in this session?") }
 
     it { should have_css("a", text: "Assess Gillick competence") }
 
     context "user is not allowed to triage or vaccinate" do
       before { stub_authorization(allowed: false) }
 
-      it "does not show the triage form" do
-        expect(rendered).not_to have_css(
-          ".nhsuk-card__heading",
-          text: "Is it safe to vaccinate"
-        )
-      end
+      it { should_not have_content("Is it safe to vaccinate") }
     end
   end
 
@@ -77,19 +61,9 @@ describe AppPatientPageComponent do
       )
     end
 
-    it "does not show the triage form" do
-      expect(rendered).not_to have_selector(
-        :heading,
-        text: "Is it safe to vaccinate"
-      )
-    end
+    it { should_not have_content("Is it safe to vaccinate") }
 
-    it "does not show the vaccination form" do
-      expect(rendered).not_to have_css(
-        ".nhsuk-card",
-        text: "Did they get the HPV vaccine?"
-      )
-    end
+    it { should_not have_content("ready to vaccinate in this session?") }
   end
 
   context "session in progress, patient ready to vaccinate" do
@@ -107,29 +81,14 @@ describe AppPatientPageComponent do
     it { should have_css(".nhsuk-card__heading", text: "Consent") }
     it { should have_css(".nhsuk-card__heading", text: "Triage notes") }
 
-    it "does not show the triage form" do
-      expect(rendered).not_to have_css(
-        ".nhsuk-card__heading",
-        text: "Is it safe to vaccinate"
-      )
-    end
+    it { should_not have_content("Is it safe to vaccinate") }
 
-    it "shows the vaccination form" do
-      expect(rendered).to have_css(
-        ".nhsuk-card__heading",
-        text: "Did they get the HPV vaccine?"
-      )
-    end
+    it { should have_content("ready to vaccinate in this session?") }
 
     context "user is not allowed to triage or vaccinate" do
       before { stub_authorization(allowed: false) }
 
-      it "does not show the vaccination form" do
-        expect(rendered).not_to have_css(
-          ".nhsuk-card__heading",
-          text: "Did they get the HPV vaccine?"
-        )
-      end
+      it { should_not have_content("ready to vaccinate in this session?") }
     end
   end
 

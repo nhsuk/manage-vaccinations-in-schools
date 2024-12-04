@@ -72,23 +72,21 @@
 <% if display_health_questions? %>
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "All answers to health questions" } %>
-    <%= render AppHealthQuestionsComponent.new(
-          consents: @patient_session.consents,
-        ) %>
+    <%= render AppHealthQuestionsComponent.new(consents: patient_session.consents) %>
   <% end %>
 <% end %>
 
-<% if @patient_session.triages.any? %>
+<% if patient_session.triages.any? %>
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "Triage notes" } %>
     <%= render AppTriageNotesComponent.new(patient_session:) %>
   <% end %>
 <% end %>
 
-<% if helpers.policy(Triage).create? && @patient_session.next_step == :triage && @patient_session.session.open? %>
+<% if helpers.policy(Triage).create? && patient_session.next_step == :triage && patient_session.session.open? %>
   <%= render AppCardComponent.new do %>
     <%= render AppTriageFormComponent.new(
-          patient_session: @patient_session,
+          patient_session:,
           url: session_patient_triages_path(
             session,
             patient,
@@ -102,7 +100,7 @@
   <% end %>
 <% end %>
 
-<% @patient_session.vaccination_records.each do |vaccination_record| %>
+<% patient_session.vaccination_records.each do |vaccination_record| %>
   <%= render AppCardComponent.new do |c| %>
     <% c.with_heading { "Vaccination details" } %>
     <%= render AppVaccinationRecordSummaryComponent.new(vaccination_record, current_user:) %>
@@ -121,6 +119,6 @@
   <% end %>
 <% end %>
 
-<% if helpers.policy(VaccinationRecord).create? && @patient_session.attending_today? %>
-  <%= render AppVaccinateFormComponent.new(@vaccination_record, section: @section, tab: @tab) %>
+<% if helpers.policy(VaccinationRecord).create? %>
+  <%= render AppVaccinateFormComponent.new(patient_session:, vaccinate_form:, section:, tab:) %>
 <% end %>

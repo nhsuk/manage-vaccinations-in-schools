@@ -102,7 +102,7 @@ describe "Manage attendance" do
   end
 
   def and_i_am_not_able_to_vaccinate
-    expect(page).not_to have_content("Did they get the HPV vaccine?")
+    expect(page).not_to have_content("ready to vaccinate in this session?")
   end
 
   def when_i_choose_the_patient_has_not_been_registered_yet
@@ -146,7 +146,7 @@ describe "Manage attendance" do
   alias_method :then_i_see_the_attending_flash, :and_i_see_the_attending_flash
 
   def and_i_can_vaccinate
-    expect(page).to have_content("Did they get the HPV vaccine?")
+    expect(page).to have_content("ready to vaccinate in this session?")
   end
 
   def when_i_go_to_the_activity_log
