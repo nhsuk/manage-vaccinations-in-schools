@@ -5,6 +5,7 @@ describe AppPatientSummaryComponent do
 
   let(:component) { described_class.new(patient) }
   let(:school) { create(:school, name: "Test School") }
+  let(:gp_practice) { nil }
   let(:other_school) { create(:school, name: "Other School") }
   let(:parent) { create(:parent, full_name: "Mark Doe") }
   let(:restricted) { false }
@@ -20,6 +21,7 @@ describe AppPatientSummaryComponent do
       address_line_1: "10 Downing Street",
       address_postcode: "SW1A 1AA",
       school:,
+      gp_practice:,
       restricted_at: restricted ? Time.current : nil,
       pending_changes: {
         given_name: "Jane",
@@ -62,6 +64,15 @@ describe AppPatientSummaryComponent do
 
   it { should have_content("Year group") }
   it { should have_content(/Year [0-9]+/) }
+
+  it { should_not have_content("GP surgery") }
+
+  context "with a GP practice" do
+    let(:gp_practice) { create(:gp_practice, name: "Waterloo GP") }
+
+    it { should have_content("GP surgery") }
+    it { should have_content("Waterloo GP") }
+  end
 
   context "when showing parents or guardians" do
     let(:component) do
