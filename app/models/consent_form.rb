@@ -14,8 +14,6 @@
 #  education_setting                   :integer
 #  family_name                         :text
 #  given_name                          :text
-#  gp_name                             :string
-#  gp_response                         :integer
 #  health_answers                      :jsonb            not null
 #  nhs_number                          :string
 #  parent_contact_method_other_details :string
@@ -97,7 +95,6 @@ class ConsentForm < ApplicationRecord
          other: 5
        },
        prefix: "refused_because"
-  enum :gp_response, { yes: 0, no: 1, dont_know: 2 }, prefix: true
 
   enum :parent_contact_method_type,
        Parent.contact_method_types,

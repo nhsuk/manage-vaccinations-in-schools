@@ -14,8 +14,6 @@
 #  education_setting                   :integer
 #  family_name                         :text
 #  given_name                          :text
-#  gp_name                             :string
-#  gp_response                         :integer
 #  health_answers                      :jsonb            not null
 #  nhs_number                          :string
 #  parent_contact_method_other_details :string
