@@ -126,6 +126,6 @@ describe "Invalidate consent" do
 
   def and_i_am_not_able_to_record_a_vaccination
     expect(page).to have_content("No response")
-    expect(page).not_to have_content("Did they get the HPV vaccine?")
+    expect(page).not_to have_content("ready to vaccinate in this session?")
   end
 end

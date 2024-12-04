@@ -121,6 +121,6 @@
   <% end %>
 <% end %>
 
-<% if helpers.policy(VaccinationRecord).create? && @patient_session.attending_today? %>
-  <%= render AppVaccinateFormComponent.new(@vaccination_record, section: @section, tab: @tab) %>
+<% if helpers.policy(VaccinationRecord).create? %>
+  <%= render AppVaccinateFormComponent.new(patient_session:, vaccinate_form:, section:, tab:) %>
 <% end %>

@@ -194,8 +194,6 @@ en:
               inclusion: Choose a status
         draft_vaccination_record:
           attributes:
-            administered:
-              blank: Choose if they got the vaccine
             batch_id:
               blank: Choose a batch
               incorrect_vaccine: Choose a batch of the %{vaccine_brand} vaccine
@@ -300,6 +298,10 @@ en:
               inclusion: Choose whether to update the child’s record with this new information
             move_to_school:
               inclusion: Choose whether to move the child to the upcoming school session
+        vaccinate_form:
+          attributes:
+            administered:
+              inclusion: Choose if they got the vaccine
         vaccination_report:
           attributes:
             file_format:
@@ -833,10 +835,6 @@ en:
       title:
         flu: Why was the flu vaccine not given?
         hpv: Why was the HPV vaccine not given?
-    form:
-      label:
-        flu: Yes, they got the flu vaccine
-        hpv: Yes, they got the HPV vaccine
     flash:
       given: Vaccination recorded for
       not_given: Record updated for

@@ -1,33 +1,33 @@
 # frozen_string_literal: true
 
 class AppVaccinateFormComponent < ViewComponent::Base
-  def initialize(vaccination_record, section:, tab:)
+  def initialize(patient_session:, vaccinate_form:, section:, tab:)
     super
 
-    @vaccination_record = vaccination_record
-    @patient_session = vaccination_record.patient_session
+    @patient_session = patient_session
+    @vaccinate_form = vaccinate_form
     @section = section
     @tab = tab
   end
 
-  def url
-    @url ||=
-      session_patient_vaccinations_path(
-        @patient_session.session,
-        @patient_session.patient,
-        section: @section,
-        tab: @tab
-      )
-  end
-
   def render?
-    @patient_session.next_step == :vaccinate && session.open? && session.today?
+    patient_session.next_step == :vaccinate && session.open? &&
+      (patient_session.attending_today? || false)
   end
 
   private
 
-  def session
-    @patient_session.session
+  attr_reader :patient_session, :vaccinate_form
+
+  delegate :patient, :session, to: :patient_session
+
+  def url
+    session_patient_vaccinations_path(
+      session,
+      patient,
+      section: @section,
+      tab: @tab
+    )
   end
 
   # TODO: this code will need to be revisited in future as it only really
@@ -37,34 +37,14 @@ class AppVaccinateFormComponent < ViewComponent::Base
   # injectable vaccines.
 
   def programme
-    @patient_session.programmes.first
+    patient_session.programmes.first
   end
 
   def vaccine
     programme.vaccines.active.first
   end
 
-  def delivery_method
-    :intramuscular
-  end
-
   def dose_sequence
     1
-  end
-
-  def common_delivery_sites_options
-    options =
-      vaccine.common_delivery_sites.map do |site|
-        OpenStruct.new(
-          value: site,
-          label:
-            t(
-              site,
-              scope: "activerecord.attributes.vaccination_record.delivery_sites"
-            )
-        )
-      end
-
-    options + [OpenStruct.new(value: "other", label: "Other")]
   end
 end

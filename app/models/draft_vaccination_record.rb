@@ -35,9 +35,9 @@ class DraftVaccinationRecord
     [
       :date_and_time,
       :outcome,
-      (:delivery if administered?),
       (:vaccine if administered?),
       (:batch if administered?),
+      (:delivery if administered?),
       (:location if location&.generic_clinic?),
       :confirm
     ].compact

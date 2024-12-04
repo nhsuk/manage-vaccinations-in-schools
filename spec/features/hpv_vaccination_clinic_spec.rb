@@ -9,6 +9,7 @@ describe "HPV Vaccination" do
     when_i_go_to_a_patient_that_is_ready_to_vaccinate
     and_i_record_that_the_patient_has_been_vaccinated
     and_i_select_the_batch
+    and_i_select_the_delivery
     and_i_select_a_location
     then_i_see_the_confirmation_page
 
@@ -62,14 +63,19 @@ describe "HPV Vaccination" do
   end
 
   def and_i_record_that_the_patient_has_been_vaccinated
-    choose "Yes, they got the HPV vaccine"
-    choose "Left arm"
-    click_button "Continue"
+    choose "Yes"
+    click_on "Continue"
   end
 
   def and_i_select_the_batch
     choose @active_batch.name
     click_button "Continue"
+  end
+
+  def and_i_select_the_delivery
+    choose "Intramuscular"
+    choose "Left arm"
+    click_on "Continue"
   end
 
   def and_i_select_a_location

@@ -29,6 +29,6 @@ describe "HPV vaccination" do
   end
 
   def then_i_cannot_record_that_the_patient_has_been_vaccinated
-    expect(page).not_to have_content("Did they get the HPV vaccine?")
+    expect(page).not_to have_content("ready to vaccinate in this session?")
   end
 end

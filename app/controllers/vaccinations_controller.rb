@@ -51,27 +51,24 @@ class VaccinationsController < ApplicationController
   def create
     authorize VaccinationRecord
 
-    @draft_vaccination_record =
-      DraftVaccinationRecord.new(request_session: session, current_user:).tap(
-        &:reset!
+    draft_vaccination_record =
+      DraftVaccinationRecord.new(request_session: session, current_user:)
+
+    @vaccinate_form =
+      VaccinateForm.new(
+        patient_session: @patient_session,
+        current_user:,
+        todays_batch: @todays_batch,
+        **vaccinate_form_params
       )
 
-    @draft_vaccination_record.patient_session = @patient_session
-
-    if create_params.nil?
-      @draft_vaccination_record.errors.add(:administered, :blank)
-      render "patient_sessions/show", status: :unprocessable_entity
-    elsif @draft_vaccination_record.update(create_params)
-      steps = @draft_vaccination_record.wizard_steps
+    if @vaccinate_form.save(draft_vaccination_record:)
+      steps = draft_vaccination_record.wizard_steps
 
       steps.delete(:date_and_time)
-      steps.delete(:outcome) if @draft_vaccination_record.administered?
-      if @draft_vaccination_record.delivery_method.present? &&
-           @draft_vaccination_record.delivery_site.present?
-        steps.delete(:delivery)
-      end
-      steps.delete(:vaccine) if @draft_vaccination_record.vaccine.present?
-      steps.delete(:batch) if @draft_vaccination_record.batch.present?
+      steps.delete(:outcome) if draft_vaccination_record.administered?
+      steps.delete(:vaccine) if draft_vaccination_record.vaccine.present?
+      steps.delete(:batch) if draft_vaccination_record.batch.present?
 
       redirect_to draft_vaccination_record_path(
                     I18n.t(steps.first, scope: :wicked)
@@ -126,39 +123,13 @@ class VaccinationsController < ApplicationController
 
   private
 
-  def vaccination_record_params
-    params
-      .require(:vaccination_record)
-      .permit(
-        :administered,
-        :delivery_method,
-        :delivery_site,
-        :dose_sequence,
-        :programme_id,
-        :vaccine_id
-      )
-      .merge(performed_at: Time.current, performed_by_user: current_user)
-  end
-
-  def create_params
-    administered = vaccination_record_params[:administered]
-    return if administered.blank?
-
-    if administered == "true"
-      create_params =
-        if vaccination_record_params[:delivery_site] == "other"
-          vaccination_record_params.except(:delivery_site, :delivery_method)
-        else
-          vaccination_record_params
-        end
-
-      create_params.except(:administered).merge(
-        batch_id: @todays_batch&.id,
-        outcome: "administered"
-      )
-    else
-      vaccination_record_params.except(:administered)
-    end
+  def vaccinate_form_params
+    params.require(:vaccinate_form).permit(
+      :administered,
+      :dose_sequence,
+      :programme_id,
+      :vaccine_id
+    )
   end
 
   def set_session

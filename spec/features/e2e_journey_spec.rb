@@ -233,11 +233,14 @@ describe "End-to-end journey" do
 
     expect(page).to have_content("Update attendance")
 
-    choose "Yes, they got the HPV vaccine"
-    choose "Left arm (upper position)"
+    choose "Yes"
     click_button "Continue"
 
     choose @batch.name
+    click_button "Continue"
+
+    choose "Intramuscular"
+    choose "Left arm (upper position)"
     click_button "Continue"
 
     click_button "Confirm"

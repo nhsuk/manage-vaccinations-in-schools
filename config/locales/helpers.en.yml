@@ -21,6 +21,10 @@ en:
         move_to_school_options:
           false: No, keep them in the community clinic
           true: Yes, move them to the upcoming school session
+      vaccinate_form:
+        administered_options:
+          true: "Yes"
+          false: "No"
       vaccination_report:
         file_format_options:
           careplus: CarePlus

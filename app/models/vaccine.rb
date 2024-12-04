@@ -56,15 +56,6 @@ class Vaccine < ApplicationRecord
     programme.flu? && nasal?
   end
 
-  def common_delivery_sites
-    if programme.hpv?
-      %w[left_arm_upper_position right_arm_upper_position]
-    else
-      raise NotImplementedError,
-            "Common delivery sites not implemented for #{programme.type} vaccines."
-    end
-  end
-
   def maximum_dose_sequence
     { "flu" => 1, "hpv" => 3 }.fetch(programme.type)
   end

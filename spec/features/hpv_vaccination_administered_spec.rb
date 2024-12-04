@@ -10,36 +10,37 @@ describe "HPV Vaccination" do
     and_i_record_that_the_patient_has_been_vaccinated
     and_i_see_only_not_expired_batches
     and_i_select_the_batch
+    and_i_select_the_delivery
     then_i_see_the_confirmation_page
 
     when_i_click_change_outcome
     and_i_choose_vaccinated
-    and_i_select_the_delivery
     and_i_select_the_vaccine
     and_i_select_the_batch
+    and_i_select_the_delivery
     then_i_see_the_confirmation_page
 
     when_i_click_change_batch
     and_i_select_the_batch
+    and_i_select_the_delivery
     then_i_see_the_confirmation_page
 
     when_i_click_change_vaccine
     and_i_select_the_vaccine
     and_i_select_the_batch
+    and_i_select_the_delivery
     then_i_see_the_confirmation_page
 
     when_i_click_change_delivery_site
     and_i_select_the_delivery
-    and_i_select_the_vaccine
-    and_i_select_the_batch
     then_i_see_the_confirmation_page
 
     when_i_click_change_date
     and_i_select_the_date
     and_i_choose_vaccinated
-    and_i_select_the_delivery
     and_i_select_the_vaccine
     and_i_select_the_batch
+    and_i_select_the_delivery
     then_i_see_the_confirmation_page
 
     when_i_confirm_the_details
@@ -94,8 +95,7 @@ describe "HPV Vaccination" do
   end
 
   def and_i_record_that_the_patient_has_been_vaccinated
-    choose "Yes, they got the HPV vaccine"
-    choose "Left arm"
+    choose "Yes"
     click_button "Continue"
   end
 
