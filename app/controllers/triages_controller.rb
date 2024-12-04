@@ -77,7 +77,7 @@ class TriagesController < ApplicationController
   end
 
   def set_patient_session
-    @patient_session = @patient.patient_sessions.find_by(session: @session)
+    @patient_session = @patient.patient_sessions.find_by!(session: @session)
   end
 
   def set_triage

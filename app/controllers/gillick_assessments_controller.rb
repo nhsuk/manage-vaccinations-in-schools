@@ -33,7 +33,10 @@ class GillickAssessmentsController < ApplicationController
 
   def set_patient_session
     @patient_session =
-      policy_scope(PatientSession).find_by(session: @session, patient: @patient)
+      policy_scope(PatientSession).find_by!(
+        session: @session,
+        patient: @patient
+      )
   end
 
   def set_is_first_assessment
