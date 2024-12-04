@@ -70,6 +70,12 @@ group :development do
   gem "annotaterb", require: false
   gem "asciidoctor"
   gem "asciidoctor-diagram"
+  gem "aws-sdk-accessanalyzer", "~> 1"
+  gem "aws-sdk-ec2", "~> 1"
+  gem "aws-sdk-ecr", "~> 1"
+  gem "aws-sdk-iam", "~> 1"
+  gem "aws-sdk-rds", "~> 1"
+  gem "aws-sdk-s3", "~> 1"
   gem "hotwire-livereload"
   gem "mechanize"
   gem "prettier_print", require: false
