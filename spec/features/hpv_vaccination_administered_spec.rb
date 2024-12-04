@@ -94,7 +94,7 @@ describe "HPV Vaccination" do
   end
 
   def and_i_record_that_the_patient_has_been_vaccinated
-    choose "Yes, they got the HPV vaccine"
+    choose "Yes"
     choose "Left arm"
     click_button "Continue"
   end

@@ -233,7 +233,7 @@ describe "End-to-end journey" do
 
     expect(page).to have_content("Update attendance")
 
-    choose "Yes, they got the HPV vaccine"
+    choose "Yes"
     choose "Left arm (upper position)"
     click_button "Continue"
 

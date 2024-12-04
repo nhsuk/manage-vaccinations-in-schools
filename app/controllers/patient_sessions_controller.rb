@@ -10,8 +10,6 @@ class PatientSessionsController < ApplicationController
   layout "three_quarters"
 
   def show
-    @draft_vaccination_record =
-      VaccinationRecord.new(patient_session: @patient_session)
   end
 
   def log

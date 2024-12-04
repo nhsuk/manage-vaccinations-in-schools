@@ -50,7 +50,7 @@ describe "HPV Vaccination" do
   end
 
   def and_i_record_that_the_patient_wasnt_vaccinated
-    choose "No, they did not get it"
+    choose "No"
     click_button "Continue"
   end
 
