@@ -161,7 +161,7 @@ describe Location do
         )
       end
 
-      it { should eq("123/456") }
+      it { should eq("123456") }
     end
   end
 end

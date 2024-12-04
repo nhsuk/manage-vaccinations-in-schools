@@ -100,7 +100,7 @@ describe Reports::CareplusExporter do
     expect(row[staff_type_index]).to eq("IN")
     expect(row[staff_code_index]).to eq("LW5PM")
     expect(row[venue_type_index]).to eq("SC")
-    expect(row[venue_code_index]).to eq("123/456")
+    expect(row[venue_code_index]).to eq("123456")
   end
 
   context "in a community clinic" do
