@@ -30,24 +30,34 @@ REGION = "eu-west-2"
 S3_BUCKET_NAME = "mavis-#{Rails.env}-splunk-firehose-errors".freeze
 S3_BUCKET_ARN = "arn:aws:s3:::#{S3_BUCKET_NAME}".freeze
 
-# IAM roles for CloudWatch and Firehose
-IAM_CLOUDWATCH_ROLE_NAME = "mavis-#{Rails.env}-splunk-cloudwatch".freeze
+# IAM roles for CloudWatch, Firehose and Lambda
+IAM_CLOUDWATCH_ROLE_NAME = "mavis-splunk-cloudwatch"
 IAM_CLOUDWATCH_ROLE_ARN =
   "arn:aws:iam::#{ACCOUNT_ID}:role/#{IAM_CLOUDWATCH_ROLE_NAME}".freeze
 IAM_CLOUDWATCH_POLICY_NAME = "#{IAM_CLOUDWATCH_ROLE_NAME}-policy".freeze
 
-IAM_FIREHOSE_ROLE_NAME = "mavis-#{Rails.env}-splunk-firehose".freeze
+IAM_FIREHOSE_ROLE_NAME = "mavis-splunk-firehose"
 IAM_FIREHOSE_ROLE_ARN =
   "arn:aws:iam::#{ACCOUNT_ID}:role/#{IAM_FIREHOSE_ROLE_NAME}".freeze
 IAM_FIREHOSE_POLICY_NAME = "#{IAM_FIREHOSE_ROLE_NAME}-policy".freeze
 
+IAM_LAMBDA_ROLE_NAME = "mavis-splunk-lambda"
+IAM_LAMBDA_ROLE_ARN =
+  "arn:aws:iam::#{ACCOUNT_ID}:role/#{IAM_LAMBDA_ROLE_NAME}".freeze
+IAM_LAMBDA_POLICY_NAME = "#{IAM_LAMBDA_ROLE_NAME}-policy".freeze
+
 # Firehose stream that sends logs to Splunk
-FIREHOSE_STREAM_NAME = "mavis-#{Rails.env}-splunk-firehose".freeze
+FIREHOSE_STREAM_NAME = "mavis-splunk-firehose"
 FIREHOSE_STREAM_ARN =
   "arn:aws:firehose:#{REGION}:#{ACCOUNT_ID}:deliverystream/#{FIREHOSE_STREAM_NAME}".freeze
 
 LOG_GROUP_NAME = "/copilot/mavis-#{ENVIRONMENT}-webapp".freeze
-LOG_FILTER_NAME = "mavis-#{Rails.env}-splunk-firehose-filter".freeze
+LOG_FILTER_NAME = "mavis-splunk-firehose-filter"
+
+# Lambda function that transforms the CloudWatch log data for Splunk
+LAMBDA_FUNCTION_NAME = "mavis-splunk-lambda"
+LAMBDA_FUNCTION_ARN =
+  "arn:aws:lambda:#{REGION}:#{ACCOUNT_ID}:function:#{LAMBDA_FUNCTION_NAME}".freeze
 
 def main
   check_aws_login
@@ -57,6 +67,7 @@ def main
   else
     create_s3_bucket
     create_iam_role_and_policy
+    create_transform_lambda
     create_firehose_stream
     create_cloudwatch_subscription_filter
   end
@@ -89,8 +100,12 @@ def cleanup
     "aws firehose delete-delivery-stream --delivery-stream-name #{FIREHOSE_STREAM_NAME}"
   )
 
-  puts "Deleting S3 bucket #{S3_BUCKET_NAME}..."
-  system("aws s3 rb s3://#{S3_BUCKET_NAME} --force")
+  # Don't delete the bucket as maybe we want to keep the errors
+  # puts "Deleting S3 bucket #{S3_BUCKET_NAME}..."
+  # system("aws s3 rb s3://#{S3_BUCKET_NAME} --force")
+
+  puts "Deleting Lambda function #{LAMBDA_FUNCTION_NAME}..."
+  system("aws lambda delete-function --function-name #{LAMBDA_FUNCTION_NAME}")
 
   puts "Deleting IAM role policies..."
   system(
@@ -101,10 +116,15 @@ def cleanup
     "aws iam delete-role-policy --role-name #{IAM_FIREHOSE_ROLE_NAME} \
                                 --policy-name #{IAM_FIREHOSE_POLICY_NAME}"
   )
+  system(
+    "aws iam delete-role-policy --role-name #{IAM_LAMBDA_ROLE_NAME} \
+                                --policy-name #{IAM_LAMBDA_POLICY_NAME}"
+  )
 
   puts "Deleting IAM roles..."
   system("aws iam delete-role --role-name #{IAM_CLOUDWATCH_ROLE_NAME}")
   system("aws iam delete-role --role-name #{IAM_FIREHOSE_ROLE_NAME}")
+  system("aws iam delete-role --role-name #{IAM_LAMBDA_ROLE_NAME}")
 end
 
 def create_s3_bucket
@@ -119,6 +139,7 @@ end
 def create_iam_role_and_policy
   create_cloudwatch_role_and_policy
   create_firehose_role_and_policy
+  create_lambda_role_and_policy
 
   puts "Waiting 5s for IAM roles and policies to be ready..."
   sleep 5
@@ -212,6 +233,84 @@ def create_firehose_role_and_policy
   ) || exit(1)
 end
 
+def create_lambda_role_and_policy
+  if system("aws iam get-role --role-name #{IAM_LAMBDA_ROLE_NAME} &>/dev/null")
+    return puts "IAM role #{IAM_LAMBDA_ROLE_NAME} already exists"
+  end
+
+  puts "Creating Lambda IAM role #{IAM_LAMBDA_ROLE_NAME}..."
+  assume_role_policy = {
+    Version: "2012-10-17",
+    Statement: [
+      {
+        Effect: "Allow",
+        Principal: {
+          Service: %w[lambda.amazonaws.com firehose.amazonaws.com]
+        },
+        Action: "sts:AssumeRole"
+      }
+    ]
+  }.to_json
+
+  system(
+    "aws iam create-role --role-name #{IAM_LAMBDA_ROLE_NAME} \
+                         --assume-role-policy-document '#{assume_role_policy}'"
+  ) || exit(1)
+
+  role_policy = {
+    Version: "2012-10-17",
+    Statement: [
+      {
+        Effect: "Allow",
+        Action: "logs:CreateLogGroup",
+        Resource: "arn:aws:logs:#{REGION}:#{ACCOUNT_ID}:*"
+      },
+      {
+        Effect: "Allow",
+        Action: %w[logs:CreateLogStream logs:PutLogEvents],
+        Resource: [
+          "arn:aws:logs:#{REGION}:#{ACCOUNT_ID}:log-group:/aws/lambda/#{LAMBDA_FUNCTION_NAME}:*"
+        ]
+      },
+      {
+        Effect: "Allow",
+        Action: %w[lambda:InvokeFunction lambda:GetFunctionConfiguration],
+        Resource: LAMBDA_FUNCTION_ARN
+      }
+    ]
+  }.to_json
+
+  system(
+    "aws iam put-role-policy --role-name #{IAM_LAMBDA_ROLE_NAME} \
+                             --policy-name #{IAM_LAMBDA_POLICY_NAME} \
+                             --policy-document '#{role_policy}'"
+  ) || exit(1)
+end
+
+def create_transform_lambda
+  if system(
+       "aws lambda get-function --function-name #{LAMBDA_FUNCTION_NAME} &>/dev/null"
+     )
+    return puts "Lambda function #{LAMBDA_FUNCTION_NAME} already exists"
+  end
+
+  puts "Creating Lambda function #{LAMBDA_FUNCTION_NAME}..."
+
+  # Create a temporary zip file containing the Lambda function code
+  system("rm tmp/function.zip")
+  system("zip --junk-paths tmp/function.zip aws/mavis-splunk-lambda.mjs")
+
+  system(
+    "aws lambda create-function \
+      --function-name #{LAMBDA_FUNCTION_NAME} \
+      --runtime nodejs18.x \
+      --role #{IAM_LAMBDA_ROLE_ARN} \
+      --handler mavis-splunk-lambda.handler \
+      --timeout 60 \
+      --zip-file fileb://tmp/function.zip"
+  ) || exit(1)
+end
+
 def create_firehose_stream
   if system(
        "aws firehose describe-delivery-stream --delivery-stream-name \
@@ -231,9 +330,12 @@ def create_firehose_stream
       Enabled: true,
       Processors: [
         {
-          Type: "Decompression",
+          Type: "Lambda",
           Parameters: [
-            { ParameterName: "CompressionFormat", ParameterValue: "GZIP" }
+            { ParameterName: "LambdaArn", ParameterValue: LAMBDA_FUNCTION_ARN },
+            { ParameterName: "RoleArn", ParameterValue: IAM_LAMBDA_ROLE_ARN },
+            { ParameterName: "BufferSizeInMBs", ParameterValue: "0.256" },
+            { ParameterName: "BufferIntervalInSeconds", ParameterValue: "60" }
           ]
         }
       ]
