@@ -16,12 +16,7 @@ describe AppConsentPatientSummaryComponent do
     create(:session, programme:, organisation:, location: school)
   end
   let(:consent_form) do
-    create(
-      :consent_form,
-      address_postcode: "SW1A 1AA",
-      gp_name: "Waterloo GP",
-      session:
-    )
+    create(:consent_form, address_postcode: "SW1A 1AA", session:)
   end
 
   let(:restricted) { false }
@@ -46,17 +41,11 @@ describe AppConsentPatientSummaryComponent do
   it { should have_content("Home address") }
   it { should have_content("SW1A 1AA") }
 
-  it { should have_content("GP surgery") }
-  it { should have_content("Waterloo GP") }
-
   it { should have_content("School") }
   it { should have_content("Waterloo Road") }
 
   context "with a restricted patient" do
     let(:restricted) { true }
-
-    it { should_not have_content("GP surgery") }
-    it { should_not have_content("Waterloo GP") }
 
     it { should_not have_content("Home address") }
     it { should_not have_content("SW1A 1AA") }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_12_03_165616) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_04_084415) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -164,8 +164,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_03_165616) do
     t.integer "reason"
     t.text "reason_notes"
     t.boolean "contact_injection"
-    t.string "gp_name"
-    t.integer "gp_response"
     t.string "address_line_1"
     t.string "address_line_2"
     t.string "address_town"

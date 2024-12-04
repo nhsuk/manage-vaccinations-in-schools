@@ -24,19 +24,6 @@ class AppConsentPatientSummaryComponent < ViewComponent::Base
           row.with_key { "Home address" }
           row.with_value { helpers.format_address_multi_line(consent_form) }
         end
-
-        summary_list.with_row do |row|
-          row.with_key { "GP surgery" }
-          row.with_value do
-            if consent_form.gp_response_yes?
-              consent_form.gp_name
-            elsif consent_form.gp_response_no?
-              "Not registered"
-            elsif consent_form.gp_response_dont_know?
-              "Not known"
-            end
-          end
-        end
       end
 
       summary_list.with_row do |row|

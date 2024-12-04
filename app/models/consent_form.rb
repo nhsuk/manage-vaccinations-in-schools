@@ -14,8 +14,6 @@
 #  education_setting                   :integer
 #  family_name                         :text
 #  given_name                          :text
-#  gp_name                             :string
-#  gp_response                         :integer
 #  health_answers                      :jsonb            not null
 #  nhs_number                          :string
 #  parent_contact_method_other_details :string
@@ -97,7 +95,6 @@ class ConsentForm < ApplicationRecord
          other: 5
        },
        prefix: "refused_because"
-  enum :gp_response, { yes: 0, no: 1, dont_know: 2 }, prefix: true
 
   enum :parent_contact_method_type,
        Parent.contact_method_types,
@@ -122,7 +119,6 @@ class ConsentForm < ApplicationRecord
            :address_town,
            :family_name,
            :given_name,
-           :gp_name,
            :health_answers,
            :parent_contact_method_other_details,
            :parent_email,
@@ -147,7 +143,6 @@ class ConsentForm < ApplicationRecord
             :address_town,
             :family_name,
             :given_name,
-            :gp_name,
             :parent_contact_method_other_details,
             :parent_full_name,
             :parent_relationship_other_name,
@@ -249,11 +244,6 @@ class ConsentForm < ApplicationRecord
     validates :contact_injection, inclusion: { in: [true, false] }
   end
 
-  on_wizard_step :gp do
-    validates :gp_response, presence: true
-    validates :gp_name, presence: true, if: :gp_response_yes?
-  end
-
   on_wizard_step :address do
     validates :address_line_1, presence: true
     validates :address_town, presence: true
@@ -279,7 +269,6 @@ class ConsentForm < ApplicationRecord
       (:reason if consent_refused?),
       (:reason_notes if consent_refused? && reason_notes_must_be_provided?),
       (:injection if injection_offered_as_alternative?),
-      (:gp if consent_given?),
       (:address if consent_given?),
       (:health_question if consent_given?)
     ].compact
@@ -497,8 +486,6 @@ class ConsentForm < ApplicationRecord
     end
 
     if consent_refused?
-      self.gp_response = nil
-
       self.address_line_1 = nil
       self.address_line_2 = nil
       self.address_town = nil
@@ -521,8 +508,6 @@ class ConsentForm < ApplicationRecord
 
       seed_health_questions
     end
-
-    self.gp_name = nil unless gp_response_yes?
 
     if school_confirmed
       self.education_setting = "school"

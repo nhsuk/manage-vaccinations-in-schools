@@ -236,11 +236,6 @@ describe "Parental consent school" do
     choose "Yes, I agree"
     click_on "Continue"
 
-    expect(page).to have_content("Is your child registered with a GP?")
-    choose "Yes, they are registered with a GP"
-    fill_in "Name of GP surgery", with: "GP Surgery"
-    click_on "Continue"
-
     expect(page).to have_content("Home address")
     fill_in "Address line 1", with: "1 Test Street"
     fill_in "Address line 2 (optional)", with: "2nd Floor"

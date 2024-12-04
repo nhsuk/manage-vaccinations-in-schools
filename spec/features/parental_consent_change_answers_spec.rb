@@ -62,9 +62,6 @@ RSpec.feature "Parental consent change answers" do
     then_i_see_the_consent_form_confirmation_page
 
     when_i_change_my_consent_to_accepted
-    then_i_see_the_gp_page
-
-    when_i_input_my_gp_details
     then_i_see_the_address_page
 
     when_i_input_my_address
@@ -135,7 +132,7 @@ RSpec.feature "Parental consent change answers" do
     # BUG: The page should be the consent confirm page, but because we
     # encountered a validation error, the skip_to_confirm flag gets lost and we
     # end up on the next page in the wizard.
-    11.times { click_button "Continue" }
+    10.times { click_button "Continue" }
   end
 
   def when_i_change_my_parental_relationship_to_dad
@@ -259,16 +256,6 @@ RSpec.feature "Parental consent change answers" do
     expect(page).to have_content(
       "Someone will be in touch to discuss them having an injection instead."
     )
-  end
-
-  def then_i_see_the_gp_page
-    expect(page).to have_content("Is your child registered with a GP?")
-  end
-
-  def when_i_input_my_gp_details
-    choose "Yes"
-    fill_in "Name of GP surgery", with: "Test GP"
-    click_button "Continue"
   end
 
   def then_i_see_the_address_page

@@ -14,8 +14,6 @@
 #  education_setting                   :integer
 #  family_name                         :text
 #  given_name                          :text
-#  gp_name                             :string
-#  gp_response                         :integer
 #  health_answers                      :jsonb            not null
 #  nhs_number                          :string
 #  parent_contact_method_other_details :string
@@ -65,7 +63,6 @@ describe ConsentForm do
     subject(:consent_form) do
       build(
         :consent_form,
-        gp_response:,
         health_answers:,
         parent_phone_receive_updates:,
         reason:,
@@ -77,7 +74,6 @@ describe ConsentForm do
       )
     end
 
-    let(:gp_response) { nil }
     let(:health_answers) { [] }
     let(:parent_phone_receive_updates) { false }
     let(:reason) { nil }
@@ -221,24 +217,6 @@ describe ConsentForm do
       # end
     end
 
-    context "when wizard_step is :gp" do
-      let(:response) { "given" }
-      let(:wizard_step) { :gp }
-
-      context "runs validations from previous steps" do
-        it { should validate_presence_of(:given_name).on(:update) }
-        it { should validate_presence_of(:date_of_birth).on(:update) }
-      end
-
-      it { should validate_presence_of(:gp_response).on(:update) }
-
-      context "when gp_response is 'yes'" do
-        let(:gp_response) { "yes" }
-
-        it { should validate_presence_of(:gp_name).on(:update) }
-      end
-    end
-
     context "when wizard_step is :address" do
       let(:response) { "given" }
       let(:wizard_step) { :address }
@@ -246,7 +224,6 @@ describe ConsentForm do
       context "runs validations from previous steps" do
         it { should validate_presence_of(:given_name).on(:update) }
         it { should validate_presence_of(:date_of_birth).on(:update) }
-        it { should validate_presence_of(:gp_response).on(:update) }
       end
 
       it { should validate_presence_of(:address_line_1).on(:update) }
@@ -262,7 +239,6 @@ describe ConsentForm do
 
     context "when wizard_step is :health_question" do
       let(:response) { "given" }
-      let(:gp_response) { "yes" }
       let(:wizard_step) { :health_question }
       let(:health_answers) do
         [
@@ -288,7 +264,6 @@ describe ConsentForm do
       describe "validations from previous steps" do
         it { should validate_presence_of(:given_name).on(:update) }
         it { should validate_presence_of(:date_of_birth).on(:update) }
-        it { should validate_presence_of(:gp_response).on(:update) }
         it { should validate_presence_of(:address_line_1).on(:update) }
         it { should validate_presence_of(:address_town).on(:update) }
         it { should validate_presence_of(:address_postcode).on(:update) }
@@ -389,11 +364,6 @@ describe ConsentForm do
       end
     end
 
-    it "does not ask for gp details when patient refuses consent" do
-      consent_form = build(:consent_form, response: "refused")
-      expect(consent_form.wizard_steps).not_to include(:gp)
-    end
-
     it "asks for details when patient refuses for a few different reasons" do
       session = create(:session)
 
@@ -417,12 +387,6 @@ describe ConsentForm do
           build(:consent_form, response: "refused", reason:, session:)
         expect(consent_form.wizard_steps).not_to include(:reason_notes)
       end
-    end
-
-    it "asks for gp details, address when patient gives consent" do
-      consent_form = build(:consent_form, response: "given")
-      expect(consent_form.wizard_steps).to include(:gp)
-      expect(consent_form.wizard_steps).to include(:address)
     end
   end
 
@@ -631,9 +595,7 @@ describe ConsentForm do
       response: "given",
       address_line_1: "123 Fake St",
       address_town: "London",
-      address_postcode: "SW1A 1AA",
-      gp_response: "yes",
-      gp_name: "Dr. Foo"
+      address_postcode: "SW1A 1AA"
     )
     consent_form.reload
 
@@ -882,20 +844,8 @@ describe ConsentForm do
     expect(consent_form.reason).to be_nil
     expect(consent_form.reason_notes).to be_nil
 
-    consent_form =
-      build(
-        :consent_form,
-        programme:,
-        gp_response: "yes",
-        gp_name: "Dr. Foo",
-        session:
-      )
-    consent_form.update!(gp_response: "no")
-    expect(consent_form.gp_name).to be_nil
-
     consent_form = build(:consent_form, programme:, session:)
     consent_form.update!(response: "refused")
-    expect(consent_form.gp_response).to be_nil
     expect(consent_form.address_line_1).to be_nil
     expect(consent_form.address_line_2).to be_nil
     expect(consent_form.address_town).to be_nil

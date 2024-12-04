@@ -58,16 +58,6 @@ export async function parentJourney(page: Page, context: Context) {
   await page.getByLabel("Yes, I agree").check();
   await page.getByRole("button", { name: "Continue" }).click();
 
-  // GP
-  await expect(
-    page.getByRole("heading", {
-      name: "Is your child registered with a GP?",
-    }),
-  ).toBeVisible();
-  await page.getByLabel("Yes, they are registered with a GP").check();
-  await page.getByLabel("Name of GP surgery").fill("Local GP");
-  await page.getByRole("button", { name: "Continue" }).click();
-
   // Address
   await expect(
     page.getByRole("heading", { name: "Home address" }),

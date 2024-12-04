@@ -65,10 +65,6 @@ describe "Parental consent" do
     choose "Yes, I agree"
     click_button "Continue"
 
-    # Is your child registered with a GP?
-    choose "I don’t know"
-    click_button "Continue"
-
     # Home address
     fill_in "Address line 1", with: "1 High Street"
     fill_in "Town or city", with: "London"
