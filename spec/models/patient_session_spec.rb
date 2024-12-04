@@ -82,6 +82,49 @@ describe PatientSession do
     it { should eq(later_triage) }
   end
 
+  describe "#no_consent?" do
+    subject(:no_consent?) { patient_session.no_consent? }
+
+    let(:patient) { patient_session.patient }
+
+    context "with no consent" do
+      it { should be(true) }
+    end
+
+    context "with an invalidated consent" do
+      before { create(:consent, :invalidated, patient:, programme:) }
+
+      it { should be(true) }
+    end
+
+    context "with a not provided consent" do
+      before { create(:consent, :not_provided, patient:, programme:) }
+
+      it { should be(true) }
+    end
+
+    context "with both an invalidated and not provided consent" do
+      before do
+        create(:consent, :invalidated, patient:, programme:)
+        create(:consent, :not_provided, patient:, programme:)
+      end
+
+      it { should be(true) }
+    end
+
+    context "with a refused consent" do
+      before { create(:consent, :refused, patient:, programme:) }
+
+      it { should be(false) }
+    end
+
+    context "with a given consent" do
+      before { create(:consent, :given, patient:, programme:) }
+
+      it { should be(false) }
+    end
+  end
+
   describe "#latest_consents" do
     subject(:latest_consents) { patient_session.latest_consents }
 

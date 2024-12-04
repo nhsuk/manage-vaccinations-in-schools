@@ -68,9 +68,7 @@ FactoryBot.define do
       end
     end
 
-    trait :given do
-      response { :given }
-    end
+    traits_for_enum :response
 
     trait :given_verbally do
       given
