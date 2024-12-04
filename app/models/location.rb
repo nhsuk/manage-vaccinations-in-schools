@@ -87,7 +87,7 @@ class Location < ApplicationRecord
   end
 
   def dfe_number
-    "#{gias_local_authority_code}/#{gias_establishment_number}" if school?
+    "#{gias_local_authority_code}#{gias_establishment_number}" if school?
   end
 
   private
