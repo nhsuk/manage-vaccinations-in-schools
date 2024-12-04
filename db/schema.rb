@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_12_03_160038) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_03_165616) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -559,11 +559,13 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_03_160038) do
     t.string "preferred_given_name"
     t.string "preferred_family_name"
     t.datetime "updated_from_pds_at"
+    t.bigint "gp_practice_id"
     t.index ["cohort_id"], name: "index_patients_on_cohort_id"
     t.index ["family_name", "given_name"], name: "index_patients_on_names_family_first"
     t.index ["family_name"], name: "index_patients_on_family_name_trigram", opclass: :gin_trgm_ops, using: :gin
     t.index ["given_name", "family_name"], name: "index_patients_on_names_given_first"
     t.index ["given_name"], name: "index_patients_on_given_name_trigram", opclass: :gin_trgm_ops, using: :gin
+    t.index ["gp_practice_id"], name: "index_patients_on_gp_practice_id"
     t.index ["nhs_number"], name: "index_patients_on_nhs_number", unique: true
     t.index ["school_id"], name: "index_patients_on_school_id"
   end
@@ -800,6 +802,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_03_160038) do
   add_foreign_key "parent_relationships", "parents"
   add_foreign_key "parent_relationships", "patients"
   add_foreign_key "patients", "cohorts"
+  add_foreign_key "patients", "locations", column: "gp_practice_id"
   add_foreign_key "patients", "locations", column: "school_id"
   add_foreign_key "programmes_sessions", "programmes"
   add_foreign_key "programmes_sessions", "sessions"

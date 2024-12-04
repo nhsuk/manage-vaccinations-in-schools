@@ -67,6 +67,12 @@ class AppPatientSummaryComponent < ViewComponent::Base
         row.with_key { "Year group" }
         row.with_value { format_year_group }
       end
+      if (gp_practice = @patient.gp_practice)
+        summary_list.with_row do |row|
+          row.with_key { "GP surgery" }
+          row.with_value { gp_practice.name }
+        end
+      end
       if @show_parent_or_guardians && !@patient.restricted? &&
            @patient.parents.present?
         summary_list.with_row do |row|
