@@ -43,6 +43,8 @@ class Reports::ProgrammeVaccinationsExporter
       PERSON_ADDRESS_LINE_1
       PERSON_POSTCODE
       NHS_NUMBER
+      GP_ORGANISATION_CODE
+      GP_NAME
       CONSENT_STATUS
       CONSENT_DETAILS
       HEALTH_QUESTION_ANSWERS
@@ -84,7 +86,7 @@ class Reports::ProgrammeVaccinationsExporter
           :programme,
           :vaccine,
           patient_session: {
-            patient: %i[cohort school],
+            patient: %i[cohort gp_practice school],
             consents: [:patient, { parent: :parent_relationships }],
             gillick_assessments: :performed_by,
             triages: :performed_by
@@ -125,6 +127,8 @@ class Reports::ProgrammeVaccinationsExporter
       patient.restricted? ? "" : patient.address_line_1,
       patient.restricted? ? "" : patient.address_postcode,
       patient.nhs_number,
+      patient.gp_practice&.ods_code || "",
+      patient.gp_practice&.name || "",
       consents.first&.response&.humanize || "",
       consent_details(consents:),
       health_question_answers(consents:),
