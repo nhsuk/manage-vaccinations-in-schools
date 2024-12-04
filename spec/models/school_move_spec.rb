@@ -134,10 +134,15 @@ describe SchoolMove do
     end
 
     shared_examples "destroys the school move" do
-      it "destroys the school move" do
+      it "destroys the school move and any others" do
+        other_school_move = create(:school_move, :to_school, patient:)
+
         expect(school_move).to be_persisted
-        expect { confirm! }.to change(described_class, :count).by(-1)
+        expect { confirm! }.to change(described_class, :count).by(-2)
         expect { school_move.reload }.to raise_error(
+          ActiveRecord::RecordNotFound
+        )
+        expect { other_school_move.reload }.to raise_error(
           ActiveRecord::RecordNotFound
         )
       end
