@@ -5,7 +5,6 @@ class PatientSessionsController < ApplicationController
   before_action :set_session
   before_action :set_patient
   before_action :set_section_and_tab
-  before_action :set_back_link
 
   layout "three_quarters"
 
@@ -42,9 +41,5 @@ class PatientSessionsController < ApplicationController
   def set_section_and_tab
     @section = params[:section]
     @tab = params[:tab]
-  end
-
-  def set_back_link
-    @back_link = session_section_tab_path(@session)
   end
 end
