@@ -6,8 +6,8 @@ config:
       maxVusers: 90
     - name: "Sustained load"
       duration: 180
-      arrivalCount: 200
-      maxVusers: 90
+      arrivalCount: 1000 # Throw as many users as possible
+      maxVusers: 90 # Allow 90 users to be active at once
     - name: "Ramp down"
       duration: 60
       arrivalRate: 1
@@ -18,7 +18,7 @@ config:
       showAllPageMetrics: true
       launchOptions:
         headless: true # Set to false to see the browser
-        slowMo: 1666 # 1.66s delay between each action -> ~60s journey
+        slowMo: 1800 # 1.8s delay between each action -> ~60s journey
   processor: "./load.ts"
   variables:
     username: "{{ $processEnvironment.USERNAME }}"
