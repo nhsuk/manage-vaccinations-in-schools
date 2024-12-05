@@ -1,0 +1,53 @@
+# frozen_string_literal: true
+
+class AppLogEventComponent < ViewComponent::Base
+  erb_template <<-ERB
+    <% if card %>
+      <div class="nhsuk-card"><div class="nhsuk-card__content">
+    <% end %>
+
+    <h3 class="<% if card %>nhsuk-card__heading <% end %>nhsuk-heading-s">
+      <%= invalidated ? tag.s(title) : title %>
+    </h3>
+    
+    <% if body.present? %>
+      <blockquote><p>
+        <%= invalidated ? tag.s(body) : body %>
+      </p></blockquote>
+    <% end %>
+    
+    <p class="nhsuk-body-s nhsuk-u-margin-0 nhsuk-u-secondary-text-color">
+      <%= invalidated ? tag.s(subtitle) : subtitle %>
+    </p>
+    
+    <% if card %>
+      </div></div>
+    <% end %>
+  ERB
+
+  def initialize(
+    title:,
+    at:,
+    body: nil,
+    by: nil,
+    invalidated: false,
+    card: false
+  )
+    super
+
+    @title = title
+    @body = body
+    @at = at.to_fs(:long)
+    @by = by.respond_to?(:full_name) ? by.full_name : by
+    @invalidated = invalidated
+    @card = card
+  end
+
+  private
+
+  attr_reader :title, :body, :invalidated, :card
+
+  def subtitle
+    safe_join([@at, @by].compact, " &middot; ".html_safe)
+  end
+end

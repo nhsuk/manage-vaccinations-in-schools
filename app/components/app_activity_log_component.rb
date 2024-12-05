@@ -1,6 +1,19 @@
 # frozen_string_literal: true
 
 class AppActivityLogComponent < ViewComponent::Base
+  erb_template <<-ERB
+    <% events_by_day.each do |day, events| %>
+      <h2 class="nhsuk-heading-xs nhsuk-u-secondary-text-color
+                 nhsuk-u-font-weight-normal">
+        <%= day.to_fs(:long) %>
+      </h2>
+    
+      <% events.each do |event| %>
+        <%= render AppLogEventComponent.new(card: true, **event) %>
+      <% end %>
+    <% end %>
+  ERB
+
   def initialize(patient: nil, patient_session: nil)
     super
 
@@ -31,7 +44,7 @@ class AppActivityLogComponent < ViewComponent::Base
               :vaccination_records
 
   def events_by_day
-    all_events.sort_by { -_1[:time].to_i }.group_by { _1[:time].to_date }
+    all_events.sort_by { -_1[:at].to_i }.group_by { _1[:at].to_date }
   end
 
   def all_events
@@ -54,12 +67,12 @@ class AppActivityLogComponent < ViewComponent::Base
           {
             title:
               "Consent #{consent.response} by #{consent.name} (#{consent.who_responded})",
-            time: consent.created_at,
-            by: consent.recorded_by&.full_name
+            at: consent.created_at,
+            by: consent.recorded_by
           },
           {
             title: "Consent from #{consent.name} invalidated",
-            time: consent.invalidated_at
+            at: consent.invalidated_at
           }
         ]
       elsif consent.withdrawn?
@@ -67,12 +80,12 @@ class AppActivityLogComponent < ViewComponent::Base
           {
             title:
               "Consent given by #{consent.name} (#{consent.who_responded})",
-            time: consent.created_at,
-            by: consent.recorded_by&.full_name
+            at: consent.created_at,
+            by: consent.recorded_by
           },
           {
             title: "Consent from #{consent.name} withdrawn",
-            time: consent.withdrawn_at
+            at: consent.withdrawn_at
           }
         ]
       else
@@ -80,8 +93,8 @@ class AppActivityLogComponent < ViewComponent::Base
           {
             title:
               "Consent #{consent.response} by #{consent.name} (#{consent.who_responded})",
-            time: consent.created_at,
-            by: consent.recorded_by&.full_name
+            at: consent.created_at,
+            by: consent.recorded_by
           }
         ]
       end
@@ -102,9 +115,9 @@ class AppActivityLogComponent < ViewComponent::Base
 
       {
         title: "#{action} Gillick assessment as #{outcome}",
-        notes: gillick_assessment.notes,
-        time: gillick_assessment.created_at,
-        by: gillick_assessment.performed_by.full_name
+        body: gillick_assessment.notes,
+        at: gillick_assessment.created_at,
+        by: gillick_assessment.performed_by
       }
     end
   end
@@ -113,9 +126,9 @@ class AppActivityLogComponent < ViewComponent::Base
     patient.notify_log_entries.map do
       {
         title: "#{_1.title} sent",
-        time: _1.created_at,
-        notes: patient.restricted? ? "" : _1.recipient,
-        by: _1.sent_by&.full_name
+        body: patient.restricted? ? "" : _1.recipient,
+        at: _1.created_at,
+        by: _1.sent_by
       }
     end
   end
@@ -124,9 +137,9 @@ class AppActivityLogComponent < ViewComponent::Base
     pre_screenings.map do |pre_screening|
       {
         title: "Completed pre-screening checks",
-        notes: pre_screening.notes,
-        time: pre_screening.created_at,
-        by: pre_screening.performed_by.full_name
+        body: pre_screening.notes,
+        at: pre_screening.created_at,
+        by: pre_screening.performed_by
       }
     end
   end
@@ -136,7 +149,7 @@ class AppActivityLogComponent < ViewComponent::Base
       [
         {
           title: "Added to session at #{patient_session.location.name}",
-          time: patient_session.created_at
+          at: patient_session.created_at
         }
       ]
     end
@@ -146,9 +159,9 @@ class AppActivityLogComponent < ViewComponent::Base
     triages.map do
       {
         title: "Triaged decision: #{_1.human_enum_name(:status)}",
-        time: _1.created_at,
-        notes: _1.notes,
-        by: _1.performed_by.full_name
+        body: _1.notes,
+        at: _1.created_at,
+        by: _1.performed_by
       }
     end
   end
@@ -164,9 +177,9 @@ class AppActivityLogComponent < ViewComponent::Base
 
       kept = {
         title:,
-        time: vaccination_record.performed_at,
-        notes: vaccination_record.notes,
-        by: vaccination_record.performed_by&.full_name
+        body: vaccination_record.notes,
+        at: vaccination_record.performed_at,
+        by: vaccination_record.performed_by
       }
 
       discarded =
@@ -174,7 +187,7 @@ class AppActivityLogComponent < ViewComponent::Base
           {
             title:
               "#{vaccination_record.programme.name} vaccination record deleted",
-            time: vaccination_record.discarded_at
+            at: vaccination_record.discarded_at
           }
         end
 
@@ -189,7 +202,7 @@ class AppActivityLogComponent < ViewComponent::Base
         title = (_1.attending? ? "Attended session" : "Absent from session")
         title += " at #{_1.patient_session.location.name}"
 
-        { title:, time: _1.created_at }
+        { title:, at: _1.created_at }
       end
   end
 end
