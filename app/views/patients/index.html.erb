@@ -2,6 +2,7 @@
 
 <%= render AppDetailsComponent.new(summary: "Filter children", expander: true, open: @filtered) do %>
   <%= form_with url: patients_path,
+                method: :get,
                 data: { module: "autosubmit", turbo: "true" },
                 role: "search" do |f| %>
     <div class="nhsuk-form-group">
