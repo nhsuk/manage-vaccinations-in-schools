@@ -76,6 +76,6 @@ pds:
   perform_jobs: true
 
 splunk:
-  enable: true
+  enabled: true
   hec_endpoint: https://firehose.inputs.splunk.aws.digital.nhs.uk/services/collector/event
   hec_token: <%= Rails.application.credentials.splunk&.hec_token %>

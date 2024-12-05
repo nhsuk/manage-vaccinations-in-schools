@@ -12,7 +12,7 @@ end
 
 SemanticLogger::Appender::SplunkHttp.prepend(SplunkHttpPatch)
 
-if Settings.splunk.enable
+if Settings.splunk.enabled
   SemanticLogger.add_appender(
     appender: :splunk_http,
     url: Settings.splunk.hec_endpoint,
