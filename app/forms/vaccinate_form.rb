@@ -6,6 +6,12 @@ class VaccinateForm
 
   attr_accessor :patient_session, :current_user, :todays_batch
 
+  attribute :knows_vaccination, :boolean
+  attribute :not_already_had, :boolean
+  attribute :feeling_well, :boolean
+  attribute :no_allergies, :boolean
+  attribute :pre_screening_notes, :string
+
   attribute :administered, :boolean
   attribute :delivery_method, :string
   attribute :delivery_site, :string
@@ -13,15 +19,25 @@ class VaccinateForm
   attribute :programme_id, :integer
   attribute :vaccine_id, :integer
 
-  validates :administered, inclusion: { in: [true, false] }
-  validates :delivery_method, presence: true, if: :administered
-  validates :delivery_site, presence: true, if: :administered
+  validates :knows_vaccination, inclusion: { in: [true, false] }
+  validates :not_already_had, inclusion: { in: [true, false] }
+  validates :feeling_well, inclusion: { in: [true, false] }
+  validates :no_allergies, inclusion: { in: [true, false] }
+
+  validate :valid_administered_values
   validates :dose_sequence, presence: true
   validates :programme_id, presence: true
-  validates :vaccine_id, presence: true, if: :administered
+
+  with_options if: :administered do
+    validates :delivery_method, presence: true
+    validates :delivery_site, presence: true
+    validates :vaccine_id, presence: true
+  end
 
   def save(draft_vaccination_record:)
     return nil if invalid?
+
+    return false unless pre_screening.save
 
     draft_vaccination_record.reset!
 
@@ -43,5 +59,33 @@ class VaccinateForm
     draft_vaccination_record.batch_id = todays_batch&.id
 
     draft_vaccination_record.save # rubocop:disable Rails/SaveBang
+  end
+
+  private
+
+  def pre_screening
+    @pre_screening ||=
+      PreScreening.new(
+        patient_session:,
+        performed_by: current_user,
+        knows_vaccination:,
+        not_already_had:,
+        feeling_well:,
+        no_allergies:,
+        notes: pre_screening_notes
+      )
+  end
+
+  def valid_administered_values
+    if administered.nil?
+      errors.add(:administered, "Choose if they are ready to vaccinate")
+    end
+
+    vaccination_allowed =
+      pre_screening.invalid? || pre_screening.allows_vaccination?
+
+    if administered && !vaccination_allowed
+      errors.add(:administered, "Patient should not be vaccinated")
+    end
   end
 end

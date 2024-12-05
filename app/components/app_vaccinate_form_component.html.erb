@@ -9,6 +9,44 @@
 
   <div class="nhsuk-card__content">
     <h2 class="nhsuk-card__heading nhsuk-heading-m">
+      Pre-screening questions
+    </h2>
+
+    <% options = [OpenStruct.new(value: true, label: "Yes"), OpenStruct.new(value: false, label: "No")] %>
+
+    <%= f.govuk_collection_radio_buttons :knows_vaccination,
+                                         options,
+                                         :value,
+                                         :label,
+                                         inline: true,
+                                         legend: { text: "Does the child know what the vaccination is for, and are they happy to have it?", size: nil } %>
+
+    <%= f.govuk_collection_radio_buttons :not_already_had,
+                                         options,
+                                         :value,
+                                         :label,
+                                         inline: true,
+                                         legend: { text: "Has the child confirmed they have not already had this vaccination?", size: nil } %>
+
+    <%= f.govuk_collection_radio_buttons :feeling_well,
+                                         options,
+                                         :value,
+                                         :label,
+                                         inline: true,
+                                         legend: { text: "Is the child is feeling well?", size: nil } %>
+
+    <%= f.govuk_collection_radio_buttons :no_allergies,
+                                         options,
+                                         :value,
+                                         :label,
+                                         inline: true,
+                                         legend: { text: "Has the child confirmed they have no allergies which would prevent vaccination?", size: nil } %>
+
+    <%= f.govuk_text_area :pre_screening_notes, label: { text: "Pre-screening notes (optional)" } %>
+
+    <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--l">
+
+    <h2 class="nhsuk-card__heading nhsuk-heading-m">
       Is <%= patient.given_name %> ready to vaccinate in this session?
     </h2>
 

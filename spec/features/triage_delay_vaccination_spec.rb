@@ -104,7 +104,7 @@ describe "Triage" do
   end
 
   def and_i_am_able_to_record_a_vaccination
-    choose "Yes"
+    expect(page).to have_content("ready to vaccinate in this session?")
   end
 
   def when_i_go_to_the_community_clinics

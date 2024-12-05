@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "HPV Vaccination" do
+describe "HPV vaccination" do
   scenario "Already had" do
     given_i_am_signed_in
 
@@ -50,7 +50,27 @@ describe "HPV Vaccination" do
   end
 
   def and_i_record_that_the_patient_wasnt_vaccinated
-    choose "No"
+    within(
+      "fieldset",
+      text:
+        "Does the child know what the vaccination is for, and are they happy to have it?"
+    ) { choose "Yes" }
+
+    within(
+      "fieldset",
+      text:
+        "Has the child confirmed they have not already had this vaccination?"
+    ) { choose "No" }
+
+    within("fieldset", text: "Is the child is feeling well?") { choose "Yes" }
+
+    within(
+      "fieldset",
+      text:
+        "Has the child confirmed they have no allergies which would prevent vaccination?"
+    ) { choose "Yes" }
+
+    find_all(".nhsuk-fieldset")[4].choose "No"
     click_button "Continue"
   end
 

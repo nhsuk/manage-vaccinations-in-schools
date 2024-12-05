@@ -133,6 +133,11 @@ class VaccinationsController < ApplicationController
       :delivery_method,
       :delivery_site,
       :dose_sequence,
+      :feeling_well,
+      :knows_vaccination,
+      :no_allergies,
+      :not_already_had,
+      :pre_screening_notes,
       :programme_id,
       :vaccine_id
     )

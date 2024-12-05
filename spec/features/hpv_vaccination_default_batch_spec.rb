@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "HPV Vaccination" do
+describe "HPV vaccination" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
   scenario "Default batch" do
@@ -56,7 +56,14 @@ describe "HPV Vaccination" do
     visit session_vaccinations_path(@session)
     click_link @patient.full_name
 
-    choose "Yes"
+    # pre-screening
+    find_all(".nhsuk-fieldset")[0].choose "Yes"
+    find_all(".nhsuk-fieldset")[1].choose "Yes"
+    find_all(".nhsuk-fieldset")[2].choose "Yes"
+    find_all(".nhsuk-fieldset")[3].choose "Yes"
+
+    # vaccination
+    find_all(".nhsuk-fieldset")[4].choose "Yes"
     choose "Left arm"
     click_button "Continue"
 
@@ -81,7 +88,14 @@ describe "HPV Vaccination" do
     visit session_vaccinations_path(@session)
     click_link @patient2.full_name
 
-    choose "Yes"
+    # pre-screening
+    find_all(".nhsuk-fieldset")[0].choose "Yes"
+    find_all(".nhsuk-fieldset")[1].choose "Yes"
+    find_all(".nhsuk-fieldset")[2].choose "Yes"
+    find_all(".nhsuk-fieldset")[3].choose "Yes"
+
+    # vaccination
+    find_all(".nhsuk-fieldset")[4].choose "Yes"
     choose "Left arm"
     click_button "Continue"
   end

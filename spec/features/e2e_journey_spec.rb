@@ -233,7 +233,14 @@ describe "End-to-end journey" do
 
     expect(page).to have_content("Update attendance")
 
-    choose "Yes"
+    # pre-screening
+    find_all(".nhsuk-fieldset")[0].choose "Yes"
+    find_all(".nhsuk-fieldset")[1].choose "Yes"
+    find_all(".nhsuk-fieldset")[2].choose "Yes"
+    find_all(".nhsuk-fieldset")[3].choose "Yes"
+
+    # vaccination
+    find_all(".nhsuk-fieldset")[4].choose "Yes"
     choose "Left arm (upper position)"
     click_button "Continue"
 
