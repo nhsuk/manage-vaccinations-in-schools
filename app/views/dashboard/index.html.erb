@@ -60,12 +60,14 @@
     <% end %>
   </li>
 
-  <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
-    <%= render AppCardComponent.new(link_to: notices_path, secondary: true) do |card| %>
-      <% card.with_heading { t("notices.index.title") } %>
-      <% card.with_description { "View notices about important updates to patient records" } %>
-    <% end %>
-  </li>
+  <% if policy(:notices).index? %>
+    <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
+      <%= render AppCardComponent.new(link_to: notices_path, secondary: true) do |card| %>
+        <% card.with_heading { t("notices.index.title") } %>
+        <% card.with_description { "View notices about important updates to patient records" } %>
+      <% end %>
+    </li>
+  <% end %>
 
   <li class="nhsuk-grid-column-one-third nhsuk-card-group__item">
     <%= render AppCardComponent.new(link_to: organisation_path, secondary: true) do |card| %>
