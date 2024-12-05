@@ -3,7 +3,7 @@
 describe "HPV vaccination" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
-  scenario "cannot be recorded by an admin" do
+  scenario "Cannot be recorded by an admin" do
     given_i_am_signed_in_as_an_admin
     when_i_go_to_a_patient_that_is_ready_to_vaccinate
     then_i_cannot_record_that_the_patient_has_been_vaccinated

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe "HPV Vaccination" do
-  scenario "Delayed" do
+describe "HPV vaccination" do
+  scenario "Delayed (unwell)" do
     given_i_am_signed_in
 
     when_i_go_to_a_patient_that_is_ready_to_vaccinate
@@ -51,7 +51,27 @@ describe "HPV Vaccination" do
   end
 
   def and_i_record_that_the_patient_was_unwell
-    choose "No"
+    within(
+      "fieldset",
+      text:
+        "Does the child know what the vaccination is for, and are they happy to have it?"
+    ) { choose "Yes" }
+
+    within(
+      "fieldset",
+      text:
+        "Has the child confirmed they have not already had this vaccination?"
+    ) { choose "Yes" }
+
+    within("fieldset", text: "Is the child is feeling well?") { choose "No" }
+
+    within(
+      "fieldset",
+      text:
+        "Has the child confirmed they have no allergies which would prevent vaccination?"
+    ) { choose "Yes" }
+
+    find_all(".nhsuk-fieldset")[4].choose "No"
     click_button "Continue"
 
     choose "They were not well enough"

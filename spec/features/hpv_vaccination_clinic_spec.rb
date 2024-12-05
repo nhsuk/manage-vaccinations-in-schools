@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "HPV Vaccination" do
+describe "HPV vaccination" do
   around { |example| travel_to(Time.zone.local(2024, 2, 1)) { example.run } }
 
   scenario "Administered at a clinic" do
@@ -62,7 +62,14 @@ describe "HPV Vaccination" do
   end
 
   def and_i_record_that_the_patient_has_been_vaccinated
-    choose "Yes"
+    # pre-screening
+    find_all(".nhsuk-fieldset")[0].choose "Yes"
+    find_all(".nhsuk-fieldset")[1].choose "Yes"
+    find_all(".nhsuk-fieldset")[2].choose "Yes"
+    find_all(".nhsuk-fieldset")[3].choose "Yes"
+
+    # vaccination
+    find_all(".nhsuk-fieldset")[4].choose "Yes"
     choose "Left arm"
     click_button "Continue"
   end
