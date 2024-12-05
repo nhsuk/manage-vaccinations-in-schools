@@ -51,7 +51,8 @@ FactoryBot.define do
           },
           "selected_role" => {
             "name" => selected_role_name,
-            "code" => selected_role_code
+            "code" => selected_role_code,
+            "workgroups" => ["schoolagedimmunisations"]
           }
         }
       end
