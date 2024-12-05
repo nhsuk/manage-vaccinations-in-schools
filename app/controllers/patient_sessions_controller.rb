@@ -21,7 +21,7 @@ class PatientSessionsController < ApplicationController
       policy_scope(PatientSession)
         .includes(:patient, :vaccination_records)
         .eager_load(:session)
-        .preload(:consents, :gillick_assessments, :triages)
+        .preload(:consents, :gillick_assessments, :pre_screenings, :triages)
         .find_by!(
           session: {
             slug: params.fetch(:session_slug)

@@ -317,4 +317,26 @@ describe AppActivityLogComponent do
                      date: "1 June 2024 at 1:00pm",
                      by: "Nurse Joy"
   end
+
+  describe "Pre-screenings" do
+    let(:programme) { create(:programme) }
+    let(:patient_session) { create(:patient_session, patient:, programme:) }
+
+    before do
+      create(
+        :pre_screening,
+        :allows_vaccination,
+        performed_by: user,
+        patient_session:,
+        notes: "Some notes",
+        created_at: Time.zone.local(2024, 6, 1, 12)
+      )
+    end
+
+    include_examples "card",
+                     title: "Completed pre-screening checks",
+                     notes: "Some notes",
+                     date: "1 June 2024 at 12:00pm",
+                     by: "Nurse Joy"
+  end
 end

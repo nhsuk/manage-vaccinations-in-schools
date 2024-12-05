@@ -75,6 +75,9 @@ class Patient < ApplicationRecord
   has_many :gillick_assessments,
            -> { order(:created_at) },
            through: :patient_sessions
+  has_many :pre_screenings,
+           -> { order(:created_at) },
+           through: :patient_sessions
   has_many :sessions, through: :patient_sessions
   has_many :vaccination_records, through: :patient_sessions
 

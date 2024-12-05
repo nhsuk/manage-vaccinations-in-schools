@@ -93,6 +93,7 @@ class PatientsController < ApplicationController
           notify_log_entries: :sent_by,
           parents: :parent_relationships,
           patient_sessions: %i[location session_attendances],
+          pre_screenings: :performed_by,
           triages: :performed_by,
           vaccination_records: [:performed_by_user, { vaccine: :programme }]
         )
