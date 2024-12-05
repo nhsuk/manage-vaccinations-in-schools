@@ -2,12 +2,7 @@
 
 describe Reports::ProgrammeVaccinationsExporter do
   subject(:call) do
-    described_class.call(
-      organisation:,
-      programme:,
-      start_date: nil,
-      end_date: nil
-    )
+    described_class.call(organisation:, programme:, start_date:, end_date:)
   end
 
   let(:programme) { create(:programme, :hpv) }
@@ -23,6 +18,9 @@ describe Reports::ProgrammeVaccinationsExporter do
   end
   let(:team) { create(:team, organisation:) }
   let(:session) { create(:session, location:, organisation:, programme:) }
+
+  let(:start_date) { nil }
+  let(:end_date) { nil }
 
   describe "headers" do
     subject(:headers) { CSV.parse(call).first }
@@ -156,6 +154,24 @@ describe Reports::ProgrammeVaccinationsExporter do
             }
           )
         end
+      end
+
+      context "with a vaccinated patient outside the date range" do
+        let(:patient_session) { create(:patient_session, session:) }
+        let(:start_date) { Date.current }
+
+        before do
+          create(
+            :vaccination_record,
+            patient_session:,
+            created_at: 1.day.ago,
+            updated_at: 1.day.ago,
+            programme:,
+            performed_by: user
+          )
+        end
+
+        it { should be_empty }
       end
     end
 

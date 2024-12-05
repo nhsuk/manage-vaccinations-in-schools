@@ -97,11 +97,29 @@ class Reports::ProgrammeVaccinationsExporter
         )
 
     if start_date.present?
-      scope = scope.where("performed_at >= ?", start_date.beginning_of_day)
+      scope =
+        scope.where(
+          "vaccination_records.created_at >= ?",
+          start_date.beginning_of_day
+        ).or(
+          scope.where(
+            "vaccination_records.updated_at >= ?",
+            start_date.beginning_of_day
+          )
+        )
     end
 
     if end_date.present?
-      scope = scope.where("performed_at <= ?", end_date.end_of_day)
+      scope =
+        scope.where(
+          "vaccination_records.created_at <= ?",
+          end_date.end_of_day
+        ).or(
+          scope.where(
+            "vaccination_records.updated_at <= ?",
+            end_date.end_of_day
+          )
+        )
     end
 
     scope.strict_loading
