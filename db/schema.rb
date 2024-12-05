@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_12_04_084415) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_05_094032) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -568,6 +568,20 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_04_084415) do
     t.index ["school_id"], name: "index_patients_on_school_id"
   end
 
+  create_table "pre_screenings", force: :cascade do |t|
+    t.bigint "patient_session_id", null: false
+    t.bigint "performed_by_user_id", null: false
+    t.boolean "knows_vaccination", null: false
+    t.boolean "not_already_had", null: false
+    t.boolean "feeling_well", null: false
+    t.boolean "no_allergies", null: false
+    t.text "notes", default: "", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["patient_session_id"], name: "index_pre_screenings_on_patient_session_id"
+    t.index ["performed_by_user_id"], name: "index_pre_screenings_on_performed_by_user_id"
+  end
+
   create_table "programmes", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -802,6 +816,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_04_084415) do
   add_foreign_key "patients", "cohorts"
   add_foreign_key "patients", "locations", column: "gp_practice_id"
   add_foreign_key "patients", "locations", column: "school_id"
+  add_foreign_key "pre_screenings", "patient_sessions"
+  add_foreign_key "pre_screenings", "users", column: "performed_by_user_id"
   add_foreign_key "programmes_sessions", "programmes"
   add_foreign_key "programmes_sessions", "sessions"
   add_foreign_key "school_moves", "locations", column: "school_id"
