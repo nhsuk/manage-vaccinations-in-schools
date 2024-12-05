@@ -72,6 +72,7 @@ describe Reports::ProgrammeVaccinationsExporter do
           REASON_NOT_VACCINATED
           LOCAL_PATIENT_ID
           SNOMED_PROCEDURE_CODE
+          RECORD_STATUS
         ]
       )
     end
@@ -139,6 +140,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               "PERSON_SURNAME" => patient.family_name,
               "PROGRAMME_NAME" => "HPV",
               "REASON_NOT_VACCINATED" => "",
+              "RECORD_STATUS" => "created",
               "ROUTE_OF_VACCINATION" => "intramuscular",
               "SCHOOL_NAME" => location.name,
               "SCHOOL_URN" => location.urn,
@@ -172,6 +174,26 @@ describe Reports::ProgrammeVaccinationsExporter do
         end
 
         it { should be_empty }
+      end
+
+      context "with a vaccinated patient that was updated in the date range" do
+        let(:patient_session) { create(:patient_session, session:) }
+        let(:start_date) { 1.day.ago }
+
+        before do
+          create(
+            :vaccination_record,
+            patient_session:,
+            created_at: 10.days.ago,
+            updated_at: Time.current,
+            programme:,
+            performed_by: user
+          )
+        end
+
+        it "includes the information" do
+          expect(rows.first.to_hash).to include("RECORD_STATUS" => "updated")
+        end
       end
     end
 
@@ -235,6 +257,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               "PERSON_SURNAME" => patient.family_name,
               "PROGRAMME_NAME" => "HPV",
               "REASON_NOT_VACCINATED" => "",
+              "RECORD_STATUS" => "created",
               "ROUTE_OF_VACCINATION" => "intramuscular",
               "SCHOOL_NAME" => "",
               "SCHOOL_URN" => "888888",

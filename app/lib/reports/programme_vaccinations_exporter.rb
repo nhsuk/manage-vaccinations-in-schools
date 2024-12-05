@@ -74,6 +74,7 @@ class Reports::ProgrammeVaccinationsExporter
       REASON_NOT_VACCINATED
       LOCAL_PATIENT_ID
       SNOMED_PROCEDURE_CODE
+      RECORD_STATUS
     ]
   end
 
@@ -179,7 +180,8 @@ class Reports::ProgrammeVaccinationsExporter
       dose_sequence(vaccination_record:),
       reason_not_vaccinated(vaccination_record:),
       patient.id,
-      vaccine.snomed_procedure_code
+      vaccine.snomed_procedure_code,
+      record_status(vaccination_record:)
     ]
   end
 
@@ -193,6 +195,33 @@ class Reports::ProgrammeVaccinationsExporter
       "02" # Number present but not traced
     else
       "03" # Trace required
+    end
+  end
+
+  def record_status(vaccination_record:)
+    created_at = vaccination_record.created_at
+    updated_at = vaccination_record.updated_at
+
+    return "created" if created_at == updated_at
+
+    if start_date.nil? && end_date.nil?
+      "updated"
+    elsif start_date.present? && end_date.present?
+      if updated_at >= start_date && updated_at <= end_date
+        "updated"
+      else
+        "created"
+      end
+    elsif start_date.present?
+      if updated_at >= start_date
+        "updated"
+      else
+        "created"
+      end
+    elsif updated_at <= end_date # end_date.present?
+      "updated"
+    else
+      "created"
     end
   end
 end
