@@ -77,5 +77,7 @@ module ManageVaccinations
     )
 
     config.silence_healthcheck_path = "/up"
+
+    config.yjit = true
   end
 end
