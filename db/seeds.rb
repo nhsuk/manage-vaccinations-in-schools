@@ -297,6 +297,11 @@ unless Settings.cis2.enabled
     email: "admin.hope@example.com",
     fallback_role: "admin"
   )
+  create_user(
+    organisation:,
+    email: "superuser@example.com",
+    fallback_role: "superuser"
+  )
 
   attach_sample_of_schools_to(organisation)
 
