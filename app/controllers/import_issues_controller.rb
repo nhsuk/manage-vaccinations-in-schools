@@ -45,7 +45,7 @@ class ImportIssuesController < ApplicationController
           :patient_session,
           :performed_by_user,
           session: :location,
-          patient: %i[cohort school],
+          patient: %i[cohort gp_practice school],
           vaccine: :programme
         )
         .strict_loading
