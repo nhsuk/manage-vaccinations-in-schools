@@ -833,10 +833,6 @@ en:
     index:
       title: Vaccinations
   vaccinations:
-    reason:
-      title:
-        flu: Why was the flu vaccine not given?
-        hpv: Why was the HPV vaccine not given?
     flash:
       given: Vaccination recorded for
       not_given: Record updated for
