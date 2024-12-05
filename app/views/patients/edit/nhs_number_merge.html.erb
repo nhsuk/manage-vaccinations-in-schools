@@ -1,8 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(
-        href: edit_nhs_number_patient_path(@patient),
-        name: "edit NHS number",
-      ) %>
+  <%= render AppBacklinkComponent.new(edit_nhs_number_patient_path(@patient), name: "edit NHS number") %>
 <% end %>
 
 <% page_title = "Do you want to merge this record?" %>

@@ -1,8 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(
-        href: @back_link_href,
-        name: "previous page",
-      ) %>
+  <%= render AppBacklinkComponent.new(@back_link_path) %>
 <% end %>
 
 <% page_title = if @parent.persisted?

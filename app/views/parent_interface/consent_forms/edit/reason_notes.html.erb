@@ -1,8 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(
-        href: backlink_path,
-        name: "previous page",
-      ) %>
+  <%= render AppBacklinkComponent.new(backlink_path) %>
 <% end %>
 
 <%= form_with model: @consent_form, url: wizard_path, method: :put do |f| %>

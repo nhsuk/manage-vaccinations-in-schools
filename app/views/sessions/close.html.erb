@@ -1,8 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(
-        href: session_path(@session),
-        name: @session.location.name,
-      ) %>
+  <%= render AppBacklinkComponent.new(session_path(@session), name: @session.location.name) %>
 <% end %>
 
 <%= h1 "Close session" do %>

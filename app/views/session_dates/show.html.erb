@@ -1,8 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(
-        href: edit_session_path(@session),
-        name: "edit session",
-      ) %>
+  <%= render AppBacklinkComponent.new(edit_session_path(@session), name: "edit session") %>
 <% end %>
 
 <%= h1 "When will sessions be held?" %>

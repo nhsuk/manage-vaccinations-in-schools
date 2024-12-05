@@ -1,12 +1,8 @@
 <% title = "What type of records are you importing?" %>
-
 <% content_for :page_title, title %>
 
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(
-        href: programme_imports_path,
-        name: "imports",
-      ) %>
+  <%= render AppBacklinkComponent.new(programme_imports_path, name: "imports") %>
 <% end %>
 
 <%= form_with(url: programme_imports_path) do |f| %>

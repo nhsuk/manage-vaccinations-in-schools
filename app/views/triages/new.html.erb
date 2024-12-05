@@ -1,8 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(
-        href: session_patient_path(id: @patient.id),
-        name: "patient page",
-      ) %>
+  <%= render AppBacklinkComponent.new(session_patient_path(id: @patient.id), name: @patient.full_name) %>
 <% end %>
 
 <%= h1 page_title: "Update triage outcome" do %>

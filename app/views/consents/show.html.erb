@@ -1,8 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(
-        href: session_patient_path(id: @consent.patient.id),
-        name: "patient page",
-      ) %>
+  <%= render AppBacklinkComponent.new(session_patient_path(id: @consent.patient.id), name: @consent.patient.full_name) %>
 <% end %>
 
 <%= h1 "Consent response from #{@consent.name}" %>

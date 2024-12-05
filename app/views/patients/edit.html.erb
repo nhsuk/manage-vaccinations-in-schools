@@ -1,8 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(
-        href: patient_path(@patient),
-        name: @patient.full_name,
-      ) %>
+  <%= render AppBacklinkComponent.new(patient_path(@patient), name: @patient.full_name) %>
 <% end %>
 
 <% page_title = "Edit child record" %>

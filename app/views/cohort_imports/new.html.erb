@@ -1,8 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(
-        href: programme_cohorts_path(@programme),
-        name: @programme.name,
-      ) %>
+  <%= render AppBacklinkComponent.new(programme_cohorts_path(@programme), name: @programme.name) %>
 <% end %>
 
 <% title = "Import child records" %>

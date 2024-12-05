@@ -1,6 +1,6 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: session_section_tab_path(@session),
+        session_section_tab_path(@session),
         name: "#{@section.pluralize} page",
       ) %>
 <% end %>
