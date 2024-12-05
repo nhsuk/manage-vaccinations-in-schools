@@ -37,12 +37,14 @@ class Reports::ProgrammeVaccinationsExporter
       CLINIC_NAME
       PERSON_FORENAME
       PERSON_SURNAME
-      PERSON_DOB
+      PERSON_DATE_OF_BIRTH
+      PERSON_DATE_OF_DEATH
       YEAR_GROUP
       PERSON_GENDER_CODE
       PERSON_ADDRESS_LINE_1
       PERSON_POSTCODE
       NHS_NUMBER
+      NHS_NUMBER_STATUS_CODE
       GP_ORGANISATION_CODE
       GP_NAME
       CONSENT_STATUS
@@ -70,6 +72,8 @@ class Reports::ProgrammeVaccinationsExporter
       ROUTE_OF_VACCINATION
       DOSE_SEQUENCE
       REASON_NOT_VACCINATED
+      LOCAL_PATIENT_ID
+      SNOMED_PROCEDURE_CODE
     ]
   end
 
@@ -83,8 +87,7 @@ class Reports::ProgrammeVaccinationsExporter
           :batch,
           :location,
           :performed_by_user,
-          :programme,
-          :vaccine,
+          vaccine: :programme,
           patient_session: {
             patient: %i[cohort gp_practice school],
             consents: [:patient, { parent: :parent_relationships }],
@@ -111,7 +114,8 @@ class Reports::ProgrammeVaccinationsExporter
     patient = patient_session.patient
     triage = patient_session.latest_triage
     location = vaccination_record.location
-    programme = vaccination_record.programme
+    vaccine = vaccination_record.vaccine
+    programme = vaccine.programme
 
     [
       organisation.ods_code,
@@ -122,11 +126,13 @@ class Reports::ProgrammeVaccinationsExporter
       patient.given_name,
       patient.family_name,
       patient.date_of_birth.strftime("%Y%m%d"),
+      patient.date_of_death&.strftime("%Y%m%d") || "",
       patient.year_group || "",
       patient.gender_code.humanize,
       patient.restricted? ? "" : patient.address_line_1,
       patient.restricted? ? "" : patient.address_postcode,
       patient.nhs_number,
+      nhs_number_status_code(patient:),
       patient.gp_practice&.ods_code || "",
       patient.gp_practice&.name || "",
       consents.first&.response&.humanize || "",
@@ -153,7 +159,22 @@ class Reports::ProgrammeVaccinationsExporter
       anatomical_site(vaccination_record:),
       route_of_vaccination(vaccination_record:),
       dose_sequence(vaccination_record:),
-      reason_not_vaccinated(vaccination_record:)
+      reason_not_vaccinated(vaccination_record:),
+      patient.id,
+      vaccine.snomed_procedure_code
     ]
+  end
+
+  def nhs_number_status_code(patient:)
+    present = patient.nhs_number.present?
+    verified = patient.updated_from_pds_at.present?
+
+    if present && verified
+      "01" # Number present and verified
+    elsif present
+      "02" # Number present but not traced
+    else
+      "03" # Trace required
+    end
   end
 end

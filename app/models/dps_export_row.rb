@@ -125,11 +125,11 @@ class DPSExportRow
   end
 
   def vaccination_procedure_code
-    vaccine.snomed_procedure_code_and_term.first
+    vaccine.snomed_procedure_code
   end
 
   def vaccination_procedure_term
-    vaccine.snomed_procedure_code_and_term.last
+    vaccine.snomed_procedure_term
   end
 
   def dose_sequence
