@@ -18,6 +18,7 @@ class DraftVaccinationRecordsController < ApplicationController
   before_action :validate_params, only: :update
   before_action :set_batches, if: -> { current_step == :batch }
   before_action :set_locations, if: -> { current_step == :location }
+  before_action :set_back_link_href
 
   after_action :verify_authorized
 
@@ -193,6 +194,26 @@ class DraftVaccinationRecordsController < ApplicationController
 
   def set_locations
     @locations = policy_scope(Location).community_clinic
+  end
+
+  def set_back_link_href
+    @back_link_href =
+      if @draft_vaccination_record.editing?
+        if current_step == :confirm
+          programme_vaccination_record_path(@programme, @vaccination_record)
+        else
+          wizard_path("confirm")
+        end
+      elsif current_step == @draft_vaccination_record.wizard_steps.first
+        session_patient_path(
+          @session,
+          @patient,
+          section: "vaccinations",
+          tab: "vaccinate"
+        )
+      else
+        previous_wizard_path
+      end
   end
 
   def update_default_batch_for_today

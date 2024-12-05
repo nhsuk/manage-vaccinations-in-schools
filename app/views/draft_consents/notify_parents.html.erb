@@ -1,6 +1,6 @@
 <% content_for :before_main do %>
   <%= render AppBacklinkComponent.new(
-        href: consents_back_link_path,
+        href: @back_link_href,
         name: "previous page",
       ) %>
 <% end %>
