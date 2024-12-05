@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# We need to patch the SplunkHttp appender to add the request channel header.
+# Without this, Splunk returns a 400.
 module SplunkHttpPatch
   def initialize(request_channel: nil, **args, &block)
     super(**args, &block)

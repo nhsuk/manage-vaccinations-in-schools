@@ -17,7 +17,6 @@ ENVIRONMENT = ARGV[0]
 
 usage if ENVIRONMENT.blank? || !defined?(Settings)
 
-SPLUNK_INDEX = Settings.splunk.index
 HEC_ENDPOINT = Settings.splunk.hec_endpoint
 HEC_TOKEN = Settings.splunk.hec_token
 
