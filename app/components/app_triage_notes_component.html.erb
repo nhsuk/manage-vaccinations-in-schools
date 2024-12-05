@@ -1,22 +1,20 @@
-<% entries.each_with_index do |triage, index| %>
+<% entries.each_with_index do |entry, index| %>
   <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">
-    <% if triage.invalidated? %><s><% end %>
-    Triaged decision: <%= triage.human_enum_name(:status) %>
-    <% if triage.invalidated? %></s><% end %>
+    <%= entry[:invalidated] ? tag.s(entry[:title]) : entry[:title] %>
   </h3>
 
-  <% if (notes = triage.notes).present? %>
+  <% if (notes = entry[:notes]).present? %>
     <blockquote><p>
-      <%= triage.invalidated? ? tag.s(notes) : notes %>
+      <%= entry[:invalidated] ? tag.s(notes) : notes %>
     </p></blockquote>
   <% end %>
 
   <p class="nhsuk-u-secondary-text-color nhsuk-u-font-size-16">
-    <% if triage.invalidated? %><s><% end %>
-      <%= triage.created_at.to_fs(:long) %>
+    <% if entry[:invalidated] %><s><% end %>
+      <%= entry[:time].to_fs(:long) %>
       &middot;
-      <%= triage.performed_by.full_name %>
-    <% if triage.invalidated? %></s><% end %>
+      <%= entry[:by] %>
+    <% if entry[:invalidated] %></s><% end %>
   </p>
 
   <% if index < entries.size - 1 %>
