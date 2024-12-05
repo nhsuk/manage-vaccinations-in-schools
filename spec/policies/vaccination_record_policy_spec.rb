@@ -6,40 +6,29 @@ describe VaccinationRecordPolicy do
   describe "destroy?" do
     subject(:destroy?) { policy.destroy? }
 
-    let(:programme) { create(:programme) }
-    let(:vaccination_record) do
-      create(:vaccination_record, session:, programme:)
-    end
+    let(:vaccination_record) { create(:vaccination_record) }
 
-    context "when session is open" do
-      let(:session) { create(:session, :scheduled, programme:) }
+    context "with an admin" do
+      let(:user) { build(:admin) }
 
-      context "with an admin" do
-        let(:user) { create(:admin) }
+      it { should be(false) }
 
-        it { should be(false) }
-      end
-
-      context "with a nurse" do
-        let(:user) { create(:nurse) }
+      context "and superuser access" do
+        let(:user) { build(:admin, :superuser) }
 
         it { should be(true) }
       end
     end
 
-    context "when session is not open" do
-      let(:session) { create(:session, :closed, programme:) }
+    context "with a nurse" do
+      let(:user) { build(:nurse) }
 
-      context "with an admin" do
-        let(:user) { create(:admin) }
+      it { should be(false) }
 
-        it { should be(false) }
-      end
+      context "and superuser access" do
+        let(:user) { build(:nurse, :superuser) }
 
-      context "with a nurse" do
-        let(:user) { create(:nurse) }
-
-        it { should be(false) }
+        it { should be(true) }
       end
     end
   end

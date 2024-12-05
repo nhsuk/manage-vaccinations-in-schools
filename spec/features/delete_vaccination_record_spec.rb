@@ -5,7 +5,8 @@ describe "Delete vaccination record" do
     given_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
 
-    when_i_go_to_a_patient_that_is_vaccinated
+    when_i_sign_in_as_a_superuser
+    and_i_go_to_a_patient_that_is_vaccinated
     and_i_click_on_delete_vaccination_record
     then_i_see_the_delete_vaccination_page
 
@@ -18,7 +19,8 @@ describe "Delete vaccination record" do
     given_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
 
-    when_i_go_to_a_patient_that_is_vaccinated
+    when_i_sign_in_as_a_superuser
+    and_i_go_to_a_patient_that_is_vaccinated
     and_i_click_on_delete_vaccination_record
     then_i_see_the_delete_vaccination_page
 
@@ -35,7 +37,8 @@ describe "Delete vaccination record" do
     given_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
 
-    when_i_go_to_a_patient_that_is_vaccinated
+    when_i_sign_in_as_a_superuser
+    and_i_go_to_a_patient_that_is_vaccinated
     and_i_click_on_delete_vaccination_record
     then_i_see_the_delete_vaccination_page
 
@@ -54,7 +57,8 @@ describe "Delete vaccination record" do
     and_an_administered_vaccination_record_exists
     and_a_confirmation_email_has_been_sent
 
-    when_i_go_to_a_patient_that_is_vaccinated
+    when_i_sign_in_as_a_superuser
+    and_i_go_to_a_patient_that_is_vaccinated
     and_i_click_on_delete_vaccination_record
     then_i_see_the_delete_vaccination_page
 
@@ -68,12 +72,13 @@ describe "Delete vaccination record" do
     and_the_parent_receives_an_email
   end
 
-  scenario "User tries to delete a record for a closed session date" do
+  scenario "User can't delete a record without superuser access" do
     given_an_hpv_programme_is_underway
     and_an_administered_vaccination_record_exists
     and_the_session_has_closed
 
-    when_i_go_to_a_patient_that_is_vaccinated
+    when_i_sign_in
+    and_i_go_to_a_patient_that_is_vaccinated
     then_i_cant_click_on_delete_vaccination_record
   end
 
@@ -126,8 +131,15 @@ describe "Delete vaccination record" do
     @session.close!
   end
 
-  def when_i_go_to_a_patient_that_is_vaccinated
+  def when_i_sign_in
     sign_in @organisation.users.first
+  end
+
+  def when_i_sign_in_as_a_superuser
+    sign_in @organisation.users.first, superuser: true
+  end
+
+  def and_i_go_to_a_patient_that_is_vaccinated
     visit session_vaccinations_path(@session)
     click_link "Vaccinated"
     click_link @patient.full_name

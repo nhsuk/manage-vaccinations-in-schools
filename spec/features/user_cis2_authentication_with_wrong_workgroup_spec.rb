@@ -55,7 +55,7 @@ describe "User CIS2 authentication", :cis2 do
       org_code: @organisation.ods_code,
       org_name: @organisation.name,
       role: :nurse,
-      workgroup: "schoolagedimmunisations"
+      workgroups: %w[schoolagedimmunisations]
     )
     click_button "Change role"
   end

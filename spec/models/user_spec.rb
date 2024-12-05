@@ -57,7 +57,7 @@ describe User do
   end
 
   describe "#is_admin?" do
-    subject { user.is_admin? }
+    subject(:is_admin?) { user.is_admin? }
 
     context "cis2 is enabled", cis2: :enabled do
       context "when the user is an admin" do
@@ -89,7 +89,7 @@ describe User do
   end
 
   describe "#is_nurse?" do
-    subject { user.is_nurse? }
+    subject(:is_nurse?) { user.is_nurse? }
 
     context "cis2 is enabled", cis2: :enabled do
       context "when the user is a nurse" do
@@ -116,6 +116,62 @@ describe User do
         let(:user) { build(:admin) }
 
         it { should be false }
+      end
+    end
+  end
+
+  describe "#is_superuser?" do
+    subject(:is_superuser?) { user.is_superuser? }
+
+    context "cis2 is enabled", cis2: :enabled do
+      context "when the user is an admin" do
+        let(:user) { build(:admin) }
+
+        it { should be false }
+
+        context "with superuser access" do
+          let(:user) { build(:admin, :superuser) }
+
+          it { should be true }
+        end
+      end
+
+      context "when the user is a nurse" do
+        let(:user) { build(:nurse) }
+
+        it { should be false }
+
+        context "with superuser access" do
+          let(:user) { build(:nurse, :superuser) }
+
+          it { should be true }
+        end
+      end
+    end
+
+    context "cis2 is disabled", cis2: :disabled do
+      context "when the user is an admin" do
+        let(:user) { build(:admin) }
+
+        it { should be false }
+
+        context "with superuser access" do
+          let(:user) { build(:admin, :superuser) }
+
+          it { should be true }
+        end
+      end
+
+      context "when the user is a nurse" do
+        let(:user) { build(:nurse) }
+
+        it { should be false }
+
+        context "with superuser access" do
+          let(:user) { build(:nurse, :superuser) }
+
+          it { should be true }
+        end
       end
     end
   end

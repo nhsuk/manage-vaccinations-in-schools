@@ -42,6 +42,7 @@ FactoryBot.define do
 
       selected_role_code { "S8000:G8000:R8001" }
       selected_role_name { "Nurse Access Role" }
+      selected_role_workgroups { %w[schoolagedimmunisations] }
 
       cis2_info_hash do
         {
@@ -52,7 +53,7 @@ FactoryBot.define do
           "selected_role" => {
             "name" => selected_role_name,
             "code" => selected_role_code,
-            "workgroups" => ["schoolagedimmunisations"]
+            "workgroups" => selected_role_workgroups
           }
         }
       end
@@ -77,6 +78,11 @@ FactoryBot.define do
       selected_role_name { "Medical Secretary Access Role" }
       sequence(:email) { |n| "admin-#{n}@example.com" }
       fallback_role { :admin }
+    end
+
+    trait :superuser do
+      selected_role_workgroups { %w[schoolagedimmunisations mavissuperusers] }
+      fallback_role { :superuser }
     end
 
     trait :signed_in do

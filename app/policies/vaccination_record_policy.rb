@@ -18,7 +18,7 @@ class VaccinationRecordPolicy < ApplicationPolicy
   end
 
   def destroy?
-    user.is_nurse? && record.session.open?
+    user.is_superuser?
   end
 
   class Scope < ApplicationPolicy::Scope

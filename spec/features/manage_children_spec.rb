@@ -62,7 +62,16 @@ describe "Manage children" do
   end
 
   scenario "Viewing important notices" do
-    when_i_click_on_notices
+    when_i_go_to_the_dashboard
+    then_i_cannot_see_notices
+
+    when_i_go_to_the_notices_page
+    then_i_see_permission_denied
+  end
+
+  scenario "Viewing important notices as a superuser" do
+    when_i_go_to_the_dashboard_as_a_superuser
+    and_i_click_on_notices
     then_i_see_no_notices
 
     when_a_deceased_patient_exists
@@ -219,10 +228,31 @@ describe "Manage children" do
     expect(page).to have_content("No sessions")
   end
 
-  def when_i_click_on_notices
+  def when_i_go_to_the_dashboard
     sign_in @organisation.users.first
 
     visit "/dashboard"
+  end
+
+  def when_i_go_to_the_dashboard_as_a_superuser
+    sign_in @organisation.users.first, superuser: true
+
+    visit "/dashboard"
+  end
+
+  def then_i_cannot_see_notices
+    expect(page).not_to have_content("Notices")
+  end
+
+  def when_i_go_to_the_notices_page
+    visit "/notices"
+  end
+
+  def then_i_see_permission_denied
+    expect(page.status_code).to eq(403)
+  end
+
+  def when_i_click_on_notices
     click_on "Notices"
   end
 
