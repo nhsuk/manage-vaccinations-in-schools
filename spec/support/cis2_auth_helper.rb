@@ -77,7 +77,10 @@ module CIS2AuthHelper
     }
   end
 
-  def cis2_sign_in(user, role: :nurse, org_code: nil)
+  def cis2_sign_in(user, role: :nurse, org_code: nil, superuser: false)
+    workgroups =
+      %w[schoolagedimmunisations] + (superuser ? %w[mavissuperusers] : [])
+
     mock_cis2_auth(
       uid: user.uid,
       given_name: user.given_name,
@@ -85,7 +88,8 @@ module CIS2AuthHelper
       email: user.email,
       role:,
       org_code:,
-      sid: user.session_token
+      sid: user.session_token,
+      workgroups:
     )
 
     if page.driver.respond_to? :get
@@ -96,9 +100,9 @@ module CIS2AuthHelper
   end
 
   # Define a sign_in that is compatible with Devise's sign_in.
-  def sign_in(user, role: :nurse, org_code: nil)
+  def sign_in(user, role: :nurse, org_code: nil, superuser: false)
     org_code ||= user.organisations.first.ods_code
-    cis2_sign_in(user, role:, org_code:)
+    cis2_sign_in(user, role:, org_code:, superuser:)
   end
 
   def mock_cis2_auth(
@@ -111,7 +115,7 @@ module CIS2AuthHelper
     org_code: nil,
     org_name: "Test SAIS Org",
     user_only_has_one_org: false,
-    workgroup: nil,
+    workgroups: nil,
     no_workgroup: false,
     sid: nil
   )
@@ -137,8 +141,8 @@ module CIS2AuthHelper
     if no_workgroup
       nhsid_nrbac_role.delete("workgroups")
       nhsid_nrbac_role.delete("workgroups_codes")
-    elsif workgroup
-      nhsid_nrbac_role["workgroups"][0] = workgroup
+    elsif workgroups
+      nhsid_nrbac_role["workgroups"] = workgroups
     end
 
     mock_auth["uid"] = uid
