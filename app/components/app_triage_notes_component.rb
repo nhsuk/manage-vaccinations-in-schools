@@ -1,6 +1,16 @@
 # frozen_string_literal: true
 
 class AppTriageNotesComponent < ViewComponent::Base
+  erb_template <<-ERB
+    <% events.each_with_index do |event, index| %>
+      <%= render AppLogEventComponent.new(**event) %>
+    
+      <% if index < events.size - 1 %>
+        <hr class="nhsuk-section-break nhsuk-section-break--visible nhsuk-section-break--m">
+      <% end %>
+    <% end %>
+  ERB
+
   def initialize(patient_session:)
     super
 
@@ -8,38 +18,38 @@ class AppTriageNotesComponent < ViewComponent::Base
   end
 
   def render?
-    entries.present?
+    events.present?
   end
 
   private
 
-  def entries
-    @entries ||=
-      (triage_entries + pre_screening_entries).sort_by { -_1[:time].to_i }
+  def events
+    @events ||=
+      (triage_events + pre_screening_events).sort_by { -_1[:time].to_i }
   end
 
-  def triage_entries
+  def triage_events
     @patient_session.triages.map do |triage|
       {
         title: "Triaged decision: #{triage.human_enum_name(:status)}",
-        notes: triage.notes,
-        time: triage.created_at,
-        by: triage.performed_by.full_name,
+        body: triage.notes,
+        at: triage.created_at,
+        by: triage.performed_by,
         invalidated: triage.invalidated?
       }
     end
   end
 
-  def pre_screening_entries
+  def pre_screening_events
     @patient_session
       .pre_screenings
       .where.not(notes: "")
       .map do |pre_screening|
         {
           title: "Completed pre-screening checks",
-          notes: pre_screening.notes,
-          time: pre_screening.created_at,
-          by: pre_screening.performed_by.full_name
+          body: pre_screening.notes,
+          at: pre_screening.created_at,
+          by: pre_screening.performed_by
         }
       end
   end
