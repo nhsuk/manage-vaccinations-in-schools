@@ -8,6 +8,7 @@ module TriageMailerConcern
     patient = patient_session.patient
 
     return unless patient.send_notifications?
+    return if consent.via_self_consent?
 
     params = { consent:, session:, sent_by: current_user }
 

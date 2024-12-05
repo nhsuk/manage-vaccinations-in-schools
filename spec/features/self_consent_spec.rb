@@ -20,6 +20,7 @@ describe "Self-consent" do
     when_the_nurse_views_the_childs_record
     then_they_see_that_the_child_has_consent
     and_the_child_should_be_safe_to_vaccinate
+    and_enqueued_jobs_run_with_no_errors
   end
 
   def given_an_hpv_programme_is_underway
@@ -214,5 +215,9 @@ describe "Self-consent" do
 
   def and_the_child_should_be_safe_to_vaccinate
     expect(page).to have_content("Safe to vaccinate")
+  end
+
+  def and_enqueued_jobs_run_with_no_errors
+    expect { perform_enqueued_jobs }.not_to raise_error
   end
 end

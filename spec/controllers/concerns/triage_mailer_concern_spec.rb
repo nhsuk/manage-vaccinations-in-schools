@@ -121,6 +121,27 @@ describe TriageMailerConcern do
       end
     end
 
+    context "when the patient self-consented" do
+      let(:patient_session) { create(:patient_session) }
+      let(:consent) do
+        create(
+          :consent,
+          :self_consent,
+          :given,
+          patient: patient_session.patient,
+          programme: patient_session.session.programmes.first
+        )
+      end
+
+      it "doesn't send an email" do
+        expect { send_triage_confirmation }.not_to have_enqueued_email
+      end
+
+      it "doesn't send a text message" do
+        expect { send_triage_confirmation }.not_to have_enqueued_text
+      end
+    end
+
     context "when the parents have verbally refused consent" do
       let(:patient_session) { create(:patient_session, :consent_refused) }
 
