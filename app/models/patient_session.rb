@@ -31,6 +31,7 @@ class PatientSession < ApplicationRecord
   has_many :session_attendances, dependent: :destroy
 
   has_many :gillick_assessments, -> { order(:created_at) }
+  has_many :pre_screenings, -> { order(:created_at) }
   has_many :vaccination_records, -> { kept }
 
   # TODO: Only fetch consents and triages for the relevant programme.

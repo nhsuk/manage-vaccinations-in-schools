@@ -14,6 +14,33 @@ class AppTriageNotesComponent < ViewComponent::Base
   private
 
   def entries
-    @entries ||= @patient_session.triages.order(created_at: :desc)
+    @entries ||=
+      (triage_entries + pre_screening_entries).sort_by { -_1[:time].to_i }
+  end
+
+  def triage_entries
+    @patient_session.triages.map do |triage|
+      {
+        title: "Triaged decision: #{triage.human_enum_name(:status)}",
+        notes: triage.notes,
+        time: triage.created_at,
+        by: triage.performed_by.full_name,
+        invalidated: triage.invalidated?
+      }
+    end
+  end
+
+  def pre_screening_entries
+    @patient_session
+      .pre_screenings
+      .where.not(notes: "")
+      .map do |pre_screening|
+        {
+          title: "Completed pre-screening checks",
+          notes: pre_screening.notes,
+          time: pre_screening.created_at,
+          by: pre_screening.performed_by.full_name
+        }
+      end
   end
 end

@@ -16,6 +16,7 @@ class AppActivityLogComponent < ViewComponent::Base
 
     @consents = (patient || patient_session).consents
     @gillick_assessments = (patient || patient_session).gillick_assessments
+    @pre_screenings = (patient || patient_session).pre_screenings
     @triages = (patient || patient_session).triages
     @vaccination_records =
       (patient || patient_session).vaccination_records.with_discarded
@@ -25,6 +26,7 @@ class AppActivityLogComponent < ViewComponent::Base
               :patient_sessions,
               :consents,
               :gillick_assessments,
+              :pre_screenings,
               :triages,
               :vaccination_records
 
@@ -34,13 +36,14 @@ class AppActivityLogComponent < ViewComponent::Base
 
   def all_events
     [
+      attendance_events,
       consent_events,
       gillick_assessment_events,
       notify_events,
+      pre_screening_events,
       session_events,
       triage_events,
-      vaccination_events,
-      attendance_events
+      vaccination_events
     ].flatten
   end
 
@@ -113,6 +116,17 @@ class AppActivityLogComponent < ViewComponent::Base
         time: _1.created_at,
         notes: patient.restricted? ? "" : _1.recipient,
         by: _1.sent_by&.full_name
+      }
+    end
+  end
+
+  def pre_screening_events
+    pre_screenings.map do |pre_screening|
+      {
+        title: "Completed pre-screening checks",
+        notes: pre_screening.notes,
+        time: pre_screening.created_at,
+        by: pre_screening.performed_by.full_name
       }
     end
   end
