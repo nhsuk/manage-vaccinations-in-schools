@@ -1,8 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(
-        href: vaccines_path,
-        name: "vaccines",
-      ) %>
+  <%= render AppBacklinkComponent.new(vaccines_path, name: "vaccines") %>
 <% end %>
 
 <% page_title = "Are you sure you want to archive this batch?" %>

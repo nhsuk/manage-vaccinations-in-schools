@@ -1,8 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(
-        href: edit_session_path(@session),
-        name: "edit session",
-      ) %>
+  <%= render AppBacklinkComponent.new(edit_session_path(@session), name: "edit session") %>
 <% end %>
 
 <% legend = "When should parents get a reminder to give consent?" %>

@@ -17,7 +17,7 @@ class DraftConsentsController < ApplicationController
   include WizardControllerConcern
 
   before_action :set_parent_options, if: -> { current_step == :who }
-  before_action :set_back_link_href
+  before_action :set_back_link_path
 
   after_action :verify_authorized
 
@@ -170,8 +170,8 @@ class DraftConsentsController < ApplicationController
         .sort_by(&:label)
   end
 
-  def set_back_link_href
-    @back_link_href =
+  def set_back_link_path
+    @back_link_path =
       if @draft_consent.editing?
         wizard_path("confirm")
       elsif current_step == @draft_consent.wizard_steps.first

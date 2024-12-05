@@ -18,7 +18,7 @@ class DraftVaccinationRecordsController < ApplicationController
   before_action :validate_params, only: :update
   before_action :set_batches, if: -> { current_step == :batch }
   before_action :set_locations, if: -> { current_step == :location }
-  before_action :set_back_link_href
+  before_action :set_back_link_path
 
   after_action :verify_authorized
 
@@ -196,8 +196,8 @@ class DraftVaccinationRecordsController < ApplicationController
     @locations = policy_scope(Location).community_clinic
   end
 
-  def set_back_link_href
-    @back_link_href =
+  def set_back_link_path
+    @back_link_path =
       if @draft_vaccination_record.editing?
         if current_step == :confirm
           programme_vaccination_record_path(@programme, @vaccination_record)

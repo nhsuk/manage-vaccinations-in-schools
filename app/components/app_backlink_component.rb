@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AppBacklinkComponent < ViewComponent::Base
-  def initialize(href:, name:, classes: nil, attributes: {})
+  def initialize(href, name: "previous page", classes: nil, attributes: {})
     super
 
     @href = href

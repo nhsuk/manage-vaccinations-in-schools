@@ -1,8 +1,5 @@
 <% content_for :before_main do %>
-  <%= render AppBacklinkComponent.new(
-        href: session_vaccinations_path(@session.id),
-        name: "vaccinations page",
-      ) %>
+  <%= render AppBacklinkComponent.new(session_vaccinations_path(@session.id), name: "vaccinations page") %>
 <% end %>
 
 <% page_title = "Select a default batch for this session" %>
