@@ -50,5 +50,8 @@ if Settings.web_concurrency > 1
   preload_app!
 end
 
+# Re-open appenders after forking the process; needed for Semantic Logger
+on_worker_boot { SemanticLogger.reopen }
+
 # Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart

@@ -24,3 +24,6 @@ nhs_api:
 
 pds:
   perform_jobs: false
+
+splunk:
+  enable: false

@@ -17,10 +17,8 @@ ENVIRONMENT = ARGV[0]
 
 usage if ENVIRONMENT.blank? || !defined?(Settings)
 
-SPLUNK_INDEX = Settings.splunk.index
+HEC_ENDPOINT = Settings.splunk.hec_endpoint
 HEC_TOKEN = Settings.splunk.hec_token
-HEC_ENDPOINT =
-  "https://firehose.inputs.splunk.aws.digital.nhs.uk/services/collector/event"
 
 # Get AWS account ID and region
 ACCOUNT_ID = `aws sts get-caller-identity --query "Account" --output text`.strip
