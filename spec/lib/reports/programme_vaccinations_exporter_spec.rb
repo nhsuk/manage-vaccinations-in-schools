@@ -37,12 +37,14 @@ describe Reports::ProgrammeVaccinationsExporter do
           CLINIC_NAME
           PERSON_FORENAME
           PERSON_SURNAME
-          PERSON_DOB
+          PERSON_DATE_OF_BIRTH
+          PERSON_DATE_OF_DEATH
           YEAR_GROUP
           PERSON_GENDER_CODE
           PERSON_ADDRESS_LINE_1
           PERSON_POSTCODE
           NHS_NUMBER
+          NHS_NUMBER_STATUS_CODE
           GP_ORGANISATION_CODE
           GP_NAME
           CONSENT_STATUS
@@ -70,6 +72,8 @@ describe Reports::ProgrammeVaccinationsExporter do
           ROUTE_OF_VACCINATION
           DOSE_SEQUENCE
           REASON_NOT_VACCINATED
+          LOCAL_PATIENT_ID
+          SNOMED_PROCEDURE_CODE
         ]
       )
     end
@@ -120,13 +124,17 @@ describe Reports::ProgrammeVaccinationsExporter do
               "GP_NAME" => "",
               "GP_ORGANISATION_CODE" => "",
               "HEALTH_QUESTION_ANSWERS" => "",
+              "LOCAL_PATIENT_ID" => patient.id.to_s,
               "NHS_NUMBER" => patient.nhs_number,
+              "NHS_NUMBER_STATUS_CODE" => "02",
               "ORGANISATION_CODE" => organisation.ods_code,
               "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
               "PERFORMING_PROFESSIONAL_FORENAME" => "Nurse",
               "PERFORMING_PROFESSIONAL_SURNAME" => "Test",
               "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
-              "PERSON_DOB" => patient.date_of_birth.strftime("%Y%m%d"),
+              "PERSON_DATE_OF_BIRTH" =>
+                patient.date_of_birth.strftime("%Y%m%d"),
+              "PERSON_DATE_OF_DEATH" => "",
               "PERSON_FORENAME" => patient.given_name,
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
@@ -136,6 +144,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               "ROUTE_OF_VACCINATION" => "intramuscular",
               "SCHOOL_NAME" => location.name,
               "SCHOOL_URN" => location.urn,
+              "SNOMED_PROCEDURE_CODE" => "761841000",
               "TIME_OF_VACCINATION" => "12:05:20",
               "TRIAGED_BY" => "",
               "TRIAGE_DATE" => "",
@@ -193,13 +202,17 @@ describe Reports::ProgrammeVaccinationsExporter do
               "GP_NAME" => "",
               "GP_ORGANISATION_CODE" => "",
               "HEALTH_QUESTION_ANSWERS" => "",
+              "LOCAL_PATIENT_ID" => patient.id.to_s,
               "NHS_NUMBER" => patient.nhs_number,
+              "NHS_NUMBER_STATUS_CODE" => "02",
               "ORGANISATION_CODE" => organisation.ods_code,
               "PERFORMING_PROFESSIONAL_EMAIL" => "nurse@example.com",
               "PERFORMING_PROFESSIONAL_FORENAME" => "Nurse",
               "PERFORMING_PROFESSIONAL_SURNAME" => "Test",
               "PERSON_ADDRESS_LINE_1" => patient.address_line_1,
-              "PERSON_DOB" => patient.date_of_birth.strftime("%Y%m%d"),
+              "PERSON_DATE_OF_BIRTH" =>
+                patient.date_of_birth.strftime("%Y%m%d"),
+              "PERSON_DATE_OF_DEATH" => "",
               "PERSON_FORENAME" => patient.given_name,
               "PERSON_GENDER_CODE" => "Not known",
               "PERSON_POSTCODE" => patient.address_postcode,
@@ -209,6 +222,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               "ROUTE_OF_VACCINATION" => "intramuscular",
               "SCHOOL_NAME" => "",
               "SCHOOL_URN" => "888888",
+              "SNOMED_PROCEDURE_CODE" => "761841000",
               "TIME_OF_VACCINATION" => "12:05:20",
               "TRIAGED_BY" => "",
               "TRIAGE_DATE" => "",
@@ -220,6 +234,45 @@ describe Reports::ProgrammeVaccinationsExporter do
             }
           )
         end
+      end
+    end
+
+    context "with a deceased patient" do
+      let(:session) { create(:session, programme:, organisation:) }
+
+      before do
+        create(
+          :patient,
+          :vaccinated,
+          :deceased,
+          date_of_death: Date.new(2010, 1, 1),
+          session:,
+          programme:
+        )
+      end
+
+      it "includes the information" do
+        expect(rows.first.to_hash).to include(
+          "PERSON_DATE_OF_DEATH" => "20100101"
+        )
+      end
+    end
+
+    context "with a traced NHS number" do
+      let(:session) { create(:session, programme:, organisation:) }
+
+      before do
+        create(
+          :patient,
+          :vaccinated,
+          updated_from_pds_at: Time.current,
+          session:,
+          programme:
+        )
+      end
+
+      it "includes the information" do
+        expect(rows.first.to_hash).to include("NHS_NUMBER_STATUS_CODE" => "01")
       end
     end
 
