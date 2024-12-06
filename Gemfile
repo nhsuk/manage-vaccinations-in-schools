@@ -66,7 +66,7 @@ group :development, :test do
 end
 
 group :development do
-  gem "annotate", require: false
+  gem "annotaterb", require: false
   gem "asciidoctor"
   gem "asciidoctor-diagram"
   gem "dockerfile-rails", ">= 1.0.0"
