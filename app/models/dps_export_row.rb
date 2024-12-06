@@ -55,6 +55,7 @@ class DPSExportRow
            :location,
            :patient,
            :organisation,
+           :programme,
            :user,
            :vaccine,
            to: :vaccination_record
@@ -125,11 +126,11 @@ class DPSExportRow
   end
 
   def vaccination_procedure_code
-    vaccine.snomed_procedure_code
+    programme.snomed_procedure_code
   end
 
   def vaccination_procedure_term
-    vaccine.snomed_procedure_term
+    programme.snomed_procedure_term
   end
 
   def dose_sequence

@@ -52,4 +52,23 @@ class Programme < ApplicationRecord
   def to_param
     type
   end
+
+  SNOMED_PROCEDURE_CODES = {
+    "hpv" => "761841000",
+    "flu" => "822851000000102"
+  }.freeze
+
+  def snomed_procedure_code
+    SNOMED_PROCEDURE_CODES.fetch(type)
+  end
+
+  SNOMED_PROCEDURE_TERMS = {
+    "hpv" =>
+      "Administration of vaccine product containing only Human papillomavirus antigen (procedure)",
+    "flu" => "Seasonal influenza vaccination (procedure)"
+  }.freeze
+
+  def snomed_procedure_term
+    SNOMED_PROCEDURE_TERMS.fetch(type)
+  end
 end
