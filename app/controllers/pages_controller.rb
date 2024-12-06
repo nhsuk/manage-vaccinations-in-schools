@@ -6,5 +6,6 @@ class PagesController < ApplicationController
   skip_before_action :store_user_location!, only: :start
 
   def start
+    redirect_to dashboard_path if current_user
   end
 end

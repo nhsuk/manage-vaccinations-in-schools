@@ -109,7 +109,7 @@ describe "Child record imports duplicates" do
 
   def when_i_visit_the_cohort_page_for_the_hpv_programme
     visit "/"
-    click_link "Programmes"
+    click_link "Programmes", match: :first
     click_link "HPV"
     click_link "Cohorts"
   end
