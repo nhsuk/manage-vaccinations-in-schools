@@ -18,4 +18,4 @@ nhs_api:
   disable_authentication: true
 
 splunk:
-  enable: false
+  enabled: false

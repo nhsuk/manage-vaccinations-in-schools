@@ -71,7 +71,7 @@ will use:
 
 ```sh
 # Temporarily set the version of postgres to use to build the pg gem
-ASDF_POSTGRES_VERSION=13.5 bundle install
+ASDF_POSTGRES_VERSION=17.2 bundle install
 ```
 
 After installing Postgres via `asdf`, run the database in the background, and
