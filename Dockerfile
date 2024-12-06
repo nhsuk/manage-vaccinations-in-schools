@@ -15,6 +15,7 @@ RUN apt-get update -qq && \
 
 # Set production environment
 ENV RAILS_ENV="production" \
+    NODE_ENV="production" \
     BUNDLE_WITHOUT="development:test" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle"
