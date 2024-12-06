@@ -41,7 +41,8 @@ class DPSExport < ApplicationRecord
             :performed_by_user,
             :session,
             :organisation,
-            vaccine: :programme
+            :programme,
+            :vaccine
           )
           .order(:performed_at)
           .strict_loading

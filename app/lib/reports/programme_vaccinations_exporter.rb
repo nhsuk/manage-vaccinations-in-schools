@@ -88,7 +88,8 @@ class Reports::ProgrammeVaccinationsExporter
           :batch,
           :location,
           :performed_by_user,
-          vaccine: :programme,
+          :programme,
+          :vaccine,
           patient_session: {
             patient: %i[cohort gp_practice school],
             consents: [:patient, { parent: :parent_relationships }],
@@ -133,8 +134,7 @@ class Reports::ProgrammeVaccinationsExporter
     patient = patient_session.patient
     triage = patient_session.latest_triage
     location = vaccination_record.location
-    vaccine = vaccination_record.vaccine
-    programme = vaccine.programme
+    programme = vaccination_record.programme
 
     [
       organisation.ods_code,
@@ -180,7 +180,7 @@ class Reports::ProgrammeVaccinationsExporter
       dose_sequence(vaccination_record:),
       reason_not_vaccinated(vaccination_record:),
       patient.id,
-      vaccine.snomed_procedure_code,
+      programme.snomed_procedure_code,
       record_status(vaccination_record:)
     ]
   end

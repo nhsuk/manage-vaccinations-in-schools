@@ -92,23 +92,4 @@ class Vaccine < ApplicationRecord
   def available_delivery_methods
     AVAILABLE_DELIVERY_METHODS_BY_TYPE.fetch(programme.type)
   end
-
-  SNOMED_PROCEDURE_CODES = {
-    "hpv" => "761841000",
-    "flu" => "822851000000102"
-  }.freeze
-
-  def snomed_procedure_code
-    SNOMED_PROCEDURE_CODES.fetch(programme.type)
-  end
-
-  SNOMED_PROCEDURE_TERMS = {
-    "hpv" =>
-      "Administration of vaccine product containing only Human papillomavirus antigen (procedure)",
-    "flu" => "Seasonal influenza vaccination (procedure)"
-  }.freeze
-
-  def snomed_procedure_term
-    SNOMED_PROCEDURE_TERMS.fetch(programme.type)
-  end
 end
