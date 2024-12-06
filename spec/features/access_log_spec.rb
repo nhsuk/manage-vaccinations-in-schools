@@ -1,0 +1,97 @@
+# frozen_string_literal: true
+
+describe "Access log" do
+  before { given_i_am_signed_in }
+
+  scenario "View patient" do
+    when_i_go_to_the_programme
+    and_i_go_to_a_patient
+    then_i_am_recorded_in_the_access_log(controller: "patients")
+  end
+
+  scenario "View patient's activity log" do
+    when_i_go_to_the_programme
+    and_i_go_to_a_patient
+    and_i_click_on_activity_log
+    then_i_am_recorded_in_the_access_log_twice(controller: "patients")
+  end
+
+  scenario "View patient in a session" do
+    when_i_go_to_the_programme
+    and_i_go_to_a_patient_in_a_session
+    then_i_am_recorded_in_the_access_log(controller: "patient_sessions")
+  end
+
+  scenario "View patient's activity log in a session" do
+    when_i_go_to_the_programme
+    and_i_go_to_a_patient_in_a_session
+    and_i_click_on_activity_log
+    then_i_am_recorded_in_the_access_log_twice(controller: "patient_sessions")
+  end
+
+  def given_i_am_signed_in
+    programme = create(:programme, :hpv)
+    organisation =
+      create(:organisation, :with_one_nurse, programmes: [programme])
+
+    @user = organisation.users.first
+
+    @session = create(:session, organisation:, programme:)
+    @patient =
+      create(
+        :patient,
+        :consent_given_triage_not_needed,
+        year_group: 8,
+        session: @session
+      )
+
+    sign_in @user
+  end
+
+  def when_i_go_to_the_programme
+    visit dashboard_path
+    click_on "Programmes", match: :first
+    click_on "HPV"
+  end
+
+  def and_i_go_to_a_patient
+    within(".app-secondary-navigation") { click_on "Children" }
+
+    click_on @patient.full_name
+  end
+
+  def and_i_go_to_a_patient_in_a_session
+    within(".app-secondary-navigation") { click_on "Sessions" }
+
+    click_on @session.location.name
+    click_on "Record vaccinations"
+    click_on @patient.full_name
+  end
+
+  def and_i_click_on_activity_log
+    click_on "Activity log"
+  end
+
+  def then_i_am_recorded_in_the_access_log(controller:)
+    expect(AccessLogEntry.count).to eq(1)
+    expect(AccessLogEntry.first).to have_attributes(
+      user: @user,
+      controller:,
+      action: "show"
+    )
+  end
+
+  def then_i_am_recorded_in_the_access_log_twice(controller:)
+    expect(AccessLogEntry.count).to eq(2)
+    expect(AccessLogEntry.first).to have_attributes(
+      user: @user,
+      controller:,
+      action: "show"
+    )
+    expect(AccessLogEntry.second).to have_attributes(
+      user: @user,
+      controller:,
+      action: "log"
+    )
+  end
+end

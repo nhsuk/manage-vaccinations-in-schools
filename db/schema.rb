@@ -10,10 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_12_05_094032) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_06_090608) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
+
+  create_table "access_log_entries", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "patient_id", null: false
+    t.integer "controller", null: false
+    t.integer "action", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["patient_id"], name: "index_access_log_entries_on_patient_id"
+    t.index ["user_id"], name: "index_access_log_entries_on_user_id"
+  end
 
   create_table "active_record_sessions", force: :cascade do |t|
     t.string "session_id", null: false
@@ -751,6 +762,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_05_094032) do
     t.index ["snomed_product_term"], name: "index_vaccines_on_snomed_product_term", unique: true
   end
 
+  add_foreign_key "access_log_entries", "patients"
+  add_foreign_key "access_log_entries", "users"
   add_foreign_key "batches", "organisations"
   add_foreign_key "batches", "vaccines"
   add_foreign_key "batches_immunisation_imports", "batches"

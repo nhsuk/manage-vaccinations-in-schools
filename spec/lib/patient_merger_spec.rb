@@ -15,9 +15,15 @@ describe PatientMerger do
     let!(:patient_to_keep) { create(:patient) }
     let!(:patient_to_destroy) { create(:patient) }
 
+    let(:access_log_entry) do
+      create(:access_log_entry, patient: patient_to_destroy)
+    end
     let(:consent) { create(:consent, patient: patient_to_destroy, programme:) }
     let(:gillick_assessment) do
       create(:gillick_assessment, :competent, patient_session:)
+    end
+    let(:notify_log_entry) do
+      create(:notify_log_entry, :email, patient: patient_to_destroy)
     end
     let(:parent_relationship) do
       create(:parent_relationship, patient: patient_to_destroy)
@@ -37,12 +43,24 @@ describe PatientMerger do
       )
     end
 
+    it "moves access log entries" do
+      expect { call }.to change { access_log_entry.reload.patient }.to(
+        patient_to_keep
+      )
+    end
+
     it "moves consents" do
       expect { call }.to change { consent.reload.patient }.to(patient_to_keep)
     end
 
     it "moves gillick assessments" do
       expect { call }.to change { gillick_assessment.reload.patient }.to(
+        patient_to_keep
+      )
+    end
+
+    it "moves notify log entries" do
+      expect { call }.to change { notify_log_entry.reload.patient }.to(
         patient_to_keep
       )
     end
