@@ -1,5 +1,15 @@
 # Rake Tasks
 
+## Access log
+
+### `access_log:for_patient[id]`
+
+Displays the access log for a particular patient identified by their ID.
+
+### `access_log:for_user[email]`
+
+Displays the access log for a particular user identified by an email address.
+
 ## Clinics
 
 ### `clinics:create[name,address,town,postcode,ods_code,organisation_ods_code]`
