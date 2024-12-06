@@ -4,6 +4,7 @@ class PatientsController < ApplicationController
   include Pagy::Backend
 
   before_action :set_patient, except: :index
+  before_action :record_access_log_entry, only: %i[show log]
 
   def index
     scope = policy_scope(Patient).not_deceased
@@ -100,5 +101,13 @@ class PatientsController < ApplicationController
         )
         .strict_loading
         .find(params[:id])
+  end
+
+  def record_access_log_entry
+    @patient.access_log_entries.create!(
+      user: current_user,
+      controller: "patients",
+      action: action_name
+    )
   end
 end

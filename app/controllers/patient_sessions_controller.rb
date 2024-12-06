@@ -5,6 +5,7 @@ class PatientSessionsController < ApplicationController
   before_action :set_session
   before_action :set_patient
   before_action :set_section_and_tab
+  before_action :record_access_log_entry
 
   layout "three_quarters"
 
@@ -41,5 +42,13 @@ class PatientSessionsController < ApplicationController
   def set_section_and_tab
     @section = params[:section]
     @tab = params[:tab]
+  end
+
+  def record_access_log_entry
+    @patient.access_log_entries.create!(
+      user: current_user,
+      controller: "patient_sessions",
+      action: action_name
+    )
   end
 end
