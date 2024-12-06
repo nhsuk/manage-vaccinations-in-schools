@@ -73,7 +73,7 @@ describe "Scheduled consent requests" do
 
   def when_i_go_to_my_organisation_page
     visit "/"
-    click_link "Your organisation"
+    click_link "Your organisation", match: :first
   end
 
   def then_i_see_consent_requests_are_sent_3_weeks_before
