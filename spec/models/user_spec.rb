@@ -134,6 +134,12 @@ describe User do
 
           it { should be true }
         end
+
+        context "without workgroups" do
+          let(:user) { build(:admin, selected_role_workgroups: nil) }
+
+          it { should be false }
+        end
       end
 
       context "when the user is a nurse" do
@@ -145,6 +151,12 @@ describe User do
           let(:user) { build(:nurse, :superuser) }
 
           it { should be true }
+        end
+
+        context "without workgroups" do
+          let(:user) { build(:nurse, selected_role_workgroups: nil) }
+
+          it { should be false }
         end
       end
     end

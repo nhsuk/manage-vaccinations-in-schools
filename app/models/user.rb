@@ -109,7 +109,8 @@ class User < ApplicationRecord
   def is_superuser?
     return fallback_role_superuser? unless Settings.cis2.enabled
 
-    cis2_info.dig("selected_role", "workgroups").include?("mavissuperusers")
+    cis2_info.dig("selected_role", "workgroups")&.include?("mavissuperusers") ||
+      false
   end
 
   def role_description
