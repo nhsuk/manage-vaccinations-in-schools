@@ -60,6 +60,7 @@ class Patient < ApplicationRecord
   belongs_to :cohort, optional: true
   belongs_to :gp_practice, class_name: "Location", optional: true
 
+  has_many :access_log_entries
   has_many :consent_notifications
   has_many :consents
   has_many :notify_log_entries
