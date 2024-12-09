@@ -95,9 +95,11 @@ class User < ApplicationRecord
   end
 
   def is_admin?
-    return fallback_role_admin? unless Settings.cis2.enabled
-
-    cis2_info.dig("selected_role", "code")&.ends_with?("R8006")
+    if Settings.cis2.enabled
+      cis2_info.dig("selected_role", "code")&.ends_with?("R8006")
+    else
+      fallback_role_admin? || fallback_role_superuser?
+    end
   end
 
   def is_nurse?
