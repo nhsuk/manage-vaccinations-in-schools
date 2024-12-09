@@ -23,12 +23,12 @@ Bundler.require(*Rails.groups)
 module ManageVaccinations
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.1
+    config.load_defaults 7.2
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
-    config.autoload_lib(ignore: %w[core_ext tasks])
+    config.autoload_lib(ignore: %w[assets core_ext tasks])
 
     # DB_SECRET is a JSON string containing the database credentials on AWS.
     # We need to parse it in order to set the DATABASE_URL variable.
@@ -77,7 +77,5 @@ module ManageVaccinations
     )
 
     config.silence_healthcheck_path = "/up"
-
-    config.yjit = true
   end
 end
