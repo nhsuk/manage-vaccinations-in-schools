@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
   before_action :set_header_path
   before_action :set_service_name
   before_action :set_service_guide_url
-  before_action :set_secondary_navigation
+  before_action :set_show_navigation
   before_action :set_privacy_policy_url
   before_action :authenticate_basic
 
@@ -41,8 +41,8 @@ class ApplicationController < ActionController::Base
     @service_name = "Manage vaccinations in schools"
   end
 
-  def set_secondary_navigation
-    @show_secondary_navigation = current_user.present?
+  def set_show_navigation
+    @show_navigation = current_user.present?
   end
 
   def set_disable_cache_headers

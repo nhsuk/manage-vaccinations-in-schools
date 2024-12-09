@@ -55,3 +55,7 @@ RSpec/VerifiedDoubles:
 Style/FrozenStringLiteralComment:
   Enabled: true
   EnforcedStyle: always_true
+
+Rails/ApplicationController:
+  Exclude:
+    - app/controllers/errors_controller.rb
