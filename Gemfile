@@ -49,7 +49,6 @@ gem "ruby-progressbar"
 gem "rubyzip"
 gem "sentry-rails"
 gem "sentry-ruby"
-gem "silencer", require: false
 gem "splunk-sdk-ruby"
 gem "stimulus-rails"
 gem "turbo-rails"
