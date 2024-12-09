@@ -32,7 +32,13 @@ module PatientSortingConcern
     when "year_group"
       [
         obj.try(:year_group) || obj.patient.year_group || "",
-        obj.try(:registration) || obj.patient.registration || ""
+        (
+          if obj.respond_to?(:registration)
+            obj.registration
+          else
+            obj.patient.registration
+          end
+        ) || ""
       ]
     end
   end
