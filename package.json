@@ -34,7 +34,7 @@
     "jest-fetch-mock": "^3.0.3",
     "mutationobserver-shim": "^0.3.7",
     "officecrypto-tool": "^0.0.18",
-    "prettier": "^3.4.1"
+    "prettier": "^3.4.2"
   },
   "jest": {
     "collectCoverage": true,
