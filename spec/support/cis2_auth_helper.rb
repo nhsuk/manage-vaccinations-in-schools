@@ -117,7 +117,8 @@ module CIS2AuthHelper
     user_only_has_one_org: false,
     workgroups: nil,
     no_workgroup: false,
-    sid: nil
+    sid: nil,
+    selected_roleid: "5555666677778888"
   )
     mock_auth = cis2_auth_info
     raw_info = mock_auth["extra"]["raw_info"]
@@ -156,6 +157,7 @@ module CIS2AuthHelper
     raw_info["family_name"] = family_name
     raw_info["name"] = "#{given_name} #{family_name}"
     raw_info["email"] = email
+    raw_info["selected_roleid"] = selected_roleid
 
     OmniAuth.config.add_mock(:cis2, mock_auth)
   end

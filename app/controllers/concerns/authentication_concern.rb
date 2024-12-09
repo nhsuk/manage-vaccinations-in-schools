@@ -93,6 +93,8 @@ module AuthenticationConcern
     end
 
     def selected_cis2_nrbac_role
+      return {} if raw_cis2_info["selected_roleid"].blank?
+
       @selected_cis2_nrbac_role ||=
         raw_cis2_info["nhsid_nrbac_roles"].find do
           _1["person_roleid"] == raw_cis2_info["selected_roleid"]
@@ -100,6 +102,8 @@ module AuthenticationConcern
     end
 
     def selected_cis2_org
+      return {} if selected_cis2_nrbac_role.empty?
+
       @selected_cis2_org ||=
         raw_cis2_info["nhsid_user_orgs"].find do
           _1["org_code"] == selected_cis2_nrbac_role["org_code"]
