@@ -130,8 +130,6 @@ class Reports::OfflineSessionExporter
           add_existing_row_cells(row, vaccination_record:)
         end
       end
-    elsif patient_session.consent_refused?
-      []
     else
       session.programmes.map do |programme|
         Row.new(columns, style: row_style) do |row|
