@@ -188,7 +188,63 @@ module AwsAccountSetup
       end
     end
 
+    def check_default_security_group
+      print "Checking that all VPCs default security groups have no rules ... "
+
+      mavis_vpc_ids = mavis_vpcs.map(&:vpc_id)
+      default_sgs_and_vpcs_with_rules =
+        ec2_client
+          .describe_security_groups(
+            filters: [
+              { name: "vpc-id", values: mavis_vpc_ids },
+              { name: "group-name", values: ["default"] }
+            ]
+          )
+          .security_groups
+          .reject { _1.ip_permissions.empty? }
+          .map { |sg| [sg, mavis_vpcs.find { _1.vpc_id == sg.vpc_id }] }
+
+      if default_sgs_and_vpcs_with_rules.empty?
+        puts "done"
+        return
+      end
+
+      puts "found"
+      puts "\nThe default security groups have inbound rules:\n\n"
+
+      default_sgs_and_vpcs_with_rules.each do |sg, vpc|
+        puts "  #{name_for_vpc(vpc)} #{sg.group_id}"
+      end
+
+      print "\nDo you want to delete these inbound rules? (y/N) "
+      if gets.chomp.downcase == "y"
+        default_sgs_and_vpcs_with_rules.each do |sg, vpc|
+          puts "Removing rules from #{name_for_vpc(vpc)} (#{sg.group_id})"
+
+          ec2_client.revoke_security_group_ingress(
+            group_id: sg.group_id,
+            ip_permissions: sg.ip_permissions
+          )
+        end
+      end
+    end
+
     private
+
+    def ec2_client
+      @ec2_client ||= Aws::EC2::Client.new
+    end
+
+    def mavis_vpcs
+      @mavis_vpcs ||=
+        ec2_client.describe_vpcs(
+          filters: [{ name: "tag:Name", values: ["copilot-mavis-*"] }]
+        ).vpcs
+    end
+
+    def name_for_vpc(vpc)
+      vpc.tags.find { |t| t.key == "Name" }&.value || vpc.vpc_id
+    end
 
     def create_analyzer(analyzer_name, analyzer_type)
       print "Checking for the existence of the #{analyzer_name} of type #{analyzer_type} ... "
