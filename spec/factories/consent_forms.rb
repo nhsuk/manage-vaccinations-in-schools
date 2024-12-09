@@ -69,7 +69,6 @@ FactoryBot.define do
     use_preferred_name { false }
     date_of_birth { Faker::Date.birthday(min_age: 3, max_age: 9) }
     response { "given" }
-    school_confirmed { true }
     address_line_1 { Faker::Address.street_address }
     address_town { Faker::Address.city }
     address_postcode { Faker::Address.uk_postcode }
@@ -90,7 +89,10 @@ FactoryBot.define do
 
     programme { session.programmes.first }
     organisation { session.organisation }
+
     location { session.location }
+    school { location.school? ? location : association(:school, organisation:) }
+    school_confirmed { true }
 
     health_answers do
       [
