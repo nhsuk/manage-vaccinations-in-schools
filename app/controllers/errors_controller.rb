@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-class ErrorsController < ApplicationController
-  skip_before_action :verify_authenticity_token
-  skip_before_action :authenticate_user!
-  skip_after_action :verify_policy_scoped
+class ErrorsController < ActionController::Base
+  layout "two_thirds"
 
   def not_found
     render "not_found", status: :not_found
