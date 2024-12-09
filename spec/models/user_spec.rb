@@ -71,11 +71,23 @@ describe User do
 
         it { should be false }
       end
+
+      context "when the user is a nurse and superuser" do
+        let(:user) { build(:nurse, :superuser) }
+
+        it { should be false }
+      end
     end
 
     context "cis2 is disabled", cis2: :disabled do
       context "when the user is an admin" do
         let(:user) { build(:admin) }
+
+        it { should be true }
+      end
+
+      context "when the user is an admin and superuser" do
+        let(:user) { build(:admin, :superuser) }
 
         it { should be true }
       end
