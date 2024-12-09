@@ -421,8 +421,11 @@ describe Patient do
         PDS::Patient.new(nhs_number: "0123456789", gp_ods_code: "GP")
       end
 
-      it "raises an error" do
-        expect { update_from_pds! }.to raise_error(Patient::UnknownGPPractice)
+      it "records an error in Sentry" do
+        expect(Sentry).to receive(:capture_exception).with(
+          an_instance_of(Patient::UnknownGPPractice)
+        )
+        update_from_pds!
       end
     end
   end

@@ -304,17 +304,15 @@ class Patient < ApplicationRecord
         self.restricted_at = nil
       end
 
-      self.gp_practice =
-        if (ods_code = pds_patient.gp_ods_code).present?
-          if (gp_practice = Location.gp_practice.find_by(ods_code:))
-            gp_practice
-          else
-            # This intentionally raises an exception if the ODS code doesn't
-            # exist, so we become aware of it, add the missing GP practice,
-            # and re-run the job.
-            raise UnknownGPPractice, ods_code
-          end
+      if (ods_code = pds_patient.gp_ods_code).present?
+        if (gp_practice = Location.gp_practice.find_by(ods_code:))
+          self.gp_practice = gp_practice
+        elsif Settings.pds.raise_unknown_gp_practice
+          Sentry.capture_exception(UnknownGPPractice.new(ods_code))
         end
+      else
+        self.gp_practice = nil
+      end
 
       self.updated_from_pds_at = Time.current
 
