@@ -21,3 +21,6 @@ mesh:
 nhs_api:
   base_url: "https://sandbox.api.service.nhs.uk"
   disable_authentication: true
+
+splunk:
+  enabled: false

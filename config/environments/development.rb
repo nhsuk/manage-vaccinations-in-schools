@@ -89,4 +89,10 @@ Rails.application.configure do
     config.action_mailer.default_options = { from: "no-reply@nhs.net" }
     config.action_mailer.delivery_method = :file
   end
+
+  # Configure Semantic Logger to look like Rails' default logger but nicer
+  config.rails_semantic_logger.semantic = false
+  config.rails_semantic_logger.started = true
+  config.rails_semantic_logger.processing = true
+  config.rails_semantic_logger.rendered = true
 end

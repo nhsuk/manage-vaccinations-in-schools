@@ -60,6 +60,7 @@ environments:
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "accessibility.mavistesting.com"
       MAVIS__CIS2__ENABLED: false
       MAVIS__PDS__PERFORM_JOBS: false
+      MAVIS__SPLUNK__ENABLED: false
   pentest:
     http:
       alias:
@@ -73,6 +74,7 @@ environments:
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "pentest.mavistesting.com"
       MAVIS__CIS2__ENABLED: false
       MAVIS__PDS__PERFORM_JOBS: false
+      MAVIS__SPLUNK__ENABLED: false
   test:
     http:
       alias:
@@ -98,6 +100,7 @@ environments:
       MAVIS__GIVE_OR_REFUSE_CONSENT_HOST: "training.manage-vaccinations-in-schools.nhs.uk"
       MAVIS__CIS2__ENABLED: false
       MAVIS__PDS__PERFORM_JOBS: false
+      MAVIS__SPLUNK__ENABLED: false
   production:
     http:
       alias:
