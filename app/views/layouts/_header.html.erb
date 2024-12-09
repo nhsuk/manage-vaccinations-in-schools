@@ -13,7 +13,7 @@
         </span>
       </a>
     </div>
-    <% if current_user.present? %>
+    <% if @show_navigation %>
       <div class="nhsuk-header__content app-header__content">
         <div class="app-header__account">
           <span class="app-header__account-item">
@@ -36,7 +36,7 @@
     <% end %>
   </div>
 
-  <% if @show_secondary_navigation %>
+  <% if @show_navigation %>
     <nav class="nhsuk-navigation" role="navigation" aria-label="Primary navigation">
       <ul class="nhsuk-header__navigation-list nhsuk-header__navigation-list--left-aligned">
         <li class="nhsuk-header__navigation-item">
