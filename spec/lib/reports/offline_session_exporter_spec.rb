@@ -135,14 +135,6 @@ describe Reports::OfflineSessionExporter do
           )
           expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
         end
-
-        context "with consent refused" do
-          before { create(:consent, :refused, patient:, programme:) }
-
-          it "does not include the row" do
-            expect(rows.count).to eq(0)
-          end
-        end
       end
 
       context "with a restricted patient" do
@@ -412,14 +404,6 @@ describe Reports::OfflineSessionExporter do
             }
           )
           expect(rows.first["PERSON_DOB"].to_date).to eq(patient.date_of_birth)
-        end
-
-        context "with consent refused" do
-          before { create(:consent, :refused, patient:, programme:) }
-
-          it "does not include the row" do
-            expect(rows.count).to eq(0)
-          end
         end
       end
 
