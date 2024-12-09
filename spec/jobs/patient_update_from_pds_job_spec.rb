@@ -132,6 +132,42 @@ describe PatientUpdateFromPDSJob do
         perform_now
       end
 
+      it "doesn't remove the NHS number" do
+        expect { perform_now }.not_to change(patient, :nhs_number)
+      end
+
+      it "queues a job to look up NHS number" do
+        expect { perform_now }.to have_enqueued_job(
+          PatientNHSNumberLookupJob
+        ).with(patient)
+      end
+    end
+
+    context "when the NHS number is not found" do
+      before do
+        stub_request(
+          :get,
+          "https://sandbox.api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/9000000009"
+        ).to_return(
+          body: file_fixture("pds/not-found-patient-response.json"),
+          status: 404,
+          headers: {
+            "Content-Type" => "application/fhir+json"
+          }
+        )
+      end
+
+      let(:patient) { create(:patient, nhs_number: "9000000009") }
+
+      it "doesn't mark the patient as invalid" do
+        expect(patient).not_to receive(:invalidate!)
+        perform_now
+      end
+
+      it "removes the NHS number" do
+        expect { perform_now }.to change(patient, :nhs_number).to(nil)
+      end
+
       it "queues a job to look up NHS number" do
         expect { perform_now }.to have_enqueued_job(
           PatientNHSNumberLookupJob
