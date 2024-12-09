@@ -415,6 +415,16 @@ describe Patient do
         ).to(gp_practice)
       end
     end
+
+    context "with a GP practice that doesn't exist" do
+      let(:pds_patient) do
+        PDS::Patient.new(nhs_number: "0123456789", gp_ods_code: "GP")
+      end
+
+      it "raises an error" do
+        expect { update_from_pds! }.to raise_error(Patient::UnknownGPPractice)
+      end
+    end
   end
 
   describe "#invalidate!" do
