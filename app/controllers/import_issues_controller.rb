@@ -54,7 +54,7 @@ class ImportIssuesController < ApplicationController
       policy_scope(Patient)
         .with_pending_changes
         .distinct
-        .includes(:cohort, :school)
+        .eager_load(:cohort, :gp_practice, :school)
         .strict_loading
 
     @import_issues =
