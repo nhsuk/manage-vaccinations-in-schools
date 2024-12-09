@@ -47,6 +47,7 @@ class VaccinationReportsController < ApplicationController
 
   def set_programme
     @programme = @vaccination_report.programme
+    redirect_to dashboard_path if @programme.nil?
   end
 
   def set_steps
