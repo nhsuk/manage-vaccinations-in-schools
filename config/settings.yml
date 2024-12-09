@@ -74,6 +74,7 @@ nhs_api:
 
 pds:
   perform_jobs: true
+  raise_unknown_gp_practice: true
 
 splunk:
   enabled: true
