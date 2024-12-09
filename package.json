@@ -36,7 +36,6 @@
     "officecrypto-tool": "^0.0.18",
     "prettier": "^3.4.1"
   },
-  "packageManager": "yarn@1.22.19",
   "jest": {
     "collectCoverage": true,
     "setupFilesAfterEnv": [

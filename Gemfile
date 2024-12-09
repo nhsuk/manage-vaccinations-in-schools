@@ -69,7 +69,6 @@ group :development do
   gem "annotaterb", require: false
   gem "asciidoctor"
   gem "asciidoctor-diagram"
-  gem "dockerfile-rails", ">= 1.0.0"
   gem "hotwire-livereload"
   gem "mechanize"
   gem "prettier_print", require: false
