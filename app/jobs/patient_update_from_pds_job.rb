@@ -5,8 +5,6 @@ class PatientUpdateFromPDSJob < ApplicationJob
 
   queue_as :pds
 
-  discard_on NHS::PDS::PatientNotFound
-
   def perform(patient)
     raise MissingNHSNumber if patient.nhs_number.nil?
 
@@ -28,6 +26,9 @@ class PatientUpdateFromPDSJob < ApplicationJob
     else
       patient.update_from_pds!(pds_patient)
     end
+  rescue NHS::PDS::PatientNotFound
+    patient.update!(nhs_number: nil)
+    PatientNHSNumberLookupJob.perform_later(patient)
   rescue NHS::PDS::InvalidatedResource, NHS::PDS::InvalidNHSNumber
     patient.invalidate!
     PatientNHSNumberLookupJob.perform_later(patient)
