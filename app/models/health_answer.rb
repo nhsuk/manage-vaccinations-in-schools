@@ -60,7 +60,7 @@ class HealthAnswer
       return if arr.nil?
       arr.map.with_index do |(item), idx|
         HealthAnswer.new(
-          item.merge("id" => idx).except("validation_context", "errors")
+          item.merge("id" => idx).except("context_for_validation", "errors")
         )
       end
     end

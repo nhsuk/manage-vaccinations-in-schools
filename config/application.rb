@@ -23,7 +23,7 @@ Bundler.require(*Rails.groups)
 module ManageVaccinations
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.2
+    config.load_defaults 8.0
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
@@ -45,10 +45,6 @@ module ManageVaccinations
     end
 
     config.middleware.use Rack::Deflater
-
-    config.public_file_server.headers = {
-      "Cache-Control" => "public, max-age=2147483648, immutable"
-    }
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -75,7 +71,5 @@ module ManageVaccinations
     config.view_component.preview_paths << Rails.root.join(
       "spec/components/previews"
     )
-
-    config.silence_healthcheck_path = "/up"
   end
 end

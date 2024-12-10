@@ -84,11 +84,10 @@ $ psql -U postgres -c "CREATE USER $(whoami); ALTER USER $(whoami) WITH SUPERUSE
 
 ### Local development
 
-To set the project up locally:
+To run the project locally:
 
 ```bash
-bin/setup
-bin/dev
+$ bin/setup
 ```
 
 #### Yarn
