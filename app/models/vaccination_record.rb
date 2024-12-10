@@ -144,12 +144,13 @@ class VaccinationRecord < ApplicationRecord
               if: :requires_location_name?
             }
 
+  validates :dose_sequence, presence: true
   validates :dose_sequence,
-            presence: true,
             comparison: {
               greater_than_or_equal_to: 1,
               less_than_or_equal_to: :maximum_dose_sequence
-            }
+            },
+            if: :administered?
 
   validates :performed_at,
             comparison: {
@@ -199,6 +200,6 @@ class VaccinationRecord < ApplicationRecord
   end
 
   def maximum_dose_sequence
-    vaccine&.maximum_dose_sequence || 1
+    vaccine.maximum_dose_sequence
   end
 end
