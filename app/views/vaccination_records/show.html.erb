@@ -17,13 +17,15 @@
   <% c.with_heading { "Vaccination details" } %>
   <%= render AppVaccinationRecordSummaryComponent.new(@vaccination_record, current_user:) %>
 
-  <% if policy(@vaccination_record).edit? %>
-    <%= govuk_button_to "Edit vaccination record",
-                        programme_vaccination_record_path(@programme, @vaccination_record),
-                        method: :put, class: "app-button--secondary" %>
-  <% end %>
+  <div class="app-button-group">
+    <% if policy(@vaccination_record).edit? %>
+      <%= govuk_button_to "Edit vaccination record",
+                          programme_vaccination_record_path(@programme, @vaccination_record),
+                          method: :put, class: "app-button--secondary" %>
+    <% end %>
 
-  <% if policy(@vaccination_record).destroy? %>
-    <%= govuk_link_to "Delete vaccination record", destroy_programme_vaccination_record_path(@programme, @vaccination_record) %>
-  <% end %>
+    <% if policy(@vaccination_record).destroy? %>
+      <%= govuk_link_to "Delete vaccination record", destroy_programme_vaccination_record_path(@programme, @vaccination_record) %>
+    <% end %>
+  </div>
 <% end %>
