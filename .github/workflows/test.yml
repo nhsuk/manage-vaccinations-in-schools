@@ -79,11 +79,11 @@ jobs:
           ruby-version: .tool-versions
           bundler-cache: true
       - name: Get Node.js version
-        id: asdf
+        id: mise
         run: echo "::set-output name=VERSION::$(grep nodejs .tool-versions | awk '{print $2}')"
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ steps.asdf.outputs.VERSION }}
+          node-version: ${{ steps.mise.outputs.VERSION }}
           cache: "yarn"
       - run: bundle
       - run: yarn install --frozen-lockfile

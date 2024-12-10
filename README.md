@@ -23,7 +23,7 @@ This project depends on:
 - [Yarn](https://yarnpkg.com/)
 - [Postgres](https://www.postgresql.org/)
 
-The instructions below assume you are using `asdf` to manage the necessary
+The instructions below assume you are using `mise` to manage the necessary
 versions of the above.
 
 ### Application architecture
@@ -39,42 +39,41 @@ bin/bundle exec rladr new title
 
 ### Development toolchain
 
-#### asdf
+#### mise
 
-This project uses `asdf`. Use the following to install the required tools:
-
-```sh
-# Install dependencies
-brew install gcc readline zlib curl ossp-uuid # Mac-specific
-export HOMEBREW_PREFIX=/opt/homebrew          # Mac-specific
-
-# The first time
-brew install asdf                             # Mac-specific
-asdf plugin add aws-copilot
-asdf plugin add awscli
-asdf plugin add nodejs
-asdf plugin add postgres
-asdf plugin add ruby
-asdf plugin add yarn
-
-# To install (or update, following a change to .tool-versions)
-asdf install
-```
-
-Following installation of `asdf` with `homebrew`, it needs to be sourced in your shell to complete the installation. Refer to the `asdf` [getting started guide](https://asdf-vm.com/guide/getting-started.html#_3-install-asdf) for the correct command given your shell, OS and `asdf` installation method.
-
-When installing the `pg` gem, bundle changes directory outside of this
-project directory, causing it lose track of which version of postgres has
-been selected in the project's `.tool-versions` file. To ensure the `pg` gem
-installs correctly, you'll want to set the version of postgres that `asdf`
-will use:
+This project uses `mise`. Use the following to set up (replace `brew` and
+package names depending on your platform):
 
 ```sh
-# Temporarily set the version of postgres to use to build the pg gem
-ASDF_POSTGRES_VERSION=17.2 bundle install
+# Dependencies for ruby
+brew install libyaml
+
+# Dependencies for postgres
+brew install gcc readline zlib curl ossp-uuid icu4c pkg-config
+
+# Env vars for postgres
+export OPENSSL_PATH=$(brew --prefix openssl)
+export CMAKE_PREFIX_PATH=$(brew --prefix icu4c)
+export PATH="$OPENSSL_PATH/bin:$CMAKE_PREFIX_PATH/bin:$PATH"
+export LDFLAGS="-L$OPENSSL_PATH/lib $LDFLAGS"
+export CPPFLAGS="-I$OPENSSL_PATH/include $CPPFLAGS"
+export PKG_CONFIG_PATH="$CMAKE_PREFIX_PATH/lib/pkgconfig"
+
+# Version manager
+brew install mise
+
+# Yarn via brew as this skips installing `gpg`
+brew install yarn
 ```
 
-After installing Postgres via `asdf`, run the database in the background, and
+Then to install the required tools (or update, following a change to
+`.tool-versions`):
+
+```
+mise install
+```
+
+After installing Postgres via `mise`, run the database in the background, and
 connect to it to create a user:
 
 ```sh
@@ -88,20 +87,6 @@ To run the project locally:
 
 ```bash
 $ bin/setup
-```
-
-#### Yarn
-
-If you encounter:
-
-```sh
-No yarn executable found for nodejs 22.5.1
-```
-
-You need to reshim nodejs:
-
-```sh
-asdf reshim nodejs
 ```
 
 ### Linting
@@ -134,9 +119,8 @@ You'll also need to configure your editor's `solargraph` plugin to
 ### PostgreSQL
 
 The script `bin/db` is included to start up PostgreSQL for setups that don't use
-system-started services, such as `asdf` which is our default. Note that this is
-meant to be a handy script to manage PostgreSQL, not run a console like `rails db`
-does.
+system-started services. Note that this is meant to be a handy script to manage
+PostgreSQL, not run a console like `rails db` does.
 
 ```
 $ bin/db
@@ -146,7 +130,6 @@ waiting for server to start.... done
 server started
 $ bin/db
 pg_ctl: server is running (PID: 79113)
-/Users/misaka/.asdf/installs/postgres/13.5/bin/postgres
 ```
 
 This script attempts to be installation agnostic by relying on `pg_config` to
