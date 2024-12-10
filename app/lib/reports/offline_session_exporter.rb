@@ -114,9 +114,16 @@ class Reports::OfflineSessionExporter
     vaccination_records =
       patient_session.vaccination_records.order(:performed_at)
 
+    bg_color =
+      if patient_session.consent_refused?
+        "F7D4D1"
+      elsif patient_session.consent_conflicts?
+        "FFDC8E"
+      end
+
     row_style = {
       strike: patient_session.patient.invalidated?,
-      bg_color: patient_session.consent_given? ? nil : "F7D4D1",
+      bg_color:,
       border: {
         style: :thin,
         color: "000000"
