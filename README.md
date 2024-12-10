@@ -41,8 +41,8 @@ bin/bundle exec rladr new title
 
 #### mise
 
-This project uses `mise`. Use the following to install the required tools
-(replace `brew` and package names depending on your platform):
+This project uses `mise`. Use the following to set up (replace `brew` and
+package names depending on your platform):
 
 ```sh
 # Dependencies for ruby
@@ -64,8 +64,12 @@ brew install mise
 
 # Yarn via brew as this skips installing `gpg`
 brew install yarn
+```
 
-# To install (or update, following a change to .tool-versions)
+Then to install the required tools (or update, following a change to
+`.tool-versions`):
+
+```
 mise install
 ```
 
