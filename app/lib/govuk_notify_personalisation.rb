@@ -48,6 +48,7 @@ class GovukNotifyPersonalisation
       next_session_dates:,
       next_session_dates_or:,
       not_catch_up:,
+      organisation_privacy_policy_url:,
       outcome_administered:,
       outcome_not_administered:,
       parent_full_name:,
@@ -156,6 +157,10 @@ class GovukNotifyPersonalisation
       .today_or_future_dates
       .map { _1.to_fs(:short_day_of_week) }
       .to_sentence(last_word_connector: ", or ", two_words_connector: " or ")
+  end
+
+  def organisation_privacy_policy_url
+    organisation.privacy_policy_url
   end
 
   def outcome_administered
