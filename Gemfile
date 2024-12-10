@@ -4,7 +4,7 @@ source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby file: ".ruby-version"
-gem "rails", "~> 7.2.2"
+gem "rails", "~> 8.0.0"
 
 gem "activerecord-import"
 gem "activerecord-session_store"
