@@ -209,10 +209,19 @@ yarn playwright codegen http://localhost:4000
 
 #### Load testing
 
+Install [artillery](https://www.artillery.io):
+
+```bash
+yarn global add artillery
+```
+
+We don't package it alongside the other devDependencies because it's quite heavy
+and used infrequently.
+
 To run the load tests:
 
 ```bash
-USERNAME=username PASSWORD=password SESSION=slug yarn test:load --target=http://test.mavistesting.com
+USERNAME=username PASSWORD=password SESSION=slug artillery run tests/load.yml --target=http://test.mavistesting.com
 ```
 
 ### Example programmes
