@@ -69,17 +69,6 @@ brew install yarn
 mise install
 ```
 
-When installing the `pg` gem, bundle changes directory outside of this
-project directory, causing it lose track of which version of postgres has
-been selected in the project's `.tool-versions` file. To ensure the `pg` gem
-installs correctly, you'll want to set the version of postgres that `mise`
-will use:
-
-```sh
-# Temporarily set the version of postgres to use to build the pg gem
-MISE_POSTGRES_VERSION=17.2 bundle install
-```
-
 After installing Postgres via `mise`, run the database in the background, and
 connect to it to create a user:
 
