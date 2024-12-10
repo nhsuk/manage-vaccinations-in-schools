@@ -73,13 +73,14 @@ describe Reports::ProgrammeVaccinationsExporter do
           LOCAL_PATIENT_ID
           SNOMED_PROCEDURE_CODE
           RECORD_STATUS
+          RECORD_DATE_TIME
         ]
       )
     end
   end
 
   describe "rows" do
-    subject(:rows) { CSV.parse(call, headers: true) }
+    subject(:rows) { freeze_time { CSV.parse(call, headers: true) } }
 
     context "a school session" do
       let(:location) { create(:school, team:) }
@@ -140,6 +141,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               "PERSON_SURNAME" => patient.family_name,
               "PROGRAMME_NAME" => "HPV",
               "REASON_NOT_VACCINATED" => "",
+              "RECORD_DATE_TIME" => Time.current.iso8601,
               "RECORD_STATUS" => "created",
               "ROUTE_OF_VACCINATION" => "intramuscular",
               "SCHOOL_NAME" => location.name,
@@ -257,6 +259,7 @@ describe Reports::ProgrammeVaccinationsExporter do
               "PERSON_SURNAME" => patient.family_name,
               "PROGRAMME_NAME" => "HPV",
               "REASON_NOT_VACCINATED" => "",
+              "RECORD_DATE_TIME" => Time.current.iso8601,
               "RECORD_STATUS" => "created",
               "ROUTE_OF_VACCINATION" => "intramuscular",
               "SCHOOL_NAME" => "",

@@ -75,6 +75,7 @@ class Reports::ProgrammeVaccinationsExporter
       LOCAL_PATIENT_ID
       SNOMED_PROCEDURE_CODE
       RECORD_STATUS
+      RECORD_DATE_TIME
     ]
   end
 
@@ -181,7 +182,8 @@ class Reports::ProgrammeVaccinationsExporter
       reason_not_vaccinated(vaccination_record:),
       patient.id,
       programme.snomed_procedure_code,
-      record_status(vaccination_record:)
+      record_status(vaccination_record:),
+      record_date_time(vaccination_record:)
     ]
   end
 
@@ -222,6 +224,14 @@ class Reports::ProgrammeVaccinationsExporter
       "updated"
     else
       "created"
+    end
+  end
+
+  def record_date_time(vaccination_record:)
+    if record_status(vaccination_record:) == "created"
+      vaccination_record.created_at.iso8601
+    else
+      vaccination_record.updated_at.iso8601
     end
   end
 end
