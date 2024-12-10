@@ -46,10 +46,6 @@ module ManageVaccinations
 
     config.middleware.use Rack::Deflater
 
-    config.public_file_server.headers = {
-      "Cache-Control" => "public, max-age=2147483648, immutable"
-    }
-
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
@@ -75,7 +71,5 @@ module ManageVaccinations
     config.view_component.preview_paths << Rails.root.join(
       "spec/components/previews"
     )
-
-    config.silence_healthcheck_path = "/up"
   end
 end
