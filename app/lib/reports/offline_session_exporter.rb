@@ -169,7 +169,7 @@ class Reports::OfflineSessionExporter
       patient.address_postcode unless patient.restricted?
     )
     row[:nhs_number] = patient.nhs_number
-    row[:consent_status] = consents.first&.response&.humanize
+    row[:consent_status] = consent_status(patient_session:)
     row[:consent_details] = consent_details(consents:)
     row[:health_question_answers] = Cell.new(
       health_question_answers(consents:),

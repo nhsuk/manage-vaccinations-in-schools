@@ -25,6 +25,18 @@ module Reports::ExportFormatters
     location.school? ? "" : vaccination_record.location_name
   end
 
+  def consent_status(patient_session:)
+    if patient_session.consent_given?
+      "Consent given"
+    elsif patient_session.consent_refused?
+      "Consent refused"
+    elsif patient_session.consent_conflicts?
+      "Conflicting consent"
+    else
+      ""
+    end
+  end
+
   def consent_details(consents:)
     values =
       consents.map do |consent|
