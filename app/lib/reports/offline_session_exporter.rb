@@ -114,9 +114,16 @@ class Reports::OfflineSessionExporter
     vaccination_records =
       patient_session.vaccination_records.order(:performed_at)
 
+    bg_color =
+      if patient_session.consent_refused?
+        "F7D4D1"
+      elsif patient_session.consent_conflicts?
+        "FFDC8E"
+      end
+
     row_style = {
       strike: patient_session.patient.invalidated?,
-      bg_color: patient_session.consent_given? ? nil : "F7D4D1",
+      bg_color:,
       border: {
         style: :thin,
         color: "000000"
@@ -169,7 +176,7 @@ class Reports::OfflineSessionExporter
       patient.address_postcode unless patient.restricted?
     )
     row[:nhs_number] = patient.nhs_number
-    row[:consent_status] = consents.first&.response&.humanize
+    row[:consent_status] = consent_status(patient_session:)
     row[:consent_details] = consent_details(consents:)
     row[:health_question_answers] = Cell.new(
       health_question_answers(consents:),

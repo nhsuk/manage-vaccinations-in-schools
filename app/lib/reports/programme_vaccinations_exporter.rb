@@ -154,7 +154,7 @@ class Reports::ProgrammeVaccinationsExporter
       nhs_number_status_code(patient:),
       patient.gp_practice&.ods_code || "",
       patient.gp_practice&.name || "",
-      consents.first&.response&.humanize || "",
+      consent_status(patient_session:),
       consent_details(consents:),
       health_question_answers(consents:),
       triage&.status&.humanize || "",

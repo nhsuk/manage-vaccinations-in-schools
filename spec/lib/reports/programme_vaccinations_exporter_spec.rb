@@ -348,7 +348,7 @@ describe Reports::ProgrammeVaccinationsExporter do
         expect(rows.first.to_hash).to include(
           "CONSENT_DETAILS" =>
             "Given by John Smith at 2024-01-01 12:05:20 +0000",
-          "CONSENT_STATUS" => "Given",
+          "CONSENT_STATUS" => "Consent given",
           "HEALTH_QUESTION_ANSWERS" => [
             "Does your child have any severe allergies? No from Dad",
             "Does your child have any medical conditions for which they receive treatment? No from Dad",
