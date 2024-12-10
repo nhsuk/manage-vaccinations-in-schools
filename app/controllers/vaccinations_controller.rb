@@ -7,13 +7,12 @@ class VaccinationsController < ApplicationController
   include PatientSortingConcern
 
   before_action :set_session
-  before_action :set_patient, only: %i[create confirm_destroy destroy]
-  before_action :set_patient_session, only: %i[create confirm_destroy destroy]
-  before_action :set_vaccination_record, only: %i[confirm_destroy destroy]
+  before_action :set_patient, only: :create
+  before_action :set_patient_session, only: :create
+  before_action :set_section_and_tab, only: :create
 
   before_action :set_batches, only: %i[index create batch update_batch]
   before_action :set_todays_batch, only: %i[index create batch]
-  before_action :set_section_and_tab, only: %i[create]
 
   after_action :verify_authorized
 
@@ -105,26 +104,6 @@ class VaccinationsController < ApplicationController
     end
   end
 
-  def confirm_destroy
-    authorize @vaccination_record, :destroy?
-    render :destroy
-  end
-
-  def destroy
-    authorize @vaccination_record
-
-    @vaccination_record.discard!
-
-    if @vaccination_record.confirmation_sent?
-      send_vaccination_deletion(@vaccination_record)
-    end
-
-    redirect_to session_patient_path(id: @patient.id),
-                flash: {
-                  success: "Vaccination record deleted"
-                }
-  end
-
   private
 
   def vaccinate_form_params
@@ -161,9 +140,9 @@ class VaccinationsController < ApplicationController
     @patient_session = @patient.patient_sessions.find_by!(session: @session)
   end
 
-  def set_vaccination_record
-    @vaccination_record =
-      @patient_session.vaccination_records.find(params[:vaccination_record_id])
+  def set_section_and_tab
+    @section = params[:section]
+    @tab = params[:tab]
   end
 
   def set_batches
@@ -177,10 +156,5 @@ class VaccinationsController < ApplicationController
 
   def set_todays_batch
     @todays_batch = @batches.find_by(id: todays_batch_id)
-  end
-
-  def set_section_and_tab
-    @section = params[:section]
-    @tab = params[:tab]
   end
 end

@@ -113,7 +113,7 @@
       <% end %>
 
       <% if helpers.policy(vaccination_record).destroy? %>
-        <%= govuk_link_to "Delete vaccination record", destroy_vaccination_record_session_patient_vaccinations_path(patient_id: patient.id, vaccination_record_id: vaccination_record.id) %>
+        <%= govuk_link_to "Delete vaccination record", destroy_programme_vaccination_record_path(vaccination_record.programme, vaccination_record, return_to: session_patient_path(id: patient.id)) %>
       <% end %>
     </div>
   <% end %>

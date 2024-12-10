@@ -154,10 +154,14 @@ Rails.application.routes.draw do
 
     resources :vaccination_records,
               path: "vaccination-records",
-              only: %i[index show update] do
-      post "export-dps", on: :collection
-      constraints -> { Flipper.enabled?(:dev_tools) } do
-        post "reset-dps-export", on: :collection
+              only: %i[index show update destroy] do
+      get "destroy", action: :confirm_destroy, on: :member, as: "destroy"
+
+      collection do
+        post "export-dps"
+        constraints -> { Flipper.enabled?(:dev_tools) } do
+          post "reset-dps-export"
+        end
       end
     end
 
@@ -315,16 +319,7 @@ Rails.application.routes.draw do
 
         resource :gillick_assessment, path: "gillick", only: %i[edit update]
         resource :triages, only: %i[new create]
-        resource :vaccinations, only: %i[create] do
-          member do
-            delete ":vaccination_record_id",
-                   action: :destroy,
-                   as: :vaccination_record
-            get ":vaccination_record_id/destroy",
-                action: :confirm_destroy,
-                as: :destroy_vaccination_record
-          end
-        end
+        resource :vaccinations, only: %i[create]
 
         resource :attendance,
                  controller: "session_attendances",
