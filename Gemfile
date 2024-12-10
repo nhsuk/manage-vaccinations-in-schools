@@ -51,6 +51,7 @@ gem "sentry-rails"
 gem "sentry-ruby"
 gem "splunk-sdk-ruby"
 gem "stimulus-rails"
+gem "thruster"
 gem "turbo-rails"
 gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
 gem "uk_postcode"
