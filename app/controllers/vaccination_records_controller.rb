@@ -2,8 +2,10 @@
 
 class VaccinationRecordsController < ApplicationController
   include Pagy::Backend
+  include VaccinationMailerConcern
 
   before_action :set_vaccination_record, except: :index
+  before_action :set_return_to, only: %i[confirm_destroy destroy]
 
   def index
     @pagy, @vaccination_records = pagy(vaccination_records)
@@ -21,6 +23,23 @@ class VaccinationRecordsController < ApplicationController
     ).read_from!(@vaccination_record)
 
     redirect_to draft_vaccination_record_path("confirm")
+  end
+
+  def confirm_destroy
+    authorize @vaccination_record, :destroy?
+    render :destroy
+  end
+
+  def destroy
+    authorize @vaccination_record
+
+    @vaccination_record.discard!
+
+    if @vaccination_record.confirmation_sent?
+      send_vaccination_deletion(@vaccination_record)
+    end
+
+    redirect_to @return_to, flash: { success: "Vaccination record deleted" }
   end
 
   def export_dps
@@ -53,6 +72,16 @@ class VaccinationRecordsController < ApplicationController
           :location,
           :performed_by_user,
           :programme,
+          # TODO: avoid duplicate here by using one or the other everywhere
+          patient_session: {
+            consents: :parent,
+            patient: [
+              :cohort,
+              :gp_practice,
+              :school,
+              { parents: :parent_relationships }
+            ]
+          },
           patient: [
             :cohort,
             :gp_practice,
@@ -75,5 +104,9 @@ class VaccinationRecordsController < ApplicationController
     @vaccination_record = vaccination_records.find(params[:id])
     @patient = @vaccination_record.patient
     @session = @vaccination_record.session
+  end
+
+  def set_return_to
+    @return_to = params[:return_to] || patient_path(@patient)
   end
 end
