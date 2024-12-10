@@ -51,9 +51,6 @@ brew install libyaml
 # Dependencies for postgres
 brew install gcc readline zlib curl ossp-uuid icu4c pkg-config
 
-# # Dependencies for yarn
-# brew install gpg
-
 # Env vars for postgres
 export OPENSSL_PATH=$(brew --prefix openssl)
 export CMAKE_PREFIX_PATH=$(brew --prefix icu4c)
@@ -64,6 +61,9 @@ export PKG_CONFIG_PATH="$CMAKE_PREFIX_PATH/lib/pkgconfig"
 
 # Version manager
 brew install mise
+
+# Yarn via brew as this skips installing `gpg`
+brew install yarn
 
 # To install (or update, following a change to .tool-versions)
 mise install
