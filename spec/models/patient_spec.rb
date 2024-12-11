@@ -513,6 +513,63 @@ describe Patient do
     end
   end
 
+  describe "#dup_for_pending_changes" do
+    subject(:new_patient) { old_patient.dup_for_pending_changes }
+
+    let(:old_patient) { create(:patient) }
+
+    it { should be_valid }
+
+    it "doesn't change the old patient" do
+      new_patient
+      expect(old_patient).not_to be_changed
+    end
+
+    it "clears the NHS number" do
+      expect(new_patient.nhs_number).to be_nil
+    end
+
+    context "when the old patient has upcoming sessions" do
+      let(:session) { create(:session) }
+
+      before { create(:patient_session, patient: old_patient, session:) }
+
+      it "adds the new patient to any upcoming sessions" do
+        expect(new_patient.patient_sessions.size).to eq(1)
+        expect(new_patient.patient_sessions.first.session).to eq(session)
+      end
+    end
+
+    context "when the old patient has a school move to a school" do
+      let(:school) { create(:school) }
+
+      before { create(:school_move, :to_school, patient: old_patient, school:) }
+
+      it "adds any school moves from the old patient" do
+        expect(new_patient.school_moves.size).to eq(1)
+        expect(new_patient.school_moves.first.school).to eq(school)
+      end
+    end
+
+    context "when the old patient has a school move to an unknown school" do
+      before { create(:school_move, :to_unknown_school, patient: old_patient) }
+
+      it "adds any school moves from the old patient" do
+        expect(new_patient.school_moves.size).to eq(1)
+        expect(new_patient.school_moves.first.home_educated).to be(false)
+      end
+    end
+
+    context "when the old patient has a school move to home-schooled" do
+      before { create(:school_move, :to_home_educated, patient: old_patient) }
+
+      it "adds any school moves from the old patient" do
+        expect(new_patient.school_moves.size).to eq(1)
+        expect(new_patient.school_moves.first.home_educated).to be(true)
+      end
+    end
+  end
+
   describe "#destroy_childless_parents" do
     let(:patient) { create(:patient, parents: []) }
     let(:parent) { create(:parent) }

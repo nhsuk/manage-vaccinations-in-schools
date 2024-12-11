@@ -55,6 +55,7 @@ class ImportIssuesController < ApplicationController
         .with_pending_changes
         .distinct
         .eager_load(:cohort, :gp_practice, :school)
+        .preload(:school_moves, :upcoming_sessions)
         .strict_loading
 
     @import_issues =
