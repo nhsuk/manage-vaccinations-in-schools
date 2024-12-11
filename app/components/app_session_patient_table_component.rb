@@ -107,21 +107,51 @@ class AppSessionPatientTableComponent < ViewComponent::Base
   end
 
   def patient_link(patient)
-    session = @patient_sessions[patient]&.session
+    patient_session = @patient_sessions[patient]
 
-    if @section == :matching || session.nil?
-      patient.full_name
-    elsif @section == :patients
-      govuk_link_to patient.full_name, patient_path(patient)
-    else
-      govuk_link_to patient.full_name,
-                    session_patient_path(
-                      session,
-                      patient,
-                      section: params[:section],
-                      tab: params[:tab]
-                    )
+    return patient.full_name if @section == :matching || patient_session.nil?
+
+    section = params[:section]
+    tab = params[:tab]
+
+    # TODO: Remove this once "Record session outcomes" exists.
+    # We have to guess the section and tab if it's not provided, this
+    # is only the case when looking at children at a programme-level.
+    if section.nil? || tab.nil?
+      if patient_session.added_to_session?
+        section = "consents"
+        tab = "no-consent"
+      elsif patient_session.consent_refused?
+        section = "consents"
+        tab = "refused"
+      elsif patient_session.consent_conflicts?
+        section = "consents"
+        tab = "conflicts"
+      elsif patient_session.consent_given_triage_needed? ||
+            patient_session.triaged_kept_in_triage?
+        section = "triage"
+        tab = "needed"
+      elsif patient_session.consent_given_triage_not_needed? ||
+            patient_session.triaged_ready_to_vaccinate? ||
+            patient_session.delay_vaccination?
+        section = "vaccinations"
+        tab = "vaccinate"
+      elsif patient_session.triaged_do_not_vaccinate? ||
+            patient_session.unable_to_vaccinate?
+        section = "vaccinations"
+        tab = "could-not"
+      elsif patient_session.vaccinated?
+        section = "vaccinations"
+        tab = "vaccinated"
+      end
     end
+
+    session = patient_session.session
+
+    govuk_link_to(
+      patient.full_name,
+      session_patient_path(session, patient, section:, tab:)
+    )
   end
 
   def matching_link(patient)
