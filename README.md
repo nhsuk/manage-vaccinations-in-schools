@@ -1,7 +1,6 @@
-# Manage vaccinations in schools – Prototype
+# Manage vaccinations in schools
 
-This is a service for recording children vaccinations with the NHS. This version
-is a prototype used for testing service designs and implementation technology.
+This is a service used within the NHS for managing and recording school-aged vaccinations.
 
 ## Environments
 
