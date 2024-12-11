@@ -492,7 +492,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_13_104730) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "email"
-    t.string "privacy_policy_url"
+    t.string "privacy_policy_url", null: false
     t.string "ods_code", null: false
     t.uuid "reply_to_id"
     t.string "phone"
